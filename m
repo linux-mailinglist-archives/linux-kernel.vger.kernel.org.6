@@ -1,236 +1,263 @@
-Return-Path: <linux-kernel+bounces-545609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41477A4EF39
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:13:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE3F1A4EF3C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:14:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B40DE7A8B90
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:12:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FC847A3D66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:13:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864E926B09A;
-	Tue,  4 Mar 2025 21:13:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A421727780E;
+	Tue,  4 Mar 2025 21:13:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="eRif0Ako"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jSXl3qck"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC061FDA9D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 074CD1FDA9D;
+	Tue,  4 Mar 2025 21:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741122802; cv=none; b=GmPhMDcJ6FEEQ9UJxKi3Er5IBz1ey0P5w5/9ihu/ALMwJ9G/9Eu6WEqqLuvaFFGKuhOBCqbu9mqtOs9bvH19FDiJNsunsjgHmlpBUU0CVcJCQ30mvd4mvjHx60OgzdYtPwoGPaaBHX1lFRruC2miXTobPce9lnF0O8Fgay5gXQU=
+	t=1741122834; cv=none; b=PW6PkIswR6lhpntIe1lpyQklnmV0CryhS2eMXeQdVstebC4NsMnylAT2nUh/MvSbmjyOR6NAbfthJutyk0z4yTOMO0aOQTvAwTEEfYNbZqYIac9MbzXWBk0PILa+uTp4n2igjp6kdkMEXw0dkxRf4zYpDkpSovq+AnkPYYQt9IU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741122802; c=relaxed/simple;
-	bh=LskRZcu6xVm6LtybvTSkdUfkBkzhutfp9Vg/z40f/Mg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oFncZrJBX+1c7KzuQbmAshmDC1aOI5SnYCS9I1i6N4a9K7qo2VtPcsTiZha+QbGz8k2fU8tpuWjnlIUqi1Q3LDgVSPSxCtIh5EfNZEvymX/3JZVWus9ynFhK/c3C48qXX9AvwwJM2N8XzWgWIjRLGimmueCKWVbDqGrYFRbJSo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=eRif0Ako; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 05F7E40E0202;
-	Tue,  4 Mar 2025 21:13:17 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id aLboqJJ2XNmr; Tue,  4 Mar 2025 21:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741122791; bh=LdcTYFTwyxAe0GTULnC1Hf3ftMeeyMOzsLoDFCVxUvI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eRif0AkobBlshUnkYnyAxHfz3/LiY9xn44cegODjZ8eneK3mlVCMp20IUquamBbZk
-	 xHPgq8mI2ciE8K5jPYcoXECz3Y/CBzexDk3+rD1cDk8p8EusF3S+82WZJ+PZtPGqnc
-	 9gD8OnD2m7bg52fC6+aLWVGCE6NpBHFuP0/Q1yFUTxatM/YkTIcIMKLCyc1IQs8Y9o
-	 pQrdCoYwyq/At4tUkkirdXvpa90K5gui8MW/7G/m1w9v5WjOH7gyViGLF6XAXALOCQ
-	 G+/uepIEzIKGePlN0d8JZaDa6oErHD05ppN5eSNfn93IHtjWu0QFgW3pj62S36EG5S
-	 TfX0CPPFSi7KcIy0JgMcq8aojRDmVw2DaGfUAFBsNHIpEsRlm5O0sfWCdookDgWNjH
-	 EPACJIoSwHvpa0e5Nxcho24xV2Ea2LwEPKCHnVhIGth9Vz0S+DOtaKbKhznlj25ucg
-	 HlcZ7vojtBTM0Bu07SGY5Lbhdr/Y2Jy2emha0tyPNCbZ4b1YAqU+2EtMlKEFoZCP+l
-	 JayZFadjUGeeHx37yACs7neRmKdxGUgqZ6X+lDnRgVH8+L7k81hzfje6nd5IFEPfN9
-	 Rzbnau/7P8Ut1gLQbjQGzlTHTbMCt5Dbzqc4xdJN8ScBiJv4j8Z5haCI4X2PnT+vGv
-	 ZKGuWIB1GUZ2334z6qV33UYY=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3B3E540E015D;
-	Tue,  4 Mar 2025 21:12:53 +0000 (UTC)
-Date: Tue, 4 Mar 2025 22:12:45 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
-	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v14 03/13] x86/mm: add INVLPGB support code
-Message-ID: <20250304211245.GJZ8dszTlbuRhxZ3To@fat_crate.local>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-4-riel@surriel.com>
- <20250228194734.GGZ8IS1iFVpPzmEyYl@fat_crate.local>
- <30c721e0-338d-4172-989c-5226d584bcbc@intel.com>
- <34b80474-a309-493b-81e9-3a7d4de8a369@intel.com>
- <20250304110032.GEZ8bdUOg2WLUrhMcm@fat_crate.local>
- <ec7247d0-0379-487d-a2d7-21b81dcd0c38@intel.com>
- <20250304161901.GCZ8cn9d252LTzThpI@fat_crate.local>
- <2efa96d5-b26a-4058-a353-5dd2180ed502@intel.com>
+	s=arc-20240116; t=1741122834; c=relaxed/simple;
+	bh=JMe/qcspcoiZchvQQU0hMSSgEZILtqwU9OoakxbHb9I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RlB7k8OxMx+0GpJvXUgwHzqvzLpZmcnzoRZUu2vKc4L8jLxJ6gC6mC3/yty5NNmqfriD9yA+4AdV4mSlBKaHWIcQtchpmyV3U+UNmCxG4BNye/wajvuPadQImQn8dYpSfpszpv23etiEzndLgCgIMNqCqYtUCOMZLFb6HZRzFoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jSXl3qck; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf45d8db04so598258766b.1;
+        Tue, 04 Mar 2025 13:13:52 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741122831; x=1741727631; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7J8YOwIEEVHyNCl0YcJAroXcURAnRLfse6R4+fdppn4=;
+        b=jSXl3qck2y4BaU9frgxaTQd/+HVtJWTsKlBLdCiSTWoRXC47WEbtZ2zBVcPKy/vBGp
+         RUSIeV70hlJQZGWidFKIN5siaxTr46FNKYgng87fpdaAWJsiyfeqetjc6XrKMhxZQ/yi
+         1dvyUbrMsvVZMbJseRiZYI34q1PM+XvaKdL04yDlfMCavxgDeLuHnYcs9lbcc3ObK6E4
+         gDjlII/h+9fX5BgzKN5ve4wN11r+rtzhVrqP8t9KnGPwV6qC3YSi+NrMwvtmO4yft3gU
+         wrh9QtnzvJhLYyFo6m5ho/lzcHpGZ/G9xGOUIJvtRGex2pkyEB9AQBbbArbDA5uSika+
+         DwRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741122831; x=1741727631;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7J8YOwIEEVHyNCl0YcJAroXcURAnRLfse6R4+fdppn4=;
+        b=J96rnif+7JTqL+3jW5iIwASlwjXtW4I90kGheLVfk6RqVd96fDyEzRiWZ8TVyFvvKf
+         trIupfDNbcw/nr/LEnlFwH4KnmemBzghZilC8RFiZ8mEwuACTY9hoWNbjI770gzcMP9H
+         IiFgyxfd45Gm6n1QP0+mD5QwHY5iymVkZTmxeQki8YLdsm6iRMRLk+vGKL2Q1YQyhIR3
+         lxea5qpZOSAcDDTZZZCSp7hti3I7sUmQBpiUsbbnDbj59au/j9CcSDC9YU1H8TAUViR0
+         sox6XH2NQ8boVZJob+rPnqAE+u4ZIkwLJFeZNtFOX9uSb+i+Ec2T/E4BW7e2yi4UTgzb
+         pTAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUEp+kg8fRfbodvO2cQavJYJI4s48Z18JcfCEaoWCVAmM4SxdHtDEzjqD/M1GMvCcyH8T3RBG5IKdl6AlRT@vger.kernel.org, AJvYcCUlXkItj6R9UmSmXxZ5SUHyhBgVnM078MyX+0WCPJvfmZ+FofGIkQjYeG8XY8PsTSyjh1NI8xwiQW37@vger.kernel.org, AJvYcCXFr8ZlgQy1VJsca8bFAj3nYjj8akmDE2k8ItyhBf1IOPT2Mpi83xYiaQqENCf6qgExUXvJNudTC/culN9L@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+XSY/FUD7heDCZtd8DsbJo5pOccLdmZ45yd2gKSUoD4iNLqX/
+	n5gdDZu+q2t+6DL6Ie6xAgqlLyqkRqo9wS/zWrUR3x7SSg0s8c8342tUMTWFR9tI63pi95OdtZ4
+	7mN+6HPVME/LGFIVnE2fMlbXnqyQ=
+X-Gm-Gg: ASbGnctTd5PqX1pBwhFXjqULAPm92FFDJAYSrSNx5KvguBOoDOP0D1LCHIygYBTKgNH
+	a9bSx2MaLqkS42WzZ55Tq8wd3t7upjB5dGcoTR9tr/4fRGibLejlrUg6I+rvF72TtK3ZUeTyG7i
+	cro9lWFPeM8q+WZWlU2gSOLYNrqQ==
+X-Google-Smtp-Source: AGHT+IFZrWlJPjDY/K1dKn6KwlpO6FY0o5jmsajcaXfdxae8w/3rlNFD6nvU8jAFvHJ57tKEXe9DLGo3vFHWtTW1S+E=
+X-Received: by 2002:a17:907:7f8a:b0:ac1:ec42:6cb6 with SMTP id
+ a640c23a62f3a-ac20db006a5mr74629566b.52.1741122830557; Tue, 04 Mar 2025
+ 13:13:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <2efa96d5-b26a-4058-a353-5dd2180ed502@intel.com>
+References: <67a487f7.050a0220.19061f.05fc.GAE@google.com> <67c4881e.050a0220.1dee4d.0054.GAE@google.com>
+ <7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc>
+ <CAOQ4uxjf5H_vj-swF7wEvUkPobEuxs2q6jfO9jFsx4pqxtJMMg@mail.gmail.com>
+ <20250304161509.GA4047943@perftesting> <CAOQ4uxj0cN-sUN=EE0+9tRhMFFrWLQ0T_i0fprwNRr92Hire6Q@mail.gmail.com>
+ <20250304203657.GA4063187@perftesting>
+In-Reply-To: <20250304203657.GA4063187@perftesting>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 4 Mar 2025 22:13:39 +0100
+X-Gm-Features: AQ5f1JqNtzknjQuSpiU1bx2jheCURHcVXVhGUHYQJGqWgiCdDvdg1aIGdH7j2m0
+Message-ID: <CAOQ4uxihyR8u5c0T8q85ySNgp4U1T0MMSR=+vv3HWNFcvezRPQ@mail.gmail.com>
+Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
+To: Josef Bacik <josef@toxicpanda.com>
+Cc: Jan Kara <jack@suse.cz>, 
+	syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>, 
+	akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org, 
+	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 04, 2025 at 08:57:30AM -0800, Dave Hansen wrote:
-> Why would __invlpg_all() need an 'addr' or 'nr_pages'? Shouldn't those be 0?
+On Tue, Mar 4, 2025 at 9:37=E2=80=AFPM Josef Bacik <josef@toxicpanda.com> w=
+rote:
+>
+> On Tue, Mar 04, 2025 at 09:27:20PM +0100, Amir Goldstein wrote:
+> > On Tue, Mar 4, 2025 at 5:15=E2=80=AFPM Josef Bacik <josef@toxicpanda.co=
+m> wrote:
+> > >
+> > > On Tue, Mar 04, 2025 at 04:09:16PM +0100, Amir Goldstein wrote:
+> > > > On Tue, Mar 4, 2025 at 12:06=E2=80=AFPM Jan Kara <jack@suse.cz> wro=
+te:
+> > > > >
+> > > > > Josef, Amir,
+> > > > >
+> > > > > this is indeed an interesting case:
+> > > > >
+> > > > > On Sun 02-03-25 08:32:30, syzbot wrote:
+> > > > > > syzbot has found a reproducer for the following issue on:
+> > > > > ...
+> > > > > > ------------[ cut here ]------------
+> > > > > > WARNING: CPU: 1 PID: 6440 at ./include/linux/fsnotify.h:145 fsn=
+otify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > > Modules linked in:
+> > > > > > CPU: 1 UID: 0 PID: 6440 Comm: syz-executor370 Not tainted 6.14.=
+0-rc4-syzkaller-ge056da87c780 #0
+> > > > > > Hardware name: Google Google Compute Engine/Google Compute Engi=
+ne, BIOS Google 12/27/2024
+> > > > > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=3D-=
+-)
+> > > > > > pc : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify=
+.h:145
+> > > > > > lr : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify=
+.h:145
+> > > > > > sp : ffff8000a42569d0
+> > > > > > x29: ffff8000a42569d0 x28: ffff0000dcec1b48 x27: ffff0000d68a17=
+08
+> > > > > > x26: ffff0000d68a16c0 x25: dfff800000000000 x24: 00000000000080=
+00
+> > > > > > x23: 0000000000000001 x22: ffff8000a4256b00 x21: 00000000000010=
+00
+> > > > > > x20: 0000000000000010 x19: ffff0000d68a16c0 x18: ffff8000a42566=
+e0
+> > > > > > x17: 000000000000e388 x16: ffff800080466c24 x15: 00000000000000=
+01
+> > > > > > x14: 1fffe0001b31513c x13: 0000000000000000 x12: 00000000000000=
+00
+> > > > > > x11: 0000000000000001 x10: 0000000000ff0100 x9 : 00000000000000=
+00
+> > > > > > x8 : ffff0000c6d98000 x7 : 0000000000000000 x6 : 00000000000000=
+00
+> > > > > > x5 : 0000000000000020 x4 : 0000000000000000 x3 : 00000000000010=
+00
+> > > > > > x2 : ffff8000a4256b00 x1 : 0000000000000001 x0 : 00000000000000=
+00
+> > > > > > Call trace:
+> > > > > >  fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:1=
+45 (P)
+> > > > > >  filemap_fault+0x12b0/0x1518 mm/filemap.c:3509
+> > > > > >  xfs_filemap_fault+0xc4/0x194 fs/xfs/xfs_file.c:1543
+> > > > > >  __do_fault+0xf8/0x498 mm/memory.c:4988
+> > > > > >  do_read_fault mm/memory.c:5403 [inline]
+> > > > > >  do_fault mm/memory.c:5537 [inline]
+> > > > > >  do_pte_missing mm/memory.c:4058 [inline]
+> > > > > >  handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
+> > > > > >  __handle_mm_fault mm/memory.c:6043 [inline]
+> > > > > >  handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+> > > > > >  do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
+> > > > > >  do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+> > > > > >  do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
+> > > > > >  el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:432
+> > > > > >  el1h_64_sync_handler+0x60/0xcc arch/arm64/kernel/entry-common.=
+c:510
+> > > > > >  el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
+> > > > > >  __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inlin=
+e] (P)
+> > > > > >  fault_in_readable+0x168/0x310 mm/gup.c:2234 (P)
+> > > > > >  fault_in_iov_iter_readable+0x1dc/0x22c lib/iov_iter.c:94
+> > > > > >  iomap_write_iter fs/iomap/buffered-io.c:950 [inline]
+> > > > > >  iomap_file_buffered_write+0x490/0xd54 fs/iomap/buffered-io.c:1=
+039
+> > > > > >  xfs_file_buffered_write+0x2dc/0xac8 fs/xfs/xfs_file.c:792
+> > > > > >  xfs_file_write_iter+0x2c4/0x6ac fs/xfs/xfs_file.c:881
+> > > > > >  new_sync_write fs/read_write.c:586 [inline]
+> > > > > >  vfs_write+0x704/0xa9c fs/read_write.c:679
+> > > > >
+> > > > > The backtrace actually explains it all. We had a buffered write w=
+hose
+> > > > > buffer was mmapped file on a filesystem with an HSM mark. Now the=
+ prefaulting
+> > > > > of the buffer happens already (quite deep) under the filesystem f=
+reeze
+> > > > > protection (obtained in vfs_write()) which breaks assumptions of =
+HSM code
+> > > > > and introduces potential deadlock of HSM handler in userspace wit=
+h filesystem
+> > > > > freezing. So we need to think how to deal with this case...
+> > > >
+> > > > Ouch. It's like the splice mess all over again.
+> > > > Except we do not really care to make this use case work with HSM
+> > > > in the sense that we do not care to have to fill in the mmaped file=
+ content
+> > > > in this corner case - we just need to let HSM fail the access if co=
+ntent is
+> > > > not available.
+> > > >
+> > > > If you remember, in one of my very early version of pre-content eve=
+nts,
+> > > > the pre-content event (or maybe it was FAN_ACCESS_PERM itself)
+> > > > carried a flag (I think it was called FAN_PRE_VFS) to communicate t=
+o
+> > > > HSM service if it was safe to write to fs in the context of event h=
+andling.
+> > > >
+> > > > At the moment, I cannot think of any elegant way out of this use ca=
+se
+> > > > except annotating the event from fault_in_readable() as "unsafe-for=
+-write".
+> > > > This will relax the debugging code assertion and notify the HSM ser=
+vice
+> > > > (via an event flag) that it can ALLOW/DENY, but it cannot fill the =
+file.
+> > > > Maybe we can reuse the FAN_ACCESS_PERM event to communicate
+> > > > this case to HSM service.
+> > > >
+> > > > WDYT?
+> > >
+> > > I think that mmap was a mistake.
+> >
+> > What do you mean?
+> > Isn't the fault hook required for your large executables use case?
+>
+> I mean the mmap syscall was a mistake ;).
+>
 
-Yap, good idea. It makes the _all helper even better:
+ah :)
 
-static inline void __invlpgb_all(unsigned long asid, unsigned long pcid, u8 flags)
-{
-        __invlpgb(asid, pcid, 0, 1, 0, flags);
-}
+> >
+> > >
+> > > Is there a way to tell if we're currently in a path that is under fsf=
+reeze
+> > > protection?
+> >
+> > Not at the moment.
+> > At the moment, file_write_not_started() is not a reliable check
+> > (has false positives) without CONFIG_LOCKDEP.
+> >
 
-> It's _better_ of course when it happens at a single site and it's close
-> to a prototype for __invlpgb(). But it's still a magic '0' that it's
-> impossible to make sense of without looking at the prototype.
+One very ugly solution is to require CONFIG_LOCKDEP for
+pre-content events.
 
-Yes.
+> > > Just denying this case would be a simpler short term solution while
+> > > we come up with a long term solution. I think your solution is fine, =
+but I'd be
+> > > just as happy with a simpler "this isn't allowed" solution. Thanks,
+> >
+> > Yeh, I don't mind that, but it's a bit of an overkill considering that
+> > file with no content may in fact be rare.
+>
+> Agreed, I'm fine with your solution.
 
-> Looking at the APM again... there really are three possible values for
-> ECX[31]:
-> 
->  0: increment by 4k
->  1: increment by 2M
->  X: Don't care, no increment is going to happen
-> 
-> What you wrote above could actually be written:
-> 
-> 	__invlpgb(asid, pcid, addr, nr_pages, 1, flags);
-> 
-> so the 0/1 is _actually_ completely random and arbitrary as far as the
-> spec goes.
+Well, my "solution" was quite hand-wavy - it did not really say how to
+propagate the fact that faults initiated from fault_in_readable().
+Do you guys have any ideas for a simple solution?
 
-Yes.
-
-> Why does it matter?
-> 
-> It enables you to do sanity checking. For example, we could actually
-> enforce a rule that "no stride" can't be paired with any of the
-> per-address invalidation characteristics:
-> 
-> 	if (stride == NO_STRIDE) {
-> 		WARN_ON(flags & INVLPGB_FLAG_VA);
-> 		WARN_ON(addr);
-> 		WARN_ON(nr_pages);
-> 	}
-> 
-> That's impossible if you pass a 'bool' in.
-> 
-> But, honestly, I'm deep into nitpick mode here. I think differentiating
-> the three cases is worth it, but it's also not the hill I'm going to die
-> on. ;)
-
-Yap, and now I've massaged it so much so that it doesn't really need that
-checking. Because I have exactly two calls which use the stride:
-
-1.
-
-static inline void __invlpgb_flush_user_nr_nosync(unsigned long pcid,
-                                                  unsigned long addr,
-                                                  u16 nr, bool stride)
-{
-        enum addr_stride str = stride ? PMD_STRIDE : PTE_STRIDE;
-        u8 flags = INVLPGB_FLAG_PCID | INVLPGB_FLAG_VA;
-
-        __invlpgb(0, pcid, addr, nr, str, flags);
-}
-
-This one is fine - I verify it.
-
-2.
-
-/* Flush addr, including globals, for all PCIDs. */
-static inline void __invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
-{
-	__invlpgb(0, 0, addr, nr, PTE_STRIDE, INVLPGB_FLAG_INCLUDE_GLOBAL);
-}
-
-This one controls it already.
-
-So the only case where something could go bad is when one would use
-__invlpgb() directly and that should hopefully be caught early enough.
-
-But if you really want, I could add sanitization to __invlpgb() to massage it
-into the right stride. And print a single warning - the big fat WARN* in an
-inline functions are probably too much. Hm, I dunno...
-
-Current diff ontop:
-
-diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
-index e8561a846754..8ab21487d6ee 100644
---- a/arch/x86/include/asm/tlb.h
-+++ b/arch/x86/include/asm/tlb.h
-@@ -66,6 +66,11 @@ static inline void __invlpgb(unsigned long asid, unsigned long pcid,
- 	asm volatile(".byte 0x0f, 0x01, 0xfe" :: "a" (rax), "c" (ecx), "d" (edx));
- }
- 
-+static inline void __invlpgb_all(unsigned long asid, unsigned long pcid, u8 flags)
-+{
-+	__invlpgb(asid, pcid, 0, 1, 0, flags);
-+}
-+
- static inline void __tlbsync(void)
- {
- 	/*
-@@ -84,6 +89,7 @@ static inline void __tlbsync(void)
- static inline void __invlpgb(unsigned long asid, unsigned long pcid,
- 			     unsigned long addr, u16 nr_pages,
- 			     enum addr_stride s, u8 flags) { }
-+static inline void __invlpgb_all(unsigned long asid, unsigned long pcid, u8 flags) { }
- static inline void __tlbsync(void) { }
- #endif
- 
-@@ -121,7 +127,7 @@ static inline void __invlpgb_flush_user_nr_nosync(unsigned long pcid,
- /* Flush all mappings for a given PCID, not including globals. */
- static inline void __invlpgb_flush_single_pcid_nosync(unsigned long pcid)
- {
--	__invlpgb(0, pcid, 0, 1, PTE_STRIDE, INVLPGB_FLAG_PCID);
-+	__invlpgb_all(0, pcid, INVLPGB_FLAG_PCID);
- }
- 
- /* Flush all mappings, including globals, for all PCIDs. */
-@@ -134,7 +140,7 @@ static inline void invlpgb_flush_all(void)
- 	 * as it is cheaper.
- 	 */
- 	guard(preempt)();
--	__invlpgb(0, 0, 0, 1, PTE_STRIDE, INVLPGB_FLAG_INCLUDE_GLOBAL);
-+	__invlpgb_all(0, 0, INVLPGB_FLAG_INCLUDE_GLOBAL);
- 	__tlbsync();
- }
- 
-@@ -148,7 +154,7 @@ static inline void __invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
- static inline void invlpgb_flush_all_nonglobals(void)
- {
- 	guard(preempt)();
--	__invlpgb(0, 0, 0, 1, PTE_STRIDE, INVLPGB_MODE_ALL_NONGLOBALS);
-+	__invlpgb_all(0, 0, INVLPGB_MODE_ALL_NONGLOBALS);
- 	__tlbsync();
- }
- #endif /* _ASM_X86_TLB_H */
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+Thanks,
+Amir.
 
