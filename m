@@ -1,85 +1,74 @@
-Return-Path: <linux-kernel+bounces-544043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C39BA4DCCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:40:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 446DDA4DCCD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:41:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AC4D176ABF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:40:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A296D3AFBBC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:41:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498DC20013D;
-	Tue,  4 Mar 2025 11:39:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8E931FFC69;
+	Tue,  4 Mar 2025 11:41:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YE7VUCI7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cbs2jcLx"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AE31FDE27
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:39:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 836701FCD00
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:41:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741088397; cv=none; b=FEKpk4nDgTSvrgFSkWwwwsbUUpL9wqtf2MDlMsjxke7JhhUh38GqnTypvsvm/XJtRdol4Sse8rEXlbvHSdAmCKet2tvMwYVcqeX3XlhgIiovZt7KsBu7hA0/O7ftleTrvwoP6zFGmsgfuFRv0eeJ5lC8qT6HzH+Q1vRDVGDmNMg=
+	t=1741088500; cv=none; b=YBALRmR3OByC0euQrSeRswAuvczL7UdrnAPOv8CQfpZg6Xjo3QTgbPQUthnJPSZteIat4NJwJ2MJQ64B1h1R+Q48eNd5TodjhzGJkyBV335JI+3Fog5GEKzPVzyib7wF5OYjSenz2EMCwCVw2vjCDaDfjAm9tqYSEJFuwHD+wEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741088397; c=relaxed/simple;
-	bh=Pet6msmAnBNCWNPcprQAH+0FzVtjVOU/qcl3s7u8JWM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oGmBd9cbf2R1+HfM3qptZFoD7HiT61q0diBU37/v9JP3HMGAJIx01jA6+Zfm2HIDOXBsdfiQNCpYNP+J+pEdZn0W99vYM6ufOmuEaoZrSYW9MNTx3hKA3T87Awiffpy3g4pTZxKEjuzFlQ2+ESXLV93VZ0HqBbKTlTOINOUPf7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YE7VUCI7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741088394;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hntXZpQfa271EvBEp9eoZmK+pCjo6fsW/klFtftWSNM=;
-	b=YE7VUCI7QoxM9jxp1gs1O8oQrffYwutQRgA326Z/rBZA+AzbfadIxliwPPSWtBdhT0gHnL
-	OnADjNyODFAhSPYtE3/1odJlrlIKY275XccPOda8nrREEbqiq5nSeO7+0/pkXXNBbZC2sP
-	54lbRN25rleotnqR8ud06ujV+mlXG/w=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-384-0IVJF4fIN-KKN6uA2lSsEg-1; Tue, 04 Mar 2025 06:39:43 -0500
-X-MC-Unique: 0IVJF4fIN-KKN6uA2lSsEg-1
-X-Mimecast-MFC-AGG-ID: 0IVJF4fIN-KKN6uA2lSsEg_1741088383
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43bce8882d4so1275595e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 03:39:43 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741088382; x=1741693182;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hntXZpQfa271EvBEp9eoZmK+pCjo6fsW/klFtftWSNM=;
-        b=K3Om+6UAKiIUFM4hOhF4fe2XJ645yuLP/WIy5ENzHqFv0V872l/oyf5KldadnA/qlY
-         zrIFr71b0cKl6csxURaKdnCQTi9o+vgx0Knhr8XTnuO0fSFPRqUstGBI9LLI8ChqLPPm
-         OyE6KJyZ14dGvVTFceoxNiUQnPpCvZF0CYJbRbJaQzxQIz82vopqcqD0vJ7HxeHqcFvs
-         MKMo+185ACMXf9iMwubttgUMPYg26+pplQWMDOmY09QO4tSo9SPXI45wmhpP7IZW0VXZ
-         vmEWUbYzkf9KwOR73xPPjR6L4g5N89hw4z+zUuFARgY8TwYWMo7O2Cqho0WBWgn/Y+xr
-         Zbmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUiHHxHYehtxV6/3MZFt1FG7YFQwq+YWTkZaPyneul0rQUtevCspju0wxxbnYI3acKJEjF1+KdSqjJZibc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwICxa/OxK3V9RNnNFNaevo9IBbzJt+acw3jfCrMfZJcj3DgzvZ
-	MYz+TOyFaRoHmIZicBtkG0skWDzU1JrJwCyj/R7IB+7DDJfeV9EG5zgQGg4fmLE+awHAb3FQTMn
-	zXiafFz6IZBYAizacZRGzxvoO+oqzr61PW/FkUTwMhzmk4tkmoAZbe0nl/PVHEj8mSKk2Ug==
-X-Gm-Gg: ASbGncvwdTbwpszGnsQ7vLETezdmRYF7ymxwKjYy/ThiSVoMoYtQUurs1u5sudhAQhB
-	ipuMaNPpf68zvCS2KKvWj2eeS06BA2R5cQtvzVbR4Ii/JW+N4MPqDGf95rf4ZwLBptagzqubYq4
-	tmOJZYoMsRLcg99PDHhUrnYhCOn+ZxOqQ3kSiDu/DUT5XF1HGZjgOyYGLgBq4OCU5XP39HEVUe2
-	Lxteemt3iFvMfAjZs5BSOIsJ47H/vy+UwnP8SmHQ3Wfy8iSTfzM3ElnTa7dmhMiOt39ZDgUV0DR
-	F0jboMeH29uh3UWTimwcx6pir4HOYMr/3vcVWEHZlONDNA==
-X-Received: by 2002:a05:600c:1384:b0:439:9f42:8652 with SMTP id 5b1f17b1804b1-43ba6704748mr155318235e9.17.1741088382346;
-        Tue, 04 Mar 2025 03:39:42 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEvEFgiDy7ba5K1ePVI42ersngV+bgTh0BsGa2h1RJF6kOEPu7Gge8cE7SX90ZY6smvmrEHow==
-X-Received: by 2002:a05:600c:1384:b0:439:9f42:8652 with SMTP id 5b1f17b1804b1-43ba6704748mr155318035e9.17.1741088382013;
-        Tue, 04 Mar 2025 03:39:42 -0800 (PST)
-Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6cd8sm17197430f8f.44.2025.03.04.03.39.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 03:39:41 -0800 (PST)
-Message-ID: <5ec0a2cc-e5f6-42dd-992c-79b1a0c1b9f5@redhat.com>
-Date: Tue, 4 Mar 2025 12:39:40 +0100
+	s=arc-20240116; t=1741088500; c=relaxed/simple;
+	bh=I44sgI+u2joZdHUTtoqWCM8gDvnFAnNWYP1QyAt08vk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=juY4z0M7YwWv0nWRp6/4xNJvm6i0R4RWsxgVczHDL/+0vd2gyNaZzuNWRqQDcZ6/Q+tMTdBbNIjpiNrrIo6OPOAI+TvGtZmAu7r6jO7NX3n/Mrwesb0JGLIJdFC13spE/divXDej2NufrjCZImjZL1DUCo+AWr8djnuqcUZEXHE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cbs2jcLx; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524AZcaE023022;
+	Tue, 4 Mar 2025 11:41:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=OUxtYV
+	zm+6IiOZ/jzardOjOvsD4thEc0+iR6C42pggo=; b=cbs2jcLxX848zDIM68P8Re
+	Qz9oJule4qOVqICVeZzYNedH+d/Ei4Rj33d4LOWzqBOswIBvl0XzQeqcAxZr9HH/
+	clU5u2VIaXBO2EpUpjTh0Tl4YPTRsi8jpH7o4CApEYlaB5fZDD0WtFs4Z2ExOSZY
+	3bQ0Ms2RdUn44E1/SuxDljY98ddP+WwD3zdV1hn2AoFBkoXhuxzoxrpM6fuyS02+
+	ONj9LutuOZ3EfRWJdBnk2qXzDmoRofrHAkbaasNzJN2b8EaZH9fXAB7don4E1j4/
+	o6iqYEGePERGZ/8wNsyisplW7bOsHMzhT4tsk8tO3qJacMQ8ovKDQyXcaVbxicGA
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455dunxdww-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 11:41:24 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52489uZD013776;
+	Tue, 4 Mar 2025 11:41:23 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2kn2ma-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 11:41:23 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524BfLN525690750
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 11:41:21 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F07A658045;
+	Tue,  4 Mar 2025 11:41:22 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 37B5758054;
+	Tue,  4 Mar 2025 11:41:21 +0000 (GMT)
+Received: from [9.204.204.161] (unknown [9.204.204.161])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Mar 2025 11:41:20 +0000 (GMT)
+Message-ID: <2a8656cf-8ff5-40fa-8ed8-efb1245fddf2@linux.ibm.com>
+Date: Tue, 4 Mar 2025 17:11:19 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,59 +76,133 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net v1 1/1] bnx2: Fix unused data compilation warning
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jakub Kicinski <kuba@kernel.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>
-References: <20250228100538.32029-1-andriy.shevchenko@linux.intel.com>
- <20250303172114.6004ef32@kernel.org> <Z8bcaR9MS7dk8Q0p@smile.fi.intel.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <Z8bcaR9MS7dk8Q0p@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: Build Warnings at arch/powerpc/
+Content-Language: en-GB
+To: Madhavan Srinivasan <maddy@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+        linux-kernel@vger.kernel.org, Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
+ <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
+From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
+In-Reply-To: <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: v0imr_UqSZMlwgBJTuNKxA0mCg2N0V3s
+X-Proofpoint-GUID: v0imr_UqSZMlwgBJTuNKxA0mCg2N0V3s
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_05,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 malwarescore=0 bulkscore=0 spamscore=0
+ suspectscore=0 mlxlogscore=999 phishscore=0 clxscore=1015 mlxscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040097
 
-On 3/4/25 11:56 AM, Andy Shevchenko wrote:
-> On Mon, Mar 03, 2025 at 05:21:14PM -0800, Jakub Kicinski wrote:
->> On Fri, 28 Feb 2025 12:05:37 +0200 Andy Shevchenko wrote:
->>> In some configuration, compilation raises warnings related to unused
->>> data. Indeed, depending on configuration, those data can be unused.
->>>
->>> Mark those data as __maybe_unused to avoid compilation warnings.
+Hello Maddy,
+
+
+Git bisect is poinitng to d543c29a68989ac9e39e0b50cfe8b592d92a1599 as 
+the first bad commit.
+
+Git Bisect log:
+
+[root@ltc-zzci-1 linux-next]# git bisect log
+git bisect start
+# status: waiting for both good and bad commits
+# good: [7eb172143d5508b4da468ed59ee857c6e5e01da6] Linux 6.14-rc5
+git bisect good 7eb172143d5508b4da468ed59ee857c6e5e01da6
+# status: waiting for bad commit, 1 good commit known
+# bad: [cd3215bbcb9d4321def93fea6cfad4d5b42b9d1d] Add linux-next 
+specific files for 20250303
+git bisect bad cd3215bbcb9d4321def93fea6cfad4d5b42b9d1d
+# bad: [f084774e60dd4171a536e7f5506f90031e3a8c6f] Merge branch 
+'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/ath/ath.git
+git bisect bad f084774e60dd4171a536e7f5506f90031e3a8c6f
+# good: [a57419b6b3df381d61367a3034910d1d8a197fd7] Merge branch 
+'fs-next' of linux-next
+git bisect good a57419b6b3df381d61367a3034910d1d8a197fd7
+# good: [4350f3677257b7762a89901f81bc2e5ef84bc30f] Merge branch 
+'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git
+git bisect good 4350f3677257b7762a89901f81bc2e5ef84bc30f
+# good: [e87700965abeddcdb84c9540107c69ce08b87431] Merge tag 
+'for-netdev' of https://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next
+git bisect good e87700965abeddcdb84c9540107c69ce08b87431
+# bad: [0edfdc95d3459a6a9e9487a748b04c5b8fd2a69a] Merge branch 'master' 
+of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec-next.git
+git bisect bad 0edfdc95d3459a6a9e9487a748b04c5b8fd2a69a
+# good: [97fc6863637630cdf9a5e9ed2569fe9a7974434b] net: usb: cdc_mbim: 
+fix Telit Cinterion FE990A name
+git bisect good 97fc6863637630cdf9a5e9ed2569fe9a7974434b
+# good: [bb7abf3049025f7e4ad91cff2d9fe8381a9278af] bpf: make 
+state->dfs_depth < state->loop_entry->dfs_depth an invariant
+git bisect good bb7abf3049025f7e4ad91cff2d9fe8381a9278af
+# good: [0ba0ef012eba63652a50b318a7a3136963c37f74] selftests/bpf: Test 
+bpf_usdt_arg_size() function
+git bisect good 0ba0ef012eba63652a50b318a7a3136963c37f74
+# good: [42c5e6d2accf31bba4cd31f8a742d5b9e19a7d28] selftests/bpf: Add 
+selftests allowing cgroup prog pre-ordering
+git bisect good 42c5e6d2accf31bba4cd31f8a742d5b9e19a7d28
+# good: [b70c222ea9d66d51fc1f038f82e41ea17b38499f] Merge branch 
+'bpf-next/master' into for-next
+git bisect good b70c222ea9d66d51fc1f038f82e41ea17b38499f
+# good: [cc18f482e8b60a2bcf2d7d57b48740bd0837fc04] xfrm: provide common 
+xdo_dev_offload_ok callback implementation
+git bisect good cc18f482e8b60a2bcf2d7d57b48740bd0837fc04
+# bad: [d543c29a68989ac9e39e0b50cfe8b592d92a1599] Merge branch 
+'for-next' of git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+git bisect bad d543c29a68989ac9e39e0b50cfe8b592d92a1599
+# good: [3ab37b090d1c458553a5268c7aaa8790ee759674] Merge branch 'main' 
+of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net-next.git
+git bisect good 3ab37b090d1c458553a5268c7aaa8790ee759674
+# first bad commit: [d543c29a68989ac9e39e0b50cfe8b592d92a1599] Merge 
+branch 'for-next' of 
+git://git.kernel.org/pub/scm/linux/kernel/git/bpf/bpf-next.git
+
+On 04/03/25 11:43 am, Madhavan Srinivasan wrote:
+>
+> On 3/4/25 10:42 AM, Venkat Rao Bagalkote wrote:
+>> Greetings!!
 >>
->> Will making dma_unmap_addr access the first argument instead of
->> pre-processing down to nothing not work?
-> 
-> I looked at the implementation of those macros and I have no clue
-> how to do that in a least intrusive way. Otherwise it sounds to me
-> quite far from the scope of the small compilation error fix that
-> I presented here.
+>>
+>> Observing build warnings with linux-next and powerpc repo's. Issue is currently not seen on mainline yet.
+>>
+>> PPC Repo: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git merge branch
+>>
+>> PPC Kernel Version: 6.14.0-rc4-g1304f486dbf1
+>> next Repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master branch
+>>
+>> next Kernel Version: 6.14.0-rc5-next-20250303
+>>
+>>
+>> On linux-next kernel issue got introduced b/w next-20250227 and next-20250303
+>>
+>>
+>> Build Warnings:
+>>
+>> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
+>> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
+>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+>>
+>>
+> Can you please specific the compiler and compiler version you found this issue with
+>
+> maddy
+GCC Version: gcc (GCC) 11.4.1 20231218 (Red Hat 11.4.1-3)
+>
+>> If you fix this issue, please add below tag.
+>>
+>>
+>> Reported-By: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+>>
+>>
+>> Regards,
+>>
+>> Venkat.
+>>
+Regards,
 
-I *think* Jakub is suggesting something alike:
+Venkat.
 
----
-diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
-index b79925b1c433..927884f10b0f 100644
---- a/include/linux/dma-mapping.h
-+++ b/include/linux/dma-mapping.h
-@@ -629,7 +629,7 @@ static inline int dma_mmap_wc(struct device *dev,
- #else
- #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
- #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
--#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
-+#define dma_unmap_addr(PTR, ADDR_NAME)           (((PTR)->ADDR_NAME), 0)
- #define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
- #define dma_unmap_len(PTR, LEN_NAME)             (0)
- #define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
----
-
-Would that work?
-
-Thanks,
-
-Paolo
-
+>
 
