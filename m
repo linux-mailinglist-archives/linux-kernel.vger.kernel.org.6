@@ -1,111 +1,123 @@
-Return-Path: <linux-kernel+bounces-544704-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BB1A4E42D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:50:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FD2A4E432
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9161119C04FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0262819C4A8B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC02E281526;
-	Tue,  4 Mar 2025 15:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE4F265CB7;
+	Tue,  4 Mar 2025 15:30:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="W1W5CazB"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f0qihsw6"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82EC22356C9;
-	Tue,  4 Mar 2025 15:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 826FD204C22
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102165; cv=none; b=KWq7yZt/t1HPbviqWvBXti4GQG/7JGTkERWqwXi09jl5zVfkzFIC37rOVuz5rmfiHyriULFgRyv3+cSk9zONw6TmtF4z+q72RMLLCuj319AqtdxoC8ev0w1uxY7r4lV9pwVCnWDpaRMV6IGM7kE8C/Xb9KgKgePxCVY2d4xWR2A=
+	t=1741102204; cv=none; b=huIEOZ9XPCE4gquWnfeCjusKHJqurcK5of3U6xt9PLxsONmi/EpubeRxCyU4cmUv6ycdV1fmS9DTOvqV0R6Oj9jcn4Grj6WPSEU67lblMqOrGxUBTtW89N9cCqjqM8tUzxc7HwXOt10cXcW1Dn3arwuwmlttrLpzm4pflpm098Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102165; c=relaxed/simple;
-	bh=vqeB9SrNqzQ09LSrU5OcmZtpCdJ+dHGgTXQ7UhOc/dM=;
+	s=arc-20240116; t=1741102204; c=relaxed/simple;
+	bh=DvT37mlLylWirMmvziApQyMOyXFz2tPHw47pSw/2Ns0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qhqvUaADZNIaqUq9i/s5LNXCgiDYAHA0+09d/WqXhbhd9kQGm+iP+vdt2nVxp9dKueMU1h91StQz0gTm51zadedma/xVbRPGOWYLVq0lq8NXvzAIl5xFxQh5l7TciRhX5W52+sY1cEqwklhbjMR3QS/9qEMSAjs1JJVE/cT/Hlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=W1W5CazB; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=EwH5tL2R1Nh04CIVB45yHJPEmwvHf497lkyWPZPvBAk=; b=W1W5CazB8j4q0EfGur/vmxU19O
-	eEoNwKx6EAg72UeTKnxPaU9ZtjpCwyh9lIjGDsQf0rV1pgrRwUF1HYtHxEjrPXnHYkGOUJNS7EXxR
-	1m7AZvOzW4Sw5h0lFssqklz8fS3BTVoqXH38JNwRoof43KdPhl890cCl2gL4g6ENZPIEpt0jRuvf5
-	eSagUChSacvZLdi4xgEyu0YwV01kKiDNu9WgIhghhjKFj15zNQj3Ouv7XnuaFcEaJ07gR6lLB4Kl6
-	gX/DZJYtbhcjsSsO0+pDLrZp4MKb8Vfgjd5pIcrzneGsTQtdvDe8uv2Zccy9jhPumr3FLZkb2pUCh
-	JI6hpqFw==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpUCk-0000000048f-3L3R;
-	Tue, 04 Mar 2025 15:29:11 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id D7DFC30049D; Tue,  4 Mar 2025 16:29:09 +0100 (CET)
-Date: Tue, 4 Mar 2025 16:29:09 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
-	Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 02/34] compiler-capability-analysis: Add
- infrastructure for Clang's capability analysis
-Message-ID: <20250304152909.GH11590@noisy.programming.kicks-ass.net>
-References: <20250304092417.2873893-1-elver@google.com>
- <20250304092417.2873893-3-elver@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGJMNk/T12RjIyVSMISzQBAKaiuhCoiU9/WlZIEdgoF6n8CzPTt2+63UjsCnmhz2SOcpVeh1WWAhejS9UsPo01v2nXqn/M+eu9z7P5WgIwn1PwHWkmYW+4Mp0a/O3guedn5d3alExO9s3bcJG58jFkhTClZ6dIPVOWSXu1x3Uqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f0qihsw6; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2234bec7192so97299865ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:30:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741102202; x=1741707002; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=66psdEYIrVGR86JKMR8+mqBEFxkGfgmcukM2sBzapxc=;
+        b=f0qihsw6h6E1twiuVjL+pwN2kHj+/eIdoqLQS/bM5Pu1Rcst++qQvUyQnyW4fIl3Fw
+         XHmrKq6oSDnN+xGBU+RPFbDbngaZY06NTdSdDc8lixsezuXDonsQtMs1DGPVU1+5o06U
+         geZyewK6D+0sAxdjsYLg23YV+TA2kHt7sp/cAAWt0tKecJxorvOrQFJpAWJlOX6rGtXT
+         aiRCAFZPNplSmEsb20L7Yjy3Oy5aNa4dIG6QvrRILp33DAlP208t+V8sni5oafxqCkrI
+         KowpbOlG9gjuYfBw6xi5OHCkdKYAOqnd31j/Smi9wHgI5RTMl4TKXW0BpSlgeTgElKoe
+         wKNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741102202; x=1741707002;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=66psdEYIrVGR86JKMR8+mqBEFxkGfgmcukM2sBzapxc=;
+        b=oO5Jsv2TAvFaBkcfwBLTo01uA7LDN9e5YaUXXw+m/YgHMVAIG3H7s1JtMKAdT01nOD
+         6or5MCwGQjUQNjv4O59ZDyITnyMaZdtV5xjTtqKW/sWRU75qlGW86hS5N43khyBl+KsL
+         ky/ngbbimvBbWPkfdSts2ImgTLdO9huIzRYQABgD7iDkXVmmlWCLM0k1MGj0+Jt0WPYb
+         zEWA6LJsvCfZxFxAL1RdoIc7HaXH6iAvS5E7eHoeOFMiQdV+GgoGZPeN9qWi0iZcfA/c
+         I9+bn1BkZ8kGxzo06VLpkL0wNfxaOnq4JSAVTJtgN+cIRe5d1pHRdiMt4b5NUWCe9WZe
+         WTXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh4+Tsrydq97l+YEO+svc/0Zjue6IWi3A9cyUt+7QJ+pF7zOuiguObU7L0iICjXrGJx9rZLpHE39tooRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzALWIQhXSibNUGpsmkxflcXj+FhzFL27FZbAdz3NTgWiCFBGUV
+	38/CEesUWDAP7HZ4cDzm8u2Ivw370ECTchceQo+9//VVWN83ZEVf8yavZwZhlQ==
+X-Gm-Gg: ASbGnctpmNlYqtYasQ79Urgd69GAg3TCv5ZY4wCpsVWbUGMWi75HvKHRsOIamcdO88c
+	Lll4FazZ+HCZPzTFgEbBj04+6DJ6up8T3v+N7miuhrnvKJhaiI8++zQh04JV6V/D0oUAvta1Gxz
+	Ksq6jKjGmPkgxVzPbEGdYf3X3DS+sTIK0sFs23UwKIUbs3ALfFb2i6IUBaUQrkiCJ3nB9Jeq+/j
+	FHXz3FRAZrvKkFKjSdZBEwpMnmPjyA5by99yA3OSZJGMJuli92rl8rMMCkoZaLy3kDqPLSzWozR
+	X+AANEu8JMI6saZyhjctpARJA3BA7Np33iOfwnkVLbMbDnfgSNusNUs=
+X-Google-Smtp-Source: AGHT+IHDLoudvsE8ThGCBDtv8xpmDC4PMrV1KRLn9yaD488OmdYvS42vvygcsTzqkS+txl9sTFzPNQ==
+X-Received: by 2002:a05:6a20:7348:b0:1ee:be88:f5cf with SMTP id adf61e73a8af0-1f2f4e00bfbmr34435609637.32.1741102202650;
+        Tue, 04 Mar 2025 07:30:02 -0800 (PST)
+Received: from thinkpad ([120.60.51.199])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7de38003sm10265993a12.33.2025.03.04.07.29.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 07:30:01 -0800 (PST)
+Date: Tue, 4 Mar 2025 20:59:52 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+Cc: Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, fan.ni@samsung.com,
+	nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 4/5] Add debugfs based error injection support in DWC
+Message-ID: <20250304152952.pal66goo2dwegevh@thinkpad>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132039epcas5p31913eab0acec1eb5e7874897a084c725@epcas5p3.samsung.com>
+ <20250221131548.59616-5-shradha.t@samsung.com>
+ <20250303095200.GB1065658@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250304092417.2873893-3-elver@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250303095200.GB1065658@rocinante>
 
-On Tue, Mar 04, 2025 at 10:21:01AM +0100, Marco Elver wrote:
+On Mon, Mar 03, 2025 at 06:52:00PM +0900, Krzysztof Wilczyński wrote:
+> Hello,
+> 
+> [...]
+> > +		29) Generates duplicate TLPs - duplicate_dllp
+> > +		30) Generates Nullified TLPs - nullified_tlp
+> 
+> Would the above field called "duplicate_dllp" for duplicate TLPs be
+> a potential typo?  Perhaps this should be called "duplicate_tlp"?
+> 
 
-> +# define __asserts_cap(var)			__attribute__((assert_capability(var)))
-> +# define __asserts_shared_cap(var)		__attribute__((assert_shared_capability(var)))
+Looks like a typo. As per Synopsys documentation, there is only 'duplicate TLP'
+field.
 
-> +	static __always_inline void __assert_cap(const struct name *var)				\
-> +		__attribute__((overloadable)) __asserts_cap(var) { }					\
-> +	static __always_inline void __assert_shared_cap(const struct name *var)				\
-> +		__attribute__((overloadable)) __asserts_shared_cap(var) { }				\
+Good catch!
 
-Since this does not in fact check -- that's __must_hold(), I would
-suggest renaming these like s/assert/assume/.
+- Mani
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
