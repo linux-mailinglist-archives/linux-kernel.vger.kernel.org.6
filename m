@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-544236-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358B0A4DF2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:25:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01755A4DF39
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:27:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7C53B39C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:25:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC99D189DA54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:27:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E663204C28;
-	Tue,  4 Mar 2025 13:25:04 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6092046B7;
+	Tue,  4 Mar 2025 13:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bn6xlnl5"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C02F2045A6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADE03204875
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:26:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741094703; cv=none; b=l84hvad8dX0rPL5sl0MLaKyBmuBKJEz0jGoFJLBQFsi06NY1FM7wISe0wzVPfi/v7mHjs/3IepIPwPxSBsTND/2/rSWc4m5HWOgSmvh7wUqxyzdggZFLmeaSkjTfN2xSKIl4VFcM1v/nG3H+vLooG0oWCtg/S/WR+YCkQbMlwZE=
+	t=1741094762; cv=none; b=SH1kSlOzh2EjU1cKHVBoXkzMez+cPBf8kBpFOeqvH9tvIQVnbnyuyZ9MxgIm4Uy2kzHTQ7o0GX/3aHgxw2wDEe0A1oKYRWteHHgnqy1mrKXXGh677bbu1iG+HKwoJj3oqBqM9Qqk+hKQSm+uSLyY5X86yeZJSNxw/Pl7x3LLvkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741094703; c=relaxed/simple;
-	bh=X22BauJ/yxhjyd9bdHmx73unUwfLqnlpQZoxOrJ9bLs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JzIKqJWDecB0gYV1OJO4zWMDzoafk8YUe5tUDa09cywFZl/iMjFUpq8CuGS5jjowMgpE88Icd1DMedjEI5AKj+rp/yHRwyKrsbmNGdmH6XXSfPhoH8U04M0dTBMz+ST1Pr9Lags62ZOYmTYAE2R291dVbkQ0omqs2LgFzk+D/a8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tpSGB-00072D-JP; Tue, 04 Mar 2025 14:24:35 +0100
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tpSGA-003yzA-37;
-	Tue, 04 Mar 2025 14:24:34 +0100
-Received: from ore by dude04.red.stw.pengutronix.de with local (Exim 4.96)
-	(envelope-from <ore@pengutronix.de>)
-	id 1tpSGA-000skZ-2n;
-	Tue, 04 Mar 2025 14:24:34 +0100
-From: Oleksij Rempel <o.rempel@pengutronix.de>
-To: Sebastian Reichel <sre@kernel.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
-Cc: Oleksij Rempel <o.rempel@pengutronix.de>,
-	kernel@pengutronix.de,
+	s=arc-20240116; t=1741094762; c=relaxed/simple;
+	bh=r3Nisdi5Q9Wip7NkNXSMDJXBD6dGblQGzS7tgN7/kaY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vGQ59wtjng0CGjRuirdVueHGkOa8l5PDCR07wbdke7I0aRrkVp36VLpP0HITpD98FGs94goATjtk4i/Nw7zP46qjgF3RnE6ocZwIWdeRL/d+BdEw51v468xwcLmDX9d9RjZ0j+VwkftDMOASPtlBvvlGqZDowCcUV8CsIsPe00g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bn6xlnl5; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741094759;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=njrHr5Zj32Q7fbjo3E1wVGJh0ApjW14vpP+FavY+KBw=;
+	b=bn6xlnl5mCkLcZnPUt0CCYwaVXo6Gf8HVbicxfFAoUeC0x56CDECEc2Y2hnF6mNLmfCHBa
+	DdUjoqxiejcuIKZQPnu8tGgxhsOc/1NFiZTq6tvbDouDb2yrRpAGmkK6QaIuZipv8LXTQM
+	rGafDMYyESygZn+XPUzY8zVSG1M1iYU=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-562-UdeULCsUP--sVgQ4XEPdgw-1; Tue,
+ 04 Mar 2025 08:25:46 -0500
+X-MC-Unique: UdeULCsUP--sVgQ4XEPdgw-1
+X-Mimecast-MFC-AGG-ID: UdeULCsUP--sVgQ4XEPdgw_1741094744
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 777421800374;
+	Tue,  4 Mar 2025 13:25:44 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.246])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A9EAD180094C;
+	Tue,  4 Mar 2025 13:25:39 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Tue,  4 Mar 2025 14:25:14 +0100 (CET)
+Date: Tue, 4 Mar 2025 14:25:08 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Mateusz Guzik <mjguzik@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Manfred Spraul <manfred@colorfullife.com>,
+	Christian Brauner <brauner@kernel.org>,
+	David Howells <dhowells@redhat.com>,
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org,
-	=?UTF-8?q?S=C3=B8ren=20Andersen?= <san@skov.dk>
-Subject: [PATCH v3 7/7] thermal: core: Record PSCR before hw_protection_shutdown()
-Date: Tue,  4 Mar 2025 14:24:33 +0100
-Message-Id: <20250304132433.210355-8-o.rempel@pengutronix.de>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250304132433.210355-1-o.rempel@pengutronix.de>
-References: <20250304132433.210355-1-o.rempel@pengutronix.de>
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
+	Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+Message-ID: <20250304132507.GC26141@redhat.com>
+References: <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
+ <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
+ <741fe214-d534-4484-9cf3-122aabe6281e@amd.com>
+ <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
+ <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
+ <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+ <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
+ <20250303202735.GD9870@redhat.com>
+ <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
+ <20250304125416.GA26141@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: ore@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304125416.GA26141@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-Enhance the thermal core to record the Power State Change Reason (PSCR)
-prior to invoking hw_protection_shutdown(). This change integrates the
-PSCR framework with the thermal subsystem, ensuring that reasons for
-power state changes, such as overtemperature events, are stored in a
-dedicated non-volatile memory (NVMEM) cell.
+On 03/04, Oleg Nesterov wrote:
+>
+> On 03/03, Linus Torvalds wrote:
+> >
+> > +/*
+> > + * Really only alpha needs 32-bit fields, but
+> > + * might as well do it for 64-bit architectures
+> > + * since that's what we've historically done,
+> > + * and it makes 'head_tail' always be a simple
+> > + * 'unsigned long'.
+> > + */
+> > +#ifdef CONFIG_64BIT
+> > +  typedef unsigned int pipe_index_t;
+> > +#else
+> > +  typedef unsigned short pipe_index_t;
+> > +#endif
+>
+> I am just curious, why we can't use "unsigned short" unconditionally
+> and avoid #ifdef ?
+>
+> Is "unsigned int" more efficient on 64-bit?
 
-This 'black box' recording is crucial for post-mortem analysis, enabling
-a deeper understanding of system failures and abrupt shutdowns,
-especially in scenarios where PMICs or watchdog timers are incapable of
-logging such events.  The recorded data can be utilized during system
-recovery routines in the bootloader or early kernel stages of subsequent
-boots, significantly enhancing system diagnostics, reliability, and
-debugging capabilities.
+Ah, I guess I misread the comment...
 
-Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
----
- drivers/thermal/thermal_core.c | 3 +++
- 1 file changed, 3 insertions(+)
+So, the problem is that 64-bit alpha can't write u16 "atomically" ?
 
-diff --git a/drivers/thermal/thermal_core.c b/drivers/thermal/thermal_core.c
-index 2328ac0d8561..af4e9cf22bf6 100644
---- a/drivers/thermal/thermal_core.c
-+++ b/drivers/thermal/thermal_core.c
-@@ -16,6 +16,7 @@
- #include <linux/kdev_t.h>
- #include <linux/idr.h>
- #include <linux/thermal.h>
-+#include <linux/pscrr.h>
- #include <linux/reboot.h>
- #include <linux/string.h>
- #include <linux/of.h>
-@@ -380,6 +381,8 @@ static void thermal_zone_device_halt(struct thermal_zone_device *tz, bool shutdo
- 
- 	dev_emerg(&tz->device, "%s: critical temperature reached\n", tz->type);
- 
-+	set_power_state_change_reason(PSCR_OVERTEMPERATURE);
-+
- 	if (shutdown)
- 		hw_protection_shutdown(msg, poweroff_delay_ms);
- 	else
--- 
-2.39.5
+Oleg.
 
 
