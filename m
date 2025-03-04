@@ -1,178 +1,114 @@
-Return-Path: <linux-kernel+bounces-544048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C4D4A4DCD9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:44:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67752A4DCD5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:43:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43685174A6E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:44:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F6163AF049
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:43:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB874200BB5;
-	Tue,  4 Mar 2025 11:43:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57CB0200B8A;
+	Tue,  4 Mar 2025 11:43:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vRw1+VEA"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KyRTydvW"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E2B1FDE06
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:43:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70BD81F5850;
+	Tue,  4 Mar 2025 11:43:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741088635; cv=none; b=L/m2lbWzAgGFeo/gPlu/nIpyROz911R4OArN3MqKiGwqHiWOOAx4hJmOhgdDlzjUQrFF5plxEBAMrgNuTcbc/8sQKVe1u/iG6dXiU9DgDmdTw1u9EAzhf+DM0Sntv0aXJtbTob1M9llLyX6jmwilGQvGrh4sc8nnQl9U86Gq3Kw=
+	t=1741088614; cv=none; b=ZkltJflMgWjAeJgolte0yr/tqOBC9m+PJ2VMgpZ9YVBFzyisu7/pEH7/VIWpMni7f0utYzG9ZPAR4IyIkMicMlnJ+YOU+Yi9li6fZbaIlGYmxBJFhElFQLBtCLUkAW7r2nbgxlJohIV73I9C0hso8P54r6mu86weDjdTFFdOWVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741088635; c=relaxed/simple;
-	bh=7JMGCeJF/Dp3pl5kzpMvrUbvwzv+GjyKlzt033ZLbrw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JyIqcV+lN1RUL2+VPDpHNMkC1FV9PcWMZ33KvFqasbGDfUgM1MBdv7vONZwIoeyLDNmzHTzuhLabGNtk0DpLqjQ9gFIZWPhMo0O+mYM4uNq5ZNCVTVAJgLTy3WNRsEpLxKXldieRjcXChu6Z1ELH9ivQHUDX6ciX2T8KSanohAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vRw1+VEA; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22356471820so87254765ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 03:43:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741088633; x=1741693433; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QR5Fe2yNdtUQN8MYBySGOzmABqc40NGzK767K+eex7I=;
-        b=vRw1+VEAt4PRU3DtY9BxsLnStXiAXNOfV90ci4wjIKGuhoSBuH4MFSbK46UhUXb1Vb
-         TMxvBaJYaQ6H7RdAaVca8BaFQloCSWXsk3yjbL1Z+tGkihJszaZ6IvMTBxHI1oULOCi+
-         8ODVdWAzTUTrlOJB/f00hKvFqNAZ+lT/lrG5aYjKnx+AJ9zcAIZIWIztaiRXizmG4u7w
-         RdA1uO92AMD23sXxsQP4ufauZ60qCFHuRgFwosnGOjs+rPsegvul1OZnuh5nyRHsMIV9
-         iwqmqxAqeuMyz4AUWWTz1AJnOPsWvb14n8C6RaMKOpBZg1Trj3bwfYv7q+CnlQVzU2Ju
-         m18w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741088633; x=1741693433;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QR5Fe2yNdtUQN8MYBySGOzmABqc40NGzK767K+eex7I=;
-        b=J7HJqGxE7DLyCQdTMywsfQmO/EigtiPW9tLPoPZlYTmIZASJtNtk5a+K6fpPkemYxY
-         8/z1xNfXBrsXnwPRHMuT1tQYn12xl8FsYWuVG5hObHMGLJfDo4XUDa3u2wP7qhzIyXr4
-         96iXHwRcAGiBElA7gwHjonJJkTZVlFSEI6JX1p4V72NrFK8y6tdxi1zJgMpMWwkwDlsi
-         LUrE38SRKTmGPPNimW4J0XmiFiCvEUhDak4VGsDAUdDvtaC2YULdUXuIyo3LlI6fKSaD
-         dUuazGFx+2u4f9HJ/fT+DBxNsbmLJX8/QO/bczIp5rvPg/Q+HN8omG5SZd2pXogJtXYb
-         5DzA==
-X-Forwarded-Encrypted: i=1; AJvYcCV4k1GYbNmBloUeo9u9Hl6XyedrPDeu0Ye0JiXDiArxDE6x8jDWQh79FOsZ2IzRlQYmvZljRGf9EHKZ+co=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT/vn3RdU/kiMlNwu0snZVLTL9qrbkx8b3J0JSL+rvgf/mHStM
-	kxZyQUth5To6mRuJj4F0aT/hpNeau6BjqPsREJTLKszmSx9z871lIOupcLkSxBi4iPyR5eL5dhW
-	GEoilv1x7u0ntYuGfUiODxyQJSyXjLRqd+3Yv
-X-Gm-Gg: ASbGncsukViOpI36vqYM4HLfly9ruhg4LckYMda/jEu1K3clgOryk27PRbnmTbzisy1
-	tthi/QWpe7HjFZfhLGtyQtx7ZkBU8kFm14JM5l4JrC4NUfwvrlEhx1eGuk0jn7eWq6nczdnI+IB
-	pSIg7dG52vCtwn69kZ4yaVFfNKDEa3KR25GbFbwDtqqhHqp5d5nrMN7Cfm
-X-Google-Smtp-Source: AGHT+IEVXXLrKnpkIy+GQHgCDOyqfRoqXWkok7n4CEJmqUNtrw4OipvJO9eUgzweAGOK6LFHiiUO/kAFxvZ/Vg2r6rk=
-X-Received: by 2002:a17:903:17cf:b0:215:89a0:416f with SMTP id
- d9443c01a7336-22368fc97c4mr252442495ad.30.1741088632488; Tue, 04 Mar 2025
- 03:43:52 -0800 (PST)
+	s=arc-20240116; t=1741088614; c=relaxed/simple;
+	bh=FcNzcsYCEp9nj205UUzc+DgPRS6a1O12QwDnx6WQ1y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ell4eOtUUJeddUlPzcUREgeP+DnmBG0ahn/qClXITWXoEMeboF2RrkwjkcGtcNbTtIrxgJsH/JsmG+OcsnbrdnGLWXuj7Gzzzlepoqg5Z5gDGkIAshzhsG+l57fQxalY2WMi/2h0BpFEbgIs1PVjDHcccZ7hLPVvCw6oh3BPxYs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KyRTydvW; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741088613; x=1772624613;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=FcNzcsYCEp9nj205UUzc+DgPRS6a1O12QwDnx6WQ1y0=;
+  b=KyRTydvWxz89v6dN3x9K/pOVzXKv6NLGEmkR85qvPm8Z0tyjLBxoqlU4
+   x6euQikTWuBfvQcCCHwCw4a1uZaAiw03lJvhvl8vFZ97ONOpJ1PXC7WXC
+   gmIVCtjkCI/bWnhAKXyEWhGgDtCYzet9vCqcaWqVSjrcSilNQZZnTq8EG
+   Rcb6RBYsoXOTrCw1Bd3HvfuSLyiN+2f40Xvg7M6/7hixVloX3sXP23S3M
+   L737nxHQafOtL4MfUXwnsxSMzy8k29DK/xT2pDK/x4wGWL7uXqCzgKrii
+   NrYOt4SDUtgRzOeo8dw7EaGGqc7sFvAdQhIj0reWKoLaLE1ihcm5pXSi2
+   Q==;
+X-CSE-ConnectionGUID: 4+Ayx1xsT6G1aVBpT4Is0A==
+X-CSE-MsgGUID: kUDB/2nmSoCV0h+08rAevg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41858544"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="41858544"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:43:32 -0800
+X-CSE-ConnectionGUID: Ec7/tvZsSAGefPECBu0b1Q==
+X-CSE-MsgGUID: VHM9taCqSBCl8Na4A6e60A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="123553148"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:43:30 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tpQgJ-0000000H6su-2sMG;
+	Tue, 04 Mar 2025 13:43:27 +0200
+Date: Tue, 4 Mar 2025 13:43:27 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
+	Mika Westerberg <mika.westerberg@linux.intel.com>,
+	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH] i2c: designware: Add ACPI HID for DWAPB I2C controller
+ on Sophgo SG2044
+Message-ID: <Z8bnX8zcY3yIxh9n@smile.fi.intel.com>
+References: <20250304070212.350155-3-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304092417.2873893-1-elver@google.com> <20250304112114.GE11590@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250304112114.GE11590@noisy.programming.kicks-ass.net>
-From: Marco Elver <elver@google.com>
-Date: Tue, 4 Mar 2025 12:43:15 +0100
-X-Gm-Features: AQ5f1Jq8MTV2B3C5aow9x7Sg78yjoK0kjhHzTC3jNgyCezrqQgZfKxcyrD8i65c
-Message-ID: <CANpmjNP6N0d0dnGjDUGLeH4FQ2-G5YAuWrSPp+bvDR==0hYykw@mail.gmail.com>
-Subject: Re: [PATCH v2 00/34] Compiler-Based Capability- and Locking-Analysis
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
-	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Ingo Molnar <mingo@kernel.org>, 
-	Jann Horn <jannh@google.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	Joel Fernandes <joel@joelfernandes.org>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Triplett <josh@joshtriplett.org>, Justin Stitt <justinstitt@google.com>, 
-	Kees Cook <kees@kernel.org>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
-	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
-	Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, rcu@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304070212.350155-3-inochiama@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, 4 Mar 2025 at 12:21, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Tue, Mar 04, 2025 at 10:20:59AM +0100, Marco Elver wrote:
->
-> > === Initial Uses ===
-> >
-> > With this initial series, the following synchronization primitives are
-> > supported: `raw_spinlock_t`, `spinlock_t`, `rwlock_t`, `mutex`,
-> > `seqlock_t`, `bit_spinlock`, RCU, SRCU (`srcu_struct`), `rw_semaphore`,
-> > `local_lock_t`, `ww_mutex`.
->
-> Wasn't there a limitation wrt recursion -- specifically RCU is very much
-> a recursive lock and TS didn't really fancy that?
+On Tue, Mar 04, 2025 at 03:02:11PM +0800, Inochi Amaoto wrote:
+> Add ACPI ID for DWAPB I2C controller on Sophgo SG2044 so
+> the SoC can enumerated the device via ACPI.
 
-Yup, I mentioned that in the rcu patch. Make it more prominent in documentation?
+Same as per UART:
 
-> >   - Rename __var_guarded_by to simply __guarded_by. Initially the idea
-> >     was to be explicit about if the variable itself or the pointed-to
-> >     data is guarded, but in the long-term, making this shorter might be
-> >     better.
-> >
-> >   - Likewise rename __ref_guarded_by to __pt_guarded_by.
->
-> Shorter is better :-)
->
-> Anyway; I think I would like to start talking about extensions for these
-> asap.
->
-> Notably I feel like we should have a means to annotate the rules for
-> access/read vs modify/write to a variable.
->
-> The obvious case is RCU; where holding RCU is sufficient to read, but
-> modification requires a 'real' lock. This is not something that can be
-> currently expressed.
+---8<---
 
-It can. It distinguishes between holding shared/read locks and
-exclusive/read-write locks.
+This is fake ACPI ID. Please work with a vendor to issue the proper one.
+Vendor ACPI ID registry has no records on Sophgo:
+https://uefi.org/ACPI_ID_List?acpi_search=SophGo
 
-RCU is is a bit special because we also have rcu_dereference() and
-rcu_assign_pointer() and such, but in general if you only hold a
-"shared capability" e.g. the RCU read lock only, it won't let you
-write to __guarded_by variables. Again, the RCU case is special
-because updating RCU-guarded can be done any number of ways, so I had
-to make rcu_assign_pointer() a bit more relaxed.
+NAK.
 
-But besides RCU, the distinction between holding a lock exclusively or
-shared does what one would expect: holding the lock exclusively lets
-you write, and holding it shared only lets you only read a
-__guarded_by() member.
+---8<---
 
-> The other is the lock pattern I touched upon the other day, where
-> reading is permitted when holding one of two locks, while writing
-> requires holding both locks.
->
-> Being able to explicitly write that in the __guarded_by() annotations is
-> the cleanest way I think.
+But, it might be that is already in the process of getting proper ACPI vendor
+ID, please provide an evidence in such a case.
 
-Simpler forms of this are possible if you stack __guarded_by(): you
-must hold both locks exclusively to write, otherwise you can only read
-(but must still hold both locks "shared", or "shared"+"exclusive").
+Otherwise drag the representative of the vendor to this email thread to answer
+the question why the heck they abuse ACPI specification.
 
-The special case regarding "hold lock A -OR- B to read" is problematic
-of course - that can be solved by designing lock-wrappers that "fake
-acquire" some lock, or we do design some extension. We can go off and
-propose something to the Clang maintainers, but I fear that there are
-only few cases where we need __guarded_by(A OR B). If you say we need
-an extension, then we need a list of requirements that we can go and
-design a clear and implementable extension.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-In general, yes, the analysis imposes additional constraints, and not
-all kernel locking patterns will be expressible (if ever). But a lot
-of the "regular" code (drivers!) can be opted in today.
 
-Thanks,
--- Marco
 
