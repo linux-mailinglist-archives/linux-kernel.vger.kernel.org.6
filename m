@@ -1,83 +1,78 @@
-Return-Path: <linux-kernel+bounces-544056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 342ADA4DCEF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:49:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CE17A4DCED
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:49:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F99018842DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:49:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B52A1896572
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:49:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89C2A200B8A;
-	Tue,  4 Mar 2025 11:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50CC1FFC68;
+	Tue,  4 Mar 2025 11:49:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pt8zuhVF"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CqFiaiFZ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F2233D561;
-	Tue,  4 Mar 2025 11:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EEA73D561;
+	Tue,  4 Mar 2025 11:49:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741088953; cv=none; b=XCMdHJl6MUrFIY4El15wkabsYtg4L0ejicmDOrRXJRdCu9kT97PLgkxqJ+VLdgloxtyQx0Uh0kukWJlLKBuaVWWO1fTH98xt8GcLTxeaI8pvP8Iu1gb1fx2ULEIr6PVJOjqEWjVApQn1NE9MgPMxqs22ms2gIfF+ylNgdDzPdEQ=
+	t=1741088944; cv=none; b=HvnuTqwPHt2IS37zMoSuXpbwpFoQktRaymYpDX3Q7JRRjIRbZVOvvamFiNMOxz7n60JhwtqJ7VxzhHREjCISp7c2up2U4aH7Xd5q/NAx9qnPlsmSW68hHDAXXIUFUVgjpNrBJmJ1BxG52COiV37NPdExvzxBM1/UkGpaw8wXAJg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741088953; c=relaxed/simple;
-	bh=RCtg6YfWfyeXEbzX98sv0AzTk9Z0mtgYMGtnNpm0zgc=;
+	s=arc-20240116; t=1741088944; c=relaxed/simple;
+	bh=I6AKIvYBVoI50+WthzWOWVzX/QNQgAy/x57wy0pi7+4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VJ7HSdAICpAG2mhrE9fkHK4B/ri/MUMeUJvTmkZtdO2j4rKEewPrXYwiN8BpBn0hniTUEhl+DJpSZdfPbZ4NvFlkiSNkS+1zF8dTBG9STjCFnvIVjrDGsqhuZV8fmFudRaGppNJHWNsWBj1LjX806g13Rxsp/qwfeyOdFGZGGvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pt8zuhVF; arc=none smtp.client-ip=209.85.222.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7be8f281714so653530485a.1;
-        Tue, 04 Mar 2025 03:49:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741088949; x=1741693749; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=onMdlp2f8x1LxPV52MNcce+I2AyQq4Iol3MJODJ2GE0=;
-        b=Pt8zuhVFN4dKXm4KTAHwsNSw54tGXi0lUiXzBXY428V1aX973EtDgX1DI9bCnT4RLB
-         Nbvx3/eJvUSLZYKYtB30wNvsLYrt2Fao1Qs3M7DIuBrySZY82pnbgE+6+Ji0QP+MEW7u
-         XWmcWMIrvQJGwfzULfflN64m4S9ky+vcVljfqZnSEUbijXjuxiimB+wPBRCUkgjoQ7WP
-         imeVIISXtGHKTaLDgdUcj8IJPvBwZSvoxG1HZGYSE+BossIPYpLNuFs9oxTHDtBoy3DR
-         vPWXjxwL72YB9PvsrG2fdd/OW3VY3kQ29eYnM712H8q2KGso46uqKYYDz/nZalPmjydU
-         eCGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741088949; x=1741693749;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=onMdlp2f8x1LxPV52MNcce+I2AyQq4Iol3MJODJ2GE0=;
-        b=WA1ZTQLQlknt3JQM5nNU4eElgG+pfq9aS1nzRYQwg2v9xiGOg0W0ZAf9PJF08RG9Ct
-         TTRve578kIOri6kwXrhrUszui09Zw9NZbr5ZSzyB/CRDTI/4w2gu/lbT9V1gPnqDf7qv
-         x/yq1j/JQyAV/dpQ9BxDYMUe9b0SWM6OTEX91FJRk9alM9u/KXvvv7TxOnAc6nBtUfC8
-         tQtOJC+clUSQnCp7rBB8fDzz/w0Au8Fl9Jznxj+ZFHJPndHosQJJT+4fPWvNBfcobWFH
-         VLr/fnAKamDTSRNh4y8XmGh4JTBmXxyNZRRBzAhFucy6UKrHWbJPQPNY0z/vKygTJcdi
-         yQTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIxjwN5V0rP7FZQpCBqtXy5kHZ0spKYdxrbElJTuNiy0FWqA9fTgdQUn23JRVXNod/TYfk4fEfW6py@vger.kernel.org, AJvYcCWnkoABtVbPUmIy0xFJ/6eizwu9HYTccuWkIPjbCiAgFHgeNF5DMupY5J0nchLz3SM0tk7THb0K29ESKk8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZBgF+OAcrz5+BaXVsUyqMLoXjbUT+14Cp2I056f58qEQlLDrj
-	YLBSNYUqlW9jz0cTTAhnkRi7iz7/5rBXIU+/pYYS9m8Kdjz41beO
-X-Gm-Gg: ASbGncskQm7dJMnOR8SgRVPeytZrfSQ9W2TOdQIqlzad8iAwCAb6I5fNHLQqPOXW9vq
-	4L29MzA38JIcXZN5gydaK5vMu1QzDRElUrh0usTtnWIpFc7araBInoiX8VrLtcQfROTbnjkCJQK
-	Y53WSDjltk669Hg66eB7OEteSKCiMSZeotQlHv9JXze/LxkHaonyO+dn+gV+R8jv5tlRzi37c+E
-	KaZdXKP9BTxrSeq3BYoBW/7FHa3AfQPyb04o3iI7ER6ppDdKpxRrcRRGVxm0/KSaZKJMkJspQa5
-	wdQfwbq0CjPx2Qj8d2QE
-X-Google-Smtp-Source: AGHT+IHqpua1AnMLXzWu+IhdWI6r2Cd/qFZvYWoxIEa4UPjyLGrwl6Anv4vk3oJ5Ez/Yyh7+uPRoaQ==
-X-Received: by 2002:a05:620a:f14:b0:7c0:a3bd:a787 with SMTP id af79cd13be357-7c39c4b6eaemr2636434085a.13.1741088949526;
-        Tue, 04 Mar 2025 03:49:09 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3b2fb20f0sm329018585a.107.2025.03.04.03.49.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 03:49:09 -0800 (PST)
-Date: Tue, 4 Mar 2025 19:48:42 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Mark Brown <broonie@kernel.org>
-Cc: Inochi Amaoto <inochiama@gmail.com>, linux-spi@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH] spi: dw: Add ACPI ID for the Sophgo SG2044 SoC SPI
-Message-ID: <nvym76w7ezhsugmno65m6jnt54ts5at7jcnn3jfrhlorayjlya@jyl536p2435u>
-References: <20250304070212.350155-2-inochiama@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uomiSiY1Ols4pcs/xP4cIi1E0yDUl9qyXBxo5cKv8l5IgGxmOZ+M38200cE/DBBRYPr3pNOTdDC7LkMdBSk4lbMQ5kg2Ds0WTHSKKNfN914I7Wt21QyNyxiY2ivcxfVZ+8lPj0MOWjcv1NXgu362jC5tqDZcCv0gnVlIkX5X8KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CqFiaiFZ; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741088943; x=1772624943;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=I6AKIvYBVoI50+WthzWOWVzX/QNQgAy/x57wy0pi7+4=;
+  b=CqFiaiFZWlwuSHKJdUZlFbTAAYxboSnJKV2/9bni2er6eAADlVfQJ3fh
+   mq7/m9KsQG3XQtO7IyLlWQJyUmDPwBP/6H0zGXT1dov/Cm+ptGr+L5jXI
+   HlIr1/6aM02xLKVV2vwHzJAyroR3+X7W0WN+IvhEeKUjeFHMRE1O+cstP
+   3DnBq3b9HMKVfW8qUQ3dUvVGdc5i0v2LuoBHZm/zqpQdFCjyXv8xs0Au5
+   8rfgbfwmXknkohPZXxnL+gsVh8NkzVZyITyIJC1HuU8GWW42cWUO4drSf
+   FANtctiIPo1Ef/2eJXETe8kwQvW2c5Q5UuhsNxIiByyEPnbIhlfsXFRZp
+   w==;
+X-CSE-ConnectionGUID: W1Ervz8kS9WpovA6vRKHlw==
+X-CSE-MsgGUID: k+P0mD6bT7e4l6idlyPayg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41713843"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="41713843"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:49:02 -0800
+X-CSE-ConnectionGUID: 4xB8vtM6Tf2sxARRtd+wzA==
+X-CSE-MsgGUID: uC1esw9ASl+c8JYUarqujg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="118076348"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:49:01 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tpQld-0000000H71k-2rCc;
+	Tue, 04 Mar 2025 13:48:57 +0200
+Date: Tue, 4 Mar 2025 13:48:57 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH] serial: 8250_dw: Add ACPI ID for Sophgo SG2044 UART
+Message-ID: <Z8boqRiECAvAqy04@smile.fi.intel.com>
+References: <20250304070212.350155-1-inochiama@gmail.com>
+ <Z8blz3pAOV9by5tB@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,35 +81,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304070212.350155-2-inochiama@gmail.com>
+In-Reply-To: <Z8blz3pAOV9by5tB@smile.fi.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Mar 04, 2025 at 03:02:10PM +0800, Inochi Amaoto wrote:
-> The Sophgo SG2044 SoC can enumerated its SPI device via ACPI.
-> Add ACPI ID for it.
+On Tue, Mar 04, 2025 at 01:36:47PM +0200, Andy Shevchenko wrote:
+> On Tue, Mar 04, 2025 at 03:02:09PM +0800, Inochi Amaoto wrote:
+> > The UART on Sophgo SG2044 can be enumerated via ACPI.
+> > Add ACPI ID for it.
 > 
-> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> ---
->  drivers/spi/spi-dw-mmio.c | 1 +
->  1 file changed, 1 insertion(+)
+> This is fake ACPI ID. Please work with a vendor to issue the proper one.
+> Vendor ACPI ID registry has no records on Sophgo:
+> https://uefi.org/ACPI_ID_List?acpi_search=SophGo
 > 
-> diff --git a/drivers/spi/spi-dw-mmio.c b/drivers/spi/spi-dw-mmio.c
-> index f0f576fac77a..70fdc4b6de9e 100644
-> --- a/drivers/spi/spi-dw-mmio.c
-> +++ b/drivers/spi/spi-dw-mmio.c
-> @@ -426,6 +426,7 @@ MODULE_DEVICE_TABLE(of, dw_spi_mmio_of_match);
->  #ifdef CONFIG_ACPI
->  static const struct acpi_device_id dw_spi_mmio_acpi_match[] = {
->  	{"HISI0173", (kernel_ulong_t)dw_spi_pssi_init},
-> +	{"SOPHO004", (kernel_ulong_t)dw_spi_pssi_init},
->  	{},
->  };
->  MODULE_DEVICE_TABLE(acpi, dw_spi_mmio_acpi_match);
-> -- 
-> 2.48.1
-> 
+> NAK.
 
-Drop this patch for now as the ACPI id is not registed.
+FWIW, the I2C thread has more insights and details:
+https://lore.kernel.org/r/20250304070212.350155-3-inochiama@gmail.com
 
-Regards,
-Inochi
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
