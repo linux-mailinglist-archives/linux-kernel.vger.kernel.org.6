@@ -1,244 +1,147 @@
-Return-Path: <linux-kernel+bounces-544910-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61263A4E673
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:43:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DC6A4E6B5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:49:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E83419C1681
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E7619C6B81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02483259CAE;
-	Tue,  4 Mar 2025 16:15:36 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E45EC28368F;
+	Tue,  4 Mar 2025 16:16:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b="d9qtE4lK"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3CF259CB4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:15:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92F89283680
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104935; cv=none; b=TjQNBZdO4ORYra/s17ZFDWvzZbvVlPjhFCN+eFVu0qZxOY2+krlIK7xw6cofo1yYq69TmR4bxjqBnRYTizrN+HtGidk8e8oEOf4eBtf78f07RPQYrNRmDNUwBO5I7Ie79/ipYa1i2mAdKernN0KgtQ4JdRiPmVI5JSPnoEI34aA=
+	t=1741104982; cv=none; b=UVOYQ1RRTd3IQ3FuG2W8j77H8ocHIVY2s2J7xxTOFOdm84fr7jEAPbg3XYsgmII5AtH8U9fmjqJiK6blmd4e4Y7MGsXsNqYbYH0La6PzdhurXnRPCrLo1CN4kPQxjYI3WdMnlGJORHVWIA+hf6GrX4lzi22xaeETp0AqFtJytHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104935; c=relaxed/simple;
-	bh=K7yzb6edcP8bmFWB8ecuJ4gMWiQm+oAmiGD9Ncp1YNc=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=S3ogt9bEXkHNjHIpmy1SWrI/9uDwpPRvpn6SPzaKgs/NcArJf69xY/iHiWIH/XlzAwIuHoVf7IbRbNMhw1bzX1O3L7F1As6KFECRcsMmdC0sOM+AVhE94U12O6FfxVGSgftIxc4ifYaIF9bx03mxOpFsY2hB6/x0TrvY1WZVoGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3d05b1ae6e3so55982865ab.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:15:33 -0800 (PST)
+	s=arc-20240116; t=1741104982; c=relaxed/simple;
+	bh=vndrgoHzO1JbxR/Uplci2S29F5Yak6PffbtWYRGDCLE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9botLCZ9wg5NlpxfOlS7L6kHpM39AZyHSeSYcfNWa/XOZkeU0dgyP3aRpDyhOpCB2gtf6QsQrtrqmZbWdUzeZMQMPQV9aLWxNPZ4uqpEF669iZLhrpmU9uuzRNoDr88qdmZ31JmxhKu1ieyrcyk2IfnuNFmdiGDLRT6TXQOB3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net; spf=pass smtp.mailfrom=gourry.net; dkim=pass (2048-bit key) header.d=gourry.net header.i=@gourry.net header.b=d9qtE4lK; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=gourry.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gourry.net
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c04df48a5bso588012985a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:16:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gourry.net; s=google; t=1741104979; x=1741709779; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IdH3AKQlJjVPXu/3oVyqdmU7Zg+wJAihXQK8/YRYybU=;
+        b=d9qtE4lK26a9aB7KbztbpPQHL7+8I5u1Y70I3fUrUktCXAhWXku95PKUcRx/GsmBl4
+         wu8uaLjZ2p838Z0sNgT2uSh/OdV3DjNokzona3tDgu+0Zuh1WVUk1xT17xGJv212OexR
+         raoYLc2FDtrcU/7SRDSCF7HnHu5WGgEMgRVOtDJysMkNazurDqp0psgPk63ERJf7ycpd
+         R8mY26r9O6G5rq/HAzy1ytBr2mAPRZkLMBMDOsai4RgH78s/ITm8K6sOLPErggRv+qDd
+         UI1lipV+ttsU0Hx85JJrCH14LW2gcsLW3GDWR4ChNs3VQWKJe+EuevB8J4ihLpR+uqwg
+         aGqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741104932; x=1741709732;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=9hvXuSmvaJg+IcvFlPWgG69GFLhMM2upToKAA354dNk=;
-        b=Y6uFrl7lZwwQA74G+nFqhD+iuknfBjzdbcAIczkIk5qExraNqOC2psr6ccK55VV+Sb
-         xu2NkFYcKAJvN6DOokGjAQsOdqphT95nMHjcKr9pgoG6CUGC+kZZz8GQWtQLQSr8nc2G
-         ftd3T4jKN4Kz+2B2RKP9pO2lr+fFhWw2e55rYFVovdRPH14MyLD9i1JgvTSj0vOZ41iz
-         u0lA6XdLr+jsDVsnf06JeoiAGANmlgcqBYl8DWlLoNx9TB7xGMdDLpaCS03KWcpC8D29
-         KdGNWK6UIfif4YDGX8GhW/97pyGUj0Pl7SpmknJ4vpw7IS54j7PKzqxsBdr30uBdrOoD
-         j9gg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtt3n+FjJb8vsjdWSede4CiegFtEYCONpD5poreagl4tvWkonTgnYyKzqphvETHFip7M7nTd12oeotdaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1JYMj+y9vIKDsdYr9ZvOeDlBWGUlWvc9Dza7VcurFmhDuI/TX
-	5ColAxD/N9HaGwmr6QvjA1csYvSdITxyXIyDuYjcjYjFn5HIzuxkwpAy2Df41HEkYUn1hoEp2Nj
-	hKN5YQCE16DNT7/G3f6TJBF11edcLxVee9FQpunAqaF1rDfpbmSdOP8U=
-X-Google-Smtp-Source: AGHT+IFR2UjKiBXOis/gbeIYriwEdiW1qxqqnr6lreZVeEiuaeiI6OqDEvnt+2JLOffo8Pp/t+lv9jGR/i+CADLd72ikeU8rj/0v
+        d=1e100.net; s=20230601; t=1741104979; x=1741709779;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IdH3AKQlJjVPXu/3oVyqdmU7Zg+wJAihXQK8/YRYybU=;
+        b=aKrC8LwNkQAvIO1HCTp11yca5bn6OWvY/NCMUodiliq2ZWSmApZJB96hSRM5KOxSbI
+         DEbFFHqf4mXRA6i2QJOzJn9aFJo2nR4w71oAACDOtxA5ChyGV18Yhwte6zN9YBEoyhpk
+         9RROqznfwfSTQyQ9j0k0k8V9UgOzUOyvJYjJwEdVTIrym5kSaYC72ZQbSQqC5R4pZ6oK
+         4fVlrXGcn36fk5i7C2lUCTd6EWkhlIYPYXyFrSNevlCbitig5q6QfrevYVtMRjAP0sXF
+         dKBJT0dxxnqQPShSv71GbGNxjApEQs+qRi8AtmBOL/838LL5ADHJAA51RxOgB6JkNKkd
+         l+hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWld1UVuAIVuAfFY78bbmshQXTHe3vNZ4yfUmovK+if/FXLkw8XfMfi9YjjUtd3HpQaPY9EgQ0ChaYMpLw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxnymw8A1WPq/Cv8TMZicbUcFmHp4vWj8LgD1SLUne5DchF2wU5
+	KqAgH0C5TWvMGxnwJyk4g76ioqB3LIwSahCk5+1/p1XFxQSkqCQ7Zu2jKnrzKzk=
+X-Gm-Gg: ASbGncuJYkk/VYMiGSjP1znIV0mKpUMBun604JdJjZqKMrwVU1nFd+y8X997obQUffC
+	kkIMDjZoGWR53ct6Xjnf2yR0+qtFqgcYwgL0ttU82egRXKCBHuDwMbzSkwbhsQDl2mICDweRpy8
+	9u7fX6HnHirxrxkRp0OXamOyZvDV/4s9MOG0K/+R77m+gfbZI7Av3lJtY8SQiddVbVYq0rhJc7Z
+	XiHmWoJKrpk/RaoWOSD/m+3i6VL/52giMq43qGl563bv9/mdPJ6i7vQe4O8NKPTRqKzSIndGp1v
+	kPSeQmIvWUxf4IwPRJfBKlCe4my6wWCqZPqSXK/AYzXnK4hpWT9WAaqXH69zGQsYBttbdfK9NVP
+	BQOEN4xt8IrWZGt8vujXYFkRrCJ0=
+X-Google-Smtp-Source: AGHT+IG+8gkxb5a4FLU8HNw0RgCDeDarhruq85hL2w5mldbW/rpOd9s+9LQfuwgtmnJwF45uXgCLwA==
+X-Received: by 2002:a05:620a:26a8:b0:7c3:d3bf:d1c0 with SMTP id af79cd13be357-7c3d3bfd3d7mr258875085a.43.1741104979239;
+        Tue, 04 Mar 2025 08:16:19 -0800 (PST)
+Received: from gourry-fedora-PF4VCD3F (pool-173-79-56-208.washdc.fios.verizon.net. [173.79.56.208])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3be1f0c05sm279200385a.102.2025.03.04.08.16.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 08:16:18 -0800 (PST)
+Date: Tue, 4 Mar 2025 11:16:16 -0500
+From: Gregory Price <gourry@gourry.net>
+To: Honggyu Kim <honggyu.kim@sk.com>
+Cc: kernel_team@skhynix.com, Joshua Hahn <joshua.hahnjy@gmail.com>,
+	harry.yoo@oracle.com, ying.huang@linux.alibaba.com,
+	gregkh@linuxfoundation.org, rakie.kim@sk.com,
+	akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
+	dan.j.williams@intel.com, Jonathan.Cameron@huawei.com,
+	dave.jiang@intel.com, horen.chuang@linux.dev, hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org, kernel-team@meta.com, yunjeong.mun@sk.com
+Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
+ memoryless nodes
+Message-ID: <Z8cnUA9WqsscbUtm@gourry-fedora-PF4VCD3F>
+References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
+ <20250226213518.767670-2-joshua.hahnjy@gmail.com>
+ <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
+ <Z8XWqQdPC7245FA2@gourry-fedora-PF4VCD3F>
+ <95541985-8d40-4ded-a83e-46203c441640@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2608:b0:3cf:c9b9:3eb with SMTP id
- e9e14a558f8ab-3d3e6d53e74mr167318695ab.0.1741104932716; Tue, 04 Mar 2025
- 08:15:32 -0800 (PST)
-Date: Tue, 04 Mar 2025 08:15:32 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c72724.050a0220.38b91b.0244.GAE@google.com>
-Subject: [syzbot] [xfs?] KASAN: slab-out-of-bounds Read in xlog_cksum
-From: syzbot <syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com>
-To: ardb@kernel.org, bp@alien8.de, chandan.babu@oracle.com, 
-	dave.hansen@linux.intel.com, ebiggers@kernel.org, hpa@zytor.com, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-xfs@vger.kernel.org, mingo@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de, x86@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <95541985-8d40-4ded-a83e-46203c441640@sk.com>
 
-Hello,
+On Tue, Mar 04, 2025 at 10:03:22PM +0900, Honggyu Kim wrote:
+> Hi Gregory,
+> 
+> > This patch may have been a bit overzealous of us, I forgot to ask
+> > whether N_MEMORY is set for nodes created but not onlined at boot. So
+> > this is a good observation.
+> 
+> I didn't want to make more noise but we found many issues again after
+> getting a new machine and started using it with multiple CXL memory.
+> 
 
-syzbot found the following issue on:
+I spent yesterday looking into how nodes are created and marked N_MEMORY
+and I think now that this patch is just not correct.
 
-HEAD commit:    99fa936e8e4f Merge tag 'affs-6.14-rc5-tag' of git://git.ke..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=111c9464580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=2040405600e83619
-dashboard link: https://syzkaller.appspot.com/bug?extid=9f6d080dece587cfdd4c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=132f0078580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1483fc54580000
+N_MEMORY for a given nid is toggled:
+  1) during mm_init if any page is associated with that node (DRAM)
+  2) memory_hotplug when a memory block is onlined/offlined  (CXL)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-99fa936e.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ef04f83d96f6/vmlinux-99fa936e.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/583a7eea5c8e/bzImage-99fa936e.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/6232fcdbddfb/mount_1.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=11d457a0580000)
+This means a CXL node which is deferred to the driver will come up as
+memoryless at boot (mm_init) but has N_MEMORY toggled on when the first
+hotplug memory block is onlined.  However, its access_coordinate data is
+reported during cxl driver probe - well prior to memory hotplug.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9f6d080dece587cfdd4c@syzkaller.appspotmail.com
+This means we must expose a node entry for every possible node, always,
+because we can't predict what nodes will have hotplug memory.
 
-=======================================================
-XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
-==================================================================
-BUG: KASAN: slab-out-of-bounds in crc32c_le_arch+0xc7/0x1b0 arch/x86/lib/crc32-glue.c:81
-Read of size 8 at addr ffff888040dfea00 by task syz-executor260/5304
+We COULD try to react to hotplug memory blocks, but this increase in
+complexity just doesn't seem worth the hassle - the hotplug callback has
+timing restrictions (callback must occur AFTER N_MEMORY is toggled).
 
-CPU: 0 UID: 0 PID: 5304 Comm: syz-executor260 Not tainted 6.14.0-rc5-syzkaller-00013-g99fa936e8e4f #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:408 [inline]
- print_report+0x16e/0x5b0 mm/kasan/report.c:521
- kasan_report+0x143/0x180 mm/kasan/report.c:634
- crc32c_le_arch+0xc7/0x1b0 arch/x86/lib/crc32-glue.c:81
- __crc32c_le include/linux/crc32.h:36 [inline]
- crc32c include/linux/crc32c.h:9 [inline]
- xlog_cksum+0x91/0xf0 fs/xfs/xfs_log.c:1588
- xlog_recover_process+0x78/0x1e0 fs/xfs/xfs_log_recover.c:2900
- xlog_do_recovery_pass+0xa01/0xdc0 fs/xfs/xfs_log_recover.c:3235
- xlog_verify_head+0x21f/0x5a0 fs/xfs/xfs_log_recover.c:1058
- xlog_find_tail+0xa04/0xdf0 fs/xfs/xfs_log_recover.c:1315
- xlog_recover+0xe1/0x540 fs/xfs/xfs_log_recover.c:3419
- xfs_log_mount+0x252/0x3e0 fs/xfs/xfs_log.c:666
- xfs_mountfs+0xfbb/0x2500 fs/xfs/xfs_mount.c:878
- xfs_fs_fill_super+0x1223/0x1550 fs/xfs/xfs_super.c:1817
- get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff347850dfa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcece53ae8 EFLAGS: 00000202 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffcece53b00 RCX: 00007ff347850dfa
-RDX: 0000400000000500 RSI: 0000400000000200 RDI: 00007ffcece53b00
-RBP: 0000400000000500 R08: 00007ffcece53b40 R09: 002c6563726f666e
-R10: 0000000002218a5d R11: 0000000000000202 R12: 0000400000000200
-R13: 0000000000000005 R14: 0000000000000004 R15: 00007ffcece53b40
- </TASK>
+It seems better to include all nodes with reported data in the reduction.
 
-Allocated by task 5304:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
- __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
- kasan_kmalloc include/linux/kasan.h:260 [inline]
- __do_kmalloc_node mm/slub.c:4294 [inline]
- __kmalloc_node_noprof+0x290/0x4d0 mm/slub.c:4300
- __kvmalloc_node_noprof+0x72/0x190 mm/util.c:662
- xlog_do_recovery_pass+0x143/0xdc0 fs/xfs/xfs_log_recover.c:3016
- xlog_verify_head+0x21f/0x5a0 fs/xfs/xfs_log_recover.c:1058
- xlog_find_tail+0xa04/0xdf0 fs/xfs/xfs_log_recover.c:1315
- xlog_recover+0xe1/0x540 fs/xfs/xfs_log_recover.c:3419
- xfs_log_mount+0x252/0x3e0 fs/xfs/xfs_log.c:666
- xfs_mountfs+0xfbb/0x2500 fs/xfs/xfs_mount.c:878
- xfs_fs_fill_super+0x1223/0x1550 fs/xfs/xfs_super.c:1817
- get_tree_bdev_flags+0x48c/0x5c0 fs/super.c:1636
- vfs_get_tree+0x90/0x2b0 fs/super.c:1814
- do_new_mount+0x2be/0xb40 fs/namespace.c:3560
- do_mount fs/namespace.c:3900 [inline]
- __do_sys_mount fs/namespace.c:4111 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4088
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+This has two downsides:
+  1) stale data may be used if hotplug occurs and the new device does
+     not have CDAT/HMAT/access_coordinate data.
+  2) any device without CDAT/HMAT/access_coordinate data will not be
+     included in the reduction by default.
 
-The buggy address belongs to the object at ffff888040dfe800
- which belongs to the cache kmalloc-512 of size 512
-The buggy address is located 0 bytes to the right of
- allocated 512-byte region [ffff888040dfe800, ffff888040dfea00)
+I think we can work around #2 by detecting this (on reduction, if data
+is missing but N_MEMORY is set, fire a warning).  We can't do much about
+#1 unless we field physical device hot-un-plug callbacks - and that
+seems like a bit much.
 
-The buggy address belongs to the physical page:
-page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x40dfe
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0x4fff00000000040(head|node=1|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 04fff00000000040 ffff88801b041c80 ffffea0000d6ab00 dead000000000004
-raw: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-head: 04fff00000000040 ffff88801b041c80 ffffea0000d6ab00 dead000000000004
-head: 0000000000000000 0000000080080008 00000000f5000000 0000000000000000
-head: 04fff00000000001 ffffea0001037f81 ffffffffffffffff 0000000000000000
-head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 2, tgid 2 (kthreadd), ts 25533552797, free_ts 0
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f4/0x240 mm/page_alloc.c:1551
- prep_new_page mm/page_alloc.c:1559 [inline]
- get_page_from_freelist+0x365c/0x37a0 mm/page_alloc.c:3477
- __alloc_frozen_pages_noprof+0x292/0x710 mm/page_alloc.c:4739
- alloc_pages_mpol+0x311/0x660 mm/mempolicy.c:2270
- alloc_slab_page mm/slub.c:2423 [inline]
- allocate_slab+0x8f/0x3a0 mm/slub.c:2587
- new_slab mm/slub.c:2640 [inline]
- ___slab_alloc+0xc27/0x14a0 mm/slub.c:3826
- __slab_alloc+0x58/0xa0 mm/slub.c:3916
- __slab_alloc_node mm/slub.c:3991 [inline]
- slab_alloc_node mm/slub.c:4152 [inline]
- __kmalloc_cache_noprof+0x27b/0x390 mm/slub.c:4320
- kmalloc_noprof include/linux/slab.h:901 [inline]
- kzalloc_noprof include/linux/slab.h:1037 [inline]
- set_kthread_struct+0xc2/0x330 kernel/kthread.c:126
- copy_process+0x1179/0x3cf0 kernel/fork.c:2331
- kernel_clone+0x226/0x8e0 kernel/fork.c:2815
- kernel_thread+0x1c0/0x250 kernel/fork.c:2877
- create_kthread kernel/kthread.c:487 [inline]
- kthreadd+0x60d/0x810 kernel/kthread.c:847
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-page_owner free stack trace missing
-
-Memory state around the buggy address:
- ffff888040dfe900: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
- ffff888040dfe980: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
->ffff888040dfea00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                   ^
- ffff888040dfea80: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
- ffff888040dfeb00: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+~Gregory
 
