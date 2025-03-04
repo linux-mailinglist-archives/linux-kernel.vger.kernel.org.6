@@ -1,159 +1,113 @@
-Return-Path: <linux-kernel+bounces-545251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92ED6A4EAD1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:12:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C99FA4EADB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:13:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ABDD17FC1F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:07:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E1A17B475
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBC7296D7C;
-	Tue,  4 Mar 2025 17:47:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FC4C27C87D;
+	Tue,  4 Mar 2025 17:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="fhYhvYHZ"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kKIm+8gq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DCD127C853
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5827209F57;
+	Tue,  4 Mar 2025 17:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741110427; cv=none; b=gKgtBpxCV1j3J6+eU3FdHrliXuu53PTxgAD1KHOnwZ+pIQMnNWnwTLBzlJTQd5wL3qKG6MpvMYoFbj4a8xHy1YiWmWPyIKAx2kn+6RWkOF26sJ1KYshDEEMxDCUb4aN+nGHnjhrhuO/bRPdrAqrZ36dO/hZwmnVbXOHuDPT5z1Y=
+	t=1741110528; cv=none; b=lv5QYyCGbbz9djG/kCzpAZuBIv2mZ9t6RGkMJuTjj8qPd/gpD/tXp4ZBsjO+ZOwxPEW8tTAK9wSZM+WqBavbpj3nzc6olq5jLN7yeFewqfajlIodCZxNQuxG6KK6cCFD1uDogT0ZPijUtM7loLNE6t9t1mmJ55NAvAxTZUaG9qQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741110427; c=relaxed/simple;
-	bh=0BeTHKn/9rkWCHe8dQS4KM5fYtL6wfV7Q0u6lZxJe/A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d59A3caX2Kwsb/qkIB8PA/Nf9bSJY6T2Lb5ObqxJLsBBhLGJsekqKa8LxFCt1sIAKmqLQjOTjQV5gZFdMJQgzGsFmVtlfi2btFeEYWseBrcgrY7iImg6exi0TGOkueUmMznW9szzHqXjG+aIV3UIl63blyLLrlev7Aw+rNqLzIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=fhYhvYHZ; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6fd2fca1cebso37272737b3.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:47:04 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1741110424; x=1741715224; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=mxnywYP2lTqSlnLFR3ftUdo5O+Ug+wLHKmeRYSDuQTk=;
-        b=fhYhvYHZWBjOHZjsgx2cCqY0vT/rnPWWn0ORAW2AdyNHVftWw0I5UxEvG5SZ5VbfFD
-         3VBjQjbxzlf0xcTOzGO7zTycOamfvGDGD8dI8pNjGbMibvPs2+qG8j2kh1nnc2yXiMim
-         qd3u80yskocyMnvkStAEZfNKZ4sd83NNT1g48AqkiNrTAkrfXoWrxBNxj8h2OijyCWwC
-         olC+vx58HxmVQ96NBD2P5CXs2wMqRZd4Q90fBUlYYROilnQRcaIOkc1vHf8xNSKrN+hH
-         l3LqWDM/4yqc8qvdSkj5GldGAYvIciR/TNW1sRC1nYpZEsDT/gyktMDh0F50j7u8nb9m
-         CKBA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741110424; x=1741715224;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mxnywYP2lTqSlnLFR3ftUdo5O+Ug+wLHKmeRYSDuQTk=;
-        b=cR2n1vpaJ2ZMz/lvbRCzYRctP5mQdlO+gfL6qtOfTYGejYbDVgBGHzf6j/xiKCaTtz
-         XUnXXrpQHs6mNWEfgHEAYh8SLUiGyNChc5JEgtBB7y/GX+Vp8pfEGT9UDD9MpRbLuqc1
-         tp3T9ctbXOenAkMPWSun5lRBEyz0FUmJ3deF+1cXzqKtk0UCkURQKZdsbApwrsJuSr3I
-         jVPyuY3IEM/eEQV2zqx1VVc+fedZ53mBXiC3b3fZZmCAHKPmyb0corrbk7hqYTSKy1nn
-         uCdJT771sGzJXuJrAumK7HGoKh33VUTBPBP6eiYgJ5j647jpiPIpXpZQIQf7+KNBsgjt
-         Odow==
-X-Forwarded-Encrypted: i=1; AJvYcCUkiAG3RGFFGBxBXa3HyKsXdEv8XfH9bdlUXa3vGsXao21UDsXqq4AVY+Nb3PrWNdqzgNGihi7SAUg5xok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvCqSUtjjP1P1wOzx5fegU1JQ/t+Zt9Ho+62iqrFfpdEgUYS7O
-	Ah3MksIB/grgoVyzYjTWAedguCnT2NNxLS5oOWZ4Q9BTneMPN9DtLWQug1ZS40HYQ/SkWaw86+S
-	91Imd6Nk4q9yAHTwyvltjvobOvKQh22mgnH899ux1OYsBGwkZLb0=
-X-Gm-Gg: ASbGnctDVN4l40EjPDwj/2PmCUG/1KTj1s3vuqjM5xvNgpg47olu7dapBbU8MVMDIwx
-	AXlpSlgtVFiZWN29MGnHi2Q/GbdgcFj+zvEntOG/VfwFj2unGVvl4YBi9VTjHw4NmcZb3rGCcVS
-	UzUa86c4io11VWEO5kcY+0uERj6hcxCdScugiFbUOaCnUWmFj5MdSP4jpTxw==
-X-Google-Smtp-Source: AGHT+IGPlfxsnL8xkZ525LntzQCfam2wCKsFv2c35BiU8Iy6Us9VMAZ/4ps8ZbWXqXudbJreVUIbo0hr9QOb+DIDfWA=
-X-Received: by 2002:a05:690c:7243:b0:6fb:9389:3cde with SMTP id
- 00721157ae682-6fda2fe10a1mr2553737b3.3.1741110424008; Tue, 04 Mar 2025
- 09:47:04 -0800 (PST)
+	s=arc-20240116; t=1741110528; c=relaxed/simple;
+	bh=ev0z99uVBne2zit/zIk55GPh3D478gskiWyAFFzpyro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbqX3wNDV3+qT7251SmRcW5soMCQjlPJGI1Idz5kp9N+VTW5cPWiV8+8TYaBt+ZMJOq+9dEfwUc4ySVOnmd6JTVfiLEMYmg3dVpWj64fkfGNtI2SjAxIbxB7YNTcBYgtcKOTe/5zZ7dgoF4lG5W8FarQAS87md2voZiZydeRm4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kKIm+8gq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A1E5EC4CEE8;
+	Tue,  4 Mar 2025 17:48:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741110527;
+	bh=ev0z99uVBne2zit/zIk55GPh3D478gskiWyAFFzpyro=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kKIm+8gq9l4mHJY8OKVIFmeJ/GiYZBCioty0FDdvxsdnhpVxBIkk49wZL+0BG4Mxt
+	 AwttCLI+rn60QtRHAYr49jixca7pzgi75CHwVeECrGB79otgRZKh55rUC2sshsSKtB
+	 7spgo582vYvzhLQz1qP6OCo/6AYdGpG8xTqT03XH5yZam/aj/4CENDhvLDRmZDyKuP
+	 rOXXaImY8DNCp269awZQEtpCkCocBP1wSBF6gWXSDtU6PaY+bdw+/v7XjaQX8Z0JMF
+	 loz6guSdG3nsC+aDwb/bqBGj47oTPgK7ujyEg0pdsF11czAQHxA8dZwerzqMHwIyFH
+	 Jfyi8DTl/uErQ==
+Date: Tue, 4 Mar 2025 19:48:42 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Fiona Behrens <me@kloenk.dev>
+Cc: Bart Van Assche <bvanassche@acm.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Jason Gunthorpe <jgg@nvidia.com>, Kees Cook <kees@kernel.org>,
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	rust-for-linux <rust-for-linux@vger.kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	David Airlie <airlied@gmail.com>, linux-kernel@vger.kernel.org,
+	ksummit@lists.linux.dev
+Subject: Re: Rust kernel policy
+Message-ID: <Z8c8-q1jMDm3t-OL@kernel.org>
+References: <202502191026.8B6FD47A1@keescook>
+ <20250219140821.27fa1e8a@gandalf.local.home>
+ <202502191117.8E1BCD4615@keescook>
+ <20250219202751.GA42073@nvidia.com>
+ <20250219154610.30dc6223@gandalf.local.home>
+ <97841173-1de8-4221-8bf3-3470a5ac98a7@acm.org>
+ <89f2547edcaaba53d9965cab9133d809607330ac.camel@kernel.org>
+ <87pljc6d7s.fsf@kloenk.dev>
+ <Z7c3PguDn-sEl3gm@kernel.org>
+ <m2cyexjb8d.fsf@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
-In-Reply-To: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
-From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Tue, 4 Mar 2025 17:46:34 +0000
-X-Gm-Features: AQ5f1JprQl2-aACC5Zkamr8nD2QNVsrsLvufWKjEDPBWI84GrWquHohlN1sdMzE
-Message-ID: <CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com>
-Subject: Re: [PATCH 0/3] Add flash/strobe support for ov9282
-To: Richard Leitner <richard.leitner@linux.dev>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <m2cyexjb8d.fsf@kloenk.dev>
 
-Hi Richard
+On Tue, Mar 04, 2025 at 12:17:54PM +0100, Fiona Behrens wrote:
+> I do have a new pr open in the nix repo, it still needs some polishing
+> and gcc and all that. but it does work for me to build using clang and
+> also run kunit.
+> 
+> https://github.com/Rust-for-Linux/nix/pull/8
 
-Thanks for the series.
+My scenario has no connection to this. Let me explain.
 
-On Mon, 3 Mar 2025 at 22:59, Richard Leitner <richard.leitner@linux.dev> wrote:
->
-> This series adds basic flash/strobe support for ov9282 sensors using
-> their "hardware strobe output".
->
-> Apart from en-/disabling the flash/strobe output, setting a timeout
-> (duration of activated strobe per frame) is implemented. The calculation
-> of this timeout is only interpolated from various measurements, as no
-> documentation was found.
+I needed a system comparable to BuildRoot and Yocto to build images and
+manage complexity of two toolchains. I.e. I use it only as build system
+not as an environment for doing kernel development.
 
-The bigger picture question is whether using these flash controls is
-appropriate for controlling the strobe output on a sensor. That's a
-question for others (mainly Sakari and Laurent).
+I.e. what I created is
 
-V4L2_CID_FLASH_TIMEOUT feels wrong for setting the duration of the strobe pulse.
-Whilst the description in the docs [1] is a little brief, you then
-have the description of V4L2_FLASH_FAULT_TIMEOUT for
-V4L2_CID_FLASH_FAULT
-"The flash strobe was still on when the timeout set by the user ---
-V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
-controllers may set this in all such conditions."
-which implies it is the hardware watchdog timeout to ensure the flash
-LEDs don't burn out, not configuring the duration of the flash pulse.
-Then again adp1653 adopts it as the flash duration.
+https://gitlab.com/jarkkojs/linux-tpmdd-nixos
 
-Is there an expectation that V4L2_CID_FLASH_STROBE_SOURCE should also
-be implemented, even if it is fixed to
-V4L2_FLASH_STROBE_SOURCE_EXTERNAL?
+which replaces eventually
 
-The one saving grace with this sensor is that it has a global shutter,
-so the strobe does correspond to the exposure period. With rolling
-shutter sensors, the flash duration is typically two frames to cover
-the exposure duration of all lines as the shutter rolls down.
+https://codeberg.org/jarkko/linux-tpmdd-test
 
-  Dave
+What I can do with my environment is essentially along the lines of
 
-[1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
+1. docker compose up --build
+2. qemu-system-x86_64 -M pc -m 2G -drive if=pflash,format=raw,unit=0,file=output/firmware.fd -drive file=output/tpmdd-nixos.qcow2,if=virtio,format=qcow2 -nographic
 
-> Further flash/strobe-related controls as well as a migration to v4l2-cci
-> helpers will likely be implemented in future series.
->
-> All register addresses/values are based on the OV9281 datasheet v1.53
-> (january 2019). This series was tested using an ov9281 VisionComponents
-> camera module.
->
-> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> ---
-> Richard Leitner (3):
->       media: i2c: ov9282: add output enable register definitions
->       media: i2c: ov9282: add led_mode v4l2 control
->       media: i2c: ov9282: add strobe_timeout v4l2 control
->
->  drivers/media/i2c/ov9282.c | 89 ++++++++++++++++++++++++++++++++++++++++++++--
->  1 file changed, 86 insertions(+), 3 deletions(-)
-> ---
-> base-commit: f41427b3bdee7d9845b13a80c0d03882212f4b20
-> change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
-> prerequisite-change-id: 20250225-b4-ov9282-gain-ef1cdaba5bfd:v1
-> prerequisite-patch-id: 86f2582378ff7095ab65ce4bb25a143eb639e840
-> prerequisite-patch-id: b06eb6ec697aaf0b3155b4b2370f171d0d304ae2
-> prerequisite-patch-id: b123047d71bfb9b93f743bbdd6893d5a98495801
->
-> Best regards,
-> --
-> Richard Leitner <richard.leitner@linux.dev>
->
->
+I use this in Fedora Linux where I do all my kernel development. This
+is something I plan to update to MAINTAINERS as a test environment.
+
+> 
+> Thanks
+> Fiona
+> 
+
+BR, Jarkko
 
