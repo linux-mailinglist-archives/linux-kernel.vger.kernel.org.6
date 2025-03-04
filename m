@@ -1,116 +1,83 @@
-Return-Path: <linux-kernel+bounces-544609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1565DA4E310
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:25:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BED3A4E30E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:25:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C87417E890
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:18:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 714584228CD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:18:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 245A624C07A;
-	Tue,  4 Mar 2025 15:10:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79E782054EC;
+	Tue,  4 Mar 2025 15:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f1RldajX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDFF26F441;
-	Tue,  4 Mar 2025 15:10:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D161A24C093;
+	Tue,  4 Mar 2025 15:11:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101057; cv=none; b=VaPdw6hd+VHvn/4drHTAQ8dRmjxRMxib7p3tqZf+bB0cpeC49KaEOTxFJA5EcUXNlH71Ea8DS0b8cvQXvbAsahwNa1eFOi2Dsn37pcTyIXCMM6Rfv7USI5i1sMEYua66KeHSnoDyNmQCWfLH8xn/tmJYXW/OAJCOUoPD0nlAkYk=
+	t=1741101119; cv=none; b=izd/mMedgMhdFbOo2Sgq6sAgHoOuw56dme0Y/O0c+0cmjryqLN9XPucN8/tlAAIUf9UHeUv0R9mOn9MBhd2dMxE0/AMsxNoCaAWm9suh8MtZEACxToz/0h4A+e0nfOXv35Php3tTd5cSXOtamlSZDlJZUHPPqIB44XWnvAxiKRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101057; c=relaxed/simple;
-	bh=KRdRud0KKKLKl9c4w5fSpaB1vPlZnIT/TE03lwaFsZE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gb3749cKdg8W1lvUB6lJ4PqN6u7sVWFv+D0QS8FYZ8p0/wyY1uLn9KmLGeSlwyPq+ylOGgHfDcWHOX9XpcbYmEjQMRkAZUOQm8iPTcD25QTda4N07qNYrEN2HU0s7J01mZmHkdaQYLPxVn/UtZ9WAAwGRUoRAxva+2am9AHpYB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CA025C4CEF0;
-	Tue,  4 Mar 2025 15:10:55 +0000 (UTC)
-Date: Tue, 4 Mar 2025 10:11:50 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Strforexc yn <strforexc@gmail.com>, Lai Jiangshan
- <jiangshanlai@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, Josh
- Triplett <josh@joshtriplett.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, rcu@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: KASAN: global-out-of-bounds Read in srcu_gp_start_if_needed
-Message-ID: <20250304101150.0eb83618@gandalf.local.home>
-In-Reply-To: <20250304035732.GA128190@joelnvbox>
-References: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
-	<20250303114711.12716d05@gandalf.local.home>
-	<20250304035732.GA128190@joelnvbox>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741101119; c=relaxed/simple;
+	bh=4SIBqmrS42kkSMxCMQFChof+F0bMN3x2UOvDWptOUsk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tk0saRSALfHot2T0WLlp1/3QDaiRd8g9IufWj46xkcrDUo1e+ePLpCjGVWVlcl9a67JA3jLS719XVVZU7Dn+6G5zTaPyxDSqBAUOc8eCTKT5+g1f+PoRmK9s1sSCGWHVg+ulr5S47IsE4sP+oaTFjUS0nZbw9cZQxeFxy86xde8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f1RldajX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 22280C4CEE5;
+	Tue,  4 Mar 2025 15:11:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741101119;
+	bh=4SIBqmrS42kkSMxCMQFChof+F0bMN3x2UOvDWptOUsk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=f1RldajXPHDVDaV8FrXpmlawZekNo7rfjLrH+iZk48PdTNBRRGoGXlRiD1dMOmiOK
+	 hdPWou5HpOvcLRH93nIoXnoYhrybdWjGDoYCEY6KjmM4THfuQMoeypD3sNZR50pLw3
+	 hoDsuVH5UnLQ8II5S35z2YdM3BZzZT84eDNImYf/MQIiBXd4SuOtjuJda3Jn3pHocW
+	 KaBXHJ0twf+ut9bhI+4tIH7Pfpsi4iTEx4VCI6WIuCQ8FpFOOiJSKVwWSaB2APzLFK
+	 oTX5LqnYHQ8rSsOU8Rljk4c76OrwGylKiU8s1/2pdz4l2fXAEK1tjyxpkrT64br/a/
+	 8THTVDr84zQXw==
+Date: Tue, 4 Mar 2025 09:11:57 -0600
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Longbin Li <looong.bin@gmail.com>
+Cc: linux-riscv@lists.infradead.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	devicetree@vger.kernel.org, Mark Brown <broonie@kernel.org>,
+	Palmer Dabbelt <palmer@dabbelt.com>, linux-spi@vger.kernel.org,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	linux-kernel@vger.kernel.org, Chen Wang <unicorn_wang@outlook.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, sophgo@lists.linux.dev,
+	Conor Dooley <conor+dt@kernel.org>,
+	Inochi Amaoto <inochiama@gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: spi: add SG2044 SPI NOR controller
+ driver
+Message-ID: <174110111660.2625891.8370014258934747237.robh@kernel.org>
+References: <20250304083548.10101-1-looong.bin@gmail.com>
+ <20250304083548.10101-2-looong.bin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304083548.10101-2-looong.bin@gmail.com>
 
-On Mon, 3 Mar 2025 22:57:32 -0500
-Joel Fernandes <joelagnelf@nvidia.com> wrote:
 
-> > 
-> > The lock taken is from the passed in rcu_pending pointer.
-> >   
-> > > [   92.322655][   T28]  rcu_pending_enqueue+0x686/0xd30
-> > > [   92.322676][   T28]  ? __pfx_rcu_pending_enqueue+0x10/0x10
-> > > [   92.322693][   T28]  ? trace_lock_release+0x11a/0x180
-> > > [   92.322708][   T28]  ? bkey_cached_free+0xa3/0x170
-> > > [   92.322725][   T28]  ? lock_release+0x13/0x180
-> > > [   92.322744][   T28]  ? bkey_cached_free+0xa3/0x170
-> > > [   92.322760][   T28]  bkey_cached_free+0xfd/0x170  
-> > 
-> > Which has:
-> > 
-> > static void bkey_cached_free(struct btree_key_cache *bc,
-> >                              struct bkey_cached *ck)
-> > {
-> >         kfree(ck->k);
-> >         ck->k           = NULL;
-> >         ck->u64s        = 0;
-> >                 
-> >         six_unlock_write(&ck->c.lock);
-> >         six_unlock_intent(&ck->c.lock);
-> > 
-> >         bool pcpu_readers = ck->c.lock.readers != NULL;
-> >         rcu_pending_enqueue(&bc->pending[pcpu_readers], &ck->rcu);
-> >         this_cpu_inc(*bc->nr_pending);
-> > }
-> > 
-> > So if that bc->pending[pcpu_readers] gets corrupted in anyway, that could trigger this.  
+On Tue, 04 Mar 2025 16:35:42 +0800, Longbin Li wrote:
+> Add SPI NOR driver for SG2044, including read, write operations.
 > 
-> True, another thing that could corrupt it is if per-cpu global data section
-> section is corrupted, because the crash is happening in this trylock per the
-> above stack:
+> Signed-off-by: Longbin Li <looong.bin@gmail.com>
+> ---
+>  .../bindings/spi/spi-sg2044-nor.yaml          | 52 +++++++++++++++++++
+>  1 file changed, 52 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/spi/spi-sg2044-nor.yaml
 > 
->  srcu_gp_start_if_needed ->
-> 	spin_lock_irqsave_sdp_contention(sdp) ->
-> 		spin_trylock(sdp->lock)
-> 
-> 	where sdp is ssp->sda and is allocated from per-cpu storage.
-> 
-> So corruption of the per-cpu global data section can also trigger this, even
-> if the rcu_pending pointer is intact.
 
-If there was corruption of the per-cpu section, you would think it would
-have a bigger impact than just this location. As most of the kernel relies
-on the per-cpu section.
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-But it could be corruption of the per-cpu variable that was used. Caused by
-the code that uses it.
-
-That code is quite complex, and I usually try to rule out the code that is
-used in one location as being the issue before looking at something like
-per-cpu or RCU code which is used all over the place, and if that was
-buggy, it would likely blow up elsewhere outside of bcachefs.
-
-But who knows, perhaps the bcachefs triggered a corner case?
-
--- Steve
 
