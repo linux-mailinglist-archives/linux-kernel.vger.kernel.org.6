@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-545203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92CB9A4EB10
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:18:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C564DA4EA41
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 792DE8A10DB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:54:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 077BF4241E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90582BA2E;
-	Tue,  4 Mar 2025 17:36:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF594293B7F;
+	Tue,  4 Mar 2025 17:36:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PExqiomM"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h2ZE3ycl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6F2620967C;
-	Tue,  4 Mar 2025 17:36:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43B2A20967C;
+	Tue,  4 Mar 2025 17:36:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109765; cv=none; b=sMXlOQFjkzwrWsZ7cEBuO4QrIwaYlu5OmUmYSJVJ8OOAT0/cFeY6/SlKXl8oVaJLxWIRjUPVsTd/H/GOqap7LQntli6xtVZxraqChqUrTqjj4pJkkNYHNVmm/MBYeuLSU8ifvNRp1qXbuDCSGvoj/gsbenwcLiPT8lqps1Z1X1g=
+	t=1741109771; cv=none; b=NCNKvTJQmdYl10B44PSWw66mNAPARKWNztt9ihxqcgLYIN4Q5MnsZ1rUr5zUYZVs+gCOvargAT2JQNY31hn32TFDiSMl+e6tQ6ua/dm4NTuj0eAucB9A4JK/KaKA+HHFDcNz/f72ecNnG+BCaCAebsMSbwmrOhGUozLR9U8CW0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109765; c=relaxed/simple;
-	bh=9NzHeomlf+Nv1BhOgJmO2czzW6I5BiHvH358DPrPLGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NUAtfyhESgZZNG3hOENjLOU0GB2AqH7cYOcfhcNAlBbnDDWGiF2d9pdH5TXvv9hb9pSKAJM98S/jDISWDgvQwNBIRoxBOWaBPUQzxNhThKUJ5SB75lpDyBt8ifGP/vjiD0qI6WtS+W50Xm9tk/BOnFO+P6pIL3rKcmyZbmv8xms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PExqiomM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31225C4CEE8;
-	Tue,  4 Mar 2025 17:35:58 +0000 (UTC)
+	s=arc-20240116; t=1741109771; c=relaxed/simple;
+	bh=VWb05+i6gtUm2qjEL+/as6rN5zfg3VkaaaJqFy7VfTE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=H2QxxvScFPpXyaYSuKlAAjOcewao/TVW8E5N1+PXIqf8nfyAFNNz/eh5fqPRKFahAuhGcfY4p9lBfepCoPgse9uCnB9yLMuwXjlIGe9tS5Bq4uWvLmkt/wn5e+Nt+TTLYEX498n9wU0jCfh8jKZzM2wGyVAN00xxP1+ttrIe304=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h2ZE3ycl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7674C4CEE9;
+	Tue,  4 Mar 2025 17:36:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741109764;
-	bh=9NzHeomlf+Nv1BhOgJmO2czzW6I5BiHvH358DPrPLGY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=PExqiomMamFh2EJ9lGxHd/1D2oolzwvnyCKcOkvuazmzN1Ct5aWwUPk3H080auBcn
-	 ofJLRPqUqs3NyXc+8e8JAy/lPKK/QFIJVrC3zlUG78zfarJJoMTvaK81ykPF7kORle
-	 QmXV5KFrWdHkn4s/S2xdoJiITIhpWrQ+cTS7+0Vs2Q4izGxXKudql4i3m3qe6wJllj
-	 wYdAEjHxVOKISGH1acerLWe4Xm03IfdsM2TJDgONc0zg2OCJbPldWybpG7Goh7uS7c
-	 Oza5S6pUZPVzWj4RPDCx0ukMUOpmIZTXLSpAe1T+OJrkw69Zu/fuI02RbGgKwEMDEp
-	 2G6SUJhXh0bGg==
+	s=k20201202; t=1741109770;
+	bh=VWb05+i6gtUm2qjEL+/as6rN5zfg3VkaaaJqFy7VfTE=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=h2ZE3yclgc34fDhaGM2qEAHNmfCkQoDUpSzRjh1JM7sk3v/5XXEJer+QU+240LBSE
+	 kAxmK5wI0MsH6FuFoLoNH4M8AHT4jD6Wr4nJ4VOQUDnKWXru8xWHXvHws2LTsnzL4O
+	 iwJeJVs/8kvrYlBQ7SdxlF+M5DpIPVMwZ9sYotsWYyn6UbDJS/rJIhDE+HIyxn69VK
+	 Ld+ea8vPVr05iXacetdof/pQA1W+W7QjsorHjDx19LapBuS6d57kSkTv7urx4JzPYG
+	 fIPUhaTwhsEvA5lhUOVIXzejZfHTQ+GEjsI0c3SKGfara/eEiMI49PsdQLu29MEQqG
+	 FZVq5K1ADNzXQ==
 From: Danilo Krummrich <dakr@kernel.org>
 To: airlied@gmail.com,
 	simona@ffwll.ch,
@@ -72,10 +73,12 @@ Cc: ojeda@kernel.org,
 	nouveau@lists.freedesktop.org,
 	rust-for-linux@vger.kernel.org,
 	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH v5 0/5] Initial Nova Core series
-Date: Tue,  4 Mar 2025 18:34:47 +0100
-Message-ID: <20250304173555.2496-1-dakr@kernel.org>
+Subject: [PATCH v5 1/5] rust: module: add type `LocalModule`
+Date: Tue,  4 Mar 2025 18:34:48 +0100
+Message-ID: <20250304173555.2496-2-dakr@kernel.org>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250304173555.2496-1-dakr@kernel.org>
+References: <20250304173555.2496-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,114 +87,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is the initial series for the nova-core stub driver.
+The `LocalModule` type is the type of the module created by `module!`,
+`module_pci_driver!`, `module_platform_driver!`, etc.
 
-nova-core is intended to serve as a common base for nova-drm (the
-corresponding DRM driver) and the vGPU manager VFIO driver, serving as a
-hard- and firmware abstraction layer for GSP-based NVIDIA GPUs.
+Since the exact type of the module is sometimes generated on the fly by
+the listed macros, provide an alias.
 
-The Nova project, including nova-core and nova-drm, in the long term,
-is intended to serve as the successor of Nouveau for all GSP-based GPUs.
+This is first used by the `module_firmware!` macro introduced in a
+subsequent patch.
 
-The motivation for both, starting a successor project for Nouveau and
-doing so using the Rust programming language, is documented in detail
-through a previous post on the mailing list [1], an LWN article [2] and a
-talk from LPC '24.
+Suggested-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+---
+ rust/macros/module.rs | 2 ++
+ 1 file changed, 2 insertions(+)
 
-In order to avoid the chicken and egg problem to require a user to
-upstream Rust abstractions, but at the same time require the Rust
-abstractions to implement the driver, nova-core kicks off as a driver
-stub and is subsequently developed upstream.
-
-Besides the driver itself and the corresponding documentation, i.e. guidelines,
-task list, etc., this series also carries a few more patches to more flexibly
-compose firmware path strings for the .modinfo section.
-
-Link: https://lore.kernel.org/dri-devel/Zfsj0_tb-0-tNrJy@cassiopeiae/T/#u [1]
-Link: https://lwn.net/Articles/990736/ [2]
-Link: https://youtu.be/3Igmx28B3BQ?si=sBdSEer4tAPKGpOs [3]
-
-Changes in v5:
-  - change `ModInfoBuilder::push()` to take a `&str` instead of `&[u8]`
-  - drop patch "rust: str: provide const fn as_bytes() for BStr"
-  - embedd `impl TryFrom<u32> for Chipset` in `define_chipset!` (Alexandre)
-  - switch `Chipset::NAMES` from `[&BStr; N]` to `[&str; N]`
-  - introduce `const_bytes_to_str()` helper
-  - move `to_lowercase_bytes()` to util.rs
-
-Changes in v4:
-  - in `regs::Boot0` take a `&Bar0` and let deref coercion do its thing
-    (Alexandre)
-  - add missing firmware path string to the .modinfo section (Greg)
-  - add some infrastructure to compose firmware path strings more flexibly
-
-Changes in v3:
-  - impl TryFrom<u32> for Chipset
-  - add Chipset::arch()
-  - initialize revision from Boot0
-  - in Firmware, eliminate repeating code pattern using a closure (thanks to
-    Alexandre)
-  - use #[expect(dead_code)] for Firmware
-  - Replace some Rust specific rules with links to existing R4L documentation.
-  - Link in R4L submit checklist.
-  - Update task entry "Page abstraction for foreign pages" with Lina's work.
-
-Changes in v2:
-  - Fix module name in Kconfig description. (John)
-  - Expand Kconfig description a bit. (John)
-  - Expand name for PCI BAR0 region.
-  - Do not store / print boot0 raw register value. (John)
-  - Rename CardType to Architecture, rename enum names to represent the
-    architecture name and adjust enum values according to the register
-    definition. (John)
-  - Add an abstraction for register accesses.
-  - Print chipset, architecture and revision.
-  - Load bootloader firmware. (Timur)
-  - Add task "Generic register abstraction".
-  - Change complexity of "Debugfs abstractions".
-
-
-Danilo Krummrich (5):
-  rust: module: add type `LocalModule`
-  rust: firmware: introduce `firmware::ModInfoBuilder`
-  rust: firmware: add `module_firmware!` macro
-  gpu: nova-core: add initial driver stub
-  gpu: nova-core: add initial documentation
-
- Documentation/gpu/drivers.rst              |   1 +
- Documentation/gpu/nova/core/guidelines.rst |  24 ++
- Documentation/gpu/nova/core/todo.rst       | 446 +++++++++++++++++++++
- Documentation/gpu/nova/guidelines.rst      |  69 ++++
- Documentation/gpu/nova/index.rst           |  30 ++
- MAINTAINERS                                |  11 +
- drivers/gpu/Makefile                       |   1 +
- drivers/gpu/nova-core/Kconfig              |  14 +
- drivers/gpu/nova-core/Makefile             |   3 +
- drivers/gpu/nova-core/driver.rs            |  47 +++
- drivers/gpu/nova-core/firmware.rs          |  45 +++
- drivers/gpu/nova-core/gpu.rs               | 199 +++++++++
- drivers/gpu/nova-core/nova_core.rs         |  20 +
- drivers/gpu/nova-core/regs.rs              |  55 +++
- drivers/gpu/nova-core/util.rs              |  21 +
- drivers/video/Kconfig                      |   1 +
- rust/kernel/firmware.rs                    | 177 ++++++++
- rust/macros/module.rs                      |   2 +
- 18 files changed, 1166 insertions(+)
- create mode 100644 Documentation/gpu/nova/core/guidelines.rst
- create mode 100644 Documentation/gpu/nova/core/todo.rst
- create mode 100644 Documentation/gpu/nova/guidelines.rst
- create mode 100644 Documentation/gpu/nova/index.rst
- create mode 100644 drivers/gpu/nova-core/Kconfig
- create mode 100644 drivers/gpu/nova-core/Makefile
- create mode 100644 drivers/gpu/nova-core/driver.rs
- create mode 100644 drivers/gpu/nova-core/firmware.rs
- create mode 100644 drivers/gpu/nova-core/gpu.rs
- create mode 100644 drivers/gpu/nova-core/nova_core.rs
- create mode 100644 drivers/gpu/nova-core/regs.rs
- create mode 100644 drivers/gpu/nova-core/util.rs
-
-
-base-commit: 99fa936e8e4f117d62f229003c9799686f74cebc
+diff --git a/rust/macros/module.rs b/rust/macros/module.rs
+index cdf94f4982df..6ba9210677c5 100644
+--- a/rust/macros/module.rs
++++ b/rust/macros/module.rs
+@@ -228,6 +228,8 @@ pub(crate) fn module(ts: TokenStream) -> TokenStream {
+                 kernel::ThisModule::from_ptr(core::ptr::null_mut())
+             }};
+ 
++            type LocalModule = {type_};
++
+             impl kernel::ModuleMetadata for {type_} {{
+                 const NAME: &'static kernel::str::CStr = kernel::c_str!(\"{name}\");
+             }}
 -- 
 2.48.1
 
