@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-543920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 519D8A4DB6C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:53:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0465A4DB7E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:56:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E84F7188F9F0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:52:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329C83B3554
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6132D1FCCEF;
-	Tue,  4 Mar 2025 10:52:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D1F1FC7CA;
+	Tue,  4 Mar 2025 10:53:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N2vSvTeQ"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Ts2Fhy3N"
+Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13A6E1FAC59;
-	Tue,  4 Mar 2025 10:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141A21FDE2B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741085553; cv=none; b=oaOASPYS1WjIbatbWLk7qRFKnC1XYPtG8a/3iZaTDX16cVwkg7JeO7Gj6NALFLmeGYmyfDbE6Je+wvympVk7BqAlJeb3mc01uPBkonoMq9x4VTVqfCpr2lbUkrdPrgz2/WNaOr/sIop9QiinrSwZrCsh3zosCKvsrsZgV3SrXw8=
+	t=1741085620; cv=none; b=SctUCPBZ8ZGCeqkI/X2o1xWZXYBnxAv9T5Jk2vjv4pBV050SpJlE1RDcfKlIOtHAUktSf0gynWt6VRJTkSWXhX5MPM0K+LfljH75If6lz/XelRikdyN4J/MNDD6T1CRpPwugmq7j5bLhyyiM8EImJsu08XtVGHYT3Zh9ceklvSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741085553; c=relaxed/simple;
-	bh=j8t2vG8K2ktYqpUbC5SvLN1eHryBSP6okv4cMZrKszM=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fs2wyOHKbOsiZx/VVGkjulAtKvBlQh6+X5JCaxrzq6Lbw8wyP6O3yaXcV4OcJNNJ9yXX13AaBFZJFc3s4W7QUaQ0GgNY6wRp6/yxMWsLK/uicQ2OozrnRCpbaBKqB5GzpDoPfyV2/lbVwLIuONHTvQTA3RoFMfBqOJ1ScUKJkAE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N2vSvTeQ; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5452c29bacfso6001916e87.3;
-        Tue, 04 Mar 2025 02:52:31 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741085550; x=1741690350; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gWewbNXYilovO9nAVA1KkJAf5VT1tC1W6c4bmyggmpQ=;
-        b=N2vSvTeQh+GXQKJ767x4ala7VrB26lMk1LyK/bqyBLZBnORteOc/UAbxJx9jUoR+OT
-         Saw780bkQCe4vz0IbXX66haXJ4rCScIX8trNukDCsZIx0vYft0FeqISHYPE2hT3BVeZM
-         JxKEflDb/Yd+VG1zEQY+kDWs1jkpCkO/VgCZ0eLCCeWcLCXdTOKGTqRsxk9FB2H8dNJw
-         C8mYs+srs8gh0BRrzJUcjsJcQFC8HRTcfqTqHfl4ySjPFxETtveL/ilyrDMjUrlwJYSR
-         yII5jx+QzwRieohR3josqiePld32QrovssiU8GHQF9pyClueuS7hQD1FM1n8a/NPUgqs
-         PHjg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741085550; x=1741690350;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gWewbNXYilovO9nAVA1KkJAf5VT1tC1W6c4bmyggmpQ=;
-        b=xJ7UNNkZXSNTLeQk6ZtPsU0EbaJdggFmFdp0Rvu/6Q+iF6O/T9Lds1FzzBIwLOdK0t
-         lGdotkhIXAnjkrtQnUSPfDN2/pI1JkTer2uC99LbBieYGimtlhWlvem2/Yiu8MJ7ookI
-         Uzrb5Axc4tx1eNXc1KwrG2Ux4US2DqpSbau5f8RQhT0VBJLeZLPoXroekPIDxbFGQTQh
-         6eOj593ChKMSqhN5WvRjeQWCATmX7BSHwrftgbByK/s6yMlgVFQwDzmI4bSKyW/nOujD
-         R+xlSVpE3JKPOuAFm2MINN0xmxmdT70Sg6NZVroQG7K/3szry8D16GKRk15Ti/bv4HNJ
-         BJyA==
-X-Forwarded-Encrypted: i=1; AJvYcCVjDyzWwZ8QHpRHDtJ/Jq+tlqEj5qMt9Aa29Kj6A8/AHB3LKsIMTkiz3oS1YfG7nKkFUnez+pQG8Ruf0cs=@vger.kernel.org, AJvYcCWEZ4RiivtmteyS3+NGQGrFI0b8TN/fqei4XijQ4jECSGK6mkxQRQ8jXa8liLpOBn7sXl8V@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUEuqArKzt/I6lDs1gOCnvItCH00TFhoCs7wZdWiG6JK184CWJ
-	jXl27qi75e8g7+4uA2PExIxjVrJSmQmsr0S9o2P6SvqvfgX5Ludx
-X-Gm-Gg: ASbGnctfjWpxOtdWUMvjQQg7qWZmSAH4DCM92nj46WVr5QU5AkWvddbvt/yiSpUkrZY
-	tqCp2tSQWSxoby4gBZr/djr/6JmeNCFjUzwg1vj7ojnbrillSTCgaHtF/1skuk98lfCEBNIPlbc
-	8g0Z7C5Kguv+ZBW4fbakiTIRz7xS0pASsFDZd6b/7HwzdozNz1uJnneRuZdiBySSGlVYxXTSU/y
-	ivR5X2Fw7HH6R+CNxRF1EeCNmIct7+yURRfurAKUSHelvVL/s1Z0f4X+u9Tk11bLK4XtUvYze4W
-	J0WkYXpBi5zDMSwpoZbRLI1FfuLHig4qWqVbA1ulEoL6/arI1XuJSFoNf2wxrELNTwI=
-X-Google-Smtp-Source: AGHT+IG8kgKfpGG4n/YSX41vVjX1+n0ye29JCvFsfWOni1nyuIrzy6/5dr7Z8Gpr1hYii8cqhvYs2g==
-X-Received: by 2002:a05:6512:1085:b0:545:1d96:d702 with SMTP id 2adb3069b0e04-5494c38c05dmr7304997e87.48.1741085549756;
-        Tue, 04 Mar 2025 02:52:29 -0800 (PST)
-Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495804887dsm1059599e87.188.2025.03.04.02.52.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 02:52:29 -0800 (PST)
-From: Uladzislau Rezki <urezki@gmail.com>
-X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
-Date: Tue, 4 Mar 2025 11:52:26 +0100
-To: Boqun Feng <boqun.feng@gmail.com>,
-	Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Joel Fernandes <joelagnelf@nvidia.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Uladzislau Rezki <urezki@gmail.com>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Cheung Wall <zzqq0103.hey@gmail.com>,
-	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>
-Subject: Re: [PATCH v4 3/3] rcu: Use _full() API to debug synchronize_rcu()
-Message-ID: <Z8bbary51FZ2TsUA@pc636>
-References: <1408fc88-e2c6-4f49-b581-0e9ad5620fe0@paulmck-laptop>
- <Z8HmH85bYNU8enJ2@pc636>
- <dd15fa79-70a5-4929-9339-51a47099c916@paulmck-laptop>
- <Z8H_aYBUHD2sS2Ir@pc636>
- <73724164-71f4-4671-b612-eb82a784da58@paulmck-laptop>
- <Z8IKs-I-YsOoS4uw@pc636>
- <cdab57a4-8d58-41d9-a9b5-71d425a7375e@paulmck-laptop>
- <f6803081-8243-4723-a3ba-00db351aafff@paulmck-laptop>
- <20250303001507.GA3994772@joelnvbox>
- <Z8ZyMaUhXMIxX7WE@tardis>
+	s=arc-20240116; t=1741085620; c=relaxed/simple;
+	bh=VCfucskRC2cvY6966shLxXr2SgNODQiP9tZAsdqtyxs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WZnr6fCieKAb5ZVdz+5F50OskXg6mFEPNGCg1CRu8Ko2PQaAtCpGZSM9Gi+TW024akDhcewTeHQGFNZuLriZw/AUhJbp1IWpR8NcAtSvW6ZFv8Uu862BFKC45hE9Q+9mKvTe+G14mWGrjvIytcVeZuBAVKaqvaGCngdWWqcNjqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Ts2Fhy3N; arc=none smtp.client-ip=43.155.80.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1741085590;
+	bh=J+AbzbeKk1TMOXRqPTcIrGEKxdHexrILpO1xrigQbXw=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=Ts2Fhy3NoH798WqrPYgtOydEju0evau98tXJ1IcAbU4cuiylLRseMKescOf3WlPhE
+	 oyLAfB8UYhRvL0QjSScIzgyJY7m1jGSmihi0TCEBJzDuoAFqH9ZB9373YxxwZ+E3MX
+	 /h4DuYyPhrZulqLU6WzzDy/B0JJSNqJ9grysGQ58=
+X-QQ-mid: bizesmtpip3t1741085573tvc43m9
+X-QQ-Originating-IP: jfMFLMqo6HvurF85wH0TBlAZWnlJjGgvU5j6z2Ly9Yw=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 04 Mar 2025 18:52:50 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6603146197274234106
+From: WangYuli <wangyuli@uniontech.com>
+To: chenhuacai@kernel.org,
+	kernel@xen0n.name
+Cc: yangtiezhu@loongson.cn,
+	maobibo@loongson.cn,
+	guoweikang.kernel@gmail.com,
+	agordeev@linux.ibm.com,
+	ast@kernel.org,
+	usamaarif642@gmail.com,
+	jiaxun.yang@flygoat.com,
+	wangyuli@uniontech.com,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	chenlinxuan@uniontech.com,
+	donmor3000@hotmail.com,
+	Wentao Guan <guanwentao@uniontech.com>
+Subject: [PATCH] LoongArch: Fix use of logical '&&' with constant operand
+Date: Tue,  4 Mar 2025 18:52:46 +0800
+Message-ID: <EEBE30D1ACFF646F+20250304105246.766404-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8ZyMaUhXMIxX7WE@tardis>
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MauZFeUCNtAMjs4gQDc9KQ/kWf+xVva34SNCoNnMK7/7sQaWFIrBYpA5
+	HL1Q4iENEyRRxZH51pT4+tO+uG+pXnCqTVEFak/0Xgc43czIRYtWGHZfQORD0FASWngEBdE
+	Otjbbc4tqQGw9lpPx5TXnI+JHsc53l3CsslykATMboYMWo8u+uKh1jeg9IZxzt8pfzNzS1f
+	0D45DDGlFPHG4wTmhmr1bVpRpjZX5IK54qarxJMsVJbJEfskfvcb+yaU0eyS0as3egWLMDC
+	WM7wEMFb40ctD/efTwZYZhbA2ItdsClfq7e7PUrUgTnU3ousuZdWu9SCjGRi1xbVs119i+o
+	KYr2IIYCg5n1+iOksVVrxYpYiKNGPe5GhDOjDozkyW6AWe0X7aGwC94ufrq8RffxePVgcQ6
+	AI6pwCFWC/pvlaPorKRcix1HNMOEczxOpwVmoWi26NhviWs6NPlB4jN5ncd9Qp5T/NwGnvW
+	iSrMopauie1/5Z9scU2MJ3xmsGcgkCdCVv8eUzQ5+Qybw+FS0WiIYaWK/DcOficwQhiYVtI
+	Zte1B8CToruvzJ9jMQIF5DXMOpr/MoDcJ6fYrJZ7Ay5B7e/wBi8nEjZgNtSHAAJ7qF5qupd
+	a4FOR/Y1lXIF8QTd225uR2OtKqgxcT/ofzdGe9iuGFLsBcH07iK7LOpKbF5aaOxFGUUJ2Sc
+	htMiFOYPXQ1U/iRQlbtCR/5tHmNct7B4TuUe4Qr/X6aOgYo6jFOz4vLuQoUZz4HzDVKQSJq
+	m17nTrm1tTV/966XdWc4/4kJQt7oemSziRDyQ7+rLAwCBAwOAfAWdHJWEEXi/KOYX+zipx4
+	edTfs4TYTzNcA2y4MHHDxR6CHQGmPy+zca+/QAZBl6z+3Bs2zmfhwa0haM5JCYOQYwuzGah
+	ed/aksx9PFczs51iQrDosJpvSxjwB4ssmmO6NrlGeXH/zu2BO0WB1AwBRtiS0T+ldziKWcH
+	BW2NgU8FdDxFSapyByN7BpCw+QO/l50rSN5YDDt1ipceq31sGYyyXCi44AnHcQzOc8Vt+Ww
+	dhjGr2nHi6Qf/gfbwmKFo5YMTmejY=
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
-> > Did I get that right?
-> > 
-> 
-> Other than I'm unable to follow what do you mean "WH has not been
-> injected, so nothing to wait on", maybe because I am missing some
-> terminology from you ;-) I think it's a good analysis, thank you!
-> 
-> > I think this is a real bug AFAICS, hoping all the memory barriers are in
-> > place to make sure the code reordering also correctly orders the accesses.
-> > I'll double check that.
-> > 
-> > I also feel its 'theoretical', because as long as rcu_gp_init() and
-> > rcu_gp_cleanup() are properly ordered WRT pre-existing readers, then
-> > synchronize_rcu_normal() still waits for pre-existing readers even though its
-> > a bit confused about the value of the cookies.
-> > 
-> > For the fix,
-> > Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
-> > 
-> > (If possible, include a Link: to my (this) post so that the sequence of
-> > events is further clarified.)
-> > 
-> 
-> Will add the tag (with the email you really want ;-)) and a link to this
-> email to the patch. Thanks!
-> 
+Fix follow error with clang-19:
 
-CPU_1:                                | CPU_2:
-  # Increase a seq-number             |
-  rcu_seq_start(&rcu_state.gp_seq);   |
-                                      | add_client() {
-				      |   # Record a gp-sec state 
-				      |   get_state_synchronize_rcu_full(&rs.oldstate);
-                                      | }
-                                      |
-                                      | rcu_sr_normal_gp_init() {
-				      |   add a dummy-wait-head;
-				      | }
+arch/loongarch/kernel/setup.c:335:40: error: use of logical '&&' with constant operand [-Werror,-Wconstant-logical-operand]
+  335 |         if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && CONFIG_CMDLINE[0]) {
+      |                                               ^  ~~~~~~~~~~~~~~~~~
+arch/loongarch/kernel/setup.c:335:40: note: use '&' for a bitwise operation
+  335 |         if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && CONFIG_CMDLINE[0]) {
+      |                                               ^~
+      |                                               &
+arch/loongarch/kernel/setup.c:335:40: note: remove constant to silence this warning
+  335 |         if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && CONFIG_CMDLINE[0]) {
+      |                                               ^~~~~~~~~~~~~~~~~~~~
+1 error generated.
 
+Fixes: 83da30d73b86 ("LoongArch: Fix CMDLINE_EXTEND and CMDLINE_BOOTLOADER handling")
+Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
+Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
+---
+ arch/loongarch/kernel/setup.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-A client has been added with already updated gp-sec number, i.e.
-"oldstate" would refer to this GP, not to previous. A poll_state_synchronize_rcu_full()
-will complain because this GP is not passed, it will on a next iteration.
+diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+index edcfdfcad7d2..834bea7f42da 100644
+--- a/arch/loongarch/kernel/setup.c
++++ b/arch/loongarch/kernel/setup.c
+@@ -332,7 +332,7 @@ static void __init bootcmdline_init(char **cmdline_p)
+ 	 * Append built-in command line to the bootloader command line if
+ 	 * CONFIG_CMDLINE_EXTEND is enabled.
+ 	 */
+-	if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && CONFIG_CMDLINE[0]) {
++	if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && !!CONFIG_CMDLINE[0]) {
+ 		strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
+ 		strlcat(boot_command_line, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
+ 	}
+-- 
+2.47.2
 
-This is how i see this.
-
---
-Uladzislau Rezki
 
