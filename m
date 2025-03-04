@@ -1,304 +1,219 @@
-Return-Path: <linux-kernel+bounces-544303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74868A4DFF6
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DAC1A4DFF7
 	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:57:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A8F83B5108
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:56:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29FDD189062B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED236204F73;
-	Tue,  4 Mar 2025 13:56:30 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E32B720485D;
+	Tue,  4 Mar 2025 13:57:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mZsCoSvD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BACA920485B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:56:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62FC6204594
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096590; cv=none; b=ToAPFMrBEUx++vcjQZSHHr1B04D1XbCI8gBS+svOc/DXq2O1cDMGz+18NOtaS/7cRXWq+ccki3xnA5L6Jd0yLaVu6oxqxViNFb+U0pbvNQYltt8r3QPVkI2UNgZpeB6y6Lrm326TX0m0n+t2EzIBiW+kdWK1EFlr6BKsvhrA3D0=
+	t=1741096644; cv=none; b=J441DYhggB7C4y6zsUa4DFdu+vSWWEi5zswsHu48OL723U84WrNGlnC0nKVmNt0/l6hpSd7J7ARSL9tWujeojS6BAWjzATtKuvSTCT5ER6GZIgeEtSsX5y/Ahs4WVZfLW0qX4TQpMlbs5atGuO7d6ZF4BXrSo0MDNsojWjLu5jU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096590; c=relaxed/simple;
-	bh=B1HhjIwvey1c5ezYoPA1l5ZccU/01rKBuPoMwstDUJ8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=mRaH3ZGIVC6qP6xIzMPHcQtqZw1r1pbSRC+GSxEnDwf3/wmHmHt3rhQUwQQEJZaQKPq2CtHmAGVEhD3rI2pcwNiN3juHFE0GEDu30KnXxQraPQ3lk2ofm0yKFYfyE5Uvxo+kJXXx3Li1thThLA/pOW8RYzZXyW5HOpMid/bakLc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z6cXz4wvlzwXNs;
-	Tue,  4 Mar 2025 21:51:31 +0800 (CST)
-Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0C7131400CD;
-	Tue,  4 Mar 2025 21:56:25 +0800 (CST)
-Received: from [10.67.120.170] (10.67.120.170) by
- kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Mar 2025 21:56:24 +0800
-Message-ID: <de7966bb-dbf1-4f41-9e25-561ab8c3afc0@huawei.com>
-Date: Tue, 4 Mar 2025 21:56:23 +0800
+	s=arc-20240116; t=1741096644; c=relaxed/simple;
+	bh=/wWw1SW/t4kU27Bk8uTvzVKjqKLxKNP1Aac8aA0xtVY=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=HL3ZO5xiCajnKfqBsd1s7GJhOYk1/roZDmSe2RxOHiLI3D8nSyIhMmQUy4mS2M2rxne4yrMPIiSuc0MIQUyqBZwnCxx2TL6iuf4PEfrERGqHrWax8Wq8TIjPubMB82Ab0Z3snvoYs7si9KVlu9aZy9eNRoue4TVkNXHwSuYi5MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mZsCoSvD; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741096642; x=1772632642;
+  h=date:from:to:cc:subject:message-id;
+  bh=/wWw1SW/t4kU27Bk8uTvzVKjqKLxKNP1Aac8aA0xtVY=;
+  b=mZsCoSvDT9LRQ67nPwkq2X/8HOS3p08A+qdJ/nKUdRdPcJt9iJVMo+Um
+   2mCOoyiwSV/pxwlRStfwOuEiAWyhprtJzQpg9/HVTKRF1cXdF2RgP63c0
+   6d8dGXH3sdZVw2nlnK4Nj7kJdRyFuq9rC+JNqbaQwXYbbqBJq6sWdCgJ7
+   XEoaluB5pHbFZyLnwH73n8Q8SWinef2rS+WBPulVL+NzNgvNTL/n64nSP
+   1UAYSlicWsfWzKFfFHRY8o9dqq9VuJ1P9a21AVc90w0Eu+Tg6WhKklGA8
+   NEdQmd0pkT+SAtJfLHd6KoOjePBmBo6ERH4fU2TkcCgRQxhvLWpQLa3F1
+   A==;
+X-CSE-ConnectionGUID: jwp6jqzHRBqpLybkHfKEfA==
+X-CSE-MsgGUID: nw9EaZn1TPCm4NIOEE7BgQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41870773"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="41870773"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 05:57:22 -0800
+X-CSE-ConnectionGUID: 2T+/PcA7Tp6/9J9upS3iQw==
+X-CSE-MsgGUID: 4BC5QVHnSpeBZJJI0FtCTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="123384552"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa004.jf.intel.com with ESMTP; 04 Mar 2025 05:57:21 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpSlh-000Jpw-2a;
+	Tue, 04 Mar 2025 13:57:12 +0000
+Date: Tue, 04 Mar 2025 21:56:40 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/mm] BUILD SUCCESS
+ 4e1c520c95849e16f8dfbcacbfd37be5330447b9
+Message-ID: <202503042133.zfSmlLvl-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] dma-mapping: benchmark: add support for dma_map_sg
-From: Qinxin Xia <xiaqinxin@huawei.com>
-To: Barry Song <21cnbao@gmail.com>
-CC: yangyicong <yangyicong@huawei.com>, "hch@lst.de" <hch@lst.de>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, Jonathan Cameron
-	<jonathan.cameron@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
-	"fanghao (A)" <fanghao11@huawei.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-References: <20250212022718.1995504-1-xiaqinxin@huawei.com>
- <20250212022718.1995504-3-xiaqinxin@huawei.com>
- <CAGsJ_4yDBT4rJyG4-Ow4T3xLq8VujBjG+-uxjnWUm_vW1nzT_A@mail.gmail.com>
- <43618c9167654c68945ec5e7d9bf69d5@huawei.com>
- <CAGsJ_4zNTYsMkeBav7z=AKdm5CjB=Y73P1QBzq+9FS--z9t9Cw@mail.gmail.com>
- <66470ea1-668a-418a-bcf6-c8702be799ce@huawei.com>
-In-Reply-To: <66470ea1-668a-418a-bcf6-c8702be799ce@huawei.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemj200003.china.huawei.com (7.202.194.15)
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/mm
+branch HEAD: 4e1c520c95849e16f8dfbcacbfd37be5330447b9  x86/mm/pat: Fix VM_PAT handling when fork() fails in copy_page_range()
 
-在 2025/3/4 21:49, Qinxin Xia 写道:
->
-> 在 2025/2/22 14:36, Barry Song 写道:
->> On Fri, Feb 21, 2025 at 4:16 PM xiaqinxin <xiaqinxin@huawei.com> wrote:
->>>
->>>
->>> -----邮件原件-----
->>> 发件人: Barry Song <21cnbao@gmail.com>
->>> 发送时间: 2025年2月18日 4:59
->>> 收件人: xiaqinxin <xiaqinxin@huawei.com>
->>> 抄送: chenxiang66@hisilicon.com; yangyicong <yangyicong@huawei.com>; 
->>> hch@lst.de; iommu@lists.linux.dev; Jonathan Cameron 
->>> <jonathan.cameron@huawei.com>; Zengtao (B) 
->>> <prime.zeng@hisilicon.com>; fanghao (A) <fanghao11@huawei.com>; 
->>> linux-kernel@vger.kernel.org
->>> 主题: Re: [PATCH 2/3] dma-mapping: benchmark: add support for 
->>> dma_map_sg
->>>
->>> On Wed, Feb 12, 2025 at 3:27 PM Qinxin Xia <xiaqinxin@huawei.com> 
->>> wrote:
->>>> Support for dma scatter-gather mapping and is intended for testing
->>>> mapping performance. It achieves by introducing the dma_sg_map_param
->>>> structure and related functions, which enable the implementation of
->>>> scatter-gather mapping preparation, mapping, and unmapping operations.
->>>> Additionally, the dma_map_benchmark_ops array is updated to include
->>>> operations for scatter-gather mapping. This commit aims to provide a
->>>> wider range of mapping performance test  to cater to different 
->>>> scenarios.
->>> This benchmark is mainly designed to debug contention issues, such 
->>> as IOMMU TLB flushes or IOMMU driver bottlenecks. I don't fully 
->>> understand how SG or single will impact the evaluation of the IOMMU 
->>> driver, making it unclear if the added complexity is justified.
->>>
->>> Can you add some explanation on why single mode is not sufficient 
->>> for profiling and improving IOMMU drivers?
->>>
->>> Hello Barry ! 😊
->>> Currently, the HiSilicon accelerator service uses the dma_map_sg 
->>> interface. We want to evaluate the performance of the entire DMA map 
->>> process. (including not only the iommu, but also the map framework). 
->>> In addition, for scatterlist, __iommu_map is executed for each nent. 
->>> This increases the complexity and time overhead of mapping. The 
->>> effect of this fragmentation is not obvious in dma_map_single, which 
->>> only handles a single contiguous block of memory.
->>>
->> Thanks!
->> Please update your editor to ensure it doesn't respond with such long 
->> sentences
->> without line breaks in the future :-)
->
-> Hello Barry !
->
-> Thank you for your advice, I will I'll pay attention. Leon
+elapsed time: 1449m
 
-A little mistake, sorry for it...
+configs tested: 127
+configs skipped: 3
 
-I will I'll pay attention. Leon  ==> I will pay attention.
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
->
->> Can you provide concrete examples or data showing how the newly added 
->> mode
->> improves profiling of the entire DMA map process? For instance, what 
->> limitations
->> exist without this mode? What performance issues cannot be identified 
->> without
->> it?
->
-> You can see this patch 
-> :https://lore.kernel.org/all/cover.1738765879.git.leonro@nvidia.com/
->
-> Leon provides new interface for scatterlist scenarios to improve 
-> performance and gives some
->
-> application instance in rdma and vfio. Users can use dma_map_sg 
-> benchmark to measure
->
-> the performance improvement of the optimized interface compared with 
-> the previous one.
->
-> Thanks!
->
->>
->>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
->>>> ---
->>>>   include/linux/map_benchmark.h |   1 +
->>>>   kernel/dma/map_benchmark.c    | 102 
->>>> ++++++++++++++++++++++++++++++++++
->>>>   2 files changed, 103 insertions(+)
->>>>
->>>> diff --git a/include/linux/map_benchmark.h
->>>> b/include/linux/map_benchmark.h index 054db02a03a7..a9c1a104ba4f
->>>> 100644
->>>> --- a/include/linux/map_benchmark.h
->>>> +++ b/include/linux/map_benchmark.h
->>>> @@ -17,6 +17,7 @@
->>>>
->>>>   enum {
->>>>          DMA_MAP_SINGLE_MODE,
->>>> +       DMA_MAP_SG_MODE,
->>>>          DMA_MAP_MODE_MAX
->>>>   };
->>>>
->>>> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
->>>> index d8ec0ce058d8..b5828eeb3db7 100644
->>>> --- a/kernel/dma/map_benchmark.c
->>>> +++ b/kernel/dma/map_benchmark.c
->>>> @@ -17,6 +17,7 @@
->>>>   #include <linux/module.h>
->>>>   #include <linux/pci.h>
->>>>   #include <linux/platform_device.h>
->>>> +#include <linux/scatterlist.h>
->>>>   #include <linux/slab.h>
->>>>   #include <linux/timekeeping.h>
->>>>
->>>> @@ -111,8 +112,109 @@ static struct map_benchmark_ops 
->>>> dma_single_map_benchmark_ops = {
->>>>          .do_unmap = dma_single_map_benchmark_do_unmap,
->>>>   };
->>>>
->>>> +struct dma_sg_map_param {
->>>> +       struct sg_table sgt;
->>>> +       struct device *dev;
->>>> +       void **buf;
->>>> +       u32 npages;
->>>> +       u32 dma_dir;
->>>> +};
->>>> +
->>>> +static void *dma_sg_map_benchmark_prepare(struct map_benchmark_data
->>>> +*map) {
->>>> +       struct scatterlist *sg;
->>>> +       int i = 0;
->>>> +
->>>> +       struct dma_sg_map_param *mparam __free(kfree) = 
->>>> kzalloc(sizeof(*mparam), GFP_KERNEL);
->>>> +       if (!mparam)
->>>> +               return NULL;
->>>> +
->>>> +       mparam->npages = map->bparam.granule;
->>>> +       mparam->dma_dir = map->bparam.dma_dir;
->>>> +       mparam->dev = map->dev;
->>>> +       mparam->buf = kmalloc_array(mparam->npages, 
->>>> sizeof(*mparam->buf),
->>>> +                                   GFP_KERNEL);
->>>> +       if (!mparam->buf)
->>>> +               goto err1;
->>>> +
->>>> +       if (sg_alloc_table(&mparam->sgt, mparam->npages, GFP_KERNEL))
->>>> +               goto err2;
->>>> +
->>>> +       for_each_sgtable_sg(&mparam->sgt, sg, i) {
->>>> +               mparam->buf[i] = (void *)__get_free_page(GFP_KERNEL);
->>>> +               if (!mparam->buf[i])
->>>> +                       goto err3;
->>>> +
->>>> +               if (mparam->dma_dir != DMA_FROM_DEVICE)
->>>> +                       memset(mparam->buf[i], 0x66, PAGE_SIZE);
->>>> +
->>>> +               sg_set_buf(sg, mparam->buf[i], PAGE_SIZE);
->>>> +       }
->>>> +
->>>> +       return_ptr(mparam);
->>>> +
->>>> +err3:
->>>> +       while (i-- > 0)
->>>> +               free_page((unsigned long)mparam->buf[i]);
->>>> +
->>>> +       pr_err("dma_map_sg failed get free page on %s\n", 
->>>> dev_name(mparam->dev));
->>>> +       sg_free_table(&mparam->sgt);
->>>> +err2:
->>>> +       pr_err("dma_map_sg failed alloc sg table on %s\n", 
->>>> dev_name(mparam->dev));
->>>> +       kfree(mparam->buf);
->>>> +err1:
->>>> +       pr_err("dma_map_sg failed alloc mparam buf on %s\n", 
->>>> dev_name(mparam->dev));
->>>> +       return NULL;
->>>> +}
->>>> +
->>>> +static void dma_sg_map_benchmark_unprepare(void *arg) {
->>>> +       struct dma_sg_map_param *mparam = arg;
->>>> +       int i;
->>>> +
->>>> +       for (i = 0; i < mparam->npages; i++)
->>>> +               free_page((unsigned long)mparam->buf[i]);
->>>> +
->>>> +       sg_free_table(&mparam->sgt);
->>>> +
->>>> +       kfree(mparam->buf);
->>>> +       kfree(mparam);
->>>> +}
->>>> +
->>>> +static int dma_sg_map_benchmark_do_map(void *arg) {
->>>> +       struct dma_sg_map_param *mparam = arg;
->>>> +
->>>> +       int sg_mapped = dma_map_sg(mparam->dev, mparam->sgt.sgl,
->>>> +                                  mparam->npages, mparam->dma_dir);
->>>> +       if (!sg_mapped) {
->>>> +               pr_err("dma_map_sg failed on %s\n", 
->>>> dev_name(mparam->dev));
->>>> +               return -ENOMEM;
->>>> +       }
->>>> +
->>>> +       return 0;
->>>> +}
->>>> +
->>>> +static int dma_sg_map_benchmark_do_unmap(void *arg) {
->>>> +       struct dma_sg_map_param *mparam = arg;
->>>> +
->>>> +       dma_unmap_sg(mparam->dev, mparam->sgt.sgl, mparam->npages,
->>>> +                    mparam->dma_dir);
->>>> +
->>>> +       return 0;
->>>> +}
->>>> +
->>>> +static struct map_benchmark_ops dma_sg_map_benchmark_ops = {
->>>> +       .prepare = dma_sg_map_benchmark_prepare,
->>>> +       .unprepare = dma_sg_map_benchmark_unprepare,
->>>> +       .do_map = dma_sg_map_benchmark_do_map,
->>>> +       .do_unmap = dma_sg_map_benchmark_do_unmap, };
->>>> +
->>>>   static struct map_benchmark_ops 
->>>> *dma_map_benchmark_ops[DMA_MAP_MODE_MAX] = {
->>>>          [DMA_MAP_SINGLE_MODE] = &dma_single_map_benchmark_ops,
->>>> +       [DMA_MAP_SG_MODE] = &dma_sg_map_benchmark_ops,
->>>>   };
->>>>
->>>>   static int map_benchmark_thread(void *data)
->>>> -- 
->>>> 2.33.0
->>>>
->> Thanks
->> Barry
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20250303    gcc-13.2.0
+arc                   randconfig-002-20250303    gcc-13.2.0
+arm                              allmodconfig    gcc-14.2.0
+arm                               allnoconfig    clang-17
+arm                              allyesconfig    gcc-14.2.0
+arm                          ixp4xx_defconfig    gcc-14.2.0
+arm                   milbeaut_m10v_defconfig    clang-21
+arm                        multi_v7_defconfig    gcc-14.2.0
+arm                   randconfig-001-20250303    clang-15
+arm                   randconfig-002-20250303    gcc-14.2.0
+arm                   randconfig-003-20250303    gcc-14.2.0
+arm                   randconfig-004-20250303    clang-17
+arm                         s5pv210_defconfig    gcc-14.2.0
+arm                          sp7021_defconfig    gcc-14.2.0
+arm64                            allmodconfig    clang-18
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250303    clang-21
+arm64                 randconfig-002-20250303    clang-19
+arm64                 randconfig-003-20250303    gcc-14.2.0
+arm64                 randconfig-004-20250303    clang-19
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250304    gcc-14.2.0
+csky                  randconfig-002-20250304    gcc-14.2.0
+hexagon                          allmodconfig    clang-21
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250304    clang-21
+hexagon               randconfig-002-20250304    clang-21
+i386                             allmodconfig    gcc-12
+i386                              allnoconfig    gcc-12
+i386                             allyesconfig    gcc-12
+i386        buildonly-randconfig-001-20250303    gcc-12
+i386        buildonly-randconfig-002-20250303    clang-19
+i386        buildonly-randconfig-003-20250303    clang-19
+i386        buildonly-randconfig-004-20250303    gcc-12
+i386        buildonly-randconfig-005-20250303    gcc-12
+i386        buildonly-randconfig-006-20250303    clang-19
+i386                                defconfig    clang-19
+loongarch                        allmodconfig    gcc-14.2.0
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250304    gcc-14.2.0
+loongarch             randconfig-002-20250304    gcc-14.2.0
+m68k                             allmodconfig    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+m68k                             allyesconfig    gcc-14.2.0
+m68k                       m5208evb_defconfig    gcc-14.2.0
+m68k                        m5307c3_defconfig    gcc-14.2.0
+m68k                        mvme147_defconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+mips                         db1xxx_defconfig    clang-21
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250304    gcc-14.2.0
+nios2                 randconfig-002-20250304    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+openrisc                         allyesconfig    gcc-14.2.0
+openrisc                            defconfig    gcc-14.2.0
+openrisc                       virt_defconfig    gcc-14.2.0
+parisc                           allmodconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                           allyesconfig    gcc-14.2.0
+parisc                              defconfig    gcc-14.2.0
+parisc                randconfig-001-20250304    gcc-14.2.0
+parisc                randconfig-002-20250304    gcc-14.2.0
+powerpc                          allmodconfig    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc                          allyesconfig    clang-16
+powerpc                   lite5200b_defconfig    clang-21
+powerpc                 mpc837x_rdb_defconfig    gcc-14.2.0
+powerpc               randconfig-001-20250304    gcc-14.2.0
+powerpc               randconfig-002-20250304    gcc-14.2.0
+powerpc               randconfig-003-20250304    clang-21
+powerpc64             randconfig-001-20250304    gcc-14.2.0
+powerpc64             randconfig-002-20250304    gcc-14.2.0
+powerpc64             randconfig-003-20250304    clang-21
+riscv                             allnoconfig    gcc-14.2.0
+riscv                            allyesconfig    clang-21
+riscv                               defconfig    clang-19
+riscv                 randconfig-001-20250303    gcc-14.2.0
+riscv                 randconfig-002-20250303    gcc-14.2.0
+s390                             alldefconfig    gcc-14.2.0
+s390                             allmodconfig    clang-19
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                                defconfig    clang-15
+s390                  randconfig-001-20250303    clang-18
+s390                  randconfig-002-20250303    clang-16
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                                  defconfig    gcc-14.2.0
+sh                    randconfig-001-20250303    gcc-14.2.0
+sh                    randconfig-002-20250303    gcc-14.2.0
+sh                           se7619_defconfig    gcc-14.2.0
+sh                           sh2007_defconfig    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250303    gcc-14.2.0
+sparc                 randconfig-002-20250303    gcc-14.2.0
+sparc64                             defconfig    gcc-14.2.0
+sparc64               randconfig-001-20250303    gcc-14.2.0
+sparc64               randconfig-002-20250303    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                                  defconfig    clang-21
+um                             i386_defconfig    gcc-12
+um                    randconfig-001-20250303    gcc-12
+um                    randconfig-002-20250303    clang-21
+um                           x86_64_defconfig    clang-15
+x86_64                            allnoconfig    clang-19
+x86_64                           allyesconfig    clang-19
+x86_64      buildonly-randconfig-001-20250303    clang-19
+x86_64      buildonly-randconfig-002-20250303    gcc-12
+x86_64      buildonly-randconfig-003-20250303    clang-19
+x86_64      buildonly-randconfig-004-20250303    gcc-12
+x86_64      buildonly-randconfig-005-20250303    gcc-12
+x86_64      buildonly-randconfig-006-20250303    clang-19
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250303    gcc-14.2.0
+xtensa                randconfig-002-20250303    gcc-14.2.0
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
