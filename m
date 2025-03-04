@@ -1,159 +1,111 @@
-Return-Path: <linux-kernel+bounces-543439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7254CA4D58F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:00:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58FCFA4D59B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:01:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 534977AA071
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:59:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86CFE173261
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:01:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3076E1F9A89;
-	Tue,  4 Mar 2025 07:59:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C68251F8BDD;
+	Tue,  4 Mar 2025 08:01:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GR29q8ge"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DPSb3OYt"
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3581F9413;
-	Tue,  4 Mar 2025 07:59:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D6581EDA0B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075188; cv=none; b=E+co3fLwwlH2NNjgpS7YUJ8Oj5DIge4EbhVZu5M4YjQVCC9B+2e6nYGAgmIRoDpIIIgO1RFtBTGRdt9fMHIqHFgkf78hVrxDT2uJvZD2KDWmn1CXmjYSw4S9X0WdSFxsf47FWbgj8rMsoj80+xVrAhi68A96hNn0azUZWfq96Ao=
+	t=1741075286; cv=none; b=bNEPDG8zJj3i9JjcEwwFMawrZXaK8+gEin1TvlVKjkQsyndNJW+51Cf4W1bXJIF21xaW93aZ/Rbswlk7fGEpf+tI3U+XGbC9GGHQKgxtjEjQb7uL0nbI1+CbJQjykJmLULJE3WOgFYGuZ/HA3zd3bcxQewnsPXv4Ymm22aVdJIg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075188; c=relaxed/simple;
-	bh=Cu4z4tJcKQnioK5oBCWV59p1bBfRBmR9sh8lkmQoAZs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DUXD0bUgAHKLqrFuL3bNAQRhDim0BisXWinHgAcAZdg9ok2ZtvfJUXIlT8hgL9W53ZJYDlCKeMBqmjORrkPn9q0ltfQ2THvSkzotuJQzPP8XAupaxqhyUqobnkTWSW5zY8JO/ol/UnKoJiWNC2w+WgrlcWOzCwEyYgJVBjEqM4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GR29q8ge; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-471fabc5bf5so24870121cf.3;
-        Mon, 03 Mar 2025 23:59:46 -0800 (PST)
+	s=arc-20240116; t=1741075286; c=relaxed/simple;
+	bh=yM6piAILnQk9xGq2GxzFHXReJiLNyLpTJqnfUjNN9hk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RCmV3Dn7DoSRAsv3wNOeVczVrSz3xVS94lr8a3WUWC80wI5bfgLIWI9Yv45ok/9zn+EH8zRpxqZEmLmPklgXEZOxHAYO/W7hHQoU8g/pyBqqu4zsKSMBeMX57xJILumZWlVlGuucO4bM6tMAu2tJ1kydlAukJgUX8oGpTWaEKNU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DPSb3OYt; arc=none smtp.client-ip=209.85.128.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6efe4e3d698so47524497b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:01:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741075186; x=1741679986; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1aV334ikN5dUEF1FAOBcx+MylSK4OZXxof9bYGpg/Ok=;
-        b=GR29q8geLWfOns2hVVJFCjQhI+FGIS/xgwPnzFTau9ayJqdwf1QBlmkwYTCjI3h8Xt
-         zNJ8GgcuzsOC6qrQnjirzcSdsRaSbk6eTcPGB2rPQRE1sHIc3EKNPin76iuCQKwN+AUj
-         gzDdoU/khCWlPeRc5qTU3viPU1rr5tkOZFkISSTLq7saV605DemEM3fgxj+gVd8iXAPW
-         OM06NZG++BRUBVyDAFJTinoC39qHA7+bLeK28URXL0o1OosQwwN4O0s96tdRhLSaY9Q6
-         B7GZQbJk1V7m3fQXUPFM43tHR5B/L+3EyJYPIKA8lKdAP/dqhV6V2RgqRY0UcxZ8os8n
-         rl5g==
+        d=linaro.org; s=google; t=1741075283; x=1741680083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yM6piAILnQk9xGq2GxzFHXReJiLNyLpTJqnfUjNN9hk=;
+        b=DPSb3OYtRAl9eJzUnDMymVpwekzT1bupKpE5lmtkv5Tk0bYTR75QwDtv4m0WJ0cQp1
+         kXDLEnVrv8qle3rCgGK2GvD3+TgqX60D8iaYc6dgbMHKLvj3V5S6Zas8sm+0XbXFsHgp
+         elMMgp57dpEPFjFrl7ky4G7jTQDLEANihg6IxRNkqohBl9ZbdYKy2qnPcf0IXpE42uwS
+         4b9n58WjZJtkXp9RHE1QBPAorVei4m/VJp41rJ20EzXruBtPtMeX8suL4v5uJM1mz/3j
+         CkBX7EU8vmnCceQAZm9jn8361NEcb+qm1psezma4hShPmoZt7VfenWXJGr75zgU+meR7
+         q1gA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741075186; x=1741679986;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1aV334ikN5dUEF1FAOBcx+MylSK4OZXxof9bYGpg/Ok=;
-        b=pigatJrUAYkino9Yw00ATm8iFDQabdz+kvDu7WiAeM9fCMNtlMcgKjgipIYW2U8OWN
-         GM8+N4C8FviTQTHLDEVqh+Y5iRiF1Y1Gp9FAEI5wkxB3grvi3m+6PO8xLWDEfKCJLGeD
-         CpvxknG0yWFzAtcy10nAG8zw4zq2KuR6DW+PqPjcA262HiY0Kte8SRNXXVBis+aZPtuB
-         C6E9dcWvAFTWrEg6JIsHPRLA+YT119eg+7A9ftCvxnnHK6eQZ23FRGTI9vFpkMJNp1mK
-         I38800AfsT/BnVzjydGs9EqwXS9BsN8R7dypgMmv6KHMHqBBGdY4VxRIcWWhKo51qlH2
-         OPPw==
-X-Forwarded-Encrypted: i=1; AJvYcCXXirjT1TonsEkxm7Z+wY7+EpTTU6c2mipFZlkzQSBCl5YeunLDw8bggeq9BRab6S133hdMe2BJJFwZgVg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYEh+aAJqi+Av3TcmA4J+Amc3uKjvo9UV/z9hkilBBpSzwjI4d
-	7nFcPYsqY8ayRDHT2Nf9mGTFdqMZQ8If7sDOmMC3pgnu0CFK9Kf5
-X-Gm-Gg: ASbGnctbBBlLK9AC7aaN6/CN58FeZeTSsu56/IM0X5KyY5Ow2fQ1yqPDRLdhghJVqpA
-	6kgUEMyk4RbgQrNwlOq/NH5CmTrsAueMa0rHCREtm7YuqFEtxS3nC2n7pRrAxqk8GRJNHXY3I18
-	WNz54YWp3o4dXE6LmxKQv4S2/7zOvHYROFOwhIlscRogUr4r/EaZ2XUhEVpkpgRoIwxFt4BGo8d
-	VI/qHQfUqeuAV5ESy1taCt8OXBYLnvSn8F/flq3AyHHuJGEdhyA6gzrTFV78ArqAXi8lrOxnve3
-	/+GlSFHkfWAvuYrPhthhuHoDx+NKVeC4+x52PPoDMBMpqg==
-X-Google-Smtp-Source: AGHT+IHIYoa+cieyOOJgxd5EL3wyq699sPw+C+GlH+7h85SoD+RTkabVF3VG6HjUXFBPykg/6gEcuA==
-X-Received: by 2002:a05:622a:20a:b0:471:8d66:cd68 with SMTP id d75a77b69052e-474bc0554ddmr212901451cf.3.1741075185773;
-        Mon, 03 Mar 2025 23:59:45 -0800 (PST)
-Received: from iman-pc.home ([184.148.73.125])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474691a1f02sm70183901cf.11.2025.03.03.23.59.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 23:59:45 -0800 (PST)
-From: Seyediman Seyedarab <imandevel@gmail.com>
-X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
-To: jack@suse.cz,
-	amir73il@gmail.com
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linux.dev,
-	Seyediman Seyedarab <ImanDevel@gmail.com>
-Subject: [PATCH] inotify: disallow watches on unsupported filesystems
-Date: Tue,  4 Mar 2025 03:00:44 -0500
-Message-ID: <20250304080044.7623-1-ImanDevel@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1741075283; x=1741680083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yM6piAILnQk9xGq2GxzFHXReJiLNyLpTJqnfUjNN9hk=;
+        b=DA7Sxx5baqOW5dcZzKNkOcM2Acx4ADuiE9FR/0iFWlh2qvfxjz9/PCWRRoEBbkOiPN
+         vA9fNwbrwIL+M3m3K3jaVSyMCVO5n4i2bkSZ8AEfKnVsl5x6YzjIjBCjuD4Svhnvlx6f
+         igChA6zOzRAjqlYzm7l08V0E4VyxZ+2u31NtxTWbezzgKp1hnZPdG4lYz1wVd1WXZ6GM
+         1JnKo4yp6EDjRFEUaD7XGUAI5Lo9KKb1WfUf1ifVlGFwCpcPOYouK4apolfzRNE3kZ5I
+         Uubs7cMoVccaj+aikNovZTTqPOKTlX1aZuiFxTpQl5q5JxXEY5BSUzhiR5uve7m+dFK4
+         1l4g==
+X-Forwarded-Encrypted: i=1; AJvYcCXGSBTXil2mMxZCHNagv6sjXd35BZiPwmykHSBQ3XI/bHX627pgDK17uu13O8MOdnY8sEz3vsdpTE17o1Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRzY9nOtNYiLf8uSpAexaPBuOWa2GyxGQbBQWVvTeyKEIxd3/B
+	pjjBv4fQmVXvGsnK9V9BgfdJ92M3+wYGIf4aLJXp3H5pAWUVengvfF9mTRGUOtwceMy+a640aJk
+	NokIhw4r+AiD6HCTiMj/trNpOTqWx7JkjB8EADA==
+X-Gm-Gg: ASbGncv/p5KiRYR5hQB4FCvlrP3uqBM+j0hRRTA+Iu+jyiPIEdStdO5Ai7jYzu7QI0M
+	ZnJu9wizZcwHCaplDTXdn3tzHkvPV6Rtgkio3XTxZsqplSiWnPN/i3ONH5prckJBDqd8e1+2QvL
+	wr65OqOU0TxudWNR4SgyrM4Sfbdw==
+X-Google-Smtp-Source: AGHT+IGAv1QI6NxLx4aSutmM2eABQddCgvk11+0H2Td2ZN4KP/uMxodKgMJh5YrQ4faawCMRD4vowNlT+PD+ek3jkU4=
+X-Received: by 2002:a05:690c:b8e:b0:6f9:41e3:ea4b with SMTP id
+ 00721157ae682-6fd4a059726mr195363417b3.9.1741075283608; Tue, 04 Mar 2025
+ 00:01:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250228-max77759-mfd-v3-0-0c3627d42526@linaro.org> <20250228-max77759-mfd-v3-5-0c3627d42526@linaro.org>
+In-Reply-To: <20250228-max77759-mfd-v3-5-0c3627d42526@linaro.org>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Tue, 4 Mar 2025 09:01:06 +0100
+X-Gm-Features: AQ5f1Jr4hfcQtwg_ZcA-Ydn_kIMJZb-DCuZHup-eBLnhS1CYHvK_yjDzqNv-Zg8
+Message-ID: <CACRpkdYYpT1ut0EeP03p-UK4NZfYGb_ykc2CE4yo7jx+sF+Xig@mail.gmail.com>
+Subject: Re: [PATCH v3 5/6] gpio: max77759: add Maxim MAX77759 gpio driver
+To: =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+	Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>, 
+	Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, 
+	Will McVicker <willmcvicker@google.com>, kernel-team@android.com, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-gpio@vger.kernel.org, linux-hardening@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-currently, inotify_add_watch() allows adding watches on filesystems
-where inotify does not work correctly, without returning an explicit
-error. This behavior is misleading and can cause confusion for users
-expecting inotify to work on a certain filesystem.
+On Fri, Feb 28, 2025 at 3:25=E2=80=AFPM Andr=C3=A9 Draszik <andre.draszik@l=
+inaro.org> wrote:
 
-This patch explicitly rejects inotify usage on filesystems where it
-is known to be unreliable, such as sysfs, procfs, overlayfs, 9p, fuse,
-and others.
+> The Maxim MAX77759 is a companion PMIC for USB Type-C applications and
+> includes Battery Charger, Fuel Gauge, temperature sensors, USB Type-C
+> Port Controller (TCPC), NVMEM, and a GPIO expander.
+>
+> This driver supports the GPIO functions using the platform device
+> registered by the core MFD driver.
+>
+> Signed-off-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
 
-By returning -EOPNOTSUPP, the limitation is made explicit, preventing
-users from making incorrect assumptions about inotify behavior.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
----
- fs/notify/inotify/inotify_user.c | 22 ++++++++++++++++++++++
- 1 file changed, 22 insertions(+)
-
-diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
-index b372fb2c56bd..9b96438f4d46 100644
---- a/fs/notify/inotify/inotify_user.c
-+++ b/fs/notify/inotify/inotify_user.c
-@@ -87,6 +87,13 @@ static const struct ctl_table inotify_table[] = {
- 	},
- };
- 
-+static const unsigned long unwatchable_fs[] = {
-+	PROC_SUPER_MAGIC,      SYSFS_MAGIC,	  TRACEFS_MAGIC,
-+	DEBUGFS_MAGIC,	      CGROUP_SUPER_MAGIC, SECURITYFS_MAGIC,
-+	RAMFS_MAGIC,	      DEVPTS_SUPER_MAGIC, BPF_FS_MAGIC,
-+	OVERLAYFS_SUPER_MAGIC, FUSE_SUPER_MAGIC,   NFS_SUPER_MAGIC
-+};
-+
- static void __init inotify_sysctls_init(void)
- {
- 	register_sysctl("fs/inotify", inotify_table);
-@@ -690,6 +697,14 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
- }
- 
- 
-+static inline bool is_unwatchable_fs(struct inode *inode)
-+{
-+	for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
-+		if (inode->i_sb->s_magic == unwatchable_fs[i])
-+			return true;
-+	return false;
-+}
-+
- /* inotify syscalls */
- static int do_inotify_init(int flags)
- {
-@@ -777,6 +792,13 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
- 	inode = path.dentry->d_inode;
- 	group = fd_file(f)->private_data;
- 
-+	/* ensure that inotify is only used on supported filesystems */
-+	if (is_unwatchable_fs(inode)) {
-+		pr_debug("%s: inotify is not supported on filesystem with s_magic=0x%lx\n",
-+				__func__, inode->i_sb->s_magic);
-+		return -EOPNOTSUPP;
-+	}
-+
- 	/* create/update an inode mark */
- 	ret = inotify_update_watch(group, inode, mask);
- 	path_put(&path);
--- 
-2.48.1
-
+Yours,
+Linus Walleij
 
