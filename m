@@ -1,125 +1,168 @@
-Return-Path: <linux-kernel+bounces-543741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57EEBA4D93B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:51:31 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB71CA4D939
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:51:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 59408172314
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:49:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B874F7A3124
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9A41FCF57;
-	Tue,  4 Mar 2025 09:49:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49651FCFDB;
+	Tue,  4 Mar 2025 09:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MqkVENF6"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 047C21FC0F9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:49:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28D742077;
+	Tue,  4 Mar 2025 09:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081778; cv=none; b=Wk+kS/NbOpco9BTrjOAaYkbfl6gWKCTmTO/F180O0SUjyroSk/eMbsraYC18bqPpr6Ydm94KErKS9KJw9hT2ZJh4mA4og5FhJM6furHyLOlHrq3QarhvGmSjhoZtXJERGhTLwNtk7ETPQo07xYk50miuoseCoua+e1k5vm23rzQ=
+	t=1741081857; cv=none; b=WnRTaKdEORq4+Z3j7FDN1QkWwwnwXAdhWuNeNHPNtn00w15mH6gTpXGag1jNbiAs7S3eD8hOHvKzDZHQdDz+wmMACoKWWAnbGkSD6yIPf8E89tgPnR9mKdhNpyHH3zRgYaXYyr5iLi7mNosNPwEPqWL+GCGf02WJUdxQWBKPqL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081778; c=relaxed/simple;
-	bh=gfx1xrKRf1ejbzHzB5qS0vdi+BPXu+3ettzO76yT+Uc=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LPszoqVctElg7NJ7Yngyfrnj2Y8p92gEv7TDvrGp0Jp+LDohlxkeApmfc0CO9MzUIJQUpwxBCYxgrwom42cg+fnj8R/Z0aMe1TPAQNtzl3kPYeyGiGUA2riQAdW/Y75BZSS78f6VuHPXHG3CBrhZR9oJNdct+ZmtTSdN6R/lKlc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z6W7F0Vl1z6D90N;
-	Tue,  4 Mar 2025 17:47:21 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 01C8F140A08;
-	Tue,  4 Mar 2025 17:49:33 +0800 (CST)
-Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 4 Mar
- 2025 10:49:24 +0100
-Date: Tue, 4 Mar 2025 17:49:19 +0800
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Will Deacon <will@kernel.org>
-CC: Yicong Yang <yangyicong@huawei.com>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
-	<yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
-Subject: Re: [PATCH 4/9] drivers/perf: hisi: Use ACPI driver_data to
- retrieve SLLC PMU information
-Message-ID: <20250304174919.00001e24@huawei.com>
-In-Reply-To: <20250301064347.GB27700@willie-the-truck>
-References: <20250218092000.41641-1-yangyicong@huawei.com>
-	<20250218092000.41641-5-yangyicong@huawei.com>
-	<20250301064347.GB27700@willie-the-truck>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741081857; c=relaxed/simple;
+	bh=OyViGJ/xSkOScuLl8Kts553uXVJWw4tJ0x/3OkXB+JM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ljUySu8Bz8uycEUdXS7HRQrQgYePSqzXZL910u8ln3lyowj8JX/zUf0AX4CVfRoma7BL0QRcG0ayi3hsxosWaDb/3AtHZ/Y5Sp3l0ZhVJDJwoxBp4YFCyueibHd+zdhxrGN4Th8Nwpp/kaPsQKjOGuhizWX+P36P6vUA8nEsrt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MqkVENF6; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741081847; x=1741686647; i=markus.elfring@web.de;
+	bh=asA99JHuFG45J+PLamKyBXsE7OPnQTEQXbgBwGkvXUY=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
+	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=MqkVENF66K7NM+Rdc1ebVHybRmg/N+adIGafKK9Il2hSAgU2TrzNtZgLEUq+d56c
+	 BsdFiDc5Krs3ST5UQtrXMiwTgBMLtxShCEDrcUmVt6nGxd8CNbb+jm8Nk8UBUpb8Y
+	 hoJcGToaD0OvNB/d9uXRChUlJoBCIJnqmpO2z12/E7a0MlKgx/TKVovj5hrV2Idrr
+	 2h16/SJh8AhNNkmnrenQ2Nythb2jugKPUx+7zEV4TaITCthyCR05xbGKmJyJJGGjL
+	 MOAZv2Iwl23em4EP4hIlAM2E4qMXSlPIjIszifMuYP6i/A37+8SZFVVHqTyI6B+Vy
+	 DZdJHlDtUnz3USb+lQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbCHy-1tIFxu3iWm-00iB9R; Tue, 04
+ Mar 2025 10:50:46 +0100
+Message-ID: <c69c79e4-04a3-4182-a694-809a5fa36083@web.de>
+Date: Tue, 4 Mar 2025 10:50:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH RESEND] perf cputopo: Improve exception handling in
+ build_cpu_topology()
+From: Markus Elfring <Markus.Elfring@web.de>
+To: kernel-janitors@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
+ Ingo Molnar <mingo@redhat.com>, James Clark <james.clark@arm.com>,
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
+ Leo Yan <leo.yan@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
+ Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ Suzuki Poulouse <suzuki.poulose@arm.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <b1c70348-6459-474e-6a0f-d956423368d5@web.de>
+Content-Language: en-GB
+In-Reply-To: <b1c70348-6459-474e-6a0f-d956423368d5@web.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:zwnxKwlzGB6lzUwzmSXhy5SzzNCA5khP3HuvwjAnzkkTSsl+oIG
+ DWOKj06jnDp9rAYXsw/PmjRcrC8kxCSzERqmbAssiny6VokvGklOFI3UVmcoUz1bKebDrR6
+ jiet48jwrUEis7A8RSdOhtkr8AotZkLyqlfLHfYdYo4FAltrtYdFPdS4GdaLrrLa9Qk+X63
+ 9qVgzazeoL3JAQOY5jeEw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:v/LKQqKo3yk=;2xU/kzBRtU5lDFHf7glYk9cze/y
+ gg1qF5dIYCm3Nzi0/mGVb3B1sBlZth/yoVVtNWj+M19J/2pqcxNM3esgC+j6y64p/0Q6BE7mt
+ 2M9Xd/4Tv3rMT5m+r1GfAHh1GP8vsTOIJ9iLRMs1qOhI5edxfAt/hxCyBh9WpkSTbOZv90AB/
+ 571Q5b9Rcm28BVFAYk7ai6Wg/sTnwACL1Q3mt3/+CToiA0OfI25W4ZKS7PeUumYrJz5KqdUNk
+ /9HtLExm8xEz0FwwTmREjksqHGZBetuczVsnHFuDikKLJMYgdmuMm7/aHEd8fY+kQGgsC9Jf+
+ 0wBabKaYHDnWvBM8cshHa9vJdaFrMg6BLRo/mquLVX35ryWJ8+lccSZ5KwTP0CXytIEIbnE0S
+ MylDHM13/8p6gD76hbpaD8bbjEuZrgTHj2Dmbr7biy45PS0D3q1uHpfBSY9o+F7DtNCMYvDvu
+ lJIgSn4/J9rTRQbRXeeB+TWtMUryzTLC1rK+Z7A/svKwupl3qPdgKyrBz4cXuz0dYNpOuhr5x
+ 5YXxuOt/Gfe9ljpUA6OgtLg6gynzkxkIqdLpJeSRhzvSFqEZ/DmMi9MUuVFl7Idtr0zxLvKOy
+ bZ3jRPXiPcLdqcX5GBfx9YsuFaD9kqzN3zDHB1UjxifAlDo8qVHtbvhZH6FWmBYuJtK4mbxA4
+ R1Cja56gQt07lOGpQXcDGbQMukfnjiLbqYS6+t8bEcOTCajtyvNaNmPmD8KNWpAknbqY83AN6
+ 6IaRVfdOQV3I0I9/U1iF7mLe7N9N3vLFMv+0H7G/q6Vf/MoPU+PUB2xZ57IcA08TxqO8VIaL3
+ HvL3wmzzqg9p4ZNngJu9UdLRqyZXfjb5ESP1R+M6qx/YjcMBdStz615TRQGElDIlDesJO8jKx
+ Uh8QLaUBOlPdaSGfG1kwwdy1BdHIznBRD2kFF+Yw9o+dsGKwRshSIBzpYfFXUG4NIXbXlDXHo
+ oiksC7f2prXB0VxgoABgjan5P3HhURYUcbsjElfzyGsYPSpw0YlZOr/szVGpLSq1OHMOsWtyO
+ yOipxcqzI8ZwzBbM8RQDDG1FFG5PbNKC9lEjzW6MBSX/gww7NgroM7ss+7PVsLyqvO2KdaoHc
+ xnKH/WPMGHCrQTCZg4K5r2Ta4h4Ey9jvnOsHfbJX1RbU200YsUvp34y7skAxZrbkSKu+77QjC
+ yjqSUwtrjSV0AQu6iP9p9HoGWha4V++3AjN4fKg0rUYpEhtcs3wfAwU/2+wkmJukDxk1/Pxlp
+ dQHeBF7phoe/a7HjoxLAo/1Be4ootv7uJ1p3aXxdt/CU5O5pXv1WwKwfUwrjEq0VH3XfitT1p
+ Nd5yZAL9nJgMWhsxSbrJHSDOkPA3nPpx6P/kSNtfmxcpt2wLtHieh4oM+whMC16of06gHrJfX
+ DIEPVcymD64LXUOe/1xIuQ2EK4+MbJYa357qjo93/YHcGP2koXiyp5/lC1h3J30JEMGHpfx05
+ NzvA8yrnqjq8xv9FX1Hh9Kj/scg8=
 
-On Sat, 1 Mar 2025 06:43:49 +0000
-Will Deacon <will@kernel.org> wrote:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Thu, 23 Mar 2023 22:00:07 +0100
 
-> On Tue, Feb 18, 2025 at 05:19:55PM +0800, Yicong Yang wrote:
-> > From: Junhao He <hejunhao3@huawei.com>
-> > 
-> > Make use of struct acpi_device_id::driver_data for version specific
-> > information rather than judge the version register. This will help
-> > to simplify the probe process and also a bit easier for extension.
-> > 
-> > Factor out SLLC register definition to struct hisi_sllc_pmu_regs.
-> > No functional changes intended.
-> > 
-> > Signed-off-by: Junhao He <hejunhao3@huawei.com>
-> > Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> > ---
-> >  drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c | 191 ++++++++++++------
-> >  1 file changed, 125 insertions(+), 66 deletions(-)
-> > 
-> > diff --git a/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c b/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c
-> > index dbd079016fc4..c1fd60d397c3 100644
-> > --- a/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c
-> > +++ b/drivers/perf/hisilicon/hisi_uncore_sllc_pmu.c
-> > @@ -36,11 +36,14 @@
-> >  #define SLLC_SRCID_NONE			0x0
-> >  #define SLLC_TGTID_EN			BIT(5)
-> >  #define SLLC_TGTID_NONE			0x0
-> > -#define SLLC_TGTID_MIN_SHIFT		1
-> > -#define SLLC_TGTID_MAX_SHIFT		12
-> > -#define SLLC_SRCID_CMD_SHIFT		1
-> > -#define SLLC_SRCID_MSK_SHIFT		12
-> > +#define SLLC_TGTID_MIN_MSK		GENMASK(11, 1)
-> > +#define SLLC_TGTID_MAX_MSK		GENMASK(22, 12)
-> > +#define SLLC_SRCID_CMD_MSK		GENMASK(11, 1)
-> > +#define SLLC_SRCID_MSK_MSK		GENMASK(22, 12)
-> >  #define SLLC_NR_EVENTS			0x80
-> > +#define SLLC_EVENT_CNTn(cnt0, n)	((cnt0) + (n) * 8)
-> > +#define SLLC_FIRST_BIT(_mask)		(find_first_bit((const unsigned long *)&(_mask), 32))
-> > +#define SLLC_FIELD_PREP(_mask, _val)	(_mask & (_val << SLLC_FIRST_BIT(_mask)))  
-> 
-> It's a bit of a shame to have to compute this dynamically given that th
-> input mask is constant for a given device. Is it not possible to use the
-> generic FIELD_PREP macro in per-device code and then just dispatch to
-> that, instead of funneling everything through hisi_sllc_pmu_regs?
-There is yet another ongoing discussion of handling non const
-field cases:
-https://lore.kernel.org/all/cover.1739540679.git.geert+renesas@glider.be/
+The label =E2=80=9Cdone=E2=80=9D was used to jump to another pointer check=
+ despite of
+the detail in the implementation of the function =E2=80=9Cbuild_cpu_topolo=
+gy=E2=80=9D
+that it was determined already that a corresponding variable contained
+a null pointer because of a failed call of the function =E2=80=9Cfopen=E2=
+=80=9D.
 
-Maybe that will resolve with a nicer solution but I doubt it.
+1. Thus use more appropriate labels instead.
 
-Alternatively best plan may be a shift (and length) instead
-of the neat solution of FIELD_PREP().
+2. Reorder jump targets at the end.
 
-Jonathan
+3. Delete a redundant check.
 
-> 
-> Will
+
+This issue was detected by using the Coccinelle software.
+
+Fixes: 5135d5efcbb4 ("perf tools: Add cpu_topology object")
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ tools/perf/util/cputopo.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/tools/perf/util/cputopo.c b/tools/perf/util/cputopo.c
+index e08797c3cdbc..fd185951ee2c 100644
+=2D-- a/tools/perf/util/cputopo.c
++++ b/tools/perf/util/cputopo.c
+@@ -112,10 +112,10 @@ static int build_cpu_topology(struct cpu_topology *t=
+p, int cpu)
+ 	}
+ 	fp =3D fopen(filename, "r");
+ 	if (!fp)
+-		goto done;
++		goto exit;
+
+ 	if (getline(&buf, &len, fp) <=3D 0)
+-		goto done;
++		goto close_file;
+
+ 	p =3D strchr(buf, '\n');
+ 	if (p)
+@@ -131,10 +131,10 @@ static int build_cpu_topology(struct cpu_topology *t=
+p, int cpu)
+ 		buf =3D NULL;
+ 	}
+ 	ret =3D 0;
+-done:
+-	if (fp)
+-		fclose(fp);
+ 	free(buf);
++close_file:
++	fclose(fp);
++exit:
+ 	return ret;
+ }
+
+=2D-
+2.40.0
 
 
