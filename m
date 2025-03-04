@@ -1,154 +1,109 @@
-Return-Path: <linux-kernel+bounces-543608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826BAA4D778
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:09:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A6AA4D77E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:09:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7412D188AC77
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:05:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B57DE188C6F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E0E3202C4F;
-	Tue,  4 Mar 2025 08:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A5371FCCEB;
+	Tue,  4 Mar 2025 09:00:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="AL2XNqTy"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b="HoZUHGFH"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52011FDE2D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:59:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1605D1EA7CE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:00:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078744; cv=none; b=tbVnxz0HDUIcEoqe4xbV/qiJZ8ZbUV82FKicLRE+HilpiTog7DusjapI5cmUq+edFVKMUt7myBOBRlf4JWpU2v9g/+VEp4IlksBlFHIo7hy3zyw8asjEUyJ4lacHi7GiEdLD7EWfv/8i0WPRyA5AOC9BAh4fMTOycgVFakW3w/A=
+	t=1741078845; cv=none; b=RtAKQcHcUl946wSRNarDmu4Id+REa8tFIQEvt8SzknSmQ2Y93sv62dk/0bjv5jvMypyWrUQBoyWeWpZy4bd8uJYIXuabgk4Dp+CUj0esH5Jvh+w5K9KoPmx7ycDk1rXwT6UNkr5EeTBx/Fp0EIS73hLp1n8eOCqWzivq9cmlvdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078744; c=relaxed/simple;
-	bh=HSILkVA5vBIiizFYSmaF6BrUL10+HFIpOlfWfW+K+44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cT2Bjzr27uy6E3tXKRxrEY2QQM9wcFTHrI7OUt7ik1dIHJFDF4MhqLeQ3LQVKmevpOW7w9EE4FWoNjl/ieTFe1KfyflNeoor83Kx/GU5Da4TXj4TRw+tO/Zw2egMrnhYdQwbF2FWppC13GhE0GwBKA5mAL7/3XCYCAm890KPeao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=AL2XNqTy; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-390edaee0cfso2889798f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:59:02 -0800 (PST)
+	s=arc-20240116; t=1741078845; c=relaxed/simple;
+	bh=C5ZHUydAfD7qIPC2fugkdbL/7ZQbv9+E48hf7fmVHuI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZBNBW+OqiD8xEWYxc+mNbGz1Y6ZAfYhuHHFGOYW272FBHrxCKY1lOkLZCBWKd+dfwHAG9CBvWLVnA1ax4k0qUu6uhj+ZKxFqN0PPYG/Liyr1hhy8wQ/61n60+/05b5OcKHm7FECTcbZz9tS6emt24D2sHMWgsFQLN566Y64ONAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com; spf=pass smtp.mailfrom=ventanamicro.com; dkim=pass (2048-bit key) header.d=ventanamicro.com header.i=@ventanamicro.com header.b=HoZUHGFH; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ventanamicro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ventanamicro.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43948f77f1aso34642335e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:00:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1741078741; x=1741683541; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fqP3ahwggB+Ec4UF+o8yzis0/YWb9Mn4LNCx06esETg=;
-        b=AL2XNqTyEqpvqxJdMsPnVcHHbnptPqPa9Ld/TXA+le0iKCLZTThVFE5yuMkmeDcczl
-         8XTMBCUyTZntsyDvCWirv4W8jue2pixtWs8150XqBO9yi4LSrYhlr9j922DInlFc0Nvl
-         ovQkwG+pZNMCrXZ1dB/g9MqunpzFIheLJUKnWRGIKEiLTgHiBZMJB5qMiT9HTqs4PM2k
-         qLvIwDDu/TfvtGGIu2+6ic4glNE4wCrVedYkiYMVdD99cmyjCejc+gFdWraHY2x+1onw
-         XUsfQ7Dd5OGyljUR+oI/X7XeG4vwxrfz+MOsLhMwp2ZViW1UWH68nLiMx2O88aSpx6Zw
-         wP+w==
+        d=ventanamicro.com; s=google; t=1741078842; x=1741683642; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5UP7DmGMGEllBfFdaot9026+FUs+6/ByI4Mfm7p9ZUY=;
+        b=HoZUHGFH3Y3FTWhwkHDQQUy4JseQKHJd+NaXAIQ5OId1VHbF6srGTfUWL4YPG9UU6t
+         9OuRn+3XADWpRHOI/g7l9J+52arW586qdZvgBhfCMBlaE0P4Y32HnL9A55y/kA/LygU2
+         QLAFLzP+hw15qhUlx+v7gJXMXdycytGcpQy3cMiEwrSVjnlKCur0jKKGoJ/Bmh5RvL72
+         wCukzIqEB8iZTsvvm/H0yy1enT8OrcBWc9UGcVK7h+05c3b5r2TmsUSH5H9t6K4yJrHf
+         V+rHcKmRSsU7DWv/JJMNRxnl5SRe8seaabn8A3pcz4DXhK6XPoG68ge2jV0iqLSG7fXI
+         YyTA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741078741; x=1741683541;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fqP3ahwggB+Ec4UF+o8yzis0/YWb9Mn4LNCx06esETg=;
-        b=D6Tn0s67/XOPNbZY4pk5Q/26eZ6XUF2Vp+B7nslEN7+mrAvULMRCYgP+ON1rmfXKBz
-         UdMqlae13tP9a50Y87c9QB5y5M+5uctQHaIwGUjedwaHY7PSxxz5mUC1SGDl9jVY7WJh
-         5Abmc2h6ntb9MUYNvn8y5qwVfvaOQ/q75cVWHHMswbRkNeFY2kDf3AYsAHwwFM9AjjSq
-         QjLSQSpyyAxrtdfZz9sXkFy0NXCpI/ULKfZyU/r3ZbSpvf/EnJLgB/uRQA+UgHtznqrL
-         blT64cWhtbRLeYlTB+eK6JuWa57PY1YNvUqyYsv4nkNY8KOiKWg61Ew9gqME948I2O+u
-         9mvA==
-X-Forwarded-Encrypted: i=1; AJvYcCV2bNbq6541h5jc5VnVCMlkDNbntpTUW5wWov/P0HqH5xjsrgQnBzBi999iFVpt4mQkh8km9VCzs+YhfPM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqhittJ6ztir/6gq7wmFh22q4LDdqE7u/XNH9lMatuxolDTnGP
-	2DcnZMV99h5ZE3NTbpHSe0f4HCBKZ4zzzPxalXvAxbUi5wq/ynUwf270L5VI/io=
-X-Gm-Gg: ASbGnctGcFL8nGsCcf8l7gE0F7d56n7P7W2FSsWSaK2HELzwGon4qfeAxqkLVKN0TB0
-	+uHcEEhpmrJHfsOt6De1eRH5zegrCm4pB4U2FR4OuCbIrpBFZnRMrYO/KO3ai5M/B05l3ja7Off
-	pREnCiUGaNcfR7vi4RDjE9HvbzssLI8h4166Q0T3yhfV2giD6LOkLrVxJF2Y0PKyDOeyBh2hpCP
-	oijIjsY5vMhdyXRrnSHFuS7I/4tg4KNBLUi6ln28TfLSMfXYrBh+LDY7jIz+Es3xaOfwA6G+uzv
-	gyfAXgBVyYAmjr7XECZSxqR0L2Tpr6JeNqedzQYRceLR6AFnsg761Q==
-X-Google-Smtp-Source: AGHT+IEEccYK+D24g35rR7y+28h/qCLlvYXo70nHWkcjc7tufX7M7+n3T60EL+5hB1uyjzyEXD8y5g==
-X-Received: by 2002:a5d:6d0e:0:b0:390:ff25:79c8 with SMTP id ffacd0b85a97d-390ff257cccmr7156094f8f.20.1741078740828;
-        Tue, 04 Mar 2025 00:59:00 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479608fsm17236647f8f.14.2025.03.04.00.58.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 00:59:00 -0800 (PST)
-Message-ID: <1100c663-362a-433c-9c70-8435807b29ac@tuxon.dev>
-Date: Tue, 4 Mar 2025 10:58:59 +0200
+        d=1e100.net; s=20230601; t=1741078842; x=1741683642;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5UP7DmGMGEllBfFdaot9026+FUs+6/ByI4Mfm7p9ZUY=;
+        b=T+i708+VGeXYdZazrcN6hy4UxXd4s0UH9C5FpqRyaPFSbda8X6x0POhKuPUebTQGOU
+         b292BfIHOHB2q4/GWCP6LsZFM6/sxslFM3VPytcp5eANh78oNIe5QGYozGnNUANnmI06
+         yQDKFFXwekcUzECRnPO64gj85NYaZjpp9/irEBMPzJDmmi0HXBtOMlNdGAlhuy7y1II+
+         qOKZ1u/atXjFo4Pr4qZ2PN7V3fPEIiSLCrZ8OHKCQy8MwTv2xkFxo7UKqMo8JA7YUxF5
+         RfMfxXHaB+QibSfdi5Ux827TC6JQ6Txz2ezk+m7s8hYRiDnv51yjf63WsfoRC+lQJoOr
+         u+tg==
+X-Forwarded-Encrypted: i=1; AJvYcCUSROT+cH6n1U4v23yuAPqP3Ept//9+bmfUdI7SJH3zyBnFZn7pgTuJERP5uPMJWztHJ1YRTfGGypojmgA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKBEal1mB3w2bp+m231qY/iXVZGLEKiy50DF/2X3ra2KZcu6o7
+	Rp0m+E9zBKsDgPEMmlFnmxepT5w5lCijqiYD2pd7P4ULQOkbwbKgo7ar+FcQBXA=
+X-Gm-Gg: ASbGnctKXiwZwvNEYaZfoiljzISKykDcB++9S0/TZPErgqI88CfBtRyD3JL+zC4JJaE
+	AUzyyFIRvwFcseLTqy2oQ7ffgCbb850nv8lGm+4sVmTIl/Qep36f4OBZpgDCqSJM9bdhh7HEIkX
+	h6fgYdLnRofktMfAWhOqpcVi5oEKkw8nHuOEkyLHjHXN6F6e8uv8ojyy7y7UGZBlwFuVFlqA5UA
+	3mIiGRKB3SIqE2qLANbDWP8FJ1m/ZNnA+EX03w7QbudXgrgFr6kHy53A7T/bVtBSN5PRoM+YMyU
+	xom/MCMEvmKjmPxkJO47bP89x3WPHymI
+X-Google-Smtp-Source: AGHT+IE98Wtw/qck2RNdbUy35iBZdcuCmo9BHlXLPhcqJEgVkq5LxR8GTapjzExbGuStv6PALsyUfQ==
+X-Received: by 2002:a05:600c:3b23:b0:439:98b0:f8ce with SMTP id 5b1f17b1804b1-43ba66e60f5mr143195855e9.7.1741078842210;
+        Tue, 04 Mar 2025 01:00:42 -0800 (PST)
+Received: from localhost ([2a02:8308:a00c:e200::688c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bbf2edf84sm75715855e9.40.2025.03.04.01.00.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 01:00:41 -0800 (PST)
+Date: Tue, 4 Mar 2025 10:00:41 +0100
+From: Andrew Jones <ajones@ventanamicro.com>
+To: Atish Patra <atishp@rivosinc.com>
+Cc: Anup Patel <anup@brainfault.org>, Atish Patra <atishp@atishpatra.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Shuah Khan <shuah@kernel.org>, kvm@vger.kernel.org, 
+	kvm-riscv@lists.infradead.org, linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v2 4/4] KVM: riscv: selftests: Allow number of interrupts
+ to be configurable
+Message-ID: <20250304-bb96798e9a1fd292430df3e8@orel>
+References: <20250303-kvm_pmu_improve-v2-0-41d177e45929@rivosinc.com>
+ <20250303-kvm_pmu_improve-v2-4-41d177e45929@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] iio: adc: rzg2l_adc: Open a devres group
-To: prabhakar.mahadev-lad.rj@bp.renesas.com, jic23@kernel.org, lars@metafoo.de
-Cc: linux-iio@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-References: <20250224120608.1769039-1-claudiu.beznea.uj@bp.renesas.com>
- <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250224120608.1769039-2-claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303-kvm_pmu_improve-v2-4-41d177e45929@rivosinc.com>
 
-Hi, Jonathan,
+On Mon, Mar 03, 2025 at 02:53:09PM -0800, Atish Patra wrote:
+> It is helpful to vary the number of the LCOFI interrupts generated
+> by the overflow test. Allow additional argument for overflow test
+> to accommodate that. It can be easily cross-validated with
+> /proc/interrupts output in the host.
+> 
+> Signed-off-by: Atish Patra <atishp@rivosinc.com>
+> ---
+>  tools/testing/selftests/kvm/riscv/sbi_pmu_test.c | 38 +++++++++++++++++++-----
+>  1 file changed, 31 insertions(+), 7 deletions(-)
+>
 
-On 24.02.2025 14:06, Claudiu wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> 
-> On all systems where the rzg2l_adc driver is used, the ADC clocks are part
-> of a PM domain. The code that implements the PM domains support is in
-> drivers/clk/renesas/rzg2l-cpg.c, the functions of interest for this commit
-> being rzg2l_cpg_attach_dev() and rzg2l_cpg_deattach_dev(). The PM
-> domains support is registered with GENPD_FLAG_PM_CLK which, according to
-> the documentation, instructs genpd to use the PM clk framework while
-> powering on/off attached devices.
-> 
-> During probe, the ADC device is attached to the PM domain
-> controlling the ADC clocks. Similarly, during removal, the ADC device is
-> detached from the PM domain.
-> 
-> The detachment call stack is as follows:
-> 
-> device_driver_detach() ->
->   device_release_driver_internal() ->
->     __device_release_driver() ->
->       device_remove() ->
->         platform_remove() ->
->           dev_pm_domain_detach()
-> 
-> During driver unbind, after the ADC device is detached from its PM domain,
-> the device_unbind_cleanup() function is called, which subsequently invokes
-> devres_release_all(). This function handles devres resource cleanup.
-> 
-> If runtime PM is enabled via devm_pm_runtime_enable(), the cleanup process
-> triggers the action or reset function for disabling runtime PM. This
-> function is pm_runtime_disable_action(), which leads to the following call
-> stack of interest when called:
-> 
-> pm_runtime_disable_action() ->
->   pm_runtime_dont_use_autosuspend() ->
->     __pm_runtime_use_autosuspend() ->
->       update_autosuspend() ->
->         rpm_idle()
-> 
-> The rpm_idle() function attempts to runtime resume the ADC device. However,
-> at the point it is called, the ADC device is no longer part of the PM
-> domain (which manages the ADC clocks). Since the rzg2l_adc runtime PM
-> APIs directly modifies hardware registers, the
-> rzg2l_adc_pm_runtime_resume() function is invoked without the ADC clocks
-> being enabled. This is because the PM domain no longer resumes along with
-> the ADC device. As a result, this leads to system aborts.
-> 
-> Open a devres group in the driver probe and release it in the driver
-> remove. This ensures the runtime PM is disabled (though the devres group)
-> after the rzg2l_adc_remove() finishes its execution avoiding the described
-> scenario.
-
-Can you please let me know if you consider this approach acceptable?
-
-Thank you,
-Claudiu
+Reviewed-by: Andrew Jones <ajones@ventanamicro.com>
 
