@@ -1,80 +1,77 @@
-Return-Path: <linux-kernel+bounces-543838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA36A4DA89
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:31:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 888CFA4DA8D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:32:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E7913B1E3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:29:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD4961770C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:30:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28C002045A6;
-	Tue,  4 Mar 2025 10:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA6C32046BC;
+	Tue,  4 Mar 2025 10:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oldnpnP+";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l1yOjHBe"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ELApevrY";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w0vYS5Fb"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EA00202F96;
-	Tue,  4 Mar 2025 10:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77B2C202974;
+	Tue,  4 Mar 2025 10:26:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741083989; cv=none; b=ee10WGvRcn/KZuM7b8Mo1nQJf/TMWbH2gMlF6i6DqUy98qRk4b3IsNnd5zJbr0YnJB3rPrqg3MCFgRZ93XWX6K2bngnf7sD1q5Ji8wWeYcCPRksu/JMd7tRaFb1xL+AMe6+t06IDXFVu2LdQTnpcgMtM+N8F6ygJESbTBCtPZN0=
+	t=1741083993; cv=none; b=P/QBz7eqayn70bAFLr30vcjMMJjkxusV1if/aRFYnA6qLQUhP5ytapYG9rIMLWJAihl9uCQjFUirnxCHX2a+bPBHwC0k7TU/sFp1WP8B4gp0oa2436x51MPg94fy7MrgaCzHlUk2HDdt8/xIT43/thNO2xbe6LWovCSeGlpJTmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741083989; c=relaxed/simple;
-	bh=Ie7WO4f/CXgFKqoDY6nKzFss+o4mjNMkssHx4VLtSvE=;
+	s=arc-20240116; t=1741083993; c=relaxed/simple;
+	bh=NP9PLM9c91/HpUWLW8InVHb1TkmjEZWoZ8fjVLtukRs=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aWGobO2B5SZ186O88Yi1F9gt14pHL2TGb3b2Opf4cKJlRJnwXc/py/MuYvHsWHAI127oMrhx1Ojegv/tJmh7tu6PgOqjf9wHQRPsjzq9WSRZNjDijmcyD+p1Gj0DOnPlR1qrUFo86Jqq2x21/RzETT8xk+x0ZRQIqhYiXfUHoXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oldnpnP+; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l1yOjHBe; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=QQ43YZHJ/losvwVh4d3+0rMcEO47IsaXg8VL4HIqOwOhJzTu9hE2qTWHMAAFjWpLv736x/rwHCv8dMttKKVdIafgh7QWN8dYx9/VzKkm+WrGKJb05ZgEZdIedlLhErFgajdtUvIydBsvUt6shV6dTl+IgPyyQz2SCu5FqpOnN+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ELApevrY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w0vYS5Fb; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 10:26:25 -0000
+Date: Tue, 04 Mar 2025 10:26:28 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741083985;
+	s=2020; t=1741083989;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OfkyRlVGgRbWCEcHW0zfiId2WrFaEDaVnkd9hXZkm/c=;
-	b=oldnpnP+8+tXcqdzHmaPWLgox/5hBojawkTWLi4z5ChklgrPe/o4jivBzaXjhLxKMJKVnr
-	9reCKyGDy4ix5/+gbHOsnUgAERZoqZWPA9V0KVbOattku4ltIMblEYd2vbzecRCQ9pDFW3
-	HgETxoAsl+tcTiA1+kZc659ov4qKhohZ7FUEMJ8+KAYwS0Ip/nlBM8iXGxMtaTfO+RQGQE
-	eSR5xKts3aJguHt0Ms2MIs7jGdDIvZ1Bs8Utp9EnxdoFGGe9ZBvCiD+TAVNJzUc5egAOem
-	d66XgMCrJ/G/BEJfbErjfkctAE8nG/uMo3JwL974ITUJTFcSiUfeMawxBpRCNg==
+	bh=pArQYtOKuLD/t+TUgDC66fA77LQO/Rai5zODWIcEq1U=;
+	b=ELApevrYJxWBMTl8BQzL02y8pQ0dvonDTWuGst6Ej66E7qcfI/phuIjqK1C7ti2l992aVl
+	9fGBO0ksQzzBPVBIwg/B/CVbm9W509MEgGHfEbhshQdUJSoBfrdiBM+mUdE1dV1tPwDZ09
+	CUsjQn7kppqGcQ3ZAn2GW156kmLnLeGLXUo1zbQzmq8i2N+cVVAk//5CsfCl4g/JiWcuf8
+	s4dtWcx+VkxHEWaeao7W9UnAbNgKDkjfg8E8nzqfmGTHLAxMoGzCH8HaCuwpG8jCOUFcaV
+	o7udlautFz5PAHaEuBcNJU//cBVQtrnIK7RylOj4bz4MSsSUsW1mCYalopLypg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741083985;
+	s=2020e; t=1741083989;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=OfkyRlVGgRbWCEcHW0zfiId2WrFaEDaVnkd9hXZkm/c=;
-	b=l1yOjHBe3r9DGSbaOLYVPgwJeqf8mHjS3TScbhhHJCblFw+4y22/AgwrWL7QZVRVpS9FK7
-	WS6LuOuuA14nvfCw==
-From: "tip-bot2 for Pawan Gupta" <tip-bot2@linutronix.de>
+	bh=pArQYtOKuLD/t+TUgDC66fA77LQO/Rai5zODWIcEq1U=;
+	b=w0vYS5Fb1R0yp1R9h1I6LDkQs6+6S3EEWG+NO8lwNZ3+I59ewySigeJwOi1MBtVuzEPojB
+	HVsL6zZUtrUp+ADA==
+From: "tip-bot2 for Lukas Bulwahn" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/speculation: Simplify and make CALL_NOSPEC consistent
-Cc: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
- Ingo Molnar <mingo@kernel.org>, Andrew Cooper <andrew.cooper3@citrix.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250228-call-nospec-v3-1-96599fed0f33@linux.intel.com>
-References: <20250228-call-nospec-v3-1-96599fed0f33@linux.intel.com>
+Subject: [tip: x86/cpu] xen: Kconfig: Drop reference to obsolete configs
+ MCORE2 and MK8
+Cc: Lukas Bulwahn <lukas.bulwahn@redhat.com>, Ingo Molnar <mingo@kernel.org>,
+ Juergen Gross <jgross@suse.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250303093759.371445-1-lukas.bulwahn@redhat.com>
+References: <20250303093759.371445-1-lukas.bulwahn@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174108398503.14745.3531917844748876019.tip-bot2@tip-bot2>
+Message-ID: <174108398871.14745.16916807649583411965.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -84,61 +81,41 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     cfceff8526a426948b53445c02bcb98453c7330d
-Gitweb:        https://git.kernel.org/tip/cfceff8526a426948b53445c02bcb98453c7330d
-Author:        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-AuthorDate:    Fri, 28 Feb 2025 18:35:43 -08:00
+Commit-ID:     091b768604a8df7822aade75dd5bfc5c788154ee
+Gitweb:        https://git.kernel.org/tip/091b768604a8df7822aade75dd5bfc5c788154ee
+Author:        Lukas Bulwahn <lukas.bulwahn@redhat.com>
+AuthorDate:    Mon, 03 Mar 2025 10:37:59 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 11:14:35 +01:00
+CommitterDate: Tue, 04 Mar 2025 11:14:15 +01:00
 
-x86/speculation: Simplify and make CALL_NOSPEC consistent
+xen: Kconfig: Drop reference to obsolete configs MCORE2 and MK8
 
-CALL_NOSPEC macro is used to generate Spectre-v2 mitigation friendly
-indirect branches. At compile time the macro defaults to indirect branch,
-and at runtime those can be patched to thunk based mitigations.
+Commit f388f60ca904 ("x86/cpu: Drop configuration options for early 64-bit CPUs")
+removes the config symbols MCORE2 and MK8.
 
-This approach is opposite of what is done for the rest of the kernel, where
-the compile time default is to replace indirect calls with retpoline thunk
-calls.
+With that, the references to those two config symbols in xen's x86 Kconfig
+are obsolete. Drop them.
 
-Make CALL_NOSPEC consistent with the rest of the kernel, default to
-retpoline thunk at compile time when CONFIG_MITIGATION_RETPOLINE is
-enabled.
-
-Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+Fixes: f388f60ca904 ("x86/cpu: Drop configuration options for early 64-bit CPUs")
+Signed-off-by: Lukas Bulwahn <lukas.bulwahn@redhat.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Andrew Cooper <andrew.cooper3@citrix.com
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250228-call-nospec-v3-1-96599fed0f33@linux.intel.com
+Reviewed-by: Juergen Gross <jgross@suse.com>
+Link: https://lore.kernel.org/r/20250303093759.371445-1-lukas.bulwahn@redhat.com
 ---
- arch/x86/include/asm/nospec-branch.h | 15 +++++----------
- 1 file changed, 5 insertions(+), 10 deletions(-)
+ arch/x86/xen/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/x86/include/asm/nospec-branch.h b/arch/x86/include/asm/nospec-branch.h
-index 7e8bf78..1e6b915 100644
---- a/arch/x86/include/asm/nospec-branch.h
-+++ b/arch/x86/include/asm/nospec-branch.h
-@@ -424,16 +424,11 @@ static inline void call_depth_return_thunk(void) {}
-  * Inline asm uses the %V modifier which is only in newer GCC
-  * which is ensured when CONFIG_MITIGATION_RETPOLINE is defined.
-  */
--# define CALL_NOSPEC						\
--	ALTERNATIVE_2(						\
--	ANNOTATE_RETPOLINE_SAFE					\
--	"call *%[thunk_target]\n",				\
--	"call __x86_indirect_thunk_%V[thunk_target]\n",		\
--	X86_FEATURE_RETPOLINE,					\
--	"lfence;\n"						\
--	ANNOTATE_RETPOLINE_SAFE					\
--	"call *%[thunk_target]\n",				\
--	X86_FEATURE_RETPOLINE_LFENCE)
-+#ifdef CONFIG_MITIGATION_RETPOLINE
-+#define CALL_NOSPEC	"call __x86_indirect_thunk_%V[thunk_target]\n"
-+#else
-+#define CALL_NOSPEC	"call *%[thunk_target]\n"
-+#endif
- 
- # define THUNK_TARGET(addr) [thunk_target] "r" (addr)
- 
+diff --git a/arch/x86/xen/Kconfig b/arch/x86/xen/Kconfig
+index 77e788e..98d8a50 100644
+--- a/arch/x86/xen/Kconfig
++++ b/arch/x86/xen/Kconfig
+@@ -9,7 +9,7 @@ config XEN
+ 	select PARAVIRT_CLOCK
+ 	select X86_HV_CALLBACK_VECTOR
+ 	depends on X86_64 || (X86_32 && X86_PAE)
+-	depends on X86_64 || (X86_GENERIC || MPENTIUM4 || MCORE2 || MATOM || MK8)
++	depends on X86_64 || (X86_GENERIC || MPENTIUM4 || MATOM)
+ 	depends on X86_LOCAL_APIC && X86_TSC
+ 	help
+ 	  This is the Linux Xen port.  Enabling this will allow the
 
