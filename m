@@ -1,148 +1,151 @@
-Return-Path: <linux-kernel+bounces-544536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23AF0A4E25E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:08:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CB8EA4E2BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:17:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26496179721
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:59:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143FA886583
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:01:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14B026AAA3;
-	Tue,  4 Mar 2025 14:56:22 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA7A27EC64;
+	Tue,  4 Mar 2025 14:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="azrrZJOX"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F680205E0D;
-	Tue,  4 Mar 2025 14:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033E427E1D9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100182; cv=none; b=C72sywMTkszysXtWG6wmv1bY6xdALuzGrL6eyvpMxGTpCetEWWamqr/Z8p5cqcxt1BImvs3NPjPsBT+LeWkzuQ74q6dn5lr+OArjaZqLhFNDxbPK6h9QyRVRVtNcKUDPhv+/iMVK0aSWromotXiHQO7i6hmXa84JR5VIn2iSMak=
+	t=1741100254; cv=none; b=oTYMcooYes8PZw+7kDNaboWY3YA8J4/HnHOo/uangvI4+scKf4iagDSIcG2pKt9GDvy+6nNmAnt0wJWtNeL226v9uoW/XGZ2593tNXpspAnVNDGfBoSyhEY1u28/8QHmoqGTR4uc1PdKp1aDHJhSdD+StVDPGlN6ElxNZskicWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100182; c=relaxed/simple;
-	bh=WkcT4BROTdtshKrn7PVipZZH5jr5YuyR+1h0Ukj8X/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jAUrOLnru5HoQx9Ljvc8Nd90ys9OaTw7EXq+DY0c90BPJ7EXcK1ROoxN/UpzvRZwv6UMK0sozrfpi7A20uNEt2Jh9pFXNARfNRXLIMAc/x2elTqgq5dWBzCQ4O44k7UZL8sI6OsK+ySy5baXKTy4wB4+Grr+s1ZChr6XN9mJJEA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 781FFC4CEE5;
-	Tue,  4 Mar 2025 14:56:20 +0000 (UTC)
-Date: Tue, 4 Mar 2025 09:57:14 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, Petr Pavlu <petr.pavlu@suse.com>, Sami
- Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>,
- linux-modules@vger.kernel.org
-Subject: Re: [PATCH v3 5/8] module: Add module_for_each_mod() function
-Message-ID: <20250304095714.47a171fa@gandalf.local.home>
-In-Reply-To: <20250304012548.433669427@goodmis.org>
-References: <20250304012516.282694507@goodmis.org>
-	<20250304012548.433669427@goodmis.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741100254; c=relaxed/simple;
+	bh=K8C3hmIFC9Q50r0TsdLo+cvtp2V7ltUvaziJRbo5Ll0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h2YiP9Iq10Y26LGEr/6x4V8V6cxg5sXqtnQhci2BLFYaB1r1Feet9hMT8CRawmBeGKxASnpulYtokjJOWRWLVgWlfrdP+AHBoLFVU+jXp0Ey9Ix8BmH6bYw2wGU6LOC3ri3wGEAKlaYuCUveg24GLN4dT4RwDOKK5Y/EcwS/8ZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=azrrZJOX; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2239c066347so51423995ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 06:57:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741100252; x=1741705052; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=bB0FA1hVPZJ0S4Y1IaK4hi0Fvaas9G2N8erQYJkQNzE=;
+        b=azrrZJOXrdoBbsbo2U26Giciaf6KTN0PABnbXlMjZPVAIY7PCjs2CKOcRgbC7443T2
+         t73iOnR5TZaH2nYXipTkShu7149FP/WqSZrq24Ee5UUX4AYwQ2nsUeJlVuQ9PkcvauDv
+         3YhEjjnzhgTDQGcSyCWcuR8g38gJShd2bKGMzCKObxZfaclKkOYgYZDC9xP1RJfb+6/c
+         1kDtB1m0uU3qf5A6c/nITpwOUwbsytteQUIix5/hAgy5fn0STUUGJWz+A1AeO9AGiJN5
+         FP6XiCwUz2T7vYZD0BCWrnPUHKQS1K+7nCEkjA/P4LMIgRtdLfz4XLXJCmczW3yIxu5A
+         xuDw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741100252; x=1741705052;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bB0FA1hVPZJ0S4Y1IaK4hi0Fvaas9G2N8erQYJkQNzE=;
+        b=VKo6D3tF+/mShtYNE7U8LItRks1mmb7WhSu1GkGjoj6SSszvBjs6OCc04Tg0SaXNRh
+         QNcHUdfrU0BVdLDT442Az6F66TxkCBHQfwdjZ12uycsxm1Sa5DRzEJmgcVxRA7uO1g8i
+         BdEPrW0NnktOwM1vs53H1P0GnWtXw9kQaSYR561jIrl/9ec1eiomkfTfT1EKVNdfo/XZ
+         sJbqfowqVYgS53MnfZRIOan9iaDenUebfCpRlJ7iWjsfCl4sA7DeIjfeEaPNoDPnWhKp
+         qaUsiIv0bFbh4EgMBKFmXBg0IVyIDErJL8muQ0iC/wwAonJ+FUavS4iAdnkgzcE6exZX
+         TIkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUmz/qrwybbcmdPgPgT0AfsDDYX/RSZX/+uD1OVLpExxPQ6NurCuVtdKgkTz1YtuerQ7KUXvRgiBU3b9Y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpdV8UBFRXy2cBlrQ4+uVceHIR02xOAgyafuLP9YqCpROYFZ21
+	i4vP7R4KD+KFD/6XWvAT/wccUPDXBzqm2NRuE8oqaJQ9vNPjWIUmRgNe2jlcUw==
+X-Gm-Gg: ASbGncvSEdCMCHj1aT3nMMVZjljbFZTi7qvaqN2WKD+ZSq925xujdwtEjjDENlSYNjo
+	Xnlu1g/HCOYfrcXt+Cy3lumD6PDhUT02dvJ8OA7yXafX2pOB4t+rqzzdeULpCmasHjMKlFyUHN2
+	kGVcTnICsQhqCGY2wPWb/fx2tmWGxoSVEr//NgbupcWYOpkPVHKBIWIyE4BCT4nvi5fRlJLReno
+	UV1MJGAxgi99lVaJvo66zWTCLlr1ZN6V6MaSCCuYJJ75g5ztX+HBbo4bddidFUED99OZK1mmr6g
+	0y7uT0ElSvnnngjNdIm/VIjz6jwkstsoqF29XKGDorQQFaOpOFU/OZM=
+X-Google-Smtp-Source: AGHT+IGo7wa+ol8U/rxNOCJnFdMfRJrO9oY2HvfjcAeePQLXu1JAeASpEDGGST/KBMpQr7w4rAQjHw==
+X-Received: by 2002:a05:6a21:6f09:b0:1f3:46cd:d01f with SMTP id adf61e73a8af0-1f346cdd0f4mr1167212637.21.1741100252271;
+        Tue, 04 Mar 2025 06:57:32 -0800 (PST)
+Received: from thinkpad ([120.60.51.199])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73519c31931sm8622046b3a.20.2025.03.04.06.57.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 06:57:31 -0800 (PST)
+Date: Tue, 4 Mar 2025 20:27:24 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Jim Quinlan <james.quinlan@broadcom.com>
+Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Cyril Brulebois <kibi@debian.org>,
+	Stanimir Varbanov <svarbanov@suse.de>,
+	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
+	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 3/8] PCI: brcmstb: Do not assume that reg field starts
+ at LSB
+Message-ID: <20250304145724.itrzj6wnflxxf3up@thinkpad>
+References: <20250214173944.47506-1-james.quinlan@broadcom.com>
+ <20250214173944.47506-4-james.quinlan@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250214173944.47506-4-james.quinlan@broadcom.com>
 
+On Fri, Feb 14, 2025 at 12:39:31PM -0500, Jim Quinlan wrote:
+> When setting a register field it was assumed that the field started at the
 
-Luis,
+s/a register field/LNKCAP and LNKCTL2 register fields,
 
-Can I get an Acked-by from you?
-
-This follows the changes you have in linux-next.
-
-Thanks,
-
--- Steve
-
-
-
-
-On Mon, 03 Mar 2025 20:25:21 -0500
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+> lsb of the register.  Although the masks do indeed start at the lsb, and
+> this will probably not change, it is prudent to use a method that makes no
+> assumption about the mask's placement in the register.
 > 
-> The tracing system needs a way to save all the currently loaded modules
-> and their addresses into persistent memory so that it can evaluate the
-> addresses on a reboot from a crash. When the persistent memory trace
-> starts, it will load the module addresses and names into the persistent
-> memory. To do so, it will call the module_for_each_mod() function and pass
-> it a function and data structure to get called on each loaded module. Then
-> it can record the memory.
+> The uXXp_replace_bits() calls are used since they are already prevalent
+> in this driver.
 > 
-> This only implements that function.
-> 
-> Cc: Luis Chamberlain <mcgrof@kernel.org>
-> Cc: Petr Pavlu <petr.pavlu@suse.com>
-> Cc: Sami Tolvanen <samitolvanen@google.com>
-> Cc: Daniel Gomez <da.gomez@samsung.com>
-> Cc: linux-modules@vger.kernel.org
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
 > ---
-> Changes since v2: https://lore.kernel.org/20250215034404.902259250@goodmis.org
+>  drivers/pci/controller/pcie-brcmstb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> - Use RCU guard instead of disabling preemption
-> 
->  include/linux/module.h |  6 ++++++
->  kernel/module/main.c   | 13 +++++++++++++
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/include/linux/module.h b/include/linux/module.h
-> index 30e5b19bafa9..9a71dd2cb11f 100644
-> --- a/include/linux/module.h
-> +++ b/include/linux/module.h
-> @@ -782,6 +782,8 @@ static inline void *module_writable_address(struct module *mod, void *loc)
->  	return __module_writable_address(mod, loc);
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 98542e74aa16..e0b20f58c604 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -415,10 +415,10 @@ static void brcm_pcie_set_gen(struct brcm_pcie *pcie, int gen)
+>  	u16 lnkctl2 = readw(pcie->base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKCTL2);
+>  	u32 lnkcap = readl(pcie->base + PCIE_RC_CFG_PRIV1_LINK_CAPABILITY);
+>  
+> -	lnkcap = (lnkcap & ~PCI_EXP_LNKCAP_SLS) | gen;
+> +	u32p_replace_bits(&lnkcap, gen, PCI_EXP_LNKCAP_SLS);
+>  	writel(lnkcap, pcie->base + PCIE_RC_CFG_PRIV1_LINK_CAPABILITY);
+>  
+> -	lnkctl2 = (lnkctl2 & ~0xf) | gen;
+> +	u16p_replace_bits(&lnkctl2, gen, PCI_EXP_LNKCTL2_TLS);
+>  	writew(lnkctl2, pcie->base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKCTL2);
 >  }
 >  
-> +void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data);
-> +
->  #else /* !CONFIG_MODULES... */
->  
->  static inline struct module *__module_address(unsigned long addr)
-> @@ -894,6 +896,10 @@ static inline void *module_writable_address(struct module *mod, void *loc)
->  {
->  	return loc;
->  }
-> +
-> +static inline void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data)
-> +{
-> +}
->  #endif /* CONFIG_MODULES */
->  
->  #ifdef CONFIG_SYSFS
-> diff --git a/kernel/module/main.c b/kernel/module/main.c
-> index 1fb9ad289a6f..927a2e0ffd5f 100644
-> --- a/kernel/module/main.c
-> +++ b/kernel/module/main.c
-> @@ -3809,6 +3809,19 @@ bool is_module_text_address(unsigned long addr)
->  	return ret;
->  }
->  
-> +void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data)
-> +{
-> +	struct module *mod;
-> +
-> +	guard(rcu)();
-> +	list_for_each_entry_rcu(mod, &modules, list) {
-> +		if (mod->state == MODULE_STATE_UNFORMED)
-> +			continue;
-> +		if (func(mod, data))
-> +			break;
-> +	}
-> +}
-> +
->  /**
->   * __module_text_address() - get the module whose code contains an address.
->   * @addr: the address.
+> -- 
+> 2.43.0
+> 
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
