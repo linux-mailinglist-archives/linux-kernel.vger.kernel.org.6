@@ -1,241 +1,151 @@
-Return-Path: <linux-kernel+bounces-543294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C0EBA4D3F1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:36:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F99A4D3F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:37:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ADFB1895E19
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:36:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87BB01739AE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:37:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29111F461A;
-	Tue,  4 Mar 2025 06:36:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FAA1F5616;
+	Tue,  4 Mar 2025 06:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYxxeJbB"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Et2Uc7rM"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854D21DCB24;
-	Tue,  4 Mar 2025 06:36:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EC201EF390
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741070179; cv=none; b=UFguOOV1qvYCwYdpARVpGCbRp/4jQhQUo+aWuNcTjw2Punxe6x6uKdSe2wQovBa7kLb+4FNKSuMgW8WzO1k5xHOGbMxbGlE6U8qemCAYulKHwqH2H5HD9AkYoRfMXO6rvlqheeG6ZN5dgEL9JgvtxpQKGRUxLOEdCbDjPM3zqyM=
+	t=1741070227; cv=none; b=cHhIgQdNEcMYISi18LwMZeKgIeLr+1fSimYNY2tAbtOBERSdyEscebtGqYi494OST399qfl6A52LD88VeGBWLmhUaYSETw3rP/zJ2FjY3hN8750cfaZYbE0TM+D9m9TPbgxKomAmsh0y7kocWWnaO/CiacH6eck5oLIdgrfMcr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741070179; c=relaxed/simple;
-	bh=qo90MPty2vy5TkjHxjbbN8VqbnrgXqZe9HCQ6R+CBy0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=s2cvorPi/nC9sGL5jc/q2J+4rijzSusFmEBOaFtiB33VXeaOPeUVxJmF1bSB3Cr5bhZlK5oYJ+D48LuXuvou6ubz3DIHOWXuFZ6of6nNL99h8vn/5YeRK5iXGVEJTN0cuLWyeFsuTPXcRzCRTXX8LUd4j7JH6YdcYvmNfXTqjAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYxxeJbB; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abf57138cfaso500636866b.1;
-        Mon, 03 Mar 2025 22:36:16 -0800 (PST)
+	s=arc-20240116; t=1741070227; c=relaxed/simple;
+	bh=UMt2ZIzD4i/3+qQhSPSHEop7znwVILAj++vRqySJMaA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ad7NVWo7sCUGDtIeXjwq4TU/IRWErgQhIPK6/Axtg1qmxMEhmMldB9qEEZrzuqYvtTKanp2yQNOUyyXCCt8K+w+NQ6zLD6VnAjk8/ztcKC6To7eDl2GflNPNydFDP/qu2R/MxylOKK6hWt5SifghZH7DhxxU3NKXgdsg8VZe3H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Et2Uc7rM; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf4802b242so553242066b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:37:02 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741070175; x=1741674975; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3QIIT7csmVM8dlZqywgBobuFZmmi6UocIrnDWBO9ciw=;
-        b=ZYxxeJbBG6HPubpoJItUypm/mdo2YiB/zrCdJ164OuUjRRACbGCtsHVqxXcnAj0vId
-         5PuYwjIdiFUycWF6m4m9qTSc5js/KXTtgM/Nx1L2kVaJUJyy4WscnETwIRaYyfqbQPku
-         pOC7u3oYINulMNES04ST8+VL11EFF/to0zZOOB0BkpogHLCPETJblrDql4bIPUWOr4lN
-         JOLWHlq7/fgtJ1aMytouKC3TxBb92PnkApmL/pvQBu0TYqFMa5NJXg8eo0VRDvFVNwRM
-         BrZWP2hYL2sxQqjf8QvVGJ1Mdl+aaGE6veT3KwcRvTExZevvPyWO6dJPkKQUt1ONpbms
-         s8iQ==
+        d=linaro.org; s=google; t=1741070221; x=1741675021; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZODVp5qI7foXW09kyVwXfjrHAWYKs/CU5C/Z/8rz1U=;
+        b=Et2Uc7rMNEMbeY3MTcVu7BHRt/ovc+d5j50nEgL0yK1mqGSxV4AuffIizoheIGDMTc
+         iervZE0McyNANe/DwtbasuoVYIph7dOr4Q4Yol2AQy8b2wDcsN6i8op4n/kQmNRiT6sJ
+         qNPta9N5X1I+RriSdEZHfWUjNsLQksZGG4ZCBPXxjXw1k8SCirrVdL/ZvZ8pMirLysr6
+         2Bv1N36dJ+d/R4QpUMhuDrgWtAlOVp5O9CNheieT9oxcaulvslH5pCbeHxXvG8LX7Qq/
+         9qpe61ip7Rg0Vg+G9ib0iis3K9VdYyXq8Zkvkq1dYqXjBZFb/lwnqXZU9PNGNzzv1wRn
+         8Exg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741070175; x=1741674975;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3QIIT7csmVM8dlZqywgBobuFZmmi6UocIrnDWBO9ciw=;
-        b=I8KHq9j0yrwW59iR0wFiPJkpsqVvSaPhIXW4pbWaLNUo+q5QPVWsPVLrISflZ0DC91
-         pEqLopUslu+8sRv4qJxhEXZEdX1yz/2raAI9gKC94YeUfUmOPvvYjS6MBB2rV5YcyAp6
-         StKgooEEQwqmiv9l5cG8rQ3FDST6HcCFI1KfFpE2tDG+HylfMcQdXsKU+JRgyIsXBJS4
-         ji6uZSLIeF5JE7o3diwlX7447FpARRX00itn9CL5798t+IXfIvHMYT92vVMBtf1OJYXb
-         umwlveQc3+NJLtLqQjpFcZnDwZFVNOkMykZ6iCNE7+7lgC0sYmfIdbJXwgKo54ao36/Q
-         DMFg==
-X-Forwarded-Encrypted: i=1; AJvYcCUsTM7Fj/gI4Yx32IYoV6sui2VcootHZxlg2u+cWjXNTq5xHNTlkuIhtnlUT1/AIuXScmfuzI9I96yfCtLt@vger.kernel.org, AJvYcCV2ZfdJywkI1WN4lW3ULlB7ZlhZBXtjzEYHuksxRMG43+pK3Eo+XhKJR2lmmOyhuOgEOMd/chKZHzqE@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzvECdbHJtOhlJdU2nC4+Y+2T7tLF4h/48rIcdOxcf1iB4Nz9w
-	IYrR+m8THdvD5oinyrMAFf4X8L+3Zz0NqlKwHNVfPy4tFMqPBTj3XkhU2S6T5937tMcaDzxvPoO
-	OkQcS0zl0vzE57pD0LwFa0iQEtTY=
-X-Gm-Gg: ASbGnctAeGLPZurCEGbQVC1WoSmC/ge5VMi16hr52PkmIIVvd8nQDLAR6Q60nqkXbjN
-	T5ExuZkBrOgBL1/I+pBj0roR8rv5/26zzGBP5saUAIH+MalnmiB7eAukKP7RlE6C8mdbdAFzOKg
-	XkePWgg55suksorO8iQjMd2wsv8OLrghMFS6jzmNn/3Njx6bOEXOEG9vc=
-X-Google-Smtp-Source: AGHT+IHZm0fkINHMh/RJm6iSWcBaUzASH1B4ShN21HBXQ4x/u3WqSAUs5vR9z8gHam8OvAnYpRbhVOA/A6CSdmFfsw8=
-X-Received: by 2002:a17:907:3d89:b0:ac1:e5b1:86fb with SMTP id
- a640c23a62f3a-ac1e5b191c5mr390382766b.10.1741070174300; Mon, 03 Mar 2025
- 22:36:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741070221; x=1741675021;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MZODVp5qI7foXW09kyVwXfjrHAWYKs/CU5C/Z/8rz1U=;
+        b=nEk8h5L2rlIJmf2nTVzJHX4GxzP0fyrffNmicvDC0tcCiSsd4H3tFgVqCMcGBh/+75
+         DdEz7RjsHg+SYSREhl8tGwGM3hnv7QQkRUlfogLIQJTvS3yyozX/5MhqZFABA1jM6FQc
+         j6qB3XsKCVY4Xj7843kwHFzuzbXYyyJ0lPZcqr3X82GmpltY76InNbh9VbB9RAbaa+VG
+         PHJ7tQDxGJMyxSDSJWOR3OuSQ6ycch2fnpazsRb+yawtK/Qwwi6HAOmniTt7YtXQk/c8
+         +fJa3f65ywgGVv3mS3mHZaiamu1BTVY0jSJvFBd76hTl4hAT2tz7R1YKcHChoG32duzE
+         SQhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUk+RHMNIOKDNbMp6W8k/uixAb8Y2MPYvuAS774OI/EpJ4vut8FsvFsG6CT9EqTZgANErDYnU5sY23OKbg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiBptp5ysqZDXg5DKIgxSdekbz9dyFcGiwEFUpySw//y7GnAGo
+	ilMOZCw83HsSMIwCrAfr89RPLOKTQ33mihBTsjijLPX0z/QbhOHjJPrn4wKSLH0=
+X-Gm-Gg: ASbGncs/PQ2U7JZAagWk8XJp8L77Ax0blnzS+RFt0xR97eIgLVBfIhwbTHlx//mGm74
+	N7fgbZXKFUd/2Xu4uyYMgN4z59cX48apgePiFyOWhGHv+OgHR97o+PvFj2s46aURR/KC30szPIK
+	GXIHH/j0bEMIrdb6Qhb24KvSyEGBUnTRjLcQnRk4nTiixEGnXO9sDPo0j7rsAl5l8If6ezYlq5I
+	pRE9BCWCbqhEPowCHUQqiFEH0vSow+Fpsbj78FvKdAU5NJ8to8X/EOZwTMPyfblNKbqI9BSYN/O
+	yanSXhhYrNwwbUhPKUWr5hm+NpAEsZfZqBumjV51qvcm2kPzww==
+X-Google-Smtp-Source: AGHT+IE59zFK0k4FqZlCMkYs0jRqy9akgU6KdZPmbOJsPiyF1i1a53x6V4y4VmoHrSVjObFtMf/iuw==
+X-Received: by 2002:a17:907:94cb:b0:ac1:ea29:4e74 with SMTP id a640c23a62f3a-ac1ea2951afmr373989566b.28.1741070220918;
+        Mon, 03 Mar 2025 22:37:00 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf6f85ea15sm367116166b.111.2025.03.03.22.36.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 22:37:00 -0800 (PST)
+Date: Tue, 4 Mar 2025 09:36:56 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: sunliming@linux.dev
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, nuno.sa@analog.com,
+	jic23@kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, sunliming@kylinos.cn,
+	kernel test robot <lkp@intel.com>,
+	Dan Carpenter <error27@gmail.com>
+Subject: Re: [PATCH] iio: imu: adis: fix uninitialized symbol warning
+Message-ID: <c5b70fd8-2d03-4179-a8b8-5ee827fff978@stanley.mountain>
+References: <20250304060518.1834910-1-sunliming@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228-sfg-spi-v2-1-8bbf23b85d0e@gmail.com> <fllmh65x7ke4sfolxbdod73fx3fm45w7gy7x4pgamxnbhztjvk@wqd56dzxaa37>
-In-Reply-To: <fllmh65x7ke4sfolxbdod73fx3fm45w7gy7x4pgamxnbhztjvk@wqd56dzxaa37>
-From: Zixian Zeng <sycamoremoon376@gmail.com>
-Date: Tue, 4 Mar 2025 14:36:03 +0800
-X-Gm-Features: AQ5f1JpUBt6QMLvOzLEGb8fYUdsyP3P3_7A1zhBvghXd3CBU5ioBvlsqG2gFerg
-Message-ID: <CAKyUbwXqg13Ho7QHw8vV2W6OcObphwhQ8HUrZMDNBxrVxLmdug@mail.gmail.com>
-Subject: Re: [PATCH v2] riscv: sophgo: dts: Add spi controller for SG2042
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Alexandre Ghiti <alex@ghiti.fr>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, chao.wei@sophgo.com, 
-	xiaoguang.xing@sophgo.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304060518.1834910-1-sunliming@linux.dev>
 
-On 25/03/02 10:18AM, Inochi Amaoto wrote:
-> On Fri, Feb 28, 2025 at 08:40:23PM +0800, Zixian Zeng wrote:
-> > Add spi controllers for SG2042.
-> >
-> > SG2042 uses the upstreamed Synopsys DW SPI IP.
-> >
-> > Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
-> > ---
-> > For this spi controller patch, only bindings are included.
-> > This is tested on milkv-pioneer board. Using driver/spi/spidev.c
-> > for creating /dev/spidevX.Y and tools/spi/spidev_test for testing
-> > functionality.
->
-> I wonder whether this patch is tested (or at least can be
-> tested), as I am not sure there are pins for spi or any
-> onboard device on existing SG2042 board.
->
-Yes, this is tested on milkv-pioneer board.
-Since this patch is just for supporting SPI controller in BUS level
-which not relates to the real hardware such as screen, I used
-driver/spi/spidev.c for creating virtual device /dev/spidevX.Y by
-adding nodes in DTS file as following:
-spidev@0 {
-        compatible =3D "snps,dw-apb-ssi";
-        reg =3D <0>;
-        status =3D "okay";
-};
+On Tue, Mar 04, 2025 at 02:05:18PM +0800, sunliming@linux.dev wrote:
+> From: sunliming <sunliming@kylinos.cn>
+> 
+> Fix below kernel warning:
+> smatch warnings:
+> drivers/iio/imu/adis.c:319 __adis_check_status() error: uninitialized symbol 'status_16'.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <error27@gmail.com>
+> Signed-off-by: sunliming <sunliming@kylinos.cn>
 
-spidev@1 {
-        compatible =3D "snps,dw-apb-ssi";
-        reg =3D <1>;
-        status =3D "okay";
-};
-And using tools/spi/spidev_{test,fdx} provided by kernel tree for
-testing bus functionality.
-> > ---
-> > Changes in v2:
-> > - rebase v1 to sophgo/master(github.com/sophgo/linux.git).
-> > - order properties in device node.
-> > - remove unevaluated properties `clock-frequency`.
-> > - set default status to disable.
-> > - Link to v1: https://lore.kernel.org/r/20250228-sfg-spi-v1-1-b989aed94=
-911@gmail.com
-> > ---
-> >  .../riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts |  8 +++++++
-> >  arch/riscv/boot/dts/sophgo/sg2042.dtsi             | 28 ++++++++++++++=
-++++++++
-> >  2 files changed, 36 insertions(+)
-> >
-> > diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch=
-/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-> > index be596d01ff8d33bcdbe431d9731a55ee190ad5b3..c43a807af2f827b5267afe5=
-e4fdf6e9e857dfa20 100644
-> > --- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-> > +++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
-> > @@ -72,6 +72,14 @@ &uart0 {
-> >     status =3D "okay";
-> >  };
-> >
-> > +&spi0 {
-> > +   status =3D "okay";
-> > +};
-> > +
-> > +&spi1 {
-> > +   status =3D "okay";
-> > +};
-> > +
-> >  / {
-> >     thermal-zones {
-> >             soc-thermal {
-> > diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/d=
-ts/sophgo/sg2042.dtsi
-> > index e62ac51ac55abd922b5ef796ba8c2196383850c4..500645147b1f8ed0a08ad3c=
-afb38ea79cf57d737 100644
-> > --- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-> > +++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
-> > @@ -545,5 +545,33 @@ sd: mmc@704002b000 {
-> >                                   "timer";
-> >                     status =3D "disabled";
-> >             };
-> > +
-> > +           spi0: spi@7040004000 {
-> > +                   compatible =3D "snps,dw-apb-ssi";
-> > +                   reg =3D <0x70 0x40004000 0x00 0x1000>;
->
-> > +                   clocks =3D <&clkgen GATE_CLK_APB_SPI>,
-> > +                                   <&clkgen GATE_CLK_SYSDMA_AXI>;
->
-> Is the sysdma axi clock for the this device. IIRC is APB interface.
->
-Thanks, I will remove the GATE_CLK_SYSDMA_AXI in next revision.
-> Also, Are these clock aligned? If not, use space to align the two
-> clocks. You also need to add the clock-names here.
-In the case of the only clock, I think it=E2=80=99s probably no need to add
-the clock-names property here.
->
-> > +                   interrupt-parent =3D <&intc>;
-> > +                   interrupts =3D <110 IRQ_TYPE_LEVEL_HIGH>;
->
-> > +                   #address-cells =3D <0x01>;
-> > +                   #size-cells =3D <0x00>;
-> > +                   num-cs =3D <0x02>;
->
-> Just use decimal number, no hex there.
->
-Thanks, I will fix it in next revision.
-> > +                   resets =3D <&rstgen RST_SPI0>;
-> > +                   status =3D "disabled";
-> > +           };
-> > +
-> > +           spi1: spi@7040005000 {
-> > +                   compatible =3D "snps,dw-apb-ssi";
-> > +                   reg =3D <0x70 0x40005000 0x00 0x1000>;
->
-> > +                   clocks =3D <&clkgen GATE_CLK_APB_SPI>,
-> > +                                   <&clkgen GATE_CLK_SYSDMA_AXI>;
->
-> The same as above.
->
-Thanks.
-> > +                   interrupt-parent =3D <&intc>;
-> > +                   interrupts =3D <111 IRQ_TYPE_LEVEL_HIGH>;
->
-> > +                   #address-cells =3D <0x01>;
-> > +                   #size-cells =3D <0x00>;
-> > +                   num-cs =3D <0x02>;
->
-> The same as above.
->
-Thanks.
-> > +                   resets =3D <&rstgen RST_SPI1>;
-> > +                   status =3D "disabled";
-> > +           };
-> >     };
-> >  };
-> >
-> > ---
-> > base-commit: aa5ee7180ec41bb77c3e327e95d119f2294babea
-> > change-id: 20250228-sfg-spi-e3f2aeca09ab
-> >
-> > Best regards,
-> > --
-> > Zixian Zeng <sycamoremoon376@gmail.com>
-> >
-Best regards,
+Huh...  Someone is using lei to get their email.  This patch is fine and
+it's theoretically the correct thing to do.
 
-Zixian Zeng <sycamoremoon376@gmail.com>
+How the zero-day bot warnings work is the they are first sent to my gmail
+account and I look them over and either forward them or ignore them.  Here
+is the code:
+
+drivers/iio/imu/adis.c
+   305  int __adis_check_status(struct adis *adis)
+   306  {
+   307          unsigned int status;
+   308          int diag_stat_bits;
+   309          u16 status_16;
+   310          int ret;
+   311          int i;
+   312  
+   313          if (adis->data->diag_stat_size) {
+   314                  ret = adis->ops->read(adis, adis->data->diag_stat_reg, &status,
+   315                                        adis->data->diag_stat_size);
+   316          } else {
+   317                  ret = __adis_read_reg_16(adis, adis->data->diag_stat_reg,
+   318                                           &status_16);
+   319                  status = status_16;
+   320          }
+   321          if (ret)
+   322                  return ret;
+   323  
+
+So if __adis_read_reg_16() fails, then the next line is an uninitialized
+read.  But then the if (ret) check means that it's fine at run-time.
+It's a false positive.  The other thing to consider it the UBSan will
+also detect the uninitialized read at runtime and splat.  That's still a
+false positive but it's a headache.  But when I was looking at this, I
+decided that __adis_read_reg_16() was unlikely to fail in real life so I
+decided to ignore this warning.
+
+Initializing the variable to zero doesn't change runtime for sane configs
+because everyone automatically zeroes stack variables these days.  It
+just silences the Smatch warning.  So I'm fine with this patch.
+
+(This email is for information only in case you were wondering why the
+bug report was formatted strangely etc).
+
+regards,
+dan carpenter
+
 
