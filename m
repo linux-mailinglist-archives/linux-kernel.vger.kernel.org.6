@@ -1,124 +1,151 @@
-Return-Path: <linux-kernel+bounces-543487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF02A4D63C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:25:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 039ECA4D63F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:25:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC9B81740ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:25:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A2F8C1896996
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50C261F891D;
-	Tue,  4 Mar 2025 08:25:18 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6811FBCA1
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:25:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 110BC1FBCA1;
+	Tue,  4 Mar 2025 08:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpDGT4pl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6628743172;
+	Tue,  4 Mar 2025 08:25:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076718; cv=none; b=Iv0053RkY+0Q9pJoXWcBIEjElnNdyyM2JRjtgbB7l9uWp5ZInmPrJlXy7mhRvVMJ/bzjpv2N/lA2qPNILW3UlleTrd+LPRWdWEz/s1920OztrFQMTE2cPyCrH8NO6Sc9H1NjcsTyj5iuA3S0q2IzXkfjKqhhqZbGoetY9birhLU=
+	t=1741076728; cv=none; b=Vh2YCUfluw3emKHB01++vWn2+U0PKYC2NaDasFGTKUQMM8bXd/K7tiKNnkyH1O9yuNN9YOa3JFldvMPIeHSLkUw8YVJq0PaboHpEzwdWOw9N3ywNKredLximA7d+kidbOBIMXdJFEBsrDrrv1m6pDhjiRWWZ9AcqOPNIhxqGqQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076718; c=relaxed/simple;
-	bh=togOrjhO7oN1fgPiaw6Ef3qgBVgHc4Hv5BClWtBVcS4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uLX6a+446/2VlWvy+ERr4wsz8SOFzMIdpRlpLoduCgQf/WwmyOhW+BYw2hSuGdyaIBub7wb86xrJtIr+2uXg3nkOonz75AHuURJsw1MFrAgXA346w5JVcmdd/u6KsIbOblqFvrtB4psCSszYxbc/IwF0LLHuNAK218uhxWS6k94=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 634871063;
-	Tue,  4 Mar 2025 00:25:27 -0800 (PST)
-Received: from [10.34.129.29] (unknown [10.34.129.29])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A5ACD3F66E;
-	Tue,  4 Mar 2025 00:25:08 -0800 (PST)
-Message-ID: <2fdea4f6-db98-4dc7-947f-e19ee54d2c3c@arm.com>
-Date: Tue, 4 Mar 2025 09:25:02 +0100
+	s=arc-20240116; t=1741076728; c=relaxed/simple;
+	bh=EjG1Ayc6WOrjJoENYUK2AAQIO5stxQf7QR9qv10BbjU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=icJTvtuqlRP+U4BNIOLg7OauCitAyB+RQ0ClEN5gmC1+YmG9QHthuTT2gpchcKqyMJgBBn26VYkuJwRDl7ghYRtxbIQseX4SlT2mzjlXQg/lLjfy4r/2adKlLu7ydK+XpXCYNKR+EAMiIXq/rPCXB+cDcxVjP2rjMhLkuodX0Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpDGT4pl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F116BC4CEE5;
+	Tue,  4 Mar 2025 08:25:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741076727;
+	bh=EjG1Ayc6WOrjJoENYUK2AAQIO5stxQf7QR9qv10BbjU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PpDGT4pl9OvTRcB3fq/ZOwLw8spKntrGFEwzLqPphNVifkDf/CruyEbhZQHgk/2P2
+	 OaO/XH8YBr7vXXUzzAXb9MCxHwhS3Gv6Lw96scmHOli+H3nQsIXZDQDGC9W3emPS3N
+	 nY3Dit1FlyI7es4f9fPs1wsEjQbPiYY11PCcNL82Y5z3/khVERpMwEhADig/jJn80Q
+	 vxoAqgpGd+J/JtYDXZxRHPHA6yhMPJnjnhv1xxRiF8rjLhR7Ykgb7/Uf0tznDN5Gph
+	 VGcFHF5LGIIO9dp4qig6fzhiykzDqDLh2TTUyPQxfH7e7pYRq0jETxtmR9wLg1j4SA
+	 C5CHMLvKvr0yQ==
+Date: Tue, 4 Mar 2025 09:25:24 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 04/15] dt-bindings: clk: sunxi-ng: document Allwinner
+ A523 CCU
+Message-ID: <20250304-resilient-spiritual-crane-30d4e1@krzk-bin>
+References: <20250304012805.28594-1-andre.przywara@arm.com>
+ <20250304012805.28594-5-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v11 3/4] arm64: topology: Support SMT control on ACPI
- based system
-To: Yicong Yang <yangyicong@huawei.com>, Sudeep Holla <sudeep.holla@arm.com>
-Cc: yangyicong@hisilicon.com, catalin.marinas@arm.com, will@kernel.org,
- tglx@linutronix.de, peterz@infradead.org, mpe@ellerman.id.au,
- linux-arm-kernel@lists.infradead.org, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, dietmar.eggemann@arm.com,
- linuxppc-dev@lists.ozlabs.org, x86@kernel.org, linux-kernel@vger.kernel.org,
- morten.rasmussen@arm.com, msuchanek@suse.de, gregkh@linuxfoundation.org,
- rafael@kernel.org, jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
- linuxarm@huawei.com, xuwei5@huawei.com, guohanjun@huawei.com,
- sshegde@linux.ibm.com
-References: <20250218141018.18082-1-yangyicong@huawei.com>
- <20250218141018.18082-4-yangyicong@huawei.com> <Z8HAkZiHYRjj97M7@bogus>
- <336e9c4e-cd9c-4449-ba7b-60ee8774115d@arm.com>
- <20250228190641.q23vd53aaw42tcdi@bogus>
- <a52972c7-aadd-4a77-a292-057fa5f8372d@arm.com> <Z8WPiOweOjFZqTwN@bogus>
- <32e572d6-dedd-d8a3-13be-6de02303a64d@huawei.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <32e572d6-dedd-d8a3-13be-6de02303a64d@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250304012805.28594-5-andre.przywara@arm.com>
 
+On Tue, Mar 04, 2025 at 01:27:54AM +0000, Andre Przywara wrote:
+> The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
+> the main CCU.
+> 
+> The source clock list differs in some annoying details, and folding this
+> into the existing Allwinner CCU clock binding document gets quite
+> unwieldy, so create a new document for these CCUs.
+> Add the new compatible string, along with the required input clock
+> lists. This conditionally describes the input clock list, to make for
+> an easier patch adding the other CCUs.
+> 
+> Also add the DT binding headers, listing all the clocks with their ID
+> numbers.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  .../clock/allwinner,sun55i-a523-ccu.yaml      |  77 +++++++
+>  include/dt-bindings/clock/sun55i-a523-ccu.h   | 189 ++++++++++++++++++
+>  include/dt-bindings/reset/sun55i-a523-ccu.h   |  88 ++++++++
+>  3 files changed, 354 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
+>  create mode 100644 include/dt-bindings/clock/sun55i-a523-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun55i-a523-ccu.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
+> new file mode 100644
+> index 0000000000000..2eacaeaeabac7
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
+> @@ -0,0 +1,77 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/allwinner,sun55i-a523-ccu.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Allwinner A523 Clock Control Unit
+> +
+> +maintainers:
+> +  - Andre Przywara <andre.przywara@arm.com>
+> +
+> +properties:
+> +  "#clock-cells":
+> +    const: 1
+> +
+> +  "#reset-cells":
+> +    const: 1
+> +
+> +  compatible:
+> +    enum:
+> +      - allwinner,sun55i-a523-ccu
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    minItems: 4
 
+Drop, redundant.
 
-On 3/3/25 15:40, Yicong Yang wrote:
-> On 2025/3/3 19:16, Sudeep Holla wrote:
->> On Mon, Mar 03, 2025 at 10:56:12AM +0100, Pierre Gondois wrote:
->>> On 2/28/25 20:06, Sudeep Holla wrote:
->>>>>>
->>>>>> Ditto as previous patch, can get rid if it is default 1.
->>>>>>
->>>>>
->>>>> On non-SMT platforms, not calling cpu_smt_set_num_threads() leaves
->>>>> cpu_smt_num_threads uninitialized to UINT_MAX:
->>>>>
->>>>> smt/active:0
->>>>> smt/control:-1
->>>>>
->>>>> If cpu_smt_set_num_threads() is called:
->>>>> active:0
->>>>> control:notsupported
->>>>>
->>>>> So it might be slightly better to still initialize max_smt_thread_num.
->>>>>
->>>>
->>>> Sure, what I meant is to have max_smt_thread_num set to 1 by default is
->>>> that is what needed anyways and the above code does that now.
->>>>
->>>> Why not start with initialised to 1 instead ?
->>>> Of course some current logic needs to change around testing it for zero.
->>>>
->>>
->>> I think there would still be a way to check against the default value.
->>> If we have:
->>> unsigned int max_smt_thread_num = 1;
->>>
->>> then on a platform with 2 threads, the detection condition would trigger:
->>> xa_for_each(&hetero_cpu, hetero_id, entry) {
->>>      if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)     <---- (entry->thread_num=2) and (max_smt_thread_num=1)
->>>          pr_warn_once("Heterogeneous SMT topology is partly
->>>                        supported by SMT control\n");
->>>
->>> so we would need an additional variable:
->>> bool is_initialized = false;
->>
->> Sure, we could do that or skip the check if max_smt_thread_num == 1 ?
->>
->> I mean
->> 	if (entry->thread_num != max_smt_thread_num && max_smt_thread_num != 1)
->>
+> +    maxItems: 4
+> +
+> +  clock-names:
+> +    minItems: 4
+> +    maxItems: 4
 
-I think it will be problematic if we parse:
-- first a CPU with 1 thread
-- then a CPU with 2 threads
+Drop both and instead you need to list the items.
 
-in that case we should detect the 'Heterogeneous SMT topology',
-but we cannot because we don't know whether max_smt_thread_num=1
-because 1 is the default value or we found a CPU with one thread.
+> +
+> +required:
+> +  - "#clock-cells"
+> +  - "#reset-cells"
+> +  - compatible
+> +  - reg
+> +  - clocks
+> +  - clock-names
+> +
+> +if:
+
+Drop, you have here only one device, no need for if:then.
+
+Best regards,
+Krzysztof
+
 
