@@ -1,78 +1,81 @@
-Return-Path: <linux-kernel+bounces-544017-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A365A4DC6D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:24:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7CBA4DC98
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:30:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 667A27A52A2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0954E172314
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:30:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCCBC1FF1DA;
-	Tue,  4 Mar 2025 11:23:56 +0000 (UTC)
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99FC31FFC7A;
+	Tue,  4 Mar 2025 11:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b="szojJJVZ"
+Received: from mail.thorsis.com (mail.thorsis.com [217.92.40.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F27581F9F73;
-	Tue,  4 Mar 2025 11:23:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE46D1FF7D5;
+	Tue,  4 Mar 2025 11:30:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.92.40.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741087436; cv=none; b=XHFkMByKFRsPaYCWaX6Zog3R55zk6deF2aEk560lY4Y7j8a3CJO8wSLqeYcQZVhALAKdRllCt4khqgrZ8Mh8dYW3qX8BcYz+yxGKoKzTk+jgENPLT3ZFFswEGtwrpkJrxAFtdu7klvH9MAQAp+4E9MqEuzLpjisliyLgpyqWunE=
+	t=1741087813; cv=none; b=npt2OV2j/jlYALVokrRccU+9E3iroNwfppu2qnu9BbUBtgV/DfvhlKH/qC3xRwaGNOu7i09NqxEXEpOty3kuQlGCHJWTyvqhSyjiejJIUoG5mkLGOo6/K6ww0J5rwV2kwpxb4p225ftHWbu1sPYa9ag0k4HU3dAqavYRs8QpcEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741087436; c=relaxed/simple;
-	bh=JOYjasouVRO3o6RgMExrK3pQmulScXxTN9o2B86UVrQ=;
+	s=arc-20240116; t=1741087813; c=relaxed/simple;
+	bh=4NlApes1uMZR/fEzD45gw5HtUBzCox4wK22duVcC3eY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t4PTi4azkNu/CKIXEISdpERf6qyOIEtxKtsgtZHA3WSIlGA/YVkY5vVeMqcBiViUhz8WyPMoMEKJLX7VgMzZ839hsAJH+ckIT9AcaNpW5TBnYmDeqN0DHXKL0IkssEnc4EjQZ2XLHI94sOvb9KCVSnJw+h+CyKeFkNXi+gOtVKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22185cddbffso108045395ad.1;
-        Tue, 04 Mar 2025 03:23:54 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741087434; x=1741692234;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ta+9BN55K6L6GjGyvObgWVr1yZ4SW90dTHxigz1cLy0=;
-        b=ZznE2dQGYJrempHSG5Dp1A9ZRTFYNSfmadltdGmku6c7i9J1hgAHl48PxZzOrHkXZL
-         e6Exqli/OkY15HsuO07tXZoq+eAKAt73t0KP6goyZ9HvJ9h6sURgMSystLFnjnk+vaZB
-         GYSPO8mnBLkEc5mJumwhKus/dV0aKSKDqegjY3zr7v9bJtpY7UTXOrkrgreWc0XlW1KS
-         bQFFLJ4W09BPX0RPjJupJ8uyL5ftWzmcyNJDxqE+aNtgxokqJpdfoHnxHF6BZd2+Vc+0
-         UaU6wHwgidqtXr8L7nP57TRfsAJaNbzZusJKuV3n/A2XvYSa+A+mX5YCw0fwJeQNn4KS
-         LfHQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGlOVcw7Bc5/u225MoYVh0dPHbJD4/kOi4ww7wOHPFsDyd4uBL/BI+MjEdirgJzjbksNnK0zE8yXs1BQg=@vger.kernel.org, AJvYcCXOV3KD9jyqMm9Wd9atS3T0aRVc2raAL5vkPGgpyn4VwLt6ET2OiOBA1JPWQoVaN6vMTBcjo5oKe775@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznen1R487JmD3bY+nUJE4da9nNIcneL2xHWFraMiT3MTcqB+kO
-	3tvsf5QG7iyOCE2Y8ZnTpCfR/vGVorrbq3r3gzYQxwbk+q7oXSUi
-X-Gm-Gg: ASbGncvS9EgeiT5FBNQYI6Mu5KxRXKq0oefyLdyUCsrB8SAS9iaLyKBXoWOCRvbfv78
-	8v4Mm85pdiUQ8EWQEDmsCn1tP+67FlWjpzyoLrIpNi78JTIX39PThIJ8Y5HInA10lFX+1DYW9ol
-	9cHjp8mK65VBjH6E2kF4LBRBxQcm4oWuxF2idpfrtflh7IOoKw6S+KG8lf5dMY4pcRt6KxPUVXf
-	AJpr8s3Ns+01H1mtDiGGEgtnHepXANgcWSxPMxaNQvT6MuSXyof3gIljrqFfIuEcn8xzLN9DgxE
-	t2OKQDYLvzZFHrePzCja8OeVmOcb8ZvpWIRfFHpAGWCzO6CTUTuulA0hEh6cFXfxsEGvGODTXCS
-	1s5I=
-X-Google-Smtp-Source: AGHT+IGn13wDvrhCbjxdWuP7Ai0Mmx1XcETMxA3SEyux2k86dVwD5n40nX57aEx3i5RAbD7djFsKGQ==
-X-Received: by 2002:a05:6a00:ccc:b0:728:f21b:ce4c with SMTP id d2e1a72fcca58-7366e5b53c2mr4923560b3a.5.1741087434158;
-        Tue, 04 Mar 2025 03:23:54 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7364d4fd2e0sm4423784b3a.120.2025.03.04.03.23.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 03:23:53 -0800 (PST)
-Date: Tue, 4 Mar 2025 20:23:51 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Hans Zhang <18255117159@163.com>
-Cc: lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org, bhelgaas@google.com, bwawrzyn@cisco.com,
-	cassel@kernel.org, wojciech.jasko-EXT@continental-corporation.com,
-	a-verma1@ti.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, rockswang7@gmail.com
-Subject: Re: [v4] PCI: cadence-ep: Fix the driver to send MSG TLP for INTx
- without data payload
-Message-ID: <20250304112351.GB4101682@rocinante>
-References: <20250214165724.184599-1-18255117159@163.com>
- <20250303190602.GB1466882@rocinante>
- <20250304110134.GA4101682@rocinante>
- <f51a60de-65f9-459e-9c1f-dd4f10ed65c6@163.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qr67NKr0lX+030JT0ILFyTzNfcBt1Ad8zyo2QlWh6CEirKzZWue4PeKg61N9sM54pf3qmPtfL7erDc/ThB1bQS5gxvkz8bTlR+b+XJ5ZG29GKN7xaXDEpjfjz8GKOT+PdPRrbHpKhwJ+mlvLLdLAPajITbc+urJikqOIRNYjKKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com; spf=pass smtp.mailfrom=thorsis.com; dkim=pass (2048-bit key) header.d=thorsis.com header.i=@thorsis.com header.b=szojJJVZ; arc=none smtp.client-ip=217.92.40.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=thorsis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=thorsis.com
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5B6411480850;
+	Tue,  4 Mar 2025 12:24:07 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=thorsis.com; s=dkim;
+	t=1741087453;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5abHVWwaHFEi1aRUSGkWCShuUKq/Uu+o+daM4oBhLRc=;
+	b=szojJJVZWk6XvOFPNdubWFEz43mbBbNVI+FB/KEk1K4r9ta2Gl+uI5T8z8P/l250boNeID
+	NjMViqUfeEzM+JoLZadkW4Ts7XUuc+pwSwa3vXIIDL+e1HXLp57r16IKMbx4pPOeV9DPHm
+	hEZJ+1R0nZYepTOgcTuvBVR576HtQVrxQ3Dh7t35Z+bKEG6lah6Bnt/K0TbKAT22bUrzMj
+	acNOqP0r4bYc7B4dwo8iRwKG7uuumXPrZtNFJv66c0je01nsbvzLyUJaIUODKg4Sf7sAYG
+	V65jMLIJYe9IRdBCINX5K21zFfa8JsY2Kg/cfqB5cvCs7uPHaRQo2eiQhLXpBA==
+Date: Tue, 4 Mar 2025 12:24:02 +0100
+From: Alexander Dahl <ada@thorsis.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: iansdannapel@gmail.com, linux-fpga@vger.kernel.org,
+	Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Aradhya Bhatia <a-bhatia1@ti.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [v4 1/3] dt-bindings: vendor-prefix: Add prefix for Efinix, Inc.
+Message-ID: <20250304-despite-knee-8b528b8f7f4c@thorsis.com>
+Mail-Followup-To: Krzysztof Kozlowski <krzk@kernel.org>,
+	iansdannapel@gmail.com, linux-fpga@vger.kernel.org,
+	Moritz Fischer <mdf@kernel.org>, Wu Hao <hao.wu@intel.com>,
+	Xu Yilun <yilun.xu@intel.com>, Tom Rix <trix@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	=?utf-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
+	Aradhya Bhatia <a-bhatia1@ti.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20250228094732.54642-1-iansdannapel@gmail.com>
+ <20250228094732.54642-2-iansdannapel@gmail.com>
+ <cf8b754e-f4b1-40f2-86df-e1f0cbf07189@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,40 +84,49 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <f51a60de-65f9-459e-9c1f-dd4f10ed65c6@163.com>
+In-Reply-To: <cf8b754e-f4b1-40f2-86df-e1f0cbf07189@kernel.org>
+User-Agent: Mutt/2.2.12 (2023-09-09)
+X-Last-TLS-Session-Version: TLSv1.3
 
-Hello,
+Hello Ian,
 
-[...]
-> > > > Cadence reference manual cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf, section
-> > > > 9.1.7.1 'AXI Subordinate to PCIe Address Translation' mentions that
-> > > > axi_s_awaddr bits 16 when set, corresponds to MSG with data and when not
-> > > > set, MSG without data.
-> > > 
-> > > Would it be possible to get the full name of the reference manual mentioned
-> > > about?  I want to properly reference the full name, version, revision, etc.,
-> > > like we do for other documentation of this type where possible.
+Am Sat, Mar 01, 2025 at 02:10:38PM +0100 schrieb Krzysztof Kozlowski:
+> On 28/02/2025 10:47, iansdannapel@gmail.com wrote:
+> > From: Ian Dannapel <iansdannapel@gmail.com>
 > > 
-> > Hans, I came up with the following, have a look at:
+> > Add entry for Efinix, Inc. (https://www.efinixinc.com/)
 > > 
-> >    https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/cadence&id=09f4343a59cc2678a3a5b731d16e55c697246a40
-> > 
-> > Let me know if this is OK with you.  Thank you.
-> > 
-> > 	Krzysztof
+> > Signed-off-by: Ian Dannapel <iansdannapel@gmail.com>
 > 
-> It's OK with me.
+> <form letter>
+> This is a friendly reminder during the review process.
 > 
-> Can you add an email address of our company as Signed-off-by? Because it
-> involves Cadence documentation.
+> It looks like you received a tag and forgot to add it.
 > 
-> My company email: Hans Zhang <hans.zhang@cixtech.com>
+> If you do not know the process, here is a short explanation:
+> Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
+> of patchset, under or above your Signed-off-by tag, unless patch changed
+> significantly (e.g. new properties added to the DT bindings). Tag is
+> "received", when provided in a message replied to you on the mailing
+> list. Tools like b4 can help here. However, there's no need to repost
+> patches *only* to add the tags. The upstream maintainer will do that for
+> tags received on the version they apply.
 > 
-> Like this:
-> Signed-off-by: Hans Zhang <18255117159@163.com>
-> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> Please read:
+> https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
+> 
+> If a tag was not added on purpose, please state why and what changed.
+> </form letter>
 
-Done.  Thank you!
+FWIW I guess this might refer to:
 
-	Krzysztof
+https://lore.kernel.org/linux-fpga/20240930-tranquil-glitch-f48685f77942@thorsis.com/
+
+Greets
+Alex
+
+> 
+> Best regards,
+> Krzysztof
+> 
 
