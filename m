@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-545032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC3AA4E854
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:19:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C9B5A4E848
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:18:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA53A19C3A1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:12:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CAD3C4609BB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18D9298CC5;
-	Tue,  4 Mar 2025 16:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13F77279323;
+	Tue,  4 Mar 2025 16:50:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="UKXAJCR1"
-Received: from mail-oa1-f54.google.com (mail-oa1-f54.google.com [209.85.160.54])
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="La5b50ao"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2A352980D0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B482BD5B5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107009; cv=none; b=avK1IZ42bv2lXusIHO3hiii6foMTxv3mUy/D30fxQFOLvjZx7lTrLTXTCSa2DjAn7n0Ryjen88FYsxJMtbdL4NmBf++TTQ5snbZUCyDL22ZVE49kCpstx6q9+sFHoNFyGrwdUa48432iUI3ozKqAF2ZHSwLgOmMf5IOwen2k4kM=
+	t=1741107015; cv=none; b=Ddldv7csdr+ewpXT/DGIeyxeYy1/3GUmiagXgvN4ae3ZaHG+Ibf3bjXP3VN38BKTtldy3kNuc8E6/P6IIOSKps3Au3B2jduSWY4IWxeDGSn8vVSSUZgBY10lkFQdRsH6AkCpT8kBl+IbxMcBQ/mx4sNKTJHiijSoEVZKs4NunNY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107009; c=relaxed/simple;
-	bh=L8HHTMU8DmC+6N2WJp3kjc3+BlXX6m9YnXOf1KwXSx8=;
+	s=arc-20240116; t=1741107015; c=relaxed/simple;
+	bh=ERL98+XMhCBq0WKMSdxbiVgqP55a8peNWRl1nrEYVgM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KHOmL3J92aBVUg9hH3PqwgzdzmumzODnk4WJ0FUctz74tIh4IwGzx9VDt7OfYKBmRGxoOhfIhCqjem3N+9U32+9NA064NA/2FQ4RONJ/BcSb0aEj9RGbL0mpM1EO9fR+ge9CjN4sHu3ckFzY1OBteMG18ADCTGjyh11dv+/cyYM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=UKXAJCR1; arc=none smtp.client-ip=209.85.160.54
+	 In-Reply-To:Content-Type; b=QMxrVAbzfIoNg8BzwGlDiCauhEigUN+8SI3D4glNu6HaMdKIiZlMye7afIqxTtXwTc1oo4A1t+l33POHpD1M/CIGvgtit4xcEcLqyeRwCy4yYmpqkDtpXO9EhEsH4PfMZrZUPO4draLvUlXo0GoOvOitr3xExtj+rdhmJimoyIY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=La5b50ao; arc=none smtp.client-ip=209.85.160.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=riscstar.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
-Received: by mail-oa1-f54.google.com with SMTP id 586e51a60fabf-2bcc0c6c149so5118050fac.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:50:06 -0800 (PST)
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-2a01bcd0143so4932514fac.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:50:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1741107006; x=1741711806; darn=vger.kernel.org;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1741107012; x=1741711812; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FFC/0VaDOfAur/tgnlAkpmmS5lpWwryf/b8rBN6y4bk=;
-        b=UKXAJCR1/tTwsmoZ4x9nqIHt3iJiOx3wg33jD7tZPm4GLZj0FXhiwRnDlQRI/UFsRM
-         tHKZcH9BJP8yWCXszhuuYxWjUZOvTT6tVJxqCkm4gBKbN+ayHH9Q9A14mcBlJfzYH6PC
-         8PToCT73Xt0d8SlldeLUsM5g/ZQBOPRrDY1dsJBF3XQJs9Nev83VvY/mB4RaklGM2N0E
-         0SSdfPRgLIwVPAFR0kEDKq8cSUXXMgV/5m3hRWmcxM//NO5gfr9sld21ztQXusoRUeMf
-         AaFS1gA5FrXeKYYzznxCqHaquThoDbNg6ESjB/hsD8NmTsb0E0iWBLdj89MfdQZRrNKU
-         D/KQ==
+        bh=nlIbklXNCmcjeQcgQte8OZAzddo1rgx7AgL8en5NgHA=;
+        b=La5b50aoPH0xeWXwkyTSX4jKTnUS8QRDAk3Xc0L8YlVHQXHuUkjUcw6xBqeqm9/XaF
+         3wbiTi8gzZaGZg9cHkPqCLTZohyOP+XQiXCrWhPwUHl3kuaBd9EtstOSunb7uDs7WVaH
+         meQRugRn0gK1Ml79b7Cp6kFNf9MXoHIPynA1FRb7346+qUfMiPtil5GXtElIsOKqJcxS
+         y1ylzT4kbhhUBEIJAKKzaPIefIJPZXiEqa4lKKT1TYXZoAi8zHQYmuOsbaGFi2lCzWTS
+         a5g9xN/Z5eqE29hXg65HGF6FSznRLxUWYgjzh/vo5NSoQhNRXNaaBOL4DBnrimWXL4L3
+         pOKQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741107006; x=1741711806;
+        d=1e100.net; s=20230601; t=1741107012; x=1741711812;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FFC/0VaDOfAur/tgnlAkpmmS5lpWwryf/b8rBN6y4bk=;
-        b=ClrzvGzXTw7ZdUsSXTlOnImWFh5dmGCjXuWQieSyyUS0aAuXImq+PmHEDRUtUvkMR5
-         UPPy7YD5MzceKJx9S8Qd26gZyhncYQtYB9qjWfVG0N5d3RtAKylCudtrks24MV4656Ex
-         cwbV28Gu+cgQHoLBoJxg5t4dm8B/y/KRpJ195+/GY+QOcchZ/S8BCZ0C+EFXukrLye3W
-         qDuFbVjQpt2LqW18SZmdA5GXu6CRbuuJ6tyI2ejFRhUAur479B6i4ytCzy0O+1zmb2g6
-         Iy/N1E+qdG+abagO/uAWN0SVq3TvwR+9WwWjDsaJ/xJDwz4gEs9ewRrezC9AYpe6OqpN
-         I5hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWtrPuhfBBMn7sMwueE38P0V0iNBSS/IXhCwlOAxw4mloYiBbDPg0Wg6ljHOfNcyc1Vfn7mvug+Ted4VDQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGCH8psL/hy4PIbJvHIpf0vplS7H4/3h1poN5APfEZU20dpvmn
-	9RQwc1FDvEymNpLuAOYxF+8C0F+nEmEht5atpFO+EdJqNC1Fex3ziVlUHFSbZzM=
-X-Gm-Gg: ASbGnctvXIE4YzdZD3Uy8Iwwv5xoLEiemad2VGnax74hZ5IDVh5aBN2v3rVUzmJdmYy
-	INC7RZxwDdpsEZiIjvhUOabXC6Rh96wiULDbes2jPMF8Zjn5aQz0Dh+/kyWs/M7Law6GFSqZOZH
-	VH23As0iH8wmeVih0DNBCFE1c7FQl9Nf1upZKXHaJYWQjElNnsgFrOigKthrNNubmrqGAXZMmmd
-	1/s8/ltLsue4tqnymBaIVFf3qsbgIjArWm80dKEfYRofJ1JQNdlDqph7P6M/z3RJ8tNF78fY4nM
-	D7E8gJTxDV95mxHV66o4E1gSlvWExlYFd0WLx57IZGqhfeN84icvkS4MngfSt6VfMuLeO/evwpG
-	ENuRaXCyO
-X-Google-Smtp-Source: AGHT+IENf5TzZy2paUOp2+yHiImyvpIf605z0YIuqY3weTYHuWBj9XQYDXLVtnPEtkn/E/5Jk+cT9w==
-X-Received: by 2002:a05:6871:53c9:b0:29d:c5e8:e41f with SMTP id 586e51a60fabf-2c1782c5bb3mr11456642fac.5.1741107005688;
-        Tue, 04 Mar 2025 08:50:05 -0800 (PST)
+        bh=nlIbklXNCmcjeQcgQte8OZAzddo1rgx7AgL8en5NgHA=;
+        b=WYBanYZ4dFJJr0yu8urhPevfbAf0ymwuzJD8b9H0Z9gMHspGc4I/J8Y9wLgjtWVvgE
+         qiO27YsaqdLA3id37DgpazeNdlqHA8n9m9OfZOGp/vW6RuzanEkdBAhtDQFOxQYzTXiV
+         uZgxMKo/BkLcZbemsoK+Q5mDhnr7LXHMro2MKKIsBzWrUfRc9Sf05oc3mzEO2rFBO1va
+         P0Pm4pROcTZlsU+dlkJ9KQdR/iST7kc2uKIswgD8z9vlgsaIAv+ufH5zoR/cAMjiBwPJ
+         u81DAWuidhRbBmyojruWC9CZLC1jBM9FkYyhS/jVMXvKn+qlunZqfZykgLJWCHROnCaA
+         Dj7A==
+X-Forwarded-Encrypted: i=1; AJvYcCUXx1JYpn9wS2CO5RqYWqN3JUXREOB2LPC+cQPTJ3DW0w5KgHrNHTzLXrXFzU4unmwBY6C5kfnz9CVXa9U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxixh+Jof+FV6P6NB66BosoFCD0Lg8Xn4nmTeu7Lk2kzrp2dVzw
+	MGiCup0moB194u2AxEFmTU3ntB3HkRQexLF3lcu/g8z0WsqO3sOFZtet5v+9qyc=
+X-Gm-Gg: ASbGncvD79wvYePZMYsQP6VN7DLsIQZUR4hgB7YkFketxLnmIW0udMEf9l1kwGfrFUH
+	fhGjm5+rSPD9peCU/jkhiU5NVy/iRfI4x+qhT6oindQdBbUY8Mn72hMk2DFFmnqVquiR8/w/W1p
+	7gPKthedtH+hrwI9SoZK9tJ374o5fguXMbootWSQa8SQTSZeiS1sNKFd2wte2ERPPm73vmUgJ2m
+	uJcszBjDQALzGJbh2UfIB8oLUAeeLnsfiK6lcqCllwXcZa1+3EwHtC2YzQi29Aqix5NjTFZkX44
+	PZJryjehKuYJg4ZRa43lN/utdVdAblOsJrvmFSJnUDx1F1XC6/F6QDL6iG67Hkhb1cqvDjIZp9W
+	HG8/zi+5T
+X-Google-Smtp-Source: AGHT+IF132mZL/5S2H3HBYE9POUMpakPzvAs82bnnnaYSOVaRfL5Z+1wdFvEGSjxOOUrEK5Dp2GhIg==
+X-Received: by 2002:a05:6871:d10d:b0:296:a1fc:91b5 with SMTP id 586e51a60fabf-2c178341172mr10264433fac.8.1741107012166;
+        Tue, 04 Mar 2025 08:50:12 -0800 (PST)
 Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c15c45e81bsm2333459fac.50.2025.03.04.08.50.04
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-2c15c45e81bsm2333459fac.50.2025.03.04.08.50.10
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 08:50:05 -0800 (PST)
-Message-ID: <f8a6aea3-fa69-4c59-bccc-ae6e5021d5f3@riscstar.com>
-Date: Tue, 4 Mar 2025 10:50:03 -0600
+        Tue, 04 Mar 2025 08:50:11 -0800 (PST)
+Message-ID: <5b2c08d1-47fc-43f2-abcb-f5f54fad84e1@riscstar.com>
+Date: Tue, 4 Mar 2025 10:50:10 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,7 +81,7 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] net: ipa: Fix v4.7 resource group names
+Subject: Re: [PATCH 2/3] net: ipa: Fix QSB data for v4.7
 To: Luca Weiss <luca.weiss@fairphone.com>, Alex Elder <elder@kernel.org>,
  Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
  <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
@@ -89,83 +89,43 @@ To: Luca Weiss <luca.weiss@fairphone.com>, Alex Elder <elder@kernel.org>,
 Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
  netdev@vger.kernel.org, linux-kernel@vger.kernel.org
 References: <20250227-ipa-v4-7-fixes-v1-0-a88dd8249d8a@fairphone.com>
- <20250227-ipa-v4-7-fixes-v1-1-a88dd8249d8a@fairphone.com>
+ <20250227-ipa-v4-7-fixes-v1-2-a88dd8249d8a@fairphone.com>
 Content-Language: en-US
 From: Alex Elder <elder@riscstar.com>
-In-Reply-To: <20250227-ipa-v4-7-fixes-v1-1-a88dd8249d8a@fairphone.com>
+In-Reply-To: <20250227-ipa-v4-7-fixes-v1-2-a88dd8249d8a@fairphone.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 2/27/25 4:33 AM, Luca Weiss wrote:
-> In the downstream IPA driver there's only one group defined for source
-> and destination, and the destination group doesn't have a _DPL suffix.
+> As per downstream reference, max_writes should be 12 and max_reads
+> should be 13.
 > 
 > Fixes: b310de784bac ("net: ipa: add IPA v4.7 support")
 > Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
 
-FYI, I used this to check what you're saying:
-  
-https://git.codelinaro.org/clo/la/platform/vendor/opensource/dataipa/-/blob/clo/main/drivers/platform/msm/ipa/ipa_v3/ipa_utils.c
-
-This looks good, thanks a lot for the patch.
+Looks good.
 
 Reviewed-by: Alex Elder <elder@riscstar.com>
 
 > ---
->   drivers/net/ipa/data/ipa_data-v4.7.c | 12 +++++-------
->   1 file changed, 5 insertions(+), 7 deletions(-)
+>   drivers/net/ipa/data/ipa_data-v4.7.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
 > 
 > diff --git a/drivers/net/ipa/data/ipa_data-v4.7.c b/drivers/net/ipa/data/ipa_data-v4.7.c
-> index c8c23d9be961b1b818e8a1592a7f7dd76cdd5468..7e315779e66480c2a3f2473a068278ab5e513a3d 100644
+> index 7e315779e66480c2a3f2473a068278ab5e513a3d..e63dcf8d45567b0851393c2cea7a0d630afa20cd 100644
 > --- a/drivers/net/ipa/data/ipa_data-v4.7.c
 > +++ b/drivers/net/ipa/data/ipa_data-v4.7.c
-> @@ -28,12 +28,10 @@ enum ipa_resource_type {
->   enum ipa_rsrc_group_id {
->   	/* Source resource group identifiers */
->   	IPA_RSRC_GROUP_SRC_UL_DL			= 0,
-> -	IPA_RSRC_GROUP_SRC_UC_RX_Q,
->   	IPA_RSRC_GROUP_SRC_COUNT,	/* Last in set; not a source group */
->   
->   	/* Destination resource group identifiers */
-> -	IPA_RSRC_GROUP_DST_UL_DL_DPL			= 0,
-> -	IPA_RSRC_GROUP_DST_UNUSED_1,
-> +	IPA_RSRC_GROUP_DST_UL_DL			= 0,
->   	IPA_RSRC_GROUP_DST_COUNT,	/* Last; not a destination group */
+> @@ -38,8 +38,8 @@ enum ipa_rsrc_group_id {
+>   /* QSB configuration data for an SoC having IPA v4.7 */
+>   static const struct ipa_qsb_data ipa_qsb_data[] = {
+>   	[IPA_QSB_MASTER_DDR] = {
+> -		.max_writes		= 8,
+> -		.max_reads		= 0,	/* no limit (hardware max) */
+> +		.max_writes		= 12,
+> +		.max_reads		= 13,
+>   		.max_reads_beats	= 120,
+>   	},
 >   };
->   
-> @@ -81,7 +79,7 @@ static const struct ipa_gsi_endpoint_data ipa_gsi_endpoint_data[] = {
->   		},
->   		.endpoint = {
->   			.config = {
-> -				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL_DPL,
-> +				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL,
->   				.aggregation	= true,
->   				.status_enable	= true,
->   				.rx = {
-> @@ -128,7 +126,7 @@ static const struct ipa_gsi_endpoint_data ipa_gsi_endpoint_data[] = {
->   		},
->   		.endpoint = {
->   			.config = {
-> -				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL_DPL,
-> +				.resource_group	= IPA_RSRC_GROUP_DST_UL_DL,
->   				.qmap		= true,
->   				.aggregation	= true,
->   				.rx = {
-> @@ -197,12 +195,12 @@ static const struct ipa_resource ipa_resource_src[] = {
->   /* Destination resource configuration data for an SoC having IPA v4.7 */
->   static const struct ipa_resource ipa_resource_dst[] = {
->   	[IPA_RESOURCE_TYPE_DST_DATA_SECTORS] = {
-> -		.limits[IPA_RSRC_GROUP_DST_UL_DL_DPL] = {
-> +		.limits[IPA_RSRC_GROUP_DST_UL_DL] = {
->   			.min = 7,	.max = 7,
->   		},
->   	},
->   	[IPA_RESOURCE_TYPE_DST_DPS_DMARS] = {
-> -		.limits[IPA_RSRC_GROUP_DST_UL_DL_DPL] = {
-> +		.limits[IPA_RSRC_GROUP_DST_UL_DL] = {
->   			.min = 2,	.max = 2,
->   		},
->   	},
 > 
 
 
