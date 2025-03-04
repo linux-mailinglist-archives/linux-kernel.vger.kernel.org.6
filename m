@@ -1,91 +1,212 @@
-Return-Path: <linux-kernel+bounces-544045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 626CAA4DCCF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:42:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6C7CA4DCD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:43:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83E92188D826
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:42:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A83A3AD688
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B5F7200132;
-	Tue,  4 Mar 2025 11:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B3B1FF1A2;
+	Tue,  4 Mar 2025 11:43:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="1EiI6HaY"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OdL4K2ab";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="g6PYtemt";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r6cC35uM";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5TDelq9/"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124AD1FFC50;
-	Tue,  4 Mar 2025 11:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022591EDA1E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:43:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741088527; cv=none; b=BMxmgSJwcmZSEfL+tzvhXXt06+pwO5r+gTvhUyGZCqQjatdNa+XoiB7ND99zslRDB8SH3JPDDLSZYH3narG3aqKkQ4p15vBY65U5JMZHZjovol72hxcSi56t/fJ+WABfnXt2ygKch7LuEZ21uhW4f1cU/3qK4vO2LoPF6GXabiY=
+	t=1741088597; cv=none; b=jTxVgb/f8nJSQ3EcAlTgXuBx1C0R1LwOG59KkQ6DOr4qN1o7FMbm8GJoCjkU9tFs91Jou+Mn9N8QRPPNaO6ZP+6nFkDvbREuU0r6hSjCVpe5RYUxmFxZI9cdCPSLqLjOZCE0AMeKqcEl7Inch9G3EjY9ZgkbUzl/RxS2UVmRnAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741088527; c=relaxed/simple;
-	bh=uqenW6FxHzjv93IlGq3O4/NtcfxeAquNgX50B3dpRGI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FyjupuW5TdH9qJ5JPCLYu5OyZ3vAwVVoBArJAHKMUlPrcEGE9hxpAZEXF1LuYrD1Dux9aNkaAjUuZbxBJzbHRdDs/CaAGJfOvOWW9CT+m3YVAcW9gQfyRgtgx9awrYbR2LZ7DhunwLrM7VLHerVF3B3xkn9F3HPSLVu8oBLPBT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=1EiI6HaY; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=LlkC1H6GlfM4Hx4kB9R2XcBn/wEpCBfNZPYyj4bbtvs=; b=1EiI6HaYvFggifFfi7bvm1wBKs
-	6jLTW7PCJ7Oi2vW1Zf0AkcO74u/pGgwoED+2iUf225BS+ONodX0g1SV8YxrqrvwKSY8WMt6GozH1P
-	Za4o+/iMmwj1Qw0wEj3pBbdIVFk7WC75pXwxpBQKIeCxbOo7uNOEimr07UiHkNUuq8vtnDXZIHZDN
-	Pr+YjXaNZplYLFekBRhJMCkqBDIcsBz0Ou9tzeI5JAV3Zp0NwfswqRUul9gGRcVAKdO09RvtvpUQX
-	VU6vKqFSwGb4C/efsUkU3OGme/KjRaIgYizLWDGK2QbngJTBqg+e4qWORjjtanbcZYqPjG2+8qE1f
-	tsLW+eyQ==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tpQer-0002qO-Nc; Tue, 04 Mar 2025 12:41:57 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jonas Karlman <jonas@kwiboo.se>
-Cc: Yao Zi <ziyao@disroot.org>, linux-rockchip@lists.infradead.org,
- devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Jonas Karlman <jonas@kwiboo.se>
-Subject:
- Re: [PATCH 1/4] dt-bindings: iio: adc: Add rockchip,rk3528-saradc variant
-Date: Tue, 04 Mar 2025 12:41:56 +0100
-Message-ID: <3748393.44csPzL39Z@diego>
-In-Reply-To: <20250227184058.2964204-2-jonas@kwiboo.se>
-References:
- <20250227184058.2964204-1-jonas@kwiboo.se>
- <20250227184058.2964204-2-jonas@kwiboo.se>
+	s=arc-20240116; t=1741088597; c=relaxed/simple;
+	bh=yKIGqILu+t2U/a7DjSz4T6ZMkX8w87MBMShH0PJ1Pr4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=q2cSLIXDDyBEk3dUN/gGSDe6RnmKSuo+oSAggs3rJLqveKlsnvLPmQICYfzb6sTCsE1e+PZqxyuPej+g2j0eT6So9fldIqg3CScXYlcPaMZQR122Lk0p2mY69gWIUfvyzJ58UrkfOEWzhxLiiYAYEzDyweGlYlva7gVzrDzwoYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OdL4K2ab; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=g6PYtemt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r6cC35uM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5TDelq9/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D2C5321197;
+	Tue,  4 Mar 2025 11:43:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741088594; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3xat5MAD5sqlPWHFzE2952kcqEJ11StBzDEZP7zDYkc=;
+	b=OdL4K2abqHUgbNsIixJkpTfHow9oRccA5YUnX5H7y9a8H7gF0wj+Kog5wy8WylQquZU+oy
+	F6gKm/kdIEGBpN+9lb9SCAfMNPEuSmoEp6bhrL6LtabFjwqqFJJ+Ig6XtHHjsowazH4UJ8
+	9vQTYJzAYNMlBB5OU4IzPvWajkeZPu4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741088594;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3xat5MAD5sqlPWHFzE2952kcqEJ11StBzDEZP7zDYkc=;
+	b=g6PYtemthGlyeu3CY0HaLCw1xogvcVyuGTUVeW+EghJLNIQcdUShIcZ4j5sz9gjZ11T9Te
+	xy8LrcAoUtmzDODg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741088593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3xat5MAD5sqlPWHFzE2952kcqEJ11StBzDEZP7zDYkc=;
+	b=r6cC35uMrr4y0W+bskb9f5F9Ttw/EfKuszfLF93FaX8tyx4fOHUUuBDM8bdfthjNmhEAjA
+	+oQP4rjBw3NLEyfa9+dB3dn3djHbikkkPXISQveHqGekJUyPXjRCuXAEK18ngumEtC0PUb
+	ba+VJzidU/9m6Hl4w5YdEEzSHI8A/HM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741088593;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=3xat5MAD5sqlPWHFzE2952kcqEJ11StBzDEZP7zDYkc=;
+	b=5TDelq9/NZqHReBy+pUvMqOkUa4B4A3YH8NHZFVzi0BzCH2/3VOyeWUO1IJ7/dgRWL/3Tj
+	DI17jgZguWtYHbAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 613B413967;
+	Tue,  4 Mar 2025 11:43:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mNLiFVHnxmcZegAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Tue, 04 Mar 2025 11:43:13 +0000
+Message-ID: <d777ab50-51cf-4eed-bfec-a44eca7ba3c5@suse.de>
+Date: Tue, 4 Mar 2025 12:43:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v19 22/30] drm/shmem-helper: Add common memory shrinker
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ David Airlie <airlied@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
+ <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Qiang Yu <yuq825@gmail.com>, Steven Price <steven.price@arm.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Emma Anholt <emma@anholt.net>, Melissa Wen <mwen@igalia.com>
+Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
+References: <20240105184624.508603-1-dmitry.osipenko@collabora.com>
+ <20240105184624.508603-23-dmitry.osipenko@collabora.com>
+ <d1f856c7-47dd-4f1d-a124-973064dcd1f0@suse.de>
+ <6b7d95b7-a9dd-43c9-b1db-8a636b85ad51@collabora.com>
+Content-Language: en-US
+From: Thomas Zimmermann <tzimmermann@suse.de>
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <6b7d95b7-a9dd-43c9-b1db-8a636b85ad51@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FREEMAIL_TO(0.00)[collabora.com,gmail.com,redhat.com,chromium.org,ffwll.ch,linux.intel.com,kernel.org,amd.com,arm.com,anholt.net,igalia.com];
+	RCPT_COUNT_TWELVE(0.00)[18];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
+X-Spam-Score: -4.30
+X-Spam-Flag: NO
 
-Am Donnerstag, 27. Februar 2025, 19:40:50 MEZ schrieb Jonas Karlman:
-> The Successive Approximation ADC (SARADC) in RK3528 uses the v2
-> controller and support:
-> - 10-bit resolution
-> - Up to 1MS/s sampling rate
-> - 4 single-ended input channels
-> - Current consumption: 0.5mA @ 1MS/s
-> 
-> Add a rockchip,rk3562-saradc compatible string for the 4 channels of
-> 10-bit resolution supported by SARADC in RK3528.
-> 
-> Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+Hi
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+Am 04.03.25 um 11:59 schrieb Dmitry Osipenko:
+> On 3/4/25 13:29, Thomas Zimmermann wrote:
+>> Hi
+>>
+>> Am 05.01.24 um 19:46 schrieb Dmitry Osipenko:
+>>> Introduce common drm-shmem shrinker for DRM drivers.
+>> What's the status of this patch?
+> It was de-prioritized on my list a year ago as I had to move to a higher
+> priority problems. Rebasing and re-testing these patches takes much
+> time, it either has to be split up in a smaller parts or applied in one go.
 
+The first 11 patches seem uncontroversial to me; maybe except for patch 
+9. Could they be merged any time soon?
+
+The next batch could then be patches up to #20, which seem to be 
+reviewed as well.
+
+>
+> The current status is that I started to work on v20 rather long time ago
+> and the patches need to be rebased and re-tested again. Heard that
+> Panthor driver may want shmem shrinker more than others today.
+
+I've been receiving reports about low performance of ast plus gem-shmem 
+recently. I suspect that the vmap/vunmap overhead could be related and 
+this series would likely lessen the problem.
+
+Best regards
+Thomas
+
+>
+
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
 
