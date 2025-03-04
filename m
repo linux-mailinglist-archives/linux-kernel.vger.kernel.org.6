@@ -1,136 +1,141 @@
-Return-Path: <linux-kernel+bounces-543602-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543604-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AA91A4D761
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:06:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1BFA4D74E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:04:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C7461884D29
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:04:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 293937A408E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 651B7204F64;
-	Tue,  4 Mar 2025 08:57:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B51A1FDA99;
+	Tue,  4 Mar 2025 08:58:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LvyV93ls";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bwfj6DPB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jMoCZOEY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E781B1FCF72;
-	Tue,  4 Mar 2025 08:57:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649021FAC59;
+	Tue,  4 Mar 2025 08:58:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078631; cv=none; b=VbPhoXEHAATYkjMjPlICScrvZ3wU8sQgaT9LvCRsNZEND5fShHJRZEsZZ3HXp8KSysII5ciL+BFLk6/f/SkOO1bVfbsLd/7c4b8BnYxf6t6I9paP9b+T6xZj/4w6WKMn+egv7oEBMw958YhFX+7ddPPFhf/qoiKkokg6/zHhED4=
+	t=1741078688; cv=none; b=PapT8YgLzTIwMZQ72ieiDReyTIjrYJeAuPNZ9wcZIJWJ9Pc0+YKyHAKXKqOpvV9X5SoFP9Q1NuaoSBKmF7Pkfg3PIZZ1zsa6H3FsvY0/gFLrQfWsZr7msuU0Xs/THeZPtXRNjhEI9/j7RIqRDyZv6BIfQUmE7dsZyGqqdyR28mc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078631; c=relaxed/simple;
-	bh=Mv+iQ1Tq4xLXDtAXupuNGLYRJMJALhXj1+iM5f1FIJA=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=aQq0aV7SGboRU0UOLjKruajCzVWloB2ZLRVv2SgmRjN6q2zDHbqPv+URGUGwzYRERcMC3zQuUW/DE12TN9qsjV0S7vGRlrpmUYBLYQScl+jLwwcNkn3flDhvUmU+F02ElceORa77wNzV+m+JeL7N/2oWGTB+h4LQkK8ln5yyWaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LvyV93ls; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bwfj6DPB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 08:57:07 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741078628;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YWegiVUaagVRntjHOtRXaR3JpJIw08JyWbRCddJ8gCc=;
-	b=LvyV93ls4SZt8eX80UXNpPL/tZuEyyY1exH3FSekuFegckCf2GRBOCvkKoBhb9QxSgGRSl
-	A/mX9JXy5rJO5hmPT5xsLiKoqf3ZRUIFziotilqqpN9ANterQJsU0Z0e7MqVOYs0kRLxPu
-	OBvNyCopuiHkuB4GPDFfUuI0dZm1qgMIiglLmVzI2Q4e65xW4UtTF7lhNKVkEfeBKdnUDk
-	5mySNJxxsX8FmcejQBfyk5QTlN00r8BnWA0J/pMzvWIKxllY0JvnV/EvgPcN0Go5OP3gyn
-	mflZ0+mqnB/AG4s2XJJMpiNFk2WBC1Z6HckklWFuSrdLjK31xWbhXx31xckYoQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741078628;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YWegiVUaagVRntjHOtRXaR3JpJIw08JyWbRCddJ8gCc=;
-	b=bwfj6DPBPFE3gBJbO2dJR5EUO+LPp4zS5kp/slLZs3vL0wlaK7kBWasdgAmfpS+tupx46Z
-	5dVSGFFeIdbL+LAA==
-From: "tip-bot2 for Saket Kumar Bhaskar" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: perf/core] perf/hw_breakpoint: Return EOPNOTSUPP for
- unsupported breakpoint type
-Cc: Saket Kumar Bhaskar <skb99@linux.ibm.com>, Ingo Molnar <mingo@kernel.org>,
- Marco Elver <elver@google.com>, Dmitry Vyukov <dvyukov@google.com>,
- Ian Rogers <irogers@google.com>, Frederic Weisbecker <fweisbec@gmail.com>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250303092451.1862862-1-skb99@linux.ibm.com>
-References: <20250303092451.1862862-1-skb99@linux.ibm.com>
+	s=arc-20240116; t=1741078688; c=relaxed/simple;
+	bh=ddy7BgWCBWeuZUy2eIZh8ooD1wt0aH8qK5EF6t6ee0U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=cJv7sg3Bj+nc+3IpIXvHpV3lPVUThHfFiWQBy9+TCkUmgHcSAHpXjFQGqMFsPsnM80pKeB2+NVkfYlEqkH2nMgesOLbRC6ekBobStAq05fEzEiHl9aODReMJ5k+5vmIHLPp2N2GPdOEO4CcIlCgb57NVznaIO6+9UtbgXEs3nc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jMoCZOEY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523NX3lX006113;
+	Tue, 4 Mar 2025 08:58:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JtNqsTlqI2gMEyukBobe1UA3U9C+2jFIY+BhbFzyXSo=; b=jMoCZOEYPph2YD+t
+	aOz9KMKpHPQjhX0bUi8bTqbn3U4nTtcabwt+w3hvYABpWx7lm1ch8dV0tWcpV4JA
+	hT1EsIDDQzxR/9Lj8Yz+VwIbwQIFX8/SEE4jmb231tFutvGsnmvZUSBirZGhx8Jr
+	aPy8UZ6eCYVdMUmW66VO5KUXeOIxwFGS3UN+C4fFm+ZUy4yx1sJqLbHM4YKWUvpM
+	1B3j4qitZsFHjsq1QH1OsFi2taLXnwoneUQHMlfmqrNWm+s8X/JToVOcDFS9r3/b
+	NOqauJf8UJtrFmOl8FFJ9UGKD3BHVity6tAoD7yGccZteZIRyf22V+FpXS8ejaIF
+	AfzzmA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6th8yg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 08:58:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5248w0Y4015630
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Mar 2025 08:58:00 GMT
+Received: from [10.216.44.43] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
+ 00:57:56 -0800
+Message-ID: <9db40fd1-a9bc-421e-b322-c309edb095d0@quicinc.com>
+Date: Tue, 4 Mar 2025 14:27:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174107862797.14745.7983428300069881325.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 1/2] dt-bindings: mailbox: Document qcom,tmel-qmp
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>
+References: <20250228045356.3527662-1-quic_srichara@quicinc.com>
+ <20250228045356.3527662-2-quic_srichara@quicinc.com>
+ <velvqajyhrdaipmqmsduv3l3dsv56sy4rfukwm2hrdvh47hgqx@7sbnrgkzsn67>
+ <1a22a637-c3f1-49b3-adf5-3e952c7d336a@quicinc.com>
+ <5xjtb4cifjjagkeifpkgx4y5cb7mwrocv7sxq3lh4lhadtw2bn@umtwhw7eqkhe>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <5xjtb4cifjjagkeifpkgx4y5cb7mwrocv7sxq3lh4lhadtw2bn@umtwhw7eqkhe>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=HZbuTjE8 c=1 sm=1 tr=0 ts=67c6c099 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=gEfo2CItAAAA:8 a=COk6AnOGAAAA:8 a=yp3r7umGiTXjgQfZ3P4A:9
+ a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: LUzPKvJdMvzL8nO84qMGWjlsnHR5YBFO
+X-Proofpoint-ORIG-GUID: LUzPKvJdMvzL8nO84qMGWjlsnHR5YBFO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_04,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 spamscore=0 clxscore=1015 phishscore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=770 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2503040075
 
-The following commit has been merged into the perf/core branch of tip:
+<..>
+>>>> diff --git a/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml b/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..2e3c79add405
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/mailbox/qcom,ipq5424-tmel.yaml
+>>>> @@ -0,0 +1,62 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/mailbox/qcom,ipq5424-tmel.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>>> +
+>>>> +title: Qualcomm TMEL IPCC channel
+>>>> +
+>>>> +maintainers:
+>>>> +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>>>> +
+>>>> +description:
+>>>> +  TMEL SS provides different kinds of services like secureboot, remote image authentication,
+>>>> +  key management, crypto, OEM provisioning etc. This patch adds support for remote image
+>>>> +  authentication. Support for rest of the services can be added.
+>>>> +
+>>>> +  The QMP mailbox is the primary means of communication between TMEL SS and other subsystem on
+>>>> +  the SoC. A dedicated pair of inbound and outbound mailboxes is implemented for each
+>>>> +  subsystem/external execution environment which needs to communicate with TMEL for security
+>>>> +  services. The inbound mailboxes are used to send IPC requests to TMEL, which are then processed
+>>>
+>>> This string is 100 chars long. What is the recommended wrapping
+>>> boundary?
+>>>
+>> I kept it as 100 and checkpatch did not throw any warnings.
+> 
+> "The preferred limit on the length of a single line is 80 columns."
+> 
+> Documentation/process/coding-style.rst
+ok, will fix.
 
-Commit-ID:     061c991697062f3bf87b72ed553d1d33a0e370dd
-Gitweb:        https://git.kernel.org/tip/061c991697062f3bf87b72ed553d1d33a0e370dd
-Author:        Saket Kumar Bhaskar <skb99@linux.ibm.com>
-AuthorDate:    Mon, 03 Mar 2025 14:54:51 +05:30
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 09:42:13 +01:00
-
-perf/hw_breakpoint: Return EOPNOTSUPP for unsupported breakpoint type
-
-Currently, __reserve_bp_slot() returns -ENOSPC for unsupported
-breakpoint types on the architecture. For example, powerpc
-does not support hardware instruction breakpoints. This causes
-the perf_skip BPF selftest to fail, as neither ENOENT nor
-EOPNOTSUPP is returned by perf_event_open for unsupported
-breakpoint types. As a result, the test that should be skipped
-for this arch is not correctly identified.
-
-To resolve this, hw_breakpoint_event_init() should exit early by
-checking for unsupported breakpoint types using
-hw_breakpoint_slots_cached() and return the appropriate error
-(-EOPNOTSUPP).
-
-Signed-off-by: Saket Kumar Bhaskar <skb99@linux.ibm.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Cc: Marco Elver <elver@google.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Frederic Weisbecker <fweisbec@gmail.com>
-Link: https://lore.kernel.org/r/20250303092451.1862862-1-skb99@linux.ibm.com
----
- kernel/events/hw_breakpoint.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/kernel/events/hw_breakpoint.c b/kernel/events/hw_breakpoint.c
-index bc4a610..8ec2cb6 100644
---- a/kernel/events/hw_breakpoint.c
-+++ b/kernel/events/hw_breakpoint.c
-@@ -950,9 +950,10 @@ static int hw_breakpoint_event_init(struct perf_event *bp)
- 		return -ENOENT;
- 
- 	/*
--	 * no branch sampling for breakpoint events
-+	 * Check if breakpoint type is supported before proceeding.
-+	 * Also, no branch sampling for breakpoint events.
- 	 */
--	if (has_branch_stack(bp))
-+	if (!hw_breakpoint_slots_cached(find_slot_idx(bp->attr.bp_type)) || has_branch_stack(bp))
- 		return -EOPNOTSUPP;
- 
- 	err = register_perf_hw_breakpoint(bp);
+Regards,
+  Sricharan
 
