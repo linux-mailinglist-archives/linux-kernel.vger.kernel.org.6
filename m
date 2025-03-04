@@ -1,108 +1,155 @@
-Return-Path: <linux-kernel+bounces-542936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CA67A4CF9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:04:07 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F613A4CFA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:04:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FF9D170C14
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:04:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A98751722D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B40879F5;
-	Tue,  4 Mar 2025 00:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A147A8C1E;
+	Tue,  4 Mar 2025 00:04:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EqdAS/SX"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccMDZCAt"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2FAEC4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7600218D;
+	Tue,  4 Mar 2025 00:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741046636; cv=none; b=KVc4tWhOEyuEqp2S4wmcYpBvecxqmluaMWZxM3V+rxKZAWBVpLia9qi7a92eSdnGwkRa/PxSpWaDOolunPkA8383Ntiy+c9pYWNz94YUtkcJcKBUjG40eRFP8IMaFy1xhlx6dpUB+WLBi5wVIBy3TTKXxseVkN1xf99aIamBp+0=
+	t=1741046650; cv=none; b=t+GzSeRtYL1IcTJoXr504AELztPKzXq0Fl0Rhgkdzw+eIvEc4HV0DocPhrU7xr9/+b/hTVtZDbSqcw+8NKu09PRXa2TkNThGGYm32tQFZPx5Y9hMCFHgsvcdmLw5TU+MxARTflobsgJeYdOisx3cljaGsrW2K17gXOhBop2Zev4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741046636; c=relaxed/simple;
-	bh=C/LfSpekGkcQBqzcVBoT+8ef+/NIGmgDTXMdDSp2KH0=;
+	s=arc-20240116; t=1741046650; c=relaxed/simple;
+	bh=HXAKX2N9TbcSqNkQkYRPQn7lcR9MtlSeezsuxXMMk7w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kZEybC0fujh8I1zmTJxOFi28aNp2DVrJrMJkY3L4OrEVYxmOrxvvws3oztYh8Zuj4wXoXHW5kHmHx6WawNIyDoqQuujMdfJL4k7a2d2qoIlLGyBJBmrTMBGqSRk/Vqy2A/EZe7wyyl72yWt7skEDSgDWDfHAccdbFGHx1bPfDgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EqdAS/SX; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30bb64a4060so14174001fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 16:03:54 -0800 (PST)
+	 To:Cc:Content-Type; b=sD+KPvwkcZKckmeMzARsaVEhEzW1lDaK9rmPecugvlZGdLmuGXvIf5fAOZTQqEjm3G4qlsb/pV9k1zZ6CGY1TcHEjUZkgr/WWQYHb1vH930bsUfncYPKUZk40LYC+NuYnWveVe7WBbdobaSak/kp+AvwkxcprIhFUjLpPM2Amp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccMDZCAt; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2fd02536660so1129855a91.2;
+        Mon, 03 Mar 2025 16:04:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741046633; x=1741651433; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741046648; x=1741651448; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=C/LfSpekGkcQBqzcVBoT+8ef+/NIGmgDTXMdDSp2KH0=;
-        b=EqdAS/SX1cNZTPEopGRn/ftTbaYzlpkYYur946VDRWoj00RW3RDDO8j/ft3yZdOdth
-         fwKkbezcExtBYnOFIGVBOnMpIdFg6pvId4WvJpni43+cy/ieXkBk7HZ7mUO/GKJzeacV
-         3ilD14W0in27CViA/3KtXcrWyRxCa3IJ3CnWQ7z8Ln+HPa/UUxlXT4iU0ldPZ9gqdzE4
-         kBdvGA5OkZcNmK77gZFYzyrSu8KDlMuX0Y0PZPdDG295qR4uS9LTPIUOjlO1jDVJO/4t
-         2nHIv/3zuQjN1hLi/I6VDIte/+82buQbCgfGEofT4f6F8nOE1zw4pZOIAU4W9Or4i/kL
-         Aw7w==
+        bh=ysR28s3u8CnmgoTuBfCN0R8kYhifvtml7/f8t3uhNZU=;
+        b=ccMDZCAtVOaZf2Hig1n5VKge7TMlx4dtkdZJOLTwmiV5JqtGcA7QZtmfdOgeb6pAf2
+         0i/yLHmNc64Kvm0E7v8w6snKq++tE6GFFhlmkjQpIwcgE+6n2N14ebE9gn8HyXw2ABhw
+         63YSUyigPGIE6oSviCLcb2PphyP/gNtulB6xDJJQQK5lRaHrUNB+l7y4gTlVxuiRYbmI
+         Pe7euiGNfyc7PVSZz26Fy63Bio0Y6nINb67OFlU/vrf6f0iGW5VWgWzj/18a5EqSDF4H
+         wiNHRqrGtI8EoyCz86s8Dyy/z90kGvSdAejCmcjnLb0v6Q/NBf7BOnmk3G8zXTlW7Add
+         tLxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741046633; x=1741651433;
+        d=1e100.net; s=20230601; t=1741046648; x=1741651448;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=C/LfSpekGkcQBqzcVBoT+8ef+/NIGmgDTXMdDSp2KH0=;
-        b=cUTNNyZW2ITX7UnWr5ugPJC9W8/wwevUI6PLVM6sWUJsk69L+e+tIQYlmLd0Ji3Ejv
-         sRb4mvdIikfY0W6vZbi7S30rIAlFk8xBphgTd+xjtP+v0NfhB3wtdF4Tb9OYyTVhPum7
-         SiuixqERNufe7M+8GLOCEXAzmy4hjdp0FXhBiKzFeuBoe1usmeiY3OpKGpnWbj5EEVOC
-         pO0w74MjeabVpNP+fpDIveBOK9hJAcGoXc8EzAKfk6EvX3vkocpTz77YpgxnYLfohmXK
-         KYUqEAAp9e9eNivh00IaqJiorwTRIO6FgBE+LWKnNca9GAbf1th7UNMu36fhIHYx/fif
-         a/hg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzsHmAgnupc2ouTblmvep/gGDg4rlP1SVXjqvlEycBRKKcmwjBsnvMKOY0zAhWN1orJhCTYJpeIVN3les=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwT3NC1NJ7EKXRWDXcHSxprPqpMHK7B7ejV0ETTzHa0OUi8rm8a
-	ki4N5TGcZELTdlrvbBlAp6KU6KA8J3wrWvVdH7fsR9m1k61DyQ1SCjqCO6ZskCmc0X59PFvOVgZ
-	gv4mSygslj5k17IWUb7iVweYaQeq45slmQ5Rpdw==
-X-Gm-Gg: ASbGncsqy9EcSxNmHxAmqCSa7WzTza7Cs94teZcxpphpxd9TkGEpZbOg34u5Wc+4BZI
-	yR7Gxh0gmyHL5log7WHlJEI0H/Gi6+p1V4kdKRpNn57rVQQXpwG4z6AAeIMSByhlc1poCBwf857
-	jP2L1NjpcEygAwLymsw4ZTBlcU7g==
-X-Google-Smtp-Source: AGHT+IGrydCSg/lI1uzAKwGHugbQGvBBzjG9s3mdXfZC6EYIplaWRQ795GqrXmFtWsW5Su7ME7vIhfLoaVp40Qd8SR4=
-X-Received: by 2002:a2e:be03:0:b0:309:1d7b:f027 with SMTP id
- 38308e7fff4ca-30b9320f37bmr66066201fa.9.1741046632848; Mon, 03 Mar 2025
- 16:03:52 -0800 (PST)
+        bh=ysR28s3u8CnmgoTuBfCN0R8kYhifvtml7/f8t3uhNZU=;
+        b=htbHOyg7TJxwsdhMchT5+N3XS+Oeoam89XzszEV3o+au7Nzp5sfiJgFnxZZh/QbXAg
+         d/kDyuClYpIdGmcv4eUlFCVN1OEoEGr8fj1nLS1ONIUaUNCaNQXOwc9eyRoRh7OW6Ehp
+         cs5v1UkQDWOgxixne723QPZNxIdM1KAf5PdWRO6BMrHf21TEzwrn36bZQm8tWHtZbOH9
+         IBxAXB7n9KI4KUicj7MioP+vJEfpC0uwIeMr+/a6gwqMPXxV0jedC0OkRq4Ys4f5Rv9Z
+         E5BAZpYdLtvTnx3x9WbDz+4m3glQgSvrzSceqQZIv7vuM7n4kfwi2lrajuail2fe9Xnz
+         dhZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWrtb2PmCrTMlgIx5ta6yUcC2gwErB90/5jfzSWrlx0D47gnXrZoAKnsP0K/YnYmLA7Jg10wMvWy6DuzDQPC6rQSrIR1OT@vger.kernel.org, AJvYcCUntojxTX5FhwH8x46h7mIjlpPoHlRkcUyoFa9ghtpMjdlvOrMh+kS0E60fOkvM4STHgQIYvRAbqCqTjt/6kZg=@vger.kernel.org, AJvYcCVQavgiTszOJuBD++sZ7LeTUejM8BV0KRuUkXesk1zeUZ4haXPrM1LQ1mY903uRpXG4uCfPvDbVe+rwyo0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3ztj1WeNLMPjq4w/tLLlsnAfLPDQSZp3Pc9LKT18RNp5pMSil
+	omsIQpchGAqaHdKudYUHJRvPCbxu98xiBlGmHfAPWb4qTfyFH52fu94KNU72PJ7x2EgH0MOOKc6
+	TB4NQSQzmyDsbERW7EstQKruimXo=
+X-Gm-Gg: ASbGnctGrDAPRSWduKAgVclvUbdFVlKGcp6HILJxV9HwmklIKcE82uEOH6klj06DMzp
+	Rzn+V4MXB/clvzkW/u4ZKRrU2BJyrAVXaYQyvgsyQhkdYvPzWRI+nD5377klIhAx+5p6NNDWmJk
+	3Ztk6D8fbnB974lbv2dOGr9OOw1Q==
+X-Google-Smtp-Source: AGHT+IFN+xbOu5QfcgaBgtNPAK4UHIFhRFNtYHlPW6b79kAWFeZjWU+GDc72m/R3caqAAOD/IZViYriJF/YR/9zZ/iQ=
+X-Received: by 2002:a17:90b:3845:b0:2fe:8e19:bcd7 with SMTP id
+ 98e67ed59e1d1-2ff3534a3c9mr422621a91.5.1741046647649; Mon, 03 Mar 2025
+ 16:04:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303164928.1466246-1-andriy.shevchenko@linux.intel.com>
- <20250303164928.1466246-4-andriy.shevchenko@linux.intel.com>
- <CACRpkdbCfhqRGOGrCgP-e3AnK_tmHX+eUpZKjitbfemzAXCcWg@mail.gmail.com> <Z8YThNku95-oPPNB@surfacebook.localdomain>
-In-Reply-To: <Z8YThNku95-oPPNB@surfacebook.localdomain>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 4 Mar 2025 01:03:41 +0100
-X-Gm-Features: AQ5f1Jpd0GEUB6MlVioV71j1v6rfMl3pu_k3_4FUFebcVwfwl0boXwZuTwUA1vQ
-Message-ID: <CACRpkdbqYoY1vYGii1SyPL1mkULGXYX7vFwu+U9u2w9--EYAsQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 3/3] ieee802154: ca8210: Switch to using gpiod API
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, linux-wpan@vger.kernel.org, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-gpio@vger.kernel.org, Alexander Aring <alex.aring@gmail.com>, 
-	Stefan Schmidt <stefan@datenfreihafen.org>, Miquel Raynal <miquel.raynal@bootlin.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Bartosz Golaszewski <brgl@bgdev.pl>
+References: <20250303-inline-securityctx-v1-1-fb7b9b641fdf@google.com> <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
+In-Reply-To: <CAHC9VhSo3aGsJVd=a3MTeakgU66oTN86oh5sZE8P4ghSk8Rx2g@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 4 Mar 2025 01:03:54 +0100
+X-Gm-Features: AQ5f1JoZtQM3Oja3NDT-Obx7yZMvaxx2kZbpcAlTwOsQb2zyvabJdICtBU9x160
+Message-ID: <CANiq72=n_cGmrb6+6CH1AbGePy5dRMMFyzAFv6O1VEp8EgKR8w@mail.gmail.com>
+Subject: Re: [PATCH] lsm: rust: mark SecurityCtx methods inline
+To: Paul Moore <paul@paul-moore.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 3, 2025 at 9:39=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
+Hi Paul,
 
-> > Maybe add a comment in the code that this is wrong and the
-> > driver and DTS files should be fixed.
+On Mon, Mar 3, 2025 at 11:55=E2=80=AFPM Paul Moore <paul@paul-moore.com> wr=
+ote:
 >
-> Or maybe fix in the driver and schema and add a quirk to gpiolib-of.c?
+> Beyond those nitpicks, this looks okay to me based on my *extremely*
+> limited Rust knowledge.  With the minor requested changes in place,
+> would you prefer me to take this via the LSM tree, or would you prefer
+> it to go up to Linus via a more Rust-y tree?
 
-Even better!
+In general, if a subsystem is willing to take Rust-related patches
+through their tree, that is the ideal scenario! So please definitely
+feel free to pick it up on your side (and thanks!); otherwise, I can
+pick it up with your Acked-by.
 
-Yours,
-Linus Walleij
+Some days ago I wrote a summary of the usual discussion we have around
+this (copy-pasting here for convenience):
+
+    So far, what we have been doing is ask maintainers, first, if they
+    would be willing take the patches themselves -- they are the experts
+    of the subsystem, know what changes are incoming, etc. Some subsystems
+    have done this (e.g. KUnit). That is ideal, because the goal is to
+    scale and allows maintainers to be in full control.
+
+    Of course, sometimes maintainers are not fully comfortable doing that,
+    since they may not have the bandwidth, or the setup, or the Rust
+    knowledge. In those cases, we typically ask if they would be willing
+    to have a co-maintainer (i.e. in their entry, e.g. like locking did),
+    or a sub-maintainer (i.e. in a new entry, e.g. like block did), that
+    would take care of the bulk of the work from them.
+
+    I think that is a nice middle-ground -- the advantage of doing it like
+    that is that you get the benefits of knowing best what is going on
+    without too much work (hopefully), and it may allow you to get more
+    and more involved over time and confident on what is going on with the
+    Rust callers, typical issues that appear, etc. Plus the sub-maintainer
+    gets to learn more about the subsystem, its timelines, procedures,
+    etc., which you may welcome (if you are looking for new people to get
+    involved).
+
+    I think that would be a nice middle-ground. As far as I understand,
+    Andreas would be happy to commit to maintain the Rust side as a
+    sub-maintainer (for instance). He would also need to make sure the
+    tree builds properly with Rust enabled and so on. He already does
+    something similar for Jens. Would that work for you?
+
+    You could take the patches directly with his RoBs or Acked-bys, for
+    instance. Or perhaps it makes more sense to take PRs from him (on the
+    Rust code only, of course), to save you more work. Andreas does not
+    send PRs to anyone yet, but I think it would be a good time for him to
+    start learning how to apply patches himself etc.
+
+    If not, then the last fallback would be putting it in the Rust tree as
+    a sub-entry or similar.
+
+    I hope that clarifies (and thanks whatever you decide!).
+
+    https://lore.kernel.org/rust-for-linux/CANiq72mpYoig2Ro76K0E-sUtP31fW+0=
+403zYWd6MumCgFKfTDQ@mail.gmail.com/
+
+Cheers,
+Miguel
 
