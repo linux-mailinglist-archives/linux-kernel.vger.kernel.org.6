@@ -1,75 +1,76 @@
-Return-Path: <linux-kernel+bounces-543895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1D0FA4DB48
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:49:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AD1A4DB34
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:47:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3B553A608D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E80B51889377
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC441FF7D5;
-	Tue,  4 Mar 2025 10:42:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7CD1FFC6E;
+	Tue,  4 Mar 2025 10:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ezjyld/P"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jB+NySUc"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 081631FCFE7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFDC1FDA86
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:42:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741084927; cv=none; b=VeLz0/QnZnGSuDUvIB3Lsg4vxv6Vg6QMkh7OvIpLR88IMf/H5C32PpIh+IaZ6TY4KLPiYrkd3Qcajg1UEIf7Ok3ITCs2oDGFfcl3GyRNEFAjoSHWSkFYR20dC7fBE8uPnU+yJ5nLJZ3iTlhENVMTALuYyQ9OsilKpZjzLTae/0A=
+	t=1741084929; cv=none; b=G7Fq7csz8ZgnZ2K5yVRWonYbF9XLm/ENh1XkWPj5xoG4HQmKoBy6GNY2k99IYgeq5mhMQhk7ou0RV6clVTTbpo4yAnsB7uAxkHuN69ATJBnYQf5LFCXJ7a1uESlpf2dk4k9OQsbf8gDq4e1CetHF9LcveOuo4gXpkXQHc5tJTqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741084927; c=relaxed/simple;
-	bh=oVGnr7AhMY5erBxqjABx8O/86uJFOwPvuIi+4qeKs9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d4zLD6vzfTLjTx+x1wz5U+VFK6i46Fm9WvvPJnlVNlGpy4DiCidVQBauVo7heBoXFRUF985kxkjwDuzQV5fUhA/BTyldD53AE0i934wa+w8Zd5iG/O9cL1jwNrxToodVScsB038uFZzQjVlMoYeKX1pwsgXiSESLkhoMwrXFdkM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ezjyld/P; arc=none smtp.client-ip=209.85.128.48
+	s=arc-20240116; t=1741084929; c=relaxed/simple;
+	bh=lj+LKYBIbZHMRgSOHlWkhtGfvLPPYNRUo3TcX1HTbxM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Edye56t8PCNynnQsKA4yfiOqkjJ2Wwo4E9MeuqpNW2OShPjRaLfSAj6OWgeLYufYINcaYqnmIZKochS0us1pE+tIBTtTDJdB3Ehx7kfnYTnigxckrzKEuNUiWAXtVE/Jn/UaXdyYb1DzxvQKRHUvOfuWnYnMKCcwheMuZX49sFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jB+NySUc; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bba52bc1fso2148005e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:42:04 -0800 (PST)
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43ba8bbeae2so4930795e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:42:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741084923; x=1741689723; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fRLGX0BSFbSkbyHv+vppZ4+v0T0SuHCAkvGOI/AsUU4=;
-        b=ezjyld/Po0DBBS33OGbpPq2KWd5zp0hrut2NokITOhhYkq1a2+1sHwo2pTqm9rXipB
-         fNEk6XCh9hWYsUUXkinZ6Haf27GFmHVijkdoxJ9Dv6b5EQDtIHFXQA/OjNMLKrr/H85l
-         8K5xJUpiEE9yj1N1wL8hyhz/yPVELfrhlcl1oBGVqc/71zHklWt+doZHIOQNf+/232df
-         6YSMJOF04oy2vH18VW4spWfYLE/X8HVSvVYffwcnXU4F0DeCHvA0wNC3csakqip+MZZc
-         FmHnGiOjSHnatY7VV5lQ5L0hWszK23GiwfBHIagC1S+QAi0MYAltBbRk68HWL21e4ZFX
-         WSjQ==
+        d=linaro.org; s=google; t=1741084925; x=1741689725; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GDxLGGq40mrprdt8U26xMTW1xjWdDPFqwzgumK7bnvA=;
+        b=jB+NySUcTT6dUHfnGaqdiGBjze25TFujdi0TPrmY+th5Kkt+YL476VNg55mX6MRTtg
+         CpuzeTg33b2YD2vLWBDG4UMpUlGU7lfpeQhkkH7nifTVykKyOybE8dFwm3Twxd1arwbI
+         rSkAuEBMi5LBWU3k5GlWutLACDVm2tXANfwL/WAkETP+lR1YcfGCW/or5UD9i6zxkX3P
+         4yTZHrZWgEkGjUgDSDmZIKwMzbJ90KSHHZjeHthSDSApiSsjg5EQsZgL9KfnlUMfDZ2s
+         +zApmqQYLA+PzYptsPJXfkRRE9NzsFnZIx0sUkC+2BZXFlTjISwiF2iQ6w8HcF8nFgCJ
+         WBsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741084923; x=1741689723;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fRLGX0BSFbSkbyHv+vppZ4+v0T0SuHCAkvGOI/AsUU4=;
-        b=EzIs8rX09FP1QJLRLXlbUhL41+s5emWC4BYA7wVfwl+WwA0l5gDKBFnbpH9Qywu0W+
-         AIwoEyH9l8obnoj1YhtGqWHCwOD5Cq4GrouNExejgpjWY540T975P7Ns60DDvlhB/Pz3
-         W8+5RhRXXi48W8Wdir/CD7ODFF2h3MDzP4BMFg2CP0jTW2FMYce06uzR8ajHqdJ6N3/G
-         Hp2+u2xWZfrnPZ9WCNkk0ZoV39JxGqY8dcatIawhv/srh22HON04K1F2dXE10E4Zc7C9
-         dj/nSvE2BJ83FK7DJjH6C4sGpywyl8/Pga3EXslwSvy1/FA06gsx8ZHhGHs+NJyGnSeI
-         cjyw==
-X-Forwarded-Encrypted: i=1; AJvYcCVUU//hWhV6Zi18TiSC4CdhcsefErHb30Anbiytf7W3rIJ1o75qyQ5RbtpNj9zuFlCKlnC3FGhfH6mA1N4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdx2sJ8gNY+Xtrl7B75ybpuTov+tJXtm9PCcY0E0OQlmRT4DUv
-	UZgamcm0F/OPUpZqmkkaNdP/0eZHnyKs6nY1zprNLy3Sl2wsTU2E1qNMI/oLp1VJXeZFYY2wNXR
-	vf40=
-X-Gm-Gg: ASbGncupBIPnwWwdP/MNYZVlSKCB3fdNrShpP+e7wuDIPpB/vROUNMh1nfkOHxnOHiN
-	XvqmsFlRzaYJQ0dXwacOqLRHrDHTT55NW8VbEKPLGsBEh5/CKK9iR9WChHTVHtfG9YfzIA0qHDe
-	F2PSmtd8WjnWTOcxFz0Zk/F3mGxcAoM1Ug0VRtMUb+P5Swq8zpfeugz1B3A/vmDkGtFA5EObJM9
-	CGzNWJRIZakfXR3puBvFqj5WhXAsOWlOgQdQP3RBT2rM/UR6Pr64c5sja3liM1XuVUccZViHpt1
-	ZJ7YQ9bLZ/QC8DaGMfzmpvbzN8TxjFiCTP5ztkYH5IiIXqLHETIBU9t08ig=
-X-Google-Smtp-Source: AGHT+IFu+lUWQUJTNva4ATWrG4BJPlHZWRTzwg/XUajrbEnxSw1V0tjsJYbZeKjxr47p60rztgJf0A==
-X-Received: by 2002:a05:600c:1d86:b0:43b:c0fa:f9e5 with SMTP id 5b1f17b1804b1-43bcb969548mr7400795e9.4.1741084923281;
-        Tue, 04 Mar 2025 02:42:03 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741084925; x=1741689725;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=GDxLGGq40mrprdt8U26xMTW1xjWdDPFqwzgumK7bnvA=;
+        b=rGb30QS4pXH9nOeqUqMMsJKJbfUtmizLR3M5hoxEBf85k5JawHJpgR7Bw/96oZh6yz
+         KwJMcQkcq4M1YLWGUwuvR3ihX4CppaTcRZC9X7GE/hNdeM3e9ym+LGfD9fsC4NXphDsF
+         feqqDeHP+0gbboTsGuYnq7xTenfQrJtx9fQRrju98CtOrz0yjJ0mpd4i6NFDXssLa2ar
+         Tt6gSKjixVZ4NIiInnFfmWm2fjPXQZCoSYv7VYngocojAkCz4+CsN+vMn6jaa7DrFExq
+         Z3h4rQgwhrKUO3ZyCk3IMnKpbghmP4cDGR0/3mxp3gG2Uu6PszPlAfm18Auv2w2qtygv
+         pcCA==
+X-Forwarded-Encrypted: i=1; AJvYcCW/CSFaPKhixNXjODaWd2LHqaWiS8wShQTCs1n5l04/+IWIyymMcLttbPLpCrW/VudWMGGFxpb7ZkH53AQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzDxD5zq+lQrETPTJORNLSsc2I9cLuwFTOkRg3xrgFNrOhWpOcf
+	iWEV4rgkDmIAMsciEBco0tG1utB1PnBeWEDaoYw3IPgFZd6a5FItj787BlpANuk=
+X-Gm-Gg: ASbGncu0V4orF/EEnwvqXpsPSJ6edwzKmThkH9xyH5Q73BHQ62OMJc1WTgAeqRHErQJ
+	tdffewB8KDrxgXtUjsCkQUX+A5+C+7ORt9sCm7MwJSFVLkRk/wjDL4XNDrluxHEKGcsLNKPOCVt
+	b6vutY0tlFhXHoSgHZW31wHp8mSOWFHfhGLpedLqf9MyvDmC+DEY+t0E2PxXXGQB2d8sNuUVT15
+	B7wInGO8i5J3S1h4CLIRzWzJFbx3jsJq6kyNX9xGu+lQMp3PyqiKI7pCMEo7BgFa3OjTgBQvKoQ
+	NYu0sCOS1wwjexJgR7arhGFW0KLhkw1oKWcxAL/O2fWAy4ZMfyuK0jhpI38=
+X-Google-Smtp-Source: AGHT+IEBaeeS+ss4bvkyeewcMs2ci2tWe2j9anwRxAUmA/kmrMhdWw1KWJLeZhb3ucTu5owhQtYxHA==
+X-Received: by 2002:a05:600c:3b8e:b0:43b:c228:1ee0 with SMTP id 5b1f17b1804b1-43bc2282147mr23743515e9.7.1741084924557;
+        Tue, 04 Mar 2025 02:42:04 -0800 (PST)
 Received: from krzk-bin.. ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b792asm17202257f8f.53.2025.03.04.02.42.02
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b792asm17202257f8f.53.2025.03.04.02.42.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 02:42:02 -0800 (PST)
+        Tue, 04 Mar 2025 02:42:04 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -80,10 +81,12 @@ To: Rob Herring <robh@kernel.org>,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org
 Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 1/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3399 ROC PC PLUS
-Date: Tue,  4 Mar 2025 11:41:59 +0100
-Message-ID: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 2/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3588 boards
+Date: Tue,  4 Mar 2025 11:42:00 +0100
+Message-ID: <20250304104200.76178-2-krzysztof.kozlowski@linaro.org>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
+References: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -104,22 +107,106 @@ https://lore.kernel.org/all/20250304103808.75236-1-krzysztof.kozlowski@linaro.or
 
 Please take it to the same or next merge cycle as above ASoC binding.
 ---
- arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts         | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi      | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts      | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts        | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts   | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts | 2 +-
+ arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi     | 2 +-
+ 7 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
-index e2e9279fa267..8e3858cf988c 100644
---- a/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dts
-@@ -112,7 +112,7 @@ hym8563: rtc@51 {
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
+index 27a7895595ee..e77a38d726e0 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
+@@ -472,7 +472,7 @@ &i2c7 {
+ 	status = "okay";
  
- &i2c1 {
- 	es8388: es8388@11 {
+ 	es8388: audio-codec@11 {
 -		compatible = "everest,es8388";
 +		compatible = "everest,es8388", "everest,es8328";
  		reg = <0x11>;
- 		clocks = <&cru SCLK_I2S_8CH_OUT>;
- 		#sound-dai-cells = <0>;
+ 		clocks = <&cru I2S0_8CH_MCLKOUT>;
+ 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
+index a98e804a0949..81031b99c9b9 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
+@@ -276,7 +276,7 @@ &i2c7 {
+ 
+ 	/* PLDO2 vcca 1.8V, BUCK8 gated by PLDO2 being enabled */
+ 	es8388: audio-codec@11 {
+-		compatible = "everest,es8388";
++		compatible = "everest,es8388", "everest,es8328";
+ 		reg = <0x11>;
+ 		clocks = <&cru I2S0_8CH_MCLKOUT>;
+ 		AVDD-supply = <&vcc_3v3_s0>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts b/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
+index 088cfade6f6f..e07888c9948f 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
+@@ -311,7 +311,7 @@ &i2c7 {
+ 	status = "okay";
+ 
+ 	es8388: audio-codec@11 {
+-		compatible = "everest,es8388";
++		compatible = "everest,es8388", "everest,es8328";
+ 		reg = <0x11>;
+ 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
+ 		assigned-clock-rates = <12288000>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
+index bc4077575beb..7c948b2653da 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
+@@ -242,7 +242,7 @@ &i2c3 {
+ 	status = "okay";
+ 
+ 	es8388: audio-codec@11 {
+-		compatible = "everest,es8388";
++		compatible = "everest,es8388", "everest,es8328";
+ 		reg = <0x11>;
+ 		clocks = <&cru I2S0_8CH_MCLKOUT>;
+ 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts b/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
+index 812bba0aef1a..b79ce3ec1186 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
+@@ -611,7 +611,7 @@ &i2c7 {
+ 	status = "okay";
+ 
+ 	es8388: audio-codec@11 {
+-		compatible = "everest,es8388";
++		compatible = "everest,es8388", "everest,es8328";
+ 		reg = <0x11>;
+ 		assigned-clock-rates = <12288000>;
+ 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts b/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
+index 74a4f03e05e3..73042e7416bc 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
+@@ -412,7 +412,7 @@ &i2c7 {
+ 	status = "okay";
+ 
+ 	es8388: audio-codec@11 {
+-		compatible = "everest,es8388";
++		compatible = "everest,es8388", "everest,es8328";
+ 		reg = <0x11>;
+ 		assigned-clock-rates = <12288000>;
+ 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
+index 9e16960b8705..a48bcb6b6a91 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
+@@ -268,7 +268,7 @@ &i2c6 {
+ 	status = "okay";
+ 
+ 	es8388: audio-codec@10 {
+-		compatible = "everest,es8388";
++		compatible = "everest,es8388", "everest,es8328";
+ 		reg = <0x10>;
+ 		clocks = <&cru I2S1_8CH_MCLKOUT>;
+ 		AVDD-supply = <&vcc_3v3_s0>;
 -- 
 2.43.0
 
