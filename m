@@ -1,189 +1,135 @@
-Return-Path: <linux-kernel+bounces-545026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08A8A4E82D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298EEA4E826
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:15:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14F01883FAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:10:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A801419C304F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2DC27811C;
-	Tue,  4 Mar 2025 16:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3A5E2780F3;
+	Tue,  4 Mar 2025 16:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOnExzph"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="jubrd4tS"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1BE278110
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A47E2777FB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106933; cv=none; b=g8V/D/nX4glXUMNKcKaOaiJBI32HoL6RZ+pBq4WQNziiwlauNGSF1/uzrIbIJo1OBEvG+TP/ZQGTk1DbhArmzcAHBmBH5B37vO60l0Za4FtazDUySH7UsxPJvRHb/l4mhIKSGi+naTadKbUecBvehzz7eeNhH50BC6R0rHjYkFI=
+	t=1741106929; cv=none; b=fMHiCdTbSksNUvrK/yjiBLmyNkjViku5fBW0jPRYqAj2p0IXAtERWHrvQYswNelB6dXxOAKDrVo9yuuEF03bcF0NBvd7tjrBH3QMg625cqrt9ae21FtIszAlHwd/Il/NjBpZb77KNU+OMwGt+mDI6Nx7TnIuZaHQowgjBZtM8uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106933; c=relaxed/simple;
-	bh=/z0XwPGGhoHlFeHUs2A7nBYOZsSvcI1+TvpOTqcGq+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G6UBdsUK2QeqThPC33ma8qU/uhCa5mC6hGPSTVm/3K4wAgHE/RzUVYmSnGAzGAJg9dq1A+mfyOXBlHAHIc1YwbNqoAHGVE8qt6s959BgYBh4EUXoCNIlYupiL63MCXQm8tYlaXiy44BT8QetM9sCEwOiF6ospg1eMAgBpaA+e58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOnExzph; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30613802a04so59627241fa.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:48:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741106930; x=1741711730; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D2p1zWXWJUnwqxrejHWDKdVWhbal1K6h7wHaPnZrswE=;
-        b=VOnExzphBLw+v4SCXl6qQrywzYxY7w3RnY/Y8ipsDJVpFOLkDI72MbjiSt+7M+fcQ2
-         XdPPSMbp2wcfQBj50XPqhDkJwBb8mQ8jwEd7UOtpjoRvRkuvP/AGJeYAyR9ky/RiWdtD
-         SrnB2ViITZiUWy21/IapGQ5Ar8P5zVdHMkfuKIJorow3UBkkgUKkMyDtlkX8ZFeHxjuo
-         aBOBegkg//g0wiOTTt7pUu4MJHIMeeq3ZNQ2FT5w2l1C9/1LZ7/WkvhXl0pZF/LnZlp/
-         E+c6DHOKgq8GcGFIzuv6qAsnqyuUqd3WSukfGQR2H0vZLjLz3bmgmfpF077VdzN3jXJm
-         KkMw==
+	s=arc-20240116; t=1741106929; c=relaxed/simple;
+	bh=sd3DB5QAo14h5zLM+vWzziyxgeu9gXug/Wqkl/V836M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pL4JShcuWLJ5nYsBAniroXPZQnhkUjwO5TWgcsKPm1yY8fZlmTxd8w/h1zyWBZrXm5vMiCwUu1byf8TRnZ4ESyQ04wSncHvx/2o2W6Bn34nGA8hlyewucFxJWJhsk/XVkftcJlRqkmX6L4eNoOHCwE7gd52baU42BdFAajg7cTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=jubrd4tS; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524AEqYa021624
+	for <linux-kernel@vger.kernel.org>; Tue, 4 Mar 2025 16:48:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	Gg8kGpZ3MAusVn1q3n6ecqBdb3hu6mGJUnWrCE8von4=; b=jubrd4tSj4b+OvuB
+	4ALyGT4PlRgXWsHH3zIyTkDb0nwIQ0FuYEK4sqXErixAInEsqm45ln4HbWYyVX7E
+	rRaEEwQ2GIAFPnpVMWpgnx6rrRgIHXENQnH5C3/9Fc1nTcj3d/Gq5aFMj/5pdcG5
+	wWc4ZU20DaePo/yBPC3lg/aIPSvEkJ+hZ6G/MKjb8MO+rZWm+e1yZv0p6PlXPkvL
+	vMzDNBHsGi/dcKiejlRwZoGRWoBQbC18AUst82ZJN7DGL2qGLS5WjqnBGWZzOtZy
+	/E2ifAqV+XpycXaCYaYURXmwP1HFVXvKz9IckqXtvg4fh2xp4PEAn+OoXi2OSBtf
+	o9KOxg==
+Received: from mail-qk1-f200.google.com (mail-qk1-f200.google.com [209.85.222.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6t2h7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 16:48:46 +0000 (GMT)
+Received: by mail-qk1-f200.google.com with SMTP id af79cd13be357-7c3c58f9c72so28133985a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:48:46 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741106930; x=1741711730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=D2p1zWXWJUnwqxrejHWDKdVWhbal1K6h7wHaPnZrswE=;
-        b=cDZyeeJh5BTUD4g7OFtWMqaovhK0zP2u4GTkwfHMO2RGwoTH+8nlzZwe4l/Xb0xvcR
-         m2aaSKBZJuriniNb1eAlfQF0kbt59e8PWb3ReckaxXzqVWiDspvK6q/fwEprWAgTrSwD
-         EtIYhPgqiOht9nIstgDG0eqgAUySUS4s1jvzHxeB7gHg2U9qYOjRNKd7WsppVct58/0Z
-         ral72x9ql1MAq+WI/M30Kk8INeCyK2/iVV/L7WRlaBJFViJPd0shd0wEVZagI5gYnCQi
-         Wpi+rB95Wohn9wwGhFN318KKaqGDFEy03TRONsTxjcIcvtnjkrFtLjLqPUKThqd9QepR
-         Ezmg==
-X-Forwarded-Encrypted: i=1; AJvYcCWEyuPNNy/kBkcCNarAqgNpjrT3E3MzhIAMHE0MnMGVtY1MIqCSr1Y6cTP8to/C7RDEVsr8opfRQGRcJEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJb5AOB+mgJkXxmCopqqGEW54iXhEf6eCl1qPKJZR0hEixTtYA
-	NJj7jT7OA4S6+MJNl50txbSvimj2qKYXwJsJEqZPOxzLGYgIkQ2DheLSds/mQZRK73363CKhMqX
-	PdR6kU4zPg4Br63hmSur3q0UUByc=
-X-Gm-Gg: ASbGnctxMzSEzIUEm7M/caKx03N3N8kC29XdIXoPxYbvEfeW4UVulFt5qxUNgVCSjUM
-	N/ofHBp2H7S+70a1cb/et6q8wdpOVHl5zuDlktO6iCqpWvQADA9AJ5GPfWFbj1R7KjXQdxfVRrw
-	X4iGokvHtFplEw1NlX/0GDLbLFcg==
-X-Google-Smtp-Source: AGHT+IG+nyTkzziefkFGgQAs+gxUFqxfRYcnS1VunyY9grWbI/b09zPWZTWHdLe4XR/cwpnHW/KUiDkeZtdK60eAJdk=
-X-Received: by 2002:a2e:9a8f:0:b0:30b:9813:afff with SMTP id
- 38308e7fff4ca-30b9813b525mr50699561fa.31.1741106929338; Tue, 04 Mar 2025
- 08:48:49 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741106925; x=1741711725;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Gg8kGpZ3MAusVn1q3n6ecqBdb3hu6mGJUnWrCE8von4=;
+        b=TgMLCRNEoQ7+TaaROjqhczSiuaFCTbiOvt8aPngAqB/cDWC6CEMV42pGu2KY4FosJ3
+         gX86uDBpAGxT+Bs2DxuTPHAlDEsGj7C9iOUAhxeHllSUUjcLYKvWjSQFuaXYIiL9AId8
+         HqviEOGrZAzjjdPMDtl2gWMVDwEwKT98L6dc97mdMorD/ZyubkTls50WoreUk6van6t3
+         amHeID8a6rGQDidqYACLvKKGao+3y6KLtlW1fJtf/Vxm3LT8EhgPi20oOyYfq3/hUzKs
+         XJr/gmTEcfV27gkKLaHT6x7kJHWY7ZxwlM8L86JPI/ZqU9v9FesdgwifGo/PVjKZCbNL
+         +jFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX6hCKO3iWPWnu8PG1E1HpFY5ZRRvfOlJUwupg0Rl+Jms7UxilEHZK4JwQepfnoxdtBA2hQ5v6sdcSE4xc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPXRzjMYMGktiKV2xPYv+167PNfxSNNTyQ2nM3zJNu7p2sFcq8
+	Xc1PoJFcJ5+bmz2kL052ZCf7ccPER3fWp4edFXRNnem+xu453nV0rNg6Bmo/XoVBVOgYjeY7DmK
+	eFwXyYf/VCXyFkvCKNdEcxYzVkw7Se+nELkAE20D51a39ylBcqI9pQS0/GROQNWM=
+X-Gm-Gg: ASbGncvyRyQOOFhdfhUCa9rlWQ/7FOtCyBFb2zTaK5U2kK/TrcYMDBk8n5965dAbHNE
+	czWeGMX8laEfVqXEs8EY4gSB6TvJLegQO37coTkTwVWvDMV8Pi8t8GwjgpRWwj3K/djbORg/atP
+	woVZllKKjWy9w+1zCA1OYkGq7A0p+sYjBe9Orot68WK4577GLTJQPTrNLIm6EOAz7UaVGkNmyUV
+	QWPMI3pGq9Trd0Q9N9aECzKQf0ZmOVVKSqfy4xhstFJTLm90ojegMi+12rwp9UOhILnDIqt6aXl
+	pX5dfxBr8prWnywGHY/6GjUqL6CVDeQkaOXvN9BHIye/GizOsiaZj8PuMoJ1CU5UZ/vFlg==
+X-Received: by 2002:a05:620a:1a18:b0:7c0:be0e:cb09 with SMTP id af79cd13be357-7c3cd61c237mr169167585a.7.1741106925399;
+        Tue, 04 Mar 2025 08:48:45 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEQvuQvClwiwFMie4FZTFPdTyWvzcou0+abmlXxIUtcYhhNTelNl/VTqgUaWtUDHiiQfW/r8g==
+X-Received: by 2002:a05:620a:1a18:b0:7c0:be0e:cb09 with SMTP id af79cd13be357-7c3cd61c237mr169165385a.7.1741106925089;
+        Tue, 04 Mar 2025 08:48:45 -0800 (PST)
+Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e152fdd4sm256004166b.176.2025.03.04.08.48.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 08:48:44 -0800 (PST)
+Message-ID: <9cb0c042-759c-48bd-9776-0b2dbae928ea@oss.qualcomm.com>
+Date: Tue, 4 Mar 2025 17:48:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303165246.2175811-1-brgerst@gmail.com> <Z8YTYWs-DeDHal1Q@gmail.com>
- <CAMzpN2iB4Gv0Fq1pNtk7bpa2z6eYwQGYXT0=p=_wWDBE9Uxa7w@mail.gmail.com>
- <Z8a-NVJs-pm5W-mG@gmail.com> <CAMzpN2gpHRtOtRuCJF_TKOFbEJ2xkksndCH+MfntfDuZHC0O1w@mail.gmail.com>
- <Z8bMSr8JrDZtqwK8@gmail.com> <CAFULd4YFm-2Sc6NOzyWt4-TPDkwY-=5h-Gb99M+tFf-Mczk0Ng@mail.gmail.com>
- <Z8bOIXeWYycUEmp4@gmail.com> <CAMzpN2jUKp93z=jeXqa0uA-kQtaZ931aehZLm_axZoqGCeQZJQ@mail.gmail.com>
- <CAFULd4aR3+J3z18OCKbFcghOrJ7xLdYM1kPbD4HnUka4+AiLcw@mail.gmail.com> <CAMzpN2gLR51ko+hWAS7XRDM4VLL+YJYcP91AsH+phG1K7UoVDQ@mail.gmail.com>
-In-Reply-To: <CAMzpN2gLR51ko+hWAS7XRDM4VLL+YJYcP91AsH+phG1K7UoVDQ@mail.gmail.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Tue, 4 Mar 2025 17:48:37 +0100
-X-Gm-Features: AQ5f1Jqb3Rp_Qm1vV9QpzNLG9o-5fA_UIgOcFDmt8WFw_xNmuevaonc13Rl9uFs
-Message-ID: <CAFULd4ZN1FXh3JMznJ=SiBxuYj74iaDSg-j6wZjbYxuTaS7wTA@mail.gmail.com>
-Subject: Re: [PATCH v3 00/11] Add a percpu subsection for cache hot data
-To: Brian Gerst <brgerst@gmail.com>
-Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Ard Biesheuvel <ardb@kernel.org>, Linus Torvalds <torvalds@linuxfoundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/5] arm64: dts: qcom: qcm2290: add apr and its services
+To: Alexey Klimov <alexey.klimov@linaro.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org
+References: <20250302-rb1_hdmi_sound_first-v1-0-81a87ae1503c@linaro.org>
+ <20250302-rb1_hdmi_sound_first-v1-3-81a87ae1503c@linaro.org>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250302-rb1_hdmi_sound_first-v1-3-81a87ae1503c@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=I/ufRMgg c=1 sm=1 tr=0 ts=67c72eee cx=c_pps a=hnmNkyzTK/kJ09Xio7VxxA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=EUspDBNiAAAA:8 a=4ckOxxuvsnspfostOZcA:9 a=QEXdDO2ut3YA:10
+ a=PEH46H7Ffwr30OY-TuGO:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: GGIDzFidp8rOdZbnyddlxZDVn-iWQvdb
+X-Proofpoint-ORIG-GUID: GGIDzFidp8rOdZbnyddlxZDVn-iWQvdb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_07,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 mlxlogscore=517 impostorscore=0
+ clxscore=1015 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040135
 
-On Tue, Mar 4, 2025 at 5:42=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wrot=
-e:
->
-> On Tue, Mar 4, 2025 at 11:02=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> w=
-rote:
-> >
-> > On Tue, Mar 4, 2025 at 4:00=E2=80=AFPM Brian Gerst <brgerst@gmail.com> =
-wrote:
-> > >
-> > > On Tue, Mar 4, 2025 at 4:55=E2=80=AFAM Ingo Molnar <mingo@kernel.org>=
- wrote:
-> > > >
-> > > >
-> > > > * Uros Bizjak <ubizjak@gmail.com> wrote:
-> > > >
-> > > > > On Tue, Mar 4, 2025 at 10:48=E2=80=AFAM Ingo Molnar <mingo@kernel=
-.org> wrote:
-> > > > > >
-> > > > > >
-> > > > > > * Brian Gerst <brgerst@gmail.com> wrote:
-> > > > > >
-> > > > > > > On Tue, Mar 4, 2025 at 3:47=E2=80=AFAM Ingo Molnar <mingo@ker=
-nel.org> wrote:
-> > > > > > > >
-> > > > > > > >
-> > > > > > > > * Brian Gerst <brgerst@gmail.com> wrote:
-> > > > > > > >
-> > > > > > > > > >
-> > > > > > > > > > -       PERCPU_SECTION(INTERNODE_CACHE_BYTES)
-> > > > > > > > > > +       PERCPU_SECTION(L1_CACHE_BYTES)
-> > > > > > > > > >         ASSERT(__per_cpu_hot_end - __per_cpu_hot_start =
-<=3D 64, "percpu cache hot section too large")
-> > > > > > > > > >
-> > > > > > > > > >         RUNTIME_CONST_VARIABLES
-> > > > > > > > > >
-> > > > > > > > >
-> > > > > > > > > That is probably the right call.  The initial percpu sect=
-ion is just
-> > > > > > > > > used by the boot cpu early and as a template for the dyna=
-mically
-> > > > > > > > > allocated percpu memory, which should account for the pro=
-per
-> > > > > > > > > alignment for NUMA.
-> > > > > > > >
-> > > > > > > > Okay.
-> > > > > > > >
-> > > > > > > > Randconfig testing found another corner case with the attac=
-hed config:
-> > > > > > > >
-> > > > > > > >     KSYMS   .tmp_vmlinux0.kallsyms.S
-> > > > > > > >     AS      .tmp_vmlinux0.kallsyms.o
-> > > > > > > >     LD      .tmp_vmlinux1
-> > > > > > > >   ld: percpu cache hot section too large
-> > > > > > > >   make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error=
- 1
-> > > > > > > >
-> > > > > > > > (I haven't figured out the root cause yet.)
-> > > > > > >
-> > > > > > > CONFIG_MPENTIUM4 sets X86_L1_CACHE_SHIFT to 7 (128 bytes).
-> > > > > >
-> > > > > > Hm, to resolve this I'd go for the easy out of explicitly using=
- '64' as
-> > > > > > the size limit - like we did it in the C space.
-> > > > >
-> > > > > Why not simply:
-> > > > >
-> > > > > ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <=3D L1_CACHE_BYTE=
-S, "...")
-> > > > >
-> > > > > ?
-> > > >
-> > > > I don't think it's a great idea to randomly allow a larger section
-> > > > depending on the .config ... The *actual* intended limit is 64, not=
- 128
-> > > > and not 4096, so I'd suggest we write it out as before.
-> > >
-> > > Change the assert to:
-> > >        ASSERT(__per_cpu_hot_pad - __per_cpu_hot_start <=3D 64, "percp=
-u
-> > > cache hot section too large")
-> > >
-> > > We only care about the used portion, not the padded end.
-> >
-> > If this is the case, perhaps it is better to use __per_cpu_hot_end
-> > to mark the end of the real data, as in the attached patch.
->
-> That's a better approach.  There's not much value in the current _end
-> symbol if it's not always _start+64.
+On 2.03.2025 3:49 AM, Alexey Klimov wrote:
+> Add apr (asynchronous packet router) node and its associated services
+> required to enable audio on QRB2210 RB1 board.
+> 
+> Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> Signed-off-by: Alexey Klimov <alexey.klimov@linaro.org>
+> ---
 
-Thanks, I'll submit a formal patch submission.
+Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Uros.
+Konrad
 
