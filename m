@@ -1,113 +1,138 @@
-Return-Path: <linux-kernel+bounces-545536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C159A4EE47
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:23:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBBE4A4EE4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:25:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7CB316C803
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:23:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAABD16A13A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:25:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758E024C096;
-	Tue,  4 Mar 2025 20:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D1824C085;
+	Tue,  4 Mar 2025 20:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EcW9W9An"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="hJfM/74K"
+Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0FF81FAC34;
-	Tue,  4 Mar 2025 20:23:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213781FA178
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:25:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741119821; cv=none; b=swXg+VKJaW6BmbN0EaIMn4NAHShXBywyQWxas505vhQGF8k6SFv1TejtMgNRlfWyJmOPD6lhlROVMZci7OzdXLc1Eglva4rmcTnks77J/r5yIgepJj3gnwXhpnojuZ3HT+EmQCjYaqPkm8NUFtGFfN3p2QEJd6UvrCiKUuxY4Uw=
+	t=1741119950; cv=none; b=rYvqOPN/qrqVN80Sqp8FTNXKQ0BUQgqHoJHcCKd0AlZdWFI7KxCUxofs+Ojx1U/4pVqUo7NZ38Ukcr5WU1uvC3g7T2nyNh/Rc9ggvx0Ab3KyXE+5Ni3nua/NszCnkfemm4Xgglk0PayFCNDdDESwpOgKguZLFdHpolYN9PflNbc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741119821; c=relaxed/simple;
-	bh=g789kfaQQHuo8kTSk/c93II7xSW10weQSTmmIUy/3U4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=Uqso9pdpWQBcqwuvC3P+ipNI/vRablaYeSgY9SH2gd7uI8ZhwbWy9Que0VqfXRdBJ4KsrlMrxrhljfzKUeyhwechOIGF+PSBbzE3raW6viAk1FTCueSn5WFv2nwetCRm1T/fhFQUqrhLQZwDIzCkX8PGBwGN8iw15zVe/J1xdjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EcW9W9An; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41DCCC4CEE5;
-	Tue,  4 Mar 2025 20:23:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741119821;
-	bh=g789kfaQQHuo8kTSk/c93II7xSW10weQSTmmIUy/3U4=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=EcW9W9AnrJDv/H0Z0CwTnNLWDwqkpQaptMqLhQFf3E67zhkcaTE9j2mupXVyYuUQO
-	 tiduBhr6E4zDJgWwhtQLIQ/JolA7Sw2IjvAV3ploV+zL64dhLA8Bp48tXjIjQO8Wvk
-	 mIIZLG+WMnHDpsYhqcE4s4XAQ3PXlpcp5LrwI4KUVq1urMMu61YFCXVq3ReYvwyOso
-	 JYNSJgwSihaT0jveyjFw+h+CxRBhngtRUSDJQYQeca5soQXm9JcISym+inMRtzBq0o
-	 VpBSn+WlInOyfHAsyPdCi8PSL6sarQr4Quh4BlAj9acxebwhzhISmBQCgFSe1dMUHi
-	 MIu7U55nBxDjg==
-Date: Tue, 4 Mar 2025 21:23:38 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Aditya Garg <gargaditya08@live.com>
-cc: Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-    "bentiss@kernel.org" <bentiss@kernel.org>, 
-    Alex Henrie <alexhenrie24@gmail.com>, 
-    "jose.exposito89@gmail.com" <jose.exposito89@gmail.com>, 
-    "bruners@gmail.com" <bruners@gmail.com>, 
-    "seobrien@chromium.org" <seobrien@chromium.org>, 
-    Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
-Subject: Re: [PATCH v2 1/4] HID: apple: Use common table for MacBook Pro fn
- mapping
-In-Reply-To: <CEFE855F-CC63-4361-8ABD-875BD5662294@live.com>
-Message-ID: <sp111ppn-q3pn-20rp-92n0-rqn0p2s7s7n5@xreary.bet>
-References: <CEFE855F-CC63-4361-8ABD-875BD5662294@live.com>
+	s=arc-20240116; t=1741119950; c=relaxed/simple;
+	bh=X5RiZHBsbLcPKV323Q8tWpZ073WfByOYU3vrxNxusK4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PCDLvb9AexhNeWSMrMoJIbkbHSJKS+u9gVmyrfhmxzVjmOvuvWc90Q52n4GmIo4lIPHubxo3LPIV73/hMbFFtsffnGIdF+h59ky9ZIKZShurRuIqaaO+QXFCscdh9SWXa6/wnHhS3OOEvZTbtLOOVyF9l57/uOy3NzRC6/9ucJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=hJfM/74K; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e0b70fb1daso10506702a12.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 12:25:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741119946; x=1741724746; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ng6/HlQleweYy73ZBFOZ7zU4VxzpXmmE/CHm0RKEds=;
+        b=hJfM/74Kb1TF4MxMKpnWR4w1Bxak8kihFYFmbX98F1wvhlDZGx83RYqCfz604NoqNR
+         NrQ3DFla4YoFbNiaUa/UrQkqaEXwKr1L8ohxSCLVL30wKPqJ6yNeXVPG4eC6qgNA5nCf
+         aZlWTOa8VfZUW/iQMGI1/VZ+Jr77kKjS3gPlg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741119946; x=1741724746;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5ng6/HlQleweYy73ZBFOZ7zU4VxzpXmmE/CHm0RKEds=;
+        b=Lm7p7C0/UiAnFYhWR2RqhmDll66YksFD+8F30C85F/crGu3wJ7YtMkFvfyFUdvimu1
+         7eOOr0MO9NmaLgGZfld7FU9FIhunK0oRMUIJwUcFQR1MrojOX6k1XlPUJBRgsP++rgTR
+         DiDZNQ68oZ0TcTTptE+LGX1QRSaPK9OA0q555BvbI+HP3Yrg4HsJP+yjRuamf47bGi/w
+         zy4e/dZa+hVi63J20UKDbKS/uRB3M4g0OAtYbPaKGuFtn1mSDqaMu1L2ft/LXKRZF69o
+         LrT7kbVlEa1kZgIhKQEw1YTtFC+vnwBmfpe/TaH5cD4V4po4qwkz/UfxZjSc3iq9EckL
+         2kCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXLlih24JsL6WGRjluWc8tlhrf1DbRP2NPTcCoQKcun2GM6RG3X0nfI6HZhobgdJQLnYHQHCLyFZxR5F4w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdUSAjklhI5YCr2W4tXGR634yAuX1izhJHOBIK3Q4e6+HBX/l9
+	cwQ1LOjlLBxO5f2EqmyRNiUgpaV83vsaVmOpM0Askl6Kz/FoCJrDyJSg1+PMg5wMNzYYbvJVVpb
+	g5CuLlw==
+X-Gm-Gg: ASbGncttRV1EbrsOaVCAckasaC5ku/21AuaRHdv2Pe7g/dF2I+kdkBWdawW68hel83m
+	O91Bm9IpNrjcnQ27fnkfsdfJNGdUJPDhV0booGLXhv3HKc2dQYDrtCMDKs4mnofDvcxwkgwxS2u
+	b9K1Y+4zhCYPF5gfC/tMd7pgAz8NWOCwWgSFXN/jGJIR8YR0pls9lah8LTgDwlnn0qAb2UJoIB7
+	XNxxxthkDyq+OwwKxUnbqzgAGF4FOYPxnHwyhil2pjZ+J1KLsFEE5SQz7RD9Pv854FLEvSE8uS6
+	G8BtpwCMtDZs1vI7Esi0uzQ1qiFl9nc2xdfMzw3P/8iTGOYdMrLfZjUQmwEz2YVaRIdaTj+QV7U
+	M+y/oMLYSm2uaBg/ArP0=
+X-Google-Smtp-Source: AGHT+IGeBe+33BWA8uz6Vl728NrGXlOnmm3LtwjjN46iLazLJciWHhC95S01Z2qZxS5TacJULy5cgA==
+X-Received: by 2002:a05:6402:430f:b0:5e4:cfb0:f651 with SMTP id 4fb4d7f45d1cf-5e59f385a07mr551409a12.6.1741119945946;
+        Tue, 04 Mar 2025 12:25:45 -0800 (PST)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com. [209.85.218.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb66fbsm8611530a12.37.2025.03.04.12.25.44
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 12:25:44 -0800 (PST)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abf64aa2a80so590291966b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 12:25:44 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUArF4Xu9UMQYXFQON1ivHozPXuetRn4XztnGwACVZbaBL+fFapdDwegqYFOKbch1mUJdeF9jMaaaV9BzU=@vger.kernel.org
+X-Received: by 2002:a17:907:9496:b0:ab6:362b:a83a with SMTP id
+ a640c23a62f3a-ac20d84509fmr57802866b.8.1741119944023; Tue, 04 Mar 2025
+ 12:25:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
+ <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
+ <Z8a66_DbMbP-V5mi@gmail.com> <CAHk-=wjRsMfndBGLZzkq7DOU7JOVZLsUaXnfjFvOcEw_Kd6h5g@mail.gmail.com>
+ <CAHk-=wjc8jnsOkLq1YfmM0eQqceyTunLEcfpXcm1EBhCDaLLgg@mail.gmail.com>
+ <20250304182132.fcn62i4ry5ndli7l@jpoimboe> <CAHk-=wjgGD1p2bOCOeTjikNKmyDJ9zH8Fxiv5A+ts3JYacD3fA@mail.gmail.com>
+ <CAHk-=whqPZjtH6VwLT3vL5-b3ONL2F83yEzxMMco+uFXe8CdKg@mail.gmail.com>
+ <20250304195625.qcxvtv63fqqk6fx4@jpoimboe> <CAHk-=wizdAA_d1yHZQGHoJs2fqywPiT=NJT2wNA0xybV+GVefw@mail.gmail.com>
+In-Reply-To: <CAHk-=wizdAA_d1yHZQGHoJs2fqywPiT=NJT2wNA0xybV+GVefw@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 4 Mar 2025 10:25:26 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgtnKe+pH2Sx7C0u_UDzan6paTMesRDhAyDEAcCptyuuw@mail.gmail.com>
+X-Gm-Features: AQ5f1JrMDxVLcTEMY5jJ6-t8Assg5ksjiB7T5IGpvzD8oxsD3xGemkRL0m8NNVE
+Message-ID: <CAHk-=wgtnKe+pH2Sx7C0u_UDzan6paTMesRDhAyDEAcCptyuuw@mail.gmail.com>
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-tip-commits@vger.kernel.org, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Brian Gerst <brgerst@gmail.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 14 Feb 2025, Aditya Garg wrote:
+On Tue, 4 Mar 2025 at 10:13, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Tue, 4 Mar 2025 at 09:56, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+> >
+> > While that may be theoretically true, the reality is that it produces
+> > better code for Clang.
+>
+> Does clang even need it? Last we did any changes for clang, it wasn't
+> because clang needed the marker at all, it was because clang was
+> unhappy with the stack pointer register define being local.
 
-> From: Aditya Garg <gargaditya08@live.com>
-> 
-> The only difference between the fn mapping of the MacBook Pros with esc key
-> and those without is of the presence of KEY_GRAVE in the translation table.
-> 
-> We can easily use a flag instead of writing the whole table again to omit
-> it from the models that have an esc key.
-> 
-> Additionally, APPLE_IGNORE_MOUSE quirk was unused in this driver, so has
-> been removed in this commit.
-> 
-> Signed-off-by: Aditya Garg <gargaditya08@live.com>
-> ---
-> drivers/hid/hid-apple.c | 72 ++++++++++++++++-------------------------
-> 1 file changed, 27 insertions(+), 45 deletions(-)
-> 
-> diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
-> index 49812a76b..e31c9e8e8 100644
-> --- a/drivers/hid/hid-apple.c
-> +++ b/drivers/hid/hid-apple.c
-> @@ -30,7 +30,7 @@
-> #include "hid-ids.h"
-> 
-> #define APPLE_RDESC_JIS		BIT(0)
-> -#define APPLE_IGNORE_MOUSE	BIT(1)
-> +/* BIT(1) reserved, was: APPLE_IGNORE_MOUSE */
-> #define APPLE_HAS_FN		BIT(2)
-> /* BIT(3) reserved, was: APPLE_HIDDEV */
-> #define APPLE_ISO_TILDE_QUIRK	BIT(4)
-> @@ -43,7 +43,8 @@
-> #define APPLE_IS_NON_APPLE	BIT(11)
-> #define APPLE_MAGIC_BACKLIGHT	BIT(12)
+Put another way: if we make this conditional, it would make a whole
+lot more sense to make it conditional on the *compiler*, not on some
+random kernel config option.
 
-This patch is corrupt -- the context lines are missing the leading space. 
-For some reason, it's only the 1/4 which is corrupted, the rest is fine.
+At least making some "use this to mark inline asms" be
+compiler-specific makes sense. We already do exactly that for other
+compiler issues (we used to have the "asm goto output" gcc bugs that
+way, and we still do asm_inline that way)
 
-Can you please look into this and resubmit?
+And as far as I know, we've only ever needed this for gcc, and gcc has
+never had any problem with just using %rsp as the input - whether as a
+local variable or as a global one.
 
-Thanks,
+But regardless, changing from one very tested model to another, when a
+gcc person already has said that the new model isn't reliable, and
+doing it for gcc because of a *clang* issue, really seems all kinds of
+insane.
 
--- 
-Jiri Kosina
-SUSE Labs
-
+                 Linus
 
