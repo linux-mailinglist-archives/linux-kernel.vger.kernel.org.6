@@ -1,257 +1,203 @@
-Return-Path: <linux-kernel+bounces-544259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F927A4DF67
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:36:52 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EE323A4DF66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:36:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9F2E1776AA
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 187511777D5
 	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC9D920468B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB215204683;
 	Tue,  4 Mar 2025 13:36:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a39L2NS2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SX3bOaM8"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D0B202F88;
-	Tue,  4 Mar 2025 13:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4516C2AF16;
+	Tue,  4 Mar 2025 13:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741095400; cv=none; b=Tuj/blbESWhehsUW9JAywRDDUAcfCFD7MxFv9OsdbBjoikhLQEeE6ka8hE6NLMlONOOL1trv3CUKeSIu4G+C3Kb9YQUC0N0tf7GBcQYbiCiDTTC2u50JT+tlpr5/FI1m3w/H3nJmY/uOHGFuMLQj7cRp+xRuY+iDIGdGUTD/f7I=
+	t=1741095400; cv=none; b=O8kTExSlQJxD/fEWhxac4jkH4X3ATvUJYhu0gbfitZmZV40XTS9Qc8pwfo1tTos9d04wkCmlId1Fb5/5x1X44bKh0hmGzY7JFvzc65pxZo2rczzOPqrI6tfaPsxLNTK2Xe6TiyXwFpqDTgUaVyqMKEmb92qOP/mWhgmEq+4EgYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741095400; c=relaxed/simple;
-	bh=dIc7ZWMjUrT6oNcZ8E4/2SkmGDQ9C98PWVBuCcWoeOQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TNyTw92z4lJDTq+9Oc/+GjfBu5Z5q7yz/zhlgOM5NsD8rZEOIInt1xRZUXzWzTq+BZelGeM4EHt99BIqneb0BCdBIyI00R9dCVjfCg037Ay8K+iMI6cVDIJxszKF/paqBlW8QZIfCN4HLQcmkKE5grzIZ4S1QawGYVzmWjV0Qoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a39L2NS2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A49A6C4CEE5;
-	Tue,  4 Mar 2025 13:36:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741095399;
-	bh=dIc7ZWMjUrT6oNcZ8E4/2SkmGDQ9C98PWVBuCcWoeOQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=a39L2NS2Vf9hG3dvrvXrDSiUoCS9LHIMEY75cvGzTaBZWQISA416ttcmLhP+vAWGf
-	 Pce5s5titmzDkySVIlx4FAHBJ+RQQZ5dRCd//L9Gy8Pvv5Ofn31lj1TJ39P4d8fBGW
-	 qyJIdW5M2Z2TjJ8GEP/SD2XPbw7m9hhpLU7yVJ6TdwkVYomSk/oO8e1l6WRvc7tij7
-	 BEY7uOjh4/ym1k0fAk+ATy7aFiOjM+IhG1biCFNekTRe5SfkIFUFLKE9MW93xCWn9S
-	 OE+ezK/LBDA+5rAbyG4iTccw5SiIAmV+30butbmPmo1SrFiusEs8+eaoJieiC/eODc
-	 GI3custQieJ6A==
-Date: Tue, 4 Mar 2025 13:36:26 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v3 10/15] iio: accel: adxl345: extend sample frequency
- adjustments
-Message-ID: <20250304133626.709221c1@jic23-huawei>
-In-Reply-To: <20250220104234.40958-11-l.rubusch@gmail.com>
-References: <20250220104234.40958-1-l.rubusch@gmail.com>
-	<20250220104234.40958-11-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	bh=yF25LpGdJi7PFv7kUBafbWN5+6gSA01nKdsra3U1hbE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e7XaONeDlqkAB8adTKCN5z/3iqSPs0abToVdN/3OLAel2Obi+Lyacu9UFcR24s8fxxp0314uBGSEOOqStdxL1HsEv60oJnWen6LZ9XlS8FE2/gtrd43mw1G3mX3FAySVZ7kE5B7UdlXIRvgryZmdWPsbWvS/100LejtdiK+2lz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SX3bOaM8; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5249ckMK026620;
+	Tue, 4 Mar 2025 13:36:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=CDiax/
+	LIP8CJb3abRRbcSlRurLsVLCyEDkOlbIbb9NE=; b=SX3bOaM8vT8vlvQ6zfuIPO
+	OCDFDni6b74lFSpzOfJ/SXvSNsmMLHHMtgLq/YoIyey2UqbHU6A8Ll/K3NTeWsIb
+	4EudSY+SU98r+E0kbwlrWiZz5IN2MwbOoOkdeFlOcBAxwb9IkvafDWPiQkWovE8E
+	VYA3+e8qcBHDfJg1X+O4LU1vvVxspK0sRaop0PxiZgb1iV37sjNLcf2xxBFp7WVZ
+	XSxz+l28yyDzEYnM+kcSTZ2ZXh3Ou096IGBycOiqixXugznZ8F2EV0cPFAJv6jSM
+	42YNMwLPWLQ07ixfQfo9P+/TNoQSnaVDWSb82PyNMm4wDyDednZJ3TTibBp0UxoA
+	==
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455kkpc3d7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 13:36:35 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524DLwnI020877;
+	Tue, 4 Mar 2025 13:36:35 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 454esjw8r2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 13:36:35 +0000
+Received: from smtpav04.dal12v.mail.ibm.com (smtpav04.dal12v.mail.ibm.com [10.241.53.103])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524DaX3l15925970
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 13:36:33 GMT
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5B8F958052;
+	Tue,  4 Mar 2025 13:36:33 +0000 (GMT)
+Received: from smtpav04.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 8B6A65805A;
+	Tue,  4 Mar 2025 13:36:32 +0000 (GMT)
+Received: from [9.61.107.75] (unknown [9.61.107.75])
+	by smtpav04.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Mar 2025 13:36:32 +0000 (GMT)
+Message-ID: <4bf76371-43ea-4c1a-8a7f-500b0b0195b6@linux.ibm.com>
+Date: Tue, 4 Mar 2025 08:36:32 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1] fixup! s390/vfio-ap: Notify userspace that guest's
+ AP config changed when mdev removed
+To: Rorie Reyes <rreyes@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org
+Cc: hca@linux.ibm.com, borntraeger@de.ibm.com, agordeev@linux.ibm.com,
+        gor@linux.ibm.com, pasic@linux.ibm.com, jjherne@linux.ibm.com,
+        alex.williamson@redhat.com
+References: <20250303191158.49317-1-rreyes@linux.ibm.com>
+Content-Language: en-US
+From: Anthony Krowiak <akrowiak@linux.ibm.com>
+In-Reply-To: <20250303191158.49317-1-rreyes@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: dswjtEnHH1k6NuG2lPlPBU_nuMfzNUIJ
+X-Proofpoint-ORIG-GUID: dswjtEnHH1k6NuG2lPlPBU_nuMfzNUIJ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_05,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 clxscore=1015
+ malwarescore=0 adultscore=0 impostorscore=0 bulkscore=0 mlxlogscore=999
+ phishscore=0 spamscore=0 priorityscore=1501 mlxscore=0 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503040110
 
-On Thu, 20 Feb 2025 10:42:29 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Introduce enums and functions to work with the sample frequency
-> adjustments. Let the sample frequency adjust via IIO and configure
-> a reasonable default.
-> 
-> Replace the old static sample frequency handling. The patch is in
-> preparation for activity/inactivity handling. During adjustment of
-> bw registers, measuring is disabled and afterwards enabled again.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Hi Lothar, a few minor things inline.
 
 
-> +static int adxl345_find_odr(struct adxl345_state *st, int val,
-> +			    int val2, enum adxl345_odr *odr)
-> +{
-> +	int i;
-> +
-> +	for (i = 0; i < ARRAY_SIZE(adxl345_odr_tbl); i++)
-> +		if (val == adxl345_odr_tbl[i][0] &&
-> +		    val2 == adxl345_odr_tbl[i][1])
-> +			break;
-> +
-> +	if (i == ARRAY_SIZE(adxl345_odr_tbl))
-> +		return -EINVAL;
-> +
-> +	*odr = i;
-> +
-> +	return 0;
-Unless there will be more to do here later it would be fine to
-move this setting *odr = i and return into the loop condition.
-Then you can return -EINVAL directly if the loop finishes.
-i.e.
-	for (i = 0; i < ARRAY_SIZE(adxl345_odr_tbl); i++) {
-		if (val == adxl345_odr_tbl[i][0] &&
-		    val2 == adxl345_odr_tbl[i][1]) {
-			*odr = i;
-			return 0;
-		}
-	}
-	return -EINVAL;
 
-This is a very common pattern when there isn't much
-to do on a match.
+On 3/3/25 2:11 PM, Rorie Reyes wrote:
+> This patch is based on the s390/features branch
+>
+> The guest's AP configuration is cleared when the mdev is removed, so
+> userspace must be notified that the AP configuration has changed. To this
+> end, this patch:
+>
+> * Removes call to 'signal_guest_ap_cfg_changed()' function from the
+>    'vfio_ap_mdev_unset_kvm()' function because it has no affect given it is
+>    called after the mdev fd is closed.
+>
+> * Adds call to 'signal_guest_ap_cfg_changed()' function to the
+>    'vfio_ap_mdev_request()' function to notify userspace that the guest's
+>    AP configuration has changed before signaling the request to remove the
+>    mdev.
+>
+> Minor change - Fixed an indentation issue in function
+> 'signal_guest_ap_cfg_changed()'
+>
+> Fixes: 2ba4410dd477 ("s390/vfio-ap: Signal eventfd when guest AP configuration is changed")
+> Signed-off-by: Rorie Reyes <rreyes@linux.ibm.com>
+> ---
+>   drivers/s390/crypto/vfio_ap_ops.c | 19 ++++++++++++++++---
+>   1 file changed, 16 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/s390/crypto/vfio_ap_ops.c b/drivers/s390/crypto/vfio_ap_ops.c
+> index 571f5dcb49c5..c1afac5ac555 100644
+> --- a/drivers/s390/crypto/vfio_ap_ops.c
+> +++ b/drivers/s390/crypto/vfio_ap_ops.c
+> @@ -652,8 +652,8 @@ static void vfio_ap_matrix_init(struct ap_config_info *info,
+>   
+>   static void signal_guest_ap_cfg_changed(struct ap_matrix_mdev *matrix_mdev)
+>   {
+> -		if (matrix_mdev->cfg_chg_trigger)
+> -			eventfd_signal(matrix_mdev->cfg_chg_trigger);
+> +	if (matrix_mdev->cfg_chg_trigger)
+> +		eventfd_signal(matrix_mdev->cfg_chg_trigger);
+>   }
+>   
+>   static void vfio_ap_mdev_update_guest_apcb(struct ap_matrix_mdev *matrix_mdev)
+> @@ -1870,7 +1870,6 @@ static void vfio_ap_mdev_unset_kvm(struct ap_matrix_mdev *matrix_mdev)
+>   		get_update_locks_for_kvm(kvm);
+>   
+>   		kvm_arch_crypto_clear_masks(kvm);
+> -		signal_guest_ap_cfg_changed(matrix_mdev);
+>   		vfio_ap_mdev_reset_queues(matrix_mdev);
+>   		kvm_put_kvm(kvm);
+>   		matrix_mdev->kvm = NULL;
+> @@ -2057,6 +2056,14 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
+>   
+>   	matrix_mdev = container_of(vdev, struct ap_matrix_mdev, vdev);
+>   
+> +	if (matrix_mdev->kvm) {
+> +		get_update_locks_for_kvm(matrix_mdev->kvm);
 
-> +}
-> +
-> +static int adxl345_set_odr(struct adxl345_state *st, enum adxl345_odr odr)
-> +{
-> +	int ret;
-> +
-> +	ret = regmap_update_bits(st->regmap, ADXL345_REG_BW_RATE,
-> +				 ADXL345_BW_RATE_MSK,
-> +				 FIELD_PREP(ADXL345_BW_RATE_MSK, odr));
-> +	if (ret)
-> +		return ret;
-I guess this makes sense in later patches, but if it doesn't get more
-complex
-	return regmap()
+I know we talked about this prior to submission of this patch, but 
+looking at this again I think
+you should use the get_update_locks_for_mdev() function for two reasons:
 
-> +
-> +	return 0;
-> +}
-> +
-> +static int adxl345_read_avail(struct iio_dev *indio_dev,
-> +			      struct iio_chan_spec const *chan,
-> +			      const int **vals, int *type,
-> +			      int *length, long mask)
-> +{
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_SAMP_FREQ:
-> +		*vals = (int *)adxl345_odr_tbl;
-> +		*type = IIO_VAL_INT_PLUS_MICRO;
-> +		*length = ARRAY_SIZE(adxl345_odr_tbl) * 2;
-> +		return IIO_AVAIL_LIST;
+1. It is safer because it will take the matrix_dev->guests_lock which 
+will prevent the matrix_mdev->kvm
+     field from changing before you check it
+
+2. I will eliminate the need for the else
+
+get_update_locks_for_mdev(matrix_mdev)
+if (matrix_mdev->kvm) {
+     clear the masks
+     signal guest config changed
+}
+...
+release_update_locks_for_mdev(matrix_mdev); Sorry about not seeing this 
+before you posted this patch.
+> +		kvm_arch_crypto_clear_masks(matrix_mdev->kvm);
+> +		signal_guest_ap_cfg_changed(matrix_mdev);
+> +	} else {
+> +		mutex_lock(&matrix_dev->mdevs_lock);
 > +	}
 > +
-> +	return -EINVAL;
-> +}
+>   	if (matrix_mdev->req_trigger) {
+>   		if (!(count % 10))
+>   			dev_notice_ratelimited(dev,
+> @@ -2068,6 +2075,12 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
+>   		dev_notice(dev,
+>   			   "No device request registered, blocked until released by user\n");
+>   	}
 > +
->  static int adxl345_read_raw(struct iio_dev *indio_dev,
->  			    struct iio_chan_spec const *chan,
->  			    int *val, int *val2, long mask)
->  {
->  	struct adxl345_state *st = iio_priv(indio_dev);
->  	__le16 accel;
-> -	long long samp_freq_nhz;
->  	unsigned int regval;
-> +	enum adxl345_odr odr;
->  	int ret;
->  
->  	switch (mask) {
-> @@ -455,14 +542,12 @@ static int adxl345_read_raw(struct iio_dev *indio_dev,
->  		return IIO_VAL_INT;
->  	case IIO_CHAN_INFO_SAMP_FREQ:
->  		ret = regmap_read(st->regmap, ADXL345_REG_BW_RATE, &regval);
-> -		if (ret < 0)
-> +		if (ret)
->  			return ret;
-
-Change is reasonable but unrelated to this patch that I can see. Should
-really be a separate patch cleaning these up for all regmap calls.
-I have no idea if there are others.
-
-> -
-> -		samp_freq_nhz = ADXL345_BASE_RATE_NANO_HZ <<
-> -				(regval & ADXL345_BW_RATE);
-> -		*val = div_s64_rem(samp_freq_nhz, NANOHZ_PER_HZ, val2);
-> -
-> -		return IIO_VAL_INT_PLUS_NANO;
-> +		odr = FIELD_GET(ADXL345_BW_RATE_MSK, regval);
-> +		*val = adxl345_odr_tbl[odr][0];
-> +		*val2 = adxl345_odr_tbl[odr][1];
-> +		return IIO_VAL_INT_PLUS_MICRO;
->  	}
->  
->  	return -EINVAL;
-> @@ -473,7 +558,12 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
->  			     int val, int val2, long mask)
->  {
->  	struct adxl345_state *st = iio_priv(indio_dev);
-> -	s64 n;
-> +	enum adxl345_odr odr;
-> +	int ret;
+> +	if (matrix_mdev->kvm)
+> +		release_update_locks_for_kvm(matrix_mdev->kvm);
+> +	else
+> +		mutex_unlock(&matrix_dev->mdevs_lock);
 > +
-> +	ret = adxl345_set_measure_en(st, false);
-> +	if (ret)
-> +		return ret;
->  
->  	switch (mask) {
->  	case IIO_CHAN_INFO_CALIBBIAS:
-> @@ -481,20 +571,24 @@ static int adxl345_write_raw(struct iio_dev *indio_dev,
->  		 * 8-bit resolution at +/- 2g, that is 4x accel data scale
->  		 * factor
->  		 */
-> -		return regmap_write(st->regmap,
-> -				    ADXL345_REG_OFS_AXIS(chan->address),
-> -				    val / 4);
-> +		ret = regmap_write(st->regmap,
-> +				   ADXL345_REG_OFS_AXIS(chan->address),
-> +				   val / 4);
-I'd do local error handling here...
-> +		break;
->  	case IIO_CHAN_INFO_SAMP_FREQ:
-> -		n = div_s64(val * NANOHZ_PER_HZ + val2,
-> -			    ADXL345_BASE_RATE_NANO_HZ);
-> -
-> -		return regmap_update_bits(st->regmap, ADXL345_REG_BW_RATE,
-> -					  ADXL345_BW_RATE,
-> -					  clamp_val(ilog2(n), 0,
-> -						    ADXL345_BW_RATE));
-> +		ret = adxl345_find_odr(st, val, val2, &odr);
-> +		if (ret)
-> +			return ret;
-> +		ret = adxl345_set_odr(st, odr);
-and here just to be consistent with the case above here
-		if (ret)
-			return ret;
-> +		break;
-> +	default:
-> +		return -EINVAL;
->  	}
->  
-> -	return -EINVAL;
-> +	if (ret)
-This this one is never hit.
-
-> +		return ret;
-> +
-> +	return adxl345_set_measure_en(st, true);
->  }
->  
->  static int adxl345_read_event_config(struct iio_dev *indio_dev,
-> @@ -747,7 +841,7 @@ static int adxl345_write_raw_get_fmt(struct iio_dev *indio_dev,
->  	case IIO_CHAN_INFO_CALIBBIAS:
->  		return IIO_VAL_INT;
->  	case IIO_CHAN_INFO_SAMP_FREQ:
-> -		return IIO_VAL_INT_PLUS_NANO;
-> +		return IIO_VAL_INT_PLUS_MICRO;
->  	default:
->  		return -EINVAL;
->  	}
-> @@ -760,19 +854,6 @@ static void adxl345_powerdown(void *ptr)
->  	adxl345_set_measure_en(st, false);
->  }
->  
-> -static IIO_CONST_ATTR_SAMP_FREQ_AVAIL(
-> -"0.09765625 0.1953125 0.390625 0.78125 1.5625 3.125 6.25 12.5 25 50 100 200 400 800 1600 3200"
-> -);
+>   }
+>   
+>   static int vfio_ap_mdev_get_device_info(unsigned long arg)
 
 
