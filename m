@@ -1,213 +1,136 @@
-Return-Path: <linux-kernel+bounces-543896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45AD1A4DB34
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:47:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CDC7A4DB2E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:46:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E80B51889377
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:45:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CAEB57A35B2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:45:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB7CD1FFC6E;
-	Tue,  4 Mar 2025 10:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAA2C200BB5;
+	Tue,  4 Mar 2025 10:43:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jB+NySUc"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N3N0Pn0T"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFDC1FDA86
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:42:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F0961FCCF1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:42:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741084929; cv=none; b=G7Fq7csz8ZgnZ2K5yVRWonYbF9XLm/ENh1XkWPj5xoG4HQmKoBy6GNY2k99IYgeq5mhMQhk7ou0RV6clVTTbpo4yAnsB7uAxkHuN69ATJBnYQf5LFCXJ7a1uESlpf2dk4k9OQsbf8gDq4e1CetHF9LcveOuo4gXpkXQHc5tJTqI=
+	t=1741084981; cv=none; b=I24KaxcsVbg6eaE1GqZXv36NKw2ZHmCOF53dOnUoSEtFoFJSTZGTlifBYX3W0fjIFD3EqYnFU4wLvmuMVyfn2COBbDyE+4jdFcX3ijhd40PkBgcIx/asOEOiN38L0KOYEqCKIyI5O9IM9DFqPMtcqHOQdoTgHO2pJmlxQv4hbbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741084929; c=relaxed/simple;
-	bh=lj+LKYBIbZHMRgSOHlWkhtGfvLPPYNRUo3TcX1HTbxM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Edye56t8PCNynnQsKA4yfiOqkjJ2Wwo4E9MeuqpNW2OShPjRaLfSAj6OWgeLYufYINcaYqnmIZKochS0us1pE+tIBTtTDJdB3Ehx7kfnYTnigxckrzKEuNUiWAXtVE/Jn/UaXdyYb1DzxvQKRHUvOfuWnYnMKCcwheMuZX49sFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jB+NySUc; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43ba8bbeae2so4930795e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:42:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741084925; x=1741689725; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GDxLGGq40mrprdt8U26xMTW1xjWdDPFqwzgumK7bnvA=;
-        b=jB+NySUcTT6dUHfnGaqdiGBjze25TFujdi0TPrmY+th5Kkt+YL476VNg55mX6MRTtg
-         CpuzeTg33b2YD2vLWBDG4UMpUlGU7lfpeQhkkH7nifTVykKyOybE8dFwm3Twxd1arwbI
-         rSkAuEBMi5LBWU3k5GlWutLACDVm2tXANfwL/WAkETP+lR1YcfGCW/or5UD9i6zxkX3P
-         4yTZHrZWgEkGjUgDSDmZIKwMzbJ90KSHHZjeHthSDSApiSsjg5EQsZgL9KfnlUMfDZ2s
-         +zApmqQYLA+PzYptsPJXfkRRE9NzsFnZIx0sUkC+2BZXFlTjISwiF2iQ6w8HcF8nFgCJ
-         WBsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741084925; x=1741689725;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GDxLGGq40mrprdt8U26xMTW1xjWdDPFqwzgumK7bnvA=;
-        b=rGb30QS4pXH9nOeqUqMMsJKJbfUtmizLR3M5hoxEBf85k5JawHJpgR7Bw/96oZh6yz
-         KwJMcQkcq4M1YLWGUwuvR3ihX4CppaTcRZC9X7GE/hNdeM3e9ym+LGfD9fsC4NXphDsF
-         feqqDeHP+0gbboTsGuYnq7xTenfQrJtx9fQRrju98CtOrz0yjJ0mpd4i6NFDXssLa2ar
-         Tt6gSKjixVZ4NIiInnFfmWm2fjPXQZCoSYv7VYngocojAkCz4+CsN+vMn6jaa7DrFExq
-         Z3h4rQgwhrKUO3ZyCk3IMnKpbghmP4cDGR0/3mxp3gG2Uu6PszPlAfm18Auv2w2qtygv
-         pcCA==
-X-Forwarded-Encrypted: i=1; AJvYcCW/CSFaPKhixNXjODaWd2LHqaWiS8wShQTCs1n5l04/+IWIyymMcLttbPLpCrW/VudWMGGFxpb7ZkH53AQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDxD5zq+lQrETPTJORNLSsc2I9cLuwFTOkRg3xrgFNrOhWpOcf
-	iWEV4rgkDmIAMsciEBco0tG1utB1PnBeWEDaoYw3IPgFZd6a5FItj787BlpANuk=
-X-Gm-Gg: ASbGncu0V4orF/EEnwvqXpsPSJ6edwzKmThkH9xyH5Q73BHQ62OMJc1WTgAeqRHErQJ
-	tdffewB8KDrxgXtUjsCkQUX+A5+C+7ORt9sCm7MwJSFVLkRk/wjDL4XNDrluxHEKGcsLNKPOCVt
-	b6vutY0tlFhXHoSgHZW31wHp8mSOWFHfhGLpedLqf9MyvDmC+DEY+t0E2PxXXGQB2d8sNuUVT15
-	B7wInGO8i5J3S1h4CLIRzWzJFbx3jsJq6kyNX9xGu+lQMp3PyqiKI7pCMEo7BgFa3OjTgBQvKoQ
-	NYu0sCOS1wwjexJgR7arhGFW0KLhkw1oKWcxAL/O2fWAy4ZMfyuK0jhpI38=
-X-Google-Smtp-Source: AGHT+IEBaeeS+ss4bvkyeewcMs2ci2tWe2j9anwRxAUmA/kmrMhdWw1KWJLeZhb3ucTu5owhQtYxHA==
-X-Received: by 2002:a05:600c:3b8e:b0:43b:c228:1ee0 with SMTP id 5b1f17b1804b1-43bc2282147mr23743515e9.7.1741084924557;
-        Tue, 04 Mar 2025 02:42:04 -0800 (PST)
-Received: from krzk-bin.. ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b792asm17202257f8f.53.2025.03.04.02.42.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 02:42:04 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH 2/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3588 boards
-Date: Tue,  4 Mar 2025 11:42:00 +0100
-Message-ID: <20250304104200.76178-2-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
-References: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1741084981; c=relaxed/simple;
+	bh=AAUmVn2f+OJGl5++4TDAcy/d2xI+fSp6H+1SWf1N1kE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OCsES/4su4dPf6CWo3bzjpcyAOCWffV/fZ9bSn6t0yiYcSFd1LMWPMHoaHXVsX1PPZsQHIqYAVPELm/Dk7EjvgcnZKyl52KaXDbE8p0O7FmwLt7PG8OB83a5YQ0ZGP5BlHxmuwd/2OIDqPLjFliJbtfhxZeFrVb4arYuBuKDugE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N3N0Pn0T; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741084980; x=1772620980;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=AAUmVn2f+OJGl5++4TDAcy/d2xI+fSp6H+1SWf1N1kE=;
+  b=N3N0Pn0ThMUJYITdmWg/cwJajIkkIT1XVQKsGBEhHqEq2DieQnZ9Dx5C
+   gpKQqKHG8DLx5CE1OzldQtFYArhnmBCPD4HnDjrZzP2mTmAHTHRedlAxy
+   vleDbp0o4ABzZkcZerrQHOzHK4dzoCgHI7aSkQBslZ7N/o/mImR+b50TZ
+   N20yvujAs1MrU1/mXFYzz7wHZtdqZmVP64c2Q5YO7KQ+XUyeTFBGmukTZ
+   P67jiKiq5BuBI0ziuI4tZ4zy+4MDowbiCVBiOm5oG0J6GM03IIobRzWJM
+   CWINWzqXBYY9mXm7CVXu/lBSTBFVj8GW5Cq/4znpxu+QKbjJ+Dt0yND9B
+   Q==;
+X-CSE-ConnectionGUID: 8EqK1BW6Rrqcegr5Tkex2g==
+X-CSE-MsgGUID: Vmtpp6qOSTm2aquv/i/3qw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53390798"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="53390798"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 02:42:58 -0800
+X-CSE-ConnectionGUID: RRpphfkFQdaIgE+9o57zZA==
+X-CSE-MsgGUID: CKZ0dbezRhiyjX2wyXbDEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="119028097"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa009.fm.intel.com with ESMTP; 04 Mar 2025 02:42:56 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpPjh-000JcV-2P;
+	Tue, 04 Mar 2025 10:42:53 +0000
+Date: Tue, 4 Mar 2025 18:42:16 +0800
+From: kernel test robot <lkp@intel.com>
+To: Peter Xu <peterx@redhat.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Memory Management List <linux-mm@kvack.org>
+Subject: mm/gup.c:778:15: sparse: sparse: cast to non-scalar
+Message-ID: <202503041858.tK5Q1vkP-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Devicetree bindings for ES8388 audio codec expect the device to be
-marked as compatible with ES8328.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   99fa936e8e4f117d62f229003c9799686f74cebc
+commit: e6fd5564c07c3c749ff3d1b2aa35540b4047e395 mm/gup: cache p4d in follow_p4d_mask()
+date:   10 months ago
+config: alpha-randconfig-r123-20250304 (https://download.01.org/0day-ci/archive/20250304/202503041858.tK5Q1vkP-lkp@intel.com/config)
+compiler: alpha-linux-gcc (GCC) 14.2.0
+reproduce: (https://download.01.org/0day-ci/archive/20250304/202503041858.tK5Q1vkP-lkp@intel.com/reproduce)
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503041858.tK5Q1vkP-lkp@intel.com/
 
----
+sparse warnings: (new ones prefixed by >>)
+>> mm/gup.c:778:15: sparse: sparse: cast to non-scalar
+>> mm/gup.c:778:15: sparse: sparse: cast from non-scalar
+   mm/gup.c: note: in included file (through include/linux/mm.h):
+   include/linux/pgtable.h:315:16: sparse: sparse: cast to non-scalar
+   include/linux/pgtable.h:315:16: sparse: sparse: cast from non-scalar
+   include/linux/pgtable.h:315:16: sparse: sparse: cast to non-scalar
+   include/linux/pgtable.h:315:16: sparse: sparse: cast from non-scalar
+   mm/gup.c: note: in included file (through include/linux/mmzone.h, include/linux/gfp.h, include/linux/mm.h):
+   include/linux/page-flags.h:241:46: sparse: sparse: self-comparison always evaluates to false
+   mm/gup.c:682:9: sparse: sparse: context imbalance in 'follow_page_pte' - unexpected unlock
+   mm/gup.c: note: in included file (through include/linux/mm.h):
+   include/linux/pgtable.h:322:16: sparse: sparse: cast to non-scalar
+   include/linux/pgtable.h:322:16: sparse: sparse: cast from non-scalar
+   include/linux/pgtable.h:315:16: sparse: sparse: cast to non-scalar
+   include/linux/pgtable.h:315:16: sparse: sparse: cast from non-scalar
+   mm/gup.c:911:18: sparse: sparse: context imbalance in 'get_gate_page' - unexpected unlock
 
-Changeset depends on bindings patch being accepted to ASoC:
-https://lore.kernel.org/all/20250304103808.75236-1-krzysztof.kozlowski@linaro.org/
+vim +778 mm/gup.c
 
-Please take it to the same or next merge cycle as above ASoC binding.
----
- arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts         | 2 +-
- arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi      | 2 +-
- arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts      | 2 +-
- arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts        | 2 +-
- arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts   | 2 +-
- arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts | 2 +-
- arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi     | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
+   769	
+   770	static struct page *follow_p4d_mask(struct vm_area_struct *vma,
+   771					    unsigned long address, pgd_t *pgdp,
+   772					    unsigned int flags,
+   773					    struct follow_page_context *ctx)
+   774	{
+   775		p4d_t *p4dp, p4d;
+   776	
+   777		p4dp = p4d_offset(pgdp, address);
+ > 778		p4d = READ_ONCE(*p4dp);
+   779		if (p4d_none(p4d))
+   780			return no_page_table(vma, flags);
+   781		BUILD_BUG_ON(p4d_huge(p4d));
+   782		if (unlikely(p4d_bad(p4d)))
+   783			return no_page_table(vma, flags);
+   784	
+   785		return follow_pud_mask(vma, address, p4dp, flags, ctx);
+   786	}
+   787	
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-index 27a7895595ee..e77a38d726e0 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-evb1-v10.dts
-@@ -472,7 +472,7 @@ &i2c7 {
- 	status = "okay";
- 
- 	es8388: audio-codec@11 {
--		compatible = "everest,es8388";
-+		compatible = "everest,es8388", "everest,es8328";
- 		reg = <0x11>;
- 		clocks = <&cru I2S0_8CH_MCLKOUT>;
- 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
-index a98e804a0949..81031b99c9b9 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-orangepi-5.dtsi
-@@ -276,7 +276,7 @@ &i2c7 {
- 
- 	/* PLDO2 vcca 1.8V, BUCK8 gated by PLDO2 being enabled */
- 	es8388: audio-codec@11 {
--		compatible = "everest,es8388";
-+		compatible = "everest,es8388", "everest,es8328";
- 		reg = <0x11>;
- 		clocks = <&cru I2S0_8CH_MCLKOUT>;
- 		AVDD-supply = <&vcc_3v3_s0>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts b/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
-index 088cfade6f6f..e07888c9948f 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-quartzpro64.dts
-@@ -311,7 +311,7 @@ &i2c7 {
- 	status = "okay";
- 
- 	es8388: audio-codec@11 {
--		compatible = "everest,es8388";
-+		compatible = "everest,es8388", "everest,es8328";
- 		reg = <0x11>;
- 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
- 		assigned-clock-rates = <12288000>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-index bc4077575beb..7c948b2653da 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-evb1-v10.dts
-@@ -242,7 +242,7 @@ &i2c3 {
- 	status = "okay";
- 
- 	es8388: audio-codec@11 {
--		compatible = "everest,es8388";
-+		compatible = "everest,es8388", "everest,es8328";
- 		reg = <0x11>;
- 		clocks = <&cru I2S0_8CH_MCLKOUT>;
- 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts b/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
-index 812bba0aef1a..b79ce3ec1186 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-gameforce-ace.dts
-@@ -611,7 +611,7 @@ &i2c7 {
- 	status = "okay";
- 
- 	es8388: audio-codec@11 {
--		compatible = "everest,es8388";
-+		compatible = "everest,es8388", "everest,es8328";
- 		reg = <0x11>;
- 		assigned-clock-rates = <12288000>;
- 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts b/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
-index 74a4f03e05e3..73042e7416bc 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-indiedroid-nova.dts
-@@ -412,7 +412,7 @@ &i2c7 {
- 	status = "okay";
- 
- 	es8388: audio-codec@11 {
--		compatible = "everest,es8388";
-+		compatible = "everest,es8388", "everest,es8328";
- 		reg = <0x11>;
- 		assigned-clock-rates = <12288000>;
- 		assigned-clocks = <&cru I2S0_8CH_MCLKOUT>;
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
-index 9e16960b8705..a48bcb6b6a91 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
-@@ -268,7 +268,7 @@ &i2c6 {
- 	status = "okay";
- 
- 	es8388: audio-codec@10 {
--		compatible = "everest,es8388";
-+		compatible = "everest,es8388", "everest,es8328";
- 		reg = <0x10>;
- 		clocks = <&cru I2S1_8CH_MCLKOUT>;
- 		AVDD-supply = <&vcc_3v3_s0>;
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
