@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-543562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DF7A4D711
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:56:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE876A4D712
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:57:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 051D1189A464
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:56:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A2F5189AA99
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E489F1FFC4D;
-	Tue,  4 Mar 2025 08:53:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 375AE1FFC7A;
+	Tue,  4 Mar 2025 08:53:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iBGBm9Q1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lGKAkupY"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LBlbMNX6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/qZbgqsG"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4414C1FFC54
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9A71FFC62
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078394; cv=none; b=gCwitCMdcygyD9ihlzMwv54Y0hCU5p/p4vcAT8gl3xDgJ2lRvNdsMEZnEwpHue1roVVeDwrywGhnDb8DtSwEDtYeNBbsyTzTUkOtVW9z71uIWWBJixJVs+U+tFyX+ppxKRS2k7h9UBrzyND1o/7sBhHhntPG8/EBF6bZhY98kMU=
+	t=1741078397; cv=none; b=HLsXRbuo/bSHyxCyCIHApOmT4tV5RZrh9Qrg2W2zA6UcGxrgV6+ppd2xo7DSqb7Raxv7GD4GjQW0ww+5Z46V0pzEpQ3/r6FG6HHZksuuB1NzAWzAYFUMT3RkxsBCQ4ppucBbu1C29jRax6pDcS5/ZGKgMlTLdYNqDmrYt1NFexM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078394; c=relaxed/simple;
-	bh=4OMUhk8gV/GVTTRsBV4hI78HAG/JzdeLKoG8yY12nJo=;
+	s=arc-20240116; t=1741078397; c=relaxed/simple;
+	bh=4mVs32IP/JJwhwIrsKAxI9VHzWvehSi+ZVAbjv/FwJ8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OErq0kaxGAzo4ftof8kb1jNZxaG5ukltk7LSt5xn6ztTyBZtal+RIBqfR2C61h7jchnOwKCbADGB8CYGqUjBrWTIJAyCEEEcFQ1UDWCGtngxlzYF1FtnZ6e9p4knlY3yUwMrv+iLGvx62fjWoq6cumkpjNo9SjW6KIuGvF0co58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iBGBm9Q1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lGKAkupY; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=fwDEMHBakTt6UOAwKHdp0CohkEgy9f4A+WnrHMGo4oayFfx+5+2ls1VNU70FiVweBVmN1QJlPhZwK0nRQN6LjTb1ayU5nVS7O6kxCL/WroqaQ+A2bztA6tS0PHpNm3Qzo6A4Yqh0+e5jzTtv04qZPTRDXVK26viz0Py79aIE/Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LBlbMNX6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/qZbgqsG; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741078391;
+	s=2020; t=1741078393;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=znaERUgOHhEL9pgrdSNyK5mzYUTwqjRpM0omk77NMPY=;
-	b=iBGBm9Q1FBLAp6YxE6NqAY8lE/xt8xiWFt2sUyCRaPhNNc4hYjru0v0VagWQjCaEKQgUJv
-	LMfguOVR3SYDMLi5yzRqZaz035fd1Vh0wjWUQ8vU8JvTR3krEgc11tjpmUCVXQiroi8qyG
-	SNMNE/cjkrYH5iSgJV9RWeKSUvPzyXIa2iqeL6EIxw+ODTurmRu/ZsgKPuTRW5u7xA6Dll
-	DQqSJes55xUJdRNbuOqJYHYcRuhiUtSE+FnIm+mlfhSzpppl3S5dvs3S5e+C4MSKubZkD1
-	4IuKNa/lrPngTDMXFVBYyPwYVN4eJQUbCBNK7I9ywrj5OrlZJM4e94XQXFglCQ==
+	bh=1f/wmwFxuOm6NrbQ051GrZqcSL5nUPMeX+arERDp4+A=;
+	b=LBlbMNX69QeNxID6lY+6SSLV0ftXgGZm/0OwqJbLdAahr9dXp2KzVp95uFrSM18+uQ7ROm
+	vghxaHCZBUBrDFj45jfFfLF5GGcmaiDUZvZYfHKWGha96F4+N7zU7ZZwhlFq/EVbZdtg5r
+	8M9DN/pho85RiTAGTeQAjbTEPkTSuxHFhai9FSjUBYk7LGrPqNCBEoMTVkRfvPJ7avEbi6
+	B+n4jhxJqcua59CROeGoZzUU/u+zMAVpstOnl8L7PgUbtwClhGOzqSRdyMsCKUNNnJJtkO
+	NdtqSL7cGAknQaXcGZ3PVx3A2RQyY0PaX3rOUin7q45bLZeombHTR2YvAVNsHg==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741078391;
+	s=2020e; t=1741078393;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=znaERUgOHhEL9pgrdSNyK5mzYUTwqjRpM0omk77NMPY=;
-	b=lGKAkupYmvZKdrL4G5A5bOsgd7ed4k31LPDfOMbEecn+pX0Xr4y29zkEMGgCDUO8HVGuub
-	Mbxvj3QYDoS/+ZAg==
+	bh=1f/wmwFxuOm6NrbQ051GrZqcSL5nUPMeX+arERDp4+A=;
+	b=/qZbgqsGs98NaRjGy5tp9QX7DUnBpESXsJf7rCQ/yu4VdyOFuhmWT00M+SlWy5s88/1Z8Z
+	3Ii29lcB7cwgTjCA==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -64,9 +64,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v1 19/40] x86/cacheinfo: Standardize _cpuid4_info_regs instance naming
-Date: Tue,  4 Mar 2025 09:51:30 +0100
-Message-ID: <20250304085152.51092-20-darwi@linutronix.de>
+Subject: [PATCH v1 20/40] x86: treewide: Introduce x86_vendor_amd_or_hygon()
+Date: Tue,  4 Mar 2025 09:51:31 +0100
+Message-ID: <20250304085152.51092-21-darwi@linutronix.de>
 In-Reply-To: <20250304085152.51092-1-darwi@linutronix.de>
 References: <20250304085152.51092-1-darwi@linutronix.de>
 Precedence: bulk
@@ -77,246 +77,318 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The cacheinfo code frequently uses the output registers from cpuid leaf
-0x4.  Such registers are cached at struct _cpuid4_info_regs, augmented
-with related information, and are then passed across functions.
+The pattern to check if an x86 vendor is AMD or HYGON (or not both), is
+pretty common across the x86 tree.
 
-The naming of these _cpuid4_info_regs instances is confusing at best.
-
-Some instances are called "this_leaf", which is vague as "this" lacks
-context and "leaf" is overly generic given that other cpuid leaves are
-also processed within cacheinfo.  Other _cpuid4_info_regs instances are
-just called "base", adding further ambiguity.
-
-Standardize on id4 for all instances.
+Introduce x86_vendor_amd_or_hygon() macro at asm/processor.h, and use it
+across the x86 tree.
 
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/kernel/cpu/cacheinfo.c | 97 +++++++++++++++++----------------
- 1 file changed, 49 insertions(+), 48 deletions(-)
+ arch/x86/events/amd/uncore.c       |  3 +--
+ arch/x86/events/rapl.c             |  3 +--
+ arch/x86/include/asm/processor.h   |  5 +++++
+ arch/x86/kernel/amd_nb.c           |  9 +++------
+ arch/x86/kernel/cpu/bugs.c         | 12 ++++--------
+ arch/x86/kernel/cpu/cacheinfo.c    |  7 ++-----
+ arch/x86/kernel/cpu/mce/core.c     |  4 ++--
+ arch/x86/kernel/cpu/mce/severity.c |  3 +--
+ arch/x86/kernel/cpu/mtrr/cleanup.c |  3 +--
+ arch/x86/kernel/smpboot.c          |  3 +--
+ arch/x86/kvm/svm/svm.c             |  3 +--
+ arch/x86/pci/amd_bus.c             |  3 +--
+ arch/x86/xen/enlighten.c           | 15 +++++----------
+ arch/x86/xen/pmu.c                 |  3 +--
+ 14 files changed, 29 insertions(+), 47 deletions(-)
 
+diff --git a/arch/x86/events/amd/uncore.c b/arch/x86/events/amd/uncore.c
+index 49c26ce2b115..5141c0375990 100644
+--- a/arch/x86/events/amd/uncore.c
++++ b/arch/x86/events/amd/uncore.c
+@@ -1023,8 +1023,7 @@ static int __init amd_uncore_init(void)
+ 	int ret = -ENODEV;
+ 	int i;
+ 
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++	if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return -ENODEV;
+ 
+ 	if (!boot_cpu_has(X86_FEATURE_TOPOEXT))
+diff --git a/arch/x86/events/rapl.c b/arch/x86/events/rapl.c
+index 6941f4811bec..999ea90059ae 100644
+--- a/arch/x86/events/rapl.c
++++ b/arch/x86/events/rapl.c
+@@ -123,8 +123,7 @@ static struct perf_pmu_events_attr event_attr_##v = {				\
+  *	     them as die-scope.
+  */
+ #define rapl_pkg_pmu_is_pkg_scope()				\
+-	(boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||	\
+-	 boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
++	x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor)
+ 
+ struct rapl_pmu {
+ 	raw_spinlock_t		lock;
+diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
+index d5d9a071cddc..0f586c638e87 100644
+--- a/arch/x86/include/asm/processor.h
++++ b/arch/x86/include/asm/processor.h
+@@ -203,6 +203,11 @@ struct cpuinfo_x86 {
+ 
+ #define X86_VENDOR_UNKNOWN	0xff
+ 
++static inline bool x86_vendor_amd_or_hygon(u8 vendor)
++{
++	return (vendor == X86_VENDOR_AMD || vendor == X86_VENDOR_HYGON);
++}
++
+ /*
+  * capabilities of CPUs
+  */
+diff --git a/arch/x86/kernel/amd_nb.c b/arch/x86/kernel/amd_nb.c
+index 11fac09e3a8c..bac8d3b6f12b 100644
+--- a/arch/x86/kernel/amd_nb.c
++++ b/arch/x86/kernel/amd_nb.c
+@@ -127,8 +127,7 @@ bool __init early_is_amd_nb(u32 device)
+ 	const struct pci_device_id *id;
+ 	u32 vendor = device & 0xffff;
+ 
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++	if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return false;
+ 
+ 	if (cpu_feature_enabled(X86_FEATURE_ZEN))
+@@ -147,8 +146,7 @@ struct resource *amd_get_mmconfig_range(struct resource *res)
+ 	u64 base, msr;
+ 	unsigned int segn_busn_bits;
+ 
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++	if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return NULL;
+ 
+ 	/* assume all cpus from fam10h have mmconfig */
+@@ -320,8 +318,7 @@ static __init void fix_erratum_688(void)
+ 
+ static __init int init_amd_nbs(void)
+ {
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++	if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return 0;
+ 
+ 	amd_cache_northbridges();
+diff --git a/arch/x86/kernel/cpu/bugs.c b/arch/x86/kernel/cpu/bugs.c
+index a5d0998d7604..b0dc4e96f4bc 100644
+--- a/arch/x86/kernel/cpu/bugs.c
++++ b/arch/x86/kernel/cpu/bugs.c
+@@ -1081,8 +1081,7 @@ static void __init retbleed_select_mitigation(void)
+ 
+ do_cmd_auto:
+ 	case RETBLEED_CMD_AUTO:
+-		if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+-		    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
++		if (x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor)) {
+ 			if (IS_ENABLED(CONFIG_MITIGATION_UNRET_ENTRY))
+ 				retbleed_mitigation = RETBLEED_MITIGATION_UNRET;
+ 			else if (IS_ENABLED(CONFIG_MITIGATION_IBPB_ENTRY) &&
+@@ -1106,8 +1105,7 @@ static void __init retbleed_select_mitigation(void)
+ 
+ 		x86_return_thunk = retbleed_return_thunk;
+ 
+-		if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-		    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++		if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 			pr_err(RETBLEED_UNTRAIN_MSG);
+ 
+ 		mitigate_smt = true;
+@@ -1872,8 +1870,7 @@ static void __init spectre_v2_select_mitigation(void)
+ 	 */
+ 	if (boot_cpu_has_bug(X86_BUG_RETBLEED) &&
+ 	    boot_cpu_has(X86_FEATURE_IBPB) &&
+-	    (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+-	     boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)) {
++	    x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor)) {
+ 
+ 		if (retbleed_cmd != RETBLEED_CMD_IBPB) {
+ 			setup_force_cpu_cap(X86_FEATURE_USE_IBPB_FW);
+@@ -2903,8 +2900,7 @@ static ssize_t retbleed_show_state(char *buf)
+ {
+ 	if (retbleed_mitigation == RETBLEED_MITIGATION_UNRET ||
+ 	    retbleed_mitigation == RETBLEED_MITIGATION_IBPB) {
+-		if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-		    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++		if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 			return sysfs_emit(buf, "Vulnerable: untrained return thunk / IBPB on non-AMD based uarch\n");
+ 
+ 		return sysfs_emit(buf, "%s; SMT %s\n", retbleed_strings[retbleed_mitigation],
 diff --git a/arch/x86/kernel/cpu/cacheinfo.c b/arch/x86/kernel/cpu/cacheinfo.c
-index f825d68e8de6..74a2949ff872 100644
+index 74a2949ff872..0024d126c385 100644
 --- a/arch/x86/kernel/cpu/cacheinfo.c
 +++ b/arch/x86/kernel/cpu/cacheinfo.c
-@@ -573,7 +573,7 @@ cache_get_priv_group(struct cacheinfo *ci)
- 	return &cache_private_group;
- }
+@@ -633,8 +633,7 @@ static int find_num_cache_leaves(struct cpuinfo_x86 *c)
+ 	union _cpuid4_leaf_eax	cache_eax;
+ 	int 			i = -1;
  
--static void amd_init_l3_cache(struct _cpuid4_info_regs *this_leaf, int index)
-+static void amd_init_l3_cache(struct _cpuid4_info_regs *id4, int index)
- {
- 	int node;
+-	if (c->x86_vendor == X86_VENDOR_AMD ||
+-	    c->x86_vendor == X86_VENDOR_HYGON)
++	if (x86_vendor_amd_or_hygon(c->x86_vendor))
+ 		op = 0x8000001d;
+ 	else
+ 		op = 4;
+@@ -907,11 +906,9 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
+ 	int index_msb, i;
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
  
-@@ -582,16 +582,16 @@ static void amd_init_l3_cache(struct _cpuid4_info_regs *this_leaf, int index)
- 		return;
- 
- 	node = topology_amd_node_id(smp_processor_id());
--	this_leaf->nb = node_to_amd_nb(node);
--	if (this_leaf->nb && !this_leaf->nb->l3_cache.indices)
--		amd_calc_l3_indices(this_leaf->nb);
-+	id4->nb = node_to_amd_nb(node);
-+	if (id4->nb && !id4->nb->l3_cache.indices)
-+		amd_calc_l3_indices(id4->nb);
- }
- #else
- #define amd_init_l3_cache(x, y)
- #endif  /* CONFIG_AMD_NB && CONFIG_SYSFS */
- 
- static int
--cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
-+cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *id4)
- {
- 	union _cpuid4_leaf_eax	eax;
- 	union _cpuid4_leaf_ebx	ebx;
-@@ -604,11 +604,11 @@ cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
- 				    &ebx.full, &ecx.full, &edx);
- 		else
- 			amd_cpuid4(index, &eax, &ebx, &ecx);
--		amd_init_l3_cache(this_leaf, index);
-+		amd_init_l3_cache(id4, index);
- 	} else if (boot_cpu_data.x86_vendor == X86_VENDOR_HYGON) {
- 		cpuid_count(0x8000001d, index, &eax.full,
- 			    &ebx.full, &ecx.full, &edx);
--		amd_init_l3_cache(this_leaf, index);
-+		amd_init_l3_cache(id4, index);
- 	} else {
- 		cpuid_count(4, index, &eax.full, &ebx.full, &ecx.full, &edx);
- 	}
-@@ -616,13 +616,14 @@ cpuid4_cache_lookup_regs(int index, struct _cpuid4_info_regs *this_leaf)
- 	if (eax.split.type == CTYPE_NULL)
- 		return -EIO; /* better error ? */
- 
--	this_leaf->eax = eax;
--	this_leaf->ebx = ebx;
--	this_leaf->ecx = ecx;
--	this_leaf->size = (ecx.split.number_of_sets          + 1) *
--			  (ebx.split.coherency_line_size     + 1) *
--			  (ebx.split.physical_line_partition + 1) *
--			  (ebx.split.ways_of_associativity   + 1);
-+	id4->eax = eax;
-+	id4->ebx = ebx;
-+	id4->ecx = ecx;
-+	id4->size = (ecx.split.number_of_sets          + 1) *
-+		    (ebx.split.coherency_line_size     + 1) *
-+		    (ebx.split.physical_line_partition + 1) *
-+		    (ebx.split.ways_of_associativity   + 1);
-+
- 	return 0;
- }
- 
-@@ -754,29 +755,29 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- 		 * parameters cpuid leaf to find the cache details
- 		 */
- 		for (i = 0; i < ci->num_leaves; i++) {
--			struct _cpuid4_info_regs this_leaf = {};
-+			struct _cpuid4_info_regs id4 = {};
- 			int retval;
- 
--			retval = cpuid4_cache_lookup_regs(i, &this_leaf);
-+			retval = cpuid4_cache_lookup_regs(i, &id4);
- 			if (retval < 0)
- 				continue;
- 
--			switch (this_leaf.eax.split.level) {
-+			switch (id4.eax.split.level) {
- 			case 1:
--				if (this_leaf.eax.split.type == CTYPE_DATA)
--					new_l1d = this_leaf.size/1024;
--				else if (this_leaf.eax.split.type == CTYPE_INST)
--					new_l1i = this_leaf.size/1024;
-+				if (id4.eax.split.type == CTYPE_DATA)
-+					new_l1d = id4.size/1024;
-+				else if (id4.eax.split.type == CTYPE_INST)
-+					new_l1i = id4.size/1024;
- 				break;
- 			case 2:
--				new_l2 = this_leaf.size/1024;
--				num_threads_sharing = 1 + this_leaf.eax.split.num_threads_sharing;
-+				new_l2 = id4.size/1024;
-+				num_threads_sharing = 1 + id4.eax.split.num_threads_sharing;
- 				index_msb = get_count_order(num_threads_sharing);
- 				l2_id = c->topo.apicid & ~((1 << index_msb) - 1);
- 				break;
- 			case 3:
--				new_l3 = this_leaf.size/1024;
--				num_threads_sharing = 1 + this_leaf.eax.split.num_threads_sharing;
-+				new_l3 = id4.size/1024;
-+				num_threads_sharing = 1 + id4.eax.split.num_threads_sharing;
- 				index_msb = get_count_order(num_threads_sharing);
- 				l3_id = c->topo.apicid & ~((1 << index_msb) - 1);
- 				break;
-@@ -841,7 +842,7 @@ void init_intel_cacheinfo(struct cpuinfo_x86 *c)
- }
- 
- static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
--				    const struct _cpuid4_info_regs *base)
-+				    const struct _cpuid4_info_regs *id4)
- {
- 	struct cpu_cacheinfo *this_cpu_ci;
- 	struct cacheinfo *ci;
-@@ -867,7 +868,7 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- 	} else if (boot_cpu_has(X86_FEATURE_TOPOEXT)) {
- 		unsigned int apicid, nshared, first, last;
- 
--		nshared = base->eax.split.num_threads_sharing + 1;
-+		nshared = id4->eax.split.num_threads_sharing + 1;
- 		apicid = cpu_data(cpu).topo.apicid;
- 		first = apicid - (apicid % nshared);
- 		last = first + nshared - 1;
-@@ -898,7 +899,7 @@ static int __cache_amd_cpumap_setup(unsigned int cpu, int index,
- }
- 
- static void __cache_cpumap_setup(unsigned int cpu, int index,
--				 const struct _cpuid4_info_regs *base)
-+				 const struct _cpuid4_info_regs *id4)
- {
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
- 	struct cacheinfo *ci, *sibling_ci;
-@@ -908,12 +909,12 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
- 
- 	if (c->x86_vendor == X86_VENDOR_AMD ||
- 	    c->x86_vendor == X86_VENDOR_HYGON) {
--		if (__cache_amd_cpumap_setup(cpu, index, base))
-+		if (__cache_amd_cpumap_setup(cpu, index, id4))
+-	if (c->x86_vendor == X86_VENDOR_AMD ||
+-	    c->x86_vendor == X86_VENDOR_HYGON) {
++	if (x86_vendor_amd_or_hygon(c->x86_vendor))
+ 		if (__cache_amd_cpumap_setup(cpu, index, id4))
  			return;
- 	}
+-	}
  
  	ci = this_cpu_ci->info_list + index;
--	num_threads_sharing = 1 + base->eax.split.num_threads_sharing;
-+	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
+ 	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 0dc00c9894c7..135d7b8f3e55 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -227,7 +227,7 @@ static void print_mce(struct mce_hw_err *err)
  
- 	cpumask_set_cpu(cpu, &ci->shared_cpu_map);
- 	if (num_threads_sharing == 1)
-@@ -934,18 +935,18 @@ static void __cache_cpumap_setup(unsigned int cpu, int index,
+ 	__print_mce(err);
+ 
+-	if (m->cpuvendor != X86_VENDOR_AMD && m->cpuvendor != X86_VENDOR_HYGON)
++	if (!x86_vendor_amd_or_hygon(m->cpuvendor))
+ 		pr_emerg_ratelimited(HW_ERR "Run the above through 'mcelog --ascii'\n");
  }
  
- static void ci_info_init(struct cacheinfo *ci,
--			 const struct _cpuid4_info_regs *base)
-+			 const struct _cpuid4_info_regs *id4)
- {
--	ci->id				= base->id;
-+	ci->id				= id4->id;
- 	ci->attributes			= CACHE_ID;
--	ci->level			= base->eax.split.level;
--	ci->type			= cache_type_map[base->eax.split.type];
--	ci->coherency_line_size		= base->ebx.split.coherency_line_size + 1;
--	ci->ways_of_associativity	= base->ebx.split.ways_of_associativity + 1;
--	ci->size			= base->size;
--	ci->number_of_sets		= base->ecx.split.number_of_sets + 1;
--	ci->physical_line_partition	= base->ebx.split.physical_line_partition + 1;
--	ci->priv			= base->nb;
-+	ci->level			= id4->eax.split.level;
-+	ci->type			= cache_type_map[id4->eax.split.type];
-+	ci->coherency_line_size		= id4->ebx.split.coherency_line_size + 1;
-+	ci->ways_of_associativity	= id4->ebx.split.ways_of_associativity + 1;
-+	ci->size			= id4->size;
-+	ci->number_of_sets		= id4->ecx.split.number_of_sets + 1;
-+	ci->physical_line_partition	= id4->ebx.split.physical_line_partition + 1;
-+	ci->priv			= id4->nb;
- }
- 
- int init_cache_level(unsigned int cpu)
-@@ -964,15 +965,15 @@ int init_cache_level(unsigned int cpu)
-  * ECX as cache index. Then right shift apicid by the number's order to get
-  * cache id for this cache node.
+@@ -2060,7 +2060,7 @@ static bool __mcheck_cpu_ancient_init(struct cpuinfo_x86 *c)
   */
--static void get_cache_id(int cpu, struct _cpuid4_info_regs *id4_regs)
-+static void get_cache_id(int cpu, struct _cpuid4_info_regs *id4)
+ static void __mcheck_cpu_init_early(struct cpuinfo_x86 *c)
  {
- 	struct cpuinfo_x86 *c = &cpu_data(cpu);
- 	unsigned long num_threads_sharing;
- 	int index_msb;
+-	if (c->x86_vendor == X86_VENDOR_AMD || c->x86_vendor == X86_VENDOR_HYGON) {
++	if (x86_vendor_amd_or_hygon(c->x86_vendor)) {
+ 		mce_flags.overflow_recov = !!cpu_has(c, X86_FEATURE_OVERFLOW_RECOV);
+ 		mce_flags.succor	 = !!cpu_has(c, X86_FEATURE_SUCCOR);
+ 		mce_flags.smca		 = !!cpu_has(c, X86_FEATURE_SMCA);
+diff --git a/arch/x86/kernel/cpu/mce/severity.c b/arch/x86/kernel/cpu/mce/severity.c
+index dac4d64dfb2a..a3f2f1c236bc 100644
+--- a/arch/x86/kernel/cpu/mce/severity.c
++++ b/arch/x86/kernel/cpu/mce/severity.c
+@@ -413,8 +413,7 @@ static noinstr int mce_severity_intel(struct mce *m, struct pt_regs *regs, char
  
--	num_threads_sharing = 1 + id4_regs->eax.split.num_threads_sharing;
-+	num_threads_sharing = 1 + id4->eax.split.num_threads_sharing;
- 	index_msb = get_count_order(num_threads_sharing);
--	id4_regs->id = c->topo.apicid >> index_msb;
-+	id4->id = c->topo.apicid >> index_msb;
+ int noinstr mce_severity(struct mce *m, struct pt_regs *regs, char **msg, bool is_excp)
+ {
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+-	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
++	if (x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return mce_severity_amd(m, regs, msg, is_excp);
+ 	else
+ 		return mce_severity_intel(m, regs, msg, is_excp);
+diff --git a/arch/x86/kernel/cpu/mtrr/cleanup.c b/arch/x86/kernel/cpu/mtrr/cleanup.c
+index 18cf79d6e2c5..236d7e3b4e55 100644
+--- a/arch/x86/kernel/cpu/mtrr/cleanup.c
++++ b/arch/x86/kernel/cpu/mtrr/cleanup.c
+@@ -820,8 +820,7 @@ int __init amd_special_default_mtrr(void)
+ {
+ 	u32 l, h;
+ 
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++	if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return 0;
+ 	if (boot_cpu_data.x86 < 0xf)
+ 		return 0;
+diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
+index e199465dc9e1..5ba8424cf4e6 100644
+--- a/arch/x86/kernel/smpboot.c
++++ b/arch/x86/kernel/smpboot.c
+@@ -1250,8 +1250,7 @@ static inline void mwait_play_dead(void)
+ 	unsigned int highest_subcstate = 0;
+ 	int i;
+ 
+-	if (boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+-	    boot_cpu_data.x86_vendor == X86_VENDOR_HYGON)
++	if (x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return;
+ 	if (!this_cpu_has(X86_FEATURE_MWAIT))
+ 		return;
+diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+index a713c803a3a3..8c88f3c0c2cd 100644
+--- a/arch/x86/kvm/svm/svm.c
++++ b/arch/x86/kvm/svm/svm.c
+@@ -523,8 +523,7 @@ static bool __kvm_is_svm_supported(void)
+ 	int cpu = smp_processor_id();
+ 	struct cpuinfo_x86 *c = &cpu_data(cpu);
+ 
+-	if (c->x86_vendor != X86_VENDOR_AMD &&
+-	    c->x86_vendor != X86_VENDOR_HYGON) {
++	if (!x86_vendor_amd_or_hygon(c->x86_vendor)) {
+ 		pr_err("CPU %d isn't AMD or Hygon\n", cpu);
+ 		return false;
+ 	}
+diff --git a/arch/x86/pci/amd_bus.c b/arch/x86/pci/amd_bus.c
+index 631512f7ec85..43033d54080a 100644
+--- a/arch/x86/pci/amd_bus.c
++++ b/arch/x86/pci/amd_bus.c
+@@ -399,8 +399,7 @@ static int __init pci_io_ecs_init(void)
+ 
+ static int __init amd_postcore_init(void)
+ {
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++	if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return 0;
+ 
+ 	early_root_info_init();
+diff --git a/arch/x86/xen/enlighten.c b/arch/x86/xen/enlighten.c
+index 43dcd8c7badc..13df4917d7d8 100644
+--- a/arch/x86/xen/enlighten.c
++++ b/arch/x86/xen/enlighten.c
+@@ -82,11 +82,9 @@ void xen_hypercall_setfunc(void)
+ 	if (static_call_query(xen_hypercall) != xen_hypercall_hvm)
+ 		return;
+ 
+-	if ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+-	     boot_cpu_data.x86_vendor == X86_VENDOR_HYGON))
+-		static_call_update(xen_hypercall, xen_hypercall_amd);
+-	else
+-		static_call_update(xen_hypercall, xen_hypercall_intel);
++	static_call_update(xen_hypercall,
++			   x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor) ?
++			   xen_hypercall_amd : xen_hypercall_intel);
  }
  
- int populate_cache_leaves(unsigned int cpu)
-@@ -980,15 +981,15 @@ int populate_cache_leaves(unsigned int cpu)
- 	unsigned int idx, ret;
- 	struct cpu_cacheinfo *this_cpu_ci = get_cpu_cacheinfo(cpu);
- 	struct cacheinfo *ci = this_cpu_ci->info_list;
--	struct _cpuid4_info_regs id4_regs = {};
-+	struct _cpuid4_info_regs id4 = {};
+ /*
+@@ -118,11 +116,8 @@ noinstr void *__xen_hypercall_setfunc(void)
+ 	if (!boot_cpu_has(X86_FEATURE_CPUID))
+ 		xen_get_vendor();
  
- 	for (idx = 0; idx < this_cpu_ci->num_leaves; idx++) {
--		ret = cpuid4_cache_lookup_regs(idx, &id4_regs);
-+		ret = cpuid4_cache_lookup_regs(idx, &id4);
- 		if (ret)
- 			return ret;
--		get_cache_id(cpu, &id4_regs);
--		ci_info_init(ci++, &id4_regs);
--		__cache_cpumap_setup(cpu, idx, &id4_regs);
-+		get_cache_id(cpu, &id4);
-+		ci_info_init(ci++, &id4);
-+		__cache_cpumap_setup(cpu, idx, &id4);
- 	}
- 	this_cpu_ci->cpu_map_populated = true;
+-	if ((boot_cpu_data.x86_vendor == X86_VENDOR_AMD ||
+-	     boot_cpu_data.x86_vendor == X86_VENDOR_HYGON))
+-		func = xen_hypercall_amd;
+-	else
+-		func = xen_hypercall_intel;
++	func = x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor) ?
++		xen_hypercall_amd : xen_hypercall_intel;
  
+ 	static_call_update_early(xen_hypercall, func);
+ 
+diff --git a/arch/x86/xen/pmu.c b/arch/x86/xen/pmu.c
+index f06987b0efc3..af5cb19b5990 100644
+--- a/arch/x86/xen/pmu.c
++++ b/arch/x86/xen/pmu.c
+@@ -130,8 +130,7 @@ static inline uint32_t get_fam15h_addr(u32 addr)
+ 
+ static inline bool is_amd_pmu_msr(unsigned int msr)
+ {
+-	if (boot_cpu_data.x86_vendor != X86_VENDOR_AMD &&
+-	    boot_cpu_data.x86_vendor != X86_VENDOR_HYGON)
++	if (!x86_vendor_amd_or_hygon(boot_cpu_data.x86_vendor))
+ 		return false;
+ 
+ 	if ((msr >= MSR_F15H_PERF_CTL &&
 -- 
 2.48.1
 
