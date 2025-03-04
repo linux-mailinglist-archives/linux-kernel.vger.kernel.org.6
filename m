@@ -1,234 +1,111 @@
-Return-Path: <linux-kernel+bounces-544750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BACDA4E46A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:55:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A688A4E4CA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B7AA7A2282
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:54:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 935B019C4F57
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D7628FFF1;
-	Tue,  4 Mar 2025 15:39:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 220BE280CC0;
+	Tue,  4 Mar 2025 15:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eZD+JurH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="gqL5BQrT"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873BD28FFD1;
-	Tue,  4 Mar 2025 15:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73CD22BE7D9;
+	Tue,  4 Mar 2025 15:39:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102741; cv=none; b=SPlmKBO0CRxkKTEmBbd1wmtWIO8O4OPY7zFpWeeS8JauaE6uFs6lYtppvtDHw5NPuNUiMOxbUcke5phHQ3Lhqlg5oVbCT0SJvxeObY2NLuHaSrsbl4sCUeXTYchEoWydpgkHfS58QBVu765x0/MaNqYLXF3ePjzPfD8uH2hmKLQ=
+	t=1741102753; cv=none; b=iiwgvE6dnqb/2W1LNZmXPeOkIZOBHiT3jzY53mwcCK0ClO0tC2BwsqQrdyOqNTBIgSHjnW3RXiXtQRtUfP8usMUpdgbVPA4lFMOV8r3Ky4FS3eIVMqqLXgCcd/V8JHtm/aKoCv13AuBcNGB+gHq4RxxLGDsJ3uk1S0X2PfgRJ0c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102741; c=relaxed/simple;
-	bh=LmmUDES04mGNUWw2sZpLxKlKIEhol4VSewPbqfeMwjk=;
+	s=arc-20240116; t=1741102753; c=relaxed/simple;
+	bh=auG9fhIEk5WNSfZP00zkFoUGxi1ycw90jpxVYjD4uzs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IAv4kJITcn9VHQ/wFqvGnVm5+fIWKHb0+U959f6o7qRdkkZHSLrsaBw/biMZMs7vm0u/ojvDgm8uB9Szyge9nBRF/uJTKo2MLFE9+B9FOCO58bSiRVjbrZAS5/ckyg84rm9AnMqeoWftKZySsuI5zlfdw1Wt8czWcgF1gxkHm7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eZD+JurH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52463C4CEE9;
-	Tue,  4 Mar 2025 15:39:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741102741;
-	bh=LmmUDES04mGNUWw2sZpLxKlKIEhol4VSewPbqfeMwjk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eZD+JurHongg1WwduqAxWTQ69tyw66IF/3nzgBX1onoxvJlLBhoHhhMqMJWAuygVv
-	 /67gnTJruEMl5+W/PQDjbmpwPTuC0UR9tmXqNj18L2RnNkWRvSZEzb8ZaMuhLi0PUK
-	 zJpdLlcqYaW0CASb6ji1B/rP3M5P0casgYYXquFsdXn4haNsP5xIjFrtZpb8Dat9l1
-	 dehXeU/7j9r/MQsXCFtDr5O6IHxuVClJi7L6bgOQST9sgvYKEyn8SrSclDTu5ryrOV
-	 8TExnjqcIcQIRRWAPmu498leI/mCu9d/K09tIegF/PUAffHNGpYn8nJ6Tvkvuz8j1+
-	 KSOR9OSe2qWqg==
-Date: Tue, 4 Mar 2025 16:38:57 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
-	Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>, Kamal Wadhwa <quic_kamalw@quicinc.com>, 
-	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>, 
-	Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
- period instead
-Message-ID: <5uk75v3cpy2hymdgjyvqdwyda34t2pn7jqyupyvhmqgo3wlxkl@uim4lth7lipa>
-References: <20250303-leds-qcom-lpg-compute-pwm-value-using-period-v1-1-833e729e3da2@linaro.org>
- <ylnkjxnukss7askv7ip5htrb4tyjzhpw7jim2se6rloleq5h6w@ngk7lbk26hxj>
- <Z8bGHV4PIkY4te6V@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=l+IiN9P1qosVIi0Z0iBW65oDfHHumPLEtwOsk00KtaIAL4tD9kwHHCH95vJsfFH8IkAlypWvB+EabyT7zInl/NnTvRmpMJXVhV4jACcrRpugoDgxiq7vc3G4H8jMJwbQIKNtaqjaIKYf1fuKziuy0nsggdeXOLnrwPpsxAq2q1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=gqL5BQrT; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=Content-Type:MIME-Version:Message-ID:Subject:From:Date:From
+	:Subject; bh=CrZJzgsPb563EHYUAm6DxIL/LwlblsMqudybIt3wKg0=; b=gqL5BQrT4i54xtk1
+	lSBohzS8FZec1wIdT1h3LfiBsRZFAnV4bGG2yT6CthXjPfaayOpfvJMhFjvCysNG1V169asaH2peJ
+	zsXsQVdP3ykBwnbl/AjqQFIDW2qw6xWKtJRvGZQCNhQlDKYBWJXN8WBSqifzkCG+sHPKG8vrhRwsV
+	F7+k3BkAdY783bkiyijiUboMi3VPhUghuTWh+5j+DvLWY8Bg3v4cJWZcrgeogC5jyCSgS4QvyKzX1
+	l/1A7s6x4CoKR8+1+op8s0elNm4oTkAc1gY81H8Yg8PC+ZWfBCgfB4xz1ldvlfyxVD8JBPngUuQCA
+	cP2jsC3E48ANWLDBLQ==;
+Received: from dg by mx.treblig.org with local (Exim 4.96)
+	(envelope-from <dg@treblig.org>)
+	id 1tpUMH-002XPv-01;
+	Tue, 04 Mar 2025 15:39:01 +0000
+Date: Tue, 4 Mar 2025 15:39:00 +0000
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
+To: Bryan Tan <bryan-bt.tan@broadcom.com>
+Cc: Jason Gunthorpe <jgg@ziepe.ca>, vishnu.dasa@broadcom.com,
+	leon@kernel.org, bcm-kernel-feedback-list@broadcom.com,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Unwired pvrdma_modify_device ?
+Message-ID: <Z8celFfGXR8P6Mk8@gallifrey>
+References: <Z8TWF6coBUF3l_jk@gallifrey>
+ <20250303182629.GV5011@ziepe.ca>
+ <Z8X4Ax5UCerz9lP8@gallifrey>
+ <CAOuBmuZdG7SWWmmhtEF09B5A4O-s+_h_uZnmTOPyKtQJGM9=wA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jxjluywedohfii7r"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Z8bGHV4PIkY4te6V@linaro.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOuBmuZdG7SWWmmhtEF09B5A4O-s+_h_uZnmTOPyKtQJGM9=wA@mail.gmail.com>
+X-Chocolate: 70 percent or better cocoa solids preferably
+X-Operating-System: Linux/6.1.0-21-amd64 (x86_64)
+X-Uptime: 15:38:19 up 300 days,  2:52,  1 user,  load average: 0.02, 0.04,
+ 0.00
+User-Agent: Mutt/2.2.12 (2023-09-09)
 
+* Bryan Tan (bryan-bt.tan@broadcom.com) wrote:
+> On Mon, Mar 3, 2025 at 6:42 PM Dr. David Alan Gilbert <linux@treblig.org>
+> wrote:
+> > * Jason Gunthorpe (jgg@ziepe.ca) wrote:
+> > > On Sun, Mar 02, 2025 at 10:05:11PM +0000, Dr. David Alan Gilbert wrote:
+> > > > Hi,
+> > > >   I noticed that pvrdma_modify_device() in
+> > > >    drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
+> > > > isn't called anywhere; shouldn't it be wired up in pvrdma_dev_ops ?
+> > > >
+> > > > (I've not got VMWare anywhere to try it on, and don't know the innards
+> > > > of RDMA drivers; so can't really test it).
+> >
+> > Hi Jason,
+> >   Thanks for the reply,
+> >
+> > > Seems probably right
+> > >
+> > > But at this point I'd just delete it unless pvrdma maintainers say
+> > > otherwise in the next week
+> >
+> > OK, lets see if they wake up.
+> >
+> > Dave
+> 
+> Thanks David for bringing this up. You're right, it looks like we
+> never wired it up to pvrdma_dev_ops. Feel free to remove it.
 
---jxjluywedohfii7r
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
- period instead
-MIME-Version: 1.0
+Hi Bryan,
+  Thanks for the reply - OK, I'll send a patch later to remove it.
 
-On Tue, Mar 04, 2025 at 11:21:33AM +0200, Abel Vesa wrote:
-> On 25-03-04 07:24:32, Uwe Kleine-K=F6nig wrote:
-> > Hello Abel,
-> >=20
-> > On Mon, Mar 03, 2025 at 06:14:36PM +0200, Abel Vesa wrote:
-> > > Currently, the implementation computes the best matched period based
-> > > on the requested one, by looping through all possible register
-> > > configurations. The best matched period is below the requested period.
-> >=20
-> > The best matched period *isn't above* the requested one. An exact match
-> > is fine.
-> >=20
->=20
-> Yep, that's better. Will re-word.
->=20
-> > > This means the PWM consumer could request duty cycle values between
-> > > the best matched period and the requested period, which with the curr=
-ent
-> > > implementation for computing the PWM value, it will result in values =
-out
-> > > of range with respect to the selected resolution.
-> >=20
-> > I still don't understand what you mean with resolution here.
->=20
-> Resolution in this context means the number of bits the PWM value
-> (register value) is represented in. Currently, the driver supporst two PWM
-> HW subtypes: normal and Hi-Res. Normal ones recently got support for chan=
-ging
-> the resolution between 6 bits or 9 bits. The high resolution ones support
-> anything between 8 bits and 15 bits.
->=20
-> >=20
-> > I guess you spend some time understanding the workings of the driver and
-> > you also have an example request that results in a hardware
-> > configuration you don't like. Please share the latter to a) support your
-> > case and b) make it easier for your reviewers to judge if your change is
-> > indeed an improvement.
->=20
-> Sure, will bring up the 5ms period scenario again.
->=20
-> When the consumer requests a period of 5ms, the closest the HW can do in
-> this case is actually 4.26ms. Since the PWM API will continue to ask for
-> duty cycle values based on the 5ms period, for any duty cycle value
-> between 4.26ms and 5ms, the resulting PWM value will be above 255, which
-> has been selected as best resolution for the 4.26ms best matched period.
->=20
-> For example, when 5ms duty cycle value is requested, it will result in a
-> PWM value of 300, which overflows the 255 selected resolution.
+Dave
 
-this is the bug you have to fix then. The PWM value (that defines the
-duty cycle) has to be calculated based on .period =3D 4.26 ms and capped
-at 255. So assuming that 0 yields a duty cycle of 0 ms and 255 yields
-4.26 ms, a request for .duty_cycle =3D 4; + .period =3D 5 should result in =
-an
-actual .duty_cycle =3D 239 / 255 * 4.26 ms =3D 3.992705882352941 ms;
-+ .period =3D 4.26 ms.
-
-> > > So change the way the PWM value is determined as a ratio between the
-> > > requested period and duty cycle, mapped on the resolution interval.
-> >=20
-> > Is the intention here that (for the picked period) a duty_cycle is
-> > selected that approximates the requested relative duty_cycle (i.e.
-> > .duty_cycle / .period)?
->=20
-> Yes, that exactly what the intention is.
->=20
-> > If it's that: Nack. This might be the right thing for your use case, but
-> > it's wrong for others, it complicates the driver because you have spend
-> > more effort in the calculation and (from my POV even worse) the driver's
-> > behaviour deviates from the usual one for pwm drivers. I admit there are
-> > some other lowlevel pwm drivers that are not aligned to the procedure I
-> > described that should be used to determine the register settings for a
-> > given request. But I target a common behaviour of all pwm drivers
-> > because that is the only way the pwm API functions can make a promise to
-> > its consumers about the resulting behaviour. Reaching this is difficult,
-> > because some consumers might depend on the "broken" behaviour of a given
-> > lowlevel driver (and also because analysing a driver to check and fix
-> > its behaviour is an effort). But "fixing" a driver to deviate from the
-> > declared right behaviour is wrong and includes all downsides that make
-> > me hesitate to align the old drivers to the common policy.
->=20
-> OK, fair enough. But I still don't get what you expect from the provider
-> that can't give the exact requested period. Do you expect the consumer
-> to request a period, then provider compute a best matched one, which in
-> our case is pretty far, and then still give exact duty cycle values ?
->=20
-> Like: request 5ms period, get 4.26ms instead, then request 4ms duty
-> cycle and get exact 4ms duty cycle when measured, instead of a
-> proportional value to the best matched period?
-
-Yes.
-=20
-> If so, then what happens when consumer asks for 5ms duty cycle?
-> Everything above the 4.26ms will just represent 100% duty cycle.
-
-Yes.
-
-> > The policy to pick a hardware setting is a compromise between consumer
-> > needs and what is straight forward to implement for (most) hardware
-> > drivers. Please stick to that. If you want more flexibility and
-> > precision in your consumer, please consider converting the pwm driver to
-> > the waveform API.
->=20
-> That means the pwm_bl driver will have to switch to waveform API, IIUC.
-
-Yes, if the pwm_bl driver cares about that precision it has to switch.
-
-While the waveform API isn't expressive enough, just use 4260000 as
-period in the pwm_bl device, or ignore the missing precision.
-
-> That might break other providers for the pwm_bl consumer, wouldn't it?
-
-Given that the consumer side of the waveform API only works with drivers
-that are converted: maybe. You could fall-back to the legacy API.
-=20
-> > > [...]
-> > > ---
-> > > base-commit: 0067a4b21c9ab441bbe6bf3635b3ddd21f6ca7c3
-> >=20
-> > My git repo doesn't know that commit. Given that you said your patch
-> > bases on that other series, this isn't surprising. Please use a publicly
-> > available commit as base parameter, otherwise you (and I) don't benefit
-> > from the armada of build bots because they just silently fail to test in
-> > this case.
->=20
-> Well, this is a pretty common practice. When the patch relies on other
-> patches that haven't been merged yet, but are still on the list, you
-> can't really base it on a publicly available commit.
->=20
-> And the fixes patchset that this is based on is needed for this to work.
->=20
-> So I really don't get how this can be done differently.
-
-You can still use --base=3D$newestpubliccommit and git-format-patch will
-at least give a chance to the build bots by emitting patch-ids for all
-the commits between the public base and the start of your patch series.
-
-Best regards
-Uwe
-
---jxjluywedohfii7r
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfHHo8ACgkQj4D7WH0S
-/k7OHQf8D54fFKGPCmwFzm1pqUVRJmEfRHlxBqo84n+xLsEbGtFdc9YO/yGABfu3
-zsfp5NhfT1k+EEZfKvWvICyyu3JfWCscLbEb/Xze81GU6DuKr1LG9r+1YX3NFuwZ
-j3XKYd70DcZRVykUmUdDPG22tunWrSNWFYBGc432VqCvNR6eXSy5ifYndAYHxpbu
-56xnutFpNZheu/G8JnsFk5bzODRBwcK2U14YXwmDrmky1nNGKTX+OEGLuBv/7CVI
-svGHRH9pJ0qQuOChyTKoAFbb47qdUH5q60YCY9lQyqEBhcaXrg/2jX/O43h5yKZ0
-s5oX/wYmFFPvRaijPPNFjjCyPdkivA==
-=G6kq
------END PGP SIGNATURE-----
-
---jxjluywedohfii7r--
+-- 
+ -----Open up your eyes, open up your mind, open up your code -------   
+/ Dr. David Alan Gilbert    |       Running GNU/Linux       | Happy  \ 
+\        dave @ treblig.org |                               | In Hex /
+ \ _________________________|_____ http://www.treblig.org   |_______/
 
