@@ -1,195 +1,158 @@
-Return-Path: <linux-kernel+bounces-544617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A15D5A4E333
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:28:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E739A4E351
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:31:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C55A3BEB99
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:20:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D9B219C3D1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:22:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99EE1FFC57;
-	Tue,  4 Mar 2025 15:14:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444D427EC92;
+	Tue,  4 Mar 2025 15:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="KY6FOERq"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AC6A202F8F;
-	Tue,  4 Mar 2025 15:14:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 692D427E1C1;
+	Tue,  4 Mar 2025 15:16:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101278; cv=none; b=Z8f0kqeGyGdRaP78SgqT+fysve17OAkuwQ4AyxOfoL1nfVQ258+vSBcx2OtCgS2wxV3PZWBcIKZNt57u7hDDDVEx37RhglN/BDjXVt5tluEWBrJLCxM4UTkjErcw2tV2Whvl36KV2UKagNXkh7hOvy8fAaWN5zIDk5sASpGcfVU=
+	t=1741101371; cv=none; b=prqTFnuPgrBhugz5u66IXjuU+1+igetUSUJgAuhLOKBMOpUqNHeI6/R409H+w5ndm2wuBV3Hch1Mnee0A9ao+OG2J4yyzppbotFOEikYQfHkhg3fLLLmInwpROqPWNNBwTwSvdX9mECIruKZjlIzo3bEKPmdPfK8rmh4wdLaKtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101278; c=relaxed/simple;
-	bh=zWrzCGCyEtmz4bprxj0QGkAf7nnb/KqKRPqPQWMwaxY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nhySPWhB+8BYwIJCq1VwfggVgtJ7sIkl/ZWDW+nbnQtt8C8deYGAlQZA2cy8FHXs3JvwshjipQPB7npHL3bj4LnI/jqf0Xhlh9yczDjM5gQFmIDea5/vS+b+mpdMxzzhdpGNsSY/uYHByKSTJ4tYpOEt1LzhukmrsdY3GY7CscU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8BC4C4CEE5;
-	Tue,  4 Mar 2025 15:14:36 +0000 (UTC)
-Date: Tue, 4 Mar 2025 10:15:31 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Strforexc yn <strforexc@gmail.com>
-Cc: Lai Jiangshan <jiangshanlai@gmail.com>, "Paul E. McKenney"
- <paulmck@kernel.org>, Josh Triplett <josh@joshtriplett.org>, Mathieu
- Desnoyers <mathieu.desnoyers@efficios.com>, rcu@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org
-Subject: Re: KASAN: global-out-of-bounds Read in srcu_gp_start_if_needed
-Message-ID: <20250304101531.55de1072@gandalf.local.home>
-In-Reply-To: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
-References: <CA+HokZrPb-oHcuZQsc=LZ6_aJfjKy9oMeCBd-tq4b_sX5EG7NQ@mail.gmail.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741101371; c=relaxed/simple;
+	bh=kRk65fFWGiW9cLrHn6Gq8JEnZaLlDaonyfy1q1fzf8Q=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=B7FVpPNoLOPFQwIQz3Vvwb50K1V9uhQB3BLdLrUPCx6Xwxfdp7+vARBNmFLZtlKuVhy7aTa3kASvni/8GYjooYBmrS8zHhMJAB8SQpIBjofPg2TTGoNWPEbbFBzN6/mj7sEYDjbuqLYtLSUhTqNL1o6FgrK4yJGyLJg4ZSeegNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=KY6FOERq; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741101367;
+	bh=kRk65fFWGiW9cLrHn6Gq8JEnZaLlDaonyfy1q1fzf8Q=;
+	h=From:Subject:Date:To:Cc:From;
+	b=KY6FOERqCblcMtcMsG1Jo68iIUJRZhzGfDNIRsw0BTcMNCXmDNb2m1j3zcEo4RvAA
+	 4S7+Gwr6uePEDLlKtbtdj/RVOurABGmkx9fwp3yXQqjDouTPSh11yiZivu9fY1jVlN
+	 FnGhPGOiS0LxG0DEH79LUJnsEIlfcb/c45tdRMvwYHg6KA9tKUAEV3FnTVZwLQOsZd
+	 97PWLOlLF2mntA+8Pqg9e9+2oi0YZYWvHs9xJVB9D31sYKrBrnM5tF91uDTC7lkJZq
+	 Ds3fnE8Yd/GyCNhqnmSeN/CrCLGhAf38zLQcbPMcP9PotWGAcSku55fkzh4p2+U7lO
+	 O9k4rMmTYv0aA==
+Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5615517E065E;
+	Tue,  4 Mar 2025 16:16:02 +0100 (CET)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v3 00/20] Get mt6359-accdet ready for usage in Devicetree
+Date: Tue, 04 Mar 2025 12:15:41 -0300
+Message-Id: <20250304-mt6359-accdet-dts-v3-0-5b0eafc29f5b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAB0Zx2cC/33NSwrCMBSF4a2UjI3k2bSO3Ic4yOPWBlojSQhK6
+ d5NOxFEHP4H7ncXlCB6SOjULChC8cmHew1+aJAd9f0G2LvaiBEmCaMCz7nlssfaWgcZu5wwIYZ
+ 2fSfUwC2qd48Ig3/u5uVae/Qph/jaXxS6rf+0QjHBrVKaSmp6I+zZhmnSJkR9tGFGm1jYR+GE/
+ VJYVaRxLecAxAn1razr+gZ2a2Fy/AAAAA==
+X-Change-ID: 20250214-mt6359-accdet-dts-00b189847f3c
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Sen Chu <sen.chu@mediatek.com>, Sean Wang <sean.wang@mediatek.com>, 
+ Macpaul Lin <macpaul.lin@mediatek.com>, Lee Jones <lee@kernel.org>, 
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ linux-pm@vger.kernel.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ Andrew Perepech <andrew.perepech@mediatek.com>
+X-Mailer: b4 0.14.2
 
+This series prepares the MT6359 ACCDET for actual usage in the
+Devicetree. Patches 1 and 2 add the required DT bindings, patches 3 and
+4 get the mt6359-accdet driver probing, patches 5-18 clean up code
+related to DT property parsing, patch 19 adds the node in the
+Devicetree and patch 20 enables the kconfig for the driver.
 
-I just realized that the bcachefs maintainer wasn't Cc'd on this.
+Together with the series "Allow retrieving accessory detection reference
+on MT8188" [1], and one extra patch on top enabling it on the
+genio-700-evk DT, this series was tested on the Genio 700 EVK to get
+audio jack detection working on it.
 
-As I believe that this is more likely a bcachefs bug than an RCU bug, I'm
-adding the bcachefs maintainer and mailing list to this.
+[1] https://lore.kernel.org/all/20250214-mt8188-accdet-v1-0-6bbd5483855b@collabora.com
 
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+Changes in v3:
+- Removed unneeded '|' in mt6359-accdet's dt-binding description
+- Removed unneeded unevaluatedProperties for accdet node in mt6397's
+  dt-binding
+- Clarified HP_EINT pin is on the MT6359 PMIC in mediatek,hp-eint-high's
+  description in the mt6359-accdet dt-binding
+- Link to v2: https://lore.kernel.org/r/20250302-mt6359-accdet-dts-v2-0-5bd633ee0d47@collabora.com
 
-On Mon, 3 Mar 2025 08:44:48 +0800
-Strforexc yn <strforexc@gmail.com> wrote:
+Changes in v2:
+- Removed all DT-binding properties except for EINT polarity one
+  (mediatek,eint-level-pol / mediatek,hp-eint-high)
+  - Added patches 12-18 to make those settings internal to driver
+- Renamed mediatek,eint-level-pol to mediatek,hp-eint-high and made it
+  bool
+- Added patch 20 to enable the MT6359 ACCDET Kconfig in the defconfig
+- Removed unused btn_type variable as part of "Drop dead code for button
+  detection" patch.
+- Link to v1: https://lore.kernel.org/r/20250214-mt6359-accdet-dts-v1-0-677a151b9b4c@collabora.com
 
-> Dear Maintainers, When using our customized Syzkaller to fuzz the
-> latest Linux kernel, the following crash was triggered.
->=20
-> Kernel commit: v6.14-rc4 (Commits on Feb 24, 2025)
-> Kernel Config : https://github.com/Strforexc/LinuxKernelbug/blob/main/.co=
-nfig
-> Kernel Log: attachment
->=20
-> I=E2=80=99ve encountered a KASAN-reported global-out-of-bounds read in Li=
-nux
-> kernel 6.14.0-rc4, involving the RCU subsystem and bcachefs. Here are
+---
+Andrew Perepech (2):
+      mfd: mt6397-core: Add mfd_cell for mt6359-accdet
+      ASoC: mediatek: mt6359-accdet: Implement HP_EINT polarity configuration
 
-In the future, if you see an issue between two subsystems, make sure to
-include the maintainers of both subsystems!
+Nícolas F. R. A. Prado (18):
+      ASoC: dt-bindings: Add document for mt6359-accdet
+      dt-bindings: mfd: mediatek: mt6397: Add accdet subnode
+      ASoC: mediatek: mt6359-accdet: Add compatible property
+      ASoC: mediatek: mt6359-accdet: Handle hp-eint-high property
+      ASoC: mediatek: mt6359-accdet: Drop dead code for EINT/GPIO IRQ handling
+      ASoC: mediatek: mt6359-accdet: Drop dead code for EINT trigger setting
+      ASoC: mediatek: mt6359-accdet: Drop dead code for button detection
+      ASoC: mediatek: mt6359-accdet: Drop dead code for plugout-debounce
+      ASoC: mediatek: mt6359-accdet: Drop unused moisture variables
+      ASoC: mediatek: mt6359-accdet: Always use internal resistor
+      ASoC: mediatek: mt6359-accdet: Make PWM debounce settings internal
+      ASoC: mediatek: mt6359-accdet: Always use eint detect mode 4
+      ASoC: mediatek: mt6359-accdet: Always set micbias1 to 2.8V
+      ASoC: mediatek: mt6359-accdet: Always configure hardware as mic-mode 2
+      ASoC: mediatek: mt6359-accdet: Always set comp-vth to 1.6V
+      ASoC: mediatek: mt6359-accdet: Always use EINT0 IRQ
+      arm64: dts: mt6359: Add accessory detect node
+      arm64: defconfig: Enable MT6359 ACCDET
 
-Thanks,
+ .../devicetree/bindings/mfd/mediatek,mt6397.yaml   |   6 +
+ .../bindings/sound/mediatek,mt6359-accdet.yaml     |  42 ++
+ arch/arm64/boot/dts/mediatek/mt6359.dtsi           |   4 +
+ arch/arm64/configs/defconfig                       |   1 +
+ drivers/mfd/mt6397-core.c                          |  12 +
+ sound/soc/codecs/mt6359-accdet.c                   | 599 +++++----------------
+ sound/soc/codecs/mt6359-accdet.h                   |  55 +-
+ 7 files changed, 195 insertions(+), 524 deletions(-)
+---
+base-commit: 20d5c66e1810e6e8805ec0d01373afb2dba9f51a
+change-id: 20250214-mt6359-accdet-dts-00b189847f3c
 
--- Steve
-
-
-> the details:
->=20
-> A global-out-of-bounds read of size 1 was detected at address
-> ffffffff8b8e8d55 in string_nocheck (lib/vsprintf.c:632), called from
-> string (lib/vsprintf.c:714). The buggy address belongs to
-> str__rcu__trace_system_name+0x815/0xb40, triggered by a kworker task.
->=20
-> The issue occurs during a bcachefs transaction commit
-> (bch2_trans_commit), which enqueues an RCU callback via
-> srcu_gp_start_if_needed. The out-of-bounds access happens in
-> string_nocheck, likely during a printk or tracepoint operation
-> (vprintk_emit), triggered by a lockdep warning (__warn_printk). The
-> variable str__rcu__trace_system_name (size 0xb40) is overrun at offset
-> 0x815, suggesting a string handling bug in RCU or bcachefs debug
-> output.
->=20
-> The bug was observed in a QEMU environment during
-> btree_interior_update_work execution in bcachefs. It may involve
-> filesystem operations (e.g., key cache dropping) under load. I don=E2=80=
-=99t
-> have a precise reproducer yet but can assist with testing.
->=20
-> Could RCU or bcachefs maintainers investigate? This might be a
-> tracepoint or printk format string issue in srcu_gp_start_if_needed or
-> related code. I suspect an invalid index into
-> str__rcu__trace_system_name or a pointer corruption. Happy to provide
-> more logs or test patches.
->=20
-> If you fix this issue, please add the following tag to the commit:
-> Reported-by: Zhizhuo Tang <strforexctzzchange@foxmail.com>, Jianzhou
-> Zhao <xnxc22xnxc22@qq.com>, Haoran Liu <cherest_san@163.com>
-> ------------[ cut here ]------------
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> BUG: KASAN: global-out-of-bounds in string_nocheck lib/vsprintf.c:632 [in=
-line]
-> BUG: KASAN: global-out-of-bounds in string+0x4b3/0x500 lib/vsprintf.c:714
-> Read of size 1 at addr ffffffff8b8e8d55 by task kworker/u10:0/28
->=20
-> CPU: 1 UID: 0 PID: 28 Comm: kworker/u10:0 Not tainted 6.14.0-rc4 #1
-> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.15.0-1 04/0=
-1/2014
-> Workqueue: btree_update btree_interior_update_work
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x116/0x1b0 lib/dump_stack.c:120
->  print_address_description.constprop.0+0x2c/0x420 mm/kasan/report.c:408
->  print_report+0xaa/0x270 mm/kasan/report.c:521
->  kasan_report+0xbd/0x100 mm/kasan/report.c:634
->  string_nocheck lib/vsprintf.c:632 [inline]
->  string+0x4b3/0x500 lib/vsprintf.c:714
->  vsnprintf+0x620/0x1120 lib/vsprintf.c:2843
->  vprintk_store+0x34f/0xb90 kernel/printk/printk.c:2279
->  vprintk_emit+0x151/0x330 kernel/printk/printk.c:2408
->  __warn_printk+0x162/0x320 kernel/panic.c:797
->  look_up_lock_class+0xad/0x160 kernel/locking/lockdep.c:938
->  register_lock_class+0xb2/0xfc0 kernel/locking/lockdep.c:1292
->  __lock_acquire+0xc3/0x16a0 kernel/locking/lockdep.c:5103
->  lock_acquire+0x181/0x3a0 kernel/locking/lockdep.c:5851
->  __raw_spin_trylock include/linux/spinlock_api_smp.h:90 [inline]
->  _raw_spin_trylock+0x76/0xa0 kernel/locking/spinlock.c:138
->  spin_lock_irqsave_sdp_contention kernel/rcu/srcutree.c:375 [inline]
->  srcu_gp_start_if_needed+0x1a9/0x5f0 kernel/rcu/srcutree.c:1270
->  __call_rcu fs/bcachefs/rcu_pending.c:76 [inline]
->  __rcu_pending_enqueue fs/bcachefs/rcu_pending.c:497 [inline]
->  rcu_pending_enqueue+0x686/0xd30 fs/bcachefs/rcu_pending.c:531
->  bkey_cached_free+0xfd/0x170 fs/bcachefs/btree_key_cache.c:115
->  bch2_btree_key_cache_drop+0xe7/0x770 fs/bcachefs/btree_key_cache.c:613
->  bch2_trans_commit_write_locked.constprop.0+0x2bc6/0x3bc0
-> fs/bcachefs/btree_trans_commit.c:794
->  do_bch2_trans_commit.isra.0+0x7a6/0x12f0 fs/bcachefs/btree_trans_commit.=
-c:866
->  __bch2_trans_commit+0x1018/0x18e0 fs/bcachefs/btree_trans_commit.c:1070
->  bch2_trans_commit fs/bcachefs/btree_update.h:183 [inline]
->  btree_update_nodes_written+0x1352/0x2210
-> fs/bcachefs/btree_update_interior.c:708
->  btree_interior_update_work+0xda/0x100 fs/bcachefs/btree_update_interior.=
-c:846
->  process_one_work+0x109d/0x18c0 kernel/workqueue.c:3236
->  process_scheduled_works kernel/workqueue.c:3317 [inline]
->  worker_thread+0x677/0xe90 kernel/workqueue.c:3398
->  kthread+0x3b3/0x760 kernel/kthread.c:464
->  ret_from_fork+0x48/0x80 arch/x86/kernel/process.c:148
->  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
->  </TASK>
->=20
-> The buggy address belongs to the variable:
->  str__rcu__trace_system_name+0x815/0xb40
->=20
-> The buggy address belongs to the physical page:
-> page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0xb8e8
-> flags: 0xfff00000002000(reserved|node=3D0|zone=3D1|lastcpupid=3D0x7ff)
-> raw: 00fff00000002000 ffffea00002e3a08 ffffea00002e3a08 0000000000000000
-> raw: 0000000000000000 0000000000000000 00000001ffffffff 0000000000000000
-> page dumped because: kasan: bad access detected
-> page_owner info is not present (never set?)
->=20
-> Memory state around the buggy address:
->  ffffffff8b8e8c00: f9 f9 f9 f9 00 00 00 00 03 f9 f9 f9 f9 f9 f9 f9
->  ffffffff8b8e8c80: 00 00 00 00 00 00 01 f9 f9 f9 f9 f9 00 00 00 07
-> >ffffffff8b8e8d00: f9 f9 f9 f9 00 00 00 03 f9 f9 f9 f9 00 00 00 06 =20
->                                                  ^
->  ffffffff8b8e8d80: f9 f9 f9 f9 00 00 03 f9 f9 f9 f9 f9 00 00 01 f9
->  ffffffff8b8e8e00: f9 f9 f9 f9 00 01 f9 f9 f9 f9 f9 f9 00 00 00 00
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> Thanks,
-> Zhizhuo Tang
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 
