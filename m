@@ -1,142 +1,163 @@
-Return-Path: <linux-kernel+bounces-544925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7191EA4E653
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:40:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48C13A4E6C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:50:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4C8227A4240
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA66E19C20E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10290290BC0;
-	Tue,  4 Mar 2025 16:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B4852BEC2E;
+	Tue,  4 Mar 2025 16:19:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IBAF3P6j"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="C3ukYSEX"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB926280CFB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 995322BEC25
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105147; cv=none; b=EW4Uet7NCZSA2q754+7ZWQ4yoqqB0H6K/ew1GbOZENtZwSwLy8CY2JwXqwcQJIMg5MjtNYHUy9M8Nc0dG316UQw7kuW5ULc8j86Vbja7i6xG34tpZ0yyPypT3QUFeKdpyCsN6wtuZnLGM8Fe7YiEbJ3kyuq1WRFURxtv6uhKDfc=
+	t=1741105177; cv=none; b=ITdzvyAMZmfHNT6AeYEw6shp4nxz9hgfpNCzD+Zegjzco3+Yr/qHg7MI4mXDCoeAyAtqJ9VHEKJrs9+vUwEDGsPjlOCI6W12F65asy0PbIIm6qKy4y3k0H7HSuiMHUSwMpfcuyDGEAYqNIvMgmBN2xUIDw4nzgd0XQ+vO6eNy0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105147; c=relaxed/simple;
-	bh=Y6IhqAMyuypLmPTH+Xshl5PBsPx3QPOHwZtDka96QGE=;
-	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Pql1AgqxtZQlbiJsr4gmt+dS2G85wPLtG6jdKO84w53Q4a0ZpAYw5N1E+BqOO41EPALk73g8bM6DmdgxY1b9Ef8mCX7iZsTc0mGtKpDH15/7VET0V9w6MJt2mhhf4TV0SUotmQK621Iwj+SwQ6BGWcooEO6UdfOzY50vWUnYhRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IBAF3P6j; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741105144;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=LkY1q4GVy/AgzNXZlr3UCoSg7uwWVuhY86KyHkjXAyU=;
-	b=IBAF3P6jST2LlBK6PNJiDrAsSJjEqbRhJygjKVm0NbYc070OWWGpDhJB2MuyTFYSgAS4XO
-	n1t5ey42f2Gk3wKAT+ek/B1SV0QPjtwPcZnkmtQG4xohh3wqf23njQJb6hHLlrjpDzJ7aA
-	VkrtZZ0is7/isDNYUi/77ao0aWpZDGc=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-586-KXQm385cP7uMquX0ZFdnqw-1; Tue, 04 Mar 2025 11:19:03 -0500
-X-MC-Unique: KXQm385cP7uMquX0ZFdnqw-1
-X-Mimecast-MFC-AGG-ID: KXQm385cP7uMquX0ZFdnqw_1741105143
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e88964702cso126304236d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:19:03 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741105142; x=1741709942;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LkY1q4GVy/AgzNXZlr3UCoSg7uwWVuhY86KyHkjXAyU=;
-        b=I7pZBMqK4kculsQSc31Zb+qXimlJer6sE7/PvFCa4USbVChhfvfMGIyFPT2HkhYbUF
-         yfI+bzLSywR4vtFYU/mSKIbhtPyjL2nEKbYKpdXhCzve73diusa4dwEHY1uGzM6h5lmM
-         qFj7Y5xdcZ8MmkBDKVAeHdpY38jjI5z2Jt/FzLkGqSKBokVxMV0S7LoJFlpl4v1B7xmN
-         9bX6IbI4XyhavTOTUPCooPv8GaJvBDtVbN1gFQXDHgB8WClg0reBcoUy4hue7q9b5smY
-         MnrqnO50ENSxCxRUr8sKTcO3/cUOplwBMuDXUK+ScCxpd0EOyDM/uV2BKe2LbJKAX54W
-         Z+yQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWA80rgLJLj0ql1QhIotYuDYo4OW7X6VgZCwk8ZAB/7jb1Hwsb/WRmi4547lr1e5EPucx8mHVckdPTMg58=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyn8H9u6a5rzjl27qx86PVX5YP7PAjpXDRFv5NaX1o+PrfmaYMP
-	nj6vwwe47IHj/ucK5TchFYophRYh4yYCCMTj2QvPS+9njtkaRFFZO3k1urAPkIYekh/zZJ3j9Ao
-	IM9FARr40otUmidD1TmpbMWafvDNN/ype6UEHW5QS5LTM6HVQrNJwYauDY8+c5Ss8cxGOkQ==
-X-Gm-Gg: ASbGncv/nhJu2X/y9Iw47Xd6bPVsYrR09E/MveNNLQW4UaEnA+en/Vy3SAln0FAME1Q
-	qGHBFxCItUkgSK9maUX+ws4/6naWKla3SVVn5VkBpoVAK353qdbaRdKpnTuNZOSmQUacd5ms4ZN
-	odQURguWINDlJPnY9Km9i8fgac62tQhtFzhrdNjLWqm40josJtcU+tXoiDbNd7GU+5G1gx6cwsL
-	nnEwf4KqkVkEH27LEUPWBxwlgG30DQUjPJ0MB/rMoUy2U4gJvfIiK05t6Fmg2vK1raaSBYQSt2C
-	facMbBwY7rN2Yw7SI/HhIgKNYG017TSBkvivpmFhBMwlh7CFhj7WE1dc6Dk=
-X-Received: by 2002:a05:6214:d0a:b0:6e2:4da9:4e2d with SMTP id 6a1803df08f44-6e8da86c4e6mr54175546d6.9.1741105142537;
-        Tue, 04 Mar 2025 08:19:02 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGf9Lkg6ASc/ykDXkK6Oa+0eE2cY96omReERphGYblNYllL/ZY1FB1NRS0/OnykdtBdUDLs1Q==
-X-Received: by 2002:a05:6214:d0a:b0:6e2:4da9:4e2d with SMTP id 6a1803df08f44-6e8da86c4e6mr54175276d6.9.1741105142174;
-        Tue, 04 Mar 2025 08:19:02 -0800 (PST)
-Received: from ?IPV6:2601:188:c100:5710:627d:9ff:fe85:9ade? ([2601:188:c100:5710:627d:9ff:fe85:9ade])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976608e7sm67966136d6.51.2025.03.04.08.19.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 08:19:01 -0800 (PST)
-From: Waiman Long <llong@redhat.com>
-X-Google-Original-From: Waiman Long <longman@redhat.com>
-Message-ID: <8b8f0f99-6d42-4c6f-9c43-d0224bdedf9e@redhat.com>
-Date: Tue, 4 Mar 2025 11:19:00 -0500
+	s=arc-20240116; t=1741105177; c=relaxed/simple;
+	bh=72oSp4NRTUL4iq6d9P9Lgt9+cjIJ73YL44iRj4VfVtI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GW2+dGiYgBaVNK3GyKW/kXEuKHarx4+3K+UIusRyjakWx6JavnIgLcuFaqBHD9sowsysy2MLCXrSneYYYomi7LuGSDBy5ANYDjI/bc9QUeRs1Yua8KQnCxL6iCGGwc7B3/2EcwI1ZoyhPpNKVwQZi6LFENWBFAG+7NBF9ZI6Qis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=C3ukYSEX; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 74F8840E015E;
+	Tue,  4 Mar 2025 16:19:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id P5fGbP63a4RC; Tue,  4 Mar 2025 16:19:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741105165; bh=tTPraD/2IkvxED+KlWLuIIiqPJz+rVst3iYy14q2FMo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=C3ukYSEXDjWqplXbxA5vfpYYc+aJWgHeM7JsgDFrfryALviCV3ZjQ6x36EoLPzfoT
+	 vPindXjdoOekME5+igV8pTAVaLuTWI1XQDzgj0Dn2XeYfmzJiD2+vGuyBQwuUdrO4h
+	 UXRuMhfPGE3Etje+qgiAO76g5FSC/qaxaZ8s4sfAvP4cZxL6F1KqpxtlSRPQx9lZqy
+	 AvqPes7+sbz3CH8aoBFZvVYvFsHeflJigAra1vyvRGN6ZKT8H6Ex9eDJRLyE259WjC
+	 MTTqybqBFZfsw+cHnI9U5/c+IO+ALCCcGUEALr76gXx78vKZadhBIiHPpYFGDlI3AZ
+	 3RHcpeCMdvl/3n+8V1ZNVUdHhTzPoi9tMucrGTqOUC4i1a2wtqZw/uiE3771RJs9QQ
+	 nz15Kp1m/oCV3C58N0NItVsuToEJidXJslWvfL5bSetGK560e2puPLUZkuS2L/IWv3
+	 XYItMZzcZxOpStUr0ET4ZAzwtZV+yaADVuEEP+OkZP8Pitezs/bv50QRhMTQw8N+pL
+	 7dpAWP9LfCnKuPh4IlX/N9r1jFdc/IH9WlQ32J+b/d+Ik0CqnlBV3P8CRmPyxF3JKU
+	 8m75EUrlfCeX2pUkVBYHkV4cfPUkjr7hcUyWRU3pDgVGDWFOGt7lFRKVHEtqqV6RSW
+	 t3Ttm2LDrAMR+uuL3T2YRbtA=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 68C4340E015D;
+	Tue,  4 Mar 2025 16:19:07 +0000 (UTC)
+Date: Tue, 4 Mar 2025 17:19:01 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Rik van Riel <riel@surriel.com>, x86@kernel.org,
+	linux-kernel@vger.kernel.org, peterz@infradead.org,
+	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
+	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
+	linux-mm@kvack.org, akpm@linux-foundation.org, jackmanb@google.com,
+	jannh@google.com, mhklinux@outlook.com, andrew.cooper3@citrix.com,
+	Manali.Shukla@amd.com, mingo@kernel.org
+Subject: Re: [PATCH v14 03/13] x86/mm: add INVLPGB support code
+Message-ID: <20250304161901.GCZ8cn9d252LTzThpI@fat_crate.local>
+References: <20250226030129.530345-1-riel@surriel.com>
+ <20250226030129.530345-4-riel@surriel.com>
+ <20250228194734.GGZ8IS1iFVpPzmEyYl@fat_crate.local>
+ <30c721e0-338d-4172-989c-5226d584bcbc@intel.com>
+ <34b80474-a309-493b-81e9-3a7d4de8a369@intel.com>
+ <20250304110032.GEZ8bdUOg2WLUrhMcm@fat_crate.local>
+ <ec7247d0-0379-487d-a2d7-21b81dcd0c38@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/9] cgroup/cpuset-v1: Add deprecation warnings to
- sched_load_balance and memory_pressure_enabled
-To: =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Tejun Heo <tj@kernel.org>, Josef Bacik <josef@toxicpanda.com>,
- Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>
-References: <20250304153801.597907-1-mkoutny@suse.com>
- <20250304153801.597907-2-mkoutny@suse.com>
-Content-Language: en-US
-In-Reply-To: <20250304153801.597907-2-mkoutny@suse.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <ec7247d0-0379-487d-a2d7-21b81dcd0c38@intel.com>
 
+On Tue, Mar 04, 2025 at 07:10:13AM -0800, Dave Hansen wrote:
+> So, we could have the enum be totally divorced from the hardware type:
+> 
+> 	NO_STRIDE,
+> 	PTE_STRIDE,
+> 	PMD_STRIDE
 
-On 3/4/25 10:37 AM, Michal Koutný wrote:
-> These two v1 feature have analogues in cgroup v2.
->
-> Signed-off-by: Michal Koutný <mkoutny@suse.com>
-> ---
->   kernel/cgroup/cpuset-v1.c | 2 ++
->   1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/cgroup/cpuset-v1.c b/kernel/cgroup/cpuset-v1.c
-> index 25c1d7b77e2f2..3e81ac76578c7 100644
-> --- a/kernel/cgroup/cpuset-v1.c
-> +++ b/kernel/cgroup/cpuset-v1.c
-> @@ -430,12 +430,14 @@ static int cpuset_write_u64(struct cgroup_subsys_state *css, struct cftype *cft,
->   		retval = cpuset_update_flag(CS_MEM_HARDWALL, cs, val);
->   		break;
->   	case FILE_SCHED_LOAD_BALANCE:
-> +		pr_warn_once("cpuset.%s is deprecated, use cpus.partition instead\n", cft->name);
-Should you use the full name "cpuset.cpus.partition" instead?
->   		retval = cpuset_update_flag(CS_SCHED_LOAD_BALANCE, cs, val);
->   		break;
->   	case FILE_MEMORY_MIGRATE:
->   		retval = cpuset_update_flag(CS_MEMORY_MIGRATE, cs, val);
->   		break;
->   	case FILE_MEMORY_PRESSURE_ENABLED:
-> +		pr_warn_once("cpuset.%s is deprecated, use memory.pressure instead\n", cft->name);
+How about we completely hide that NO_STRIDE thing and do a __invlpgb_all()
+"sub-helper" which is basically telling you it is invalidating all kinds of
+TLB entries and stride does not apply there:
 
-memory.pressure depends on CONFIG_PSI, so it may not available in some 
-cases. My suggestion is to add a "if available" suffix.
+---
 
-I do have some concern with the use of pr_warn*() because some users may 
-attempt to use the panic_on_warn command line option.
+diff --git a/arch/x86/include/asm/tlb.h b/arch/x86/include/asm/tlb.h
+index e8561a846754..361b3dde2656 100644
+--- a/arch/x86/include/asm/tlb.h
++++ b/arch/x86/include/asm/tlb.h
+@@ -66,6 +66,12 @@ static inline void __invlpgb(unsigned long asid, unsigned long pcid,
+ 	asm volatile(".byte 0x0f, 0x01, 0xfe" :: "a" (rax), "c" (ecx), "d" (edx));
+ }
+ 
++static inline void __invlpgb_all(unsigned long asid, unsigned long pcid,
++				 unsigned long addr, u16 nr_pages, u8 flags)
++{
++	__invlpgb(asid, pcid, addr, nr_pages, 0, flags);
++}
++
+ static inline void __tlbsync(void)
+ {
+ 	/*
+@@ -84,6 +90,8 @@ static inline void __tlbsync(void)
+ static inline void __invlpgb(unsigned long asid, unsigned long pcid,
+ 			     unsigned long addr, u16 nr_pages,
+ 			     enum addr_stride s, u8 flags) { }
++static inline void __invlpgb_all(unsigned long asid, unsigned long pcid,
++				 unsigned long addr, u16 nr_pages, u8 flags) { }
+ static inline void __tlbsync(void) { }
+ #endif
+ 
+@@ -121,7 +129,7 @@ static inline void __invlpgb_flush_user_nr_nosync(unsigned long pcid,
+ /* Flush all mappings for a given PCID, not including globals. */
+ static inline void __invlpgb_flush_single_pcid_nosync(unsigned long pcid)
+ {
+-	__invlpgb(0, pcid, 0, 1, PTE_STRIDE, INVLPGB_FLAG_PCID);
++	__invlpgb_all(0, pcid, 0, 1, INVLPGB_FLAG_PCID);
+ }
+ 
+ /* Flush all mappings, including globals, for all PCIDs. */
+@@ -134,7 +142,7 @@ static inline void invlpgb_flush_all(void)
+ 	 * as it is cheaper.
+ 	 */
+ 	guard(preempt)();
+-	__invlpgb(0, 0, 0, 1, PTE_STRIDE, INVLPGB_FLAG_INCLUDE_GLOBAL);
++	__invlpgb_all(0, 0, 0, 1, INVLPGB_FLAG_INCLUDE_GLOBAL);
+ 	__tlbsync();
+ }
+ 
+@@ -148,7 +156,7 @@ static inline void __invlpgb_flush_addr_nosync(unsigned long addr, u16 nr)
+ static inline void invlpgb_flush_all_nonglobals(void)
+ {
+ 	guard(preempt)();
+-	__invlpgb(0, 0, 0, 1, PTE_STRIDE, INVLPGB_MODE_ALL_NONGLOBALS);
++	__invlpgb_all(0, 0, 0, 1, INVLPGB_MODE_ALL_NONGLOBALS);
+ 	__tlbsync();
+ }
+ #endif /* _ASM_X86_TLB_H */
 
-Cheers,
-Longman
+-- 
+Regards/Gruss,
+    Boris.
 
+https://people.kernel.org/tglx/notes-about-netiquette
 
