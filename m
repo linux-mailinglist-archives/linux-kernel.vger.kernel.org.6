@@ -1,130 +1,306 @@
-Return-Path: <linux-kernel+bounces-544007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97539A4DC4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B48A1A4DC4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388A1179783
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2764316EC76
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56363201023;
-	Tue,  4 Mar 2025 11:15:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B1B341FECAE;
+	Tue,  4 Mar 2025 11:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="ZeV8A67R"
-Received: from ksmg02.maxima.ru (ksmg02.maxima.ru [81.200.124.39])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="POVDISCp"
+Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB7B200BA1;
-	Tue,  4 Mar 2025 11:15:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.39
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 071141F9F73
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:15:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741086931; cv=none; b=TjClcRBDzPKATGHwJgb3cKhvAiuTuim56eMRPF5bCQJXUFgoGDKypLqAm3h0KGi8QBuFjxgH1PVvI8ah/6+dEdnNYQnt/oAnOLxd3tAjPVSc7cCURgZwmResWc9igy9Tk0M4KA5Wo+rIwxFgnpBQGLInYl331wSlh4W8sKNkfGE=
+	t=1741086918; cv=none; b=c/RNTcOZBAfbY4T1Jw6OuxKtBE2MxpS3Y9DroTR30Kdxva2CEM7bP4sODDhHcL0cp7SjxkpyDXKqP4a1qdhTqziS5cEh023Q0Bx4m+WMCg6+auVfVlpzS3jqZsisl9K1BdQ5aNBYkDlhfFgIPNpye/udSSxl5WLp5XpVWF5IuV4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741086931; c=relaxed/simple;
-	bh=5BDM17uom/O82sIHy0lmhsXIKxXEb/ZX3iY6CW+R5N0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JtT9tDZXKFrdbR8C2YB/opdl9H673y9ryX+fnjEVCiBB0+0HpOMuslhFJFzpkgy83fNHoEmp1Hl+yeqVC3NcncgwT0shKuQKp6Sk/ml2O89MbDmo9LEU1BHL9DCtQD5LHsC1gKE0oxKot8/9PS4JNc6vUxc9qdzqrdLUSoKzTYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=ZeV8A67R; arc=none smtp.client-ip=81.200.124.39
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg02.maxima.ru (localhost [127.0.0.1])
-	by ksmg02.maxima.ru (Postfix) with ESMTP id BCE2D1E0002;
-	Tue,  4 Mar 2025 14:15:18 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg02.maxima.ru BCE2D1E0002
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1741086918; bh=Z0V0m8DolYfni7Yo+BrJEX6IjWmZXrYC9lZZ7A+VISI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=ZeV8A67RJAaKq5uMY6QB4vEkrOzD53rwqBg3xirIe1Jf5IgKgAcBj5CoR6Y58h//J
-	 dvvPUQg3oSGEIOSs/BIYgzdAnpt20plmHD1C0JPz8mCZpdwTJVglf4ivOt/F+4Necd
-	 6UySDoYZ3O7TV0hrbcB/DQTKRd1EU6Iyj0l6jfmqtXsKcbR7yWhLHhJEx0zYMmjq9K
-	 6XH/evsqndVLuWqyqYq0Ah4VvD8wGSZbuflD8qj3QDftVbuGwr+DPam/Xmfp76KIu6
-	 sgmsrx7Yw8U7rraxsYovpjoO3UsvkCUWgLg3EUCtbzSDjhBfw2vEAVEu/JLJZpg5VC
-	 yG4RXMKBzQK2w==
-Received: from ksmg02.maxima.ru (mail.maxima.ru [81.200.124.62])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg02.maxima.ru (Postfix) with ESMTPS;
-	Tue,  4 Mar 2025 14:15:18 +0300 (MSK)
-Received: from GS-NOTE-190.mt.ru (10.0.247.85) by mmail-p-exch02.mt.ru
- (81.200.124.62) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Tue, 4 Mar 2025
- 14:15:16 +0300
-From: Murad Masimov <m.masimov@mt-integration.ru>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-CC: Zheyu Ma <zheyuma97@gmail.com>, Laurent Pinchart
-	<laurent.pinchart+renesas@ideasonboard.com>, Murad Masimov
-	<m.masimov@mt-integration.ru>, "Rob Herring (Arm)" <robh@kernel.org>, Wolfram
- Sang <wsa+renesas@sang-engineering.com>, Heiner Kallweit
-	<hkallweit1@gmail.com>, =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<u.kleine-koenig@pengutronix.de>, Fred Richter <frichter@hauppauge.com>,
-	Michael Ira Krufky <mkrufky@linuxtv.org>, Brad Love <brad@nextdimension.cc>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] media: lgdt3306a: handle negative SNR in lgdt3306a_calculate_snr_x100
-Date: Tue, 4 Mar 2025 14:14:53 +0300
-Message-ID: <20250304111453.1688-1-m.masimov@mt-integration.ru>
-X-Mailer: git-send-email 2.46.0.windows.1
+	s=arc-20240116; t=1741086918; c=relaxed/simple;
+	bh=00J+U2HrXRRY9mo+XD37HuUOAnY6kI5heqWQuH+9eY0=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=qZSeePqQnHb6LiwDTAd6MMbql6GgJXvd4gSpP/FJGwWJD80ogOa5bIr/RjEBBQfAQHsOQt2xKAo27UZPLbJ/bebzvb2TuEywEUGaSA6dPKKP526mN7aGY33ywDLPw1wFDVWhFF803LRPl5RaJyuDjNPYjoqsGCk0lLVtlTH5kpM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=POVDISCp; arc=none smtp.client-ip=209.85.128.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6fd2fca1cebso34303747b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 03:15:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741086915; x=1741691715; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=u1u6A3exscEAR1j00w/e4EA5kReEo6jf+SB/fNoSzP8=;
+        b=POVDISCp0r/UDlFBktO53/qLsK9sca3KA5H3vwzmGjLCBy3o/dNNtsW9epKwVyd4kF
+         eZ4GVYTCAN2fwidvcw0ZKgf+hPPCrc38obZHuyeeEfZxBe2vpgerSfjZuFqvOxGg4Izh
+         oYfJMTIWn11IfoKqDFIWV2PAzxlKSElLIwmFK2QZI5VG93X1t64hnoqAPLhDVc0ZCZFL
+         VvLRoKSv4hf0SMClWTA+ZjgJAgsOHo56/kh3nRsOCvsrxlCba/gyPMGtixp/D2DxKNA0
+         o0v5a+sOdgim5qfTdUYckkX40HO6qm+Q5ta++vOcpgdUER9kHUuihOVhlK3W4NMV+Uly
+         DZ+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741086915; x=1741691715;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u1u6A3exscEAR1j00w/e4EA5kReEo6jf+SB/fNoSzP8=;
+        b=bAl4dqFPrjCe6AZkRvX1lS8pDqY3xQIxLX7W3oElMusynSR5g4YHSlxa171woxo7Qf
+         hFS94Gbm8gUSplqg6BFflniH0clUfPl6mSF3GG8qfAM16b37LPgp7R0goGTmxxqBMN88
+         Zucr7y7dB5yilcCtd0aeyqoYLKJAv1/g58RVCQyBr/9iMssKVW9dca0MQw5iqJHw2O3f
+         aKN28mGKvqlMWhFjWPuob3pfY5KGsxZ2TahaKI22FyNZ8wAy2vLRoMO62PK6jV0DgWIM
+         XEfgStHhF/L1fJC31p/MXqaxHcsR9EIzalVwx/9VXW0WYNHl0S5FXEJ19ACD63y3/1c7
+         +4LA==
+X-Gm-Message-State: AOJu0Yyn89WCMBM9QmLNtz9Wj5WFFm1GolScAeiICeAgYJsXAovW7L/B
+	R6EUPVmlIXI7Qyo6Nok5ZMotewleVsxDGnSSqfUR9VshzxuPYz5L5yb2ZgQddyEnKMBf2LDEreq
+	sOm++Ro2/ikr8Qxa9RIUdSfEp3pEfEdU0nsOoqA==
+X-Gm-Gg: ASbGncsEH5SFM7NKnbSdpiH4Y5fxDyclkwpor/9sU3c8VWe3iAtp0knDZD6yn8z8+a5
+	l0A56NcjYghpCJAAuRVBXa2NDbzM3Q9FgQDRiDWLJ9W9ZxC92cDT5C9RQxMxbw6J5BniSjeSgXf
+	+9EV8qvMv3sMcz7VFK43fhgL7uGw4Ot50POR16U88xoH/WNj++YYJxkbIxM9eA
+X-Google-Smtp-Source: AGHT+IFdtYnSUcgnZsvzol9jjNu0Rj+3gPWbD3nvh9IMBA/D7qJM3ijFShXtfefT6CkR4RvPfOcxZASRs6TEyobkefI=
+X-Received: by 2002:a05:690c:4a0e:b0:6fb:1c5a:80fc with SMTP id
+ 00721157ae682-6fd4a0c405amr221510397b3.26.1741086914711; Tue, 04 Mar 2025
+ 03:15:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch02.mt.ru
- (81.200.124.62)
-X-KSMG-AntiPhishing: NotDetected
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: m.masimov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;ksmg02.maxima.ru:7.1.1;127.0.0.199:7.1.2;81.200.124.62:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.62
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191453 [Mar 04 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/04 09:41:00 #27591543
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+From: Amit <amitchoudhary0523@gmail.com>
+Date: Tue, 4 Mar 2025 16:45:03 +0530
+X-Gm-Features: AQ5f1JrIOLst8nuuw5P0b3AcgW5j5lUkG1UzngpbN8TTcp3rgPG0hxYIsBycA7c
+Message-ID: <CAFf+5ziHz+v=iOaS+3bQ+LMoOuvmruR3o_7+sXH5Au_6tf08KA@mail.gmail.com>
+Subject: Example program (user_menu_code.c) for presenting a text menu to the
+ user and getting a valid option from the user.
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The lgdt3306a_calculate_snr_x100() function returns value of type u32.
-However it is possible that the calculated SNR value is negative, which
-may affect the behaviour of the driver. E.g. lgdt3306a_read_snr() assumes
-SNR (x10) can be represented as a value of type u16 so passing negative
-32-bit values would result in garbage there.
+--------------------------
+user_menu_code.c
+--------------------------
 
-Since the dvb-frontends API only allows unsigned SNR values,
-lgdt3306a_calculate_snr_x100() should return 0 if SNR is negative.
-The same way calculate_snr() returns 0 on negative SNR in lgdt330x driver.
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+/*
+ * License: This file has been released under GNU General Public License,
+ *          version 2 (GPLv2).
+ *
+ * The license details can be found here:
+ *                  https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
+ */
 
-Fixes: b63b36fa44d0 ("[media] DVB: add support for LG Electronics LGDT3306A ATSC/QAM-B Demodulator")
-Signed-off-by: Murad Masimov <m.masimov@mt-integration.ru>
----
- drivers/media/dvb-frontends/lgdt3306a.c | 3 +++
- 1 file changed, 3 insertions(+)
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <limits.h>
 
-diff --git a/drivers/media/dvb-frontends/lgdt3306a.c b/drivers/media/dvb-frontends/lgdt3306a.c
-index 6ab9d4de65ce..e6c3b65157e5 100644
---- a/drivers/media/dvb-frontends/lgdt3306a.c
-+++ b/drivers/media/dvb-frontends/lgdt3306a.c
-@@ -1500,6 +1500,9 @@ static u32 lgdt3306a_calculate_snr_x100(struct lgdt3306a_state *state)
- 	snr_x100 = log10_x1000((pwr * 10000) / mse) - 3000;
- 	dbg_info("mse=%u, pwr=%u, snr_x100=%d\n", mse, pwr, snr_x100);
+#define NUM_TRUE  1
+#define NUM_FALSE 0
 
-+	if ((s32)snr_x100 < 0)
-+		return 0;
-+
- 	return snr_x100;
- }
+// function prototypes for gcc flag -Werror-implicit-function-declaration
+char *get_input_from_stdin_and_discard_extra_characters(char *str, long size);
+int is_str_a_number(const char *str);
+void print_menu(void);
+int print_menu_and_get_valid_user_option(void);
+void process_user_option(int option);
+void __func(int option);
 
---
-2.39.2
+char *get_input_from_stdin_and_discard_extra_characters(char *str, long size)
+{
 
+    int c = 0;
+    long i = 0;
+
+    // If 'size' is 0 then this function will discard all input and return NULL.
+    // No need to check 'str' if 'size' is 0.
+    if (size == 0) {
+        // discard all input
+        while ((c = getchar()) && (c != '\n') && (c != EOF));
+        return NULL;
+    }
+
+    if (str == NULL)
+        return NULL;
+
+    if (size < 0)
+        return NULL;
+
+    for (i = 0; i < (size - 1); i = i + 1) {
+
+        c = getchar();
+
+        if ((c == '\n') || (c == EOF)) {
+            str[i] = 0;
+            return str;
+        }
+
+        str[i] = (char)(c);
+
+    } // end of for loop
+
+    str[i] = 0;
+
+    // discard rest of input
+    while ((c = getchar()) && (c != '\n') && (c != EOF));
+
+    return str;
+
+} // end of function get_input_from_stdin_and_discard_extra_characters()
+
+int is_str_a_number(const char *str)
+{
+
+    char c = '=';
+
+    if (str == NULL) {
+        return NUM_FALSE;
+    }
+
+    if (str[0] == '\0') { // empty string
+        return NUM_FALSE;
+    }
+
+    while ((c = *str)) {
+        if ((c < '0') || (c > '9')) {
+            return NUM_FALSE;
+        }
+        str++;
+    }
+
+    return NUM_TRUE;
+
+} // end of function is_str_a_number()
+
+void print_menu(void)
+{
+
+    printf("\n\n");
+
+    printf("----\n");
+    printf("Menu\n");
+    printf("----\n");
+    printf("\n");
+
+    printf("1. Option 1\n");
+    printf("2. Option 2\n");
+    printf("3. Option 3\n");
+    printf("4. Exit\n");
+
+    return;
+
+} // end of function print_menu()
+
+int print_menu_and_get_valid_user_option(void)
+{
+#define MIN_USER_OPTION 1
+#define MAX_USER_OPTION 4
+#define OPTION_SIZE     8
+
+    char option_str[OPTION_SIZE] = {0};
+    int option = -1;
+
+    while (1) {
+
+        print_menu();
+
+        printf("\n");
+
+        while (1) {
+
+            printf("Please enter a valid option (%d - %d)"
+                   " (spaces not allowed): ", MIN_USER_OPTION, MAX_USER_OPTION);
+
+            get_input_from_stdin_and_discard_extra_characters(option_str,
+                                                              OPTION_SIZE);
+
+            if (is_str_a_number(option_str) != NUM_TRUE) {
+                continue;
+            }
+
+            option = atoi(option_str);
+
+            if ((option < MIN_USER_OPTION) || (option > MAX_USER_OPTION)) {
+                continue;
+            }
+
+            printf("\n");
+            printf("Option number given by the user is: %d\n", option);
+            printf("\n");
+            printf("Do you want to proceed (Enter only 'n' (without the quotes)"
+                   " for not proceeding, enter any thing else for proceeding):"
+                   " ");
+            get_input_from_stdin_and_discard_extra_characters(option_str,
+                                                              OPTION_SIZE);
+            if (strcmp(option_str, "n") != 0) {
+                return option;
+            }
+
+            break;
+
+        } // end of inner while(1) loop
+
+    }  // end of outer while(1) loop
+
+    // Unreachable code. Program execution should not reach here.
+    // Exit the program.
+    printf("\n");
+    printf("Line %d: Some BUG in the program. Exiting..\n", __LINE__);
+    printf("\n");
+    exit(1);
+
+} // end of function print_menu_and_get_valid_user_option()
+
+void process_user_option(int option)
+{
+
+    switch (option) {
+
+        case 1: __func(option);
+                break;
+        case 2: __func(option);
+                break;
+        case 3: __func(option);
+                break;
+        case 4: printf("\n");
+                printf("**THE USER GAVE OPTION NUMBER %d**\n", option);
+                printf("\n");
+                printf("Exiting..\n");
+                printf("\n");
+                exit(0);
+        default: printf("\n");
+                 printf("Line %d: Some BUG in the program. Exiting..\n",
+                                                                    __LINE__);
+                 printf("\n");
+                 exit(1);
+
+    } // end of switch statement
+
+    return;
+
+} // end of function process_user_option()
+
+void __func(int option)
+{
+
+    printf("\n");
+    printf("**THE USER GAVE OPTION NUMBER %d**\n", option);
+
+    return;
+
+} // end of function __func()
+
+int main(void)
+{
+    int option = -1;
+
+    while (1) {
+
+        option = print_menu_and_get_valid_user_option();
+        process_user_option(option);
+
+    } // end of while loop
+
+} // end of function main()
 
