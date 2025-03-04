@@ -1,177 +1,130 @@
-Return-Path: <linux-kernel+bounces-544855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70250A4E5F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:31:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44538A4E625
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:36:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 075A18A80C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:22:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D8F84253D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E72C327FE7D;
-	Tue,  4 Mar 2025 16:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3377D25F996;
+	Tue,  4 Mar 2025 16:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yFSgXNX4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SrDaeMDK";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="yFSgXNX4";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SrDaeMDK"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Z9HOCrOx"
+Received: from mail-pj1-f42.google.com (mail-pj1-f42.google.com [209.85.216.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F6B20DD4C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:03:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F205724C092
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104239; cv=none; b=WwVyZdH0SNmI1W75wrXF+SnKj4rKchNLiBe0mZDeggYy7kLq2tMC89TzBFSgbUj9vtWJwbx2c5Y0AITAYeLAkfmlA54LLr1Dd4Tm3LVNP56udJekHdIfRzXuNO3yFoEk/zZBVmO4JK6Rq8CujSxA6IBnESx0wagtirNP+sU1+/U=
+	t=1741104373; cv=none; b=daCCu88AVfracK3pfFh4f5awv/joFPRVMnUzDbZIHakDUnROCG7NjIo6vP2xokqNLe9JiQOoAVaQdQNfdoNIpeMMrEvTKelZLfLGltLLGJ17LStXOq2gMmJzyznpQKeYTYKw62Syreg1LVz2e5EvXmJe2OO9UL8n7dlasOob08s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104239; c=relaxed/simple;
-	bh=bdwxiy4kXslJpByfIdTnVDJq1CDBP0ngp/DxK3nUyt4=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YCfVdpX8F+HfU9xyaxevBmuOPl3kzRf8o7q3Fhs5NaXCaj3KVLvSs8hYKBakVV4t/89Aa88KbC/xGQZYAk5HuT1Q0QLmN3cO40oqGclEi6zeKzCFz3H3YbAr/jXIAQ8x8J4clPTO9r2qIa+8CKpDKg943B8h0JPoTQPguaVaJFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yFSgXNX4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SrDaeMDK; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=yFSgXNX4; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SrDaeMDK; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AB6B2211AA;
-	Tue,  4 Mar 2025 16:03:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741104235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQA4ZIhyW/4iFLrkSc1IiUv3MxWcxzn4jf4rHXFSogU=;
-	b=yFSgXNX4jc+uqjUtMH5wMgVvFaodqX6e9s4SwS8K0KhZ4aZSZMtS/bACHX+8yGvwzTfUP9
-	UROEMsE7QR6idKY+8194IWKMtrelnzM+FGnotmyhZab+B/BBSxL6Vwj7NAeZxitHnNlirj
-	JjzMmP/exm0buZlKlYwAasCeFsHrEwc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741104235;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQA4ZIhyW/4iFLrkSc1IiUv3MxWcxzn4jf4rHXFSogU=;
-	b=SrDaeMDKrjmOwLLCmKcJs5AkAe8npd9Wct1Eq8g9ayCG/tFCZSIh9wBzj7zyyJbUU/iG7G
-	pWemtxMOmz1EAQAw==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=yFSgXNX4;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=SrDaeMDK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741104235; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQA4ZIhyW/4iFLrkSc1IiUv3MxWcxzn4jf4rHXFSogU=;
-	b=yFSgXNX4jc+uqjUtMH5wMgVvFaodqX6e9s4SwS8K0KhZ4aZSZMtS/bACHX+8yGvwzTfUP9
-	UROEMsE7QR6idKY+8194IWKMtrelnzM+FGnotmyhZab+B/BBSxL6Vwj7NAeZxitHnNlirj
-	JjzMmP/exm0buZlKlYwAasCeFsHrEwc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741104235;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQA4ZIhyW/4iFLrkSc1IiUv3MxWcxzn4jf4rHXFSogU=;
-	b=SrDaeMDKrjmOwLLCmKcJs5AkAe8npd9Wct1Eq8g9ayCG/tFCZSIh9wBzj7zyyJbUU/iG7G
-	pWemtxMOmz1EAQAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 89F4B13967;
-	Tue,  4 Mar 2025 16:03:55 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id BJwfIWskx2d7UQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Tue, 04 Mar 2025 16:03:55 +0000
-Date: Tue, 04 Mar 2025 17:03:55 +0100
-Message-ID: <87ikooail0.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Takashi Iwai" <tiwai@suse.de>,
-	"Arnd Bergmann" <arnd@kernel.org>,
-	"Jaroslav Kysela" <perex@perex.cz>,
-	"Takashi Iwai" <tiwai@suse.com>,
-	"Kailang Yang" <kailang@realtek.com>,
-	"Simon Trimmer" <simont@opensource.cirrus.com>,
-	"Joshua Grisham" <josh@joshuagrisham.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] snd: hda: realtek: fix incorrect IS_REACHABLE() usage
-In-Reply-To: <94b39ea3-bc29-49f0-bd34-eec45d61ff1b@app.fastmail.com>
-References: <20250304142620.582191-1-arnd@kernel.org>
-	<87tt88oo05.wl-tiwai@suse.de>
-	<94b39ea3-bc29-49f0-bd34-eec45d61ff1b@app.fastmail.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1741104373; c=relaxed/simple;
+	bh=WWkPvNPAsAK/o9BV1/7oCW3olPK1i28GTmpPd97Esgc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GfDjzc3Hpgg1oeDEULX9Zk5H+ks3JExjGJ1FjvB9+mQAa6dMwhwoDSJEuR6BeEl26xENC+BSo8rOafuH1uPGf/rjFqQXrrCDTQGCZC/nybXndKUqsEJHvg0DXGd+gMizM2SZTBIWBKKVCPAbOnosOBwB5BkuhVQwUY6YAUlQpSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Z9HOCrOx; arc=none smtp.client-ip=209.85.216.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f42.google.com with SMTP id 98e67ed59e1d1-2feaca4e99cso8554940a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:06:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741104371; x=1741709171; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=1t6ivLIoIuftK2f6E0pPM+6bkcWx6f6OEyc75s3kSwQ=;
+        b=Z9HOCrOxgbWushjjjNNkwcx9LKZumjOrDWDWYrSFZVwByCC3MPD1pvISqu/wDAtyuc
+         YMBhbv2R70SVZXOnu0MOtBL7Og0Z6dSY6mY5QaE1TjYTghl3t2/dcgtWi07T677SBW6y
+         F++hDWUDhN1nYsEmn/8vGVpeNrT3JT7aG6de1v2wxpVL8Qm9MCWfZf7Wp6dcqdEUUFNZ
+         zlvekDTGvU+NRADexTCVCpEpKjLhuXeXSkjFKtzq2oS/M5hovCbfMqHd19CCWAkR3lzX
+         XUl22CFKGBH0G2aZKmOAxQWQdcT8KLcHcahH7sgWn0gvzlODtN896EyrQCvU9Cj/bTW9
+         q3Og==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741104371; x=1741709171;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1t6ivLIoIuftK2f6E0pPM+6bkcWx6f6OEyc75s3kSwQ=;
+        b=DzLQ9tWU81EMamPK+7Wesh5ab1xEb0r7p3LqdzAMfZKEdYlLDZ+OnbOXqsre8UoYhV
+         8yY0l/QUKrWH3bLHv6pxF3fOH3clvNxUf+OL9qwiIQKVgyu1m5cB8ia4UjE2NYzcc+Di
+         X+O/c9o2s408Wb2XcMeTAmuE6LGoCigHAbc1UElvC+Lzztu4SDp1S1aepkxmmYm+xvPa
+         CWocepszwrqtvEwArm3HxLiRn2WuFJtO9oZDElo4ZHGGZV7Sh2ohqcWWA9Coa/87RYpC
+         X9ABMaoNnpb3cvbyx7WwR7Tlb7dqPC3jIGzfYrgJlqWNerCAAILQks8TdoKGdjX92rTS
+         UJjw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6dTe2sU8oqr5+4p3q5dJiWgkeko7y9tpIqdrK4sh+ldEuj5uYDsyHordUKKlXlHb3cvBSweRL8P5f9bg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXNOt+AkDx5CTlxAKqa7UtRaN3jzC1fZ05VahGTRHHpPRw3MBj
+	8ru9MNt3ChWYMs9klNvUYkIsKL1HWq6chn1Lv+69FyKRbmxXDnBZ5c5Nf+UkSrtrraUTGdFczdT
+	9zYZaglLp2F6DzKURMzBe0g8CNgvvioRaEqMa
+X-Gm-Gg: ASbGncsQejEsdq0UBPBTcii66jIiZXuy3klzTOE6fKMowV9Cg1NhrTSp3OJYFPJNJao
+	rai+yeR4wRgP/N5hjkPG6YDeHoVSalHyYlV+DBNcj+TR3rDItSKl/zTajy1J2lJAS6YPpcPnZwp
+	hQWATOgO8zEBWltPQQRio73saDDgHUuQWarsol7HiFe/CEX4go9XTCHcFC
+X-Google-Smtp-Source: AGHT+IGC++S0t8n6ETtzwl720fo704PFOyUfTbjjLTjxsG9B6ISbxU7AjY+lsYqZ8bJrf6DliVj8kaBM3qPLyBgfJME=
+X-Received: by 2002:a17:90b:1ccd:b0:2ee:c918:cd60 with SMTP id
+ 98e67ed59e1d1-2febab78da2mr27444913a91.20.1741104371050; Tue, 04 Mar 2025
+ 08:06:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: AB6B2211AA
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <20250304092417.2873893-1-elver@google.com> <20250304092417.2873893-3-elver@google.com>
+ <20250304152909.GH11590@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250304152909.GH11590@noisy.programming.kicks-ass.net>
+From: Marco Elver <elver@google.com>
+Date: Tue, 4 Mar 2025 17:05:34 +0100
+X-Gm-Features: AQ5f1JrbHN1FRthi_aRGgJ-kY7WYoWmU4g-pqTmD_Y1oCMFum9IakZQE8Yg9HXM
+Message-ID: <CANpmjNOR=EaPPhnkj+WwV8mDYNuM7fY2r_xdjORv2MGGxxH_0g@mail.gmail.com>
+Subject: Re: [PATCH v2 02/34] compiler-capability-analysis: Add infrastructure
+ for Clang's capability analysis
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ingo Molnar <mingo@kernel.org>, 
+	Jann Horn <jannh@google.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Triplett <josh@joshtriplett.org>, Justin Stitt <justinstitt@google.com>, 
+	Kees Cook <kees@kernel.org>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 04 Mar 2025 15:54:33 +0100,
-Arnd Bergmann wrote:
-> 
-> On Tue, Mar 4, 2025, at 15:43, Takashi Iwai wrote:
-> > On Tue, 04 Mar 2025 15:25:55 +0100,
-> >
-> > Thanks for the patch.  Indeed it's a very corner case, but I still
-> > hesitate to add a kconfig dependency.  Can we take an alternative fix
-> > to define the proper dummy functions like below instead?
-> 
-> I'm sure that works, and I had considered something like that,
-> but I really dislike the IS_REACHABLE() use because I think it
-> causes more problems than it solves. (I introduced the macro
-> originally but regret that).
-> 
-> Note that the only way to disable input is to have manually flip
-> CONFIG_EXPERT and CONFIG_TTY as well as the major GPU drivers
-> that select it:
-> 
-> config INPUT
->         tristate "Generic input layer (needed for keyboard, mouse, ...)" if EXPERT
->         default y
-> 
-> so in the end, there is very little difference between
-> your patch and mine, as they both fix build testing on
-> randconfig.
+On Tue, 4 Mar 2025 at 16:29, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Mar 04, 2025 at 10:21:01AM +0100, Marco Elver wrote:
+>
+> > +# define __asserts_cap(var)                  __attribute__((assert_capability(var)))
+> > +# define __asserts_shared_cap(var)           __attribute__((assert_shared_capability(var)))
+>
+> > +     static __always_inline void __assert_cap(const struct name *var)                                \
+> > +             __attribute__((overloadable)) __asserts_cap(var) { }                                    \
+> > +     static __always_inline void __assert_shared_cap(const struct name *var)                         \
+> > +             __attribute__((overloadable)) __asserts_shared_cap(var) { }                             \
+>
+> Since this does not in fact check -- that's __must_hold(), I would
+> suggest renaming these like s/assert/assume/.
 
-OK, I don't mind much, so I take your patch now, as this actually
-reduces the code size.
+Yeah, that's better.
 
+FTR - the "asserts_capability" attribute was originally meant to be
+used on runtime functions that check that a lock is held at runtime;
+what Clang does underneath is simply adding the given capability/lock
+to the held lockset, so no real checking is enforced. In this series
+it's used for a lot more than just our lockdep_assert*() helpers, so
+the "assert" naming is indeed confusing.
 
-thanks,
-
-Takashi
+Thanks!
 
