@@ -1,138 +1,152 @@
-Return-Path: <linux-kernel+bounces-544726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C80C8A4E424
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:49:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A6E3A4E61A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:35:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 90C457A43BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:48:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA7C2880A45
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:49:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2EB127BF75;
-	Tue,  4 Mar 2025 15:33:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7601627BF97;
+	Tue,  4 Mar 2025 15:33:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FbK87N6x"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iNJliLkf"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A525427BF6C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0A627BF81;
+	Tue,  4 Mar 2025 15:33:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102412; cv=none; b=I29XJBrqyav/BnoJBsF+SDwV9hlGqPp3IyfmTLRUx6vY9sK40eNJQ/z1mLl1NkZmoqvNVlCAyUWfTKWu/d9ivTs/tWLRzfdXDDb4wFEi0DuB3O+n2jW0hPckSsXn1DkI6L8bdkm3JWcDCy+XlwIzlbiHZbRpHRb9dT9FQisdW9c=
+	t=1741102415; cv=none; b=BGrA9sYWCfjonY51cPmZzuu4ZlEh43yQuRUv8OO54vTYo5E2/xyU9jCUZWsnUe4Y76GiLqv7yIwkgxBAZmt9+JFg6xJci+guLlzWMHXjXNBAE0LP1GLgEOMd1hS+Z6INMf6+i4H2x6fehogTkC3eXFTikVJi1Fq1Jopn+RTqnLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102412; c=relaxed/simple;
-	bh=AtmrxciAUjDUt8Le2C3RdTGI6SD4SxyI8sKwNOJLZCA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EPimT+jw0H00aB8pkgfXrmQRRUN2rQ7C+l6/lmPVexhzUm/1jlQflHNS8l5NaXivcZSxbbOQ4C8pWWkt5aHUbf0mISBTHrn5bw5QLj0GOrkhP8E4cSfUn9MetzNldM7JPl31eN0OYHKEcMLrnrRDLFuSP/yI9aTA5iWXjwu5iZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FbK87N6x; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43ba8a87643so65205e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:33:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741102409; x=1741707209; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ibbQ8vZKRLThagAhXqw0zr6eU9i/rMMEX0Q2/bXISBY=;
-        b=FbK87N6xjAqFW2IiTX2V+fTHzlw6YrXcomH/2te7OVH1AaaVbzgVEGy3eOvOfbI9bv
-         HvzbAoh1KnFglcFFYwGz68dKVyto/NKRTtSG8c2Ca95LV+WfzifoyxaPb00cIXdaMv8q
-         daA5Sp+jdEIN5qCyI89X91tT0Wgt/cJUBL9wBZd9NDmQ/iHan7OmZ2GagR1s04hUNADO
-         vgHWZz5WKOLWNUKBxyPZ6Veakb3yyH46/OG2xXTjMchg3SJ19Rwv2pGg6t/cYJgwMviT
-         BSJFT1KXdwjx1asPVGBjh8p2WGY2AJ/PXCjIHVkszuKzhXnb4wMQGA5EYKMArVjr+0dT
-         XiHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741102409; x=1741707209;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ibbQ8vZKRLThagAhXqw0zr6eU9i/rMMEX0Q2/bXISBY=;
-        b=Ic5dKvHSqKA6yl7BsXvHP9BSXo/D4GIOpH4W6bBqjy9lOAZeSX2FQ8KM4Ym+IPCWpB
-         yTlkUcdprH3eE8rFqKU5fMc2lk24w/j7Yz+ZiD7CTu9ZfyOE6NLCLs2AqBRv7Qxb1alL
-         P/goM//Bqo1eMoucaHhuJsQMcZreUv9ENyfxl89OwgUk+EC89RlqiEjuG8HVSMS2/9i+
-         7eQmFGi0rlD0uuXyTDREVJT5W5ImywMN590KvTGigCaujgFOShNYxW37FHix9avwjili
-         DcAUJnC8dpNaGl2VxSR2JzaLrJlrrf8wSr0ZnCbL9oqnhJcymqvNLVKDaThzPdPG4NkY
-         va5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVvnkofAsPxzZhieLt48JtKqAL9KRwiWthdDcldHuUdw4/yug8FpfLkJsT9vzR4UjrAtR9co32pryOt0G4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEoqNLeuUdhjXqcOW9Ush+j+ZQNp+R89sT9n3h42w8YdbOW3Wi
-	td0WiDxBdr3rMvyThr8rAg0yOuvI3aiEJg2bXsveM2FjbrAnGZKuHNYIyKKgCA==
-X-Gm-Gg: ASbGncsAD03RthsbHOra4HyZCMozkm8lOR/GiUIBsj+wYw5RXvg+K7qkIiehVUGcI+0
-	5KZpGr4VkYhAfVPEZnXAO6dRpShcgPI585HUQIT8NmzhPzaNl0KtakFVh/liT1pOvSxBy9CcSVR
-	CFW8vsnfq1ZGKatqaXyBmwvQNN3GggquNJgPJqbY5Jay0Q4zIi0wXF255Yt5gvxig+iFEE4KgWe
-	g5L7q135nHqggEbsZYKlnlNm60fgeBmTUeog2P7neI7zKfiukugxYhHG3Jwuk3muXZ3P6h8WJY/
-	9dvi2GmIgW1h7T3L/al6PrVCfXgRSn16HdilbdyHmrno1rZyk9HdyVZ3eu9SXT/6+Ti00x8keiA
-	ljs9m
-X-Google-Smtp-Source: AGHT+IHD6tgroZwF1RiEywTFB8Xo582z8MBUAfqrce6J1GbfQJzHVOeJsLd40g5y/9Wkv4MuwqP+ZQ==
-X-Received: by 2002:a05:600c:3593:b0:439:8f59:2c56 with SMTP id 5b1f17b1804b1-43bcb43acc4mr1414045e9.2.1741102408761;
-        Tue, 04 Mar 2025 07:33:28 -0800 (PST)
-Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc993abc5sm45371435e9.2.2025.03.04.07.33.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 07:33:27 -0800 (PST)
-Date: Tue, 4 Mar 2025 15:33:23 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@intel.com>, Rik van Riel <riel@surriel.com>,
-	x86@kernel.org, linux-kernel@vger.kernel.org, peterz@infradead.org,
-	dave.hansen@linux.intel.com, zhengqi.arch@bytedance.com,
-	nadav.amit@gmail.com, thomas.lendacky@amd.com, kernel-team@meta.com,
-	linux-mm@kvack.org, akpm@linux-foundation.org, jannh@google.com,
-	mhklinux@outlook.com, andrew.cooper3@citrix.com,
-	Manali.Shukla@amd.com, mingo@kernel.org
-Subject: Re: [PATCH v14 11/13] x86/mm: do targeted broadcast flushing from
- tlbbatch code
-Message-ID: <Z8cdQwVnx8dmFDLA@google.com>
-References: <20250226030129.530345-1-riel@surriel.com>
- <20250226030129.530345-12-riel@surriel.com>
- <20250303114618.GBZ8WWihMDjf-oy8P0@fat_crate.local>
- <7e1ca8c7-6f3e-44dc-9dd8-bd273a03a83e@intel.com>
- <Z8b3n85dpkz_-2ci@google.com>
- <20250304141134.GIZ8cKFom3W0ChHiXk@fat_crate.local>
+	s=arc-20240116; t=1741102415; c=relaxed/simple;
+	bh=cxYGbUkB0Yoz6qWbFJi8QO9m0UONprohdcSKnp399Yc=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=fSPlVXuL949Lt56lqb0UNQY+GAhxXn3XJSCAJrAizwv/Kbd7e1o3IxW3t3OX2U/em5AEy38A8KqC/ACCgxHTe4Pu/E79Wo4sz8wHBxIZh4b8VG0PKHLC3/4FidARdfEd32dImfhxRm3K8JemPhWiK08dt19svrIqJlf5k744pTw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iNJliLkf; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741102414; x=1772638414;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=cxYGbUkB0Yoz6qWbFJi8QO9m0UONprohdcSKnp399Yc=;
+  b=iNJliLkfh+2GZhyKeuwcd6WWF9b2ET7N2Q0A6KSHKdbnwR4B2vqnfOb1
+   6y1uUSfsiSDd1dA6dEUtXshwomtAupuqw5rA+zxU+PzBNtE0UXRzuvIgy
+   ancmpaqzs/OHlAvVWUoSeVx8AhkUk9TosjN0skZtyNnZqci8tDCfNVzUP
+   9dIhLwuonrHu/SyxkjAT3oD4P/VdQxdiKoPLPIcxCjLwIGgAmBUtr3FM3
+   YLWA1TqVhYtwzd0UtR60BpU5IyyyxykG0kObJ0l/ipc2aHNLStemzyyf3
+   YIFOhEBXn/wVfda4Q1cq4D6sCVNAUcyE6tpIkVfG2t1vIxi7kEEimB25S
+   Q==;
+X-CSE-ConnectionGUID: Pfvh9izUSeq7OKSm4pS6eg==
+X-CSE-MsgGUID: 7ca2OBeWS9ic9Y40kPpopA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53429551"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="53429551"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:33:30 -0800
+X-CSE-ConnectionGUID: nUA5FecfRbafr5jpttdATg==
+X-CSE-MsgGUID: ojR8XYzuQaSwbmd5zaSYpw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="119086996"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.220])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:33:27 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 4 Mar 2025 17:33:23 +0200 (EET)
+To: Kurt Borja <kuurtb@gmail.com>
+cc: Armin Wolf <W_Armin@gmx.de>, platform-driver-x86@vger.kernel.org, 
+    Hans de Goede <hdegoede@redhat.com>, Dell.Client.Kernel@dell.com, 
+    LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2 04/10] platform/x86: alienware-wmi-wmax: Modify
+ supported_thermal_profiles[]
+In-Reply-To: <20250225222500.23535-5-kuurtb@gmail.com>
+Message-ID: <55b6fd60-c82a-32f5-4639-09472745dc87@linux.intel.com>
+References: <20250225222500.23535-1-kuurtb@gmail.com> <20250225222500.23535-5-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304141134.GIZ8cKFom3W0ChHiXk@fat_crate.local>
+Content-Type: multipart/mixed; boundary="8323328-1247101556-1741102403=:931"
 
-On Tue, Mar 04, 2025 at 03:11:34PM +0100, Borislav Petkov wrote:
-> On Tue, Mar 04, 2025 at 12:52:47PM +0000, Brendan Jackman wrote:
-> > https://lore.kernel.org/all/CA+i-1C31TrceZiizC_tng_cc-zcvKsfXLAZD_XDftXnp9B2Tdw@mail.gmail.com/
-> 
-> Lemme try to understand what you're suggesting on that subthread:
-> 
-> > static inline void arch_start_context_switch(struct task_struct *prev)
-> > {
-> >     arch_paravirt_start_context_switch(prev);
-> >     tlb_start_context_switch(prev);
-> > }
-> 
-> This kinda makes sense to me...
+  This message is in MIME format.  The first part should be readable text,
+  while the remaining parts are likely unreadable without MIME-aware tools.
 
-Yeah so basically my concern here is that we are doing something
-that's about context switching, but we're doing it in mm-switching
-code, entangling an assumption that "context_switch() must either call
-this function or that function". Whereas if we just call it explicitly
-from context_switch() it will be much clearer.
+--8323328-1247101556-1741102403=:931
+Content-Type: text/plain; charset=ISO-8859-15
+Content-Transfer-Encoding: QUOTED-PRINTABLE
 
-> > Now I think about it... if we always tlbsync() before a context switch, is the
-> > cant_migrate() above actually required? I think with that, even if we migrated
-> > in the middle of e.g.  broadcast_kernel_range_flush(), we'd be fine? (At
-> > least, from the specific perspective of the invplgb code, presumably having
-> > preemption on there would break things horribly in other ways).
-> 
-> I think we still need it because you need to TLBSYNC on the same CPU you've
-> issued the INVLPGB and actually, you want all TLBs to have been synched
-> system-wide.
-> 
-> Or am I misunderstanding it?
+On Tue, 25 Feb 2025, Kurt Borja wrote:
 
-Er, I might be exposing my own ignorance here. I was thinking that you
-always go through context_switch() before you get migrated, but I
-might not understand hwo migration happens.
+> Rename supported_thermal_profiles[] -> supported_profiles[] and change
+> it's type to u8 because it stores AWCC thermal IDs.
+>=20
+> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+> Reviewed-by: Armin Wolf <W_Armin@gmx.de>
+> ---
+>  drivers/platform/x86/dell/alienware-wmi-wmax.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+>=20
+> diff --git a/drivers/platform/x86/dell/alienware-wmi-wmax.c b/drivers/pla=
+tform/x86/dell/alienware-wmi-wmax.c
+> index 57897a0f4296..4a8335d90b5d 100644
+> --- a/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> +++ b/drivers/platform/x86/dell/alienware-wmi-wmax.c
+> @@ -212,7 +212,7 @@ struct wmax_u32_args {
+>  struct awcc_priv {
+>  =09struct wmi_device *wdev;
+>  =09struct device *ppdev;
+> -=09enum awcc_thermal_profile supported_thermal_profiles[PLATFORM_PROFILE=
+_LAST];
+> +=09u8 supported_profiles[PLATFORM_PROFILE_LAST];
+>  };
+> =20
+>  static const enum platform_profile_option awcc_mode_to_platform_profile[=
+AWCC_PROFILE_LAST] =3D {
+> @@ -606,7 +606,7 @@ static int awcc_platform_profile_set(struct device *d=
+ev,
+>  =09}
+> =20
+>  =09return awcc_thermal_control(priv->wdev,
+> -=09=09=09=09    priv->supported_thermal_profiles[profile]);
+> +=09=09=09=09    priv->supported_profiles[profile]);
+>  }
+> =20
+>  static int awcc_platform_profile_probe(void *drvdata, unsigned long *cho=
+ices)
+> @@ -643,7 +643,7 @@ static int awcc_platform_profile_probe(void *drvdata,=
+ unsigned long *choices)
+> =20
+>  =09=09mode =3D FIELD_GET(AWCC_THERMAL_MODE_MASK, id);
+>  =09=09profile =3D awcc_mode_to_platform_profile[mode];
+> -=09=09priv->supported_thermal_profiles[profile] =3D id;
+> +=09=09priv->supported_profiles[profile] =3D id;
+> =20
+>  =09=09set_bit(profile, choices);
+>  =09}
+> @@ -652,7 +652,7 @@ static int awcc_platform_profile_probe(void *drvdata,=
+ unsigned long *choices)
+>  =09=09return -ENODEV;
+> =20
+>  =09if (awcc->gmode) {
+> -=09=09priv->supported_thermal_profiles[PLATFORM_PROFILE_PERFORMANCE] =3D
+> +=09=09priv->supported_profiles[PLATFORM_PROFILE_PERFORMANCE] =3D
+>  =09=09=09AWCC_THERMAL_MODE_GMODE;
+> =20
+>  =09=09set_bit(PLATFORM_PROFILE_PERFORMANCE, choices);
+>=20
+
+Reviewed-by: Ilpo J=E4rvinen <ilpo.jarvinen@linux.intel.com>
+
+--=20
+ i.
+
+--8323328-1247101556-1741102403=:931--
 
