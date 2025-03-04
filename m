@@ -1,55 +1,55 @@
-Return-Path: <linux-kernel+bounces-543066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543067-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87BDBA4D121
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:44:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41202A4D122
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:44:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8E051720D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:44:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12023ACF8A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:44:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A6414830C;
-	Tue,  4 Mar 2025 01:44:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173C515383A;
+	Tue,  4 Mar 2025 01:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="Dg2DSGE1"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C/insOKg"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B185136347
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:44:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B978A13AA27
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741052668; cv=none; b=WQ5GrAoSn4n9EXOh2Z7yWkYoJz4n9YSmoBUNsjtXbXtZlDVnhUkiUsAu77xUrmkLBEClXQ0QVGbM+rzYDwQ0PlAKPpgz1773uzKQTfBc5xcmiXbP655SHFb27clHpJCmfoPRJtQAtdTLPI3jAH9F4q3pfur7R/Fw48EQvypk3DI=
+	t=1741052668; cv=none; b=WFqvoTm0xle+xhAfNoeycXbKMQDpuEPOANvL9IiM5oh1imBtAcOrolIgCst0lqyacip5juleTyOw/FOMP8v7r2wrBxMreky81O7nbzLlxOntqWx9eD3T4OLHBvFTDSJu/WDkh10EH6bjncC/maEB5JibAK59s96p92nY6gv2vpA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741052668; c=relaxed/simple;
-	bh=iDVPebVtBVKbo8sc+q34EtLBvJPNOV2/Slk4+XhkzX8=;
+	bh=SBKosOyQ+vqRRzYCaSZdG4Ns7DFVxhSrWT6ixWWkh/c=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U+u52eN2D9p5/7eftULdfQP38wJpIpTpFOyf+nYEb0jbs9RqkbPiJUym0XoO0AIk3ljheJXjeW09fsjpvDkEe/CDSAxVW8iBMM7GoMNIwdw2JcXgnkv+pnA4xWGrWHtDGKHjden1NfqwP3jTI8E3Vc255w/Tm4/JesqMgQaSOUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=Dg2DSGE1; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=KOCHHoT7b/vRz2I/8h5cRPxnA1hw3FloMn+u88nqNirzJKE+W09J0gzcAhqzvi4ycsQPQNyGcrZsGjDwA2ubVAdfLp1345RQNEkKTFYabBDh310WUcpeXJz4NE0V54uBagmD8Ffe1uVEls7q+mKGHlOlwjXMZstXef7sbdGr/5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C/insOKg; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741052658;
-	bh=iDVPebVtBVKbo8sc+q34EtLBvJPNOV2/Slk4+XhkzX8=;
+	s=mail; t=1741052659;
+	bh=SBKosOyQ+vqRRzYCaSZdG4Ns7DFVxhSrWT6ixWWkh/c=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=Dg2DSGE1mIWJMt5NqyrYikQxOSRhJbtg2lLdUOIBBbtbioR5Cws1qIsqEuBhUm7kK
-	 a46shU/FL112y3h0HqvfS/psfgPryIV1oWpUNqNbo+2pHQZTOhDo1CIbHz6wZSQB/q
-	 zaxPgTctZOgsS7VVmKz2pmjYNRP4xMDdBWZ2VA6FNjeojD6NdmOvns2Y34lBQb7UJH
-	 s6WK+u9KZvkqEVFIyQt7nLbg8XTk3hyMz7UJJVYtUqzE8LVnKckHIQg5EJ94FhGhQ8
-	 WGzS0qbCF2iDSHpH/IThdERfe4LUJ2wGaB6F/UAPECMzmB5vjPz8FfaA5c7jruCUPM
-	 y9+2urszhPIMg==
+	b=C/insOKgXcw6ARzrlNpuhz9Fm9s56VDre1JMRsUowSRkvTFqUJiI7XLv0/eQVGX1K
+	 Xz1cW0Pn/AiugnEvp5T15VjRpP/eS4MpGsDWoEGoSQCo67xJBsbkiqqFwUza8hwD2p
+	 LLCeQk/y9AA8d1PdEoqFHhVse34HXHejm/WJawNMvEWSoh+a6B/ehSgQGUSEGMGwxA
+	 dSCI2L56Yc4xHTGGXqHoPb1lSA9SX+RdjhDpVy5tCe/05S6Zp1Ig/CcbU3iVmzxS5g
+	 EOu//NGkvRMqeK71TGl50825S5+tTmakZXggSln/5t2mBTECrwxc4itn/Gf3oLxYIX
+	 6nFjpseAMQsFA==
 Received: from localhost (unknown [188.27.58.83])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 2DBB817E0E8D;
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id E9D9817E0E8E;
 	Tue,  4 Mar 2025 02:44:18 +0100 (CET)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 04 Mar 2025 03:44:00 +0200
-Subject: [PATCH v4 01/12] phy: Add HDMI configuration options
+Date: Tue, 04 Mar 2025 03:44:01 +0200
+Subject: [PATCH v4 02/12] phy: hdmi: Add color depth configuration
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +58,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-phy-sam-hdptx-bpc-v4-1-8657847c13f7@collabora.com>
+Message-Id: <20250304-phy-sam-hdptx-bpc-v4-2-8657847c13f7@collabora.com>
 References: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
 In-Reply-To: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -71,88 +71,33 @@ Cc: Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
 
-From: Sandor Yu <Sandor.yu@nxp.com>
+Extend the HDMI configuration options to allow managing bits per color
+channel.  This is required by some PHY drivers such as
+rockchip-samsung-hdptx.
 
-Allow HDMI PHYs to be configured through the generic
-functions through a custom structure added to the generic union.
-
-The parameters added here are based on HDMI PHY
-implementation practices.  The current set of parameters
-should cover the potential users.
-
-Signed-off-by: Sandor Yu <Sandor.yu@nxp.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
-Acked-by: Vinod Koul <vkoul@kernel.org>
-Link: https://lore.kernel.org/r/d1cff6c03ec3732d2244022029245ab2d954d997.1734340233.git.Sandor.yu@nxp.com
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- include/linux/phy/phy-hdmi.h | 19 +++++++++++++++++++
- include/linux/phy/phy.h      |  7 ++++++-
- 2 files changed, 25 insertions(+), 1 deletion(-)
+ include/linux/phy/phy-hdmi.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
 diff --git a/include/linux/phy/phy-hdmi.h b/include/linux/phy/phy-hdmi.h
-new file mode 100644
-index 0000000000000000000000000000000000000000..6a696922bc7f29af63d88646701b2c0fcee5c885
---- /dev/null
+index 6a696922bc7f29af63d88646701b2c0fcee5c885..f0ec963c6e84f1b7728acafc824dff191c6b873d 100644
+--- a/include/linux/phy/phy-hdmi.h
 +++ b/include/linux/phy/phy-hdmi.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/*
-+ * Copyright 2022,2024 NXP
-+ */
-+
-+#ifndef __PHY_HDMI_H_
-+#define __PHY_HDMI_H_
-+
-+/**
-+ * struct phy_configure_opts_hdmi - HDMI configuration set
-+ * @tmds_char_rate: HDMI TMDS Character Rate in Hertz.
-+ *
-+ * This structure is used to represent the configuration state of a HDMI phy.
-+ */
-+struct phy_configure_opts_hdmi {
-+	unsigned long long tmds_char_rate;
-+};
-+
-+#endif /* __PHY_HDMI_H_ */
-diff --git a/include/linux/phy/phy.h b/include/linux/phy/phy.h
-index 03cd5bae92d3f189d739c453fe4c160dd2a5063e..4ac486b101fe4023b8f2a84e907e65a0ff0a5ede 100644
---- a/include/linux/phy/phy.h
-+++ b/include/linux/phy/phy.h
-@@ -17,6 +17,7 @@
- #include <linux/regulator/consumer.h>
- 
- #include <linux/phy/phy-dp.h>
-+#include <linux/phy/phy-hdmi.h>
- #include <linux/phy/phy-lvds.h>
- #include <linux/phy/phy-mipi-dphy.h>
- 
-@@ -42,7 +43,8 @@ enum phy_mode {
- 	PHY_MODE_MIPI_DPHY,
- 	PHY_MODE_SATA,
- 	PHY_MODE_LVDS,
--	PHY_MODE_DP
-+	PHY_MODE_DP,
-+	PHY_MODE_HDMI,
- };
- 
- enum phy_media {
-@@ -60,11 +62,14 @@ enum phy_media {
-  *		the DisplayPort protocol.
-  * @lvds:	Configuration set applicable for phys supporting
-  *		the LVDS phy mode.
-+ * @hdmi:	Configuration set applicable for phys supporting
-+ *		the HDMI phy mode.
-  */
- union phy_configure_opts {
- 	struct phy_configure_opts_mipi_dphy	mipi_dphy;
- 	struct phy_configure_opts_dp		dp;
- 	struct phy_configure_opts_lvds		lvds;
-+	struct phy_configure_opts_hdmi		hdmi;
- };
- 
+@@ -9,11 +9,13 @@
  /**
+  * struct phy_configure_opts_hdmi - HDMI configuration set
+  * @tmds_char_rate: HDMI TMDS Character Rate in Hertz.
++ * @bpc: Bits per color channel.
+  *
+  * This structure is used to represent the configuration state of a HDMI phy.
+  */
+ struct phy_configure_opts_hdmi {
+ 	unsigned long long tmds_char_rate;
++	unsigned int bpc;
+ };
+ 
+ #endif /* __PHY_HDMI_H_ */
 
 -- 
 2.48.1
