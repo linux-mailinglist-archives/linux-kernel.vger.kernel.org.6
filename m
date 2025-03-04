@@ -1,173 +1,138 @@
-Return-Path: <linux-kernel+bounces-545489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70DFDA4EDBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:46:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D62EBA4EDC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:46:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A434318948A5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:46:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01DC1174333
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA0D27C152;
-	Tue,  4 Mar 2025 19:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CE0425F7B4;
+	Tue,  4 Mar 2025 19:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QyvpApyq";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Hw4d06Bi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="h50HTGRH"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F6A5278146;
-	Tue,  4 Mar 2025 19:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05CB31FFC5F
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741117442; cv=none; b=qxb0WHyW02P3q5A5hcU4dBwdHpWh15oESFfeG/H6h99c8VG1hzwravrPVb0Cry6797SVVjpwAWRMdwNR/qyQVXS6UWvtzKOnT+sOEifcEkbwSiHuaK1jRcwMdHpil/PZjQq1jXOc1msFNlPYdDCNA8VOPDFMbMT8TNM5+bILVEg=
+	t=1741117532; cv=none; b=joISHOVwk7wnpRR9owtRFPLFbimzDAuQeZ0Z6HSwjY6IRBB8hva0ZpuWTXrOIOGGTPKx+t0z19xMvjSex1YQ8JwzdRgdJPD2COF1nyvWCw6ImCQKdwZUJ2t1+FUuyIV+GAuMzXf2nKbUtnmPBna5UYbPJRx0M+YPIoadOIWtgqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741117442; c=relaxed/simple;
-	bh=TCuFq6rnKiqA8FZI/m1q4J5jdHgSjKcMB5/PWjRIZK8=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=lXasHqC1cUKRqrohncbpn0KnewoA6NHT/pY/pmFy6PWOSEMK3Sax3RqFmDlQt4G9ARePSzW4JbVZM+IoQu3FBB4MYUY1UlC0JpaBnAAGp9jbW/IzHQT0Bmk3XyJUv+Hw6xLoVTaL1p9PMDTM/GYRc3Xt2G9yU/e/88Qmmsk++cM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QyvpApyq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Hw4d06Bi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 19:43:58 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741117438;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBuByQx1rs3aL7EfvA1FX4xLhJHpjef2EMWCqlyZ4MU=;
-	b=QyvpApyqftEs1yysYpgHlN3frWGEQrK6Wqxad/1NVfum38l9UMVk3W/snLwDux8x/fWjW4
-	iXXcpyHnSck7Rs5+SrqBWmXgKNdB9vIjo3sZQxyVAQ6iOwfVLISnOO+SDdLA4CnNCTzhIf
-	aEHRiQWGXbv13RgqG4ktgSM+CLEnNvBHwBe8qaepgev9nvvtFQZMnTQDfNP9pN4rE007+A
-	Dl0s3nRO/xVLngV0Y/GIwEjdK/2aZcXBP2KV5sYZ+gPxPO0laA4PELmikcw6PgFJYUznLl
-	7yY9Gnm0ObRk+nUjDdffBbLGQyuTKvKYaQLNOHwR5PYQ/IFkwqAUaUMHPbgsUg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741117438;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MBuByQx1rs3aL7EfvA1FX4xLhJHpjef2EMWCqlyZ4MU=;
-	b=Hw4d06Bi00vMpvhn74N7bsl1g9DnwBiaozpYXxRagLn7kYAADP+XDMPuj8DFESzm7aUXIU
-	G5TjV/aHE7HOSmBg==
-From: "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] percpu: Introduce percpu hot section
-Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Uros Bizjak <ubizjak@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250303165246.2175811-2-brgerst@gmail.com>
-References: <20250303165246.2175811-2-brgerst@gmail.com>
+	s=arc-20240116; t=1741117532; c=relaxed/simple;
+	bh=cRxreIV1tABCpL9fRZfH6KzlR/VZYK1SWoxTM7CPHC8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mf9Ja7R1kTqWY6wkFP/VuI9TRegVXuf0HW8V+iUkYpiQRTOnpag7zOjCfW/x/A4kbp+tGYQZlFeoKJPLc/3t6oxg6Q6yuyPBOuDi6oruV9s7AwjYzBV/Pd2D/YO+gnPF1sYeaMC5HbC7XreOKgsd/olq1sBeZiUcdWNb3flvZ7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=h50HTGRH; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-85afc05fc40so20069839f.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:45:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1741117530; x=1741722330; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Wlj6wsu/JSvBM4RPZykaf7UYl5o6YxQI8N0Xp4ZZi8E=;
+        b=h50HTGRHn++xPcga7XKV7ytlYY8x5eYFCWtFqy2mTTl0YViEl/LNWPbZnXbIqB0W6o
+         lB5O/3f+Q+XNPGomBlX0EWuYtZMIPiG8JWAp72QOcGx5oN9O3iZLuUaGWOOOX2ogM9Ww
+         oajmw45dFoNY9fLkyuotzestgQh1PErUkrwlE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741117530; x=1741722330;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Wlj6wsu/JSvBM4RPZykaf7UYl5o6YxQI8N0Xp4ZZi8E=;
+        b=tBBFNBIu5mPfMMGgRRbmsQg256oKqeBctF/qZnJ5CggcqilmnCY14pcHXvAUwhk7Gm
+         o60AiOxGStc0mbr5kr2+S2HoMDal8fyNXZXGFzoVEbzzHH4TRYaeJDjmxPJifIIFdBtO
+         chO2u0xVqo0hQZNC5n6NQqJWzvbvrdc4EsjcAZvZP58txmhwrnmTNws9TCHqSI93F0Zs
+         zLbOR5e4+4aBbMLJs6E9tctKta8zdRw+Ec3gCF+YXqv8YWG4lO46OZa1WzB1Byzj9RiI
+         R7SGbH8UD+z9Yuv2+mf3ncsmngkJBTcHmEBzEcCfTkk+GgJ0cDefJ11ycRcapelfNScG
+         +grQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX3t3ncQ9aXQG7BthFCx5qgHtzjTVnaGTTWe7TOrX/mRlCJxlCNy8xLeFoSiMSAFyRbA9av3z6eaLfVzfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhoMNW57zyZEvPRBNp7bEsnY9mufgApeAiirc4++y+eZVmVso7
+	emc0kOu6JWnLDSPh7FBycp5HpVkH5boPPOxNMesIGw7b5naEjC8dH0ndhTf3mzU=
+X-Gm-Gg: ASbGncsNteGffZEgb504dFjbK/uVy9yYXy+9plSD6fMeh0gGjRBl0egoCF3VInKm/Nl
+	YqhnW1OWw31ENrCRPsgGhOQFNdm6bR3XDRLF1VayHptDnzEfhZECTPP3ZSzRhru77m+dX1klPH5
+	jUvxnz9OAwklGlFUwYFBRrrx+nch0LoNMD5/Xk8jveSv5F3HD5v4CrlBH9Z0H/6e0ztLc4XFvn6
+	xJpCsM3Rl8xY24GAsUCECxes66SWSUfionD9IHHzijiAwN30YP7wSQUsX38sGvo8f0UtMEDu3zn
+	esv/H7ZH8fpi6Og2CrrQ2jbyXKEX1MmZlN45v7JyUUalZyTlNnmo+9k=
+X-Google-Smtp-Source: AGHT+IGkXVbMrjLGRFRcGTX+Z6vuj8MvARSqYVSsiUwnZt/gjJ0RAXPrIhj1KuEyYDn119fg33fmwQ==
+X-Received: by 2002:a05:6602:b84:b0:85a:fdf4:f429 with SMTP id ca18e2360f4ac-85affb97f71mr40405939f.12.1741117529977;
+        Tue, 04 Mar 2025 11:45:29 -0800 (PST)
+Received: from [192.168.1.14] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-85afc905722sm22022339f.13.2025.03.04.11.45.29
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 11:45:29 -0800 (PST)
+Message-ID: <c49917d2-5157-4878-9866-be6053b5124d@linuxfoundation.org>
+Date: Tue, 4 Mar 2025 12:45:28 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174111743821.14745.6882309467873511423.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] usbip: Fix the error limitation on max_hw_sectors for
+ usbip device
+To: Zongmin Zhou <min_halo@163.com>
+Cc: valentina.manea.m@gmail.com, shuah@kernel.org, i@zenithal.me,
+ gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Zongmin Zhou <zhouzongmin@kylinos.cn>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20250219092555.112631-1-min_halo@163.com>
+ <88b2fb4b-96a4-4d29-bf92-4064d3572fa4@linuxfoundation.org>
+ <5a41d6c3.8c78.195371996e0.Coremail.min_halo@163.com>
+ <247c7e15-bbff-427f-8315-ca463f8b933b@linuxfoundation.org>
+ <4d4035bf.26b9.19556dcc23d.Coremail.min_halo@163.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <4d4035bf.26b9.19556dcc23d.Coremail.min_halo@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/core branch of tip:
+On 3/2/25 05:37, Zongmin Zhou wrote:
+> Dear shuah,
+> 
+> 
+> Yes, I agree with you.It would be better if there have a more simpler fixes than This patch.
+> 
+> I can just think of the two possible solutions that mentioned before.
 
-Commit-ID:     ab2bb9c084f7e3b641ceba91efc33b3adcd1846e
-Gitweb:        https://git.kernel.org/tip/ab2bb9c084f7e3b641ceba91efc33b3adcd1846e
-Author:        Brian Gerst <brgerst@gmail.com>
-AuthorDate:    Mon, 03 Mar 2025 11:52:36 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 20:30:33 +01:00
+What are the two possible solutions?
+> 
+> 
+> If SWIOTLB disabled,dma_max_mapping_size() return SIZE_MAX.
 
-percpu: Introduce percpu hot section
+Right when CONFIG_HAS_DMA, if not it returns 0. Perhaps we
+can ignore CONFIG_HAS_DMA=n for this for this discussion.
 
-Add a subsection to the percpu data for frequently accessed variables
-that should remain cached on each processor.  These varables should not
-be accessed from other processors to avoid cacheline bouncing.
+> 
+> Only if SWIOTLB is active and dma addressing limited will return the swiotlb max mapping size.
+> 
+> 
+> The swiotlb config seems rely on many other config options like x86_64/IOMMU_SUPPORT and so on,
+> 
+> and the configuration on host and client side only use the default at all,Like the default ubuntu release version.
+> 
+> It seems that switlb is enabled by default on most platforms.
 
-This will replace the pcpu_hot struct on x86, and open up similar
-functionality to other architectures and the kernel core.
+If understand correctly the problem happens only when SWIOTLB
+is enabled on client or host?
 
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250303165246.2175811-2-brgerst@gmail.com
----
- include/asm-generic/vmlinux.lds.h | 11 +++++++++++
- include/linux/percpu-defs.h       | 13 +++++++++++++
- 2 files changed, 24 insertions(+)
+The following combinations are possible:
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index b32e453..c4e8fac 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -385,6 +385,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	. = ALIGN(PAGE_SIZE);						\
- 	__nosave_end = .;
- 
-+#define CACHE_HOT_DATA(align)						\
-+	. = ALIGN(align);						\
-+	*(SORT_BY_ALIGNMENT(.data..hot.*))				\
-+	. = ALIGN(align);
-+
- #define PAGE_ALIGNED_DATA(page_align)					\
- 	. = ALIGN(page_align);						\
- 	*(.data..page_aligned)						\
-@@ -1065,6 +1070,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	. = ALIGN(PAGE_SIZE);						\
- 	*(.data..percpu..page_aligned)					\
- 	. = ALIGN(cacheline);						\
-+	__per_cpu_hot_start = .;					\
-+	*(SORT_BY_ALIGNMENT(.data..percpu..hot.*))			\
-+	__per_cpu_hot_pad = .;						\
-+	. = ALIGN(cacheline);						\
-+	__per_cpu_hot_end = .;						\
- 	*(.data..percpu..read_mostly)					\
- 	. = ALIGN(cacheline);						\
- 	*(.data..percpu)						\
-@@ -1112,6 +1122,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 		INIT_TASK_DATA(inittask)				\
- 		NOSAVE_DATA						\
- 		PAGE_ALIGNED_DATA(pagealigned)				\
-+		CACHE_HOT_DATA(cacheline)				\
- 		CACHELINE_ALIGNED_DATA(cacheline)			\
- 		READ_MOSTLY_DATA(cacheline)				\
- 		DATA_DATA						\
-diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
-index 40d34e0..0fcacb9 100644
---- a/include/linux/percpu-defs.h
-+++ b/include/linux/percpu-defs.h
-@@ -113,6 +113,19 @@
- 	DEFINE_PER_CPU_SECTION(type, name, "")
- 
- /*
-+ * Declaration/definition used for per-CPU variables that are frequently
-+ * accessed and should be in a single cacheline.
-+ *
-+ * For use only by architecture and core code.  Only use scalar or pointer
-+ * types to maximize density.
-+ */
-+#define DECLARE_PER_CPU_CACHE_HOT(type, name)				\
-+	DECLARE_PER_CPU_SECTION(type, name, "..hot.." #name)
-+
-+#define DEFINE_PER_CPU_CACHE_HOT(type, name)				\
-+	DEFINE_PER_CPU_SECTION(type, name, "..hot.." #name)
-+
-+/*
-  * Declaration/definition used for per-CPU variables that must be cacheline
-  * aligned under SMP conditions so that, whilst a particular instance of the
-  * data corresponds to a particular CPU, inefficiencies due to direct access by
+SWILTLB enabled on client and disabled on host - rate limited?
+SWILTLB enabled on client and enabled on host - rate limited?
+SWILTLB disabled on client and enabled on host - rate limited?
+SWILTLB disabled on client and disabled on host - not a problem
+
+thanks,
+-- Shuah
+
+
 
