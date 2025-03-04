@@ -1,123 +1,145 @@
-Return-Path: <linux-kernel+bounces-545589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCEAAA4EEF3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:00:28 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C7AA4EEF6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:00:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DB7CD171FAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:00:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 501E87A8256
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CDF7260384;
-	Tue,  4 Mar 2025 21:00:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03B3276042;
+	Tue,  4 Mar 2025 21:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9HrlEgw"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="jg7hpmhW"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0A3913B58B;
-	Tue,  4 Mar 2025 21:00:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5611F7076;
+	Tue,  4 Mar 2025 21:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741122020; cv=none; b=PArtsiNP1zu1sVn3HdZGxkk4hAz7d8vlsNpxZDsuDEz5hAm7wvQywin/K+69aFSkeuJ063ArtxVtQzJnPcMe1SiDmfMwNQKP793ySlS82vwVhDQR+fJETxTZHMOzy9H9uEa6nub7iQOwrtiP+LmHaf6fypt21Aopl1hO0pnCTak=
+	t=1741122028; cv=none; b=CAIzqXfXBAEYAzhLA+u13cs4omUSalSsCuDB8ns0EKXdcluF/ouZaPOPQJ2dBk+ZQuWNB/6pgVle6nwONj6FHpiiDvDXr7kCQXWVBmdpSrX7ef6KqYookGah0c+dLDTuuXqcK5FYDwtebG+JkvmZ+JJFgL08L6S54/ciuVEEDnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741122020; c=relaxed/simple;
-	bh=DkO8vqGaCxhiZ558GYpuGAy5F9fFTFBI+V5glW4tExk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jRsGe2+W3CXHC/+IF01+aOlMa3SjSfWoSyppj1o4QUUQ8RmUD6XXN2IvFvPGZKZOvYlPOHADHrAS+3ekqfBeS95oepJHVPELATKFsSovsNbnenb1zKD7pN+pEhoOE57QQ+9rlL0wkEP1UdJnhPOez95ehrx2ayh1UsVwfkrtcUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9HrlEgw; arc=none smtp.client-ip=209.85.216.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2fd02536660so1383939a91.2;
-        Tue, 04 Mar 2025 13:00:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741122019; x=1741726819; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DkO8vqGaCxhiZ558GYpuGAy5F9fFTFBI+V5glW4tExk=;
-        b=L9HrlEgwVuuy/J6oyQD3hsh24xrcSSYcd46nojVZAw0nqF3lpAseVq896k7slhTm4Y
-         0iXPHEsep28e66679W/dtFBzx3H8onQGrbKw53iLsXLzHKKIRb49MYZPurQuSiB8G5B1
-         Q2FYuN9u2/t94pMCR5KOJpOJI/oXja0lNAasXgu339hVUET+aUtX8s9Ci39jph+2TmuD
-         9pJaaRWRh6Ck/NhzlDL58r2nizaVSg8mjlXWDnt5ZjjiPJTAbjTwsmno/YbqiCntOUp2
-         ds0PrrCIaTD53A8o1BIT688ZFq3IjbtLFFfCifp/O4/FG2vZN03FF3iRauqjoTLpLABm
-         ROTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741122019; x=1741726819;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DkO8vqGaCxhiZ558GYpuGAy5F9fFTFBI+V5glW4tExk=;
-        b=FMYyql07bhsiSaviRS2bfw9GXkFBv1XSvOrTvP1M+1cmUeNVfJ9+6k3mOTwtK/WqRW
-         7U/WZVq2v7ABmEa0JiBLLh1ZpwSELI6GkikJb/3OocGQEGbwLPaYV1NW3sHP3RtDN7M7
-         aP1nGoMjZdlXZE8oOEQDRJqASk374Kj8tOeynEau7Ft5dpxSJMeMwKFU2bxHFv89Zwji
-         iCOW6AroHcKlGrW7fo/PEqxKvOIiZGZKfTAufvc8wDCYO0HSJ0yi8hlvpNCJrQxtxHu1
-         qlQQxFCH00x4O9DfE+noDMuGUfwBch8lg/QVDW4lbNbLjLFJFu85plMen/tjVEPVVkBO
-         +oTg==
-X-Forwarded-Encrypted: i=1; AJvYcCW3sEF1IJba2pfksX3mGCcuwZkD1lQnyByhBf/HtqJHw76dT5ceV7YQQfm6kmzwTN/BW13ldC2w1re4OEY=@vger.kernel.org, AJvYcCWPTqkNWJeaadsjMFamvxCMld8Fos6oM1xyHMFFSdkH64ye8+/rQ679hmwafeELc6bEah87GTR93kkmKd1oh1s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0RUR1jCWJWDcP5rdilE/dZZQA0kKpA3B7w1Z8OD/UzTIvMuae
-	Q0bZs1GicgBMP+PcyOjNHdGsQ3V0VsOAZIUPHxs71XiDgzXH/qzBOrYBCKzO+o6xM+wv+MNlDHf
-	5gCmcbkankkqKTPuDCrU77Dl7wdw=
-X-Gm-Gg: ASbGncvOX2kEQlzdLIeHwclckKJCv5dSTx6AVl4z0DnVFlihrTIGr0W7qcQY26FIOGO
-	j+GAjMXOA1L80ulUARYaAXVY7XIrb56g17fXtvwvvWgoRYE1pwBM2yGusdw5IWpph2NLDac4K5e
-	lUBh0HT9QSmREaMEurdR8yrMIZcw==
-X-Google-Smtp-Source: AGHT+IH8msz9C67j2ZJZxakUz8S4LbQG08GAyBfGOl4QHKMO3AEokLocjvxhY/71RydgDc5G7JFtlBFdCMK0D6dvGTg=
-X-Received: by 2002:a17:90b:4f47:b0:2fc:1845:9f68 with SMTP id
- 98e67ed59e1d1-2ff49836bd5mr390481a91.6.1741122018797; Tue, 04 Mar 2025
- 13:00:18 -0800 (PST)
+	s=arc-20240116; t=1741122028; c=relaxed/simple;
+	bh=0Z+9kiKDFnIcXDbnRazK7aF//miZ0UNiijEm8N+3uoc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SgZQoKf5HRXfGBLG7uoFRucxpu70ZBU2YivWryHUtkEOcvymflrALXw5JqzKU2gDW0n5ZhDvkhcMeI0UmAs/SoSUQoqIqH/d5rshJZnXtmNDxDjiMOxPG0p8dQXrvf0X/2V8n7kKCA47aKdPZ9MBf5g+MWNOrTBsTrIwJD4Xgxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=jg7hpmhW; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524Kci5k014511;
+	Tue, 4 Mar 2025 21:00:24 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=7xGcW4sgPBDzi5F3yytDSrPK1EIb9h
+	kVolhk9uQtGJg=; b=jg7hpmhWdNxpOX1nXZLn/4Uso9wQuzVEmzCHPtFqJo9tL7
+	E0KVv1eqA0csutba8M5TD0pRU+jZVj1vN4vi+x7sJOs5stZ7icv8Ag49GJY4ay7L
+	T9esr9DGa2EWlfw2Rl2D4VSWDzEVBBQ6J+/pg2b0lGviHi4ZO+8QkWod+uyMMDR5
+	cKa7UjTDZRsGMPwQFstr33MfkraaoDpvxHXQ5KXDJQNVIrT7Yw04V8XpEHmOVOQQ
+	Kc1BZ8CCXPbSxC2f8RQkkT1uP6u+tFfV3w3LuqJHNPY7294eAtQbevw1t4odoKlK
+	Yso85sZ+iP+ouPjPIqleFzFs1j168gME2tyOt2gg==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4568r0g21c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 21:00:23 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524I9bpY031827;
+	Tue, 4 Mar 2025 21:00:23 GMT
+Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 454cjsym47-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 21:00:23 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524L0Jhf35914166
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 21:00:19 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id BC6AF20049;
+	Tue,  4 Mar 2025 21:00:19 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2138C20040;
+	Tue,  4 Mar 2025 21:00:19 +0000 (GMT)
+Received: from localhost (unknown [9.171.29.134])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Tue,  4 Mar 2025 21:00:19 +0000 (GMT)
+Date: Tue, 4 Mar 2025 22:00:17 +0100
+From: Vasily Gorbik <gor@linux.ibm.com>
+To: Anthony Krowiak <akrowiak@linux.ibm.com>
+Cc: Rorie Reyes <rreyes@linux.ibm.com>, linux-s390@vger.kernel.org,
+        linux-kernel@vger.kernel.org, kvm@vger.kernel.org, hca@linux.ibm.com,
+        borntraeger@de.ibm.com, agordeev@linux.ibm.com, pasic@linux.ibm.com,
+        jjherne@linux.ibm.com, alex.williamson@redhat.com
+Subject: Re: [RFC PATCH v2] s390/vfio-ap: Notify userspace that guest's AP
+ config changed when mdev removed
+Message-ID: <your-ad-here.call-01741122017-ext-6684@work.hours>
+References: <20250304200812.54556-1-rreyes@linux.ibm.com>
+ <a3e051e0-b2c3-4e2e-961e-ee36956a5666@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87tt89gfe4.fsf@kernel.org> <20250304205054.207285-1-trintaeoitogc@gmail.com>
-In-Reply-To: <20250304205054.207285-1-trintaeoitogc@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 4 Mar 2025 22:00:06 +0100
-X-Gm-Features: AQ5f1JruOVbE14tvT1lMIOeeFc1cC-ef_fCY1TDUk1ktVEqX2fKHKZX-Rl6OICA
-Message-ID: <CANiq72koDba445gMYtC_VEcFk2+O-Xg2-2y6uMyp7onBy=7rcw@mail.gmail.com>
-Subject: Re: [PATCH V6 2/2] checkpatch: check format of Vec<String> in modules
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, 
-	apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com, axboe@kernel.dk, 
-	benno.lossin@proton.me, bhelgaas@google.com, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, dakr@kernel.org, dwaipayanray1@gmail.com, 
-	ethan.twardy@gmail.com, fujita.tomonori@gmail.com, gary@garyguo.net, 
-	gregkh@linuxfoundation.org, joe@perches.com, linux-kernel@vger.kernel.org, 
-	lukas.bulwahn@gmail.com, ojeda@kernel.org, pbonzini@redhat.com, 
-	rust-for-linux@vger.kernel.org, tmgross@umich.edu, walmeida@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <a3e051e0-b2c3-4e2e-961e-ee36956a5666@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: CCrlg6u0lCcKuuLz5-j3vf6tp7cd-_fF
+X-Proofpoint-ORIG-GUID: CCrlg6u0lCcKuuLz5-j3vf6tp7cd-_fF
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ mlxscore=0 phishscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040168
 
-On Tue, Mar 4, 2025 at 9:51=E2=80=AFPM Guilherme Giacomo Simoes
-<trintaeoitogc@gmail.com> wrote:
->
-> hostprog like rustfmt?
+On Tue, Mar 04, 2025 at 03:11:12PM -0500, Anthony Krowiak wrote:
+> On 3/4/25 3:08 PM, Rorie Reyes wrote:
+> > The guest's AP configuration is cleared when the mdev is removed, so
+> > userspace must be notified that the AP configuration has changed. To this
+> > end, this patch:
+> > 
+> > * Removes call to 'signal_guest_ap_cfg_changed()' function from the
+> >    'vfio_ap_mdev_unset_kvm()' function because it has no affect given it is
+> >    called after the mdev fd is closed.
+> > 
+> > * Adds call to 'signal_guest_ap_cfg_changed()' function to the
+> >    'vfio_ap_mdev_request()' function to notify userspace that the guest's
+> >    AP configuration has changed before signaling the request to remove the
+> >    mdev.
+> > 
+> > Minor change - Fixed an indentation issue in function
+> > 'signal_guest_ap_cfg_changed()'
+> > 
+> > Fixes: 07d89045bffe ("s390/vfio-ap: Signal eventfd when guest AP configuration is changed")
+> > Signed-off-by: Rorie Reyes <rreyes@linux.ibm.com>
+> > ---
+> > This patch is based on the s390/features branch
+> > 
+> > V1 -> V2:
+> > - replaced get_update_locks_for_kvm() with get_update_locks_for_mdev
+> > - removed else statements that were unnecessary
+> > - Addressed review comments for commit messages/details
+> > ---
+> >   drivers/s390/crypto/vfio_ap_ops.c | 15 ++++++++++++---
+> >   1 file changed, 12 insertions(+), 3 deletions(-)
 
-No, Andreas means a script written in Rust, rather than a binary that
-comes from the toolchain.
+> > @@ -2068,6 +2074,9 @@ static void vfio_ap_mdev_request(struct vfio_device *vdev, unsigned int count)
+> >   		dev_notice(dev,
+> >   			   "No device request registered, blocked until released by user\n");
+> >   	}
+> > +
+> > +	release_update_locks_for_mdev(matrix_mdev);
+> > +
+> 
+> Get rid of empty line; other than that, LGTM
+> Reviewed-by: Anthony Krowiak <akrowiak@linux.ibm.com>
 
-I think it could be a good idea (it would be lovely to write the
-checker in Rust -- I also had a checker bot in Python from the old
-days of the old `rust` branch in GitHub), but `checkpatch.pl` doesn't
-need a built kernel, so it would be a disadvantage or at least a
-difference w.r.t. the usual `checkpatch.pl`, and we may not be able to
-call it from `checkpatch.pl`.
-
-> About this, Daniel Sedlak say:
-> "I think we could fight with the code formatting, because when it comes
-> to the rust macros, rustfmt is often very confused and we could end up
-> with variations like:
-
-Did you check? i.e. is it something we noticed, or something that
-generally happens but maybe not in this case? Is there a way to
-workaround or disable that (e.g. a `rustfmt` config value)?
-
-Thanks!
-
-Cheers,
-Miguel
+Removed the empty line and applied, thank you!
 
