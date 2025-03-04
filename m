@@ -1,93 +1,136 @@
-Return-Path: <linux-kernel+bounces-543253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D0D6A4D364
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:06:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51771A4D36C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:07:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC7E616C87B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:06:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7731C189779C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:07:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670431F4604;
-	Tue,  4 Mar 2025 06:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CBE1F63F0;
+	Tue,  4 Mar 2025 06:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I7muvuz2"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EKB/1p3w"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6E5D53AC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2546A1F582E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741068374; cv=none; b=lFEQKXHIQ8rdZ/SmH555UZpgexhj/B1Fa9dXDYWYAyGzL9x9/YGF4Z6BRCWtDcxxIqp3zyI2zKagOMkn6Qdt6TOxI4fKE0qGSU+UlF6jXbkXP9d0drQJr0gQbUEBB/i01L2YIm1X+QEMF9nz3Cp+gHuzJubmyRZXLJvEBVVSkVo=
+	t=1741068424; cv=none; b=Jbql4Zcv3zxBEyChBM+6VqoqN5DWDbBEYrZodflH1vSuuVM5Zb4tJ50qqgJQfSn6oVFfBXaXzaAZbHJVzzjWaQLSxyH7mjEDgzIG08C7bmMEOXaiYZdKS30rLBDklCjeMnjLNKqSYBHgrJZFKEx3zpV+DGir1YdyG2mlkcZSqWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741068374; c=relaxed/simple;
-	bh=QtEa1zq3/mNdAOhk1rn6asgWWsdKjD5zozOj80+BDFo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gIsNzhhLaQw7w0ASorAuU6zQI5T3lL3XscMcufDqGBjppmR9j+X0XjnA0Y2J3UBZDJYdxaTBOJZrL6xZkfTrQu68QV7xAMawtisdJ6cIX6y48VLOyq6gl3YwWGEPfMqQZVQ91icHSjXD4zyZE/KnMaXeIZIgTIczEwdsdRzEghs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I7muvuz2; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741068367;
+	s=arc-20240116; t=1741068424; c=relaxed/simple;
+	bh=H3yi31HVokcXJOCubsppmA5t1sFMy5S8K3VED2TAarI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o0TpLdyGbkgTli2O3z46yTflFg7UWsLdXhbCx6zq9PlXgCPwVdk0j6W3uZW3nLMr14QYPdLa4a0/rvVGKz3z3WnbpJa29t/cGE1UhBlQaxx6d+kDwe4Bmdj8TlH79mYkqsij/0YXrvQpjtga8a27B6bRPnI9OFVvsE57vusRO28=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EKB/1p3w; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741068421;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding;
-	bh=hNtZKMGCFYNKNfdPUddVscJWUmXlLMRCxoU5HIaNvO4=;
-	b=I7muvuz2G3D7+JDF+j0a4x+NgZyhG2lznmZ+QSkl/KODhLEbQkjR96tW5X/cNOhZQqcTo+
-	FZVsDX8btbpajcQN2iBGk+k8p8IXZFYy5KrJUFHvym3t9g65uP51Zd80Wq06Fz+/ERWLUP
-	zsWtv3thl1YyhROvaCt9O+6yHvcgi4E=
-From: sunliming@linux.dev
-To: lars@metafoo.de,
-	Michael.Hennerich@analog.com,
-	nuno.sa@analog.com,
-	jic23@kernel.org
-Cc: linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sunliming@kylinos.cn,
-	kernel test robot <lkp@intel.com>,
-	Dan Carpenter <error27@gmail.com>
-Subject: [PATCH] iio: imu: adis: fix uninitialized symbol warning
-Date: Tue,  4 Mar 2025 14:05:18 +0800
-Message-Id: <20250304060518.1834910-1-sunliming@linux.dev>
+	bh=Gh8Xe3wJDPflxFCDUNvREYtPLwvRg7q/ggCpf5a4R/o=;
+	b=EKB/1p3wm0LdomkUzwqtNk2j+f8ltus6buaOX9mTwMDS9Vo5CVg5tM9gICPlcdLCIQTuUm
+	f/CnXPgGK7sm5jnI9lEKHyu9BXQV5T+Hx71eAM/LRmxik0kZOv83Dj9obofxww3fzy0ipY
+	MsFOUs6uyCK6oEtwN0RpRXVaVyuy0mk=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-230-m7A5iEGUNZ-MxK0My6uWjA-1; Tue,
+ 04 Mar 2025 01:06:50 -0500
+X-MC-Unique: m7A5iEGUNZ-MxK0My6uWjA-1
+X-Mimecast-MFC-AGG-ID: m7A5iEGUNZ-MxK0My6uWjA_1741068409
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3367F180087E;
+	Tue,  4 Mar 2025 06:06:49 +0000 (UTC)
+Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 50A6919560A3;
+	Tue,  4 Mar 2025 06:06:48 +0000 (UTC)
+From: Paolo Bonzini <pbonzini@redhat.com>
+To: linux-kernel@vger.kernel.org,
+	kvm@vger.kernel.org
+Cc: xiaoyao.li@intel.com,
+	seanjc@google.com,
+	yan.y.zhao@intel.com
+Subject: [PATCH v3 0/4] KVM: x86: Introduce quirk KVM_X86_QUIRK_IGNORE_GUEST_PAT
+Date: Tue,  4 Mar 2025 01:06:41 -0500
+Message-ID: <20250304060647.2903469-1-pbonzini@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: sunliming <sunliming@kylinos.cn>
+This series is my evolution of Yan's patches at
+https://patchew.org/linux/20250224070716.31360-1-yan.y.zhao@intel.com/.
 
-Fix below kernel warning:
-smatch warnings:
-drivers/iio/imu/adis.c:319 __adis_check_status() error: uninitialized symbol 'status_16'.
+The implementation of the quirk is unchanged, but the concepts in kvm_caps
+are a bit different.  In particular:
 
-Reported-by: kernel test robot <lkp@intel.com>
-Reported-by: Dan Carpenter <error27@gmail.com>
-Signed-off-by: sunliming <sunliming@kylinos.cn>
----
- drivers/iio/imu/adis.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- if a quirk is not applicable to some hardware, it is still included
+  in KVM_CAP_DISABLE_QUIRKS2.  This way userspace knows that KVM is
+  *aware* of a particular issue - even if disabling it has no effect
+  because the quirk is not a problem on a specific hardware, userspace
+  may want to know that it can rely on the problematic behavior not
+  being present.  Therefore, KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT is
+  simply auto-disabled on TDX machines.
 
-diff --git a/drivers/iio/imu/adis.c b/drivers/iio/imu/adis.c
-index 1c646c36aeb1..0ea072a4c966 100644
---- a/drivers/iio/imu/adis.c
-+++ b/drivers/iio/imu/adis.c
-@@ -306,7 +306,7 @@ int __adis_check_status(struct adis *adis)
- {
- 	unsigned int status;
- 	int diag_stat_bits;
--	u16 status_16;
-+	u16 status_16 = 0;
- 	int ret;
- 	int i;
- 
+- if instead a quirk cannot be disabled due to limitations, for example
+  KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT if self-snoop is not present on
+  the CPU, the quirk is removed completely from kvm_caps.supported_quirks
+  and therefore from KVM_CAP_DISABLE_QUIRKS2.
+
+This series does not introduce a way to query always-disabled quirks,
+which could be for example KVM_CAP_DISABLED_QUIRKS.  This could be
+added if we wanted for example to get rid of hypercall patching; it's
+a trivial addition.
+
+The main semantic change with respect to v2 is to prevent re-enabling
+quirks that have been disabled with KVM_ENABLE_CAP.  This in turn makes
+it possible to just use kvm->arch.disabled_quirks for TDX-enabled
+
+Paolo
+
+Supersedes: <20250301073428.2435768-1-pbonzini@redhat.com>
+
+Paolo Bonzini (3):
+  KVM: x86: do not allow re-enabling quirks
+  KVM: x86: Allow vendor code to disable quirks
+  KVM: x86: remove shadow_memtype_mask
+
+Yan Zhao (3):
+  KVM: x86: Introduce supported_quirks to block disabling quirks
+  KVM: x86: Introduce Intel specific quirk
+    KVM_X86_QUIRK_IGNORE_GUEST_PAT
+  KVM: TDX: Always honor guest PAT on TDX enabled guests
+
+ Documentation/virt/kvm/api.rst  | 22 +++++++++++++++++
+ arch/x86/include/asm/kvm_host.h |  7 +++++-
+ arch/x86/include/uapi/asm/kvm.h |  1 +
+ arch/x86/kvm/mmu.h              |  2 +-
+ arch/x86/kvm/mmu/mmu.c          | 13 ----------
+ arch/x86/kvm/mmu/spte.c         | 19 ++-------------
+ arch/x86/kvm/mmu/spte.h         |  1 -
+ arch/x86/kvm/svm/svm.c          |  1 +
+ arch/x86/kvm/vmx/tdx.c          |  6 +++++
+ arch/x86/kvm/vmx/vmx.c          | 43 +++++++++++++++++++++++++++------
+ arch/x86/kvm/x86.c              | 13 +++++++---
+ arch/x86/kvm/x86.h              |  3 +++
+ 12 files changed, 87 insertions(+), 44 deletions(-)
+
 -- 
-2.25.1
+2.43.5
 
 
