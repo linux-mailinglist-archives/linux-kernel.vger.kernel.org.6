@@ -1,232 +1,131 @@
-Return-Path: <linux-kernel+bounces-543705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3B3A4D8F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:44:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0A95A4D8D9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:41:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C4743B66C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:38:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9613E188B18F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1321FF5F6;
-	Tue,  4 Mar 2025 09:37:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D1F200B95;
+	Tue,  4 Mar 2025 09:37:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NthV14LY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Ad4TYRdP"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="SYsFw1XT"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 318491FC7F6;
-	Tue,  4 Mar 2025 09:37:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79F481FF5EA;
+	Tue,  4 Mar 2025 09:37:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081043; cv=none; b=Q1lg0aeBb1E09zw5M9jfzrsIMZEnhvNd0fn8FD44LntxMFSEVoFLFKUMpu/Y2h7pMh/H/+GZ53A4/nHqrervzYgZSbvUHTS0NLWYYYk0+Nn0bOQt0nHUA9M8xo1CbTuiGj3SKL6AH4rkKODReSxPxKy4249F8ClzStYNTfuuCQU=
+	t=1741081045; cv=none; b=qi7F2sSRya0lTqIiyd527rWzJII8zoagE7oUAI7LiFmpmicJQYkZjjZ3JRoWa9VnseSTX1oYI5i325AJzPYiCyu4FG+XKSaMi682pI4Uerna05mhl2R3nTglqewQlVP0JHvazzpZzcEHAJr93i+hxHohp5ZFMvwZqSEdZkFu3CU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081043; c=relaxed/simple;
-	bh=113PVFaPa4+TzerInU4d2BPqT/JisSb1AvqesKdyC3Y=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=KTq9CJuKoGa+WuxEHq0nGbAwGT8F1Xr3qKlFVo10zmQUruVR/PRGvyl2vPNFd5zRcRxVV7kBTLZ5DFPEYf0h/A36L+yl4LJiokf6AdOQPI7sOQXK9+0CGDB1adaTKSZNYT7eqKPiBm6zoOLhhPcb0uXwu7G2WAuBKTaySfZDmUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NthV14LY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Ad4TYRdP; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 09:37:18 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741081039;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jmzX5en/CfvRSkr8JFMxbx+HqYHmUwj/LgDUtf5FKBM=;
-	b=NthV14LY/qH1oLXF/5oPylWqUMPju2Dti+Yo8DqzKqFO06wWrEyCQBloanuSWhIlLxBf2u
-	ZKuJ3acRQsS24dor6bBF3E8P0pVvPWXrq+C3lZPHEo42Cz9NOxvPvJufysz5dbNHvbskP/
-	wmoqGFVjX93MKFBvODuYKdaCCHapG1I2Eqa8wIrCWzIVZp1XI8xU7lTMAm89o1nrv5Xk09
-	oYNBm//9f99K2knUaTZy5NBpgP7OtB0n616VNCTdu6mop29aMo9prJ1dXf2hmsJFifBMv/
-	9UuzrJrbW/qU95GCxeIuSlRiux3vuM6wDuIAqy1xOAYHyBXqM+rITQpJQAn9XQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741081039;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=jmzX5en/CfvRSkr8JFMxbx+HqYHmUwj/LgDUtf5FKBM=;
-	b=Ad4TYRdP1aFgDx981fTlUSgTUIYua/RY9ReGsGFAPBvzMoqM5YgYVFoTb/dMi11xL61Z6o
-	iTkB37zp/PxyvjBw==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: x86/cpu] x86/cpu: Get rid of the smp_store_cpu_info() indirection
-Cc: Thomas Gleixner <tglx@linutronix.de>,
- "Ahmed S. Darwish" <darwi@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250304085152.51092-9-darwi@linutronix.de>
-References: <20250304085152.51092-9-darwi@linutronix.de>
+	s=arc-20240116; t=1741081045; c=relaxed/simple;
+	bh=O+9rlfF/uzRCAS1prhuz8xBGKDW0RRz/qKexdWg2yVs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gxKVMjcHE9j/KPeWq8TayLe6XdYDuBtMP8EEv38M0gxCNKfeKAFWxhiz/Rsr+aq0NMpFL/qqX8w2tGZsuu5/uokLHRc0RBH3VDzO9Q5vGDOLZgIfMCaM6USiysH8wbSl5cjx8Aaie++rziobjQfhTaaC1u2ZKyazy0xnwD8a1m4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=SYsFw1XT; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741081041;
+	bh=O+9rlfF/uzRCAS1prhuz8xBGKDW0RRz/qKexdWg2yVs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=SYsFw1XTKGn8nlc9yGX98hysdmfTLwmrKPyhJ5f/AOf3GEnpmEgtgOcuym/Lbywf2
+	 drGLXcgVkOWwW6a+o9VD1HK0PYaFKCSg5Uc9waeVycLHxL4djvQEMUGX5RT9qLE8j7
+	 VezMteK7KIQ03Chmgc+PQR3YGIb1yYrEFwWrf3utdxXvu1f2wT7E4pvetrKgsI6F8s
+	 pwgP4ERTLHmrKj6LersjzLz6NzjBjcPBBVBJprDynLV7kxbgbs70u76JMVE0RAS551
+	 Z8TBl46NuCVESgDiKXzaaD4c4/NwOvdSL3HuqlNsyfoFIJ7OrI/DzV3Lb5Z07D+cT0
+	 ADsdzhXOHYaHQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 61DDC17E0630;
+	Tue,  4 Mar 2025 10:37:20 +0100 (CET)
+Message-ID: <c1395546-9cfe-4da9-b87a-e5cc392910f6@collabora.com>
+Date: Tue, 4 Mar 2025 10:37:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174108103883.14745.3512782926989212177.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 5/8] soc: mediatek: mtk-cmdq: Add mminfra_offset
+ compatibility for DRAM address
+To: Jason-JH Lin <jason-jh.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Chun-Kuang Hu <chunkuang.hu@kernel.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Matthias Brugger <matthias.bgg@gmail.com>,
+ Nancy Lin <nancy.lin@mediatek.com>, Singo Chang <singo.chang@mediatek.com>,
+ Moudy Ho <moudy.ho@mediatek.com>, Xavier Chang <xavier.chang@mediatek.com>,
+ Xiandong Wang <xiandong.wang@mediatek.com>,
+ Sirius Wang <sirius.wang@mediatek.com>, Fei Shao <fshao@chromium.org>,
+ Pin-yen Lin <treapking@chromium.org>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org
+References: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
+ <20250218054405.2017918-6-jason-jh.lin@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250218054405.2017918-6-jason-jh.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/cpu branch of tip:
+Il 18/02/25 06:41, Jason-JH Lin ha scritto:
+> Since GCE has been moved to mminfra in MT8196, all transactions from
+> mminfra to DRAM will have their addresses adjusted by subtracting a
+> mminfra offset.
+> This information should be handled inside the CMDQ driver, allowing
+> CMDQ users to call CMDQ APIs as usual.
+> 
+> Therefore, CMDQ driver needs to use the mbox API to get the
+> mminfra_offset value of the SoC, and then add it to the DRAM address
+> when generating instructions to ensure GCE accesses the correct DRAM
+> address.
+> 
+> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
+> ---
+>   drivers/soc/mediatek/mtk-cmdq-helper.c | 35 ++++++++++++++++++++++++--
+>   1 file changed, 33 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-cmdq-helper.c b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> index aa9853100d78..f2853a74af01 100644
+> --- a/drivers/soc/mediatek/mtk-cmdq-helper.c
+> +++ b/drivers/soc/mediatek/mtk-cmdq-helper.c
+> @@ -314,10 +314,22 @@ EXPORT_SYMBOL(cmdq_pkt_write_s_mask_value);
+>   
+>   int cmdq_pkt_mem_move(struct cmdq_pkt *pkt, dma_addr_t src_addr, dma_addr_t dst_addr)
+>   {
+> +	struct cmdq_client *cl = (struct cmdq_client *)pkt->cl;
+>   	const u16 high_addr_reg_idx  = CMDQ_THR_SPR_IDX0;
+>   	const u16 value_reg_idx = CMDQ_THR_SPR_IDX1;
+>   	int ret;
+>   
+> +	if (!cl) {
+> +		pr_err("%s %d: pkt->cl is NULL!\n", __func__, __LINE__);
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (cmdq_addr_need_offset(cl->chan, src_addr))
+> +		src_addr += cmdq_get_offset_pa(cl->chan);
 
-Commit-ID:     1419833d3c2de8ad648d053f230a7f3dcf4fa973
-Gitweb:        https://git.kernel.org/tip/1419833d3c2de8ad648d053f230a7f3dcf4fa973
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Tue, 04 Mar 2025 09:51:19 +01:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 10:15:24 +01:00
+If the offset is just DRAM IOSTART, you could manage that differently in the cmdq
+helper as well as the cmdq mailbox... :-)
 
-x86/cpu: Get rid of the smp_store_cpu_info() indirection
-
-smp_store_cpu_info() is just a wrapper around identify_secondary_cpu()
-without further value.
-
-Move the extra bits from smp_store_cpu_info() into identify_secondary_cpu()
-and remove the wrapper.
-
-[ darwi: Make it compile and fix up the xen/smp_pv.c instance ]
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250304085152.51092-9-darwi@linutronix.de
----
- arch/x86/include/asm/processor.h |  2 +-
- arch/x86/include/asm/smp.h       |  2 --
- arch/x86/kernel/cpu/common.c     | 11 +++++++++--
- arch/x86/kernel/smpboot.c        | 24 ++----------------------
- arch/x86/xen/smp_pv.c            |  2 +-
- 5 files changed, 13 insertions(+), 28 deletions(-)
-
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 0ea227f..d5d9a07 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -229,7 +229,7 @@ static inline unsigned long long l1tf_pfn_limit(void)
- void init_cpu_devs(void);
- void get_cpu_vendor(struct cpuinfo_x86 *c);
- extern void early_cpu_init(void);
--extern void identify_secondary_cpu(struct cpuinfo_x86 *);
-+extern void identify_secondary_cpu(unsigned int cpu);
- extern void print_cpu_info(struct cpuinfo_x86 *);
- void print_cpu_msr(struct cpuinfo_x86 *);
- 
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index 1d3b11e..128e06a 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -120,8 +120,6 @@ void native_smp_send_reschedule(int cpu);
- void native_send_call_func_ipi(const struct cpumask *mask);
- void native_send_call_func_single_ipi(int cpu);
- 
--void smp_store_cpu_info(int id);
--
- asmlinkage __visible void smp_reboot_interrupt(void);
- __visible void smp_reschedule_interrupt(struct pt_regs *regs);
- __visible void smp_call_function_interrupt(struct pt_regs *regs);
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 3a1a957..5f81c55 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1997,9 +1997,15 @@ static __init void identify_boot_cpu(void)
- 	lkgs_init();
- }
- 
--void identify_secondary_cpu(struct cpuinfo_x86 *c)
-+void identify_secondary_cpu(unsigned int cpu)
- {
--	BUG_ON(c == &boot_cpu_data);
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
-+
-+	/* Copy boot_cpu_data only on the first bringup */
-+	if (!c->initialized)
-+		*c = boot_cpu_data;
-+	c->cpu_index = cpu;
-+
- 	identify_cpu(c);
- #ifdef CONFIG_X86_32
- 	enable_sep_cpu();
-@@ -2010,6 +2016,7 @@ void identify_secondary_cpu(struct cpuinfo_x86 *c)
- 		update_gds_msr();
- 
- 	tsx_ap_init();
-+	c->initialized = true;
- }
- 
- void print_cpu_info(struct cpuinfo_x86 *c)
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index 5746084..8ecf1bf 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -190,7 +190,7 @@ static void ap_starting(void)
- 	apic_ap_setup();
- 
- 	/* Save the processor parameters. */
--	smp_store_cpu_info(cpuid);
-+	identify_secondary_cpu(cpuid);
- 
- 	/*
- 	 * The topology information must be up to date before
-@@ -215,7 +215,7 @@ static void ap_calibrate_delay(void)
- {
- 	/*
- 	 * Calibrate the delay loop and update loops_per_jiffy in cpu_data.
--	 * smp_store_cpu_info() stored a value that is close but not as
-+	 * identify_secondary_cpu() stored a value that is close but not as
- 	 * accurate as the value just calculated.
- 	 *
- 	 * As this is invoked after the TSC synchronization check,
-@@ -315,26 +315,6 @@ static void notrace start_secondary(void *unused)
- 	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
- }
- 
--/*
-- * The bootstrap kernel entry code has set these up. Save them for
-- * a given CPU
-- */
--void smp_store_cpu_info(int id)
--{
--	struct cpuinfo_x86 *c = &cpu_data(id);
--
--	/* Copy boot_cpu_data only on the first bringup */
--	if (!c->initialized)
--		*c = boot_cpu_data;
--	c->cpu_index = id;
--	/*
--	 * During boot time, CPU0 has this setup already. Save the info when
--	 * bringing up an AP.
--	 */
--	identify_secondary_cpu(c);
--	c->initialized = true;
--}
--
- static bool
- topology_same_node(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- {
-diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
-index 6863d3d..688ff59 100644
---- a/arch/x86/xen/smp_pv.c
-+++ b/arch/x86/xen/smp_pv.c
-@@ -70,7 +70,7 @@ static void cpu_bringup(void)
- 		xen_enable_syscall();
- 	}
- 	cpu = smp_processor_id();
--	smp_store_cpu_info(cpu);
-+	identify_secondary_cpu(cpu);
- 	set_cpu_sibling_map(cpu);
- 
- 	speculative_store_bypass_ht_init();
+> +
+> +	if (cmdq_addr_need_offset(cl->chan, dst_addr))
+> +		dst_addr += cmdq_get_offset_pa(cl->chan);
+> +
+Cheers,
+Angelo
 
