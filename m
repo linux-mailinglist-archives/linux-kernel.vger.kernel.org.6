@@ -1,183 +1,140 @@
-Return-Path: <linux-kernel+bounces-543079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC5AA4D135
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:48:01 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8719BA4D139
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:50:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588C93AB7EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:47:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 772D77A9757
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA39E14830C;
-	Tue,  4 Mar 2025 01:47:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="D0mGKI6u"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E6A136347;
-	Tue,  4 Mar 2025 01:47:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886C8155CBD;
+	Tue,  4 Mar 2025 01:46:44 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FE7136347;
+	Tue,  4 Mar 2025 01:46:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741052851; cv=none; b=YAOtCvL9rO/Z9Uc+/NGgPDrO3+s2sCishrGwLHjnqYm5SyTUqUAr4jIErGRnobmCZHCrDtE/5pmQWPLyN+t/ljkuMb3X0YGWoZOr7MaZokGnWud4hws3+HSaoXqtejhT3Ybqh4nj1cv4W1vdiYaCBoEKrPcxP0g9pR0pQJj4JQA=
+	t=1741052804; cv=none; b=H0k2hBQxyoalM28+l/xpuB/D7YdIbyUfYZROlwcjERMX7dys3QGjmPLqW8YzCf1E1EtjmfU4jv4h/5knt2EW6/V740oMthPrKmSpIFQOrXe43CSomWM7QOTRbXX3bYzcLnmTYhQJo55YeqJEoSebk5lStMJuUfhnPlI5hTdPphU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741052851; c=relaxed/simple;
-	bh=itatnIBL9MuZ4JyVcFNO6XYKdUfb6qT39ConBCUndNA=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=r1C518cMLcZzIb62Zr2XlGpkPYiGK/I0PbdtuEyC1sEoxVvmQCpAXxv3orXAtuAsz65IvkQ+mFaZrr6YwP+Qlf0TQKQ8F3Q2ZZXpTv2+gVsffJTqxvpC5/Unq8PcRAwGfUPopxTFEbEq+AnyWzRabXg+hXYeNdGT2Am5f9FHzVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=D0mGKI6u; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: by linux.microsoft.com (Postfix, from userid 1202)
-	id 126D9204E5B9; Mon,  3 Mar 2025 17:47:29 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 126D9204E5B9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
-	s=default; t=1741052849;
-	bh=bSP8AbizQps9S7CQl+lE3G/sxd1tc37Q1iVyE0aCu4E=;
-	h=From:To:Cc:Subject:Date:From;
-	b=D0mGKI6uNQC7M8tBttoqq04lMw5G7hJuaBOvg8Ik25rMIlz0LVhg9gc8g9KhJl5LW
-	 aAGnM6+7DQA37FbOt2xvRVvgYjMjtHd+KDyJzouq6xnrdQfWD4NN25CdebFgXS55Yc
-	 fl/n09UL+OV3MLYe0NSOTTlItLTOha3XtvRKC7GI=
-From: longli@linuxonhyperv.com
-To: Jason Gunthorpe <jgg@ziepe.ca>,
-	Leon Romanovsky <leon@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: linux-rdma@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hyperv@vger.kernel.org,
-	Long Li <longli@microsoft.com>
-Subject: [Patch rdma-next v2] RDMA/mana_ib: handle net event for pointing to the current netdev
-Date: Mon,  3 Mar 2025 17:47:27 -0800
-Message-Id: <1741052847-8271-1-git-send-email-longli@linuxonhyperv.com>
-X-Mailer: git-send-email 1.8.3.1
+	s=arc-20240116; t=1741052804; c=relaxed/simple;
+	bh=uI4aKqpuzt3742VEL0ucD83H5oRjcLrVnMEmZ0UADgQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Gpwzh+p6gdc53K2GXBxUCzj8OcEKh0c556MYK33v+b/RMKBNzxoH/ZbcNfHp88sQCJWy3ycrWb1xMkbaMqhxISusHixenx1aQleRFuOkayVfxZrNqOwOFT0qRPchDtD7sEGJ/6ub9XxATZ61vPlAtkP7c33MBNRB9+MAYysWaSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0706C4CEE8;
+	Tue,  4 Mar 2025 01:46:39 +0000 (UTC)
+Date: Mon, 3 Mar 2025 20:47:32 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Joel Granados <joel.granados@kernel.org>
+Cc: Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
+ Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
+ Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, "David S. Miller"
+ <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Heiko
+ Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
+ Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Gerald
+ Schaefer <gerald.schaefer@linux.ibm.com>, Thomas Gleixner
+ <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
+ <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
+ <lenb@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org,
+ linux-s390@vger.kernel.org, linux-acpi@vger.kernel.org
+Subject: Re: [PATCH 4/8] stack_tracer: move sysctl registration to
+ kernel/trace/trace.c
+Message-ID: <20250303204732.1f5af40d@gandalf.local.home>
+In-Reply-To: <20250218-jag-mv_ctltables-v1-4-cd3698ab8d29@kernel.org>
+References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
+	<20250218-jag-mv_ctltables-v1-4-cd3698ab8d29@kernel.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Long Li <longli@microsoft.com>
+On Tue, 18 Feb 2025 10:56:20 +0100
+Joel Granados <joel.granados@kernel.org> wrote:
 
-When running under Hyper-V, the master device to the RDMA device is always
-bonded to this RDMA device. This is not user-configurable.
+> Squash with ftrace:
+> Move stac_tracer_enabled into trace_sysctl_table while keeping the
+> CONFIG_STACK_TRACER ifdef. This is part of a greater effort to move ctl
+> tables into their respective subsystems which will reduce the merge
+> conflicts in kerenel/sysctl.c.
+> 
+> Signed-off-by: Joel Granados <joel.granados@kernel.org>
+> ---
+>  kernel/sysctl.c      | 10 ----------
+>  kernel/trace/trace.c |  9 +++++++++
+>  2 files changed, 9 insertions(+), 10 deletions(-)
+> 
+> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
+> index baa250e223a2..dc3747cc72d4 100644
+> --- a/kernel/sysctl.c
+> +++ b/kernel/sysctl.c
+> @@ -68,7 +68,6 @@
+>  
+>  #ifdef CONFIG_X86
+>  #include <asm/nmi.h>
+> -#include <asm/stacktrace.h>
+>  #include <asm/io.h>
+>  #endif
+>  #ifdef CONFIG_SPARC
+> @@ -1674,15 +1673,6 @@ static const struct ctl_table kern_table[] = {
+>  		.proc_handler	= proc_dointvec,
+>  	},
+>  #endif
+> -#ifdef CONFIG_STACK_TRACER
+> -	{
+> -		.procname	= "stack_tracer_enabled",
+> -		.data		= &stack_tracer_enabled,
+> -		.maxlen		= sizeof(int),
+> -		.mode		= 0644,
+> -		.proc_handler	= stack_trace_sysctl,
+> -	},
+> -#endif
+>  #ifdef CONFIG_MODULES
+>  	{
+>  		.procname	= "modprobe",
+> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+> index abfc0e56173b..17b449f9e330 100644
+> --- a/kernel/trace/trace.c
+> +++ b/kernel/trace/trace.c
 
-The master device can be unbind/bind from the kernel. During those events,
-the RDMA device should set to the current netdev to relect the change of
-master device from those events.
+This should go into kernel/trace/trace_stack.c, and remove the #ifdef.
 
-Signed-off-by: Long Li <longli@microsoft.com>
----
-Change in v2:
-Add missing error handling when register_netdevice_notifier() fails.
+-- Steve
 
- drivers/infiniband/hw/mana/device.c  | 46 ++++++++++++++++++++++++++--
- drivers/infiniband/hw/mana/mana_ib.h |  1 +
- 2 files changed, 45 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
-index 3416a85f8738..8c922a6d6720 100644
---- a/drivers/infiniband/hw/mana/device.c
-+++ b/drivers/infiniband/hw/mana/device.c
-@@ -51,6 +51,37 @@ static const struct ib_device_ops mana_ib_dev_ops = {
- 			   ib_ind_table),
- };
- 
-+static int mana_ib_netdev_event(struct notifier_block *this,
-+				unsigned long event, void *ptr)
-+{
-+	struct mana_ib_dev *dev = container_of(this, struct mana_ib_dev, nb);
-+	struct net_device *event_dev = netdev_notifier_info_to_dev(ptr);
-+	struct gdma_context *gc = dev->gdma_dev->gdma_context;
-+	struct mana_context *mc = gc->mana.driver_data;
-+	struct net_device *ndev;
-+
-+	if (event_dev != mc->ports[0])
-+		return NOTIFY_DONE;
-+
-+	switch (event) {
-+	case NETDEV_CHANGEUPPER:
-+		rcu_read_lock();
-+		ndev = mana_get_primary_netdev_rcu(mc, 0);
-+		rcu_read_unlock();
-+
-+		/*
-+		 * RDMA core will setup GID based on updated netdev.
-+		 * It's not possible to race with the core as rtnl lock is being
-+		 * held.
-+		 */
-+		ib_device_set_netdev(&dev->ib_dev, ndev, 1);
-+
-+		return NOTIFY_OK;
-+	default:
-+		return NOTIFY_DONE;
-+	}
-+}
-+
- static int mana_ib_probe(struct auxiliary_device *adev,
- 			 const struct auxiliary_device_id *id)
- {
-@@ -109,17 +140,25 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 	}
- 	dev->gdma_dev = &mdev->gdma_context->mana_ib;
- 
-+	dev->nb.notifier_call = mana_ib_netdev_event;
-+	ret = register_netdevice_notifier(&dev->nb);
-+	if (ret) {
-+		ibdev_err(&dev->ib_dev, "Failed to register net notifier, %d",
-+			  ret);
-+		goto deregister_device;
-+	}
-+
- 	ret = mana_ib_gd_query_adapter_caps(dev);
- 	if (ret) {
- 		ibdev_err(&dev->ib_dev, "Failed to query device caps, ret %d",
- 			  ret);
--		goto deregister_device;
-+		goto deregister_net_notifier;
- 	}
- 
- 	ret = mana_ib_create_eqs(dev);
- 	if (ret) {
- 		ibdev_err(&dev->ib_dev, "Failed to create EQs, ret %d", ret);
--		goto deregister_device;
-+		goto deregister_net_notifier;
- 	}
- 
- 	ret = mana_ib_gd_create_rnic_adapter(dev);
-@@ -148,6 +187,8 @@ static int mana_ib_probe(struct auxiliary_device *adev,
- 	mana_ib_gd_destroy_rnic_adapter(dev);
- destroy_eqs:
- 	mana_ib_destroy_eqs(dev);
-+deregister_net_notifier:
-+	unregister_netdevice_notifier(&dev->nb);
- deregister_device:
- 	mana_gd_deregister_device(dev->gdma_dev);
- free_ib_device:
-@@ -164,6 +205,7 @@ static void mana_ib_remove(struct auxiliary_device *adev)
- 	mana_ib_gd_destroy_rnic_adapter(dev);
- 	mana_ib_destroy_eqs(dev);
- 	mana_gd_deregister_device(dev->gdma_dev);
-+	unregister_netdevice_notifier(&dev->nb);
- 	ib_dealloc_device(&dev->ib_dev);
- }
- 
-diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
-index b53a5b4de908..d88187072899 100644
---- a/drivers/infiniband/hw/mana/mana_ib.h
-+++ b/drivers/infiniband/hw/mana/mana_ib.h
-@@ -64,6 +64,7 @@ struct mana_ib_dev {
- 	struct gdma_queue **eqs;
- 	struct xarray qp_table_wq;
- 	struct mana_ib_adapter_caps adapter_caps;
-+	struct notifier_block nb;
- };
- 
- struct mana_ib_wq {
--- 
-2.34.1
+> @@ -166,6 +166,15 @@ static const struct ctl_table trace_sysctl_table[] = {
+>  		.mode		= 0644,
+>  		.proc_handler	= tracepoint_printk_sysctl,
+>  	},
+> +#ifdef CONFIG_STACK_TRACER
+> +	{
+> +		.procname	= "stack_tracer_enabled",
+> +		.data		= &stack_tracer_enabled,
+> +		.maxlen		= sizeof(int),
+> +		.mode		= 0644,
+> +		.proc_handler	= stack_trace_sysctl,
+> +	},
+> +#endif
+>  };
+>  
+>  static int __init init_trace_sysctls(void)
+> 
 
 
