@@ -1,79 +1,89 @@
-Return-Path: <linux-kernel+bounces-543451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372F4A4D5C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:07:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79FB1A4D5C9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:08:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 697791887BB4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:07:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A81BF16FC14
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:08:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 907711F8F04;
-	Tue,  4 Mar 2025 08:07:06 +0000 (UTC)
-Received: from 1wt.eu (ded1.1wt.eu [163.172.96.212])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 076BF1EDA04;
-	Tue,  4 Mar 2025 08:07:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=163.172.96.212
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 519A61FAC50;
+	Tue,  4 Mar 2025 08:08:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lob7vi19"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94FBA335BA;
+	Tue,  4 Mar 2025 08:08:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075626; cv=none; b=ryOuqockGe49ydEInKI/tEOyjxoIB+IbUPg8Y06LhTt/aUL/lj8+eEJun5vUb97//WrtsxUScnkl6taihw95rT7slHbU1J3UBxBAje/kEU/m18jK+Zb7Tn97OB9d8MCYrdTZG2yLtfM5HkkAG0XWyuq5lLYKbnXvoazix/FtUZk=
+	t=1741075692; cv=none; b=iWDuiaDUDbN8ggCcGBxu9BJz3hqYgilj2i/y+kTTSJTwRSf72AEm+A4kQclLI26OV8xcqpQiuzI9TJXxIpsQQaGFtNwhpSoNiFh3zVJN8hkGodx6TcTuBwxZbEfziU7fRPunzOtc+VorH8/RfThej45GM+6ceeptaNm+GFD0KNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075626; c=relaxed/simple;
-	bh=pvGE4ls4yWHii0KYd69+xmdVGEiN9WOekxGD7T3b3mM=;
+	s=arc-20240116; t=1741075692; c=relaxed/simple;
+	bh=NOzINh5aX2jOBOsPAaQKshxr35+wXfE9sFP11D1XYHk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DHAJGLhiimcU11UkY834BUU4JaUUhWQtwHI+xpbuAP2E4UYE+6s1FY9nJsJcjSIcRRYa3AEU/hX2b2ow/Xh43LWORuGv2PEO7MKYXul076JtKs2A3+AdZqpNM+hBAY/4Wqmqee653QTmPcjH6gk07N21KCMuPZtNMSAuCxVvO0o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu; spf=pass smtp.mailfrom=1wt.eu; arc=none smtp.client-ip=163.172.96.212
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=1wt.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=1wt.eu
-Received: (from willy@localhost)
-	by pcw.home.local (8.15.2/8.15.2/Submit) id 52486utX010241;
-	Tue, 4 Mar 2025 09:06:56 +0100
-Date: Tue, 4 Mar 2025 09:06:56 +0100
-From: Willy Tarreau <w@1wt.eu>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>,
-        Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-        linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 00/32] kselftest harness and nolibc compatibility
-Message-ID: <20250304080656.GF9911@1wt.eu>
-References: <20250304-nolibc-kselftest-harness-v1-0-adca7cd231e2@linutronix.de>
+	 Content-Type:Content-Disposition:In-Reply-To; b=rIHv/X6C8PdiFxdU1eO+PKGwDqfeNXOGT6GgpXNN0ULrfU0qk1eLPZKgK5qiUHHIzt9q+5CMzhCkkBWLB7PaiM5oF+DupIvISGm/YnWdPWUa7ylMq+FeLJKutQ+0yVC65PhuUDVGoq7/DHG1FvcN2HlDz+WUcxkXB0qmN406j6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lob7vi19; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7FD29C4CEE5;
+	Tue,  4 Mar 2025 08:08:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741075692;
+	bh=NOzINh5aX2jOBOsPAaQKshxr35+wXfE9sFP11D1XYHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lob7vi199B5vC1tpokI+OyTfSLRvJrvQBduJJDBaMgtIQrEqfiqv4yhN+gVBpVR1y
+	 JDv0kIjlOtJTo8oXn+TKS3A0SOpAgBLwrw5fmLcOe3eiIx9HA3DbpxdZcLtSg70KKO
+	 HZF9BLyxbUvjwFDFapw1O/ZI1a9svkQmLtyr1BdeL9deJgSJYoXWgZ8/urpEg73672
+	 EjXm9GBhUl7MLAYkJ1R41Mm9zHPYL7BMoRAp6QthpVSbA21lKjwvG9/oDcof24+pa9
+	 lljNFef3ntVO4lvSd3+TkXCkMd652jj5m6Y4280NEtv1aM0XcT30Q6d4YV8y3nyIEZ
+	 UVRGjgkxlDN1g==
+Date: Tue, 4 Mar 2025 09:08:08 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Cc: andi.shyti@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, gregkh@linuxfoundation.org, jirislaby@kernel.org, 
+	broonie@kernel.or, andersson@kernel.org, konradybcio@kernel.org, 
+	johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, linux-spi@vger.kernel.org, 
+	quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
+Subject: Re: [PATCH v3 1/9] dt-bindings: qcom: geni-se: Add 'firmware-name'
+ property for firmware loading
+Message-ID: <20250304-masked-pristine-mole-c05dc1@krzk-bin>
+References: <20250303124349.3474185-1-quic_vdadhani@quicinc.com>
+ <20250303124349.3474185-2-quic_vdadhani@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250304-nolibc-kselftest-harness-v1-0-adca7cd231e2@linutronix.de>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20250303124349.3474185-2-quic_vdadhani@quicinc.com>
 
-Hi Thomas,
-
-On Tue, Mar 04, 2025 at 08:10:30AM +0100, Thomas Weißschuh wrote:
-> Nolibc is useful for selftests as the test programs can be very small,
-> and compiled with just a kernel crosscompiler, without userspace support.
-> Currently nolibc is only usable with kselftest.h, not the more
-> convenient to use kselftest_harness.h
-> This series provides this compatibility by adding new features to nolibc
-> and removing the usage of problematic features from the harness.
+On Mon, Mar 03, 2025 at 06:13:41PM +0530, Viken Dadhaniya wrote:
+> Document the 'firmware-name' property in the device tree bindings to
+> support loading SE (Serial Engine) firmware from the protocol driver,
+> allowing for more flexible firmware management.
 > 
-> The first half of the series are changes to the harness, the second one
-> are for nolibc. Both parts are very independent and can go through
-> different trees.
-> The last patch is not meant to be applied and serves as test that
-> everything works correctly.
+> Co-developed-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
+> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
+> ---
+> v2 -> v3:
 > 
-> Based on the next branch of the nolibc tree:
-> https://web.git.kernel.org/pub/scm/linux/kernel/git/nolibc/linux-nolibc.git/log/?h=next
+> - Remove ref and add maxItem element.
+> 
+> v2 Link: https://lore.kernel.org/linux-arm-msm/20250124105309.295769-2-quic_vdadhani@quicinc.com/
+> ---
 
-Really nice work, thank you, particularly for making the waitpid() and
-printf() families more standard. Please accept my Acked-by on all the
-nolibc parts. As usual, proceed as you see fit for the ones I commented
-and assume the Acked-by for adjustments following the same spirit ;-)
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Cheers,
-Willy
+Best regards,
+Krzysztof
+
 
