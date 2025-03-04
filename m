@@ -1,159 +1,184 @@
-Return-Path: <linux-kernel+bounces-543912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D3D3A4DB74
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:53:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB69A4DB68
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCB9B3B5940
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:50:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532C11896888
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A591FFC55;
-	Tue,  4 Mar 2025 10:49:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 732C3201276;
+	Tue,  4 Mar 2025 10:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="MXYgIneL"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="iAPMWVyg"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A210F1FF1CE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9BF01FCFD2;
+	Tue,  4 Mar 2025 10:50:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741085375; cv=none; b=K6/Jy2Tw6ceJQB0aCJ1AAVd3iECf/03UhKr6uDDzdDil6++zkOGuHGo+nKSzGxt696J5/+IcJvnDoyKHeBdOMuVN9QzzLbLL7EDqvg+oCGEV4M3FA9sHMZgc5edWZJO5c2a61dqWcdePkEjRQWRhHYiZ1CmuiUzc7B/evZq79ZM=
+	t=1741085408; cv=none; b=KRgaLcqbnun+TSpQ0QXtAdOHmMM+7rjeS7ltacRPpEtybcbchCS74dYSU/gKtwkYypIGFsjt8mzO1E1kShmtoqU5s8X2bDNfiJpvXX/W5fn/WKulPkcchOVCMCgvt8Ldh5sge82wZlmkncryIJxF8ECwhWFGjxPdVIi1YmwkVFs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741085375; c=relaxed/simple;
-	bh=e9wTY6GpniqjtOjPPzJ79qkW1wxFcngg2oaLOnGdkxQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=q1tc0Nh3Jkn6hTiKL7jmuys65iXUjvIH7yBE1wo3aNTMtBYlbLI56iCYLmtSrxYrAfsqON6rX1JtjzbXMRu/K1DV1iLVZfqW/KiXxsPa0UCJPMQPPgCt2hq/9nKY8y/wSkWcZJw4Kv/UP3hWFAgUXxGQlc5QTpqG8tulLrNRqPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=MXYgIneL; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=MlGHBLA3wNIQKGRJHUwflnJkc/ehF+MF4bZqo1RCWXo=; b=MXYgIneLqS6ngMRkjzOYi06maM
-	oNwR9+Rd9JxXtAjrTXt59Cr6AYrNKvCnZJIsmIPUmSz/fMFedGP4YSk6U7sWtIm1G8N9DCexAIsnE
-	Amk44AZ5UDLm+zDqHxUQ+AKYfj/xAPbj19YcBLTIG3Ly3jbP6yHfdt7/eRepzO6t1CKu8LeTHEYqZ
-	KgLTybogYO+1pEjGoHCMSa3PuFGXCBcMqCAqRj1qr2F+vRQaBCRKz7HLR2UaSQY5BQ9SusIFF1aRs
-	dbQUbcBwPkj8gB2Ot1hbtcjuw8hjVfAeR2dyDBrZa6OLMgJzWgqZ3osgUsr25BzvTeWD1ncjyM/L6
-	2urWuS8g==;
-Received: from [175.114.83.198] (helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1tpPpx-003fer-L0; Tue, 04 Mar 2025 11:49:28 +0100
-From: Changwoo Min <changwoo@igalia.com>
-To: tj@kernel.org,
-	void@manifault.com,
-	arighi@nvidia.com
-Cc: kernel-dev@igalia.com,
-	linux-kernel@vger.kernel.org,
-	Changwoo Min <changwoo@igalia.com>
-Subject: [PATCH v4 2/2] sched_ext: Add trace point to track sched_ext core events
-Date: Tue,  4 Mar 2025 19:49:00 +0900
-Message-ID: <20250304104900.154618-3-changwoo@igalia.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250304104900.154618-1-changwoo@igalia.com>
-References: <20250304104900.154618-1-changwoo@igalia.com>
+	s=arc-20240116; t=1741085408; c=relaxed/simple;
+	bh=mGXlpz3CiqcPQnbKPytAQ5hYUOnpdwSqUuiF+lDuTT4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=C+WTPNFYsx/qH0V+H2TUkhGdILRDtk/fSGmzqj9v2VD1k1yDGeAhgUGGU4NqHzlZIpnQyDnx0kjKqvhOG475vyQsNmx5Yv4Ar68BPp6oxMFv43XBQzmBdtcv497Qyh92XKX1Ilj/6jyghKqoFb0et4/1YPie45enoDb/cq2TB9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=iAPMWVyg; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524A8DVx025579;
+	Tue, 4 Mar 2025 10:50:00 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	GP+yLfOMUx0b3MSlMgsVk4hK4+Tg3fbuyX5/ertOoLQ=; b=iAPMWVygLve/YdWE
+	nK8b3aiTrxKRY57boqU+yQpEoKKmLPno9j4gjh9oV5kL5F/Ozcoub8VKaVjuin4q
+	Kl4nhLNXW1XZwk76+1wzNLu8mQqsdIrjx30uCQlxx0ahMrOt5dYiadgfknVO/RsY
+	QjE5DJKAA5eECpdk7oljT6AFxX6Z1/0IqEIoFWKYDwgdFDKTm9viRVB22brvmBQi
+	WKy8rr3E+1vwevd/RtAad95pSTFPGYESN3jPgtHeL0dkdSJHjjKEn1N/XMk0r2KR
+	Z0f+hdhheeCKCJit6rsR4XKF0RYKqsPARVMqX0hSqc3tmQvUjPTsjafXMWV2o8kl
+	+qnCpQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p931jn0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 10:50:00 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 524AnxW3012288
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Mar 2025 10:49:59 GMT
+Received: from [10.231.216.103] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
+ 02:49:55 -0800
+Message-ID: <47b362a2-116c-4260-84dc-0e0dc0ab7cc7@quicinc.com>
+Date: Tue, 4 Mar 2025 18:49:53 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Use APIs in gdsc genpd to switch gdsc mode for
+ venus v4 core
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        Stanimir Varbanov
+	<stanimir.k.varbanov@gmail.com>,
+        Vikash Garodia <quic_vgarodia@quicinc.com>,
+        Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+        Mauro Carvalho Chehab
+	<mchehab@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        Taniya Das
+	<quic_tdas@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+References: <20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com>
+Content-Language: en-US
+From: Renjiang Han <quic_renjiang@quicinc.com>
+In-Reply-To: <20250218-switch_gdsc_mode-v4-0-546f6c925ae0@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Me2Wu4/f c=1 sm=1 tr=0 ts=67c6dad8 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=8t6D1CfDI0I1gW2ExC4A:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: 2v-jueHv1U93dJp3dOnZnl3XKH7wkkJ7
+X-Proofpoint-ORIG-GUID: 2v-jueHv1U93dJp3dOnZnl3XKH7wkkJ7
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_04,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0 spamscore=0
+ adultscore=0 lowpriorityscore=0 mlxlogscore=808 priorityscore=1501
+ impostorscore=0 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2502100000 definitions=main-2503040091
 
-Add tracing support to track sched_ext core events
-(/sched_ext/sched_ext_event). This may be useful for debugging sched_ext
-schedulers that trigger a particular event.
 
-The trace point can be used as other trace points, so it can be used in,
-for example, `perf trace` and BPF programs, as follows:
+On 2/18/2025 6:33 PM, Renjiang Han wrote:
+> The Venus driver requires vcodec GDSC to be ON in SW mode for clock
+> operations and move it back to HW mode to gain power benefits. Earlier,
+> as there is no interface to switch the GDSC mode from GenPD framework,
+> the GDSC is moved to HW control mode as part of GDSC enable callback and
+> venus driver is writing to its POWER_CONTROL register to keep the GDSC ON
+> from SW whereever required. But the POWER_CONTROL register addresses are
+> not constant and can vary across the variants.
+>
+> Also as per the HW recommendation, the GDSC mode switching needs to be
+> controlled from respective GDSC register and this is a uniform approach
+> across all the targets. Hence use dev_pm_genpd_set_hwmode() API which
+> controls GDSC mode switching using its respective GDSC register.
+>
+> Make venus driver to use dev_pm_genpd_set_hwmode() to switch GDSC mode on
+> v4.
+> - 1. the venus driver adds compatibility with the new way to switch GDSC
+> mode.
+> - 2. the clock driver uses the HW_CTRL_TRIGGER flag, which means the venus
+> driver needs to use the dev_pm_genpd_set_hwmode() API to switch GDSC mode.
+>
+> Validated this series on QCS615 and SC7180.
+>
+> Signed-off-by: Renjiang Han <quic_renjiang@quicinc.com>
+> ---
+> Changes in v4:
+> - 1. Update the order of patches.
+> - 2. Update vcodec_control_v4 to try dev_pm_genpd_set_hwmode first.
+> - 3. Add hwmode_dev to indicate whether to use HW_CTRL_TRIGGER flag.
+> - 4. Update commit message and cover letter message.
+> - 5. Remove the patch that cleaned up dead code and will submit this patch
+> with next patch series.
+> - Link to v3: https://lore.kernel.org/r/20250115-switch_gdsc_mode-v3-0-9a24d2fd724c@quicinc.com
+>
+> Changes in v3:
+> - 1. Update commit message.
+> - 2. Add a patch to clean up the dead code for the venus driver.
+> - 3. Remove vcodec_control_v4() function.
+> - 4. Directly call dev_pm_genpd_set_hwmode() without vcodec_control_v4().
+> - Link to v2: https://lore.kernel.org/r/20241223-switch_gdsc_mode-v2-0-eb5c96aee662@quicinc.com
+>
+> Changes in v2:
+> - 1. Add the HW_CTRL_TRIGGER flag for the targets SM7150/SM8150 and SM8450
+> video GDSCs supporting movement between HW and SW mode of the GDSC.
+> (Suggested by Dmitry Baryshkov)
+> - 2. There is a dependency of the clock driver introducing the new flag
+> and the video driver adapting to this new API. Missing either the clock
+> and video driver could potentially break the video driver.
+> - Link to v1: https://lore.kernel.org/r/20241122-switch_gdsc_mode-v1-0-365f097ecbb0@quicinc.com
+>
+> ---
+> Renjiang Han (1):
+>        venus: pm_helpers: add compatibility for dev_pm_genpd_set_hwmode on V4
+>
+> Taniya Das (1):
+>        clk: qcom: videocc: Use HW_CTRL_TRIGGER flag for video GDSC's
+>
+>   drivers/clk/qcom/videocc-sc7180.c              |  2 +-
+>   drivers/clk/qcom/videocc-sdm845.c              |  4 +--
+>   drivers/clk/qcom/videocc-sm7150.c              |  4 +--
+>   drivers/clk/qcom/videocc-sm8150.c              |  4 +--
+>   drivers/clk/qcom/videocc-sm8450.c              |  4 +--
+>   drivers/media/platform/qcom/venus/core.h       |  2 ++
+>   drivers/media/platform/qcom/venus/pm_helpers.c | 38 ++++++++++++++------------
+>   7 files changed, 32 insertions(+), 26 deletions(-)
+> ---
+> base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
+> change-id: 20250115-switch_gdsc_mode-a9c14fad9a36
+Gentle ping on this patch series.
+>
+> Best regards,
 
-======
-$> sudo perf trace -e sched_ext:sched_ext_event --filter 'name == "SCX_EV_ENQ_SLICE_DFL"'
-======
-
-======
-struct tp_sched_ext_event {
-	struct trace_entry ent;
-	u32 __data_loc_name;
-	s64 delta;
-};
-
-SEC("tracepoint/sched_ext/sched_ext_event")
-int rtp_add_event(struct tp_sched_ext_event *ctx)
-{
-	char event_name[128];
-	unsigned short offset = ctx->__data_loc_name & 0xFFFF;
-        bpf_probe_read_str((void *)event_name, 128, (char *)ctx + offset);
-
-	bpf_printk("name %s   delta %lld", event_name, ctx->delta);
-	return 0;
-}
-======
-
-Signed-off-by: Changwoo Min <changwoo@igalia.com>
----
- include/trace/events/sched_ext.h | 19 +++++++++++++++++++
- kernel/sched/ext.c               |  2 ++
- 2 files changed, 21 insertions(+)
-
-diff --git a/include/trace/events/sched_ext.h b/include/trace/events/sched_ext.h
-index fe19da7315a9..50e4b712735a 100644
---- a/include/trace/events/sched_ext.h
-+++ b/include/trace/events/sched_ext.h
-@@ -26,6 +26,25 @@ TRACE_EVENT(sched_ext_dump,
- 	)
- );
- 
-+TRACE_EVENT(sched_ext_event,
-+	    TP_PROTO(const char *name, __s64 delta),
-+	    TP_ARGS(name, delta),
-+
-+	TP_STRUCT__entry(
-+		__string(name, name)
-+		__field(	__s64,		delta		)
-+	),
-+
-+	TP_fast_assign(
-+		__assign_str(name);
-+		__entry->delta		= delta;
-+	),
-+
-+	TP_printk("name %s delta %lld",
-+		  __get_str(name), __entry->delta
-+	)
-+);
-+
- #endif /* _TRACE_SCHED_EXT_H */
- 
- /* This part must be outside protection */
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 686629a860f3..debcd1cf2de9 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -1554,6 +1554,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
-  */
- #define scx_add_event(name, cnt) do {						\
- 	this_cpu_add(event_stats_cpu.name, cnt);				\
-+	trace_sched_ext_event(#name, cnt);					\
- } while(0)
- 
- /**
-@@ -1565,6 +1566,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
-  */
- #define __scx_add_event(name, cnt) do {						\
- 	__this_cpu_add(event_stats_cpu.name, cnt);				\
-+	trace_sched_ext_event(#name, cnt);					\
- } while(0)
- 
- /**
 -- 
-2.48.1
+Best Regards,
+Renjiang
 
 
