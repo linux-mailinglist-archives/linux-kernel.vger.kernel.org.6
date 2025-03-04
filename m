@@ -1,136 +1,155 @@
-Return-Path: <linux-kernel+bounces-543258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A5EBA4D36F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:08:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A094A4D374
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:09:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD2073AAA4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:08:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48106171BE9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F20911F4E41;
-	Tue,  4 Mar 2025 06:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4514B1F4288;
+	Tue,  4 Mar 2025 06:07:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EFdPBjvA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lnRT8g5N"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E14111F4E27
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAD71F4622;
+	Tue,  4 Mar 2025 06:07:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741068433; cv=none; b=YQ8vaEAVtgOpevAsOf/dlOMqDSUsldbZg+8o4yKlXuiIsS2314qb/M6pWEJnM7Vsh79+13D2FnSm3b5JWny+PZ4Oml3lWRo6vU2EmErBtVK6PE/ROdKHPdkXZ15Oz3XgtzEV2Y1zWvwI6MRIkNB1IC42k6m2B4Ys5DITI3k2KVc=
+	t=1741068472; cv=none; b=U4c9LXIYrtw8OD+7x01zJiae2kYIvU7tf5DrFgIs1Ezs4QGJPkwNSEOxcCUY0uSh5a3RCQZUwnMn+dXBEIr9z5xNNMUgOh3tgUia7mOMlT6uXl5g7neHm7T0o8nhEk03kYDEk/pQZUyLtDMEoTvT96rAODRxRDzNW14N6CTe15E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741068433; c=relaxed/simple;
-	bh=6SMH+nvsZ9K/pkzEyIYaEKeKuAOROQOzkyq4QpI39/E=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tkmX5F1MEgTZT+4W87WrpF0qPz3qzI3PhL7hNPwrnyx7eb0m9M5IIZ03MBvhutsBs1TO4uoob4UxdAc7jJjqMOMAzYRiMRmbtd4XifNkhHvupd6ux4Xk1pX4LK0X4UirDbk1/lJKzC+SqjtlSrUE6fUandcxqGlfzJZ6PdS16xg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EFdPBjvA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741068431;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AJy41FzUFSGhCGRtfpNprpEPFn03VpR5sk8BsIsJt2c=;
-	b=EFdPBjvA34iBgdVgyKI5XTT1TSCPUOVytfa0NtPvuy5BmXc2Gy7bw5Thzl+E8AAUnCK6uZ
-	plNCryYaId1k0oCmUzM9ZsXBNk9A14S1pO+5zrXQlg4zPjPa1Vot4KLi+X+Fpmmzz0ce8Q
-	Qb9MA6cafXylPAQjfWqbSHa65nkiAlk=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-542-IOSdMb_ZOTiy-c1hLc4Rzg-1; Tue,
- 04 Mar 2025 01:06:57 -0500
-X-MC-Unique: IOSdMb_ZOTiy-c1hLc4Rzg-1
-X-Mimecast-MFC-AGG-ID: IOSdMb_ZOTiy-c1hLc4Rzg_1741068416
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 6D9491800876;
-	Tue,  4 Mar 2025 06:06:56 +0000 (UTC)
-Received: from virtlab1023.lab.eng.rdu2.redhat.com (virtlab1023.lab.eng.rdu2.redhat.com [10.8.1.187])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 3E5DA19560A3;
-	Tue,  4 Mar 2025 06:06:55 +0000 (UTC)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: xiaoyao.li@intel.com,
-	seanjc@google.com,
-	yan.y.zhao@intel.com
-Subject: [PATCH v3 6/6] KVM: TDX: Always honor guest PAT on TDX enabled guests
-Date: Tue,  4 Mar 2025 01:06:47 -0500
-Message-ID: <20250304060647.2903469-7-pbonzini@redhat.com>
-In-Reply-To: <20250304060647.2903469-1-pbonzini@redhat.com>
-References: <20250304060647.2903469-1-pbonzini@redhat.com>
+	s=arc-20240116; t=1741068472; c=relaxed/simple;
+	bh=Y4J5kNPdn31vbKWpYhcJQtNAfF5XqIdmKd1v5R5JRS4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WxJLwzBHjiqZL8ju9OLR7srgxRIWB2h0HKnulzXDdYPhBdJv04ztQlBcnbNk4pNYEEcXwK6SRBYMEXMmP6ArV4Vi4xeq0+hpcFUzAJVK9TzHeKBl0CHhKS7wrJyf9dsogGw4t5O56rd1lprWJawbc0I4K+2xP9wYTvHTul4gwb4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lnRT8g5N; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-aaecf50578eso996957266b.2;
+        Mon, 03 Mar 2025 22:07:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741068469; x=1741673269; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aIxZQD6EiobOPlS8qnte96hg7t0Clugw1BVd4bOewtU=;
+        b=lnRT8g5NaGWFfazibFqJZ/MVLYRMwvebDVfsQtEA/0Oc4a+dVPYyiYKDzlwlebcLyS
+         4qQyNSMmKBHe6lFSowrP2r7+N+Q3nl9P7agpSndLtUvQFq76bWj9BwOmsrCw4VEigB9f
+         OJV6EP8duOLzdGcljnei48TYwfY1ukU2w/EBOQCb7ZOIPYkYXrkCeMBTJ4dvv9qslzWF
+         J440wNk7TmmtzWdizS4FILGFqFXeSZ2F2pmhMgh3YTcD0uKQh8ag4xWS2tVBqYJi65Lk
+         672ofVPwYLoKXUI9VrY5VvauiIrlGeVfHwAedj88MP5KxKZto8C0w4X0JUeeYGXI5xIL
+         /fOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741068469; x=1741673269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aIxZQD6EiobOPlS8qnte96hg7t0Clugw1BVd4bOewtU=;
+        b=W3FMrjmWfWK5XaxvxYyRKUJvIKJJszsZ58SvMoEEANQew74iX98Z5mZHgM3eIQ9SBA
+         Z7bXnZioknZ6stnGKKVXvNoCVA0bXPom8oAsZ/Z2IIhlZQLcKPugV06m26amESQQW03S
+         wlIdqIcDNA3UY8Dcm1VMeOo1aKEk8e7raJCDTEA4j0L23rChKMgapaSaEw7pVaCF4EWR
+         FfL98PHR01wx90WGRyA8BHD4I/s+bGMY2HQKYsR8x3TkSYrWIZ52y6QG1/tsm2MLwibA
+         6Oj9ipxO/1IiV2KBQ17x2i/aEove2CWgACWw9ZHIUihpPDtQMS7Z/N6wLXP6dhR2Plac
+         5oWw==
+X-Forwarded-Encrypted: i=1; AJvYcCWE7kK9HufFzcyebpJVEX3+n19BSlQX9yCUfGTz/bjd8slgQ4bBLPKJG/f8+xhbz4F43TC78VkDrTre7d4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEhFPxOfDdweZEwy2dt4jwDHnXZOORkIvB4YMlSIPjUM+2282j
+	Jt2YD0bRImjtX7eQLc+7mHiU1wpIvGfhqwNfkvKUSpAOB7KPRoA6Bxv+cbcqQhwD2TTi2p/XMMB
+	n6ZbA5eQ5g7aTfOEWKPa9u5pmvNvPLQqr
+X-Gm-Gg: ASbGncsCBFDxdE4kIq8RcUp/cL3SspEuQ5LuB75rgfCizw+lU9TEihq3ej+AO4sjpmz
+	tRuX+xli2pWM49l1F7Ickxw/enqxNZkuo97uU1BcmxQRHzB8zQLvjXXCAinq6WxCMjqdsZBQoDq
+	wOW7Hva2k/oGW33rA339AhKwBHVQ==
+X-Google-Smtp-Source: AGHT+IHiq+pDlrJy7nC5i+QKpFa4VzADHCerDO5gvGYEncIXUDBKDIBbGpG/ztTBO6CkwXj27M6FDqdI95h9ldSeJ1E=
+X-Received: by 2002:a17:907:9816:b0:abf:56e3:e899 with SMTP id
+ a640c23a62f3a-abf56e497d3mr1327215566b.40.1741068468891; Mon, 03 Mar 2025
+ 22:07:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+References: <20250304035447.3138221-1-adamsimonelli@gmail.com> <20250304035447.3138221-3-adamsimonelli@gmail.com>
+In-Reply-To: <20250304035447.3138221-3-adamsimonelli@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Tue, 4 Mar 2025 08:07:12 +0200
+X-Gm-Features: AQ5f1Jp4apRDDfOHT1-ImwZ6vl-zTonZ9ToEQ6lUMnYoIGGXDnGxEz8HWIb3MIs
+Message-ID: <CAHp75VeMm3rmPto_31vWCVKh0z76h2zFjpjLUaiZ-gS8REEG+Q@mail.gmail.com>
+Subject: Re: [PATCH v6 2/3] ttynull: Add an option to allow ttynull to be used
+ as a console device
+To: adamsimonelli@gmail.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Yan Zhao <yan.y.zhao@intel.com>
+On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
+>
+> From: Adam Simonelli <adamsimonelli@gmail.com>
+>
+> The new config option, CONFIG_NULL_TTY_DEFAULT_ CONSOLE will allow
+> ttynull to be initialized by console_initcall() and selected as a
+> possible console device.
 
-Always honor guest PAT in KVM-managed EPTs on TDX enabled guests by
-making self-snoop feature a hard dependency for TDX and making quirk
-KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT not a valid quirk once TDX is enabled.
+...
 
-The quirk KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT only affects memory type of
-KVM-managed EPTs. For the TDX-module-managed private EPT, memory type is
-always forced to WB now.
+>           In order to use this driver, you should redirect the console to=
+ this
+> -         TTY, or boot the kernel with console=3Dttynull.
+> +         TTY, boot the kernel with console=3Dttynull, or enable
+> +         CONFIG_NULL_TTY_DEFAULT_CONSOLE.
+> +
+> +         If unsure, say N.
+> +
+> +config NULL_TTY_DEFAULT_CONSOLE
+> +        bool "Support for console on ttynull"
+> +        depends on NULL_TTY=3Dy && !VT_CONSOLE
+> +       help
+> +         Say Y here if you want the NULL TTY to be used as a /dev/consol=
+e
+> +         device.
+> +
+> +         This is similar to CONFIG_VT_CONSOLE, but without the dependenc=
+y on
+> +         CONFIG_VT. It uses the ttynull driver as the system console.
 
-Honoring guest PAT in KVM-managed EPTs ensures KVM does not invoke
-kvm_zap_gfn_range() when attaching/detaching non-coherent DMA devices,
-which would cause mirrored EPTs for TDs to be zapped, leading to the
-TDX-module-managed private EPT being incorrectly zapped.
+I'm now at the non-monospace font mail client, but it looks like you
+have a TAB/space mix in the above for the indentation. Please, double
+check that all lines, except the first in the option starts with a
+single TAB and help lines (after the 'help' keyword) additionally
+indented by 2 (two) spaces.
 
-As a new feature, TDX always comes with support for self-snoop, and does
-not have to worry about unmodifiable but buggy guests. So, simply ignore
-KVM_X86_QUIRK_IGNORE_GUEST_PAT on TDX guests just like kvm-amd.ko already
-does.
+>           If unsure, say N.
 
-Suggested-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-Message-ID: <20250224071039.31511-1-yan.y.zhao@intel.com>
-[Only apply to TDX guests. - Paolo]
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- arch/x86/kvm/vmx/tdx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+...
 
-diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
-index b6f6f6e2f02e..89a0e90b7aef 100644
---- a/arch/x86/kvm/vmx/tdx.c
-+++ b/arch/x86/kvm/vmx/tdx.c
-@@ -624,6 +624,7 @@ int tdx_vm_init(struct kvm *kvm)
- 
- 	kvm->arch.has_protected_state = true;
- 	kvm->arch.has_private_mem = true;
-+	kvm->arch.disabled_quirks |= KVM_X86_QUIRK_IGNORE_GUEST_PAT;
- 
- 	/*
- 	 * Because guest TD is protected, VMM can't parse the instruction in TD.
-@@ -3470,6 +3471,11 @@ int __init tdx_bringup(void)
- 		goto success_disable_tdx;
- 	}
- 
-+	if (!cpu_feature_enabled(X86_FEATURE_SELFSNOOP)) {
-+		pr_err("Self-snoop is required for TDX\n");
-+		goto success_disable_tdx;
-+	}
-+
- 	if (!cpu_feature_enabled(X86_FEATURE_TDX_HOST_PLATFORM)) {
- 		pr_err("tdx: no TDX private KeyIDs available\n");
- 		goto success_disable_tdx;
--- 
-2.43.5
+> +#ifdef CONFIG_NULL_TTY_DEFAULT_CONSOLE
+> +static int __init ttynull_register(void)
+> +{
+> +       if (!console_set_on_cmdline)
 
+Invert this. It might be that we want more in the future and this
+conditional is not-scalable for that. Inverted does the trick. To be
+precise, do like the fb driver for xen does:
+
+  /* User defined console is present, avoid registering "ttynull" */
+  if (..._set_on_cmdline)
+    return 0;
+
+> +               add_preferred_console("ttynull", 0, NULL);;
+> +
+> +       return 0;
+> +}
+> +console_initcall(ttynull_register);
+> +#endif
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
