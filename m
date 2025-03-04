@@ -1,245 +1,127 @@
-Return-Path: <linux-kernel+bounces-544893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF06BA4E69D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:46:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B18F7A4E2F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:23:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE7DA8A2C47
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:32:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CA933AE9C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A59AB2BD5AC;
-	Tue,  4 Mar 2025 16:11:22 +0000 (UTC)
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86D2B27FE75;
+	Tue,  4 Mar 2025 14:59:12 +0000 (UTC)
+Received: from vps-ovh.mhejs.net (vps-ovh.mhejs.net [145.239.82.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E442277803
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:11:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=160.75.25.115
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104682; cv=fail; b=Jw1X54ESU3qaKiXvwKpPFe9QA10em1p8rjqWMXUcpW5PDW7L99g+jKrNMxzlTTQrj9gSu9rZNQXLDUlKIPQYIs0EG9f62FfbTlxdttQdPOSwQEwf589WZUfxChtoeBCdMlbVpPpa3QAMzeIOd2+W57jkMYu4Uc5VGqPYMT/nO9Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104682; c=relaxed/simple;
-	bh=SCF2CpNwKghz0IDt6OxQVOYq5t62aM5F93MPXL22weA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bDPhwHYuh2nWvfHeK7nmrvGgCRT90lxZNiyfXFXWuCytJL4i5Ss0jvyfmWcEC6UEkn+WdKbSFdwkUgLiISLAbIqtzCKX+SYB7erVHcjFFiUNHYmy1QPm6D/5NLEg8ukGes+bjiML6dmccTLlDv2TU0XSz8r4a067UOzZ0743EAU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com; spf=none smtp.mailfrom=cc.itu.edu.tr; arc=none smtp.client-ip=217.140.110.172; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=fail smtp.client-ip=160.75.25.115
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=cc.itu.edu.tr
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id 888B040D9763
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:11:16 +0300 (+03)
-X-Envelope-From: <root@cc.itu.edu.tr>
-Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6gbv37mGzG2Th
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:09:15 +0300 (+03)
-Received: by le1 (Postfix, from userid 0)
-	id 0156942746; Tue,  4 Mar 2025 19:08:55 +0300 (+03)
-X-Envelope-From: <linux-kernel+bounces-541891-bozkiru=itu.edu.tr@vger.kernel.org>
-Received: from fgw2.itu.edu.tr (fgw2.itu.edu.tr [160.75.25.104])
-	by le2 (Postfix) with ESMTP id B691441BE8
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:16:29 +0300 (+03)
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by fgw2.itu.edu.tr (Postfix) with SMTP id 6A1602DCE0
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:16:29 +0300 (+03)
-Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
-	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD7501655C2
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:16:28 +0000 (UTC)
-Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0B4213E94;
-	Mon,  3 Mar 2025 14:16:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2A458BEE;
-	Mon,  3 Mar 2025 14:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6C623A9AE;
+	Tue,  4 Mar 2025 14:59:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=145.239.82.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741011360; cv=none; b=PDBsqgSo6NEFjyniblmfiDcwtMp3acwbV99QcLR70l7xfEzqgtxct+MUnmsm7m+uYa6dFW44W4Syq17ywL5yxVLp1bHSlamPshjlXYuyIAC4kxeuojouy+1nibofQPMpBKJfQGp8VZa9mQEDvD6VXMfb3xTSmH60bZzj4MPQI84=
+	t=1741100352; cv=none; b=KXmr+NSAEjfKjmH5P7BtLA34irzhgRrh/SeNnVWIckd8U+kqbKj9Sd9b0aiBQwNfF0VdJCBHGua99XyCe9mUp1f5duQ1QJqXdxKiyTejjG106SOCGXDYJ75+ozpf04mTUGyh4ZBtJiUfbFbJgYzm89BCTCrVmhN5ZY099se9Zgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741011360; c=relaxed/simple;
-	bh=noQaqyESrFXPlVuJvXsqVgB6g2QUq9O0Y8RZo1VBRPI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hkus79t/uzRWjKh9MBXNgKIgf/OwfMPNuy+v55/Ba3D4yvJ4AEJHDBrxsqsnM37AV555ZNlPNazeTpFAH9m+QGVkMX+psLDEWkaVtSkwJ03NWaPPRcYLgB4iDBRtYxb70wW3oQ0pg2wbgKpA8Vb8w0Oh2UQxxfE37YzCP4/J38Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BDB7D113E;
-	Mon,  3 Mar 2025 06:16:10 -0800 (PST)
-Received: from e125769.cambridge.arm.com (e125769.cambridge.arm.com [10.1.196.27])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 807673F66E;
-	Mon,  3 Mar 2025 06:15:54 -0800 (PST)
-From: Ryan Roberts <ryan.roberts@arm.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Juergen Gross <jgross@suse.com>,
-	Boris Ostrovsky <boris.ostrovsky@oracle.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
-	Catalin Marinas <catalin.marinas@arm.com>
-Cc: Ryan Roberts <ryan.roberts@arm.com>,
-	linux-mm@kvack.org,
-	sparclinux@vger.kernel.org,
-	xen-devel@lists.xenproject.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>
-Subject: [PATCH v2 1/5] mm: Fix lazy mmu docs and usage
-Date: Mon,  3 Mar 2025 14:15:35 +0000
-Message-ID: <20250303141542.3371656-2-ryan.roberts@arm.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250303141542.3371656-1-ryan.roberts@arm.com>
-References: <20250303141542.3371656-1-ryan.roberts@arm.com>
-Precedence: bulk
+	s=arc-20240116; t=1741100352; c=relaxed/simple;
+	bh=UClmafexKg6NNUTLIrpb/B8GK548EN1DK2RtSIjCdMI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=K6/VWHMsrV1+C4ae/Etuk5rNW6Zy4MOkmpc5J7gsiMVt8BUXyV2nIxYFWsisn07zUj39usEPIyz/2C+8pfr7mv5xJOAeg6WlfBsYAwoGVFzvKD3iBajqgO+xVWv4GVDs2qPIu8chTUn68gLsSL6abYy88Kf0o2uttxoJco1WNcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name; spf=pass smtp.mailfrom=vps-ovh.mhejs.net; arc=none smtp.client-ip=145.239.82.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=maciej.szmigiero.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vps-ovh.mhejs.net
+Received: from MUA
+	by vps-ovh.mhejs.net with esmtpsa  (TLS1.3) tls TLS_AES_128_GCM_SHA256
+	(Exim 4.98)
+	(envelope-from <mhej@vps-ovh.mhejs.net>)
+	id 1tpSfV-00000000KXK-3XMb;
+	Tue, 04 Mar 2025 14:50:45 +0100
+Message-ID: <2fd13fdb-1d62-4d76-a8a0-c63fb0575fb7@maciej.szmigiero.name>
+Date: Tue, 4 Mar 2025 14:50:40 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6gbv37mGzG2Th
-X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741709362.21776@7Mw+uarGDLXOmMCMxxcj0Q
-X-ITU-MailScanner-SpamCheck: not spam
+User-Agent: Mozilla Thunderbird
+Subject: Re: QEMU's Hyper-V HV_X64_MSR_EOM is broken with split IRQCHIP
+To: Vitaly Kuznetsov <vkuznets@redhat.com>,
+ Sean Christopherson <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Paolo Bonzini <pbonzini@redhat.com>, Peter Xu <peterx@redhat.com>
+References: <Z8ZBzEJ7--VWKdWd@google.com> <87ikoposs6.fsf@redhat.com>
+Content-Language: en-US, pl-PL
+From: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>
+Autocrypt: addr=mail@maciej.szmigiero.name; keydata=
+ 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
+Disposition-Notification-To: "Maciej S. Szmigiero"
+ <mail@maciej.szmigiero.name>
+In-Reply-To: <87ikoposs6.fsf@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Sender: mhej@vps-ovh.mhejs.net
 
-The docs, implementations and use of arch_[enter|leave]_lazy_mmu_mode()
-is a bit of a mess (to put it politely). There are a number of issues
-related to nesting of lazy mmu regions and confusion over whether the
-task, when in a lazy mmu region, is preemptible or not. Fix all the
-issues relating to the core-mm. Follow up commits will fix the
-arch-specific implementations. 3 arches implement lazy mmu; powerpc,
-sparc and x86.
+On 4.03.2025 13:59, Vitaly Kuznetsov wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> 
+>> FYI, QEMU's Hyper-V emulation of HV_X64_MSR_EOM has been broken since QEMU commit
+>> c82d9d43ed ("KVM: Kick resamplefd for split kernel irqchip"), as nothing in KVM
+>> will forward the EOM notification to userspace.  I have no idea if anything in
+>> QEMU besides hyperv_testdev.c cares.
+> 
+> The only VMBus device in QEMU besides the testdev seems to be Hyper-V
+> ballooning driver, Cc: Maciej to check whether it's a real problem for
+> it or not.
 
-When arch_[enter|leave]_lazy_mmu_mode() was first introduced by commit
-6606c3e0da53 ("[PATCH] paravirt: lazy mmu mode hooks.patch"), it was
-expected that lazy mmu regions would never nest and that the appropriate
-page table lock(s) would be held while in the region, thus ensuring the
-region is non-preemptible. Additionally lazy mmu regions were only used
-during manipulation of user mappings.
+I just did a quick check on a hv-balloon Windows 2019 setup that I had on hand
+and it seems to work with "kernel-irqchip=split" the same correct way as without
+this option (which AFAIK is kernel-irqchip=on for q35 machine type).
 
-Commit 38e0edb15bd0 ("mm/apply_to_range: call pte function with lazy
-updates") started invoking the lazy mmu mode in apply_to_pte_range(),
-which is used for both user and kernel mappings. For kernel mappings the
-region is no longer protected by any lock so there is no longer any
-guarantee about non-preemptibility. Additionally, for RT configs, the
-holding the PTL only implies no CPU migration, it doesn't prevent
-preemption.
+So at least this Windows version and its VMBus client driver seem to not be
+affected by this issue.
 
-Commit bcc6cc832573 ("mm: add default definition of set_ptes()") added
-arch_[enter|leave]_lazy_mmu_mode() to the default implementation of
-set_ptes(), used by x86. So after this commit, lazy mmu regions can be
-nested. Additionally commit 1a10a44dfc1d ("sparc64: implement the new
-page table range API") and commit 9fee28baa601 ("powerpc: implement the
-new page table range API") did the same for the sparc and powerpc
-set_ptes() overrides.
+Will try to look at this deeper in coming time as I am fairly busy right now
+with QEMU live migration stuff before the code freeze soon.
 
-powerpc couldn't deal with preemption so avoids it in commit
-b9ef323ea168 ("powerpc/64s: Disable preemption in hash lazy mmu mode"),
-which explicitly disables preemption for the whole region in its
-implementation. x86 can support preemption (or at least it could until
-it tried to add support nesting; more on this below). Sparc looks to be
-totally broken in the face of preemption, as far as I can tell.
-
-powerpc can't deal with nesting, so avoids it in commit 47b8def9358c
-("powerpc/mm: Avoid calling arch_enter/leave_lazy_mmu() in set_ptes"),
-which removes the lazy mmu calls from its implementation of set_ptes().
-x86 attempted to support nesting in commit 49147beb0ccb ("x86/xen: allow
-nesting of same lazy mode") but as far as I can tell, this breaks its
-support for preemption.
-
-In short, it's all a mess; the semantics for
-arch_[enter|leave]_lazy_mmu_mode() are not clearly defined and as a
-result the implementations all have different expectations, sticking
-plasters and bugs.
-
-arm64 is aiming to start using these hooks, so let's clean everything up
-before adding an arm64 implementation. Update the documentation to state
-that lazy mmu regions can never be nested, must not be called in
-interrupt context and preemption may or may not be enabled for the
-duration of the region. And fix the generic implementation of set_ptes()
-to avoid nesting.
-
-arch-specific fixes to conform to the new spec will proceed this one.
-
-These issues were spotted by code review and I have no evidence of
-issues being reported in the wild.
-
-Cc: <stable@vger.kernel.org>
-Fixes: bcc6cc832573 ("mm: add default definition of set_ptes()")
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
----
- include/linux/pgtable.h | 14 ++++++++------
- 1 file changed, 8 insertions(+), 6 deletions(-)
-
-diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
-index 94d267d02372..787c632ee2c9 100644
---- a/include/linux/pgtable.h
-+++ b/include/linux/pgtable.h
-@@ -222,10 +222,14 @@ static inline int pmd_dirty(pmd_t pmd)
-  * hazard could result in the direct mode hypervisor case, since the act=
-ual
-  * write to the page tables may not yet have taken place, so reads thoug=
-h
-  * a raw PTE pointer after it has been modified are not guaranteed to be
-- * up to date.  This mode can only be entered and left under the protect=
-ion of
-- * the page table locks for all page tables which may be modified.  In t=
-he UP
-- * case, this is required so that preemption is disabled, and in the SMP=
- case,
-- * it must synchronize the delayed page table writes properly on other C=
-PUs.
-+ * up to date.
-+ *
-+ * In the general case, no lock is guaranteed to be held between entry a=
-nd exit
-+ * of the lazy mode. So the implementation must assume preemption may be=
- enabled
-+ * and cpu migration is possible; it must take steps to be robust agains=
-t this.
-+ * (In practice, for user PTE updates, the appropriate page table lock(s=
-) are
-+ * held, but for kernel PTE updates, no lock is held). Nesting is not pe=
-rmitted
-+ * and the mode cannot be used in interrupt context.
-  */
- #ifndef __HAVE_ARCH_ENTER_LAZY_MMU_MODE
- #define arch_enter_lazy_mmu_mode()	do {} while (0)
-@@ -287,7 +291,6 @@ static inline void set_ptes(struct mm_struct *mm, uns=
-igned long addr,
- {
- 	page_table_check_ptes_set(mm, ptep, pte, nr);
-=20
--	arch_enter_lazy_mmu_mode();
- 	for (;;) {
- 		set_pte(ptep, pte);
- 		if (--nr =3D=3D 0)
-@@ -295,7 +298,6 @@ static inline void set_ptes(struct mm_struct *mm, uns=
-igned long addr,
- 		ptep++;
- 		pte =3D pte_next_pfn(pte);
- 	}
--	arch_leave_lazy_mmu_mode();
- }
- #endif
- #define set_pte_at(mm, addr, ptep, pte) set_ptes(mm, addr, ptep, pte, 1)
---=20
-2.43.0
-
+Thanks,
+Maciej
 
 
