@@ -1,187 +1,137 @@
-Return-Path: <linux-aspeed+bounces-949-lists+linux-aspeed=lfdr.de@lists.ozlabs.org>
-X-Original-To: lists+linux-aspeed@lfdr.de
-Delivered-To: lists+linux-aspeed@lfdr.de
-Received: from lists.ozlabs.org (lists.ozlabs.org [112.213.38.117])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9499A4F19B
-	for <lists+linux-aspeed@lfdr.de>; Wed,  5 Mar 2025 00:36:26 +0100 (CET)
-Received: from boromir.ozlabs.org (localhost [127.0.0.1])
-	by lists.ozlabs.org (Postfix) with ESMTP id 4Z6sWl2mKJz3bx0;
-	Wed,  5 Mar 2025 10:36:19 +1100 (AEDT)
-X-Original-To: linux-aspeed@lists.ozlabs.org
-Authentication-Results: lists.ozlabs.org; arc=fail smtp.remote-ip=160.75.25.115
-ARC-Seal: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707; t=1741098299;
-	cv=fail; b=EWla/2JDgNkmYBQ+DEZ+X56JCFG9zBUmc4/+xbKUb2x0B7Bc5czxS+ejkk9ootXSdfqTx72/UqQ8jEovyE1Lt4mWhxLeEBUOi5vGl+L4obTRfb2sLS5wY9pdI91V321TBogA8YsDWVQ5KFDcL6DjPwuwxI7iWXUOF2wuhz/wc9oQr/Gpb62jsUdeT7XZ4wN0KUtQxBCb/kPNutJA6NutZHnX5c0Z/M42k1g5dtbCfPpPI5id2zS5HKtKpkm32ZJ418DPZrOZfOaSSqJS/WkcjVgxsezjGGt9E4asvuqUPsuZit8Cig+mj/LGUaFuUb+QHQXcgwrre8vgjuOOjwb6bA==
-ARC-Message-Signature: i=2; a=rsa-sha256; d=lists.ozlabs.org; s=201707;
-	t=1741098299; c=relaxed/relaxed;
-	bh=ChzWCAC/nneidv5nY92AltDK1p3xOBlts66BZXwSMHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PgnxFozoZ8dCuDZiyf3xJcUmWsT0FiaKXsRr7vv3SS80dYxg9kuciEUUyZN0sY68abPYmaupTh/WlXAmhEhCvih3FxfMt7BwtKvyf6CAGP+H1K2rr6/PZagIeTy/0TrE2btWXT/W/6wDT3W6vhuZ3iUjIKjXMlRTBCIbX5gOEIvCoslnqpE6cMQ6zJ7dZHyhMhYdPMPYOZafXyDnU9Hip1VvATUMpiQ7deQR2VeDmduesWLjvWPe5PYeNdLLQPs4QzqUKPpLfP3G2YEQGfan9KRHdC4M3OL3jcpCK27F9I8dQEXs19KwftkDVMNGx+zZxsGeGi8YQ4LI/UzmQjoQPw==
-ARC-Authentication-Results: i=2; lists.ozlabs.org; dmarc=fail (p=none dis=none) header.from=gmail.com; dkim=fail (2048-bit key; unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=HMuZyZAt reason="signature verification failed"; dkim-atps=neutral; spf=none (client-ip=160.75.25.115; helo=beeline1.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org) smtp.mailfrom=cc.itu.edu.tr
-Authentication-Results: lists.ozlabs.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: lists.ozlabs.org;
-	dkim=fail reason="signature verification failed" (2048-bit key; unprotected) header.d=gmail.com header.i=@gmail.com header.a=rsa-sha256 header.s=20230601 header.b=HMuZyZAt;
-	dkim-atps=neutral
-Authentication-Results: lists.ozlabs.org; spf=none (no SPF record) smtp.mailfrom=cc.itu.edu.tr (client-ip=160.75.25.115; helo=beeline1.cc.itu.edu.tr; envelope-from=root@cc.itu.edu.tr; receiver=lists.ozlabs.org)
-X-Greylist: delayed 245 seconds by postgrey-1.37 at boromir; Wed, 05 Mar 2025 01:24:58 AEDT
-Received: from beeline1.cc.itu.edu.tr (beeline1.cc.itu.edu.tr [160.75.25.115])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lists.ozlabs.org (Postfix) with ESMTPS id 4Z6dHZ6wTrz3089
-	for <linux-aspeed@lists.ozlabs.org>; Wed,  5 Mar 2025 01:24:58 +1100 (AEDT)
-Received: from lesvatest1.cc.itu.edu.tr (lesvatest1.cc.itu.edu.tr [10.146.128.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits))
-	(No client certificate requested)
-	by beeline1.cc.itu.edu.tr (Postfix) with ESMTPS id D5F6E40D5707
-	for <linux-aspeed@lists.ozlabs.org>; Tue,  4 Mar 2025 17:24:25 +0300 (+03)
-X-Envelope-From: <root@cc.itu.edu.tr>
-Received: from lesva1.cc.itu.edu.tr (unknown [160.75.70.79])
-	by lesvatest1.cc.itu.edu.tr (Postfix) with ESMTP id 4Z6dDx4DqszFwYD
-	for <linux-aspeed@lists.ozlabs.org>; Tue,  4 Mar 2025 17:22:41 +0300 (+03)
-Received: by le1 (Postfix, from userid 0)
-	id 5FDE04272F; Tue,  4 Mar 2025 17:22:34 +0300 (+03)
-Authentication-Results: lesva1.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMuZyZAt
-X-Envelope-From: <linux-kernel+bounces-541874-bozkiru=itu.edu.tr@vger.kernel.org>
-Authentication-Results: lesva2.cc.itu.edu.tr;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMuZyZAt
-Received: from fgw1.itu.edu.tr (fgw1.itu.edu.tr [160.75.25.103])
-	by le2 (Postfix) with ESMTP id 0BB234220E
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:04:47 +0300 (+03)
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by fgw1.itu.edu.tr (Postfix) with SMTP id 95BB4305F789
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 17:04:47 +0300 (+03)
+Return-Path: <linux-kernel+bounces-545799-lists+linux-kernel=lfdr.de@vger.kernel.org>
+X-Original-To: lists+linux-kernel@lfdr.de
+Delivered-To: lists+linux-kernel@lfdr.de
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8253A4F1A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:36:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 66AFE3AA327
-	for <bozkiru@itu.edu.tr>; Mon,  3 Mar 2025 14:04:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA16516DDB2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:36:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 784362135D8;
-	Mon,  3 Mar 2025 14:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12B4A24C076;
+	Tue,  4 Mar 2025 23:36:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HMuZyZAt"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b="VlYuS0Sb"
+Received: from camel.cherry.relay.mailchannels.net (camel.cherry.relay.mailchannels.net [23.83.223.29])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3553320FAB5;
-	Mon,  3 Mar 2025 14:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741010656; cv=none; b=GmV0AsmW2GTu4hGxeL7c6lCLPQ+0aMelbzB7M7JhHpOi4bZl62lwAS5t6dvmQdJYtRuqzku6oKU09NLB9+L9d7y7wBnuQYJX71eVccCqwICsthdJ4tg2SIwCoaWliyVcCtlsx1xZoqWpQ6c8KM1zBAgTFRluviklXyLCI1G8NZQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741010656; c=relaxed/simple;
-	bh=8k28ohh0BPSZHJHOBtNIM4qll2UGyVczMLoUtKSqo1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tj3AsVJiQnxZJpqmydaM9fIRa87U37Eu5BgQkgd3Vo5SQXoKbS7ltowDf0uK5GrNaXL4FKWT/KEb1cImx88i1CLDMWW0eGO6ZIyjPCWLLgDPRxOoY/bTmHZ7rgHczL8jGEuYr8F4ljHKmvg1vEvB3xR7pCqOjThsXoBSBLdJU+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HMuZyZAt; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4394a823036so42853775e9.0;
-        Mon, 03 Mar 2025 06:04:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741010652; x=1741615452; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=8k28ohh0BPSZHJHOBtNIM4qll2UGyVczMLoUtKSqo1k=;
-        b=HMuZyZAt3+HrcqUH2wDsCmDpbKiFItBtr8/0V/WDq2g16LasV9IOnq+dO/GEWPSKtX
-         kMi/Hb1xLCLX+4r3Z0nFzor101reg5Vd2Fn/1KoXe09FMx1g99ojWfM5hJ7kEGlUB2G4
-         WOT3HRaQxMILVhsdYeD+t8a+o+JkQiTi4+VWVfo4KF1zUPnRnNbsDT5ZhvXf3lfAzDV8
-         rRF5tPkrrumjlqxbyunrMHUoh5At7RMr228RzIUton2Mk5p7H4lvvqPiqvc823991v+h
-         kPIUA48tjnZ8luNk8eNDW75+D7uqZamPoCvVUgTLeA/L1J0IB8EG0NXNePXUb99Vhw72
-         tZbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741010652; x=1741615452;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8k28ohh0BPSZHJHOBtNIM4qll2UGyVczMLoUtKSqo1k=;
-        b=rAE9Fy76ozFyqo4amQLQObaKNJfrmaz9CEDMBLLl6LXlFp8FWq6+c4B2PNEMqNcIBx
-         rylt3ohqvwadsc5S5DO2qu5mNzzVyNWjRgSlOv1L1E/iODVBcoqeyGMpXBjWQreWT6+y
-         aMh+ZjfutmfOwO0hdzUWTpnJk5QuL4brYgJifO2s2uT0dxVSYUqvbkXTnNlqiFiY36tn
-         daOAa5YiOUnpvZ+vQlSSahwNMtSrAMuihZ5iy5YyKG1SCZryQKVOrY+z/mfAFjRXkL79
-         DeRmWizEmzXVnGvvI5q4luGd6BZaphDBoNT2194LtRfgFsRJMdSvseLvv82G7nIPQFvs
-         aeVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUx+Ltl09t+5Okss6+7fhvMxHcP4/TKjLG8yV8m5iwyk7wA8MkILGsedHWlhMD+klp4veR8sd+zIDNZ0VkKvNSS9Zs=@vger.kernel.org, AJvYcCWXEfO8zwWZBXxXRvZC3JKmwvCGcIeS/lsXVLiDdqGHBB0EpLRn+j9koeVe2lXQ6PdcyLvBI6HBlHp9QEs=@vger.kernel.org, AJvYcCXa+ESqYlmieoKrmPM3Mv994053zyJSjMQdO4E72RrR8GFW8+i6U+r33OXCCPEh0Xxf45PLqKRaLXDF@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywl855ZvE7prsJAOtYRk0h6G57Za/l751DTqF2bnkVztmjaLM0h
-	LAxE08UDXoNXUEA11BMtLH/Lq2CigUewbyJ+DO1XHAY3ue5tc6/B
-X-Gm-Gg: ASbGncu/OS6VUzHuiuqjRaVH2h0Kp/kTAFvmKS0WwDvYoAJaFXayFkwilZSMn+gGa39
-	qk6feCfTlkywqB4MG6APMmxla5M++u21ayfwKfbarUFghFvcrfeBkinHkVsreI0Ip78BgxOV8kB
-	OJQWTsmNECGDKPYE1GQ+n2VW4Dg+8Km+m15/PNUJAVxCZf1oIrtZyyQbHMPCkighaH9rRrgque3
-	nka7QrTooO5ERTIrbN8pPsgZmqhnRFS9PjnALK+nViUz2+wU2W4cZfb0r5sP5LEzxglc/dVd/lS
-	H1RhGfv/RkutV8TqbQl99BX0ADAlPLFDzEh4TFOmWF/ZaOID8Ptlv0S2OMCmyEH5NuuImGMI+VO
-	QnLI=
-X-Google-Smtp-Source: AGHT+IHvcHXOSeKhHWMUt2xXWhTV53mo6yshUFDelmHEDhBHpCQfhR1rFavwoCbMnPzni4lL0cMigA==
-X-Received: by 2002:a05:6000:1f8c:b0:38d:e48b:1783 with SMTP id ffacd0b85a97d-390eca27761mr8649282f8f.42.1741010652096;
-        Mon, 03 Mar 2025 06:04:12 -0800 (PST)
-Received: from ubuntu2204 (207-pool1.nat.godollo.uni-mate.hu. [192.188.242.207])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47960b6sm14936073f8f.17.2025.03.03.06.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 06:04:11 -0800 (PST)
-Date: Mon, 3 Mar 2025 15:04:09 +0100
-From: =?utf-8?B?VMOzdGggSsOhbm9z?= <gomba007@gmail.com>
-To: =?utf-8?B?QW5kcsOp?= Draszik <andre.draszik@linaro.org>
-Cc: Chanwoo Choi <cw00.choi@samsung.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
-	Joel Stanley <joel@jms.id.au>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
-	Hans Ulli Kroll <ulli.kroll@googlemail.com>, Linus Walleij <linus.walleij@linaro.org>, 
-	Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
-	Jerome Brunet <jbrunet@baylibre.com>, Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
-	Dianlong Li <long17.cool@163.com>, linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-amlogic@lists.infradead.org
-Subject: Re: [PATCH 13/18] rtc: sd2405al: drop needless struct sd2405al::rtc
- member
-Message-ID: <2gfjdazu2ohv4evd7iuk2dzexlydnd6yu3xmjk2lgsx3iws5sa@xdwf4df4ojck>
-References: <20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org>
- <20250228-rtc-cleanups-v1-13-b44cec078481@linaro.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 917AA1FAC40;
+	Tue,  4 Mar 2025 23:36:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.223.29
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741131398; cv=pass; b=I2jKsZ8jVeRm6Ojhq/WCnX5dp0idWhO3gOR45zGeVoYd268I7OcaiUfDbTpGLjWuaVqLGpLu1cCaop0vFGiOxXTfyX4Vdn5EQc3ILqLqUjUKptQhHPwl1AQo8u7CKlX9DJL2ioTpu2VDT7nSrxiWyiOi8HU4LqmaouDKfEIupAs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741131398; c=relaxed/simple;
+	bh=au4ZHHjqyU6in8xgr/VtU+7ORsPZNbiGMQowSls/TzI=;
+	h=Message-ID:MIME-Version:Subject:To:References:From:In-Reply-To:
+	 Content-Type:Date; b=iu1PvXcXePXx87gK5fCqBWRqUBxvxLbZPFUiTjx0O9BU9rA3KiXGB/mkn8zBJjuyhVcLGH7IqJMKxxD5FlzvSkMv3gNX9BZmDZe+7JsCbhcM7lSnf8A3DcsrHWPCprGdIYxnN2/7P5IkpZK3PHvLagzrQ0Y/DlwIcAVp21QR/y4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com; spf=pass smtp.mailfrom=arinc9.com; dkim=pass (2048-bit key) header.d=arinc9.com header.i=@arinc9.com header.b=VlYuS0Sb; arc=pass smtp.client-ip=23.83.223.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arinc9.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arinc9.com
+X-Sender-Id: hostingeremail|x-authuser|chester.a.unal@arinc9.com
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id E9A30782DBC;
+	Tue,  4 Mar 2025 17:57:31 +0000 (UTC)
+Received: from nl-srv-smtpout1.hostinger.io (100-105-75-112.trex-nlb.outbound.svc.cluster.local [100.105.75.112])
+	(Authenticated sender: hostingeremail)
+	by relay.mailchannels.net (Postfix) with ESMTPA id 6E6FD7821D7;
+	Tue,  4 Mar 2025 17:57:28 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1741111051; a=rsa-sha256;
+	cv=none;
+	b=4kIyyYpRo4F2Zo5ZlP8/25GUpSfkqmS+oB+5jUpQpJ56D20fMZdK+bbp5UQ9HwrtmajeVC
+	Pm9vOeQq+N92OPjYAOdyC8pwCzkfJBH+ZMP5LUrt4mEw62hubi2yLs08xBPUKpU4cjxlpW
+	lnD6ecc6UZg+vlldEjcvql/Tmmffo6FHf+z7fgu+fto90pDpJ/FpjsOtkDqBiYuLaVqJp3
+	oWQpATvb0+AcrY5n66p3LUxeK2efh7YXUFGYV7u2s9R54zKjDhOV3GeTwW+XCZuu8lGV7a
+	x4ZwsnHKrwK/uvCRwf6JKM3tIp4SammQwTIPU8uHACMGSjYxlf+2G6wqqL8YdA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1741111051;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=uHrANchvNJ+aKAH+dxKPt87xl9/ANWKJQ/Jgn87Orgg=;
+	b=voRx0J38LeQaH0gsL85SbJCNy8ycVN24s+g1aYkTYvUurNZsLSeKjupQxWnzBUA0a8jPo4
+	vy8pnYIivlUhJBd+wJem3XJOTLwQTR1S3dzhWQzNhd7+nf0cBcjCaTY2rENhtedQNnC8Wf
+	m2cvs5vbjzuRWWV5AlIX0sQrhgdfifijhdnW+RibhkG1hLBBd/GLoUPoWS7m1iLiUltUr9
+	Ab8sSfDmGFLuj4Xii1A9rogqmhKfACkTHsu7KNmwTTMVba2/TBxGPB7IHGxiE6Od9jYJbU
+	NvfuO50AwVj4cVSywytMM90+O7Bn2dlSyxXXu3+Jvh4VuGiSpDh4OlcentC4iQ==
+ARC-Authentication-Results: i=1;
+	rspamd-5c7b96f5b9-lglkd;
+	auth=pass smtp.auth=hostingeremail smtp.mailfrom=chester.a.unal@arinc9.com
+X-Sender-Id: hostingeremail|x-authuser|chester.a.unal@arinc9.com
+X-MC-Relay: Bad
+X-MailChannels-SenderId: hostingeremail|x-authuser|chester.a.unal@arinc9.com
+X-MailChannels-Auth-Id: hostingeremail
+X-White-Snatch: 6ac490ef0cad969d_1741111051802_1907771754
+X-MC-Loop-Signature: 1741111051802:3446199483
+X-MC-Ingress-Time: 1741111051801
+Received: from nl-srv-smtpout1.hostinger.io (nl-srv-smtpout1.hostinger.io
+ [145.14.150.87])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.105.75.112 (trex/7.0.2);
+	Tue, 04 Mar 2025 17:57:31 +0000
+Received: from [10.10.10.229] (unknown [109.228.249.111])
+	(Authenticated sender: chester.a.unal@arinc9.com)
+	by smtp.hostinger.com (smtp.hostinger.com) with ESMTPSA id 4Z6k0h58rHz35BGt;
+	Tue, 04 Mar 2025 17:57:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arinc9.com;
+	s=hostingermail-a; t=1741111046;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uHrANchvNJ+aKAH+dxKPt87xl9/ANWKJQ/Jgn87Orgg=;
+	b=VlYuS0SbjdEYQjhRibRf6Btba4juCqtPMunmxKouR4Yq5vxsZFsVzW8LiHjC5qAtmXv+cj
+	qrddsjbnsb4qC4xveJq9FJfx4vhyVSteYj+MqzipcyB0b100MGUNZCgDaj3TBnz5fpaK+n
+	cXFg980zguMAAwaprVd9If9Z5GoY8U+TApHzvoju8j7PuH4Eh+355LTjb0Hs7DwpaaypVT
+	eEpy0YRY+8y18Uwpy7jnAoTx/XDQJhfB+1iUGQUjXsDF5cnw0jCncOiTbV4AQ1ZXMFpv7l
+	nGTbvvqmF3gDE/+E7FlD267gIbSjlHWs/GbBibxlIH/bAHmbbZi/cde/E6A11A==
+Message-ID: <411daae4-0cf6-4e47-9a38-0fe46cf2825c@arinc9.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-X-Mailing-List: linux-aspeed@lists.ozlabs.org
-List-Id: <linux-aspeed.lists.ozlabs.org>
-List-Help: <mailto:linux-aspeed+help@lists.ozlabs.org>
-List-Owner: <mailto:linux-aspeed+owner@lists.ozlabs.org>
-List-Post: <mailto:linux-aspeed@lists.ozlabs.org>
-List-Archive: <https://lore.kernel.org/linux-aspeed/>,
-  <https://lists.ozlabs.org/pipermail/linux-aspeed/>
-List-Subscribe: <mailto:linux-aspeed+subscribe@lists.ozlabs.org>,
-  <mailto:linux-aspeed+subscribe-digest@lists.ozlabs.org>,
-  <mailto:linux-aspeed+subscribe-nomail@lists.ozlabs.org>
-List-Unsubscribe: <mailto:linux-aspeed+unsubscribe@lists.ozlabs.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <20250228-rtc-cleanups-v1-13-b44cec078481@linaro.org>
-Content-Transfer-Encoding: quoted-printable
-X-ITU-Libra-ESVA-Information: Please contact Istanbul Teknik Universitesi for more information
-X-ITU-Libra-ESVA-ID: 4Z6dDx4DqszFwYD
-X-ITU-Libra-ESVA: No virus found
-X-ITU-Libra-ESVA-From: root@cc.itu.edu.tr
-X-ITU-Libra-ESVA-Watermark: 1741702968.82795@UYzycq/sjtRBl6OJQ4WogA
-X-ITU-MailScanner-SpamCheck: not spam
-X-Spam-Status: No, score=-0.8 required=5.0 tests=ARC_SIGNED,ARC_VALID,
-	DKIM_ADSP_CUSTOM_MED,DKIM_INVALID,DKIM_SIGNED,
-	FREEMAIL_FORGED_FROMDOMAIN,FREEMAIL_FROM,HEADER_FROM_DIFFERENT_DOMAINS,
-	MAILING_LIST_MULTI,SPF_HELO_NONE,SPF_NONE autolearn=disabled
-	version=4.0.0
-X-Spam-Checker-Version: SpamAssassin 4.0.0 (2022-12-13) on lists.ozlabs.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2] dsa: mt7530: Utilize REGMAP_IRQ for interrupt
+ handling
+To: Daniel Golle <daniel@makrotopia.org>, Andrew Lunn <andrew@lunn.ch>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ DENG Qingfang <dqfext@gmail.com>, Sean Wang <sean.wang@mediatek.com>,
+ SkyLake Huang <SkyLake.Huang@mediatek.com>,
+ Christian Marangi <ansuelsmth@gmail.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Frank Wunderlich <frank-w@public-files.de>, John Crispin <john@phrozen.org>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <221013c3530b61504599e285c341a993f6188f00.1740792674.git.daniel@makrotopia.org>
+Content-Language: en-US
+From: "Chester A. Unal" <chester.a.unal@arinc9.com>
+In-Reply-To: <221013c3530b61504599e285c341a993f6188f00.1740792674.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+Date: Tue, 04 Mar 2025 17:57:24 +0000 (UTC)
+X-CM-Analysis: v=2.4 cv=F4sFdbhN c=0 sm=1 tr=0 ts=67c73f06 p=VT4XjZGOAAAA:8 a=DLgUjxyaX94o89xnTiwHMQ==:117 a=DLgUjxyaX94o89xnTiwHMQ==:17 a=IkcTkHD0fZMA:10
+X-CM-Envelope: MS4xfD7S7/gD50VTE/59nwPF/2oV/M3GLXLr6H55NKCDhTFqO+648U8qru2NN9sYDvCLk7Q60Q+9pBkIIp+dNir+Sq6xHl5eEuzwqPFqknqQ32b1xURDDOLW id8NvcuXj9UmMklo4HRP9kR8OpLqlKMf0LWhusUgxQxX3t4VdoDMR8mAWMctBZY1BKATqFcPLSlpB6ypsDNQxsbx2su/hhlWaCr/qKjg3rjbMPi3VQp2cogm dDv9ApnrR/K7zBtFslgXga7Ofq3aW8SFD6QPVQBqld6eBI9JXGEObdiKDO0BE2wxIlQZVGtgMVn/k9e6XuaT26BA/JYKGfnViM/NPkeXA6snaG7iAFO+6R8j HSkoK65c24SlQUfPDYy9Us0msyGIJz8L/AmG0opbxRFmXIlc4AgcYuP/iEDTMGLtYjks71uumOjp0Hrne9vXpgUnRXaNumqG7NymEs5IdKxNwRQuiEVgueMm 0XesZ5FFHKX734zrxglNevX08q0FmJCnyoM5bCP7FawPxPBj1WASC1yzxjAIQq0f7KSWGdPLBfNWjPYrDH5FVHh8XvAV9aWAm8VRe3OLj9OH12thVmv2t28Q jVIUd5Q8FNOrJz4ZgcGqQ3NxNOEf8q2DfEDkhjlsAHJOIZrqKQZnqpiYkbou71uR1wU4CGxFlFz6SeUjo/n1tRZas/9RKyG1F0m4oaiH0fNRBNAHlIc1vERU I8t3G8VATzsNgHtKjkojJniz8F29Cl6fUFqXRlz2ESAzghJJBqMexUddzzj5FXRMNaZbJAWZV3r6qyRXGSd8KlbbaOpmjLXGNNxgxNOuXQYY4e/REeOvgWEp 7FxtfLIZq4xokYW0dgE=
+X-AuthUser: chester.a.unal@arinc9.com
 
-Hi!
+On 01/03/2025 01:41, Daniel Golle wrote:
+> Replace the custom IRQ chip handler and mask/unmask functions with
+> REGMAP_IRQ. This significantly simplifies the code and allows for the
+> removal of almost all interrupt-related functions from mt7530.c.
+> 
+> Tested on MT7988A built-in switch (MMIO) as well as MT7531AE IC (MDIO).
+> 
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
-> We can drop it from the structure and just use a local temporary
-> variable, reducing runtime memory consumption by a few bytes.
+Acked-by: Chester A. Unal <chester.a.unal@arinc9.com>
 
-It works on real hardware.
-
-Tested-by: T=F3th J=E1nos <gomba007@gmail.com>
-
-Regards,
-TJ
-
-
+Chester A.
 
