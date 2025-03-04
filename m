@@ -1,249 +1,152 @@
-Return-Path: <linux-kernel+bounces-544227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47B52A4DF10
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:20:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95DA7A4DEB0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:07:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD77189055D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:20:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 90F06189AB71
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:07:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FE92040A4;
-	Tue,  4 Mar 2025 13:20:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42509202F68
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 034E2204582;
+	Tue,  4 Mar 2025 13:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="p1t912bg"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E3AD200BBC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:07:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741094406; cv=none; b=N9ciFJH+l9HEaIBrcqmA2eMNwFYEG/XvMSkhFh+gIzNsGmfu4I8Ra0T2t21/k7hD+eTcrwPfxSwBcE2M9kZPEtoA3v8PcPXHUpydqKB+752Srl9MF/H4s5+h5zWQAkJAFaDVO9PWfkwBM2HwrOrndqcRB5ZAj9Ft6k+0yLYyvS4=
+	t=1741093633; cv=none; b=K/9c9tlySA0o4Z58N8X8n0XQG8kP6fGU/+r1Tmn1vJz7EWeDteHsxkhV308UwttzNA0f6H+bD0X5cUJDfooUe95aOPeU3bggt4tGGIn5tlOLjL/a7mipk3kAyIf15dpClSm7MrVxbtOhYg1PAupryc6GAUG7brrJu7DVuPgXxb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741094406; c=relaxed/simple;
-	bh=m9Je7f6LGEVPu9cjBmXbrgZ/ibfBq4qHWPcQbiitp5Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=RSVtCskhTkZw5accwsOKBDKqcthM1+hWzydFE9wgnt7spjBGJUtwgiynbq5TyaUUX6LPcszrzGtKdlQ9DSUxjClWW5JQT7goFbHDK0EwAn5QjcUA1UQvuItpSGwhxkV3zHCzAGW5Xn5NeEcNJWw10z/IZ+q6Ll0+ONO9W9BVxi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Z6bYB4Jp9z9ssM;
-	Tue,  4 Mar 2025 14:06:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id bALd6RdimFkt; Tue,  4 Mar 2025 14:06:38 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z6bYB3FN1z9ssL;
-	Tue,  4 Mar 2025 14:06:38 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5AC468B773;
-	Tue,  4 Mar 2025 14:06:38 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id QXxqVrulQ7mE; Tue,  4 Mar 2025 14:06:38 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E49218B763;
-	Tue,  4 Mar 2025 14:06:37 +0100 (CET)
-Message-ID: <c4fe2f76-e6b8-4445-84b0-8509235e1fef@csgroup.eu>
-Date: Tue, 4 Mar 2025 14:06:35 +0100
+	s=arc-20240116; t=1741093633; c=relaxed/simple;
+	bh=Ky+fvdyDoG3IissBsaiMMbiz45nPeSzwNjFD36o7tK0=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=pKY5F0Cc0/Drc5mtzTb9ZJH8NkJC2pXCRyN7EACAedsHJNLoO5GtW8noXpmzHbb8m599A4MOfQ1i0CwU5rx5dHrnyyl15FkPXJGIuarHAHmtxU1aqsqGiz4+QU9rXYW9H9Zs8eUu5UOA87foTdjY9fBYTUAwP5fBprrnkRFSsb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=p1t912bg; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43995b907cfso35986735e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:07:11 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741093630; x=1741698430; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wZFlPwqznQHgnLAxscIdZsj0o5PqYme1kBm8s2m+DWI=;
+        b=p1t912bgiEA7pVQg6xF8m1DSuE39EYevTwd//iwOHkfXAn45PIX+1Z7RtQP0DKzRJ7
+         gz2+3/82sOEdxS4dCzhWJV0CEnRkbwWPXDwAvzrCMoH3fDEjrosC2cMGmAHcfpMdehd+
+         y1sIJWSIhKFGnJkTirWAgyZtwm4/WVFj1VQ8RAIxK3GA2v3xv8eR1319V1hM3HLnd8M5
+         OVzWtQHK86GG42TG03grZPyga84uqi+5z6i4IUKfD2AvUa4a3DW1nWTd4DPsKcFls6V1
+         ZGShdabnxDtBQozz4eccKwURIhLaVe1w3Pa+fAfW01g7hLDniJn1zqSAfZgrmNgq4yXd
+         1xDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741093630; x=1741698430;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wZFlPwqznQHgnLAxscIdZsj0o5PqYme1kBm8s2m+DWI=;
+        b=n8tM+Q9TsXOIWccm3dtOeFc5s5CGyQrNyt2qis1/lqWiGQ6RQ73wDVHKNOi0yaaMmp
+         NoVPAt8NCfIx+LdXEikf4XGnq37yBx3vnfoSEqwWPyLSdzZgQssiI3bthSsiMxlFDpas
+         D4wIL+3h2k36ZtR5ppQ4sIkcp+nXjXV7G4pghNi3erQA/j78P2ZaI1fbE+7a5eLeYoVO
+         iLv+vILAlRwap1zNhfzTnI1D1tb6w/JRo2FFhHtcE0wEizLtsWbflw0LDCcvmUrCRg89
+         q5e4QpV3+ZBa11bAYYebm6l6+nfT1PJ5j+sjCTsqlJz/wgfhb/R73EhYNBEc6/ZofpqD
+         61WQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX2OZEwS+cpAIj2O9OL0mNflytMh/8bcPUsRompMh52Dp1vWsjfzQKgogyHFln6+nd6q9MQd233elVZDG0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXTshDMAG7oiTYLN5O5SjndsQ/8/fUslWPF0k3oni/9h2eVx5W
+	iUqjBNLPhwOJmo8LTC0stOCRZG8XRA0TZLkkxyaryhAGCZjxN+haPTfhjkwJN6A=
+X-Gm-Gg: ASbGncuc94oT+bFrV+CjD+HME1tJuWKR0Tn2LBV3Npc80CXrwbXl1Y0heAbuj+w+m4k
+	M6qb2lSgCnciLrFpwMq2znUkq3fsNhXGJ03wpdJF5lGg87EQhz+VLzSZ9zQ8mB3ArPgI7FwVAyv
+	XHTW15t7UUudxuoz+w5uL30CpXMNEWm0n4z6XW3cRysRHAqv4s/sKGBr06Q5xN9up7hn8AoPtbQ
+	HKcvLhqj1mGvIeUbV6pGPTKco60QMdcYU9GRLx3+F872sVOv7186k0wdBdCy1/wnV+w7opXGnw7
+	zPgcU0YINxetWD9QOo5c36qodFKv/UGex7y4lqOnqqgE991Ve03Bg9Y2qgMp0DxgS/AOFLfyv4h
+	1si2UZg==
+X-Google-Smtp-Source: AGHT+IEHFxGtqrv8BoxoMocArVZG35gEJU/5Ocm93/iIVY0b3mdodulWU6Lr+CIjH7ZiEcVq6DZcLA==
+X-Received: by 2002:a05:600c:3114:b0:439:9946:af60 with SMTP id 5b1f17b1804b1-43ba676e393mr123014035e9.25.1741093629721;
+        Tue, 04 Mar 2025 05:07:09 -0800 (PST)
+Received: from [127.0.1.1] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6cd8sm17401715f8f.44.2025.03.04.05.07.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 05:07:09 -0800 (PST)
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Subject: [PATCH 0/8] Reup: SM8350 and SC8280XP venus support
+Date: Tue, 04 Mar 2025 13:07:06 +0000
+Message-Id: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Build Warnings at arch/powerpc/
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
- Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Michael Ellerman <mpe@ellerman.id.au>
-References: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
- <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
- <8ba544e7-cf2a-4807-a056-683115805721@csgroup.eu>
- <bfcce9ce-bc26-4088-8d27-0797fc0d22d3@linux.ibm.com>
- <fe937273-d81a-4f6c-9eba-b96b711b4644@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <fe937273-d81a-4f6c-9eba-b96b711b4644@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPr6xmcC/x3NQQqDMBBA0avIrDswRqW2VykuYjK2AzVKJkpAv
+ LvB5dv8f4ByFFZ4VwdE3kVlCQX1owL3s+HLKL4YDJmOGqpxbPEvYcs4sxeLbpklJY6K6nrTU15
+ x57ApsnHWd8/X2E4EpbZGniTfp89wnhcILkOjeQAAAA==
+X-Change-ID: 20250301-b4-linux-media-comitters-sc8280xp-venus-e2cad579b4f0
+To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
+ Vikash Garodia <quic_vgarodia@quicinc.com>, 
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
+ Bjorn Andersson <andersson@kernel.org>
+Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
+ Johan Hovold <johan+linaro@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+X-Mailer: b4 0.15-dev-33ea6
 
+This series is a re-up of Konrad's original venus series for sc8280xp and
+sm8350.
 
+Link: https://lore.kernel.org/all/20230731-topic-8280_venus-v1-0-8c8bbe1983a5@linaro.org/
 
-Le 04/03/2025 à 13:38, Madhavan Srinivasan a écrit :
-> 
-> 
-> On 3/4/25 4:58 PM, Madhavan Srinivasan wrote:
->>
->>
->> On 3/4/25 2:26 PM, Christophe Leroy wrote:
->>>
->>>
->>> Le 04/03/2025 à 07:13, Madhavan Srinivasan a écrit :
->>>>
->>>>
->>>> On 3/4/25 10:42 AM, Venkat Rao Bagalkote wrote:
->>>>> Greetings!!
->>>>>
->>>>>
->>>>> Observing build warnings with linux-next and powerpc repo's. Issue is currently not seen on mainline yet.
->>>>>
->>>>> PPC Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fpowerpc%2Flinux.git&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C48de41657f8341b927e708dd5b198b84%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766887458137690%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=P9JQJ7joMFHGDws1H0iaxpj6blYAqsh4ATzrmB1A8Yc%3D&reserved=0 merge branch
->>>>>
->>>>> PPC Kernel Version: 6.14.0-rc4-g1304f486dbf1
->>>>> next Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fnext%2Flinux-next.git&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C48de41657f8341b927e708dd5b198b84%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766887458152652%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=ZVQdCx62Z3ekoXOrWoE6SdHv4RvgjDFSE9CHPPJ%2FiyI%3D&reserved=0 master branch
->>>>>
->>>>> next Kernel Version: 6.14.0-rc5-next-20250303
->>>>>
->>>>>
->>>>> On linux-next kernel issue got introduced b/w next-20250227 and next-20250303
->>>>>
->>>>>
->>>>> Build Warnings:
->>>>>
->>>>> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
->>>>> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
->>>>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
->>>>>
->>>>>
->>>>
->>>> Can you please specific the compiler and compiler version you found this issue with
->>>>
->>>
->>> Can you also tell which defconfig you are using or provide your .config
->>>
->>> It might also be helpfull if you can provide a disassembly of the three file.o around the warned address.
->>
->> I could recreate the issue with gcc 11.4.1 20231218 with today's linux-next (but could not recreate with gcc 14 or gcc 11.3.0)
->>
->> (20d5c66e1810 (HEAD -> master, tag: next-20250304, origin/master, origin/HEAD) Add linux-next specific files for 20250304)
->>
->> warning for one of the switch.S file :
->>
->>    CC      arch/powerpc/kernel/syscalls.o
->>    AS      arch/powerpc/kernel/switch.o
->> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
-> 
-> I guess this is becos, for bl .+4, we recently added in the arch_decode_instruction (decode.c) to set the type as INSN_OTHER
-> 
->          case 18: /* b[l][a] */
->                  if (ins == 0x48000005)  /* bl .+4 */
->                          typ = INSN_OTHER;
-> 
-> Which I think is the issue here, changing it to INSN_CALL from INSN_OTHER fixes the warning
+The main obstacle to merging that series at the time was the longstanding
+but invalid usage of "video-encoder" and "video-decoder" which is a
+driver level configuration option not a description of hardware.
 
-Yes indeed I ended up with the same conclusion. However if you change it 
-back to INSN_CALL you just bring back the issue with clang using bl .+4 
-for relocatable code.
+Following on from that discussion a backwards compatible means of
+statically selecting transcoder mode was upstreamed
 
-The warning is from here:
+commit: 687bfbba5a1c ("media: venus: Add support for static video encoder/decoder declarations")
 
-static int __annotate_ifc(struct objtool_file *file, int type, struct 
-instruction *insn)
-{
-	unsigned long dest_off;
+Reworking this series from Konrad to incorporate this simple change
 
-	if (type != ANNOTYPE_INTRA_FUNCTION_CALL)
-		return 0;
+- Removing dts dependencies/declarations on the offending compat strings
+- Inclusion of necessary static configuration in the 8350/8280xp driver
+  config
+- A small update to interconnect tags which Konrad pointed out on IRC to me
+- Fixed author and SOB on first patch to match
 
-	if (insn->type != INSN_CALL) {
-		WARN_INSN(insn, "intra_function_call not a direct call");
-		return -1;
-	}
+Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+---
+Konrad Dybcio (8):
+      media: dt-bindings: Document SC8280XP/SM8350 Venus
+      media: venus: core: Remove trailing commas from of match entries
+      media: venus: hfi_venus: Support only updating certain bits with presets
+      media: platform: venus: Add optional LLCC path
+      media: venus: core: Add SM8350 resource struct
+      media: venus: core: Add SC8280XP resource struct
+      arm64: dts: qcom: sc8280xp: Add Venus
+      arm64: dts: qcom: sc8280xp-x13s: Enable Venus
 
+ .../bindings/media/qcom,sm8350-venus.yaml          | 119 ++++++++++++++++++++
+ .../dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts     |   5 +
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi             |  82 ++++++++++++++
+ drivers/media/platform/qcom/venus/core.c           | 125 +++++++++++++++++++--
+ drivers/media/platform/qcom/venus/core.h           |   4 +
+ drivers/media/platform/qcom/venus/hfi_venus.c      |  15 ++-
+ drivers/media/platform/qcom/venus/pm_helpers.c     |   3 +
+ 7 files changed, 341 insertions(+), 12 deletions(-)
+---
+base-commit: d98e9213a768a3cc3a99f5e1abe09ad3baff2104
+change-id: 20250301-b4-linux-media-comitters-sc8280xp-venus-e2cad579b4f0
 
-Now that arch_decode_instruction() does not consider bl .+4 an INSN_CALL 
-anymore, we have to remove the ANNOTATE_INTRA_FUNCTION_CALL annotations 
-here:
-
-arch/powerpc/kernel/switch.S:42:        ANNOTATE_INTRA_FUNCTION_CALL
-arch/powerpc/kvm/book3s_hv_rmhandlers.S:1527:   ANNOTATE_INTRA_FUNCTION_CALL
-arch/powerpc/kvm/book3s_hv_rmhandlers.S:1534:   ANNOTATE_INTRA_FUNCTION_CALL
-
-The one in arch/powerpc/kexec/relocate_32.S is not a problem at the 
-moment but it looks buggy and that "bl 1f" should be replaced by a 
-branch to the "bcl 20,31,$+4"
-
-I will try to cook a couple patches for all that.
-
-The last one from the report is:
-
-arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: 
-unannotated intra-function call
-
-That one is different, we need to reproduce it to understand what it is.
-
-Christophe
-
-
-> 
-> diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/powerpc/decode.c
-> index 26d5050424a9..ffd63a61a585 100644
-> --- a/tools/objtool/arch/powerpc/decode.c
-> +++ b/tools/objtool/arch/powerpc/decode.c
-> @@ -56,7 +56,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
->          switch (opcode) {
->          case 18: /* b[l][a] */
->                  if (ins == 0x48000005)  /* bl .+4 */
-> -                       typ = INSN_OTHER;
-> +                       typ = INSN_CALL;
->                  else if (ins & 1)       /* bl[a] */
->                          typ = INSN_CALL;
->                  else            /* b[a] */
-> 
-> 
-> Maddy
-> 
->>    CC      arch/powerpc/kernel/irq.o
->>    CC      arch/powerpc/kernel/align.o
->>    CC      arch/powerpc/kernel/signal_64.o
->>
->> Objdump of switch.o:
->> arch/powerpc/kernel/switch.o:     file format elf64-powerpcle
->>
->> Disassembly of section .text:
->>
->> 0000000000000000 <flush_branch_caches>:
->>         0:	a6 02 28 7d 	mflr    r9
->>         4:	05 00 00 48 	bl      8 <flush_branch_caches+0x8>
->>         8:	05 00 00 48 	bl      c <flush_branch_caches+0xc>
->>         c:	05 00 00 48 	bl      10 <flush_branch_caches+0x10>
->>        10:	05 00 00 48 	bl      14 <flush_branch_caches+0x14>
->>        14:	05 00 00 48 	bl      18 <flush_branch_caches+0x18>
->>        18:	05 00 00 48 	bl      1c <flush_branch_caches+0x1c>
->>        1c:	05 00 00 48 	bl      20 <flush_branch_caches+0x20>
->>        20:	05 00 00 48 	bl      24 <flush_branch_caches+0x24>
->>        24:	05 00 00 48 	bl      28 <flush_branch_caches+0x28>
->>        28:	05 00 00 48 	bl      2c <flush_branch_caches+0x2c>
->>
->>
->> arch/powerpc/kernel/switch.S failing src section:
->>
->> .balign 32
->> .global flush_branch_caches
->> flush_branch_caches:
->>          /* Save LR into r9 */
->>          mflr    r9
->>
->>          // Flush the link stack
->>          .rept 64
->>          ANNOTATE_INTRA_FUNCTION_CALL
->>          bl      .+4
->>          .endr
->>          b       1f
->>          nops    6
->>
->> Maddy
->>
->>
->>>
->>> Christophe
->>
->>
-> 
+Best regards,
+-- 
+Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 
 
