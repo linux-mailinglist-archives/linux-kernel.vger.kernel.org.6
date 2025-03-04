@@ -1,221 +1,193 @@
-Return-Path: <linux-kernel+bounces-543632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC047A4D7BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:18:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73FC4A4D7C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:18:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFA293AC1AF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:17:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F26731886E6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:18:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E92E1FCCF8;
-	Tue,  4 Mar 2025 09:17:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116571F8BAA;
+	Tue,  4 Mar 2025 09:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="fuxu++ZY"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G9TAC2cP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WVjRosd2";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="G9TAC2cP";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="WVjRosd2"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD44F1E7C20
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:17:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90201F8BCB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:18:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741079873; cv=none; b=WjH/jm3uksQcFiVL8P/RJR8bGF4sk/aD8NgasXSGVK7t3QGiwoy0T1zDGiV5xnT9PnAWJHC34HMefg9/qTVVnsp7A1XibJENkZnv6zlPTUeOhPorfJDx3UtYsuQ0zB6uH6ib1+vb8uCmpU9JnSo55P4/ws3B0WznaJBkSHlDyV0=
+	t=1741079882; cv=none; b=j4uSkt+mc7+qCGz1FrlA50a2k+py44J/LcepbF9QU5Q5owVHbNByCR6fQx81iG8BJx001BObvmI8lcFig01N6ekguZGKwVCrkdbY52Lb5XQLJb7CKEUcWFgjdCSbOVX/PA8Owhni26cw1N/pWnR9ffOVhwGbco/Si1oF5rdBeY8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741079873; c=relaxed/simple;
-	bh=EYwd2Jf8ZA0KU9xC36aNCIR5lDQhcFK0j7Q6bTeAt5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aGkIqEw9ctL6xmAEn59Yp0h+PebzhmTLr5DvHXOmhQ9GMVxPVZJ8Pe63/oEPN7hv4W//smq/RGaBU6+FeIIZYrkmkpatlvQTCXdPani5omrsi8Hr6NJg7Bzli0NUD3Vv+iP2yLHqV/BA4CimqDuecp8uK87II4x1zEAPdsJMMcA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=fuxu++ZY; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e5491eb37dso3459041a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:17:50 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741079869; x=1741684669; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=U7nVbwpLU0+lp6Hc0ee6jvbH0Pu/dJ0Otg1V1qw972I=;
-        b=fuxu++ZYVsqoY3xjWsoTqcXMgLBOCtHww6PZHUOFjz5ZCu+QqJYXzitd9nUrbOXdjP
-         vlId1tD1GAFFDUCt4mtRLBehfFm2IgtoWyfO8hYTXTsnU1JseV1C8hw5Zamf3QEi8Pl6
-         +DMmdH4u8snN/q8RavL3eaoQBoqjPBE2cz4VWdIrhOaXchpJgr6lSoBlL7nkBCv5wouJ
-         unrymmFLGE0qhL/SferbZsj0JrR51NjppLcZExBfAWFN9AzRFpF4I31CILKK8ufUUOIs
-         fnDizfeEvpw7uJNhqMuJSL8Lucj8/ma28e/HsVdlu4Gq2Z/5XQ2dljW3BkNmPVPbf9pa
-         EZXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741079869; x=1741684669;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=U7nVbwpLU0+lp6Hc0ee6jvbH0Pu/dJ0Otg1V1qw972I=;
-        b=SXvGcQjWI44/M2ZR+lr9gRDSIesSGb5Awg4yhuzohWowqQNpInsOrHV0sxigMP15xu
-         c7rzp/8dKKqJpCWm1GUku4/uWWvnvzGNpfnLUsqEl9mD/9/PTIxybWf+ga1gLxq7tBDc
-         52Fyxe1HaqliVyANFFCLr6MC0jugD4GjJNqvatPKgxy63Mak6z7cRtE98FwIU+3JCxCY
-         eHlJfD2cdOlLmuwJBjguumeGETI1iJpsAaBHbRuCiQ8MVp/SOxf4Vs7IF/Ei6oS05iqa
-         E/MrPdW07mwNjm6VTzD+8qsYzy2bYRlFsLmAl9mUSXnhsOrlRt9exb5GLxHB+vaFeF71
-         PJaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWrB0XwCQZvNmZhwRM7COJjyFBdGKoQF0l0DW3MWiQ5vvpRrj/V7pEXXg0597b1/m+F+YKpMKat+NJ8m7Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz5OMSGObjf0s2LLWTYekzI33b3itldVji1n7O3gv/JCwJviG7r
-	su5cXaNITDVS8hzFNylIIcspkSkZhZVSpDXzbt7+Q5iPdBArUdQEJt6x/AtCqko=
-X-Gm-Gg: ASbGncvPVUJ9ywK49IriDs9jqf0GWa4yBGSzZbSyDepIWHpvAh92CfVFoYsNUcd9YW7
-	yJmH84UPCZu3gHOGsL5pBf1X/K6m+z2G76esQ5WrRrfrmujyncsPmMm90ao++bCBP7YGWNBLMr9
-	VCZmHl3QO/mkMcxTnZRDPb1Mo1u8bUnA0ovwwgdcY+IcTUUXvbXHIea732NGMF9ck1HjlFkwCgd
-	onR8BL6QtKBTTzmIGLh65PUprplxnHmiJf7oPJNVzmhEB5xXLheT3yBTFIKZ9I92qUQ8JP9+ilr
-	hoDZgkSROTM4q/kARum/frRqFsM4etpTQWB06oj8znH0FSBe+q3inir5THovY7bh/p1n5CP3
-X-Google-Smtp-Source: AGHT+IFEBbxQyaP0/2DWYOKB8ElC0B8gdpp7QbNW8c37nqwtwNfKPMEljUeKpMeGoOykV8PZYEcmVQ==
-X-Received: by 2002:a05:6402:2789:b0:5e0:52df:d569 with SMTP id 4fb4d7f45d1cf-5e4d6b852d0mr16127811a12.28.1741079868692;
-        Tue, 04 Mar 2025 01:17:48 -0800 (PST)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501f9dd8sm90968655ad.57.2025.03.04.01.17.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 01:17:48 -0800 (PST)
-Message-ID: <6f4017dc-2b3d-4b1a-b819-423acb42d999@suse.com>
-Date: Tue, 4 Mar 2025 19:47:34 +1030
+	s=arc-20240116; t=1741079882; c=relaxed/simple;
+	bh=YrIsco6FllE7VgEZoNWhG2k2L7easPadYklqbBhe0uo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T1tags+M6LfJms5AsIATVQ9ikCBpg9gWhlfxYxNi+fW+QQ6YYdEveGDw5hxI2KBkidojhiQB6Es2s1rughl93ab1R+dYC0/s+I9sQrwaEN0yEQ2KHsqieHYBCbb/5Juj1wBT4gaSNREPCw8Fj+5qIZJPCefc9SPbOzvmKmnKP34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G9TAC2cP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WVjRosd2; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=G9TAC2cP; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=WVjRosd2; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CBA8A2118F;
+	Tue,  4 Mar 2025 09:17:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741079878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VZ+zMoNnPWznQOdy8eGcx7wdCBztUYeaRVbXyyuev0Q=;
+	b=G9TAC2cPulrjS53UqxjY7EBbS3rMubidLTmA9LMQgLr87w/M9pKMOZs6onGjcbypHwOLD6
+	DNlPlDBXze1z/h4JVp/k4CXHV+j17i1uIq6+BPsSHzRXZ6pzD3lzOMXvVwMNn86UqECJGV
+	SD3gy/9kC8lAoKDSJqoJT2r1oSHPbF8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741079878;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VZ+zMoNnPWznQOdy8eGcx7wdCBztUYeaRVbXyyuev0Q=;
+	b=WVjRosd2bIKgA5bpXiKhWM8h3dZ4evUHX/2hXVjnHKgJ5Peh2/FQLCkSitc6TRtf9ejFIw
+	C3IBV/h+cATEpqBg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741079878; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VZ+zMoNnPWznQOdy8eGcx7wdCBztUYeaRVbXyyuev0Q=;
+	b=G9TAC2cPulrjS53UqxjY7EBbS3rMubidLTmA9LMQgLr87w/M9pKMOZs6onGjcbypHwOLD6
+	DNlPlDBXze1z/h4JVp/k4CXHV+j17i1uIq6+BPsSHzRXZ6pzD3lzOMXvVwMNn86UqECJGV
+	SD3gy/9kC8lAoKDSJqoJT2r1oSHPbF8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741079878;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VZ+zMoNnPWznQOdy8eGcx7wdCBztUYeaRVbXyyuev0Q=;
+	b=WVjRosd2bIKgA5bpXiKhWM8h3dZ4evUHX/2hXVjnHKgJ5Peh2/FQLCkSitc6TRtf9ejFIw
+	C3IBV/h+cATEpqBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 48E2C13967;
+	Tue,  4 Mar 2025 09:17:58 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id mmiCDkbFxmfWSgAAD6G6ig
+	(envelope-from <osalvador@suse.de>); Tue, 04 Mar 2025 09:17:58 +0000
+Date: Tue, 4 Mar 2025 10:17:56 +0100
+From: Oscar Salvador <osalvador@suse.de>
+To: Liu Shixin <liushixin2@huawei.com>
+Cc: Muchun Song <muchun.song@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Barry Song <song.bao.hua@hisilicon.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Peter Xu <peterx@redhat.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] mm/hugetlb: update nr_huge_pages and
+ surplus_huge_pages together
+Message-ID: <Z8bFRDMf_Y4aG7uD@localhost.localdomain>
+References: <20250304083841.283159-1-liushixin2@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
- only NULL elements
-To: Yunsheng Lin <linyunsheng@huawei.com>, Yishai Hadas <yishaih@nvidia.com>,
- Jason Gunthorpe <jgg@ziepe.ca>,
- Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>,
- Kevin Tian <kevin.tian@intel.com>,
- Alex Williamson <alex.williamson@redhat.com>, Chris Mason <clm@fb.com>,
- Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
- Gao Xiang <xiang@kernel.org>, Chao Yu <chao@kernel.org>,
- Yue Hu <zbestahu@gmail.com>, Jeffle Xu <jefflexu@linux.alibaba.com>,
- Sandeep Dhavale <dhavale@google.com>, Carlos Maiolino <cem@kernel.org>,
- "Darrick J. Wong" <djwong@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Trond Myklebust <trondmy@kernel.org>,
- Anna Schumaker <anna@kernel.org>, Chuck Lever <chuck.lever@oracle.com>,
- Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>,
- Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>,
- Tom Talpey <tom@talpey.com>
-Cc: Luiz Capitulino <luizcap@redhat.com>,
- Mel Gorman <mgorman@techsingularity.net>, Dave Chinner
- <david@fromorbit.com>, kvm@vger.kernel.org, virtualization@lists.linux.dev,
- linux-kernel@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-erofs@lists.ozlabs.org, linux-xfs@vger.kernel.org, linux-mm@kvack.org,
- netdev@vger.kernel.org, linux-nfs@vger.kernel.org
-References: <20250228094424.757465-1-linyunsheng@huawei.com>
-Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20250228094424.757465-1-linyunsheng@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304083841.283159-1-liushixin2@huawei.com>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-在 2025/2/28 20:14, Yunsheng Lin 写道:
-> As mentioned in [1], it seems odd to check NULL elements in
-> the middle of page bulk allocating, and it seems caller can
-> do a better job of bulk allocating pages into a whole array
-> sequentially without checking NULL elements first before
-> doing the page bulk allocation for most of existing users.
+On Tue, Mar 04, 2025 at 04:38:41PM +0800, Liu Shixin wrote:
+> In alloc_surplus_hugetlb_folio(), we increase nr_huge_pages and
+> surplus_huge_pages separately. In the middle window, if we set
+> nr_hugepages to smaller and satisfy count < persistent_huge_pages(h),
+> the surplus_huge_pages will be increased by adjust_pool_surplus().
 > 
-> Through analyzing of bulk allocation API used in fs, it
-> seems that the callers are depending on the assumption of
-> populating only NULL elements in fs/btrfs/extent_io.c and
-> net/sunrpc/svc_xprt.c while erofs and btrfs don't, see:
-> commit 91d6ac1d62c3 ("btrfs: allocate page arrays using bulk page allocator")
-
-If you want to change the btrfs part, please run full fstests with 
-SCRATCH_DEV_POOL populated at least.
-
-[...]
-> diff --git a/fs/btrfs/extent_io.c b/fs/btrfs/extent_io.c
-> index f0a1da40d641..ef52cedd9873 100644
-> --- a/fs/btrfs/extent_io.c
-> +++ b/fs/btrfs/extent_io.c
-> @@ -623,13 +623,26 @@ int btrfs_alloc_page_array(unsigned int nr_pages, struct page **page_array,
->   			   bool nofail)
->   {
->   	const gfp_t gfp = nofail ? (GFP_NOFS | __GFP_NOFAIL) : GFP_NOFS;
-> -	unsigned int allocated;
-> +	unsigned int allocated, ret;
->   
-> -	for (allocated = 0; allocated < nr_pages;) {
-> -		unsigned int last = allocated;
-> +	/* Defragment page_array so pages can be bulk allocated into remaining
-> +	 * NULL elements sequentially.
-> +	 */
-> +	for (allocated = 0, ret = 0; ret < nr_pages; ret++) {
-> +		if (page_array[ret]) {
-
-You just prove how bad the design is.
-
-All the callers have their page array members to initialized to NULL, or 
-do not care and just want alloc_pages_bulk() to overwrite the 
-uninitialized values.
-
-The best example here is btrfs_encoded_read_regular().
-Now your code will just crash encoded read.
-
-Read the context before doing stupid things.
-
-I find it unacceptable that you just change the code, without any 
-testing, nor even just check all the involved callers.
-
-> +			page_array[allocated] = page_array[ret];
-> +			if (ret != allocated)
-> +				page_array[ret] = NULL;
+> After adding delay in the middle window, we can reproduce the problem
+> easily by following step:
+> 
+>  1. echo 3 > /proc/sys/vm/nr_overcommit_hugepages
+>  2. mmap two hugepages. When nr_huge_pages=2 and surplus_huge_pages=1,
+>     goto step 3.
+>  3. echo 0 > /proc/sys/vm/nr_huge_pages
+> 
+> Finally, nr_huge_pages is less than surplus_huge_pages.
+> 
+> To fix the problem, call only_alloc_fresh_hugetlb_folio() instead and
+> move down __prep_account_new_huge_page() into the hugetlb_lock.
+> 
+> Fixes: 0c397daea1d4 ("mm, hugetlb: further simplify hugetlb allocation API")
+> Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+> ---
+>  mm/hugetlb.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+> index 9faa1034704ff..0b02ea1c39e63 100644
+> --- a/mm/hugetlb.c
+> +++ b/mm/hugetlb.c
+> @@ -2253,11 +2253,19 @@ static struct folio *alloc_surplus_hugetlb_folio(struct hstate *h,
+>  		goto out_unlock;
+>  	spin_unlock_irq(&hugetlb_lock);
+>  
+> -	folio = alloc_fresh_hugetlb_folio(h, gfp_mask, nid, nmask);
+> +	folio = only_alloc_fresh_hugetlb_folio(h, gfp_mask, nid, nmask, NULL);
+>  	if (!folio)
+>  		return NULL;
+>  
+> +	hugetlb_vmemmap_optimize_folio(h, folio);
 > +
-> +			allocated++;
-> +		}
-> +	}
->   
-> -		allocated = alloc_pages_bulk(gfp, nr_pages, page_array);
-> -		if (unlikely(allocated == last)) {
-> +	while (allocated < nr_pages) {
-> +		ret = alloc_pages_bulk(gfp, nr_pages - allocated,
-> +				       page_array + allocated);
+>  	spin_lock_irq(&hugetlb_lock);
+> +	/*
+> +	 * Update nr_huge_pages and surplus_huge_pages together,
+> +	 * otherwise it might confuse persistent_huge_pages() momentarily.
+> +	 */
+> +	__prep_account_new_huge_page(h, nid);
 
-I see the new interface way worse than the existing one.
+It would be great if we could pair up this one with the actual increase
+of surplus pages, but then free_huge_folio() will decrease the
+nr_huge_pages if the pool changed.
 
-All btrfs usage only wants a simple retry-until-all-fulfilled behavior.
+Also, that comment makes me think that__prep_account_new_huge_page()
+will adjust both counters, so maybe just go with something like
 
-NACK for btrfs part, and I find you very unresponsible not even bother 
-running any testsuit and just submit such a mess.
+"nr_huge_pages needs to be adjusted within the same lock cycle
+as surplus_pages, otherwise..."
 
-Just stop this, no one will ever take you serious anymore.
 
-Thanks,
-Qu
-
+-- 
+Oscar Salvador
+SUSE Labs
 
