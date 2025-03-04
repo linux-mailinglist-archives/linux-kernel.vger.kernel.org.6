@@ -1,171 +1,206 @@
-Return-Path: <linux-kernel+bounces-543736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E211DA4D920
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:48:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8DC9A4D92A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:49:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F018518860BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:48:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C34297A7BC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:47:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735441FCFE5;
-	Tue,  4 Mar 2025 09:47:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C8E81FDE1A;
+	Tue,  4 Mar 2025 09:48:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IcqVUBiS"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="hwb942xG"
+Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E561A481C4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B1D01FDE20
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:48:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081670; cv=none; b=BRkL7ekiUxNTQfZa+uMC9NXpl3+RslHCpCJUSLcStrWMEBKkqIb19KdhoXCIj+aMrLgfhfK8bYBYpTZubVQEXQ534WpVSaHw9MKqjyalQ9UWUt8iG3WmWR3PuvxsmwYEzp326tZ3y24Ismw49QsrCk6ZWwkhsERQOf0H9TxRylc=
+	t=1741081685; cv=none; b=WxSPwQ0qjhg+qxeMXy3kNNkna6lLVyT694RO7DHdayGs0w39Y7Q19g1LK1gtUbomB/6YOyB6hbsuMq9s4+wpPeOzndwgwbOQGQRvmf0EiRrTpVN+1b9e1NU35/4fBozTZ7Qoub+I/MyM9iIrQU6aVa6Hizdj4LwmoF4vGxnVyRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081670; c=relaxed/simple;
-	bh=jM+khpR6kSrzXPpnRYBzaNBVw13oVxCaP+gD5x4MJis=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bsURHiIbL31qRuvbFqTKdTO/yV09tb7j+AaKq67AFAGGp7fSH8noPcNMI8dGdTKzk2oOJUphCT3uC1f5WvMLDPO6J6aA2IO4UlG+IgDaNpJXle9otDC1dm7qWLBLGdg7Yf6MvTrG9UDSFYT0p0AxbC7Y2hNWE5+s1oochrrWKsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IcqVUBiS; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43690d4605dso34664205e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:47:48 -0800 (PST)
+	s=arc-20240116; t=1741081685; c=relaxed/simple;
+	bh=2r3By0fXJsZQEawsgDkxqe42VQpAHpb0s0vqWGd1zPM=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=QUstW0A5D9brehkjgzQUD1uJrW7paPw0HhKaLMukGE4r4ADjN/aiE5Q2Zn8JEcPdFls1s43E2gdOZ5vylCqWmNuZ/ggR1ncGiskCozFtcVltiFpTc/Chl5kPovPOMdOkGhWeyJVWhbvj/WuSpY00Q7T2Qp3jHhv2TV+XO4Q/Iwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=hwb942xG; arc=none smtp.client-ip=209.85.210.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-72a164cb607so222933a34.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:48:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741081667; x=1741686467; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qSm1lg2/FkL1yWeHeKV4bekvslQt2WvmtVqn6o+tUnQ=;
-        b=IcqVUBiSEsldwLum6i7goXFnHY5PQQoIAs7IH1jZYokVylwIVObVHdSZgT8W/0CYle
-         cFti+mk+DD5KnGfDUrhSBDRh0w6JCJ/VOlDvyr4wj51jSD+08/QC7mwpkYtEF9/amLd2
-         1Z5eeFOpW2LzYRTGb6zIRCrCpRjzha/B9mG34c9ORjz0YkDnMTRXTwnZ4xzYDn5hy0kH
-         EEkFp3gQrVi1x7jMHuAuzU+YHN3ibcQH5ChuH6hCQoyunsv8ilRWqJX4nbJ1GaRij/zg
-         /nPhKxqnEbDvIMJPweVfiYSzECCzo08DijOGcQv3I0ePo1ZLqx4KcXF2Lkf4Zc3L/6G+
-         V2lw==
+        d=google.com; s=20230601; t=1741081683; x=1741686483; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8HOHs5ZstfJ5o568Xa5zyB7db/o03y3YlavBZxWfyZQ=;
+        b=hwb942xGVaaPN07SDla2T5DrP41e63Ut8XryPC6zyu459GdopxH10O5E9uOPfeoix7
+         lYCMr7O4fXM0iFZY58KJej1K9WztuuCc5nHm/Y4W6OX8U68cuHWo6YY46h08UwmVhc/h
+         /oHvCULfSd93/XUPTuVaBAOe5TGCgBQUp6CROL8T2s/cn0QPlsIN2nXH9ioZEpPod4uV
+         F9jaM4xuQ4FPvK+bn1EZ1mIligLAeLgKEMmm4GDgviPltM7K9Kbdkt1SoIHzlFBqwaS2
+         vs3G4XF+P1/yFfzYbhkqwqI2RJD2mLqsF8wDSxpCOcaeGSuFrPZ3/4I1XD2hJ4w96jJ1
+         o+lA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741081667; x=1741686467;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=qSm1lg2/FkL1yWeHeKV4bekvslQt2WvmtVqn6o+tUnQ=;
-        b=jgEPSgS83SdFsPhpp0c7bjRRjSryTR2jxIuMWApUiZvLa5kpGb5JuRVMEuPl0NbgHV
-         Lg2K6TH9j7DnVcoArSXJrIeDVVi39xlFiaA+9pAsETB8xHOuPm6ufSEstjSBjzeJhnTY
-         IPFFFFvCG6fMhrEWH8kzHH8vJ8/mu3k/zl1FvATuK4AbpBrBIiqdtShyN1pjRyuWPMjJ
-         iIWlmjq5BTYYl176M7Spcl6cir2N2arD8iCvWko26zciLl/F4K0cRz3O3KrzhYOYcdPf
-         KbkRRItQgFsCsg+mf4w4DdQVhMM/FJnE4CUfC+2RQxoCbG3vqNUOFhRa2rEj/wukx9Fu
-         2hfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBGW8TBD5D4PLGK6keHxakzTI4Yp1Eyoe402q0/7yCe/UPc1CLw8AWkbglrQFokcIPIgqLhRuQkboXNt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyjtx9nbKLpwTDCEnjWPOStP0fwIWSWDn93qgi8ZQcX7M5j5mGX
-	l6b/TBTTHWlMeG4HB3NWzNRdmDAJ9XSVflDks0Xa+HpIAV8CR5QxH5J6yp9mt5w=
-X-Gm-Gg: ASbGncvu9Gv9WRL9useW46TWj90DTDVqo9t5FwR0FKYR9p4Ee52L63ciTq82wMVPyMG
-	BDOjqhmPfe+EtH5qeM3WIA2yD8cpXtTL5OHwHqZO9/BqzTcv53Vzlak4W7UAr8PE8FEVMFztfBc
-	3zsGCAO4UeVMC60t+07bUIIyd8I7Y2qOaV0jC+Zdbzr2ZQ7cfp2VRt+z8BojcWJ+ud7nVDSNQ7z
-	U6urVTsXohrfIluqBCGmg+kd+PXNZgcI+XuDFEzsHCgTzCyJc/xgpvM4VwBLBO6GE93WCH9V6Vw
-	kihp/M0l66nn6gP1lWYu1aWA5j5vj4u51PfhROknrYqvDGFNfXA2hok+Gih6WV9vvnwnF7QzAGO
-	Ok8/Agkcttg==
-X-Google-Smtp-Source: AGHT+IFDmnK5YYmULhWYfPkCzV4REgmiXkQRXkNfOTnHTpTo4USjUT1kKhF/sQF1HrBw+vy8AZd5Qw==
-X-Received: by 2002:a05:600c:a03:b0:439:9b19:9e2d with SMTP id 5b1f17b1804b1-43ba6702becmr158936035e9.16.1741081667192;
-        Tue, 04 Mar 2025 01:47:47 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e13fsm16964961f8f.100.2025.03.04.01.47.45
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 01:47:46 -0800 (PST)
-Message-ID: <f5c2044e-e78e-4839-9c29-63610ff406e2@linaro.org>
-Date: Tue, 4 Mar 2025 09:47:44 +0000
+        d=1e100.net; s=20230601; t=1741081683; x=1741686483;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8HOHs5ZstfJ5o568Xa5zyB7db/o03y3YlavBZxWfyZQ=;
+        b=l9or1V4gxP0Pkf5cfpLLkEuhKjh/fUEoUQae4Y8UyK74z3iFFB2cv4cFz3K1Qd9mlw
+         0+RpCjcszdsgBA9gPqOdaiR9+3PDNOM7fedwrXCgL58PRNdLebW7/fQ9+1jmLKQ/0eWK
+         lUej4zRa8iESOIGDrI3L3vpYHcm59BvLo41OqENsfaaN4AuvBeXH3RjXoX0sQKHnVSvz
+         oqkhQZEzG/hHFvC95HU2zGVmzuyUcJQIYk0dhn1YbM3ngi3QFAW0hIXa40rgYkDU6tX7
+         smvA5eUxi7gTxz88UDsCpMli42feLVHdUP6P50dmcZcXN8zyPIHKPJtsTDWZxBmNTFW5
+         coUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVzeabouH8uwRz/im63afrvP05RV3cbgj7dvEU6UkHYxzYWT38womMhO9fkiU84yiqXVEp9lJ5HZAhd+B8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM9ZMxG/X01DXzRKCOKeeFex7ZIsscsDtcDNC3yLscBeCrhDEb
+	dT6hBm5jkJDX9hBdyMx0dkPprEOrI+1V3o1ssiW8GHDhYjtfvrZyxTOHYH6MFw==
+X-Gm-Gg: ASbGnct+N7Kz8EXtgXNbtbtT/WOqaAV/8BheJAp32QRqZ4d5YcBy8Il6o7gHuw6aePt
+	uz0RxgZBkFUWOjfmLhtLANetzYwLiJZcCV35rl+zTEMABKfBeGusiPB9fPqlLAGsqFhU/z2taPb
+	prDBVBB0ZL9o9Q/4j7cVESkfFJEVWhN4IMopvTMqlc02RI6aa5wyRmWZtzGPWDD3586eug34Ks2
+	10aJLsETYUk8pJh3E44oJbiVx6ZzHkhA4V7hYNxc6aYpKOcaEoWh4AwvHNwjCNbl5kHUq9PgNtN
+	xyBUjZc13UBvBy/fhXZSU17FYJePTJ9ImidD9pwT1XC3N5azZB6gRkkzmXYf7bx9oiKB6wdHSSD
+	mScqOyScJFJpOY2i6MzXqGkX1b//j
+X-Google-Smtp-Source: AGHT+IGdMEBMjK0xYYVwrNxOf6XqwE8AYZxLYxN/SKUpsg+bPBtoAzbZx90I3qdmj2oNt7FksMqoPQ==
+X-Received: by 2002:a05:6830:91f:b0:728:b9d3:4330 with SMTP id 46e09a7af769-72a14efd17bmr1806518a34.1.1741081682851;
+        Tue, 04 Mar 2025 01:48:02 -0800 (PST)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-728afd0061dsm2071715a34.27.2025.03.04.01.47.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 01:48:01 -0800 (PST)
+Date: Tue, 4 Mar 2025 01:47:46 -0800 (PST)
+From: Hugh Dickins <hughd@google.com>
+To: Zi Yan <ziy@nvidia.com>
+cc: Liu Shixin <liushixin2@huawei.com>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org, 
+    Andrew Morton <akpm@linux-foundation.org>, Barry Song <baohua@kernel.org>, 
+    David Hildenbrand <david@redhat.com>, 
+    Kefeng Wang <wangkefeng.wang@huawei.com>, Lance Yang <ioworker0@gmail.com>, 
+    Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>, 
+    Hugh Dickins <hughd@google.com>, 
+    Charan Teja Kalla <quic_charante@quicinc.com>, 
+    linux-kernel@vger.kernel.org, Shivank Garg <shivankg@amd.com>
+Subject: Re: [PATCH v2] mm/migrate: fix shmem xarray update during
+ migration
+In-Reply-To: <20250228174953.2222831-1-ziy@nvidia.com>
+Message-ID: <23d65532-859a-e88f-9c24-06a6c7ff4006@google.com>
+References: <20250228174953.2222831-1-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v14 2/2] arm64: dts: qcom:
- qcs6490-rb3gen2-vision-mezzanine: Add vision mezzanine
-To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>,
- Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
- cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
- will@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Konrad Dybcio <konrad.dybcio@linaro.org>
-References: <20250208225143.2868279-1-quic_vikramsa@quicinc.com>
- <20250208225143.2868279-3-quic_vikramsa@quicinc.com>
- <ca8e6569-b466-4f83-83af-38c51891d395@kernel.org> <Z8a7cMmxJuHIhgjo@trex>
- <baae2a56-5299-486f-acf1-14fe13fd2f81@kernel.org> <Z8a/Dk7zjZ7RQT2/@trex>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <Z8a/Dk7zjZ7RQT2/@trex>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 04/03/2025 08:51, Jorge Ramirez wrote:
-> On 04/03/25 09:40:21, Krzysztof Kozlowski wrote:
->> On 04/03/2025 09:36, Jorge Ramirez wrote:
->>> On 03/03/25 18:13:20, Krzysztof Kozlowski wrote:
->>>> On 08/02/2025 23:51, Vikram Sharma wrote:
->>>>> The Vision Mezzanine for the Qualcomm RB3 Gen 2 ships with an imx577
->>>>> camera sensor. Enable IMX577 on the vision mezzanine.
->>>>>
->>>>> An example media-ctl pipeline for the imx577 is:
->>>>>
->>>>> media-ctl --reset
->>>>> media-ctl -V '"imx577 '17-001a'":0[fmt:SRGGB10/4056x3040 field:none]'
->>>>
->>>> AFAIU, camss does not support SRGGB10, but only SRGGB10P.
->>>>
->>>> Based on tests reported on IRC I think this might not have been tested
->>>> correctly.
->>>
->>> I acquired SRGGB10P (10 bit packed) frames from the camera despite the
->>> pipeline being set to SRGGB10 (16 bit) samples.
->>>
->>> so something does not add up.
->>
->> Then the commands are actually correct, just the camss or media behave
->> here a bit unexpected?
->>
-> 
-> setting the pipeline (CSI) as SRGGB10 (16 bit samples) as per below
-> 
-> media-ctl --reset
-> media-ctl -v -V '"imx577 '19-001a'":0[fmt:SRGGB10/4056x3040 field:none]'
-> media-ctl -V '"msm_csiphy3":0[fmt:SRGGB10/4056x3040]'
-> media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
-> media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
-> media-ctl -l '"msm_csiphy3":1->"msm_csid0":0[1]'
-> media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
-> 
-> allows to capture SRGGB10P samples (frames-xxxx.bin files contain 10 bit samples for the size)
-> 
->   ==> yavta -B capture-mplane -c -I -n 5 -f SRGGB10P -s 4056x3040 -F /dev/video0
-> 
-> 
-> shouldnt the CSI need to be set to SRGGB10P instead?
-> 
-> 
->> Best regards,
->> Krzysztof
-> 
+On Fri, 28 Feb 2025, Zi Yan wrote:
 
-No an internal media bus format MEDIA_BUS_FMT_THING is used
+> Pagecache uses multi-index entries for large folio, so does shmem. Only
+> swap cache still stores multiple entries for a single large folio.
+> Commit fc346d0a70a1 ("mm: migrate high-order folios in swap cache correctly")
+> fixed swap cache but got shmem wrong by storing multiple entries for
+> a large shmem folio. Fix it by storing a single entry for a shmem
+> folio.
+> 
+> Fixes: fc346d0a70a1 ("mm: migrate high-order folios in swap cache correctly")
+> Reported-by: Liu Shixin <liushixin2@huawei.com>
+> Closes: https://lore.kernel.org/all/28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com/
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Reviewed-by: Shivank Garg <shivankg@amd.com>
 
-See
+It's a great find (I think), and your commit message is okay:
+but unless I'm much mistaken, NAK to the patch itself.
 
-87889f1b7ea40d2544b49c62092e6ef2792dced7
-5480b0c67f120a6c293cc5eff72fa1d6a74de504
-3c1dfb5a69cf836f513a2a49113ee946a4b9d95d
+First, I say "(I think)" there, because I don't actually know what the
+loop writing the same folio nr times to the multi-index entry does to
+the xarray: I can imagine it as being completely harmless, just nr
+times more work than was needed.
 
-Yavta is specifying a v4l2 pixel format SRGGB10P which then gets 
-translated into a media bus format MEDIA_BUS_FMT_SRGGB10_1X10.
+But I guess it does something bad, since Matthew was horrified,
+and we have all found that your patch appears to improve behaviour
+(or at least improve behaviour in the context of your folio_split()
+series: none of us noticed a problem before that, but it may be
+that your new series is widening our exposure to existing bugs).
 
-I'm not sure what the historical reasons for that are, probably good ones.
+Maybe your orginal patch, with the shmem_mapping(mapping) check there,
+was good, and it's only wrong when changed to !folio_test_anon(folio);
+but TBH I find it too confusing, with the conditionals the way they are.
+See my preferred alternative below.
 
+The vital point is that multi-index entries are not used in swap cache:
+whether the folio in question orginates from anon or from shmem.  And
+it's easier to understand once you remember that a shmem folio is never
+in both page cache and swap cache at the same time (well, there may be an
+instant of transition from one to other while that folio is held locked) -
+once it's in swap cache, folio->mapping is NULL and it's no longer
+recognizable as from a shmem mapping.
+
+The way I read your patch originally, I thought it meant that shmem
+folios go into the swap cache as multi-index, but anon folios do not;
+which seemed a worrying mixture to me.  But crashes on the
+VM_BUG_ON_PAGE(entry != folio, entry) in __delete_from_swap_cache()
+yesterday (with your patch in) led me to see how add_to_swap_cache()
+inserts multiple non-multi-index entries, whether for anon or for shmem.
+
+If this patch really is needed in old releases, then I suspect that
+mm/huge_memory.c needs correction there too; but let me explain in
+a response to your folio_split() series.
+
+> ---
+>  mm/migrate.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index 365c6daa8d1b..2c9669135a38 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -524,7 +524,11 @@ static int __folio_migrate_mapping(struct address_space *mapping,
+>  			folio_set_swapcache(newfolio);
+>  			newfolio->private = folio_get_private(folio);
+>  		}
+> -		entries = nr;
+> +		/* shmem uses high-order entry */
+> +		if (!folio_test_anon(folio))
+> +			entries = 1;
+> +		else
+> +			entries = nr;
+>  	} else {
+>  		VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
+>  		entries = 1;
+> -- 
+> 2.47.2
+
+NAK to that patch above, here's how I think it should be:
+
+Signed-off-by: Hugh Dickins <hughd@google.com>
 ---
-bod
+ mm/migrate.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
+
+diff --git a/mm/migrate.c b/mm/migrate.c
+index fb19a18892c8..822776819ca6 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -518,12 +518,12 @@ static int __folio_migrate_mapping(struct address_space *mapping,
+ 	if (folio_test_anon(folio) && folio_test_large(folio))
+ 		mod_mthp_stat(folio_order(folio), MTHP_STAT_NR_ANON, 1);
+ 	folio_ref_add(newfolio, nr); /* add cache reference */
+-	if (folio_test_swapbacked(folio)) {
++	if (folio_test_swapbacked(folio))
+ 		__folio_set_swapbacked(newfolio);
+-		if (folio_test_swapcache(folio)) {
+-			folio_set_swapcache(newfolio);
+-			newfolio->private = folio_get_private(folio);
+-		}
++
++	if (folio_test_swapcache(folio)) {
++		folio_set_swapcache(newfolio);
++		newfolio->private = folio_get_private(folio);
+ 		entries = nr;
+ 	} else {
+ 		VM_BUG_ON_FOLIO(folio_test_swapcache(folio), folio);
+-- 
+2.43.0
 
