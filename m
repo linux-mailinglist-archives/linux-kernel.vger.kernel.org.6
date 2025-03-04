@@ -1,210 +1,214 @@
-Return-Path: <linux-kernel+bounces-543619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 565D8A4D798
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:12:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24794A4D78D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B6EAB1883E58
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:08:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FEFE16336F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:09:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725AE1FC7F6;
-	Tue,  4 Mar 2025 09:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E941FCD11;
+	Tue,  4 Mar 2025 09:08:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q4TsWd9d"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C5YWoQqx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE58B1FC7EE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996D51FBE8F;
+	Tue,  4 Mar 2025 09:08:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741079113; cv=none; b=XWsZdww/lFLF2Q7u2X3/RmiEVjiGxiCgKNtTLK6JeMQe2h6GTFBC0ykRJDMS6UJ1vCqeclysBwa/xfAjJ1FJLB+GN7f/wlpo0wzZXySLg0OrLKV2MS58rLn3MAvIZ/PJGb2JN0UFdCdsUtdUT0eQRz79v+byfYytOQiB7E/zaEM=
+	t=1741079302; cv=none; b=g1oQALgx/Wyp2B+RB2qWR4tE9r42gKkozON85TVc5GMPooq763BUjKdD/ZyHkuK5qOFjvHnpOXKJ9mbyvyxSHCfYRBtTxqHgnslpOTu35i7z7hkYk/OENXHTLPM8ZhoKuUd0bhZ3dg2ee93B8k7QwBaeZ9unVCl2rpqC8LIue0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741079113; c=relaxed/simple;
-	bh=GrcoTw0YtUZk1ndA0Q6ue9JHWrXqchuWzVN8n1ZG6Sg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Dyo5/6PSX3J3YfdxEqw+NHHU69g/m3asJEbbDGuLXdbOziDaDff5vx9l755wBxbr8JeL3WtsFmwZoP4QjJlco8pCDe4sw8VAXNIjOpM1B75tn6HZaZkKghBGP1wG4bXXeW9Ztt6EhqUmaUCbTVhHxVA79IaHxA2sdnqdVl98vBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q4TsWd9d; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43996e95114so36315065e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:05:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741079109; x=1741683909; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4xb9+GQnQ3x1ktQ8IEjtazHwzMTgQ6i/8bTVn9usn+I=;
-        b=Q4TsWd9dcVkwLF7FQmQG9ZLx7eTArq6aKJe6KcT2hVKGfwXjdJp1ygH8qAkKyntoLp
-         4D92H3JEfqUEbjgGT8X6xQY7Fxpy424GlcJxn21JtR56gk7lW6zbziOC7Oq5KOevMYJE
-         59LoeZzsQRVVVAA+RMHwQ7o7jhTFNBuF/133dZqosGkJREdByDbiv4cTUrL+es5JG78x
-         1RR1cW4wxLJ+/CIOtPJJFELSHYJ9NQqThjBwwngbRjrAD8I5Hp5Dg7zG6TVmmUF/qvw4
-         jRWqyX9HOQrty3O3YswTgtxD+KvTqNSRf5Y9ye8smtojXCcIB966b+eMPRRNtSyTzXMX
-         uPGg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741079109; x=1741683909;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4xb9+GQnQ3x1ktQ8IEjtazHwzMTgQ6i/8bTVn9usn+I=;
-        b=EpwfehLjy29uw63TtF+LfvfyemB+nNMz5FdianiOw9IgWDH3APSMG+q6eQpd+WAeMY
-         tEfQPhuJB1OczfkMfDy4FtFhxm8eWoZNVe1blS9urVLaa6XU9B+BaL+mbcLQgPp5KLKf
-         9IixEMf0TRa2cJW4iLBXC0BglALEGHj5TpJ0ASZ7J34rNfU11RL4Zl3ZOPsrQ9MsrOQ3
-         7h7QfEGJnaZD+mFK5XbeAVLHd+/vNWGQP+XqYOZ98TLrK5yodLx56dX+XMPnXoaR7fZp
-         PMGQPmUlT2UgDs+vigiz/mr7gIoCnRE+6ChVV/y8BUH4nh8DIW3deAaXi+WgE5NhOdgZ
-         oHCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUIMvkUEAhB+kVjw6DADfB7lcxNfu8Vhf8XOUm9W3TP6dgsVTNV98vhXuqfLhF/yqsRtWy+QO8HxJ6bKQ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymFacS4fwVxy0KgbcnxzqV/jwl4IfGBEn1d060r2Xen61u2BxT
-	/qsFTo5BsugVyhm7S1DOMDoFybctN/ZURFINTM22SBTLi6UB1ZSK
-X-Gm-Gg: ASbGnctug1GysVeKffA4k73OA9ssetmWuxP2wl4Rj+ZVzJUCAUUKO+GLfFacy6BO9FY
-	MM6TGva3UkJwsmFOO4x8sDAnrlmgrYzF5bnuG8QgkjWR5z+kz3cG3i3Lyz0KBxU/ORzI8ZtdZBj
-	dhOay67yreZrgsvB2rvijL6pgcj0pJvE/6V3262HOgQwBVPX/bpgTzV6SwrTwtm9VCF/Ot0Y+fc
-	UFcSRgxD4NBpWd6L6KbvNySE5FwcQly3jREhZJRWM4lXjYTtGkS7cq0eueZxw9DxJXn9rBwHM1A
-	wmC/sJsCdzCPtI5agQr2ISWBP96t3oWqZ1GtbomWqjwe72X2c0mmILKTHj8y6j8l8tGFJ4WT3g=
-	=
-X-Google-Smtp-Source: AGHT+IFLFkBo9xLZBI+Mw0maqjnI5Dp5cRHrb9tzUsxec4lWUzI8CqW0o8hXWCxH5HkIYF+DMkSQMg==
-X-Received: by 2002:a05:600c:a48:b0:439:a1c7:7b2d with SMTP id 5b1f17b1804b1-43ba66da31fmr127853845e9.4.1741079108566;
-        Tue, 04 Mar 2025 01:05:08 -0800 (PST)
-Received: from [10.254.108.83] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844514sm17070694f8f.76.2025.03.04.01.05.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 01:05:08 -0800 (PST)
-Message-ID: <688b5665-496d-470d-9835-0c6eadfa5569@gmail.com>
-Date: Tue, 4 Mar 2025 10:05:05 +0100
+	s=arc-20240116; t=1741079302; c=relaxed/simple;
+	bh=GXuRz06hDfIRTVBK7Y7J5u3Fy/4jNuBeBSyafYInY64=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b/cZzi8OqTe4B9IAJukfVM6gzu6jtX1b65QCnwH4oVyB0LRBGfDzt5Y9mK/9srSp6HZUg9BEeOXetQs2QXURq8e8GKe88EVcRdaFeA+o7rebW5Sk1IlMTXYmIpbAb+U6OP9L+tyFzuLsNKphLhH5W0GCNV+FuQ/iiO0G14+L0yM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C5YWoQqx; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741079301; x=1772615301;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GXuRz06hDfIRTVBK7Y7J5u3Fy/4jNuBeBSyafYInY64=;
+  b=C5YWoQqxrFlXBnJEqCviSGlZtU8sxMyRIAW943RjN6TT4Bi21kWkOoq+
+   AUEvs/KInq6bXX5ztwZpcNd8KE4QTpT2r2SAhUtiXcgziNnoQw58KBVZt
+   QZOAxmtwCGtrVetQKwwGQG7epPV9V4a+7ee+YMRP+fuCJqqO2FcMr4QVq
+   dPJq3kFf0bJ9rPzsyRKoj9IaM2H+9a1ZtMlRS8mYTtYOtgdthKrrF8OEZ
+   kA3eAi1Yxf96TABpxbzniUcw0/BiqmQWvZ7nCfCdyhXr3ktREU8hWxIhi
+   whQWkf8boBjYSuUUSpA1rcIZjjRx9Vq7PwEd3KwgG/2I3lkY2K050TRtT
+   Q==;
+X-CSE-ConnectionGUID: Mpr7xC91TPevwqb2m+Q6sw==
+X-CSE-MsgGUID: e4DmfpB+R/majPQjySI6hg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53391440"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="53391440"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 01:08:20 -0800
+X-CSE-ConnectionGUID: WsdSvD8kQSqq8xlLa15QJg==
+X-CSE-MsgGUID: wBNumz0fSaSG5Y1WNX0q2Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119230033"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa008.jf.intel.com with ESMTP; 04 Mar 2025 01:08:16 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpOG5-000JWI-26;
+	Tue, 04 Mar 2025 09:08:13 +0000
+Date: Tue, 4 Mar 2025 17:07:44 +0800
+From: kernel test robot <lkp@intel.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Michael Hennerich <michael.hennerich@analog.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Mun Yew Tham <mun.yew.tham@intel.com>,
+	Joel Stanley <joel@jms.id.au>,
+	Andrew Jeffery <andrew@codeconstruct.com.au>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org, patches@opensource.cirrus.com,
+	linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org
+Subject: Re: [PATCH 02/15] gpio: adnp: use lock guards for the I2C lock
+Message-ID: <202503041612.G8O0Bdrg-lkp@intel.com>
+References: <20250303-gpiochip-set-conversion-v1-2-1d5cceeebf8b@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/3] drm/sched: Adjust outdated docu for run_job()
-To: Matthew Brost <matthew.brost@intel.com>,
- Danilo Krummrich <dakr@kernel.org>
-Cc: =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>, phasta@kernel.org,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Tvrtko Ursulin <tvrtko.ursulin@igalia.com>, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250220112813.87992-2-phasta@kernel.org>
- <20250220112813.87992-4-phasta@kernel.org>
- <12c53d41-21c4-443d-a572-fd22c3cc56ad@igalia.com>
- <1457e985f88e02cd04b2152d2468a65b7a513e63.camel@mailbox.org>
- <cfef8bd7-f335-4796-9d4f-93197bb3fc2d@igalia.com>
- <Z7yFpZMCFINhEht7@cassiopeiae> <Z7ydaE4JmNcvzjJw@lstrano-desk.jf.intel.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <Z7ydaE4JmNcvzjJw@lstrano-desk.jf.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303-gpiochip-set-conversion-v1-2-1d5cceeebf8b@linaro.org>
 
-Am 24.02.25 um 17:25 schrieb Matthew Brost:
-> On Mon, Feb 24, 2025 at 03:43:49PM +0100, Danilo Krummrich wrote:
->> On Mon, Feb 24, 2025 at 10:29:26AM -0300, Maíra Canal wrote:
->>> On 20/02/25 12:28, Philipp Stanner wrote:
->>>> On Thu, 2025-02-20 at 10:28 -0300, Maíra Canal wrote:
->>>>> Would it be possible to add a comment that `run_job()` must check if
->>>>> `s_fence->finished.error` is different than 0? If you increase the
->>>>> karma
->>>>> of a job and don't check for `s_fence->finished.error`, you might run
->>>>> a
->>>>> cancelled job.
->>>> s_fence->finished is only signaled and its error set once the hardware
->>>> fence got signaled; or when the entity is killed.
->>> If you have a timeout, increase the karma of that job with
->>> `drm_sched_increase_karma()` and call `drm_sched_resubmit_jobs()`, the
->>> latter will flag an error in the dma fence. If you don't check for it in
->>> `run_job()`, you will run the guilty job again.
->> Considering that drm_sched_resubmit_jobs() is deprecated I don't think we need
->> to add this hint to the documentation; the drivers that are still using the API
->> hopefully got it right.
->>
->>> I'm still talking about `drm_sched_resubmit_jobs()`, because I'm
->>> currently fixing an issue in V3D with the GPU reset and we still use
->>> `drm_sched_resubmit_jobs()`. I read the documentation of `run_job()` and
->>> `timeout_job()` and the information I commented here (which was crucial
->>> to fix the bug) wasn't available there.
->> Well, hopefully... :-)
->>
->>> `drm_sched_resubmit_jobs()` was deprecated in 2022, but Xe introduced a
->>> new use in 2023
->> Yeah, that's a bit odd, since Xe relies on a firmware scheduler and uses a 1:1
->> scheduler - entity setup. I'm a bit surprised Xe does use this function.
->>
-> To clarify Xe's usage. We use this function to resubmit jobs after
-> device reset for queues which had nothing to do with the device reset.
-> In practice, a device should never occur as we have per-queue resets in
-> our harwdare. If a per-queue reset occurs, we ban the queue rather than
-> doing a resubmit.
+Hi Bartosz,
 
-That's still invalid usage. Re-submitting jobs by the scheduler is a completely broken concept in general.
+kernel test robot noticed the following build warnings:
 
-What you can do is to re-create the queue content after device reset inside your driver, but *never* use drm_sched_resubmit_jobs() for that.
+[auto build test WARNING on 9778568dede2166c7bd124d473f9ec365f782935]
 
->
-> Matt  
->
->>> for example. The commit that deprecated it just
->>> mentions AMD's case, but do we know if the function works as expected
->>> for the other users?
->> I read the comment [1] you're referring to differently. It says that
->> "Re-submitting jobs was a concept AMD came up as cheap way to implement recovery
->> after a job timeout".
->>
->> It further explains that "there are many problem with the dma_fence
->> implementation and requirements. Either the implementation is risking deadlocks
->> with core memory management or violating documented implementation details of
->> the dma_fence object", which doesn't give any hint to me that the conceptual
->> issues are limited to amdgpu.
->>
->>> For V3D, it does. Also, we need to make it clear which
->>> are the dma fence requirements that the functions violates.
->> This I fully agree with, unfortunately the comment does not explain what's the
->> issue at all.
->>
->> While I do think I have a vague idea of what's the potential issue with this
->> approach, I think it would be way better to get Christian, as the expert for DMA
->> fence rules to comment on this.
->>
->> @Christian: Can you please shed some light on this?
->>
->>> If we shouldn't use `drm_sched_resubmit_jobs()`, would it be possible to
->>> provide a common interface for job resubmission?
->> I wonder why this question did not come up when drm_sched_resubmit_jobs() was
->> deprecated two years ago, did it?
+url:    https://github.com/intel-lab-lkp/linux/commits/Bartosz-Golaszewski/gpio-74x164-use-new-line-value-setter-callbacks/20250303-212738
+base:   9778568dede2166c7bd124d473f9ec365f782935
+patch link:    https://lore.kernel.org/r/20250303-gpiochip-set-conversion-v1-2-1d5cceeebf8b%40linaro.org
+patch subject: [PATCH 02/15] gpio: adnp: use lock guards for the I2C lock
+config: x86_64-buildonly-randconfig-001-20250304 (https://download.01.org/0day-ci/archive/20250304/202503041612.G8O0Bdrg-lkp@intel.com/config)
+compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250304/202503041612.G8O0Bdrg-lkp@intel.com/reproduce)
 
-Exactly that's the point why drm_sched_resubmit_jobs() was deprecated.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503041612.G8O0Bdrg-lkp@intel.com/
 
-It is not possible to provide a common interface to re-submit jobs (with switching of hardware dma_fences) without breaking dma_fence rules.
+All warnings (new ones prefixed by >>):
 
-The idea behind the scheduler is that you pack your submission state into a job object which as soon as it is picked up is converted into a hardware dma_fence for execution. This hardware dma_fence is then the object which represents execution of the submission on the hardware.
+>> drivers/gpio/gpio-adnp.c:241:8: warning: variable 'isr' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     241 |                         if (err < 0)
+         |                             ^~~~~~~
+   drivers/gpio/gpio-adnp.c:265:14: note: uninitialized use occurs here
+     265 |                 pending &= isr & ier;
+         |                            ^~~
+   drivers/gpio/gpio-adnp.c:241:4: note: remove the 'if' if its condition is always false
+     241 |                         if (err < 0)
+         |                         ^~~~~~~~~~~~
+     242 |                                 continue;
+         |                                 ~~~~~~~~
+   drivers/gpio/gpio-adnp.c:235:25: note: initialize the variable 'isr' to silence this warning
+     235 |                 u8 changed, level, isr, ier;
+         |                                       ^
+         |                                        = '\0'
+>> drivers/gpio/gpio-adnp.c:245:8: warning: variable 'ier' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     245 |                         if (err < 0)
+         |                             ^~~~~~~
+   drivers/gpio/gpio-adnp.c:265:20: note: uninitialized use occurs here
+     265 |                 pending &= isr & ier;
+         |                                  ^~~
+   drivers/gpio/gpio-adnp.c:245:4: note: remove the 'if' if its condition is always false
+     245 |                         if (err < 0)
+         |                         ^~~~~~~~~~~~
+     246 |                                 continue;
+         |                                 ~~~~~~~~
+   drivers/gpio/gpio-adnp.c:241:8: warning: variable 'ier' is used uninitialized whenever 'if' condition is true [-Wsometimes-uninitialized]
+     241 |                         if (err < 0)
+         |                             ^~~~~~~
+   drivers/gpio/gpio-adnp.c:265:20: note: uninitialized use occurs here
+     265 |                 pending &= isr & ier;
+         |                                  ^~~
+   drivers/gpio/gpio-adnp.c:241:4: note: remove the 'if' if its condition is always false
+     241 |                         if (err < 0)
+         |                         ^~~~~~~~~~~~
+     242 |                                 continue;
+         |                                 ~~~~~~~~
+   drivers/gpio/gpio-adnp.c:235:30: note: initialize the variable 'ier' to silence this warning
+     235 |                 u8 changed, level, isr, ier;
+         |                                            ^
+         |                                             = '\0'
+   3 warnings generated.
 
-So on re-submission you either use the same dma_fence multiple times which results in a *horrible* kref_init() on an already initialized reference (It's a wonder that this doesn't crashes all the time in amdgpu). Or you do things like starting to allocate memory while the memory management potentially waits for the reset to complete.
 
-What we could do is to provide a helper for the device drivers in the form of an iterator which gives you all the hardware fences the scheduler is waiting for, but in general device drivers should have this information by themselves.
+vim +241 drivers/gpio/gpio-adnp.c
 
->>
->> Anyway, let's shed some light on the difficulties with drm_sched_resubmit_jobs()
->> and then we can figure out how we can do better.
->>
->> I think it would also be interesting to know how amdgpu handles job from
->> unrelated entities being discarded by not re-submitting them when a job from
->> another entitiy hangs the HW ring.
+   225	
+   226	static irqreturn_t adnp_irq(int irq, void *data)
+   227	{
+   228		struct adnp *adnp = data;
+   229		unsigned int num_regs, i;
+   230	
+   231		num_regs = 1 << adnp->reg_shift;
+   232	
+   233		for (i = 0; i < num_regs; i++) {
+   234			unsigned int base = i << adnp->reg_shift, bit;
+   235			u8 changed, level, isr, ier;
+   236			unsigned long pending;
+   237			int err;
+   238	
+   239			scoped_guard(mutex, &adnp->i2c_lock) {
+   240				err = adnp_read(adnp, GPIO_PLR(adnp) + i, &level);
+ > 241				if (err < 0)
+   242					continue;
+   243	
+   244				err = adnp_read(adnp, GPIO_ISR(adnp) + i, &isr);
+ > 245				if (err < 0)
+   246					continue;
+   247	
+   248				err = adnp_read(adnp, GPIO_IER(adnp) + i, &ier);
+   249				if (err < 0)
+   250					continue;
+   251			}
+   252	
+   253			/* determine pins that changed levels */
+   254			changed = level ^ adnp->irq_level[i];
+   255	
+   256			/* compute edge-triggered interrupts */
+   257			pending = changed & ((adnp->irq_fall[i] & ~level) |
+   258					     (adnp->irq_rise[i] & level));
+   259	
+   260			/* add in level-triggered interrupts */
+   261			pending |= (adnp->irq_high[i] & level) |
+   262				   (adnp->irq_low[i] & ~level);
+   263	
+   264			/* mask out non-pending and disabled interrupts */
+   265			pending &= isr & ier;
+   266	
+   267			for_each_set_bit(bit, &pending, 8) {
+   268				unsigned int child_irq;
+   269				child_irq = irq_find_mapping(adnp->gpio.irq.domain,
+   270							     base + bit);
+   271				handle_nested_irq(child_irq);
+   272			}
+   273		}
+   274	
+   275		return IRQ_HANDLED;
+   276	}
+   277	
 
-Quite simple this case never happens in the first place.
-
-When you have individual queues for each process (e.g. like Xe and upcomming amdgpu HW generation) you should always be able to reset the device without loosing everything.
-
-Otherwise things like userspace queues also doesn't work at all because then neither the kernel nor the DRM scheduler is involved in the submission any more.
-
-Regards,
-Christian.
-
->>
->> [1] https://patchwork.freedesktop.org/patch/msgid/20221109095010.141189-5-christian.koenig@amd.com
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
