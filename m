@@ -1,189 +1,122 @@
-Return-Path: <linux-kernel+bounces-543269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45B79A4D3A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:18:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E9B3EA4D3AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:20:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 445F81897F68
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:18:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247B11893D89
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:20:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A1A1F4CA3;
-	Tue,  4 Mar 2025 06:18:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FF891F55F8;
+	Tue,  4 Mar 2025 06:20:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EKt6CdS/"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FWsOxRny"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904AF152E02;
-	Tue,  4 Mar 2025 06:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A89F152E02;
+	Tue,  4 Mar 2025 06:20:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741069093; cv=none; b=K8It7uIk3+KKTXIMKZh9BAZkEruGqgqAG/4RMbmOYL57ONfvr+ZT4b+oBVA3ONXyoH8EgoTxR877P5YpRliPO8gPu03J5WtmmpHaPlWj8R+ks257sahbkivtBUaoPsT4zxWOU3foMaDuap3UOIYoKaJZLIFK4HDvez1AoHUT68c=
+	t=1741069217; cv=none; b=eRVGUpmDiZ8zDfw0+Dj31hIySpYVeHavaJV0odGXbUen3aHy+GuZmCMgVFZ+eeXrWxrUsepqDEp0+NWvsVbygsb3EMrIckq0aY52+iHj4c/KqPl37+tr9N/gfHNfaGpEjyCIaINRQrFFEqAZ4ByUrflbdfemIa7XI/x6q6BHV7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741069093; c=relaxed/simple;
-	bh=QQOkh+3wVSJzLYJ7viJ3y47huTC98CGWMWaPdnjnjYM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=h8AxEa8yunKQ6cyDuUSW1nrp+iTg16uQ1mosRyBsbpkV8M4CZ/LnJ2L9v/M0edKcAsUnCVILcoO29m4UomEwg9SVjgUJXexIoX7SIHduwz85hu1KzmntyIBkDO6jZvVVAPVK9FJBNHI+qe6+SzR0IhF3iCJELrZtYt2Dua0Og+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EKt6CdS/; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5246HgYw3517465
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Tue, 4 Mar 2025 00:17:42 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741069062;
-	bh=N9Y4JwuClarjXzxVWt1JrUj/6OJyXCE1bCRokMfQHlc=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=EKt6CdS/C6CBn25rAj78txKmE0D06kNV72m3EPZ0rkROu3/m+3MS2njKqxjDcCxFp
-	 3BAEkq6O2IUL85Ul1fEM0yqTwL8R0voELQIKt5j+5y6awTG3jQA3Qge4sKuIkF6eKj
-	 TU2XwMcBgqIWPYlYb/6W/O8bDqKjv9Suamshx1PA=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5246HgB8028403;
-	Tue, 4 Mar 2025 00:17:42 -0600
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Mar 2025 00:17:42 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Mar 2025 00:17:42 -0600
-Received: from [172.24.31.59] (lt9560gk3.dhcp.ti.com [172.24.31.59])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5246HZvQ106977;
-	Tue, 4 Mar 2025 00:17:36 -0600
-Message-ID: <5cad21ef-a97b-4412-a399-7ace69b85356@ti.com>
-Date: Tue, 4 Mar 2025 11:47:35 +0530
+	s=arc-20240116; t=1741069217; c=relaxed/simple;
+	bh=SKTfUxiDVoQrUXmMNuNlIric4cD5/FdL5HKEoC1ByIc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cEHSUSqGmBIERW/mW4adhGIPf1us2OLTg8ZbjdOLE8XZuhq7kvrcn6YUIZA15LfOGe/tf14VcGWKbhm+P0NB1ufVwia03kP5fXvrKNjue8x4nt+EhkgXuDQZ+LOtB4bU2RMhHLEIsniqF8H2TtX55ZOWx5iIqSNOfP21+wa9Py8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FWsOxRny; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741069216; x=1772605216;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=SKTfUxiDVoQrUXmMNuNlIric4cD5/FdL5HKEoC1ByIc=;
+  b=FWsOxRnytkXFDEggYcRMaKrJ3QA9DFcAmh3G1ZQPFU6KFXFumjDKq2AW
+   kA6U/M+UWzjx8VR+/U+OohhpwOreJQxO702nXh5PcuvTXh1tWz48hzqy2
+   a++4F91Ar4ahlSf9O5KQ7eLTfnW3rlsDogXumdGAsSFJ+bU/jHb4F8pfg
+   kD6vIphMaeLT6VZNQPerqqY7NKvzmYg5JfTF+MDau8HdBq2Sis6RrxqEW
+   fyHCnnqITdWTQwlQ1Nx699oucfCRuy/xs8g0vfCOeoiOGo54G3Y4XHRhw
+   hkaDqk38nlU+f/wxp0ZhADFv0xRgvLThOaHYDmJ13d/XoHVoVPmHUFakK
+   A==;
+X-CSE-ConnectionGUID: H/kmhRfxR6CIaRMjhXFBzg==
+X-CSE-MsgGUID: aw6TnQeRRm2SMwgQKK53lg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="42164581"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="42164581"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 22:20:15 -0800
+X-CSE-ConnectionGUID: oofMHzU/Sm6Dh61WCLy3SA==
+X-CSE-MsgGUID: i+lX7EqAQaO6sGJC3ohPkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="118260140"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa007.fm.intel.com with ESMTP; 03 Mar 2025 22:20:13 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpLdS-000JLK-35;
+	Tue, 04 Mar 2025 06:20:10 +0000
+Date: Tue, 4 Mar 2025 14:19:56 +0800
+From: kernel test robot <lkp@intel.com>
+To: Oliver Mangold <oliver.mangold@pm.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH] Rust: Implement a unique reference type URef
+ supplementing ARef
+Message-ID: <202503041325.UnOn2m7a-lkp@intel.com>
+References: <SpXhwnZO__ST8sHQ3HQ3ygThOcnmn0x2JlJ_nwJglL87vw5XfQA8sDH6HdkrGgFVycLhPBlCc6-UtEImTvY26A==@protonmail.internalid>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [EXTERNAL] Re: [PATCH net-next v3 1/2] net: ti: icss-iep: Add
- pwidth configuration for perout signal
-To: Kory Maincent <kory.maincent@bootlin.com>
-CC: <javier.carrasco.cruz@gmail.com>, <diogo.ivo@siemens.com>,
-        <horms@kernel.org>, <jacob.e.keller@intel.com>,
-        <richardcochran@gmail.com>, <pabeni@redhat.com>, <kuba@kernel.org>,
-        <edumazet@google.com>, <davem@davemloft.net>, <andrew+netdev@lunn.ch>,
-        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-References: <20250303135124.632845-1-m-malladi@ti.com>
- <20250303135124.632845-2-m-malladi@ti.com>
- <20250303180323.1d9b51de@kmaincent-XPS-13-7390>
-Content-Language: en-US
-From: "Malladi, Meghana" <m-malladi@ti.com>
-In-Reply-To: <20250303180323.1d9b51de@kmaincent-XPS-13-7390>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SpXhwnZO__ST8sHQ3HQ3ygThOcnmn0x2JlJ_nwJglL87vw5XfQA8sDH6HdkrGgFVycLhPBlCc6-UtEImTvY26A==@protonmail.internalid>
 
+Hi Oliver,
 
+kernel test robot noticed the following build warnings:
 
-On 3/3/2025 10:33 PM, Kory Maincent wrote:
-> On Mon, 3 Mar 2025 19: 21: 23 +0530 Meghana Malladi <m-malladi@ ti. com> 
-> wrote: > icss_iep_perout_enable_hw() is a common function for generating 
->  > both pps and perout signals. When enabling pps, the application needs 
->  > to only pass
-> ZjQcmQRYFpfptBannerStart
-> This message was sent from outside of Texas Instruments.
-> Do not click links or open attachments unless you recognize the source 
-> of this email and know the content is safe.
-> Report Suspicious
-> <https://us-phishalarm-ewt.proofpoint.com/EWT/v1/G3vK! 
-> uVdqXRfP1m17KmZFPNPjnPB9kIuFmkbGwUjWeOt4PhpPuyUdhbWQXCWjPIg3CE7zH4vA7aR5lJOdoby6lh8SIqLqdFhb$>
-> ZjQcmQRYFpfptBannerEnd
-> 
-> On Mon, 3 Mar 2025 19:21:23 +0530
-> Meghana Malladi <m-malladi@ti.com> wrote:
-> 
->> icss_iep_perout_enable_hw() is a common function for generating
->> both pps and perout signals. When enabling pps, the application needs
->> to only pass enable/disable argument, whereas for perout it supports
->> different flags to configure the signal.
->> 
->> But icss_iep_perout_enable_hw() function is missing to hook the
->> configuration params passed by the app, causing perout to behave
->> same a pps (except being able to configure the period). As duty cycle
->> is also one feature which can configured for perout, incorporate this
->> in the function to get the expected signal.
-> 
-> ...
-> 
->> IEP_SYNC_CTRL_SYNC_EN); @@ -474,7 +484,38 @@ static int
->> icss_iep_perout_enable_hw(struct icss_iep *iep, static int
->> icss_iep_perout_enable(struct icss_iep *iep, struct ptp_perout_request *req,
->> int on) {
->> -	return -EOPNOTSUPP;
->> +	int ret = 0;
->> +
->> +	mutex_lock(&iep->ptp_clk_mutex);
->> +
->> +	/* Reject requests with unsupported flags */
->> +	if (req->flags & ~PTP_PEROUT_DUTY_CYCLE) {
->> +		ret = -EOPNOTSUPP;
->> +		goto exit;
->> +	}
-> 
-> The flags check does not need to be in the mutex lock.
-> With this change:
-> Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
-> 
+[auto build test WARNING on rust/rust-next]
+[also build test WARNING on linus/master v6.14-rc5 next-20250303]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Yes agreed, will move it outside the mutex lock. Thanks.
+url:    https://github.com/intel-lab-lkp/linux/commits/Oliver-Mangold/Rust-Implement-a-unique-reference-type-URef-supplementing-ARef/20250221-160625
+base:   https://github.com/Rust-for-Linux/linux rust-next
+patch link:    https://lore.kernel.org/r/SpXhwnZO__ST8sHQ3HQ3ygThOcnmn0x2JlJ_nwJglL87vw5XfQA8sDH6HdkrGgFVycLhPBlCc6-UtEImTvY26A%3D%3D%40protonmail.internalid
+patch subject: [PATCH] Rust: Implement a unique reference type URef supplementing ARef
+config: x86_64-rhel-9.4-rust (https://download.01.org/0day-ci/archive/20250304/202503041325.UnOn2m7a-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250304/202503041325.UnOn2m7a-lkp@intel.com/reproduce)
 
->> +	if (iep->pps_enabled) {
->> +		ret = -EBUSY;
->> +		goto exit;
->> +	}
->> +
->> +	if (iep->perout_enabled == !!on)
->> +		goto exit;
->> +
->> +	/* Set default "on" time (1ms) for the signal if not passed by the
->> app */
->> +	if (!(req->flags & PTP_PEROUT_DUTY_CYCLE)) {
->> +		req->on.sec = 0;
->> +		req->on.nsec = NSEC_PER_MSEC;
->> +	}
->> +
->> +	ret = icss_iep_perout_enable_hw(iep, req, on);
->> +	if (!ret)
->> +		iep->perout_enabled = !!on;
->> +
->> +exit:
->> +	mutex_unlock(&iep->ptp_clk_mutex);
->> +
->> +	return ret;
->>  }
->>  
->>  static void icss_iep_cap_cmp_work(struct work_struct *work)
->> @@ -553,6 +594,8 @@ static int icss_iep_pps_enable(struct icss_iep *iep, int
->> on) rq.perout.period.nsec = 0;
->>  		rq.perout.start.sec = ts.tv_sec + 2;
->>  		rq.perout.start.nsec = 0;
->> +		rq.perout.on.sec = 0;
->> +		rq.perout.on.nsec = NSEC_PER_MSEC;
->>  		ret = icss_iep_perout_enable_hw(iep, &rq.perout, on);
->>  	} else {
->>  		ret = icss_iep_perout_enable_hw(iep, &rq.perout, on);
-> 
-> 
-> 
-> -- 
-> Köry Maincent, Bootlin
-> Embedded Linux and kernel engineering
-> https://urldefense.com/v3/__https://bootlin.com__;!!G3vK! 
-> TJ19I0FAUivlehxg6fb4ka96Q2RiJDOZNyHXmEeRdYIPu4Cthp- 
-> iiGCHOwcUnPvn8Ek_htiuIef9PMEWGUfBEA$ <https://urldefense.com/v3/__https://bootlin.com__;!!G3vK!TJ19I0FAUivlehxg6fb4ka96Q2RiJDOZNyHXmEeRdYIPu4Cthp-iiGCHOwcUnPvn8Ek_htiuIef9PMEWGUfBEA$>
-> 
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503041325.UnOn2m7a-lkp@intel.com/
 
+All warnings (new ones prefixed by >>):
+
+>> warning: docs for unsafe trait missing `# Safety` section
+   --> rust/kernel/types.rs:546:1
+   |
+   546 | pub unsafe trait UniqueRefCounted: AlwaysRefCounted + Sized {
+   | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+   |
+   = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#missing_safety_doc
+   = note: `-W clippy::missing-safety-doc` implied by `-W clippy::all`
+   = help: to override `-W clippy::all` add `#[allow(clippy::missing_safety_doc)]`
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
