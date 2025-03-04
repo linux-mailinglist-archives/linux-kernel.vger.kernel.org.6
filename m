@@ -1,49 +1,61 @@
-Return-Path: <linux-kernel+bounces-544183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CCBCA4DE54
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:50:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514B5A4DE59
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:52:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE55189BCED
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:50:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4091D7A7528
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1CD202F88;
-	Tue,  4 Mar 2025 12:50:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5DCC202998;
+	Tue,  4 Mar 2025 12:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdGdba2E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="WkYmpMPD"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE38202960;
-	Tue,  4 Mar 2025 12:49:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B869F1FC7FD;
+	Tue,  4 Mar 2025 12:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092600; cv=none; b=knHAGHyEzwxeoYaeMz/6asrLRWwcEK7b1B2I85b6ITbWecGRbYfD7k+/jMHjjVAeXUZCGyipHg7WEyWT/k/yWzH3lvgM//Gog6tF8NU8aqmoPK6VXzTm/wJd3W3Ci3OWidAcfk+9qEK9ZXSO+UjEqG8FRfAJuxYAzdmEE4JW+6E=
+	t=1741092731; cv=none; b=pk0mZXd0ajm21Exvc8KPUZlD1KNNoKZ4NYKpA63f969BXoR3kp7M7F9OZo5URCHfnw8k6WQ09HjXVrSvkz4JhNLaqb6Hg59vyPDtqcJArR6xuCQ3bpwYl+E1aGieYmQpR0SAaawErDkjAFEcKEK/u43N2UDmhP9ZMxS0+X6RruQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092600; c=relaxed/simple;
-	bh=a6QinKqDIMkZ8XorkobTU2Cya4t8AO7Fb/SG8uey8X4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=draAn0NfRxQLP0zYr0NfKMXRnHKWv6PXhjIlp3jzh+GvnccLEIfrv007ynV/XD1r0bNs7hatdz7sj4KKxzRSst2fCI7fK9wWFnyRNEsWgPNuBLaG3T0ZrXzZ/uCIggjD76UCTCPgf4K3DPuEnKANzYRNPjCCyFY2PUArTiErlwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdGdba2E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98793C4CEE5;
-	Tue,  4 Mar 2025 12:49:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741092599;
-	bh=a6QinKqDIMkZ8XorkobTU2Cya4t8AO7Fb/SG8uey8X4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=KdGdba2Eq3HpCVBhfsTZUdxakiGRxsbaWuc+WFy95UERKDsYiy8WLsOru8GtT39xK
-	 yaol5ItmInR9p5oqS2AmR5dj6vEcz2Hl3YD7dKp8wFNHY0BJAhCNEyBkR6gfkiaPM5
-	 DebPl59TAKr7UpYNYUHNXYOX8a2Z8nkVxDPh3tlL9hdhGZAszaxqO0EddI8lpSrfk8
-	 ZqJwdjb9ah14gJyna/nYrvrfv2I3jTDdn8ZvaRrIfhQXq/cramirtJ4uUXkxwmWHjZ
-	 kQtrqu6TGaCDsFuqMHTORoa9pw68nzhOOJY8nZkNLFDqbDGFzNo92PZuv3Phayd5Cj
-	 ZARI66umh2+mw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD8C380AA7F;
-	Tue,  4 Mar 2025 12:50:33 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741092731; c=relaxed/simple;
+	bh=jNXj/hM908lbIGT/rEay9SEHPUga9srW3xe5hIv0S4I=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=D2y2qWNgLlvigKBdUDUBcbJbLxTjAc1ewoLUWbQJ50bhh89zIfqngQmH+nxhlvBM8vOXukK2DfDkq3JIxrVMAwkX4t0cmRWgVh2YgtIPecr8258Rz5PjRqlh5FjxCKzkwQLPhr2bi5ZyHZnrhJtN2kF8IkIVB/g14CSYdm4tfQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=WkYmpMPD; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1741092686;
+	bh=uqbrItG4RF2iGWowQ1HAIeAWIrLWX/XtAcPaXldbM9U=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=WkYmpMPDliAQbHjKRg0TBEH9LUROFq9jOJXC3K+edpNJckfhotE7Dzpzk6dQWfE8A
+	 prijyE8NeIDj2xnEfpzvFcoygxjespqaU8Ash7Fmo10yvAI6oD2c5ILajs19kMCMwC
+	 Jm+qdnJXI3twqbhHKsp2G3xZuZTQzFoFLeKaX74w=
+X-QQ-mid: bizesmtpip2t1741092678tcj7lod
+X-QQ-Originating-IP: N/MK0n+jARevcIz76CPcyl4YeOuRDsR2KzdfonEkqv8=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Tue, 04 Mar 2025 20:51:16 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 9723207296368819461
+From: raoxu <raoxu@uniontech.com>
+To: mathias.nyman@intel.com,
+	gregkh@linuxfoundation.org
+Cc: linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	wangyuli@uniontech.com,
+	zhanjun@uniontech.com,
+	raoxu@uniontech.com
+Subject: Re:[PATCH V2] usb: xhci: Add debugfs support for xHCI port bandwidth
+Date: Tue,  4 Mar 2025 20:51:15 +0800
+Message-Id: <20250304125115.29332-1-raoxu@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,58 +63,48 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH v4 net-next 0/6] Support some enhances features for the
- HIBMCGE driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174109263250.131753.15116775173435171481.git-patchwork-notify@kernel.org>
-Date: Tue, 04 Mar 2025 12:50:32 +0000
-References: <20250228115411.1750803-1-shaojijie@huawei.com>
-In-Reply-To: <20250228115411.1750803-1-shaojijie@huawei.com>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
- shenjian15@huawei.com, wangpeiyang1@huawei.com, liuyonglong@huawei.com,
- chenhao418@huawei.com, sudongming1@huawei.com, xujunsheng@huawei.com,
- shiyongbang@huawei.com, libaihan@huawei.com, jonathan.cameron@huawei.com,
- shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- kalesh-anakkur.purayil@broadcom.com
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz7a-0
+X-QQ-XMAILINFO: OdexiAf7tcY2bVPH384jGr4mGD+SH+WbD52RF935rULBRBGFY/bvH+yw
+	6f4Qh57ZwG6nlQrFqSYJrQukcc8pleZbeSqU5DrTSZ1iw0qro+VmX1Vwqoz9YzVj05UMn+N
+	xgnBfdFzxmd6HUIW4VwcZlgw0yZpIB0c9NesUleLSI+OKgPaP1fJ8VKNw1nRH6u2Tk8ZJnT
+	oInPrfHM3eM2pjhafrSQLLR7CFBhiCQ9e3nLJ+mf93SiI4y+UTEBr8ud6bxLmoXnplMeo46
+	1sNxLfOIf7lEP7yr3Wvy7pX/xP4YdEEhL7YZhP3iWo/ptLRP/Q1OAkJnk9tJShEuMGhN/rH
+	bWsHNTAg6hprT164nLPPAHM/rRuPJdlzk0h7EvQQcT+Rlnu6znAFmoHgcA2MX+67Umgyksu
+	HG72c5vZKCjXSbO945KndyhpHGEigpjegra9AehTg2ex05UIUwCNZnSY9/UKyWWqCHQ3cuv
+	ho6gOIMt66JP6I6fAQdGtakeK7lLFYtTochA68JuwlVmytaT1D/5VgIbA4yKWlH9K9ouTFz
+	MVFgbTBMNGSK9AF7bsEIU4Jm7AX8jOq4cb/ckUEhp+/PuegfOTbUIRgzseABlsYDl3CrJK8
+	k1ED5DBKrH7YxfGrmC0smya/mlm5jZiJZ6I5zirEphd/SH28YtZSJsz8ptGUHZjUv5/3lVq
+	ij2G+wXqalNoe1OuyCXj20tZ8hP6GJ3A7YvYeH9mabIS38vKp7Jir4aKFe7qJLLpkmGIQaq
+	kKf744STZ6WKjMCkagfozpS68RT5r+g7GkWbCJnJpWmiyGXBlOLRtQ61QshNvYl1hlnh8WH
+	p+pB6QG6cTSUOqjbdS1Y0z3XCnrcrUzm5J/hUXhMs0cR6ghqBgR0ABpxn+u+7avtrLuDLdm
+	nlLli4gdLaM0lpbVmbmeaKn1YB6r9jCWVk5kZv4h3j/CDd5Y70KQksGjMLvtR/lp7sTZVyU
+	g3wK252k9cT7iqFsY01EKc6OcE9HLy5wsh0ji2IaMZsnXfq4RjHGcpVjCB2OfV2HqemMT8y
+	5spOEQsvnxvkqYKr2B12NEPYfq0NVvuPDauck+7kzKk2XaRPNpDjb2gTX+kGbI0GJMnHM2z
+	TQdEDp8vKY0kCW36RMF2VTTaHPC4BOTfA==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+X-QQ-RECHKSPAM: 0
 
-Hello:
+On 2025/3/4 20:31, Mathias Nyman  wrote:
 
-This series was applied to netdev/net-next.git (main)
-by Paolo Abeni <pabeni@redhat.com>:
+>I do however have some larger rework suggestions to this.
+>
+>Instead of queuing three commands on one file read, parsing and
+>copy the content from each context dma into an array on stack, we could
+>have separate files in debugfs for each speed, and queue one command
+>for each. we could also skip the array on stack and print values from context
+>directly.
+>
+>Something is also very off with the locks in this patch.
+>Looks like every lock/unlock got replaced with an unlock
 
-On Fri, 28 Feb 2025 19:54:05 +0800 you wrote:
-> In this patch set, we mainly implement some enhanced features.
-> It mainly includes the statistics, diagnosis, and ioctl to
-> improve fault locating efficiency,
-> abnormal irq and MAC link exception handling feature
-> to enhance driver robustness,
-> and rx checksum offload feature to improve performance
-> (tx checksum feature has been implemented).
-> 
-> [...]
+thanks Mathias Nyman,
 
-Here is the summary with links:
-  - [v4,net-next,1/6] net: hibmcge: Add support for dump statistics
-    https://git.kernel.org/netdev/net-next/c/c0bf9bf31e79
-  - [v4,net-next,2/6] net: hibmcge: Add support for checksum offload
-    https://git.kernel.org/netdev/net-next/c/833b65a3b54d
-  - [v4,net-next,3/6] net: hibmcge: Add support for abnormal irq handling feature
-    https://git.kernel.org/netdev/net-next/c/fd394a334b1c
-  - [v4,net-next,4/6] net: hibmcge: Add support for mac link exception handling feature
-    https://git.kernel.org/netdev/net-next/c/e0306637e85d
-  - [v4,net-next,5/6] net: hibmcge: Add support for BMC diagnose feature
-    https://git.kernel.org/netdev/net-next/c/7a5d60dcf998
-  - [v4,net-next,6/6] net: hibmcge: Add support for ioctl
-    https://git.kernel.org/netdev/net-next/c/615552c601ed
+Thank you for your valuable suggestions.I will separate files in debugfs for each speed.
+skipping the array on stack and print values from context directly sounds good. looks is a error and i will fix it.
+According to your suggestion i will send patch v3
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+thanks,
 
-
+raoxu
 
