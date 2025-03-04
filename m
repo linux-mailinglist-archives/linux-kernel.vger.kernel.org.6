@@ -1,173 +1,106 @@
-Return-Path: <linux-kernel+bounces-543385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2EBA4D4EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:38:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBFBCA4D4F0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:39:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD0C23ABCF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:38:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76C211886C1B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:39:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9831F791E;
-	Tue,  4 Mar 2025 07:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="SBVcZOJw"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E97A51F866A;
+	Tue,  4 Mar 2025 07:39:08 +0000 (UTC)
+Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EF4D1F7561;
-	Tue,  4 Mar 2025 07:38:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9FF01F55F8;
+	Tue,  4 Mar 2025 07:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741073918; cv=none; b=YBDt7tGPgd8vV+AlwpGzPH8zBlWp6O35g7l3j2Qw3L+8frNi8E61/CokZUWQQXDm719zEEQGq2wKGcQAaNgxV5DUIMe40CQtpF7HI4iDdbItTXBunse3XipcCvxaUwpTy9Otxa87KlcQTzmR64HbszkV8S0cOP9Tk0G76xOhBQo=
+	t=1741073948; cv=none; b=It1Net4l+lONuG3duUn91SpAeEpvDxDOtQ06nZ1Lksc3FBkRM04TwuAcZiVNEo82nCmy7EcTSVvNMaY6+U4jyo1fwpDsEYaOoD7U8EvJ9qmypgfn97b17yXYG2CnR7omI7vyY1DfyXQjE01/dFPehG/VWS4vjBW2BgLi1ZzU1D0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741073918; c=relaxed/simple;
-	bh=XFcWAfOdjfHUvZMpjXN8UBajs+n3IF62Q6GYNvZFl+g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SqfQcnSHMoDo19622IjtdRniXW0VeUzC6S77rmJBnIky/GPdCv5+axq7amVWoim/uQT86Pu8kUJ5+soxDj6zVtOG2kHw8ErMyc8FwY10pvWNYOIHuKnND3N34xWD+ymLYLh3BryXLFgG9ocES3d6h4TLi7cw7X2Meil28OujzQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=SBVcZOJw; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523Ke4cc020517;
-	Tue, 4 Mar 2025 07:38:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vjTFF5
-	8thWXv9CPpTVynWVvptQKkmV91uZV11PxveTM=; b=SBVcZOJwii5/DQXo0f+nHu
-	OOuo84P6gxM/FJgAVs/R99pOBHtCPseQz4r0U7NscQND35uhhfZ1B9IpV5METI2N
-	qixzELcCb14t2F/CygYQlJIowiU3+1LwRu5oTqJc1Pjph4lY7uZAmAhxOd5dnbRj
-	16nBXENWIQI34KieS1OZTBVqqIn4fbL9FgSkqKl4ZaOpAYhnBlgSqVcIo9NXeKFE
-	fVOedgeacXFiICdDc7Ub3GIDQCrcYTegCauL02R4num3CfsXXbw7uTN1/BXTPx/U
-	gukenuyBQ35fAh4js7bDvxrCibdgfR+SuiJ75NX4uhbgqPZ6GQ9U+OT3865JOD+g
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455kmyjdnb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 07:38:20 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5247RsTo003863;
-	Tue, 4 Mar 2025 07:38:19 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455kmyjdn8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 07:38:19 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5243uJt6020871;
-	Tue, 4 Mar 2025 07:38:19 GMT
-Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454djnc8gx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 07:38:19 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5247cHxN49480042
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 07:38:17 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 205852004B;
-	Tue,  4 Mar 2025 07:38:17 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B741020043;
-	Tue,  4 Mar 2025 07:38:16 +0000 (GMT)
-Received: from [9.152.212.236] (unknown [9.152.212.236])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Mar 2025 07:38:16 +0000 (GMT)
-Message-ID: <aa2aad75-a8db-4cc5-a33c-f004d8f1df4a@linux.ibm.com>
-Date: Tue, 4 Mar 2025 08:38:16 +0100
+	s=arc-20240116; t=1741073948; c=relaxed/simple;
+	bh=pp6cxliTAdX/ToQmnTQjP3FVGBVTcVn4aX4ceR300nU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WtWXGHRvUbPvXPMd4B72/vulDWM23R7mjOElfZaWCervCY/xUijQPdGhxbpr2i+WsUo+dwSO9G/p5+hhkFRkkG2HqUJlbrcvDFWFzAHmuv2LafZ0TtlqmpyaEzNU2zSGDFmT9oYurRl94VABEz/BHyhoLciSKyVw2Ve0pvliZe4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
+Received: from localhost (unknown [116.232.55.252])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dlan)
+	by smtp.gentoo.org (Postfix) with ESMTPSA id B8E58343072;
+	Tue, 04 Mar 2025 07:39:05 +0000 (UTC)
+Date: Tue, 4 Mar 2025 07:39:01 +0000
+From: Yixun Lan <dlan@gentoo.org>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Alex Elder <elder@riscstar.com>,
+	Inochi Amaoto <inochiama@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev, Rob Herring <robh@kernel.org>
+Subject: Re: [PATCH v2 1/2] irqdomain: support three-cell scheme interrupts
+Message-ID: <20250304073901-GYA60841@gentoo>
+References: <20250302-04-gpio-irq-threecell-v2-0-34f13ad37ea4@gentoo.org>
+ <20250302-04-gpio-irq-threecell-v2-1-34f13ad37ea4@gentoo.org>
+ <87jz97cml1.ffs@tglx>
+ <20250303124011-GYA59067@gentoo>
+ <CACRpkdZn93oA6Tmi4EaWw9U=TAjEAdqgtK+2Ct_Nf1YUUrurgw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/6] perf test: Simplify data symbol test
-To: Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org,
-        Leo Yan <leo.yan@arm.com>
-References: <20250304022837.1877845-1-namhyung@kernel.org>
- <20250304022837.1877845-7-namhyung@kernel.org>
-Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <20250304022837.1877845-7-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: luUNLpdwlFRuykUWAoFiwHox-Lg7VStg
-X-Proofpoint-GUID: suFCkDAdyhdl3vvlaKZcXkYYWEJALY6o
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_03,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
- mlxscore=0 malwarescore=0 clxscore=1015 phishscore=0 suspectscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040062
+In-Reply-To: <CACRpkdZn93oA6Tmi4EaWw9U=TAjEAdqgtK+2Ct_Nf1YUUrurgw@mail.gmail.com>
 
-On 3/4/25 03:28, Namhyung Kim wrote:
-> Now the workload will end after 1 second.  Just run it with perf instead
-> of waiting for the background process.
-> 
-> Cc: Thomas Richter <tmricht@linux.ibm.com>
-> Cc: Leo Yan <leo.yan@arm.com>
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
->  tools/perf/tests/shell/test_data_symbol.sh | 15 ++-------------
->  1 file changed, 2 insertions(+), 13 deletions(-)
-> 
-> diff --git a/tools/perf/tests/shell/test_data_symbol.sh b/tools/perf/tests/shell/test_data_symbol.sh
-> index c86da02350596b35..1792b7ad4066f8cd 100755
-> --- a/tools/perf/tests/shell/test_data_symbol.sh
-> +++ b/tools/perf/tests/shell/test_data_symbol.sh
-> @@ -5,8 +5,6 @@
->  # Leo Yan <leo.yan@linaro.org>, 2022
->  
->  shelldir=$(dirname "$0")
-> -# shellcheck source=lib/waiting.sh
-> -. "${shelldir}"/lib/waiting.sh
->  
->  # shellcheck source=lib/perf_has_symbol.sh
->  . "${shelldir}"/lib/perf_has_symbol.sh
-> @@ -60,19 +58,10 @@ echo "Recording workload..."
->  # specific CPU and test in per-CPU mode.
->  is_amd=$(grep -E -c 'vendor_id.*AuthenticAMD' /proc/cpuinfo)
->  if (($is_amd >= 1)); then
-> -	perf mem record -vvv -o ${PERF_DATA} -C 0 -- taskset -c 0 $TEST_PROGRAM 2>"${ERR_FILE}" &
-> +	perf mem record -vvv -o ${PERF_DATA} -C 0 -- taskset -c 0 $TEST_PROGRAM 2>"${ERR_FILE}"
->  else
-> -	perf mem record -vvv --all-user -o ${PERF_DATA} -- $TEST_PROGRAM 2>"${ERR_FILE}" &
-> +	perf mem record -vvv --all-user -o ${PERF_DATA} -- $TEST_PROGRAM 2>"${ERR_FILE}"
->  fi
->  
-> -PERFPID=$!
-> -
-> -wait_for_perf_to_start ${PERFPID} "${ERR_FILE}"
-> -
-> -sleep 1
-> -
-> -kill $PERFPID
-> -wait $PERFPID
-> -
->  check_result
->  exit $?
+Hi Linus Walleij:
 
-Tested-by: Thomas Richter <tmricht@linux.ibm.com>
+On 08:31 Tue 04 Mar     , Linus Walleij wrote:
+> On Mon, Mar 3, 2025 at 1:40 PM Yixun Lan <dlan@gentoo.org> wrote:
+> > On 19:30 Sun 02 Mar     , Thomas Gleixner wrote:
+> 
+> > > Why is the three cell translation not following the one/two cell scheme
+> > > and has the parameters at the same place (index 0,1), i.e. adding the
+> > > extra information at the end? That makes sense to me as the extra cell
+> > > is obviously not directly related to the interrupt mapping.
+> >
+> > I think we currently just following the scheme with gpio cells order
+> > scheme, which is (index(instance) offset flag..), the index and offset
+> > are parameters to locate the irq which can easily derive from global
+> > gpio pin number, so I thought it's more intuitive to group them
+> > orderly together..
+> 
+> Right, the DT bindings are mainly for human consumption, and the
+> cells are positioned in left-to-right intuitive order.
+> 
+> If they were only for machines it would be another issue, but it's
+> people who have to write and maintain these files.
+> 
+> For example, in a library a machine could arrange books by
+> first letter in the title, then by second letter in the title etc, but
+> that would be very confusing for humans who expect to find
+> them in author order.
+> 
+> There are many examples of this in the DT bindings.
+> 
+Ok, I got your idea.. thanks
+I will rework the patch to address Thomas's concern
+
+> Yours,
+> Linus Walleij
+> 
 
 -- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
-
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
-
-Geschäftsführung: David Faller
-
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+Yixun Lan (dlan)
+Gentoo Linux Developer
+GPG Key ID AABEFD55
 
