@@ -1,148 +1,93 @@
-Return-Path: <linux-kernel+bounces-543160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56E9A4D241
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:00:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B603A4D243
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:04:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D35651894210
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:00:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3934B7A5EA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 530D61EEA5D;
-	Tue,  4 Mar 2025 04:00:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rk3z+T8y"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9631EBA07;
+	Tue,  4 Mar 2025 04:03:51 +0000 (UTC)
+Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DA07BA38;
-	Tue,  4 Mar 2025 04:00:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C82BA38;
+	Tue,  4 Mar 2025 04:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741060836; cv=none; b=umYk2bvyTlQvc6opghpkaJ0gGnquO/HjNvgxKlW1pQhNPuQrE5+vwGftiXO1Ss97c7z1Px4tRGWcTvhirUesXrcmYjyhbd4ziu8On0FkdBXuxU0tU+I0MXbXbm+VAWXRNR4DlsDyxlbfFQ8oldPBVU7N1gMz1cnnPdB89J1CCZQ=
+	t=1741061031; cv=none; b=rVbi6GXxYcCLSirnJm4zwoVZppva5VSZJ0RTeQrSJ1SCsnuVJi4gYnoPRxnsLXcMubpRJtn0BacHY/5L2OMSsP37E2tS2MzbFfgBDf6tzl6IHHQ2Jt1Z2xEK+vC4pWXlxjoaY0Wg2ZtlCRhdZ2nnnaSlkL3EL0GQuJRpHufkdeA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741060836; c=relaxed/simple;
-	bh=rluc3zmydmEHsLOo2Qguez2nWvDhxgsY2UdhSAVwpzE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iMHIA0Wn2dZxYmZrumSKylPzxXpPLVVvnVc/fiTtBclN6gFKUl9v1mHpE2KjCKL3sepZ23yGoZDV38E5faHJnzWlylUlzVRYayVVk3Hx4fpnjirWK3vRbddJEbH2qcT70OU9mzXdSoxU9PEGZgJ27H5ji0CgkCKl/d0GPdYoaac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rk3z+T8y; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8E3C4CEE7;
-	Tue,  4 Mar 2025 04:00:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741060836;
-	bh=rluc3zmydmEHsLOo2Qguez2nWvDhxgsY2UdhSAVwpzE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Rk3z+T8yvyOaj+R/LtvqXDbqa7zbie17wD5yujeksze1szQsYTmaXVquDenXGfBND
-	 y9E9qjAdS2aZcUtEfShjHohpclIvxGE46dDTOKWnXyVnKSzBHI9bUidGcdZmDmQCry
-	 z+DpUnfL5W/CWacU+Q9RjD350kjy3TiAk3AcMuMvC3uZzXP4Ui3Pv2NDNajG9xURxh
-	 VXl6qaobRvspKgo4pWpHUNNzhXARV5Bgb+LijAu9gc/+SQC8J1mwF91SASby3X2HxZ
-	 9iVJjsX1lnfjLFAOl5f/U4zVNUtKPdDNJslOrCm1wQAtheG5WeknEsRwSQSQ/bYOac
-	 S7mLTVGZZW8mw==
-Date: Mon, 3 Mar 2025 22:00:33 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Stone Zhang <quic_stonez@quicinc.com>
-Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	quic_miaoqing@quicinc.com, quic_zhichen@quicinc.com, quic_yuzha@quicinc.com
-Subject: Re: [PATCH v2 2/2] arm64: dts: qcom: qcs8300-ride: enable WLAN on
- qcs8300-ride
-Message-ID: <5cxrfaa46scajod6cgaq4lrjokb2xv6yi3cta4fqfelepqi2vl@fr56uqm3xv23>
-References: <20250227065439.1407230-1-quic_stonez@quicinc.com>
- <20250227065439.1407230-3-quic_stonez@quicinc.com>
- <6wr6slqdigcrhda3aldy3iggwdhpqcb7xp54jszxksr3sli2td@h6sxf5qth27c>
- <34b4859e-16c4-4661-a545-669643a9b34c@quicinc.com>
+	s=arc-20240116; t=1741061031; c=relaxed/simple;
+	bh=L+DcmApLOKfTDlb+sBGuWJsudO3OdyQhKhrYJdRIBcw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r2SY5rW/rUBS1noPZEmtctdVb1NmJWXT6dbp+VQS3Z0oJdJZEQHPqliaL0PA38xNMUBJBTpu6VnapGST3CSka8Of7Px93p/xh5v/r/TLeqQGm4aBote0Zsd83chrVLgBlu3DW4TZU4QDBc3DA6kf9/Bx+U/MWneXa9beQLQP4ZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
+Received: from localhost.localdomain (unknown [124.16.141.245])
+	by APP-01 (Coremail) with SMTP id qwCowAB3f2+Pe8ZnQL06Eg--.36838S2;
+	Tue, 04 Mar 2025 12:03:29 +0800 (CST)
+From: Wentao Liang <vulab@iscas.ac.cn>
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Wentao Liang <vulab@iscas.ac.cn>
+Subject: [PATCH] bcachefs: Add error handling for bch2_folio()
+Date: Tue,  4 Mar 2025 12:03:11 +0800
+Message-ID: <20250304040311.2081-1-vulab@iscas.ac.cn>
+X-Mailer: git-send-email 2.42.0.windows.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <34b4859e-16c4-4661-a545-669643a9b34c@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qwCowAB3f2+Pe8ZnQL06Eg--.36838S2
+X-Coremail-Antispam: 1UD129KBjvdXoWrtF1kAr4Uur1UArWkAw4xZwb_yoW3Wwb_W3
+	WrJa1UWw4fKFyUtr17ZFW7ZrZ0v34Fyr4S9F48KF47ua4kt34ftws0yr1UZ3yI9rWrGa98
+	KFyYvr95ArW7CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbwAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
+	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
+	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vI
+	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUywZ7UUUUU=
+X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAgLA2fGYfVh0gAAsK
 
-On Tue, Mar 04, 2025 at 10:30:15AM +0800, Stone Zhang wrote:
-> 
-> 
-> On 2/27/2025 11:15 PM, Dmitry Baryshkov wrote:
-> > On Thu, Feb 27, 2025 at 02:54:39PM +0800, Stone Zhang wrote:
-> > > Enable WLAN on qcs8300-ride by adding a node for the PMU module
-> > > of the WCN6855 and assigning its LDO power outputs to the existing
-> > > WiFi module.
-> > > 
-> > > Signed-off-by: Stone Zhang <quic_stonez@quicinc.com>
-> > > ---
-> > >   arch/arm64/boot/dts/qcom/qcs8300-ride.dts | 100 ++++++++++++++++++++++
-> > >   1 file changed, 100 insertions(+)
-> > > 
-> > > diff --git a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > > index 3e246fbc5759..e9304420c93e 100644
-> > > --- a/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > > +++ b/arch/arm64/boot/dts/qcom/qcs8300-ride.dts
-> > > @@ -22,6 +22,80 @@ aliases {
-> > >   	chosen {
-> > >   		stdout-path = "serial0:115200n8";
-> > >   	};
-> > > +
-> > > +	vreg_conn_1p8: vreg-conn-1p8 {
-> > > +		compatible = "regulator-fixed";
-> > > +		regulator-name = "vreg_conn_1p8";
-> > > +		regulator-min-microvolt = <1800000>;
-> > > +		regulator-max-microvolt = <1800000>;
-> > > +		startup-delay-us = <4000>;
-> > > +		enable-active-high;
-> > > +		gpio = <&pmm8650au_1_gpios 4 GPIO_ACTIVE_HIGH>;
-> > > +	};
-> > > +
-> > > +	vreg_conn_pa: vreg-conn-pa {
-> > > +		compatible = "regulator-fixed";
-> > > +		regulator-name = "vreg_conn_pa";
-> > > +		regulator-min-microvolt = <1800000>;
-> > > +		regulator-max-microvolt = <1800000>;
-> > > +		startup-delay-us = <4000>;
-> > > +		enable-active-high;
-> > > +		gpio = <&pmm8650au_1_gpios 6 GPIO_ACTIVE_HIGH>;
-> > > +	};
-> > > +
-> > > +	wcn6855-pmu {
-> > > +		compatible = "qcom,wcn6855-pmu";
-> > > +
-> > > +		pinctrl-names = "default";
-> > > +		pinctrl-0 = <&wlan_en_state>;
-> > > +
-> > > +		vddaon-supply = <&vreg_conn_pa>;
-> > > +		vddpmu-supply = <&vreg_conn_1p8>;
-> > 
-> > This is very incomplete. Compare it to sa8775p-ride.dtsi.
-> It will be completed according to the supply voltage defined in the power
-> sequence driver.
+Add error handling for the case where bch2_folio() returns NULL
+in __bch2_folio_set(). Return immediately to prevent null pointer
+dereference.
 
-The Devicetree binding, not the Linux device driver, is what defines
-what should go into the Devicetree source. That way the binding forms a
-contract between the dtb file and any operating system reading that dtb
-file.
+Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+---
+ fs/bcachefs/fs-io-pagecache.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-If you ran the required "make qcom/qcs8300-ride.dtb CHECK_DTBS=1 W=1"
-(short for "make dtbs_check W=1") you would have noticed that your patch
-introduces the following errors:
+diff --git a/fs/bcachefs/fs-io-pagecache.c b/fs/bcachefs/fs-io-pagecache.c
+index e072900e6a5b..1dc65fef3ff4 100644
+--- a/fs/bcachefs/fs-io-pagecache.c
++++ b/fs/bcachefs/fs-io-pagecache.c
+@@ -159,6 +159,9 @@ static void __bch2_folio_set(struct folio *folio,
+ 	struct bch_folio *s = bch2_folio(folio);
+ 	unsigned i, sectors = folio_sectors(folio);
+ 
++	if (!s)
++		return;
++
+ 	BUG_ON(pg_offset >= sectors);
+ 	BUG_ON(pg_offset + pg_len > sectors);
+ 
+-- 
+2.42.0.windows.2
 
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wifi@0: 'vddrfa1p8-supply' is a required property
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: pinctrl@f100000: wlan-en-state: 'oneOf' conditional failed, one must be fixed:
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wcn6855-pmu: 'vddio-supply' is a required property
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wcn6855-pmu: 'vddpmumx-supply' is a required property
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wcn6855-pmu: 'vddpmucx-supply' is a required property
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wcn6855-pmu: 'vddrfa0p95-supply' is a required property
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wcn6855-pmu: 'vddrfa1p3-supply' is a required property
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wcn6855-pmu: 'vddrfa1p9-supply' is a required property
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wcn6855-pmu: 'vddpcie1p3-supply' is a required property
-      +arch/arm64/boot/dts/qcom/qcs8300-ride.dtb: wcn6855-pmu: 'vddpcie1p9-supply' is a required property
-
-There should be 0 new errors for me to merge the patch.
-
-Regards,
-Bjorn
 
