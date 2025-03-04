@@ -1,125 +1,111 @@
-Return-Path: <linux-kernel+bounces-545446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C8E6A4ED40
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:24:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10469A4ED47
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:26:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7DD3A7A9FEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:23:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B43016B636
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF7725F78A;
-	Tue,  4 Mar 2025 19:24:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 701CE259CA0;
+	Tue,  4 Mar 2025 19:26:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qHPVMeTA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lXV04OoR"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91790259CAC;
-	Tue,  4 Mar 2025 19:24:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9110F255244
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741116270; cv=none; b=W/v/mTBRMKdPMLpzvWo0Q6rIF5VskdNrt7YJnoKToXh1/H9h1PgW4sKg9M74dnzc2CSDgQJNoFuFEXwyRgZm1fOYljy52UwJQbMUXHhoT/vJKkZHnopP9fS9cnFAS8kDRjwBeUi0YJ2rIKXMhhpI6PFEKha1+AQkRoVtd8bXnno=
+	t=1741116378; cv=none; b=LvyHTMnr66aO43JywwHtDLiyRIbPcb1oYRK6uosqtHvH5Xc4hRbwfvKNMXpNgKpx/jqNqN0sDHtaN/LT2mCMU0daBc1mm/Kg7J+pkq2QvqAyh9xr8cn199WCoUHvhGygbf3QWSyU2JGHXxCwXK7/1V9augUwrL/tdGTMPMBDxkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741116270; c=relaxed/simple;
-	bh=sqOoP6qtQH+z0V252rI4cc0trTllwqKtMaxYZTrbQlQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=a0kT7PHgsGq0q8nVYK4gD7A6rxlKPTH0esJTT/SicjMYhBY11Obl6phUxmpYgc6HeP3YTAdXeMz6U4MUWckaKinFiks3oxgPghbgM7hWf4ceoKauxWUEfXxGhDamx1JQvNO3AuPOruzi5d9rQTUKEtVwCwRLUoPfuP+xW85T92o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qHPVMeTA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCD1FC4CEEA;
-	Tue,  4 Mar 2025 19:24:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741116269;
-	bh=sqOoP6qtQH+z0V252rI4cc0trTllwqKtMaxYZTrbQlQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qHPVMeTAVw+KBNx4Plw7imddYR3bWWUXTpHl9KC8vEtXc/paFXOfKnvO+pdtTx3SY
-	 RGB9X4j/NEmlI8CXQKgZsK98pLO4caCzemMWDgIxAf2HiabWlbndSc9WH35hla/DnQ
-	 8J26Qm1AXhhWTB48XmGi/E2Zqvxoyav9hg8+hsb2KQjhXaq+ZpsoGA81E/2un2SNTZ
-	 /0cnYHLFvpfEoISDGqEBL1ecxTbrDNQVolhjOSct3/G/yaeZbwGqhv86/zmFqQkldo
-	 MY8KgTpMLm02RhfQlBmZwKXSAH+9eDOAsy7+oreZeCyf4B7d9whBGtCY37v/upkvcp
-	 1+FZE/Nm0g+8g==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5495e926364so2951221e87.3;
-        Tue, 04 Mar 2025 11:24:29 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUJ9ihNN2sU2pe38keUL4B6qyjqcinm84fVJaKb1+cyZlOu9JSwN9xeudkqQumtW+dVUN4qIRjwzXas6cv8@vger.kernel.org, AJvYcCWsDOfQxuHkt7lIFPRnrGXrJ4Ki6CYiS1Kp8Pc56jSVAE3ADzSNODrZr2iFNsVZ6reYBXVNbyzwzJ2Z7tF1@vger.kernel.org, AJvYcCWuK/kHFUwTiwXJpt7KyoG7oIb3XAzB3L/URnY2qn2bKuEXppQXXCDGiVluV/65DGuKMXMO+7BCt+xkudiaaIuH@vger.kernel.org, AJvYcCXFJGE40YxR2WzqLUA0ew2+NCxSN9BnDzSsgzuEum5nBaCV4mesdgij5YpDGoFHJpphXiZLk85AhQk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOh0Ql8C4CtMIEPQzdatns9eJ/soci1SxuxXCGha4Yxr8yUXbg
-	c9g0k9Ih7tfg/yeqq9c9rBGfHg5/g7T1G/ySvgBaRxuLBEHdiv6AeYDw1sblRz0OZgNWy3AzYgM
-	YSgM0UwWI9SmhXlqloamg2FvmUWM=
-X-Google-Smtp-Source: AGHT+IET8vj/yG3AdG8e8f1Ip4fbT+3bL2YrcsjlWbBKdOpoUun8nHQlHQPie5a4pPWBe/Qdno00in9upo3HUiJQTc4=
-X-Received: by 2002:a05:6512:489:b0:545:aa5:d44f with SMTP id
- 2adb3069b0e04-5497d35811fmr121961e87.30.1741116268516; Tue, 04 Mar 2025
- 11:24:28 -0800 (PST)
+	s=arc-20240116; t=1741116378; c=relaxed/simple;
+	bh=ctMz1e2CGC4DkzZBkLf4JtpwG8U/L4qitQ9Gn5V9CVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ael0jVK0OeBTEK81qRVDXts0BmBlIrS84R+vM5LR5Ig4ruVSLh7/JiPAWdqg4pNSxgd/YH+Oya9H1jKIW73GuUQXwu04mROx3tH9iU663ke3Via8kCrediFLkCN1zK1b8dlxDj53xo0DjU9aT3A4JMktIZ23VLOl1ye3ir+jmvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lXV04OoR; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-21f8f3bd828so12543335ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:26:17 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741116377; x=1741721177; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Dy8V4gjtpPMBJ5TaQITNkgOEfjsL8exmFfrxFWgLLqc=;
+        b=lXV04OoRE3XSstj2sGAnZHWPE3EkSvSjb+vlWMb9tpaLq5NrjSOS/Gqh11J3dAj15g
+         JLxdYG172cSfgl9MRbT3tOVJ3CkTe8tLzbea3befCuo/IRlU8ogm0M99eVvseUCivIqz
+         no8LqGvA5WZf9I/hKEV3W2rNTTBdyeHhIEwS1MAb6F666jxg4mVqndkDaRxctFQ+k2BN
+         W1ggX5gWZYp/GmemBLUk8wSEYV3nC+DACw53UTMWuc6nomXCD7LwSLHProWZGCm4RHg4
+         5ajas5hive+O+tYO1TeUeXkwiBlDkEajCOduYhmmAIBHpCTTNydJ1KZW+trcBOVo2+OU
+         rIdw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741116377; x=1741721177;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Dy8V4gjtpPMBJ5TaQITNkgOEfjsL8exmFfrxFWgLLqc=;
+        b=SYh0hd3ElT2meiEPr91wezee8go72TH2HYgQsL+YSI9+7ZPT0RQObh7T62xlkbHS9/
+         6LAAQGvN7C83Zuj68b05mW3nP9YJ+DYCLlFaVx2vl8oc+LW5pD8WmPQJmVBsMAPTd89W
+         DZ3YA+iLHLYexFp0pUqkaJ9Jvn7/KM8Ya9upLXLDZjKBfssw1r/EpAflFx1zQ5bmpH2c
+         FHGFxotU4JvRoMS1ODJ/w6bXOwuYqyNg4Kbb9eBI93qfu3LvvnTa9HMpQFWO2PbLL8jj
+         /L73RDKoBz3nkUdp+1Pax8wx1GzC28x3RSIjdm7pG4HZ3fGuM1kNz1qbBnCVAeVkPZnO
+         +I6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWa+mjriosIUB/AlOg76Mk4JOw3Cbdj2Q4G3BqpMG76InrrrQrqysnOncGVw/GaEcUnWluijtXnarz28LI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9DewloMB8Ha3p199Cqssl1qsd4xhSHlGkHS5v1/Vzw8qJ+DUR
+	xI2gQ7p5dAK9n8anxvmhy+h1OTF0tNTt1cZhv0o03mSNomGYlC/k
+X-Gm-Gg: ASbGncudYa3m/HElbNxmz4HH62uol1FjfyW8ApsxXzq+Y0dbDpkUCafdGf8q4LusC/7
+	cAamzOeJELRtrnNydUdaNfg3FcTfazlIkwcJUJHld+nUEzAl+or3j4CHXKPYxPKIgVAH1W7yoW9
+	vQk4Vx4ID5+xi3dkeFm+ZwvFOpUbeuE/LzQqtI/TaKoj+4YSF/4ZSBpMnM0+TZ8hbFxFbwCel4c
+	H/0b4y+aJkPV6GJPuB3k/SX1hh8AODxQ3MsesYuLDIdrCdblcKlmcO1kCspHNTavGrbxAXoEyHs
+	HslZmUrKzWoxFHrDApa0UF7JaLRqI2SZYdnNfkpZLijjLc7zlyuVG/SLkw==
+X-Google-Smtp-Source: AGHT+IEuEdk79yHkkrNDMvuEPkBCk96IopRp4oy1rlhPhqXw3QwUgWZiPYT5dvgCxIo6wTTUMae/qA==
+X-Received: by 2002:a05:6a00:9a3:b0:736:3326:2bc with SMTP id d2e1a72fcca58-73682cda4f3mr39951b3a.5.1741116376754;
+        Tue, 04 Mar 2025 11:26:16 -0800 (PST)
+Received: from localhost.localdomain ([2802:8012:1f:3200:f1d1:c186:ba5b:8f06])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734d444a9fasm9341920b3a.60.2025.03.04.11.26.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 11:26:16 -0800 (PST)
+From: Gaston Gonzalez <gascoar@gmail.com>
+To: linux-staging@lists.linux.dev
+Cc: dpenkler@gmail.com,
+	gregkh@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	arnd@arndb.de,
+	niharchaithanya@gmail.com,
+	jiapeng.chong@linux.alibaba.com,
+	linux-kernel@vger.kernel.org,
+	Gaston Gonzalez <gascoar@gmail.com>
+Subject: [PATCH 0/4] staging: gpib: some cleanups in lpvo_usb_gpib.c
+Date: Tue,  4 Mar 2025 16:25:35 -0300
+Message-ID: <20250304192603.40565-1-gascoar@gmail.com>
+X-Mailer: git-send-email 2.49.0.rc0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250217-kunit-kselftests-v1-0-42b4524c3b0a@linutronix.de> <20250217-kunit-kselftests-v1-1-42b4524c3b0a@linutronix.de>
-In-Reply-To: <20250217-kunit-kselftests-v1-1-42b4524c3b0a@linutronix.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 5 Mar 2025 04:23:51 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQ6U9ZSRHW+6J1PjwuefQPFFUwdjRdaLQT9NtRBkEGUAQ@mail.gmail.com>
-X-Gm-Features: AQ5f1Jqnsz9EeEagDtG-j1LU-LhgsPAPKhnZ99QZ8tUu3o8tPV8yMe6vSpykRME
-Message-ID: <CAK7LNAQ6U9ZSRHW+6J1PjwuefQPFFUwdjRdaLQT9NtRBkEGUAQ@mail.gmail.com>
-Subject: Re: [PATCH 01/12] kconfig: implement CONFIG_HEADERS_INSTALL for
- Usermode Linux
-To: =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, 
-	Andrew Morton <akpm@linux-foundation.org>, Willy Tarreau <w@1wt.eu>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, 
-	Rae Moar <rmoar@google.com>, Shuah Khan <shuah@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 17, 2025 at 8:00=E2=80=AFPM Thomas Wei=C3=9Fschuh
-<thomas.weissschuh@linutronix.de> wrote:
->
-> userprogs sometimes need access to UAPI headers.
-> This is currently not possible for Usermode Linux, as UM is only
-> a pseudo architecture built on top of a regular architecture and does
-> not have its own UAPI.
-> Instead use the UAPI headers from the underlying regular architecture.
->
-> Signed-off-by: Thomas Wei=C3=9Fschuh <thomas.weissschuh@linutronix.de>
+This series comprises three kernel-doc comments fixes and one commented-out code
+cleanup.
 
-Applied to linux-kbuild with the subject prefix fixed.
+Gaston Gonzalez (4):
+  staging: gpib: fix kernel-doc section for write_loop() function
+  staging: gpib: fix kernel-doc section for function
+    usb_gpib_interface_clear()
+  staging: gpib: fix kernel-doc section for usb_gpib_line_status()
+    function
+  staging: gpib: remove commented-out lines
 
+ .../gpib/lpvo_usb_gpib/lpvo_usb_gpib.c        | 27 ++++++-------------
+ 1 file changed, 8 insertions(+), 19 deletions(-)
 
-What concerned me was that this patch creates
-multiple paths to visit the same directory.
+-- 
+2.49.0.rc0
 
-
-[1]
-ARCH=3Dum archheaders
-  -> ARCH=3Dx86 archheaders
-    -> arch/x86/entry/syscalls/
-
-[2]
-ARCH=3Dum headers
-  -> ARCH=3Dx86 headers
-    -> depends on ARCH=3Dx86 archheaders
-      -> arch/x86/entry/syscalls/
-
-
-After carefully reviewing the code, I was convinced that
-this is not a race condition.
-(I am particularly cautious about race conditions in parallel builds
-and try my best to avoid such code.)
-
-
-
-
-
-
-
-
---
-Best Regards
-Masahiro Yamada
 
