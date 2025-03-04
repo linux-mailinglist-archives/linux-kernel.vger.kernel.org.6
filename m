@@ -1,112 +1,136 @@
-Return-Path: <linux-kernel+bounces-545586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4E75A4EEEA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:56:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38E69A4EEED
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:58:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B7D07A8F50
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:55:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845C93ACAE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79F052620DE;
-	Tue,  4 Mar 2025 20:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AECD255250;
+	Tue,  4 Mar 2025 20:58:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXApZhyT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yLRykez/"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3071C84D7;
-	Tue,  4 Mar 2025 20:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24BF8335BA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:58:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741121789; cv=none; b=rej9G5eV5m7VXAPfLw2sCctAZcCyiqqBWUFTNKQSC2+UXyvASNskz+A0Uc+rjW8/2pJuLZko0y9KBfKzhBZrep1CJPfcw83JpyWQGC+XEl96erHe2gQWy+FEzgZ4qLyHStNWgr7yjcmRZuIYc5cIYyHV/vlR/HYX9TEAnvPxVlA=
+	t=1741121930; cv=none; b=Pww7d4tcQ/5gDO7yIOkOMG2fA2fnV1fvJldvt/zZlVz5l037gGX5jyEacWrMJYe19/9llwuwYFcFxfQMx9/uplmha7EL9vJbQTzfnawux9hIeXz40aMKgdpWgmAvRf8JQBFsQOij5RqKX1aLZrAR4fIfBMvzLgcu139Jr/KiigM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741121789; c=relaxed/simple;
-	bh=1Avo1J1t/55foolZqszBHMkSIlhzUvvxah+3+Q5by1o=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=bzZxGQVURo3iMl/Ce9grxeeJAcZH6QOjZ9n94TJbdkBauNyzhfU0WZJOo08oW6ohBhcBTYxkeDONHN93j9gZ2+fnZI7L/PjyKcVHBG07zAfrmejo6EArV6JxMa4rHL5Gu2dcHWuyKDIxLurL3qaldF/H2FUBM337uHUjBNSuT1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXApZhyT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD5BBC4CEE5;
-	Tue,  4 Mar 2025 20:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741121789;
-	bh=1Avo1J1t/55foolZqszBHMkSIlhzUvvxah+3+Q5by1o=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=SXApZhyTz5vv9wzRJoXczuOEVj7QwpGl+xE+oChVkj99OVOC+nKeJbb9O5J3i5AS1
-	 sh1Jl7awqRzxXB122sCCzUa5IRRTN8TFMGqClySmfEynCcjnWyKU7f99eNCZfiaCA0
-	 LjSUzbhvPwUZGEJyIBUXCbzp71o/PzSFen0jCvXPanD1jWRi5qr/GSEzPsiaiqGLMD
-	 5VPm4mFzchDw6WPATpKr9pHJKoZLBdQfM+OV2GrMEM7lUgtnyvEY0nx88ODmJWAoeD
-	 bT9/a/9FAYXj7pPQcuaYoFvc2xYLO+fWDa40ofUmbbfy2DS8vDwvvunyFBbpvFgSBl
-	 2XOYFIXGS24nQ==
-Date: Tue, 4 Mar 2025 21:56:26 +0100 (CET)
-From: Jiri Kosina <jikos@kernel.org>
-To: Luke Jones <luke@ljones.dev>
-cc: linux-kernel@vger.kernel.org, hdegoede@redhat.com, 
-    ilpo.jarvinen@linux.intel.com, platform-driver-x86@vger.kernel.org, 
-    linux-input@vger.kernel.org, bentiss@kernel.org, mario.limonciello@amd.com
-Subject: Re: [PATCH v3 0/2] hid-asus: asus-wmi: refactor Ally
- suspend/resume
-In-Reply-To: <20250227085817.1007697-1-luke@ljones.dev>
-Message-ID: <878o9n16-33p1-orpr-q957-91ns25pp4804@xreary.bet>
-References: <20250227085817.1007697-1-luke@ljones.dev>
+	s=arc-20240116; t=1741121930; c=relaxed/simple;
+	bh=5CJK1L3DdT2P27pS4L8DUKmYYJnFR7F+MB9nM8vDjq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pclBf3fsvcozRHC59TGr1Ck9q8T/XwCiP0b3hyGNv8LiRahBWzfhfR/+akR+KXm3ytsIJXZOQ0RS/EX1ucTj63U5nyjMeRPzxB9qnrg//pZ5KPwZJ/a7m+fs8nnKGsiPzIZY3IZvR21s5ljpt214XmxBkW8hTRMpjsnWVSNrKvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yLRykez/; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5495c1e1b63so3814176e87.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 12:58:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741121927; x=1741726727; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5mmSXUaSzYlxPu2USBQ5qryQWG6hHSfkcGFhsLiuIng=;
+        b=yLRykez/HSbsccAl3klZNZQqm+dTAeD/0VLjmeTb1XzXJfhMmKA2Ae7rqJV/9BPtks
+         N1qgKKdfdzhkczmiQMbMZ1SHf0HL9vdL6gjqyt93ARiB8b03Blubnvg4HeDhsYfhpzYO
+         KD4KDeNLRF59PO5NrTv6gYnakgnONv5NbKvsNoCqhBB56AWhiZZ2EIl3smVuLLys7CHm
+         tKJN5DH8Hp4LlTDqvQk4LT6pezCVim5EC1ji5bGpM+mwGkp0IHRmmuFISvLNnGMn7Wqb
+         rNU+EEUcnoZX3rwkRRWnRHPbucF3j9d3ojXhWK86YABn2x6el0JiNZ6+ASrDekC6IIk8
+         5q0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741121927; x=1741726727;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5mmSXUaSzYlxPu2USBQ5qryQWG6hHSfkcGFhsLiuIng=;
+        b=X3y6WojMMBd9mjws322HXJpvSTeZQQw02UTt8fJ2W6Bs4A8QHCdcHiaqz+nLy2ML/k
+         PjzxOl/uM67rNWRzWTgH9gESGgXP9DNRlX9iXhUbXsjIVFGApSm1GUjGKZZGlAXjtMhI
+         DJiPMFfDGWeza3n6ZI59ChB5QOhKwLo1zgtmccrqCw6uhzSS9/8z45ibpjgxJHcQ3KkN
+         WIhApZYa91Ew+5+tTvhksLvuLW3M3BA6EjVgh7hV9WtTMMdRJxGQcH9msv/7lxyYxrjW
+         vcx5hkaE0q3f9geuUyiWugFbF5cpMSUrad8Dzn1apMCkmaTG3pw294ZfVA8onj/B5hg2
+         NgSg==
+X-Forwarded-Encrypted: i=1; AJvYcCV/VPSUudHy8yQZEn2o+T4RLuT0b0ASmVACmlo/3vmWBglsyifjXnoB4uJwlLhwp0opt6s+vjtO0LnFX2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDnyBtGuhiDSpY1+iGRTczHFUO5a+wmvl7dJs883DcmE9/cE4p
+	oXIxeyQOvDLn0epc+Y+HTlNbQmH5hZKcslnl1Z+u3f9K5E6i5jvbdZNh8irqf6QxKQI+hGD86EQ
+	WLp4=
+X-Gm-Gg: ASbGnctVKvpSXsfOuwpnNiXh78z9pVPNBdwwXg/pem/07hRTFbO7s6sh/mclEq+VtdS
+	kVz6qPZhM3iB8co6tsjRBxb3rsO9XkkUVYZLOqQRcO2wrIoMrB1CvqcZIEGx853v+B4lCo1YQ2G
+	SK+uW/ZD9v6ymledZWW3cXBQjwhxJ8SRLgBDnMSbTkAs0lTgY1hCgyiJVyX0a2cseM4qwlDOTY6
+	WW8xAqXhvtAF7e2Y4Aoo+x9FiTYuePpBbS6oQVIQ7VOzaQBvddctQhcvRhZXP2plbrxUscWQ84O
+	nv/Z0HoMBJIq/BZxcMjrWFJ5+PNVxPRkB0uUPNtBrGdUuJ6HA58Lo7RdVsmfh6ycpbe9foh/RS+
+	Q7xg+LS8Y9Abwc9xJA5fBA2Y8
+X-Google-Smtp-Source: AGHT+IEkteX/WZFejhteH6gRB1PUmIKU/gh7k+WBHiisHZu0Tfo1WrX2L4UA0SJ992cRS807pAM8qg==
+X-Received: by 2002:a05:6512:1289:b0:549:7394:2cfa with SMTP id 2adb3069b0e04-5497d377287mr150803e87.38.1741121927123;
+        Tue, 04 Mar 2025 12:58:47 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549591c8bacsm1132258e87.122.2025.03.04.12.58.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 12:58:45 -0800 (PST)
+Date: Tue, 4 Mar 2025 22:58:44 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Kaustubh Pandey <quic_kapandey@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, quic_rpavan@quicinc.com, 
+	quic_sharathv@quicinc.com, quic_sarata@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcom6490-idp: Add IPA nodes
+Message-ID: <7jupetl37t6nshmme5raxavvbjo3vo5eajusroh6j3ccdxnpo5@7qaz2nckghcf>
+References: <20250304152133.GA2763820@hu-kapandey-hyd.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304152133.GA2763820@hu-kapandey-hyd.qualcomm.com>
 
-On Thu, 27 Feb 2025, Luke Jones wrote:
+On Tue, Mar 04, 2025 at 08:51:33PM +0530, Kaustubh Pandey wrote:
+> Add IPA nodes for Qualcomm qcm6490 board.
+> 
+> Signed-off-by: Kaustubh Pandey <quic_kapandey@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> index 9209efcc49b5..ba47786d6474 100644
+> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+> @@ -19,7 +19,6 @@
+>  #include "pm8350c.dtsi"
+>  #include "pmk8350.dtsi"
+> 
+> -/delete-node/ &ipa_fw_mem;
+>  /delete-node/ &rmtfs_mem;
+>  /delete-node/ &adsp_mem;
+>  /delete-node/ &cdsp_mem;
+> @@ -515,6 +514,13 @@ &gpu_zap_shader {
+>  	firmware-name = "qcom/qcm6490/a660_zap.mbn";
+>  };
+> 
+> +&ipa {
+> +	qcom,gsi-loader = "self";
+> +	memory-region = <&ipa_fw_mem>;
+> +	firmware-name = "qcom/qcm6490/ipa_fws.mdt";
 
-> This short series refactors the Ally suspend/resume functionality in the
-> asus-wmi driver along with adding support for ROG Ally MCU version checking.
-> 
-> The version checking is then used to toggle the use of older CSEE call hacks
-> that were initially used to combat Ally suspend/wake issues arising from the MCU
-> not clearing a particular flag on resume. ASUS have since corrected this
-> especially for Linux in newer firmware versions.
-> 
-> - hid-asus requests the MCU version and displays a warning if the version is
->   older than the one that fixes the issue.
-> - hid-asus awill also toggle the CSEE hack off, and mcu_powersave to on if the
-> version is high enough.
-> 
-> *Note: In review it was requested by Mario that I try strsep() for parsing
-> the version. I did try this and a few variations but the result was much
-> more code due to having to check more edge cases due to the input being
-> raw bytes. In the end the cleaned up while loop proved more robust.
-> 
-> - Changelog:
->   + V2: https://lore.kernel.org/platform-driver-x86/20250226010129.32043-1-luke@ljones.dev/T/#t
->     - Adjust warning message to explicitly mention suspend issues
->     - Use switch/case block to set min_version
->       - Set min_version to 0 by default and toggle hacks off
->   + V3
->     - Remove noise (excess pr_info)
->     - Use kstrtoint, not kstrtolong
->     - Use __free(kfree) for allocated mem and drop goto + logging
->     - Use print_hex_dump() to show failed data after pr_err in mcu_request_version()
->     - Use pr_debug in set_ally_mcu_hack() and set_ally_mcu_powersave() plus
->       correct the message.
-> 
-> Luke D. Jones (2):
->   hid-asus: check ROG Ally MCU version and warn
->   platform/x86: asus-wmi: Refactor Ally suspend/resume
-> 
->  drivers/hid/hid-asus.c                     | 111 +++++++++++++++++-
->  drivers/platform/x86/asus-wmi.c            | 130 ++++++++++++++-------
->  include/linux/platform_data/x86/asus-wmi.h |  15 +++
->  3 files changed, 215 insertions(+), 41 deletions(-)
+"qcom/qcm6490/ipa_fws.mbn". There is no .mdt in linux-firmware.
 
-Hans, are you OK taking both patches through your tree?
-
-Thanks,
+> +	status = "okay";
+> +};
+> +
+>  &mdss {
+>  	status = "okay";
+>  };
 
 -- 
-Jiri Kosina
-SUSE Labs
-
+With best wishes
+Dmitry
 
