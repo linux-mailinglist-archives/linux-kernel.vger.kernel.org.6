@@ -1,115 +1,103 @@
-Return-Path: <linux-kernel+bounces-543616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EE35A4D773
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:08:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DB04A4D758
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:05:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 617593B0C91
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:07:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164B23AB1FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB272045AD;
-	Tue,  4 Mar 2025 09:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C612F201276;
+	Tue,  4 Mar 2025 08:58:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="eH34w4K1"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="fgdednzU"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3BE204582;
-	Tue,  4 Mar 2025 09:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078926; cv=pass; b=uhRHeXP739VWCGfl+Jfq/N/TqVYhQjZcZATfLRDGqKz0uUZItxvZol3K0ASJVlTzvHJiIKsfld3mNSkyKP5WwNRVplb7o/OcsKmsl1vTlVBqtwH/6hzxNoa8ihgAjbNReBF11NPGeQ970kOUkUrbN1Q0ttuACFvYDjCpUhe+iP8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078926; c=relaxed/simple;
-	bh=8F66nSttOlsQP03vnEfihLm5ICcMwT66a6odkCxM1MQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hOoAGzUpbesnqbswD7rzH8KSBqH6LISxiBXPRrITjXEfrbnDPT+DDog+U6jMvAN3/n0yAaAkVNgjI23zVNFinxka5B12TS7IArYCkx0wTzf2Ay4t8jp4xI8XiZzDiI82WLXdpSmIQAOYnKqCvZX301zrK3LQyEKJvdE3j6Ka+Bo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=eH34w4K1; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741078876; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=n8wqhQSPdv8rDFfVZps+5KRPxeUtWo6h5Cplc7J6WEl5aj+cyrBxE0oanyFV/zQAWvM6bx5LBSOdIwsi+GG7BqrQLxBpNdNlYRE01LQZKEgWDjAv3aMV6EuIo5cjRkoJHSFV11tbWwjtQ4pzr/J2iNUQC6lxytbarxNsQBNTs/0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741078876; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=v6XdBeWdF3ROCU+Lkd505Ci9024pYHmhBHgplZExxHU=; 
-	b=MMqwNnFwd4IFAmLFRTI2bDKoZmiT+ABCMZyA9SWmJdvltqOA9XfmkT4u4vl857CwyWquurcxT0xE/2sdrJXQenzpNu/kCgbusyuV7bnIdqcgdrKnPaDAZQCyCVxQuTNznqnZjrQkLD6QL21tMh+Y3vYPz/mq9UhDJxrgF53um8I=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741078876;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=v6XdBeWdF3ROCU+Lkd505Ci9024pYHmhBHgplZExxHU=;
-	b=eH34w4K1gXXUgajAGgoDI/iF153FUHOLNz040cQ1z68n0uR+CI2XXhjpFTF4vNus
-	SOuF972r4jWL/1ZKpthcOePSMsuFPSn6ZspLWcaFRpOWvVUIb6cfpufHyYxNKzjck1d
-	WKU0V9VOUHNJrUeGJLSaoF0r2V2eAZaf513RKHYE=
-Received: by mx.zohomail.com with SMTPS id 1741078873694849.3940243076472;
-	Tue, 4 Mar 2025 01:01:13 -0800 (PST)
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-To: Shreeya Patel <shreeya.patel@collabora.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	jose.abreu@synopsys.com,
-	nelson.costa@synopsys.com,
-	shawn.wen@rock-chips.com,
-	nicolas.dufresne@collabora.com,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com,
-	linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	Tim Surber <me@timsurber.de>,
-	Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
-	Diederik de Haas <didi.debian@cknow.org>
-Subject: [PATCH v13 6/6] arm64: defconfig: Enable Synopsys HDMI receiver
-Date: Tue,  4 Mar 2025 11:58:19 +0300
-Message-ID: <20250304085819.108067-7-dmitry.osipenko@collabora.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
-References: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EAE5202972
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741078728; cv=none; b=THPTJ3y+18Nhn5zTY7zCKg1CMwPuOWlPTsHGCcerleZ63mChUGCrAkAN2tYGNgy7OQAqSdff/NiZ7dnHK4ELs57VnehLU74raq2HVZr4vMXgpLqVAlEozsuLbvGF02loyX2T+GGoZGhMU2QHe2DcbUeRzmjKrHXD21WgzJGSxVU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741078728; c=relaxed/simple;
+	bh=nUmHrfzNp6jmDbZwNWVM32a5wL7mYYMwSCZDj8Gheo0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=XkiLwoNK4KGUmwHdWcUJqbst9XIpnSJJHVc6ztr/p3Xomovle/zaPpLsuR/qvE7JICp92uukLP5fguChNPWfE2QTP7ulLU2x2prYZ1GHFzUO0yFBsRgEdBZ69hAYi1fCJm9CGJG5Cj6kprbou9px+AjVSDQESSCo+uWic7h9G54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=fgdednzU; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Content-Type: text/plain;
+	charset=us-ascii
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741078714;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/01Bti/qdBFlvVEApIrVpIxZmx2rAPTHByTEu+IQIFo=;
+	b=fgdednzUcOniM5YeoiPiAdMMWv2f+kdYhdy7EFrkoNBbgHGQop+auflWqTvhBgwDY6JK9F
+	hIawFE4YhARDHi0335OWnkNXMxpS70uI9gx3KxgDixg61XTSHpKaJgCUwjf3/q5td4/X8e
+	I/r70Ebom6VgKEi6G829c3Rh08wslrE=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51.11.1\))
+Subject: Re: [RESEND PATCH] mux: Convert mux_control_ops to a flex array
+ member in mux_chip
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Thorsten Blum <thorsten.blum@linux.dev>
+In-Reply-To: <202503031040.223DEF2781@keescook>
+Date: Tue, 4 Mar 2025 09:58:21 +0100
+Cc: Peter Rosin <peda@axentia.se>,
+ "Gustavo A. R. Silva" <gustavoars@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ linux-hardening@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <20A47316-D274-45DD-BA15-F66139654D44@linux.dev>
+References: <20250302230220.245739-3-thorsten.blum@linux.dev>
+ <202503031040.223DEF2781@keescook>
+To: Kees Cook <kees@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
+On 3. Mar 2025, at 19:44, Kees Cook wrote:
+> On Mon, Mar 03, 2025 at 12:02:22AM +0100, Thorsten Blum wrote:
+>> Convert mux_control_ops to a flexible array member at the end of the
+>> mux_chip struct and add the __counted_by() compiler attribute to
+>> improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+>> CONFIG_FORTIFY_SOURCE.
+>> 
+>> Use struct_size() to calculate the number of bytes to allocate for a new
+>> mux chip and to remove the following Coccinelle/coccicheck warning:
+>> 
+>> WARNING: Use struct_size
+>> 
+>> Use size_add() to safely add any extra bytes.
+>> 
+>> Compile-tested only.
+> 
+> I believe this will fail at runtime. Note that sizeof_priv follows the
+> allocation, so at the very least, you'd need to update:
+> 
+> static inline void *mux_chip_priv(struct mux_chip *mux_chip)
+> {
+>       return &mux_chip->mux[mux_chip->controllers];
+> }
+> 
+> to not use the mux array itself as a location reference because it will
+> be seen as out of bounds.
 
-The Rockchip RK3588 has a built-in HDMI receiver block from
-Synopsys. Let's enable the driver for it.
+Getting the address doesn't fail at runtime, does it? For this example
+it works, but maybe I'm missing some compiler flag?
 
-Signed-off-by: Sebastian Reichel <sebastian.reichel@collabora.com>
-Signed-off-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
----
- arch/arm64/configs/defconfig | 1 +
- 1 file changed, 1 insertion(+)
+https://godbolt.org/z/qTEdqn9WW
 
-diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-index cb7da4415599..6ed1ad3c0055 100644
---- a/arch/arm64/configs/defconfig
-+++ b/arch/arm64/configs/defconfig
-@@ -859,6 +859,7 @@ CONFIG_VIDEO_SAMSUNG_EXYNOS_GSC=m
- CONFIG_VIDEO_SAMSUNG_S5P_JPEG=m
- CONFIG_VIDEO_SAMSUNG_S5P_MFC=m
- CONFIG_VIDEO_SUN6I_CSI=m
-+CONFIG_VIDEO_SYNOPSYS_HDMIRX=m
- CONFIG_VIDEO_TI_J721E_CSI2RX=m
- CONFIG_VIDEO_HANTRO=m
- CONFIG_VIDEO_IMX219=m
--- 
-2.48.1
+Thanks,
+Thorsten
 
 
