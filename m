@@ -1,130 +1,116 @@
-Return-Path: <linux-kernel+bounces-543753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D34AA4D961
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:56:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF239A4D969
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:57:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A3D77A1F91
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:54:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1477B188BA6F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:57:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264051FCFDF;
-	Tue,  4 Mar 2025 09:55:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A780F1FCD13;
+	Tue,  4 Mar 2025 09:57:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TRaCxbUH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="gXmHO5nR"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827531F37CE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADB242077;
+	Tue,  4 Mar 2025 09:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741082151; cv=none; b=dU13/WDbfEoVB4cRxQt0XvkVVCOOGJxHLnY/WYDkSsjKi5CSnJpCroRVGVTX6kgeAL0kWFLnbN7Q44SzlLAAvzRseakITpHlyezxpNiYcQD2xTG2klsvFs7BEV6o1CrDKHHFDXm0J1ITijWcJFTV6Dd6MfKfw4QT+C0jOqBEmYY=
+	t=1741082237; cv=none; b=kzr+s40nSdKzvRe6xUNLHGiLdIvO/Bk8cwwFjukbI9qzyduJ+euEQVq7i+8rnQFyGm6q4OaKu9qCh/8h07i15iBNaMSPfSuGJqr1GHQqoEX/q54leuz0RF9XYHV8vRy0g6HYihvivZwC8ecQIOwOb87V+z2+0et85z4ARjAZzW0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741082151; c=relaxed/simple;
-	bh=Vg0JIHG39DDeLKayInuouwopWCmilHvmKYPuJMTkmSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OUzz7ztleYiR1DjiS0ZO5We/BVg+oBn0OaNsyH89NX7y3ulKAjSFWIWXNqWNS0vdbanb3e2CfF2BZ/TBMUUcuNqskfBpa2zjx1Q8j0tvYwS013eBj1CHtcmI1hCzkYYPCHR3Dy4Nv81l1lklI3TJ7jlHDkxlKLMlnBBbVt2IMIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TRaCxbUH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 359F5C4CEE5;
-	Tue,  4 Mar 2025 09:55:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741082151;
-	bh=Vg0JIHG39DDeLKayInuouwopWCmilHvmKYPuJMTkmSo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=TRaCxbUHvz/dBwnYK2JGN4xmuLxPLFUpREo+EeC5RF8PCXfwIomceblSiUaXLcWXX
-	 RPXo1UiMPW/+BhZKF7RrWJOTw6iilcTCv+Ko7SvmAp9Ati8cBAxlX5c/LBwq7Uq/3M
-	 uNQ0TCC9gYQV09wvTF/Zt1OxOduCF2kMrO4WGoh/WNj3qU17mt38e2QlAOslibAgSO
-	 wHX94F2RrNjKIHkCHJeJU5Q2ryFHSFGvvwmqgS1ldVuwdzYCV09dEehb2XLkE90l/M
-	 Di9WAG2ddmzeSfHOVR07uybmiaEeBMPuDpCNON4qzrLZaqSv0RuLWP+hsSXrm75CP1
-	 vf8aOb88WnlHQ==
-Date: Tue, 4 Mar 2025 10:55:45 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org,
-	x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>,
-	Linus Torvalds <torvalds@linuxfoundation.org>,
-	Andy Lutomirski <luto@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: [PATCH v3 00/11] Add a percpu subsection for cache hot data
-Message-ID: <Z8bOIXeWYycUEmp4@gmail.com>
-References: <20250303165246.2175811-1-brgerst@gmail.com>
- <Z8YTYWs-DeDHal1Q@gmail.com>
- <CAMzpN2iB4Gv0Fq1pNtk7bpa2z6eYwQGYXT0=p=_wWDBE9Uxa7w@mail.gmail.com>
- <Z8a-NVJs-pm5W-mG@gmail.com>
- <CAMzpN2gpHRtOtRuCJF_TKOFbEJ2xkksndCH+MfntfDuZHC0O1w@mail.gmail.com>
- <Z8bMSr8JrDZtqwK8@gmail.com>
- <CAFULd4YFm-2Sc6NOzyWt4-TPDkwY-=5h-Gb99M+tFf-Mczk0Ng@mail.gmail.com>
+	s=arc-20240116; t=1741082237; c=relaxed/simple;
+	bh=PaNTGi8a1kzuyCrlfcyODv4zfwA4Iq2DyYt1R4ODsq0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=YZfpT3uqMq9l0v3mSMQuNkA+jCZtAZj0u4i1rJEK5CpBWHBlvwbfCf18DIeKvd9XNWBxmWo+gQ4tGTMQXInmUiOes9E3+JRKMnsgeBCehcy+nR7TFEOIBLmORr86bqNv38atF6NOh5FkcH+UaZJl18R9KGT3Amx/CqFp07sUzuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=gXmHO5nR; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 9F867A0391;
+	Tue,  4 Mar 2025 10:57:06 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=O7eD0wrs+km6lrs+4i3I
+	I34UDaTR3ANIVNOTTBmkqxM=; b=gXmHO5nR2oYypWDnMoZKH4nKOSeHA36L1egR
+	4SdB5UtMA8/0L+c05ZMZL29MmIuG5kP51lVcgLVcELGIDwhBowTs9g8Ns2sxS9O1
+	fulfKvQHC+mFwI2zQy9ri0A7kQpKy+0PJ1/82Csb44K5VkV80pb34avi686oXReT
+	z1rkeTzjmetXB1veEGDkSuFkspqFGluWWNgvSLsgtNP2d5b7lzQ24CWvlj1mhP6h
+	+OClikhWU5QzDbr8bj5xNRv2yMCO1lXgt+fXwGOxMo+NL1fJ4o3F53iyCOXaYvcz
+	uVg529HwBL01D/XuK0yA0uD6jyF3z2w16Jr0PXO+3NEAGKn84RYoqKjkXAdYkymp
+	NJTnq1udc2M4KHPKdI4EpnOXhNi5B6MuiOU8xoaKv+bcejHdWWuMklw1PDujlYpo
+	FQjs82lWj/bF4uG2cUpLQntjuTshSmDYOpjlz9wKjG1I8vk/pIAatMf02/PkE9OZ
+	ty0vqHXfcVyTUTNrapoVdGZ3Ja++KvuuLRDrFj5KeeC6OA0N2O3f7AN+6CuA+QWJ
+	g8jHhkHJHfsBeD4uP9Ct77MqargS6eEt58bq2zu0Fxh5ipsMKNKsKem6TYhgL0XI
+	Yfw6WWTAFyPpQVebPxcaenimSGSkAFJTUKjCTkwjcVR95SjNdFcWhffaBGXecMY+
+	x2QsKTQ=
+Message-ID: <9fcf9cf4-ba02-4583-9e14-bd650dbe32ee@prolan.hu>
+Date: Tue, 4 Mar 2025 10:57:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAFULd4YFm-2Sc6NOzyWt4-TPDkwY-=5h-Gb99M+tFf-Mczk0Ng@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/3] counter: microchip-tcb-capture: Add IRQ handling
+To: William Breathitt Gray <wbg@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Kamel Bouhara <kamel.bouhara@bootlin.com>
+References: <20250227144023.64530-1-csokas.bence@prolan.hu>
+ <20250227144023.64530-3-csokas.bence@prolan.hu> <Z8alaOTjZeRuXnUI@ishi>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <Z8alaOTjZeRuXnUI@ishi>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852637260
 
+Hi,
 
-* Uros Bizjak <ubizjak@gmail.com> wrote:
+On 2025. 03. 04. 8:02, William Breathitt Gray wrote:
+> In theory, the error code could be something else if of_irq_get() failed
+> for any other reason. Handle all those error cases at once by checking
+> IS_ERR(priv->irq) rather than just -EPROBE_DEFER. Then you can just
+> return dev_err_probe() with priv->irq for the error code.
 
-> On Tue, Mar 4, 2025 at 10:48 AM Ingo Molnar <mingo@kernel.org> wrote:
-> >
-> >
-> > * Brian Gerst <brgerst@gmail.com> wrote:
-> >
-> > > On Tue, Mar 4, 2025 at 3:47 AM Ingo Molnar <mingo@kernel.org> wrote:
-> > > >
-> > > >
-> > > > * Brian Gerst <brgerst@gmail.com> wrote:
-> > > >
-> > > > > >
-> > > > > > -       PERCPU_SECTION(INTERNODE_CACHE_BYTES)
-> > > > > > +       PERCPU_SECTION(L1_CACHE_BYTES)
-> > > > > >         ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <= 64, "percpu cache hot section too large")
-> > > > > >
-> > > > > >         RUNTIME_CONST_VARIABLES
-> > > > > >
-> > > > >
-> > > > > That is probably the right call.  The initial percpu section is just
-> > > > > used by the boot cpu early and as a template for the dynamically
-> > > > > allocated percpu memory, which should account for the proper
-> > > > > alignment for NUMA.
-> > > >
-> > > > Okay.
-> > > >
-> > > > Randconfig testing found another corner case with the attached config:
-> > > >
-> > > >     KSYMS   .tmp_vmlinux0.kallsyms.S
-> > > >     AS      .tmp_vmlinux0.kallsyms.o
-> > > >     LD      .tmp_vmlinux1
-> > > >   ld: percpu cache hot section too large
-> > > >   make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 1
-> > > >
-> > > > (I haven't figured out the root cause yet.)
-> > >
-> > > CONFIG_MPENTIUM4 sets X86_L1_CACHE_SHIFT to 7 (128 bytes).
-> >
-> > Hm, to resolve this I'd go for the easy out of explicitly using '64' as
-> > the size limit - like we did it in the C space.
+Yes, `of_irq_get()` can return an error, for example if the IRQ is not 
+defined in the DT. In these cases, we just don't do IRQ, but still allow 
+the device to probe. -EPROBE_DEFER is special in this case, because it 
+signifies that there *is* an IRQ to set up, just not now.
+
+>> +enum counter_mchp_event_channels {
+>> +	COUNTER_MCHP_EVCHN_CV = 0,
+>> +	COUNTER_MCHP_EVCHN_RA = 0,
+>> +	COUNTER_MCHP_EVCHN_RB,
+>> +	COUNTER_MCHP_EVCHN_RC,
+>> +};
 > 
-> Why not simply:
+> These would be better as preprocessor defines in case we need to
+> introduce new events to channel 1 or 2 in the future. That would allow
+> us to insert new events easily to existing channels without having to
+> worry about its actual position in an enum list.
+
+Okay. I personally like the enum interface more, as it is much cleaner, 
+but if there's a good reason to use #define's, then so be it.
+
+> One additional benefit is if we do end up introducing more Counts for
+> the module. In that situation we would have multiple CV and RA/RB/RC per
+> Counter device, but we can easily define a preprocessor macro to
+> calculate the channel offset given the Count index. However, with enum
+> structure we would have to manually add and maintain redundant defines
+> for each Count, which is far less ideal.
 > 
-> ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <= L1_CACHE_BYTES, "...")
-> 
-> ?
+> William Breathitt Gray
 
-I don't think it's a great idea to randomly allow a larger section 
-depending on the .config ... The *actual* intended limit is 64, not 128 
-and not 4096, so I'd suggest we write it out as before.
+Bence
 
-Thanks,
-
-	Ingo
 
