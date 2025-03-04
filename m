@@ -1,184 +1,121 @@
-Return-Path: <linux-kernel+bounces-545431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B176BA4ED11
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:17:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD523A4ED5A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:30:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD07A189078B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:17:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A993BCC1D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:20:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53F0D255252;
-	Tue,  4 Mar 2025 19:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899AD259C9C;
+	Tue,  4 Mar 2025 19:20:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="irJ7QdaR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9GYfE+g"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E5D1237180;
-	Tue,  4 Mar 2025 19:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96196204874
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115835; cv=none; b=Voku5Zp9etGFG4Xt6tiEOdiijJleyzqOHxKhgh8OlqBPAJoKSV48SN0wI5AkReN6oh7b61KOvVSmAiSAYR/7G4hiq8xpxT0rUukgXfRPcoYW/AlGbXmXjIWPBxmZDztrwDaMaH59ZY3MLZqep2ynBLrRI94OhfjpO1N0/bohEA0=
+	t=1741116050; cv=none; b=DboNDFNbu0hcL8T4ToTc7CSStWpAPS9gH8+f9BhS4wPyUqCdiyQQKbrtleLHtpkyfQJG8ZYqpZ6JJuBxltqTlx4PlHvKCZOZWvHySuuj7174KdpqMGwRNJmjaNMxBk/QjNgUcsbnNh3c1IqUDK6a6da4s0lbcmuL5G47fjHTv0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115835; c=relaxed/simple;
-	bh=PMboUH21QxSZynvmqYXTsJlCbDsI3wUH1QQCqbJpVC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ItyCo3NgCdoax2kft9IA3z5X4Sfd1fn4XFQMssMjJizNbXQp0BpvX0MICzpBZPnCTOcaDRl6ohS+LhlG5wW37oBtfmbR6bThoAiZ9UP+FHGMEp7wPpaE63gK0IowX3SNTRhUDoZ+lWyLfpHhEWIlNLQSci1OyDicLWiUYI+pLDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=irJ7QdaR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DEB2C4CEE5;
-	Tue,  4 Mar 2025 19:17:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741115835;
-	bh=PMboUH21QxSZynvmqYXTsJlCbDsI3wUH1QQCqbJpVC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=irJ7QdaR0K0c04nUp9b2wT+j89G4yrbHif+hu8lFO/egIAVdxMP+68HZBNcVhAMHn
-	 553GEYa/+Ppt5fcaxYJZ+jysAIxz7DNKriXV9R7mF1UFoFFGOvm2SicSkZYdK3GFKv
-	 hEAEg+m+bSXQQrCt/lrjDaRsbdtWmpLSnnJFCvu6RHx1nmBNpzctDhvx+b/x4dBSh0
-	 6/n3Uv+kvpFYtCW0XCXTp6HyhthA5/jBPGZ8vz/J3/ZkjYOk77t5IzWNubNl4Exr9k
-	 oV6k2bNSI/Iad/IPd+AWmbx7KHy7rwxVdd9igchCOuWhAkHqkJVD1oSE8muqq2z7CX
-	 ZBbbYaYOgTZWg==
-Date: Tue, 4 Mar 2025 21:17:10 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
-	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	gregkh@linuxfoundation.org, mcgrof@kernel.org,
-	russ.weight@linux.dev, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 3/5] rust: firmware: add `module_firmware!` macro
-Message-ID: <Z8dRtiUaS_Yrv8-K@kernel.org>
-References: <20250304173555.2496-1-dakr@kernel.org>
- <20250304173555.2496-4-dakr@kernel.org>
+	s=arc-20240116; t=1741116050; c=relaxed/simple;
+	bh=sCroFOj5gIG939wW1MBEN05QRv/2HsiEtX+DCRCeyRA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OWD/QtGRPK1vbCpyLedswcEgckkdi8FGOqdBQbkOaEex0VZ4mo2koYOHWzkd4wJS/Ed+Lf3MTQNslH77+rR9H1LWHSbd7mxLT5blcy2CmJNzZTkRjx38c6e+g2lNYnV5DOP3lh7p5B5XLlqyzfV3WnBR5lMaP0NwK2v4YBWBH2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9GYfE+g; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223785beedfso75390665ad.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:20:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741116047; x=1741720847; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=W/dXSi6xRgwsWQ1SiZXMUsL2CPHZOkxLFICb2229Usk=;
+        b=X9GYfE+gdvJkXefzdWRysmejWu8JQvnR+12zCFkBfW3iJwhtRASNTixXjId6RwW1Es
+         toEFIwUq62iu8NEAESeXAGAUR2ui27sYoON5Z0tP6oA82dC9uEmMsK0KQv0hJtAqtMA7
+         7uiYYH32nALbB82MI6E+XtDOwzPmq67HpeEUhk5S03c8dTtrrK/CeEM/zCCtzSN3YdfL
+         R4MTdfXBFbC3QT0Uv9BLP++lUhSv+xOmbL5OtiR+Pnu5KGlj12KCC5SrmkzEwVeJAFI9
+         zNwE7Q9GGPC//hfWBSzKiZW0UI6nqe+Fb7XZPSU33OcsMHC1MG2creXJkWDHnakQxOZz
+         hyyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741116047; x=1741720847;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=W/dXSi6xRgwsWQ1SiZXMUsL2CPHZOkxLFICb2229Usk=;
+        b=Z5L3uHk3/Rv/3YRF/Ip2On9DyLfvCZRzmG+AsofafHxTGTIwnFZi1gtZdffkAHw0vH
+         Rbk923aUetpdlovfVWzbjYgmrDY4cfy4N9WJ9R2l5OgDixOV7jhLRcKlWW4Owk181aGS
+         dtclfy/nAXWR9xEfvJG2aqhlLDI7+z9mxkHAJ7oRFYkwACof2k8esdhBr5f8YGIOEYIR
+         yRbzHL+XmkuzdJ1eJncIavhwXRix5veTG0QTQqu6ia5ZJw1pUqVrJR50arnzNrAvHUIl
+         kJhiyWIjhbRO4jioZul1/RuvGgTlnCGPBDxy7JmVR+NQfOMJdunrOQLJc+GpCO7vj5d9
+         uOMw==
+X-Gm-Message-State: AOJu0Yx5JVxC4HKuNZpQ/5Ho0fvDDnsKmJB2pASxIzMezNF/fxDBWLw3
+	oCV2ufIFxIoISNeDLVF7ShSATeZF9enagBBaRUTkQURNp6jOjYa2/gCPVg==
+X-Gm-Gg: ASbGncsdYL9sCAMF1eCqKEkdusjIcQp+9LvMoHFWZlgRjzcjjGX6ro3yGOoDSIFcLie
+	f5+HG7CAn4a5OmywB4OK5haDWoOd20bvz/9lnot3z6hjPPP0RQNsFD8usCJxcNGwHqk9hmvMQYc
+	R71eLJ5bb2xHQpD0oG6zsmh7FdzErhP1QYpYVsqon/mG7hVy1iZddNp7B6eEB+6/K96EZ/Lkwlk
+	4a6FAOKVHvOzgIcRAFon4BCefZzmex61/BkUQrNrPRV3PFWYPq7YyVrhzm+pja2HNOGOQT/7zKj
+	KreSut+DqYezCEuSIjs46MH/ED4ILpxePhn9v/mobpgaUQx542UbeeNuEwKfHBhSTRiyc6jwt09
+	ofqEGz4YcIwHpgei2Qh6WBxwrcseQ0mbMSyri
+X-Google-Smtp-Source: AGHT+IE/izDo+2T2PoP2W0Zud9dEe4n8vIruh1o+XbAemCyGlSIAuwSw6HV5IvFQ+4u8lDGh5rcUkQ==
+X-Received: by 2002:a17:902:dacf:b0:21f:93f8:ce16 with SMTP id d9443c01a7336-223f1ca9026mr4913365ad.31.1741116047417;
+        Tue, 04 Mar 2025 11:20:47 -0800 (PST)
+Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:ae36:4619:1aa2:117b])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7363d97dcd0sm6602610b3a.54.2025.03.04.11.20.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 11:20:47 -0800 (PST)
+From: Daeho Jeong <daeho43@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	kernel-team@android.com
+Cc: Daeho Jeong <daehojeong@google.com>
+Subject: [PATCH] f2fs: subtract current_reserved_blocks from total
+Date: Tue,  4 Mar 2025 11:20:41 -0800
+Message-ID: <20250304192041.4048741-1-daeho43@gmail.com>
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304173555.2496-4-dakr@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 06:34:50PM +0100, Danilo Krummrich wrote:
-> Analogous to the `module!` macro `module_firmware!` adds additional
-> firmware path strings to the .modinfo section.
-> 
-> In contrast to `module!`, where path strings need to be string literals,
-> path strings can be composed with the `firmware::ModInfoBuilder`.
-> 
-> Some drivers require a lot of firmware files (such as nova-core) and
-> hence benefit from more flexibility composing firmware path strings.
-> 
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/firmware.rs | 79 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 79 insertions(+)
-> 
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> index 6e6972d94597..5d1ac8287171 100644
-> --- a/rust/kernel/firmware.rs
-> +++ b/rust/kernel/firmware.rs
-> @@ -116,6 +116,85 @@ unsafe impl Send for Firmware {}
->  // be used from any thread.
->  unsafe impl Sync for Firmware {}
->  
-> +/// Create firmware .modinfo entries.
-> +///
-> +/// This macro is the counterpart of the C macro `MODULE_FIRMWARE()`, but instead of taking a
-> +/// simple string literals, which is already covered by the `firmware` field of
-> +/// [`crate::prelude::module!`], it allows the caller to pass a builder type (e.g.
-> +/// [`ModInfoBuilder`]) which can create the firmware modinfo strings in a more flexible way.
-> +///
-> +/// Drivers should extend the [`ModInfoBuilder`] with their own driver specific builder type.
-> +///
-> +/// The `builder` argument must be a type which implements the following function.
-> +///
-> +/// `const fn create(module_name: &'static CStr) -> ModInfoBuilder`
-> +///
-> +/// `create` should pass the `module_name` to the [`ModInfoBuilder`] and, with the help of
-> +/// it construct the corresponding firmware modinfo.
-> +///
-> +/// Typically, such contracts would be enforced by a trait, however traits do not (yet) support
-> +/// const functions.
-> +///
-> +/// # Example
-> +///
-> +/// ```
-> +/// # mod module_firmware_test {
-> +/// # use kernel::firmware;
-> +/// # use kernel::prelude::*;
-> +/// #
-> +/// # struct MyModule;
-> +/// #
-> +/// # impl kernel::Module for MyModule {
-> +/// #     fn init(_module: &'static ThisModule) -> Result<Self> {
-> +/// #         Ok(Self)
-> +/// #     }
-> +/// # }
-> +/// #
-> +/// #
-> +/// struct Builder<const N: usize>;
-> +///
-> +/// impl<const N: usize> Builder<N> {
-> +///     const fn create(module_name: &'static kernel::str::CStr) -> firmware::ModInfoBuilder<N> {
-> +///         firmware::ModInfoBuilder::new(module_name)
-> +///             .prepare()
-> +///             .push("vendor/foo.bin")
-> +///             .prepare()
-> +///             .push("vendor/bar.bin")
-> +///     }
-> +/// }
-> +///
-> +/// module! {
-> +///    type: MyModule,
-> +///    name: "module_firmware_test",
-> +///    author: "Rust for Linux",
-> +///    description: "module_firmware! test module",
-> +///    license: "GPL",
-> +/// }
-> +///
-> +/// kernel::module_firmware!(Builder);
-> +/// # }
-> +/// ```
-> +#[macro_export]
-> +macro_rules! module_firmware {
-> +    ($($builder:tt)*) => {
-> +
-> +        #[cfg(not(MODULE))]
-> +        const fn __module_name() -> &'static kernel::str::CStr {
-> +            <LocalModule as kernel::ModuleMetadata>::NAME
-> +        }
-> +
-> +        #[cfg(MODULE)]
-> +        const fn __module_name() -> &'static kernel::str::CStr {
-> +            kernel::c_str!("")
-> +        }
-> +
-> +        #[link_section = ".modinfo"]
-> +        #[used]
-> +        static __MODULE_FIRMWARE: [u8; $($builder)*::create(__module_name()).build_length()] =
-> +            $($builder)*::create(__module_name()).build();
-> +    };
-> +}
-> +
->  /// Builder for firmware module info.
->  ///
->  /// [`ModInfoBuilder`] is a helper component to flexibly compose firmware paths strings for the
-> -- 
-> 2.48.1
-> 
-> 
-Acked-by: Jarkko Sakkinen <jarkko@kernel.org>
+From: Daeho Jeong <daehojeong@google.com>
 
-BR, Jarkko
+current_reserved_blocks is not allowed to utilize. For some zoned
+storage devices, vendors will provide extra space which was used for
+device level GC than specs and we will use this space for filesystem
+level GC. This extra space should not be shown to users, otherwise,
+users will see not standardized size number like 530GB, not 512GB.
+
+Signed-off-by: Daeho Jeong <daehojeong@google.com>
+---
+ fs/f2fs/super.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
+
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index 19b67828ae32..c346dcc2518a 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -1833,10 +1833,9 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+ 	buf->f_type = F2FS_SUPER_MAGIC;
+ 	buf->f_bsize = sbi->blocksize;
+ 
+-	buf->f_blocks = total_count - start_count;
+-
+ 	spin_lock(&sbi->stat_lock);
+ 
++	buf->f_blocks = total_count - start_count - sbi->current_reserved_blocks;
+ 	user_block_count = sbi->user_block_count;
+ 	total_valid_node_count = valid_node_count(sbi);
+ 	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+-- 
+2.48.1.711.g2feabab25a-goog
+
 
