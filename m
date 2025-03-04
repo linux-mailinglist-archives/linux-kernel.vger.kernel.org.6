@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-544407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544412-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79F4EA4E0DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:29:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 820BBA4E112
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:35:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BDA8179889
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:26:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18B9F3BC285
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5FA820766C;
-	Tue,  4 Mar 2025 14:24:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D10520AF94;
+	Tue,  4 Mar 2025 14:25:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="i29LHU8q"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761482066CE;
-	Tue,  4 Mar 2025 14:24:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="caUtKXC2"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF5B205ABE
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:25:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098293; cv=none; b=ubC9PbjuGK1S5yIyCy9u/sq91gh8YyHAZFmszO+pnEvraFDVFcScQ15yg7XzwxlHN3pLW5VP9rXLh2nZHjCegyfcJxRvqyhYc4pb6vCXbW4Pj5eZHFX7gaq0Yxg972R/lgu06SMYlpHb0dq+XKRqZYACp4xsJTwaADZIOWjRVSk=
+	t=1741098332; cv=none; b=b+HvRnmTSRgzyS/3++0Ib+V7VURnkC7ZSiCqW06/1mOaDutzIrGyCUViaph0XoPFetDYecV1+Q1yIQvbPhxxFTDHtnepTvsdyIWz1NWYxYqfYi00P4jM9NnZJQx/yDnLPkam5bcSmYQJcklnesCsLmKX6DKmE0yBrpPmdBOouwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098293; c=relaxed/simple;
-	bh=wg2HTDH+GhCY1HuZynJsDoXu0dgUu5HmFEb9Fd89oeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bDxUDdF1tb5JQ6bxAkPn7tcbC9RKajk612ZM3KAtIgXxH8ljxePLmx9K4I8el/I2P2aINOsJRN2JmC3AfXI7h/0zHGXxbbxO3RoahdevjamxoW1y3lzsrwGIVpqn+pMEc8DlFsudaLpal6uR0fRrO8/F0Z1dA28bExIoMznw8qg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=i29LHU8q; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741098291; x=1772634291;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=wg2HTDH+GhCY1HuZynJsDoXu0dgUu5HmFEb9Fd89oeE=;
-  b=i29LHU8qL0SMz46b3EgvfaVjvUv4U2c9qlOPDVyTocT1fl47aY8T6eSL
-   ofttRDmLmRvKQMUqG2lkRtWLGVe0IMhg54tSy7vkiHjVtCzbbZyHKkyjE
-   v9GeauMjGaO9cNmwZEpv4UiEJUTgMbsmZMUYUuHWv+uiLaNMVJ+k0VxGY
-   RSEyRi5GhO2rkQFUDOUaevfvYErJQJ7N4AiyIXPvAAWJfaza4gEI9QE1V
-   +sXKGd02ihySw+YMNS5ABQMPPI387+DZWqzwCJgUL/YtGucmbE+O8eBEM
-   W+re3YsJnkGJav1gAU+c6F98IhyjfrxUgaPoj9ouNFIS0pzR6aImHpRAI
-   Q==;
-X-CSE-ConnectionGUID: rgpIGLpuQYSO3iv84PvzOQ==
-X-CSE-MsgGUID: B+0h+9NJTT6DAMcRmPuvUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53419577"
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="53419577"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 06:24:50 -0800
-X-CSE-ConnectionGUID: mkkJ+bYxQyKCGZikjCSwgA==
-X-CSE-MsgGUID: yrH2c8RtT1CBUnM+5PEMSQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="123587289"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 06:24:49 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tpTCP-0000000H9Du-4B7m;
-	Tue, 04 Mar 2025 16:24:45 +0200
-Date: Tue, 4 Mar 2025 16:24:45 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Raag Jadav <raag.jadav@intel.com>
-Cc: lee@kernel.org, giometti@enneenne.com, gregkh@linuxfoundation.org,
-	raymond.tan@intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/5] gpio: elkhartlake: depend on
- MFD_INTEL_EHL_PSE_GPIO
-Message-ID: <Z8cNLcTIrPZ6AoRd@smile.fi.intel.com>
-References: <20250303044745.268964-1-raag.jadav@intel.com>
- <20250303044745.268964-3-raag.jadav@intel.com>
- <Z8VmebNcrH6CjHp6@smile.fi.intel.com>
- <Z8WUpzDHbhp0aMoN@black.fi.intel.com>
- <Z8WWNHL1rZKV4c4o@smile.fi.intel.com>
- <Z8Wc73OytMx3khP_@black.fi.intel.com>
- <Z8We4_FJvxTxegpN@smile.fi.intel.com>
- <Z8WkoPVk2SsSj5aR@black.fi.intel.com>
- <Z8WsfXV1vMlRxzLi@smile.fi.intel.com>
- <Z8W2R0DUS6lctU8v@black.fi.intel.com>
+	s=arc-20240116; t=1741098332; c=relaxed/simple;
+	bh=uOBnjqVHku8KLjSmIJeN7+CSJV8wIxJlGQYxylA1bhI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=l1WxGOKIW2ButvRMWaoSlAxhSUaZXGzp/V7XI1Qj2FCXKbN8iUh+r9+IHZmO2bEmTg9ECLF6zgDO0NZH361049GKuc2i/Nlrfq3RWjoN/uib1KI6YwosNSw7tgbmhG+wyob0wGlNMDcdcK6mrA4pVFL9E/iJABABNp6amn+Ruo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=caUtKXC2; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=aKGTU
+	/dlsOYSmJzvx1y1f0+yqOr7O0TlNGte0WRVQTg=; b=caUtKXC2e2ZvYUUboeHae
+	GGalq0s9Fs1NjDxZMkxPplA9J4uhkwNdLIrGJRwGcHMEWdqLfKILq2HW+V3Jn/jQ
+	dci81FlAJ14YAFq9lqrEPnT8nAKdAkjXL/KoG8lkO//qkdOdxZWI5ZSjHT16I3wU
+	9DIZaPqXY5EnYsXghDOk6E=
+Received: from zhuxin.hobot.cc (unknown [])
+	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDXvwA2DcdnOmUHQQ--.34665S2;
+	Tue, 04 Mar 2025 22:25:00 +0800 (CST)
+From: Zxyan Zhu <zxyan20@163.com>
+To: broonie@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zxyan Zhu <zxyan20@163.com>
+Subject: [PATCH v2] regmap: debugfs: Fix name collision without atomic operations
+Date: Tue,  4 Mar 2025 22:24:52 +0800
+Message-Id: <20250304142452.3521828-1-zxyan20@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8W2R0DUS6lctU8v@black.fi.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDXvwA2DcdnOmUHQQ--.34665S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7tF1UZFyfJF15AryfWw17Wrg_yoW8Cw47pa
+	1DGF1Fkws7Jr4rGrWYka18CFySk3929a43A3yru3WF9wnagr43WFsYqFW5tryDWryUXw1U
+	XF45A34UCr1jy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piYhF7UUUUU=
+X-CM-SenderInfo: p201t0isq6il2tof0z/1tbioAUGXmfG+lFLCgADs1
 
-On Mon, Mar 03, 2025 at 04:01:43PM +0200, Raag Jadav wrote:
-> On Mon, Mar 03, 2025 at 03:19:57PM +0200, Andy Shevchenko wrote:
-> > On Mon, Mar 03, 2025 at 02:46:24PM +0200, Raag Jadav wrote:
-> > > On Mon, Mar 03, 2025 at 02:21:55PM +0200, Andy Shevchenko wrote:
-> > > > On Mon, Mar 03, 2025 at 02:13:35PM +0200, Raag Jadav wrote:
-> > > > > On Mon, Mar 03, 2025 at 01:44:52PM +0200, Andy Shevchenko wrote:
-> > > > > > On Mon, Mar 03, 2025 at 01:38:15PM +0200, Raag Jadav wrote:
-> > > > > > > On Mon, Mar 03, 2025 at 10:21:13AM +0200, Andy Shevchenko wrote:
-> > > > > > > > On Mon, Mar 03, 2025 at 10:17:42AM +0530, Raag Jadav wrote:
+The `dummy_index` global variable caused debugfs file name conflicts
+during re-entry, leading to creation failures. Use atomic operations
+to ensure safe and unique debugfs `dummy%d` naming.
 
-...
+Changes since v1:
+- Replaced atomic_read + atomic_inc with atomic_inc_return.
+- Added atomic_dec in the error path to maintain index consistency.
+- Updated the commit message to clarify the fix.
 
-> > > > > Better CI coverage?
-> > > > 
-> > > > How? I do not see the difference, can you elaborate?
-> > > > (Assuming that CIs are using the merge_config.sh approach or alike)
-> > > 
-> > > That is my understanding of it.
-> > > 
-> > > config COMPILE_TEST
-> > >         bool "Compile also drivers which will not load"
-> > >         depends on HAS_IOMEM
-> > >         help
-> > >           Some drivers can be compiled on a different platform than they are
-> > >           intended to be run on. Despite they cannot be loaded there (or even
-> > >           when they load they cannot be used due to missing HW support),
-> > >           developers still, opposing to distributors, might want to build such
-> > >           drivers to compile-test them.
-> > 
-> > Yes, and how does my suggestion prevent from this happening?
-> 
-> Nothing's preventing it, but since we have an opportunity to allow
-> a wider build test (even without arch or mfd dependency), shouldn't
-> we allow it?
+Signed-off-by: Zxyan Zhu <zxyan20@163.com>
+---
+ drivers/base/regmap/regmap-debugfs.c | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-We are going circles here. My point that there is a little sense to do that
-without MFD as it's impractical. On top of that this is inconsistent to other
-drivers with similar design.
-
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index fb84cda92a75..60c8d9a673b8 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -20,7 +20,7 @@ struct regmap_debugfs_node {
+ 	struct list_head link;
+ };
+ 
+-static unsigned int dummy_index;
++static atomic_t dummy_index = ATOMIC_INIT(0);
+ static struct dentry *regmap_debugfs_root;
+ static LIST_HEAD(regmap_debugfs_early_list);
+ static DEFINE_MUTEX(regmap_debugfs_early_lock);
+@@ -549,6 +549,7 @@ void regmap_debugfs_init(struct regmap *map)
+ 	struct regmap_range_node *range_node;
+ 	const char *devname = "dummy";
+ 	const char *name = map->name;
++	int index;
+ 
+ 	/*
+ 	 * Userspace can initiate reads from the hardware over debugfs.
+@@ -595,12 +596,13 @@ void regmap_debugfs_init(struct regmap *map)
+ 
+ 	if (!strcmp(name, "dummy")) {
+ 		kfree(map->debugfs_name);
+-		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
+-						dummy_index);
+-		if (!map->debugfs_name)
++		index = atomic_inc_return(&dummy_index);
++		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d", index);
++		if (!map->debugfs_name) {
++			atomic_dec(&dummy_index);
+ 			return;
++		}
+ 		name = map->debugfs_name;
+-		dummy_index++;
+ 	}
+ 
+ 	map->debugfs = debugfs_create_dir(name, regmap_debugfs_root);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
