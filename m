@@ -1,149 +1,136 @@
-Return-Path: <linux-kernel+bounces-543849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E65F1A4DABA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:34:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E27FA4DAB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:34:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B0329178245
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:32:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A3127A689D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:33:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9DC1FECB7;
-	Tue,  4 Mar 2025 10:32:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE90F1FECAA;
+	Tue,  4 Mar 2025 10:33:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="K55R1tuo"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g197VdAA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E428E1FECA0
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:32:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 487FD1FDE35;
+	Tue,  4 Mar 2025 10:33:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741084325; cv=none; b=RimqjnabdI1K6f8708dxaJ9Wn2eEYZh0BLIIQgWZ0foZqmfBWIvWzLbQQlkujh51VTb2AYCfa9enVq6cifrOP62XB/dMdprasZb6wKccuq/YNJLKjJzCC2hMg5QnqeAcfHMVxfP/E9aw9BGBqDBfoHOezxUfPnYMOHbZ/LLHkiw=
+	t=1741084427; cv=none; b=I36rbJLzOBPNew81pt5sKuktwaj/RVKwDjoaGRLBu429aI8lHPYW/7IJRj7Anfnt7MfjDRiV1m382sdi6UEaOnA+67orgdyGkmgjwb8BDOh+w2umo++Usxtcg4WkyXuUqwMUT2d0uLdf920tra9J5ULbN22wxketdaRVyZn/P30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741084325; c=relaxed/simple;
-	bh=2QN4c6t4NTMLZfo84yIUSl8a68B1T7HX28jmEa3K2TQ=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=SiVXhzs7h8wT/ZSZQQLF/IeO6KRV703v70MUT+cyptoUMMSGKY7nurfaEXh9qTLVDwKDEEF+55enmR3+3Y8TXHx1iEh/qUNiD+ucUEuKDsjRkQ3yizg593OR6ZkmNGnQCbga5nAuQ8UKrnquSud4HoWlWn81NTgzRnJWsJU2S3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=K55R1tuo; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43bce8882d4so895965e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:32:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741084322; x=1741689122; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=CgBM9qkXPKsz4E4wlMO9VCpTU9cY6MKXXq6pU54rOXU=;
-        b=K55R1tuonZDQuU8sPAcgsuiwDXi4Zc5mvtHHJTMHp7mmzrY1Ia0LXEFgA/Z4eqoqfI
-         yH6SWMy7WNJ8MIIrTRIT6RqBCDHqNch9vnyv29KyFE1NOvdpgDfskdk53CkJdhOFAuak
-         QIZ6Q+7tYkFoa4jzErQI+aW2ZVNaY6aZICCfMGM+KH8MmSIQw8sfESjUvrwIg7LUPoq6
-         xoUPmzr6hWEwvHEvVvOodaG9hRqKbO63jkFLMp6V6XrGraVSSYPuPZ3ohdpNQmI1VkRV
-         R6GGBHGc5Cvvj96SyJM4AMBN+aVJy4hN0D2u5rgpbcOpvkzPxKlbeV6EEAfuFkXlZOPu
-         zJpQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741084322; x=1741689122;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CgBM9qkXPKsz4E4wlMO9VCpTU9cY6MKXXq6pU54rOXU=;
-        b=XPH0H8IL+BpKgb2qvjmAimS0T5/erJnUwGQ93SVWoB8y/IzoU1xTVwoM/iW0fp6P/5
-         9P8fNE73puInSGuBi3DK/DV+fXkVKLtm6RAV56igwW125A2nSyhsKf1tgMHPuB4X+3Rz
-         sdUnCO5ZH0xZH3zLeaDH936YUi/x4w44N5fqIVNMMClwvoOLxudZ450Anq/XKIPHtFD+
-         Ya2COw32FEVQFvN833pcIR7AmeU7E8Pvf0JH5U+kjjwya9Vk4+g+IyYch0kA3Rzy+RlB
-         uJB4IRbtqUKGPyvT51lSBvIQHveyWk2QxEglj6iIhajxMEb4iABuT47hBodZF0MhYsVs
-         vv4g==
-X-Forwarded-Encrypted: i=1; AJvYcCVM0Bg4bSn+yMcb1XRQ2BnAkM7n7Y6etmaJ8acj3Vf7IZUrPqCmh5XLTVqpPWIbQ1Fl5wb+0n6yYfizqS4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRUw6cCa5PWcSKVAljimqfW0B2FpbKgC9Y/XzSr3yUOItiG7aG
-	Ey6ZXYUQ8avkhUEqSsWFTjWqEbWDUbqMnsCSufTZziDGAoZFmRIE3DshzVxJ6+Gnbvn7cyralOV
-	sFKI/qsinzKEJAw==
-X-Google-Smtp-Source: AGHT+IHhnkbrdCEb0Dq9dBlFWcgEAlaF3SWEtL4WwW/UfW9TbgpU0Jmo6dviPOgNSpapJjyGppCqbmtXhTCpUF4=
-X-Received: from wmrn9.prod.google.com ([2002:a05:600c:5009:b0:43b:c205:3a80])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:35d2:b0:439:9f97:7d67 with SMTP id 5b1f17b1804b1-43ba6704614mr161034505e9.16.1741084322399;
- Tue, 04 Mar 2025 02:32:02 -0800 (PST)
-Date: Tue, 04 Mar 2025 10:31:55 +0000
+	s=arc-20240116; t=1741084427; c=relaxed/simple;
+	bh=oxfH1b29Jy5NXagTLRaZznTNYVx5Cxlh0iPVEkxx5ts=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TWjLuQImEMa3MCAB7q54e/8QI+GlUW2fZgtB/hW2hxB49Ugaj0mw3k6P9QNTG9iOw4K7/fYfnXiYnCN0o/2BLSy0Im4dDoSjraoUNjIPaSdcNT0D4eSCAXNbajfA1WtTWcoQRYU4lAKkPJbDMljLIZi9jOQOxEzo+cg6G8gPk78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g197VdAA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4778CC4CEE5;
+	Tue,  4 Mar 2025 10:33:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741084426;
+	bh=oxfH1b29Jy5NXagTLRaZznTNYVx5Cxlh0iPVEkxx5ts=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=g197VdAAYYTjRZKbfgFXGAvD7HV6HNzMZEtn3V+Uq4SVwSAu9q4joTn3fDjaC/4gZ
+	 QAa69KyTC+qhSiCefQwEw77zkBzKMYQZ2XrDeqoyckA5Yj6EBSlwYSy0QPSGJ25pl2
+	 Xad8txPvgBLyyShLVUlmx32yUvyahXcY+qT+fLX4p6dqpJgPLVLaUBI4WG+1DKWIaT
+	 NNq3ao2mEHd5kXSwhDKQdVJ9AhBRwiMysYB6umTjCWmB6btNVBdvsgvKFdCGQ3iH6A
+	 NDoDcGk++yJPE8OgUK1Lhdc85EUR6zIN7c9rRUS6bCZVz48MHivhnM+Nj7xGvLLUUQ
+	 UharaEHU2clxw==
+Date: Tue, 4 Mar 2025 11:33:44 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Liu Ying <victor.liu@nxp.com>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, 
+	maarten.lankhorst@linux.intel.com, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+Subject: Re: [PATCH 1/5] dt-bindings: display: Document DPI color codings
+Message-ID: <20250304-deer-of-striking-pride-ff6e86@houat>
+References: <20250304101530.969920-1-victor.liu@nxp.com>
+ <20250304101530.969920-2-victor.liu@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-B4-Tracking: v=1; b=H4sIAJrWxmcC/x2M3QpAQBQGX0Xn2tZaf+VV5GKtD6eEzhFK3t3ma
- pqLmYcUwlBqkocEJytva5QsTSjMfp1geIhOzrrS5rYwihCO2wiuTYaIBV5h4CofCqCG7Sm2u2D k+/+23ft+yWVU+GcAAAA=
-X-Change-Id: 20250304-secctx-reword-release-e26ac4ee7e0b
-X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1902; i=aliceryhl@google.com;
- h=from:subject:message-id; bh=2QN4c6t4NTMLZfo84yIUSl8a68B1T7HX28jmEa3K2TQ=;
- b=owEBbAKT/ZANAwAKAQRYvu5YxjlGAcsmYgBnxtafko7OGAXd/t7elbNMyK4uxuHQQNW0bF0+g
- nsUQs3Bn/OJAjIEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZ8bWnwAKCRAEWL7uWMY5
- Rk4jD/dSV7WTYYlnYfVe3c6B0oR98nYlDdQoBdHNQ2vx0mm7svyvl/V5f34wg3Ii6WhooeIl+Q+
- 7rlJICSPkyc5WphLaimQq7j0pvyH1/DZrBGPE/8usHQa1yWgmOG5z2zywauEi2Q0pQijOvgrj40
- uU0cpDJUBSdcVutmI5dsq5MYzvtaZrRibRrnB754JEUSCVLC2H5YpdhNATk2Q46GoGZGASR18It
- DKxVJgKR4K25rktXEdYk1mN4l2OwN0e25Zu3ro7K8ROBh095CXdJXMbuL7VSAfnuoLqkb0aKHES
- 7YYY8cyUvB3V0e5g3UifchYEXc2LyXvhnTZnTJjTofhxQHk3RQqDqdiSFcJmLM75aM3JOSW14Lu
- LxawEUmB3NDPE8NGsfFfLcQJ6cWF3hZb4cybxvuPFUppCZYmlMVDhouLt7lICbS+2vIpQ9Vwi0v
- 7r53cq38ZWZLGs32XDU4vSKVg3xepNIVZgO4WlF29jeLT2T2dsd3N0EWVW1mwn67CuH/Tdi0BJO
- dvN+8/Oe470vPjW0scABmAxmN5Dyzgr3WDKm+8ma0Q2qQ2PAl6DtqyI6wkq872+QAgDZ/XkYHg4
- DmDIk/H+sumfeYHbiviUqFKbWDoa9o43gT1gZ/ICJKBrIHjlduflMhms67ebfZpv8FNpShxgCiy vROkNIl7GiI+3
-X-Mailer: b4 0.14.2
-Message-ID: <20250304-secctx-reword-release-v1-1-e8e9a7ff85ba@google.com>
-Subject: [PATCH] lsm: rust: reword "destroy" -> "release" in SecurityCtx
-From: Alice Ryhl <aliceryhl@google.com>
-To: Paul Moore <paul@paul-moore.com>, Casey Schaufler <casey@schaufler-ca.com>
-Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Alice Ryhl <aliceryhl@google.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="cj2zylo7nvilgql5"
+Content-Disposition: inline
+In-Reply-To: <20250304101530.969920-2-victor.liu@nxp.com>
 
-What happens inside the individual LSMs for a given LSM hook can vary
-quite a bit, so it is best to use the terminology "release" instead of
-"destroy" or "free".
 
-Suggested-by: Casey Schaufler <casey@schaufler-ca.com>
-Signed-off-by: Alice Ryhl <aliceryhl@google.com>
----
-This patch is based on top of:
-https://lore.kernel.org/all/20250304-inline-securityctx-v2-1-f110f2c6e7ff@google.com/
----
- rust/kernel/security.rs | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
+--cj2zylo7nvilgql5
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 1/5] dt-bindings: display: Document DPI color codings
+MIME-Version: 1.0
 
-diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
-index 24321105052648e150f2875bcfa5ef29f4249516..0c63e9e7e564b7d9d85865e5415dd0464e9a9098 100644
---- a/rust/kernel/security.rs
-+++ b/rust/kernel/security.rs
-@@ -16,7 +16,7 @@
- /// # Invariants
- ///
- /// The `ctx` field corresponds to a valid security context as returned by a successful call to
--/// `security_secid_to_secctx`, that has not yet been destroyed by `security_release_secctx`.
-+/// `security_secid_to_secctx`, that has not yet been released by `security_release_secctx`.
- pub struct SecurityCtx {
-     ctx: bindings::lsm_context,
- }
-@@ -67,9 +67,8 @@ pub fn as_bytes(&self) -> &[u8] {
- impl Drop for SecurityCtx {
-     #[inline]
-     fn drop(&mut self) {
--        // SAFETY: By the invariant of `Self`, this frees a context that came from a successful
--        // call to `security_secid_to_secctx` and has not yet been destroyed by
--        // `security_release_secctx`.
-+        // SAFETY: By the invariant of `Self`, this releases an lsm context that came from a
-+        // successful call to `security_secid_to_secctx` and has not yet been released.
-         unsafe { bindings::security_release_secctx(&mut self.ctx) };
-     }
- }
+On Tue, Mar 04, 2025 at 06:15:26PM +0800, Liu Ying wrote:
+> Document DPI color codings according to MIPI Alliance Standard for
+> Display Pixel Interface(DPI-2) Version 2.00(15 September 2005).
+>=20
+> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+> ---
+>  .../bindings/display/dpi-color-coding.yaml    | 90 +++++++++++++++++++
+>  1 file changed, 90 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/display/dpi-color-c=
+oding.yaml
+>=20
+> diff --git a/Documentation/devicetree/bindings/display/dpi-color-coding.y=
+aml b/Documentation/devicetree/bindings/display/dpi-color-coding.yaml
+> new file mode 100644
+> index 000000000000..6430d6f1ddd1
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/display/dpi-color-coding.yaml
+> @@ -0,0 +1,90 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/display/dpi-color-coding.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: MIPI DPI Interface Color Coding
+> +
+> +maintainers:
+> +  - Liu Ying <victor.liu@nxp.com>
+> +
+> +description:
+> +  MIPI Alliance Standard for Display Pixel Interface(DPI-2) Version 2.00=
+(15
+> +  September 2005) specifies color codings at the DPI interface.
+> +
+> +properties:
+> +  dpi-color-coding:
+> +    enum:
+> +      - 16bit-configuration1
+> +      - 16bit-configuration2
+> +      - 16bit-configuration3
+> +      - 18bit-configuration1
+> +      - 18bit-configuration2
+> +      - 24bit
 
----
-base-commit: 93f60f16db02f7b52985338f37679095231b6383
-change-id: 20250304-secctx-reword-release-e26ac4ee7e0b
+Do we really needs strings there? It would be much better to use an int
+plus a header
 
-Best regards,
--- 
-Alice Ryhl <aliceryhl@google.com>
+Maxime
 
+--cj2zylo7nvilgql5
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8bXBwAKCRAnX84Zoj2+
+dt1IAX9V1mlAI1Gl75oEmrf11qBXqppa8x3GWIJnJLuNlT9ukdKeaLCrQX1wn479
+eHm4Ol4BegL0L7cndLVYuxBHxQPptolpuxW4+J/3gbKcG28DPUVdqmmu2icZfev0
+HafXHYBLEg==
+=Pg8P
+-----END PGP SIGNATURE-----
+
+--cj2zylo7nvilgql5--
 
