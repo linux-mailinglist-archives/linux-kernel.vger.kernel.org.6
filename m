@@ -1,102 +1,129 @@
-Return-Path: <linux-kernel+bounces-545393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079B7A4EC9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:02:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 703A1A4EC71
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:51:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC87E3BAEFB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:48:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 803177ACB70
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:49:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51ABD207E09;
-	Tue,  4 Mar 2025 18:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3631D24EA9F;
+	Tue,  4 Mar 2025 18:50:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MgqesJTy"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KzB3Gi66"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13E4C2045BC;
-	Tue,  4 Mar 2025 18:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4DA1F583E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741114126; cv=none; b=j6Di23abqLL5azepjwOc+LJocrr2ZgFHP/JceMy4AjTDahAxTdSn6zmKNr4n+ThSaHHPP2Xl8jMJAaPU0gGSpGIcxdCYJI1oQck2BeaV6A7qB4s99dGslR9DNs0JxgMWoBEoqsH+YRCvQMINIpOMqsX5rPf3Iu6WKYiS1tNCkUU=
+	t=1741114206; cv=none; b=Pk37mbltJgQfiRETYGwk8J8K4hWieFn4xnJ84tS/D3oELxz5BwGAOn5RsoijuBJcEY2GLW6H7HrnOYqWTela6YdcBnUyer+6kK0x41pgZZc0Vb2t8jbDzX5vubPknB7iiw+e6sfj7vXpN1UZdfjsvoq1bcYYiL/ZCARFP+ufO/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741114126; c=relaxed/simple;
-	bh=NpKfzr/oUBsQgUVJ29zrkPoatW+jzNjZkTw+UvFff8o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OTNGYcl4lW6QYmJrx30n2iX5i1q9X7y0ih6in6Yuqxxz/xwcRH/EbmqXMkvKoRJGJzkeaFCqUIFi6TXMiQd3OiMNJqNY8ZFxdUmP4GZdZsn1BvtvHY1q2smOSYB/QGZZPmtWJ7k+WJfrulVeH58fiM6bSBYEbSukrrztqdM/Oxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MgqesJTy; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5e50d491f69so4640796a12.1;
-        Tue, 04 Mar 2025 10:48:44 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741114123; x=1741718923; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3MrypCo6V7mDN1yvGSKa3ZiKGOTIawZz8DrFPoNJTQE=;
-        b=MgqesJTymab556ltKm/CqIAvEz3vi+qXj4MamnlIsxI4SZR9/jjKibmGzBU5UTR8Vt
-         dyYW85uBbqoadUKhG4WZqjKHRLeNefgE3aiejiCUzsZlGMwgFbTct9URYUTE7K1Dnmzs
-         bScmrTfKypuK7ybNOt/jtUTJ3N4p1aAlW9bzS7UfF1X/EW9uGVrVeoUifV0QPCcrKSWM
-         Qg0n6xZO+oBPdsn5pNiPkqgALkmKenDQ0+FGiXelz8PoBJ1BQdavoieuIjdXPTLxGLBk
-         PlemQ8kR6SvxigpV+GX358LNqTwtBILG7vfFnCbta6cLwJ7qghpRxTqkYiT8P9CO3fVB
-         ijbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741114123; x=1741718923;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3MrypCo6V7mDN1yvGSKa3ZiKGOTIawZz8DrFPoNJTQE=;
-        b=j6BnGv4Q5FOtPckLQ7fE2TF23LMJ4rjClkusbav+dptSa9LF+3eaw10KHtn1vqLZ3F
-         N0Yn+logLWzRXALjjZyLT31mibkSrHqFTA6+Xq0R5NEkKeyluIiV3TcmL7sDIyASTHdp
-         /JnN+HpHIyZN7l918/JgfT/O2KdkkmsPdSXsFgxMKSnybwZ277FdlnAxr536wMlSTOf3
-         2jlDkRCZ77lJL3aa4rc/kE0P6Ju0QXNI0+wp3ScAbTPWBGlPDbuIvMyvbQnPZoTnyM05
-         YhGw1K66/E4W/IYoM86096KqZ+QUfStgjV/9fI6GF285xODUx8ZjGKrQCVCydj6p3RwY
-         HMEA==
-X-Forwarded-Encrypted: i=1; AJvYcCVbxZdk8cqde+jOGz5Of1HqM0KdHDhYrVwGtwvZwu5Dc4kD0JBhj1Srd9J2f44WSWWrjxeWg3kVd0BdETdm@vger.kernel.org, AJvYcCWYGSW04Sxb81Z5bfRD4UEXE/EJ1A0rgQI3WctYjMso+a2mu8T04o2DMvvksn2MKwAgVrJ1n5ArI39/4PDM@vger.kernel.org
-X-Gm-Message-State: AOJu0YyawDa6uFHNsaVmUmySFFPhj3mMmDtaZMRysVghAmvXCBZ/VyvJ
-	nsUStYmfIKQ/62GoS+YxxnfmCS3K3fZNv8BEXw3qS5ixnCW/h64FcVNi4vwL0GuQtxFNzZ/9tWb
-	rnYCe0JzWN6mhQa8DRedwWt6I4/w=
-X-Gm-Gg: ASbGncu8i2z37XLG3CkSs2uS52tBtpe02syv7PwxwQSG2xBWiVGWIx1tKPhiWqJ2X/K
-	rIzzERUkS4zflTqMb4ofTByyuThNtkLbklfayogqR6Y7fM/7H9+rjNkqZLTSDKu3TW+6mkouQEU
-	Au95G3h2sIzmN6YK8mC8pLoR5m
-X-Google-Smtp-Source: AGHT+IHCazDJJo/7iQIA45l595GF8+VhKHWgcWqMTz+wapHtrZ5mfXVHw2QdpH37Cov+fyOXnQcBRr8tYrJ0j+9dZNI=
-X-Received: by 2002:a05:6402:3547:b0:5e4:cfb0:f66b with SMTP id
- 4fb4d7f45d1cf-5e59f35248amr167731a12.7.1741114122758; Tue, 04 Mar 2025
- 10:48:42 -0800 (PST)
+	s=arc-20240116; t=1741114206; c=relaxed/simple;
+	bh=ERDSiQRCm2WziHCfxkR9TWnvgzH+j6+KMNNxZfF4lWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ou/dZpZEQMrP0CSoXVKRm/DqLCTk9G5ndKctTGar0vh+UAWAMFNPCW59wXDfqSnd9YA442jlXDuWsqUU+AohhQ3EQ7aeXdE6pPVWhupRiGo7z2jw48rsU3Hd4OprAQZkOSZkm15eRtdDkS1a2x6aThZ+tscRTB/YLxoaP187sXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KzB3Gi66; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741114205; x=1772650205;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ERDSiQRCm2WziHCfxkR9TWnvgzH+j6+KMNNxZfF4lWE=;
+  b=KzB3Gi66euFArwO0URpDfCMe5BsZQdXjpdJwsO0JpSJOClHsD29xTZ05
+   YtykOXQYrE0vCOXWxYpOHkzgvCRXf4/86RbKGe4f8UtKj+qXlPi8fizDh
+   redo7fFZ0GlcuqMYkKf8gXT1pIvhy+VOZPVq74oa0i85gPjsg514ro9Jp
+   5fLrLJP4tFf0bwkDnJRiHHJTRC8wPfDXOBmFx7rBQLtKhFQZ6pjpUVq1s
+   XhK+fteVKXiYx8n1RrxwhWjCLySh8Qo5Pqd3Xm+hxb1qVH1/0XBmGwkbW
+   O3VarGZyV6vuKPjI+myqfjzyYE2OSBzhvBCXNgx2qV29wzsygB/Uqv3Uq
+   Q==;
+X-CSE-ConnectionGUID: SyA3HwUNSU+Rasx3V2+QIg==
+X-CSE-MsgGUID: ttvmOaVyQcigCVLgBwX+zA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41300918"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="41300918"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 10:50:04 -0800
+X-CSE-ConnectionGUID: L2gp5m1iTESUO//o6ZLqsw==
+X-CSE-MsgGUID: PJuqkSteSBei5ABb7SshKA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="118193970"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa009.jf.intel.com with ESMTP; 04 Mar 2025 10:50:01 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpXL4-000K9m-0h;
+	Tue, 04 Mar 2025 18:49:58 +0000
+Date: Wed, 5 Mar 2025 02:49:38 +0800
+From: kernel test robot <lkp@intel.com>
+To: Christian Eggers <ceggers@arri.de>,
+	Russell King <linux@armlinux.org.uk>,
+	Yuntao Liu <liuyuntao12@huawei.com>,
+	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Nathan Chancellor <nathan@kernel.org>,
+	linux-arm-kernel@lists.infradead.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Christian Eggers <ceggers@arri.de>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v2 1/2] ARM: substitute OVERLAY description in linker
+ script
+Message-ID: <202503050230.820w99b6-lkp@intel.com>
+References: <20250224125414.2184-1-ceggers@arri.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304183506.498724-1-mjguzik@gmail.com> <20250304183506.498724-2-mjguzik@gmail.com>
-In-Reply-To: <20250304183506.498724-2-mjguzik@gmail.com>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Tue, 4 Mar 2025 19:48:30 +0100
-X-Gm-Features: AQ5f1JqL3wd9FXFX4qmZyopa_wTmc40z_qCDzfhmGbuS95bJdGI7okUIdP1XsFs
-Message-ID: <CAGudoHHjGZ4xTQ4mGhFX5RV+fq7=Ywo86b7Qf42+ssVeHhMOtQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] file: add fput and file_ref_put routines optimized
- for use when closing a fd
-To: brauner@kernel.org, viro@zeniv.linux.org.uk
-Cc: jack@suse.cz, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224125414.2184-1-ceggers@arri.de>
 
-On Tue, Mar 4, 2025 at 7:35=E2=80=AFPM Mateusz Guzik <mjguzik@gmail.com> wr=
-ote:
+Hi Christian,
 
-> +void fput_close_sync(struct file *file)
-> +{
-> +       if (unlikely(file_ref_put_close(&file->f_ref)))
-> +               __fput(file);
-> +}
+kernel test robot noticed the following build errors:
 
-this of course should be: *likely*
+[auto build test ERROR on soc/for-next]
+[also build test ERROR on linus/master v6.14-rc5 next-20250304]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
+url:    https://github.com/intel-lab-lkp/linux/commits/Christian-Eggers/ARM-avoid-that-vectors-are-removed-during-linker-garbage-collection/20250224-210146
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/soc/soc.git for-next
+patch link:    https://lore.kernel.org/r/20250224125414.2184-1-ceggers%40arri.de
+patch subject: [PATCH v2 1/2] ARM: substitute OVERLAY description in linker script
+config: arm-milbeaut_m10v_defconfig (https://download.01.org/0day-ci/archive/20250305/202503050230.820w99b6-lkp@intel.com/config)
+compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 14170b16028c087ca154878f5ed93d3089a965c6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250305/202503050230.820w99b6-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503050230.820w99b6-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+>> ld.lld: error: section .vectors.bhb.bpiall virtual address range overlaps with .vectors.bhb.loop8
+   >>> .vectors.bhb.bpiall range is [0xFFFF0000, 0xFFFF001F]
+   >>> .vectors.bhb.loop8 range is [0xFFFF0000, 0xFFFF001F]
+--
+>> ld.lld: error: section .vectors.bhb.loop8 virtual address range overlaps with .vectors
+   >>> .vectors.bhb.loop8 range is [0xFFFF0000, 0xFFFF001F]
+   >>> .vectors range is [0xFFFF0000, 0xFFFF001F]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
