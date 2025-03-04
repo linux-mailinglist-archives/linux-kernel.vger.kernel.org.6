@@ -1,56 +1,64 @@
-Return-Path: <linux-kernel+bounces-544422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F381A4E0FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:33:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E35F3A4E12F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:38:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5FB517BC05
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:30:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB5453B2D8E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:30:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4627120E6E2;
-	Tue,  4 Mar 2025 14:28:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACAF205AC1;
+	Tue,  4 Mar 2025 14:29:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkIFqbWy"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gU/b9v4A"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBFC2063F8;
-	Tue,  4 Mar 2025 14:28:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2D72046BD
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098489; cv=none; b=lUO59l53MNLNKR4CQTSkPPelns/CbApuA0f0PoIt1c1QWYJg6ckZKlB8BnIcWq6pE1MZxqVjQkPlmQTCeE/KEAXR9StPZgqEv55250h11B2bFgYtxDoxtsv60RA0PUnmFTTNtyI484sRk4uOgcRAgn65YcDkwE/aXA3jCvD3HMw=
+	t=1741098553; cv=none; b=pudEmunz2zy948LDcEzVx59pYa8OfXC93at/kQiHB3N83K68B8wi2ZSvBfcXA55rO6vmD/4J6hS6Bc84TFH9fIeywlHL5isfroqpRmVh95hPW9sif/DB1pJ5tZsULTuAivNyaebnj9r74trmiCDYi8jieduoWUfiNcwQLZ612F4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098489; c=relaxed/simple;
-	bh=ZP9crCiLqCC27DzizkJ4ARDSaafzhltXkaVGhTSqjQo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gOsUWluXiJ5I95uGHM3LsuvtMKKFybKWGMOmptfPrzWPGD2GUU/apzG50eM8zZFy49VBkfsW26vEzRSthZSD9g3YbPqALRPNpVJRqybAYRYk80Gn5MHrC8q7B08fqYtiYqpZ5nZbEl+XY/DN26wLZ2mo+LZOiG+RBNHjqv+8Ias=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkIFqbWy; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5963FC4CEE5;
-	Tue,  4 Mar 2025 14:28:07 +0000 (UTC)
+	s=arc-20240116; t=1741098553; c=relaxed/simple;
+	bh=khdG65bPlGvNQL4Lss2vc1W5hJeqULPsPGO4kSfUOOE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bkRHuNLJ9A9w6QPVmt+aok9jiWGC6ReE6IFn/X5N5+hdpUuSBTnR+URkvB73Sfzn6OuJRgzZ/nVQ5s6+DT6x3bfJ94Ot3MOMRLQGuX8xKDdFPB8UudjMBROpP+VoULYjtJDzW/8ysd5kt9/h6ujmPKo71nsuTtVKC96UB8k68YQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gU/b9v4A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B88EC4CEE5;
+	Tue,  4 Mar 2025 14:29:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741098489;
-	bh=ZP9crCiLqCC27DzizkJ4ARDSaafzhltXkaVGhTSqjQo=;
+	s=k20201202; t=1741098553;
+	bh=khdG65bPlGvNQL4Lss2vc1W5hJeqULPsPGO4kSfUOOE=;
 	h=From:To:Cc:Subject:Date:From;
-	b=DkIFqbWyusoB3FRblukNCbV0zy+rX7iyW6CGrDHjAiXe26bjUf9x3qJEp65/jMEr2
-	 lRljmarzXCrwNqcu+7+QIXQ9Gb/7LaB0Bi0PzW9ouEW7JPcLPZHwYU1XoY+rlc9BBD
-	 ImJemoPKOPp0yacfnA0KGQ5VQEmzGzl2b+s9VlLyhbq5sQLjLUd9SWkIcmFaLt6ERq
-	 MCekeJKnJK3TCA8z/pbK89ykMrUdjyVx2xtFi5d+gDTXSy1cAVCuiI4pT6V2WWco4M
-	 QRG/z/YOSYUtmc/7WE1acWpfEPX6KRU2lLRQjvQ41OTgkDa4tPagvxR340Yb+Ao5Xh
-	 LCitY7hmsr+uQ==
+	b=gU/b9v4AVvPUXBnn+BB6c9u5mTLIBgVJoceQLI2ZCuGQdIjqsF4IsNKGyDbPsR/Xu
+	 YrPfLzGU24s7tVZ+/dF7z3Lbg1ph+6zA1C7yCsJq/giRpTO/kWtfVa2xIy3ZQb91sO
+	 qRxHyYlYO/bvOlTK1Q11NlbIY9Gx9RfVsznsnqzfOVftiTuUWszFI1b4OxWpFm7M8y
+	 xNeQtb3+tVdcovbE1Fghmuduid5JsUnpCScStMN94RAkm7NqnFkKre6mefEJ6lyTxt
+	 uz8qK0CHewetnlN1CEV0PNj2204xS7CjBjBuOhE4Qt+tTUVOyezJbU3xZk7jCQREgo
+	 rEYWCh1E30+vQ==
 From: Arnd Bergmann <arnd@kernel.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Danila Tikhonov <danila@jiaxyga.com>,
+	Eugene Lepshy <fekz115@gmail.com>
 Cc: Arnd Bergmann <arnd@arndb.de>,
-	linux-pm@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	David Wronek <david@mainlining.org>,
+	Sumit Semwal <sumit.semwal@linaro.org>,
+	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH] pmdomain: rockchip: add regulator dependency
-Date: Tue,  4 Mar 2025 15:27:59 +0100
-Message-Id: <20250304142803.689201-1-arnd@kernel.org>
+Subject: [PATCH] drm/panel: fix Visionox RM692E5 dependencies
+Date: Tue,  4 Mar 2025 15:29:02 +0100
+Message-Id: <20250304142907.732196-1-arnd@kernel.org>
 X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,36 +70,30 @@ Content-Transfer-Encoding: 8bit
 
 From: Arnd Bergmann <arnd@arndb.de>
 
-When CONFIG_REGULATOR is disabled, this pmdomain driver fails to build:
+The newly added driver uses the DSC helpers, so the corresponding
+Kconfig option must be enabled:
 
-drivers/pmdomain/rockchip/pm-domains.c:653:30: error: implicit declaration of function 'devm_of_regulator_get'; did you mean 'devm_regulator_get'? [-Wimplicit-function-declaration]
-  653 |                 pd->supply = devm_of_regulator_get(pmu->dev, pd->node, "domain");
-      |                              ^~~~~~~~~~~~~~~~~~~~~
-      |                              devm_regulator_get
-drivers/pmdomain/rockchip/pm-domains.c:653:28: error: assignment to 'struct regulator *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
-  653 |                 pd->supply = devm_of_regulator_get(pmu->dev, pd->node, "domain");
-      |                            ^
+ERROR: modpost: "drm_dsc_pps_payload_pack" [drivers/gpu/drm/panel/panel-visionox-rm692e5.ko] undefined!
 
-Add a Kconfig dependency.
-
-Fixes: db6df2e3fc16 ("pmdomain: rockchip: add regulator support")
+Fixes: 7cb3274341bf ("drm/panel: Add Visionox RM692E5 panel driver")
 Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- drivers/pmdomain/rockchip/Kconfig | 1 +
- 1 file changed, 1 insertion(+)
+ drivers/gpu/drm/panel/Kconfig | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/drivers/pmdomain/rockchip/Kconfig b/drivers/pmdomain/rockchip/Kconfig
-index 7e4f9b628f0b..218d43186e5b 100644
---- a/drivers/pmdomain/rockchip/Kconfig
-+++ b/drivers/pmdomain/rockchip/Kconfig
-@@ -5,6 +5,7 @@ config ROCKCHIP_PM_DOMAINS
- 	bool "Rockchip generic power domain"
- 	depends on PM
- 	depends on HAVE_ARM_SMCCC_DISCOVERY
-+	depends on REGULATOR
- 	select PM_GENERIC_DOMAINS
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index 5927806cb4a9..e059b06e0239 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -1020,6 +1020,8 @@ config DRM_PANEL_VISIONOX_RM692E5
+ 	depends on OF
+ 	depends on DRM_MIPI_DSI
+ 	depends on BACKLIGHT_CLASS_DEVICE
++	select DRM_DISPLAY_DSC_HELPER
++	select DRM_DISPLAY_HELPER
  	help
- 	  Say y here to enable power domain support.
+ 	  Say Y here if you want to enable support for Visionox RM692E5 amoled
+ 	  display panels, such as the one found in the Nothing Phone (1)
 -- 
 2.39.5
 
