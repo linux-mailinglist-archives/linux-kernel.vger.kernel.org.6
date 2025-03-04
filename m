@@ -1,99 +1,107 @@
-Return-Path: <linux-kernel+bounces-544011-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62C17A4DC5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:22:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296D3A4DC68
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:23:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 356F51687CF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:19:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB2D4189D808
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:20:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98EF9200126;
-	Tue,  4 Mar 2025 11:18:40 +0000 (UTC)
-Received: from mail-gw01.astralinux.ru (mail-gw01.astralinux.ru [37.230.196.243])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DDC1FDE27;
-	Tue,  4 Mar 2025 11:18:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.230.196.243
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E031FF1B7;
+	Tue,  4 Mar 2025 11:19:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kOwWUsyx"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 760F01F76C0;
+	Tue,  4 Mar 2025 11:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741087120; cv=none; b=EaFYYDCd3zAncadb/Lcrz99f8NvAuMuCuR/243SNNUzdGosaODu6ckTvSVcO6hrEbZtjRjBi7laVDp46IMVPGYk/4rGN1onxQ2DnWF6NMo0uNeflEvJfjg3GCAexMCH3+uPYNEzCKpVcG7fRUFVsSFzS67pYPhQKqkSuXW14DNw=
+	t=1741087187; cv=none; b=rFkac+KjIA24Mj3bMxcz6nmiMeM8eeRX4ODFtgRd3kbQzZyKximc/mppSpdwMmH+zzDLRggTcDAYnvSkoyHrMFWjzPa+tieFcDaVj/Av6sqQoAh9l03kdJQ179mCRgFW+toySI5xwcaDKAcLOZ11onUoq2FnuHnwP8eFigges+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741087120; c=relaxed/simple;
-	bh=4gSmLRbTivzjiU8XEaQKI//sTOVkf96OovK/HUTeQOE=;
+	s=arc-20240116; t=1741087187; c=relaxed/simple;
+	bh=C7Iv/jeyWjTA3dGBlMW6Um/8mVYZwN5zn6x3p4sIXYM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W2Poeuwl0pAbT903x/BAvzK6OG+gERVrwzOEYnZi3cpcMiuc6V1yZC2sbrcUKMJIHpa0ylhIMkgrU+mPfFA56/EYlJ9AJ/n7LHpkp62vau1g/QHipvepD24XcoRaW1mJl0rJdr3CqWLku8K0aSSm9Q9tlmAA8X9LKT9+hHPV07k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru; spf=pass smtp.mailfrom=astralinux.ru; arc=none smtp.client-ip=37.230.196.243
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=astralinux.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=astralinux.ru
-Received: from gca-sc-a-srv-ksmg01.astralinux.ru (localhost [127.0.0.1])
-	by mail-gw01.astralinux.ru (Postfix) with ESMTP id 908DC25037;
-	Tue,  4 Mar 2025 14:18:31 +0300 (MSK)
-Received: from new-mail.astralinux.ru (gca-yc-ruca-srv-mail03.astralinux.ru [10.177.185.108])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail-gw01.astralinux.ru (Postfix) with ESMTPS;
-	Tue,  4 Mar 2025 14:18:30 +0300 (MSK)
-Received: from [10.177.20.114] (unknown [10.177.20.114])
-	by new-mail.astralinux.ru (Postfix) with ESMTPA id 4Z6Y8M73L9z1h0Rt;
-	Tue,  4 Mar 2025 14:18:27 +0300 (MSK)
-Message-ID: <108a8459-6024-4af1-978a-b085729825f7@astralinux.ru>
-Date: Tue, 4 Mar 2025 14:18:26 +0300
+	 In-Reply-To:Content-Type; b=YRrLgA0kHvRl3VupLu166I4iSkYEx3SksH1r2SN/Z9zbI45JLFdyezm5eS9u2eGmSE2ckEhLEx0GYJ96UVFLO5iPMQKUYlg3a/fzSxYyWblT+t0Arn5LbGaGWaNBDc5PQZx1Y+LHqnr1w9+eMEAYtau/9+ae+4HBWkgzXQQUI9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kOwWUsyx; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=sBluh1p4+KUU8wEwPmT8gKFeC51HPBnTxIKdh6B6pBo=;
+	b=kOwWUsyx8lZ0CC6cHHZhv/nDCAbn4ymzM1CrJC50sg1asPEptMkYCizZUrg6tZ
+	MJw9dOkudXmoQT1/cIvZMYPpi3OHfuIb9zNWFZvH8X4TiIj4B+rCXmq/VSzPqSwr
+	/W5b81k192s50x7wmfM0Q4pu7XuhA2ddbhSjcVZo9qq40=
+Received: from [192.168.97.52] (unknown [])
+	by gzsmtp4 (Coremail) with SMTP id PygvCgCHH+Gp4cZn6a7xBg--.59104S2;
+	Tue, 04 Mar 2025 19:19:08 +0800 (CST)
+Message-ID: <f51a60de-65f9-459e-9c1f-dd4f10ed65c6@163.com>
+Date: Tue, 4 Mar 2025 19:19:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: RuPost Desktop
-Subject: Re: [PATCH 6.1 1/2] erofs: handle overlapped pclusters out of crafted
- images properly
-Content-Language: ru
-To: Fedor Pchelkin <pchelkin@ispras.ru>,
- Gao Xiang <hsiangkao@linux.alibaba.com>
-Cc: stable@vger.kernel.org, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Max Kellermann <max.kellermann@ionos.com>, lvc-project@linuxtesting.org,
- syzbot+de04e06b28cfecf2281c@syzkaller.appspotmail.com,
- syzbot+c8c8238b394be4a1087d@syzkaller.appspotmail.com,
- Chao Yu <chao@kernel.org>, linux-kernel@vger.kernel.org,
- Yue Hu <huyue2@coolpad.com>,
- syzbot+4fc98ed414ae63d1ada2@syzkaller.appspotmail.com,
- Jeffle Xu <jefflexu@linux.alibaba.com>, Gao Xiang <xiang@kernel.org>,
- linux-erofs@lists.ozlabs.org
-References: <20250228165103.26775-1-apanov@astralinux.ru>
- <20250228165103.26775-2-apanov@astralinux.ru>
- <kcsbxadkk4wow7554zonb6cjvzmkh2pbncsvioloucv3npvbtt@rpthpmo7cjja>
- <fb801c0f-105e-4aa7-80e2-fcf622179446@linux.alibaba.com>
- <3vutme7tf24cqdfbf4wjti22u6jfxjewe6gt4ufppp4xplyb5e@xls7aozstoqr>
- <0417518e-d02e-48a9-a9ce-8d2be53bc1bd@linux.alibaba.com>
- <whxlizkpoqifmcvjbxt35bnj5jpc5cx6wzy3nq47zteu5pefq3@umdsbzhl3wqm>
-From: =?UTF-8?B?0JDQu9C10LrRgdC10Lkg0J/QsNC90L7Qsg==?= <apanov@astralinux.ru>
-In-Reply-To: <whxlizkpoqifmcvjbxt35bnj5jpc5cx6wzy3nq47zteu5pefq3@umdsbzhl3wqm>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [v4] PCI: cadence-ep: Fix the driver to send MSG TLP for INTx
+ without data payload
+To: =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>
+Cc: lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org, robh@kernel.org,
+ bhelgaas@google.com, bwawrzyn@cisco.com, cassel@kernel.org,
+ wojciech.jasko-EXT@continental-corporation.com, a-verma1@ti.com,
+ linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, rockswang7@gmail.com
+References: <20250214165724.184599-1-18255117159@163.com>
+ <20250303190602.GB1466882@rocinante> <20250304110134.GA4101682@rocinante>
+Content-Language: en-US
+From: Hans Zhang <18255117159@163.com>
+In-Reply-To: <20250304110134.GA4101682@rocinante>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/03/04 09:15:00
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Envelope-From: apanov@astralinux.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, lore.kernel.org:7.1.1;127.0.0.199:7.1.2;astralinux.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;new-mail.astralinux.ru:7.1.1, FromAlignment: s
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191453 [Mar 04 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.0.7854, bases: 2025/03/04 09:41:00 #27591543
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/03/04 09:15:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 1
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:PygvCgCHH+Gp4cZn6a7xBg--.59104S2
+X-Coremail-Antispam: 1Uf129KBjvdXoW7Xw4xZr18KrW7WryrKFWUCFg_yoWkKwb_ur
+	4kXFykAFs0gFna9F4rGF43AFyDuw1vyrWaga48trn8JayaqrWUJasxAr1rA3yrGw4Syr17
+	uF93u3s8G3W3AjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUjD73PUUUUU==
+X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/xtbBDwoGo2fG27rb-gAAsF
 
-Hi Fedor and Gao!
 
-Thanks for your efforts. I've sent out v2 of this patch with the
-appropriate changes.
 
-https://lore.kernel.org/all/20250304110558.8315-1-apanov@astralinux.ru/
+On 2025/3/4 19:01, Krzysztof Wilczyński wrote:
+> On 25-03-04 04:06:02, Krzysztof Wilczyński wrote:
+>> Hello,
+>>
+>>> Cadence reference manual cdn_pcie_gen4_hpa_axi_ips_ug_v1.04.pdf, section
+>>> 9.1.7.1 'AXI Subordinate to PCIe Address Translation' mentions that
+>>> axi_s_awaddr bits 16 when set, corresponds to MSG with data and when not
+>>> set, MSG without data.
+>>
+>> Would it be possible to get the full name of the reference manual mentioned
+>> about?  I want to properly reference the full name, version, revision, etc.,
+>> like we do for other documentation of this type where possible.
+> 
+> Hans, I came up with the following, have a look at:
+> 
+>    https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/cadence&id=09f4343a59cc2678a3a5b731d16e55c697246a40
+> 
+> Let me know if this is OK with you.  Thank you.
+> 
+> 	Krzysztof
+
+It's OK with me.
+
+Can you add an email address of our company as Signed-off-by? Because it 
+involves Cadence documentation.
+
+My company email: Hans Zhang <hans.zhang@cixtech.com>
+
+Like this:
+Signed-off-by: Hans Zhang <18255117159@163.com>
+Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+
+Best regards
+Hans
+
 
