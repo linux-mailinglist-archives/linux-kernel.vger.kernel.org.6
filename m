@@ -1,123 +1,187 @@
-Return-Path: <linux-kernel+bounces-543714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92D0EA4D8E3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:42:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A568A4D8E5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:42:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 627211888DA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:41:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 51F20173ADA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE33F1FECD8;
-	Tue,  4 Mar 2025 09:39:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ACE1FCFE3;
+	Tue,  4 Mar 2025 09:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="vE7b76Iv"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mv2yid4H"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF5F21FECAA
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB9E1FCCF9;
+	Tue,  4 Mar 2025 09:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081180; cv=none; b=itw3d04PalnHILup7tdgfwpc50tWpICe9bo0QQyyZPbSeKCnQ10LtZ9hpMs1ILtoKH+btrzZatw/OFfOGw/qtUly0k5sSlSxcXYZoo+HN860SoLtl30eohQiE/lz7HpdAfT14B9TcoPNAS0lj+82XfQA8t8u1Lx0mSCpMHqi2QE=
+	t=1741081085; cv=none; b=ffU7H35Xxh4hLQ8miQ/qmKK7DOTj0eOund5ZoidXIzdjD2Xy7AJxtsntSsdJsNOeqVdH8d5NZIZFOpfYDHAop7HMMZzDNnvZwp3eSQLQ8UUpe4/JaEFdyO8zjsqojvbe0qdNuJKNkNxRilbNKuDkrU/SPlE1Y+nMoTru+LbpPH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081180; c=relaxed/simple;
-	bh=aOGadUaD55/7NjVi9olJnWxHY2EQr81G0BMQB3FqhzQ=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sq1FALWj44HkY67aWolQGgMJziF5ekgukm7cBQzzLF/RdbmEeppOhNuaj3LkxyXPYXc/cdHm/A1J4gg0XzMsSg/HW3+eZejEuri+0VkbV2VMNMh6ZlT1tZFGkVtvsYbyIW4CheWgwJMY55d0QHW9/m4CIIMqY7WoAEJYAZwFlXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=vE7b76Iv; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43bcc04d4fcso2827955e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:39:37 -0800 (PST)
+	s=arc-20240116; t=1741081085; c=relaxed/simple;
+	bh=LZDM2xAdf8eJxQzX+hEwCpxB5UmW0nbXtrqKHsDEjI4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PLimxkvVMCGbQZMn2k3o2D563EjAUZ6cXoWfiw05pLDa8nrxlh2ktFgFWOfU2DfiUa1h2V3t0Hg2p1O/VC5pS2z3ok6WG2Pms2YGfMi90/+mQ5MMj7EQJIK+anPqMH0qGOkKRWkAEgGjsqKhGXO753hHQ2w7jyhFd719gTq8HhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mv2yid4H; arc=none smtp.client-ip=209.85.216.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2f74e6c6cbcso1570583a91.2;
+        Tue, 04 Mar 2025 01:38:03 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741081176; x=1741685976; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=yzSd2WWwaJ30wmCeIbpT1A/lGBwbvt5bCwq5/4oCS6I=;
-        b=vE7b76IvIy0hog7qW6HDTGl/PAw6bW7Adl2xf6+9tIfZ0V50hZffFnsnv3IKp9F1mz
-         8UVjdEGN0AndDgYH6sDggkyf9ppbwh1pp+84q7VBgmQ7nKzOZp7kBlXeXwDgfMysCooL
-         D5TbwBfv1W4OhSczgB58nzWukuQvKbLF4AytutKvRrvLuf7jzTfG28MsS6oG9gOJ3HT4
-         xiM7R3oz7ybaIGUfrX5vZmRgWOlYFjvzssNOPlXCSFrKgcACWKxPH9rvXE2ULmhgEpbS
-         Fxuj5KlTtYLw7vWj1+Fot5QLKFSS7+k6SjSg6FtT8o9QET42BZMBxkYUKeSdFuO2ushN
-         HGVg==
+        d=gmail.com; s=20230601; t=1741081083; x=1741685883; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fw0u9DHNsaXRy0ckcD1EnqQyVRFqJOyZfyZRJh2W6bE=;
+        b=Mv2yid4HwoxYK2vC+6fcq4KMWlBai00eRgIqYrjOzmQZvdAVvDGC0A1viz/SpqTCIx
+         Zq78rNXS0nrzwkBYu61rJ9yaO8KC7BnVd83igWmR6tYxJgYGFr/cNLC66SHIGeWIEmUJ
+         Nc5IfRGZVUesEFH90L9/uOJ0gauIkJAG4XjJwrcw2LRYaKWngXr+Ul0oEL134vr+eqxP
+         /EN94OBHrZRLmgGZCFAALmSFBqoe6bXsgDgS++E5OfxOP2UWosTpF2O30nx+BdfZDApg
+         rDzXfWukPGk2gDxkVBzBJ5ldINeFyNTCKUOiC0Zt57meDA/Y79nSPSEhSsiEA4/sCc8J
+         Zh5A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741081176; x=1741685976;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=yzSd2WWwaJ30wmCeIbpT1A/lGBwbvt5bCwq5/4oCS6I=;
-        b=hqVKlsUH/9PEVcvZXoE91k1v1CsdAIT9b83tC803tAwo3CyO0xkVmviJbIzYDJMbwa
-         0OzKfeJe5JDgIJiZIko5UamTnZmcPXN7KdKLdk+LZGS7Me9SdX7kcmWJQ+8oVdIzBIO+
-         2OpfSPIW01i8cc8d8luGUq31jlOSNIsyBCFAeOPRli971xWKi5UHNcnjMgYSdkcmmwSV
-         G+QG+IX48V4y+rXN7+DfUrq0HLl8rCN+s1ckiF4lBXihJiX14N+zFatvhy+5nfIOAdnc
-         t3YuEO7bn1IQNCpfTgX2BUnMj7ECg8AcA2xiAz6LrliPyQwp8D9A9XIWCLAuTXDKdRyY
-         VB+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWKkaaZXTGz4SIrZ++AvXhOsqpVLVfgxX/UeBdo7PwWk4rYkdjsqQCkdhwD+dQDyxkGzc1sTtnTao8fSow=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9Hm3e7f87j0o6wqky9Te1oKBcdga4urcOhieev0f1lkH/+DS/
-	tfidITp+rlo7N3USencuIQo1BctJlVS9gMEkH39K9Tgn/OSxd+mHQ6J+vMwDH5s=
-X-Gm-Gg: ASbGncvfInl2Sx0N9lZdOv4zKy18Ub3n6MevULlwdj79DcdIXeBdJYvrsvevTyzgIdj
-	N7cf26wTO2/1s76KUeIl7Jr+3ThLoVua/LveptiVHLBOJZSEzoD22WOhl8uWPkR4nJOiTNNJp5b
-	W5A9UV/Y3QPN50WtnrDx2FX3TzHK9gV5GN9ZEgJzB5MqlPLOo08CWIykqgf9V45ulEkSqPbOHv0
-	X5cdOMQXQx9ouzEnUfO9t7ue1NyTIOALqwujcagj421c6Slq5QlWMqqQbBOLtxrSNEWIBVhabX0
-	tHUH80A5ST2+a84BkEQ4Vx2MUgUbBzhBi4TbVufEE4bep3bf6bHwlKFXpt3p08LLVoR56ROaMtu
-	NEpOZGQQLceg2wyW797EflUU+UTlcrYjVZQ==
-X-Google-Smtp-Source: AGHT+IHj42i+Jh0hoXFnYJNDz31oiilscLISu0w5fjYK90iskecg4D7mRgp2rynwPpr1wC+EJx98Hw==
-X-Received: by 2002:a5d:6d89:0:b0:390:f815:78ca with SMTP id ffacd0b85a97d-390f8157bf2mr8815914f8f.30.1741081176166;
-        Tue, 04 Mar 2025 01:39:36 -0800 (PST)
-Received: from [10.2.5.157] (amontpellier-556-1-148-206.w109-210.abo.wanadoo.fr. [109.210.4.206])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7ddesm17307844f8f.57.2025.03.04.01.39.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 01:39:35 -0800 (PST)
-From: Angelo Dureghello <adureghello@baylibre.com>
-Subject: [PATCH v2 0/2] iio: ad7380: add SPI offload support
-Date: Tue, 04 Mar 2025 10:37:49 +0100
-Message-Id: <20250304-wip-bl-spi-offload-ad7380-v2-0-0fef61f2650a@baylibre.com>
+        d=1e100.net; s=20230601; t=1741081083; x=1741685883;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=fw0u9DHNsaXRy0ckcD1EnqQyVRFqJOyZfyZRJh2W6bE=;
+        b=vnQUBUB5B3oYJLCqVfSY+AzbxrVwPcciPTNm+7YYJ4rUSo2inIUk1zXo5BNlJQOAM7
+         fJiAY8w/155m/FB5NkyxDbWJVCZTbn+WnGp/hcrbY6cL+jQafmK/65U2gBbBu7oRE/GP
+         kTYfJgNlCe4206UnBOCUGxwCazmtkGtLlCc6D52uWDBAlFVplQogp6s0xZDWMTYjN4Ee
+         uxKmmx4l25t/RPCDTsgq2M4AikCHS6UfjOhKMS6j+z7aWK64JFhxFfGvnmSdNRrSMAZw
+         c2zxwOksUZ99gXLVUDetuTYR1CB9W606iFLOBM1H2gY59bYClsQ67gv3kP5yq3C33Pm0
+         MKFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUuhItoBnlKbSa8nu2HqE7bAEa3t2bucx2Jev9hyEBAhoUaEAnLBNCrWduwXFJ6TaYyEwV7mzQ0F/cBnT7KCg8=@vger.kernel.org, AJvYcCWohkwoH7ONe9LnlAOWqmdVrXcY+kEaACfoo1wQVgAZy0Zr5rstmqf7RrjCV44fyX/mqfcb5hUcN4E=@vger.kernel.org, AJvYcCXKikmF2KOQRsHT90uicHhf7JEiUfjGRegmqWvgUPowzQmRq1WmQknrsl9kKWABdC5mmWlHbgm8UfBJ0ghj@vger.kernel.org
+X-Gm-Message-State: AOJu0YxDkDwifJYcojxUVPY5J3+CKbpTFJmrpknPyRodOC3eW8KJSJpt
+	7DdlN5wiCNjYOk6UCRTGfwqfVsvJEdflJLPIRnmwFSpLZx0QLwmqFO51Fkmexy9AQ90xlVDOIZk
+	C8WUWI4ozgKPdEb2BZbbA3ItEhOE=
+X-Gm-Gg: ASbGncuoXmiwUyp3R0L+YmODvgyjlzbU0F9dXdRWi71hqrY8+1NS+UlQBX3OMW1k4ul
+	9h2cuE2Zx6cPG+zr/ftjMJc2TkjTY3F7cZmdmeDaFCF8Pd8xWFA2Pr/rst4HW3gBye1MBq1GWxl
+	BF1EPMnw8MB/4YcSjSLCFkV3jsHQ==
+X-Google-Smtp-Source: AGHT+IH7Bt4TfFrukBmJaN9iZdzw8qUaCn0ZZrPGUaEOJ6zpYbPCR7KXCMN07QqTGVg/55EKEonT4z00pMvEFKFCBvI=
+X-Received: by 2002:a17:90b:2251:b0:2fb:f9de:9497 with SMTP id
+ 98e67ed59e1d1-2febabf4096mr10283180a91.5.1741081083151; Tue, 04 Mar 2025
+ 01:38:03 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAO3JxmcC/x2MQQqEMAwAvyI5Gyhxu4pfEQ/VJhoQW1pQofj3L
- Xsa5jBTIHNSzjA2BRJfmjWcVahtYN3duTGqrw5kyJrOfPDWiMuBOSoGkSM4j8733WAqvr0VciR
- 2hdrHxKLP/z3N7/sD6aD5zWsAAAA=
-X-Change-ID: 20250304-wip-bl-spi-offload-ad7380-ad675f2a2f5c
-To: Jonathan Cameron <jic23@kernel.org>, 
- Lars-Peter Clausen <lars@metafoo.de>, 
- Michael Hennerich <Michael.Hennerich@analog.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- David Lechner <dlechner@baylibre.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, Angelo Dureghello <adureghello@baylibre.com>
-X-Mailer: b4 0.14.2
+References: <cover.1740995194.git.viresh.kumar@linaro.org> <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org>
+ <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com> <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+In-Reply-To: <20250304085351.inrvjgixvxla4yn3@vireshk-i7>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Tue, 4 Mar 2025 10:37:50 +0100
+X-Gm-Features: AQ5f1JophVTgEU33y5Gpj9LnEQeCoGu_PJHR12L4h3Bfq4OIOIBgLsVVTzFMGiA
+Message-ID: <CANiq72=sU1sHvamC5REFPEC1aOVdZw9EKdxOgkUYESTR2yh3iQ@mail.gmail.com>
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+To: Viresh Kumar <viresh.kumar@linaro.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add SPI offload support for the ad7380 ADC. 
+On Tue, Mar 4, 2025 at 9:53=E2=80=AFAM Viresh Kumar <viresh.kumar@linaro.or=
+g> wrote:
+>
+> I have tried some improvements based on your (and Alice's comments), plea=
+se see
+> if it looks any better now.
 
-Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
----
-Changes for v2:
-- fix return value on offload probe,
-- add documentation patch 2/2.
+That looks much, much better, thanks!
 
----
-Angelo Dureghello (2):
-      iio: ad7380: add support for SPI offload
-      docs: iio: ad7380: add SPI offload support
+> +/// Frequency unit.
+> +#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+> +pub struct Hertz(c_ulong);
 
- Documentation/iio/ad7380.rst |  54 ++++-
- drivers/iio/adc/Kconfig      |   2 +
- drivers/iio/adc/ad7380.c     | 509 ++++++++++++++++++++++++++++++++++++++++---
- 3 files changed, 518 insertions(+), 47 deletions(-)
----
-base-commit: b7508a5a672275694c2a1b09a5f491ca2a56bbcf
-change-id: 20250304-wip-bl-spi-offload-ad7380-ad675f2a2f5c
+Please add a quick example for this one, e.g. constructing it and
+comparing the value with an `assert_eq!` and another line comparing
+two different `Hertz` objects for instance. After all, this one we can
+even run it easily!
 
-Best regards,
--- 
-Angelo Dureghello <adureghello@baylibre.com>
+> +/// This structure represents the Rust abstraction for a C [`struct clk`=
+].
 
+Nit: the usual style is e.g.:
+
+    /// An instance of a PHY device.
+    ///
+    /// Wraps the kernel's [`struct phy_device`].
+
+i.e. the first line does not need to say "This structure" ... "Rust
+abstraction" etc.
+
+> +/// Instances of this type are reference-counted. Calling `get` ensures =
+that the allocation remains
+
+Please use intra-doc links (also for `OptionalClk` etc.).
+
+> +/// ## Example
+
+Nit: plural (even if there is a single example).
+
+> +///     clk.disable_unprepare();
+
+Looking at the example, a question that one may have is: should we
+have something like a scope guard or a closure-passing API for this,
+or does it not make sense in general?
+
+> +    /// Enable the clock.
+> +    #[inline]
+> +    pub fn enable(&self) -> Result {
+
+Should the users of these methods consult the C API side for the
+comments/docs? e.g. should they read
+https://docs.kernel.org/driver-api/clk.html#locking?
+
+If so, please at least provide a link to the C API or the relevant
+docs. e.g. https://docs.kernel.org/core-api/kernel-api.html#c.clk_enable.
+Otherwise, if there is something there that should be mentioned here
+directly, please do so.
+
+In other words, in general, the goal is that you can find everything
+you need in the Rust docs, even if those docs may sometimes rely on a
+link there to the C side or a Doc/ document to avoid duplication. But
+the information or the way to find that information should be there,
+if that makes sense.
+
+> +        // SAFETY: It is safe to call clk APIs of the C code for a clock=
+ pointer earlier returned
+> +        // by `clk_get()`.
+
+We should probably say why we know that, i.e. due to the invariant,
+unless I am missing something.
+
+By the way, in the constructor, you should add/use an `// INVARIANT:`
+comment (please grep to see how others do it).
+
+> +///     let expected_rate =3D Hertz::new(1_000_000_000);
+
+Would it be useful for users to have constructors for a few SI
+prefixes, e.g. `Hertz::from_giga`? I see some big constants used for
+e.g. `set_rate` in the C side, so I guess it could.
+
+On top of that, would any other kind of operation make sense? For
+instance, `.inverse()` to/from time or things like that -- we don't
+need to do any of this now, of course, but it may be worth taking a
+minute to investigate how we could improve the type now that we have
+it.
+
+Thanks!
+
+Cheers,
+Miguel
 
