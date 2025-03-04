@@ -1,117 +1,123 @@
-Return-Path: <linux-kernel+bounces-543085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC3CCA4D149
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:56:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA7AFA4D147
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:56:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23B011742A4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:56:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 417A03AD3E3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:56:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7069413C918;
-	Tue,  4 Mar 2025 01:56:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6106E13B5A0;
+	Tue,  4 Mar 2025 01:56:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZQ91vAb"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uNJEIl1/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F43013AA27
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCB662AE8D;
+	Tue,  4 Mar 2025 01:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741053409; cv=none; b=igNmaJZ0d0PeqMjkmUUD0lZneRy1QmXeUwYLNp3djPztY0dP7t7XSEktf/W3z8tS6UIIwb/vK13qiinEkqeTFrszVNPR4Gv7TcxkTNXBaLzJE5RneOHx+AdkowdB0D1oGDhYijJYUXCPQqvE+7O7xYi4vYNPAfuxSuul+iXFe58=
+	t=1741053401; cv=none; b=qhdFn0s0OeaWBFTWhdx/i8KDgpDTlkG9h6IeYczZ8rk7QYxpldulhtGWJXskne7Rnij/tIiwv6e3llzGcCUzjkmQZ7UPv61/9hldSLqC11MhX13zzjQuWydS1FzEa5z1lCm6+HLQgPcIl8yPWGM8Yc1Lr/UJTgftjzGO31ZnEf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741053409; c=relaxed/simple;
-	bh=XogSGIFusThCkYAi7RyBfqCqvYbUSJkF3dde+0TPxVE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZBAah21MFitsyoRxJWUOto0zhtQ6RzUR2mejDTtdtOOrIugMTB3buFzLWqG2x/rTLTM8rHfUnatIiqQVN3W9znhNWjOk5/YGwnc+YslJRSbfPXLEfOp0dx0XWUQ3IFiQH8DJJGo/53VtCdlYRM857JHXERGQatoZ7VOpFO+Zb8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZQ91vAb; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-abf48293ad0so472009966b.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 17:56:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741053406; x=1741658206; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XogSGIFusThCkYAi7RyBfqCqvYbUSJkF3dde+0TPxVE=;
-        b=DZQ91vAbMeoLDSUBn5OGr22gnV/8hGIOOuBOh2oieRd/yDYRD6KKqJAKrY+/qsNenJ
-         Lw9s2JniSxhy8GtfL3bchOCVeKQd5n4J4ar1OE99GbuPCXj7mUJ3YigUFecp7PWjMImv
-         CuBENIRKawI7kGKJzJKlzPpPCoM/lvJt1WJ0ZCqutFOGfEt/5NlLDh3gTvCVmlZnInAf
-         PX2M51zISE4ktITz29vxDtfA2+7nUPl0rvB1DclJ+N3l+9iuFDGiZ00HOLC1gy+6MyQL
-         xtJm/iAFo2Vy3mIbd5Mj8T3o3ZFQI7r/QbPGW1TSOvMcBSRhQis6g6xs4u3g4pg9LGLC
-         LIBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741053406; x=1741658206;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XogSGIFusThCkYAi7RyBfqCqvYbUSJkF3dde+0TPxVE=;
-        b=rSsDoxmAhinrfUDyn091LLfz58BYHfFkosO1lFco1hdMh4W+V8yawNtwuKPaX15J/u
-         HEwqUe650fBovQpFVGDrYx/HWZDa+lqX6u+88ntYPNLLk31bIiSS5sjLBPIGmcw2+4Yc
-         W3iT1w8xi9o8l3qDU72CAAaM8XPAkxTID444aJ052R2ZE5i5VXJTgH6KvYtCYAKJszGp
-         m6piIYpM1muW/dRSaYDtoBBx4xkKVhrX71d7t0r4qbJ75L5o9B8kLF1L1EoIByRsY40x
-         noQnEFS/5ud6g7KYoR8ie/T/jIV+eLX//6YkYhxPFhVOqMUHYJjJySOoUin6kRi+IXV9
-         zKsw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCvMQPjydRhAwu0ILIyZYgYh6LThR7R/a34gqVRd/6EPZdyg0uzlf9HpRfmY53ptNkewhY9E5zZMAsjwc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQVrmNcAcS6BTxUFTTpM6IP1fa9JsDibihmVhF0iY0I1z/O9fn
-	rzarIK5Z5HPcqNnRWiXrSouI7dG13aH5jAXAahwMiYrKkl41s3WG7tzs3EZXnKjBAwkupAjXfP8
-	Q9P9PUW0PJLJFwu39vdN4A8G0D3o=
-X-Gm-Gg: ASbGncv9158ZI3WsJm6h54X40gvojhEr2AMqF6Dwop9/un3xe8xaBMZ2OJoXObmJr+i
-	MbAKthxKqoFBkMK/z0ROlfZD3ey/+5iQq+sFN3Sv/mYtgK+qXvEPaqlInsrluSOJ/Qn+nZhxT3Y
-	NHMCBc8Y4fw22KoliABwBGr7owlOQ=
-X-Google-Smtp-Source: AGHT+IGFGlf/Tw+p7cxh9KZ3JgKrZRcBulXTyPodYrWIRFPzM9fT/G8aIuBv0O5DanK4nJA2rRBhxy0PhYdG3ACdKqU=
-X-Received: by 2002:a17:907:7288:b0:abf:5922:b7a8 with SMTP id
- a640c23a62f3a-abf5922dccamr1498289666b.41.1741053406293; Mon, 03 Mar 2025
- 17:56:46 -0800 (PST)
+	s=arc-20240116; t=1741053401; c=relaxed/simple;
+	bh=FUVChTxusLCMBLUVlti1YUL8LW7/tvUKTXZZlRvP6rI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kUjfbIvpoCRn2rFVI7+ceLshRAZLFCJ7mdQdieeHY9lK8Pvug6WDP88sufTJKuObJum7Tt5ZRquHpjOLVpL9+0LAxYQLW00b5g4S006AocNqTPICGnCv/iJETGHDRIAYK1Q+S8V60zk6hA0QSQzCH8ch6g4ayb9pwyg2PMINRdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uNJEIl1/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BDA13C4CEE4;
+	Tue,  4 Mar 2025 01:56:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741053401;
+	bh=FUVChTxusLCMBLUVlti1YUL8LW7/tvUKTXZZlRvP6rI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uNJEIl1/t95dU9GT2B34a8VuVRjvsPNcprE9PkVvHlHbKTTyXm5zK9o6p0m85fEgW
+	 n7mEtMyT6uP5e/QBv6B+2lzevvUwBWjfSVcsFiyFxnT8nFqpT7nLEAv0Ns65jzlGws
+	 MyPyha38P/a4MDUGjLtM2ckh809jCe1Ens/9DTIIWwEqCI4V5SfZGemgEFbijV7qpW
+	 XvgiN7sn7H4LYbGeKfqhdTbBOhLL3xXGl4QZ9IyNYVhnEakHqrBDE95LS6Ni29DYLi
+	 5xrOtEesB3mJ58Rjjalw24MyHMsXPGSdVGqne40sgY4qaEDOEgvBx4c6X5XGClGeAR
+	 +hvX72HSm51pw==
+Date: Tue, 4 Mar 2025 01:56:35 +0000
+From: Will Deacon <will@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, snehalreddy@google.com,
+	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com,
+	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2 3/4] KVM: arm64: Map the hypervisor FF-A buffers on
+ ffa init
+Message-ID: <20250304015633.GA30882@willie-the-truck>
+References: <20250227181750.3606372-1-sebastianene@google.com>
+ <20250227181750.3606372-4-sebastianene@google.com>
+ <20250303234259.GA30749@willie-the-truck>
+ <Z8ZPBZF7J-qKdb_i@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303105241.17251-1-xuewen.yan@unisoc.com> <20250303120021.GA11590@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250303120021.GA11590@noisy.programming.kicks-ass.net>
-From: Xuewen Yan <xuewen.yan94@gmail.com>
-Date: Tue, 4 Mar 2025 09:56:34 +0800
-X-Gm-Features: AQ5f1JpJr_Dcm08RrotlVGYHmZoAIi8XkvykEcoVza1rNg6D8yeSUERcqJdPAAU
-Message-ID: <CAB8ipk-pmSGoaxtMGhcvn7MmSEibvQDbCDgjp9iEDTzG5=_L7g@mail.gmail.com>
-Subject: Re: [RFC PATCH V2 0/3] sched/fair: Fix nr-running vs delayed-dequeue
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Xuewen Yan <xuewen.yan@unisoc.com>, vincent.guittot@linaro.org, mingo@redhat.com, 
-	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
-	linux-kernel@vger.kernel.org, ke.wang@unisoc.com, di.shen@unisoc.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8ZPBZF7J-qKdb_i@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Hi Peter
+On Tue, Mar 04, 2025 at 12:53:25AM +0000, Sebastian Ene wrote:
+> On Mon, Mar 03, 2025 at 11:43:03PM +0000, Will Deacon wrote:
+> > On Thu, Feb 27, 2025 at 06:17:48PM +0000, Sebastian Ene wrote:
+> > > Map the hypervisor's buffers irrespective to the host and return
+> > > a linux error code from the FF-A error code on failure. Remove
+> > > the unmap ff-a buffers calls from the hypervisor as it will
+> > > never be called.
+> > > Prevent the host from using FF-A directly with Trustzone
+> > > if the hypervisor could not map its own buffers.
+> > > 
+> > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > > ---
+> > >  arch/arm64/kvm/hyp/nvhe/ffa.c | 46 +++++++++++++----------------------
+> > >  1 file changed, 17 insertions(+), 29 deletions(-)
+> > 
+> > [...]
+> > 
+> > > @@ -861,6 +842,7 @@ int hyp_ffa_init(void *pages)
+> > >  {
+> > >  	struct arm_smccc_res res;
+> > >  	void *tx, *rx;
+> > > +	int ret;
+> > >  
+> > >  	if (kvm_host_psci_config.smccc_version < ARM_SMCCC_VERSION_1_2)
+> > >  		return 0;
+> > > @@ -911,5 +893,11 @@ int hyp_ffa_init(void *pages)
+> > >  		.lock	= __HYP_SPIN_LOCK_UNLOCKED,
+> > >  	};
+> > >  
+> > > +	/* Map our hypervisor buffers into the SPMD */
+> > > +	ret = ffa_map_hyp_buffers();
+> > > +	if (ret)
+> > > +		return ret;
+> > 
+> > Doesn't calling RXTX_MAP here undo the fix from c9c012625e12 ("KVM:
+> > arm64: Trap FFA_VERSION host call in pKVM") where we want to allow for
+> > the host to negotiate the version lazily?
+> 
+> We still have the same behaviour where we don't allow memory
+> sharing to happen until the version is negotiated but this
+> separates the hypervisor buffer mapping part from the host.
 
-On Mon, Mar 3, 2025 at 8:00=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
-> On Mon, Mar 03, 2025 at 06:52:38PM +0800, Xuewen Yan wrote:
-> > Delayed dequeued feature keeps a sleeping sched_entitiy enqueued until =
-its
-> > lag has elapsed. As a result, it stays also visible in rq->nr_running.
-> > However, sometimes when using nr-running, we should not consider
-> > sched-delayed tasks.
-> > This serie fixes those by adding a helper function which return the
-> > number of sched-delayed tasks. And when we should get the real runnable
-> > tasks, we sub the nr-delayed tasks.
-> >
->
-> Is there an actual performance improvement? Because when a runqueue
-> looses competition, delayed tasks very quickly dissipate.
+Sadly, the spec doesn't restrict this to the memory sharing calls:
 
-At the moment, I don't have very detailed test data. I've been
-studying delay-dequeue carefully recently, and these are the issues I
-feel might need modification as I go through the code.
+  | [...] negotiation of the version must happen before an invocation of
+  | any other FF-A ABI
 
-Thanks!
+We're also probing the minimum rxtx size in hyp_ffa_post_init() so doing
+this here is doubly wrong.
 
-BR
+So I think we should probably just drop this patch.
+
+Will
 
