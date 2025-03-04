@@ -1,105 +1,98 @@
-Return-Path: <linux-kernel+bounces-544421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59C57A4E0F8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:33:11 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F381A4E0FB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:33:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0C721733E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:29:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5FB517BC05
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F7220D50E;
-	Tue,  4 Mar 2025 14:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4627120E6E2;
+	Tue,  4 Mar 2025 14:28:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfy8P4FI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DkIFqbWy"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45A3A20B1E8;
-	Tue,  4 Mar 2025 14:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBFC2063F8;
+	Tue,  4 Mar 2025 14:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098474; cv=none; b=DM6LoKJ3WByz2g+qver5QdBjgUoFLOj8Q/wUJg1LWioO2uE4VECFhPKT/IYdhhxqshiC94AAICaYQGljoeyPIXEorBSz8T8iWTMt8UykVhJmqLVD31Ira7qHHP1nJWqeunviqiHGy3wDAm5+l/nilKyr1Gx0LcRFsnXlpJ+xHxE=
+	t=1741098489; cv=none; b=lUO59l53MNLNKR4CQTSkPPelns/CbApuA0f0PoIt1c1QWYJg6ckZKlB8BnIcWq6pE1MZxqVjQkPlmQTCeE/KEAXR9StPZgqEv55250h11B2bFgYtxDoxtsv60RA0PUnmFTTNtyI484sRk4uOgcRAgn65YcDkwE/aXA3jCvD3HMw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098474; c=relaxed/simple;
-	bh=zwBkiv0jR98E/16OURLG7ddEECe4p2gZPQLDDNbkETY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Bj3xHQG7P/hWiywKxiS6nbvf3H++O4UBcf6o5tBl14dI405ditGo2bCON6Vud31bVdIShgMi9sXd+p8nGMfAsfWF796STU7Mys3swFhkkyJK3IX2cTeAHKhi+PMwlM5XjvqfPrqT3A/3kBoClZQlBUDbT14D1xu042bzu12paww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfy8P4FI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF688C4CEE5;
-	Tue,  4 Mar 2025 14:27:50 +0000 (UTC)
+	s=arc-20240116; t=1741098489; c=relaxed/simple;
+	bh=ZP9crCiLqCC27DzizkJ4ARDSaafzhltXkaVGhTSqjQo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gOsUWluXiJ5I95uGHM3LsuvtMKKFybKWGMOmptfPrzWPGD2GUU/apzG50eM8zZFy49VBkfsW26vEzRSthZSD9g3YbPqALRPNpVJRqybAYRYk80Gn5MHrC8q7B08fqYtiYqpZ5nZbEl+XY/DN26wLZ2mo+LZOiG+RBNHjqv+8Ias=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DkIFqbWy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5963FC4CEE5;
+	Tue,  4 Mar 2025 14:28:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741098473;
-	bh=zwBkiv0jR98E/16OURLG7ddEECe4p2gZPQLDDNbkETY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cfy8P4FIB6sGg2BeSAzl/qCC9hAIio4DBHuGNnd823DCSYSnCPV+d96oJVXONNaWn
-	 MwuvSOC9fSqxzhieTayC0Smm4BMfDp7Xu+3YqIbnJeAdabFK2eVkP+podTPl0ktZ+B
-	 TseGs1rv78goEpg95cwc+EADppnb5uJqNtS6vioy4y3e6CXpS2eIUHmHiyrmkNl/GW
-	 R4qI0FNuFUS4qoK3lbq3CU5KcXkuHIgbaS0a0p9EzkEZIOZ+vLwWq/cKXmedIzxdaF
-	 6r+9MmTKBoZRUMiNLZB7FCgmiA0c2n8KpHd2iQbnmukZjmKUqdsg6n6hEiWzm25bRm
-	 uBvHQa2ar2Pqw==
-Date: Tue, 4 Mar 2025 14:27:42 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev,
- linux-fbdev@vger.kernel.org, linux-iio@vger.kernel.org, Michael Hennerich
- <michael.hennerich@analog.com>
-Subject: Re: [PATCH] MAINTAINERS: remove adi,ad7606.yaml from SEPS525
-Message-ID: <20250304142742.7ea52a67@jic23-huawei>
-In-Reply-To: <20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-v1-1-a4e4f1b824ab@baylibre.com>
-References: <20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-v1-1-a4e4f1b824ab@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1741098489;
+	bh=ZP9crCiLqCC27DzizkJ4ARDSaafzhltXkaVGhTSqjQo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=DkIFqbWyusoB3FRblukNCbV0zy+rX7iyW6CGrDHjAiXe26bjUf9x3qJEp65/jMEr2
+	 lRljmarzXCrwNqcu+7+QIXQ9Gb/7LaB0Bi0PzW9ouEW7JPcLPZHwYU1XoY+rlc9BBD
+	 ImJemoPKOPp0yacfnA0KGQ5VQEmzGzl2b+s9VlLyhbq5sQLjLUd9SWkIcmFaLt6ERq
+	 MCekeJKnJK3TCA8z/pbK89ykMrUdjyVx2xtFi5d+gDTXSy1cAVCuiI4pT6V2WWco4M
+	 QRG/z/YOSYUtmc/7WE1acWpfEPX6KRU2lLRQjvQ41OTgkDa4tPagvxR340Yb+Ao5Xh
+	 LCitY7hmsr+uQ==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-pm@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] pmdomain: rockchip: add regulator dependency
+Date: Tue,  4 Mar 2025 15:27:59 +0100
+Message-Id: <20250304142803.689201-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Mon, 03 Mar 2025 14:39:57 +0000
-David Lechner <dlechner@baylibre.com> wrote:
+From: Arnd Bergmann <arnd@arndb.de>
 
-> Remove Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml from
-> STAGING - SEPS525 LCD CONTROLLER DRIVERS. This was likley a copy/paste
-> mistake. There is no bindings file for SEPS525 since it is only in
-> staging.
-> 
-> The removed file matches Documentation/devicetree/bindings/iio/*/adi,*
-> under ANALOG DEVICES INC IIO DRIVERS already so wasn't just misplaced.
-> 
-> Signed-off-by: David Lechner <dlechner@baylibre.com>
-I'll apply it.
+When CONFIG_REGULATOR is disabled, this pmdomain driver fails to build:
 
-Jonathan
+drivers/pmdomain/rockchip/pm-domains.c:653:30: error: implicit declaration of function 'devm_of_regulator_get'; did you mean 'devm_regulator_get'? [-Wimplicit-function-declaration]
+  653 |                 pd->supply = devm_of_regulator_get(pmu->dev, pd->node, "domain");
+      |                              ^~~~~~~~~~~~~~~~~~~~~
+      |                              devm_regulator_get
+drivers/pmdomain/rockchip/pm-domains.c:653:28: error: assignment to 'struct regulator *' from 'int' makes pointer from integer without a cast [-Wint-conversion]
+  653 |                 pd->supply = devm_of_regulator_get(pmu->dev, pd->node, "domain");
+      |                            ^
 
-> ---
-> This falls under FBTFT which is currently orphaned, so someone else will
-> have to volunteer to pick this up.
-> ---
->  MAINTAINERS | 1 -
->  1 file changed, 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8e0736dc2ee0e33544fa373a4978b7dae18c040c..215dbaeedced8473b5b339329b3596a2fbfd13b1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22512,7 +22512,6 @@ STAGING - SEPS525 LCD CONTROLLER DRIVERS
->  M:	Michael Hennerich <michael.hennerich@analog.com>
->  L:	linux-fbdev@vger.kernel.org
->  S:	Supported
-> -F:	Documentation/devicetree/bindings/iio/adc/adi,ad7606.yaml
->  F:	drivers/staging/fbtft/fb_seps525.c
->  
->  STAGING - SILICON MOTION SM750 FRAME BUFFER DRIVER
-> 
-> ---
-> base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
-> change-id: 20250303-maintainers-remove-adi-ad7606-yaml-from-seps525-lcd-controller-b77d4c4bf54a
-> 
-> Best regards,
+Add a Kconfig dependency.
+
+Fixes: db6df2e3fc16 ("pmdomain: rockchip: add regulator support")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/pmdomain/rockchip/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/pmdomain/rockchip/Kconfig b/drivers/pmdomain/rockchip/Kconfig
+index 7e4f9b628f0b..218d43186e5b 100644
+--- a/drivers/pmdomain/rockchip/Kconfig
++++ b/drivers/pmdomain/rockchip/Kconfig
+@@ -5,6 +5,7 @@ config ROCKCHIP_PM_DOMAINS
+ 	bool "Rockchip generic power domain"
+ 	depends on PM
+ 	depends on HAVE_ARM_SMCCC_DISCOVERY
++	depends on REGULATOR
+ 	select PM_GENERIC_DOMAINS
+ 	help
+ 	  Say y here to enable power domain support.
+-- 
+2.39.5
 
 
