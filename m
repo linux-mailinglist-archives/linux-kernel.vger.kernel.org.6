@@ -1,164 +1,116 @@
-Return-Path: <linux-kernel+bounces-542962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542963-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C2EA4CFE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:25:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D63AEA4CFEC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:29:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0208171BCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:25:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE19A171D38
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:29:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4F2DDDC;
-	Tue,  4 Mar 2025 00:25:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1036B27468;
+	Tue,  4 Mar 2025 00:29:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqwVkBOu"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R82tMGF6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3011A260
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:25:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581D933C9;
+	Tue,  4 Mar 2025 00:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741047923; cv=none; b=HtEfND5/Vps3gfUexE6EAUztBW+Y9SIrhir4THM5OPE7gPw8qGLQ5PA/MFwUYc+moCMo1w6oPklIDMIG7Uxaood7/9XiFtEbqxi7ydYWqt5TMEk0nlvBFQi+bmQmMmca8R8sA/WqYnhGnACiMa8yfGtGlnW/r2peIijA5T0Dc8Y=
+	t=1741048144; cv=none; b=ryJrrZj14xfZ5F5/EEy1DGPKeI/8jQgvnd2/j2FZvHN01Xc/05zgTKdKf0trS9Qxzgj6exmfqjS0e5VTnl5R67vxkiCrB1iQUwuVy2Z6dDeMFcFiGamzRIWbS09DH7DKhfJXJGSx+jiwocNN+V6IklmMk3gdsvs99ZJ3qu1hjwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741047923; c=relaxed/simple;
-	bh=+Zrm1MV11CyznMqTplgKdlEe784avoc0c272vJzfiHU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C3N9YdU3MbFpNeNiM3i9m2OBMqjicVsxkfWIKLoZgSFHoJY5+/NbRufxwHK3IvHyb/0Z3zeW0bH5W3IE/I7e6coneHnO0FCS/QhHT+JOYp848AwKRocrFMEF37RRbgL8Tq0Vtz9w4VbCDsQHRzOugVf61nz5Vf2XI7xI6Xtdhek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqwVkBOu; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-548409cd2a8so5257727e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 16:25:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741047918; x=1741652718; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gxI/GG4PNTB3m1Ugu6g6VlWiKM3FjEsAmkg2oUQx6FA=;
-        b=XqwVkBOusbjuBw2xStxt8S0pe7AIQjPKGqnvT78JUOfK0JmJFOzDFNu0Om1wyQhL63
-         JPqAO41iG6NL13airtGBsnh6Gh9u4eW2oz7nSq0BvhugL1/ShoJpfo39GAHjqkEkk2Uk
-         FPayPCGFhUrAXM1eixi525S1b4HFtD/aqnMni4D+A9hXGNZO7XzePaSEkeOgyq/uUIZ8
-         oYSd+A/3OAZNfrePXBT53wz/MMq05KGJORNixNfDxusyUfigpIkjCP2X1s4FHPMa6mR1
-         5EiSGO59kdt2NPWoG02vbexZTb7SB7Jj+HhMrP1Q0q+AmGMga1pZ9WhqsESZwRYvPFDl
-         BK8w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741047918; x=1741652718;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gxI/GG4PNTB3m1Ugu6g6VlWiKM3FjEsAmkg2oUQx6FA=;
-        b=lzfSgVpNMUc73ZyzJxzi1knR+xS+cBos51sqz/ZBP3OcGze/qVnD+V49uVf4mINlex
-         quGO6z1aCcBbjXN6riO2dV/NFT2y7iOc8DRXQBxmEqOx6ILT7S0Oe+9InqZ5LR8vAz4r
-         FXI5xcVaMl6gHXK242khG9WelblODUveN1XWbh/2rTjpLbhfEQld93BQIb0A69cU81Sd
-         f6g7ogcDu5cb6VI9y891BbbpgriEETso3hnxaEMykne3lnoo0wnBs5ReG1EP0sXrAHkb
-         C94h3LPXBFdYsKTHI26aABEdTRQWjDmidCIsD2B7u4QVe9NSEp464rP6lFYLyrLCSI38
-         fKzQ==
-X-Gm-Message-State: AOJu0YyoKMUNCxYE6i/RPhgNw/Eu1QlhYs14nyueceM6WH+VepZ/4GmH
-	AlGBEagCEcDaHAoBVE6D4UKXnXWqyGtxZWqshMRsrBTlPiMdFMa9QdTaOSTIZh5VS6+TKW63ddF
-	WzTa4zaWsVFsd7NTAdV+tCf01qg==
-X-Gm-Gg: ASbGnctw7hmCAOiKdDtyV16nTx+56CH3DJ4LCpGbyWFC0+6liGO+FA9v/MUXpzfVIxr
-	iwX+INADLWr4+KGVJrturTDzqe/W71qpIXoPM+bJV1TkMPXDmZt+fdJF1ZCVNAobzeHjILchfyD
-	z9JWlEttSSz038njlyweGAvJ6mLMPtQqnprHSQwP96
-X-Google-Smtp-Source: AGHT+IH7jePv/cleojM+C8gSVOOrHi6BQQdnULIZr3BC9WdguRpPQOgH9wX4FKVe4fltWVuLdv9DeiOmEDyv8zz8RS0=
-X-Received: by 2002:a05:6512:3d0e:b0:545:16f0:6ca2 with SMTP id
- 2adb3069b0e04-5494c34ea28mr5030547e87.42.1741047918127; Mon, 03 Mar 2025
- 16:25:18 -0800 (PST)
+	s=arc-20240116; t=1741048144; c=relaxed/simple;
+	bh=Ly2aEH0hd4Ze3/zdCTZcBlMsu86z7XE9ksQtnmTlUrk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nu7iZUMiTboc5rBGB8aDrlui5fsizk1F2041EPLelZ7HYn0BWESR5Jv8Kk8+OexJ2hBYlYMSigar9t6IfPlbesKD5Wa+DiNlN0rMQKpjiYeTZhd9BIxRCR0+EmW1mvo+bGUkm7ZmqPrjkxbi61JolRaTOdAWqzAKUJi9NKnecgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R82tMGF6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2500C4CEE4;
+	Tue,  4 Mar 2025 00:29:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741048143;
+	bh=Ly2aEH0hd4Ze3/zdCTZcBlMsu86z7XE9ksQtnmTlUrk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=R82tMGF6RdlMBIkheAdwBinAtHyfqN2atNoIWXVRziWr5F0ZEs07qV4OH9O+ckKQX
+	 3by4aApVE40CcEzEWZHA33Xlg+kkNrL5+Y/vxYYYcs+n+pST9BQ53jczTLnzCigAQQ
+	 cwwt12zyk0kvWvjt19YY22FFMr972kKK/5zfDkxV+/BS+r8aZXE8VT/ng1Bt6/lVeU
+	 S4/7ei6UfeoCL6ZCtvbI7wg+EreIxbRjemcYBFZEVdf8zm6a5SuaJ/NVDf8ojf9Feg
+	 jB6pa68SLRBmKdkElB6EzO157+b65uQkt5Ui/Wr69x7IZmjpXgUD+MrT3FWF1283AD
+	 FcnaNWB2ZrZ3w==
+Date: Mon, 3 Mar 2025 16:29:01 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, Donald
+ Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>,
+ Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Eugenio =?UTF-8?B?UMOpcmV6?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, Stefano
+ Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, Jamal Hadi Salim
+ <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Subject: Re: [PATCH net-next v6 7/8] net: check for driver support in netmem
+ TX
+Message-ID: <20250303162901.7fa57cd0@kernel.org>
+In-Reply-To: <CAHS8izO-N4maVtjhgH7CFv5D-QEtjQaYKSrHUrth=aJje4NZgg@mail.gmail.com>
+References: <20250227041209.2031104-1-almasrymina@google.com>
+	<20250227041209.2031104-8-almasrymina@google.com>
+	<20250228164301.07af6753@kernel.org>
+	<CAHS8izO-N4maVtjhgH7CFv5D-QEtjQaYKSrHUrth=aJje4NZgg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303183111.2245129-1-brgerst@gmail.com> <9FC474C9-284D-4EB5-BF8A-7B938247E577@zytor.com>
-In-Reply-To: <9FC474C9-284D-4EB5-BF8A-7B938247E577@zytor.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Mon, 3 Mar 2025 19:25:06 -0500
-X-Gm-Features: AQ5f1JrRarMEBfsqBG8IB4cdTewkZmaQsRRRpufSv16xTyd0gz9Lwds8lB4DL9k
-Message-ID: <CAMzpN2jjcBtr73iuw8QaJ6MQxnnSRzr2SqDDKhfyDVnRETzLPg@mail.gmail.com>
-Subject: Re: [PATCH] x86/asm: Merge KSTK_ESP() implementations
-To: "H. Peter Anvin" <hpa@zytor.com>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 3, 2025 at 7:01=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrote=
-:
->
-> On March 3, 2025 10:31:11 AM PST, Brian Gerst <brgerst@gmail.com> wrote:
-> >Commit 263042e4630a ("Save user RSP in pt_regs->sp on SYSCALL64
-> >fastpath") simplified the 64-bit implementation of KSTK_ESP() which is
-> >now identical to 32-bit.  Merge them into a common definition.
+On Fri, 28 Feb 2025 17:53:24 -0800 Mina Almasry wrote:
+> On Fri, Feb 28, 2025 at 4:43=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> =
+wrote:
+> > On Thu, 27 Feb 2025 04:12:08 +0000 Mina Almasry wrote: =20
+> > > +     if (!skb_frags_readable(skb) && !dev->netmem_tx) =20
 > >
-> >No functional change.
-> >
-> >Signed-off-by: Brian Gerst <brgerst@gmail.com>
-> >---
-> > arch/x86/include/asm/processor.h | 5 +----
-> > arch/x86/kernel/process_64.c     | 5 -----
-> > 2 files changed, 1 insertion(+), 9 deletions(-)
-> >
-> >diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/pro=
-cessor.h
-> >index a969bea1ed07..55f0e48413b0 100644
-> >--- a/arch/x86/include/asm/processor.h
-> >+++ b/arch/x86/include/asm/processor.h
-> >@@ -652,8 +652,6 @@ static __always_inline void prefetchw(const void *x)
-> >       .sysenter_cs            =3D __KERNEL_CS,                         =
-   \
-> > }
-> >
-> >-#define KSTK_ESP(task)                (task_pt_regs(task)->sp)
-> >-
-> > #else
-> > extern unsigned long __top_init_kernel_stack[];
-> >
-> >@@ -661,8 +659,6 @@ extern unsigned long __top_init_kernel_stack[];
-> >       .sp     =3D (unsigned long)&__top_init_kernel_stack,             =
- \
-> > }
-> >
-> >-extern unsigned long KSTK_ESP(struct task_struct *task);
-> >-
-> > #endif /* CONFIG_X86_64 */
-> >
-> > extern void start_thread(struct pt_regs *regs, unsigned long new_ip,
-> >@@ -676,6 +672,7 @@ extern void start_thread(struct pt_regs *regs, unsig=
-ned long new_ip,
-> > #define TASK_UNMAPPED_BASE            __TASK_UNMAPPED_BASE(TASK_SIZE_LO=
-W)
-> >
-> > #define KSTK_EIP(task)                (task_pt_regs(task)->ip)
-> >+#define KSTK_ESP(task)                (task_pt_regs(task)->sp)
-> >
-> > /* Get/set a process' ability to use the timestamp counter instruction =
-*/
-> > #define GET_TSC_CTL(adr)      get_tsc_mode((adr))
-> >diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
-> >index 4ca73ddfb30b..f983d2a57ac3 100644
-> >--- a/arch/x86/kernel/process_64.c
-> >+++ b/arch/x86/kernel/process_64.c
-> >@@ -979,8 +979,3 @@ long do_arch_prctl_64(struct task_struct *task, int =
-option, unsigned long arg2)
-> >
-> >       return ret;
-> > }
-> >-
-> >-unsigned long KSTK_ESP(struct task_struct *task)
-> >-{
-> >-      return task_pt_regs(task)->sp;
-> >-}
-> >
-> >base-commit: 693c8502970a533363e9ece482c80bb6db0c12a5
->
-> Why using the macro version?
+> > How do you know it's for _this_ device tho? =20
+>=20
+> Maybe a noob question, but how do we end up here with an skb that is
+> not targeted for the 'dev' device? We are checking in
+> tcp_sendmsg_locked that we're targeting the appropriate device before
+> creating the skb. Is this about a packet arriving on a dmabuf bound to
+> a device and then being forwarded through another device that doesn't
+> own the mapping, bypassing the check?
 
-Why call an out-of-line function?  I guess it could be an inline
-function (along with KSK_EIP()).
+Forwarded or just redirected by nft/bpf/tc
 
+> > The driver doesn't seem to check the DMA mapping belongs to it either.
+> >
+> > Remind me, how do we prevent the unreadable skbs from getting into the
+> > Tx path today? =20
+>=20
+> I'm not sure if this is about forwarding, or if there is some other
+> way for unreadable skbs to end up in the XT path that you have in
+> mind. At some point in this thread[1] we had talked about preventing
+> MP bound devices from being lower devices at all to side step this
+> entirely but you mentioned that may not be enough, and we ended up
+> sidestepping only XDP entirely.
+>=20
+> [1] https://lore.kernel.org/bpf/20240821153049.7dc983db@kernel.org/
 
-Brian Gerst
+Upper devices and BPF access is covered I think, by the skbuff checks.
+But I think we missed adding a check in validate_xmit_skb() to protect
+the xmit paths of HW|virt drivers. You can try to add a TC rule which
+forwards all traffic from your devmem flow back out to the device and
+see if it crashes on net-next ?
 
