@@ -1,106 +1,111 @@
-Return-Path: <linux-kernel+bounces-543777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0233A4D9D3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:09:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2028BA4D9D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:10:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E97111897A99
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:10:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B751D16E37E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:10:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8618F1FDA90;
-	Tue,  4 Mar 2025 10:09:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C74C1FDA7C;
+	Tue,  4 Mar 2025 10:09:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nakDaq8Y"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1umtxGSh";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="P7Qostk+"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB518225D6;
-	Tue,  4 Mar 2025 10:09:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 031881F8BCB
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:09:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741082989; cv=none; b=WIyy9SvY4WRAhuYTvi0aD5ppsy22nkcI5Wzg77/OHgsisX98RopOjqQtsOSEw1HWE/vsF4klvLNWQe1G3uBiiZ2Vx+FAJHFR6sO7RIENIiZ8sERhRsrgFqdRm5+/Psr1m24SaPTgLf3HjFMmaqhCctgm3u4xGBfjdIOiErdTJms=
+	t=1741082998; cv=none; b=i0ehAyUYvBObTOv8vj5Rv2AjzIq0XOmCTNjSZAaLcRvjQZG6Ldsfdi3tMnSmJGbCgA2eFpIbSFI4kEM1zf+IvNyiw+0xrAmlrljsmyU5P2DyI3tf2MiLkfN5dMi2k3cp28kE5jQvJ+YVR4+cM+W0IFO09MOSYocC4ZoyIeBrNb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741082989; c=relaxed/simple;
-	bh=sN22qP9PHuqHBrVUW+81ofUl2waI0KRpIxRfstJLrkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lgOKAvQuimCiz2nJ1OdSeyf5Vr89WZz8FEefl0/3Rynk4T9hRy5Zw054idimG8vzGCPx96igX1Iv6qYoUhp1IJi5EsnUURgc1ByjCQevFfjYc/aZr2rPShT30c52RefwiigfzH7ThB2Wj+VUtTSWJDiW0RDsAzlxHZQhu6a7Wlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nakDaq8Y; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2fe82430bb4so1446744a91.2;
-        Tue, 04 Mar 2025 02:09:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741082987; x=1741687787; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ERN7diVe571lVikT49/v2kMDw68tmDpGY4TrvA+K4j0=;
-        b=nakDaq8YG2qtSiRDiuG6Lt1sIR0ypat/sb2HEnZdyAKZGh6T4iIXI0RQCdVeevs1KM
-         gn6nf3FI8pjFA80WR4NPbo5FXtcSVVMB1EbYi+NsEpZuLnRND8OES3iJuGVH/ucRg0s0
-         oWBEvidVF/FQCV2qGedGkrqCduEYrLORep1tIMcxk9rW14+tRHGxpxk+pGNg4VHqIQbo
-         oFyap8cHnvdNvyqRmfLUYTf3Pg6WV1S84cM/xskovRST6LqW+UUeBNs2dUC9YLpYvrb/
-         EyyR/nRvsE6Kn+HvkAK419crGxqLkUO/ct1wMKTVTcTDmgJxJcE6L+ku0aqLJZTxtvdj
-         KByQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741082987; x=1741687787;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ERN7diVe571lVikT49/v2kMDw68tmDpGY4TrvA+K4j0=;
-        b=Bl/KZQ6j9/dlkbpRoDVpBk0/GHhN+odxuW9adyDI9G0SVsyJkufU3v0yHMDKLGa4Qm
-         oz6CTR6rLynbF4T76Sq6meWTJNab32I7GBj3E7itdAZiznVX5D6pO6zh7DOi+oErT1LI
-         iREUSYwQrybEHquV+HCxh/6HmjAogh0p3yrFcA7+u96Uk2l2VLlniMjjjxsmJ2lHe6u6
-         SmYiVf98075VZMYaXUgtmeFD5XT5ek+TEWcct7yzfMwIfDZxHRR28HnUAAgCQnD1s5qE
-         2/uqGD9HzZwbTbiC9MDYq1nMSUiK+LlL0HAXLm0t34Z3GHwUn21i4N6rJiyMso7JbXQk
-         bsAA==
-X-Forwarded-Encrypted: i=1; AJvYcCUF48aPZDpDnbpxX9AhN4fZ4n60zesmgjOAeGXKsq5X5t5lqHQii17auVoSJaukOzuvWmGEzrSRAOUvCLKQRo0=@vger.kernel.org, AJvYcCWUD4DR1GGPHyL2sfXZqmOq6NTL39vLH90aBPq8tXOmD2ODRZggsX5T8Pdt1LGdMaoL88ae/Kgi6fyR6xQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/ewyG/TVYiGp3jbivPzLcS3h0CRzIDeFcRl3OTy41SUz3cVE6
-	z2qH8kxKqk/ZriYvjf1KoZMDhBzMeMkyHOdMB7nZ4TCILKwr9ulQVXXxDLopJSqJ0TcCsYBh7Bl
-	5Ea3sPPI5Z4xGFAHlCkC9+uI1uds=
-X-Gm-Gg: ASbGncsZZ7W2wk4LiD5gQWK2wcssWXsC9CnkSRJaMf3ZsfG9f8MjcMcL0IVUNtlO5vx
-	9LP8ML1RZAJPZelo8dPaGNMHgXcrqVl+L8K8zx0pD5GQQPQ1Rb0qNt/7uBmJPKkIhqyohpRB+kM
-	vJjxFwZJ1niSBaGOpbGJ84V9F/wg==
-X-Google-Smtp-Source: AGHT+IFseN2+z2lYv8glz+eJOuVumErTdOblnU7bMcjpSO7VXdKzX6o3No+XO9527+1TY40dPn08a6YtpsEue9e8lPQ=
-X-Received: by 2002:a17:90b:38d2:b0:2fe:9730:8e42 with SMTP id
- 98e67ed59e1d1-2febabdee63mr10089868a91.3.1741082986991; Tue, 04 Mar 2025
- 02:09:46 -0800 (PST)
+	s=arc-20240116; t=1741082998; c=relaxed/simple;
+	bh=gpufqaTqjpP6z1NEK42OACyK2k4GqN0zGHXMKvy3KzA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=LkI0fJ3/YLDYyBCKah7apUakLL8F4kJo56VlIahkF4WKI6vC4pKmaXan2QqXp3Teztf+i9GgEuQ0XUbD9Da0n8BBBWHfNdYYE34Q3POONe51bOKMHNnf9FyMkIksMbRrbATU0saK5OmnALaOODaqUdbwZ1fxB0vs/VTAf5waCvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1umtxGSh; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=P7Qostk+; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741082994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dGrYAp2UYRB4ahPvzjkNTvyhBhRpzSJnkRhzP34zvcs=;
+	b=1umtxGShTe/HM+xs3bZ9BbOVGzCe2+AifYvLvOD7LbDIzG3k9DovpDEe3hbkcKG/gGy0pO
+	kCNEbrRfXhxm6h+ZWnKLzaPPCTBfQgcGRHdPa9laVB4R4srBdRo7dgzx8Nnr5Y6VCA1dqB
+	6Yj8c6GtisdPxbuc6ys7Qrqyp9zYK+ZA82wuDJBRXL99FnB5ylI/CFPIfrGbDqjIGaOJvZ
+	kF2yf3Ju0wgKapobQxMVttUxgwq8HSEtQo4OCiKUI8pKlAdzUXKkhcQypCKa5KnFRny9Ly
+	E9AxM2s4TTKd2ejwAlyI7nGl91W66NBgbsxzA2v/of7ieCW5amVYD2zyjIo3Ow==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741082994;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dGrYAp2UYRB4ahPvzjkNTvyhBhRpzSJnkRhzP34zvcs=;
+	b=P7Qostk+Q2bXrVqb2DnypZKDI/nn16FYUiL0Zw/eiCQzbwL+O6vI00L7Pq9mXI4tuuItMZ
+	+mtiNDa5jOQadkCA==
+To: Jacky Bai <ping.bai@nxp.com>, shawnguo@kernel.org, s.hauer@pengutronix.de
+Cc: kernel@pengutronix.de, festevam@gmail.com, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ aisheng.dong@nxp.com, peng.fan@nxp.com, frank.li@nxp.com,
+ shengjiu.wang@nxp.com
+Subject: Re: [PATCH] irq: imx-irqsteer: irq_count can larger than registered
+ irq
+In-Reply-To: <20250304094513.1964356-1-ping.bai@nxp.com>
+References: <20250304094513.1964356-1-ping.bai@nxp.com>
+Date: Tue, 04 Mar 2025 11:09:53 +0100
+Message-ID: <87bjuh6r9q.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304040450.697235-1-sidong.yang@furiosa.ai> <2025030451-polka-lustfully-1edd@gregkh>
-In-Reply-To: <2025030451-polka-lustfully-1edd@gregkh>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 4 Mar 2025 11:09:33 +0100
-X-Gm-Features: AQ5f1JpmdO2O7KOha9l3o3OBV-Z6_NOKk8RBDswJH7SVQQMJMWrOnvKM9t-A3WU
-Message-ID: <CANiq72mShwVOM5DSSH8hOj4sxx3Xx=pk=SHN5nHWCZEJ+DRoCg@mail.gmail.com>
-Subject: Re: [RFC PATCH] rust: add cdev for rust bindings helper
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Sidong Yang <sidong.yang@furiosa.ai>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Mar 4, 2025 at 6:42=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
+On Tue, Mar 04 2025 at 17:45, Jacky Bai wrote:
+> From: Shengjiu Wang <shengjiu.wang@nxp.com>
+
+Please use the proper subsystem prefix as documented:
+
+  https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#patch-submission-notes
+
+Also 'irq_count can larger than registered irq' is not a sentence and
+tells absolutely nothing what this patch is about.
+
+> The irqsteer IP itself can support up to 5 channels and each
+> channel can support max 960 IRQs per. The actual number of
+
+Can you please write out words, i.e. interrupts, hardware etc.. This is
+a changelog and not twatter.
+
+Aside of that: 'per.' does not make any sense. 'per' wants to be
+followed by a noun: '...per $WHAT.'
+
+> channels and IRQ per channel implemented in HW is SoC related.
+
+> For previous i.MX SoCs, normally only one channel and max 512
+> IRQ is implemented, But for i.MX94, the irqsteer HW is implemented
+> for 960 IRQs, even it only has 384 IRQs connected.
 >
-> I think you're missing the actual bindings here, right?
->
-> confused,
+> That means on i.MX94, the 'irq_number' is 6 but the 'irq_count' is
 
-I think this is:
+What means irq_number and irq_count here? 
 
-    https://rust-for-linux.zulipchat.com/#narrow/channel/291565-Help/topic/=
-trying.20to.20implement.20a.20chrdev.20in.20rust/near/503177362
+> 15, so we need to increase the CHAN_MAX_OUTPUT_INT to 0xF(960 / 64)
 
-And, yeah, we don't add headers that have no users, and we don't want
-to promote avoiding to write abstractions either.
+What kind of math is 0xF(960 / 64) ? And what has this to do with
+irq_number=6 ad irq_count=15?
 
-Cheers,
-Miguel
+Thanks,
+
+        tglx
+
 
