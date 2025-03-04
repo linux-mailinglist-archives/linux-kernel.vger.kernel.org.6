@@ -1,179 +1,102 @@
-Return-Path: <linux-kernel+bounces-544022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E724AA4DC7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:25:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CEFA4DC88
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:27:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 147A016D2DA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:25:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF12D188CFC1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A27821F583F;
-	Tue,  4 Mar 2025 11:24:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iolnmcAy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D47200132;
+	Tue,  4 Mar 2025 11:25:13 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 142671FF1C5;
-	Tue,  4 Mar 2025 11:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA9AF1FCCF7;
+	Tue,  4 Mar 2025 11:25:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741087481; cv=none; b=PB6sG1po6BZktn4wkNuKDRwoi4jm7rPSzf3UY4/RnWqmcEQFswBHsIyiRjDszxTME9b3/6PCCRVnuTr0TBcNS4LwsJheKltbvYfim5BTjHzQIn+qE/WzOUf/Cq0v5X4sUtaKF+YPpvRce4zSt1LRDbSjFC/h+85VbIBZ7Usxq7Y=
+	t=1741087512; cv=none; b=V3VFPKfGHSIdmynlNWIweL3Wr14p61zj3GTbZFFfhV147VW0NihW0GpGDZH/O+8eqGmBE/R2KmA0iKtTzRuAiEcaXrRFCXVUYN4xH5WMR8qpxi04uBmPx9fUTxRbeqWDVJ2kH9R2CVhm0X0e+IBpoknRobM8r/4uwkLk9jhxsmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741087481; c=relaxed/simple;
-	bh=e8xAFzSOyEmR1JJktVOqZSTe9qvmMkeaXJerupWRRU8=;
+	s=arc-20240116; t=1741087512; c=relaxed/simple;
+	bh=Zj99QU+1T4AumhagELbWhW6sNQ5PMl7nw6neJbMlvJM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MW9cgBlYTslUu8JSk8vgbt13ep/TdC6tKbZlu7r+ZZ++24dulk1/abcxLmi5uINt63UF/Hy3X9gbmIUyEipPtOThaJA7vSYVl+3fnyjkzB38CcUGd0MiZbibp6CYZBPkEtvhPWSW2DOoaylkllwmNzAnQz6bH9bkr1rYxDpk1iw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iolnmcAy; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741087479; x=1772623479;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=e8xAFzSOyEmR1JJktVOqZSTe9qvmMkeaXJerupWRRU8=;
-  b=iolnmcAygEZ6uLjyly1hmHvjEZdbFVoduHZFI3yYhEaScVDCwSqFXEIu
-   hAPmR2ec3doz5nEIu2preLTxxAq8iTFkGleGoMni93g8FKHuqqz/G/ZiM
-   XCeTW0daKiIjVs+iHTDfxUwaJdBcejvkGgTgDj5yw86LgVuozW6o3Q9OD
-   9y/YDz1IMxsQvYyCGSEy4XOOOleiIXXSHoARHoDpsRaA+tS+ZW651aL9R
-   lu+R0eUT22VyvluOalEf2Pgiqce60x5GUwrnSnY/IZzI0Fg5B2gQtuujd
-   uawur5oNmbDgHM4ynHB2QYt/KV2jO8rcfqfPkqBddd+v0glHr8ctpseFD
-   g==;
-X-CSE-ConnectionGUID: jGq75flVRcaIbLafjT40iw==
-X-CSE-MsgGUID: +HGdazroSjmKn/mo6RXpkA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="45925577"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="45925577"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 03:24:38 -0800
-X-CSE-ConnectionGUID: lAkXDvqMSwmcIaS7Nwzq+A==
-X-CSE-MsgGUID: xCV705m/SdKj7H3VTZxEqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="122475846"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa003.fm.intel.com with ESMTP; 04 Mar 2025 03:24:34 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpQO0-000JhS-08;
-	Tue, 04 Mar 2025 11:24:32 +0000
-Date: Tue, 4 Mar 2025 19:24:27 +0800
-From: kernel test robot <lkp@intel.com>
-To: Tianyang Zhang <zhangtianyang@loongson.cn>, chenhuacai@kernel.org,
-	kernel@xen0n.name, corbet@lwn.net, alexs@kernel.org,
-	si.yanteng@linux.dev, tglx@linutronix.de, jiaxun.yang@flygoat.com,
-	peterz@infradead.org, wangliupu@loongson.cn, lvjianmin@loongson.cn,
-	maobibo@loongson.cn, siyanteng@cqsoftware.com.cn,
-	gaosong@loongson.cn, yangtiezhu@loongson.cn
-Cc: oe-kbuild-all@lists.linux.dev, loongarch@lists.linux.dev,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Tianyang Zhang <zhangtianyang@loongson.cn>
-Subject: Re: [PATCH 2/2] irq/irq-loongarch-ir:Add Redirect irqchip support
-Message-ID: <202503041913.hIveXcmc-lkp@intel.com>
-References: <20250303101533.31462-3-zhangtianyang@loongson.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FH9RUvN8i5acuUBXiB7QDn65x2rEmux87JzBfdC1t0e666GKW00UA3NUgft7yiAEdCpYXnGdL0QNxK9vZxAqhuLoVDHeK7CqyRwVdMDtCIcoOirBjkEADqdOR++8L0IC/b4Fu6KjPJ+YvM+wW34q5MujXyMdnfUGIJKADel3R8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30551C4CEE5;
+	Tue,  4 Mar 2025 11:25:08 +0000 (UTC)
+Date: Tue, 4 Mar 2025 11:25:06 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Rob Herring <robh@kernel.org>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	James Clark <james.clark@linaro.org>,
+	Anshuman Khandual <anshuman.khandual@arm.com>,
+	Leo Yan <leo.yan@arm.com>, kernel-team@android.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, kvmarm@lists.linux.dev,
+	Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v20 00/11] arm64/perf: Enable branch stack sampling
+Message-ID: <Z8bjEm_neWdMBNYv@arm.com>
+References: <20250218-arm-brbe-v19-v20-0-4e9922fc2e8e@kernel.org>
+ <174080569248.3208873.17639032755999041028.b4-ty@kernel.org>
+ <CAL_JsqLijFG1PFkqKk7hXzC=aj70OLQsXwC280QsCO=PnCVZYg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250303101533.31462-3-zhangtianyang@loongson.cn>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAL_JsqLijFG1PFkqKk7hXzC=aj70OLQsXwC280QsCO=PnCVZYg@mail.gmail.com>
 
-Hi Tianyang,
+On Mon, Mar 03, 2025 at 10:44:21AM -0600, Rob Herring wrote:
+> On Sat, Mar 1, 2025 at 1:05 AM Will Deacon <will@kernel.org> wrote:
+> > On Tue, 18 Feb 2025 14:39:55 -0600, Rob Herring (Arm) wrote:
+> > > This series enables perf branch stack sampling support on arm64 via a
+> > > v9.2 arch feature called Branch Record Buffer Extension (BRBE). Details
+> > > on BRBE can be found in the Arm ARM[1] chapter D18.
+> > >
+> > > I've picked up this series from Anshuman. v19 and v20 versions have been
+> > > reworked quite a bit by Mark and myself. The bulk of those changes are
+> > > in patch 11.
+> > >
+> > > [...]
+> >
+> > Applied cleanups to will (for-next/perf), thanks!
+> >
+> > [01/11] perf: arm_pmuv3: Call kvm_vcpu_pmu_resync_el0() before enabling counters
+> >         https://git.kernel.org/will/c/04bd15c4cbc3
+> > [02/11] perf: arm_pmu: Don't disable counter in armpmu_add()
+> >         https://git.kernel.org/will/c/dcca27bc1ecc
+> > [03/11] perf: arm_pmuv3: Don't disable counter in armv8pmu_enable_event()
+> >         https://git.kernel.org/will/c/4b0567ad0be5
+> > [04/11] perf: arm_v7_pmu: Drop obvious comments for enabling/disabling counters and interrupts
+> >         https://git.kernel.org/will/c/7a5387748215
+> > [05/11] perf: arm_v7_pmu: Don't disable counter in (armv7|krait_|scorpion_)pmu_enable_event()
+> >         https://git.kernel.org/will/c/7bf1001e0d91
+> > [06/11] perf: apple_m1: Don't disable counter in m1_pmu_enable_event()
+> >         https://git.kernel.org/will/c/c2e793da59fc
+> > [07/11] perf: arm_pmu: Move PMUv3-specific data
+> >         https://git.kernel.org/will/c/dc4d58a752ea
+> 
+> I don't know if you looked at the thread on patch 11 and said "long
+> discussion, I'll assume a new version is coming. Next!" because that's
+> what I would do. In this case though, there's not any changes.
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on tip/irq/core]
-[also build test ERROR on lwn/docs-next linus/master v6.14-rc5 next-20250303]
-[cannot apply to tip/smp/core]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Tianyang-Zhang/Docs-LoongArch-Add-Advanced-Extended-Redirect-IRQ-model-description/20250303-181832
-base:   tip/irq/core
-patch link:    https://lore.kernel.org/r/20250303101533.31462-3-zhangtianyang%40loongson.cn
-patch subject: [PATCH 2/2] irq/irq-loongarch-ir:Add Redirect irqchip support
-config: loongarch-randconfig-002-20250304 (https://download.01.org/0day-ci/archive/20250304/202503041913.hIveXcmc-lkp@intel.com/config)
-compiler: loongarch64-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250304/202503041913.hIveXcmc-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503041913.hIveXcmc-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   drivers/irqchip/irq-loongarch-ir.c: In function 'loongarch_irq_redirect_alloc':
->> drivers/irqchip/irq-loongarch-ir.c:352:52: error: 'struct device' has no member named 'numa_node'
-     352 |         node = ((msi_alloc_info_t *)arg)->desc->dev->numa_node;
-         |                                                    ^~
-
-
-vim +352 drivers/irqchip/irq-loongarch-ir.c
-
-   342	
-   343	static int loongarch_irq_redirect_alloc(struct irq_domain *domain,
-   344						unsigned int virq, unsigned int nr_irqs,
-   345						 void *arg)
-   346	{
-   347		struct redirect_table *ird_table;
-   348		struct avecintc_data *avec_data;
-   349		struct irq_data *irq_data;
-   350		int ret, i, node;
-   351	
- > 352		node = ((msi_alloc_info_t *)arg)->desc->dev->numa_node;
-   353		ird_table = &irde_descs[node].ird_table;
-   354		ret = irq_domain_alloc_irqs_parent(domain, virq, nr_irqs, arg);
-   355		if (ret < 0)
-   356			return ret;
-   357	
-   358		for (i = 0; i < nr_irqs; i++) {
-   359			struct redirect_item *item;
-   360	
-   361			item = kzalloc(sizeof(struct redirect_item), GFP_KERNEL);
-   362			if (!item) {
-   363				pr_err("Alloc redirect descriptor failed\n");
-   364				goto out_free_resources;
-   365			}
-   366	
-   367			irq_data = irq_domain_get_irq_data(domain, virq + i);
-   368	
-   369			avec_data = irq_data_get_avec_data(irq_data);
-   370			ret = redirect_table_alloc(item, ird_table);
-   371			if (ret) {
-   372				pr_err("Alloc redirect table entry failed\n");
-   373				goto out_free_resources;
-   374			}
-   375	
-   376			item->gpid = kzalloc_node(sizeof(struct redirect_gpid), GFP_KERNEL, node);
-   377			if (!item->gpid) {
-   378				pr_err("Alloc redirect GPID failed\n");
-   379				goto out_free_resources;
-   380			}
-   381	
-   382			irq_data->chip_data = item;
-   383			irq_data->chip = &loongarch_redirect_chip;
-   384			redirect_domain_prepare_entry(item, avec_data);
-   385		}
-   386		return 0;
-   387	
-   388	out_free_resources:
-   389		loongarch_irq_redirect_free_resources(domain, virq, nr_irqs);
-   390		irq_domain_free_irqs_common(domain, virq, nr_irqs);
-   391	
-   392		return -EINVAL;
-   393	}
-   394	
+I do this as well ;). But I think Will is waiting for Mark R to look at
+the rest of the series.
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Catalin
 
