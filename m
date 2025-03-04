@@ -1,74 +1,34 @@
-Return-Path: <linux-kernel+bounces-544200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E737A4DE9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:03:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134AFA4DE9B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:03:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 984CB3B3926
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7D91897014
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:03:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F04BF204592;
-	Tue,  4 Mar 2025 13:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b4dMPjBQ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24FF2040BC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6D42036E8;
+	Tue,  4 Mar 2025 13:03:31 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7F9442C;
+	Tue,  4 Mar 2025 13:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741093415; cv=none; b=DDCHE/NkV8v7MrvmK/UQJvrhiSDE8rHXdvVMdADsZqGse0DciecnmIq6ORX6S2jLcC2hBfiA/UFmHw9qkJfNYJLDinGUlce5gEG8tOBUeDWo8xMxDHhOIISFybT/l1nyEWSG/2WkE5GSw62oyYgWNeSzPW7mcloJdfHphtC3baA=
+	t=1741093411; cv=none; b=D8Qrh1vyj/P6ao/lpV7OETlcACm3Jb8NsighsaV/1/hFFIdhrJIU+TnoxpzdVig2779A64EPxLNeHT8nYkXUa6GzH9RNIkYvTTkg0YS6qSFtIUAOsIIVY+9mNvkyb2C7nRjVVM9GF9eQM0fyrFH+mtWrpiWZ5xuWNER5wZRTsIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741093415; c=relaxed/simple;
-	bh=//MDk5wWskWjueusVk95MJOIjgSL8ySlz6rRD25g/rI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=U49ILvfJAdZNUxb4j5dFrEZC87nNevVQH+dIjvWyBeSzDVnLYmTVZCmLHuBG2XuMWLEnY7hjonzS+y3lnp3dBnIralg8iDTJcjhoulZdG2R7qCzWU0hWSI4a6TlwljN+c5McKahr9zj28ZK6LTVrCdqoFzVfzOzqSnOCQ3P8XZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=b4dMPjBQ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5243jdmZ021463;
-	Tue, 4 Mar 2025 13:03:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=euZ8Dx
-	MSMx6rmx4z/sWvOjZi0F8HZrbTAT1UZpVcZXo=; b=b4dMPjBQRyameE4rF8mKf9
-	et2qG8CXHgvJArptNEdFVliYIlKyEhYDAidEiza2vceUP+IP7yhajmtgdeov8bfK
-	Hf/aBEiVGWHjsN4JXS546XFaCl4zcrUnAqILPh4IhhAvtnKBzBhU4Vb0Z8/z2hWG
-	PL3ZqbubCc14mnSYraR7IAqVRaIVcWGkoQGX5iyh8sGsK3Q8D4FVDQWi4WfICdnv
-	8fVVwz02yk8ZVcmOHdzPVfogF0md4lgzEcK2WYDxfPyXDKNfgWDTHEFUPy12icTW
-	HBo7h7pUpDQULnapOsHO6vMNdQWtWmC0qQq/GTYIIPWhssuYEIimzTisiUm2UZQA
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455sw7jh39-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 13:03:14 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524BogVu013805;
-	Tue, 4 Mar 2025 13:03:13 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2knc3x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 13:03:13 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524D3CBp26477256
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 13:03:13 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AF33B58054;
-	Tue,  4 Mar 2025 13:03:12 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9A01C5805E;
-	Tue,  4 Mar 2025 13:03:10 +0000 (GMT)
-Received: from [9.204.204.161] (unknown [9.204.204.161])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Mar 2025 13:03:10 +0000 (GMT)
-Message-ID: <988cb994-d8b1-4688-b926-66507ebe90df@linux.ibm.com>
-Date: Tue, 4 Mar 2025 18:33:08 +0530
+	s=arc-20240116; t=1741093411; c=relaxed/simple;
+	bh=jGFfWBKXukbqHaXl3amXekS7y7SRP7mA+YmsLXI+alM=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=mOqxx0ocuDIBd+C+1kUJ3h8lTynbwtS9WDMg5ecT3362vLtG6o3xlvl7s0g9ZEFy5jfUg0+BQ9bZ3kYmsLb7833TkqYJ+3eb0XCoHB2VOhG/2siUXuXPLT3IZCFeDqMoqUm3LxETZc2RMC+tD4oGnMrpD1sfQRNqGAYv5URguo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3e1ff7000001d7ae-c9-67c6fa1bc9a6
+Message-ID: <95541985-8d40-4ded-a83e-46203c441640@sk.com>
+Date: Tue, 4 Mar 2025 22:03:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,162 +36,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: Build Warnings at arch/powerpc/
-Content-Language: en-GB
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        Stephen Rothwell <sfr@canb.auug.org.au>,
-        Michael Ellerman <mpe@ellerman.id.au>
-References: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
- <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
- <8ba544e7-cf2a-4807-a056-683115805721@csgroup.eu>
- <bfcce9ce-bc26-4088-8d27-0797fc0d22d3@linux.ibm.com>
- <fe937273-d81a-4f6c-9eba-b96b711b4644@linux.ibm.com>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <fe937273-d81a-4f6c-9eba-b96b711b4644@linux.ibm.com>
+Cc: kernel_team@skhynix.com, Joshua Hahn <joshua.hahnjy@gmail.com>,
+ harry.yoo@oracle.com, ying.huang@linux.alibaba.com,
+ gregkh@linuxfoundation.org, rakie.kim@sk.com, akpm@linux-foundation.org,
+ rafael@kernel.org, lenb@kernel.org, dan.j.williams@intel.com,
+ Jonathan.Cameron@huawei.com, dave.jiang@intel.com, horen.chuang@linux.dev,
+ hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
+ yunjeong.mun@sk.com
+Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
+ memoryless nodes
+Content-Language: ko
+To: Gregory Price <gourry@gourry.net>
+References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
+ <20250226213518.767670-2-joshua.hahnjy@gmail.com>
+ <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
+ <Z8XWqQdPC7245FA2@gourry-fedora-PF4VCD3F>
+From: Honggyu Kim <honggyu.kim@sk.com>
+In-Reply-To: <Z8XWqQdPC7245FA2@gourry-fedora-PF4VCD3F>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Vdhte9sQSbjrloT_IM0X_9W0ET2oJPF5
-X-Proofpoint-GUID: Vdhte9sQSbjrloT_IM0X_9W0ET2oJPF5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_05,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1011 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040106
+Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsXC9ZZnka70r2PpBvP+81jMWb+GzWL61AuM
+	FiduNrJZ/Lx7nN2iefF6NovVm3wt7i97xmJxu/8cq8WqhdfYLI5vncduse8iUMPOh2/ZLJbv
+	62e0uLxrDpvFvTX/WS3mfpnKbLF6TYaDoMfhN++ZPXbOusvu0d12md2j5chbVo/Fe14yeWxa
+	1cnmsenTJHaPEzN+s3jsfGjpsbBhKrPH/rlr2D3OXazw+Pj0FovH501yAXxRXDYpqTmZZalF
+	+nYJXBk7V31gLtjMXzH74EWmBsZOni5GDg4JAROJFS1MXYycEOa+fywgYV4BS4mzl4NAwiwC
+	KhKL7raygNi8AoISJ2c+AbNFBeQl7t+awd7FyMXBLPCYWeLTnS5mkISwQJTEzld/wWYyC4hI
+	zO5sYwaZKSKgKtF2xR2kXkjgLKPE23f7GUFq2ATUJK68nARWzylgJjF93112iF4zia6tXYwQ
+	trzE9rdzmEGaJQTusUtM33OUDeJoSYmDK26wTGAUnIXkwFlIds9CMmsWklkLGFlWMQpl5pXl
+	JmbmmOhlVOZlVugl5+duYgTG8LLaP9E7GD9dCD7EKMDBqMTDG/DzWLoQa2JZcWXuIUYJDmYl
+	EV7Tz0Ah3pTEyqrUovz4otKc1OJDjNIcLErivEbfylOEBNITS1KzU1MLUotgskwcnFINjJMZ
+	P27X9TPoK6+X/Pf/+uJX/S09Wz9pZugKaWd594W1TGy996ik6OcDxi55K5knM/M496neKFty
+	MlSaXd1+mczuiTK6h5f1s1dxLv9w48nTcpc1qbdfXo7jmftuV+Y9X5m94SrKqg+UJbmvv6hs
+	2jplZ77Z4Uy9N81Ktg85+LTm1dlejSqSVmIpzkg01GIuKk4EADZxK+HdAgAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsXCNUNLT1f617F0g5NrmC3mrF/DZjF96gVG
+	ixM3G9ksft49zm7RvHg9m8XqTb4W95c9Y7G43X+O1WLVwmtsFse3zmO32HcRqOHw3JOsFjsf
+	vmWzWL6vn9Hi8q45bBb31vxntZj7ZSqzxaFrz1ktVq/JsPi9bQWbg4jH4TfvmT12zrrL7tHd
+	dpndo+XIW1aPxXteMnlsWtXJ5rHp0yR2jxMzfrN47Hxo6bGwYSqzx/65a9g9zl2s8Pj49BaL
+	x7fbHh6LX3xg8vi8SS5AIIrLJiU1J7MstUjfLoErY+eqD8wFm/krZh+8yNTA2MnTxcjJISFg
+	IrFi3z+WLkYODl4BS4mzl4NAwiwCKhKL7raygNi8AoISJ2c+AbNFBeQl7t+awd7FyMXBLPCY
+	WeLTnS5mkISwQJTEzld/mUBsZgERidmdbcwgM0UEVCXarriD1AsJnGWUePtuPyNIDZuAmsSV
+	l5PA6jkFzCSm77vLDtFrJtG1tYsRwpaX2P52DvMERr5ZSO6YhWTFLCQts5C0LGBkWcUokplX
+	lpuYmWOqV5ydUZmXWaGXnJ+7iREYr8tq/0zcwfjlsvshRgEORiUe3oCfx9KFWBPLiitzDzFK
+	cDArifCafgYK8aYkVlalFuXHF5XmpBYfYpTmYFES5/UKT00QEkhPLEnNTk0tSC2CyTJxcEo1
+	MHod1NCetdD1nQDDxL85Grl7EgxOVm7wfN2lz7Xy9I513jbbpidXzxW7lnl+4dPNJSctTp8O
+	augW9zK3maCc9Zc/3jrm571zW/U2/Tfe2dGbJrYsfl9AyaVLe+vC7ZXtDm6z1lwwa4rehSsr
+	+Ms7izefy9gsNvW9c8hDq1PnrfMXpmwx77i4+K8SS3FGoqEWc1FxIgD06bnY0wIAAA==
+X-CFilter-Loop: Reflected
 
+Hi Gregory,
 
-On 04/03/25 6:08 pm, Madhavan Srinivasan wrote:
->
-> On 3/4/25 4:58 PM, Madhavan Srinivasan wrote:
+On 3/4/2025 1:19 AM, Gregory Price wrote:
+> On Thu, Feb 27, 2025 at 11:32:26AM +0900, Honggyu Kim wrote:
 >>
->> On 3/4/25 2:26 PM, Christophe Leroy wrote:
->>>
->>> Le 04/03/2025 à 07:13, Madhavan Srinivasan a écrit :
->>>>
->>>> On 3/4/25 10:42 AM, Venkat Rao Bagalkote wrote:
->>>>> Greetings!!
->>>>>
->>>>>
->>>>> Observing build warnings with linux-next and powerpc repo's. Issue is currently not seen on mainline yet.
->>>>>
->>>>> PPC Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fpowerpc%2Flinux.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C8e0f8501f09c48dbb43608dd5ae3c9bf%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766656585342184%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=e5BrJzcrtlITkLF31KltGExQ5Qe8fDVTMV6VfR4w9o8%3D&reserved=0 merge branch
->>>>>
->>>>> PPC Kernel Version: 6.14.0-rc4-g1304f486dbf1
->>>>> next Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fnext%2Flinux-next.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C8e0f8501f09c48dbb43608dd5ae3c9bf%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766656585355246%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=meQyZfB75HhJFCL6AX93slsyVwnogGPYFabDXl%2FLzDA%3D&reserved=0 master branch
->>>>>
->>>>> next Kernel Version: 6.14.0-rc5-next-20250303
->>>>>
->>>>>
->>>>> On linux-next kernel issue got introduced b/w next-20250227 and next-20250303
->>>>>
->>>>>
->>>>> Build Warnings:
->>>>>
->>>>> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
->>>>> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
->>>>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
->>>>>
->>>>>
->>>> Can you please specific the compiler and compiler version you found this issue with
->>>>
->>> Can you also tell which defconfig you are using or provide your .config
->>>
->>> It might also be helpfull if you can provide a disassembly of the three file.o around the warned address.
->> I could recreate the issue with gcc 11.4.1 20231218 with today's linux-next (but could not recreate with gcc 14 or gcc 11.3.0)
+>> But using N_MEMORY doesn't fix this problem and it hides the entire CXL
+>> memory nodes in our system because the CXL memory isn't detected at this
+>> point of creating node*.  Maybe there is some difference when multiple
+>> CXL memory is detected as a single node.
 >>
->> (20d5c66e1810 (HEAD -> master, tag: next-20250304, origin/master, origin/HEAD) Add linux-next specific files for 20250304)
->>
->> warning for one of the switch.S file :
->>
->>    CC      arch/powerpc/kernel/syscalls.o
->>    AS      arch/powerpc/kernel/switch.o
->> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
-> I guess this is becos, for bl .+4, we recently added in the arch_decode_instruction (decode.c) to set the type as INSN_OTHER
->
->          case 18: /* b[l][a] */
->                  if (ins == 0x48000005)  /* bl .+4 */
->                          typ = INSN_OTHER;
->
-> Which I think is the issue here, changing it to INSN_CALL from INSN_OTHER fixes the warning
->
-> diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/powerpc/decode.c
-> index 26d5050424a9..ffd63a61a585 100644
-> --- a/tools/objtool/arch/powerpc/decode.c
-> +++ b/tools/objtool/arch/powerpc/decode.c
-> @@ -56,7 +56,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
->          switch (opcode) {
->          case 18: /* b[l][a] */
->                  if (ins == 0x48000005)  /* bl .+4 */
-> -                       typ = INSN_OTHER;
-> +                       typ = INSN_CALL;
->                  else if (ins & 1)       /* bl[a] */
->                          typ = INSN_CALL;
->                  else            /* b[a] */
->
->
-> Maddy
->
-Maddy,
+> 
+> Hm, well, the node is "created" during early boot when ACPI tables are
+> read and the CFMW are discovered - but they aren't necessarily "online"
+> at the time they're created.
+> 
+> There is no true concept of a "Hotplug NUMA Node" - as the node must be
+> created at boot time. (tl;dr: N_POSSIBLE will never change).
+> 
+> This patch may have been a bit overzealous of us, I forgot to ask
+> whether N_MEMORY is set for nodes created but not onlined at boot. So
+> this is a good observation.
 
-I changed the code manually and gave it a try. The Proposed fix, 
-partially fixes the issue. It gets rid of two of the warnings, but below 
-warning still persists.
+I didn't want to make more noise but we found many issues again after
+getting a new machine and started using it with multiple CXL memory.
 
-arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: 
-unannotated intra-function call
+> 
+> It also doesn't help that this may introduce a subtle race condition.
+> 
+> If a node exists (N_POSSIBLE) but hasn't been onlined (!N_MEMORY) and
+> bandwidth information is reported - then we store the bandwidth info
+> but don't include the node in the reduction.  Then if the node comes
+> online later, we don't re-trigger reduction.
+> 
+> Joshua we should just drop this patch for now and work with Honggyu and
+> friends separately on this issue.  In the meantime we can stick with
+> N_POSSIBLE.
+> 
+> There are more problems in this space - namely how to handle a system
+> whereby 8 CXL nodes are "possible" but the user only configures 2 (as
+> described by Hyonggye here).  We will probably need to introduce
+> hotplug/node on/offline callbacks to re-configure weights.
+> 
+> ~Gregory
 
->>    CC      arch/powerpc/kernel/irq.o
->>    CC      arch/powerpc/kernel/align.o
->>    CC      arch/powerpc/kernel/signal_64.o
->>
->> Objdump of switch.o:
->> arch/powerpc/kernel/switch.o:     file format elf64-powerpcle
->>
->> Disassembly of section .text:
->>
->> 0000000000000000 <flush_branch_caches>:
->>         0:	a6 02 28 7d 	mflr    r9
->>         4:	05 00 00 48 	bl      8 <flush_branch_caches+0x8>
->>         8:	05 00 00 48 	bl      c <flush_branch_caches+0xc>
->>         c:	05 00 00 48 	bl      10 <flush_branch_caches+0x10>
->>        10:	05 00 00 48 	bl      14 <flush_branch_caches+0x14>
->>        14:	05 00 00 48 	bl      18 <flush_branch_caches+0x18>
->>        18:	05 00 00 48 	bl      1c <flush_branch_caches+0x1c>
->>        1c:	05 00 00 48 	bl      20 <flush_branch_caches+0x20>
->>        20:	05 00 00 48 	bl      24 <flush_branch_caches+0x24>
->>        24:	05 00 00 48 	bl      28 <flush_branch_caches+0x28>
->>        28:	05 00 00 48 	bl      2c <flush_branch_caches+0x2c>
->>
->>
->> arch/powerpc/kernel/switch.S failing src section:
->>
->> .balign 32
->> .global flush_branch_caches
->> flush_branch_caches:
->>          /* Save LR into r9 */
->>          mflr    r9
->>
->>          // Flush the link stack
->>          .rept 64
->>          ANNOTATE_INTRA_FUNCTION_CALL
->>          bl      .+4
->>          .endr
->>          b       1f
->>          nops    6
->>
->> Maddy
->>
->>
->>> Christophe
->>
->
-Regards,
+This work won't take a long time so I think we can submit a patch within 
+a few days.
 
-Venkat.
-
+Thanks,
+Honggyu
 
