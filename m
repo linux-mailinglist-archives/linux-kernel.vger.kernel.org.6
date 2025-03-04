@@ -1,214 +1,136 @@
-Return-Path: <linux-kernel+bounces-543731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C51F4A4D95F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:55:29 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 825C2A4D91B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:48:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86B2F3B2DD6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:47:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7DEF7A3202
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:46:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4E9A1FDA8D;
-	Tue,  4 Mar 2025 09:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4461FCFFE;
+	Tue,  4 Mar 2025 09:47:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="fbqptPq7";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HGXPWWFB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jtNulAOm"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A60E1F891D;
-	Tue,  4 Mar 2025 09:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B30B1FCFD2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:46:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081604; cv=none; b=pWoqPx55SN5qq6S2jAQZNVH+0fJ/hpifVa/a1Srq0X9qXqzDlkyU6P94iGYwLfb/Zturmc+MTTsMZ4vdBp+QXww31X9dNXNfcgVUxxWxdWcH42WNhj4XRYCNZNfW7kxWZaU+dT/pji1jcm5D0yR8AoKV2JhLpZxDEceivBZ2BLM=
+	t=1741081625; cv=none; b=qbVEUOIFyAHCLQB2DgKkAwLDTXTzG52OXqtIAW15fsvC1rhaEaeGXvf+TvOJjQkJpmnLpUHPtkuGitxzFbo0mYPX131QLnEdlOE3zvrbz/Kxk9scgy2PIucIJZ6S90sxmIRo/SxY5FA25O4w3a3opyCbXTStN8Kk+mSMD93Lwcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081604; c=relaxed/simple;
-	bh=UMk00EuNH2lKjFtnpyml52S827F53RJjRAon7xO+YZ8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qnQkEBwu+56mR6wYi3yZAPdosfY2wzUTH/0oSsdXLq1B2z4RklPEkRohqmeqwCuj23crhbXZtGqr9TarKC8ZgJZZ8nqIcnfuAIA3IpqIBgkayJsGGY3RVtKPpldQDXtDd5fOxccY9chCM5wazdy7pk6b9UE7w35vdDfa3YPKWms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=fbqptPq7; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HGXPWWFB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741081599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ziAg5LrUy7XRPKEmFNKAy4hQ0wSkNtaRL4TH75GunHo=;
-	b=fbqptPq7NfPpHDjQRxAA+lyFw6JoXVoUf7RO9sqERMvy4dFAl2+mu2gusD233hSSOisGtR
-	uZBso9kF+aWkfoSL95VCMyCRVCu1WdUDMModUmbAK+pxBbTQ8m60Ccc8pkkRv/ki4z8aie
-	8IecSBQsm5WCQA1FpDt4lw/KdjdaKEybdueisNt8don/3LhsA2oy50P6xnz6JtJCiEOvgU
-	mRIgKvMU/xPKP5PD0lPWs0A7bdNCqW34Ai7iGaaNfD3brKcP+Ze+ihGeIZG03ICruQjCXG
-	QKRoPRQUT5D6yhOCZtCgY1DSNmEj2R2jVHjuukwB9iPDFxx3DuwmLFoXGXRKVg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741081599;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ziAg5LrUy7XRPKEmFNKAy4hQ0wSkNtaRL4TH75GunHo=;
-	b=HGXPWWFBcymb7WxzSbHzq5D6wUa6+LyS9CV1UtdwMVJq3X1G3hJg7cvlnuNi2oTfbz5zl1
-	p4E3dUrDP0toGXCA==
-To: Tsai Sung-Fu <danielsftsai@google.com>
-Cc: Jingoo Han <jingoohan1@gmail.com>, Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Lorenzo Pieralisi
- <lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
- <kw@linux.com>, Rob Herring
- <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Chant
- <achant@google.com>, Brian Norris <briannorris@google.com>, Sajid Dalvi
- <sdalvi@google.com>, Mark Cheng <markcheng@google.com>, Ben Cheng
- <bccheng@google.com>, linux-pci@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to
- the parent
-In-Reply-To: <CAK7fddD4Y5CJ3hKQvppGB2Bof4ibYDX4mBK3N1y8qt-NVoBb7w@mail.gmail.com>
-References: <20250303070501.2740392-1-danielsftsai@google.com>
- <87a5a2cwer.ffs@tglx>
- <CAK7fddD4Y5CJ3hKQvppGB2Bof4ibYDX4mBK3N1y8qt-NVoBb7w@mail.gmail.com>
-Date: Tue, 04 Mar 2025 10:46:39 +0100
-Message-ID: <87eczd6scg.ffs@tglx>
+	s=arc-20240116; t=1741081625; c=relaxed/simple;
+	bh=0wXdinaXSN5qy0jF6IaPQC041JouYwi+t9tdAPeFE60=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tbstBAtz0enXVeJrq63ssQW5NdTLoj9ad4YAdGMlBr4v7o3yyUI/rrvNDcZEP+PGLwRc+pwmwmEhonpxeMg/PlIoz4MKc9ii410mVrKzhwXCBRus7CmfWc2TETQMFT4zWZrS+wvjk4IOQBxbwwFAki01mquxAXgUPpxr6ZkDp2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jtNulAOm; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5494bc4d796so4824742e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:46:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741081618; x=1741686418; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=fDostDuCz+69r2wOSDeI1fXNvVPWdirSCV/X9dfMlRE=;
+        b=jtNulAOm4OkicJuvMBovIQ6dUwezBPzo0RkLUT/Zf8rZEkQSXyatDMv/rCWuFT3qTs
+         gcby2AaFIXSxF5+ipzWxrKYUd+AOAu7cLZhnb0I4Brmka2zkzBjU4SaSEai5MYbOfO8j
+         85mdLp4nmaHy9XhNFJ87x6Tv4tH20ZhxZZGLySx6fUWI8BrMVv1bkKkt+0bq4M/x9pYi
+         dopuepHlV+/HgPwK7OqZc7p/WZhCfLMC3XiR8u42NkX04IzPbFsW81Gu1a8eD83/SQJi
+         ZhNslAouxu9j/vS10D/FhuDM0aWazBJcS7VQT4lpmZaRoqtG//M4z1/P+Fbgl1MHbM/Z
+         /Sxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741081618; x=1741686418;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=fDostDuCz+69r2wOSDeI1fXNvVPWdirSCV/X9dfMlRE=;
+        b=OUVG27AfCCVG7og+D7s6vy8cyiCbpxKdpl56961gZgxluI7Tg0JBYvBRIm88xs81P/
+         hFxOg6GNYXJ+NCzY0LKua7y2tAe5lRSo+zuNVTrQnGwE4lus7r9G0QnOhMThzHAiIywr
+         u2ebLMpO1rhKqnvLvJeVXMlXYosQEvzJpVdnakR6RYMj9+XznAMiCLMFvNk9zgYdTlkJ
+         N5HNOFjHcIPq8kqci6woXXJImhnmXJWl9ucLtjt3B3UR4beQlUIq1LUf0WP/rjTk0jLK
+         Qb9txB97O9jyYJ52WCIG2hwVeU92wQ7j/k8s+2GHEvnVTiZ7YwdDqHgpYeTU7D6MvlCX
+         r1kw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYp0RAx+AkjiJeG7lqJA6N5o81CqC2aRGjZWg2kwlTkW8FlJJKApQ7AVKIw8oCrFDGun3N5xxRQTEl0g8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzEgb5VuS5+6aej5fh00m8L1UIueXoIPqktxPTXggeY7atGMw3K
+	Blj8Plqw+B+MyqfxpYoxkej27KJbpI93gn3tFZIPyOF7GkEgR2z5
+X-Gm-Gg: ASbGnctBvY+eKBtNgI2bYwfwl5TGzKTCmpXULQFSY3/vlZyJGag8jgGAX17kAcePo4z
+	ateu5vA0lm6gO18/fSnjh4Cy0OarID+rqzT1+9mhfUIInadY+PHxv3A+5edle4PTjAwIQtVuRd6
+	qMI94qTtJVVFr6xKtkrEDefw1s0fP7XcmgfiM/1bJDWn3zm2L3lVcMdFyq4Z2LKEJAqB5BusAoi
+	0x7kHh9iX4pDMjaHuPk38yUW5ydoH8PpoEQHkwvwaYxcTHuSSsH/6jVapwcMQwwV9SbuYumyAUu
+	d6xRDmVpX9Y=
+X-Google-Smtp-Source: AGHT+IGfzQnZ26ydI/Hp3PtQZN4UXtI5pke9feZjOxzsb0bBFWh1zSD7cQWbLYhGYm4LdjPoaqrnvg==
+X-Received: by 2002:a05:6512:6c9:b0:545:ee3:f3c5 with SMTP id 2adb3069b0e04-5494c32008amr6366824e87.17.1741081617269;
+        Tue, 04 Mar 2025 01:46:57 -0800 (PST)
+Received: from pc636 ([2001:9b1:d5a0:a500::800])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-549570fc8fbsm1129701e87.80.2025.03.04.01.46.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 01:46:56 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Tue, 4 Mar 2025 10:46:54 +0100
+To: Liu Ye <liuye@kylinos.cn>
+Cc: akpm@linux-foundation.org, urezki@gmail.com, hch@infradead.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/vmalloc: Move free_vm_area(area) from the
+ __vmalloc_area_node function to the __vmalloc_node_range_noprof function
+Message-ID: <Z8bMDi1TIlCaec2X@pc636>
+References: <20250303015702.319416-1-liuye@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303015702.319416-1-liuye@kylinos.cn>
 
-On Tue, Mar 04 2025 at 13:48, Tsai Sung-Fu wrote:
-> On Mon, Mar 3, 2025 at 5:10=E2=80=AFPM Thomas Gleixner <tglx@linutronix.d=
-e> wrote:
->> > +     hwirq =3D ctrl * MAX_MSI_IRQS_PER_CTRL;
->> > +     end =3D hwirq + MAX_MSI_IRQS_PER_CTRL;
->> > +     for_each_set_bit_from(hwirq, pp->msi_irq_in_use, end) {
->> > +             if (hwirq =3D=3D hwirq_to_check)
->> > +                     continue;
->> > +             virq =3D irq_find_mapping(pp->irq_domain, hwirq);
->> > +             if (!virq)
->> > +                     continue;
->> > +             mask =3D irq_get_affinity_mask(virq);
->>
->> What protects @mask against a concurrent modification?
->
-> We hold the &pp->lock in the dw_pci_msi_set_affinity before calling
-> this function
-> so that should help to protect against concurrent modification ?
+On Mon, Mar 03, 2025 at 09:57:02AM +0800, Liu Ye wrote:
+> Moved free_vm_area from the __vmalloc_area_node function to the
+> __vmalloc_node_range_noprof function so that allocation and freeing
+> of the area can be paired in one function for better readability.
+> 
+> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+> ---
+>  mm/vmalloc.c | 5 +++--
+>  1 file changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> index a6e7acebe9ad..dc658d4af181 100644
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3651,7 +3651,6 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  		warn_alloc(gfp_mask, NULL,
+>  			"vmalloc error: size %lu, failed to allocated page array size %lu",
+>  			nr_small_pages * PAGE_SIZE, array_size);
+> -		free_vm_area(area);
+>  		return NULL;
+>  	}
+>  
+> @@ -3844,8 +3843,10 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+>  
+>  	/* Allocate physical pages and map them into vmalloc space. */
+>  	ret = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
+> -	if (!ret)
+> +	if (!ret) {
+> +		free_vm_area(area);
+>  		goto fail;
+> +	}
+>  
+>  	/*
+>  	 * Mark the pages as accessible, now that they are mapped.
+> -- 
+> 2.25.1
+> 
+This one looks good to me:
 
-So that's the same domain, right?
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
 
->> > +     /*
->> > +      * Update all the irq_data's effective mask
->> > +      * bind to this MSI controller, so the correct
->> > +      * affinity would reflect on
->> > +      * /proc/irq/XXX/effective_affinity
->> > +      */
->> > +     hwirq =3D ctrl * MAX_MSI_IRQS_PER_CTRL;
->> > +     end =3D hwirq + MAX_MSI_IRQS_PER_CTRL;
->> > +     for_each_set_bit_from(hwirq, pp->msi_irq_in_use, end) {
->> > +             virq_downstream =3D irq_find_mapping(pp->irq_domain, hwi=
-rq);
->> > +             if (!virq_downstream)
->> > +                     continue;
->> > +             desc_downstream =3D irq_to_desc(virq_downstream);
->> > +             irq_data_update_effective_affinity(&desc_downstream->irq=
-_data,
->> > +                                                effective_mask);
->>
->> Same here.
->
-> We hold the &pp->lock in the dw_pci_msi_set_affinity before calling
-> here, so that could help I think ?
-
-A comment would be helpful for the casual reader.
-
->>
->> > +     }
->> > +}
->> > +
->> > +static int dw_pci_msi_set_affinity(struct irq_data *d,
->> > +                                const struct cpumask *mask, bool forc=
-e)
->> > +{
->> > +     struct dw_pcie_rp *pp =3D irq_data_get_irq_chip_data(d);
->> > +     struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
->> > +     int ret;
->> > +     int virq_parent;
->> > +     unsigned long hwirq =3D d->hwirq;
->> > +     unsigned long flags, ctrl;
->> > +     struct irq_desc *desc_parent;
->> > +     const struct cpumask *effective_mask;
->> > +     cpumask_var_t mask_result;
->> > +
->> > +     ctrl =3D hwirq / MAX_MSI_IRQS_PER_CTRL;
->> > +     if (!alloc_cpumask_var(&mask_result, GFP_ATOMIC))
->> > +             return -ENOMEM;
->>
->> This does not work on a RT enabled kernel. Allocations with a raw spin
->> lock held are not possible.
->>
->
-> Even with the GFP_ATOMIC flag ? I thought that means it would be safe
-> to do allocation in the atomic context ?
-> Didn't work on the RT kernel before, so please enlighten me if I am
-> wrong and if you don't mind.
-
-https://www.kernel.org/doc/html/latest/locking/locktypes.html#preempt-rt-ca=
-veats
-https://www.kernel.org/doc/html/latest/locking/locktypes.html#raw-spinlock-=
-t-on-rt
-
->> > +     /*
->> > +      * Loop through all possible MSI vector to check if the
->> > +      * requested one is compatible with all of them
->> > +      */
->> > +     raw_spin_lock_irqsave(&pp->lock, flags);
->> > +     cpumask_copy(mask_result, mask);
->> > +     ret =3D dw_pci_check_mask_compatibility(pp, ctrl, hwirq, mask_re=
-sult);
->> > +     if (ret) {
->> > +             dev_dbg(pci->dev, "Incompatible mask, request %*pbl, irq=
- num %u\n",
->> > +                     cpumask_pr_args(mask), d->irq);
->> > +             goto unlock;
->> > +     }
->> > +
->> > +     dev_dbg(pci->dev, "Final mask, request %*pbl, irq num %u\n",
->> > +             cpumask_pr_args(mask_result), d->irq);
->> > +
->> > +     virq_parent =3D pp->msi_irq[ctrl];
->> > +     desc_parent =3D irq_to_desc(virq_parent);
->> > +     ret =3D desc_parent->irq_data.chip->irq_set_affinity(&desc_paren=
-t->irq_data,
->> > +                                                        mask_result, =
-force);
->>
->> Again. Completely unserialized.
->>
->
-> The reason why we remove the desc_parent->lock protection is because
-> the chained IRQ structure didn't export parent IRQ to the user space, so =
-we
-> think this call path should be the only caller. And since we have &pp->lo=
-ck hold
-> at the beginning, so that should help to protect against concurrent
-> modification here ?
-
-"Should be the only caller" is not really a technical argument. If you
-make assumptions like this, then you have to come up with a proper
-explanation why this is correct under all circumstances and with all
-possible variants of parent interrupt chips.
-
-Aside of that fiddling with the internals of interrupt descriptors is
-not really justified here. What's wrong with using the existing
-irq_set_affinity() mechanism?
-
-Thanks,
-
-        tglx
-
+--
+Uladzislau Rezki
 
