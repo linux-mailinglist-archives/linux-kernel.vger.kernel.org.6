@@ -1,136 +1,79 @@
-Return-Path: <linux-kernel+bounces-544199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 134AFA4DE9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:03:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88067A4DE3D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:48:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F7D91897014
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:03:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C99503ADA1A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:48:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D6D42036E8;
-	Tue,  4 Mar 2025 13:03:31 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D7F9442C;
-	Tue,  4 Mar 2025 13:03:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89D89202996;
+	Tue,  4 Mar 2025 12:48:36 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EB026ACD;
+	Tue,  4 Mar 2025 12:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741093411; cv=none; b=D8Qrh1vyj/P6ao/lpV7OETlcACm3Jb8NsighsaV/1/hFFIdhrJIU+TnoxpzdVig2779A64EPxLNeHT8nYkXUa6GzH9RNIkYvTTkg0YS6qSFtIUAOsIIVY+9mNvkyb2C7nRjVVM9GF9eQM0fyrFH+mtWrpiWZ5xuWNER5wZRTsIk=
+	t=1741092516; cv=none; b=I+0MIT6r/E6LaCaBxMkAzp7yMjxga+pJh3Mrewuc+R8QXoLA67Wc35c4czF9BAtzCvYbsSvXKXDMAfkkIoy4otvIpmNkiihkvaxpM3AZyhJy1p1WN9iAruXGlpVVt57HqkJMueXa0TvZow7S5baDjU1yeJk63o2UHXOzKr/CKR4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741093411; c=relaxed/simple;
-	bh=jGFfWBKXukbqHaXl3amXekS7y7SRP7mA+YmsLXI+alM=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=mOqxx0ocuDIBd+C+1kUJ3h8lTynbwtS9WDMg5ecT3362vLtG6o3xlvl7s0g9ZEFy5jfUg0+BQ9bZ3kYmsLb7833TkqYJ+3eb0XCoHB2VOhG/2siUXuXPLT3IZCFeDqMoqUm3LxETZc2RMC+tD4oGnMrpD1sfQRNqGAYv5URguo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-3e1ff7000001d7ae-c9-67c6fa1bc9a6
-Message-ID: <95541985-8d40-4ded-a83e-46203c441640@sk.com>
-Date: Tue, 4 Mar 2025 22:03:22 +0900
+	s=arc-20240116; t=1741092516; c=relaxed/simple;
+	bh=M1RC0c8Lm4NIyyJY/aAgHNkXEayMLHduAvUH/c7VGcM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EkCU5km6P/5jcj7QccUptPJ5FT1tUvh84AgV7XPTnZyCx5qB8DdjyKOxXv6Yeo0SOVGx4Eb8HU8XWGp5hfLy2mY+gZZFGsFte2f8u0SJVnpHQ8XqRICujQMmVzotPIV9SfGQbNWICoKRyhEx4ejjzKW2yy56erscVvlj1lnslqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z6b6W5j6zzpbTn;
+	Tue,  4 Mar 2025 20:46:59 +0800 (CST)
+Received: from kwepemg500017.china.huawei.com (unknown [7.202.181.81])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9B6F01800EB;
+	Tue,  4 Mar 2025 20:48:30 +0800 (CST)
+Received: from huawei.com (10.175.127.227) by kwepemg500017.china.huawei.com
+ (7.202.181.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Tue, 4 Mar
+ 2025 20:48:29 +0800
+From: Li Lingfeng <lilingfeng3@huawei.com>
+To: <trondmy@kernel.org>, <anna@kernel.org>
+CC: <linux-nfs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<ehagberg@janestreet.com>, <linux-nfs@dimebar.com>,
+	<yukuai1@huaweicloud.com>, <houtao1@huawei.com>, <yi.zhang@huawei.com>,
+	<yangerkun@huawei.com>, <lilingfeng@huaweicloud.com>,
+	<lilingfeng3@huawei.com>
+Subject: [PATCH 0/2] Ignore SB_RDONLY when mounting and remounting nfs
+Date: Tue, 4 Mar 2025 21:05:31 +0800
+Message-ID: <20250304130533.549840-1-lilingfeng3@huawei.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: kernel_team@skhynix.com, Joshua Hahn <joshua.hahnjy@gmail.com>,
- harry.yoo@oracle.com, ying.huang@linux.alibaba.com,
- gregkh@linuxfoundation.org, rakie.kim@sk.com, akpm@linux-foundation.org,
- rafael@kernel.org, lenb@kernel.org, dan.j.williams@intel.com,
- Jonathan.Cameron@huawei.com, dave.jiang@intel.com, horen.chuang@linux.dev,
- hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
- yunjeong.mun@sk.com
-Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
- memoryless nodes
-Content-Language: ko
-To: Gregory Price <gourry@gourry.net>
-References: <20250226213518.767670-1-joshua.hahnjy@gmail.com>
- <20250226213518.767670-2-joshua.hahnjy@gmail.com>
- <b8ac8654-92bd-4c08-a3fc-e28a7be5e0e6@sk.com>
- <Z8XWqQdPC7245FA2@gourry-fedora-PF4VCD3F>
-From: Honggyu Kim <honggyu.kim@sk.com>
-In-Reply-To: <Z8XWqQdPC7245FA2@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrFIsWRmVeSWpSXmKPExsXC9ZZnka70r2PpBvP+81jMWb+GzWL61AuM
-	FiduNrJZ/Lx7nN2iefF6NovVm3wt7i97xmJxu/8cq8WqhdfYLI5vncduse8iUMPOh2/ZLJbv
-	62e0uLxrDpvFvTX/WS3mfpnKbLF6TYaDoMfhN++ZPXbOusvu0d12md2j5chbVo/Fe14yeWxa
-	1cnmsenTJHaPEzN+s3jsfGjpsbBhKrPH/rlr2D3OXazw+Pj0FovH501yAXxRXDYpqTmZZalF
-	+nYJXBk7V31gLtjMXzH74EWmBsZOni5GDg4JAROJFS1MXYycEOa+fywgYV4BS4mzl4NAwiwC
-	KhKL7raygNi8AoISJ2c+AbNFBeQl7t+awd7FyMXBLPCYWeLTnS5mkISwQJTEzld/wWYyC4hI
-	zO5sYwaZKSKgKtF2xR2kXkjgLKPE23f7GUFq2ATUJK68nARWzylgJjF93112iF4zia6tXYwQ
-	trzE9rdzmEGaJQTusUtM33OUDeJoSYmDK26wTGAUnIXkwFlIds9CMmsWklkLGFlWMQpl5pXl
-	JmbmmOhlVOZlVugl5+duYgTG8LLaP9E7GD9dCD7EKMDBqMTDG/DzWLoQa2JZcWXuIUYJDmYl
-	EV7Tz0Ah3pTEyqrUovz4otKc1OJDjNIcLErivEbfylOEBNITS1KzU1MLUotgskwcnFINjJMZ
-	P27X9TPoK6+X/Pf/+uJX/S09Wz9pZugKaWd594W1TGy996ik6OcDxi55K5knM/M496neKFty
-	MlSaXd1+mczuiTK6h5f1s1dxLv9w48nTcpc1qbdfXo7jmftuV+Y9X5m94SrKqg+UJbmvv6hs
-	2jplZ77Z4Uy9N81Ktg85+LTm1dlejSqSVmIpzkg01GIuKk4EADZxK+HdAgAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrAIsWRmVeSWpSXmKPExsXCNUNLT1f617F0g5NrmC3mrF/DZjF96gVG
-	ixM3G9ksft49zm7RvHg9m8XqTb4W95c9Y7G43X+O1WLVwmtsFse3zmO32HcRqOHw3JOsFjsf
-	vmWzWL6vn9Hi8q45bBb31vxntZj7ZSqzxaFrz1ktVq/JsPi9bQWbg4jH4TfvmT12zrrL7tHd
-	dpndo+XIW1aPxXteMnlsWtXJ5rHp0yR2jxMzfrN47Hxo6bGwYSqzx/65a9g9zl2s8Pj49BaL
-	x7fbHh6LX3xg8vi8SS5AIIrLJiU1J7MstUjfLoErY+eqD8wFm/krZh+8yNTA2MnTxcjJISFg
-	IrFi3z+WLkYODl4BS4mzl4NAwiwCKhKL7raygNi8AoISJ2c+AbNFBeQl7t+awd7FyMXBLPCY
-	WeLTnS5mkISwQJTEzld/mUBsZgERidmdbcwgM0UEVCXarriD1AsJnGWUePtuPyNIDZuAmsSV
-	l5PA6jkFzCSm77vLDtFrJtG1tYsRwpaX2P52DvMERr5ZSO6YhWTFLCQts5C0LGBkWcUokplX
-	lpuYmWOqV5ydUZmXWaGXnJ+7iREYr8tq/0zcwfjlsvshRgEORiUe3oCfx9KFWBPLiitzDzFK
-	cDArifCafgYK8aYkVlalFuXHF5XmpBYfYpTmYFES5/UKT00QEkhPLEnNTk0tSC2CyTJxcEo1
-	MHod1NCetdD1nQDDxL85Grl7EgxOVm7wfN2lz7Xy9I513jbbpidXzxW7lnl+4dPNJSctTp8O
-	augW9zK3maCc9Zc/3jrm571zW/U2/Tfe2dGbJrYsfl9AyaVLe+vC7ZXtDm6z1lwwa4rehSsr
-	+Ms7izefy9gsNvW9c8hDq1PnrfMXpmwx77i4+K8SS3FGoqEWc1FxIgD06bnY0wIAAA==
-X-CFilter-Loop: Reflected
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemg500017.china.huawei.com (7.202.181.81)
 
-Hi Gregory,
+When NFS_MOUNT_UNSHARED is not set, NFS forces the sharing of a
+superblock among each filesystem that mounts sub-directories elonging to
+a single exported root path.
 
-On 3/4/2025 1:19 AM, Gregory Price wrote:
-> On Thu, Feb 27, 2025 at 11:32:26AM +0900, Honggyu Kim wrote:
->>
->> But using N_MEMORY doesn't fix this problem and it hides the entire CXL
->> memory nodes in our system because the CXL memory isn't detected at this
->> point of creating node*.  Maybe there is some difference when multiple
->> CXL memory is detected as a single node.
->>
-> 
-> Hm, well, the node is "created" during early boot when ACPI tables are
-> read and the CFMW are discovered - but they aren't necessarily "online"
-> at the time they're created.
-> 
-> There is no true concept of a "Hotplug NUMA Node" - as the node must be
-> created at boot time. (tl;dr: N_POSSIBLE will never change).
-> 
-> This patch may have been a bit overzealous of us, I forgot to ask
-> whether N_MEMORY is set for nodes created but not onlined at boot. So
-> this is a good observation.
+To prevent interference between different filesystems, ignore SB_RDONLY
+when mounting and remounting nfs.
 
-I didn't want to make more noise but we found many issues again after
-getting a new machine and started using it with multiple CXL memory.
+Li Lingfeng (2):
+  nfs: clear SB_RDONLY before getting superblock
+  nfs: ignore SB_RDONLY when remounting nfs
 
-> 
-> It also doesn't help that this may introduce a subtle race condition.
-> 
-> If a node exists (N_POSSIBLE) but hasn't been onlined (!N_MEMORY) and
-> bandwidth information is reported - then we store the bandwidth info
-> but don't include the node in the reduction.  Then if the node comes
-> online later, we don't re-trigger reduction.
-> 
-> Joshua we should just drop this patch for now and work with Honggyu and
-> friends separately on this issue.  In the meantime we can stick with
-> N_POSSIBLE.
-> 
-> There are more problems in this space - namely how to handle a system
-> whereby 8 CXL nodes are "possible" but the user only configures 2 (as
-> described by Hyonggye here).  We will probably need to introduce
-> hotplug/node on/offline callbacks to re-configure weights.
-> 
-> ~Gregory
+ fs/nfs/super.c | 19 +++++++++++++++++++
+ 1 file changed, 19 insertions(+)
 
-This work won't take a long time so I think we can submit a patch within 
-a few days.
+-- 
+2.31.1
 
-Thanks,
-Honggyu
 
