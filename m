@@ -1,167 +1,140 @@
-Return-Path: <linux-kernel+bounces-545402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C60A4EC9B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:02:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31A38A4ECA1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:03:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07DED188FD3A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:02:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58E3E168910
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:03:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F03A254844;
-	Tue,  4 Mar 2025 19:02:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23C32512FB;
+	Tue,  4 Mar 2025 19:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="lHabd9vs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Ev+jCEBw"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IehZU5d0";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="/c0PDdGs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C4924EABA;
-	Tue,  4 Mar 2025 19:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C550424EA9A;
+	Tue,  4 Mar 2025 19:03:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741114946; cv=none; b=p4LDFqCnIw1Bj2I9IcDuoeRAwX3BH+XjXDzQBybDvgJ8jfcw6bCjNKws0W2pXhGHnmEuVgYp/2cZP58fSiFczyv9wgTZlYEKZgSoJ41IfQ6PmBPW3uOvOWsvL9AUyFPDfHtyFxHBYVEIVVUUzw4pe+fDSJKUEAXQhiP3rUvdR5U=
+	t=1741115007; cv=none; b=Lj+0xfwKezI5a2My9Ok+sRE9u8IJ2/5sIERUKaAbgWl+qt7/drOMUZrvJoDcQdRvXzVLWQvlGhCjDbLPJmMgNmyL2/IqpElRDnr+NKoFXY2+/4vTQy7VHl72O8Z8TYkiB5Ade3ectfuOoxKWzE18NuTLS2y/1ZACMSy67emwzCY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741114946; c=relaxed/simple;
-	bh=oeO3k+fQ2uc2xW3PAoVoZusaYb/VRHAyBWTKFEnt+OA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZRSGT5oL5sB2CNhYJo9iuFlg1LIUYVDybs/VidzSmBUHpsFXyHeAmOyY04/bRof3XPkfWkdSg2cPjtCd28Ukc0EJ6ZQfGMdkgPGPXHzw99AjKMON184eg9KAsLdX6PP6+NfVX4hzyzYopjEFAEEm05h1NKvgPVyXIPzQnUsC4S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=lHabd9vs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Ev+jCEBw; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 294C61140109;
-	Tue,  4 Mar 2025 14:02:22 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-02.internal (MEProxy); Tue, 04 Mar 2025 14:02:22 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1741114942; x=
-	1741201342; bh=Pgi+DunqwLwq74Jly3YwOvG4Ta4hOiz0xroRVd15Urw=; b=l
-	Habd9vs30fdL28oTItRbA1XW+04wrHPY5ODRttgyEguacL3rY/m+PJS+sEbwU233
-	BmqT6V8s4lQa8kNge/9sGtF5D7dnNi2cBFAWNLFDNKdZW0GE4/macfFpiaTBd3kR
-	m8cC98Lp6mJI2907ZezUlvLGsEr64b7j2aJoQBcIHv5HjriqJkBY259yw4VrY7IA
-	qMycTjQIVNntwRVftQTX/vk+a80/0zqz95iMtL48C/D+e0cTW8c+F2+p8i7PsNev
-	oFzu+u6rmgRex+JDBuWQAynOsN/uFB21ZGIDh5LEle873yrTNFcvExg/IE//mffE
-	NoCvEDi7btr1jEsbz4Z+A==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741114942; x=1741201342; bh=Pgi+DunqwLwq74Jly3YwOvG4Ta4hOiz0xro
-	RVd15Urw=; b=Ev+jCEBwgjl+CCT5iDqMekTBNCU2vL9lY5sYtgpide4sM81W/C2
-	PKXxDqa7n7NfdSjuF/wcKHL0pSJTAbCsbggHy4G7BsZv3J97QfY9wzbXOQgd9U/h
-	AJy6WZJzMEmwrRBAt7x+uehZDsPX87DfLdlO1t/v+msZ1ijaNiof7S6GlAOnV0oQ
-	kbE2AbEOKNzNIiqOfVwOF7ynglupW33s+SP6l5u9YYcK/gxy3OwwMvyLpIEB9LeW
-	3E9+HcMLCO/YvFzSSAHWe3XdcK5aoZaOHfwptvLku/USF9zExk2b/9DqtXqeMW6O
-	ffJW2JyXTynfTyFiSmR/1QMvoBnWWRthPuw==
-X-ME-Sender: <xms:PU7HZ5YJaYoe3gBUiQdMtZcL_S6evoKtVMTWuwWHHU5YeORy_N4fBg>
-    <xme:PU7HZwb1k3_T_U657_1x1p1uIO3jMzzSao1wnpWGuPq9UzeaPMtdDllWu6VWS8j77
-    x0TNFwF8RDqlpLD9Y0>
-X-ME-Received: <xmr:PU7HZ78PC01jiQHPUtrAFZmiTb83BAwkRqA84QWLADDTOsCXnBy8fDwTAvKz>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddvkeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:PU7HZ3q60ijFSyPaYi875yQA9SYT06ZrmrAYtnVXUQL68g_0y2bIoA>
-    <xmx:PU7HZ0rG_qUw2z0DBkJzZ5BM2pME_11XtYPZHfex2tqLuQrVJGQWeQ>
-    <xmx:PU7HZ9SFvwxCDmVEKjsZBn3bBnBBY7O9tT4DT0qIsX1ygk8uRR3kCw>
-    <xmx:PU7HZ8oE1ilRcAHF2QGVk_qNg9JJdf2ZhITX2riumaUzfezeucodng>
-    <xmx:Pk7HZx4ileAH-OCVIQb-UsPWKcNc6GMp4HwKKCsZ29BOdn4DiYjRa1dJ>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Mar 2025 14:02:20 -0500 (EST)
-Date: Tue, 4 Mar 2025 20:02:19 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH v21 09/24] ovpn: implement packet processing
-Message-ID: <Z8dOOy9tSpJ1UCiR@hog>
-References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
- <20250304-b4-ovpn-tmp-v21-9-d3cbb74bb581@openvpn.net>
+	s=arc-20240116; t=1741115007; c=relaxed/simple;
+	bh=CPELXozTeReH2ofb9KpESsg9LYa/ImFn14grBac7rT8=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=rnLJfwi1Bvb1haguLXm3l+qegvcR63qhV4IQ3lrfO3JDPYXyex80aUr90Du8uNDnh2Tbb8h79MKAUstqNDsIeAJ7xFev5QpjQ32wqtGbCTUJpJKFzhzhb6VB64/qrcEYvkGlW3UAT5zsG0i8Xl+kM1NVoLhSscWUAGbJe1uk0qQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IehZU5d0; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=/c0PDdGs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 04 Mar 2025 19:03:15 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741114998;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RoRjfGENlhPI/bFhwdClDqShNTuAMaGgnOC3/ni2/CY=;
+	b=IehZU5d0g+9PteRPD6H/meJhNUKFmp0rPjLDFUBIhw2s6SAb0R9t2ukh8N5YPx3E+nHq7r
+	gHsicOVuA6sWtkCW8sZrwnD+bw01hjRDL1PlRICPHm4j+zvHEfYglLQ4Kqi/dKyjIWCLke
+	b8bAIdBU/vy8kLMY6zOwnDgY6XOy2U6N7AZi2atcZZWY5bSS7lR/2ihj4cqlNl8w95LHUW
+	DaYq38PYrl/toHT/Ew0TvqAf7guGegNwIlF1KcknoiQCGIJE0INbcP5YJWCXoxzpwno0PQ
+	WZRsa43f0ULjKe46CyWnJJwyK2nbwByXlHkS5vHyU6BoBbBSlPBpdXgarSwOZQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741114998;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RoRjfGENlhPI/bFhwdClDqShNTuAMaGgnOC3/ni2/CY=;
+	b=/c0PDdGst86HeJodB2S/VHbgaTAl4Rnw2SdQbFhIk2b96FR7FMK62tfhAbzn2JTbQF1//0
+	H4BL0bdyrwq9jmCA==
+From: "tip-bot2 for Uros Bizjak" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/core] x86/percpu: Fix __per_cpu_hot_end marker
+Cc: Ingo Molnar <mingo@kernel.org>, Uros Bizjak <ubizjak@gmail.com>,
+ Brian Gerst <brgerst@gmail.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250304173455.89361-1-ubizjak@gmail.com>
+References: <20250304173455.89361-1-ubizjak@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250304-b4-ovpn-tmp-v21-9-d3cbb74bb581@openvpn.net>
+Message-ID: <174111499551.14745.17175153879841115008.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-2025-03-04, 01:33:39 +0100, Antonio Quartulli wrote:
-> +struct crypto_aead *ovpn_aead_init(const char *title, const char *alg_name,
-> +				   const unsigned char *key,
-> +				   unsigned int keylen)
+The following commit has been merged into the x86/core branch of tip:
 
-nit: static? I don't see it used outside this file.
+Commit-ID:     56cbc77dd94dc4932dd4d4543bd92a3334815354
+Gitweb:        https://git.kernel.org/tip/56cbc77dd94dc4932dd4d4543bd92a3334815354
+Author:        Uros Bizjak <ubizjak@gmail.com>
+AuthorDate:    Tue, 04 Mar 2025 18:34:36 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 04 Mar 2025 19:54:26 +01:00
 
+x86/percpu: Fix __per_cpu_hot_end marker
 
-[...]
-> +static inline struct ovpn_crypto_key_slot *
-> +ovpn_crypto_key_id_to_slot(const struct ovpn_crypto_state *cs, u8 key_id)
-> +{
-> +	struct ovpn_crypto_key_slot *ks;
-> +	u8 idx;
-> +
-> +	if (unlikely(!cs))
-> +		return NULL;
-> +
-> +	rcu_read_lock();
-> +	idx = cs->primary_idx;
+Make __per_cpu_hot_end marker point to the end of the percpu cache
+hot data, not to the end of the percpu cache hot section.
 
-I'd go with slots[0] and slots[1], since it doesn't really matter
-whether we check the primary or secondary first. It would avoid a
-possible reload of cs->primary_idx (which might be updated
-concurrently by a key swap and cause us to look into the same slot
-twice) -- a READ_ONCE would also prevent that.
+This fixes CONFIG_MPENTIUM4 case where X86_L1_CACHE_SHIFT
+is set to 7 (128 bytes).
 
-> +	ks = rcu_dereference(cs->slots[idx]);
-> +	if (ks && ks->key_id == key_id) {
-> +		if (unlikely(!ovpn_crypto_key_slot_hold(ks)))
-> +			ks = NULL;
-> +		goto out;
-> +	}
-> +
-> +	ks = rcu_dereference(cs->slots[!idx]);
-> +	if (ks && ks->key_id == key_id) {
-> +		if (unlikely(!ovpn_crypto_key_slot_hold(ks)))
-> +			ks = NULL;
-> +		goto out;
-> +	}
-> +
-> +	/* when both key slots are occupied but no matching key ID is found, ks
-> +	 * has to be reset to NULL to avoid carrying a stale pointer
-> +	 */
-> +	ks = NULL;
-> +out:
-> +	rcu_read_unlock();
-> +
-> +	return ks;
-> +}
+Also update assert message accordingly.
 
--- 
-Sabrina
+Reported-by: Ingo Molnar <mingo@kernel.org>
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Brian Gerst <brgerst@gmail.com>
+Link: https://lore.kernel.org/r/20250304173455.89361-1-ubizjak@gmail.com
+
+Closes: https://lore.kernel.org/lkml/Z8a-NVJs-pm5W-mG@gmail.com/
+---
+ arch/x86/kernel/vmlinux.lds.S     | 2 +-
+ include/asm-generic/vmlinux.lds.h | 3 +--
+ 2 files changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
+index 31f9102..ccdc45e 100644
+--- a/arch/x86/kernel/vmlinux.lds.S
++++ b/arch/x86/kernel/vmlinux.lds.S
+@@ -331,7 +331,7 @@ SECTIONS
+ 	}
+ 
+ 	PERCPU_SECTION(L1_CACHE_BYTES)
+-	ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <= 64, "percpu cache hot section too large")
++	ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <= 64, "percpu cache hot data too large")
+ 
+ 	RUNTIME_CONST_VARIABLES
+ 	RUNTIME_CONST(ptr, USER_PTR_MAX)
+diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
+index c4e8fac..4925441 100644
+--- a/include/asm-generic/vmlinux.lds.h
++++ b/include/asm-generic/vmlinux.lds.h
+@@ -1072,9 +1072,8 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
+ 	. = ALIGN(cacheline);						\
+ 	__per_cpu_hot_start = .;					\
+ 	*(SORT_BY_ALIGNMENT(.data..percpu..hot.*))			\
+-	__per_cpu_hot_pad = .;						\
+-	. = ALIGN(cacheline);						\
+ 	__per_cpu_hot_end = .;						\
++	. = ALIGN(cacheline);						\
+ 	*(.data..percpu..read_mostly)					\
+ 	. = ALIGN(cacheline);						\
+ 	*(.data..percpu)						\
 
