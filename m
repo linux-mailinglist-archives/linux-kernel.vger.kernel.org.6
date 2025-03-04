@@ -1,168 +1,140 @@
-Return-Path: <linux-kernel+bounces-543742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB71CA4D939
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:51:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E7B7A4D967
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:57:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B874F7A3124
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:50:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E6C83B3BDB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49651FCFDB;
-	Tue,  4 Mar 2025 09:50:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181851FCFDA;
+	Tue,  4 Mar 2025 09:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="MqkVENF6"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TnukOhcE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28D742077;
-	Tue,  4 Mar 2025 09:50:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F06A1DFD8B;
+	Tue,  4 Mar 2025 09:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741081857; cv=none; b=WnRTaKdEORq4+Z3j7FDN1QkWwwnwXAdhWuNeNHPNtn00w15mH6gTpXGag1jNbiAs7S3eD8hOHvKzDZHQdDz+wmMACoKWWAnbGkSD6yIPf8E89tgPnR9mKdhNpyHH3zRgYaXYyr5iLi7mNosNPwEPqWL+GCGf02WJUdxQWBKPqL8=
+	t=1741081883; cv=none; b=CF8yWl0liAbKMFgqdA2s236jC1XgD0IAoSou82B7T02w2jwxHdBq+wmccs00fCZA3GNYrMNCgTIeTimtKmPgFTsjeYOO21Zrjyllm3jbR19anPGV7i6YSIeoT4Hi6mD/eDz2Bp1PPs/OMk+vTjODF0dhRFl38uIortCgktRA+Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741081857; c=relaxed/simple;
-	bh=OyViGJ/xSkOScuLl8Kts553uXVJWw4tJ0x/3OkXB+JM=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=ljUySu8Bz8uycEUdXS7HRQrQgYePSqzXZL910u8ln3lyowj8JX/zUf0AX4CVfRoma7BL0QRcG0ayi3hsxosWaDb/3AtHZ/Y5Sp3l0ZhVJDJwoxBp4YFCyueibHd+zdhxrGN4Th8Nwpp/kaPsQKjOGuhizWX+P36P6vUA8nEsrt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=MqkVENF6; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741081847; x=1741686647; i=markus.elfring@web.de;
-	bh=asA99JHuFG45J+PLamKyBXsE7OPnQTEQXbgBwGkvXUY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=MqkVENF66K7NM+Rdc1ebVHybRmg/N+adIGafKK9Il2hSAgU2TrzNtZgLEUq+d56c
-	 BsdFiDc5Krs3ST5UQtrXMiwTgBMLtxShCEDrcUmVt6nGxd8CNbb+jm8Nk8UBUpb8Y
-	 hoJcGToaD0OvNB/d9uXRChUlJoBCIJnqmpO2z12/E7a0MlKgx/TKVovj5hrV2Idrr
-	 2h16/SJh8AhNNkmnrenQ2Nythb2jugKPUx+7zEV4TaITCthyCR05xbGKmJyJJGGjL
-	 MOAZv2Iwl23em4EP4hIlAM2E4qMXSlPIjIszifMuYP6i/A37+8SZFVVHqTyI6B+Vy
-	 DZdJHlDtUnz3USb+lQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MbCHy-1tIFxu3iWm-00iB9R; Tue, 04
- Mar 2025 10:50:46 +0100
-Message-ID: <c69c79e4-04a3-4182-a694-809a5fa36083@web.de>
-Date: Tue, 4 Mar 2025 10:50:35 +0100
+	s=arc-20240116; t=1741081883; c=relaxed/simple;
+	bh=3AC8YGVOMopiGMhE+q/wk3R/hqs4Zk918q6dZqSrKY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=axXltGoguC8yYOiSsi7N874vtZrgJsRYXRwGAV+gHPwHfOlUKox8tBPlT+umJ4jxZq03qaO/kC0VNYxZVblRBmP8Rqw5mKCfPfgq2/qyFEOjOrjQVphYi3WXxn5vNjcNa5AoYXk2CM5uZHDHyQsjx4fCl5abh+C69oAjua77W+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TnukOhcE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89A97C4CEE5;
+	Tue,  4 Mar 2025 09:51:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741081882;
+	bh=3AC8YGVOMopiGMhE+q/wk3R/hqs4Zk918q6dZqSrKY8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TnukOhcELWDMHSi92I6AH2aVZA9crN168Hg83AUocvBIll0kQbw0l+fEnwj72lKJJ
+	 b3l7qDO1A6XN/OiOYGlOzZkiN2L8wkfPQtFMYX7FP0ETLgIufnIpxVK12lRO60Vwbn
+	 FOzW6bfq2OZ1q2lJp6qfDYvFRXw+uvRaFgOyophzj0eDVgP9G5AnvacAy8UsuVHExt
+	 YNdPupAKT8/17iBibqkWQVI4pWS79b9nO0nT0WeEA0TTAQa0sx00gKJ8e6J+G+PRpW
+	 sMsmCa7u4QWQ0Jo7HkcwyBjFYAzfI/zE5INB4pXxqNix5LhPtr98+WULFek4Pu9yPF
+	 sXmvtFguS0miw==
+Date: Tue, 4 Mar 2025 18:51:18 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-iio@vger.kernel.org,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>
+Subject: Re: [PATCH v6 1/3] include: uapi: counter: Add
+ microchip-tcb-capture.h
+Message-ID: <Z8bNFjh85p2jqK9C@ishi>
+References: <20250227144023.64530-1-csokas.bence@prolan.hu>
+ <20250227144023.64530-2-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH RESEND] perf cputopo: Improve exception handling in
- build_cpu_topology()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: kernel-janitors@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Adrian Hunter <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@redhat.com>, James Clark <james.clark@arm.com>,
- Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
- Leo Yan <leo.yan@linaro.org>, Mark Rutland <mark.rutland@arm.com>,
- Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- Suzuki Poulouse <suzuki.poulose@arm.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <b1c70348-6459-474e-6a0f-d956423368d5@web.de>
-Content-Language: en-GB
-In-Reply-To: <b1c70348-6459-474e-6a0f-d956423368d5@web.de>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="8INrE+XEHmoL1yAg"
+Content-Disposition: inline
+In-Reply-To: <20250227144023.64530-2-csokas.bence@prolan.hu>
+
+
+--8INrE+XEHmoL1yAg
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:zwnxKwlzGB6lzUwzmSXhy5SzzNCA5khP3HuvwjAnzkkTSsl+oIG
- DWOKj06jnDp9rAYXsw/PmjRcrC8kxCSzERqmbAssiny6VokvGklOFI3UVmcoUz1bKebDrR6
- jiet48jwrUEis7A8RSdOhtkr8AotZkLyqlfLHfYdYo4FAltrtYdFPdS4GdaLrrLa9Qk+X63
- 9qVgzazeoL3JAQOY5jeEw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:v/LKQqKo3yk=;2xU/kzBRtU5lDFHf7glYk9cze/y
- gg1qF5dIYCm3Nzi0/mGVb3B1sBlZth/yoVVtNWj+M19J/2pqcxNM3esgC+j6y64p/0Q6BE7mt
- 2M9Xd/4Tv3rMT5m+r1GfAHh1GP8vsTOIJ9iLRMs1qOhI5edxfAt/hxCyBh9WpkSTbOZv90AB/
- 571Q5b9Rcm28BVFAYk7ai6Wg/sTnwACL1Q3mt3/+CToiA0OfI25W4ZKS7PeUumYrJz5KqdUNk
- /9HtLExm8xEz0FwwTmREjksqHGZBetuczVsnHFuDikKLJMYgdmuMm7/aHEd8fY+kQGgsC9Jf+
- 0wBabKaYHDnWvBM8cshHa9vJdaFrMg6BLRo/mquLVX35ryWJ8+lccSZ5KwTP0CXytIEIbnE0S
- MylDHM13/8p6gD76hbpaD8bbjEuZrgTHj2Dmbr7biy45PS0D3q1uHpfBSY9o+F7DtNCMYvDvu
- lJIgSn4/J9rTRQbRXeeB+TWtMUryzTLC1rK+Z7A/svKwupl3qPdgKyrBz4cXuz0dYNpOuhr5x
- 5YXxuOt/Gfe9ljpUA6OgtLg6gynzkxkIqdLpJeSRhzvSFqEZ/DmMi9MUuVFl7Idtr0zxLvKOy
- bZ3jRPXiPcLdqcX5GBfx9YsuFaD9kqzN3zDHB1UjxifAlDo8qVHtbvhZH6FWmBYuJtK4mbxA4
- R1Cja56gQt07lOGpQXcDGbQMukfnjiLbqYS6+t8bEcOTCajtyvNaNmPmD8KNWpAknbqY83AN6
- 6IaRVfdOQV3I0I9/U1iF7mLe7N9N3vLFMv+0H7G/q6Vf/MoPU+PUB2xZ57IcA08TxqO8VIaL3
- HvL3wmzzqg9p4ZNngJu9UdLRqyZXfjb5ESP1R+M6qx/YjcMBdStz615TRQGElDIlDesJO8jKx
- Uh8QLaUBOlPdaSGfG1kwwdy1BdHIznBRD2kFF+Yw9o+dsGKwRshSIBzpYfFXUG4NIXbXlDXHo
- oiksC7f2prXB0VxgoABgjan5P3HhURYUcbsjElfzyGsYPSpw0YlZOr/szVGpLSq1OHMOsWtyO
- yOipxcqzI8ZwzBbM8RQDDG1FFG5PbNKC9lEjzW6MBSX/gww7NgroM7ss+7PVsLyqvO2KdaoHc
- xnKH/WPMGHCrQTCZg4K5r2Ta4h4Ey9jvnOsHfbJX1RbU200YsUvp34y7skAxZrbkSKu+77QjC
- yjqSUwtrjSV0AQu6iP9p9HoGWha4V++3AjN4fKg0rUYpEhtcs3wfAwU/2+wkmJukDxk1/Pxlp
- dQHeBF7phoe/a7HjoxLAo/1Be4ootv7uJ1p3aXxdt/CU5O5pXv1WwKwfUwrjEq0VH3XfitT1p
- Nd5yZAL9nJgMWhsxSbrJHSDOkPA3nPpx6P/kSNtfmxcpt2wLtHieh4oM+whMC16of06gHrJfX
- DIEPVcymD64LXUOe/1xIuQ2EK4+MbJYa357qjo93/YHcGP2koXiyp5/lC1h3J30JEMGHpfx05
- NzvA8yrnqjq8xv9FX1Hh9Kj/scg8=
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Thu, 23 Mar 2023 22:00:07 +0100
+On Thu, Feb 27, 2025 at 03:40:18PM +0100, Bence Cs=F3k=E1s wrote:
+> Add UAPI header for the microchip-tcb-capture.c driver.
+> This header will hold the various event channels, component numbers etc.
+> used by this driver.
+>=20
+> Signed-off-by: Bence Cs=F3k=E1s <csokas.bence@prolan.hu>
 
-The label =E2=80=9Cdone=E2=80=9D was used to jump to another pointer check=
- despite of
-the detail in the implementation of the function =E2=80=9Cbuild_cpu_topolo=
-gy=E2=80=9D
-that it was determined already that a corresponding variable contained
-a null pointer because of a failed call of the function =E2=80=9Cfopen=E2=
-=80=9D.
+Oops, I almost missed this one! Make sure I'm included in the To field
+for the next revision. ;-)
 
-1. Thus use more appropriate labels instead.
+By the way, b4 is a nifty tool that can save you some work and help you
+prep patch series for submission.[^1]
 
-2. Reorder jump targets at the end.
+> +/*
+> + * The driver defines the following components:
+> + *
+> + * Count 0
+> + * \__  Synapse 0 -- Signal 0 (Channel A, i.e. TIOA)
+> + * \__  Synapse 1 -- Signal 1 (Channel B, i.e. TIOB)
+> + */
+> +
+> +enum counter_mchp_signals {
+> +	COUNTER_MCHP_SIG_TIOA,
+> +	COUNTER_MCHP_SIG_TIOB,
+> +};
 
-3. Delete a redundant check.
+Are these meant to be used to identify the Signals in the
+microchip-tcb-capture.c file. You should set the the counter_signal id
+members to these enum constants then. However, this enum doesn't need to
+be exposed to userspace in that case.
 
+Or is the purpose of this to match the parent ID of the Signal when
+you create Counter watches? That won't work safely the way you intend
+because the Counter subsystem creates the userspace parent IDs
+independent of the kernelspace counter_signal struct id member.
 
-This issue was detected by using the Coccinelle software.
+Right now the Counter subsystem just happens to create these parent IDs
+sequentially from 0 because it was a simple way to implement it at the
+time we introduced the feature. However, there is nothing that ensures
+this will stay that way in the future, and in fact the design intention
+was exactly to allow the possibility of a future change to this area of
+code.
 
-Fixes: 5135d5efcbb4 ("perf tools: Add cpu_topology object")
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- tools/perf/util/cputopo.c | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
+In other words, there's no gurantee the parent ID in userspace will
+remain the same even between driver reloads. The intended way for
+userspace to behave is to first identify the desired Signals at startup
+based on their "name" sysfs attribute and then set Counter watches and
+such accordingly thereafter as desired.
 
-diff --git a/tools/perf/util/cputopo.c b/tools/perf/util/cputopo.c
-index e08797c3cdbc..fd185951ee2c 100644
-=2D-- a/tools/perf/util/cputopo.c
-+++ b/tools/perf/util/cputopo.c
-@@ -112,10 +112,10 @@ static int build_cpu_topology(struct cpu_topology *t=
-p, int cpu)
- 	}
- 	fp =3D fopen(filename, "r");
- 	if (!fp)
--		goto done;
-+		goto exit;
+If that is the only purpose of enum counter_mchp_signals, then we can
+omit this patch from the series and you won't need to send it in the
+next revision.
 
- 	if (getline(&buf, &len, fp) <=3D 0)
--		goto done;
-+		goto close_file;
+William Breathitt Gray
 
- 	p =3D strchr(buf, '\n');
- 	if (p)
-@@ -131,10 +131,10 @@ static int build_cpu_topology(struct cpu_topology *t=
-p, int cpu)
- 		buf =3D NULL;
- 	}
- 	ret =3D 0;
--done:
--	if (fp)
--		fclose(fp);
- 	free(buf);
-+close_file:
-+	fclose(fp);
-+exit:
- 	return ret;
- }
+[^1] https://b4.docs.kernel.org/en/latest/
 
-=2D-
-2.40.0
+--8INrE+XEHmoL1yAg
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8bNFgAKCRC1SFbKvhIj
+K8vtAQDQtKdqNviMCtM14inLMV9gO9XK9+zhMyb3MGIEkiBZ6AEAmowtr8SAqf6v
+JEe9IFPC1iVoe0A355hZA2t2H7E3LwE=
+=Wees
+-----END PGP SIGNATURE-----
+
+--8INrE+XEHmoL1yAg--
 
