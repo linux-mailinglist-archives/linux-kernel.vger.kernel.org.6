@@ -1,198 +1,331 @@
-Return-Path: <linux-kernel+bounces-543230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543231-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97C21A4D300
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:31:43 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BD8A4D304
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:32:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 970481894CAE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:31:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51FD33AC3ED
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66E411F4284;
-	Tue,  4 Mar 2025 05:31:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 073AD1F0990;
+	Tue,  4 Mar 2025 05:32:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="B6/bHiLd"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2049.outbound.protection.outlook.com [40.107.93.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F3zvqSNu"
+Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com [209.85.219.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F4142905;
-	Tue,  4 Mar 2025 05:31:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.49
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741066293; cv=fail; b=gzzCT/W3DfLDnGk4wQ4OQj7PnzQcSU0LeC4cSS0Kz/FBDxDOI/K4d7C5xzfaHUwZEOyM8fDYFvPvgIvIwTgbPOUOEOX1KDqjATnI/T/GXOWA5M1N94JPat5C9vw0Q96A2Y6H7QuU1ayOV+zabNdB9o/pOa9brdXMNlTRtk5O3rc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741066293; c=relaxed/simple;
-	bh=t8g2h0nQr0Vp0/dDSTR1mNnvrWhCZJKM1EDlX2aBB7Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=sWbR4WjC82dwU/AVnMSSwRlXByB2rVohlpxj34HnWeb0Q5t+to2v/pHQhAJhgfDoZsI9RCFKasti23lg9zPfJmM2DFBLZ3DQxCrjkjZDjF5XE/PbQ29hLyYaS7CvbJHf9dulFpUPKzFNLW6jc6L7DHpSj2tEZjMTgXVg2Ug3p7A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=B6/bHiLd; arc=fail smtp.client-ip=40.107.93.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=t3+xaQLWg855TdrGX6eRc3vVaC3kjRqZYYVtYFqwDIRMSM6OdC2wfiZBm8IiLBw9hpvU+YjdYLZ38O8pV4y33x7UJ2D+U7pPQuuF0QVnI/CS7MKjtSoDTus9Htaa6HrgnkurvNXZMBQWwQpRrPu5ypqYZwfirv3cMwvgI4Rt+OVgvUOtn4N2Uyo1NYQnlWuHmMOKYqRWUtC6g7TkIQP/yKXuL6gVVFqSm87MQ/z0y1dSeq/4qZnViMZqNMkK6fehKygnz6rLtxSIKDgcU8Xbb9FB2a+wGsc/mLwVG72/s/iGp85BAb3U9SETzFCOfUr4A1nWf0MbHeTWVgzhhNw3LQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tI/n8dS5Meg4FNcUPzX1uWdubv5fzZcbWWi72f+C23Y=;
- b=i4haWMmBw43K6nhkQu1tVaGc/H1iddJvZtoWn1EMCWdHX6+1EEIgHxzKQL0oPqI7775Zh4V9+iOkHDjTSnNMYp6o0v7+b1YSNUTmRAMKx4NM4DCkr59QhiU2XW3GylYuqAjV80Q/dbjnAarF0e7NDsB84RgpOrBtG/LyCP1tFKDE/bN8K9NrTr8t5HcDMxqAzFxvEdY5INpnpsFfZv3e9I4fIg2rj/sCohuP04ZUgb0ufV4Rz0O+n53rv5mgATfmve++IAsULIMSGG1w0HHBNxDKfA5pYE6jKAAW3mVkkfT8AuprFSy7b3hWaj94GqUvt6hbGuTc+J0IpnJhUnuGrA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
- dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
- header.from=amd.com; dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tI/n8dS5Meg4FNcUPzX1uWdubv5fzZcbWWi72f+C23Y=;
- b=B6/bHiLdxDY5l/q39dJt6USBxehkS7nqaXjaykSblHEvT6bBavyGy/uifjAsoi4V0xgUF7AqQ08G32sUAolyB8m62OyRXwsYw3YV9qWujD/vzzt3nSW7kn6AwU/gOp4Bp00liq1AEtu61lcGXcD6HlvN157oPuGHwoCLEhwPpOY=
-Received: from BYAPR21CA0029.namprd21.prod.outlook.com (2603:10b6:a03:114::39)
- by PH0PR12MB7885.namprd12.prod.outlook.com (2603:10b6:510:28f::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.29; Tue, 4 Mar
- 2025 05:31:26 +0000
-Received: from SJ1PEPF000026C5.namprd04.prod.outlook.com
- (2603:10b6:a03:114:cafe::2a) by BYAPR21CA0029.outlook.office365.com
- (2603:10b6:a03:114::39) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8534.8 via Frontend Transport; Tue, 4
- Mar 2025 05:31:26 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- SJ1PEPF000026C5.mail.protection.outlook.com (10.167.244.102) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8511.15 via Frontend Transport; Tue, 4 Mar 2025 05:31:25 +0000
-Received: from [10.136.44.144] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 3 Mar
- 2025 23:31:09 -0600
-Message-ID: <1a969884-8245-4bea-b4cc-d1727348bf50@amd.com>
-Date: Tue, 4 Mar 2025 11:01:07 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F248353AC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 05:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741066337; cv=none; b=u/P39KHigiRnduQcshHRMHYjh4CF/xz/Gus5j18t5PCoZwZvHfD3jSR41jc6zkccksZRI9ZfSX/+eXM8z1xCkuEoZaRww8qsNy0I0RDRu9pKbs+R489VUm+AudAEEKxLtCX4GJqbEIs+2ucSQ5QvMdYrUqzla9ZGOKirXhGOPQc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741066337; c=relaxed/simple;
+	bh=uwJfsOqafeYgVO0sftglEgEE8j+brYeugdGXjZpMmBE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ULpbNsgbXVYH/HDC4pG6dq5qbnDiQNqVrddQ08ASt52+v7ctnINhzV1oZD+H1YeEkFi/un5Wh/VIRc6yQHT/Yu2NFzLMrxNl51LS42KFeU00yTGccmMT7B2FGccUEnWwPLeCKuds4SXIJP7ojr5Dx3OnGi/9W46+sf1oCtFFfkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F3zvqSNu; arc=none smtp.client-ip=209.85.219.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e60b04fc3edso3746855276.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 21:32:14 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741066334; x=1741671134; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=CYu4MUZk18rAS2xPiF495RECniwJHYMBXDJmsgS/w88=;
+        b=F3zvqSNu6zlZcdtAvDhZ8VlLsj3yuNJ4PRBbQnhoT0O07AXPc5tCYnjIeaYcXMtCAm
+         NSve0wxLAFk2L7xemfgmzvYaNYEkzpmpsnf/QJx6VsEdlAIqE/SMLPuLBjAI2lhygOmU
+         4pVDX4xn9FQ7nbO9XCMX+whUp2HXdv/2FUmYdsWjofm017MSwbxyVHgiyuMzJJVLm7YK
+         Tr6GxeN9f8InRPhya4yhskKlZ/pUxWwASn9cJyjXfN5RjggZsXMed35ACZy0X9NgVB1c
+         Jg8zac2fBrNctJKB6iF8/GL5jDIRCnIHyJI2obRcc6CMBrBUCbv2lmNaqCdb0Bz5q9Mm
+         VFFA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741066334; x=1741671134;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=CYu4MUZk18rAS2xPiF495RECniwJHYMBXDJmsgS/w88=;
+        b=UjvolbWeKwa6PZvenMGfpZn7u7L3cW8KQW/lZmBA4TNYF+Z/64gPVisBl96DUINDSy
+         oIBqLNbmKKDzTKbgD7DogWHld/vmwx/Mjs+M2dH8K08XqFSgd+ZZocNA4jXONWBRt+Aj
+         kzTZc4PY/qrzKWwbcq2CgQPeNgG8L3clfsQQWs5EYzOfdu3vM+YMPycseKtkgiVF0t5/
+         gu+nx4GnA0XJmc69YvDmp9jv7T9nDp2LIM+mi6beV7hzf/6WJmQRiBJKlRcvnByiqwo7
+         +6i2MtxSkhE2By1NzplkrKT2+5McrW+Dw+QL0AFm/nnQZaZ3x8eBTFzIjzIT3/EXEW/y
+         Beqg==
+X-Forwarded-Encrypted: i=1; AJvYcCXbRpbQdgP3RQUbABOA8GXdKdjRdJIWNueefse71/3la5RErdZXrM6mHeQ1pQceg9dAdcUoT9zYt1dGZmc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx60rvfW4Vd2XEgBCbqpa2euqg/EPb8+lkG47RoyKt4kuHrM0I/
+	0k9ESqh/mV2hdIMA5gZebU0WSepoMmrTnKyT7nUKliNPBHG+wIuNJeFVH6lu10jPIaSd+DnBNIu
+	zvdXCsm7ILVE0rRArctGnpGnDC5F0fLHS7E7OVQ==
+X-Gm-Gg: ASbGncsCvWXHn9LOqmfMmIG6L7CKIDDrbdZi0Z5MPjtVyskPEu4jRfsikIKOBCEhw2O
+	KpVEjqvHDT9qDgKGxcm/+RoePRDcCD4Ac3/LsTLoZ5+lmg7kdPyrNolcjEtFONsfuhKNeDz+JSb
+	dpg7oBMDUNML3w5FS2m7LJEwpEdCmxFpXr9YT5SI+AAA5Rv8P5e8E/VQBQtTc=
+X-Google-Smtp-Source: AGHT+IGubsERPILfSO+nWvHRpqWIhp8+Tnzqu8k5LKZYyilLC8HQ+8Yx1dArhOQDYGCOO2RveNiySFtfYy72NF/mQEQ=
+X-Received: by 2002:a05:6902:2743:b0:e5e:700:92f5 with SMTP id
+ 3f1490d57ef6-e60b2e8e4f7mr19425932276.2.1741066333741; Mon, 03 Mar 2025
+ 21:32:13 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-To: Linus Torvalds <torvalds@linux-foundation.org>, Oleg Nesterov
-	<oleg@redhat.com>
-CC: Mateusz Guzik <mjguzik@gmail.com>, "Sapkal, Swapnil"
-	<swapnil.sapkal@amd.com>, Manfred Spraul <manfred@colorfullife.com>,
-	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, "Shenoy, Gautham Ranjal"
-	<gautham.shenoy@amd.com>, <Neeraj.Upadhyay@amd.com>, <Ananth.narayan@amd.com>
-References: <20250228143049.GA17761@redhat.com>
- <20250228163347.GB17761@redhat.com>
- <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
- <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
- <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
- <741fe214-d534-4484-9cf3-122aabe6281e@amd.com>
- <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
- <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
- <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
- <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
- <20250303202735.GD9870@redhat.com>
- <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
-Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000026C5:EE_|PH0PR12MB7885:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66b20459-02a1-4848-5217-08dd5addcee2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Zm9aZUFoRWFXZW5WKzRvKzlaNWYxRG5zRWpySitKdEw3bDZ5M0VvVTFvUmFN?=
- =?utf-8?B?M1hCQjhlM3pqTllQNE1YTlpyS2ZOWCtzc1NUZjAwVDAwRm8xNHoxd0MxK0xu?=
- =?utf-8?B?VnlBWmVYNis0UGJkU1dQNHdVWjltTnUrekJKV20xWTg2dHRoOHF5TS9lY1JE?=
- =?utf-8?B?cEQ5enFGMjdFVUZES0Q0dHZlRUZUWEwrMjBQVG9ZUXlnT1J3REhlb0pneE4v?=
- =?utf-8?B?QVdlZXpxRTVLdFNRMmVUMmZocGVVWm5yam9jTFJWdGZPSFZMSlNpTmNFUmx1?=
- =?utf-8?B?RmU2cTdxVDJYS0gyVURQT2tMZElMUkd1ZFV1ZlZ0eXBQSm1iNVRuTGgwR1hk?=
- =?utf-8?B?dDJ5emJiQ1psZXJCajN1YjNyV1owN3d3STVSZ1VhSGdsTlphTzk0RXgwZTVB?=
- =?utf-8?B?QVJwQ0xmcUpDTGV1bHNBRE9vRUtXd0ZqektLR3AyWFltdWpTVjVVL1JVRU8r?=
- =?utf-8?B?ZUNiNHNrMlhCVjB1RlBDUWVyVXNUNUFXMkZZWmVVa0tJTUpvUTFROCtQVjVw?=
- =?utf-8?B?TTA4NnVYQml5Wk5seUxxVmVhdzRiT0M5STVGdEppRXJ5cEVkTjNNREF0RlJn?=
- =?utf-8?B?MG5xQUd0UFR4bm1EV2E4ZTFhWnlPcEk1Mm5wKzVrb3daa0ZGQUlXTmxtRlQ5?=
- =?utf-8?B?endTR1cvblk1R0QzTlpmWGNyclYrUmo5WXcrUCs5ZlVzOUw2MWIweWZLM2RF?=
- =?utf-8?B?ZDI0K1B4R2RHNmsyRmM2RTE5MTMvb0wwVzRlQmRMU2tVNytveWhNU3BWNnBF?=
- =?utf-8?B?cG0vdlJRa3A2aWZ5b2pNbWxjdHlLTW0rQmZRRnk5b25YYVI0RWRhOWxTaVJk?=
- =?utf-8?B?bzh3a3R1VXBsNWt6WGtCdjltektMNG1iVk1hSkJqd2NvRGdMb1IybFNJZTcy?=
- =?utf-8?B?NTB6K2ZPREJ0OFJlZGxwcmR4RDZ4V1prY0VMN3dQQUxsaEFlUUJNRWo1MVpi?=
- =?utf-8?B?N1VBWXFQY0xUc3dKMHhSN0k1KzRDd0Q4cU1qTnp6d1o2TzJBYWRydHpLeWpH?=
- =?utf-8?B?eDJaV1hmb2lrbGFtdVlNR1pQNVFzYmZQMnkxbDY2L0UwOHJBNDlXYjUxR2ZO?=
- =?utf-8?B?YW9nTlA2aEZxd0tVUnlJcXl6a2dHQTQvOWVUNlRMS0ZYN1V2UkIvMHdLZDBZ?=
- =?utf-8?B?a1FlSXBQaUxMSWttL2k1dVprWjcxZjgzN3lmdk94MVNvSEhZRG5UbXNzSCsz?=
- =?utf-8?B?RmRxNjE2bFFWQlEzc0ZkYndhNWlOcGtDQzhja0ZrT1FkaWJweTdQSkx1Yndu?=
- =?utf-8?B?bFc5cjhhQ1lPQWVTTndiMkdnNHM3S1A0V25mTXJLd1hsQVhXcFRGZ2Fqckd3?=
- =?utf-8?B?ZENJSXVnM3VtR2kzYVZiZkRhOVhxUGRPWWdOaDJ2NjFDRlBuOTUxUjBERU93?=
- =?utf-8?B?eks5ZUd2NGU3YjcxT3hxNlZQV2Fta0dpOW9MNDB4L3h6cU15MVZ0TDhDSCtQ?=
- =?utf-8?B?QWRGQ1Blb2ZWNmxPNVNJQWh4eHl5NVA3cm8ybkZJK3pSODhFZVZxM1dWZHl2?=
- =?utf-8?B?T1hBWW54bkg3UjYwTTNsQXhCUjFmWmUwTTQ2bWxiQmNkQkowSTJpS2RYME9G?=
- =?utf-8?B?K3Y0eXpKZFUwRUFONnNsSnZ0bjZXblpnSnVUSFlhbDZwUWMwZUZ4V2lZTUJR?=
- =?utf-8?B?bDRCZW01RWF0OUlUOXcwdEN5OU1zWVhQVUNhL0gyeE85eWIxWGVQR05ic201?=
- =?utf-8?B?VUFzT3FHdDRKbzFxek03NXF5ZHU5eG9hbGowWjhDZkpOajYwR2R2SW1IQ3lG?=
- =?utf-8?B?ZzEvam9sQU9tYUVZMUI3NnRFMnQ1UHpKdkZHSUF3eGUrcHYwaHVKQWNYNm1S?=
- =?utf-8?B?WkVaUnFtUG5HUndxeXV0anlSbUVUU24vZVVhN2c3OVJ5aTZUK0xTalFuYi91?=
- =?utf-8?B?Y1lKTGttbjNCV2I5RHNyV2hubjZWVFdtUXlLTkdRSHBzbFZtZ1Y3dGtuazhj?=
- =?utf-8?B?NnNva2xhUnhUNVplRXR3c2FXVUcxWGhRcnk2WjhFbzFkejd6ZHJnckdRQlZG?=
- =?utf-8?Q?iGhOgzy6f3hETBhPnKvkY3aQbVbM3M=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 05:31:25.9970
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66b20459-02a1-4848-5217-08dd5addcee2
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000026C5.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR12MB7885
+References: <20250303-force-modeset-hw-ctl-v1-1-9cbf6d4fbf8e@quicinc.com>
+ <flc3cyky4wxfin7dlxhukwmhonze3napmuyhl2s6jbsgepco7a@q4l2ndh23lus> <4bb1d4a7-dd0b-4565-8d5d-ff8fd4cda20a@quicinc.com>
+In-Reply-To: <4bb1d4a7-dd0b-4565-8d5d-ff8fd4cda20a@quicinc.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Tue, 4 Mar 2025 06:32:00 +0100
+X-Gm-Features: AQ5f1JqQetJ9iRwf0aLX0aThJ-eqZfritAKkEN_CXCT36mxXKb-PEqdphLh_J5I
+Message-ID: <CAA8EJppMV7uj6w1_qr2AMVT7KYJiVqPRWBibqXtf3adLpRKcrw@mail.gmail.com>
+Subject: Re: [PATCH RFC] drm/msm/dpu: Force modeset if new CTLs have been reserved
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hello Linus,
+On Tue, 4 Mar 2025 at 03:44, Jessica Zhang <quic_jesszhan@quicinc.com> wrote:
+>
+>
+>
+> On 3/3/2025 3:49 PM, Dmitry Baryshkov wrote:
+> > On Mon, Mar 03, 2025 at 10:28:00AM -0800, Jessica Zhang wrote:
+> >> If new CTLs are reserved by CRTC but atomic_enable() is skipped, the
+> >> encoders will configure the stale CTL instead of the newly reserved one.
+> >
+> > The CTLs are propagates in .atomic_mode_set(), not in .atomic_enable().
+>
+> Hi Dmitry,
+>
+> Yes, sorry mixed up the two function ops here and in my reply in the CWB
+> thread.
+>
+> >
+> >>
+> >> Avoid this by setting mode_changed to true if new CTLs have been
+> >> reserved by CRTC.
+> >
+> > This looks very strange. First we reserve new CTLs when there is a
+> > modeset requested. Then on one of the next commits we detect that
+> > encoder has stale CTLs and try to upgrade the commit to full modeset
+> > (while the user might not have .allow_modeset set to true for whatever
+> > reason, e.g. because only ACTIVE is changed).
+>
+> Ah I see what you mean. I think this is an issue with how/when we're
+> calling dpu_rm_reserve(). Since RM reservation is tied to
+> atomic_check(), we aren't able to force a modeset based on HW block
+> reservation. The only reason we were able to avoid this issue with
+> needs_cdm is because needs_cdm didn't depend on the CDM HW block index.
+>
+> I think there's not really a good way to avoid this other than flipping
+> the order of the msm_atomic_check to drm_helper_atomic_check ->
+> dpu_kms.check_mode_changed -> drm_atomic_helper_check_modeset().
 
-On 3/4/2025 2:16 AM, Linus Torvalds wrote:
-> On Mon, 3 Mar 2025 at 10:28, Oleg Nesterov <oleg@redhat.com> wrote:
->>
->> Stupid question... but do we really need to change the code which update
->> tail/head if we pack them into a single word?
-> 
-> No. It's only the READ_ONCE() parts that need changing.
-> 
-> See this suggested patch, which does something very similar to what
-> you were thinking of.
-> 
-> ENTIRELY UNTESTED, but it seems to generate ok code. It might even
-> generate better code than what we have now.
+No-no-no. This would require a full drm_atomic_helper_check() call
+again, after the check_mode_changed() callback. But again, this should
+not be required at all. The whole point of .check_mode_changed() is to
+be called before performing full atomic_check() chains.
 
-With the patch on top of commit aaec5a95d596 ("pipe_read: don't wake up
-the writer if the pipe is still full"), we've not seen any hangs yet
-with a few thousand iterations of short loops, and a few hundred
-iterations of larger loop sizes with hackbench.
+>
+> What do you think? It seems to be valid given the examples in the DRM
+> docs [1]
+>
+> [1]
+> https://elixir.bootlin.com/linux/v6.13.5/source/drivers/gpu/drm/drm_atomic_helper.c#L610
+>
+> >
+> > Could you please check if the following change fixes the issue: in
+> > crtc_set_mode() replace the raw !new_crtc_state->mode_changed check with
+> > the drm_atomic_crtc_needs_modeset() call?
+>
+> This also fixes the DPMS failures. IIRC Abhinav had suggested a similar
+> change to fix a different issue [2] and you gave some feedback on
+> avoiding mode_set() for enable/disable calls which don't have mode_changed.
 
-If you can provide you S-o-b, we can send out an official patch with a
-commit log. We'll wait for Oleg's response in case he has any concerns.
+After reading the documentation for
+drm_encoder_helper_funcs.atomic_mode_set() and looking around, I think
+the issue is in the handling of the DPMS functions. I might have a fix
+for the issue.
 
-> 
->                 Linus
+> Also, while this may fix the CWB CI failures, wouldn't the issue still
+> remain regarding how to force modeset for changes in HW block reservation?
+
+I think it is the other way around: HW block reservation is only
+changed if there is a modeset. I'm currently testing my theory :-) We
+were performing HW reassignment if drm_atomic_crtc_needs_modeset() was
+true. However this function returns true in one of the cases, where
+there is no actual modeset happening (and it's even documented this
+way) - when only DPMS call has happened (in other words, when
+.active_changed = true, but two other bits are false). It is required
+not to reassign HW resources in such a case. So, I think, a correct
+fix is to change the condition in dpu_crtc_atomic_check().
+
+>
+> [2] https://gitlab.freedesktop.org/drm/msm/-/issues/59
+>
+> Thanks,
+>
+> Jessica Zhang
+>
+> >
+> >>
+> >> Note: This patch only adds tracking for the CTL reservation, but eventually
+> >> all HW blocks used by encoders (i.e. DSC, PINGPONG, CWB) should have a
+> >> similar check to avoid the same issue.
+> >>
+> >> Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+> >> Closes: https://lists.freedesktop.org/archives/freedreno/2025-February/036719.html
+> >> Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
+> >> ---
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 13 +++++++++++++
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 12 ++++++++++++
+> >>   drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h |  1 +
+> >>   3 files changed, 26 insertions(+)
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >> index 4073d821158c0..a1a8be8f5ab9f 100644
+> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> >> @@ -1406,19 +1406,32 @@ int dpu_crtc_check_mode_changed(struct drm_crtc_state *old_crtc_state,
+> >>      struct drm_crtc *crtc = new_crtc_state->crtc;
+> >>      bool clone_mode_enabled = drm_crtc_in_clone_mode(old_crtc_state);
+> >>      bool clone_mode_requested = drm_crtc_in_clone_mode(new_crtc_state);
+> >> +    struct dpu_crtc_state *cstate = to_dpu_crtc_state(new_crtc_state);
+> >> +    uint32_t enc_ctl_mask = 0;
+> >> +    uint32_t crtc_ctl_mask = 0;
+> >> +    struct dpu_crtc_mixer *m;
+> >>
+> >>      DRM_DEBUG_ATOMIC("%d\n", crtc->base.id);
+> >>
+> >> +    for (int i = 0; i < cstate->num_mixers; i++) {
+> >> +            m = &cstate->mixers[i];
+> >> +            crtc_ctl_mask |= BIT(m->lm_ctl->idx - CTL_0);
+> >> +    }
+> >> +
+> >>      /* there might be cases where encoder needs a modeset too */
+> >>      drm_for_each_encoder_mask(drm_enc, crtc->dev, new_crtc_state->encoder_mask) {
+> >>              if (dpu_encoder_needs_modeset(drm_enc, new_crtc_state->state))
+> >>                      new_crtc_state->mode_changed = true;
+> >> +            enc_ctl_mask |= dpu_encoder_get_ctls(drm_enc);
+> >>      }
+> >>
+> >>      if ((clone_mode_requested && !clone_mode_enabled) ||
+> >>          (!clone_mode_requested && clone_mode_enabled))
+> >>              new_crtc_state->mode_changed = true;
+> >>
+> >> +    if (crtc_ctl_mask != enc_ctl_mask)
+> >> +            new_crtc_state->mode_changed = true;
+> >> +
+> >>      return 0;
+> >>   }
+> >>
+> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> >> index a61598710acda..2f3101caeba91 100644
+> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> >> @@ -188,6 +188,7 @@ struct dpu_encoder_virt {
+> >>
+> >>      unsigned int dsc_mask;
+> >>      unsigned int cwb_mask;
+> >> +    unsigned int ctl_mask;
+> >>
+> >>      bool intfs_swapped;
+> >>
+> >> @@ -707,6 +708,13 @@ void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
+> >>      }
+> >>   }
+> >>
+> >> +uint32_t dpu_encoder_get_ctls(struct drm_encoder *drm_enc)
+> >> +{
+> >> +    struct dpu_encoder_virt *dpu_enc = to_dpu_encoder_virt(drm_enc);
+> >> +
+> >> +    return dpu_enc->ctl_mask;
+> >> +}
+> >> +
+> >>   bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_state *state)
+> >>   {
+> >>      struct drm_connector *connector;
+> >> @@ -1155,6 +1163,7 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+> >>      bool is_cwb_encoder;
+> >>      unsigned int dsc_mask = 0;
+> >>      unsigned int cwb_mask = 0;
+> >> +    unsigned int ctl_mask = 0;
+> >>      int i;
+> >>
+> >>      if (!drm_enc) {
+> >> @@ -1245,11 +1254,14 @@ static void dpu_encoder_virt_atomic_mode_set(struct drm_encoder *drm_enc,
+> >>                              "no ctl block assigned at idx: %d\n", i);
+> >>                      return;
+> >>              }
+> >> +            ctl_mask |= BIT(phys->hw_ctl->idx - CTL_0);
+> >>
+> >>              phys->cached_mode = crtc_state->adjusted_mode;
+> >>              if (phys->ops.atomic_mode_set)
+> >>                      phys->ops.atomic_mode_set(phys, crtc_state, conn_state);
+> >>      }
+> >> +
+> >> +    dpu_enc->ctl_mask = ctl_mask;
+> >>   }
+> >>
+> >>   static void _dpu_encoder_virt_enable_helper(struct drm_encoder *drm_enc)
+> >> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
+> >> index ca1ca2e51d7ea..70b03743dc346 100644
+> >> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
+> >> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.h
+> >> @@ -91,6 +91,7 @@ bool dpu_encoder_needs_modeset(struct drm_encoder *drm_enc, struct drm_atomic_st
+> >>
+> >>   void dpu_encoder_prepare_wb_job(struct drm_encoder *drm_enc,
+> >>              struct drm_writeback_job *job);
+> >> +uint32_t dpu_encoder_get_ctls(struct drm_encoder *drm_enc);
+> >>
+> >>   void dpu_encoder_cleanup_wb_job(struct drm_encoder *drm_enc,
+> >>              struct drm_writeback_job *job);
+> >>
+> >> ---
+> >> base-commit: 866e43b945bf98f8e807dfa45eca92f931f3a032
+> >> change-id: 20250228-force-modeset-hw-ctl-d02b80a2bb4c
+> >> prerequisite-change-id: 20241222-drm-dirty-modeset-88079bd27ae6:v2
+> >> prerequisite-patch-id: 0c61aabfcd13651203f476985380cbf4d3c299e6
+> >> prerequisite-patch-id: c6026f08011c288fd301676e9fa6f46d0cc1dab7
+> >> prerequisite-patch-id: b0cb06d5c88791d6e4755d879ced0d5050aa3cbf
+> >> prerequisite-patch-id: fd72ddde9dba0df053113bc505c213961a9760da
+> >> prerequisite-change-id: 20250209-dpu-c3fac78fc617:v2
+> >> prerequisite-patch-id: c84d2b4b06be06384968429085d1e8ebae23a583
+> >> prerequisite-patch-id: fb8ea7b9e7c85fabd27589c6551108382a235002
+> >> prerequisite-change-id: 20250211-dither-disable-b77b1e31977f:v1
+> >> prerequisite-patch-id: 079e04296212b4b83d51394b5a9b5eea6870d98a
+> >> prerequisite-change-id: 20240618-concurrent-wb-97d62387f952:v6
+> >> prerequisite-patch-id: b52034179741dc182aea9411fd446e270fdc69d1
+> >> prerequisite-patch-id: bc472765a7d5214691f3d92696cc8b0119f3252e
+> >> prerequisite-patch-id: c959bc480e96b04297ebaf30fea3a68bbac69da6
+> >> prerequisite-patch-id: f7db8449b241a41faac357d9257f8c7cb16503ec
+> >> prerequisite-patch-id: 7beb73131d0ab100f266fcd3c1f67c818a3263f4
+> >> prerequisite-patch-id: c08cbb5cf4e67e308afd61fdad6684b89429d3b6
+> >> prerequisite-patch-id: a4e343143b8fbe98ae4aa068cc459c750105eb9d
+> >> prerequisite-patch-id: 1d09edcf12ef7e7ab43547eefacae5b604b698e9
+> >> prerequisite-patch-id: 0008f9802bfd3c5877267666cceb7608203e5830
+> >> prerequisite-patch-id: 49402eb767c97915faf2378c5f5d05ced2dcfdac
+> >> prerequisite-patch-id: 522be2a6b5fe4e3a2d609526bb1539f9bc6f828f
+> >> prerequisite-patch-id: 031da00d0fffd522f74d682a551362f3ecda0c71
+> >> prerequisite-patch-id: 9454cec22231a8f3f01c33d52a5df3e26dd88287
+> >> prerequisite-patch-id: 7edbeaace3549332e581bee3183a76b0e4d18163
+> >>
+> >> Best regards,
+> >> --
+> >> Jessica Zhang <quic_jesszhan@quicinc.com>
+> >>
+> >
+> > --
+> > With best wishes
+> > Dmitry
+>
+
 
 -- 
-Thanks and Regards,
-Prateek
-
+With best wishes
+Dmitry
 
