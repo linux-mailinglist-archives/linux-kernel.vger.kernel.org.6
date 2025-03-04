@@ -1,133 +1,174 @@
-Return-Path: <linux-kernel+bounces-545095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11FE1A4E8D2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:30:58 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 120CAA4EAF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:15:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 840D37A3FA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:27:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53F3C3B2CE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:28:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421D22857F4;
-	Tue,  4 Mar 2025 17:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6998E259C86;
+	Tue,  4 Mar 2025 17:03:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LsA4KZb4"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qPziMNPP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 443FD2857F3
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA585255231;
+	Tue,  4 Mar 2025 17:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107798; cv=none; b=OI1RT5zVbd/ui/iPffyKboRumZcdFEu4EdGuLuz4bDrS1x8feOrH/+vbgKg+QgeXjpcYH2TJ2keHa2p/NJjVP3YBldEIpqmEK2hCW+mVuba8m8yqpVAbzMCeTXjCboKxGKXbPSRL95G5DekwXD7TgGgNnwqo3yl8/sUXAmWlsXA=
+	t=1741107806; cv=none; b=hpOu9W7zIJoHhxUrdju/aT1KacPUCoVLR1YIKGoe6oCTmhcAgT5rX8heeDXuU5b8GhjpOZC7Z/dubvtFtWYMPf8h/7lz6P9hKoUzPH2Skz/0Uztb4UiyjmSusWyjXW7pUPNaELpU+1R0+88tmC8FxebB3YGnTrmdcZ3/YG3hocs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107798; c=relaxed/simple;
-	bh=T94NuQPBHRq+7RffbHPtggg4RzXeb+StCo1orI07SVU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zsp60a4sjyBGiL3Z6TbHqpVeFGgx3IqCbC1mePfmz1POZIwY9ebBXpMikVsWEHrdS2guefL4UR+4CB3JaOj8ZppeUEfWRRv8jA13v0g74rwVJ4FTjfHMXcnK2kB+LfZd/J8GdGiMWz3H9Tu/kJBhMPNx1x4LnhuqlTD2mc86c+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LsA4KZb4; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5249rdrg006166
-	for <linux-kernel@vger.kernel.org>; Tue, 4 Mar 2025 17:03:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XfjJKhXYnPoz5V9fgo7qXBxn3xFBcrjNrs2Q0WyjUis=; b=LsA4KZb4AS/+Md+V
-	OZePmJc2XdO/jOCsGCxdkI0psRnyIwyERLG0/CLdg86caI1CW5PcHfmasP/4wIbi
-	vaTnDG9RjvQutRrBMmRsmJp3fJMhE3nET47Gv8iP+8W0rm/DrKiqryGb1/7SSTYI
-	HaEwGUTDMO1ydcOXnsaZmzMvwLzYT4dEkYuZyx3tQ6wVF4q5WKFWFUaNELMCF5Ow
-	W+OouFcWFV5a9TjmrZuBvTp45oiRQOX1MMLI2XViNqYuv/iMt5YnkJVhXFw+KZSX
-	V5OdHweoK/+Xfy4cWPOPdQEIDRCby7yLYwqAps1xU+D7D/pohho0fbk3xa9S8LYF
-	b9+dCA==
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com [209.85.160.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6tjj8c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:03:15 +0000 (GMT)
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-474e26f2daaso7881341cf.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:03:15 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741107795; x=1741712595;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XfjJKhXYnPoz5V9fgo7qXBxn3xFBcrjNrs2Q0WyjUis=;
-        b=toqxmAjQba78oVi/feRHCrdUlLRC6mnfMTI/xTBXvDOwdyeScKOvU5HcSy5YEODlhC
-         N4LAszSBsKTjXiVndnHbzATJKWMPrqBPS7Ejwy2V3tG6A7MVjMuYAoPdSA0indiIToy0
-         G8IxGwXSvAmBCjhJaJIMdD0GotWvF9DUpUiRxIKRyK/T28auC95tNO35DNAxRySFWb60
-         PR/zQpe/wMcgiMPHytBCFBl+0UoSB6FO6dfQHqKPIxXZPjDboJTB6/KWZJWto4Q54X3L
-         +B30RUKWZUTmo00lU4kjHtn7hV3RkqUuGviv3daukKCOp2uUOQk0gVNLXdJymDV3sP4T
-         0Dxw==
-X-Forwarded-Encrypted: i=1; AJvYcCXG6HscEGznrLu5ZbIDP7SC8c4LnPxyNdkaZjG26lBg2lv3nTCjAAVLTwSv8d6Rjd963FbUJSMgIBjaUSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYdsckl9DQnPhe+TF32DI/yrzC9eGeeHjMRzpKe+gN2SDWzGHy
-	KPgkmanspKr67xEKaIv21w6EhEONc4dAlHwZJHZhskkkF+knvKMptCYml5FWSaiNEC7Yl//FhS5
-	9rLv11PvH+fDlhtaVPWIHSbExE89lJs2zINu6b5vLQ6yDMdZGdVbdl5pPSJwL8c0=
-X-Gm-Gg: ASbGncsenYO4T7DlbXSlV4hpPszuy5fT8HeOyIe1m7EHQzdnJ+Eby1+oODQ0D9tytlB
-	3xAoWFg0bbyK4HsMarfity2km2+5A+bkDZLjUkC1sBbFFUqR+cIdA8qF6HsasVQFK3/r8kD5p8P
-	P+1EuMWLbT95QW0OfLV5It+9NbtQl0umJwpqU2L/LkVvOV+L0yW4NTDFA03DFttXbc+SM7I63R7
-	Tb1y2F9g429Plv2UzCxCVVxK7U93B/mbdpqvi8ZiIg+5ZuWu6E53jgGFj0wulo5Mq9nz1phZpMv
-	IKcrHHotuEEBe2YEqATb/7eDhHFtCeW/n/fmPIklPJPjr2nm1s/WTjfik+YIGia4xcQpAw==
-X-Received: by 2002:a05:622a:3c6:b0:472:7a2:c3ca with SMTP id d75a77b69052e-474fcf22ee1mr17698141cf.7.1741107795108;
-        Tue, 04 Mar 2025 09:03:15 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF6X4OkNe5Y1A2PTdo9agkkM4vxYz+sQ46VBxO8LchjgkPfcte+pqKgPp5rIaC4TGjWHNZHEA==
-X-Received: by 2002:a05:622a:3c6:b0:472:7a2:c3ca with SMTP id d75a77b69052e-474fcf22ee1mr17697881cf.7.1741107794757;
-        Tue, 04 Mar 2025 09:03:14 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3bb4bd9sm8384553a12.33.2025.03.04.09.03.12
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 09:03:14 -0800 (PST)
-Message-ID: <887ca307-b0fe-47a4-9a72-7fc720319343@oss.qualcomm.com>
-Date: Tue, 4 Mar 2025 18:03:11 +0100
+	s=arc-20240116; t=1741107806; c=relaxed/simple;
+	bh=TKQ7m1KW0EDUZSOKBSYQtrQAfX8pph1vCn+eyQcex7E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=b4/vqeI7saZ/Dndbicdv/4E/ZPeEJ2pkqLP9pG9mmmZi1ae2PF9lAyC0mpNcRMhRCgTDX3KeCbnhEUzdki92jmaWJ2LCo4a7zptP2saXvlMsIDy6yxuxwQXYfa+Ja8032/VVmLjZntgpWsieuUdriYxsY6wBnH8g6qmYZquFwFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qPziMNPP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94039C4CEE8;
+	Tue,  4 Mar 2025 17:03:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741107806;
+	bh=TKQ7m1KW0EDUZSOKBSYQtrQAfX8pph1vCn+eyQcex7E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=qPziMNPPTpV7AZGdUSJ2pYZHvFof/rb0iJAdl6k+BJQLENzl9F/vV7Df+y7sKupaA
+	 a1zn3SDLQlTwb6tDEv2Ba4iq/jBLIkd3vheLWpE4K02jvvC4wt0MlF6PYyMe9ROVn1
+	 x9z4RcJuQRLw7GvPpsiqtCq61JrxalqOx6TtjqXV9zoORnT7JiF/HHCGNaZVcGOlBh
+	 /xy671WTBi974k8LS2Fdha1r42iqIcI58w5KS/S4bdLcP0mXU+P3P5G2SdI4JWBoKj
+	 e9DDkNQX8asdnyKuZTcAmKPblEs0ipfwxhH2B09QZ/pFaTuaoapSRIgAl7+ZXwGjcx
+	 ZpgP+490ep10g==
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e53b3fa7daso4343474a12.2;
+        Tue, 04 Mar 2025 09:03:26 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVXgYhFF5LGlUwOp9WDs+5JLWN28ieOy3FPZRUlFFrqcCk3z3HjvamAgIfFT9ATj1I/VrA2DZn1OIoA@vger.kernel.org, AJvYcCXB7UMjFeDHtGtqRBzTiW0nsEfO/UuQn2NzIaJHqX8Ubn9TVlPpHV6/UgusM0av/DqBHGQ2L1uYS6ctfaZt@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsYo1yWmtWduq+NpBVgU8iV0OX2Fjgq4cz4s6U9GUE0aa5kIHa
+	jxh8Vg+UwuZDKr8iAAa/1j55Y9xAoSXv3r1gwSKgGd4ZVKENa97qFjM9FwyDqvn938E8snvlgKa
+	n4LnBi1jcqTdIYCi2gL7J0PmpjA==
+X-Google-Smtp-Source: AGHT+IGsfY6fqe2YQl8Oj3jQOJXYsrLKdp1WEPofGDKrpvMKW/z4zof5UMwhD4wjXSR+/W1s+f5P1D2nlfXqLF0F4Ms=
+X-Received: by 2002:a17:907:d1a:b0:abf:d4a9:a0a5 with SMTP id
+ a640c23a62f3a-abfd4a9b8fbmr946630666b.45.1741107804893; Tue, 04 Mar 2025
+ 09:03:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] arm64: dts: qcom: x1e80100-dell-xps13-9345: mark l12b
- and l15b always-on
-To: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>,
-        Johan Hovold <johan+linaro@kernel.org>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250227081357.25971-1-johan+linaro@kernel.org>
- <20250227081357.25971-5-johan+linaro@kernel.org>
- <CAMcHhXp2im-55KxwSUj0pV_hmrg-HaV5RYB4jvPOoqOYjJuCYw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAMcHhXp2im-55KxwSUj0pV_hmrg-HaV5RYB4jvPOoqOYjJuCYw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=HZbuTjE8 c=1 sm=1 tr=0 ts=67c73253 cx=c_pps a=EVbN6Ke/fEF3bsl7X48z0g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=iuD-kgW1Kdg19m1uaYAA:9 a=QEXdDO2ut3YA:10
- a=a_PwQJl-kcHnX1M80qC6:22
-X-Proofpoint-GUID: ZDaJZkGn3Tnv9ymIFaMVr-MFDodcQPq_
-X-Proofpoint-ORIG-GUID: ZDaJZkGn3Tnv9ymIFaMVr-MFDodcQPq_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_07,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 spamscore=0 clxscore=1015 phishscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=728 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2503040137
+References: <20250226124245.9856-1-s-vadapalli@ti.com> <20250226124245.9856-2-s-vadapalli@ti.com>
+In-Reply-To: <20250226124245.9856-2-s-vadapalli@ti.com>
+From: Rob Herring <robh@kernel.org>
+Date: Tue, 4 Mar 2025 11:03:13 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqKDMecB3dD2oU2MJo-_8G66K-mVTfNKWUBuL-=_tWpjtw@mail.gmail.com>
+X-Gm-Features: AQ5f1Jo_MMcNezVZGplk__qmIGqhWMGwQvZlfARIVI6FBgde0NxdeBDApYXXBNM
+Message-ID: <CAL_JsqKDMecB3dD2oU2MJo-_8G66K-mVTfNKWUBuL-=_tWpjtw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] arm64: dts: ti: k3-j721e-evm: Add overlay for PCIe
+ NTB functionality
+To: Siddharth Vadapalli <s-vadapalli@ti.com>
+Cc: nm@ti.com, vigneshr@ti.com, kristo@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, srk@ti.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2.03.2025 11:04 PM, Aleksandrs Vinarskis wrote:
-> On Thu, 27 Feb 2025 at 09:15, Johan Hovold <johan+linaro@kernel.org> wrote:
->>
->> The l12b and l15b supplies are used by components that are not (fully)
->> described (and some never will be) and must never be disabled.
-> 
-> Out of curiosity, what are these components?
+On Wed, Feb 26, 2025 at 6:43=E2=80=AFAM Siddharth Vadapalli <s-vadapalli@ti=
+.com> wrote:
+>
+> PCIe NTB (Non-Transparent-Bridge) allows connecting the memory of
+> multiple PCIe Hosts (Root-Complex). The number of such hosts is
+> determined by the number of PCIe instances configured for NTB operation
+> on the device which intends to enable NTB functionality. Add a device-tre=
+e
+> overlay to configure PCIE0 and PCIE1 instances of PCIe on J721E EVM for N=
+TB
+> operation. This shall allow connecting the memory of two PCIe Hosts via
+> PCIE0 and PCIE1 on J721E EVM.
+>
+> Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> ---
+>
+> v1:
+> https://patchwork.kernel.org/project/linux-arm-kernel/patch/2025020209363=
+6.2699064-2-s-vadapalli@ti.com/
+> Changes since v1:
+> - s/epf_bus/epf-bus since node names shouldn't contain underscores.
+>
+> Regards,
+> Siddharth.
+>
+>  arch/arm64/boot/dts/ti/Makefile               |  4 +
+>  .../boot/dts/ti/k3-j721e-evm-pcie-ntb.dtso    | 91 +++++++++++++++++++
+>  2 files changed, 95 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/ti/k3-j721e-evm-pcie-ntb.dtso
+>
+> diff --git a/arch/arm64/boot/dts/ti/Makefile b/arch/arm64/boot/dts/ti/Mak=
+efile
+> index 8a4bdf87e2d4..1097ab30f5a9 100644
+> --- a/arch/arm64/boot/dts/ti/Makefile
+> +++ b/arch/arm64/boot/dts/ti/Makefile
+> @@ -102,6 +102,7 @@ dtb-$(CONFIG_ARCH_K3) +=3D k3-j721e-beagleboneai64.dt=
+b
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-j721e-common-proc-board-infotainment.dtbo
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-j721e-evm.dtb
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-j721e-evm-gesi-exp-board.dtbo
+> +dtb-$(CONFIG_ARCH_K3) +=3D k3-j721e-evm-pcie-ntb.dtbo
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-j721e-evm-pcie0-ep.dtbo
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-j721e-evm-pcie1-ep.dtbo
+>  dtb-$(CONFIG_ARCH_K3) +=3D k3-j721e-sk.dtb
+> @@ -201,6 +202,8 @@ k3-j7200-evm-pcie1-ep-dtbs :=3D k3-j7200-common-proc-=
+board.dtb \
+>         k3-j7200-evm-pcie1-ep.dtbo
+>  k3-j721e-common-proc-board-infotainment-dtbs :=3D k3-j721e-common-proc-b=
+oard.dtb \
+>         k3-j721e-common-proc-board-infotainment.dtbo
+> +k3-j721e-evm-pcie-ntb-dtbs :=3D k3-j721e-common-proc-board.dtb \
+> +       k3-j721e-evm-pcie-ntb.dtbo
+>  k3-j721e-evm-pcie0-ep-dtbs :=3D k3-j721e-common-proc-board.dtb \
+>         k3-j721e-evm-pcie0-ep.dtbo
+>  k3-j721e-evm-pcie1-ep-dtbs :=3D k3-j721e-common-proc-board.dtb \
+> @@ -239,6 +242,7 @@ dtb- +=3D k3-am625-beagleplay-csi2-ov5640.dtb \
+>         k3-am69-sk-pcie0-ep.dtb \
+>         k3-j7200-evm-pcie1-ep.dtb \
+>         k3-j721e-common-proc-board-infotainment.dtb \
+> +       k3-j721e-evm-pcie-ntb.dtb \
+>         k3-j721e-evm-pcie0-ep.dtb \
+>         k3-j721e-evm-pcie1-ep.dtb \
+>         k3-j721e-sk-csi2-dual-imx219.dtb \
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-evm-pcie-ntb.dtso b/arch/arm=
+64/boot/dts/ti/k3-j721e-evm-pcie-ntb.dtso
+> new file mode 100644
+> index 000000000000..9b6b3e153e91
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-evm-pcie-ntb.dtso
+> @@ -0,0 +1,91 @@
+> +// SPDX-License-Identifier: GPL-2.0-only OR MIT
+> +/**
+> + * DT Overlay for enabling NTB functionality using PCIE0 and PCIE1 insta=
+nces of
+> + * PCIe on the J7 common processor board.
+> + *
+> + * J7 Common Processor Board Product Link: https://www.ti.com/tool/J721E=
+XCPXEVM
+> + *
+> + * Copyright (C) 2025 Texas Instruments Incorporated - https://www.ti.co=
+m/
+> + */
+> +
+> +/dts-v1/;
+> +/plugin/;
+> +
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/soc/ti,sci_pm_domain.h>
+> +
+> +#include "k3-pinctrl.h"
+> +
+> +&{/} {
+> +       epf-bus {
+> +               compatible =3D "pci-epf-bus";
 
-Mainly dumb onboard electronic components, it seems like
+There is no such binding upstream nor one pending. This needs to be dropped=
+.
 
-Konrad
+Rob
 
