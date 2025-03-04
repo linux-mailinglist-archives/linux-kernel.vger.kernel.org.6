@@ -1,108 +1,135 @@
-Return-Path: <linux-kernel+bounces-544004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A191DA4DC4C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17667A4DC54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:21:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0356189E739
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:18:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11AAD3A7DF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B2C2040BE;
-	Tue,  4 Mar 2025 11:13:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D7051FFC66;
+	Tue,  4 Mar 2025 11:14:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fhMSdpsR"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="O2Eo/dig"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0ACF2040A6;
-	Tue,  4 Mar 2025 11:13:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2AB1FDE1A;
+	Tue,  4 Mar 2025 11:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741086830; cv=none; b=MwOpczcgcm8lEznjw7HNkGkDNgLX1nNL6MXxxsRqNMVYnOupen6OVXa8BX5IughNn1hGNXUcu9HWy8Ibig9Ra+FJzP+JtNtWqBPfbXiqV19zgifV8IDo1MCMnJQOoFXoSbHCrGbSq+2SbitFniADZnEEi6WfPiOSdip7Vc6VS2M=
+	t=1741086851; cv=none; b=ithq7v9F+DMaZh0p1MrrM/AcipCdNy+23sc9QMv5JBStzbEsPpXRB+QFz+LY4v1AYPRtNuPjMGZHoFdJwt6NpdFxEO3AvRrmju/tktT/7/rqQR8Dtc+NkKrO0eTRK4Cb3z8W1qRFIUQDtswFbwzE2CzsjiguWkAPXgTOgU6NhvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741086830; c=relaxed/simple;
-	bh=1eb2xI/Z8Fws5Q4rva7Mr0Ok1LH3OrqtSQCPoaRX6OI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PxkMl/uF4iFSlo0ufH3c63aprRCGdyqTbTIaq+l+FGWtz39F/DuuttCLVXF9MgUtKfg5h66C97yYIqZ5EEzaMOaGhLQnqJ/6kQFBC4ETbAWI83Ja67mDv57R8SfCtb7EwqSwYrE/cjYfD6LXlAK78tyk3JNx9N4rmQKX/BEDXj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fhMSdpsR; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2235908a30aso88116115ad.3;
-        Tue, 04 Mar 2025 03:13:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741086828; x=1741691628; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=SsvBQ42haXm44TkA4xjE5aaK6WLS+9Ndji8VDL/8jNg=;
-        b=fhMSdpsRkc2d8APzy4ws6tNWlLAPJ/CvGlroSEsC78XtnrWUOoCePjcJ2GjwzaIWsN
-         0b3zpZ145L8c0zAyW7CHjzEWxFXU/bvt4zkfFhV7H7bves/lrJgxCnFNBtXLIKbLfgxb
-         IJTEyOb4d9zWlRmwdsuUWZxwN+ymsC/6lsLIdfAXtf07LzEY92rbtZSomByJ0Yd74KX4
-         k32IfGPTLrpS5caddxMupk1XkCyrFYj982kQscrcmZOv3Y54GO4IwTZoBOwBAe4NdsK9
-         BViEPIhdRTU5lnlaV1DwbnQ2BSOcLC6I4X5zZFZMOjCvdPYwrEgKZBu7Qvj4zf4Z6AHF
-         0LLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741086828; x=1741691628;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SsvBQ42haXm44TkA4xjE5aaK6WLS+9Ndji8VDL/8jNg=;
-        b=BJE37jLtaAvKzyZ4KoU3wmuQIlRNHl+Vw1Mu3q9locT3xvLlSzoPAMvUy+VV5Ho4t9
-         gCjQ32001KRuk1Bs4QZPEwcwr8Vz6HkDnwYK68+gcqlbQkp+BrwrTA8dupnqAoKBnT9R
-         9w4XKk2/N73o1tOHtxfLg8qI1L2e6PQLKaMEZtKLZkZ4Qqc4mCVQ/ftuwhPMEpTTobfG
-         ZxRBwvfB0XKwzskFYaOUnB06P7TcSpkO6266snZBTADxxwJW1bF4eJlcrDO/rx31+jJ8
-         dJlkVqoc/cYvQWXtL65kFd7SySZXzwsgTKuEoQHog/AybBRI5BFOs6JgdQBk1vmAOlen
-         8L3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVG4KP+LCNKSyQ7Dlo7I+wj7gpcfKOldmLGeasKTGSI7Y81oD2cRHiF52NI75TQfbmr2E3gUKbStnTyAQ==@vger.kernel.org, AJvYcCXQoz7a13fUoex6cyMK97IHvTXLAUE2v499QETfaPZiOPbdaWlOQSRl2nDS94g9/uODGFYRIQKBNUcM3OoB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2vHRez6MpUD7elWFqalbQRpAn1exc8cIr7OUYMzsasQ16ra7f
-	9OeppAcaYC7//gK9k0ZIEByrQUUVXEPUV9xMBaP8Ij0n/CuU2eU/YkLyqg==
-X-Gm-Gg: ASbGncvvdd1lPqEHFunBjhU3xTGklrLvSVHI+RVR1gXHA5w72U2fNfeymFXlkxZUprb
-	mD5qpJvAEgM8iGJc+6UG51/v6vKmX3YnmOmOjfgsClf5oZE47ejiGNYPI0iQA306IYSicYnqOme
-	gLb+UIOlS3GLdsXkqVoOrIRgjWjq71RqOom1EGDcExOqZrbV4u+/t1YTvpJAdhDNYkYrPF5ZVn4
-	zstkkr+dtBY69+pAdGUP9xoiTzLVKYb3Ll4RDdEL1lqoL6DDi6oEHXNM1mh3N3KR+MxZlOUSXbr
-	U2Do/pzI7Y7ILdL+PgOHKm9XVQ7TCWcuPa9FE4W4iwtCeV5hJjdw1AY6+g==
-X-Google-Smtp-Source: AGHT+IHmeGNT7Bo6qQEZlyUPUIC19AmmHg3p/vwnkUVwP0XEgpMjL9trCezeXrwVY1FOM6HEcbUrAA==
-X-Received: by 2002:a17:903:27c4:b0:223:668d:eba9 with SMTP id d9443c01a7336-22368f60c09mr213344335ad.10.1741086828047;
-        Tue, 04 Mar 2025 03:13:48 -0800 (PST)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501fb54esm93371845ad.99.2025.03.04.03.13.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 03:13:47 -0800 (PST)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Tue, 4 Mar 2025 03:13:46 -0800
-From: Guenter Roeck <linux@roeck-us.net>
-To: Huisong Li <lihuisong@huawei.com>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, zhanjie9@hisilicon.com,
-	zhenglifeng1@huawei.com, liuyonglong@huawei.com
-Subject: Re: [PATCH] hwmon: Fix the missing of 'average' word in
- hwmon_power_attr_templates
-Message-ID: <de6321dc-1015-4368-ac25-971bc781c210@roeck-us.net>
-References: <20250304074640.2770353-1-lihuisong@huawei.com>
+	s=arc-20240116; t=1741086851; c=relaxed/simple;
+	bh=XOdBksz8Vf2+lJNphsoE9ZmVFjju/xls/RhmovDo7d0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jVqkKFo5STfg2RhlqieYZMVtM5h0vpZ2yyuGxTkpqGShn+p76pc50jfJovHpdwC41P9UauksDgQLXPA9PKW7um/L26Ac/y9EU9M1yPQ7byUAngVkkFwHfHDn/7mlVSH6F3fpNStYZ0u7sbIIg/vP6qxtpaUDXK+FK4FEm7N4WS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=O2Eo/dig; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id A114CA028B;
+	Tue,  4 Mar 2025 12:14:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=/mDRp4/mkuaV1Yy1R0fV
+	mKQrTdpMwxGr5IRopCnt1VA=; b=O2Eo/diglpqOv6fh4s2gELtN/AllTdGKIItn
+	ImtH3HyMZhCZ6Xan9Stww5iUxYWZCP1k8w2zigOw1zl0h64hBtqjR07B9YtIyW2E
+	za9el3NCgabIWOEDlZr46F5pvo3BvH+sc05eYO76kx7N8Sj69LzLYWQfpvpRPsZL
+	ezZuQqgP0Prd9us6q4wv/+7uDpC/eZfoOvdzEJ3tMmSzED4uIsvq/i5aW0OwvzLz
+	KUQCo5g5rgLduUQS4l9bPMSdHlX9HSjryd6b62ahtQ686AhPXYdw6zEDjaSYQXAu
+	NoR7bYMu2YCwd9dOaanQLXTThuDJcOmVEQpHpI0qvTZYVUIw6e3UFq4kMuqGrp9K
+	1sc47k1o7D3+6Vx4C4YMTfJd3e0copso+vuyNlpY82edA6crKSAaRZTVbZf/re80
+	5xG9POmujLgAe/vPeDkW+M5cKuh/m+AJnDjLLgz+v+VQyLllMf4uk9yeDgpBfT5q
+	PG3DqdWZSDxSFU//zDaq6dpe4qH9BOFCLnddiM3x+Wlw8eiN+Uq6M6TZtWZC01/L
+	PCmqwv99/kv9XYS7pzoZyroV/garfmCY+I+Z9VzNMWPRoNT7yoXEHlh5W5UlvOI/
+	k2uaO1wP0+irRhZlgkI+R+95yfu4mJIfRNFxFTADwsMZkJ187nsXXcVo4Qjnku60
+	85dx7EA=
+Message-ID: <8cf056d7-22d0-4bf2-8dd6-79a45977bfc1@prolan.hu>
+Date: Tue, 4 Mar 2025 12:14:04 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304074640.2770353-1-lihuisong@huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/3] include: uapi: counter: Add
+ microchip-tcb-capture.h
+To: William Breathitt Gray <wbg@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-iio@vger.kernel.org>, Kamel Bouhara <kamel.bouhara@bootlin.com>
+References: <20250227144023.64530-1-csokas.bence@prolan.hu>
+ <20250227144023.64530-2-csokas.bence@prolan.hu> <Z8bNFjh85p2jqK9C@ishi>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <Z8bNFjh85p2jqK9C@ishi>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852637266
 
-On Tue, Mar 04, 2025 at 03:46:40PM +0800, Huisong Li wrote:
-> The string "power%d_interval_max" and "power%d_interval_min" in the
-> hwmon_power_attr_templates[] are corresponding to the sysfs interface name
-> of hwmon_power_average_interval_max and hwmon_power_average_interval_min.
-> But the 'average' word is missing in two strings. Fortunately, there is
-> no driver to use it yet.
+Hi,
+
+On 2025. 03. 04. 10:51, William Breathitt Gray wrote:
+> On Thu, Feb 27, 2025 at 03:40:18PM +0100, Bence Csókás wrote:
+>> Add UAPI header for the microchip-tcb-capture.c driver.
+>> This header will hold the various event channels, component numbers etc.
+>> used by this driver.
+>>
+>> Signed-off-by: Bence Csókás <csokas.bence@prolan.hu>
 > 
-> Signed-off-by: Huisong Li <lihuisong@huawei.com>
+> Oops, I almost missed this one! Make sure I'm included in the To field
+> for the next revision. ;-)
+> 
+> By the way, b4 is a nifty tool that can save you some work and help you
+> prep patch series for submission.[^1]
 
-Applied.
+Yes, I have considered it, but unfortunately it still has quite a few 
+bugs, for example [1], which has mangled my tags before, when a 
+maintainer using it tried to apply one of my patches with it.
 
-Thanks,
-Guenter
+[1] https://github.com/mricon/b4/issues/52
+
+>> +/*
+>> + * The driver defines the following components:
+>> + *
+>> + * Count 0
+>> + * \__  Synapse 0 -- Signal 0 (Channel A, i.e. TIOA)
+>> + * \__  Synapse 1 -- Signal 1 (Channel B, i.e. TIOB)
+>> + */
+>> +
+>> +enum counter_mchp_signals {
+>> +	COUNTER_MCHP_SIG_TIOA,
+>> +	COUNTER_MCHP_SIG_TIOB,
+>> +};
+> 
+> Are these meant to be used to identify the Signals in the
+> microchip-tcb-capture.c file. You should set the the counter_signal id
+> members to these enum constants then. However, this enum doesn't need to
+> be exposed to userspace in that case.
+
+The thought was to let userspace figure out which 
+`signal%d_action_component_id` to read, but now I see that this is not 
+the way to go.
+
+> If that is the only purpose of enum counter_mchp_signals, then we can
+> omit this patch from the series and you won't need to send it in the
+> next revision.
+
+Alright, I'll drop this enum. Then this header will be empty at the 
+start, save for the block comment. I hope that will be alright.
+
+> William Breathitt Gray
+> 
+> [^1] https://b4.docs.kernel.org/en/latest/
+
+Bence
+
 
