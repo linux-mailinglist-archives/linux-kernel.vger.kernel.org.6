@@ -1,124 +1,160 @@
-Return-Path: <linux-kernel+bounces-545395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D92AA4EC79
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:53:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FC6EA4EC57
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:49:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 227A21888C57
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:50:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6480B1654CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71FEE2376E4;
-	Tue,  4 Mar 2025 18:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B53741F4E3B;
+	Tue,  4 Mar 2025 18:45:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b="eOfA0JzF"
-Received: from ixit.cz (ip-89-177-23-149.bb.vodafone.cz [89.177.23.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OIPEEtSv"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C11F204C22;
-	Tue,  4 Mar 2025 18:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.177.23.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6C718CBE1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:45:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741114205; cv=none; b=cha1/cIZWDkVFIYEmrwScQeVqna/DQsghX0HaNNDkuF7JyFMSmEzo2i8Hg/xqj6ZwZzNA0h/wUFTCyP8lIKzFPTEA3+guj/NCBZZ1MWMLDsH0m9N8YueOlubiyS4NceB+F9G8ha+PZRHy1CE8aI98JxafuXK594ps7rKYpaYfsE=
+	t=1741113946; cv=none; b=cp1UgXqOYKfREkgN+xX2ptx4NjX/WHilTFG1tK4QJESpswQlvJxJ/GniP2xN5+P5oUMnvLQAokgMnwaRxOQqlK6byJfDGa9mw5NdGx4WU7o0pBQNO8p7nwjp1IilLsXtXjXxu2dgTR5oeLqCzt3lEQi6aGc9Sw38q9pjhHplWNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741114205; c=relaxed/simple;
-	bh=0CAx1mQ5RZ6zsMxOMxa0QiY+PZp3mnFBFPc/jCZGve4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=gD65AjMsW2qowNxYbCpX+DC6a2HYNjBjIOPHXLNEE52ewoEbVogEB4iktdWI5XlTZNBY/edQQpOsxhiCD3k4Vzkvpt6lb2XDp20P9cuDUyINrfFXcqnqJ0BCrMfGPP7jUSKnmuF3Pjml+2ilJrC+2ZAEQK5eiANQZESw8j+mZbs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz; spf=pass smtp.mailfrom=ixit.cz; dkim=pass (1024-bit key) header.d=ixit.cz header.i=@ixit.cz header.b=eOfA0JzF; arc=none smtp.client-ip=89.177.23.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ixit.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ixit.cz
-Received: from [10.0.0.228] (unknown [10.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ixit.cz (Postfix) with ESMTPSA id 7EBF116508E;
-	Tue,  4 Mar 2025 19:43:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ixit.cz; s=dkim;
-	t=1741113824; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=0CAx1mQ5RZ6zsMxOMxa0QiY+PZp3mnFBFPc/jCZGve4=;
-	b=eOfA0JzF8XO4Oy6q9bZSu45oTn4TozB4eK33nfrsSbKtCx+rx41ZQu1V1gPmoRtQpXQjKB
-	DsRj8bLeu3L+0pqe3cRvqhvh8iQQYXrK+DIDVuwndJ2foTeVswZ0oJI4O0AQrKhqHfRira
-	0mP8EMEAVCTWwhcUauIHqB/wbvg+pjc=
-Message-ID: <b796bfee-b753-479a-a8d6-ba1fe3ee6222@ixit.cz>
-Date: Tue, 4 Mar 2025 19:43:44 +0100
+	s=arc-20240116; t=1741113946; c=relaxed/simple;
+	bh=XDngEG8wtWQvhvF3YrSeK4X7ZGTxQunF/E8GOiLPgSs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UwXZwsimZuipwK8pGCmS3Iq7BlCERXPcRGoJmwJmg/kAu5IVjoHWIzEfuOCIe6qy2G6jd9ZtI4FWLmgtEI4Fn7Ll8N1BeBNh2oGBPLD1+spc97IvjXC9KnRmTtk6Dw9Q0at6bfHbNHkJFs3DUxqmO7FZfbDYdXu85GPOdw6ciPc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OIPEEtSv; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bba52bc1fso2716815e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 10:45:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741113941; x=1741718741; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dV66bSO3p7CPdI7VDIr32ThJ93exQDdyBO//zJP39OQ=;
+        b=OIPEEtSvjEQKYEN6lP+MhnXchB3yuqvbxZuw+yyV4qZjZ6xywmlYzIWfEhreHir16N
+         ZlkN8zhxQ2HYkr6GklDcABX1KSsyQZ6BcmePPSpLXrZKNIeG4m8Q0GETpaQ9Mg+ZYdYU
+         kHF0KF0f1E5jWgMtaXFPA1ebyVwRXgFd0yD+w7aU+OLN/r4n/m0Q/eGHABqfnw+6zEwL
+         AaodSbg513/2rY2e/Rin9VNA50P5kOClNpkP5i14cpF7wzfzICKb24nFTeuY/jCOOqPh
+         YyeT8lZrWpUPF7fmJSY9Z/Egz7L1Xd3hdJXrbRyrYm7bqW7SLOXE2548DLBLDCeSrNuB
+         /9zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741113941; x=1741718741;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dV66bSO3p7CPdI7VDIr32ThJ93exQDdyBO//zJP39OQ=;
+        b=f3NlnjLrjJu/vAUkV05ZpO5cUjIjoUlxxOXfl4oUo3K7wbygrV/uvnlflqgYPrAcqB
+         7lABvOeyb9YQuZSRCZCTE3Itx9Rn6Kyn6iytNjfjz/TViyck8chnEUw4wJEWRks/EmUZ
+         AkO50iOO9ho6WoVeTydSy2JqaYU72ButdYd0u5Q5P/JknY8H7LdKntXpMVZN4AGAE9kG
+         zmu2LVhekQsXZ3l7cw+YwfIKNBDAhzobkthremRHWVLJ87KL+oPIoRRxfWOIrB2hVtEs
+         0EHf926QOfcCkEPgy8Oj6agaUNOC+hAB00QSAhYeVtx5iF/5e7cXTit5Ivx6HfChf+pk
+         YUGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUYg3jYFAozuHoP9IsEqALTz2PLS+Mw2st3M+zzSJgUbXAF2RjSaSVbMscwaLx3Efr35o1kDpcefAv0p8I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOmy7d9BpeS0/uAYEAbG72cZl7mgb0iuJxPq0dQdju1sYfz8ol
+	TuqFwjr9+Z/GtT5FGGyDM2s8oTihnGZ2hC+30KarPdfR+sQmiHqmXW44GvPm+0s=
+X-Gm-Gg: ASbGncs67ncHotL/pI5eS83S8yyf25UrVJ+0245nG3IL7d9B/5npGRLmH0h2ogRbI/T
+	e4B7K06R7+VEwff6CucaxyBIAdHzKlB3+cyoRmL5DCVFEh58imljm13KqghQVnLfdjBC0UQEJrY
+	mpoBgfDzy++AGepXc4D/mEmzw63/buSqNLbAFHiDh4jF+Bru96d3zrUtG2EccIJ6U762idKXtlh
+	NLtTr0hvh2JI1Kewz19XMPjEl64gtc2uWPftyFCcF5N9eVkyK3Z8KccIihXfX7LbsPUW8Cdgfea
+	f7x1xso6bO2M1iozOu9SNagmTcXGfn7SrOKBWLZobJ/fEuZzb9DHJl/9brO5
+X-Google-Smtp-Source: AGHT+IHswIEyCJXZp7woYZZuJpnAXAHgU63OvcCGWQJRtFTY7jo4WjlXR0PIT3yu2UR8Js69fWovDA==
+X-Received: by 2002:a5d:5850:0:b0:38d:e0ee:bb8 with SMTP id ffacd0b85a97d-3911641410amr1370787f8f.11.1741113941249;
+        Tue, 04 Mar 2025 10:45:41 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6ceesm18229985f8f.45.2025.03.04.10.45.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 10:45:40 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 0/2] clk: samsung: Two header cleanups
+Date: Tue, 04 Mar 2025 19:45:30 +0100
+Message-Id: <20250304-clk-samsung-headers-cleanup-v1-0-81718e38246e@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-To: amit.pundir@linaro.org
-Cc: ath10k@lists.infradead.org, bjorn.andersson@linaro.org,
- davem@davemloft.net, devicetree@vger.kernel.org, jeffrey.l.hugo@gmail.com,
- john.stultz@linaro.org, konradybcio@gmail.com, kuba@kernel.org,
- kvalo@codeaurora.org, linux-kernel@vger.kernel.org,
- linux-wireless@vger.kernel.org, netdev@vger.kernel.org, robh@kernel.org,
- sumit.semwal@linaro.org
-References: <CAMi1Hd2g68U8LVng2+RmhD+zFLqW8vcHS54FvaKxNF+BMs_tZg@mail.gmail.com>
-Subject: Re: [PATCH] ath10k: Introduce a devicetree quirk to skip host cap QMI
- requests
-Content-Language: en-US
-Reply-To: CAMi1Hd2g68U8LVng2+RmhD+zFLqW8vcHS54FvaKxNF+BMs_tZg@mail.gmail.com
-From: David Heidelberg <david@ixit.cz>
-Autocrypt: addr=david@ixit.cz; keydata=
- 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
-In-Reply-To: <CAMi1Hd2g68U8LVng2+RmhD+zFLqW8vcHS54FvaKxNF+BMs_tZg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEpKx2cC/x2MywqDQAwAf0VybiD1TX+leFh3owbtVjYogvjvB
+ o8zDHOCchJW+GQnJN5F5R8N3q8M/OTiyCjBGHLKKyqoRL/MqO6nWxxxYhc4qTl2cVvRU9O3IVh
+ YE9hhTTzI8dy/3XXdYx3eU20AAAA=
+X-Change-ID: 20250304-clk-samsung-headers-cleanup-c07b8dd50360
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1611;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=XDngEG8wtWQvhvF3YrSeK4X7ZGTxQunF/E8GOiLPgSs=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnx0pN00BqtKjo8GLAIBcX4Q9OtViT91hhZMDba
+ VZfjobaseqJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ8dKTQAKCRDBN2bmhouD
+ 14bHD/9SLqOUAS4O36jLepNIa7itVCkJE3SddDL/7+JXCH/HT/7ForYiv2Pw5ZCaP5FQHVs8rXv
+ j8Wrrkh8F7rt6Io4KRK18qE84K4JC8GwEUCvG+TmryeajaUS6vg8ElbZ6zAHXeLIneWknMH6JRO
+ xtciD4Om3JIXD0eWluwV7ZAbi4DYV9jhxZcY5YwXmJI+a+VLCbDSkhaJzKl/fwZO89r9FqXgpQb
+ iJyp2P+UW+Wb1PyC8ZAJw/3a7V63Icadc/mzUKTiAQEqrHcPtnu2B8jwacPdrlo6bMuvT395Dq1
+ odV6qdKw7WxIe5WFczs6dPRsn9HIOqMU2xKT4w9nkCBzBfTbR1Qqezp+DwcrYRTiNFUAaJeVF3h
+ FwZ56GXbkyA+VtPJ+TqrLqVesOupSNLGsA9iNdxC1DI87ppon7f2/dIWNczjUhPAfsEdTCXe+j+
+ GL9QRA+3ZvVi55tIjq95uk4ewxdWdALQ2L/n/7dLD1TnhazHewO1d/vOyJa3Pywp5HqBwDSKR7I
+ 8Kavj9bnXIyPuZUfXzn+yhFILJkyzY69PoYcXnCKIbD2WYWgMRuxKjU+o2AU/o80c4IUc2JGS/j
+ Fke330DMu7cmYQ5rJV5yKYEXJhEZnVByMY16vLOw1jYACHQ62ZLsWqcXe9gH7H4iScZtUhzU4dC
+ 7Rdfp5W1qrpPmWA==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Kind reminder.
+Just two cleanups, no dependencies.
 
-This workaround is still used by sdm845 downstream.
+Best regards,
+Krzysztof
 
-Thank you
-David
+---
+Krzysztof Kozlowski (2):
+      clk: samsung: Add missing mod_devicetable.h header
+      clk: samsung: Drop unused clk.h and of.h headers
+
+ drivers/clk/samsung/clk-exynos-audss.c   | 1 +
+ drivers/clk/samsung/clk-exynos-clkout.c  | 1 +
+ drivers/clk/samsung/clk-exynos3250.c     | 4 +---
+ drivers/clk/samsung/clk-exynos4.c        | 1 -
+ drivers/clk/samsung/clk-exynos4412-isp.c | 2 +-
+ drivers/clk/samsung/clk-exynos5250.c     | 1 +
+ drivers/clk/samsung/clk-exynos5260.c     | 3 ---
+ drivers/clk/samsung/clk-exynos5410.c     | 2 --
+ drivers/clk/samsung/clk-exynos5420.c     | 1 +
+ drivers/clk/samsung/clk-exynos5433.c     | 4 +---
+ drivers/clk/samsung/clk-exynos7.c        | 1 -
+ drivers/clk/samsung/clk-exynos7885.c     | 2 +-
+ drivers/clk/samsung/clk-exynos850.c      | 2 +-
+ drivers/clk/samsung/clk-exynos8895.c     | 2 +-
+ drivers/clk/samsung/clk-exynos990.c      | 2 +-
+ drivers/clk/samsung/clk-exynosautov9.c   | 2 +-
+ drivers/clk/samsung/clk-exynosautov920.c | 2 +-
+ drivers/clk/samsung/clk-fsd.c            | 2 +-
+ drivers/clk/samsung/clk-gs101.c          | 2 +-
+ drivers/clk/samsung/clk-s3c64xx.c        | 1 -
+ drivers/clk/samsung/clk-s5pv210-audss.c  | 1 +
+ drivers/clk/samsung/clk-s5pv210.c        | 1 -
+ drivers/clk/samsung/clk.c                | 1 -
+ 23 files changed, 16 insertions(+), 25 deletions(-)
+---
+base-commit: c0eb65494e59d9834af7cbad983629e9017b25a1
+change-id: 20250304-clk-samsung-headers-cleanup-c07b8dd50360
+
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
 
