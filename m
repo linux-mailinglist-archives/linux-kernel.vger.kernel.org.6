@@ -1,96 +1,208 @@
-Return-Path: <linux-kernel+bounces-545771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1B27A4F137
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:08:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A36FA4F13F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:10:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BD71891855
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:08:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9311D16E13D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:09:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E01027C86C;
-	Tue,  4 Mar 2025 23:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738D02777F4;
+	Tue,  4 Mar 2025 23:09:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SGegSeD2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="jozOdXtZ";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="33arta1Y"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C214927BF99;
-	Tue,  4 Mar 2025 23:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45A61FFC75;
+	Tue,  4 Mar 2025 23:09:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741129683; cv=none; b=UReQFcpA7ZKGFnouM6ANksj3cm5dprv26ayh/jBSYhe64138Zd4pvHZZXEBMATaqi+BSVrjKUwnPbwScpK0YwmRCdUuNmOUe2ryPIS3hFdS50q3ZLOHGGvU2S/9ql95hfm3y8ofFTU+4Yy572d2GB0RyQU4sqUmF0BzLsrjPaZs=
+	t=1741129772; cv=none; b=MU68Xm3PVLxiImp9giWKBpeGqbXbCxU0CAdssHRxw8V7QcynX6Qr2J47ajGrELVMthxQIPZXl+uuAH5dosCWYNAO2Ljau9/TAslo6KDVv/GiuOYuY2bGP4CdNIZaHiDmD8aiygjoAYhh3gHXKrxqr5OYzdykuTUOq41YMgaypT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741129683; c=relaxed/simple;
-	bh=6OawBiHHp4m5x2MxZ3PlFGzG0WH9Ah1ajeEk2doc+RU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rns9t7teQCb10W6vLeP6c0izp4zPPB8+fU4RnkeUhKlaDUfFIPbQy6g7N8OGAbeUBfFDTeOkwGNeAAQTNww+F1M9MmV8Q39zAbs7a9XyUkyn8ujB4kiDs4TkQp1KdV3pzZG2hFbv1lauPYbho9zzWPmt+iNyZfS3Do64YGdsy8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SGegSeD2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48493C4CEEC;
-	Tue,  4 Mar 2025 23:08:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741129683;
-	bh=6OawBiHHp4m5x2MxZ3PlFGzG0WH9Ah1ajeEk2doc+RU=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=SGegSeD2r06+jxlBPe5wL7d6OdXJKBJOloxIZDAKlcR8YWKWL6k1OAhBAm7QK1voX
-	 2FXurfeKf/nrnPCV6PkXx0RVx+SQdsdGgQjmvoPGFqe/kj6Q1BtLS1jvskrVnZX4XL
-	 T4RfWl0dLDDGZfO0eb1aN6qYPmw/m5q9I7LncJG42uYXUS/xbHuATOLgXP3I/tIwhz
-	 IaQknc7mkWn9IqvysRrUbNRsi1VVOp1bTqQWa/rsuo3yIVNq79L7TmVet4HQa5+8tD
-	 jzvOSZ3E55K8NpjAFZAmx4PHZup9dsankH82zdUcG+cheLAFYuvOZ0mJY8v8QdRVr4
-	 SbY30juDGlWew==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH 5/5] lib/crc: remove unnecessary prompt for CONFIG_CRC64
-Date: Tue,  4 Mar 2025 15:07:12 -0800
-Message-ID: <20250304230712.167600-6-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250304230712.167600-1-ebiggers@kernel.org>
-References: <20250304230712.167600-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1741129772; c=relaxed/simple;
+	bh=q40/rgSvCjoosg2U1Wkr/p76YD3osU7sXdgPHcq2Ijc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hTTmkCrVJ6gUceB1ii3cGw/rc0NVlXc0ZbEIU7l0FRCfvAZJ3KHGfv+O88pvKVgOtTM5D+9Sbwl5ISpr4JMovZas4sP73a+ugzDkVlbIQD9op9Wz0tNwHjLq1HDwIj/udcUMTNoS44AvytsK0rIq/mMqagpD8L+bn1fcNDUk8l8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=jozOdXtZ; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=33arta1Y; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-13.internal (phl-compute-13.phl.internal [10.202.2.53])
+	by mailfout.phl.internal (Postfix) with ESMTP id A07761381125;
+	Tue,  4 Mar 2025 18:09:27 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-13.internal (MEProxy); Tue, 04 Mar 2025 18:09:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1741129767; x=
+	1741216167; bh=wtdm/fUGVEjzzSbcrQ7Os+OPL1GEYeRAyGx41pPtUaE=; b=j
+	ozOdXtZcW2LEBD/ETQv9TiBxVFJC78nybIvLKwV3qUPqf9AEiOF4/vS3bzS/a4FG
+	JztRDZ2n1aAG2itI5V0THI/Pqb+yTShUQOcqA9GkPjD6eVOm/IYY51UxW8NaO9yh
+	cCqcjDde/DsOBoCaOPwAVDCa+pYMs21P0UMh84bbncEuzkMRPxFz1yaKYBqAwtYJ
+	HnpWh4lDATSPm030NptKj8DZLhRiEBOSTxzIRu1lFzmWDyGDJ+uZPJwYzi8/wpIi
+	c1a4B8bCCfUCQUtlEJdD5R+FLhJFMiDKFQRn4WxAHef5QTaa/dxQZ2H5MaHXa3CL
+	YMlOAEOsW+PYSDoj+5U3w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741129767; x=1741216167; bh=wtdm/fUGVEjzzSbcrQ7Os+OPL1GEYeRAyGx
+	41pPtUaE=; b=33arta1YQ0MUx4XwM4dhmgQZ2RPs2ZIvTbCTKG4ZulQ6e9B8vYO
+	j6Jy3bIQ6B1d+V0hcca1HBvpWDqdD+lKFPj9dOQ0yTZC47j25ojSl3gNgSiezYCS
+	qpfJi6/Oz0KtJfCnX1IdGUv28AhIqs22wy3OlvccC2Q/MDZU8RkXN5RSyA9R632j
+	e+BCSafgB5BHoEzDxa3iz095dOplcBjbGc3PaPFuL2NMtvn0BYGrPPyrWzo4Bnvu
+	oyPTv3fCWhWk+yoP/EncRHGkNtRMFrgtdxGeuITgA+FciRKY9QIlXDV8oFJdqQff
+	UdjpPVL6gcFMxM5HrVBg4nBoCBoGxbJkKzQ==
+X-ME-Sender: <xms:J4jHZ73quXoYZ1RSAqlY2jJfMxb2rLJ0L4SjtrF2HKtU1_p5c-bKAg>
+    <xme:J4jHZ6HcQN7WJxE6E_0IU6DVZXl9zqKFjErbCbRWGPJorblyXHpLThctOh8388ZRb
+    3NifRikRPz-2O7nJLI>
+X-ME-Received: <xmr:J4jHZ77uouHQTcb-LulzFsiG7V9CVm7s8JhxIUqTsMd-K1tuh4iIy79bZpOZ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdefvdegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
+    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepgefhffdtvedugfekffejvdeiieel
+    hfetffeffefghedvvefhjeejvdekfeelgefgnecuffhomhgrihhnpehkvghrnhgvlhdroh
+    hrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehs
+    ugesqhhuvggrshihshhnrghilhdrnhgvthdpnhgspghrtghpthhtohepudefpdhmohguvg
+    epshhmthhpohhuthdprhgtphhtthhopegrnhhtohhnihhosehophgvnhhvphhnrdhnvght
+    pdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgsrges
+    khgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomh
+    dprhgtphhtthhopeguohhnrghlugdrhhhunhhtvghrsehgmhgrihhlrdgtohhmpdhrtghp
+    thhtohepshhhuhgrhheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhihrgiirghnoh
+    hvrdhsrdgrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnughrvgifodhnvghtuggv
+    vheslhhunhhnrdgthh
+X-ME-Proxy: <xmx:J4jHZw3H6ZTdQvU68R9X9SFVMtSWdipP1yBx_rgphdBwWKASIwN3Cw>
+    <xmx:J4jHZ-Eyn3IFjUcz3yQIhyRJL2KzNZnGSe7x9uk2o231N-02BzD4ZA>
+    <xmx:J4jHZx9s0VvmNqABwYlIM85AKYyfU0nPVdXkjaCiMGpVEivVduHOGQ>
+    <xmx:J4jHZ7l0gECFvfqAqcBVwHKsWhZW1F4Q4-nHXE2WtL_6n8zEby0Hzw>
+    <xmx:J4jHZ7cKwY8mFvU0FUyprS7vpOzCkBcbC94291Px1ZhsOstAmGoKoKLn>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 4 Mar 2025 18:09:26 -0500 (EST)
+Date: Wed, 5 Mar 2025 00:09:24 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH v21 20/24] ovpn: implement key add/get/del/swap via
+ netlink
+Message-ID: <Z8eIJH1LtTtfljSj@hog>
+References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
+ <20250304-b4-ovpn-tmp-v21-20-d3cbb74bb581@openvpn.net>
+ <Z8braoc3yeBY7lcE@hog>
+ <07c73e1d-3c9c-46c7-92cd-28d728929d18@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <07c73e1d-3c9c-46c7-92cd-28d728929d18@openvpn.net>
 
-From: Eric Biggers <ebiggers@google.com>
+2025-03-04, 13:11:28 +0100, Antonio Quartulli wrote:
+> On 04/03/2025 13:00, Sabrina Dubroca wrote:
+> > 2025-03-04, 01:33:50 +0100, Antonio Quartulli wrote:
+> > >   int ovpn_nl_key_new_doit(struct sk_buff *skb, struct genl_info *info)
+> > >   {
+> > ...
+> > > +	pkr.slot = nla_get_u8(attrs[OVPN_A_KEYCONF_SLOT]);
+> > > +	pkr.key.key_id = nla_get_u16(attrs[OVPN_A_KEYCONF_KEY_ID]);
+> > > +	pkr.key.cipher_alg = nla_get_u16(attrs[OVPN_A_KEYCONF_CIPHER_ALG]);
+> > 
+> > 
+> > [...]
+> > > +static int ovpn_nl_send_key(struct sk_buff *skb, const struct genl_info *info,
+> > > +			    u32 peer_id, enum ovpn_key_slot slot,
+> > > +			    const struct ovpn_key_config *keyconf)
+> > > +{
+> > ...
+> > > +	if (nla_put_u32(skb, OVPN_A_KEYCONF_SLOT, slot) ||
+> > > +	    nla_put_u32(skb, OVPN_A_KEYCONF_KEY_ID, keyconf->key_id) ||
+> > > +	    nla_put_u32(skb, OVPN_A_KEYCONF_CIPHER_ALG, keyconf->cipher_alg))
+> > 
+> > That's a bit inconsistent. nla_put_u32 matches the generated policy,
+> > but the nla_get_u{8,16} don't (and nla_get_u16 also doesn't match "u8
+> > key_id" it's getting stored into).
+> > 
+> > [also kind of curious that the policy/spec uses U32 with max values of 1/2/7]
+> 
+> From https://www.kernel.org/doc/html/next/userspace-api/netlink/specs.html#fix-width-integer-types
+> 
+> "Note that types smaller than 32 bit should be avoided as using them does
+> not save any memory in Netlink messages (due to alignment)."
+> 
+> Hence I went for u32 attributes, although values stored into them are much
+> smaller.
 
-All modules that need CONFIG_CRC64 already select it, so there is no
-need to bother users about the option.
+Right.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- lib/Kconfig | 7 +------
- 1 file changed, 1 insertion(+), 6 deletions(-)
 
-diff --git a/lib/Kconfig b/lib/Kconfig
-index 4bf2dd9f49a80..61cce0686b53e 100644
---- a/lib/Kconfig
-+++ b/lib/Kconfig
-@@ -192,16 +192,11 @@ config ARCH_HAS_CRC32
- config CRC32_ARCH
- 	tristate
- 	default CRC32 if ARCH_HAS_CRC32 && CRC_OPTIMIZATIONS
- 
- config CRC64
--	tristate "CRC64 functions"
--	help
--	  This option is provided for the case where no in-kernel-tree
--	  modules require CRC64 functions, but a module built outside
--	  the kernel tree does. Such modules that use library CRC64
--	  functions require M here.
-+	tristate
- 
- config ARCH_HAS_CRC64
- 	bool
- 
- config CRC64_ARCH
+> > >   int ovpn_nl_key_get_doit(struct sk_buff *skb, struct genl_info *info)
+> > >   {
+> > ...
+> > > +	slot = nla_get_u32(attrs[OVPN_A_KEYCONF_SLOT]);
+> > 
+> > 
+> > 
+> > >   int ovpn_nl_key_del_doit(struct sk_buff *skb, struct genl_info *info)
+> > >   {
+> > ...
+> > > +	slot = nla_get_u8(attrs[OVPN_A_KEYCONF_SLOT]);
+> 
+> Right. Since actual values are smaller I sometimes used the smaller macro.
+
+Which only works on little-endian if the other side is using the full
+size?
+
+              LE        BE
+put_u32(1) -> 01000000  00000001
+get_u8        ^^        ^^
+              =1        =0
+
+
+(and put_u8(1) vs get_u32 would result in fetching 0x1000000 in BE)
+
+> I guess I better convert them all to u32.
+
+SGTM
+
+
+> > A few more inconsistencies:
+> > 
+> > * OVPN_A_IFNAME is defined in the uapi but never used (I guess
+> >    leftover from genl link creation)
+> 
+> Ouch, I guess you're right about it being a leftover.
+> 
+> > 
+> > * OVPN_A_PEER_DEL_REASON (u32 vs u8)
+> > drivers/net/ovpn/netlink-gen.c:52:      [OVPN_A_PEER_DEL_REASON] = NLA_POLICY_MAX(NLA_U32, 4),
+> > drivers/net/ovpn/netlink.c:1131:        if (nla_put_u8(msg, OVPN_A_PEER_DEL_REASON, peer->delete_reason))
+> 
+> Like above, probably better to convert them all to u32.
+[...]
+> 
+> u32 should be enough for packets - but yeah, going UINT is better as I don't
+> need to care if it really fits 4B or not.
+
+And that SGTM too. Thanks.
+
 -- 
-2.48.1
-
+Sabrina
 
