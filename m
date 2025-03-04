@@ -1,137 +1,134 @@
-Return-Path: <linux-kernel+bounces-545421-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694FDA4ED20
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:19:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8950DA4ECE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:12:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 27C59880B0F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:12:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5F8416B2B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF44255244;
-	Tue,  4 Mar 2025 19:12:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FD8C255238;
+	Tue,  4 Mar 2025 19:12:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b90XRDZJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W6FLAw6O";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kSDF5jxY"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 752F1253B75;
-	Tue,  4 Mar 2025 19:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4270A1EEA36;
+	Tue,  4 Mar 2025 19:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115541; cv=none; b=PtpJmBmcgzFN5DiSEA/qxIV37P5XLUsgLaUJwtmxh3A69m/+bBi6RCpB6T1PuyDjM0Yr6UYDkSPymOW2BGDW6tW6xX2qLpbPtzZ6I+RfQKWq8QDdRfujIqW46diJZqoTahJ+RUtrTpaOJS43g7Z4hSWsSVMTZqGIHovFj2m6FMc=
+	t=1741115552; cv=none; b=t7v/JA06VvwRnpNBybYHcvcjBkYovYa4otknLITrNMO9REW3j6GX80Dnv+bvRIdkDaFnDgB8Ng5XnM1D63Yy12lg85dGlGJhpdGO7HM3v8qqnrehMjpnF04/WLp5Stt3DckKTL/eZ7HrUv+nVLKbTnZQjQO2B3rWo9jyUJ2xnKY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115541; c=relaxed/simple;
-	bh=Ci7nz+Ro7inrwbsSnXblrTQOXIqs+O9CwkgBJ92korc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=aiDgNAY5H7+GNrAegi+D1etV8wizcSwBh4sXSmeXYV4elq5PCE4aB4/LB+AlO91kyOMYS+6OuPxj/GUE5nH9XaXIO+Rw8BDS3Bm/z0pwRrRLUFejhAxf8O4e8eVEG/m3pisByyEboX4td5AmmjTyY56aXXg8xi45ifNStOWLhKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b90XRDZJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id D18B0C4CEE5;
-	Tue,  4 Mar 2025 19:12:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741115540;
-	bh=Ci7nz+Ro7inrwbsSnXblrTQOXIqs+O9CwkgBJ92korc=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=b90XRDZJJOfqR8ElYaRTuEi8PYVAMfwLviWV6R9nk2qjXZ0jYTAS73KD3BKYVXfsK
-	 K3N8qDa9niK2qD5acbIOcPJ+cn25BmWCvBa86q61r2r2dZQmSV9LWBghTIQLq27a0S
-	 BDb75TiiCLUG987Zya80TSanQ+rWdwvYqnGUOAstdY8h4/QJ5PeJOPwdOg+6HeTCvN
-	 wJGysyUqDumeaU2pY974ioOzXKt7JrngPI3nz4UcGICUIaEOg3g9GdBZNkrIiDv78h
-	 JBjGu/Ly+FafzQMZh2zCMlm0hEhQ++MfHhOHF7bigyNyj/B8zxSogsIb4fDZc7v3Q5
-	 Pd9V4BzQDWi0Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B8E2AC021B8;
-	Tue,  4 Mar 2025 19:12:20 +0000 (UTC)
-From: Janne Grunau via B4 Relay <devnull+j.jannau.net@kernel.org>
-Date: Tue, 04 Mar 2025 20:12:14 +0100
-Subject: [PATCH] drm: Select DRM_KMS_HELPER from
- DRM_DEBUG_DP_MST_TOPOLOGY_REFS
+	s=arc-20240116; t=1741115552; c=relaxed/simple;
+	bh=pFcur4LhuU6e7exEBimRKYlZhg0Ha9BKAc0GUJNEMGM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=fVeGVmHCoRWnlyZbC5PEMcWciJxKdGMhC3c+1mE0JlslpOHhIC4iDr+SPeo66HZq9lojeD9f7Y+PlF9l+H9ZooO5G4T3iby/HxjdZIPd9AsnPlvPTVh9P+E3JTUJvQBuEjdusVKjZ/vIT0RRBZ2oQstRRIeTXnKlB8K4doVbYSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W6FLAw6O; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kSDF5jxY; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 04 Mar 2025 19:12:27 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741115549;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vdfWzjh5f8yU2E686H+/CLEZdKtId2rsdnVtVaeCwGY=;
+	b=W6FLAw6OMPwzebe2HBezMvAysuU91LRybJEwTTDZwyRIEjh60/7K6ucpar6NyfhuV+wS05
+	v2piG5uG1MYkyd8TaRltI5wqyEaAdJJkkZA3pKy74rr0Ndyv2nvvUD52v+VNfHiYiSSoYW
+	dxIb7KQr+KqbVyDiZM1SYDUHWgqmwdp3Es8rJDRr3HRr34R87saoFpQZL/IFrMkKoB5RDs
+	eXSWq2tgq0LFta4XtIdnLvyBIqObPJM+CD0BuAgmZ76KZ1QqN/zo0mhF8w8zjTrsOt/UjJ
+	SJGmduxury8yg/MaM1A1cQTocrcv/xqQeRJpQlbKyY4BZZYy5dHlEt95LB8TGA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741115549;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vdfWzjh5f8yU2E686H+/CLEZdKtId2rsdnVtVaeCwGY=;
+	b=kSDF5jxYZWc/zcWbzFIe3MGw02/ibEDqpW97iKYJHJzaXOKX5Kvmh/EwZVun9LuOFF0A9N
+	Cz9tajr4OHbVHSCg==
+From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/core] perf/x86: Annotate struct bts_buffer with __counted_by()
+Cc: Thorsten Blum <thorsten.blum@linux.dev>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250304183056.78920-2-thorsten.blum@linux.dev>
+References: <20250304183056.78920-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <174111554764.14745.14213573362217486017.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-drm_debug_dp_mst_topo_kconfig-v1-1-e16fd152f258@jannau.net>
-X-B4-Tracking: v=1; b=H4sIAI1Qx2cC/x3MQQqDMBAAwK/InhvIplqwXylliWZNFzEJiRZB/
- LvB41zmgMJZuMC7OSDzX4rEUIGPBsafDZ6VuGow2nT6qVvl8kKOh82TS7SUldaYIs1jDJN4ZRF
- Nr9vBvhChHinzJPv9f77neQHbKI4hbwAAAA==
-X-Change-ID: 20250304-drm_debug_dp_mst_topo_kconfig-a112904ba611
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Janne Grunau <j@jannau.net>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2182; i=j@jannau.net;
- s=yk2024; h=from:subject:message-id;
- bh=CwxEpxjxqdhwbX3K+IrTZdcGwFWOTIRbUncA5vUkg+8=;
- b=owGbwMvMwCW2UNrmdq9+ahrjabUkhvTjAZNFwncV/wzyebfhsJvo05Cm1F29cU5SRzkvqPMtC
- HKMUGDvKGVhEONikBVTZEnSftnBsLpGMab2QRjMHFYmkCEMXJwCMJHqXQx/RblCHy68xXKhLsYv
- Tm7D4XJWr3XbKn8UcM/6YMh7yfuPACPD1kdeDy+VKrpv/qm9QSUyjl/koIfU851KOw/P2LS6wMe
- HEwA=
-X-Developer-Key: i=j@jannau.net; a=openpgp;
- fpr=8B336A6BE4E5695E89B8532B81E806F586338419
-X-Endpoint-Received: by B4 Relay for j@jannau.net/yk2024 with auth_id=264
-X-Original-From: Janne Grunau <j@jannau.net>
-Reply-To: j@jannau.net
 
-From: Janne Grunau <j@jannau.net>
+The following commit has been merged into the perf/core branch of tip:
 
-Using "depends on" and "select" for the same Kconfig symbol is known to
-cause circular dependencies (cmp. "Kconfig recursive dependency
-limitations" in Documentation/kbuild/kconfig-language.rst.
-DRM drivers are selecting drm helpers so do the same for
-DRM_DEBUG_DP_MST_TOPOLOGY_REFS.
-Fixes following circular dependency reported on x86 for the downstream
-Asahi Linux tree:
+Commit-ID:     077dcef270361089c322a969b792438b33cfb479
+Gitweb:        https://git.kernel.org/tip/077dcef270361089c322a969b792438b33cfb479
+Author:        Thorsten Blum <thorsten.blum@linux.dev>
+AuthorDate:    Tue, 04 Mar 2025 19:30:57 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 04 Mar 2025 19:58:01 +01:00
 
-error: recursive dependency detected!
-  symbol DRM_KMS_HELPER is selected by DRM_GEM_SHMEM_HELPER
-  symbol DRM_GEM_SHMEM_HELPER is selected by RUST_DRM_GEM_SHMEM_HELPER
-  symbol RUST_DRM_GEM_SHMEM_HELPER is selected by DRM_ASAHI
-  symbol DRM_ASAHI depends on RUST
-  symbol RUST depends on CALL_PADDING
-  symbol CALL_PADDING depends on OBJTOOL
-  symbol OBJTOOL is selected by STACK_VALIDATION
-  symbol STACK_VALIDATION depends on UNWINDER_FRAME_POINTER
-  symbol UNWINDER_FRAME_POINTER is part of choice block at arch/x86/Kconfig.debug:224
-  symbol <choice> unknown is visible depending on UNWINDER_GUESS
-  symbol UNWINDER_GUESS prompt is visible depending on STACKDEPOT
-  symbol STACKDEPOT is selected by DRM_DEBUG_DP_MST_TOPOLOGY_REFS
-  symbol DRM_DEBUG_DP_MST_TOPOLOGY_REFS depends on DRM_KMS_HELPER
+perf/x86: Annotate struct bts_buffer with __counted_by()
 
-Fixes: 12a280c72868 ("drm/dp_mst: Add topology ref history tracking for debugging")
-Cc: stable@vger.kernel.org
-Signed-off-by: Janne Grunau <j@jannau.net>
+Add the __counted_by() compiler attribute to the flexible array member
+buf to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
+
+Use struct_size() to calculate the number of bytes to allocate for a new
+bts_buffer. Compared to offsetof(), struct_size() has additional
+compile-time checks (e.g., __must_be_array()).
+
+No functional changes intended.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250304183056.78920-2-thorsten.blum@linux.dev
 ---
- drivers/gpu/drm/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ arch/x86/events/intel/bts.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-index fbef3f471bd0e5101699cf576542f7350bea3982..bd228dc77e99b4356b09de02d9001237eb2423e2 100644
---- a/drivers/gpu/drm/Kconfig
-+++ b/drivers/gpu/drm/Kconfig
-@@ -188,7 +188,7 @@ config DRM_DEBUG_DP_MST_TOPOLOGY_REFS
-         bool "Enable refcount backtrace history in the DP MST helpers"
- 	depends on STACKTRACE_SUPPORT
-         select STACKDEPOT
--        depends on DRM_KMS_HELPER
-+        select DRM_KMS_HELPER
-         depends on DEBUG_KERNEL
-         depends on EXPERT
-         help
-
----
-base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-change-id: 20250304-drm_debug_dp_mst_topo_kconfig-a112904ba611
-
-Best regards,
--- 
-Janne Grunau <j@jannau.net>
-
-
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 8e09319..debfc18 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -58,7 +58,7 @@ struct bts_buffer {
+ 	local_t		head;
+ 	unsigned long	end;
+ 	void		**data_pages;
+-	struct bts_phys	buf[];
++	struct bts_phys	buf[] __counted_by(nr_bufs);
+ };
+ 
+ static struct pmu bts_pmu;
+@@ -101,7 +101,7 @@ bts_buffer_setup_aux(struct perf_event *event, void **pages,
+ 	if (overwrite && nbuf > 1)
+ 		return NULL;
+ 
+-	buf = kzalloc_node(offsetof(struct bts_buffer, buf[nbuf]), GFP_KERNEL, node);
++	buf = kzalloc_node(struct_size(buf, buf, nbuf), GFP_KERNEL, node);
+ 	if (!buf)
+ 		return NULL;
+ 
 
