@@ -1,78 +1,80 @@
-Return-Path: <linux-kernel+bounces-545102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D88C4A4EA5E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:03:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3680CA4E90A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:34:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CC368C47A8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:29:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 728DD17F1D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:29:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86CC927FE84;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAB1A28D0B6;
 	Tue,  4 Mar 2025 17:05:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ITXiACx8"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LWwuzUgF"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4344C2857D8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA74C286292
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:05:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107935; cv=none; b=lH5Is/FUwZ/LFRjlRdE6/bNZ9cPRoRq11JuC+C2itg6DDpYhxqC0nfkknP6UDzE7Pb3Ds7zBowQK4W/q1ImzWzmdbHVHVE6pKMiHTETF3T8cZW1VvNwJEiPbFta9jP9oRNxxdSknxms+Q0lv0K23jWGYdTMzfl6hOQxwjnYv1bc=
+	t=1741107935; cv=none; b=f4UXAmRONkZUv7C3vIaITMkTyGM8FOqMZ7KzWApOXRJ6yj8Y7mVIJf/e4lcnxxIRNrldHJ4J5RbD8sB9VOVnXUmhqOJCAPJiPfDRbmRs+5TyzFCM029JtX7BBANzA39Xm+RIHrNT81AxR7Jl/G4RneTtwYhk6aRkP3uLzDWYLxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741107935; c=relaxed/simple;
-	bh=vgbHVbyAdNxxqlJ49fGdNGtTt3OgYs9o/Lygu1bq/OA=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=secvoP/Hf6ccGzfTn/ZyKoV7P3OkXRUyL5J+ZJWJbLihMfqcVk37iDfap3Kqu6sLKDFxfiMmZ+kWUfqreqFK8QhJMSJzu3WCQfqZe8kR6x5kviG22QUp3hPBHvLhWJyfB/tZ4lSBcy6KAHbnBYl1TvGy/esPxNesDuZWBvP8QkI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ITXiACx8; arc=none smtp.client-ip=209.85.208.44
+	bh=uYPyL/IWo3+zxsKwPHXxHCdTPQr36Ok0GjwhGtYCZ8I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=OXReRNV20JcHKq5uH425drqQQvdvKbYpBqb1Z8od9+M7hEnQWG/ipPmGlM6diEWpLHuHqQ9nw7Q8r+JmsSU4ehY5F8N8YE6WPrnjIxIsBwaD5ox6njieB9V1a5HWtUhYESO9xPb79bfhZSD7ajo8ieO8ryNAmAtN8bnPujm/3XE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LWwuzUgF; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e4cbade42aso8923749a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:05:32 -0800 (PST)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-390fdaf2897so3096680f8f.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:05:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741107931; x=1741712731; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=VwGP1hOkgqyt7cuslt+mBb5Pi8swKaj/YmncchBevCs=;
-        b=ITXiACx82elRORdzNYn4xfGKOF8bz9O7LelV8yR1/wQagJY55lumDQGs7DfJxlfeBJ
-         QRsAgNJFETKetYw4CRXwLuw+y1OYuXGkXpgCxTiteJXimBvUkOI76Kd0VMDbjz+2a5FY
-         hVoh102w72cV+7xNsTs/XPc0vFoqUw1tGENmju171aNoLJ4A5k2S6qIe8IB2A3ADyipv
-         Bxg+I4ydJ9ShuXV5XFpoDnHJvMLMwZJiXE7ln4Hv1jM0UDbE0ts/J+2TAL6CwMXiKr5D
-         b0ydZxjgUobsM1PoeWdFZqVB8xWNGJhCmgrEzfLqYGk2eG6RrK71mb4cFz5ZB67AyWWF
-         gfsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741107931; x=1741712731;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1741107932; x=1741712732; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VwGP1hOkgqyt7cuslt+mBb5Pi8swKaj/YmncchBevCs=;
-        b=RYw29xREHuC+G5WWFjcgP5WU4hn7/50Rgisf79lZulEVs9WU3gYgOxp+4Ek7ruLY7X
-         BrZufLRgibSBLWND9IL/PVQMk9/uyMHYHDBx7iJDILMTy8njxFQZ+3G5P8HRLVIcV0XG
-         KXPsnNt+S8RJNopzcHrU/2rt8BOY5cYPRp1MLzYlmDQxz0XCp492gtOE0dqb/v6F7+tP
-         wEkdMogSugsMxT/l15ONJ+w9sJ/4hWxieiHXomIjAZHTbmjJEh2J7I+lfHEi8giQO4hv
-         EOEO6NJbVFWQycx0GrCvNrAGGM3VMx/HJ0HJcVBXnV89Fh5V0ZGRzXh3UdsyStV9IsLq
-         og0g==
-X-Gm-Message-State: AOJu0YwS2adr6C4jC3yGjsEysGLnmK5HBf826z8UdVqIDhD2DCSih9+B
-	bJIgB0iFaKz3Wih3NKjgsIeq7zEiASQfv41OfiStPfdl4BlCEU+oJw/gaoAJPx8=
-X-Gm-Gg: ASbGncs/7LmTmYjfQ8RUP8cnA0y411OUNxTf6zhU280PSutVXutj5ssaH1CEPdLGGVt
-	r8enG1DM9LxSurX43yh/WYvXYpljdzyuw3Ra2vW2ULoXoGeS5ps8ncKmN/3XG4eJEetMYCWw2OL
-	TJfv1YGVKOvhoJiovGJpU0RSBKAKiLJuwW5BmMf3q2NG2oTpDBVObWPI56gIOyEfXGB+PPie+aZ
-	K9i1fHCx2EhBXCYMCSWiOsYnFVuM3cn9phdt93zlcPEDQwO1YEIJltG3bkmTLRxU8D92J4KHb6a
-	1PhhOS8wDcgD4j0syzxFzGIlUFbN/Qrp9QWerIjz9cWpJrE7SmF8jfinvZruOqdrslDyqwsjqrW
-	g5MPjEQfNHZ4pYhlVizx7Mp6jLzVx
-X-Google-Smtp-Source: AGHT+IG1qDKc0hst2zevKKhfPXC0MrEb14O70/5mMsp5hFfaUprLxoI4xNFXRR1d5hlR/z34qhDcpw==
-X-Received: by 2002:a17:907:da0:b0:abf:23a7:fc6 with SMTP id a640c23a62f3a-ac1f1185263mr365511466b.16.1741107931351;
+        bh=M1Zs+DHu4keoQ7nH0HfotkX9qiVtwoVoQvIhvtnI4DA=;
+        b=LWwuzUgFnhYf5w853jXU4MbTtJG5AKP1cFGZ/rJ82kPJ6qEzUkYAnP7WpAzjw4caml
+         CD9bu06MA2LmxelRdj4Wxtn1sFMXfvwP9BtZSMRcQ1pLoeAPQhC2/bo4tNPpci7HrFfw
+         Dsy4ab1qeCOIN1l6SSS2f4NgX2ZjLweg2stZA0fvO8Xmwvpc1/jmpkPzVVHYH2yE79ob
+         D5biFz0mJCIs5QHsQom5/OR1YrpojGaURub+qHWxfWI64nGNsABh8Fl0g5BpM8nFzf4r
+         2/Qx6kTt2bI4scSFCzRpYyGVKRWSx7hmZ9z1A3sRKCSuocug2QrVMj/AcgIBNkkW8A24
+         WLtw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741107932; x=1741712732;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M1Zs+DHu4keoQ7nH0HfotkX9qiVtwoVoQvIhvtnI4DA=;
+        b=Ndv8ebPF9tYW+/any1d+fd2+dNWUtLztLzgTUE+wT7reCd/5rkWhfvS1Sc6puwQyEi
+         SBD8VgIOn+KFHS4olLtPIPQgbF3EJ4bSQsngZQk4uqVXUUt2TgxhGg5LCygOR7DJ7Be2
+         9WZXpKePv/LdyA4mSD1bS+eug9Uf8MU3SFYoUcA2FNJcM/P++yXLAwI3mv2Zq0AzJc5G
+         vkH+31HcA7uYqP+xR6AmIUv+ooEaNgdXIEKmPqNUwvDIvUSzl0ntW6s0FILiS5UxkJUq
+         bXbUOLQMzkubVgG0fx39o1KNuinFAcwbB0QnfFZSyt2U5SP7mUj8iEPEttErH2yIPPv9
+         mGlQ==
+X-Gm-Message-State: AOJu0Yx5Fc2eeMXwR7dUbujTlXPX3h18Q3JnvfGm9YpDkKsEG42sa7D4
+	uU7xUeBmkvx+mCErrKu+gKfbR9WdatOEC5Ad90MlSVo+eP98UYsiYMjNG9KfNaE=
+X-Gm-Gg: ASbGncsggpRNGvGhLjWw4XIc0Qk+1RiowjV31gV7cKpHk0ukS75g/cEkRIRG8L1Aw9F
+	19r3D9tCQC3ETrd+Anz56713xOsm8n/rO6ti7jC/JwY87cwek4O1DTa14EwtGO0jI8PCyuCsPUu
+	Z5T+UmLCH4a2M4bpKvK1u9HMsfE6gd8tnV2gJhmz3d3LztXHQTo4n9sh9+sGzi7Me3TYCkcg9uj
+	9UltBo0kfGKWe00ty7JjGJPTCst5SsGyS+Lp2xwR2/FHb+QNDJq1tjyfi08/MJe/7fh2GH+sclN
+	FQgXWcCx72IrzAslBt9uvUk504l9qi8cs+BTNk7qA9JAScEk/j1txU+Z3+EqpuOmd4+/rUzboZp
+	mhLshDyD9d2tvBTCr+piIy3qGdGkQ
+X-Google-Smtp-Source: AGHT+IHSc8pjwattEBJyeHF3OjOkT41+G9Y/Rh1pozPSubIjG3eC8i5kYIqu87xMZCHZm4ULB7j+yA==
+X-Received: by 2002:a05:6000:1faf:b0:391:888:f534 with SMTP id ffacd0b85a97d-3910888f656mr7939190f8f.20.1741107931986;
         Tue, 04 Mar 2025 09:05:31 -0800 (PST)
 Received: from puffmais.c.googlers.com (30.171.91.34.bc.googleusercontent.com. [34.91.171.30])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf795ba15esm367589066b.131.2025.03.04.09.05.30
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf795ba15esm367589066b.131.2025.03.04.09.05.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 09:05:30 -0800 (PST)
+        Tue, 04 Mar 2025 09:05:31 -0800 (PST)
 From: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
-Subject: [PATCH v2 00/16] a few rtc driver cleanups
-Date: Tue, 04 Mar 2025 17:05:28 +0000
-Message-Id: <20250304-rtc-cleanups-v2-0-d4689a71668c@linaro.org>
+Date: Tue, 04 Mar 2025 17:05:29 +0000
+Subject: [PATCH v2 01/16] rtc: max77686: drop needless struct
+ max77686_rtc_info::rtc member
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,10 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIANgyx2cC/3XMQQrCMBCF4auUWRtJxhSDK+9Rukjj2A6UpExqU
- Urubuze5f/gfTtkEqYMt2YHoY0zp1gDTw2EyceRFD9qA2psNaJTsgYVZvLxtWRlMOihNXghb6F
- eFqEnvw+u62tPnNckn0PfzG/9A21GaTVYGyjoq7PO3GeOXtI5yQh9KeULAj75TakAAAA=
-X-Change-ID: 20250228-rtc-cleanups-12c0b5123ea4
+Message-Id: <20250304-rtc-cleanups-v2-1-d4689a71668c@linaro.org>
+References: <20250304-rtc-cleanups-v2-0-d4689a71668c@linaro.org>
+In-Reply-To: <20250304-rtc-cleanups-v2-0-d4689a71668c@linaro.org>
 To: Chanwoo Choi <cw00.choi@samsung.com>, 
  Krzysztof Kozlowski <krzk@kernel.org>, 
  Alexandre Belloni <alexandre.belloni@bootlin.com>, 
@@ -106,72 +107,62 @@ Cc: linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org,
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
 
-Hi,
+When this driver was converted to using the devres managed i2c device
+in commit 59a7f24fceb3 ("rtc: max77686: convert to
+devm_i2c_new_dummy_device()"), struct max77686_rtc_info::rtc became
+essentially unused.
 
-While looking at RTC, I noticed that various drivers are keeping
-pointers to data that they're not using themselves throughout their
-lifetime.
+We can drop it from the structure and just use a local temporary
+variable, reducing runtime memory consumption by a few bytes.
 
-So I took the liberty to drop these pointers and this series is the
-result.
-
-The last two patches also convert two drivers to using dev_err_probe(),
-as I looked slightly closer into those two. They don't exactly fit the
-general subject of removal of unneeded pointers, but I wanted to share
-them anyway, since they're ready.
-
-Drivers other than s5m were compile-tested only.
-
-Cheers,
-Andre'
-
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 Signed-off-by: André Draszik <andre.draszik@linaro.org>
 ---
-Changes in v2:
-- s5m: fix arguments to devm_i2c_new_dummy_device()
-- merge two rx8581 & sd3078 patches into one each (Alexandre)
-- Link to v1: https://lore.kernel.org/r/20250228-rtc-cleanups-v1-0-b44cec078481@linaro.org
+ drivers/rtc/rtc-max77686.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
----
-André Draszik (16):
-      rtc: max77686: drop needless struct max77686_rtc_info::rtc member
-      rtc: s5m: drop needless struct s5m_rtc_info::i2c member
-      rtc: aspeed: drop needless struct aspeed_rtc::rtc_dev member
-      rtc: ds2404: drop needless struct ds2404::rtc member
-      rtc: ep93xx: drop needless struct ep93xx_rtc::rtc member
-      rtc: ftrtc010: drop needless struct ftrtc010_rtc::rtc_dev member
-      rtc: m48t86: drop needless struct m48t86_rtc_info::rtc member
-      rtc: meson: drop needless struct meson_rtc::rtc member
-      rtc: meson-vrtc: drop needless struct meson_vrtc_data::rtc member
-      rtc: pl030: drop needless struct pl030_rtc::rtc member
-      rtc: rx8581: drop needless struct rx8581
-      rtc: s35390a: drop needless struct s35390a::rtc member
-      rtc: sd2405al: drop needless struct sd2405al::rtc member
-      rtc: sd3078: drop needless struct sd3078
-      rtc: max77686: use dev_err_probe() where appropriate
-      rtc: s5m: convert to dev_err_probe() where appropriate
+diff --git a/drivers/rtc/rtc-max77686.c b/drivers/rtc/rtc-max77686.c
+index 7bb044d2ac25aeaaf2404b47b7e7bd485ae3d39e..6b0d02b44c8097453f704cbec9f02580fb869ca3 100644
+--- a/drivers/rtc/rtc-max77686.c
++++ b/drivers/rtc/rtc-max77686.c
+@@ -85,7 +85,6 @@ struct max77686_rtc_driver_data {
+ 
+ struct max77686_rtc_info {
+ 	struct device		*dev;
+-	struct i2c_client	*rtc;
+ 	struct rtc_device	*rtc_dev;
+ 	struct mutex		lock;
+ 
+@@ -691,6 +690,7 @@ static int max77686_init_rtc_regmap(struct max77686_rtc_info *info)
+ {
+ 	struct device *parent = info->dev->parent;
+ 	struct i2c_client *parent_i2c = to_i2c_client(parent);
++	struct i2c_client *client;
+ 	int ret;
+ 
+ 	if (info->drv_data->rtc_irq_from_platform) {
+@@ -714,14 +714,14 @@ static int max77686_init_rtc_regmap(struct max77686_rtc_info *info)
+ 		goto add_rtc_irq;
+ 	}
+ 
+-	info->rtc = devm_i2c_new_dummy_device(info->dev, parent_i2c->adapter,
+-					      info->drv_data->rtc_i2c_addr);
+-	if (IS_ERR(info->rtc)) {
++	client = devm_i2c_new_dummy_device(info->dev, parent_i2c->adapter,
++					   info->drv_data->rtc_i2c_addr);
++	if (IS_ERR(client)) {
+ 		dev_err(info->dev, "Failed to allocate I2C device for RTC\n");
+-		return PTR_ERR(info->rtc);
++		return PTR_ERR(client);
+ 	}
+ 
+-	info->rtc_regmap = devm_regmap_init_i2c(info->rtc,
++	info->rtc_regmap = devm_regmap_init_i2c(client,
+ 						info->drv_data->regmap_config);
+ 	if (IS_ERR(info->rtc_regmap)) {
+ 		ret = PTR_ERR(info->rtc_regmap);
 
- drivers/rtc/rtc-aspeed.c     | 16 ++++-----
- drivers/rtc/rtc-ds2404.c     | 14 ++++----
- drivers/rtc/rtc-ep93xx.c     | 16 ++++-----
- drivers/rtc/rtc-ftrtc010.c   | 17 +++++----
- drivers/rtc/rtc-m48t86.c     | 14 ++++----
- drivers/rtc/rtc-max77686.c   | 37 +++++++++----------
- drivers/rtc/rtc-meson-vrtc.c | 12 +++----
- drivers/rtc/rtc-meson.c      | 16 ++++-----
- drivers/rtc/rtc-pl030.c      | 14 ++++----
- drivers/rtc/rtc-rx8581.c     | 85 +++++++++++++++++++-------------------------
- drivers/rtc/rtc-s35390a.c    | 22 ++++++------
- drivers/rtc/rtc-s5m.c        | 58 +++++++++++++-----------------
- drivers/rtc/rtc-sd2405al.c   | 16 ++++-----
- drivers/rtc/rtc-sd3078.c     | 71 +++++++++++++++---------------------
- 14 files changed, 183 insertions(+), 225 deletions(-)
----
-base-commit: 0226d0ce98a477937ed295fb7df4cc30b46fc304
-change-id: 20250228-rtc-cleanups-12c0b5123ea4
-
-Best regards,
 -- 
-André Draszik <andre.draszik@linaro.org>
+2.48.1.711.g2feabab25a-goog
 
 
