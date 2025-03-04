@@ -1,152 +1,88 @@
-Return-Path: <linux-kernel+bounces-545672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4175BA4EFF2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:16:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAA3CA4EFFF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:19:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 737661890714
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2E6188AC08
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A67E51F55FA;
-	Tue,  4 Mar 2025 22:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02A42251788;
+	Tue,  4 Mar 2025 22:19:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SQ1WJNTI"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g7EpLZGq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FD0F33998
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 22:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5275A1F03D7;
+	Tue,  4 Mar 2025 22:19:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741126587; cv=none; b=Nxf1zM4wbrseZiJn1+fP0TLpSTMMs34y+nxOe0jOocZ0Ik61p/Xc/BHnfvHHVsfEiaoT0pomCoqcLbhCPsGyLZ6ROW42qUc0I9Ak8jUHAA9gN1mkCW+XijS1YZtps61mAbgIailJtoLnx3Fcfh2n42UaF3ykXSB0BG6qWy9GViM=
+	t=1741126774; cv=none; b=tcln5iujsVcl5L20rnBzKOJkLnWGMYxnHDmVI4mIYaZkX+KGS6OaZmT1FEF7Vn42XQ7Yc3s/mMDkFECDnlz4NwiE7HV/ynr+7VSDE7U2sXQsCYGGCrnjDm++fKEs5O01N4zTyYGz0E33EEcPn3q8MPywFhxrohhCE6qfaQjjVFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741126587; c=relaxed/simple;
-	bh=J1zT4ttI1/ipMv4SRCFdEmuAVaIbre469EL8k9w3Oqg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tl+Ms6i+2r2LAbl2EJsHteNJQFhLqqXr4cRA5ejbc7FJPScAK/CWk7MwcQViS3uPW4K554KKcYIeRUTcGrZcUjQvpdrFNjiyOq94zhg1fzaSSsNAUmd4JWLVF3aH3VXInkjl9WZo91YT4RuVx/wGRTD/y2B/Hy35sYqkBZ2qI3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SQ1WJNTI; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5496301c6afso282933e87.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 14:16:25 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741126583; x=1741731383; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6WX4nyHf58fSCu7WOT40A2wbQKdGUiev3A8Wr+Eeu60=;
-        b=SQ1WJNTIFqJWl/1z89p2Xg1lnU80XIQgEHbRmr2cGLrx0l+K6l8MEna0j8MC8qhnAJ
-         8xK5HRBKEpLPEZfgn0zoz52oyBG7WUkmdillcjuE/ziBKdeouhUhdySaBIRRJwt+DJiH
-         3U4sWo67bstjPyOT11rTbybiV2ByfKn+12ZG9y82KlCrw+MG0Pc1Diblg7Mih18PsbTM
-         ZS8VQg5p7HewB7PRQvrUZQj5NUhkQRpLEosPfWA60JbqGgdpjbzUeo8H+A6Ecxy3PXgq
-         8ZSmEDc0lkeoEunSnhnZZeqxl9x12LcTj2UoXNT67rHMdp9dUm4PKvjblU6+TrW/V/Qc
-         LiKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741126583; x=1741731383;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6WX4nyHf58fSCu7WOT40A2wbQKdGUiev3A8Wr+Eeu60=;
-        b=FwNiRsJNoR6kwCCW7QDNvSGxT4FVvgeH07tdYOaznnrOdQRr65SMJkbfDyUGRyvMeL
-         o0Bo9n7+8ya9D0Jldrr0zg9MSXYFZrd6SFyfrvGvHMuj8bG34DiE7umOFFu91qivyzZp
-         9ynxKIbOEnm+bc1dPne7y7Dgk0HTEbVdilQ3H3QoJXLlMnBrwu/LBQ9B4nVF0irdobD4
-         7kjsoMxc2CkCF1T+rsK2AUAv/Ggl+PPRaRjfMwaEwb2LY/i16PY+BuyYhl76SY3eSh1F
-         l0FoxiT9Z9PmlG7vbRj9i6MYogYMWTU0OlMXQiscW00usKgfOUzY+CbD6Biw8rhdAzyV
-         LIhg==
-X-Gm-Message-State: AOJu0Ywtp7ymgN+FN5pL44UfvjSut/fi8jE/7N3Bx8TZJtlL6/w2L4Po
-	p0k8THpWXZCZs2PZI15caWUTHeZlnFCiMySTNvy2vlJdYByQsOA4
-X-Gm-Gg: ASbGncvRWRWa9K9YncEZe2Jdc3kOfpVZXUICuB86KxaP4TgJHvSBJlt6M6rTXgUfl8+
-	oSbrtUrWIonYv3yeAp0dm808L3LrJMgS7RGmp18xmK8N+A4PMHnB3OKTL4nMwN8xW2wkmGi89vu
-	tevb36tplHpn+RxOSBZ6Qr4OcuHLFTtvGKwHFqDQQ3LKfbOfUU/UGWpbmSqjJJGhvK5LuYXlEXt
-	KxAHJejgDrQ2SOKs+HjCRPVPrTBQxrtlQYSGCZHBjzPDGMhlMo4bSxK7I2sfBlsva8xyRo0/p1L
-	iecx7prxUL+HG7J2OWuF6haFiyFCWL+EIY8CTLuEUtkSOg==
-X-Google-Smtp-Source: AGHT+IGTaDy82c512qOasiS5NrBQ1bgGqKGq7jC9aALQjNTV4T7hF+u3nl3JLPQQdGDKghZG3WDunA==
-X-Received: by 2002:a05:6512:3e20:b0:549:6451:7e78 with SMTP id 2adb3069b0e04-5497d3a04e4mr249202e87.20.1741126583004;
-        Tue, 04 Mar 2025 14:16:23 -0800 (PST)
-Received: from grain.localdomain ([5.18.255.97])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54961edb9c4sm884053e87.33.2025.03.04.14.16.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 14:16:22 -0800 (PST)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id 29F145A0136; Wed, 05 Mar 2025 01:16:22 +0300 (MSK)
-Date: Wed, 5 Mar 2025 01:16:22 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V2 10/17] posix-timers: Make
- signal_struct::next_posix_timer_id an atomic_t
-Message-ID: <Z8d7tm5dQN6dZEvu@grain>
-References: <20250302185753.311903554@linutronix.de>
- <20250302193627.543399558@linutronix.de>
- <Z8YPQn0UpxucZLJP@grain>
- <87sentbyer.ffs@tglx>
- <Z8c-vvnMpPjYRvOn@grain>
- <87mse05yk3.ffs@tglx>
+	s=arc-20240116; t=1741126774; c=relaxed/simple;
+	bh=JlHcj6u/gzHc+jr2w3RZkgVR2UBvZLumzzsoWt33zVc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=holbrC73ovYQIsCq1uqMgT8VQy1bEglx0erXfAtQ3BjyAT/gvmPe0VAO0GyOT5ytpyddcyyQXuZIRYLa74mx65RB4fMQWCLfe39ORzrxAb43Y+s5tYsGgKXh1/uUI3YkwMI+lKdhUb+tCz43YaU2lQ5UFSLwMTVlaaEaZRxDP0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g7EpLZGq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2CA1C4CEEF;
+	Tue,  4 Mar 2025 22:19:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741126773;
+	bh=JlHcj6u/gzHc+jr2w3RZkgVR2UBvZLumzzsoWt33zVc=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=g7EpLZGqw+3Oi28j446nfBJaVbYes3y4HfkpwGlfIkYIKzJbLl62rC8e74cSkZ2kN
+	 x54MQaR/MRel2YMWOze+Kn4s4Ft4x9UYusozXx1qgJz12WH7hG1mvFPgBxwMUT2519
+	 6axQQYdDcxvAeIf3YjNJpc9+K1v6OLBZtrqFw25CkpcwW0yHxP09z5nFfgKWBlROGy
+	 tAMxjso3h5Y1oVoZcIGLob8w2rD1Twi9XBx7s/DcfkfF1eUunv4bHTulP4A9/7Lovl
+	 wFGCLJtZRBaUMxjAECUuJf0iANOpBFjKfeMOYlOwbi48HQQWymOiESrN8NjEbm8VPF
+	 q9UihKgk0x2Vg==
+Received: by mail-il1-f175.google.com with SMTP id e9e14a558f8ab-3cfeff44d94so20422625ab.0;
+        Tue, 04 Mar 2025 14:19:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV/HjqsMgdqKzs975AmQrppLzO80o8iiN9/o7GVDqJlHognqGKRXyJrk0UUu5JQfcgZ74k=@vger.kernel.org, AJvYcCWGq9kAkw61PG48fRydaMNLafG9AsAPmv4B/jUaWf7DtBeEXmAagXyMcxWij62Z/fLkfOOntKgmTZO9vqut@vger.kernel.org, AJvYcCX9FpRZdNW3STLwOuDmKCbUFth9yl3zQ9j0YPBJ54XWhQa0Dpq+v7O9aIkrXpa5OxaLdDHFnBOZfcrz@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywznn8nGWbkuWRBYNwzCj+W6epJqee2TyN8hzMhlkJc/NO9mH4K
+	LtD6bWnyevcVAeXw2q05RlNCct+omCGJpWujwCERrixeBfRM9Mo8QorkdTKlMI6G/+ZN60dFwAm
+	awWb3NPHLv0mKzxpg9i1T+N97Dcw=
+X-Google-Smtp-Source: AGHT+IFUvrwnqLa+FC83yVK8URcKieeZt/81kczIwIO/bglfFZBkiSZtmOagtbAFh/+0HdTfNdrPo25hl/hEM0vM3ec=
+X-Received: by 2002:a05:6e02:180c:b0:3d3:d17b:2d95 with SMTP id
+ e9e14a558f8ab-3d42b8d3dbemr11785515ab.12.1741126772988; Tue, 04 Mar 2025
+ 14:19:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87mse05yk3.ffs@tglx>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+References: <20250304204520.201115-1-tjmercier@google.com>
+In-Reply-To: <20250304204520.201115-1-tjmercier@google.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 4 Mar 2025 14:19:21 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW5uMAHoT0XbDLW23u_SYLyM7-oJXykG+az2RkQdiD2SqQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JpYFT97tNU7gIjgCbQmuo9nkTMDE3uPBsNRPXkiH37S3HdGrI2R1NVpL_Y
+Message-ID: <CAPhsuW5uMAHoT0XbDLW23u_SYLyM7-oJXykG+az2RkQdiD2SqQ@mail.gmail.com>
+Subject: Re: [PATCH] bpf, docs: Fix broken link to renamed bpf_iter_task_vmas.c
+To: "T.J. Mercier" <tjmercier@google.com>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Dave Marchevsky <davemarchevsky@fb.com>, bpf@vger.kernel.org, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 04, 2025 at 09:30:04PM +0100, Thomas Gleixner wrote:
-> On Tue, Mar 04 2025 at 20:56, Cyrill Gorcunov wrote:
-> > On Mon, Mar 03, 2025 at 10:24:28PM +0100, Thomas Gleixner wrote:
-> >> 
-> >> Welcome. Some quick validation with CRIU would be appreciated.
-> >
-> > Just tested in criu: works without problem, both modes -- with new
-> > prctl and without it. Note that I only have ran separate posix-timers
-> > test case, probably virtuozzo team might do more deep tesing.
-> 
-> Thank you very much!
+On Tue, Mar 4, 2025 at 12:45=E2=80=AFPM T.J. Mercier <tjmercier@google.com>=
+ wrote:
+>
+> This file was renamed from bpf_iter_task_vma.c.
+>
+> Fixes: 45b38941c81f ("selftests/bpf: Rename bpf_iter_task_vma.c to bpf_it=
+er_task_vmas.c")
+> Signed-off-by: T.J. Mercier <tjmercier@google.com>
 
-Thanks for handling this) Also looking into this series I wonder why can't
-we instead of mangling ::it_signal zero bit just use ::it_id with negative
-value as a sign of not yet fully initialized timer? This would allow to not
-read-modify action while traversing bucket hash chain. I mean we could do
-
-static bool posix_timer_add_at(struct k_itimer *timer, struct signal_struct *sig, unsigned int id)
-{
-	struct timer_hash_bucket *bucket = hash_bucket(sig, id);
-
-	scoped_guard (spinlock, &bucket->lock) {
-		if (!posix_timer_hashed(bucket, sig, id)) {
---->			timer->it_id = -(timer_t)id;
-			timer->it_signal = (struct signal_struct *)((unsigned long)sig | 1UL);
-			hlist_add_head_rcu(&timer->t_hash, &bucket->head);
-			return true;
-		}
-	}
-	return false;
-}
-
-Then hash traverse won't find the timer until the do_timer_create will do
-
-	scoped_guard (spinlock_irq, &current->sighand->siglock) {
-		WRITE_ONCE(new_timer->it_id, abs(new_timer->it_id));
-		hlist_add_head_rcu(&new_timer->list, &current->signal->posix_timers);
-	}
-
-Or I miss something obvious? (Of course when deleting timer we will have to pass
-abs it_id for hash traversing).
-
-It looks that in case of many many timers present in the system traversing hash
-in read-modify way might be heavy (though I didn't measure of course).
-
-	Cyrill
+Acked-by: Song Liu <song@kernel.org>
 
