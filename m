@@ -1,106 +1,128 @@
-Return-Path: <linux-kernel+bounces-545747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C510FA4F0E0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:59:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47920A4F0DD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:59:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8153AF8CD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:58:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8FC27176E4D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:59:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382F627F4FA;
-	Tue,  4 Mar 2025 22:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AD2A27CB39;
+	Tue,  4 Mar 2025 22:56:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="hTNQS3gu"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WATPFRNH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3D3E279349;
-	Tue,  4 Mar 2025 22:56:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A350727CB34;
+	Tue,  4 Mar 2025 22:56:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741128996; cv=none; b=W4GeQDsGq0qxfvx6TI6vz2vM8IyJ+uf/UhAli08BpvV6h3eO9o+/NlzsSO3dpnviDiHb1evuozPRkP5WFeaG2+CdQisoFCQNdjLMEKWCY8brgmxj/n39+XTpnrlUd2FJGF6n0gK0xwKh5WeikO0VKgwWGNe47PjtZK9U/oPsoS4=
+	t=1741129017; cv=none; b=lHo5FLrJ9c+hpN/cIMzmoBEhrwvl7727kQ0w13o4LWgCAt6o5TTC0+Bdx2zBH4FAiEwjKTWM8abhhanwz5C2RRHLqEHavacf/gZOB84UBF3ynvOtfEMNMdqVuydmyqr1E70Zu7ZkLU6Yh3vma7oCja/S0i4mFV4hDQCWbPPnxSE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741128996; c=relaxed/simple;
-	bh=r5+NIDp2XF4eMwhB/70g3s0n8TuRc4TRKSpPySgRDUo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AiRkdb1AiQVwYhXRWKMqkav0PsCzWqXBzRsUFr1pFt+MJYbmdmILPjnbhfhWdrK7mKXQK3FsCjdXFbGIm+JSJTYVPJ3S+9bUXl3xe2xjHzw/g8+mZzifboImM6ih0mgHDTHLBNZnPpcXuY2lP5ZA8W/O4ODuy8Mg71QBzakESHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=hTNQS3gu; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741128992; x=1741388192;
-	bh=r5+NIDp2XF4eMwhB/70g3s0n8TuRc4TRKSpPySgRDUo=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=hTNQS3guqlirujrKkdUKhdpz9it3OSQ2h00UoTWu8D9A+q9O6P0Qjr9Uq7ZD0qfrB
-	 AH4oqqLt9044INAjieX/JNiIosk+yfIpI1BW7rfLQrgGUpxcj5/Hf8TgMyYyXDB1CF
-	 gbfq5wjMh0XigkI8+DVgIK4HpZwCGB+loP+c09syRA1t0HafJVwD7MX6kOCxXlKNTD
-	 UwT2JBVjVXKoxkl8fRGoOnc8jl6FMpLyVypdQnlvHAuEWx4AKaBdESFA4l+JVovou0
-	 VtGFePWNVfVuqH2DP2QbrHroYdQseEhm9WDsAvN4gOPQibOfomIkwgbUmN1tU+0dbW
-	 Jzf+z3rPLUKVw==
-Date: Tue, 04 Mar 2025 22:56:27 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: [PATCH 22/22] MAINTAINERS: add entry for the `pin-init` crate
-Message-ID: <20250304225245.2033120-23-benno.lossin@proton.me>
-In-Reply-To: <20250304225245.2033120-1-benno.lossin@proton.me>
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 344408caef3f5c1422addc16dead2ce56178304c
+	s=arc-20240116; t=1741129017; c=relaxed/simple;
+	bh=bRlqhB0230mfIlVKHsoerEPbZx5Lz7IFjEzcjkiGTDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MKpDPAv0q7KqZHq2AmZFo97nAvrdv/YNPgdqDx3QGaICVSIY6qE1ZKV88gcbgQ76V7aEcOzcSyMB3C0wswrWVsyJ9iq74b7pHU5XLCAvWZXnPBhj24bo5y+94ylQ0Ia+uXA16oAFUSS6FjJhNU9krY03Or195V8PKX2SVBwwMwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WATPFRNH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADC80C4CEE5;
+	Tue,  4 Mar 2025 22:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741129017;
+	bh=bRlqhB0230mfIlVKHsoerEPbZx5Lz7IFjEzcjkiGTDM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=WATPFRNHk9OktpR86T6h1w1vH7JknKhosipN69B+b6OnQpozabdcWTz0KQqSceTR8
+	 Ll0qUTEGHIhJfiJgDKq/xEj1ZrrhRkbJtLdB4H9QPcknoLLLJg9XiRWcZHZmyr3dXP
+	 zYSv9YCakg3gMbhTF/qSaS2G1+qHOVyUt0miMoiWh0npADn0u4ax6MgtbQOO4xhf7y
+	 FZdkAKfnXJbgb6SYlXsp8ZZTN1G5NfGKOpWHlmlF3HlTFp7esgzKDmq3k+zcNU0iS1
+	 6BDQ/wCWzMQsZbG4O3YNA/4IQcIvi3ynq8d0JJbE1VEbRfLdaAdLpxWkQlGG/+mVmM
+	 MvN5dCetOVUmg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-sgx@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arch/x86: Fix size overflows in sgx_encl_create()
+Date: Wed,  5 Mar 2025 00:56:48 +0200
+Message-ID: <20250304225648.116440-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Add maintainers entry for the `pin-init` crate.
+The total size calculated for EPC can overflow u64 given the added up page
+for SECS.  Further, the total size calculated for shmem can overflow even
+when the EPC size stays within limits of u64, given that it adds the extra
+space for 128 byte PCMD structures (one for each page).
 
-This crate is already being maintained by me, but until now there
-existed two different versions: the version inside of the kernel tree
-and a user-space version at [1]. The previous patches synchronized these
-two versions to reduce the maintenance burden. In order to keep them
-synchronized from now on, separate the maintenance from other Rust code.
+Address this by adding the necessary validation for each partial results
+before going forward. Return -E2BIG when an overflow is detected.
 
-Link: https://github.com/Rust-for-Linux/pin-init [1]
-Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-sgx/c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 ---
- MAINTAINERS | 13 +++++++++++++
- 1 file changed, 13 insertions(+)
+ arch/x86/kernel/cpu/sgx/ioctl.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e0736dc2ee0..ced7fac4dbbe 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -20735,6 +20735,19 @@ S:=09Maintained
- F:=09rust/kernel/alloc.rs
- F:=09rust/kernel/alloc/
-=20
-+RUST [PIN-INIT]
-+M:=09Benno Lossin <benno.lossin@proton.me>
-+L:=09rust-for-linux@vger.kernel.org
-+S:=09Maintained
-+W:=09https://rust-for-linux.com/pin-init
-+B:=09https://github.com/Rust-for-Linux/pin-init/issues
-+C:=09zulip://rust-for-linux.zulipchat.com
-+P:=09rust/pin-init/CONTRIBUTING.md
-+T:=09git https://github.com/Rust-for-Linux/linux.git pin-init-next
-+F:=09rust/kernel/init.rs
-+F:=09rust/pin-init/
-+K:=09\bpin-init\b|pin_init\b|PinInit
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index b65ab214bdf5..176c2d8d9b60 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -56,14 +56,26 @@ void sgx_encl_shrink(struct sgx_encl *encl, struct sgx_va_page *va_page)
+ 
+ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ {
++	u64 epc_size, pcmd_size, shmem_size;
+ 	struct sgx_epc_page *secs_epc;
+ 	struct sgx_va_page *va_page;
+ 	struct sgx_pageinfo pginfo;
+ 	struct sgx_secinfo secinfo;
+-	unsigned long encl_size;
+ 	struct file *backing;
+ 	long ret;
+ 
++	if ((u64)PAGE_SIZE > ~secs->size)
++		return -E2BIG;
 +
- RXRPC SOCKETS (AF_RXRPC)
- M:=09David Howells <dhowells@redhat.com>
- M:=09Marc Dionne <marc.dionne@auristor.com>
---=20
-2.47.2
-
++	/* The extra page is for SECS: */
++	epc_size = secs->size + PAGE_SIZE;
++	pcmd_size = epc_size >> 5;
++
++	if (pcmd_size > ~epc_size)
++		return -E2BIG;
++
++	shmem_size = epc_size + pcmd_size;
++
+ 	va_page = sgx_encl_grow(encl, true);
+ 	if (IS_ERR(va_page))
+ 		return PTR_ERR(va_page);
+@@ -71,11 +83,7 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 		list_add(&va_page->list, &encl->va_pages);
+ 	/* else the tail page of the VA page list had free slots. */
+ 
+-	/* The extra page goes to SECS. */
+-	encl_size = secs->size + PAGE_SIZE;
+-
+-	backing = shmem_file_setup("SGX backing", encl_size + (encl_size >> 5),
+-				   VM_NORESERVE);
++	backing = shmem_file_setup("SGX backing", shmem_size, VM_NORESERVE);
+ 	if (IS_ERR(backing)) {
+ 		ret = PTR_ERR(backing);
+ 		goto err_out_shrink;
+-- 
+2.48.1
 
 
