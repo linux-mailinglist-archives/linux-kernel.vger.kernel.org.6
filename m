@@ -1,268 +1,424 @@
-Return-Path: <linux-kernel+bounces-544835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CDF1A4E5A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:23:42 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D80A4E5BC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:25:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07150461F1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:17:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9528C19C7E9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC67528D08B;
-	Tue,  4 Mar 2025 15:57:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C4328D0AC;
+	Tue,  4 Mar 2025 15:58:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="fDAI498l"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2047.outbound.protection.outlook.com [40.107.243.47])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KwcwLGcG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B2D27F4C1;
-	Tue,  4 Mar 2025 15:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103879; cv=fail; b=FnHZOTcCcrkcPZuBEN95p8NQd8LFXWDp7R64yWarPFxw3vNTNteuMVYGXKGdEgGPuw8VFwFMBe7qp98d2qvyCZnS5bioLJ976W25kFLu3GyHzgaT0sbZ0iCIsDJuyBmAuhZDD6OX0E1jqlYKyUl4PuZMxMCQQvlFPM408rCgzoU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103879; c=relaxed/simple;
-	bh=tesTLzsJBXk7HI10qCwfN+ymDxVmyx2OTm7TXfUecRw=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=IIyxGuAZZmenUYXKBSrxtWqqsTALN6BTnS7HT9pnZpKEd3Eeoaqb3RbAkX6I85CXKRBdqAJ593c2iquLcjFHhzRAo98TfNmGU/sOLW3QYlsu/6U3Pt/xhj7vehVgNWxPQmov9yzBaAB6nKlH/KX5TtEX0IIl9quLYANX0S1PKf0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=fDAI498l; arc=fail smtp.client-ip=40.107.243.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SEgADAMKGOlD8Ie3MruiCkvFpE3d1qaQX3eKGmbl+6/rtrrC9qXlDMCIyvZm8VmCJ75Bkc9X4APRmr/w8v0gIEV1+G625/LVrCNjUEcmzBUkWG+LTjL5XW2p5mnLzIZk73l+XiYZmofLw+fIpw2NEUT1Z6NIJLyze7w6ACOBtx3UuDeckYJSXVReL+jAn27czrc7PaAE/CEMR2RteBBheAixMkjznkWD0P6ZKNwMGneiq2yGXH+IuStE6kb7XKbWAXm6GCLjLrdnOmIgwH9YKV1HkGaCYZVhIFv5ZcZW2gGC+jtCSu0LIaJqVFhTCQ15k2vYSr2UOo8yplNJczaGoA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=F/0KwfEA+Cjb/eYXAQsaYeMfOJNkl1XjO430uRjjHVk=;
- b=h33EF5sONlkN2pAGjTd/FvUmGr+Svs2s//FuPL01ULGOQdoOxzUaDPoUeF+P/7nKDL2t05kuxcew5izL53DVTRXkuPokKqz2Cyx7ttcS/j8f7hM++xkgMq8QTAt0hOuJCvydDdtKIBpAQi1Y3kojgyvoRWN+HgizZuqc0dHg97DvX7UaJDfvxnFbbvRRogx1vvl8vdGZvDylzkDnNb0cKmmxraRsLqRfDcOvp3JRcLxSP6CIVv6HH+jH43h3Df1jFPE7AYapk+0gsnliKf7lmJlyH0BVALe0tP4X/pbHpYUziXCqwyBIfniZNtGwUZguYNupc7tY6ndhPOzxgaqMXQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=F/0KwfEA+Cjb/eYXAQsaYeMfOJNkl1XjO430uRjjHVk=;
- b=fDAI498ldOUN/54blcGZI72sYmjeJYsYTLeJY0pbiCokWGH2p3M/6yLMYI7WrJIaBxmgr95bPnNBTF4OOxxb7bidq5eeeWChmpk2c5y9QkmGSOduXcIxcgdOm7CtAN1u2ZNpzEnEnh/O3Hix3c1yayECwyvvjEZyiSHfzWtIiU8dZC5V38i2YlJh+D/oIl+trvGMj5LcFnmgpWurUDYSwQDYxBNYvk4s97dRNFsebvjKV8MGLu/RReBbch7e3aARCHiKFp9/fYOydJgxvLtpOIKXRjwY2syCUA6H6ptEdpKIffUmsiEz9WG8Hk2Gsfw0pDkG8accomFlaVvvdSlD7A==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8583.namprd12.prod.outlook.com (2603:10b6:610:15f::12)
- by LV8PR12MB9360.namprd12.prod.outlook.com (2603:10b6:408:205::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.29; Tue, 4 Mar
- 2025 15:57:54 +0000
-Received: from CH3PR12MB8583.namprd12.prod.outlook.com
- ([fe80::32a8:1b05:3bcf:4e4]) by CH3PR12MB8583.namprd12.prod.outlook.com
- ([fe80::32a8:1b05:3bcf:4e4%5]) with mapi id 15.20.8511.017; Tue, 4 Mar 2025
- 15:57:53 +0000
-Message-ID: <cf97f6fd-d40a-43f0-8b58-ad51d602fdfd@nvidia.com>
-Date: Tue, 4 Mar 2025 17:57:47 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] RDMA/mlx5: Prevent UB from shifting negative signed value
-To: Qasim Ijaz <qasdev00@gmail.com>, leon@kernel.org, jgg@ziepe.ca
-Cc: linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250304140246.205919-1-qasdev00@gmail.com>
-Content-Language: en-US
-From: Patrisious Haddad <phaddad@nvidia.com>
-In-Reply-To: <20250304140246.205919-1-qasdev00@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR0P281CA0096.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a9::9) To CH3PR12MB8583.namprd12.prod.outlook.com
- (2603:10b6:610:15f::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F84E28D0A2;
+	Tue,  4 Mar 2025 15:58:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741103884; cv=none; b=g5hGhu9w1ogUpgvP6N42vesz7h3hthRHOe3mz8xaCacdS/bJljPeZ/65QJmSaiROZ09QzS0MPOAolW3/CVQjBHrb7BHsYbHpdsqcLObJWrNFSJ0V+b0z7dqI2cxZXOD4XRxD62Yklba2sN5+PhFssJc5zEyaVqpJzCE6zVGS724=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741103884; c=relaxed/simple;
+	bh=X+Y0HQR0b88fojhcUUcYL5hdXM9c5QGbIFoh8/9h4oI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FlDKuJgNN2bNAyp7uRrjF0jG2iFtnSk7dJ3WH/+IoDXvmXBfATh6G24QA6T8xwv5sPdB5/b5AOWEF/d/UMLtcMhzp+rXlZZjLPD4NlM2jkDASTxDKclRZmqroSLqzh7fB83F2OSO7iE4LL5dBOZvyNABmB8YzToPHCKKL9G4xmo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KwcwLGcG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66577C4CEE5;
+	Tue,  4 Mar 2025 15:58:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741103883;
+	bh=X+Y0HQR0b88fojhcUUcYL5hdXM9c5QGbIFoh8/9h4oI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KwcwLGcGgxtGqB5MPJ9o3gLB0nXaYMiG8laTGfoUekgdqpy49cC4ZbR/WC6M+z9eg
+	 K5B+HPlsy6by4MB2RTxSZ3utbhATj3NdoO8060M3m/Ya/zYwzhbP9Ub+aoO0FyU33Q
+	 Ftp3OYCUREgpbMzRSh7ye/k22kYfLX2k7i4BiA9hvp89DZpBICrR4QKG8pEx1RQzUZ
+	 O7h+wVImn325V2aL39yEpWCMOsKSvraMQ3F4FigMFoBa6a6ow5H5yXGx0/3DlsbA3a
+	 VY5rjNccnK6FDaJYeP4uhsJaTigd6BNXMxvLcNf7XPf8h/snl0nYyBRFC2KcFt8kG8
+	 dJqdcOS6cWd9A==
+Date: Tue, 4 Mar 2025 09:58:01 -0600
+From: Bjorn Andersson <andersson@kernel.org>
+To: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Cc: Mathieu Poirier <mathieu.poirier@linaro.org>, 
+	linux-kernel@vger.kernel.org, linux-remoteproc@vger.kernel.org
+Subject: Re: [PATCH v15 2/8] remoteproc: Add TEE support
+Message-ID: <qxzsz2r7ugiyb7njphmdyupihqmalnmfbbsrtpi7meua37qfqb@bobtx24bwl6r>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-3-arnaud.pouliquen@foss.st.com>
+ <6fufphs3ajlc7htj74qus6gifdd4yd64l5yjn2zyjrtdezoe4f@cqbbzg63acv4>
+ <93a0475f-c62f-4eab-b9c2-0306e24041bb@foss.st.com>
+ <zcr3zg3t3iwshyz3e5valrfluk4s4isrqfiz7y3naw53goemtq@ph2ctpemqile>
+ <e2e127a5-a451-486e-9978-7ddc13462da3@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8583:EE_|LV8PR12MB9360:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6b0838a2-8816-45ed-9cd8-08dd5b3552b8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TnVuSkF5YkF1akVDSU9kcHIrcXBiNUl2YUNaSmpLWjhjVzZaZk9FMEJURWpp?=
- =?utf-8?B?MnlZMitWcFptWk5DREg1enZaa29tZHRyMjBVZ09YemduczlUVFIxME9mckQr?=
- =?utf-8?B?Yzg3aTNUZDN3TThBMjBvQ2RiNThnUlhJY1lsQW1raHVIeVE3VjFndk1nclBs?=
- =?utf-8?B?RFhEZmJhbk4vT2tFdmprWENTMEo1c2VacTQ1amg5dDhwMndSakxjVXI5Qm1R?=
- =?utf-8?B?WUFCV0JzU2hNWmNGZWhacVJRRnJIODdDL0UrWVAvSHFLcTRyUUt6djRLc2FW?=
- =?utf-8?B?SDdKY1ZLbjNneXM1RHhkU0VYVkVvMG5Qb280NldpYlY2MkhMbzIvNzhTMHRU?=
- =?utf-8?B?Nk1CSHprV2s2UG5SL3JNdTIrWGRQY3pKb1V6Tnc2M3VWLzZUSHhkbUVtcFoy?=
- =?utf-8?B?NTV4RmhqQ2EwTmpBcDJoVSs5S2VmeFVhWUNUdGY2UnROV0hrd1V3bW02T21M?=
- =?utf-8?B?THRsOWFqRjNEZVVjVXF2ZTQ1alUyaTJadU5IZDhKc2RRVTNiTWNrMjVtOWFW?=
- =?utf-8?B?U1EzSmJiZG1sRTJLZ3BWeGs4OUF5aE50UTQrZk1yLzkzYldZajI2SlNaRW1s?=
- =?utf-8?B?eGo5WmJYYUVUWmZKVkRrMGpuYk91UGFLcGVxUFR2SlY2elB1WFlPcVowRFRM?=
- =?utf-8?B?bFlJS3lkb1ZFVWhlSGVLSjJ5QXpzbVdXMktaTzcwQTQwMHJLdjV4WUdrR2VG?=
- =?utf-8?B?QmRxZnBtbEpRUit5VGRySU1nb2lQNzJ4NVhNOWRkbXc0SFljdXl0Zmp5QWFJ?=
- =?utf-8?B?WGhGdnJmSFJia0hreTA1dHUwYzFuMWtCVCtmTzBuVmZoRHNwVDBvVy8zTzQz?=
- =?utf-8?B?ZzR2S1ZBRldzL3pOMWFtRVdnMU9EUGhRd2NZSTZxOTlRTzdJZ08veDhIaStq?=
- =?utf-8?B?QUcyMmNMMUJMUDN1QmZNeDBBNENtY0JVSFA1czlzbDJBend3a1FzZWxKVEdy?=
- =?utf-8?B?QzQ4TWswM0draFNPSytybUV1eDRRNzVsM1VLcVlzR09MdDFLWXVwTXZVUk1y?=
- =?utf-8?B?blVnS0E4RSs5bUZvVk9OZGZyUGxUcHNXbWZQUEpYY1JtTTZQMVZaei9oMXMv?=
- =?utf-8?B?cGg2ZEJrSUFpTnkzZmw5M0RCSTgydlpkOHhWN0FncEI3WE8wbTYySUdFNGs4?=
- =?utf-8?B?b1R6YW5jNzF6WEU4RWgyYTJXV0xyYVNvbnorQy96Y29BbVNtakRvZ2VnaURP?=
- =?utf-8?B?UGxMbkozb1RaWGRLdkhFM09KekN5KzI2T2E5WFVzT0pETXNSYkF5VmFOTUJ1?=
- =?utf-8?B?NVkyaFhhWjhmMVJ2QTQzZXZnVlZYYjR0THJCQ2doclA5V3U2Q2laK1NXVHIw?=
- =?utf-8?B?WnBET3RsZGQzbDhSS3V6U20xeHFGWkhCbnVBTGlwUjhXajZWZFNUdENGamls?=
- =?utf-8?B?TWFoRTdiaEtjK3lGcnB4aGJydEZWa0MyOU5Zdk9BWDRsMlhkZzNmTDJYV2tT?=
- =?utf-8?B?MExqRnE2Y0QzajN2cWFtYWx0TkdHMzJTcjhjSDR3ZnU3eW9hTmxjNzlsaUFJ?=
- =?utf-8?B?aUQvUGVqYm1OK0QwcTA1Zm55dEJrejVyeEpuSXZ5QUhrMm16aFdhZVpMWExj?=
- =?utf-8?B?R3dhalJGVC8wL0YwZlB2T05aNnlkSXIwSk1Penc3Nm5pVGx4dDVNazQzZ1FG?=
- =?utf-8?B?UU5LOHdMNXVCR3I2OEVValhVdnZOOW1kRlNhekpwRjFhK0VLQURrdEN0SEtD?=
- =?utf-8?B?RVdjZVdQQVoxYXY3a2xmT1N2dkRzaE9RSlZlNC9BMDYzMkg1elJZWDI3WGZw?=
- =?utf-8?B?MW5xSFM2MW9kenNSbDk0ekd6aW1GTVVPcVB4TWNyR1dnTjZtQkI4UDhXMTdk?=
- =?utf-8?B?enB3YUxOSU9MekxFaHVka1JJREs0eDJKMW5oRmZtdCtTenp5b1p2SiswcGhh?=
- =?utf-8?Q?gjCVni2vZ6hwk?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8583.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?OXB1WVVjUlhac2kvcFNHc3plUjhqNGh4a3VkelhKVXlpU2NmMEt1bkFWV2h5?=
- =?utf-8?B?TkI1cGVCdlp4TXN2V3J3MUFNdHNTYTFEMHNzc2NLSTNiQTdSS3hyaG80M2JC?=
- =?utf-8?B?Y29pemF2cFYzRmtsa0tETE9sdTdJNC8rcW4zMnk1dHpDYkVZS1FEQk9teFdk?=
- =?utf-8?B?aHRRMGJtK01IMjMyMmJIWVhheHJwR1d1NUZCY1p0NVFHZnkzNTBRd2lHbnNZ?=
- =?utf-8?B?V1NpMHhYd24ya256TEUzQUlFSWZOWCtJZHlCalhtdFpETFNSZWo1RUlnTFYx?=
- =?utf-8?B?TjMrVElFSlBRMHdBekszS2JVZHhjcm5HQUdITk5RQUFLc1NuMWExZ3BVMUVt?=
- =?utf-8?B?MzV4WUR3K1d4djBJL0E4Q0llRGVOd2JPVkl5TUp1czVhZVFReUhEeUd0LzNt?=
- =?utf-8?B?TGJUYytlMml0SXJ2byswTXlkQ2t6L3NtbkNFcFdiWmJHcWJnVUhRaHJQWGcv?=
- =?utf-8?B?aWpac04zcG5UbzdxdlJTcCtUYnRhaWM2Ny9pQzJUTlNtME5kQ2xHaTZ1WXhZ?=
- =?utf-8?B?UlJxU1d1Rmt4SDgrWG8yYXpTczE5L2hrSkQ4Z0NOT1QyVFYvRjg3clNnRGM5?=
- =?utf-8?B?K0FjT2JVSDhDVVZzNXNteEV5SmJ0L0lwSnZ1dVJYSjVlUS9pdTFSWFZXd2FB?=
- =?utf-8?B?N2lGR3dhMDg0ZEZDZ05PcFJ1Q2tZYzRLb3ZNQ1FFNnJMUVNuU0RHbVhXSjBp?=
- =?utf-8?B?Zk0xakFUZGtBRGdrdGs2NHB1WWJWTHYwUUJiYkpLUTVPQkhUWmpPSE9kL2JZ?=
- =?utf-8?B?UytGa3V1cDVyRWg1UldzK0R1a2FneGNtNWRFaVFCUS96WTVIOUl6YXdXMVFH?=
- =?utf-8?B?ZUZlRFpKdzkvYzNLcjBkZVRMOEdpWTExRUNpOVNpSGhpenNIS0Q2OWhIS0Jj?=
- =?utf-8?B?NmNrTEEvQ0VkZjhNK25SZ3d0NnVzR0xia0pxT21tYTMxNVhxQmNockhtYlpZ?=
- =?utf-8?B?TmJMNzBDUzdmR2JsQ3d2Y2hOdHUwdUloUVd1aWFoSGZpWFR0UklSbnJOc3BH?=
- =?utf-8?B?U0NWVlNuemlWS2NFbno2YVZlOHNkZVIvWU04MXdubmtFK2k3czNmOGZFdzZ3?=
- =?utf-8?B?VUlGRW1HdktkazZ5WlpuZk9BM0tCS0hTUnpRNE4yM1BrUGhMcEluQnVpSkor?=
- =?utf-8?B?V0E1b3lQUmk0azIvSUVuL3FjNjM4NjEvbE5yUXZvek1aTUUrTG9WeDBZa251?=
- =?utf-8?B?Nmllay9HVmF2NXBWS3J0dzIrWnUrRklZVHpVa2pJWkgrVWtIL0U5S1pLdDZj?=
- =?utf-8?B?M1B0SXJ0aG14R3lEVklSZnJ0NzE3Z3JURFFJQUdYOVkwanRLWkV2czh0Y29v?=
- =?utf-8?B?ZW5ERHJ6MDFwZWpBNFVqcWdCWjFZT0tRRFp5c0c4Z0kzeDNXaTJkSDg3b1Jv?=
- =?utf-8?B?em1uVWducWlUeEtkRzJGS0NCTjEyOHpBbnVuY2wway9vQmJhdGFKNjBSdFE4?=
- =?utf-8?B?QTRhVmV5OWRWT2w0QmxGYVhJTk1GdkN6ZUE5NlpVQlhkektoUjYzVXlxY1dp?=
- =?utf-8?B?c04zZGFMMTJobWhpdlpJN1VLbTRUYmZoK3JjNFJFOUVtdFBsV0tsVXBYZm9t?=
- =?utf-8?B?ZHFNYlFJd2luTDVqcHpaYnAvenV1Sy9tRjJmRTJxOGlLWHJ6cTIycWM0REsr?=
- =?utf-8?B?dmRqSGQ1eVgvaFcyMXdmMEJmRHdYeFB6alVQdEx5dTI0TWVUNEtlaGw0WWpo?=
- =?utf-8?B?ekRFcEw1VUIzdG5qRjlRbi9yQUxZUVVEa2RxK0MzWUtQMFlaa2dlL3UrMlkx?=
- =?utf-8?B?cGhQdWNuSTV6cGFhNEM2MUVhd3lSenhkNmtYVkhhZkkzSzNKTTMxRHp3MUhr?=
- =?utf-8?B?R3NmbnNJL0xoRkNKS3ZPZHdOTmVjL0JZcjFUWlVnbFdhd0MwWEdtUFdtUzBh?=
- =?utf-8?B?dWVKZXhlWWlKTU1SZHlzUy9wL1Rva1dYY29kc0h5anZlY3hXVWF4YjFWcm9y?=
- =?utf-8?B?UDBwNDlmYWlQVXVZQTE0TEoyTi9VTVAyeUJPdnFaS0R5NGpNYWx5YkhlQTBJ?=
- =?utf-8?B?Mk5Qek5TRG5aaVgrbXc2R0phbi9XMVNtR0N1S3FxclVrUE1RaWdMaHIydHRY?=
- =?utf-8?B?ZnFjcWFXeUlVWEZ1bE8rcVZkODAxb3BXaDhyRlRzTlZZeXdPOFM5dnFHVDhJ?=
- =?utf-8?Q?3FXFkkMDV70lO5Mi1mDtWYL5F?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b0838a2-8816-45ed-9cd8-08dd5b3552b8
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8583.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 15:57:53.8235
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: IWvKjsce3ARsFiNc1OHP/4xKrJM8yxO6vTrhMp4KVenEQer9LW8ZLXM0iUkodEH0ZAHoIIRwOI6vEl7pBQ7lpw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9360
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e2e127a5-a451-486e-9978-7ddc13462da3@foss.st.com>
 
-On 3/4/2025 4:02 PM, Qasim Ijaz wrote:
-> External email: Use caution opening links or attachments
->
->
-> In function create_ib_ah() the following line attempts
-> to left shift the return value of mlx5r_ib_rate() by 4
-> and store it in the stat_rate_sl member of av:
->
->                  ah->av.stat_rate_sl = (mlx5r_ib_rate(dev, rdma_ah_get_static_rate(ah_attr)) << 4);
->
-> However the code overlooks the fact that mlx5r_ib_rate()
-> may return -EINVAL if the rate passed to it is less than
-> IB_RATE_2_5_GBPS or greater than IB_RATE_800_GBPS.
->
-> Because of this, the code may invoke undefined behaviour when
-> shifting a signed negative value when doing "-EINVAL << 4".
->
-> To fix this check for errors before assigning stat_rate_sl and
-> propagate any error value to the callers.
->
-> Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-> Fixes: c534ffda781f ("RDMA/mlx5: Fix AH static rate parsing")
-> Cc: stable@vger.kernel.org
+On Wed, Feb 12, 2025 at 02:42:28PM +0100, Arnaud POULIQUEN wrote:
+> Hello,
+> 
+> On 2/12/25 04:18, Bjorn Andersson wrote:
+> > On Tue, Dec 10, 2024 at 09:57:40AM +0100, Arnaud POULIQUEN wrote:
+> >> Hello Bjorn,
+> >>
+> >> On 12/6/24 23:07, Bjorn Andersson wrote:
+> >>> On Thu, Nov 28, 2024 at 09:42:09AM GMT, Arnaud Pouliquen wrote:
+> >>>> Add a remoteproc TEE (Trusted Execution Environment) driver
+> >>>> that will be probed by the TEE bus. If the associated Trusted
+> >>>> application is supported on secure part this driver offers a client
+> >>>> interface to load a firmware by the secure part.
+> >>>
+> >>> If...else?
+> >>>
+> >>>> This firmware could be authenticated by the secure trusted application.
+> >>>>
+> >>>
+> >>> I would like for this to fully describe how this fits with the bus and
+> >> Are you speaking about the OP-TEE bus?
+> >>
+> >> I assume that your attempt is that I provide more details on the live cycle
+> >> sequence, right?
+> >>
+> > 
+> > Right, there's a tee_client_driver and there's a remoteproc driver.
+> > Let's document clearly how these interact.
+> > 
+> >>> how it is expected to be used by a specific remoteproc driver.
+> >>>
+> >>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>>> ---
+> >>>> Updates vs version v13:
+> >>>> - define REMOTEPROC_TEE as bool instead of tristate,
+> >>>> - remove the load of the firmware in rproc_tee_parse_fw as we will ensure
+> >>>>   that the firmware is loaded using the load_fw() operation.
+> >>>> ---
+> >>>>  drivers/remoteproc/Kconfig          |  10 +
+> >>>>  drivers/remoteproc/Makefile         |   1 +
+> >>>>  drivers/remoteproc/remoteproc_tee.c | 508 ++++++++++++++++++++++++++++
+> >>>>  include/linux/remoteproc.h          |   4 +
+> >>>>  include/linux/remoteproc_tee.h      | 105 ++++++
+> >>>>  5 files changed, 628 insertions(+)
+> >>>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+> >>>>  create mode 100644 include/linux/remoteproc_tee.h
+> >>>>
+> >>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+> >>>> index 955e4e38477e..f6335321d540 100644
+> >>>> --- a/drivers/remoteproc/Kconfig
+> >>>> +++ b/drivers/remoteproc/Kconfig
+> >>>> @@ -23,6 +23,16 @@ config REMOTEPROC_CDEV
+> >>>>  
+> >>>>  	  It's safe to say N if you don't want to use this interface.
+> >>>>  
+> >>>> +config REMOTEPROC_TEE
+> >>>> +	bool "Remoteproc support by a TEE application"
+> >>>> +	depends on OPTEE
+> >>>> +	help
+> >>>> +	  Support a remote processor with a TEE application.
+> >>>
+> >>> Does the remote processor run TEE applications? (Rethorical question...)
+> >>>
+> >>>> 	  The Trusted
+> >>>> +	  Execution Context is responsible for loading the trusted firmware
+> >>>> +	  image and managing the remote processor's lifecycle.
+> >>>> +
+> >>>> +	  It's safe to say N if you don't want to use remoteproc TEE.
+> >>>
+> >>> It's not really about "wanting to use", it's a question whether your
+> >>> device implements/provides the remoteproc TEE.
+> >>>
+> >>>> +
+> >>>>  config IMX_REMOTEPROC
+> >>>>  	tristate "i.MX remoteproc support"
+> >>>>  	depends on ARCH_MXC
+> >>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+> >>>> index 5ff4e2fee4ab..f77e0abe8349 100644
+> >>>> --- a/drivers/remoteproc/Makefile
+> >>>> +++ b/drivers/remoteproc/Makefile
+> >>>> @@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_sysfs.o
+> >>>>  remoteproc-y				+= remoteproc_virtio.o
+> >>>>  remoteproc-y				+= remoteproc_elf_loader.o
+> >>>>  obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+> >>>> +obj-$(CONFIG_REMOTEPROC_TEE)		+= remoteproc_tee.o
+> >>>>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+> >>>>  obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
+> >>>>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+> >>>> diff --git a/drivers/remoteproc/remoteproc_tee.c b/drivers/remoteproc/remoteproc_tee.c
+> >>>> new file mode 100644
+> >>>> index 000000000000..3fe3f31068f2
+> >>>> --- /dev/null
+> >>>> +++ b/drivers/remoteproc/remoteproc_tee.c
+> >>>> @@ -0,0 +1,508 @@
+> >>>> +// SPDX-License-Identifier: GPL-2.0-or-later
+> >>>> +/*
+> >>>> + * Copyright (C) STMicroelectronics 2024
+> >>>> + * Author: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+> >>>> + */
+> >>>> +
+> >>>> +#include <linux/firmware.h>
+> >>>> +#include <linux/io.h>
+> >>>> +#include <linux/module.h>
+> >>>> +#include <linux/remoteproc.h>
+> >>>> +#include <linux/remoteproc_tee.h>
+> >>>> +#include <linux/slab.h>
+> >>>> +#include <linux/tee_drv.h>
+> >>>> +
+> >>>> +#define MAX_TEE_PARAM_ARRAY_MEMBER	4
+> >>>> +
+> >>>> +/*
+> >>>> + * Authentication of the firmware and load in the remote processor memory
+> >>>
+> >>> Exactly what does this imply? Will the content of @memref be copied into
+> >>> some other memory?
+> >>
+> >> The objective is to authenticate and load in one step. So, yes, the image is
+> >> loaded into the remoteproc destination memory.
+> >>
+> > 
+> > So, some separate device-memory, or some preallocated carveout which is
+> > only accessible from secure world?
+> 
+> No sure to understand the difference you do between eparate device-memory and
+> preallocated carveout.
+> 
 
-Thanks for fixing this , looks good to me.
+The main clarification I was looking for was that in your design you
+don't use any resources on the Linux side for when your remoteproc
+instance is running - i.e. no carveouts etc on the Linux side.
 
-Reviewed-by: Patrisious Haddad <phaddad@nvidia.com>
+> In OP-TEE, we use the same principle as in Linux. OP-TEE uses memory regions
+> declared in its device tree to list memories usable for the coprocessor (with
+> associated access rights). On load, it checks that the segments to load  are
+> included in these memory regions.
+> 
+> Linux only declares the shared memory-regions in the device tree, for IPC.
+> 
+> > 
+> > Does the OS need to retain @memref past this point?
+> 
+> No need,and as the area contains the reult of request_firmware() that can be
+> corrupted by Linux, OP-TEE considered this as a temporaray unsafe memory. After
+> the load + authentication step this buffer is no more used.
+> For detail, OPTEE make a copy of the header and TLV (metadata) in a secure
+> memory. and load the firmware images in destination memories All these memories
+>  are not accessible from the Linux.
+> 
 
-> ---
->   drivers/infiniband/hw/mlx5/ah.c | 17 +++++++++++++----
->   1 file changed, 13 insertions(+), 4 deletions(-)
->
-> diff --git a/drivers/infiniband/hw/mlx5/ah.c b/drivers/infiniband/hw/mlx5/ah.c
-> index 99036afb3aef..6bccd9ce4538 100644
-> --- a/drivers/infiniband/hw/mlx5/ah.c
-> +++ b/drivers/infiniband/hw/mlx5/ah.c
-> @@ -50,11 +50,12 @@ static __be16 mlx5_ah_get_udp_sport(const struct mlx5_ib_dev *dev,
->          return sport;
->   }
->
-> -static void create_ib_ah(struct mlx5_ib_dev *dev, struct mlx5_ib_ah *ah,
-> +static int create_ib_ah(struct mlx5_ib_dev *dev, struct mlx5_ib_ah *ah,
->                           struct rdma_ah_init_attr *init_attr)
->   {
->          struct rdma_ah_attr *ah_attr = init_attr->ah_attr;
->          enum ib_gid_type gid_type;
-> +       int rate_val;
->
->          if (rdma_ah_get_ah_flags(ah_attr) & IB_AH_GRH) {
->                  const struct ib_global_route *grh = rdma_ah_read_grh(ah_attr);
-> @@ -67,8 +68,10 @@ static void create_ib_ah(struct mlx5_ib_dev *dev, struct mlx5_ib_ah *ah,
->                  ah->av.tclass = grh->traffic_class;
->          }
->
-> -       ah->av.stat_rate_sl =
-> -               (mlx5r_ib_rate(dev, rdma_ah_get_static_rate(ah_attr)) << 4);
-> +       rate_val = mlx5r_ib_rate(dev, rdma_ah_get_static_rate(ah_attr));
-> +       if (rate_val < 0)
-> +               return rate_val;
-> +       ah->av.stat_rate_sl = rate_val << 4;
->
->          if (ah_attr->type == RDMA_AH_ATTR_TYPE_ROCE) {
->                  if (init_attr->xmit_slave)
-> @@ -89,6 +92,8 @@ static void create_ib_ah(struct mlx5_ib_dev *dev, struct mlx5_ib_ah *ah,
->                  ah->av.fl_mlid = rdma_ah_get_path_bits(ah_attr) & 0x7f;
->                  ah->av.stat_rate_sl |= (rdma_ah_get_sl(ah_attr) & 0xf);
->          }
-> +
-> +       return 0;
->   }
->
->   int mlx5_ib_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
-> @@ -99,6 +104,7 @@ int mlx5_ib_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
->          struct mlx5_ib_ah *ah = to_mah(ibah);
->          struct mlx5_ib_dev *dev = to_mdev(ibah->device);
->          enum rdma_ah_attr_type ah_type = ah_attr->type;
-> +       int ret;
->
->          if ((ah_type == RDMA_AH_ATTR_TYPE_ROCE) &&
->              !(rdma_ah_get_ah_flags(ah_attr) & IB_AH_GRH))
-> @@ -121,7 +127,10 @@ int mlx5_ib_create_ah(struct ib_ah *ibah, struct rdma_ah_init_attr *init_attr,
->                          return err;
->          }
->
-> -       create_ib_ah(dev, ah, init_attr);
-> +       ret = create_ib_ah(dev, ah, init_attr);
-> +       if (ret)
-> +               return ret;
-> +
->          return 0;
->   }
->
-> --
-> 2.39.5
->
->
+No concerns with this, but these semantics should be clearly documented
+here.
+
+> > 
+> >> On stm32mp1 we can not store the elf file in a temporary secure memory as
+> >> the memory is encrypted by software (this would take to much time).
+> >>
+> >> For your information, in OP-TEE, the application code is split into a generic
+> >> part and a platform adaptation layer. The generic application is mainly
+> >> responsible for:
+> >>
+> >> - Copying the binary header and metadata into secure memory and authenticating them.
+> >> - Parsing the ELF images and providing segments to load with associated
+> >> authenticated hashes to the platform application.
+> >> In the future, someone can add their own format if needed.
+> >>
+> >> But the generic part could be enhance to authenticate and load a non ELF binary.
+> >> So I'm trying to be generic as possible here.
+> >>
+> > 
+> > Generic might be okay, but I'd prefer this to be less vague.
+> > Also worth noting is the Qualcomm implementation of TZ-backed
+> > remoteproc, which is already in the tree. 
+> 
+> Could you point me the code in Linux and your TEE, please?
+> 
+
+One example is drivers/remoteproc/qcom_q6v5_pas.c where this is captured
+in adsp_start().
+
+qcom_mdt_pas_init() parses out the ELF header and signature information
+and passes this to the secure world, it then loads the segments of the
+ELF into the carvouts (qcom_mdt_load_no_init()) and finally it jumps to
+secure world with qcom_scm_pas_auth_and_reset(), which will lock down
+Linux's access to the carveouts, then based on previously established
+data will authenticate the loaded firmware and finally start execution
+on the remote processor.
+
+The difference in this model though is that we don't need the resource
+table for rproc_handle_resources() - so this doesn't meet your needs.
+
+> > There the firmware is loaded
+> > into carveouts, the certificates and hashes are validated. 
+> 
+> Seems to me that there is also a partial Authentication done during the load step.
+> 
+
+Given that the ELF header and signature information is vetted before the
+actually copy the segments into carveouts, it's conceivable that the ELF
+header could be sanity checked...
+
+> > Lastly
+> > the operation "authenticate and start" is invoked, which does that, and
+> > locks the OS out of the given memory region - until "shutdown" is
+> > invoked.
+> 
+> The differnce between the 2 implementations is the authentication method done in
+> 2 steps for Qualcomm implementation , in one step for OP-TEE.
+> 
+
+Yes, but it needs to be pointed out that this is because you want the
+resource table to be authenticated.
+
+> So here if I just remove the term 'authentication' in the command description
+> does it ok for you?
+> 
+
+No, perhaps I'm misinterpreting you here; but the goal isn't to play
+word games until it's good enough - the goal is to have a clean design
+that will cover the various cases, and for that we need to establish
+what your actual requirements on the host OS side is (typically while
+considering the "other side" to be a black box).
+
+> > 
+> >>
+> >>>
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>
+> >>> Why not just "remote processor identifier"?
+> >>>
+> >>>> + * [in]	 params[1].memref:	buffer containing the image of the buffer
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_LOAD_FW		1
+> >>>> +
+> >>>> +/*
+> >>>> + * Start the remote processor
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_START_FW	2
+> >>>
+> >>> Why is there two "FW" in this constant? Why isn't it just
+> >>> "TA_RPROC_FW_CMD_START"?
+> >>>
+> >>> And why is it not TEE_PROC_FW_CMD_START?
+> >>>
+> >>>> +
+> >>>> +/*
+> >>>> + * Stop the remote processor
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_STOP_FW		3
+> >>>> +
+> >>>> +/*
+> >>>> + * Return the address of the resource table, or 0 if not found
+> >>>> + * No check is done to verify that the address returned is accessible by
+> >>>> + * the non secure context. If the resource table is loaded in a protected
+> >>>> + * memory the access by the non secure context will lead to a data abort.
+> >>>
+> >>> These three lines describe a scenario that doesn't make any sense to me.
+> >>> But if that's the case, you should be able to describe that the API
+> >>> might give you a inaccessible pointer, by design.
+> >>
+> >> On STM32MP, we have a kind of firewall in OP-TEE that sets memory access rights
+> >> from the device tree. So if the firmware image is not linked according to the
+> >> firewall configuration, the pointer may not be accessible.
+> >>
+> >> I will update the comment as you propose.
+> >>
+> >>>
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + * [out]  params[1].value.a:	32bit LSB resource table memory address
+> >>>> + * [out]  params[1].value.b:	32bit MSB resource table memory address
+> >>>> + * [out]  params[2].value.a:	32bit LSB resource table memory size
+> >>>> + * [out]  params[2].value.b:	32bit MSB resource table memory size
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_GET_RSC_TABLE	4
+> >>>> +
+> >>>> +/*
+> >>>> + * Return the address of the core dump
+> >>>
+> >>> What does this mean? What will I find at @memref after this call?
+> >>
+> >> I do not have a simple answer here as it depends on the OP-TEE strategy.
+> >> It could be an obscure core dump with possible encryption.
+> >>
+> >> I will remove this as it is not yet implemented in OP-TEE.
+> >>
+> > 
+> > Okay. But I would prefer that we define the semantics before it's
+> > implemented...
+> 
+> that seems fair, I notice that we will have to address this in a separate thread
+> strating with a series in Linux.
+> 
+> 
+> > 
+> >> https://elixir.bootlin.com/op-tee/4.4.0/source/ta/remoteproc/src/remoteproc_core.c#L1131
+> >>
+> >>>
+> >>>> + *
+> >>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+> >>>> + * [out] params[1].memref:	address of the core dump image if exist,
+> >>>> + *				else return Null
+> >>>
+> >>> s/else return Null/or NULL/
+> >>>
+> >>>> + */
+> >>>> +#define TA_RPROC_FW_CMD_GET_COREDUMP	5
+> >>>> +
+> >>>> +/*
+> >>>> + * Release remote processor firmware images and associated resources.
+> >>>
+> >>> Exactly what does this mean for the caller?
+> >>
+> >> It is platform dependent. It can consist in cleaning the memory, but
+> >> can be also something else such as firewall configuration.
+> >> On stm323mp we clean all the memories region reserved for the remote processor.
+> >>
+> > 
+> > We can't have an ABI which isn't well defined in intent. Your examples
+> > would easily fall in the realm of a well defined interface, but this
+> > ties into the question above - what does is actually mean in terms of
+> > the memory carveouts and such.
+> > 
+> 
+> Regarding this comment and the one below, does following description would
+> respond to your expectations? else do you have a suggestion?
+> 
+> /*
+>  * This command should be used in case an error occurs between the loading of
+>  * the firmware images (TA_RPROC_CMD_LOAD_FW) and the starting of the remote
+>  * processor (TA_RPROC_CMD_START_FW),
+
+This is valuable information related to TA_RPROC_CMD_LOAD_FW and
+TA_RPROC_CMD_START_FW, so let's document this there instead.
+
+>  * or after stopping the remote processor
+>  * (TA_RPROC_CMD_STOP_FW).
+>  *
+>  * This command is used to inform the TEE (Trusted Execution Environment) that
+>  * resources associated with the remote processor can be released. After this
+>  * command, the firmware is no longer present in the remote processor's memories
+>  * and must be reloaded (TA_RPROC_FW_CMD_LOAD_FW) to restart the remote
+>  * processor.
+
+I guess it's fine to define it like this on this level, but in the
+remoteproc core I'd like us to express the related logic as "release
+resources allocated durign rproc_parse_fw(). (And I don't think these
+two interpretations are in conflict).
+
+What's unexpected to me then is that you're not actually reloading your
+firmware across a recovery/restart?
+
+Regards,
+Bjorn
 
