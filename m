@@ -1,101 +1,142 @@
-Return-Path: <linux-kernel+bounces-543520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80C9AA4D6B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:40:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB4AAA4D6B8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:40:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE3A116C450
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:40:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3D80188DA2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:40:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D69E1FBEB9;
-	Tue,  4 Mar 2025 08:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7264B1FC0FB;
+	Tue,  4 Mar 2025 08:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lcMJYJWc"
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com [209.85.128.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUF6CQwe"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B37E1DFD8B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97CA11F582F;
+	Tue,  4 Mar 2025 08:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741077608; cv=none; b=bUWUFssmG/Qo8CiJQqwDclBBJ4LU8hTEbhdwYMVh8qLzCdvwkGFzz1S1EmFZ17v3DGpG8kYWplb0RuFxRTM4y9N22b94arTrNLp3d+1LagkM1uba9Dt1Nz+B2Gn8m2IEPzZV3QRH/zl8psbzaQC4gFp4GIvDkU7nGf4VWvmv2E0=
+	t=1741077631; cv=none; b=c+moDzVKkVqPFek8qyugA9Lmvr7qMSrttF8fAgKC2IrTcoIMBG+UJqQbpt4obK50F4k57kRX6bZdkNNbO4dtlq2igt/SC1H8wYEXaSEQt1vNfMF7Kqt5lr13DRHlHdWJlZgy2dRv57DqM2Dl4WZU8PkPVKHsM7c4XwenEX/NSbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741077608; c=relaxed/simple;
-	bh=YK/v+HTjGEFPbEINjripCBl0YEaMvBdXG3vSD9bGu5w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NfGkaSdmOoUVSEtzAind9mLjf5Zs+GDCcyfWyK8T08yfcMlcBdlN6sOZRgw+/H2mWDBOsL7fs7d6eCNKznDgyH30bjDnZLPFIazvV21C32CEXA0U3a3PlTn1j8Kyy9tdsRoWFmkv+fYHpGaAyHQYJSUnL43Tfacfiu+2pSrph80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lcMJYJWc; arc=none smtp.client-ip=209.85.128.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6f4bc408e49so47904407b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:40:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741077605; x=1741682405; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YK/v+HTjGEFPbEINjripCBl0YEaMvBdXG3vSD9bGu5w=;
-        b=lcMJYJWcyFv/O1o3KqIUHZv9hFomU32mdKnoZULCveMCmgTXFYma84DF+muqVNQ8cb
-         Ye8eGspmkhIBsgvhUtb3rpGFykGmTo3RQEeOTatfe9uumuD/gupiV4IVHZ1HlbqQY/NU
-         +DOzgujaNkqonuHs2g8DxQnusiMHqFSu0NkTAukXEkrrgpibNQtoCW6Ehqnw1lPLILcE
-         TrTSGDQ4vNZr3Jx/QBr/fBMFBVTH//OcnUAVj1md4uN92UFT1UFe4weaMSPVDZBXZJ8X
-         KRySWc8JREgxXvUqx1eRtGf1TCl2Ud/xLIj4zi8XImHlK61TgywozZC0mKkmwpHCjDAJ
-         0qLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741077605; x=1741682405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YK/v+HTjGEFPbEINjripCBl0YEaMvBdXG3vSD9bGu5w=;
-        b=GL9sEWD5aNt4nEDFmu9VO3CDo/0LiOcC6+Hrb+KHzVcWylnBrnRmAnhNq5Y0u9CGwX
-         X652QTGTcPXTD5z4o3U50T7xvBrxoHTXgRaF8tE7D9SL8l8bS5LVYglwvE6ec/wTYZxW
-         eNRyE77gZI9Drqzd+hi4g3dIZHHk/2lV5vJj1iuOt7bCTJQOCzRZwFqJhCkMRE2IunD0
-         3q9sNCJOlImJx4D+1Flonl4a73eY+SSp13PyTR65uS2bjzj4YBR1k+5pmHn8ucvQCwq/
-         EbMFhfFRGME6Ba7tjQKGLGoGRWiL8jQlwrnc2ywxkFYi1edW/V19B8eoFTTbFwdlyE53
-         2Krg==
-X-Forwarded-Encrypted: i=1; AJvYcCVS6+4LhVhqkY4rXL3AHNj3h8Iybo/Ig1Gjgz19Wj4kN8Xp8FpwXg5R2ijGSNcmtZoeLu4DYFBhlbNsU7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQG+tf3GEja4hpJKIhxiyw0jSi6Aa1TgIex9LyoAjK9t4E2U0R
-	lGBsa8uwAgBvjfdecY5MgmeoNkRzL/3mlEptbBr8n4lwltR6eYnkYyyfIWtPA2m3p2ZSIPAsdQa
-	hjv1dZq4DZhxfsLSscjMnxymaIg9aFrWf/pCQOA==
-X-Gm-Gg: ASbGncvqiVxC64OoivrcF85fZNNsv1CRJhae3p0LLiwzU9liCLqL2vwV2xxdB6dOAqM
-	DnO3EjO6jV69pImilD8z3nKjUGOTpm5BS3T49a6bgZlrzxG7WYOhyRosoVyqr/gXzQM/QeXHnVr
-	6dNkFfpeM5TI9HErZiY6AbvMGhIQ==
-X-Google-Smtp-Source: AGHT+IHzjcSCOgliNPgzEIfJP4zRqA+GXbH1gcPHEqHVdjToORnVLP+q+n+ER/rA0dxnmWxFxju94KxpZdoxEUjQw0w=
-X-Received: by 2002:a05:690c:3387:b0:6fd:4521:f9d7 with SMTP id
- 00721157ae682-6fd4a1b5ad8mr221954587b3.24.1741077605393; Tue, 04 Mar 2025
- 00:40:05 -0800 (PST)
+	s=arc-20240116; t=1741077631; c=relaxed/simple;
+	bh=lTb9kj/VYq2+/Onyib1ardpDWG1lE263WpaogE2OBmM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lE9hOq/QhVC7xGndxOo7fZVhLCaI2jFzJVwhjFp8LOLQKTixxxaLqIvQaqIa6C/Ia9qlY7aazn209cjuB05XFKxW6w/W6CGIxN0tdo3HuMUikrk+JMoStYaDsI/k+4wRNnUbDIEsP12PlsIIjIE0cXlt14jcpZ31P3MYRgduPIk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUF6CQwe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2FFBC4CEE5;
+	Tue,  4 Mar 2025 08:40:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741077631;
+	bh=lTb9kj/VYq2+/Onyib1ardpDWG1lE263WpaogE2OBmM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bUF6CQwe9uXUIF+57L1KVwUOYWIOF0x/ymyn8yEMLfZYBk3tmeA9zpBdzbqrcsW9b
+	 m2j0qx+XZ7Xihr0JYloW9zcg2mkirP4yOGqG2l1ejxKD1PRirXW/0pe2o47bsfISaD
+	 R+AKuk0RDwz1iEGspcxZNPftbM7eut00UDS98qOlqJYx7ytMUDasgAC0ZbgRRt2fkc
+	 ca192Iy17X1kmvk8M/NIN7DtzPzHQWoNe8ie4XI99XLSYj2e16fkQy4UwiszmMtWmC
+	 qcGG4lmksPdi1u5oYdWX+i5i6gCDOGaav2Wo7m1hWrB8MFEFh9+4mhbkosnMpQjdkL
+	 /Ww31JDQ8qJPA==
+Message-ID: <baae2a56-5299-486f-acf1-14fe13fd2f81@kernel.org>
+Date: Tue, 4 Mar 2025 09:40:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303092826.318638-1-colin.i.king@gmail.com>
-In-Reply-To: <20250303092826.318638-1-colin.i.king@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Tue, 4 Mar 2025 09:39:51 +0100
-X-Gm-Features: AQ5f1Jq2rfvBPsQCyevIyKgnAdZxW9QavsIRuyb9v_d9Hj7plbiOg3wN5ZMKg3c
-Message-ID: <CACRpkdZwjOWTJioAY92LwmEGmqZJHu3d6foKNbtVmNDN1h_cFw@mail.gmail.com>
-Subject: Re: [PATCH] pinctrl: pinconf-generic: Fix spelling mistake "paramers"
- -> "parameters"
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: linux-gpio@vger.kernel.org, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v14 2/2] arm64: dts: qcom:
+ qcs6490-rb3gen2-vision-mezzanine: Add vision mezzanine
+To: Jorge Ramirez <jorge.ramirez@oss.qualcomm.com>
+Cc: Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, bryan.odonoghue@linaro.org, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
+ will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Konrad Dybcio <konrad.dybcio@linaro.org>
+References: <20250208225143.2868279-1-quic_vikramsa@quicinc.com>
+ <20250208225143.2868279-3-quic_vikramsa@quicinc.com>
+ <ca8e6569-b466-4f83-83af-38c51891d395@kernel.org> <Z8a7cMmxJuHIhgjo@trex>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <Z8a7cMmxJuHIhgjo@trex>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 3, 2025 at 10:29=E2=80=AFAM Colin Ian King <colin.i.king@gmail.=
-com> wrote:
+On 04/03/2025 09:36, Jorge Ramirez wrote:
+> On 03/03/25 18:13:20, Krzysztof Kozlowski wrote:
+>> On 08/02/2025 23:51, Vikram Sharma wrote:
+>>> The Vision Mezzanine for the Qualcomm RB3 Gen 2 ships with an imx577
+>>> camera sensor. Enable IMX577 on the vision mezzanine.
+>>>
+>>> An example media-ctl pipeline for the imx577 is:
+>>>
+>>> media-ctl --reset
+>>> media-ctl -V '"imx577 '17-001a'":0[fmt:SRGGB10/4056x3040 field:none]'
+>>
+>> AFAIU, camss does not support SRGGB10, but only SRGGB10P.
+>>
+>> Based on tests reported on IRC I think this might not have been tested
+>> correctly.
+> 
+> I acquired SRGGB10P (10 bit packed) frames from the camera despite the
+> pipeline being set to SRGGB10 (16 bit) samples.
+> 
+> so something does not add up.
 
-> There is a spelling mistake in a dev_err message. Fix it.
->
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Then the commands are actually correct, just the camss or media behave
+here a bit unexpected?
 
-Patch applied!
-
-Yours,
-Linus Walleij
+Best regards,
+Krzysztof
 
