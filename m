@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-543500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 668B1A4D659
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:29:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29D85A4D65F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:30:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DB8916FE34
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:29:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46B301745A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:30:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 748E81FDA90;
-	Tue,  4 Mar 2025 08:27:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 698DF1FECD7;
+	Tue,  4 Mar 2025 08:27:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NenqcujT";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="KXfPeBEc"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="HEqMS7Ms";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7VcAwdDz"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC52E1FC7FF;
-	Tue,  4 Mar 2025 08:27:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215341FDE2B;
+	Tue,  4 Mar 2025 08:27:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076874; cv=none; b=nQlehIVbrVek1qXEDM0Mg7OUrON6+jLK7xBolQ+FQSVfzlEMzlgbriHNz6oOW/CQacLZm4WARE0ZcZgbuSB3I26mJLf8TUlxFVxJGmQlRZify++7DaEH3dgrWNNBbgV3Ap3L7k7J4l6QewIUJYkfnNlyVVaadSyQ8/P7NNYLa4Q=
+	t=1741076877; cv=none; b=BWjTV4baT7ZStPKIZsns8jm+buNI1cutODob5YVRJXghf0I/L1tGcX2F5xYdj/J2r7IlKmapiihVOOsool4SkTuZE8cuD6v1G1MOH8y/7qgGWGumCeo2ft1jDN9LK4mKlOpvZTeeqKeHzuMrzNMa5lxyCzkIaMnmzIAACgm55fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076874; c=relaxed/simple;
-	bh=7Y4FdGqJyvoGmED68zp87CyN7N99wGJUH/8vHXsIe20=;
+	s=arc-20240116; t=1741076877; c=relaxed/simple;
+	bh=UXK34iZcqNzOHgTgkxnA9XSM43n+N2SNFGr56lakNzM=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=l4vavRpgZSfpsKeIkhcsUmv/Scq7TddADJ7Sil0gDIdzKFeaTQbp472y6BcsFz4X7zVX8ZLUBCtrVag4tXlfKQu50adCMxUQ158WCI34BHcJ67LnwxCBWJ1T+SDDyAsA4Xb5FmVR4rmxERpON1kK8PEBZf4L96jd5gU5WBN0HD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NenqcujT; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=KXfPeBEc; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=UZk7/3qGD+VhTKtP0S1iF4zuD3Py6rVKfQp3ptqbar4T8Hbuo9Sa9M7B0F7BoQiW6CDXRqedIWOlMLvRSQfTDUD1Y1oFIVIpI4yfDzLr/EJWkWvzZ6A5zz8i9iW3+tb634mRdSYOBKvJS49QC0GKM0rmDvW46XxbcoCQUk8ANiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=HEqMS7Ms; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7VcAwdDz; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 08:27:50 -0000
+Date: Tue, 04 Mar 2025 08:27:52 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741076871;
+	s=2020; t=1741076873;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GpMAUHBoQez/fWC0sUhtW95levUNMYtYD1ODViyhaVE=;
-	b=NenqcujT0jLhGajNGo9v+LxWBzahca9JY0ajbji/c3H/0NNDDgenFzX3sl8GYfJ/ewy8Vj
-	XvNoJVxItw8a/g8P26ruwe2NGDFVNWdrUIuj5ljV4MVVj4ZcTRq1mFL1zIX0YF2IPg6/Hx
-	+L3947gVy0W9/Riyqqc27wV2Yj+P7nURhBqstn896pKjvbDGDTBYdt/pNFr5gdC9mp/aYB
-	1aZfHlFNPBHdM6sIZMdYVqXeG0QfdOQxGrwAAlhJFm4Pjjvg9r8hXjoJdMtnr2wzrKyBSo
-	Qywi34vZM+rCbkMt9QZTjF6b5uF/cKcyWQATSOrKGHiJ/3Qfqb2iRdU32e3EXg==
+	bh=dMGDQZu5FA95BFqikIlJ7YWTqVrXpl8bK0mGP7UazmU=;
+	b=HEqMS7MsLNxIizOvRKD8ZoPQUPM9Yf0OoZRPjFNgIpB9gxTuqBg8UPbhRyVPEq4rVTcBc4
+	cCM8YnatJYNorBDvqFrbSY9N7Jej0RZX2W7IKUBDjts5KqJdbj+M//Qq4FBOI2SvqCM0YI
+	D1SmE7NnloVAyBD5lntfoCy1j0vyso8SKiayqShNbEglY8OPmZrP3bHj+zODGWox6E/eYC
+	iBWjC+gnqB62tWNvlf2GDRseVApEW6Cy84OuwENP3eelnlUQjyX2th2Bm494qtqjrFxpFL
+	CDtdVDDiMrSDeIaDLE0nMU4PJo6kcGLzoRBo6m8+AG3dSwHV8Y+HqmsPZ4CJyA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741076871;
+	s=2020e; t=1741076873;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=GpMAUHBoQez/fWC0sUhtW95levUNMYtYD1ODViyhaVE=;
-	b=KXfPeBEc/uAMcHffe8e+2Bb0CBwywhAaRoyU2mm3eVQt/hilmK0weXjznSDUFZDItjh8Br
-	u0TxmTUfzenKs3Cw==
-From: "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
+	bh=dMGDQZu5FA95BFqikIlJ7YWTqVrXpl8bK0mGP7UazmU=;
+	b=7VcAwdDz9JhxU83HNUIOdnM5Gcoj0cSeITaCX1Doel5lGuUPxuQePdYfYukriUfa0Zv+DF
+	D/VSKKOVQoufJMCA==
+From: "tip-bot2 for Brendan Jackman" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] percpu: Introduce percpu hot section
-Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Uros Bizjak <ubizjak@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250303165246.2175811-2-brgerst@gmail.com>
-References: <20250303165246.2175811-2-brgerst@gmail.com>
+Subject: [tip: x86/cpu] x86/cpu: Warn louder about the {set,clear}cpuid boot
+ parameters
+Cc: Ingo Molnar <mingo@redhat.com>, Brendan Jackman <jackmanb@google.com>,
+ Ingo Molnar <mingo@kernel.org>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250303-setcpuid-taint-louder-v1-2-8d255032cb4c@google.com>
+References: <20250303-setcpuid-taint-louder-v1-2-8d255032cb4c@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174107687023.14745.3503430539442439687.tip-bot2@tip-bot2>
+Message-ID: <174107687265.14745.5980705395851261771.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,93 +80,98 @@ Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/core branch of tip:
+The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     56f91085a914d807477fc90b414998dcd7a0d0c3
-Gitweb:        https://git.kernel.org/tip/56f91085a914d807477fc90b414998dcd7a0d0c3
-Author:        Brian Gerst <brgerst@gmail.com>
-AuthorDate:    Mon, 03 Mar 2025 11:52:36 -05:00
+Commit-ID:     cf4d8a642cb8556c3cb786278a6f7fa43bc3f5e9
+Gitweb:        https://git.kernel.org/tip/cf4d8a642cb8556c3cb786278a6f7fa43bc3f5e9
+Author:        Brendan Jackman <jackmanb@google.com>
+AuthorDate:    Mon, 03 Mar 2025 15:45:38 
 Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 03 Mar 2025 21:07:16 +01:00
+CommitterDate: Mon, 03 Mar 2025 21:23:39 +01:00
 
-percpu: Introduce percpu hot section
+x86/cpu: Warn louder about the {set,clear}cpuid boot parameters
 
-Add a subsection to the percpu data for frequently accessed variables
-that should remain cached on each processor.  These varables should not
-be accessed from other processors to avoid cacheline bouncing.
+Commit 814165e9fd1f6 ("x86/cpu: Add the 'setcpuid=' boot parameter")
+recently expanded the user's ability to break their system horribly by
+overriding effective CPU flags. This was reflected with updates to the
+documentation to try and make people aware that this is dangerous.
 
-This will replace the pcpu_hot struct on x86, and open up similar
-functionality to other architectures and the kernel core.
+To further reduce the risk of users mistaking this for a "real feature",
+and try to help them figure out why their kernel is tainted if they do
+use it:
 
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
+- Upgrade the existing printk to pr_warn, to help ensure kernel logs
+  reflect what changes are in effect.
+
+- Print an extra warning that tries to be as dramatic as possible, while
+  also highlighting the fact that it tainted the kernel.
+
+Suggested-by: Ingo Molnar <mingo@redhat.com>
+Signed-off-by: Brendan Jackman <jackmanb@google.com>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250303165246.2175811-2-brgerst@gmail.com
+Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Link: https://lore.kernel.org/r/20250303-setcpuid-taint-louder-v1-2-8d255032cb4c@google.com
 ---
- include/asm-generic/vmlinux.lds.h | 11 +++++++++++
- include/linux/percpu-defs.h       | 13 +++++++++++++
- 2 files changed, 24 insertions(+)
+ arch/x86/kernel/cpu/common.c | 19 ++++++++++++-------
+ 1 file changed, 12 insertions(+), 7 deletions(-)
 
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index b32e453..c4e8fac 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -385,6 +385,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	. = ALIGN(PAGE_SIZE);						\
- 	__nosave_end = .;
+diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
+index b5fdaa6..c1ced31 100644
+--- a/arch/x86/kernel/cpu/common.c
++++ b/arch/x86/kernel/cpu/common.c
+@@ -1479,12 +1479,12 @@ static void detect_nopl(void)
+ #endif
+ }
  
-+#define CACHE_HOT_DATA(align)						\
-+	. = ALIGN(align);						\
-+	*(SORT_BY_ALIGNMENT(.data..hot.*))				\
-+	. = ALIGN(align);
+-static inline void parse_set_clear_cpuid(char *arg, bool set)
++static inline bool parse_set_clear_cpuid(char *arg, bool set)
+ {
+ 	char *opt;
+ 	int taint = 0;
+ 
+-	pr_info("%s CPUID bits:", set ? "Force-enabling" : "Clearing");
++	pr_warn("%s CPUID bits:", set ? "Force-enabling" : "Clearing");
+ 
+ 	while (arg) {
+ 		bool found __maybe_unused = false;
+@@ -1547,10 +1547,9 @@ static inline void parse_set_clear_cpuid(char *arg, bool set)
+ 			pr_cont(" (unknown: %s)", opt);
+ 	}
+ 
+-	if (taint)
+-		add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
+-
+ 	pr_cont("\n");
 +
- #define PAGE_ALIGNED_DATA(page_align)					\
- 	. = ALIGN(page_align);						\
- 	*(.data..page_aligned)						\
-@@ -1065,6 +1070,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	. = ALIGN(PAGE_SIZE);						\
- 	*(.data..percpu..page_aligned)					\
- 	. = ALIGN(cacheline);						\
-+	__per_cpu_hot_start = .;					\
-+	*(SORT_BY_ALIGNMENT(.data..percpu..hot.*))			\
-+	__per_cpu_hot_pad = .;						\
-+	. = ALIGN(cacheline);						\
-+	__per_cpu_hot_end = .;						\
- 	*(.data..percpu..read_mostly)					\
- 	. = ALIGN(cacheline);						\
- 	*(.data..percpu)						\
-@@ -1112,6 +1122,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 		INIT_TASK_DATA(inittask)				\
- 		NOSAVE_DATA						\
- 		PAGE_ALIGNED_DATA(pagealigned)				\
-+		CACHE_HOT_DATA(cacheline)				\
- 		CACHELINE_ALIGNED_DATA(cacheline)			\
- 		READ_MOSTLY_DATA(cacheline)				\
- 		DATA_DATA						\
-diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
-index 40d34e0..0fcacb9 100644
---- a/include/linux/percpu-defs.h
-+++ b/include/linux/percpu-defs.h
-@@ -113,6 +113,19 @@
- 	DEFINE_PER_CPU_SECTION(type, name, "")
++	return taint;
+ }
+ 
+ 
+@@ -1560,6 +1559,7 @@ static inline void parse_set_clear_cpuid(char *arg, bool set)
+  */
+ static void __init cpu_parse_early_param(void)
+ {
++	bool cpuid_taint = false;
+ 	char arg[128];
+ 	int arglen;
+ 
+@@ -1594,11 +1594,16 @@ static void __init cpu_parse_early_param(void)
+ 
+ 	arglen = cmdline_find_option(boot_command_line, "clearcpuid", arg, sizeof(arg));
+ 	if (arglen > 0)
+-		parse_set_clear_cpuid(arg, false);
++		cpuid_taint |= parse_set_clear_cpuid(arg, false);
+ 
+ 	arglen = cmdline_find_option(boot_command_line, "setcpuid", arg, sizeof(arg));
+ 	if (arglen > 0)
+-		parse_set_clear_cpuid(arg, true);
++		cpuid_taint |= parse_set_clear_cpuid(arg, true);
++
++	if (cpuid_taint) {
++		pr_warn("!!! setcpuid=/clearcpuid= in use, this is for TESTING ONLY, may break things horribly. Tainting kernel.\n");
++		add_taint(TAINT_CPU_OUT_OF_SPEC, LOCKDEP_STILL_OK);
++	}
+ }
  
  /*
-+ * Declaration/definition used for per-CPU variables that are frequently
-+ * accessed and should be in a single cacheline.
-+ *
-+ * For use only by architecture and core code.  Only use scalar or pointer
-+ * types to maximize density.
-+ */
-+#define DECLARE_PER_CPU_CACHE_HOT(type, name)				\
-+	DECLARE_PER_CPU_SECTION(type, name, "..hot.." #name)
-+
-+#define DEFINE_PER_CPU_CACHE_HOT(type, name)				\
-+	DEFINE_PER_CPU_SECTION(type, name, "..hot.." #name)
-+
-+/*
-  * Declaration/definition used for per-CPU variables that must be cacheline
-  * aligned under SMP conditions so that, whilst a particular instance of the
-  * data corresponds to a particular CPU, inefficiencies due to direct access by
 
