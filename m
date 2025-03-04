@@ -1,142 +1,92 @@
-Return-Path: <linux-kernel+bounces-543001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54B27A4D061
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:47:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79103A4D064
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:49:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02AF43AEBF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:46:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DB5316D1EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82F1D78F59;
-	Tue,  4 Mar 2025 00:46:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D8043AA9;
+	Tue,  4 Mar 2025 00:47:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6asW5bj"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="zrvda/Qj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 373B83A8D2;
-	Tue,  4 Mar 2025 00:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C2D2AEF1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:47:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741049159; cv=none; b=UWDbvqdjufnCbZKE/jIpo5drGy1eSp+5FTFCqnkQIkBCzLYqJnnfDx+Vw7vhDsaVI8JJ37dNciUGpXMwEuQKvm9iJfPtGFM27uWEgyf83Mzlc6CUS8Y7Cp+e75CQTFDDm3vkJNRtpmFOz9Lcpspt8DB4kMQipTG85GCRdKviJP0=
+	t=1741049238; cv=none; b=D298dZMt+jrB1jJUuwoLxTxtA8Xq/OYD4rycVlqznjKqBYIgszftaHTBwUyWswZYZc0koDXdtd+N2EpmHPib66xCvtvEFgpmusmFzrrLijt3kUIrOR2aaA0oprC7a6sX2SZN8ea3yvDvW8k/c9EQxCgxRFwl0NZFHC4JV91zk9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741049159; c=relaxed/simple;
-	bh=vkzjz3ctK7/+9gjakz/Igs+oV7SZ+OPIeCbCepzr7Q4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dy7mjk5QTMV/G/yWSPXDB+MCj9u0TzRxrHn2U6Zfs4B2AoMhFrHqoWEKmUaO7Tgfy/lXF/c/Z86J/IXMoMx2nDc9D4hJKGJbPOkTrcJJK3sNvismZuRcYWkcYyQjhVyrkNIX/6XAHZRv5kphvnUngVflTmL/X/zT47wnXfJUGn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6asW5bj; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-38f403edb4eso2920490f8f.3;
-        Mon, 03 Mar 2025 16:45:57 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741049156; x=1741653956; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VfEqBGvtNzR0G45Bk+6Z+AfzCK4ABkw8MT0g5a3BjEk=;
-        b=f6asW5bjXxCgrL2CoriCkYm9/idCIEgTgOnudUzX3ZzTbCB2ONiT1XbM8di0fKNvam
-         jpCLqW8oGuOz0M9BBTGFQhleCRwsT98rePl2GucgYgevYp0QkWM5vMYP4EXjd7PvKaPm
-         nRNPR/I0AD/rx8r1tiOR9kFeEcoJ1GA79T3EMCRq2eSL9/3/mo1A2YxxGQMZp+nA4JDp
-         vVEr1dSoiLpjaE9Jcpcou6klIaUf8HeDy1zeO/ZHESid64p4QwXixQcr+Brx9IJVl+MF
-         d3ZFwm+CIVM28H4ysaPA2XIV8wVp+6Wfnsuky/HBp2ssrQl9NebZVzNcRN5hyMkUg63S
-         b/UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741049156; x=1741653956;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VfEqBGvtNzR0G45Bk+6Z+AfzCK4ABkw8MT0g5a3BjEk=;
-        b=YgnxaEOJtQJSSSJ4wCEGHVWd1NPxbCaiZ1efAO/bfs0YKWIaJS7ruVbszESHzZBNbY
-         LXyoGWqar0OL3TwYhVsnrHHXX7KvxckLmzLme3i0KhFPu9+mY5O3dfo4H2+PeGGn/qgc
-         MKTFeCNogxaMFgF2RaI/YjLGNi5b3u2fmyQPncJ5zmodUBMKXyR/Fu59tWB1IIb5pB2G
-         ujc7ftHEaHpYEfromsHHjZdJHMMzcZoN8sB4SVOtVivULQU/9a7UnZmPnqqUC12JX9kO
-         L/sRvTOVhKJGaiNmS/OuiduzgAl8Ucq7rTOh9OkQ4zGNmdiJIaE3sYYtuS26QMbxrGi7
-         3JXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXxmodph5Mh2FDf08GZyxroLQmbtosuGz/FeWtighT8gmG1uSYQ7b5GSYfgdaxeYO5n5MZP2lP3pjk+zRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEs3uw07APWWSRNhq3zocJH5lbJ7sUS9tB4IXk+sYWDOb8fWzR
-	T02iJbA6qM1xs4yTakJpt5lbhQWmn9bXVmL5xV6SsuHJP9EqNqZEaWzr+v++PFZHpKsDEvd4MOz
-	Bzb2TVEBI3OA0IlRQXmT+ncmu8Bc=
-X-Gm-Gg: ASbGncsm+cfBj1YKVeJMGKiAXowXK5lmarY8znqo7TLurVd2UszsTa0Z8f3OHht3sKB
-	+iHi8KPo0fxiOjHfD/CD/bhZDoQCNliMxBwy8LK8ERUr6g9YCJ5Va6TkKekYMiXiGOZXI8PfJEL
-	iqvvmID24xn5W3oetQOKRMqu7sQbwunETtTyHxy6vFKQ==
-X-Google-Smtp-Source: AGHT+IEeCQOoKVLy4aSX1gkhOY/8NCtlxOej7jcHLIrdLW4wuHtUOO9CoIgsFDaGt9gEKcs42bRRcl7/VDvF1Nuu3vQ=
-X-Received: by 2002:a05:6000:2112:b0:38f:6149:9235 with SMTP id
- ffacd0b85a97d-390ec7cba70mr13100812f8f.16.1741049156403; Mon, 03 Mar 2025
- 16:45:56 -0800 (PST)
+	s=arc-20240116; t=1741049238; c=relaxed/simple;
+	bh=76/XWDwZVHvJ8/uhNZJfs1uJ4fJJCpM1IBiy8YtPoDc=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=u6qax/DdUsgmE6aREE9Gr5na+v2/tO/ETEBz+LI0YPkXkXCqbKSdu4qEV2X0NXYTzOaF8jnYtrTeRVdXjbq9+tZVKYMuHFH5xLLibHJqG24kNnwdBVFNDyEeVxW9vBTRBCasxtYiHfF8lhqrIGUqxIj6JmA7nCDBF9djvB8lgS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=zrvda/Qj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4259DC4CEE4;
+	Tue,  4 Mar 2025 00:47:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1741049237;
+	bh=76/XWDwZVHvJ8/uhNZJfs1uJ4fJJCpM1IBiy8YtPoDc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=zrvda/QjpPuS9xFpjoOhceLjGVlk5T/cG+UzBELZuiUgQWtHCt13x60up1sQVimL2
+	 EFzSlWNBQwWZI/0gFDPpOcudMxMeYFbM9/eqkPQaMXSzR3ViF3nCW/bkyvo6mu3E1s
+	 3O4n2GlRRsKAu6xV30o1SnK/LHPq+9YPFO2aUMTM=
+Date: Mon, 3 Mar 2025 16:47:16 -0800
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Liu Ye <liuye@kylinos.cn>
+Cc: urezki@gmail.com, hch@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/vmalloc: Move free_vm_area(area) from the
+ __vmalloc_area_node function to the __vmalloc_node_range_noprof function
+Message-Id: <20250303164716.a98b1e3ceb27a264b57a56d7@linux-foundation.org>
+In-Reply-To: <20250303015702.319416-1-liuye@kylinos.cn>
+References: <20250303015702.319416-1-liuye@kylinos.cn>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <cover.1741046028.git.yepeilin@google.com> <b0042990da762f5f6082cb6028c0af6b2b228c54.1741046028.git.yepeilin@google.com>
- <CAADnVQKX+PoSUqPBB2+eZrR7wdq-8EVaMxy_Wur7g8wyy3Dcmg@mail.gmail.com> <Z8ZL1L69z8XWm8vl@google.com>
-In-Reply-To: <Z8ZL1L69z8XWm8vl@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 3 Mar 2025 16:45:45 -0800
-X-Gm-Features: AQ5f1JqY-QHGbRkFB0PZC5Se3XKsPl7QHq1ktYT5k72ZsvNzYpgqlyxSmJn0sLk
-Message-ID: <CAADnVQKB-9q6fxcVPbd7Ee+QBH=_ySv2EyULkgFhv_n2i07L1A@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 1/6] bpf: Introduce load-acquire and
- store-release instructions
-To: Peilin Ye <yepeilin@google.com>
-Cc: bpf <bpf@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, bpf@ietf.org, 
-	Alexei Starovoitov <ast@kernel.org>, Xu Kuohai <xukuohai@huaweicloud.com>, 
-	Eduard Zingerman <eddyz87@gmail.com>, David Vernet <void@manifault.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Quentin Monnet <qmo@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Ihor Solodrai <ihor.solodrai@linux.dev>, Yingchi Long <longyingchi24s@ict.ac.cn>, 
-	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>, Neel Natu <neelnatu@google.com>, 
-	Benjamin Segall <bsegall@google.com>, LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 3, 2025 at 4:39=E2=80=AFPM Peilin Ye <yepeilin@google.com> wrot=
-e:
->
-> Hi Alexei,
->
-> On Mon, Mar 03, 2025 at 04:24:12PM -0800, Alexei Starovoitov wrote:
-> > >         switch (insn->imm) {
-> > > @@ -7780,6 +7813,24 @@ static int check_atomic(struct bpf_verifier_en=
-v *env, struct bpf_insn *insn)
-> > >         case BPF_XCHG:
-> > >         case BPF_CMPXCHG:
-> > >                 return check_atomic_rmw(env, insn);
-> > > +       case BPF_LOAD_ACQ:
-> > > +#ifndef CONFIG_64BIT
-> > > +               if (BPF_SIZE(insn->code) =3D=3D BPF_DW) {
-> > > +                       verbose(env,
-> > > +                               "64-bit load-acquires are only suppor=
-ted on 64-bit arches\n");
-> > > +                       return -EOPNOTSUPP;
-> > > +               }
-> > > +#endif
-> >
-> > Your earlier proposal of:
-> > if (BPF_SIZE(insn->code) =3D=3D BPF_DW && BITS_PER_LONG !=3D 64) {
-> >
-> > was cleaner.
-> > Why did you pick ifndef ?
->
-> Likely overthinking, but I wanted to avoid this check at all for 64-bit
-> arches, so it's just a little bit faster.  Should I change it back to
-> checking BITS_PER_LONG ?
+On Mon,  3 Mar 2025 09:57:02 +0800 Liu Ye <liuye@kylinos.cn> wrote:
 
-In general #ifdef in .c is the last resort.
-We avoid it when possible.
-In core.c we probably cannot, but here we can.
-So yes. please respin.
-I bet the compiler will produce the exact same code.
+> Moved free_vm_area from the __vmalloc_area_node function to the
+> __vmalloc_node_range_noprof function so that allocation and freeing
+> of the area can be paired in one function for better readability.
+> 
+> ...
+>
+> --- a/mm/vmalloc.c
+> +++ b/mm/vmalloc.c
+> @@ -3651,7 +3651,6 @@ static void *__vmalloc_area_node(struct vm_struct *area, gfp_t gfp_mask,
+>  		warn_alloc(gfp_mask, NULL,
+>  			"vmalloc error: size %lu, failed to allocated page array size %lu",
+>  			nr_small_pages * PAGE_SIZE, array_size);
+> -		free_vm_area(area);
+>  		return NULL;
+>  	}
+>  
+> @@ -3844,8 +3843,10 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+>  
+>  	/* Allocate physical pages and map them into vmalloc space. */
+>  	ret = __vmalloc_area_node(area, gfp_mask, prot, shift, node);
+> -	if (!ret)
+> +	if (!ret) {
+> +		free_vm_area(area);
+>  		goto fail;
+> +	}
+>  
+>  	/*
+>  	 * Mark the pages as accessible, now that they are mapped.
+
+yes, nicer to free it at the level where it was allocated.
 
