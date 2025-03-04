@@ -1,151 +1,96 @@
-Return-Path: <linux-kernel+bounces-545691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B61A4F037
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:24:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43D37A4F03A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:25:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654E416F41A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:24:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2153D188CB52
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:25:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A1A627BF82;
-	Tue,  4 Mar 2025 22:24:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 163B627C859;
+	Tue,  4 Mar 2025 22:24:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MlaBkcXL"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="X+ZDZ1jY"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B7F227810E;
-	Tue,  4 Mar 2025 22:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB5972780EE;
+	Tue,  4 Mar 2025 22:24:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741127057; cv=none; b=d1z7lLoWVtP3FMcbodr2VcBo1qGk/oHWSCTYuLXFenEvFAhgq/i7Bc6wuKJjSNOSglo9Ev5IN4QKURaU2SaazhvhUSVeQMbbsKcUqHwpELywpvd97UBI1jHv6XhyLt4K/tmekNqJ/yEf521SWTb6h92S18o7iIrNpHr60yAe8EI=
+	t=1741127064; cv=none; b=Qz+TaCZ6SB9tO8yIMepS1J0zEB44a047oPmk/aWtl9piFRiXx7MQksepAZX3IzVtIwfdxiBLG4USiJfE/j4eQ2xqChqldOXYxlqE7IuqShla50VVAowVyZdDUclXWM++abpBGUTHbp4gpuRCbBCNJnPpkZi8HJlWyQTgVo7+nNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741127057; c=relaxed/simple;
-	bh=yyuFzL9LtSYARpW4okLpxNny9DSC9xIoudXgZxXbJmc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=SIkLOh8HG+XjyG3M7cbfSRXUQ6lJdwM6WgUY5G9o3zFTYpSISy5Zk5dQpg2JMqDMPap2U+sdkCU1L0LdRcX95KH2jqKdK8Z50IMb4zobLMDStJXXFW1tqtuiOag58kZ31ElLjQivwuU5KwV/B+eyLxotlNECAfeJlyMeV35r2IM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MlaBkcXL; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524AZBxH010211;
-	Tue, 4 Mar 2025 22:24:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zFLzxCJhvx1kfLFhPCMDGpmV/c7io94CywbRcFPfLaQ=; b=MlaBkcXL6xOiMB/C
-	iuuKdf1sjakp0lR+BsEQVtLMPyB0EquwBB+M2r5bcGoguWChIQhy/pZwzbFWK15A
-	DNVDrNhg410d6Hoy3Knnw/GqeSLQEzWPTT7onV5hkLNO/XzXVI3mJINmo+lvzrDL
-	lmP7Puq8J6vKMmI3Izbs34SCeaXeuGs56umfWxBt1olYwzrQgLk8rgecpv3vnsUB
-	g5i/qNpMBCJxeGdZInVo4Ibl5c4u+M3dLcPjiC/C9LajOHCPjTe6CXqKLUhic52A
-	b4FtzUCOnW6mesHMPGbUSzDqOtbXYZgfWSN0VVXdpgkpL1RnYXufMLtsDqADtThz
-	5Riybw==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6wkaj3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 22:24:12 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 524MOBfK007693
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Mar 2025 22:24:11 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 4 Mar 2025 14:24:10 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-Date: Tue, 4 Mar 2025 14:24:00 -0800
-Subject: [PATCH v2 4/4] arm64: dts: qcom: sm8750: Add LLCC node
+	s=arc-20240116; t=1741127064; c=relaxed/simple;
+	bh=7QvuPnWT0EW53TvuPMg7Nv80uhxx7F8g12MYgUeNZPA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rbqX48aCJjeMHda/04FnrIVI7e5yEkcBGjdWGyYWcNU9WlM3NRGBxVOeiTYFXKvnVGG4jDqe3xKmLb+CXr/OFQE/Igpn7pSNvApk2/BSM6JLTWAg7WT3im4oirlXn982boy3PQkVUd2OsThg8GhspNH+5WzopsOUXY6+tQtLeao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=X+ZDZ1jY; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=NQspby4G75DaS/LBNhOnxLMcEKKmp/qYjXqhxLpgpJc=; b=X+ZDZ1jYxcz5VBtDKzP8p0t8nn
+	qrHqeqVx76GM2mwLBEeMYc/M3s47hIw8qlQaamEt68PbvmCnU+TTqvWHVrPLd7LNwyvKTA5Q1kD+y
+	nvE8RJm7JyFXpAZmDheUn+8K8V6cusfhtGtoDXrHt6mw/VqpPdbWWragyPXDZYvh+V/U=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tpagH-002Hg7-7E; Tue, 04 Mar 2025 23:24:05 +0100
+Date: Tue, 4 Mar 2025 23:24:05 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Mark Pearson <mpearson-lenovo@squebb.ca>
+Cc: Vitaly Lifshits <vitaly.lifshits@intel.com>, anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com, andrew+netdev@lunn.ch,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [Intel-wired-lan] [PATCH] e1000e: Link flap workaround option
+ for false IRP events
+Message-ID: <eb5b93b5-ca90-4287-b6b5-17825d79e6ea@lunn.ch>
+References: <20250226194422.1030419-1-mpearson-lenovo@squebb.ca>
+ <36ae9886-8696-4f8a-a1e4-b93a9bd47b2f@lunn.ch>
+ <50d86329-98b1-4579-9cf1-d974cf7a748d@app.fastmail.com>
+ <1a4ed373-9d27-4f4b-9e75-9434b4f5cad9@lunn.ch>
+ <9f460418-99c6-49f9-ac2c-7a957f781e17@app.fastmail.com>
+ <4b5b0f52-7ed8-7eef-2467-fa59ca5de937@intel.com>
+ <698700ab-fd36-4a09-8457-a356d92f00ea@lunn.ch>
+ <24740a7d-cc50-44af-99e2-21cb838e17e5@app.fastmail.com>
+ <316a020a-aa49-700e-3735-f5f810adaaed@intel.com>
+ <a2bd6964-1ec0-4bd6-ad68-7210ac3fe38b@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250304-sm8750_llcc_master-v2-4-ae4e1949546e@quicinc.com>
-References: <20250304-sm8750_llcc_master-v2-0-ae4e1949546e@quicinc.com>
-In-Reply-To: <20250304-sm8750_llcc_master-v2-0-ae4e1949546e@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Conor Dooley <conor@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        Trilok Soni <quic_tsoni@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Melody Olvera <quic_molvera@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741127048; l=1241;
- i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
- bh=yyuFzL9LtSYARpW4okLpxNny9DSC9xIoudXgZxXbJmc=;
- b=HJIwEICVYXtzN87KjyEzZJ5ZLHJlfAthTNE2Cm19nA0DmdBDl2cv3SPY7cgKUlu5Ira45dMqY
- ntbaVg116frC8AsF4v/Z1AOHJL4LQCsVleuSqIzI2MgIHRQpFRZ4wOS
-X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
- pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
-X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=EZcyQOmC c=1 sm=1 tr=0 ts=67c77d8c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=3H110R4YSZwA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=HB9I7tTqELxSCm6kzBkA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: _pD676k1tx5wXqv7XjQj_BSWLWG_tKZn
-X-Proofpoint-ORIG-GUID: _pD676k1tx5wXqv7XjQj_BSWLWG_tKZn
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 mlxlogscore=607 suspectscore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 spamscore=0 impostorscore=0
- malwarescore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040179
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2bd6964-1ec0-4bd6-ad68-7210ac3fe38b@app.fastmail.com>
 
-Add LLCC node for SM8750 SoC.
+> > I suggest to try replacing the register read for a short delay or 
+> > reading the PHY STATUS register instead.
+> >
+> 
+> Ack - we'll try that, and collect some other debug registers in the process.
+> Will update with findings - this may take a while :)
 
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
----
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+Please be careful with which register you choice. Because the link
+status bit in BMSR is latching, you should not be reading it and
+discarding the result.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 3bbd7d18598ee0a3a0d5130c03a3166e1fc14d82..a3f9595c496f6f6fcdf430d44fdd465dda4bd39e 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -2888,6 +2888,24 @@ gem_noc: interconnect@24100000 {
- 			#interconnect-cells = <2>;
- 		};
- 
-+		system-cache-controller@24800000 {
-+			compatible = "qcom,sm8750-llcc";
-+			reg = <0x0 0x24800000 0x0 0x200000>,
-+				  <0x0 0x25800000 0x0 0x200000>,
-+				  <0x0 0x24c00000 0x0 0x200000>,
-+				  <0x0 0x25c00000 0x0 0x200000>,
-+				  <0x0 0x26800000 0x0 0x200000>,
-+				  <0x0 0x26c00000 0x0 0x200000>;
-+			reg-names = "llcc0_base",
-+					"llcc1_base",
-+					"llcc2_base",
-+					"llcc3_base",
-+					"llcc_broadcast_base",
-+					"llcc_broadcast_and_base";
-+
-+			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		nsp_noc: interconnect@320c0000 {
- 			compatible = "qcom,sm8750-nsp-noc";
- 			reg = <0x0 0x320c0000 0x0 0x13080>;
+Reading register 2 or 3 should be totally safe.
 
--- 
-2.46.1
+Another thing to keep in mind, you cannot unconditionally read a paged
+register in this particular PHY, because the e1000e is used with a
+number of different PHYs. That register does not exist in other PHYs,
+and the action of selecting the page performs a register write, which
+for some other PHY could be destructive. So i would suggest you keep
+to registers defined in 802.3 C22.
 
+	Andrew
 
