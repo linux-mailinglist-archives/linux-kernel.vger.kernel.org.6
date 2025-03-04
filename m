@@ -1,79 +1,120 @@
-Return-Path: <linux-kernel+bounces-545796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B349FA4F188
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:34:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 77878A4F18C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:35:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF87E169853
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:34:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 718A616DE06
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:35:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C72C200BB8;
-	Tue,  4 Mar 2025 23:34:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Od8/Mxcf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29D8024EAAA;
+	Tue,  4 Mar 2025 23:35:28 +0000 (UTC)
+Received: from mail114-241.sinamail.sina.com.cn (mail114-241.sinamail.sina.com.cn [218.30.114.241])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F761FDE1E;
-	Tue,  4 Mar 2025 23:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2100C1FF61D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:35:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.114.241
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741131263; cv=none; b=gdUSRUHBpF2EWQf+Dgc1eqfG/hsYuhzR60OTb6bxpn64MRFrIH8Fmm4FLKKjWizAHMpYt69Qpu7FFc2lEoZmnAWlzEez/zaljNO9aEIEEzpgvGEsUzD1dsuAgTpAZ8d9lDpuzHH/bRwLWpVurQYhaZYcebxkx42UShbPD6zMECA=
+	t=1741131327; cv=none; b=klnYM7faeuNQ3QXDVHwlSWxjx3BvOFjGIDmH0ZUD9t+1OHsOclTPu/CHKejg6xVcOm9eKOsBuX3+QBvz4g2T+zuZ96h+JtjjY0HlBz1sCCdujabpbQqGxdGyVXogrkX6GAt5HiGYQ5499i9QfoaXipL5LT/XOjQu3r0eH4G863E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741131263; c=relaxed/simple;
-	bh=kM8RJDowmej9xcgCwmrS/qQgZmPIdRYBJAJSOmBcdMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YbrO7EEO286MDtA8OHbtfoeGasxs1Ss7UAPqxjhZCAwbRuF4c9iZ2wQ+Mhg1Ym/D+Ekcw6tyXW3a3gdwsFRMZPkRfdFLPZUWTuBH2IDIVgY1UIglv9dqDAT4laZrATXyrEkR7B5AGt3jj/tjYYknmJcNYUEwxTGVb5u+Ww7YalM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Od8/Mxcf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 520A5C4CEE5;
-	Tue,  4 Mar 2025 23:34:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741131263;
-	bh=kM8RJDowmej9xcgCwmrS/qQgZmPIdRYBJAJSOmBcdMs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Od8/MxcfJ6kZwxduWn4hcyAxjJKkF/DV8XXU8Y406vC2pgpZ2KriX1ZZETn49/tTk
-	 wf1ykSLbO1rws184xC+J3wv3VGFUuxdnjZZq7+x6IBFyMpzlS60IvPVBojeIM8z+va
-	 ecJmwJX8TlzRUN/pga+zx85PsjwJ6heMRvp9y5LCqgfUvi5eHexxxzZ7Nis+Dg+3eA
-	 aP7cFUqWnjoiwx/g9dxEckaAMkN4Wd3kb7BYSLpeBofr8SyZojOjEzy8MTzJc4DNDU
-	 qqzyxG8pcmSmsJYt1dk0PaUKoG/G44SBhfVFJnMF+KlhJ7clhwU4I9VNr96dU+rkOu
-	 IXcVB1YYWkyqA==
-Date: Tue, 4 Mar 2025 23:34:11 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Sam Winchenbach <sam.winchenbach@framepointer.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- antoniu.miclaus@analog.com, lars@metafoo.de, Michael.Hennerich@analog.com
-Subject: Re: [PATCH v2] iio: filter: admv8818: fix range calculation
-Message-ID: <20250304233411.3fac7c69@jic23-huawei>
-In-Reply-To: <Z7crV0DV1Fq7wE1Z@65YTFL3.secure.tethers.com>
-References: <Z7crV0DV1Fq7wE1Z@65YTFL3.secure.tethers.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741131327; c=relaxed/simple;
+	bh=d/7vgs/C5rwes4Txtu4q0m9uILsnhLNub4HC3E8ykmE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J1CgXPsy/q77TsOvD/UZtmDyZTVMqZ43UXkCQ1M6RL9pwFSp1zhNWJUA9SCm39EuhZMquKDuT7mWYp1KeRiXtfKEoBYcLllwi4vF2mC0azh+62437kj8muYaAWafxsiA7q1pPE3uNHm2NiFQrvNxEKwRD20BUDcPx29uZBofPoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.114.241
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.118.69.118])
+	by sina.com (10.185.250.23) with ESMTP
+	id 67C78E2E00002C0E; Tue, 5 Mar 2025 07:35:13 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 2523278913411
+X-SMAIL-UIID: A9E38C04C32D46F99DE422E1BD7AAFB2-20250305-073513-1
+From: Hillf Danton <hdanton@sina.com>
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+Date: Wed,  5 Mar 2025 07:35:00 +0800
+Message-ID: <20250304233501.3019-1-hdanton@sina.com>
+In-Reply-To: <20250304123457.GA25281@redhat.com>
+References: <e813814e-7094-4673-bc69-731af065a0eb@amd.com> <20250224142329.GA19016@redhat.com> <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt> <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Thu, 20 Feb 2025 08:17:11 -0500
-Sam Winchenbach <sam.winchenbach@framepointer.org> wrote:
-
-> Corrects the upper range of LPF Band 4 from 18.5 GHz to 18.85 GHz per
-> the ADMV8818 datasheet
+On Tue, 4 Mar 2025 13:34:57 +0100 Oleg Nesterov <oleg@redhat.com>
+> On 03/04, Hillf Danton wrote:
+> > On Tue, 4 Mar 2025 11:05:57 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
+> > >> @@ -573,11 +573,13 @@ pipe_write(struct kiocb *iocb, struct io
+> > >>   		 * after waiting we need to re-check whether the pipe
+> > >>   		 * become empty while we dropped the lock.
+> > >>   		 */
+> > >> +		tail = pipe->tail;
+> > >>   		mutex_unlock(&pipe->mutex);
+> > >>   		if (was_empty)
+> > >>   			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+> > >>   		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+> > >> -		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
+> > >> +		wait_event_interruptible_exclusive(pipe->wr_wait,
+> > >> +				!READ_ONCE(pipe->readers) || tail != READ_ONCE(pipe->tail));
+> > >
+> > >That could work too for the case highlighted but in case the head too
+> > >has moved by the time the writer wakes up, it'll lead to an extra
+> > >wakeup.
+> > >
+> > Note wakeup can occur even if pipe is full,
 > 
-Hi Sam,
+> Perhaps I misunderstood you, but I don't think pipe_read() can ever do
+> wake_up(pipe->wr_wait) if pipe is full...
+> 
+> > 		 * So we still need to wake up any pending writers in the
+> > 		 * _very_ unlikely case that the pipe was full, but we got
+> > 		 * no data.
+> > 		 */
+> 
+> Only if wake_writer is true,
+> 
+> 		if (unlikely(wake_writer))
+> 			wake_up_interruptible_sync_poll(...);
+> 
+> and in this case the pipe is no longer full. A zero-sized buffer was
+> removed.
+> 
+> Of course this pipe can be full again when the woken writer checks the
+> condition, but this is another story. And in this case, with your
+> proposed change, the woken writer will take pipe->mutex for no reason.
+> 
+See the following sequence,
 
-Just a trivial process thing.  If you are sending updated code
-and there isn't an obvious reason why when someone looks at the
-old patch set (e.g. no reviews asking for changes etc) please
-reply to that.
+	1) waker makes full false
+	2) waker makes full true
+	3) waiter checks full
+	4) waker makes full false
 
-At times where reviewers (such as me on this occasion) are running
-way behind they might look at wrong version otherwise.
+waiter has no real idea of full without lock held, perhaps regardless
+the code cut below.
 
-Jonathan
+> Note also that the comment and code above was already removed by
+> https://lore.kernel.org/all/20250210114039.GA3588@redhat.com/
+> 
+> Oleg.
 
