@@ -1,266 +1,157 @@
-Return-Path: <linux-kernel+bounces-543790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36631A4D9F2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:15:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 213E3A4D9FA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8011D189A233
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C713B034C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:16:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C741FF1DB;
-	Tue,  4 Mar 2025 10:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A121FCFD2;
+	Tue,  4 Mar 2025 10:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e3MnPn0r"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2060.outbound.protection.outlook.com [40.107.22.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="suOU9Eep"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2977C1FC7DD;
-	Tue,  4 Mar 2025 10:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741083304; cv=fail; b=oowvSTuALb66TMPxFyDS8/p841k6/VMiQRVyvUWq+/yAsF1GtY798/W4nZLdUTD+2XoUUh48yOhALL1RADV0Skky7XtREls5god+AmldqZEYhsz+u7JBXd1y7q+kfS0K5Qt4TLV0ijeLEN/SDUisCyyN9a04TC558cKF4nqGEj0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741083304; c=relaxed/simple;
-	bh=Sq8Zm8fzRuWXZCHfOg9Ur4tfjPHev73ZHw9gIzCqm2I=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=OUT78iNUsQZLSiosUZByYO+BVH8uQfMElPYdlwjgxerT5Yl1DH2qMkcer8o3i8tzr4tIDSfTLyhRGzTx4Q+6/k8iqJAWSkon4775891rsADG7xfBqqw3XBqJFIXwcP6YgTQ1TvILDpycbVsNaW3H4K66AcEa3ULNVeP5Sg5N4Bg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e3MnPn0r; arc=fail smtp.client-ip=40.107.22.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bHrzSHmbVEKj/FZSxTDwl6GWpG38rUlWG2euuRHy97rxxOWLpwIEtL82DFdh5G6v/phOvKIkNFZT81zOUJzw4xkE+EgI3byTUBsg1U4eBJkXs9Jfx96WEdHrSkvykiRdVH/tz9i+9VE6YVJidljONrgqMrLyHi8UIIe7cC3hVfMI+ZSZZcl9vUzL02WP/gtMvIpPo6ePh1/iq3FyDUe4ykAntC//qZWD70kqhsI8alzggSP7gcluHmk+f2zJqVct8e96jtyOraZKpAuLoNL7dosVUh9xbJ/8yh0XZJg97NrZ2ns2v+x9GZmSgsNjD2AJ0qpNNsQKtIs5/c7JSyWACg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=mJSDHRgqIhAV5McM9Ea4GDHgePdURwrsqUQF6kOTf0Y=;
- b=GgzMaEyudvE4jU9eJn5JsMg7YVuYdQ/sfK8G8QxwHDpVAmkO0fwiiWs0aWpMmLoqo/kkzJXPHNEFUT+3Ohm0yRkfOBUaO0HFcKsITRnBPLO5vuaqrO9vMzdR/IIuDikbb5hiaNq43zth1NHDuoby2CUvNnm0s6JfwBxULw7xyaL85v9DCMhIg6Wr5ZYRj/3SvU6Df1eV99D9b6TBQzt+8XfXmFhoLeeK0hjmojyK9do/AqTKogILrFuqJBhdyrQTp1ZCqB2ky0yOZ1kQXo91MxE9wG/G06Svh2j5vQ+3PwHxOVedYpUtjIkHelKz+a0BXA+cQHeSKvTwo6mxuCWo6w==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=mJSDHRgqIhAV5McM9Ea4GDHgePdURwrsqUQF6kOTf0Y=;
- b=e3MnPn0rmGjgjFgZ2gEq/UPD29pq6YBRMqSYekKVi+uym4sUE/fzQKoEaHO2pxVnDSRIRrYHQIvLNo2thzd0Is3HI2PaZwXN1x5tin6qKUr+0g+4vUlmsGYtcqQu2qV209fAI6BwTMonRnhst/o4EtEnh2U4NNVpJa2Xr1iGSiZ0l0ljAbGYL1NhLsTFXaWSi0V4cRQ8sF0BlDt08N+DuZhNfFt1fyZMkuqWJfvZpQYcyht+IbHeKd33luLzUbN40fMISYMM4gbx4zIGQ1+HwYdbLH5NgX73KsVqTQf3t4bwinruc+6VcUDNeU3REIJrfDwAu9rXaEB/UziB/+1JVw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by DB9PR04MB9868.eurprd04.prod.outlook.com (2603:10a6:10:4c3::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Tue, 4 Mar
- 2025 10:14:59 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%3]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
- 10:14:59 +0000
-From: Liu Ying <victor.liu@nxp.com>
-To: dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org,
-	rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com,
-	jonas@kwiboo.se,
-	jernej.skrabec@gmail.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Subject: [PATCH 5/5] drm/bridge: simple-bridge: Add next panel support
-Date: Tue,  4 Mar 2025 18:15:30 +0800
-Message-Id: <20250304101530.969920-6-victor.liu@nxp.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250304101530.969920-1-victor.liu@nxp.com>
-References: <20250304101530.969920-1-victor.liu@nxp.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR04CA0188.apcprd04.prod.outlook.com
- (2603:1096:4:14::26) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 017F41FCCED
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:15:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741083351; cv=none; b=SmvkiyNeZJ8uuUNRG+UDxKFBThlvgJf6uxJyZ2O1P5r/zmG5+mh/iCWUthPQWuG+duFGqvFDPCmxzf20fuEzLfIX8yblp4wkdTyfRJcMe6x4iAAd5eD0wE+hKGKGvQcgDkR9ySOSA9Sz04mpp6WwKX4D5SoUbPtFwoapI/YoyQc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741083351; c=relaxed/simple;
+	bh=586x6KaLpuRws9oiXO3+ufXeNdlCPivVZ8T7Ww4YYog=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kiIWyCGhV93725kb3y0TgHxgi+Nr8BffZsfyedWjWakQivMs3OjFGk8WSAgmV9GNInnnpJAQZ4rOVaumSqwvXYZGM2W5MIVERrAxUxij0em6AzxP16tiy2O5tIR2n605FnsMhefByJIRWVzIc6fu1l8bt66HuXxSQUTcBVWzCcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=suOU9Eep; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so34899615e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:15:49 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741083348; x=1741688148; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kIp1cph66/HGjo1LcKFC/SHdEMb7MTb3g/6N0/oA0e8=;
+        b=suOU9EepyK8t7trCsQTS2KSUHIf44nBYyVaoRxw03VkjxaCCeuGEqXeUNypjS6VmK/
+         gU1zjtJNuG3IWxp9CQbsmWjRXUkRfE6klqTHJSbiU3oJw3exAWU5ZQOWVOJIhwVR+gL2
+         ScfofBvncgV4z6ySEqFCv2gDACgyo963VA75zmCBKW27BpHTVGeauih7xUVVGuHyt8hz
+         zJ7wjjFAKVMeHVL484sNQ7Cy8ff7qCAqvdIvL1afXVb703TdFHxV3ifGOWW2T7ezJuuK
+         4cJ4OfpMEsllMObHgOKJM3VF9p264XV98nRstwhmpxZEUrrF146BSZPrXSSSg6Mr6uRL
+         //sg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741083348; x=1741688148;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=kIp1cph66/HGjo1LcKFC/SHdEMb7MTb3g/6N0/oA0e8=;
+        b=o2azb8xlyD8iCJPajzBK0tkOsLdPgZeMedljGOURASobLyoVgPDg4/OjydLh4tvAnK
+         I2LB8nuH8Thjzjx8vOvoRf3A8NqyJKD+vgGl5CoPGkZVupMoD4iiMHqQH2M2urtGMNYx
+         qPESgOek9p3x1gdJVukMrnIpkI7myv9c3sAJWBK692vW7XVPPlcoUVrFChu2KI8aMqtd
+         o1zXd8eeFy2NlBKvZVZUV0ElBIAiPdZ4ZYjiku+FSz7oCtfBrWi2cruP44bINRK9Nndt
+         GEczd+JEt4cOzI+Q2VZTPN3OO+b+Gqnr75dozz/qE+TyS+rKvO3LZO2MXMKSVNQYLBRQ
+         ZXuA==
+X-Forwarded-Encrypted: i=1; AJvYcCVFgbTJz5bzzyshyBJHkYdyHbDeI7cmWl6/VW9fDaw9VG9UL5+Oq+MqoHQDpEOAYB2pP6Zg64A0Ez6m1jk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzn325EYEqAur9P5UBciQ61s2l7HcdK1S02spqX1vCEEm7m/Tam
+	c1J+/ODBpptvuLqtufIVXOSg4SgpQX7DU3ZtbqN2914aj9EBO3MUKJtuyGi2YEo=
+X-Gm-Gg: ASbGncuCbOj3u3z3sYyyrg+obKmvux4JTcdtGC1Wx81FUC1Msquxq2C4QRYCpetgzv3
+	rQgjseSfi0TMa1D/9glQOpQMZ4b0s+0Umz9w15WHnK0nVO+dymqXjxrMuy6FTfw5hiaw784CD/X
+	djP828h0ckHycWfhyw/By2lEH70LWXc1uYEHbjzz8Nw7wJeu5XKkLiamSUvbp9MAS+l1+ZZivrN
+	82ZLT49J+uBsPq9QF8vGM43pbyIOcMtNuSDz+QUzXu27wxrGWdZoYVvJJJP+6s5e2wCQCQWj9Ez
+	qP4hCZw2J4VUWSMHPf8V4Uu2dmMn3npDtCMdyHPgS9Q8nG3w1l/YWKxK
+X-Google-Smtp-Source: AGHT+IGey+kjBPOhuoeEklMVdzB91lv2feUrKYSiI7u29mC2m39dGVaqOGpmY1/H5pbh0BrYF7k6rg==
+X-Received: by 2002:a05:6000:4029:b0:390:efe7:20fa with SMTP id ffacd0b85a97d-390efe72244mr11536252f8f.47.1741083348262;
+        Tue, 04 Mar 2025 02:15:48 -0800 (PST)
+Received: from [192.168.1.101] ([37.167.169.83])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bc18452c3sm69076095e9.25.2025.03.04.02.15.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 02:15:47 -0800 (PST)
+Message-ID: <2b5c44c8-4eca-45d2-9599-a4d00bf44f5e@linaro.org>
+Date: Tue, 4 Mar 2025 11:15:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|DB9PR04MB9868:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e06c5a3-bc35-4302-d5f1-08dd5b056b70
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|52116014|366016|7416014|1800799024|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?mmi1NxmNmAb6RDhuFt19ZQVliSAphHE64y+eRC8flGLPiMDIwdo6/+A6K3XB?=
- =?us-ascii?Q?Nkuv45tYa9BMrvDDrnMNqtFpi19WdyLQTvQAHELveeRRZUpG6yKpVlN0ysO5?=
- =?us-ascii?Q?cUdjtqI9ctCpEDlsAPHxFuDqVDKS6UTx84l1COvScROwp09NYiD/QulpgWLs?=
- =?us-ascii?Q?FVQ3NCDnkV2bVAgWvV/xnoWYgoxBro1DAVhfwL+vXUNXmzGXwOTTML9nXkDM?=
- =?us-ascii?Q?S7UdsSB+TuZMieSj1DPt6tIJ85J0qDP1Nl2yYEQA/YcktDMud4W06p5W6sDI?=
- =?us-ascii?Q?MwMWFVtAV8B0esWoM+wDbccxNV8UOWgQVfnH3C1kbV1Gz5sjzjo4XEDnSJT2?=
- =?us-ascii?Q?9Tru5ByWfCEw+nXDjnJGQYyKAA/YX6fmX66eFDK9y5LM6hY/6VxdnF0Q20dD?=
- =?us-ascii?Q?Ac/WWXoKDJXE6oAE+a4Y8qkFLK3nUF5gyL/niA36M4/KgdAxMJx9ZA+/dBWY?=
- =?us-ascii?Q?rmw1XVy+JvwrChqaDpZSyRC/zLvxsmhENv38Gd3eN1IefqYcU1+yr39bbRKn?=
- =?us-ascii?Q?FyGUSTi78yw78sy4B+EJq1ZYkzbsyrCleD3AKwHxL9leFkHBQYnOk6SFMdUP?=
- =?us-ascii?Q?67j6/SRCrfZWEwsa3SgESHOp9JI5RDJH+78ImdkFlgqjKutG0I5IISVxWGet?=
- =?us-ascii?Q?wWRUIfbw/rqKioF3RIxD8xkoemHySXtyNXOm74UQJKjb+c6XRvaFHhKiItLx?=
- =?us-ascii?Q?oCRpgJMlJHevwf4DYTiDYW3yl4fLqCpOI/sxTfdmzxHT/c0KYbH0s0vxdU5n?=
- =?us-ascii?Q?lnXsPUJmVStaHlvM6i+2RlzzhykdZtX9teiTt3yi3DTqAeDVgdLPyAD/moLW?=
- =?us-ascii?Q?7Qsn+oVWJiTue2YQKSVhMkBvqD2D5j8zeE/q7kLxJVDXwGP1k+id91A5Ivs1?=
- =?us-ascii?Q?6Jg2dvxlwSQpXTMdeE/jl7ac1bPleQFAGy1u9PJvchBTxFWW2UKs60aLbLqq?=
- =?us-ascii?Q?M53w0Dna+Kbgz/9PUczQVXYIcVF5cPo7Ed8QzXWGnRZDBj5ZR7wmMwrTMZB2?=
- =?us-ascii?Q?NogO2SO7usxLaDhTFrBSF8xbT5om7LEhu+Ehp/zV5Hi+vIHMpij3m6JXqvNj?=
- =?us-ascii?Q?kmZSK/0II+mcKlsM+QDwXRzvrdM3fwyMOZtq9wqdi27Re17yreRwN2To6GYA?=
- =?us-ascii?Q?79V9klkLPDhhHjkWUraJv/A5B48dKJBJGUDXx2OYPenrq9C56HZDFC3Gvxor?=
- =?us-ascii?Q?ZZQEcn1JVKmaYSfAHGX1+jObaG9VvsnZFjrfmDKfoJo9vuEvASJNIhHynpLt?=
- =?us-ascii?Q?1TcdRHq8C58NXmp2N51Q3SRuM3c2v4uX+AI7gXY/5YY3/JXLHqN5AzSoqZmw?=
- =?us-ascii?Q?G0MLbE7BkZFx2s6aR+CIj5wTi2RoquFrPf2isjSXetCRkkKa63iDVeA+vPvj?=
- =?us-ascii?Q?vgJdmEZQXqAv3DdrpUOkPsp5YT/if2YHhOExxaEEW54rev3bNeOeYP0IYfmb?=
- =?us-ascii?Q?cTojLQLdPXm9fJrHwlRlB01DD3Uz3F7/?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(7416014)(1800799024)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?9emBCAUYFQNYUdvF22VpUWcNcEmfTQHfxVtxfAfKOBll1X5b3sms+iFwOhjb?=
- =?us-ascii?Q?Ffk+JE8YsdmfCS3XttlE9T0xGSZ2j8CPpbDe10IeFmerDym+hEYyqZpHhIxn?=
- =?us-ascii?Q?qCpAP0auD2ijHxcUspuQSiNw5Iz3eOquVoYwDpybyQdJ6zFqC+ZQvkVnPXV/?=
- =?us-ascii?Q?6+YQCMP/5dehSbDWr/90v05yobtT9/1pWdF8aGcx2WBi5ZYCPUyCmuAG19fV?=
- =?us-ascii?Q?46RX8O4acVDZky4HVV7zBe+OduPiq4mUMMK+v1RsYg/yuXIm3q54SQt+ncVR?=
- =?us-ascii?Q?4bF4hW7GLRzF3LShBx0UtN03PuY5qEaI50xzQ7wSym0sf4Kqb+QTrHTS+vUr?=
- =?us-ascii?Q?ozpOxqwYhbt07Ezt586YN+71ssKeq35Ok2JEfET5baJheox45cNi8nTkUb98?=
- =?us-ascii?Q?t6rQrW/5R+/mvO9yqiYs3BVrVuuJ+POpD9hTVa8C8WSpntX0ldjI2pn6k109?=
- =?us-ascii?Q?JZsObB3yRUphhrz5mqQszHsjlZtG+1HLcm+stmdxZM9GYOy1HBcaMJNLsyz6?=
- =?us-ascii?Q?dLW6gwEGrEcxEEzghvqwCQcO4NpsL7rOCBmVpj6aDHhk4FgjpSdbfJ2EZUpH?=
- =?us-ascii?Q?/INb6mRLBlvT0D8wv/G24LfKn9k++ZldpwX+GDIIjwlqhJVI9lqO51065eD6?=
- =?us-ascii?Q?bZvM7b4u5Pgx+uVpcaw3prheDG16tvjTlp/JJhTtUNtPYdp6xH28dKQpJjGk?=
- =?us-ascii?Q?YV9O9OvFjkYDvcc6gu01zuY7h9FanqYj/LRexpqGplsbVirx1SozuK/KyHJh?=
- =?us-ascii?Q?paxNyAUNqH5UKrPltzSKD0HiC5k9Vs7qcvRbJHBdFc4f4SzS0fsbUOCaUUVJ?=
- =?us-ascii?Q?n2HNW+1mGMU+1z7pcT87XPrpJ6+saDUUxw5OQKCnMT6h/KO2ziAo72urcnvC?=
- =?us-ascii?Q?cK4RMucFHdylejKisZgpjSag+YJm1MwXiM28BAwhP9iPlRWPOjYLemGwXQYY?=
- =?us-ascii?Q?frcY6feRGe8X0Hy+WxkMjvIBq0EUmAhnDq1M9BM7fLpdZ+L5q8IZ1hzs/Q4d?=
- =?us-ascii?Q?hKNg/siF/6TlxazVG3GCePOO8P3qPkcS1XA7S/dOhOm0qgZwMHjVSug9OCM3?=
- =?us-ascii?Q?s2Ufs+D0pXhOQwOKt22PeCKa+3dEtmV5b9KpMLAKzDamX2V1VhrjgihiNI8Y?=
- =?us-ascii?Q?GgSzVCyEHqBbElJGorHNSyZVzJKLaAT2aI6fcvEFhUfKZsWY5nOI0F7HPU51?=
- =?us-ascii?Q?7pj78zY1QImF3SuF+LJHUGDssYZxWDEkSB40ZPHUF+g4Cju3TWd0sCFpwDob?=
- =?us-ascii?Q?pPJ3lFjJFH+LT8Qsq8N3oc0i+RfJpe55qAW+yms+1fRZTCLZb/fl/8EIKlTA?=
- =?us-ascii?Q?LJ6e2CKFRuu82hx+3xbbuuMn378lWg5+Av4SmyvoBIYaAzWuhC24SKBFLG1E?=
- =?us-ascii?Q?1yRm33B3zgH3aO0r8nYg8WluCnDtZtiMUFNXpfleFDUkz9UyF55IQjUKRCxT?=
- =?us-ascii?Q?hQvCwnQGzyQ6h/+DojUj33upxrFXadxbUHNTLbQ64aDutRdxDch/8gK3L/JN?=
- =?us-ascii?Q?9rCEE1mwSCjQZkM7TbJD+9CaDDgX3IvYz7L2eKDdH4Tc73ejKqwEuautMGg9?=
- =?us-ascii?Q?V3M+4XAsukePN07qkFRhX3xo/wSiK47sxEgk4/X5?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e06c5a3-bc35-4302-d5f1-08dd5b056b70
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 10:14:59.4277
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /uFJXMpH3BJRZe0AaWQpMgYGiGfVcU2tQO72mMtBvmDI9p1mDQ/m38jUSbzGeB4h3Z16PZWhk11Fes5DaMonvw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9868
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] pmdomain: amlogic: fix T7 ISP secpower
+To: xianwei.zhao@amlogic.com, Ulf Hansson <ulf.hansson@linaro.org>,
+ Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
+ Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Cc: linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250303-fix-t7-pwrc-v1-1-b563612bcd86@amlogic.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250303-fix-t7-pwrc-v1-1-b563612bcd86@amlogic.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The next bridge connected to a simple bridge could be a panel, e.g.,
-a DPI panel connected to a DPI color encoder. Add the next panel support,
-instead of supporting non-panel next bridge only.
+On 03/03/2025 10:06, Xianwei Zhao via B4 Relay wrote:
+> From: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> 
+> ISP and MIPI_ISP, these two have a parent-child relationship,
+> ISP depends on MIPI_ISP.
+> 
+> Fixes: ca75e4b214c6 ("pmdomain: amlogic: Add support for T7 power domains controller")
+> Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
+> ---
+>   drivers/pmdomain/amlogic/meson-secure-pwrc.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/pmdomain/amlogic/meson-secure-pwrc.c b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> index 42ce41a2fe3a..ff76ea36835e 100644
+> --- a/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> +++ b/drivers/pmdomain/amlogic/meson-secure-pwrc.c
+> @@ -221,7 +221,7 @@ static const struct meson_secure_pwrc_domain_desc t7_pwrc_domains[] = {
+>   	SEC_PD(T7_VI_CLK2,	0),
+>   	/* ETH is for ethernet online wakeup, and should be always on */
+>   	SEC_PD(T7_ETH,		GENPD_FLAG_ALWAYS_ON),
+> -	SEC_PD(T7_ISP,		0),
+> +	TOP_PD(T7_ISP,		0, PWRC_T7_MIPI_ISP_ID),
+>   	SEC_PD(T7_MIPI_ISP,	0),
+>   	TOP_PD(T7_GDC,		0, PWRC_T7_NIC3_ID),
+>   	TOP_PD(T7_DEWARP,	0, PWRC_T7_NIC3_ID),
+> 
+> ---
+> base-commit: 73e4ffb27bb8a093d557bb2dac1a271474cca99c
+> change-id: 20250303-fix-t7-pwrc-f33650b190ef
+> 
+> Best regards,
 
-Signed-off-by: Liu Ying <victor.liu@nxp.com>
----
- drivers/gpu/drm/bridge/Kconfig         |  1 +
- drivers/gpu/drm/bridge/simple-bridge.c | 32 ++++++++++++++++----------
- 2 files changed, 21 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/gpu/drm/bridge/Kconfig b/drivers/gpu/drm/bridge/Kconfig
-index d20f1646dac2..92187dbdd32b 100644
---- a/drivers/gpu/drm/bridge/Kconfig
-+++ b/drivers/gpu/drm/bridge/Kconfig
-@@ -310,6 +310,7 @@ config DRM_SIMPLE_BRIDGE
- 	tristate "Simple DRM bridge support"
- 	depends on OF
- 	select DRM_KMS_HELPER
-+	select DRM_PANEL_BRIDGE
- 	help
- 	  Support for non-programmable DRM bridges, such as ADI ADV7123, TI
- 	  THS8134 and THS8135 or passive resistor ladder DACs.
-diff --git a/drivers/gpu/drm/bridge/simple-bridge.c b/drivers/gpu/drm/bridge/simple-bridge.c
-index c0445bd20e07..4c585e5583ca 100644
---- a/drivers/gpu/drm/bridge/simple-bridge.c
-+++ b/drivers/gpu/drm/bridge/simple-bridge.c
-@@ -19,6 +19,7 @@
- #include <drm/drm_crtc.h>
- #include <drm/drm_edid.h>
- #include <drm/drm_of.h>
-+#include <drm/drm_panel.h>
- #include <drm/drm_print.h>
- #include <drm/drm_probe_helper.h>
- 
-@@ -35,6 +36,7 @@ struct simple_bridge {
- 	const struct simple_bridge_info *info;
- 
- 	struct drm_bridge	*next_bridge;
-+	struct drm_panel	*next_panel;
- 	struct regulator	*vdd;
- 	struct gpio_desc	*enable;
- 
-@@ -114,6 +116,10 @@ static int simple_bridge_attach(struct drm_bridge *bridge,
- 	struct simple_bridge *sbridge = drm_bridge_to_simple_bridge(bridge);
- 	int ret;
- 
-+	if (sbridge->next_panel)
-+		return drm_bridge_attach(bridge->encoder, sbridge->next_bridge,
-+					 bridge, flags);
-+
- 	ret = drm_bridge_attach(bridge->encoder, sbridge->next_bridge, bridge,
- 				DRM_BRIDGE_ATTACH_NO_CONNECTOR);
- 	if (ret < 0)
-@@ -247,7 +253,6 @@ static int simple_bridge_get_dpi_color_coding(struct simple_bridge *sbridge,
- static int simple_bridge_probe(struct platform_device *pdev)
- {
- 	struct simple_bridge *sbridge;
--	struct device_node *remote;
- 	int ret;
- 
- 	sbridge = devm_kzalloc(&pdev->dev, sizeof(*sbridge), GFP_KERNEL);
-@@ -257,17 +262,20 @@ static int simple_bridge_probe(struct platform_device *pdev)
- 	sbridge->info = of_device_get_match_data(&pdev->dev);
- 
- 	/* Get the next bridge in the pipeline. */
--	remote = of_graph_get_remote_node(pdev->dev.of_node, 1, -1);
--	if (!remote)
--		return -EINVAL;
--
--	sbridge->next_bridge = of_drm_find_bridge(remote);
--	of_node_put(remote);
--
--	if (!sbridge->next_bridge) {
--		dev_dbg(&pdev->dev, "Next bridge not found, deferring probe\n");
--		return -EPROBE_DEFER;
--	}
-+	ret = drm_of_find_panel_or_bridge(pdev->dev.of_node, 1, -1,
-+					  &sbridge->next_panel,
-+					  &sbridge->next_bridge);
-+	if (ret)
-+		return dev_err_probe(&pdev->dev, ret,
-+				     "Next panel or bridge not found\n");
-+
-+	if (sbridge->next_panel)
-+		sbridge->next_bridge = devm_drm_panel_bridge_add(&pdev->dev,
-+								 sbridge->next_panel);
-+
-+	if (IS_ERR(sbridge->next_bridge))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(sbridge->next_bridge),
-+				     "Next bridge not found\n");
- 
- 	/* Get the regulator and GPIO resources. */
- 	sbridge->vdd = devm_regulator_get_optional(&pdev->dev, "vdd");
--- 
-2.34.1
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
