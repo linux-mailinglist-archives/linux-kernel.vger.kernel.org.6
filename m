@@ -1,142 +1,89 @@
-Return-Path: <linux-kernel+bounces-544194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B91A4DE75
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:55:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F203A4DE6D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:54:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8DCF3169C3D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:55:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A6A53A9BFD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:54:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFE2202974;
-	Tue,  4 Mar 2025 12:55:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 980B2202C5D;
+	Tue,  4 Mar 2025 12:54:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gS8c3kdl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MRYtRR3b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F85B20299D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:55:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F26721EA7CE;
+	Tue,  4 Mar 2025 12:54:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092912; cv=none; b=qoMp6AV5Vj0OCTRaQNvc4ImDDBRG6N9tZsUQlTTc43iUXt+VsmEPX3WrgUQF+NNPtINFEAkqnjeGqH+/TtWPwlnLdxtN5+XnokJ+Ty2LIn1sJNBqnV/rLUIfOeIz+UKr5TmdzPMohzhdMhYsEHj0e3QTRoOJW4Zt8Hh4T7Rrg+w=
+	t=1741092869; cv=none; b=sngfxGDsU8PjJkYWa4vuXnKpy2OnnTNaHruNWQLeXhO0SmM0rEfuelCqMrKUQCEpSzjcxE1YvNsZuHKa6H2yVPXjFrdkqAR+ttbC1ffDmmMUKb4bJzNUZK1Q82rDxMjsdar1iI1GHznKwJxTdbpSUZ+QsYh6G07eMCPdhp8LmfE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092912; c=relaxed/simple;
-	bh=DiEVCMAGpueHuWnJu6E8MC5GPgN6xjv+sQKeXs/FkJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DDJ5rVMY9i3yYWaRxh9VM8nKK+uNRYqzqkSco77fDRttahdKAEol2VXln4O0QnYgx5s98j7Kjy+FLNuwBfvlXHE3m65bxaekEe3AsOcONMSxNbP480H3JxN6oXXl34TeLH3Vqi+aoheBV8XGheF0oMkRNgSBa/is1gbrFoo7BZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gS8c3kdl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741092909;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fH9J4ARJLyt28l+yIiFu9Mp4M2zRb+mAnPPqf6DryPU=;
-	b=gS8c3kdlOvHAI165cZ84f8KCXkat4zlT8Gj74NS7/ia3xm2ecySc7t75qAY7QbRBnztJgV
-	MnN9vdrlJqV31aOFobYIcJlHOy/YYf8j+YtCrP5VJFKj3j8Y9lLeRjX05RH2fi9rjtC4b9
-	08mJ3BzHdiI7KbFzlFEWrnatqq6FKBI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-657-ltJdboBeP6W1-e8tqC9VfA-1; Tue,
- 04 Mar 2025 07:54:55 -0500
-X-MC-Unique: ltJdboBeP6W1-e8tqC9VfA-1
-X-Mimecast-MFC-AGG-ID: ltJdboBeP6W1-e8tqC9VfA_1741092894
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A7B061801A13;
-	Tue,  4 Mar 2025 12:54:53 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.246])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 2140F3000197;
-	Tue,  4 Mar 2025 12:54:48 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  4 Mar 2025 13:54:23 +0100 (CET)
-Date: Tue, 4 Mar 2025 13:54:17 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Mateusz Guzik <mjguzik@gmail.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Manfred Spraul <manfred@colorfullife.com>,
-	Christian Brauner <brauner@kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>,
-	Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250304125416.GA26141@redhat.com>
-References: <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
- <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
- <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
- <741fe214-d534-4484-9cf3-122aabe6281e@amd.com>
- <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
- <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
- <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
- <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
- <20250303202735.GD9870@redhat.com>
- <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
+	s=arc-20240116; t=1741092869; c=relaxed/simple;
+	bh=/A1A2qZsYsqWgcNSomPW+1mfRwPf8XYoLazhrNYnIU8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PafBDmfumIH8ejBaeaARoQ0b3BxAMVaLB/asFLgzQbF7ckAUm3fNeddo9QTg7j0g/H5XNwXp4AF7QGYBbUVdudUj9wohCxl0XvDVcsUzUYkHpaJjaSxZKJBsHan40/ot+EHvfMhYPC+pDBK+kKiaQPyb2dIPZVhv8Vnl17PVnRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MRYtRR3b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC710C4CEE5;
+	Tue,  4 Mar 2025 12:54:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741092868;
+	bh=/A1A2qZsYsqWgcNSomPW+1mfRwPf8XYoLazhrNYnIU8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=MRYtRR3bSOxt7sDY714pvRJ+cGuKXP1KXOzq7Es4hIChNxf5yfdbuZR5bbw1DInq+
+	 XTyxl4Uqj3539js3jqHejm1CRVV7YfTAUWlpCEwBZy0AYwnmRSvviIJm8lbcw7aazu
+	 4OC2+CshNXdu7/wMzgqSKbWzDwVJgHouoMilfhdnXGAIYOIZLSP4f7RL+hRnWBTYGR
+	 eGkWv1extNmvHcBzHUjTxVQR7Ib1ZVjkI74nip4Lg17FLRRotOHJu/dF194mwzJ6JF
+	 /zqLdIbNwnC3GXPYwYewdPtt6YVfoZKKEtzuRJkuxxWfgQvde2FiRCrUK4sw74wDrf
+	 M2DSvNvOxsr9Q==
+Message-ID: <847c7cd3-3b23-4180-b2b3-affa47413cf4@kernel.org>
+Date: Tue, 4 Mar 2025 06:54:26 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND v2] arm64: dts: socfpga: agilex: Add dma channel id
+ for spi
+To: niravkumar.l.rabara@intel.com, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, nirav.rabara@altera.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250225133919.4128252-1-niravkumar.l.rabara@intel.com>
+Content-Language: en-US
+From: Dinh Nguyen <dinguyen@kernel.org>
+In-Reply-To: <20250225133919.4128252-1-niravkumar.l.rabara@intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 03/03, Linus Torvalds wrote:
->
-> ENTIRELY UNTESTED, but it seems to generate ok code. It might even
-> generate better code than what we have now.
+On 2/25/25 07:39, niravkumar.l.rabara@intel.com wrote:
+> From: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> 
+> Add DMA channel ids for spi0 and spi1 nodes in device tree.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Niravkumar L Rabara <niravkumar.l.rabara@intel.com>
+> ---
+>   arch/arm64/boot/dts/intel/socfpga_agilex.dtsi | 4 ++++
+>   1 file changed, 4 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> index 1235ba5a9865..616259447c6f 100644
+> --- a/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> +++ b/arch/arm64/boot/dts/intel/socfpga_agilex.dtsi
+> @@ -457,6 +457,8 @@ spi0: spi@ffda4000 {
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Applied!
 
-but I have another question...
-
->  static inline bool pipe_readable(const struct pipe_inode_info *pipe)
->  {
-> -	unsigned int head = READ_ONCE(pipe->head);
-> -	unsigned int tail = READ_ONCE(pipe->tail);
-> +	union pipe_index idx = { READ_ONCE(pipe->head_tail) };
-
-I thought this is wrong, but then I noticed that in your version
-->head_tail is the 1st member in this union.
-
-Still perhaps
-
-	union pipe_index idx = { .head_tail = READ_ONCE(pipe->head_tail) };
-
-will look more clear?
-
-> +/*
-> + * Really only alpha needs 32-bit fields, but
-> + * might as well do it for 64-bit architectures
-> + * since that's what we've historically done,
-> + * and it makes 'head_tail' always be a simple
-> + * 'unsigned long'.
-> + */
-> +#ifdef CONFIG_64BIT
-> +  typedef unsigned int pipe_index_t;
-> +#else
-> +  typedef unsigned short pipe_index_t;
-> +#endif
-
-I am just curious, why we can't use "unsigned short" unconditionally
-and avoid #ifdef ?
-
-Is "unsigned int" more efficient on 64-bit?
-
-Oleg.
+Thanks,
+Dinh
 
 
