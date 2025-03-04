@@ -1,150 +1,165 @@
-Return-Path: <linux-kernel+bounces-545318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D0BDA4EB9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:30:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92EC6A4EC4B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:48:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ED0A178919
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:25:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED9058C0A22
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CC228D084;
-	Tue,  4 Mar 2025 18:14:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AEF427EC8E;
+	Tue,  4 Mar 2025 18:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w8pwDljw"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="arLobDPT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DE62780F2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E8E239579;
+	Tue,  4 Mar 2025 18:16:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741112067; cv=none; b=bgH3wb+AAQWJb+RUekyr+Y0UVWKvj1lc8fNIcCPh7yEOzv6cQF6GGaqwIpz7wAlOoSWtAMbotN5fGwTE2V4DQPviKWe6Ua+g0OCfa8KLUA+uysIUP7u2GpaNgmECKc/0+fi+6LXx9fj04i6MthLH4ORzDgh2cwR3QGZhWP5jLXM=
+	t=1741112166; cv=none; b=Zql45AqJSaD5XnqTTBjog8/IiDOM7yFWYn47ppkzJHk2TNuJvhljep6yWvRu1iLwFdJpoj3lokisVKLDrt8wbabVb9eIq6qLI9GBk8yaLwd9xfuT9sJfJMB8kBZfs/upRx9kSiTm+2QGA6k74X/rcb+bxptlXsmNOyBEsvWOUuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741112067; c=relaxed/simple;
-	bh=0BxNCArQS6YXz9VsmCXNHkqDx3pRc8E0K6P//18NTM0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n6R5eANP6jPZ2TFqOohcKWPufcvnHvi5jI8SW7byYyxL8Vr9jL9CIma2ipLb6gdtJvMbCyFHIO0kyEGYqSqL+dMXDVvRO1hcZurng/Fv4CSNGIPwUBQrrQZBo33WnC3S1kscStoLt2L2kvovG70+CT6VO2HjgT7JQj3GULn0Py0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w8pwDljw; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741112062;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=CI5XJci0mb8S2pl5ASbOYBG4+fIERNXYTJQdDedonSU=;
-	b=w8pwDljwAzV2pA5mnEYEewwTLP5iJd/yjKxuoF7il3mxTJCXEqWO1nf6296TYy81jBzdJP
-	0USIKCvph+hrYrlCvz9U7at8SlbglWY84XHhIaj32adQ17PJqJI8p3ANInemnxxnrt/uvl
-	1HB+Sa8ASDf6T11MhS4oMkz/XW7s9ME=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-scsi@vger.kernel.org,
-	target-devel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scsi: target: Remove size arguments when calling strscpy()
-Date: Tue,  4 Mar 2025 19:14:00 +0100
-Message-ID: <20250304181400.78325-1-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1741112166; c=relaxed/simple;
+	bh=TjiK3dy6VtxMzpyEGZ59HRvoPz9f2mzhsPZT7T2eWnU=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=okj9PBu2zxvgD5prfL2rOc5UMwUZfhM5romrVp21PohPL7ArQTvD85ftyvh+vLrneYOpOGhMW5OvcuRjkrP49LB/vQQWZSobVHNN84x/8LPBhqEEY/Z6t++h094h8ggJivDTqwoB9dammXYP+PSEvEUmLsI3mXnFuxTB0D/bsQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=arLobDPT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 097A8C4CEE5;
+	Tue,  4 Mar 2025 18:16:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741112166;
+	bh=TjiK3dy6VtxMzpyEGZ59HRvoPz9f2mzhsPZT7T2eWnU=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=arLobDPTfb+VaUBCkCpX2TEeRqAqSHAELYPc8ObZkWzMQKhT+yCu1KFwupzYjGm0G
+	 vgDiwRkW4dC2pApZZ05eKIvfD91/SWFaQ9R0hID/hhbhAAL1zywLO0aKBRixIwgQuz
+	 kfBLhQRB47lGrthuWQjAq7/4pcqbtUygmCUAlabgm1Xi3ypDps51vvR3KiLB6N8aJt
+	 CP3/v1hen2/7T4KgAuO+EYJaIFprcJWJOwI5j/GXKl2Teg01wRKx4Jm/92TkcoCviT
+	 RmXeI3jgKyRl/y0hvoeWBvPAdZ5nNL0Tj7tj+msGJqFJA5bQfjL1CzthgEHt5WAUpq
+	 Ddgj0rzvqukqw==
+Message-ID: <b4fb36bc3970293ebdf1ac793bb3d752.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250301-exynos7870-pmu-clocks-v5-2-715b646d5206@disroot.org>
+References: <20250301-exynos7870-pmu-clocks-v5-0-715b646d5206@disroot.org> <20250301-exynos7870-pmu-clocks-v5-2-715b646d5206@disroot.org>
+Subject: Re: [PATCH v5 2/2] clk: samsung: add initial exynos7870 clock driver
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, Kaustabh Chakraborty <kauschluss@disroot.org>
+To: Alim Akhtar <alim.akhtar@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Conor Dooley <conor+dt@kernel.org>, Kaustabh Chakraborty <kauschluss@disroot.org>, Krzysztof Kozlowski <krzk@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Rob Herring <robh@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>
+Date: Tue, 04 Mar 2025 10:16:03 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-The size parameter of strscpy() is optional because strscpy() uses
-sizeof() to determine the length of the destination buffer if it is not
-provided as an argument. Remove it to simplify the code.
+Quoting Kaustabh Chakraborty (2025-02-28 19:57:13)
+> diff --git a/drivers/clk/samsung/clk-exynos7870.c b/drivers/clk/samsung/c=
+lk-exynos7870.c
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..2ec4a4e489be30bd1cd2e6dea=
+c006bb8ac5bdc57
+> --- /dev/null
+> +++ b/drivers/clk/samsung/clk-exynos7870.c
+> @@ -0,0 +1,1830 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Copyright (C) 2015 Samsung Electronics Co., Ltd.
+> + * Author: Kaustabh Chakraborty <kauschluss@disroot.org>
+> + *
+> + * Common Clock Framework support for Exynos7870.
+> + */
+> +
+> +#include <linux/clk.h>
 
-Remove some unnecessary curly braces.
+Please remove this include as this is a clk provider and not a clk
+consumer.
 
-No functional changes intended.
+> +#include <linux/clk-provider.h>
+> +#include <linux/of.h>
+> +#include <linux/of_device.h>
+> +#include <linux/platform_device.h>
+> +
+> +#include <dt-bindings/clock/samsung,exynos7870-cmu.h>
+> +
+> +#include "clk.h"
+> +#include "clk-exynos-arm64.h"
+> +
+> +/*
+> + * Register offsets for CMU_MIF (0x10460000)
+> + */
+[...]
+> +
+> +static const struct samsung_cmu_info peri_cmu_info __initconst =3D {
+> +       .gate_clks              =3D peri_gate_clks,
+> +       .nr_gate_clks           =3D ARRAY_SIZE(peri_gate_clks),
+> +       .clk_regs               =3D peri_clk_regs,
+> +       .nr_clk_regs            =3D ARRAY_SIZE(peri_clk_regs),
+> +       .nr_clk_ids             =3D PERI_NR_CLK,
+> +};
+> +
+> +static int __init exynos7870_cmu_probe(struct platform_device *pdev)
+> +{
+> +       const struct samsung_cmu_info *info;
+> +       struct device *dev =3D &pdev->dev;
+> +
+> +       info =3D of_device_get_match_data(dev);
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
- drivers/target/target_core_configfs.c | 20 +++++++++-----------
- 1 file changed, 9 insertions(+), 11 deletions(-)
+Use device APIs please: device_get_match_data()
 
-diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
-index c40217f44b1b..9b2b9786ce2f 100644
---- a/drivers/target/target_core_configfs.c
-+++ b/drivers/target/target_core_configfs.c
-@@ -673,12 +673,10 @@ static ssize_t emulate_model_alias_store(struct config_item *item,
- 		return ret;
- 
- 	BUILD_BUG_ON(sizeof(dev->t10_wwn.model) != INQUIRY_MODEL_LEN + 1);
--	if (flag) {
-+	if (flag)
- 		dev_set_t10_wwn_model_alias(dev);
--	} else {
--		strscpy(dev->t10_wwn.model, dev->transport->inquiry_prod,
--			sizeof(dev->t10_wwn.model));
--	}
-+	else
-+		strscpy(dev->t10_wwn.model, dev->transport->inquiry_prod);
- 	da->emulate_model_alias = flag;
- 	return count;
- }
-@@ -1433,7 +1431,7 @@ static ssize_t target_wwn_vendor_id_store(struct config_item *item,
- 	ssize_t len;
- 	ssize_t ret;
- 
--	len = strscpy(buf, page, sizeof(buf));
-+	len = strscpy(buf, page);
- 	if (len > 0) {
- 		/* Strip any newline added from userspace. */
- 		stripped = strstrip(buf);
-@@ -1464,7 +1462,7 @@ static ssize_t target_wwn_vendor_id_store(struct config_item *item,
- 	}
- 
- 	BUILD_BUG_ON(sizeof(dev->t10_wwn.vendor) != INQUIRY_VENDOR_LEN + 1);
--	strscpy(dev->t10_wwn.vendor, stripped, sizeof(dev->t10_wwn.vendor));
-+	strscpy(dev->t10_wwn.vendor, stripped);
- 
- 	pr_debug("Target_Core_ConfigFS: Set emulated T10 Vendor Identification:"
- 		 " %s\n", dev->t10_wwn.vendor);
-@@ -1489,7 +1487,7 @@ static ssize_t target_wwn_product_id_store(struct config_item *item,
- 	ssize_t len;
- 	ssize_t ret;
- 
--	len = strscpy(buf, page, sizeof(buf));
-+	len = strscpy(buf, page);
- 	if (len > 0) {
- 		/* Strip any newline added from userspace. */
- 		stripped = strstrip(buf);
-@@ -1520,7 +1518,7 @@ static ssize_t target_wwn_product_id_store(struct config_item *item,
- 	}
- 
- 	BUILD_BUG_ON(sizeof(dev->t10_wwn.model) != INQUIRY_MODEL_LEN + 1);
--	strscpy(dev->t10_wwn.model, stripped, sizeof(dev->t10_wwn.model));
-+	strscpy(dev->t10_wwn.model, stripped);
- 
- 	pr_debug("Target_Core_ConfigFS: Set emulated T10 Model Identification: %s\n",
- 		 dev->t10_wwn.model);
-@@ -1545,7 +1543,7 @@ static ssize_t target_wwn_revision_store(struct config_item *item,
- 	ssize_t len;
- 	ssize_t ret;
- 
--	len = strscpy(buf, page, sizeof(buf));
-+	len = strscpy(buf, page);
- 	if (len > 0) {
- 		/* Strip any newline added from userspace. */
- 		stripped = strstrip(buf);
-@@ -1576,7 +1574,7 @@ static ssize_t target_wwn_revision_store(struct config_item *item,
- 	}
- 
- 	BUILD_BUG_ON(sizeof(dev->t10_wwn.revision) != INQUIRY_REVISION_LEN + 1);
--	strscpy(dev->t10_wwn.revision, stripped, sizeof(dev->t10_wwn.revision));
-+	strscpy(dev->t10_wwn.revision, stripped);
- 
- 	pr_debug("Target_Core_ConfigFS: Set emulated T10 Revision: %s\n",
- 		 dev->t10_wwn.revision);
--- 
-2.48.1
+> +       exynos_arm64_register_cmu(dev, dev->of_node, info);
+> +
+> +       return 0;
+> +}
+> +
+> +static const struct of_device_id exynos7870_cmu_of_match[] =3D {
+> +       {
+> +               .compatible =3D "samsung,exynos7870-cmu-mif",
+> +               .data =3D &mif_cmu_info,
+> +       }, {
+> +               .compatible =3D "samsung,exynos7870-cmu-dispaud",
+> +               .data =3D &dispaud_cmu_info,
+> +       }, {
+> +               .compatible =3D "samsung,exynos7870-cmu-fsys",
+> +               .data =3D &fsys_cmu_info,
+> +       }, {
+> +               .compatible =3D "samsung,exynos7870-cmu-g3d",
+> +               .data =3D &g3d_cmu_info,
+> +       }, {
+> +               .compatible =3D "samsung,exynos7870-cmu-isp",
+> +               .data =3D &isp_cmu_info,
+> +       }, {
+> +               .compatible =3D "samsung,exynos7870-cmu-mfcmscl",
+> +               .data =3D &mfcmscl_cmu_info,
+> +       }, {
+> +               .compatible =3D "samsung,exynos7870-cmu-peri",
+> +               .data =3D &peri_cmu_info,
+> +       }, {
+> +       },
+> +};
+> +
+> +static struct platform_driver exynos7870_cmu_driver __refdata =3D {
 
+Having __refdata here looks wrong.
+
+> +       .driver =3D {
+> +               .name =3D "exynos7870-cmu",
+> +               .of_match_table =3D exynos7870_cmu_of_match,
+> +               .suppress_bind_attrs =3D true,
+> +       },
+> +       .probe =3D exynos7870_cmu_probe,
+> +};
+> +
+> +static int __init exynos7870_cmu_init(void)
+> +{
+> +       return platform_driver_register(&exynos7870_cmu_driver);
+
+Is this supposed to be platform_driver_probe()? All the __init markings
+in the samsung clk driver look like potential problems if anything
+defers or is made into a module.
 
