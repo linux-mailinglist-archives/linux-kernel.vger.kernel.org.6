@@ -1,166 +1,129 @@
-Return-Path: <linux-kernel+bounces-545398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 362BCA4EC83
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:57:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DC7A4EC87
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F12D188EAF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:57:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D56CD7A3E4A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C512475C3;
-	Tue,  4 Mar 2025 18:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB0E1E505;
+	Tue,  4 Mar 2025 18:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="I46g0O7L"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="d4gTLTTm"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D1281EE7AD;
-	Tue,  4 Mar 2025 18:56:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2E22E3368
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:57:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741114616; cv=none; b=cvxNE6hD8wQXNSMMd3mqiGrdyXfC/Cp01pBSR95hmbeqv9KtqNfLMgx6i9qFE5r7xR+EhcWFryIq4H04STJhosZ53Mhntve6RIoJJaiyKXNS6T3EzstMBvAb+Kl0ECBWwcFDL3Z6xiJYbSOVc3EiGh+a4IVJfvBOTiWFr5a0jys=
+	t=1741114656; cv=none; b=hPUodIMVWv60+V655i9CoGE8zZ6dBm/t5G7XKW+zV/H5mziVbYP46ChYDo6oWP67Agv9WGY1tpA0OJu0o0RZFjEJpJ0xrXtFrGnJPl9NJlQZ6L0q52dAbyEsy2E5N8fO4eT52N+9Ae+OYUbGdl8+e3L41dXrHhM9L9HDUEp9o3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741114616; c=relaxed/simple;
-	bh=jNN+ALkVqBLsOraGBngdWfjn4aWXUrvS6kha8AJ+uSM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TFu+QYdjjZep8dmEdWxQdql8/N2JV//R8kMsmhgBmPLUvWJIlQyvU7GsQEtuyy7wf1nqpg7Bhcpbygqyn+NsRnph16Q5cGE4doy/KKK/zV3bHIM43d13FoZNB66tLGjnnB/xVVD5wVDGOoCG0a+VzV1vG3/vvVzQwNBaOs1RfQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=I46g0O7L; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741114615; x=1772650615;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jNN+ALkVqBLsOraGBngdWfjn4aWXUrvS6kha8AJ+uSM=;
-  b=I46g0O7LVd1cW3o5u7weSQ8zzlf4+IFRiX06NLxiVhHTAsMpgHBBikaI
-   YC7ZNxxG+TdiNMF3saQwnwW8xPUxzc8R8SRy5mUBP2Hu/AI/3Z12gGHc5
-   OFUsfpVR5Sjina4wTDaHlGvvg41E/ayMhLgOZpE0PeZ3m5CwEbfk1KcUP
-   qtKUXO+s8na6fWWxu7eJRJxpqyxiVzCHs+yUNm5QxAC8L+JJE/nIf35b9
-   Qj5ZIym2hDy6FylDmG28Hk8Iap90MwxSwOMY1fdpa0Uev87t9vhLE1K1i
-   HU1y/UTHknD34h7TNkI1Llz3VEx1vBZnZVFgJwxOyaPVGLNQN2nqAQNhv
-   Q==;
-X-CSE-ConnectionGUID: ikVJiX1MSAq7rpeQHe9aeg==
-X-CSE-MsgGUID: KebMXSuqSNmojcqb7qJRSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53453054"
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="53453054"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 10:56:54 -0800
-X-CSE-ConnectionGUID: xUXsFrzMQ0SJUDL3yqgfMQ==
-X-CSE-MsgGUID: mxMoLTajRYW6mo2UUB6DVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
-   d="scan'208";a="118284175"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.109.132])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 10:56:53 -0800
-Date: Tue, 4 Mar 2025 10:56:51 -0800
-From: Alison Schofield <alison.schofield@intel.com>
-To: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	Ira Weiny <ira.weiny@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Yazen Ghannam <yazen.ghannam@amd.com>,
-	Terry Bowman <terry.bowman@amd.com>
-Subject: Re: [PATCH v7 2/2] cxl/pci: Add trace logging for CXL PCIe Port RAS
- errors
-Message-ID: <Z8dM80wy5Q8UQomz@aschofie-mobl2.lan>
-References: <20250226221157.149406-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250226221157.149406-3-Smita.KoralahalliChannabasappa@amd.com>
+	s=arc-20240116; t=1741114656; c=relaxed/simple;
+	bh=6T9FhHb/JWtxunhRwlvuECiU9TmRmhKYSWtxW63z62w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TeSpl+CMsbwhQBawq6bO0VkixcahIvOkCUaYz346AiAkfC4g7KHNsN3fdHsLmQ5Ao5lGKBN4StI477z9tCfoYK0oYuXLN492W4F1RpAdIpEEQZbdCfjgMexH26VM/J9FvsVcD+CUp9AkJozHyYH8X18ziXcth15/itSK1hLyZIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=d4gTLTTm; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-abf538f7be0so565820666b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 10:57:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741114652; x=1741719452; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=wwUaiWfoPUpRoeAAS0kH7mr77gvmAjedPgmddxc8NaY=;
+        b=d4gTLTTmnlbE2Ks+8QbeE9nKPcCbZe0jXCXY/vFYf/BvDR5O6gCjQvremTOE4ubTht
+         FZ0FdKLmhvZ8MRKu+4XoEmo3oKIt8/LJeceycUoYe2RMsn2Mh8B4X3yFxE6bXJg8wPcD
+         9SO1Z6AgNeyohS/bxnTwLYja8sQdJUqWMyTtg=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741114652; x=1741719452;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wwUaiWfoPUpRoeAAS0kH7mr77gvmAjedPgmddxc8NaY=;
+        b=EftcUmMc1tn8M2aUQYUjdnwITWH4hclf3t/hW2f1W+F+kvc40Hwzc79UVhJyl1Mo3/
+         hXBNJ+iQCY+0zQWZyr+/INAxruPrBilUdoyAOr5QAmxA0oluXd8n85DzQMJlyxaSc9FW
+         C0GF/g8nXEdS6M4IVy8KPnMMUNiO7+QeSgnWwb4GA1vjTU2307kbnq926SQ4DoDTLSmV
+         YT/03SKz12aOM4OuU1OK2P7x9NiKlhHVaaIv6rEzQiutRtifGRK4/z/biE+Z4aPih4EP
+         9E26M/m0ssuatV2lwQbupqEjJI8v0oof1tIXmdufk8ApD1hW61SHz1SA7XUYgQieHUaX
+         +t0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUrZXKxWC6ZKB/SbOFRHOJYACK1hL9O5rfoDNjkCuY7/Z/Wm6IzeAEI6AVIXg7vLEWaJY6IdgaMtZrsN1U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoEB+miwBDn/UrEnMjMRZAmFayPKtbcBLxgg6j3BEA1CDFCiFV
+	4ucYP7/7ZBp6vGH6qrWrUu0uVv/8q3DECdEBmuc3hj1TQmtXsnj3Kjk2R1xfd2KOydEDEF91PU9
+	9reBf4w==
+X-Gm-Gg: ASbGnctAr6EZ4/5bpPCpxvO4FjrBx5+QEe4soAbLimzZ2c3IkqreB1B1ZZ2A3dKkmVw
+	EN26eBia3hk7smklEY/XY8tJVeqVVX2PjwGjz1ZtYkrH2L9D6R7oD0RfIwA4y4Ii3BE5yVavYKz
+	xnH19BAJHt3CnPiBL0NsmF0MnTb3yIxl0a8s/ibZRDW7jkht7jXYbjX/V67rBBfmawmfPd2gEn7
+	3S69mo1WIobWOe+6UL9Jazrg8sxqGGYWhv8iANibY00CNHZB8DXdvD37G5Pj8d4gr1YueOP+VWL
+	vCF1LE5cd2JqE1sSXcW4S1KMh8xNNiNW0J55gNyH+e1I98+aIuXokWQYAsgvtKkZKt4HYk5Bp+d
+	2ZIj1pAHEgyY1IaB4r8E=
+X-Google-Smtp-Source: AGHT+IEIw+Dr6kT0ozUjSr7fy4FfY4XSauA9HeKs4+NdMhy77HwurKaspcq64SGVyZn4XJ+tmJlWyg==
+X-Received: by 2002:a17:906:7950:b0:aa6:a87e:f2e1 with SMTP id a640c23a62f3a-ac20db0455bmr36645166b.56.1741114652365;
+        Tue, 04 Mar 2025 10:57:32 -0800 (PST)
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com. [209.85.218.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac052702e83sm336921466b.21.2025.03.04.10.57.31
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 10:57:31 -0800 (PST)
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf518748cbso632800966b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 10:57:31 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUiUByvCAFSecr8NYXX/8lV5VrLHmN91ok3tcy6wffKP+9MB9/C/CpyBgRlR5LjX8EDo4/J/U9RzlcEM20=@vger.kernel.org
+X-Received: by 2002:a17:907:da9:b0:abf:497d:a23d with SMTP id
+ a640c23a62f3a-ac20db01cbbmr33101366b.53.1741114650914; Tue, 04 Mar 2025
+ 10:57:30 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226221157.149406-3-Smita.KoralahalliChannabasappa@amd.com>
+References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
+ <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
+ <Z8a66_DbMbP-V5mi@gmail.com> <CAHk-=wjRsMfndBGLZzkq7DOU7JOVZLsUaXnfjFvOcEw_Kd6h5g@mail.gmail.com>
+ <CAHk-=wjc8jnsOkLq1YfmM0eQqceyTunLEcfpXcm1EBhCDaLLgg@mail.gmail.com>
+ <20250304182132.fcn62i4ry5ndli7l@jpoimboe> <CAHk-=wjgGD1p2bOCOeTjikNKmyDJ9zH8Fxiv5A+ts3JYacD3fA@mail.gmail.com>
+In-Reply-To: <CAHk-=wjgGD1p2bOCOeTjikNKmyDJ9zH8Fxiv5A+ts3JYacD3fA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Tue, 4 Mar 2025 08:57:13 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whqPZjtH6VwLT3vL5-b3ONL2F83yEzxMMco+uFXe8CdKg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jr_usyxBsXKRNlYO2C44tmlzyfAvMqXf0CKg8l-nZ0GMDd02O2gmQZ-lCU
+Message-ID: <CAHk-=whqPZjtH6VwLT3vL5-b3ONL2F83yEzxMMco+uFXe8CdKg@mail.gmail.com>
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-tip-commits@vger.kernel.org, 
+	"Peter Zijlstra (Intel)" <peterz@infradead.org>, Brian Gerst <brgerst@gmail.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Feb 26, 2025 at 10:11:57PM +0000, Smita Koralahalli wrote:
+On Tue, 4 Mar 2025 at 08:48, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> Random ugly code, untested, special versions for different config options.
+>
+> __builtin_frame_address() is much more complex than just the old "use
+> a register variable".
 
-Kind of a nit, but since these are exposed to user space suggest 
-matching these names now.
+On the gcc bugzilla that hpa opened, I also note that Pinski said that
+the __builtin_frame_address() is likely to just work by accident.
 
-> +++ b/drivers/cxl/core/trace.h
-> @@ -48,6 +48,34 @@
->  	{ CXL_RAS_UC_IDE_RX_ERR, "IDE Rx Error" }			  \
->  )
->  
-> +TRACE_EVENT(cxl_port_aer_uncorrectable_error,
-> +	TP_PROTO(struct device *dev, u32 status, u32 fe, u32 *hl),
-> +	TP_ARGS(dev, status, fe, hl),
-> +	TP_STRUCT__entry(
-> +		__string(devname, dev_name(dev))
-> +		__string(parent, dev_name(dev->parent))
+Exactly like the %rsp case.
 
-Above devname, parent 
+I'd be much more inclined to look for whether marking the asm
+'volatile' would be a more reliable model. Or adding a memory clobber
+or similar.
 
-> +		__field(u32, status)
-> +		__field(u32, first_error)
-> +		__array(u32, header_log, CXL_HEADERLOG_SIZE_U32)
-> +	),
-> +	TP_fast_assign(
-> +		__assign_str(devname);
-> +		__assign_str(parent);
-> +		__entry->status = status;
-> +		__entry->first_error = fe;
-> +		/*
-> +		 * Embed the 512B headerlog data for user app retrieval and
-> +		 * parsing, but no need to print this in the trace buffer.
-> +		 */
-> +		memcpy(__entry->header_log, hl, CXL_HEADERLOG_SIZE);
-> +	),
-> +	TP_printk("device=%s host=%s status: '%s' first_error: '%s'",
+Those kinds of solutions would also hopefully not need different
+sequences for different config options. Because
+__builtin_frame_address() really *is* fundamentally fragile, and the
+fact that frame pointers change behavior is a pretty big symptom of
+that fragility.
 
-Above device, host
-
-> +		  __get_str(devname), __get_str(parent),
-> +		  show_uc_errs(__entry->status),
-> +		  show_uc_errs(__entry->first_error)
-> +	)
-> +);
-> +
->  TRACE_EVENT(cxl_aer_uncorrectable_error,
->  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status, u32 fe, u32 *hl),
->  	TP_ARGS(cxlmd, status, fe, hl),
-> @@ -96,6 +124,25 @@ TRACE_EVENT(cxl_aer_uncorrectable_error,
->  	{ CXL_RAS_CE_PHYS_LAYER_ERR, "Received Error From Physical Layer" }	\
->  )
->  
-
-same thing below -
-
-
-> +TRACE_EVENT(cxl_port_aer_correctable_error,
-> +	TP_PROTO(struct device *dev, u32 status),
-> +	TP_ARGS(dev, status),
-> +	TP_STRUCT__entry(
-> +		__string(devname, dev_name(dev))
-> +		__string(parent, dev_name(dev->parent))
-> +		__field(u32, status)
-> +	),
-> +	TP_fast_assign(
-> +		__assign_str(devname);
-> +		__assign_str(parent);
-> +		__entry->status = status;
-> +	),
-> +	TP_printk("device=%s host=%s status='%s'",
-> +		  __get_str(devname), __get_str(parent),
-> +		  show_ce_errs(__entry->status)
-> +	)
-> +);
-> +
->  TRACE_EVENT(cxl_aer_correctable_error,
->  	TP_PROTO(const struct cxl_memdev *cxlmd, u32 status),
->  	TP_ARGS(cxlmd, status),
-> -- 
-> 2.17.1
-> 
+             Linus
 
