@@ -1,137 +1,148 @@
-Return-Path: <linux-kernel+bounces-544710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC05A4E467
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:54:57 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA08A4E4E2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6415719C4E52
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:45:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FD118835E0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:46:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CA0124EA87;
-	Tue,  4 Mar 2025 15:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FDD20ADEC;
+	Tue,  4 Mar 2025 15:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DiF3v5Vk"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PcHRxeoJ"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F33DF24C060
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B54278118
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:32:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102223; cv=none; b=BGWyczLFFnyCuy0oLXqRF6wOFJA2tv/sTjWi7/c7WeBzmsnGlBehwd4J/NRiUtreI4V0N9L23lo7PhNnMy8sq6QIKDaaZpFSBRj6bssmHculIgSKJaswmVHBg8bhDTpW9Y0Nfvm8N96dgzht7hoFeg84Ir2IKPwsWT/of+sRlsk=
+	t=1741102339; cv=none; b=G4kgKCpYPp+BQ4TH55MoYyw7TETgHtcPTRPsz4n+Q8etPztw2r4OlZw9mZbYD0+g+6WVD2gPX0TxFGYHjA4MBcCYhPtmC2V2s2S5GtSeF5CB9f98XwRCu+quSBN62BQ+5Hrtjg+ix4acdb3u1W0D3jXUqp+yJ0jXd6dCJq92dzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102223; c=relaxed/simple;
-	bh=pCfGtvk96jzYY0aDPo6UzD5wZN4EHA8IEklxkYVKezQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Vk+uAitTXXR2UZ9MJReeCe7j9O7IZyIJWnne29SMi1Rgs9XPzBk4wvGxdZNw6uzyZwrBo9o6QmIaAVYb5JJBbXEUx07bFfkLh4kbfl9cio3o6qf4PXxec3SigmoYk9Dx1m2ft6b+7hoRALQYCmNUk74rvhjn9sjJSg6DgU0AO+M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DiF3v5Vk; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fed20dd70cso6345592a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:30:21 -0800 (PST)
+	s=arc-20240116; t=1741102339; c=relaxed/simple;
+	bh=jHsoS/QfB3OLT+xMvFjIYwKmEM5bHtcU7LWt7y8mak8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ERKXbUH+eAO9/Ap88Ehe0nx7DLQWxe0cs+mUgyfiJTl8YEDy+ygOoMIgKIijREtk7tSoLZ8EpJmwC8/6PS1yZxQ8nM70fxy2TrFIHho+nVz8HgHLbIFD20v67wpAzOu5FVllFSbejNDy1ELGPuHDITHuJ8BWygqS7mv0f01QKXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PcHRxeoJ; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2feb9076cdcso9872430a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:32:17 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741102221; x=1741707021; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=cvg9RGNtgXTSILk0IdpR94FQL1jxJC1gyLgPdqw8XU0=;
-        b=DiF3v5VkUGnzU9LKyJFBLtvo7EuoyDw4OnRAFiK+y8GgN2HpMhbK8zc+rPW6V+4IK8
-         TYW4fTuVYM41oIxmQaZBZq0o0HbHJLedCSSU2GgvWAH5pz6pLojHA/aIl9g8er5M03Yr
-         BjAISmyhDBrGcce83oggSEo1XMgS/4C8xlA6tW0JCgl0dW3TBJn8ksyPyrh9ZEdqA9xU
-         Nbtp3xtpEx6yvGs/9oPSIOx6pib+NM4PGyvglFbFc7K3+inEa8mXx/cYzMAxwgVlJmhH
-         dM+EarfIA5cX5aGGpBxXzZsLq0QwUCrrq7TQPuLflyLlIzjlgIo6Z9iyzUeXJoqyIYni
-         dVlg==
+        d=linaro.org; s=google; t=1741102337; x=1741707137; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=9J55i6SaAxXDmk71XUiDvvdHDUMorv5pKHh75B2QGvY=;
+        b=PcHRxeoJRnnQsqqnpmTbzdbJFuUoQ6wslJvBQ1oXtZ6vlbZ6aI4+N14wW2b8UzUPxD
+         /4WdAv8otbQKOIfVurvDb67QKRHwWuADKVpEFmvbBEUzy09otdz6SB+Q1FmmKFWYnL0G
+         +Wo4JsWoPhupopYXMMzgma901JP6G5E+WHm6rQSkBFtNlhdszAnhDHFC6wxrvzEhVZDQ
+         he/qzQQIGyRHK7n+/AyUYR1/y5AZqocZfAkyin6P3kLx5K8EbTbcwJBstocmJR1tErbA
+         VrEL+Y+s0hn++WB4IUEuYsutvL+TzXzLRd1AO/UwNM6YVPJ0+vBpn7cbl0eud2eIm3XS
+         /elw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741102221; x=1741707021;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cvg9RGNtgXTSILk0IdpR94FQL1jxJC1gyLgPdqw8XU0=;
-        b=vZ+BwHfogkTtXlSYa8eUbNVmO2asL3yeWkYYEKAKDQyWLAbtSCUj4GB/QpBnzmguMd
-         JX1NQ1YiX1nQ17VXpcqz7ZVb5rgHhDTYGQ1KahktXYUeqQ5nf3jXMTD7/uuNo0E8WAIH
-         cLCUvZg7ryEq/EH9W7yknib1LeoKDwGbRN1i2SdmXakkN6I0VadaoPWS9PsJ/V/VRxOl
-         3o6glYMhYsVBOh1OpLmKyXgvmROlKPcKS3ZsXYt+iHQTv1fg/pV8P/3ROqdPBwtqnSQ/
-         Ql/XyE/L82aMWseBS1QSBIsEiGI30oQ7d/tCCrmxQsaNs9K5DChriQtpVI+syDU/xrIl
-         Sjxg==
-X-Forwarded-Encrypted: i=1; AJvYcCX4alfrvdssOIjSI2Kh4IaCPgXgYhJjST4lfspavFbHHvHeL5u5fF+9ToaeXq3Ltbz4ahlHBQjksLFd3XA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMA1NkZKsZhHB9isbnt23JD0hzBEz7HDndh3ngdetXXhheLkXV
-	L267UwhrlYW6HDFXgecHAihyOTWp6yAe6s3PrELqnf6G++11SadIb/yC1+vE0yRYQDxbywYzcr5
-	JOw==
-X-Google-Smtp-Source: AGHT+IEM4E5/Zptus46DoKrgzz5+XTeSJ4hJIAQWQAIYRnIL9pjg60K5aKaF81Eu644JbhsDlC5832QLpoQ=
-X-Received: from pjur6.prod.google.com ([2002:a17:90a:d406:b0:2fc:2959:b397])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2c90:b0:2ee:db8a:2a01
- with SMTP id 98e67ed59e1d1-2febac10a9fmr26741760a91.30.1741102221273; Tue, 04
- Mar 2025 07:30:21 -0800 (PST)
-Date: Tue, 4 Mar 2025 07:30:19 -0800
-In-Reply-To: <diqz8qplabre.fsf@ackerleytng-ctop.c.googlers.com>
+        d=1e100.net; s=20230601; t=1741102337; x=1741707137;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9J55i6SaAxXDmk71XUiDvvdHDUMorv5pKHh75B2QGvY=;
+        b=u/ued1GSlQDY3DQ1TDFBy3/gwQsgAzC3i8Ph2ho9GtviXarnMIBhqAv+iLDTAcdzp7
+         HI/3KqfSlxxY5f/YUHcKcpjJR8K/b5GrRekCF+WD0bMaV3RT0AlfGIgP9lBURrTuK79z
+         8GAoW/xYrZlw2OrS+4yZql1dX+iLo0zSAzTiuyvfP0tiHPk4MZRoUba8q9U0wQGfizCB
+         3mLBhrvk4UACgocB96REY+F+4Caren+8HLSJNHgCXch/E5OhA6un+YR8eXnnSOz/OCsi
+         LOjc1l5rt3shwFiKSbOTfO6LCll0Jaz7Mu2UWjRDfeNtja4+lcHhHd2zQrZ7n4dx4WVU
+         3G1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUCSaFbBJUtrlSM4RAKQydBRJJRW+EBd38AuxaQw8n3YvbmIlwylghk9h25d6KQ8V26G+EVc/II+oqEsaE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywhs4J9/qS1ARBnroJqSN3bGMCv/7vkIYL3fsnIIIjjL6L+BaQC
+	jYFyzvdmxT0EzVdINcdHHoegxOLZe4hgttY3dA/2xsUlpCPccqgg13nBLqW55w==
+X-Gm-Gg: ASbGncsXSpO+wAcl841apurR0GBsYYkb2q1Ff+VNiO3CeTMEonTMpwHzF/tSQ9VVc7F
+	7YIz7A8AHqz8dID33wFEa/CeeA+rni3YyW5TySSwM4sJuRO5/rb7oq6ddEtVtn8pPbf5dAg+EoQ
+	FswkFVS6mMf3PRA7LSu3W+4raCH5L+qb56Q4AqM2oxjrawxr9TpGRVq+zVbTv4tkUhnHVdlqc3E
+	o2RVEsz8w2uOS+kiDMYY7uk+LEoyv64Q1ke8cCpvl/rdVG7ovzPL3nqqfnqzUpFFMIl0GuRrklB
+	wI8UuRVw9ZMBRbNHs15Ud9Yt4SUmt+LhndRKzPSN/2r4Ea8MJ/FMv+s=
+X-Google-Smtp-Source: AGHT+IGGf95zBxRvPRSEYDsTC4/BBUP78sumCmzYhxc9letUVVeTQ59a5edLgdJXdoWT1eIqtoqw6w==
+X-Received: by 2002:a17:90b:2888:b0:2fe:b907:562f with SMTP id 98e67ed59e1d1-2febab5e112mr30851643a91.14.1741102336858;
+        Tue, 04 Mar 2025 07:32:16 -0800 (PST)
+Received: from thinkpad ([120.60.51.199])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2fe8284f076sm13309640a91.42.2025.03.04.07.32.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 07:32:16 -0800 (PST)
+Date: Tue, 4 Mar 2025 21:02:06 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Fan Ni <nifan.cxl@gmail.com>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 5/5] Add debugfs based statistical counter support in
+ DWC
+Message-ID: <20250304153206.gr7footrqrpc5uxf@thinkpad>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132043epcas5p27fde98558b13b3311cdc467e8f246380@epcas5p2.samsung.com>
+ <20250221131548.59616-6-shradha.t@samsung.com>
+ <Z8XuuNb6TRevUlHH@debian>
+ <20250303194228.GB1552306@rocinante>
+ <Z8YZEALV71PUkXpF@debian>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <b494af0e-3441-48d4-abc8-df3d5c006935@suse.cz> <diqz8qplabre.fsf@ackerleytng-ctop.c.googlers.com>
-Message-ID: <Z8cci0nNtwja8gyR@google.com>
-Subject: Re: [PATCH v6 4/5] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy
-From: Sean Christopherson <seanjc@google.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: Vlastimil Babka <vbabka@suse.cz>, shivankg@amd.com, akpm@linux-foundation.org, 
-	willy@infradead.org, pbonzini@redhat.com, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	linux-coco@lists.linux.dev, chao.gao@intel.com, david@redhat.com, 
-	bharata@amd.com, nikunj@amd.com, michael.day@amd.com, Neeraj.Upadhyay@amd.com, 
-	thomas.lendacky@amd.com, michael.roth@amd.com, tabba@google.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8YZEALV71PUkXpF@debian>
 
-On Tue, Mar 04, 2025, Ackerley Tng wrote:
-> Vlastimil Babka <vbabka@suse.cz> writes:
-> >> struct shared_policy should be stored on the inode rather than the file,
-> >> since the memory policy is a property of the memory (struct inode),
-> >> rather than a property of how the memory is used for a given VM (struct
-> >> file).
-> >
-> > That makes sense. AFAICS shmem also uses inodes to store policy.
-> >
-> >> When the shared_policy is stored on the inode, intra-host migration [1]
-> >> will work correctly, since the while the inode will be transferred from
-> >> one VM (struct kvm) to another, the file (a VM's view/bindings of the
-> >> memory) will be recreated for the new VM.
-> >> 
-> >> I'm thinking of having a patch like this [2] to introduce inodes.
-> >
-> > shmem has it easier by already having inodes
-> >
-> >> With this, we shouldn't need to pass file pointers instead of inode
-> >> pointers.
-> >
-> > Any downsides, besides more work needed? Or is it feasible to do it using
-> > files now and convert to inodes later?
-> >
-> > Feels like something that must have been discussed already, but I don't
-> > recall specifics.
+On Mon, Mar 03, 2025 at 01:03:12PM -0800, Fan Ni wrote:
+> On Tue, Mar 04, 2025 at 04:42:28AM +0900, Krzysztof Wilczyński wrote:
+> > Hello,
+> > 
+> > [...]
+> > > > +static ssize_t counter_value_read(struct file *file, char __user *buf, size_t count, loff_t *ppos)
+> > > > +{
+> > > > +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
+> > > > +	struct dw_pcie *pci = pdata->pci;
+> > > > +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
+> > > > +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
+> > > > +	ssize_t pos;
+> > > > +	u32 val;
+> > > > +
+> > > > +	mutex_lock(&rinfo->reg_event_lock);
+> > > > +	set_event_number(pdata, pci, rinfo);
+> > > > +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_DATA_REG);
+> > > > +	mutex_unlock(&rinfo->reg_event_lock);
+> > > > +	pos = scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX, "Counter value: %d\n", val);
+> > > > +
+> > > > +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf, pos);
+> > > > +}
+> > > 
+> > > Do we need to check whether the counter is enabled or not for the event
+> > > before retrieving the counter value?
+> > 
+> > I believe, we have a patch that aims to address, have a look at:
+> > 
+> >   https://lore.kernel.org/linux-pci/20250225171239.19574-1-manivannan.sadhasivam@linaro.org
 > 
-> Here's where Sean described file vs inode: "The inode is effectively the
-> raw underlying physical storage, while the file is the VM's view of that
-> storage." [1].
+> Maybe I missed something, that seems to fix counter_enable_read(), but
+> here is to retrieve counter value. 
+> How dw_pcie_readl_dbi() can return something like "Counter Disabled"? 
 > 
-> I guess you're right that for now there is little distinction between
-> file and inode and using file should be feasible, but I feel that this
-> dilutes the original intent.
 
-Hmm, and using the file would be actively problematic at some point.  One could
-argue that NUMA policy is property of the VM accessing the memory, i.e. that two
-VMs mapping the same guest_memfd could want different policies.  But in practice,
-that would allow for conflicting requirements, e.g. different policies in each
-VM for the same chunk of memory, and would likely lead to surprising behavior due
-to having to manually do mbind() for every VM/file view.
+Only way to know if a counter is enabled by reading back the status. And that is
+what the patch is doing.
 
-> Something like [2] doesn't seem like too big of a change and could perhaps be
-> included earlier rather than later, since it will also contribute to support
-> for restricted mapping [3].
-> 
-> [1] https://lore.kernel.org/all/ZLGiEfJZTyl7M8mS@google.com/
-> [2] https://lore.kernel.org/all/d1940d466fc69472c8b6dda95df2e0522b2d8744.1726009989.git.ackerleytng@google.com/
-> [3] https://lore.kernel.org/all/20250117163001.2326672-1-tabba@google.com/T/
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
