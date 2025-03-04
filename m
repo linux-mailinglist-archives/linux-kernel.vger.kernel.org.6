@@ -1,142 +1,86 @@
-Return-Path: <linux-kernel+bounces-544151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7C40A4DDF9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:31:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE83DA4DE1F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:39:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4FE189CD66
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:32:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80A701738EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B95BA202C32;
-	Tue,  4 Mar 2025 12:31:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0AE02036E8;
+	Tue,  4 Mar 2025 12:38:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fsCFCsfy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="VkRhwj8h"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7D78472;
-	Tue,  4 Mar 2025 12:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3160D2036F5;
+	Tue,  4 Mar 2025 12:38:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091505; cv=none; b=ia9+Zk5CjbB+DpZo8lMYYid7Kcg0DleJ8LbO32GFCHZD+WnzbWmCLX38Ybtcq5cklBQ/rxN1cYZTmd7opjKJ+7EmmEC3Cey6mMWmmuk/MVmAql1E2nuTsPFTDQ0EQBsFut19cMPaZVCOBdyY7qPFTlp0gnGgnMM0SGPCs1900/o=
+	t=1741091914; cv=none; b=KAbyjrBZNZEpZq60LKvdXC3eJKT2Sgf04sQhtZZVCMsLYZQaSC15wZkCWOAnlEBfPCbl7P+yYwcru2akAYixdGOlgOQYS3fZw+oWYDaILVGrLu4FqE/f6jGCGVg5Adz4BjbHzjOdSjEfKFv4/RuCPJOvf+o6YnUhXN3KOBdCfAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091505; c=relaxed/simple;
-	bh=ch5HuCNaSbBnRrFzcfCE8Js6kll47DRucNUGWtDz8Uo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=A97FtcAtWbtapUtIfOMWTmj5MSvyUzGijiZPLQntxyKdpIBnZOblhydGiAiQJFQdiHYJU9QK8bKSMsS82lQdVW1fJMEpt2LWy/iI+FMewEub9ehqArC8vB8qy9vdlOYDU6qRKusFACieNWrobsG6OnEe7ZO04SyNLwmh0TvgDaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fsCFCsfy; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741091504; x=1772627504;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=ch5HuCNaSbBnRrFzcfCE8Js6kll47DRucNUGWtDz8Uo=;
-  b=fsCFCsfysbXu9ELDMDfgBzh/ZCgn0TRLB8a4Bxmu205WW+KZ23Ws8u0I
-   1U8mKTwOpAUAc4RU18/F0EDsq0geF2unBdIqq+FEQWaO+x478PnHzKQjf
-   9HDkzRfRUWthJLdeqvtquvxED+BJ4qAWvafOZUfURla+I7D2s7xC9IT5O
-   KQoWsvZ6Seu8mtaKbcgkywcEmAocYxo9B2jh0LGuB4XPqAD1pyYtyvPBS
-   D87NzpU1Lnpv41oDHSDgC2YalnrnMGdbkwShDP86sI6pmO+FWgNqhX+k3
-   YNA+GK5J2aAYf+kILhmY+c1M0U1m9W4DBQUdi1k+NKsS8Q2uKGRsC+y1A
-   g==;
-X-CSE-ConnectionGUID: bsjl6KcnSV2faoLruAaXVw==
-X-CSE-MsgGUID: 5mHGIu6WRy+KadY1OU2ARA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52212322"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="52212322"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 04:31:43 -0800
-X-CSE-ConnectionGUID: GNZ7DyeVQieqBGQjFMgPAw==
-X-CSE-MsgGUID: hfgsoOjpRnaaHRCY0h85oQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="123557789"
-Received: from unknown (HELO [10.237.72.199]) ([10.237.72.199])
-  by orviesa005.jf.intel.com with ESMTP; 04 Mar 2025 04:31:41 -0800
-Message-ID: <7f231ac1-69de-43ce-a9f6-23beade42fc8@intel.com>
-Date: Tue, 4 Mar 2025 14:32:43 +0200
+	s=arc-20240116; t=1741091914; c=relaxed/simple;
+	bh=3YlAxAE2YbWWJgC7s273kR+6UMcvkOwkPhMJ4M16UsE=;
+	h=From:To:Subject:Mime-Version:Content-Type:Date:Message-ID; b=uDgQvbzzdNz/T0MwWq+jOu0ekdGCLCagZoMZ/zZw+277yeHgnI4iBB0Px4tWB0a96gpCCecjHE7jn2iRWECQd3lIcy6+aZ35dearHvRNS+vSF28uKK/VUflasmIidW+mThRL9b2zrx8pCdWJcyX7pBir2nER/jMOBkAAiqhPsrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=VkRhwj8h; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1741091600; bh=3YlAxAE2YbWWJgC7s273kR+6UMcvkOwkPhMJ4M16UsE=;
+	h=From:To:Subject:Date;
+	b=VkRhwj8hdle73Ia6fl9FIHsXLKzfF7fp+jafQxL0qpROXw3zr5T3ymctRVYhqsFau
+	 8yjpWLf6xgAYhNp6EkSYDu4X/xcHvux5ovVoOydu/UUEICqgsCxMSgW8E+vxZ2UiKI
+	 zEvEpFUx7w0ZYtNpMFVgZb8C4/sGVo8K96SJ8Yms=
+X-QQ-FEAT: oHWrrGTW1dCni6VLWI7Xi3lwP5c1dnPf
+X-QQ-SSF: 00000000000000F0000000000000
+X-QQ-XMRINFO: MFuljud3PUW4EHVQZqpniSQ=
+X-QQ-XMAILINFO: N6tmAlkxtqcd1RYE7ZiLzY7Lw6tRdpXhVk9+Hz77o1EVYTKrnqC6hUqHe2CZh1
+	 C6Zrom9b5pps1iDsmsJpAVXvUET82apKru9S7YqrNm4/BMD5dt85BFCjuFno+IqKTfLYl/U1dAX/R
+	 +TcrQCxibq1CvqQFcy8WPooIbI9eCvANi3rwO7h0baIgtrfHauNVltdQ0us2Q0ETeMAF8spFJGQUj
+	 I2STjzrQXTwgNqNrEKWZluMA92/4CjrUKIFNvUMO/i69YJHk/tf0T3RexRirrIbRYRxhEDsAjPDn+
+	 gB0OagWGkRAC2YIl1ZSdRSIaMuiI+mChGsCWLO1Tn/sSRXD6mu0Xs7AiPJs395Dth/WcIzgG50PFd
+	 ocACv4SI7+38GhFyXJmLMpwRVPaPE3+IIivtxZF5ErKldVEf63hInfI9HWwFQi7RPEyuBjexcFZE0
+	 E4cRIlfg2UBE0OCgLDdxm1O3IVqx64q2DIoa2iYrOkOyidCXTveOMvpaW6uMHXcaVaUiHnpgKeRDh
+	 LSqCkmvQQnxxIED+7s9U83K+y+yR29tcMs+80DHMOAh0zI3q+8OuzhkunmHArLXL7w+D21APrDfqJ
+	 tYeHrO9fJEbTFX7/+BT2mMo0kdcrIfioGUCUWxgEhRVO4yufczcvwPI8YkeUlhFK+lPb9UVTKKuxd
+	 fG/JSPtEMUZNO/G/HON8EpenWq+57LVDFsUU0Ko8KOZ51SVAReIP0xNiis5npZrq/ch2XdovuftlJ
+	 2ecEdDrFlkVaWMAsnMNHnkV1yYB96KTob31lYLg+StQ2asByiITbbb2l5mulMuOACyVIwgvHk1UTw
+	 ECwW/U3AbcOJyWHNcgS9101KDr5SJURCfVwGL56ff+heovlB6FW0y0HjdTT1HeWWTkpvMDH6rn+Si
+	 1dRJZTUOkbQKvTQJRCnjSwdJL2LLkkQarZ9mQfBjCAC69Mmo0J59x5GJquSdeOaaQvLhnvnMZUQTO
+	 wQxKDTI2jtpsfh5PpLaGx78mfmOUTg+fi6hNhEgDH2RydK2i3gLlqkVFRsUdA=
+X-HAS-ATTACH: no
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-STYLE: 
+X-QQ-mid: webmail284t1741091598t3256532
+From: "=?gb18030?B?ZmZoZ2Z2?=" <744439878@qq.com>
+To: "=?gb18030?B?d2Vuamlh?=" <wenjia@linux.ibm.com>, "=?gb18030?B?amFrYQ==?=" <jaka@linux.ibm.com>, "=?gb18030?B?YWxpYnVkYQ==?=" <alibuda@linux.alibaba.com>, "=?gb18030?B?dG9ueWx1?=" <tonylu@linux.alibaba.com>, "=?gb18030?B?Z3V3ZW4=?=" <guwen@linux.alibaba.com>, "=?gb18030?B?ZGF2ZW0=?=" <davem@davemloft.net>, "=?gb18030?B?ZWR1bWF6ZXQ=?=" <edumazet@google.com>, "=?gb18030?B?a3ViYQ==?=" <kuba@kernel.org>, "=?gb18030?B?cGFiZW5p?=" <pabeni@redhat.com>, "=?gb18030?B?aG9ybXM=?=" <horms@kernel.org>, "=?gb18030?B?bGludXgtcmRtYQ==?=" <linux-rdma@vger.kernel.org>, "=?gb18030?B?bGludXgtczM5MA==?=" <linux-s390@vger.kernel.org>, "=?gb18030?B?bmV0ZGV2?=" <netdev@vger.kernel.org>, "=?gb18030?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
+Subject: =?gb18030?B?QWRkaXRpb25hbCBkZXNjcmlwdGlvbiBhYm91dCBi?=
+ =?gb18030?B?dWc6IKGwS0FTQU46IG51bGwtcHRyLWRlcmVmIFJl?=
+ =?gb18030?B?YWQgaW4gc21jX3RjcF9zeW5fcmVjdl9zb2NrobE=?=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] usb: xhci: Add debugfs support for xHCI port bandwidth
-To: raoxu <raoxu@uniontech.com>, gregkh@linuxfoundation.org
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- wangyuli@uniontech.com, zhanjun@uniontech.com
-References: <20250303105635.21290-1-raoxu@uniontech.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@intel.com>
-In-Reply-To: <20250303105635.21290-1-raoxu@uniontech.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="gb18030"
+Content-Transfer-Encoding: base64
+Date: Tue, 4 Mar 2025 07:33:18 -0500
+X-Priority: 3
+Message-ID: <tencent_DB489820B9DDDC69F6AFCC12649BDADE7808@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
 
-On 3.3.2025 12.56, raoxu wrote:
-> From: Xu Rao <raoxu@uniontech.com>
-> 
-> In many projects, you need to obtain the available bandwidth of the
-> xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
-> command to obtain it.
-> 
-> hardware tested:
-> 03:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raven USB 3.1
-> (prog-if 30 [XHCI])
-> Subsystem: Huawei Technologies Co., Ltd. Raven USB 3.1
-> Flags: bus master, fast devsel, latency 0, IRQ 30
-> Memory at c0300000 (64-bit, non-prefetchable) [size=1M]
-> Capabilities: [48] Vendor Specific Information: Len=08 <?>
-> Capabilities: [50] Power Management version 3
-> Capabilities: [64] Express Endpoint, MSI 00
-> Capabilities: [a0] MSI: Enable- Count=1/8 Maskable- 64bit+
-> Capabilities: [c0] MSI-X: Enable+ Count=8 Masked-
-> Kernel driver in use: xhci_hcd
-> 
-> test progress:
-> 1.cd /sys/kernel/debug/usb/xhci/0000:03:00.3
-> cat port_bandwidth
-> /sys/kernel/debug/usb/xhci/0000:03:00.3# cat port_bandwidth
-> port[1] available bw: 79%.
-> port[2] available bw: 79%.
-> port[3] available bw: 79%.
-> port[4] available bw: 79%.
-> port[5] available bw: 90%.
-> port[6] available bw: 90%.
-> port[7] available bw: 90%.
-> port[8] available bw: 90%.
-> 2.plug in usb video cammer open it
-> cat port_bandwidth
-> port[1] available bw: 39%.
-> port[2] available bw: 39%.
-> port[3] available bw: 39%.
-> port[4] available bw: 39%.
-> port[5] available bw: 90%.
-> port[6] available bw: 90%.
-> port[7] available bw: 90%.
-> port[8] available bw: 90%.
-> 
-> Signed-off-by: Xu Rao <raoxu@uniontech.com>
-
-Thanks Xy Rao,
-Nice to see support for 'Get Port Bandwidth' feature in xhci.
-
-I do however have some larger rework suggestions to this.
-
-Instead of queuing three commands on one file read, parsing and
-copy the content from each context dma into an array on stack, we could
-have separate files in debugfs for each speed, and queue one command
-for each. we could also skip the array on stack and print values from context
-directly.
-
-Something is also very off with the locks in this patch.
-Looks like every lock/unlock got replaced with an unlock
-
-Thanks
-Mathias
+U29ycnkgYWJvdXQgdGhlIGJ1ZzogobBLQVNBTjogbnVsbC1wdHItZGVyZWYgUmVhZCBpbiBz
+bWNfdGNwX3N5bl9yZWN2X3NvY2uhsCBpbiBteSBsYXN0IGVtYWlsIGFib3V0IHRoZSBidWcn
+cyBzdWJzeXN0ZW0gZGVzY3JpcHRpb24gZXJyb3IgKG1pc3Rha2VubHkgd3JpdHRlbiBhcyBi
+Y2FjaGVmcyBmaWxlIHN5c3RlbSksIGl0IHNob3VsZCBhY3R1YWxseSBiZSByZWxhdGVkIHRv
+IHRoZSBTTUMgc3Vic3lzdGVtLg==
 
 
