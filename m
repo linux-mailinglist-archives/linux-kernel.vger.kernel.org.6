@@ -1,113 +1,124 @@
-Return-Path: <linux-kernel+bounces-545425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834FDA4ECF6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:15:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3039A4ECFE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:15:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48DE18903EE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:15:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90E9216B82F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A608D25D20C;
-	Tue,  4 Mar 2025 19:15:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C95BB259C9A;
+	Tue,  4 Mar 2025 19:15:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wd9JANeJ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wd+VYz5Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07837255251;
-	Tue,  4 Mar 2025 19:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25CD424BCE8;
+	Tue,  4 Mar 2025 19:15:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115706; cv=none; b=EdfhHjsgD9qox0lmV7yFxww6/YOfsBbHfZikf0oEfO11rULxWDAXyJlQWLA7rG6hPabr0Tg3kgdgXQE6mdPazDfZpJQ9a62UKYsGTqMEMqtVnni8PbXLkS7IN1b9l+1VZ76VJaFSEE910jSm31rIH4YJ8uav/DFbB71pSIFVYjs=
+	t=1741115718; cv=none; b=LFGc2ewl1vLkSFdghMC4v2e3bkP9n8sMLSyFGez5CPdFuQVIfcTZb5ww8JaNvl3stjQyft74J7yLhqnUeERaMH0nI2haAuBOWMgC9hUxf9RPQ8jiKDvnlzYG73FkiMKlfw7bA1RFlZSLM8g4QC6+8UMw2glhRKPHt3F43qEK7Q0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115706; c=relaxed/simple;
-	bh=JJAJkxUJ1Ssn3V4i6mnrB10sKcPRACeB/DFOKNhD4xs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LyJsb9mVOFPSeYH92xmuAozREWP4dirgBrq+Wl0Klk/jYq/RS72zeXn4Pt29N2Emr2U+sk171pdO5XNehNpBHnTNuszfV8x09gAYCziW4nYi18vLiU543VQnYkSE/hsTx4XZAFX3dOVx22Mfifm5vWX2JdGKnXD7fpESuMsPTo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wd9JANeJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85B85C4CEE5;
-	Tue,  4 Mar 2025 19:15:03 +0000 (UTC)
+	s=arc-20240116; t=1741115718; c=relaxed/simple;
+	bh=m8gpsFcvErC+OBg1crSKmlYcazdRoOwZ0xMnwbncoLg=;
+	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
+	 Message-Id:Subject; b=NYpHjrOUrqNzU7LSwekpgEspFnLdH5wUv0RLgdySmZ6VCvjQtrzDZcJUdh548aVWv0pdxRcVRNBc+JkeWnJ52Hf+jw/JLu+6sLOzIZOx1ZgsBuBQ6wR9VpU6GSorusG7Snnefhb8+IKjE/bo4jZFPcZqTLkyI45MKl0q7KXa04g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wd+VYz5Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BA93C4CEE5;
+	Tue,  4 Mar 2025 19:15:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741115705;
-	bh=JJAJkxUJ1Ssn3V4i6mnrB10sKcPRACeB/DFOKNhD4xs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wd9JANeJfOHYEK6EVPAw2D9d0oO9xu0TCn07i8JUGEwPwIzMrEo5kUUUM0JRxSgCe
-	 Ya3UwIMByvZ6Uh+tYsP68ftGLlEZ5Sb2oUUlEb2wleHZY8s8Pi7V+xko8gXaIKzaHz
-	 clG23v9FmTavanU2W+8MXoBWlc5e9ueafFP+tdJGVKSy+9lrjvfuaOAaalcU5GXcVD
-	 7Hu53N+0GntPjjXh8ZtcVDqw6t5o60eAhQii5IMPK0chk/6rFPiJH05vFD5SPwMIbf
-	 7al0iIOlOcya//ouNSpRt/9UXCO9EbsX118KNqgGFOyrqNAMIwu/5JCnXAgRtIZaxs
-	 DxmBf9AudKkRA==
-Date: Tue, 4 Mar 2025 20:15:00 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Brian Gerst <brgerst@gmail.com>, "H. Peter Anvin" <hpa@zytor.com>,
-	x86@kernel.org
-Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
- frame pointers
-Message-ID: <Z8dRNO1-_1YmIpAv@gmail.com>
-References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
- <CAHk-=wjSwqJhvzAT-=AY88+7QmN=U0A121cGr286ZpuNdC+yaw@mail.gmail.com>
- <Z8a66_DbMbP-V5mi@gmail.com>
- <CAHk-=wjRsMfndBGLZzkq7DOU7JOVZLsUaXnfjFvOcEw_Kd6h5g@mail.gmail.com>
- <CAHk-=wjc8jnsOkLq1YfmM0eQqceyTunLEcfpXcm1EBhCDaLLgg@mail.gmail.com>
- <20250304182132.fcn62i4ry5ndli7l@jpoimboe>
+	s=k20201202; t=1741115717;
+	bh=m8gpsFcvErC+OBg1crSKmlYcazdRoOwZ0xMnwbncoLg=;
+	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
+	b=Wd+VYz5Z5pmq6PMWBMCh4meGD69gSJjcGdaQqppo0JES4AT8CP7BglSfJgGMVA3y7
+	 UTxQvO0wRGmTbAZ1rh01lKFGskbhM75iCjZ6guHgUT/y704xVrwXatSv5etp8opAL/
+	 hMX2QJSLGU+L4BspbNuRwWw7D+P0z4vZhF8JcjMhBRoudk+xaT0kjlBU8ik1AI4bbJ
+	 /804WbtwyRXPPLHq2RrTziJNifSXLCDEj8XSDDzcF/V/DkuC7iaKTrjOhKSmKp2bfF
+	 1M63SfvUoiIkLLZzovZrXd1NTBWJJQ7O8Xg5BWl8JiUITB6tWMIjQ2m2VpPjnnVLjG
+	 opGhzPH4Pok/A==
+Date: Tue, 04 Mar 2025 13:15:15 -0600
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304182132.fcn62i4ry5ndli7l@jpoimboe>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: tglx@linutronix.de, jic23@kernel.org, linux-iio@vger.kernel.org, 
+ olivier.moysan@foss.st.com, wbg@kernel.org, linux-kernel@vger.kernel.org, 
+ linux-pwm@vger.kernel.org, alexandre.torgue@foss.st.com, 
+ conor+dt@kernel.org, krzk+dt@kernel.org, daniel.lezcano@linaro.org, 
+ devicetree@vger.kernel.org, will@kernel.org, lee@kernel.org, 
+ catalin.marinas@arm.com, ukleinek@kernel.org, 
+ linux-stm32@st-md-mailman.stormreply.com, 
+ linux-arm-kernel@lists.infradead.org
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+In-Reply-To: <20250304173229.3215445-2-fabrice.gasnier@foss.st.com>
+References: <20250304173229.3215445-1-fabrice.gasnier@foss.st.com>
+ <20250304173229.3215445-2-fabrice.gasnier@foss.st.com>
+Message-Id: <174111571576.3307031.12348647271786435979.robh@kernel.org>
+Subject: Re: [PATCH v2 1/8] dt-bindings: mfd: stm32-lptimer: add support
+ for stm32mp25
 
 
-* Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-
-> On Tue, Mar 04, 2025 at 08:01:58AM -1000, Linus Torvalds wrote:
-> > On Tue, 4 Mar 2025 at 07:51, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > > Put another way: the old code has years of testing and is
-> > > significantly simpler. The new code is new and untested and more
-> > > complicated and has already caused known new problems, never mind any
-> > > unknown ones.
-> > >
-> > > It really doesn't sound like a good trade-off to me.
+On Tue, 04 Mar 2025 18:32:22 +0100, Fabrice Gasnier wrote:
+> Add a new stm32mp25 compatible to stm32-lptimer dt-bindings, to support
+> STM32MP25 SoC. Some features has been updated or added to the low-power
+> timer:
+> - new capture compare channels
+> - up to two PWM channels
+> - PWM input capture
+> - peripheral interconnect in stm32mp25 has been updated (new triggers).
+> - registers/bits has been added or revisited (IER access).
+> So introduce a new compatible to handle this diversity.
 > 
-> I'm utterly confused, what are these new problems you're referring to?
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+> ---
+> Changes in V2:
+> - Use fallback compatibles, along with stm32mp25 specific compatible
+> - trigger identifier can be up to 4 (e.g. from LPTIM1..5)
+> ---
+>  .../bindings/mfd/st,stm32-lptimer.yaml        | 40 ++++++++++++++++---
+>  1 file changed, 34 insertions(+), 6 deletions(-)
 > 
-> And how specifically is this more fragile?
-> 
-> AFAICT, there was one known bug before the patches.  Now there are zero
-> known bugs.
-> 
-> Of course, it's entirely possible the build bots will shake out new
-> objtool warnings over the next weeks.  But as of now, I haven't seen
-> anything.
 
-In any case I've zapped these two commits from tip:x86/asm for the time 
-being:
+My bot found errors running 'make dt_binding_check' on your patch:
 
-  x86/asm: Fix ASM_CALL_CONSTRAINT for Clang 19 + KCOV + KMSAN
-  x86/asm: Make ASM_CALL_CONSTRAINT conditional on frame pointers
+yamllint warnings/errors:
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:26:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:29:9: [warning] wrong indentation: expected 10 but found 8 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:67:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:70:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:87:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:90:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:103:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:106:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:120:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
+./Documentation/devicetree/bindings/mfd/st,stm32-lptimer.yaml:123:13: [warning] wrong indentation: expected 14 but found 12 (indentation)
 
-Until there's consensus.
+dtschema/dtc warnings/errors:
 
-I left the 3 preparatory patches, which make sense as standalone 
-cleanups:
+doc reference errors (make refcheckdocs):
 
-  KVM: VMX: Use named operands in inline asm
-  x86/hyperv: Use named operands in inline asm
-  x86/alternatives: Simplify alternative_call() interface
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250304173229.3215445-2-fabrice.gasnier@foss.st.com
 
-Thanks,
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
 
-	Ingo
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
