@@ -1,173 +1,254 @@
-Return-Path: <linux-kernel+bounces-544131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ED87A4DDB9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:20:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B942A4DDBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:21:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5700D3A888B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D61F31779D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C36202C46;
-	Tue,  4 Mar 2025 12:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F39420298D;
+	Tue,  4 Mar 2025 12:20:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9OQWGoE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="orxJ9YkB"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2055.outbound.protection.outlook.com [40.107.223.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C8B202C20
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741090824; cv=none; b=WNbD0VQaYmLsXBd7ZZ4kp7IoHGfMyRC6ObIjOUFtnbcGOf+6Q1PH2k7z8oIVehr4kBqH2k9hUIDCxKzkrJ1daKYiAVpY3/HTRumyFZdEjkdn0eHUp2N+J1/yw+6SvkEVSqIbsdRIAxfMyZVooJAk4ACvNggrjniO+4fuI91L3hI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741090824; c=relaxed/simple;
-	bh=xw3wyvUOJS5mdgY1QWhsMI2KSuimzDRG6M/hdDd2hcs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ab90v7tjp+1YaLGRUbcXRXbTRWkvD0LcTOm4q3Z9WQG9MnstcNzF28uX3OF/8KQ8A1wNdmwOK7+sQwtcE/Q5K8m1Eu1TSumu0X6j1oUOsiT+xPx2UWBKMoT2PENcPBKpKnzlKIc2l94dGE5V86tjsibvxTsPqczhWwt7mihvfzk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9OQWGoE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00D8C4CEEC
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:20:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741090823;
-	bh=xw3wyvUOJS5mdgY1QWhsMI2KSuimzDRG6M/hdDd2hcs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y9OQWGoE17K2vnE6wOIojAGq5RgiGpj9jFYJKfIUTfSPQNkgQhiTlQvpcYk3YiXT8
-	 Dj8fVUX3C465S2VNhwnMLeWWE6abVw7PtojxY019eMnV31kR0/lL+jIrdLgTsEbFOn
-	 n6uRRhN0H8ZKrMmY9h9YnPxaac5pO6RWA/naZ25/eosSkKI96kJhrEzzj4xHb2qfFz
-	 LzEeRMF9m5auW2gTgAACArsq1/ieXKMZ0aXlqYekWMsoi5jbYuN8G2VBSQoh5PdES/
-	 1kyz3xM9m+IeH09Gu9NRXXu6EwMCct0wCeFja9oQ7KtMsmB4lNG/agqub0ibV6/i8Y
-	 EscZDzn6gVP1Q==
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac0cc83e9adso355712566b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 04:20:23 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUUZ6VA7VxmtW5XRVdZ1EInNXJpeOKBoYAxlIZzYflRNUFZaIC3uHG5PF8v/isAl+vk6aMAdD6xfD2rmr8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAS1l6b0YOpImBtIP0b6aehlzbhbT6Uebn0XDY5x16ab+a+KkU
-	giBxo7C/2t3JaXKWEe7rHcs4nUbxwFxImt5sjhnoPtN8w5SNuWOU6uVSYr67mbcswK6mzWEBE2J
-	WQv87nwaAHxb4r4RWAgpWhrNYs9s=
-X-Google-Smtp-Source: AGHT+IEHzftfHcwd+SZI6gGQKw6De60uYiQ5Iiz6OuxpN6JEhmQJJSk2v/X8q1I7Nznpxig9660faVXg8f34jrzTL3Y=
-X-Received: by 2002:a17:907:2da4:b0:abf:6ead:2e57 with SMTP id
- a640c23a62f3a-ac1f1372261mr223774566b.24.1741090822350; Tue, 04 Mar 2025
- 04:20:22 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA1C8202976
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:20:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741090838; cv=fail; b=pYeieqd7LwCX2/OcKL9rzm29jes54RNu6q9I8AmAAWIpZ5noXIAG7Lp6poSPAXKUGi3GJyg/a92yMhxwKpHgcazbcr12lL+iPPwaUHONpuTTflDcvF2BEnv9U85dgmhVIGyssZrNPe/Ua6vvZhrScSMNhVhddCIDezZp7iIVmkY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741090838; c=relaxed/simple;
+	bh=fYR/5nnEEipEd6/JTgzMwgiNkYT+yPJs3GnEjnm7t0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=dGxlgfkLQrV2j/f5++iJdrXmGCD8gNVIkvVQGlpUhyNsIcJSav2hAmAHDtWV5SrTVgIV2XBT9tj/0yTQf2GoWH3l5hHy0aWX+m6VB1l61kJfFxhcJ2FFkvPih8mdcCIwKJYbOQaViyzmSqmiLNxcKB5dV4CyOqdWeVhGooP3vjk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=orxJ9YkB; arc=fail smtp.client-ip=40.107.223.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xekCJGaHmZal1jdU8AC/qbnZaB9lDGTNX52WwPzYHJObI/M9ROPGHzOF0Fd+PDZMppISBMLplSwvSKn8hyneTk7vdEVFmnM4kzp5sWyX56QStdyo3B2fG2V0iB74BfzVTdzTkUmi3JkvQ2Zxu2UbJWGkndvyvpieDYhhElNtqwA2uie3qSRM8sBdRrV1zaYT8p+uZi/r45bY8HP30yyxJC29I1QdRFD6odyYMK6yr6HmPi48MUhbYoC3c/PsncZD0CZxhX102+Co2AB3CX8T2bMmqazouHb8Uc37sPv8bfl/qulMGMxrq1LuU3iaDNzyVJWPuwwQvuH+/uQ+Bvmsxw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=1bhBZk5IilMPWIUsdUxt+ivch9g3EEK5sqBH6bGfY0I=;
+ b=pY5/fzukl/7SywnXj4wHxtFmkzMXG/3e90mr2NcovV3iPcwZlexFs5ivJgLhdFfu8leV+0ufCnsomofWnOj+ORCpCK2akhF4S7Kuiffz4792O3NlsfAf4qWht+qw3e93i0akjQGhKm5zB2Yf6dxNGergtWKWsSkqHrF6FGMRb/f1ed1SAngS9CtjScuP0iDpigZ8w/tcGMF8F/kJ2LPZNf3R4+uWqUP6ewxpi8tr0BXv9Q6TEWK/nERgslsJ3k4Czvg99RJhJVFY6zx+RkZHdDUuzmjJxXtuNrj1q1d43AmkxF1dwr14OWKmcPlBX8aYmf3lpd0WDFpfjf4K6q156A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=1bhBZk5IilMPWIUsdUxt+ivch9g3EEK5sqBH6bGfY0I=;
+ b=orxJ9YkB7e6GGf/vqhlFWIybT+PGemU9TMS0JY/jlpsrYhjobc68X7Gr9DQOfXfOqVXjV9ftFFjdI9Y6P3w+RCvLlVi8uv+MW2Ta0LTK94p94qXjGWoKnrkq4X3igjpklKols9ttYo0qYe0YIL5UuCEz4GLarOVqR54l3p6TJ/+/dfD3IVXWnB7ZQGcKO8+PTNiTrI4kMan+I2EMzPMAEnyFijBaTcoKsDhv38zFbnyo3YZ0veXFSgWz6a6eZgaA2dNdo+3TwOiuke0klLaHkterNONdMrJ9SlemZ0XEaYEj6M1UwfumPsrZXp0FnA+RZHDRDpAr11pRzmxMmYV0Nw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com (2603:10b6:930:3e::17)
+ by LV2PR12MB5990.namprd12.prod.outlook.com (2603:10b6:408:170::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
+ 2025 12:20:34 +0000
+Received: from CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5]) by CY5PR12MB6405.namprd12.prod.outlook.com
+ ([fe80::2119:c96c:b455:53b5%7]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 12:20:33 +0000
+Date: Tue, 4 Mar 2025 13:20:17 +0100
+From: Andrea Righi <arighi@nvidia.com>
+To: Changwoo Min <changwoo@igalia.com>
+Cc: tj@kernel.org, void@manifault.com, kernel-dev@igalia.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 2/2] sched_ext: Add trace point to track sched_ext
+ core events
+Message-ID: <Z8bwAdeAuNQgJCR2@gpd3>
+References: <20250304104900.154618-1-changwoo@igalia.com>
+ <20250304104900.154618-3-changwoo@igalia.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304104900.154618-3-changwoo@igalia.com>
+X-ClientProxiedBy: MI1P293CA0028.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::20) To CY5PR12MB6405.namprd12.prod.outlook.com
+ (2603:10b6:930:3e::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304112717.1810047-1-maobibo@loongson.cn>
-In-Reply-To: <20250304112717.1810047-1-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Tue, 4 Mar 2025 20:20:11 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H4A74u9CmLcF3O6sFJbJXcxOyww1or1NJ-AntEOUgBMzQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrbbAn90PBn51LjqYMOSQNRkWPDRkyPmggx_ZqaCk8ntkQ-Qb0ts0IxiLg
-Message-ID: <CAAhV-H4A74u9CmLcF3O6sFJbJXcxOyww1or1NJ-AntEOUgBMzQ@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: mm: Set hugetlb mmap base address aligned with
- pmd size
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY5PR12MB6405:EE_|LV2PR12MB5990:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0c577a38-47d1-4870-258a-08dd5b16f648
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?s6Vg3KC6GG1ynZDSf3H0vc5JqwlDsDeQTJf0VI44vTqLM+dKxmD9h8W8wZcw?=
+ =?us-ascii?Q?l8YnM0alBgRUXv/KLyMICe5uquNaPsveO8tY9uqu4npg4O8D5UMfqcKNcWdV?=
+ =?us-ascii?Q?piBGY10vtayFxkhbp5eCzc7715Psa3DiX37IbFMaYijNdgsWRTNG2cvAxllA?=
+ =?us-ascii?Q?4pD08O40iNkvU5okx68JNGz2zjJeGfutvmFIzhCFHEZ66OBDTzJT6/YaT3yy?=
+ =?us-ascii?Q?PDo935/LqnUEsKYuCswTe43E/bOvFpf7l2nHch/huHMlIBcABnPZdzmY14JJ?=
+ =?us-ascii?Q?m32wHrRQRZWJk/7mTGl+LR1s4U/oW1x6tpoHQJ+Oa2Dbo+bUoFbEdOs9ppg+?=
+ =?us-ascii?Q?mkBVrij7QNbS9bwYPJsUkQO796laU8pAgH5Ixs+twKuzt+2NSu0H8tTuIyqL?=
+ =?us-ascii?Q?J0Eu70+YB7qn+vE7Uhag31JMvI/RLYTCJFGn53pnnexdqEFU1lzEW5NbOmaJ?=
+ =?us-ascii?Q?Ncv1/hiWee8hByQjzNFaQ0n3U7MB02Cf44tAEFAABYUVNjw2v1dVMgs0W4Bd?=
+ =?us-ascii?Q?tjrg1/yEzJu3uWdosPzgnUBHA+gZKIcxPTiVe5G6xYS3sRc1fxGZ53HGbKvK?=
+ =?us-ascii?Q?V/TcZ9K6v1zWyIQ597JfMBm/b3gvr/7/ApNMQ3g7TQyVA2hoYRLfAewJqWpw?=
+ =?us-ascii?Q?VrnNjFCTvSxiyL2xAx3IraTJ+LhxmNxFugjg2RHLMcuEruwPJBShYRcyMHIN?=
+ =?us-ascii?Q?wvFkHnx15CCxvh8Ak/H1G+Y00i7J6bUWbqNWuepmD66P8Vc1nsDEbURVoHCC?=
+ =?us-ascii?Q?K0G7B6tdEZAacpf86oPKI6vZdyxQLAYefDMWJ4+fBbBvunVt5hlO3fzjz0G4?=
+ =?us-ascii?Q?CUTXX3Gtz2uoq5Ek+GTp+yNUoAisrJ4UGTLAUEh9WwJrdASTpoNzstEX7l4w?=
+ =?us-ascii?Q?46LGFdW7wtIvAZdPPGdQQt45qQ7RhNiqc2j9s1jE9lWbju5l/sP3c64gtMYK?=
+ =?us-ascii?Q?5W0OKURCidym94/XXj0AX0+7k2YgpHp5jWsNKqOrKqpt4qycaQnzwU9uQDPY?=
+ =?us-ascii?Q?K8zzw0QPsEd7UKu8B+YjQAQ5KGzNCcTqRKnwCs/Cvi+qWtOU/oOQESTEhgbR?=
+ =?us-ascii?Q?XvkdMXvSYMkjo5P/UF5ZLpqM+xYcmmC6mhIfUIWS2c+F5f1eh/u8ePYKbjr8?=
+ =?us-ascii?Q?dyKTX9g/wtlsDEXfCYBVsU0HrM/ZXhIQS3jMRhDi4AGvC8NbzcU/LilncDxN?=
+ =?us-ascii?Q?KIzdwvC66ywBkWRkxL7JOjTx4kNa+6cwnkw8f4AAky/rEE/yqvvo3NCl/921?=
+ =?us-ascii?Q?vtivT/hucaj8sm1lVSTnHAujNXlLj41BFcPTTUOKGySBfRpWiYFZOzJoh2yE?=
+ =?us-ascii?Q?ThpbJrd7gwAT7EdEbZN+pMWbrcMhMcgJWfIaBPs1OKtJOcORJ28JXrmXLkv2?=
+ =?us-ascii?Q?hNt5ptZyIJLCQp3tzty6uNVxvUZl?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6405.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?atoPuKpRpt+rzzXKbYT3qjf0C401GbnCAW1LjhNRuIKJaD73+yRgpO1WfSWY?=
+ =?us-ascii?Q?LWOn+w0eY+zVR8JjHeLjM7Yk090oYAEhlFShT5Sg3bEJHZ2ZrB0BXOO8cmw/?=
+ =?us-ascii?Q?6haUPuLK7vHm0GzrAfUsMa2Cb1aC4WYb+UGYs+Vj/rxYhVIUH5HAaS89kpzx?=
+ =?us-ascii?Q?H9qTNBKLtVoeC6Fvg1ZxXn/gahmoyU6aH4v++UgnFJjLISk804BU0gV63GFo?=
+ =?us-ascii?Q?0pcT7CjtEo6UAAfcq3lZZYBipntc21z6gkbaJ1I2NZFA1A/9Q21GCPEgrN72?=
+ =?us-ascii?Q?1BoO7JwXHauPDYVqBUAuaPwBh5Bzcz1aAbY+k+liKrlKv47wJfEmO+rIbS9G?=
+ =?us-ascii?Q?SYJE+CrzQk+N12HqjdMBmTKwq+X9K1tY7/GQ/MIs4kSjUUT4d8jkMVT9TWoc?=
+ =?us-ascii?Q?JnXheI0qcxiADWcoWmpwo8Py+QC0ZpWDdn5j8Mra56TaF/S+xrU4I7pn2PcF?=
+ =?us-ascii?Q?eKiCtDzB0uM/bIfOm/VtT4XTbzzgI0Ykmj+RH3QaPIaC01I9Pv9f9/wQF28l?=
+ =?us-ascii?Q?rdYHNqH+uyekWlklfgw4xL260SSOW3K+p1DM2itfs5nJXB+Nab66ilLwE3mC?=
+ =?us-ascii?Q?KHBAGziwEJwI+bx6b1FHKJoatJEWEwOfN8NxoA1gKRypPP+5GJPjnLPdkKoS?=
+ =?us-ascii?Q?zPn/kdFZ5GkNXcPbvsV4o+paHJUhptlLX3R1eVjTmz9vxpGcpGfagAu8uxOM?=
+ =?us-ascii?Q?8rnm7eQpFbMTwdw0o/yUrQDpyBM/ONFU16ve5C+8XDfUO5g8x6nWoSEsS+L4?=
+ =?us-ascii?Q?yGrHsVaboXAMueEEcF5cU2G6o9x8YMhTw4nTLg+VduUlY8pew7ziuUZRvDXv?=
+ =?us-ascii?Q?OMoa80DqGg83pWYSrIcQjsUwUt1KbnC7WbS/ar0EpUQ2BH2kCe1loi48RRhG?=
+ =?us-ascii?Q?49fQ0STmR3n2YZLoonOnHYSbVEvVSORbsRnoHqVhz1ffVg1hbW558GfKrS6A?=
+ =?us-ascii?Q?z0Kvkzrl1TdF1UCxmsGzEvDfo6mdp9MCZxZ2Xme+Yqv7oB3ODTxDm7Z3wmo2?=
+ =?us-ascii?Q?K/nsTlwRHnb/N2XBpkgXd7w82tkz9XkJBOcokfMBDwVvEHc4a2glgCDeegLu?=
+ =?us-ascii?Q?t2UFMfwhDJzHlmu+hcIttxyAfrDCJQDR3V0vUbJLKTNi4UargrN3iSme6yb0?=
+ =?us-ascii?Q?1VRP2IphMTIztjafpYJDpvXeUVdZ9kh3cj7hqMMAfzYPySHjzAxLn3eCku30?=
+ =?us-ascii?Q?7oG8UimuEios9C9diNggcy7Xc7IJdhb9bSTPNWtuA8l6X+rG5oFj/2IEpzHX?=
+ =?us-ascii?Q?cjdS5Q8JxmbKKdJIwvwBXIFXw02k94meQZeHvE0m9tnlvHABDRQYu+VWvbVb?=
+ =?us-ascii?Q?n3I1xRtBJxqBJ99M70h6qLaKMsJSO61KOHHS7xf23sb7vRcgInV1uKuju5Gu?=
+ =?us-ascii?Q?y97yCo0diYLMwpO1rH9/x/vLKb68YCVXdlL5kcxINHfZXARpUdgj8YhQk7Is?=
+ =?us-ascii?Q?mdi7lJK1V3LvP0A0HI1MRpoL50socUwCL89GCflIIRdQ/+r4Hwvy1cDFyV05?=
+ =?us-ascii?Q?Tq/zgll3evDtNeM9lQPHrNUW/Xm5ScsCmaPufhqnHUr/B/X39h0P7Gs2kqhA?=
+ =?us-ascii?Q?OE2Z12rDXPiLFDExgz4uOazI5epM2QF14ZaEybIp?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0c577a38-47d1-4870-258a-08dd5b16f648
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6405.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 12:20:33.6917
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 0X61NeSAOGghRNkLJrGsZWXiXEMSn2sDk977o9qyfmyLaG1RYm63QrqjqyNcMBJG5REmLsBu5K+Dgl/NeJZMMg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR12MB5990
 
-Hi, Bibo,
-
-On Tue, Mar 4, 2025 at 7:27=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrote=
-:
->
-> With ltp test case "testcases/bin/hugefork02", there is dmesg error
-> report message such as
->  kernel BUG at mm/hugetlb.c:5550!
->  Oops - BUG[#1]:
->  CPU: 0 UID: 0 PID: 1517 Comm: hugefork02 Not tainted 6.14.0-rc2+ #241
->  Hardware name: QEMU QEMU Virtual Machine, BIOS unknown 2/2/2022
->  pc 90000000004eaf1c ra 9000000000485538 tp 900000010edbc000 sp 900000010=
-edbf940
->  a0 900000010edbfb00 a1 9000000108d20280 a2 00007fffe9474000 a3 00007ffff=
-3474000
->  a4 0000000000000000 a5 0000000000000003 a6 00000000003cadd3 a7 000000000=
-0000000
->  t0 0000000001ffffff t1 0000000001474000 t2 900000010ecd7900 t3 00007fffe=
-9474000
->  t4 00007fffe9474000 t5 0000000000000040 t6 900000010edbfb00 t7 000000000=
-0000001
->  t8 0000000000000005 u0 90000000004849d0 s9 900000010edbfa00 s0 900000010=
-8d20280
->  s1 00007fffe9474000 s2 0000000002000000 s3 9000000108d20280 s4 900000000=
-2b38b10
->  s5 900000010edbfb00 s6 00007ffff3474000 s7 0000000000000406 s8 900000010=
-edbfa08
->     ra: 9000000000485538 unmap_vmas+0x130/0x218
->    ERA: 90000000004eaf1c __unmap_hugepage_range+0x6f4/0x7d0
->   PRMD: 00000004 (PPLV0 +PIE -PWE)
->   EUEN: 00000007 (+FPE +SXE +ASXE -BTE)
->   ECFG: 00071c1d (LIE=3D0,2-4,10-12 VS=3D7)
->  ESTAT: 000c0000 [BRK] (IS=3D ECode=3D12 EsubCode=3D0)
->  PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
->  Modules linked in: snd_seq_dummy snd_seq snd_seq_device rfkill vfat fat =
-virtio_net net_failover failover efi_pstore virtio_balloon pstore fuse nfne=
-tlink virtio_scsi dm_multipath efivarfs
->  Process hugefork02 (pid: 1517, threadinfo=3D00000000a670eaf4, task=3D000=
-000007a95fc64)
->  Call Trace:
->  [<90000000004eaf1c>] __unmap_hugepage_range+0x6f4/0x7d0
->  [<9000000000485534>] unmap_vmas+0x12c/0x218
->  [<9000000000494068>] exit_mmap+0xe0/0x308
->  [<900000000025fdc4>] mmput+0x74/0x180
->  [<900000000026a284>] do_exit+0x294/0x898
->  [<900000000026aa30>] do_group_exit+0x30/0x98
->  [<900000000027bed4>] get_signal+0x83c/0x868
->  [<90000000002457b4>] arch_do_signal_or_restart+0x54/0xfa0
->  [<90000000015795e8>] irqentry_exit_to_user_mode+0xb8/0x138
->  [<90000000002572d0>] tlb_do_page_fault_1+0x114/0x1b4
->
-> The problem is that base address allocated from hugetlbfs is not aligned
-> with pmd size. Here add checking for hugetlbfs and align base address
-> with pmd size. After this patch rest case "testcases/bin/hugefork02"
-> passes to run.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+On Tue, Mar 04, 2025 at 07:49:00PM +0900, Changwoo Min wrote:
+> Add tracing support to track sched_ext core events
+> (/sched_ext/sched_ext_event). This may be useful for debugging sched_ext
+> schedulers that trigger a particular event.
+> 
+> The trace point can be used as other trace points, so it can be used in,
+> for example, `perf trace` and BPF programs, as follows:
+> 
+> ======
+> $> sudo perf trace -e sched_ext:sched_ext_event --filter 'name == "SCX_EV_ENQ_SLICE_DFL"'
+> ======
+> 
+> ======
+> struct tp_sched_ext_event {
+> 	struct trace_entry ent;
+> 	u32 __data_loc_name;
+> 	s64 delta;
+> };
+> 
+> SEC("tracepoint/sched_ext/sched_ext_event")
+> int rtp_add_event(struct tp_sched_ext_event *ctx)
+> {
+> 	char event_name[128];
+> 	unsigned short offset = ctx->__data_loc_name & 0xFFFF;
+>         bpf_probe_read_str((void *)event_name, 128, (char *)ctx + offset);
+> 
+> 	bpf_printk("name %s   delta %lld", event_name, ctx->delta);
+> 	return 0;
+> }
+> ======
+> 
+> Signed-off-by: Changwoo Min <changwoo@igalia.com>
 > ---
->  arch/loongarch/mm/mmap.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/mm/mmap.c b/arch/loongarch/mm/mmap.c
-> index 914e82ff3f65..1df9e99582cc 100644
-> --- a/arch/loongarch/mm/mmap.c
-> +++ b/arch/loongarch/mm/mmap.c
-> @@ -3,6 +3,7 @@
->   * Copyright (C) 2020-2022 Loongson Technology Corporation Limited
+>  include/trace/events/sched_ext.h | 19 +++++++++++++++++++
+>  kernel/sched/ext.c               |  2 ++
+>  2 files changed, 21 insertions(+)
+> 
+> diff --git a/include/trace/events/sched_ext.h b/include/trace/events/sched_ext.h
+> index fe19da7315a9..50e4b712735a 100644
+> --- a/include/trace/events/sched_ext.h
+> +++ b/include/trace/events/sched_ext.h
+> @@ -26,6 +26,25 @@ TRACE_EVENT(sched_ext_dump,
+>  	)
+>  );
+>  
+> +TRACE_EVENT(sched_ext_event,
+> +	    TP_PROTO(const char *name, __s64 delta),
+> +	    TP_ARGS(name, delta),
+> +
+> +	TP_STRUCT__entry(
+> +		__string(name, name)
+> +		__field(	__s64,		delta		)
+
+nit: there's an extra space/tab after delta.
+
+But apart than that LGTM.
+
+Acked-by: Andrea Righi <arighi@nvidia.com>
+
+-Andrea
+
+> +	),
+> +
+> +	TP_fast_assign(
+> +		__assign_str(name);
+> +		__entry->delta		= delta;
+> +	),
+> +
+> +	TP_printk("name %s delta %lld",
+> +		  __get_str(name), __entry->delta
+> +	)
+> +);
+> +
+>  #endif /* _TRACE_SCHED_EXT_H */
+>  
+>  /* This part must be outside protection */
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index 686629a860f3..debcd1cf2de9 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -1554,6 +1554,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
 >   */
->  #include <linux/export.h>
-> +#include <linux/hugetlb.h>
->  #include <linux/io.h>
->  #include <linux/kfence.h>
->  #include <linux/memblock.h>
-> @@ -63,8 +64,11 @@ static unsigned long arch_get_unmapped_area_common(str=
-uct file *filp,
->         }
->
->         info.length =3D len;
-> -       info.align_mask =3D do_color_align ? (PAGE_MASK & SHM_ALIGN_MASK)=
- : 0;
->         info.align_offset =3D pgoff << PAGE_SHIFT;
-> +       if (filp && is_file_hugepages(filp))
-> +               info.align_mask =3D huge_page_mask_align(filp);
-> +       else
-> +               info.align_mask =3D do_color_align ? (PAGE_MASK & SHM_ALI=
-GN_MASK) : 0;
-Thank you for your catch, I think this problem only exist after commit
-7f24cbc9c4d42db8a3c8484d120cf9c1 ("mm/mmap: teach
-generic_get_unmapped_area{_topdown} to handle hugetlb mappings"). But
-you don't need to resend, I will add this information when I apply.
-
-Huacai
-
->
->         if (dir =3D=3D DOWN) {
->                 info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
-> --
-> 2.39.3
->
+>  #define scx_add_event(name, cnt) do {						\
+>  	this_cpu_add(event_stats_cpu.name, cnt);				\
+> +	trace_sched_ext_event(#name, cnt);					\
+>  } while(0)
+>  
+>  /**
+> @@ -1565,6 +1566,7 @@ static DEFINE_PER_CPU(struct scx_event_stats, event_stats_cpu);
+>   */
+>  #define __scx_add_event(name, cnt) do {						\
+>  	__this_cpu_add(event_stats_cpu.name, cnt);				\
+> +	trace_sched_ext_event(#name, cnt);					\
+>  } while(0)
+>  
+>  /**
+> -- 
+> 2.48.1
+> 
 
