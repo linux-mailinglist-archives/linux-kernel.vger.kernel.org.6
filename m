@@ -1,96 +1,146 @@
-Return-Path: <linux-kernel+bounces-545208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18967A4EA4B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:01:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38FBA4EA5C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:02:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC9C1424448
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:56:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214C01892EB8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:56:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B473253B75;
-	Tue,  4 Mar 2025 17:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E4482780F5;
+	Tue,  4 Mar 2025 17:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKYyMLJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="dhx0STSc"
+Received: from sonic303-27.consmr.mail.ne1.yahoo.com (sonic303-27.consmr.mail.ne1.yahoo.com [66.163.188.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB74264620;
-	Tue,  4 Mar 2025 17:36:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B904B278140
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:36:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.188.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109794; cv=none; b=GcmlYQEAItndsMayrK5agxe4sfHMEsjWPgr1sBjiXNF/TRnsuXyhab00DpuzF95iGvS0UBadVXr5Fzmil4MXru+gt/eE2AC4ICVrlS2S8j5LawznAuQYq14fPh1jNtDN4ZLrCuGSgHstVreKcY/ioNeDPqwE/uD07+gcn3XyGvU=
+	t=1741109809; cv=none; b=Y4Q2hTo3xuM6EQzXkuyii3zVOl5HPz4my4EOmPU38znuw2XSNlD17FCqMcy0YjY1ftv3iGOLQDXmkJNQQTOMfkaCDo2neggIr2ONGzzkDKsOmLEFuyLrWAr81CRf7UWItGDRC4DAuGyXA31rpyOnbkRIlKqQIdlVHUnKasc2Bik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109794; c=relaxed/simple;
-	bh=4xp4+anK14JQk+kT/F+uLJnv73+F1a80g9z7dafx3bU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=M5he7FFJQnVA69of/h0GI9BP5U3eatkMFyy4iQnlHRJUmfxyaFPfr7lqbbwVIsle8VJwkDtGk0wCqOgGoUomPsPu0prb23aeXCSVOPdu85na3el4zAs+CMsAV3yW9cu4+5ewj38bVDU9z6Gcrxoe/qBzOswWgD1AO0H5AWsvSCA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKYyMLJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5C95C4CEE7;
-	Tue,  4 Mar 2025 17:36:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741109794;
-	bh=4xp4+anK14JQk+kT/F+uLJnv73+F1a80g9z7dafx3bU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=bKYyMLJ+yOp+0aO9VyEpW+tSgo9qctpb7iguPytHoQU0sfJKJ+XoZAJZmaQkjyTfT
-	 hehyQtmSyO4BUnQZBl+mhm/sv2wrBZoIEYviegMRdxEJ7ET4WyniNFxMd4W+Rb3kTi
-	 V4pUatRzJzPAIaZ1OapVH/ueOT+AATjfwo/PhvKnT8xKN0v9sIquCXlF2f+VQfkpd2
-	 nROLiqP3ksHB+/N4ZvMOdbFJQC9N5s0sN2YamzMzDksrwVwOR5iuJQf1tKMdAM0Nig
-	 cnCboG+5xb+FcRmw2NSvQAEIEaIRnEld5eCqvecQ5KY0OWd1es3JFcFiU37U+HAXLH
-	 2Bi6Nt2CvY5AQ==
-Date: Tue, 4 Mar 2025 11:36:32 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 2/2] PCI: sophgo-dwc: Add Sophgo SG2044 PCIe driver
-Message-ID: <20250304173632.GA243820@bhelgaas>
+	s=arc-20240116; t=1741109809; c=relaxed/simple;
+	bh=s0t9eoZ0UhrtcNtAyJ1l8+SLWcnjMKPt1rsr1i/fWFQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=b6BkwEspXy94QjAnACabPtwHsShh4HlPNo6nM5pJdgKeYlpaLqZQZ4EeWahn6PhSiTd0J6txlSuVoNLmqLBVBoA7szT6ANvzn2sqQzYOtZdlGhrrRjXPOhfntWgAGctHWlxyrlApcLf7Ae85pLfMWR5xGV/J1LtzX8DZUzYCraU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=dhx0STSc; arc=none smtp.client-ip=66.163.188.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741109801; bh=q8mQTeBqOlBQmnAfR6SxuXY4R++1kfQAA3Mj2DPK9us=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=dhx0STSc6wlgdxRjv6xqRVlxutu48in418fSHOTSmbbJfvm+Sw9V9jT8LaxqGoOi7pPpTcOK8d7Iaaxud0MZVt0PC4d2Azcfh0zdnaHtDn9CLHNdo2NFhllGaRmgloNGjmyzPAAfGz3XLJIORw8VdsLGz6BlsaJ/RbIyC/ZRSIyZs9HXUfmuAqQpb8WI7yW2xgtjijzvMUBjT+HF9bAT6+5d6vdGujfB7uZIvHnfGjf6hoZpjE3+u0EekCubdoaOav3SC075BWB9NPGRIvUgJj/DrPGvnkvIY7Q+0zNrQSBdLxCmsFzX3nnT6EdeHTKH/R+ZT5lG/k8ExzXFZLtOqg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1741109801; bh=7gPyjyMjpXtuornAcDU8XfzlQZVeOiXSyOFfmL3tr9w=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=FN4+0E62QeFlvDlw43hbeLh0mCKfofVnE4RxqF1MyKXOWVjYtqkFf9o2sYZUtaOpneGgkeuKcYqVBv5OpoTTW1IEMDEstL/+FuX+5XKnSf/UAvCvIcuc7Jvm54mk4eAjgHhvTEJ5rdOrsyEqsGQHYSMFtLV4CBUzWGK2NlTHK7mV8iUP0SvZjWn0E7thoTDY3ieQQMOzb/DYIMjf6WE6DNOsxwYl9M8ZPELbnoRkMq0UdCAwK9dyeV4h0DZzb2Y8bsjf4n49tybGHhO9bSfslqWZ0myA9CVnPLq62/kqBGAagjO6U0gvCM9Ngv9diqQ14UneRDtLE8UeBhbp4KY34Q==
+X-YMail-OSG: q7ijfEsVM1nPMrPeTh.AtTN2gnR9YAQgrH17qWDnbIaeFpeQ55ZCBQOL8xwN8RK
+ 41ut25ZFqhjdxV61AZuZ6soDnwOX0uElw0XfsgZRerl93WBSlnxmDGo17jHf3YoGkD47.a.CseqC
+ HZHNbQ9Qc8QPwXTaV2U3S_mSqaAAbGMf.bEOlQIzUAQYo2utpCjTibrERGcSVIQPB6zz3a5dYVok
+ rNKEBtZwH6gzrGOVETemFpoFCkO1FefJ.Qo5aOYQ5oA1wAB3oqC.YDlZyegww6sKySigJP3qHkdK
+ CahyK7Y1I53J9ii9i1HflYTm0B9lIsCqiqWinsCLP7xZsxxdRs_uTD5.aVXFsIuCHg4zkHkB3sAQ
+ Alp96Joe1NkAhc9F_o7XUAM1h95a05uw0OjGf3POvOkNyCBICWcnGUIuG0CIFu1zUsVdNRHUzuxA
+ qxloE3bg890uvXxBJiwpuw8mtcIwkmPMT8JFaBl6eabZmKrLqck5ZgaD3gyI5uQnj7YT1Wx4iz6h
+ qOBVfOKBk4Ha1PssKvbL9lDxpmwbUJnbGuq1t3z2_lsurF3KfbX64ZEZpsAU1DybScQkaBQJGpts
+ T1E2eLFDN49fhV_WQLgwDj1TBgCHO2pDXXp4d0mK1bLh6yOc6aQywm0d.50HFhUiKXmIVQaNdkoQ
+ 08KZIMZaXQlS_uAocVdBfTUFI3_4FO7q6fjabWYGGzCCNrbNnxcO50LCdzgQ1Ujx4oYUqURsTXDX
+ Na8d4KoYNdnoGJihmLkS_SzSjQGx2I7Z5fOc7Zs6SitnAkUSLDwcolyeyBgZW3vqV4F5YHgGg7EP
+ WujezmrlCNzPJh6HL6IMe6vhuguOMV6Qh83.tTBqD6ykselIrC1aiyIlfgaXb4NAT9AxTho76Y4q
+ NdkKrYqjNPDzDHSdgIoe1pJjE1mcmje0lDnrbH518Y5EsMgOYrhQhdRwQhxnLD9adeHDjPIgo9.q
+ dnhnc.l9ws.CTgScfnFwPTqvnRlBc0ju1BCjinVj8kWrBGjPJoG.b8xJoY7S3sWVRz5RLJflZqrq
+ l.KCBqUUce_aviNNx7.8RaK4KXOT8G5OzefgkSaAoQcgNZL_c7hHmq1SbUm5_xTNoXPYz0wAkoVZ
+ 63bsC6tpSrth5cwy9srPCT.NnuthHSwpEkpflHFwYB6Kbu61QApU6j2mOzahcizrxmgRZAxKTUSo
+ RHgdo34Jj7oC19VkvEeNJ3wNp5hOOj12ig9mDtBtP4FP4e.2vmPeut78BSx3xIQVdMMB0SlvPWYz
+ LdYAyq6Mwd2_Na428n_RR4IRsIsh27xrI2gVSzC40O8RsuKuYY9GYsL5GRHRBvO6MIbnv5J7orgn
+ JC244SgNNF7bhuk2dQo.EQP9vFPNAaKM_na.zsB5e4mkyTJmljs9DNh1M6.OjemWSqLxRAiHB1XM
+ O2824ZyhWJn6tTtTfAoBcGe_ZLYNA0w1JhgwcT7.iBeG3stDcfn0zy9oQwCLCrhhIcuvYKAZH5Y2
+ ivPQOa6mqDNTlt1KzGV0FVsKICHeiBVva2A.QqMdUoc4tBBpTuIqqMR6Z9MX44FwrhPjU4eqwvWe
+ 05xK9kV.gfga.R8az6ygnYeTx8eMvTJ0L3ZIlbKLNN.XmEh8mYvvg.mcoMZffsNQleqAzUF4BNfR
+ PQt_5jBOvQlN9DME_OisGq.A_nmv5f53QiDoPigLn9DTmGCzH5VTauknXk5am2eSdyNn93w2szrt
+ l3cUwoLd_t_BisdcvBVa7_E4oE1MD5cRGQXmZ.2NcLy1817AOHLRrzhUsLlXU6gpNbowlbbHYuO.
+ qfzPeq0n12Xzswdyc0XqEkG0hObGCwKTdfCYuFXWLBM5ZyCH9K3LHFBSpU6nfQJDl2yv8nnspwxz
+ SCGZwAVdMRCTTpZt5M7CiIA47ZtMg7htLCo4KTOZXNO8s4AbpgnMfOG0Pca1dzlIYchMNroP3pPl
+ _cknQjHcdolHp.THENlrtGV4.9rpz3PneLhzoORzQZKcJHKjpdwF5FeGW.XmVBdg.4Fgwf50GKQq
+ ENkvFZ9CjfW3Wg7OsRtz3C3euQVhlexsrh45koZoOGNCwcsDAQ3czj9DKfvoj31UzgjzlZwuKI6P
+ j4VZPqbZTvu7GBZxLqqgwdYuyaxgS6ddRAmaKK5blpTt6nfWxnp1xqP5mBCNzgblnhWyzkQ1d7Ks
+ 24d7dWf3OzFcecMdvtsrsLvKp.yysrOlur14N2w6xC50Vefkf3D_hyUP6DfolxUxHUSRp.1uWfaP
+ 1Ao249BNULnJ56BRQOQYHbYW_E2fV6NQSGoviU52gejE0si_YNyybcaHt8Nk.wz7Bh.Jo4YZpFuJ
+ bIR.OaMbkFmeejmw9gEtL8F8MgGBI
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 988bdb84-7027-48f7-82c0-0bfd78b2cd66
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic303.consmr.mail.ne1.yahoo.com with HTTP; Tue, 4 Mar 2025 17:36:41 +0000
+Received: by hermes--production-gq1-7d5f4447dd-bx5bp (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 1dc123c7904c3395b899a662df8993c7;
+          Tue, 04 Mar 2025 17:36:38 +0000 (UTC)
+Message-ID: <35e0dab4-dc24-4d73-a267-183c73548d62@schaufler-ca.com>
+Date: Tue, 4 Mar 2025 09:36:38 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304071239.352486-3-inochiama@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] lsm: rust: reword "destroy" -> "release" in SecurityCtx
+To: Alice Ryhl <aliceryhl@google.com>, Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>,
+ rust-for-linux@vger.kernel.org, linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
+References: <20250304-secctx-reword-release-v1-1-e8e9a7ff85ba@google.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20250304-secctx-reword-release-v1-1-e8e9a7ff85ba@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.23369 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Tue, Mar 04, 2025 at 03:12:38PM +0800, Inochi Amaoto wrote:
-> Add support for DesignWare-based PCIe controller in SG2044 SoC.
+On 3/4/2025 2:31 AM, Alice Ryhl wrote:
+> What happens inside the individual LSMs for a given LSM hook can vary
+> quite a bit, so it is best to use the terminology "release" instead of
+> "destroy" or "free".
+>
+> Suggested-by: Casey Schaufler <casey@schaufler-ca.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-> +static void sophgo_intx_irq_eoi(struct irq_data *d)
-> +{
-> +}
+Acked-by: Casey Schaufler <casey@schaufler-ca.com>
 
-The empty .irq_eoi() is unusual.  Why do you need it?
-
-I see that the existence of chip->irq_eoi() makes a difference in
-chained_irq_enter() and chained_irq_exit(), but I'm surprised that
-this is the only driver in drivers/pci/controller/ that implements an
-empty .irq_eoi().
-
-A comment here about what is special would be helpful.
-
-> +static struct irq_chip sophgo_intx_irq_chip = {
-> +	.name			= "INTx",
-> +	.irq_mask		= sophgo_intx_irq_mask,
-> +	.irq_unmask		= sophgo_intx_irq_unmask,
-> +	.irq_eoi		= sophgo_intx_irq_eoi,
-> +};
+> ---
+> This patch is based on top of:
+> https://lore.kernel.org/all/20250304-inline-securityctx-v2-1-f110f2c6e7ff@google.com/
+> ---
+>  rust/kernel/security.rs | 7 +++----
+>  1 file changed, 3 insertions(+), 4 deletions(-)
+>
+> diff --git a/rust/kernel/security.rs b/rust/kernel/security.rs
+> index 24321105052648e150f2875bcfa5ef29f4249516..0c63e9e7e564b7d9d85865e5415dd0464e9a9098 100644
+> --- a/rust/kernel/security.rs
+> +++ b/rust/kernel/security.rs
+> @@ -16,7 +16,7 @@
+>  /// # Invariants
+>  ///
+>  /// The `ctx` field corresponds to a valid security context as returned by a successful call to
+> -/// `security_secid_to_secctx`, that has not yet been destroyed by `security_release_secctx`.
+> +/// `security_secid_to_secctx`, that has not yet been released by `security_release_secctx`.
+>  pub struct SecurityCtx {
+>      ctx: bindings::lsm_context,
+>  }
+> @@ -67,9 +67,8 @@ pub fn as_bytes(&self) -> &[u8] {
+>  impl Drop for SecurityCtx {
+>      #[inline]
+>      fn drop(&mut self) {
+> -        // SAFETY: By the invariant of `Self`, this frees a context that came from a successful
+> -        // call to `security_secid_to_secctx` and has not yet been destroyed by
+> -        // `security_release_secctx`.
+> +        // SAFETY: By the invariant of `Self`, this releases an lsm context that came from a
+> +        // successful call to `security_secid_to_secctx` and has not yet been released.
+>          unsafe { bindings::security_release_secctx(&mut self.ctx) };
+>      }
+>  }
+>
+> ---
+> base-commit: 93f60f16db02f7b52985338f37679095231b6383
+> change-id: 20250304-secctx-reword-release-e26ac4ee7e0b
+>
+> Best regards,
 
