@@ -1,316 +1,173 @@
-Return-Path: <linux-kernel+bounces-544130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16E25A4DDB8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:20:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2ED87A4DDB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:20:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34804176B39
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5700D3A888B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:20:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C362D202996;
-	Tue,  4 Mar 2025 12:20:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C36202C46;
+	Tue,  4 Mar 2025 12:20:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XcpmdagO"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y9OQWGoE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2F1202976;
-	Tue,  4 Mar 2025 12:20:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50C8B202C20
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:20:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741090822; cv=none; b=U8fLhUp7SQdjccFTRc5KJrQHnasPAVYE6hJHRpUMnc5ERPvdhf4YC+rE/6d8cUuALe3Feqhu3nGJoqvC02Fw2YitupkXLeJWe8uduxMcE4B6qtnLXe3n3FkIX+4puuU2+qqbBFavGMerKQARXRlqh9QglzwKoopgT2YtiP3K3WU=
+	t=1741090824; cv=none; b=WNbD0VQaYmLsXBd7ZZ4kp7IoHGfMyRC6ObIjOUFtnbcGOf+6Q1PH2k7z8oIVehr4kBqH2k9hUIDCxKzkrJ1daKYiAVpY3/HTRumyFZdEjkdn0eHUp2N+J1/yw+6SvkEVSqIbsdRIAxfMyZVooJAk4ACvNggrjniO+4fuI91L3hI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741090822; c=relaxed/simple;
-	bh=2ar+f7KPMqAX1QocPDdnx0UYD5XmMum8mConbChM40k=;
+	s=arc-20240116; t=1741090824; c=relaxed/simple;
+	bh=xw3wyvUOJS5mdgY1QWhsMI2KSuimzDRG6M/hdDd2hcs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PCxXFNVjidfvQgyiHoi45RwCye6OB15rIFOuYaGESOo9Sf8afQlOX00BXYGG9G8dLfqBod/AfUDWM5FJMI6eiV5GQ3cPp5fo7qI5r8rxN1rOK0CjsRyw8v5wM67sbnfdsIUrokVh9hsBemV0FCV7hVhDXVFlRBjQN7b9Vhk7j4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XcpmdagO; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab7430e27b2so917452366b.3;
-        Tue, 04 Mar 2025 04:20:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741090819; x=1741695619; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=T2b/5ukyRNqmFbWc8ToNTxaJWZ+JvSrLpsvdrXtS7LA=;
-        b=XcpmdagOnORuDGP/ewKiHelfF0cxJ3nwuPg2gOUcFq0HtGtsM7NctkH71ZDrtb7E76
-         CMBEZd+aWYL4/5qJiKYzszNNa6QRD3lQYeN5EJwpYK0nKR35aBFuYaf7hNrqoPa91rFd
-         W6Mht6KgNsv3eUk2pALC3ezwTdlguVDFonzDV1W5FAmskLPohB9USHAM6eHXSLHMR0bf
-         FDyPCmEoOqf8hgUTiTF8S/LiJeLZNxgbX2qFnifOxRylKfaDbdNzkPUdmwbOo2cEHXnE
-         In638tWXj1k3cPcze3fZwdFdlXJwzodkc0C+25mk+DFqbfF+g7dGk79VcPmz9ZJVmlCw
-         3EaA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741090819; x=1741695619;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=T2b/5ukyRNqmFbWc8ToNTxaJWZ+JvSrLpsvdrXtS7LA=;
-        b=IeCjpV5kKfkQT1rLs6Vbg2sUvXbZqzHHLQh6g1q616TdszSkWrZILqIosgFaz7nDiB
-         /h2dv9S1K9+QE1terPfvrZrDvGRRZBTO7TT3O2B4ENjwA2MJ5EhzfFJBsTzqNkdMwo4/
-         i2wqv6tLvg9UvSdWcciHQTyotMD6TOWozvG5wP1brxEMK3IOlWSAVBEbQ5UUtB1untLu
-         2r5rKSMYgEzK5EULYjaJyNRyy2HEv1Ed6vnMAKQiN2nBzXELcQ0aqcsD42ad6/OAfMfz
-         9guyZ0lVpiUOMa9eyjwQjJjSl6sf3hSa8DQRScKiCVuNgbDQ8SDU5ZTjtwkfHAKmflOO
-         36sw==
-X-Forwarded-Encrypted: i=1; AJvYcCWMWGDQ8DwEj1BzWvQxhisGmdBFcd0BUO1da9PYYq8XYSAM0KisLkBIZPHwuGrT9PrT879rYjmJJQPe3Jg=@vger.kernel.org, AJvYcCWpB/Svt0z665xNm0Li5w7q+41lHT/u9Uu0yolJNlZjy7UKoYVNgYSt3d6yNN5oqlNLLUNu/ucbwQk=@vger.kernel.org, AJvYcCXGjHNy9iUk3pojoIqUbzKV0UW+78LTY1c3esyq4WHUrjA4ZqsPN34wBanorqRA8OpxCtYVlwYlSdJTY/9JeCfJgE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0FqtkaNVzfcuFiBZSsrVFkPDcE9L/HIMlidlBIRHI7/dw2lAY
-	/VILArU/CEdqCagEadkNYrcGSYGlP3AUSUmjzUfEBCZuHSTkrthW4p6MPad4wYc9yXHECR1VmRr
-	hOCSCQt0VQEURSb+x9fRQqZ+5uhs=
-X-Gm-Gg: ASbGncs1wtG3PsKxjoKRIiX3W0qb1MHSof2AC5TdR4zjgZsKuYNaTeoKjq0K7YfDYj3
-	YSKhTtrcNUv20h09Z7EDw52Qlk/rMLNp5REFNG4qp9m/i3pM4gNn3ZJuUDgEcYR+n/WmIybrsf1
-	zcrof2GIl3NHTCsOaM48YT2iVg6A==
-X-Google-Smtp-Source: AGHT+IHkYWadWW7TaJ6Pjpkx8CZPlIqxBSv7u3JGLhQgehyVgUtS6n03IifPBFz9R3q6GPUl2gY1BtIeWq8xfJUg8Uk=
-X-Received: by 2002:a17:907:6d02:b0:abf:7a80:1a7e with SMTP id
- a640c23a62f3a-abf7a8020bbmr787792166b.9.1741090818886; Tue, 04 Mar 2025
- 04:20:18 -0800 (PST)
+	 To:Cc:Content-Type; b=Ab90v7tjp+1YaLGRUbcXRXbTRWkvD0LcTOm4q3Z9WQG9MnstcNzF28uX3OF/8KQ8A1wNdmwOK7+sQwtcE/Q5K8m1Eu1TSumu0X6j1oUOsiT+xPx2UWBKMoT2PENcPBKpKnzlKIc2l94dGE5V86tjsibvxTsPqczhWwt7mihvfzk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y9OQWGoE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C00D8C4CEEC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:20:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741090823;
+	bh=xw3wyvUOJS5mdgY1QWhsMI2KSuimzDRG6M/hdDd2hcs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Y9OQWGoE17K2vnE6wOIojAGq5RgiGpj9jFYJKfIUTfSPQNkgQhiTlQvpcYk3YiXT8
+	 Dj8fVUX3C465S2VNhwnMLeWWE6abVw7PtojxY019eMnV31kR0/lL+jIrdLgTsEbFOn
+	 n6uRRhN0H8ZKrMmY9h9YnPxaac5pO6RWA/naZ25/eosSkKI96kJhrEzzj4xHb2qfFz
+	 LzEeRMF9m5auW2gTgAACArsq1/ieXKMZ0aXlqYekWMsoi5jbYuN8G2VBSQoh5PdES/
+	 1kyz3xM9m+IeH09Gu9NRXXu6EwMCct0wCeFja9oQ7KtMsmB4lNG/agqub0ibV6/i8Y
+	 EscZDzn6gVP1Q==
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac0cc83e9adso355712566b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 04:20:23 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUUZ6VA7VxmtW5XRVdZ1EInNXJpeOKBoYAxlIZzYflRNUFZaIC3uHG5PF8v/isAl+vk6aMAdD6xfD2rmr8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAS1l6b0YOpImBtIP0b6aehlzbhbT6Uebn0XDY5x16ab+a+KkU
+	giBxo7C/2t3JaXKWEe7rHcs4nUbxwFxImt5sjhnoPtN8w5SNuWOU6uVSYr67mbcswK6mzWEBE2J
+	WQv87nwaAHxb4r4RWAgpWhrNYs9s=
+X-Google-Smtp-Source: AGHT+IEHzftfHcwd+SZI6gGQKw6De60uYiQ5Iiz6OuxpN6JEhmQJJSk2v/X8q1I7Nznpxig9660faVXg8f34jrzTL3Y=
+X-Received: by 2002:a17:907:2da4:b0:abf:6ead:2e57 with SMTP id
+ a640c23a62f3a-ac1f1372261mr223774566b.24.1741090822350; Tue, 04 Mar 2025
+ 04:20:22 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250216195850.5352-1-linux.amoon@gmail.com> <20250216195850.5352-5-linux.amoon@gmail.com>
- <f44efd1a-1f6e-456d-9395-de2a55ef2279@arm.com> <CANAwSgTpV_kGFEU-ND0N+OEtT6+j4ceq37xAoLyC7iHPWAuLjg@mail.gmail.com>
-In-Reply-To: <CANAwSgTpV_kGFEU-ND0N+OEtT6+j4ceq37xAoLyC7iHPWAuLjg@mail.gmail.com>
-From: Anand Moon <linux.amoon@gmail.com>
-Date: Tue, 4 Mar 2025 17:50:01 +0530
-X-Gm-Features: AQ5f1JpX0iWefCe0V27iOMVW62tgPomNaHMGwjJbtqtjqB7h6WVwx5RmH8xbgrw
-Message-ID: <CANAwSgSWf_YxSi-pzWPaRoiJx7RLrWUz+HTWx5hf+E2x1ZGmoQ@mail.gmail.com>
-Subject: Re: [PATCH v3 4/4] drivers/thermal/exymos: Use guard notation when
- acquiring mutex
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: Bartlomiej Zolnierkiewicz <bzolnier@gmail.com>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-samsung-soc@vger.kernel.org>, 
-	"open list:SAMSUNG THERMAL DRIVER" <linux-pm@vger.kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, open list <linux-kernel@vger.kernel.org>, 
-	"moderated list:ARM/SAMSUNG S3C, S5P AND EXYNOS ARM ARCHITECTURES" <linux-arm-kernel@lists.infradead.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20250304112717.1810047-1-maobibo@loongson.cn>
+In-Reply-To: <20250304112717.1810047-1-maobibo@loongson.cn>
+From: Huacai Chen <chenhuacai@kernel.org>
+Date: Tue, 4 Mar 2025 20:20:11 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H4A74u9CmLcF3O6sFJbJXcxOyww1or1NJ-AntEOUgBMzQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrbbAn90PBn51LjqYMOSQNRkWPDRkyPmggx_ZqaCk8ntkQ-Qb0ts0IxiLg
+Message-ID: <CAAhV-H4A74u9CmLcF3O6sFJbJXcxOyww1or1NJ-AntEOUgBMzQ@mail.gmail.com>
+Subject: Re: [PATCH] LoongArch: mm: Set hugetlb mmap base address aligned with
+ pmd size
+To: Bibo Mao <maobibo@loongson.cn>
+Cc: WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Lukasz,
+Hi, Bibo,
 
-On Sat, 1 Mar 2025 at 00:06, Anand Moon <linux.amoon@gmail.com> wrote:
+On Tue, Mar 4, 2025 at 7:27=E2=80=AFPM Bibo Mao <maobibo@loongson.cn> wrote=
+:
 >
-> Hi Lukasz,
+> With ltp test case "testcases/bin/hugefork02", there is dmesg error
+> report message such as
+>  kernel BUG at mm/hugetlb.c:5550!
+>  Oops - BUG[#1]:
+>  CPU: 0 UID: 0 PID: 1517 Comm: hugefork02 Not tainted 6.14.0-rc2+ #241
+>  Hardware name: QEMU QEMU Virtual Machine, BIOS unknown 2/2/2022
+>  pc 90000000004eaf1c ra 9000000000485538 tp 900000010edbc000 sp 900000010=
+edbf940
+>  a0 900000010edbfb00 a1 9000000108d20280 a2 00007fffe9474000 a3 00007ffff=
+3474000
+>  a4 0000000000000000 a5 0000000000000003 a6 00000000003cadd3 a7 000000000=
+0000000
+>  t0 0000000001ffffff t1 0000000001474000 t2 900000010ecd7900 t3 00007fffe=
+9474000
+>  t4 00007fffe9474000 t5 0000000000000040 t6 900000010edbfb00 t7 000000000=
+0000001
+>  t8 0000000000000005 u0 90000000004849d0 s9 900000010edbfa00 s0 900000010=
+8d20280
+>  s1 00007fffe9474000 s2 0000000002000000 s3 9000000108d20280 s4 900000000=
+2b38b10
+>  s5 900000010edbfb00 s6 00007ffff3474000 s7 0000000000000406 s8 900000010=
+edbfa08
+>     ra: 9000000000485538 unmap_vmas+0x130/0x218
+>    ERA: 90000000004eaf1c __unmap_hugepage_range+0x6f4/0x7d0
+>   PRMD: 00000004 (PPLV0 +PIE -PWE)
+>   EUEN: 00000007 (+FPE +SXE +ASXE -BTE)
+>   ECFG: 00071c1d (LIE=3D0,2-4,10-12 VS=3D7)
+>  ESTAT: 000c0000 [BRK] (IS=3D ECode=3D12 EsubCode=3D0)
+>  PRID: 0014c010 (Loongson-64bit, Loongson-3A5000)
+>  Modules linked in: snd_seq_dummy snd_seq snd_seq_device rfkill vfat fat =
+virtio_net net_failover failover efi_pstore virtio_balloon pstore fuse nfne=
+tlink virtio_scsi dm_multipath efivarfs
+>  Process hugefork02 (pid: 1517, threadinfo=3D00000000a670eaf4, task=3D000=
+000007a95fc64)
+>  Call Trace:
+>  [<90000000004eaf1c>] __unmap_hugepage_range+0x6f4/0x7d0
+>  [<9000000000485534>] unmap_vmas+0x12c/0x218
+>  [<9000000000494068>] exit_mmap+0xe0/0x308
+>  [<900000000025fdc4>] mmput+0x74/0x180
+>  [<900000000026a284>] do_exit+0x294/0x898
+>  [<900000000026aa30>] do_group_exit+0x30/0x98
+>  [<900000000027bed4>] get_signal+0x83c/0x868
+>  [<90000000002457b4>] arch_do_signal_or_restart+0x54/0xfa0
+>  [<90000000015795e8>] irqentry_exit_to_user_mode+0xb8/0x138
+>  [<90000000002572d0>] tlb_do_page_fault_1+0x114/0x1b4
 >
-> On Fri, 28 Feb 2025 at 22:58, Lukasz Luba <lukasz.luba@arm.com> wrote:
-> >
-> >
-> >
-> > On 2/16/25 19:58, Anand Moon wrote:
-> > > Using guard notation makes the code more compact and error handling
-> > > more robust by ensuring that mutexes are released in all code paths
-> > > when control leaves critical section.
-> > >
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > ---
-> > > v3: new patch
-> > > ---
-> > >   drivers/thermal/samsung/exynos_tmu.c | 21 +++++++--------------
-> > >   1 file changed, 7 insertions(+), 14 deletions(-)
-> > >
-> > > diff --git a/drivers/thermal/samsung/exynos_tmu.c b/drivers/thermal/samsung/exynos_tmu.c
-> > > index fe090c1a93ab..a34ba3858d64 100644
-> > > --- a/drivers/thermal/samsung/exynos_tmu.c
-> > > +++ b/drivers/thermal/samsung/exynos_tmu.c
-> > > @@ -256,7 +256,7 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> > >       unsigned int status;
-> > >       int ret = 0;
-> > >
-> > > -     mutex_lock(&data->lock);
-> > > +     guard(mutex)(&data->lock);
-> > >       clk_enable(data->clk);
-> > >       clk_enable(data->clk_sec);
-> > >
-> > > @@ -270,7 +270,6 @@ static int exynos_tmu_initialize(struct platform_device *pdev)
-> > >
-> > >       clk_disable(data->clk_sec);
-> > >       clk_disable(data->clk);
-> > > -     mutex_unlock(&data->lock);
-> > >
-> > >       return ret;
-> > >   }
-> > > @@ -292,13 +291,12 @@ static int exynos_thermal_zone_configure(struct platform_device *pdev)
-> > >               return ret;
-> > >       }
-> > >
-> > > -     mutex_lock(&data->lock);
-> > > +     guard(mutex)(&data->lock);
-> > >       clk_enable(data->clk);
-> > >
-> > >       data->tmu_set_crit_temp(data, temp / MCELSIUS);
-> > >
-> > >       clk_disable(data->clk);
-> > > -     mutex_unlock(&data->lock);
-> > >
-> > >       return 0;
-> > >   }
-> > > @@ -325,12 +323,11 @@ static void exynos_tmu_control(struct platform_device *pdev, bool on)
-> > >   {
-> > >       struct exynos_tmu_data *data = platform_get_drvdata(pdev);
-> > >
-> > > -     mutex_lock(&data->lock);
-> > > +     guard(mutex)(&data->lock);
-> > >       clk_enable(data->clk);
-> > >       data->tmu_control(pdev, on);
-> > >       data->enabled = on;
-> > >       clk_disable(data->clk);
-> > > -     mutex_unlock(&data->lock);
-> > >   }
-> > >
-> > >   static void exynos_tmu_update_bit(struct exynos_tmu_data *data, int reg_off,
-> > > @@ -645,7 +642,7 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
-> > >                */
-> > >               return -EAGAIN;
-> > >
-> > > -     mutex_lock(&data->lock);
-> > > +     guard(mutex)(&data->lock);
-> > >       clk_enable(data->clk);
-> > >
-> > >       value = data->tmu_read(data);
-> > > @@ -655,7 +652,6 @@ static int exynos_get_temp(struct thermal_zone_device *tz, int *temp)
-> > >               *temp = code_to_temp(data, value) * MCELSIUS;
-> > >
-> > >       clk_disable(data->clk);
-> > > -     mutex_unlock(&data->lock);
-> > >
-> > >       return ret;
-> > >   }
-> > > @@ -720,11 +716,10 @@ static int exynos_tmu_set_emulation(struct thermal_zone_device *tz, int temp)
-> > >       if (temp && temp < MCELSIUS)
-> > >               goto out;
-> > >
-> > > -     mutex_lock(&data->lock);
-> > > +     guard(mutex)(&data->lock);
-> > >       clk_enable(data->clk);
-> > >       data->tmu_set_emulation(data, temp);
-> > >       clk_disable(data->clk);
-> > > -     mutex_unlock(&data->lock);
-> > >       return 0;
-> > >   out:
-> > >       return ret;
-> > > @@ -760,14 +755,13 @@ static irqreturn_t exynos_tmu_threaded_irq(int irq, void *id)
-> > >
-> > >       thermal_zone_device_update(data->tzd, THERMAL_EVENT_UNSPECIFIED);
-> > >
-> > > -     mutex_lock(&data->lock);
-> > > +     guard(mutex)(&data->lock);
-> > >       clk_enable(data->clk);
-> > >
-> > >       /* TODO: take action based on particular interrupt */
-> > >       data->tmu_clear_irqs(data);
-> > >
-> > >       clk_disable(data->clk);
-> > > -     mutex_unlock(&data->lock);
-> > >
-> > >       return IRQ_HANDLED;
-> > >   }
-> > > @@ -987,7 +981,7 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
-> > >   {
-> > >       struct exynos_tmu_data *data = thermal_zone_device_priv(tz);
-> > >
-> > > -     mutex_lock(&data->lock);
-> > > +     guard(mutex)(&data->lock);
-> > >       clk_enable(data->clk);
-> > >
-> > >       if (low > INT_MIN)
-> > > @@ -1000,7 +994,6 @@ static int exynos_set_trips(struct thermal_zone_device *tz, int low, int high)
-> > >               data->tmu_disable_high(data);
-> > >
-> > >       clk_disable(data->clk);
-> > > -     mutex_unlock(&data->lock);
-> > >
-> > >       return 0;
-> > >   }
+> The problem is that base address allocated from hugetlbfs is not aligned
+> with pmd size. Here add checking for hugetlbfs and align base address
+> with pmd size. After this patch rest case "testcases/bin/hugefork02"
+> passes to run.
 >
-> Thanks for your review comments.
-> >
-> > IMO you should be able to even use something like we have
-> > core framework:
-> >
-> > guard(thermal_zone)(tz);
-> >
-> > Your mutex name is simply 'lock' in the struct exynos_tmu_data
-> > so you should be able to leverage this by:
-> >
-> > guard(exynos_tmu_data)(data);
-> >
+> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> ---
+>  arch/loongarch/mm/mmap.c | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/mm/mmap.c b/arch/loongarch/mm/mmap.c
+> index 914e82ff3f65..1df9e99582cc 100644
+> --- a/arch/loongarch/mm/mmap.c
+> +++ b/arch/loongarch/mm/mmap.c
+> @@ -3,6 +3,7 @@
+>   * Copyright (C) 2020-2022 Loongson Technology Corporation Limited
+>   */
+>  #include <linux/export.h>
+> +#include <linux/hugetlb.h>
+>  #include <linux/io.h>
+>  #include <linux/kfence.h>
+>  #include <linux/memblock.h>
+> @@ -63,8 +64,11 @@ static unsigned long arch_get_unmapped_area_common(str=
+uct file *filp,
+>         }
+>
+>         info.length =3D len;
+> -       info.align_mask =3D do_color_align ? (PAGE_MASK & SHM_ALIGN_MASK)=
+ : 0;
+>         info.align_offset =3D pgoff << PAGE_SHIFT;
+> +       if (filp && is_file_hugepages(filp))
+> +               info.align_mask =3D huge_page_mask_align(filp);
+> +       else
+> +               info.align_mask =3D do_color_align ? (PAGE_MASK & SHM_ALI=
+GN_MASK) : 0;
+Thank you for your catch, I think this problem only exist after commit
+7f24cbc9c4d42db8a3c8484d120cf9c1 ("mm/mmap: teach
+generic_get_unmapped_area{_topdown} to handle hugetlb mappings"). But
+you don't need to resend, I will add this information when I apply.
 
-If I introduce the guard it creates a compilation error
+Huacai
 
-amoon@anand-m920q:~/mainline/linux-exynos-6.y-devel$ vi
-drivers/thermal/samsung/exynos_tmu.c +306
-amoon@anand-m920q:~/mainline/linux-exynos-6.y-devel$ make -j$(nproc)
-ARCH=arm CROSS_COMPILE=arm-none-eabi- LOCALVERSION=-u3ml dtbs zImage
-modules
-  CALL    scripts/checksyscalls.sh
-  CHK     kernel/kheaders_data.tar.xz
-  CC      drivers/thermal/samsung/exynos_tmu.o
-  CC [M]  drivers/md/raid10.o
-In file included from ./include/linux/irqflags.h:17,
-                 from ./arch/arm/include/asm/bitops.h:28,
-                 from ./include/linux/bitops.h:68,
-                 from ./include/linux/kernel.h:23,
-                 from ./include/linux/clk.h:13,
-                 from drivers/thermal/samsung/exynos_tmu.c:14:
-drivers/thermal/samsung/exynos_tmu.c: In function 'exynos_tmu_update_bit':
-./include/linux/cleanup.h:258:9: error: unknown type name
-'class_exynos_tmu_data_t'
-  258 |         class_##_name##_t var
-__cleanup(class_##_name##_destructor) =   \
-      |         ^~~~~~
-./include/linux/cleanup.h:309:9: note: in expansion of macro 'CLASS'
-  309 |         CLASS(_name, __UNIQUE_ID(guard))
-      |         ^~~~~
-drivers/thermal/samsung/exynos_tmu.c:338:9: note: in expansion of macro 'guard'
-  338 |         guard(exynos_tmu_data)(data);
-      |         ^~~~~
-drivers/thermal/samsung/exynos_tmu.c:338:9: error: cleanup argument
-not a function
-  CC [M]  drivers/md/raid5.o
-./include/linux/cleanup.h:259:17: error: implicit declaration of
-function 'class_exynos_tmu_data_constructor'
-[-Wimplicit-function-declaration]
-  259 |                 class_##_name##_constructor
-      |                 ^~~~~~
-./include/linux/cleanup.h:309:9: note: in expansion of macro 'CLASS'
-  309 |         CLASS(_name, __UNIQUE_ID(guard))
-      |         ^~~~~
-drivers/thermal/samsung/exynos_tmu.c:338:9: note: in expansion of macro 'guard'
-  338 |         guard(exynos_tmu_data)(data);
-      |         ^~~~~
-./include/linux/compiler.h:166:45: warning: unused variable
-'__UNIQUE_ID_guard572' [-Wunused-variable]
-  166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_,
-prefix), __COUNTER__)
-      |                                             ^~~~~~~~~~~~
-./include/linux/cleanup.h:258:27: note: in definition of macro 'CLASS'
-  258 |         class_##_name##_t var
-__cleanup(class_##_name##_destructor) =   \
-      |                           ^~~
-././include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-   84 | #define __PASTE(a,b) ___PASTE(a,b)
-      |                      ^~~~~~~~
-./include/linux/compiler.h:166:29: note: in expansion of macro '__PASTE'
-  166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_,
-prefix), __COUNTER__)
-      |                             ^~~~~~~
-././include/linux/compiler_types.h:84:22: note: in expansion of macro '___PASTE'
-   84 | #define __PASTE(a,b) ___PASTE(a,b)
-      |                      ^~~~~~~~
-./include/linux/compiler.h:166:37: note: in expansion of macro '__PASTE'
-  166 | #define __UNIQUE_ID(prefix) __PASTE(__PASTE(__UNIQUE_ID_,
-prefix), __COUNTER__)
-      |                                     ^~~~~~~
-./include/linux/cleanup.h:309:22: note: in expansion of macro '__UNIQUE_ID'
-  309 |         CLASS(_name, __UNIQUE_ID(guard))
-      |                      ^~~~~~~~~~~
-drivers/thermal/samsung/exynos_tmu.c:338:9: note: in expansion of macro 'guard'
-  338 |         guard(exynos_tmu_data)(data);
-
-Thanks
--Anand
+>
+>         if (dir =3D=3D DOWN) {
+>                 info.flags =3D VM_UNMAPPED_AREA_TOPDOWN;
+> --
+> 2.39.3
+>
 
