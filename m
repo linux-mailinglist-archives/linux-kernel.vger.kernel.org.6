@@ -1,231 +1,266 @@
-Return-Path: <linux-kernel+bounces-544279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08A88A4DFA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:49:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E446A4DFA3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:49:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A40716E2D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:49:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99D311887871
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB67320487D;
-	Tue,  4 Mar 2025 13:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OIcMOqvT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F7120469B;
+	Tue,  4 Mar 2025 13:49:28 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45E8E20485B;
-	Tue,  4 Mar 2025 13:49:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66258201267
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096170; cv=none; b=AUgSb9xmu1/5NZhl3knbDgSW1BkTeOHlyAwevEF0mRS4c4SVO0mD+aQzcKy9zlweNDTno2anRw6WoWaH3oOUyeiiHN0REh+FroHjYbLW1FeJYvK+qesXrGD6/PvEeC90YWOZkJ4gghaLtjepQn+8TlQwguay1fNGdezs2FHyR54=
+	t=1741096168; cv=none; b=uLmLMcUNkSIPl6VA2UVxUYnPB4OB/gWA1FxSQ1TWDIHjfEZ204kYzjuQlrYIpkqWjXYUk3Cp6oVG7VfaTvHt0Uku/VQPOASsz9KZk4dF5oUf56Na8DZ0WqKGZ/GtWe2u2ht9TcoArzVfX13kVZQG15p75CDkaLfP4FFwUgD5E+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096170; c=relaxed/simple;
-	bh=fyxWa29VHQSI5ZvMqSHC2xD1q88BTq69e8l69PiolJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JhlDEyUUg14tqgejermmJlDjPTmOeTSIIn+bBU8t/6r9wlkC/OezJoJQf7vp1+kYMdRK7KwS5PioGGaX97k94F0JJspMYExMdYknD60ADWoDM3PITQ9BwOb127xtxTHtI37itw/meGU1zXPps9dnsbigpqsijlAK9Me79vg1whg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OIcMOqvT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 333A7C4CEE7;
-	Tue,  4 Mar 2025 13:49:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741096169;
-	bh=fyxWa29VHQSI5ZvMqSHC2xD1q88BTq69e8l69PiolJQ=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OIcMOqvTNBMiyUl66s0VRn5M2wztYf2DYCD6BxJeGvPuZK2NlDlVjeKuIjuf9gcb4
-	 AhvIgRfX2KV5zOeLjrWxmYzBImT7Wk6CSkIB+tlBj6KIgwhVnwQHaW9TaKaVkl6Y2C
-	 co/5TIpP4sIRJ70gM3g3VJKLU3kaDD0FraIi3xETDTuhikLBg74sGcViZzU5EfzWjJ
-	 KbTfdj48KX9U/Qe6LFVNcqUsDs/6wo+viwiItqwNvcC64hXfNh+71bokUOR3nbtPBc
-	 sxV4yDscmw3e3alx5N+ostgayp9Y3H7xeAFpkn3d+zxvEWRtO4PdWLTWmEM6WJC7R6
-	 l1ZtP5c9MzGfA==
-Date: Tue, 4 Mar 2025 13:49:18 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- eraretuya@gmail.com
-Subject: Re: [PATCH v3 12/15] iio: accel: adxl345: add activity event
- feature
-Message-ID: <20250304134918.797e6386@jic23-huawei>
-In-Reply-To: <20250220104234.40958-13-l.rubusch@gmail.com>
-References: <20250220104234.40958-1-l.rubusch@gmail.com>
-	<20250220104234.40958-13-l.rubusch@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741096168; c=relaxed/simple;
+	bh=zIcjd+GZ4jHLuGDbIL1wO2AAE5TPtRSirf5FTkhQ3LM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PrMIx1w8qyqEuvaXs8KnXwAXrjNcdn+EPDG7SklmeHFeG6q9RGS16wR9E8ve/nTOvQJ2YjIeITMLzDhPc+oVid4OgvOJpioqVBXVdbmKjG+ftkaEEj8EOXhvyuL7nD6/QFGKX0oA/SlnMoLXf7uvI03YSAFeorR3dlEYfADsHB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.163])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z6cPd6RsSz2Dkbh;
+	Tue,  4 Mar 2025 21:45:09 +0800 (CST)
+Received: from kwepemj200003.china.huawei.com (unknown [7.202.194.15])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6ED1D180214;
+	Tue,  4 Mar 2025 21:49:21 +0800 (CST)
+Received: from [10.67.120.170] (10.67.120.170) by
+ kwepemj200003.china.huawei.com (7.202.194.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Tue, 4 Mar 2025 21:49:20 +0800
+Message-ID: <66470ea1-668a-418a-bcf6-c8702be799ce@huawei.com>
+Date: Tue, 4 Mar 2025 21:49:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-
-On Thu, 20 Feb 2025 10:42:31 +0000
-Lothar Rubusch <l.rubusch@gmail.com> wrote:
-
-> Make the sensor detect and issue interrupts at activity. Activity
-> events are configured by a threshold stored in regmap cache.
-> 
-> Activity, together with ODR and range setting are preparing a setup
-> together with inactivity coming in a follow up patch.
-> 
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-Some questions / comments inline.
-
-This review is has been at random moments whilst travelling (hence
-over several days!) so it may be less than thorough or consistent!
-I should be back to normal sometime next week.
-
-> @@ -258,6 +284,73 @@ static int adxl345_set_measure_en(struct adxl345_state *st, bool en)
->  	return regmap_write(st->regmap, ADXL345_REG_POWER_CTL, val);
->  }
->  
-> +/* act/inact */
-> +
-> +static int adxl345_write_act_axis(struct adxl345_state *st,
-> +				  enum adxl345_activity_type type, bool en)
-> +{
-> +	int ret;
-> +
-> +	/*
-> +	 * The ADXL345 allows for individually enabling/disabling axis for
-> +	 * activity and inactivity detection, respectively. Here both axis are
-> +	 * kept in sync, i.e. an axis will be generally enabled or disabled for
-> +	 * both equally, activity and inactivity detection.
-
-Why?  Can definitely see people only being interested in one case
-and not the other.  What advantage is there in always having both
-or neither over separate controls?
-
-> +	 */
-> +	if (type == ADXL345_ACTIVITY) {
-> +		st->act_axis_ctrl = en
-> +			? st->act_axis_ctrl | ADXL345_REG_ACT_AXIS_MSK
-> +			: st->act_axis_ctrl & ~ADXL345_REG_ACT_AXIS_MSK;
-> +
-> +		ret = regmap_update_bits(st->regmap, ADXL345_REG_ACT_INACT_CTRL,
-> +					 adxl345_act_axis_msk[type],
-> +					 st->act_axis_ctrl);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +	return 0;
-> +}
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] dma-mapping: benchmark: add support for dma_map_sg
+To: Barry Song <21cnbao@gmail.com>
+CC: yangyicong <yangyicong@huawei.com>, "hch@lst.de" <hch@lst.de>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, Jonathan Cameron
+	<jonathan.cameron@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>,
+	"fanghao (A)" <fanghao11@huawei.com>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+References: <20250212022718.1995504-1-xiaqinxin@huawei.com>
+ <20250212022718.1995504-3-xiaqinxin@huawei.com>
+ <CAGsJ_4yDBT4rJyG4-Ow4T3xLq8VujBjG+-uxjnWUm_vW1nzT_A@mail.gmail.com>
+ <43618c9167654c68945ec5e7d9bf69d5@huawei.com>
+ <CAGsJ_4zNTYsMkeBav7z=AKdm5CjB=Y73P1QBzq+9FS--z9t9Cw@mail.gmail.com>
+From: Qinxin Xia <xiaqinxin@huawei.com>
+In-Reply-To: <CAGsJ_4zNTYsMkeBav7z=AKdm5CjB=Y73P1QBzq+9FS--z9t9Cw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemj200003.china.huawei.com (7.202.194.15)
 
 
-> +static int adxl345_set_act_inact_en(struct adxl345_state *st,
-> +				    enum adxl345_activity_type type, bool cmd_en)
-> +{
-> +	bool axis_en, en = false;
-I'm not keen on mix of set and unset in a declaration line.  Better to 
-use two lines here as it can be hard to spot when things are or aren't
-initialized when that is not the intent.
+在 2025/2/22 14:36, Barry Song 写道:
+> On Fri, Feb 21, 2025 at 4:16 PM xiaqinxin <xiaqinxin@huawei.com> wrote:
+>>
+>>
+>> -----邮件原件-----
+>> 发件人: Barry Song <21cnbao@gmail.com>
+>> 发送时间: 2025年2月18日 4:59
+>> 收件人: xiaqinxin <xiaqinxin@huawei.com>
+>> 抄送: chenxiang66@hisilicon.com; yangyicong <yangyicong@huawei.com>; hch@lst.de; iommu@lists.linux.dev; Jonathan Cameron <jonathan.cameron@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; fanghao (A) <fanghao11@huawei.com>; linux-kernel@vger.kernel.org
+>> 主题: Re: [PATCH 2/3] dma-mapping: benchmark: add support for dma_map_sg
+>>
+>> On Wed, Feb 12, 2025 at 3:27 PM Qinxin Xia <xiaqinxin@huawei.com> wrote:
+>>> Support for dma scatter-gather mapping and is intended for testing
+>>> mapping performance. It achieves by introducing the dma_sg_map_param
+>>> structure and related functions, which enable the implementation of
+>>> scatter-gather mapping preparation, mapping, and unmapping operations.
+>>> Additionally, the dma_map_benchmark_ops array is updated to include
+>>> operations for scatter-gather mapping. This commit aims to provide a
+>>> wider range of mapping performance test  to cater to different scenarios.
+>> This benchmark is mainly designed to debug contention issues, such as IOMMU TLB flushes or IOMMU driver bottlenecks. I don't fully understand how SG or single will impact the evaluation of the IOMMU driver, making it unclear if the added complexity is justified.
+>>
+>> Can you add some explanation on why single mode is not sufficient for profiling and improving IOMMU drivers?
+>>
+>> Hello Barry ! 😊
+>> Currently, the HiSilicon accelerator service uses the dma_map_sg interface. We want to evaluate the performance of the entire DMA map process. (including not only the iommu, but also the map framework). In addition, for scatterlist, __iommu_map is executed for each nent. This increases the complexity and time overhead of mapping. The effect of this fragmentation is not obvious in dma_map_single, which only handles a single contiguous block of memory.
+>>
+> Thanks!
+> Please update your editor to ensure it doesn't respond with such long sentences
+> without line breaks in the future :-)
 
-	bool en = false;
-	bool axis_en;
+Hello Barry !
 
-> +	unsigned int threshold;
-> +	int ret;
-> +
-> +	ret = adxl345_write_act_axis(st, type, cmd_en);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret = regmap_read(st->regmap, adxl345_act_thresh_reg[type], &threshold);
-> +	if (ret)
-> +		return ret;
-> +
-> +	if (type == ADXL345_ACTIVITY) {
-> +		axis_en = FIELD_GET(ADXL345_REG_ACT_AXIS_MSK, st->act_axis_ctrl) > 0;
-> +		en = axis_en && threshold > 0;
-> +	}
-> +
-> +	return regmap_update_bits(st->regmap, ADXL345_REG_INT_ENABLE,
-> +				  adxl345_act_int_reg[type],
-> +				  en ? adxl345_act_int_reg[type] : 0);
-> +}
-> +
+Thank you for your advice, I will I'll pay attention. Leon
 
-> @@ -842,6 +972,23 @@ static int adxl345_write_event_value(struct iio_dev *indio_dev,
->  		return ret;
->  
->  	switch (type) {
-> +	case IIO_EV_TYPE_THRESH:
-> +		switch (info) {
-> +		case IIO_EV_INFO_VALUE:
-> +			switch (dir) {
-> +			case IIO_EV_DIR_RISING:
-> +				ret = regmap_write(st->regmap,
-> +						   adxl345_act_thresh_reg[ADXL345_ACTIVITY],
-> +						   val);
-> +				break;
-This collection of breaks and nested functions suggests maybe we can either
-return directly (I've lost track of what happens after this) or that
-we should factor out some of this code to allow direct returns in the
-function we put that code in.  Chasing the breaks is not great if it
-doesn't lead to anything interesting.
-> +			default:
-> +				ret = -EINVAL;
-> +			}
-> +			break;
-> +		default:
-> +			ret = -EINVAL;
-> +		}
-> +		break;
->  	case IIO_EV_TYPE_GESTURE:
->  		switch (info) {
->  		case IIO_EV_INFO_VALUE:
-> @@ -1124,6 +1271,17 @@ static int adxl345_push_event(struct iio_dev *indio_dev, int int_stat,
->  			return ret;
->  	}
->  
-> +	if (FIELD_GET(ADXL345_INT_ACTIVITY, int_stat)) {
-> +		ret = iio_push_event(indio_dev,
-> +				     IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
-> +							act_tap_dir,
-> +							IIO_EV_TYPE_THRESH,
-> +							IIO_EV_DIR_RISING),
-> +				     ts);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
->  	if (FIELD_GET(ADXL345_INT_FREE_FALL, int_stat)) {
->  		ret = iio_push_event(indio_dev,
->  				     IIO_MOD_EVENT_CODE(IIO_ACCEL, 0,
-> @@ -1157,6 +1315,7 @@ static irqreturn_t adxl345_irq_handler(int irq, void *p)
->  		ret = regmap_read(st->regmap, ADXL345_REG_ACT_TAP_STATUS, &regval);
->  		if (ret)
->  			return ret;
-> +		/* tap direction */
+> Can you provide concrete examples or data showing how the newly added mode
+> improves profiling of the entire DMA map process? For instance, what limitations
+> exist without this mode? What performance issues cannot be identified without
+> it?
 
-Belongs in earlier patch?
+You can see this patch 
+:https://lore.kernel.org/all/cover.1738765879.git.leonro@nvidia.com/
 
->  		if (FIELD_GET(ADXL345_Z_EN, regval) > 0)
->  			act_tap_dir = IIO_MOD_Z;
->  		else if (FIELD_GET(ADXL345_Y_EN, regval) > 0)
-> @@ -1165,6 +1324,19 @@ static irqreturn_t adxl345_irq_handler(int irq, void *p)
->  			act_tap_dir = IIO_MOD_X;
->  	}
->  
-> +	if (FIELD_GET(ADXL345_REG_ACT_AXIS_MSK, st->act_axis_ctrl) > 0) {
-> +		ret = regmap_read(st->regmap, ADXL345_REG_ACT_TAP_STATUS, &regval);
-> +		if (ret)
-> +			return ret;
-> +		/* activity direction */
-> +		if (FIELD_GET(ADXL345_Z_EN, regval >> 4) > 0)
+Leon provides new interface for scatterlist scenarios to improve 
+performance and gives some
 
-I'm not following the shifts here.   That looks like we don't have
-defines that we should but instead use the ones for the lower fields.
+application instance in rdma and vfio. Users can use dma_map_sg 
+benchmark to measure
 
-> +			act_tap_dir = IIO_MOD_Z;
-> +		else if (FIELD_GET(ADXL345_Y_EN, regval >> 4) > 0)
-> +			act_tap_dir = IIO_MOD_Y;
-> +		else if (FIELD_GET(ADXL345_X_EN, regval >> 4) > 0)
-> +			act_tap_dir = IIO_MOD_X;
-> +	}
+the performance improvement of the optimized interface compared with the 
+previous one.
 
+Thanks!
 
+>
+>>> Signed-off-by: Qinxin Xia <xiaqinxin@huawei.com>
+>>> ---
+>>>   include/linux/map_benchmark.h |   1 +
+>>>   kernel/dma/map_benchmark.c    | 102 ++++++++++++++++++++++++++++++++++
+>>>   2 files changed, 103 insertions(+)
+>>>
+>>> diff --git a/include/linux/map_benchmark.h
+>>> b/include/linux/map_benchmark.h index 054db02a03a7..a9c1a104ba4f
+>>> 100644
+>>> --- a/include/linux/map_benchmark.h
+>>> +++ b/include/linux/map_benchmark.h
+>>> @@ -17,6 +17,7 @@
+>>>
+>>>   enum {
+>>>          DMA_MAP_SINGLE_MODE,
+>>> +       DMA_MAP_SG_MODE,
+>>>          DMA_MAP_MODE_MAX
+>>>   };
+>>>
+>>> diff --git a/kernel/dma/map_benchmark.c b/kernel/dma/map_benchmark.c
+>>> index d8ec0ce058d8..b5828eeb3db7 100644
+>>> --- a/kernel/dma/map_benchmark.c
+>>> +++ b/kernel/dma/map_benchmark.c
+>>> @@ -17,6 +17,7 @@
+>>>   #include <linux/module.h>
+>>>   #include <linux/pci.h>
+>>>   #include <linux/platform_device.h>
+>>> +#include <linux/scatterlist.h>
+>>>   #include <linux/slab.h>
+>>>   #include <linux/timekeeping.h>
+>>>
+>>> @@ -111,8 +112,109 @@ static struct map_benchmark_ops dma_single_map_benchmark_ops = {
+>>>          .do_unmap = dma_single_map_benchmark_do_unmap,
+>>>   };
+>>>
+>>> +struct dma_sg_map_param {
+>>> +       struct sg_table sgt;
+>>> +       struct device *dev;
+>>> +       void **buf;
+>>> +       u32 npages;
+>>> +       u32 dma_dir;
+>>> +};
+>>> +
+>>> +static void *dma_sg_map_benchmark_prepare(struct map_benchmark_data
+>>> +*map) {
+>>> +       struct scatterlist *sg;
+>>> +       int i = 0;
+>>> +
+>>> +       struct dma_sg_map_param *mparam __free(kfree) = kzalloc(sizeof(*mparam), GFP_KERNEL);
+>>> +       if (!mparam)
+>>> +               return NULL;
+>>> +
+>>> +       mparam->npages = map->bparam.granule;
+>>> +       mparam->dma_dir = map->bparam.dma_dir;
+>>> +       mparam->dev = map->dev;
+>>> +       mparam->buf = kmalloc_array(mparam->npages, sizeof(*mparam->buf),
+>>> +                                   GFP_KERNEL);
+>>> +       if (!mparam->buf)
+>>> +               goto err1;
+>>> +
+>>> +       if (sg_alloc_table(&mparam->sgt, mparam->npages, GFP_KERNEL))
+>>> +               goto err2;
+>>> +
+>>> +       for_each_sgtable_sg(&mparam->sgt, sg, i) {
+>>> +               mparam->buf[i] = (void *)__get_free_page(GFP_KERNEL);
+>>> +               if (!mparam->buf[i])
+>>> +                       goto err3;
+>>> +
+>>> +               if (mparam->dma_dir != DMA_FROM_DEVICE)
+>>> +                       memset(mparam->buf[i], 0x66, PAGE_SIZE);
+>>> +
+>>> +               sg_set_buf(sg, mparam->buf[i], PAGE_SIZE);
+>>> +       }
+>>> +
+>>> +       return_ptr(mparam);
+>>> +
+>>> +err3:
+>>> +       while (i-- > 0)
+>>> +               free_page((unsigned long)mparam->buf[i]);
+>>> +
+>>> +       pr_err("dma_map_sg failed get free page on %s\n", dev_name(mparam->dev));
+>>> +       sg_free_table(&mparam->sgt);
+>>> +err2:
+>>> +       pr_err("dma_map_sg failed alloc sg table on %s\n", dev_name(mparam->dev));
+>>> +       kfree(mparam->buf);
+>>> +err1:
+>>> +       pr_err("dma_map_sg failed alloc mparam buf on %s\n", dev_name(mparam->dev));
+>>> +       return NULL;
+>>> +}
+>>> +
+>>> +static void dma_sg_map_benchmark_unprepare(void *arg) {
+>>> +       struct dma_sg_map_param *mparam = arg;
+>>> +       int i;
+>>> +
+>>> +       for (i = 0; i < mparam->npages; i++)
+>>> +               free_page((unsigned long)mparam->buf[i]);
+>>> +
+>>> +       sg_free_table(&mparam->sgt);
+>>> +
+>>> +       kfree(mparam->buf);
+>>> +       kfree(mparam);
+>>> +}
+>>> +
+>>> +static int dma_sg_map_benchmark_do_map(void *arg) {
+>>> +       struct dma_sg_map_param *mparam = arg;
+>>> +
+>>> +       int sg_mapped = dma_map_sg(mparam->dev, mparam->sgt.sgl,
+>>> +                                  mparam->npages, mparam->dma_dir);
+>>> +       if (!sg_mapped) {
+>>> +               pr_err("dma_map_sg failed on %s\n", dev_name(mparam->dev));
+>>> +               return -ENOMEM;
+>>> +       }
+>>> +
+>>> +       return 0;
+>>> +}
+>>> +
+>>> +static int dma_sg_map_benchmark_do_unmap(void *arg) {
+>>> +       struct dma_sg_map_param *mparam = arg;
+>>> +
+>>> +       dma_unmap_sg(mparam->dev, mparam->sgt.sgl, mparam->npages,
+>>> +                    mparam->dma_dir);
+>>> +
+>>> +       return 0;
+>>> +}
+>>> +
+>>> +static struct map_benchmark_ops dma_sg_map_benchmark_ops = {
+>>> +       .prepare = dma_sg_map_benchmark_prepare,
+>>> +       .unprepare = dma_sg_map_benchmark_unprepare,
+>>> +       .do_map = dma_sg_map_benchmark_do_map,
+>>> +       .do_unmap = dma_sg_map_benchmark_do_unmap, };
+>>> +
+>>>   static struct map_benchmark_ops *dma_map_benchmark_ops[DMA_MAP_MODE_MAX] = {
+>>>          [DMA_MAP_SINGLE_MODE] = &dma_single_map_benchmark_ops,
+>>> +       [DMA_MAP_SG_MODE] = &dma_sg_map_benchmark_ops,
+>>>   };
+>>>
+>>>   static int map_benchmark_thread(void *data)
+>>> --
+>>> 2.33.0
+>>>
+> Thanks
+> Barry
 
