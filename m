@@ -1,233 +1,143 @@
-Return-Path: <linux-kernel+bounces-543876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C6EA4DAFA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:41:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A31A4DB0C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:42:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03A3D16D10B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:41:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 502B316D6B7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59D851FF617;
-	Tue,  4 Mar 2025 10:37:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627D0204F95;
+	Tue,  4 Mar 2025 10:38:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCcJMVT7"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jANpfjcJ"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7486C1FCCEA;
-	Tue,  4 Mar 2025 10:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00BE32010E5
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741084653; cv=none; b=BlNYLBv2M15jWBseuMGMrrPYKHYBC2UPanQBy2Tradfdo8xPPFDxUJjf+2dg2sXs+2ULrtLxZYvr+3aMEzhwvk/xDFO5QtzAVDCdcNgIKhLaoZAMiob9h9usUwieogsXlGkX1A1M8+Ct6HxRXHxNCpQ22nbBa3RnYk5fiak8wq8=
+	t=1741084696; cv=none; b=r3cpH+Rq/E3m0BGY4HVW1QDWQygYMUURrqRK13Ny2hxs+zNmvMcE+UqBOOavfajfU7jOqqrhYzFccBLKa7S1L4C2xdvZ66gmkW65IB4IpLzExVSj405aWnJnOjnufZrTXmRShhVF02DWoITVqGwqE8q4Dxi1VScJOe6cm3Fj8Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741084653; c=relaxed/simple;
-	bh=85nhDBhTFiWJYgl6DykBnE3QBUXn9UbjndlP97pBjIQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XJXYJnjflM9bdzN00A8rE9nKKJPoMNsVQmtn5g6rOr7CpTw58l36/exuOit2TmuiJWxkeNk3r8sUrhRnKLVT/GTtjAQSZsh/GwRBhJwyJbFtj9M752G0oOaz9W2LEUrY3p7SgSHkUt7QudDakPbYj+ux9itfJyG4k+ecvEhIEjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gCcJMVT7; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abf5358984bso468329066b.3;
-        Tue, 04 Mar 2025 02:37:31 -0800 (PST)
+	s=arc-20240116; t=1741084696; c=relaxed/simple;
+	bh=Wam1Dxy8Bbgc/5NwEFi/OZRhWrfo5AHEYP0wl2UfjTs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WrlUdK1agR8zxXswLN+B1u6Dh4zBr8na3SWvmwlGP5wF5YyTukEA2lX5Cpkumzt96hKa/SUCcGEMufStl1d63ENXdrJhpWEwn1NS9nig7bSVDnZXIGFD0OFKl1tMA5uosUcEX0qt9w6oDz3Ym2cEgw3ptf+Y0s+g8kP3ZjghNP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jANpfjcJ; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bc21f831bso2094255e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 02:38:13 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741084650; x=1741689450; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=y05GgcUzyRvbTep5413nOELZn3QacVghe1JgbSP50KQ=;
-        b=gCcJMVT7yPWZ7sHJ6TFuLdLlysZX7LV8WhM7taG4wAOWg2+EEYXOYjPRP6cS8BV59j
-         Q450IM0/9ADf0HP96KA8EAzxqNpuFFloAlpbbT7+T2Fpbn7rJ/cygDtn8GG7IAlAbIPB
-         uGq6O7MoZWHDNWBHKIbzYpJlgOUwKSEKbGqs5QOkxAN5TLCOvPqiWVThCwdNPc1I/CjJ
-         cDbJO1C4n+MqUYMHBLNPjI4SMZj6p6ldCHzBNAFxVTML/1WQt495CwJkHofQRp+GzH7G
-         Dhy2CDU3QrNuPCC5sobm1j8YPjb5NUDqn7ir4sXCvnM3pp+3C/8CQx/lB8OQEbJFEiGP
-         EwrA==
+        d=linaro.org; s=google; t=1741084692; x=1741689492; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=DRT6zOAR06y6e5a1u/1hudMd12hMY8AMBwvepK3I88Q=;
+        b=jANpfjcJ+9klFJP5zxDmYByJUCIKEF4rTDHsq1rEVZ0D26cDjPi/ABatWZDqSwZ4j5
+         EPhH94D8M4PVKHYdrkMuiOyowRezCwbns0KhmJyWJ7TDMAng78lAoolnaRS5zoEt5wT6
+         F29WQW27Z05V/8LgBDGP8GF0mqxF7xbbdNBODknzTaC0/XwsVaFBWs8FCQZJLepLQdBP
+         JpFGZBxa8R/SFLW3QZeql1dmVabNgMOzJZUDenJAI9yawJK3YnTDXbseVGZWlUzUzhKU
+         A2VJO8AAje4AfyEnJMS/QJEvCUEWya6uWiiQaB/ylE3HZ0HUWx8o5ClY2Z4n9ig8CsnF
+         TdmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741084650; x=1741689450;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to
-         :content-language:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=y05GgcUzyRvbTep5413nOELZn3QacVghe1JgbSP50KQ=;
-        b=vE+IhvDEFXZBN9Vo1Jx+aRkiCW6B2iBNHR28OVjyttpRPdKqXtAO2DOJ6IzqRYZXTV
-         nppqEx98OKa89ppmwepLz6/jopHbquEc6oMzGa8uakFoFAumkDY+704FepsXYunBTczk
-         XH6ZqxgdFFqxwiY91EmrEbVBn8LP/IiwZNsOS/+0t7QlN9ciIiAKKZbQo3PQ1N5uCW1v
-         fqr/5LC5cpp265rNz+50gSJfphpS9AAcprzdg3DgUkLVSRzhuzNpWqXJe+8iY8DpGgZ6
-         bgTLG0Hl70enCp3I+vchCeaPqLci1BdgkWCAH6ilDQd5hDBW6lObJtYl3kI0uwHlnWWC
-         dBfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSQboeectvY7XoTzMse957oFtyh5lK7jEjksT410IJYUIVkSjEcEYgelRiPIABPQvlxjkmuywuejyzM3DE@vger.kernel.org, AJvYcCVFtB7QUIxg4zZmtobl/jpD3vvPMzi5OUmUTBkqTFWOT356gOFH1VsVfRVYjhC8l5Eu+xMf3W16WZvDU6JvKw==@vger.kernel.org, AJvYcCX2mmEFYEAVxOzulmLrKDV/YcVTuxBDxgo8EWwp0tdKSpDTwVs2Tjc3JkdCvyg3YMoT7PAxV0C+j/XgNZIIPR9Y4Vk=@vger.kernel.org, AJvYcCXx3iC9i55be+F0DC8Sx564eZQeYurKLt+x6PBvjE5K8CcF7qlUkfMMEoFspMJqNHHJLOPugYmIKEkf@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGEy3uZd/OR6QHANuTRzOeH/qOd91ISi5DKYr23l6nsUjbrLsD
-	lVAoVCA2/L++mS3lzc7x+SwqtebBdyyF2g9Aw3BWjOAixIAjJNFF
-X-Gm-Gg: ASbGncuBc+IstDX/vyBX+ZXr9XwVa7Ihkzcd3mIm+eh232F5BNFpVfT7ASKKtD8l/d3
-	3FNOKKxQIZRRFx2608aorQpT9NTxIg++fY5RuVcsIs6Miu3A6h6rYcTfbqbDT/bDjPeZ7HmnOnx
-	g6MipZQn7E/slaVA/FMPzh/G2hfNEQFiIYABPXFN1msXeqXW8rDyH6zYUEdZzB+kx4GdxmKrp5e
-	gVd1fG+IHeTxdfJ27ggHw6+huIvvcv+UVpPWUgcgc5byCt7GwR5gic8Boc2GJhLDfkMyK9j8z3h
-	nLFvqA4NC5T35cJe5NCUs1EZgQMI51B4CrSs5GgKPTYzgxLVIWm1nijQeb4=
-X-Google-Smtp-Source: AGHT+IH8pMgz4t35O8oyRIFQxpdE0tnaA9mngLuWrWyOfwIXMudSbWqIktMm891rz72griamnTx0kg==
-X-Received: by 2002:a17:907:3e94:b0:abf:55c8:4cd5 with SMTP id a640c23a62f3a-abf55c85c18mr1332877066b.12.1741084649331;
-        Tue, 04 Mar 2025 02:37:29 -0800 (PST)
-Received: from [192.168.43.21] ([77.85.230.22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1ea18e32csm149481966b.137.2025.03.04.02.37.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 02:37:28 -0800 (PST)
-Message-ID: <0b8f71cf-03ee-4b5f-94ba-92811fccb541@gmail.com>
-Date: Tue, 4 Mar 2025 12:37:27 +0200
+        d=1e100.net; s=20230601; t=1741084692; x=1741689492;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DRT6zOAR06y6e5a1u/1hudMd12hMY8AMBwvepK3I88Q=;
+        b=d/FztchrOnxKRFJd8fFU3nKyWcSZROPalJOgnXCNShUeRVs9AUX40iAxNad0rVZOnn
+         7bjruS6Wn/woKDWjl47r9yGtUBU7Bkeq/SC315hFxkT8Hlz56SdnaZQSZ3ludiunAmz8
+         7GfZCm0LH8kjjIneQU6J26zhiYm2x3O5kDmtZm5CmGJYRvpfmtMst9WemSACeYTdy+fE
+         +tlhYlhNZX2c0eoQS/DYUmPccrSxlvkVfjGHdaJvyihbkNeSi2S21oSrA8rfhl8R59GX
+         esV4OU+vbExbxdIqjnQ2oJ3cxB7MSPvsLzL+w29su+ENhJOJ/MA+lbAzQLh3Qc8UmCxG
+         EZjw==
+X-Forwarded-Encrypted: i=1; AJvYcCX0Hz01qVYwLm/LbljYTAROpUbNiG0JAwKWlGJhyVBpxcnXDnKGOFnGxVCS7yUJiNNLcwYXazUaGlq9tcI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz75odqwdc9bB3FCHaykaeT+H+hQs+IDIgqhuioGTXaXMmoJh1Z
+	uMt5W5konhvt0i+8B+G22PDqWrT34wwQ9s/UwmCJA4bS23ymQZnmdonJ1m7dCbwlrKVClWtk2/H
+	ZL24=
+X-Gm-Gg: ASbGncuCqWI9V3KamTJZqCQmXuXVTTpSEL6tgNHLwQhMBZkk+Bh7MojlsM5ZKErFqhf
+	MddY7iypeWF7hLedv186gbl28mjLWEjYEQIIkL/tcOqEB3JOKC8Y/YhC3tQcQWjjWBohQR4ImBd
+	q/WiiHqDMXr5GMb+MeQNa6uWwBvbseAuCOXgQeLfiLE1A2aAI4zqQDT4sGjH+i9yJGgV8Lx+WWF
+	HoDuP8wjZ6KgTxzHi0VBumpeiA9xlLszDEFevqP/MlHLXDKGeMCaFDSHkkIe7exQKVxi1vmiYI/
+	eLGjJD+l+TWG1bWOb33cguT2MKmYyso+Z8pKLX0gH2AMNlqHXY/cDBbBitw=
+X-Google-Smtp-Source: AGHT+IGfNFBtTCkGMjxpoYoMf9mCyMbqZUVYcs5tbE+Zv0fhEqp67tfpgTNytZPPOfLXj9HjjGF61g==
+X-Received: by 2002:a05:600c:b96:b0:439:9a40:aa1a with SMTP id 5b1f17b1804b1-43bcb604fbemr3817175e9.6.1741084692178;
+        Tue, 04 Mar 2025 02:38:12 -0800 (PST)
+Received: from krzk-bin.. ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43b694524c6sm198574825e9.0.2025.03.04.02.38.10
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 02:38:11 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+To: Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	David Yang <yangxiaohua@everest-semi.com>,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH 1/2] ASoC: dt-bindings: everest,es8328: Mark ES8388 compatible with ES8328
+Date: Tue,  4 Mar 2025 11:38:07 +0100
+Message-ID: <20250304103808.75236-1-krzysztof.kozlowski@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/8] dt-bindings: phy: add
- samsung,exynos2200-usbcon-phy schema file
-Content-Language: en-US
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
- <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>,
- Philipp Zabel <p.zabel@pengutronix.de>, Abel Vesa <abel.vesa@linaro.org>,
- linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250223122227.725233-1-ivo.ivanov.ivanov1@gmail.com>
- <20250223122227.725233-4-ivo.ivanov.ivanov1@gmail.com>
- <20250224-curly-cyber-spaniel-efdc39@krzk-bin>
- <a4f63721-d094-4eda-b68a-6ef62ff54680@gmail.com>
- <c8184542-5dab-4403-bee4-867810397ae4@kernel.org>
- <4502b578-96e6-49e0-8f3b-54f6e5640c55@gmail.com>
- <354d6100-311f-44d7-b8a5-1fd671b651e3@kernel.org>
- <9fb63a04-5b3d-40cc-b96f-eb4f297f307e@gmail.com>
- <027decb4-3fa9-40a5-9cf4-65f9a69b4566@kernel.org>
- <21460de5-76a0-4576-a7e6-f4873e40de48@gmail.com>
- <9ec6c2c6-cf99-4c6e-8fc2-871716987c54@kernel.org>
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <9ec6c2c6-cf99-4c6e-8fc2-871716987c54@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 3/4/25 12:03, Krzysztof Kozlowski wrote:
-> On 04/03/2025 10:09, Ivaylo Ivanov wrote:
->> On 3/4/25 09:21, Krzysztof Kozlowski wrote:
->>> On 03/03/2025 18:18, Ivaylo Ivanov wrote:
->>>> On 3/3/25 09:24, Krzysztof Kozlowski wrote:
->>>>> On 02/03/2025 10:16, Ivaylo Ivanov wrote:
->>>>>> On 2/25/25 10:11, Krzysztof Kozlowski wrote:
->>>>>>> On 24/02/2025 11:48, Ivaylo Ivanov wrote:
->>>>>>>> On 2/24/25 10:56, Krzysztof Kozlowski wrote:
->>>>>>>>> On Sun, Feb 23, 2025 at 02:22:22PM +0200, Ivaylo Ivanov wrote:
->>>>>>>>>> The Exynos2200 SoC has a USB controller PHY, which acts as an
->>>>>>>>>> intermediary between a USB controller (typically DWC3) and other PHYs
->>>>>>>>>> (UTMI, PIPE3). Add a dt-binding schema for it.
->>>>>>>>>>
->>>>>>>>>> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>>>>>>>>> ---
->>>>>>>>>>  .../phy/samsung,exynos2200-usbcon-phy.yaml    | 76 +++++++++++++++++++
->>>>>>>>>>  1 file changed, 76 insertions(+)
->>>>>>>>>>  create mode 100644 Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->>>>>>>>> You have undocumented dependencies which prevent merging this file.
->>>>>>>>> First, dependencies have to be clearly expressed.
->>>>>>>> They are, in the cover letter.
->>>>>>> Where? I read it twice. Dependencies is the most important thing and
->>>>>>> should scream at beginning of the cover letter, so if you bury them
->>>>>>> somewhere deep it also would not matter - just like they were missing.
->>>>>>>
->>>>>>>>> Second, you should
->>>>>>>>> rather decouple the code from header dependencies, otherwise this cannot
->>>>>>>>> be merged for current release (just use clocks with long names, without IDs).
->>>>>>>> Sure
->>>>>>>>>> diff --git a/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->>>>>>>>>> new file mode 100644
->>>>>>>>>> index 000000000..7d879ec8b
->>>>>>>>>> --- /dev/null
->>>>>>>>>> +++ b/Documentation/devicetree/bindings/phy/samsung,exynos2200-usbcon-phy.yaml
->>>>>>>>>> @@ -0,0 +1,76 @@
->>>>>>>>>> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
->>>>>>>>>> +%YAML 1.2
->>>>>>>>>> +---
->>>>>>>>>> +$id: http://devicetree.org/schemas/phy/samsung,exynos2200-usbcon-phy.yaml#
->>>>>>>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
->>>>>>>>>> +
->>>>>>>>>> +title: Exynos2200 USB controller PHY
->>>>>>>>>> +
->>>>>>>>>> +maintainers:
->>>>>>>>>> +  - Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
->>>>>>>>>> +
->>>>>>>>>> +description:
->>>>>>>>>> +  Exynos2200 USB controller PHY is an intermediary between a USB controller
->>>>>>>>>> +  (typically DWC3) and other PHYs (UTMI, PIPE3).
->>>>>>>>> Isn't this the same as usbdrd phy? see: samsung,usb3-drd-phy.yaml
->>>>>>>> It's not (I think). There's a few reasons I've decided to make this separate
->>>>>>>> from the usb3-drd-phy bindings and exynos5-usbdrd driver:
->>>>>>>>
->>>>>>>> 1. This PHY does not provide UTMI and PIPE3 on its own. There's no tuning
->>>>>>> USBDRD phy does not provide UTMI and PIPE on its own either if you look
->>>>>>> at diagram - they call it phy controller.
->>>>>> Ughm. What? So in most exynos cases, there's a combination of multiple phys?
->>>>>>>> for them, and all that is needed from it is to disable HWACG, assert/
->>>>>>>> deassert reset and force bvalid/vbusvalid. After that SNPS eUSB2
->>>>>>>> initialization can be done and USB2 works. If the USBCON phy is not set
->>>>>>>> up before the eUSB2 one, the device hangs, so there is definitely a
->>>>>>>> dependancy between them. For PIPE3 we'd need to control the pipe3
->>>>>>>> attaching/deattaching and then initialize the synopsys USBDP combophy.
->>>>>>> Does it mean there is no USB DRD phy controller as before?
->>>>>>>
->>>>>>> Anyway the problem is you have DWC3 -> PHY -> PHY. Looks one phy too many.
->>>>>> So...
->>>>>>
->>>>>> DWC3 -> USBDRD (USBCON) -> PHYs?
->>>>> No, drop last phy. You just wrote the same as me - two phys, because
->>>>> usbdrd is the phy. In all existing designs there is no such controllable
->>>>> object from the point of view of operating system.
->>>> What? Per my understanding, the phy property should refer to whatever is
->>>> is connected to dwc3 UTMI. In this case it's the so-called USBDRD phy (called
->>>> usbcon in downstream). Considering that the eUSB2 IP definitely also has UTMI
->>>> that has to be connected to something, doesn't that mean we have clearly
->>> The entire point is that eUSB2 is connected to DWC3, no? That's exactly
->>> how it is done for example on Qualcomm SoC. Otherwise you claim that
->>> DWC3 controls one phy, which controls another phy which controls UTMI...
->> But where does the USBCON fit? Is it just a side controller? Why's it needed
->> in the first place? This is what I don't understand.
-> I assume usbcon, so old usbdrd, is the second DWC3's phy, just like qcom
-> qmpphy.
+Based on Linux driver, the ES8388 looks fully compatible with ES8328.
+One upstream DTS (ARM rk3288-rock2-square.dts) already uses ES8328
+fallback, so mark the devices as compatible in the binding.
 
-Ugh. For qcoms, does the first phy depend on qmpphy? If we pass it as the second phy,
-I don't know how the linkreset will happen. We also have a usbdp phy, which I
-suspect is used for SS as well since it's a combophy by Synopsys.
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-https://gitlab.com/Mis012/sm-s908b-linux-source-code/-/blob/s22_restored_history/drivers/phy/samsung/phy-exynos-usbdrd-eusb.c#L1579
+---
 
-Best regards,
-Ivaylo
+ARM64 Rockchip DTS use only single everest,es8388 compatible, so this
+will trigger dtbs_check warnings which I will fix in separate patchset.
 
->
->>>> separated hardware blocks? Now, I guess one could argue that this USBCON
->>>> hardware block could be classified as a syscon. But I don't see the problem
->>>> with the current binding description, nor the modelling, as it represents
->>>> how the hardware is (unless I've gotten it completely wrong).
->>> It is the first time you use argument that it represents how the
->>> hardware is and this is what we actually disagree. It is not like that.
->>> You do not have chain of phys. Just look at any USB 3.0 DRD DWC diagram
->>> from any Samsung SoC: where would you squeeze these two phys in relation
->>> to what is called there "USB 3.0 PHY" which would be the third phy (!!!).
->> Yeah, my point was that it was different from any previous design. Now,
->> I don't know if it's actually theoretically possible to design it like so. It's
->> hard to just guess how the hardware is designed without having access
->> to die shots, documentations or even just schematics.
->>
->> Let's make it clear now, the changes your request are to document USBCON
->> in the existing exynos binding, as well as to correct all explanations of how
->> this block functions, right?
-> No, not necessarily. If USBCON is entirely different device than USBDRD
-> (different register layout, different features), then go ahead with a
-> new binding.
->
-> I was questioning your chain of PHYs and this should be investigated.
->
->
-> Best regards,
-> Krzysztof
+No ABI break/impact expected.
+
+Expected dtbs_check warnings:
+
+arm64/boot/dts/rockchip/rk3399-roc-pc-plus.dtb: es8388@11: compatible: 'oneOf' conditional failed, one must be fixed:
+  ['everest,es8388'] is too short
+  'everest,es8388' is not one of ['everest,es8328']
+  from schema $id: http://devicetree.org/schemas/sound/everest,es8328.yaml#
+---
+ .../devicetree/bindings/sound/everest,es8328.yaml      | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/devicetree/bindings/sound/everest,es8328.yaml b/Documentation/devicetree/bindings/sound/everest,es8328.yaml
+index ed18e40dcaac..309c4d01db76 100644
+--- a/Documentation/devicetree/bindings/sound/everest,es8328.yaml
++++ b/Documentation/devicetree/bindings/sound/everest,es8328.yaml
+@@ -24,9 +24,13 @@ maintainers:
+ 
+ properties:
+   compatible:
+-    enum:
+-      - everest,es8328
+-      - everest,es8388
++    oneOf:
++      - enum:
++          - everest,es8328
++      - items:
++          - enum:
++              - everest,es8388
++          - const: everest,es8328
+ 
+   reg:
+     maxItems: 1
+-- 
+2.43.0
 
 
