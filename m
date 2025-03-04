@@ -1,111 +1,193 @@
-Return-Path: <linux-kernel+bounces-543445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9006CA4D5A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:04:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 834EFA4D5B0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:05:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D6D71888221
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:04:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 214827AA394
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:04:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32501F8BC0;
-	Tue,  4 Mar 2025 08:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB921F91FE;
+	Tue,  4 Mar 2025 08:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HFhF0vwO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTMooLPO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9513233998
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:04:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBEB1F55ED;
+	Tue,  4 Mar 2025 08:04:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075452; cv=none; b=KEFCMygWy5+X5/q8ax5qUC62+NnvVKulMo528lDpVKyoisDcPn7cL1lEjhCfCIVGvTJcRo7Vu2Fj7Cm8H9yP71ACBtXh4so8VX35IO2AOyzQY08wp596RK9XGSuJQMoWZmU2RnH6moPaedaqhFPcHx4M2j6x60U7XfA9pcVd+54=
+	t=1741075495; cv=none; b=Kx5wzJ1mcOauMiMZUaCHeo0yYVuopk6HNlV8IdTtWLH8eonHvIEtZEQLjKnkSpoB6yc/Ibfs/RKG/URdW2wq+8si8FOePDBq9pxlOau+SIs0uhMGtSen3VpuFiytmiM/atHQglbjQSpnpNerK9V4CVT+IRv01157h6WlncjCniA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075452; c=relaxed/simple;
-	bh=sAzTUkskqFANm/ZL5XzhKxmHu1rE7O5U8eewvrLoL4o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=psmorQ+7gqdagwQTqaXY+BTXfjds6m3UckXOxgQ90LF6bGL8A1EfVTzPo/QvJiqhkH096eO9yMdgN6rIBM73M2iHk78Z8gaRZN5Sjb7NDQRqLJ+D8oJm4UDnxU9ucJ79U2mHaxDVTE+Yhc+bGeqsiR7QwjvmmuucP6cG4YMXGTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HFhF0vwO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741075449;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sAzTUkskqFANm/ZL5XzhKxmHu1rE7O5U8eewvrLoL4o=;
-	b=HFhF0vwOPtC1lzxbAUIq0CFZEioOQWJNCrodRH/hoKW5aqO6Tf84XI7C9taoYwby/KHW/F
-	n5ioChnl7EWh9gpc9EI0ZZHSvUj6DJry5mOzIhmdltaONSRI9ziP7Pq2DDh2u06OjjtT5d
-	bpIDgdChh8SWQJKyS05CxjAdJw/KYE0=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-21-CLAdtbMqNPqDgzo5flwpfQ-1; Tue, 04 Mar 2025 03:04:07 -0500
-X-MC-Unique: CLAdtbMqNPqDgzo5flwpfQ-1
-X-Mimecast-MFC-AGG-ID: CLAdtbMqNPqDgzo5flwpfQ_1741075447
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ab397fff5a3so688212266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:04:07 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741075447; x=1741680247;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sAzTUkskqFANm/ZL5XzhKxmHu1rE7O5U8eewvrLoL4o=;
-        b=bxRT/5uE4Nz3OFmQ7/KORiX1PusXUYwwVGXW4EYgEBbBoj+gjLmGs5ry0IyEz4vSaL
-         dpw7/x+K7C2q92RH4mEGgA4V8IMO0ZuaiHp0fMjx4QLIxtBQbM5KU1U7T2NajhPN2M52
-         yPwNE24tKOopcz+12DdBWa9XjLwPi7XH8TCXsghxbFUKw4wJ5uU4gmW7OazqbsIo3BW9
-         U70GzasEPuwUMbKnE5Wnu2bZoR/2wp9zbWqkKKQ0d1wXjWxRIvsP8APBZBCy3WuDxOPY
-         NkdcELrwJCwpwtkH9TQ3AYPwWSZZoJqd7trPF7VrO7N+CaLBV6M8ArdVhnYu4+ydY84j
-         2oIg==
-X-Forwarded-Encrypted: i=1; AJvYcCXwbS8Rm/zD/RXhHCVkhfCSh/DHRMDp0sKzicCNAXgseoecc+lGmeFCdbYJaUFWvx30HKYbFzWVie3yrPc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRyd2UdeIjiGnQCVXz8agfkI5sh36z0wlI52NswA91T4JGhk/n
-	9D7dDt/4MQ+lemqPELfxIhNhEV38yE5OBr54M+u3mMQxahjBMGE+mvlgI/ZZbERpMF1PNCaphC0
-	2oRPEXPQ05SQi8yYYW9cJiZatOptUJhE/M3OMi5j7wW2v/4gOrM+80BGluw+E7H9nbgpx9sJZFM
-	BFyqnu/1qr9xOpED3VQZFjaG/mGfYemzB2Vp9u
-X-Gm-Gg: ASbGnctKWV6tGBBPX2IwcNFrlFUdI8Loo18SOuG0zvlDFm2OHrXn2ilaj/Jere9CJ7w
-	Op685jXLAnGSM+zsaX6TPy9RhGBM+Ow2TXhV8tYrMY+Ry/QS2RMO1dvvqbgw6Yi6m7zDUe+u3
-X-Received: by 2002:a17:906:f5a7:b0:abf:5778:f93e with SMTP id a640c23a62f3a-ac1f11e1e49mr196575366b.20.1741075446667;
-        Tue, 04 Mar 2025 00:04:06 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGMlvQhJSMa3o5MDPkih10cYTXXoBgWdsfMBlBzK4PZOMAtrxmS3ejEm6Rb9oGBns3LDIQ87ekx3ly/gV77Hao=
-X-Received: by 2002:a17:906:f5a7:b0:abf:5778:f93e with SMTP id
- a640c23a62f3a-ac1f11e1e49mr196573466b.20.1741075446350; Tue, 04 Mar 2025
- 00:04:06 -0800 (PST)
+	s=arc-20240116; t=1741075495; c=relaxed/simple;
+	bh=vIjLPcUzgSKENXMFoyq8MSR3rL6XCeonIPvrarBTHfI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B3U28mQepnDeUKBZ3n6NMOTj1oq13K3Ud7oOpW42XburH4dZohnZurfBb24PF2hIqk3KcLpSJpsARfjv8Uq0j0wDklZMadRDHcbwIBaIV+cTjwdWnR9jpKda7Fz9W+yXl5p/GZw/YVpUpIwHCcHe3LN3VSeuo2p7w3BGDx6jYKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTMooLPO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DCBEC4CEE5;
+	Tue,  4 Mar 2025 08:04:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741075492;
+	bh=vIjLPcUzgSKENXMFoyq8MSR3rL6XCeonIPvrarBTHfI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MTMooLPO8Bbb2GKqdM1BuZCtLRVMLpPUiZewyqhTUOANTZEdA7zKLpNVpc2b4+pde
+	 qLxD1GPfTrr2crKHjmFBRkbsQhLcZE/wIdMSn7xP+K7vJd7ZRJEAH9qDQUxuZcs5kx
+	 PTy2NgT0nWNSVjrgvdi0A9uofQ0NxTbml1X58f1jrN3deGiad5mCcW/u5Oh/f1kNxH
+	 WkgVk5ns/TvPqpAEbTVtWOTQmUYqzcBtq42vbowT/RyyDgHhCJdC0cKAvbzxnmEotI
+	 4k4ylvc9gwaqMoZC+TRzV16b9VRVTbQY41zF+zC/l+py0e6GMwaWsk+QqwNP9zvG1O
+	 WP0yWgzyy+/YA==
+Date: Tue, 4 Mar 2025 09:04:50 +0100
+From: Maxime Ripard <mripard@kernel.org>
+To: Anusha Srivatsa <asrivats@redhat.com>
+Cc: Raphael Gallais-Pou <raphael.gallais-pou@foss.st.com>, 
+	Joel Stanley <joel@jms.id.au>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Andrew Jeffery <andrew@codeconstruct.com.au>, 
+	Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
+	Xinliang Liu <xinliang.liu@linaro.org>, Tian Tao <tiantao6@hisilicon.com>, 
+	Xinwei Kong <kong.kongxinwei@hisilicon.com>, Sumit Semwal <sumit.semwal@linaro.org>, 
+	Yongqin Liu <yongqin.liu@linaro.org>, John Stultz <jstultz@google.com>, 
+	Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Marek Vasut <marex@denx.de>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	Fabio Estevam <festevam@gmail.com>, Orson Zhai <orsonzhai@gmail.com>, 
+	Baolin Wang <baolin.wang@linux.alibaba.com>, Chunyan Zhang <zhang.lyra@gmail.com>, 
+	Alain Volmat <alain.volmat@foss.st.com>, Raphael Gallais-Pou <rgallaispou@gmail.com>, 
+	Yannick Fertre <yannick.fertre@foss.st.com>, Philippe Cornu <philippe.cornu@foss.st.com>, 
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Mikko Perttunen <mperttunen@nvidia.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Alexey Brodkin <abrodkin@synopsys.com>, 
+	Dave Stevenson <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Jonathan Corbet <corbet@lwn.net>, linux-aspeed@lists.ozlabs.org, 
+	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org, imx@lists.linux.dev, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-tegra@vger.kernel.org, linux-doc@vger.kernel.org
+Subject: Re: [PATCH RESEND 07/12] drm/sti: move to
+ devm_platform_ioremap_resource() usage
+Message-ID: <20250304-astute-curvy-ladybug-f9ff15@houat>
+References: <20250225-memory-drm-misc-next-v1-0-9d0e8761107a@redhat.com>
+ <20250225-memory-drm-misc-next-v1-7-9d0e8761107a@redhat.com>
+ <24958ae8-6153-4798-abeb-e770d66ca8e4@foss.st.com>
+ <CAN9Xe3Q8=_Tz51i6gxNM6445p-rhNiK7B5Ljcga8g_Nn676dCQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127170251.744751-1-costa.shul@redhat.com>
- <20250227200623.60f20571@gandalf.local.home> <CAP4=nvQXaFmemBeW8U3U9zTMK0gVYvp23gfq_6ALsBJPTXt9Uw@mail.gmail.com>
- <CADDUTFwyMt5zFqWeKXXiECOeqeyZ46fJcc4-ff=rjccsMDHKSQ@mail.gmail.com>
-In-Reply-To: <CADDUTFwyMt5zFqWeKXXiECOeqeyZ46fJcc4-ff=rjccsMDHKSQ@mail.gmail.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Tue, 4 Mar 2025 09:03:55 +0100
-X-Gm-Features: AQ5f1Jp8s1Qa4Hjbj_2ILgoonOOrXdtSK1KX8J9VpSATDK0_36Dw6hYizV0UtBI
-Message-ID: <CAP4=nvRtY+kEzxW9Lj2uSYZuFhuESbYs3yj0oq6resyuWVHjjQ@mail.gmail.com>
-Subject: Re: [PATCH v1] rtla: Save trace when option `--trace` is specified
-To: Costa Shulyupin <costa.shul@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="3cvx2hh6lak7gb3g"
+Content-Disposition: inline
+In-Reply-To: <CAN9Xe3Q8=_Tz51i6gxNM6445p-rhNiK7B5Ljcga8g_Nn676dCQ@mail.gmail.com>
+
+
+--3cvx2hh6lak7gb3g
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH RESEND 07/12] drm/sti: move to
+ devm_platform_ioremap_resource() usage
+MIME-Version: 1.0
 
-po 3. 3. 2025 v 16:55 odes=C3=ADlatel Costa Shulyupin <costa.shul@redhat.co=
-m> napsal:
->
-> Actually trace collection can be performed using just trace-cmd start,
-> trace-cmd stop, and trace-cmd extract.
->
+On Mon, Mar 03, 2025 at 12:29:19PM -0500, Anusha Srivatsa wrote:
+> On Wed, Feb 26, 2025 at 5:19=E2=80=AFAM Raphael Gallais-Pou <
+> raphael.gallais-pou@foss.st.com> wrote:
+>=20
+> >
+> > On 2/25/25 23:20, Anusha Srivatsa wrote:
+> > > Replace platform_get_resource/_byname + devm_ioremap
+> > > with just devm_platform_ioremap_resource()
+> > >
+> > > Used Coccinelle to do this change. SmPl patch:
+> > >
+> > > @rule@
+> > > identifier res;
+> > > expression ioremap;
+> > > identifier pdev;
+> > > constant mem;
+> > > expression name;
+> > > @@
+> > > -struct resource *res;
+> > > ...
+> > > -res =3D platform_get_resource_byname(pdev,mem,name);
+> > > <...
+> > > -if (!res) {
+> > > -...
+> > > -}
+> > > ...>
+> > > -ioremap =3D devm_ioremap(...);
+> > > +ioremap =3D devm_platform_ioremap_resource_byname(pdev,name);
+> > >
+> > > and
+> > > @rule_2@
+> > > identifier res;
+> > > expression ioremap;
+> > > identifier pdev;
+> > > @@
+> > > -struct resource *res;
+> > > ...
+> > > -res =3D platform_get_resource(pdev,...);
+> > > <...
+> > > -if (!res) {
+> > > -...
+> > > -}
+> > > ...>
+> > > -ioremap =3D devm_ioremap(...);
+> > > +ioremap =3D devm_platform_ioremap_resource(pdev,0);
+> > >
+> > > v2: Fix compilation error.
+> >
+> >
+> > Hi Anusha,
+> >
+> >
+> > You did not take into account my comment regarding the changelog. :-)
+> >
+> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
+commentary
+> >
+> > While the commit summary do not specify the version, this changelog
+> > suggests
+> > that the version of your series as been incremented.
+> > If this is a v2, then a version descriptor should be applied to the
+> > patchset.
+> >
+> > https://www.kernel.org/doc/html/latest/process/submitting-patches.html#=
+subject-line
+> >
+> > Hi  Raphael,
+>=20
+> That is correct. While this patch is a v2, there is another patch or two =
+in
+> the same series that is on v4 when it got acked and reviewed. Having
+> patches belonging to the same series with different version prefixes seem=
+ed
+> odd when I sent the series. Hence added what exactly changed in the commit
+> log.
 
-Yes, but that does not necessarily mean we cannot add it to rtla, too;
-we already do that e.g. for event histograms, which you could also
-replace with trace-cmd. It has the benefit of synchronizing the
-start/stop of the trace collection with the osnoise/timerlat tracer.
+This breaks a lot of tools though. If your series changes, you need to
+increase the version number, no matter how small or insignificant it
+changed compared to the previous one. resend is only meant to be used
+when you send the exact same series.
 
-Tomas
+Maxime
 
+--3cvx2hh6lak7gb3g
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZ8a0GwAKCRAnX84Zoj2+
+dvPAAX0T6CB5j6he9IlacsjKLYZXt0M1IhAKVugJHAC1WHuswlCAJSgEyELEpzS1
+ddcuQ7kBf3wXscEAe3lhr3vk0F2KVEj4r8JtBnUwxNM0o1E63auMQV7dNPG5Z5Ku
+4gxKbq/wJQ==
+=hPVI
+-----END PGP SIGNATURE-----
+
+--3cvx2hh6lak7gb3g--
 
