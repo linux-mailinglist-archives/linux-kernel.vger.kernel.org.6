@@ -1,110 +1,114 @@
-Return-Path: <linux-kernel+bounces-542944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E549A4CFB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:09:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A944A4CFBB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:10:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F5D3ACFE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:09:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 667321895CB9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:10:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6108472;
-	Tue,  4 Mar 2025 00:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0250522A;
+	Tue,  4 Mar 2025 00:10:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="lnoXGO27"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1275628F4;
-	Tue,  4 Mar 2025 00:09:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hSNxcxjQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 564762905;
+	Tue,  4 Mar 2025 00:10:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741046984; cv=none; b=JmLgN2PRFGS7XdyfG2+km/vGv3PKzJo1c7QTb//60RtqCygUgF9URGgY8SptzuIxeVyOU2LNaCCLl9b20lR2lSx5ilXEd4opsg40G9UgSUOxxbKGj6RxXmmu2ZCFHnbjp4Cod4gEqa8WnBGIHfdoCuYE162bfY+inljU9NwB2NY=
+	t=1741047026; cv=none; b=uAoBB1qTJ9EfWra3VeyxUbI+lgumOn/eXvu8khVPZvDDRp3y3Y6THolOMUpduZbXJ+AUYp3Z56sU3JyIKwsyIZ7p73+IXBBfz6SCLEWMMNuOqNNe5CkVzKZTiOfIG4Kgo35PsLb+d04sn0e1kFLzVndUGKeGPbJY2SFlySe1DIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741046984; c=relaxed/simple;
-	bh=8QTX0gSTcUhFewuiZj/6AB6PoOE/TdhC/NsZANgtDsA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hXhutcVn6HpK8WuLNtCitIoty7qHKUrGaW1u4sbXL4ahoIy6BexXQA07XE3FY7vTpt+m1uUiA9qZmGq+fG6F4FpxfX7LZCm4PT0H/GM6ygWdW92IeMGvWN9Qsu02Fhcka0XA3sU0kPyYYp91fQWwf/JZZm0DcyeqQk3IZRXzap8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=lnoXGO27; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from romank-3650.corp.microsoft.com (unknown [131.107.160.188])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 6F81F2110499;
-	Mon,  3 Mar 2025 16:09:42 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6F81F2110499
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741046982;
-	bh=wKyL8JEg7oY2WkvOaVvvBUT+gAUjHPmQCOIZqydTSq0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=lnoXGO27ng0PwYk+yFV08K1fTS4bNhSC1XthXWzebLKWXY0nFsCA2dpMUVmQKH0vo
-	 VlwrasqA8aD2eEVMWs4nob8oG/I014MwB9GYptttpTwD+dVuBfmoomr88mhojRN3QO
-	 KBzJt6AbSLmMKYhSpxCMX/DM6hMyb/hCOf3xSoRY=
-From: Roman Kisel <romank@linux.microsoft.com>
-To: eahariha@linux.microsoft.com,
-	mhklinux@outlook.com,
-	kys@microsoft.com,
-	haiyangz@microsoft.com,
-	wei.liu@kernel.org,
-	decui@microsoft.com,
-	James.Bottomley@HansenPartnership.com,
-	martin.petersen@oracle.com,
-	linux-hyperv@vger.kernel.org,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: apais@microsoft.com,
-	benhill@microsoft.com,
-	sunilmut@microsoft.com
-Subject: [PATCH hyperv-next v2 1/1] scsi: storvsc: Don't report the host packet status as the hv status
-Date: Mon,  3 Mar 2025 16:09:40 -0800
-Message-ID: <20250304000940.9557-2-romank@linux.microsoft.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250304000940.9557-1-romank@linux.microsoft.com>
-References: <20250304000940.9557-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1741047026; c=relaxed/simple;
+	bh=mhb0R+JmZbuqZb2vKrLLB9HfKDaCWuI1Q6s/9+i/gkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qpYY3lhvxZop5JRXoJ1CfXWPk4GXZWRzBOUy7Qv02VBqq7R3BbjikkXxwHLYvnM1WuRDboUODnkFsWow7kkp1IJ4oAAgpmnDmf8qX9cyYl7AR7GxG1L68ZIO0+3V1MMsN4Jfz1DS7U2mIffS+Z6X3OiPg+YmHtnFhGa1zCZm+nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hSNxcxjQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B3C1C4CEE4;
+	Tue,  4 Mar 2025 00:10:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741047026;
+	bh=mhb0R+JmZbuqZb2vKrLLB9HfKDaCWuI1Q6s/9+i/gkc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=hSNxcxjQZv/RKSYZQNum16KV0wryu2LL8z+zTyog6YdTtK1gF1VttJ/xPPcbtjVHU
+	 JZmil/BGqLpE9YLTHHzWIun8yrHJm+/uxcu/ucV3NF2apROYk68N6E6TFTzyEOSopS
+	 Jty+DVMyr4zLFToJtTEvwTqvv8X+DC7+joSl3XW/C6igqAT6n6pUTWDTg91XHvJTEA
+	 0WomYPJlQ6vQqWI2DjEtdX8BSwLWMZeK8AfhRVB1sbDI4T1aAiJ8xamF+Jv6J/tJ5w
+	 3/yHvoE8D8dHNXXPhhPIcJdlAxr6SsqcrsyMxOIxvGr956jKnaxA93cLPHpNqQuYHZ
+	 sskj05VhvjrOA==
+Date: Mon, 3 Mar 2025 16:10:24 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Eric Dumazet
+ <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Heiner Kallweit
+ <hkallweit1@gmail.com>, Parthiban Veerasooran
+ <parthiban.veerasooran@microchip.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, thomas.petazzoni@bootlin.com,
+ linux-arm-kernel@lists.infradead.org, Christophe Leroy
+ <christophe.leroy@csgroup.eu>, Herve Codina <herve.codina@bootlin.com>,
+ Florian Fainelli <f.fainelli@gmail.com>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>, Piergiorgio Beruto
+ <piergiorgio.beruto@gmail.com>
+Subject: Re: [PATCH net v2] net: ethtool: netlink: Allow NULL nlattrs when
+ getting a phy_device
+Message-ID: <20250303161024.43969294@kernel.org>
+In-Reply-To: <20250301141114.97204-1-maxime.chevallier@bootlin.com>
+References: <20250301141114.97204-1-maxime.chevallier@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The log statement reports the packet status code as the hv
-status code which causes confusion when debugging as "hv"
-might refer to a hypervisor, and sometimes to the host part
-of the Hyper-V virtualization stack.
+On Sat,  1 Mar 2025 15:11:13 +0100 Maxime Chevallier wrote:
+> ethnl_req_get_phydev() is used to lookup a phy_device, in the case an
+> ethtool netlink command targets a specific phydev within a netdev's
+> topology.
+> 
+> It takes as a parameter a const struct nlattr *header that's used for
+> error handling :
+> 
+>        if (!phydev) {
+>                NL_SET_ERR_MSG_ATTR(extack, header,
+>                                    "no phy matching phyindex");
+>                return ERR_PTR(-ENODEV);
+>        }
+> 
+> In the notify path after a ->set operation however, there's no request
+> attributes available.
+> 
+> The typical callsite for the above function looks like:
+> 
+> 	phydev = ethnl_req_get_phydev(req_base, tb[ETHTOOL_A_XXX_HEADER],
+> 				      info->extack);
+> 
+> So, when tb is NULL (such as in the ethnl notify path), we have a nice
+> crash.
+> 
+> It turns out that there's only the PLCA command that is in that case, as
+> the other phydev-specific commands don't have a notification.
+> 
+> This commit fixes the crash by passing the cmd index and the nlattr
+> array separately, allowing NULL-checking it directly inside the helper.
+> 
+> Fixes: c15e065b46dc ("net: ethtool: Allow passing a phy index for some commands")
+> Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
 
-Fix the name of the datum being logged to clearly indicate
-the component reporting the error. Also log it in hexadecimal
-everywhere for consistency.
+Well, this alone doesn't look too bad.. :) Hopefully we can address
+adding more suitable handlers for phy ops in net-next.
 
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
----
- drivers/scsi/storvsc_drv.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
-index a8614e54544e..35db061ae3ec 100644
---- a/drivers/scsi/storvsc_drv.c
-+++ b/drivers/scsi/storvsc_drv.c
-@@ -776,7 +776,7 @@ static void  handle_multichannel_storage(struct hv_device *device, int max_chns)
- 
- 	if (vstor_packet->operation != VSTOR_OPERATION_COMPLETE_IO ||
- 	    vstor_packet->status != 0) {
--		dev_err(dev, "Failed to create sub-channel: op=%d, sts=%d\n",
-+		dev_err(dev, "Failed to create sub-channel: op=%d, host=0x%x\n",
- 			vstor_packet->operation, vstor_packet->status);
- 		return;
- 	}
-@@ -1183,7 +1183,7 @@ static void storvsc_on_io_completion(struct storvsc_device *stor_device,
- 			STORVSC_LOGGING_WARN : STORVSC_LOGGING_ERROR;
- 
- 		storvsc_log_ratelimited(device, loglevel,
--			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x hv 0x%x\n",
-+			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x host 0x%x\n",
- 			scsi_cmd_to_rq(request->cmd)->tag,
- 			stor_pkt->vm_srb.cdb[0],
- 			vstor_packet->vm_srb.scsi_status,
--- 
-2.43.0
-
+Didn't someone report this, tho? I vaguely remember seeing an email,
+unless they said they don't want to be credited maybe we should add
+a Reported-by tag? You can post it in reply, no need to repost 
+the patch.
 
