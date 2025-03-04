@@ -1,93 +1,161 @@
-Return-Path: <linux-kernel+bounces-543425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05689A4D56C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:54:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D318A4D556
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:49:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70D167A9399
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:53:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40B6618938D5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDBE1F8736;
-	Tue,  4 Mar 2025 07:54:28 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F06111F5838;
+	Tue,  4 Mar 2025 07:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AmsQrcb7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB081F55F8;
-	Tue,  4 Mar 2025 07:54:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581541F63F5;
+	Tue,  4 Mar 2025 07:47:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741074867; cv=none; b=nRDowyNGOkUpAYBYJK8fSZrmnSWQKRUAsGO7txFVg6wSmwuYYq9QvD0IT2MbiVqiVw8hdyJ4uGElFKK9mC7kyeRvfPdD5Gaz9wjJCKgmnM8YZQTGXVJqW7JfVxUKAD0cJ+inHH8WhZW+n7Tn+tWc6WPJ6qEe85ya6ZtGvjFZiew=
+	t=1741074460; cv=none; b=rlsm0M/1rcFHd7nHP441b+o/G5wlpdXmAyABUdq04Bec6Te6YTT0ri6fnb3h8iGEG68VwevM6grZ8mI4EESzTqI5TgQ8UlR5awAlUiYs1YlkUVZhOlV1nsVve1JuruUyPIJ/4oyvg5PUm8lS3twALqsMxl1XLVcVMB5wGrjBXoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741074867; c=relaxed/simple;
-	bh=iRL1xqpVHtKl17cWCTJwB5wPeu43QyomPaKN1qB2UTE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=UTyu8fM2NDtTLmoFaXuRMDURJf7Ys7VqkPD4NAVq59t8aA1WZeZGTpFSjA6GR+CrBX0HqwJYv+uCv59r4SM8kyvuXH/NovlQHoAkMHSt8Oxdry5mtIk1/GjFGeTeLiYktkvZl3P5VkVlQ8/i9+6dnUd2hPMH5gJtSzaY6mYQzZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.17])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z6SWw4SsYz1dyjv;
-	Tue,  4 Mar 2025 15:50:04 +0800 (CST)
-Received: from dggemv703-chm.china.huawei.com (unknown [10.3.19.46])
-	by mail.maildlp.com (Postfix) with ESMTPS id 6E1821A0188;
-	Tue,  4 Mar 2025 15:54:16 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv703-chm.china.huawei.com (10.3.19.46) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 4 Mar 2025 15:54:16 +0800
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemn100009.china.huawei.com (7.202.194.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Tue, 4 Mar 2025 15:54:15 +0800
-From: Huisong Li <lihuisong@huawei.com>
-To: <linux@roeck-us.net>, <jdelvare@suse.com>
-CC: <linux-hwmon@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<zhanjie9@hisilicon.com>, <zhenglifeng1@huawei.com>,
-	<liuyonglong@huawei.com>, <lihuisong@huawei.com>
-Subject: [PATCH] hwmon: Fix the missing of 'average' word in hwmon_power_attr_templates
-Date: Tue, 4 Mar 2025 15:46:40 +0800
-Message-ID: <20250304074640.2770353-1-lihuisong@huawei.com>
-X-Mailer: git-send-email 2.30.0
+	s=arc-20240116; t=1741074460; c=relaxed/simple;
+	bh=AFZWbQeLdmlscWJGirRlHWpxaH/09ugu2ZcjrkguJhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GBZQh3LQyWupunD1J+EViWSR7Xh9rqU8ahWT/kOsY3aSnOw/APUUGYmgeRMzXL06GjDyulSbIpHc+Qe77f3yfPBCxWXMFapIakJDUu7WRVWkqS8kmGWMjd3BmwueW+0BDH5GW+yQOf5EBdFlgg59p6VPX8XlcULpJ3jip0tr210=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AmsQrcb7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 499D4C4CEE8;
+	Tue,  4 Mar 2025 07:47:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741074460;
+	bh=AFZWbQeLdmlscWJGirRlHWpxaH/09ugu2ZcjrkguJhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AmsQrcb7ldMif9AB4P8WWXFrZuHD/4pz0dW/6kBzZ2di7u33yb5XNq8m+Edxpjbue
+	 t1cgcLKAZmjKQpGIjMJBBPNQ8eXfpCoY5dvYXuEARGZ6jOQQxtFmdnMGMpwNDZHxzM
+	 w/9DD8QsNsqFtubcoj1pdMRVJg0p7FGrOd0WFI8MuxdVj2pBpoPNBDQJ6H6Cb1Ejke
+	 RkMED8G1vDf+UuWDXEkgJqRDONQ1OXXKE4GzvChTKYhYV/8HfudKhgkleMW3FX9vD+
+	 VRrDoFv+awSTVONgpGrfK1b9m+9pREyedrzkFBr2/6ZDpwbJBLONHfOAxO7UMzq0kv
+	 RFoQYwj6wwyTQ==
+Date: Tue, 4 Mar 2025 16:47:36 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>
+Cc: linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kamel Bouhara <kamel.bouhara@bootlin.com>
+Subject: Re: [PATCH v6 3/3] counter: microchip-tcb-capture: Add capture
+ extensions for registers RA/RB
+Message-ID: <Z8awGBW8obpG1QPN@ishi>
+References: <20250227144023.64530-1-csokas.bence@prolan.hu>
+ <20250227144023.64530-4-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="fmbU7YrIDFXv6vYx"
+Content-Disposition: inline
+In-Reply-To: <20250227144023.64530-4-csokas.bence@prolan.hu>
 
-The string "power%d_interval_max" and "power%d_interval_min" in the
-hwmon_power_attr_templates[] are corresponding to the sysfs interface name
-of hwmon_power_average_interval_max and hwmon_power_average_interval_min.
-But the 'average' word is missing in two strings. Fortunately, there is
-no driver to use it yet.
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
----
- drivers/hwmon/hwmon.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--fmbU7YrIDFXv6vYx
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-diff --git a/drivers/hwmon/hwmon.c b/drivers/hwmon/hwmon.c
-index 9703d60e9bbf..1688c210888a 100644
---- a/drivers/hwmon/hwmon.c
-+++ b/drivers/hwmon/hwmon.c
-@@ -646,8 +646,8 @@ static const char * const hwmon_power_attr_templates[] = {
- 	[hwmon_power_enable] = "power%d_enable",
- 	[hwmon_power_average] = "power%d_average",
- 	[hwmon_power_average_interval] = "power%d_average_interval",
--	[hwmon_power_average_interval_max] = "power%d_interval_max",
--	[hwmon_power_average_interval_min] = "power%d_interval_min",
-+	[hwmon_power_average_interval_max] = "power%d_average_interval_max",
-+	[hwmon_power_average_interval_min] = "power%d_average_interval_min",
- 	[hwmon_power_average_highest] = "power%d_average_highest",
- 	[hwmon_power_average_lowest] = "power%d_average_lowest",
- 	[hwmon_power_average_max] = "power%d_average_max",
--- 
-2.33.0
+On Thu, Feb 27, 2025 at 03:40:20PM +0100, Bence Cs=F3k=E1s wrote:
+> +static int mchp_tc_count_cap_read(struct counter_device *counter,
+> +				  struct counter_count *count, size_t idx, u64 *val)
+> +{
+> +	struct mchp_tc_data *const priv =3D counter_priv(counter);
+> +	u32 cnt;
+> +	int ret;
+> +
+> +	switch (idx) {
+> +	case COUNTER_MCHP_EXCAP_RA:
+> +		ret =3D regmap_read(priv->regmap, ATMEL_TC_REG(priv->channel[0], RA), =
+&cnt);
+> +		break;
+> +	case COUNTER_MCHP_EXCAP_RB:
+> +		ret =3D regmap_read(priv->regmap, ATMEL_TC_REG(priv->channel[0], RB), =
+&cnt);
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	if (!ret)
+> +		*val =3D cnt;
+> +
+> +	return ret;
+> +}
 
+It's cleaner to exit early on an error than to carry it to the end.
+Instead of if (!ret), perform an if (ret) return ret to exit early on an
+error, then simply return 0 at the end of the funtion.
+
+> diff --git a/include/uapi/linux/counter/microchip-tcb-capture.h b/include=
+/uapi/linux/counter/microchip-tcb-capture.h
+> index ee72f1463594..5c015fafe42c 100644
+> --- a/include/uapi/linux/counter/microchip-tcb-capture.h
+> +++ b/include/uapi/linux/counter/microchip-tcb-capture.h
+> @@ -12,6 +12,9 @@
+>   * Count 0
+>   * \__  Synapse 0 -- Signal 0 (Channel A, i.e. TIOA)
+>   * \__  Synapse 1 -- Signal 1 (Channel B, i.e. TIOB)
+> + * \__  Extension capture0    (RA register)
+> + * \__  Extension capture1    (RB register)
+> + * \__  Extension capture2    (RC register)
+
+The capture2 extension doesn't exist in this patch so remove this
+comment line.
+
+> @@ -30,6 +33,12 @@ enum counter_mchp_signals {
+>  	COUNTER_MCHP_SIG_TIOB,
+>  };
+> =20
+> +enum counter_mchp_capture_extensions {
+> +	COUNTER_MCHP_EXCAP_RA,
+> +	COUNTER_MCHP_EXCAP_RB,
+> +	COUNTER_MCHP_EXCAP_RC,
+> +};
+
+Remove COUNTER_MCHP_EXCAP_RC for the same reason as above.
+
+Also, I would argue for these to be preprocessor defines rather than
+enum for the same reasons as in my other review[^1].
+
+One final comment: is RA/RB the best way to differentiate these? One of
+the benefits of abstraction layers is that users won't need to be
+concerned about the hardware details, and naming the capture values
+after their respective general register hardware names feels somewhat
+antithetic to that end.
+
+I imagine there are better ways to refer to these that would communicate
+their relationship better, such as "primary capture" and "secondary
+capture". However at that point capture0 and capture1 would seem
+obvious enough, in which case you might not even need to expose these to
+userspace at all.
+
+William Breathitt Gray
+
+[^1] https://lore.kernel.org/all/Z8alaOTjZeRuXnUI@ishi/
+
+--fmbU7YrIDFXv6vYx
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8awGAAKCRC1SFbKvhIj
+K+peAP0dCAA2g9OAlpFDPmbqoOmnwi+yDLF2hYMVY72oMo8RqAEAt6QoAGB5MLHi
+Wb5E+EiJBEq2j9Hh1/bUvs7Xzsm4dws=
+=jTwQ
+-----END PGP SIGNATURE-----
+
+--fmbU7YrIDFXv6vYx--
 
