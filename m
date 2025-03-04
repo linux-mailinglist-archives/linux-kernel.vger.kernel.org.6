@@ -1,148 +1,117 @@
-Return-Path: <linux-kernel+bounces-544978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15163A4E9F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:52:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294A6A4E78D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:06:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2CF2885D31
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:55:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4053420531
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:56:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E3092BD585;
-	Tue,  4 Mar 2025 16:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5656727F4CC;
+	Tue,  4 Mar 2025 16:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WLzqKgeb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j7hQIFxO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F5129DB8C;
-	Tue,  4 Mar 2025 16:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C35264A91;
+	Tue,  4 Mar 2025 16:35:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106005; cv=none; b=d7KmdiMjvpstRYNP782oTJfnuD+lzCmpY76xrQe5JFYy1UYjVpfKs1FL7yLOoAPNdcQltMzp0J9sGd1GTLUpAAOpnNMu0n/vL+L4gv/fxERVpIFDwbcH/nJwZpADGE7swnjumKgGzo7nODwLuRx8Tx1ft/N7MmKqLxIEuHYPX8k=
+	t=1741106126; cv=none; b=I8kKy91XM3nYALhz4xEeaBVC9er2mISSqs/DNZ1PobzbUbnGBTkwbLKyOEaGE4JbtfFxCkQRkvKKalCmVX1PPnIQ9f3/MEwyZE1Ql8Gf7AsB5EyOQuQELWpK96Gl+h53fEym0TqW1wbhcEMKoQMjK0Ipkxi6bWbbNNyc8hKMlnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106005; c=relaxed/simple;
-	bh=sVMNAHKUeuRT95+im4P0/jKAS/GgcfOXmRXfFHueNYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Zkd+/HYZ9kKIKL+Uo6gpwDbV+xY+f46ekM+H4qwPIOusQoJ/7NOBqOS8y2sn9igtGCPIEa6NZpA/xQF3NI3Nje5oaMyosbngSZdPmrQwtT1cPkCJLYE1nFbjtmcO9PI+phXZvKRQbylq16ZPSjYrHyHD493Mix/0CxZvTjnX9Dc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WLzqKgeb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B13C4CEE7;
-	Tue,  4 Mar 2025 16:33:18 +0000 (UTC)
+	s=arc-20240116; t=1741106126; c=relaxed/simple;
+	bh=uTZtAcGD27ys5mwl7TA1zFMFkvyG6nq684nffzW7D+0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lTs13lHMFnWoIcuyZnLsV8JQaJu27xWQ6fw105kPEytb2HZGDgr6KsGh8s/ezZr4iwuQOxYPDGZ+d4Y7kzLrH+bhR4SqDi5FI1tummcsJdswrTv/wqYcS5WA8ybXFxPllORfl3WlYdF9o77CzBELR9moMxDUrDm++DNYffuGfss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j7hQIFxO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E38F0C4CEE5;
+	Tue,  4 Mar 2025 16:35:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741106005;
-	bh=sVMNAHKUeuRT95+im4P0/jKAS/GgcfOXmRXfFHueNYU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WLzqKgebR3Z1yyQWkkvDsRbvkJ0DR4h7CdicTt6kETDN7WiFUR0IZ2mFnvwFYvFki
-	 3wCFKEtwexcxSaTSYV+/A9/5S25Wmd8e+5Z0qvOxeEyEF0dLONG1ufDrRds6m3KOzq
-	 MILYp6ND7vin9qEwgEM59ydkSOG/ZQU9orONU8ZUKlBuaz9FTqA7yac7Tpk8HRnhFD
-	 SOXp+lSElrlCio1jTn0KAdE4h5BUjqhePtvHk8n2fqhaFlHC4PshfrhZDXEfP7pUsK
-	 zC1MzrJtoD5eiGlIEfLDwOVDZ0DJ1ZL3egfIZ+69FoITW0TvIoKaQ7pUcMaKOHWMLQ
-	 naBBllK6LaF6Q==
-Message-ID: <d4282923-63e4-4f14-b5ee-5e8bf1973893@kernel.org>
-Date: Tue, 4 Mar 2025 17:33:16 +0100
+	s=k20201202; t=1741106126;
+	bh=uTZtAcGD27ys5mwl7TA1zFMFkvyG6nq684nffzW7D+0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=j7hQIFxOQbVS5TqOYMymW+CSIlJL61wC45Uupjdl3+yzYs5Si4DmYm3zhhYiKmvNk
+	 Du9i+KeqqUG6B5c8UEmr9CzuW/j1eaeEufIMYE2c+WhGLu/EShCtUJuPJ4ex4ZLU5g
+	 XJH/0ypQ8gM6O7oIAFMqPB50BXkSCcrdAQtVW1g4sbnxXz5xmAKgd9CNQkP3QXks90
+	 dHkJZL+n1xuu9rlnAOPWkbFyM0TEupuonsmsycbmnWUcy6u7N8DKfS4yFCG7mxX/y/
+	 shhNPv22SIQEZsKTi7ohoOYETJl+TnnciBHA5z9wmyKoqhts9k9PuLyyYesElH1oTH
+	 KSxJnVonW+v+Q==
+Date: Tue, 4 Mar 2025 08:35:24 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, Christoph Hellwig <hch@lst.de>, Marek
+ Szyprowski <m.szyprowski@samsung.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Rasesh Mody <rmody@marvell.com>,
+ GR-Linux-NIC-Dev@marvell.com, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH net v1 1/1] bnx2: Fix unused data compilation warning
+Message-ID: <20250304083524.3fe2ced4@kernel.org>
+In-Reply-To: <Z8cC_xMScZ9rq47q@smile.fi.intel.com>
+References: <20250228100538.32029-1-andriy.shevchenko@linux.intel.com>
+	<20250303172114.6004ef32@kernel.org>
+	<Z8bcaR9MS7dk8Q0p@smile.fi.intel.com>
+	<5ec0a2cc-e5f6-42dd-992c-79b1a0c1b9f5@redhat.com>
+	<Z8bq6XJGJNbycmJ9@smile.fi.intel.com>
+	<Z8cC_xMScZ9rq47q@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/3] dt-bindings: hwmon: Add Microchip emc2305 yaml
- schema
-To: florin.leotescu@oss.nxp.com, Jean Delvare <jdelvare@suse.com>,
- Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Michael Shych <michaelsh@nvidia.com>,
- linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: viorel.suman@nxp.com, carlos.song@nxp.com,
- linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
- festevam@gmail.com, Florin Leotescu <florin.leotescu@nxp.com>
-References: <20250304162136.1963384-1-florin.leotescu@oss.nxp.com>
- <20250304162136.1963384-2-florin.leotescu@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250304162136.1963384-2-florin.leotescu@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 04/03/2025 17:21, florin.leotescu@oss.nxp.com wrote:
-> From: Florin Leotescu <florin.leotescu@nxp.com>
+On Tue, 4 Mar 2025 15:41:19 +0200 Andy Shevchenko wrote:
+> > > diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> > > index b79925b1c433..927884f10b0f 100644
+> > > --- a/include/linux/dma-mapping.h
+> > > +++ b/include/linux/dma-mapping.h
+> > > @@ -629,7 +629,7 @@ static inline int dma_mmap_wc(struct device *dev,
+> > >  #else
+> > >  #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
+> > >  #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
+> > > -#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
+> > > +#define dma_unmap_addr(PTR, ADDR_NAME)           (((PTR)->ADDR_NAME), 0)
+> > >  #define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
+> > >  #define dma_unmap_len(PTR, LEN_NAME)             (0)
+> > >  #define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
+> > > ---
+> > > 
+> > > Would that work?  
 > 
-> Introduce yaml schema for Microchip emc2305 pwm fan controller.
-> 
-> Signed-off-by: Florin Leotescu <florin.leotescu@nxp.com>
-> ---
->  .../bindings/hwmon/microchip,emc2305.yaml     | 43 +++++++++++++++++++
+> Actually it won't work because the variable is under the same ifdeffery.
+> What will work is to spreading the ifdeffery to the users, but it doesn't any
+> better than __maybe_unsused, which is compact hack (yes, I admit that it is not
+> the nicest solution, but it's spread enough in the kernel).
 
-I do not see improvements in the subject nor in missing $ref to common
-schema for fans.
+I meant something more like (untested):
 
-<form letter>
-This is a friendly reminder during the review process.
+diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+index b79925b1c433..a7ebcede43f6 100644
+--- a/include/linux/dma-mapping.h
++++ b/include/linux/dma-mapping.h
+@@ -629,10 +629,10 @@ static inline int dma_mmap_wc(struct device *dev,
+ #else
+ #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
+ #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
+-#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
+-#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
+-#define dma_unmap_len(PTR, LEN_NAME)             (0)
+-#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
++#define dma_unmap_addr(PTR, ADDR_NAME)           ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
++#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
++#define dma_unmap_len(PTR, LEN_NAME)             ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
++#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
+ #endif
+ 
+ #endif /* _LINUX_DMA_MAPPING_H */
 
-It looks like you received a tag and forgot to add it.
 
-If you do not know the process, here is a short explanation:
-Please add Acked-by/Reviewed-by/Tested-by tags when posting new versions
-of patchset, under or above your Signed-off-by tag, unless patch changed
-significantly (e.g. new properties added to the DT bindings). Tag is
-"received", when provided in a message replied to you on the mailing
-list. Tools like b4 can help here. However, there's no need to repost
-patches *only* to add the tags. The upstream maintainer will do that for
-tags received on the version they apply.
-
-Please read:
-https://elixir.bootlin.com/linux/v6.12-rc3/source/Documentation/process/submitting-patches.rst#L577
-
-If a tag was not added on purpose, please state why and what changed.
-</form letter>
-
-Best regards,
-Krzysztof
+I just don't know how much code out there depends on PTR not
+existing if !CONFIG_NEED_DMA_MAP_STATE
 
