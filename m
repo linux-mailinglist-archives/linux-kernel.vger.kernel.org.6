@@ -1,62 +1,84 @@
-Return-Path: <linux-kernel+bounces-543692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB0AA4D8BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:39:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6076A4D8A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:37:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7CC9B3B5886
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE42917090E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:36:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 158271FFC5B;
-	Tue,  4 Mar 2025 09:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2121FFC74;
+	Tue,  4 Mar 2025 09:31:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="L56dBXf5"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nmy2jmPC"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E47FD1FDE1B;
-	Tue,  4 Mar 2025 09:30:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AAC1FFC7D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:31:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741080658; cv=none; b=Y3vu+8sOy3jtWsQbvLwt3RrE9jIFsrzyFXRtg0MmqLZPvxE62H91FDu8JrK2T+2v3kVMt0Jd1apPT4axrMMMP4+w24G4MdhOsfGCsGmyJH0qeCpYx2scgy//wEV9gsDs1RI9c9wdjlvnLSglhF3Oki7VfTEVNdCaR1DOHOymOPk=
+	t=1741080663; cv=none; b=i2C7y24+PXvTjDhtU7jD2eP1UA216goStTW1cuDNw0oBwkmaj/65Oa3VcvcCUbgzlbfAfLSOCckJ4q1g5xa5jpiqG0ODsKCkv7ml4QjFdSI0copNiU0d4xmGrR+7gSNOdF09EaIXzPUs/JucFthPcmXCxLaSUEO86jtMzAjDrZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741080658; c=relaxed/simple;
-	bh=azR/n+ME0OmekE2Xm4FRbD4LwYTYZKxi63PxlSTZAi8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=JKpf8DS7/73n5HoGjueg9J01SsYR/lu4xRE6hPcuQ0NJgbP0eByHcxeZiMilJ78Kfjybkjysm/GtMk582zsbg8wLOca46djSUkKbcYvQ2vXzDNGnWD6OrugtAIxJLY6kEofCPfAOWOPVuRGG5njRGY8RsIx5u63OvDXH6K+MBXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=L56dBXf5; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523NX4HG027319;
-	Tue, 4 Mar 2025 09:30:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	E8a1MoI/DSxQaVM5wDw1IAkuYTIlsrqYIzpG40JKed8=; b=L56dBXf5yPBG4No1
-	rqXnA4Lx02tbLzkucYYJsXKN4PvM92u6jI6rf7Wx8vWQRma1nG70rhO080zMkvjU
-	XmLMXP+Mar4/RZ5vliroe1qgVZfLzMxqZGdkeuGRdto4Tmkm8acFAEolSRwXMblu
-	BIlT45UWJ9bRQkdQefpT/1gOGty/xlBhZA9955L2DOXzkL9aTBsbj3pUX9+XPr0P
-	jjLZy4XkM2eU+vKf6c8V/EDXOofctX0KDIqDZt+I1TN1NTfcN5LRtAHi07yAV/bN
-	FV6/EYlb7JfZsiw0PN4L3DFqO3xngk3l6ibfdVSAT0ps+wl4OSrud1PGjRerWtjt
-	iLkxNA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6uhbq6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 09:30:35 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5249UZhU011921
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Mar 2025 09:30:35 GMT
-Received: from [10.204.66.137] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
- 01:30:28 -0800
-Message-ID: <91934960-c9fc-4442-88f3-ba1371470d05@quicinc.com>
-Date: Tue, 4 Mar 2025 15:00:25 +0530
+	s=arc-20240116; t=1741080663; c=relaxed/simple;
+	bh=KfgdtkUe9Ld3YiFZ+5uLKSPVI/DPDNsZowoXD930AZ0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nsEkoAkP1+MXG5yr8gBd79AdUer4SxPKnUvemkRauNP+CtMrFfvgeoDXCPZVSB62gh+HMMjaeoIPrX7a5FWdepgHYLM9zBm/NV4Qk75xpRbgAiV7LqAYUa1+y9STAL+Aw0LJC+jdauR9ItXt8X+NuaxS2j02ZxGJY2/55+PKiIw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Nmy2jmPC; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741080660;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0ZMdD5x7r0Q82/d4L8C6y43uagkDVSSt8m6qokozWb4=;
+	b=Nmy2jmPCkz6rZSZ8ZYPc5/0NtvMjyVxczzG4nTkn0RIR6saqk8zfBrCfdHahWwK2ns822R
+	1KCJvAiAaoe6mRYW/NMfPN8d279sgbs20ewRnsPb8Nkdg2Ldr1dYhp9Hhg7h9d6vEZqcUI
+	V1G/DElmjgMh6jwBj2GbAyOmAAwzWPU=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-331-9vKqKqX1NnSvOmuRrWX79A-1; Tue, 04 Mar 2025 04:30:48 -0500
+X-MC-Unique: 9vKqKqX1NnSvOmuRrWX79A-1
+X-Mimecast-MFC-AGG-ID: 9vKqKqX1NnSvOmuRrWX79A_1741080647
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43bcb061704so3444485e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:30:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741080647; x=1741685447;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0ZMdD5x7r0Q82/d4L8C6y43uagkDVSSt8m6qokozWb4=;
+        b=Gd1ZbIPe1zTiQ9sNvwbSgbiADLN9KykHUzOkHsPAc30q+0OTXjdGHYispcvjaoQ4kO
+         9rKtiBI62xmCP8ttWEz8xt6x77PWyks4q+fqIqxHYTC9T0oisPexa+HaGT6TejFxAOXA
+         U5iWoQVAf8Dr6qNF4qHC49Tka4CYXJ05qJJcCjWZEuGrPfbhjBHNFCfV4HGSZa28lKnM
+         YzwDyuIA8W8DBwhBNVitNpQgZUHH2YIQXAf8gGfzu0gVqZ1uupoEkCGxQjjI3132BqId
+         4zVBs6EJ8nZ+JOamfohGYhIZBtncpRi5UMPHuVOk0sZenYkZKHSeYpOM3Occp4PULHYN
+         /l3A==
+X-Gm-Message-State: AOJu0YyKHKfN6dtql5GYUXKb1d7xuonCpxscM28Hi6jWazhQS2ifi0nj
+	UKkDKC2rC0MlG/lmUgGYqqYbvx9ozt96U8E4EX8MQ8u0bUEf/OXK8GypDcO2CS1yGjOiYISBJnV
+	sob4+hb51CJqRrXTcpgf6t+XdN6zFunML4Bjxgdnvu3KfB622p9rQnom9YeMH8Q==
+X-Gm-Gg: ASbGncsl8qG6vr5eNgv+vfeM4S1LiMjfcVkFagNdRAMMDcX4YjQLiPsmarL4sPFIrBI
+	tbVvqPFK9qOCQCQb6+d41UIsHXj2aX+KZNKRy8mJxGGhqDjfA6rFsdU7CIvCB3RfoGX1ahMObE/
+	NPZ2Zc+kPIeo/9O3i4+DJHyBXwijpYZ4WlalT66ZlzisbMqXah/pApmJ5X9MZ45jgqMqGuCQ1lO
+	YNkqLthOHGZ9pKnKa/mAyu06SEqHTVairh6pJpkv4RxCbJrzWCxky54vvYfZ51gT/OrU7JC+SZH
+	Hj+nuz3UesbbONLDnH3BFu1lnm59PRm61KndAVb4jYEymg==
+X-Received: by 2002:a05:600c:1c95:b0:43b:cad1:46a0 with SMTP id 5b1f17b1804b1-43bcad14869mr20550875e9.14.1741080647548;
+        Tue, 04 Mar 2025 01:30:47 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFwVGJhG3LClhBH2gAIqvGg6sSkPzRuS7dTplCKfBFEiuEd9NOsvF6NXcj7TUVWOSoUqn5vfw==
+X-Received: by 2002:a05:600c:1c95:b0:43b:cad1:46a0 with SMTP id 5b1f17b1804b1-43bcad14869mr20550575e9.14.1741080647161;
+        Tue, 04 Mar 2025 01:30:47 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bcc732b6bsm13453975e9.21.2025.03.04.01.30.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 01:30:46 -0800 (PST)
+Message-ID: <7759fdfb-1aee-4a62-a2fb-33a22150ca9b@redhat.com>
+Date: Tue, 4 Mar 2025 10:30:45 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,83 +86,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 05/11] drm/msm/dsi: add DSI support for SA8775P
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
-        <sean@poorly.run>, <marijn.suijten@somainline.org>,
-        <andersson@kernel.org>, <robh@kernel.org>, <robh+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <konradybcio@kernel.org>, <conor+dt@kernel.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
-        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-6-quic_amakhija@quicinc.com>
- <hl352hhpv6imtilpw554njkpod4nycjlls4gg75barlugc2e42@okw2snj2bqm3>
+Subject: Re: [PATCH net-next v3 1/2] net: hsr: Fix PRP duplicate detection
+To: Jaakko Karrenpalo <jkarrenpalo@gmail.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Simon Horman <horms@kernel.org>,
+ Lukasz Majewski <lukma@denx.de>, MD Danish Anwar <danishanwar@ti.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ Jaakko Karrenpalo <jaakko.karrenpalo@fi.abb.com>
+References: <20250227050923.10241-1-jkarrenpalo@gmail.com>
 Content-Language: en-US
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <hl352hhpv6imtilpw554njkpod4nycjlls4gg75barlugc2e42@okw2snj2bqm3>
-Content-Type: text/plain; charset="UTF-8"
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250227050923.10241-1-jkarrenpalo@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: YAGyFw0Vmnxo5OEXqgHet3JwugnAXHCB
-X-Authority-Analysis: v=2.4 cv=H40hw/Yi c=1 sm=1 tr=0 ts=67c6c83b cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=SqrKEsC-_tjMY2b0tDgA:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: YAGyFw0Vmnxo5OEXqgHet3JwugnAXHCB
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_04,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=999
- classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040080
 
-On 2/25/2025 10:48 PM, Dmitry Baryshkov wrote:
-> On Tue, Feb 25, 2025 at 05:48:18PM +0530, Ayushi Makhija wrote:
->> Add DSI Controller v2.5.1 support for SA8775P SoC.
->>
->> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
->> ---
->>  drivers/gpu/drm/msm/dsi/dsi_cfg.c | 18 ++++++++++++++++++
->>  drivers/gpu/drm/msm/dsi/dsi_cfg.h |  1 +
->>  2 files changed, 19 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/msm/dsi/dsi_cfg.c b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->> index 7754dcec33d0..71881d9370af 100644
->> --- a/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->> +++ b/drivers/gpu/drm/msm/dsi/dsi_cfg.c
->> @@ -221,6 +221,22 @@ static const struct msm_dsi_config sc7280_dsi_cfg = {
->>  	},
->>  };
->>  
->> +static const struct regulator_bulk_data sa8775p_dsi_regulators[] = {
->> +	{ .supply = "vdda", .init_load_uA = 30100 },    /* 1.2 V */
->> +	{ .supply = "refgen" },
->> +};
-> 
-> sc7280 has 8350 uA here. I'd say, having those two next to each other is
-> suspicious. Could you please doublecheck it?
-> 
-> LGTM otherwise
-> 
+On 2/27/25 6:09 AM, Jaakko Karrenpalo wrote:
+> +int prp_register_frame_out(struct hsr_port *port, struct hsr_frame_info *frame)
+> +{
+> +	enum hsr_port_type other_port;
+> +	enum hsr_port_type rcv_port;
+> +	struct hsr_node *node;
+> +	u16 sequence_diff;
+> +	u16 sequence_exp;
+> +	u16 sequence_nr;
+> +
+> +	/* out-going frames are always in order
+> +	 *and can be checked the same way as for HSR
+> +	 */
+> +	if (frame->port_rcv->type == HSR_PT_MASTER)
+> +		return hsr_register_frame_out(port, frame);
+> +
+> +	/* for PRP we should only forward frames from the slave ports
+> +	 * to the master port
+> +	 */
+> +	if (port->type != HSR_PT_MASTER)
+> +		return 1;
+> +
+> +	node = frame->node_src;
+> +	sequence_nr = frame->sequence_nr;
+> +	sequence_exp = sequence_nr + 1;
+> +	rcv_port = frame->port_rcv->type;
+> +	other_port =
+> +		rcv_port == HSR_PT_SLAVE_A ? HSR_PT_SLAVE_B : HSR_PT_SLAVE_A;
 
-Hi Dmitry,
-Thanks, for the review.
+I'm again surprised checkpatch did not complain WRT the above. Please
+reformat it as:
 
-This chipset is being used in Auto, and I have taken the init load values from the downstream code.
-After you raised the doubt, I checked in the power grid for the DSI ctrl 1p2 supply (mdss0_dsi0 && mdss0_dsi1) and found the load is 8300 uA. 
-I also checked DSI PHY 0p9 supply (mdss0_dsi0_phy & mdss0_dsi1_phy) load and it seems the downstream SW values are incorrect for the PHY as well.
-Correct value for 0p9 supply as per the Power grid is 48000 uA. 
-I have tested using update load and it's working fine. I will update the both in my next patchset.
+	other_port = rcv_port == HSR_PT_SLAVE_A ? HSR_PT_SLAVE_B :
+						  HSR_PT_SLAVE_A;
+
+Also, please address the other things mentioned by Simon.
+
+Note: you can retain Simon's tag in next iteration.
 
 Thanks,
-Ayushi
+
+Paolo
 
 
