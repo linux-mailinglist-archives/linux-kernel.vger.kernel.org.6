@@ -1,120 +1,237 @@
-Return-Path: <linux-kernel+bounces-543032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49BE8A4D0C3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:26:39 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27836A4D0C7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:27:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA25E18941DC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:26:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 207101891F98
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6413AA38;
-	Tue,  4 Mar 2025 01:25:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D797136347;
+	Tue,  4 Mar 2025 01:27:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iie1xK3Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FerzzF4H"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88170126C1E;
-	Tue,  4 Mar 2025 01:25:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5555477102;
+	Tue,  4 Mar 2025 01:27:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741051545; cv=none; b=J6rgjrckYV7+gsDcZrPgxPTAQctRFyfMQQnn6GO+Ll9DGAE0F22QWBhV5pqIH8EHk12PdN3226iKWLa6pUtMMwCApN0RyV3J1TsQxtIeJIZy1eOhxlHodpoWXLQpjTjwb3ferIJwH+WbRrbcOiMhO4JswmfGH0FdMZEzrxLqI9A=
+	t=1741051644; cv=none; b=gZY9RsfkMoTwW8S3S9e4qDgYbQ8xMloub+woVtK+S47h5lkFHGE4x4d/iNg2RqJENCL3O2kmWwh7zNcGnMV3iX7Xw0g+boOBwEZoZ4/AYlAtfJtjrvlTSAXnwvUQHdJ/ymBzrKR7S8JqfyYvKAr+L9VIpxDRN9TeTeTKFkZhr4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741051545; c=relaxed/simple;
-	bh=V+AR8dH+t6wF0pag9HBom6C8kvjl0abK03bDTDbhgus=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WAgy3CHWnQvfyDFBd+YvANtTCo7Ggv74lo1IZIf+R1dmeKbxCKothgS8AAVbRzK7D2yj7r1h2Dp0j6wTDnRXtXD3mcvtUs5tesI6gQLZhRliMzkKbj1hDDNKN0V9TvdhpwBf1ERi6QRaAo6Em2xbDFrdl+VwRPp9qmClp3HFc1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iie1xK3Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A250C4CEE4;
-	Tue,  4 Mar 2025 01:25:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741051545;
-	bh=V+AR8dH+t6wF0pag9HBom6C8kvjl0abK03bDTDbhgus=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Iie1xK3ZssJi2y780Ojr9j8a6wVbrQsYpN1DUXNwRXsqH+k5jAeLV42Vryi1kOEG+
-	 hB/ncQZa656pbfQXYLnjBjrOw29+2BIpnQ/htvg0p6VqeEe9rK6vtY3uEIyrM1wEJy
-	 6ZIHsvV66Qq998PaXNlkAgS1uFstqSki0f7Ni48+uteJr1L/t0FYSFjoxRqR4WFKWm
-	 H9OQvIFNNrr9gBvuXEuiEj+I4GKi9fjUoi4OcG0UhURgqD4ipA8ld/AyT6eQtahLxb
-	 GUhVTdMp9sO8sjBSOrkWOB6V22aKZNHrimZklojiEkwzlvOh7fUozPVoG/7ilw/c8/
-	 49yyaym+R/2TQ==
-Date: Mon, 3 Mar 2025 17:25:43 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Meghana Malladi <m-malladi@ti.com>, Diogo Ivo <diogo.ivo@siemens.com>,
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "David
- S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH net-next] net: ti: icssg-prueth: Add ICSSG FW Stats
-Message-ID: <20250303172543.249a4fc2@kernel.org>
-In-Reply-To: <20250227093712.2130561-1-danishanwar@ti.com>
-References: <20250227093712.2130561-1-danishanwar@ti.com>
+	s=arc-20240116; t=1741051644; c=relaxed/simple;
+	bh=YQeiOsS8sA5NXZ3BRFyUMePzRT1TRZE82gnAlYurqyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UeeEimknKBTsZ1EI0eAGqeSNtrsWOP+f9D6lsqZKnBiwHjUfAnUIqmh6c//maUMIL9Di7uTHle58rMrnMwCeuZRPnYioDrALy+pX8QE1RjHBKUfqn+p0i2zr+h8YAEJ5ne1Q5NKZLdVdcCh3hhYTeR4my8o+LgM3D3dMK92mwbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FerzzF4H; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-22385253e2bso58801385ad.1;
+        Mon, 03 Mar 2025 17:27:23 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741051642; x=1741656442; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sBEXUn0LmSyIKU3EkgV+cVlF4cvjhGTO881KNfj3fOo=;
+        b=FerzzF4HGLCGSu7KoFfmVsYUwo+MVsOvGtqIPwtTltovdH5OVQZ4t33YhWRDq0jgb/
+         wYCex2tzxWvVcfR9ETRck8mxo8WCDYYHeYB4Lhq2O4yFMYYCX5oVOe4vHCRPusrWHSZw
+         yhNol7YQoWvBhM42+8TpoV9XQSIVOKi8xO1uLDE+3jmx5nPKBZrpYhF9YaayIXlw94bc
+         0BhP0EYka/NA6tl0mWvqK6ohivJYr+J7tUDY10nCKTMvt/a/IhLC6pLLcygvu7OIe2bu
+         FLSP5gJQXp7KYUk0dOnWUPNujWyv9RiGzYQyt5qb6+jfsBJir1Hu5+0Hlu7+WEQzdzMG
+         rQ4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741051642; x=1741656442;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sBEXUn0LmSyIKU3EkgV+cVlF4cvjhGTO881KNfj3fOo=;
+        b=NT92r4fXAW+Wf/G1BZ1onFRLlsFtogZ6QKUKPw7d7RupCFKtnHcFujN7AQyWlZCv4O
+         a0jXCrNVY4DifpyMKWZDqUHdr4dM5hWED061I/pt1XMAOnAC2XldB4Gxp8LMUPvBRyl6
+         oCE2toDjSAzqK5hrn8iUWln4ARNyw1pqzkxyZ3F9kS9rziP7tQoY/aTCPGfC5+R54WPw
+         6oXmzW+XGa4HJ53Xbdh5zo8vuzZJbQrDdLHw1WeQiwZXzjL7LgmKEKNhubQRlCV0QGUo
+         PMI372itorP3bDPXNl0v0ES6PRaoRHzw2BcY2fPu5uLCSHPz1Ey4cAKlz67xo9cckhQj
+         655Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUBK8ci74TGuD8ALORJOGSSr+TAW6YNuIJ+eBaSpRJDbc2Z7/c39ZQ0zlWWVjcIN/tZakWmmOYDT7Q9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv5oaDKtxuVANIxWkrzsd2aeM/HUalPSN3lgM2M6jKfZyRBVcT
+	XpLV3dPKLplJpGpmd1FDLwaSQN96F8P4TiCacMJCF13NujL/WE+R
+X-Gm-Gg: ASbGncuOGHxTh4S7cNWSxgMBfhFpT+CutmQpfCI/l4nz3yccQU/Vw44+4deZVm0fQcR
+	/3hNEpsCeds6xwU+g06oGQ34A/OY7gW2ockDEdhZwaccgqHGxUYBMKE3xbbPDXqUrmCyzzmF7o5
+	qwcrfqyPmO7ZEzmOtQ5uVMasnY8V4xSi+BV7c8ciJFuaMBhgr2KJtQn3OTxtsdPLRjCj2pJMMwV
+	0REklZ1cZVwppRhJVbv9kZkbQNsP3xT2Ku/sZIXs+ACl3XbvbLAV8R5lYpnwsBQDuj8++r1xCy+
+	y5PtSuNv7e/XsQ0rOov7ts7BqNcfY2oDqcfO7vMFoZKBo3p7k1X1RbxpVH8kis+jPCk/a2dHfHR
+	1pr1LoQgR+QHm6Tg1hQ==
+X-Google-Smtp-Source: AGHT+IEr30nFCYMOZeqRuWFTTayl8S2lFSGhI6eVrpSdWMcqpU3UpkD71EK2TZWiBnLaRqXGpuCfIw==
+X-Received: by 2002:a05:6a21:4c85:b0:1f3:2c55:8d8a with SMTP id adf61e73a8af0-1f32c559139mr7168245637.12.1741051642433;
+        Mon, 03 Mar 2025 17:27:22 -0800 (PST)
+Received: from ?IPV6:2804:14d:887:95a9:849b:933a:ba2a:b462? ([2804:14d:887:95a9:849b:933a:ba2a:b462])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf20b8sm8989367a12.7.2025.03.03.17.27.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 03 Mar 2025 17:27:22 -0800 (PST)
+Message-ID: <7ea9fb0f-f7bc-49bf-965f-631514abf9fe@gmail.com>
+Date: Mon, 3 Mar 2025 22:27:17 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] dt-bindings: interrupt-controller: Convert
+ nxp,lpc3220-mic.txt to yaml format
+To: Vladimir Zapolskiy <vz@mleia.com>, tglx@linutronix.de, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ skhan@linuxfoundation.org, linux-kernel-mentees@lists.linuxfoundation.org
+References: <20250228034021.607135-1-leo.fthirata@gmail.com>
+ <09acba97-70e1-448e-8453-c4e1f67a035c@mleia.com>
+Content-Language: en-US
+From: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
+In-Reply-To: <09acba97-70e1-448e-8453-c4e1f67a035c@mleia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, 27 Feb 2025 15:07:12 +0530 MD Danish Anwar wrote:
-> +	ICSSG_PA_STATS(FW_PREEMPT_BAD_FRAG),
-> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_ERR),
-> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_TX),
-> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_OK),
-> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_RX),
+Hi Vladimir.
 
-I presume frame preemption is implemented in silicon? If yes -
-what makes these "FW statistics"? Does the FW collect them from 
-the device or the frames are for FW? 
+On 03/03/2025 1:27 AM, Vladimir Zapolskiy wrote:
+> Hello Leonardo.
+> 
+> On 2/28/25 05:39, Leonardo Felipe Takao Hirata wrote:
+>> Convert NXP LPC3220-MIC to DT schema.
+>>
+>> Signed-off-by: Leonardo Felipe Takao Hirata <leo.fthirata@gmail.com>
+>> ---
+>> Changes in v3:
+>>   - Add interrupts property description
+>>   - Fix interrupts items descriptions
+>>   - Remove else condition
+>> ---
+> 
+> <snip>
+> 
+>> diff --git a/Documentation/devicetree/bindings/interrupt-controller/ 
+>> nxp,lpc3220-mic.yaml b/Documentation/devicetree/bindings/interrupt-controller/ 
+>> nxp,lpc3220-mic.yaml
+>> new file mode 100644
+>> index 000000000000..59e8814a15b7
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/interrupt-controller/nxp,lpc3220-mic.yaml
+>> @@ -0,0 +1,69 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/interrupt-controller/nxp,lpc3220-mic.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: NXP LPC32xx MIC, SIC1 and SIC2 Interrupt Controllers
+>> +
+>> +maintainers:
+>> +  - Vladimir Zapolskiy <vz@mleia.com>
+>> +
+>> +properties:
+>> +  compatible:
+>> +    enum:
+>> +      - nxp,lpc3220-mic
+>> +      - nxp,lpc3220-sic
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  interrupt-controller: true
+>> +
+>> +  '#interrupt-cells':
+>> +    const: 2
+>> +
+>> +  interrupts:
+> 
+> Please put here
+> 
+>    minItems: 2
+>    maxItems: 2
+> 
 
-> +	ICSSG_PA_STATS(FW_RX_EOF_SHORT_FRMERR),
-> +	ICSSG_PA_STATS(FW_RX_B0_DROP_EARLY_EOF),
-> +	ICSSG_PA_STATS(FW_TX_JUMBO_FRM_CUTOFF),
-> +	ICSSG_PA_STATS(FW_RX_EXP_FRAG_Q_DROP),
-> +	ICSSG_PA_STATS(FW_RX_FIFO_OVERRUN),
-> +	ICSSG_PA_STATS(FW_CUT_THR_PKT),
-> +	ICSSG_PA_STATS(FW_HOST_RX_PKT_CNT),
-> +	ICSSG_PA_STATS(FW_HOST_TX_PKT_CNT),
-> +	ICSSG_PA_STATS(FW_HOST_EGRESS_Q_PRE_OVERFLOW),
-> +	ICSSG_PA_STATS(FW_HOST_EGRESS_Q_EXP_OVERFLOW),
->  };
->  
->  #endif /* __NET_TI_ICSSG_STATS_H */
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-> index 424a7e945ea8..d30203a0978c 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-> @@ -231,4 +231,109 @@
->  /* Start of 32 bits PA_STAT counters */
->  #define PA_STAT_32b_START_OFFSET                           0x0080
->  
-> +/* Diagnostic error counter which increments when RTU drops a locally injected
-> + * packet due to port disabled or rule violation.
-> + */
-> +#define FW_RTU_PKT_DROP		0x0088
-> +
-> +/* Tx Queue Overflow Counters */
-> +#define FW_Q0_OVERFLOW		0x0090
-> +#define FW_Q1_OVERFLOW		0x0098
-> +#define FW_Q2_OVERFLOW		0x00A0
-> +#define FW_Q3_OVERFLOW		0x00A8
-> +#define FW_Q4_OVERFLOW		0x00B0
-> +#define FW_Q5_OVERFLOW		0x00B8
-> +#define FW_Q6_OVERFLOW		0x00C0
-> +#define FW_Q7_OVERFLOW		0x00C8
-> +
-> +/* Incremented if a packet is dropped at PRU because of a rule violation */
-> +#define FW_DROPPED_PKT		0x00F8
+I didn't add them in this patch because example-schema.yaml states that minItems 
+and maxItems are already implied. The following code is taken from the 
+example-schema.yaml.
 
-Instead of adding comments here please add a file under
-Documentation/networking/device_drivers/ with the explanations.
-That's far more likely to be discovered by users, no?
--- 
-pw-bot: cr
+items:
+   - description: core registers
+   - description: aux registers
+   # minItems/maxItems equal to 2 is implied
+
+Besides, adding minItems and maxItems triggers the respective warnings:
+
+- "minItems" is only needed if less than the "items" list length
+- "maxItems" is not needed with an "items" list
+
+>> +    items:
+>> +      - description: Regular interrupt request
+>> +      - description: Fast interrupt request
+>> +    description: IRQ and FIQ outputs of SIC1/SIC2 to the MIC.
+> 
+> Having both two descriptions under 'items:' and another description is
+> excessive, please leave only one of two.
+> 
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - interrupt-controller
+>> +  - '#interrupt-cells'
+>> +
+>> +allOf:
+>> +  - if:
+>> +      properties:
+>> +        compatible:
+>> +          contains:
+>> +            const: nxp,lpc3220-sic
+>> +    then:
+>> +      required:
+>> +        - interrupts
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    #include <dt-bindings/interrupt-controller/irq.h>
+>> +
+>> +    mic: interrupt-controller@40008000 {
+>> +        compatible = "nxp,lpc3220-mic";
+>> +        reg = <0x40008000 0x4000>;
+>> +        interrupt-controller;
+>> +        #interrupt-cells = <2>;
+>> +    };
+>> +
+>> +    sic1: interrupt-controller@4000c000 {
+> 
+> Here sic1 label is not used, please remove.
+> 
+>> +        compatible = "nxp,lpc3220-sic";
+>> +        reg = <0x4000c000 0x4000>;
+>> +        interrupt-controller;
+>> +        #interrupt-cells = <2>;
+>> +        interrupt-parent = <&mic>;
+>> +        interrupts = <0 IRQ_TYPE_LEVEL_LOW>,
+>> +                    <30 IRQ_TYPE_LEVEL_LOW>;
+>> +    };
+> 
+> After the fixes please feel free to add the tag:
+> 
+> Reviewed-by: Vladimir Zapolskiy <vz@mleia.com>
+> 
+> -- 
+> Best wishes,
+> Vladimir
+
+Rob,
+
+Do you want these changes on top of what was applied or a complete patch?
+
+Best regards,
+
+Leonardo Hirata
 
