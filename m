@@ -1,140 +1,108 @@
-Return-Path: <linux-kernel+bounces-543078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8719BA4D139
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:50:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C98EA4D13F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:53:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 772D77A9757
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:46:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4118A3AD967
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 886C8155CBD;
-	Tue,  4 Mar 2025 01:46:44 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CBF41494DB;
+	Tue,  4 Mar 2025 01:53:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="qHoI4P66"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02FE7136347;
-	Tue,  4 Mar 2025 01:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4098F86328
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:53:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741052804; cv=none; b=H0k2hBQxyoalM28+l/xpuB/D7YdIbyUfYZROlwcjERMX7dys3QGjmPLqW8YzCf1E1EtjmfU4jv4h/5knt2EW6/V740oMthPrKmSpIFQOrXe43CSomWM7QOTRbXX3bYzcLnmTYhQJo55YeqJEoSebk5lStMJuUfhnPlI5hTdPphU=
+	t=1741053195; cv=none; b=lYNOIYpugwSwFYSWBvQ6haQ6rzJDKWS+x7Kk/Js89yXha+ArLCKB33G7BhTEPOw2tGMHDwLv0R2l2Fl1NzAZ9pYLtdyhsEDv+AbtFnMm9obVDiy7bvqB3I7eiyAbN/x84qj+iwSk/m5N0ZF4vG9r/Hc2xKn3P4mxjlmwCeTe82A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741052804; c=relaxed/simple;
-	bh=uI4aKqpuzt3742VEL0ucD83H5oRjcLrVnMEmZ0UADgQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gpwzh+p6gdc53K2GXBxUCzj8OcEKh0c556MYK33v+b/RMKBNzxoH/ZbcNfHp88sQCJWy3ycrWb1xMkbaMqhxISusHixenx1aQleRFuOkayVfxZrNqOwOFT0qRPchDtD7sEGJ/6ub9XxATZ61vPlAtkP7c33MBNRB9+MAYysWaSI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C0706C4CEE8;
-	Tue,  4 Mar 2025 01:46:39 +0000 (UTC)
-Date: Mon, 3 Mar 2025 20:47:32 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, "David S. Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
- Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Gerald
- Schaefer <gerald.schaefer@linux.ibm.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
- <lenb@kernel.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 4/8] stack_tracer: move sysctl registration to
- kernel/trace/trace.c
-Message-ID: <20250303204732.1f5af40d@gandalf.local.home>
-In-Reply-To: <20250218-jag-mv_ctltables-v1-4-cd3698ab8d29@kernel.org>
-References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
-	<20250218-jag-mv_ctltables-v1-4-cd3698ab8d29@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741053195; c=relaxed/simple;
+	bh=/ZguSDY3nlHQc3sfkxqyJohvWfUs1zsj8ApDONhyQig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=epMZvV9meI/XXVcZyuXKP1pKMNI+pDZCMnsNYkfaFy0ZtVb05zypEoYLmu9oAUlIhwss2ygifG0P+fkdJsS3NYxdcidz8mGBfhmURzxRNfDtfzdUdPL9Q4IezBkzUN8aYU8D/n7wBVUoREDwfQJ7D+keNX9VBQyWKB6K/VjdVD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=qHoI4P66; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 94E672C09DD;
+	Tue,  4 Mar 2025 14:53:02 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1741053182;
+	bh=9cVdqmAxnsQrsbWJCU2FebU0qpancQ5/MUf6RxqYKME=;
+	h=From:To:Cc:Subject:Date:From;
+	b=qHoI4P66Z88aeUL5NkPgJDeYObGy35oRS5udDiOQY0s1ut8rA+/96rwnQuG+EiYd9
+	 ySavj6+emKOQXt6Q/p4Xjo6vCsu85dY4q3D6CePeKR3wwghCeN3Y04/Je5hAwzU6M8
+	 F9bdBa5X6qTPadSveU2BggJg7spFuWgjtdKCKcUaoGdii0ACRAjoQDQqGOG14TCoLl
+	 6/oRnxKBCVGkldBvI/1fzuU3pwlj4kdukVXl54FkZVsnvdVeSBG4kAMAYN3PVTXtL/
+	 85Mm4HE4EEccNorm3DXjyZVt1VK92+nK7J/f439cSLZL+eDXnP3lG5F1u+wnwibAZa
+	 7w+ushQob2u5Q==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B67c65cfe0000>; Tue, 04 Mar 2025 14:53:02 +1300
+Received: from chrisp-dl.ws.atlnz.lc (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 691E013EE4B;
+	Tue,  4 Mar 2025 14:53:02 +1300 (NZDT)
+Received: by chrisp-dl.ws.atlnz.lc (Postfix, from userid 1030)
+	id 68E002803F8; Tue,  4 Mar 2025 14:53:02 +1300 (NZDT)
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+To: andrew@lunn.ch,
+	hkallweit1@gmail.com,
+	linux@armlinux.org.uk,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	sander@svanheule.net,
+	markus.stockhausen@gmx.de
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chris Packham <chris.packham@alliedtelesis.co.nz>
+Subject: [RESEND PATCH net-next v8 0/1] RTL9300 MDIO driver
+Date: Tue,  4 Mar 2025 14:52:57 +1300
+Message-ID: <20250304015258.386485-1-chris.packham@alliedtelesis.co.nz>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ccpxrWDM c=1 sm=1 tr=0 ts=67c65cfe a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=Vs1iUdzkB0EA:10 a=H2aqgZpJBgBZoEMRn60A:9 a=3ZKOabzyN94A:10 a=zZCYzV9kfG8A:10
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-On Tue, 18 Feb 2025 10:56:20 +0100
-Joel Granados <joel.granados@kernel.org> wrote:
+This series adds a driver for the MDIO controller on the RTL9300 family
+of devices. The controller is a little unique in that we can't access the=
+ SMI
+interfaces directly. This means we need to use the hardware description f=
+rom
+the DTS to compute a mapping of switch port to mdio bus/address.
 
-> Squash with ftrace:
-> Move stac_tracer_enabled into trace_sysctl_table while keeping the
-> CONFIG_STACK_TRACER ifdef. This is part of a greater effort to move ctl
-> tables into their respective subsystems which will reduce the merge
-> conflicts in kerenel/sysctl.c.
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> ---
->  kernel/sysctl.c      | 10 ----------
->  kernel/trace/trace.c |  9 +++++++++
->  2 files changed, 9 insertions(+), 10 deletions(-)
-> 
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index baa250e223a2..dc3747cc72d4 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -68,7 +68,6 @@
->  
->  #ifdef CONFIG_X86
->  #include <asm/nmi.h>
-> -#include <asm/stacktrace.h>
->  #include <asm/io.h>
->  #endif
->  #ifdef CONFIG_SPARC
-> @@ -1674,15 +1673,6 @@ static const struct ctl_table kern_table[] = {
->  		.proc_handler	= proc_dointvec,
->  	},
->  #endif
-> -#ifdef CONFIG_STACK_TRACER
-> -	{
-> -		.procname	= "stack_tracer_enabled",
-> -		.data		= &stack_tracer_enabled,
-> -		.maxlen		= sizeof(int),
-> -		.mode		= 0644,
-> -		.proc_handler	= stack_trace_sysctl,
-> -	},
-> -#endif
->  #ifdef CONFIG_MODULES
->  	{
->  		.procname	= "modprobe",
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index abfc0e56173b..17b449f9e330 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
+The dt-bindings have been applied to net-next.
 
-This should go into kernel/trace/trace_stack.c, and remove the #ifdef.
+I've dropped the linux-mips patches at Jakub's request so this can go int=
+o
+net-next indpendently.
 
--- Steve
+Chris Packham (1):
+  net: mdio: Add RTL9300 MDIO driver
 
-> @@ -166,6 +166,15 @@ static const struct ctl_table trace_sysctl_table[] = {
->  		.mode		= 0644,
->  		.proc_handler	= tracepoint_printk_sysctl,
->  	},
-> +#ifdef CONFIG_STACK_TRACER
-> +	{
-> +		.procname	= "stack_tracer_enabled",
-> +		.data		= &stack_tracer_enabled,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0644,
-> +		.proc_handler	= stack_trace_sysctl,
-> +	},
-> +#endif
->  };
->  
->  static int __init init_trace_sysctls(void)
-> 
+ drivers/net/mdio/Kconfig                |   7 +
+ drivers/net/mdio/Makefile               |   1 +
+ drivers/net/mdio/mdio-realtek-rtl9300.c | 475 ++++++++++++++++++++++++
+ 4 files changed, 516 insertions(+)
+ create mode 100644 drivers/net/mdio/mdio-realtek-rtl9300.c
+
+--=20
+2.48.1
 
 
