@@ -1,146 +1,198 @@
-Return-Path: <linux-kernel+bounces-545646-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3379BA4EF95
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:52:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE2AAA4EF93
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:52:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A789F7A4E12
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:51:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F5201890840
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA652780FD;
-	Tue,  4 Mar 2025 21:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Tkh7mn3A"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5CB2620E6;
+	Tue,  4 Mar 2025 21:52:29 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B4222780E4;
-	Tue,  4 Mar 2025 21:52:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC5991EE7B1
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741125152; cv=none; b=u+FVbccdJvbS1vKp4SVYbu884Ao0HuqRsxfvzgr6j7gtT57G8DRGfHHt4e21uoUU6G97zXQqyjRQ18TJJID/d5JPGgvJqxmiIEcGtwpIfoyLtfwnoPvbZHnRRDURih5Ylir+sdyFumIV5Bs1pVpmKqB6LTPIcwAMKh5Aob0meqs=
+	t=1741125149; cv=none; b=Iz+U71SctAhUc1jZc5noE/PzBc+/50iSRBlOJbKwFi9xEVg9Jzu3Tf+bmtCZlY/pW9EL0QpHoYQa0kcmJz82aEx+trPN866r2NoUUPH7BGu6eOtatV5lryXK3v74IEkVsxTZ3u6pZf2ef6X06ImnIf49lSU1pyL/S/3HJiprwzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741125152; c=relaxed/simple;
-	bh=jbUYXbpvU141BlebTQ7l6pAnXZWMdd92RibBqvtskwE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DVO8P7SB4FbAWhxduo+tFKkiNgHrYL/8qkv08pmaD//HSQjDrCoZS6d5e+Wsgg6t2isDz/jhfeBhQWtQH3NU51sLKISRfMO3e3K/I/XAvJIgADxy7dsxJ8oCa/o9X+X4hWn/vLT2vpRWKl5ldtbL1NNZgqu5rvR482NnyE+NmK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Tkh7mn3A; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=JofA2Qh9JGaxtMid0/5sEvR2yQLob0lQuZxap80vKqw=; b=Tkh7mn3A+PYTIgV27zWhch/208
-	ETUALWlqEqZb9jksjEgNDlpzfKLYqN2rarathziQV8Ntjv+PPBBfpKKage0LcF7B5AYw5QcG4mzHk
-	Nds+uv8i40buo1duskWACkkerB1c8+77MtGCmUqDCz/AWnTbCcf/VEohCydBFaftKyZDJ4/Buxmfy
-	mPtQZSVrBco/oLg3OHlqc4Wn15Q5yI3xcUjWkH5zHT1Lf0r43ib9TeG6ezMFV4R1zoTZ6I17a2l91
-	INcWrZvknMxlFFMkx2w45YdSG5m6sc+nEHFuQA6yVC26YXkNz7i4f39l6AJ1KWr3USk5v0Ew3iEAH
-	kPVZlMcw==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tpaBb-0006QR-08; Tue, 04 Mar 2025 22:52:23 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, didi.debian@cknow.org, chris@z9.de
-Subject:
- Re: [PATCH v2 0/2] Slightly improve hardware description of Pine64 RockPro64
-Date: Tue, 04 Mar 2025 22:52:22 +0100
-Message-ID: <2630232.Icojqenx9y@diego>
-In-Reply-To: <757afa87255212dfa5abf4c0e31deb08@manjaro.org>
-References:
- <cover.1740941097.git.dsimic@manjaro.org>
- <174104113599.8946.16805724674396090918.b4-ty@sntech.de>
- <757afa87255212dfa5abf4c0e31deb08@manjaro.org>
+	s=arc-20240116; t=1741125149; c=relaxed/simple;
+	bh=fPEkJZTWhWGkSvyHQx9qG+VOs+4MAg2FdojLghrzEUs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=N6T4EZydNW7bCL49mUZI+zArDQt5SsVEi15LTqIWmOB/8prN18xo6Pf5FNiobU2IPMoEQZOgPAza2gIV0At1NMWvv07DslrWKq2z690fd/GTkkGnHbJf9Fs9zwXYMZhMiJrgwRnG1za7Ca4qHC5SlmIGg0F2WvhxhDBlAl5aEkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d3d949fd42so124510575ab.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 13:52:27 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741125147; x=1741729947;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Eh7fZ3momAvYKWET6wtFNtqSRFn0GlnN16QrylaRDhA=;
+        b=wdpVrdw0GpTEaosgBDMVnDNsFG/CJEOFFgjUfHwbf4jrhQs7RiVrTVVT5QuR0RYyFE
+         wxLAQoofTm3vCldGjmK129lp8M73XK/3IAJjE7Kvmq7KjvGFi/NpOeF9tU23U3t33hp5
+         agYF3+Ta4K24d3QnbKBxpVOOqKzBk8SVWCLb1h6aFoRS0fU3kN91E1PN8J86P7vC1Itq
+         KKgViSrA/5P9ggmCHyIc2ZV6EdaRLj7MACxpzVI+wva26CU1UDfKjQ+ideTIqeIPUd2+
+         IKgmVro4WTBcjL5iSJBKdcTrGuyAOA3nDb7+FPg+1QB0XsMa4DAwPdGTW6rhxAanVPY6
+         H7CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVR5NWvT9JuYSZSZGg4CTeLNRt4UNiCx1wAEz1hdOQfbntCjgdThKRSUdHITlI8cYMtdlz4BT4OfmdmWBQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuklAU5bUb45gCWs1x7C5VJtLIQZ0FLKDwi22J49OC/kntleZq
+	JDVEggVurHLqRrnVLO81MbDhIbNSkrrr5PBzWwi+R4cIe9f/t5SP7bIBSA+mHe+Yy6LSfddpEAz
+	HTQTuyscKVIa2yfvqAl4w4c4Df/V+H1Edj8Aod3PQEU1blxrGU26AdtU=
+X-Google-Smtp-Source: AGHT+IEAxg5QDO8kH0xAi4FrGX5hac33JkTNqmJapyMQzfnaHUGv0Vh5PB+zgboDoI66FUPJrf+EV/P9S9CJYeN05ff7wv5Rkzb3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+X-Received: by 2002:a05:6e02:12c4:b0:3d1:a75e:65f6 with SMTP id
+ e9e14a558f8ab-3d42b97733cmr12768325ab.18.1741125146944; Tue, 04 Mar 2025
+ 13:52:26 -0800 (PST)
+Date: Tue, 04 Mar 2025 13:52:26 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c7761a.050a0220.15b4b9.0018.GAE@google.com>
+Subject: [syzbot] [virt?] KCSAN: data-race in virtqueue_disable_cb /
+ virtqueue_enable_cb_delayed (9)
+From: syzbot <syzbot+efe683d57990864b8c8e@syzkaller.appspotmail.com>
+To: eperezma@redhat.com, jasowang@redhat.com, linux-kernel@vger.kernel.org, 
+	mst@redhat.com, syzkaller-bugs@googlegroups.com, 
+	virtualization@lists.linux.dev, xuanzhuo@linux.alibaba.com
+Content-Type: text/plain; charset="UTF-8"
 
-Am Dienstag, 4. M=C3=A4rz 2025, 07:44:59 MEZ schrieb Dragan Simic:
-> Hello Heiko,
->=20
-> On 2025-03-03 23:36, Heiko Stuebner wrote:
-> > On Sun, 02 Mar 2025 19:48:02 +0100, Dragan Simic wrote:
-> >> This is a small series that introduces small improvements to the way
-> >> Pine64 RockPro64 [1] single-board-computer is described in the DT=20
-> >> files.
-> >> This applies to both production-run revisions of the RockPro64.
-> >>=20
-> >> The introduced improvements boil down to eliminating some warnings=20
-> >> from
-> >> the kernel log, by adding a previously undefined regulator and by=20
-> >> adding
-> >> some previously missing references to the regulators.
-> >>=20
-> >> [...]
-> >=20
-> > Applied, thanks!
-> >=20
-> > [1/2] arm64: dts: rockchip: Add avdd HDMI supplies to RockPro64 board=20
-> > dtsi
-> >       commit: bd1c959f37f384b477f51572331b0dc828bd009a
-> > [2/2] arm64: dts: rockchip: Add missing PCIe supplies to RockPro64=20
-> > board dtsi
-> >       commit: 64ef4a4320e7aa3f0f267e01f170f52b90bf0b1b
-> >=20
-> > I've moved the pcie12v supply up one line.
-> > While in a mathematical sense it's true 12 > 3.3, we're sorting
-> > alphabetical, so it's 1?? < 3?? .
-> >=20
-> > And yes I sympathize with 3.3 < 12, but also have come to appreciate=20
-> > not
-> > having overly many special cases :-)
->=20
-> Great, thanks! :)
->=20
-> I'm fine with the alphabetical ordering, albeit with some caveats
-> described below, but the following part of the patch description
-> should also be removed, if possible, so the patch description fully
-> matches the introduced changes:
->=20
->    Shuffle and reorder the "vpcie*-supply" properties a bit, so they're=20
-> sorted
->    alphanumerically, which is a bit more logical and more useful than=20
-> having
->    these properties listed in their strict alphabetical order.
+Hello,
 
-I've amended the commit, dropping this block
+syzbot found the following issue on:
 
-> I'm hoping you'll agree that specifying alphanumerical ordering
-> for the properties in the DTS coding style is the way to go, just
-> like it's already specified for the ordering of the nodes.  I'll
-> go ahead and submit an appropriate patch for the DT guidelines.
+HEAD commit:    99fa936e8e4f Merge tag 'affs-6.14-rc5-tag' of git://git.ke..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=14629464580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=523b0e2f15224775
+dashboard link: https://syzkaller.appspot.com/bug?extid=efe683d57990864b8c8e
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-vpcie0v9-supply =3D <&vcca_0v9>;
-vpcie1v8-supply =3D <&vcca_1v8>;
-vpcie3v3-supply =3D <&vcc3v3_pcie>;
-vpcie12v-supply =3D <&vcc12v_dcin>;
+Unfortunately, I don't have any reproducer for this issue yet.
 
-In the end I don't care _that_ much, but personally I find that
-alphanumerical ordering harder to read ;-) .
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/a28c1cb92a01/disk-99fa936e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/229349d043c8/vmlinux-99fa936e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/49768322c46d/bzImage-99fa936e.xz
 
-Because in the example above, my mind now constantly shouts
-"why is vpcie1... after vpcie3... ..... ooooh right, it's alpha-numerical"
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+efe683d57990864b8c8e@syzkaller.appspotmail.com
 
-But I can live with it I guess ;-) .
-As 3.3 is smaller than 12 afterall.
+==================================================================
+BUG: KCSAN: data-race in virtqueue_disable_cb / virtqueue_enable_cb_delayed
+
+write to 0xffff8881025bc452 of 1 bytes by task 3288 on cpu 0:
+ virtqueue_enable_cb_delayed+0x42/0x3c0 drivers/virtio/virtio_ring.c:2653
+ start_xmit+0x230/0x1310 drivers/net/virtio_net.c:3264
+ __netdev_start_xmit include/linux/netdevice.h:5151 [inline]
+ netdev_start_xmit include/linux/netdevice.h:5160 [inline]
+ xmit_one net/core/dev.c:3800 [inline]
+ dev_hard_start_xmit+0x119/0x3f0 net/core/dev.c:3816
+ sch_direct_xmit+0x1a9/0x580 net/sched/sch_generic.c:343
+ __dev_xmit_skb net/core/dev.c:4039 [inline]
+ __dev_queue_xmit+0xf6a/0x2090 net/core/dev.c:4615
+ dev_queue_xmit include/linux/netdevice.h:3313 [inline]
+ neigh_hh_output include/net/neighbour.h:523 [inline]
+ neigh_output include/net/neighbour.h:537 [inline]
+ ip_finish_output2+0x71d/0x880 net/ipv4/ip_output.c:236
+ ip_finish_output+0x11a/0x2a0 net/ipv4/ip_output.c:324
+ NF_HOOK_COND include/linux/netfilter.h:303 [inline]
+ ip_output+0xab/0x170 net/ipv4/ip_output.c:434
+ dst_output include/net/dst.h:459 [inline]
+ ip_local_out net/ipv4/ip_output.c:130 [inline]
+ __ip_queue_xmit+0xb2c/0xb50 net/ipv4/ip_output.c:528
+ ip_queue_xmit+0x38/0x50 net/ipv4/ip_output.c:542
+ __tcp_transmit_skb+0x15ca/0x19d0 net/ipv4/tcp_output.c:1471
+ tcp_transmit_skb net/ipv4/tcp_output.c:1489 [inline]
+ tcp_write_xmit+0x1217/0x3020 net/ipv4/tcp_output.c:2832
+ __tcp_push_pending_frames+0x6a/0x1a0 net/ipv4/tcp_output.c:3015
+ tcp_push+0x320/0x340 net/ipv4/tcp.c:751
+ tcp_sendmsg_locked+0x21a1/0x26a0 net/ipv4/tcp.c:1326
+ tcp_sendmsg+0x30/0x50 net/ipv4/tcp.c:1358
+ inet_sendmsg+0x77/0xd0 net/ipv4/af_inet.c:851
+ sock_sendmsg_nosec net/socket.c:718 [inline]
+ __sock_sendmsg+0x102/0x180 net/socket.c:733
+ sock_write_iter+0x15e/0x1a0 net/socket.c:1137
+ new_sync_write fs/read_write.c:586 [inline]
+ vfs_write+0x77b/0x920 fs/read_write.c:679
+ ksys_write+0xe8/0x1b0 fs/read_write.c:731
+ __do_sys_write fs/read_write.c:742 [inline]
+ __se_sys_write fs/read_write.c:739 [inline]
+ __x64_sys_write+0x42/0x50 fs/read_write.c:739
+ x64_sys_call+0x287e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff8881025bc452 of 1 bytes by interrupt on cpu 1:
+ virtqueue_disable_cb_split drivers/virtio/virtio_ring.c:880 [inline]
+ virtqueue_disable_cb+0x92/0x180 drivers/virtio/virtio_ring.c:2566
+ skb_xmit_done+0x5f/0x140 drivers/net/virtio_net.c:777
+ vring_interrupt+0x161/0x190 drivers/virtio/virtio_ring.c:2715
+ __handle_irq_event_percpu+0x95/0x490 kernel/irq/handle.c:158
+ handle_irq_event_percpu kernel/irq/handle.c:193 [inline]
+ handle_irq_event+0x64/0xf0 kernel/irq/handle.c:210
+ handle_edge_irq+0x16d/0x5b0 kernel/irq/chip.c:831
+ generic_handle_irq_desc include/linux/irqdesc.h:173 [inline]
+ handle_irq arch/x86/kernel/irq.c:249 [inline]
+ call_irq_handler arch/x86/kernel/irq.c:261 [inline]
+ __common_interrupt+0x58/0xe0 arch/x86/kernel/irq.c:287
+ common_interrupt+0x7c/0x90 arch/x86/kernel/irq.c:280
+ asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
+ rep_movs_alternative+0x33/0x70 arch/x86/lib/copy_user_64.S:57
+ copy_user_generic arch/x86/include/asm/uaccess_64.h:126 [inline]
+ raw_copy_from_user arch/x86/include/asm/uaccess_64.h:141 [inline]
+ _inline_copy_from_user include/linux/uaccess.h:178 [inline]
+ _copy_from_user+0x6f/0xa0 lib/usercopy.c:18
+ copy_from_user include/linux/uaccess.h:212 [inline]
+ copy_msghdr_from_user+0x54/0x2a0 net/socket.c:2503
+ recvmsg_copy_msghdr net/socket.c:2759 [inline]
+ ___sys_recvmsg net/socket.c:2831 [inline]
+ do_recvmmsg+0x256/0x6d0 net/socket.c:2930
+ __sys_recvmmsg net/socket.c:3004 [inline]
+ __do_sys_recvmmsg net/socket.c:3027 [inline]
+ __se_sys_recvmmsg net/socket.c:3020 [inline]
+ __x64_sys_recvmmsg+0xe2/0x170 net/socket.c:3020
+ x64_sys_call+0x2a9a/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:300
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x01 -> 0x00
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 1 UID: 0 PID: 4167 Comm: syz.0.259 Not tainted 6.14.0-rc5-syzkaller-00013-g99fa936e8e4f #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+==================================================================
 
 
-Heiko
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
