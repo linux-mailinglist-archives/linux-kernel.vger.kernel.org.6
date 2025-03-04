@@ -1,194 +1,136 @@
-Return-Path: <linux-kernel+bounces-543478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA178A4D626
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:23:19 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id AA359A4D629
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:23:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C593A77E4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:23:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E9D83A674A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B131FAC4B;
-	Tue,  4 Mar 2025 08:23:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5586B1FBCB4;
+	Tue,  4 Mar 2025 08:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tKLIHTuS"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CFHQEELn"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 758C61FAC3E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE891F940A;
+	Tue,  4 Mar 2025 08:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076583; cv=none; b=NU1nepeSsPlGUn9qlEXqi46dOc+Zae0/0Y+bdUswJ8Uqk3AG6vzBiI773f49zIjXpmHpb6x1RoDRI1YUJkAweWEw7H57TThLYcO6jnBCj7vNNkwyIAJboywZAPWzwh+VqvgyY5N6yT2vi3jZ1lK80A2k6qVYjExRbySihYRx8u4=
+	t=1741076604; cv=none; b=a7VijCJbsJB7PdUTSzsanbM2SDabquc2p7RFTmeY4Re+fRhCuz7Egr7FNF8rnSDxZAZoAVVmrEugH8xzuRJASftJp934B2AU7PgBEZqnlwxGGnZycB0A0TzcchEMVaotAOy0mpd29hT+momQDoUfsV+Q6UdCerm7rLe15KJya9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076583; c=relaxed/simple;
-	bh=oJRocjVxvG8aocBlf5vT9fLjx9PJTOnjpaP9NfdgLoU=;
+	s=arc-20240116; t=1741076604; c=relaxed/simple;
+	bh=RsFHsmgRna6/YR64hWk++Pe5uJYfrdjKW5xLWtUre6U=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VTE4Pev7Z/FPVTMTnGJrKgyo/ByEssW1BvvZtQ8le6rFPG4eLs1VB8tlo/NCcoqrYHr/Z94ArpDT4mM3M7Af2JlBTBsiJN9XaaKQvuMMHzqQXq5kdhnpfOnTRIHhipDRDkaTTNBPYp2qmBoVj9LATdZGovr8bfTCfBaVMDbzd5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tKLIHTuS; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e535e6739bso3827161a12.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:23:01 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741076580; x=1741681380; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T6vsEs0w+2fpN2o1KS8VIE9clQoUeLM/QArYwjwqcY0=;
-        b=tKLIHTuSb8EsCI1KkpfUsVKCJmmjnPjmWq6aBgxmRlJtqHk8ikuDpQ8pHQReaI2mzY
-         hSRuBoHrplNxKm+Y4AUGV9s/rpZi3ab7HTGhJPL3UL+H4U4sUbErG02SGoa5LSgQ49lJ
-         EK907gmP/2Nd2Rx9WKHHzLvL/Hayd2zCx/SsnRoV6+qLW0QbLmyVmqKpmmFIgpZi/d+P
-         oOyVrYPQC8+ZdXGCZHDzxOYUHCOpJgGTP8f8IZC2o38X08eQfmkCkksKnHW0A9U/jHsu
-         UF0pqcYRChbbFpJq4Bo5lX4ZWHo5VqiJXAXUKvRfft6HvLeJM3L4MsQVeRM6sf+t+cpL
-         Mbew==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741076580; x=1741681380;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T6vsEs0w+2fpN2o1KS8VIE9clQoUeLM/QArYwjwqcY0=;
-        b=jrFGnBY4kjhv7Mkrab8WifnwC/iVCnVfJDHsC37U8H5F6LuDAkpgRaJmqwabUlj104
-         fYZOOau4T7oYQefJ5AroItOeCkuIKgNrIJM0v+b00b5fA/BGpMwgGUQ+PZSm6zDhO8hI
-         ldTNTLqZRC6DDOu8KuUxM6Uvf20zSB28SEHVmXu8cyJQR9gmjmcit5yranlp0PgEm71O
-         ZGMsrpPO3Fmr0j61nxR/TTBcxwxc7y4H4FQAbBMPOAij8zK/F8LJmCAZETaMtN5eelFt
-         semrmnd6RUmkzi7tVIQBTU5+7WofCf4BQdu0EgiVrYp7nEb5hIRPK7N4VHCsP9c5flGI
-         n9EQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXnz1iYNQ6CCL85abkO6/N7oKhWPR/W7g6ba0YzfNWIB8ZaDDZ53bOki0kOWwpTENMqD6o13msYfp0iGME=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMJsNN2OS0ubJVfw0PfBH+/SqD218j/fGUwC+8I6Bl2GnAnB/0
-	vepjWD29syIfNsnH6jeUjxUivnbi7uSV7xdPsDr6dmfSliF5uhu+sQFUW/ur4Ch2FAxgXhn0wwA
-	3
-X-Gm-Gg: ASbGncto9Y18/9ezFUHIgBENauQEhwJEy1/5s5y+M+xg3mOnQTJjrXUgtqGOj95tp+D
-	VPb5+2Zl2vRi/ArEAT9w8cghmstZFYxUHzW5lc6vLn0mOGGvUCKmIFR8+ezVVcsL2jm09ZZUqWs
-	S5mHkDo7UN/lf70UPwrQ/Rd3RHXk6Uv0iTUOYOaQ1xmrXb0x/2SLn2KWqxm7mgxqxjl7oNzGGTA
-	lZgwhs4lxY5uvAkAVOrbPuhNfo7OA7b6Pz89ZUG5ufOWKbG/SlQXrITAV8p/LNhoY0k5fCbhAvJ
-	ijtqqIMRFWdE10pMaryJzSjdto629YKV9/yRpV14SEIUf6wThVlMA7g/
-X-Google-Smtp-Source: AGHT+IH0Xb393ctWLRXZSas7YgLXGqNPTHNCJsQolq/B1J5pMVs0L4gi+m3eIifTOO2YP/AzGBdjxw==
-X-Received: by 2002:a05:6402:3891:b0:5e0:8c55:531 with SMTP id 4fb4d7f45d1cf-5e4d6af98d1mr18864132a12.14.1741076579579;
-        Tue, 04 Mar 2025 00:22:59 -0800 (PST)
-Received: from linaro.org ([2a02:2454:ff21:ef30:ea7e:cb1f:99c6:de2d])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e5925ff875sm332907a12.20.2025.03.04.00.22.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 00:22:58 -0800 (PST)
-Date: Tue, 4 Mar 2025 09:22:49 +0100
-From: Stephan Gerhold <stephan.gerhold@linaro.org>
-To: Wesley Cheng <quic_wcheng@quicinc.com>
-Cc: Greg KH <gregkh@linuxfoundation.org>, srinivas.kandagatla@linaro.org,
-	mathias.nyman@intel.com, perex@perex.cz, conor+dt@kernel.org,
-	dmitry.torokhov@gmail.com, corbet@lwn.net, broonie@kernel.org,
-	lgirdwood@gmail.com, tiwai@suse.com, krzk+dt@kernel.org,
-	pierre-louis.bossart@linux.intel.com, Thinh.Nguyen@synopsys.com,
-	robh@kernel.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-sound@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-usb@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH v35 00/31] Introduce QC USB SND audio offloading support
-Message-ID: <Z8a4WYq4GqWBVNyX@linaro.org>
-References: <20250219004754.497985-1-quic_wcheng@quicinc.com>
- <Z7W_Vz_kVDjIcp5N@linaro.org>
- <82ce69a3-d248-494f-6ddb-098f392c78a0@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=N4G2yhDykJ89xAIiIcCfr4CgZ5lkgjTXwVGmkAvrBd2g1UrL9meIX/IJfLDpGLQKHC9sTKxWc/j5+P085B2EpSRNASHqiaYLAaGKt83uc4UyeeboFFjhxy+Oww3XsFry2xFU8bIKqnZtTWG4VIk6FGOvbzD5hp+jx04vCiqKQ0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CFHQEELn; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741076603; x=1772612603;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RsFHsmgRna6/YR64hWk++Pe5uJYfrdjKW5xLWtUre6U=;
+  b=CFHQEELnKhvakvHYUaBC3nCBVnc9Q9DibTUv/SWLyo+4uFKufOR9X4LM
+   AcmPARw2EToG0GU+yXa426iB2rLwNd7GjTmhg8RvNdCSHHigezvFNypp7
+   cBELYE5FkhaLLmvbgSAl1dZBaMt7BiQs1RDaWrH8GdvSUF9XlGqyIxR1g
+   2ORQ1ERe0UH03vcZeKq++g1ILyZVC/axRJiyA51SVWJe+O5WvrQBi6qiW
+   iyNnJmeGJwZuZQ9wkN+z8cN+3QJbwKW5JM8SYg11SGUblaiQdjpdrFXXt
+   Zo2dI3Ui7AMaPIocsf3NMtvAYupdZr+CEpwpAHNGeVL9RN1YGO2nvusnY
+   Q==;
+X-CSE-ConnectionGUID: OcPUaMaLSBe6+Axadk5N2A==
+X-CSE-MsgGUID: CJj7la2sTKGQdql0u+t9gQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="52964160"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="52964160"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 00:23:20 -0800
+X-CSE-ConnectionGUID: EaDWR0S3SCe0DGJAinWjIA==
+X-CSE-MsgGUID: nI1OirT+QFCGP7zJY6no7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="149105150"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa002.jf.intel.com with ESMTP; 04 Mar 2025 00:23:16 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id 0E93718F; Tue, 04 Mar 2025 10:23:14 +0200 (EET)
+Date: Tue, 4 Mar 2025 10:23:14 +0200
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Lukas Wunner <lukas@wunner.de>
+Cc: Kenneth Crudup <kenny@panix.com>, Bjorn Helgaas <helgaas@kernel.org>,
+	ilpo.jarvinen@linux.intel.com, Bjorn Helgaas <bhelgaas@google.com>,
+	Jian-Hong Pan <jhp@endlessos.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Nikl??vs Ko??es??ikovs <pinkflames.linux@gmail.com>,
+	Andreas Noever <andreas.noever@gmail.com>,
+	Michael Jamet <michael.jamet@intel.com>,
+	Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
+Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
+ Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
+Message-ID: <20250304082314.GE3713119@black.fi.intel.com>
+References: <20250211055722.GW3713119@black.fi.intel.com>
+ <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
+ <20250213135911.GG3713119@black.fi.intel.com>
+ <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
+ <20250214162948.GJ3713119@black.fi.intel.com>
+ <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
+ <20250226084404.GM3713119@black.fi.intel.com>
+ <Z77ak-4YsdAKXbHr@wunner.de>
+ <20250226091958.GN3713119@black.fi.intel.com>
+ <Z8YKXC1IXYXctQrZ@wunner.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <82ce69a3-d248-494f-6ddb-098f392c78a0@quicinc.com>
+In-Reply-To: <Z8YKXC1IXYXctQrZ@wunner.de>
 
-On Mon, Mar 03, 2025 at 06:39:52PM -0800, Wesley Cheng wrote:
-> 
-> 
-> On 2/19/2025 3:24 AM, Stephan Gerhold wrote:
-> > On Tue, Feb 18, 2025 at 04:47:23PM -0800, Wesley Cheng wrote:
-> > > Requesting to see if we can get some Acked-By tags, and merge on usb-next.
+On Mon, Mar 03, 2025 at 09:00:28PM +0100, Lukas Wunner wrote:
+> On Wed, Feb 26, 2025 at 11:19:58AM +0200, Mika Westerberg wrote:
+> > On Wed, Feb 26, 2025 at 10:10:43AM +0100, Lukas Wunner wrote:
+> > > On Wed, Feb 26, 2025 at 10:44:04AM +0200, Mika Westerberg wrote:
+> > > >   [Meteor Lake host] <--> [TB 4 dock] <--> [TB 3 NVMe]
+> > > [...]
+> > > > I added "no_console_suspend" to the command line and the did sysrq-w to
+> > > > get list of blocked tasks. I've attached it just in case it is needed.
 > > > 
-> > > Several Qualcomm based chipsets can support USB audio offloading to a
-> > > dedicated audio DSP, which can take over issuing transfers to the USB
-> > > host controller.  The intention is to reduce the load on the main
-> > > processors in the SoC, and allow them to be placed into lower power modes.
-> > > There are several parts to this design:
-> > >   1. Adding ASoC binding layer
-> > >   2. Create a USB backend for Q6DSP
-> > >   3. Introduce XHCI interrupter support
-> > >   4. Create vendor ops for the USB SND driver
+> > > This looks like the deadlock we've had for years when hot-removing
+> > > nested hotplug ports.
 > > > 
-> > >       USB                          |            ASoC
-> > > --------------------------------------------------------------------
-> > >                                    |  _________________________
-> > >                                    | |sm8250 platform card     |
-> > >                                    | |_________________________|
-> > >                                    |         |           |
-> > >                                    |      ___V____   ____V____
-> > >                                    |     |Q6USB   | |Q6AFE    |
-> > > |     |"codec" | |"cpu"    |
-> > >                                    |     |________| |_________|
-> > >                                    |         ^  ^        ^
-> > >                                    |         |  |________|
-> > >                                    |      ___V____    |
-> > >                                    |     |SOC-USB |   |
-> > >    ________       ________               |        |   |
-> > >   |USB SND |<--->|QC offld|<------------>|________|   |
-> > >   |(card.c)|     |        |<----------                |
-> > >   |________|     |________|___     | |                |
-> > >       ^               ^       |    | |    ____________V_________
-> > >       |               |       |    | |   |APR/GLINK             |
-> > >    __ V_______________V_____  |    | |   |______________________|
-> > >   |USB SND (endpoint.c)     | |    | |              ^
-> > >   |_________________________| |    | |              |
-> > >               ^               |    | |   ___________V___________
-> > >               |               |    | |->|audio DSP              |
-> > >    ___________V_____________  |    |    |_______________________|
-> > >   |XHCI HCD                 |<-    |
-> > >   |_________________________|      |
+> > > If you attach only a single device to the host, I guess the issue
+> > > does not occur, right?
+> > 
+> > Yes.
+> > 
+> > > Previous attempts to fix this:
 > > > 
+> > > https://lore.kernel.org/all/4c882e25194ba8282b78fe963fec8faae7cf23eb.1529173804.git.lukas@wunner.de/
+> > > 
+> > > https://lore.kernel.org/all/20240612181625.3604512-1-kbusch@meta.com/
 > > 
-> > As I noted on v34 [1], this version is still missing instructions and
-> > changes needed for testing this series. The device tree changes don't
-> > need to be part of the same series, but there should be at least a link
-> > provided to give other people the chance to provide Tested-by tags.
-> > 
-> > IMO we shouldn't merge this series without those instructions, otherwise
-> > we risk that this just ends up being dead code that no one can use.
-> > 
-> > Can you please share the device tree changes for a board upstream and
-> > any other changes needed to be able to test this series? E.g. for
-> > sm8250-mtp.dts, based on the examples in your cover letter.
-> > 
+> > Well, it does not happen if I revert the commit so isn't that a
+> > regresssion?
 > 
-> To clarify I'm testing this on sm8350 in recent times, but utilizing sm8250
-> definitions for the ASoC platform card, as the platform sound card is more
-> or less the same between the two SoCs.  Back
-> when I started this series, sm8350 was missing a bunch of dependent
-> components, such as aDSP not being loaded, and missing platform sound card
-> definition, so I had to define and enable those on my own, which required a
-> slew of new DT nodes, hence why it wasn't as straight forward to include
-> the DT definitions yet for sm8350.  Not thinking that this series would
-> take as long as it did, I was planning on separating out the DT changes in
-> a different series to enable offloading for the devices I have tested with.
-> (sm8150, sm8250 and sm8350)
-> 
-> There's still a pretty big chunk of dependencies missing from sm8350, so
-> those would also be handled in the follow up DT submission.  For now, its a
-> much bigger hurdle to get the main/functional changes in, and that was
-> taking a significant amount of time from my end to manage.
-> 
-> If you want, I can give you the changes I have offline to enable this for
-> sm8350, since I haven't spent time formatting/prepping the changes for
-> submission yet.
-> 
+> Does the below fix the issue?
 
-Can you push it to a public branch somewhere (e.g. on CodeLinaro)? I was
-talking to some people from the community about testing this on some of
-the smartphones we have in upstream, so it wouldn't help if I just have
-the changes privately.
+Unfortunately I still see the same hang. I double checked, with revert the
+problem goes a way and with this patch I still see it.
 
-It doesn't have to be perfectly clean as far as I'm concerned, as long
-as it allows to see the whole picture of the additional changes we need
-to make use of this series.
+Steps:
 
-Thanks,
-Stephan
+1. Boot the system, nothing connected.
+2. Connect TBT 4 dock to the host.
+3. Connect TBT 3 NVMe to the TBT4 doc.
+4. Authorize both PCIe tunnels, verify devices are there.
+5. Enter s2idle.
+6. Unplug the TBT 4 dock from the host.
+7. Exit s2idle.
 
