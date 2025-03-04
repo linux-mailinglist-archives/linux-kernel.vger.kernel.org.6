@@ -1,242 +1,334 @@
-Return-Path: <linux-kernel+bounces-544534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368E7A4E24D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:06:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 129D0A4E289
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:12:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E18816CA71
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13E3A3BE9B6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:59:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E4A27E1BA;
-	Tue,  4 Mar 2025 14:55:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 320482627F5;
+	Tue,  4 Mar 2025 14:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fde/bJwf"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VoKOa/gi"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6463025FA2C;
-	Tue,  4 Mar 2025 14:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB9223A9AB;
+	Tue,  4 Mar 2025 14:57:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100134; cv=none; b=HQjKGuJpWg9X3T6jOJ+cCQ+ousf4Izqi4RTF7k7qLxPR09lyzVwv65oMz555FvNdfy26u97ZUgoa6sx+FRB1/Yh6gR5QBbvFdtxHCE24KO6+gHVMho0VMkd6//ZuvP9dPCSqkj46QCfuyvT0UQJlIO9QK2sxYJs7cVgSsipXn9Y=
+	t=1741100235; cv=none; b=JHwYdG3WzV//ZuVkACqVKp0iVgVZTrmD1Gb/3Eb1YJxPyPkd435t2PN+j0cOgXL3SPEw/7LpNB3uKEZpAWAgaSh9sa8NfVNFW9eqofsOliiHWTB61fLg/LLX9WuqwrDirwx87Rs0aVYrOwcCIS9oWPknTrzxdaCxzy4jU7NaWmU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100134; c=relaxed/simple;
-	bh=21/+tTReVZYvj3YaSc8NqoDvZVmfhekN36NcOLoxLwk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nDiCdsqW9t/ZEr8DlEJboarYtfSxKlpsRVwdntLNH+HVMkw4w70LAhcxl7LStFVd5XS32+VUgWNMibMIz+Cttn9vp2DbNkhwuFErWVBCxs2xR6+1qtuAZzmcjziwG7dc/IP0imsDOqxpkHNEKMgMGDPc0rSRn9Bfi5CFg1cUdNk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fde/bJwf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D395EC4CEE5;
-	Tue,  4 Mar 2025 14:55:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741100133;
-	bh=21/+tTReVZYvj3YaSc8NqoDvZVmfhekN36NcOLoxLwk=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=fde/bJwfid4Bvg9Rf1K+unyrTTS4ahPqPaVQaw+O4gR7RTjOtx0kHnb+w7XhwNI/0
-	 2uJzM4oX/4e811tBSQlgF+KA+VQjZpsVRfZQwbEQSfQEX6J0vF01yDmwt+dAg6XvSA
-	 cNIe+c5DcIFY1cgk5zn/c4dFhlQgSJyo80hrDtiHlQH1fw8bw4yhBNtijapcp6B4zK
-	 cTweeFAgoSbbJAvXmispCWHDG3muyms8yoEuQ+7qO4Xj2sW5AJbfFOFrbIoR/YemZF
-	 ntNuJmSlcG/rWGWgFTXsoh1WKKrRExceq+iZfsPojEf6iQiWt6dUtxC+lllxido3bQ
-	 dPNhqrHpanUkw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 70480CE12E4; Tue,  4 Mar 2025 06:55:33 -0800 (PST)
-Date: Tue, 4 Mar 2025 06:55:33 -0800
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: "Uladzislau Rezki (Sony)" <urezki@gmail.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
-	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
-	stable@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Keith Busch <kbusch@kernel.org>
-Subject: Re: [PATCH v1 2/2] mm/slab/kvfree_rcu: Switch to WQ_MEM_RECLAIM wq
-Message-ID: <14b61981-35ae-4f87-8341-b8d484123e56@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250228121356.336871-1-urezki@gmail.com>
- <20250228121356.336871-2-urezki@gmail.com>
- <20250303160824.GA22541@joelnvbox>
+	s=arc-20240116; t=1741100235; c=relaxed/simple;
+	bh=Qual+ve5thf+vI/agmYtffTam++x2ApTEKb+DhHDAno=;
+	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=A7pDTWAlEdvNE2NIKB0YAks5M+x2dTZM6SB2pXHyeIf2A8re4cZRmeu7D8bi0BoCK8GWF8EgfnEvVf1zWVa+NSALNvBb6MY3DpmEzKx7aHvFEGjpmL7TM6FnBHJ0PMQ13Pj5uvZDnADL2qBE9cFEKIbwUXcx+Qg0decAaAvO+Xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VoKOa/gi; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741100234; x=1772636234;
+  h=from:date:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=Qual+ve5thf+vI/agmYtffTam++x2ApTEKb+DhHDAno=;
+  b=VoKOa/gio4yfFki/W2+VFymhP/XToQnI76OLunUvzk/DsAEQA4KZxYNv
+   CT43qyK3uvkD7hvwqQ06cBcB22FXGKWYM1hfCTcAFe4QWyM37kzIwSjnD
+   IBWCMFnYIs8Kll5OB5BIlPR2fNGja68gqehGi1yb71hPv4/zdYouH7iIP
+   d1fDb6Wq+e0U9Nr8tKkGr2YRko35jBUUc4ykOMso5otQaSIx/jXTd0tO1
+   1Prnt9zmIj2n6tWj/ewZSQ1yJqui1nYbrCpiWSKGvhsjA/ytLEuLBHN6+
+   PSU8TMeO2jpdFcNaWE3r9b7+t5E2rsQWUjgtRSeJ3e2Z6IZeVFxJKmY1R
+   A==;
+X-CSE-ConnectionGUID: kPDth2jHQW6vQu7VDUaQFg==
+X-CSE-MsgGUID: vN4M6CfURTCyMBfzOifYhQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45671327"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="45671327"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 06:57:13 -0800
+X-CSE-ConnectionGUID: 24oyge/hTxGFJr/pHYDaQQ==
+X-CSE-MsgGUID: NSsGcZaDTcSMQimrsVZmOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="123328484"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.220])
+  by ORVIESA003-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 06:57:11 -0800
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Date: Tue, 4 Mar 2025 16:57:07 +0200 (EET)
+To: Tadeu Marchese <marchese.kdev@gmail.com>
+cc: Hans de Goede <hdegoede@redhat.com>, platform-driver-x86@vger.kernel.org, 
+    LKML <linux-kernel@vger.kernel.org>, Tadeu Marchese <marchese@hp.com>
+Subject: Re: platform/x86/hp-bioscfg: Fix buffer alignment and conversion
+In-Reply-To: <20250304062319.86270-1-marchese@hp.com>
+Message-ID: <3c30721a-cc1f-2d4a-d5df-f9cdec0af5e8@linux.intel.com>
+References: <20250304062319.86270-1-marchese@hp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303160824.GA22541@joelnvbox>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Mar 03, 2025 at 11:08:24AM -0500, Joel Fernandes wrote:
-> On Fri, Feb 28, 2025 at 01:13:56PM +0100, Uladzislau Rezki (Sony) wrote:
-> > Currently kvfree_rcu() APIs use a system workqueue which is
-> > "system_unbound_wq" to driver RCU machinery to reclaim a memory.
-> > 
-> > Recently, it has been noted that the following kernel warning can
-> > be observed:
-> > 
-> > <snip>
-> > workqueue: WQ_MEM_RECLAIM nvme-wq:nvme_scan_work is flushing !WQ_MEM_RECLAIM events_unbound:kfree_rcu_work
-> >   WARNING: CPU: 21 PID: 330 at kernel/workqueue.c:3719 check_flush_dependency+0x112/0x120
-> >   Modules linked in: intel_uncore_frequency(E) intel_uncore_frequency_common(E) skx_edac(E) ...
-> >   CPU: 21 UID: 0 PID: 330 Comm: kworker/u144:6 Tainted: G            E      6.13.2-0_g925d379822da #1
-> >   Hardware name: Wiwynn Twin Lakes MP/Twin Lakes Passive MP, BIOS YMM20 02/01/2023
-> >   Workqueue: nvme-wq nvme_scan_work
-> >   RIP: 0010:check_flush_dependency+0x112/0x120
-> >   Code: 05 9a 40 14 02 01 48 81 c6 c0 00 00 00 48 8b 50 18 48 81 c7 c0 00 00 00 48 89 f9 48 ...
-> >   RSP: 0018:ffffc90000df7bd8 EFLAGS: 00010082
-> >   RAX: 000000000000006a RBX: ffffffff81622390 RCX: 0000000000000027
-> >   RDX: 00000000fffeffff RSI: 000000000057ffa8 RDI: ffff88907f960c88
-> >   RBP: 0000000000000000 R08: ffffffff83068e50 R09: 000000000002fffd
-> >   R10: 0000000000000004 R11: 0000000000000000 R12: ffff8881001a4400
-> >   R13: 0000000000000000 R14: ffff88907f420fb8 R15: 0000000000000000
-> >   FS:  0000000000000000(0000) GS:ffff88907f940000(0000) knlGS:0000000000000000
-> >   CR2: 00007f60c3001000 CR3: 000000107d010005 CR4: 00000000007726f0
-> >   PKRU: 55555554
-> >   Call Trace:
-> >    <TASK>
-> >    ? __warn+0xa4/0x140
-> >    ? check_flush_dependency+0x112/0x120
-> >    ? report_bug+0xe1/0x140
-> >    ? check_flush_dependency+0x112/0x120
-> >    ? handle_bug+0x5e/0x90
-> >    ? exc_invalid_op+0x16/0x40
-> >    ? asm_exc_invalid_op+0x16/0x20
-> >    ? timer_recalc_next_expiry+0x190/0x190
-> >    ? check_flush_dependency+0x112/0x120
-> >    ? check_flush_dependency+0x112/0x120
-> >    __flush_work.llvm.1643880146586177030+0x174/0x2c0
-> >    flush_rcu_work+0x28/0x30
-> >    kvfree_rcu_barrier+0x12f/0x160
-> >    kmem_cache_destroy+0x18/0x120
-> >    bioset_exit+0x10c/0x150
-> >    disk_release.llvm.6740012984264378178+0x61/0xd0
-> >    device_release+0x4f/0x90
-> >    kobject_put+0x95/0x180
-> >    nvme_put_ns+0x23/0xc0
-> >    nvme_remove_invalid_namespaces+0xb3/0xd0
-> >    nvme_scan_work+0x342/0x490
-> >    process_scheduled_works+0x1a2/0x370
-> >    worker_thread+0x2ff/0x390
-> >    ? pwq_release_workfn+0x1e0/0x1e0
-> >    kthread+0xb1/0xe0
-> >    ? __kthread_parkme+0x70/0x70
-> >    ret_from_fork+0x30/0x40
-> >    ? __kthread_parkme+0x70/0x70
-> >    ret_from_fork_asm+0x11/0x20
-> >    </TASK>
-> >   ---[ end trace 0000000000000000 ]---
-> > <snip>
-> > 
-> > To address this switch to use of independent WQ_MEM_RECLAIM
-> > workqueue, so the rules are not violated from workqueue framework
-> > point of view.
-> > 
-> > Apart of that, since kvfree_rcu() does reclaim memory it is worth
-> > to go with WQ_MEM_RECLAIM type of wq because it is designed for
-> > this purpose.
-> > 
-> > Cc: <stable@vger.kernel.org>
-> > Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-> > Cc: Keith Busch <kbusch@kernel.org>
-> > Closes: https://www.spinics.net/lists/kernel/msg5563270.html
-> > Fixes: 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> > Reported-by: Keith Busch <kbusch@kernel.org>
-> > Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
-> 
-> BTW, there is a path in RCU-tasks that involves queuing work on system_wq
-> which is !WQ_RECLAIM. While I don't anticipate an issue such as the one fixed
-> by this patch, I am wondering if we should move these to their own WQ_RECLAIM
-> queues for added robustness since otherwise that will result in CB invocation
-> (And thus memory freeing delays). Paul?
+On Tue, 4 Mar 2025, Tadeu Marchese wrote:
 
-For RCU Tasks, the memory traffic has been much lower.  But maybe someday
-someone will drop a million trampolines all at once.  But let's see that
-problem before we fix some random problem that we believe will happen,
-but which proves to be only slightly related to the problem that actually
-does happen.  ;-)
+> Use PTR_ALIGN to access buffer in hp_get_string_from_buffer().
+> Remove code that escapes characters with backslashes.
+> Use kstrtouint() for unsigned string-to-integer conversion.
+> Increase the string_data buffer size by defining MAX_STRING_BUFF_SIZE.
+> 
+> Signed-off-by: Tadeu Marchese <marchese@hp.com>
+> ---
+> This patch ensures proper alignment when reading the string size from the 
+> buffer and simplifies Unicode-to-UTF-8 conversion by removing 
+> unnecessary character escaping.
+> 
+> Issues fixed at the module initialization:
+> [  433.823905] hp_bioscfg: Prerequisites size value exceeded the maximum 
+>   number of elements supported or data may be malformed
+> [  433.837747] Unable to convert string to integer: 4294967295
+> 
+> The buffer size was too small for string attributes such as 
+> 'HP_Disk0MapForUefiBootOrder'.
+> 
+>  drivers/platform/x86/hp/hp-bioscfg/bioscfg.c  | 82 ++++++-------------
+>  drivers/platform/x86/hp/hp-bioscfg/bioscfg.h  |  6 +-
+>  .../x86/hp/hp-bioscfg/int-attributes.c        |  8 +-
+>  3 files changed, 33 insertions(+), 63 deletions(-)
+> 
+> diff --git a/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c b/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
+> index 0b277b7e37dd..b537fbaac15e 100644
+> --- a/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
+> +++ b/drivers/platform/x86/hp/hp-bioscfg/bioscfg.c
+> @@ -51,19 +51,21 @@ int hp_get_integer_from_buffer(u8 **buffer, u32 *buffer_size, u32 *integer)
+>  
+>  int hp_get_string_from_buffer(u8 **buffer, u32 *buffer_size, char *dst, u32 dst_size)
+>  {
 
-							Thanx, Paul
+Oh great, thanks for looking into this! I recall raising this custom 
+string conversion madness during review but back then the patch got 
+applied without my comments being addressed.
 
-> kernel/rcu/tasks.h:       queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
-> kernel/rcu/tasks.h:       queue_work_on(cpuwq, system_wq, &rtpcp_next->rtp_work);
+> -	u16 *src = (u16 *)*buffer;
+> +	u16 *src = PTR_ALIGN((u16 *)*buffer, sizeof(u16));
+
+What happens here if the PTR_ALIGN() actually aligns the pointer by 
+skipping over the first character?? Is the string going to get read 
+out-of-sync with the true character boundaries??
+
+>  	u16 src_size;
+>  
+> -	u16 size;
+> -	int i;
+> +	u16 length;
+>  	int conv_dst_size;
+> +	int result;
+>  
+>  	if (*buffer_size < sizeof(u16))
+>  		return -EINVAL;
+>  
+> +	/* String size is in the first two bytes of the buffer */
+>  	src_size = *(src++);
+> -	/* size value in u16 chars */
+> -	size = src_size / sizeof(u16);
+> +
+> +	/* Get the string length considering it is u16 */
+> +	length = src_size / sizeof(u16);
+>  
+>  	/* Ensure there is enough space remaining to read and convert
+>  	 * the string
+> @@ -71,54 +73,22 @@ int hp_get_string_from_buffer(u8 **buffer, u32 *buffer_size, char *dst, u32 dst_
+>  	if (*buffer_size < src_size)
+>  		return -EINVAL;
+>  
+> -	for (i = 0; i < size; i++)
+> -		if (src[i] == '\\' ||
+> -		    src[i] == '\r' ||
+> -		    src[i] == '\n' ||
+> -		    src[i] == '\t')
+> -			size++;
+> -
+> -	/*
+> -	 * Conversion is limited to destination string max number of
+> -	 * bytes.
+> -	 */
+> -	conv_dst_size = size;
+> -	if (size > dst_size)
+> -		conv_dst_size = dst_size - 1;
+> +	conv_dst_size = length;
+> +	if (dst_size < conv_dst_size)
+> +		return -EINVAL;
+>  
+>  	/*
+> -	 * convert from UTF-16 unicode to ASCII
+> +	 * Convert from UTF-16 unicode to UTF-8 and ensure
+> +	 * the string is null terminated
+>  	 */
+> -	utf16s_to_utf8s(src, src_size, UTF16_HOST_ENDIAN, dst, conv_dst_size);
+> -	dst[conv_dst_size] = 0;
+> -
+> -	for (i = 0; i < conv_dst_size; i++) {
+> -		if (*src == '\\' ||
+> -		    *src == '\r' ||
+> -		    *src == '\n' ||
+> -		    *src == '\t') {
+> -			dst[i++] = '\\';
+> -			if (i == conv_dst_size)
+> -				break;
+> -		}
+> -
+> -		if (*src == '\r')
+> -			dst[i] = 'r';
+> -		else if (*src == '\n')
+> -			dst[i] = 'n';
+> -		else if (*src == '\t')
+> -			dst[i] = 't';
+> -		else if (*src == '"')
+> -			dst[i] = '\'';
+> -		else
+> -			dst[i] = *src;
+> -		src++;
+> -	}
+> +	result = utf16s_to_utf8s(src, src_size, UTF16_HOST_ENDIAN, dst, conv_dst_size);
+> +	dst[result] = 0;
+>  
+> -	*buffer = (u8 *)src;
+> -	*buffer_size -= size * sizeof(u16);
+> +	/* Update buffer to point to the next position */
+> +	*buffer = (u8 *)src + src_size;
+> +	*buffer_size -= src_size;
+>  
+> -	return size;
+> +	return result;
+>  }
+>  
+>  int hp_get_common_data_from_buffer(u8 **buffer_ptr, u32 *buffer_size,
+> @@ -999,37 +969,37 @@ static int __init hp_init(void)
+>  	 */
+>  	ret = create_attributes_level_sysfs_files();
+>  	if (ret)
+> -		pr_debug("Failed to create sysfs level attributes\n");
+> +		pr_warn("Failed to create sysfs level attributes\n");
+
+This patch should be split into a series with each patch doing a single 
+thing as you seem to have include changes that look independent of the 
+string conversion cleanup.
+
+>  
+>  	ret = hp_init_bios_attributes(HPWMI_STRING_TYPE, HP_WMI_BIOS_STRING_GUID);
+>  	if (ret)
+> -		pr_debug("Failed to populate string type attributes\n");
+> +		pr_warn("Failed to populate string type attributes\n");
+>  
+>  	ret = hp_init_bios_attributes(HPWMI_INTEGER_TYPE, HP_WMI_BIOS_INTEGER_GUID);
+>  	if (ret)
+> -		pr_debug("Failed to populate integer type attributes\n");
+> +		pr_warn("Failed to populate integer type attributes\n");
+>  
+>  	ret = hp_init_bios_attributes(HPWMI_ENUMERATION_TYPE, HP_WMI_BIOS_ENUMERATION_GUID);
+>  	if (ret)
+> -		pr_debug("Failed to populate enumeration type attributes\n");
+> +		pr_warn("Failed to populate enumeration type attributes\n");
+>  
+>  	ret = hp_init_bios_attributes(HPWMI_ORDERED_LIST_TYPE, HP_WMI_BIOS_ORDERED_LIST_GUID);
+>  	if (ret)
+> -		pr_debug("Failed to populate ordered list object type attributes\n");
+> +		pr_warn("Failed to populate ordered list object type attributes\n");
+>  
+>  	ret = hp_init_bios_attributes(HPWMI_PASSWORD_TYPE, HP_WMI_BIOS_PASSWORD_GUID);
+>  	if (ret)
+> -		pr_debug("Failed to populate password object type attributes\n");
+> +		pr_warn("Failed to populate password object type attributes\n");
+>  
+>  	bioscfg_drv.spm_data.attr_name_kobj = NULL;
+>  	ret = hp_add_other_attributes(HPWMI_SECURE_PLATFORM_TYPE);
+>  	if (ret)
+> -		pr_debug("Failed to populate secure platform object type attribute\n");
+> +		pr_warn("Failed to populate secure platform object type attribute\n");
+>  
+>  	bioscfg_drv.sure_start_attr_kobj = NULL;
+>  	ret = hp_add_other_attributes(HPWMI_SURE_START_TYPE);
+>  	if (ret)
+> -		pr_debug("Failed to populate sure start object type attribute\n");
+> +		pr_warn("Failed to populate sure start object type attribute\n");
+>  
+>  	return 0;
+>  
+> diff --git a/drivers/platform/x86/hp/hp-bioscfg/bioscfg.h b/drivers/platform/x86/hp/hp-bioscfg/bioscfg.h
+> index 3166ef328eba..99a95c709061 100644
+> --- a/drivers/platform/x86/hp/hp-bioscfg/bioscfg.h
+> +++ b/drivers/platform/x86/hp/hp-bioscfg/bioscfg.h
+> @@ -17,11 +17,11 @@
+>  
+>  #define DRIVER_NAME		"hp-bioscfg"
+>  
+> +#define MAX_STRING_BUFF_SIZE	1024
+>  #define MAX_BUFF_SIZE		512
+>  #define MAX_KEY_MOD_SIZE	256
+>  #define MAX_PASSWD_SIZE		64
+>  #define MAX_PREREQUISITES_SIZE	20
+> -#define MAX_REQ_ELEM_SIZE	128
+>  #define MAX_VALUES_SIZE		16
+>  #define MAX_ENCODINGS_SIZE	16
+>  #define MAX_ELEMENTS_SIZE	16
+> @@ -131,8 +131,8 @@ struct common_data {
+>  struct string_data {
+>  	struct common_data common;
+>  	struct kobject *attr_name_kobj;
+> -	u8 current_value[MAX_BUFF_SIZE];
+> -	u8 new_value[MAX_BUFF_SIZE];
+> +	u8 current_value[MAX_STRING_BUFF_SIZE];
+> +	u8 new_value[MAX_STRING_BUFF_SIZE];
+>  	u32 min_length;
+>  	u32 max_length;
+>  };
+> diff --git a/drivers/platform/x86/hp/hp-bioscfg/int-attributes.c b/drivers/platform/x86/hp/hp-bioscfg/int-attributes.c
+> index 6c7f4d5fa9cb..3e8f99b4174d 100644
+> --- a/drivers/platform/x86/hp/hp-bioscfg/int-attributes.c
+> +++ b/drivers/platform/x86/hp/hp-bioscfg/int-attributes.c
+> @@ -38,7 +38,7 @@ static int validate_integer_input(int instance_id, char *buf)
+>  	if (integer_data->common.is_readonly)
+>  		return -EIO;
+>  
+> -	ret = kstrtoint(buf, 10, &in_val);
+> +	ret = kstrtouint(buf, 10, &in_val);
+>  	if (ret < 0)
+>  		return ret;
+>  
+> @@ -55,7 +55,7 @@ static void update_integer_value(int instance_id, char *attr_value)
+>  	int ret;
+>  	struct integer_data *integer_data = &bioscfg_drv.integer_data[instance_id];
+>  
+> -	ret = kstrtoint(attr_value, 10, &in_val);
+> +	ret = kstrtouint(attr_value, 10, &in_val);
+>  	if (ret == 0)
+>  		integer_data->current_value = in_val;
+>  	else
+> @@ -185,7 +185,7 @@ static int hp_populate_integer_elements_from_package(union acpi_object *integer_
+>  		/* Assign appropriate element value to corresponding field*/
+>  		switch (eloc) {
+>  		case VALUE:
+> -			ret = kstrtoint(str_value, 10, &int_value);
+> +			ret = kstrtouint(str_value, 10, &int_value);
+>  			if (ret)
+>  				continue;
+>  
+> @@ -328,7 +328,7 @@ static int hp_populate_integer_elements_from_buffer(u8 *buffer_ptr, u32 *buffer_
+>  	integer_data->current_value = 0;
+>  
+>  	hp_get_string_from_buffer(&buffer_ptr, buffer_size, dst, dst_size);
+> -	ret = kstrtoint(dst, 10, &integer_data->current_value);
+> +	ret = kstrtouint(dst, 10, &integer_data->current_value);
+>  	if (ret)
+>  		pr_warn("Unable to convert string to integer: %s\n", dst);
+>  	kfree(dst);
 > 
-> For this patch:
-> Reviewed-by: Joel Fernandes <joelagnelf@nvidia.com>
-> 
-> thanks,
-> 
->  - Joel
-> 
-> 
-> > ---
-> >  mm/slab_common.c | 14 ++++++++++----
-> >  1 file changed, 10 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/mm/slab_common.c b/mm/slab_common.c
-> > index 4030907b6b7d..4c9f0a87f733 100644
-> > --- a/mm/slab_common.c
-> > +++ b/mm/slab_common.c
-> > @@ -1304,6 +1304,8 @@ module_param(rcu_min_cached_objs, int, 0444);
-> >  static int rcu_delay_page_cache_fill_msec = 5000;
-> >  module_param(rcu_delay_page_cache_fill_msec, int, 0444);
-> >  
-> > +static struct workqueue_struct *rcu_reclaim_wq;
-> > +
-> >  /* Maximum number of jiffies to wait before draining a batch. */
-> >  #define KFREE_DRAIN_JIFFIES (5 * HZ)
-> >  #define KFREE_N_BATCHES 2
-> > @@ -1632,10 +1634,10 @@ __schedule_delayed_monitor_work(struct kfree_rcu_cpu *krcp)
-> >  	if (delayed_work_pending(&krcp->monitor_work)) {
-> >  		delay_left = krcp->monitor_work.timer.expires - jiffies;
-> >  		if (delay < delay_left)
-> > -			mod_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
-> > +			mod_delayed_work(rcu_reclaim_wq, &krcp->monitor_work, delay);
-> >  		return;
-> >  	}
-> > -	queue_delayed_work(system_unbound_wq, &krcp->monitor_work, delay);
-> > +	queue_delayed_work(rcu_reclaim_wq, &krcp->monitor_work, delay);
-> >  }
-> >  
-> >  static void
-> > @@ -1733,7 +1735,7 @@ kvfree_rcu_queue_batch(struct kfree_rcu_cpu *krcp)
-> >  			// "free channels", the batch can handle. Break
-> >  			// the loop since it is done with this CPU thus
-> >  			// queuing an RCU work is _always_ success here.
-> > -			queued = queue_rcu_work(system_unbound_wq, &krwp->rcu_work);
-> > +			queued = queue_rcu_work(rcu_reclaim_wq, &krwp->rcu_work);
-> >  			WARN_ON_ONCE(!queued);
-> >  			break;
-> >  		}
-> > @@ -1883,7 +1885,7 @@ run_page_cache_worker(struct kfree_rcu_cpu *krcp)
-> >  	if (rcu_scheduler_active == RCU_SCHEDULER_RUNNING &&
-> >  			!atomic_xchg(&krcp->work_in_progress, 1)) {
-> >  		if (atomic_read(&krcp->backoff_page_cache_fill)) {
-> > -			queue_delayed_work(system_unbound_wq,
-> > +			queue_delayed_work(rcu_reclaim_wq,
-> >  				&krcp->page_cache_work,
-> >  					msecs_to_jiffies(rcu_delay_page_cache_fill_msec));
-> >  		} else {
-> > @@ -2120,6 +2122,10 @@ void __init kvfree_rcu_init(void)
-> >  	int i, j;
-> >  	struct shrinker *kfree_rcu_shrinker;
-> >  
-> > +	rcu_reclaim_wq = alloc_workqueue("kvfree_rcu_reclaim",
-> > +			WQ_UNBOUND | WQ_MEM_RECLAIM, 0);
-> > +	WARN_ON(!rcu_reclaim_wq);
-> > +
-> >  	/* Clamp it to [0:100] seconds interval. */
-> >  	if (rcu_delay_page_cache_fill_msec < 0 ||
-> >  		rcu_delay_page_cache_fill_msec > 100 * MSEC_PER_SEC) {
-> > -- 
-> > 2.39.5
-> > 
-> 
+
+-- 
+ i.
+
 
