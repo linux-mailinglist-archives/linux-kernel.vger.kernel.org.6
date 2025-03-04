@@ -1,65 +1,47 @@
-Return-Path: <linux-kernel+bounces-545427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 933B3A4ED03
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:15:44 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD95CA4ED05
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:16:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10D8E7A866B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:14:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D597318905C0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:16:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DB0259CAA;
-	Tue,  4 Mar 2025 19:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTq6rl92"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DE924C08E;
+	Tue,  4 Mar 2025 19:16:00 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96C2F16F271;
-	Tue,  4 Mar 2025 19:15:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC1F1EE7AD;
+	Tue,  4 Mar 2025 19:15:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115727; cv=none; b=BCyhxqGR1YYKBkNYicE4ctylmoZvep1kEQkkq4FZfeKVUpq1fmbj4vDmhOctKwwRhU4Rw38avgKQ4uv40IKxjB2Myjwki45am+NMqw+q9X27f54B5azhbMEDZGSacU0chYkHLkJ/XoyM/c1VZ/QIj4iGi/48FyTTgfsMY64QOLk=
+	t=1741115759; cv=none; b=Lx78yybCdE5YRoTjwN2S0Edz+DgDdYrCl4HPUr56ryosoXNRhs1Au1MYEp2yQvASyrtMCtiY3/SeKxuuhWtsjLTsqmT9guNfFmnwoEE97RQ2A0P41c4cHReaUg7j+y2KmK9JoIuk8x4z3XePCgYwH/CPl3WT04J/qlrZpJvXgRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115727; c=relaxed/simple;
-	bh=NJ3TQZFfV3q3elNa2NxItYJQTy6CMZkFNGwhlIZAytw=;
+	s=arc-20240116; t=1741115759; c=relaxed/simple;
+	bh=EX2yCH5S4Sr+3vHjRGwcGccOr3tHhewaJmApX8U9vdA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lp47s9OdcQqvRVmDROWNsEl17OZudnzQzdZR4kZu6rY4fObYRwi/ZfwrEJotB4mG2+7L6ar/U5O4VT1INGQ+Ocr2h61IJi5ATVxHHkgtqD2GgCcGrByQDK5A7eBo6iJYwqQhVrv1MVImGqmApuaiUnLR5xw/oMVpfrHoN0++aZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTq6rl92; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E51EC4CEE5;
-	Tue,  4 Mar 2025 19:15:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741115727;
-	bh=NJ3TQZFfV3q3elNa2NxItYJQTy6CMZkFNGwhlIZAytw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oTq6rl92QjtF9LyJG1zuHCWL9z0PN3kj3ItWHL+poQ4CKCDTVvQXuMKeV7omAG079
-	 A8L0eLtHNrgS21USGn1mmEaLQdRskQobutNrEQkJLt1VnYyGM7XbC0BrHUBdTdFjC0
-	 yQUPQxUkWsaECSup+PnDHhRyV2SsB4sRbAU8GqJ7fpoI3ApW13x62Q00dqv9QyHZjX
-	 +SZ1cd+h7r1lEih4uMUidp+oChcTYTVwRsa6rGPtv4PzZviy3kVOY1yOSz67CN/wyW
-	 rQ0KSaNncpkrMJJsaBzvrm6gUnyM1F7KXHrJWmibu9KoZnIlKaibe5lzTG1Y+hkyIr
-	 2oYKxMVUDAsXA==
-Date: Tue, 4 Mar 2025 21:15:22 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
-	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	gregkh@linuxfoundation.org, mcgrof@kernel.org,
-	russ.weight@linux.dev, dri-devel@lists.freedesktop.org,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	nouveau@lists.freedesktop.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] rust: firmware: introduce
- `firmware::ModInfoBuilder`
-Message-ID: <Z8dRSp13fsvEF9HR@kernel.org>
-References: <20250304173555.2496-1-dakr@kernel.org>
- <20250304173555.2496-3-dakr@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oekSEBM8dGSmvX0OpVq8azsUqwxDGU1qsqXX6eCHDF8pwhq9XY3tn4g+YUwwXwUxo1TfJwchRtNxagCv3so7q8LDTyDc0LJDw1q4hQiQARKFntM8hyynmOSUpFfB6pu3T4qKRQWtJlwYa7nSOnWOUaKM4bcKIM/gJyF609p9BrA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C4CBC4CEE5;
+	Tue,  4 Mar 2025 19:15:57 +0000 (UTC)
+Date: Tue, 4 Mar 2025 19:15:54 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, arnd@arndb.de,
+	will@kernel.org, peterz@infradead.org, mark.rutland@arm.com,
+	harisokn@amazon.com, cl@gentwo.org, memxor@gmail.com,
+	zhenglifeng1@huawei.com, joao.m.martins@oracle.com,
+	boris.ostrovsky@oracle.com, konrad.wilk@oracle.com
+Subject: Re: [PATCH 1/4] asm-generic: barrier: Add
+ smp_cond_load_relaxed_timewait()
+Message-ID: <Z8dRalfxYcJIcLGj@arm.com>
+References: <20250203214911.898276-1-ankur.a.arora@oracle.com>
+ <20250203214911.898276-2-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,141 +50,104 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304173555.2496-3-dakr@kernel.org>
+In-Reply-To: <20250203214911.898276-2-ankur.a.arora@oracle.com>
+X-TUID: lLrdoPZx9Q90
 
-On Tue, Mar 04, 2025 at 06:34:49PM +0100, Danilo Krummrich wrote:
-> The `firmware` field of the `module!` only accepts literal strings,
-> which is due to the fact that it is implemented as a proc macro.
-> 
-> Some drivers require a lot of firmware files (such as nova-core) and
-> hence benefit from more flexibility composing firmware path strings.
-> 
-> The `firmware::ModInfoBuilder` is a helper component to flexibly compose
-> firmware path strings for the .modinfo section in const context.
-> 
-> It is meant to be used in combination with `kernel::module_firmware!`,
-> which is introduced in a subsequent patch.
+On Mon, Feb 03, 2025 at 01:49:08PM -0800, Ankur Arora wrote:
+> Add smp_cond_load_relaxed_timewait(), a timed variant of
+> smp_cond_load_relaxed(). This is useful for cases where we want to
+> wait on a conditional variable but don't want to wait indefinitely.
 
-Ditto.
+Bikeshedding: why not "timeout" rather than "timewait"?
 
-> 
-> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/firmware.rs | 98 +++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 98 insertions(+)
-> 
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> index c5162fdc95ff..6e6972d94597 100644
-> --- a/rust/kernel/firmware.rs
-> +++ b/rust/kernel/firmware.rs
-> @@ -115,3 +115,101 @@ unsafe impl Send for Firmware {}
->  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
->  // be used from any thread.
->  unsafe impl Sync for Firmware {}
-> +
-> +/// Builder for firmware module info.
-> +///
-> +/// [`ModInfoBuilder`] is a helper component to flexibly compose firmware paths strings for the
-> +/// .modinfo section in const context.
-> +///
-> +/// It is meant to be used in combination with [`kernel::module_firmware!`].
-> +///
-> +/// For more details and an example, see [`kernel::module_firmware!`].
-> +pub struct ModInfoBuilder<const N: usize> {
-> +    buf: [u8; N],
-> +    n: usize,
-> +    module_name: &'static CStr,
-> +}
-> +
-> +impl<const N: usize> ModInfoBuilder<N> {
-> +    /// Create an empty builder instance.
-> +    pub const fn new(module_name: &'static CStr) -> Self {
-> +        Self {
-> +            buf: [0; N],
-> +            n: 0,
-> +            module_name,
-> +        }
-> +    }
-> +
-> +    const fn push_internal(mut self, bytes: &[u8]) -> Self {
-> +        let mut j = 0;
-> +
-> +        if N == 0 {
-> +            self.n += bytes.len();
-> +            return self;
-> +        }
-> +
-> +        while j < bytes.len() {
-> +            if self.n < N {
-> +                self.buf[self.n] = bytes[j];
-> +            }
-> +            self.n += 1;
-> +            j += 1;
-> +        }
-> +        self
-> +    }
-> +
-> +    /// Push an additional path component.
-> +    ///
-> +    /// After a new [`ModInfoBuilder`] instance has been created, [`ModInfoBuilder::prepare`] must
-> +    /// be called before adding path components.
-> +    pub const fn push(self, s: &str) -> Self {
-> +        if N != 0 && self.n == 0 {
-> +            crate::build_error!("Must call prepare() before push().");
-> +        }
-> +
-> +        self.push_internal(s.as_bytes())
-> +    }
-> +
-> +    const fn prepare_module_name(self) -> Self {
-> +        let mut this = self;
-> +        let module_name = this.module_name;
-> +
-> +        if !this.module_name.is_empty() {
-> +            this = this.push_internal(module_name.as_bytes_with_nul());
-> +
-> +            if N != 0 {
-> +                // Re-use the space taken by the NULL terminator and swap it with the '.' separator.
-> +                this.buf[this.n - 1] = b'.';
-> +            }
-> +        }
-> +
-> +        this.push_internal(b"firmware=")
-> +    }
-> +
-> +    /// Prepare for the next module info entry.
-> +    ///
-> +    /// Must be called before [`ModInfoBuilder::push`] can be called.
-> +    pub const fn prepare(self) -> Self {
-> +        self.push_internal(b"\0").prepare_module_name()
-> +    }
-> +
-> +    /// Build the byte array.
-> +    pub const fn build(self) -> [u8; N] {
-> +        // Add the final NULL terminator.
-> +        let this = self.push_internal(b"\0");
-> +
-> +        if this.n == N {
-> +            this.buf
-> +        } else {
-> +            crate::build_error!("Length mismatch.");
-> +        }
-> +    }
-> +}
-> +
-> +impl ModInfoBuilder<0> {
-> +    /// Return the length of the byte array to build.
-> +    pub const fn build_length(self) -> usize {
-> +        // Compensate for the NULL terminator added by `build`.
-> +        self.n + 1
-> +    }
-> +}
-> -- 
-> 2.48.1
-> 
-> 
+> diff --git a/include/asm-generic/barrier.h b/include/asm-generic/barrier.h
+> index d4f581c1e21d..31de8ed2a05e 100644
+> --- a/include/asm-generic/barrier.h
+> +++ b/include/asm-generic/barrier.h
+> @@ -273,6 +273,54 @@ do {									\
+>  })
+>  #endif
+>  
+> +#ifndef smp_cond_time_check_count
+> +/*
+> + * Limit how often smp_cond_load_relaxed_timewait() evaluates time_expr_ns.
+> + * This helps reduce the number of instructions executed while spin-waiting.
+> + */
+> +#define smp_cond_time_check_count	200
+> +#endif
 
-BR, Jarkko
+While this was indeed added to the poll_idle() loop, it feels completely
+random in a generic implementation. It's highly dependent on the
+time_expr_ns passed. Can the caller not move the loop in time_expr_ns
+before invoking this macro?
+
+> +
+> +/**
+> + * smp_cond_load_relaxed_timewait() - (Spin) wait for cond with no ordering
+> + * guarantees until a timeout expires.
+> + * @ptr: pointer to the variable to wait on
+> + * @cond: boolean expression to wait for
+> + * @time_expr_ns: evaluates to the current time
+> + * @time_limit_ns: compared against time_expr_ns
+> + *
+> + * Equivalent to using READ_ONCE() on the condition variable.
+> + *
+> + * Note that the time check in time_expr_ns can be synchronous or
+> + * asynchronous.
+> + * In the generic version the check is synchronous but kept coarse
+> + * to minimize instructions executed while spin-waiting.
+> + */
+
+Not sure exactly what synchronous vs asynchronous here mean. I see the
+latter more like an interrupt. I guess what you have in mind is the WFE
+wakeup events on arm64, though they don't interrupt the instruction
+flow. I'd not bother specifying this at all.
+
+> +#ifndef __smp_cond_load_relaxed_spinwait
+> +#define __smp_cond_load_relaxed_spinwait(ptr, cond_expr, time_expr_ns,	\
+> +					 time_limit_ns) ({		\
+> +	typeof(ptr) __PTR = (ptr);					\
+> +	__unqual_scalar_typeof(*ptr) VAL;				\
+> +	unsigned int __count = 0;					\
+> +	for (;;) {							\
+> +		VAL = READ_ONCE(*__PTR);				\
+> +		if (cond_expr)						\
+> +			break;						\
+> +		cpu_relax();						\
+> +		if (__count++ < smp_cond_time_check_count)		\
+> +			continue;					\
+> +		if ((time_expr_ns) >= (time_limit_ns))			\
+> +			break;						\
+> +		__count = 0;						\
+> +	}								\
+> +	(typeof(*ptr))VAL;						\
+> +})
+> +#endif
+> +
+> +#ifndef smp_cond_load_relaxed_timewait
+> +#define smp_cond_load_relaxed_timewait  __smp_cond_load_relaxed_spinwait
+> +#endif
+
+What I don't particularly like about this interface is (1) no idea of
+what time granularity it offers, how much it can slip past the deadline,
+even though there's some nanoseconds implied and (2) time_expr_ns leaves
+the caller to figure out why time function to use for tracking the time.
+Well, I can be ok with (2) if we make it a bit more generic.
+
+The way it is written, I guess the type of the time expression and limit
+no longer matters as long as you can compare them. The naming implies
+nanoseconds but we don't have such precision, especially with the WFE
+implementation for arm64. We could add a slack range argument like the
+delta_ns for some of the hrtimer API and let the arch code decide
+whether to honour it.
+
+What about we drop the time_limit_ns and build it into the time_expr_ns
+as a 'time_cond' argument? The latter would return the result of some
+comparison and the loop bails out if true. An additional argument would
+be the minimum granularity for checking the time_cond and the arch code
+may decide to fall back to busy loops if the granularity is larger than
+what the caller required.
+
+-- 
+Catalin
 
