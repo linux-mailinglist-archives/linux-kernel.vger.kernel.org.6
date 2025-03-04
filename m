@@ -1,92 +1,163 @@
-Return-Path: <linux-kernel+bounces-544845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F0D4A4E5C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:25:54 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D333A4E5C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:26:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB538422A2F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:20:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 342B7422D2D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4782728D068;
-	Tue,  4 Mar 2025 16:00:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3A5328F933;
+	Tue,  4 Mar 2025 16:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bzp5KeuY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="CRD59RSF"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49DB28F92D;
-	Tue,  4 Mar 2025 16:00:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D14F28D06E;
+	Tue,  4 Mar 2025 16:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104042; cv=none; b=UkgtUbmcRBzKfnhAk+7ME/pfcsgmQblnp2PyvDq9tkcc/iq1vn5cUlPLUTGZlT3KkQm6ecR5Xod+I9zQS4o7bFnrQ/bZ3vLEq3gKPuezvkzNwLFsyw+xc25mBWf3yxG34V7PB2Farwr8UnBMi06l942ha4W4gKrQPtgEJh5nZpE=
+	t=1741104059; cv=none; b=bopsjqtIx1sESkmOKuaqbjLOeMDzHD/ZQM0U6FxMp7idfNN677v2geBMGH4TbzbnS5lCiOwP84rH+82W45ulQbUMO8/rsuZcBo6GT5hpUYLKacQqIWCuQr5RkRjD4Ogk49pKZLu14Auo99DIwB+rVnpYqZicn40CJ0LZdA3c998=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104042; c=relaxed/simple;
-	bh=0F2zNAg52IqVf8VARIvWlkAqo4vcQHul7cmg19AhclE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=XR/4SOZZpR+3iRHqo6amc/PBSjhhUQG/fTC9UBjUZAH72t/lVYyu5MCJc/s2fnk4YhpuHmPkHROyBdoQbEq9kPM8uKhSXINaHJf7wHI/IexQil2rl2HegN56V72sEI7XVPryg84Yxv/jSGkQPUKEak70B65kKCS8CanrSkp+U74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bzp5KeuY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE51FC4CEE5;
-	Tue,  4 Mar 2025 16:00:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741104042;
-	bh=0F2zNAg52IqVf8VARIvWlkAqo4vcQHul7cmg19AhclE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bzp5KeuYV4jR5I1XA4UVbml33KpNQCjMNlbeJROJh2+od7JQSdh1zA9DR+Ffn5uKx
-	 OgX37DrIZF5+cODtLC14rjfYdE8QLvXDCdKeN09W2tSg/LBZ0unHgagjzuaLMBWwHn
-	 0rClbRzyriak/seU+F5knLcqqebRpP9KAVEPKiXtqyEy7mTAiEF+wB/xvNn4B7s/cy
-	 zXGo15p6jeojPZYPGVt2CKbeNCVFGYNucbzuDNv8MTA/97dAzydMCzqCr+2Mg3F56t
-	 liTzxqDotghDnlDcg9itKKMuXPd9nRZQ0yJaVEu2i3j+hdwlQ7kpn7UytaG9IXmxQY
-	 U7xSH6sXQ6NIQ==
-Date: Tue, 4 Mar 2025 10:00:40 -0600
-From: Rob Herring <robh@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Saravana Kannan <saravanak@google.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [GIT PULL] Devicetree fix for v6.14, part 2
-Message-ID: <20250304160040.GA2690690-robh@kernel.org>
+	s=arc-20240116; t=1741104059; c=relaxed/simple;
+	bh=pPjIO747FKL6jAHmMKeBPAAnLzptVY1ZNkFDQcUSYTM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JtCZb76chQiEC+VPtKyH1RxxscMvlUj9FhR0DGyi3D3rH6n8ng8Vhs8pH3z9Lp6s/ISphYIviE+VUDveJ/n/TsfKBoSznV49Q+hNTt2WI7vzp3SCDjmU0rYMbLYoXy2Yzgp03xCMibwv0bq/aamll/UeabYDbySY/sxkuwVcvXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=CRD59RSF; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 7457944333;
+	Tue,  4 Mar 2025 16:00:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741104055;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RUl0n/50RU5tg+1nlfKABzZ6a5bn6YeoemF/OpOiw6s=;
+	b=CRD59RSFJibwTubuGWUQH+rVsIbGqXDyu51P/eZhUt9/BJxv4rqmXrkswy+ZozaZ7jbPhR
+	ih8ctUWP+aojNtJO5UQjydr7NFcaGbB3qpQ6id1jpQ7eZpo+HTvINN/r3RREvuzQKk50CW
+	twW8YtQfgnmMZ3UCEi0WtzEQwWlH5BxwpFGO3h/m48VpuRrPkhORZa2QB8m0OQ3+UGVBPh
+	A8Zhw4yrKhwwMoxwAKHsmLJLHKLr14gnJf4o80Z4Tmxdrg5AokJzlP2Yg5p81q8bUmp/sW
+	vSIhsihKHDwUfHADuuY9YtIK0JpRLJ92wVqH/uAVDB90UPMnYo9SDG0GzD6vzQ==
+Date: Tue, 4 Mar 2025 17:00:51 +0100
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Maxime Chevallier <maxime.chevallier@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
+ Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>,
+ Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
+Subject: Re: [PATCH net] net: ethtool: Set the req_info->dev on DUMP
+ requests for each dev
+Message-ID: <20250304170051.607097e9@kmaincent-XPS-13-7390>
+In-Reply-To: <20250302162137.698092-1-maxime.chevallier@bootlin.com>
+References: <20250302162137.698092-1-maxime.chevallier@bootlin.com>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddvgeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpefmohhrhicuofgrihhntggvnhhtuceokhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgfdutdefvedtudegvefgvedtgfdvhfdtueeltefffefffffhgfetkedvfeduieeinecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehkmhgrihhntggvnhhtqdgirffuqddufedqjeefledtpdhmrghilhhfrhhomhepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhop
+ egvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Hi Linus,
+On Sun,  2 Mar 2025 17:21:36 +0100
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-Please pull this one DT fix.
+> There are a few netlink commands that rely on the req_info->dev field
+> being populated by ethnl in their ->prepare_data() and ->fill_reply().
+>=20
+> For a regular GET request, this will be set by ethnl_default_parse(),
+> which calls ethnl_parse_header_dev_get().
+>=20
+> In the case of a DUMP request, the ->prepare_data() and ->fill_reply()
+> callbacks will be called with the req_info->dev being NULL, which can
+> cause discrepancies in the behaviour between GET and DUMP results.
+>=20
+> The main impact is that ethnl_req_get_phydev() will not find any
+> phy_device, impacting :
+>  - plca
+>  - pse-pd
+>  - stats
+>=20
+> Some other commands rely on req_info->dev, namely :
+>  - coalesce in ->fill_reply to look for an irq_moder
+>=20
+> Although cable_test and tunnels also rely on req_info->dev being set,
+> that's not a problem for these commands as :
+>  - cable_test doesn't support DUMP
+>  - tunnels rolls its own ->dumpit (and sets dev in the req_info).
+>  - phy also has its own ->dumpit
+>=20
+> All other commands use reply_data->dev (probably the correct way of
+> doing things) and aren't facing this issue.
+>=20
+> Simply set the dev in the req_info context when iterating to dump each
+> dev.
+>=20
+> Fixes: c15e065b46dc ("net: ethtool: Allow passing a phy index for some
+> commands") Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.co=
+m>
+> ---
+>=20
+> Fixes tag targets the phy-index commit, as it introduced a change in
+> behaviour for PLCA. From what I can tell, coalesce never correctly
+> detected irq_moder in DUMP requests.
+>=20
+> We could also consider fixing all individual commands that use
+> req_info->dev, however I'm not actually sure it's incorrect to do so,
+> feel free to correct me though.
+>=20
+> Maxime
+>=20
+>  net/ethtool/netlink.c | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+> index b4c45207fa32..de967961d8fe 100644
+> --- a/net/ethtool/netlink.c
+> +++ b/net/ethtool/netlink.c
+> @@ -582,6 +582,7 @@ static int ethnl_default_dumpit(struct sk_buff *skb,
+>  		dev_hold(dev);
+>  		rcu_read_unlock();
+> =20
+> +		ctx->req_info->dev =3D dev;
 
-Rob
+I would rather put it in ethnl_default_dump_one() before
+ethnl_init_reply_data() call.
+
+With this change:
+Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+Tested-by: Kory Maincent <kory.maincent@bootlin.com>
+
+Thank you!
+
+>  		ret =3D ethnl_default_dump_one(skb, dev, ctx,
+> genl_info_dump(cb));=20
+>  		rcu_read_lock();
 
 
-The following changes since commit 038e33fcd40e59b60cdca561c2a39998e6759e08:
 
-  dt-bindings: display: Add powertip,{st7272|hx8238a} as DT Schema description (2025-02-05 12:39:30 -0600)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-fixes-for-6.14-2
-
-for you to fetch changes up to 75f1f311d883dfaffb98be3c1da208d6ed5d4df9:
-
-  Revert "of: reserved-memory: Fix using wrong number of cells to get property 'alignment'" (2025-02-26 13:39:28 -0600)
-
-----------------------------------------------------------------
-Devicetree fix for 6.14, part 2:
-
-- Revert reserved-memory 'alignment' property to use '#address-cells'
-  instead of '#size-cells'. What's in use trumps the spec.
-
-----------------------------------------------------------------
-Rob Herring (Arm) (1):
-      Revert "of: reserved-memory: Fix using wrong number of cells to get property 'alignment'"
-
- drivers/of/of_reserved_mem.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
