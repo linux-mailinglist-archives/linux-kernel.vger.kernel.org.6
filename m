@@ -1,147 +1,99 @@
-Return-Path: <linux-kernel+bounces-543411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5C71A4D544
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:47:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21835A4D52E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:46:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C54A23B0F1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:46:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F24D17A2DE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:45:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F191FAC5F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36C2A1FA243;
 	Tue,  4 Mar 2025 07:45:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cdCKt5dq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UPOsmW32"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2131C1F9F61;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EB331C84C9;
 	Tue,  4 Mar 2025 07:45:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741074318; cv=none; b=D1F5mfnj9tC/cRU9khK3RPT1Oba1uldeolcldej6qL+7ljExXWoOI3fONiuLH+FUrOdqpVtDDUEs3jtuIXdbvV6jzn4XXkQypSrqedLJbqKmsMWE5lOT/hkIItYWbxnJeyKLfkJ7ugVfTL+VXeUcBBGskjiep8j3xOecqR/SH+8=
+	t=1741074317; cv=none; b=QVsiGLM/hkAkVE8jg7VqazKurWKU6xG3WzgQwkNvLfTOXM//bE5E3IVpsK3oCVOkugNJYjkC7iWLfgpeD0/S77+cvEz4tyX4xT+Igi/+DYCAzElxPpSDrQ/4kmt3SKCWQ9NfblziWqxtH0lV6lwE3H2i7PDwEBnxLM2BtRkl8ZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741074318; c=relaxed/simple;
-	bh=g1CwEryvdLe/wwnFIV+iFxNi+rI8ZMf000Ap6/2bRsc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FejNjd+3uXeVa5j6xq2q3haXvsq5kRIDWwxVsbxk905R/hAbsWbN7AUhSbUh2hrRKt7IbP9JCSV3X9GYhJvOJBv4ogPuxn5x0pLwpxv4lBTUwen7ERNg7kagtcp/sPN9vME+vW73iDhg5RYyVPaX6cSfo/MTuuUJ906eTZFVZ+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cdCKt5dq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D9FC4CEE5;
-	Tue,  4 Mar 2025 07:45:10 +0000 (UTC)
+	s=arc-20240116; t=1741074317; c=relaxed/simple;
+	bh=+ZG9d0xMJRBurf96LSn3na+FqFlH1BReDY4goXCg6Ss=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DxmvUjvI6pCzgkHCkleiZWSZzpeYVot82bb011AcztSWZr0OP6Py/47788E36LIdvhu76131n+/Yzd7sFZDC5ZS1jCkHu5tmIZH5Pkfx71IlCDQiTGxolUsEyHO1FL6TpXx4H1AeS/rjMZcHDtGbjo889CfZixDRk98S4UqK8L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UPOsmW32; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5AAEBC4CEE8;
+	Tue,  4 Mar 2025 07:45:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1741074317;
-	bh=g1CwEryvdLe/wwnFIV+iFxNi+rI8ZMf000Ap6/2bRsc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=cdCKt5dqc2V0hxGVfsdWIyoPeJzNgXBf30K/LKZNr/Nh++hELAIJzh26FQXfOzyXD
-	 t40liJ4Axy0B2KasBzBjkc4uHjdfRcoHVw9WEoL7Kp3z8OW3jc4ePEUCkrYuqlTDts
-	 HEMvRqwleLaAHduvsQxzLcA6DdI6Sqp8/ybjXprA2mIgTRAqp+LNx6JG/OQkrFI6n0
-	 3DtpOEU49ZSBker6zxUWUAU2WC0ShbNRiU2G6m/r85QFpKLO4Iwav/5y2e/njkSAYw
-	 q8bhVGrMXrqHa0VpvcIa6qODW8RQQRRqVcrt8Mv+pJDGca9EXAPuu/47F0vxd7E6S3
-	 MX5hWK6JiRzRQ==
-Message-ID: <377951ad-341f-4e19-a582-a534567dc466@kernel.org>
-Date: Tue, 4 Mar 2025 08:45:08 +0100
+	bh=+ZG9d0xMJRBurf96LSn3na+FqFlH1BReDY4goXCg6Ss=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UPOsmW32plQUc2mtjyAKB8B+ZGHMM37G3rsz/wVAK8Q37VF6/MEx3WvZSjw2J28GZ
+	 nhTIYillEU2XI9wHfXecKHBOs6SqGfZiXNnIKG6nimzamLXsQ4nqXaIWwmBJSZW1QZ
+	 HVpqlv4Ct6MHnKJJNJJrdg14aFKloFQA7FpjemzWmBOZMXg5xZWSmq6VCRxv6FEpDy
+	 A+tj/9+BzFqheu8Krjnb/uHIA8ucFt166lFUvfQ9XM7eLfqDx12jK7O51ZkyHUdVlB
+	 6nt/xWUe3bSaRlBl85x37fL0SsGrGnKNkZlPzxk+pUEIEYdoCupeKgHIpujhvbo2+X
+	 MNR4MREDsJE9w==
+Date: Tue, 4 Mar 2025 09:45:12 +0200
+From: Leon Romanovsky <leon@kernel.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Andrew Lunn <andrew@lunn.ch>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	linux-pci@vger.kernel.org, Ariel Almog <ariela@nvidia.com>,
+	Aditya Prabhune <aprabhune@nvidia.com>,
+	Hannes Reinecke <hare@suse.de>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Arun Easi <aeasi@marvell.com>, Jonathan Chocron <jonnyc@amazon.com>,
+	Bert Kenward <bkenward@solarflare.com>,
+	Matt Carlson <mcarlson@broadcom.com>,
+	Kai-Heng Feng <kai.heng.feng@canonical.com>,
+	Jean Delvare <jdelvare@suse.de>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	Jakub Kicinski <kuba@kernel.org>,
+	Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
+	Stephen Hemminger <stephen@networkplumber.org>
+Subject: Re: [PATCH v4] PCI/sysfs: Change read permissions for VPD attributes
+Message-ID: <20250304074512.GC1955273@unreal>
+References: <e9943382-8d53-4e28-b600-066ef470f889@app.fastmail.com>
+ <20250303211755.GA200634@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/5] dt-bindings: firmware: thead,th1520: Add support
- for firmware node
-To: Michal Wilczynski <m.wilczynski@samsung.com>, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com, guoren@kernel.org,
- wefu@redhat.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, alex@ghiti.fr, jszhang@kernel.org,
- ulf.hansson@linaro.org, m.szyprowski@samsung.com
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org,
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-References: <20250303145901.446791-1-m.wilczynski@samsung.com>
- <CGME20250303145918eucas1p10f64b2ce75e395ce208439307daa8a8f@eucas1p1.samsung.com>
- <20250303145901.446791-2-m.wilczynski@samsung.com>
- <edb3dd6e-8b56-42b3-8bb2-8ed7ad186b75@kernel.org>
- <8dcdd2ec-e4b6-4fc0-be50-12fe187cd5e0@kernel.org>
- <99fcf36f-7fed-43e8-a94f-47563ab00fc6@samsung.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <99fcf36f-7fed-43e8-a94f-47563ab00fc6@samsung.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250303211755.GA200634@bhelgaas>
 
-On 04/03/2025 08:43, Michal Wilczynski wrote:
-> 
-> 
-> On 3/3/25 18:46, Krzysztof Kozlowski wrote:
->> On 03/03/2025 18:42, Krzysztof Kozlowski wrote:
->>> On 03/03/2025 15:58, Michal Wilczynski wrote:
->>>> The kernel communicates with the E902 core through the mailbox
->>>> transport using AON firmware protocol. Add dt-bindings to document it
->>>> the dt node.
->>>>
->>>> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
->>>
->>>
->>> How is this possible? That's v1 and I never review outside of mailing list.
->>>
->> OK, I found v5:
->> https://lore.kernel.org/all/20250219140239.1378758-4-m.wilczynski@samsung.com/
->>
->> so is this the same?
-> 
-> Yeah, I thought by splitting the patchset and creating new sub-series I
-> should start versioning from v1 again, and leave that bigger patchset as
+On Mon, Mar 03, 2025 at 03:17:55PM -0600, Bjorn Helgaas wrote:
+> On Tue, Feb 25, 2025 at 10:05:49PM +0200, Leon Romanovsky wrote:
+> > On Tue, Feb 25, 2025, at 20:59, Andrew Lunn wrote:
+> > >> Chmod solution is something that I thought, but for now I'm looking
+> > >> for the out of the box solution. Chmod still require from
+> > >> administrator to run scripts with root permissions.
+> > >
+> > > It is more likely to be a udev rule.=20
+> >=20
+> > Udev rule is one of the ways to run such script.
+> >=20
+> > > systemd already has lots of examples:
+> > >
+> > > /lib/udev/rules.d/50-udev-default.rules:KERNEL=3D=3D"rfkill", MODE=3D=
+"0664"
+>=20
+> Where are we at with this?  Is a udev rule a feasible solution?
 
-What was unclear in my "keep versioning and keep changelog"? How this
-can lead to "start new versioning"?
+We asked customer if this can work for him and still didn't get answer.
+I don't know if they have systemd/udev in their hypervisors.
 
-> a reference, I've linked it in each cover letter for each sub-series.
-
-Best regards,
-Krzysztof
+Thanks
 
