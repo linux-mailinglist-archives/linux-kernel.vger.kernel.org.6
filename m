@@ -1,131 +1,143 @@
-Return-Path: <linux-kernel+bounces-543367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43517A4D4A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:19:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2006A4D4A0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:19:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDA4016C531
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:18:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB4283ACCDA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8913A1FC7FD;
-	Tue,  4 Mar 2025 07:16:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B541F5830;
+	Tue,  4 Mar 2025 07:13:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TuO/UDwO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eVM9GNoz"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1304B1FBEB3;
-	Tue,  4 Mar 2025 07:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 901BB156C40;
+	Tue,  4 Mar 2025 07:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741072585; cv=none; b=r6WS2AaAIXRnoWoGftfmOCvLjLJF7Nn0h/Vrzr5Ag+DuO87d+Qest5niy71rK44jCzpBwwlwUIIQVwLyZvjmWqJHMQ/86ZhfnVCYtMGurkAaKh+j1OVs4IeRUQtu4FqwRLZ9FFdfrbwDMiOCxtwlQXuNkg7hQSThfOjkNpiJ4h0=
+	t=1741072400; cv=none; b=rM87xUajsPI6uc/e5/yuldpdzC4rbNxBLA90SiSSvSiCxCWOhy6hCKqlnZrgqztjAwFP8J/IE+tbgg38Fe/HqmT7z1YSyu4s2TMICOyJTDZzvl+cvK1XbN/DD0xIxwEQBzuhmuxpYy34XZoNjcuAVFqo0HZ/4f9CorP5cP2l/2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741072585; c=relaxed/simple;
-	bh=vA1PHVGyKBsZXGTUFJhLoHOtf7WUBd9NEZ6psAdExJo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FzfzCurRN7DaGwJ4u6Vx/Q17FVBFwa5uO/SrQ67cwvZovV+x4yAfmPmN4Cm58oYU9NfUl/KD3PQ0WG31vX0hEgCht7rJ4TJjQOgO4lHHAkWMHnGbG/7GG+Uxx5eECz9IcoODviQPseWMWxVMfX0aINJ8EhPSKGaBHt+RE6iQAY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TuO/UDwO; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741072584; x=1772608584;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=vA1PHVGyKBsZXGTUFJhLoHOtf7WUBd9NEZ6psAdExJo=;
-  b=TuO/UDwO7TDlfSQdj6WYQehiVCSkfRA4ISXOJVnPhJTxs8o8oedJCgYG
-   pc4CJysAlN8WTjt62OjwafW6ffkKSju5KAzBhx8NKdohe4rdD+3+wGoEV
-   bMChCTpKAeIXGxAt/bUs6kc0Ikdmj2DzvQC+eEoN1KvDI2mZo6uuEb6nW
-   KwUiTxNQkvae4xEV9dkL0hc8RB5yAnJWn/VQrbBXLSVlkPLIcMvM77rA1
-   IdEXgXGlaairSie+ygUNnh3fP7DjQxzqL4zJqFJ2CChtaMUp01OtD+HpT
-   H4s+fAxQ5lrd1rGoO9gwqIzfKNGGCgyyadTnYb5OalMlEgFESTUZSIOLv
-   w==;
-X-CSE-ConnectionGUID: iYFu+B1sRkmUWH7cub0c7Q==
-X-CSE-MsgGUID: 5niIKDU+T+yhRdVBpmMAtQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="44784277"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="44784277"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 23:16:23 -0800
-X-CSE-ConnectionGUID: ErItsbA0TaGriciw0SFmDg==
-X-CSE-MsgGUID: TbASbV78QoSmaKexCGnnIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="118447613"
-Received: from mev-dev.igk.intel.com ([10.237.112.144])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 23:16:20 -0800
-Date: Tue, 4 Mar 2025 08:12:32 +0100
-From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
-To: Tariq Toukan <tariqt@nvidia.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
-	Leon Romanovsky <leonro@nvidia.com>,
-	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
-	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Amir Tzin <amirtz@nvidia.com>, Mark Bloch <mbloch@nvidia.com>
-Subject: Re: [PATCH net-next 4/6] net/mlx5: Lag, Enable Multiport E-Switch
- offloads on 8 ports LAG
-Message-ID: <Z8an4KmSILuK4mmv@mev-dev.igk.intel.com>
-References: <20250226114752.104838-1-tariqt@nvidia.com>
- <20250226114752.104838-5-tariqt@nvidia.com>
+	s=arc-20240116; t=1741072400; c=relaxed/simple;
+	bh=gpr/gu0uMIzZiWGXCBHbF3MX1vSus63CKXmYmCWxdq0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Al8jgIrhKaU/mdSMQ1o0UaeBjd6TiqVEqfcAWlUJ5N+YG4WusMXrwQmhsZ0b551nr3m7qeCYmMbZvdHkautgr6Pw9RtpaSJe6G/yoL/ChyfT2rkHoG3pb0o2UK/wMwzWno1jJQxY4AxLKbeZteNEhgbWHYAWLNbNYSXMblfnSSY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eVM9GNoz; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6e6c082eac0so49858646d6.0;
+        Mon, 03 Mar 2025 23:13:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741072397; x=1741677197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=04t/KBfFwVvzecOXRhML0Qn2Gh7Rc4imVCzpNOWwyWQ=;
+        b=eVM9GNozuhsP1SWu9W2qhe92EmfyTVfc5FVwrU9QIFwZb91ZMEfeDlsGq+zg2tYb6S
+         wA+R00crRvbiaOrgPnM0e22dwmBAX9A8l/bs2myhDdjMm86BRg9hD6YUWPfLzZdbOPcU
+         34qrW8yyaRdBu7jcmlmTCB7ACRz5tgvSnqXjuyEM0dBTtZujqooKekpkpqmKqSKGQe8X
+         MfxpbIPoCnZzkqBGbyVQJV1Kvxq43K1jvF83FBjThiuO5zyr4vwPSqLxOVklZLlaIf/T
+         aVjdA93qyTxMwwT5/MuarPSZqcfaNva3FbR1gpp+rEpov9zsAiKBuRykzPpcTBziNj74
+         LKcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741072397; x=1741677197;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=04t/KBfFwVvzecOXRhML0Qn2Gh7Rc4imVCzpNOWwyWQ=;
+        b=mUsz4G+E+lRXEXEfxivEGiG5uklNkdVVNjM0FemMF4d6pv2r96ylFb7aKhV4oJx2sp
+         FtkdQnOPWYda+h7LTo1oxKoZjwuqbywHyF/p8wijrQk/esvfxjv16PL8F1oeDmv3zGVY
+         xhjIgXOXV5x2x7R/Zsl/ofobBBBW/o1gDPEEcJ0vh4HL2YSITGSDJ1yrBfjl1P8dnksm
+         uVujI4TnCNPkKVb9n32nhHdPxQXONMv618AU13Fqe62+KBh63jR6Pcv2/wyRkJJB521S
+         KtpmVVkm2DFkhIz+jus0zmU4xLzNqLCXcVrgBMB86OMi9ps4a83nzv7QScrVPh1HVKh2
+         TgkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUWasEuR1etKD/QOunUMaCXyWs40LxB8xW57WhBB1Zvk98tLbDtlYOwarGqvKKkeCafxrY0zQ0yteBY@vger.kernel.org, AJvYcCUd6yM9IDQjNJRi6Os9IqCUQ3dzTSsAmvs6++Ws3IcbWehvlnGjhWQbJoYf/QLV/fSSoJYKoak4A+tYW6hP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwoeiD+NJig6a4tYuRnOSZ/7UahTgsrB+IxPYOSnDBJy++051TZ
+	rkEQQ+a86nP2JAvDoxtJR96f/SKCdR7FSsWBygVsSR9txdsK4jt0
+X-Gm-Gg: ASbGncvpAiLdl/7xrKjqy3drRewxV1KizVVyB0MIp0CoMNIuW2c2YPqGWj5UZBmer26
+	ULtC9Xa2+5gDs1oCCyXVooQ6RadkuVdjEvC2ylCazG4PY1LNcatkPdFXHcCt6L8uetlCevcNQl3
+	LVohqvSnCNcw+obxTEypWm1zlPeigpHrVnTh6MGvA12rnRmJ7J486s24C8v8aN7IvhhPBNvaCTW
+	c4LVjCT1fB4f8AInfKjhVuP7mc0+LBevNyvBpFsFobIeM8e3dR/iC5E2HZELu+RH0QzCGevq44F
+	xSbkjCe50ilhgZJv29NV
+X-Google-Smtp-Source: AGHT+IEKObI0ybp4bSeJ6S2BRkKmZEZlFbaJV85NGpcqaQnfX+y+IKf1GVvL/+XToao/2dp4HCiEoQ==
+X-Received: by 2002:a05:6214:2b0b:b0:6e6:5bec:13a0 with SMTP id 6a1803df08f44-6e8a0c9f140mr258457966d6.10.1741072397382;
+        Mon, 03 Mar 2025 23:13:17 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-474691a1f2csm69783811cf.13.2025.03.03.23.13.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 23:13:17 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
+	Niklas Cassel <cassel@kernel.org>
+Cc: linux-pci@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH 0/2] riscv: sophgo Add PCIe support to Sophgo SG2044 SoC
+Date: Tue,  4 Mar 2025 15:12:36 +0800
+Message-ID: <20250304071239.352486-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226114752.104838-5-tariqt@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Feb 26, 2025 at 01:47:50PM +0200, Tariq Toukan wrote:
-> From: Amir Tzin <amirtz@nvidia.com>
-> 
-> Patch [1] added mlx5 driver support for 8 ports HCAs which are available
-> since ConnectX-8. Now that Multiport E-Switch is tested, we can enable
-> it by removing flag MLX5_LAG_MPESW_OFFLOADS_SUPPORTED_PORTS.
-> 
-> [1]
-> commit e0e6adfe8c20 ("net/mlx5: Enable 8 ports LAG")
-> 
-> Signed-off-by: Amir Tzin <amirtz@nvidia.com>
-> Signed-off-by: Mark Bloch <mbloch@nvidia.com>
-> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
-> ---
->  drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c | 4 ----
->  1 file changed, 4 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c b/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
-> index ffac0bd6c895..cbde54324059 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
-> @@ -65,7 +65,6 @@ static int mlx5_mpesw_metadata_set(struct mlx5_lag *ldev)
->  	return err;
->  }
->  
-> -#define MLX5_LAG_MPESW_OFFLOADS_SUPPORTED_PORTS 4
->  static int enable_mpesw(struct mlx5_lag *ldev)
->  {
->  	int idx = mlx5_lag_get_dev_index_by_seq(ldev, MLX5_LAG_P1);
-> @@ -77,9 +76,6 @@ static int enable_mpesw(struct mlx5_lag *ldev)
->  		return -EINVAL;
->  
->  	dev0 = ldev->pf[idx].dev;
-> -	if (ldev->ports > MLX5_LAG_MPESW_OFFLOADS_SUPPORTED_PORTS)
-> -		return -EOPNOTSUPP;
-> -
->  	if (mlx5_eswitch_mode(dev0) != MLX5_ESWITCH_OFFLOADS ||
->  	    !MLX5_CAP_PORT_SELECTION(dev0, port_select_flow_table) ||
->  	    !MLX5_CAP_GEN(dev0, create_lag_when_not_master_up) ||
+Sophgo's SG2044 SoC uses Synopsys Designware PCIe core
+to implement RC mode.
 
-Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+For legacy interrupt, the PCIe controller on SG2044 implement
+its own legacy interrupt controller. For MSI/MSI-X, it use an
+external interrupt controller to handle.
 
-> -- 
-> 2.45.0
+The external MSI interrupt controller patch can be found on [1].
+As SG2044 needs a mirror change to support the way to send MSI
+message and different irq number.
+
+[1] https://lore.kernel.org/all/20250303111648.1337543-1-inochiama@gmail.com
+
+Changed from v1:
+- https://lore.kernel.org/all/20250221013758.370936-1-inochiama@gmail.comq
+1. patch 1: remove dma-coherent property
+2. patch 2: remove unused reset
+3. patch 2: fix Kconfig menu title and reorder the entry
+4. patch 2: use FIELD_GET/FIELD_PREP to simplify the code.
+5. patch 2: rename the irq handle function to match the irq_chip name
+
+Inochi Amaoto (2):
+  dt-bindings: pci: Add Sophgo SG2044 PCIe host
+  PCI: sophgo-dwc: Add Sophgo SG2044 PCIe driver
+
+ .../bindings/pci/sophgo,sg2044-pcie.yaml      | 122 ++++++++
+ drivers/pci/controller/dwc/Kconfig            |  10 +
+ drivers/pci/controller/dwc/Makefile           |   1 +
+ drivers/pci/controller/dwc/pcie-dw-sophgo.c   | 270 ++++++++++++++++++
+ 4 files changed, 403 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
+ create mode 100644 drivers/pci/controller/dwc/pcie-dw-sophgo.c
+
+--
+2.48.1
+
 
