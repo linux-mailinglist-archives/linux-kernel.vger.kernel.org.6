@@ -1,171 +1,108 @@
-Return-Path: <linux-kernel+bounces-544184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EFDFA4DE53
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:50:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCBCA4DE54
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FB10175E3B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCE55189BCED
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:50:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9C161FC7FD;
-	Tue,  4 Mar 2025 12:50:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA1CD202F88;
+	Tue,  4 Mar 2025 12:50:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="238FYJ17"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdGdba2E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4F1202C48
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:50:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AE38202960;
+	Tue,  4 Mar 2025 12:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092624; cv=none; b=fnT7b7vYY17ZvVNl9XB67p4eyDLob9gxuCgFKfdrYNKhctzfw9i/+rzfXo5HqFtya+a+BmC5rYWG/QCMh6N5sCZaHlGdrBZH2Wb8prnbMyE1kLFZsgO66b/I6BF43ma6XxpfIKA7XIfga5M/nupDYIz5u53f4Tg6+f5hlq9LzRQ=
+	t=1741092600; cv=none; b=knHAGHyEzwxeoYaeMz/6asrLRWwcEK7b1B2I85b6ITbWecGRbYfD7k+/jMHjjVAeXUZCGyipHg7WEyWT/k/yWzH3lvgM//Gog6tF8NU8aqmoPK6VXzTm/wJd3W3Ci3OWidAcfk+9qEK9ZXSO+UjEqG8FRfAJuxYAzdmEE4JW+6E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092624; c=relaxed/simple;
-	bh=nbGq81EdTNF4OCh1/VvqR49zOJHTP6QV6OWUNCKqC94=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IQ6/TQh/QEivQfpiEkJqo3b7cM0U2eowrqfDMBlwjdwsK5OdE4ZUQMX6QTq3jgXldCziPcrOnqmogMPLrAAEjqaPnfCyaid6RDNgMgCoDh7aoYygU5hPv03K0EW/YH9DYITlSdpuxTT/vtWG7tQQ9VX16FnDWB0OlsO+PPvBXo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=238FYJ17; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-438d9c391fcso54795e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 04:50:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741092621; x=1741697421; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Za2+1iO7dL31cbQ2NJ7DZYtdHtY7Z5QXUzl1byI/FLw=;
-        b=238FYJ17p5fH1SGFthEgGyk4lHbyBZDofFP8JODpwhWrPCOcBb/GKCmfwWyE0Htqo9
-         WavmNHF/UlsJfPHurlf7sl45eZF3cI7ZUq18SzHIATV9UskBTfND66+00BZQunPAnkeB
-         9gpR1K+a3oHlL9oBsdDCRxPO6BRvW1Js8kxYqD8hI15Se1qBo/0oMyCs8hScNgTmEyio
-         dD6LKZV5/tQwHwLy2qVC59o3FwL5qEcay4XO2mmqk7uZuR830//FpSGv0YIcxNfB9jTb
-         FS24GKq2+u86l0+NulXlmZM494CG+lufXNLR8aLpzX643B4Hc2S4jimIZyeJhBIb92mP
-         9WGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741092621; x=1741697421;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Za2+1iO7dL31cbQ2NJ7DZYtdHtY7Z5QXUzl1byI/FLw=;
-        b=WzX7dzjV9OutMYB63yeC7XvfOG/YrRiyf+JgjiLF0CCmnCx4lIh+nG+K01qLIwY3+p
-         w2jzgKtfhyag1mMSXef+lKGcPP0KH/pvAEkGlQuO/PLFDwMReYjrT6VQbFmgNRLJhyUJ
-         WosH39qkyB5tEThAQRjKySIx8LmJECFz44hfsi3YjZ+oI4MO8wW6GZdQ5x1oKhMHl/5J
-         hADKvbhTqKcyju0pbBFrdSSt1XTNwgV6PbocGEP3nkWUh5Tyi37/xkomvQk6Nx77lZp3
-         ruFs3s4hkn0k30raCGxcKv5/2h2oBGPfOoi8QUWnY4Naul41zNwKyDYUhlcgRXRz2hq7
-         tkAg==
-X-Forwarded-Encrypted: i=1; AJvYcCUQsC+Qtc1vN9hVFphXjqgTWtYMVgqP9YxsTE6jgoQE5jiJkx29ftDz+xmAhAYNWk8HSm9Ixi1M9hasO7o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3jrSgUcYLw6BPWLbgC1lomZnoUr7hBCRstgJs5MEZgaU30Dst
-	HBj+/O6OzAElhhX8H/ba8cDjNL768DXWOBScf0V43ybQlTnTNqNmsEW6K+ogAg==
-X-Gm-Gg: ASbGncuV49TqT0CjpZfFmNFFI6vKSiLIfLVExI/s6BmS13v7gcJVIKQ4gHIcSQ1Osq7
-	gZLbb5vaM6gjymqrtslkFXPIy6rJgHjpTaLzhBGbhqi5oS+BYmUT35E/mNskX8TOfUPyjutq4Ec
-	S1XL12nssZ0U7beRqPPK8eiWMp9FuAJcpjQvXNLWQ39dWhYdwkOxwPbRKIw7GSWTC0TEDvojkiX
-	Uj7d2a+ixaAIp7Nr1G44CQgJFKPGweGbrv5fjIscMzWjYNiCDFWd8qjrznFcnjLVhvNuAWygig8
-	ojQNxxGPsdmjmVK/ji8JyxhIndqBFD5N76+vqon7zvGmpNPfMlIkOIoV62PNgCUQfQDlaZctKLc
-	1WEQI
-X-Google-Smtp-Source: AGHT+IFhRnrV4mRUTOLd5oZokomaH93RHqi8VEcCLMksncmjcz/Y4Ytn4IeShC2SIGRJbJ1B+LxfNA==
-X-Received: by 2002:a7b:c386:0:b0:43b:b106:bb1c with SMTP id 5b1f17b1804b1-43bcb2aefd1mr1168965e9.0.1741092620567;
-        Tue, 04 Mar 2025 04:50:20 -0800 (PST)
-Received: from google.com (44.232.78.34.bc.googleusercontent.com. [34.78.232.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba57145esm223586235e9.30.2025.03.04.04.50.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 04:50:20 -0800 (PST)
-Date: Tue, 4 Mar 2025 12:50:15 +0000
-From: Brendan Jackman <jackmanb@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Oscar Salvador <osalvador@suse.de>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] mm/page_alloc: Add lockdep assertion for pageblock
- type change
-Message-ID: <Z8b3B42jwRpnPIs7@google.com>
-References: <20250303-pageblock-lockdep-v2-1-3fc0c37e9532@google.com>
- <4d0f0bca-3096-4fb4-9e8b-d4dcdf7eeb92@redhat.com>
- <Z8W0v0LjuyH8ztTQ@google.com>
- <3e66875e-a4d5-4802-85b3-f873b0aa3b06@redhat.com>
- <Z8XSCE8goWnEzRSY@google.com>
- <0f120624-3ae9-4273-b349-b10d813a4e65@redhat.com>
+	s=arc-20240116; t=1741092600; c=relaxed/simple;
+	bh=a6QinKqDIMkZ8XorkobTU2Cya4t8AO7Fb/SG8uey8X4=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=draAn0NfRxQLP0zYr0NfKMXRnHKWv6PXhjIlp3jzh+GvnccLEIfrv007ynV/XD1r0bNs7hatdz7sj4KKxzRSst2fCI7fK9wWFnyRNEsWgPNuBLaG3T0ZrXzZ/uCIggjD76UCTCPgf4K3DPuEnKANzYRNPjCCyFY2PUArTiErlwU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdGdba2E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98793C4CEE5;
+	Tue,  4 Mar 2025 12:49:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741092599;
+	bh=a6QinKqDIMkZ8XorkobTU2Cya4t8AO7Fb/SG8uey8X4=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=KdGdba2Eq3HpCVBhfsTZUdxakiGRxsbaWuc+WFy95UERKDsYiy8WLsOru8GtT39xK
+	 yaol5ItmInR9p5oqS2AmR5dj6vEcz2Hl3YD7dKp8wFNHY0BJAhCNEyBkR6gfkiaPM5
+	 DebPl59TAKr7UpYNYUHNXYOX8a2Z8nkVxDPh3tlL9hdhGZAszaxqO0EddI8lpSrfk8
+	 ZqJwdjb9ah14gJyna/nYrvrfv2I3jTDdn8ZvaRrIfhQXq/cramirtJ4uUXkxwmWHjZ
+	 kQtrqu6TGaCDsFuqMHTORoa9pw68nzhOOJY8nZkNLFDqbDGFzNo92PZuv3Phayd5Cj
+	 ZARI66umh2+mw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD8C380AA7F;
+	Tue,  4 Mar 2025 12:50:33 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0f120624-3ae9-4273-b349-b10d813a4e65@redhat.com>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH v4 net-next 0/6] Support some enhances features for the
+ HIBMCGE driver
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174109263250.131753.15116775173435171481.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Mar 2025 12:50:32 +0000
+References: <20250228115411.1750803-1-shaojijie@huawei.com>
+In-Reply-To: <20250228115411.1750803-1-shaojijie@huawei.com>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
+ shenjian15@huawei.com, wangpeiyang1@huawei.com, liuyonglong@huawei.com,
+ chenhao418@huawei.com, sudongming1@huawei.com, xujunsheng@huawei.com,
+ shiyongbang@huawei.com, libaihan@huawei.com, jonathan.cameron@huawei.com,
+ shameerali.kolothum.thodi@huawei.com, salil.mehta@huawei.com,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kalesh-anakkur.purayil@broadcom.com
 
-On Mon, Mar 03, 2025 at 06:06:12PM +0100, David Hildenbrand wrote:
-> > > But I am not sure why memmap_init_zone_device() would have to set the
-> > > migratetype at all? Because migratetype is a buddy concept, and
-> > > ZONE_DEVICE does not interact with the buddy to that degree.
-> > > 
-> > > The comment in __init_zone_device_page states:
-> > > 
-> > > "Mark the block movable so that blocks are reserved for movable at
-> > > startup. This will force kernel allocations to reserve their blocks
-> > > rather than leaking throughout the address space during boot when
-> > > many long-lived kernel allocations are made."
-> > 
-> > Uh, yeah I was pretty mystified by that. It would certainly be nice if
-> > we can just get rid of this modification path.
-> > 
-> > > But that just dates back to 966cf44f637e where we copy-pasted that code.
-> > > 
-> > > So I wonder if we could just
-> > > 
-> > > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> > > index 57933683ed0d1..b95f545846e6e 100644
-> > > --- a/mm/mm_init.c
-> > > +++ b/mm/mm_init.c
-> > > @@ -1002,19 +1002,11 @@ static void __ref __init_zone_device_page(struct page *page, unsigned long pfn,
-> > >          page->zone_device_data = NULL;
-> > >          /*
-> > > -        * Mark the block movable so that blocks are reserved for
-> > > -        * movable at startup. This will force kernel allocations
-> > > -        * to reserve their blocks rather than leaking throughout
-> > > -        * the address space during boot when many long-lived
-> > > -        * kernel allocations are made.
-> > > -        *
-> > > -        * Please note that MEMINIT_HOTPLUG path doesn't clear memmap
-> > > -        * because this is done early in section_activate()
-> > > +        * Note that we leave pageblock migratetypes uninitialized, because
-> > > +        * they don't apply to ZONE_DEVICE.
-> > >           */
-> > > -       if (pageblock_aligned(pfn)) {
-> > > -               set_pageblock_migratetype(page, MIGRATE_MOVABLE);
-> > > +       if (pageblock_aligned(pfn))
-> > >                  cond_resched();
-> > > -       }
-> > >          /*
-> > >           * ZONE_DEVICE pages other than MEMORY_TYPE_GENERIC are released
-> > 
-> > memory-model.rst says:
-> > 
-> > > Since the
-> > > page reference count never drops below 1 the page is never tracked as
-> > > free memory and the page's `struct list_head lru` space is repurposed
-> > > for back referencing to the host device / driver that mapped the memory.
-> 
-> That comment will be stale soon. In general, ZONE_DEVICE refcounts can drop
-> to 0, but they will never go to the buddy, but will get intercepted on the
-> freeing path.
-> 
-> > 
-> > And this code seems to assume that the whole pageblock is part of the
-> > ZONE_DEVICE dance, it would certainly make sense to me...
-> 
-> Sorry, I didn't get your final conclusion: do you thing we don't have to
-> initialize the migratetype, or do you think there is reason to still do it?
+Hello:
 
-Sorry yeah, I was concluding that I don't see any reason to set the
-migratetype here. But, given I didn't even notice this code path until
-your review here I am not feeling too confident about changing it.
+This series was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-I can try to stare it some more and hopefully some courage will build
-up! I probably also need to find a way to run a system that uses
-ZONE_DEVICE for my local testing...
+On Fri, 28 Feb 2025 19:54:05 +0800 you wrote:
+> In this patch set, we mainly implement some enhanced features.
+> It mainly includes the statistics, diagnosis, and ioctl to
+> improve fault locating efficiency,
+> abnormal irq and MAC link exception handling feature
+> to enhance driver robustness,
+> and rx checksum offload feature to improve performance
+> (tx checksum feature has been implemented).
+> 
+> [...]
+
+Here is the summary with links:
+  - [v4,net-next,1/6] net: hibmcge: Add support for dump statistics
+    https://git.kernel.org/netdev/net-next/c/c0bf9bf31e79
+  - [v4,net-next,2/6] net: hibmcge: Add support for checksum offload
+    https://git.kernel.org/netdev/net-next/c/833b65a3b54d
+  - [v4,net-next,3/6] net: hibmcge: Add support for abnormal irq handling feature
+    https://git.kernel.org/netdev/net-next/c/fd394a334b1c
+  - [v4,net-next,4/6] net: hibmcge: Add support for mac link exception handling feature
+    https://git.kernel.org/netdev/net-next/c/e0306637e85d
+  - [v4,net-next,5/6] net: hibmcge: Add support for BMC diagnose feature
+    https://git.kernel.org/netdev/net-next/c/7a5d60dcf998
+  - [v4,net-next,6/6] net: hibmcge: Add support for ioctl
+    https://git.kernel.org/netdev/net-next/c/615552c601ed
+
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
