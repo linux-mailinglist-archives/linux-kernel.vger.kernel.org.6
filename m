@@ -1,79 +1,97 @@
-Return-Path: <linux-kernel+bounces-543689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F54EA4D89E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:36:38 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71B32A4D8A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:36:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E2F818857FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:35:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3C9188EC20
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476031FF7B8;
-	Tue,  4 Mar 2025 09:27:55 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C579F1FC7D4;
+	Tue,  4 Mar 2025 09:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QSRXsKon";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cD4mHs95"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66C511FE46C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC7161FCD06
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:28:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741080474; cv=none; b=OlXtwLHvHJZFgG+Of41gijjD2l+VXRBB4yOOo8AHv0kHmyenkGApaqZPqAL1lGi5DuHWeLAmjf/eW/7q4KrJZdYHfAbBsH30VKutlBs8X7FhfVk8X2hR6xNEm1wne+1piDpfb44PBR3LIjFBn4FUJL6xzYEQCYU5qg1XK/u+fug=
+	t=1741080531; cv=none; b=Bp9edrzmtKB/kvhqj1qPOr3kaplMVB01d6ooFxZDYLW9+pDsBfnz/DZOjmX5UhNfDo5i5jBdJOVOW+OI6HR9NaP3me9U6JU9fc+zUnAhr0UnqsYXKdnyWN2uYaHXSC3AWb1NJ/6RAqjZjQZsTCPLYqVdfmgJaS68H/N1LKdQC7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741080474; c=relaxed/simple;
-	bh=ZQXaHCeNUwh1Ktdgd/EI3FahjIvcCEQRCiDISY9Y4Mk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VN/L3cYIntYPzGLBQIsQjZ83O1UFpgY0mG8ZBae0sC0b+48lg3OvLBt9iT4+6Z+Mpmd5P9ZSfWsONIqpc6DR0C81LwE1h7LspZPKlfdIwybAVaMe03yohZcEZWn2SHktjqdzwBjz6Fe1iUrxmP5bI4hMMBwO4kb4QZ4t5j+dHSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z6VfB4mgdz6D90n;
-	Tue,  4 Mar 2025 17:25:38 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id EC987140390;
-	Tue,  4 Mar 2025 17:27:50 +0800 (CST)
-Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 4 Mar
- 2025 10:27:48 +0100
-Date: Tue, 4 Mar 2025 17:27:43 +0800
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Yicong Yang <yangyicong@huawei.com>
-CC: <will@kernel.org>, <mark.rutland@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
-	<yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
-Subject: Re: [PATCH 3/9] drivers/perf: hisi: Add support for HiSilicon DDRC
- v3 PMU driver
-Message-ID: <20250304172743.0000211e@huawei.com>
-In-Reply-To: <20250218092000.41641-4-yangyicong@huawei.com>
-References: <20250218092000.41641-1-yangyicong@huawei.com>
-	<20250218092000.41641-4-yangyicong@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1741080531; c=relaxed/simple;
+	bh=NN/jF2K71fBQKoNartJZu5Q1DPuRsEOcnXVTdidkoWc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqDj3WoOfGLib3J0wjhk6zjN5kL9clV4iEGev3mt4FfSpfeM0EHdIZ3n4AwLIf2r/Dchz9caDsXETruwK30UE/uD6kxIyfsChc+j3G1R72bxWs4v4ewKAIOvg8LPVBNl5R01ahnbUboMlwSq8S5ALM9FFbprg4mA0lrCZlUoe8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QSRXsKon; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cD4mHs95; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 4 Mar 2025 10:28:45 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741080527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CDIQ41H8uq3SlJZIpmnYfmJNWfvZdJsc7pN3IQwF/JE=;
+	b=QSRXsKonapLYEA0jCtYenQAiI3ECQ+IZ0+LuoGxVSEGYnbI6MoQZkDVzU2edRk+NdYA3nc
+	D6r+smrk8dWNHyk/vmSme7Wo5TRR+5KGtUXddlGfcDTXBXzE+X9Ow4rj3YTCfteOm7NeRT
+	vqhdhh7oHmD8SxtKpXHAvl/gxlsvrDn72o9ZJdd8qBjDZi2NcwEma5RGXqixV+/S8LEkOb
+	++t5ValeRLysfmPTOHK9q+20CKPiwhlfKhccbrsbAdt84Jfv+B7BZMpsTw/XTyADtLPm4L
+	aX9Offmm6ME2AYdXcJlpV7Eg4eEtFDPpqyu9Gto18Ij6/lLGBs2W0Tsqr4/wfg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741080527;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CDIQ41H8uq3SlJZIpmnYfmJNWfvZdJsc7pN3IQwF/JE=;
+	b=cD4mHs95p5GK253fsRt6hU47Vx0ENata0S2Nw77EzbHn73tg2e8xjFIZXy5eg6RGXln21s
+	PenYsU6YjK/OnsCw==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 05/40] x86/cpu: Remove unnecessary headers and reorder
+ the rest
+Message-ID: <Z8bHzaFjfRcZOKer@lx-t490>
+References: <20250304085152.51092-1-darwi@linutronix.de>
+ <20250304085152.51092-6-darwi@linutronix.de>
+ <Z8bEiWu-Vvu5844p@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500001.china.huawei.com (7.191.163.213) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8bEiWu-Vvu5844p@gmail.com>
 
-On Tue, 18 Feb 2025 17:19:54 +0800
-Yicong Yang <yangyicong@huawei.com> wrote:
+On Tue, 04 Mar 2025, Ingo Molnar wrote:
+>
+> This patch has an unexpected side-effect on i386 allmodconfig builds:
+>
+>   arch/x86/kernel/cpu/intel.c: In function ‘intel_workarounds’:
+>   arch/x86/kernel/cpu/intel.c:452:17: error: ‘movsl_mask’ undeclared (first use in this function)
+>   arch/x86/kernel/cpu/intel.c:452:17: note: each undeclared identifier is reported only once for each function it appears in
+>   make[5]: *** [scripts/Makefile.build:207: arch/x86/kernel/cpu/intel.o] Error 1
+>
+> Due to the removal of the <asm/uaccess.h> header.
+>
+> The attached patch fixes it.
+>
 
-> From: Junhao He <hejunhao3@huawei.com>
-> 
-> HiSilicon DDRC v3 PMU has the different interrupt register offset
-> compared to the v2. Add device information of v3 PMU with ACPI
-> HID HISI0235.
-> 
-> Signed-off-by: Junhao He <hejunhao3@huawei.com>
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
+Thanks a lot, will do.
 
