@@ -1,212 +1,178 @@
-Return-Path: <linux-kernel+bounces-544046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6C7CA4DCD2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:43:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C4D4A4DCD9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:44:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A83A3AD688
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:43:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43685174A6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B3B1FF1A2;
-	Tue,  4 Mar 2025 11:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB874200BB5;
+	Tue,  4 Mar 2025 11:43:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OdL4K2ab";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="g6PYtemt";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r6cC35uM";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="5TDelq9/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vRw1+VEA"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 022591EDA1E
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:43:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63E2B1FDE06
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741088597; cv=none; b=jTxVgb/f8nJSQ3EcAlTgXuBx1C0R1LwOG59KkQ6DOr4qN1o7FMbm8GJoCjkU9tFs91Jou+Mn9N8QRPPNaO6ZP+6nFkDvbREuU0r6hSjCVpe5RYUxmFxZI9cdCPSLqLjOZCE0AMeKqcEl7Inch9G3EjY9ZgkbUzl/RxS2UVmRnAU=
+	t=1741088635; cv=none; b=L/m2lbWzAgGFeo/gPlu/nIpyROz911R4OArN3MqKiGwqHiWOOAx4hJmOhgdDlzjUQrFF5plxEBAMrgNuTcbc/8sQKVe1u/iG6dXiU9DgDmdTw1u9EAzhf+DM0Sntv0aXJtbTob1M9llLyX6jmwilGQvGrh4sc8nnQl9U86Gq3Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741088597; c=relaxed/simple;
-	bh=yKIGqILu+t2U/a7DjSz4T6ZMkX8w87MBMShH0PJ1Pr4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q2cSLIXDDyBEk3dUN/gGSDe6RnmKSuo+oSAggs3rJLqveKlsnvLPmQICYfzb6sTCsE1e+PZqxyuPej+g2j0eT6So9fldIqg3CScXYlcPaMZQR122Lk0p2mY69gWIUfvyzJ58UrkfOEWzhxLiiYAYEzDyweGlYlva7gVzrDzwoYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OdL4K2ab; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=g6PYtemt; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r6cC35uM; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=5TDelq9/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id D2C5321197;
-	Tue,  4 Mar 2025 11:43:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741088594; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3xat5MAD5sqlPWHFzE2952kcqEJ11StBzDEZP7zDYkc=;
-	b=OdL4K2abqHUgbNsIixJkpTfHow9oRccA5YUnX5H7y9a8H7gF0wj+Kog5wy8WylQquZU+oy
-	F6gKm/kdIEGBpN+9lb9SCAfMNPEuSmoEp6bhrL6LtabFjwqqFJJ+Ig6XtHHjsowazH4UJ8
-	9vQTYJzAYNMlBB5OU4IzPvWajkeZPu4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741088594;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3xat5MAD5sqlPWHFzE2952kcqEJ11StBzDEZP7zDYkc=;
-	b=g6PYtemthGlyeu3CY0HaLCw1xogvcVyuGTUVeW+EghJLNIQcdUShIcZ4j5sz9gjZ11T9Te
-	xy8LrcAoUtmzDODg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741088593; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3xat5MAD5sqlPWHFzE2952kcqEJ11StBzDEZP7zDYkc=;
-	b=r6cC35uMrr4y0W+bskb9f5F9Ttw/EfKuszfLF93FaX8tyx4fOHUUuBDM8bdfthjNmhEAjA
-	+oQP4rjBw3NLEyfa9+dB3dn3djHbikkkPXISQveHqGekJUyPXjRCuXAEK18ngumEtC0PUb
-	ba+VJzidU/9m6Hl4w5YdEEzSHI8A/HM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741088593;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=3xat5MAD5sqlPWHFzE2952kcqEJ11StBzDEZP7zDYkc=;
-	b=5TDelq9/NZqHReBy+pUvMqOkUa4B4A3YH8NHZFVzi0BzCH2/3VOyeWUO1IJ7/dgRWL/3Tj
-	DI17jgZguWtYHbAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 613B413967;
-	Tue,  4 Mar 2025 11:43:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id mNLiFVHnxmcZegAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Tue, 04 Mar 2025 11:43:13 +0000
-Message-ID: <d777ab50-51cf-4eed-bfec-a44eca7ba3c5@suse.de>
-Date: Tue, 4 Mar 2025 12:43:13 +0100
+	s=arc-20240116; t=1741088635; c=relaxed/simple;
+	bh=7JMGCeJF/Dp3pl5kzpMvrUbvwzv+GjyKlzt033ZLbrw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JyIqcV+lN1RUL2+VPDpHNMkC1FV9PcWMZ33KvFqasbGDfUgM1MBdv7vONZwIoeyLDNmzHTzuhLabGNtk0DpLqjQ9gFIZWPhMo0O+mYM4uNq5ZNCVTVAJgLTy3WNRsEpLxKXldieRjcXChu6Z1ELH9ivQHUDX6ciX2T8KSanohAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vRw1+VEA; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22356471820so87254765ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 03:43:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741088633; x=1741693433; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QR5Fe2yNdtUQN8MYBySGOzmABqc40NGzK767K+eex7I=;
+        b=vRw1+VEAt4PRU3DtY9BxsLnStXiAXNOfV90ci4wjIKGuhoSBuH4MFSbK46UhUXb1Vb
+         TMxvBaJYaQ6H7RdAaVca8BaFQloCSWXsk3yjbL1Z+tGkihJszaZ6IvMTBxHI1oULOCi+
+         8ODVdWAzTUTrlOJB/f00hKvFqNAZ+lT/lrG5aYjKnx+AJ9zcAIZIWIztaiRXizmG4u7w
+         RdA1uO92AMD23sXxsQP4ufauZ60qCFHuRgFwosnGOjs+rPsegvul1OZnuh5nyRHsMIV9
+         iwqmqxAqeuMyz4AUWWTz1AJnOPsWvb14n8C6RaMKOpBZg1Trj3bwfYv7q+CnlQVzU2Ju
+         m18w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741088633; x=1741693433;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QR5Fe2yNdtUQN8MYBySGOzmABqc40NGzK767K+eex7I=;
+        b=J7HJqGxE7DLyCQdTMywsfQmO/EigtiPW9tLPoPZlYTmIZASJtNtk5a+K6fpPkemYxY
+         8/z1xNfXBrsXnwPRHMuT1tQYn12xl8FsYWuVG5hObHMGLJfDo4XUDa3u2wP7qhzIyXr4
+         96iXHwRcAGiBElA7gwHjonJJkTZVlFSEI6JX1p4V72NrFK8y6tdxi1zJgMpMWwkwDlsi
+         LUrE38SRKTmGPPNimW4J0XmiFiCvEUhDak4VGsDAUdDvtaC2YULdUXuIyo3LlI6fKSaD
+         dUuazGFx+2u4f9HJ/fT+DBxNsbmLJX8/QO/bczIp5rvPg/Q+HN8omG5SZd2pXogJtXYb
+         5DzA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4k1GYbNmBloUeo9u9Hl6XyedrPDeu0Ye0JiXDiArxDE6x8jDWQh79FOsZ2IzRlQYmvZljRGf9EHKZ+co=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzT/vn3RdU/kiMlNwu0snZVLTL9qrbkx8b3J0JSL+rvgf/mHStM
+	kxZyQUth5To6mRuJj4F0aT/hpNeau6BjqPsREJTLKszmSx9z871lIOupcLkSxBi4iPyR5eL5dhW
+	GEoilv1x7u0ntYuGfUiODxyQJSyXjLRqd+3Yv
+X-Gm-Gg: ASbGncsukViOpI36vqYM4HLfly9ruhg4LckYMda/jEu1K3clgOryk27PRbnmTbzisy1
+	tthi/QWpe7HjFZfhLGtyQtx7ZkBU8kFm14JM5l4JrC4NUfwvrlEhx1eGuk0jn7eWq6nczdnI+IB
+	pSIg7dG52vCtwn69kZ4yaVFfNKDEa3KR25GbFbwDtqqhHqp5d5nrMN7Cfm
+X-Google-Smtp-Source: AGHT+IEVXXLrKnpkIy+GQHgCDOyqfRoqXWkok7n4CEJmqUNtrw4OipvJO9eUgzweAGOK6LFHiiUO/kAFxvZ/Vg2r6rk=
+X-Received: by 2002:a17:903:17cf:b0:215:89a0:416f with SMTP id
+ d9443c01a7336-22368fc97c4mr252442495ad.30.1741088632488; Tue, 04 Mar 2025
+ 03:43:52 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v19 22/30] drm/shmem-helper: Add common memory shrinker
-To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- David Airlie <airlied@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>, Chia-I Wu
- <olvaffe@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- Qiang Yu <yuq825@gmail.com>, Steven Price <steven.price@arm.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Emma Anholt <emma@anholt.net>, Melissa Wen <mwen@igalia.com>
-Cc: kernel@collabora.com, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, virtualization@lists.linux-foundation.org
-References: <20240105184624.508603-1-dmitry.osipenko@collabora.com>
- <20240105184624.508603-23-dmitry.osipenko@collabora.com>
- <d1f856c7-47dd-4f1d-a124-973064dcd1f0@suse.de>
- <6b7d95b7-a9dd-43c9-b1db-8a636b85ad51@collabora.com>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <6b7d95b7-a9dd-43c9-b1db-8a636b85ad51@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FREEMAIL_TO(0.00)[collabora.com,gmail.com,redhat.com,chromium.org,ffwll.ch,linux.intel.com,kernel.org,amd.com,arm.com,anholt.net,igalia.com];
-	RCPT_COUNT_TWELVE(0.00)[18];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <20250304092417.2873893-1-elver@google.com> <20250304112114.GE11590@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250304112114.GE11590@noisy.programming.kicks-ass.net>
+From: Marco Elver <elver@google.com>
+Date: Tue, 4 Mar 2025 12:43:15 +0100
+X-Gm-Features: AQ5f1Jq8MTV2B3C5aow9x7Sg78yjoK0kjhHzTC3jNgyCezrqQgZfKxcyrD8i65c
+Message-ID: <CANpmjNP6N0d0dnGjDUGLeH4FQ2-G5YAuWrSPp+bvDR==0hYykw@mail.gmail.com>
+Subject: Re: [PATCH v2 00/34] Compiler-Based Capability- and Locking-Analysis
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ingo Molnar <mingo@kernel.org>, 
+	Jann Horn <jannh@google.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Triplett <josh@joshtriplett.org>, Justin Stitt <justinstitt@google.com>, 
+	Kees Cook <kees@kernel.org>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi
-
-Am 04.03.25 um 11:59 schrieb Dmitry Osipenko:
-> On 3/4/25 13:29, Thomas Zimmermann wrote:
->> Hi
->>
->> Am 05.01.24 um 19:46 schrieb Dmitry Osipenko:
->>> Introduce common drm-shmem shrinker for DRM drivers.
->> What's the status of this patch?
-> It was de-prioritized on my list a year ago as I had to move to a higher
-> priority problems. Rebasing and re-testing these patches takes much
-> time, it either has to be split up in a smaller parts or applied in one go.
-
-The first 11 patches seem uncontroversial to me; maybe except for patch 
-9. Could they be merged any time soon?
-
-The next batch could then be patches up to #20, which seem to be 
-reviewed as well.
-
+On Tue, 4 Mar 2025 at 12:21, Peter Zijlstra <peterz@infradead.org> wrote:
 >
-> The current status is that I started to work on v20 rather long time ago
-> and the patches need to be rebased and re-tested again. Heard that
-> Panthor driver may want shmem shrinker more than others today.
-
-I've been receiving reports about low performance of ast plus gem-shmem 
-recently. I suspect that the vmap/vunmap overhead could be related and 
-this series would likely lessen the problem.
-
-Best regards
-Thomas
-
+> On Tue, Mar 04, 2025 at 10:20:59AM +0100, Marco Elver wrote:
 >
+> > === Initial Uses ===
+> >
+> > With this initial series, the following synchronization primitives are
+> > supported: `raw_spinlock_t`, `spinlock_t`, `rwlock_t`, `mutex`,
+> > `seqlock_t`, `bit_spinlock`, RCU, SRCU (`srcu_struct`), `rw_semaphore`,
+> > `local_lock_t`, `ww_mutex`.
+>
+> Wasn't there a limitation wrt recursion -- specifically RCU is very much
+> a recursive lock and TS didn't really fancy that?
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
+Yup, I mentioned that in the rcu patch. Make it more prominent in documentation?
 
+> >   - Rename __var_guarded_by to simply __guarded_by. Initially the idea
+> >     was to be explicit about if the variable itself or the pointed-to
+> >     data is guarded, but in the long-term, making this shorter might be
+> >     better.
+> >
+> >   - Likewise rename __ref_guarded_by to __pt_guarded_by.
+>
+> Shorter is better :-)
+>
+> Anyway; I think I would like to start talking about extensions for these
+> asap.
+>
+> Notably I feel like we should have a means to annotate the rules for
+> access/read vs modify/write to a variable.
+>
+> The obvious case is RCU; where holding RCU is sufficient to read, but
+> modification requires a 'real' lock. This is not something that can be
+> currently expressed.
+
+It can. It distinguishes between holding shared/read locks and
+exclusive/read-write locks.
+
+RCU is is a bit special because we also have rcu_dereference() and
+rcu_assign_pointer() and such, but in general if you only hold a
+"shared capability" e.g. the RCU read lock only, it won't let you
+write to __guarded_by variables. Again, the RCU case is special
+because updating RCU-guarded can be done any number of ways, so I had
+to make rcu_assign_pointer() a bit more relaxed.
+
+But besides RCU, the distinction between holding a lock exclusively or
+shared does what one would expect: holding the lock exclusively lets
+you write, and holding it shared only lets you only read a
+__guarded_by() member.
+
+> The other is the lock pattern I touched upon the other day, where
+> reading is permitted when holding one of two locks, while writing
+> requires holding both locks.
+>
+> Being able to explicitly write that in the __guarded_by() annotations is
+> the cleanest way I think.
+
+Simpler forms of this are possible if you stack __guarded_by(): you
+must hold both locks exclusively to write, otherwise you can only read
+(but must still hold both locks "shared", or "shared"+"exclusive").
+
+The special case regarding "hold lock A -OR- B to read" is problematic
+of course - that can be solved by designing lock-wrappers that "fake
+acquire" some lock, or we do design some extension. We can go off and
+propose something to the Clang maintainers, but I fear that there are
+only few cases where we need __guarded_by(A OR B). If you say we need
+an extension, then we need a list of requirements that we can go and
+design a clear and implementable extension.
+
+In general, yes, the analysis imposes additional constraints, and not
+all kernel locking patterns will be expressible (if ever). But a lot
+of the "regular" code (drivers!) can be opted in today.
+
+Thanks,
+-- Marco
 
