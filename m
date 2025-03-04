@@ -1,193 +1,193 @@
-Return-Path: <linux-kernel+bounces-544908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544911-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B858A4E859
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:20:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84BFFA4E804
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:13:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04B88A76FB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D508C5AD8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:37:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FAE0285408;
-	Tue,  4 Mar 2025 16:15:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D33127C84A;
+	Tue,  4 Mar 2025 16:15:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="Dfnn7tAZ"
-Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="enFC4w7i"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0687E2D1F41
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:15:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F42259CB4;
+	Tue,  4 Mar 2025 16:15:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104913; cv=none; b=FQTSdmsByOvIby+wt1u+5Ca9QpIi/F5vlmueiIVzJLSDcLH7fnoUo4tbEm1BxqepSLSpepwIC6IPCDE0A4vgfl0VXZ4M+wXwYyKqw1/qsoIqZzgRiM2SZtfEJWyBto/jJJzw+LfdD1p1gb0Bfs7JxGTy06VIMIpCWkQS6nS3uQo=
+	t=1741104946; cv=none; b=pwtYwCsgzj5FBwKsClWUal6gR5q8/JQIjEQcmzWJ9g2Q8GvGU6djEFbcT4LUEoShCOZPyl6iShSMEIsLdtqj5mtyc6XDnKirE0dmxRTSAPwD3vjfPF44o9wxhHZkYwPTZMGqj0R8Sv0eEiSLe0YVbASE01dWK+X/uU3ywkpm99c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104913; c=relaxed/simple;
-	bh=HoUdEEUij4AowK9YlSYz+ODggQby4SqBMMaaeIy+IZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NtV20klUaKACmv28UIBF9TbijopOSTG+snWSm+ZKRMCCJ+DA96b4nmzvSUPGbRxd4Gjdw587fblkDIgrd7p7BxompRPK3JwuRqgDrwLsvTQmyhuEfhdfyu6OVg/ab5heo2TQSpnUXryUhKR5rKOLZHerdgrtcLYTLJY9SRG+xlQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=Dfnn7tAZ; arc=none smtp.client-ip=209.85.160.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
-Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-47509ac80cbso850521cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:15:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1741104911; x=1741709711; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Yn/mVNLBd6udkX5JiXXuHWAdMeM57oaufTToD3WukKw=;
-        b=Dfnn7tAZ/Sxotj5vmOnH7uB1/z34MJBlvcJ4RethG9Xo4c1rYRWSkp8N+q+O7gntpy
-         0ubuCoxTlP6/wwkrIyM0UbTMGjD12pCEDeDm4pYpPIRxUxzHALdlBSlMonzTQd1Xb4sf
-         qRl16sVK/oZ2dnSIHyQ3eKqwiUzyF52fgAFdvYLGb5xFHV06YLG2+h5FXtyMXws8Vdqi
-         xoOdT8hCmVJjBoAW9dJq7GUwr26/sAEnf04Oz1RMN2Z67S054yi68XJkH1pFBhUWVWTO
-         ahGf7PQpjJeOSuGY1rL+Z5F+GpU3deOYiGad00ifwEuxg71NtgcN5spHuIs5ul2m+FRN
-         OC9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741104911; x=1741709711;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Yn/mVNLBd6udkX5JiXXuHWAdMeM57oaufTToD3WukKw=;
-        b=SP+2esG+R/E33KxmbrzbjBvq+PWrSstbB3A2Ivvw5riESg2kOu5nzmWdwrvHoMN3aY
-         xdqB6k8G/QAXcqZPZiFMLdy8MSgpkFoEZkoePtL8Eh1hS5Iitr/1Sf7YnzlFfe19Qwil
-         LRrN7GV+wEGPBzGCERsf03Q/i+F2NIvMk3iFWOsrrl+1EmTrcgfuZtrrESE5HZDrkUKH
-         RY2M2TQBUxzTFfHzX2nzglR0PxMleBnHYfyp0mii5OfpqVYxYyE5Y+vgjrlK31nBZhV7
-         dYBQ1wcmtPzDYBmzWNIaw2UHi3sBJ5Qv9FKtm/zWPn0IP2K3XICPc2mv+q2fTdPX95DU
-         E5Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXhfNIDiljZyfKlYmIkRZqREuHcSU+R+5spR0vIo+jvQ9HmppQcoBlbAC/LA+YoVG42QOgkJ7Q+bdjnPRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydJQ5AofDlseJIaRXDgpcHTNT1NhtQXtG6WYdvniU2AGrmbv0n
-	8QeeyV8ZOTe+ELgRDgYzyHCjnS1y5o6wIk/S7TzS1A+MlI1Y7Rl037iB3eKjObc=
-X-Gm-Gg: ASbGnctbsLKCXWaUGkjryJjtDXBTgJQoqeWsfRoB6dOIziqcPKIOxXLU0bBWbDyTWzE
-	3yK9diNm5McLYQrOrCYBnpRcp7M4slXYf4q2SjgBsRedR2ntWVgyrgIr0qGn6prVhKcJ4W4ptCL
-	yUuPOzZRhPuZU8qBYhpLi1WJpHsleos0wIccip6ejHgWxX79PD6sFNq6j3yo9P0lfKWBrm2BdM+
-	uJ9xHDqsuncOgSTICNhB8b9EEMOJ0UMyUjjDC9E9psjI9yErU9hyYnBIroCdtOH0EwVRdcWsISY
-	L1IMeFrNLS17+qbQqeECuoahxoQmCvjYFfQPkYBz+n6syJszdyUpv6i8Kq/g8OQaQfVHrJUmC2j
-	2wpUpgw==
-X-Google-Smtp-Source: AGHT+IET7KPbwwaDJPgxaLzaAdHSOjh+Hip5XZIqRDysdxQdHiaEvAFtjPuu1+nbA8r6dL+tqRwBGA==
-X-Received: by 2002:ac8:5a49:0:b0:471:a523:6ac1 with SMTP id d75a77b69052e-474bc0558bcmr281954941cf.6.1741104910839;
-        Tue, 04 Mar 2025 08:15:10 -0800 (PST)
-Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-47503d688f7sm5731921cf.56.2025.03.04.08.15.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 08:15:10 -0800 (PST)
-Date: Tue, 4 Mar 2025 11:15:09 -0500
-From: Josef Bacik <josef@toxicpanda.com>
-To: Amir Goldstein <amir73il@gmail.com>
-Cc: Jan Kara <jack@suse.cz>,
-	syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>,
-	akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org,
-	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, linux-xfs@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
-Message-ID: <20250304161509.GA4047943@perftesting>
-References: <67a487f7.050a0220.19061f.05fc.GAE@google.com>
- <67c4881e.050a0220.1dee4d.0054.GAE@google.com>
- <7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc>
- <CAOQ4uxjf5H_vj-swF7wEvUkPobEuxs2q6jfO9jFsx4pqxtJMMg@mail.gmail.com>
+	s=arc-20240116; t=1741104946; c=relaxed/simple;
+	bh=fIpTyWL6ayzFDuJIGBcstdA8O3+/QfyIGVuGPadTW0E=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=YfpZAMl2BAqFplRe6Rspvc2d+PP0Pr9tQco5jTzqxTzTJvkr4jrHNq2kvG/aUut445no4J6QIS3yg8b6YSI2EYnRWWrszlFRgTkwi1UUqHSUUS4DCW8pCuqC01Nm5AAmk3dd2O8Xy0btg/ebe5yWJFgwcOozEglN2Z3UK1Elzzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=enFC4w7i; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524E3Ku9019009;
+	Tue, 4 Mar 2025 16:15:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=+IoJ+2
+	H9c2CFdb09znTxlwvThy3kn7nz7db1xHQkKkM=; b=enFC4w7iAxa7xBJJ50nn5r
+	YHwcsrqCj91bKzXNDMt/lK3Da6qrxKeOdyw55vTS+5tSRh/LCW7VTHne1QB6PDCH
+	E04yAMBr5R0IT1MIh+lsBn12jaenqDXOL0kCAMHHp2uTEbSNtevMf7+6e0dWDjb3
+	0lY9UYLFpaVgOmnxytJ40rCGXSXuXH4TBYq/l7WJhu8JIKDqVnSBaTqC7YQ2TDxY
+	0QahawjYm0acYxmOxim50YEc2M6BG6sI/rWcct/6OOuBbSKYvlDUKuuZPlrWfyX+
+	nVpHiXi756zfn953xIufU7xfTR8gGUa/HI/Lm5pZABYEOnqa+UXBjLdlMmRhLMTg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpgp2j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 16:15:18 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 524GFI8F012989;
+	Tue, 4 Mar 2025 16:15:18 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpgp2b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 16:15:17 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524Fxqlx013776;
+	Tue, 4 Mar 2025 16:15:16 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2kp52f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 16:15:16 +0000
+Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524GFGpZ53936398
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 16:15:16 GMT
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4700E58060;
+	Tue,  4 Mar 2025 16:15:16 +0000 (GMT)
+Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6A27758050;
+	Tue,  4 Mar 2025 16:15:14 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.136.132])
+	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Mar 2025 16:15:14 +0000 (GMT)
+Message-ID: <6828fbeeff42ce962cc0195466760ea136f9c049.camel@linux.ibm.com>
+Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Baoquan He <bhe@redhat.com>
+Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+        madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
+        dyoung@redhat.com, Mike Rapoport
+ <mike.rapoport@gmail.com>
+Date: Tue, 04 Mar 2025 11:15:13 -0500
+In-Reply-To: <Z8FDlp8QvnSR58Vd@MiWiFi-R3L-srv>
+References: <20250218225502.747963-1-chenste@linux.microsoft.com>
+	 <20250218225502.747963-3-chenste@linux.microsoft.com>
+	 <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
+	 <55acf768b52b47dd9d33fa0486772d8c7ae38779.camel@linux.ibm.com>
+	 <Z8FDlp8QvnSR58Vd@MiWiFi-R3L-srv>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAOQ4uxjf5H_vj-swF7wEvUkPobEuxs2q6jfO9jFsx4pqxtJMMg@mail.gmail.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: -oBsvbmbJu1H4kuwA-IK6n9CtSiRlunB
+X-Proofpoint-GUID: _0Rk9JlUBxHxaloj8zlUADdSvGWN6oiI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_06,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
+ lowpriorityscore=0 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503040129
 
-On Tue, Mar 04, 2025 at 04:09:16PM +0100, Amir Goldstein wrote:
-> On Tue, Mar 4, 2025 at 12:06 PM Jan Kara <jack@suse.cz> wrote:
-> >
-> > Josef, Amir,
-> >
-> > this is indeed an interesting case:
-> >
-> > On Sun 02-03-25 08:32:30, syzbot wrote:
-> > > syzbot has found a reproducer for the following issue on:
-> > ...
-> > > ------------[ cut here ]------------
-> > > WARNING: CPU: 1 PID: 6440 at ./include/linux/fsnotify.h:145 fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
-> > > Modules linked in:
-> > > CPU: 1 UID: 0 PID: 6440 Comm: syz-executor370 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
-> > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
-> > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> > > pc : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
-> > > lr : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
-> > > sp : ffff8000a42569d0
-> > > x29: ffff8000a42569d0 x28: ffff0000dcec1b48 x27: ffff0000d68a1708
-> > > x26: ffff0000d68a16c0 x25: dfff800000000000 x24: 0000000000008000
-> > > x23: 0000000000000001 x22: ffff8000a4256b00 x21: 0000000000001000
-> > > x20: 0000000000000010 x19: ffff0000d68a16c0 x18: ffff8000a42566e0
-> > > x17: 000000000000e388 x16: ffff800080466c24 x15: 0000000000000001
-> > > x14: 1fffe0001b31513c x13: 0000000000000000 x12: 0000000000000000
-> > > x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
-> > > x8 : ffff0000c6d98000 x7 : 0000000000000000 x6 : 0000000000000000
-> > > x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000000001000
-> > > x2 : ffff8000a4256b00 x1 : 0000000000000001 x0 : 0000000000000000
-> > > Call trace:
-> > >  fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145 (P)
-> > >  filemap_fault+0x12b0/0x1518 mm/filemap.c:3509
-> > >  xfs_filemap_fault+0xc4/0x194 fs/xfs/xfs_file.c:1543
-> > >  __do_fault+0xf8/0x498 mm/memory.c:4988
-> > >  do_read_fault mm/memory.c:5403 [inline]
-> > >  do_fault mm/memory.c:5537 [inline]
-> > >  do_pte_missing mm/memory.c:4058 [inline]
-> > >  handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
-> > >  __handle_mm_fault mm/memory.c:6043 [inline]
-> > >  handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
-> > >  do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
-> > >  do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
-> > >  do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
-> > >  el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:432
-> > >  el1h_64_sync_handler+0x60/0xcc arch/arm64/kernel/entry-common.c:510
-> > >  el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
-> > >  __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inline] (P)
-> > >  fault_in_readable+0x168/0x310 mm/gup.c:2234 (P)
-> > >  fault_in_iov_iter_readable+0x1dc/0x22c lib/iov_iter.c:94
-> > >  iomap_write_iter fs/iomap/buffered-io.c:950 [inline]
-> > >  iomap_file_buffered_write+0x490/0xd54 fs/iomap/buffered-io.c:1039
-> > >  xfs_file_buffered_write+0x2dc/0xac8 fs/xfs/xfs_file.c:792
-> > >  xfs_file_write_iter+0x2c4/0x6ac fs/xfs/xfs_file.c:881
-> > >  new_sync_write fs/read_write.c:586 [inline]
-> > >  vfs_write+0x704/0xa9c fs/read_write.c:679
-> >
-> > The backtrace actually explains it all. We had a buffered write whose
-> > buffer was mmapped file on a filesystem with an HSM mark. Now the prefaulting
-> > of the buffer happens already (quite deep) under the filesystem freeze
-> > protection (obtained in vfs_write()) which breaks assumptions of HSM code
-> > and introduces potential deadlock of HSM handler in userspace with filesystem
-> > freezing. So we need to think how to deal with this case...
-> 
-> Ouch. It's like the splice mess all over again.
-> Except we do not really care to make this use case work with HSM
-> in the sense that we do not care to have to fill in the mmaped file content
-> in this corner case - we just need to let HSM fail the access if content is
-> not available.
-> 
-> If you remember, in one of my very early version of pre-content events,
-> the pre-content event (or maybe it was FAN_ACCESS_PERM itself)
-> carried a flag (I think it was called FAN_PRE_VFS) to communicate to
-> HSM service if it was safe to write to fs in the context of event handling.
-> 
-> At the moment, I cannot think of any elegant way out of this use case
-> except annotating the event from fault_in_readable() as "unsafe-for-write".
-> This will relax the debugging code assertion and notify the HSM service
-> (via an event flag) that it can ALLOW/DENY, but it cannot fill the file.
-> Maybe we can reuse the FAN_ACCESS_PERM event to communicate
-> this case to HSM service.
-> 
-> WDYT?
+On Fri, 2025-02-28 at 13:03 +0800, Baoquan He wrote:
+> On 02/27/25 at 10:41am, Mimi Zohar wrote:
+> > [Cc'ing Mike Rapoport]
+> >=20
+> > On Mon, 2025-02-24 at 14:14 +0800, Baoquan He wrote:
+> > > Hi Steve, Mimi,
+> > >=20
+> > > On 02/18/25 at 02:54pm, steven chen wrote:
+> > > > Currently, the mechanism to map and unmap segments to the kimage
+> > > > structure is not available to the subsystems outside of kexec.  Thi=
+s
+> > > > functionality is needed when IMA is allocating the memory segments
+> > > > during kexec 'load' operation.  Implement functions to map and unma=
+p
+> > > > segments to kimage.
+> > >=20
+> > > I am done with the whole patchset understanding. My concern is if thi=
+s
+> > > TPM PCRs content can be carried over through newly introduced KHO. I =
+can
+> > > see that these patchset doesn't introduce too much new code changes,
+> > > while if many conponents need do this, kexec reboot will be patched a=
+ll
+> > > over its body and become ugly and hard to maintain.
+> > >=20
+> > > Please check Mike Rapoport's v4 patchset to see if IMA can register
+> > > itself to KHO and do somthing during 2nd kernel init to restore those
+> > > TPM PCRs content to make sure all measurement logs are read correctly=
+.
+> > > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
+> >=20
+> > Hi Baoquan,
+> >=20
+> > I was hoping to look at Mike's patch set before responding, but perhaps=
+ it is
+> > better to respond earlier rather than later with my initial thoughts.
+> >=20
+> > The IMA measurement list isn't stored in contiguous memory, but has to =
+be
+> > marshalled before being carried across kexec, and then unmarshalled to =
+restore
+> > it after the kexec.  Roberto Sassu has been thinking about changing how=
+ the IMA
+> > measurement list is stored so marshalling/unmarshalling wouldn't be nec=
+essary.=20
+> > Making both this change and using KHO going forward would be a good ide=
+a.
+> >=20
+> > However, that sort of change wouldn't be appropriate to backport.  So t=
+he
+> > question comes down to whether being unable to attest the measurement l=
+ist,
+> > because the measurements are copied too early at kexec load, but the TP=
+M is
+> > being extended through kexec exec, is considered a bug.  If that is the=
+ case,
+> > then I suggest finish cleaning up and upstreaming this patch set so tha=
+t it
+> > could be backported.
+>=20
+> Ah, I understand your concern. There are stable kernels or distros
+> kernels which need be taken care of. If then, we can continue to work on
+> polishing this patchset, as you have pointed out, there are still room
+> in this patchset to improve before merging.
 
-I think that mmap was a mistake.
+Thanks, Baoquan!
 
-Is there a way to tell if we're currently in a path that is under fsfreeze
-protection?  Just denying this case would be a simpler short term solution while
-we come up with a long term solution. I think your solution is fine, but I'd be
-just as happy with a simpler "this isn't allowed" solution. Thanks,
+I've already provided feedback on the IMA related patches.  Hopefully that =
+will
+be it.
 
-Josef
+Mimi
+
+
 
