@@ -1,44 +1,83 @@
-Return-Path: <linux-kernel+bounces-543161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B603A4D243
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:04:01 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 968ADA4D244
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:06:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3934B7A5EA1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA54A1709BD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:06:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE9631EBA07;
-	Tue,  4 Mar 2025 04:03:51 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905F21EF0BC;
+	Tue,  4 Mar 2025 04:05:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b="kf8oUeo+"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57C82BA38;
-	Tue,  4 Mar 2025 04:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D383BA38
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 04:05:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741061031; cv=none; b=rVbi6GXxYcCLSirnJm4zwoVZppva5VSZJ0RTeQrSJ1SCsnuVJi4gYnoPRxnsLXcMubpRJtn0BacHY/5L2OMSsP37E2tS2MzbFfgBDf6tzl6IHHQ2Jt1Z2xEK+vC4pWXlxjoaY0Wg2ZtlCRhdZ2nnnaSlkL3EL0GQuJRpHufkdeA=
+	t=1741061155; cv=none; b=oa9Uo6iQhcob2EXF2tUQz+AvlVt6sxKDH9WtFQn6FUHVy0mMy30kuro58/zn2aLOCo/Y0TeLAa4MSN/xA2b8q71P0TtHt7a3ccK8nnRMXrpX9Zo5Ztxt5K/zzqOe8nVmkjBksQhuf+j44alycX/5BmEaP6aiuim7xGOt7JdjI94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741061031; c=relaxed/simple;
-	bh=L+DcmApLOKfTDlb+sBGuWJsudO3OdyQhKhrYJdRIBcw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r2SY5rW/rUBS1noPZEmtctdVb1NmJWXT6dbp+VQS3Z0oJdJZEQHPqliaL0PA38xNMUBJBTpu6VnapGST3CSka8Of7Px93p/xh5v/r/TLeqQGm4aBote0Zsd83chrVLgBlu3DW4TZU4QDBc3DA6kf9/Bx+U/MWneXa9beQLQP4ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowAB3f2+Pe8ZnQL06Eg--.36838S2;
-	Tue, 04 Mar 2025 12:03:29 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: kent.overstreet@linux.dev
-Cc: linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH] bcachefs: Add error handling for bch2_folio()
-Date: Tue,  4 Mar 2025 12:03:11 +0800
-Message-ID: <20250304040311.2081-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	s=arc-20240116; t=1741061155; c=relaxed/simple;
+	bh=VM2t+jylxMB2T771kmAuUS21X4Kndc0vcr8ru3CPI6E=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HrBknjIlk4333M6CqANIpFBTdlr6vQomHD7dp0VUIAvc+z5OtDiAlNdzpBiZDfFK5OltpNc23BNtHYpFgr1X0Cs8b8zHNCWOM/6zIjRmTY9bngrChA5kxnkOgeC0WFiUPw0A7vQeQbXwcznvF+o0Tn6UEgmtN0xTi1/7IXOyHik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai; spf=none smtp.mailfrom=furiosa.ai; dkim=pass (2048-bit key) header.d=furiosa-ai.20230601.gappssmtp.com header.i=@furiosa-ai.20230601.gappssmtp.com header.b=kf8oUeo+; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=furiosa.ai
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=furiosa.ai
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2234e5347e2so104170725ad.1
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 20:05:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=furiosa-ai.20230601.gappssmtp.com; s=20230601; t=1741061151; x=1741665951; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6B/YlsPCXj6yKOA081X5xsFxPwPhBIXGZLI0eUqTn/8=;
+        b=kf8oUeo+5qa4Cznd4VFeIEG7KCYX0fdo/U+qYHxo5clvZqupfNntRZ8Tan80q8aFrm
+         P+pF/rHS0CUNDuN5We3eoxrCLAbXPP14cVR6nuC03aU3v/tyknQX6fmb0u8XhflYS1od
+         be0kZ6hIX/RfZxwtUWO8EGGFlfED/PKYSFexFIdM98p3nR715WcW36B7s3bhokeaDXcN
+         UkycbRQV1oTcX/6TpsQaXJ46grIJ/NKXyDSoJBLdbPZy72zkaLo/fYC5jTW8SnmcCDup
+         lcxyUxi/GqoJibO3P3mJ3THG2AhdmCZywGc7T/kdQn9HX28EFGLWkELbTCfcfitYU9vr
+         d5QQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741061151; x=1741665951;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6B/YlsPCXj6yKOA081X5xsFxPwPhBIXGZLI0eUqTn/8=;
+        b=fMMv8x8jYw+XbF90UI9ZGMqp932Y2LA5jKNtGhP8lL1D9kTUXPSCyEbaD/g+QskMcR
+         MByUcDp2DXytXvuWjNK7MIX0K/OozMEj06XVz5lyupzGO5ZBH/KgTCBz4CA+F69C8RR2
+         JYH8A5bAR77XJGZ2ctTGyQjd67Aflg6fQeOyCjZlZ72tbV73GaFWKI/oyqWPa/WAjVei
+         QI49v6hCQlGyPqyqC57SjY0vAa0EnQyruRT9DhxFyKuQZYlpzE4NrFwa+2dnZUu0sENY
+         2sumF5ayG7Dp3PQMsDfPP7IGKaa+DdV5UH6CxtewmIsfcfH8hARabRkxoA48SjGbbRw0
+         Zp0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWnYCJUjWuDMW13ZlVhdL/0gx/tHhQMP8Un6uH2GDBvI8E/tAtN8DLGdpZyhp1qFKmINGD6bvVH9UlFdnQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw23Qwj8qNP8NeEce94xR/IcZ7y5Vw3kUMbJOYE5jVFJcdWn1+e
+	/UN9dUX8MICJZZgR0R81Kmnn28f/64bKPa3mGCIFIzLL1pcE5zW+Zn+9mPNi5h4=
+X-Gm-Gg: ASbGncsW8/gHSb44qsnruF6bVFxHCwJI26ygXMh2QhK8C2wx2mtHlc4HlpHKSCNrVKX
+	4XYyn+NqOsX865eBvufz/chEJrKaaZi+TeqO3nbWFRpFHRfmnPWlPAlKv0/EIVWS6oCMPDgmhVi
+	2gcQzeLsJSEhqzMuM9malk8ZP+ho95VkNER7opKqHIF/mDfC7rhfgS2E/VK7xH2osdlYhApg/bm
+	Oue0o9GVP1rtbasNNbiWYIClnclqDRGCNB6wrS+mEZvov2tAkmnmD25RslewGNFadbCBrcbaGr1
+	iRtcbqmqd3m3+XiaZ40SVoipn1BIMg8sCq15PuxbJuJQ37Ag1u6itNKzyeovmdggJ2g6vAv0xQg
+	v/g==
+X-Google-Smtp-Source: AGHT+IGfCVdejojVJj2Py5zdVgtTo9BZmtMnWbj/yAlgz1ojCDYJf/ViDIO5m5g6t94u2uNmzJB8Yg==
+X-Received: by 2002:a17:903:f84:b0:221:7e04:d791 with SMTP id d9443c01a7336-22368fc97f7mr243723755ad.31.1741061151198;
+        Mon, 03 Mar 2025 20:05:51 -0800 (PST)
+Received: from MS03-CEO-004.yan.office.furiosa.vpn ([221.148.76.1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050fdafsm85296075ad.214.2025.03.03.20.05.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 20:05:50 -0800 (PST)
+From: Sidong Yang <sidong.yang@furiosa.ai>
+To: rust-for-linux@vger.kernel.org
+Cc: Sidong Yang <sidong.yang@furiosa.ai>,
+	linux-kernel@vger.kernel.org
+Subject: [RFC PATCH] rust: add cdev for rust bindings helper
+Date: Tue,  4 Mar 2025 13:04:49 +0900
+Message-Id: <20250304040450.697235-1-sidong.yang@furiosa.ai>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,48 +85,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowAB3f2+Pe8ZnQL06Eg--.36838S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrtF1kAr4Uur1UArWkAw4xZwb_yoW3Wwb_W3
-	WrJa1UWw4fKFyUtr17ZFW7ZrZ0v34Fyr4S9F48KF47ua4kt34ftws0yr1UZ3yI9rWrGa98
-	KFyYvr95ArW7CjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbwAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
-	A2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr0_
-	Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AKxVWxJr
-	0_GcWle2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1l42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUywZ7UUUUU=
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiDAgLA2fGYfVh0gAAsK
 
-Add error handling for the case where bch2_folio() returns NULL
-in __bch2_folio_set(). Return immediately to prevent null pointer
-dereference.
+This patch adds cdev rust bindings.
 
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
 ---
- fs/bcachefs/fs-io-pagecache.c | 3 +++
- 1 file changed, 3 insertions(+)
+ rust/bindings/bindings_helper.h | 1 +
+ rust/helpers/cdev.c             | 3 +++
+ rust/helpers/helpers.c          | 1 +
+ 3 files changed, 5 insertions(+)
+ create mode 100644 rust/helpers/cdev.c
 
-diff --git a/fs/bcachefs/fs-io-pagecache.c b/fs/bcachefs/fs-io-pagecache.c
-index e072900e6a5b..1dc65fef3ff4 100644
---- a/fs/bcachefs/fs-io-pagecache.c
-+++ b/fs/bcachefs/fs-io-pagecache.c
-@@ -159,6 +159,9 @@ static void __bch2_folio_set(struct folio *folio,
- 	struct bch_folio *s = bch2_folio(folio);
- 	unsigned i, sectors = folio_sectors(folio);
- 
-+	if (!s)
-+		return;
+diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+index f46cf3bb7069..07145905bc10 100644
+--- a/rust/bindings/bindings_helper.h
++++ b/rust/bindings/bindings_helper.h
+@@ -10,6 +10,7 @@
+ #include <linux/blk-mq.h>
+ #include <linux/blk_types.h>
+ #include <linux/blkdev.h>
++#include <linux/cdev.h>
+ #include <linux/cred.h>
+ #include <linux/device/faux.h>
+ #include <linux/errname.h>
+diff --git a/rust/helpers/cdev.c b/rust/helpers/cdev.c
+new file mode 100644
+index 000000000000..929aa5359a47
+--- /dev/null
++++ b/rust/helpers/cdev.c
+@@ -0,0 +1,3 @@
++// SPDX-License-Identifier: GPL-2.0
 +
- 	BUG_ON(pg_offset >= sectors);
- 	BUG_ON(pg_offset + pg_len > sectors);
- 
++#include <linux/cdev.h>
+diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+index 0640b7e115be..6aa69761409e 100644
+--- a/rust/helpers/helpers.c
++++ b/rust/helpers/helpers.c
+@@ -11,6 +11,7 @@
+ #include "bug.c"
+ #include "build_assert.c"
+ #include "build_bug.c"
++#include "cdev.c"
+ #include "cred.c"
+ #include "device.c"
+ #include "err.c"
 -- 
-2.42.0.windows.2
+2.34.1
 
 
