@@ -1,160 +1,147 @@
-Return-Path: <linux-kernel+bounces-544455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C284A4E166
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:43:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 680B3A4E162
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:43:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C3D16F769
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:37:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 610FE188A668
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:37:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0ADE253F23;
-	Tue,  4 Mar 2025 14:35:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE4426FA5E;
+	Tue,  4 Mar 2025 14:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrG21Sfl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="VuNzS7MB";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="uhv181ey"
+Received: from fhigh-a6-smtp.messagingengine.com (fhigh-a6-smtp.messagingengine.com [103.168.172.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55545253B50;
-	Tue,  4 Mar 2025 14:35:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 721C226E169;
+	Tue,  4 Mar 2025 14:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098924; cv=none; b=ZvKKShG0VW0P8ZUGoFNc0yf9qB+qiAH0p9li1q9mVsTYGT38S9ftItM7Tu9upqOZ8r1/3YdmTdANSBHzH975QWczJR0rQSPmjQAzNqtBGtsiZfZ0MMj9xcUBs2MW6p20Gmf1UORc1/clqb3k1u4ymVLkSkQFBpdZucUQ56kq7i4=
+	t=1741098932; cv=none; b=XpD0Eahmcgp4BgJPPqL/Fba5xMe3lOdTs194SU4eaTHq8ZLOX4XWGqx4D/L7nqeBRsLZZpzKBBLpa6RfX4Mz5tcjecolr22rJWFEXIymgOkLMFCwh9R5vQBuSdTCHrTCbDKhcQXoBV6zeiWNGHOG5EPmHsHwCUk2+uMtFvl+44U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098924; c=relaxed/simple;
-	bh=HA/EqEu0cw/BtzLiMnQRIy7r8rN4w8ZK+l6Ngj/Zlk8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HYQav3Y2yGdKL+dHm0wewLrFxImEQu2tOhmK8VLv43Jhjt0cyK0Tqs75rrfsh1ssBMyJPzh/0R2eqEPh1A8oGIfwstbGpT52eLVnGxHjjBmTdtk9HHnyUlTaWfGe5ySUeaPt03nC6yLB3mc639i1cwFhWf17u7DGDGbro7WlZP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrG21Sfl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DAC2C4CEE7;
-	Tue,  4 Mar 2025 14:35:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741098923;
-	bh=HA/EqEu0cw/BtzLiMnQRIy7r8rN4w8ZK+l6Ngj/Zlk8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=QrG21Sfl+iAOpw2chf7PBTK8AJg39XjitXV8A7NkvlO/xKNvffN4S4DLsETfFHGon
-	 2BsUYuFXus7so6UwWlsQ2DNZpMpDRvCuUtxMlywfs791DQ3yQtxaaqelaGR3ssC5qC
-	 0NGWgYmEMTmp5PIJ2igP/Yw2PHJx3oPHD9n+CzxpekyG/Gxxw22i/xB92TsEu0SQ+g
-	 Dz5yozoFX2SCya1Wv2/AjHF9bMHillEu008CTGk40ChJO988Gyo/cy2inzJM73wfql
-	 d0k5GGoxLDHpOdYBGt5GrS6acJhcw7/79rFu4p2rPtkwR70ZNcHUDoGY0lzLFwwL0m
-	 ypnff4/CTEDqQ==
-Date: Tue, 4 Mar 2025 14:35:11 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Saalim Quadri <danascape@gmail.com>
-Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
- gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: Re: [PATCH] staging: iio: ad9832: Use devm_regulator_get_enable()
-Message-ID: <20250304143511.1f5e8e70@jic23-huawei>
-In-Reply-To: <20250303221427.30964-1-danascape@gmail.com>
-References: <20250303221427.30964-1-danascape@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741098932; c=relaxed/simple;
+	bh=YMy5gkaueEQktqoKVHPtEIDeqrmLdBspWegegQlhlwA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EVJkfK9I6myaU27z/BpAvz7MLYFXiMVIZhosNsRT0P65VDbLpMKw9qzgH79JZM7UEmBTBuZj79st8UZiyjwqnLy23wuUkNUrRH9fRdxi+2gI3cFVqplBSeM35WTeIGU4ZnPOvVYTdrxP6WwrzbrfGXI/DV4pHA75ygrH2YJ/N98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=VuNzS7MB; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=uhv181ey; arc=none smtp.client-ip=103.168.172.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 3253B11400BC;
+	Tue,  4 Mar 2025 09:35:28 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Tue, 04 Mar 2025 09:35:28 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1741098928; x=
+	1741185328; bh=wRZRNLutIoBb8oF0ngDTZPa0vNaZ5AVJbj6GM4zyYs0=; b=V
+	uNzS7MBwuIfKhW8lgt3WmAlh/dEDeB9BAEpXZA0kq/kFyXTEQ6e3Eb0OYf4sbv6j
+	1XQ5JUrSGlkB28TpkUxvizOi1rwa3CSZeoxTPiGLtltlmk6DbpaVaCsH761tWRvy
+	64PByEuc4xFsKng3HBimzgv0xeTIGQ1RyqsJslnlRwCihmW6uzw22sMPgbD5BUdI
+	EwMvaf/uMGhP0Yfu6VMZcLGezNlE0r8W3yBweAJmDVr0FT5m/DJ/fVTqGnMMuh+J
+	P/6/I5QQCVJWUhwPOAiYhdggrTgYu3aowRT/n1vtWTLTyp4fuDe2Z0A+ybjSDR7w
+	oGPnBTKUz7rZexUCPWMqw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741098928; x=1741185328; bh=wRZRNLutIoBb8oF0ngDTZPa0vNaZ5AVJbj6
+	GM4zyYs0=; b=uhv181eyF6LArvZTYb+QgVT4sGvPPkZCDqtMihzV3VZ1ZXhhGyV
+	p4YSj6jJ9XamrqG+UFCxH0oaL9qc2gw7vHZElq9Yue6TRERldW6pLnVGuDGpHb0i
+	fKYs8We9FotWJdvw/CoWosjlT3I/gieIGVQ4/Eq8O8TIDmiTuSyiTNR02n/jcD0s
+	VRb/EE36pJwO8LzBgTiQgXcA501/7tDDa1/PRoKRyhD+dfoAZfWVIOK6nQTrwWiW
+	1FINh9L1G6i9vox5bpO0vPzNBVsdLZ+XuirVPvn0Ekr7nfsQ6qnFgdn1BgUFYhDz
+	3KhrX2MiQSHKfpSTbPO4oVgdEjp3LCF0uaA==
+X-ME-Sender: <xms:rw_HZ0yOSUDvbujyVfQwEGipbyNwKEa-3YlwR4nAaZKQf6SNKDAcPQ>
+    <xme:rw_HZ4T6L9OyXdwzg29l8jZayeMWhr_wqyhMtNVWZ9S7mJojGka83Mtzb3sQPl687
+    dIYXMZNzOm2AdghMiw>
+X-ME-Received: <xmr:rw_HZ2WakGeJ-7hOIfr5eiL_vUYvmz1lK-d1_9Qld-U7PU1Wm8vz4ryZw9Ol>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddvfedtucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
+    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
+    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
+    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
+    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
+    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
+    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
+    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
+X-ME-Proxy: <xmx:rw_HZyjnRzMpCPET0Wf_HyOZ7PAV7OQyX2bABphrYL7SiS0-uaAn1A>
+    <xmx:rw_HZ2Agb3RXYN6qnR7-G0xL2-kTG2msyZxIup5-PvdhJZVpypoozA>
+    <xmx:rw_HZzKlzQPdAt8Rbp9jcErn-vs5qMD8RAIubDGwCCZwCXaCW-jOFw>
+    <xmx:rw_HZ9DTr3nx2qlyFXlQdZ0m9Br1gKwapkEoKGpg2bjO-snTP11DgQ>
+    <xmx:sA_HZywrZwyOiY_19rSz2RZ2nE-bBI55aqdOZKkchKu2upcW8fp1Z7t0>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
+ 4 Mar 2025 09:35:27 -0500 (EST)
+Date: Tue, 4 Mar 2025 15:35:25 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH v21 19/24] ovpn: implement peer add/get/dump/delete via
+ netlink
+Message-ID: <Z8cPrYs0TuQfLlKX@hog>
+References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
+ <20250304-b4-ovpn-tmp-v21-19-d3cbb74bb581@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250304-b4-ovpn-tmp-v21-19-d3cbb74bb581@openvpn.net>
 
-On Tue,  4 Mar 2025 03:44:27 +0530
-Saalim Quadri <danascape@gmail.com> wrote:
-Hi Saalim,
-
-Thanks for your patch - a few comments inline.
-
-> Use devm_regulator_get_enable() to reduce boiler plate
-> code.
-
-Wrap patch descriptions to 75 chars.
-
-> 
-> Signed-off-by: Saalim Quadri <danascape@gmail.com>
-> ---
->  drivers/staging/iio/frequency/ad9832.c | 37 +++-----------------------
->  1 file changed, 4 insertions(+), 33 deletions(-)
-> 
-> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
-> index 140ee4f9c137..a26d7caac131 100644
-> --- a/drivers/staging/iio/frequency/ad9832.c
-> +++ b/drivers/staging/iio/frequency/ad9832.c
-> @@ -74,8 +74,6 @@
->  /**
->   * struct ad9832_state - driver instance specific data
->   * @spi:		spi_device
-> - * @avdd:		supply regulator for the analog section
-> - * @dvdd:		supply regulator for the digital section
->   * @mclk:		external master clock
->   * @ctrl_fp:		cached frequency/phase control word
->   * @ctrl_ss:		cached sync/selsrc control word
-> @@ -94,8 +92,6 @@
+2025-03-04, 01:33:49 +0100, Antonio Quartulli wrote:
+> @@ -1317,11 +1336,16 @@ void ovpn_peer_keepalive_work(struct work_struct *work)
 >  
->  struct ad9832_state {
->  	struct spi_device		*spi;
-> -	struct regulator		*avdd;
-> -	struct regulator		*dvdd;
->  	struct clk			*mclk;
->  	unsigned short			ctrl_fp;
->  	unsigned short			ctrl_ss;
-> @@ -297,11 +293,6 @@ static const struct iio_info ad9832_info = {
->  	.attrs = &ad9832_attribute_group,
->  };
->  
-> -static void ad9832_reg_disable(void *reg)
-> -{
-> -	regulator_disable(reg);
-> -}
-> -
->  static int ad9832_probe(struct spi_device *spi)
->  {
->  	struct ad9832_platform_data *pdata = dev_get_platdata(&spi->dev);
-> @@ -320,33 +311,13 @@ static int ad9832_probe(struct spi_device *spi)
->  
->  	st = iio_priv(indio_dev);
->  
-> -	st->avdd = devm_regulator_get(&spi->dev, "avdd");
-> -	if (IS_ERR(st->avdd))
-> -		return PTR_ERR(st->avdd);
-> -
-> -	ret = regulator_enable(st->avdd);
-> -	if (ret) {
-> -		dev_err(&spi->dev, "Failed to enable specified AVDD supply\n");
-> -		return ret;
-> -	}
-> -
-> -	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->avdd);
-> +	ret = devm_regulator_get_enable(&spi->dev, "avdd");
->  	if (ret)
-> -		return ret;
-> -
-> -	st->dvdd = devm_regulator_get(&spi->dev, "dvdd");
-> -	if (IS_ERR(st->dvdd))
-> -		return PTR_ERR(st->dvdd);
-> +			return dev_err_probe(&spi->dev, ret, "failed to get AVDD voltage\n");
+>  	/* prevent rearming if the interface is being destroyed */
+>  	if (next_run > 0 && ovpn->registered) {
+> +		time64_t delta = next_run - now;
+> +
+>  		netdev_dbg(ovpn->dev,
+>  			   "scheduling keepalive work: now=%llu next_run=%llu delta=%llu\n",
+> -			   next_run, now, next_run - now);
+> +			   next_run, now, delta > 0 ? delta : 0);
+> +		/* due to the waiting above, the next_run deadline may have
+> +		 * passed: in this case we reschedule the worker immediately
+> +		 */
 
-Please fix indentation. Should only be 1 tab more than if (ret)
+I don't understand this bit. I don't see what waiting you're refering
+to (in particular within this patch), and I don't see how we could get
+next_run < now based on how next_run is computed in
+ovpn_peer_keepalive_work_single (next_run1/next_run2 is always set to
+now + X or something that we just tested to be > now).
 
+Am I missing something?
 
->  
-> -	ret = regulator_enable(st->dvdd);
-> -	if (ret) {
-> -		dev_err(&spi->dev, "Failed to enable specified DVDD supply\n");
-> -		return ret;
-> -	}
-> -
-> -	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->dvdd);
-> +	ret = devm_regulator_get_enable(&spi->dev, "dvdd");
->  	if (ret)
-> -		return ret;
-> +			return dev_err_probe(&spi->dev, ret, "Failed to enable specified DVDD supply\n");
+>  		schedule_delayed_work(&ovpn->keepalive_work,
+> -				      (next_run - now) * HZ);
+> +				      delta * HZ > 0 ? delta * HZ : 0);
+>  	}
+>  	unlock_ovpn(ovpn, &release_list);
+>  }
 
-As above.
-
->  
->  	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
->  	if (IS_ERR(st->mclk))
-
+-- 
+Sabrina
 
