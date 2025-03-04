@@ -1,122 +1,151 @@
-Return-Path: <linux-kernel+bounces-545022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6738CA4E94F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:38:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00BDA4E837
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 495848C4F7D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:08:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80AE17CFE4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:10:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D6224EAB6;
-	Tue,  4 Mar 2025 16:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB5427C86B;
+	Tue,  4 Mar 2025 16:49:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lJW3R7PI"
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="aYEeSW6P"
+Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C7F24EAA2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:48:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106911; cv=none; b=ECgqq4kGuiLP5J/mzWOlg8CSgPX4E+A1FUvQLt542vkUbm6qEiDtX+4pRjn5hiDaL8MYiELLcVYf/vMZD5my8Ya1EZ5UZBwlhl3kWV/C27JT7pUXWt+XbNHHvRcsvIvNr1qupYrMEPASSS0cWpMY/8C3KSWIGk3wSbst6usKopw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106911; c=relaxed/simple;
-	bh=VEd/Qg03kECFeS4hFXnZqJyn3+4HfSz1x69E5nv1DKU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gWX0hnywr2bKHXR9z/nkAbFttiiBpja4uoE2edr34LhGdjbNwwZCp8HoJFBA6vjya3a/cVYIxxJEDCkBP81+YYbJTN+fDe3JiAJphRCi2DSuwvJj1i6AXHyxPKqC7XGEPZ8UdPOTOk5e6KkerdEoMY9++Vea85vGix6xOexJEnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lJW3R7PI; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-390e3b3d3f4so3029178f8f.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:48:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741106908; x=1741711708; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=knwLaqR4E/krVUJDxD7fdWOUGWk2k+uH2ku8XnnCDG8=;
-        b=lJW3R7PI75dtuLA56i6G1Zg8jO6gja2k2fT03iiWeuy+4qBuKtTy/DvmXRJ+1ntDfX
-         4rQ82N8YYLfn24seGOcG7mXbSn5kxrtsvFBjKOhiy+SJyDawiuOBmuMCkMdm9bxe3O2V
-         K4WhnrUK45BLMUOcbfkrWB/kxsrN27PmeIw5oeT/UGjs/pNEXrLPvN0QpD71Zp2JfQAN
-         EI720YPLt1XhhrpYbpq8DRZh+8WxexeTNeViQstA5c7JBD4OEqavvTGxrN6aY1CCha3N
-         WdoxHSIhAXjxRkEj96fDX2Kt7GPytikub2c32Pm5JeWewPolJJoQeWIPcU/eGFLL6HIV
-         E5hA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741106908; x=1741711708;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=knwLaqR4E/krVUJDxD7fdWOUGWk2k+uH2ku8XnnCDG8=;
-        b=RtXhqK0EssOdER9yVkMp/AXcB5BfZUxbv7KWmYFaJJR/8yq+IqTU17cPV3P6ZdMG+A
-         x97O4+0G3GPsL9bwyUBzvK+JgRCAnu3WB5APC+pKKdOZwgiJI2qWBmFuMtDCmvXx3Y91
-         BCTWqALdXZvp9DRP6WiRQCQmxLu4KiYY71ItbKyfkEG1X1sP2KRxolwAx5ygOGe+0ZQK
-         oDRtJq2OZHy2vPiY3J8yX4tOqP+pgW/Lh1IPM7+0OBAYuobIdq9wsGR9nU8r7XYr7PRe
-         ZOitUT+kwx1qv5GmpfCQwTDkIx5Yob0v+7jP/xu2qEPrm0xam8+bdTwsstyW99lHOs6Q
-         1cMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVp+DbVEHnodcGnHnG4/c/loz1ove01f92rQehi6S4LaHbFrZGO/m7a+vz9JS3nFTuaC/cwBHjymmyH1QI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmsaJE1zKc1Dr8GR8cj0G/mpaMMh5OIAFvY6EOI+jgSOrwlZy0
-	ozbZY5IQIta8qSWxe4eFxJLwAdm0McF39kZMSWCs9Jlyx+zx2gxveQe3GFCnDDQ=
-X-Gm-Gg: ASbGnctbZv1C7ZWLRRv3n+2vCGh0/+HxlEpgLo5OnwH9qoa6bXzA1Dkny4Jm6PNWFIs
-	2yt+dXfs8Q0l6VIoL+v9l3jliPBtqXmwFtajLcke5dP34e4k2DkslMt9I63+SjYuvhoCgBbwW3m
-	gDMnrzo2X064/OwjrZ1v4IH4hT3j/T253RBWkVON3bkPfgPMRlsy5+gfowts0MTR8EmeAVOjEo1
-	WU7myvRnZbv5l5JdvrXp/KXfV/StN9F2/VN+Mv9CfXYfW4U7GJNUQ7gnqWdrn6n1yU4R/+Qioon
-	ReXhSn+fB6xtg3bUYB89WVUcdDD2sijQx/g2frFZsJbw8rUmWc77R7iIE19seIn6TJFIh4MCTGS
-	z/D8hveygzw==
-X-Google-Smtp-Source: AGHT+IFY41tyGQRHzMHyy9KgcsRF5vwNocdWNy72eFAv2Q9wjjxRggFSPsKEudgOviU58D9n9GBy1Q==
-X-Received: by 2002:a05:6000:400a:b0:390:f6be:9a3d with SMTP id ffacd0b85a97d-390f6be9a90mr14711089f8f.35.1741106908171;
-        Tue, 04 Mar 2025 08:48:28 -0800 (PST)
-Received: from [192.168.0.35] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6a87sm18452789f8f.32.2025.03.04.08.48.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 08:48:27 -0800 (PST)
-Message-ID: <438498a4-10c9-451e-94e5-c8dea899beff@linaro.org>
-Date: Tue, 4 Mar 2025 16:48:26 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606E02517BB;
+	Tue,  4 Mar 2025 16:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741106943; cv=pass; b=F8mDs2z/uo0ChYHAJycPRyB9lxrCeuvLgl9dGdA6Gt7Gv5nQY7xipxMr6ESmrGTz2pJRiUXbuoSWYwpLg4/0elb1bpQHWUZKSuPg2YTJN0dHMDAia+b3fRCLQEZebKts1jR58EFd6wCWTdX5CH4dRMiaa8WgBO1d/Z1V3K3t5kI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741106943; c=relaxed/simple;
+	bh=4RAoUkuf7ewwJ8cnrWg8tsLrSLar35HtgkvQotfrXug=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=SiLvpzpdQCe4dkbz9vfDcMVUcSQlZdBAPOQ2E1qVHW85WsmQbWSVpZCD/obtP1EmK4nc1QzpqXizAN48oh5IFCua8+GATPaIXKuulglEkwLzEf1qlIQNxnkYzqdiWmA2vk4XssOh3q4HU0MYUV+xpnQklsVTM2synOiQn63tCsc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=aYEeSW6P; arc=pass smtp.client-ip=136.143.188.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741106922; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=oD6ujRjG+rsYxCx4iGEyaaiezw/7wmwGdhJZAMizG4U8lFLrUl+m4d/2FWA9Vk55Zzyp6IJzFNBWQLVHxw7S4+aR/s3c4BurtrA+YVdeI814VUvKQffCvVlHGvHNXGaTxsUS5PlPJqubP9dAi0UpLAiK+3QQFuW92qdOjwctNN4=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741106922; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=dwy5+ghU3OdxRxXJ5Gg2zsehsrGVRP88ZDUxKwxlNq8=; 
+	b=GotW3QTbO8u6iESn0fn7Mly94JXRKfTNeqUsQmApfpVfnvxgtNpeF77VZdJs4VAYGfd8jD5nCm+Lx0QLalU2bZNfL2rzWhuwmmE8ss2YFezIgMm7V5u2o3Xzl/XZslXWFRm4DCtKy9Wl5fXqrqLxihh476cy0NRTdnhO7STvhJE=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741106922;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=dwy5+ghU3OdxRxXJ5Gg2zsehsrGVRP88ZDUxKwxlNq8=;
+	b=aYEeSW6PsY8U0KJa4Sy+jfb6NwH6ByLrAY0Ioui7hBX6296opa/L2UGvo2IVT5el
+	gOObVd4rtiXEvHXe/5vt4ifnwSg8/nHE2KSyuzGdJY18S33/A5m/O9Zd2bDTV9N8QAk
+	GECH72e8TOvsIfEKhBa9HWkNqt6QYVvAZj2KpH6g=
+Received: by mx.zohomail.com with SMTPS id 1741106920056781.2730201045849;
+	Tue, 4 Mar 2025 08:48:40 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] media: dt-bindings: Document SC8280XP/SM8350 Venus
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Johan Hovold <johan+linaro@kernel.org>
-References: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
- <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org>
- <6f7fea59-310d-4a7e-94f7-2483363012ba@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <6f7fea59-310d-4a7e-94f7-2483363012ba@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: [PATCH v2] rust: irq: add support for request_irq()
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <87cyewhpxj.fsf@kernel.org>
+Date: Tue, 4 Mar 2025 13:48:30 -0300
+Cc: ojeda@kernel.org,
+ alex.gaynor@gmail.com,
+ boqun.feng@gmail.com,
+ gary@garyguo.net,
+ bjorn3_gh@protonmail.com,
+ benno.lossin@proton.me,
+ tmgross@umich.edu,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Alice Ryhl <aliceryhl@google.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <BE595E8E-CB77-4E8B-B6EF-215CCAF5580A@collabora.com>
+References: <u-vC1KbeOK3Fd2PClzinb8LmqS_dntOW-pOSmZIFWotCZeTOg30xR_GYUc4oReAKZeuuu7ZaXWzfeTkpGMlr0A==@protonmail.internalid>
+ <20250122163932.46697-1-daniel.almeida@collabora.com>
+ <87cyewhpxj.fsf@kernel.org>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-On 04/03/2025 14:00, Krzysztof Kozlowski wrote:
->> +
->> +        operating-points-v2 = <&venus_opp_table>;
->> +        iommus = <&apps_smmu 0x2100 0x400>;
->> +        memory-region = <&pil_video_mem>;
->> +
->> +        status = "disabled";
-> So it is the same...
-> 
-> Same comments apply, same review.
+Hi Andreas,
 
-Ah my mistake I didn't dive deep into much more than the 
-video-encoder/video-decoder feedback.
+I will address your other comments later this week, as I=E2=80=99m off =
+for a few days.
 
-I'll see if I can fix the rest up.
+> On 4 Mar 2025, at 10:43, Andreas Hindborg <a.hindborg@kernel.org> =
+wrote:
+>=20
+> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
+>=20
+>> Add support for registering IRQ handlers in Rust.
+>>=20
+>> IRQ handlers are extensively used in drivers when some peripheral =
+wants to
+>> obtain the CPU attention. Registering a handler will make the system =
+invoke the
+>> passed-in function whenever the chosen IRQ line is triggered.
+>>=20
+>> Both regular and threaded IRQ handlers are supported through a =
+Handler (or
+>> ThreadedHandler) trait that is meant to be implemented by a type =
+that:
+>>=20
+>> a) provides a function to be run by the system when the IRQ fires =
+and,
+>>=20
+>> b) holds the shared data (i.e.: `T`) between process and IRQ =
+contexts.
+>>=20
+>> The requirement that T is Sync derives from the fact that handlers =
+might run
+>> concurrently with other processes executing the same driver, creating =
+the
+>> potential for data races.
+>>=20
+>> Ideally, some interior mutability must be in place if T is to be =
+mutated. This
+>> should usually be done through the in-flight SpinLockIrq type.
+>>=20
+>> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+>> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+>> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+>=20
+> What is the base commit to apply this patch to? I am getting some
+> compiler errors when trying it out:
+>=20
+>   error[E0308]: mismatched types
+>     --> =
+/home/aeh/src/linux-rust/linux/rust/kernel/irq/request.rs:240:21
+>       |
+>   237 |                 bindings::request_irq(
+>       |                 --------------------- arguments to this =
+function are incorrect
+>   ...
+>   240 |                     flags.0,
+>       |                     ^^^^^^^ expected `usize`, found `u64`
+>       |
+>=20
+> [...]
 
----
-bod
+This patch needs a rebase. I=E2=80=99ve been waiting for Lyude & Boqun
+new SpinLockIrq series, which just came out last week.
+
+I=E2=80=99ll work on a v3 soon.
+
+
+
 
