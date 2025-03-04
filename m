@@ -1,85 +1,84 @@
-Return-Path: <linux-kernel+bounces-544753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9F27A4E4C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:03:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B16AEA4E503
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:08:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50E96885333
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:55:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD27619C13C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13AF22980AC;
-	Tue,  4 Mar 2025 15:39:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B7A325523C;
+	Tue,  4 Mar 2025 15:40:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j6B9ulxg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F8B5290BD0;
-	Tue,  4 Mar 2025 15:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F722298CDF;
+	Tue,  4 Mar 2025 15:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102744; cv=none; b=W2o66X9rdfXoPNxeQhC+te00w+kwKzZxk3/rc5o7M3AqU6MmAKXlYojRdA3FKF7jsE0hcylMAoBh2GKgIFGOOK6NiQgFg37kfH32st10AdQBp87+YBm3RPHpCNI1TWsQOvVbinoy8qrGEE3pnXfqcVbC9V8Fx61WRJVpetem/Uo=
+	t=1741102801; cv=none; b=cPDVuS7cbV4NoaGwz9wD5Yt+Nfpmnl4Q0jieH2RS9QaflyGHNO0LVlKmgPf7h7yKHXiZfhHvnvj2Hh2RMB605UqMoRO6Cet99X3BcSW/NYkQIQgs9RHXV0OqBdRCuqrUKvmGDGAwWTWmZ6qV/WGjfeFsD9anMRRldQgnTvs9+ac=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102744; c=relaxed/simple;
-	bh=6HgwrSjLCzomZbkJhXnmgrDy7Sm9jKUjliKEcXcaDyY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=E0wHaWlg9L3gGzxQry8qHBfWyZ5Ip3v/Mtz53uC7MTnB4UmI6bHYq15bLSgrLN7qqptQ7WJ9GtrwhJzzeynrLzXY7NTy93U7j6uSK1YYCImnsDWme7cNZWkB+A3gSUDz0O/QEiljwgzHBvGCQJmTY9OfyG5JI4AcFRk8WpEPJFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0796C4CEE7;
-	Tue,  4 Mar 2025 15:39:02 +0000 (UTC)
-Date: Tue, 4 Mar 2025 10:39:57 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Tang Yizhou <yizhou.tang@shopee.com>
-Cc: tj@kernel.org, jack@suse.cz, brauner@kernel.org, willy@infradead.org,
- akpm@linux-foundation.org, mhiramat@kernel.org, ast@kernel.org,
- linux-mm@kvack.org, linux-fsdevel@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/3] writeback: Let trace_balance_dirty_pages() take
- struct dtc as parameter
-Message-ID: <20250304103957.08c79da0@gandalf.local.home>
-In-Reply-To: <20250304110318.159567-2-yizhou.tang@shopee.com>
-References: <20250304110318.159567-1-yizhou.tang@shopee.com>
-	<20250304110318.159567-2-yizhou.tang@shopee.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741102801; c=relaxed/simple;
+	bh=0nzWHKcWuWbK8/ao8glPbcdrGPVX6FDyKhLlbVZ2Pnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CtGMapIVLiUypDwdGCSG1qHoZMquIFxb6UuRj4FhPZKSBHsuzrR3gsKGZqJemtgZNRaV7mm47ilDt/4D/IQItI9O1qb7LoWMQ///dv7O+SSwWZx4+JskZ4qnuyfiqTOUtBf+dCjVWsKZDjJg1TJT9xIjM/t6IJZU/7+ydVfymjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j6B9ulxg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BD23C4CEE5;
+	Tue,  4 Mar 2025 15:40:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741102801;
+	bh=0nzWHKcWuWbK8/ao8glPbcdrGPVX6FDyKhLlbVZ2Pnk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j6B9ulxgJQWvPf7X0QEbuP+/MVSMQqLYpCaGqMSWog+pCCVVZK2liddntsw/zR5TC
+	 98IkZurpy23tHavp0nT9SyAMWlzRopn5pN/ugjhD8pYRUde0Qq6Fs+ja4HR8pKsLlK
+	 1cNiNn+oZM9863H5afwSC02Q+2we2bA24fcjPXoy12InyazpZnkchZDRmmAu0slp5B
+	 lTQzY4h7n0vK0dLUhlqlFiUCtJZ+Vfb3hQaFeXNl7Awb/64eatix2woIrdtUoUzvNF
+	 x64wKLg8lsMwmxMX7iRRXAfmm2H4nQnJprfkmr1NTJJpUBzbFpxTqwr5IAOxyC9aJ2
+	 Ss9c46K9Jxl5w==
+Date: Tue, 4 Mar 2025 09:39:59 -0600
+From: Rob Herring <robh@kernel.org>
+To: Chintan Vankar <c-vankar@ti.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Peter Rosin <peda@axentia.se>, s-vadapalli@ti.com,
+	danishanwar@ti.com, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [RFC PATCH v2 1/2] devicetree: bindings: mux: reg-mux: Update
+ bindings for reg-mux for new property
+Message-ID: <20250304153959.GA2654372-robh@kernel.org>
+References: <20250304102306.2977836-1-c-vankar@ti.com>
+ <20250304102306.2977836-2-c-vankar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304102306.2977836-2-c-vankar@ti.com>
 
-On Tue,  4 Mar 2025 19:03:16 +0800
-Tang Yizhou <yizhou.tang@shopee.com> wrote:
+On Tue, Mar 04, 2025 at 03:53:05PM +0530, Chintan Vankar wrote:
+> DT-binding of reg-mux is defined in such a way that one need to provide
+> register offset and mask in a "mux-reg-masks" property and corresponding
+> register value in "idle-states" property. This constraint forces to define
+> these values in such a way that "mux-reg-masks" and "idle-states" must be
+> in sync with each other. This implementation would be more complex if
+> specific register or set of registers need to be configured which has
+> large memory space. Introduce a new property "mux-reg-masks-state" which
+> allow to specify offset, mask and value as a tuple in a single property.
 
-> @@ -664,16 +660,16 @@ TRACE_EVENT(balance_dirty_pages,
->  	),
->  
->  	TP_fast_assign(
-> -		unsigned long freerun = (thresh + bg_thresh) / 2;
-> +		unsigned long freerun = (dtc->thresh + dtc->bg_thresh) / 2;
->  		strscpy_pad(__entry->bdi, bdi_dev_name(wb->bdi), 32);
->  
->  		__entry->limit		= global_wb_domain.dirty_limit;
->  		__entry->setpoint	= (global_wb_domain.dirty_limit +
->  						freerun) / 2;
-> -		__entry->dirty		= dirty;
-> +		__entry->dirty		= dtc->dirty;
->  		__entry->bdi_setpoint	= __entry->setpoint *
-> -						bdi_thresh / (thresh + 1);
-> -		__entry->bdi_dirty	= bdi_dirty;
-> +						dtc->wb_thresh / (dtc->thresh + 1);
-> +		__entry->bdi_dirty	= dtc->wb_dirty;
->  		__entry->dirty_ratelimit = KBps(dirty_ratelimit);
->  		__entry->task_ratelimit	= KBps(task_ratelimit);
->  		__entry->dirtied	= dirtied;
+Maybe in hindsight that would have been better, but having 2 ways to 
+specify the same thing that we have to maintain forever is not an 
+improvement.
 
-I don't know how much of a fast path these tracepoints are in, but instead
-of doing the divisions above, why not just save the values in the ring
-buffer, and do the divisions in the TP_printk() section, which is done when
-the user reads it and not when the code is executing?
+No one is making you use this binding. If you have a large number of 
+muxes, then maybe you should use a specific binding.
 
--- Steve
+Rob
 
