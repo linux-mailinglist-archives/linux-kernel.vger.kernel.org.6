@@ -1,121 +1,253 @@
-Return-Path: <linux-kernel+bounces-544434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B01FDA4E11F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:37:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C510A4E139
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:39:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F3E119C08AE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:33:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80F1517C5A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26F08253F2F;
-	Tue,  4 Mar 2025 14:30:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61C1726A0B5;
+	Tue,  4 Mar 2025 14:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f54Samq2"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k8TV3Dx5"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80C2B253F1B;
-	Tue,  4 Mar 2025 14:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A691726AA99;
+	Tue,  4 Mar 2025 14:32:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098657; cv=none; b=nZ55Y2WLqXRucbGxg82dPeLShxct9o47Mxv7jhdQiU16+4Gga4135EIImth0LLnkN3zvJ6tZOZHSKZO+MA7WDUX53QHTN2YNdfjwkYVrbKpt0ZujJmuAvZvOcNVu0kA2l4v+3cj5kL0BfLuynDWn5yjTgmN6Rxi3gro8OuUit+U=
+	t=1741098757; cv=none; b=EdSf1Urwbu5PTcF5XRUQgFCjwzkG3MawluZFRqHrQATMGBe1uZK0nxd4NezQAmkcUPniU4wDBdQ7ovL3/kafpb4AtIkZPiTTh7kM6EiXwQ7f5EJZkBHR27H4axLeGeZx8nGdmDcHlQEHoXqI98cJ81tFt73HjPfYSlf+T+S0Uq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098657; c=relaxed/simple;
-	bh=+bcl3HGDoc9IqaZsMJSKegqvSclSq4gfCFg0kcJllNc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gaj1V4lhm2bIfJCbhq0x2tUsG6Bu3CW5kO5eHRfW/wV7PhE/yC3rD06iuIGTgmebjISi7yhyu4A87OgFs2jSCVZXrP9MgjpwtdHP18N7rQ5liQvbHH8mBLmHqsjenGwE3wCEoOgozHIIcRpd7rhJnmD6VSaVQwrSgM3q/qkGXag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f54Samq2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3C9DC4CEE5;
-	Tue,  4 Mar 2025 14:30:50 +0000 (UTC)
+	s=arc-20240116; t=1741098757; c=relaxed/simple;
+	bh=XokWXJgVsvFaOzJU4BQOTS4Hl1XUcN8dYUyAwCadPSM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=O0OfOj2Q5rBku6ALq4eNwYDgLR10rGHTgXA1dV2iug9ZH1xtimyfPFqEOVC9Gj/DJvX5tKaQfQqNGp69SVZYPEbFkmbWRUBp0vjXFoK2ITuAiLUOxwVFrEqbGcHhbKREeZk7uGJ1LIOGMuDcVXJmbsnpIdrYhq8t0GwNzLsfBNY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k8TV3Dx5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E9FFC4CEE5;
+	Tue,  4 Mar 2025 14:32:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741098657;
-	bh=+bcl3HGDoc9IqaZsMJSKegqvSclSq4gfCFg0kcJllNc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f54Samq2ENCyCzuTHGR/tYVZKiwx076XuyVyuDVLnKmBwmBZLrrFDqh/SJuc8H2A8
-	 QK/pOjMHQD2Zr1heHM8PR9WQZ9EqTc3k0MqkEQip4O0NsOspaS2Tn9LQvf1skBxKrN
-	 xLtT3Cn2+850TS7nTuTHGzQSRtU3CAqvIeCuNRcYiVNQbYsRIrOGi8IztoA9X0FxeJ
-	 JyWCMgeVgiQshwxCL02k7yH3iIhj9wr24Epn30wWdi02sU++HLb0uy1n5bZG+ArkTW
-	 a5Pkoyizp8l35EIyOFSmuLNWE16gROFxnX4oLq1YO0hUmND3VXceKOodcfD3Nkrk1R
-	 oRkGgycHf/kDQ==
-Date: Tue, 4 Mar 2025 15:30:48 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Alexandre Courbot <acourbot@nvidia.com>
-Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
-	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	a.hindborg@kernel.org, aliceryhl@google.com, tmgross@umich.edu,
-	mcgrof@kernel.org, russ.weight@linux.dev,
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org,
-	Nouveau <nouveau-bounces@lists.freedesktop.org>
-Subject: Re: [PATCH v4 5/6] gpu: nova-core: add initial driver stub
-Message-ID: <Z8cOmISkQNcFdcvm@cassiopeiae>
-References: <20250226175552.29381-1-dakr@kernel.org>
- <20250226175552.29381-6-dakr@kernel.org>
- <D87JQ69QA6F0.184YR2BTJB0IT@nvidia.com>
+	s=k20201202; t=1741098757;
+	bh=XokWXJgVsvFaOzJU4BQOTS4Hl1XUcN8dYUyAwCadPSM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=k8TV3Dx5qUQzv/8hcRE55wPsjfviBdZ1Tk724s7VRwqZwAEqFtoOgBcVtfSqb733M
+	 xPDFtFMlYh1X4l/6yhxoakWr/tL2ZSx4iVcGbKzgB+B9KLfhrZMjuA1x/XX52Yo1nN
+	 7/mYTIxbpt+2oBEv9Ku19URj2yyl8hgWHeNRNaM4DkdgFcSz398vL8hRaQgVkiMKCr
+	 XPNmimF6s/sq9B1wKQHsPr41d8I38603c1edvAdYBL0110fFCWVyjBL9ANo4fr6yef
+	 f67gwJk6qmPDd147/UlM4BTG6K7NuaA3PZqzCgV65bPrue+6NT5zOhD7ATjgCKKyfy
+	 +HLnF8ZkGp9hw==
+From: Philipp Stanner <phasta@kernel.org>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Philipp Stanner <phasta@kernel.org>,
+	Bingbu Cao <bingbu.cao@linux.intel.com>
+Subject: [PATCH] PCI: Check BAR index for validity
+Date: Tue,  4 Mar 2025 15:31:13 +0100
+Message-ID: <20250304143112.104190-2-phasta@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <D87JQ69QA6F0.184YR2BTJB0IT@nvidia.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 11:19:49PM +0900, Alexandre Courbot wrote:
-> On Thu Feb 27, 2025 at 2:55 AM JST, Danilo Krummrich wrote:
-> 
-> > +// TODO replace with something like derive(FromPrimitive)
-> > +impl TryFrom<u32> for Chipset {
-> > +    type Error = kernel::error::Error;
-> > +
-> > +    fn try_from(value: u32) -> Result<Self, Self::Error> {
-> > +        match value {
-> > +            0x162 => Ok(Chipset::TU102),
-> > +            0x164 => Ok(Chipset::TU104),
-> > +            0x166 => Ok(Chipset::TU106),
-> > +            0x167 => Ok(Chipset::TU117),
-> > +            0x168 => Ok(Chipset::TU116),
-> > +            0x172 => Ok(Chipset::GA102),
-> > +            0x173 => Ok(Chipset::GA103),
-> > +            0x174 => Ok(Chipset::GA104),
-> > +            0x176 => Ok(Chipset::GA106),
-> > +            0x177 => Ok(Chipset::GA107),
-> > +            0x192 => Ok(Chipset::AD102),
-> > +            0x193 => Ok(Chipset::AD103),
-> > +            0x194 => Ok(Chipset::AD104),
-> > +            0x196 => Ok(Chipset::AD106),
-> > +            0x197 => Ok(Chipset::AD107),
-> > +            _ => Err(ENODEV),
-> > +        }
-> > +    }
-> > +}
-> 
-> I know this is probably temporary anyway, but since there is a macro now you can simplify this implementation by making part of it:
-> 
-> 		impl TryFrom<u32> for Chipset {
-> 				type Error = kernel::error::Error;
-> 
-> 				fn try_from(value: u32) -> Result<Self, Self::Error> {
-> 						match value {
-> 								$( $value => Ok(Chipset::$variant), )*
-> 								_ => Err(ENODEV),
-> 						}
-> 				}
-> 		}
-> 
+Many functions in PCI use accessor macros such as pci_resource_len(),
+which take a BAR index. That index, however, is never checked for
+validity, potentially resulting in undefined behavior by overflowing the
+array pci_dev.resource in the macro pci_resource_n().
 
-Sure, that's a good suggestion, will do.
+Since many users of those macros directly assign the accessed value to
+an unsigned integer, the macros cannot be changed easily anymore to
+return -EINVAL for invalid indexes. Consequently, the problem has to be
+mitigated in higher layers.
 
-With that changed, may I add your RB? I'd like to land this series in the next
-merge window.
+Add pci_bar_index_valid(). Use it where appropriate.
+
+Reported-by: Bingbu Cao <bingbu.cao@linux.intel.com>
+Closes: https://lore.kernel.org/all/adb53b1f-29e1-3d14-0e61-351fd2d3ff0d@linux.intel.com/
+Signed-off-by: Philipp Stanner <phasta@kernel.org>
+---
+ drivers/pci/devres.c | 16 ++++++++++++++--
+ drivers/pci/iomap.c  | 30 +++++++++++++++++++++---------
+ drivers/pci/pci.c    |  6 ++++++
+ drivers/pci/pci.h    |  8 ++++++++
+ 4 files changed, 49 insertions(+), 11 deletions(-)
+
+diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+index 3431a7df3e0d..d2c09589c537 100644
+--- a/drivers/pci/devres.c
++++ b/drivers/pci/devres.c
+@@ -577,7 +577,7 @@ static int pcim_add_mapping_to_legacy_table(struct pci_dev *pdev,
+ {
+ 	void __iomem **legacy_iomap_table;
+ 
+-	if (bar >= PCI_STD_NUM_BARS)
++	if (!pci_bar_index_is_valid(bar))
+ 		return -EINVAL;
+ 
+ 	legacy_iomap_table = (void __iomem **)pcim_iomap_table(pdev);
+@@ -622,7 +622,7 @@ static void pcim_remove_bar_from_legacy_table(struct pci_dev *pdev, int bar)
+ {
+ 	void __iomem **legacy_iomap_table;
+ 
+-	if (bar >= PCI_STD_NUM_BARS)
++	if (!pci_bar_index_is_valid(bar))
+ 		return;
+ 
+ 	legacy_iomap_table = (void __iomem **)pcim_iomap_table(pdev);
+@@ -655,6 +655,9 @@ void __iomem *pcim_iomap(struct pci_dev *pdev, int bar, unsigned long maxlen)
+ 	void __iomem *mapping;
+ 	struct pcim_addr_devres *res;
+ 
++	if (!pci_bar_index_is_valid(bar))
++		return NULL;
++
+ 	res = pcim_addr_devres_alloc(pdev);
+ 	if (!res)
+ 		return NULL;
+@@ -722,6 +725,9 @@ void __iomem *pcim_iomap_region(struct pci_dev *pdev, int bar,
+ 	int ret;
+ 	struct pcim_addr_devres *res;
+ 
++	if (!pci_bar_index_is_valid(bar))
++		return IOMEM_ERR_PTR(-EINVAL);
++
+ 	res = pcim_addr_devres_alloc(pdev);
+ 	if (!res)
+ 		return IOMEM_ERR_PTR(-ENOMEM);
+@@ -823,6 +829,9 @@ static int _pcim_request_region(struct pci_dev *pdev, int bar, const char *name,
+ 	int ret;
+ 	struct pcim_addr_devres *res;
+ 
++	if (!pci_bar_index_is_valid(bar))
++		return -EINVAL;
++
+ 	res = pcim_addr_devres_alloc(pdev);
+ 	if (!res)
+ 		return -ENOMEM;
+@@ -991,6 +1000,9 @@ void __iomem *pcim_iomap_range(struct pci_dev *pdev, int bar,
+ 	void __iomem *mapping;
+ 	struct pcim_addr_devres *res;
+ 
++	if (!pci_bar_index_is_valid(bar))
++		return IOMEM_ERR_PTR(-EINVAL);
++
+ 	res = pcim_addr_devres_alloc(pdev);
+ 	if (!res)
+ 		return IOMEM_ERR_PTR(-ENOMEM);
+diff --git a/drivers/pci/iomap.c b/drivers/pci/iomap.c
+index 9fb7cacc15cd..0cab82cbcc99 100644
+--- a/drivers/pci/iomap.c
++++ b/drivers/pci/iomap.c
+@@ -9,6 +9,8 @@
+ 
+ #include <linux/export.h>
+ 
++#include "pci.h" /* for pci_bar_index_is_valid() */
++
+ /**
+  * pci_iomap_range - create a virtual mapping cookie for a PCI BAR
+  * @dev: PCI device that owns the BAR
+@@ -33,12 +35,18 @@ void __iomem *pci_iomap_range(struct pci_dev *dev,
+ 			      unsigned long offset,
+ 			      unsigned long maxlen)
+ {
+-	resource_size_t start = pci_resource_start(dev, bar);
+-	resource_size_t len = pci_resource_len(dev, bar);
+-	unsigned long flags = pci_resource_flags(dev, bar);
++	resource_size_t start, len;
++	unsigned long flags;
+ 
++	if (!pci_bar_index_is_valid(bar))
++		return NULL;
+ 	if (len <= offset || !start)
+ 		return NULL;
++
++	start = pci_resource_start(dev, bar);
++	len = pci_resource_len(dev, bar);
++	flags = pci_resource_flags(dev, bar);
++
+ 	len -= offset;
+ 	start += offset;
+ 	if (maxlen && len > maxlen)
+@@ -77,17 +85,21 @@ void __iomem *pci_iomap_wc_range(struct pci_dev *dev,
+ 				 unsigned long offset,
+ 				 unsigned long maxlen)
+ {
+-	resource_size_t start = pci_resource_start(dev, bar);
+-	resource_size_t len = pci_resource_len(dev, bar);
+-	unsigned long flags = pci_resource_flags(dev, bar);
+-
++	resource_size_t start, len;
++	unsigned long flags;
+ 
+-	if (flags & IORESOURCE_IO)
++	if (!pci_bar_index_is_valid(bar))
+ 		return NULL;
+-
+ 	if (len <= offset || !start)
+ 		return NULL;
+ 
++	start = pci_resource_start(dev, bar);
++	len = pci_resource_len(dev, bar);
++	flags = pci_resource_flags(dev, bar);
++
++	if (flags & IORESOURCE_IO)
++		return NULL;
++
+ 	len -= offset;
+ 	start += offset;
+ 	if (maxlen && len > maxlen)
+diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+index 869d204a70a3..da82d734d09c 100644
+--- a/drivers/pci/pci.c
++++ b/drivers/pci/pci.c
+@@ -3921,6 +3921,9 @@ EXPORT_SYMBOL(pci_enable_atomic_ops_to_root);
+  */
+ void pci_release_region(struct pci_dev *pdev, int bar)
+ {
++	if (!pci_bar_index_is_valid(bar))
++		return;
++
+ 	/*
+ 	 * This is done for backwards compatibility, because the old PCI devres
+ 	 * API had a mode in which the function became managed if it had been
+@@ -3965,6 +3968,9 @@ EXPORT_SYMBOL(pci_release_region);
+ static int __pci_request_region(struct pci_dev *pdev, int bar,
+ 				const char *name, int exclusive)
+ {
++	if (!pci_bar_index_is_valid(bar))
++		return -EINVAL;
++
+ 	if (pci_is_managed(pdev)) {
+ 		if (exclusive == IORESOURCE_EXCLUSIVE)
+ 			return pcim_request_region_exclusive(pdev, bar, name);
+diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+index 01e51db8d285..ae8b2f5c118b 100644
+--- a/drivers/pci/pci.h
++++ b/drivers/pci/pci.h
+@@ -167,6 +167,14 @@ static inline void pci_wakeup_event(struct pci_dev *dev)
+ 	pm_wakeup_event(&dev->dev, 100);
+ }
+ 
++static inline bool pci_bar_index_is_valid(int bar)
++{
++	if (bar < 0 || bar >= PCI_NUM_RESOURCES)
++		return false;
++
++	return true;
++}
++
+ static inline bool pci_has_subordinate(struct pci_dev *pci_dev)
+ {
+ 	return !!(pci_dev->subordinate);
+-- 
+2.48.1
+
 
