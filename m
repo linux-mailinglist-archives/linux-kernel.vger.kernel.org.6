@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-545449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545450-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E307A4ED4A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:27:03 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0D08A4ED4E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:28:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E94E1890D1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:27:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A14718908B3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:28:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57EA025D215;
-	Tue,  4 Mar 2025 19:26:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DAC724C08E;
+	Tue,  4 Mar 2025 19:28:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TDkEp5qA"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K/d7Upz3"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EAEE1D7E35
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CCA625523D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:28:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741116416; cv=none; b=Qf1f8pS2JgOf0OFs3eN48kaoXo9oUQlyK2jp9ucc00vt/kf4BdTpmUOhUgbXx5aN9wTWcLKYMWB8iSrGqzFDl9j3l5mxjCMzOoN6WLDYdkNkurUq6y7Lx6edSQ01VJ2cxHkj7v98OPkVNrqeF4YpvfNSl0OeqijR4zuV+1o227o=
+	t=1741116489; cv=none; b=KQxO8y+5Bj+/xoJOTYP89yRBgbIeAGLkYYptiYudc9j3yaZ9hmW5p8/fz7f2Ry07Dr6OJpcPtM/72gcwtnyaORwre27gwFwY3zOOy7+E2mORERK/tRWrw0U+Y8grpa1Adkemwdqcb/qf0e1o1eFOLlOQuFoFkN8sf2WN4TYjDFI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741116416; c=relaxed/simple;
-	bh=DAdX4OpccQ4N/WOgqzCYspVQp1sfDjoox8PLWuX0yz4=;
+	s=arc-20240116; t=1741116489; c=relaxed/simple;
+	bh=R9opTtkqiR3EVB5DiuJYrC8B6crJ7i7OxRy9XNgNAB8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=flRmWQ+eNyBP9UCDhA94uXwlwkOauN1xkgIdJZe5HozS5CuFTRIUNlFNOGt8vL/QwUgLMMxfbopj8KrV2d0jmI2+hNAHBq+evr7hW9vrwdo5F7girgm9QL6hIFV8VCrOc+u+fjFGhI2YU48AxBL9PdM3pGvjJG/p298Qjnlrfzc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TDkEp5qA; arc=none smtp.client-ip=209.85.214.177
+	 MIME-Version; b=Km22ViYj/eLugBLBNXx+o+8wvjr8wNm2oS7adeXn5FlczxopH7ov08QbxC7qyCbhuBFXccah+sGlaBus+RBYNU3UWnFNnYiIh65iCj2+HduwJc/7+VZdi2QgLKWudeOGLBtLx7sBt8k5VXK/RWy9pnmZMd7WFEkgtacJ9cXOJUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K/d7Upz3; arc=none smtp.client-ip=209.85.214.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2238266483dso9327135ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:26:55 -0800 (PST)
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-2232aead21aso15999375ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:28:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741116414; x=1741721214; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741116487; x=1741721287; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0a3i+UFmRGSl/m+YRIPURF4olKZ+jWt/8woe5airEEw=;
-        b=TDkEp5qARYBm1F2GzXRC0kXZR2uUmhIu7/oCWSbHE+Ipp93g3gxZmphTmjMOkglinw
-         2ljaZ0JHqAWd992JgT8vtM0y6RhjpJFlX97jmBRU/nXwtyapzK4x6TZKiSbvDFO06LFF
-         7jv5Bsf0w7zNJWn2WPNGFE9TCNs/OD+YiS6djEbaNbxOL2zstkquCAcE+o6itamLA0Jy
-         SMjeQPGMKaSBiR7d5gz2xshcePDz28+kF7+3sK88xmsh1134t0xsfKb4WlWNTfm8EpZ5
-         jEml6quOCRsTQGl4BNfu23OBUXVPS09Ol09zH2+RgaO6C23/0alX2QWdxi3Jd25Evmh+
-         Ymmw==
+        bh=epmOVtfS9+Yo2ZaSmvnox3J1qzYW8Hx3jkXGEoYH3uA=;
+        b=K/d7Upz3A8fA4nJHoSzfZNAARmoNXH5f3vCkMaEL4UJf98B36zhEvX8/gEeyhBtGQq
+         /uXyfcpvlyotiObErqQXjY+CB4rlVrzxa+FCd+ZMT7jXd2PYiE43y3TLBp1k489rqge5
+         v03wxR0cJrpbbPhjN1H15MgNoZz37J6zQlOr/GKjVmcOy13xT2e8rqt3kpt2YQiQBIdn
+         hDXGcb85hj/MIL3Mo4i7NZCIrGerss8nKovPMUsZFoEGO+RQppHe9HfHwnN56jvyQSVm
+         h/+PhEAawoer6PwRg5/lfoSY2u8c2xMXh8T63dwkATNo1aNMwp/bO9BI0fGY2RPWo/nF
+         fJ/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741116414; x=1741721214;
+        d=1e100.net; s=20230601; t=1741116487; x=1741721287;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0a3i+UFmRGSl/m+YRIPURF4olKZ+jWt/8woe5airEEw=;
-        b=PFfPK+oUV4wr9FMtWDOYuXmajxwYvJ44ysCRxnbPweALgXi9L/QsWJ4Qnkjo1DzaUs
-         pjtb2C0YgbJ+2cbo24f2YbdTk9feSjLh5J0mVRf7hhciePoEDeuXiiDatnRTuMWTF7us
-         wiMshOWA1DGPZZDwghatZ/x8zusgdTr3T9Tsc5RUJTpTqk47rbiYqqk0TQt01WqND+Gc
-         924Yg9jHSxhjOSTNhmwm+33LzMGN8dtMGuSuzW7PCa9A9AUUhUGPzp+GH0AvpCx/MLsn
-         rmr1WRVOLjcJnClJmqV0zd+lZZlIp1/wG+njafVtfQoLSOVNzVT2zAVgDWmf7A1To+F3
-         GmWg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOXwXvkmsy5xdszkcynq+lViuFk7EVAXJZFCgTHfgM7/y7IZFqDmdX6KlscWq1W3fPn7OC3ZqxNO6ljTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRpwH2DgsxQY2/em8f/7/deZ0FU50618sjRYHnJBzGOy1lM+v9
-	hOGFYH8Ll/R5bBQFQfoOmLwMubmuvNa82z09YcqRRY93IvSiwirl
-X-Gm-Gg: ASbGncueMQLvo73f6Hdze2dHEHVkiaTE1jY8xePpAFyopq6qVV+Qxad4GMPiwLTsz8i
-	WDP+YsU5ZEI/Nh4TMS1GHPztPxe2UQ8JVhwQ00zn5k8hwYrpQBm/4jAuQbID6X9HgyxZdgHQaRZ
-	di1CyNGcSRwE83VtqqJ1lTgZ2RO0AtEI8qn7HVF8c1KcEi7c2iUpTM2X0AI9c5LEofIjowAhazf
-	LKW1Ft1UtpA+PyDg/0FtNtuPFlntYCVXcXToKpoIqVkPHbDlRR3gr0TqpqQioixtj5GB5cAygEY
-	c9wQxLzsAv5z0qQdsSOTkVVSgeJbtvVFQAbSE/gXfcX4qHTr4aziV7LFdA==
-X-Google-Smtp-Source: AGHT+IHsR5Gyj3IQ6WCJBUcHLaPvJEGRp0u+lrdzKgsHJz4jWIFjmVkczlI+pasHGBKFEHhUmAp9cQ==
-X-Received: by 2002:a05:6a00:21cc:b0:730:915c:b77 with SMTP id d2e1a72fcca58-73682b5b913mr54849b3a.1.1741116414537;
-        Tue, 04 Mar 2025 11:26:54 -0800 (PST)
+        bh=epmOVtfS9+Yo2ZaSmvnox3J1qzYW8Hx3jkXGEoYH3uA=;
+        b=q3XLTs6U26iCigRMU16l+YoShvrqh3ZTLhRxnufyU6sb4/9ZWx41N0WdxIMbHWY7H5
+         kBuGGF+9z5Ttu1i/HZBZODq2+Ck7DIL0PyK4ccRyWmR2lZ1R45OqOengX/rTbgXhRGhR
+         PYHf/f/v5rGfsvl0Equ5wQDpvS5jvFwStDXeRshOkt8/ibazze3PU777Ua955n68edhO
+         crERnDcw6I/qKs/xZy4FSnlB4g0egawVfKYJbLoD9HqvfebYX5cxNS+CoirSCttNrByX
+         0tKQUemgo6wY7eXLWp6SoxXjN8v2nVZagHNQqJW0w3WMK8mf1N9ptXBOXHEecbUoKM/x
+         EJ2w==
+X-Forwarded-Encrypted: i=1; AJvYcCXnKLG0yY8mqkwkCnXTIZwzEhx1HGfDtuG0y8GSrSrWxyPor7hhxFgFqWj6qSrVWm9+qosA4+SfpTFXNsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyftqOATPwY8dQ7cZqyg+OCmwy1RWb5UksUfoAE4IcYkehu0eb
+	auHACw8S9Z7ecZjEyGRHn86NlqHSMJp3XrAsAT9OKZskaqgrZD0b
+X-Gm-Gg: ASbGncvZy7hjb3pMS7oNHKLv+Wl5RniSHCCYkpLk/D6LgXnh2CE24AwjK+WTef7SRRC
+	XFQtG/VI4TUPoQqTZF5m5qxInQL3w+Sy+FVxQwYiGYh5Ff04BwiLQ0l+qTdOdtaTiA2t3G1VyHQ
+	g2pe6ddmen3VrZl+vF78ObaBXAmqGOzBdoPfMUD7e+Ardth19B5hLvG9EIiSwtyarH0bYZM+uD1
+	eAkaD2glfJTq0YfilqufjLQTE/AIMCs+bf4P63aiJ1OK3pQ3w1gmFQ/1RsUY9AcOXq9ZRNA8Vqy
+	jvlzGCQe/ZulnpJPYmd0i3RtgZI1AaZTQayHuYK5tgfEllrSc2WoxOXrfg==
+X-Google-Smtp-Source: AGHT+IEdX0BHGO1aNI4wvVQv2mPr+fwnaDksYZRGrdWeJn/GT7+TqDieWrNAWkuFEHO7F4AFLt2RNw==
+X-Received: by 2002:a05:6a00:244f:b0:72a:a7a4:99ca with SMTP id d2e1a72fcca58-73682b4e2a4mr73072b3a.2.1741116486856;
+        Tue, 04 Mar 2025 11:28:06 -0800 (PST)
 Received: from localhost.localdomain ([2802:8012:1f:3200:f1d1:c186:ba5b:8f06])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734d444a9fasm9341920b3a.60.2025.03.04.11.26.51
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734d444a9fasm9341920b3a.60.2025.03.04.11.28.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 11:26:54 -0800 (PST)
+        Tue, 04 Mar 2025 11:28:06 -0800 (PST)
 From: Gaston Gonzalez <gascoar@gmail.com>
 To: linux-staging@lists.linux.dev
 Cc: dpenkler@gmail.com,
@@ -81,9 +81,9 @@ Cc: dpenkler@gmail.com,
 	jiapeng.chong@linux.alibaba.com,
 	linux-kernel@vger.kernel.org,
 	Gaston Gonzalez <gascoar@gmail.com>
-Subject: [PATCH 2/4] staging: gpib: fix kernel-doc section for function usb_gpib_interface_clear()
-Date: Tue,  4 Mar 2025 16:25:39 -0300
-Message-ID: <20250304192603.40565-5-gascoar@gmail.com>
+Subject: [PATCH 3/4] staging: gpib: fix kernel-doc section for usb_gpib_line_status() function
+Date: Tue,  4 Mar 2025 16:25:41 -0300
+Message-ID: <20250304192603.40565-7-gascoar@gmail.com>
 X-Mailer: git-send-email 2.49.0.rc0
 In-Reply-To: <20250304192603.40565-1-gascoar@gmail.com>
 References: <20250304192603.40565-1-gascoar@gmail.com>
@@ -95,32 +95,67 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add '@' character in kernel-doc comment in order 'assert' to be picked as
-argument by the kernel-doc compiler.
+The function name field in the kernel-doc section for the
+usb_gpib_line_status() is defined as 'line_status'. In addition, after
+the kernel-doc section, there are three macro definition instead of the
+function definition.
 
-This change fix the following warning:
+These issues trigger the warning:
 
-warning: Function parameter or struct member 'assert' not described in
-'usb_gpib_interface_clear'
+warning: expecting prototype for line_status(). Prototype was for WQT()
+instead.
+
+Fix the warning by renaming the function in the kernel-doc section and
+by moving the macros at the beginning of the file with the rest of
+macros definition.
 
 Signed-off-by: Gaston Gonzalez <gascoar@gmail.com>
 ---
- drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-index eeabbdb39057..090857824d07 100644
+index 090857824d07..f7dd0809b06c 100644
 --- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
 +++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-@@ -621,7 +621,7 @@ static int usb_gpib_go_to_standby(gpib_board_t *board)
-  * usb_gpib_interface_clear() - Assert or de-assert IFC
+@@ -78,6 +78,10 @@ module_param(debug, int, 0644);
+ 			dev_dbg(board->gpib_dev, format, ## __VA_ARGS__); } \
+ 	while (0)
+ 
++#define WQT wait_queue_entry_t
++#define WQH head
++#define WQE entry
++
+ /* standard and extended command sets of the usb-gpib adapter */
+ 
+ #define USB_GPIB_ON	 "\nIB\n"
+@@ -131,6 +135,7 @@ module_param(debug, int, 0644);
+ 
+ #define INBUF_SIZE 128
+ 
++
+ struct char_buf {		/* used by one_char() routine */
+ 	char *inbuf;
+ 	int last;
+@@ -644,17 +649,12 @@ static void usb_gpib_interface_clear(gpib_board_t *board, int assert)
+ }
+ 
+ /**
+- * line_status() - Read the status of the bus lines.
++ * usb_gpib_line_status() - Read the status of the bus lines.
   *
-  * @board:    the gpib_board data area for this gpib interface
-- * assert:    1: assert IFC;  0: de-assert IFC
-+ * @assert:   1: assert IFC;  0: de-assert IFC
+  *  @board:    the gpib_board data area for this gpib interface
   *
-  *    Currently on the assert request we issue the lpvo IBZ
-  *    command that cycles IFC low for 100 usec, then we ignore
+  *    We can read all lines.
+  */
+-
+-#define WQT wait_queue_entry_t
+-#define WQH head
+-#define WQE entry
+-
+ static int usb_gpib_line_status(const gpib_board_t *board)
+ {
+ 	int buffer;
 -- 
 2.49.0.rc0
 
