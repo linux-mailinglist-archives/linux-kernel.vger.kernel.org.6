@@ -1,215 +1,244 @@
-Return-Path: <linux-kernel+bounces-545525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31061A4EE2D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:16:53 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C86F7A4EE34
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:17:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F9563A9444
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:16:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7F893AAF01
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:17:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AAF01FA178;
-	Tue,  4 Mar 2025 20:16:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AD9265600;
+	Tue,  4 Mar 2025 20:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="hzZRunzN"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NNECqxIP"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1BE32E3377;
-	Tue,  4 Mar 2025 20:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741119405; cv=fail; b=XCMPLGjkjJw7NBgymhA1biC/lcRE2aYOx1o/UGC+eIKmUV9PHENQ5f6Am62sg+3Oc60j+VoFscMqhWhPwRV+1GJLiHKa2VO5eF9C8yQyTK9MGjvy1mbR1tgws4cYDusev3+SScDnFy6Z+j32TDz7K2mr0NDXvC2ZasKNbZg6i6Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741119405; c=relaxed/simple;
-	bh=mff4U/gP7vwdnRv5CO+WfRRfq/VSMOBGPY1a7UgD+Zk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=BGmj5VpCOLHYoTF/zpUELuAwfImZBwen3JW7etwpbQl+Y1iSOZmTa80I1RvOmwPhPgD7fOLcJnVDPh55NdWgpuSgQ5U52S3EjhVZBme0rcpSvK6Cw9rcZB4dUf/La7/dAUMVdmuxnWcsGwJyWqbszH4geMf005sdpQcCX7Y7N+Y=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=hzZRunzN; arc=fail smtp.client-ip=40.107.237.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X6P5+YheZl1+/eephj7sYQ/5O6RPTzj/2RWwcmEg4B65R1tLvTGwXMeW1wI2/GO+ti7gjEHs0og1MPUlmCEpnrgHIoKl+viaZkPQPgjFvDVbnzQFvul0BUlRWXZCysMAZnKUdggdc6Hpa6N222dS374qTruM5IxwcoarbtEhGOlQYF2OAZmbMAq2ZizeG1B8UGVtpsVaJtdsIjAKP9JHbXg5Rq+HiIZ9l6UIBJKlhZkAvyv9ekPZwpJb9C5HPUaIBY9RQ991r8F9dZNMQPZlJrMfiPCicVFORFa4aQDETm5167cvemLs9TfYCGjNWs0QqkKwtuCOUHn5No5A5pxHyw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hjmA1PidkiQg7rr9vgM5kU2MJV3i4ceJAQ2ElpKbIwc=;
- b=okTYQIPobeGm8NBr89xluX7Qvl9rKnrvTPfOBdX+2UwaZmC2n8klOvXDDxjq5BWfoBgCYxwFYTuriAu916PaFYGEGoF7kWZui1AvTjuWD2cLvG26D/0eHX0/9Hn7P1xF41ECA6KZ8074JSSWX36brDX+++QR8MTid/bkxLdyXKbMiVn9PcpbaCyrPUnlQXVjUkGguqOcbuaJeCTSKQq94/rU5aXyXtX1TM3tSdhDu/cqunweRBHD/t0bbim+jHGJsXwPUHxaop8v0uqerndAeNLOAaCKrNnUJiwr1I9gaRS4pr4eIawq9bpiOWtIvhDTUXCBeouX26Mqf0v2tbtFWw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hjmA1PidkiQg7rr9vgM5kU2MJV3i4ceJAQ2ElpKbIwc=;
- b=hzZRunzNE/WTw2waRpEf7nDPF/tiNa4GaN4niK0RKjTonKi5eN4Hxfm8QIoE3+tbI6ttQb2iCv7HwWP6G+nA2+U/gq3kaNT+VbHSnhz9k/2diiUHLG72BtB1dO624ktEsGH0SNNAE3e2G4wV9nmZy/LbWqLD4mLyDP723alLmO0=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com (2603:10b6:303:220::6)
- by DM4PR12MB6087.namprd12.prod.outlook.com (2603:10b6:8:b1::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
- 2025 20:16:39 +0000
-Received: from MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3]) by MW4PR12MB7142.namprd12.prod.outlook.com
- ([fe80::e5b2:cd7c:ba7d:4be3%4]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
- 20:16:37 +0000
-Message-ID: <336ccf36-c0ea-4633-aa26-b683b294f893@amd.com>
-Date: Tue, 4 Mar 2025 12:16:37 -0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/2] acpi/ghes, cxl/pci: Process CXL CPER Protocol
- Errors
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-cxl@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
- Alison Schofield <alison.schofield@intel.com>,
- Vishal Verma <vishal.l.verma@intel.com>, Ira Weiny <ira.weiny@intel.com>,
- Dan Williams <dan.j.williams@intel.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>,
- Terry Bowman <terry.bowman@amd.com>
-References: <20250226221157.149406-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250226221157.149406-2-Smita.KoralahalliChannabasappa@amd.com>
- <20250304195731.GA1960804@yaz-khff2.amd.com>
-Content-Language: en-US
-From: "Koralahalli Channabasappa, Smita"
- <Smita.KoralahalliChannabasappa@amd.com>
-In-Reply-To: <20250304195731.GA1960804@yaz-khff2.amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PH8PR21CA0013.namprd21.prod.outlook.com
- (2603:10b6:510:2ce::22) To MW4PR12MB7142.namprd12.prod.outlook.com
- (2603:10b6:303:220::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9602E1FA262;
+	Tue,  4 Mar 2025 20:16:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741119416; cv=none; b=PqFy4AnBgjmlMIR3ld8sDCq5w4f17kNFlQD8V1d7DAtbICU62q4F3amUrPV96kbpF0m/uuJca++92oZsrDB5ntXDW0gaHhOTDBohxZ97X3XC/fXQJDVG2VSL/vBoUMzkQeKlAqDCnThv5id0MBkFzZrhRHVtMQFesdOmhOz83x8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741119416; c=relaxed/simple;
+	bh=+m3MSI+Wse2/nqsFrLOXWe0hhVL+hryAhIW9WJvUc8E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QkmRG3eTZPv1RsHZFOerB9XZVpovJ/x2IUlH8PGUxNFXEIOPVZP9jl3ZCiyMJIpNe+R0NjXQk8dhzFIj1J+9z0pneZKsIb+aHXqxmtqdC04ETg0w0ePJL7a/HB8PwbijSEVFCLpDy6CVChuZJWEdgA2OZfnHA/DFRX1qNu5eyWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NNECqxIP; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741119411;
+	bh=+m3MSI+Wse2/nqsFrLOXWe0hhVL+hryAhIW9WJvUc8E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NNECqxIPqgDEtxC9WNQhyIy2/0BlsbnkQQQ7J3VmPwFXLmxwhcJ+X7zkHWp8SAX7B
+	 80IHb7DobMVk8upoZzv8kZ7Ufys9Hv8cVcU53xTnQY9nprqmn2JHwMQ6VhhJ3NVW5i
+	 0MuVOIz/bQq7nkZfbkrgbWHLZpEtFgKpeYIsMacQFP5CtPp9LtjWqlrdteyopxakxY
+	 cSrHMsNJBsLul3xcQbe8hvEezMHOGJjnWaW18al4Et6xnkoxAIeB3wiAfVgWHkAIK7
+	 SFH9XJHNAiatitTFKSLxGGbiHgdue62MXrDC8rFAOELpfqAHr+gPith0ORbN+P2A2d
+	 418DLNuKI5Leg==
+Received: from notapiano (unknown [IPv6:2804:14c:1a9:53ee::1001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id B51B417E0630;
+	Tue,  4 Mar 2025 21:16:47 +0100 (CET)
+Date: Tue, 4 Mar 2025 17:16:45 -0300
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Trevor Wu <trevor.wu@mediatek.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	kernel@collabora.com, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Zoran Zhan <zoran.zhan@mediatek.com>
+Subject: Re: [PATCH 3/3] ASoC: mediatek: mt8188-mt6359: Add headset jack
+ detect support
+Message-ID: <fc9863ef-8781-46a0-ba8c-6dabd9fb6cdf@notapiano>
+References: <20250214-mt8188-accdet-v1-0-6bbd5483855b@collabora.com>
+ <20250214-mt8188-accdet-v1-3-6bbd5483855b@collabora.com>
+ <d976b28d-f44f-4d51-8b61-4c046c571412@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MW4PR12MB7142:EE_|DM4PR12MB6087:EE_
-X-MS-Office365-Filtering-Correlation-Id: 605e8890-9267-4356-f422-08dd5b5977c9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZTRCQ3VLWDJ1dU1KNG9ZcHI5L1ZaVTdYTEZtSUVUbm1oWkVwZUFQTFBZQXFG?=
- =?utf-8?B?cU1IdVRaSXJ2ZmhBQ3NnYUhSelhPMWI0Y0FrNDNHZXdZNEVLWk9PQ01ZcjQ0?=
- =?utf-8?B?WGlORnc0Vm1aVG5xSGxROXk3ZGdHUFJYV1F5RGZWSlRZUGpycGlHbWJFdUk0?=
- =?utf-8?B?U1VRMFBPZU5ZWUQ0RklNTzRsN1NPRkMvdWl2a2FoVFFXTTh5WUpDclkycGhW?=
- =?utf-8?B?cnV1cnBXWHlHanJXTHg4UXhuYnpESEtoMFJBV29yY0RiR3JaUEEyQkdCR0ps?=
- =?utf-8?B?Tmh3b0w1cmFHT2dsV3Byb2Uwc0ZFWmkydy9MNDl5OWw3UTU5dC8yYWVXdlla?=
- =?utf-8?B?dUl2ay9DV0RGVWJlSTVtbStsVHQ2OXdlcGhZZmtHWWY3b3pHNU9uekNqVXVj?=
- =?utf-8?B?WTl5UjZOcGlDM3k4TEp3OGxhK3A3QUVpeWh0TzZwZzNjNG1mejZMNUo0OEVL?=
- =?utf-8?B?azQyRUR2elZONUhPWG04WUtkZ3Z1YTEyZ0NXMytHei9GYkI1Q1grUWFQOXVr?=
- =?utf-8?B?bnVJUW5pVFRma2Q5dGF6ZDdGeWJlTlhXWW4zMTFsTjZMdUs4b3h5bWdxMnlQ?=
- =?utf-8?B?YnBjTWpjTU9MdVdTUDdRTTRtMThjbkk1WmdoMzByZ25KZ0o1N0wrblE4YUJS?=
- =?utf-8?B?OHl2Mmtudi9XZFRqS0dJZk5sSlpNbzZPc2xIclY3VUNISmRqbkhXZjFwa0JO?=
- =?utf-8?B?RFdnNDR2VllLNjhrNG9BbnJKSm9Bb1F0U2hidElYdmJJcnBtM3UzSXZFUUtv?=
- =?utf-8?B?azNmaHZyNW1oV2Rod3c0S3V2VXMwejAzSytUUnZaZGRHVXI5TVJxNHlMRHJF?=
- =?utf-8?B?NUhQalgycXBYQU1ERWlINlV3Y3dTZThpUlpBRENIc2t3V1gwSFpXdEQrRGdI?=
- =?utf-8?B?bjZ6TEdMcklPL2F2aUkxM1VyN0UyMWxIbnpRMHIxb0tBeUM3TUhUWkVFZ1BO?=
- =?utf-8?B?N01GeGtzL0dPOFp6OC9KenpneXVRdm92eElxTDFxTVpPS1JuSzhaajl1OGJZ?=
- =?utf-8?B?TU1VSnUwWVN5bHE5L0MrU2ptUWtURkgybVNMQnlwWEFxa3I5UVJnU1JhUUFn?=
- =?utf-8?B?d2tXandvdnVIVjdRMERpV3crWXJ4SlRaK0xvTmJQOTdWSlE5ajlWMWdwbndP?=
- =?utf-8?B?N2QyUXc5N2VEb0RkVS9MNGtmZ2NkTk9scEpUbkRlZmYvK0o2dFpKTEZPYzQw?=
- =?utf-8?B?QW5zdFNzb3lITFIrdk1LWnN6VmJFeHVTVU5tb1Q3SjNZYjJvSDdqT21OYmRi?=
- =?utf-8?B?b2EzMDNMTDRaN2xmbS8xdldtcnBWeDBzOUdNd1NuTXh3M0hGRGs0allPU29B?=
- =?utf-8?B?dk9MRjJRL1QxcHpOc2phL3ZaeXp3aDFPMWdmZUFPTHl2cTl5K2J6RjZSclRZ?=
- =?utf-8?B?RzF2TFdGeGlRZ1Y5VW11Y2s0YW9UK0hnenFYbHhyOFdMUzNQQndrZU1Rbzh1?=
- =?utf-8?B?clZQKzFad25Pd29PSDI1M2RIZkNLQmFCblZsMmQyWXRCNmFaVzJ4YzdwcFBt?=
- =?utf-8?B?dlZVLzRKSzg0UzhyMTViMnUvbXRqbWJFZWEyOEVMYlRlSGZCRmFpM28xdEtr?=
- =?utf-8?B?eW1sc2loWUVQM1I0VzV6Z2k5MVlPNUVwUXdSZG1Xem42QWdOTXZjcEZBVDB6?=
- =?utf-8?B?TFZlbWw0NVltOG1JeE5QMFcrR3JtMER2c1hEUUptc1dkR1E5Wk90cGJNVGVZ?=
- =?utf-8?B?U3BXU24rTHIva1FLSE1GTWdzMkg3NUFZS09adlZMMGFPMzJUZGZBT3dzK3ZK?=
- =?utf-8?B?clArdkNKYWI4S054WS96SjZsanRTT3FvYi9KdW12Y0Y5Y2tqN2tBNDRLay9v?=
- =?utf-8?B?VFM1UmlKQ1I3MVJsVmFIUkV5SC80UFhWa1ZpRWwzbEJrTlRBdHZpN0krcXFM?=
- =?utf-8?Q?5Pjzk2N9pKzni?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR12MB7142.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RU4zWkMyUi8yallCNG80RjlFeUNSK2ZoZVYzeUx5ZDBUbHpxeWFqMGdYeXdW?=
- =?utf-8?B?K3EzRXJwS0lHWHVuMEd1YnFaczYzS0pDaHQ5bXFhZWxmcngxaE1RL3pudzNq?=
- =?utf-8?B?TTVCRlJ5NjR4YklObHZOaTNLRFhEUkNmUC8rWGdmRlVUaE5VMGx0TWdTN1E3?=
- =?utf-8?B?L0hmU2RqeW5uODRvcG54amhhTEtva3d4WkZTWkFxSVJka3VhNG5zQnk4RHVF?=
- =?utf-8?B?Yyt0RERvNjl5N24za2l3M21jNC9uN1NmVDMxNmF3cmNtWStBRWhnK2lUTzY1?=
- =?utf-8?B?MnpJSUVjcnBQSSticklYZU9zTnREUWNHbWNyWjdMM3UvL0JMRmYzOTdBQ1dD?=
- =?utf-8?B?YXZ3V1FIYXd4aFpQY1BMUVY1dkpvVlZwRkdZSXhWV2FnTE9FWGQwdkhHbVVk?=
- =?utf-8?B?VEhjMDd4T1BWNVUvd3ljNTZnREZMVmp4L3hvU3NxUktYUHIyQ1VoVGE1RjJY?=
- =?utf-8?B?VFd4VTVNdEtYbnlaSTJKRU1KVWJSRnNiNnJGUXdBRytTc0F3MzhLQ25GcitM?=
- =?utf-8?B?aEVmdDcrVEVLbVJLVUtTZUpwMncwTkUxWXdEVkR3eHZUQjVlMkRzR1ZyS3lZ?=
- =?utf-8?B?ZUN1aDBWSTc3b2NLOHpub3JMT3dub250K3pWTEcxaW9tY3YxQ1BJR1ZqelJZ?=
- =?utf-8?B?dDhpRndIRWxScGRtN2JKSVBvVzZUM2dsNUVSY1A5Z1V6WGhBMkc5M256TEJO?=
- =?utf-8?B?VUVvWGxINytsb2ZVQlJaTXBaY1RXYjRseG1PM3NidWkwdFAxK3V6TGZSL2pT?=
- =?utf-8?B?VVVDRW9XM0JRV3I3NHZrL3c5U0tpemNQL2FvVVUvTndrVC9jOGR0dTZmZUNt?=
- =?utf-8?B?ZnV3Z3BFUFgwVmxMaWlJNk1MeXA1SnJLYnBLOFJZbnpSeENYbGxBcnFWdlBn?=
- =?utf-8?B?dmVZUk9oaFl0bWo0eEdEOVdCL2VYMCtHUktVNCt1dTFpWko2amFCYXRyR21y?=
- =?utf-8?B?dUU5UHhEMjUxblNmOUlBVzhIMStHczVUVEFVUGZqK3IxaG1CZHV4eldIMU1k?=
- =?utf-8?B?Wis2Y1Z1UEd3TWd2ZUxnUVd1akUrRVBWaW5kbjhMbkp3aGM5UkxrV2xrZWsy?=
- =?utf-8?B?empqSzdJWjFmYVJpUEM3Uk82NWhFZGllWUlLZGF2WVhXZy9ROUoxd0FLM2RS?=
- =?utf-8?B?NHgzY3o3UElMaEh0eEhrZkc5UzQ0bzZLQTVlWTBmbVhKY3NuYnUrd1hyQzJs?=
- =?utf-8?B?Vm1hNHk3UFJiVlJxWWJFcDMrMk43TTljd3hoeUQ3R1RzaC8xV1ZtYk03YVQ2?=
- =?utf-8?B?TVdIMG11N21NWFN6M0t2N1RESDVLK2NERU9pak9sc2pjNTZtbm8xbVBKNDMv?=
- =?utf-8?B?ZnN0dXlaYjV3MWF2N0t6U0lhL3AyTVlZTXFCYjNvc2ljcDNnVmFzYVlyZ0dJ?=
- =?utf-8?B?N3k2WDUrcFdRd1hTM01UNC8zcTB6M1RaK1dOSWxpZWp2YUxYd0lIcUJ3QVB4?=
- =?utf-8?B?Uy9CQWdZQ2RMaVZQdDNBaENZVTZzV29kNGgzN3RMSXpqU09FQ25vM3d6T1Ny?=
- =?utf-8?B?OUZlbGxoaFcydjJnYytZUEgvNmtlai9lQ1VQdVM5MmY5ek9lVjRhb1B1SGln?=
- =?utf-8?B?UjY4bmEvOFB6S1poZWFFR0MxTDI2QnhFOFJ2SGM1SEFzRmNaY0MzUythaUh1?=
- =?utf-8?B?dTliRmdjeHVHRGdGai9uelk3c2lTYVRUU2swR2VPazhiT2dXNmVzOUVXVXln?=
- =?utf-8?B?emk1c2s1a2ZraEtsM1VpckdMeHdUWGloZkdPS280OXY3VkNwWjdtYmxjbFVm?=
- =?utf-8?B?Ujh5SkttUDJpeXFuMVRsWGdMU0JpK3NEYmdmVFdxeDZsY1VLM1NZNWdGdVYy?=
- =?utf-8?B?K2RsMTQrR29kY3JqL0NLdkRKSjlsaXRCMS9Ld082OC9HZHRtTDRsMHR4K3k2?=
- =?utf-8?B?c3p3MTB6ZW02MzVZc1dvNVNIZWtsaVg4aWtoU2Z2bmszbVdXZVY1eXJGeEJS?=
- =?utf-8?B?VldjenhFL0lxMlhZNHVXdHdTVnkxWVdabXlqam1OOURxbmFOZzQ1MU90MlBJ?=
- =?utf-8?B?a0NrRXY3VnQ0aUpmNVdxRTBEM1g2WkNPRmphR2daS0p6b0hXVXYxWjlDZXZH?=
- =?utf-8?B?anFFaUIvSStpZFlteEp2Y3p5eGE1WWRocGkrZTkzMm0xbGgxU2FWbWlPV0w5?=
- =?utf-8?Q?TozquSwffNGkjsORTSavR4oTE?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 605e8890-9267-4356-f422-08dd5b5977c9
-X-MS-Exchange-CrossTenant-AuthSource: MW4PR12MB7142.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 20:16:37.8236
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: qfGckH2ir+1mhY0hGRrYYAQ4TER6W0sUpTxdo+2q6a8nkyMfAl0GpkZzfUMGcGBMOSPZLZ1JX3baSbVnu9Ki1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6087
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <d976b28d-f44f-4d51-8b61-4c046c571412@collabora.com>
 
-
-
-On 3/4/2025 11:57 AM, Yazen Ghannam wrote:
-> On Wed, Feb 26, 2025 at 10:11:56PM +0000, Smita Koralahalli wrote:
+On Tue, Mar 04, 2025 at 04:39:33PM +0100, AngeloGioacchino Del Regno wrote:
+> Il 14/02/25 16:14, Nícolas F. R. A. Prado ha scritto:
+> > Enable headset jack detection for MT8188 platforms using the MT6359
+> > ACCDET block for it.
+> > 
+> > Co-developed-by: Zoran Zhan <zoran.zhan@mediatek.com>
+> > Signed-off-by: Zoran Zhan <zoran.zhan@mediatek.com>
+> > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> > ---
+> >   sound/soc/mediatek/mt8188/mt8188-mt6359.c | 43 +++++++++++++++++++++++++++++++
+> >   1 file changed, 43 insertions(+)
+> > 
+> > diff --git a/sound/soc/mediatek/mt8188/mt8188-mt6359.c b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
+> > index 2d0d04e0232da07ba43a030b14853322427d55e7..4e19e6cfad1e1f42863b2e2f27131f880c5883bf 100644
+> > --- a/sound/soc/mediatek/mt8188/mt8188-mt6359.c
+> > +++ b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
+> > @@ -17,6 +17,7 @@
+> >   #include "mt8188-afe-common.h"
+> >   #include "../../codecs/nau8825.h"
+> >   #include "../../codecs/mt6359.h"
+> > +#include "../../codecs/mt6359-accdet.h"
+> >   #include "../../codecs/rt5682.h"
+> >   #include "../common/mtk-afe-platform-driver.h"
+> >   #include "../common/mtk-soundcard-driver.h"
+> > @@ -266,6 +267,17 @@ static struct snd_soc_jack_pin nau8825_jack_pins[] = {
+> >   	},
+> >   };
+> > +static struct snd_soc_jack_pin mt8188_headset_jack_pins[] = {
 > 
-> [...]
-> 
->> +static void cxl_cper_handle_prot_err(struct cxl_cper_prot_err_work_data *data)
->> +{
->> +	unsigned int devfn = PCI_DEVFN(data->prot_err.agent_addr.device,
->> +				       data->prot_err.agent_addr.function);
->> +	struct pci_dev *pdev __free(pci_dev_put) =
->> +		pci_get_domain_bus_and_slot(data->prot_err.agent_addr.segment,
->> +					    data->prot_err.agent_addr.bus,
->> +					    devfn);
->> +
->> +	guard(device)(&pdev->dev);
->> +	if (!pdev)
->> +		return;
->> +
-> 
-> If 'pdev == NULL', then there would be a NULL pointer dereference in the
-> guard() statement, IIUC.
-> 
-> So I think the guard() statement should go after the NULL pointer check.
+> This is the same as nau8825_jack_pins... perhaps we could reuse that?
 
-This is such a blunder. Thanks for pointing out Yazen. Let me fix in 
-next revision.
+The difference is the pin name: "Headphone Jack", which results in a difference
+in the widget's name. I remember you wanted to not have the "Jack" in the
+widget's name to standardize it among other MTK platforms, and we could do that
+here by dropping it from the nau8825_jack_pins. But since that name is also used
+on the audio routes in a few DTs, those would need updating as well:
 
-Thanks
-Smita
+arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku0.dts
+arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku1.dts
+arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku3.dts
+arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku2.dts
+arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku5.dts
+arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku7.dts
+arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku4.dts
+arch/arm64/boot/dts/mediatek/mt8188-geralt-ciri-sku6.dts
+
+The name is not used in upstream alsa-ucm-conf though, so it should be safe to
+update.
+
+In any case, I didn't want to expand the scope of this series to that unrelated
+change, so that's why I introduced this separate struct, thinking we could
+commonize as a later step.
+
 > 
-> Thanks,
-> Yazen
+> > +	{
+> > +		.pin    = "Headphone",
+> > +		.mask   = SND_JACK_HEADPHONE,
+> > +	},
+> > +	{
+> > +		.pin    = "Headset Mic",
+> > +		.mask   = SND_JACK_MICROPHONE,
+> > +	},
+> > +};
+> > +
+> >   static const struct snd_kcontrol_new mt8188_dumb_spk_controls[] = {
+> >   	SOC_DAPM_PIN_SWITCH("Ext Spk"),
+> >   };
+> > @@ -500,6 +512,35 @@ static int mt8188_mt6359_mtkaif_calibration(struct snd_soc_pcm_runtime *rtd)
+> >   	return 0;
+> >   }
+> > +static int mt8188_mt6359_accdet_init(struct snd_soc_pcm_runtime *rtd)
+> > +{
+> > +	struct mtk_soc_card_data *soc_card_data = snd_soc_card_get_drvdata(rtd->card);
+> > +	struct snd_soc_jack *jack = &soc_card_data->card_data->jacks[MT8188_JACK_HEADSET];
+> > +	int ret;
+> > +
+> > +	if (!soc_card_data->accdet)
+> > +		return 0;
+> 
+> I'm not sure... if we have mediatek,accdet (so accdet is present here), but we also
+> have a NAU8825, or RT5682S, or ES8326 codec, this function will create a headset
+> jack for MT6359, but then mt8188_headset_codec_init() will do the same again!
+> 
+> I think we should find a way to avoid that situation, as I'm mostly sure that this
+> will give issues in the long run.
+> 
+> Even if it wouldn't, having two headset jacks exposed, of which one doesn't work
+> because it doesn't exist on the physical board... would be confusing for the user.
 
+IMO that situation happening would mean the DT is wrong. If the board has the
+headset jack pins wired to a headset codec, and that's responsible for jack
+detection, then those pins won't be wired to the ACCDET block, and therefore the
+board DT shouldn't have the mediatek,accdet property.
+
+I think you're imagining having the mediatek,accdet property always present, and
+the logic you propose would allow specifying a headset codec to essentially
+override it (making the mediatek,accdet property useless in this case). But
+there can also be boards with no jacks at all, and in those cases we don't want
+jack widgets exposed to userspace, so the mediatek,accdet property should be
+omitted for those boards, and only present on boards where the ACCDET is
+actually wired to.
+
+> 
+> I guess that the best option here would be:
+>  - Let the `for_each_card_prelinks()` loop finish
+>  - Check if any of the external codecs are providing 3.5mm jack
+>    - External codec providing jack means that the detection should be performed
+>      by the external codec, as the jack should not be physically routed to the
+>      MediaTek ACCDET related PMIC pins (right?)
+>    - No external codec means that the accessory detection can only be performed
+>      by the MediaTek ACCDET IP
+>  - If external codec manages 3.5mm jack: do nothing
+>  - If no external codec managing 3.5mm jack: check if accdet provided in DT and
+>    initialize it
+> 
+> ....unless I'm wrong - and if I am, please explain why (and also add explanation
+> to the commit description).
+
+I can add to the commit message:
+
+Only boards that have jack detection managed by the MT6359 ACCDET block will
+have the mediatek,accdet property present.
+
+Thanks,
+Nícolas
+
+> 
+> Cheers,
+> Angelo
+> 
+> > +
+> > +	ret = snd_soc_card_jack_new_pins(rtd->card, "Headset Jack",
+> > +				   SND_JACK_HEADSET | SND_JACK_BTN_0 |
+> > +				   SND_JACK_BTN_1 | SND_JACK_BTN_2 |
+> > +				   SND_JACK_BTN_3,
+> > +				   jack, mt8188_headset_jack_pins,
+> > +				   ARRAY_SIZE(mt8188_headset_jack_pins));
+> > +	if (ret) {
+> > +		dev_err(rtd->dev, "Headset Jack create failed: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	ret = mt6359_accdet_enable_jack_detect(soc_card_data->accdet, jack);
+> > +	if (ret) {
+> > +		dev_err(rtd->dev, "Headset Jack enable failed: %d\n", ret);
+> > +		return ret;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >   static int mt8188_mt6359_init(struct snd_soc_pcm_runtime *rtd)
+> >   {
+> >   	struct snd_soc_component *cmpnt_codec =
+> > @@ -512,6 +553,8 @@ static int mt8188_mt6359_init(struct snd_soc_pcm_runtime *rtd)
+> >   	/* mtkaif calibration */
+> >   	mt8188_mt6359_mtkaif_calibration(rtd);
+> > +	mt8188_mt6359_accdet_init(rtd);
+> > +
+> >   	return 0;
+> >   }
+> > 
 
