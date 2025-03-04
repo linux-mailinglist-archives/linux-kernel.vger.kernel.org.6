@@ -1,128 +1,83 @@
-Return-Path: <linux-kernel+bounces-543685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED4F4A4D8AB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:37:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 991C2A4D893
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:35:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565BE3A4F2C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E77416E491
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:34:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD56C1FF1B1;
-	Tue,  4 Mar 2025 09:26:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DSJxmG0i"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027FD1FF1C6;
+	Tue,  4 Mar 2025 09:27:02 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1C81F37CE
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:26:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6F21FF1AF
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741080415; cv=none; b=TPG3KPV3Io+Yau21grqNkMZIms78X568x6+wXnphubZJaCjmkUEus8IqRVFdehnn6tkQvTb8wrxJWLrtrC+Mi4IaKDzlUOZUUas3LEAwrxYYsQ/Sgj99W4apRQXp4xhKURKcFSSg9MY6dLOalhzBQRtfZnuHgMjsue4/jHbAUig=
+	t=1741080421; cv=none; b=gHeL5LvvQzRLefJC2++zYW7ARobiAxCYGSEuDr+Zr/JUvBUOOSQdk9DD4wOt+hzRO6KSaJwe3TnmPPvcHaC58HICaOUTtZFEik/Y50aUsLp0Wb+Jue2zT9SBD8NeUOcMeo4sqNOpQ2DC3kvdxWkmajosY7c7ICeKzKoUkU/BABo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741080415; c=relaxed/simple;
-	bh=ngTjm3wKPFbc6t66JOZalOcvwoArJEVbDeWSYS0wuiY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=R5AURpAAftlwRmeNz5P3wBwainwfIUOgFJ4719x7CU9G735+kpXm5bN7mjFiaiVmWfkBcXMnRwTAg/PvUOWUV5gi9WrerZsuZlIwkz+oWtxaPWQglVYYDMo/FykOvB1SdRbruOJampNdbH/ORIlNm6hhajgnmN3nV0KbyxLc/8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DSJxmG0i; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5493b5bc6e8so6358665e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:26:52 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741080410; x=1741685210; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=q3cnCoqSgCLSn8a978dMdMagQ1ah9AakWwYcXfYLV6w=;
-        b=DSJxmG0iE/AnhTEgD9bmVGzpTrWpc+TcRjLmtOx7wipq98qybTIgDqBaiQePJtxBCa
-         Yg+LQH2hORLVaanXZDwrcIaWgG97BCSbSqwNloGNroBOLbKI86eayD5RqI2WPdVDFWz1
-         jmQup2zmVE7n/VzaiZMVTt74M/+w/ZLqQhXjqLnrCfeGhhpIgV/kzaIcfYaFMVN1DF/4
-         H+o9BH2JV4Z81polBaMylFMvo0U/e+h4tmJPBp+JtVov6F9KB7rsqoTZF/ClLoyMFPV3
-         kmBEcpYXItTkX2Rck/exx1EtZXJVP/cTJSDpzib/iugFHzwrnQkWVjJjDkxPBomn4G3m
-         FXzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741080410; x=1741685210;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q3cnCoqSgCLSn8a978dMdMagQ1ah9AakWwYcXfYLV6w=;
-        b=Vx/aUU7zDBmxOCfwx8g5j00Ly8ZFNdR89kZZjmA69ZMmJHwvIPn1QNEH2Altia5AuM
-         SuqIFVszT+bHMrS/aEVLL3bcQZivSoEugjFTCoAYl0l/YaXAmMYav+UCi6P7GiUsnH4c
-         K2DMuIDQeShKKD9ey6CQn2bbg88UozNrupDS3XgZqbctBswN2AkGUJ7Tptxnne51tJsA
-         8tOT0I3gx59DIQLsrai7Hq+gEILzG6YhfJSb2JYFxu9A0X/vLEPe7yKTHa4nRQ6aGUaE
-         NTChE+T1D2PMfIrUwKgXCmi8r9Zysw9+280Kd34cP/Km6zrTkkftAuY6503biugfJugr
-         Nn9g==
-X-Gm-Message-State: AOJu0YytM9B8LjCWpVbPLpsONhfdjX9UaqxmFvFwGbOlZVKF15kWJWVb
-	h56VUgg0U0qqdoRzL08/bajVGMOVL+1W8BlAaOaZQFafhfEaqbPdz74ONeRObpwMd4OeIEaPUni
-	4IFIB5lnYaUzkc18d3vccRwbPTQ==
-X-Gm-Gg: ASbGnctLQjRxVyclbs+rMW+V5cbf+k/+Tw4WFNY2SwbnRrdA8YukpLJA711J5TvdwVr
-	RjH9aAoylLDb1vFRbBQ5t7wB/jKNOv3FFZP2OuRy4ayaD7LPVIbZeZ/v8KqDbDYR9wPVqCzI5Qe
-	ExDDtgznKO2WzsCW+rlN4X5gNtWaOSo4T7M394M+9j
-X-Google-Smtp-Source: AGHT+IFtGnp8h5cRfI8ialBWiTIbhGfrvIXhlP/FkcbLWSpAZbnQkhb0ZOXLR8SDpAd+qcWL605w63/X87yqDggp36o=
-X-Received: by 2002:a05:6512:318e:b0:545:27af:f2d1 with SMTP id
- 2adb3069b0e04-5494c38c202mr5194000e87.44.1741080410243; Tue, 04 Mar 2025
- 01:26:50 -0800 (PST)
+	s=arc-20240116; t=1741080421; c=relaxed/simple;
+	bh=MAgZCXFeQQaoFQ/XfxnVvHnahq/vKkc7CZc0ef8JInA=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hswZD6BfDEWodZm1rDramJc0+Bv315Tocdbm1QM+epdeCv3o/XWTyIe9xX4fU7T1WfqwZRHgDuT7FnklKemFm8mHufUVK7/tmQG+VgupujvrS5oJzMwFY00MD77d7N6do/wDl1/5CcQPCSKj2bRs/Lrv7iTGbPxXgJl2xebtzTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z6Vb23t4cz6L5Hk;
+	Tue,  4 Mar 2025 17:22:54 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id F17961402C7;
+	Tue,  4 Mar 2025 17:26:56 +0800 (CST)
+Received: from localhost (10.96.237.92) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Tue, 4 Mar
+ 2025 10:26:54 +0100
+Date: Tue, 4 Mar 2025 17:26:49 +0800
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Yicong Yang <yangyicong@huawei.com>
+CC: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<prime.zeng@hisilicon.com>, <linuxarm@huawei.com>,
+	<yangyicong@hisilicon.com>, <wangyushan12@huawei.com>
+Subject: Re: [PATCH 2/9] drivers/perf: hisi: Simplify the probe process for
+ each DDRC version
+Message-ID: <20250304172649.0000189c@huawei.com>
+In-Reply-To: <20250218092000.41641-3-yangyicong@huawei.com>
+References: <20250218092000.41641-1-yangyicong@huawei.com>
+	<20250218092000.41641-3-yangyicong@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303165246.2175811-1-brgerst@gmail.com> <Z8YTYWs-DeDHal1Q@gmail.com>
- <CAMzpN2iB4Gv0Fq1pNtk7bpa2z6eYwQGYXT0=p=_wWDBE9Uxa7w@mail.gmail.com> <Z8a-NVJs-pm5W-mG@gmail.com>
-In-Reply-To: <Z8a-NVJs-pm5W-mG@gmail.com>
-From: Brian Gerst <brgerst@gmail.com>
-Date: Tue, 4 Mar 2025 04:26:38 -0500
-X-Gm-Features: AQ5f1JrrXlN8I_sVcoMxmyGwO3RWQG-EzazhOxET-xzb2CgOwGudAlqKhT3Zto0
-Message-ID: <CAMzpN2gpHRtOtRuCJF_TKOFbEJ2xkksndCH+MfntfDuZHC0O1w@mail.gmail.com>
-Subject: Re: [PATCH v3 00/11] Add a percpu subsection for cache hot data
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
-	"H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
-	Ard Biesheuvel <ardb@kernel.org>, Uros Bizjak <ubizjak@gmail.com>, 
-	Linus Torvalds <torvalds@linuxfoundation.org>, Andy Lutomirski <luto@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, Andrew Morton <akpm@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500010.china.huawei.com (7.191.174.240) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Tue, Mar 4, 2025 at 3:47=E2=80=AFAM Ingo Molnar <mingo@kernel.org> wrote=
-:
->
->
-> * Brian Gerst <brgerst@gmail.com> wrote:
->
-> > >
-> > > -       PERCPU_SECTION(INTERNODE_CACHE_BYTES)
-> > > +       PERCPU_SECTION(L1_CACHE_BYTES)
-> > >         ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <=3D 64, "perc=
-pu cache hot section too large")
-> > >
-> > >         RUNTIME_CONST_VARIABLES
-> > >
-> >
-> > That is probably the right call.  The initial percpu section is just
-> > used by the boot cpu early and as a template for the dynamically
-> > allocated percpu memory, which should account for the proper
-> > alignment for NUMA.
->
-> Okay.
->
-> Randconfig testing found another corner case with the attached config:
->
->     KSYMS   .tmp_vmlinux0.kallsyms.S
->     AS      .tmp_vmlinux0.kallsyms.o
->     LD      .tmp_vmlinux1
->   ld: percpu cache hot section too large
->   make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error 1
->
-> (I haven't figured out the root cause yet.)
+On Tue, 18 Feb 2025 17:19:53 +0800
+Yicong Yang <yangyicong@huawei.com> wrote:
 
-CONFIG_MPENTIUM4 sets X86_L1_CACHE_SHIFT to 7 (128 bytes).
+> From: Junhao He <hejunhao3@huawei.com>
+> 
+> Version 1 and 2 of DDRC PMU also use different HID. Make use of
+> struct acpi_device_id::driver_data for version specific information
+> rather than judge the version register. This will help to
+> simplify the probe process and also a bit easier for extension.
+> 
+> Signed-off-by: Junhao He <hejunhao3@huawei.com>
+> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+Looks good to me. Looking at this I can see the check_reg naming
+is an existing thing so maybe leave that alone for now and consider
+renaming as a future improvement in readability.
 
-
-Brian Gerst
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
 
