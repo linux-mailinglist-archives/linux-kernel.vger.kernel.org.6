@@ -1,48 +1,48 @@
-Return-Path: <linux-kernel+bounces-544247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79E79A4DF47
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:31:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 342B8A4DF46
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:31:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C86253A6135
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:31:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D714188E780
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:31:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0910F204680;
-	Tue,  4 Mar 2025 13:31:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D05E2036FB;
+	Tue,  4 Mar 2025 13:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MAHnmGcO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RyBfluVh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4321E2036F5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7B941E4A4
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:31:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741095077; cv=none; b=aPywFOzAw+0g9Ohiz31I94rUjpVfKRahHK7Qyxkb0SBrNiikBZx4PBETgLD/dVO2WIqMtny26OrPDGMKGAMZXVvMgIRmbFbZC2eGqr48ZOalID7FgFcWijIm1bspXh6ZbActG7Q+eQOseT+OeLthfU3yuB+DIX6tOWnpEjpUXqE=
+	t=1741095076; cv=none; b=tfN5XLLkbA0qYRJ0AGuluk1ZLWL6K7LW+XaaqgjBePsgBX3eXO1vbOlokWML1dRaiH+tWsrHw9kzhstFXDTJXGvp7nYulMqMVr717m1e0YM2aBdiKYr1FLELHPl1h4ZozlB3cgXxNRVG5ulYOB3iqo3bE+QwzkJipkAu3WIL/I4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741095077; c=relaxed/simple;
-	bh=XdC1WV9yBOfdA2FRBZWRs2sr1CJF0slV+rmf0X8pSDU=;
+	s=arc-20240116; t=1741095076; c=relaxed/simple;
+	bh=Rwv2wLoIBvRhAgKWWClzSANMSkoeu+rvgHxKTeUDCH4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kse9xsr3rpyoWoqZJo1eko4UpEDkBLuWjEV/NoK80R0y9LGZgaSio7kNsMGag82UGkkFFKBe+HjxQxRXICCgx3BTyfI/l+9n2fXfjDYBp32+Rxj93cMm9jmQgzcFP9IVPehq7rMQEmSaBCyhXLJGxD18SJyl3swFzJ98LWkHcHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MAHnmGcO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88350C4AF0C;
+	 MIME-Version; b=DcdVveb3iUq+M3sZYAC9Gc6joF7/tBhIxh/NSCFfGTMPQtQucYJYaNffZ8o9FEHwO/wEZBhkHy7NOBvT0t7a+P37pWpXeKSJI0HGNgr9OMcBsiGmCBWElBTaNM0j/WLDfF0Auq3kXTPD1B76jJfQSdsuWml1G80XBfxIleqn5hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RyBfluVh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85786C4AF09;
 	Tue,  4 Mar 2025 13:31:16 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1741095076;
-	bh=XdC1WV9yBOfdA2FRBZWRs2sr1CJF0slV+rmf0X8pSDU=;
+	bh=Rwv2wLoIBvRhAgKWWClzSANMSkoeu+rvgHxKTeUDCH4=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MAHnmGcOwcGxHesS9lQGNLDf9bM/lsaF5nf9YVh7ROjDeC5/2bsaCDEKi5MvvPIj0
-	 RD6OnRx9iZJJoFUKx2I81UrdujNkypIz4RO0tgcakJteBibmVmcad9s97rVUVBfAvi
-	 wJwBaUorA5X45c5uHhMFTrmH0/F0YVyOX4u+4PENaBxnnpzBZdNNeh1vHB05nKcRbx
-	 Ms8A7OyCxAViO0cdV4uMu+bEORLTqjCEzOWfe+doagPGLUss+6RfZdt2VLAz5e/y5W
-	 kapYSToeivdxSOz2ubZ/Ago82eT5vH3jB36SWFEjk2Zz9MLk4xdUbE0qUkmRQWl+vg
-	 +x6DO5Z8BWzzg==
+	b=RyBfluVh9AW1heRqsBLhFvuaz0KG7lK04XJMzCj2ULOWmlEcGb9Kj1BHCQHNyc7ZS
+	 85kXmjZToHjgfBNYI+kdhpZB7l9eNgL8rxPiWXJKr7CAnjj8swadsQwpwQVpFoQ8ky
+	 S32mbEliW+SLn3AMdEyHyDZXCrGnEdxXr7xOiqrzAF3Axab39wSp3P8z2KJ7baPiEy
+	 nqTbiyB/EjINL9zbKuXvV9xtgzo1mY5CUP+h02xEPlK5yR/adInpR06ZP9NteXsyph
+	 vxLVSpT0pEU79ZgQOroMQ9a5plYypgBz53F0rwr0x1GmHdwNu9nlhjVyHiHPXWy/EQ
+	 8p35LbpnceRNw==
 Received: from mchehab by mail.kernel.org with local (Exim 4.98)
 	(envelope-from <mchehab+huawei@kernel.org>)
-	id 1tpSMc-00000005rnT-20pO;
+	id 1tpSMc-00000005rnX-28Ap;
 	Tue, 04 Mar 2025 14:31:14 +0100
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Igor Mammedov <imammedo@redhat.com>,
@@ -58,9 +58,9 @@ Cc: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
 	Paolo Bonzini <pbonzini@redhat.com>,
 	Richard Henderson <richard.henderson@linaro.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH RFC 2/3] hw/i186: add support for HEST table with SCI
-Date: Tue,  4 Mar 2025 14:30:57 +0100
-Message-ID: <02ae08c5e6e1116e587f208159a2ecf80979181d.1741094512.git.mchehab+huawei@kernel.org>
+Subject: [PATCH RFC 3/3] Add a GED device for RAS notification
+Date: Tue,  4 Mar 2025 14:30:58 +0100
+Message-ID: <453dbc6c5030c654489d3c7e4da078589f24f9ec.1741094512.git.mchehab+huawei@kernel.org>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <cover.1741094512.git.mchehab+huawei@kernel.org>
 References: <cover.1741094512.git.mchehab+huawei@kernel.org>
@@ -73,214 +73,111 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 Sender: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Can be tested by setting machine to:
-	q35,ras=on
-
-E.g.:
-
-qemu-system-x86_64 --enable-kvm -cpu host -m 4g,maxmem=8G,slots=8 \
-	-M q35,nvdimm=on,ras=on \
-	-monitor stdio -no-reboot -drive if=pflash,file=OVMF_CODE.fd,format=raw \
-	-kernel ../linux/arch/x86_64/boot/bzImage \
-	-device pcie-root-port,id=root_port1 -device virtio-blk-pci,drive=hd \
-	-device virtio-net-pci,netdev=mynet,id=bob \
-	-drive if=none,file=debian.qcow2,format=qcow2,id=hd \
-	-object memory-backend-ram,size=4G,id=mem0 \
-	-netdev type=user,id=mynet,hostfwd=tcp::5555-:22 \
-	-qmp tcp:localhost:4445,server=on,wait=off \
-	-append 'earlycon nomodeset root=/dev/vda1 fsck.mode=skip tp_printk maxcpus=4 console=ttyS0 console=tty0'
-
-TODO: add a notifier logic.
-
 Signed-off-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 ---
- hw/i386/Kconfig      |  1 +
- hw/i386/acpi-build.c | 33 +++++++++++++++++++++++++++++++++
- hw/i386/pc.c         | 42 ++++++++++++++++++++++++++++++++++++++++++
- include/hw/i386/pc.h |  5 +++++
- 4 files changed, 81 insertions(+)
+ hw/i386/acpi-build.c  | 42 ++++++++++++++++++++++++++++++++++++++++++
+ hw/i386/pc.c          |  7 +++----
+ include/hw/i386/x86.h |  2 ++
+ 3 files changed, 47 insertions(+), 4 deletions(-)
 
-diff --git a/hw/i386/Kconfig b/hw/i386/Kconfig
-index d34ce07b215d..a07d5aa1a138 100644
---- a/hw/i386/Kconfig
-+++ b/hw/i386/Kconfig
-@@ -60,6 +60,7 @@ config PC_ACPI
-     select ACPI_CPU_HOTPLUG
-     select ACPI_MEMORY_HOTPLUG
-     select ACPI_PCI_BRIDGE
-+    select ACPI_APEI
-     select ACPI_VIOT
-     select SMBUS_EEPROM
-     select PFLASH_CFI01
 diff --git a/hw/i386/acpi-build.c b/hw/i386/acpi-build.c
-index 3fffa4a33280..cf11231b5fe6 100644
+index cf11231b5fe6..ad829e2c75c8 100644
 --- a/hw/i386/acpi-build.c
 +++ b/hw/i386/acpi-build.c
-@@ -38,6 +38,7 @@
- #include "hw/nvram/fw_cfg.h"
- #include "hw/acpi/bios-linker-loader.h"
- #include "hw/acpi/acpi_aml_interface.h"
-+#include "hw/acpi/generic_event_device.h"
- #include "hw/input/i8042.h"
- #include "hw/acpi/memory_hotplug.h"
- #include "system/tpm.h"
-@@ -69,6 +70,7 @@
- #include "hw/acpi/utils.h"
- #include "hw/acpi/pci.h"
- #include "hw/acpi/cxl.h"
-+#include "hw/acpi/ghes.h"
- 
- #include "qom/qom-qobject.h"
- #include "hw/i386/amd_iommu.h"
-@@ -2431,6 +2433,10 @@ static bool acpi_get_mcfg(AcpiMcfgInfo *mcfg)
-     return true;
+@@ -1352,6 +1352,28 @@ static void build_acpi0017(Aml *table)
+     aml_append(table, scope);
  }
  
-+static const AcpiNotificationSourceId hest_ghes_notify[] = {
-+    {ACPI_HEST_SRC_ID_QMP, ACPI_GHES_NOTIFY_GPIO},
-+};
++#define GED_COMMON_MMIO_BASE         0xfee00000
++#define GED_COMMON_MMIO_BASE_REGS    (GED_COMMON_MMIO_BASE + 0x100)
++#define GED_MMIO_IRQ          9
 +
- static
- void acpi_build(AcpiBuildTables *tables, MachineState *machine)
- {
-@@ -2587,6 +2593,15 @@ void acpi_build(AcpiBuildTables *tables, MachineState *machine)
-         cxl_build_cedt(table_offsets, tables_blob, tables->linker,
-                        x86ms->oem_id, x86ms->oem_table_id, &pcms->cxl_devices_state);
++static DeviceState *create_acpi_ged(X86MachineState *x86ms)
++{
++    DeviceState *dev = qdev_new(TYPE_ACPI_GED);
++
++    fprintf(stderr, "creating GED\n");
++
++    assert(x86ms->gsi);
++
++    qdev_prop_set_uint32(dev, "ged-event", ACPI_GED_ERROR_EVT);
++    sysbus_realize_and_unref(SYS_BUS_DEVICE(dev), &error_fatal);
++
++    sysbus_mmio_map(SYS_BUS_DEVICE(dev), 0, GED_COMMON_MMIO_BASE);
++    sysbus_mmio_map(SYS_BUS_DEVICE(dev), 1, GED_COMMON_MMIO_BASE_REGS);
++    sysbus_connect_irq(SYS_BUS_DEVICE(dev), 0, x86ms->gsi[GED_MMIO_IRQ]);
++
++    return dev;
++}
++
+ static void
+ build_dsdt(GArray *table_data, BIOSLinker *linker,
+            AcpiPmInfo *pm, AcpiMiscInfo *misc,
+@@ -1794,6 +1816,26 @@ build_dsdt(GArray *table_data, BIOSLinker *linker,
+         aml_append(dsdt, scope);
      }
-+    if (pcms->ras) {
-+        printf("ADD HEST\n");
-+        acpi_add_table(table_offsets, tables_blob);
-+        acpi_build_hest(tables_blob, true, tables->hardware_errors,
-+                        tables->linker, hest_ghes_notify,
-+                        ARRAY_SIZE(hest_ghes_notify),
-+                        x86ms->oem_id, x86ms->oem_table_id);
-+        printf("ADD HEST: added\n");
-+    }
  
-     acpi_add_table(table_offsets, tables_blob);
-     build_waet(tables_blob, tables->linker, x86ms->oem_id, x86ms->oem_table_id);
-@@ -2742,6 +2757,24 @@ void acpi_setup(void)
-     }
- #endif
- 
++    /* Notification type SCI requires GED */
 +    if (pcms->ras) {
-+        AcpiGhesState *ags;
-+        AcpiGedState *acpi_ged_state;
-+
-+        acpi_ged_state = ACPI_GED(object_resolve_path_type("", TYPE_ACPI_GED,
-+                                                           NULL));
-+        if (acpi_ged_state) {
-+            printf("GHES FW_CFG: %p\n", acpi_ged_state);
-+
-+            ags = &acpi_ged_state->ghes_state;
-+
-+            acpi_ghes_add_fw_cfg(ags, x86ms->fw_cfg, true,
-+                                 tables.hardware_errors);
-+
-+            printf("GHES FW_CFG: end\n");
++        if (!x86ms->ged_dev) {
++            x86ms->ged_dev = create_acpi_ged(x86ms);
 +        }
++
++        sb_scope = aml_scope("_SB");
++        build_ged_aml(sb_scope, GED_DEVICE, HOTPLUG_HANDLER(x86ms->ged_dev),
++                      GED_MMIO_IRQ, AML_SYSTEM_MEMORY, GED_COMMON_MMIO_BASE);
++        aml_append(sb_scope, aml_error_device());
++        aml_append(dsdt, sb_scope);
++
++        scope =  aml_scope("_GPE");
++        method = aml_method("L08", 0, AML_NOTSERIALIZED);
++        aml_append(method, aml_notify(aml_name("\\_SB.GEDD"),
++                                      aml_int(0x80)));
++        aml_append(scope, method);
++        aml_append(dsdt, scope);
 +    }
 +
-     vmgenid_dev = find_vmgenid_dev();
-     if (vmgenid_dev) {
-         vmgenid_add_fw_cfg(VMGENID(vmgenid_dev), x86ms->fw_cfg,
+     /* copy AML table into ACPI tables blob and patch header there */
+     g_array_append_vals(table_data, dsdt->buf->data, dsdt->buf->len);
+     acpi_table_end(linker, &table);
 diff --git a/hw/i386/pc.c b/hw/i386/pc.c
-index 63a96cd23f84..b9c32dbdbcd8 100644
+index b9c32dbdbcd8..b4a2fe61da49 100644
 --- a/hw/i386/pc.c
 +++ b/hw/i386/pc.c
-@@ -47,6 +47,7 @@
- #include "qobject/qlist.h"
- #include "qemu/error-report.h"
- #include "hw/acpi/cpu_hotplug.h"
-+#include "hw/acpi/ghes.h"
- #include "acpi-build.h"
- #include "hw/mem/nvdimm.h"
- #include "hw/cxl/cxl_host.h"
-@@ -1683,6 +1684,37 @@ static void pc_machine_set_max_fw_size(Object *obj, Visitor *v,
-     pcms->max_fw_size = value;
- }
+@@ -1700,6 +1700,8 @@ static void virt_set_ras(Object *obj, bool value, Error **errp)
  
-+static bool virt_get_ras(Object *obj, Error **errp)
-+{
-+    PCMachineState *pcms = PC_MACHINE(obj);
-+
-+    return pcms->ras;
-+}
-+
-+static void virt_set_ras(Object *obj, bool value, Error **errp)
-+{
-+    PCMachineState *pcms = PC_MACHINE(obj);
-+
-+    pcms->ras = value;
-+}
-+
-+static void pc_sci_error(Notifier *n, void *opaque)
-+{
-+    uint16_t *source_id = opaque;
-+
-+    fprintf(stderr, "GHES error for source ID: %d\n", *source_id);
-+
-+    /* Currently, only QMP injection is supported */
-+    if (*source_id != ACPI_HEST_SRC_ID_QMP)
-+        return;
-+
-+    fprintf(stderr, "GHES error notified for QMP\n");
-+
-+    // TODO: add something equivalent to:
-+    // PCMachineState *s = container_of(n, PCMachineState, ghes_sci_notifier);
-+    // acpi_send_event(s->acpi_dev, ACPI_GENERIC_ERROR);
-+    // by calling acpi_update_sci();
-+}
+ static void pc_sci_error(Notifier *n, void *opaque)
+ {
++    PCMachineState *pcms = container_of(n, PCMachineState, ghes_sci_notifier);
++    X86MachineState *x86ms = X86_MACHINE(pcms);
+     uint16_t *source_id = opaque;
+ 
+     fprintf(stderr, "GHES error for source ID: %d\n", *source_id);
+@@ -1710,10 +1712,7 @@ static void pc_sci_error(Notifier *n, void *opaque)
+ 
+     fprintf(stderr, "GHES error notified for QMP\n");
+ 
+-    // TODO: add something equivalent to:
+-    // PCMachineState *s = container_of(n, PCMachineState, ghes_sci_notifier);
+-    // acpi_send_event(s->acpi_dev, ACPI_GENERIC_ERROR);
+-    // by calling acpi_update_sci();
++    acpi_send_event(x86ms->ged_dev, ACPI_GENERIC_ERROR);
+ }
  
  static void pc_machine_initfn(Object *obj)
- {
-@@ -1717,6 +1749,10 @@ static void pc_machine_initfn(Object *obj)
-     if (pcmc->pci_enabled) {
-         cxl_machine_init(obj, &pcms->cxl_devices_state);
-     }
-+
-+    pcms->ghes_sci_notifier.notify = pc_sci_error;
-+    notifier_list_add(&acpi_generic_error_notifiers,
-+                        &pcms->ghes_sci_notifier);
- }
+diff --git a/include/hw/i386/x86.h b/include/hw/i386/x86.h
+index d43cb3908e65..06d62a944835 100644
+--- a/include/hw/i386/x86.h
++++ b/include/hw/i386/x86.h
+@@ -54,6 +54,8 @@ struct X86MachineState {
+     GMappedFile *initrd_mapped_file;
+     HotplugHandler *acpi_dev;
  
- static void pc_machine_reset(MachineState *machine, ResetType type)
-@@ -1853,6 +1889,12 @@ static void pc_machine_class_init(ObjectClass *oc, void *data)
-     object_class_property_set_description(oc, PC_MACHINE_SMBIOS_EP,
-         "SMBIOS Entry Point type [32, 64]");
- 
-+    object_class_property_add_bool(oc, "ras", virt_get_ras,
-+                                   virt_set_ras);
-+    object_class_property_set_description(oc, "ras",
-+                                          "Set on/off to enable/disable reporting host memory errors "
-+                                          "to a KVM guest using ACPI and guest external abort exceptions");
++    DeviceState *ged_dev;
 +
-     object_class_property_add_bool(oc, "fd-bootchk",
-         pc_machine_get_fd_bootchk,
-         pc_machine_set_fd_bootchk);
-diff --git a/include/hw/i386/pc.h b/include/hw/i386/pc.h
-index 103b54301f82..105b087e7af6 100644
---- a/include/hw/i386/pc.h
-+++ b/include/hw/i386/pc.h
-@@ -30,6 +30,9 @@ typedef struct PCMachineState {
-     /* State for other subsystems/APIs: */
-     Notifier machine_done;
- 
-+    /* Triggered when a new SCI GHES error raises */
-+    Notifier ghes_sci_notifier;
-+
-     /* Pointers to devices and objects: */
-     PCIBus *pcibus;
-     I2CBus *smbus;
-@@ -51,6 +54,8 @@ typedef struct PCMachineState {
-     bool i8042_enabled;
-     bool default_bus_bypass_iommu;
-     bool fd_bootchk;
-+    bool ras;
-+
-     uint64_t max_fw_size;
- 
-     /* ACPI Memory hotplug IO base address */
+     /*
+      * Map the whole BIOS just underneath the 4 GiB address boundary. Only used
+      * in the ROM (-bios) case.
 -- 
 2.48.1
 
