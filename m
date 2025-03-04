@@ -1,77 +1,78 @@
-Return-Path: <linux-kernel+bounces-543833-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543832-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06C29A4DA7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:30:04 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24962A4DA6E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:28:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ACBB63A756A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:28:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82F907A7D70
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 958E7202C32;
-	Tue,  4 Mar 2025 10:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C5C20297B;
+	Tue,  4 Mar 2025 10:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zGXVKs2e";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bBsle6ir"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qDYlncXI";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZxVTQVCG"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C36520125D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18A48201036;
 	Tue,  4 Mar 2025 10:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741083984; cv=none; b=ZpqAFzA4l1owsAnu7MrRFAGJLOQsj0+2fpIqJJNr/yZXOUVZGmH2qGistWvuvJktfYLGOc8yyzjtuxoPy7ZEIrHu6HuQYoOJbT9owKRuNGM3o/zaM0YjxlzlQ/eWjmWNsbjphatBFkChJrI9zud7Mn+YTiYzDMp1E9kk0leAqK0=
+	t=1741083983; cv=none; b=h2PczS3P1xKbifTGyqaTB8SARFuPWUWl7pBXYdN8AOSfyayGEMun883QMbVYm+YbOqW+snfg9kjjYY+6DQLP0s0TLD8IcA+9Tuxic8nvV4OFyL7VhplJfz9FtFdI5fsLVNVIuWr+NLSlhFfd4Ar4hJPEfP0QNOniQJiZVDDTtd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741083984; c=relaxed/simple;
-	bh=bjTb7UFweSKeEja1DAGC7xUKq3WZy7RsqfvI7p/7K+E=;
+	s=arc-20240116; t=1741083983; c=relaxed/simple;
+	bh=8wiJ6CNkWvfsfezUPmZrdEVp7bJt7XnRWsP8mATapc0=;
 	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=SLpwPtK0719eZYgfn6VFSAcZKNrFuIrRb4CWVnyJ2AU2h8+Tm0OqmT4ZGvrmiYrMeQz1af9aSghkqACIh0VevDE2pMaAqmV3CCtc/T5syvmW9AvnaDQDpjXbjqYvLKg8MDmesbzfeDeR3mLe+SA0oRPpHp3QlkcHdCg10YGG2AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zGXVKs2e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bBsle6ir; arc=none smtp.client-ip=193.142.43.55
+	 Message-ID:Content-Type; b=Kywp6FfJv2ThjI0ij7kvJlUFooBVlQFlQtERMDu3n8++qTs+yhv/cVzN1upGTHK+yMU0dZmUCR1ceDnP4mJ2QK4ZqcgjkFi6Td2rRcni2LGBumoqvHtJWzuv1IopduXJzovHPSOupQLBMDfl0JyXPy6cH48s6tAKX45lCRSdv24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qDYlncXI; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZxVTQVCG; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 Date: Tue, 04 Mar 2025 10:26:20 -0000
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741083981;
+	s=2020; t=1741083980;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x1W3z977r/1eiDn6gyeaRad0PYnMclADS7IIF7spivI=;
-	b=zGXVKs2ecT3vAvV/53CRQUFMluoUjYIMVD7Q/LjH6WzTBH2TOGYtk62UWXlcbQPhuQPG7l
-	1/xUQ+AHt/BagjCs2m1GXWVzG4GVkTTFfUWVXf/FxP5eIDBsf4SpYMR9mjtVHJ4qB1LVQk
-	pscBAJWRoxh2Fao5uDi8HDGUawr4s8VfL+JRCYxZmgpjGwq/4wYA1exfdcOpi1/OVt4xku
-	Z5rCedA8n//75H67nV5aHM2+Gk2FRHF8kl1O9GYb3AG+ftkPVR+ESSJeCX8rqZnbtKHjCy
-	f5C2k7HRd3ZGcANCuoDledaTfOsYRWPuoFSJqMb30A4wJ2ujpHFOoCAYsg6KAQ==
+	bh=Nvm8HZuDtBkPz1Uou5ov4b6M64loqI04v+ld9z8e6qc=;
+	b=qDYlncXIq2Fg9Hv7MdQD4HdR5MO+ohdgMpvYugYktJ1sADIpYT6g48h0Rl7maiCSQNDRpy
+	d0AStg77oRbsFetGvWjQJYjfWNqzZZAEjoTOTHPGPIqMuNI9njN0kLMkHINWn+dltHuXMf
+	XxVE8eDFQbAxFukmO+lvBwzICm3lt8vZwk1GfVZuIZ0k6L/dGfdHxhCuF+11vDGyacFlH2
+	lvUmGFZ27J71rstCh9HvColFkU/xWpZWmUMqI7tDsXtNhBeMvUFF79OPImlIoO1ReZddY7
+	0379jKqOrj8BBn2h1+ofOcw3ugYVJlI1DeJBJyOyjOTZqBJMIHdptJ3ziqO61A==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741083981;
+	s=2020e; t=1741083980;
 	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
 	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
 	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=x1W3z977r/1eiDn6gyeaRad0PYnMclADS7IIF7spivI=;
-	b=bBsle6ir/Ljj2cpR78qyKO/Gw3SbW7AFNkbuBnckx7EBHVZcFHss+9eIdseoDACz5rtlGU
-	YS5Z1PluGtIUXvBg==
+	bh=Nvm8HZuDtBkPz1Uou5ov4b6M64loqI04v+ld9z8e6qc=;
+	b=ZxVTQVCGdTtHmv8l74x7uo5mN9rmD3XT9BWJGm11JJ9xUp1k/pIw0UeQe7IfX/Y7PRgORU
+	/5Dje+6UesJkrjBQ==
 From: "tip-bot2 for Ahmed S. Darwish" <tip-bot2@linutronix.de>
 Sender: tip-bot2@linutronix.de
 Reply-to: linux-kernel@vger.kernel.org
 To: linux-tip-commits@vger.kernel.org
 Subject:
- [tip: x86/cpu] x86/cpuid: Include <linux/build_bug.h> in <asm/cpuid.h>
-Cc: "Ahmed S. Darwish" <darwi@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ [tip: x86/cpu] x86/cpu: Remove unnecessary headers and reorder the rest
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+ "Ahmed S. Darwish" <darwi@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
  x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250304085152.51092-5-darwi@linutronix.de>
-References: <20250304085152.51092-5-darwi@linutronix.de>
+In-Reply-To: <20250304085152.51092-6-darwi@linutronix.de>
+References: <20250304085152.51092-6-darwi@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174108398095.14745.801348386934644512.tip-bot2@tip-bot2>
+Message-ID: <174108398021.14745.15801075088288394260.tip-bot2@tip-bot2>
 Robot-ID: <tip-bot2@linutronix.de>
 Robot-Unsubscribe:
  Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
@@ -81,41 +82,84 @@ Content-Transfer-Encoding: 7bit
 
 The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     97c7d5723537de08e076892e07d6089ae9777965
-Gitweb:        https://git.kernel.org/tip/97c7d5723537de08e076892e07d6089ae9777965
+Commit-ID:     dec7fdc0b79c2ae0a537343b17f5ba1c6c47e1ca
+Gitweb:        https://git.kernel.org/tip/dec7fdc0b79c2ae0a537343b17f5ba1c6c47e1ca
 Author:        Ahmed S. Darwish <darwi@linutronix.de>
-AuthorDate:    Tue, 04 Mar 2025 09:51:15 +01:00
+AuthorDate:    Tue, 04 Mar 2025 09:51:16 +01:00
 Committer:     Ingo Molnar <mingo@kernel.org>
 CommitterDate: Tue, 04 Mar 2025 11:17:33 +01:00
 
-x86/cpuid: Include <linux/build_bug.h> in <asm/cpuid.h>
+x86/cpu: Remove unnecessary headers and reorder the rest
 
-<asm/cpuid.h> uses static_assert() at multiple locations but it does not
-include the CPP macro's definition at linux/build_bug.h.
+Remove the headers at intel.c that are no longer required.
 
-Include the needed header to make <asm/cpuid.h> self-sufficient.
+Alphabetically reorder what remains since more headers will be included
+in further commits.
 
-This gets triggered when cpuid.h is included in new C files, which is to
-be done in further commits.
-
-Fixes: 43d86e3cd9a7 ("x86/cpu: Provide cpuid_read() et al.")
+Suggested-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250304085152.51092-5-darwi@linutronix.de
+Link: https://lore.kernel.org/r/20250304085152.51092-6-darwi@linutronix.de
 ---
- arch/x86/include/asm/cpuid.h | 1 +
- 1 file changed, 1 insertion(+)
+ arch/x86/kernel/cpu/intel.c | 36 +++++++++++++-----------------------
+ 1 file changed, 13 insertions(+), 23 deletions(-)
 
-diff --git a/arch/x86/include/asm/cpuid.h b/arch/x86/include/asm/cpuid.h
-index b2b9b4e..a92e4b0 100644
---- a/arch/x86/include/asm/cpuid.h
-+++ b/arch/x86/include/asm/cpuid.h
-@@ -6,6 +6,7 @@
- #ifndef _ASM_X86_CPUID_H
- #define _ASM_X86_CPUID_H
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index c5d833f..60b58b1 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -1,40 +1,30 @@
+ // SPDX-License-Identifier: GPL-2.0
+-#include <linux/kernel.h>
+-#include <linux/pgtable.h>
  
-+#include <linux/build_bug.h>
- #include <linux/types.h>
+-#include <linux/string.h>
+ #include <linux/bitops.h>
+-#include <linux/smp.h>
+-#include <linux/sched.h>
+-#include <linux/sched/clock.h>
+-#include <linux/thread_info.h>
+ #include <linux/init.h>
+-#include <linux/uaccess.h>
++#include <linux/kernel.h>
++#include <linux/smp.h>
++#include <linux/string.h>
++
++#ifdef CONFIG_X86_64
++#include <linux/topology.h>
++#endif
  
- #include <asm/string.h>
+-#include <asm/cpufeature.h>
+-#include <asm/msr.h>
+ #include <asm/bugs.h>
++#include <asm/cpu_device_id.h>
++#include <asm/cpufeature.h>
+ #include <asm/cpu.h>
++#include <asm/hwcap2.h>
+ #include <asm/intel-family.h>
+ #include <asm/microcode.h>
+-#include <asm/hwcap2.h>
+-#include <asm/elf.h>
+-#include <asm/cpu_device_id.h>
+-#include <asm/resctrl.h>
++#include <asm/msr.h>
+ #include <asm/numa.h>
++#include <asm/resctrl.h>
+ #include <asm/thermal.h>
+-
+-#ifdef CONFIG_X86_64
+-#include <linux/topology.h>
+-#endif
++#include <asm/uaccess.h>
+ 
+ #include "cpu.h"
+ 
+-#ifdef CONFIG_X86_LOCAL_APIC
+-#include <asm/mpspec.h>
+-#include <asm/apic.h>
+-#endif
+-
+ /*
+  * Processors which have self-snooping capability can handle conflicting
+  * memory type across CPUs by snooping its own cache. However, there exists
 
