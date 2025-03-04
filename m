@@ -1,85 +1,74 @@
-Return-Path: <linux-kernel+bounces-544027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0AC3A4DC93
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:29:06 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 125C8A4DC95
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:29:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EA44188A044
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:29:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E15BE3B2B33
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:29:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D611FF7C3;
-	Tue,  4 Mar 2025 11:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 919AE1FF5F9;
+	Tue,  4 Mar 2025 11:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XHi3r0aS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="VV4St/cn"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B5C41FF5F9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:28:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6991FCD00
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:29:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741087726; cv=none; b=o3uyvl02zpqn/4md43RrSWMz2IRxjZ0ifTIbr3JiFYXvTAuMBsrPTlX+U9m1LUo0aT9czFYbJR5GdjTDwI2sXnk8WTbbwAb6UftcTVcaFP76bFXhCPuU7/qh3nvxE+X0wrKmMjteNLJnivmqk4QJT6TPk5yxeS94WYaCkxjOhUQ=
+	t=1741087742; cv=none; b=Z9z9EFPido4f4CqijebBQ80jjiDuiwgVwZ78YWxkg9S5A1S7hg+1U/pYpjLCKQBQYYIFwgpu8FwTsGzXrgrglDReuI2s9DsSdvNduhDN6QhdKuRZWYtis8+NJjnlouDfyfUl6Mph0gOktzfJeAV/SrrXYtL9fF8ZO9GfXs9+3lk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741087726; c=relaxed/simple;
-	bh=KnUdtItjGNYgdCcN9y5Rg4Cul1YLre/02YFHO8L2ZVg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rdK4GIVu7VOxgz1c5NoAv6fPIRpzNnIRIWMj40snvKr39e6oPXILA2AHX9tXwGGlslzUgcMF9ajIqycdPZZlcYDeplJTB+wV+Ijukuc886x0tC6aKtXDb3yPKDhx7yuJL7wlqHvdXp1/uDy0DK2V+5QoQ0nudNZ4Fg/LoYqifow=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XHi3r0aS; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741087724;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Eh0+rygjvEWvFpambZXtqMxwPMY88Yx0JvlayLr7tDE=;
-	b=XHi3r0aSKl+qT2debhqZ2hgu0pCHclxbvnUzrDUdRO0EJ9T1Uz1jr/3ZyIR8wFhV/Awvtt
-	957YQ7eZH1Ffq5tYSMT9VabWlS+6Xhq+dN+L6dohuJgGrrsDSgUDnAGQSWtwSg2VJnLcg/
-	TmCrA+5tktHWFv6yldUb3ArVGvRQpXg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-204-jh6gVdkzMXaZEAdONGpXog-1; Tue, 04 Mar 2025 06:28:33 -0500
-X-MC-Unique: jh6gVdkzMXaZEAdONGpXog-1
-X-Mimecast-MFC-AGG-ID: jh6gVdkzMXaZEAdONGpXog_1741087712
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43bc1aa0673so9729475e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 03:28:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741087712; x=1741692512;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Eh0+rygjvEWvFpambZXtqMxwPMY88Yx0JvlayLr7tDE=;
-        b=EIO7v8UJcoSDD5XhFNNa52YBhfRm8m/UCVdiK85vKS4Xde8OMAfIlsA5qXEBKmm5lo
-         0kDuWxT2xILGH0O6SwKoIrBEQ5rNZKPYdC+uEOU/+PsRWhP+o6C+H0ewDFpZZtyya3G7
-         YEC3AgPUoekgJcgWNPYx6bO9iVCUAFbCYwk+kWIvRfGFnZy03C5rM+p3vZCrYjp7etD7
-         j4K57qc6nKJ1QeTq8p7pZwymRYP9HzcQC15n0iUIHVxnDq/DkpFQSwQmrKQ+CGw2xxra
-         fVcqGwmstq9ZHmOXJzVw0lBn4v3+KEEvbfRJ+b0FJhbZC08i/JuINe6TAHfMHe2X+tbU
-         UlEA==
-X-Forwarded-Encrypted: i=1; AJvYcCUai2cGG0dujcBz8f4g+0Q6dyf5+114q0Smg7LsFM5r1NMKGx+DWB1SFM9XmRz7bgIbSLR51QT0VAt4bto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZlITEsrIJQxNXz7BK/HkxNyP1kBa8zsd1peYi6wrOEUw/Grll
-	AONZjm27nAQgLYV5ek13T+uoOjdIslZYG04yXG++RIriL3x/AWnLJvJg/agxB0sYns3QVoyVmVg
-	NlK6p4X6M25hYmC9c/COdtvLUt8wqVi98G+j1Mhh0MFvIeceA3sDbwEY87PCKmg==
-X-Gm-Gg: ASbGncuztZP1d2GOP2iWgus5cIRtJJ2p+oxC0rq71Nggw+H141sZ85PQSDY8kV9Z027
-	nDOKAqO3lsPvZ0P83Xxqj3C8/266QbaGziUOWkmLr35mfPY34NTGj1OYyZuxOOixEuAvSWuxgWx
-	h053Xmt0XKG/VosY9XyQR4ph6V7BJ5MYrX3JGWEFi89GSiW7dxStgI7mqH12Pb5eqw0jq3MigjU
-	K6DULgtRZeNSL5fp47iL/Tx5h7rRW6CNjkFv+yb4+HLLj+7wkRyy63gm6iSqmkugGXRG82dAXYL
-	mszzosurAWOr1+Mld9uJoH1FOE5oPXbWRBUv0As4DfiNwA==
-X-Received: by 2002:a5d:5f89:0:b0:390:f698:691c with SMTP id ffacd0b85a97d-390f698696emr15424447f8f.43.1741087711875;
-        Tue, 04 Mar 2025 03:28:31 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IEqZ/TRGcqVpyJ16gAgzdOfvndPozt1EifipipyO5TrSqSLkUzB4NwQLxlVOUb/6RXZ9PIEUQ==
-X-Received: by 2002:a5d:5f89:0:b0:390:f698:691c with SMTP id ffacd0b85a97d-390f698696emr15424428f8f.43.1741087711524;
-        Tue, 04 Mar 2025 03:28:31 -0800 (PST)
-Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43aba5710ebsm231184535e9.26.2025.03.04.03.28.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 03:28:31 -0800 (PST)
-Message-ID: <63e68624-3672-4473-be15-ce04eb3cd2ed@redhat.com>
-Date: Tue, 4 Mar 2025 12:28:29 +0100
+	s=arc-20240116; t=1741087742; c=relaxed/simple;
+	bh=k7/ns6k+jC8YH5yC8ti9Hx6GiB2hICgAKqN2/m6TX4w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Ng9XPmbIZ9QODtN+n+RNvCkWa8pyzy9S9fXLa4NJjPUHBt5Y0pQBINp3EV/TIYC+u6dmbkK3TEjF4CphhaLnWMrBoVSrJjwPOJhvnsCqhtwuPhOlNo4jhFUCPfvRYSWtvFx34wZRGJgwjKpYmqxEEQVM057WMb5A6+6QBdJc2WU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=VV4St/cn; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5243jgqn021527;
+	Tue, 4 Mar 2025 11:28:43 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=HB09KY
+	Dfr5AgqHYVGRS5BenMKUM+GUnC0qmbOWI8zsE=; b=VV4St/cndBGXFGGeVBHVkn
+	sHXAoyQSNdhnPwWhZCHthEhRCWMGwgUkSKY+Dw4t7iTxqtcAxQVssyC74o+yxid6
+	S4dTKYRMK288aoF0gUNsxOu9rf9Mkk2axONd/AfCH0NG1QkILAlYs3W4eFdhOFuR
+	LriJ0LOAsd4PhTugYpTMiuM8vsuIcCbGWEQmjkmUKJxq7+xkcRcZFMKml3Al3thZ
+	kC8GurlOj17jrXqRbsed/PN3Qxiu0UV1ymEaHdCyUepe8xzSU/7Dsvkg45UBWe0s
+	flMaEBZ4RPjCtLkrStCxFAvPk39MWXwYz8rVb4T6vHvwgDMbmZTgxbwz8GCrqfjw
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455sw7j4eg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 11:28:43 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5249VsZb025044;
+	Tue, 4 Mar 2025 11:28:42 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 454f91vny8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 11:28:42 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524BSf1127329098
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 11:28:41 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 68B3A5805A;
+	Tue,  4 Mar 2025 11:28:41 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3EB8358051;
+	Tue,  4 Mar 2025 11:28:37 +0000 (GMT)
+Received: from [9.43.105.169] (unknown [9.43.105.169])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Mar 2025 11:28:36 +0000 (GMT)
+Message-ID: <bfcce9ce-bc26-4088-8d27-0797fc0d22d3@linux.ibm.com>
+Date: Tue, 4 Mar 2025 16:58:34 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,38 +76,124 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] qlcnic: fix a memory leak in
- qlcnic_sriov_set_guest_vlan_mode()
-To: Haoxiang Li <haoxiang_li2024@163.com>, shshaikh@marvell.com,
- manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com, andrew+netdev@lunn.ch,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- rajesh.borundia@qlogic.com, sucheta.chakraborty@qlogic.com
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250228092449.3759573-1-haoxiang_li2024@163.com>
+Subject: Re: Build Warnings at arch/powerpc/
+To: Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
+ <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
+ <8ba544e7-cf2a-4807-a056-683115805721@csgroup.eu>
 Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20250228092449.3759573-1-haoxiang_li2024@163.com>
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <8ba544e7-cf2a-4807-a056-683115805721@csgroup.eu>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: F-gHy7AAVCittyDFXVYiNSidux3HVXLP
+X-Proofpoint-GUID: F-gHy7AAVCittyDFXVYiNSidux3HVXLP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_05,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040097
 
 
-On 2/28/25 10:24 AM, Haoxiang Li wrote:
-> Add qlcnic_sriov_free_vlans() to free the memory allocated by
-> qlcnic_sriov_alloc_vlans() if "sriov->allowed_vlans" fails to
-> be allocated.
+
+On 3/4/25 2:26 PM, Christophe Leroy wrote:
 > 
-> Fixes: 91b7282b613d ("qlcnic: Support VLAN id config.")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> 
+> Le 04/03/2025 à 07:13, Madhavan Srinivasan a écrit :
+>>
+>>
+>> On 3/4/25 10:42 AM, Venkat Rao Bagalkote wrote:
+>>> Greetings!!
+>>>
+>>>
+>>> Observing build warnings with linux-next and powerpc repo's. Issue is currently not seen on mainline yet.
+>>>
+>>> PPC Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fpowerpc%2Flinux.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C8e0f8501f09c48dbb43608dd5ae3c9bf%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766656585342184%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=e5BrJzcrtlITkLF31KltGExQ5Qe8fDVTMV6VfR4w9o8%3D&reserved=0 merge branch
+>>>
+>>> PPC Kernel Version: 6.14.0-rc4-g1304f486dbf1
+>>> next Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fnext%2Flinux-next.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C8e0f8501f09c48dbb43608dd5ae3c9bf%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766656585355246%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=meQyZfB75HhJFCL6AX93slsyVwnogGPYFabDXl%2FLzDA%3D&reserved=0 master branch
+>>>
+>>> next Kernel Version: 6.14.0-rc5-next-20250303
+>>>
+>>>
+>>> On linux-next kernel issue got introduced b/w next-20250227 and next-20250303
+>>>
+>>>
+>>> Build Warnings:
+>>>
+>>> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
+>>> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
+>>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+>>>
+>>>
+>>
+>> Can you please specific the compiler and compiler version you found this issue with
+>>
+> 
+> Can you also tell which defconfig you are using or provide your .config
+> 
+> It might also be helpfull if you can provide a disassembly of the three file.o around the warned address.
 
-AFAICS the fix is not complete: sriov vlans could still be leaked when
-qlcnic_sriov_alloc_vlans() fails on any VF with id > 0.
+I could recreate the issue with gcc 11.4.1 20231218 with today's linux-next (but could not recreate with gcc 14 or gcc 11.3.0)
 
-Please handle even such scenario.
+(20d5c66e1810 (HEAD -> master, tag: next-20250304, origin/master, origin/HEAD) Add linux-next specific files for 20250304)
 
-Thanks!
+warning for one of the switch.S file :
 
-Paolo
+  CC      arch/powerpc/kernel/syscalls.o
+  AS      arch/powerpc/kernel/switch.o
+arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+  CC      arch/powerpc/kernel/irq.o
+  CC      arch/powerpc/kernel/align.o
+  CC      arch/powerpc/kernel/signal_64.o
+
+Objdump of switch.o:
+arch/powerpc/kernel/switch.o:     file format elf64-powerpcle
+
+Disassembly of section .text:
+
+0000000000000000 <flush_branch_caches>:
+       0:	a6 02 28 7d 	mflr    r9
+       4:	05 00 00 48 	bl      8 <flush_branch_caches+0x8>
+       8:	05 00 00 48 	bl      c <flush_branch_caches+0xc>
+       c:	05 00 00 48 	bl      10 <flush_branch_caches+0x10>
+      10:	05 00 00 48 	bl      14 <flush_branch_caches+0x14>
+      14:	05 00 00 48 	bl      18 <flush_branch_caches+0x18>
+      18:	05 00 00 48 	bl      1c <flush_branch_caches+0x1c>
+      1c:	05 00 00 48 	bl      20 <flush_branch_caches+0x20>
+      20:	05 00 00 48 	bl      24 <flush_branch_caches+0x24>
+      24:	05 00 00 48 	bl      28 <flush_branch_caches+0x28>
+      28:	05 00 00 48 	bl      2c <flush_branch_caches+0x2c>
+
+
+arch/powerpc/kernel/switch.S failing src section:
+
+.balign 32
+.global flush_branch_caches
+flush_branch_caches:
+        /* Save LR into r9 */
+        mflr    r9
+
+        // Flush the link stack
+        .rept 64
+        ANNOTATE_INTRA_FUNCTION_CALL
+        bl      .+4
+        .endr
+        b       1f
+        nops    6
+
+Maddy 
+
+
+> 
+> Christophe
 
 
