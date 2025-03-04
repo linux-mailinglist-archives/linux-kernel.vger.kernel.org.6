@@ -1,145 +1,131 @@
-Return-Path: <linux-kernel+bounces-543361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9C314A4D495
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:17:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43517A4D4A9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2052C174DA6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:17:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BDA4016C531
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 643861F8922;
-	Tue,  4 Mar 2025 07:12:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8913A1FC7FD;
+	Tue,  4 Mar 2025 07:16:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="tmGYOlCJ"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TuO/UDwO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F831F875B;
-	Tue,  4 Mar 2025 07:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1304B1FBEB3;
+	Tue,  4 Mar 2025 07:16:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741072328; cv=none; b=Fl+BkyMCmxlnjqSN1+GQDe4YxG4J0dX5a9m4Bc8SZcHj8pNcskL1i/JBQJSSW2x9vcdkD0SUh+iw1oS8xSlRHpH1WZeaHjvz/3UQlC2vPiFad5OdEuTx9L+Cc18Mppg/1Q0eo4adCyiuZ/4R85cSToIziaXsj0jY6+meHqfpKFQ=
+	t=1741072585; cv=none; b=r6WS2AaAIXRnoWoGftfmOCvLjLJF7Nn0h/Vrzr5Ag+DuO87d+Qest5niy71rK44jCzpBwwlwUIIQVwLyZvjmWqJHMQ/86ZhfnVCYtMGurkAaKh+j1OVs4IeRUQtu4FqwRLZ9FFdfrbwDMiOCxtwlQXuNkg7hQSThfOjkNpiJ4h0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741072328; c=relaxed/simple;
-	bh=YpNyS+L+ebZaeL7cCRbUQtmpf7B/6++gtuflX+VXkPs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SOLh7/7SFYz5/HkCw4Aq82LF1qFzz1Jt/4L8WZz1QhF/Go7A4kxJcs5eJo2mWGYiFa/AF93l6PYA/pzy2e5eCaimU5VZ6ASZbkfjrd1/Wc8Qhrh4APwYNu0NLBg5InGITU/FwpJ/ffFXCxdAE8QSkCpnaZq+P03tnGabX/mN45U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=tmGYOlCJ; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741072316;
-	bh=s8VxkbU7o5vZ0fVz0uOKfgT2wrEWILjGmllok9tcCes=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=tmGYOlCJ9n1c6FTtQOWBKBPc6mZLhZSL4Sl3rHBKebFo+4VFYYB1kQ12K1h45rB+p
-	 fWD2Ff1LAG5D3tk3nNUWJ909bE2XPa2UvM0LOVXBxb4eNYqjbnH2nas3gymQgSBnoi
-	 GdEfQI7Q3C1Vxpsst9QRbyN6YqfnzWZXzxAEL83UWAWKADXgBCcAW5dZOrGTtZSOEr
-	 wdYqEMEWJU9O1kfdiZNPbTe0W8VTwA+Pin+nWk4zPkgGfJegCQ3c2cinR+cSuYfEpD
-	 gu9u6pAokQyeQdEu0S020lmhMfXrH+JsumtoKBod1/nHcsdh1Vl7+/XXAagy3T/FP9
-	 S47cOC9uHBVDQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z6Rgs5Cq8z4wgp;
-	Tue,  4 Mar 2025 18:11:53 +1100 (AEDT)
-Date: Tue, 4 Mar 2025 18:11:32 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- "H. Peter Anvin" <hpa@zytor.com>, Peter Zijlstra <peterz@infradead.org>,
- James Bottomley <James.Bottomley@HansenPartnership.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>, Bart Van Assche
- <bvanassche@acm.org>, John Garry <john.g.garry@oracle.com>, Linux Kernel
- Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>, Nam Cao <namcao@linutronix.de>
-Subject: Re: linux-next: manual merge of the scsi-mkp tree with the tip tree
-Message-ID: <20250304181132.3e779c4b@canb.auug.org.au>
-In-Reply-To: <20250225153200.00773d86@canb.auug.org.au>
-References: <20250225153200.00773d86@canb.auug.org.au>
+	s=arc-20240116; t=1741072585; c=relaxed/simple;
+	bh=vA1PHVGyKBsZXGTUFJhLoHOtf7WUBd9NEZ6psAdExJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FzfzCurRN7DaGwJ4u6Vx/Q17FVBFwa5uO/SrQ67cwvZovV+x4yAfmPmN4Cm58oYU9NfUl/KD3PQ0WG31vX0hEgCht7rJ4TJjQOgO4lHHAkWMHnGbG/7GG+Uxx5eECz9IcoODviQPseWMWxVMfX0aINJ8EhPSKGaBHt+RE6iQAY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TuO/UDwO; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741072584; x=1772608584;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vA1PHVGyKBsZXGTUFJhLoHOtf7WUBd9NEZ6psAdExJo=;
+  b=TuO/UDwO7TDlfSQdj6WYQehiVCSkfRA4ISXOJVnPhJTxs8o8oedJCgYG
+   pc4CJysAlN8WTjt62OjwafW6ffkKSju5KAzBhx8NKdohe4rdD+3+wGoEV
+   bMChCTpKAeIXGxAt/bUs6kc0Ikdmj2DzvQC+eEoN1KvDI2mZo6uuEb6nW
+   KwUiTxNQkvae4xEV9dkL0hc8RB5yAnJWn/VQrbBXLSVlkPLIcMvM77rA1
+   IdEXgXGlaairSie+ygUNnh3fP7DjQxzqL4zJqFJ2CChtaMUp01OtD+HpT
+   H4s+fAxQ5lrd1rGoO9gwqIzfKNGGCgyyadTnYb5OalMlEgFESTUZSIOLv
+   w==;
+X-CSE-ConnectionGUID: iYFu+B1sRkmUWH7cub0c7Q==
+X-CSE-MsgGUID: 5niIKDU+T+yhRdVBpmMAtQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="44784277"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="44784277"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 23:16:23 -0800
+X-CSE-ConnectionGUID: ErItsbA0TaGriciw0SFmDg==
+X-CSE-MsgGUID: TbASbV78QoSmaKexCGnnIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="118447613"
+Received: from mev-dev.igk.intel.com ([10.237.112.144])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 23:16:20 -0800
+Date: Tue, 4 Mar 2025 08:12:32 +0100
+From: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
+To: Tariq Toukan <tariqt@nvidia.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Saeed Mahameed <saeedm@nvidia.com>, Gal Pressman <gal@nvidia.com>,
+	Leon Romanovsky <leonro@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>, netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Amir Tzin <amirtz@nvidia.com>, Mark Bloch <mbloch@nvidia.com>
+Subject: Re: [PATCH net-next 4/6] net/mlx5: Lag, Enable Multiport E-Switch
+ offloads on 8 ports LAG
+Message-ID: <Z8an4KmSILuK4mmv@mev-dev.igk.intel.com>
+References: <20250226114752.104838-1-tariqt@nvidia.com>
+ <20250226114752.104838-5-tariqt@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Vl2WmDm8fXNy6S2Lypogz+N";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226114752.104838-5-tariqt@nvidia.com>
 
---Sig_/Vl2WmDm8fXNy6S2Lypogz+N
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Wed, Feb 26, 2025 at 01:47:50PM +0200, Tariq Toukan wrote:
+> From: Amir Tzin <amirtz@nvidia.com>
+> 
+> Patch [1] added mlx5 driver support for 8 ports HCAs which are available
+> since ConnectX-8. Now that Multiport E-Switch is tested, we can enable
+> it by removing flag MLX5_LAG_MPESW_OFFLOADS_SUPPORTED_PORTS.
+> 
+> [1]
+> commit e0e6adfe8c20 ("net/mlx5: Enable 8 ports LAG")
+> 
+> Signed-off-by: Amir Tzin <amirtz@nvidia.com>
+> Signed-off-by: Mark Bloch <mbloch@nvidia.com>
+> Signed-off-by: Tariq Toukan <tariqt@nvidia.com>
+> ---
+>  drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c | 4 ----
+>  1 file changed, 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c b/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
+> index ffac0bd6c895..cbde54324059 100644
+> --- a/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
+> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lag/mpesw.c
+> @@ -65,7 +65,6 @@ static int mlx5_mpesw_metadata_set(struct mlx5_lag *ldev)
+>  	return err;
+>  }
+>  
+> -#define MLX5_LAG_MPESW_OFFLOADS_SUPPORTED_PORTS 4
+>  static int enable_mpesw(struct mlx5_lag *ldev)
+>  {
+>  	int idx = mlx5_lag_get_dev_index_by_seq(ldev, MLX5_LAG_P1);
+> @@ -77,9 +76,6 @@ static int enable_mpesw(struct mlx5_lag *ldev)
+>  		return -EINVAL;
+>  
+>  	dev0 = ldev->pf[idx].dev;
+> -	if (ldev->ports > MLX5_LAG_MPESW_OFFLOADS_SUPPORTED_PORTS)
+> -		return -EOPNOTSUPP;
+> -
+>  	if (mlx5_eswitch_mode(dev0) != MLX5_ESWITCH_OFFLOADS ||
+>  	    !MLX5_CAP_PORT_SELECTION(dev0, port_select_flow_table) ||
+>  	    !MLX5_CAP_GEN(dev0, create_lag_when_not_master_up) ||
 
-Hi all,
+Reviewed-by: Michal Swiatkowski <michal.swiatkowski@linux.intel.com>
 
-On Tue, 25 Feb 2025 15:32:00 +1100 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Today's linux-next merge of the scsi-mkp tree got a conflict in:
->=20
->   drivers/scsi/scsi_debug.c
->=20
-> between commit:
->=20
->   b7011929380d ("scsi: Switch to use hrtimer_setup()")
->=20
-> from the tip tree and commit:
->=20
->   b441eafbd1eb ("scsi: scsi_debug: Simplify command handling")
->=20
-> from the scsi-mkp tree.
->=20
-> I fixed it up (I think - see below) and can carry the fix as necessary.
-> This is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
-> diff --cc drivers/scsi/scsi_debug.c
-> index fe5c30bb2639,2208dcba346e..000000000000
-> --- a/drivers/scsi/scsi_debug.c
-> +++ b/drivers/scsi/scsi_debug.c
-> @@@ -8701,8 -9351,12 +9351,13 @@@ err_out
->   static int sdebug_init_cmd_priv(struct Scsi_Host *shost, struct scsi_cm=
-nd *cmd)
->   {
->   	struct sdebug_scsi_cmd *sdsc =3D scsi_cmd_priv(cmd);
-> + 	struct sdebug_defer *sd_dp =3D &sdsc->sd_dp;
->  =20
->   	spin_lock_init(&sdsc->lock);
->  -	hrtimer_init(&sd_dp->hrt, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED);
-> ++	hrtimer_setup(&sd_dp->hrt, sdebug_q_cmd_hrt_complete, CLOCK_MONOTONIC,
-> ++		      HRTIMER_MODE_REL_PINNED);
-> + 	sd_dp->hrt.function =3D sdebug_q_cmd_hrt_complete;
-> + 	INIT_WORK(&sd_dp->ew.work, sdebug_q_cmd_wq_complete);
->  =20
->   	return 0;
->   }
-
-This is now a conflict between the scsi tree and the tip tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Vl2WmDm8fXNy6S2Lypogz+N
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfGp6UACgkQAVBC80lX
-0GxD7gf/SrZPz02xtkwLy4s2PWkqnNER5eFYSKcT8ULThB0j5uPWqE6PEDEdsaaV
-/pI1h3xZ9Lg7sl9TvXq9dRzJ4+PcsMBcRWKy3fTQNZxx9PXQ7vvifkhJpZx7UH/E
-uev34+FWY+yy7UhGHGW6t88sSOCSu/TLnKhwdpXsIpNXVm2I7VHmEc5clejp6zMe
-5XhiBGzwxYUXJzBqByW5iLcaQAR5XQOoWa3IzsUrJNPBMwUDddrac7UdFilqxrtr
-ZMh1RBw/E7Au+N33cUe8zoFVC2p6N7vRSFJDlPEl+Q/V4tVwg/Z6C2whtZ0eCpP0
-zjNA7g6DMVNrfXEBi0wZtCsFyD+m7g==
-=GUfP
------END PGP SIGNATURE-----
-
---Sig_/Vl2WmDm8fXNy6S2Lypogz+N--
+> -- 
+> 2.45.0
 
