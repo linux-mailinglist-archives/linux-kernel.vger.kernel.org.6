@@ -1,202 +1,120 @@
-Return-Path: <linux-kernel+bounces-543031-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543032-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63F7DA4D0C0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:25:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BE8A4D0C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:26:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C00C1892205
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:25:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA25E18941DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:26:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EFEB18B48B;
-	Tue,  4 Mar 2025 01:24:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B6413AA38;
+	Tue,  4 Mar 2025 01:25:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Iie1xK3Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A075516DC28;
-	Tue,  4 Mar 2025 01:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88170126C1E;
+	Tue,  4 Mar 2025 01:25:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741051496; cv=none; b=nm7xulX+88H8AN4qDhGwlNv1OpQnQ62L+wLzYwLQQIOHAejTKE0HlYfUWYhVOQMT98AFMSvjkpQz7lRSuXkw3Mz+U9ZHLJQzNXJGg4UNakx1JMbBQ7BoENCgqlP3geHNmkt6xJiCJOwhRm6MPvMcRPLMHlExU51poKAk6HtSc5I=
+	t=1741051545; cv=none; b=J6rgjrckYV7+gsDcZrPgxPTAQctRFyfMQQnn6GO+Ll9DGAE0F22QWBhV5pqIH8EHk12PdN3226iKWLa6pUtMMwCApN0RyV3J1TsQxtIeJIZy1eOhxlHodpoWXLQpjTjwb3ferIJwH+WbRrbcOiMhO4JswmfGH0FdMZEzrxLqI9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741051496; c=relaxed/simple;
-	bh=Q5sqZs7BJbSppMioYZ/1GK0rqmDLGX/vMRd80U2ET2k=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=iMdTWyIWv4+3G9OmEoiANZPLPGAct/LSk7+1eRViGi8t78khFc3opD5nQjyowduZZCu4pwlWHafBoRbNmo3zuCihaW2/27q3au9iFDNR8ExKzKbt0mLhIa/uvpVpGuPHlQIzBuyhpSc6wB5qjwwVEAAMnj7s63bYFzTLkBgJE7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2AA2DC4CEEA;
-	Tue,  4 Mar 2025 01:24:55 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tpH2b-0000000CC8M-0N6l;
-	Mon, 03 Mar 2025 20:25:49 -0500
-Message-ID: <20250304012548.937340181@goodmis.org>
-User-Agent: quilt/0.68
-Date: Mon, 03 Mar 2025 20:25:24 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v3 8/8] tracing: Update modules to persistent instances when loaded
-References: <20250304012516.282694507@goodmis.org>
+	s=arc-20240116; t=1741051545; c=relaxed/simple;
+	bh=V+AR8dH+t6wF0pag9HBom6C8kvjl0abK03bDTDbhgus=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WAgy3CHWnQvfyDFBd+YvANtTCo7Ggv74lo1IZIf+R1dmeKbxCKothgS8AAVbRzK7D2yj7r1h2Dp0j6wTDnRXtXD3mcvtUs5tesI6gQLZhRliMzkKbj1hDDNKN0V9TvdhpwBf1ERi6QRaAo6Em2xbDFrdl+VwRPp9qmClp3HFc1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Iie1xK3Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A250C4CEE4;
+	Tue,  4 Mar 2025 01:25:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741051545;
+	bh=V+AR8dH+t6wF0pag9HBom6C8kvjl0abK03bDTDbhgus=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Iie1xK3ZssJi2y780Ojr9j8a6wVbrQsYpN1DUXNwRXsqH+k5jAeLV42Vryi1kOEG+
+	 hB/ncQZa656pbfQXYLnjBjrOw29+2BIpnQ/htvg0p6VqeEe9rK6vtY3uEIyrM1wEJy
+	 6ZIHsvV66Qq998PaXNlkAgS1uFstqSki0f7Ni48+uteJr1L/t0FYSFjoxRqR4WFKWm
+	 H9OQvIFNNrr9gBvuXEuiEj+I4GKi9fjUoi4OcG0UhURgqD4ipA8ld/AyT6eQtahLxb
+	 GUhVTdMp9sO8sjBSOrkWOB6V22aKZNHrimZklojiEkwzlvOh7fUozPVoG/7ilw/c8/
+	 49yyaym+R/2TQ==
+Date: Mon, 3 Mar 2025 17:25:43 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: MD Danish Anwar <danishanwar@ti.com>
+Cc: Meghana Malladi <m-malladi@ti.com>, Diogo Ivo <diogo.ivo@siemens.com>,
+ Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "David
+ S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>, Vignesh Raghavendra
+ <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>
+Subject: Re: [PATCH net-next] net: ti: icssg-prueth: Add ICSSG FW Stats
+Message-ID: <20250303172543.249a4fc2@kernel.org>
+In-Reply-To: <20250227093712.2130561-1-danishanwar@ti.com>
+References: <20250227093712.2130561-1-danishanwar@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Thu, 27 Feb 2025 15:07:12 +0530 MD Danish Anwar wrote:
+> +	ICSSG_PA_STATS(FW_PREEMPT_BAD_FRAG),
+> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_ERR),
+> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_TX),
+> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_OK),
+> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_RX),
 
-When a module is loaded and a persistent buffer is actively tracing, add
-it to the list of modules in the persistent memory.
+I presume frame preemption is implemented in silicon? If yes -
+what makes these "FW statistics"? Does the FW collect them from 
+the device or the frames are for FW? 
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
-Changes since v2: https://lore.kernel.org/20250215034405.414999988@goodmis.org
+> +	ICSSG_PA_STATS(FW_RX_EOF_SHORT_FRMERR),
+> +	ICSSG_PA_STATS(FW_RX_B0_DROP_EARLY_EOF),
+> +	ICSSG_PA_STATS(FW_TX_JUMBO_FRM_CUTOFF),
+> +	ICSSG_PA_STATS(FW_RX_EXP_FRAG_Q_DROP),
+> +	ICSSG_PA_STATS(FW_RX_FIFO_OVERRUN),
+> +	ICSSG_PA_STATS(FW_CUT_THR_PKT),
+> +	ICSSG_PA_STATS(FW_HOST_RX_PKT_CNT),
+> +	ICSSG_PA_STATS(FW_HOST_TX_PKT_CNT),
+> +	ICSSG_PA_STATS(FW_HOST_EGRESS_Q_PRE_OVERFLOW),
+> +	ICSSG_PA_STATS(FW_HOST_EGRESS_Q_EXP_OVERFLOW),
+>  };
+>  
+>  #endif /* __NET_TI_ICSSG_STATS_H */
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
+> index 424a7e945ea8..d30203a0978c 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
+> @@ -231,4 +231,109 @@
+>  /* Start of 32 bits PA_STAT counters */
+>  #define PA_STAT_32b_START_OFFSET                           0x0080
+>  
+> +/* Diagnostic error counter which increments when RTU drops a locally injected
+> + * packet due to port disabled or rule violation.
+> + */
+> +#define FW_RTU_PKT_DROP		0x0088
+> +
+> +/* Tx Queue Overflow Counters */
+> +#define FW_Q0_OVERFLOW		0x0090
+> +#define FW_Q1_OVERFLOW		0x0098
+> +#define FW_Q2_OVERFLOW		0x00A0
+> +#define FW_Q3_OVERFLOW		0x00A8
+> +#define FW_Q4_OVERFLOW		0x00B0
+> +#define FW_Q5_OVERFLOW		0x00B8
+> +#define FW_Q6_OVERFLOW		0x00C0
+> +#define FW_Q7_OVERFLOW		0x00C8
+> +
+> +/* Incremented if a packet is dropped at PRU because of a rule violation */
+> +#define FW_DROPPED_PKT		0x00F8
 
-- Take the mutex outside of save_mod() to prevent deadlocks
-
- kernel/trace/trace.c        | 27 +++++++++++++++++++++++++
- kernel/trace/trace.h        |  2 ++
- kernel/trace/trace_events.c | 40 ++++++++++++++++++++++++++-----------
- 3 files changed, 57 insertions(+), 12 deletions(-)
-
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index e1f053ffe887..177a7d921ff6 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -10083,6 +10083,32 @@ static void trace_module_remove_evals(struct module *mod)
- static inline void trace_module_remove_evals(struct module *mod) { }
- #endif /* CONFIG_TRACE_EVAL_MAP_FILE */
- 
-+static bool trace_array_active(struct trace_array *tr)
-+{
-+	if (tr->current_trace != &nop_trace)
-+		return true;
-+
-+	/* 0 is no events, 1 is all disabled */
-+	return trace_events_enabled(tr, NULL) > 1;
-+}
-+
-+static void trace_module_record(struct module *mod)
-+{
-+	struct trace_array *tr;
-+
-+	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-+		/* Update any persistent trace array that has already been started */
-+		if ((tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT)) ==
-+		    TRACE_ARRAY_FL_BOOT) {
-+			/* Only update if the trace array is active */
-+			if (trace_array_active(tr)) {
-+				guard(mutex)(&scratch_mutex);
-+				save_mod(mod, tr);
-+			}
-+		}
-+	}
-+}
-+
- static int trace_module_notify(struct notifier_block *self,
- 			       unsigned long val, void *data)
- {
-@@ -10091,6 +10117,7 @@ static int trace_module_notify(struct notifier_block *self,
- 	switch (val) {
- 	case MODULE_STATE_COMING:
- 		trace_module_add_evals(mod);
-+		trace_module_record(mod);
- 		break;
- 	case MODULE_STATE_GOING:
- 		trace_module_remove_evals(mod);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 3a020fb82a34..90493220c362 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -786,6 +786,8 @@ extern void trace_find_cmdline(int pid, char comm[]);
- extern int trace_find_tgid(int pid);
- extern void trace_event_follow_fork(struct trace_array *tr, bool enable);
- 
-+extern int trace_events_enabled(struct trace_array *tr, const char *system);
-+
- #ifdef CONFIG_DYNAMIC_FTRACE
- extern unsigned long ftrace_update_tot_cnt;
- extern unsigned long ftrace_number_of_pages;
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 513de9ceb80e..7b3ef1d26167 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1818,28 +1818,28 @@ event_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 	return cnt;
- }
- 
--static ssize_t
--system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
--		   loff_t *ppos)
-+/*
-+ * Returns:
-+ *   0 : no events exist?
-+ *   1 : all events are disabled
-+ *   2 : all events are enabled
-+ *   3 : some events are enabled and some are enabled
-+ */
-+int trace_events_enabled(struct trace_array *tr, const char *system)
- {
--	const char set_to_char[4] = { '?', '0', '1', 'X' };
--	struct trace_subsystem_dir *dir = filp->private_data;
--	struct event_subsystem *system = dir->subsystem;
- 	struct trace_event_call *call;
- 	struct trace_event_file *file;
--	struct trace_array *tr = dir->tr;
--	char buf[2];
- 	int set = 0;
--	int ret;
- 
--	mutex_lock(&event_mutex);
-+	guard(mutex)(&event_mutex);
-+
- 	list_for_each_entry(file, &tr->events, list) {
- 		call = file->event_call;
- 		if ((call->flags & TRACE_EVENT_FL_IGNORE_ENABLE) ||
- 		    !trace_event_name(call) || !call->class || !call->class->reg)
- 			continue;
- 
--		if (system && strcmp(call->class->system, system->name) != 0)
-+		if (system && strcmp(call->class->system, system) != 0)
- 			continue;
- 
- 		/*
-@@ -1855,7 +1855,23 @@ system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
- 		if (set == 3)
- 			break;
- 	}
--	mutex_unlock(&event_mutex);
-+
-+	return set;
-+}
-+
-+static ssize_t
-+system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
-+		   loff_t *ppos)
-+{
-+	const char set_to_char[4] = { '?', '0', '1', 'X' };
-+	struct trace_subsystem_dir *dir = filp->private_data;
-+	struct event_subsystem *system = dir->subsystem;
-+	struct trace_array *tr = dir->tr;
-+	char buf[2];
-+	int set;
-+	int ret;
-+
-+	set = trace_events_enabled(tr, system ? system->name : NULL);
- 
- 	buf[0] = set_to_char[set];
- 	buf[1] = '\n';
+Instead of adding comments here please add a file under
+Documentation/networking/device_drivers/ with the explanations.
+That's far more likely to be discovered by users, no?
 -- 
-2.47.2
-
-
+pw-bot: cr
 
