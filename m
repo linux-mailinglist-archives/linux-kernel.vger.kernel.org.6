@@ -1,119 +1,103 @@
-Return-Path: <linux-kernel+bounces-545135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17AA5A4E979
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:42:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4C2CA4EA4F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:01:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACFF818912BA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58A0B3B9272
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:36:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D312853E5;
-	Tue,  4 Mar 2025 17:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C326A27810E;
+	Tue,  4 Mar 2025 17:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RGYo0f47"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hfjNTE+e"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD1BA25F979;
-	Tue,  4 Mar 2025 17:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCB427811C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741108261; cv=none; b=iGjUh/dG3guyzeYDLN26g0EQ+L0kRvYJQNwnkcNPORoIicswOZgrAbWuKiyfyJgWrCOaz9G8EzfQZheGl2urNGdVFbfB2Q6Ury48YwODN1gJEjZD6/zE4IztXc91ZvMFbP3pMYE+P7cVRd5zKBWuND81VsPN1n13dTuvIaDZMtc=
+	t=1741108216; cv=none; b=qvlwlvEzzoQN3eW968PMNs64A30ootSRuyDcluW1WIOZA3dCVhynquR/gSdhb76wkoVC1h9qVauSdPocTKF0C5rInBXC1HWldUXotTMOhT45gj0mJ7nEn0TIFX59ua5jfTXr175/81yF0dvihNLD6hqEguOVtiDSx1T5BXFh1Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741108261; c=relaxed/simple;
-	bh=QyJnJjJ/lXLnZyjDS28b5GSFwV9FD3aP+4XwcadNkRM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=GBvbkuYUNurxcqRUuFTeDWwKye3926VzeVNr/b73xALqNPzpLN5/lrwarfJhwK3wptDKH2mtLGyWS16OigyLyuOplx2x7qQSRCY8+WV1lOVSLefACltJTUR/5b1Zec07EN/3wtiRh+zdWNrDqibbKp101FsL7wEjH5FYb02Sq+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RGYo0f47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 746AEC4CEE5;
-	Tue,  4 Mar 2025 17:10:57 +0000 (UTC)
+	s=arc-20240116; t=1741108216; c=relaxed/simple;
+	bh=o43ff7R4e3i7w6mMMmeiN5+e4slUZu+u/De0cuXcQOg=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=ndGI5ooiFh7xVYlsv/v5TKE7sYNNNcnlMRomDV+YCJfO9XeMNKHcK/mEuVdLIciPCmhqkc0XglRs7pbnKLigExbxIN0dtqsgI4r6XzBn7DQLkq/29xoYucbSP0Xk95N1OvLtkZP1pExSc10xChxF9QnBvQ4+KKY2irI4CSsMIf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hfjNTE+e; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FFC5C4CEE5;
+	Tue,  4 Mar 2025 17:10:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741108261;
-	bh=QyJnJjJ/lXLnZyjDS28b5GSFwV9FD3aP+4XwcadNkRM=;
-	h=From:Date:Subject:To:Cc:From;
-	b=RGYo0f47bdIphAXi3nG487Me7SQvi3vSP8HlcI1krepoc4UIgzfLABTZlLoOOYEd/
-	 vFjRPpa8mV2DKyp63Z0hnG4BYKK2A8gKBlyiQxCfuNsSrc6h+MFtRio80jn3RrdsdH
-	 1Ypn9wEvG2YXqlWYFZSUwmDZ5a6Ze7EyhR+ZIojN0M3O+JRsGeGrho7IjgrPDns68p
-	 O1bkgcSAUphQluzSh8pco38/wZn80RA4ZLOgqtXzGFU82K7aeVbbb95PiWxi+icVnu
-	 axyq/oDmmp5VqJMHb0i6cUoxhRs6fQnM7wvUxf4M9X56lbLLhUxIn0vhG8Bo53BiRJ
-	 f6xmAKe5Bf9Lw==
-From: Konrad Dybcio <konradybcio@kernel.org>
-Date: Tue, 04 Mar 2025 18:10:46 +0100
-Subject: [PATCH] arm64: dts: qcom: x1e80100-romulus: Keep L12B and L15B
- always on
+	s=k20201202; t=1741108215;
+	bh=o43ff7R4e3i7w6mMMmeiN5+e4slUZu+u/De0cuXcQOg=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=hfjNTE+eToFjy7+bAUje04CdMveohZzVgbytFafuHToqn3jeT9uemTB+93vHWPLk/
+	 DeZGSkHmw1huQ/PhYeFkhrQvJN/GS7uSPXhaxOGz9W7cDrQhvueQ3optJ6MbFKi35r
+	 2K1O5W7s9pKkoFzcH+HrLcQnt/0YJ9AoKf6c0SSX4HsENdODfuNb3H3XBMez3RNNlB
+	 4bMv9WGtdRqo1JBVYSTCpIAkVsTLmXO951Sj64/bjS5dLpwiytIyqpArYBBxox+/sm
+	 0CSMBbxNPkVZwQpgrS8utkkvqlqCdPYJy/coaurn4QQvxQxAzz+y/O5z9Oiaz3xFmG
+	 SM99zlZ7q6ekg==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADF79380AA7F;
+	Tue,  4 Mar 2025 17:10:49 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-topic-sl7_vregs_aon-v1-1-b2dc706e4157@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIABU0x2cC/x3M2wpAQBRG4VfRvjY1ByKvIknjxy7NaLak5N1NL
- r+LtR4SJIZQVzyUcLFwDBmmLMhvU1iheM4mq22tna7UGQ/2SvZmvBJWGacYlLHaALX1aB3l8kh
- Y+P6v/fC+H9PfDDJlAAAA
-X-Change-ID: 20250304-topic-sl7_vregs_aon-1201ee52ce83
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
- Konrad Dybcio <quic_kdybcio@quicinc.com>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Johan Hovold <johan+linaro@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741108257; l=1496;
- i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
- bh=Q1raCAdNlbWo+epSFVrbDIAnmmxs+X4h74jjAxQUfLU=;
- b=IgCjeXZpbP0EeY9TZrvIxpTFUsVbsEiCtkLNSlhtHr/5lSuxS8wjCBfFcFaacDGfZmKXuNfuJ
- pKaHFJs9pPWBF7BW4EaRURpD3WMB3vJTE+yTLQhnlc99aoiPrEESgUJ
-X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
- pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
+Content-Transfer-Encoding: 8bit
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: do sanity check on inode footer in
+ f2fs_get_inode_page()
+From: patchwork-bot+f2fs@kernel.org
+Message-Id: 
+ <174110824849.224349.8255576653519442579.git-patchwork-notify@kernel.org>
+Date: Tue, 04 Mar 2025 17:10:48 +0000
+References: <20250303035423.1357211-1-chao@kernel.org>
+In-Reply-To: <20250303035423.1357211-1-chao@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org,
+ linux-f2fs-devel@lists.sourceforge.net
 
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Hello:
 
-These regulators power some electronic components onboard. They're
-most likely kept online by other pieces of firmware, but you can never
-be sure enough.
+This series was applied to jaegeuk/f2fs.git (dev)
+by Jaegeuk Kim <jaegeuk@kernel.org>:
 
-Fixes: 09d77be56093 ("arm64: dts: qcom: Add support for X1-based Surface Laptop 7 devices")
-Reported-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
----
- arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi | 2 ++
- 1 file changed, 2 insertions(+)
+On Mon,  3 Mar 2025 11:54:21 +0800 you wrote:
+> This patch introduces a new wrapper f2fs_get_inode_page(), then, caller
+> can use it to load inode block to page cache, meanwhile it will do sanity
+> check on inode footer.
+> 
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/data.c   |  6 ++---
+>  fs/f2fs/dir.c    |  2 +-
+>  fs/f2fs/f2fs.h   |  3 ++-
+>  fs/f2fs/file.c   |  2 +-
+>  fs/f2fs/inline.c | 22 +++++++++----------
+>  fs/f2fs/inode.c  |  4 ++--
+>  fs/f2fs/node.c   | 57 +++++++++++++++++++++++++++++++++---------------
+>  fs/f2fs/node.h   |  6 +++++
+>  fs/f2fs/xattr.c  |  4 ++--
+>  9 files changed, 67 insertions(+), 39 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-index 5867953c73564ca7ae1279b73f6834aa1d732792..6a883fafe3c77a45e045beba8357d67caa88dabf 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-microsoft-romulus.dtsi
-@@ -510,6 +510,7 @@ vreg_l12b: ldo12 {
- 			regulator-min-microvolt = <1200000>;
- 			regulator-max-microvolt = <1200000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-always-on;
- 		};
- 
- 		vreg_l13b: ldo13 {
-@@ -531,6 +532,7 @@ vreg_l15b: ldo15 {
- 			regulator-min-microvolt = <1800000>;
- 			regulator-max-microvolt = <1800000>;
- 			regulator-initial-mode = <RPMH_REGULATOR_MODE_HPM>;
-+			regulator-always-on;
- 		};
- 
- 		vreg_l16b: ldo16 {
+Here is the summary with links:
+  - [f2fs-dev,1/3] f2fs: do sanity check on inode footer in f2fs_get_inode_page()
+    https://git.kernel.org/jaegeuk/f2fs/c/770648dd6abc
+  - [f2fs-dev,2/3] f2fs: do sanity check on xattr node footer in f2fs_get_xnode_page()
+    https://git.kernel.org/jaegeuk/f2fs/c/1078ec609e0a
+  - [f2fs-dev,3/3] f2fs: introduce FAULT_INCONSISTENT_FOOTER
+    https://git.kernel.org/jaegeuk/f2fs/c/4116a6f1172c
 
----
-base-commit: 20d5c66e1810e6e8805ec0d01373afb2dba9f51a
-change-id: 20250304-topic-sl7_vregs_aon-1201ee52ce83
-
-Best regards,
+You are awesome, thank you!
 -- 
-Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
