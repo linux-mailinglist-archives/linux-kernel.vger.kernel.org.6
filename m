@@ -1,151 +1,189 @@
-Return-Path: <linux-kernel+bounces-545027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A00BDA4E837
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:43 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08A8A4E82D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B80AE17CFE4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:10:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14F01883FAB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDB5427C86B;
-	Tue,  4 Mar 2025 16:49:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2DC27811C;
+	Tue,  4 Mar 2025 16:48:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="aYEeSW6P"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VOnExzph"
+Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606E02517BB;
-	Tue,  4 Mar 2025 16:49:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741106943; cv=pass; b=F8mDs2z/uo0ChYHAJycPRyB9lxrCeuvLgl9dGdA6Gt7Gv5nQY7xipxMr6ESmrGTz2pJRiUXbuoSWYwpLg4/0elb1bpQHWUZKSuPg2YTJN0dHMDAia+b3fRCLQEZebKts1jR58EFd6wCWTdX5CH4dRMiaa8WgBO1d/Z1V3K3t5kI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741106943; c=relaxed/simple;
-	bh=4RAoUkuf7ewwJ8cnrWg8tsLrSLar35HtgkvQotfrXug=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=SiLvpzpdQCe4dkbz9vfDcMVUcSQlZdBAPOQ2E1qVHW85WsmQbWSVpZCD/obtP1EmK4nc1QzpqXizAN48oh5IFCua8+GATPaIXKuulglEkwLzEf1qlIQNxnkYzqdiWmA2vk4XssOh3q4HU0MYUV+xpnQklsVTM2synOiQn63tCsc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=aYEeSW6P; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741106922; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=oD6ujRjG+rsYxCx4iGEyaaiezw/7wmwGdhJZAMizG4U8lFLrUl+m4d/2FWA9Vk55Zzyp6IJzFNBWQLVHxw7S4+aR/s3c4BurtrA+YVdeI814VUvKQffCvVlHGvHNXGaTxsUS5PlPJqubP9dAi0UpLAiK+3QQFuW92qdOjwctNN4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741106922; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=dwy5+ghU3OdxRxXJ5Gg2zsehsrGVRP88ZDUxKwxlNq8=; 
-	b=GotW3QTbO8u6iESn0fn7Mly94JXRKfTNeqUsQmApfpVfnvxgtNpeF77VZdJs4VAYGfd8jD5nCm+Lx0QLalU2bZNfL2rzWhuwmmE8ss2YFezIgMm7V5u2o3Xzl/XZslXWFRm4DCtKy9Wl5fXqrqLxihh476cy0NRTdnhO7STvhJE=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741106922;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=dwy5+ghU3OdxRxXJ5Gg2zsehsrGVRP88ZDUxKwxlNq8=;
-	b=aYEeSW6PsY8U0KJa4Sy+jfb6NwH6ByLrAY0Ioui7hBX6296opa/L2UGvo2IVT5el
-	gOObVd4rtiXEvHXe/5vt4ifnwSg8/nHE2KSyuzGdJY18S33/A5m/O9Zd2bDTV9N8QAk
-	GECH72e8TOvsIfEKhBa9HWkNqt6QYVvAZj2KpH6g=
-Received: by mx.zohomail.com with SMTPS id 1741106920056781.2730201045849;
-	Tue, 4 Mar 2025 08:48:40 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB1BE278110
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:48:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741106933; cv=none; b=g8V/D/nX4glXUMNKcKaOaiJBI32HoL6RZ+pBq4WQNziiwlauNGSF1/uzrIbIJo1OBEvG+TP/ZQGTk1DbhArmzcAHBmBH5B37vO60l0Za4FtazDUySH7UsxPJvRHb/l4mhIKSGi+naTadKbUecBvehzz7eeNhH50BC6R0rHjYkFI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741106933; c=relaxed/simple;
+	bh=/z0XwPGGhoHlFeHUs2A7nBYOZsSvcI1+TvpOTqcGq+k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G6UBdsUK2QeqThPC33ma8qU/uhCa5mC6hGPSTVm/3K4wAgHE/RzUVYmSnGAzGAJg9dq1A+mfyOXBlHAHIc1YwbNqoAHGVE8qt6s959BgYBh4EUXoCNIlYupiL63MCXQm8tYlaXiy44BT8QetM9sCEwOiF6ospg1eMAgBpaA+e58=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VOnExzph; arc=none smtp.client-ip=209.85.208.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-30613802a04so59627241fa.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:48:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741106930; x=1741711730; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D2p1zWXWJUnwqxrejHWDKdVWhbal1K6h7wHaPnZrswE=;
+        b=VOnExzphBLw+v4SCXl6qQrywzYxY7w3RnY/Y8ipsDJVpFOLkDI72MbjiSt+7M+fcQ2
+         XdPPSMbp2wcfQBj50XPqhDkJwBb8mQ8jwEd7UOtpjoRvRkuvP/AGJeYAyR9ky/RiWdtD
+         SrnB2ViITZiUWy21/IapGQ5Ar8P5zVdHMkfuKIJorow3UBkkgUKkMyDtlkX8ZFeHxjuo
+         aBOBegkg//g0wiOTTt7pUu4MJHIMeeq3ZNQ2FT5w2l1C9/1LZ7/WkvhXl0pZF/LnZlp/
+         E+c6DHOKgq8GcGFIzuv6qAsnqyuUqd3WSukfGQR2H0vZLjLz3bmgmfpF077VdzN3jXJm
+         KkMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741106930; x=1741711730;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D2p1zWXWJUnwqxrejHWDKdVWhbal1K6h7wHaPnZrswE=;
+        b=cDZyeeJh5BTUD4g7OFtWMqaovhK0zP2u4GTkwfHMO2RGwoTH+8nlzZwe4l/Xb0xvcR
+         m2aaSKBZJuriniNb1eAlfQF0kbt59e8PWb3ReckaxXzqVWiDspvK6q/fwEprWAgTrSwD
+         EtIYhPgqiOht9nIstgDG0eqgAUySUS4s1jvzHxeB7gHg2U9qYOjRNKd7WsppVct58/0Z
+         ral72x9ql1MAq+WI/M30Kk8INeCyK2/iVV/L7WRlaBJFViJPd0shd0wEVZagI5gYnCQi
+         Wpi+rB95Wohn9wwGhFN318KKaqGDFEy03TRONsTxjcIcvtnjkrFtLjLqPUKThqd9QepR
+         Ezmg==
+X-Forwarded-Encrypted: i=1; AJvYcCWEyuPNNy/kBkcCNarAqgNpjrT3E3MzhIAMHE0MnMGVtY1MIqCSr1Y6cTP8to/C7RDEVsr8opfRQGRcJEA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJb5AOB+mgJkXxmCopqqGEW54iXhEf6eCl1qPKJZR0hEixTtYA
+	NJj7jT7OA4S6+MJNl50txbSvimj2qKYXwJsJEqZPOxzLGYgIkQ2DheLSds/mQZRK73363CKhMqX
+	PdR6kU4zPg4Br63hmSur3q0UUByc=
+X-Gm-Gg: ASbGnctxMzSEzIUEm7M/caKx03N3N8kC29XdIXoPxYbvEfeW4UVulFt5qxUNgVCSjUM
+	N/ofHBp2H7S+70a1cb/et6q8wdpOVHl5zuDlktO6iCqpWvQADA9AJ5GPfWFbj1R7KjXQdxfVRrw
+	X4iGokvHtFplEw1NlX/0GDLbLFcg==
+X-Google-Smtp-Source: AGHT+IG+nyTkzziefkFGgQAs+gxUFqxfRYcnS1VunyY9grWbI/b09zPWZTWHdLe4XR/cwpnHW/KUiDkeZtdK60eAJdk=
+X-Received: by 2002:a2e:9a8f:0:b0:30b:9813:afff with SMTP id
+ 38308e7fff4ca-30b9813b525mr50699561fa.31.1741106929338; Tue, 04 Mar 2025
+ 08:48:49 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: [PATCH v2] rust: irq: add support for request_irq()
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <87cyewhpxj.fsf@kernel.org>
-Date: Tue, 4 Mar 2025 13:48:30 -0300
-Cc: ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- benno.lossin@proton.me,
- tmgross@umich.edu,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- Alice Ryhl <aliceryhl@google.com>
+MIME-Version: 1.0
+References: <20250303165246.2175811-1-brgerst@gmail.com> <Z8YTYWs-DeDHal1Q@gmail.com>
+ <CAMzpN2iB4Gv0Fq1pNtk7bpa2z6eYwQGYXT0=p=_wWDBE9Uxa7w@mail.gmail.com>
+ <Z8a-NVJs-pm5W-mG@gmail.com> <CAMzpN2gpHRtOtRuCJF_TKOFbEJ2xkksndCH+MfntfDuZHC0O1w@mail.gmail.com>
+ <Z8bMSr8JrDZtqwK8@gmail.com> <CAFULd4YFm-2Sc6NOzyWt4-TPDkwY-=5h-Gb99M+tFf-Mczk0Ng@mail.gmail.com>
+ <Z8bOIXeWYycUEmp4@gmail.com> <CAMzpN2jUKp93z=jeXqa0uA-kQtaZ931aehZLm_axZoqGCeQZJQ@mail.gmail.com>
+ <CAFULd4aR3+J3z18OCKbFcghOrJ7xLdYM1kPbD4HnUka4+AiLcw@mail.gmail.com> <CAMzpN2gLR51ko+hWAS7XRDM4VLL+YJYcP91AsH+phG1K7UoVDQ@mail.gmail.com>
+In-Reply-To: <CAMzpN2gLR51ko+hWAS7XRDM4VLL+YJYcP91AsH+phG1K7UoVDQ@mail.gmail.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Tue, 4 Mar 2025 17:48:37 +0100
+X-Gm-Features: AQ5f1Jqb3Rp_Qm1vV9QpzNLG9o-5fA_UIgOcFDmt8WFw_xNmuevaonc13Rl9uFs
+Message-ID: <CAFULd4ZN1FXh3JMznJ=SiBxuYj74iaDSg-j6wZjbYxuTaS7wTA@mail.gmail.com>
+Subject: Re: [PATCH v3 00/11] Add a percpu subsection for cache hot data
+To: Brian Gerst <brgerst@gmail.com>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, x86@kernel.org, 
+	"H . Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, 
+	Ard Biesheuvel <ardb@kernel.org>, Linus Torvalds <torvalds@linuxfoundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Andrew Morton <akpm@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <BE595E8E-CB77-4E8B-B6EF-215CCAF5580A@collabora.com>
-References: <u-vC1KbeOK3Fd2PClzinb8LmqS_dntOW-pOSmZIFWotCZeTOg30xR_GYUc4oReAKZeuuu7ZaXWzfeTkpGMlr0A==@protonmail.internalid>
- <20250122163932.46697-1-daniel.almeida@collabora.com>
- <87cyewhpxj.fsf@kernel.org>
-To: Andreas Hindborg <a.hindborg@kernel.org>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
 
-Hi Andreas,
-
-I will address your other comments later this week, as I=E2=80=99m off =
-for a few days.
-
-> On 4 Mar 2025, at 10:43, Andreas Hindborg <a.hindborg@kernel.org> =
+On Tue, Mar 4, 2025 at 5:42=E2=80=AFPM Brian Gerst <brgerst@gmail.com> wrot=
+e:
+>
+> On Tue, Mar 4, 2025 at 11:02=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> w=
+rote:
+> >
+> > On Tue, Mar 4, 2025 at 4:00=E2=80=AFPM Brian Gerst <brgerst@gmail.com> =
 wrote:
->=20
-> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
->=20
->> Add support for registering IRQ handlers in Rust.
->>=20
->> IRQ handlers are extensively used in drivers when some peripheral =
-wants to
->> obtain the CPU attention. Registering a handler will make the system =
-invoke the
->> passed-in function whenever the chosen IRQ line is triggered.
->>=20
->> Both regular and threaded IRQ handlers are supported through a =
-Handler (or
->> ThreadedHandler) trait that is meant to be implemented by a type =
-that:
->>=20
->> a) provides a function to be run by the system when the IRQ fires =
-and,
->>=20
->> b) holds the shared data (i.e.: `T`) between process and IRQ =
-contexts.
->>=20
->> The requirement that T is Sync derives from the fact that handlers =
-might run
->> concurrently with other processes executing the same driver, creating =
-the
->> potential for data races.
->>=20
->> Ideally, some interior mutability must be in place if T is to be =
-mutated. This
->> should usually be done through the in-flight SpinLockIrq type.
->>=20
->> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
->> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
->> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
->=20
-> What is the base commit to apply this patch to? I am getting some
-> compiler errors when trying it out:
->=20
->   error[E0308]: mismatched types
->     --> =
-/home/aeh/src/linux-rust/linux/rust/kernel/irq/request.rs:240:21
->       |
->   237 |                 bindings::request_irq(
->       |                 --------------------- arguments to this =
-function are incorrect
->   ...
->   240 |                     flags.0,
->       |                     ^^^^^^^ expected `usize`, found `u64`
->       |
->=20
-> [...]
+> > >
+> > > On Tue, Mar 4, 2025 at 4:55=E2=80=AFAM Ingo Molnar <mingo@kernel.org>=
+ wrote:
+> > > >
+> > > >
+> > > > * Uros Bizjak <ubizjak@gmail.com> wrote:
+> > > >
+> > > > > On Tue, Mar 4, 2025 at 10:48=E2=80=AFAM Ingo Molnar <mingo@kernel=
+.org> wrote:
+> > > > > >
+> > > > > >
+> > > > > > * Brian Gerst <brgerst@gmail.com> wrote:
+> > > > > >
+> > > > > > > On Tue, Mar 4, 2025 at 3:47=E2=80=AFAM Ingo Molnar <mingo@ker=
+nel.org> wrote:
+> > > > > > > >
+> > > > > > > >
+> > > > > > > > * Brian Gerst <brgerst@gmail.com> wrote:
+> > > > > > > >
+> > > > > > > > > >
+> > > > > > > > > > -       PERCPU_SECTION(INTERNODE_CACHE_BYTES)
+> > > > > > > > > > +       PERCPU_SECTION(L1_CACHE_BYTES)
+> > > > > > > > > >         ASSERT(__per_cpu_hot_end - __per_cpu_hot_start =
+<=3D 64, "percpu cache hot section too large")
+> > > > > > > > > >
+> > > > > > > > > >         RUNTIME_CONST_VARIABLES
+> > > > > > > > > >
+> > > > > > > > >
+> > > > > > > > > That is probably the right call.  The initial percpu sect=
+ion is just
+> > > > > > > > > used by the boot cpu early and as a template for the dyna=
+mically
+> > > > > > > > > allocated percpu memory, which should account for the pro=
+per
+> > > > > > > > > alignment for NUMA.
+> > > > > > > >
+> > > > > > > > Okay.
+> > > > > > > >
+> > > > > > > > Randconfig testing found another corner case with the attac=
+hed config:
+> > > > > > > >
+> > > > > > > >     KSYMS   .tmp_vmlinux0.kallsyms.S
+> > > > > > > >     AS      .tmp_vmlinux0.kallsyms.o
+> > > > > > > >     LD      .tmp_vmlinux1
+> > > > > > > >   ld: percpu cache hot section too large
+> > > > > > > >   make[2]: *** [scripts/Makefile.vmlinux:77: vmlinux] Error=
+ 1
+> > > > > > > >
+> > > > > > > > (I haven't figured out the root cause yet.)
+> > > > > > >
+> > > > > > > CONFIG_MPENTIUM4 sets X86_L1_CACHE_SHIFT to 7 (128 bytes).
+> > > > > >
+> > > > > > Hm, to resolve this I'd go for the easy out of explicitly using=
+ '64' as
+> > > > > > the size limit - like we did it in the C space.
+> > > > >
+> > > > > Why not simply:
+> > > > >
+> > > > > ASSERT(__per_cpu_hot_end - __per_cpu_hot_start <=3D L1_CACHE_BYTE=
+S, "...")
+> > > > >
+> > > > > ?
+> > > >
+> > > > I don't think it's a great idea to randomly allow a larger section
+> > > > depending on the .config ... The *actual* intended limit is 64, not=
+ 128
+> > > > and not 4096, so I'd suggest we write it out as before.
+> > >
+> > > Change the assert to:
+> > >        ASSERT(__per_cpu_hot_pad - __per_cpu_hot_start <=3D 64, "percp=
+u
+> > > cache hot section too large")
+> > >
+> > > We only care about the used portion, not the padded end.
+> >
+> > If this is the case, perhaps it is better to use __per_cpu_hot_end
+> > to mark the end of the real data, as in the attached patch.
+>
+> That's a better approach.  There's not much value in the current _end
+> symbol if it's not always _start+64.
 
-This patch needs a rebase. I=E2=80=99ve been waiting for Lyude & Boqun
-new SpinLockIrq series, which just came out last week.
+Thanks, I'll submit a formal patch submission.
 
-I=E2=80=99ll work on a v3 soon.
-
-
-
+Uros.
 
