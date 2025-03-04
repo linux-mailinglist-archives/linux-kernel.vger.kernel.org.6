@@ -1,193 +1,165 @@
-Return-Path: <linux-kernel+bounces-544911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BFFA4E804
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:13:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F2A2A4E8C2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:30:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5D508C5AD8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:37:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 898068C698C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D33127C84A;
-	Tue,  4 Mar 2025 16:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA2E1259CA7;
+	Tue,  4 Mar 2025 16:15:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="enFC4w7i"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o9OpQSWC"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F42259CB4;
-	Tue,  4 Mar 2025 16:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA82259C87;
+	Tue,  4 Mar 2025 16:15:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104946; cv=none; b=pwtYwCsgzj5FBwKsClWUal6gR5q8/JQIjEQcmzWJ9g2Q8GvGU6djEFbcT4LUEoShCOZPyl6iShSMEIsLdtqj5mtyc6XDnKirE0dmxRTSAPwD3vjfPF44o9wxhHZkYwPTZMGqj0R8Sv0eEiSLe0YVbASE01dWK+X/uU3ywkpm99c=
+	t=1741104925; cv=none; b=Wl94H1/bjM/1z+ymiclZZvOyt7VxqQ/gQRTOFBkf2SDNGbC6HMDvBeDqLED93MGsF266DT+/xEmRNdco31kKX9+6xZeeCSioRYKfX2iUyww59qRg1ekklGb6TV2OcPC29mQyPC7TWzu8KsQuDtqNLtOSUY9zK9GwZTxaQVax4pI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104946; c=relaxed/simple;
-	bh=fIpTyWL6ayzFDuJIGBcstdA8O3+/QfyIGVuGPadTW0E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=YfpZAMl2BAqFplRe6Rspvc2d+PP0Pr9tQco5jTzqxTzTJvkr4jrHNq2kvG/aUut445no4J6QIS3yg8b6YSI2EYnRWWrszlFRgTkwi1UUqHSUUS4DCW8pCuqC01Nm5AAmk3dd2O8Xy0btg/ebe5yWJFgwcOozEglN2Z3UK1Elzzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=enFC4w7i; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524E3Ku9019009;
-	Tue, 4 Mar 2025 16:15:19 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+IoJ+2
-	H9c2CFdb09znTxlwvThy3kn7nz7db1xHQkKkM=; b=enFC4w7iAxa7xBJJ50nn5r
-	YHwcsrqCj91bKzXNDMt/lK3Da6qrxKeOdyw55vTS+5tSRh/LCW7VTHne1QB6PDCH
-	E04yAMBr5R0IT1MIh+lsBn12jaenqDXOL0kCAMHHp2uTEbSNtevMf7+6e0dWDjb3
-	0lY9UYLFpaVgOmnxytJ40rCGXSXuXH4TBYq/l7WJhu8JIKDqVnSBaTqC7YQ2TDxY
-	0QahawjYm0acYxmOxim50YEc2M6BG6sI/rWcct/6OOuBbSKYvlDUKuuZPlrWfyX+
-	nVpHiXi756zfn953xIufU7xfTR8gGUa/HI/Lm5pZABYEOnqa+UXBjLdlMmRhLMTg
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpgp2j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 16:15:18 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 524GFI8F012989;
-	Tue, 4 Mar 2025 16:15:18 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpgp2b-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 16:15:17 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524Fxqlx013776;
-	Tue, 4 Mar 2025 16:15:16 GMT
-Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2kp52f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 16:15:16 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 524GFGpZ53936398
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 16:15:16 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4700E58060;
-	Tue,  4 Mar 2025 16:15:16 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6A27758050;
-	Tue,  4 Mar 2025 16:15:14 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.136.132])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Mar 2025 16:15:14 +0000 (GMT)
-Message-ID: <6828fbeeff42ce962cc0195466760ea136f9c049.camel@linux.ibm.com>
-Subject: Re: [PATCH v8 2/7] kexec: define functions to map and unmap segments
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Baoquan He <bhe@redhat.com>
-Cc: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-        dyoung@redhat.com, Mike Rapoport
- <mike.rapoport@gmail.com>
-Date: Tue, 04 Mar 2025 11:15:13 -0500
-In-Reply-To: <Z8FDlp8QvnSR58Vd@MiWiFi-R3L-srv>
-References: <20250218225502.747963-1-chenste@linux.microsoft.com>
-	 <20250218225502.747963-3-chenste@linux.microsoft.com>
-	 <Z7wOPiDfy/vtrkCS@MiWiFi-R3L-srv>
-	 <55acf768b52b47dd9d33fa0486772d8c7ae38779.camel@linux.ibm.com>
-	 <Z8FDlp8QvnSR58Vd@MiWiFi-R3L-srv>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1741104925; c=relaxed/simple;
+	bh=FaitQFZZEqjD/jJ9v92zye6uteHEsM/IP3Sgot+eYM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nozAVSKnczdqDsGJGVLHChw8ykn9QcI7018pxhwtYo2Coa25XngQ87y2IWAxcdpsynCf1J5n6SpD8WvewaDuj8QyqAMj4oJAArRsn7yX8BqXMAjF4OR08EDjdjzDrtP4UL1ns/Jq18i3EK6dAseAaukq4jfmViWgHiQSSVvCgkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o9OpQSWC; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id C0A8720479;
+	Tue,  4 Mar 2025 16:15:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741104921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CqAT5+Gi1O68uLcYreVHzC9MDAGC4lcpXT9gC3flVdI=;
+	b=o9OpQSWCPcLhU75kNX2KB5/lnvHNChPaWtHihmyulicnkYRnOi0iBSibqDPh1HIurd5oXa
+	I8YiOwkICGHH3ijfJHOspj/VJLvjtz2DlSh+Bm5gAyC7rHHtSLhXp143kVLyZS0xblCbxy
+	GnHWOPVcYD+nAQ+wn2K1khX2vrkj+D8MMHwmxxkUTTFCFshXEbkYNMnhpxi7X2Lc7pqTfa
+	cNNZwJoEJqtLXnVLoXIKDuvzE+ZQybJEVzqdOfexBoUSMDrrWx0uFTJd3uDtXqx/sUU5je
+	uSScUY8lwpYIcZOGgvyNhh4fd3+xdXA3FGhygoOH6J5hzvElm5v03SYg1D1rww==
+Date: Tue, 4 Mar 2025 17:15:15 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, Oleksij Rempel <o.rempel@pengutronix.de>, Simon
+ Horman <horms@kernel.org>, Romain Gantois <romain.gantois@bootlin.com>,
+ Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
+Subject: Re: [PATCH net] net: ethtool: Set the req_info->dev on DUMP
+ requests for each dev
+Message-ID: <20250304171515.297d15df@fedora.home>
+In-Reply-To: <20250304170051.607097e9@kmaincent-XPS-13-7390>
+References: <20250302162137.698092-1-maxime.chevallier@bootlin.com>
+	<20250304170051.607097e9@kmaincent-XPS-13-7390>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: -oBsvbmbJu1H4kuwA-IK6n9CtSiRlunB
-X-Proofpoint-GUID: _0Rk9JlUBxHxaloj8zlUADdSvGWN6oiI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_06,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503040129
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutddvhedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtqhertdertdejnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepuefhfefggfdthffghfdvhffhhfetuedtkeetgffhteevheehjeejgfduieduhedunecukfhppeeltddrkeelrdduieefrdduvdejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepledtrdekledrudeifedruddvjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddtpdhrtghpthhtohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrt
+ ghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Fri, 2025-02-28 at 13:03 +0800, Baoquan He wrote:
-> On 02/27/25 at 10:41am, Mimi Zohar wrote:
-> > [Cc'ing Mike Rapoport]
-> >=20
-> > On Mon, 2025-02-24 at 14:14 +0800, Baoquan He wrote:
-> > > Hi Steve, Mimi,
-> > >=20
-> > > On 02/18/25 at 02:54pm, steven chen wrote:
-> > > > Currently, the mechanism to map and unmap segments to the kimage
-> > > > structure is not available to the subsystems outside of kexec.  Thi=
-s
-> > > > functionality is needed when IMA is allocating the memory segments
-> > > > during kexec 'load' operation.  Implement functions to map and unma=
-p
-> > > > segments to kimage.
-> > >=20
-> > > I am done with the whole patchset understanding. My concern is if thi=
-s
-> > > TPM PCRs content can be carried over through newly introduced KHO. I =
-can
-> > > see that these patchset doesn't introduce too much new code changes,
-> > > while if many conponents need do this, kexec reboot will be patched a=
-ll
-> > > over its body and become ugly and hard to maintain.
-> > >=20
-> > > Please check Mike Rapoport's v4 patchset to see if IMA can register
-> > > itself to KHO and do somthing during 2nd kernel init to restore those
-> > > TPM PCRs content to make sure all measurement logs are read correctly=
-.
-> > > [PATCH v4 00/14] kexec: introduce Kexec HandOver (KHO)
-> >=20
-> > Hi Baoquan,
-> >=20
-> > I was hoping to look at Mike's patch set before responding, but perhaps=
- it is
-> > better to respond earlier rather than later with my initial thoughts.
-> >=20
-> > The IMA measurement list isn't stored in contiguous memory, but has to =
-be
-> > marshalled before being carried across kexec, and then unmarshalled to =
-restore
-> > it after the kexec.  Roberto Sassu has been thinking about changing how=
- the IMA
-> > measurement list is stored so marshalling/unmarshalling wouldn't be nec=
-essary.=20
-> > Making both this change and using KHO going forward would be a good ide=
-a.
-> >=20
-> > However, that sort of change wouldn't be appropriate to backport.  So t=
-he
-> > question comes down to whether being unable to attest the measurement l=
-ist,
-> > because the measurements are copied too early at kexec load, but the TP=
-M is
-> > being extended through kexec exec, is considered a bug.  If that is the=
- case,
-> > then I suggest finish cleaning up and upstreaming this patch set so tha=
-t it
-> > could be backported.
+Hi K=C3=B6ry,
+
+On Tue, 4 Mar 2025 17:00:51 +0100
+Kory Maincent <kory.maincent@bootlin.com> wrote:
+
+> On Sun,  2 Mar 2025 17:21:36 +0100
+> Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 >=20
-> Ah, I understand your concern. There are stable kernels or distros
-> kernels which need be taken care of. If then, we can continue to work on
-> polishing this patchset, as you have pointed out, there are still room
-> in this patchset to improve before merging.
+> > There are a few netlink commands that rely on the req_info->dev field
+> > being populated by ethnl in their ->prepare_data() and ->fill_reply().
+> >=20
+> > For a regular GET request, this will be set by ethnl_default_parse(),
+> > which calls ethnl_parse_header_dev_get().
+> >=20
+> > In the case of a DUMP request, the ->prepare_data() and ->fill_reply()
+> > callbacks will be called with the req_info->dev being NULL, which can
+> > cause discrepancies in the behaviour between GET and DUMP results.
+> >=20
+> > The main impact is that ethnl_req_get_phydev() will not find any
+> > phy_device, impacting :
+> >  - plca
+> >  - pse-pd
+> >  - stats
+> >=20
+> > Some other commands rely on req_info->dev, namely :
+> >  - coalesce in ->fill_reply to look for an irq_moder
+> >=20
+> > Although cable_test and tunnels also rely on req_info->dev being set,
+> > that's not a problem for these commands as :
+> >  - cable_test doesn't support DUMP
+> >  - tunnels rolls its own ->dumpit (and sets dev in the req_info).
+> >  - phy also has its own ->dumpit
+> >=20
+> > All other commands use reply_data->dev (probably the correct way of
+> > doing things) and aren't facing this issue.
+> >=20
+> > Simply set the dev in the req_info context when iterating to dump each
+> > dev.
+> >=20
+> > Fixes: c15e065b46dc ("net: ethtool: Allow passing a phy index for some
+> > commands") Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.=
+com>
+> > ---
+> >=20
+> > Fixes tag targets the phy-index commit, as it introduced a change in
+> > behaviour for PLCA. From what I can tell, coalesce never correctly
+> > detected irq_moder in DUMP requests.
+> >=20
+> > We could also consider fixing all individual commands that use
+> > req_info->dev, however I'm not actually sure it's incorrect to do so,
+> > feel free to correct me though.
+> >=20
+> > Maxime
+> >=20
+> >  net/ethtool/netlink.c | 1 +
+> >  1 file changed, 1 insertion(+)
+> >=20
+> > diff --git a/net/ethtool/netlink.c b/net/ethtool/netlink.c
+> > index b4c45207fa32..de967961d8fe 100644
+> > --- a/net/ethtool/netlink.c
+> > +++ b/net/ethtool/netlink.c
+> > @@ -582,6 +582,7 @@ static int ethnl_default_dumpit(struct sk_buff *skb,
+> >  		dev_hold(dev);
+> >  		rcu_read_unlock();
+> > =20
+> > +		ctx->req_info->dev =3D dev; =20
+>=20
+> I would rather put it in ethnl_default_dump_one() before
+> ethnl_init_reply_data() call.
 
-Thanks, Baoquan!
+Ah yes true, that'll be more consistent with the other callpaths.
 
-I've already provided feedback on the IMA related patches.  Hopefully that =
-will
-be it.
+> With this change:
+> Reviewed-by: Kory Maincent <kory.maincent@bootlin.com>
+> Tested-by: Kory Maincent <kory.maincent@bootlin.com>
 
-Mimi
+Thank you for testing, I'll respin.
 
+Maxime
+
+>=20
 
 
