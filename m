@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-544970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F62A4E78B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:06:12 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0505FA4E77F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:05:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31DAC8C2202
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:52:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B5A717649A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFACC2BE7DF;
-	Tue,  4 Mar 2025 16:30:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822DE29DB60;
+	Tue,  4 Mar 2025 16:33:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXs8xEwP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k6D2ufYH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186E229B204;
-	Tue,  4 Mar 2025 16:30:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4C4A29B234;
+	Tue,  4 Mar 2025 16:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741105849; cv=none; b=I6x2QuHKxU4SCAJuhcXEKesOeJ2jZCBApMCujGjmnUhGuKdLRyeaVytnck1ZzqI+PXd6Wm4wSKkf1QWW+EuLrl3P5j+jviJ+QE/KKFo5cYZRn0IKE23y/oNY5p+CRtoMIxXWGg24MlxD39FMGIMWnFJZwCKEtDAdSKJMAkf+p4c=
+	t=1741105979; cv=none; b=KY8I2bHpPwoCoou1KGvvSIXRWXJQr29hJx/LhkQsfGzGDd9dC8L76EnZRgkKZqrUSeqkrUsGqexb2eqioeTjooe6Ow4aqqEgAnxupxKzv1MIB1EjLfG73PNMof+7B20ZROIWGKpgtz2z8eevXo1T/FNd+YBZkup7z6ehnjf0maw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741105849; c=relaxed/simple;
-	bh=7SSmhJywGvGXc8ZpfXpgY0nfMFXwgP1l6sL+dAYzJYA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bpHvQohRkggWMY+7Izmpwc7VByFy5s3nVXUQJesDaUgi2xq53eQ092oFxonyIwXdYl49YEXOAnxrobzFQabbINdcRREEFWZ+vDDjRdZLxaOi5pt/Z5VX/U0brmeBvEf11mlpN3D1jypoKckBycuArdWvec25L9+9XS/eiw8z0Cg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXs8xEwP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90BA3C4CEE9;
-	Tue,  4 Mar 2025 16:30:43 +0000 (UTC)
+	s=arc-20240116; t=1741105979; c=relaxed/simple;
+	bh=HoIZgaKi1QUHmU1k95AEv//RjwsP1AIOtEf1NJ1b9lE=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=NiaB14Rxo/ycRqWrrajlymHWjUjktHS7tlU2o0VyyA9iH6MdLjPKjw3C4KnWp1qjynkVx9A+YtXBoWMP2FJFhkzHtRCICKnN4UB4RphAF7lcV5BrIZsKitLr/BgUGUUifBE4hVNxQf8b3uZk1i9eQIXDtJQ5PFopIn736b62g44=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k6D2ufYH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88622C4CEE9;
+	Tue,  4 Mar 2025 16:32:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741105848;
-	bh=7SSmhJywGvGXc8ZpfXpgY0nfMFXwgP1l6sL+dAYzJYA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LXs8xEwPWUgdhyjLjpvHxsFPl+SiYytOtTnhGS7Hg+YqfKsElI3/5JEjyuQ79hX1e
-	 MYYvB+NUnklV63UQclOVXfwzBhWU4GIJLbTB2NRo7tjjjQlg+ugSxUywpRly289oSa
-	 UqcCCgsNBpfs5TryeYPiDFh6SL/8XdqYvc5ddJE6+EM5NsfQXVM6Ftgy5bKwXPe7nM
-	 6c1X6ywJ6ISq5a6kCan/bcToHzW0eVQ/GXutQhyS/p4eB0G9E4XJwwKZO0nCnpY76P
-	 IdSeRWHgJXzUXHEnxU1zqf+h3BNecf8cFWAIqxW9Rjrm77qL15kB00hHFYU0yNock+
-	 YiAHhFsphxHmw==
-Message-ID: <bdca9e9f-7e0d-4ca7-8e8b-f27ea8bb3b54@kernel.org>
-Date: Tue, 4 Mar 2025 17:30:40 +0100
+	s=k20201202; t=1741105979;
+	bh=HoIZgaKi1QUHmU1k95AEv//RjwsP1AIOtEf1NJ1b9lE=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=k6D2ufYHalX0UT7bInUiB0UD2G/7zBgEt0dmBPlp0CKp5kWSE2iEODFcmURhOsJiA
+	 QrOCv1dS2GgM1ooFSDFc5Tv5b44SyZpz4w50c4Sf0XXSLHvLl/D8Tkuoo7uAxYU7as
+	 /H0iIKOr5tCMWoKTy+eD+sStZNRG1Ggrc2iZcjP1iHrGgiMsu9UdcdLVu7ly+w7Pwe
+	 A94BoHMvGTHLLJkjH5ddOahgFfvizBWeBkRx3aID5ksg8vJFsus4g09JnA246h+3Ja
+	 +OYT9+eeXtx3QW9orgfLr9YDxtFCB3F79XRO9z10e+Qr8NN9fv5slEQb8C5+KnMQPh
+	 Ev4pmZWcLcPlg==
+Message-ID: <fda24b29-3a86-484f-b674-e933d2fa3704@kernel.org>
+Date: Tue, 4 Mar 2025 17:32:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,24 +49,21 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
- period instead
-To: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Abel Vesa <abel.vesa@linaro.org>, Lee Jones <lee@kernel.org>,
- Pavel Machek <pavel@kernel.org>,
- Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
- Kamal Wadhwa <quic_kamalw@quicinc.com>,
- Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>,
- Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250303-leds-qcom-lpg-compute-pwm-value-using-period-v1-1-833e729e3da2@linaro.org>
- <ylnkjxnukss7askv7ip5htrb4tyjzhpw7jim2se6rloleq5h6w@ngk7lbk26hxj>
- <dbfb17df-90e2-4a7c-9921-9dff5e9382f4@kernel.org>
- <ovnmhbzwwimil3opuv6e2ayyntlx7upxfkzm5qdfskx2x7hl7x@wmtul33ttow5>
+Subject: Re: [PATCH v3 1/3] dt-bindings: hwmon: Add Microchip emc2305 yaml
+ schema
 From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Conor Dooley <conor@kernel.org>, florin.leotescu@oss.nxp.com
+Cc: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Michael Shych <michaelsh@nvidia.com>,
+ linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, viorel.suman@nxp.com, carlos.song@nxp.com,
+ linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+ festevam@gmail.com, Florin Leotescu <florin.leotescu@nxp.com>
+References: <20250304162136.1963384-1-florin.leotescu@oss.nxp.com>
+ <20250304162136.1963384-2-florin.leotescu@oss.nxp.com>
+ <20250304-serving-stem-e059361db2b8@spud>
+ <880bac84-c593-44fa-a9dc-63462e1cee9d@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -111,52 +108,36 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <ovnmhbzwwimil3opuv6e2ayyntlx7upxfkzm5qdfskx2x7hl7x@wmtul33ttow5>
+In-Reply-To: <880bac84-c593-44fa-a9dc-63462e1cee9d@kernel.org>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 04/03/2025 17:03, Uwe Kleine-König wrote:
-> Hello Krzysztof,
-> 
-> On Tue, Mar 04, 2025 at 10:53:53AM +0100, Krzysztof Kozlowski wrote:
->> On 04/03/2025 07:24, Uwe Kleine-KÃ¶nig wrote:
->>> instead which gives you a more exact result. The challenge here however
->>> is that the multiplication might overflow. If you know that the result
->>> fits into a u64, mul_u64_u64_div_u64() is the function that gets this
->>> right for you.
->>>
->>>>  	chan->pwm_value = min(val, max);
->>>>  }
->>>> [...]
->>>> ---
->>>> base-commit: 0067a4b21c9ab441bbe6bf3635b3ddd21f6ca7c3
->>>
->>> My git repo doesn't know that commit. Given that you said your patch
->>> bases on that other series, this isn't surprising. Please use a publicly
->>> available commit as base parameter, otherwise you (and I) don't benefit
->>> from the armada of build bots because they just silently fail to test in
+On 04/03/2025 17:31, Krzysztof Kozlowski wrote:
+> On 04/03/2025 17:29, Conor Dooley wrote:
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - microchip,emc2301
+>>> +      - microchip,emc2302
+>>> +      - microchip,emc2303
+>>> +      - microchip,emc2305
 >>
->> As you can easily see in the signature, this patchset was generated by
->> b4 and such tag was added automatically. No point in stripping it even
->> if it is not useful (life, happens).
+>> Driver has no match data etc, suggesting all of these are compatible.
+>> Please pick one as a fallback compatible.
+>>
+>>> +
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +required:
+>>> +  - compatible
+>>> +  - reg
+>>
+>> Missing descriptions of the fans, no?
+>> See max6639 for an example.
 > 
-> My request was not about stripping it, but making it useful. I don't
-> know the b4 patch sending side, but git send-email has the capability to
-> make it more useful in this scenario. I didn't check, but
-> `b4 --edit-deps` which Abel mentioned sounds about right.
-> 
-> The relevant documentation for the git side is the paragraph "BASE TREE
-> INFORMATION" in git-format-patch(1).
-
-Useful how? The dependency is on the lists, so there is no base-commit
-you would know.
-
-And regardless of edit-deps, that base-commit tag is standard from b4,
-so what do you expect from all submitters even if this was not RFC?
-Always base on known commit? But for most of the cases this is
-irrelevant. I can have intermediate commit between linux-next tip and my
-patch, thus base-commit will be bogus for you, but it does not matter
-for the patch - it's based on linux-next.
+> Yes and missing $ref to fan-controller schema.
+About which I asked at v2...
 
 Best regards,
 Krzysztof
