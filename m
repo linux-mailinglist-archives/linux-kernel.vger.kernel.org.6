@@ -1,53 +1,48 @@
-Return-Path: <linux-kernel+bounces-543027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E18DAA4D0BD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:25:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33F5A4D0BF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:25:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18D3116FBB5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:25:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FC531891ABD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418E813E898;
-	Tue,  4 Mar 2025 01:24:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D65BA18952C;
+	Tue,  4 Mar 2025 01:24:56 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C877513212A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE0D513AA3E;
 	Tue,  4 Mar 2025 01:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741051494; cv=none; b=j+hOF4crmBWB0X5L+E1SQHao1hKAM+6fvWMy/B0rXt+8dw/lx6gBLNhyHl55PLUQ651Tcge78ow1HBHhhPhXjRXuCFF+HQo/rUip/3lqOT+oC7VZMB45jyvGvvCkezNB5awAbmEADsSrhZkpR1cTasC2EovYW0jDfRAlztOm5O4=
+	t=1741051495; cv=none; b=NECMjzfNcYuKVpDp7Rc+icIC40HAZwkcc8fNVpC7GJ1+Bweq+XtbtqKyqwOnLsJbS1DqCUkXlba3uIUpJhLSBtoVhouxfeOzhc1kyaNo+M1tvfaT3Vg2VNIXrVFrdpX7TFEAxOZfnKYWYCSoxuvyjHLVAtzkkV6Fl7IbjnOVD7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741051494; c=relaxed/simple;
-	bh=uwP4DOo17w5bMID/vK/+QW5Yb0LcCl7y2kyQrYSQMBk=;
+	s=arc-20240116; t=1741051495; c=relaxed/simple;
+	bh=mt+jABW0JoBgCcq1HrBVOJ0co/KuBsdghkUFeHNy130=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=TxP35qbdWnzivR8wuhIp2dNkKB23eCou1/CkG8rPqRVWhDBeg7akD73h7cvDXYer7w4xQGqp7yNY5NGAesLZuF+kwTxswcOFFHY/uxXzUWbbMzO4UznpNUiFQHXPc+qV9fJW8SqBj6YBsrI7re40uoluFNu7fPQgDv4ana3xv/4=
+	 Content-Type; b=rAAo2X9S1Pb27Bfhg4XTkVrjO/9ZYaURfeEh9w70NslXR4T1w2ula22tncCdGR8MfBwPRQ5KWXR4OS1ySYnqMvWN9UKvp+5f+yMm10nqeG+SiHzROtH6BEO2mCMFbSmSsiAGEmtyF9nYxWQqlVQbxySAr4KttOK9O1Om9fb+zbA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AB9E1C4CEED;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA80BC4CEF1;
 	Tue,  4 Mar 2025 01:24:54 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tpH2a-0000000CC6r-2RUI;
+	id 1tpH2a-0000000CC7N-38z6;
 	Mon, 03 Mar 2025 20:25:48 -0500
-Message-ID: <20250304012548.433669427@goodmis.org>
+Message-ID: <20250304012548.601008260@goodmis.org>
 User-Agent: quilt/0.68
-Date: Mon, 03 Mar 2025 20:25:21 -0500
+Date: Mon, 03 Mar 2025 20:25:22 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
 Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- Luis Chamberlain <mcgrof@kernel.org>,
- Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>,
- Daniel Gomez <da.gomez@samsung.com>,
- linux-modules@vger.kernel.org
-Subject: [PATCH v3 5/8] module: Add module_for_each_mod() function
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v3 6/8] tracing: Have persistent trace instances save module addresses
 References: <20250304012516.282694507@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -59,79 +54,154 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The tracing system needs a way to save all the currently loaded modules
-and their addresses into persistent memory so that it can evaluate the
-addresses on a reboot from a crash. When the persistent memory trace
-starts, it will load the module addresses and names into the persistent
-memory. To do so, it will call the module_for_each_mod() function and pass
-it a function and data structure to get called on each loaded module. Then
-it can record the memory.
+For trace instances that are mapped to persistent memory, have them use
+the scratch area to save the currently loaded modules. This will allow
+where the modules have been loaded on the next boot so that their
+addresses can be deciphered by using where they were loaded previously.
 
-This only implements that function.
-
-Cc: Luis Chamberlain <mcgrof@kernel.org>
-Cc: Petr Pavlu <petr.pavlu@suse.com>
-Cc: Sami Tolvanen <samitolvanen@google.com>
-Cc: Daniel Gomez <da.gomez@samsung.com>
-Cc: linux-modules@vger.kernel.org
+Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
-Changes since v2: https://lore.kernel.org/20250215034404.902259250@goodmis.org
+ kernel/trace/trace.c | 98 ++++++++++++++++++++++++++++++++++++++++----
+ 1 file changed, 89 insertions(+), 9 deletions(-)
 
-- Use RCU guard instead of disabling preemption
-
- include/linux/module.h |  6 ++++++
- kernel/module/main.c   | 13 +++++++++++++
- 2 files changed, 19 insertions(+)
-
-diff --git a/include/linux/module.h b/include/linux/module.h
-index 30e5b19bafa9..9a71dd2cb11f 100644
---- a/include/linux/module.h
-+++ b/include/linux/module.h
-@@ -782,6 +782,8 @@ static inline void *module_writable_address(struct module *mod, void *loc)
- 	return __module_writable_address(mod, loc);
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 12a359c293c6..6674dc985e52 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -5988,14 +5988,60 @@ ssize_t tracing_resize_ring_buffer(struct trace_array *tr,
+ 	return __tracing_resize_ring_buffer(tr, size, cpu_id);
  }
  
-+void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data);
++struct trace_mod_entry {
++	unsigned long	mod_addr;
++	char		mod_name[MODULE_NAME_LEN];
++};
 +
- #else /* !CONFIG_MODULES... */
+ struct trace_scratch {
+ 	unsigned long		kaslr_addr;
++	unsigned long		nr_entries;
++	struct trace_mod_entry	entries[];
+ };
  
- static inline struct module *__module_address(unsigned long addr)
-@@ -894,6 +896,10 @@ static inline void *module_writable_address(struct module *mod, void *loc)
++static int save_mod(struct module *mod, void *data)
++{
++	struct trace_array *tr = data;
++	struct trace_scratch *tscratch;
++	struct trace_mod_entry *entry;
++	unsigned int size;
++
++	tscratch = tr->scratch;
++	if (!tscratch)
++		return -1;
++	size = tr->scratch_size;
++
++	if (struct_size(tscratch, entries, tscratch->nr_entries + 1) > size)
++		return -1;
++
++	entry = &tscratch->entries[tscratch->nr_entries];
++
++	tscratch->nr_entries++;
++
++	entry->mod_addr = (unsigned long)mod->mem[MOD_TEXT].base;
++	strscpy(entry->mod_name, mod->name);
++
++	return 0;
++}
++
+ static void update_last_data(struct trace_array *tr)
  {
- 	return loc;
- }
-+
-+static inline void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data)
-+{
-+}
- #endif /* CONFIG_MODULES */
+ 	struct trace_scratch *tscratch;
  
- #ifdef CONFIG_SYSFS
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 1fb9ad289a6f..927a2e0ffd5f 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -3809,6 +3809,19 @@ bool is_module_text_address(unsigned long addr)
- 	return ret;
- }
- 
-+void module_for_each_mod(int(*func)(struct module *mod, void *data), void *data)
-+{
-+	struct module *mod;
++	if (!(tr->flags & TRACE_ARRAY_FL_BOOT))
++		return;
 +
-+	guard(rcu)();
-+	list_for_each_entry_rcu(mod, &modules, list) {
-+		if (mod->state == MODULE_STATE_UNFORMED)
-+			continue;
-+		if (func(mod, data))
-+			break;
++	/* Reset the module list and reload them */
++	if (tr->scratch) {
++		struct trace_scratch *tscratch = tr->scratch;
++
++		memset(tscratch->entries, 0,
++		       flex_array_size(tscratch, entries, tscratch->nr_entries));
++		tscratch->nr_entries = 0;
++
++		module_for_each_mod(save_mod, tr);
 +	}
++
+ 	if (!(tr->flags & TRACE_ARRAY_FL_LAST_BOOT))
+ 		return;
+ 
+@@ -9220,6 +9266,46 @@ static struct dentry *trace_instance_dir;
+ static void
+ init_tracer_tracefs(struct trace_array *tr, struct dentry *d_tracer);
+ 
++static void setup_trace_scratch(struct trace_array *tr,
++				struct trace_scratch *tscratch, unsigned int size)
++{
++	struct trace_mod_entry *entry;
++
++	if (!tscratch)
++		return;
++
++	tr->scratch = tscratch;
++	tr->scratch_size = size;
++
++#ifdef CONFIG_RANDOMIZE_BASE
++	if (tscratch->kaslr_addr)
++		tr->text_delta = kaslr_offset() - tscratch->kaslr_addr;
++#endif
++
++	if (struct_size(tscratch, entries, tscratch->nr_entries) > size)
++		goto reset;
++
++	/* Check if each module name is a valid string */
++	for (int i = 0; i < tscratch->nr_entries; i++) {
++		int n;
++
++		entry = &tscratch->entries[i];
++
++		for (n = 0; n < MODULE_NAME_LEN; n++) {
++			if (entry->mod_name[n] == '\0')
++				break;
++			if (!isprint(entry->mod_name[n]))
++				goto reset;
++		}
++		if (n == MODULE_NAME_LEN)
++			goto reset;
++	}
++	return;
++ reset:
++	/* Invalid trace modules */
++	memset(tscratch, 0, size);
 +}
 +
- /**
-  * __module_text_address() - get the module whose code contains an address.
-  * @addr: the address.
+ static int
+ allocate_trace_buffer(struct trace_array *tr, struct array_buffer *buf, int size)
+ {
+@@ -9232,21 +9318,15 @@ allocate_trace_buffer(struct trace_array *tr, struct array_buffer *buf, int size
+ 	buf->tr = tr;
+ 
+ 	if (tr->range_addr_start && tr->range_addr_size) {
++		/* Add scratch buffer to handle 128 modules */
+ 		buf->buffer = ring_buffer_alloc_range(size, rb_flags, 0,
+ 						      tr->range_addr_start,
+ 						      tr->range_addr_size,
+-						      sizeof(*tscratch));
++						      struct_size(tscratch, entries, 128));
+ 
+ 		tscratch = ring_buffer_meta_scratch(buf->buffer, &scratch_size);
+-		if (tscratch) {
+-			tr->scratch = tscratch;
+-			tr->scratch_size = scratch_size;
++		setup_trace_scratch(tr, tscratch, scratch_size);
+ 
+-#ifdef CONFIG_RANDOMIZE_BASE
+-			if (tscratch->kaslr_addr)
+-				tr->text_delta = kaslr_offset() - tscratch->kaslr_addr;
+-#endif
+-		}
+ 		/*
+ 		 * This is basically the same as a mapped buffer,
+ 		 * with the same restrictions.
 -- 
 2.47.2
 
