@@ -1,335 +1,201 @@
-Return-Path: <linux-kernel+bounces-543182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DC5DA4D28C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:23:55 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1E8A4D28B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:22:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F03553ACC9C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:23:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98832173569
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:22:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C0081EEA2A;
-	Tue,  4 Mar 2025 04:23:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BA2E1E991A;
+	Tue,  4 Mar 2025 04:22:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DA+46ioD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="W8p/T9gl"
+Received: from BN1PR04CU002.outbound.protection.outlook.com (mail-eastus2azolkn19010021.outbound.protection.outlook.com [52.103.12.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A13137160;
-	Tue,  4 Mar 2025 04:23:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 848F0225D6;
+	Tue,  4 Mar 2025 04:21:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.12.21
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741062225; cv=fail; b=EEGOx/Pl7uuvexco6l71Jpw2WxAQa/lvANZn0n4WryAu/5TX1J/1p3HjwoNq2Dvb/PnW3blp1Up79p3nv6uC8MwaZRcdKwARcEZ77jcIF+uj59AaA7mEGAKSZfNz5NpJdKUEjcAg3zuGnY/axqwdwn3IqXKa0LfI125Kx1iX/Hs=
+	t=1741062120; cv=fail; b=hz41sD/cYJTfheiHvGH4kUjKC3zI3sK7KkP6GL9igsy/vu7bj6gbMvPz0gqe6AphZvNVtG6E62oZmWbNbfQeQnOQ25ajBs5h31OI2njOSds+JVu2jEJjJffP7spJu7Hg10m0/MFCP2x8EZ8ilIkrroKDDnRcXrOxAhiWubgOth4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741062225; c=relaxed/simple;
-	bh=//TOIqrj3yg2mvCOodkVOCkj4CE3cRbXyPTvAYUR36o=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bXPsgHojaCvtPp3NzXoWhTUK2IOYtIxRUk0tY1ixyQZjrtO05rbxR9mztsz1ZTE0zyBnnO9FWQM7jdimrIETbVL9hwkGD6B0I6iqwkMa4qoVS9Y9I01wLqN1tkq58zTcM/KFIaG+cgR7rwUfhU4vvE4EL/T+X4rU1VFvR/Vrdtw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DA+46ioD; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741062223; x=1772598223;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=//TOIqrj3yg2mvCOodkVOCkj4CE3cRbXyPTvAYUR36o=;
-  b=DA+46ioDaDABzpqJmBFB2da4scwWi3MFfln2hRfh7diaV5aadlk94l3f
-   x1RiZcEUFCHsodkCXSsFe6S97HXgsQMoyJOjf0eiUXTpyY0pcJD0ZMtjp
-   3A9nhQH/Dw/farurU61zHWaj6LPEJZ1jbTmdIL1hc/mhtXNsOrbLNHL1C
-   knZshfwr3UDaHtwlYX5DvUtWXWqHlFg/qaST5aWDRQ8ux3oZnC+xXKDH9
-   GAvGDNFFFsG1DuaGFb8HFFcHmE9Dlkjpsw9PhvHmQPneD0OA/NGKch2U2
-   LXp6gSEikXBNh+/zOnxTvSSrgWpCSMpOjZ4EiGIGSTJheTVEZ4DuYnZYo
-   A==;
-X-CSE-ConnectionGUID: B89qAhF/TrOlps4e5jxEyg==
-X-CSE-MsgGUID: f0JfjowHRgO74x7hL6/+Tw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="45736730"
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="45736730"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 20:23:43 -0800
-X-CSE-ConnectionGUID: wbSpolUsSW+L9mLD+1OxwA==
-X-CSE-MsgGUID: cZG1f6huQuW2U30DgLMJdQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
-   d="scan'208";a="118940220"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 20:23:42 -0800
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Mon, 3 Mar 2025 20:23:41 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14 via Frontend Transport; Mon, 3 Mar 2025 20:23:41 -0800
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.44) by
- edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Mon, 3 Mar 2025 20:23:40 -0800
+	s=arc-20240116; t=1741062120; c=relaxed/simple;
+	bh=AQQfsD1BNvW9DfR4w2enzQxu/ez76qFB3QeEL7CSRyM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=I9oCzno1qj9YWMLbafOxMo6iI5vyfARXSLlC+oOnugCz1GLtGA6uObAn82bq60rFb3Hs1lXHbSLTqz1oCg3MrqQ7HtijPiTdMNAZgoisqr+ReIzWqtQevPk09o+r7xMjhOt0z1YsyA2SwXrqVsAW8eJnEpF1y7qpegGLgsC6SNA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=W8p/T9gl; arc=fail smtp.client-ip=52.103.12.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Me5695C7j6ykfZEEttiCfOp4F13vGg/EyH7exztvOGDfzykG7Gn+2Xl1lf9M9FzybZp53AvYg+xpJrjsTOHoo7ohKjp37VvRkYyffX8y7G/ZTsjuZqoywXBvhSIDboj9hFzPv2oklnJDdPJeGW5cTFAwX8LnKYY8ImXRkiCUkt/sEzS7XNYMprc4T7cS+f/fu9ZViwYhWq6w+kceZ4VknrWDVQArc0vqH9yOZX3NEBWp4iH0hXMRgK/+FKyzdWqc7luW+ji0IINWcTYIas4D0BsCFwmOEoBvlXnimvwBGwSO1DGJq2rY53Z3Avce/a9Mmy3Gfk3jj8NLuJEK3VgmCQ==
+ b=NFuy9xc7upuZh1k4p26vfiBlTnMZLpcKr6jXAEwmnAqmHr4w9XirqpECaA7xhsml6SqYHiAeecA4iyVU7es/ntxXIb/uKH5T3vn571h3jUsHItnUdoqGfFMdpe/zJvJ4AbuiD8ZG+NoFvAjgeY5jgWbeiRwXG1xdWtM2Z0V67wuVCuMi8oaoD5i4ZQrQAUilb7aorwtOixWoa5ZRvvIwTONJGN7nh7Al1u5pMIHFj0DwfUsqMOi2YZNqu7TafQCGHuzgrDPwOI+7/vPYKMJ7m0Axhvt9kgUuMZTBsMYSNxwOU0XejimvY8Q38EPP3x5dCxviEuPUwpfIR1/u7OkvMg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Vw17quOZdHqg31VIWrvN9diQX19qHfSJta7gPVfmNnw=;
- b=c28y1kO0FcyuD70XRC/fRCGgJf9kDEIkSKf9fqJqr1F1ZiXI90ik1LgyHgiMT+d30AqrVFLDh3+GrbcFIm+CeBxc66zUOR2jyq2DeVfkNlvTcQFgjrlO2nMaXMj5sPMuldh/yKejWp7hCFODfDlk18QsfKYhWj43AIxmb3aH2vzbhd4SbrAAHrA0FiC+nGLEJSCLwQ5CU91o/l5m96t22tz5vJJoFNpyQU16ayjqFHH7VxUbyMU37z//YOFvm40Nfg5NwHnLtXE8KQd6tbkgAyEmlg1u0m+sJsYEY7VJIj5OR3AxoRXXktbmDj/9Z+ToqIntMVQW41OCurI5LRvIJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- PH7PR11MB7570.namprd11.prod.outlook.com (2603:10b6:510:27a::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8489.29; Tue, 4 Mar 2025 04:23:11 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%4]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
- 04:23:10 +0000
-Date: Tue, 4 Mar 2025 12:21:49 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-CC: <linux-kernel@vger.kernel.org>, <kvm@vger.kernel.org>, <seanjc@google.com>
-Subject: Re: [PATCH 2/4] KVM: x86: Introduce supported_quirks to block
- disabling quirks
-Message-ID: <Z8Z/3dxtpbjpCJPI@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20250301073428.2435768-1-pbonzini@redhat.com>
- <20250301073428.2435768-3-pbonzini@redhat.com>
- <Z8UEmKhnP9w1qII9@yzhao56-desk.sh.intel.com>
- <4a2d487b-aabd-4854-a8df-214423b8c390@redhat.com>
+ bh=UY2oMWp3OfauMKYflhkuEHqxxQpnF99J+FJONL+RMY0=;
+ b=esvkPEKNm0isBBOR8rUiObAmdv/amvs05J7GDaQu48shxsuEsD9m3uvWTnG+qbnoJ1wBwu6tddqfhwqdhm1f5tMV0uUNh3e14olQXceMWSRh64LRAo/raGaXFmZ84ikSNRfnf0isieHOXHNmc2bfYztUQ5UZIUy3n3U948uXCoNgKkD/Plwua/VWsH5DJmilEcbjQXmhJEMbyT5/6355t4ip6WJU/jv3lXdoyWi6GgyYKZlFvfrn/wTfgzJeLy0yALY3JbUjI/T8BEOqDQ0dP1qPgz0ppKE8hqTSiEAA/oNjY1zjKxkXXLsur+6GrUGppiXh4MODVG9c2ulaYglB6w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=UY2oMWp3OfauMKYflhkuEHqxxQpnF99J+FJONL+RMY0=;
+ b=W8p/T9gl6gILnlIwgSU/E6a6HZ4vQK5iHNn9gvy+mf3kdHIRVlE4n2Hcd5nD68uhDhDktq3Eyz3wjDYsqbFuKS1nvMUjmNre9imfWnbd0HT8sj2zcU+sVMEaYmSWXLcFkA1Z/Qi4Y6Dk9q5DMF9IXNcC+dkpISbJheLM3dG39Bupeq7bCHJOhF+a26j4x92rpT0xVd43EGS6RtuxnOJACUzjnLWCDgxJDpqkQhtoXvZ/Cmd6rwucoG6A9HJUrtPJe+dzXnl6XMTQd2MiPOGF6+7ktiBgRRcbjYBbOAEK5rU8wTCw81sr2LyHLjbeMONvYKRc2dJIacjugd7MU8OzDA==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by PH8PR02MB10184.namprd02.prod.outlook.com (2603:10b6:510:224::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.26; Tue, 4 Mar
+ 2025 04:21:55 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 04:21:55 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Roman Kisel <romank@linux.microsoft.com>, "eahariha@linux.microsoft.com"
+	<eahariha@linux.microsoft.com>, "kys@microsoft.com" <kys@microsoft.com>,
+	"haiyangz@microsoft.com" <haiyangz@microsoft.com>, "wei.liu@kernel.org"
+	<wei.liu@kernel.org>, "decui@microsoft.com" <decui@microsoft.com>,
+	"James.Bottomley@HansenPartnership.com"
+	<James.Bottomley@HansenPartnership.com>, "martin.petersen@oracle.com"
+	<martin.petersen@oracle.com>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-scsi@vger.kernel.org"
+	<linux-scsi@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+CC: "apais@microsoft.com" <apais@microsoft.com>, "benhill@microsoft.com"
+	<benhill@microsoft.com>, "sunilmut@microsoft.com" <sunilmut@microsoft.com>
+Subject: RE: [PATCH hyperv-next v2 1/1] scsi: storvsc: Don't report the host
+ packet status as the hv status
+Thread-Topic: [PATCH hyperv-next v2 1/1] scsi: storvsc: Don't report the host
+ packet status as the hv status
+Thread-Index: AQHbjJm9EpwhEe8n1UachPV3bNTU47NiYC9g
+Date: Tue, 4 Mar 2025 04:21:55 +0000
+Message-ID:
+ <SN6PR02MB4157DD35957FC26640C6F629D4C82@SN6PR02MB4157.namprd02.prod.outlook.com>
+References: <20250304000940.9557-1-romank@linux.microsoft.com>
+ <20250304000940.9557-2-romank@linux.microsoft.com>
+In-Reply-To: <20250304000940.9557-2-romank@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|PH8PR02MB10184:EE_
+x-ms-office365-filtering-correlation-id: d28f3a16-e422-4902-aacd-08dd5ad418ec
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|19110799003|8060799006|15080799006|12121999004|461199028|8062599003|41001999003|13041999003|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?4Gi+ccTRb8bjOCvf/f+LzpBscFKMmqRR5M8//iD/FktBgGMVaA/Py7RXIMmz?=
+ =?us-ascii?Q?6+JAZ3I7m1ds7Nb4H7kFsEZn0Nw4kDsjtM0prOj7evGf5MBWanDqNfsDTck0?=
+ =?us-ascii?Q?gGPFkKuHVX8JrC3vsGGA4HbSgCsanZkyg95/AVSweglzQFntGkTJFb5naLvy?=
+ =?us-ascii?Q?cj2ijySCEl7KL4ZZ3puTDOp1+cRyQTN7z1DmzbsdlmSO/Pi7gsiftTf78olC?=
+ =?us-ascii?Q?4jIWo6D8W7IePk0p7TGCUXX7hWW8ilSYq8lLOhSkqCqVXFGO5su9oFpkos+y?=
+ =?us-ascii?Q?rBULUkxB1GyTMOFxtv78S3u82Lr+GQvFvvfPAiZvg55PqLJ7laLXWYRiQUv8?=
+ =?us-ascii?Q?Jrl1fYaklLvHYOzksXjjVBHapauMU4pkpribtsroQWK7/nDuQTE3mJlrb2LJ?=
+ =?us-ascii?Q?i6M1uKSLknZ7Yo2o+AFLzU5uYl0v+F05JWnjjG2KemtTXoT6MDVoTNWuFNqZ?=
+ =?us-ascii?Q?OxRPsdc3viMFqx0HeQ2R6XuSBkpIJ5BzK37Q/EGzlsDRFmRgpaSpEQyO/g9B?=
+ =?us-ascii?Q?RdH7ddmtHkrYzV3lLCmm84J00zFnH8yYxIHjhnwWmeqee9xmp445HVK8Ad6f?=
+ =?us-ascii?Q?S8Ttkk2kClWAwDGUJxm1aAxMtWk0ouLUgabt4lxOev3Eou66r793pSiLIrCY?=
+ =?us-ascii?Q?vKEYkmgtb5kKjH5Zmr76cMYj4O7SFEqK4f8vQEZgOhqZkA2djMV8DwKPaMZW?=
+ =?us-ascii?Q?MzARl0yTGO9BoMwdWlkJ4b0zoQRKruPyBfJSADGDK+No0S2NGIXcukQfq+8f?=
+ =?us-ascii?Q?e2upZu0T2FYHXgF4ZbTdzfpx4N6X+W4Z5o8OWX3HM7UHXs03MXGlruKcJ57l?=
+ =?us-ascii?Q?zY5ikuzwr92gRrWTYRmoMDY4LcODPYe+cjRWGl2XJH4XlvRdfDLBBBA7Tar9?=
+ =?us-ascii?Q?zGY0B32NJmJj3V+3PFZ736wALEOUC8pbTO3V5dSttIboI/3odh0JDiU0uVih?=
+ =?us-ascii?Q?bH34GNY+MlY9UZjQPAiOfBACiOfD+kJlgh5p3SGxYeADi61FjSnikcrMc+Mw?=
+ =?us-ascii?Q?ZLloojhu5f3UtxR496O06VhnatlOBUHMOoqeFosHZm+k4NS3F9VJylNBLNun?=
+ =?us-ascii?Q?UGTNGgjuxRfTyet8W58EnmDvRmBJ48+3qrR2FOFi9d3SEPwWGarChH5L02Zs?=
+ =?us-ascii?Q?jQA1FkI8EHAlPOxEn7B/An5BiR1+DBuAoQ=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?eLfXBrCBeepbBTY1o44gGST+5AQ7+7OXw0ib4UCNkhx1cyvcDJoQDD2IuDtn?=
+ =?us-ascii?Q?xMa2cc6YnhP8wlGtZzS/iRhOIVpFI+BzO5uwUnwmOTJzZ1Ziv7Qka0N0vm1G?=
+ =?us-ascii?Q?wxZ6I5VWDl3Rspg32aM9yLiN3Y4dWiCOpiUdoR1G5kZT4ik9l36EU0o7qtWw?=
+ =?us-ascii?Q?KR7buPA+6YqM6TXJbaPdWU6bpnceT12ECCHpAOilf9b8/u8bIM+WvR7Nm5zT?=
+ =?us-ascii?Q?SfDZFbOQQAKCmsEz3xecgWQdA+K8DB9GbT3zlahAQWrvXCRv0AR4lZnerVt9?=
+ =?us-ascii?Q?KFdJq7ybeYe2hhNvwfVirzwyM5alyzFiY7z72TIRXGaLSCCHCDN468/wNQdu?=
+ =?us-ascii?Q?ZljaC3m6Nin+uV6wHNI2CfcBU7sfzZO1l7xuvhXQOJHBDBw7T1Ampw4pDCpM?=
+ =?us-ascii?Q?81dWvrOhTTW8WzyTl+6ezFwCjqxIpHtKoIMJJw3OC6ykw6gy1+Hnf8pdBLzM?=
+ =?us-ascii?Q?zGxu6ySjx1FtWMdnqSn+Ujyrwsij2DLanMS+XetQWDusXdsZCm1BfyGow8JC?=
+ =?us-ascii?Q?ykK7TrVATVGCjBWkkjY4Yl/wQzsEuf7+JERkl9cKQQE7C+4c3kgYeBcYKgzP?=
+ =?us-ascii?Q?J3CCl78Bl4RWKILiyxaM2ghUkT5eJ6ZQteAN11+wy32RzIdpSIKzdqk8Bdvi?=
+ =?us-ascii?Q?CaSgM59StWSXgmw0rnG3/XIqVMzDEYtZK6M63mpW14bOm+13EfMpJpw5NNHr?=
+ =?us-ascii?Q?0uZckjAmn5C3jGI2idUSAm+hs6aXPxixaDjz8UIdMYSd4Bb9i6PO97ErYRQ3?=
+ =?us-ascii?Q?jSdyQbVP/KHVBqXmXolh0zhBUSCFm0bwJ/hZ7jDBBnqkNq29OZpZHa1B8mpt?=
+ =?us-ascii?Q?yWQXd1VqxR1IMu9VwDQ0ldlfEhfmYl+gCEBihpV4/dkS60A6L25xOaV6dD6x?=
+ =?us-ascii?Q?6x0kdYdICKvkpbVNfpfQgXp8bQJquPHwra/Jl+U/kWxK/MV1UQm3V+v4f404?=
+ =?us-ascii?Q?edp5SS2rnBzpAOp42tvbpY7T66u5IfL4ZsX30vpjMUTT9giVyJ+++nWc98ey?=
+ =?us-ascii?Q?iZ0XqSx+lxmxvLFORxhk3HMWa8WobGA6nElRKXFNWEwgWd04+mInThGXCvoH?=
+ =?us-ascii?Q?kUJbARVf2qv6mldN3YBQxNJeV88f30AeU/6FefdXaMfdfeMuh+yVsIhzdZ9w?=
+ =?us-ascii?Q?L+S+hHdHFiPyQ9XwFFjsbu+PvPv4WuC7njT9smvocwSZaGOd/fXdrUqK/+Go?=
+ =?us-ascii?Q?fsl5Ok2E2Nh6w9Uw5FWIOiR2O8BdgjKg4KBPKMVO0SoqKd9+lrUlATqfhBg?=
+ =?us-ascii?Q?=3D?=
 Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <4a2d487b-aabd-4854-a8df-214423b8c390@redhat.com>
-X-ClientProxiedBy: SG2PR01CA0187.apcprd01.prod.exchangelabs.com
- (2603:1096:4:189::12) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|PH7PR11MB7570:EE_
-X-MS-Office365-Filtering-Correlation-Id: ba574766-d1b7-42b9-9e4e-08dd5ad445a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?ZqjtPVZ5e370FIBz7omEflPV8Rswm7inCXmqCRW0lNGxHkU9SgsY+CC9jmJr?=
- =?us-ascii?Q?0CQZGKs8dXQljNBdWFXS8zzm7hP7+R2haHmE7OVmuftg5Unhvloc8moVTKBy?=
- =?us-ascii?Q?hRtyLr8WJndYSHGIa4U0LPkn4Y0I0NUArZ0y/K+3c+8au8aiNQBIrEhQkW71?=
- =?us-ascii?Q?pXQTTstKJYqfB+DVer+XnmUc7vMzfEFPXbiBX7c8FDxIm6ZbJjKYnptowwzo?=
- =?us-ascii?Q?f0x/KWTkPY6Z27ofzaMaW+4+Q4mZ/9rV4Qqh++nnJgchrVSnNsRlF4M0Hsvm?=
- =?us-ascii?Q?6wxTXbT9aBgwMiwUfiUQ8f8ilinrg3q0l4Gc6sgCzmJB1tgTt+cQUPd1YNjt?=
- =?us-ascii?Q?eKE9Q0wnM5c3X91VMx0f48UbYb5GgU7GmeZU1Cp3bAJ34EPhUnQJUtnXYnPD?=
- =?us-ascii?Q?6C3nWzssRCKg3jskVEkR1odMckrTxVkwv/3n8iM2Yrskr/q6TwJrYTEbmmxm?=
- =?us-ascii?Q?HPAZDpPyuhb7eIr8d9JL3av3UQEsAk23oylv1SuvBzWO+GomWpzVkfNAbZ+j?=
- =?us-ascii?Q?/aXlMECoZkpjL94IJgMawl5liN/FM2IXottZmqmtwnt+kZrh7DUzbI55fcQy?=
- =?us-ascii?Q?MUCe253wNo4/6xnUV7bmAAK5ybOqrN6wQd9T25059TNApkzgsvjkP9VEnDrZ?=
- =?us-ascii?Q?TDnFZkFd4yNc7xUy07azobvTL7xTabVuMSQjyUl7GcbeaCFtt/0dseNG70aJ?=
- =?us-ascii?Q?0gV9rCrsAtCZegk/Gr+l7D0BQuFD73FSpSj5YaOMcMoAU4AQHs/MVtIm68TQ?=
- =?us-ascii?Q?VHbT1k3zAG6cH2inyaHcxAzu4o7mYSF5j2VpNDjDYSg0B4ciVNDysFO4pzCw?=
- =?us-ascii?Q?/Nc11w6TrAOYrahLqDKC8zH68FeWwKLaqkSzor6CDZy9vvoAl9oMr8faQ0aT?=
- =?us-ascii?Q?IElqqeW+R5njL4YqdG01UHFDHHzlbOvyiQ0sI1yqOqJh6oLFIjlOwmajQYSc?=
- =?us-ascii?Q?08Pwob7YPfgDODpZVD6iGmY+EasFZ0WecZjiObSSJCEs2ln5G4Mvb7vMJDi7?=
- =?us-ascii?Q?AuAkrKasrvKeuZSzj0R0Tj2jPYpXW3WDX2fjQ1km+qAfnCLVb+iYpy1UaHEk?=
- =?us-ascii?Q?aQzpmuHLI1k2OUvQJGNd0Wc35qh72DcoWKTl+tsIvsaifTUY/jt1zzTojziy?=
- =?us-ascii?Q?sOsZJxqA7nIhe+yWfUB8S7TForoGgr+QvuzgH1tsSf3bfppYwtPqx83BjuUz?=
- =?us-ascii?Q?/7wDWVbqYr++TrAPJ4PXcyTdmeesZPNhj8Wdb3BkUgXYMiKrhsEXM2bF6sA5?=
- =?us-ascii?Q?MD5qLiUpfPDVGZ/xG2VV6ZiL8XIkAMbAFKGXl24A6SfWv9seRof7j0PIbh4d?=
- =?us-ascii?Q?Q8xlxXy039j+Di7qy3ZOLDsBfNvyewZLLvoRWAI1dysRszr2wlu39QPv7ryd?=
- =?us-ascii?Q?GX47yybKt9sWBsLAtDiyHkxmmtIu?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XCGYp+O9pV24fmHw672TeE1r+l/vHkidXLJEyF0K0WorKe4BLnEplwFjVdcE?=
- =?us-ascii?Q?ZSQqT5n84l9XPokewA5qNKx4ZzP0y1ccsMIlr11bzB5Ax4vWYaAw7ENETrog?=
- =?us-ascii?Q?lCSYmGYhsfxP+/i7CJqTkBX8OICqNekqiNrKUrasNk+FRH3+VULtwx2HWmGW?=
- =?us-ascii?Q?q8MwJoOEUo8gL6ycRLHb4PVt3ILwlvvWr0ZRe4TYaPKsQCAJ6gIV23WesBm3?=
- =?us-ascii?Q?rcF9rJPUpnrIU+LlKUSvOaKa7izociZkE4hWWHVlvI+qMq7Cmd67gOg5MOzZ?=
- =?us-ascii?Q?Yxul2LtCWokaanwpHwr3aUVOOFJjh1OCo0r2wu3kAUjKE0kntjeF4HgtY1lA?=
- =?us-ascii?Q?QMtNEJLdY+plBiLbUQu94M09SazZMT7xRHsvTbtiDbQeDF19sIcI6m0vDP74?=
- =?us-ascii?Q?r4dKGENJCO5CYYKueqRcdLk23Lbcgcxv1OZI1klFHJArJn4TtjqlRzpv4e7K?=
- =?us-ascii?Q?ea4JFgtDQsbowfHbUA7SAblwXxs4/Ux3Ohq4um5BCUsoR+uzC9SsV5hye7gN?=
- =?us-ascii?Q?CGM7nqapdHJnPzfWBUBDalpjU0498rVIOztWDmzj8FHOEMoO2JMA29J4Fx7i?=
- =?us-ascii?Q?cfiHB9cqvzsb+Wdf6RPCHtbrNgLOSfieAAkqTp4jmezb3Lfk4OencRu+FGWZ?=
- =?us-ascii?Q?tpU1qPQsEC1nQh1SzyCGEDXqG0XOd075sjDbuqa7UZjuio4R4gbIuDjhAPr4?=
- =?us-ascii?Q?AfR0mE/KUhEcJwe9nesEPXHOA/iL3gfGFg0+Ok9g1eOHeE02AyGBy56hn2Vu?=
- =?us-ascii?Q?qTTWzGZB/Gawx5b6L9sFcCIZ6ABsvmgAJMOQsMiL8ffdR4b/nmNy4e/zabkw?=
- =?us-ascii?Q?uq71KW1CVlQvD449tbs8Dsu/4k1wlghFXr59852g5LcfcLFVU9cknUOykkjL?=
- =?us-ascii?Q?hpMDi3cNqcGxOVfOt21gM8p5rHr2bPMFi/jGdF4MyiX4k5UrlJJVrNnxbHd0?=
- =?us-ascii?Q?CzmMXNWiUWEJpcJ3NVwqyIIhIYCQIKHcE3foyXUTSr5NeG9zhMCkgGo0TJVj?=
- =?us-ascii?Q?0A5LmJHvjQfcVFPALt337Xn2IMEOL94aV11ZyNUhNIKHsq7BLAXbdhS0k/+9?=
- =?us-ascii?Q?vMgzF++PkkIvCJ+ZdHIAhn0bbWvVovb8C1VhX8Ghx4L0tBxWRG12MkMCAe9S?=
- =?us-ascii?Q?X30CREM9al4mfImpA/YuLXear5G//2+/Fz6tp/gHdLRJiNL871OdzH3tZ15q?=
- =?us-ascii?Q?jCspvbRMhWc+MSqE5eggVZFEcuXxORATRCr+LlVX4fMej6ae1UV/UyFkQPZF?=
- =?us-ascii?Q?us5Zr271ZFPOzmhqHR1oHhCa9diVgaKvlWiEp9P+Ea17I5SKOgBGP50P01rR?=
- =?us-ascii?Q?GPl/w1iY4xeKoRZZSv2rI3o7n5e1z+FH97oAlyxq5SylASoer/NkAXy+CvAV?=
- =?us-ascii?Q?jG/M5CP+EcI/H/MPe/kicT+EoibyRIF45XWWfyJqhG7eHawm/TUotdx9emI9?=
- =?us-ascii?Q?Mpe4DiNXUuGsxcMtqHPFRDrEcoru7B6OI42bzz2UYdY36tPVtxszPFRXXp/Z?=
- =?us-ascii?Q?Xm9x2/w9+HSYwufrT7Tnk9kak0hWqWUW2l5nkX9NVyNCGC0RrK+cjCjeJ6VM?=
- =?us-ascii?Q?A9Jc67X8VqxIxcx+dnlarS+HCePH/2FrnoI5y4SZ?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: ba574766-d1b7-42b9-9e4e-08dd5ad445a8
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
+X-OriginatorOrg: outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 04:23:10.6102
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d28f3a16-e422-4902-aacd-08dd5ad418ec
+X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Mar 2025 04:21:55.3616
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GWWe6dLdjVygbJkbzeEhPUB3S8yvKabFSrU580b/HpuXgzZhuPIvw3NFPpi9LafCZMCKzNkERBPZI13cFdzi6A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB7570
-X-OriginatorOrg: intel.com
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH8PR02MB10184
 
-On Mon, Mar 03, 2025 at 05:11:31PM +0100, Paolo Bonzini wrote:
-> On 3/3/25 02:23, Yan Zhao wrote:
-> > On Sat, Mar 01, 2025 at 02:34:26AM -0500, Paolo Bonzini wrote:
-> > > From: Yan Zhao <yan.y.zhao@intel.com>
-> > > 
-> > > Introduce supported_quirks in kvm_caps to store platform-specific force-enabled
-> > > quirks.  Any quirk removed from kvm_caps.supported_quirks will never be
-> > > included in kvm->arch.disabled_quirks, and will cause the ioctl to fail if
-> > > passed to KVM_ENABLE_CAP(KVM_CAP_DISABLE_QUIRKS2).
-> > > 
-> > > Signed-off-by: Yan Zhao <yan.y.zhao@intel.com>
-> > > Message-ID: <20250224070832.31394-1-yan.y.zhao@intel.com>
-> > > Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
-> > > ---
-> > >   arch/x86/kvm/x86.c | 7 ++++---
-> > >   arch/x86/kvm/x86.h | 2 ++
-> > >   2 files changed, 6 insertions(+), 3 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> > > index fd0a44e59314..a97e58916b6a 100644
-> > > --- a/arch/x86/kvm/x86.c
-> > > +++ b/arch/x86/kvm/x86.c
-> > > @@ -4782,7 +4782,7 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm, long ext)
-> > >   		r = enable_pmu ? KVM_CAP_PMU_VALID_MASK : 0;
-> > >   		break;
-> > >   	case KVM_CAP_DISABLE_QUIRKS2:
-> > > -		r = KVM_X86_VALID_QUIRKS;
-> > > +		r = kvm_caps.supported_quirks;
-> > 
-> > As the concern raised in [1], it's confusing for
-> > KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT to be present on AMD's platforms while not
-> > present on Intel's non-self-snoop platforms.
-> 
-> To make it less confusing, let's rename it to
-> KVM_X86_QUIRK_IGNORE_GUEST_PAT.  So if userspace wants to say "I don't want
-Hmm, it looks that quirk IGNORE_GUEST_PAT is effectively always enabled on Intel
-platforms without enabling EPT.
+From: Roman Kisel <romank@linux.microsoft.com> Sent: Monday, March 3, 2025 =
+4:10 PM
+>=20
+> The log statement reports the packet status code as the hv
+> status code which causes confusion when debugging as "hv"
+> might refer to a hypervisor, and sometimes to the host part
+> of the Hyper-V virtualization stack.
+>=20
+> Fix the name of the datum being logged to clearly indicate
+> the component reporting the error. Also log it in hexadecimal
+> everywhere for consistency.
+>=20
+> Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
+> ---
+>  drivers/scsi/storvsc_drv.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>=20
+> diff --git a/drivers/scsi/storvsc_drv.c b/drivers/scsi/storvsc_drv.c
+> index a8614e54544e..35db061ae3ec 100644
+> --- a/drivers/scsi/storvsc_drv.c
+> +++ b/drivers/scsi/storvsc_drv.c
+> @@ -776,7 +776,7 @@ static void  handle_multichannel_storage(struct hv_de=
+vice *device, int max_chns)
+>=20
+>  	if (vstor_packet->operation !=3D VSTOR_OPERATION_COMPLETE_IO ||
+>  	    vstor_packet->status !=3D 0) {
+> -		dev_err(dev, "Failed to create sub-channel: op=3D%d, sts=3D%d\n",
+> +		dev_err(dev, "Failed to create sub-channel: op=3D%d, host=3D0x%x\n",
+>  			vstor_packet->operation, vstor_packet->status);
+>  		return;
+>  	}
+> @@ -1183,7 +1183,7 @@ static void storvsc_on_io_completion(struct storvsc=
+_device *stor_device,
+>  			STORVSC_LOGGING_WARN : STORVSC_LOGGING_ERROR;
+>=20
+>  		storvsc_log_ratelimited(device, loglevel,
+> -			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x hv 0x%x\n",
+> +			"tag#%d cmd 0x%x status: scsi 0x%x srb 0x%x host 0x%x\n",
+>  			scsi_cmd_to_rq(request->cmd)->tag,
+>  			stor_pkt->vm_srb.cdb[0],
+>  			vstor_packet->vm_srb.scsi_status,
 
-And kvm_mmu_may_ignore_guest_pat() does not care quirk IGNORE_GUEST_PAT on AMD
-or on Intel when enable_ept is 0.
+I had not realized that handle_multichannel_storage() was displaying the ho=
+st status
+in decimal! Ugh.
 
-bool kvm_mmu_may_ignore_guest_pat(struct kvm *kvm)                               
-{                                                                                
-        return shadow_memtype_mask &&                                            
-               kvm_check_has_quirk(kvm, KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT);     
-}                                                                                
-
-After renaming the quirk, should we also hide quirk IGNORE_GUEST_PAT from being
-exposed in KVM_CAP_DISABLE_QUIRKS2 when enable_ept is 0?
-However, doing so will complicate kvm_noncoherent_dma_assignment_start_or_stop().
-
-
-> KVM to ignore guest's PAT!", it can do so easily:
-> 
-> - it can check unconditionally that the quirk is included in
-> KVM_CAP_DISABLE_QUIRKS2, and it will pass on both Intel with self-snoop with
-> AMD;
-So, when userspace finds the quirk IGNORE_GUEST_PAT is exposed in
-KVM_CAP_DISABLE_QUIRKS2, it cannot treat this as an implication that KVM is
-currently ignoring guest PAT, but it only means that this is a new KVM with
-quirk IGNORE_GUEST_PAT taken into account.
-
-> - it can pass it unconditionally to KVM_X86_QUIRK_IGNORE_GUEST_PAT, knowing
-> that PAT will be honored.
-For AMD, since userspace does not explicitly disable quirk IGNORE_GUEST_PAT, you
-introduced kvm_caps.inapplicable_quirks to allow IGNORE_GUEST_PAT to be listed
-in KVM_CAP_DISABLED_QUIRKS.
-
-From KVM_CAP_DISABLED_QUIRKS, the userspace knows that honing guest PAT is
-performed on AMD.
-
-Is this understanding correct? 
-
-> But KVM_CHECK_EXTENSION(KVM_CAP_DISABLE_QUIRKS2) will *not* include the
-> quirk on Intel without self-snoop, which lets userspace detect the condition
-> and raise an error.  This is better than introducing a new case in the API
-> "the bit is returned by KVM_CHECK_EXTENSION, but rejected by
-> KVM_ENABLE_CAP".  Such a new case would inevitably lead to
-> KVM_CAP_DISABLE_QUIRKS3. :)
-Agreed. Thanks for the explanation:)
-
-> 
-> > Or what about introduce kvm_caps.force_enabled_quirk?
-> > 
-> > if (!static_cpu_has(X86_FEATURE_SELFSNOOP))
-> >          kvm_caps.force_enabled_quirks |= KVM_X86_QUIRK_EPT_IGNORE_GUEST_PAT;
-> 
-> That would also make it harder for userspace to understand what's going on.
-Right.
-
-> > [1] https://lore.kernel.org/all/Z8UBpC76CyxCIRiU@yzhao56-desk.sh.intel.com/
-> > >   		break;
-> > >   	case KVM_CAP_X86_NOTIFY_VMEXIT:
-> > >   		r = kvm_caps.has_notify_vmexit;
-> > > @@ -6521,11 +6521,11 @@ int kvm_vm_ioctl_enable_cap(struct kvm *kvm,
-> > >   	switch (cap->cap) {
-> > >   	case KVM_CAP_DISABLE_QUIRKS2:
-> > >   		r = -EINVAL;
-> > > -		if (cap->args[0] & ~KVM_X86_VALID_QUIRKS)
-> > > +		if (cap->args[0] & ~kvm_caps.supported_quirks)
-> > >   			break;
-> > >   		fallthrough;
-> > >   	case KVM_CAP_DISABLE_QUIRKS:
-> > > -		kvm->arch.disabled_quirks = cap->args[0];
-> > > +		kvm->arch.disabled_quirks = cap->args[0] & kvm_caps.supported_quirks;
-> > 
-> > Will this break the uapi of KVM_CAP_DISABLE_QUIRKS?
-> > My understanding is that only KVM_CAP_DISABLE_QUIRKS2 filters out invalid
-> > quirks.
-> 
-> The difference between KVM_CAP_DISABLE_QUIRKS and KVM_CAP_DISABLE_QUIRKS2 is
-> only that invalid values do not cause an error; but userspace cannot know
-> what is in kvm->arch.disabled_quirks, so KVM can change the value that is
-> stored there.
-Ah, it makes sense.
-
-Thanks
-Yan
-
-> 
-> > >   		r = 0;
-> > >   		break;
-> > >   	case KVM_CAP_SPLIT_IRQCHIP: {
-> > > @@ -9775,6 +9775,7 @@ int kvm_x86_vendor_init(struct kvm_x86_init_ops *ops)
-> > >   		kvm_host.xcr0 = xgetbv(XCR_XFEATURE_ENABLED_MASK);
-> > >   		kvm_caps.supported_xcr0 = kvm_host.xcr0 & KVM_SUPPORTED_XCR0;
-> > >   	}
-> > > +	kvm_caps.supported_quirks = KVM_X86_VALID_QUIRKS;
-> > >   	kvm_caps.inapplicable_quirks = 0;
-> > >   	rdmsrl_safe(MSR_EFER, &kvm_host.efer);
-> > > diff --git a/arch/x86/kvm/x86.h b/arch/x86/kvm/x86.h
-> > > index 9af199c8e5c8..f2672b14388c 100644
-> > > --- a/arch/x86/kvm/x86.h
-> > > +++ b/arch/x86/kvm/x86.h
-> > > @@ -34,6 +34,8 @@ struct kvm_caps {
-> > >   	u64 supported_xcr0;
-> > >   	u64 supported_xss;
-> > >   	u64 supported_perf_cap;
-> > > +
-> > > +	u64 supported_quirks;
-> > >   	u64 inapplicable_quirks;
-> > >   };
-> > > -- 
-> > > 2.43.5
-> > > 
-> > > 
-> > 
-> 
+Reviewed-by: Michael Kelley <mhklinux@outlook.com>
 
