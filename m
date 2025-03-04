@@ -1,118 +1,150 @@
-Return-Path: <linux-kernel+bounces-545313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72923A4EB93
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:29:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0BDA4EB9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:30:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A66D1799B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:24:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1ED0A178919
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:25:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 035DF280CD6;
-	Tue,  4 Mar 2025 18:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7CC228D084;
+	Tue,  4 Mar 2025 18:14:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="KqEYbZrk"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="w8pwDljw"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04C7027E1A5
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57DE62780F2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:14:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741112007; cv=none; b=YUzPV4xWEIPFC+tISDKVecZn7CMh4maW8kuyGHtpyMK66EY5y64gCOjJUjI8NyFIm+lNPYxmhBy5LkC8qRMTka4Ho9PFTzoC0Rp7p2FPMfkPzu+XInvHUbdoBYGI8MpAe00YB87h+hxM7cVFXaXS5V8HcGVrP1g8kcnK30q9Ob4=
+	t=1741112067; cv=none; b=bgH3wb+AAQWJb+RUekyr+Y0UVWKvj1lc8fNIcCPh7yEOzv6cQF6GGaqwIpz7wAlOoSWtAMbotN5fGwTE2V4DQPviKWe6Ua+g0OCfa8KLUA+uysIUP7u2GpaNgmECKc/0+fi+6LXx9fj04i6MthLH4ORzDgh2cwR3QGZhWP5jLXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741112007; c=relaxed/simple;
-	bh=ypPytUNQebnWYDRP7fpFEAJF942EcMHF5lireOs6gk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BsKNBKkbnFurYB/oavhQ+UrwxQMhOd4h0SkPKlCKdV6DWmLNqE3Xm7kRYMfL0DoHuQtvbDJ6YDJe4pv7MxZqfzI+ApVb/on96oyheX2pZ8jvDywOAZRHjnjCAj8uu9vfvnr6YiHnDAjOY1qXI7zT7ktZB7iXkHpAyc8fxVhU7gw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=KqEYbZrk; arc=none smtp.client-ip=121.127.44.59
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1741111998;
- bh=xjqXCgfra637s+rpk4UdFAWQVXX9B5blSLtqx3MNrXQ=;
- b=KqEYbZrkYoM2a8EOqYL75O4oNNU42Kt0WKaWvm7j2fCvgIPr74ds292+aIPClYWBAVZvSQxMv
- subtPZ3tfDvUPKez4iqIOcww3Poe7DOQLndRCjjwbYUcYFvCqZUUTLMJKJHqpdHfU0ExX0QcZut
- vKE0VZr4uXpH+gV1mI/7CD9/XcQrgjXYbCY0rK4fTIBKAo2IjjQa2P1RcxwDiJHJBHPMpXzN+aM
- ve9G/NOw2zrATDFkenq7mHgD4WRolVhoY8I+9sGZC+J9LkNi9yg2WI++0Bmpl8geUFcDoLN4Gok
- QLNfjNB7QcPIE+BmI1xfUqAmN1VOroxMoO5viz/pgzQA==
-X-Forward-Email-ID: 67c742bb2e5baeec949f6b1e
-X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 121.127.44.59
-X-Forward-Email-Version: 0.4.40
-X-Forward-Email-Website: https://forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Report-Abuse-To: abuse@forwardemail.net
-Message-ID: <03c34bdf-d470-4c99-bb06-0eb7496465a3@kwiboo.se>
-Date: Tue, 4 Mar 2025 19:13:10 +0100
+	s=arc-20240116; t=1741112067; c=relaxed/simple;
+	bh=0BxNCArQS6YXz9VsmCXNHkqDx3pRc8E0K6P//18NTM0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n6R5eANP6jPZ2TFqOohcKWPufcvnHvi5jI8SW7byYyxL8Vr9jL9CIma2ipLb6gdtJvMbCyFHIO0kyEGYqSqL+dMXDVvRO1hcZurng/Fv4CSNGIPwUBQrrQZBo33WnC3S1kscStoLt2L2kvovG70+CT6VO2HjgT7JQj3GULn0Py0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=w8pwDljw; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741112062;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CI5XJci0mb8S2pl5ASbOYBG4+fIERNXYTJQdDedonSU=;
+	b=w8pwDljwAzV2pA5mnEYEewwTLP5iJd/yjKxuoF7il3mxTJCXEqWO1nf6296TYy81jBzdJP
+	0USIKCvph+hrYrlCvz9U7at8SlbglWY84XHhIaj32adQ17PJqJI8p3ANInemnxxnrt/uvl
+	1HB+Sa8ASDf6T11MhS4oMkz/XW7s9ME=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-scsi@vger.kernel.org,
+	target-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] scsi: target: Remove size arguments when calling strscpy()
+Date: Tue,  4 Mar 2025 19:14:00 +0100
+Message-ID: <20250304181400.78325-1-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: (subset) [PATCH 0/7] rockchip: Add support for leds and user
- button on Radxa E20C
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, Yao Zi <ziyao@disroot.org>,
- linux-rockchip@lists.infradead.org, devicetree@vger.kernel.org,
- linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250228064024.3200000-1-jonas@kwiboo.se>
- <174108970986.65436.4272591414898454986.b4-ty@sntech.de>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <174108970986.65436.4272591414898454986.b4-ty@sntech.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Heiko,
+The size parameter of strscpy() is optional because strscpy() uses
+sizeof() to determine the length of the destination buffer if it is not
+provided as an argument. Remove it to simplify the code.
 
-On 2025-03-04 13:02, Heiko Stuebner wrote:
-> 
-> On Fri, 28 Feb 2025 06:40:06 +0000, Jonas Karlman wrote:
->> The Radxa E20C has three gpio leds and one gpio button.
->>
->> This series adds dt-binding, driver support, DT node in SoC .dtsi and
->> gpio-keys and gpio-leds nodes in board DT to support the leds and user
->> button.
->>
->> This series builds on top of the "rockchip: Add support for maskrom
->> button on Radxa E20C" series [1].
->>
->> [...]
-> 
-> Applied, thanks!
-> 
-> [1/7] dt-bindings: soc: rockchip: Add RK3528 ioc grf syscon
->       commit: ac32ad07a97648eb8330b2c4cb840b0ef46903ae
-> [4/7] arm64: dts: rockchip: Add pinctrl and gpio nodes for RK3528
->       commit: a31fad19ae39ea27b5068e3b02bcbf30a905339b
-> [5/7] arm64: dts: rockchip: Add uart0 pinctrl to Radxa E20C
->       commit: 0d2312f0d3e4ce74af0977c1519a07dfc71a82ac
-> 
-> Patches 6+7 depend on the parallel saradc support series and thus
-> do not apply - and need too much rework to safely apply.
+Remove some unnecessary curly braces.
 
-Do you want me to rebase/reorder and send an updated version with
-remaining patches? Look like the iio saradc patches [2] is pending apply
-so maybe not needed?
+No functional changes intended.
 
-[2] https://lore.kernel.org/all/20250304144648.29f376f9@jic23-huawei/
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ drivers/target/target_core_configfs.c | 20 +++++++++-----------
+ 1 file changed, 9 insertions(+), 11 deletions(-)
 
-Regards,
-Jonas
-
-> 
-> 
-> Best regards,
+diff --git a/drivers/target/target_core_configfs.c b/drivers/target/target_core_configfs.c
+index c40217f44b1b..9b2b9786ce2f 100644
+--- a/drivers/target/target_core_configfs.c
++++ b/drivers/target/target_core_configfs.c
+@@ -673,12 +673,10 @@ static ssize_t emulate_model_alias_store(struct config_item *item,
+ 		return ret;
+ 
+ 	BUILD_BUG_ON(sizeof(dev->t10_wwn.model) != INQUIRY_MODEL_LEN + 1);
+-	if (flag) {
++	if (flag)
+ 		dev_set_t10_wwn_model_alias(dev);
+-	} else {
+-		strscpy(dev->t10_wwn.model, dev->transport->inquiry_prod,
+-			sizeof(dev->t10_wwn.model));
+-	}
++	else
++		strscpy(dev->t10_wwn.model, dev->transport->inquiry_prod);
+ 	da->emulate_model_alias = flag;
+ 	return count;
+ }
+@@ -1433,7 +1431,7 @@ static ssize_t target_wwn_vendor_id_store(struct config_item *item,
+ 	ssize_t len;
+ 	ssize_t ret;
+ 
+-	len = strscpy(buf, page, sizeof(buf));
++	len = strscpy(buf, page);
+ 	if (len > 0) {
+ 		/* Strip any newline added from userspace. */
+ 		stripped = strstrip(buf);
+@@ -1464,7 +1462,7 @@ static ssize_t target_wwn_vendor_id_store(struct config_item *item,
+ 	}
+ 
+ 	BUILD_BUG_ON(sizeof(dev->t10_wwn.vendor) != INQUIRY_VENDOR_LEN + 1);
+-	strscpy(dev->t10_wwn.vendor, stripped, sizeof(dev->t10_wwn.vendor));
++	strscpy(dev->t10_wwn.vendor, stripped);
+ 
+ 	pr_debug("Target_Core_ConfigFS: Set emulated T10 Vendor Identification:"
+ 		 " %s\n", dev->t10_wwn.vendor);
+@@ -1489,7 +1487,7 @@ static ssize_t target_wwn_product_id_store(struct config_item *item,
+ 	ssize_t len;
+ 	ssize_t ret;
+ 
+-	len = strscpy(buf, page, sizeof(buf));
++	len = strscpy(buf, page);
+ 	if (len > 0) {
+ 		/* Strip any newline added from userspace. */
+ 		stripped = strstrip(buf);
+@@ -1520,7 +1518,7 @@ static ssize_t target_wwn_product_id_store(struct config_item *item,
+ 	}
+ 
+ 	BUILD_BUG_ON(sizeof(dev->t10_wwn.model) != INQUIRY_MODEL_LEN + 1);
+-	strscpy(dev->t10_wwn.model, stripped, sizeof(dev->t10_wwn.model));
++	strscpy(dev->t10_wwn.model, stripped);
+ 
+ 	pr_debug("Target_Core_ConfigFS: Set emulated T10 Model Identification: %s\n",
+ 		 dev->t10_wwn.model);
+@@ -1545,7 +1543,7 @@ static ssize_t target_wwn_revision_store(struct config_item *item,
+ 	ssize_t len;
+ 	ssize_t ret;
+ 
+-	len = strscpy(buf, page, sizeof(buf));
++	len = strscpy(buf, page);
+ 	if (len > 0) {
+ 		/* Strip any newline added from userspace. */
+ 		stripped = strstrip(buf);
+@@ -1576,7 +1574,7 @@ static ssize_t target_wwn_revision_store(struct config_item *item,
+ 	}
+ 
+ 	BUILD_BUG_ON(sizeof(dev->t10_wwn.revision) != INQUIRY_REVISION_LEN + 1);
+-	strscpy(dev->t10_wwn.revision, stripped, sizeof(dev->t10_wwn.revision));
++	strscpy(dev->t10_wwn.revision, stripped);
+ 
+ 	pr_debug("Target_Core_ConfigFS: Set emulated T10 Revision: %s\n",
+ 		 dev->t10_wwn.revision);
+-- 
+2.48.1
 
 
