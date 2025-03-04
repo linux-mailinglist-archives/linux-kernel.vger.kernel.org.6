@@ -1,121 +1,112 @@
-Return-Path: <linux-kernel+bounces-545437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD523A4ED5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:30:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 092C3A4ED27
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:21:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A993BCC1D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:20:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34A0716C504
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 899AD259C9C;
-	Tue,  4 Mar 2025 19:20:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24691259CAC;
+	Tue,  4 Mar 2025 19:21:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X9GYfE+g"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IViO4f30"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96196204874
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 19:20:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69997255244;
+	Tue,  4 Mar 2025 19:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741116050; cv=none; b=DboNDFNbu0hcL8T4ToTc7CSStWpAPS9gH8+f9BhS4wPyUqCdiyQQKbrtleLHtpkyfQJG8ZYqpZ6JJuBxltqTlx4PlHvKCZOZWvHySuuj7174KdpqMGwRNJmjaNMxBk/QjNgUcsbnNh3c1IqUDK6a6da4s0lbcmuL5G47fjHTv0A=
+	t=1741116064; cv=none; b=VkwGKjQZuDcLrQnYrm/EvwzNGiuOwlcnWTjyrdUgdTdGgJiEiGSkZVTaoVRn7UpCdanrLwkcWY7Msntv2Rhgu0e9dJ1KkpgGsa8JYQ2yYQBwc8wnqbifUcDZBCC1lPDFtTS2f1IdbzOV9WTORGBevw1QKW+NbVjLiXmDWJ39quM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741116050; c=relaxed/simple;
-	bh=sCroFOj5gIG939wW1MBEN05QRv/2HsiEtX+DCRCeyRA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OWD/QtGRPK1vbCpyLedswcEgckkdi8FGOqdBQbkOaEex0VZ4mo2koYOHWzkd4wJS/Ed+Lf3MTQNslH77+rR9H1LWHSbd7mxLT5blcy2CmJNzZTkRjx38c6e+g2lNYnV5DOP3lh7p5B5XLlqyzfV3WnBR5lMaP0NwK2v4YBWBH2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X9GYfE+g; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223785beedfso75390665ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 11:20:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741116047; x=1741720847; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W/dXSi6xRgwsWQ1SiZXMUsL2CPHZOkxLFICb2229Usk=;
-        b=X9GYfE+gdvJkXefzdWRysmejWu8JQvnR+12zCFkBfW3iJwhtRASNTixXjId6RwW1Es
-         toEFIwUq62iu8NEAESeXAGAUR2ui27sYoON5Z0tP6oA82dC9uEmMsK0KQv0hJtAqtMA7
-         7uiYYH32nALbB82MI6E+XtDOwzPmq67HpeEUhk5S03c8dTtrrK/CeEM/zCCtzSN3YdfL
-         R4MTdfXBFbC3QT0Uv9BLP++lUhSv+xOmbL5OtiR+Pnu5KGlj12KCC5SrmkzEwVeJAFI9
-         zNwE7Q9GGPC//hfWBSzKiZW0UI6nqe+Fb7XZPSU33OcsMHC1MG2creXJkWDHnakQxOZz
-         hyyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741116047; x=1741720847;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=W/dXSi6xRgwsWQ1SiZXMUsL2CPHZOkxLFICb2229Usk=;
-        b=Z5L3uHk3/Rv/3YRF/Ip2On9DyLfvCZRzmG+AsofafHxTGTIwnFZi1gtZdffkAHw0vH
-         Rbk923aUetpdlovfVWzbjYgmrDY4cfy4N9WJ9R2l5OgDixOV7jhLRcKlWW4Owk181aGS
-         dtclfy/nAXWR9xEfvJG2aqhlLDI7+z9mxkHAJ7oRFYkwACof2k8esdhBr5f8YGIOEYIR
-         yRbzHL+XmkuzdJ1eJncIavhwXRix5veTG0QTQqu6ia5ZJw1pUqVrJR50arnzNrAvHUIl
-         kJhiyWIjhbRO4jioZul1/RuvGgTlnCGPBDxy7JmVR+NQfOMJdunrOQLJc+GpCO7vj5d9
-         uOMw==
-X-Gm-Message-State: AOJu0Yx5JVxC4HKuNZpQ/5Ho0fvDDnsKmJB2pASxIzMezNF/fxDBWLw3
-	oCV2ufIFxIoISNeDLVF7ShSATeZF9enagBBaRUTkQURNp6jOjYa2/gCPVg==
-X-Gm-Gg: ASbGncsdYL9sCAMF1eCqKEkdusjIcQp+9LvMoHFWZlgRjzcjjGX6ro3yGOoDSIFcLie
-	f5+HG7CAn4a5OmywB4OK5haDWoOd20bvz/9lnot3z6hjPPP0RQNsFD8usCJxcNGwHqk9hmvMQYc
-	R71eLJ5bb2xHQpD0oG6zsmh7FdzErhP1QYpYVsqon/mG7hVy1iZddNp7B6eEB+6/K96EZ/Lkwlk
-	4a6FAOKVHvOzgIcRAFon4BCefZzmex61/BkUQrNrPRV3PFWYPq7YyVrhzm+pja2HNOGOQT/7zKj
-	KreSut+DqYezCEuSIjs46MH/ED4ILpxePhn9v/mobpgaUQx542UbeeNuEwKfHBhSTRiyc6jwt09
-	ofqEGz4YcIwHpgei2Qh6WBxwrcseQ0mbMSyri
-X-Google-Smtp-Source: AGHT+IE/izDo+2T2PoP2W0Zud9dEe4n8vIruh1o+XbAemCyGlSIAuwSw6HV5IvFQ+4u8lDGh5rcUkQ==
-X-Received: by 2002:a17:902:dacf:b0:21f:93f8:ce16 with SMTP id d9443c01a7336-223f1ca9026mr4913365ad.31.1741116047417;
-        Tue, 04 Mar 2025 11:20:47 -0800 (PST)
-Received: from daehojeong-desktop.mtv.corp.google.com ([2a00:79e0:2e14:7:ae36:4619:1aa2:117b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7363d97dcd0sm6602610b3a.54.2025.03.04.11.20.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 11:20:47 -0800 (PST)
-From: Daeho Jeong <daeho43@gmail.com>
-To: linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net,
-	kernel-team@android.com
-Cc: Daeho Jeong <daehojeong@google.com>
-Subject: [PATCH] f2fs: subtract current_reserved_blocks from total
-Date: Tue,  4 Mar 2025 11:20:41 -0800
-Message-ID: <20250304192041.4048741-1-daeho43@gmail.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+	s=arc-20240116; t=1741116064; c=relaxed/simple;
+	bh=6MnWChvdZA4s+8fxB0dv8vXGdMG4i5FgUOx+TUcX3rE=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=JNJxk8UOEbb69k9KfVUI6SVQTyWoBAEtxEpnBbyXPYGXINwBFFZ6aOohxB18chlpSBznggV1LaHs06gSqu4kIUr1fstcBtnIbP9HqOdoK0jQPYID4SYT+rZ52Okx+UBOTyv/pnoy6j4s8uowsm3xKqPvT0G5QUvia9uX2Ecn96A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IViO4f30; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13915C4CEE5;
+	Tue,  4 Mar 2025 19:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741116063;
+	bh=6MnWChvdZA4s+8fxB0dv8vXGdMG4i5FgUOx+TUcX3rE=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=IViO4f30mVkst2x3qHPFh8izeOtVaw7uz++VewyC1C4wRjjXNjkPpsvdbCKPh5a7p
+	 LqeXcwXMOBn+5V4SsCSDB4zkQJ/L06PEH92xc657CrC1OKTP0fjMViud/W7PWug3Xt
+	 yPOn3BPv2+hsD5y6O5mAh1cC1VOX6ZQIyvHn4ZXfS6Y8NQDAnYA5VViId/1CcZpwmk
+	 KMW67znwGXnZVSH7YKBEcvgHahVyteVyEVvjBoYk73cF2M5BlW/FWFAhYsheUY2uyD
+	 pM4hhX+5F+r32BkLurL55YngI2/BkcGNpQ0ySuBcL2f2C3OvYIZP5suiuVfTftmCRz
+	 6WUb34kNPuMlQ==
+From: Mark Brown <broonie@kernel.org>
+To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ linux-sound@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-kernel@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+ conor+dt@kernel.org, devicetree@vger.kernel.org, 
+ Shengjiu Wang <shengjiu.wang@nxp.com>
+In-Reply-To: <20250226100508.2352568-1-shengjiu.wang@nxp.com>
+References: <20250226100508.2352568-1-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH 0/4] ASoC: fsl_audmix: support audio graph card for
+ audmix
+Message-Id: <174111606081.246439.10804205280595861731.b4-ty@kernel.org>
+Date: Tue, 04 Mar 2025 19:21:00 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-1b0d6
 
-From: Daeho Jeong <daehojeong@google.com>
+On Wed, 26 Feb 2025 18:05:04 +0800, Shengjiu Wang wrote:
+> Change 'dais' property to be optional, that fsl_audmix device can be
+> linked with SAI device by audio graph card.
+> 
+> Shengjiu Wang (4):
+>   ASoC: dt-bindings: fsl,sai: Document audio graph port
+>   ASoC: dt-bindings: fsl,audmix: Document audio graph port
+>   ASoC: dt-bindings: fsl,audmix: make 'dais' property to be optional
+>   ASoC: fsl_audmix: register card device depends on 'dais' property
+> 
+> [...]
 
-current_reserved_blocks is not allowed to utilize. For some zoned
-storage devices, vendors will provide extra space which was used for
-device level GC than specs and we will use this space for filesystem
-level GC. This extra space should not be shown to users, otherwise,
-users will see not standardized size number like 530GB, not 512GB.
+Applied to
 
-Signed-off-by: Daeho Jeong <daehojeong@google.com>
----
- fs/f2fs/super.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-index 19b67828ae32..c346dcc2518a 100644
---- a/fs/f2fs/super.c
-+++ b/fs/f2fs/super.c
-@@ -1833,10 +1833,9 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
- 	buf->f_type = F2FS_SUPER_MAGIC;
- 	buf->f_bsize = sbi->blocksize;
- 
--	buf->f_blocks = total_count - start_count;
--
- 	spin_lock(&sbi->stat_lock);
- 
-+	buf->f_blocks = total_count - start_count - sbi->current_reserved_blocks;
- 	user_block_count = sbi->user_block_count;
- 	total_valid_node_count = valid_node_count(sbi);
- 	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
--- 
-2.48.1.711.g2feabab25a-goog
+Thanks!
+
+[1/4] ASoC: dt-bindings: fsl,sai: Document audio graph port
+      commit: abcb9a1fd89144536f3ef604f700e94424867366
+[2/4] ASoC: dt-bindings: fsl,audmix: Document audio graph port
+      commit: 5fee78e517ce0765def9387659fc56a1d5532c60
+[3/4] ASoC: dt-bindings: fsl,audmix: make 'dais' property to be optional
+      commit: 597acf1a04bede55e3ad8a7922bba286c11112d3
+[4/4] ASoC: fsl_audmix: register card device depends on 'dais' property
+      commit: 294a60e5e9830045c161181286d44ce669f88833
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
