@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-542952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BCF5A4CFC7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:14:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785B7A4CFC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E68123AD465
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:14:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79D0B188A05E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA4185228;
-	Tue,  4 Mar 2025 00:14:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA2ACA4E;
+	Tue,  4 Mar 2025 00:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FGOtyWi1"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qZ9zcQBF"
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B64B171C9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:14:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF53250EC
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:14:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741047261; cv=none; b=OUhhO1kbzTQcI/PGKmV1YBUB3lHUNICcvTJs0duAk6YaAlfcZmjccIzB9fRFngId7Y9eIfPHrNqOvhTVRl1Q3wYRBk4WIHJcjGeLZdod/WyvYfraPPu9hv4AdqjY4pZjiSmMwODK+w+jxFdJzPPdl3ge1qTgMAXJaxa+kQ8iD5M=
+	t=1741047269; cv=none; b=OqO9ArmBjbnKYfqXKCoa+Sx39PJ0YRTNoiFqMNIKkkwBOvQRvYCoOQKT8AH4OUlHaSJnM6BwCXZAdS19mwUKM7osYpilujUhM+OMsm5y6EIxIpubgjXB6LIUvYPojn/r084RPNw/jSa/lHGi6xEUVNCn1N4yEzZdjxSojacYouQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741047261; c=relaxed/simple;
-	bh=IOnqgj0XTH757S36DJspSbk0YPI+XFopVV55XSeDweM=;
+	s=arc-20240116; t=1741047269; c=relaxed/simple;
+	bh=QPA0z4IkQ4stWUSFz7Vu1LHPkM1P0cuaG7fZq/w/Sls=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=LLKqHwKlYJ5gE3xrJHb00/hw/nQn2z+Hjkho3KH0YYObWkNELqbEwwD7QLzBMoHYCqc+mwcM5eXTRnDxwT9N4z+CAVmuMDdNIPXda+zNf8KW/6O4kwzjzAavstK44mRdX2hPx8R0xN7dbyqEGCIzFHZNJ0A0iWGzllVCrAMX5kk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yepeilin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FGOtyWi1; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=UO0T62vXdshgZadHFM7ntqrHVDXYOct3i9c3s766/nZO9BJxBEF/hp+0l6Foa+edA1lo8hGmr6TrpJvR7oQb/7tRy3RKOGQJNmf7SCGEK1BlRUiQs9RoLKoYB5BGgFQD+C0QfQHG0NJL66gwtFBwjPbcSDYxnTN1OCn/KsJR3xc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--yepeilin.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qZ9zcQBF; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--yepeilin.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2feb019b13aso14370295a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 16:14:19 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fe9527c041so9986410a91.0
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 16:14:27 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741047259; x=1741652059; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741047267; x=1741652067; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8j2BSjmna2ghQKBcJTnNrRFDhjm44gnJpM2ihIwsNrg=;
-        b=FGOtyWi1DxIt2ZFHy7SAYZgySvPYJLxWArWSA7KKW6GWljEm7q3vGTQ0hdJnjWYHzw
-         sOK9C5owfiGoEDDvNZMQ5bZgnryIgQjDzZruDjtmzBT1E3Yh7FIXhwIcjDm5ZhrMPJzE
-         K8v33Oz48so9OrhwY/u2/hdcqPXWtW+o6sJkQcJskrYOGPEUy79FE1p7fTH8t1onmzoR
-         8cHv6hgTDTqcF3s6bRrMuRqRv1Z6N0c5U+KOCpZ5+0d7VlnkjoRalngCMbTdGW8akL2L
-         TRNb5yiRlClP1xd28TzSEteYzXW6wZG7u08wlNkbmyMVaR8aDDz+ajQV8Th9JjQafT6W
-         wRtw==
+        bh=VycOpllnvSzKdjd9R3576qTHHYaFrsKy4wd3sa7AubQ=;
+        b=qZ9zcQBFQtBZ0rdFEYXDiB1iDgnEoGKc8yYeIvjKFJscx01BjVyXJhZzKxlSukyzI4
+         7TFix/dtZe8Jh3rOA7sSGyFzucdUjQKyDbcfQQAr2RN8ltCAkBXs4ME7a6UnhBb6gZup
+         ynBrkFnBPkJ1IBLHxvz3qtiYi3uSV7zYi/OGDhr842ZaXflrTOlltTL56BKWr9VDeabT
+         RQoAdWqiB8yRhtcqkEu3DygyWHGISvRX1DRKYSMGzGLCslsJajqddruR0t/syOlbcJo9
+         RkpJpag/qiZg2cxJJHRbQStQ+pTVYtqGig8F9RewctWEs4s479S7rhHJQU0wyHXRJeMl
+         gneg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741047259; x=1741652059;
+        d=1e100.net; s=20230601; t=1741047267; x=1741652067;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8j2BSjmna2ghQKBcJTnNrRFDhjm44gnJpM2ihIwsNrg=;
-        b=BLW5wtgU3o3z6Ocu3FOWuIAiiRg8lS+ZsQEU97D4RImVPoBBDf3UJE5ztLM5DZ14a7
-         9oqBmfJCRgK3GwTjJagc+oE1mPLTmubsz3sC5gDtUJTwF2lclL4kTHZVOAhXU5adltB+
-         scUxXDxXs/c8O5eXfTKwKv41d1pnfbvha4X0mhQUZLbipkszvp8u+pyKXn/NM0mO+inL
-         Zz2kDlWRCoM+hf5wuHSbnuEze4tPZjl3q6kB7MFCQFyzBKRKHg/hRrhWV8DmcO96iAoC
-         Vet7DqcMVNvIYgBbSobaJNDPIZN1Kfei2RpgO24DJiT8I3osWTxoDa2ErL24UntoAab9
-         DXSg==
-X-Forwarded-Encrypted: i=1; AJvYcCXqBU3LxAAD2k7TZpmiXdfeBwVMIUfo81ZZoggIS5yACladB/r30lZJ7fQVrFmLM7/Q0cX7KK1ZCRCaOxM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwgxNKr/NE0XL7TZNwPknItfP6XUzuSxF55CB8lSiwJ+WvxbMab
-	coVTdXimJ9MlKdd2IvGqhYKvC+oKglKQjArbZknTBFNPlx31jfb+l/lfs3xsmDGYR3zzI4IYCon
-	ihyssbM7rNg==
-X-Google-Smtp-Source: AGHT+IFMIVdq6tii8p6eio9YIzGPiIzt2c6o+qQ5+Ro+WEeR+4w6njY2EQbyY4O8uOd8S00f8/XVAn3YIRE9Zg==
-X-Received: from pjbcz12.prod.google.com ([2002:a17:90a:d44c:b0:2fa:284f:adae])
+        bh=VycOpllnvSzKdjd9R3576qTHHYaFrsKy4wd3sa7AubQ=;
+        b=a1QknlEjo283+jnanon8imURPwKOQylrX1foExT/o7JHaG4jnWDGQfv0iLOGLMjD0W
+         efb8qehZC9AGyUAV7EE3C757/wgddg6gAdeXDXio+8mWOFCuBnOID8DOISkjQaq0zXCr
+         sPLHOcpZVy285QYqJk6SXPQJHkC6XaO1k+oisJx1HGkN/qfebtKCV2ZJtPheCXJu0LUN
+         iDzKd1g4PFJx4pElTIvNhrJGKvSYFKCqIQGeb+9qhkBccjvhdkTvII/WmO6uvfujRe3a
+         h1gBB/ABn9hRb8EN+ISa6Wxu/Cu22hticin3bdegDYXf1DbEAYYjeh0AJ2o2XXASVqTr
+         18Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCVrAm0cc/ugNjqtfMBVGRpdKzyUqNzXnZGucKBJGorr72MkMmwTZbeOn1J/tOAJGaGmyUtslj48p16FFzA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+VXQbLZtyQhjA7Wdm8Hy1zegGzRCFXTVHHpQ6wac8ebRgp3nP
+	UPZEAk+jpkzgsbMHqwykgtGsW1JzGBNO+hE57pRFhcRKTVSHVKZ4mziCj7obBfVNn3rZmfh4d2f
+	EgGLg0mtwSA==
+X-Google-Smtp-Source: AGHT+IGlZNGqUmDxTly2qYsBgk0PptIg3lItr8uvTn+ohlGwkImKw4P0KNR+Inhl9r8cGtTP+KHApKcxMgVj4Q==
+X-Received: from pjbqc14.prod.google.com ([2002:a17:90b:288e:b0:2f2:ea3f:34c3])
  (user=yepeilin job=prod-delivery.src-stubby-dispatcher) by
- 2002:a17:90b:554f:b0:2ea:712d:9a82 with SMTP id 98e67ed59e1d1-2febabf8577mr23330143a91.29.1741047259169;
- Mon, 03 Mar 2025 16:14:19 -0800 (PST)
-Date: Tue,  4 Mar 2025 00:14:16 +0000
+ 2002:a17:90b:278d:b0:2f8:34df:5652 with SMTP id 98e67ed59e1d1-2febab703femr20133867a91.21.1741047267046;
+ Mon, 03 Mar 2025 16:14:27 -0800 (PST)
+Date: Tue,  4 Mar 2025 00:14:22 +0000
 In-Reply-To: <cover.1741046028.git.yepeilin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <cover.1741046028.git.yepeilin@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <fb4784d569abe2ba66e33833e3e64c168a87465d.1741046028.git.yepeilin@google.com>
-Subject: [PATCH bpf-next v5 4/6] bpf, arm64: Support load-acquire and
+Message-ID: <c4b2b97086e214ee24aafeb5f57cb1275a4469ef.1741046028.git.yepeilin@google.com>
+Subject: [PATCH bpf-next v5 5/6] bpf, x86: Support load-acquire and
  store-release instructions
 From: Peilin Ye <yepeilin@google.com>
 To: bpf@vger.kernel.org, linux-arm-kernel@lists.infradead.org
@@ -94,192 +94,181 @@ Cc: Peilin Ye <yepeilin@google.com>, bpf@ietf.org, Alexei Starovoitov <ast@kerne
 	Benjamin Segall <bsegall@google.com>, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Support BPF load-acquire (BPF_LOAD_ACQ) and store-release
-(BPF_STORE_REL) instructions in the arm64 JIT compiler.  For example
-(assuming little-endian):
+Recently we introduced BPF load-acquire (BPF_LOAD_ACQ) and store-release
+(BPF_STORE_REL) instructions.  For x86-64, simply implement them as
+regular BPF_LDX/BPF_STX loads and stores.  The verifier always rejects
+misaligned load-acquires/store-releases (even if BPF_F_ANY_ALIGNMENT is
+set), so emitted MOV* instructions are guaranteed to be atomic.
 
-  db 10 00 00 00 01 00 00  r0 = load_acquire((u64 *)(r1 + 0x0))
-  95 00 00 00 00 00 00 00  exit
+Arena accesses are supported.  8- and 16-bit load-acquires are
+zero-extending (i.e., MOVZBQ, MOVZWQ).
 
-  opcode (0xdb): BPF_ATOMIC | BPF_DW | BPF_STX
-  imm (0x00000100): BPF_LOAD_ACQ
+Rename emit_atomic{,_index}() to emit_atomic_rmw{,_index}() to make it
+clear that they only handle read-modify-write atomics, and extend their
+@atomic_op parameter from u8 to u32, since we are starting to use more
+than the lowest 8 bits of the 'imm' field.
 
-The JIT compiler would emit an LDAR instruction for the above, e.g.:
-
-  ldar  x7, [x0]
-
-Similarly, consider the following 16-bit store-release:
-
-  cb 21 00 00 10 01 00 00  store_release((u16 *)(r1 + 0x0), w2)
-  95 00 00 00 00 00 00 00  exit
-
-  opcode (0xcb): BPF_ATOMIC | BPF_H | BPF_STX
-  imm (0x00000110): BPF_STORE_REL
-
-An STLRH instruction would be emitted, e.g.:
-
-  stlrh  w1, [x0]
-
-For a complete mapping:
-
-  load-acquire     8-bit  LDARB
- (BPF_LOAD_ACQ)   16-bit  LDARH
-                  32-bit  LDAR (32-bit)
-                  64-bit  LDAR (64-bit)
-  store-release    8-bit  STLRB
- (BPF_STORE_REL)  16-bit  STLRH
-                  32-bit  STLR (32-bit)
-                  64-bit  STLR (64-bit)
-
-Arena accesses are supported.
-bpf_jit_supports_insn(..., /*in_arena=*/true) always returns true for
-BPF_LOAD_ACQ and BPF_STORE_REL instructions, as they don't depend on
-ARM64_HAS_LSE_ATOMICS.
-
-Acked-by: Xu Kuohai <xukuohai@huawei.com>
 Signed-off-by: Peilin Ye <yepeilin@google.com>
 ---
- arch/arm64/net/bpf_jit.h      | 20 ++++++++
- arch/arm64/net/bpf_jit_comp.c | 90 ++++++++++++++++++++++++++++++++---
- 2 files changed, 104 insertions(+), 6 deletions(-)
+ arch/x86/net/bpf_jit_comp.c | 99 ++++++++++++++++++++++++++++++-------
+ 1 file changed, 82 insertions(+), 17 deletions(-)
 
-diff --git a/arch/arm64/net/bpf_jit.h b/arch/arm64/net/bpf_jit.h
-index b22ab2f97a30..a3b0e693a125 100644
---- a/arch/arm64/net/bpf_jit.h
-+++ b/arch/arm64/net/bpf_jit.h
-@@ -119,6 +119,26 @@
- 	aarch64_insn_gen_load_store_ex(Rt, Rn, Rs, A64_SIZE(sf), \
- 				       AARCH64_INSN_LDST_STORE_REL_EX)
+diff --git a/arch/x86/net/bpf_jit_comp.c b/arch/x86/net/bpf_jit_comp.c
+index f0c31c940fb8..0263d98d92b0 100644
+--- a/arch/x86/net/bpf_jit_comp.c
++++ b/arch/x86/net/bpf_jit_comp.c
+@@ -1242,8 +1242,8 @@ static void emit_st_r12(u8 **pprog, u32 size, u32 dst_reg, int off, int imm)
+ 	emit_st_index(pprog, size, dst_reg, X86_REG_R12, off, imm);
+ }
  
-+/* Load-acquire & store-release */
-+#define A64_LDAR(Rt, Rn, size)  \
-+	aarch64_insn_gen_load_acq_store_rel(Rt, Rn, AARCH64_INSN_SIZE_##size, \
-+					    AARCH64_INSN_LDST_LOAD_ACQ)
-+#define A64_STLR(Rt, Rn, size)  \
-+	aarch64_insn_gen_load_acq_store_rel(Rt, Rn, AARCH64_INSN_SIZE_##size, \
-+					    AARCH64_INSN_LDST_STORE_REL)
-+
-+/* Rt = [Rn] (load acquire) */
-+#define A64_LDARB(Wt, Xn)	A64_LDAR(Wt, Xn, 8)
-+#define A64_LDARH(Wt, Xn)	A64_LDAR(Wt, Xn, 16)
-+#define A64_LDAR32(Wt, Xn)	A64_LDAR(Wt, Xn, 32)
-+#define A64_LDAR64(Xt, Xn)	A64_LDAR(Xt, Xn, 64)
-+
-+/* [Rn] = Rt (store release) */
-+#define A64_STLRB(Wt, Xn)	A64_STLR(Wt, Xn, 8)
-+#define A64_STLRH(Wt, Xn)	A64_STLR(Wt, Xn, 16)
-+#define A64_STLR32(Wt, Xn)	A64_STLR(Wt, Xn, 32)
-+#define A64_STLR64(Xt, Xn)	A64_STLR(Xt, Xn, 64)
-+
- /*
-  * LSE atomics
-  *
-diff --git a/arch/arm64/net/bpf_jit_comp.c b/arch/arm64/net/bpf_jit_comp.c
-index bdda5a77bb16..70d7c89d3ac9 100644
---- a/arch/arm64/net/bpf_jit_comp.c
-+++ b/arch/arm64/net/bpf_jit_comp.c
-@@ -647,6 +647,81 @@ static int emit_bpf_tail_call(struct jit_ctx *ctx)
+-static int emit_atomic(u8 **pprog, u8 atomic_op,
+-		       u32 dst_reg, u32 src_reg, s16 off, u8 bpf_size)
++static int emit_atomic_rmw(u8 **pprog, u32 atomic_op,
++			   u32 dst_reg, u32 src_reg, s16 off, u8 bpf_size)
+ {
+ 	u8 *prog = *pprog;
+ 
+@@ -1283,8 +1283,9 @@ static int emit_atomic(u8 **pprog, u8 atomic_op,
  	return 0;
  }
  
-+static int emit_atomic_ld_st(const struct bpf_insn *insn, struct jit_ctx *ctx)
+-static int emit_atomic_index(u8 **pprog, u8 atomic_op, u32 size,
+-			     u32 dst_reg, u32 src_reg, u32 index_reg, int off)
++static int emit_atomic_rmw_index(u8 **pprog, u32 atomic_op, u32 size,
++				 u32 dst_reg, u32 src_reg, u32 index_reg,
++				 int off)
+ {
+ 	u8 *prog = *pprog;
+ 
+@@ -1297,7 +1298,7 @@ static int emit_atomic_index(u8 **pprog, u8 atomic_op, u32 size,
+ 		EMIT1(add_3mod(0x48, dst_reg, src_reg, index_reg));
+ 		break;
+ 	default:
+-		pr_err("bpf_jit: 1 and 2 byte atomics are not supported\n");
++		pr_err("bpf_jit: 1- and 2-byte RMW atomics are not supported\n");
+ 		return -EFAULT;
+ 	}
+ 
+@@ -1331,6 +1332,49 @@ static int emit_atomic_index(u8 **pprog, u8 atomic_op, u32 size,
+ 	return 0;
+ }
+ 
++static int emit_atomic_ld_st(u8 **pprog, u32 atomic_op, u32 dst_reg,
++			     u32 src_reg, s16 off, u8 bpf_size)
 +{
-+	const s32 imm = insn->imm;
-+	const s16 off = insn->off;
-+	const u8 code = insn->code;
-+	const bool arena = BPF_MODE(code) == BPF_PROBE_ATOMIC;
-+	const u8 arena_vm_base = bpf2a64[ARENA_VM_START];
-+	const u8 dst = bpf2a64[insn->dst_reg];
-+	const u8 src = bpf2a64[insn->src_reg];
-+	const u8 tmp = bpf2a64[TMP_REG_1];
-+	u8 reg;
-+
-+	switch (imm) {
++	switch (atomic_op) {
 +	case BPF_LOAD_ACQ:
-+		reg = src;
++		/* dst_reg = smp_load_acquire(src_reg + off16) */
++		emit_ldx(pprog, bpf_size, dst_reg, src_reg, off);
 +		break;
 +	case BPF_STORE_REL:
-+		reg = dst;
++		/* smp_store_release(dst_reg + off16, src_reg) */
++		emit_stx(pprog, bpf_size, dst_reg, src_reg, off);
 +		break;
 +	default:
-+		pr_err_once("unknown atomic load/store op code %02x\n", imm);
-+		return -EINVAL;
-+	}
-+
-+	if (off) {
-+		emit_a64_add_i(1, tmp, reg, tmp, off, ctx);
-+		reg = tmp;
-+	}
-+	if (arena) {
-+		emit(A64_ADD(1, tmp, reg, arena_vm_base), ctx);
-+		reg = tmp;
-+	}
-+
-+	switch (imm) {
-+	case BPF_LOAD_ACQ:
-+		switch (BPF_SIZE(code)) {
-+		case BPF_B:
-+			emit(A64_LDARB(dst, reg), ctx);
-+			break;
-+		case BPF_H:
-+			emit(A64_LDARH(dst, reg), ctx);
-+			break;
-+		case BPF_W:
-+			emit(A64_LDAR32(dst, reg), ctx);
-+			break;
-+		case BPF_DW:
-+			emit(A64_LDAR64(dst, reg), ctx);
-+			break;
-+		}
-+		break;
-+	case BPF_STORE_REL:
-+		switch (BPF_SIZE(code)) {
-+		case BPF_B:
-+			emit(A64_STLRB(src, reg), ctx);
-+			break;
-+		case BPF_H:
-+			emit(A64_STLRH(src, reg), ctx);
-+			break;
-+		case BPF_W:
-+			emit(A64_STLR32(src, reg), ctx);
-+			break;
-+		case BPF_DW:
-+			emit(A64_STLR64(src, reg), ctx);
-+			break;
-+		}
-+		break;
-+	default:
-+		pr_err_once("unexpected atomic load/store op code %02x\n",
-+			    imm);
-+		return -EINVAL;
++		pr_err("bpf_jit: unknown atomic load/store opcode %02x\n",
++		       atomic_op);
++		return -EFAULT;
 +	}
 +
 +	return 0;
 +}
 +
- #ifdef CONFIG_ARM64_LSE_ATOMICS
- static int emit_lse_atomic(const struct bpf_insn *insn, struct jit_ctx *ctx)
- {
-@@ -1641,11 +1716,17 @@ static int build_insn(const struct bpf_insn *insn, struct jit_ctx *ctx,
- 			return ret;
- 		break;
++static int emit_atomic_ld_st_index(u8 **pprog, u32 atomic_op, u32 size,
++				   u32 dst_reg, u32 src_reg, u32 index_reg,
++				   int off)
++{
++	switch (atomic_op) {
++	case BPF_LOAD_ACQ:
++		/* dst_reg = smp_load_acquire(src_reg + idx_reg + off16) */
++		emit_ldx_index(pprog, size, dst_reg, src_reg, index_reg, off);
++		break;
++	case BPF_STORE_REL:
++		/* smp_store_release(dst_reg + idx_reg + off16, src_reg) */
++		emit_stx_index(pprog, size, dst_reg, src_reg, index_reg, off);
++		break;
++	default:
++		pr_err("bpf_jit: unknown atomic load/store opcode %02x\n",
++		       atomic_op);
++		return -EFAULT;
++	}
++
++	return 0;
++}
++
+ #define DONT_CLEAR 1
  
-+	case BPF_STX | BPF_ATOMIC | BPF_B:
-+	case BPF_STX | BPF_ATOMIC | BPF_H:
- 	case BPF_STX | BPF_ATOMIC | BPF_W:
- 	case BPF_STX | BPF_ATOMIC | BPF_DW:
-+	case BPF_STX | BPF_PROBE_ATOMIC | BPF_B:
-+	case BPF_STX | BPF_PROBE_ATOMIC | BPF_H:
- 	case BPF_STX | BPF_PROBE_ATOMIC | BPF_W:
- 	case BPF_STX | BPF_PROBE_ATOMIC | BPF_DW:
--		if (cpus_have_cap(ARM64_HAS_LSE_ATOMICS))
-+		if (bpf_atomic_is_load_store(insn))
-+			ret = emit_atomic_ld_st(insn, ctx);
-+		else if (cpus_have_cap(ARM64_HAS_LSE_ATOMICS))
- 			ret = emit_lse_atomic(insn, ctx);
- 		else
- 			ret = emit_ll_sc_atomic(insn, ctx);
-@@ -2667,13 +2748,10 @@ bool bpf_jit_supports_insn(struct bpf_insn *insn, bool in_arena)
+ bool ex_handler_bpf(const struct exception_table_entry *x, struct pt_regs *regs)
+@@ -2113,6 +2157,13 @@ st:			if (is_imm8(insn->off))
+ 			}
+ 			break;
+ 
++		case BPF_STX | BPF_ATOMIC | BPF_B:
++		case BPF_STX | BPF_ATOMIC | BPF_H:
++			if (!bpf_atomic_is_load_store(insn)) {
++				pr_err("bpf_jit: 1- and 2-byte RMW atomics are not supported\n");
++				return -EFAULT;
++			}
++			fallthrough;
+ 		case BPF_STX | BPF_ATOMIC | BPF_W:
+ 		case BPF_STX | BPF_ATOMIC | BPF_DW:
+ 			if (insn->imm == (BPF_AND | BPF_FETCH) ||
+@@ -2148,10 +2199,10 @@ st:			if (is_imm8(insn->off))
+ 				EMIT2(simple_alu_opcodes[BPF_OP(insn->imm)],
+ 				      add_2reg(0xC0, AUX_REG, real_src_reg));
+ 				/* Attempt to swap in new value */
+-				err = emit_atomic(&prog, BPF_CMPXCHG,
+-						  real_dst_reg, AUX_REG,
+-						  insn->off,
+-						  BPF_SIZE(insn->code));
++				err = emit_atomic_rmw(&prog, BPF_CMPXCHG,
++						      real_dst_reg, AUX_REG,
++						      insn->off,
++						      BPF_SIZE(insn->code));
+ 				if (WARN_ON(err))
+ 					return err;
+ 				/*
+@@ -2166,17 +2217,35 @@ st:			if (is_imm8(insn->off))
+ 				break;
+ 			}
+ 
+-			err = emit_atomic(&prog, insn->imm, dst_reg, src_reg,
+-					  insn->off, BPF_SIZE(insn->code));
++			if (bpf_atomic_is_load_store(insn))
++				err = emit_atomic_ld_st(&prog, insn->imm, dst_reg, src_reg,
++							insn->off, BPF_SIZE(insn->code));
++			else
++				err = emit_atomic_rmw(&prog, insn->imm, dst_reg, src_reg,
++						      insn->off, BPF_SIZE(insn->code));
+ 			if (err)
+ 				return err;
+ 			break;
+ 
++		case BPF_STX | BPF_PROBE_ATOMIC | BPF_B:
++		case BPF_STX | BPF_PROBE_ATOMIC | BPF_H:
++			if (!bpf_atomic_is_load_store(insn)) {
++				pr_err("bpf_jit: 1- and 2-byte RMW atomics are not supported\n");
++				return -EFAULT;
++			}
++			fallthrough;
+ 		case BPF_STX | BPF_PROBE_ATOMIC | BPF_W:
+ 		case BPF_STX | BPF_PROBE_ATOMIC | BPF_DW:
+ 			start_of_ldx = prog;
+-			err = emit_atomic_index(&prog, insn->imm, BPF_SIZE(insn->code),
+-						dst_reg, src_reg, X86_REG_R12, insn->off);
++
++			if (bpf_atomic_is_load_store(insn))
++				err = emit_atomic_ld_st_index(&prog, insn->imm,
++							      BPF_SIZE(insn->code), dst_reg,
++							      src_reg, X86_REG_R12, insn->off);
++			else
++				err = emit_atomic_rmw_index(&prog, insn->imm, BPF_SIZE(insn->code),
++							    dst_reg, src_reg, X86_REG_R12,
++							    insn->off);
+ 			if (err)
+ 				return err;
+ 			goto populate_extable;
+@@ -3771,12 +3840,8 @@ bool bpf_jit_supports_insn(struct bpf_insn *insn, bool in_arena)
  	if (!in_arena)
  		return true;
  	switch (insn->code) {
@@ -289,12 +278,9 @@ index bdda5a77bb16..70d7c89d3ac9 100644
  	case BPF_STX | BPF_ATOMIC | BPF_DW:
 -		if (bpf_atomic_is_load_store(insn))
 -			return false;
--		if (!cpus_have_cap(ARM64_HAS_LSE_ATOMICS))
-+		if (!bpf_atomic_is_load_store(insn) &&
-+		    !cpus_have_cap(ARM64_HAS_LSE_ATOMICS))
- 			return false;
- 	}
- 	return true;
+ 		if (insn->imm == (BPF_AND | BPF_FETCH) ||
+ 		    insn->imm == (BPF_OR | BPF_FETCH) ||
+ 		    insn->imm == (BPF_XOR | BPF_FETCH))
 -- 
 2.48.1.711.g2feabab25a-goog
 
