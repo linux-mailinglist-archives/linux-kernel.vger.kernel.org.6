@@ -1,158 +1,108 @@
-Return-Path: <linux-kernel+bounces-543783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0AACA4D9DF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:14:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3F3A4D9EC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:15:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C05E33A819A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:14:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCDAF189A6F4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:15:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1731FDE1B;
-	Tue,  4 Mar 2025 10:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174091FECCA;
+	Tue,  4 Mar 2025 10:14:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aJhuQXFt"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p3m302a/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D0E0225D6;
-	Tue,  4 Mar 2025 10:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635141FE44B;
+	Tue,  4 Mar 2025 10:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741083250; cv=none; b=O+0s7PvFxLv7JoetwJyZ4CgyAXONFDOrkxsl+6RgXMy+BDpBycyEy8fHz6s06AfaAPR5TCWSw7sWPt3/FCp9UXeOOSDj/oKFVOkbgeUjbH4MyAOJ5hrPkZUaFTUhg9u2E1VlSqRjhMWRuZVEvQ+pCgQobXxz/ITPctaKJwMa1yo=
+	t=1741083291; cv=none; b=bZgv1Hbi994ZoFcsCHCHi3ZDK946Tzm3VonofEXjR2vsMl62cvqfZjWGmJ5Mp1aqQvljBXTcgbQPFUHraV0DN8hHpvfMKAcgOndQ9rvsL1ZjSdRYzE3X/EdSM+dGuBXqE4D6EjE6sOFT0hOR/JlriXb/T3QZAXfO5JO7nL4gqRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741083250; c=relaxed/simple;
-	bh=nVYc677Ele0ikzjRYqh2SrNDdyVzXrYDl80xL+1622g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rgzqmYmEWYdt5dDmXVGXI/YUEBUcxPco7AnkL8mKy+W/m3dbgg9BPCOSPLEjgKiD4bZPr57X71EQrheD7NWD4NmTkk598arNOiNFqW4Anhte6bd4TzAT9cbtF0kxLpEW8/8BUeecQzKQxvbYc6QokUSL8C4CLyO3DeYIabUzfHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aJhuQXFt; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524ACQH4005995;
-	Tue, 4 Mar 2025 10:13:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BhKtjnk1MeKajNiWxKWlMEudNu9Ky7L1pBQ8CJDBqEI=; b=aJhuQXFtajRB/mow
-	7/8veCSnSPKW0DgBHYOKB3dhn/H5lB4xG3QFezdWknALC+SCbJdpXm0X1dwppP+p
-	U01CzBmi0+gT4worMTp9GbnEW+qeEtG8NEhxytUZINQPJAfidWdYdbyMeXcdp3XB
-	NRtKa2M54ocjl79dmUvNQbrP3i+Did7cTn+LcXUCnZpD9dpAM4hWr5htJAmXSKKk
-	FgWkI1NG37NdjFITxINXMSvGaFu/lve02WFiUP3bEfDANwHBm3Bi1hH+Of4LXXFg
-	TxU/O/GwDDJ3IRRcQEYfCoz21ZbQHi1N5NVmMCdmLd8Z0hHUEHJElfjr1AdK5kau
-	9PpnZQ==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6thfv4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 10:13:48 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 524ADlSp009962
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 4 Mar 2025 10:13:47 GMT
-Received: from [10.206.97.61] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
- 02:13:38 -0800
-Message-ID: <42fe61c5-4552-406d-b698-aa766f57cfb3@quicinc.com>
-Date: Tue, 4 Mar 2025 15:43:35 +0530
+	s=arc-20240116; t=1741083291; c=relaxed/simple;
+	bh=TjLOJqtB1F8hWRkkxRuwtt8t9SXz+Ki1Fz1mo89VUes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUcYXqsk1aujR1Jq74jXvSzlnSIlyS3jaI3EJ2Npj7rMQEMqsiv32eDsLzy9BOPtD9GGCBW94zTg/ZojLA7q3vqhOFvN1I0nlC5y4dusfo1gdozohGn/DkdpTXsOXE0yp9fqAEsGWZnY6AF1NjK+8CaKHZSpHcmqsvk3HFHroC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p3m302a/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 682A1C4CEE5;
+	Tue,  4 Mar 2025 10:14:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741083290;
+	bh=TjLOJqtB1F8hWRkkxRuwtt8t9SXz+Ki1Fz1mo89VUes=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=p3m302a/k0SfOsBi02IpT15HnKL9GkqTwtq4VDlznbcFLhhbO8qGT5stRieyuqFUU
+	 Esj2vlfXMImK2e8p+rT7XVIsld8Hd2GUg0KnZuZZDkfNxT6kCD24DlDwCP5Dpmj8LX
+	 yd8nEeKCEdhs8jkxw1jcMuQAXvPDxiUz5kKgB2tjLp/TZI5numzst116MB9d0vuED4
+	 qOqPFnysZefOCUrxGMpo1wLKlJCGiDgCS/xvXFbKH9jFUW1hRtNSBevBsZm8oY5Jhn
+	 LOrg73y4t72P2COBKf3cRfc1VAHGgpGYxWwHwF3SnswPnz0wu4pcyn8BfDlyecQRNC
+	 Ae7EcWqlzVDVA==
+Date: Tue, 4 Mar 2025 11:14:45 +0100
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>, llvm@lists.linux.dev,
+	linux-hardening@vger.kernel.org, Paul Moore <paul@paul-moore.com>,
+	James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>, linux-kernel@vger.kernel.org,
+	linux-security-module@vger.kernel.org
+Subject: Re: [PATCH] hardening: Enable i386 FORTIFY_SOURCE on Clang 16+
+Message-ID: <20250304101445.GA2529736@ax162>
+References: <20250303214929.work.499-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 08/11] arm64: dts: qcom: sa8775p-ride: enable Display
- serial interface
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <robdclark@gmail.com>,
-        <sean@poorly.run>, <marijn.suijten@somainline.org>,
-        <andersson@kernel.org>, <robh@kernel.org>, <robh+dt@kernel.org>,
-        <krzk+dt@kernel.org>, <konradybcio@kernel.org>, <conor+dt@kernel.org>,
-        <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
-        <rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>,
-        <jonas@kwiboo.se>, <jernej.skrabec@gmail.com>,
-        <quic_abhinavk@quicinc.com>, <quic_rajeevny@quicinc.com>,
-        <quic_vproddut@quicinc.com>, <quic_jesszhan@quicinc.com>
-References: <20250225121824.3869719-1-quic_amakhija@quicinc.com>
- <20250225121824.3869719-9-quic_amakhija@quicinc.com>
- <tfd27qk543dt4sqcawogoszsjax3cqxmi6mcy3qd2mwzauedpf@l6xmy5okswrd>
- <5293f723-2a27-4d2a-8939-059226d460c3@quicinc.com>
- <CAA8EJpoTQ5cg-rM=A3C8-VKbd973vMEKDbrkNFpbB9soCgewzQ@mail.gmail.com>
-Content-Language: en-US
-From: Ayushi Makhija <quic_amakhija@quicinc.com>
-In-Reply-To: <CAA8EJpoTQ5cg-rM=A3C8-VKbd973vMEKDbrkNFpbB9soCgewzQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=HZbuTjE8 c=1 sm=1 tr=0 ts=67c6d25c cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=KMNGZfKfLVgBrRNt_q4A:9 a=QEXdDO2ut3YA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: CFNBxu6vzxY5_n2jeI7G68lK64u25Qw3
-X-Proofpoint-ORIG-GUID: CFNBxu6vzxY5_n2jeI7G68lK64u25Qw3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_04,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 spamscore=0 clxscore=1015 phishscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2502100000 definitions=main-2503040086
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303214929.work.499-kees@kernel.org>
 
-On 3/4/2025 3:18 PM, Dmitry Baryshkov wrote:
-> On Tue, 4 Mar 2025 at 10:45, Ayushi Makhija <quic_amakhija@quicinc.com> wrote:
->>
->> On 2/25/2025 11:25 PM, Dmitry Baryshkov wrote:
->>> On Tue, Feb 25, 2025 at 05:48:21PM +0530, Ayushi Makhija wrote:
->>>> Enable both DSI to DP bridge ports on SA8775P Ride plaftrom.
->>>>
->>>> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
->>>> ---
->>>>  arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 66 +++++++++++++++++++++-
->>>>  1 file changed, 64 insertions(+), 2 deletions(-)
->>>
->>> Please squash into the previous patch. It doesn't make a lot of sense separately.
->>>
->>>>
->>>> diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->>>> index 151f66512303..02d8a9c2c909 100644
->>>> --- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->>>> +++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
->>>> @@ -128,6 +128,30 @@ dp1_connector_in: endpoint {
->>>>                      };
->>>>              };
->>>>      };
->>>> +
->>>> +    dsi0-connector {
->>>
->>> dpN-connector. It is not DSI.
->>
->> Hi Dmitry, Konrad
->>
->> Thanks, for the review.
->>
->> I will change dsi0-connector -> dp2-connector and dsi1-connector -> dp3-connector respectively.
+On Mon, Mar 03, 2025 at 01:49:37PM -0800, Kees Cook wrote:
+> The i386 regparm bug exposed with FORTIFY_SOURCE with Clang was fixed
+> in Clang 16[1].
 > 
-> Why? It's then dp-dsi0-connector. I think the board has DP2 and DP3
-> (please correct me if I'm wrong). How would you name those if you use
-> those indices for DSI connectors?
+> Link: https://github.com/llvm/llvm-project/commit/c167c0a4dcdb998affb2756ce76903a12f7d8ca5 [1]
+> Signed-off-by: Kees Cook <kees@kernel.org>
+
+Yes, thank you for catching this!
+
+Reviewed-by: Nathan Chancellor <nathan@kernel.org>
+
+I assume you'll take this?
+
+> ---
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Nick Desaulniers <ndesaulniers@google.com>
+> Cc: Bill Wendling <morbo@google.com>
+> Cc: Justin Stitt <justinstitt@google.com>
+> Cc: "Gustavo A. R. Silva" <gustavoars@kernel.org>
+> Cc: llvm@lists.linux.dev
+> Cc: linux-hardening@vger.kernel.org
+> ---
+>  security/Kconfig.hardening | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-
-Hi Dmitry,
-
-Thanks, for the review.
-
-yes, you are correct there are total 4 DP connectors and 2 DSI to DP connectors on the device, better to keep the node name as
-dp-dsi0-connector and dp-dsi1-connector respectively.
-
-Thanks,
-Ayushi
-
-
+> diff --git a/security/Kconfig.hardening b/security/Kconfig.hardening
+> index 23ffb0d7c845..c17366ce8224 100644
+> --- a/security/Kconfig.hardening
+> +++ b/security/Kconfig.hardening
+> @@ -286,7 +286,7 @@ config FORTIFY_SOURCE
+>  	bool "Harden common str/mem functions against buffer overflows"
+>  	depends on ARCH_HAS_FORTIFY_SOURCE
+>  	# https://github.com/llvm/llvm-project/issues/53645
+> -	depends on !CC_IS_CLANG || !X86_32
+> +	depends on !X86_32 || !CC_IS_CLANG || CLANG_VERSION >= 160000
+>  	help
+>  	  Detect overflows of buffers in common string and memory functions
+>  	  where the compiler can determine and validate the buffer sizes.
+> -- 
+> 2.34.1
+> 
 
