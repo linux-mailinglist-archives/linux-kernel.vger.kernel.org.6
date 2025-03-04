@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-545698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFF0A4F05D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:26:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F381A4F062
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:27:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 490173AC450
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:26:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFC5F188D1C1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42C251FCF7C;
-	Tue,  4 Mar 2025 22:25:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3A827CCC2;
+	Tue,  4 Mar 2025 22:25:51 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4507627BF99;
-	Tue,  4 Mar 2025 22:25:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B016278154;
+	Tue,  4 Mar 2025 22:25:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741127148; cv=none; b=YIKD1zxLh17RDi8VrHX/lPhNMSdZQlvrQNLLP39hAPYyCZBhQI1T/0ioP+M2BAYb0Y3/HFvGRwoZNA8Mhv9aQgYJp+JzwEh79iwvO4lSZMLcaZmIgpcN2+LQQ8qBGAPSgE9BR3fC/NSQkrgzQpJR1YgE93Z6RHjT2njQgoHWNkA=
+	t=1741127151; cv=none; b=r63Pr6K36+r10eLmvq7YtJJUdDmwq7bT9i8X1R+gr5FumOFXpB39e4dSq0GM2tfpppxjGGeYguWCahN/CiV78kskp3FLXrlwSQBYdMyyRKCeg5kOaRfVpL/S0XPSC1TmQg34Z37apAQk/u+EOhG5qo5s5o2+UOuS7vZRH7UuDKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741127148; c=relaxed/simple;
-	bh=XXm9l3nOhtBu8Jy2QAjx5UHw2rmLJpcfj19w9vRNy64=;
+	s=arc-20240116; t=1741127151; c=relaxed/simple;
+	bh=+9BrNfN/II5WogLvKDzRyNR4sx+4VqrZ9EQTEmtqMUA=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=X214GU7lqd1vuL82qO74dC6BFpemzSJoO+B+Cq6P4NSki0zrU82AVxmza0HUAZLnFAMTkX6iiDbe/a5H50U7mT7ZFkf16FW/Te+2WOFSUyMRtklLdIwJaCDPe5IdofxF34Msq2X0cH+O9GQ8vh9Re3yKaeiQFNyu4ZqbKHNGcpw=
+	 MIME-Version; b=d7t9x/906sEseGBrrfILLU4ta+g9YRMlHOSDUnGUhSMAM35+J0rLuQggti5dmIDp/PVb1QMAu2ogUQjqnlGXCA4hVVyQu8V0rAq9Fn+kL5+5OPOlfZh2jGNyzQ7+E3NqpykyqQNo5dXsqcgTkjh5JiNYVqWAA0XsZsksC2NorMM=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7BC9E1DB5;
-	Tue,  4 Mar 2025 14:26:00 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 421051D31;
+	Tue,  4 Mar 2025 14:26:02 -0800 (PST)
 Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 311973F5A1;
-	Tue,  4 Mar 2025 14:25:45 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EA863F5A1;
+	Tue,  4 Mar 2025 14:25:47 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -39,16 +39,14 @@ To: Rob Herring <robh@kernel.org>,
 	Chen-Yu Tsai <wens@csie.org>,
 	Jernej Skrabec <jernej.skrabec@gmail.com>,
 	Samuel Holland <samuel@sholland.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>
+	Thomas Gleixner <tglx@linutronix.de>
 Cc: devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-watchdog@vger.kernel.org
-Subject: [PATCH v2 04/15] watchdog: sunxi_wdt: Add support for Allwinner A523
-Date: Tue,  4 Mar 2025 22:22:58 +0000
-Message-ID: <20250304222309.29385-5-andre.przywara@arm.com>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 05/15] dt-bindings: irq: sun7i-nmi: document the Allwinner A523 NMI controller
+Date: Tue,  4 Mar 2025 22:22:59 +0000
+Message-ID: <20250304222309.29385-6-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.46.3
 In-Reply-To: <20250304222309.29385-1-andre.przywara@arm.com>
 References: <20250304222309.29385-1-andre.przywara@arm.com>
@@ -60,51 +58,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Allwinner A523 SoC comes with a watchdog very similar to the ones in
-the previous Allwinner SoCs, but oddly enough moves the first half of its
-registers up by one word. Since we have different offsets for these
-registers across the other SoCs as well, this can simply be modelled by
-just stating the new offsets in our per-SoC struct.
-The rest of the IP is the same as in the D1, although the A523 moves its
-watchdog to a separate MMIO frame, so it's not embedded in the timer
-anymore. The driver can be ignorant of this, because the DT will take
-care of this.
+The Allwinner A523 SoC contains an NMI controller very close to the one
+used in the recent Allwinner SoCs, but it adds another bit that needs to
+be toggled to actually deliver the IRQs. Sigh.
 
-Add a new struct for the A523, specifying the SoC-specific details, and
-tie the new DT compatible string to it.
+Add the A523 specific name to the list of allowed compatible strings.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 ---
- drivers/watchdog/sunxi_wdt.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
+ .../interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml         | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/watchdog/sunxi_wdt.c b/drivers/watchdog/sunxi_wdt.c
-index b85354a995826..b6c761acc3de6 100644
---- a/drivers/watchdog/sunxi_wdt.c
-+++ b/drivers/watchdog/sunxi_wdt.c
-@@ -236,10 +236,21 @@ static const struct sunxi_wdt_reg sun20i_wdt_reg = {
- 	.wdt_key_val = 0x16aa0000,
- };
- 
-+static const struct sunxi_wdt_reg sun55i_wdt_reg = {
-+	.wdt_ctrl = 0x0c,
-+	.wdt_cfg = 0x10,
-+	.wdt_mode = 0x14,
-+	.wdt_timeout_shift = 4,
-+	.wdt_reset_mask = 0x03,
-+	.wdt_reset_val = 0x01,
-+	.wdt_key_val = 0x16aa0000,
-+};
-+
- static const struct of_device_id sunxi_wdt_dt_ids[] = {
- 	{ .compatible = "allwinner,sun4i-a10-wdt", .data = &sun4i_wdt_reg },
- 	{ .compatible = "allwinner,sun6i-a31-wdt", .data = &sun6i_wdt_reg },
- 	{ .compatible = "allwinner,sun20i-d1-wdt", .data = &sun20i_wdt_reg },
-+	{ .compatible = "allwinner,sun55i-a523-wdt", .data = &sun55i_wdt_reg },
- 	{ /* sentinel */ }
- };
- MODULE_DEVICE_TABLE(of, sunxi_wdt_dt_ids);
+diff --git a/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml b/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
+index f49b43f45f3d9..06e3621a8c06c 100644
+--- a/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
++++ b/Documentation/devicetree/bindings/interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml
+@@ -26,6 +26,7 @@ properties:
+         deprecated: true
+       - const: allwinner,sun7i-a20-sc-nmi
+       - const: allwinner,sun9i-a80-nmi
++      - const: allwinner,sun55i-a523-nmi
+       - items:
+           - enum:
+               - allwinner,sun8i-v3s-nmi
 -- 
 2.46.3
 
