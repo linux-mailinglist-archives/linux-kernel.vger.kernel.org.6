@@ -1,167 +1,197 @@
-Return-Path: <linux-kernel+bounces-543503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4958A4D65D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:30:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73090A4D663
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:31:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88A557A9142
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:29:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC23B3AB663
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:30:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB6C01FECB7;
-	Tue,  4 Mar 2025 08:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1F41FC0EA;
+	Tue,  4 Mar 2025 08:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Qa5q5YpR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Mh4uHjsf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccTEj6Q3"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B1D1FDA62;
-	Tue,  4 Mar 2025 08:27:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA051FBEA7;
+	Tue,  4 Mar 2025 08:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076877; cv=none; b=C9MO3eEPI1/vnRlJam0NNVMsrLdFvrlFZq2aiiQYl+8FMQ2yzinBITx3mowyKSEmL4SiWwaN2a/QB/U/zg0ueajPRqYA8CdWWvIjFAonquvkO0ALZnQ2WDXq/aWJT3weiL0Sh5yHANyIIpq2z3wDPH58pRIuqXxjRNqh7S///Dc=
+	t=1741076906; cv=none; b=EHdxYnmK0fRdrX3hm9l/e3S1qBYNlOIJj+4buOBUgmcE3EjvoC1/reFXHXnXQj5IBVJpRGwRmz7ihy/nX/tXl7CGYFmaluY4l2Gfk92Eq7SegZqfkV8v4meRvnbP3niuuAOm0dT+Y/jEOC2gtyzM11CtNw64Xbb3opB285CUMfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076877; c=relaxed/simple;
-	bh=s32lUDvRylsejrEGcSnM90fxJmK9sD/vuuS8OdwJWaU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=PaTewxqfgD5PAgatun1j/c20HexQCEBvG5IwNy9CcCPDIvYFjiwRCaC8Dd4O7Xx0lF/KL8XRT0oRSKd3aW/POQHvPYHNwgc+hUptEyQS9Sm+u3jIxpehYijmE664pWCnNrZlFd+57tbr2Ja8l2uZF9B8A8gwonDEL6HzTsU8NaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Qa5q5YpR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Mh4uHjsf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 08:27:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741076873;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UXa33ziB1f2bkwpLKUCByXk9J9vda/j3nHgSkEvOTbU=;
-	b=Qa5q5YpRVAhrvWZfkDZT0uE8HpUyLkAbNNjbs4Toa5L+BL1TqKLjd0qidkuSLZaZGPgKOB
-	EpOXBxFLVTcsUIpQUXzq7b1ntFg6iHzevvWNRmSuRvxnGb6h5EEJ/7nSYUdL0LcMb9FidX
-	mlwaknXiMoIRJvxWwO4C0DiStwG+EV9BCsWR2ObbMPABdURPyUq41R3asb01t40X/H0bfR
-	OYFvf8O/649ZH6efn69gcV0dZsuefsrnY9m5x7fpOZD1bS+9D4aD1OUgpFGAHiyU7zOyAI
-	bfejoLTCF2J3zOvuXUXQ7Y37jiqiopHJomUdcWQb25lwFm1sytkHf0X+sUudaQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741076873;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UXa33ziB1f2bkwpLKUCByXk9J9vda/j3nHgSkEvOTbU=;
-	b=Mh4uHjsfFZcRN33FT+npNBaxcpO9Zuh4zRqLrorfgrt8pEgpH+E+27hTjJPWzEd6lDfh/D
-	j6MCLntgYslvIIAA==
-From: "tip-bot2 for Brendan Jackman" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cpu] x86/cpu: Remove unnecessary macro indirection related
- to CPU feature names
-Cc: Brendan Jackman <jackmanb@google.com>, Ingo Molnar <mingo@kernel.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250303-setcpuid-taint-louder-v1-1-8d255032cb4c@google.com>
-References: <20250303-setcpuid-taint-louder-v1-1-8d255032cb4c@google.com>
+	s=arc-20240116; t=1741076906; c=relaxed/simple;
+	bh=+Xd2Qwr5IaKsyLjb2/QOiSSthlsBv7A9tUADYqtec0k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lV/RbZ6akjnHOByUjSg/MlXKFO1HdzxkczxHksH/jUP7lSfiTrGYdTXzG79PWND6BlyXS/x1W+jHpuSfmXUYxeKAxZkn/Yakw85nQklg6sQ6dX0L4PS/WeaItf3+Dj4ePf/iYLikgt55PYmg7n93hjRu3yvxSls38E7cwLYABK0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccTEj6Q3; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-307bc125e2eso60119471fa.3;
+        Tue, 04 Mar 2025 00:28:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741076903; x=1741681703; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9mX8x9KTPJ/SeOY+OHyZ4DRgvFc341kcnP5lxBsMGds=;
+        b=ccTEj6Q3RtkBBVKRAaYgvRBcx3Ya3aHuaZ4Ml5c9LKX17xIe9MRjO0Fe0+Ii79o1ec
+         1VXdnbB/VCfGUN8Ou/bxwm+Uds3iZzvzPbTASllsDktzuhlYRb5b/ZdA4bCEeHIdF/Rz
+         Y+MT6uieBe8SK8/CPgPMZfbgORBqetkvPNt8M80FX246Magq4r65BP1JWvU2TIyKK7Jg
+         hGvOkQJfyRUEbcsZvr4F1X+OKp+l1WtWRL+TgUgAwM74f1khnePNXEMvYKzOszPuj8sZ
+         0jwmQh3AkymWFDyCNZm4oL2QsW7TZ4rycSvxHIrgYHNZfxyqPpWrrHKX2X6/Kh8QOO2H
+         026w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741076903; x=1741681703;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9mX8x9KTPJ/SeOY+OHyZ4DRgvFc341kcnP5lxBsMGds=;
+        b=eRfxrmEj+7u1uuOWPCBVLOfdCg5Kuth8EOwf9nd8khL0cwIu6pm8qOy/5QYJTTNNhq
+         tV7AkDIKTNwDqUJoKDzgxrW4vjJ7ZOkJnqpb5kfM2QpfdqDxdswM7o7Gim30FYZ80iDX
+         dVgdqyM12YIArvTFE3aIKaGGk/yYyTEr/I5GNJRzARfxfweDO9hWWg21/zPZopIzPDv/
+         p0NynQkkQqwS1XRKUqVK8bwJ8AapLl1Z1QAKSBS1NRvZNVFRH8RieBOfBKkw36/aYued
+         i3ZfabDMez8askpRWKzB+PVI6m4cV7WilVDxdFW8eJxiB77m5uUGW7h8HbY1Y33zUpHb
+         lKCw==
+X-Forwarded-Encrypted: i=1; AJvYcCVvpWWOSxh8eBFp5zMtvQ0eYeGaJ1Wv7p+y5r9YOSjcnrUAce+8XlSd1DDf5rXmfDGY7pSGE0g1txd/rm0=@vger.kernel.org, AJvYcCWbXrCfNWMwAlzl3LKvRpGKClOV2sYm42ItZq+dZIG7jbbwR1Zz8r7y+JRnY+or7k+ZNSjCUTa/IMktNjyPwx8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1GuyXdW2WRA0iGcrX1moIzevejwUx1Al0PDkFG7XiwoTf/jby
+	H4QQXmC3MfBxYeg1M2mldUsausCR3VwPji1V6DvgqUz4tJNDNtDN4+LAQQ==
+X-Gm-Gg: ASbGnctpZ9th73klUUAPcT08h/uCSSEwBQBneFmxQd4i+WiWxmoqtUm2vKCX7cXKiCf
+	JqtdBKOyLcABHAqAXZD40fTGhbV1Y3bWXiPgv//sKF1J19KumN89D2vnCGNbx446g/P8/d3KRqs
+	lHG+wxZFik9/v6cH/Wk2n5781Ppnt+B9bTUcqqRdH/z/w255EDq+tcZT5ZcV4EwBvrbVdH7KaxC
+	yB5zmZbs6zyjtD9eMt2avluQHjizix8LNhxDnx1S8fJcULVV/8wkngoW1/IIRsTOlldVohky9I7
+	f5SYsThIr8tX9UVxjfzjyeDwhal0OOy2MXn+tiUAuh0KDXVZ8DaGaJ63UkRvh+drm2OGFZ3whun
+	jRxb8CaC4DCFIfJNsD4mv+Q==
+X-Google-Smtp-Source: AGHT+IGQXjXy4I7TbIxibMzg0y1cK5xMehOkC/wPiOXepdk9gzG4SYdo2xhPe+ixkrPITWiBjQcj8Q==
+X-Received: by 2002:a2e:bc0f:0:b0:30b:b987:b68d with SMTP id 38308e7fff4ca-30bb987bb51mr20938931fa.8.1741076902435;
+        Tue, 04 Mar 2025 00:28:22 -0800 (PST)
+Received: from [192.168.1.146] (dsl-hkibng22-54f8dc-251.dhcp.inet.fi. [84.248.220.251])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30b86875b76sm16838331fa.91.2025.03.04.00.28.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 00:28:21 -0800 (PST)
+Message-ID: <8d998447-bb4e-4b4b-a2d7-f5cba4b815dc@gmail.com>
+Date: Tue, 4 Mar 2025 10:28:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174107687318.14745.1316308236327638700.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+To: Alice Ryhl <aliceryhl@google.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>,
+ Benno Lossin <benno.lossin@proton.me>, dakr@kernel.org,
+ robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
+ linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+ iommu@lists.linux.dev
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+ <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
+ <tnwDK3QN_Xr0Yoa3U8HVxS5OqjvxIhgmmO_ifTGJR_EtIzjoxawOHtnbOJ9yChsUWXyFPcU9beIdrgbpfGZI8w==@protonmail.internalid>
+ <3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com>
+ <87bjuil15w.fsf@kernel.org>
+ <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+Content-Language: en-US
+From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+In-Reply-To: <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the x86/cpu branch of tip:
 
-Commit-ID:     2f0f6cdf9bc1d104c8c224df8dd65748de02118d
-Gitweb:        https://git.kernel.org/tip/2f0f6cdf9bc1d104c8c224df8dd65748de02118d
-Author:        Brendan Jackman <jackmanb@google.com>
-AuthorDate:    Mon, 03 Mar 2025 15:45:37 
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Mon, 03 Mar 2025 21:23:39 +01:00
 
-x86/cpu: Remove unnecessary macro indirection related to CPU feature names
+On 03/03/2025 15:13, Alice Ryhl wrote:
+> On Mon, Mar 3, 2025 at 2:00 PM Andreas Hindborg <a.hindborg@kernel.org> wrote:
+>>
+>> "Daniel Almeida" <daniel.almeida@collabora.com> writes:
+>>
+>>> Hi Benno,
+>>>
+>>
+>> [...]
+>>
+>>>>> +    /// Writes data to the region starting from `offset`. `offset` is in units of `T`, not the
+>>>>> +    /// number of bytes.
+>>>>> +    ///
+>>>>> +    /// # Examples
+>>>>> +    ///
+>>>>> +    /// ```
+>>>>> +    /// # fn test(alloc: &mut kernel::dma::CoherentAllocation<u8>) -> Result {
+>>>>> +    /// let somedata: [u8; 4] = [0xf; 4];
+>>>>> +    /// let buf: &[u8] = &somedata;
+>>>>> +    /// alloc.write(buf, 0)?;
+>>>>> +    /// # Ok::<(), Error>(()) }
+>>>>> +    /// ```
+>>>>> +    pub fn write(&self, src: &[T], offset: usize) -> Result {
+>>>>> +        let end = offset.checked_add(src.len()).ok_or(EOVERFLOW)?;
+>>>>> +        if end >= self.count {
+>>>>> +            return Err(EINVAL);
+>>>>> +        }
+>>>>> +        // SAFETY:
+>>>>> +        // - The pointer is valid due to type invariant on `CoherentAllocation`
+>>>>> +        // and we've just checked that the range and index is within bounds.
+>>>>> +        // - `offset` can't overflow since it is smaller than `self.count` and we've checked
+>>>>> +        // that `self.count` won't overflow early in the constructor.
+>>>>> +        unsafe {
+>>>>> +            core::ptr::copy_nonoverlapping(src.as_ptr(), self.cpu_addr.add(offset), src.len())
+>>>>
+>>>> Why are there no concurrent write or read operations on `cpu_addr`?
+>>>
+>>> Sorry, can you rephrase this question?
+>>
+>> This write is suffering the same complications as discussed here [1].
+>> There are multiple issues with this implementation.
+>>
+>> 1) `write` takes a shared reference and thus may be called concurrently.
+>> There is no synchronization, so `copy_nonoverlapping` could be called
+>> concurrently on the same address. The safety requirements for
+>> `copy_nonoverlapping` state that the destination must be valid for
+>> write. Alice claims in [1] that any memory area that experience data
+>> races are not valid for writes. So the safety requirement of
+>> `copy_nonoverlapping` is violated and this call is potential UB.
+>>
+>> 2) The destination of this write is DMA memory. It could be concurrently
+>> modified by hardware, leading to the same issues as 1). Thus the
+>> function cannot be safe if we cannot guarantee hardware will not write
+>> to the region while this function is executing.
+>>
+>> Now, I don't think that these _should_ be issues, but according to our
+>> Rust language experts they _are_.
+>>
+>> I really think that copying data through a raw pointer to or from a
+>> place that experiences data races, should _not_ be UB if the data is not
+>> interpreted in any way, other than moving it.
+>>
+>>
+>> Best regards,
+>> Andreas Hindborg
+> 
+> We need to make progress on this series, and it's starting to get late
+> in the cycle. I suggest we:
+> 
+> 1. Delete as_slice, as_slice_mut, write, and skip_drop.
+> 2. Change field_read/field_write to use a volatile read/write.
+> 
+> This will let us make progress now and sidestep this discussion. The
+> deleted methods can happen in a follow-up.
+> 
+> Similarly for the dma mask methods, let's either drop them to a
+> follow-up patch or just put them anywhere and move them later.
+> 
+> Alice
 
-These macros used to abstract over CONFIG_X86_FEATURE_NAMES, but that
-was removed in:
+Thanks Alice. Yeah, will follow-up with those other patches and move 
+forward with the basic implementation for now.
 
-  7583e8fbdc49 ("x86/cpu: Remove X86_FEATURE_NAMES")
-
-Now they are just an unnecessary indirection, remove them.
-
-Signed-off-by: Brendan Jackman <jackmanb@google.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/r/20250303-setcpuid-taint-louder-v1-1-8d255032cb4c@google.com
----
- arch/x86/include/asm/cpufeature.h |  5 -----
- arch/x86/kernel/cpu/common.c      | 12 ++++++------
- 2 files changed, 6 insertions(+), 11 deletions(-)
-
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index de88f9b..7937823 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -38,13 +38,8 @@ enum cpuid_leafs
- 	NR_CPUID_WORDS,
- };
- 
--#define X86_CAP_FMT_NUM "%d:%d"
--#define x86_cap_flag_num(flag) ((flag) >> 5), ((flag) & 31)
--
- extern const char * const x86_cap_flags[NCAPINTS*32];
- extern const char * const x86_power_flags[32];
--#define X86_CAP_FMT "%s"
--#define x86_cap_flag(flag) x86_cap_flags[flag]
- 
- /*
-  * In order to save room, we index into this array by doing
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 0f32b6f..b5fdaa6 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -667,8 +667,8 @@ static void filter_cpuid_features(struct cpuinfo_x86 *c, bool warn)
- 		if (!warn)
- 			continue;
- 
--		pr_warn("CPU: CPU feature " X86_CAP_FMT " disabled, no CPUID level 0x%x\n",
--			x86_cap_flag(df->feature), df->level);
-+		pr_warn("CPU: CPU feature %s disabled, no CPUID level 0x%x\n",
-+			x86_cap_flags[df->feature], df->level);
- 	}
- }
- 
-@@ -1502,9 +1502,9 @@ static inline void parse_set_clear_cpuid(char *arg, bool set)
- 
- 				/* empty-string, i.e., ""-defined feature flags */
- 				if (!x86_cap_flags[bit])
--					pr_cont(" " X86_CAP_FMT_NUM, x86_cap_flag_num(bit));
-+					pr_cont(" %d:%d", bit >> 5, bit & 31);
- 				else
--					pr_cont(" " X86_CAP_FMT, x86_cap_flag(bit));
-+					pr_cont(" %s", x86_cap_flags[bit]);
- 
- 				if (set)
- 					setup_force_cpu_cap(bit);
-@@ -1523,9 +1523,9 @@ static inline void parse_set_clear_cpuid(char *arg, bool set)
- 			const char *flag;
- 
- 			if (bit < 32 * NCAPINTS)
--				flag = x86_cap_flag(bit);
-+				flag = x86_cap_flags[bit];
- 			else
--				flag = x86_bug_flag(bit - (32 * NCAPINTS));
-+				flag = x86_bug_flags[bit - (32 * NCAPINTS)];
- 
- 			if (!flag)
- 				continue;
+Regards,
+Abdiel
 
