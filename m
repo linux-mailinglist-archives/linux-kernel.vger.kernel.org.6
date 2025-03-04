@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-543551-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543552-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30321A4D705
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:54:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9AEBA4D702
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C83FD18841C2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC3001749BE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792F41FCCF1;
-	Tue,  4 Mar 2025 08:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5834A1FE47C;
+	Tue,  4 Mar 2025 08:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CmlqvT5a";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="7Zs17dyD"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="OBsb5RRy";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BIgxgf7m"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 337581EB9E2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:52:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA80B1FE45B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741078360; cv=none; b=k88Z8Qjg35vBx7839Ku5Odx0LKj60wm78sioLQQQxCg1jbCo8IK0ajJxICSuocN+U0+UPu4xuQTtW4afc8KQPh5uuVNbreDZF1O0S/AK3/z8+OUs+lKw+bLBuK6cBZVe+64+ROC4xVnh8zpOLpVUybOvR8FqUNQIensOiMHE+wY=
+	t=1741078363; cv=none; b=UcDej3fk5RkVxZg9vXq8XaLzaZl4gjV6MqFKTXA5FLbp1cf35+ttWQyJfvn6KOjFDThOVJmaT80yXEBj+8B0kp1a5UomRpVaNTYj+6x2oIso3Yi6WZ7X8VW4ieBV6OhBpNOha0dp2KaxoQ5ZJQ9yqze+rvaACPXEDvmwbunHWmQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741078360; c=relaxed/simple;
-	bh=CmXBmlxisxYfICcVVw72tCNLH2pkwCIh/kTyeLQccfk=;
+	s=arc-20240116; t=1741078363; c=relaxed/simple;
+	bh=I7lWy4oxXtM92TgxDHeDJE8J2SKPngVboSsqddFra7E=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RrVRN8trhkFi5iWQd6uiJ1mFbgiOmvs2+4Y8aH5o8McMLRSYLhZidhBSCYr9ClZ1O7hXsTIycGUNJ4tOuigoK5emFPrqa8r+WStqJvctS9n9G3dZMnOwDLk9blMpDpO4KAl0XN4DMwvb6IVTcq1kMfRQ8ckF/1xYvWaFG9ZftfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CmlqvT5a; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=7Zs17dyD; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version; b=OWCduV6LEH9gIci8M4ikqYMGd6Q0UVxVhReUZrazUjUigK4fEcaI5AIAxGUvu0QFaidMOrS4kil60uRAbuH26n44kER2x7vj4LR3P0p6L8BdpoWWrWVj+59ASorxfXdtinRdMl+NqsFxV7vZI0b8MY2ewit5d/EMI1V2IiFuRnA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=OBsb5RRy; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BIgxgf7m; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: "Ahmed S. Darwish" <darwi@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741078357;
+	s=2020; t=1741078360;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kIj6d0Awb9GmuBboZEo5cpoLvkz83NhzBB7Rnz7sfts=;
-	b=CmlqvT5aYkmw3pQ/WF8kLw3aV+ngJGOOKq9sfhrRv3SpQ1j4qVNTdTh7ReBl3udZt/JqRK
-	xgta5qrUUht5hBe335Ake4VDz+jb2AK6Y3Eu9cb4hChMNyKwkLf2PdbJawWxbGu1gK/FOP
-	y4UHFnhzimqQ+0QOiTAKeDLa0+sLCBmeULoIebfoAMrfPNsnZgTX0lLfYSVPwMsP9Qa8iR
-	w06pjDuxuMBi1y/qdDzF2HTxD/D83HLmk9p1IQYUxNgir7soR+AiMZuAI7GWRY7wQ7LLtj
-	crYVP0Cd7Y5qQWCO3NNm0BEHAYfXmQyywi0u7AIEEzWJabIVMVtGKqsx7xXFlQ==
+	bh=Dop/qkJkK0O7Tda551vacFbdZKiU0QbyO4ChptChL2o=;
+	b=OBsb5RRyruCefHZyHXyusry/xryMJ8ZSn2DSfuPUVzc4jhy0I8367ao3MFaidff6ziINxY
+	jDK1ax9GO8XL9AXzKJfTemVDw2TrY5WLE8WyPJ0NtkaiPOe1ix6YHXXA+t8hMFoe2Y792A
+	mXytNRWBL9YT5btU9Fui6cJzogDLmSNes6DCM+AdXqx0qKjmE7silY6d6eGtAwZb/262NU
+	qN6Q4g3oyzB4FIOmChfsyxsiL7phS24R2Kj6x3T8pf8tPrc9H1d9lB+uxdGiOFhCOn+cmd
+	LLysmx3RYTSJPqdNn0F3UiwHZkh00ldnRlFd+PssQ/IcqCZXk8BEUSc/c+1Ndw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741078357;
+	s=2020e; t=1741078360;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=kIj6d0Awb9GmuBboZEo5cpoLvkz83NhzBB7Rnz7sfts=;
-	b=7Zs17dyDMB9arkZoBq54GdkMuJEt9c6s6f6MegBEQSap/1EJpXVgqfvw8Vn1QA6ySGl8l4
-	EqD3/1+/O2aB4cAQ==
+	bh=Dop/qkJkK0O7Tda551vacFbdZKiU0QbyO4ChptChL2o=;
+	b=BIgxgf7mVuYP57mgI/v5ygZis/MiYYkq2XTWLTy6pZP8QddV1ETA0aU9IWZO38Kkedcc4U
+	zxvjv0vJYYqnf/Bw==
 To: Borislav Petkov <bp@alien8.de>,
 	Ingo Molnar <mingo@redhat.com>,
 	Dave Hansen <dave.hansen@linux.intel.com>
@@ -64,9 +64,9 @@ Cc: Thomas Gleixner <tglx@linutronix.de>,
 	x86-cpuid@lists.linux.dev,
 	LKML <linux-kernel@vger.kernel.org>,
 	"Ahmed S. Darwish" <darwi@linutronix.de>
-Subject: [PATCH v1 08/40] x86/cpu: Get rid of smp_store_cpu_info() indirection
-Date: Tue,  4 Mar 2025 09:51:19 +0100
-Message-ID: <20250304085152.51092-9-darwi@linutronix.de>
+Subject: [PATCH v1 09/40] x86/cpu: Remove unused TLB strings
+Date: Tue,  4 Mar 2025 09:51:20 +0100
+Message-ID: <20250304085152.51092-10-darwi@linutronix.de>
 In-Reply-To: <20250304085152.51092-1-darwi@linutronix.de>
 References: <20250304085152.51092-1-darwi@linutronix.de>
 Precedence: bulk
@@ -79,142 +79,130 @@ Content-Transfer-Encoding: 8bit
 
 From: Thomas Gleixner <tglx@linutronix.de>
 
-smp_store_cpu_info() is just a wrapper around identify_secondary_cpu()
-without further value.
+commit e0ba94f14f74 ("x86/tlb_info: get last level TLB entry number of
+CPU") added the TLB table for parsing CPUID(0x4) including strings
+describing them. The string entry in the table was never used.
 
-Move the extra bits from smp_store_cpu_info() into identify_secondary_cpu()
-and remove the wrapper.
-
-[darwi: Make it compile and fixup the xen/smp_pv.c instance]
+Convert it to a comment.
 
 Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
 Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
 ---
- arch/x86/include/asm/processor.h |  2 +-
- arch/x86/include/asm/smp.h       |  2 --
- arch/x86/kernel/cpu/common.c     | 11 +++++++++--
- arch/x86/kernel/smpboot.c        | 24 ++----------------------
- arch/x86/xen/smp_pv.c            |  2 +-
- 5 files changed, 13 insertions(+), 28 deletions(-)
+ arch/x86/kernel/cpu/cpu.h   |  8 ----
+ arch/x86/kernel/cpu/intel.c | 80 ++++++++++++++++++++-----------------
+ 2 files changed, 43 insertions(+), 45 deletions(-)
 
-diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-index 0ea227fa027c..d5d9a071cddc 100644
---- a/arch/x86/include/asm/processor.h
-+++ b/arch/x86/include/asm/processor.h
-@@ -229,7 +229,7 @@ static inline unsigned long long l1tf_pfn_limit(void)
- void init_cpu_devs(void);
- void get_cpu_vendor(struct cpuinfo_x86 *c);
- extern void early_cpu_init(void);
--extern void identify_secondary_cpu(struct cpuinfo_x86 *);
-+extern void identify_secondary_cpu(unsigned int cpu);
- extern void print_cpu_info(struct cpuinfo_x86 *);
- void print_cpu_msr(struct cpuinfo_x86 *);
+diff --git a/arch/x86/kernel/cpu/cpu.h b/arch/x86/kernel/cpu/cpu.h
+index 1beccefbaff9..51deb60a9d26 100644
+--- a/arch/x86/kernel/cpu/cpu.h
++++ b/arch/x86/kernel/cpu/cpu.h
+@@ -33,14 +33,6 @@ struct cpu_dev {
+ #endif
+ };
  
-diff --git a/arch/x86/include/asm/smp.h b/arch/x86/include/asm/smp.h
-index ca073f40698f..820a90d2fb4a 100644
---- a/arch/x86/include/asm/smp.h
-+++ b/arch/x86/include/asm/smp.h
-@@ -119,8 +119,6 @@ void native_smp_send_reschedule(int cpu);
- void native_send_call_func_ipi(const struct cpumask *mask);
- void native_send_call_func_single_ipi(int cpu);
- 
--void smp_store_cpu_info(int id);
+-struct _tlb_table {
+-	unsigned char descriptor;
+-	char tlb_type;
+-	unsigned int entries;
+-	/* unsigned int ways; */
+-	char info[128];
+-};
 -
- asmlinkage __visible void smp_reboot_interrupt(void);
- __visible void smp_reschedule_interrupt(struct pt_regs *regs);
- __visible void smp_call_function_interrupt(struct pt_regs *regs);
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index 486395356faf..749fe02ef1f7 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -1960,9 +1960,15 @@ static __init void identify_boot_cpu(void)
- 	lkgs_init();
- }
+ #define cpu_dev_register(cpu_devX) \
+ 	static const struct cpu_dev *const __cpu_dev_##cpu_devX __used \
+ 	__section(".x86_cpu_dev.init") = \
+diff --git a/arch/x86/kernel/cpu/intel.c b/arch/x86/kernel/cpu/intel.c
+index 905f39fce375..cfd492cf9c3b 100644
+--- a/arch/x86/kernel/cpu/intel.c
++++ b/arch/x86/kernel/cpu/intel.c
+@@ -657,44 +657,50 @@ static unsigned int intel_size_cache(struct cpuinfo_x86 *c, unsigned int size)
+  */
+ #define TLB_0x63_2M_4M_ENTRIES	32
  
--void identify_secondary_cpu(struct cpuinfo_x86 *c)
-+void identify_secondary_cpu(unsigned int cpu)
- {
--	BUG_ON(c == &boot_cpu_data);
-+	struct cpuinfo_x86 *c = &cpu_data(cpu);
++struct _tlb_table {
++	unsigned char descriptor;
++	char tlb_type;
++	unsigned int entries;
++};
 +
-+	/* Copy boot_cpu_data only on the first bringup */
-+	if (!c->initialized)
-+		*c = boot_cpu_data;
-+	c->cpu_index = cpu;
-+
- 	identify_cpu(c);
- #ifdef CONFIG_X86_32
- 	enable_sep_cpu();
-@@ -1973,6 +1979,7 @@ void identify_secondary_cpu(struct cpuinfo_x86 *c)
- 		update_gds_msr();
+ static const struct _tlb_table intel_tlb_table[] = {
+-	{ 0x01, TLB_INST_4K,		32,	" TLB_INST 4 KByte pages, 4-way set associative" },
+-	{ 0x02, TLB_INST_4M,		2,	" TLB_INST 4 MByte pages, full associative" },
+-	{ 0x03, TLB_DATA_4K,		64,	" TLB_DATA 4 KByte pages, 4-way set associative" },
+-	{ 0x04, TLB_DATA_4M,		8,	" TLB_DATA 4 MByte pages, 4-way set associative" },
+-	{ 0x05, TLB_DATA_4M,		32,	" TLB_DATA 4 MByte pages, 4-way set associative" },
+-	{ 0x0b, TLB_INST_4M,		4,	" TLB_INST 4 MByte pages, 4-way set associative" },
+-	{ 0x4f, TLB_INST_4K,		32,	" TLB_INST 4 KByte pages" },
+-	{ 0x50, TLB_INST_ALL,		64,	" TLB_INST 4 KByte and 2-MByte or 4-MByte pages" },
+-	{ 0x51, TLB_INST_ALL,		128,	" TLB_INST 4 KByte and 2-MByte or 4-MByte pages" },
+-	{ 0x52, TLB_INST_ALL,		256,	" TLB_INST 4 KByte and 2-MByte or 4-MByte pages" },
+-	{ 0x55, TLB_INST_2M_4M,		7,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
+-	{ 0x56, TLB_DATA0_4M,		16,	" TLB_DATA0 4 MByte pages, 4-way set associative" },
+-	{ 0x57, TLB_DATA0_4K,		16,	" TLB_DATA0 4 KByte pages, 4-way associative" },
+-	{ 0x59, TLB_DATA0_4K,		16,	" TLB_DATA0 4 KByte pages, fully associative" },
+-	{ 0x5a, TLB_DATA0_2M_4M,	32,	" TLB_DATA0 2-MByte or 4 MByte pages, 4-way set associative" },
+-	{ 0x5b, TLB_DATA_4K_4M,		64,	" TLB_DATA 4 KByte and 4 MByte pages" },
+-	{ 0x5c, TLB_DATA_4K_4M,		128,	" TLB_DATA 4 KByte and 4 MByte pages" },
+-	{ 0x5d, TLB_DATA_4K_4M,		256,	" TLB_DATA 4 KByte and 4 MByte pages" },
+-	{ 0x61, TLB_INST_4K,		48,	" TLB_INST 4 KByte pages, full associative" },
+-	{ 0x63, TLB_DATA_1G_2M_4M,	4,	" TLB_DATA 1 GByte pages, 4-way set associative"
+-						" (plus 32 entries TLB_DATA 2 MByte or 4 MByte pages, not encoded here)" },
+-	{ 0x6b, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 8-way associative" },
+-	{ 0x6c, TLB_DATA_2M_4M,		128,	" TLB_DATA 2 MByte or 4 MByte pages, 8-way associative" },
+-	{ 0x6d, TLB_DATA_1G,		16,	" TLB_DATA 1 GByte pages, fully associative" },
+-	{ 0x76, TLB_INST_2M_4M,		8,	" TLB_INST 2-MByte or 4-MByte pages, fully associative" },
+-	{ 0xb0, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 4-way set associative" },
+-	{ 0xb1, TLB_INST_2M_4M,		4,	" TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries" },
+-	{ 0xb2, TLB_INST_4K,		64,	" TLB_INST 4KByte pages, 4-way set associative" },
+-	{ 0xb3, TLB_DATA_4K,		128,	" TLB_DATA 4 KByte pages, 4-way set associative" },
+-	{ 0xb4, TLB_DATA_4K,		256,	" TLB_DATA 4 KByte pages, 4-way associative" },
+-	{ 0xb5, TLB_INST_4K,		64,	" TLB_INST 4 KByte pages, 8-way set associative" },
+-	{ 0xb6, TLB_INST_4K,		128,	" TLB_INST 4 KByte pages, 8-way set associative" },
+-	{ 0xba, TLB_DATA_4K,		64,	" TLB_DATA 4 KByte pages, 4-way associative" },
+-	{ 0xc0, TLB_DATA_4K_4M,		8,	" TLB_DATA 4 KByte and 4 MByte pages, 4-way associative" },
+-	{ 0xc1, STLB_4K_2M,		1024,	" STLB 4 KByte and 2 MByte pages, 8-way associative" },
+-	{ 0xc2, TLB_DATA_2M_4M,		16,	" TLB_DATA 2 MByte/4MByte pages, 4-way associative" },
+-	{ 0xca, STLB_4K,		512,	" STLB 4 KByte pages, 4-way associative" },
++	{ 0x01, TLB_INST_4K,		32},	/* TLB_INST 4 KByte pages, 4-way set associative */
++	{ 0x02, TLB_INST_4M,		2},	/* TLB_INST 4 MByte pages, full associative */
++	{ 0x03, TLB_DATA_4K,		64},	/* TLB_DATA 4 KByte pages, 4-way set associative */
++	{ 0x04, TLB_DATA_4M,		8},	/* TLB_DATA 4 MByte pages, 4-way set associative */
++	{ 0x05, TLB_DATA_4M,		32},	/* TLB_DATA 4 MByte pages, 4-way set associative */
++	{ 0x0b, TLB_INST_4M,		4},	/* TLB_INST 4 MByte pages, 4-way set associative */
++	{ 0x4f, TLB_INST_4K,		32},	/* TLB_INST 4 KByte pages */
++	{ 0x50, TLB_INST_ALL,		64},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
++	{ 0x51, TLB_INST_ALL,		128},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
++	{ 0x52, TLB_INST_ALL,		256},	/* TLB_INST 4 KByte and 2-MByte or 4-MByte pages */
++	{ 0x55, TLB_INST_2M_4M,		7},	/* TLB_INST 2-MByte or 4-MByte pages, fully associative */
++	{ 0x56, TLB_DATA0_4M,		16},	/* TLB_DATA0 4 MByte pages, 4-way set associative */
++	{ 0x57, TLB_DATA0_4K,		16},	/* TLB_DATA0 4 KByte pages, 4-way associative */
++	{ 0x59, TLB_DATA0_4K,		16},	/* TLB_DATA0 4 KByte pages, fully associative */
++	{ 0x5a, TLB_DATA0_2M_4M,	32},	/* TLB_DATA0 2-MByte or 4 MByte pages, 4-way set associative */
++	{ 0x5b, TLB_DATA_4K_4M,		64},	/* TLB_DATA 4 KByte and 4 MByte pages */
++	{ 0x5c, TLB_DATA_4K_4M,		128},	/* TLB_DATA 4 KByte and 4 MByte pages */
++	{ 0x5d, TLB_DATA_4K_4M,		256},	/* TLB_DATA 4 KByte and 4 MByte pages */
++	{ 0x61, TLB_INST_4K,		48},	/* TLB_INST 4 KByte pages, full associative */
++	{ 0x63, TLB_DATA_1G_2M_4M,	4},	/* TLB_DATA 1 GByte pages, 4-way set associative
++						 * (plus 32 entries TLB_DATA 2 MByte or 4 MByte pages, not encoded here) */
++	{ 0x6b, TLB_DATA_4K,		256},	/* TLB_DATA 4 KByte pages, 8-way associative */
++	{ 0x6c, TLB_DATA_2M_4M,		128},	/* TLB_DATA 2 MByte or 4 MByte pages, 8-way associative */
++	{ 0x6d, TLB_DATA_1G,		16},	/* TLB_DATA 1 GByte pages, fully associative */
++	{ 0x76, TLB_INST_2M_4M,		8},	/* TLB_INST 2-MByte or 4-MByte pages, fully associative */
++	{ 0xb0, TLB_INST_4K,		128},	/* TLB_INST 4 KByte pages, 4-way set associative */
++	{ 0xb1, TLB_INST_2M_4M,		4},	/* TLB_INST 2M pages, 4-way, 8 entries or 4M pages, 4-way entries */
++	{ 0xb2, TLB_INST_4K,		64},	/* TLB_INST 4KByte pages, 4-way set associative */
++	{ 0xb3, TLB_DATA_4K,		128},	/* TLB_DATA 4 KByte pages, 4-way set associative */
++	{ 0xb4, TLB_DATA_4K,		256},	/* TLB_DATA 4 KByte pages, 4-way associative */
++	{ 0xb5, TLB_INST_4K,		64},	/* TLB_INST 4 KByte pages, 8-way set associative */
++	{ 0xb6, TLB_INST_4K,		128},	/* TLB_INST 4 KByte pages, 8-way set associative */
++	{ 0xba, TLB_DATA_4K,		64},	/* TLB_DATA 4 KByte pages, 4-way associative */
++	{ 0xc0, TLB_DATA_4K_4M,		8},	/* TLB_DATA 4 KByte and 4 MByte pages, 4-way associative */
++	{ 0xc1, STLB_4K_2M,		1024},	/* STLB 4 KByte and 2 MByte pages, 8-way associative */
++	{ 0xc2, TLB_DATA_2M_4M,		16},	/* TLB_DATA 2 MByte/4MByte pages, 4-way associative */
++	{ 0xca, STLB_4K,		512},	/* STLB 4 KByte pages, 4-way associative */
+ 	{ 0x00, 0, 0 }
+ };
  
- 	tsx_ap_init();
-+	c->initialized = true;
- }
- 
- void print_cpu_info(struct cpuinfo_x86 *c)
-diff --git a/arch/x86/kernel/smpboot.c b/arch/x86/kernel/smpboot.c
-index c10850ae6f09..e199465dc9e1 100644
---- a/arch/x86/kernel/smpboot.c
-+++ b/arch/x86/kernel/smpboot.c
-@@ -190,7 +190,7 @@ static void ap_starting(void)
- 	apic_ap_setup();
- 
- 	/* Save the processor parameters. */
--	smp_store_cpu_info(cpuid);
-+	identify_secondary_cpu(cpuid);
- 
- 	/*
- 	 * The topology information must be up to date before
-@@ -215,7 +215,7 @@ static void ap_calibrate_delay(void)
- {
- 	/*
- 	 * Calibrate the delay loop and update loops_per_jiffy in cpu_data.
--	 * smp_store_cpu_info() stored a value that is close but not as
-+	 * identify_secondary_cpu() stored a value that is close but not as
- 	 * accurate as the value just calculated.
- 	 *
- 	 * As this is invoked after the TSC synchronization check,
-@@ -315,26 +315,6 @@ static void notrace start_secondary(void *unused)
- 	cpu_startup_entry(CPUHP_AP_ONLINE_IDLE);
- }
- 
--/*
-- * The bootstrap kernel entry code has set these up. Save them for
-- * a given CPU
-- */
--void smp_store_cpu_info(int id)
--{
--	struct cpuinfo_x86 *c = &cpu_data(id);
--
--	/* Copy boot_cpu_data only on the first bringup */
--	if (!c->initialized)
--		*c = boot_cpu_data;
--	c->cpu_index = id;
--	/*
--	 * During boot time, CPU0 has this setup already. Save the info when
--	 * bringing up an AP.
--	 */
--	identify_secondary_cpu(c);
--	c->initialized = true;
--}
--
- static bool
- topology_same_node(struct cpuinfo_x86 *c, struct cpuinfo_x86 *o)
- {
-diff --git a/arch/x86/xen/smp_pv.c b/arch/x86/xen/smp_pv.c
-index 6863d3da7dec..688ff59318ae 100644
---- a/arch/x86/xen/smp_pv.c
-+++ b/arch/x86/xen/smp_pv.c
-@@ -70,7 +70,7 @@ static void cpu_bringup(void)
- 		xen_enable_syscall();
- 	}
- 	cpu = smp_processor_id();
--	smp_store_cpu_info(cpu);
-+	identify_secondary_cpu(cpu);
- 	set_cpu_sibling_map(cpu);
- 
- 	speculative_store_bypass_ht_init();
 -- 
 2.48.1
 
