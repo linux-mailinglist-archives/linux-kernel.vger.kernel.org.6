@@ -1,133 +1,163 @@
-Return-Path: <linux-kernel+bounces-544213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3CD9A4DEE2
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:11:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC040A4DED2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:10:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6AFA77AB2FF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:08:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22C1918854C4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FED12046BD;
-	Tue,  4 Mar 2025 13:07:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2473204595;
+	Tue,  4 Mar 2025 13:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tZTujuxP"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="lgAjNSH8"
+Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8142E20551A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:07:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E20A20409B
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741093643; cv=none; b=on8ZdC13GMAV6qqmVdA1HxeABNtb/g1d3f8eTB7VUTQMmzfMuF/rJJUDndtyza0I9UwLq9+BTQCIko9h1X6IjOpr2wAJ/Nmw7F4eB+et3KkFQwX+3ysiahVU/BCkJbBtU/CN68ODU3e2QmNeA8O8X6B2tjdykzquwLNCzF/4iRk=
+	t=1741093801; cv=none; b=qIwDsVf6uXSzIR0JiCyiAFevw+JOr6l+F4PE2WNtl/5WgE0P3V1Fp3RUNU02Wtc9EwFS7bMsKZJjB6q2B/vsbBNbl54USbGNjUmb18kQmZWcLZ4sGQW9AwytpvuZPwO883MSb6BferlM8NJviufw7IlfX74h9KSPzIi9BgPXTeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741093643; c=relaxed/simple;
-	bh=hbTVezICqr8e2a2ELXb8vmVSM+zmKLpGBJ8kAi4wDWg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cyxvKBfejC5zzFG2KwvPTc0gK6aKgmMV9ZLBTYfT7hsr/++SqE0EZ5CB7DBrFA3F89rVqtSDMTOqvDaSUlK6VChTUDnnSurP5v0sZopZD7AhWbOuvnQrUXNlPMmHKZb0chdGJ1f4HUeUokdp4gKJAdgLOkpfjuGG7VjdduPsdj0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tZTujuxP; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4393dc02b78so36194345e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:07:21 -0800 (PST)
+	s=arc-20240116; t=1741093801; c=relaxed/simple;
+	bh=NcEqiAia7PtxdRC2CO01i7tbbhPiGij2sr/fLY4ZFuo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ueP0rbMBJJyUp1gdnKFqUkHIAyE5tUcOwPSa8hQmAFF/KJwfq924ukTJNFhCeslqUJ6einMFWQj7G88Udzg3Yxwjw7nU/RikvvMo5h9j7fgto9y/2J+dwDPVEMWTqbTwVBv3uhq/v57IT1gH5XmMbNWmVj0P4M8EJw5tntETHnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=lgAjNSH8; arc=none smtp.client-ip=209.85.214.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-2233622fdffso105042905ad.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:09:59 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741093640; x=1741698440; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=0sMLvCT1fnTWe+fQQZYyr06r8CMaLxKRmrVcKoI1NIQ=;
-        b=tZTujuxPDg2GNgl1jcs1IhE7wLC4TNKfyI0C5rE9aBY7nF7r23ql5s22CPO2b1GTIY
-         1SpJ3jEtI7kG842OfqgYsFZoX6+4hErHw28dw75EtCTH7FfrjPsmqhoU6MsixhW9gcX9
-         zhA3bcUHoV1p3EAEaLMMD+V77FHr4k/nTHd4f7CYyLNPoYDWajUQ0JAbjsggkExNVIIF
-         tCnO+x+wRgrZOt3QptBx2igALb3RY7wk7LYCTeP9kQle831yO18y7P75VJwP7trH6vZR
-         14mqh8e6Jl+b/mH6SItHvuPLT/d9H0Gok+Q7/lozlQGno8IupClXclvlvbRSoNj5k7Q0
-         wobw==
+        d=google.com; s=20230601; t=1741093798; x=1741698598; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=x117HPWY7hfxCsyRoomSLqnsp6TkG/IZ7mxFwBfWDy4=;
+        b=lgAjNSH82Xe0CP1ujbQj7vPkQrbO8ZclVJWv90V5wBvqUXjqSghCtyJRvjhHIr8M0M
+         /OuZ4QHZQQcC65o62tiWI9yXaGXaihz74p0q1M61rW7DhwwcOWkY+OH6eWqC8+tu4jeB
+         gEPiv6zkAHwYBMbLsuplq0EamVVXdhbDLdQGy8c/4sSkij5yOdAiUBW8wucJUbUWkez6
+         4MTzAblno9u3tr+lOa3zW/i0MubBIC+Q7FOFgvnMrJAS5fPu8mzyQ4XySxRkuIvs5U24
+         NY8dqCuTDoey43LQG0iIUoYJWNvGXCPHBqNNZpQ44+X9R29pTR131iCB9XKXPt0H0JVN
+         9GiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741093640; x=1741698440;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0sMLvCT1fnTWe+fQQZYyr06r8CMaLxKRmrVcKoI1NIQ=;
-        b=aZRkiQVd3N7yHUcvwMglePCYxEZFKMBo0kWvz5SD6WJLBmySoqIEk9AtOXpbbydwfs
-         N6IO0l1EuCtSKZiiDHl/0tQ9jecH1E3CPczDn3Fx+SPXOa5X6GUqg5ADVgkgOEyByPtC
-         j3rXZzHOWt1h7Gi8wa3olyfJuO0PTPSEO8RSOOij6haAzNQrL+UYjD4FbDIFcju9wSVB
-         QM80DZQGuoyh6LQXmPuCUvv8RSaAbxaL6J4/R5ZGkiLafgYlTpRnXKn4NrudLs6EYEch
-         EDu7X01U4WTRc98A3VP2cCqXXUWGICVd+pfI50l/jEWPxJSDfQe8O3Ydjz6jJorNqJYa
-         SNNw==
-X-Forwarded-Encrypted: i=1; AJvYcCV3l3GFIw8j8zyoahn4RnK0af1zqHm+85MlbS2ZgIupu90i6/lFScQHIJDQIpLd6Elk5AABseGSas3wdu0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzN2U/OTMQPnVFhpQjZ1IxRTQAEarXXshU8pvKLFxFyZvnn6u6W
-	d2l+HecZrbgrqClCKcTsODpg+n+XYv/z1r7qtURLa8QCyBzaTMlqwdxb6+JtK3k=
-X-Gm-Gg: ASbGncsHvRRcy3h520RpUAnvZWXMoASGFauEPhlEP8m1oaOIcOlevLRibm/kg4x3psB
-	hjr+avURFW3EBpMofqCS5XCQClB6ny/3AiG0ibwwFdFAaG++Iiaub2/zcxYzEefsMQH/FKZp98O
-	ve6ZZK/ySk9dLTlOeQ7Lj8nmVEIDpG+gq70KupUccKYb7aTmOsTnLf2gr8LGRPNZ0z/oCFqDAb6
-	zxC9pMFPEm2uJWjluHptZqN1tRnvU24uNbKEcaOYWoaFelbze8hXPamhSNqduH/G59JFfxOuy6y
-	vK9ups1xaXOTEwqet3Cx3R92IUUSXDanyM8mDjeAk9/+YtIK2mlICkwWnshNX559rlXJbXzsWnR
-	EocExNA==
-X-Google-Smtp-Source: AGHT+IG7Hqk+59fncwqRhoiQZI0qgVNSHDtmwiVCCcb9ZVYfhmFpPhJTWaXXdGtM/0s4DaDuW44HFQ==
-X-Received: by 2002:a05:6000:1789:b0:391:ab2:9e80 with SMTP id ffacd0b85a97d-3910ab2a206mr6605504f8f.24.1741093639862;
-        Tue, 04 Mar 2025 05:07:19 -0800 (PST)
-Received: from [127.0.1.1] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6cd8sm17401715f8f.44.2025.03.04.05.07.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 05:07:19 -0800 (PST)
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Tue, 04 Mar 2025 13:07:14 +0000
-Subject: [PATCH 8/8] arm64: dts: qcom: sc8280xp-x13s: Enable Venus
+        d=1e100.net; s=20230601; t=1741093798; x=1741698598;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x117HPWY7hfxCsyRoomSLqnsp6TkG/IZ7mxFwBfWDy4=;
+        b=PFxp7NPGjulSNqu1ot6M1yGw/gZ2Slcqy+ZP7L5KFmPY8JLtm/fGxgtu2MsWwSLpCb
+         jPJlAvSp3wYIAsCtPzDEAug6Jx5ehiUStELreea0/WUTdiWbO1R2BOwWh7w7LkUxVwID
+         yObtVhwSByYo5fxudXH7lukQvhVWw7knT+C1YAo62omUtXpmsWAAiM79UGWSXF9EI86n
+         cf8rp6bXuuL6Yt9KtuGSZONtjCQQTJdU2DBfygn9Al4csOgQKMdXg+hLzbMWIt4zuX7U
+         91+Ni+o/qzcTa5e3aR+HOLC1eN74qOEDf/kRbaO0y6mGJc8rUl9jBX30Xa2jxH1aj7iK
+         c/aw==
+X-Forwarded-Encrypted: i=1; AJvYcCV7X46hXPLFcB7nRdKTNLRPuoooyRQyCzgjNyc2C5kkgepdt+eWwYulhiNf4xZ0WMgVkhtru9wxbkce96Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZrOVXV+a9I1iGc2gNi9ZDbEgWCDKxIW4TTl6gkPfwKr8eoH67
+	p70WJEzVFbSjfhb5rQhAWlUq20Tbs0shk5uidxqmJLzaNQSFFe8LjJnmwkXZVT8KmYtFmVKk6fj
+	lmfd5g6hJWiPBf7FEKbNzU4dl8NAGEkU/cMQl
+X-Gm-Gg: ASbGncuvZJdVY55lRGWrXXekfKprlfaqNc9j1x99v+WoFVTZLH0FQfkXMZ4Ml9gHMJr
+	apaouq1+RwrayYr08NzvyqhMJJUoC7ZTo/buKHB5dfnMiCrBV1R9Td0jQ2MYSnOUx2Ms7fWMAXK
+	Eceknc0Mpw73GR/JFy4xa4WXgrlvO9MTzjPEVKEyK+Jp0iPtIKPuplH4v4
+X-Google-Smtp-Source: AGHT+IFiWcYRRwZhjH3eoEETTKHMFeBTK3Bvk1Dikxat7wutRisU34tzNCYhuoO1ktV/UerXXSrorJjwJzvEu41/niQ=
+X-Received: by 2002:a17:902:ec91:b0:223:5ada:2484 with SMTP id
+ d9443c01a7336-2236926e8bemr319887595ad.44.1741093798418; Tue, 04 Mar 2025
+ 05:09:58 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-8-279c7ea55493@linaro.org>
-References: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
-In-Reply-To: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
-To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
- Vikash Garodia <quic_vgarodia@quicinc.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>, 
- Johan Hovold <johan+linaro@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>
-X-Mailer: b4 0.15-dev-33ea6
+References: <20250304092417.2873893-1-elver@google.com> <20250304092417.2873893-7-elver@google.com>
+ <20250304125516.GF11590@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250304125516.GF11590@noisy.programming.kicks-ass.net>
+From: Marco Elver <elver@google.com>
+Date: Tue, 4 Mar 2025 14:09:21 +0100
+X-Gm-Features: AQ5f1JpRduzHYdRlbPZG29NFbDiaHAHst1RMQPMNTm3NjpUDRIeFlhtOLA45DL8
+Message-ID: <CANpmjNNNB8zQJKZaby8KNu8PdAJDufcia+sa2RajWm6Bd2TC4A@mail.gmail.com>
+Subject: Re: [PATCH v2 06/34] cleanup: Basic compatibility with capability analysis
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: "David S. Miller" <davem@davemloft.net>, Luc Van Oostenryck <luc.vanoostenryck@gmail.com>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Bart Van Assche <bvanassche@acm.org>, Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>, 
+	Frederic Weisbecker <frederic@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Herbert Xu <herbert@gondor.apana.org.au>, Ingo Molnar <mingo@kernel.org>, 
+	Jann Horn <jannh@google.com>, Jiri Slaby <jirislaby@kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Triplett <josh@joshtriplett.org>, Justin Stitt <justinstitt@google.com>, 
+	Kees Cook <kees@kernel.org>, Kentaro Takeda <takedakn@nttdata.co.jp>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>, Steven Rostedt <rostedt@goodmis.org>, 
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>, Thomas Gleixner <tglx@linutronix.de>, 
+	Uladzislau Rezki <urezki@gmail.com>, Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>, 
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, rcu@vger.kernel.org, linux-crypto@vger.kernel.org, 
+	linux-serial@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Konrad Dybcio <konradybcio@kernel.org>
+On Tue, 4 Mar 2025 at 13:55, Peter Zijlstra <peterz@infradead.org> wrote:
+>
+> On Tue, Mar 04, 2025 at 10:21:05AM +0100, Marco Elver wrote:
+> > Due to the scoped cleanup helpers used for lock guards wrapping
+> > acquire/release around their own constructors/destructors that store
+> > pointers to the passed locks in a separate struct, we currently cannot
+> > accurately annotate *destructors* which lock was released. While it's
+> > possible to annotate the constructor to say which lock was acquired,
+> > that alone would result in false positives claiming the lock was not
+> > released on function return.
+> >
+> > Instead, to avoid false positives, we can claim that the constructor
+> > "asserts" that the taken lock is held. This will ensure we can still
+> > benefit from the analysis where scoped guards are used to protect access
+> > to guarded variables, while avoiding false positives. The only downside
+> > are false negatives where we might accidentally lock the same lock
+> > again:
+> >
+> >       raw_spin_lock(&my_lock);
+> >       ...
+> >       guard(raw_spinlock)(&my_lock);  // no warning
+> >
+> > Arguably, lockdep will immediately catch issues like this.
+> >
+> > While Clang's analysis supports scoped guards in C++ [1], there's no way
+> > to apply this to C right now. Better support for Linux's scoped guard
+> > design could be added in future if deemed critical.
+>
+> Would definitely be nice to have.
 
-Enable Venus and point the driver to the correct firmware file.
+Once we have the basic infra here, I think it'll be easier to push for
+these improvements. It's not entirely up to me, and we have to
+coordinate with the Clang maintainers. Definitely is on the list.
 
-Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
----
- arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts | 5 +++++
- 1 file changed, 5 insertions(+)
+> > @@ -383,6 +387,7 @@ static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T)       \
+> >
+> >  #define __DEFINE_LOCK_GUARD_1(_name, _type, _lock)                   \
+> >  static inline class_##_name##_t class_##_name##_constructor(_type *l)        \
+> > +     __no_capability_analysis __asserts_cap(l)                       \
+> >  {                                                                    \
+> >       class_##_name##_t _t = { .lock = l }, *_T = &_t;                \
+> >       _lock;                                                          \
+> > @@ -391,6 +396,7 @@ static inline class_##_name##_t class_##_name##_constructor(_type *l)     \
+> >
+> >  #define __DEFINE_LOCK_GUARD_0(_name, _lock)                          \
+> >  static inline class_##_name##_t class_##_name##_constructor(void)    \
+> > +     __no_capability_analysis                                        \
+>
+> Does this not need __asserts_cal(_lock) or somesuch?
+>
+> GUARD_0 is the one used for RCU and preempt, rather sad if it doesn't
+> have annotations at all.
 
-diff --git a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-index f3190f408f4b2..d4c53845eebb7 100644
---- a/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-+++ b/arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts
-@@ -1477,6 +1477,11 @@ &vamacro {
- 	status = "okay";
- };
- 
-+&venus {
-+	firmware-name = "qcom/sc8280xp/LENOVO/21BX/qcvss8280.mbn";
-+	status = "okay";
-+};
-+
- &wsamacro {
- 	status = "okay";
- };
+This is solved later in the series where we need it for RCU:
+https://lore.kernel.org/all/20250304092417.2873893-15-elver@google.com/
 
--- 
-2.47.2
-
+We can't add this to all GUARD_0, because not all will be for
+capability-enabled structs. Instead I added a helper to add the
+necessary annotations where needed (see DECLARE_LOCK_GUARD_0_ATTRS).
 
