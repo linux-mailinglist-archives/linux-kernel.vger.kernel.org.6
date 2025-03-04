@@ -1,173 +1,99 @@
-Return-Path: <linux-kernel+bounces-545472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB7EA4ED8B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:38:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B709CA4ED86
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:37:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B33B13A69E5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:36:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E337F170691
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358A527C853;
-	Tue,  4 Mar 2025 19:34:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5520B24C06A;
+	Tue,  4 Mar 2025 19:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sjzYQIXi";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="b55p/Vuv"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BxmRyCbI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9202E3385;
-	Tue,  4 Mar 2025 19:34:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADDF52E3385;
+	Tue,  4 Mar 2025 19:34:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741116849; cv=none; b=WaHZngNOAcOZsIbaRmWObvhYkbeUWxdbB/s5k06NCV3eBv9UoEssF/XX7jn2ouRLDsCZbNy+xVwZNxU0M0qNs4xWTEFUtmFTA5gDPT3KfXY2qv3NMmXoqKAxfL6BDkiZGcC1uxf93ZjLQQ9TYDyQXcQe/1l2qg8VuXDqbokZYEE=
+	t=1741116862; cv=none; b=E7VzizgJ384ti+ESD7Xahx9ay6DYwRp8+ziKC/kxsOJnCqpGzVw57mzkC5MI3NgZQOLPY7hdjbii2i7u5/gwzcXlrCSOKbnMaErz+1Y5CqoC8nQ9ijTEez0QzHkzOLmEDvCN/rxNeCorp8pmK/m9mayMAgbkS06SKWRIqm8qQhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741116849; c=relaxed/simple;
-	bh=JNmytv+Pm4JwGBaZfoSpLz/PL8LMGBTj1Ah54caOfaM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=q48dY4BMof+QEKZF2tdPl/+LqP19JWaXbyH330PiIBepowY0tft2gG20Hu1NxySh8FNk3AqyWBO8uYfaTOJxoc5pQv6OND5L36t6Z5p/ivrYYcGGfJbo6+bCq2pYMIlPvxv7zw9dX4vVbqzOUFQbHw0Ps/bj2xO8F9JwtMxZnbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sjzYQIXi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=b55p/Vuv; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Tue, 04 Mar 2025 19:34:05 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741116845;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cDusfe+F5QngHLFscGCKfq2j10N4RepwFoJSili0J6o=;
-	b=sjzYQIXiQhDYsIcBdnyip0xu2JM8VzLZzdrJRO/3P+P121uIWODMyLcYWA60ARvBiQuI11
-	6eAEoJHJFuLVoiWu9G3KgJhiZQAeBtGw2QSAh1lG+4aO9U1BA6iGF/sl/ujIK9cK874Hns
-	rnGRg/2WldR66pAWFwxUw5QxGo9p7rQYM9o3Sb4fCxR0b1W5cBdOc0E91dpE2h84iM2xmu
-	LD4UEidXarMMH06qfhYzMVLAvs9Zz2xJ9UMZzyPIbomPVFuRis1CRbe9t8Qfzi5bqNTAqz
-	+KT1nIOB/Cv5PlMHyOYEJd9sFQPk0Eafb75Lmw0Cn+DCB0isW/9N5Z4WaKW4QQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741116845;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cDusfe+F5QngHLFscGCKfq2j10N4RepwFoJSili0J6o=;
-	b=b55p/VuvPosBhpk6ArPy99/RuuB71Lj7m14kRq8CNIu5LOutMB46GPyb1RmQGwCc8ucrzp
-	qo9rujYzy9ah/hDw==
-From: "tip-bot2 for Brian Gerst" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/core] percpu: Introduce percpu hot section
-Cc: Brian Gerst <brgerst@gmail.com>, Ingo Molnar <mingo@kernel.org>,
- Uros Bizjak <ubizjak@gmail.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250303165246.2175811-2-brgerst@gmail.com>
-References: <20250303165246.2175811-2-brgerst@gmail.com>
+	s=arc-20240116; t=1741116862; c=relaxed/simple;
+	bh=0PhniFa8GHtdXz3Hb41lDuOBvw8xpGDuE72A/qcIDEI=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=o9JKnO46c7ii3DyW86twEWdzqrACB3b1TK2+LmBbfTiRxmvG2d4MZS53cPKqCNdQeG0ZTGS06r66Qgw6D9V9Tt/BwlkA3F/F84w5R9w0b+tg73vEU0kKFzW0KVTaPx9hQnOlJolrOm6oJOxfpDSBcrBzsWR8dSsvrfFG4VLGkmY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BxmRyCbI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 014BBC4CEE5;
+	Tue,  4 Mar 2025 19:34:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741116862;
+	bh=0PhniFa8GHtdXz3Hb41lDuOBvw8xpGDuE72A/qcIDEI=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BxmRyCbIP+sVdCIPPe6g96Y5dIlBdxGQa0FU25O1gOKceaLMv+GXSzdSP4pmao+oO
+	 MBcINv3xhVP1vks5eaGu/w+LdwSCQ5OZJjvHhV7mK6Bu1ht1lLviB2CfkYEqe8shdl
+	 gq/gD9idsvgcq84Qh8KzA6os+eMVXUmzMt6KaMxCEMWitQ2FWZVpD4pJxmyd/1U7eG
+	 3DAlAyZcYw/7Beey1Z3vSunHjvRkjL1WJfzVqOSjgrSpdC2bi2uswtpnQ6W3FhpM+h
+	 XEqYNNTavETHowHYhvI5R4uoJfu1+f5PX5zottflQqWAPt2/ezQ9VyVTX867+Gbn3X
+	 jtju8vXvlvJkQ==
+Message-ID: <efd38edbed2743a258bbec7e80ff2238.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174111684506.14745.4914849181470539391.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <CAA8EJppgU7_BoVCDfTuKVveBnnhtHUN6jEzkUaAou7=aypD-Dw@mail.gmail.com>
+References: <20250201-topic-ignore_unused_warn-v1-1-f29db78cea3a@oss.qualcomm.com> <93b5004dacfe1151ca3abbb0fa31eaa6.sboyd@kernel.org> <87241686-90b5-44fe-b4e9-1a59451e3575@broadcom.com> <CAA8EJppgU7_BoVCDfTuKVveBnnhtHUN6jEzkUaAou7=aypD-Dw@mail.gmail.com>
+Subject: Re: [PATCH] clk: Warn (and therefore taint the kernel) on clk_ignore_unused
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Michael Turquette <mturquette@baylibre.com>, Marijn Suijten <marijn.suijten@somainline.org>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Florian Fainelli <florian.fainelli@broadcom.com>
+Date: Tue, 04 Mar 2025 11:34:19 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-The following commit has been merged into the x86/core branch of tip:
+Quoting Dmitry Baryshkov (2025-03-03 15:17:21)
+> On Tue, 4 Mar 2025 at 00:16, Florian Fainelli
+> <florian.fainelli@broadcom.com> wrote:
+> >
+> > On 3/3/25 14:48, Stephen Boyd wrote:
+> > > Quoting Konrad Dybcio (2025-02-01 08:52:30)
+[...]
+> > >>
+> > >> The clock subsystem plays a crucial part in this quest, as even if
+> > >> the clock controllers themselves don't draw a lot of power when on
+> > >> (comparatively), improper description of clock requirements has been
+> > >> the #1 cause of incomplete/incorrect devicetree bindings in my
+> > >> experience.
+> > >
+> > > What is a user supposed to do about this warning stack? We already pr=
+int
+> > > a warning. I don't see us dumping the stack when a driver is unfinish=
+ed
+> > > and doesn't implement runtime PM to save power.
+> > >
+> >
+> > Agreed, I don't think this is tremendously helpful given that it does
+> > not even tell you what part is incomplete, it's just a broad warning for
+> > the entire system.
+> >
+> > Assuming you have a clock provided that can be used to turn clocks off,
+> > and you did not boot with 'clk_ignore_unused' set on the kernel command
+> > line, then you should discover pretty quickly which driver is not
+> > managing the clocks as it should no?
+>=20
+> Unfortunately it's sometimes not that easy. And some developers
+> pretend that 'clk_ignore_unused' is a viable way to run the system.
+>=20
 
-Commit-ID:     4c5dee3944eb239e6680167069af594878a91200
-Gitweb:        https://git.kernel.org/tip/4c5dee3944eb239e6680167069af594878a91200
-Author:        Brian Gerst <brgerst@gmail.com>
-AuthorDate:    Mon, 03 Mar 2025 11:52:36 -05:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Tue, 04 Mar 2025 20:18:02 +01:00
-
-percpu: Introduce percpu hot section
-
-Add a subsection to the percpu data for frequently accessed variables
-that should remain cached on each processor.  These varables should not
-be accessed from other processors to avoid cacheline bouncing.
-
-This will replace the pcpu_hot struct on x86, and open up similar
-functionality to other architectures and the kernel core.
-
-Signed-off-by: Brian Gerst <brgerst@gmail.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Acked-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Link: https://lore.kernel.org/r/20250303165246.2175811-2-brgerst@gmail.com
----
- include/asm-generic/vmlinux.lds.h | 11 +++++++++++
- include/linux/percpu-defs.h       | 13 +++++++++++++
- 2 files changed, 24 insertions(+)
-
-diff --git a/include/asm-generic/vmlinux.lds.h b/include/asm-generic/vmlinux.lds.h
-index b32e453..c4e8fac 100644
---- a/include/asm-generic/vmlinux.lds.h
-+++ b/include/asm-generic/vmlinux.lds.h
-@@ -385,6 +385,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	. = ALIGN(PAGE_SIZE);						\
- 	__nosave_end = .;
- 
-+#define CACHE_HOT_DATA(align)						\
-+	. = ALIGN(align);						\
-+	*(SORT_BY_ALIGNMENT(.data..hot.*))				\
-+	. = ALIGN(align);
-+
- #define PAGE_ALIGNED_DATA(page_align)					\
- 	. = ALIGN(page_align);						\
- 	*(.data..page_aligned)						\
-@@ -1065,6 +1070,11 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 	. = ALIGN(PAGE_SIZE);						\
- 	*(.data..percpu..page_aligned)					\
- 	. = ALIGN(cacheline);						\
-+	__per_cpu_hot_start = .;					\
-+	*(SORT_BY_ALIGNMENT(.data..percpu..hot.*))			\
-+	__per_cpu_hot_pad = .;						\
-+	. = ALIGN(cacheline);						\
-+	__per_cpu_hot_end = .;						\
- 	*(.data..percpu..read_mostly)					\
- 	. = ALIGN(cacheline);						\
- 	*(.data..percpu)						\
-@@ -1112,6 +1122,7 @@ defined(CONFIG_AUTOFDO_CLANG) || defined(CONFIG_PROPELLER_CLANG)
- 		INIT_TASK_DATA(inittask)				\
- 		NOSAVE_DATA						\
- 		PAGE_ALIGNED_DATA(pagealigned)				\
-+		CACHE_HOT_DATA(cacheline)				\
- 		CACHELINE_ALIGNED_DATA(cacheline)			\
- 		READ_MOSTLY_DATA(cacheline)				\
- 		DATA_DATA						\
-diff --git a/include/linux/percpu-defs.h b/include/linux/percpu-defs.h
-index 40d34e0..0fcacb9 100644
---- a/include/linux/percpu-defs.h
-+++ b/include/linux/percpu-defs.h
-@@ -113,6 +113,19 @@
- 	DEFINE_PER_CPU_SECTION(type, name, "")
- 
- /*
-+ * Declaration/definition used for per-CPU variables that are frequently
-+ * accessed and should be in a single cacheline.
-+ *
-+ * For use only by architecture and core code.  Only use scalar or pointer
-+ * types to maximize density.
-+ */
-+#define DECLARE_PER_CPU_CACHE_HOT(type, name)				\
-+	DECLARE_PER_CPU_SECTION(type, name, "..hot.." #name)
-+
-+#define DEFINE_PER_CPU_CACHE_HOT(type, name)				\
-+	DEFINE_PER_CPU_SECTION(type, name, "..hot.." #name)
-+
-+/*
-  * Declaration/definition used for per-CPU variables that must be cacheline
-  * aligned under SMP conditions so that, whilst a particular instance of the
-  * data corresponds to a particular CPU, inefficiencies due to direct access by
+Maybe we would be better off with a config option that removes the clk
+ignore unused ability entirely. Then you can have a kernel config check
+somewhere in the build process that verifies that a user can't even set
+the kernel commandline to change the behavior.
 
