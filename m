@@ -1,153 +1,90 @@
-Return-Path: <linux-kernel+bounces-545282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 023BFA4EB2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:21:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2CE4A4EB31
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:21:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86846189AA7A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E4F17B329
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:16:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 221B4281371;
-	Tue,  4 Mar 2025 17:59:28 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AE45202F89;
-	Tue,  4 Mar 2025 17:59:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68F6292FAB;
+	Tue,  4 Mar 2025 18:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i2lGtyf1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1024A20A5D9;
+	Tue,  4 Mar 2025 18:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111167; cv=none; b=JAFpjHhmF3MfQcVZvuk7leEmOG9q3XFOKyca2oLyRhUoWzbpvC4FcKvUmS78WObTOK4nbMLVH+CDWhb+giL+2CfMRurfqUw6r9JZVj3sQUYlF+BMXfKPUqS57EiSqKnrGY7RTmfVGYST9UarVrz/pWtpDLKTDaf6sR5nDfvsITU=
+	t=1741111239; cv=none; b=gLR6UaPIfbuBdsXeNGdn9lQ+8sK0+ufF83i1XywQGNo6OWG3F72s3rws2XnoCkJlbnwH3wiVATxjjtTGKjHEhqL+hgtIxdc+6aukEggUmawXZnyQrQCRwLQemthcU387IaCnaYBCNDjzirlTtdJWYdXtjhQGuPnAIKPzIpEghRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111167; c=relaxed/simple;
-	bh=oVD1GE3NzUYwD56omqTkMkV8FxpM5ALoGZ32XZaFoUM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UwMeBd5etYX8Xn+sotfvbI5KX3SNREnEfleBDGlpp+7xUHXR5x8wOCdnx3LSvsLL1lVNtZsDX13C7QneOQ8mo68hG4Y9AJpYP14s6JQfC++65Fgov0SsgfbFxDzK24f4jvfGjMjJud+3WjWT0+popcW5NJaHhTyh0vCDD1pdRj8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 23A042F;
-	Tue,  4 Mar 2025 09:59:38 -0800 (PST)
-Received: from [10.57.39.179] (unknown [10.57.39.179])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id E329B3F5A1;
-	Tue,  4 Mar 2025 09:59:20 -0800 (PST)
-Message-ID: <d3181dde-1070-4101-a5f7-7e42d0ec2f99@arm.com>
-Date: Tue, 4 Mar 2025 17:59:19 +0000
+	s=arc-20240116; t=1741111239; c=relaxed/simple;
+	bh=b845LDQJJPYS8ZbSf7oU05RhkWH9rVjK5sTMZbicoSs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A9OKLcK/plXPN7GiXsbq/0Lq3RFU0i825ZyDB/1BqGtICn8Fu+K8XPbeC3f1FA0N/M3ETu/6Iv6lp1uJ7lxQ5oDW1ahbskWX+Hkp6KegGstHzEItY/WvZnlTMaqLvMwrlXMEq8WX4ShOAmgIzF9owlOkiqvFuzNhgy1gNdrPUPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i2lGtyf1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EC43C4CEE5;
+	Tue,  4 Mar 2025 18:00:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741111238;
+	bh=b845LDQJJPYS8ZbSf7oU05RhkWH9rVjK5sTMZbicoSs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i2lGtyf1LyBSLq6GoLUfYKXWzi7CHV6OeHJPcQS82tS+dMs4muuaShnH87R6cypP8
+	 BGFY0kwwE2VH7UMCOQx1YI+WFJqDRSTJ0RDF/xNH99e8zLn7DSz5SCwSzLXlWUkteB
+	 +nuHQhtljYmuwGVzV9nD9N9Q+qAwTTP+RwFNametph/6tvQ7Vud4YbiytnTwUAyDLP
+	 g9mEXVfx4iSg6TYCeMa26TlsMlVKEKLrNzCZmiIQiccUyaMaesNAli/zrkyIV5tVWN
+	 ZVI7+oaEki0fNkJ2+/tXMpySbfGd/IRfwruB6PNJmmoJ3+xgtcMzVOjssotp4QbRXU
+	 4O485yKHJF83A==
+Date: Tue, 4 Mar 2025 08:00:37 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Juntong Deng <juntong.deng@outlook.com>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+	andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com,
+	song@kernel.org, yonghong.song@linux.dev, kpsingh@kernel.org,
+	sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org,
+	memxor@gmail.com, void@manifault.com, arighi@nvidia.com,
+	changwoo@igalia.com, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.15 v3 2/5] sched_ext: Declare
+ context-sensitive kfunc groups that can be used by different SCX operations
+Message-ID: <Z8c_xWrk-kanKgOQ@slm.duckdns.org>
+References: <AM6PR03MB50806070E3D56208DDB8131699C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <AM6PR03MB508018ABBD34FBAA089DD9F799C22@AM6PR03MB5080.eurprd03.prod.outlook.com>
+ <Z8IxQy9bvanaiFq6@slm.duckdns.org>
+ <AM6PR03MB50802468907B621471E451DF99C92@AM6PR03MB5080.eurprd03.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 15/45] KVM: arm64: Support timers in realm RECs
-Content-Language: en-GB
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Gavin Shan <gshan@redhat.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
- Alper Gun <alpergun@google.com>, "Aneesh Kumar K . V"
- <aneesh.kumar@kernel.org>
-References: <20250213161426.102987-1-steven.price@arm.com>
- <20250213161426.102987-16-steven.price@arm.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250213161426.102987-16-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <AM6PR03MB50802468907B621471E451DF99C92@AM6PR03MB5080.eurprd03.prod.outlook.com>
 
-On 13/02/2025 16:13, Steven Price wrote:
-> The RMM keeps track of the timer while the realm REC is running, but on
-> exit to the normal world KVM is responsible for handling the timers.
+On Mon, Mar 03, 2025 at 09:12:52PM +0000, Juntong Deng wrote:
+> > Can you merge this into the next patch? I don't think separating this out
+> > helps with reviewing.
+> > 
 > 
-> A later patch adds the support for propagating the timer values from the
-> exit data structure and calling kvm_realm_timers_update().
+> Yes, I can merge them in the next version.
 > 
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->   arch/arm64/kvm/arch_timer.c  | 45 ++++++++++++++++++++++++++++++++----
->   include/kvm/arm_arch_timer.h |  2 ++
->   2 files changed, 43 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/arch_timer.c b/arch/arm64/kvm/arch_timer.c
-> index d3d243366536..06b68bcd244f 100644
-> --- a/arch/arm64/kvm/arch_timer.c
-> +++ b/arch/arm64/kvm/arch_timer.c
-> @@ -148,6 +148,13 @@ static void timer_set_cval(struct arch_timer_context *ctxt, u64 cval)
->   
->   static void timer_set_offset(struct arch_timer_context *ctxt, u64 offset)
->   {
-> +	struct kvm_vcpu *vcpu = ctxt->vcpu;
-> +
-> +	if (kvm_is_realm(vcpu->kvm)) {
-> +		WARN_ON(offset);
-> +		return;
-> +	}
-> +
->   	if (!ctxt->offset.vm_offset) {
->   		WARN(offset, "timer %ld\n", arch_timer_ctx_index(ctxt));
->   		return;
-> @@ -464,6 +471,21 @@ static void kvm_timer_update_irq(struct kvm_vcpu *vcpu, bool new_level,
->   	}
->   }
->   
-> +void kvm_realm_timers_update(struct kvm_vcpu *vcpu)
-> +{
-> +	struct arch_timer_cpu *arch_timer = &vcpu->arch.timer_cpu;
-> +	int i;
-> +
-> +	for (i = 0; i < NR_KVM_EL0_TIMERS; i++) {
-> +		struct arch_timer_context *timer = &arch_timer->timers[i];
-> +		bool status = timer_get_ctl(timer) & ARCH_TIMER_CTRL_IT_STAT;
-> +		bool level = kvm_timer_irq_can_fire(timer) && status;
-> +
-> +		if (level != timer->irq.level)
-> +			kvm_timer_update_irq(vcpu, level, timer);
-> +	}
-> +}
-> +
->   /* Only called for a fully emulated timer */
->   static void timer_emulate(struct arch_timer_context *ctx)
->   {
-> @@ -889,6 +911,8 @@ void kvm_timer_vcpu_load(struct kvm_vcpu *vcpu)
->   	if (unlikely(!timer->enabled))
->   		return;
->   
-> +	kvm_timer_unblocking(vcpu);
-> +
->   	get_timer_map(vcpu, &map);
->   
->   	if (static_branch_likely(&has_gic_active_state)) {
-> @@ -902,8 +926,6 @@ void kvm_timer_vcpu_load(struct kvm_vcpu *vcpu)
->   		kvm_timer_vcpu_load_nogic(vcpu);
->   	}
->   
-> -	kvm_timer_unblocking(vcpu);
-> -
->   	timer_restore_state(map.direct_vtimer);
->   	if (map.direct_ptimer)
->   		timer_restore_state(map.direct_ptimer);
-> @@ -1094,7 +1116,9 @@ static void timer_context_init(struct kvm_vcpu *vcpu, int timerid)
->   
->   	ctxt->vcpu = vcpu;
->   
-> -	if (timerid == TIMER_VTIMER)
-> +	if (kvm_is_realm(vcpu->kvm))
-> +		ctxt->offset.vm_offset = NULL;
-> +	else if (timerid == TIMER_VTIMER)
->   		ctxt->offset.vm_offset = &kvm->arch.timer_data.voffset;
+> I am not sure, but it seems to me that the two patches are doing
+> different things?
 
-I think we need to disable the KVM_CAP_COUNTER_OFFSET for Realms and
-also deny KVM_ARM_SET_COUNTER_OFFSET vm_ioctl.
+I don't know. It can be argued either way but it's more that the table added
+by the first patch is not used in the first patch and the second patch is
+difficult to review without referring to the table added in the first patch.
+It can be either way but I don't see benefits of them being separate
+patches.
 
-Suzuki
+Thanks.
 
-
+-- 
+tejun
 
