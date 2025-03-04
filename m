@@ -1,111 +1,259 @@
-Return-Path: <linux-kernel+bounces-543638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543599-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2242A4D7D0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:20:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA0AA4D757
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:05:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C109163343
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7651C189BCF7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:03:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8666E1F4CA6;
-	Tue,  4 Mar 2025 09:20:06 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F0FE1CAA7B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A188200B99;
+	Tue,  4 Mar 2025 08:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jl3miD1h";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wZd472jg"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C8D1FF7B6;
+	Tue,  4 Mar 2025 08:57:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741080006; cv=none; b=O+KcXttEr++S0dedAnrFfXHCMt0cIjbt6gZkjZfXD1h7jUdhn3NYbDeszpr7j9PcncLiJkSj55Ay4+ENeICb9lXW59eaBjsUQ4eH4InHN9DZfvPMEWL6eAFyEhRZkNda2cOM4005lh2PL5bd+Hl1imUWKpA4KVF4oiWaL+o3D/E=
+	t=1741078629; cv=none; b=SIGlKZpmMzmANtedc+nJb0vRzrEmyfodUcW5tZZ+OBgBGQ/Nu9J5VSxzFgTMkErmO8hFprQg2s6spJCeibQv9wKo9QfJ8ALQwewS2vfwgSdhO+90ydJ/de8hbjYbWlkF+iwAIKZx3Q66RHDmKc2nIYDZw27nBYi/BseHWZcu39M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741080006; c=relaxed/simple;
-	bh=nQIIE3rsVADulU/3dXy0ss0MFmzZdDBZpy8CCyBBFeg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=sZ9fsFJmg40iAW25kPQu6KzKCm8KNVD2V+Cv/G4Be9SwtQxjqoHQA2DB3hLqe4iEUrXaOJNl8v5Kj66Z8sVnrbXsCosrhokcOzcgQJIVwALP7PwAPVFr11gShjsGXgwogsJm595Lz67m/7EKIcUgORvqwj5LQ1E3dgbKSD+GrPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Z6V031gHbz9stG;
-	Tue,  4 Mar 2025 09:56:03 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 3I1rDI2lQlkt; Tue,  4 Mar 2025 09:56:03 +0100 (CET)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z6V030r5lz9st4;
-	Tue,  4 Mar 2025 09:56:03 +0100 (CET)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 0A34E8B770;
-	Tue,  4 Mar 2025 09:56:03 +0100 (CET)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id 5F1iC3gbFidx; Tue,  4 Mar 2025 09:56:02 +0100 (CET)
-Received: from [192.168.235.99] (unknown [192.168.235.99])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id A1D238B763;
-	Tue,  4 Mar 2025 09:56:02 +0100 (CET)
-Message-ID: <8ba544e7-cf2a-4807-a056-683115805721@csgroup.eu>
-Date: Tue, 4 Mar 2025 09:56:01 +0100
+	s=arc-20240116; t=1741078629; c=relaxed/simple;
+	bh=tTLNkw9UR+Ew91hPZTxYJLMyrNyvgny45PnO1KMRiwM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=POhQhGnlUWZIfzE2k2XljuhXanHz4Xv3FyLedkoljDyvN4CjQMJlDdgXb9LVhjrUUUmkhCwe/XYuq1mFRICAp5kNX3ntOoBwiZM/KLGbLI/Quuepg6q3bs84aNsv+qfncdOIwHdxK+OYVz3cRDLV1orwEPIychC7mvjPaSGQsxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jl3miD1h; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wZd472jg; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 04 Mar 2025 08:57:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741078626;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fm7MIFN8rUstK8p3ENSxLJzP9FkW7uMauaXM6M9XaMg=;
+	b=jl3miD1hjDqERHBmvrD/o1UYGcRLOF6SACmPqtnDiNQYXf5m+md7vXsUFfwFRB+cJTVYaZ
+	lh84O7D+7y6SWNyoa7uBb26zxrBsmuckct5MYe3Vxy53mxTXydWYJPwS7kTfPQyyUV8C+W
+	MBNOHMMhygHUjngKmUhqKUEVXMi7dmj6ODMptSEK4oi4atnSFhdzk08R2MwWmLY5kUtYZq
+	a3RjKW+WopJO3CDrtEcFYVX/z2KFbbl/NdZtDvuUfLVZySheHRHBpJuOel8mjVP4OVBphZ
+	QzWHjRapmuYNMrEGqpFy8BeGSzao9H6zOEZRtEDlA2D3xjp8W4W7uRt8wHCEpw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741078626;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fm7MIFN8rUstK8p3ENSxLJzP9FkW7uMauaXM6M9XaMg=;
+	b=wZd472jgKDZl2E+oWWT03kceb0OcwTkZF+1bAiCECBHaKs2Stb+JAgKnys6DTcP3zXkWwK
+	c1H4CSpBGnIhJiDg==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/core: Simplify perf_pmu_register()
+Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241104135518.198937277@infradead.org>
+References: <20241104135518.198937277@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Build Warnings at arch/powerpc/
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
- Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
- linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
- Stephen Rothwell <sfr@canb.auug.org.au>,
- Michael Ellerman <mpe@ellerman.id.au>
-References: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
- <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <174107862567.14745.10433977133332362551.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the perf/core branch of tip:
 
+Commit-ID:     6c8b0b835f003647e593c08331a4dd2150d5eb0e
+Gitweb:        https://git.kernel.org/tip/6c8b0b835f003647e593c08331a4dd2150d5eb0e
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Mon, 04 Nov 2024 14:39:15 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Tue, 04 Mar 2025 09:42:29 +01:00
 
-Le 04/03/2025 à 07:13, Madhavan Srinivasan a écrit :
-> 
-> 
-> On 3/4/25 10:42 AM, Venkat Rao Bagalkote wrote:
->> Greetings!!
->>
->>
->> Observing build warnings with linux-next and powerpc repo's. Issue is currently not seen on mainline yet.
->>
->> PPC Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fpowerpc%2Flinux.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C8e0f8501f09c48dbb43608dd5ae3c9bf%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766656585342184%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=e5BrJzcrtlITkLF31KltGExQ5Qe8fDVTMV6VfR4w9o8%3D&reserved=0 merge branch
->>
->> PPC Kernel Version: 6.14.0-rc4-g1304f486dbf1
->> next Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fnext%2Flinux-next.git&data=05%7C02%7Cchristophe.leroy2%40cs-soprasteria.com%7C8e0f8501f09c48dbb43608dd5ae3c9bf%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766656585355246%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=meQyZfB75HhJFCL6AX93slsyVwnogGPYFabDXl%2FLzDA%3D&reserved=0 master branch
->>
->> next Kernel Version: 6.14.0-rc5-next-20250303
->>
->>
->> On linux-next kernel issue got introduced b/w next-20250227 and next-20250303
->>
->>
->> Build Warnings:
->>
->> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
->> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
->> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
->>
->>
-> 
-> Can you please specific the compiler and compiler version you found this issue with
-> 
+perf/core: Simplify perf_pmu_register()
 
-Can you also tell which defconfig you are using or provide your .config
+Using the previously introduced perf_pmu_free() and a new IDR helper,
+simplify the perf_pmu_register error paths.
 
-It might also be helpfull if you can provide a disassembly of the three 
-file.o around the warned address.
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Ravi Bangoria <ravi.bangoria@amd.com>
+Link: https://lore.kernel.org/r/20241104135518.198937277@infradead.org
+---
+ include/linux/idr.h  | 17 ++++++++++-
+ kernel/events/core.c | 71 +++++++++++++++++--------------------------
+ 2 files changed, 46 insertions(+), 42 deletions(-)
 
-Christophe
+diff --git a/include/linux/idr.h b/include/linux/idr.h
+index da5f5fa..cd729be 100644
+--- a/include/linux/idr.h
++++ b/include/linux/idr.h
+@@ -15,6 +15,7 @@
+ #include <linux/radix-tree.h>
+ #include <linux/gfp.h>
+ #include <linux/percpu.h>
++#include <linux/cleanup.h>
+ 
+ struct idr {
+ 	struct radix_tree_root	idr_rt;
+@@ -124,6 +125,22 @@ void *idr_get_next_ul(struct idr *, unsigned long *nextid);
+ void *idr_replace(struct idr *, void *, unsigned long id);
+ void idr_destroy(struct idr *);
+ 
++struct __class_idr {
++	struct idr *idr;
++	int id;
++};
++
++#define idr_null ((struct __class_idr){ NULL, -1 })
++#define take_idr_id(id) __get_and_null(id, idr_null)
++
++DEFINE_CLASS(idr_alloc, struct __class_idr,
++	     if (_T.id >= 0) idr_remove(_T.idr, _T.id),
++	     ((struct __class_idr){
++	     	.idr = idr,
++		.id = idr_alloc(idr, ptr, start, end, gfp),
++	     }),
++	     struct idr *idr, void *ptr, int start, int end, gfp_t gfp);
++
+ /**
+  * idr_init_base() - Initialise an IDR.
+  * @idr: IDR handle.
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index ee5cdd6..215dad5 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -11914,52 +11914,49 @@ static void perf_pmu_free(struct pmu *pmu)
+ 	free_percpu(pmu->cpu_pmu_context);
+ }
+ 
+-int perf_pmu_register(struct pmu *pmu, const char *name, int type)
++DEFINE_FREE(pmu_unregister, struct pmu *, if (_T) perf_pmu_free(_T))
++
++int perf_pmu_register(struct pmu *_pmu, const char *name, int type)
+ {
+-	int cpu, ret, max = PERF_TYPE_MAX;
++	int cpu, max = PERF_TYPE_MAX;
+ 
+-	pmu->type = -1;
++	struct pmu *pmu __free(pmu_unregister) = _pmu;
++	guard(mutex)(&pmus_lock);
+ 
+-	mutex_lock(&pmus_lock);
+-	ret = -ENOMEM;
+ 	pmu->pmu_disable_count = alloc_percpu(int);
+ 	if (!pmu->pmu_disable_count)
+-		goto unlock;
++		return -ENOMEM;
+ 
+-	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n")) {
+-		ret = -EINVAL;
+-		goto free;
+-	}
++	if (WARN_ONCE(!name, "Can not register anonymous pmu.\n"))
++		return -EINVAL;
+ 
+-	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE, "Can not register a pmu with an invalid scope.\n")) {
+-		ret = -EINVAL;
+-		goto free;
+-	}
++	if (WARN_ONCE(pmu->scope >= PERF_PMU_MAX_SCOPE,
++		      "Can not register a pmu with an invalid scope.\n"))
++		return -EINVAL;
+ 
+ 	pmu->name = name;
+ 
+ 	if (type >= 0)
+ 		max = type;
+ 
+-	ret = idr_alloc(&pmu_idr, NULL, max, 0, GFP_KERNEL);
+-	if (ret < 0)
+-		goto free;
++	CLASS(idr_alloc, pmu_type)(&pmu_idr, NULL, max, 0, GFP_KERNEL);
++	if (pmu_type.id < 0)
++		return pmu_type.id;
+ 
+-	WARN_ON(type >= 0 && ret != type);
++	WARN_ON(type >= 0 && pmu_type.id != type);
+ 
+-	pmu->type = ret;
++	pmu->type = pmu_type.id;
+ 	atomic_set(&pmu->exclusive_cnt, 0);
+ 
+ 	if (pmu_bus_running && !pmu->dev) {
+-		ret = pmu_dev_alloc(pmu);
++		int ret = pmu_dev_alloc(pmu);
+ 		if (ret)
+-			goto free;
++			return ret;
+ 	}
+ 
+-	ret = -ENOMEM;
+ 	pmu->cpu_pmu_context = alloc_percpu(struct perf_cpu_pmu_context);
+ 	if (!pmu->cpu_pmu_context)
+-		goto free;
++		return -ENOMEM;
+ 
+ 	for_each_possible_cpu(cpu) {
+ 		struct perf_cpu_pmu_context *cpc;
+@@ -12000,32 +11997,22 @@ int perf_pmu_register(struct pmu *pmu, const char *name, int type)
+ 	/*
+ 	 * Now that the PMU is complete, make it visible to perf_try_init_event().
+ 	 */
+-	if (!idr_cmpxchg(&pmu_idr, pmu->type, NULL, pmu)) {
+-		ret = -EINVAL;
+-		goto free;
+-	}
++	if (!idr_cmpxchg(&pmu_idr, pmu->type, NULL, pmu))
++		return -EINVAL;
+ 	list_add_rcu(&pmu->entry, &pmus);
+ 
+-	ret = 0;
+-unlock:
+-	mutex_unlock(&pmus_lock);
+-
+-	return ret;
+-
+-free:
+-	if (pmu->type >= 0)
+-		idr_remove(&pmu_idr, pmu->type);
+-	perf_pmu_free(pmu);
+-	goto unlock;
++	take_idr_id(pmu_type);
++	_pmu = no_free_ptr(pmu); // let it rip
++	return 0;
+ }
+ EXPORT_SYMBOL_GPL(perf_pmu_register);
+ 
+ void perf_pmu_unregister(struct pmu *pmu)
+ {
+-	mutex_lock(&pmus_lock);
+-	list_del_rcu(&pmu->entry);
+-	idr_remove(&pmu_idr, pmu->type);
+-	mutex_unlock(&pmus_lock);
++	scoped_guard (mutex, &pmus_lock) {
++		list_del_rcu(&pmu->entry);
++		idr_remove(&pmu_idr, pmu->type);
++	}
+ 
+ 	/*
+ 	 * We dereference the pmu list under both SRCU and regular RCU, so
 
