@@ -1,119 +1,120 @@
-Return-Path: <linux-kernel+bounces-545630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2FA1A4EF67
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:33:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91D53A4EF6B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:36:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B595172D62
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:33:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF18A188F723
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:36:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC76B24DFE1;
-	Tue,  4 Mar 2025 21:33:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5837259CB9;
+	Tue,  4 Mar 2025 21:36:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTTr2Atb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="iWVWc1gj"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBEB1E3DF4;
-	Tue,  4 Mar 2025 21:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25BC61E3DF4;
+	Tue,  4 Mar 2025 21:35:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741123994; cv=none; b=jBaPsQA0+QwFg/UL3hJ4rwzyZfcedDfJgKZFXfdxzwlXjUnLX86+G8oWim15oYIv+oInkBmE3B0d648Y7mbGmvlO5naIxt4Gkp/ZE8xfXjqMn7pN+eamnGwYU8AR8IhzeD6n+sNfWjgn57/HmlzY6FQo2QiXxDfKuBTulYbb0RA=
+	t=1741124160; cv=none; b=Ddq+kc7pO3kQ7v4QXKk6f0e3a6Xa4wN0V7EYh9SN5gIaCeW57azDwz1qSiZGvbczq0A3olW/pjWs0OFJBzgTM9+qGTq6vuaqnEuL9sj78zFNDab3tIiYp/wv/+Q0OLExjaqHJc6BYzglYWrWIKPPhZV7kdDU2RGN68LWOu9BbyU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741123994; c=relaxed/simple;
-	bh=7W0cGEGfopwD6mibxiQVtjZTTbr9k+ZHhlaN50TgDzg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aJGM9uHsftZqZsNZY+z9ZaROY97i+Er6FRHz6d/TAbf9/TTezbWJpldDwXeYBgwWtNwdWT5+B76JPdYaEg1c13Ra0J4BH7lvJ+PSepL0izVg2CfnK20Xgs4qSa/8cEOGmHtS7PuQ0akzWYQZwgIBhqqrjXVJ+LKU2fO9APmpnWw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTTr2Atb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0ABFC4CEE5;
-	Tue,  4 Mar 2025 21:33:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741123993;
-	bh=7W0cGEGfopwD6mibxiQVtjZTTbr9k+ZHhlaN50TgDzg=;
-	h=From:To:Cc:Subject:Date:From;
-	b=MTTr2AtbWuvaAbUONgoKcbknK7saKPj3gCNnPwQfYjBPay+oLknLFUHOp+Ywha81h
-	 X4pgN9cJ6Jgw6/m1Pff51bZMeNsli06ySZgDVekHnu8FY2AvXi7BHbgZAp2xKobM2O
-	 ynmYWDLbOhvKZ7CgyR5NHQ6iLoyM1ywFvJAIM7p8BI8jaS5SS9wak28VoLsqN/4ktJ
-	 Cc/LnAtaa6SQEY1hwMeCGGVXv3Z1uUEttTYGKwDskrkAd0pANLn3tZhADJnjfYWt+t
-	 8zZaWTv7K51TAG2SV9fRUqnlFXHSTiZtrWdduYwcokh1hwTSOX3e4uvLy2Cby/Z45s
-	 LXAg5YQkeXosA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Bill Wendling <morbo@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>,
-	David Laight <david.laight.linux@gmail.com>,
-	linux-crypto@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH] x86/crc32: optimize tail handling for crc32c short inputs
-Date: Tue,  4 Mar 2025 13:32:16 -0800
-Message-ID: <20250304213216.108925-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741124160; c=relaxed/simple;
+	bh=6Bc7g4mKArhcl6kXe95ybV+LNzHSc7Zsr7451OcuWLY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=q96wume7lqs/UHgdlXJp/gbRqJSQUH2mbKuBauc7H6SDvCkkPjoctMlehgw9+XF7IomDCiXHImk8gW7vS4eA+xUlVAyhebnHcSCw+klLJybojXJy1YFgWA4lXwlEfPEHsIkNwH7SeWcA1RQXT2w2cJC7pdqY+auDeC0iw2StOJc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=iWVWc1gj; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741124156;
+	bh=6Bc7g4mKArhcl6kXe95ybV+LNzHSc7Zsr7451OcuWLY=;
+	h=From:Subject:Date:To:Cc:From;
+	b=iWVWc1gj0oidP3d8c6SPfKkJ2A5uSWUUU9U095jDfR+GjEzusAcOqGNJhjLGXbeg3
+	 /NKOt7hJ9awU/+/Rt3budT5uf8iNdUF8sob0ppjb/4/WwcR4iYsB0MUlAYGsNLp1W0
+	 P7/vG+suixChc5YWbKaYMI4cp44iFUiZ3q0iiU3e22O7iJNnfr7e9DV6wKSkNUQibq
+	 daXaAZPYLOJGlUIluYVXRq8f5l5N2vV4/OSv65j0a8W8QIqr1rdjgmuVMCKG0tE7Uc
+	 y31yE9tI1KDYOd69NBp/j0CAWVBFEWgzRX9fZgzwepaJA2z/KbLNhWj1Xh5lM3VnFh
+	 iCacrWb4vDlsA==
+Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 46EFE17E088C;
+	Tue,  4 Mar 2025 22:35:52 +0100 (CET)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Subject: [PATCH v2 0/3] Allow retrieving accessory detection reference on
+ MT8188
+Date: Tue, 04 Mar 2025 18:35:35 -0300
+Message-Id: <20250304-mt8188-accdet-v2-0-27f496c4aede@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIACdyx2cC/3XMSw7CIBSF4a00dywGKBjiyH2YDnhc7U3aYoAQT
+ cPexc4d/ic53w4ZE2GG67BDwkqZ4tZDngbws92eyCj0Bsml5lIothYjjGHW+4CFqYDWOaP1qAL
+ 0zyvhg96Hd596z5RLTJ+Dr+K3/pOqYJxdnAtambGD7ubjslgXkz37uMLUWvsCB8HLMa4AAAA=
+X-Change-ID: 20250214-mt8188-accdet-4deabb85534d
+To: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Trevor Wu <trevor.wu@mediatek.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>
+Cc: kernel@collabora.com, linux-sound@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>, 
+ Zoran Zhan <zoran.zhan@mediatek.com>
+X-Mailer: b4 0.14.2
 
-From: Eric Biggers <ebiggers@google.com>
+This series enables the MT8188-MT6359 sound driver to retrieve the
+MT6359 ACCDET sound component from a mediatek,accdet DT property, which
+allows detecting jack insertion/removal.
 
-For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
-do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
-taking advantage of wider CRC instructions.  Note that crc32c-3way.S
-already uses this same optimization too.
+Patch 1 describes the new property in the binding. Patch 2 implements
+the sound component retrieval in the common MTK soundcard driver. Patch
+3 updates the MT8188-MT6359 sound driver to register the audio jack and
+initialize the ACCDET driver for detection, if the property is present.
 
-crc_kunit shows an improvement of about 25% for len=127.
+Tested on the Genio 700 EVK board.
 
-Suggested-by: H. Peter Anvin <hpa@zytor.com>
-Signed-off-by: Eric Biggers <ebiggers@google.com>
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 ---
+Changes in v2:
+- Added CONFIG_SND_SOC_MT6359_ACCDET select in
+  CONFIG_SND_SOC_MT8188_MT6359 to avoid build failure
+- Clarified in mediatek,accdet dt-binding and commit description that
+  the property should only be present if the accdet is actually used
+- Link to v1: https://lore.kernel.org/r/20250214-mt8188-accdet-v1-0-6bbd5483855b@collabora.com
 
-This applies to
-https://web.git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next
+---
+Nícolas F. R. A. Prado (3):
+      ASoC: dt-bindings: mediatek,mt8188-mt6359: Add mediatek,accdet
+      ASoC: mediatek: common: Handle mediatek,accdet property
+      ASoC: mediatek: mt8188-mt6359: Add accdet headset jack detect support
 
- arch/x86/lib/crc32-glue.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
+ .../bindings/sound/mediatek,mt8188-mt6359.yaml     |  8 ++++
+ sound/soc/mediatek/Kconfig                         |  1 +
+ sound/soc/mediatek/common/mtk-soc-card.h           |  1 +
+ sound/soc/mediatek/common/mtk-soundcard-driver.c   | 15 +++++++-
+ sound/soc/mediatek/mt8188/mt8188-mt6359.c          | 43 ++++++++++++++++++++++
+ 5 files changed, 67 insertions(+), 1 deletion(-)
+---
+base-commit: 20d5c66e1810e6e8805ec0d01373afb2dba9f51a
+change-id: 20250214-mt8188-accdet-4deabb85534d
 
-diff --git a/arch/x86/lib/crc32-glue.c b/arch/x86/lib/crc32-glue.c
-index 4b4721176799a..e3f93b17ac3f1 100644
---- a/arch/x86/lib/crc32-glue.c
-+++ b/arch/x86/lib/crc32-glue.c
-@@ -55,11 +55,19 @@ u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
- 
- 	for (num_longs = len / sizeof(unsigned long);
- 	     num_longs != 0; num_longs--, p += sizeof(unsigned long))
- 		asm(CRC32_INST : "+r" (crc) : ASM_INPUT_RM (*(unsigned long *)p));
- 
--	for (len %= sizeof(unsigned long); len; len--, p++)
-+	if (sizeof(unsigned long) > 4 && (len & 4)) {
-+		asm("crc32l %1, %0" : "+r" (crc) : ASM_INPUT_RM (*(u32 *)p));
-+		p += 4;
-+	}
-+	if (len & 2) {
-+		asm("crc32w %1, %0" : "+r" (crc) : ASM_INPUT_RM (*(u16 *)p));
-+		p += 2;
-+	}
-+	if (len & 1)
- 		asm("crc32b %1, %0" : "+r" (crc) : ASM_INPUT_RM (*p));
- 
- 	return crc;
- }
- EXPORT_SYMBOL(crc32c_arch);
-
-base-commit: 13f3d13d88b5dcba104a204fcbee61c75f8407d0
+Best regards,
 -- 
-2.48.1
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
 
