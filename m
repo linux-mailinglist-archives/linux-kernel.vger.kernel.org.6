@@ -1,141 +1,116 @@
-Return-Path: <linux-kernel+bounces-543290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD315A4D3DE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:28:55 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5A62A4D3EA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:30:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A8416E1D4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16F573AE7AF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6176C1F5435;
-	Tue,  4 Mar 2025 06:28:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FCF1F55FA;
+	Tue,  4 Mar 2025 06:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="O84e0bh8"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JRqWU0f4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C45FAD24;
-	Tue,  4 Mar 2025 06:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9342DAD24;
+	Tue,  4 Mar 2025 06:29:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741069728; cv=none; b=LUiWOq/GRdh1/2yr3I6F5mNoykbH2lGuI+q6Mb+z3wbaLyoKyf8CFFKTSuXVxD6qXHfhXzwlmDRVGUjycmOHy22xpZ5Vj/cr85If57Jpzq0vNrfMrO5RMYEe+Vw5DNqKpYaKMYyBDffr8Yhatz8yR0aaFIAZ1+jzlDFSuq7/OTw=
+	t=1741069790; cv=none; b=lgEhT4nXQf9TfdfHRS2tuQ8v24+19A6LYI19Qnl6ey+nuTraakQQlHi4NhctfVu7ES+YcLd2OYFWBdSwokelT63gJNklhRGjKqpZHhiV7FBKclNq+EvvI2C6uvf7a6kYc2mpYysUYoVJn8ek/RBk4TRGWVl0OJqOaL05cPUUm38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741069728; c=relaxed/simple;
-	bh=iXpnhM3P98eFDZLpfSUky/aLJP6ToKZcH+ePpmoozuI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J3QJX+z47PXRy6mfDgrjAuyGCeh0KzQk/rImfs7tQQMAV0P1yJGZS0ebNaWgY2adh/b/rt+cNok2HpwIGmowr58GVsWSs2K4pUHQ8XA2Sc5rH8QGb/DCXehFaQ/wNz9ltrW1ZIxow05Gbi2VHKV6VuzU5Dyb58dsSVkCCgJODfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=O84e0bh8; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5243jobs021779;
-	Tue, 4 Mar 2025 06:28:41 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=cNUqlS
-	orz0hTRYHCVAT6HlL4WN4AHcrWFBeNm6gRh/0=; b=O84e0bh8lAeRb2J7gJNmeH
-	QFkDuo4sdUoGA9+3uo+BwLY/TTnNoXAlr072JzF4Fu/k1Ug/JcW2MTynGOBvY3Dm
-	AW9lzlF43I8i/inIxVB3pWKEMNOzfyYLaDLR93T75mfL21Q68H781snqX37G/NxD
-	UK7TAIu0a79gF0ZrmKB5myayiQ99eU19u6cRgspKj/2V06ueEwCUMk3UH93z0EIk
-	CK4MPXfrub5RkMbx7Ymj0smLnYhFaIAUjGhzYHsfTUJUH0g65TF6QYkMZJrOxdHI
-	Htf8VSj/gXCzVPN5zoaQAQjcv/2f1HSwfHsKtVws5ZxYgc9GCl/XsF7DnBE1MCtA
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455sw7gnq1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 06:28:40 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 52432CmR032219;
-	Tue, 4 Mar 2025 06:28:39 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 454cjsv777-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 06:28:39 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5246SdWK17433174
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 06:28:39 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F17DB58059;
-	Tue,  4 Mar 2025 06:28:38 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9607458055;
-	Tue,  4 Mar 2025 06:28:33 +0000 (GMT)
-Received: from [9.43.105.169] (unknown [9.43.105.169])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Tue,  4 Mar 2025 06:28:33 +0000 (GMT)
-Message-ID: <9921ee1a-fbe1-4ffe-9490-5cd62714e3ec@linux.ibm.com>
-Date: Tue, 4 Mar 2025 11:58:30 +0530
+	s=arc-20240116; t=1741069790; c=relaxed/simple;
+	bh=ggeUjaz+1iBUN10GhZtvDVxPTZOliFQ1v5Q5mAMLo/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pIDLfxyntAQD1q7inpMhuw/kBUQvZVM8f/SwfJ53xT8wapO1kylBjfJIboYGOUS+r/R72L0AiA/Q6cnivo8+Q8rc8Io016xbn5W8HyEkUpm+VuD80bzbGwpU60yF8tIkrIcl+rke47wx05rSYTto6oy8Y0/73/hnSeCBL/0vZrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JRqWU0f4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51F0CC4CEE5;
+	Tue,  4 Mar 2025 06:29:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741069790;
+	bh=ggeUjaz+1iBUN10GhZtvDVxPTZOliFQ1v5Q5mAMLo/o=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JRqWU0f40+vX/3qLiRp+fX4HkYMIC3axTzw8LfE7ecIyHw7RNbuThDfL9MVIfqC5+
+	 zDCLrv08jtMuRpeQr/IbcMuTIdPlLLyGZd8cxRe8ttYLXPNbIB3/iHSdnBlgokitrk
+	 0hRI1Wq5hDJzvN2CrFEE38qRZSG0jQaQCosM2orxnRUvmwolzcuw8A6A2lNmSGRR6B
+	 DWMrEjUuvHcMkRug/mdZTl2Ycez3mBW0CGo+Wg8TvtSlnjzOpkMGO+4b6ezuLJ3rMU
+	 pokHCPC228ckbP9hZpgVWuxwNr02jE5NW77UOjmU31oHmof8iK1Xl178qZA8+eRx2X
+	 +R+TRQPPThqpQ==
+Date: Tue, 4 Mar 2025 07:29:46 +0100
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>, Kamal Wadhwa <quic_kamalw@quicinc.com>, 
+	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>, 
+	Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] leds: rgb: leds-qcom-lpg: PWM fixes
+Message-ID: <lvi75asit3ati7wwnyae6rowycr3veodswu7blbnzbrq646fgi@iksn4qas3dwt>
+References: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-0-62703c0ab76a@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/1] cxl: Remove driver
-To: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        fbarrat@linux.ibm.com, ukrishn@linux.ibm.com, clombard@linux.ibm.com,
-        vaibhav@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        Andrew Donnellan <ajd@linux.ibm.com>
-References: <20250219070007.177725-1-ajd@linux.ibm.com>
- <20250219070007.177725-2-ajd@linux.ibm.com>
- <9190bfed-8ecd-4941-9297-a8b29c9c47f4@linux.ibm.com>
- <yq1frjttt41.fsf@ca-mkp.ca.oracle.com>
-Content-Language: en-US
-From: Madhavan Srinivasan <maddy@linux.ibm.com>
-In-Reply-To: <yq1frjttt41.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: TmI2lBxqPyPlv9udpqYAaqVg5ICVAWP6
-X-Proofpoint-GUID: TmI2lBxqPyPlv9udpqYAaqVg5ICVAWP6
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_03,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- phishscore=0 mlxlogscore=482 mlxscore=0 adultscore=0 bulkscore=0
- malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 spamscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040053
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="wvccdsaewx7hrkb2"
+Content-Disposition: inline
+In-Reply-To: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-0-62703c0ab76a@linaro.org>
 
 
+--wvccdsaewx7hrkb2
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v3 0/3] leds: rgb: leds-qcom-lpg: PWM fixes
+MIME-Version: 1.0
 
-On 3/4/25 8:31 AM, Martin K. Petersen wrote:
-> 
-> Hi Madhavan!
-> 
->> This patch has depenednecy with the first patch 
->>
->> https://lists.ozlabs.org/pipermail/linuxppc-dev/2025-February/280990.html
->>
->> Which is already part of your staging tree. Can you please
->> take this patch along with the previous patch. 
-> 
-> If I merge the main cxl patch we'll have another conflict due to the
-> docs patch below:
-> 
->>> [0] https://patchwork.ozlabs.org/project/linuxppc-dev/patch/20250219064807.175107-1-ajd@linux.ibm.com/
-> 
-> I don't mind taking both patches but it seems more appropriate for a
-> major feature removal like this to go through the relevant architecture
-> tree.
-> 
-> Maybe the path of least resistance is for you to put the cxl removal in
-> a separate branch and defer sending the pull request until after Linus
-> has merged the initial SCSI bits for 6.15?
+Hello,
 
-Yes, I agree and I was thinking of doing it, but wanted to check. 
-I will send a separate PR after SCSI merge PR. 
+On Mon, Mar 03, 2025 at 01:52:49PM +0200, Abel Vesa wrote:
+> The PWM allow configuring the PWM resolution from 8 bits PWM
+> values up to 15 bits values, for the Hi-Res PWMs, and then either
+> 6-bit or 9-bit for the normal PWMs. The current implementation loops
+> through all possible resolutions (PWM sizes), for the PWM subtype, on top
+> of the already existing process of determining the prediv, exponent and
+> refclk.
+>=20
+> The first and second issues are related to capping the computed PWM
+> value.
 
-Thanks for response.
+I just took a very quick look. I'd say squash the first and second patch
+into a single one. Splitting a change that fixes the same issue in the
+two branches of an if condition has no benefit.
 
-Maddy   
+Other than that this patch set would also benefit from what I wrote in
+the review of the other patch you send: Please mention a request where
+the result becomes wrong. This considerably simplifies understanding
+your changes.
 
-> 
+Thanks
+Uwe
 
+--wvccdsaewx7hrkb2
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEyBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfGndgACgkQj4D7WH0S
+/k4E8Af0C/TTFiq7Pc0P9DdnyFVSFKtNouYJp/xbeFThs1fZ6N38gID8m7D8zOrq
+WYCHqvZWKXsw+XtrOfdq1QopMatI85dcIj6XvX8m7xk8IWGuDWvCUNcPsPVu224V
+dQd7N7KWFmoOTWoxHVMVq9TJlwF/C59vwUxZ+HFqk7mlkiBuXfhbFHftoYSlNMu5
+OHDsabnXIeeUKZznXtWQULT8T3XSZgqaTLZf+WIbe+UiQQ7+qakesiX5YG4NE9Ty
+FKf67YaOBHccLmnfNZYsRQ+SZx641sEI1HdAmxXWaTTs7hzohodTNa4qboRndbcM
+UduqTj8i59OeCAInoCvyJ+ZG++r7
+=vAjc
+-----END PGP SIGNATURE-----
+
+--wvccdsaewx7hrkb2--
 
