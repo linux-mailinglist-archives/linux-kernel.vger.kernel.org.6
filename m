@@ -1,249 +1,297 @@
-Return-Path: <linux-kernel+bounces-544243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAC2AA4DF3C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:28:18 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE5FFA4DF3E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:28:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 380093A6205
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:27:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D89B23A934A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63A2D204C22;
-	Tue,  4 Mar 2025 13:26:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A8B8204691;
+	Tue,  4 Mar 2025 13:27:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="WUp5C892"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bHyI1SuD"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAB042046A7
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 250A92045B3;
+	Tue,  4 Mar 2025 13:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741094770; cv=none; b=p54hK29cu3XY1uf3f1NQ+kuIuw2/B0tu0ajGFZWWvgJYEV8VRv0KvQn34PkPZWibV/vCWca1tlcCobe59Pp5x71cBgzzQUqsash5sXF88LDPaRNC4QiwNLvrMB6qNYvDX647m2ILpQhVFKV4RLfonuRBBZS8kxwVmXvRmgb3ROs=
+	t=1741094820; cv=none; b=lsrpLz6znll47WEpZ7N9EPFbqh+fZDIQvyHd91eAByGKUGuX/xynJyBtUyJfL0RaU7A4vGwnppwlQTjYCE24zPPLdUge5SoxmzEXpm3O8CTMfwYqmjy6TWpUUtyebKViRqY5pCX3WjbO65FkrATzQh7S0JeB0GcF89b8gR+uB8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741094770; c=relaxed/simple;
-	bh=HBaI4AQKfIhj3hYsM8gpqFECgxkX1bbwaujHiYq/TAc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p1co7N6vjL/1cAFvHPqUh5U3f2vw35Zamg98Y2gxHaLxNVz/WRTeMtxD6HtWLwALEG5zNfQiEWhYAo+FXXT+819DTjiA2oaAkDXr+P8Z481hb7KpZKLhDz3Jb8bhQDg6tPjqfS98YXm8ZeMLZ1Hvhpu92WBKt5r4F241XBRqLPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=WUp5C892; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-30762598511so60190351fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:26:08 -0800 (PST)
+	s=arc-20240116; t=1741094820; c=relaxed/simple;
+	bh=Dbh0yWnJ9wNGOeGtfH9NE1eZNuNZSiESIwromLOHGNY=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=Sfz/4aEiJxQ27EQsVRScc2wDeN5gGs6bSAUAsefNa7bYdsinAIIH5uQiyQm+EpZImNjQ8ZOfpimHuTMd1cATDu/BDs/N28FGEShX3XA3FPd3ejZch9xK4Go2sJ7TZtOHHtAkV6MkhSUuEGbqKuRHeUOdT1FYQrP6oNn3jVvkQo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bHyI1SuD; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-52367fd5af5so1659543e0c.3;
+        Tue, 04 Mar 2025 05:26:56 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1741094767; x=1741699567; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=JtOKkHl1iiOm30LH4mkCfSdNp2xpawwM4XCaKG03x2w=;
-        b=WUp5C892hPw4IJsacGagGgsk2vwbNc4sKrWcdWHV396cgadc7HlVP0cCiAvszbU2ia
-         mQmMN0+r/pOrgSQvYpHRI49rfgNE/mavbTVKfz+VcEWnfrJv/YEZj8jZ4nxqylapJz8L
-         aG/9Z+CrstydypIQArMFaNSocWan6RK7ns/VA=
+        d=gmail.com; s=20230601; t=1741094816; x=1741699616; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vL3fp9Q7jjBrH7sjWaqesrfVNl8ZcjvkllY5xGeMDnY=;
+        b=bHyI1SuDnAK8zJcwJoFNk23L08bM8nwUD5zbyDkBt9LrTpm8bBNfm+DhOVZ5H5komq
+         IhIQaHVx9BtnQ/j/SbIUAJ51C9zE1tJCIwkE9A0d3XnGJr2jB260s0nwYfiD7CRPknlh
+         3FNcf/nHm7f0g1Yceoekbfqk20qkkrr4m6NCucDzea6biOq0AjJKYMQHuDZ1wFd/p3J9
+         XTs22uYSKO3v9uMOWDGm2R8D7Q3qsyt3aIimE+afMyoONlqt92CXMlvjvespsYSuxCaT
+         tQunBY8ZI606abvTAVl3YAdKYiiCyMd2kGvOcpwd66bgV4LqwAWO7ZGZYts3n6BALnTq
+         ze2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741094767; x=1741699567;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=JtOKkHl1iiOm30LH4mkCfSdNp2xpawwM4XCaKG03x2w=;
-        b=auFPTfVzwmL3WXFb74YwYIRDBhAWaGWcFyeZ8gArpGevO4cH/hxuiZ3UAmSVIlzZFo
-         MvxBG/eEqOX8Y9VfzJHSUQB3fJVuEVE8Kw6soYtA4+Zsm+Y2NOOVPhRo4zm8jPMJv3iJ
-         2dvhylmOuBU+zPxziVIo5IR9cXb7DJru4ilTDtA3HpGsrfVAV8/nBLcZNKET79E5bvsJ
-         A66LaXPzsyTYoVGlgkj+UkYiG/K1/UoSQT9g3Yjx5or0IqkSxjSpZE9SHDLZCOsL/DKR
-         viFQlIngcrH5PRGzrWBg0ZcWHmdZyZMipCwAGNmoO9bIgXwk23UTkO18i9p3J/h470JV
-         3dDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUujfcTOmk6Z3kZmiBMSJd9QHyv+iRyk2Q/++pHV1bQ54jEP0c17pvW08wNaCZ0KlOHVlU0eU4Kz4rj66A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsNESirNC01oIMHmWNVwjKH9JyyVPNQT6qpv7dwMOZLqeJPADt
-	XktExJJMKz4GvM3YR3zRTlaGgfIPIztWubTVaP64dyihsQvhSeha6/s92bumgHyFcQN8mjb8mb6
-	Wz/ZKF1EKvS2d1vuWELOoJLFEEOdXiruhFbZa
-X-Gm-Gg: ASbGncv6qAH+kB0PmGHtbfSrH2Ksd9VC6MDlguy0r/wJserWPKesB1wgWbKLuvcujfJ
-	BhmtN8R600Vu1Q0m5A7Z8KK5/+jVRRsIWtXmQur4tI981ERhfXj+s3BBps7LrGPeDiMCf5mcfHT
-	DMxEkwOcVbWCo8hNNBFvASBjf0J1E=
-X-Google-Smtp-Source: AGHT+IE1fnmaGTtyXaw7/d7C9go4wrsIqUzlwKMfbYL4hkHb1EFadcc7K9+23gbqCV1n5NJPFqM8+LXdIaOOkUO2l3Q=
-X-Received: by 2002:a05:651c:198f:b0:30b:ca0e:e44b with SMTP id
- 38308e7fff4ca-30bca0ef27dmr11607361fa.31.1741094766721; Tue, 04 Mar 2025
- 05:26:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741094816; x=1741699616;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vL3fp9Q7jjBrH7sjWaqesrfVNl8ZcjvkllY5xGeMDnY=;
+        b=w0HLQ18SJfbyVCXtqxFyddtkVhYoO6BUmQ/zLHnaUoSPCfAd8IhOI7uBtY6g1u3zd5
+         YBq1BzLwvFrP1vRXk9mB1uEfyOZYfZ59WmjiNKLWuISpbfuDNYLiQkP/DUla0fX9MAA8
+         EvEBjVunqZ4UEoE96kET1b7GpqYeRCbtAquTeTwiCD7Np7i6QijzMxtGN8h8wFoLWoPK
+         3nspFq6paHT8yYLafzb6fWJnfjHcEbz1l7sybNlztanELpwOXzsm0jaMIlCV9JMoJ+Qm
+         4r6lGSvII4JuB+ztjl8tbNBcCqe37ZoqWT4S9JFUqYkC57INuC5w16qbI3jHX6gW2gcJ
+         2tuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUkthwephSbJrwi56AvR21yfyZmq3f6tQCHiUw6gcEn4+TY8MthYhL2Evgkh1jr+XxkeT3u718Q2v5O@vger.kernel.org, AJvYcCWEtufZolN1Y0cyAl4Grw/aI5qjGZF4azWf0e/kv6Jy6Udup0gPE4PhXD+3KCt0DHJgEvfCN1TkVdeXYCOZ@vger.kernel.org, AJvYcCX56vKqPw1u7Cxrl9DcwcIZ4tevgRzHzyb1hEt4cE2GO90vupm2V9b4dOdfK0ipzyoFioybT17fxKNuJlwzUml13Y5fnw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXcavQqHLh7Y+SJgp/qP49YiLhn5EWirICBpnjvseVDTpA2k80
+	0ofD1uRbmz0ypMC2NfUVMR57C6TNTenw+wL8pmcvqc+Y8nexphcC
+X-Gm-Gg: ASbGncs1JqfTcK38MC8z8bbetSXTucLKk9JwZ2QwqIfVgZtVPybqxnGCmAjAvnn0hDx
+	nYRI3TgRJ7xrxT2irOWCNrZ5J+AALXyOj83rums0AsA74xNmz8ntfxpHUffse4fB/dfzLCNl4nw
+	4dt521XTNj3HUJ7cZ0XliUvdtgZX9qhWsHW0M60XZEk4f0ZOluxmWA7eZqd81wmxlM8g8HjlQkf
+	RsXNTgjGTwc9l4mq3BzSJYRLF0vDevEoYrhqHjRgTJ30YqgH5pAm+kEbuIew6s4mqelNn2i7e24
+	iJpaYJTTmPJ+AZZCevIi5L6RjPl1H31aTSVU
+X-Google-Smtp-Source: AGHT+IGeE0DtxbZy0AS94tKp3ljhVZFbmqT5dQpu9xx62aCvOcS2kduSwj9MwYhFItAiqqWKahL88w==
+X-Received: by 2002:a05:6122:d10:b0:51f:405e:866e with SMTP id 71dfb90a1353d-5235b7e1aa7mr9063404e0c.1.1741094815809;
+        Tue, 04 Mar 2025 05:26:55 -0800 (PST)
+Received: from localhost ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5234c08c5b6sm2139336e0c.36.2025.03.04.05.26.53
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 05:26:54 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <Z8TWF6coBUF3l_jk@gallifrey> <20250303182629.GV5011@ziepe.ca> <Z8X4Ax5UCerz9lP8@gallifrey>
-In-Reply-To: <Z8X4Ax5UCerz9lP8@gallifrey>
-From: Bryan Tan <bryan-bt.tan@broadcom.com>
-Date: Tue, 4 Mar 2025 13:25:55 +0000
-X-Gm-Features: AQ5f1Jq8atYz5IidmM6PHJd10QJlM7atnIVUN9cDk3zl51sJIJsRs6HYHqrGp2Y
-Message-ID: <CAOuBmuZdG7SWWmmhtEF09B5A4O-s+_h_uZnmTOPyKtQJGM9=wA@mail.gmail.com>
-Subject: Re: Unwired pvrdma_modify_device ?
-To: "Dr. David Alan Gilbert" <linux@treblig.org>
-Cc: Jason Gunthorpe <jgg@ziepe.ca>, vishnu.dasa@broadcom.com, leon@kernel.org, 
-	bcm-kernel-feedback-list@broadcom.com, linux-rdma@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000001cebd0062f843766"
-
---0000000000001cebd0062f843766
-Content-Type: multipart/alternative; boundary="000000000000176cd8062f843726"
-
---000000000000176cd8062f843726
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Tue, 04 Mar 2025 08:26:52 -0500
+Message-Id: <D87ILMWSRUPG.3FHTWG38N2IFJ@gmail.com>
+From: "Kurt Borja" <kuurtb@gmail.com>
+To: "Mario Limonciello" <superm1@kernel.org>, "Antheas Kapenekakis"
+ <lkml@antheas.dev>
+Cc: "Shyam Sundar S K" <Shyam-sundar.S-k@amd.com>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, "Hans de Goede" <hdegoede@redhat.com>,
+ =?utf-8?q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, "Luke D .
+ Jones" <luke@ljones.dev>, "Mark Pearson" <mpearson-lenovo@squebb.ca>, "open
+ list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>, "open list"
+ <linux-kernel@vger.kernel.org>, "open list:ACPI"
+ <linux-acpi@vger.kernel.org>, "Derek J . Clark"
+ <derekjohn.clark@gmail.com>, <me@kylegospodneti.ch>, "Denis Benato"
+ <benato.denis96@gmail.com>, "Mario Limonciello" <mario.limonciello@amd.com>
+Subject: Re: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low
+ power the same
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a
+References: <20250304064745.1073770-1-superm1@kernel.org>
+ <20250304064745.1073770-2-superm1@kernel.org>
+ <CAGwozwHniWGQ7qK6FYD_WK5zNjkro7-Q1nTcFPAuWDt9UQ+noA@mail.gmail.com>
+ <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
+In-Reply-To: <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
 
-On Mon, Mar 3, 2025 at 6:42=E2=80=AFPM Dr. David Alan Gilbert <linux@trebli=
-g.org>
-wrote:
-> * Jason Gunthorpe (jgg@ziepe.ca) wrote:
-> > On Sun, Mar 02, 2025 at 10:05:11PM +0000, Dr. David Alan Gilbert wrote:
-> > > Hi,
-> > >   I noticed that pvrdma_modify_device() in
-> > >    drivers/infiniband/hw/vmw_pvrdma/pvrdma_verbs.c
-> > > isn't called anywhere; shouldn't it be wired up in pvrdma_dev_ops ?
-> > >
-> > > (I've not got VMWare anywhere to try it on, and don't know the innard=
-s
-> > > of RDMA drivers; so can't really test it).
+Hi all,
+
+On Tue Mar 4, 2025 at 7:49 AM -05, Mario Limonciello wrote:
 >
-> Hi Jason,
->   Thanks for the reply,
 >
-> > Seems probably right
-> >
-> > But at this point I'd just delete it unless pvrdma maintainers say
-> > otherwise in the next week
+> On 3/4/25 02:38, Antheas Kapenekakis wrote:
+>> On Tue, 4 Mar 2025 at 07:48, Mario Limonciello <superm1@kernel.org> wrot=
+e:
+>>>
+>>> From: Mario Limonciello <mario.limonciello@amd.com>
+>>>
+>>> When two drivers don't support all the same profiles the legacy interfa=
+ce
+>>> only exports the common profiles.
+>>>
+>>> This causes problems for cases where one driver uses low-power but anot=
+her
+>>> uses quiet because the result is that neither is exported to sysfs.
+>>>
+>>> If one platform profile handler supports quiet and the other
+>>> supports low power treat them as the same for the purpose of
+>>> the sysfs interface.
+>>>
+>>> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handlers")
+>>> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
+>>> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad-=
+9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
+>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+>>> ---
+>>>   drivers/acpi/platform_profile.c | 38 ++++++++++++++++++++++++++++++--=
+-
+>>>   1 file changed, 35 insertions(+), 3 deletions(-)
+>>>
+>>> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_pr=
+ofile.c
+>>> index 2ad53cc6aae53..d9a7cc5891734 100644
+>>> --- a/drivers/acpi/platform_profile.c
+>>> +++ b/drivers/acpi/platform_profile.c
+>>> @@ -73,8 +73,20 @@ static int _store_class_profile(struct device *dev, =
+void *data)
+>>>
+>>>          lockdep_assert_held(&profile_lock);
+>>>          handler =3D to_pprof_handler(dev);
+>>> -       if (!test_bit(*bit, handler->choices))
+>>> -               return -EOPNOTSUPP;
+>>> +       if (!test_bit(*bit, handler->choices)) {
+>>> +               switch (*bit) {
+>>> +               case PLATFORM_PROFILE_QUIET:
+>>> +                       *bit =3D PLATFORM_PROFILE_LOW_POWER;
+>>> +                       break;
+>>> +               case PLATFORM_PROFILE_LOW_POWER:
+>>> +                       *bit =3D PLATFORM_PROFILE_QUIET;
+>>> +                       break;
+>>> +               default:
+>>> +                       return -EOPNOTSUPP;
+>>> +               }
+>>> +               if (!test_bit(*bit, handler->choices))
+>>> +                       return -EOPNOTSUPP;
+>>> +       }
+>>>
+>>>          return handler->ops->profile_set(dev, *bit);
+>>>   }
+>>> @@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *dev, =
+void *data)
+>>>          handler =3D to_pprof_handler(dev);
+>>>          if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
+>>>                  bitmap_copy(aggregate, handler->choices, PLATFORM_PROF=
+ILE_LAST);
+>>> -       else
+>>> +       else {
+>>> +               /* treat quiet and low power the same for aggregation p=
+urposes */
+>>> +               if (test_bit(PLATFORM_PROFILE_QUIET, handler->choices) =
+&&
+>>> +                   test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate))
+>>> +                       set_bit(PLATFORM_PROFILE_QUIET, aggregate);
+>>> +               else if (test_bit(PLATFORM_PROFILE_LOW_POWER, handler->=
+choices) &&
+>>> +                        test_bit(PLATFORM_PROFILE_QUIET, aggregate))
+>>> +                       set_bit(PLATFORM_PROFILE_LOW_POWER, aggregate);
+>>>                  bitmap_and(aggregate, handler->choices, aggregate, PLA=
+TFORM_PROFILE_LAST);
+>>> +       }
+>>=20
+>> So you end up showing both? If that's the case, isn't it equivalent to
+>> just make amd-pmf show both quiet and low-power?
+>>=20
+>> I guess it is not ideal for framework devices. But if asus devices end
+>> up showing both, then it should be ok for framework devices to show
+>> both.
+>>=20
+>> I like the behavior of the V1 personally.
 >
-> OK, lets see if they wake up.
+> No; this doesn't cause it to show both.  It only causes one to show up.=
+=20
+> I confirmed it with a contrived situation on my laptop that forced=20
+> multiple profile handlers that supported a mix.
 >
-> Dave
+>
+> # cat /sys/firmware/acpi/platform_profile*
+> low-power
+> low-power balanced performance
+>
+> # cat /sys/class/platform-profile/platform-profile-*/profile
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> quiet
+> low-power
+>
+>>=20
+>>>          return 0;
+>>>   }
+>>> @@ -305,6 +325,13 @@ static int _aggregate_profiles(struct device *dev,=
+ void *data)
+>>>          if (err)
+>>>                  return err;
+>>>
+>>> +       /* treat low-power and quiet as the same */
+>>> +       if ((*profile =3D=3D PLATFORM_PROFILE_LOW_POWER &&
+>>> +            val =3D=3D PLATFORM_PROFILE_QUIET) ||
+>>> +           (*profile =3D=3D PLATFORM_PROFILE_QUIET &&
+>>> +            val =3D=3D PLATFORM_PROFILE_LOW_POWER))
+>>> +               *profile =3D val;
+>>> +
+>>>          if (*profile !=3D PLATFORM_PROFILE_LAST && *profile !=3D val)
+>>>                  *profile =3D PLATFORM_PROFILE_CUSTOM;
+>>>          else
+>>> @@ -531,6 +558,11 @@ struct device *platform_profile_register(struct de=
+vice *dev, const char *name,
+>>>                  dev_err(dev, "Failed to register platform_profile clas=
+s device with empty choices\n");
+>>>                  return ERR_PTR(-EINVAL);
+>>>          }
+>>> +       if (test_bit(PLATFORM_PROFILE_QUIET, pprof->choices) &&
+>>> +           test_bit(PLATFORM_PROFILE_LOW_POWER, pprof->choices)) {
+>>> +               dev_err(dev, "Failed to register platform_profile class=
+ device with both quiet and low-power\n");
+>>> +               return ERR_PTR(-EINVAL);
+>>> +       }
+>>=20
+>> Can you avoid failing here? It caused a lot of issues in the past (the
+>> WMI driver bails). a dev_err should be enough. Since you do not fail
+>> maybe it can be increased to dev_crit.
+>>=20
+>> There is at least one driver that implements both currently, and a fix
+>> would have to precede this patch.
+>
+> Oh, acer-wmi?  Kurt; can you please comment?  Are both simultaneous?
 
-Thanks David for bringing this up. You're right, it looks like we
-never wired it up to pvrdma_dev_ops. Feel free to remove it.
+There are a few laptops supported by alienware-wmi that definitely have
+both (including mine). The acer-wmi and the samsung-galaxybook drivers
+also probe for available choices dynamically, so some of those devices
+may be affected by this too.
 
---000000000000176cd8062f843726
-Content-Type: text/html; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+So yes, we shouldn't fail registration here.
 
-<div dir=3D"ltr">On Mon, Mar 3, 2025 at 6:42=E2=80=AFPM Dr. David Alan Gilb=
-ert &lt;<a href=3D"mailto:linux@treblig.org">linux@treblig.org</a>&gt; wrot=
-e:<br>&gt; * Jason Gunthorpe (<a href=3D"mailto:jgg@ziepe.ca">jgg@ziepe.ca<=
-/a>) wrote:<br>&gt; &gt; On Sun, Mar 02, 2025 at 10:05:11PM +0000, Dr. Davi=
-d Alan Gilbert wrote:<br>&gt; &gt; &gt; Hi,<br>&gt; &gt; &gt; =C2=A0 I noti=
-ced that pvrdma_modify_device() in<br>&gt; &gt; &gt; =C2=A0 =C2=A0drivers/i=
-nfiniband/hw/vmw_pvrdma/pvrdma_verbs.c<br>&gt; &gt; &gt; isn&#39;t called a=
-nywhere; shouldn&#39;t it be wired up in pvrdma_dev_ops ?<br>&gt; &gt; &gt;=
-<br>&gt; &gt; &gt; (I&#39;ve not got VMWare anywhere to try it on, and don&=
-#39;t know the innards<br>&gt; &gt; &gt; of RDMA drivers; so can&#39;t real=
-ly test it).<br>&gt;<br>&gt; Hi Jason,<br>&gt; =C2=A0 Thanks for the reply,=
-<br>&gt;<br>&gt; &gt; Seems probably right<br>&gt; &gt;<br>&gt; &gt; But at=
- this point I&#39;d just delete it unless pvrdma maintainers say<br>&gt; &g=
-t; otherwise in the next week<br>&gt;<br>&gt; OK, lets see if they wake up.=
-<br>&gt;<br><div>&gt; Dave</div><div><br></div><div>Thanks David for bringi=
-ng this up. You&#39;re right, it looks like we<br>never wired it up to pvrd=
-ma_dev_ops. Feel free to remove it.</div><br></div>
+Anyway, I like this approach more than v1. What do you think about
+constraining this fix to the legacy interface?
 
---000000000000176cd8062f843726--
+--=20
+ ~ Kurt
 
---0000000000001cebd0062f843766
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Transfer-Encoding: base64
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Description: S/MIME Cryptographic Signature
+>
+>>=20
+>>>
+>>>          guard(mutex)(&profile_lock);
+>>>
+>>> --
+>>> 2.43.0
+>>>
 
-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
-kKXUf8BmgVwrm4J21BIjpK/E9/meSALtIG7FIMpiIKpgHf1MRTzmYywQIWohaXxPRAEIYZK2DSMY
-n+fDChhou4ePAtzo6/x8PTSWPrJbH05U1DQt9FRG7+xcvkNqnjJq+XZK0kiDDFD8BzIKO/cq3ziS
-50EhbzFKXPpa46ztpJqQ+UJTJod2dB7SexAYJlBkjKlGc+niNQIDAQABo4IB2jCCAdYwDgYDVR0P
-AQH/BAQDAgWgMIGTBggrBgEFBQcBAQSBhjCBgzBGBggrBgEFBQcwAoY6aHR0cDovL3NlY3VyZS5n
-bG9iYWxzaWduLmNvbS9jYWNlcnQvZ3NnY2NyNnNtaW1lY2EyMDIzLmNydDA5BggrBgEFBQcwAYYt
-aHR0cDovL29jc3AuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNnNtaW1lY2EyMDIzMGUGA1UdIAReMFww
-CQYHZ4EMAQUDATALBgkrBgEEAaAyASgwQgYKKwYBBAGgMgoDAjA0MDIGCCsGAQUFBwIBFiZodHRw
-czovL3d3dy5nbG9iYWxzaWduLmNvbS9yZXBvc2l0b3J5LzAJBgNVHRMEAjAAMEEGA1UdHwQ6MDgw
-NqA0oDKGMGh0dHA6Ly9jcmwuZ2xvYmFsc2lnbi5jb20vZ3NnY2NyNnNtaW1lY2EyMDIzLmNybDAk
-BgNVHREEHTAbgRlicnlhbi1idC50YW5AYnJvYWRjb20uY29tMBMGA1UdJQQMMAoGCCsGAQUFBwME
-MB8GA1UdIwQYMBaAFAApNp5ceroPry1QLdugI4UYsKCSMB0GA1UdDgQWBBQWxgja/oUqPdrOSir6
-U+YDJVND/DANBgkqhkiG9w0BAQsFAAOCAgEAIL+CGrIYdRkQ80Psq9FtFG65/EZQH8dFSXv3AJTk
-220m3Q98q4NHh+AkBRw/pvzVQMJlRKEBKgM1qYw5FYYoC3IRpeqQ9NqnJHsEAHX2p7Hfkt3l8zd7
-rT9DuQ4Tws1Fjxo4L7OcRz8NDD9f0Y+LHADvcMUHoex2PldpXkGuWd4K1eMjga8xPOrKKYYdvWYw
-cX/rc+AYfo3B0OnjSWXjdsufMPVDDK23uGYfti1djyVhYG7hOCKjW3fg9QdDcVjVa4q7spoCPGnQ
-HGghAH5+ZauOJU1r26oGjwR/73xvsig9pX887/zvEM5WdbTXK82mciLRR4iQB0UlV+8UxxpJzfGd
-j/6onem1o3e1fTH0owcQEn59i7Ygo5cWJm0qnT7zPTS6pgkXJ4xmskj6Dcqi/hRkMlxovq3K05uN
-+lgAFg6F7ugpiGTUcxngHsGMRlj8cXIhg8KZO0gBU5KthBSvioQgN2JpAyE5gUV7stnVCu8l+SAr
-Oo+OqcCeAc14zE+TlRnoQVn/xF+q0zAyONDNmQO4uyl0EyLpTIYLK7wFxC6IDrz2FsEzlioH2cBJ
-lUyNMZuhR7c1KUj3dr4qBG1506iDiJ5qqn2rBKJAvk0ph2Irlh+82seX1iL/wX+M+Wwkzoo34GGq
-6CGv4ffBr8W+eQ2/QT4X10tgfAgSZ+Sag3gxggJkMIICYAIBATBiMFIxCzAJBgNVBAYTAkJFMRkw
-FwYDVQQKExBHbG9iYWxTaWduIG52LXNhMSgwJgYDVQQDEx9HbG9iYWxTaWduIEdDQyBSNiBTTUlN
-RSBDQSAyMDIzAgx+bIvtS2ArBR9RakkwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcNAQkEMSIE
-IHO/NaNsMo8QupLzakrHB6dn0t41He3UJRhH3NTNkn72MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0B
-BwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDMwNDEzMjYwN1owaQYJKoZIhvcNAQkPMVwwWjALBglghkgB
-ZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG9w0BAQow
-CwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBHACgKX4vOT/lNO8/H
-j/or80XMRuw9SjMyWB2+q3idyrLLgisOXFvenS/eZMnif0FawfdLv14OLkAULCq/PxElTisK25nL
-II8Tp6PAxVJnjsCulsatwhXtKqKrcEZXrL36C2dQOAb2vMWP+P4Mdk42AiVj10CeDbBSwUOFWDfg
-a7oOG3XfsBMx9W2sMPqlfX6B1H4cCJpQP74np1YDP68gUeB1PvcFs9TwN7bRlwGoRcT+TfRkTnwF
-Xri6lq1N8ROz77aqERWm1dgck+Azbqk3TwBzGsGYCt1BWPjsZ6d6Sq6B8tFI3uy+p1pydiLWYDWz
-1bqle9ty1OM7umWOeHSk
---0000000000001cebd0062f843766--
 
