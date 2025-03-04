@@ -1,112 +1,128 @@
-Return-Path: <linux-kernel+bounces-545591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6593A4EEF8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:01:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 32C97A4EEFB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:01:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9FEB77A88F6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:00:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5F0727A95A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB7325F989;
-	Tue,  4 Mar 2025 21:01:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AAFC277021;
+	Tue,  4 Mar 2025 21:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J0ZbDbgq"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WaKZp4pl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C231513B58B;
-	Tue,  4 Mar 2025 21:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62DFE13B58B;
+	Tue,  4 Mar 2025 21:01:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741122080; cv=none; b=kOzd7OCS5h/4IOEqqxvNpj/SIFivkvpOopVtvsZWv+tZqNQ3SAxuBRjTMqXd++IKgSclPtrlAcX3QbGWPQrs2JLp/e+fNLBCme4yrYgO/Z/VvacVTj2vTAKPKfRgC6EONUPDxjQXC+15FGAiFuSMNrD0eFaOCJcCHNmbeukMcI4=
+	t=1741122084; cv=none; b=r9UA1mQKrVvKwYvo6MZOL4LgvXJqImOUJICLrOKPxX6DJTpPsnryVUiqCdPXV8FkENRePDkJGx94fBZqCrqV31jdYyWF2mn4OgQ98NOmas38N88RcO632Nk9w1B1jMrtC5OTcv+HncRG0ScwBpZfFlyWONMVUpPJAN74QxrHN+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741122080; c=relaxed/simple;
-	bh=5Rt7HhMnJR87FIHk+sbfLnVm2bfYWZ0GWvkeiHdnnI4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ki5/YAkdvUbaWqsJJXAR4t5X6ppBCR5tAUOGOzv25zAIsJUN7gNhMTQ3Nx9F+jQzxiK+TgwhFn2OSBgP+ly3TgrVIWiBvoRDv8t9+LY0M2+0MKgIaBB8b0JxMk/t7s+jZim+6qqnCAHciG3HdO5mt55rflJPkslF8uOiIYss9vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J0ZbDbgq; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fee688b474so705213a91.3;
-        Tue, 04 Mar 2025 13:01:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741122078; x=1741726878; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5Rt7HhMnJR87FIHk+sbfLnVm2bfYWZ0GWvkeiHdnnI4=;
-        b=J0ZbDbgq/2wIATYmrwp1yh3Gb3BER1LJ8k9TiGR2d0Ce1/78Uhf4OcW5XlfTR2juiK
-         ExqJPr72UyxL5NaTmM60q3SiqEGP1TFQeNy3TKbw5OpoxWOHfvRczSxVXxPsWev4D3nR
-         WozfjdZNADevJiRJf7K5s/F7iOC13PNRl+dfMulgJhpijOtWes5Ld0229+Q/FLjoBPpN
-         iC/A7TIK8IFNoSmAJZ/dT5My5mrIzdV1gPMcoZKG7yFOrjC0Mm6WZfy+iJG9zYJPPsxf
-         vf5OMQGg5JolDvhq8DDRbinnCdcMWCaGLfeBQGmLOclsVTyEd7nIcAFDJSXe8pvNBGhk
-         mioA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741122078; x=1741726878;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5Rt7HhMnJR87FIHk+sbfLnVm2bfYWZ0GWvkeiHdnnI4=;
-        b=YHy1eEdCmSwbFen2aD3UzxjPHOhDmpB7WFwL2AHs4oB7diLcX8VfNqUKJkA1scmQJx
-         FmuBc9jNFuF7E+S/glHjLJJYa3dXQJSR/SzKzYdpTlBCb+98sr/t6zmwn1yu01G8u65/
-         AgdAs4I8yMf0lJOvYN4VMpkmHUfYUKUC15ekWH6d46f6bbGaobOipb4NijWNzvdieeqk
-         xSaU83og5QQnLmoEqbrzuVHhhARuiWkkA4W6xSjB09g841H8Iaue0GR1mVKUc6chh6+k
-         Fu50QJJ80aY0X3jyvS01Goev0z+5DN7YWz44ofTopeLQyiM2D6q3zy+DWDnB45zc8zv1
-         phPA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUM2Q9EJfUUAnxEcGiccQmJ2GIvW0N9eexC2LPan+oT3rOkoLkLDiIIZAXDuslU1WyYrDbk/Y0MFyL5vIn1Ho=@vger.kernel.org, AJvYcCXWFgiCY8mQQnsOurQI94fPFvaJvHQbKnMZnW7zpMa60BKOYBzPkH1QkiTSeaAVC+9yydoGCrzREC60Mo4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPvvNJP1AIY+uD7FEDfn05DqD28fFp0qsd0VmZs3sLQceU/tB0
-	hAnoY5MdnO4nIVjA30dREnCsvkjWddPSCSHcV2gdZBAW3rLrbg/1Jxx+yN8TArx+NSpGmZ6kyau
-	AIN0+M5TP6cK2Wjudrxo9tt0QyiU=
-X-Gm-Gg: ASbGnctlcqisZ0FTxtAGqHuv+kf2U/6GfMYbdbkabHAAq5f5o2erxdBeaHZBAX4z8Ol
-	7qLeue4C4FrPid3gBKEeYY0KTR6Ga6gx3n0uOXhDOVZzBPD4Ovm+CprxR522pMYzseBL41Vmc9n
-	mBL01e89rcc1djDBuXf4I4urT30g==
-X-Google-Smtp-Source: AGHT+IHotE/T0X8lzHaRVKUzNHr91tgDUR1NTtwaUOkHawisXlnELgc8m8HPLRWUglWGRhQ0+YiwV/wtCqb0DiC0PBw=
-X-Received: by 2002:a17:90b:4c0b:b0:2fe:957c:1146 with SMTP id
- 98e67ed59e1d1-2ff497c4309mr440110a91.6.1741122077913; Tue, 04 Mar 2025
- 13:01:17 -0800 (PST)
+	s=arc-20240116; t=1741122084; c=relaxed/simple;
+	bh=wuSZUsJUBvvoVVqs5pexnapAelVoxNHgNy106DGrgsc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=nIE3cqDz26fmnc7fd6s+rJ4goR6f/mqTkDYV8cXb6LjsLcdtePBrdFR/70LoSDF8IAs0M1GcDVMNN4w/2y37kXFTMNtPiPSSa7awNygwAay9lWV2X3KYEO5UdR8ZLS1jp/NgGC47hpeas0JcvznwRH1cjD5go8Ya/KiFhtNgY0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WaKZp4pl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A3C0EC4CEE5;
+	Tue,  4 Mar 2025 21:01:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741122083;
+	bh=wuSZUsJUBvvoVVqs5pexnapAelVoxNHgNy106DGrgsc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=WaKZp4plvRf+flSK8OMx76i9ew3l3hxm7OcNuKEQKPgKzV6AMK0G09KFUQBqvyneA
+	 cGYUMqkEO/tq2le0YNkFl1sAjc4UynkxUB82rY0ONgFkg6gcB5Qy36sqPDnqWRP0wR
+	 tLSIWBHHzqCC2a+sNGSiDQ3pv0oGoCv8nBHuokOb4VjKTxeq6Vbh5xCuTEgMRStfg8
+	 ERtbU4SW8SIbgLWsu/WpgYQHYvx7sh0h+7xBUsyVKvH/AFQFTgOTwsHzVIzHmBvXPe
+	 qv/MhA0Wor99mduAYOxFNZsjvzuxr1EBLIvKy/7mMma2AULWWZzXrEhCnRGo+DQW+u
+	 0xVHwBlo4MjIQ==
+Date: Tue, 4 Mar 2025 15:01:22 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Naveen Kumar P <naveenkumar.parna@gmail.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernelnewbies <kernelnewbies@kernelnewbies.org>,
+	linux-acpi@vger.kernel.org
+Subject: Re: PCI: hotplug_event: PCIe PLDA Device BAR Reset
+Message-ID: <20250304210122.GA257363@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87tt89gfe4.fsf@kernel.org> <20250304205054.207285-1-trintaeoitogc@gmail.com>
- <CANiq72koDba445gMYtC_VEcFk2+O-Xg2-2y6uMyp7onBy=7rcw@mail.gmail.com>
-In-Reply-To: <CANiq72koDba445gMYtC_VEcFk2+O-Xg2-2y6uMyp7onBy=7rcw@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 4 Mar 2025 22:01:05 +0100
-X-Gm-Features: AQ5f1Jqd9-qXA8BaSLWNNSh-szg_2ed-Qt7ZD7z_Dstq70U1UUlWMvHuq3U8Pok
-Message-ID: <CANiq72kNG7jZf+hZARjyAp-uG=x99CrUKZvJYT_icaF0x0G6iw@mail.gmail.com>
-Subject: Re: [PATCH V6 2/2] checkpatch: check format of Vec<String> in modules
-To: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
-Cc: a.hindborg@kernel.org, alex.gaynor@gmail.com, aliceryhl@google.com, 
-	apw@canonical.com, arnd@arndb.de, aswinunni01@gmail.com, axboe@kernel.dk, 
-	benno.lossin@proton.me, bhelgaas@google.com, bjorn3_gh@protonmail.com, 
-	boqun.feng@gmail.com, dakr@kernel.org, dwaipayanray1@gmail.com, 
-	ethan.twardy@gmail.com, fujita.tomonori@gmail.com, gary@garyguo.net, 
-	gregkh@linuxfoundation.org, joe@perches.com, linux-kernel@vger.kernel.org, 
-	lukas.bulwahn@gmail.com, ojeda@kernel.org, pbonzini@redhat.com, 
-	rust-for-linux@vger.kernel.org, tmgross@umich.edu, walmeida@microsoft.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMciSVVhdRjfVYZGg+0Yo6EV4P80No3kLxCL8+LyVjwywiWxYg@mail.gmail.com>
 
-On Tue, Mar 4, 2025 at 10:00=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> I think it could be a good idea (it would be lovely to write the
-> checker in Rust -- I also had a checker bot in Python from the old
-> days of the old `rust` branch in GitHub), but `checkpatch.pl` doesn't
-> need a built kernel, so it would be a disadvantage or at least a
-> difference w.r.t. the usual `checkpatch.pl`, and we may not be able to
-> call it from `checkpatch.pl`.
+On Tue, Mar 04, 2025 at 10:19:07PM +0530, Naveen Kumar P wrote:
+> On Tue, Mar 4, 2025 at 1:35 PM Naveen Kumar P
+> <naveenkumar.parna@gmail.com> wrote:
+> ...
 
-By "built kernel", I don't mean an entire kernel, but rather having to
-call `make` in general, i.e. we could have a target to build just the
-script, but still, it is a difference.
+> For this test run, I removed all three parameters (pcie_aspm=off,
+> pci=nomsi, and pcie_ports=on) and booted with the following kernel
+> command line arguments:
+> 
+> cat /proc/cmdline
+> BOOT_IMAGE=/vmlinuz-6.13.0+ root=/dev/mapper/vg00-rootvol ro quiet
+> "dyndbg=file drivers/pci/* +p; file drivers/acpi/bus.c +p; file
+> drivers/acpi/osl.c +p"
+> 
+> This time, the issue occurred earlier, at 22998 seconds. Below is the
+> relevant dmesg log during the ACPI_NOTIFY_BUS_CHECK event. The
+> complete log is attached (dmesg_march4th_log.txt).
+> 
+> [22998.536705] ACPI: \_SB_.PCI0.RP01: ACPI: ACPI_NOTIFY_BUS_CHECK event
+> [22998.536753] ACPI: \_SB_.PCI0.RP01: ACPI: OSL: Scheduling hotplug
+> event 0 for deferred handling
+> [22998.536934] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bridge acquired in
+> hotplug_event()
+> [22998.536972] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Bus check in hotplug_event()
+> [22998.537002] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Checking bridge in
+> hotplug_event()
+> [22998.537024] PCI READ: res=0, bus=01 dev=00 func=0 pos=0x00 len=4
+> data=0x55551556
+> [22998.537066] PCI READ: res=0, bus=01 dev=00 func=0 pos=0x00 len=4
+> data=0x55551556
 
-Cheers,
-Miguel
+Fine again.
+
+> [22998.537094] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Enabling slot in
+> acpiphp_check_bridge()
+> [22998.537155] ACPI: Device [PXSX] status [0000000f]
+> [22998.537206] ACPI: Device [D015] status [0000000f]
+> [22998.537276] ACPI: \_SB_.PCI0.RP01: acpiphp_glue: Releasing bridge
+> in hotplug_event()
+> 
+> sudo lspci -xxx -s 01:00.0 | grep 10:
+> 10: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+
+Obviously a problem.  Can you start including the whole
+"lspci -x -s 01:00.0" output?  Obviously the Vendor ID reads above
+worked fine.  I *assume* it's still fine here, and only the BARs are
+zeroed out?
+
+I assume you saw no new dmesg logs about config accesses to the device
+before the lspci.  If you instrumented the user config accessors
+(pci_user_read_config_*(), also in access.c), you should see those
+accesses.
+
+You could sprinkle some calls to early_dump_pci_device() through the
+acpiphp path.  Turn off the kernel config access tracing when you do
+this so it doesn't clutter things up.
+
+What is this device?  Is it a shipping product?  Do you have good
+confidence that the hardware is working correctly?  I guess you said
+it works correctly on a different machine with an older kernel.  I
+would swap the cards between machines in case one card is broken.
+
+You could try bisecting between the working kernel and the broken one.
+It's kind of painful since it takes so long to reproduce the problem.
+
+Bjorn
 
