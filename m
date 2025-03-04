@@ -1,45 +1,73 @@
-Return-Path: <linux-kernel+bounces-543143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6D61A4D1FA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:16:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FA5DA4D1FD
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:17:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E98F3AD8B3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:16:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F003AB75D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:17:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C1A1AAE17;
-	Tue,  4 Mar 2025 03:16:28 +0000 (UTC)
-Received: from cstnet.cn (smtp21.cstnet.cn [159.226.251.21])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-SHA (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D4EA1946A0;
+	Tue,  4 Mar 2025 03:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cD1D4dDt"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F91EB640;
-	Tue,  4 Mar 2025 03:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.226.251.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED88AB640;
+	Tue,  4 Mar 2025 03:17:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741058188; cv=none; b=nvhY5stlQ+uKNY+zzoUBtNsCVDFpYqn0qsyUrDkdgul1dR+8eENc1J1Et/rCljS+FaKNqlVzGk9stmZOvSiuM2s3luj2kFYEkRT+5JI/0Ws/luoXEKdOiwcgK5J9OxELIOWfeBv2IhrzK4ISaObgULjbzQp+ncfapHayB2TkBro=
+	t=1741058256; cv=none; b=dZ51si/lkiKZjN+ZkU0HD1nn3I37vCWvl9gcTofGrdzRI9BF/gK8162WmN7HDmgIo+5AE2HTticUzw5FwdK9vPnU5WoTsSfC0bvgbGjHqEsgWH2qTktWSsAX84iVeG8xWaihXQRxrZV2vpPMjvnLTc9t1Rqp1hpDi8X8fRdrMKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741058188; c=relaxed/simple;
-	bh=21uArsIzvAZGYIRg4tZeOsYknK6I+/gWgmKNVK2IuXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RMPZ/y+c4DaB7VxwCuuZ0N935cVM0PqfG4r7CJmny+5XmOkeCPGOeoS3VyC20mcj0cUpjP0dpnFoWqh57T3WdFvUlcwMkWt0RCHHggISwaxQFHMBcVeQOoSar3C34MkYpUJbIPALcde7OXGtqeIBHSOOmj54RW3aIyMsYnASJrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn; spf=pass smtp.mailfrom=iscas.ac.cn; arc=none smtp.client-ip=159.226.251.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=iscas.ac.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iscas.ac.cn
-Received: from localhost.localdomain (unknown [124.16.141.245])
-	by APP-01 (Coremail) with SMTP id qwCowABHT9ODcMZnbqs4Eg--.8591S2;
-	Tue, 04 Mar 2025 11:16:20 +0800 (CST)
-From: Wentao Liang <vulab@iscas.ac.cn>
-To: stf_xl@wp.pl,
-	kvalo@kernel.org
-Cc: linux-wireless@vger.kernel.org,
+	s=arc-20240116; t=1741058256; c=relaxed/simple;
+	bh=RjFzEFu3OskJe+RxmaWU2bDZFfHIp0XQfkUysFEbJxE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ICISIchVOzo5Du/onMOgEL6wCcR8emOJlSrl4A42Jl9VdeExOCqfEuV2wKdt3wPpCjanjSxOoZvP9LdnECMLXIHsB6YeZllZ1sebaYYIZChwn+t68FU4BM3anh9eh7Ul8BLKBRFVgS9gJavgKiWB4bODurzhlAdYx6ajf3psrJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cD1D4dDt; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741058255; x=1772594255;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=RjFzEFu3OskJe+RxmaWU2bDZFfHIp0XQfkUysFEbJxE=;
+  b=cD1D4dDtvNQOtFG2HKO6ERlKVuWyTeqgBmlBN6VmMGhv3z/spnIzoN8w
+   wcitf4+8ayvinpo6z8MthzgtmBi+kkWjEJEVWlFI3qAORziRvT9s90JxW
+   u8GEg4DtBN4mQd7U11WUxW77xiLQ03eWfECeJZ+qrjTJeWdfLNcd41G/F
+   z6UFWWWqM27HnJ6MftQkcG+lLQ9fDOSPxydVDGorVhMR4OmyiVbRtrt1l
+   doznYUskLLALdJpKMJTYR1+wADRtt8K+kihjGbkXqvtJubMiCKM3psukQ
+   yQ9arZMMTNny69SUlO1qyVuDz14/pA0uGhyeOe9D1rKfhRPHKh6qN5XIL
+   A==;
+X-CSE-ConnectionGUID: p3aoajnJRw+q1obl5yDMug==
+X-CSE-MsgGUID: abuQzXcAT/eyritQIU4mDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="41131279"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="41131279"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 19:17:34 -0800
+X-CSE-ConnectionGUID: ZtsF1NfeStaYZlTXGqV/KA==
+X-CSE-MsgGUID: aS9JGoKyQKmayoS4Huxavg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="141456323"
+Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
+  by fmviesa002.fm.intel.com with ESMTP; 03 Mar 2025 19:17:32 -0800
+From: Even Xu <even.xu@intel.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org
+Cc: srinivas.pandruvada@linux.intel.com,
+	mpearson-lenovo@squebb.ca,
+	linux-input@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Wentao Liang <vulab@iscas.ac.cn>
-Subject: [PATCH] iwlegacy/4965: Cancel deferred work on device init failure
-Date: Tue,  4 Mar 2025 11:16:03 +0800
-Message-ID: <20250304031603.1989-1-vulab@iscas.ac.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
+	Even Xu <even.xu@intel.com>
+Subject: [PATCH] HID: Intel-thc-hid: Intel-quickspi: Correct device state after S4
+Date: Tue,  4 Mar 2025 11:16:58 +0800
+Message-Id: <20250304031658.1125075-1-even.xu@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,55 +75,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qwCowABHT9ODcMZnbqs4Eg--.8591S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7Cw13Xr17GFW5WrykKr4fAFb_yoW8GFy8pr
-	srta4jkry5Ga1UWayDJay2yF1Yqa1Fy39xGFs5Aw4Y93ZYqryrZF4aqay5ta4rGrWkZ3W3
-	Zr1jy3W7Grn8JrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVWUJVW8JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4j
-	6F4UM28EF7xvwVC2z280aVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Cr
-	1j6rxdM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj
-	6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr
-	0_Gr1lF7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v2
-	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjfUehL0UU
-	UUU
-X-CM-SenderInfo: pyxotu46lvutnvoduhdfq/1tbiBgwLA2fGHmnwjAAAso
 
-In __il4965_up(), deferred work is not canceled in time when device
-initialization fails. This is harmless if the device has not started.
-However, in il4965_bg_restart(), if the device remains operational
-in any state other than S_FW_ERROR or S_EXIT_PENDING, a dereference
-operation needs to be performed when __il4965_up() fails.
+During S4 retore flow, quickspi device was resetted by driver and state
+was changed to RESETTED. It is needed to be change to ENABLED state
+after S4 re-initialization finished, otherwise, device will run in wrong
+state and HID input data will be dropped.
 
-Add il4965_cancel_deferred_work() to the failure path of
-__il4965_up() to prevent potential errors. Even if the current code
-does not exhibit the described issues, adding this change can prevent
-future problems at minimal cost, improving the robustness of the code.
-
-Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+Signed-off-by: Even Xu <even.xu@intel.com>
+Fixes: 6912aaf3fd24 ("HID: intel-thc-hid: intel-quickspi: Add PM implementation")
 ---
- drivers/net/wireless/intel/iwlegacy/4965-mac.c | 2 ++
+ drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c | 2 ++
  1 file changed, 2 insertions(+)
 
-diff --git a/drivers/net/wireless/intel/iwlegacy/4965-mac.c b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-index 05c4af41bdb9..3b21bd79f3a9 100644
---- a/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-+++ b/drivers/net/wireless/intel/iwlegacy/4965-mac.c
-@@ -5591,6 +5591,8 @@ __il4965_up(struct il_priv *il)
- 	__il4965_down(il);
- 	clear_bit(S_EXIT_PENDING, &il->status);
+diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
+index 4641e818dfa4..fb0807622a97 100644
+--- a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
++++ b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
+@@ -939,6 +939,8 @@ static int quickspi_runtime_resume(struct device *device)
  
-+	il4965_cancel_deferred_work(il);
+ 	thc_change_ltr_mode(qsdev->thc_hw, THC_LTR_MODE_ACTIVE);
+ 
++	qsdev->state = QUICKSPI_ENABLED;
 +
- 	/* tried to restart and config the device for as long as our
- 	 * patience could withstand */
- 	IL_ERR("Unable to initialize device after %d attempts.\n", i);
+ 	return 0;
+ }
+ 
 -- 
-2.42.0.windows.2
+2.40.1
 
 
