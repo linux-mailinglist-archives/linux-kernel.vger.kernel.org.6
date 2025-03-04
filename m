@@ -1,105 +1,151 @@
-Return-Path: <linux-kernel+bounces-545625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C9CA4EF5A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:21:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37186A4EF5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:30:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19C47188EC63
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:21:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FC0C1728E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:30:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6271F27CB30;
-	Tue,  4 Mar 2025 21:19:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17CD5200B99;
+	Tue,  4 Mar 2025 21:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H+yFtLDF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="F/htZXuH"
+Received: from smtp.smtpout.orange.fr (smtp-77.smtpout.orange.fr [80.12.242.77])
+	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9C427CB12;
-	Tue,  4 Mar 2025 21:19:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62D97DA93;
+	Tue,  4 Mar 2025 21:30:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.12.242.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741123167; cv=none; b=g/3OH06YITdcg2G6A125kzjGpxE+KFVKfDqLv2jfZzNTLo10MYfgt4zlYpRQjJySk30dc2DIJ2UjMwY4VqW9Wwl53XaHcOHEtL9Pj74JKn6nYd6A604NLPhOLdu/fmCaOg/3XsCaRg20EFCbnzsJaDQGOrOwllPTIuIKO9DpQK8=
+	t=1741123836; cv=none; b=GJyWIMEymD2W1liLkf01MEFYRhlbs1YOUlzrJz9rT/foJjAYtgPbYKz3sa+OBqp3UKVhlJNRMBpKJEk+2ZmYZRMvkQTpWM2DSn2kfzsiCV2Pq5s09HVCjl3i4UJvacdoZRilAs2aNaNimUY9G+8JwtfHmi4hngPgwSYjSxvc5/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741123167; c=relaxed/simple;
-	bh=MvYdk6+CJs1x3c6be1UzpWng25V7d78Qpub9AKz7s0w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=UnYByb5dmHk0dHhubw4AlkP7UEpXy9zmd92TviR5XzhUosHy0d6AqwWeNETcWlGEEl8dblN0JHD6tCsqcJ1uHmpyI5aEmBYA25n2YSXNjtJWET54PccfFCeKgNSwW+WF4WL0nKgDSXanZPQaaRce3VHvlDBZgtCx+3ghIO45P7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H+yFtLDF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1049CC4CEE5;
-	Tue,  4 Mar 2025 21:19:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741123167;
-	bh=MvYdk6+CJs1x3c6be1UzpWng25V7d78Qpub9AKz7s0w=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=H+yFtLDFGNtuTNbyJUs+cxgvACAguJ1tXWM+lVJ7fZHcH3tKreNyIYL/74ILQnPBF
-	 LlTEEqtW0LpjlYbcTMRDaiB0S8R5VwCl0QAmj4+m4Z/cMKj7SnTTIZH0u0dGbq15km
-	 XK8ubi0/sZefriDo97HjeujAKsKrZA4rtUA6leE6Z7jQFr81uQtBYPxTRh9QM6VEcw
-	 DhPEPbOV8b4U43JYDC4igFQ6atTlB4hhQLvgcCwUjdYDOoZC7ifnG4fpihSm5GpHwY
-	 YejZz9hEeZTh1c0n966bcFw8g722XNw6Lg6sL9DBfHXMS2xhiBKamFd/HXqSdbxpZn
-	 +/ver5JBcmoZQ==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 9/9] Docs/mm/damon/design: update for changed filter-default behavior
-Date: Tue,  4 Mar 2025 13:19:13 -0800
-Message-Id: <20250304211913.53574-10-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250304211913.53574-1-sj@kernel.org>
-References: <20250304211913.53574-1-sj@kernel.org>
+	s=arc-20240116; t=1741123836; c=relaxed/simple;
+	bh=uU2YbbMZxvg5eLRNvxP4W3qaFK4o/G15pdl3NZqtIgI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LGwsKty5viPem81dlb3S5/pvYhFoSji9HlzJneU0MwBTGq2b2233wKuzJo6I/5iDf4jCmnpa7IyqiIZCKGMLumQP7g5dJ9/Wfedj9nta7QbT97ppMErSGNMsSqr4zAq6lvCeInsf/Uofo/7XyAvMb982uz4diWo1Kzmp8Sq1F/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=F/htZXuH; arc=none smtp.client-ip=80.12.242.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
+Received: from [192.168.1.37] ([90.11.132.44])
+	by smtp.orange.fr with ESMTPA
+	id pZhEtjoYlf1j1pZhItMWBa; Tue, 04 Mar 2025 22:21:13 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
+	s=t20230301; t=1741123273;
+	bh=K+h7jsWHv3eIxLPH5dNajezN+xQFTDwe/w8/eZdR268=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=F/htZXuHwOLqrOg37Ie4xDkEu5dSoXycvKds+QJgKpHM4TF1OfVT4PgIZuJDeGsrB
+	 7qx9+ZmsUoXQ9CxklHemGcceTvS3H7LKNkR9LpBbJPyxeMj4+OhOJVX/dIbM51l0ea
+	 mSFuiORCumZyYWbbq5vwhFzOK/bETgw1Bhn9ORtyVf6YLnqItZ94mJAK5qh0IDCT51
+	 /Tw545tJjZPj9yLKoj7O2JntYzLwJiLtZvYykbYpMVGXLVw8Lt4yzIapdyNsw6aXKJ
+	 6BHl6lQXZd3Ia8praMr/qD7YfmQ0mg6MIWWvafegftXVEwL42f7yq+x1VOGvchNrqC
+	 ggVLi8D6df4mQ==
+X-ME-Helo: [192.168.1.37]
+X-ME-Auth: bWFyaW9uLmphaWxsZXRAd2FuYWRvby5mcg==
+X-ME-Date: Tue, 04 Mar 2025 22:21:13 +0100
+X-ME-IP: 90.11.132.44
+Message-ID: <7ef88ec2-24a5-4aa7-a601-d605a12768ba@wanadoo.fr>
+Date: Tue, 4 Mar 2025 22:20:59 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/3] soc: aspeed: lpc-pcc: Add PCC controller support
+To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+ andrew@codeconstruct.com.au, derek.kiernan@amd.com, dragan.cvetic@amd.com,
+ arnd@arndb.de, gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+References: <20250304104434.481429-1-kevin_chen@aspeedtech.com>
+ <20250304104434.481429-4-kevin_chen@aspeedtech.com>
+Content-Language: en-US, fr-FR
+From: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+In-Reply-To: <20250304104434.481429-4-kevin_chen@aspeedtech.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Update the design documentation for changed DAMOS filters default
-allowance behaviors.
+Le 04/03/2025 à 11:44, Kevin Chen a écrit :
+> Add LPC PCC controller driver to support POST code capture.
+> 
+> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/mm/damon/design.rst | 10 +++-------
- 1 file changed, 3 insertions(+), 7 deletions(-)
+Hi,
 
-diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
-index 26c9ab10daf7..0cf678d98b1b 100644
---- a/Documentation/mm/damon/design.rst
-+++ b/Documentation/mm/damon/design.rst
-@@ -631,9 +631,10 @@ When multiple filters are installed, the group of filters that handled by the
- core layer are evaluated first.  After that, the group of filters that handled
- by the operations layer are evaluated.  Filters in each of the groups are
- evaluated in the installed order.  If a part of memory is matched to one of the
--filter, next filters are ignored.  If the memory passes through the filters
-+filter, next filters are ignored.  If the part passes through the filters
- evaluation stage because it is not matched to any of the filters, applying the
--scheme's action to it is allowed, same to the behavior when no filter exists.
-+scheme's action to it depends on the last filter's allowance type.  If the last
-+filter was for allowing, the part of memory will be rejected, and vice versa.
- 
- For example, let's assume 1) a filter for allowing anonymous pages and 2)
- another filter for rejecting young pages are installed in the order.  If a page
-@@ -645,11 +646,6 @@ second reject-filter blocks it.  If the page is neither anonymous nor young,
- the page will pass through the filters evaluation stage since there is no
- matching filter, and the action will be applied to the page.
- 
--Note that the action can equally be applied to memory that either explicitly
--filter-allowed or filters evaluation stage passed.  It means that installing
--allow-filters at the end of the list makes no practical change but only
--filters-checking overhead.
--
- Below ``type`` of filters are currently supported.
- 
- - Core layer handled
--- 
-2.39.5
+> +	init_waitqueue_head(&pcc->wq);
+> +
+> +	pcc->mdev_id = ida_alloc(&aspeed_pcc_ida, GFP_KERNEL);
+
+Missing ida_free() in therror handling path and in the rmove function?
+
+> +	if (pcc->mdev_id < 0) {
+> +		dev_err(dev, "Couldn't allocate ID\n");
+> +		return pcc->mdev_id;
+> +	}
+> +
+> +	pcc->mdev.parent = dev;
+> +	pcc->mdev.minor = MISC_DYNAMIC_MINOR;
+> +	pcc->mdev.name = devm_kasprintf(dev, GFP_KERNEL, "%s%d", DEVICE_NAME,
+> +					pcc->mdev_id);
+> +	pcc->mdev.fops = &pcc_fops;
+> +	rc = misc_register(&pcc->mdev);
+> +	if (rc) {
+> +		dev_err(dev, "Couldn't register misc device\n");
+> +		goto err_free_kfifo;
+> +	}
+> +
+> +	rc = aspeed_pcc_enable(pcc, dev);
+> +	if (rc) {
+> +		dev_err(dev, "Couldn't enable PCC\n");
+> +		goto err_dereg_mdev;
+> +	}
+> +
+> +	dev_set_drvdata(&pdev->dev, pcc);
+> +
+> +	return 0;
+> +
+> +err_dereg_mdev:
+> +	misc_deregister(&pcc->mdev);
+> +
+> +err_free_kfifo:
+> +	kfifo_free(&pcc->fifo);
+> +
+> +	return rc;
+> +}
+> +
+> +static void aspeed_pcc_remove(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct aspeed_pcc_ctrl *pcc = dev_get_drvdata(dev);
+> +
+> +	kfifo_free(&pcc->fifo);
+> +	misc_deregister(&pcc->mdev);
+> +}
+> +
+> +static const struct of_device_id aspeed_pcc_table[] = {
+> +	{ .compatible = "aspeed,ast2600-lpc-pcc" },
+> +	{ },
+
+Unneeded trailing comma after a terminator.
+
+> +};
+> +
+> +static struct platform_driver aspeed_pcc_driver = {
+> +	.driver = {
+> +		.name = "aspeed-pcc",
+> +		.of_match_table = aspeed_pcc_table,
+> +	},
+> +	.probe = aspeed_pcc_probe,
+> +	.remove = aspeed_pcc_remove,
+> +};
+
+...
+
+CJ
 
