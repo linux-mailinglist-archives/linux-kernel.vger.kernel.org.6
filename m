@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-545758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30848A4F119
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:02:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83AFEA4F115
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:02:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2D7E7AA7B6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:01:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E820C18986D8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154DF278112;
-	Tue,  4 Mar 2025 23:01:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99B48263C91;
+	Tue,  4 Mar 2025 23:02:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="MhKLozmH"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="gz8BkfMW"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C78751F2380
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:01:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 975E11F237D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741129310; cv=none; b=CZLj3epJNEhQz6YVld0rExk2tEZEusTw+DjbXLebcO61fAh/adhsG6WnN5jDOA14pt6iiWVq0lmQWAgDrKLoUP2jmxMvDdZHaLUOeUukaTGfUerpyJYb8FRKHRYGlgCGm5zK6kUoBhV/eAOtN0ozDEaI1aPiLcn0hKT3TKlWWn0=
+	t=1741129320; cv=none; b=YSqsofGP5FeBtv5X/OKXJ8HivOp100f2JiF8AbteQdCAAdJ7lREx8gjlana9i615EeSTROPOdS/FXF0PviWdbpJs4rmarUpacIcVjyvdpwJCXxuNamSIBQTT25jJmySyK9g/BYCOAzX4zgBzGii9FSHDBEN3W/gkBUVoT81ejwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741129310; c=relaxed/simple;
-	bh=pz7Xcy2s1G01bGPyo60xMbXviZXfgdVcaLnTIVtLEiI=;
+	s=arc-20240116; t=1741129320; c=relaxed/simple;
+	bh=w/3vCvKBxVX0tNbKofihByzFZDT5r/Kyn4cV5PcdUIo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WVKdvS5VaKWDBkGNpDAbFgIfyGndwL/wikKYtlm4/cMYH7yOOINa54KrD5wyTS5RWsto7ux1Z4sgSTtV8yBL7mb2cn0raIs0j6hOep47hRp1Yb3dKv0gEMqShAZ47IRA1Wyn7Um96oLL7T9wD/uehFzfivXKR7Zi8QP35Wd/Zxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=MhKLozmH; arc=none smtp.client-ip=209.85.214.180
+	 In-Reply-To:Content-Type; b=hZoGRlB3FmIyGjFfF6Rmzqs29EqE2647T2+q6dS7fgTDGoZJgf7MCxdQ20MlGii8FGzfAVj4Y05CIRVYKHw2nWAJ8gTj8uKK/dnygBmkTt3GHwUDU0rIVRpmD68/Xhi3cBtjEV2IwDm9hE7bkto/jGkjqZFTznVg3KH5QWCip1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=gz8BkfMW; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-22355618fd9so107102355ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 15:01:47 -0800 (PST)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2fea47bcb51so12321835a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 15:01:58 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1741129307; x=1741734107; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1741129318; x=1741734118; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=jv+vfhFM5x+H+wKvE7Tyeh9gs1SZ0jcQcgCrZLmaD60=;
-        b=MhKLozmHFyxcnM4SjN9l8Rl0Sy0Vw9vFROlih2aRPU7ybwYtLTu+tt5czcMdyye5Sm
-         riNccAZiBgSHCERF9/wFaLdwk3Y+XJI1dxHcl5wy7mAZmpxNwaTr3OtyvIdu1LTC0Lzz
-         J6Qt73pTxiP4Irm/F+uvaHMHo/SY4xHHOtXns=
+        bh=Bpovz4p2dTADlgTVz2T00MypTvf08AyRC4B4b+S6SjU=;
+        b=gz8BkfMWvdq3KhdgOnJHCj/JE48P5xfj0lfNgwRyaWtvtbJTog1J4DDhqvBTi4GSoT
+         QbwNzEASqE3kLHPdV3TEKU5d1DZmNVklccPjt0pdojk9C0k8wH/6AuFVQciPxb9Wo6Vc
+         2Mbd0aDlRq/mU/GwmnCdCqD3s8EBty5WnorpY=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741129307; x=1741734107;
+        d=1e100.net; s=20230601; t=1741129318; x=1741734118;
         h=content-transfer-encoding:in-reply-to:autocrypt:from
          :content-language:references:cc:to:subject:user-agent:mime-version
          :date:message-id:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jv+vfhFM5x+H+wKvE7Tyeh9gs1SZ0jcQcgCrZLmaD60=;
-        b=aTJGBXG5+ufPXpOos8Tbdo30t5O+1uEZo5kk+y6TFy/MbsFAE0YbExhONmWmAmKjIR
-         jaxdvAlm9fNP3X1bSzRNdICGYCnJCHIVvGBTCnT51eDSmtn1jF6h5EShvUQ6pCRWQd95
-         Yo5KxfGrc3O7O7Qyx1YmH+1+4iDJCEkjGnxCBYhSyYRRvu9PQAoWkd+ZrM1QLAm2r5sz
-         MXR3jTwR29uVzPQKfB4E8j4rob/FyU/oc7skF52q8IJ0oTe+lJSrttrIkMtapaw5bXpX
-         1HUATN1QbvEj0OSsNGMox/qVD0XngxdqiGJzbXelv8Ki6+GOTRQ6Tofkp220NhA1Fl3h
-         2O2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWM0UDHXVZXZuKDz3UCOlbs+08kFZ0wsA8ebnsyMPoC6ZCu83/CBKqYSQbb/sMWrIOdYRCy6I1ACykkCBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwesAjtidvVqyPI/5NdS+Oqunz1tkklSHMAa0xNHvpXCDVTa6Yb
-	SahfraVb6W98Fx+mmnuAvl2cihuIcS9MwzKcX0KiXViIxOEL41Gh+243H0qgoA==
-X-Gm-Gg: ASbGnctW4nQzEA5qV1byuOFFq1mZd9tkYK+InHbQNcCTXh47egFWoj94aE5tpfcp5v0
-	aO/mo/hqjrmKVYY2bw6zF6Rh37C4yLhbJWhhfA6k0uh8caE/061FInXk86CamOrOex39KUdH1PV
-	dhsC3cUTh85f+b6M30NLMXog9zxcq+hFJzwIEZUZfnPxS2YjjMZ1a5X+N8cwoIL88WkBZI/LqvJ
-	7dTcht1f2u0ZvYpb3ua5io9RI4jnSU7euEEJQm/RSX2C4CqVTj9bfqobJB1jTnbg3ynHU4jWClu
-	WFOXMvFdAJqr7zF1zwtdmGOy4AtMyU+2u81BFHDNbhiWUkCkFYS2UK58o9bQOuf9MNbgw54ASdp
-	PoLOHBRkR
-X-Google-Smtp-Source: AGHT+IHNn+vjIDK9mrUob0jsHtMuQg5cWXZnp74724DjWY9A6ekiwkcRojQCHzA59kgShLLOIYsYAA==
-X-Received: by 2002:a17:903:41cb:b0:216:3466:7414 with SMTP id d9443c01a7336-223f1d397ecmr18376645ad.44.1741129306995;
-        Tue, 04 Mar 2025 15:01:46 -0800 (PST)
+        bh=Bpovz4p2dTADlgTVz2T00MypTvf08AyRC4B4b+S6SjU=;
+        b=SAt/GqDhQxqo+wG5SJXz96xrTO42sb6Z5tt5EFED3zmWNx0riNebpuCApXgI/BRaL2
+         xnO66y4S6Z22u7fkG3wU2VILSOqM9/Obm2jagAa81j+u+eBxCKoLPchO8PXCAKPcPzI0
+         JtS6vm3hzMVPaulbqxFIBISEW7mz1gnYv1Pv71zexXplI6eSwGqbw8i9ZX10dubzwIpq
+         a9BaLiUhcH+BPNP4vhpuW4sTxUBE7wGvYS1LGekBJ1WQjKavzGP07910f3Nm1jDPA/l4
+         n7MlA2nKKLXikSilAKfHCkcpuM1VFAuJQkMcWyT9vnuMs7BKTfXkSNkSNJzm/cTvQ9jn
+         V6UA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/VcDPPXuZfhYEpJHP7itwH0Vhi7OBQoMgD1fSJkrAnNKp6DvpjWACZNDpLaqJdintiiBGz7ruAf4dMGA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjlRtqV42osBACLvSCbZuYBsTLWJz6Zjhb702zT0PYk+1KylbB
+	2ywJHSErXXaQy5JcAmcktTHPIIZh8F2uKPJp/LuAu9WvV7xKRdVqdTFmwOcahw==
+X-Gm-Gg: ASbGncvGUb7Mp1rOQy0Q+tc0XywJm5K7/pnXD6qo6tXHV8ihIpSmHHz4l2nAN+vxHo0
+	bgxzHOaOPmaFRcymBOIebmI87RxJZF9kT12ILglHevyNzgoTlRkUsMlMGVSyqF9926Tx8w8a5y2
+	HGaPsvyBTh+AnOmt2luOv/AwpdmGruTGu7Od1iablprwI+bM03nYVv6z7rqgt4yN11ldarnjYDH
+	cBFMnZsiyGwa+/gpsvQAveX7+EZXq+Z/ZQOBxVv0A1gjrVjQQ7iY6e+CarjUi5d75wX+p9pHN+t
+	3eXTCmPyao+THWCjZ4NjHPeseg15QAQ8OAtzJCuNTxQjdbApfymYGAelqR0oKtuILZ5FVcLIXy/
+	HGhz5zekN
+X-Google-Smtp-Source: AGHT+IFZi2Lb1U/NQYFlwnnXQ8TLKKp9ji4Z+/znszyXYFRD14/L5VVldpdyQoXzfxuxtr6DE0A7OQ==
+X-Received: by 2002:a17:90a:c106:b0:2fe:b907:562f with SMTP id 98e67ed59e1d1-2ff49730986mr1913401a91.14.1741129317859;
+        Tue, 04 Mar 2025 15:01:57 -0800 (PST)
 Received: from [10.67.48.245] ([192.19.223.252])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c5cf4sm99912355ad.130.2025.03.04.15.01.43
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d4e9fsm101714055ad.28.2025.03.04.15.01.54
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 15:01:46 -0800 (PST)
-Message-ID: <cb5e3a1e-39a5-4502-b99b-b7183dfaea02@broadcom.com>
-Date: Tue, 4 Mar 2025 15:01:42 -0800
+        Tue, 04 Mar 2025 15:01:57 -0800 (PST)
+Message-ID: <934529bf-d859-4eed-ade1-2917afb4e793@broadcom.com>
+Date: Tue, 4 Mar 2025 15:01:53 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,18 +80,15 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] ARM: dts: BCM5301X: Fix switch port labels of ASUS
- RT-AC5300
+ RT-AC3200
 To: chester.a.unal@arinc9.com, Hauke Mehrtens <hauke@hauke-m.de>,
  =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <zajec5@gmail.com>,
  Broadcom internal kernel review list
  <bcm-kernel-feedback-list@broadcom.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Tom Brautaset <tbrautaset@gmail.com>,
- =?UTF-8?B?QXLEsW7DpyDDnE5BTA==?= <arinc.unal@arinc9.com>,
- Linus Walleij <linus.walleij@linaro.org>
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
 Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250303-for-broadcom-fix-rt-ac5300-switch-ports-v1-1-e058856ef4d3@arinc9.com>
+ linux-kernel@vger.kernel.org, Tom Brautaset <tbrautaset@gmail.com>
+References: <20250304-for-broadcom-fix-rt-ac3200-switch-ports-v1-1-7e249a19a13e@arinc9.com>
 Content-Language: en-US
 From: Florian Fainelli <florian.fainelli@broadcom.com>
 Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
@@ -126,18 +123,19 @@ Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
  MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
  7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
  95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
-In-Reply-To: <20250303-for-broadcom-fix-rt-ac5300-switch-ports-v1-1-e058856ef4d3@arinc9.com>
+In-Reply-To: <20250304-for-broadcom-fix-rt-ac3200-switch-ports-v1-1-7e249a19a13e@arinc9.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 3/3/25 05:06, Chester A. Unal via B4 Relay wrote:
+On 3/4/25 07:55, Chester A. Unal via B4 Relay wrote:
 > From: "Chester A. Unal" <chester.a.unal@arinc9.com>
 > 
 > After using the device for a while, Tom reports that he initially described
-> the switch port labels incorrectly. Correct them.
+> the switch port labels incorrectly. Apparently, ASUS's own firmware also
+> describes them incorrectly. Correct them to what is seen on the chassis.
 > 
 > Reported-by: Tom Brautaset <tbrautaset@gmail.com>
-> Fixes: 961dedc6b4e4 ("ARM: dts: BCM5301X: Add DT for ASUS RT-AC5300")
+> Fixes: b116239094d8 ("ARM: dts: BCM5301X: Add DT for ASUS RT-AC3200")
 > Signed-off-by: Chester A. Unal <chester.a.unal@arinc9.com>
 
 Applied to devicetree/fixes, thanks!
