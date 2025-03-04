@@ -1,160 +1,112 @@
-Return-Path: <linux-kernel+bounces-544321-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFA8EA4E00A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:02:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C72DA4E006
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:02:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E11947ABC23
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:00:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE61717490C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:02:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28660205AB3;
-	Tue,  4 Mar 2025 14:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAFC72046BD;
+	Tue,  4 Mar 2025 14:02:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oCiV58v8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="S8cuiZyj"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DF3E204695;
-	Tue,  4 Mar 2025 14:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BC142A9E;
+	Tue,  4 Mar 2025 14:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741096846; cv=none; b=Mbcs4kkZMSIt29RAbAcODvCU5GsFijY2I0JiJez9Ipo7AltzprfzPY1NZkNz5+y4mv0iJ5QIUJ4AhktSE3nZqpXmeCr6c6DliSXSYaljVridR9JXcTcnGnYq02KalsY92WRADgHWU0yiDH7LbIuW0DipOQjZgB4niH5UZewSadE=
+	t=1741096921; cv=none; b=qVJgb7ITZuYIX2vmQQAlSmbLJMpNQO9fjVTEQZgs1olVg5Q9BHyXVNvkWafTiT6d4IPHdZQY1/hrJm1Gj6db3gZ+q21LkKiOS93nm2dKmrhbcwPKcSZUtzNpiZ18bILkqzxqy9ECyRygPqebC6CQ66/TQwXLFPxPisZV/no8tCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741096846; c=relaxed/simple;
-	bh=iOf/Btd00TVbhUUPH7qKnM1gAcJ9dD7LIZMQq0bBGOA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fv2XEikB9MyEAAbVijT7Jl+bSr60P73mEQcmiUxo1xgGh9mU0ABIJbZjZe3LwvePaDjSZHYmqMBAwLiDY+sC0tquRsosWp5xrXmfcsbPvhdjTOpbg9m7ib/Va5nty8McwzBE71yiGEwZV7/OXXDc/RThj+Qn7BL4V2NocLlk6Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oCiV58v8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA4AAC4CEE7;
-	Tue,  4 Mar 2025 14:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741096845;
-	bh=iOf/Btd00TVbhUUPH7qKnM1gAcJ9dD7LIZMQq0bBGOA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oCiV58v8EKD9fbf6RJJ84xkHHP0cyJ6kpYnTV3hbiQeDBMFuJka+DR6/TIyAU8XHG
-	 voTacVP2wbLrRZPinrWGWnPIswT6op/wpkDOjncQ0v1T8AxmRllVlGArM04mr05fly
-	 nNLE5fkl9EqOeBAQ/4oiABfG/+vRXfU23ct75+7JxEIuCSa0SGTBTYOxKQiJrBq9zJ
-	 vVi3l2v5SZBnXu4mmMjA2PjT+DyqXIAxUKkxzy+Dxt6oP3tBIlthQGHE/BURS5NEZw
-	 MvNk5AZSgPJtQhtHMe1fDfWg53wfahLVcJlJLf7xoLpXmFZ94HwB5zaUIJbsnQr+X9
-	 gQeCJlanbfPww==
-Message-ID: <6f7fea59-310d-4a7e-94f7-2483363012ba@kernel.org>
-Date: Tue, 4 Mar 2025 15:00:37 +0100
+	s=arc-20240116; t=1741096921; c=relaxed/simple;
+	bh=uiZsGkjVPALBqyMp/QBuYMSVQNJhd7VY33/kwzTcb58=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=JK6bYaiUvA2yq2qScaD8OT11BSARJh+998xOhVGsBXo2oM6iQ2BGmoE559fRZAiIs4S9bevMOnFgAM3IkaMiGfysZvqszUb6cyJIaooWGrOWUsAOCBwfabR6b91SlY/f5gsnZYApyUW+fXFjgXMTwGuSHM5aza3MG4epcGp3reA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=S8cuiZyj; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741096917;
+	bh=uiZsGkjVPALBqyMp/QBuYMSVQNJhd7VY33/kwzTcb58=;
+	h=From:Subject:Date:To:Cc:From;
+	b=S8cuiZyjljT3JMmX+9hETnyOta6k0GRU4it8yY/35FwzmfIUlRkDOOAhB3hsbuCb1
+	 bJWt2KEtORIXlLwHLjLrGKm0TxXbzfha3YVhR6sx39o1qsg4x+mMeKOfqTDoRTQm2R
+	 L4PlWbdkq8dMTcfM7KKCwAd4JN0dvs6Z7O4tbDzrZH0GSamsZvQP1gb3aOCWyufwT9
+	 dsmX42SS752HzjU0Jbk/BNMp6FtxXgIW56oGFCZPAfcvCdOVP0SuAjS9rZwTX66zoh
+	 6qFqmCN4sLpwy0zFUAX5juohusVRIETqtOFOJv0EKiZziajDQLmsJ420rHem8BDpUe
+	 1yavBZ+okHL5w==
+Received: from apertis-1.home (2a01cb0892F2D600C8F85cf092d4Af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 242AD17E087E;
+	Tue,  4 Mar 2025 15:01:57 +0100 (CET)
+From: Julien Massot <julien.massot@collabora.com>
+Subject: [PATCH v2 0/2] mt8395-radxa-nio-12l: Add overlay for Radxa 8HD
+ panel
+Date: Tue, 04 Mar 2025 15:01:54 +0100
+Message-Id: <20250304-radxa-panel-overlay-v2-0-3ee6797d3f86@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/8] media: dt-bindings: Document SC8280XP/SM8350 Venus
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>
-Cc: linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Johan Hovold <johan+linaro@kernel.org>
-References: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
- <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIANIHx2cC/32NQQ6CMBBFr0Jm7Ris1FBX3sOwGNpBmlRKpqaBE
+ O5u5QAu30v++xskFs8J7tUGwtknH6cC6lSBHWl6MXpXGFStdK3UDYXcQjjTxAFjZgm0om5U43q
+ jjdEWynIWHvxyVJ9d4dGnT5T1OMmXn/3fyxes0XBrrq0beib3sDEE6qPQ2cY3dPu+fwFbL20Nu
+ gAAAA==
+X-Change-ID: 20250226-radxa-panel-overlay-5424db95995c
+To: kernel@collabora.com, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+ kernel@collabora.com, Julien Massot <julien.massot@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 04/03/2025 14:07, Bryan O'Donoghue wrote:
-> From: Konrad Dybcio <konradybcio@kernel.org>
-> 
-> Both of these SoCs implement an IRIS2 block, with SC8280XP being able
-> to clock it a bit higher.
-> 
-> Document it.
-> 
-> Signed-off-by: Konrad Dybcio <konradybcio@kernel.org>
-> Link: https://lore.kernel.org/r/20230731-topic-8280_venus-v1-1-8c8bbe1983a5@linaro.org
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> [ bod: dropped dts video-encoder/video-decoder ]
-> Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-> ---
+Hi,
+small series to enable a DSI panel on Radxa NIO 12L.
 
+The first patch adds missing dts nodes to expose some
+feature of the DSI0 port.
 
-If this is the same version, then please implement previous feedback.
+The second patch adds the Radxa 8 HD panel as an overlay.
 
-If this is a new version, then please mark it as v2 and provide
-changelog. This is what b4 gave me:
+Tested on top of linux-next tag:next-20250303
 
-b4 diff
-'<20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org>'
-Grabbing thread from
-lore.kernel.org/all/20250304-b4-linux-media-comitters-sc8280xp-venus-v1-1-279c7ea55493@linaro.org/t.mbox.gz
-Breaking thread to remove parents of
-20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
 ---
-Analyzing 9 messages in the thread
-Could not find lower series to compare against.
+Changes in v2:
+- Moved video pipeline enablement to the overlay (ovl0, vdosys0)
+- Keep backlight disabled in the board dts, enabled in the panel overlay
+- Test again on Linux next-20250303
+- Link to v1: https://lore.kernel.org/r/20250226-radxa-panel-overlay-v1-0-9e8938dfbead@collabora.com
 
-...
+---
+Julien Massot (2):
+      arm64: dts: mediatek: mt8395-nio-12l: Prepare MIPI DSI port
+      arm64: dts: mediatek: mt8395-radxa-nio-12l: Add Radxa 8 HD panel
 
-> +
-> +        operating-points-v2 = <&venus_opp_table>;
-> +        iommus = <&apps_smmu 0x2100 0x400>;
-> +        memory-region = <&pil_video_mem>;
-> +
-> +        status = "disabled";
-
-So it is the same...
-
-Same comments apply, same review.
+ arch/arm64/boot/dts/mediatek/Makefile              |  2 +
+ .../mediatek/mt8395-radxa-nio-12l-8-hd-panel.dtso  | 84 ++++++++++++++++++++++
+ .../boot/dts/mediatek/mt8395-radxa-nio-12l.dts     | 45 ++++++++++++
+ 3 files changed, 131 insertions(+)
+---
+base-commit: cd3215bbcb9d4321def93fea6cfad4d5b42b9d1d
+change-id: 20250226-radxa-panel-overlay-5424db95995c
 
 Best regards,
-Krzysztof
+-- 
+Julien Massot <julien.massot@collabora.com>
+
 
