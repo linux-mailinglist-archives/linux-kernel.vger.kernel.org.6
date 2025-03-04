@@ -1,203 +1,235 @@
-Return-Path: <linux-kernel+bounces-543135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B1D3A4D1E7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:07:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF097A4D1F8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 04:13:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EA6A33AB9EC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:07:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1385A3AC49E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 03:13:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D2A1C84C9;
-	Tue,  4 Mar 2025 03:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 507951EEA2C;
+	Tue,  4 Mar 2025 03:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="AqVkiRH9";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="NhpQMp+x"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PkVmAdAq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C92613792B;
-	Tue,  4 Mar 2025 03:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741057665; cv=fail; b=Ql4s36PE9r2g6YHMGJhUIAF87moBLsMkJ+9XloEVEyXg2WQGfMr2qLHgCRHanT124CY2BP66jf7EuI0HGQ1noJ2JB8XrfR/GLCuZYUeXB1LTbLN2ZB7CGCIcnuLvVdclC6YgQqhdI5RlCj7SQTSODXA7I4NDiBVbtbQKlSPaYD4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741057665; c=relaxed/simple;
-	bh=TMOJf/0S7rbA9VVAMsDZz9GHn9vWMCcaRxt0ANhRU8o=;
-	h=To:Cc:Subject:From:In-Reply-To:Message-ID:References:Date:
-	 Content-Type:MIME-Version; b=ppeFGIgjFUHrLa9099Rd7Pa1jcMh+V17W4PZc1s5bNysyU0/5qwi0KLUBeZkXMsS6pRKzGYHsQ0GgcCha64KFeXQJupFprefjT5WazPXLkFQl2zXFqJ3PKh2uVHQpO7cmD8DaOq53P3dwzWAuaqIIeZ0tBjHk5Ig/0CQAIrPCiY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=AqVkiRH9; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=NhpQMp+x; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246631.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5241McQs008866;
-	Tue, 4 Mar 2025 03:07:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=ClqpLcYdh4eimuocpG
-	XNLIREruVvkoRAq6foyrFb6p8=; b=AqVkiRH9gX6uUFflzIYpqM2jEG7kuzsEOL
-	/atBbv0T9od6P5CnLErf/xn4coi4/tJkVaJveDITI4u0VUcYvcjh4lshe4agm3eB
-	gYnpOYlpt+ZP3mDoXgnKchQ6/CTi0T1Rc7rZBPW9jSF7frFVqcRpdh/m6Wx8s0ng
-	Zyyv7wjO9EYOVIReZigmV1Iat53ACQE7EpycA8kMv31+WzYvzTXGEPBGZBTWRZyn
-	V9UajEoasKwm4Co3MkzbmCVLB1GBScLDQ9jtizy+7p/dNLkgHfM9tJqohMt5FWNK
-	P/6FcdX3FyQY3f1fT8yxQujaIbjBPkXgoKH6RioNIKC0aKMMJLcw==
-Received: from phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta03.appoci.oracle.com [138.1.37.129])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 453u8hc3hx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 04 Mar 2025 03:07:39 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5242spbk022735;
-	Tue, 4 Mar 2025 03:07:38 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2176.outbound.protection.outlook.com [104.47.58.176])
-	by phxpaimrmta03.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 453rwuah8c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 04 Mar 2025 03:07:38 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=pvtdhzAJIFMgbtUuH2ezH3/MMHMavK69xo/UV4l4/LPK8rNRgXvnyjIhgoiA8gqfA7rqi70Uo7IJB+L0dI1E7b1NaIWSo/T+gBch4URYjVljvRpXisLToh63uq3oK1QGV8Ukb70vJG9LWVrwnYufvbUR1p1MW3cqk91O4lAGBYwr4q0sCN5l+W6Cd4pMI+zzxdmLHXXA+Ks1bVf6aWZ4rm5/78l6HdVn2ewlj2Zp7/9eVxKJiZcx0DWHN/6qniOZ6ALmM7DTwDxWeMUKvaxEwgIUqDgG8ENDaVBER1EHMrsIr52yxs00HRlsjTAwucgUWnOS0X8lopj0x6S0m8zrhA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ClqpLcYdh4eimuocpGXNLIREruVvkoRAq6foyrFb6p8=;
- b=GCBocoLqi8geG69JwgaNDWcMY5kc1aFmWLIZXIFH9mD/ISqIAZL2Sk1PL+aCeRn7VXAupTeAB2BU2Yk+GDL28r48icVHBZetoWJ09s+mvyIXPVc93YWtRBOn0RGaBIlHKjfFdfKak8OeMt4PDA6kRzoykqRrKA6Hq8M/kkn6KwNXV2+KU0a40w3XS1KFsa+oC88uQdBQBJurNcoA4d4qBOyAB4JdbVMv3JJWdyeeZHwJ8hRXb+r0zJP5kMZTHQBTnRq7JvW6Ew0CXlpwoCynOlLUpR3KQeVez+DlcfN4TOongh63WeiHYwFPHVLkzwkdDauuLh/IYdreWxSYCHCASw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ClqpLcYdh4eimuocpGXNLIREruVvkoRAq6foyrFb6p8=;
- b=NhpQMp+x/V9AfTB5lnk5YOk328bIHp9BH1CllTAUotaCjRf29rHGX7zSuMnEfnIvXzQF45Nd5XkCPbnexKsfkucmMeo7x6Cq6W+nfBYMESaCH62urVX+c11Xsr3vG/g6/xls+MpK2WdOgXvfmW2waC0ovlrazhzPN3A9CyxqZwc=
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com (2603:10b6:610:cb::8)
- by CO6PR10MB5634.namprd10.prod.outlook.com (2603:10b6:303:149::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8466.20; Tue, 4 Mar
- 2025 03:07:35 +0000
-Received: from CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf]) by CH0PR10MB5338.namprd10.prod.outlook.com
- ([fe80::5cca:2bcc:cedb:d9bf%4]) with mapi id 15.20.8489.028; Tue, 4 Mar 2025
- 03:07:35 +0000
-To: Karan Tilak Kumar <kartilak@cisco.com>
-Cc: sebaddel@cisco.com, arulponn@cisco.com, djhawar@cisco.com,
-        gcboffa@cisco.com, mkai2@cisco.com, satishkh@cisco.com,
-        aeasi@cisco.com, jejb@linux.ibm.com, martin.petersen@oracle.com,
-        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-        Dan Carpenter
- <dan.carpenter@linaro.org>
-Subject: Re: [PATCH] scsi: fnic: Replace use of sizeof with standard usage
-From: "Martin K. Petersen" <martin.petersen@oracle.com>
-In-Reply-To: <20250225215056.4899-1-kartilak@cisco.com> (Karan Tilak Kumar's
-	message of "Tue, 25 Feb 2025 13:50:56 -0800")
-Organization: Oracle Corporation
-Message-ID: <yq1y0xlsdci.fsf@ca-mkp.ca.oracle.com>
-References: <20250225215056.4899-1-kartilak@cisco.com>
-Date: Mon, 03 Mar 2025 22:07:33 -0500
-Content-Type: text/plain
-X-ClientProxiedBy: BY5PR13CA0009.namprd13.prod.outlook.com
- (2603:10b6:a03:180::22) To CH0PR10MB5338.namprd10.prod.outlook.com
- (2603:10b6:610:cb::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD35918A6D4;
+	Tue,  4 Mar 2025 03:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741058001; cv=none; b=JBBZFe9H4tMPy50kCepVFdWf8y8a4A08/xsNHNs93h4OE3EAhX/Eyz+exq7AohZtjE9aH8ekMg6g8g/wbhG06IFc2fN1WZIEuDccrYkGv3MbUN97sT39XZ+4lPVcQtfJp1iZOTz4HNM5o26ZGFD1MEPKGqPNNtfkZRxvgWJFiow=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741058001; c=relaxed/simple;
+	bh=x6KpIjhdNrzNoOgiXRVg0LP3KzS+DSO6ifA6XJJokKU=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EpY2IgLfSt9QkIms+1hrY//hRLd1CCQ1HKICwHeFmXwa+UMAjBR66ERyqRKQyFi8HLoIx5jlSshjcMy1FxC+/fMB6g8DuXdNuqUZwcXrK1RhXEMQ2931aOyhBMMCMhoVklVE1c4I3QqAXEyJ5Jzm7QcDi2LJTT8tfhqH+fvNmk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PkVmAdAq; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741058000; x=1772594000;
+  h=message-id:date:mime-version:subject:from:to:cc:
+   references:in-reply-to:content-transfer-encoding;
+  bh=x6KpIjhdNrzNoOgiXRVg0LP3KzS+DSO6ifA6XJJokKU=;
+  b=PkVmAdAqfDq0c/KtIz6RqMz7zEz0ntTwJeLyuWcrOUgd4i3tKWK1DQng
+   ma2B6J+e1GL+EsevN1lp+lmPmdpc2XK0/PDXgyZX+j6t2SOlT+JIRXy60
+   y0UsUvccgf94UKpwZqhPI5yC5Sm6ZYl/FxBFVds7+4cihpxy3SA1Lp61k
+   gYSuE6gnuYzntOJi830Z+eKZBWf++XKWQQ5cXgY5Va30+GvfRzr5cciYs
+   DZ83sSF3Aj9nqZejDDsdEmBPCceW2F1skb18c0pav9pQQ9mDedECG3BTX
+   lalIg+qxCbpx65y6nY372YEexKbiIKr6iac21rv1CMuEFwnoEDz+5HIsu
+   g==;
+X-CSE-ConnectionGUID: 6MKW2XrKQUW1dZgpY/PNOQ==
+X-CSE-MsgGUID: DdbzMWyjRJmh7U0gz9xi8w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53352289"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="53352289"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 19:13:18 -0800
+X-CSE-ConnectionGUID: 6QbeHxE8TRWBheCS4GirrQ==
+X-CSE-MsgGUID: /pDlgezbQEmGYPyXjdlYHw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="118927674"
+Received: from dapengmi-mobl1.ccr.corp.intel.com (HELO [10.124.245.128]) ([10.124.245.128])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 19:08:43 -0800
+Message-ID: <71c0f66a-9ee8-4c01-8a29-2c6faf015b4d@linux.intel.com>
+Date: Tue, 4 Mar 2025 11:08:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH0PR10MB5338:EE_|CO6PR10MB5634:EE_
-X-MS-Office365-Filtering-Correlation-Id: 25ec4f04-aef5-45ff-6843-08dd5ac9b66f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BeFgwMhCjvFJcc6ClAvco9PS4eaViLnxneT8mugSrAy9wwQMs+Bbko2gUDyM?=
- =?us-ascii?Q?cD6MA9j3dQjgdD0hBXbbcMYA938ClZjQ4Db/kXDY6tVxBpX1NoTu3qQ7WDW7?=
- =?us-ascii?Q?qDa16v1r3rLTuyzsPjCZMCns1axiEJCRTGcuxkM0t/g2nop8pCBi1u1oIi2y?=
- =?us-ascii?Q?pvZNFmHOXPTgfhKJN4I1h5wNDYrLakUYl2CX0+M4jz63zEdiR2/aVTz0O5h+?=
- =?us-ascii?Q?Qur82AEUGltaNJsyXZ+Gvm+N5lk1RD5/mKpVtDAPZbhbiv46nuwRCZ0AMtLG?=
- =?us-ascii?Q?01ivLox4gHvUEtA/b0b+FZqZ9WY/eqULyOg6CLS/tP3AWpoIWUJF0YYDFNrC?=
- =?us-ascii?Q?c9itt6ku/ECDJv2rgXDju1dAauZ8UUGlrFrhr9asGJSrGWmqAbxn6qUMykPM?=
- =?us-ascii?Q?3xqalNif9DW0gChchdtQW3luOmxGuGR/StSunjK/3dTwmJYupeVZzSfZ00bY?=
- =?us-ascii?Q?7p3BpVhmHHIVcZvkH+R8LIsFiAfeOg1S0XyBDhf7s+FfFiE2ugVGxKGfrran?=
- =?us-ascii?Q?XjLdBWNRZ7iT/4Ry5WKFEYbZM1tBz5ejqwvD5wCBQum9LKQVpV8DYM7ceoVY?=
- =?us-ascii?Q?xXQx41rxQg94IxuF4VIl2zeVsHiy9c2yHOUo5tPbyigVIr3IMBnqhl8f96qc?=
- =?us-ascii?Q?R2nJSliC7G7RFgoEaDY1s79G6LShVbn3WKgIL+fYWVsjR/YoFH4v/vSL8+Ye?=
- =?us-ascii?Q?y0/F0kzXMb8b3UiSMU1WWfW25cCysTb/J/hkl8e0kS7DCwNjZu8AnJmYoM39?=
- =?us-ascii?Q?IseR5Xvfc0R5i6VQl/rmLqfRIrExldEcQ/RiximLALbpfYOWiyyfFDwlRu4U?=
- =?us-ascii?Q?C6bpFgdpibW/pJVyjrJuz4IpOjggC9fjZBnhaer8tFCHR/w9F4uRoAyq+oHp?=
- =?us-ascii?Q?pnQjSBHMnlxzeI4alJoU5/OBEYPcTXh72ziCqCiCZR69snTzd45+3XYvpcLZ?=
- =?us-ascii?Q?JsvE4KH9PcFW/WjXK3LhRDGr67WD+A8TGmNPpDckYk6AK8k5awWGt+Zi8kci?=
- =?us-ascii?Q?+4as71O1nylJF6EvVW9bJGfCBnn+KYzNRMBD8hmcs6DygIGrDF7nZLgZA7DE?=
- =?us-ascii?Q?fhhX1rt21Pz+6Hm1yqldLURfUKcYy8C/OaH6fLt8+CKm9kCYAEvOHRo8ynBG?=
- =?us-ascii?Q?XoY6/SLJxgeHTavNDhK0JTclwiIVosqwckXDQl+X5Od/jF6kzSZPplbw9tYo?=
- =?us-ascii?Q?C0DcG/WQWYeRE5sOkwh73nAd/dBLcgVc+bGtgDD4TpE81jfDQH+V2YYERm6d?=
- =?us-ascii?Q?TQj5CmcrHRcweJDPuHrDD9WiMbthbH+TTHiLJVRCiPUaGpTPAV6FdAM1maIl?=
- =?us-ascii?Q?E4LFvGsiGodwksnQA37QDzmZLKbk32R4WrvQEa6lS7SaycyBRYyeKxqFPsYn?=
- =?us-ascii?Q?Y44AWrGyeo/qQdcZNtd11dmNsS/o?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH0PR10MB5338.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RUcbdkUr3bqVJMF+elJ+VRlHZdj1fiwGhnV7Z9bMOICACrZ12zVUke9CXNwM?=
- =?us-ascii?Q?ORttO1SWA5f7B9dWw+kvCtyP4gtM9HhcTJBCG4XdGZZEI4oUEiTtyjnjUmr0?=
- =?us-ascii?Q?mfLDO9xGYdULXRFgo8A0dnm6mw5Lnu50pzxc9zQB5W+Cpz6+X40Yz1iecRwq?=
- =?us-ascii?Q?WXuL4WEmmqCcXVi4988nJAWo2V3X07fv/qQQDt8ymBeVwvzu0n3VgQxl4Adv?=
- =?us-ascii?Q?mTHFuNNy99d5Gs1UZTmmuIRkVcbLF9wuoFL6txkWip6rQcvSxzZi0us6RLN1?=
- =?us-ascii?Q?zxpfCzoBe6vMAS1+YeTfF0bnRfVJkud1ouuVYfY7HqwJREtQXArLwLHVqUvf?=
- =?us-ascii?Q?IEavqEytFwAh8UP77pLL5wue2Hnrd3KJuRFpMYtvySWSOEBC5fl7ZudFXV9v?=
- =?us-ascii?Q?KPPsG+3mfsRTpFsq2EwvRdvUzzunkX9dmSDsYdcWuYvsnTDY8voun7v7rcA4?=
- =?us-ascii?Q?8kp4cWNGyTEzmswoiEoW8XtVUweQE4bYg5ECzeCcws/B+geCmi/FQbO19X7b?=
- =?us-ascii?Q?b+7yltYJI97Y9ivFMcfvLwLDWpZY8Kv+juPbLd+fAMIV61FMlDaEeCjR165H?=
- =?us-ascii?Q?8D7LPy9LhTFanORMhSewyr6qiVqvigchh3I3Q4gG4KoudevO4Eda0iUjv8kH?=
- =?us-ascii?Q?N8sDIV3Hpi1y/lVAWvKkVoBfsErIgxhhrpLXhHaVIlSqzYsclUuYR7FB3GSl?=
- =?us-ascii?Q?OR6ApIAUHF5H2lNG0fre3pKvnnt46IC4UPFgcXlh4mVlUAzRHygt+T9dni+5?=
- =?us-ascii?Q?cWZsHvLIRWdzOWF1Ca+MjgtvyISqPakIXCbhWikH6DJ6WkeNPPZXf/oQ9jY0?=
- =?us-ascii?Q?Dpl4VuBcz8bNpvB2HB6ES8+Kwcql75sUpLfvJN7QeaxVda0v9OsSlQ/a3bJk?=
- =?us-ascii?Q?BH0KZ3soEULnivscKdEXI1+SuTnj0mCxQ/19cMssu5q4u+QG0k31Xb/nC6gk?=
- =?us-ascii?Q?1OOvelmB/ZjguWxUBFESFJwb/AG5xF51OFR+dlZ3qzshLP9djq3ptwzqJZtL?=
- =?us-ascii?Q?EY4m8AqVwILeGz8/Y9QhOZ/YyRk+Iq6gO1dn3PvVkL8xTFVtGkgNEGij9U5l?=
- =?us-ascii?Q?5A/aS6fDhSyiKPf/FFq2pyn/8ZaP+cZGzbGTD8nZh1uX2I8lTxHEpCLRl44l?=
- =?us-ascii?Q?ZDPC/YGCsI/4U6DYJw0Jxw9+TxaIZ5N7Zpt1xNwk+u6ninPKYhJiDrjPT7VE?=
- =?us-ascii?Q?j3mzJU5ep/35Doa5L4L0YdHlKYlirjADtH2xfft4iiZE9vVc68PQwFoUDWPt?=
- =?us-ascii?Q?KyGWSzjJ/ybFFJl9SM3L6pcZpO3YPEfSYNdKr3BOOsznpCush1WKsuryoNit?=
- =?us-ascii?Q?oBPB9VrZY2JmuJolBgEeRhtg/rbaEzuC5jZe3f5EuhM/bYQZYWsVrR1cmbTI?=
- =?us-ascii?Q?HKuIjYF0qCqpzYjsBDEPImAFV+7uf9MQ80QbqLxjtfd2peiSRaoCPKw0aK6f?=
- =?us-ascii?Q?0q4F9cl6t+F/0VKTTGgRkIdZuoKpHmzIRKHqYFbhtJ2jQlr0fdDtnsHXPvhp?=
- =?us-ascii?Q?qA6yqUXQsUGFXgNBT9sHF/o5c2gWFORVu7YVNkvf8s63IQLdPROfIFh8z/LX?=
- =?us-ascii?Q?8UpdNI+il9HlAWNyjSg2F+WVzny1hzWAKHTh2GRbo68mPm+6gd7wayg3OOxi?=
- =?us-ascii?Q?wg=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	Jj3EL/7C13lZcv+hgfb0KlyCikUtLDxh8RKlhFhNzVh8f059R6EsKCTNyJcVq2doqZubMVn3XlBFOKiqHKq2A4prESpwf6jxpDRPDOQBRimNqMYrqxEyd2uciOqeEZzUyEY4Bjgwftl17nGRIe7teiTa9NEyc+Osj7gAhm2mWtXaP7kAKHBQU9hL5HcfJT0gv2/gTeKzAAlOboFCUjVh1/kiRI53pBqneVX3B8q7sVy2m8njZN7QNY0qBpwMZ5a6Fyoymzl1RODa0LFW/7e6tnQ1NTNx0+e/VcnuScHQVqSuoKRTBHeSzlCgIWV+GL7D4X8Vp331Xky8Vug1Fh4bIL2QwzGHfB9FaugykB/G6I0ABBERwGYZDy7vhs8vlPGUvf93GgUXduumfCZLuoM+9OxQuBnIbGfRcGlVzhVub8VuZWKjBQ2x+8Rpt4XgxxgLji7AYhkNTzBZExiHklBJN+qMF3usuvydi5bWIX0ycdMaffik0XMtOxMdYTEylGFl8TbjXm6ocY7jpsDKS8gJNV0oE83j73/BMiQYjY1Rmodb56HpqL1fwLP6faRUmizsMli6cA1IJWfkPyS1kWUUYE3Qm33D6CpY3JsG/Be1wnw=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 25ec4f04-aef5-45ff-6843-08dd5ac9b66f
-X-MS-Exchange-CrossTenant-AuthSource: CH0PR10MB5338.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 03:07:35.4110
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: mohnH1Mlcnzf2T2qtGRWErQgzsuBMp7dEDm4cUWHxvKKPnmc06pJsIA6W1Am2jaSUUzgQBO5D1nNoPrQr1jiEsEHxJmspyFbHivFUC4p/20=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CO6PR10MB5634
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_01,2025-03-03_04,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=898 malwarescore=0
- bulkscore=0 adultscore=0 suspectscore=0 spamscore=0 phishscore=0
- mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2502100000 definitions=main-2503040023
-X-Proofpoint-GUID: y9jwUgskaayR5WGHVEvZiDS73RcZLK5x
-X-Proofpoint-ORIG-GUID: y9jwUgskaayR5WGHVEvZiDS73RcZLK5x
+User-Agent: Mozilla Thunderbird
+Subject: Re: [Patch v2 18/24] perf/x86/intel: Support arch-PEBS vector
+ registers group capturing
+From: "Mi, Dapeng" <dapeng1.mi@linux.intel.com>
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo
+ <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+ Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Andi Kleen <ak@linux.intel.com>,
+ Eranian Stephane <eranian@google.com>, linux-kernel@vger.kernel.org,
+ linux-perf-users@vger.kernel.org, Dapeng Mi <dapeng1.mi@intel.com>
+References: <20250218152818.158614-1-dapeng1.mi@linux.intel.com>
+ <20250218152818.158614-19-dapeng1.mi@linux.intel.com>
+ <20250225153257.GQ11590@noisy.programming.kicks-ass.net>
+ <bda04ccd-fa90-4f14-89cc-9835de36bcfb@linux.intel.com>
+ <a62bfd22-0469-46cc-954d-8331aa2922e9@linux.intel.com>
+Content-Language: en-US
+In-Reply-To: <a62bfd22-0469-46cc-954d-8331aa2922e9@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Karan,
+On 2/27/2025 2:40 PM, Mi, Dapeng wrote:
+> On 2/26/2025 4:08 PM, Mi, Dapeng wrote:
+>> On 2/25/2025 11:32 PM, Peter Zijlstra wrote:
+>>> On Tue, Feb 18, 2025 at 03:28:12PM +0000, Dapeng Mi wrote:
+>>>> Add x86/intel specific vector register (VECR) group capturing for
+>>>> arch-PEBS. Enable corresponding VECR group bits in
+>>>> GPx_CFG_C/FX0_CFG_C MSRs if users configures these vector registers
+>>>> bitmap in perf_event_attr and parse VECR group in arch-PEBS record.
+>>>>
+>>>> Currently vector registers capturing is only supported by PEBS based
+>>>> sampling, PMU driver would return error if PMI based sampling tries to
+>>>> capture these vector registers.
+>>>> @@ -676,6 +709,32 @@ int x86_pmu_hw_config(struct perf_event *event)
+>>>>  			return -EINVAL;
+>>>>  	}
+>>>>  
+>>>> +	/*
+>>>> +	 * Architectural PEBS supports to capture more vector registers besides
+>>>> +	 * XMM registers, like YMM, OPMASK and ZMM registers.
+>>>> +	 */
+>>>> +	if (unlikely(has_more_extended_regs(event))) {
+>>>> +		u64 caps = hybrid(event->pmu, arch_pebs_cap).caps;
+>>>> +
+>>>> +		if (!(event->pmu->capabilities & PERF_PMU_CAP_MORE_EXT_REGS))
+>>>> +			return -EINVAL;
+>>>> +
+>>>> +		if (has_opmask_regs(event) && !(caps & ARCH_PEBS_VECR_OPMASK))
+>>>> +			return -EINVAL;
+>>>> +
+>>>> +		if (has_ymmh_regs(event) && !(caps & ARCH_PEBS_VECR_YMM))
+>>>> +			return -EINVAL;
+>>>> +
+>>>> +		if (has_zmmh_regs(event) && !(caps & ARCH_PEBS_VECR_ZMMH))
+>>>> +			return -EINVAL;
+>>>> +
+>>>> +		if (has_h16zmm_regs(event) && !(caps & ARCH_PEBS_VECR_H16ZMM))
+>>>> +			return -EINVAL;
+>>>> +
+>>>> +		if (!event->attr.precise_ip)
+>>>> +			return -EINVAL;
+>>>> +	}
+>>>> +
+>>>>  	return x86_setup_perfctr(event);
+>>>>  }
+>>>>  
+>>>> diff --git a/arch/x86/events/intel/core.c b/arch/x86/events/intel/core.c
+>>>> index f21d9f283445..8ef5b9a05fcc 100644
+>>>> --- a/arch/x86/events/intel/core.c
+>>>> +++ b/arch/x86/events/intel/core.c
+>>>> @@ -2963,6 +2963,18 @@ static void intel_pmu_enable_event_ext(struct perf_event *event)
+>>>>  			if (pebs_data_cfg & PEBS_DATACFG_XMMS)
+>>>>  				ext |= ARCH_PEBS_VECR_XMM & cap.caps;
+>>>>  
+>>>> +			if (pebs_data_cfg & PEBS_DATACFG_YMMS)
+>>>> +				ext |= ARCH_PEBS_VECR_YMM & cap.caps;
+>>>> +
+>>>> +			if (pebs_data_cfg & PEBS_DATACFG_OPMASKS)
+>>>> +				ext |= ARCH_PEBS_VECR_OPMASK & cap.caps;
+>>>> +
+>>>> +			if (pebs_data_cfg & PEBS_DATACFG_ZMMHS)
+>>>> +				ext |= ARCH_PEBS_VECR_ZMMH & cap.caps;
+>>>> +
+>>>> +			if (pebs_data_cfg & PEBS_DATACFG_H16ZMMS)
+>>>> +				ext |= ARCH_PEBS_VECR_H16ZMM & cap.caps;
+>>>> +
+>>>>  			if (pebs_data_cfg & PEBS_DATACFG_LBRS)
+>>>>  				ext |= ARCH_PEBS_LBR & cap.caps;
+>>>>  
+>>>> @@ -5115,6 +5127,9 @@ static inline void __intel_update_pmu_caps(struct pmu *pmu)
+>>>>  
+>>>>  	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_XMM)
+>>>>  		dest_pmu->capabilities |= PERF_PMU_CAP_EXTENDED_REGS;
+>>>> +
+>>>> +	if (hybrid(pmu, arch_pebs_cap).caps & ARCH_PEBS_VECR_EXT)
+>>>> +		dest_pmu->capabilities |= PERF_PMU_CAP_MORE_EXT_REGS;
+>>>>  }
+>>> There is no technical reason for it to error out, right? We can use
+>>> FPU/XSAVE interface to read the CPU state just fine.
+>> I think it's not because of technical reason. Let me confirm if we can add
+>> it for non-PEBS sampling.
+> Hi Peter,
+>
+> Just double confirm, you want only PEBS sampling supports to capture SSP
+> and these vector registers for both *interrupt* and *user space*? or
+> further, you want PMI based sampling can also support to capture SSP and
+> these vector registers? Thanks.
 
-> Remove cast and replace use of sizeof(struct) with standard usage of
-> sizeof.
+Hi Peter,
 
-Applied to 6.15/scsi-staging, thanks!
+May I know your opinion on this? Thanks.
 
--- 
-Martin K. Petersen	Oracle Linux Engineering
+
+>
+>>
+>>>> diff --git a/arch/x86/events/intel/ds.c b/arch/x86/events/intel/ds.c
+>>>> index 4b01beee15f4..7e5a4202de37 100644
+>>>> --- a/arch/x86/events/intel/ds.c
+>>>> +++ b/arch/x86/events/intel/ds.c
+>>>> @@ -1437,9 +1438,37 @@ static u64 pebs_update_adaptive_cfg(struct perf_event *event)
+>>>>  	if (gprs || (attr->precise_ip < 2) || tsx_weight)
+>>>>  		pebs_data_cfg |= PEBS_DATACFG_GP;
+>>>>  
+>>>> -	if ((sample_type & PERF_SAMPLE_REGS_INTR) &&
+>>>> -	    (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK))
+>>>> -		pebs_data_cfg |= PEBS_DATACFG_XMMS;
+>>>> +	if (sample_type & PERF_SAMPLE_REGS_INTR) {
+>>>> +		if (attr->sample_regs_intr & PERF_REG_EXTENDED_MASK)
+>>>> +			pebs_data_cfg |= PEBS_DATACFG_XMMS;
+>>>> +
+>>>> +		for_each_set_bit_from(bit,
+>>>> +			(unsigned long *)event->attr.sample_regs_intr_ext,
+>>>> +			PERF_NUM_EXT_REGS) {
+>>> This is indented wrong; please use cino=(0:0
+>>> if you worry about indentation depth, break out in helper function.
+>> Sure. would modify it.
+>>
+>>
+>>>> +			switch (bit + PERF_REG_EXTENDED_OFFSET) {
+>>>> +			case PERF_REG_X86_OPMASK0 ... PERF_REG_X86_OPMASK7:
+>>>> +				pebs_data_cfg |= PEBS_DATACFG_OPMASKS;
+>>>> +				bit = PERF_REG_X86_YMMH0 -
+>>>> +				      PERF_REG_EXTENDED_OFFSET - 1;
+>>>> +				break;
+>>>> +			case PERF_REG_X86_YMMH0 ... PERF_REG_X86_ZMMH0 - 1:
+>>>> +				pebs_data_cfg |= PEBS_DATACFG_YMMS;
+>>>> +				bit = PERF_REG_X86_ZMMH0 -
+>>>> +				      PERF_REG_EXTENDED_OFFSET - 1;
+>>>> +				break;
+>>>> +			case PERF_REG_X86_ZMMH0 ... PERF_REG_X86_ZMM16 - 1:
+>>>> +				pebs_data_cfg |= PEBS_DATACFG_ZMMHS;
+>>>> +				bit = PERF_REG_X86_ZMM16 -
+>>>> +				      PERF_REG_EXTENDED_OFFSET - 1;
+>>>> +				break;
+>>>> +			case PERF_REG_X86_ZMM16 ... PERF_REG_X86_ZMM_MAX - 1:
+>>>> +				pebs_data_cfg |= PEBS_DATACFG_H16ZMMS;
+>>>> +				bit = PERF_REG_X86_ZMM_MAX -
+>>>> +				      PERF_REG_EXTENDED_OFFSET - 1;
+>>>> +				break;
+>>>> +			}
+>>>> +		}
+>>>> +	}
+>>>>  
+>>>>  	if (sample_type & PERF_SAMPLE_BRANCH_STACK) {
+>>>>  		/*
 
