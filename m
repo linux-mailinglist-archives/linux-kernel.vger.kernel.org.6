@@ -1,139 +1,128 @@
-Return-Path: <linux-kernel+bounces-545810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AAF4A4F1CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:50:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 600EBA4F1C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:49:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CD8E3A61A9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:49:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 170C6188CED8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43072277021;
-	Tue,  4 Mar 2025 23:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C11727932E;
+	Tue,  4 Mar 2025 23:49:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EJ0PXlI+"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OHGS+YbH"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F00BCBA2D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1D0DBA2D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:49:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741132191; cv=none; b=EkdOe72TI+mT7n748DQ1XDUueLAuRnHEcGWriaiNPPj3f01AmuBBR6jhifCGV+tQiBhb4n2ecCGBQZREQRUirPQXypOV5wlb4FMKTfzUK95CWUmM8fWZ3u1+9TRlZZSRFyrLyzlzO/ODyWZvipcsNS1T0wzOB8hrQEZt6MGA5T0=
+	t=1741132181; cv=none; b=I4TB94GG+vLVe8W8jl+xCnfj+umH9XcO3WQhY+FseQYhv3TxcYxVyn2Ox3G9UVZcWDMC2DD6hu0Dw161Y89CZfQdKcvrT99Pk9+UrUEmszlwqh1Ytkwilv1xuajkf8+6VcNjlSjGaEFfc9FNW9fFXmj78LzSj3Dcjdpj9uTOEQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741132191; c=relaxed/simple;
-	bh=iEtB+gCyt8I6YiLzpl4Y3N3BrPvrl3nxkNTaQR2VtHM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SFId0ec2cnT5rqV9ZtUf+kP7jCJEFYQXU0fRkR6lDqQGrgjBYqVsmZfgAZey5Ujoo9serNnxyXkN7idMY7j6qCZr2Ec2Wwrv34lTl/172j407QAoUfJeOGH2yTbpIFvJSg+NnmW6P5R8dWvwbDIy0a0fQoHtnKX3dyBHdiHEZVU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EJ0PXlI+; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741132188;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zsLjsgiwz48CWElDV+44qdETBMYv+pYUPW3rLAb2CoA=;
-	b=EJ0PXlI+QsJj1VCyG8H0A0vKt2Nw9L+d7YBnB4ccaCvsX1/uPbb2Wa5ET5BywFcX5XiDC1
-	fGiOOb5m24mvrn8/VXErfiwy0cb+EIz2m1WheVrD5gdAZBahDNWT0USnVmXvePc0QPwwAx
-	GO+p6mOr8aiW9f7pQjrDzHPGqmOrG0g=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-245-85hpojrxOUGcCCaFuSHlqQ-1; Tue,
- 04 Mar 2025 18:49:45 -0500
-X-MC-Unique: 85hpojrxOUGcCCaFuSHlqQ-1
-X-Mimecast-MFC-AGG-ID: 85hpojrxOUGcCCaFuSHlqQ_1741132184
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1A4071800872;
-	Tue,  4 Mar 2025 23:49:44 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.41])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 35DDE180035F;
-	Tue,  4 Mar 2025 23:49:40 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  5 Mar 2025 00:49:13 +0100 (CET)
-Date: Wed, 5 Mar 2025 00:49:09 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Hillf Danton <hdanton@sina.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
- full
-Message-ID: <20250304234908.GH5756@redhat.com>
-References: <20250224142329.GA19016@redhat.com>
- <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
- <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
- <20250227211229.GD25639@redhat.com>
- <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
- <20250228143049.GA17761@redhat.com>
- <20250228163347.GB17761@redhat.com>
- <20250304050644.2983-1-hdanton@sina.com>
- <20250304102934.2999-1-hdanton@sina.com>
- <20250304233501.3019-1-hdanton@sina.com>
+	s=arc-20240116; t=1741132181; c=relaxed/simple;
+	bh=KGc5ZOpthDNGd1BsUds+xgHbJiLHtxGxIIOfKvP7wJk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=Mx5fDF6ecPcq/vtYlr+6SAV5dD0k8/1s/oZ4UIbGYqqFzOeICe7Y0DNeb8LLy/E8QVhq3XV1ZVXgAmuDKsIfOIh5l7EhAkFP3wOZJ3OMEf8wQ7qVRsAQuBskFnQzcdF9dLhc+e6VLEmplYGrWTV6p70uDRUWpeFfgCP1Ug4qQw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OHGS+YbH; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--almasrymina.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2feb8d29740so9708672a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 15:49:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741132179; x=1741736979; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+YMZiKSz5zNA/0UkYVvQA9DfWhT+3c5l8KwfO4x1oWs=;
+        b=OHGS+YbHklFyjo2ZqSSi0Mksn52GfkpX6woVhcc/Svmpd+5J3NhSw1NpI4353N7zKL
+         uG5p6BJHkGuA7SAOa4ZKns3mGkkPIkiZdGAqgKslUcxB1Fubs5jZXJAGwGSwG9OgI58Q
+         kUqIql8Pk8tXwOlAV2g6UsA5H9Je311SiKcboR87S702+X7c2oVjY1J3vxUU6PvVLN72
+         NnWwt5Cylk2wzGvRG8+Lu7NipnvttuhTqnLbjEekt/I507dX64NAbN4cwH2Z7XR/P+tx
+         r2/1JIm0KjHWg0qs7vnNmZ9RYjkoAtRvheYGlux269bkcUOKZVprPk1AYzQHOXtDKBNF
+         sQOA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741132179; x=1741736979;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+YMZiKSz5zNA/0UkYVvQA9DfWhT+3c5l8KwfO4x1oWs=;
+        b=IVSSthUm7aF/E20XBuIuHe50SkwtbXign3wujvT+BBcbtuXyFPMZd+coTbijndDpfP
+         +/NOHNLvS8MNmj6pD5hP+LiiPOjLpObnriW5XRtbtYbdkOGZ1PmR0Gz+ep3mo+voqLT6
+         XZy0OpjRTEHckwAYoqPtoxIbs1mS09DahZb0DcAK+CtYoPihcfE1V0J2HEqPVFIjcU2L
+         0IlbM+Saow4JhHuMuBRVX6QjNyvros2spaoGdizgrK8RFSTDFI7eYe19w+7cfJtbYeie
+         Tz1eYQOjPzAZw11Z5SashQPgHe/q30CuZbE/XM2prasotvX0f/9aLo3BoOhxyQfSRoqA
+         wjSg==
+X-Forwarded-Encrypted: i=1; AJvYcCVVFX4PgzKWVeH+bSF8SXYvZT5hUdx5z2pmxuTf4BvUHdIkNl85F1LJg7nXAVcQpQVv2LbJiYwUR98jOnM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBcAYEzSKmUgtbJunh9B2qbytE1J0p+tc54G4fSpqUJLnXR0pt
+	pQQmeBD2EsXm2NG59QSM6ciCZzjtRpEKOTEwk2ntlqzFSnPZAW5XPGVfnVYwV+K/GoumsPuiqgn
+	RHBsxcrqhXHSewxWPFnpgcg==
+X-Google-Smtp-Source: AGHT+IHyEqSO1UoerwLMdOalFYRe0Gf8bawb/DcdZP+I3DG6F3XwdwIcjvKhQhRV3aPh8doeU1NUpGVgU+jQgq2Yfw==
+X-Received: from pjbmf13.prod.google.com ([2002:a17:90b:184d:b0:2fa:1803:2f9f])
+ (user=almasrymina job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a17:90b:3b51:b0:2ee:44ec:e524 with SMTP id 98e67ed59e1d1-2ff497c5dadmr1910088a91.35.1741132179057;
+ Tue, 04 Mar 2025 15:49:39 -0800 (PST)
+Date: Tue,  4 Mar 2025 23:49:24 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304233501.3019-1-hdanton@sina.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
+Message-ID: <20250304234924.1583687-1-almasrymina@google.com>
+Subject: [PATCH net v1] netmem: prevent TX of unreadable skbs
+From: Mina Almasry <almasrymina@google.com>
+To: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Mina Almasry <almasrymina@google.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Simon Horman <horms@kernel.org>, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 03/05, Hillf Danton wrote:
->
-> On Tue, 4 Mar 2025 13:34:57 +0100 Oleg Nesterov <oleg@redhat.com>
-> > > >
-> > > Note wakeup can occur even if pipe is full,
-> >
-> > Perhaps I misunderstood you, but I don't think pipe_read() can ever do
-> > wake_up(pipe->wr_wait) if pipe is full...
-> >
-> > > 		 * So we still need to wake up any pending writers in the
-> > > 		 * _very_ unlikely case that the pipe was full, but we got
-> > > 		 * no data.
-> > > 		 */
-> >
-> > Only if wake_writer is true,
-> >
-> > 		if (unlikely(wake_writer))
-> > 			wake_up_interruptible_sync_poll(...);
-> >
-> > and in this case the pipe is no longer full. A zero-sized buffer was
-> > removed.
-> >
-> > Of course this pipe can be full again when the woken writer checks the
-> > condition, but this is another story. And in this case, with your
-> > proposed change, the woken writer will take pipe->mutex for no reason.
-> >
-> See the following sequence,
->
-> 	1) waker makes full false
-> 	2) waker makes full true
-> 	3) waiter checks full
-> 	4) waker makes full false
+Currently on stable trees we have support for netmem/devmem RX but not
+TX. It is not safe to forward/redirect an RX unreadable netmem packet
+into the device's TX path, as the device may call dma-mapping APIs on
+dma addrs that should not be passed to it.
 
-I don't really understand this sequence, but
+Fix this by preventing the xmit of unreadable skbs.
 
-> waiter has no real idea of full without lock held, perhaps regardless
-> the code cut below.
+Tested by configuring tc redirect:
 
-Of course! Again, whatever the woken writer checks in pipe_writable()
-lockless, another writer can make pipe_full() true again.
+sudo tc qdisc add dev eth1 ingress
+sudo tc filter add dev eth1 ingress protocol ip prio 1 flower ip_proto \
+tcp src_ip 192.168.1.12 action mirred egress redirect dev eth1
 
-But why do we care? Why do you think that the change you propose makes
-more sense than the fix from Prateek or the (already merged) Linus's fix?
+Before, I see unreadable skbs in the driver's TX path passed to dma
+mapping APIs.
 
-Oleg.
+After, I don't see unreadable skbs in the driver's TX path passed to dma
+mapping APIs.
+
+Fixes: 65249feb6b3d ("net: add support for skbs with unreadable frags")
+Suggested-by: Jakub Kicinski <kuba@kernel.org>
+Cc: stable@vger.kernel.org
+Signed-off-by: Mina Almasry <almasrymina@google.com>
+---
+ net/core/dev.c | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/net/core/dev.c b/net/core/dev.c
+index 30da277c5a6f..63b31afacf84 100644
+--- a/net/core/dev.c
++++ b/net/core/dev.c
+@@ -3914,6 +3914,9 @@ static struct sk_buff *validate_xmit_skb(struct sk_buff *skb, struct net_device
+ 
+ 	skb = validate_xmit_xfrm(skb, features, again);
+ 
++	if (!skb_frags_readable(skb))
++		goto out_kfree_skb;
++
+ 	return skb;
+ 
+ out_kfree_skb:
+
+base-commit: 3c6a041b317a9bb0c707343c0b99d2a29d523390
+-- 
+2.48.1.711.g2feabab25a-goog
 
 
