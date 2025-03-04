@@ -1,141 +1,203 @@
-Return-Path: <linux-kernel+bounces-545072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 962AEA4E8B4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:29:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A6C2A4E982
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:43:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 27B47423E2B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:22:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EE7D3BD854
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:23:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F992C155D;
-	Tue,  4 Mar 2025 16:59:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E049527C840;
+	Tue,  4 Mar 2025 17:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xVzpIv8w"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="LJtt/F6W"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2056.outbound.protection.outlook.com [40.107.93.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA492C1545
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:59:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741107564; cv=none; b=jNX2VlCyJbObIL3jba1pY0MyLQC7OTtEW4mxHKhBYTv8pzqxFbyFx1yHcwgLXJn+e8mLisqWJOBprOBJvdpZwwsXRUd75mJ1/Kqkk3sE1ye9HcqzS2n9S/SkoWVtwyflKgZ/t97I16LL2rKWmRMmQEDe6RWrZ+2J447/vf0Vxsk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741107564; c=relaxed/simple;
-	bh=NMceGXU1AayKIvYDDDytTT9zM6ePfplkGhj1Gwrp0Tc=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mccJJ5+GmU3r6fM6budCpTtTPyQUGks42AB2K1oK7AQVKZCSXHPT+A24vSOgk53LP4ITxQsL+ea/eLkJMmk8581yrhoROTDxiZS+IwBRtJF8mW+Qe/xhL8zxsIKQKjy2C2YJQ+TDNmo4BzO9aptHrLPXg+A/LhRVmSoPej7LwSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xVzpIv8w; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-223551ee0a3so135013255ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:59:22 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741107562; x=1741712362; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7W7yQmf61Pq53pMS2vzrgU7eZq7ZkAtUnxQ4fLwZP8=;
-        b=xVzpIv8wKPzZufylkWP08Zk3L6PpAtcFJZqbK5fZWTOv6yzWtCz1OLqybZApjy6ZQ2
-         k2GZ1UrEtB9Rs8bxEXpyClDuHvAbnZIALZWxGlH9mV2iVrCW57deaINSsPlABGY0yJWQ
-         YHaMrxkB50e9C5nK/ZJ8zrPJxBSGQcp0jC7rsHotKUNBJ6YseLws9+xoJrCx9H2hLjZN
-         fbY6pA2XmiwM/36ztyZTla9TPDMyzTECE5ZXmnenjgYn3gP9CoXz/Z6SPnoxHSx/3PsA
-         Lv9rhuKNQX1xrJdYjNT9rHstlHTTsTcQAScduyhRfLJ4P3lJDu1w9D7dlh0w450BP9n9
-         10fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741107562; x=1741712362;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V7W7yQmf61Pq53pMS2vzrgU7eZq7ZkAtUnxQ4fLwZP8=;
-        b=YL+lDBM0U2fvpehGQLn/D1lEE6CpWDsb4UrOWW2IaQfjYBq13Kwrb25q2PTYJy/3GQ
-         2tBjft00wh/IBKigI6clw4wgPtGApXjjPj2KsOll+ucTQWRsc4yzNAIQE3PFCuPgtfRg
-         Lx7EZ4QoE7wqhRD7Q3Ah5/4SuMhNk6hoM7hshAfQ8YjKy269HyV/C6QzXK3HtPIpUq+T
-         WX1qsld/OVqHM9jES1ntqEyCcRoKnEmUboC/ti38H14RbboHh/USDhZaAVEcIZ2PA4ud
-         De/G2PSBoug3N7o5V73NkVLXC331EO8sK8bQ7pLsgRc0iNWZEaYrvxGD2VCq3Q/9Ctqk
-         KV8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVsoWpMFQ0Sio+ZSXlA9qkIg81TJ96VBsj5a7DKuoEv50qcbTTokeY6d3CeEm8WtEtQ23DGKgBOhtKwkWQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWmCxc6xwwFRXwctyJsyPdVGVm9SvVE5E+HWDvYvDV0s+iVFTs
-	221KHa4S97i05u0WFx86CiSfca7uK4lhJPzjQppl7AmzZoUuOXErGNpXtzgZQPS7KUI07qGAK2k
-	fag==
-X-Google-Smtp-Source: AGHT+IHAFrEgPQdnRru2RpcA9ojFQVDAwMfLY/u9ofYMqa8EKlltfiiKVsKJDm4SpBm3Hx0wphR2ehXHeKw=
-X-Received: from plbju14.prod.google.com ([2002:a17:903:428e:b0:220:e84e:350c])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:3b83:b0:221:7955:64c3
- with SMTP id d9443c01a7336-22368f9d123mr262199705ad.23.1741107562128; Tue, 04
- Mar 2025 08:59:22 -0800 (PST)
-Date: Tue, 4 Mar 2025 08:59:20 -0800
-In-Reply-To: <9d04c204-cb9a-4109-977b-3d39b992c521@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F151DDC2A;
+	Tue,  4 Mar 2025 17:00:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741107621; cv=fail; b=UgARdnTZoy5NknNwMIuU1m7jH8rTTUxn4ZIdLhaRsfQ98x42oiehsq38gh4tTDoLKFDmAPqoYG9VhYoMI0f3SvFyaAHyxGWJQG5oBixkim6/NTX66esGfT79jU5N9iP0HjDbQhYGO7AC9NSH58F0v/X0vQKf9U7Lf/NziqZEnKk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741107621; c=relaxed/simple;
+	bh=AeA1b/QP2PlM392ZgjJr+N1DeRvLwLOGp79w2/5cEOY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FXu4UzB78fREB4w6t6396o4wGGQVlfzkPFvGDLXqvQSA8syZEL5bwPYSMrpzV+qQlMLlpQrYQ6QH5NZt9em+jS4rMIzfwlZ3CUUKyhNArIonMVZrFxGYgdy2EnbxOIt5wLM2zdf95GDFvpkLOKH0qMax/Km7XDPbdzZSyyt0bHM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=LJtt/F6W; arc=fail smtp.client-ip=40.107.93.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hVCGS93hPIRgte94L3VjyAyS4YAUTDRaG758tDClu5QtILxwRKNEuR3VGknm9+9ZFSwrnVr3jYQz0pb5kMC4GjvG7N1xJgY0vN/Csklg/6ODniYQ8fanaMOvOV6oUOx6KG6oO8wNKlRYsnh50/33wDSF+IJc7oAu4Ps5OIBXAFoyfbPBfO191man+GzGJKUVxgO32snChI6xGMWLRVqZo0BBN0ABSxA2sLdEPMMDslMWXbSqaJW1UmBq9DTYH1OULqxIJ6T5PjDrGQzWtJGygADk6ZFE7B2biK6odzSas8HBqUzgzKKTOgVVbEmp4e6ohd1WFHxC5ba2qVmq+Qz/Lw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hzJPC2LZtT7r+NSIQwHHEMomDjzircoHkvmWud19RG4=;
+ b=CvnTQ9xjlbyCx531oSEqZCI4zlm8qrFY5xiEYtVB2r9RO+8MhzeenWbeW1pkXoAsD8DfzpAQJdRWC13MWts7VGzBjuI1yGiufrEioEMQ6bfqgLa7yS0nCbBmz6i84w3nTyvfa0if+eqBy4hMT1IHzbeCiRtgqucB7teJcJ67AhzUjTAHsu1OVmnoXJZMy37a1kTFwwsKw/6fOd1t0qhUquTnpjnytMc488hqvQ1Qs8Jp8KM/zZmwdKpNB0F/wei0Hhb65DXLusj2X/kmqlDo49emp+TKwi2iDVBicNDct6qKVSF2UrBmBBqBf9C1xDAek7lvvs1Vjxk6Z2141/06ZA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hzJPC2LZtT7r+NSIQwHHEMomDjzircoHkvmWud19RG4=;
+ b=LJtt/F6Wbt7FG+2Le8TbrICAt33Yg/dPH7Ng8/cU4o+DsKfEObfZdfH1O6xKQCHPBV4ZfpulFZIo1N4wWae+ZQdH2wEtg3Z6fV030AzaizJGCIX/gR1BwcogSFg1N4TJGFtCGxGmZkG9C+uHcEFfk+sP1OQR+4hXgqEV8/yR+ljatk+SjrUTTXAgcmFZdNnovZtUF1cxjq5loMgweiLzoh6yW3tWAABEFDygQXGUN1Wi4FghTfe2+r1PjNx52XDVR1/3DWAanrOkic/T94ck7qi/DaGtnAGTtesqcZgFecM1dcylbb7eTLV2fl/nCh/d/Lv3GE0sdvYOsJsgzD75dQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
+ IA1PR12MB7664.namprd12.prod.outlook.com (2603:10b6:208:423::8) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8489.25; Tue, 4 Mar 2025 17:00:13 +0000
+Received: from DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
+ ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 17:00:13 +0000
+From: Zi Yan <ziy@nvidia.com>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Liu Shixin <liushixin2@huawei.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>, Barry Song <baohua@kernel.org>,
+ David Hildenbrand <david@redhat.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Lance Yang <ioworker0@gmail.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
+ Hugh Dickins <hughd@google.com>,
+ Charan Teja Kalla <quic_charante@quicinc.com>, linux-kernel@vger.kernel.org,
+ Shivank Garg <shivankg@amd.com>, stable@vger.kernel.org
+Subject: Re: [PATCH v2] mm/migrate: fix shmem xarray update during migration
+Date: Tue, 04 Mar 2025 12:00:05 -0500
+X-Mailer: MailMate (2.0r6233)
+Message-ID: <8EF27953-6973-41C8-A3FD-FC4DAEB3F2BB@nvidia.com>
+In-Reply-To: <2025030437-posting-barbecue-94af@gregkh>
+References: <20250228174953.2222831-1-ziy@nvidia.com>
+ <16838F71-3E96-4EFE-BDA1-600C33F75D36@nvidia.com>
+ <2025030437-posting-barbecue-94af@gregkh>
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: BYAPR11CA0081.namprd11.prod.outlook.com
+ (2603:10b6:a03:f4::22) To DS7PR12MB9473.namprd12.prod.outlook.com
+ (2603:10b6:8:252::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <b494af0e-3441-48d4-abc8-df3d5c006935@suse.cz> <diqz8qplabre.fsf@ackerleytng-ctop.c.googlers.com>
- <Z8cci0nNtwja8gyR@google.com> <9d04c204-cb9a-4109-977b-3d39b992c521@redhat.com>
-Message-ID: <Z8cxaGGoQ2163-R6@google.com>
-Subject: Re: [PATCH v6 4/5] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy
-From: Sean Christopherson <seanjc@google.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Ackerley Tng <ackerleytng@google.com>, Vlastimil Babka <vbabka@suse.cz>, shivankg@amd.com, 
-	akpm@linux-foundation.org, willy@infradead.org, pbonzini@redhat.com, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, linux-coco@lists.linux.dev, 
-	chao.gao@intel.com, bharata@amd.com, nikunj@amd.com, michael.day@amd.com, 
-	Neeraj.Upadhyay@amd.com, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	tabba@google.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|IA1PR12MB7664:EE_
+X-MS-Office365-Filtering-Correlation-Id: 418234c5-c67a-460c-e433-08dd5b3e07f0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YKj/yX3N7hFkDyxFz4h0q8y2GvCwKQl3eUQOUb4hgh95lPktLSYxUe8kRvRl?=
+ =?us-ascii?Q?Avyo5cUt6IoFvUZZtJUoSfMSsX8J4ihg/Lv2FaebbaHkP/haXQ/8OO8Nzd8E?=
+ =?us-ascii?Q?1OcUzE8HbqdcouU4yBFHMJd0gUSen7DA6wY8/ND39N4zWxrjuw77N7xyNMko?=
+ =?us-ascii?Q?1CRCZzFCSfk3gr/wG8rjcOehkXI1HQsz/3ilaP1WoZ63S5PYw98pQaiVdCAR?=
+ =?us-ascii?Q?KKdY74TpOe3BskNY5gDkNpKeCdbwoQ7o9bQ0tREh4j+XhQUPncYo+2axCGeE?=
+ =?us-ascii?Q?kTfOS7QrQVULTU4NVr/Tv1IE66jS8l5Ao4gx76aPbidFQpAOwcgEDVAzMZjp?=
+ =?us-ascii?Q?0zc42XegfasrNlwejPqi036y2Fch8+ZjMUDcTFmjAG2/rFQThEFm8vFc/2rj?=
+ =?us-ascii?Q?tzw1blLqRzt4mpb4NiJHYR/wQq7q2SDZo9dDNz3zpOXUB1CcFaZ/p8oWqTEY?=
+ =?us-ascii?Q?QieWrnR35UaaLOzJ0NUVinmjtk3jDKO1eSTqRcTEsVQ0TqpXpNhQ1k0mGu25?=
+ =?us-ascii?Q?TXvU7xgALThBTRrcuDGM3olh4GJYywqFerh0nwlTIW1CfBIPeqlypcOMMGYK?=
+ =?us-ascii?Q?0qrum8yCSPkUgY4/MLkEN9YPevnYvKPs+Vd+BBkBRZBnF+ortRFT+JKh5dMC?=
+ =?us-ascii?Q?cL1rWT3LRtriIzOeAz8KEuElIVH08AWZELo7Rymg+xBWyNLUhenHC9m50wvw?=
+ =?us-ascii?Q?fys0D3lSqTrkzFrpdSJPJ89n4oTHjtQB5FWenJWC4oRg/xbdCeFU9z8CDcKD?=
+ =?us-ascii?Q?pwTOjHCTyGDrgNyjPQAdsR2yHBrxJ6Qze1RDf0MogDLP/GayMV2x7kCZXSeW?=
+ =?us-ascii?Q?ze3ObaRg70GcfihDY8whiI90BkiRfYdkG3HOAVRMRgFnKVnXfudtxSMGLKbS?=
+ =?us-ascii?Q?6IUvZm749igS/SWxY/F1HZfzJOBN2Mx286QgVS6cXA6nG/8p2hJ0cw2LAdBS?=
+ =?us-ascii?Q?Bl5wYfhOXsIqrZAFfphubhQ9b2nhv+hiJ56e6zXbvOF4qkpDkCaW+eNaxI68?=
+ =?us-ascii?Q?EY2zR0FES0g1TeQfFu73LzX5sDP4om6l6vLX6cRLrbHUB4WmjuuJ/dKorGjy?=
+ =?us-ascii?Q?ThTvPFKNTyZDggGXNJkIUfX9b6pT7eIeftgiE5x/MBjsNX2Vz87EUSOHHICK?=
+ =?us-ascii?Q?QNK+sTbYQ560i0FwdeGLSLY2yYPq9MOOgEOwgbt3/4adVaDE8nfor8o3fYBS?=
+ =?us-ascii?Q?eTatNXK+szHyR9LHMurQCqpzlZA9rJUeGdaSKo1qXSOI5O+4/hAyw3g/O5mM?=
+ =?us-ascii?Q?ntQz09zlJVplMXWQaquceVcS78Kxrk7EtFUO3Ay5ko39kqD+7M8bu8KbokAa?=
+ =?us-ascii?Q?YC6e+BLmsjxX4iwcE29FxQm2GWaJ0O+Gu5B333+0JWXUOBr5viHDhQA97EM1?=
+ =?us-ascii?Q?43CFT5pcRhaLsRAiQWhFiEFNWFsL?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?p1BExSTtZaCJ6bCr8a0ehZu15Ma83+DlqDQp17ecFg6Bif/FvH2J580wS39X?=
+ =?us-ascii?Q?qtzAC3609BnybySlxRCGuMXoAmigIzJxJXUU7v8kWnQvHNjI7ehZgVWyHbjP?=
+ =?us-ascii?Q?z9LSMqB/bG+KbL1Uzl435Qt1u5/7MfR7gUd+r5fSbv/pK+XSSAHcKTBqIRJ1?=
+ =?us-ascii?Q?7sD6WwjBcrGJyGVW3vPMcY8y7dhqCTBbq6+q4ZPZXS7mNfDtOXS2xpOVEtZf?=
+ =?us-ascii?Q?HafAgqdixW2X5GoZz7Zt213BS28X3aV4GyQ0rd6N+FEilcZaHVCeObCgZWHv?=
+ =?us-ascii?Q?sXq0tBvdbTwgTHcd3YzjqC3xD08jdJDS9h9ciKGYcSuxbTxTb9bwynElmYmR?=
+ =?us-ascii?Q?nSYp+zBOocWJsLbiccMJxzVXrETiVvw61z0vPyoDfeu9Tq+g9ZvDEx1KnPb2?=
+ =?us-ascii?Q?GOHKmnx9FEzYn1l0w3qvSLr5gjRju+ndlvnYK7iDnTcpWeP2l+/v+hdb4hSg?=
+ =?us-ascii?Q?KmDk29gvdS2XZWzcEhUzJgCJgYQU1ZkMeGOI0TNv8lEs/mAjT/bDwovFXKY5?=
+ =?us-ascii?Q?ND3xjuRSq/aVtp3Up2mSXbD+b35NTVXrFtDYuEzkkquuSGKBZbP3pxT23tmk?=
+ =?us-ascii?Q?J3oGZT8pT2Hu8tNGeMU8sVRDlKujGsqJUCEI1vgb3xn4lyg8AcBOJdqQo/Ir?=
+ =?us-ascii?Q?K71QbLqqpOmwgu5l3Ko9ptE5uM6vsfJqCUBKtta3asL5R7FmMBR7q6t5+aFA?=
+ =?us-ascii?Q?0oG54oN/H2LBCdYvyKT3K4GArNdflPAOa3n0EujUrOh3H76/yfRfoUp4yIh9?=
+ =?us-ascii?Q?SuEvOVUfP7BwxA/m3f2YQeOufLbcZMJwLDj7c4rQsBsegigB7iK7FbZZ6RCI?=
+ =?us-ascii?Q?eYlG3GdcVrZ0E/GDVneSG4Fko9252w9tLz+M1G0QGmp4jHKMIHF0VSAWUkdO?=
+ =?us-ascii?Q?s2LBtmQlPNlBY+/Cb40kbBzKiaQRKgVv4Bw67qt9bh5aDkwO+lWFkv/qqUHy?=
+ =?us-ascii?Q?88WuYg/I7JK6A4i1yOHAPLYzgdnsd0XgS9NV2r7urfUIoptjvQICOakCzVOV?=
+ =?us-ascii?Q?t0IAus3IG3FsYSLFsUxkUBT5hPw6p8CPKOijQJDG9MLzu/eW3QF1TchnNF/H?=
+ =?us-ascii?Q?IP3Ad0/BVahKlePh2G2g2XLonXzHLRi+fnrT2lgx+go0MEjU5KODQoskD+mZ?=
+ =?us-ascii?Q?IgZteGXoxObkubtIBc0HVop4k4mIhcttkcOln8F2AVuoaGAoyh/34m1d2o2f?=
+ =?us-ascii?Q?3wUdfzEaixmlsA5LkXrDaPvE3+ZDO8E1rO0oP2tc+2EjfMe9gZs26PXzjPon?=
+ =?us-ascii?Q?lZA7dnszs0rCVHP3QIteFP6BV2WjRRKj5j5DCmcFyp471ObCs7P6hJAewkVC?=
+ =?us-ascii?Q?GLZ62p9wpNQ8lFEJ+m2yHv9AThdCJowrt5WR0SZkyGIFK5+/wZBudXHYCP6W?=
+ =?us-ascii?Q?gzjdw3CjfUTjEFg0OF2jrIDdZPU+jy4Pwx6FnDs2sQ7owLNLs8degZl6wENw?=
+ =?us-ascii?Q?BdOG40M8W3nyUnHRtzFgAsPX9iRNHLzaHh/T6msxfL9YYN9NkVlew0piuFRn?=
+ =?us-ascii?Q?48o8hUEg7yHyK7brqG3yCXt2B1fUQ4y8yyuBUjx6g0ZQUDyginussAvavQUR?=
+ =?us-ascii?Q?WKiehgln30Q3Uff0/kw8hJgOm7sLKxpmMWFRkDMw?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 418234c5-c67a-460c-e433-08dd5b3e07f0
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 17:00:13.7210
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: DxBWLKnU+u5Ys4f4CvD8AUnocs6+Pwb2z3XCQ4nXYLLkxcMUwvfIN6N/YdTW3z3p
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB7664
 
-On Tue, Mar 04, 2025, David Hildenbrand wrote:
-> On 04.03.25 16:30, Sean Christopherson wrote:
-> > On Tue, Mar 04, 2025, Ackerley Tng wrote:
-> > > Vlastimil Babka <vbabka@suse.cz> writes:
-> > > > > struct shared_policy should be stored on the inode rather than the file,
-> > > > > since the memory policy is a property of the memory (struct inode),
-> > > > > rather than a property of how the memory is used for a given VM (struct
-> > > > > file).
-> > > > 
-> > > > That makes sense. AFAICS shmem also uses inodes to store policy.
-> > > > 
-> > > > > When the shared_policy is stored on the inode, intra-host migration [1]
-> > > > > will work correctly, since the while the inode will be transferred from
-> > > > > one VM (struct kvm) to another, the file (a VM's view/bindings of the
-> > > > > memory) will be recreated for the new VM.
-> > > > > 
-> > > > > I'm thinking of having a patch like this [2] to introduce inodes.
-> > > > 
-> > > > shmem has it easier by already having inodes
-> > > > 
-> > > > > With this, we shouldn't need to pass file pointers instead of inode
-> > > > > pointers.
-> > > > 
-> > > > Any downsides, besides more work needed? Or is it feasible to do it using
-> > > > files now and convert to inodes later?
-> > > > 
-> > > > Feels like something that must have been discussed already, but I don't
-> > > > recall specifics.
-> > > 
-> > > Here's where Sean described file vs inode: "The inode is effectively the
-> > > raw underlying physical storage, while the file is the VM's view of that
-> > > storage." [1].
-> > > 
-> > > I guess you're right that for now there is little distinction between
-> > > file and inode and using file should be feasible, but I feel that this
-> > > dilutes the original intent.
-> > 
-> > Hmm, and using the file would be actively problematic at some point.  One could
-> > argue that NUMA policy is property of the VM accessing the memory, i.e. that two
-> > VMs mapping the same guest_memfd could want different policies.  But in practice,
-> > that would allow for conflicting requirements, e.g. different policies in each
-> > VM for the same chunk of memory, and would likely lead to surprising behavior due
-> > to having to manually do mbind() for every VM/file view.
-> 
-> I think that's the same behavior with shmem? I mean, if you have two people
-> asking for different things for the same MAP_SHARE file range, surprises are
-> unavoidable.
+On 4 Mar 2025, at 0:30, Greg KH wrote:
 
-Yeah, I was specifically thinking of the case where a secondary mapping doesn't
-do mbind() at all, e.g. could end up effectively polluting guest_memfd with "bad"
-allocations.
+> On Mon, Mar 03, 2025 at 09:03:04PM -0500, Zi Yan wrote:
+>> On 28 Feb 2025, at 12:49, Zi Yan wrote:
+>>
+>>> Pagecache uses multi-index entries for large folio, so does shmem. On=
+ly
+>>> swap cache still stores multiple entries for a single large folio.
+>>> Commit fc346d0a70a1 ("mm: migrate high-order folios in swap cache cor=
+rectly")
+>>> fixed swap cache but got shmem wrong by storing multiple entries for
+>>> a large shmem folio. Fix it by storing a single entry for a shmem
+>>> folio.
+>>>
+>>> Fixes: fc346d0a70a1 ("mm: migrate high-order folios in swap cache cor=
+rectly")
+>>> Reported-by: Liu Shixin <liushixin2@huawei.com>
+>>> Closes: https://lore.kernel.org/all/28546fb4-5210-bf75-16d6-43e1f8646=
+080@huawei.com/
+>>> Signed-off-by: Zi Yan <ziy@nvidia.com>
+>>> Reviewed-by: Shivank Garg <shivankg@amd.com>
+>>
+>> +Cc:stable
+>>
+>
+> <formletter>
+>
+> This is not the correct way to submit patches for inclusion in the
+> stable kernel tree.  Please read:
+>   https://www.kernel.org/doc/html/latest/process/stable-kernel-rules.ht=
+ml
+> for how to do this properly.
+>
+> </formletter>
+
+Sure. And this is not the right fix. I will resend a new one. Sorry
+for the noise.
+
+
+Best Regards,
+Yan, Zi
 
