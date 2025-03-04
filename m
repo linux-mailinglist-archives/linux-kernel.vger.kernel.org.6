@@ -1,137 +1,85 @@
-Return-Path: <linux-kernel+bounces-544354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE8FFA4E065
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:15:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B1E5A4E040
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:09:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F93A3B0B0E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:09:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 282507AA30D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:08:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1707D2066F1;
-	Tue,  4 Mar 2025 14:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AE352063D6;
+	Tue,  4 Mar 2025 14:07:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="foyHauLf"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="K3dRob20"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2903204C2B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:08:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C252046BF;
+	Tue,  4 Mar 2025 14:07:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097287; cv=none; b=kqmV+jnsr7rs8f/EI8kM1+5hMMP+7HRDDvBnvynngwnXdvg0TAwmF7fMsYV2wHRhC7o9z/Ys1UjdqXHJU2WRPGBLoavP57SrellHGCo2BKBJi0p1PEzjP6oB39nczlDVXe3OX28Dltl7ynIQtwLn6Z7zY1HNLn6/U94ldKUCFTU=
+	t=1741097255; cv=none; b=MHFtXJduDe0aIP+HJ/Y0nVyidWuixC3rbuXCFQR8qboU21jffNWtqs5rpJa9Txz7FG0HIHp/xYzsdyxblMIqdcY+z1HNcd7VvzPwZWVd6oY+hhBh/AF9Y5WFqCZiIvLxTWhLK4i0IJZy9ERnnCRP0+F/aetAWKnGKHo+3Ihg5iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097287; c=relaxed/simple;
-	bh=KAiXbpu15i47EAqRuiSckrsx67fq0CuxF/yuJFF2VvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HljYyz3hPoAsOIPQerXeyNj4vYzVU4KBkFkmeJVwQNg7ifp2pQqzRCtvkO5S7W1ztUv2qzOEkVeey5IJIY7RYHz6QHsTCEFS8OOAsN4qO6zAgPdYAAe++qcoLsvK6zZDUrg8GTQjAv820LgZKJ5bYxy6vYRdM5l22dnE6h3Qv4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=foyHauLf; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741097284;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=T0duPupBbKbOBmo+V9m3H3rlnyCP4NMm3QenxG8AfDU=;
-	b=foyHauLftzeUOEzjOXI+4h3avv0/esDjc2rLlW8SbSZENiWktCjh+W1boG+MA2h3/M8VHV
-	tSiPaXbKucbSIlOroxHuHt1yVvm6zUDtPRHXNa1kW3yMuHmzFTXNVsWteKxvyJ5vJKRI9S
-	dGGR6yBYO3cqEtPRrfhGofYCTaAhQm4=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-630-9JaBw8SLPneBqvKQmQA7ig-1; Tue,
- 04 Mar 2025 09:08:03 -0500
-X-MC-Unique: 9JaBw8SLPneBqvKQmQA7ig-1
-X-Mimecast-MFC-AGG-ID: 9JaBw8SLPneBqvKQmQA7ig_1741097282
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1741097255; c=relaxed/simple;
+	bh=pRXLJIV29hRFaxj1bkkHZMot55RLvo+ihLUTWEz9PAI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=doeGax0fCkpCSGTUuyR/jrPbBdbE1qBHiDP9/Vyv2wL0SsYq8zc2wi93/izM1dkBWynTvv3jMe9c0nbYbu283D6swjLHdY0fmvplNl5V/hHWo1ZXtpMjQNgri1Y/kTViQ7dJrjLpkOqzZch5p3tqarfdbbcnlXTNpUNz9ifFavw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=K3dRob20; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741097252;
+	bh=pRXLJIV29hRFaxj1bkkHZMot55RLvo+ihLUTWEz9PAI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=K3dRob200QcQQafgHekyUUKiLWs3hgyFl2ipLbqTO94oC21URoBb0aq5Hw7DOWZF1
+	 Jh8qWfcQVjM7mmOa2q5dug9zjRJy+WLZN/Z8fvQRiHrQS0zflI/nuDlwARdhI6bKpl
+	 K3nXtr8v/1nLKAOxO5jRZU/nZXLFKywdyGXpv5L2pJQ9E3lwnVyb9cLikB9wBa16aj
+	 2plexkmfRomFz61fVFIoJa/NN/GeyRuT6xvgWHMrWfLAnaIWZtLkgphdy9UacKYsFZ
+	 wchPxbvQAwhr455Aa1BweELauv4U8wzWjgWBUCch5wM6WlC1/9Xme0vQWE2r+adR4I
+	 ZdsGk30eYKg/Q==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B874119373C4;
-	Tue,  4 Mar 2025 14:08:01 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.246])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 6C7891801768;
-	Tue,  4 Mar 2025 14:07:58 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Tue,  4 Mar 2025 15:07:31 +0100 (CET)
-Date: Tue, 4 Mar 2025 15:07:27 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: torvalds@linux-foundation.org, brauner@kernel.org, mingo@redhat.com,
-	peterz@infradead.org, rostedt@goodmis.org,
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH 1/3] pipe: drop an always true check in anon_pipe_write()
-Message-ID: <20250304140726.GD26141@redhat.com>
-References: <20250303230409.452687-1-mjguzik@gmail.com>
- <20250303230409.452687-2-mjguzik@gmail.com>
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C0A7A17E07F8;
+	Tue,  4 Mar 2025 15:07:31 +0100 (CET)
+Message-ID: <287cff19-a95f-47c0-8e06-9d12b9e7a093@collabora.com>
+Date: Tue, 4 Mar 2025 15:07:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303230409.452687-2-mjguzik@gmail.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] arm64: dts: mediatek: mt8395-radxa-nio-12l: Add
+ Radxa 8 HD panel
+To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20250304-radxa-panel-overlay-v2-0-3ee6797d3f86@collabora.com>
+ <20250304-radxa-panel-overlay-v2-2-3ee6797d3f86@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250304-radxa-panel-overlay-v2-2-3ee6797d3f86@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 03/04, Mateusz Guzik wrote:
->
-> @@ -529,10 +529,9 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
->  
->  			if (!iov_iter_count(from))
->  				break;
-> -		}
->  
-> -		if (!pipe_full(head, pipe->tail, pipe->max_usage))
->  			continue;
-> +		}
+Il 04/03/25 15:01, Julien Massot ha scritto:
+> The Radxa 8 HD touchscreen can be used with various Radxa board
+> and is sold appart from the Radxa NIO 12L development kit.
+> 
+> Add a DTS overlay for this panel.
+> 
+> Signed-off-by: Julien Massot <julien.massot@collabora.com>
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 
-
-
-It seems that we can also remove the unnecessary signal_pending()
-check, but I need to recheck and we need to cleanup the poll_usage
-logic first.
-
-This will also remove the unnecessary wakeups when the writer is
-interrupted by signal/
-
-diff --git a/fs/pipe.c b/fs/pipe.c
-index b0641f75b1ba..ed55a86ca03b 100644
---- a/fs/pipe.c
-+++ b/fs/pipe.c
-@@ -541,12 +541,6 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 				ret = -EAGAIN;
- 			break;
- 		}
--		if (signal_pending(current)) {
--			if (!ret)
--				ret = -ERESTARTSYS;
--			break;
--		}
--
- 		/*
- 		 * We're going to release the pipe lock and wait for more
- 		 * space. We wake up any readers if necessary, and then
-@@ -554,10 +548,11 @@ anon_pipe_write(struct kiocb *iocb, struct iov_iter *from)
- 		 * become empty while we dropped the lock.
- 		 */
- 		mutex_unlock(&pipe->mutex);
--		if (was_empty)
-+		if (was_empty || pipe->poll_usage)
- 			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
- 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
--		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
-+		if (wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe)) < 0)
-+			return ret ?: -ERESTARTSYS;
- 		mutex_lock(&pipe->mutex);
- 		was_empty = pipe_empty(pipe->head, pipe->tail);
- 		wake_next_writer = true;
 
 
