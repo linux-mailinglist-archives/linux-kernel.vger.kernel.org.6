@@ -1,130 +1,226 @@
-Return-Path: <linux-kernel+bounces-544190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2D6CA4DE60
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:53:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2D17A4DE5F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:53:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 847BA16709A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:53:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44A887A437A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2AF202C5D;
-	Tue,  4 Mar 2025 12:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bPLXE3IP"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE9C520127D;
-	Tue,  4 Mar 2025 12:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97977202960;
+	Tue,  4 Mar 2025 12:53:27 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F961FF605;
+	Tue,  4 Mar 2025 12:53:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741092826; cv=none; b=DCwHFqnBZBjokAP2lgOmAZ05Ez5/UWbrOqhq0YR0tbeOvMdTEQtMbEaThslHFDHEiRVy8PwvRmlT/vP3aqxvYUFvvQ0YKNcnoiEBLfz4um23MAKMl6p3LYjfEyAZb5LOYFDUovFWkxO4OyWfEUtM6jhXVRodgQjNRvrSqqlhIsk=
+	t=1741092807; cv=none; b=eFuk/PTEBDDQmHC++qMETrtFKcDFgx9GB3AEq9ZiWbwyoDpSk6+kfEzzsRcDgK6r5Ot6Irt2vcSN6K0AwPtrrSRHHpfPlexvOF+LSaJ3AK+InvaXqdayHeOJUVyPJCjK4TcaqF4aT/qQbJKthIS9ZifOA1U8NkyjrGu2TvjuIoc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741092826; c=relaxed/simple;
-	bh=SroIqtwDcZBI6USYWmrVQHd45regAWwrIk5senY15hQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VMTYzYUIvx/P3H9WjkdnZgwe9rBtNRXso1nOiqGphw203VkyO2Gi7fEM46KtOUCZAPbDhN22Q6LNAo4BRRLOdQbIFRlvIMIxdGWJVcZi3EhvEDS8pl2wKVokGSieb1XigRO8iTmLqhcmlQI10ECS3c1rB8UxuGGRxMhOCDCr3Q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bPLXE3IP; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=5VkIE
-	0q8S0ZH3DD+BjbROvAubXkdtsXQCphn+uhJwiI=; b=bPLXE3IPi323vSZzaXpr1
-	AcrNetLkSrc5iEnoOUJAT+eKukbXYOsb8zfX2Vt5LLiV6yZbEbIXvqwLeg55hUmG
-	utV7jb1YCd2BdWa9YVJombNPeI1BdE/I7JP0JBc1U2jSTiOLCTh4lMOP4BgALBL0
-	x1YLTDG8i4QV/JcckGrH8M=
-Received: from zhuxin.hobot.cc (unknown [])
-	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wAn7ISw98ZnSRmsPg--.2684S2;
-	Tue, 04 Mar 2025 20:53:16 +0800 (CST)
-From: Zxyan Zhu <zxyan20@163.com>
-To: vireshk@kernel.org
-Cc: nm@ti.com,
-	sboyd@kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zxyan Zhu <zxyan20@163.com>
-Subject: [PATCH 1/1] OPP: Support multiple frequency points with opp-hz-<name>
-Date: Tue,  4 Mar 2025 20:52:56 +0800
-Message-Id: <20250304125256.3361648-1-zxyan20@163.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741092807; c=relaxed/simple;
+	bh=k7rFah0C8AqcVxALjvT6enFaV3UT2iSy6VtvbL4WNsc=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Fi3nPBo+JGo/EjPymAJi3p4P9s+lUZXcTOakinuQVpqIpNUdI9T6KExENYM26zoNrMlyqHax2YpDkdOeM4etS6xPIzv5fHahk0SVLHZHsIRj4K8Un0R4a+yIw4Cp2WXeTfIlbjI8BAxsUU9PQ0hLArbFLOGRaf5dt560fJq4ZA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-95-67c6f7bab570
+Message-ID: <b049e0d8-a9d2-456f-aa97-148f4a6d8071@sk.com>
+Date: Tue, 4 Mar 2025 21:53:13 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: kernel_team@skhynix.com, gourry@gourry.net, harry.yoo@oracle.com,
+ ying.huang@linux.alibaba.com, gregkh@linuxfoundation.org, rakie.kim@sk.com,
+ akpm@linux-foundation.org, rafael@kernel.org, lenb@kernel.org,
+ dan.j.williams@intel.com, Jonathan.Cameron@huawei.com, dave.jiang@intel.com,
+ horen.chuang@linux.dev, hannes@cmpxchg.org, linux-kernel@vger.kernel.org,
+ linux-acpi@vger.kernel.org, linux-mm@kvack.org, kernel-team@meta.com,
+ yunjeong.mun@sk.com
+Subject: Re: [PATCH 2/2 v6] mm/mempolicy: Don't create weight sysfs for
+ memoryless nodes
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+References: <20250303215638.317539-1-joshua.hahnjy@gmail.com>
+Content-Language: ko
+From: Honggyu Kim <honggyu.kim@sk.com>
+In-Reply-To: <20250303215638.317539-1-joshua.hahnjy@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAn7ISw98ZnSRmsPg--.2684S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7ArWxJF4UAFWkJF13trW5ZFb_yoW8uryfpF
-	43J398CrZ7J3y2gF97Ja1vvryavF4kXFWxKFy7C34jva17JF95Xw47tFyjq3Zayry7Z3y5
-	tayqgFy0ka10kw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piYhF7UUUUU=
-X-CM-SenderInfo: p201t0isq6il2tof0z/1tbioBQGXmfG7SDRDAAAsd
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrNIsWRmVeSWpSXmKPExsXC9ZZnoe6u78fSDTYcFrGYs34Nm8X0qRcY
+	LU7cbGSz+Hn3OLtF8+L1bBarN/la3F/2jMXidv85VotVC6+xWRzfOo/dYt9FoIadD9+yWSzf
+	189ocXnXHDaLe2v+s1rM/TKV2WL1mgwHQY/Db94ze+ycdZfdo7vtMrtHy5G3rB6L97xk8ti0
+	qpPNY9OnSeweJ2b8ZvHY+dDSY2HDVGaP/XPXsHucu1jh8fHpLRaPz5vkAviiuGxSUnMyy1KL
+	9O0SuDK+HT3HVLBRo+Jvzz6WBsblCl2MnBwSAiYSGx+sZ4Gx/9z5yQxi8wpYSsy+f58NxGYR
+	UJF4tu8EC0RcUOLkzCdgtqiAvMT9WzPYuxi5OJgFzjJLnJ67hwkkISwQJbHz1V8wW0RAU+JE
+	6ySwoUICthLzHr4As5kFRCRmd7aB2WwCahJXXk4Cqufg4BSwk9jwVxGixEyia2sXI4QtL9G8
+	dTYzyC4JgUvsEqdWTGOCOFpS4uCKGywTGAVnIblvFpIVs5DMmoVk1gJGllWMQpl5ZbmJmTkm
+	ehmVeZkVesn5uZsYgVG8rPZP9A7GTxeCDzEKcDAq8fCeWHA0XYg1say4MvcQowQHs5IIr+nn
+	Y+lCvCmJlVWpRfnxRaU5qcWHGKU5WJTEeY2+lacICaQnlqRmp6YWpBbBZJk4OKUaGCeopwXX
+	bH79cSlnVt7M5sw9s/4qLNmn+Dhi1ppFSgVam8XnTHqkzf6rQ2GlGdduTfcpVaxT6wwfvmq7
+	W3Dn1VOx1MBtv33y3v9881cwa+O3eM09d/3b9uq/WOIVxfTg1ZzfTiKRa62Z7s+dJnn5Piv/
+	wyalLPNNLvY8JSITXqkwd05TzPNY812JpTgj0VCLuag4EQC5tL5S3gIAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrPIsWRmVeSWpSXmKPExsXCNUNLT3fX92PpBmsLLOasX8NmMX3qBUaL
+	Ezcb2Sx+3j3ObtG8eD2bxepNvhb3lz1jsbjdf47VYtXCa2wWx7fOY7fYdxGo4fDck6wWOx++
+	ZbNYvq+f0eLyrjlsFvfW/Ge1mPtlKrPFoWvPWS1Wr8mw+L1tBZuDiMfhN++ZPXbOusvu0d12
+	md2j5chbVo/Fe14yeWxa1cnmsenTJHaPEzN+s3jsfGjpsbBhKrPH/rlr2D3OXazw+Pj0FovH
+	t9seHotffGDy+LxJLkAgissmJTUnsyy1SN8ugSvj29FzTAUbNSr+9uxjaWBcrtDFyMkhIWAi
+	8efOT2YQm1fAUmL2/ftsIDaLgIrEs30nWCDighInZz4Bs0UF5CXu35rB3sXIxcEscJZZ4vTc
+	PUwgCWGBKImdr/6C2SICmhInWieBDRUSsJWY9/AFmM0sICIxu7MNzGYTUJO48nISUD0HB6eA
+	ncSGv4oQJWYSXVu7GCFseYnmrbOZJzDyzUJyxiwkk2YhaZmFpGUBI8sqRpHMvLLcxMwcU73i
+	7IzKvMwKveT83E2MwGhdVvtn4g7GL5fdDzEKcDAq8fAa3D2WLsSaWFZcmXuIUYKDWUmE1/Qz
+	UIg3JbGyKrUoP76oNCe1+BCjNAeLkjivV3hqgpBAemJJanZqakFqEUyWiYNTqoGRW2eWgGO8
+	/J7yRfkuK84J5Ot+Krl+bRXDo2eiAqKSXl11RSbx15cpFMaxLaxj/q64/Sv/83WfP7oe/aN/
+	OFzeTu+ditqp9rfvwxdcvsc/8aPyjNDdbk9sdzlrJZZfq+o70FYlEcJh3uAUZagh5flK8/kM
+	jfP3Xl/8dcFr0TLBl/4tN86LL1JRYinOSDTUYi4qTgQAHB2/vdICAAA=
+X-CFilter-Loop: Reflected
 
-Current OPP driver only supports a single frequency value per OPP
-entry using `opp-hz`. This patch extends the functionality to allow
-retrieving named frequency points using `opp-hz-<name>`, improving
-flexibility for different operating modes.
+Hi Joshua,
 
-Signed-off-by: Zxyan Zhu <zxyan20@163.com>
----
- drivers/opp/of.c | 28 ++++++++++++++++++++--------
- 1 file changed, 20 insertions(+), 8 deletions(-)
+On 3/4/2025 6:56 AM, Joshua Hahn wrote:
+> On Thu, 27 Feb 2025 12:20:03 +0900 Honggyu Kim <honggyu.kim@sk.com> wrote:
+> 
+> Hi Honggyu, thank you for taking time to review my patch, as always!
 
-diff --git a/drivers/opp/of.c b/drivers/opp/of.c
-index a24f76f5fd01..d20802b0f89c 100644
---- a/drivers/opp/of.c
-+++ b/drivers/opp/of.c
-@@ -752,18 +752,30 @@ EXPORT_SYMBOL_GPL(dev_pm_opp_of_remove_table);
- static int _read_rate(struct dev_pm_opp *new_opp, struct opp_table *opp_table,
- 		      struct device_node *np)
- {
--	struct property *prop;
-+	struct property *prop = NULL;
- 	int i, count, ret;
- 	u64 *rates;
-+	char name[NAME_MAX];
- 
--	prop = of_find_property(np, "opp-hz", NULL);
--	if (!prop)
--		return -ENODEV;
-+	/* Search for "opp-hz-<name>" */
-+	if (opp_table->prop_name) {
-+		snprintf(name, sizeof(name), "opp-hz-%s",
-+			 opp_table->prop_name);
-+		prop = of_find_property(np, name, NULL);
-+	}
-+
-+	if (!prop) {
-+		/* Search for "opp-hz" */
-+		sprintf(name, "opp-hz");
-+		prop = of_find_property(np, name, NULL);
-+		if (!prop)
-+			return -ENODEV;
-+	}
- 
- 	count = prop->length / sizeof(u64);
- 	if (opp_table->clk_count != count) {
--		pr_err("%s: Count mismatch between opp-hz and clk_count (%d %d)\n",
--		       __func__, count, opp_table->clk_count);
-+		pr_err("%s: Count mismatch between %s and clk_count (%d %d)\n",
-+		       __func__, name, count, opp_table->clk_count);
- 		return -EINVAL;
- 	}
- 
-@@ -771,9 +783,9 @@ static int _read_rate(struct dev_pm_opp *new_opp, struct opp_table *opp_table,
- 	if (!rates)
- 		return -ENOMEM;
- 
--	ret = of_property_read_u64_array(np, "opp-hz", rates, count);
-+	ret = of_property_read_u64_array(np, name, rates, count);
- 	if (ret) {
--		pr_err("%s: Error parsing opp-hz: %d\n", __func__, ret);
-+		pr_err("%s: Error parsing %s: %d\n", __func__, name, ret);
- 	} else {
- 		/*
- 		 * Rate is defined as an unsigned long in clk API, and so
--- 
-2.34.1
+My pleasure!
+
+> I thought I had sent this, but it seems like it was left in my draft
+> without being sent.
+> 
+> I will follow Gregory's advice and we will drop the patch from this series,
+> and send the first patch only (with Yunjeong's changes). Thanks again!
+
+It'd be great if you could add her with the following.
+Co-developed-by: Yunjeong Mun <yunjeong.mun@sk.com>
+
+> 
+>>
+>> On 2/27/2025 11:32 AM, Honggyu Kim wrote:
+>>> Hi Joshua,
+>>>
+>>> On 2/27/2025 6:35 AM, Joshua Hahn wrote:
+>>>> We should never try to allocate memory from a memoryless node. Creating a
+>>>> sysfs knob to control its weighted interleave weight does not make sense,
+>>>> and can be unsafe.
+>>>>
+>>>> Only create weighted interleave weight knobs for nodes with memory.
+>>>>
+>>>> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+>>>> ---
+>>>>    mm/mempolicy.c | 2 +-
+>>>>    1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+>>>> index 4cc04ff8f12c..50cbb7c047fa 100644
+>>>> --- a/mm/mempolicy.c
+>>>> +++ b/mm/mempolicy.c
+>>>> @@ -3721,7 +3721,7 @@ static int add_weighted_interleave_group(struct
+>>>> kobject *root_kobj)
+>>>>            return err;
+>>>>        }
+>>>> -    for_each_node_state(nid, N_POSSIBLE) {
+>>>
+>>> Actually, we're aware of this issue and currently trying to fix this.
+>>> In our system, we've attached 4ch of CXL memory for each socket as
+>>> follows.
+>>>
+>>>           node0             node1
+>>>         +-------+   UPI   +-------+
+>>>         | CPU 0 |-+-----+-| CPU 1 |
+>>>         +-------+         +-------+
+>>>         | DRAM0 |         | DRAM1 |
+>>>         +---+---+         +---+---+
+>>>             |                 |
+>>>         +---+---+         +---+---+
+>>>         | CXL 0 |         | CXL 4 |
+>>>         +---+---+         +---+---+
+>>>         | CXL 1 |         | CXL 5 |
+>>>         +---+---+         +---+---+
+>>>         | CXL 2 |         | CXL 6 |
+>>>         +---+---+         +---+---+
+>>>         | CXL 3 |         | CXL 7 |
+>>>         +---+---+         +---+---+
+>>>           node2             node3
+>>>
+>>> The 4ch of CXL memory are detected as a single NUMA node in each socket,
+>>> but it shows as follows with the current N_POSSIBLE loop.
+>>>
+>>> $ ls /sys/kernel/mm/mempolicy/weighted_interleave/
+>>> node0 node1 node2 node3 node4 node5
+>>> node6 node7 node8 node9 node10 node11
+
+FYI, we used to set node2 and node3 only for weights for CXL memory here
+and ignored node{4-11}.  That sounds silly but it worked.
+
+> 
+> I see. For my education, would you mind explaining how the numbering works
+> here? I am not very familiar with this setup, and not sure how you would
+> figure out what node is which, just by looking at the numbering.
+
+Regarding the numbering, I'm not 100% sure, but I guess there could be a
+logical NUMA node that combines 4ch of CXL memory and 4 nodes for CXL 
+memory so in total 5 nodes per socket.
+
+I don't have much knowledge on this but maybe this is related to PXM
+(Proximity Domain).
+
+> 
+>>>> +    for_each_node_state(nid, N_MEMORY) {
+>>
+>> Thinking it again, we can leave it as a separate patch but add our patch
+>> on top of it.
+> 
+> That sounds good to me.
+> 
+>> The only concern I have is having only N_MEMORY patch hides weight
+>> setting knobs for CXL memory and it makes there is no way to set weight
+>> values to CXL memory in my system.
+> 
+> You can use weighted interleave auto-tuning : -)
+
+Not possible because using N_MEMORY doesn't provide "node" knobs for CXL
+memory at all as follows.
+
+$ ls /sys/kernel/mm/mempolicy/weighted_interleave/
+node0 node1
+
+We need node2 and node3 for CXL memory here.
+
+> In all seriousness, this makes sense. It seems pretty problematic that
+> the knobs aren't created for the CXL channels,
+
+Yeah, it's even worse than the current status.
+
+> and I'm not sure that hiding> it is the correct approach here (it was not my intent, either).
+
+It isn't your problem but we shouldn't hide those nodes until it is
+correctly fixed with hot plugging event handler.
+
+> 
+>> IMHO, this and our patch is better to be submitted together.
+> 
+> That sounds good. We can hold off on this patch then, and just consider
+> the first patch of this series. Thank you for letting me know!
+
+The N_POSSIBLE and N_MEMORY stuffs should had been fixed earlier than
+this work. I will take a few days if we can submit it together.
+
+> 
+> Thank you for always reviewing my patches. Have a great day!
+> Joshua
+
+Thanks for your work and have a great day you too!
+
+Kind regards,
+Honggyu
+
+> 
+> Sent using hkml (https://github.com/sjp38/hackermail)
+> 
 
 
