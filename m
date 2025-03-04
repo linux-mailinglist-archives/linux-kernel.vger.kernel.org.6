@@ -1,166 +1,107 @@
-Return-Path: <linux-kernel+bounces-543305-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A55FA4D40D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:48:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F16DA4D418
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:50:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 175A43ADCCE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37EAC1897017
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C401F5833;
-	Tue,  4 Mar 2025 06:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rLVoTRfX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DE01F542A;
+	Tue,  4 Mar 2025 06:50:06 +0000 (UTC)
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFC91F5608;
-	Tue,  4 Mar 2025 06:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A54C13C67C;
+	Tue,  4 Mar 2025 06:50:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741070884; cv=none; b=F9l40kwj80RNWBZsvjf1LXWYPdQAuKGpVTVkcL6+03WBUkz/YKKDydeKY2JE6+7RIhrwNOmtX63w85J4zSh+EkmfQNFjP4Wpm1DyvAqPtspSHhe5TBPGb+V+dcfAwGff3WG7uq1DxovOPQH86GRscQLGOoo8QDeo7sq2aL4bEaA=
+	t=1741071006; cv=none; b=svUy4UO3WnFb/CbYOJ+7GGbLBXcAnfWJD7jJqTplMEnAF37wtXt4URoq+w9PBn/no7Ty8WW7gnONpI+8DmZ+QWXvUTtB/h6VB4dKf31epkqYD7mISJhoncZkLO8jt7kXcsoIsvl+8oKfXjnhEo3af8EDSXzmnqdiVMYMPqIxlbI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741070884; c=relaxed/simple;
-	bh=FFsgRhnvi+o6UYvVxaej1RWPU5KX/3pcA/SeTUYAZX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OuGzDyd9nnCkSPFY8/8s3bTLBcNr4aq4gfnL3V7xohMe4N68BjdmXxCBGKjYa7RSMJoGfZF1ptaDBE5WQtTVPWdlmfsjWOJBGn92AiCnYLr8UjD6EYGLQUACAPumCg5Bi9FG7fZJm2W3WrPyUPMJLhK/Q/qmE1aQeFs7AoTR+pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rLVoTRfX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57294C4CEE8;
-	Tue,  4 Mar 2025 06:48:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741070883;
-	bh=FFsgRhnvi+o6UYvVxaej1RWPU5KX/3pcA/SeTUYAZX0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=rLVoTRfXEX9nbqrhPCV2RC5thZzne7rSOjreff/mIjCHdG3ScZJKDQJhbSIh8YvrH
-	 +/79HI0RT77WtxBvwaIOKESk1Xb0FTeRDBOflOEsNaOPelBmNjCRWWPn0cXMcRCXWN
-	 AiQURDuz4dUFv+Zo4phjpLKtn4JlacIN2W+TKa/EBGj5otuqjVMmprsHBuHtUfQaNa
-	 tHpaQ9grvRUHy/8RB1s5etIapisMWyF6gYj/bNuY7gwJ8vzN+JGNAafwqEcKTSJd28
-	 POAWP1Qp+B7pifTzYcYu/2diCk73huSOVhXUsz7IMi6t5lltg9huVS3/Crp1uPcgTU
-	 0n4XE2dU2jUMg==
-From: Mario Limonciello <superm1@kernel.org>
-To: Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Luke D . Jones" <luke@ljones.dev>,
-	Mark Pearson <mpearson-lenovo@squebb.ca>
-Cc: platform-driver-x86@vger.kernel.org (open list:AMD PMF DRIVER),
-	linux-kernel@vger.kernel.org (open list),
-	linux-acpi@vger.kernel.org (open list:ACPI),
-	"Derek J . Clark" <derekjohn.clark@gmail.com>,
-	Antheas Kapenekakis <lkml@antheas.dev>,
-	me@kylegospodneti.ch,
-	Denis Benato <benato.denis96@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Subject: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low power the same
-Date: Tue,  4 Mar 2025 00:47:45 -0600
-Message-ID: <20250304064745.1073770-2-superm1@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250304064745.1073770-1-superm1@kernel.org>
-References: <20250304064745.1073770-1-superm1@kernel.org>
+	s=arc-20240116; t=1741071006; c=relaxed/simple;
+	bh=xKkQdbXWEuT09IaRYhW1OQKL5RSJXdUnAd1yXKspPdg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AbS7iQtsbCkOiG7zLD+QBagmE6Q5WH1fL+jnV6WnjASwdf2qGdax0IeSeU1F2HCkuXUEvfu5GJaHM2zdP5E7oK/bgpEJrxe7nLK/zJIArhFOKBQ5byuLYx6IcDIQ0ba/xFAupAgfZRcF8IOI+yQgHBWGnO0ReKXlEE/1ItSWNbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22355618fd9so89754665ad.3;
+        Mon, 03 Mar 2025 22:50:04 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741071004; x=1741675804;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wdiYB6hv/Q3Efvv78nZapqYNYn3PY60w2vwZzb6NEH4=;
+        b=j+HQ9POuA7SNB6pcvSuH37F32ewhyhqHBro+VQ01ujrKbkc95ZycV/iTwmv3muKpQV
+         w14YoIFdJbrPeGZrKeq4Qaz6ptHjor7JV+JI0UnEay5J+O30ra+kCsrwyPa2wPcwJXvI
+         RM5tKZ5GPqBHZsxYLlPoUhUibL2cqDtbJJt+QN6/rq+7AXhQJkpJMCgeaeQJ4+SZksph
+         FFFbe4apdFtsuAPy70Qanp9obK2r0CiU/8cd3jVp+XVQ30PcJgCYNIGHRLt7M/gbMuj6
+         ecT4RwvVGbOevXBGQvwwK8QSWuUJNd8BamC6mb52RpGnvt2rw2TVFng+CQAwMXAfJf57
+         3dWg==
+X-Forwarded-Encrypted: i=1; AJvYcCXHMjCil5r+eAbxiCiMtTf8UuD5fMyg8mVafNQsEUsS6pHZoo71mwCfir9k5OUrXpIjPYMStgDZZhw=@vger.kernel.org, AJvYcCXNmt63B9bnLxjU6CGb0gjNhz+Fx4Guk9vHn7c4IDw9GgJxPZRIGy5lUDyS1/Au1oh9fTa42oQ2hYRybWql5/tBgg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2u7FA4zjM/52gavp7s2MFNp35PqgW+33FGy75QsRJgn1Ubnct
+	PSCigWW308iDK20ficT9nRpuHxwtqdPRWY5hyEjjjlMBibZiMSktxS0q2eBcrmA=
+X-Gm-Gg: ASbGncupyqa9DXHQTqhJvGkbSiCxXrMolb/cHjJbkLmHUOmgbfpXqeZQ1N8jiVUu/JA
+	ZyX//8UkXV37fcJRD+Cts6HLdpeTkk6rWuuEQ8oLgEzPUISW8tOhIc6Ki7+pvjcl60JkFEUc3aJ
+	NxN/Ut6QYaUGe+6r/ujH5y69DJVcgGHWg528QD7OPlmHQQa1GV99CU/qJuNn3MUwBq6Xd/CHjvv
+	NCRk/td5eWRapIRcngOfGMPMQi1zG6eLkrL4wTIPneyUmyD0xcwj3H0E9ddT/nsAGrDxRvExZoE
+	nyE2daBzvsPYfVT6TToCdKSJ2wyoI51MTzixin9CTzs7pnNoMMpF2T+568oWz0AZ+Bgd8hwCq7F
+	Wu6s=
+X-Google-Smtp-Source: AGHT+IGcV4aYk/OpEVH73Ug+c1C0USAo6FdZmKpOcH30W1Dx1DXHv8XdmGwDQ56GkfHpVhuZmtZPUA==
+X-Received: by 2002:a17:902:ea0c:b0:21f:136a:a374 with SMTP id d9443c01a7336-22369268794mr260988655ad.43.1741071003728;
+        Mon, 03 Mar 2025 22:50:03 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-223501f9dc2sm87929895ad.61.2025.03.03.22.50.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 22:50:03 -0800 (PST)
+Date: Tue, 4 Mar 2025 15:50:00 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
+	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 4/5] Add debugfs based error injection support in DWC
+Message-ID: <20250304065000.GB2615015@rocinante>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132039epcas5p31913eab0acec1eb5e7874897a084c725@epcas5p3.samsung.com>
+ <20250221131548.59616-5-shradha.t@samsung.com>
+ <20250303095200.GB1065658@rocinante>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303095200.GB1065658@rocinante>
 
-From: Mario Limonciello <mario.limonciello@amd.com>
+Hello,
 
-When two drivers don't support all the same profiles the legacy interface
-only exports the common profiles.
+[...]
+> > +		29) Generates duplicate TLPs - duplicate_dllp
+> > +		30) Generates Nullified TLPs - nullified_tlp
+> 
+> Would the above field called "duplicate_dllp" for duplicate TLPs be
+> a potential typo?  Perhaps this should be called "duplicate_tlp"?
+> 
+> I wanted to make sure we have the correct field name.
 
-This causes problems for cases where one driver uses low-power but another
-uses quiet because the result is that neither is exported to sysfs.
+Fan or Shradha, any thoughts on this?
 
-If one platform profile handler supports quiet and the other
-supports low power treat them as the same for the purpose of
-the sysfs interface.
+Would the problem be with the name of the property of the description?
 
-Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handlers")
-Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
-Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad-9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
-Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
----
- drivers/acpi/platform_profile.c | 38 ++++++++++++++++++++++++++++++---
- 1 file changed, 35 insertions(+), 3 deletions(-)
+Thank you!
 
-diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-index 2ad53cc6aae53..d9a7cc5891734 100644
---- a/drivers/acpi/platform_profile.c
-+++ b/drivers/acpi/platform_profile.c
-@@ -73,8 +73,20 @@ static int _store_class_profile(struct device *dev, void *data)
- 
- 	lockdep_assert_held(&profile_lock);
- 	handler = to_pprof_handler(dev);
--	if (!test_bit(*bit, handler->choices))
--		return -EOPNOTSUPP;
-+	if (!test_bit(*bit, handler->choices)) {
-+		switch (*bit) {
-+		case PLATFORM_PROFILE_QUIET:
-+			*bit = PLATFORM_PROFILE_LOW_POWER;
-+			break;
-+		case PLATFORM_PROFILE_LOW_POWER:
-+			*bit = PLATFORM_PROFILE_QUIET;
-+			break;
-+		default:
-+			return -EOPNOTSUPP;
-+		}
-+		if (!test_bit(*bit, handler->choices))
-+			return -EOPNOTSUPP;
-+	}
- 
- 	return handler->ops->profile_set(dev, *bit);
- }
-@@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *dev, void *data)
- 	handler = to_pprof_handler(dev);
- 	if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
- 		bitmap_copy(aggregate, handler->choices, PLATFORM_PROFILE_LAST);
--	else
-+	else {
-+		/* treat quiet and low power the same for aggregation purposes */
-+		if (test_bit(PLATFORM_PROFILE_QUIET, handler->choices) &&
-+		    test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate))
-+			set_bit(PLATFORM_PROFILE_QUIET, aggregate);
-+		else if (test_bit(PLATFORM_PROFILE_LOW_POWER, handler->choices) &&
-+			 test_bit(PLATFORM_PROFILE_QUIET, aggregate))
-+			set_bit(PLATFORM_PROFILE_LOW_POWER, aggregate);
- 		bitmap_and(aggregate, handler->choices, aggregate, PLATFORM_PROFILE_LAST);
-+	}
- 
- 	return 0;
- }
-@@ -305,6 +325,13 @@ static int _aggregate_profiles(struct device *dev, void *data)
- 	if (err)
- 		return err;
- 
-+	/* treat low-power and quiet as the same */
-+	if ((*profile == PLATFORM_PROFILE_LOW_POWER &&
-+	     val == PLATFORM_PROFILE_QUIET) ||
-+	    (*profile == PLATFORM_PROFILE_QUIET &&
-+	     val == PLATFORM_PROFILE_LOW_POWER))
-+		*profile = val;
-+
- 	if (*profile != PLATFORM_PROFILE_LAST && *profile != val)
- 		*profile = PLATFORM_PROFILE_CUSTOM;
- 	else
-@@ -531,6 +558,11 @@ struct device *platform_profile_register(struct device *dev, const char *name,
- 		dev_err(dev, "Failed to register platform_profile class device with empty choices\n");
- 		return ERR_PTR(-EINVAL);
- 	}
-+	if (test_bit(PLATFORM_PROFILE_QUIET, pprof->choices) &&
-+	    test_bit(PLATFORM_PROFILE_LOW_POWER, pprof->choices)) {
-+		dev_err(dev, "Failed to register platform_profile class device with both quiet and low-power\n");
-+		return ERR_PTR(-EINVAL);
-+	}
- 
- 	guard(mutex)(&profile_lock);
- 
--- 
-2.43.0
-
+	Krzysztof
 
