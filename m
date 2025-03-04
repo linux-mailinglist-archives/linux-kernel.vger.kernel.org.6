@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-544211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE0FA4DEDB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:10:59 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04CA5A4DEDE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:11:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4BFC27AB933
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:08:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8024B7AB143
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:08:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31E30205AAC;
-	Tue,  4 Mar 2025 13:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36E69205AD7;
+	Tue,  4 Mar 2025 13:07:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jyiqlwbK"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cgSO9gDL"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE959204C0A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E257204F7D
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:07:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741093641; cv=none; b=lHeDB/Ghd2gfqKqVhF1rL/GGnRUrdmMjEcR+Wga5i/rOSc2bGBJwInvjMfx74ddKNSvI5LGJg0KSLBREgNeRMnFtxsbqaZbcEHElHZHFT0K3sNnvmBTI+TT7og70pNJ1nEOKf4vPIPDn0+BgcZD+UTF6lxt9d6CDHXvxVNEnao4=
+	t=1741093642; cv=none; b=YTk8Hd9OC2FFVHdLdbi61gKQ4VWEA8/qJWvGZM02juv99PELm9yv8h8l+QWokuyfFEmrSO0mTo9XxVswl1CKhExizZA2JeJAcdL2CxrU+YtNUHaahxFxTzxhA39PZ8/6BFJgdW0TdSjdo0WZzyUazVZW03pcfzdELsQvur2TakQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741093641; c=relaxed/simple;
-	bh=IoiH9OQAEf3mXrHzsj+NdNwY3Jf5RojQPu8snsaCHFQ=;
+	s=arc-20240116; t=1741093642; c=relaxed/simple;
+	bh=TO/kj9+lLvHOlw6v676cGN2X1xrQoQT6nqKUEG+rBfQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Trk9ZKaEcbJKxUrsB7Hnc22ATu4LDFdLSFwZfqp7Sg7uERCO4BrTlo6kVGank1M7fHq+zmTSbVdFw1e6vBQggqzWz/guSXjcrj6OZPw9frW46vVEZfIkTTTA8TlHb1wp6m1CW+fbEBPT5d1HIB8/+KZUg2Zb+TsQKdcW/D1Tx1Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jyiqlwbK; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=l54M6qJbrOBuT/8PpNe9UPNE4MeiG7bmSuuCaCiWAdo97opf76XBkpbOYrLja8SDO3JdhN/qubhXXOzv9oGTC/0bkeKhk8xOAwsJuXIO7L66e6R9tUpSO00HI/GHupOvyCODIzWDEGMI3EZ3mnd06ZhLqmrsiKb6d6yrq2awXfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cgSO9gDL; arc=none smtp.client-ip=209.85.221.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bcc02ca41so5960005e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:07:18 -0800 (PST)
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390ddf037ffso2995779f8f.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:07:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741093637; x=1741698437; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1741093638; x=1741698438; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=HN7nnD+hMqlXpSytJ9E50dtqwKHUCkr4EcUs1bwqocs=;
-        b=jyiqlwbK8CPoT5ncAKwY9Dhh7NiDkdry1wVeJdvLYfzJlkw0BUEKuraPckLfQLZsH7
-         L+XAiWFBhp2gI1Yw7WdckT+Qc4w6MrgmSaH36f3urPgTtAQXsQT+i8AL0OvbEtW/Nj34
-         G2Dx49YrNWALV8dbKlXgjcW8UpyARMXEs0JgLMB4gw6rwzIYZULvwNrOOEnQvlnwPwaT
-         T1kVdc6SHlMC11HF25Et021TVBHf3kpICaxaGj5AZ08jqNJhYnwfjQQyHwY49DfHrvdl
-         0LNxWkU+C42AOiO+QeTMsSu9k668m9JTztzvg6HEBBuqtP4NbJxAyFjmTa3+g59x0h63
-         08xg==
+        bh=Nln3oiv+wCOohYzCVrwCh2whMM1hc+Xd6ZxmtYAIQvg=;
+        b=cgSO9gDL58k48jBjDE95W+iYW0KzS5IzZeNEu8aL+9n2oco07ik71yP7/qggFASjl5
+         ANJAsKmzBFeMLuqPFu2NBBB3Xsi9v3h3VV99/miXN2AFR4Vkyo+A+8CcI1rTEzIBgZO7
+         ApqNmSwu/JQ3pmLT+Df2IYxuy64L9NfUveC7Eij+qK2zP5Zyvo3AYd/CEPc4Q0zkefjW
+         mQaoQYuGMJqzLEytMjdD/Tpc9gM/kAqx8bJRpHrKrgTwtI3293DNyh7M7YWVLNi1sjkJ
+         C1hrU9QhF48EK8BP2cch5mE53Fmrx3IrcQxguMx7O8h7RZjNNVjTtkBX8CfARRRuxS66
+         cKLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741093637; x=1741698437;
+        d=1e100.net; s=20230601; t=1741093638; x=1741698438;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=HN7nnD+hMqlXpSytJ9E50dtqwKHUCkr4EcUs1bwqocs=;
-        b=Nrh+dZjnyx1r80RmSo3VuEybGRyQolI5axnsgO5aGtq9mY7ikJ4Ekf1RBTAIqRL00u
-         6iqGCiPTQKLXrsqhmUK4/LB98LFrZc/8MdK8OfVgWSY86qhlA/1tHoNxrlk6rjyTslju
-         apJGYzdgyZRowrlPwU6JFJf9z9cCXFEUSoGyInyKAFM5DcT2KMPL9/bIepiQeYu6N2b2
-         y8Ss7TsR40PeN9vR6WmWl2p7i1ohUl1/cWBkTeJOBQUSd5eYd7NBpVz4GzYmjYv7oQu/
-         oZFVgRlP2mKcGNmrqwYKyIoCN/A1kTaNV2TD3DjpJdk79jhGlEbEbE6jeIsAhVDbmR3V
-         0PWQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXsY298DAT+diSIi3nu5fBNLlw021U8Ij2xMLXzPlcTvwmw3mHFq3G7VYfUIS4VFRoGB1vhHyjgyjJmaTA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHAR3OImlh4Bfr870FDIdK3ARzOE6coCxuwoS590L0xVMpba7E
-	teuuVHImavaMH3a6GsHRsEp9nued5Gw+I13AGyjLQOxBmc1caVYZ/Qw4rDL9XCQ=
-X-Gm-Gg: ASbGncvZtonIfOqHK05GOgdyI5d1J+aJ/F/9/sxiWP003U3RyTzkQvFKXTaw37INnGv
-	b/Gw4drRzIqsK9VtNYzI6JHUlo6wwFG3TIHWNpUYjUZ9Mxhk7mUROEU4C6S2CiqZypEVdx0WaGj
-	GUGKMD2XFWlJv1htMzJ0A/GbDQaX5q2SyEZVX4ExctwYhWOw3ftTYliehB7wsZ+9z5/8VqxYyvA
-	Uubdzy9I/LPsJl7vK2SrZvb+uSHmPjSR4P9FddEd9o2FWqodiDpRoeEjrDwCbOckIZlhTVPCfaO
-	X/qY/OKvs+EYJIbqARNozOyodnmIM53Qs0V4ixDI5uKTpzvjPI8fRrsk27ISPEX0dGAXQN5toMC
-	fEx+LkQ==
-X-Google-Smtp-Source: AGHT+IE3DuQ06O0EnwZraoN4Izgb+nThp2nxKKlJ9gEJ3NSSMpW+apKTyi1H7hUDREkQwtXTLJ8z3A==
-X-Received: by 2002:a5d:47c9:0:b0:391:1473:336a with SMTP id ffacd0b85a97d-391147333f7mr3080494f8f.36.1741093637175;
-        Tue, 04 Mar 2025 05:07:17 -0800 (PST)
+        bh=Nln3oiv+wCOohYzCVrwCh2whMM1hc+Xd6ZxmtYAIQvg=;
+        b=eRMpaaBYTO8uQE7ZtzND4eRy1Nx9gQ1rI4ng+x6u87xM9Ghu6nlziB6fV3waslmVfU
+         X8atgHoYANKT2f6DK0bejt7eYw5nrZOosB+84n46eczEI0IBzOVlofxUUg8tjKxH3JFY
+         X6+1N5xTztnFPOxS3UgDJL+cPz92EGLiYZI4UR1ahKEQPPTcMVH00FhIghJLIE9mVVQ3
+         9SBkKBs1So2/7onsJ0Zs5z8gdXw2rVenntl2twXic5kUNohA0DOJ9wS4C/cW6yuC3aZU
+         v60Na0yE3Q41+VoWvwEurPiqMLlmXtGQK6hsCu+lPpWvMF2BPBfasfsvj/wVMGHK3WEA
+         I7Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCWya4EbqTzpmxLKjMWJ3mZajOYVYKw9eNQ98bTKyFwQusmhBtvf2Te3HCFkplCPII6UL1IWRl3ocrq17As=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxi5NM2xg4WGKtY9eIZj8ha4kjQ5lsAAziQYvj0pAuADwrcIYor
+	YIJa6vtqbrYm+mxOTiffdnjsf0pY1hZIeaHGCzfR/Q3cLeqrWN8crJ7UYbWe7ClRkS4L4lCRy1n
+	e
+X-Gm-Gg: ASbGnct+J7psC82zzvF8j3c3kLj7yG/zhX9DucEroxdKB3TQ49Aa73BhvCj8KsyDYA/
+	JkFlB1FZFzBv+8H3haZHoFrYrFJ4oQ4OyKOi/IYAN+s9JsCXsoiTZ2RgVvqLl/LZZw78Ss/GW2q
+	nxHeALhcfadJsZbvA62Q4pesNH85QHGwbxAHF39bxaxMoaWoZu081ngk56dXQ9/PMIY2y1qSB3P
+	ujG6dLbPW7h2KnzBRtmrgCOf2EfOQw8cLM6DwtCuPmEZMYLqyz+3pnucObBGhYcKqk16izJYhni
+	eI33N3ohFpJOBxSTnhnej8V2bnisrvHMY2mwOZfGg2khF+IOvBmEWSmRMGQ/NUM1qYZGbmZAyfz
+	nxZY/IQ==
+X-Google-Smtp-Source: AGHT+IGpTFcm31h9EpuPbAm3YUIJaoJyD95IH89so3fYUNBg2B1J+FhEDae5gGh7l1PFPh0SPC0Ycg==
+X-Received: by 2002:a5d:6da3:0:b0:390:e85b:a8ee with SMTP id ffacd0b85a97d-390ec7c6a2fmr13832592f8f.1.1741093638590;
+        Tue, 04 Mar 2025 05:07:18 -0800 (PST)
 Received: from [127.0.1.1] (188-141-3-146.dynamic.upc.ie. [188.141.3.146])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6cd8sm17401715f8f.44.2025.03.04.05.07.16
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6cd8sm17401715f8f.44.2025.03.04.05.07.17
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 05:07:16 -0800 (PST)
+        Tue, 04 Mar 2025 05:07:18 -0800 (PST)
 From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Date: Tue, 04 Mar 2025 13:07:12 +0000
-Subject: [PATCH 6/8] media: venus: core: Add SC8280XP resource struct
+Date: Tue, 04 Mar 2025 13:07:13 +0000
+Subject: [PATCH 7/8] arm64: dts: qcom: sc8280xp: Add Venus
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-6-279c7ea55493@linaro.org>
+Message-Id: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-7-279c7ea55493@linaro.org>
 References: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
 In-Reply-To: <20250304-b4-linux-media-comitters-sc8280xp-venus-v1-0-279c7ea55493@linaro.org>
 To: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, 
@@ -101,84 +102,125 @@ X-Mailer: b4 0.15-dev-33ea6
 
 From: Konrad Dybcio <konradybcio@kernel.org>
 
-Add SC8280XP configuration data and related compatible.
+Add the required nodes to enable Venus on sc8280xp.
 
 Signed-off-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Link: https://lore.kernel.org/r/20230731-topic-8280_venus-v1-6-8c8bbe1983a5@linaro.org
-[ johan: rebase on 6.9-rc1; convert vcodec_pmdomains ]
+[ johan: use sm8350 videocc defines ]
 Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-[ bod: added static video encoder/decoder desciptors ]
+[ bod: dropped video encoder/decoder declarations ]
+[ bod: added interconnect tags ]
 Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
 ---
- drivers/media/platform/qcom/venus/core.c | 47 ++++++++++++++++++++++++++++++++
- 1 file changed, 47 insertions(+)
+ arch/arm64/boot/dts/qcom/sc8280xp.dtsi | 82 ++++++++++++++++++++++++++++++++++
+ 1 file changed, 82 insertions(+)
 
-diff --git a/drivers/media/platform/qcom/venus/core.c b/drivers/media/platform/qcom/venus/core.c
-index dbce635f9fa45..3d23a5919462d 100644
---- a/drivers/media/platform/qcom/venus/core.c
-+++ b/drivers/media/platform/qcom/venus/core.c
-@@ -1116,6 +1116,52 @@ static const struct venus_resources sc7280_res = {
- 	.enc_nodename = "video-encoder",
- };
+diff --git a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+index 01501acb1790a..fe8aa24d5d51e 100644
+--- a/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
++++ b/arch/arm64/boot/dts/qcom/sc8280xp.dtsi
+@@ -10,6 +10,8 @@
+ #include <dt-bindings/clock/qcom,rpmh.h>
+ #include <dt-bindings/clock/qcom,sc8280xp-camcc.h>
+ #include <dt-bindings/clock/qcom,sc8280xp-lpasscc.h>
++#include <dt-bindings/clock/qcom,sm8350-videocc.h>
++#include <dt-bindings/interconnect/qcom,icc.h>
+ #include <dt-bindings/interconnect/qcom,osm-l3.h>
+ #include <dt-bindings/interconnect/qcom,sc8280xp.h>
+ #include <dt-bindings/interrupt-controller/arm-gic.h>
+@@ -690,6 +692,11 @@ reserved-region@85b00000 {
+ 			no-map;
+ 		};
  
-+static const struct freq_tbl sc8280xp_freq_table[] = {
-+	{ 0, 239999999 },
-+	{ 0, 338000000 },
-+	{ 0, 366000000 },
-+	{ 0, 444000000 },
-+	{ 0, 533000000 },
-+	{ 0, 560000000 },
-+};
++		pil_video_mem: pil_video_region@86700000 {
++			reg = <0 0x86700000 0 0x500000>;
++			no-map;
++		};
 +
-+static const struct venus_resources sc8280xp_res = {
-+	.freq_tbl = sc8280xp_freq_table,
-+	.freq_tbl_size = ARRAY_SIZE(sc8280xp_freq_table),
-+	.reg_tbl = sm8350_reg_preset,
-+	.reg_tbl_size = ARRAY_SIZE(sm8350_reg_preset),
-+	.bw_tbl_enc = sm8250_bw_table_enc,
-+	.bw_tbl_enc_size = ARRAY_SIZE(sm8250_bw_table_enc),
-+	.bw_tbl_dec = sm8250_bw_table_dec,
-+	.bw_tbl_dec_size = ARRAY_SIZE(sm8250_bw_table_dec),
-+	.clks = { "core", "iface" },
-+	.clks_num = 2,
-+	.resets = { "core" },
-+	.resets_num = 1,
-+	.vcodec0_clks = { "vcodec0_core" },
-+	.vcodec_clks_num = 1,
-+	.vcodec_pmdomains = (const char *[]) { "venus", "vcodec0" },
-+	.vcodec_pmdomains_num = 2,
-+	.opp_pmdomain = (const char *[]) { "mx", NULL },
-+	.vcodec_num = 1,
-+	.max_load = 7833600, /* 7680x4320@60fps */
-+	.hfi_version = HFI_VERSION_6XX,
-+	.vpu_version = VPU_VERSION_IRIS2,
-+	.num_vpp_pipes = 4,
-+	.vmem_id = VIDC_RESOURCE_NONE,
-+	.vmem_size = 0,
-+	.vmem_addr = 0,
-+	.dma_mask = GENMASK(31, 29) - 1,
-+	.cp_start = 0,
-+	.cp_size = 0x25800000,
-+	.cp_nonpixel_start = 0x1000000,
-+	.cp_nonpixel_size = 0x24800000,
-+	.fwname = "qcom/vpu-2.0/venus.mbn",
-+	.dec_nodename = "video-decoder",
-+	.enc_nodename = "video-encoder",
-+};
+ 		pil_adsp_mem: adsp-region@86c00000 {
+ 			reg = <0 0x86c00000 0 0x2000000>;
+ 			no-map;
+@@ -3699,6 +3706,81 @@ usb_1_dwc3_ss: endpoint {
+ 			};
+ 		};
+ 
++		venus: video-codec@aa00000 {
++			compatible = "qcom,sm8350-venus";
++			reg = <0 0x0aa00000 0 0x100000>;
++			interrupts = <GIC_SPI 174 IRQ_TYPE_LEVEL_HIGH>;
 +
++			clocks = <&gcc GCC_VIDEO_AXI0_CLK>,
++				 <&videocc VIDEO_CC_MVS0C_CLK>,
++				 <&videocc VIDEO_CC_MVS0_CLK>;
++			clock-names = "iface",
++				      "core",
++				      "vcodec0_core";
++			power-domains = <&videocc MVS0C_GDSC>,
++					<&videocc MVS0_GDSC>,
++					<&rpmhpd SC8280XP_MX>;
++			power-domain-names = "venus",
++					     "vcodec0",
++					     "mx";
 +
- static const struct of_device_id venus_dt_match[] = {
- 	{ .compatible = "qcom,msm8916-venus", .data = &msm8916_res },
- 	{ .compatible = "qcom,msm8996-venus", .data = &msm8996_res },
-@@ -1125,6 +1171,7 @@ static const struct of_device_id venus_dt_match[] = {
- 	{ .compatible = "qcom,sdm845-venus-v2", .data = &sdm845_res_v2 },
- 	{ .compatible = "qcom,sc7180-venus", .data = &sc7180_res },
- 	{ .compatible = "qcom,sc7280-venus", .data = &sc7280_res },
-+	{ .compatible = "qcom,sc8280xp-venus", .data = &sc8280xp_res },
- 	{ .compatible = "qcom,sm8250-venus", .data = &sm8250_res },
- 	{ .compatible = "qcom,sm8350-venus", .data = &sm8350_res },
- 	{ }
++			resets = <&gcc GCC_VIDEO_AXI0_CLK_ARES>;
++			reset-names = "core";
++
++			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
++					 &config_noc SLAVE_VENUS_CFG QCOM_ICC_TAG_ACTIVE_ONLY>,
++					<&mmss_noc MASTER_VIDEO_P0 QCOM_ICC_TAG_ALWAYS
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
++					<&mmss_noc MASTER_VIDEO_P0 QCOM_ICC_TAG_ALWAYS
++					 &gem_noc SLAVE_LLCC QCOM_ICC_TAG_ALWAYS>;
++			interconnect-names = "cpu-cfg",
++					     "video-mem",
++					     "video-llcc";
++
++			operating-points-v2 = <&venus_opp_table>;
++			iommus = <&apps_smmu 0x2e00 0x400>;
++			memory-region = <&pil_video_mem>;
++
++			status = "disabled";
++
++			venus_opp_table: opp-table {
++				compatible = "operating-points-v2";
++
++				opp-720000000 {
++					opp-hz = /bits/ 64 <720000000>;
++					required-opps = <&rpmhpd_opp_low_svs>;
++				};
++
++				opp-1014000000 {
++					opp-hz = /bits/ 64 <1014000000>;
++					required-opps = <&rpmhpd_opp_svs>;
++				};
++
++				opp-1098000000 {
++					opp-hz = /bits/ 64 <1098000000>;
++					required-opps = <&rpmhpd_opp_svs_l1>;
++				};
++
++				opp-1332000000 {
++					opp-hz = /bits/ 64 <1332000000>;
++					required-opps = <&rpmhpd_opp_nom>;
++				};
++			};
++		};
++
++		videocc: clock-controller@abf0000 {
++			compatible = "qcom,sc8280xp-videocc";
++			reg = <0 0x0abf0000 0 0x10000>;
++			clocks = <&rpmhcc RPMH_CXO_CLK>,
++				 <&rpmhcc RPMH_CXO_CLK_A>,
++				 <&sleep_clk>;
++			power-domains = <&rpmhpd SC8280XP_MMCX>;
++			required-opps = <&rpmhpd_opp_low_svs>;
++			#clock-cells = <1>;
++			#reset-cells = <1>;
++			#power-domain-cells = <1>;
++		};
++
+ 		cci0: cci@ac4a000 {
+ 			compatible = "qcom,sc8280xp-cci", "qcom,msm8996-cci";
+ 			reg = <0 0x0ac4a000 0 0x1000>;
 
 -- 
 2.47.2
