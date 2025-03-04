@@ -1,124 +1,216 @@
-Return-Path: <linux-kernel+bounces-545553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DEFA4EE7B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:35:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FA30A4EE81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:37:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E36A93A4CDD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:35:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C38416D9D1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D542324EABD;
-	Tue,  4 Mar 2025 20:35:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A837325F997;
+	Tue,  4 Mar 2025 20:37:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="VZ6O9x86"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b="AsYxnkhc"
+Received: from mail-qk1-f173.google.com (mail-qk1-f173.google.com [209.85.222.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DEA41FECB4
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:35:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C4D202C2E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741120511; cv=none; b=KeELBwh7DtUhA0muLeOlcFcWCkTzr9OLDUhyyOf37eWCIz7YDec6O4WCFVjS/o0rXp5/gjWlUs9ArGbcHfpsNmcsz4hfBKA3gwIGg6JPUXGSghGeTgLq8X/8u8blQhBpHf2sleGUfW2SPANBMK2PJKA0AlxKgzlNd802JSw7Chk=
+	t=1741120621; cv=none; b=kgR38Gm4F1+jy2qk9H2xwOqpLETEWYsrKQM6B4bt0o/b9rhXEWvFNNogL1H94+JmWDpUibQ/vVuM57/5oi3atqgm7/3bYmRNQUR4/SxDgKtYGQZKYCIok93ugPN/c0AcwDP2WFiNLftJfgJH/6UgcXlVMCCi4TfnrFOq90Oguyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741120511; c=relaxed/simple;
-	bh=5CATaT+vuXFneRrXovUb/F8vmYFOLFALDZsrIyHu084=;
-	h=Message-ID:Date:MIME-Version:To:From:Subject:Content-Type; b=A1U4Ctpd45KiLD7KQxS64npUKYltExPCjjokR3xfA9JwgW4Zy5IncCfC106D+NZtCaQ8ATuznesEfDGi/EC2/9nljZF3gEAbCBjxW/LD1/OtyzdgSPZdEByeKJtkZKIoLfDJUZilvgeC/Kevg/CwzRCA8rinbdxu79RiWPV349s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=VZ6O9x86; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524Aa9BN016174
-	for <linux-kernel@vger.kernel.org>; Tue, 4 Mar 2025 20:35:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=lyZ9KZcmAozLbf98x2GQOc
-	SaLEpjLWxAVW305JA8sSA=; b=VZ6O9x86dhpapq58oisVwF+VX8EnWerCBDuG7M
-	iY4rYC9V4EoLi+TsBbjqN6IvFlEpBDoo6xWP5yhplL9yzXvtrl8DQyxYE6Wo6LcR
-	jEM7KsGJsjevNtBhn8iFO0uQoZcB5eqsZT/E09N3LIxB6GIHCmUWqBFicLBHdDOD
-	RB+WsHb2juvqGeoUfIQgXe8cgx3oLgYgkRpaWBeF6BgNs/yPU2qyWUehD10Yih6I
-	TgfH8fcDX0gAt358/EC82ld9yGHJmVligUcDibF37NJ4KZd7a5BCEtzUzvSULxFB
-	aTRaWtNUrDHQR1wIndrTTkVcAhAwWWS0jwpe2/4JQC9l8rQQ==
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com [209.85.219.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6t3504-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 20:35:08 +0000 (GMT)
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e8add20c70so3791526d6.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 12:35:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741120507; x=1741725307;
-        h=content-transfer-encoding:subject:from:to:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+	s=arc-20240116; t=1741120621; c=relaxed/simple;
+	bh=ylXDHcGiq+tE3l7CgMapVO+d5BX9Tj4+B0gqa3m5mCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AvY65p1IfU9vSAtDiVo5/KWUfE7l45q6wwKBMA1N2GavHfoKQc/CItuypU/Z4fSinLaQvl2UenDU2M0coVPhmczdRcv9t37oEOrg4xOIDAIm8iR/nFe1lKfP8pgKD9JcNKdYfEHZ0qgH2SXVviYOMgpu4I5D5U2hTpWZvLHg+U0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com; spf=none smtp.mailfrom=toxicpanda.com; dkim=pass (2048-bit key) header.d=toxicpanda-com.20230601.gappssmtp.com header.i=@toxicpanda-com.20230601.gappssmtp.com header.b=AsYxnkhc; arc=none smtp.client-ip=209.85.222.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=toxicpanda.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=toxicpanda.com
+Received: by mail-qk1-f173.google.com with SMTP id af79cd13be357-7be8f281714so712912885a.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 12:37:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=toxicpanda-com.20230601.gappssmtp.com; s=20230601; t=1741120619; x=1741725419; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=lyZ9KZcmAozLbf98x2GQOcSaLEpjLWxAVW305JA8sSA=;
-        b=Apy+s7r5DxcZUyLhqNILXWqAEof/aLFZaHkRdtTtKVCXKUEUM86KR1mriZKVSKUkAK
-         iaShjRRM5xQoSvLn0FdDv6jI509qZhN6AaffL9vLH+RcDutEN9Osz4pOwpGSeDWH3CTV
-         Mw5ib1L5RCwA4CWcEWCu2RtmSz+sY3UsLIlOZh5HNqH6838YWDpPvK5zmH4i9+j6YOXG
-         gyQ2dPMG8ToZmPWpIObjx1y0zKqpsinUSReJu/YknX+R/txDz4fKH4c1hDUOCs2JtnI7
-         RC9fjoTU7Jkr51QK83McA9pJMQicI8drlv5I0HfuSVb6cjLK9I8YmtuOUaK67fHlYOJg
-         GeAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYwz/f5yZNXKlkHYn1/WH9zrtGvRtpZQFN3uE3Wq1Gb/gTz/rmQZ/ObuZRL2KoSTOtCOWuDURljwMIdO4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYey3ToWKgrqj2K7xu5WO1wOEWVb7Gk7YnUPiwUB7MWWtYcMgN
-	jfHtB9Acykb/SO1N5OwiZIIb07Wf0s3z3osMgqRuTcPgUY3jJ18UWTd+Ay6PvdlyhRYOFIxdpnb
-	QPP/lwjHvHVpFDB2B7QXTpy1e7Wt9pqSF2TalRirb6zFcyjFLxOdkxnFPxLtlyJ8=
-X-Gm-Gg: ASbGncv15NDJHML8EgvtoOzkkfdozmgwpKrluaxewSGpLw33Qjkrss6Z4OKx+XD/JkB
-	J4vTpxkz/veyJZ5oCOeQXxM+86TKsYteXA/j5v9RS3rLhydJnrCJ3cDKD/dIeu8hlrcnQThjrFp
-	H11iY3sSwmjf+w+6Id7xWLymgHKYlL80lvNNsJHftBEJs5GU2rsH0R8zv1mTdu7pCNw7bvjs2Iu
-	ZrMkDi1pQb3LdPFXzTGLT+3iX5BdAVbap9PjRSw6m+Ch9XHxMDsDGwauRZVUjmj9LR5ZJP71B9G
-	JXYMIgfF9mWp/hE6/ro449bJj3BgpCeqK8QId+9nHDajBBzGHbv+g/6ucda+T1w5mN7qPg==
-X-Received: by 2002:a05:6214:2508:b0:6e1:a79c:4cb8 with SMTP id 6a1803df08f44-6e8e6cfee62mr3885506d6.2.1741120507041;
-        Tue, 04 Mar 2025 12:35:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFm28h1xllMq2tXJKOJVS15ihtJCh/TUXmjO3xAQyRHvzHPVSZ3k9O4oOnfXIB7q9n+dowrqA==
-X-Received: by 2002:a05:6214:2508:b0:6e1:a79c:4cb8 with SMTP id 6a1803df08f44-6e8e6cfee62mr3885386d6.2.1741120506736;
-        Tue, 04 Mar 2025 12:35:06 -0800 (PST)
-Received: from [192.168.65.90] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf45b506a0sm722319166b.30.2025.03.04.12.35.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 12:35:06 -0800 (PST)
-Message-ID: <81fa7a0d-ed4b-44cd-b2e1-779a42401cbe@oss.qualcomm.com>
-Date: Tue, 4 Mar 2025 21:35:04 +0100
+        bh=ajQNjB8mdedYx2LlwHnzClYRQdUqzI1pUD1k+HxZ7oQ=;
+        b=AsYxnkhcLSWOq5KKB+3imrFbu7bS1VcTH1z2Us1LICT4JALeDoU90IY4NytcVaBGOj
+         n7bVZ0q0HaOnoU/P3gEdNXDCSHUnV8HEOvFB4/kIL2PfYxRifBdLfYni4llIH58c1dA6
+         ii4oGqF73gCdYLXDD/JTD4nd8lzSEH4gpzY+ijy0vos7oC9i+phlGmD3q7QQfe0555O7
+         xduT6W7zi3vqL1xFNl+trZnuusDnqT58cW+EIzzFew7pLnA2HMCsjLIAPVsbcrHOxScJ
+         5yhikHTW357BjiCelu2ABCrIRYaVDGW7xB3Cpru1D8WlYtC2po+Qx3RbZjaVZIkJUHeW
+         YpGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741120619; x=1741725419;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ajQNjB8mdedYx2LlwHnzClYRQdUqzI1pUD1k+HxZ7oQ=;
+        b=lwvKjlyjYn2iOsts1g4oGxdwvIaxUymfAwdus64ja2JVIfVmJEjrNImBoZAkSPwr+e
+         PG+EbU9Iyx3kwLWrb6pJ2jvpGzXDu0ZwhcoQwIHaMNlr3FE2WQCEQ8GIVfXJgYFva01M
+         jwOoGfFr6pTGxWVxfRgS6irXoQRZosalThh89rPNu1xJ1DkMFzJa+Y2uG9ibc4uHh5FW
+         Ax51RjoBJqH7v7p/PtvbRfTnt5XdMPLwBrwNKfQpgl9WPbOn6qP0Dfuhltt8+E5sqBdC
+         4EbZ+G/A1Sk2jWuDRl0AA8/YAkyut31YjKILaiXveEZ2c0junS+WsYc7Q3B7q5PojCg3
+         it+w==
+X-Forwarded-Encrypted: i=1; AJvYcCWSH1Z6H66u1CBq/5lkWLE7Tt+d/7W3hFcG4ojHo4xclvGNBzxwG7eXa/OT62mt7+m5Yd3ILpu2GETRSmg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxekU8mh+GQ2OHCam4E3blK4cvl83w75LQBAXWM6Rw0CK4nfYc4
+	+MzKbs1ageoaYNwVRH1/7MKrOmgMGILLch7pxPwJ0IzB8KtEDY36FLpbtM2BScc=
+X-Gm-Gg: ASbGncsKAAsbVKLDBsvbJOVAjm/3D4Wq+MZuw7Gw4UxsmPttOsQHjLk3ZQx8NAyDjVF
+	kU5cgXmccAWdyR6eXKl8EQ9ZTYCE/9lP3SWQDuE5hjmjo+kuJ/vxgz6bXcBAETIhh5p1b5ychtL
+	KNVsU7t4yXqEX9EXv6KF5Jrd1tlPHeArVqQKafewnWLNd1Ej1Yt/UXlfq7ym4fzuVdFhtwUU8x2
+	UVO+TrcFReT1KUqdh3wQhY9fj2ZeJvLl5sH1NSrK9uF6y1+IA/DvorT1yset7BdUhiEKJjlaY/U
+	OlakDksA6JdaeGaixCzJqtGxjLbvEbk2lQLUCU24AC8QRLdKsb0CUmjv1lb18y2P2pQJOsf5Am3
+	rz8BYZg==
+X-Google-Smtp-Source: AGHT+IGN8GLNVXAgiOiVnkab7Lf8kpIiyiCI+E2wOU2Xu9jt2bq8RbpAyG8danZh0oP6vJsQHUFI8w==
+X-Received: by 2002:a05:620a:8908:b0:7c0:b103:f252 with SMTP id af79cd13be357-7c3d8e15ea4mr142233885a.8.1741120619086;
+        Tue, 04 Mar 2025 12:36:59 -0800 (PST)
+Received: from localhost (syn-076-182-020-124.res.spectrum.com. [76.182.20.124])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3cd20e6bdsm155346885a.23.2025.03.04.12.36.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 12:36:58 -0800 (PST)
+Date: Tue, 4 Mar 2025 15:36:57 -0500
+From: Josef Bacik <josef@toxicpanda.com>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>,
+	syzbot <syzbot+7229071b47908b19d5b7@syzkaller.appspotmail.com>,
+	akpm@linux-foundation.org, axboe@kernel.dk, brauner@kernel.org,
+	cem@kernel.org, chandan.babu@oracle.com, djwong@kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org, linux-xfs@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [xfs?] WARNING in fsnotify_file_area_perm
+Message-ID: <20250304203657.GA4063187@perftesting>
+References: <67a487f7.050a0220.19061f.05fc.GAE@google.com>
+ <67c4881e.050a0220.1dee4d.0054.GAE@google.com>
+ <7ehxrhbvehlrjwvrduoxsao5k3x4aw275patsb3krkwuq573yv@o2hskrfawbnc>
+ <CAOQ4uxjf5H_vj-swF7wEvUkPobEuxs2q6jfO9jFsx4pqxtJMMg@mail.gmail.com>
+ <20250304161509.GA4047943@perftesting>
+ <CAOQ4uxj0cN-sUN=EE0+9tRhMFFrWLQ0T_i0fprwNRr92Hire6Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-To: Linux Next Mailing List <linux-next@vger.kernel.org>,
-        Brendan Jackman <jackmanb@google.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        lkml <linux-kernel@vger.kernel.org>,
-        Linux Memory Management List <linux-mm@kvack.org>
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Subject: next-20250304 build failure
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: 9HtwBIQPKATMH_MHwyKVRJ_3oFcL4jhi
-X-Authority-Analysis: v=2.4 cv=KfMosRYD c=1 sm=1 tr=0 ts=67c763fc cx=c_pps a=oc9J++0uMp73DTRD5QyR2A==:117 a=FpWmc02/iXfjRdCD7H54yg==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=6OJpePoKIdf77JAHNpUA:9 a=QEXdDO2ut3YA:10 a=iYH6xdkBrDN1Jqds4HTS:22
-X-Proofpoint-ORIG-GUID: 9HtwBIQPKATMH_MHwyKVRJ_3oFcL4jhi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_08,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- spamscore=0 suspectscore=0 phishscore=0 malwarescore=0 clxscore=1015
- priorityscore=1501 impostorscore=0 mlxlogscore=463 adultscore=0
- bulkscore=0 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040165
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxj0cN-sUN=EE0+9tRhMFFrWLQ0T_i0fprwNRr92Hire6Q@mail.gmail.com>
 
-Hi, I'm getting this build failure:
+On Tue, Mar 04, 2025 at 09:27:20PM +0100, Amir Goldstein wrote:
+> On Tue, Mar 4, 2025 at 5:15 PM Josef Bacik <josef@toxicpanda.com> wrote:
+> >
+> > On Tue, Mar 04, 2025 at 04:09:16PM +0100, Amir Goldstein wrote:
+> > > On Tue, Mar 4, 2025 at 12:06 PM Jan Kara <jack@suse.cz> wrote:
+> > > >
+> > > > Josef, Amir,
+> > > >
+> > > > this is indeed an interesting case:
+> > > >
+> > > > On Sun 02-03-25 08:32:30, syzbot wrote:
+> > > > > syzbot has found a reproducer for the following issue on:
+> > > > ...
+> > > > > ------------[ cut here ]------------
+> > > > > WARNING: CPU: 1 PID: 6440 at ./include/linux/fsnotify.h:145 fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > Modules linked in:
+> > > > > CPU: 1 UID: 0 PID: 6440 Comm: syz-executor370 Not tainted 6.14.0-rc4-syzkaller-ge056da87c780 #0
+> > > > > Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+> > > > > pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> > > > > pc : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > lr : fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145
+> > > > > sp : ffff8000a42569d0
+> > > > > x29: ffff8000a42569d0 x28: ffff0000dcec1b48 x27: ffff0000d68a1708
+> > > > > x26: ffff0000d68a16c0 x25: dfff800000000000 x24: 0000000000008000
+> > > > > x23: 0000000000000001 x22: ffff8000a4256b00 x21: 0000000000001000
+> > > > > x20: 0000000000000010 x19: ffff0000d68a16c0 x18: ffff8000a42566e0
+> > > > > x17: 000000000000e388 x16: ffff800080466c24 x15: 0000000000000001
+> > > > > x14: 1fffe0001b31513c x13: 0000000000000000 x12: 0000000000000000
+> > > > > x11: 0000000000000001 x10: 0000000000ff0100 x9 : 0000000000000000
+> > > > > x8 : ffff0000c6d98000 x7 : 0000000000000000 x6 : 0000000000000000
+> > > > > x5 : 0000000000000020 x4 : 0000000000000000 x3 : 0000000000001000
+> > > > > x2 : ffff8000a4256b00 x1 : 0000000000000001 x0 : 0000000000000000
+> > > > > Call trace:
+> > > > >  fsnotify_file_area_perm+0x20c/0x25c include/linux/fsnotify.h:145 (P)
+> > > > >  filemap_fault+0x12b0/0x1518 mm/filemap.c:3509
+> > > > >  xfs_filemap_fault+0xc4/0x194 fs/xfs/xfs_file.c:1543
+> > > > >  __do_fault+0xf8/0x498 mm/memory.c:4988
+> > > > >  do_read_fault mm/memory.c:5403 [inline]
+> > > > >  do_fault mm/memory.c:5537 [inline]
+> > > > >  do_pte_missing mm/memory.c:4058 [inline]
+> > > > >  handle_pte_fault+0x3504/0x57b0 mm/memory.c:5900
+> > > > >  __handle_mm_fault mm/memory.c:6043 [inline]
+> > > > >  handle_mm_fault+0xfa8/0x188c mm/memory.c:6212
+> > > > >  do_page_fault+0x570/0x10a8 arch/arm64/mm/fault.c:690
+> > > > >  do_translation_fault+0xc4/0x114 arch/arm64/mm/fault.c:783
+> > > > >  do_mem_abort+0x74/0x200 arch/arm64/mm/fault.c:919
+> > > > >  el1_abort+0x3c/0x5c arch/arm64/kernel/entry-common.c:432
+> > > > >  el1h_64_sync_handler+0x60/0xcc arch/arm64/kernel/entry-common.c:510
+> > > > >  el1h_64_sync+0x6c/0x70 arch/arm64/kernel/entry.S:595
+> > > > >  __uaccess_mask_ptr arch/arm64/include/asm/uaccess.h:169 [inline] (P)
+> > > > >  fault_in_readable+0x168/0x310 mm/gup.c:2234 (P)
+> > > > >  fault_in_iov_iter_readable+0x1dc/0x22c lib/iov_iter.c:94
+> > > > >  iomap_write_iter fs/iomap/buffered-io.c:950 [inline]
+> > > > >  iomap_file_buffered_write+0x490/0xd54 fs/iomap/buffered-io.c:1039
+> > > > >  xfs_file_buffered_write+0x2dc/0xac8 fs/xfs/xfs_file.c:792
+> > > > >  xfs_file_write_iter+0x2c4/0x6ac fs/xfs/xfs_file.c:881
+> > > > >  new_sync_write fs/read_write.c:586 [inline]
+> > > > >  vfs_write+0x704/0xa9c fs/read_write.c:679
+> > > >
+> > > > The backtrace actually explains it all. We had a buffered write whose
+> > > > buffer was mmapped file on a filesystem with an HSM mark. Now the prefaulting
+> > > > of the buffer happens already (quite deep) under the filesystem freeze
+> > > > protection (obtained in vfs_write()) which breaks assumptions of HSM code
+> > > > and introduces potential deadlock of HSM handler in userspace with filesystem
+> > > > freezing. So we need to think how to deal with this case...
+> > >
+> > > Ouch. It's like the splice mess all over again.
+> > > Except we do not really care to make this use case work with HSM
+> > > in the sense that we do not care to have to fill in the mmaped file content
+> > > in this corner case - we just need to let HSM fail the access if content is
+> > > not available.
+> > >
+> > > If you remember, in one of my very early version of pre-content events,
+> > > the pre-content event (or maybe it was FAN_ACCESS_PERM itself)
+> > > carried a flag (I think it was called FAN_PRE_VFS) to communicate to
+> > > HSM service if it was safe to write to fs in the context of event handling.
+> > >
+> > > At the moment, I cannot think of any elegant way out of this use case
+> > > except annotating the event from fault_in_readable() as "unsafe-for-write".
+> > > This will relax the debugging code assertion and notify the HSM service
+> > > (via an event flag) that it can ALLOW/DENY, but it cannot fill the file.
+> > > Maybe we can reuse the FAN_ACCESS_PERM event to communicate
+> > > this case to HSM service.
+> > >
+> > > WDYT?
+> >
+> > I think that mmap was a mistake.
+> 
+> What do you mean?
+> Isn't the fault hook required for your large executables use case?
 
-mm/page_alloc.c:424:3: error: call to undeclared function 'in_mem_hotplug'; ISO C99 and later do not support implicit function declarations [-Wimplicit-function-declaration]
-  424 |                 in_mem_hotplug() ||
+I mean the mmap syscall was a mistake ;).
 
+> 
+> >
+> > Is there a way to tell if we're currently in a path that is under fsfreeze
+> > protection?
+> 
+> Not at the moment.
+> At the moment, file_write_not_started() is not a reliable check
+> (has false positives) without CONFIG_LOCKDEP.
+> 
+> > Just denying this case would be a simpler short term solution while
+> > we come up with a long term solution. I think your solution is fine, but I'd be
+> > just as happy with a simpler "this isn't allowed" solution. Thanks,
+> 
+> Yeh, I don't mind that, but it's a bit of an overkill considering that
+> file with no content may in fact be rare.
 
-building next-20250304 on arm64
+Agreed, I'm fine with your solution.  Thanks,
 
-Caused by 
-
-b4cfcc26f507 ("mm/page_alloc: add lockdep assertion for pageblock type change")
-
-Konrad
+Josef
 
