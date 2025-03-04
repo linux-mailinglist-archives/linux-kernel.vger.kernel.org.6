@@ -1,103 +1,184 @@
-Return-Path: <linux-kernel+bounces-545180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93840A4EA1C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:56:20 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E54DA4EAB3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:10:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E588A6738
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A06A18861A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E40D7283688;
-	Tue,  4 Mar 2025 17:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B2252836BC;
+	Tue,  4 Mar 2025 17:27:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KLlI11vX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="GgAHljGj"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43556283695;
-	Tue,  4 Mar 2025 17:27:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63BBA209F58
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 17:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741109255; cv=none; b=aHl3cxbj+j7CfoousTPbMHtn8rKmWNHcL7C0H7/3A7TwtaLGmCu8LDH1wCQwGbhnGANMrsbkBtC7Gj4nso9bVXOQC3GIsw2N+t3LvfGdn4lKh8069zyax0uQmlFaUVYiqaviCJzOUilY3rHaUjc08HUn0YfL2JqSUUWfwCqjQlA=
+	t=1741109278; cv=none; b=rr8GEVlmUP7C/M0zZHR8I5mVtM05nwf9sqd/qL3EFHfA3uAKObOCn9y85bkNgsuMJTwXzGF8oScPh2xbDGaYBGuqmigjOSNyH/fXbUh1F2TECdLAGTxafkvsZCs6Pt+WGJLG1pDkelKSNPCpKDKowhclrTot9X301pxZI+OMMsY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741109255; c=relaxed/simple;
-	bh=Z28VHjHcIMGjF7QPclk1fZqZmK04rbwR4LrYiI79iLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QNGQhBkQOiqWW9FU7Nqj/kXMi3pplkbGN64lR1HDUYArfll/3t/DJBuJfDgglYe13EimU8+GM30jJXtSxMYsLev8PknJ8nqO1PuqZ/c5/6yka2DAW8D7SZTm5T4x80IWHWZgcZv9bi9TpBfGble50vd78MJ7YyttGMDhNHVdj8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KLlI11vX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12754C4CEE8;
-	Tue,  4 Mar 2025 17:27:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741109254;
-	bh=Z28VHjHcIMGjF7QPclk1fZqZmK04rbwR4LrYiI79iLs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KLlI11vXZONgKcMZiIus4AdRR6dxmZvLmJMQLIdPFBQ19ZflHqyntwpZeT6JCOQpe
-	 v46NLz+/x/tQtSHgI1L62hFroe1Wy//E6X02JAEY+gUiT+m811xplLVjQjiXYFq25q
-	 CwkR6vKZVZNE16Y+YB0d0uml8MvFPOYJaFYe4M960IcmBKsZecPmd8JQYnAGYjFKPJ
-	 eyHgnqyQftgNiKR4I5EtDm1ZQr7YvfRpewB5/NJiKTPojoisH09tVuki066BAWRJ2M
-	 6tIhBXPgrW6/Q4FlWtpBSk8a5wySEo8w8IDa5k7jLLJG8K24FUM4hQJT8sFvH1frTO
-	 zYGOdBuuKNJYw==
-Date: Tue, 4 Mar 2025 19:27:30 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>, linux-integrity@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 5/6] tpm: add SNP SVSM vTPM driver
-Message-ID: <Z8c4Avw2y7k4JODe@kernel.org>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-6-sgarzare@redhat.com>
- <Z8JoMrUm9Dnoqgoi@kernel.org>
- <tpi74sl22zqngutzbqp7ajz7khwom2fgth2n3i77houwdqc3gl@obkhgfcagubh>
+	s=arc-20240116; t=1741109278; c=relaxed/simple;
+	bh=C+bBi1F8wyKjwRGAGxl1KKgwS6bfayqNblzlF2k9bno=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LZpa2BJNZwTzxtfXpwtu8tRVGSkC9SIjQlVJmcnT3j87pAiE052lpcgP21GWGqwdkHiymNfdSycfl+55aYkjM7kqhl1GyhT3IPrexZzGO6a3SZKcJ75mIjtht+k4F+hUq5xJv8vM4+QXf5Qd0Me1GtWwnkk7LHhRHNc4faDmTK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=GgAHljGj; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6fd6f7f8df9so73877b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 09:27:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=raspberrypi.com; s=google; t=1741109275; x=1741714075; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=pngwxWfatCIaGOPaCop7AUGkDzTeoWBcZRo0gHnL7tc=;
+        b=GgAHljGjEgNI2dr07VpAxkYCpphJNweeEq/dQtRYeiW4OHUY5hU+qJ0qocEndRvYSq
+         wAlHjvWnGBW0f328KK1hqLv0Fy8vGLNQdJ9mFK3Bd1LCiUiVp+Aqz8Wb/8NSnhxLkMyx
+         goC0MHmjYt/j4hpKHi+r4LrLCoX5Dv+bkujouaJDk/pXMX+sdOqNXo0PgzVZjNKAms8I
+         7kMtYVRRQZa84WiRoK+uiqtY8cupuJAeseLBqhBRkTSJHicNm6i94fixQNGpPOHzEwIX
+         ZMQBZsL094Wrstnxi5spLAJeZ2O/8bliSr7UIeIB2BRkjgwFgUnN8lxb53aw/yqdkfBT
+         VLNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741109275; x=1741714075;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=pngwxWfatCIaGOPaCop7AUGkDzTeoWBcZRo0gHnL7tc=;
+        b=B/ZQHC35yij8nvJ2FWllXj0QrZ02LrDS2iqapTEBw4TLohLgv3nhGlYfmElSHXAe0D
+         RZPs0u0J3cpYv3l1nP0R+PhA+4y3rp3K87/2RsZUrEUH9l3bfNzCtCkJbb6oIXdozYdS
+         sRZDpxLOOj4ESPVLhxqsM0CEVUl7+epm3aWoZYYPNTgnPiB502ZTQWHSgH/fdfcQD8u0
+         Mk8NT/KgG8rJT81w1BNgRbBC81Nb/hAirYj2Gq7H1d1uN/CeMfsGGmpFhMcUA13cjqc7
+         vDEeCMvUy4bJcKNHRJnyl5ThDE/o+NPROBwkjoFaua2nkfIW/MN+RpJvrKDey1WZAZ6Y
+         76hQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxmOeLfEfxw22ShaZpGQpgWi4+gva+hwzd5ESkd2fJwPR3ht/GF9uGKZ52gUl1ZAC/BN63V4q09xW5VbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8RGvsFY82GQxQtgauSIlyb8OsFZXQKWVKXw05m/c+CDAgLTdX
+	c9424Q5cuMWrbhfSf7OlP+CrmgvmemrJI1gEU//v5gL2lUrqb8Ep4mjnI/KUZ0dEFbviZlQprzN
+	9YKXnX1oYxEjirNjfVqnAyiC0iodfrADFd6Bs5g==
+X-Gm-Gg: ASbGncu1tLsPvg/+qsbX01NtdKv2ZZGy0hKu8tjPI+Q3yLYEUMoiiZ2tN0XYRG+3yHZ
+	8suJY5OAtSZf75wxJuyvYfgrVpPUd3mQkGJNtAfZRd+xLoVXrpZ7qrw4m4OD8P9ooXftvjEEJxp
+	NmEca54oMc27FZ30EUS0BR4cH92J7aXwUGTQg70FpGleuqn6Zf/id9aY4w3w==
+X-Google-Smtp-Source: AGHT+IG8rLJKP6QjcPJKBs6HHA5CSFh2OOfYDm0eu1lQ1W/CYWNV7actn7v/IuxMTC+ofswxxNQvZvTBOc2XcAmsQ0g=
+X-Received: by 2002:a05:690c:688a:b0:6fb:a222:6bff with SMTP id
+ 00721157ae682-6fd9413c257mr52561027b3.4.1741109275343; Tue, 04 Mar 2025
+ 09:27:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tpi74sl22zqngutzbqp7ajz7khwom2fgth2n3i77houwdqc3gl@obkhgfcagubh>
+References: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev> <20250303-ov9282-flash-strobe-v1-2-0fd57a1564ba@linux.dev>
+In-Reply-To: <20250303-ov9282-flash-strobe-v1-2-0fd57a1564ba@linux.dev>
+From: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Date: Tue, 4 Mar 2025 17:27:34 +0000
+X-Gm-Features: AQ5f1JqnbgG6UGzwinCOtaxggx0TCkVpbxuND_5KOBtFKC8Gj8lxhcgdz2N9p2E
+Message-ID: <CAPY8ntAQnN+Ea4oMKK5RkCa+EZMwbCjX4uJx2ex5E=peuz0vAA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] media: i2c: ov9282: add led_mode v4l2 control
+To: Richard Leitner <richard.leitner@linux.dev>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, Mar 03, 2025 at 05:46:16PM +0100, Stefano Garzarella wrote:
-> On Sat, Mar 01, 2025 at 03:51:46AM +0200, Jarkko Sakkinen wrote:
-> > On Fri, Feb 28, 2025 at 06:07:19PM +0100, Stefano Garzarella wrote:
-> > > Add driver for the vTPM defined by the AMD SVSM spec [1].
-> > > 
-> > > The specification defines a protocol that a SEV-SNP guest OS can use to
-> > > discover and talk to a vTPM emulated by the Secure VM Service Module (SVSM)
-> > > in the guest context, but at a more privileged level (VMPL0).
-> > > 
-> > > The new tpm-svsm platform driver uses two functions exposed by x86/sev
-> > > to verify that the device is actually emulated by the platform and to
-> > > send commands and receive responses.
-> > > 
-> > > The vTPM is emulated through the TCG reference implementation, so this
-> > > driver leverages tpm_tcgsim.h to fill commands and parse responses.
-> > 
-> > Why? Please don't.
-> 
-> You mean it's better not to have the external header and have all the
-> functions here to prepare commands and parse responses?
-> 
-> As I mentioned, I did this because there may be other future drivers that
-> could use it to talk to emulated devices in the same way, that is, through
-> the TCG TPM reference implementation,
+Hi Richard
 
-Sorry about harsh comment. I think we discussed this (MS simulator
-caused confusion). Anchor this to SVSM spec and we're fine.
+On Mon, 3 Mar 2025 at 22:59, Richard Leitner <richard.leitner@linux.dev> wrote:
+>
+> Add V4L2_CID_FLASH_LED_MODE support using the "strobe output enable"
+> feature of the sensor. This implements following modes:
+>
+>  - V4L2_FLASH_LED_MODE_NONE, which disables the strobe output
+>  - V4L2_FLASH_LED_MODE_FLASH, which enables the strobe output
+>
+> All values are based on the OV9281 datasheet v1.53 (january 2019) and
+> tested using an ov9281 VisionComponents module.
+>
+> Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> ---
+>  drivers/media/i2c/ov9282.c | 29 +++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+>
+> diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> index f42e0d439753e74d14e3a3592029e48f49234927..c98ba466e9aea29baff0b13578d760bf69c958c5 100644
+> --- a/drivers/media/i2c/ov9282.c
+> +++ b/drivers/media/i2c/ov9282.c
+> @@ -192,6 +192,7 @@ struct ov9282_mode {
+>   * @exp_ctrl: Pointer to exposure control
+>   * @again_ctrl: Pointer to analog gain control
+>   * @pixel_rate: Pointer to pixel rate control
+> + * @flash_led_mode: Pointer to flash led mode control
+>   * @vblank: Vertical blanking in lines
+>   * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
+>   * @cur_mode: Pointer to current selected sensor mode
+> @@ -214,6 +215,7 @@ struct ov9282 {
+>                 struct v4l2_ctrl *again_ctrl;
+>         };
+>         struct v4l2_ctrl *pixel_rate;
+> +       struct v4l2_ctrl *flash_led_mode;
 
-BR, Jarkko
+As with 3/3, you only use this control from within ov9282_set_ctrl
+where you are given the struct v4l2_ctrl, so there is no need to store
+it in the device state structure.
+
+>         u32 vblank;
+>         bool noncontinuous_clock;
+>         const struct ov9282_mode *cur_mode;
+> @@ -670,6 +672,23 @@ static int ov9282_set_ctrl_vflip(struct ov9282 *ov9282, int value)
+>                                 current_val);
+>  }
+>
+> +static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
+> +{
+> +       u32 current_val;
+> +       int ret = ov9282_read_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
+> +                                 &current_val);
+> +       if (ret)
+> +               return ret;
+> +
+> +       if (mode == V4L2_FLASH_LED_MODE_FLASH)
+> +               current_val |= OV9282_OUTPUT_ENABLE6_STROBE;
+> +       else
+> +               current_val &= ~OV9282_OUTPUT_ENABLE6_STROBE;
+> +
+> +       return ov9282_write_reg(ov9282, OV9282_REG_OUTPUT_ENABLE6, 1,
+> +                               current_val);
+> +}
+> +
+>  /**
+>   * ov9282_set_ctrl() - Set subdevice control
+>   * @ctrl: pointer to v4l2_ctrl structure
+> @@ -736,6 +755,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+>                 ret = ov9282_write_reg(ov9282, OV9282_REG_TIMING_HTS, 2,
+>                                        (ctrl->val + ov9282->cur_mode->width) >> 1);
+>                 break;
+> +       case V4L2_CID_FLASH_LED_MODE:
+> +               ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
+> +               break;
+>         default:
+>                 dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+>                 ret = -EINVAL;
+> @@ -1391,6 +1413,13 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+>                                                 OV9282_TIMING_HTS_MAX - mode->width,
+>                                                 1, hblank_min);
+>
+> +       /* Flash/Strobe controls */
+> +       ov9282->flash_led_mode = v4l2_ctrl_new_std_menu(ctrl_hdlr, &ov9282_ctrl_ops,
+> +                                                       V4L2_CID_FLASH_LED_MODE,
+> +                                                       V4L2_FLASH_LED_MODE_TORCH,
+> +                                                       (1 << V4L2_FLASH_LED_MODE_TORCH),
+> +                                                       V4L2_FLASH_LED_MODE_NONE);
+> +
+>         ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+>         if (!ret) {
+>                 /* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+>
+> --
+> 2.47.2
+>
+>
 
