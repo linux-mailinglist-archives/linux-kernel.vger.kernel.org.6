@@ -1,97 +1,70 @@
-Return-Path: <linux-kernel+bounces-545292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 116E9A4EB4F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:23:13 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B60F9A4EB48
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:22:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E54F11678A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:18:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21EAA17C1A7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC8827BF9D;
-	Tue,  4 Mar 2025 18:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JWTKfTsI"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA12E294F2D;
+	Tue,  4 Mar 2025 18:03:24 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A907D261586;
-	Tue,  4 Mar 2025 18:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 856C427BF94;
+	Tue,  4 Mar 2025 18:03:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741111447; cv=none; b=f9zcgB1I4iBqrzA3/omG/yggMPbY7zUwzmlKgWQhQn7YwPaQO3C7Qt0Co/0yDIcNipqY6qROo7MG0MB1+x4dJiXDNJKXLPvb22GNaC2jY3yYS+rH7c/WJazYKYXzHx55R+XjJdENNGLu58qDLdDTToyRQoGz2DPNGC4wQUV8Prg=
+	t=1741111404; cv=none; b=RcvAbIxB41mPql7J+XX/nQv5loVmZBqcdL8twlMf4rIjZ2e8ouyTq0OgaVo5KXQ+PDukzPn27NOT+T99CsIHTA5srJmAS4ys7v9LqtGjE7jqlSqqcRMgI3HOglXnlY/SbbIO4CFZJHAt/nhjfBq934drc62wX3/8DaDXZTxdMGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741111447; c=relaxed/simple;
-	bh=pynaldebDCauDd1sSlUu8oZBedGI0SQnMCvTPl0kQPE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SAP7hPrQ0LizSGGepsgtN8n+mxwatES2YGFD6nDHBDst6c7zeF/o+3NLM5EqRp6L/v14yaESJCgI65K4Kcxn5PTSQs/YADixW1C6LCor4ZyFy0Uey1s20x/myjvAmhgzYA7dDPvwYB6SM6duuLCdYXKeb1PMRt7QTB8YIoRv/g4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JWTKfTsI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10755C4CEE7;
-	Tue,  4 Mar 2025 18:04:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741111447;
-	bh=pynaldebDCauDd1sSlUu8oZBedGI0SQnMCvTPl0kQPE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JWTKfTsIfBZNgBBTuT12ln79TaLQA4bjpIZO/y2hlYxg1yo+MPGhvCu5sRpiFiZXm
-	 K0oKeQSWORrHLz6HvA6GcPyLtDccDaek2Grbte+uxb7LgFZAlg2ZTvvNKHgQf5102Q
-	 GCLLbxAJgQxXPM5nfT5gYfd5Cd/0CbgcC4I7ooa4AowwPUMC9LagVCPU3RhqLRaOy7
-	 nAy+KyJbas9MOczGGQbHJw9Z87geJjORF5z6DYst9XhU8azlStNNd3hDMLpH/UTcI8
-	 epEFetZUhtx9PZWEGOzSiB3kpqLkw5aSQsOLkh7lqFLO9iBZD2y7cmFLykgu0HHwtV
-	 rt53XsifTgYRQ==
-Date: Tue, 4 Mar 2025 08:04:06 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Waiman Long <llong@redhat.com>
-Cc: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>,
-	cgroups@vger.kernel.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Josef Bacik <josef@toxicpanda.com>,
-	Jens Axboe <axboe@kernel.dk>, Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH 1/9] cgroup/cpuset-v1: Add deprecation warnings to
- sched_load_balance and memory_pressure_enabled
-Message-ID: <Z8dAlvRnE28WyOGP@slm.duckdns.org>
-References: <20250304153801.597907-1-mkoutny@suse.com>
- <20250304153801.597907-2-mkoutny@suse.com>
- <8b8f0f99-6d42-4c6f-9c43-d0224bdedf9e@redhat.com>
- <Z8cv2akQ_RY4uKQa@slm.duckdns.org>
- <n2ygi7m53y5y4dx5tjxhqgzqtgs5sisdi27sk7x2xjngpxenod@7behfsvlzhxi>
- <123839ed-f607-4374-800a-4411e87ef845@redhat.com>
+	s=arc-20240116; t=1741111404; c=relaxed/simple;
+	bh=5FYXKy8jmyYUm2mDXzCgpfiwupitBejNaBYbizYrEZI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kV3MKUeXyiCp3oazbf38rfvdgh9E6YspSytNudVylLxtRgqqpV2NbyBcoNr8JZPQUj7g6JziWWZXTKrPVO2dVLKkKVCwWA9C4pyzZyQzsTKlXtrr1psqIrm0B7p5CJwQQ/E1xh45xk1xdkLKNj1NPn6rjG66MNY8yA2L5S7ajbA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5755CC4CEE5;
+	Tue,  4 Mar 2025 18:03:23 +0000 (UTC)
+Date: Tue, 4 Mar 2025 13:04:18 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Shuah Khan <skhan@linuxfoundation.org>
+Cc: Bharadwaj Raju <bharadwaj.raju777@gmail.com>, mhiramat@kernel.org,
+ mathieu.desnoyers@efficios.com, shuah@kernel.org,
+ linux-trace-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev
+Subject: Re: [PATCH] selftests/ftrace: add 'poll' binary to gitignore
+Message-ID: <20250304130418.31c32841@gandalf.local.home>
+In-Reply-To: <a9628a00-2bf3-4d86-8e41-c596079cd8f0@linuxfoundation.org>
+References: <20250210160138.4745-1-bharadwaj.raju777@gmail.com>
+	<20250303183625.5acc59ec@gandalf.local.home>
+	<a9628a00-2bf3-4d86-8e41-c596079cd8f0@linuxfoundation.org>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <123839ed-f607-4374-800a-4411e87ef845@redhat.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 12:33:32PM -0500, Waiman Long wrote:
+On Tue, 4 Mar 2025 10:49:12 -0700
+Shuah Khan <skhan@linuxfoundation.org> wrote:
+
+> > So it should go into this rc release.
+> >   
 > 
-> On 3/4/25 12:10 PM, Michal Koutný wrote:
-> > On Tue, Mar 04, 2025 at 06:52:41AM -1000, Tejun Heo <tj@kernel.org> wrote:
-> > > On Tue, Mar 04, 2025 at 11:19:00AM -0500, Waiman Long wrote:
-> > > ...
-> > > > I do have some concern with the use of pr_warn*() because some users may
-> > > > attempt to use the panic_on_warn command line option.
-> > > Yeah, let's print these as info.
-> > The intention is _not_ to cause panic by any of this this.
-> > Note the difference between WARN() and pr_warn() (only the former
-> > panics).
-> > Warn level has precedent in mm/memcontrol-v1.c already.
+> Ooos - I applied it for next for Linux 6.15-rc1 since it is just
+> a gitignore change and not critical.
 > 
-> I think you are right. The pr_warn() function should not cause a panic. I
-> have the misconception that pr_warn() will be affected by panic_on_warn
-> before. In that case, I have no objection to use pr_warn().
+> If you think it should go into this rc, I can apply to fixes and
+> send it for this rc.
 
-I'm apprehensive about adding warning messages which may be triggered
-consistently without anything end users can do about them. I think that
-deprecation messages, unless such deprecation is immediate and would have
-direct consequences on how the system can be used, should be informational.
+No, it's not that critical. So either is fine.
 
-Thanks.
+-- Steve
 
--- 
-tejun
 
