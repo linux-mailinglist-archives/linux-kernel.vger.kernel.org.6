@@ -1,154 +1,117 @@
-Return-Path: <linux-kernel+bounces-543316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D1B5A4D437
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:02:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B785BA4D43E
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:03:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79BFC16EDE0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:02:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF6DD3A215F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:02:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 659D71F5435;
-	Tue,  4 Mar 2025 07:02:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCC041F5825;
+	Tue,  4 Mar 2025 07:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XIIKFhwK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vw2edoNH"
+Received: from mail-qk1-f172.google.com (mail-qk1-f172.google.com [209.85.222.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C176618CBF2;
-	Tue,  4 Mar 2025 07:02:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBF0B18CBF2;
+	Tue,  4 Mar 2025 07:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741071724; cv=none; b=h1fm0l4rzxicWGXGSTRsuAlWoOfSKuHYYS77+GkCRbSVg4GnckP7cusxdX3+6MUoJiFjWmka6sILojHAkbnVFoexIMqjV6IfDlM92RCtwsWP+4MWHNcjgOO4i2jqn+UQvLW6NBMUGiQ62ujG7pixMeH+Bf4igSa7QcuSByxSEkQ=
+	t=1741071764; cv=none; b=MNKdSHKbFOW/KwAqV0jfWAYY/2NP/ZhYSLZaQXriuqxWELXvpjsTs9jn5xmlzNZLSsmBb1+SEqovkdvox+Mc/SLgeBtAlW7ZvxkAq+P0M8b/bD7/wMRXz0WgMHN3TVT7F28xVmE+JO0HbqbE8C72qqGbJ9uAf7UvxKR6kNA3lFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741071724; c=relaxed/simple;
-	bh=ZQ5PhUftJ57V/Y5zzJkozL4WSOs8vgmNZIByf0cbzq4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jLi0LPMdWTfLuWnm0vOrN4+6XEpf4nGJhfzlrg5t6/U+siVtMMmJjCzRcppMTBNLzW4VmuZUSGLKBnXh8wC7JQzefLq98XtkBceZBxvWGirR4tHENbUqtWYKXXJx7UeJZzpvu4Wg2s8oTLFCoQOcsTXA0Ye9W26AuUfMJTaWg1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XIIKFhwK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C59CC4CEE9;
-	Tue,  4 Mar 2025 07:02:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741071724;
-	bh=ZQ5PhUftJ57V/Y5zzJkozL4WSOs8vgmNZIByf0cbzq4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XIIKFhwKMX5MxV7LyUyuou3YED/sF9lUwEzbeR5T4NZAe6J8YFIEYE+TG55QLq7Af
-	 VoxWFYm/TplcbQwg1nQ8SWKS6b+ebpJks+yziXdxoKrQ2xmY+Kro2p9ojLsjIxEdiN
-	 E6iqEMq6jA2wL41fwv9kFfY5e8wtkK0JmN57j/bJfMWun48tODnvQtWZv4sl50sP9Y
-	 WQfgmKoyULF1N7nfhR0ZUTVyxLgHG8HamoXDerWkyz0yNXBB189TA9JjFC/wq7pJ6n
-	 PsjAjCpSK5fiD8cJiDNYnmzu0STcRcBFO92zc5emznyiNiQdBKKWNcb7oFTdLCneSw
-	 h5KpP00mUgQlw==
-Date: Tue, 4 Mar 2025 16:02:00 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: Bence =?iso-8859-1?B?Q3Pza+Fz?= <csokas.bence@prolan.hu>
-Cc: linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	s=arc-20240116; t=1741071764; c=relaxed/simple;
+	bh=bys9O0VcWA/Cebo+b4M8fexbIivFWzepcQOhdvMlll0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=W1Eng3QjOpDB1nX17LFpefnG8W9MPEJ9Se+LX87gY6WT+O8YrV5oIG3u11HIxvzvaRdMbDJxdBCRHP5q3syr/648aMJEBuIgtBFn6v3ueaJ2yWgOXr6bB2xm/sPhtmKUZegbgcG3wuwW7DmUAT7DK0a2SpUnxIiWKXGFvQWwcMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vw2edoNH; arc=none smtp.client-ip=209.85.222.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f172.google.com with SMTP id af79cd13be357-7c0818add57so565700385a.3;
+        Mon, 03 Mar 2025 23:02:42 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741071761; x=1741676561; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=zbTcNkNHFzitY1YfkyytQj+zLC+mpMRQYQZjO6RgWnw=;
+        b=Vw2edoNH5joaUfeKUNsP8sZN6k5pen7EpOq7LxL0SHFSVDcizec1MDDYcBUa4C/Xbg
+         ohCf8WLJ0qvgPu/wXWaxTVhT3/3v/vxH8kYiw6Mm8BIffiLS6VBYO+F2rH3nGCUoKd+i
+         lk7yH5hRu7ypzkqUyE5LwB4Pt1W3Z0+qaxGQVWclXGeTPpGX5cVU92rEZVutAQXTFdCv
+         gr7ukd8QVytFRTAEIAFjZn5ZP9mJJ6ocZ5PQXT1OyyvKWF3CaWArnKHsZHKj2OeY2uk8
+         oTkSDf0rpr+Nf6Yepy1K59/bx6ppzzPWiuzFYcE1NYY4qeFcPVOx2q+pnu72TfeszVF0
+         N5Wg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741071761; x=1741676561;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zbTcNkNHFzitY1YfkyytQj+zLC+mpMRQYQZjO6RgWnw=;
+        b=EPbWC0FKHIC0tk10UZeqqifXTr5/ralKEixll0AqAh+D9r5E8EV6h5e24uDbE0nLLp
+         CpoHGCfbNQBnsy5mSiTOtw5NNtPwIrtuf9wbfs8Ly3sKJUGpGBApbz3pMKvuhJ6VJaNh
+         pFh5S8U1XRFC2tSUKB7Xj50xVbsxdq40t2fq5obb3bPXLTVnz1Dgw0MILN42qRiwNqWn
+         HEDtG9YBzWMwfcZ1P1KMb+hVrV34+zr0Aaor3Pt0kw6u297ju6lBDZq1+jMYC8khWopb
+         UHKFSglDzWTOT+rvw952HS3KGJEN9T43e/ri3o6OdPq4cUoF+opSdD7iif2+z+TRv1qB
+         5/jA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8aoezgdtU0YkR5nuBSnxGD4RhFM6KK6LA9iQhE0ZgsDesaTT5BWvhkL0iMDcQylPRbUBlxjgxfsb1VAY=@vger.kernel.org, AJvYcCXxc5vLPa3neaNtymdM2RHsMEVzC7ZMeAzXLfzcAZOcGwNPaWpEnUK3uMprMiAWeXRcK2JCvhCcmK1diSp5@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwVY3z/Q5P30mdN155iQF0EwAnlR1hbWwJonDAQ5NSj0mY4E05
+	C7M0fp4jtTGZqknKnnxWq5Ew4ysjD4dwYTTSG66FyDoa8y80iKWQ
+X-Gm-Gg: ASbGncuP//MR5nL2kDtTn21aJs5OeQJSMNrFsUmImeRq16/DKDM4MGv9BZwWfjVgqNJ
+	NDj8uZygCtLc6dRA+Fm6rYMo96rKwtqsT7s5Jrk1J5Lz7QYy2WzyS8fIF2+U3WcFEMZ7MXMCCz5
+	tviBvOWN7yjQk0nOHInnt7ofvZOIdsVa6uOjnXBv/tbaIRo7bpeZTEunyTZz+HgCgdbfPNnRj3H
+	NlF8B11z+JiLAl9+27GBdzbUtkAK6PrrR7MK9ew6Moppw/C3CtNCnrGGf6RrwSpiybL76WnahgT
+	8DAEtgpS8FC08nS4AqX0
+X-Google-Smtp-Source: AGHT+IE09fMY4omeejvfEyxnEULpk+om4jmV6tCwrtaHykdqplRbip0TOEPcAVW+dipju2pX2FiV0A==
+X-Received: by 2002:ad4:5f08:0:b0:6e6:6699:7e58 with SMTP id 6a1803df08f44-6e8a0c88f49mr216896046d6.1.1741071761619;
+        Mon, 03 Mar 2025 23:02:41 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-6e8976cc819sm63177146d6.86.2025.03.03.23.02.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 23:02:41 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>
+Cc: Inochi Amaoto <inochiama@gmail.com>,
 	linux-kernel@vger.kernel.org,
-	Kamel Bouhara <kamel.bouhara@bootlin.com>
-Subject: Re: [PATCH v6 2/3] counter: microchip-tcb-capture: Add IRQ handling
-Message-ID: <Z8alaOTjZeRuXnUI@ishi>
-References: <20250227144023.64530-1-csokas.bence@prolan.hu>
- <20250227144023.64530-3-csokas.bence@prolan.hu>
+	linux-serial@vger.kernel.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH] serial: 8250_dw: Add ACPI ID for Sophgo SG2044 UART
+Date: Tue,  4 Mar 2025 15:02:09 +0800
+Message-ID: <20250304070212.350155-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="BpBnxHRSyKeOs9ok"
-Content-Disposition: inline
-In-Reply-To: <20250227144023.64530-3-csokas.bence@prolan.hu>
+Content-Transfer-Encoding: 8bit
 
+The UART on Sophgo SG2044 can be enumerated via ACPI.
+Add ACPI ID for it.
 
---BpBnxHRSyKeOs9ok
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+---
+ drivers/tty/serial/8250/8250_dw.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Thu, Feb 27, 2025 at 03:40:19PM +0100, Bence Cs=F3k=E1s wrote:
-> Add interrupt servicing to allow userspace to wait for the following even=
-ts:
+diff --git a/drivers/tty/serial/8250/8250_dw.c b/drivers/tty/serial/8250/8250_dw.c
+index 6afcf27db3b8..031ca1a7155b 100644
+--- a/drivers/tty/serial/8250/8250_dw.c
++++ b/drivers/tty/serial/8250/8250_dw.c
+@@ -785,6 +785,7 @@ static const struct acpi_device_id dw8250_acpi_match[] = {
+ 	{ "INT3434", (kernel_ulong_t)&dw8250_dw_apb },
+ 	{ "INT3435", (kernel_ulong_t)&dw8250_dw_apb },
+ 	{ "INTC10EE", (kernel_ulong_t)&dw8250_dw_apb },
++	{ "SOPH0002", (kernel_ulong_t)&dw8250_skip_set_rate_data },
+ 	{ },
+ };
+ MODULE_DEVICE_TABLE(acpi, dw8250_acpi_match);
+-- 
+2.48.1
 
-Hi Bence,
-
-This is a nitpick but keep the commit description with a maximum of 75
-characters per line so we don't have formatting issues with how they
-wrap.
-
-> @@ -378,6 +444,15 @@ static int mchp_tc_probe(struct platform_device *pde=
-v)
->  	counter->num_signals =3D ARRAY_SIZE(mchp_tc_count_signals);
->  	counter->signals =3D mchp_tc_count_signals;
-> =20
-> +	priv->irq =3D of_irq_get(np->parent, 0);
-> +	if (priv->irq =3D=3D -EPROBE_DEFER)
-> +		return -EPROBE_DEFER;
-
-In theory, the error code could be something else if of_irq_get() failed
-for any other reason. Handle all those error cases at once by checking
-IS_ERR(priv->irq) rather than just -EPROBE_DEFER. Then you can just
-return dev_err_probe() with priv->irq for the error code.
-
-> diff --git a/include/uapi/linux/counter/microchip-tcb-capture.h b/include=
-/uapi/linux/counter/microchip-tcb-capture.h
-> index 7bda5fdef19b..ee72f1463594 100644
-> --- a/include/uapi/linux/counter/microchip-tcb-capture.h
-> +++ b/include/uapi/linux/counter/microchip-tcb-capture.h
-> @@ -12,6 +12,17 @@
->   * Count 0
->   * \__  Synapse 0 -- Signal 0 (Channel A, i.e. TIOA)
->   * \__  Synapse 1 -- Signal 1 (Channel B, i.e. TIOB)
-> + *
-> + * It also supports the following events:
-> + *
-> + * Channel 0:
-> + * - CV register changed
-> + * - CV overflowed
-> + * - RA captured
-> + * Channel 1:
-> + * - RB captured
-> + * Channel 2:
-> + * - RC compare triggered
->   */
-> =20
->  enum counter_mchp_signals {
-> @@ -19,4 +30,11 @@ enum counter_mchp_signals {
->  	COUNTER_MCHP_SIG_TIOB,
->  };
-> =20
-> +enum counter_mchp_event_channels {
-> +	COUNTER_MCHP_EVCHN_CV =3D 0,
-> +	COUNTER_MCHP_EVCHN_RA =3D 0,
-> +	COUNTER_MCHP_EVCHN_RB,
-> +	COUNTER_MCHP_EVCHN_RC,
-> +};
-
-These would be better as preprocessor defines in case we need to
-introduce new events to channel 1 or 2 in the future. That would allow
-us to insert new events easily to existing channels without having to
-worry about its actual position in an enum list.
-
-One additional benefit is if we do end up introducing more Counts for
-the module. In that situation we would have multiple CV and RA/RB/RC per
-Counter device, but we can easily define a preprocessor macro to
-calculate the channel offset given the Count index. However, with enum
-structure we would have to manually add and maintain redundant defines
-for each Count, which is far less ideal.
-
-William Breathitt Gray
-
---BpBnxHRSyKeOs9ok
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8alaAAKCRC1SFbKvhIj
-KwgVAQC3uPc49wX760fObL8equIESUZ04H8MdACkUI4Mi1fhsAD9EpFDTNaLDOaL
-s4w9rvq5ikY9mEWoKsn3ojlscOGeHQ0=
-=nSNc
------END PGP SIGNATURE-----
-
---BpBnxHRSyKeOs9ok--
 
