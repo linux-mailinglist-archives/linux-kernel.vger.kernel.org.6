@@ -1,305 +1,296 @@
-Return-Path: <linux-kernel+bounces-544891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ECF6A4E69B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:46:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4082A4E656
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:41:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01A9A423983
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:32:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1716179892
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:33:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50990266F12;
-	Tue,  4 Mar 2025 16:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C0402BD5AE;
+	Tue,  4 Mar 2025 16:11:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="h7VZO1a/"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="nYXfU+Cu";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="nYXfU+Cu"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2070.outbound.protection.outlook.com [40.107.20.70])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D76926738D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 16:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741104653; cv=none; b=tSpiivYlIGS1giwEQ7NK+QLh35HQn6wlLdWu0GFLghBCZW2p2V/db/5WpEIs0Y8Z/vcvIfNDX7e3y66+dIPCJCChIXQS5xwf7B3CSsDlaRweXWYqMp1dNwKmYZNX+mWH7SGuMtQ/FRPuJru44rfcLW1bfgphBnQJ5/EIeDWGRKI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741104653; c=relaxed/simple;
-	bh=f/c/msyx1e3vxoDPGJKe0SJqzT6HzDxhGA9qQONgqPY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uoLNBDXHc6IkxQoQgHnLr7arpniaOpSzTA5borkys8BQzqJAAS2c+sMlkVkx9JS619Pw0EWirPDFlIAok0TkxltAG1/WiEgQ94cS96G1LfUSIRmK9dXG7dO8XAq1C3HaccDgnAFi5L0wIlOXhbo0GixbMsjT26L+RK9cut/824w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=h7VZO1a/; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-390eebcc331so2514442f8f.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 08:10:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1741104649; x=1741709449; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=iIy9PeTTsN4YAiA2ClJKxcubBrW079aT6S1+RxVahlY=;
-        b=h7VZO1a/xH/NrWcg39uqEMTPWcGttJPocZJUGcpS0MpqTeC1Sixu5X4RoqWggnfI32
-         i10x6bLCLVUmz0P2cyi9PrbpdkFz4imDleBeUUXWnw8oI5apER4yxw9/Nbt9dEOKSX4y
-         WGkY/lFE9+hUWSdIcRcFfHK8fjnOQjcHMwiDs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741104649; x=1741709449;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iIy9PeTTsN4YAiA2ClJKxcubBrW079aT6S1+RxVahlY=;
-        b=Yzu5Nkz/uL/EUqG/oCMbs35KYgmvfSi6j2E0XQihZtptbx52WiNToyWZQ0IQ87/SNl
-         ObbTap08QtEvPowcLja6DC2KMbdKpWbM3Fjd2wrxSAIEe/ufJPrCr1+aLqTAu6gv9n31
-         wvvHgFNN7FEbm8epqEWb7x/v8F9N5GvS5H+rggJtyAlr3NCLkngdBWatBTW6dUaaMk58
-         1K/yO8KtMZOxAi1JB6CyoIeyTRe4hDT9dMrOVo5tBd6bp+QRlINixlCw/PDUS8aTEChK
-         4/XuK9Wi/c26kgp2MVdK37bLNkfWwVphRg+CBcAM9LEtvFazPgzfiURNMEC3HEb51mhJ
-         S4tw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFzZdmHUKk2cOahEvypKY9Jnik2qbTfZ4Xy+ydPnq6EkIGhEXTMhJEMhJ7u3tOIgNMu0Yl3/2bGwbqoIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaW1X2/y/QpvqW0RISbQuMMBGWJGSX6UEU4NZ9UsYjDgaSOphv
-	1BVIE3wpV9L40spnk6qSQobcMyNelt7lGBqrWb8WvawUT/sZplNFD5LU52pUlTs=
-X-Gm-Gg: ASbGncvmoRxzyOJuxZi04suanOZxnhmcdDDHTYhPNHXQmlNOqsOJp+75/NkGX42MZo6
-	ALNFkz+/LUtpCMcJabubK/JLnqw4ooiGwGFomeSXKcf8KsfuKSshjZs9ddUQKK/w53blk/vKWzv
-	WO7o0ZeN5KNFar1kg1/p3kH15UkIBsA6KQqV4H39//fRleSHcLIIDrvAJjynb3zHN1MQqZy15W7
-	R864ccyRNchVXBzDCMYl1O99d2pCjpg7aSKA+Bn0g62btK9tY6jsyqUX4MoTCOzDZ9KVxEcTsmy
-	8wtCXqQ5vJB99ulWQdymZqMOqiyqwz7vkOIoWSPpl/QPg6kFCmevJYcd
-X-Google-Smtp-Source: AGHT+IGYstbykxSLckXcDtbIvHnaqvWhbPG4L7oRKtT9m1rH0Ss1kauZrIqVjxI5p2CBcuWK44nyyA==
-X-Received: by 2002:a05:6000:402b:b0:38f:3224:65e5 with SMTP id ffacd0b85a97d-39115605344mr3132563f8f.12.1741104649374;
-        Tue, 04 Mar 2025 08:10:49 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485db82sm17762968f8f.88.2025.03.04.08.10.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 08:10:47 -0800 (PST)
-Date: Tue, 4 Mar 2025 17:10:45 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z8cmBWB8rl97-zSG@phenom.ffwll.local>
-Mail-Followup-To: Jason Gunthorpe <jgg@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-References: <Z75WKSRlUVEqpysJ@cassiopeiae>
- <20250226004916.GB4959@nvidia.com>
- <Z75riltJo0WvOsS5@cassiopeiae>
- <20250226172120.GD28425@nvidia.com>
- <Z7-IHgcVVS8XBurW@cassiopeiae>
- <20250226234730.GC39591@nvidia.com>
- <2025022644-fleshed-petite-a944@gregkh>
- <D82UB3V6NZ55.3OEPPW2W8MFZV@nvidia.com>
- <Z8GViQzZJVFPxfNd@phenom.ffwll.local>
- <20250228184013.GF39591@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D5832512C3;
+	Tue,  4 Mar 2025 16:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.70
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741104682; cv=fail; b=CtY0gBKipTs3Pq+9UKqCdWgEGkbuC2+7ZjHz80HL2LJLe51nAAH7Kdgl7Z84ECqZdGNjHX/32hEYzkBE1oeoXVqnIxhcmh3E3QiMkuUr0aZ9lvWgQ2C4Pu/sKwxRtagqdj6pnDdBBe04hoZal8lDc/CzkbSD6RNcckcbAvygwiU=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741104682; c=relaxed/simple;
+	bh=zlM8jh1lI6nPA/2/4WeCgA8q9W5f92pbj+kjXAtJQWY=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=eqxKWGjXRMxY+aRVR/CnC6OK3V0D5mXl9XIlfYsZ+HivarStboWx+gq+/JXHe7mfdZNv62uVrgyTjJf5sVwdTYyZjF2lQLHh1Q4BeRsWxOsGmASOzuzROihcPlvDV5bo0/WGKFff2NQMS4bATogjl/JnyqUJh9otn9sOoUTwwQk=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=nYXfU+Cu; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=nYXfU+Cu; arc=fail smtp.client-ip=40.107.20.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=mqLIXkVyoOstTfphxex7U6SS8COZ8nSG+pOJWo5h4v9Q4evyNh074Cm0M1OJ6oh4wU+wnROiIbjOhFvkY0h+BaE+3HPB42DSWW2shAiLq/RhWUAyGeG7l/bdB5T2cCY3VaOcu7Up/IZkdxIqNov3rjwZQE4QQY78nFgfQZhC5hfDEC3b93lFxFo2rkMuD0JzxXmRChLydvzfhOFz3vgaCsu7WG28z2bJ+BIoMdxdfg0HXFEK2SrW8Ef0TGHl+bf1++Wc3+l+vFLchKGttox0xeOeVLdpAGpab9VXmgCRrhKeF6ERjCdnb5fHH1BndtCB3iOnrdmqjJX29KcLSSMKbw==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lZHmSVz6uK2uMfG+roJHK1PyFmS0ZcFG/mtG50FhAWY=;
+ b=rpgBCOEf5FQpXA9vySZxgiNscEcMpnWc7PfdhZhwFvgPO+IQQrBa2gkYMAydWMJc5ges52Z8JBi0/q/hSJ9yPO+BquAyP7J9dycSUqe9rgHCyLjN7P+tfNtBRZba1lJGmNYcE0FZ2kesnn1+HOnatwLPeYDlepZmGXiIZ3vJCurp13Nu5OzRhKt2Ll0HX13Wbrz8uQJ4RuPhYCr7Tt0kQbPOhhiSIG9Lbjmz7dyQCUaoywTd1mfO8fIPicHh5C3ByAon21ci5hD8W4l3xPrMbfM1GeQ6GehQyvDecF2XNjWtPvsKIMvtWAqs2Fm/gkk8Yi37M9devD/x2K7S0otXpA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
+ dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lZHmSVz6uK2uMfG+roJHK1PyFmS0ZcFG/mtG50FhAWY=;
+ b=nYXfU+CuTLJEmoC5dby8zYmZ809Pfxj9aTrjbX6N9rndbErMMc0suPmvE3rtW6Gu2i3ya8Emg2gCoUWiKAJpsNKV3LfrgopbJLLfD+U7UqNGg1UBBfUcPbvOsp3QnaMkdvKUadux4e9QqGbIxgZgRgvjxvmyBPGLZursKIQnmb0=
+Received: from AM0PR01CA0175.eurprd01.prod.exchangelabs.com
+ (2603:10a6:208:aa::44) by GV2PR08MB8653.eurprd08.prod.outlook.com
+ (2603:10a6:150:b9::7) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Tue, 4 Mar
+ 2025 16:11:10 +0000
+Received: from AM4PEPF00027A6C.eurprd04.prod.outlook.com
+ (2603:10a6:208:aa:cafe::67) by AM0PR01CA0175.outlook.office365.com
+ (2603:10a6:208:aa::44) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.21 via Frontend Transport; Tue,
+ 4 Mar 2025 16:11:10 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
+ client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
+ pr=C
+Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
+ AM4PEPF00027A6C.mail.protection.outlook.com (10.167.16.90) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.15
+ via Frontend Transport; Tue, 4 Mar 2025 16:11:10 +0000
+Received: ("Tessian outbound 0a056dca8bdd:v585"); Tue, 04 Mar 2025 16:11:09 +0000
+X-CheckRecipientChecked: true
+X-CR-MTA-CID: ab2c3f558ed2b790
+X-TessianGatewayMetadata: ZM1owvzes7hdsnGp3gAbWUwVEiC5DxCzzQcxxNNNG4R1ZUJSa+0udjexHLjlWbWlR0R1fhBgQyeS3STYMpV2iJ/EOJb7Rw9qaDqRRBdStut5bfY/OkzhbGJ7sPNr6UWHEmWdcKUHxQlYelUJH9Gffglrie16SXqUFQhlclKq5E0=
+X-CR-MTA-TID: 64aa7808
+Received: from Lcee1ae4d5ef6.1
+	by 64aa7808-outbound-1.mta.getcheckrecipient.com id E282C6D3-AF08-4B01-989A-80132F211615.1;
+	Tue, 04 Mar 2025 16:11:02 +0000
+Received: from EUR02-AM0-obe.outbound.protection.outlook.com
+    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id Lcee1ae4d5ef6.1
+    (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+    Tue, 04 Mar 2025 16:11:02 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=shtb1ZGgkHCCVQUB8fl7k0R8uwjmJEMTDnym2AYaIEMgnkxOpZmkUMpNVO2tcZ8cmM74w8BH6VE6ASmeBpLiefT4E2VpV7lR6aQNtHm6gMgpoWvmREmAe3Lv440JmBmTf3ff5P8dHSj+qiYphregJ9aD/CGEidljo9XxC9NSDjW0YbHkcYj1ZVeKl29L/tycf5yAKvjs9mqvcuwiRGQvupGGos6tDXMcNdFUn5WJ2+cYuoCZk2PgWbj3tRy4YU1YKvjBPQ23uRSeb4/ackZ8/a4vUVL+NlYlNmjkZyPR3COJCKi84mnTU2rqujKy+0aI3sLEsUwSDATwqgxTPQmxLQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lZHmSVz6uK2uMfG+roJHK1PyFmS0ZcFG/mtG50FhAWY=;
+ b=K0uA/rNaHp9WYSoJyDpMuIWvY4WRXtC1dN2PEQATFDd3aNFV1iTcXIHN/phgF3TH/8rKdPbZCNL7fZoQyslQgZezO0Xtu9FhMNIfjkQaxhnmPagKv/jCWigfLnkL9NlAT1cmgxg8I0vymGV6s7m/znJqZkm3d2CDV8aXIg2FMDj3oXHAI9QUEOsLsaQ2pRKMnGuDNYAvsMTKEfBZt9M1ICzYi71cOnfsChBwl+ZxvGZ3DpWpBZTG+tGoXO6D2JZ/jhMI7I1qgRBhDdOECSj9myPf+G09Rt66ys4aQw/cbu0UdvUn/f9VZGIAukr+8C1WNAZYY55iK71c/9Uo19oaDg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lZHmSVz6uK2uMfG+roJHK1PyFmS0ZcFG/mtG50FhAWY=;
+ b=nYXfU+CuTLJEmoC5dby8zYmZ809Pfxj9aTrjbX6N9rndbErMMc0suPmvE3rtW6Gu2i3ya8Emg2gCoUWiKAJpsNKV3LfrgopbJLLfD+U7UqNGg1UBBfUcPbvOsp3QnaMkdvKUadux4e9QqGbIxgZgRgvjxvmyBPGLZursKIQnmb0=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GVXPR08MB7727.eurprd08.prod.outlook.com (2603:10a6:150:6b::6)
+ by VI0PR08MB11061.eurprd08.prod.outlook.com (2603:10a6:800:257::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Tue, 4 Mar
+ 2025 16:11:00 +0000
+Received: from GVXPR08MB7727.eurprd08.prod.outlook.com
+ ([fe80::9672:63f7:61b8:5469]) by GVXPR08MB7727.eurprd08.prod.outlook.com
+ ([fe80::9672:63f7:61b8:5469%7]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 16:11:00 +0000
+Message-ID: <4e0959e7-cb66-41f1-b686-a274b6cbfd2e@arm.com>
+Date: Tue, 4 Mar 2025 16:10:58 +0000
+User-Agent: Mozilla Thunderbird
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+Subject: Re: [PATCH v15 04/10] Coresight: Introduce a new struct
+ coresight_path
+To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
+ <20250303032931.2500935-5-quic_jiegan@quicinc.com>
+Content-Language: en-GB
+In-Reply-To: <20250303032931.2500935-5-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P265CA0065.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2af::19) To GVXPR08MB7727.eurprd08.prod.outlook.com
+ (2603:10a6:150:6b::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250228184013.GF39591@nvidia.com>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+X-MS-TrafficTypeDiagnostic:
+	GVXPR08MB7727:EE_|VI0PR08MB11061:EE_|AM4PEPF00027A6C:EE_|GV2PR08MB8653:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2957acef-7bb5-46da-9e8b-08dd5b372db1
+X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|366016|7416014|1800799024|376014|7053199007|921020;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?utf-8?B?aVFGbURoV2RjODI4a0hra2NIRFFheUE2NFlOS082TUxrdzhPMFJUMFJXRTdn?=
+ =?utf-8?B?WVhpZTlPZVVKazdaUTRZc2d1dnZvOERPQ1A0YnZwWklYdjVZVjlqOTd3UGUv?=
+ =?utf-8?B?L24rakQyR2l4c2lvdVMrNEdmOFFuZE9TV2tKNm5SWmVVUG8vTlVLMFAwZGx6?=
+ =?utf-8?B?UDlVNzYrQk5WRVhEek4vdlRMS0hQcEV4ZUs2UDM0NGw4M013NUU3c3ExVTV5?=
+ =?utf-8?B?ZE90ZjFXcllUcU8wTE9vT0hpQ3lRMTBRWm8yUVFFQS9SZDJYUEhjYURFMjk4?=
+ =?utf-8?B?b3phWFZ5bEFSTXVUMkFZYVJuWkZnbmtrUkY0TEdoZTFZYjMrNXoxWlNNZ1lO?=
+ =?utf-8?B?YVJKT0ZuMWlIRWRBem93SFAxZGppc0VEVDdnbHo5SkFNZ2QwdVk4N2hwYTVP?=
+ =?utf-8?B?SEpJUTgxakZLVUFJY0thaU1RYlhiSVRQa1llRmRmTlFUMDMvVFNZV2lzaHdt?=
+ =?utf-8?B?c2E3QUtsb1lpMGZrU1ZLOVlqNlVjRHNWZlZDQ0pYTG51K1Z0R0xNT0ZobnFv?=
+ =?utf-8?B?cTNaVXRnUjRCVm5iT3E0WnlObDc4WEluem5rZ0IrdTc0bnJ0Y2twMU5HTXFB?=
+ =?utf-8?B?dFR1NVJqanB0b2htNFBka3NSeENQZ1FBWFY3SzJkUktMRk5DTVY3UXJXSlQv?=
+ =?utf-8?B?bnI2YmZxdWk1R2dKdFhCRWwxTUdsa3FWcW5pVGkveWtFWUZDclg0Q3MxV01y?=
+ =?utf-8?B?VnNhMWxRc1Y2cGJydzNmQmQ0RUFTMXVxZGlrcnhQZFQ4MG5US2FKV0tKV2FY?=
+ =?utf-8?B?b0RJWnhZWmtHK2h6SThncVVGNVhlbG9tbDRvL0FSWjJpVTFtR3ZlNCtDZFFk?=
+ =?utf-8?B?dzR6R1N0eGc3NHNVczdwMmtpN1VKaHlNVGMwcEVhK1U5aEZtTitELzNZY01G?=
+ =?utf-8?B?TnRFS3ZLZjAzTEVvaTdxVVRVWHRnR0lDc0pUM2NiZTgyRzJpTDhzTGZOaTEy?=
+ =?utf-8?B?RHhqZ3NoeG5YU3JETWVSaWxrdmNzVHFWNDBCMFNjdzJGb0tOdjkxam0rVWhR?=
+ =?utf-8?B?OWRZcEhpU2xhR3JzbWhTUXdKMHk1MndKbTV1TkJBYzBIZ3NaV0JFVU91SlpN?=
+ =?utf-8?B?dTQyNTczcTNGUnE3UVJ2cU5hMHVLMlpQdmZDWm5FV2ZqNFF5a3R5bVNWSGlD?=
+ =?utf-8?B?dDBUcGxmSUNBdUl3RWdKYXhFTnJIc1JlWHh3bGZoc0ZweS81UG5FTDZWdDVN?=
+ =?utf-8?B?SlBpZFcydEgzRm5iVzlkUWVKU0U5T1M2YStLWjZnQ3FMR3E3b3R4bGZrQnQ1?=
+ =?utf-8?B?d1JVTk14YTA3eGU1OWpvV2xkVWQ5WnR0Q3lHTWoxcTlodUNNdnljcjJaOUJK?=
+ =?utf-8?B?bU8xcm95NE8rMk1JS3ljT1dubmZScHFXall0Z25HZ2lJdUpsQXI2dGVTQlRO?=
+ =?utf-8?B?NEgzQzh1bEVOMHhoRVJkOHNkS3hKK1FxQVJVTUZETXpEWXAvdDB6VTFYeHJr?=
+ =?utf-8?B?Z0ZSek5ueTVWK0VBV3QwN0lwTVFmVmdDTUdONVRuTWtQQmFCR2RrYXcrRW5i?=
+ =?utf-8?B?dnRzV1JJZ0l2czdXUTV4eFdNWmtNeGlnTFFWanlqZTcrL3U4S2RXc0tsbWkx?=
+ =?utf-8?B?K0QvRWpTemVvdVQ0SWlUOEtRUFBlUmZoeUdoT05JZHBWQ1VqSk1tb2hwcTY1?=
+ =?utf-8?B?VUNRbXBlR0xkcnBORHlESkdLRG9pWTNZZC9UQS9RNlVBaTNUdkh6RTZ3VVQr?=
+ =?utf-8?B?amRsSkZIZ3UwZGg5bmY1MUJsNVRUcDhsQTg3dW5hWlNBRUk1YndseExscG55?=
+ =?utf-8?B?SllBYzd0cVBnZTh1WmUrNEVWZlFFN2F5Z3Z4YWI1NDRFTEEvcnJDVzB6NGZ0?=
+ =?utf-8?B?RU1LMXMwdVdReTdrMEVOVitzejFlTmFWV3V3UTZZQ0xzRVZTN1VUSE95TUZE?=
+ =?utf-8?B?ekpKaEdnZDdkYWx5bkdmNTl2bUtQamNRVFZuaFB6bDBRdE1pZGV4MEw3cE1R?=
+ =?utf-8?Q?8b/bhDw2LIo=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GVXPR08MB7727.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR08MB11061
+Original-Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+X-EOPAttributedMessage: 0
+X-MS-Exchange-SkipListedInternetSender:
+ ip=[2603:10a6:150:6b::6];domain=GVXPR08MB7727.eurprd08.prod.outlook.com
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ AM4PEPF00027A6C.eurprd04.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	d796dd75-28b9-4788-a101-08dd5b37279a
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|35042699022|14060799003|36860700013|1800799024|376014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Y2JpMG5aeEcxNTZNNStNQ2hvWVhIVlNDeGkvWVkxZmZEZDFBWWhVQ0JRMGtD?=
+ =?utf-8?B?YXpUSlRNVU5SYm5pVi9FSURqZXhUUnhUa3NaZG1Ec2p1ajYyeVZUSFJla1Zy?=
+ =?utf-8?B?VVErV1RrRG9CUUZDNmVVKzBudThkK1BmNUt5eFFqclY2OUdiNGlPTk5KT2NH?=
+ =?utf-8?B?ZkxEekZrdEFLNUpHb0NhOGxzcTlad0NDbUpENExqR1lER1VhWEZyQnNZMTh4?=
+ =?utf-8?B?dGdtSFRJYmx6U281WFdXaEtmYVJJMzdablhEdk44aVQ4cDJBU20wY2o0Uklu?=
+ =?utf-8?B?bmJaVWhUUjJuZnJadWR1Q0ErRExSTW5maTFyK25sYnlUL3ZYcU9MbFJGSE9G?=
+ =?utf-8?B?c2wrcHVLK0IvdnBqMzlxeTJTaWptbEJPYlpoSHVOdGw2dm1LWDc3NDlwOWph?=
+ =?utf-8?B?cG51bmF0djRxaWIyUW9YLytoSFpUTWhpOHpvVXhabE0rSlhUREE2RzJCNnlH?=
+ =?utf-8?B?UHVmbGc4QVFXa0doRXlndm9zVEJnNlVYU1dmaVR5SWlnV09LVDFORkhlZlZK?=
+ =?utf-8?B?OHFhZW5ibE5DOUJRbDBIT2ViSUxWTUdDby9GU0JEUyttUTVTVEMwRVN5cW42?=
+ =?utf-8?B?RnpRZnAxU25ZRmRuRUZvQ1pBM0ZRd1ZqNGZkbFVTUkY0OExxZW1kYmpzU0Rr?=
+ =?utf-8?B?dEhET1BkQksyWFo2TkpZRG5FeTF5ZVBKTkJ6RFVrV3IwT1Q3RU9EZStyT29v?=
+ =?utf-8?B?WDEycUc3Rit5VjA2cXBRVndCNUlsTFRpY0ZpaVUwUTQ3VWR5WExaRVpDV3No?=
+ =?utf-8?B?eTlwMWMxenJYUWFJVzJFbXVlNXl4SU1NbDI5Tk4wVG9SQnpKRm9RK2wyOGxk?=
+ =?utf-8?B?aU9qT3dJSGRSVW8rM1VjMUpOOTcydFpLZE01WGJISG90UG1GS2d3M3RTWEVH?=
+ =?utf-8?B?aHNYelhaR1BRWjNVNDE1MU9xeGIrbXRiZ3NCYUIzMmhUQ3hEODkyb1R3Wk0r?=
+ =?utf-8?B?U3RtRC9HaEZuRlJZWWFYRUZFKzFQM1FsdnNNeUs3YXhhQ1NYNzYzclZCbmJG?=
+ =?utf-8?B?MFUwRFhmQS9xMFNRQXNnZWxxM3ZmNjd2OE45YkRwMXp1cHpWWStkYzFWaXlH?=
+ =?utf-8?B?YS9rZlAyS0dpa0xwc3g4RnJVOE1Va1JSNjBSZ3RETGdxWTRQZk9MREFNZEll?=
+ =?utf-8?B?bzliTzdNUy9BZTFEL0F1TkhOYmE5c0FwRndrR0tDT2dwS1ZENzdncUg4dnNr?=
+ =?utf-8?B?U041azRTdlNqWXkzNkJZVnpXTWpiYVp2bUF4VHptZnF0T25QWXdsMGFpdW4v?=
+ =?utf-8?B?L0NNakZlbmVzcjlXTllBSUVyUk1LU1JJTWdTTTF2MFY0R3YwL0RMSG9oMjlU?=
+ =?utf-8?B?cTdReGtGWldUQ0FZMndZdGFCUGpEMDE3aWpZMG5rNGJqUDUvNkRtT0VxdndW?=
+ =?utf-8?B?QmJnQUJlSmpTYVNPLzFTNHBRZVpBWFBrZ2NMR2xtdnF6ZkdiMFFtMGRpSlZR?=
+ =?utf-8?B?c0JvTWNLT3BzWEFEbFA4Q2ZYOWs4ZGpvTksrS2JzRWh0TGJQNmFFOHJLdmVw?=
+ =?utf-8?B?ejBIV3FRbS9RdVhQOUt4dDVqeDJMcittaUtwQy9GM3FsdFJvUzBsQVNhQjE3?=
+ =?utf-8?B?MjRZUTRhcVNMaFZOaXhHaFI0NHVLeDQ0aDc5ZnZiVUFLYmRjYlJNWGVrWUJh?=
+ =?utf-8?B?ckZLRXJEUFNRNWxIMUgyY2U0SjFMY0l4a05ldG5UR1BIeUN4N0VPMlVmZWR3?=
+ =?utf-8?B?Uk9xU2dqbC8rYytrcHlTeDNUc1ZZYWJaaGdleFRSYmFTc3dqd2Nvai9FQ0NS?=
+ =?utf-8?B?WFpqSlhiM1AzQzh1eWJkUDA0MHE2YURib3l0SGFNNUhudkZVTW5PVzFIOFlE?=
+ =?utf-8?B?WCtTRkgydlJYTE11VTJqVkt6TTl3S2VxL1J5aW1lMGpQeElvcHZhaEVqMWtM?=
+ =?utf-8?B?NHBrc3pDSTZUMVd6bmhKNjhTV3NmdFRMOHBwbVVYekRVNlUwUyt5RUd0aGpV?=
+ =?utf-8?B?ai9nSEdGZ1ZzSGlGZ0hCSjlvSkViRkJSSnJlV2txRlErY0xVS2dNWHRmL1ly?=
+ =?utf-8?B?N21xTTZIOEx2bGU5d2xtU0J5NXdwRXhkckJUenhXOWgxU05yaEJiU2llL1Uw?=
+ =?utf-8?Q?j0VcY6?=
+X-Forefront-Antispam-Report:
+	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:64aa7808-outbound-1.mta.getcheckrecipient.com;CAT:NONE;SFS:(13230040)(82310400026)(35042699022)(14060799003)(36860700013)(1800799024)(376014)(921020);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 16:11:10.3641
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2957acef-7bb5-46da-9e8b-08dd5b372db1
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM4PEPF00027A6C.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV2PR08MB8653
 
-On Fri, Feb 28, 2025 at 02:40:13PM -0400, Jason Gunthorpe wrote:
-> On Fri, Feb 28, 2025 at 11:52:57AM +0100, Simona Vetter wrote:
+On 03/03/2025 03:29, Jie Gan wrote:
+> Introduce a new strcuture, 'struct coresight_path', to store the data that
+> utilized by the devices in the path. The coresight_path will be built/released
+> by coresight_build_path/coresight_release_path functions.
 > 
-> > - Nuke the driver binding manually through sysfs with the unbind files.
-> > - Nuke all userspace that might beholding files and other resources open.
-> > - At this point the module refcount should be zero and you can unload it.
-> > 
-> > Except developers really don't like the manual unbind step, and so we're
-> > missing try_module_get() in a bunch of places where it really should be.
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> ---
+>   drivers/hwtracing/coresight/coresight-core.c  | 16 +++++-----
+>   .../hwtracing/coresight/coresight-etm-perf.c  | 30 ++++++++++---------
+>   .../hwtracing/coresight/coresight-etm-perf.h  |  2 +-
+>   drivers/hwtracing/coresight/coresight-priv.h  |  6 ++--
+>   drivers/hwtracing/coresight/coresight-sysfs.c | 12 ++++----
+>   include/linux/coresight.h                     | 10 +++++++
+>   6 files changed, 44 insertions(+), 32 deletions(-)
 > 
-> IMHO they are not missing, we just have a general rule that if a
-> cleanup function, required to be called prior to module exit, revokes
-> any .text pointers then you don't need to hold the module refcount.
-> 
-> file_operations doesn't have such a cleanup function which is why it
-> takes the refcount.
-> 
-> hrtimer does have such a function which is why it doesn't take the
-> refcount.
 
-I was talking about a bunch of other places, where it works like
-file_operations, except we don't bother with the module reference count.
-I've seen patches fly by where people "fix" these things because module
-unload is "broken".
+...
 
-> > Now wrt why you can't just solve this all at the subsystem level and
-> > guarantee that after drm_dev_unplug no code is running in driver callbacks
-> > anymore:
-> > 
-> > In really, really simple subsystems like backlight this is doable. In drm
-> > with arbitrary ioctl this isn't, and you get to make a choice:
-> 
-> It is certainly doable, you list the right way to do it right below
-> and RDMA implements that successfully.
-> 
-> The subsytem owns all FDs and proxies all file_opertions to the driver
-> (after improving them :) and that is protected by a rwsem/SRCU that
-> is safe against the removal path setting all driver ops to NULL.
+> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+> index ce9a5e71b261..67cf8bdbe5c0 100644
+> --- a/include/linux/coresight.h
+> +++ b/include/linux/coresight.h
+> @@ -329,6 +329,16 @@ static struct coresight_dev_list (var) = {				\
+>   
+>   #define to_coresight_device(d) container_of(d, struct coresight_device, dev)
+>   
+> +/**
+> + * struct coresight_path - data needed by enable/disable path
+> + * @path:              path from source to sink.
 
-I'm not saying that any of these approaches are bad. For some cases we
-plan to use them in gpu code too even. The above is pretty much the plan
-we have for dma_fence.
+This doesn't match the actual variable below.
 
-> > - You wait until all driver code finishes, which could be never if there's
-> >   ioctl that wait for render to complete and don't handle hotunplug
-> >   correctly. This is a deadlock.
-> 
-> Meh. We waited for all FDs to close for along time. It isn't a
-> "deadlock" it is just a wait on userspace that extends to module
-> unload. Very undesirable yes, but not the end of the world, it can
-> resolve itself if userspace shutsdown.
-> 
-> But, IMHO, the subsystem and driver should shoot down the waits during
-> remove.
-> 
-> Your infinite waits are all interruptable right? :)
+> + * @trace_id:          trace_id of the whole path.
+> + */
+> +struct coresight_path {
+> +	struct list_head	path_list;
+> +	u8			trace_id;
+> +};
+> +
+>   enum cs_mode {
+>   	CS_MODE_DISABLED,
+>   	CS_MODE_SYSFS,
 
-So yeah userspace you can shoot down with SIGKILL, assuming really good
-programming. But there's also all the in-kernel operations between various
-work queues and other threads. This can be easily fixed by just rewriting
-the entire thing into a strict message passing paradigm. Unfortunately
-rust has to interop with the current existing mess.
-
-gpu drivers can hog console_lock (yes we're trying to get away from that
-as much as possible), at that point a cavalier attitude of "you can just
-wait" isn't very appreciated.
-
-And once you've made sure that really everything can bail out of you've
-gotten pretty close to reimplementing revocable resources.
-
-> >   In my experience this is theorically possible, practically no one gets
-> >   this right and defacto means that actual hotunplug under load has a good
-> >   chance of just hanging forever. Which is why drm doesn't do this.
-> 
-> See, we didn't have this problem as we don't have infinite waits in
-> driver as part of the API. The API toward the driver is event driven..
-
-Yeah rolling everything over to event passing and message queues would
-sort this out a lot. It's kinda not where we are though.
-
-> I can understand that adding the shootdown logic all over the place
-> would be hard and you'd get it wrong.
-> 
-> But so is half removing the driver while it is doing *anything* and
-> trying to mitigate that with a different kind of hard to do locking
-> fix. *shrug*
-
-The thing is that rust helps you enormously with implementing revocable
-resources and making sure you're not cheating with all the bail-out paths.
-
-It cannot help you with making sure you have interruptible/abortable
-sleeps in all the right places. Yes this is a bit a disappointment, but
-fundamentally rust cannot model negative contexts (unlike strictly
-functional languages like haskell) where certain operations are not
-allowed. But it is much, much better than C at "this could fail, you must
-handle it and not screw up".
-
-In some cases you can plug this gap with runtime validation, like fake
-lockdep contexts behind the might_alloc_gfp() checks and similar tricks
-we're using on the C side too. Given that I'm still struggling with
-weeding out design deadlocks at normal operations. For example runtime pm
-is an absolute disaster on this, and a lot of drivers fail real bad once
-you add lockdep annotations for runtime pm. I'll probably retire before I
-get to doing this for driver unload.
-
-> >   This is why I like the rust Revocable so much, because it's a normal rcu
-> >   section, so disallows all sleeping. You might still deadlock on a busy
-> >   loop waiting for hw without having a timeout. But that's generally
-> >   fairly easy to spot, and good drivers have macros/helpers for this so
-> >   that there is always a timeout.
-> 
-> The Recovable version narrows the critical sections to very small
-> regions, but having critical sections at all is still, IMHO, hacky.
-> 
-> What you should ask Rust to solve for you is the infinite waits! That
-> is the root cause of your problem. Compiler enforces no waits with out
-> a revocation option on DRM callbacks!
-> 
-> Wouldn't that be much better??
-
-It would indeed be nice. I haven't seen that rust unicorn yet though, and
-from my understanding it's just not something rust can give you. Rust
-isn't magic, it's just a tool that can do a few fairly specific things a
-lot better than C. But otherwise it's still the same mess.
-
-> >   drm_dev_unplug uses sleepable rcu for practicality reasons and so has a
-> >   much, much higher chance of deadlocks. Note that strictly speaking
-> >   drm_device should hold a module reference on the driver, but see above
-> >   for why we don't have that - developers prefer convenience over
-> >   correctness in this area.
-> 
-> Doesn't DRM have a module reference because the fops is in the driver
-> and the file core takes the driver module reference during
-> fops_get()/replace_fops() in drm_stub_open()? Or do I misunderstand
-> what that stub is for?
-> 
-> Like, I see a THIS_MODULE in driver->fops == amdgpu_driver_kms_fops ?
-
-Yeah it's there, except only for the userspace references and not for the
-kernel internal ones. Because developers get a bit prickle about adding
-those unfortunately due to "it breaks module unload". Maybe we just should
-add them, at least for rust.
-
-> > We can and should definitely try to make this much better. I think we can
-> > get to full correctness wrt the first 3 lifetime things in rust. I'm not
-> > sure whether handling module unload/.text lifetime is worth the bother,
-> > it's probably only going to upset developers if we try. 
-> 
-> It hurts to read a suggestion we should ignore .text lifetime rules :(
-> DRM can be be like this, but please don't push that mess onto the rest
-> of the world in the common rust bindings or common rust design
-> patterns. Especially after places have invested alot to properly and
-> fully fix these problems without EAF bugs, infinite wait problems or
-> otherwise.
-> 
-> My suggestion is that new DRM rust drivers should have the file
-> operations isolation like RDMA does and a design goal to have
-> revocable sleeps. No EAF issue. You don't have to fix the whole DRM
-> subsystem to get here, just some fairly small work that only new rust
-> drivers would use. Start off on a good foot. <shrug>
-
-You've missed the "it will upset developers part". I've seen people remove
-module references that are needed, to "fix" driver unloading.
-
-The other part is that rust isn't magic, the compiler cannot reasons
-through every possible correct api. Which means that sometimes it forces a
-failure path on you that you know cannot ever happen, but you cannot teach
-the compiler how to prove that. You can side-step that by runtime death in
-rust aka BUG_ON(). Which isn't popular really either.
-
-The third part is that I'm not aware of anything in rust that would
-guarantee that the function pointer and the module reference actually
-belong to each another. Which means another runtime check most likely, and
-hence another thing that shouldn't fail which kinda can now.
-
-Hence my conclusion that maybe it's just not the top priority to get this
-all perfect.
-
-Cheers, Sima
-
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Suzuki
 
