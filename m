@@ -1,116 +1,241 @@
-Return-Path: <linux-kernel+bounces-543293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B95C9A4D3EF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:33:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C0EBA4D3F1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:36:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E65FC172F9F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ADFB1895E19
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF9B481C4;
-	Tue,  4 Mar 2025 06:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29111F461A;
+	Tue,  4 Mar 2025 06:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b="bnqZxSVb"
-Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZYxxeJbB"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591791DCB24
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 854D21DCB24;
+	Tue,  4 Mar 2025 06:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741070013; cv=none; b=pEQ8CCkxRbVQoDHsZenfdYvPUPF0UxX8Y32orKueQjUscwGIHHGPnAajS70tLSFECslgM4imNBOFwwehpl1AUbI+qvrBK1mJ2nAnEn/FS+VeCoCCIrTNq6DZRHYOgh+VcBP39pRmqiXX4r4Fq7YHnVv0G4u6Y4HH9ryjR/QeIlQ=
+	t=1741070179; cv=none; b=UFguOOV1qvYCwYdpARVpGCbRp/4jQhQUo+aWuNcTjw2Punxe6x6uKdSe2wQovBa7kLb+4FNKSuMgW8WzO1k5xHOGbMxbGlE6U8qemCAYulKHwqH2H5HD9AkYoRfMXO6rvlqheeG6ZN5dgEL9JgvtxpQKGRUxLOEdCbDjPM3zqyM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741070013; c=relaxed/simple;
-	bh=0L9jk7jDl4R7Tch+PFoZUAPpOUQGpTxhl+ZUFKtbat4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=YH1T7gXHs4y0wpeQfnY09fD6RIZNXQPSPQ/HEVA6OoTmhsCjHrDBUm0seN4U2DULmhc0Ogcx+AfNfsch6JEeL4E1IUfmvpItszHqgnFEjKWeky+jHAphql3mPjT2jTzrJ7i4OV18a85dPwG14WH6V9zhCwSoK4D5rK3oxEl1VEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org; spf=pass smtp.mailfrom=kali.org; dkim=pass (2048-bit key) header.d=kali.org header.i=@kali.org header.b=bnqZxSVb; arc=none smtp.client-ip=209.85.167.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kali.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kali.org
-Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3f5507a09e6so2593264b6e.1
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:33:32 -0800 (PST)
+	s=arc-20240116; t=1741070179; c=relaxed/simple;
+	bh=qo90MPty2vy5TkjHxjbbN8VqbnrgXqZe9HCQ6R+CBy0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s2cvorPi/nC9sGL5jc/q2J+4rijzSusFmEBOaFtiB33VXeaOPeUVxJmF1bSB3Cr5bhZlK5oYJ+D48LuXuvou6ubz3DIHOWXuFZ6of6nNL99h8vn/5YeRK5iXGVEJTN0cuLWyeFsuTPXcRzCRTXX8LUd4j7JH6YdcYvmNfXTqjAA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZYxxeJbB; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abf57138cfaso500636866b.1;
+        Mon, 03 Mar 2025 22:36:16 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kali.org; s=google; t=1741070011; x=1741674811; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741070175; x=1741674975; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=0L9jk7jDl4R7Tch+PFoZUAPpOUQGpTxhl+ZUFKtbat4=;
-        b=bnqZxSVbDFqNV6psdfJMuqY7320OSzHiUmp+C+40y9qH6vFrEW1Ssl2+cLGfQrGruR
-         PUFWUTx/EEsgrFP60M4b8YzeoNqeiOM4bbc0OO2GdNQzkyKA8DhXKNK6DlVcPl7TtT9v
-         fMdX14sFXve2KCPt5IMx/aa+EGDgyDX3zAETAScAT7miq97JiFTqVAxQ05Lvm/+LQ2Vj
-         kDL7Fru70kaDNczmGIjVDFLa7Mkh4xrg5IVn1QMP9MS1H+xaVGv9jcbaeYZSAELWHVUu
-         mQBwfJ4v6jtcO+OdErZExycent1d0c15q5JkyPUomkW7u7GVzPuRVOO6nFR3GUUga5uS
-         I0qQ==
+        bh=3QIIT7csmVM8dlZqywgBobuFZmmi6UocIrnDWBO9ciw=;
+        b=ZYxxeJbBG6HPubpoJItUypm/mdo2YiB/zrCdJ164OuUjRRACbGCtsHVqxXcnAj0vId
+         5PuYwjIdiFUycWF6m4m9qTSc5js/KXTtgM/Nx1L2kVaJUJyy4WscnETwIRaYyfqbQPku
+         pOC7u3oYINulMNES04ST8+VL11EFF/to0zZOOB0BkpogHLCPETJblrDql4bIPUWOr4lN
+         JOLWHlq7/fgtJ1aMytouKC3TxBb92PnkApmL/pvQBu0TYqFMa5NJXg8eo0VRDvFVNwRM
+         BrZWP2hYL2sxQqjf8QvVGJ1Mdl+aaGE6veT3KwcRvTExZevvPyWO6dJPkKQUt1ONpbms
+         s8iQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741070011; x=1741674811;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741070175; x=1741674975;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0L9jk7jDl4R7Tch+PFoZUAPpOUQGpTxhl+ZUFKtbat4=;
-        b=mJjvamq4zEHYBkIYCDSxWMbIqPF4H9NM1l45goXs3O8rndCgOFJ/hVnzu8/GWaXPzF
-         TKB1Yrn6J9EiB3WT62MxbiI/l001yEgGpFf+FM/eVoNRejvpJnFWEnQvb/Qk9zc6j0AC
-         888rKypqdb2XhWKCL3uPH1XzkAPm6m7qHXEETW6aaYTKlOB9GQiHP0DH6cRhZrWoSxKU
-         fy9vXZPgSYZALkHkHKBKT1qpY7K3wqAwE5GQc71yjOq5x+mUaR7Q5LRNRlBgVmA39HAX
-         Lto/ARSvvU/XbgHdvJy65Ks+GpMrCQO1Sj6M2LJrH2FqlKZzdi5QV+thud5czp6M4dow
-         4aJw==
-X-Forwarded-Encrypted: i=1; AJvYcCV7DJqWM86I6DXtOxYwgEL6CTm3COqYUneT9MVpbY8kiv9eTUBq44+zSLPFUnnFfaQvbHnZjzAOUcVn47w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5wiacjrIgfR5+5VQ3p4DtPjMSw4HozpaDVhFx7y902FwuklOF
-	rUwAz2FpcCapQMo3f9LoJih5mHfGK9XJMJv6C7jv1NlwJgLYHluuL2F0Hf00Ov4=
-X-Gm-Gg: ASbGncswlqmIBsUh4R42QKx3fXzxrZi5KUDM5vDRkfJnGbG0BrqXCaVJt3l6BitXHMq
-	eh5JW7p+H2V8R9BdCLIr6mSne4JZvSDGfIknh/Yq3ZJ3trasePEMrbdyI0GR2tTgglzJc4C62n+
-	TNdLtdmic5dqgq2gcDcuFonN4wrDXfVBrVRXyViPwNvQxDkZnBJJHSnqd9Pfp6KrKTMF2uqq162
-	0KTY7w6/x/lm1ErQgjf5ZzvwnANd+PV7yIJB+4vx1iZ9J9EZIM9JJL1GgJMl9X9pe100Lf2cCoz
-	uTAA1UJMbOS7VJ5LxuNAhnCozhzrpYFV7vDb4icL47hrLNes2YRgrEvl+x7p5JRNK14GgELV1CM
-	WiCQMZW9nshgj
-X-Google-Smtp-Source: AGHT+IF836u3HRurnaD3JNQQMkTOVJFkdb7saaYaAdjJKb8CcB9Uh6cD4rojnwwaZzpJu95yORRjaw==
-X-Received: by 2002:a05:6808:2e96:b0:3eb:3b69:8ff4 with SMTP id 5614622812f47-3f5585254ffmr10749480b6e.15.1741070011245;
-        Mon, 03 Mar 2025 22:33:31 -0800 (PST)
-Received: from localhost (104-48-214-220.lightspeed.snantx.sbcglobal.net. [104.48.214.220])
-        by smtp.gmail.com with UTF8SMTPSA id 5614622812f47-3f66e8449f6sm539684b6e.1.2025.03.03.22.33.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 22:33:29 -0800 (PST)
-From: Steev Klimaszewski <steev@kali.org>
-To: hzyitc@outlook.com
-Cc: ath11k@lists.infradead.org,
-	jjohnson@kernel.org,
-	johannes@sipsolutions.net,
-	linux-kernel@vger.kernel.org,
-	linux-wireless@vger.kernel.org
-Subject: Re: [PATCH 1/1] wifi: ath11k: pcic: make memory access more readable
-Date: Tue,  4 Mar 2025 00:33:28 -0600
-Message-ID: <20250304063328.33762-1-steev@kali.org>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <TYZPR01MB55566065525ADA7F71F516D4C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
-References: <TYZPR01MB55566065525ADA7F71F516D4C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
+        bh=3QIIT7csmVM8dlZqywgBobuFZmmi6UocIrnDWBO9ciw=;
+        b=I8KHq9j0yrwW59iR0wFiPJkpsqVvSaPhIXW4pbWaLNUo+q5QPVWsPVLrISflZ0DC91
+         pEqLopUslu+8sRv4qJxhEXZEdX1yz/2raAI9gKC94YeUfUmOPvvYjS6MBB2rV5YcyAp6
+         StKgooEEQwqmiv9l5cG8rQ3FDST6HcCFI1KfFpE2tDG+HylfMcQdXsKU+JRgyIsXBJS4
+         ji6uZSLIeF5JE7o3diwlX7447FpARRX00itn9CL5798t+IXfIvHMYT92vVMBtf1OJYXb
+         umwlveQc3+NJLtLqQjpFcZnDwZFVNOkMykZ6iCNE7+7lgC0sYmfIdbJXwgKo54ao36/Q
+         DMFg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsTM7Fj/gI4Yx32IYoV6sui2VcootHZxlg2u+cWjXNTq5xHNTlkuIhtnlUT1/AIuXScmfuzI9I96yfCtLt@vger.kernel.org, AJvYcCV2ZfdJywkI1WN4lW3ULlB7ZlhZBXtjzEYHuksxRMG43+pK3Eo+XhKJR2lmmOyhuOgEOMd/chKZHzqE@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzvECdbHJtOhlJdU2nC4+Y+2T7tLF4h/48rIcdOxcf1iB4Nz9w
+	IYrR+m8THdvD5oinyrMAFf4X8L+3Zz0NqlKwHNVfPy4tFMqPBTj3XkhU2S6T5937tMcaDzxvPoO
+	OkQcS0zl0vzE57pD0LwFa0iQEtTY=
+X-Gm-Gg: ASbGnctAeGLPZurCEGbQVC1WoSmC/ge5VMi16hr52PkmIIVvd8nQDLAR6Q60nqkXbjN
+	T5ExuZkBrOgBL1/I+pBj0roR8rv5/26zzGBP5saUAIH+MalnmiB7eAukKP7RlE6C8mdbdAFzOKg
+	XkePWgg55suksorO8iQjMd2wsv8OLrghMFS6jzmNn/3Njx6bOEXOEG9vc=
+X-Google-Smtp-Source: AGHT+IHZm0fkINHMh/RJm6iSWcBaUzASH1B4ShN21HBXQ4x/u3WqSAUs5vR9z8gHam8OvAnYpRbhVOA/A6CSdmFfsw8=
+X-Received: by 2002:a17:907:3d89:b0:ac1:e5b1:86fb with SMTP id
+ a640c23a62f3a-ac1e5b191c5mr390382766b.10.1741070174300; Mon, 03 Mar 2025
+ 22:36:14 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250228-sfg-spi-v2-1-8bbf23b85d0e@gmail.com> <fllmh65x7ke4sfolxbdod73fx3fm45w7gy7x4pgamxnbhztjvk@wqd56dzxaa37>
+In-Reply-To: <fllmh65x7ke4sfolxbdod73fx3fm45w7gy7x4pgamxnbhztjvk@wqd56dzxaa37>
+From: Zixian Zeng <sycamoremoon376@gmail.com>
+Date: Tue, 4 Mar 2025 14:36:03 +0800
+X-Gm-Features: AQ5f1JpUBt6QMLvOzLEGb8fYUdsyP3P3_7A1zhBvghXd3CBU5ioBvlsqG2gFerg
+Message-ID: <CAKyUbwXqg13Ho7QHw8vV2W6OcObphwhQ8HUrZMDNBxrVxLmdug@mail.gmail.com>
+Subject: Re: [PATCH v2] riscv: sophgo: dts: Add spi controller for SG2042
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
+	Alexandre Ghiti <alex@ghiti.fr>, devicetree@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, sophgo@lists.linux.dev, chao.wei@sophgo.com, 
+	xiaoguang.xing@sophgo.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Ziyang,
+On 25/03/02 10:18AM, Inochi Amaoto wrote:
+> On Fri, Feb 28, 2025 at 08:40:23PM +0800, Zixian Zeng wrote:
+> > Add spi controllers for SG2042.
+> >
+> > SG2042 uses the upstreamed Synopsys DW SPI IP.
+> >
+> > Signed-off-by: Zixian Zeng <sycamoremoon376@gmail.com>
+> > ---
+> > For this spi controller patch, only bindings are included.
+> > This is tested on milkv-pioneer board. Using driver/spi/spidev.c
+> > for creating /dev/spidevX.Y and tools/spi/spidev_test for testing
+> > functionality.
+>
+> I wonder whether this patch is tested (or at least can be
+> tested), as I am not sure there are pins for spi or any
+> onboard device on existing SG2042 board.
+>
+Yes, this is tested on milkv-pioneer board.
+Since this patch is just for supporting SPI controller in BUS level
+which not relates to the real hardware such as screen, I used
+driver/spi/spidev.c for creating virtual device /dev/spidevX.Y by
+adding nodes in DTS file as following:
+spidev@0 {
+        compatible =3D "snps,dw-apb-ssi";
+        reg =3D <0>;
+        status =3D "okay";
+};
 
-With this patch applied, on the Thinkpad X13s which has an ath11k, I am seeing
-the following:
+spidev@1 {
+        compatible =3D "snps,dw-apb-ssi";
+        reg =3D <1>;
+        status =3D "okay";
+};
+And using tools/spi/spidev_{test,fdx} provided by kernel tree for
+testing bus functionality.
+> > ---
+> > Changes in v2:
+> > - rebase v1 to sophgo/master(github.com/sophgo/linux.git).
+> > - order properties in device node.
+> > - remove unevaluated properties `clock-frequency`.
+> > - set default status to disable.
+> > - Link to v1: https://lore.kernel.org/r/20250228-sfg-spi-v1-1-b989aed94=
+911@gmail.com
+> > ---
+> >  .../riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts |  8 +++++++
+> >  arch/riscv/boot/dts/sophgo/sg2042.dtsi             | 28 ++++++++++++++=
+++++++++
+> >  2 files changed, 36 insertions(+)
+> >
+> > diff --git a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts b/arch=
+/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
+> > index be596d01ff8d33bcdbe431d9731a55ee190ad5b3..c43a807af2f827b5267afe5=
+e4fdf6e9e857dfa20 100644
+> > --- a/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
+> > +++ b/arch/riscv/boot/dts/sophgo/sg2042-milkv-pioneer.dts
+> > @@ -72,6 +72,14 @@ &uart0 {
+> >     status =3D "okay";
+> >  };
+> >
+> > +&spi0 {
+> > +   status =3D "okay";
+> > +};
+> > +
+> > +&spi1 {
+> > +   status =3D "okay";
+> > +};
+> > +
+> >  / {
+> >     thermal-zones {
+> >             soc-thermal {
+> > diff --git a/arch/riscv/boot/dts/sophgo/sg2042.dtsi b/arch/riscv/boot/d=
+ts/sophgo/sg2042.dtsi
+> > index e62ac51ac55abd922b5ef796ba8c2196383850c4..500645147b1f8ed0a08ad3c=
+afb38ea79cf57d737 100644
+> > --- a/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+> > +++ b/arch/riscv/boot/dts/sophgo/sg2042.dtsi
+> > @@ -545,5 +545,33 @@ sd: mmc@704002b000 {
+> >                                   "timer";
+> >                     status =3D "disabled";
+> >             };
+> > +
+> > +           spi0: spi@7040004000 {
+> > +                   compatible =3D "snps,dw-apb-ssi";
+> > +                   reg =3D <0x70 0x40004000 0x00 0x1000>;
+>
+> > +                   clocks =3D <&clkgen GATE_CLK_APB_SPI>,
+> > +                                   <&clkgen GATE_CLK_SYSDMA_AXI>;
+>
+> Is the sysdma axi clock for the this device. IIRC is APB interface.
+>
+Thanks, I will remove the GATE_CLK_SYSDMA_AXI in next revision.
+> Also, Are these clock aligned? If not, use space to align the two
+> clocks. You also need to add the clock-names here.
+In the case of the only clock, I think it=E2=80=99s probably no need to add
+the clock-names property here.
+>
+> > +                   interrupt-parent =3D <&intc>;
+> > +                   interrupts =3D <110 IRQ_TYPE_LEVEL_HIGH>;
+>
+> > +                   #address-cells =3D <0x01>;
+> > +                   #size-cells =3D <0x00>;
+> > +                   num-cs =3D <0x02>;
+>
+> Just use decimal number, no hex there.
+>
+Thanks, I will fix it in next revision.
+> > +                   resets =3D <&rstgen RST_SPI0>;
+> > +                   status =3D "disabled";
+> > +           };
+> > +
+> > +           spi1: spi@7040005000 {
+> > +                   compatible =3D "snps,dw-apb-ssi";
+> > +                   reg =3D <0x70 0x40005000 0x00 0x1000>;
+>
+> > +                   clocks =3D <&clkgen GATE_CLK_APB_SPI>,
+> > +                                   <&clkgen GATE_CLK_SYSDMA_AXI>;
+>
+> The same as above.
+>
+Thanks.
+> > +                   interrupt-parent =3D <&intc>;
+> > +                   interrupts =3D <111 IRQ_TYPE_LEVEL_HIGH>;
+>
+> > +                   #address-cells =3D <0x01>;
+> > +                   #size-cells =3D <0x00>;
+> > +                   num-cs =3D <0x02>;
+>
+> The same as above.
+>
+Thanks.
+> > +                   resets =3D <&rstgen RST_SPI1>;
+> > +                   status =3D "disabled";
+> > +           };
+> >     };
+> >  };
+> >
+> > ---
+> > base-commit: aa5ee7180ec41bb77c3e327e95d119f2294babea
+> > change-id: 20250228-sfg-spi-e3f2aeca09ab
+> >
+> > Best regards,
+> > --
+> > Zixian Zeng <sycamoremoon376@gmail.com>
+> >
+Best regards,
 
- ath11k_pci 0006:01:00.0: chip_id 0x2 chip_family 0xb board_id 0x8c soc_id 0x400c0210
- ath11k_pci 0006:01:00.0: fw_version 0x11088c35 fw_build_timestamp 2024-04-17 08:34 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
- ath11k_pci 0006:01:00.0: firmware crashed: MHI_CB_EE_RDDM
- ath11k_pci 0006:01:00.0: ignore reset dev flags 0xc800
- ath11k_pci 0006:01:00.0: failed to receive control response completion, polling..
- ath11k_pci 0006:01:00.0: ctl_resp never came in (-110)
- ath11k_pci 0006:01:00.0: failed to connect to HTC: -110
- ath11k_pci 0006:01:00.0: failed to start core: -110
- failed to send QMI message
- ath11k_pci 0006:01:00.0: failed to send wlan mode request (mode 4): -5
- ath11k_pci 0006:01:00.0: qmi failed to send wlan mode off: -5
-
-I'm pretty sure this isn't supposed to happen?
-
---steev
+Zixian Zeng <sycamoremoon376@gmail.com>
 
