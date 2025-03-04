@@ -1,87 +1,144 @@
-Return-Path: <linux-kernel+bounces-544590-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544592-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3AF4A4E2D6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:20:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29F91A4E2D4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:20:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88F198A06C5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:13:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7C7D17ED80
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB33C281357;
-	Tue,  4 Mar 2025 15:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIf/B5bq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3810527C14D;
-	Tue,  4 Mar 2025 15:06:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD95B2080C5;
+	Tue,  4 Mar 2025 15:07:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41C52857D2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:07:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100778; cv=none; b=oaEPq3V4WiS9mS2Yf6r6x9LbnDHQwfaZY0jrZIzoliWItXtB82fzIpCNaFwOwWBz80PC9TCOZAeVkYkENdf8ShVXzyBxlPwRPfu5/0ThHyI2+zMECQumTROgADDR6G0DbFT1jlo8LEt80x3pRfPI8J7IpPcucoPPqjvDxGdhpec=
+	t=1741100865; cv=none; b=HGxoM6zP1fEjjL+RZHFgvTE6Khk+y2JXYZ4HcmFqIYs9uzxTZybKS7AyKPsrmXKsdHl/eXpPd3S7Fb0a3gHvYFI1cdnQxue+aOds3iHSBrVGI+mLnB1h49FHPtpJYGh6gwMFa77YaXHk7z9mXuh6Bc/QOod+mHJW4M6qMQ0hXn4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100778; c=relaxed/simple;
-	bh=YWffusgVy4JqzxHkhg7lyaWZ2TNntH893fnALgxGyJ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KodUbKoPU9unfiaWiWbJ/wbsIY0W0qEOR6DulDVtr5kv31fYIJlF1wgcaOBE934vwxOMG9uxIgN5tvukxlD8L+GiAU7luqDGkCvceMDT8qFQNTZGDd/Rx9UFCyPqJQ4JPGSMK9C6F4WCeOstvtpi/iTaf/bguS18/AXXweqhnEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIf/B5bq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1BD1C4CEE5;
-	Tue,  4 Mar 2025 15:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741100777;
-	bh=YWffusgVy4JqzxHkhg7lyaWZ2TNntH893fnALgxGyJ4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KIf/B5bqXGbEHqQolNccXFTt6pJjSB/gwtS5LxrvptvqG6pmtjXol5/MPW77gC9b/
-	 E3n1Cerw6RfVugcoEk8VzAeZGG6uyxRiW7BnGJ+JYmFF9z6VQ7ACllOAO9sIZNclcv
-	 piZW4txwZ5vSk0hRFszQ0Hl8WrcVDC94gmQ2AoEF3s/N43LsN8P+A8lbR792R7SM4n
-	 /BdgBhCVchwZHgGX9yWmxXO15mnUW/3zKgDwYKw/6NJpBjhqRrWpSqQ8WVTc77KF3d
-	 MnCzWWR6gPLG2rMKE7oj4rv1xMe4KePHK5gRZ5hXWmCM8URI2jQTCd70cfxLgtl/p1
-	 NWapbl3Ad5qrw==
-Date: Tue, 4 Mar 2025 15:06:06 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Julien Stephan <jstephan@baylibre.com>, Michael Hennerich
- <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 0/3] ad7380: add adaq4381-4 support
-Message-ID: <20250304150606.5125bbea@jic23-huawei>
-In-Reply-To: <5ad1f95b-ef0b-4e65-9e31-a8166a8e90cd@baylibre.com>
-References: <20250226-ad7380-add-adaq4381-4-support-v1-0-f350ab872d37@baylibre.com>
-	<5ad1f95b-ef0b-4e65-9e31-a8166a8e90cd@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741100865; c=relaxed/simple;
+	bh=YiVUPg6QTx7D+YwimUc5/sL3Qt3fbI8JG9/k/yLslIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k80OjoblzTCGdHXuCeM5k/S1uNYq0IYZrJvGwcRoDxtkpJUI1EOwJvA+gV5FzGBFx7NlY11f/JtZTeVR/p48Pt0Be7kHI1AC1hxerHn4rUSPwiMPlFc5G1JpsHUuMTwKxlQKTKWK0vqHAPMqgefma16cuA4h1VYpLD9TGLF1wQw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCA88FEC;
+	Tue,  4 Mar 2025 07:07:56 -0800 (PST)
+Received: from [192.168.1.12] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E1B983F66E;
+	Tue,  4 Mar 2025 07:07:37 -0800 (PST)
+Message-ID: <153df413-9989-42fe-b574-598ff0fa9716@arm.com>
+Date: Tue, 4 Mar 2025 16:07:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 3/4] arm64: topology: Support SMT control on ACPI
+ based system
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: Yicong Yang <yangyicong@huawei.com>, yangyicong@hisilicon.com,
+ catalin.marinas@arm.com, will@kernel.org, tglx@linutronix.de,
+ peterz@infradead.org, mpe@ellerman.id.au,
+ linux-arm-kernel@lists.infradead.org, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com, dietmar.eggemann@arm.com,
+ linuxppc-dev@lists.ozlabs.org, x86@kernel.org, linux-kernel@vger.kernel.org,
+ morten.rasmussen@arm.com, msuchanek@suse.de, gregkh@linuxfoundation.org,
+ rafael@kernel.org, jonathan.cameron@huawei.com, prime.zeng@hisilicon.com,
+ linuxarm@huawei.com, xuwei5@huawei.com, guohanjun@huawei.com,
+ sshegde@linux.ibm.com
+References: <20250218141018.18082-1-yangyicong@huawei.com>
+ <20250218141018.18082-4-yangyicong@huawei.com> <Z8HAkZiHYRjj97M7@bogus>
+ <336e9c4e-cd9c-4449-ba7b-60ee8774115d@arm.com>
+ <20250228190641.q23vd53aaw42tcdi@bogus>
+ <a52972c7-aadd-4a77-a292-057fa5f8372d@arm.com> <Z8WPiOweOjFZqTwN@bogus>
+ <32e572d6-dedd-d8a3-13be-6de02303a64d@huawei.com>
+ <2fdea4f6-db98-4dc7-947f-e19ee54d2c3c@arm.com> <Z8bPtsO7dEV0lq2M@bogus>
+Content-Language: en-US
+From: Pierre Gondois <pierre.gondois@arm.com>
+In-Reply-To: <Z8bPtsO7dEV0lq2M@bogus>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Wed, 26 Feb 2025 10:14:40 -0600
-David Lechner <dlechner@baylibre.com> wrote:
 
-> On 2/26/25 8:50 AM, Julien Stephan wrote:
-> > ADAQ4381-4 is the 14 bits version of the ADAQ4380-4. It is compatible
-> > with the ad7380 driver, so add its support and documentation, in driver,
-> > doc, and bindings.
-> > 
-> > Signed-off-by: Julien Stephan <jstephan@baylibre.com>
-> > ---  
-> Reviewed-by: David Lechner <dlechner@baylibre.com>
+
+On 3/4/25 11:02, Sudeep Holla wrote:
+> On Tue, Mar 04, 2025 at 09:25:02AM +0100, Pierre Gondois wrote:
+>>
+>>
+>> On 3/3/25 15:40, Yicong Yang wrote:
+>>> On 2025/3/3 19:16, Sudeep Holla wrote:
+>>>> On Mon, Mar 03, 2025 at 10:56:12AM +0100, Pierre Gondois wrote:
+>>>>> On 2/28/25 20:06, Sudeep Holla wrote:
+>>>>>>>>
+>>>>>>>> Ditto as previous patch, can get rid if it is default 1.
+>>>>>>>>
+>>>>>>>
+>>>>>>> On non-SMT platforms, not calling cpu_smt_set_num_threads() leaves
+>>>>>>> cpu_smt_num_threads uninitialized to UINT_MAX:
+>>>>>>>
+>>>>>>> smt/active:0
+>>>>>>> smt/control:-1
+>>>>>>>
+>>>>>>> If cpu_smt_set_num_threads() is called:
+>>>>>>> active:0
+>>>>>>> control:notsupported
+>>>>>>>
+>>>>>>> So it might be slightly better to still initialize max_smt_thread_num.
+>>>>>>>
+>>>>>>
+>>>>>> Sure, what I meant is to have max_smt_thread_num set to 1 by default is
+>>>>>> that is what needed anyways and the above code does that now.
+>>>>>>
+>>>>>> Why not start with initialised to 1 instead ?
+>>>>>> Of course some current logic needs to change around testing it for zero.
+>>>>>>
+>>>>>
+>>>>> I think there would still be a way to check against the default value.
+>>>>> If we have:
+>>>>> unsigned int max_smt_thread_num = 1;
+>>>>>
+>>>>> then on a platform with 2 threads, the detection condition would trigger:
+>>>>> xa_for_each(&hetero_cpu, hetero_id, entry) {
+>>>>>       if (entry->thread_num != max_smt_thread_num && max_smt_thread_num)     <---- (entry->thread_num=2) and (max_smt_thread_num=1)
+>>>>>           pr_warn_once("Heterogeneous SMT topology is partly
+>>>>>                         supported by SMT control\n");
+>>>>>
+>>>>> so we would need an additional variable:
+>>>>> bool is_initialized = false;
+>>>>
+>>>> Sure, we could do that or skip the check if max_smt_thread_num == 1 ?
+>>>>
+>>>> I mean
+>>>> 	if (entry->thread_num != max_smt_thread_num && max_smt_thread_num != 1)
+>>>>
+>>
+>> I think it will be problematic if we parse:
+>> - first a CPU with 1 thread
+>> - then a CPU with 2 threads
+>>
+>> in that case we should detect the 'Heterogeneous SMT topology',
+>> but we cannot because we don't know whether max_smt_thread_num=1
+>> because 1 is the default value or we found a CPU with one thread.
 > 
-> 
+> Right, but as per Dietmar's and my previous response, it may be a valid
+> case. See latest response from Dietmar which is explicitly requesting
+> support for this. It may need some special handling if we decide to support
+> that.
 
-Applied,
+Ah ok, right indeed.
+For heterogeneous SMT platforms, the 'smt/control' file is able to accept
+on/off/forceoff strings. But providing the max #count of threads as an integer would
+be wrong if the CPU doesn't have this #count of threads.
 
-Thanks,
-
-Jonathan
+Initially the idea was to just warn that support might be needed for heterogeneous
+SMT platforms, and let whoever would have such platform solve this case, but just
+disabling the integer interface in this case would solve the issue generically.
 
