@@ -1,151 +1,140 @@
-Return-Path: <linux-kernel+bounces-544543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544544-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CB8EA4E2BB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:17:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 220F6A4E26A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:09:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 143FA886583
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:01:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 817BC189667B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:01:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA7A27EC64;
-	Tue,  4 Mar 2025 14:57:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECDE2417F7;
+	Tue,  4 Mar 2025 14:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="azrrZJOX"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ufv8lhra"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033E427E1D9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:57:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0049027D77E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:57:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741100254; cv=none; b=oTYMcooYes8PZw+7kDNaboWY3YA8J4/HnHOo/uangvI4+scKf4iagDSIcG2pKt9GDvy+6nNmAnt0wJWtNeL226v9uoW/XGZ2593tNXpspAnVNDGfBoSyhEY1u28/8QHmoqGTR4uc1PdKp1aDHJhSdD+StVDPGlN6ElxNZskicWs=
+	t=1741100270; cv=none; b=oYi9FVeqAFfiHY8kBVMOA6P45XydeK8OkfmGk9eRnfFjdr1Ts7SbhnW6pul8TqV/ZU5JFUhB3NYMZ1MzWSaZSrOkzs6SapNATieyMsghBcvjer7jvu2+P0aNi7wRgUtdQgkgLnTMABGJX9S42zUYWrGiFo7mWgQSw5ouKu+59YY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741100254; c=relaxed/simple;
-	bh=K8C3hmIFC9Q50r0TsdLo+cvtp2V7ltUvaziJRbo5Ll0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h2YiP9Iq10Y26LGEr/6x4V8V6cxg5sXqtnQhci2BLFYaB1r1Feet9hMT8CRawmBeGKxASnpulYtokjJOWRWLVgWlfrdP+AHBoLFVU+jXp0Ey9Ix8BmH6bYw2wGU6LOC3ri3wGEAKlaYuCUveg24GLN4dT4RwDOKK5Y/EcwS/8ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=azrrZJOX; arc=none smtp.client-ip=209.85.214.178
+	s=arc-20240116; t=1741100270; c=relaxed/simple;
+	bh=6BkGgMCQlKnBVI/z/gSMz/QG6/qLrODbE7vy+j+F1/s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VFIl8A/s4nHrPeVF1g2mh0p/BN8epymS9Zkjhu3RA3JDTL5kRGix4QhqPUEcJU1VbJGDfk3EIeeS0pHqBJVPM3fX3EQAnQ7HXemRrRxBDR8ApF1SNYwSKslUNbG48kfsgqwwEFbNo3fbRpDfMrzdNGBfom7ykC49hURtazFZ5sU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ufv8lhra; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2239c066347so51423995ad.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 06:57:32 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e539ea490dso3422218a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 06:57:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741100252; x=1741705052; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=bB0FA1hVPZJ0S4Y1IaK4hi0Fvaas9G2N8erQYJkQNzE=;
-        b=azrrZJOXrdoBbsbo2U26Giciaf6KTN0PABnbXlMjZPVAIY7PCjs2CKOcRgbC7443T2
-         t73iOnR5TZaH2nYXipTkShu7149FP/WqSZrq24Ee5UUX4AYwQ2nsUeJlVuQ9PkcvauDv
-         3YhEjjnzhgTDQGcSyCWcuR8g38gJShd2bKGMzCKObxZfaclKkOYgYZDC9xP1RJfb+6/c
-         1kDtB1m0uU3qf5A6c/nITpwOUwbsytteQUIix5/hAgy5fn0STUUGJWz+A1AeO9AGiJN5
-         FP6XiCwUz2T7vYZD0BCWrnPUHKQS1K+7nCEkjA/P4LMIgRtdLfz4XLXJCmczW3yIxu5A
-         xuDw==
+        d=linaro.org; s=google; t=1741100267; x=1741705067; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/68QcT9qmsXPc69IGraMC5MbQqgSu9/5hLTlhc2o0Zo=;
+        b=Ufv8lhraUMgD36VHSmxAiE9zDab4TrUVF2NHgCj4x8lnn4TqheD2GPGLJ7PgtIp8pG
+         E7b7EECSb+RMHVtC2sPpAUgxlHP6iICI1Vb3+y2bkqom+ly/GgjUy7Qs0Hok1Jp6ML6p
+         qqZwhVBBAH11EiD2QmQK9M+xY4ZNHkPR86FuL6iQJhUyjFbKz8vqs74fTkRDTk8vYyli
+         63/NIbqOXTHHdrMpkEeIK3uIly/vgoYrAIeVwdZngllBVORQkkCQOVXNg6pajmrs/hH/
+         NfeaGqpEQsoeNNSCMKlcyIr7lggNK0yb4IfzNlnERwGeaZmduXrj7DWwoBLeUR2CpmCJ
+         5X3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741100252; x=1741705052;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1741100267; x=1741705067;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bB0FA1hVPZJ0S4Y1IaK4hi0Fvaas9G2N8erQYJkQNzE=;
-        b=VKo6D3tF+/mShtYNE7U8LItRks1mmb7WhSu1GkGjoj6SSszvBjs6OCc04Tg0SaXNRh
-         QNcHUdfrU0BVdLDT442Az6F66TxkCBHQfwdjZ12uycsxm1Sa5DRzEJmgcVxRA7uO1g8i
-         BdEPrW0NnktOwM1vs53H1P0GnWtXw9kQaSYR561jIrl/9ec1eiomkfTfT1EKVNdfo/XZ
-         sJbqfowqVYgS53MnfZRIOan9iaDenUebfCpRlJ7iWjsfCl4sA7DeIjfeEaPNoDPnWhKp
-         qaUsiIv0bFbh4EgMBKFmXBg0IVyIDErJL8muQ0iC/wwAonJ+FUavS4iAdnkgzcE6exZX
-         TIkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUmz/qrwybbcmdPgPgT0AfsDDYX/RSZX/+uD1OVLpExxPQ6NurCuVtdKgkTz1YtuerQ7KUXvRgiBU3b9Y0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzpdV8UBFRXy2cBlrQ4+uVceHIR02xOAgyafuLP9YqCpROYFZ21
-	i4vP7R4KD+KFD/6XWvAT/wccUPDXBzqm2NRuE8oqaJQ9vNPjWIUmRgNe2jlcUw==
-X-Gm-Gg: ASbGncvSEdCMCHj1aT3nMMVZjljbFZTi7qvaqN2WKD+ZSq925xujdwtEjjDENlSYNjo
-	Xnlu1g/HCOYfrcXt+Cy3lumD6PDhUT02dvJ8OA7yXafX2pOB4t+rqzzdeULpCmasHjMKlFyUHN2
-	kGVcTnICsQhqCGY2wPWb/fx2tmWGxoSVEr//NgbupcWYOpkPVHKBIWIyE4BCT4nvi5fRlJLReno
-	UV1MJGAxgi99lVaJvo66zWTCLlr1ZN6V6MaSCCuYJJ75g5ztX+HBbo4bddidFUED99OZK1mmr6g
-	0y7uT0ElSvnnngjNdIm/VIjz6jwkstsoqF29XKGDorQQFaOpOFU/OZM=
-X-Google-Smtp-Source: AGHT+IGo7wa+ol8U/rxNOCJnFdMfRJrO9oY2HvfjcAeePQLXu1JAeASpEDGGST/KBMpQr7w4rAQjHw==
-X-Received: by 2002:a05:6a21:6f09:b0:1f3:46cd:d01f with SMTP id adf61e73a8af0-1f346cdd0f4mr1167212637.21.1741100252271;
-        Tue, 04 Mar 2025 06:57:32 -0800 (PST)
-Received: from thinkpad ([120.60.51.199])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-73519c31931sm8622046b3a.20.2025.03.04.06.57.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 06:57:31 -0800 (PST)
-Date: Tue, 4 Mar 2025 20:27:24 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Jim Quinlan <james.quinlan@broadcom.com>
-Cc: linux-pci@vger.kernel.org, Nicolas Saenz Julienne <nsaenz@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Cyril Brulebois <kibi@debian.org>,
-	Stanimir Varbanov <svarbanov@suse.de>,
-	bcm-kernel-feedback-list@broadcom.com, jim2101024@gmail.com,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-rpi-kernel@lists.infradead.org>,
-	"moderated list:BROADCOM BCM2711/BCM2835 ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2 3/8] PCI: brcmstb: Do not assume that reg field starts
- at LSB
-Message-ID: <20250304145724.itrzj6wnflxxf3up@thinkpad>
-References: <20250214173944.47506-1-james.quinlan@broadcom.com>
- <20250214173944.47506-4-james.quinlan@broadcom.com>
+        bh=/68QcT9qmsXPc69IGraMC5MbQqgSu9/5hLTlhc2o0Zo=;
+        b=W6dwy0tacvJXCIjE0FPbRfdX96QQXJ1p8Cv+2BD60zSuaJuK7TA689UkIQjVenQUPC
+         2svnSsdTSWrtOS3waBt5Olu/sipKYAnXYberL7N8Dv0Rkrnd6jIoJ5/RNY14Wq9ArxSe
+         ua0S6qn50t+GkCgvo8c+i2VUxOABEEhwWzMxNIyq6fqtrpNtnXUF8q4WqFduHHGOzE1L
+         fp5EGFl2VAEYYqo0fWju9cvCg/qnYtNBLtu4Mlb1tUkkdErwCZsHwmrBClUazJWeJDrI
+         qbv8WGoWiHlq3JPjaaeSyv7ODxjNOLHrlj5Aj5TauJEAsfcDrEf3L/yULDJETnVRmyXo
+         zQGw==
+X-Forwarded-Encrypted: i=1; AJvYcCXMMf2Wi7Rs8dE+NIZLYykndOz7I0BFoMl/ex+/Hk8Mmkuckk52BdYGEeyT4j1B4Wz6pD13Auqah246CYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxhxna0VRwy2v6daKId4bo05UK7FVcxW/v9m9kJS2v8qHRnmKyV
+	imNAWzxhhn43Xf1AVynEBrIGQICpPN20jbtJdxiFu19q5Q3RFHfK8SkJBBPqUlg=
+X-Gm-Gg: ASbGncsFD6HPHM/tKh7anOUUyYkBxtPCoDBPNhRs9+X4o/WuxyGTiUJgNtXTc1aKHRs
+	vgJaBCwftPx47/EGbdaV5L76FG3Q1+WNJ5Xfn3rZhtOZ5p2U/ttan/79rd8ItGL4jHCzFMpcVRE
+	zeBpMQR9dKVXf12yGUg7DXOdfkpozHeZFayOkboX4Q2QvckM9Box2FX6iM54wVM65OrCelAigUX
+	YP5YQeCWfhtAdaniwmNm+vtuJQ7dHVrr8RJlZN5UmQk9U2ycbWElw7YpJ+eEZshRbtkOP6vUZd7
+	LHiUweCFTtWhOCoFxmfKEHvMWrbS38wwzGk2hlA0CydDC37qMkW1BSZsuBDz6No=
+X-Google-Smtp-Source: AGHT+IEY7PhEqQJuGNVHSkKsQAe7pu1Yw5wYxTDHs1q4RmGyn0tUXGiG6DmuGxPMIR02qbfXS4GcZw==
+X-Received: by 2002:a05:6402:388a:b0:5e5:335:dad1 with SMTP id 4fb4d7f45d1cf-5e50335de57mr44726697a12.27.1741100267164;
+        Tue, 04 Mar 2025 06:57:47 -0800 (PST)
+Received: from [192.168.68.113] ([5.133.47.210])
+        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-ac12cdf244esm296583766b.20.2025.03.04.06.57.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 06:57:46 -0800 (PST)
+Message-ID: <beab1578-eb49-4cf9-bb74-b1282ab04754@linaro.org>
+Date: Tue, 4 Mar 2025 14:57:45 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250214173944.47506-4-james.quinlan@broadcom.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/13] ASoC: wcd938x: Use SOC_SINGLE_EXT_TLV() helper
+ macro
+To: Charles Keepax <ckeepax@opensource.cirrus.com>, broonie@kernel.org
+Cc: lgirdwood@gmail.com, peda@axentia.se, andrei.simion@microchip.com,
+ nuno.sa@analog.com, paul@crapouillou.net, oder_chiou@realtek.com,
+ kiseok.jo@irondevice.com, shenghao-ding@ti.com, kevin-lu@ti.com,
+ baojun.xu@ti.com, linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ patches@opensource.cirrus.com
+References: <20250304140500.976127-1-ckeepax@opensource.cirrus.com>
+ <20250304140500.976127-6-ckeepax@opensource.cirrus.com>
+Content-Language: en-US
+From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+In-Reply-To: <20250304140500.976127-6-ckeepax@opensource.cirrus.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 14, 2025 at 12:39:31PM -0500, Jim Quinlan wrote:
-> When setting a register field it was assumed that the field started at the
+Thanks Charles,
 
-s/a register field/LNKCAP and LNKCTL2 register fields,
-
-> lsb of the register.  Although the masks do indeed start at the lsb, and
-> this will probably not change, it is prudent to use a method that makes no
-> assumption about the mask's placement in the register.
+On 04/03/2025 14:04, Charles Keepax wrote:
+> Rather than open coding use the helper macro provided by the ASoC core.
 > 
-> The uXXp_replace_bits() calls are used since they are already prevalent
-> in this driver.
-> 
-> Signed-off-by: Jim Quinlan <james.quinlan@broadcom.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
+> Signed-off-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 > ---
->  drivers/pci/controller/pcie-brcmstb.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
-> index 98542e74aa16..e0b20f58c604 100644
-> --- a/drivers/pci/controller/pcie-brcmstb.c
-> +++ b/drivers/pci/controller/pcie-brcmstb.c
-> @@ -415,10 +415,10 @@ static void brcm_pcie_set_gen(struct brcm_pcie *pcie, int gen)
->  	u16 lnkctl2 = readw(pcie->base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKCTL2);
->  	u32 lnkcap = readl(pcie->base + PCIE_RC_CFG_PRIV1_LINK_CAPABILITY);
->  
-> -	lnkcap = (lnkcap & ~PCI_EXP_LNKCAP_SLS) | gen;
-> +	u32p_replace_bits(&lnkcap, gen, PCI_EXP_LNKCAP_SLS);
->  	writel(lnkcap, pcie->base + PCIE_RC_CFG_PRIV1_LINK_CAPABILITY);
->  
-> -	lnkctl2 = (lnkctl2 & ~0xf) | gen;
-> +	u16p_replace_bits(&lnkctl2, gen, PCI_EXP_LNKCTL2_TLS);
->  	writew(lnkctl2, pcie->base + BRCM_PCIE_CAP_REGS + PCI_EXP_LNKCTL2);
->  }
->  
-> -- 
-> 2.43.0
+> No change since v2.
 > 
+>   sound/soc/codecs/wcd938x.c | 9 ++-------
+>   1 file changed, 2 insertions(+), 7 deletions(-)
+> 
+> diff --git a/sound/soc/codecs/wcd938x.c b/sound/soc/codecs/wcd938x.c
+> index f2a4f3262bdbc..b536e8bdc5a74 100644
+> --- a/sound/soc/codecs/wcd938x.c
+> +++ b/sound/soc/codecs/wcd938x.c
+> @@ -70,13 +70,8 @@
+>   #define WCD_MBHC_HS_V_MAX           1600
+>   
+>   #define WCD938X_EAR_PA_GAIN_TLV(xname, reg, shift, max, invert, tlv_array) \
 
--- 
-மணிவண்ணன் சதாசிவம்
+We remove WCD938X_EAR_PA_GAIN_TLV altogether.
+
+Otherwise lgtm,
+
+Reviewed-by: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+
+--srini
+> -{	.iface = SNDRV_CTL_ELEM_IFACE_MIXER, .name = xname, \
+> -	.access = SNDRV_CTL_ELEM_ACCESS_TLV_READ |\
+> -		 SNDRV_CTL_ELEM_ACCESS_READWRITE,\
+> -	.tlv.p = (tlv_array), \
+> -	.info = snd_soc_info_volsw, .get = snd_soc_get_volsw,\
+> -	.put = wcd938x_ear_pa_put_gain, \
+> -	.private_value = SOC_SINGLE_VALUE(reg, shift, max, invert, 0) }
+> +	SOC_SINGLE_EXT_TLV(xname, reg, shift, max, invert, snd_soc_get_volsw, \
+> +			   wcd938x_ear_pa_put_gain, tlv_array)
+>   
+>   enum {
+>   	WCD9380 = 0,
 
