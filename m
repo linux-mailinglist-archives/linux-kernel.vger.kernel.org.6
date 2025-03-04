@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-544275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45BCCA4DF90
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:45:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9FFA4DEE1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:11:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B7DBC189CB37
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:45:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09D73A9AF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:11:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4B5204F76;
-	Tue,  4 Mar 2025 13:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6012040A8;
+	Tue,  4 Mar 2025 13:11:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHaYIPdZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OlUsRcar"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 224D020469F;
-	Tue,  4 Mar 2025 13:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419AD1FECDB;
+	Tue,  4 Mar 2025 13:11:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741095847; cv=none; b=hDKuqvEl1GE9fh9kcPjB+Wy4AwLUAvegq+Wvl88+QBPmVIYOTTAnqF+UCGpHTa6RaCaXepdICTkucLRoDh3rI0jvA0yOqCAJXESRF4Q+w9ZkU1X7Hs+JDkVdLzMpqMNqh3XaPwtoZCXKtSqVd1fu231Jl80+5hawis1XfQK+kcA=
+	t=1741093894; cv=none; b=I/ULNbRPsWMgnn2/iNzQWj650gi1GJfFw3LVzfLtJC/NF0vMigl3y8FIyFTUxNear9De6rwd5ckI6MbKli58I3SN1myd6w67r+kwjZmeB2h1JGLTQ+XFThuT2RsD2lj86alv5NXkbrh7l97u9ca7qTLVWnafWryIZzEU6rVReQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741095847; c=relaxed/simple;
-	bh=B/OYmvy9zr76agLhnG0ycC+hDadBQqyUMPzhZTGcanM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NgSpEy0jLvaJmI95UGPoSp3speQ1YkVAcBBx+e0cdcu2gy2XB/CKABsHrdc7MzhEUzRaA01VDOmEZO24bntyIGYlgf7CRRxQsohIJymxc8neLnu883Y9xK/JfFKMzE6gntiXlOXEqJLcF5XyQm6SjtfAvjreNEO915lpT9Vn10E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHaYIPdZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BFDDC4CEE5;
-	Tue,  4 Mar 2025 13:44:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741095846;
-	bh=B/OYmvy9zr76agLhnG0ycC+hDadBQqyUMPzhZTGcanM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=GHaYIPdZB+3UljcK2WXyQXDq+T9ZSbm/1EV7+xgFEyBmpEG7aNwiAmIEvav0i57n5
-	 R+x8B7q/vCA+kQSUXQBO6Hcw6kua+dMeNcktLTC35whgzDglHoGtM7GL1oFrLqINF2
-	 RpYHZHPsE/H+qjUNtp+CKm8iDiBzFNIdACL+SPF4mYIOoqmAVg2qU9Vgxc82hwyYP/
-	 c9DEKunX7RPzayF26nR3NjICU+kN9QofOR412fFlQ+4g7J0qD36PXz95ncl1Qu4Yy2
-	 v/q/GgqqnrHiANFJAovw31SjDC3DDKjml987HDer3c86Mhpy31HU5VNPLpZpKD0sLb
-	 IY0wW22zban+Q==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-Cc: <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,  <boqun.feng@gmail.com>,
-  <gary@garyguo.net>,  <bjorn3_gh@protonmail.com>,
-  <benno.lossin@proton.me>,  <tmgross@umich.edu>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
-  "Alice Ryhl" <aliceryhl@google.com>
-Subject: Re: [PATCH v2] rust: irq: add support for request_irq()
-In-Reply-To: <D058ABBE-A0E8-4D95-AA4F-31EAA4092A73@collabora.com> (Daniel
-	Almeida's message of "Mon, 10 Feb 2025 05:41:17 -0300")
-References: <20250122163932.46697-1-daniel.almeida@collabora.com>
-	<P6uxHjNnFZn4JOtisJbsPvyFH7-7YjYa8rBGb0bWMZzVN6dJI2V3ULxonvji7BsHT6nn5oAq0cI5R9RvhqzExA==@protonmail.internalid>
-	<D058ABBE-A0E8-4D95-AA4F-31EAA4092A73@collabora.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Tue, 04 Mar 2025 14:11:00 +0100
-Message-ID: <87ikopgcuz.fsf@kernel.org>
+	s=arc-20240116; t=1741093894; c=relaxed/simple;
+	bh=rZSB8ttJc33k4p7Ftc2PQRAgzsvuJBhIKVv79k++F8U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cHK5uZ6w/PcL0SGdfdB2WJc1FBUITT3dVeTj2JcfwuKkbJ10HNl5z0nCQWpxTRIKuYSNsUFwMUmDoJSt66mmHrmDYTbqVJdpcaM9ViecYVB4bJBjpBMOnKruq8xI9vvVQdoX0bRa2UKR66B0z+6yokpxpk5HJR8hhpShIEjjp90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OlUsRcar; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-22337bc9ac3so104926585ad.1;
+        Tue, 04 Mar 2025 05:11:32 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741093892; x=1741698692; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uoBQMXTscKMSBK7mXc73SSB9UbMhqYi1iTf6fQEcMsQ=;
+        b=OlUsRcar27PSEQ1qreMtXJCQiaLyBmQGi/cA2ccE187sNJ9F0/irXW+v8Y1gHjtnWJ
+         9RsD5bHYasw4zOpPu97hLhCA0IIAkj03wvgUQ50l4/6twCDqNFryIZh29uX2dI1yQ/SL
+         ELwOzVOFsMEcbcesT+wEUpEmsQXKaCLITvZz26Z0dxzFaZScduIz1GME+mnMJfMxbz7W
+         muwu3LUh6o0XY3qIOql80lVHkpSt76WcLFqPCGt+YdkaZVCagrPD0YKi+4u6OFGywbHe
+         oa/x2bVXJMUWTaMpWk2i5fm0wCp7ytbYDAFgHbs+epNmvPyGEKCrqseGSplsHQoIavW7
+         hrhg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741093892; x=1741698692;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uoBQMXTscKMSBK7mXc73SSB9UbMhqYi1iTf6fQEcMsQ=;
+        b=F/g1DUFVQnX1BU14G/YT2A0bzK9Wefn+2lA/OHgAAgtsKfd9H4GJTC0t+wT4N572Wb
+         kAy4qWSzo/8eE8OwkUPW+T3TZ3bqVyW3bTKRlhkAUyPcQtlZhDbJO2W9NsrWfaXekBF9
+         cBZTK/VmTbvrUyLUlLSJjxF0y7pWcMZL5tHcsM/1RAraGHlS7szxSsUkDysvEWSSNJCw
+         vB4g8t4WKqVOFggUkpimQfgXnRGejH5xHlgZTRiU2SZ4n+6+kXMtXx29YSINq28uvvYW
+         kbCMq8lkMB0VwkgEbdchakyOphC21ebDFmgd4Ft1XUBqewU3k3nWoKFsqljDxqiC0ukU
+         07Fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVPS8nAsgZHJ5UrUeKTT/NOAYX/hfAcPiUZ7fR9aTIc8VKBhrIZ4FbaDXPFjUgpouzSA7zTbdl+AnrwYYnr8WAQ@vger.kernel.org, AJvYcCWHKaf43IioxeDBe9PZmEsEgtgV648RfJQnU7ZHZTmIYwG5kQtCQkV4RZ2SNE6lAV/m7DWi2KgudLn965c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwN7WXACygzgGdv1EBFBM0mNY6vmx6nJb+fHppjfQgK5mObtFRM
+	qEmunVoSb7la9T2KfzHM/BsYOq3uSvVmRuLKPWtyxmjYFmBZbB7kJuv6du3e5r/lIg==
+X-Gm-Gg: ASbGncuQxJi55C5Zp2QQ7dEJWQ7eBtr+VGfp65yA16q7+prrdAxEzM6F7QxDxTzS1T9
+	xiT8uW3EEiv73m2tzDViWq2DVRAROZydbVfI/7pfKo2NvPoanyTXTvAZM+Xa7SkTNyj6qIhws2e
+	tJ5fW0hK9VgaRpHdzZmPld+NXtgnf6Rs6cxynBMohhB+2kXVl46XEX31Hah7asdKpDG6h1Pks+O
+	ozUCf4/q70yr371LepW+ySfGU/9+BsvpIKzpsRaMY9REjyDh8QoBZfKRVca9Qxum6fQ3CEXAWm+
+	lfaxKxFqarXIlnQNLbg/YknPopU0vdpgcE2OEHfOeAc/XNo7brJIrmV+wjNXEinL
+X-Google-Smtp-Source: AGHT+IEfsnSbzTHyDxFsr+hqkwQxcQYjceyAHDwsu2spopC0Uu00vPNa4OOk9Ujk6+K2F17feBA/Yg==
+X-Received: by 2002:a17:902:d2cb:b0:220:dff2:18ee with SMTP id d9443c01a7336-22368f819abmr268409195ad.14.1741093892134;
+        Tue, 04 Mar 2025 05:11:32 -0800 (PST)
+Received: from fedora.dns.podman ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7349fe2a668sm10824199b3a.30.2025.03.04.05.11.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 05:11:31 -0800 (PST)
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Jianbo Liu <jianbol@nvidia.com>,
+	Jarod Wilson <jarod@redhat.com>,
+	Steffen Klassert <steffen.klassert@secunet.com>,
+	Cosmin Ratiu <cratiu@nvidia.com>,
+	Petr Machata <petrm@nvidia.com>,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hangbin Liu <liuhangbin@gmail.com>
+Subject: [PATCHv4 net 0/3] bond: fix xfrm offload issues
+Date: Tue,  4 Mar 2025 13:11:17 +0000
+Message-ID: <20250304131120.31135-1-liuhangbin@gmail.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-"Daniel Almeida" <daniel.almeida@collabora.com> writes:
+The first patch fixes the incorrect locks using in bond driver.
+The second patch fixes the xfrm offload feature during setup active-backup
+mode. The third patch add a ipsec offload testing.
 
->> On 22 Jan 2025, at 13:39, Daniel Almeida <daniel.almeida@collabora.com> =
-wrote:
->>
->> Add support for registering IRQ handlers in Rust.
+v4: hold xs->lock for bond_ipsec_{del, add}_sa_all (Cosmin Ratiu)
+    use the defer helpers in lib.sh for selftest (Petr Machata)
+v3: move the ipsec deletion to bond_ipsec_free_sa (Cosmin Ratiu)
+v2: do not turn carrier on if bond change link failed (Nikolay Aleksandrov)
+    move the mutex lock to a work queue (Cosmin Ratiu)
 
-[...]
+Hangbin Liu (3):
+  bonding: move IPsec deletion to bond_ipsec_free_sa
+  bonding: fix xfrm offload feature setup on active-backup mode
+  selftests: bonding: add ipsec offload test
 
->> +/// use kernel::prelude::*;
->> +/// use kernel::irq::request::flags;
->> +/// use kernel::irq::request::Registration;
->
-> By the way, I wonder if a re-export would be beneficial? I find it a bit =
-tedious to specify this path.
->
-> It also clashes with kernel::driver::Registration and kernel::driver::drm=
-::Registration, so I find myself
-> continuously writing an alias for it, i.e.:
->
-> ```
-> Use kernel::irq::request::Registration as IrqRegistration;
-> Use kernel::irq::request::Handler as IrqHandler;
-> ```
->
-> Looking at mq.rs <http://mq.rs/>, I see Andreas did something similar:
->
-> ```
-> pub use operations::Operations;
-> pub use request::Request;
-> pub use tag_set::TagSet;
-> ```
->
-> Asking for opinions here since this is a bit cosmetic in nature. IMHO, at=
- least the =E2=80=98request=E2=80=99 part of the path has to go.
+ drivers/net/bonding/bond_main.c               |  55 +++++--
+ drivers/net/bonding/bond_netlink.c            |  16 +-
+ include/net/bonding.h                         |   1 +
+ .../selftests/drivers/net/bonding/Makefile    |   3 +-
+ .../drivers/net/bonding/bond_ipsec_offload.sh | 154 ++++++++++++++++++
+ .../selftests/drivers/net/bonding/config      |   4 +
+ 6 files changed, 208 insertions(+), 25 deletions(-)
+ create mode 100755 tools/testing/selftests/drivers/net/bonding/bond_ipsec_offload.sh
 
-For block I usually import `mq` if there can be clashes, then I can use
-`mq::Request`, which is not so bad. I think a reexport to make
-`irq::request::Request` available as `irq::Request` would be nice.
-
-In `mq`, most sub modules are not pub, so the only way to reach the
-types is through the reexport.
-
-
-Best regards,
-Andreas Hindborg
-
-
+-- 
+2.46.0
 
 
