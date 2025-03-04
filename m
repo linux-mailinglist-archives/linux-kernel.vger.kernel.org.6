@@ -1,143 +1,96 @@
-Return-Path: <linux-kernel+bounces-545717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3417AA4F0A1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:41:07 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5DD6A4F0A4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 854303A61C8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:40:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9620E7A3FD2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:41:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D777424C096;
-	Tue,  4 Mar 2025 22:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA3A24C096;
+	Tue,  4 Mar 2025 22:42:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M2j7fAbF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LXSUmnek"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B9F01F03D7;
-	Tue,  4 Mar 2025 22:40:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345B91F03D7;
+	Tue,  4 Mar 2025 22:42:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741128059; cv=none; b=Rmhy0gI/bh7ZUYR7wjOnaatnp7qxP0o+Njx01l/S2KkZpsZ1W2dezRSaWQkyTQqEHYx4kJVasiIUPGN6taxDISfPr1gEmo1a4ppgz8T+AuWtXpdqEfcK8ay6M2am0HHUAxmn2EB2IQKZ2QoF2DoaA/tPj2RE4SpO13m68KLoBaQ=
+	t=1741128125; cv=none; b=S0P9ZQzYbfaxec4p4AJsxkVH7HhV4N0pieImyi/HZcam/ZfSzQRZcs8Oo91KiiF576qxtNf6vAnHfB2iXrKj2NYD99AZesMh5nSKM8mDwHTxo3RoHqyqBaVIKAVDa3qfiGSHqvQEjHZdTC0+Vdlp2UIIP3gVML7v1g58veBeqOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741128059; c=relaxed/simple;
-	bh=GgF7ox4Ph7gA2gW2WSndHkdXRt9eV/weI4chuZiDDS4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VEc3H3wcMIA26DwXC4uNGxAYmmMlv4+3NZftYHDUOFxmVKZ/xn5SyZfKGiijKF4N2D9lD4+YLQa2D3aVqxc+pOGsFyr/n82JN7O08M7/4JedTF0fbnYszB5n/LVgCMvFeE7XWC4oh7w9+6lFQYUz9if0fE4c0NojN/S3hWSG6UQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M2j7fAbF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 89613C4CEE5;
-	Tue,  4 Mar 2025 22:40:58 +0000 (UTC)
+	s=arc-20240116; t=1741128125; c=relaxed/simple;
+	bh=lVnymA60HmSZG+igOrN6c3CxYLXL85eQGfRLhLo9tU8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=gPtyrIIgaWLVIwbyPIAjHh4rGAYvCJV/C3gwXb1PbtxIkMIoNSJ9z2xseulzXbNFB0a752f6vkq2yZYt1Wzeej2SOsuIdx/UrF7cFgryz1uo0dSf49JxjQdYU9boV09jZrDffsEUvjUmipzcQ8v/DCPG0DQw9t5BDRwGEX0dQ6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LXSUmnek; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 909C6C4CEE5;
+	Tue,  4 Mar 2025 22:42:04 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741128058;
-	bh=GgF7ox4Ph7gA2gW2WSndHkdXRt9eV/weI4chuZiDDS4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=M2j7fAbF1gjpo4YPkdbjydcS+xWJHI39qxa4j9ZRyszO3pkUslc7doLFZG2afz05s
-	 WVUrbnPYihAzmOsCVk8oXLngNtXIDNJ87hqkj9+GZVvT5mIYto658n9TDET10YLbaV
-	 8CW8gaEcBWZjqFGxM9dDY4Bf9OVAS1PYHmat90jaWghAfbfblPpZtItMdghIPiz7uF
-	 RzDHPfEmcWOOkrLAO0envq3qPX3VUwINPomTAKPTlo/xfKgDbOyC57AXHTqMZNJBix
-	 K5TDuUDqnN6qzMGoBZiuZUxM8HmuxJP36J3Pl/+u/qDwbtqf5AGKpeEp9Ic3FI2aAB
-	 730sIxB+to6Yg==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: linux-crypto@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH] lib/crc7: unexport crc7_be_syndrome_table
-Date: Tue,  4 Mar 2025 14:40:52 -0800
-Message-ID: <20250304224052.157915-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	s=k20201202; t=1741128124;
+	bh=lVnymA60HmSZG+igOrN6c3CxYLXL85eQGfRLhLo9tU8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LXSUmnek0zRIOQ3Vwq8xRnAnSsU76SfnPjOM9g/zyVE/mZHl45099Sh6ATGV1U6cS
+	 0zmvuUEBkqFQZKs6YbBLmi+uNN+rzxeMxMyqKMsa2HZJz38hrhXPG7L2Pp3tyikai0
+	 oMV5uv/XBenF1FpDBh90ThH1FFkFH/R4XfS2RE/LX9sjglgl14beqR1zzGtS9b97D7
+	 BPcI7EPu8kHkZNxbWRNcG3bnGc3e8eCWQWySeJt46fIbOIiN2Oo9Ln17MDohBmu91B
+	 p96J4R+RHP1H1rvPfR4tyYEf3tcn/rEFgkIEwRD5F1ourOiAsSMEpQYDw903H+SEQ6
+	 svI03azfAeWuQ==
+Date: Tue, 4 Mar 2025 16:42:03 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bingbu Cao <bingbu.cao@linux.intel.com>
+Subject: Re: [PATCH] PCI: Check BAR index for validity
+Message-ID: <20250304224203.GA260968@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304143112.104190-2-phasta@kernel.org>
 
-From: Eric Biggers <ebiggers@google.com>
+On Tue, Mar 04, 2025 at 03:31:13PM +0100, Philipp Stanner wrote:
+> Many functions in PCI use accessor macros such as pci_resource_len(),
+> which take a BAR index. That index, however, is never checked for
+> validity, potentially resulting in undefined behavior by overflowing the
+> array pci_dev.resource in the macro pci_resource_n().
+> 
+> Since many users of those macros directly assign the accessed value to
+> an unsigned integer, the macros cannot be changed easily anymore to
+> return -EINVAL for invalid indexes. Consequently, the problem has to be
+> mitigated in higher layers.
+> 
+> Add pci_bar_index_valid(). Use it where appropriate.
+> 
+> Reported-by: Bingbu Cao <bingbu.cao@linux.intel.com>
+> Closes: https://lore.kernel.org/all/adb53b1f-29e1-3d14-0e61-351fd2d3ff0d@linux.intel.com/
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
 
-Since neither crc7_be_syndrome_table nor crc7_be_byte() are used outside
-lib/crc7.c, fold them into lib/crc7.c.
+Applied to pci/devres for v6.15, thanks.
 
-Signed-off-by: Eric Biggers <ebiggers@google.com>
----
- include/linux/crc7.h | 7 -------
- lib/crc7.c           | 6 ++----
- 2 files changed, 2 insertions(+), 11 deletions(-)
+I reversed this:
 
-diff --git a/include/linux/crc7.h b/include/linux/crc7.h
-index b462842f3c32c..61d34749e437d 100644
---- a/include/linux/crc7.h
-+++ b/include/linux/crc7.h
-@@ -1,15 +1,8 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- #ifndef _LINUX_CRC7_H
- #define _LINUX_CRC7_H
- #include <linux/types.h>
- 
--extern const u8 crc7_be_syndrome_table[256];
--
--static inline u8 crc7_be_byte(u8 crc, u8 data)
--{
--	return crc7_be_syndrome_table[crc ^ data];
--}
--
- extern u8 crc7_be(u8 crc, const u8 *buffer, size_t len);
- 
- #endif
-diff --git a/lib/crc7.c b/lib/crc7.c
-index 3848e313b7224..8dd991cc61146 100644
---- a/lib/crc7.c
-+++ b/lib/crc7.c
-@@ -5,18 +5,17 @@
- 
- #include <linux/types.h>
- #include <linux/module.h>
- #include <linux/crc7.h>
- 
--
- /*
-  * Table for CRC-7 (polynomial x^7 + x^3 + 1).
-  * This is a big-endian CRC (msbit is highest power of x),
-  * aligned so the msbit of the byte is the x^6 coefficient
-  * and the lsbit is not used.
-  */
--const u8 crc7_be_syndrome_table[256] = {
-+static const u8 crc7_be_syndrome_table[256] = {
- 	0x00, 0x12, 0x24, 0x36, 0x48, 0x5a, 0x6c, 0x7e,
- 	0x90, 0x82, 0xb4, 0xa6, 0xd8, 0xca, 0xfc, 0xee,
- 	0x32, 0x20, 0x16, 0x04, 0x7a, 0x68, 0x5e, 0x4c,
- 	0xa2, 0xb0, 0x86, 0x94, 0xea, 0xf8, 0xce, 0xdc,
- 	0x64, 0x76, 0x40, 0x52, 0x2c, 0x3e, 0x08, 0x1a,
-@@ -46,11 +45,10 @@ const u8 crc7_be_syndrome_table[256] = {
- 	0x2e, 0x3c, 0x0a, 0x18, 0x66, 0x74, 0x42, 0x50,
- 	0xbe, 0xac, 0x9a, 0x88, 0xf6, 0xe4, 0xd2, 0xc0,
- 	0x1c, 0x0e, 0x38, 0x2a, 0x54, 0x46, 0x70, 0x62,
- 	0x8c, 0x9e, 0xa8, 0xba, 0xc4, 0xd6, 0xe0, 0xf2
- };
--EXPORT_SYMBOL(crc7_be_syndrome_table);
- 
- /**
-  * crc7_be - update the CRC7 for the data buffer
-  * @crc:     previous CRC7 value
-  * @buffer:  data pointer
-@@ -63,11 +61,11 @@ EXPORT_SYMBOL(crc7_be_syndrome_table);
-  *
-  */
- u8 crc7_be(u8 crc, const u8 *buffer, size_t len)
- {
- 	while (len--)
--		crc = crc7_be_byte(crc, *buffer++);
-+		crc = crc7_be_syndrome_table[crc ^ *buffer++];
- 	return crc;
- }
- EXPORT_SYMBOL(crc7_be);
- 
- MODULE_DESCRIPTION("CRC7 calculations");
+> +static inline bool pci_bar_index_is_valid(int bar)
+> +{
+> +	if (bar < 0 || bar >= PCI_NUM_RESOURCES)
+> +		return false;
+> +
+> +	return true;
+> +}
 
-base-commit: 13f3d13d88b5dcba104a204fcbee61c75f8407d0
--- 
-2.48.1
+so the test describes valid indexes, not invalid ones:
 
+  if (bar >= 0 && bar < PCI_NUM_RESOURCES)
+    return true;
+
+  return false;
 
