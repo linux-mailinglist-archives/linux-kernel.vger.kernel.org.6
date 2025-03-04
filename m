@@ -1,55 +1,56 @@
-Return-Path: <linux-kernel+bounces-543067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41202A4D122
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:44:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF326A4D124
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:45:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B12023ACF8A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:44:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8FAB171A93
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173C515383A;
-	Tue,  4 Mar 2025 01:44:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62B1916DC28;
+	Tue,  4 Mar 2025 01:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="C/insOKg"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="qvKZ515N"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B978A13AA27
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:44:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E481613C8E2
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:44:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741052668; cv=none; b=WFqvoTm0xle+xhAfNoeycXbKMQDpuEPOANvL9IiM5oh1imBtAcOrolIgCst0lqyacip5juleTyOw/FOMP8v7r2wrBxMreky81O7nbzLlxOntqWx9eD3T4OLHBvFTDSJu/WDkh10EH6bjncC/maEB5JibAK59s96p92nY6gv2vpA=
+	t=1741052669; cv=none; b=SW+0NhHgdugXDK3EjYobDTxhaFFzY65tmOvSLGsC4qWz7V/pTCpmhcSBpVh1csSJbqHytmMN6AFA21OKA9ff6gtS1xDcfcfH/y+bALs1s12/vACY0N47uerioG7m0T+EnHoQEMB597zqdow7TMMJ1e6PULWnG0dZ6szafLkrrsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741052668; c=relaxed/simple;
-	bh=SBKosOyQ+vqRRzYCaSZdG4Ns7DFVxhSrWT6ixWWkh/c=;
+	s=arc-20240116; t=1741052669; c=relaxed/simple;
+	bh=JVO6B5huh7eGDo+k3A1fG3SKCxGyB11XeWKMxuuZ+rw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=KOCHHoT7b/vRz2I/8h5cRPxnA1hw3FloMn+u88nqNirzJKE+W09J0gzcAhqzvi4ycsQPQNyGcrZsGjDwA2ubVAdfLp1345RQNEkKTFYabBDh310WUcpeXJz4NE0V54uBagmD8Ffe1uVEls7q+mKGHlOlwjXMZstXef7sbdGr/5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=C/insOKg; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=bEDBCX36OOozwrN/l59yEGdOO+nzANE/aX0t08XFnUmQANAL46ftNk3FY8oDX+o5CDdKb71BOYptVagDPu+OWpprp4ZGLrNo0PWR7HdirbvXZA2jhoE6K0ncOZdpCLQLa8tWWRDaPzwFGquFfqK9KOqi1mA3yuW25BNNwXFeNw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=qvKZ515N; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741052659;
-	bh=SBKosOyQ+vqRRzYCaSZdG4Ns7DFVxhSrWT6ixWWkh/c=;
+	s=mail; t=1741052660;
+	bh=JVO6B5huh7eGDo+k3A1fG3SKCxGyB11XeWKMxuuZ+rw=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=C/insOKgXcw6ARzrlNpuhz9Fm9s56VDre1JMRsUowSRkvTFqUJiI7XLv0/eQVGX1K
-	 Xz1cW0Pn/AiugnEvp5T15VjRpP/eS4MpGsDWoEGoSQCo67xJBsbkiqqFwUza8hwD2p
-	 LLCeQk/y9AA8d1PdEoqFHhVse34HXHejm/WJawNMvEWSoh+a6B/ehSgQGUSEGMGwxA
-	 dSCI2L56Yc4xHTGGXqHoPb1lSA9SX+RdjhDpVy5tCe/05S6Zp1Ig/CcbU3iVmzxS5g
-	 EOu//NGkvRMqeK71TGl50825S5+tTmakZXggSln/5t2mBTECrwxc4itn/Gf3oLxYIX
-	 6nFjpseAMQsFA==
+	b=qvKZ515NVdudG5/INUpwF68Tb5cdYb37WTMmQAaQs7oDwMfuxnf292TUulUtMR6tB
+	 xr1OeuVrmBfAaJyTiIf47CFveoq9ATnHEhjexNaflUkOtpC3/cnEf0fIWJ0/GnWRQK
+	 VH6s/axpAiBD412eAjjfVCVxeCa9OED/MXWDm7fLqqvtsxdT6lHI+2BChJYnlhNqb4
+	 Lgz6ygplXtbqCDLXRIoByF7Wa7Lx0z+3YqRbXdFG+fQsfvJqSHZrdEDNHQ8uwhD5Zv
+	 USjmJBjdd7CDyL2QtGLA2fsz9W0hZABcQP6/TAk84kjnrU7z3zSOuql7q6buI83nx1
+	 ehopYz/8WkOoQ==
 Received: from localhost (unknown [188.27.58.83])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id E9D9817E0E8E;
-	Tue,  4 Mar 2025 02:44:18 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id CEB6B17E0FA7;
+	Tue,  4 Mar 2025 02:44:19 +0100 (CET)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 04 Mar 2025 03:44:01 +0200
-Subject: [PATCH v4 02/12] phy: hdmi: Add color depth configuration
+Date: Tue, 04 Mar 2025 03:44:02 +0200
+Subject: [PATCH v4 03/12] phy: rockchip: samsung-hdptx: Fix clock ratio
+ setup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-phy-sam-hdptx-bpc-v4-2-8657847c13f7@collabora.com>
+Message-Id: <20250304-phy-sam-hdptx-bpc-v4-3-8657847c13f7@collabora.com>
 References: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
 In-Reply-To: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -71,33 +72,39 @@ Cc: Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
 
-Extend the HDMI configuration options to allow managing bits per color
-channel.  This is required by some PHY drivers such as
-rockchip-samsung-hdptx.
+The switch from 1/10 to 1/40 clock ratio must happen when exceeding the
+340 MHz rate limit of HDMI 1.4, i.e. when entering the HDMI 2.0 domain,
+and not before.
 
+While at it, introduce a define for this rate limit constant.
+
+Fixes: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- include/linux/phy/phy-hdmi.h | 2 ++
- 1 file changed, 2 insertions(+)
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/phy/phy-hdmi.h b/include/linux/phy/phy-hdmi.h
-index 6a696922bc7f29af63d88646701b2c0fcee5c885..f0ec963c6e84f1b7728acafc824dff191c6b873d 100644
---- a/include/linux/phy/phy-hdmi.h
-+++ b/include/linux/phy/phy-hdmi.h
-@@ -9,11 +9,13 @@
- /**
-  * struct phy_configure_opts_hdmi - HDMI configuration set
-  * @tmds_char_rate: HDMI TMDS Character Rate in Hertz.
-+ * @bpc: Bits per color channel.
-  *
-  * This structure is used to represent the configuration state of a HDMI phy.
-  */
- struct phy_configure_opts_hdmi {
- 	unsigned long long tmds_char_rate;
-+	unsigned int bpc;
- };
+diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+index f88369864c50e4563834ccbb26f1f9f440e99271..cf2c3a46604cb9d8c26fe5ec8346904e0b62848f 100644
+--- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
++++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+@@ -320,6 +320,7 @@
+ #define LN3_TX_SER_RATE_SEL_HBR2_MASK	BIT(3)
+ #define LN3_TX_SER_RATE_SEL_HBR3_MASK	BIT(2)
  
- #endif /* __PHY_HDMI_H_ */
++#define HDMI14_MAX_RATE			340000000
+ #define HDMI20_MAX_RATE			600000000
+ 
+ enum dp_link_rate {
+@@ -1072,7 +1073,7 @@ static int rk_hdptx_ropll_tmds_mode_config(struct rk_hdptx_phy *hdptx,
+ 
+ 	regmap_write(hdptx->regmap, LNTOP_REG(0200), 0x06);
+ 
+-	if (rate >= 3400000) {
++	if (rate > HDMI14_MAX_RATE / 100) {
+ 		/* For 1/40 bitrate clk */
+ 		rk_hdptx_multi_reg_write(hdptx, rk_hdtpx_tmds_lntop_highbr_seq);
+ 	} else {
 
 -- 
 2.48.1
