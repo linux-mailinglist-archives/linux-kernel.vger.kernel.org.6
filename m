@@ -1,246 +1,140 @@
-Return-Path: <linux-kernel+bounces-543532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724F2A4D6D5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:43:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 096B3A4D6CE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:42:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCD1116CB9E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:43:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67EFA188E041
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:42:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FF21FC7D6;
-	Tue,  4 Mar 2025 08:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0941FC7E5;
+	Tue,  4 Mar 2025 08:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AIDGOeLq"
-Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mETPgI23"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447011FBEB1;
-	Tue,  4 Mar 2025 08:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 755AB1FCF63
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741077789; cv=none; b=rX8DGwKuE7qhVJLP0JWrNuqu408C+JugkihxNyouluUnkRQKXiJd3j9zD8T93oWrKpdwixhv2NtPHRYO7JTBEktDlO0dob+pXSzXgRqmojqaSuIbIXhSgR88I1HbJPuyIV8CL9Z47h9qCLeRedr+cUCeRXNvjs61u5UZJhwysZo=
+	t=1741077705; cv=none; b=SMtKePXJrUGHJZwSeDD8rmBP9a6HrjysTyTjvS+iViuczuGMfwpvRgkdhqBj8v/CLs3kITvFyNfEfUATIqLIIMUZ8OjUvJGuNYwRHyAxKrNLTrzQ4UZrNlLFRHTYh8/0hdzUslj+TS0VYrLxnm19zbCLg4ClnpMPxFEA/yQXeUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741077789; c=relaxed/simple;
-	bh=dTtL6Jur3atffX/frcpKEb7wF2vN7b/LS2OXFn6lV18=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hXGmOE7nPabjxpT1Y/cLH9X/dS6RdOICbc9ZrNG3dzB+h7kE3uwn3Iv/XS30KiPQHfBzeyOcDVvz4cz1y54vUULtzS+ger8frHOwDW2fyRSmeDTiPXXER2BgxF/4oHF9yikWpLXQo6gUcvf+8GOdCEimi12Z2s1XEtqB9Ut/Zms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AIDGOeLq; arc=none smtp.client-ip=209.85.128.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-6f7031ea11cso53378687b3.2;
-        Tue, 04 Mar 2025 00:43:06 -0800 (PST)
+	s=arc-20240116; t=1741077705; c=relaxed/simple;
+	bh=dQMWqa7bqGUsuYvK1/Ia2Th2yYYxZTfZ4zTTgbD3dM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iXaqOhTd2LGr77k0i6inUUL2wtd64yk1WGxIvvbwiPt9p/iMBJyMjnwoZhVFgT+QmbGijdnJt4UxLsLoSnlklLWTDoaHoutjTQtGrQsRux4EFGsUkFp0YCHlBPdajyzXBrSel4qLjxotblY+862Pf7d7V6U6LeOTmS113z/EwcE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mETPgI23; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf4b376f2fso499682466b.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:41:42 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741077786; x=1741682586; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H7DJBIx3iIusUVOEMB5nnJFYTmd3nur6e8lzlUxwqLk=;
-        b=AIDGOeLqtovb2yr+ZgA+DOQLDoBpM+VLZLQ6LqQLe7ezhAUiIt/zM/qgq/qYacwoAp
-         3Q8m8Hd3RboRGSrhWp5Ufsoci465g9q+/8E2trcnxrB/Ci9ZDAoITORfXJVTIhrtOvco
-         Kia003XJ9G0Ok5Nmsc7q4ugPMFfbT9cPGRXmmvKr6YqFvpg1WIIQzRJ0EbTvpOA0ehOr
-         4xXIo5CPzSshvoHiQ5gaj+5D/scYU7jNGESw+ovghUL+PC2etQ4yFaB4TeTVDKAfbHGq
-         PubAT+Aprwx/B6J4lmT0JpPKwv+IkOzdxKbuEWUMsOmt8veB2ID7uQGfElkNhV2Q0xUM
-         WA9Q==
+        d=linaro.org; s=google; t=1741077701; x=1741682501; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=56LRZhimeVf0548v2DjrELpnYIUuGBcJG2m3Hu8yBtw=;
+        b=mETPgI23iMZxrX7GFlSZRwwi7jXMWbtYR4M3vRphfBCECl58WfB81Rx9vB6ka0K3t2
+         L/LFUswCMPP7zQsX2+qYYyvXJlIFe0+96ZuZB8QIMW20xuVvEn+22VTPPwE1ykFp8UET
+         QugvwKbKib9yg5nXJnasC8WWRhvPtotg0o5LLcT2L7QDr4n/HgpZlFourgonBQLEcyHz
+         41qc2oNbkw5hA/ZW/Afs2EeB6X3vq1X7y8SunsRQFmSsV8LSHWEd8ogu72H0yiamGsVk
+         8v6oVEFyYisedodPQ4g7etioVcdXT7oFxC3SNWy+UxjDNYvR6ytzHziVV9qqpUhDN4/i
+         ShJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741077786; x=1741682586;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H7DJBIx3iIusUVOEMB5nnJFYTmd3nur6e8lzlUxwqLk=;
-        b=n+U0UZ+EaIa8Sb27vgIcfGz7ReXhnBprW6X3ld2ZDVFpkBWWfOlSC41oiy0KE2y1Ae
-         EGaF9KT6mk6gid/UPF1Gp2A4QZuYWN2kmKYsJxelCUTynJG+sZ/3ln3Sh2pu930eu6lz
-         R/QWpDRRuhu/khajEtOTAXP3CjkIURGRg1lshCazzWJAFM/Hj9dKYv6QjDBJhNg4Vv81
-         s3XJT6J7XxdNNx4lv6fTXsHKgwTwMQ5PG2l9nw3IlcFnzT5NXuY/IONlinOuh3X99jUp
-         CQjeqQQij2hSBjVT51SsZKfBXwuMUZhi2CbM5o4IpZ/tIaCp58oKwBcxVJDkkKTMOSgS
-         NJPA==
-X-Forwarded-Encrypted: i=1; AJvYcCUEQVo23PidUQfh6JFWad3O8S4RzhMF/jlZcCJ/pUT+Y1Z7yx0GRiUP6kayTU3YeFa6Nh0=@vger.kernel.org, AJvYcCUmmj2VOOPZDRCVLXHgQq2oWipJ+Qcp4Wowv61q7Q94RV3E/wriIREPebbzx1W4lVZANgB1/y6HPuUTuuusI7NgYNVb@vger.kernel.org, AJvYcCWtbmerjTOG9ZlHCzx17spZfbkyFbnmeWDb10E963AlnC8/xaQlG94aWnbNxltv3c35c+5kZSDETyFLg/J5@vger.kernel.org, AJvYcCXfODhJq3pDxbor7egvnuhh7w81C/s4tSYweG0ffzqvWcqUPIcx4u+Z1BBZtV9PIB73BOgXg4CJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmefm+1N1fDeAWJhmlOETXER/fGGV6NporMvSKsWdlX80J8eeZ
-	kaHc4dWpp4UmhKwWe1PGvXTto4IxifGJhpaHCDwsr77a9Ufgk2cxRxzfr55deMMRHGZQXREqvaj
-	7QJYQLRvP7VpE8t4bkfk5RdpWhvc=
-X-Gm-Gg: ASbGnctJeFSUghaZsn1bZ8wUQsn0YP60p91M0+a6EBKtu4qQR2S8jxY2Cq5p98q7Wgf
-	3fuK4ydWBITqBG+xiCi+BC60JFgjZSzPdokyYDIps+u5kgnV90yPOdyKyB5jxNnOgNCHF1+PygX
-	I16nNOly15Nb9uFvjGkgmLqm4s/A==
-X-Google-Smtp-Source: AGHT+IFwKhleghfxmR4fo46mZcDQS529bArSvfkTfmrf2+HZom9bVtkcaUWWW29c+BaFyOYjznUloBGTXBdQLw3Z1i8=
-X-Received: by 2002:a05:690c:6303:b0:6fd:3f88:e0a9 with SMTP id
- 00721157ae682-6fd49e2a409mr227818067b3.0.1741077786117; Tue, 04 Mar 2025
- 00:43:06 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741077701; x=1741682501;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=56LRZhimeVf0548v2DjrELpnYIUuGBcJG2m3Hu8yBtw=;
+        b=EGM3blyguwXwzZiKUa8HjvEO/YT85KxCCez8oJsVMdO9FpU8Hpe2VuHCbDOypiCw4U
+         1J+4Nl48r3Vw3XN8P6V3GSTW0MfGHJcVa5MgMOfMBq2fC3U4PtPMYYpq2CQyguYBDa/P
+         CfYQbi8UjPGKySy6iHLucQgcufLVExGdrItOdyGTjV9NQnCfFFYNhNMUwkcn3M8TbMyK
+         XP5QKWDEaL9NEkeoZCUW7V9Hrt9FHIdouWvtUTeh5/kzydclMfIP0zKV0LQLJIE8fGVh
+         tw3LiOkP/8uWS1WMyC8Cy4XDPkX6uC+dm42TgP2/37KHNsMYHPIXxT6Y94tSW+6EZLBM
+         HJkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUn/tmJbBaPtI6o7bBNSZmHrRlyw2LayjTxqAoEoU72/ed84qILutk7wFzBcNweXJ6dEnfFsF4sPt0+hE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+7iOA6pjcVA4nAePdE2rHGBeZzJ+3FhTT8Bvo8p7PF0+i/cIp
+	UCBHv1b+T2m/EYh2hTlsdfvPJhQCLpF8tJ+yKbJumugn+xzBQAEJa9wIhst2xsM=
+X-Gm-Gg: ASbGncsMauYXjaNJnPkBTn+iWPWYBSjYvYzETOpgsVcANNYj2uzcZZbYQpWJ5mc1AW/
+	hn+2E6plrxV9U8qKHfTN/50ZCCpC+Mm6MOpYqkjbOxeUKOdQ8oAR4ddDJNOQvWhSw83NyY16V8/
+	Xpg9a5SXkgARQpd700MY7WNex98KfVnMwulnFUnBDEwR4J+fgEGQ+QsWwAjRr7BCp2e1R+8m/WP
+	MKPJbHOkbMIkrwp5pHI4nNpW2o90yXiP/20GcQyI+nSgg+6fW03Fy5XM3u/xEn/7YhUOXK9h62X
+	ddeJm4hZCmwN7KoFUpvbBxcknutkknbjYeDBgiZnWQ==
+X-Google-Smtp-Source: AGHT+IFFHM/nljeEtmfpwAYQ5fCe3mzYlZ/kbhPchbUbj2wuqBNp/7U42a+daD7qurHBY27yA6v3Yg==
+X-Received: by 2002:a17:907:7d89:b0:abf:7832:bf5 with SMTP id a640c23a62f3a-abf783244f6mr732543466b.34.1741077700633;
+        Tue, 04 Mar 2025 00:41:40 -0800 (PST)
+Received: from linaro.org ([62.231.96.41])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf529feacfsm557445466b.153.2025.03.04.00.41.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 00:41:40 -0800 (PST)
+Date: Tue, 4 Mar 2025 10:41:38 +0200
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
+	Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
+	Kamal Wadhwa <quic_kamalw@quicinc.com>,
+	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
+	linux-pwm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3 0/3] leds: rgb: leds-qcom-lpg: PWM fixes
+Message-ID: <Z8a8wrEcBuZrGm2/@linaro.org>
+References: <20250303-leds-qcom-lpg-fix-max-pwm-on-hi-res-v3-0-62703c0ab76a@linaro.org>
+ <lvi75asit3ati7wwnyae6rowycr3veodswu7blbnzbrq646fgi@iksn4qas3dwt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303132837.498938-1-dongml2@chinatelecom.cn>
- <20250303132837.498938-2-dongml2@chinatelecom.cn> <20250303165454.GB11590@noisy.programming.kicks-ass.net>
- <CADxym3aVtKx_mh7aZyZfk27gEiA_TX6VSAvtK+YDNBtuk_HigA@mail.gmail.com>
- <20250304053853.GA7099@noisy.programming.kicks-ass.net> <20250304061635.GA29480@noisy.programming.kicks-ass.net>
- <CADxym3bS_6jpGC3vLAAyD20GsR+QZofQw0_GgKT8nN3c-HqG-g@mail.gmail.com>
-In-Reply-To: <CADxym3bS_6jpGC3vLAAyD20GsR+QZofQw0_GgKT8nN3c-HqG-g@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Tue, 4 Mar 2025 16:41:29 +0800
-X-Gm-Features: AQ5f1Jq2_mS0v23bn6W1X-IWDb9MW8dDTnlwz6_dNKl9ybY4p55hAFXAjC92mhs
-Message-ID: <CADxym3bS6XdGFhKeEm5TKD-_ubEQB+yTrd=7_L_CDn4xthe-Vg@mail.gmail.com>
-Subject: Re: [PATCH v4 1/4] x86/ibt: factor out cfi and fineibt offset
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com, 
-	catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, ast@kernel.org, 
-	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, yonghong.song@linux.dev, john.fastabend@gmail.com, 
-	kpsingh@kernel.org, sdf@fomichev.me, jolsa@kernel.org, davem@davemloft.net, 
-	dsahern@kernel.org, mathieu.desnoyers@efficios.com, nathan@kernel.org, 
-	nick.desaulniers+lkml@gmail.com, morbo@google.com, samitolvanen@google.com, 
-	kees@kernel.org, dongml2@chinatelecom.cn, akpm@linux-foundation.org, 
-	riel@surriel.com, rppt@kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, netdev@vger.kernel.org, llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <lvi75asit3ati7wwnyae6rowycr3veodswu7blbnzbrq646fgi@iksn4qas3dwt>
 
-On Tue, Mar 4, 2025 at 3:47=E2=80=AFPM Menglong Dong <menglong8.dong@gmail.=
-com> wrote:
->
-> On Tue, Mar 4, 2025 at 2:16=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
-rg> wrote:
-> >
-> > On Tue, Mar 04, 2025 at 06:38:53AM +0100, Peter Zijlstra wrote:
-> > > On Tue, Mar 04, 2025 at 09:10:12AM +0800, Menglong Dong wrote:
-> > > > Hello, sorry that I forgot to add something to the changelog. In fa=
-ct,
-> > > > I don't add extra 5-bytes anymore, which you can see in the 3rd pat=
-ch.
-> > > >
-> > > > The thing is that we can't add extra 5-bytes if CFI is enabled. Wit=
-hout
-> > > > CFI, we can make the padding space any value, such as 5-bytes, and
-> > > > the layout will be like this:
-> > > >
-> > > > __align:
-> > > >   nop
-> > > >   nop
-> > > >   nop
-> > > >   nop
-> > > >   nop
-> > > > foo: -- __align +5
-> > > >
-> > > > However, the CFI will always make the cfi insn 16-bytes aligned. Wh=
-en
-> > > > we set the FUNCTION_PADDING_BYTES to (11 + 5), the layout will be
-> > > > like this:
-> > > >
-> > > > __cfi_foo:
-> > > >   nop (11)
-> > > >   mov $0x12345678, %reg
-> > > >   nop (16)
-> > > > foo:
-> > > >
-> > > > and the padding space is 32-bytes actually. So, we can just select
-> > > > FUNCTION_ALIGNMENT_32B instead, which makes the padding
-> > > > space 32-bytes too, and have the following layout:
-> > > >
-> > > > __cfi_foo:
-> > > >   mov $0x12345678, %reg
-> > > >   nop (27)
-> > > > foo:
-> > >
-> > > *blink*, wtf is clang smoking.
-> > >
-> > > I mean, you're right, this is what it is doing, but that is somewhat
-> > > unexpected. Let me go look at clang source, this is insane.
-> >
-> > Bah, this is because assemblers are stupid :/
-> >
-> > There is no way to tell them to have foo aligned such that there are at
-> > least N bytes free before it.
-> >
-> > So what kCFI ends up having to do is align the __cfi symbol to the
-> > function alignment, and then stuff enough nops in to make the real
-> > symbol meet alignment.
-> >
-> > And the end result is utter insanity.
-> >
-> > I mean, look at this:
-> >
-> >       50:       2e e9 00 00 00 00       cs jmp 56 <__traceiter_initcall=
-_level+0x46>     52: R_X86_64_PLT32      __x86_return_thunk-0x4
-> >       56:       66 2e 0f 1f 84 00 00 00 00 00   cs nopw 0x0(%rax,%rax,1=
-)
-> >
-> > 0000000000000060 <__cfi___probestub_initcall_level>:
-> >       60:       90                      nop
-> >       61:       90                      nop
-> >       62:       90                      nop
-> >       63:       90                      nop
-> >       64:       90                      nop
-> >       65:       90                      nop
-> >       66:       90                      nop
-> >       67:       90                      nop
-> >       68:       90                      nop
-> >       69:       90                      nop
-> >       6a:       90                      nop
-> >       6b:       b8 b1 fd 66 f9          mov    $0xf966fdb1,%eax
-> >
-> > 0000000000000070 <__probestub_initcall_level>:
-> >       70:       2e e9 00 00 00 00       cs jmp 76 <__probestub_initcall=
-_level+0x6>      72: R_X86_64_PLT32      __x86_return_thunk-0x4
-> >
-> >
-> > That's 21 bytes wasted, for no reason other than that asm doesn't have =
-a
-> > directive to say: get me a place that is M before N alignment.
-> >
-> > Because ideally the whole above thing would look like:
-> >
-> >       50:       2e e9 00 00 00 00       cs jmp 56 <__traceiter_initcall=
-_level+0x46>     52: R_X86_64_PLT32      __x86_return_thunk-0x4
-> >       56:       66 2e 0f 1f 84          cs nopw (%rax,%rax,1)
-> >
-> > 000000000000005b <__cfi___probestub_initcall_level>:
-> >       5b:       b8 b1 fd 66 f9          mov    $0xf966fdb1,%eax
-> >
-> > 0000000000000060 <__probestub_initcall_level>:
-> >       60:       2e e9 00 00 00 00       cs jmp 76 <__probestub_initcall=
-_level+0x6>      72: R_X86_64_PLT32      __x86_return_thunk-0x4
->
-> Hi, peter. Thank you for the testing, which is quite helpful
-> to understand the whole thing.
->
-> I was surprised at this too. Without CALL_PADDING, the cfi is
-> nop(11) + mov; with CALL_PADDING, the cfi is mov + nop(11),
-> which is weird, as it seems that we can select CALL_PADDING if
-> CFI_CLANG to make things consistent. And I  thought that it is
-> designed to be this for some reasons :/
->
-> Hmm......so what should we do now? Accept and bear it,
-> or do something different?
->
-> I'm good at clang, so the solution that I can think of is how to
+On 25-03-04 07:29:46, Uwe Kleine-König wrote:
+> Hello,
+> 
+> On Mon, Mar 03, 2025 at 01:52:49PM +0200, Abel Vesa wrote:
+> > The PWM allow configuring the PWM resolution from 8 bits PWM
+> > values up to 15 bits values, for the Hi-Res PWMs, and then either
+> > 6-bit or 9-bit for the normal PWMs. The current implementation loops
+> > through all possible resolutions (PWM sizes), for the PWM subtype, on top
+> > of the already existing process of determining the prediv, exponent and
+> > refclk.
+> > 
+> > The first and second issues are related to capping the computed PWM
+> > value.
+> 
+> I just took a very quick look. I'd say squash the first and second patch
+> into a single one. Splitting a change that fixes the same issue in the
+> two branches of an if condition has no benefit.
 
-*not good at*
+Actually, the first two patches fix different commits.
+The first patch fixes a commit that is only in linux-next for now,
+while the second patch fixes a commit that has been merged in 6.4.
 
-> bear it :/
->
-> According to my testing, the text size will increase:
->
-> ~2.2% if we make FUNCTION_PADDING_BYTES 27 and select
-> FUNCTION_ALIGNMENT_16B.
->
-> ~3.5% if we make FUNCTION_PADDING_BYTES 27 and select
-> FUNCTION_ALIGNMENT_32B.
->
-> We don't have to select FUNCTION_ALIGNMENT_32B, so the
-> worst case is to increase ~2.2%.
->
-> What do you think?
->
-> Thanks!
-> Menglong Dong
->
-> >
-> >
-> >
+So they need to be separate patches.
+
+> 
+> Other than that this patch set would also benefit from what I wrote in
+> the review of the other patch you send: Please mention a request where
+> the result becomes wrong. This considerably simplifies understanding
+> your changes.
+
+Sure. Will describe the 5ms vs 4.26ms period scenario. Hope that's OK.
+
+> 
+> Thanks
+> Uwe
+
+Thanks for reviewing,
+Abel
 
