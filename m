@@ -1,39 +1,54 @@
-Return-Path: <linux-kernel+bounces-544147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22F95A4DDE7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:28:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8326A4DDE5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:28:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5A4E178A65
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:28:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B95C7A384F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:27:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7019F202C55;
-	Tue,  4 Mar 2025 12:28:42 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BD12010E3;
-	Tue,  4 Mar 2025 12:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E607E202989;
+	Tue,  4 Mar 2025 12:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="bHuJpAX9"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8F478F4C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 12:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091322; cv=none; b=AI7kaeoOZgCDAXSK1TO8kBMdJtfA/swJcsr4RilxMoM/HgijIVSFS3mwVnX4i9VVayirfDTAvCXShatT7Y+3fsVSk/gnFvGApmkYSAzLzxP1fgp5Bl73xcOVo2Oyyr63XejqImHdmjdlkKQYWifFJvkv17w2oZUNYj3+cmt6YO0=
+	t=1741091321; cv=none; b=aBFY676eNGQVvhsICMiUf3N+Xkc0bzTF8OUKAIS/0RvMTUaJct81FhwJUQUvXjcZgoGw5BZKjD0wXJmiCxTFpUbJoP5i7uL3G11XXPfkQp59eJpnONkcpYoCQJ9luwuJCOiqTPDrEFGEdsmdN+cDcUJCHeIpEYkWoZUuWGpf/ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091322; c=relaxed/simple;
-	bh=7CVK5RriPNiuTywe/Ytj/4JBL8PgijKTyYnsve+78ps=;
+	s=arc-20240116; t=1741091321; c=relaxed/simple;
+	bh=hXQr2JDc6VwEA4oybx8Hdat3clPEU6hQMlM5Zb8perI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yp1sozUlYMwbOx2jg1EdVbGJP2PL9lWI7UidI9kK8d1QZvd/wLkoBvy6lOWZKntebMNAKKoiSq8k6yormRrrgIpP7wTgdxX06tryJc03lc2ErIhIMd4TOgTboFiZsY84xTbQRFisqmsNHJkw/iMCf4euQoxERyjFF2u6ahyxcC4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4573BFEC;
-	Tue,  4 Mar 2025 04:28:52 -0800 (PST)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54D7C3F5A1;
-	Tue,  4 Mar 2025 04:28:36 -0800 (PST)
-Message-ID: <0be31ecd-4386-4eb6-ad6f-a4409a3fc6ad@arm.com>
-Date: Tue, 4 Mar 2025 12:28:23 +0000
+	 In-Reply-To:Content-Type; b=spb5kE1gy8plvumHJwg4Qk6dyYcFjj+iOV7UsGzHOMbAW5wdLLGQ3U7QZ5KSombkj1YfPL3SjDyVtO72AH4mda2rE/oLnzjNnfBIeikF6nHu5M/5GFwV34ymd9C30Sv7T0xmqmMY+9hSVD65i3Xr0UjjJGszgjVB9wF2Q7Qrb+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=bHuJpAX9; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741091317;
+	bh=hXQr2JDc6VwEA4oybx8Hdat3clPEU6hQMlM5Zb8perI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=bHuJpAX9EfysrAFIJ7eOaGldWtzuqJalISkcLY5g2SWE1mKHj9jqimeQs3+Jvcw4T
+	 ZV1mKQoV93K5Ht1KNnpsCHAoy0BU3MBHK5Nq+21BJ7GwQLXNlovFdBooRbUVYMJF0+
+	 Y8WMkrFaN+eEhGbUETuiDaEw5j2dwwhnbKQBw9ETrTf8vygNidVwR+NR/H0T5iSGEK
+	 QpeUzBshEZA3zEGQBTxkHzCP7SnRpW7guG6rGi+X9ovR1MpfN/wyQhkJMps8NJa2jo
+	 ngkL+2r1eGG0fnzr6ry9DMggnE9kDyyEt7ATTGggwWsvddy88+AcZ9FtBj+cftlAk2
+	 8+axtikx2WJYA==
+Received: from [192.168.1.90] (unknown [188.27.58.83])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 36ACC17E023F;
+	Tue,  4 Mar 2025 13:28:37 +0100 (CET)
+Message-ID: <71817739-7ecd-478d-ae57-d764e21c8dd9@collabora.com>
+Date: Tue, 4 Mar 2025 14:28:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,222 +56,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 10/10] arm64: dts: qcom: sa8775p: Add CTCU and ETR
- nodes
-To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
- James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
- Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
- <20250303032931.2500935-11-quic_jiegan@quicinc.com>
+Subject: Re: [PATCH v4 10/12] phy: rockchip: samsung-hdptx: Add high color
+ depth management
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I
+ <kishon@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+ Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, kernel@collabora.com,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
+References: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
+ <20250304-phy-sam-hdptx-bpc-v4-10-8657847c13f7@collabora.com>
+ <20250304-delicate-crazy-tuatara-5ea4d3@houat>
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20250303032931.2500935-11-quic_jiegan@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+In-Reply-To: <20250304-delicate-crazy-tuatara-5ea4d3@houat>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 03/03/2025 03:29, Jie Gan wrote:
-> Add CTCU and ETR nodes in DT to enable related functionalities.
+
+
+On 3/4/25 10:21 AM, Maxime Ripard wrote:
+> On Tue, Mar 04, 2025 at 03:44:09AM +0200, Cristian Ciocaltea wrote:
+>> @@ -1480,12 +1484,12 @@ static int rk_hdptx_phy_power_off(struct phy *phy)
+>>  static int rk_hdptx_phy_verify_hdmi_config(struct rk_hdptx_phy *hdptx,
+>>  					   struct phy_configure_opts_hdmi *hdmi)
+>>  {
+>> -	if (!hdmi->tmds_char_rate || hdmi->tmds_char_rate > HDMI20_MAX_RATE)
+>> -		return -EINVAL;
+>> -
+>>  	u32 bit_rate = hdmi->tmds_char_rate / 100;
+>>  	int i;
+>>  
+>> +	if (!hdmi->tmds_char_rate || hdmi->tmds_char_rate > HDMI20_MAX_RATE)
+>> +		return -EINVAL;
+>> +
+>>  	for (i = 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
+>>  		if (bit_rate == ropll_tmds_cfg[i].bit_rate)
+>>  			break;
 > 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+> Why is that change needed?
 
-Assuming this goes via the soc tree,
+Oh, that was supposed to be a fixup for "phy: rockchip: samsung-hdptx:
+Provide config params validation support" to keep variable declaration
+section on top.  Not sure how I missed it, probably I chose the wrong
+commit hash while focusing on some other changes during the rebase.
 
-Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+Will sort this out in v5.
 
-
-> ---
->   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 153 ++++++++++++++++++++++++++
->   1 file changed, 153 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> index 3394ae2d1300..31aa94d2a043 100644
-> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-> @@ -2429,6 +2429,35 @@ crypto: crypto@1dfa000 {
->   			interconnect-names = "memory";
->   		};
->   
-> +		ctcu@4001000 {
-> +			compatible = "qcom,sa8775p-ctcu";
-> +			reg = <0x0 0x04001000 0x0 0x1000>;
-> +
-> +			clocks = <&aoss_qmp>;
-> +			clock-names = "apb";
-> +
-> +			in-ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					ctcu_in0: endpoint {
-> +						remote-endpoint = <&etr0_out>;
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					ctcu_in1: endpoint {
-> +						remote-endpoint = <&etr1_out>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
->   		stm: stm@4002000 {
->   			compatible = "arm,coresight-stm", "arm,primecell";
->   			reg = <0x0 0x4002000 0x0 0x1000>,
-> @@ -2633,6 +2662,122 @@ qdss_funnel_in1: endpoint {
->   			};
->   		};
->   
-> +		replicator@4046000 {
-> +			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-> +			reg = <0x0 0x04046000 0x0 0x1000>;
-> +
-> +			clocks = <&aoss_qmp>;
-> +			clock-names = "apb_pclk";
-> +
-> +			in-ports {
-> +				port {
-> +					qdss_rep_in: endpoint {
-> +						remote-endpoint = <&swao_rep_out0>;
-> +					};
-> +				};
-> +			};
-> +
-> +			out-ports {
-> +				port {
-> +					qdss_rep_out0: endpoint {
-> +						remote-endpoint = <&etr_rep_in>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		tmc_etr: tmc@4048000 {
-> +			compatible = "arm,coresight-tmc", "arm,primecell";
-> +			reg = <0x0 0x04048000 0x0 0x1000>;
-> +
-> +			clocks = <&aoss_qmp>;
-> +			clock-names = "apb_pclk";
-> +			iommus = <&apps_smmu 0x04c0 0x00>;
-> +
-> +			arm,scatter-gather;
-> +
-> +			in-ports {
-> +				port {
-> +					etr0_in: endpoint {
-> +						remote-endpoint = <&etr_rep_out0>;
-> +					};
-> +				};
-> +			};
-> +
-> +			out-ports {
-> +				port {
-> +					etr0_out: endpoint {
-> +						remote-endpoint = <&ctcu_in0>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		replicator@404e000 {
-> +			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
-> +			reg = <0x0 0x0404e000 0x0 0x1000>;
-> +
-> +			clocks = <&aoss_qmp>;
-> +			clock-names = "apb_pclk";
-> +
-> +			in-ports {
-> +				port {
-> +					etr_rep_in: endpoint {
-> +						remote-endpoint = <&qdss_rep_out0>;
-> +					};
-> +				};
-> +			};
-> +
-> +			out-ports {
-> +				#address-cells = <1>;
-> +				#size-cells = <0>;
-> +
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					etr_rep_out0: endpoint {
-> +						remote-endpoint = <&etr0_in>;
-> +					};
-> +				};
-> +
-> +				port@1 {
-> +					reg = <1>;
-> +
-> +					etr_rep_out1: endpoint {
-> +						remote-endpoint = <&etr1_in>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
-> +		tmc_etr1: tmc@404f000 {
-> +			compatible = "arm,coresight-tmc", "arm,primecell";
-> +			reg = <0x0 0x0404f000 0x0 0x1000>;
-> +
-> +			clocks = <&aoss_qmp>;
-> +			clock-names = "apb_pclk";
-> +			iommus = <&apps_smmu 0x04a0 0x40>;
-> +
-> +			arm,scatter-gather;
-> +			arm,buffer-size = <0x400000>;
-> +
-> +			in-ports {
-> +				port {
-> +					etr1_in: endpoint {
-> +						remote-endpoint = <&etr_rep_out1>;
-> +					};
-> +				};
-> +			};
-> +
-> +			out-ports {
-> +				port {
-> +					etr1_out: endpoint {
-> +						remote-endpoint = <&ctcu_in1>;
-> +					};
-> +				};
-> +			};
-> +		};
-> +
->   		funnel@4b04000 {
->   			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
->   			reg = <0x0 0x4b04000 0x0 0x1000>;
-> @@ -2708,6 +2853,14 @@ out-ports {
->   				#address-cells = <1>;
->   				#size-cells = <0>;
->   
-> +				port@0 {
-> +					reg = <0>;
-> +
-> +					swao_rep_out0: endpoint {
-> +						remote-endpoint = <&qdss_rep_in>;
-> +					};
-> +				};
-> +
->   				port@1 {
->   					reg = <1>;
->   					swao_rep_out1: endpoint {
-
+Thanks for spotting it,
+Cristian
 
