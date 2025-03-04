@@ -1,135 +1,258 @@
-Return-Path: <linux-kernel+bounces-543922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0465A4DB7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:56:45 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 00F41A4DB86
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:57:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 329C83B3554
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:53:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 142623A8487
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:54:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D1F1FC7CA;
-	Tue,  4 Mar 2025 10:53:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 749381FCFE7;
+	Tue,  4 Mar 2025 10:55:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Ts2Fhy3N"
-Received: from bg5.exmail.qq.com (bg5.exmail.qq.com [43.155.80.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qHwIcoG+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JnMXtkX8";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qHwIcoG+";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="JnMXtkX8"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 141A21FDE2B
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=43.155.80.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E0F1FC7CA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:55:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741085620; cv=none; b=SctUCPBZ8ZGCeqkI/X2o1xWZXYBnxAv9T5Jk2vjv4pBV050SpJlE1RDcfKlIOtHAUktSf0gynWt6VRJTkSWXhX5MPM0K+LfljH75If6lz/XelRikdyN4J/MNDD6T1CRpPwugmq7j5bLhyyiM8EImJsu08XtVGHYT3Zh9ceklvSA=
+	t=1741085702; cv=none; b=IIEBRW9KxyMxeo0cav++PxvsHGtiUuv8H0m5jtbDtV0VVSCKgEw1534unLJBPPxNFMT9cceu8B0ayBXUdGqj9yuO0um2Qi6UkQuGsONE66Jdi/LFFDNUkt/3bOvLDKHtPqIwiAQDzcC9Ybg3TwA3c1SsQGhf3ZX8rLNM/J64/9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741085620; c=relaxed/simple;
-	bh=VCfucskRC2cvY6966shLxXr2SgNODQiP9tZAsdqtyxs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WZnr6fCieKAb5ZVdz+5F50OskXg6mFEPNGCg1CRu8Ko2PQaAtCpGZSM9Gi+TW024akDhcewTeHQGFNZuLriZw/AUhJbp1IWpR8NcAtSvW6ZFv8Uu862BFKC45hE9Q+9mKvTe+G14mWGrjvIytcVeZuBAVKaqvaGCngdWWqcNjqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Ts2Fhy3N; arc=none smtp.client-ip=43.155.80.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1741085590;
-	bh=J+AbzbeKk1TMOXRqPTcIrGEKxdHexrILpO1xrigQbXw=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Ts2Fhy3NoH798WqrPYgtOydEju0evau98tXJ1IcAbU4cuiylLRseMKescOf3WlPhE
-	 oyLAfB8UYhRvL0QjSScIzgyJY7m1jGSmihi0TCEBJzDuoAFqH9ZB9373YxxwZ+E3MX
-	 /h4DuYyPhrZulqLU6WzzDy/B0JJSNqJ9grysGQ58=
-X-QQ-mid: bizesmtpip3t1741085573tvc43m9
-X-QQ-Originating-IP: jfMFLMqo6HvurF85wH0TBlAZWnlJjGgvU5j6z2Ly9Yw=
-Received: from localhost.localdomain ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Tue, 04 Mar 2025 18:52:50 +0800 (CST)
-X-QQ-SSF: 0002000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 6603146197274234106
-From: WangYuli <wangyuli@uniontech.com>
-To: chenhuacai@kernel.org,
-	kernel@xen0n.name
-Cc: yangtiezhu@loongson.cn,
-	maobibo@loongson.cn,
-	guoweikang.kernel@gmail.com,
-	agordeev@linux.ibm.com,
-	ast@kernel.org,
-	usamaarif642@gmail.com,
-	jiaxun.yang@flygoat.com,
-	wangyuli@uniontech.com,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	chenlinxuan@uniontech.com,
-	donmor3000@hotmail.com,
-	Wentao Guan <guanwentao@uniontech.com>
-Subject: [PATCH] LoongArch: Fix use of logical '&&' with constant operand
-Date: Tue,  4 Mar 2025 18:52:46 +0800
-Message-ID: <EEBE30D1ACFF646F+20250304105246.766404-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.47.2
+	s=arc-20240116; t=1741085702; c=relaxed/simple;
+	bh=PMup+WsIQnQifzoxT6kN3Bx4jt7qmX2BCLcUlW05gSI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C07QsAjBw8NfxVG5C6wcg5tdlDD988p+TNknavX/rHBPwbGl6yAlhc/iTySE+o9yBB0BeY8QbE9X/Q8JFOjNdZkHtZdUT/LJ03smS54YvZzMsh+v/WuKdPWZc7H3/CY+30Z3b+PGY63NeoaKSp0iY0/tUqSTZrQ+gm85wMl2BjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qHwIcoG+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JnMXtkX8; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qHwIcoG+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=JnMXtkX8; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4143321187;
+	Tue,  4 Mar 2025 10:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741085699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EO9kVHSdTHn2fWrMycpwAcQb5rp2wiW+HXpcxpE+EdM=;
+	b=qHwIcoG+3IwI3t1Ze7bqX4B6nFBEhJSjc6MEkonUdJvXCOE4qS2JUmYaOxaAE58wycI3kP
+	8FwCa7LCbUU1NWHglejxHSiaYMLKAsDsQWEnlQCeBFrMqz/F+7BcSZXYyt40shFN/7p6LC
+	79BEhLo0S/kwWX7RkNjmmu+GG19aofQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741085699;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EO9kVHSdTHn2fWrMycpwAcQb5rp2wiW+HXpcxpE+EdM=;
+	b=JnMXtkX8m+6WvVVH4zhb5aYrnrYlFy0yGKs239TMdq1eK0JvUU63WtLur6QGUYpQORhVai
+	t0PgHH1tLpXvSSCA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741085699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EO9kVHSdTHn2fWrMycpwAcQb5rp2wiW+HXpcxpE+EdM=;
+	b=qHwIcoG+3IwI3t1Ze7bqX4B6nFBEhJSjc6MEkonUdJvXCOE4qS2JUmYaOxaAE58wycI3kP
+	8FwCa7LCbUU1NWHglejxHSiaYMLKAsDsQWEnlQCeBFrMqz/F+7BcSZXYyt40shFN/7p6LC
+	79BEhLo0S/kwWX7RkNjmmu+GG19aofQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741085699;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=EO9kVHSdTHn2fWrMycpwAcQb5rp2wiW+HXpcxpE+EdM=;
+	b=JnMXtkX8m+6WvVVH4zhb5aYrnrYlFy0yGKs239TMdq1eK0JvUU63WtLur6QGUYpQORhVai
+	t0PgHH1tLpXvSSCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2207A1393C;
+	Tue,  4 Mar 2025 10:54:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id JZUACAPcxmc2agAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Tue, 04 Mar 2025 10:54:59 +0000
+Message-ID: <19df9218-c984-4cbc-8b5d-4e0f7658935f@suse.cz>
+Date: Tue, 4 Mar 2025 11:54:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 00/10] SLUB percpu sheaves
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>, Christoph Lameter
+ <cl@linux.com>, David Rientjes <rientjes@google.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>,
+ Hyeonggon Yoo <42.hyeyoo@gmail.com>, Uladzislau Rezki <urezki@gmail.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+ maple-tree@lists.infradead.org,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Alexei Starovoitov <ast@kernel.org>
+References: <20250214-slub-percpu-caches-v2-0-88592ee0966a@suse.cz>
+ <ztssad52ikws3a2dwodju4o73h6rsutxnvzj5i6vyjjkudkiel@g7c7g5i3l7jd>
+ <CAJuCfpHi4Od4K2xQEUFWuG=a4zCKecWBMwBiy_7mVn6QgsTSvA@mail.gmail.com>
+ <CAJuCfpEq8P4cz7HXaRVqaagONPBKrFgOSqdigEYU60sGAE4-rg@mail.gmail.com>
+ <173d4dbe-399d-4330-944c-9689588f18e8@suse.cz>
+ <CAJuCfpHHXYKGjaOxHcuJcuQbUVO7YqLMpcYeF3HM5Ayxy1fE+g@mail.gmail.com>
+ <CAJuCfpE7t83PKWw+8XJLE5538kKJnbhirLg2siDSw=F4sw=9uA@mail.gmail.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAJuCfpE7t83PKWw+8XJLE5538kKJnbhirLg2siDSw=F4sw=9uA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MauZFeUCNtAMjs4gQDc9KQ/kWf+xVva34SNCoNnMK7/7sQaWFIrBYpA5
-	HL1Q4iENEyRRxZH51pT4+tO+uG+pXnCqTVEFak/0Xgc43czIRYtWGHZfQORD0FASWngEBdE
-	Otjbbc4tqQGw9lpPx5TXnI+JHsc53l3CsslykATMboYMWo8u+uKh1jeg9IZxzt8pfzNzS1f
-	0D45DDGlFPHG4wTmhmr1bVpRpjZX5IK54qarxJMsVJbJEfskfvcb+yaU0eyS0as3egWLMDC
-	WM7wEMFb40ctD/efTwZYZhbA2ItdsClfq7e7PUrUgTnU3ousuZdWu9SCjGRi1xbVs119i+o
-	KYr2IIYCg5n1+iOksVVrxYpYiKNGPe5GhDOjDozkyW6AWe0X7aGwC94ufrq8RffxePVgcQ6
-	AI6pwCFWC/pvlaPorKRcix1HNMOEczxOpwVmoWi26NhviWs6NPlB4jN5ncd9Qp5T/NwGnvW
-	iSrMopauie1/5Z9scU2MJ3xmsGcgkCdCVv8eUzQ5+Qybw+FS0WiIYaWK/DcOficwQhiYVtI
-	Zte1B8CToruvzJ9jMQIF5DXMOpr/MoDcJ6fYrJZ7Ay5B7e/wBi8nEjZgNtSHAAJ7qF5qupd
-	a4FOR/Y1lXIF8QTd225uR2OtKqgxcT/ofzdGe9iuGFLsBcH07iK7LOpKbF5aaOxFGUUJ2Sc
-	htMiFOYPXQ1U/iRQlbtCR/5tHmNct7B4TuUe4Qr/X6aOgYo6jFOz4vLuQoUZz4HzDVKQSJq
-	m17nTrm1tTV/966XdWc4/4kJQt7oemSziRDyQ7+rLAwCBAwOAfAWdHJWEEXi/KOYX+zipx4
-	edTfs4TYTzNcA2y4MHHDxR6CHQGmPy+zca+/QAZBl6z+3Bs2zmfhwa0haM5JCYOQYwuzGah
-	ed/aksx9PFczs51iQrDosJpvSxjwB4ssmmO6NrlGeXH/zu2BO0WB1AwBRtiS0T+ldziKWcH
-	BW2NgU8FdDxFSapyByN7BpCw+QO/l50rSN5YDDt1ipceq31sGYyyXCi44AnHcQzOc8Vt+Ww
-	dhjGr2nHi6Qf/gfbwmKFo5YMTmejY=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-X-QQ-RECHKSPAM: 0
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[14];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.dev,oracle.com,linux.com,google.com,gmail.com,kvack.org,vger.kernel.org,lists.infradead.org,linutronix.de,kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Fix follow error with clang-19:
+On 2/25/25 21:26, Suren Baghdasaryan wrote:
+> On Mon, Feb 24, 2025 at 1:12 PM Suren Baghdasaryan <surenb@google.com> wrote:
+>>
+>> >
+>> > > The values represent the total time it took to perform mmap syscalls, less is
+>> > > better.
+>> > >
+>> > > (1)                  baseline       control
+>> > > Little core       7.58327       6.614939 (-12.77%)
+>> > > Medium core  2.125315     1.428702 (-32.78%)
+>> > > Big core          0.514673     0.422948 (-17.82%)
+>> > >
+>> > > (2)                  baseline      control
+>> > > Little core       7.58327       5.141478 (-32.20%)
+>> > > Medium core  2.125315     0.427692 (-79.88%)
+>> > > Big core          0.514673    0.046642 (-90.94%)
+>> > >
+>> > > (3)                   baseline      control
+>> > > Little core        7.58327      4.779624 (-36.97%)
+>> > > Medium core   2.125315    0.450368 (-78.81%)
+>> > > Big core           0.514673    0.037776 (-92.66%)
+> 
+> (4)                   baseline      control
+> Little core        7.58327      4.642977 (-38.77%)
+> Medium core   2.125315    0.373692 (-82.42%)
+> Big core           0.514673    0.043613 (-91.53%)
+> 
+> I think the difference between (3) and (4) is noise.
+> Thanks,
+> Suren.
 
-arch/loongarch/kernel/setup.c:335:40: error: use of logical '&&' with constant operand [-Werror,-Wconstant-logical-operand]
-  335 |         if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && CONFIG_CMDLINE[0]) {
-      |                                               ^  ~~~~~~~~~~~~~~~~~
-arch/loongarch/kernel/setup.c:335:40: note: use '&' for a bitwise operation
-  335 |         if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && CONFIG_CMDLINE[0]) {
-      |                                               ^~
-      |                                               &
-arch/loongarch/kernel/setup.c:335:40: note: remove constant to silence this warning
-  335 |         if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && CONFIG_CMDLINE[0]) {
-      |                                               ^~~~~~~~~~~~~~~~~~~~
-1 error generated.
+Hi, as we discussed yesterday, it would be useful to set the baseline to
+include everything before sheaves as that's already on the way to 6.15, so
+we can see more clearly what sheaves do relative to that. So at this point
+it's the vma lock conversion including TYPESAFE_BY_RCU (that's not undone,
+thus like in scenario (4)), and benchmark the following:
 
-Fixes: 83da30d73b86 ("LoongArch: Fix CMDLINE_EXTEND and CMDLINE_BOOTLOADER handling")
-Co-developed-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: Wentao Guan <guanwentao@uniontech.com>
-Signed-off-by: Yuli Wang <wangyuli@uniontech.com>
----
- arch/loongarch/kernel/setup.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+- baseline - vma locking conversion with TYPESAFE_BY_RCU
+- baseline+maple tree node reduction from mm-unstable (Liam might point out
+which patches?)
+- the above + this series + sheaves enabled for vm_area_struct cache
+- the above + full maple node sheaves conversion [1]
+- the above + the top-most patches from [1] that are optimizations with a
+tradeoff (not clear win-win) so it would be good to know if they are useful
 
-diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
-index edcfdfcad7d2..834bea7f42da 100644
---- a/arch/loongarch/kernel/setup.c
-+++ b/arch/loongarch/kernel/setup.c
-@@ -332,7 +332,7 @@ static void __init bootcmdline_init(char **cmdline_p)
- 	 * Append built-in command line to the bootloader command line if
- 	 * CONFIG_CMDLINE_EXTEND is enabled.
- 	 */
--	if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && CONFIG_CMDLINE[0]) {
-+	if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) && !!CONFIG_CMDLINE[0]) {
- 		strlcat(boot_command_line, " ", COMMAND_LINE_SIZE);
- 		strlcat(boot_command_line, CONFIG_CMDLINE, COMMAND_LINE_SIZE);
- 	}
--- 
-2.47.2
+[1] currently the 4 commits here:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/vbabka/linux.git/log/?h=slub-percpu-sheaves-v2-maple
+from "maple_tree: Sheaf conversion" to "maple_tree: Clean up sheaf"
+but as Liam noted, they won't cherry pick without conflict once maple tree
+node reduction is backported, but he's working on a rebase
+
+Thanks in advance!
+
+>> > >
+>> > > Results in (3) vs (2) indicate that using sheaves for vm_area_struct
+>> > > yields slightly better averages and I noticed that this was mostly due
+>> > > to sheaves results missing occasional spikes that worsened
+>> > > TYPESAFE_BY_RCU averages (the results seemed more stable with
+>> > > sheaves).
+>> >
+>> > Thanks a lot, that looks promising!
+>>
+>> Indeed, that looks better than I expected :)
+>> Cheers!
+>>
+>> >
+>> > > [1] https://lore.kernel.org/all/20250213224655.1680278-1-surenb@google.com/
+>> > >
+>> >
 
 
