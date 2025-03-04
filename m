@@ -1,159 +1,302 @@
-Return-Path: <linux-kernel+bounces-544353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C49FA4E066
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:15:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30CA1A4E054
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:12:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 222D33B04C9
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:09:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D0AA1793A3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0A68204C1C;
-	Tue,  4 Mar 2025 14:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2E9206F1B;
+	Tue,  4 Mar 2025 14:08:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SFZKL57U"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WiSY7ixg";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="l4QxbnnT"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B1E204C0C;
-	Tue,  4 Mar 2025 14:08:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72317206F14
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741097286; cv=none; b=g+ixyJS40SFp7vPW1MGPRX7T1zWZuxuvYsUbRH7UXXisElcEPp7k29ZV4rmckAjl3iinqdxY7bQN+XZPKBwC0Ojk3p0CR1K2MThMcGo1+tFDQmj+7JNjISG1/wXtpIMGbwTB2LkmO9eMAZOjKc7+huwbPzBIhMv+WBvQhKg1IqY=
+	t=1741097297; cv=none; b=tjrI1wDUupvrHZtZpVeN8i7Ge67wq5MIAqfE//POSsLEKhSnz0QNpth+J19jj1oahE/gGE5/BauCAQdu6zwLpJe9HD1bv/0FFNj8Yoa91Bf4GM3geoDw6ezPsr15fa22syD2aNVjOvWbhZ83FkPpsMqwkuLWD/SLymJc+EQldHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741097286; c=relaxed/simple;
-	bh=Cg/Ftvcq4g405J0nOC5nO8bWo5QhMY6QKiYmQy3B+aA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p9PrT04LVFr2/P0t7Gt7hfsehI2RHFYizEFPZTEIM4+Swq8/wWX+WGqoGcdAoqeeJELqxHXg2bsu2FKbdPylRHwcyCek1aB4kkLgkO2zlfQs/CU19NuNOhnVaW7SIi8bcwY9/fIGGQ0k9BUvdHPWUwhqOGjK/ilwjnxVJnVnK9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SFZKL57U; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-390ec7c2d40so3962190f8f.1;
-        Tue, 04 Mar 2025 06:08:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741097282; x=1741702082; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gvjkoB4ZG7Joej4FKL3r9K9R6HaP9ipwwekkbFSDZQQ=;
-        b=SFZKL57UvQv5H/OW++HlQIS35zFt7J1Yn66cwtv1SO2PMdsBAOw0LjKAFob3IfQKQP
-         MSEbpjkzREr7tWDWb8/w6aIOP1oewpbFcfG8G9lm2oQxMNw/Z8ielNRMru/03IcsuhPQ
-         bqFMXzv8XIegtgVNbbzkZTHP3f+ETOT/9ATxjIQbwyq5iNhkgPpbenWohz2kil4xlBHo
-         ufEYlANm8+vgNNXN956cjlR0kA8O0ClVqg/pCvHi98ZL6eYCKgW/yP07U0Ejq3Qwe62Y
-         6uGxr+H+8Md0RQztqcX6m6BmKkUZxXUHGPwcLIpNGnyURT7Yh2ViY4y/ZRbCCTjoAIvm
-         PHqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741097282; x=1741702082;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gvjkoB4ZG7Joej4FKL3r9K9R6HaP9ipwwekkbFSDZQQ=;
-        b=ufXbr9Z6rKLqqa/Ob/9+Zm/KLUkxkvDfpoKZ0Bp7AMuOGttCRwt/34zsIQAznwwTsT
-         IbP3yEHuYZkCih4EfG5psAAOQw58GL/rRD7dujAN8JC2kF5ucf79zI7qSgU2KBhxd+ZF
-         dJbx5eej9LpJ/BVp4AgX27AH1IeCpiYi3hIXGyRQ/sbAEj3aqAU9e/kNDE8vPmQBAAWP
-         zNaO+JaKgRv7027tnp9DTfJHXPhS3KyanYmGP7WMqgV9+GfZGQnph5pJeIW0Xqi4MBqI
-         j8GFSnbdIUtB/pVrguRRPotYx+C/KF3QAtOabdMQXXmLVgn5CsJpb8gXEKYpHd1Rtes7
-         LRmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6TqALus7seOHnLD2gpiLNyGXtihiAcqWtoWLvj1VurE989FR3gaitdEvlH4KVv8jyYxnmr29smU1XIZnj@vger.kernel.org, AJvYcCWUOgnIPxoPNsGqbNL45a///fi4/3mrfwp89A0tSKdnrXFdunT6/XovMsi5g8+bsGrb4xpeJf1Hd+Fw@vger.kernel.org, AJvYcCXMyC3FhlSeA1kLWEiDDI74QIEfd3q5t2Od4qvNFMeGzSdp4IA26zC2kvdmDug8TyOKp7yFR8cXAC0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxE9U1ZuVZ82dL16M6JxdpqgQNh6wwntE2+VbSG7A78wN4DKvSa
-	QvcMsOfx1LSyR0Do33qUd2jiqUPSCYh5bY77g6peEOzc3bTEWAFgtWb1J4lSeglLBXlRiNXQrND
-	5zxvq0OjLP3xTd4LJj6L3/8dNoCY=
-X-Gm-Gg: ASbGncsikDdUbzjTZQPM2QdlUU5d5soUdX5HV25AJSgT3w5ENI+yOMU8leVJoA6Uako
-	DVm9Y4AhqEk7icdqxXcik2Lh+KJRe/wP/OlPBltI3DUf7J+F0JujsxKNf64kZugSY7DN24M21lm
-	08BZwRCbbMYLSOjKBR6Q5c4P+wUNw=
-X-Google-Smtp-Source: AGHT+IFjv5TSTzhlcWSOBo1x1W1IcoLqGnROypgybAmJGbAPlBuUel3SrpfN9aEUG/VwQ+frtIfmeqFR42TJ9PNvRqc=
-X-Received: by 2002:a5d:588f:0:b0:391:1388:64b7 with SMTP id
- ffacd0b85a97d-39113886653mr4119463f8f.46.1741097282206; Tue, 04 Mar 2025
- 06:08:02 -0800 (PST)
+	s=arc-20240116; t=1741097297; c=relaxed/simple;
+	bh=E+xWwTR1Aqli+zBLMjHkAMyWovGIKrBuamaEmQ6Uun8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Yonho8RRi7bezoZXCQkxUAxJ/ka5yOF2NdbPgpGhSZuZLMFtr4dyr1pjxomhrcDv7jFEhbIN+Fo2RMA4LwG5NuB5tkPECGXAV1nKMs094PD6cGzauxNLVoJBt+9KEPJBy4TEppK/wQahTGtagBCLceLBCU760h4LbLh2a51WPoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WiSY7ixg; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=l4QxbnnT; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741097293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=auTU3+uFQNm0dQ1wwFy4iWqBlKhStGiG/cF56W5BvSg=;
+	b=WiSY7ixgd7qFmx0CNimT82B2gnUyIlI27nBQnQ1wo+gIJDzZovxMeKungdpkSqkSp8PEwG
+	sLe/0q1iS1xihz1s38VQ/0Jct2UnMNvl5uUFlSidCGgPZkmECcyankeXf97z89Vd/Yf4k0
+	b10jp4hdWP6tZLXwfPewX54/eO8lsnHbL71FI1Ke3NiBQZ5u0cHdubmxTwLdMmdkQCu3ef
+	Y2xuWcwuvx0UXAUo0W/htA+dLDQy4EAWWZK74EPCwGMoodC9lW2/mlrU2VzDXHojrCZKFy
+	bHaBpDJXeaOwbS6Qq3G69gcXw0TZDs0l1rQV3vKfF8q6lK3gT73jkzq41/446Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741097293;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=auTU3+uFQNm0dQ1wwFy4iWqBlKhStGiG/cF56W5BvSg=;
+	b=l4QxbnnT1zNyWdk+9uM4v+kXI3Zp8oSsU9u8A97gmJ/Ji8YpxeDnoQauzvFahBv8KXHM/c
+	ZwU11hr0nbKwAgCg==
+To: LKML <linux-kernel@vger.kernel.org>
+Cc: Anna-Maria Behnsen <anna-maria@linutronix.de>, Frederic Weisbecker
+ <frederic@kernel.org>, Benjamin Segall <bsegall@google.com>, Eric Dumazet
+ <edumazet@google.com>, Andrey Vagin <avagin@openvz.org>, Pavel Tikhomirov
+ <ptikhomirov@virtuozzo.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: [patch V2a 09/17] posix-timers: Make lock_timer() use guard()
+In-Reply-To: <20250302193627.480949005@linutronix.de>
+References: <20250302185753.311903554@linutronix.de>
+ <20250302193627.480949005@linutronix.de>
+Date: Tue, 04 Mar 2025 15:08:13 +0100
+Message-ID: <875xko7usy.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303115502.89457-1-clamor95@gmail.com> <20250303115502.89457-2-clamor95@gmail.com>
- <20250304135806.GA2503334-robh@kernel.org>
-In-Reply-To: <20250304135806.GA2503334-robh@kernel.org>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Tue, 4 Mar 2025 16:07:51 +0200
-X-Gm-Features: AQ5f1Jp3ZVuELgXhuLdb11TgLn2mVZx5owqHAFTutB4Rua3nn4b59h4RukfJHGM
-Message-ID: <CAPVz0n1gHycREMywHYtJWJ=Juk14bk3_pU_8Bhzu0kvXeiZ41Q@mail.gmail.com>
-Subject: Re: [PATCH v3 1/2] dt-bindings: power: supply: Document Maxim MAX8971 charger
-To: Rob Herring <robh@kernel.org>
-Cc: Sebastian Reichel <sre@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-=D0=B2=D1=82, 4 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 15:58 Rob H=
-erring <robh@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Mon, Mar 03, 2025 at 01:55:01PM +0200, Svyatoslav Ryhel wrote:
-> > Add bindings for Maxim MAX8971 charger.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >  .../bindings/power/supply/maxim,max8971.yaml  | 68 +++++++++++++++++++
-> >  1 file changed, 68 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/power/supply/maxi=
-m,max8971.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/power/supply/maxim,max89=
-71.yaml b/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
-> > new file mode 100644
-> > index 000000000000..2244cc3d45a6
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/power/supply/maxim,max8971.yaml
-> > @@ -0,0 +1,68 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/power/supply/maxim,max8971.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Maxim MAX8971 IC charger
-> > +
-> > +maintainers:
-> > +  - Svyatoslav Ryhel <clamor95@gmail.com>
-> > +
-> > +description:
-> > +  The MAX8971 is a compact, high-frequency, high-efficiency switch-mod=
-e charger
-> > +  for a one-cell lithium-ion (Li+) battery.
-> > +
-> > +allOf:
-> > +  - $ref: power-supply.yaml#
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: maxim,max8971
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +  interrupts:
-> > +    maxItems: 1
-> > +
-> > +  monitored-battery: true
-> > +
-> > +  port:
-> > +    description:
-> > +      An optional port node to link the extcon device to detect type o=
-f plug.
-> > +    $ref: /schemas/graph.yaml#/properties/port
->
-> extcon as a binding is pretty much deprecated in favor of connector
-> bindings.
->
-> The OF graph is an overkill here too. You should just need a phandle to
-> the connector node.
->
 
-What if extcon controls the connector? Why OF graph is not suitable,
-it fits trends in supply bindings and it is optional anyway.
+From: Peter Zijlstra <peterz@infradead.org>
 
-> Rob
+The lookup and locking of posix timers requires the same repeating pattern
+at all usage sites:
+
+   tmr = lock_timer(tiner_id);
+   if (!tmr)
+   	return -EINVAL;
+   ....
+   unlock_timer(tmr);
+
+Solve this with a guard implementation, which works in most places out of
+the box except for those, which need to unlock the timer inside the guard
+scope.
+
+Though the only places where this matters are timer_delete() and
+timer_settime(). In both cases the timer pointer needs to be preserved
+across the end of the scope, which is solved by storing the pointer in a
+variable outside of the scope.
+
+timer_settime() also has to protect the timer with RCU before unlocking,
+which obviously can't use guard(rcu) before leaving the guard scope as that
+guard is cleaned up before the unlock. Solve this by providing the RCU
+protection open coded.
+
+[ tglx: Made it work and added change log ]
+
+Signed-off-by: Peter Zijlstra <peterz@infradead.org>
+Signed-off-by-yet: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250224162103.GD11590@noisy.programming.kicks-ass.net
+---
+V2a: Make unlock conditional - 0day
+V2: New patch
+---
+ include/linux/cleanup.h    |   22 ++++++----
+ kernel/time/posix-timers.c |   94 +++++++++++++++++----------------------------
+ 2 files changed, 51 insertions(+), 65 deletions(-)
+
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -291,11 +291,21 @@ static inline class_##_name##_t class_##
+ #define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
+ static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
+ 
+-#define DEFINE_GUARD(_name, _type, _lock, _unlock) \
++#define __DEFINE_GUARD_LOCK_PTR(_name, _exp) \
++	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
++	{ return (void *)(__force unsigned long)*(_exp); }
++
++#define DEFINE_CLASS_IS_GUARD(_name) \
+ 	__DEFINE_CLASS_IS_CONDITIONAL(_name, false); \
++	__DEFINE_GUARD_LOCK_PTR(_name, _T)
++
++#define DEFINE_CLASS_IS_COND_GUARD(_name) \
++	__DEFINE_CLASS_IS_CONDITIONAL(_name, true); \
++	__DEFINE_GUARD_LOCK_PTR(_name, _T)
++
++#define DEFINE_GUARD(_name, _type, _lock, _unlock) \
+ 	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
+-	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
+-	{ return (void *)(__force unsigned long)*_T; }
++	DEFINE_CLASS_IS_GUARD(_name)
+ 
+ #define DEFINE_GUARD_COND(_name, _ext, _condlock) \
+ 	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true); \
+@@ -375,11 +385,7 @@ static inline void class_##_name##_destr
+ 	if (_T->lock) { _unlock; }					\
+ }									\
+ 									\
+-static inline void *class_##_name##_lock_ptr(class_##_name##_t *_T)	\
+-{									\
+-	return (void *)(__force unsigned long)_T->lock;			\
+-}
+-
++__DEFINE_GUARD_LOCK_PTR(_name, &_T->lock)
+ 
+ #define __DEFINE_LOCK_GUARD_1(_name, _type, _lock)			\
+ static inline class_##_name##_t class_##_name##_constructor(_type *l)	\
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -63,9 +63,18 @@ static struct k_itimer *__lock_timer(tim
+ 
+ static inline void unlock_timer(struct k_itimer *timr)
+ {
+-	spin_unlock_irq(&timr->it_lock);
++	if (likely((timr)))
++		spin_unlock_irq(&timr->it_lock);
+ }
+ 
++#define scoped_timer_get_or_fail(_id)					\
++	scoped_cond_guard(lock_timer, return -EINVAL, _id)
++
++#define scoped_timer				(scope)
++
++DEFINE_CLASS(lock_timer, struct k_itimer *, unlock_timer(_T), __lock_timer(id), timer_t id);
++DEFINE_CLASS_IS_COND_GUARD(lock_timer);
++
+ static int hash(struct signal_struct *sig, unsigned int nr)
+ {
+ 	return hash_32(hash32_ptr(sig) ^ nr, HASH_BITS(posix_timers_hashtable));
+@@ -675,18 +684,10 @@ void common_timer_get(struct k_itimer *t
+ 
+ static int do_timer_gettime(timer_t timer_id,  struct itimerspec64 *setting)
+ {
+-	struct k_itimer *timr;
+-	int ret = 0;
+-
+-	timr = lock_timer(timer_id);
+-	if (!timr)
+-		return -EINVAL;
+-
+ 	memset(setting, 0, sizeof(*setting));
+-	timr->kclock->timer_get(timr, setting);
+-
+-	unlock_timer(timr);
+-	return ret;
++	scoped_timer_get_or_fail(timer_id)
++		scoped_timer->kclock->timer_get(scoped_timer, setting);
++	return 0;
+ }
+ 
+ /* Get the time remaining on a POSIX.1b interval timer. */
+@@ -740,17 +741,8 @@ SYSCALL_DEFINE2(timer_gettime32, timer_t
+  */
+ SYSCALL_DEFINE1(timer_getoverrun, timer_t, timer_id)
+ {
+-	struct k_itimer *timr;
+-	int overrun;
+-
+-	timr = lock_timer(timer_id);
+-	if (!timr)
+-		return -EINVAL;
+-
+-	overrun = timer_overrun_to_int(timr);
+-	unlock_timer(timr);
+-
+-	return overrun;
++	scoped_timer_get_or_fail(timer_id)
++		return timer_overrun_to_int(scoped_timer);
+ }
+ 
+ static void common_hrtimer_arm(struct k_itimer *timr, ktime_t expires,
+@@ -868,12 +860,9 @@ int common_timer_set(struct k_itimer *ti
+ 	return 0;
+ }
+ 
+-static int do_timer_settime(timer_t timer_id, int tmr_flags,
+-			    struct itimerspec64 *new_spec64,
++static int do_timer_settime(timer_t timer_id, int tmr_flags, struct itimerspec64 *new_spec64,
+ 			    struct itimerspec64 *old_spec64)
+ {
+-	int ret;
+-
+ 	if (!timespec64_valid(&new_spec64->it_interval) ||
+ 	    !timespec64_valid(&new_spec64->it_value))
+ 		return -EINVAL;
+@@ -881,36 +870,28 @@ static int do_timer_settime(timer_t time
+ 	if (old_spec64)
+ 		memset(old_spec64, 0, sizeof(*old_spec64));
+ 
+-	for (;;) {
+-		struct k_itimer *timr = lock_timer(timer_id);
++	for (; ; old_spec64 = NULL) {
++		struct k_itimer *timr;
+ 
+-		if (!timr)
+-			return -EINVAL;
++		scoped_timer_get_or_fail(timer_id) {
++			timr = scoped_timer;
+ 
+-		if (old_spec64)
+-			old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
++			if (old_spec64)
++				old_spec64->it_interval = ktime_to_timespec64(timr->it_interval);
+ 
+-		/* Prevent signal delivery and rearming. */
+-		timr->it_signal_seq++;
+-
+-		ret = timr->kclock->timer_set(timr, tmr_flags, new_spec64, old_spec64);
+-		if (ret != TIMER_RETRY) {
+-			unlock_timer(timr);
+-			break;
+-		}
++			/* Prevent signal delivery and rearming. */
++			timr->it_signal_seq++;
+ 
+-		/* Read the old time only once */
+-		old_spec64 = NULL;
+-		/* Protect the timer from being freed after the lock is dropped */
+-		guard(rcu)();
+-		unlock_timer(timr);
+-		/*
+-		 * timer_wait_running() might drop RCU read side protection
+-		 * so the timer has to be looked up again!
+-		 */
++			int ret = timr->kclock->timer_set(timr, tmr_flags, new_spec64, old_spec64);
++			if (ret != TIMER_RETRY)
++				return ret;
++
++			/* Protect the timer from being freed when leaving the lock scope */
++			rcu_read_lock();
++		}
+ 		timer_wait_running(timr);
++		rcu_read_unlock();
+ 	}
+-	return ret;
+ }
+ 
+ /* Set a POSIX.1b interval timer */
+@@ -1021,13 +1002,12 @@ static void posix_timer_delete(struct k_
+ /* Delete a POSIX.1b interval timer. */
+ SYSCALL_DEFINE1(timer_delete, timer_t, timer_id)
+ {
+-	struct k_itimer *timer = lock_timer(timer_id);
+-
+-	if (!timer)
+-		return -EINVAL;
++	struct k_itimer *timer;
+ 
+-	posix_timer_delete(timer);
+-	unlock_timer(timer);
++	scoped_timer_get_or_fail(timer_id) {
++		timer = scoped_timer;
++		posix_timer_delete(timer);
++	}
+ 	/* Remove it from the hash, which frees up the timer ID */
+ 	posix_timer_unhash_and_free(timer);
+ 	return 0;
 
