@@ -1,256 +1,323 @@
-Return-Path: <linux-kernel+bounces-542958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41544A4CFD7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:18:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55BF1A4CFD0
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:17:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 093191747F3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:17:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 738B5170888
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:17:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3557378F2F;
-	Tue,  4 Mar 2025 00:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F0DCF9E6;
+	Tue,  4 Mar 2025 00:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="nh4i4ut+"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2087.outbound.protection.outlook.com [40.107.105.87])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m737CHbG"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B807A92E;
-	Tue,  4 Mar 2025 00:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741047445; cv=fail; b=BKSrUnPHHCd01/wdX3UM2LdRzjG1VVLBqkty6NalcXXU6PfApC3r6rcrg8IaDUYHqiFn9EWEXRqBsBhQHYcW+dvqrTo2lfOxu90sVVSHOCC2ZB2HQ0qeTEFnpeTucFT7mteKNiV0qiSa1QIMLzQoGz4LXmgs13t1pIMX84NOi90=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741047445; c=relaxed/simple;
-	bh=AhDpt/gbUHxDqS0kr21v9tf67t67Myk0Pyb76T1bYfg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=n3R/l7wY/rk9NYFR8rxixLvnPBo4E3QxEKOl0XeICAtqqinEXxk34qQ+ispira6kMaUi/BjQBfxue0GFTt7C/HNf5rGT/EkqvrDm7DHkQf6HNXayQ9/bfIqFkDeAB/r1GJC3gq9IfZLNXFc4xTWA0tTAvopJPlX3y0Kp1bHu83A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=nh4i4ut+; arc=fail smtp.client-ip=40.107.105.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=cl48HyfP2x1KGzX87HiEE12BWsdxfvfN+ukNwrr8F6ST1W9N5pveiT+0MBUslWYLmTQNhQQKFKpjW2QvS2THywZxW9xoVwZsPYp+zdvvez/MRbcmBJYUXXfeogDG1Ho6yc2iFwNH+QIvfuErKj7vxoJi8fPAIgEGxrNDWSUqET0fW5SV/vnnm+BmzzzEh8ptjnUAdnZerPuejnkJZoiLZZIRQGtL/vTjEil0/uHcs91hNmRwIFTxnnFLuCI0O+RIz3GcHsxc8CigrzkoiHeumGRUmJlU8fgPxh0g+gL0+NNX8NGMHotRHH/+ptgGQcIwrEnS88ax4Om4bAhYnJdn/A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=tHZNPLsTcmf8Jd/WWkaI9jf8sEwDXn4SIfT4rmn/nbg=;
- b=puDeuwTJwUF9zI29Iis10Au/NFemRsvn3I+pOz2AJN2TwOQ92XLHg92hvK62tlvQI3ZTTDs90ASbMjK2dM1aXd6E1QM1xp41mBjaS53LJ6Bp20dUJOXsSflCzYHg8xZoxGLi734J+WG7uqBkXPJXPVGczvW7XjS1AI3tU9djKSmOJ2DYBzQ5U8H3d2w5vfL9sKW9WkU5hi3kzq0jVgrTc97V1Dr5JB0acbPKNBGLNuOsn+jJtoV5Rj39WRi1g9mRR64WlibHsSAkIxmFsZ9WlAESGYwzYpTU+ZGZukrYm4lpzsxHR8J42ixyg1UmTwuWXmEMssiMP9DqdkQXaYJlpA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=tHZNPLsTcmf8Jd/WWkaI9jf8sEwDXn4SIfT4rmn/nbg=;
- b=nh4i4ut+fgTKY757EvX4e9YZAzHns9vR5QOQpiU38jmt2l+5AxaXAhh1gjMXHNaoufkgp7pzYWRqsCethWyKfRR9m7AFvughMsD0PJBaiMVhbfXIXFvnMe5VfTzSb/GcrUSyfyEXeRoSx6N6WHCkIeWZW8jK+yEcfS54p5aJNvwfL2sr5CdoU427BO58jB+52oGifgD2v9cUdh8i/tI3p9rxgPTYqCbxBvkPT4WNcNlNEyr2PHnngu2XXwC6VN9RqbQhMlBckQsXD6aDUjMdjGjfxjqyB/jdKHovpM8eXrmut/n5CcCNoEq26GGPlAuduqpaRA6xvKgzyIJE2soMzw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AS8PR04MB8216.eurprd04.prod.outlook.com (2603:10a6:20b:3f2::22)
- by VI1PR04MB9763.eurprd04.prod.outlook.com (2603:10a6:800:1d3::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.26; Tue, 4 Mar
- 2025 00:17:19 +0000
-Received: from AS8PR04MB8216.eurprd04.prod.outlook.com
- ([fe80::f1:514e:3f1e:4e4a]) by AS8PR04MB8216.eurprd04.prod.outlook.com
- ([fe80::f1:514e:3f1e:4e4a%5]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
- 00:17:19 +0000
-From: Andrei Botila <andrei.botila@oss.nxp.com>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	s32@nxp.com,
-	Christophe Lizzi <clizzi@redhat.com>,
-	Alberto Ruiz <aruizrui@redhat.com>,
-	Enric Balletbo <eballetb@redhat.com>,
-	Andrei Botila <andrei.botila@oss.nxp.com>,
-	stable@vger.kernel.org
-Subject: [PATCH net 2/2] net: phy: nxp-c45-tja11xx: add TJA112XB SGMII PCS restart errata
-Date: Tue,  4 Mar 2025 02:16:28 +0200
-Message-ID: <20250304001629.4094176-3-andrei.botila@oss.nxp.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250304001629.4094176-1-andrei.botila@oss.nxp.com>
-References: <20250304001629.4094176-1-andrei.botila@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: AM0PR06CA0097.eurprd06.prod.outlook.com
- (2603:10a6:208:fa::38) To AS8PR04MB8216.eurprd04.prod.outlook.com
- (2603:10a6:20b:3f2::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0C5533C9
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:17:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741047423; cv=none; b=hyp7Q+iQYwA7TFL63ngIxh3GaG2iPAYh+9M0lTrK0k32TXT8+Nl4fde3/AsAwOAho707M8DYHTNnBw5b1RIGMQ36vg4AjwNiItJIUDEgyB6sK/Lj23VvMTxp3osyFgfArlBL00619Ko4otSLS/b2y9tsjWovRcvAw/wbKHKHj3c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741047423; c=relaxed/simple;
+	bh=rrW1qjeJ/QQIr7ggV8xAw6BBomUUhv0egDm20B+8KU4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JnRuH9/3CIIQbBgvXPvErVycurpmrNgHuIcSiclQlAI1rXDSyJeCKHma8C4wHl7E34jEg94euBPsCpia3dXslvZmGKER37KspSEQwx56h5YPg8Sv721mhkhl003BnVCBXSlXLCyEXMcOzGVX1FFyAzERsKajr3+n+smChMspKnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m737CHbG; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e033c2f106so5793651a12.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 16:17:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741047420; x=1741652220; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jMKIyNsG0NtyjtxG4pWMI2QT+uTV771bs3P2Kh65/aI=;
+        b=m737CHbGCeHrSGZKySkEASP0KI3c9eD5Cy6O+VYkk3Yh7T17+aZs+1lAE1CYFEzwve
+         EoPfGJcZ4c2QvMfCrx27kW0m+g0AW5+p699s+u2+ZlGgJGFCUXCAaiOllGpqAcDkVJ8B
+         5iljnx9EdBN1UbS93m7KkTvAfYyXvE4+Vqn/E6ccHA515gwnHDJ3gxMZw0UUloHl25zR
+         TpO02zXvR8Yk4KhDnLCSJpEFuGZLnZibrcmJbBAa/T/jQTYMBvLeKee7/K1bDVOOl4ve
+         9pb3J5S25XjFcLMoJS3r8UFUswD9kGccJEfHrcvXuJM22XiUl0mu59Ax6FohcoOL9PbL
+         dljQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741047420; x=1741652220;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jMKIyNsG0NtyjtxG4pWMI2QT+uTV771bs3P2Kh65/aI=;
+        b=SHkxFBjCdPoQ59A3KAdIGGtB5TMJjUWsJl+TQfCj+lJAHzVJ4hCN/oOcRXqj5eTRt6
+         +5y8lgArwhG2v3ZCIEsVXhPDeLcU95wW0NN2CVgi21ah0M34HMZOId9jf8cRaDdBqRy+
+         XW2EgR3JAdju+K/wHQTBJuXY4U1wJFFFukTEAPMFmjJHciULn8KEXOOPxgv2oMp48Lrf
+         WOjzV531hihBg2NtVVdof9hIAHpzXLm+w9tIst+ToKXrd6yzvV7iLE9FH1tcZnkJeQLu
+         ZzMudk/OqDKnsuAyiYggspkGk/EqhCuuJ5cFDjV75dAPzwXsMyT7822t/YHDvfUcBxam
+         Hs0A==
+X-Forwarded-Encrypted: i=1; AJvYcCXkmnPsNHXrpYLkwGpYPrJiO2Wawtt/c733+kvZODkIezb4T4xT2aw9/JmxYBnFOzuQVg205dVLv0Kt2uc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqATc93bTFvZvcHzH4UrAvk3rwKefs7FzkbHWW+303I2wT++3s
+	ADziuIRMn0usOD+yG1pFp9g/QhK+uOw9uewxdGC1vtqJYpLiWQqM5zLwNIJ+y49WGWoxTNMAaOC
+	YMRxWbEAupRuyH1SbkK3pi0RiNL5+agJKlRE=
+X-Gm-Gg: ASbGncuHEuGvYm3Ckohqth6LsVD6L6K4cFwUL6szfpeOQOR3x/5H9aYdbe9LNySoQ3M
+	0JJI1CViA4qgyeuNUl+gK8Xkw0R5ZUUrxikWTibD98Ga4EDgqfkFu9FX1Mzf33/xEis76h+egZW
+	52/s4OenI5vSQ0iEDa21ZJTc0=
+X-Google-Smtp-Source: AGHT+IExrkPe2uEtMergGwL+KBk495Fd4lod8M4gAWfLy3ShXLjKMJZ8PsT9Bi/Phnh7dpEn1JARrX6tpxQCmjgQieg=
+X-Received: by 2002:a05:6402:51d4:b0:5dc:a44e:7644 with SMTP id
+ 4fb4d7f45d1cf-5e4d6ac58e5mr35957412a12.2.1741047419844; Mon, 03 Mar 2025
+ 16:16:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8216:EE_|VI1PR04MB9763:EE_
-X-MS-Office365-Filtering-Correlation-Id: 867da228-21aa-4152-cc86-08dd5ab1ed84
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NDVsdFBvZkd2aVBldDhFOHVlemZ1RDRSOGZ2Y21qRkN3UUFnbHgzUlM0Q0xW?=
- =?utf-8?B?TlVRcHpsc0gyVXpSUTJGNW5Dc2dkU3ZvS1RHR1FZUk9IR25ON0MvQlp5WHhW?=
- =?utf-8?B?Y2VhNDBxQ2p3akhjWUNpY3RpWmw2V2NpVlkwU2xraVJIaW1IOXp3ci9SRktu?=
- =?utf-8?B?WEhWMEVma1pkdjA0dlIwKzAvMXJ1WElMWkYvQzRTMnVmTnpXNkJNdUR4TWxJ?=
- =?utf-8?B?TzN0L2ZuWWVPYk1VR2tMcWs4aXd2K0RTUzBZbDJZN3FQYVFBdGFxUmxUUjZL?=
- =?utf-8?B?K1lXbFE0ZGg0UVFvVmxBbTdRWGJqYTVmR2dNci91K0VNd1NSRkVtQmN2K1Ux?=
- =?utf-8?B?enVpRGZoR1dSc3FkK0s0TDlpOHlkUFpiMW5IZFIyNSsyK3FsZEVkZjRXSHMv?=
- =?utf-8?B?TTZQRjFJMm9mQTF3TTRlTmlpY1ZWc0dLV3IwSFJHUVpoSTNTK29mR2pqVDM0?=
- =?utf-8?B?Zkgya01qT3dVZDBJQVhCMHVmeFhtNk5zK0JiNEprMkJKZlNza3hCbFRmd2pQ?=
- =?utf-8?B?NHZuVVR5ZDdBcmJSTFo3aDg0ZGxhSDlaNjVkSG93NmsrbmpFblRTdE5FdWlF?=
- =?utf-8?B?RVo1WVVDL1VOV3JmN3dyWnljU1pNcU1KQ1dkcDVZNnpvT0o3N1VQb3pqME5r?=
- =?utf-8?B?dElXb2JSYlI0WU1PaVFpMyttdStqc1RGK3pQOFV6cUZoMXd4clN0MVkyWU5C?=
- =?utf-8?B?ZVhSSjR1VlJiSy8rWnlTeUFlanJIUFdOL2MyN0pqRmxQUUVmSkszU1hWaEwv?=
- =?utf-8?B?SFRQQkJ5K0N1eElNekhXckJTM3J1a0NjSGtpMXRCUk8waXZlQXI0VmVpd241?=
- =?utf-8?B?R0xRNXpqcG5WeEtQaU5la1EzaVlVWnRrTVVnbSt1Ykh1Mkw4MjhsbHlLajZC?=
- =?utf-8?B?cUI1aVhYUEVTYlBxdkpkU1NLYy90TFJlU3huYStramljUGFVVVprVzVzVHkx?=
- =?utf-8?B?OGxzS1Blem0yL1VaOTJiRFE5V3E3ZXA4d3doUjh1QXU3YzA3TUFxeXZET1Zo?=
- =?utf-8?B?dG1OTTA4V05sbkkzOUtxZjI4QUlWUUFoTFd0c0VRYnVCa2J1VS9pNy9BSHB5?=
- =?utf-8?B?ZElYQ0ZFKzVadGFJYk1KQnBHS25mK2Q2eFd4N0xqTTBPSDNOMnpCL1NsU0NN?=
- =?utf-8?B?ZjhHa2RKTG5WZGtvYnVETnIzY1dndlJyT1BxMEpYSS9MbGhTdVY2Mjh5bWFT?=
- =?utf-8?B?STM1eC8wYkR0TjdVRVQ3L3NTSm5ucXNhZWNEN2s2akZlaGRIMm0wK3IwVCtY?=
- =?utf-8?B?K25zclBTRVhHZmtUQTJ4dWxwbkdZR1NManpnbHY1em02R3dMQlVZUVhKdGcz?=
- =?utf-8?B?K3BCMlNKV21HMFJJeFdKVFdGUUdUSjBKTlg1bjlTSjNMRHVFQ0lzSTgrakZl?=
- =?utf-8?B?U0I4SkY3TFE1STExalR3bUhjSEd2WTlnSzV4UW5SZDE1VUFyUnZ6VmdsTXo3?=
- =?utf-8?B?RG1BWENLTERmK3lwUG9kRjJ5Y2ZkaTJqUDQ2M09SK3FjZW5qV2NvRVByL1Fi?=
- =?utf-8?B?ZTdua1JzWnBzbnBTSFdiUzljVlVwK2dwcDdZQ0RmV1Q3a3hsTlZoK2lrMmlY?=
- =?utf-8?B?NmpxdWMzb1R5bGk0TVZucHlCdDdBWUVCR1VuNUZKemh6ZEZRWWEycDBVV01Z?=
- =?utf-8?B?VWN6U1VXUGE2Z3J2TnpCVnAyLzMxQnJwY2RmaDFkTmpCaCtGUzR3c21IVTBO?=
- =?utf-8?B?dERDRzF3TFBtS0VkZ3pSL3doUXpjSWNMekY5dWo1bk9XSThReEpIZVhweTdE?=
- =?utf-8?B?Q3MyT3BCZ0NyWXZsaU04WXhhSHIwUUVzcWgzZDNDM0xFZTUzUnloS0t3Nlho?=
- =?utf-8?B?MTFKRC9KYzUxQUlRQy91bWNodWw1UklhQlkra3JkVjVQQ0tHQWpIM0N2MlZn?=
- =?utf-8?Q?BbW155dRVYB6G?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8216.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?NGVvaGdaYVlua2s3MWl2UVBMbENPV05Lck1vWGZyZ2UxVmxMRkFNR0NsNkhj?=
- =?utf-8?B?d083R3VHVTdrdUtxT2xZL2sxb200VjFUbWE5N3I1c2pZUG5WNWcvZmpySStC?=
- =?utf-8?B?SEM3ZUZ6UUJoNzRuaWg4UWt1RnNtR2JCWjIyN0t2UE83N1hsMnFFS3N5eVg3?=
- =?utf-8?B?elY5NjFGN2p4L1RWQkVoRnVjLzdQYytCYXVQZDZqWFRUbUZ2Q0dSRDFrYkdZ?=
- =?utf-8?B?eFI1eVhwdFJCaE1zRE4zR01tT1dRbWErY2hzMmErUW1ZWkhzRWJKTnhzYWRS?=
- =?utf-8?B?UEhUVGFkeTZtd25rTFlvalRaODhiUHN5Wm9hOXJZZFdNMHZrdHpLd0I3czBu?=
- =?utf-8?B?dVF2UEJqZ25idThsWHB6YkJLUE5UT1lYNlpWYzRYWEk3VCs1dzIybUs0ejlM?=
- =?utf-8?B?M1FyVFNUVmRXZzJkN1Qvd3NBM0pWNWVuZnBha2h1L2VTSE10aGxtS2tlc1gw?=
- =?utf-8?B?aERsOVgrR3M2WEZ0V0dWR0FxNko3WlcySFV0cDFhbUFJWG1tSjNQL256REta?=
- =?utf-8?B?S29vMUlBUDNHS1pYV0ZXOEFpcnc1aFdEcGJwUXF0aUQzcWpmKy9ic005SFhU?=
- =?utf-8?B?ZVI1cE4zS2xKdCtHOHRvMXZWVmU4clY3UlUyOEpjUlFUMFh1K1BranpMWHN1?=
- =?utf-8?B?L3h6a0JkQXRLakhEOE0xd2xaeTFzNFpkOU9KQzZscGFlTkVKK1hiUExCNUhT?=
- =?utf-8?B?cjArbG9Qakw5N2tKZkZWblVLOFVYRTFyVnc2RWlIV0hsc2RDWVA3WXNUeFRU?=
- =?utf-8?B?d2I4Y1ZsS1ZoaThCZnZRbytPc281aVVCMGQyVllzdUZHbTFxWmJhb3lDT3Qr?=
- =?utf-8?B?RlNHQ1hPSG96Skg4QWoxYnVocDloWnpGZHJyNTJvUkJEYkcrdVJTQldrbTFD?=
- =?utf-8?B?UWFpWG12WHNIU0l1M0V1ZFZuNVJzTmJaeUlHM1lWSTNSMWswYUQ5RVhnMlIw?=
- =?utf-8?B?VG5PVk13ejFRdmhFMktxMzJuVDJUckw2bktyckVHeGgrVFhpTElERmlvVHl2?=
- =?utf-8?B?cVJSTkNHMHEvL3VFQ3pjU2JaVFdlTHB4SzVJeTB5dkZXcG81L0trYUphRW1k?=
- =?utf-8?B?ODdack9BbFZHc0p6WGxzY2ZoZ1d2MTh1MVlCWFZoTS9rSEo0UU5aaVczYlhu?=
- =?utf-8?B?T1J5VjhlRVlQV2tIVW1wQ2VyMko1UFNrZHpCNlVGUHVxOUR1cm5oNGFNeklu?=
- =?utf-8?B?YVFWNm9wRXZFY1VGd3BJYkhPVkh6QVBOYjlaeUR4OHpGTjFjM29Ed3JmcG94?=
- =?utf-8?B?SzcyUjFyM2g3ZXNpQWlPZW5lcHU3MHp2d0pnWHo4TklWT3ZNcjRFTFJkNXpw?=
- =?utf-8?B?dzZVZjhCOXZ4L1FLSG52ZmdKeE8xcFVWdW5YRlorbnpoaDA3SW5CeTdHMC9V?=
- =?utf-8?B?NDh2c3FWTTJUd0htVG9wSHdiUjlBdjVGRSs2aWx5bW92RGQvY2RXRFk0c25G?=
- =?utf-8?B?TTZPRElhNERwSyszbjY1VjFMcldhVkZ0WUJkdmNwMWIzeXRZbS9Ia3pVakRy?=
- =?utf-8?B?anRxSnB1Y2lHazU1MjQ1eGxlZ01RWGg0dUZxRVFLSDVLRnRtZXFaMFlqTkhu?=
- =?utf-8?B?L2U1RVB1endnRHlqNmtDZ002Z0hLWVdTOXhXbHdSbEJZL0JIQTRxd2xPWGJq?=
- =?utf-8?B?aENram9ZeTBvN1RNeUFWb1NyUUtzK3NOMGtuYjFwRERlUUhpblR6bDZPaXhS?=
- =?utf-8?B?Q2k2N25qc3QvaFJvZHBwTi9PVXlPSzRmVUhEWjJwUDgyQVVEbE5KVXhYRTZ4?=
- =?utf-8?B?U08xWDJnMGphSVdremRlTXdKM0JOZ0NmN3VnL0Z6d2N6cC9kc2JuLzl1d0hH?=
- =?utf-8?B?NytwbXphRGtsVU1jYUVmRDB5Y2xGOVNaK2NGRWpFdXlTUGZoVkR5cmdXc0Uw?=
- =?utf-8?B?UmZzOHkrUDhTclI1cmRUNEpyUGlGc1RDYkpVbUxMTU8rTTB0Mm5kYmtZM05Z?=
- =?utf-8?B?R290dFhXL2dHb1Yvc2cvYmhmTmx6eSsrMWJQMGlmNFJjRjRqd3JmbUxESW96?=
- =?utf-8?B?UnBVOWFTTENOYmg2QnNhayt4UzJFZGRKbGduOHJUYlB5YW56ZW9pejFGejFX?=
- =?utf-8?B?akVHNVNqL3ZaNzNKdmVaV0UySTNmZWIyUmp1aWdiQUcvOTB3VjRHMHVxVFhw?=
- =?utf-8?Q?yrKAKKzyCzEjZ3f5DvQSkv0M3?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 867da228-21aa-4152-cc86-08dd5ab1ed84
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8216.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 00:17:19.8139
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: B9HEbEc56GXK+XGHtMjFmj5oc07Ahhr5/xIgc2IE1ia+7NoPIRbqdksp0h5KdiJHQgmTnr03OjBjGVs+Q4g6Tw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR04MB9763
+References: <CAGG=3QVi27WRYVxmsk9+HLpJw9ZJrpfLjU8G4exuXm-vUA-KqQ@mail.gmail.com>
+ <CAGG=3QVkd9Vb9a=pQ=KwhKzGJXaS+6Mk5K+JtBqamj15MzT9mQ@mail.gmail.com>
+ <20250303201509.32f6f062@pumpkin> <CAGG=3QV1iDn2r39v5eroO+kCvpbmJNtSeqJS+fpwb4vBG67z=w@mail.gmail.com>
+ <20250303224216.30431b1d@pumpkin> <7BC89461-A060-462A-9B42-7C0138AA0307@zytor.com>
+In-Reply-To: <7BC89461-A060-462A-9B42-7C0138AA0307@zytor.com>
+From: Bill Wendling <morbo@google.com>
+Date: Mon, 3 Mar 2025 16:16:43 -0800
+X-Gm-Features: AQ5f1Jp1rCZue6IqDgtc6XQUmsfbb7iZovfig0pjAWT2AtVPQ_9tNDnWhAAaCuk
+Message-ID: <CAGG=3QUnUQL2=YxN2ozwSba2A_x-S7sAEUP5oGhCWOzu4Q9SQA@mail.gmail.com>
+Subject: Re: [PATCH v2] x86/crc32: use builtins to improve code generation
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: David Laight <david.laight.linux@gmail.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, 
+	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>, Eric Biggers <ebiggers@kernel.org>, Ard Biesheuvel <ardb@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <nick.desaulniers+lkml@gmail.com>, 
+	Justin Stitt <justinstitt@google.com>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-crypto@vger.kernel.org, clang-built-linux <llvm@lists.linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-TJA1120B/TJA1121B can achieve a stable operation of SGMII after
-a startup event by putting the SGMII PCS into power down mode and
-restart afterwards.
+On Mon, Mar 3, 2025 at 3:58=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrote=
+:
+> On March 3, 2025 2:42:16 PM PST, David Laight <david.laight.linux@gmail.c=
+om> wrote:
+> >On Mon, 3 Mar 2025 12:27:21 -0800
+> >Bill Wendling <morbo@google.com> wrote:
+> >
+> >> On Mon, Mar 3, 2025 at 12:15=E2=80=AFPM David Laight
+> >> <david.laight.linux@gmail.com> wrote:
+> >> > On Thu, 27 Feb 2025 15:47:03 -0800
+> >> > Bill Wendling <morbo@google.com> wrote:
+> >> >
+> >> > > For both gcc and clang, crc32 builtins generate better code than t=
+he
+> >> > > inline asm. GCC improves, removing unneeded "mov" instructions. Cl=
+ang
+> >> > > does the same and unrolls the loops. GCC has no changes on i386, b=
+ut
+> >> > > Clang's code generation is vastly improved, due to Clang's "rm"
+> >> > > constraint issue.
+> >> > >
+> >> > > The number of cycles improved by ~0.1% for GCC and ~1% for Clang, =
+which
+> >> > > is expected because of the "rm" issue. However, Clang's performanc=
+e is
+> >> > > better than GCC's by ~1.5%, most likely due to loop unrolling.
+> >> >
+> >> > How much does it unroll?
+> >> > How much you need depends on the latency of the crc32 instruction.
+> >> > The copy of Agner's tables I have gives it a latency of 3 on
+> >> > pretty much everything.
+> >> > If you can only do one chained crc instruction every three clocks
+> >> > it is hard to see how unrolling the loop will help.
+> >> > Intel cpu (since sandy bridge) will run a two clock loop.
+> >> > With three clocks to play with it should be easy (even for a compile=
+r)
+> >> > to generate a loop with no extra clock stalls.
+> >> >
+> >> > Clearly if Clang decides to copy arguments to the stack an extra tim=
+e
+> >> > that will kill things. But in this case you want the "m" constraint
+> >> > to directly read from the buffer (with a (reg,reg,8) addressing mode=
+).
+> >> >
+> >> Below is what Clang generates with the builtins. From what Eric said,
+> >> this code is only run for sizes <=3D 512 bytes? So maybe it's not supe=
+r
+> >> important to micro-optimize this. I apologize, but my ability to
+> >> measure clock loops for x86 code isn't great. (I'm sure I lack the
+> >> requisite benchmarks, etc.)
+> >
+> >Jeepers - that is trashing the I-cache.
+> >Not to mention all the conditional branches at the bottom.
+> >Consider the basic loop:
+> >1:     crc32q  (%rcx), %rbx
+> >       addq    $8, %rcx
+> >       cmp     %rcx, %rdx
+> >       jne     1b
+> >The crc32 has latency 3 so it must take at least 3 clocks.
+> >Even naively the addq can be issued in the same clock as the crc32
+> >and the cmp and jne in the following ones.
+> >Since the jne is predicted taken, the addq can be assumed to execute
+> >in the same clock as the jne.
+> >(The cmp+jne might also get merged into a single u-op)
+> >(I've done this with adc (for IP checksum), with two adc the loop takes
+> >two clocks even with the extra memory reads.)
+> >
+> >So that loop is likely to run limited by the three clock latency of crc3=
+2.
+> >Even the memory reads will happen with all the crc32 just waiting for th=
+e
+> >previous crc32 to finish.
+> >You can take an instruction out of the loop:
+> >1:     crc32q  (%rcx,%rdx), %rbx
+> >       addq    $8, %rdx
+> >       jne     1b
+> >but that may not be necessary, and (IIRC) gcc doesn't like letting you
+> >generate it.
+> >
+> >For buffers that aren't multiples of 8 bytes 'remember' that the crc of
+> >a byte depends on how far it is from the end of the buffer, and that ini=
+tial
+> >zero bytes have no effect.
+> >So (provided the buffer is 8+ bytes long) read the first 8 bytes, shift
+> >right by the number of bytes needed to make the rest of the buffer a mul=
+tiple
+> >or 8 bytes (the same as reading from across the start of the buffer and =
+masking
+> >the low bytes) then treat exactly the same as a buffer that is a multipl=
+e
+> >of 8 bytes long.
+> >Don't worry about misaligned reads, you lose less than one clock per cac=
+he
+> >line (that is with adc doing a read every clock).
+> >
+For reference, GCC does much better with code gen, but only with the builti=
+n:
 
-It is necessary to put the SGMII PCS into power down mode and back up.
+.L39:
+        crc32q  (%rax), %rbx    # MEM[(long unsigned int *)p_40], tmp120
+        addq    $8, %rax        #, p
+        cmpq    %rcx, %rax      # _37, p
+        jne     .L39    #,
+        leaq    (%rsi,%rdi,8), %rsi     #, p
+.L38:
+        andl    $7, %edx        #, len
+        je      .L41    #,
+        addq    %rsi, %rdx      # p, _11
+        movl    %ebx, %eax      # crc, <retval>
+        .p2align 4
+.L40:
+        crc32b  (%rsi), %eax    # MEM[(const u8 *)p_45], <retval>
+        addq    $1, %rsi        #, p
+        cmpq    %rsi, %rdx      # p, _11
+        jne     .L40    #,
 
-Cc: stable@vger.kernel.org
-Fixes: f1fe5dff2b8a ("net: phy: nxp-c45-tja11xx: add TJA1120 support")
-Signed-off-by: Andrei Botila <andrei.botila@oss.nxp.com>
----
- drivers/net/phy/nxp-c45-tja11xx.c | 20 ++++++++++++++++++--
- 1 file changed, 18 insertions(+), 2 deletions(-)
+> >Actually measuring the performance is hard.
+> >You can use rdtsc because the clock speed will change when the cpu gets =
+busy.
+> >There is a 'performance counter' that is actual clocks.
+> >While you can use the library functions to set it up, you need to just r=
+ead the
+> >register - the library overhead it too big.
+> >You also need the odd lfence.
+> >Having done that, and provided the buffer is in the L1 d-cache you can m=
+easure
+> >the loop time in clocks and compare against the expected value.
+> >Once you've got 3 clocks per crc32 instruction it won't get any better,
+> >which is why the 'fast' code for big buffers does crc of 3+ buffers sect=
+ions
+> >in parallel.
+> >
+Thanks for the info! It'll help a lot the next time I need to delve
+deeply into performance.
 
-diff --git a/drivers/net/phy/nxp-c45-tja11xx.c b/drivers/net/phy/nxp-c45-tja11xx.c
-index e083b1a714fd..d142e0a02327 100644
---- a/drivers/net/phy/nxp-c45-tja11xx.c
-+++ b/drivers/net/phy/nxp-c45-tja11xx.c
-@@ -114,6 +114,9 @@
- #define MII_BASIC_CONFIG_RMII		0x5
- #define MII_BASIC_CONFIG_MII		0x4
- 
-+#define VEND1_SGMII_BASIC_CONTROL	0xB000
-+#define SGMII_LPM			BIT(11)
-+
- #define VEND1_SYMBOL_ERROR_CNT_XTD	0x8351
- #define EXTENDED_CNT_EN			BIT(15)
- #define VEND1_MONITOR_STATUS		0xAC80
-@@ -1598,11 +1601,11 @@ static int nxp_c45_set_phy_mode(struct phy_device *phydev)
- 	return 0;
- }
- 
--/* Errata: ES_TJA1120 and ES_TJA1121 Rev. 1.0 — 28 November 2024 Section 3.1 */
-+/* Errata: ES_TJA1120 and ES_TJA1121 Rev. 1.0 — 28 November 2024 Section 3.1 & 3.2 */
- static void nxp_c45_tja1120_errata(struct phy_device *phydev)
- {
-+	bool macsec_ability, sgmii_ability;
- 	int silicon_version, sample_type;
--	bool macsec_ability;
- 	int phy_abilities;
- 	int ret = 0;
- 
-@@ -1619,6 +1622,7 @@ static void nxp_c45_tja1120_errata(struct phy_device *phydev)
- 	phy_abilities = phy_read_mmd(phydev, MDIO_MMD_VEND1,
- 				     VEND1_PORT_ABILITIES);
- 	macsec_ability = !!(phy_abilities & MACSEC_ABILITY);
-+	sgmii_ability = !!(phy_abilities & SGMII_ABILITY);
- 	if ((!macsec_ability && silicon_version == 2) ||
- 	    (macsec_ability && silicon_version == 1)) {
- 		/* TJA1120/TJA1121 PHY configuration errata workaround.
-@@ -1639,6 +1643,18 @@ static void nxp_c45_tja1120_errata(struct phy_device *phydev)
- 
- 		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F8, 0x0);
- 		phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x01F9, 0x0);
-+
-+		if (sgmii_ability) {
-+			/* TJA1120B/TJA1121B SGMII PCS restart errata workaround.
-+			 * Put SGMII PCS into power down mode and back up.
-+			 */
-+			phy_set_bits_mmd(phydev, MDIO_MMD_VEND1,
-+					 VEND1_SGMII_BASIC_CONTROL,
-+					 SGMII_LPM);
-+			phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1,
-+					   VEND1_SGMII_BASIC_CONTROL,
-+					   SGMII_LPM);
-+		}
- 	}
- }
- 
--- 
-2.48.1
+I tried using rdtsc and another programmatic way of measuring timing.
+Also tried making the task have high priority, restricting to one CPU,
+etc. But the numbers weren't as consistent as I wanted them to be. The
+times I reported were the based on the fastest times / clocks /
+whatever from several runs for each build.
 
+> >       David
+> >
+> >>
+> >> -bw
+> >>
+> >> .LBB1_9:                                # =3D>This Inner Loop Header: =
+Depth=3D1
+> >>         movl    %ebx, %ebx
+> >>         crc32q  (%rcx), %rbx
+> >>         addq    $8, %rcx
+> >>         incq    %rdi
+> >>         cmpq    %rdi, %rsi
+> >>         jne     .LBB1_9
+> >> # %bb.10:
+> >>         subq    %rdi, %rax
+> >>         jmp     .LBB1_11
+> >> .LBB1_7:
+> >>         movq    %r14, %rcx
+> >> .LBB1_11:
+> >>         movq    %r15, %rsi
+> >>         andq    $-8, %rsi
+> >>         cmpq    $7, %rdx
+> >>         jb      .LBB1_14
+> >> # %bb.12:
+> >>         xorl    %edx, %edx
+> >> .LBB1_13:                               # =3D>This Inner Loop Header: =
+Depth=3D1
+> >>         movl    %ebx, %ebx
+> >>         crc32q  (%rcx,%rdx,8), %rbx
+> >>         crc32q  8(%rcx,%rdx,8), %rbx
+> >>         crc32q  16(%rcx,%rdx,8), %rbx
+> >>         crc32q  24(%rcx,%rdx,8), %rbx
+> >>         crc32q  32(%rcx,%rdx,8), %rbx
+> >>         crc32q  40(%rcx,%rdx,8), %rbx
+> >>         crc32q  48(%rcx,%rdx,8), %rbx
+> >>         crc32q  56(%rcx,%rdx,8), %rbx
+> >>         addq    $8, %rdx
+> >>         cmpq    %rdx, %rax
+> >>         jne     .LBB1_13
+> >> .LBB1_14:
+> >>         addq    %rsi, %r14
+> >> .LBB1_15:
+> >>         andq    $7, %r15
+> >>         je      .LBB1_23
+> >> # %bb.16:
+> >>         crc32b  (%r14), %ebx
+> >>         cmpl    $1, %r15d
+> >>         je      .LBB1_23
+> >> # %bb.17:
+> >>         crc32b  1(%r14), %ebx
+> >>         cmpl    $2, %r15d
+> >>         je      .LBB1_23
+> >> # %bb.18:
+> >>         crc32b  2(%r14), %ebx
+> >>         cmpl    $3, %r15d
+> >>         je      .LBB1_23
+> >> # %bb.19:
+> >>         crc32b  3(%r14), %ebx
+> >>         cmpl    $4, %r15d
+> >>         je      .LBB1_23
+> >> # %bb.20:
+> >>         crc32b  4(%r14), %ebx
+> >>         cmpl    $5, %r15d
+> >>         je      .LBB1_23
+> >> # %bb.21:
+> >>         crc32b  5(%r14), %ebx
+> >>         cmpl    $6, %r15d
+> >>         je      .LBB1_23
+> >> # %bb.22:
+> >>         crc32b  6(%r14), %ebx
+> >> .LBB1_23:
+> >>         movl    %ebx, %eax
+> >> .LBB1_24:
+> >
+> >
+>
+> The tail is *weird*. Wouldn't it be better to do a 4-2-1 stepdown?
+
+Definitely on the weird side! I considered hard-coding something like
+that, but thought it might be a bit convoluted, though certainly less
+convoluted than what we generate now. A simple loop is probably all
+that's needed, because it should only need to be done at most seven
+times.
+
+-bw
 
