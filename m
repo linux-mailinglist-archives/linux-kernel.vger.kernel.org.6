@@ -1,121 +1,141 @@
-Return-Path: <linux-kernel+bounces-543485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6663CA4D637
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:24:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54E66A4D638
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:24:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A6D173FCA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:24:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 587343AA985
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B811FBEA2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1275A1FAC33;
 	Tue,  4 Mar 2025 08:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH1AGMd8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOWgvRAQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24621FBC99;
-	Tue,  4 Mar 2025 08:24:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F9751F583F;
+	Tue,  4 Mar 2025 08:24:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076686; cv=none; b=KYAETYMo5fdrk51Uz2ij+gQFvO3QO4QDKo9JXuadTrIDYsDpeZhaKKHRt3L55kGPBWqS/4U1uDKfZX5izvLtYLprW6XnxWsv0FuQ0AHbEmJV3VcdWVmerIZZWx4R4AyNwIyuh2dsBmAYYJ1+3uDSItjlU5UXnHOvUKJcWUu2+pM=
+	t=1741076685; cv=none; b=tPkYseMmXSlW5UlL+XZZ88OwBdOCM24h+vGiUhkmnXXRtVhKGJwOpYCRircHuuDn5BWFq7fWGte2RuflxVLbc5xoTlDnKqBwZCDibUG2NOOH/EA1KVU3FUElsNyjLb/j4FFq/MQbnCWJuxNHcR4b10bxOx8l+50rHsRJ/36t/y0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076686; c=relaxed/simple;
-	bh=TAw6fNcNSg7YEvEqtiZRQve5lHtjiupPT421lnC+KgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q7fCaB8or9jiPlCSxplWFHwwmoHWZvPU/Ruv6Ljbrq01HDianO28cZ9Ec49edp6tKMDxFCMpF70iy8aSHe50aktujU2oRSakCKO/xcyWWYmJ5UAn8qA4FsqYqoE4jNRo/FPniR4//8EnKiawW/XsWiTVMQLn1q44MRaPlCOm79s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH1AGMd8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 965A7C4CEE9;
+	s=arc-20240116; t=1741076685; c=relaxed/simple;
+	bh=+LfuEtS3hu1y9dTM9mxPPM+YBFahStoGBJrYDCOEvOQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=lh7lECFoGTq1A8mCOo72KJHsG2CxF85ZqhjM+0LOyZgMvO40pVeGxRRT7MG1GGY1J7sKigkYxKFEpXnA+Y36kWjBRqeWRx86oMUaVc2RN8OZCec0gOTMKWXrlX5tWiWxm/KhfNsClQsoXmmVnLwrvyDn1VBIF8Ilq3KTPuBlVD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOWgvRAQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id C4EF4C4CEE8;
 	Tue,  4 Mar 2025 08:24:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741076685;
-	bh=TAw6fNcNSg7YEvEqtiZRQve5lHtjiupPT421lnC+KgY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FH1AGMd8G1LRCF9lw6vdX7tGzR5edBc4ZLYek88tB93kOeyrHhacKB0a5T4MF/1XJ
-	 qLOnmf2SAi4ZGkCxli6zkzeK7pRgFyVrWk+ZO+L1FcwqiRFCUFDRCu82m+zFyoXzF0
-	 zHumQyHi27uzUh6slpVEc4pV8rhJR6xhAx4E3d0Ld8Z6SSfgN5zWPyRlWHAGxhfP74
-	 p4xXpRekD0Wb/i7AqnlldQWvGQWG2Fgrv9487/gmQQDwy79VhFZ/xBtzbjLLogl2yt
-	 nNqRQ8TgMtMn5a1AnFPkgll67VwUgYJ95m+amQ+poVrtLFwq+Y6NqmA9+UyFJc1vk2
-	 zMkxoqBrjSZaw==
-Date: Tue, 4 Mar 2025 09:24:41 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
-	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 05/15] dt-bindings: clk: sunxi-ng: add compatible for
- the A523 PRCM-CCU
-Message-ID: <20250304-rare-hyrax-of-criticism-1c7b12@krzk-bin>
-References: <20250304012805.28594-1-andre.przywara@arm.com>
- <20250304012805.28594-6-andre.przywara@arm.com>
+	s=k20201202; t=1741076684;
+	bh=+LfuEtS3hu1y9dTM9mxPPM+YBFahStoGBJrYDCOEvOQ=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=EOWgvRAQC/+Kl/2yWBvrpLxw/J951iYOTxXrq/o0OVSU2XzLKONteM9WvSwBtR6xy
+	 jt2hCKmIDv7YGoF6El4rmnnuishxFyVwU4vH98wEMuMz2/wmV6FkT/wG7jqm5ll5Oq
+	 EbvxfuxkoHn6o6OwFnDpuDGexCKdC6/Ii2w2f7W5fCbbf4tTPsiNmikxDNQ9lsIjIc
+	 x3KfRrYAopYwE6LQy8U2DO8gHZWh3ScWHBZbOnppYQezcUWDiVGu8G7Nlfv5pgQ84L
+	 2wuOlS6viNAh2559hVjUGXo7nYvDURvYwqSBR0qvrygcIOz/M0u79y2qEqXHL30gvr
+	 4m11sP661tKsg==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id B2982C021B8;
+	Tue,  4 Mar 2025 08:24:44 +0000 (UTC)
+From: Maud Spierings via B4 Relay <devnull+maudspierings.gocontroll.com@kernel.org>
+Date: Tue, 04 Mar 2025 09:24:43 +0100
+Subject: [PATCH] hwmon: (ntc_thermistor) Add min and max temperature
+ attributes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250304012805.28594-6-andre.przywara@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250304-ntc_min_max-v1-1-b08e70e56459@gocontroll.com>
+X-B4-Tracking: v=1; b=H4sIAMq4xmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYwMT3byS5PjczLz43MQK3URLI9NUC/MUg5REcyWgjoKi1LTMCrBp0bG
+ 1tQB0iY2eXQAAAA==
+X-Change-ID: 20250304-ntc_min_max-a925e87d0da7
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Maud Spierings <maudspierings@gocontroll.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741076683; l=2025;
+ i=maudspierings@gocontroll.com; s=20250214; h=from:subject:message-id;
+ bh=CtUQPwJHavioCaVE/ITL8uSD7Pf7f336ipLgnIe6DqQ=;
+ b=VFtcbljprV8WoPiWguyklrq7/qaLVB3HmKS463g82n6G8aqwOurAdFbPbzZhWxI6zEoLahSgm
+ h8SEs5l/xFuBQ2FXtWz2q45eksoMtFL2AGfke/QRtIW/sQrO+8omJyx
+X-Developer-Key: i=maudspierings@gocontroll.com; a=ed25519;
+ pk=7chUb8XpaTQDvWhzTdHC0YPMkTDloELEC7q94tOUyPg=
+X-Endpoint-Received: by B4 Relay for maudspierings@gocontroll.com/20250214
+ with auth_id=341
+X-Original-From: Maud Spierings <maudspierings@gocontroll.com>
+Reply-To: maudspierings@gocontroll.com
 
-On Tue, Mar 04, 2025 at 01:27:55AM +0000, Andre Przywara wrote:
-> The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
-> the PRCM R_CCU.
-> 
-> Add the new compatible string, along with the required input clock
-> lists. There is now an extra input clock (PLL_AUDIO), so add this to the
-> list of allowed clocks and required it for the A523 PRCM CCU.
-> Also add the DT binding headers, listing all the clocks with their ID
-> numbers.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../clock/allwinner,sun55i-a523-ccu.yaml      | 23 +++++++++++-
->  include/dt-bindings/clock/sun55i-a523-r-ccu.h | 37 +++++++++++++++++++
->  include/dt-bindings/reset/sun55i-a523-r-ccu.h | 25 +++++++++++++
->  3 files changed, 83 insertions(+), 2 deletions(-)
->  create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
->  create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
-> 
-> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> index 2eacaeaeabac7..a64a35b423736 100644
-> --- a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
-> @@ -19,17 +19,18 @@ properties:
->    compatible:
->      enum:
->        - allwinner,sun55i-a523-ccu
-> +      - allwinner,sun55i-a523-r-ccu
->  
->    reg:
->      maxItems: 1
->  
->    clocks:
->      minItems: 4
-> -    maxItems: 4
-> +    maxItems: 5
+From: Maud Spierings <maudspierings@gocontroll.com>
 
-You just added these lines in previous patch, so squash these and make a
-complete binding in one patch.
+Add the min and max temperature attributes as it is trivial for this
+driver.
 
-Otherwise you will get comment like:
+This can help with detecting implausible readings and indicates to users
+which range they can actually measure, so they will not set a trip point
+at a temperature higher than max or lower than min.
 
->  
->    clock-names:
->      minItems: 4
+This implementation only works for ntcs, if a ptc gets added this will
+have to be changed, but I'm not sure if that is ever the intention.
 
-This is not supposed to be here in previous patch...
+Signed-off-by: Maud Spierings <maudspierings@gocontroll.com>
+---
+ drivers/hwmon/ntc_thermistor.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-> -    maxItems: 4
-> +    maxItems: 5
+diff --git a/drivers/hwmon/ntc_thermistor.c b/drivers/hwmon/ntc_thermistor.c
+index 0d29c8f97ba7c2f264588b6309b91ca494012ad6..fecee177be5daf304c0521a74f2733f6e42567e0 100644
+--- a/drivers/hwmon/ntc_thermistor.c
++++ b/drivers/hwmon/ntc_thermistor.c
+@@ -522,6 +522,12 @@ static int ntc_read(struct device *dev, enum hwmon_sensor_types type,
+ 		case hwmon_temp_type:
+ 			*val = 4;
+ 			return 0;
++		case hwmon_temp_min:
++			*val = data->comp[0].temp_c*1000;
++			return 0;
++		case hwmon_temp_max:
++			*val = data->comp[data->n_comp-1].temp_c*1000;
++			return 0;
+ 		default:
+ 			break;
+ 		}
+@@ -539,6 +545,8 @@ static umode_t ntc_is_visible(const void *data, enum hwmon_sensor_types type,
+ 		switch (attr) {
+ 		case hwmon_temp_input:
+ 		case hwmon_temp_type:
++		case hwmon_temp_min:
++		case hwmon_temp_max:
+ 			return 0444;
+ 		default:
+ 			break;
+@@ -549,7 +557,8 @@ static umode_t ntc_is_visible(const void *data, enum hwmon_sensor_types type,
+ 
+ static const struct hwmon_channel_info * const ntc_info[] = {
+ 	HWMON_CHANNEL_INFO(chip, HWMON_C_REGISTER_TZ),
+-	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT | HWMON_T_TYPE),
++	HWMON_CHANNEL_INFO(temp, HWMON_T_INPUT | HWMON_T_TYPE | HWMON_T_MIN |
++					 HWMON_T_MAX),
+ 	NULL
+ };
+ 
+
+---
+base-commit: cd3215bbcb9d4321def93fea6cfad4d5b42b9d1d
+change-id: 20250304-ntc_min_max-a925e87d0da7
 
 Best regards,
-Krzysztof
+-- 
+Maud Spierings <maudspierings@gocontroll.com>
+
 
 
