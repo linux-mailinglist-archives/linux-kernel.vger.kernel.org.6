@@ -1,128 +1,175 @@
-Return-Path: <linux-kernel+bounces-543267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33E9AA4D39C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:16:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6623A4D3A2
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:17:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 594A71897765
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:16:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CCF21731C3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC971F4CA2;
-	Tue,  4 Mar 2025 06:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9341F542A;
+	Tue,  4 Mar 2025 06:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XFMM4UdJ"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="N2WovOai"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8991DAC95
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D94811F427D;
+	Tue,  4 Mar 2025 06:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741068998; cv=none; b=qDKjPiuYVg8tJBmMRzR+wgVFL0hmFfW2FhDvl3S76GlDejMVwH153bZ/v2o8BvXZ5XPofxJviGJHa78aIxMl5gtmo6nMxRt/f0PK0go5Q4VBzZ6LO48vsSF0Z9niOK74CD9zDWkFKv7WLI8h0nWy623kQ9/6cBu6lsJflG/ovpc=
+	t=1741069017; cv=none; b=ZNcF4cl4vG6pebP0M3XuWudUgyhrUwJc1qIRDzQJKTUwinchNX+dQbCWrk7Jvy5KrCmIfXypLjkF/KS90hguWgRRuLgn57mrfY3w8U/DC0DfuO8PvMDi5AzAKFrXWVqx+Z4u+8oJajxOBTysSLBgoKtTe+oMHbNOX8rbUZn3uZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741068998; c=relaxed/simple;
-	bh=19X3Uwx+JKkXHVL064XwCITOPrqaO+UWsdIEHnMneuM=;
+	s=arc-20240116; t=1741069017; c=relaxed/simple;
+	bh=tPctZgjEhRRZal12UASbRN2RbchFHhep/cFENeVUq9Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DEyDLVvOyo4vEhEYyDZMXct2o0wwwTnggPVdp0I+Gjmv2X10Yj4/J/Vd3gpqJtkbFYa5Z/59wwESMBb6xlUjuXvpO6P90yGqL1rjjRk7nqZironXHdj0L9RQvZYsSehhw279NR8BLVdu7P8KJZ+vQEjrDuevtlTaWIOFsl45TX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XFMM4UdJ; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390e3b3d3bcso6215591f8f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:16:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741068995; x=1741673795; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=/nKPX6DIjshEMAUl1KOyqAjGkCUe+ICt9ye1bUSmbrI=;
-        b=XFMM4UdJk1Yh3GXNa173Jt80Ie/9MKLaAq7fUdk5ctdOkVE1ydX+AU/r3cqCskssBT
-         bV9VWbGh11E9ZlAz7Nho5/q8rljPYp69v0/Y4PTGNOm8ce34msCN/jRFr26vUDj2Sj3t
-         v21WDEDfj8EO0FU5J7OED6HOB5C3DB+JfLqCBsndVoSTMih9ESbl1Xhqti0rNfjK7X+N
-         z7nRQFeHrxawLOstauxQMRkqwJXM0Um1Jv4RF0kQb4dJMLb5PbxxRgvT+ZYc7vmiqbmj
-         SXYjfxmUTBacQSzj4LbilSlhNqXsH3ttM89n7RJ1SDafIi50KE3u4xwlDgvmeAGrVoHp
-         y74Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741068995; x=1741673795;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/nKPX6DIjshEMAUl1KOyqAjGkCUe+ICt9ye1bUSmbrI=;
-        b=QXWOJmWh/gddjKaXYDkGGbwfdeXxkjM4dtnTjb+RS9Dgxp9q995HvsQMFJOc5RLaZj
-         A+xCULKRYhFFdw0kM2QS1MTkc7kdg96WYa+97NlUr96rjg0Dwevvlw5BLAjZxYVkRRpC
-         JrzEqnmpDAIk5ei0JQX/QgfqxaWA0vkwQ0YVhqvDHI7LugbJKM5+wO7cUAycSbkkDhzc
-         BQQMynN39HkRCwcF1rLdt7Imo1cQ/b1JaRRJdS0/vnnfFWvz564rWqezMkXOVQ6Le97b
-         ONEhBzEZBwrakOonECoTOdnXwmX7weau8J9boTBryLKkXaNAU9bSu+JTr55aUDb/h3dA
-         KaGA==
-X-Forwarded-Encrypted: i=1; AJvYcCUY+OgYup7+SfEUmN9rBcfNdjASUuWbb1xEDI0PUTl9DLFfZ1gt/RNjuoiFhjbAfO8KU4tAbfMc+ZKLufU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7tMDHmOLp0IsTIDwe2KxdzkM11q9LL0md0y4QeQbfoeEeP9Dj
-	lgfKmH3oDHNO+SX7himJ3AfemDwbv7G3+MzRXmu1P1Fj3h2RHqGrxZueH3SqUPg=
-X-Gm-Gg: ASbGnctWfsJgBEE/BVQK6huyK7VAcfhKW1ZVZqCp78UxOnjgU8BojCIXoms2qRi2clw
-	IKmbrKNee7SV8w6MNL92c9v5pQOhoFooR8aIDL5kzHfGaV5mLrgYiO3hhGYhtwoQJXeVJXbmMil
-	NXJINI/aSgKE0TZu+04J/LrIbRMVaZNYH67gBeb0I4JiHtjTeoLIjwwcKwYOoeD5ql9gEOThKgc
-	XzPdmjlGmWUS9FQvJR96/dE41Uqx6Wgfc4LNqQ3417IoKFK6pgAH7MvEw4sExKOYVDgLN1V3bhi
-	LQJZVcCQVMBfJf0VJIPXrFrUHyrbMkzS1i7QTlAUkADlOl9SlA==
-X-Google-Smtp-Source: AGHT+IHGIpUcpblova9lskxdumW2y8lPrejnCbvxgbQgqTl6SZZm6j7C3FFjt6dcr0CvmsmXKYeMQQ==
-X-Received: by 2002:a05:6000:186d:b0:391:13ef:1b35 with SMTP id ffacd0b85a97d-39113ef1da9mr2356446f8f.29.1741068994861;
-        Mon, 03 Mar 2025 22:16:34 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e479608fsm16819421f8f.14.2025.03.03.22.16.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 22:16:34 -0800 (PST)
-Date: Tue, 4 Mar 2025 09:16:30 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, kernel-janitors@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	Ben Skeggs <bskeggs@redhat.com>, Daniel Vetter <daniel@ffwll.ch>,
-	David Airlie <airlied@gmail.com>, Karol Herbst <kherbst@redhat.com>,
-	Lyude Paul <lyude@redhat.com>, Simona Vetter <simona@ffwll.ch>,
-	cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH RESEND] drm/nouveau: Add a jump label in
- nouveau_gem_ioctl_pushbuf()
-Message-ID: <bd5220d3-e2f5-4688-919c-bd65f4a41eb2@stanley.mountain>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <8f785de5-ebe2-edd9-2155-f440acacc643@web.de>
- <809905c6-73c0-75a6-1226-048d8cb8dfda@web.de>
- <684bfc0d-7e1d-40f1-b1b7-d6ed64fcd8b7@web.de>
- <Z8YF0kkYLlh1m5ys@pollux>
+	 Content-Type:Content-Disposition:In-Reply-To; b=hly9+YtTwU40SwQimGKwXTh5SNJDS4/owSpny4igpLcaRG5zc9DeTN/QJflHifW+RnQKg2MDUnOy3MwxEpGSVr8Gs29DDWFuqG34aYuXFIZL/bvqUJ1s27wOZz5QJ6i/cYY2I8W9h18nlBCmfGEJgnVkTkyuOJaECEvxzhzD6DY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=N2WovOai; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=wv+PIGwL4Os+6UQr8shBumtmGLDADHsIVKfUG7p0oac=; b=N2WovOaitXsb/19o9wZCWBmkbx
+	X6nG7aGP7e9xXTHfVKszHjHGCjHvP1s+unrd0sDaHVZPKiJKHowe9rCsl6nu1rGadL/60ARvewN3e
+	ZAPsFep2gcveMkAMNvaShUynEhWKqrFc0bxjw+7cUptYPV2Ug91W/HRfS/0b1SL5xoTedaR6OSfTl
+	F/5dr9LwADjHja4YomDwE3U3zdmH4SQF8wYmzJUr+lVJ/mcBBG53xFWkW2J/xpv842f8FpEz0sTV5
+	6VJCazUVPutTp+RWfJgFrN7jb0UGwOsQZTD9Ik7ZOdKhY2PJM6Euq67lJgTL1Ysy6PVWKJW1Ixzrd
+	SOuZMAag==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpLa3-00000000I7p-07aa;
+	Tue, 04 Mar 2025 06:16:39 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7544D30049D; Tue,  4 Mar 2025 07:16:35 +0100 (CET)
+Date: Tue, 4 Mar 2025 07:16:35 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Menglong Dong <menglong8.dong@gmail.com>
+Cc: rostedt@goodmis.org, mark.rutland@arm.com, alexei.starovoitov@gmail.com,
+	catalin.marinas@arm.com, will@kernel.org, mhiramat@kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+	ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+	martin.lau@linux.dev, eddyz87@gmail.com, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+	jolsa@kernel.org, davem@davemloft.net, dsahern@kernel.org,
+	mathieu.desnoyers@efficios.com, nathan@kernel.org,
+	nick.desaulniers+lkml@gmail.com, morbo@google.com,
+	samitolvanen@google.com, kees@kernel.org, dongml2@chinatelecom.cn,
+	akpm@linux-foundation.org, riel@surriel.com, rppt@kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v4 1/4] x86/ibt: factor out cfi and fineibt offset
+Message-ID: <20250304061635.GA29480@noisy.programming.kicks-ass.net>
+References: <20250303132837.498938-1-dongml2@chinatelecom.cn>
+ <20250303132837.498938-2-dongml2@chinatelecom.cn>
+ <20250303165454.GB11590@noisy.programming.kicks-ass.net>
+ <CADxym3aVtKx_mh7aZyZfk27gEiA_TX6VSAvtK+YDNBtuk_HigA@mail.gmail.com>
+ <20250304053853.GA7099@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8YF0kkYLlh1m5ys@pollux>
+In-Reply-To: <20250304053853.GA7099@noisy.programming.kicks-ass.net>
 
-On Mon, Mar 03, 2025 at 08:41:06PM +0100, Danilo Krummrich wrote:
-> On Mon, Mar 03, 2025 at 06:49:07PM +0100, Markus Elfring wrote:
-> > From: Markus Elfring <elfring@users.sourceforge.net>
-> > Date: Wed, 5 Apr 2023 18:38:54 +0200
+On Tue, Mar 04, 2025 at 06:38:53AM +0100, Peter Zijlstra wrote:
+> On Tue, Mar 04, 2025 at 09:10:12AM +0800, Menglong Dong wrote:
+> > Hello, sorry that I forgot to add something to the changelog. In fact,
+> > I don't add extra 5-bytes anymore, which you can see in the 3rd patch.
 > > 
-> > The label “out_prevalid” was used to jump to another pointer check
-> > despite of the detail in the implementation of the function
-> > “nouveau_gem_ioctl_pushbuf” that it was determined already in one case
-> > that the corresponding variable contained an error pointer
-> > because of a failed call of the function “u_memcpya”.
+> > The thing is that we can't add extra 5-bytes if CFI is enabled. Without
+> > CFI, we can make the padding space any value, such as 5-bytes, and
+> > the layout will be like this:
 > > 
-> > Thus use an additional label.
+> > __align:
+> >   nop
+> >   nop
+> >   nop
+> >   nop
+> >   nop
+> > foo: -- __align +5
 > > 
-> > This issue was detected by using the Coccinelle software.
+> > However, the CFI will always make the cfi insn 16-bytes aligned. When
+> > we set the FUNCTION_PADDING_BYTES to (11 + 5), the layout will be
+> > like this:
 > > 
-> > Fixes: 2be65641642e ("drm/nouveau: fix relocations applying logic and a double-free")
-> > Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+> > __cfi_foo:
+> >   nop (11)
+> >   mov $0x12345678, %reg
+> >   nop (16)
+> > foo:
+> > 
+> > and the padding space is 32-bytes actually. So, we can just select
+> > FUNCTION_ALIGNMENT_32B instead, which makes the padding
+> > space 32-bytes too, and have the following layout:
+> > 
+> > __cfi_foo:
+> >   mov $0x12345678, %reg
+> >   nop (27)
+> > foo:
 > 
-> I'm not entirely sure, but I remember that we had this discussion already.
+> *blink*, wtf is clang smoking.
 > 
-> Can you please send patches from the same address as indicated by your SoB?
+> I mean, you're right, this is what it is doing, but that is somewhat
+> unexpected. Let me go look at clang source, this is insane.
 
-This is not a bug fix so it shouldn't have a Fixes tag.
+Bah, this is because assemblers are stupid :/
 
-regards,
-dan carpenter
+There is no way to tell them to have foo aligned such that there are at
+least N bytes free before it.
+
+So what kCFI ends up having to do is align the __cfi symbol to the
+function alignment, and then stuff enough nops in to make the real
+symbol meet alignment.
+
+And the end result is utter insanity.
+
+I mean, look at this:
+
+      50:       2e e9 00 00 00 00       cs jmp 56 <__traceiter_initcall_level+0x46>     52: R_X86_64_PLT32      __x86_return_thunk-0x4
+      56:       66 2e 0f 1f 84 00 00 00 00 00   cs nopw 0x0(%rax,%rax,1)
+
+0000000000000060 <__cfi___probestub_initcall_level>:
+      60:       90                      nop
+      61:       90                      nop
+      62:       90                      nop
+      63:       90                      nop
+      64:       90                      nop
+      65:       90                      nop
+      66:       90                      nop
+      67:       90                      nop
+      68:       90                      nop
+      69:       90                      nop
+      6a:       90                      nop
+      6b:       b8 b1 fd 66 f9          mov    $0xf966fdb1,%eax
+
+0000000000000070 <__probestub_initcall_level>:
+      70:       2e e9 00 00 00 00       cs jmp 76 <__probestub_initcall_level+0x6>      72: R_X86_64_PLT32      __x86_return_thunk-0x4
+
+
+That's 21 bytes wasted, for no reason other than that asm doesn't have a
+directive to say: get me a place that is M before N alignment.
+
+Because ideally the whole above thing would look like:
+
+      50:       2e e9 00 00 00 00       cs jmp 56 <__traceiter_initcall_level+0x46>     52: R_X86_64_PLT32      __x86_return_thunk-0x4
+      56:       66 2e 0f 1f 84 		cs nopw (%rax,%rax,1)
+
+000000000000005b <__cfi___probestub_initcall_level>:
+      5b:       b8 b1 fd 66 f9          mov    $0xf966fdb1,%eax
+
+0000000000000060 <__probestub_initcall_level>:
+      60:       2e e9 00 00 00 00       cs jmp 76 <__probestub_initcall_level+0x6>      72: R_X86_64_PLT32      __x86_return_thunk-0x4
+
+
+
 
