@@ -1,37 +1,37 @@
-Return-Path: <linux-kernel+bounces-543049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1A3FA4D0F4
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:33:33 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76207A4D0EF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDBD03AF73D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:32:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0D4F176BF4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:33:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C4801F3FED;
-	Tue,  4 Mar 2025 01:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FFE514F121;
+	Tue,  4 Mar 2025 01:31:01 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7E01F4174;
-	Tue,  4 Mar 2025 01:30:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69F801F37C3;
+	Tue,  4 Mar 2025 01:30:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741051858; cv=none; b=NJt9JmBfPGWbA0ZdosmP+70IVZ82Y6J3UXJWoyEl8dg7uOV3rlcrpDewNgo+GIb2NrxJ0qpdsBCfEbz/7GaiG2bn+GoHpf6HTmjUBjqeLdDFAX5IZuE4sJVQaYETk2ITZ2HtMRHR0w2303mQ/xNPiUEhzDU2PZ59LUCkqq6m5vE=
+	t=1741051861; cv=none; b=LIN0boUlE0EfVOaP4ecgidQOYLIF1tusIkAW+XltZRvgTN5yQ+TAjGbB4X7hs2UPvWmGMnhcHRzRO3aAc4JwRFRwelzMgHcpfohirXbAAq6VcdbGS7pohm5QKcLqZiNtK4RaZhvDB8jfSEzdzzfUXqgb920ROQZ4d517KeQCYno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741051858; c=relaxed/simple;
-	bh=Ddc0gypRS35D9ISvodKyAMUc2+6+6ub2YWfWwxSlW1s=;
+	s=arc-20240116; t=1741051861; c=relaxed/simple;
+	bh=AlP7WpdAB6AJvcZIQ2zvJ0bMKW8XOabbeR8BoF73JWw=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ddMQ7FXMXwOFhkILopS2pr1lugHkNxb/ibs1UoCH/6Jsjen5dr56UOOawSJJ12+PRb/EygQuPINGohkvjnyz3OCTka2RKtfgfMJEszokgAJX1J2BGyNOkDfvW9oIXGxoxjox8DiUhlRAvSCFSS/QXw1GbecGfdo0euk2l8b/nEc=
+	 MIME-Version; b=kk27dioJ+gTSf/S/Uw7Zj+p4pHy0GE+0IKm07mczS+64ROZwP1looLL1jMZhKAUibK7zplsLo/fldo3inbLvXavgTpqIryWi1jPkL2JsVTeHraVRZF4PzBeJGkl/6+TuTkqPx9uYuYsoWl6zo0kN26+pKDNDos4WhOshzM6++Wo=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 922861BF7;
-	Mon,  3 Mar 2025 17:31:10 -0800 (PST)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AC434FEC;
+	Mon,  3 Mar 2025 17:31:12 -0800 (PST)
 Received: from localhost.localdomain (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D1B7E3F673;
-	Mon,  3 Mar 2025 17:30:54 -0800 (PST)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id EAA733F673;
+	Mon,  3 Mar 2025 17:30:56 -0800 (PST)
 From: Andre Przywara <andre.przywara@arm.com>
 To: Michael Turquette <mturquette@baylibre.com>,
 	Stephen Boyd <sboyd@kernel.org>,
@@ -47,9 +47,9 @@ Cc: Philipp Zabel <p.zabel@pengutronix.de>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-sunxi@lists.linux.dev,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v3 11/15] clk: sunxi-ng: a523: add USB mod clocks
-Date: Tue,  4 Mar 2025 01:28:01 +0000
-Message-ID: <20250304012805.28594-12-andre.przywara@arm.com>
+Subject: [PATCH v3 12/15] clk: sunxi-ng: a523: remaining mod clocks
+Date: Tue,  4 Mar 2025 01:28:02 +0000
+Message-ID: <20250304012805.28594-13-andre.przywara@arm.com>
 X-Mailer: git-send-email 2.46.3
 In-Reply-To: <20250304012805.28594-1-andre.przywara@arm.com>
 References: <20250304012805.28594-1-andre.przywara@arm.com>
@@ -61,99 +61,226 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add the clocks driving the USB subsystem: this just covers the two
-clocks creating the 12 MHz rate for the OHCI (USB 1.x) device. The rest
-of the USB clocks are either gate clocks (added later) or created
-internal to the USB IP.
+Add the remaining mod clocks, driving various parts of the SoC: the "LEDC"
+LED controller, the "CSI" camera interface, the "ISP" image processor,
+the DSP clock, and the "fanout" clocks, which allow to put clock signals
+on external pins.
 
 Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 ---
- drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 57 ++++++++++++++++++++++++++
- 1 file changed, 57 insertions(+)
+ drivers/clk/sunxi-ng/ccu-sun55i-a523.c | 185 +++++++++++++++++++++++++
+ 1 file changed, 185 insertions(+)
 
 diff --git a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-index 7aa38bb2e6ba6..573c9885110a1 100644
+index 573c9885110a1..12cdd623a3851 100644
 --- a/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
 +++ b/drivers/clk/sunxi-ng/ccu-sun55i-a523.c
-@@ -684,6 +684,59 @@ static SUNXI_CCU_M_WITH_GATE(gpadc1_clk, "gpadc1", "hosc", 0x9e4,
- 				 BIT(31),	/* gate */
- 				 0);
+@@ -862,6 +862,157 @@ static SUNXI_CCU_M_HW_WITH_MUX_GATE(edp_clk, "edp", edp_parents, 0xbb0,
+ 				    BIT(31),	/* gate */
+ 				    CLK_SET_RATE_PARENT);
  
-+/*
-+ * The first parent is a 48 MHz input clock divided by 4. That 48 MHz clock is
-+ * a 2x multiplier from osc24M synchronized by pll-periph0, and is also used by
-+ * the OHCI module.
-+ */
-+static const struct clk_parent_data usb_ohci_parents[] = {
-+	{ .hw = &pll_periph0_4x_clk.common.hw },
++static SUNXI_CCU_M_DATA_WITH_MUX_GATE(ledc_clk, "ledc", ir_tx_ledc_parents,
++				      0xbf0,
++				      0, 4,	/* M */
++				      24, 1,	/* mux */
++				      BIT(31),	/* gate */
++				      0);
++
++static const struct clk_hw *csi_top_parents[] = {
++	&pll_periph0_300M_clk.hw,
++	&pll_periph0_400M_clk.hw,
++	&pll_periph0_480M_clk.common.hw,
++	&pll_video3_4x_clk.common.hw,
++	&pll_video3_3x_clk.hw,
++};
++static SUNXI_CCU_M_HW_WITH_MUX_GATE(csi_top_clk, "csi-top", csi_top_parents,
++				    0xc04,
++				    0, 5,	/* M */
++				    24, 3,	/* mux */
++				    BIT(31),	/* gate */
++				    0);
++
++static const struct clk_parent_data csi_mclk_parents[] = {
++	{ .fw_name = "hosc" },
++	{ .hw = &pll_video3_4x_clk.common.hw },
++	{ .hw = &pll_video0_4x_clk.common.hw },
++	{ .hw = &pll_video1_4x_clk.common.hw },
++	{ .hw = &pll_video2_4x_clk.common.hw },
++};
++static SUNXI_CCU_DUALDIV_MUX_GATE(csi_mclk0_clk, "csi-mclk0", csi_mclk_parents,
++				  0xc08,
++				  0, 5,		/* M */
++				  8, 5,		/* P */
++				  24, 3,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_DUALDIV_MUX_GATE(csi_mclk1_clk, "csi-mclk1", csi_mclk_parents,
++				  0xc0c,
++				  0, 5,		/* M */
++				  8, 5,		/* P */
++				  24, 3,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_DUALDIV_MUX_GATE(csi_mclk2_clk, "csi-mclk2", csi_mclk_parents,
++				  0xc10,
++				  0, 5,		/* M */
++				  8, 5,		/* P */
++				  24, 3,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static SUNXI_CCU_DUALDIV_MUX_GATE(csi_mclk3_clk, "csi-mclk3", csi_mclk_parents,
++				  0xc14,
++				  0, 5,		/* M */
++				  8, 5,		/* P */
++				  24, 3,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
++
++static const struct clk_hw *isp_parents[] = {
++	&pll_periph0_300M_clk.hw,
++	&pll_periph0_400M_clk.hw,
++	&pll_video2_4x_clk.common.hw,
++	&pll_video3_4x_clk.common.hw,
++};
++static SUNXI_CCU_M_HW_WITH_MUX_GATE(isp_clk, "isp", isp_parents, 0xc20,
++				    0, 5,	/* M */
++				    24, 3,	/* mux */
++				    BIT(31),	/* gate */
++				    0);
++
++static const struct clk_parent_data dsp_parents[] = {
 +	{ .fw_name = "hosc" },
 +	{ .fw_name = "losc" },
 +	{ .fw_name = "iosc" },
++	{ .hw = &pll_periph0_2x_clk.common.hw },
++	{ .hw = &pll_periph0_480M_clk.common.hw, },
 +};
-+static const struct ccu_mux_fixed_prediv usb_ohci_predivs[] = {
-+	{ .index = 0, .div = 50 },
-+	{ .index = 1, .div = 2 },
++static SUNXI_CCU_M_DATA_WITH_MUX_GATE(dsp_clk, "dsp", dsp_parents, 0xc70,
++				      0, 5,	/* M */
++				      24, 3,	/* mux */
++				      BIT(31),	/* gate */
++				      0);
++
++static SUNXI_CCU_GATE_DATA(fanout_24M_clk, "fanout-24M", osc24M,
++			   0xf30, BIT(0), 0);
++static SUNXI_CCU_GATE_DATA_WITH_PREDIV(fanout_12M_clk, "fanout-12M", osc24M,
++				       0xf30, BIT(1), 2, 0);
++static SUNXI_CCU_GATE_HWS_WITH_PREDIV(fanout_16M_clk, "fanout-16M",
++				      pll_periph0_480M_hws,
++				      0xf30, BIT(2), 30, 0);
++static SUNXI_CCU_GATE_HWS_WITH_PREDIV(fanout_25M_clk, "fanout-25M",
++				      pll_periph0_2x_hws,
++				      0xf30, BIT(3), 48, 0);
++static SUNXI_CCU_GATE_HWS_WITH_PREDIV(fanout_50M_clk, "fanout-50M",
++				      pll_periph0_2x_hws,
++				      0xf30, BIT(4), 24, 0);
++
++static const struct clk_parent_data fanout_27M_parents[] = {
++	{ .hw = &pll_video0_4x_clk.common.hw },
++	{ .hw = &pll_video1_4x_clk.common.hw },
++	{ .hw = &pll_video2_4x_clk.common.hw },
++	{ .hw = &pll_video3_4x_clk.common.hw },
 +};
++static SUNXI_CCU_DUALDIV_MUX_GATE(fanout_27M_clk, "fanout-27M",
++				  fanout_27M_parents, 0xf34,
++				  0, 5,		/* div0 */
++				  8, 5,		/* div1 */
++				  24, 2,	/* mux */
++				  BIT(31),	/* gate */
++				  0);
 +
-+static struct ccu_mux usb_ohci0_clk = {
-+	.enable		= BIT(31),
-+	.mux		= {
-+		.shift		= 24,
-+		.width		= 2,
-+		.fixed_predivs	= usb_ohci_predivs,
-+		.n_predivs	= ARRAY_SIZE(usb_ohci_predivs),
-+	},
-+	.common		= {
-+		.reg		= 0xa70,
-+		.features	= CCU_FEATURE_FIXED_PREDIV,
-+		.hw.init	= CLK_HW_INIT_PARENTS_DATA("usb-ohci0",
-+							   usb_ohci_parents,
-+							   &ccu_mux_ops,
-+							   0),
-+	},
++static const struct clk_parent_data fanout_pclk_parents[] = {
++	{ .hw = &apb0_clk.common.hw }
 +};
++static SUNXI_CCU_DUALDIV_MUX_GATE(fanout_pclk_clk, "fanout-pclk",
++				  fanout_pclk_parents,
++				  0xf38,
++				  0, 5,		/* div0 */
++				  5, 5,		/* div1 */
++				  0, 0,		/* mux */
++				  BIT(31),	/* gate */
++				  0);
 +
-+static struct ccu_mux usb_ohci1_clk = {
-+	.enable		= BIT(31),
-+	.mux		= {
-+		.shift		= 24,
-+		.width		= 2,
-+		.fixed_predivs	= usb_ohci_predivs,
-+		.n_predivs	= ARRAY_SIZE(usb_ohci_predivs),
-+	},
-+	.common		= {
-+		.reg		= 0xa74,
-+		.features	= CCU_FEATURE_FIXED_PREDIV,
-+		.hw.init	= CLK_HW_INIT_PARENTS_DATA("usb-ohci1",
-+							   usb_ohci_parents,
-+							   &ccu_mux_ops,
-+							   0),
-+	},
++static const struct clk_parent_data fanout_parents[] = {
++	{ .fw_name = "losc-fanout" },
++	{ .hw = &fanout_12M_clk.common.hw, },
++	{ .hw = &fanout_16M_clk.common.hw, },
++	{ .hw = &fanout_24M_clk.common.hw, },
++	{ .hw = &fanout_25M_clk.common.hw, },
++	{ .hw = &fanout_27M_clk.common.hw, },
++	{ .hw = &fanout_pclk_clk.common.hw, },
++	{ .hw = &fanout_50M_clk.common.hw, },
 +};
++static SUNXI_CCU_MUX_DATA_WITH_GATE(fanout0_clk, "fanout0", fanout_parents,
++				    0xf3c,
++				    0, 3,	/* mux */
++				    BIT(21),	/* gate */
++				    0);
++static SUNXI_CCU_MUX_DATA_WITH_GATE(fanout1_clk, "fanout1", fanout_parents,
++				    0xf3c,
++				    3, 3,	/* mux */
++				    BIT(22),	/* gate */
++				    0);
++static SUNXI_CCU_MUX_DATA_WITH_GATE(fanout2_clk, "fanout2", fanout_parents,
++				    0xf3c,
++				    6, 3,	/* mux */
++				    BIT(23),	/* gate */
++				    0);
 +
-+
- static const struct clk_parent_data losc_hosc_parents[] = {
- 	{ .fw_name = "hosc" },
- 	{ .fw_name = "losc" },
-@@ -869,6 +922,8 @@ static struct ccu_common *sun55i_a523_ccu_clks[] = {
- 	&ir_tx_clk.common,
- 	&gpadc0_clk.common,
- 	&gpadc1_clk.common,
-+	&usb_ohci0_clk.common,
-+	&usb_ohci1_clk.common,
- 	&pcie_aux_clk.common,
- 	&hdmi_24M_clk.common,
- 	&hdmi_cec_32k_clk.common,
-@@ -960,6 +1015,8 @@ static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
- 		[CLK_IR_TX]		= &ir_tx_clk.common.hw,
- 		[CLK_GPADC0]		= &gpadc0_clk.common.hw,
- 		[CLK_GPADC1]		= &gpadc1_clk.common.hw,
-+		[CLK_USB_OHCI0]		= &usb_ohci0_clk.common.hw,
-+		[CLK_USB_OHCI1]		= &usb_ohci1_clk.common.hw,
- 		[CLK_PCIE_AUX]		= &pcie_aux_clk.common.hw,
- 		[CLK_HDMI_24M]		= &hdmi_24M_clk.common.hw,
- 		[CLK_HDMI_CEC_32K]	= &hdmi_cec_32k_clk.common.hw,
+ /*
+  * Contains all clocks that are controlled by a hardware register. They
+  * have a (sunxi) .common member, which needs to be initialised by the common
+@@ -936,6 +1087,23 @@ static struct ccu_common *sun55i_a523_ccu_clks[] = {
+ 	&tcon_tv0_clk.common,
+ 	&tcon_tv1_clk.common,
+ 	&edp_clk.common,
++	&ledc_clk.common,
++	&csi_top_clk.common,
++	&csi_mclk0_clk.common,
++	&csi_mclk1_clk.common,
++	&csi_mclk2_clk.common,
++	&csi_mclk3_clk.common,
++	&isp_clk.common,
++	&dsp_clk.common,
++	&fanout_24M_clk.common,
++	&fanout_12M_clk.common,
++	&fanout_16M_clk.common,
++	&fanout_25M_clk.common,
++	&fanout_27M_clk.common,
++	&fanout_pclk_clk.common,
++	&fanout0_clk.common,
++	&fanout1_clk.common,
++	&fanout2_clk.common,
+ };
+ 
+ static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
+@@ -1031,6 +1199,23 @@ static struct clk_hw_onecell_data sun55i_a523_hw_clks = {
+ 		[CLK_TCON_TV0]		= &tcon_tv0_clk.common.hw,
+ 		[CLK_TCON_TV1]		= &tcon_tv1_clk.common.hw,
+ 		[CLK_EDP]		= &edp_clk.common.hw,
++		[CLK_LEDC]		= &ledc_clk.common.hw,
++		[CLK_CSI_TOP]		= &csi_top_clk.common.hw,
++		[CLK_CSI_MCLK0]		= &csi_mclk0_clk.common.hw,
++		[CLK_CSI_MCLK1]		= &csi_mclk1_clk.common.hw,
++		[CLK_CSI_MCLK2]		= &csi_mclk2_clk.common.hw,
++		[CLK_CSI_MCLK3]		= &csi_mclk3_clk.common.hw,
++		[CLK_ISP]		= &isp_clk.common.hw,
++		[CLK_DSP]		= &dsp_clk.common.hw,
++		[CLK_FANOUT_24M]	= &fanout_24M_clk.common.hw,
++		[CLK_FANOUT_12M]	= &fanout_12M_clk.common.hw,
++		[CLK_FANOUT_16M]	= &fanout_16M_clk.common.hw,
++		[CLK_FANOUT_25M]	= &fanout_25M_clk.common.hw,
++		[CLK_FANOUT_27M]	= &fanout_27M_clk.common.hw,
++		[CLK_FANOUT_PCLK]	= &fanout_pclk_clk.common.hw,
++		[CLK_FANOUT0]		= &fanout0_clk.common.hw,
++		[CLK_FANOUT1]		= &fanout1_clk.common.hw,
++		[CLK_FANOUT2]		= &fanout2_clk.common.hw,
+ 	},
+ };
+ 
 -- 
 2.46.3
 
