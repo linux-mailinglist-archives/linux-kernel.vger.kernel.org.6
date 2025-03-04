@@ -1,138 +1,159 @@
-Return-Path: <linux-kernel+bounces-543441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4ADFBA4D597
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:01:15 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7254CA4D58F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:00:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE8BE3ADB14
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:01:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 534977AA071
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:59:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 481BC1F8BC9;
-	Tue,  4 Mar 2025 08:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3076E1F9A89;
+	Tue,  4 Mar 2025 07:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HaH/ezKP"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GR29q8ge"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1CE61F8AE2
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 08:00:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3581F9413;
+	Tue,  4 Mar 2025 07:59:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741075258; cv=none; b=d/j2+ccehTLrUKNQCebLH9lRnelDH/hByoZdV31HuU0G1SVHxbxhX187852lMX/Fw3qKcpXr327B/q4z9dB0+AlFxMfpDN4da2bSA8NAs4IGI7CK2iqglZn/Wn3hRfewKCHSIzI+AZBb5CJazjcN0VA1XIqFQBusPVVCgN51nOg=
+	t=1741075188; cv=none; b=E+co3fLwwlH2NNjgpS7YUJ8Oj5DIge4EbhVZu5M4YjQVCC9B+2e6nYGAgmIRoDpIIIgO1RFtBTGRdt9fMHIqHFgkf78hVrxDT2uJvZD2KDWmn1CXmjYSw4S9X0WdSFxsf47FWbgj8rMsoj80+xVrAhi68A96hNn0azUZWfq96Ao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741075258; c=relaxed/simple;
-	bh=grlvUcq+n0ZHUeHH4YRjJJgBrlyFS1tT7OsIfZ6MtKI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SzYTEBgznc4xzpNXpnPF6APQO7YC0yAG9nb+IraoZjafZT2JgcKH4bdyoRzVe8ZjK1U6Cp8hA2Y6BkuKXwd6uLEZvI/phwxBQQwIBO2MXQ8uzsegCCssvfpxda0iXCK/V/1DfCuZEzVTsnc1tbuJahWFC/Ql/CqzRPDUbbzlH6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HaH/ezKP; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741075254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IFiLdPv0wJgydI+E9BMmh4MKMo+mTex0R96kXh25It4=;
-	b=HaH/ezKPCy4lSBpk5Cg2gpZU3IKZNyrs8+2ka2A6fLTw/z6i8DDnK51px969K2F2orS86n
-	sWc2GSnFv15HKPjAQFouQ/yoG9yau6x6mlQvWq6RJb1IMQ1AD5lPnPBvtuZjSC8VEDrAsF
-	NYb3AhFFKiL/vsfvA7Ld4Y3ntC2pPjM=
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
- [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-542-wIEe4zmuMZqRksH1RFW_6w-1; Tue, 04 Mar 2025 03:00:53 -0500
-X-MC-Unique: wIEe4zmuMZqRksH1RFW_6w-1
-X-Mimecast-MFC-AGG-ID: wIEe4zmuMZqRksH1RFW_6w_1741075252
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-ac1e442740cso140405266b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 00:00:53 -0800 (PST)
+	s=arc-20240116; t=1741075188; c=relaxed/simple;
+	bh=Cu4z4tJcKQnioK5oBCWV59p1bBfRBmR9sh8lkmQoAZs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DUXD0bUgAHKLqrFuL3bNAQRhDim0BisXWinHgAcAZdg9ok2ZtvfJUXIlT8hgL9W53ZJYDlCKeMBqmjORrkPn9q0ltfQ2THvSkzotuJQzPP8XAupaxqhyUqobnkTWSW5zY8JO/ol/UnKoJiWNC2w+WgrlcWOzCwEyYgJVBjEqM4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GR29q8ge; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-471fabc5bf5so24870121cf.3;
+        Mon, 03 Mar 2025 23:59:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741075186; x=1741679986; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=1aV334ikN5dUEF1FAOBcx+MylSK4OZXxof9bYGpg/Ok=;
+        b=GR29q8geLWfOns2hVVJFCjQhI+FGIS/xgwPnzFTau9ayJqdwf1QBlmkwYTCjI3h8Xt
+         zNJ8GgcuzsOC6qrQnjirzcSdsRaSbk6eTcPGB2rPQRE1sHIc3EKNPin76iuCQKwN+AUj
+         gzDdoU/khCWlPeRc5qTU3viPU1rr5tkOZFkISSTLq7saV605DemEM3fgxj+gVd8iXAPW
+         OM06NZG++BRUBVyDAFJTinoC39qHA7+bLeK28URXL0o1OosQwwN4O0s96tdRhLSaY9Q6
+         B7GZQbJk1V7m3fQXUPFM43tHR5B/L+3EyJYPIKA8lKdAP/dqhV6V2RgqRY0UcxZ8os8n
+         rl5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741075252; x=1741680052;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IFiLdPv0wJgydI+E9BMmh4MKMo+mTex0R96kXh25It4=;
-        b=ZZyY6EN9DPeUKJw/Rpaofta8IMno7Ka3WEkTjZzGY+GHNSErdnQSkk4hCJTzjcnTgH
-         ewu6yroHJrZdf4iqF+HDTxP68P/90TUEI3hcp739lOTCXOLnOcov2XIvsU0s/GPfCFJR
-         WVKg3TczvjrS1JBV2wU8G4FnWIHQaBaHpVx1nYCB7Dp48XDGH0uAcVAjENOOHG7xHbd/
-         cN9WpJ/kGGGFuLfNsmNc+1lygxWXWuSyJyxeXB5cNuoy42Pm/6JVxm57sOdjsmkCwgKq
-         gNLbRDxdQDnM1qu6jF5bj9AolIXTso4Y7JhgRacH6SZ/Pyv8XMgeiulumoKs6Z0L/Ksk
-         eddQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkZn3hods0s+IGFKhWK18teAxJEbpOXsVmWR3QLN5Jkjo8t4SUT4GYUuDG9GwRNnDO8bQ2thZmiwcmkv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwICgn4qkyR+jg9UMXDHSPcny1p0nXgIg5ziyD0CyAPIQu2rBWC
-	97MQDsAvSrnhS9MohzLtrMD3Phyd6zSLXbKHYBcvE1TxSQ8coJfnzorDx2WumJ8ofhPa9gBQLqX
-	q2JN++zYIAAe721YBU3c8g6ECeYEiRW1lfUY3+tuGE0aSffnfKF2YiOeYQVPHRbAlwkMbJGhm6v
-	mDPC/zUF1LchApm+CmS28akJE/tfzNJZ5/7T2N
-X-Gm-Gg: ASbGncuEiZ9SOJJFR0CXPLd8eIbWPLiqkp42ODZmovXRWNq1oruG1WYJ379jNTnxoje
-	Umv2VvFseR3g79uWvxludaiYhTkGIaBwjBv3A9C+gm/CTorUSDgdpcrWxrm2PExwv07SjXTFS
-X-Received: by 2002:a17:907:97c9:b0:ac1:fa6f:4941 with SMTP id a640c23a62f3a-ac1fa6f56b3mr77297866b.13.1741075251961;
-        Tue, 04 Mar 2025 00:00:51 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH6YcRUoE+PQsHcF94LU8vESBGW89cDx3MC01IA3KlNUw4Ta0bQ9PK+pMZlo0Tp04vd/FuLAgkki0nl8YikaVQ=
-X-Received: by 2002:a17:907:97c9:b0:ac1:fa6f:4941 with SMTP id
- a640c23a62f3a-ac1fa6f56b3mr77295666b.13.1741075251611; Tue, 04 Mar 2025
- 00:00:51 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741075186; x=1741679986;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1aV334ikN5dUEF1FAOBcx+MylSK4OZXxof9bYGpg/Ok=;
+        b=pigatJrUAYkino9Yw00ATm8iFDQabdz+kvDu7WiAeM9fCMNtlMcgKjgipIYW2U8OWN
+         GM8+N4C8FviTQTHLDEVqh+Y5iRiF1Y1Gp9FAEI5wkxB3grvi3m+6PO8xLWDEfKCJLGeD
+         CpvxknG0yWFzAtcy10nAG8zw4zq2KuR6DW+PqPjcA262HiY0Kte8SRNXXVBis+aZPtuB
+         C6E9dcWvAFTWrEg6JIsHPRLA+YT119eg+7A9ftCvxnnHK6eQZ23FRGTI9vFpkMJNp1mK
+         I38800AfsT/BnVzjydGs9EqwXS9BsN8R7dypgMmv6KHMHqBBGdY4VxRIcWWhKo51qlH2
+         OPPw==
+X-Forwarded-Encrypted: i=1; AJvYcCXXirjT1TonsEkxm7Z+wY7+EpTTU6c2mipFZlkzQSBCl5YeunLDw8bggeq9BRab6S133hdMe2BJJFwZgVg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyYEh+aAJqi+Av3TcmA4J+Amc3uKjvo9UV/z9hkilBBpSzwjI4d
+	7nFcPYsqY8ayRDHT2Nf9mGTFdqMZQ8If7sDOmMC3pgnu0CFK9Kf5
+X-Gm-Gg: ASbGnctbBBlLK9AC7aaN6/CN58FeZeTSsu56/IM0X5KyY5Ow2fQ1yqPDRLdhghJVqpA
+	6kgUEMyk4RbgQrNwlOq/NH5CmTrsAueMa0rHCREtm7YuqFEtxS3nC2n7pRrAxqk8GRJNHXY3I18
+	WNz54YWp3o4dXE6LmxKQv4S2/7zOvHYROFOwhIlscRogUr4r/EaZ2XUhEVpkpgRoIwxFt4BGo8d
+	VI/qHQfUqeuAV5ESy1taCt8OXBYLnvSn8F/flq3AyHHuJGEdhyA6gzrTFV78ArqAXi8lrOxnve3
+	/+GlSFHkfWAvuYrPhthhuHoDx+NKVeC4+x52PPoDMBMpqg==
+X-Google-Smtp-Source: AGHT+IHIYoa+cieyOOJgxd5EL3wyq699sPw+C+GlH+7h85SoD+RTkabVF3VG6HjUXFBPykg/6gEcuA==
+X-Received: by 2002:a05:622a:20a:b0:471:8d66:cd68 with SMTP id d75a77b69052e-474bc0554ddmr212901451cf.3.1741075185773;
+        Mon, 03 Mar 2025 23:59:45 -0800 (PST)
+Received: from iman-pc.home ([184.148.73.125])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474691a1f02sm70183901cf.11.2025.03.03.23.59.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 03 Mar 2025 23:59:45 -0800 (PST)
+From: Seyediman Seyedarab <imandevel@gmail.com>
+X-Google-Original-From: Seyediman Seyedarab <ImanDevel@gmail.com>
+To: jack@suse.cz,
+	amir73il@gmail.com
+Cc: linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Seyediman Seyedarab <ImanDevel@gmail.com>
+Subject: [PATCH] inotify: disallow watches on unsupported filesystems
+Date: Tue,  4 Mar 2025 03:00:44 -0500
+Message-ID: <20250304080044.7623-1-ImanDevel@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250127170251.744751-1-costa.shul@redhat.com>
- <20250227200623.60f20571@gandalf.local.home> <CAP4=nvQXaFmemBeW8U3U9zTMK0gVYvp23gfq_6ALsBJPTXt9Uw@mail.gmail.com>
- <20250303150351.28007ad1@gandalf.local.home>
-In-Reply-To: <20250303150351.28007ad1@gandalf.local.home>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Tue, 4 Mar 2025 09:00:40 +0100
-X-Gm-Features: AQ5f1JpjC5uI6iD9gjjgeuoX5GcZz2a7tfefoRMXBLfWQDJ3fcDoPMA4HZz7dWk
-Message-ID: <CAP4=nvQ9pXYtihL7HTTRK=EzUEubtWbxDr78JswksSo-wa7zYw@mail.gmail.com>
-Subject: Re: [PATCH v1] rtla: Save trace when option `--trace` is specified
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Costa Shulyupin <costa.shul@redhat.com>, John Kacur <jkacur@redhat.com>, 
-	"Luis Claudio R. Goncalves" <lgoncalv@redhat.com>, Eder Zulian <ezulian@redhat.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-po 3. 3. 2025 v 21:04 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis.org> =
-napsal:
->
-> Not sure what you mean by "main instance"?
->
+currently, inotify_add_watch() allows adding watches on filesystems
+where inotify does not work correctly, without returning an explicit
+error. This behavior is misleading and can cause confusion for users
+expecting inotify to work on a certain filesystem.
 
-By "main instance", I meant tool->trace.inst. My point was that
-record->trace.inst, which is a different instance, would be still on.
-But that's not the case, osnoise_stop_tracing() stops *all* osnoise
-instances, not just the first one - sorry, that was my mistake.
+This patch explicitly rejects inotify usage on filesystems where it
+is known to be unreliable, such as sysfs, procfs, overlayfs, 9p, fuse,
+and others.
 
->
-> The code being changed is:
->
-> -       if (osnoise_trace_is_off(tool, record)) {
-> +       if (osnoise_trace_is_off(tool, record))
->                 printf("rtla osnoise hit stop tracing\n");
-> -               if (params->trace_output) {
-> -                       printf("  Saving trace to %s\n", params->trace_ou=
-tput);
-> -                       save_trace_to_file(record->trace.inst, params->tr=
-ace_output);
-> -               }
-> +       if (params->trace_output) {
-> +               printf("  Saving trace to %s\n", params->trace_output);
-> +               save_trace_to_file(record->trace.inst, params->trace_outp=
-ut);
->         }
->
+By returning -EOPNOTSUPP, the limitation is made explicit, preventing
+users from making incorrect assumptions about inotify behavior.
 
-So we need to stop tracing here, before we save the trace, if we want
-to do that. Perhaps combining this with the cleanup patch [1] and
-doing the stopping in save_trace_to_file would make sense?
+Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+---
+ fs/notify/inotify/inotify_user.c | 22 ++++++++++++++++++++++
+ 1 file changed, 22 insertions(+)
 
-[1] - https://lore.kernel.org/linux-trace-kernel/20250219115138.406075-1-co=
-sta.shul@redhat.com/
-
-Tomas
+diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify_user.c
+index b372fb2c56bd..9b96438f4d46 100644
+--- a/fs/notify/inotify/inotify_user.c
++++ b/fs/notify/inotify/inotify_user.c
+@@ -87,6 +87,13 @@ static const struct ctl_table inotify_table[] = {
+ 	},
+ };
+ 
++static const unsigned long unwatchable_fs[] = {
++	PROC_SUPER_MAGIC,      SYSFS_MAGIC,	  TRACEFS_MAGIC,
++	DEBUGFS_MAGIC,	      CGROUP_SUPER_MAGIC, SECURITYFS_MAGIC,
++	RAMFS_MAGIC,	      DEVPTS_SUPER_MAGIC, BPF_FS_MAGIC,
++	OVERLAYFS_SUPER_MAGIC, FUSE_SUPER_MAGIC,   NFS_SUPER_MAGIC
++};
++
+ static void __init inotify_sysctls_init(void)
+ {
+ 	register_sysctl("fs/inotify", inotify_table);
+@@ -690,6 +697,14 @@ static struct fsnotify_group *inotify_new_group(unsigned int max_events)
+ }
+ 
+ 
++static inline bool is_unwatchable_fs(struct inode *inode)
++{
++	for (int i = 0; i < ARRAY_SIZE(unwatchable_fs); i++)
++		if (inode->i_sb->s_magic == unwatchable_fs[i])
++			return true;
++	return false;
++}
++
+ /* inotify syscalls */
+ static int do_inotify_init(int flags)
+ {
+@@ -777,6 +792,13 @@ SYSCALL_DEFINE3(inotify_add_watch, int, fd, const char __user *, pathname,
+ 	inode = path.dentry->d_inode;
+ 	group = fd_file(f)->private_data;
+ 
++	/* ensure that inotify is only used on supported filesystems */
++	if (is_unwatchable_fs(inode)) {
++		pr_debug("%s: inotify is not supported on filesystem with s_magic=0x%lx\n",
++				__func__, inode->i_sb->s_magic);
++		return -EOPNOTSUPP;
++	}
++
+ 	/* create/update an inode mark */
+ 	ret = inotify_update_watch(group, inode, mask);
+ 	path_put(&path);
+-- 
+2.48.1
 
 
