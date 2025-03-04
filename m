@@ -1,62 +1,69 @@
-Return-Path: <linux-kernel+bounces-545786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52409A4F15E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:20:51 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D21A4F15C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:20:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68785188E79B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:20:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AF8AE7A9D05
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:19:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8114727BF63;
-	Tue,  4 Mar 2025 23:20:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C5C127C14F;
+	Tue,  4 Mar 2025 23:20:07 +0000 (UTC)
 Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A4CB279337
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 23:20:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AAD8278116;
+	Tue,  4 Mar 2025 23:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741130411; cv=none; b=M5qHElyH7UCEurHOIrjX69m6dhCJGgVtm8Xv1pmsbzUvpP16Fak+TGh+sOzSaNOJM4GkSZzfQR/DN42Casj9LTtSpuBMSnVHmq6IXKuYMs3KetWUNVpDxo/mfVAaq2VNw+3TgWXihLq1I/j4iVH3Su5sCRey6JLMxinVCGDKq6o=
+	t=1741130406; cv=none; b=e/wGhPN14cDGRhe2SFZeEeUXQAbh7+e8v6sOeR5vI5YPeyvX4CcHGPiyNBZXWfe6jUqgrB5TXNTaP+LRtoZNHiK78vwO6sW76GEP4TQ7irlxSiywfcMGDmNEL+maOuz0F2esHyIf5h2aS71TuHCQ70d4++xInttS5K54GQkGqfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741130411; c=relaxed/simple;
-	bh=mhbNOqeaG3cayoZ0G+PBgg4dwi61tzwTHcEUa12auuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dTT5RtNXhJIdWnVxwkFGM7IAU6ak1Ze/P4Bzf1azUrxpSifV+lgPMAlimmX153+QP8FRrDeLpzb3D4UdiOL7GbmOEdVEVH/Ph+9556j2u4boY4ozlJKhYzQa7QWW87YD6vM99fzVxsDEnCmHKaYKoDHgkx05XDU0o0LGAudyzG0=
+	s=arc-20240116; t=1741130406; c=relaxed/simple;
+	bh=rxbY0OYKeF/ruyA697I5bCATkY6ZUvEuwEmFs1kOfUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=m/Dt1v8rKWmhGjDEDHr/67xSbWSFFTx5v+9LFLF4UsfmPkom4hv1+5Aq/tu3g7VdIKEAJBGKoE5lJUCrjOpVw6Uj0D1wbHYGU0RowoAgzmBkoeao+VB4X3RNIiFdmqAdnX6XykvzRlkF+6T/JObSqu7EXcr+CfvIXZt4k9TFRj8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
 Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4Z6rkH4Tpfz9stK;
-	Wed,  5 Mar 2025 00:00:23 +0100 (CET)
+	by localhost (Postfix) with ESMTP id 4Z6rn82bvXz9stM;
+	Wed,  5 Mar 2025 00:02:52 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from pegase2.c-s.fr ([172.26.127.65])
 	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id Vg8UFazMBaqu; Wed,  5 Mar 2025 00:00:23 +0100 (CET)
+	with ESMTP id wPfy1sCZaY9s; Wed,  5 Mar 2025 00:02:52 +0100 (CET)
 Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z6rkH3gmRz9stJ;
-	Wed,  5 Mar 2025 00:00:23 +0100 (CET)
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z6rn81Bh0z9stL;
+	Wed,  5 Mar 2025 00:02:52 +0100 (CET)
 Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 68B398B776;
-	Wed,  5 Mar 2025 00:00:23 +0100 (CET)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E81738B776;
+	Wed,  5 Mar 2025 00:02:51 +0100 (CET)
 X-Virus-Scanned: amavisd-new at c-s.fr
 Received: from messagerie.si.c-s.fr ([127.0.0.1])
 	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id WgqhTFqhzL8T; Wed,  5 Mar 2025 00:00:23 +0100 (CET)
+	with ESMTP id qWXKjmuiIl6W; Wed,  5 Mar 2025 00:02:51 +0100 (CET)
 Received: from PO20335.idsi0.si.c-s.fr (unknown [192.168.202.221])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id 6A6868B763;
-	Wed,  5 Mar 2025 00:00:22 +0100 (CET)
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 168D68B763;
+	Wed,  5 Mar 2025 00:02:50 +0100 (CET)
 From: Christophe Leroy <christophe.leroy@csgroup.eu>
-To: Michael Ellerman <mpe@ellerman.id.au>,
+To: Herbert Xu <herbert@gondor.apana.org.au>,
+	Danny Tsen <dtsen@linux.ibm.com>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	"Breno Leitao" <leitao@debian.org>,
+	Nayna Jain <nayna@linux.ibm.com>,
+	Paulo Flabiano Smorigo <pfsmorigo@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
 	Nicholas Piggin <npiggin@gmail.com>,
 	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
-	linux-kernel@vger.kernel.org,
+	linux-crypto@vger.kernel.org,
 	linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org,
 	Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-Subject: [PATCH] powerpc: Fix 'intra_function_call not a direct call' warning
-Date: Wed,  5 Mar 2025 00:00:19 +0100
-Message-ID: <88876fb4e412203452e57d1037a1341cf15ccc7b.1741128981.git.christophe.leroy@csgroup.eu>
+Subject: [PATCH] crypto: powerpc: Mark ghashp8-ppc.o as an OBJECT_FILES_NON_STANDARD
+Date: Wed,  5 Mar 2025 00:02:39 +0100
+Message-ID: <7aa7eb73fe6bc95ac210510e22394ca0ae227b69.1741128786.git.christophe.leroy@csgroup.eu>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -64,64 +71,81 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741129219; l=2054; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=mhbNOqeaG3cayoZ0G+PBgg4dwi61tzwTHcEUa12auuE=; b=7N9scikoa+Nrpe1ZRdjcL9gPR/Fv9oP706Utkehsb5jpMtETPsmWna7UeuR2WrRZqNzuzxEPV Yl2xUJ9+RvLDFWnUJcyDqZ4beL9CAl/sTxFcq+8ZuShM/FEjsmx0abA
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741129359; l=2686; i=christophe.leroy@csgroup.eu; s=20211009; h=from:subject:message-id; bh=rxbY0OYKeF/ruyA697I5bCATkY6ZUvEuwEmFs1kOfUM=; b=QegfBkLIMtIn2pXyrwu9vHSHXI1g41Q0dNFUgkY3G903IcJVCl4645/HlUnQUPo95ItBmd33F HV13MubBCESC5ol+ngCq5l7/E9HpbAJBINPc6EkQXB1p97B+QaF8T8m
 X-Developer-Key: i=christophe.leroy@csgroup.eu; a=ed25519; pk=HIzTzUj91asvincQGOFx6+ZF5AoUuP9GdOtQChs7Mm0=
 Content-Transfer-Encoding: 8bit
 
-The following build warning have been reported:
+The following build warning has been reported:
 
-  arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
-  arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+  arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
 
 This happens due to commit bb7f054f4de2 ("objtool/powerpc: Add support
-for decoding all types of uncond branches") because that commit decodes
-'bl .+4' as a normal instruction because that instruction is used by
-clang instead of 'bcl 20,31,+.4' for relocatable code.
+for decoding all types of uncond branches")
 
-The solution is simply to remove the ANNOTATE_INTRA_FUNCTION_CALL
-annotation now that the instruction is not seen as a function call
-anymore.
+Disassembly of arch/powerpc/crypto/ghashp8-ppc.o shows:
+
+ arch/powerpc/crypto/ghashp8-ppc.o:     file format elf64-powerpcle
+
+ Disassembly of section .text:
+
+ 0000000000000140 <gcm_ghash_p8>:
+   140:    f8 ff 00 3c     lis     r0,-8
+ ...
+   20c:    20 00 80 4e     blr
+   210:    00 00 00 00     .long 0x0
+   214:    00 0c 14 00     .long 0x140c00
+   218:    00 00 04 00     .long 0x40000
+   21c:    00 00 00 00     .long 0x0
+   220:    47 48 41 53     rlwimi. r1,r26,9,1,3
+   224:    48 20 66 6f     xoris   r6,r27,8264
+   228:    72 20 50 6f     xoris   r16,r26,8306
+   22c:    77 65 72 49     bla     1726574 <gcm_ghash_p8+0x1726434>      <==
+ ...
+
+It corresponds to the following code in ghashp8-ppc.o :
+
+ _GLOBAL(gcm_ghash_p8)
+    lis    0,0xfff8
+ ...
+    blr
+ .long    0
+ .byte    0,12,0x14,0,0,0,4,0
+ .long    0
+ .size    gcm_ghash_p8,.-gcm_ghash_p8
+
+ .byte 71,72,65,83,72,32,102,111,114,32,80,111,119,101,114,73,83,65,32,50,46,48,55,44,32,67,82,89,80,84,79,71,65,77,83,32,98,121,32,60,97,112,112,114,111,64,111,112,101,110,115,115,108,46,111,114,103,62,0
+ .align    2
+ .align    2
+
+In fact this is raw data that is after the function end and that is
+not text so shouldn't be disassembled as text. But ghashp8-ppc.S is
+generated by a perl script and should have been marked as
+OBJECT_FILES_NON_STANDARD.
+
+Now that 'bla' is understood as a call instruction, that raw data
+is mis-interpreted as an infra-function call.
+
+Mark ghashp8-ppc.o as a OBJECT_FILES_NON_STANDARD to avoid this
+warning.
 
 Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
 Closes: https://lore.kernel.org/all/8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com
-Fixes: bb7f054f4de2 ("objtool/powerpc: Add support for decoding all types of uncond branches")
+Cc: Danny Tsen <dtsen@linux.ibm.com>
+Fixes: 109303336a0c ("crypto: vmx - Move to arch/powerpc/crypto")
 Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
 ---
- arch/powerpc/kernel/switch.S            | 1 -
- arch/powerpc/kvm/book3s_hv_rmhandlers.S | 2 --
- 2 files changed, 3 deletions(-)
+ arch/powerpc/crypto/Makefile | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/arch/powerpc/kernel/switch.S b/arch/powerpc/kernel/switch.S
-index 608c0ce7cec6..59e3ee99db0e 100644
---- a/arch/powerpc/kernel/switch.S
-+++ b/arch/powerpc/kernel/switch.S
-@@ -39,7 +39,6 @@ flush_branch_caches:
- 
- 	// Flush the link stack
- 	.rept 64
--	ANNOTATE_INTRA_FUNCTION_CALL
- 	bl	.+4
- 	.endr
- 	b	1f
-diff --git a/arch/powerpc/kvm/book3s_hv_rmhandlers.S b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-index ea7ad200b330..83f7504349d2 100644
---- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-+++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-@@ -1524,14 +1524,12 @@ kvm_flush_link_stack:
- 
- 	/* Flush the link stack. On Power8 it's up to 32 entries in size. */
- 	.rept 32
--	ANNOTATE_INTRA_FUNCTION_CALL
- 	bl	.+4
- 	.endr
- 
- 	/* And on Power9 it's up to 64. */
- BEGIN_FTR_SECTION
- 	.rept 32
--	ANNOTATE_INTRA_FUNCTION_CALL
- 	bl	.+4
- 	.endr
- END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
+diff --git a/arch/powerpc/crypto/Makefile b/arch/powerpc/crypto/Makefile
+index 9b38f4a7bc15..2f00b22b0823 100644
+--- a/arch/powerpc/crypto/Makefile
++++ b/arch/powerpc/crypto/Makefile
+@@ -51,3 +51,4 @@ $(obj)/aesp8-ppc.S $(obj)/ghashp8-ppc.S: $(obj)/%.S: $(src)/%.pl FORCE
+ OBJECT_FILES_NON_STANDARD_aesp10-ppc.o := y
+ OBJECT_FILES_NON_STANDARD_ghashp10-ppc.o := y
+ OBJECT_FILES_NON_STANDARD_aesp8-ppc.o := y
++OBJECT_FILES_NON_STANDARD_ghashp8-ppc.o := y
 -- 
 2.47.0
 
