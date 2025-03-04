@@ -1,173 +1,83 @@
-Return-Path: <linux-kernel+bounces-545248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17200A4EA83
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:06:42 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA7C2A4EAC8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:12:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26F307A4625
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:05:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B711763A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:06:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2817285403;
-	Tue,  4 Mar 2025 17:45:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7D5A2BE7B1;
+	Tue,  4 Mar 2025 17:45:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZVMooXPe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cATQX4SO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2837B259C8E;
-	Tue,  4 Mar 2025 17:45:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32844284B5B;
+	Tue,  4 Mar 2025 17:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741110356; cv=none; b=OxLOtseK7W/y6Cl44mR+0RpvBzDSUwNVsXppCJfSwejKR3ppY43FQKnbspWCLF59e8toiJQyFsBpQy/AuMD5qd5ZTweGkwJuLJWJL8p5Bb+elJo0BV+4kJY+RUOjHfrpRHDKSAEau/l8bVlqRhTVCzSn0ceQ0EybQEiM5irU5q0=
+	t=1741110359; cv=none; b=KKIdRyEBSBTWc3ARidxcqQW8yo/oPQ+NHyamXXgGOspcZWZrU+DKjPQae9+W5OHvJWghxmU4lGeuAxOvNzR2QBvbAeEYjQCMj2X6C37QwaLurb1o5cqCQYZohX0uWqitylFjXmwSOoOBmxb37l7qD0UzQFKDWXWEqSiZ2IG2NfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741110356; c=relaxed/simple;
-	bh=dMmbRSw5Wygxzqtk7yBIvmykz+bSqg8Tu3586uZGrOQ=;
+	s=arc-20240116; t=1741110359; c=relaxed/simple;
+	bh=rC/oo/enE7GE0ijiRwfs0hAzlQSt3YHvjCTih3uUFwA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oKF+hc0djwqCg1gCBiDBTLxu/HQrrrIUdKBdgCvUpWycxogo2UjLmCxg+bKhkRp5HoVO3qUPTbH7rvrl3onhutevdrxaIIbiWF4v9grJUgC3zrqiETs1vD5+M1bTcABqmqi7Gzi8hhYN2Chpj4CBFfE0ooW++pVAaM4TPPzqAqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZVMooXPe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B78E5C4CEE5;
-	Tue,  4 Mar 2025 17:45:54 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=EK0IGOA2GhTZ/R2EUuuNyjscHN8mG+6mxKw7P30Qitq2W5hpcKGcCCSHC1oFI5DwOgHKiidx0AG5mrAFXHXTMsGKgj0NFF8RQYKnZi9mis8LZTLyClTjHUiaXNbubfpvRDIwMy7TlJRE+LqTFOlmvkoMWPbnGvt2dz9Pz8K/64M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cATQX4SO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44AF4C4CEE5;
+	Tue,  4 Mar 2025 17:45:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741110355;
-	bh=dMmbRSw5Wygxzqtk7yBIvmykz+bSqg8Tu3586uZGrOQ=;
+	s=k20201202; t=1741110358;
+	bh=rC/oo/enE7GE0ijiRwfs0hAzlQSt3YHvjCTih3uUFwA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZVMooXPefi4t97hpLHFZ9BqCzhlFsGejQJ8vuBGwLmnbj3WDSqs/hao5H4qxtIr5v
-	 YQ+13QUGc6uyyK7BXaHQRUmtlFgJtUc75VY0hNt9f3vJ6ynhTPk787G7SnKGcL5+Lk
-	 LR/9k4lGu0QXs798Pq+RsYCMmtN80BZWba33noIfbc2ls1FwWebU7r4ha8NMG24ZOb
-	 kdQfMpaHzRVbF2u3JASSNHz1h8WuqCV8mPnogVjP1cuWcbccPgexA2fDEd7iJXPuCS
-	 9JBKj1P9vFKfyEPnCevx/MXGCAvLFNLSPEAElatTnjPHdMSwHmZTmQcv8a/n8plNOF
-	 8pSGwEgkfUCyg==
-Date: Tue, 4 Mar 2025 11:45:53 -0600
-From: Bjorn Andersson <andersson@kernel.org>
-To: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Cc: gregkh@linuxfoundation.org, jirislaby@kernel.org, 
-	johan+linaro@kernel.org, dianders@chromium.org, konradybcio@kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com
-Subject: Re: [PATCH v1] serial: qcom-geni: Remove alias dependency from qcom
- serial driver
-Message-ID: <tn6czifetdf2mg5gl3mhfpwcb6q7dkn5r4kgqln6evm4qdsjvi@ehpl3qj3axvw>
-References: <20250304071423.4033565-1-quic_vdadhani@quicinc.com>
+	b=cATQX4SO8pIuv2V3ErkAAOjCLrDPUufE6F4qrkpKtI2/quE8YGHDDznBu8/G5peZM
+	 Pm9LcVxM0NEzmH/VOZ95/WcrPsCPDmr5SNzUSCJw1b57GmjLZ2gz9jI4gGs7qmPZ0w
+	 mME/vRd9Hiqp02j50OpdUY2ecwJKL/wSnFM5BaVVS6YPk6pv/f7fUJ0wIkjVume/n4
+	 pNW9nzQcaAXJpC9I+/scxw4+8plBgnPTycUC9oooFZYe6H8cxLcH3oFI4W4W/mF+u2
+	 85bl3SF/MoSAj+f01rmffn7MLEOz1aET7xqky2Q6jBS2ZJdi4oEhVDU/JMVhHd0MHb
+	 TxAgCpCcmAd/A==
+Date: Tue, 4 Mar 2025 09:45:56 -0800
+From: Josh Poimboeuf <jpoimboe@kernel.org>
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: Andrew Cooper <andrew.cooper3@citrix.com>, brgerst@gmail.com,
+	linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	mingo@kernel.org, peterz@infradead.org, tip-bot2@linutronix.de,
+	torvalds@linux-foundation.org, x86@kernel.org
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+Message-ID: <20250304174556.hva7f2p4uchhh5dd@jpoimboe>
+References: <28D821BB-96B5-4389-839E-5B7CB4D49F5F@zytor.com>
+ <c7496069-2630-45ca-b6d3-c8d6b3678271@citrix.com>
+ <82FF5D6C-15F5-44FE-8436-CDBB9F35FDD5@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250304071423.4033565-1-quic_vdadhani@quicinc.com>
+In-Reply-To: <82FF5D6C-15F5-44FE-8436-CDBB9F35FDD5@zytor.com>
 
-On Tue, Mar 04, 2025 at 12:44:23PM +0530, Viken Dadhaniya wrote:
-> Remove the dependency on aliases in the device tree configuration for the
-> qcom serial driver. Currently, the absence of an alias results in an
-> invalid line number, causing the driver probe to fail for geni serial.
+On Mon, Mar 03, 2025 at 06:05:07PM -0800, H. Peter Anvin wrote:
+> On March 3, 2025 4:57:49 PM PST, Andrew Cooper <andrew.cooper3@citrix.com> wrote:
+> >> One more thing: if we remove ASM_CALL_CONSTRAINTS, we will not be able to use the redzone in future FRED only kernel builds.
+> >
+> >That's easy enough to fix with "|| CONFIG_FRED_EXCLUSIVE" in some
+> >theoretical future when it's a feasible config to use.
+> >
+> >~Andrew
 > 
-> To prevent probe failures, implement logic to dynamically assign line
-> numbers if an alias is not present in the device tree for non-console
-> ports.
-> 
+> Assuming it hasn't bitrotted...
 
-Please read and follow https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+If we start using red zone, I'm thinking it should be fairly easy to add
+"red zone stack validation" to objtool.  Then the build bots should be
+able to shake out pretty quickly where ASM_CALL_CONSTRAINT is needed.
 
-Start with your problem description, then a description of your proposed
-solution.
-
-> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-> ---
->  drivers/tty/serial/qcom_geni_serial.c | 26 +++++++++++++++++++++++---
->  1 file changed, 23 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/tty/serial/qcom_geni_serial.c b/drivers/tty/serial/qcom_geni_serial.c
-> index a80ce7aaf309..2457f39dfc84 100644
-> --- a/drivers/tty/serial/qcom_geni_serial.c
-> +++ b/drivers/tty/serial/qcom_geni_serial.c
-> @@ -98,6 +98,8 @@
->  
->  #define DMA_RX_BUF_SIZE		2048
->  
-> +static DEFINE_IDR(port_idr);
-
-You're just looking for a index allocator, so DEFINE_IDA() is probably
-what you want to use.
-
-
-That said, theoretically I think we could get 24 GENI serial instances
-in a system. Making this a huge waste of memory and CPU cycles.
-
-An empty idr takes 88 bytes, if you then allocate 1 entry it grows with
-at least one xa_array node which is 576 bytes.
-
-> +
->  struct qcom_geni_device_data {
->  	bool console;
->  	enum geni_se_xfer_mode mode;
-> @@ -253,10 +255,25 @@ static struct qcom_geni_serial_port *get_port_from_line(int line, bool console)
->  	struct qcom_geni_serial_port *port;
->  	int nr_ports = console ? GENI_UART_CONS_PORTS : GENI_UART_PORTS;
->  
-> -	if (line < 0 || line >= nr_ports)
-> -		return ERR_PTR(-ENXIO);
-> +	if (console) {
-> +		if (line < 0 || line >= nr_ports)
-> +			return ERR_PTR(-ENXIO);
-> +
-> +		port = &qcom_geni_console_port;
-> +	} else {
-> +		int max_alias_num = of_alias_get_highest_id("serial");
-> +
-> +		if (line < 0 || line >= nr_ports)
-> +			line = idr_alloc(&port_idr, (void *)port, max_alias_num + 1, nr_ports,
-> +					 GFP_KERNEL);
-> +		else
-> +			line = idr_alloc(&port_idr, (void *)port, line, nr_ports, GFP_KERNEL);
-> +
-> +		if (line < 0)
-> +			return ERR_PTR(-ENXIO);
->  
-> -	port = console ? &qcom_geni_console_port : &qcom_geni_uart_ports[line];
-> +		port = &qcom_geni_uart_ports[line];
-
-Plus qcom_geni_uart_ports[] is GENI_UART_PORTS long. So you will
-actually only have a maximum of 3 ports.
-
-
-I like the change, but please replace port_idr with a u32 and use
-linux/bitmap.h to implement the port allocation scheme.
-
-Regards,
-Bjorn
-
-> +	}
->  	return port;
->  }
->  
-> @@ -1761,6 +1778,7 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
->  						port->wakeup_irq);
->  		if (ret) {
->  			device_init_wakeup(&pdev->dev, false);
-> +			idr_remove(&port_idr, uport->line);
->  			uart_remove_one_port(drv, uport);
->  			return ret;
->  		}
-> @@ -1772,10 +1790,12 @@ static int qcom_geni_serial_probe(struct platform_device *pdev)
->  static void qcom_geni_serial_remove(struct platform_device *pdev)
->  {
->  	struct qcom_geni_serial_port *port = platform_get_drvdata(pdev);
-> +	struct uart_port *uport = &port->uport;
->  	struct uart_driver *drv = port->private_data.drv;
->  
->  	dev_pm_clear_wake_irq(&pdev->dev);
->  	device_init_wakeup(&pdev->dev, false);
-> +	idr_remove(&port_idr, uport->line);
->  	uart_remove_one_port(drv, &port->uport);
->  }
->  
-> -- 
-> 2.34.1
-> 
-> 
+-- 
+Josh
 
