@@ -1,433 +1,313 @@
-Return-Path: <linux-kernel+bounces-543364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA22EA4D4A6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:19:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C047EA4D4AB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:19:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4248188A547
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 231B7188F0FE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:18:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9CD1F9F61;
-	Tue,  4 Mar 2025 07:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0B31F7098;
+	Tue,  4 Mar 2025 07:13:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DkbHXXJ4"
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com [209.85.160.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T6Bv6oB/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C81A1F9AB1;
-	Tue,  4 Mar 2025 07:13:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1D521FAC31;
+	Tue,  4 Mar 2025 07:13:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741072407; cv=none; b=noZo7W6xmeQXY+BLVfMUpwv/QkkRxJO5WcTQ3NbeZCbA40iNfnfNomi6G0XmRvPyP8zly8spLuNbukp76PQ5Uac3shsbIdCv+9U9xPH+HOzkOY2qisoELimRE27598R6+FdVtGSWKEbU6wUVF8EUYfTsHdqoOdY0GgtpyXwoQ+c=
+	t=1741072418; cv=none; b=Bv+zuvFuzrQN9VdFhdwXOKcttrLHGG3sh8Bu6zyeI/7aYrEZPp+hWLS26OXek3+OSh2ddp5WoAoEXP2jCzTc7bo3wEdJiccIQzMGwP34r4IFKRQB06+g1/s6H1Kss71HRSnVpVI6ifkzL4hNpUtyV2vFVPNCcI7dI/PYxT5YJU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741072407; c=relaxed/simple;
-	bh=kbGFW3DXNmNaI/LJicjMxyiKRsoi7BY1jdzzyDoctOo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=QK3deLljQlmm74lUruekiC6m/8r4PCd7iOcpL4EoWmOSG3hUYm2k5nEUzCm924c9UrHyXs8mg9BCwXMB06hZOHOYXVXlqJXJ9qn/DjY5yJgK6UwkaHY/zZnpdbFEljagp1+wHRrUHPaAdgXAW3aIDdm0+UXjCipxyMweGSccQsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DkbHXXJ4; arc=none smtp.client-ip=209.85.160.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-46fa764aac2so45883131cf.1;
-        Mon, 03 Mar 2025 23:13:24 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741072404; x=1741677204; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rrdQz9Cgs/e9JZOqG5wHg9flLJAY+0kITfj7PWOImhU=;
-        b=DkbHXXJ4jVbMBFFQxElG3nVKFKMOmMvPtpixJlGuEfaGyNDN+Oae/urisrKlnglDjL
-         hfNxirn7Z4aq71xGtQeGmybQtiY6n6OPzZT3JdJvqUo7hzReDoz/1VTy5NcbWjg6qRnm
-         xXx96zDABditL6siAfhsOBhC6AHlREpwpYMUSQ70EVVwmRD32lW5MhRk/IUSq5E11mSU
-         vgAsZMv2aLzsiVka3wCH5f+IMN8cluaJOJkxFwPwv7WmKYnAKOX+dfGpDST8a1gddG9F
-         ln70PHVvHGOL4QFZg++xDwA5k+nKQcXUHHgk2EQkgCiPt0dO+hv704fPrU48yUzuQHWt
-         eKVA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741072404; x=1741677204;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rrdQz9Cgs/e9JZOqG5wHg9flLJAY+0kITfj7PWOImhU=;
-        b=rbmpT1vb299HxJyvfvELkKznLYARLCbcNGunMDC3XUY8S3AbrZW2xOuweaextidzFZ
-         rVNULaY6Gdjbf6OegwOBMBURf0bLSH/rotdUtFxVPzXzCK/NjGIem5j9xeBB6Ld3qVWr
-         2n+lYg5vdScRWpOiKMg2h4RRpzAlL8uTwsFD4JVV7rt83peLvBmWEcwORTd4XFxC4L20
-         g3CjORRFWX19MMZrXnvWSFuvpuM9/KREdAeklVoKQuSEd8Pa6VYU68uP1MZ8kSfB1IZO
-         xT2sb2PSBuLMF/JkvqJ7SAE96mYPm0ToPEZ79X7C+NjYxWKD0/WBAGDvMf5Uwo9cFchx
-         RdfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5sMjuY3gqzFtYEQL+B/1sDiwlfm1qmryBeTPxLiB29igX/x6/JdG3a70y1W2rsfm9cFdct4B5M/aw@vger.kernel.org, AJvYcCXxzo2gmyaXDBBXVUTHYgFHHbEayPEd2rp3Qj+3gmP2YK1E15VQYRRx2AcVOdwPh/dqGbFlkeAr/saOgz5u@vger.kernel.org
-X-Gm-Message-State: AOJu0YzztRucyqB2bSVU491zj0CIM15jCXLNif0Y87RW3SecHb0/pLga
-	/lLEktuJlm3odk6tXjIxaL/o0PzCYUDi1s2gU0XxApcbq6FBaI+l
-X-Gm-Gg: ASbGncuZ3dg+tcquqeGKBISp3FJG1X/hEknVEKIlgBgEAMPwFj6c9Yohf9hicMl4DmJ
-	D+sDexeAzhHCFvuCoRJtCWvW5EXc24B9y+TRvGabZ0A+6SJePpDK3frx2DLSipAonruX6qVzh6O
-	mrUaJvjtcFDwsdCsTFnsUfqenyKCJ3jXjdvAj9CtYjcqjbkcGCDbwZPhF7spitEl/kjWjOPB7fi
-	KlMLV/8KS7VwIUGr1Yt0i6HFbdzCYURL+7BEpQdV8NtwaMH1NkJzRpvsJVziJWowGqps0y9fcXg
-	3arooONruI1HJGbsQftD
-X-Google-Smtp-Source: AGHT+IEyqWPUhMGvruobgDMmuMPk0gKDbAAIQMmUTsNb1WXjMm/eOtaru71S38A51PS4dUF/LL7KkQ==
-X-Received: by 2002:a05:622a:352:b0:475:42d:ea0a with SMTP id d75a77b69052e-475042debfbmr320181cf.38.1741072403930;
-        Mon, 03 Mar 2025 23:13:23 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-47500cef956sm3231951cf.54.2025.03.03.23.13.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 23:13:23 -0800 (PST)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	Niklas Cassel <cassel@kernel.org>
-Cc: linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH 2/2] PCI: sophgo-dwc: Add Sophgo SG2044 PCIe driver
-Date: Tue,  4 Mar 2025 15:12:38 +0800
-Message-ID: <20250304071239.352486-3-inochiama@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250304071239.352486-1-inochiama@gmail.com>
-References: <20250304071239.352486-1-inochiama@gmail.com>
+	s=arc-20240116; t=1741072418; c=relaxed/simple;
+	bh=+3RnUOIOjtWeMcQ1AJs2mmM7nGjmYwlkzz+vEspMr8I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I979t9i7dPro3CsM8wclPbb51waq9DxxlHq+IaQVycKztRo3OMHRVcG3h4niFQeWO4C7NSaEpcTA660NraXdcGc+CeMR0J3eovgWa02Ant6pERYJxL4Mv3V2F4LB30QZ17Vw/UWlpzRRR613Rxh6oQPgWqdepnMzyLIgnYxOTBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T6Bv6oB/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4BA9C4CEEA;
+	Tue,  4 Mar 2025 07:13:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741072418;
+	bh=+3RnUOIOjtWeMcQ1AJs2mmM7nGjmYwlkzz+vEspMr8I=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T6Bv6oB/J6d6B5DMpVSiTAdssEbVQR3nb/WsHGyqS85cz5AzlwCW5BliA5xnpxaQN
+	 +vqeUO21fPHHparRM4/1SddkkbpI9zSe09lFYiA8wHFfbxEbC9hI6ycqNdpLwayJhL
+	 DYagNQP/YPPXzMtIH6P7dQSwhJY3Lsa6fXBxVOBwJss18RIMqxg2N5RxP69rR94OGw
+	 AzLiObY9xuysAbx812HFRmLYerZN05HVZashFxoleQgpaF7nU6Mz1vscoZR1nmvK+w
+	 Z1OH5UJCKUzxIWM2xkSWEwP26Cjg7kqSyfUAtOn2fyp4GJ2BgLwEP15CUIsDnnT9eu
+	 FPeNLbid99Luw==
+Message-ID: <87b9e9c3-87db-4ebe-96b0-4f04705ef6f8@kernel.org>
+Date: Tue, 4 Mar 2025 08:13:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: [PATCH v3 3/3] arm64: dts: marvell: cp11x: Add
+ reset controller node
+To: Wilson Ding <dingwei@marvell.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org"
+ <linux-arm-kernel@lists.infradead.org>, "robh@kernel.org" <robh@kernel.org>
+Cc: "andrew@lunn.ch" <andrew@lunn.ch>,
+ "gregory.clement@bootlin.com" <gregory.clement@bootlin.com>,
+ "sebastian.hesselbarth@gmail.com" <sebastian.hesselbarth@gmail.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ Sanghoon Lee <salee@marvell.com>, Geethasowjanya Akula <gakula@marvell.com>
+References: <20250227192536.2426490-1-dingwei@marvell.com>
+ <20250227192536.2426490-4-dingwei@marvell.com>
+ <d085c34a-fdbf-4950-a2e3-b3d25a1c0145@kernel.org>
+ <BY3PR18MB46730C150D4CB9619B3B05FBA7CC2@BY3PR18MB4673.namprd18.prod.outlook.com>
+ <050ae833-10b5-4d80-9856-8bc2f434a74f@kernel.org>
+ <BY3PR18MB46739700B533630D65C60808A7C82@BY3PR18MB4673.namprd18.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <BY3PR18MB46739700B533630D65C60808A7C82@BY3PR18MB4673.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add support for DesignWare-based PCIe controller in SG2044 SoC.
+On 04/03/2025 03:17, Wilson Ding wrote:
+> 
+> 
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: Saturday, March 1, 2025 5:46 AM
+>> To: Wilson Ding <dingwei@marvell.com>; linux-kernel@vger.kernel.org;
+>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+>> Cc: andrew@lunn.ch; gregory.clement@bootlin.com;
+>> sebastian.hesselbarth@gmail.com; robh@kernel.org; krzk+dt@kernel.org;
+>> conor+dt@kernel.org; p.zabel@pengutronix.de; Sanghoon Lee
+>> <salee@marvell.com>; Geethasowjanya Akula <gakula@marvell.com>
+>> Subject: Re: [EXTERNAL] Re: [PATCH v3 3/3] arm64: dts: marvell: cp11x: Add
+>> reset controller node
+>>
+>> On 28/02/2025 21:18, Wilson Ding wrote:
+>>>
+>>>
+>>>> -----Original Message-----
+>>>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>>>> Sent: Thursday, February 27, 2025 10:57 PM
+>>>> To: Wilson Ding <dingwei@marvell.com>; linux-kernel@vger.kernel.org;
+>>>> devicetree@vger.kernel.org; linux-arm-kernel@lists.infradead.org
+>>>> Cc: andrew@lunn.ch; gregory.clement@bootlin.com;
+>>>> sebastian.hesselbarth@gmail.com; robh@kernel.org; krzk+dt@kernel.org;
+>>>> conor+dt@kernel.org; p.zabel@pengutronix.de; Sanghoon Lee
+>>>> <salee@marvell.com>; Geethasowjanya Akula <gakula@marvell.com>
+>>>> Subject: [EXTERNAL] Re: [PATCH v3 3/3] arm64: dts: marvell: cp11x: Add
+>> reset
+>>>> controller node
+>>>>
+>>>> On 27/02/2025 20: 25, Wilson Ding wrote: > Add the reset controller node
+>> as
+>>>> a sub-node to the system controller > node. > > Signed-off-by: Wilson Ding
+>>>> <dingwei@ marvell. com> > --- > arch/arm64/boot/dts/marvell/armada-
+>>>> cp11x. dtsi
+>>>>
+>>>> On 27/02/2025 20:25, Wilson Ding wrote:
+>>>>> Add the reset controller node as a sub-node to the system controller
+>>>>> node.
+>>>>>
+>>>>> Signed-off-by: Wilson Ding <dingwei@marvell.com>
+>>>>> ---
+>>>>>  arch/arm64/boot/dts/marvell/armada-cp11x.dtsi | 8 ++++++++
+>>>>>  1 file changed, 8 insertions(+)
+>>>>>
+>>>>> diff --git a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+>>>> b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+>>>>> index 161beec0b6b0..c27058d1534e 100644
+>>>>> --- a/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+>>>>> +++ b/arch/arm64/boot/dts/marvell/armada-cp11x.dtsi
+>>>>> @@ -226,6 +226,8 @@ CP11X_LABEL(rtc): rtc@284000 {
+>>>>>  		CP11X_LABEL(syscon0): system-controller@440000 {
+>>>>>  			compatible = "syscon", "simple-mfd";
+>>>>>  			reg = <0x440000 0x2000>;
+>>>>> +			#address-cells = <1>;
+>>>>> +			#size-cells = <1>;
+>>>>>
+>>>>>  			CP11X_LABEL(clk): clock {
+>>>>
+>>>> Wait, no unit address here.
+>>>
+>>> This subnode came from the existing code. I didn't touch this subnode
+>>> in my patch. As you can see, the system-controller has a wide address
+>>> range, which includes clock, GPIO registers as well as the unit-softreset
+>>> register.
+>>>
+>>>>
+>>>>>  				compatible = "marvell,cp110-clock";
+>>>>> @@ -273,6 +275,12 @@ CP11X_LABEL(gpio2): gpio@140 {
+>>>>>  					 <&CP11X_LABEL(clk) 1 17>;
+>>>>>  				status = "disabled";
+>>>>>  			};
+>>>>> +
+>>>>> +			CP11X_LABEL(swrst): reset-controller@268 {
+>>>>
+>>>>
+>>>> So why here it appeared? This is wrong and not even necessary. Entire
+>>>> child should be folded into parent, so finally you will fix the
+>>>> incomplete parent compatible.
+>>>
+>>> We do need the reset-controller as a subnode under system-controller node
+>>> for the following reasons:
+>>>
+>>> - We need to have 'reg' property in this subnode so that we can get the
+>> offset
+>>>   to system-controller register base defined in parent node. This is suggested
+>>>   by Rob in V2 comments.
+>>>   And we need to know the register size to calculate the number of reset
+>> lines.
+>>>   This is suggested by Philipp in V1 comments.
+>>
+>> You do not need and you received that comment as well. It is implied by
+>> compatible.
+>>
+>>>
+>>> - We also need to define the 'reset-cells' in this subnode. And the consumer
+>> of
+>>>   the reset controller uses the label of this subnode for the phandle and reset
+>>>   specifier pair.
+>>
+>> reset-cells will be in the parent once you fold it.
+>>
+>>>
+>>> As I mentioned in my reply to the first comment, the reset-controller is not
+>> the
+>>> only device within the system-controller register spaces. Do you still think I
+>>
+>> You provided very little hardware description of the device. So based on
+>> hardware description you provided: yes.
+>>
+>>> should fold it into the parent node. And what I proposed is exactly same as
+>>> that the armada_thermal driver did (See below). I wonder why what was
+>> accepted
+>>> in the past become not accepted now.
+>>
+>> We did not discuss here drivers, but if you insist talking about
+>> "marvell,armada-cp110-thermal" then point me to review or ack from DT
+>> people. You claim it was accepted so how did we accept it?
+>>
+> 
+> I didn't intend to extend discussion to the driver in this thread. The following
+> Is the review thread of the dt-binding for the thermal device (in 2018).
+> Indeed, there is no comments challenging why not fold the thermal sub-node
+> Into the parent 'syscon' node.
+> 
+> https://lore.kernel.org/linux-arm-kernel/20180703211335.GA8858@rob-hp-laptop/
 
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
----
- drivers/pci/controller/dwc/Kconfig          |  10 +
- drivers/pci/controller/dwc/Makefile         |   1 +
- drivers/pci/controller/dwc/pcie-dw-sophgo.c | 270 ++++++++++++++++++++
- 3 files changed, 281 insertions(+)
- create mode 100644 drivers/pci/controller/dwc/pcie-dw-sophgo.c
+Indeed, this one got review. I was checking armada-thermal and it never
+got any, when it was merged back in the 2013.
 
-diff --git a/drivers/pci/controller/dwc/Kconfig b/drivers/pci/controller/dwc/Kconfig
-index b6d6778b0698..004c384e25ad 100644
---- a/drivers/pci/controller/dwc/Kconfig
-+++ b/drivers/pci/controller/dwc/Kconfig
-@@ -381,6 +381,16 @@ config PCIE_UNIPHIER_EP
- 	  Say Y here if you want PCIe endpoint controller support on
- 	  UniPhier SoCs. This driver supports Pro5 SoC.
- 
-+config PCIE_SOPHGO_DW
-+	bool "Sophgo DesignWare PCIe controller"
-+	depends on ARCH_SOPHGO || COMPILE_TEST
-+	depends on PCI_MSI
-+	depends on OF
-+	select PCIE_DW_HOST
-+	help
-+	  Enables support for the DesignWare PCIe controller in the
-+	  Sophgo SoC.
-+
- config PCIE_SPEAR13XX
- 	bool "STMicroelectronics SPEAr PCIe controller"
- 	depends on ARCH_SPEAR13XX || COMPILE_TEST
-diff --git a/drivers/pci/controller/dwc/Makefile b/drivers/pci/controller/dwc/Makefile
-index a8308d9ea986..193150056dd3 100644
---- a/drivers/pci/controller/dwc/Makefile
-+++ b/drivers/pci/controller/dwc/Makefile
-@@ -18,6 +18,7 @@ obj-$(CONFIG_PCIE_QCOM_EP) += pcie-qcom-ep.o
- obj-$(CONFIG_PCIE_ARMADA_8K) += pcie-armada8k.o
- obj-$(CONFIG_PCIE_ARTPEC6) += pcie-artpec6.o
- obj-$(CONFIG_PCIE_ROCKCHIP_DW) += pcie-dw-rockchip.o
-+obj-$(CONFIG_PCIE_SOPHGO_DW) += pcie-dw-sophgo.o
- obj-$(CONFIG_PCIE_INTEL_GW) += pcie-intel-gw.o
- obj-$(CONFIG_PCIE_KEEMBAY) += pcie-keembay.o
- obj-$(CONFIG_PCIE_KIRIN) += pcie-kirin.o
-diff --git a/drivers/pci/controller/dwc/pcie-dw-sophgo.c b/drivers/pci/controller/dwc/pcie-dw-sophgo.c
-new file mode 100644
-index 000000000000..3ed7cfe0b361
---- /dev/null
-+++ b/drivers/pci/controller/dwc/pcie-dw-sophgo.c
-@@ -0,0 +1,270 @@
-+// SPDX-License-Identifier: GPL-2.0
-+/*
-+ * Sophgo DesignWare based PCIe host controller driver
-+ */
-+
-+#include <linux/bits.h>
-+#include <linux/clk.h>
-+#include <linux/irqchip/chained_irq.h>
-+#include <linux/irqdomain.h>
-+#include <linux/module.h>
-+#include <linux/property.h>
-+#include <linux/platform_device.h>
-+
-+#include "pcie-designware.h"
-+
-+#define to_sophgo_pcie(x)		dev_get_drvdata((x)->dev)
-+
-+#define PCIE_INT_SIGNAL			0xc48
-+#define PCIE_INT_EN			0xca0
-+
-+#define PCIE_INT_SIGNAL_INTX		GENMASK(8, 5)
-+
-+#define PCIE_INT_EN_INTX		GENMASK(4, 1)
-+#define PCIE_INT_EN_INT_MSI		BIT(5)
-+
-+struct sophgo_pcie {
-+	struct dw_pcie		pci;
-+	void __iomem		*app_base;
-+	struct clk_bulk_data	*clks;
-+	unsigned int		clk_cnt;
-+	struct irq_domain	*irq_domain;
-+};
-+
-+static int sophgo_pcie_readl_app(struct sophgo_pcie *sophgo, u32 reg)
-+{
-+	return readl_relaxed(sophgo->app_base + reg);
-+}
-+
-+static void sophgo_pcie_writel_app(struct sophgo_pcie *sophgo, u32 val, u32 reg)
-+{
-+	writel_relaxed(val, sophgo->app_base + reg);
-+}
-+
-+static void sophgo_pcie_intx_handler(struct irq_desc *desc)
-+{
-+	struct dw_pcie_rp *pp = irq_desc_get_handler_data(desc);
-+	struct irq_chip *chip = irq_desc_get_chip(desc);
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct sophgo_pcie *sophgo = to_sophgo_pcie(pci);
-+	unsigned long hwirq, reg;
-+
-+	chained_irq_enter(chip, desc);
-+
-+	reg = sophgo_pcie_readl_app(sophgo, PCIE_INT_SIGNAL);
-+	reg = FIELD_GET(PCIE_INT_SIGNAL_INTX, reg);
-+
-+	for_each_set_bit(hwirq, &reg, PCI_NUM_INTX)
-+		generic_handle_domain_irq(sophgo->irq_domain, hwirq);
-+
-+	chained_irq_exit(chip, desc);
-+}
-+
-+static void sophgo_intx_irq_mask(struct irq_data *d)
-+{
-+	struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(d);
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct sophgo_pcie *sophgo = to_sophgo_pcie(pci);
-+	unsigned long flags;
-+	u32 val;
-+
-+	raw_spin_lock_irqsave(&pp->lock, flags);
-+
-+	val = sophgo_pcie_readl_app(sophgo, PCIE_INT_EN);
-+	val &= ~FIELD_PREP(PCIE_INT_EN_INTX, BIT(d->hwirq));
-+	sophgo_pcie_writel_app(sophgo, val, PCIE_INT_EN);
-+
-+	raw_spin_unlock_irqrestore(&pp->lock, flags);
-+};
-+
-+static void sophgo_intx_irq_unmask(struct irq_data *d)
-+{
-+	struct dw_pcie_rp *pp = irq_data_get_irq_chip_data(d);
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct sophgo_pcie *sophgo = to_sophgo_pcie(pci);
-+	unsigned long flags;
-+	u32 val;
-+
-+	raw_spin_lock_irqsave(&pp->lock, flags);
-+
-+	val = sophgo_pcie_readl_app(sophgo, PCIE_INT_EN);
-+	val |= FIELD_PREP(PCIE_INT_EN_INTX, BIT(d->hwirq));
-+	sophgo_pcie_writel_app(sophgo, val, PCIE_INT_EN);
-+
-+	raw_spin_unlock_irqrestore(&pp->lock, flags);
-+};
-+
-+static void sophgo_intx_irq_eoi(struct irq_data *d)
-+{
-+}
-+
-+static struct irq_chip sophgo_intx_irq_chip = {
-+	.name			= "INTx",
-+	.irq_mask		= sophgo_intx_irq_mask,
-+	.irq_unmask		= sophgo_intx_irq_unmask,
-+	.irq_eoi		= sophgo_intx_irq_eoi,
-+};
-+
-+static int sophgo_pcie_intx_map(struct irq_domain *domain, unsigned int irq,
-+				irq_hw_number_t hwirq)
-+{
-+	irq_set_chip_and_handler(irq, &sophgo_intx_irq_chip, handle_fasteoi_irq);
-+	irq_set_chip_data(irq, domain->host_data);
-+
-+	return 0;
-+}
-+
-+static const struct irq_domain_ops intx_domain_ops = {
-+	.map = sophgo_pcie_intx_map,
-+};
-+
-+static int sophgo_pcie_init_irq_domain(struct dw_pcie_rp *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct sophgo_pcie *sophgo = to_sophgo_pcie(pci);
-+	struct device *dev = sophgo->pci.dev;
-+	struct fwnode_handle *intc;
-+	int irq;
-+
-+	intc = device_get_named_child_node(dev, "interrupt-controller");
-+	if (!intc) {
-+		dev_err(dev, "missing child interrupt-controller node\n");
-+		return -ENODEV;
-+	}
-+
-+	irq = fwnode_irq_get(intc, 0);
-+	if (irq < 0) {
-+		dev_err(dev, "failed to get INTx irq number\n");
-+		fwnode_handle_put(intc);
-+		return irq;
-+	}
-+
-+	sophgo->irq_domain = irq_domain_create_linear(intc, PCI_NUM_INTX,
-+						      &intx_domain_ops, sophgo);
-+	fwnode_handle_put(intc);
-+	if (!sophgo->irq_domain) {
-+		dev_err(dev, "failed to get a INTx irq domain\n");
-+		return -EINVAL;
-+	}
-+
-+	return irq;
-+}
-+
-+static void sophgo_pcie_msi_enable(struct dw_pcie_rp *pp)
-+{
-+	struct dw_pcie *pci = to_dw_pcie_from_pp(pp);
-+	struct sophgo_pcie *sophgo = to_sophgo_pcie(pci);
-+	unsigned long flags;
-+	u32 val;
-+
-+	raw_spin_lock_irqsave(&pp->lock, flags);
-+
-+	val = sophgo_pcie_readl_app(sophgo, PCIE_INT_EN);
-+	val |= PCIE_INT_EN_INT_MSI;
-+	sophgo_pcie_writel_app(sophgo, val, PCIE_INT_EN);
-+
-+	raw_spin_unlock_irqrestore(&pp->lock, flags);
-+}
-+
-+static int sophgo_pcie_host_init(struct dw_pcie_rp *pp)
-+{
-+	int irq;
-+
-+	irq = sophgo_pcie_init_irq_domain(pp);
-+	if (irq < 0)
-+		return irq;
-+
-+	irq_set_chained_handler_and_data(irq, sophgo_pcie_intx_handler,
-+					 pp);
-+
-+	sophgo_pcie_msi_enable(pp);
-+
-+	return 0;
-+}
-+
-+static const struct dw_pcie_host_ops sophgo_pcie_host_ops = {
-+	.init = sophgo_pcie_host_init,
-+};
-+
-+static int sophgo_pcie_clk_init(struct sophgo_pcie *sophgo)
-+{
-+	struct device *dev = sophgo->pci.dev;
-+	int ret;
-+
-+	ret = devm_clk_bulk_get_all_enabled(dev, &sophgo->clks);
-+	if (ret < 0)
-+		return dev_err_probe(dev, ret, "failed to get clocks\n");
-+
-+	sophgo->clk_cnt = ret;
-+
-+	return 0;
-+}
-+
-+static int sophgo_pcie_resource_get(struct platform_device *pdev,
-+				    struct sophgo_pcie *sophgo)
-+{
-+	sophgo->app_base = devm_platform_ioremap_resource_byname(pdev, "app");
-+	if (IS_ERR(sophgo->app_base))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(sophgo->app_base),
-+				     "failed to map app registers\n");
-+
-+	return 0;
-+}
-+
-+static int sophgo_pcie_configure_rc(struct sophgo_pcie *sophgo)
-+{
-+	struct dw_pcie_rp *pp;
-+
-+	pp = &sophgo->pci.pp;
-+	pp->ops = &sophgo_pcie_host_ops;
-+
-+	return dw_pcie_host_init(pp);
-+}
-+
-+static int sophgo_pcie_probe(struct platform_device *pdev)
-+{
-+	struct device *dev = &pdev->dev;
-+	struct sophgo_pcie *sophgo;
-+	int ret;
-+
-+	sophgo = devm_kzalloc(dev, sizeof(*sophgo), GFP_KERNEL);
-+	if (!sophgo)
-+		return -ENOMEM;
-+
-+	platform_set_drvdata(pdev, sophgo);
-+
-+	sophgo->pci.dev = dev;
-+
-+	ret = sophgo_pcie_resource_get(pdev, sophgo);
-+	if (ret)
-+		return ret;
-+
-+	ret = sophgo_pcie_clk_init(sophgo);
-+	if (ret)
-+		return ret;
-+
-+	return sophgo_pcie_configure_rc(sophgo);
-+}
-+
-+static const struct of_device_id sophgo_pcie_of_match[] = {
-+	{ .compatible = "sophgo,sg2044-pcie" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(of, sophgo_pcie_acpi_match);
-+
-+static const struct acpi_device_id sophgo_pcie_acpi_match[] = {
-+	{ "SOPHO000", 0 },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, sophgo_pcie_acpi_match);
-+
-+static struct platform_driver sophgo_pcie_driver = {
-+	.driver = {
-+		.name = "sophgo-dw-pcie",
-+		.of_match_table = sophgo_pcie_of_match,
-+		.acpi_match_table = sophgo_pcie_acpi_match,
-+		.suppress_bind_attrs = true,
-+	},
-+	.probe = sophgo_pcie_probe,
-+};
-+builtin_platform_driver(sophgo_pcie_driver);
--- 
-2.48.1
+> 
+> Digging further, I found some interesting history about the parent 'syscon' node
+> of the reset-controller. I'd appreciate if you can take a look into the following
+> patches/thread -
+> 
+> The syscon0 node was initially added along with Armada clock driver support.
+> It was the very beginning of the upstream for Armada SoCs support (2016).
+> And the clock driver is one of the earliest drivers to be mainlined. At that time,
+> the clock controller is the only supported device within sycon register range.
+> As you can see, the clock dt-binding was exactly aligned with what your suggested
+> (no sub-node, compatible and clock-cells just in syscon). 
+> 
+> https://lore.kernel.org/all/1460648013-31320-5-git-send-email-thomas.petazzoni@free-electrons.com/
+> 
+> Besides the clock controller, the system controller also includes the GPIO controller,
+> pinctl controller, reset controller and other miscellaneous configurations. Before
+> adding the pinctl dt-binding, it's decided to use the sub-nodes to present the multiple
+> function blocks of various devices.
+> 
+> https://lore.kernel.org/all/b27495e10fb4f4d8a7fd1a760d49402bbae83b58.1496328934.git-series.gregory.clement@free-electrons.com/
 
+So this is the source here. I see.
+
+Commit comes with a rationale that it will grow significantly.
+
+> 
+> In the following patch, it was clearly addressed why sub-nodes was chosen
+> over one flat node.
+> 
+> https://lore.kernel.org/all/bb21ee9acc55efac884450ff710049b99b27f8bf.1496328934.git-series.gregory.clement@free-electrons.com/
+> 
+> "The initial intent when the binding of the cp110 system controller was to
+> have one flat node. The idea being that what is currently a clock-only
+> driver in drivers would become a MFD driver, exposing the clock, GPIO and
+> pinctrl functionality. However, after taking a step back, this would lead
+> to a messy binding. Indeed, a single node would be a GPIO controller,
+> clock controller, pinmux controller, and more.
+> 
+> This patch adopts a more classical solution of a top-level syscon node
+> with sub-nodes for the individual devices. The main benefit will be to
+> have each functional block associated to its own sub-node where we can
+> put its own properties."
+> 
+> Since then, the dt-binding of Armada's system controller became an
+> exception. But I think it's sensible. If we do put all these controllers into
+> one node, you can image the properties of different devices will be
+> messed up, e.g., not just #reset-cells, #clock-cells and #gpio-cells will
+> be gathered. There will be a long compatible list of all devices.
+> 
+> Going back to my current patch - if we fold the reset controller into the
+> parent node, the syscon node will become a hybrid, which GPIO and 
+> clock controller are still sub-nodes while reset controller is folded into
+> the syscon node. Isn't it very confusing?
+
+Yes, it will be. But more confusing is existing pattern of mixing MMIO
+nodes with non-MMIO which you grow. So okay, keep them as separate
+child, but drop offset in your patch or unify everything into 'reg'.
+
+
+Best regards,
+Krzysztof
 
