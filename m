@@ -1,113 +1,100 @@
-Return-Path: <linux-kernel+bounces-544506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 010DFA4E1ED
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:57:03 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0B0AA4E1DF
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:54:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFC5A1882DF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:51:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE3387AA644
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:50:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E416126A086;
-	Tue,  4 Mar 2025 14:50:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B43276D3B;
+	Tue,  4 Mar 2025 14:50:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hEfwMRTz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="eETCHX43"
+Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E18526463F;
-	Tue,  4 Mar 2025 14:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 493192517A3;
+	Tue,  4 Mar 2025 14:50:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741099802; cv=none; b=AINqu+SGYZQZBCqXmn8UfTu0oae2Nokx/fFW1Sx6Lhzww0Qq+mDirjRV/ULKt2ZL721BjKRIdThXuTiaTH61n6JJksdCNpOTNrzIVWt+m5tAv1PgTgUHaUOfVitJk5AjjAYIzKBTsJRNRwNHtmymmuHO3j7aqRHE0MBwCgfBYbQ=
+	t=1741099818; cv=none; b=gh9IoDWNzMBjThVSdXhoCzmRu69gRklA8LQyK0b39KnyuZnKuIbjwGWpazZoUoa9UAGrJOaPkuVJOj/BPSTWdj6dfkg37GVTTEsvjpLvsIbNqg6ukzmR3ZwVI3eXzaDyBssHSWnQETMIDGpsWLCipf4N67+NWHXRbgvuTFNhav0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741099802; c=relaxed/simple;
-	bh=gvu0i166/31zSlrQGFJF0Kf6XaFopXDBRAjMx2RaV1g=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Tv+Mw89mdSUYppe9zYgNoIHjpCDNTya2JrYgyhJ2qN04manZTC/poWOah1nf+Fs3PlpBg3COR9tMj1Av5lxp4QzyBwvbldP8dCCDh/8cGYxKxSAMDgl+g9d5t9d66YNqg05zMDL9spwFtB3YaGupV9z/0UN7wFzlEFO7nR6f1r0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hEfwMRTz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 405C8C4CEE7;
-	Tue,  4 Mar 2025 14:49:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741099801;
-	bh=gvu0i166/31zSlrQGFJF0Kf6XaFopXDBRAjMx2RaV1g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hEfwMRTzcS+9wfndkkQmnzngTQdkpZ81sOdrKTs9Ajgmw7HNDW9o5g8ttpxNahlmT
-	 PKVYnse4D6K9SJOgcRCqH7KtkEZlAW1iOEinxupk4HvCOKBUpGFqVZ0NVEYiXs4gwh
-	 3bjNeKqpCQPRE5IXDOLCJazbheCWCw9qKUGeYPbp+XRKJNbwEr30NaVpodlnMipyn3
-	 NK+ZUd1pNDgib08XvMNpAZ5EvoQd63kydctF0lTnU0q0CP0WA16E6jp0lGeBQJXvYN
-	 6NK4Sb+30272/DbmMhEg4vfuIGHgTcy9A50JPr03t/KNkt/XD9PrP/kOY/0jC+pLSJ
-	 HxBwuY85Rcf4g==
-Date: Tue, 4 Mar 2025 14:49:51 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Folker Schwesinger <dev@folker-schwesinger.de>, Lars-Peter Clausen
- <lars@metafoo.de>, Nuno Sa  <nuno.sa@analog.com>, Paul Cercueil
- <paul@crapouillou.net>, Peter Zijlstra  <peterz@infradead.org>,
- linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: buffer-dma: Fix docstrings
-Message-ID: <20250304144951.73d152d3@jic23-huawei>
-In-Reply-To: <37a99292819c20e6da5227cd46e9f1250cb67804.camel@gmail.com>
-References: <D83IPSTKYWNB.1PUBV1530XI86@folker-schwesinger.de>
-	<37a99292819c20e6da5227cd46e9f1250cb67804.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741099818; c=relaxed/simple;
+	bh=S2vv2I0lRAzTLQjy6aBkrV5She4YB6ok9cGpfqGx440=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SP100m+ZVoMm4JxMDQ+zo+YFLoJ3OcRTdcJuykorjHqeWGzlVeCyETuTlgl4ytRBNESQfyamMANC68///+qh0PWDSWxn4X1D1l89KSGdIgUAUo0s6VST5I86Ir+7cv4LnLSTq519uNa+N+NP351yCuCROVfuUAWTiTojLHV+5lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=eETCHX43; arc=none smtp.client-ip=67.231.149.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
+	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5245gdjw021938;
+	Tue, 4 Mar 2025 08:50:13 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=PODMain02222019; bh=1k08KFxenrMqy7/G
+	8yBibnQNuQBMeEok4mRyNMtNPuk=; b=eETCHX430bsYZMrjo8R5QCdywkbg2wlJ
+	C8oDrVAjOHbMTS9wM2+MeXWH3d2APBgil88iifO7+kkEAkHRqrPXkLrubVAtjivi
+	hh1Z9Qk3XBdWUB66/dCzSZBWUUBWM4ZFiDN2//BHn7NTpQgvLgUBEIigsXiwhbm0
+	Mg0jhD9Gch9XndABI/QVkrRe1mZVreHLQng+gZ0rOQWx4Vq3pZ23lCC9mliGLsRT
+	2PXrLco0wU/9xDZRU8Db1Yb3tphfz+kHNTNo/29hccv4rE4VS7YAQyPHWTlVmMah
+	MZ75WUgAM05qKe6K5T+UY8mXyF3K81roM7Vwz1I0lJnU+NjbYgb3pg==
+Received: from ediex01.ad.cirrus.com ([84.19.233.68])
+	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 455fyyj3j1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 08:50:13 -0600 (CST)
+Received: from ediex01.ad.cirrus.com (198.61.84.80) by ediex01.ad.cirrus.com
+ (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 4 Mar
+ 2025 14:50:11 +0000
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex01.ad.cirrus.com (198.61.84.80) with Microsoft SMTP Server id
+ 15.2.1544.14 via Frontend Transport; Tue, 4 Mar 2025 14:50:11 +0000
+Received: from ediswws06.ad.cirrus.com (ediswws06.ad.cirrus.com [198.90.208.18])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 05DAA820248;
+	Tue,  4 Mar 2025 14:50:11 +0000 (UTC)
+From: Richard Fitzgerald <rf@opensource.cirrus.com>
+To: <broonie@kernel.org>
+CC: <yung-chuan.liao@linux.intel.com>, <linux-sound@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <patches@opensource.cirrus.com>
+Subject: [PATCH for-next 0/2] ASoC: Add Intel machine driver support for CS35L56 on SSP
+Date: Tue, 4 Mar 2025 14:50:08 +0000
+Message-ID: <20250304145010.288082-1-rf@opensource.cirrus.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: B9PELdNn_n7S6-bw8CuyD6uJ1nywRCgh
+X-Proofpoint-ORIG-GUID: B9PELdNn_n7S6-bw8CuyD6uJ1nywRCgh
+X-Authority-Analysis: v=2.4 cv=DaftqutW c=1 sm=1 tr=0 ts=67c71325 cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=Vs1iUdzkB0EA:10 a=r3wmAV2J7K43Z6TldlcA:9
+X-Proofpoint-Spam-Reason: safe
 
-On Fri, 28 Feb 2025 08:26:44 +0000
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+This adds support to the Intel machine drivers for CS35L56 codecs on
+Intel SSP port using TDM. Also adds the match entries for this on
+Tigerlake systems.
 
-> On Thu, 2025-02-27 at 20:27 +0100, Folker Schwesinger wrote:
-> > Fix a typo in the docstring of iio_dma_buffer_read() and fix what looks
-> > like a copy-and-paste error in the iio_dma_buffer_write() docstring.
-> >=20
-> > Signed-off-by: Folker Schwesinger <dev@folker-schwesinger.de>
-> > --- =20
->=20
-> Reviewed-by: Nuno S=C3=A1 <nuno.sa@analog.com>
-Applied. Thanks.
+Richard Fitzgerald (2):
+  ASoC: Intel: Add sof_cs35l56 driver for CS35L56 on SSP2.
+  ASoC: Intel: tgl-match: Add CS35L56 on SSP2 for CDB35L56-FOUR board
 
->=20
-> > =C2=A0drivers/iio/buffer/industrialio-buffer-dma.c | 4 ++--
-> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
-> >=20
-> > diff --git a/drivers/iio/buffer/industrialio-buffer-dma.c
-> > b/drivers/iio/buffer/industrialio-buffer-dma.c
-> > index 7ea784304ffb..ee294a775e8a 100644
-> > --- a/drivers/iio/buffer/industrialio-buffer-dma.c
-> > +++ b/drivers/iio/buffer/industrialio-buffer-dma.c
-> > @@ -624,7 +624,7 @@ static int iio_dma_buffer_io(struct iio_buffer *buf=
-fer,
-> > size_t n,
-> > =C2=A0
-> > =C2=A0/**
-> > =C2=A0 * iio_dma_buffer_read() - DMA buffer read callback
-> > - * @buffer: Buffer to read form
-> > + * @buffer: Buffer to read from
-> > =C2=A0 * @n: Number of bytes to read
-> > =C2=A0 * @user_buffer: Userspace buffer to copy the data to
-> > =C2=A0 *
-> > @@ -640,7 +640,7 @@ EXPORT_SYMBOL_NS_GPL(iio_dma_buffer_read,
-> > "IIO_DMA_BUFFER");
-> > =C2=A0
-> > =C2=A0/**
-> > =C2=A0 * iio_dma_buffer_write() - DMA buffer write callback
-> > - * @buffer: Buffer to read form
-> > + * @buffer: Buffer to write to
-> > =C2=A0 * @n: Number of bytes to read
-> > =C2=A0 * @user_buffer: Userspace buffer to copy the data from
-> > =C2=A0 *
-> >=20
-> > base-commit: faeaa1ec6c63b6676679f321601471772f2a0c9b =20
->=20
->=20
+ MAINTAINERS                                   |   1 +
+ include/sound/soc-acpi-intel-ssp-common.h     |   2 +
+ sound/soc/intel/boards/Kconfig                |  15 ++
+ sound/soc/intel/boards/Makefile               |   2 +
+ sound/soc/intel/boards/sof_cs35l56.c          | 254 ++++++++++++++++++
+ .../intel/common/soc-acpi-intel-ssp-common.c  |   1 +
+ .../intel/common/soc-acpi-intel-tgl-match.c   |   5 +
+ 7 files changed, 280 insertions(+)
+ create mode 100644 sound/soc/intel/boards/sof_cs35l56.c
+
+-- 
+2.39.5
 
 
