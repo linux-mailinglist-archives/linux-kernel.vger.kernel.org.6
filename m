@@ -1,89 +1,85 @@
-Return-Path: <linux-kernel+bounces-544784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87530A4E52B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:11:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E00C7A4E56C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:18:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 72BD5168059
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0388C19C2EB1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4421524EAA6;
-	Tue,  4 Mar 2025 15:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RNptpm8Y"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E01F24C07E;
+	Tue,  4 Mar 2025 15:46:43 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214EB24EA90
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 15:46:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58BBE24C063;
+	Tue,  4 Mar 2025 15:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741103178; cv=none; b=ixhhi83W5dkiYEaACWYi4nkCqHQEj51j/qIR9lbWfmw5nujmBWhJia8Us0YjHPYzKnlX+t4Fc4T7xV2RCNO9mfBQuqgpemxftmBU0Pudt9kFWyEhvCbtL2qKe4tN7z2uQ6Jk3F1D7BGq6fZSGIQ6+taoRHhHc4Z0MswE4tdPKgI=
+	t=1741103202; cv=none; b=UQe7feSLN0iLxnuDC/YUqZBAO5peZXSPo42+xKeDfccHqAV5NpMHQ4GQFqcA7wy2GflF4o5ddqo7/9a6Khdh8+MwnnrtXArAg14G4qoZDwqN44/C7808X1pAyyQwq3qrUz2PNPXkUcz/VQmmbDQ5cyb9BRkEYG9hnHL16UX95BE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741103178; c=relaxed/simple;
-	bh=p9MPleuZDVUI+Z5MIM/sLliMtf8a2r+Xk6MzUvX+8hI=;
+	s=arc-20240116; t=1741103202; c=relaxed/simple;
+	bh=msyzO0UYK4O7STic7nVv1CFyyWG3MIkiJBnBLQ9y/KQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CKQMKrCqcDmlRs7GKSO6Dj2wjCx2KjvhjK9JcdEroDf91fO2Dltaj5T25kulwd52qLclzWqxG1EgN0mjZzzEjVsdmJTr/WhPkSGFe3R6Fbd1V1rlFPI7XN0OZrAzDlQiIn1hw+TQ4zc0HWdXtiCP6Lydfed1b2Ox0ACobHsSuA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RNptpm8Y; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22349dc31bcso102433335ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 07:46:15 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741103175; x=1741707975; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7YL+VxJ0Q3RaNWRR/aVESAdhzcvG1F11vJfodj75NqY=;
-        b=RNptpm8YkrxZcFlQ2rmewYn89/+UhNfS16RNomfluGKNP0b8nm9uCeOcsTv9w8R+CF
-         DtThGJFCaAFF+Bvq1IIltAJO1URcZ4z4ZXGbjXU2X2NTzzVCKCJEjyXUeHJgH7IK2C1q
-         pmQwjPq4LFEsK9ukMBov1dgkFGpsVce9pNBJ4E5lboMB28Vl4H523S2ULXgiN7kzJoZH
-         NiyIAT/6HzWP5IOswShSCBUQmLPjvPtK4BgYUDc2XUaYxsnaYlsLgyVexqgE8tcyOXaX
-         cHCIpxgtFC07FBV26Bq98ANcYpLL93I7mXchbtXKqWdi3VYoVt7ktBQvNXwr2lg9S163
-         2VDw==
+	 Content-Type:Content-Disposition:In-Reply-To; b=FORaG4S3hdK6BbyyCU1t/I1Z09JROBNH+k4myrCNkZKdopnUE3cLOuVkMUFdS6hyFNEaY2DorCjzkapJQK8sjDXtfzB7/n+Xqc8iTUaWISY7Hahk2ubEkkjso2F+vBC6zOBbW412MgNoX2cjt3MqPeqLLgARg16C8R5ISPBMiMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22382657540so63595355ad.2;
+        Tue, 04 Mar 2025 07:46:41 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741103175; x=1741707975;
+        d=1e100.net; s=20230601; t=1741103200; x=1741708000;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7YL+VxJ0Q3RaNWRR/aVESAdhzcvG1F11vJfodj75NqY=;
-        b=HuhjPXr0pozCUMJWZym+DD2HxxEXGWZz82rCiVK0+gsVT1W+g+FOR9me42xJgTXWOn
-         m3ZhD/LUKO+qCzAyz9IkWoQMJK3LvTbfDMVrnezV+AE6ZtYWfTdG6dmcNRp/9yEUBI97
-         R/G5SldvqQotwoXNRlrn7soQB4fZHDGFgSSG/iZMXOAiTzS+WRq0QZm7NsecDF6GE8sN
-         uFrvj34n/U3WFe9PYFKRae4766UE0geTeGE2r2ahHfLSSTnhol1LuTiEspPKViZts4Id
-         CxBn+Utn9CtMfMen4VlD5huCJiaFmyBrHs8OQV4NlzSWx2DhsP25BuCIchmsUCdkYfES
-         0FAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVbHIJhzsIqDUIuumb17BOrhU6oj2x0RkxT6SP1mhs9/X0jHhoeQ9qGd+psqmwR7op/IuZVjzABWKdE1wA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2HY98XfLgv033jFBanhgk2o4VipzoGxRdcSb+a3KkIM9tBvm9
-	823hb8m318YqmiLZTkUZSd+dQspyaISt2c8hXEiTL61e6lrFD+TAIZiSyy+B7A==
-X-Gm-Gg: ASbGncvojTfDKQsOaALggFAyKPU6yenY5TuJ3Sb18aNrcGwFnw7j57d81gc4u2fULUJ
-	jMMH748tJNZDDqxpSrZ9qpT0KtlRj1X0owTylwXAfWLxcSdpiUayKT1QmrwNQK2lnsjseeQCsHv
-	Frn9y9ByhPX7kNJnfwJMOlwlbLzKRk7ab1TdX1KjyV6IwOxgAuu9L2Qf1C8dVME6EJh3txSI/B0
-	VfT6DC2pizuzqZIX+zgF7oYJEnmpN4n+QdhkO12SbHHlsoI0PMYqedrV9CF5nIsfBlhP3JyUtkc
-	TvEGZDLJfsxlXDqOAS5R8HwP75oy+phMF1ineswa18BmNdtrK5i9tLI=
-X-Google-Smtp-Source: AGHT+IEu5Llady3MDRUfE27shPyV3JvqN+sd6X1GgDxXaMbDHoS38zRfVq5TjcSVc4smqJopw9/IuQ==
-X-Received: by 2002:a05:6a20:2447:b0:1f0:e706:1370 with SMTP id adf61e73a8af0-1f2f4e4e1f4mr33125419637.35.1741103175351;
-        Tue, 04 Mar 2025 07:46:15 -0800 (PST)
-Received: from thinkpad ([120.60.51.199])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf206bsm10352962a12.6.2025.03.04.07.46.11
+        bh=rW1cKuRtFgc98VoZXyjtJAQFKd78PcnO2hM7lIoduzI=;
+        b=ADv5vCOTXRfip53oPUwGGyUjgLOK7cllqlm1/AUgZZWQuS8FMvq0KPVyHRiyvpqpHN
+         t3QStcx4Q1XyplFUXuHRjIxurQt3zNn0GUGQyK9lhBKold8Dud+9WUNRjXsVJYdpdRas
+         ockWE8gnfyrqHaa+2zoV+v2Ojf45cftJHFt3wL2y7LJosZVqJcYSpEgz5WJw0CGkIhyG
+         RTHoCwVIXzSF+AZ9jptH1f/9LgeWP0GNAvB4hqCpWJ+IHcNgudCgVRBTw46u4wWscFSi
+         hyBqCX3APUuYgziBIfeqDfGmgD7WNoFm5q3eXyZlUfGcUUWO7NTBfUG6UEMroTiQqJXt
+         DqIA==
+X-Forwarded-Encrypted: i=1; AJvYcCV0FUZCcO20MpJx26F9d008rkDxiH0AAcmoeRB5T9EFDAEb3BwCPy6yDgKNhjSBBWCY38F+4ftTIUc7sE+JxgUbDw==@vger.kernel.org, AJvYcCVHagZ+J8gZFgFv8TChFx6t7UduwGj1BPbfi1PDBEdMpNcmQGlgHEgI56fCpRKK+teqRUO0bpHzANldp1n+fFmO0q8=@vger.kernel.org, AJvYcCVW2rbx6fTnbG6tu5UChAXuaqzmOAn6SLi2aI2LVXrixxAK/SfWPe109BWIeS/wLkerhyC36Onsgb8n65o=@vger.kernel.org, AJvYcCVpq3FHYEhkJYq0sTr7RNvxV7sgG4y9N7Sh/7XqpUO9twtUc8jhbqYnAd+r2/VZ6IdZcyrenGWs5Grz@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5l7z0y+YSKdwVmngNob3XA3kPEKAgotuC/1434MelchFFzwjJ
+	osKPWwruwfT8hwrmwPxUwmSX2uX3jzIYYI3MA3s2dIZ7O70Si+Kf
+X-Gm-Gg: ASbGnctZGk+s1MVjO97dS6jaNw7ULvUk68CGGscs5BPi99c6ktwBSHsWo+x//qqc/7I
+	Oh6BHeslbzLDE/zCWPj8CybshbtxAEiDqMwNB4Jp3SpYSxTp1zHGMx8wcmZUQFZhexS2k/AgmcA
+	BZ5FfZX0nxBPxY71s7zdCwMyVUBmIs3Qri+rh+/y1Lcf46OyhXJp6Kv+2xAaJuLr2Ough/mMuOD
+	VvvpY4zEYwXP9JlqgSwWKMvrRf1M5yYJYvSmSV1dlDn/8xmapxbudeRPU/CvQMF/IPlptOvhag1
+	LvdNXrviXGh2O9PQ2Qaadw5gek16gRLifhQ29L3OjR6/ZHqXpHEMOMqApEu5Sgrcj4rXPEnTjRA
+	Saaw=
+X-Google-Smtp-Source: AGHT+IEzaN/r/FxaRDaAv2WPggcOLIm/6Vm7eMmJxC9+tfE4ygUZ5mXkWtuc2TbBMjwycyUGGLoq3Q==
+X-Received: by 2002:a17:903:230c:b0:223:7006:4db2 with SMTP id d9443c01a7336-22370064ea3mr216436475ad.31.1741103200544;
+        Tue, 04 Mar 2025 07:46:40 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-223504e18b3sm96918945ad.182.2025.03.04.07.46.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 07:46:14 -0800 (PST)
-Date: Tue, 4 Mar 2025 21:16:08 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-Cc: bhelgaas@google.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, michal.simek@amd.com,
-	bharat.kumar.gogada@amd.com
-Subject: Re: [PATCH v5 1/3] PCI: xilinx-cpm: Fix IRQ domain leak in error
- path of probe.
-Message-ID: <20250304154608.5nmg4afotcp6hfym@thinkpad>
-References: <20250224155025.782179-1-thippeswamy.havalige@amd.com>
- <20250224155025.782179-2-thippeswamy.havalige@amd.com>
+        Tue, 04 Mar 2025 07:46:40 -0800 (PST)
+Date: Wed, 5 Mar 2025 00:46:38 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Fan Ni <nifan.cxl@gmail.com>, Shradha Todi <shradha.t@samsung.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
+	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
+	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
+	a.manzanares@samsung.com, pankaj.dubey@samsung.com,
+	cassel@kernel.org, 18255117159@163.com, xueshuai@linux.alibaba.com,
+	renyu.zj@linux.alibaba.com, will@kernel.org, mark.rutland@arm.com,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
+Message-ID: <20250304154638.GB2310180@rocinante>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132035epcas5p47221a5198df9bf86020abcefdfded789@epcas5p4.samsung.com>
+ <20250221131548.59616-4-shradha.t@samsung.com>
+ <Z8XrYxP_pZr6tFU8@debian>
+ <20250303194647.GC1552306@rocinante>
+ <CAMuHMdWens9ZZrjNH1Bd2AN3PJEP1KSUGdiJcBCt0uPGH_GiiA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,40 +89,81 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250224155025.782179-2-thippeswamy.havalige@amd.com>
+In-Reply-To: <CAMuHMdWens9ZZrjNH1Bd2AN3PJEP1KSUGdiJcBCt0uPGH_GiiA@mail.gmail.com>
 
-On Mon, Feb 24, 2025 at 09:20:22PM +0530, Thippeswamy Havalige wrote:
-> The IRQ domain allocated for the PCIe controller is not freed if
-> resource_list_first_type returns NULL, leading to a resource leak.
+Hello,
+
+> This patch is now commit 1ff54f4cbaed9ec6 ("PCI: dwc: Add debugfs
+> based Silicon Debug support for DWC") in pci/next (next-20250304).
 > 
-> This fix ensures properly cleaning up the allocated IRQ domain in the error
-> path.
+> On Mon, 3 Mar 2025 at 20:47, Krzysztof Wilczyński <kw@linux.com> wrote:
+> > [...]
+> > > > +int dwc_pcie_debugfs_init(struct dw_pcie *pci)
+> > > > +{
+> > > > +   char dirname[DWC_DEBUGFS_BUF_MAX];
+> > > > +   struct device *dev = pci->dev;
+> > > > +   struct debugfs_info *debugfs;
+> > > > +   struct dentry *dir;
+> > > > +   int ret;
+> > > > +
+> > > > +   /* Create main directory for each platform driver */
+> > > > +   snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
+> > > > +   dir = debugfs_create_dir(dirname, NULL);
+> > > > +   debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
+> > > > +   if (!debugfs)
+> > > > +           return -ENOMEM;
+> > > > +
+> > > > +   debugfs->debug_dir = dir;
+> > > > +   pci->debugfs = debugfs;
+> > > > +   ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
+> > > > +   if (ret)
+> > > > +           dev_dbg(dev, "RASDES debugfs init failed\n");
+> > >
+> > > What will happen if ret != 0? still return 0?
 > 
+> And that is exactly what happens on Gray Hawk Single with R-Car
+> V4M: dw_pcie_find_rasdes_capability() returns NULL, causing
+> dwc_pcie_rasdes_debugfs_init() to return -ENODEV.
 
-Missing Fixes tag.
+Thank you for testing and for catching this issue.  Much appreciated.
 
-> Signed-off-by: Thippeswamy Havalige <thippeswamy.havalige@amd.com>
-> ---
->  drivers/pci/controller/pcie-xilinx-cpm.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+> > Given that callers of dwc_pcie_debugfs_init() check for errors,
 > 
-> diff --git a/drivers/pci/controller/pcie-xilinx-cpm.c b/drivers/pci/controller/pcie-xilinx-cpm.c
-> index 81e8bfae53d0..660b12fc4631 100644
-> --- a/drivers/pci/controller/pcie-xilinx-cpm.c
-> +++ b/drivers/pci/controller/pcie-xilinx-cpm.c
-> @@ -583,8 +583,10 @@ static int xilinx_cpm_pcie_probe(struct platform_device *pdev)
->  		return err;
->  
->  	bus = resource_list_first_type(&bridge->windows, IORESOURCE_BUS);
-> -	if (!bus)
-> +	if (!bus) {
-> +		xilinx_cpm_free_irq_domains(port);
+> Debugfs issues should never be propagated upstream!
 
-Why can't you use existing 'err_parse_dt' label? If the reason is the name, just
-change it to actual error case. Like, 'err_free_irq_domains'.
+Makes complete sense.  Sorry for breaking things here!
 
-- Mani
+> > this probably should correctly bubble up any failure coming from
+> > dwc_pcie_rasdes_debugfs_init().
+> >
+> > I made updates to the code directly on the current branch, have a look:
+> 
+> So while applying, you changed this like:
+> 
+>             ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
+>     -       if (ret)
+>     -               dev_dbg(dev, "RASDES debugfs init failed\n");
+>     +       if (ret) {
+>     +               dev_err(dev, "failed to initialize RAS DES debugfs\n");
+>     +               return ret;
+>     +       }
+> 
+>             return 0;
+> 
+> Hence this is now a fatal error, causing the probe to fail.
 
--- 
-மணிவண்ணன் சதாசிவம்
+I removed the changed, and also move the log level to be a warning, per:
+
+  https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=controller/dwc&id=c6759a967e69aba16aef0d92f43e527b112e98a5
+
+Would this be acceptable here?
+
+Mani, would this be acceptable to you, too?  Given that you posted the
+following recently:
+
+  https://lore.kernel.org/linux-pci/20250303200055.GA1881771@rocinante/T/#mab9cbd5834390d259afea056eee9a73d8c3b435f
+
+That said, perhaps moving the log level to a debug would be better served here.
+
+	Krzysztof
 
