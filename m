@@ -1,186 +1,119 @@
-Return-Path: <linux-kernel+bounces-545629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 834CEA4EF63
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:31:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2FA1A4EF67
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:33:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878D6172C60
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:31:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B595172D62
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B312780FB;
-	Tue,  4 Mar 2025 21:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC76B24DFE1;
+	Tue,  4 Mar 2025 21:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PKHSVMcl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MTTr2Atb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700DC264F8C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 21:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBEB1E3DF4;
+	Tue,  4 Mar 2025 21:33:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741123898; cv=none; b=hofoZrCYfj44HoGIqLYwmjAbWVXBNZN4Fnjg+2iTMixIlMqj/fMBflzVDPwIQJkmiwAJRbqb5epxHzisSmLURTfOHkG00nSIixs+QbYGjkZlPot/Rcnt0ruQWHOP0paD7KweAzIJMxpULouNeRkwUWF6WkbbQ5sP+3qwU8Gm/Sc=
+	t=1741123994; cv=none; b=jBaPsQA0+QwFg/UL3hJ4rwzyZfcedDfJgKZFXfdxzwlXjUnLX86+G8oWim15oYIv+oInkBmE3B0d648Y7mbGmvlO5naIxt4Gkp/ZE8xfXjqMn7pN+eamnGwYU8AR8IhzeD6n+sNfWjgn57/HmlzY6FQo2QiXxDfKuBTulYbb0RA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741123898; c=relaxed/simple;
-	bh=iZIzip/a82vX2LkJv4zSZm4C3SJDxHZJwHDvU2KQ3Lw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=obT9boisS8dNqy39HuvYJfo5mqtdiuUfha25md0FG6k1fcOyvmrV8CilNyneoFZI5qe2KrS1y7z6bo8jvy14u0xFCYkjpSZXXgiRxPX3M1dyzSnrW24Ld8kIvW+E1QS+HJUotFb+zebrH5Lc/W2xQkals29TIYXPjeZtje69c8U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PKHSVMcl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741123895;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/u+lFueGmAvUTM+DtaLsQO1A1g/BaRj/gNOIsb+910g=;
-	b=PKHSVMclxtCDIQ+ZkfTp4Q3WZXs3lReg5RD0iiLH0Wf0BegavvJbwUd0NzQsuACnny2tOe
-	noWX3jQ2acxzsdereNtHsJPGlV2ei2ASeoepzaw32JevZLJNwfC5rG3IeepOF8Iwbcd11B
-	qxjniK52Y4Z4DOCxCmnjfgC3SgXdTIw=
-Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
- [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-499-xRlHr9LWPdikS5dTTrEJMg-1; Tue, 04 Mar 2025 16:31:34 -0500
-X-MC-Unique: xRlHr9LWPdikS5dTTrEJMg-1
-X-Mimecast-MFC-AGG-ID: xRlHr9LWPdikS5dTTrEJMg_1741123893
-Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-47506816e5aso15775791cf.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 13:31:34 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741123893; x=1741728693;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/u+lFueGmAvUTM+DtaLsQO1A1g/BaRj/gNOIsb+910g=;
-        b=k0xg56+ArS3KO8/7WgozwQvaQuQ8IOgdLDJjUOA9ZWA8gFhYtNAKbGw9Gk8vtKWRJ7
-         SX2Nk8wViLnZ4V3GXO68xz/LSqp/il9b0kLjXMrFK/dyUJTgYipI/bOOOaRPckXVdWLn
-         bMCMPkwSGtC5mU7GBnTKPuh7QSePyY7Kz+WdV3GqPXT2Grpsai2+y+hkz2C1+3eSC7Uu
-         FbBrTQRdt9MjwJRbIzoZHUCENOdod32IH1HupUu+TIgx5Mt1X8fugwwTCB2gNdM7uk9W
-         Y1IKHSNCCD8sulwuYtEIoEY1Jl5HI+A4XWsLham51HAlg8yfL3XprH3fGJA52qAqfu3q
-         9u+g==
-X-Forwarded-Encrypted: i=1; AJvYcCWsAeGVALbJDpsVg8bGTbKp+d/y5hx/qGcvatbO2MaPS/XK7II9Do1pea4/VWyl3KJxJCVeDMdyzOes9HA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq8/hdT3y8ZiT66MxPuA0vihbJtoSaaNGlulVP3CyJTLFy9y8/
-	JG20iqQY1RD4PM4FVrOL1cx71b/v8sYdmVxJwgIVMO5CD7dPg1GPeRGkfzlurVS7YhxYnbM69+1
-	TDzPPtMTRRD96k1ZgSsLuOCGgFt8pdjDGFivMFwQZVJ5NLrO1hZXAVEBFIQPa5w==
-X-Gm-Gg: ASbGncsV2ouZSgYC9xf9SNeRk0sF4sn2pDjrGsLG2eVuIEjhNGy5tkuUQDDL5AfPe+w
-	YIRckGsMife8qzUQNQwJZiqLNvdYaWYM0aGwX9BJadwy5duz8rlF3KhZaoBipt0MGCaweLGrxgZ
-	69makwZqnOSzWANX/q4wWugPOk3CFREfVSRxdFjZBHhq9PQ6hYm2xrksP7DBXppy4MHq0Sj+/xE
-	2IFNdrQuQRWrOH/TP+NpBDeus8j++bAIEpsSoUAcTitBua5dJky0CXllA4Hx2n4gi5ROBtJDztG
-	G7UphZdTD1PknlY=
-X-Received: by 2002:a05:622a:60f:b0:471:be0e:e853 with SMTP id d75a77b69052e-4750b43c3d2mr11681841cf.20.1741123893528;
-        Tue, 04 Mar 2025 13:31:33 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFq3Qm8HjXWzqA8J3MceftXH5+TdpP0G/l/xsbfQtBrI9xoJPnzFc7gCJPy7NR5vHnpnooV3A==
-X-Received: by 2002:a05:622a:60f:b0:471:be0e:e853 with SMTP id d75a77b69052e-4750b43c3d2mr11681531cf.20.1741123893214;
-        Tue, 04 Mar 2025 13:31:33 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474e0f1e0c1sm36608431cf.47.2025.03.04.13.31.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 13:31:32 -0800 (PST)
-Message-ID: <23cfae5adcdee2c69014d18b2b19be157ef2c20d.camel@redhat.com>
-Subject: Re: QEMU's Hyper-V HV_X64_MSR_EOM is broken with split IRQCHIP
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Vitaly Kuznetsov <vkuznets@redhat.com>, Sean Christopherson
-	 <seanjc@google.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini
-	 <pbonzini@redhat.com>, Peter Xu <peterx@redhat.com>, "Maciej S. Szmigiero"
-	 <maciej.szmigiero@oracle.com>
-Date: Tue, 04 Mar 2025 16:31:31 -0500
-In-Reply-To: <87cyewq2ea.fsf@redhat.com>
-References: <Z8ZBzEJ7--VWKdWd@google.com> <87ikoposs6.fsf@redhat.com>
-	 <Z8cNBTgz3YBDga3c@google.com> <87cyewq2ea.fsf@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+	s=arc-20240116; t=1741123994; c=relaxed/simple;
+	bh=7W0cGEGfopwD6mibxiQVtjZTTbr9k+ZHhlaN50TgDzg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aJGM9uHsftZqZsNZY+z9ZaROY97i+Er6FRHz6d/TAbf9/TTezbWJpldDwXeYBgwWtNwdWT5+B76JPdYaEg1c13Ra0J4BH7lvJ+PSepL0izVg2CfnK20Xgs4qSa/8cEOGmHtS7PuQ0akzWYQZwgIBhqqrjXVJ+LKU2fO9APmpnWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MTTr2Atb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0ABFC4CEE5;
+	Tue,  4 Mar 2025 21:33:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741123993;
+	bh=7W0cGEGfopwD6mibxiQVtjZTTbr9k+ZHhlaN50TgDzg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MTTr2AtbWuvaAbUONgoKcbknK7saKPj3gCNnPwQfYjBPay+oLknLFUHOp+Ywha81h
+	 X4pgN9cJ6Jgw6/m1Pff51bZMeNsli06ySZgDVekHnu8FY2AvXi7BHbgZAp2xKobM2O
+	 ynmYWDLbOhvKZ7CgyR5NHQ6iLoyM1ywFvJAIM7p8BI8jaS5SS9wak28VoLsqN/4ktJ
+	 Cc/LnAtaa6SQEY1hwMeCGGVXv3Z1uUEttTYGKwDskrkAd0pANLn3tZhADJnjfYWt+t
+	 8zZaWTv7K51TAG2SV9fRUqnlFXHSTiZtrWdduYwcokh1hwTSOX3e4uvLy2Cby/Z45s
+	 LXAg5YQkeXosA==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Bill Wendling <morbo@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Justin Stitt <justinstitt@google.com>,
+	David Laight <david.laight.linux@gmail.com>,
+	linux-crypto@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH] x86/crc32: optimize tail handling for crc32c short inputs
+Date: Tue,  4 Mar 2025 13:32:16 -0800
+Message-ID: <20250304213216.108925-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Tue, 2025-03-04 at 15:46 +0100, Vitaly Kuznetsov wrote:
-> Sean Christopherson <seanjc@google.com> writes:
-> 
-> > On Tue, Mar 04, 2025, Vitaly Kuznetsov wrote:
-> > > Sean Christopherson <seanjc@google.com> writes:
-> > > 
-> > > > FYI, QEMU's Hyper-V emulation of HV_X64_MSR_EOM has been broken since QEMU commit
-> > > > c82d9d43ed ("KVM: Kick resamplefd for split kernel irqchip"), as nothing in KVM
-> > > > will forward the EOM notification to userspace.  I have no idea if anything in
-> > > > QEMU besides hyperv_testdev.c cares.
-> > > 
-> > > The only VMBus device in QEMU besides the testdev seems to be Hyper-V
-> > > ballooning driver, Cc: Maciej to check whether it's a real problem for
-> > > it or not.
-> > > 
-> > > > The bug is reproducible by running the hyperv_connections KVM-Unit-Test with a
-> > > > split IRQCHIP.
-> > > 
-> > > Thanks, I can reproduce the problem too.
-> > > 
-> > > > Hacking QEMU and KVM (see KVM commit 654f1f13ea56 ("kvm: Check irqchip mode before
-> > > > assign irqfd") as below gets the test to pass.  Assuming that's not a palatable
-> > > > solution, the other options I can think of would be for QEMU to intercept
-> > > > HV_X64_MSR_EOM when using a split IRQCHIP, or to modify KVM to do KVM_EXIT_HYPERV_SYNIC
-> > > > on writes to HV_X64_MSR_EOM with a split IRQCHIP.
-> > > 
-> > > AFAIR, Hyper-V message interface is a fairly generic communication
-> > > mechanism which in theory can be used without interrupts at all: the
-> > > corresponding SINT can be masked and the guest can be polling for
-> > > messages, proccessing them and then writing to HV_X64_MSR_EOM to trigger
-> > > delivery on the next queued message. To support this scenario on the
-> > > backend, we need to receive HV_X64_MSR_EOM writes regardless of whether
-> > > irqchip is split or not. (In theory, we can get away without this by
-> > > just checking if pending messages can be delivered upon each vCPU entry
-> > > but this can take an undefined amount of time in some scenarios so I
-> > > guess we're better off with notifications).
-> > 
-> > Before c82d9d43ed ("KVM: Kick resamplefd for split kernel irqchip"), and without
-> > a split IRCHIP, QEMU gets notified via eventfd.  On writes to HV_X64_MSR_EOM, KVM
-> > invokes irq_acked(), i.e. irqfd_resampler_ack(), for all SINT routes.  The eventfd
-> > signal gets back to sint_ack_handler(), which invokes msg_retry() to re-post the
-> > message.
-> > 
-> > I.e. trapping HV_X64_MSR_EOM on would be a slow path relative to what's there for
-> > in-kernel IRQCHIP.
-> 
-> My understanding is that the only type of message which requires fast
-> processing is STIMER messages but we don't do stimers in userspace. I
-> guess it is possible to have a competing 'noisy neighbough' in userspace
-> draining message slots but then we are slow anyway.
-> 
+From: Eric Biggers <ebiggers@google.com>
 
-Hi,
+For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
+do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
+taking advantage of wider CRC instructions.  Note that crc32c-3way.S
+already uses this same optimization too.
 
-AFAIK, HV_X64_MSR_EOM is only one of the ways for the guest to signal that it processed the SYNIC message.
+crc_kunit shows an improvement of about 25% for len=127.
 
-Guest can also signal that it finished processing a SYNIC message using HV_X64_MSR_EOI or even by writing to EOI
-local apic register, and I actually think that the later is what is used by at least recent Windows.
+Suggested-by: H. Peter Anvin <hpa@zytor.com>
+Signed-off-by: Eric Biggers <ebiggers@google.com>
+---
 
+This applies to
+https://web.git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git/log/?h=crc-next
 
-Now KVM does intercept EOI and it even "happens" to work with both APICv and AVIC:
+ arch/x86/lib/crc32-glue.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
 
-APICv has EOI 'exiting bitmap' and SYNC interrupts are set there (see vcpu_load_eoi_exitmap).
+diff --git a/arch/x86/lib/crc32-glue.c b/arch/x86/lib/crc32-glue.c
+index 4b4721176799a..e3f93b17ac3f1 100644
+--- a/arch/x86/lib/crc32-glue.c
++++ b/arch/x86/lib/crc32-glue.c
+@@ -55,11 +55,19 @@ u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
+ 
+ 	for (num_longs = len / sizeof(unsigned long);
+ 	     num_longs != 0; num_longs--, p += sizeof(unsigned long))
+ 		asm(CRC32_INST : "+r" (crc) : ASM_INPUT_RM (*(unsigned long *)p));
+ 
+-	for (len %= sizeof(unsigned long); len; len--, p++)
++	if (sizeof(unsigned long) > 4 && (len & 4)) {
++		asm("crc32l %1, %0" : "+r" (crc) : ASM_INPUT_RM (*(u32 *)p));
++		p += 4;
++	}
++	if (len & 2) {
++		asm("crc32w %1, %0" : "+r" (crc) : ASM_INPUT_RM (*(u16 *)p));
++		p += 2;
++	}
++	if (len & 1)
+ 		asm("crc32b %1, %0" : "+r" (crc) : ASM_INPUT_RM (*p));
+ 
+ 	return crc;
+ }
+ EXPORT_SYMBOL(crc32c_arch);
 
-AVIC intercepts EOI write iff the interrupt was level-triggered and SYNIC interrupts happen
-to be indeed level-triggered:
-
-static int synic_set_irq(struct kvm_vcpu_hv_synic *synic, u32 sint)
-...
-	irq.shorthand = APIC_DEST_SELF;
-	irq.dest_mode = APIC_DEST_PHYSICAL;
-	irq.delivery_mode = APIC_DM_FIXED;
-	irq.vector =
-vector;
-	irq.level = 1;
-...
-
-
-Best regards,
-	Maxim Levitsky
-
-
+base-commit: 13f3d13d88b5dcba104a204fcbee61c75f8407d0
+-- 
+2.48.1
 
 
