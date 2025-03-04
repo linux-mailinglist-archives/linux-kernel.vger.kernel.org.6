@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-545344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57494A4EBDC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:37:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74883A4EBFA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1CE318903A3
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:32:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1EC85170A46
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 18:35:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F51F25F97C;
-	Tue,  4 Mar 2025 18:23:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4CDE26036C;
+	Tue,  4 Mar 2025 18:27:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CkM6idHO"
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="NnwGEh6A"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A019283682
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 18:23:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E092A1F4193;
+	Tue,  4 Mar 2025 18:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741112630; cv=none; b=VcXJUyLWqya/aULkcgqhjvTCij09uxFcUipR5d04OvNQp9X+z4mmbgtaMI5Yj0IqCFTME4XxBlh+xby5ogbtiiUX4o7YTQKmbpdY0ZBxFkRHQbQ/sC+ANT7u2PGXCNCVGz4pDX+eZaGlMhTB+z8RF2xT8hjUBJPyw6Jyc12v0do=
+	t=1741112853; cv=none; b=HMO5czdrA4IHPAQ6cmFbr65WSvJTYWPcfQKguzoIadDBXhoJ5n5J/3eh0hGAK92xN+Y8ocu7OA1egsYT+r/jIEDWlwISUVsnuQPZ77gxoH51Ss45RQvD61KcCZWYZnHmhrOy5M5lIS+JgV6ubirJ18ucslTNBV1j9/MW4P4F/WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741112630; c=relaxed/simple;
-	bh=9C3HRgMvOSEa4ktjDvIz4M/r6v4WMGEKoFgWeLzkARM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dkju0k8At0rMiayc8fASHWRpo0d6bqYJ0/4g3xDHZXMInZlQizqOwNDJby972ywXDD1TMRaWfnyA42vhbaJzIviUQ80bWStj24WZdokmiU3ZuSum+6nHGJHlMxWj/bRSgg5mo2GdfJgizHK7FVfHjCeQOarwOkO7yBViN3duGuo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CkM6idHO; arc=none smtp.client-ip=209.85.221.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-5235d7f9599so2119877e0c.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 10:23:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741112628; x=1741717428; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UTvXX8sSlYolu/q7NpQQdlJiEqFKcsD2LSJ4GjwRKNM=;
-        b=CkM6idHOQ6/qPKKIthQAkoq2q5IjeLJFjFvzXvmbG7TqsMXRVBzM1VJcODzlBQcpyL
-         e2tdCVtAL6Uxs+8YwRREgKE+DxPGoH2r/+dAuB0rbPij6yJRB2qcvhLbWHIPvsxzKH5D
-         HwBN038XUDXUrprG/7WZKZU/Q5tR0ffubNsO/DDwka3mgZ7lLgALgsNPIRAewkIgYzll
-         P3Wq7mLevno8q+jJ8SWEIODnEqvl5vA7v6hxBHxFA/2fMGtGMNa/f6ACg/YK2cowYasn
-         BNpthy+jEmAa+2ft9vlkoJc1+IVydk0EtUYhZeKxDzu6oWLRTcyX6I8fvGTPz5oJCT7z
-         bIRg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741112628; x=1741717428;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UTvXX8sSlYolu/q7NpQQdlJiEqFKcsD2LSJ4GjwRKNM=;
-        b=qnhialtYhrABbq/PlUtHe0JRdscGYi9QTn0ADPRNIb++4rBb46TKmBRXX+5rUou91R
-         e1oGk47OeOSYN9M2Y8T7oS2m9AJwSRsJBdkwTsY+DOcofto14naeazWO2Pj+fZLCysfy
-         geZ0fNhSqEdfCP/wc5bt0yxFLHaq6jraUH0bfMMC8HnAyg2pEAIGPQSSn/Tuzjlf+m8F
-         d0WDGGWhjQqYzR7eh3w7htnSJieDUx/QCvEBAzT4sv6pwoel01U9HLJrxckxXCCaDWTu
-         fsVyNxVtnlMVqtV6vLgGNuAAkKq9zg2wurdAkk8EkH+vJmxdQHNq2FdxkAu6sCAIZbXX
-         OjTQ==
-X-Gm-Message-State: AOJu0Yy3chnTxGQxr1k8wNsC4ZsWmmg2++rzbLPikQvUav9OybPj8gr1
-	52bJb3p4xRI4BqurhaCcPFYDm1p0lKnY43HPMTIpuaT/stpiEU8JRxbuaEh7eYGaUcABpbh9ks3
-	Bo3iQel8YpQmqmLzsRQIiB6AmeQ0=
-X-Gm-Gg: ASbGncun9GBUEoqJjFwaTfaWWP+VH5i28TEckhEJUho1L3EJeK9uHErT8vN3tYaPy1O
-	WR7DoigxZ9DURk46Be3R5PXrYQa/Ce57orb+FLMJnnRGzN/16STc3jBElsTSN5dbFMX4fJnrFqB
-	krdvlnTo8BT7c119gcwnO5NGYN7vgcBwR4oLkY0sAIeATwyRkIra5SZMJ4
-X-Google-Smtp-Source: AGHT+IEZ/7BRp+uRS9nvklgUVf2SLGq8Z8YVnf3r6v7ElAdA67PrC/xXF/mqmYSEMUQX29CjECzNkD4WGfrOQXTiWbs=
-X-Received: by 2002:a05:6102:2924:b0:4bb:e2a1:183e with SMTP id
- ada2fe7eead31-4c044a0017cmr10533700137.18.1741112627454; Tue, 04 Mar 2025
- 10:23:47 -0800 (PST)
+	s=arc-20240116; t=1741112853; c=relaxed/simple;
+	bh=fw3XFDpuR/okZsbBXVBMT/x7kct6cGuTWm5VfRiNRVE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nAgbJbT4hAI04/rvSpZEbMhaxL253w3uexrOOQju2zeINs6FofkluztTWy2hdcqcOdqI0sLGvLlPGWQ3P0sNBLOM5zYS6RyJN7yVhuQQVB7UVFlLq/kpaDEggDB/HSrAakEuuswSa3Z5QKgTQS6qaT8UMu1RfpLJiamTW7yUUXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=NnwGEh6A; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=Rx3ABjWk1ldP5FCol6X6uLC9GxswBZMZjKTR2QA7emY=; b=NnwGEh6AY17SgydLVqzuydkcBe
+	jteeXwmvTz7HIE32jeBKVj3KCJF8qYd8Izu3NvV6ORUZEGcWgIFUaA13CMp5L4My6GAaS9AH0/dof
+	GU99zZRbYbpiSAVjmL79REoXvj4bW50wcp9pVtYs8Upj3tDRuuNrmz0Ab26iwZpw2+FKkUTyuiF2Q
+	1HbV4v0wuXy8as4HO56T7BdhU5udPybpBKcjRj8ahSOZSLJpkR7eC8PYoh0F3oi7UoHtoJZblRDuB
+	nlkwGP46Iu5mQq8pp/kFEjcG5pWhjCjuV1Q8ADcwsBEL7r6nGzIPz6TvwcrBHirL/7SIXNaTvrq6y
+	B0khax1A==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tpWz9-0005NR-IB; Tue, 04 Mar 2025 19:27:19 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Jonas Karlman <jonas@kwiboo.se>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
+ Yao Zi <ziyao@disroot.org>, linux-rockchip@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject:
+ Re: (subset) [PATCH 0/7] rockchip: Add support for leds and user button on
+ Radxa E20C
+Date: Tue, 04 Mar 2025 19:27:18 +0100
+Message-ID: <8941439.NyiUUSuA9g@diego>
+In-Reply-To: <03c34bdf-d470-4c99-bb06-0eb7496465a3@kwiboo.se>
+References:
+ <20250228064024.3200000-1-jonas@kwiboo.se>
+ <174108970986.65436.4272591414898454986.b4-ty@sntech.de>
+ <03c34bdf-d470-4c99-bb06-0eb7496465a3@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303221730.1284822-1-jaegeuk@kernel.org>
-In-Reply-To: <20250303221730.1284822-1-jaegeuk@kernel.org>
-From: Daeho Jeong <daeho43@gmail.com>
-Date: Tue, 4 Mar 2025 10:23:36 -0800
-X-Gm-Features: AQ5f1JpfsRQkcPF6KIFZ7YMYTdcL01aAD6xF-xk3YtBCXsNdVl8h0JTYeOohAe8
-Message-ID: <CACOAw_zmqS8UrpsYeMEEvyc_Xe9edx4ptWOtQBz3UufZM+iNag@mail.gmail.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: set highest IO priority for checkpoint thread
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Mar 3, 2025 at 2:19=E2=80=AFPM Jaegeuk Kim via Linux-f2fs-devel
-<linux-f2fs-devel@lists.sourceforge.net> wrote:
->
-> The checkpoint is the top priority thread which can stop all the filesyst=
-em
-> operations. Let's make it RT priority.
->
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/checkpoint.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-> index bd890738b94d..8dbb815a35c0 100644
-> --- a/fs/f2fs/checkpoint.c
-> +++ b/fs/f2fs/checkpoint.c
-> @@ -21,7 +21,7 @@
->  #include "iostat.h"
->  #include <trace/events/f2fs.h>
->
-> -#define DEFAULT_CHECKPOINT_IOPRIO (IOPRIO_PRIO_VALUE(IOPRIO_CLASS_BE, 3)=
-)
-> +#define DEFAULT_CHECKPOINT_IOPRIO (IOPRIO_PRIO_VALUE(IOPRIO_CLASS_RT, 3)=
-)
->
->  static struct kmem_cache *ino_entry_slab;
->  struct kmem_cache *f2fs_inode_entry_slab;
-> --
-> 2.48.1.711.g2feabab25a-goog
->
+Am Dienstag, 4. M=C3=A4rz 2025, 19:13:10 MEZ schrieb Jonas Karlman:
+> Hi Heiko,
+>=20
+> On 2025-03-04 13:02, Heiko Stuebner wrote:
+> >=20
+> > On Fri, 28 Feb 2025 06:40:06 +0000, Jonas Karlman wrote:
+> >> The Radxa E20C has three gpio leds and one gpio button.
+> >>
+> >> This series adds dt-binding, driver support, DT node in SoC .dtsi and
+> >> gpio-keys and gpio-leds nodes in board DT to support the leds and user
+> >> button.
+> >>
+> >> This series builds on top of the "rockchip: Add support for maskrom
+> >> button on Radxa E20C" series [1].
+> >>
+> >> [...]
+> >=20
+> > Applied, thanks!
+> >=20
+> > [1/7] dt-bindings: soc: rockchip: Add RK3528 ioc grf syscon
+> >       commit: ac32ad07a97648eb8330b2c4cb840b0ef46903ae
+> > [4/7] arm64: dts: rockchip: Add pinctrl and gpio nodes for RK3528
+> >       commit: a31fad19ae39ea27b5068e3b02bcbf30a905339b
+> > [5/7] arm64: dts: rockchip: Add uart0 pinctrl to Radxa E20C
+> >       commit: 0d2312f0d3e4ce74af0977c1519a07dfc71a82ac
+> >=20
+> > Patches 6+7 depend on the parallel saradc support series and thus
+> > do not apply - and need too much rework to safely apply.
+>=20
+> Do you want me to rebase/reorder and send an updated version with
+> remaining patches? Look like the iio saradc patches [2] is pending apply
+> so maybe not needed?
 
-Reviewed-by: Daeho Jeong <daehojeong@google.com>
+Not sure how long the that test run will be taking ...
+and where after -rc5. But in theory things should be fine though.
 
->
->
-> _______________________________________________
-> Linux-f2fs-devel mailing list
-> Linux-f2fs-devel@lists.sourceforge.net
-> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
+So essentially up to you - and if you actually have spare minutes.
+
+Heiko
+
+
+
+
 
