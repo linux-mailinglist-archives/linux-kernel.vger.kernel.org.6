@@ -1,367 +1,265 @@
-Return-Path: <linux-kernel+bounces-544692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFBCCA4E41A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:48:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B34FA4E3E9
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 16:43:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C4E43BEEAB
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:40:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 106E54230AA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D512A2992DA;
-	Tue,  4 Mar 2025 15:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D81C27CCD5;
+	Tue,  4 Mar 2025 15:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b="djsF0J15"
-Received: from mail.mainlining.org (mail.mainlining.org [5.75.144.95])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ya5yfLu7"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE62B280CF6;
-	Tue,  4 Mar 2025 15:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.75.144.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741101995; cv=none; b=Mfp4HlmoP9zpoY6D408HmnFqMjmpThSAD3cL7s1dOPEBvJL6DdW9ZZzrVWyZBm4QEGGgOutSK+M7it1TaXVt9waExrL6etCENGgnxSBdmyBLu+Boc1JHigzu7CcGCdle2Kij+z0YbB/DIGaMHFuMFpl48eMyvlOUsZKwqH/+XCw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741101995; c=relaxed/simple;
-	bh=EUJJFAhaLN4+ccsuF3KGc268dENYUHXD2lop0FfN0uM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=iMk1Nvdod5IXt4i9QTcWRK55HvCA4a+Ck6Mz/l7EqADvz0UICmHa+3z1FDhs+x474W9RbwAs8dk4MwzuYLzeajnNTeMs7bQBlF2hLM+MObKhxfyVm5dK0U4d8hd2x9sMg5e7dc62SU+uKSMcSyfHVTzw4i8yHTnq8NzVR1rLeIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org; spf=pass smtp.mailfrom=mainlining.org; dkim=pass (2048-bit key) header.d=mainlining.org header.i=@mainlining.org header.b=djsF0J15; arc=none smtp.client-ip=5.75.144.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mainlining.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mainlining.org
-Received: from [192.168.1.78] (unknown [45.136.247.92])
-	by mail.mainlining.org (Postfix) with ESMTPSA id BBE7FBBEE5;
-	Tue,  4 Mar 2025 15:21:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mainlining.org;
-	s=psm; t=1741101676;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Jitm5JkLCPyrZxusc13jC3w+GcAY4CZHFICFRg+E00o=;
-	b=djsF0J150J8LxIpmgghqUQ88HsiYOq5AKGF42y2Y6VRJK+O/xrw9QNMCcRYDK3M4DLVlAP
-	ZF+LHJt1BG315anmKWA+BAaVYSXKTSxf4xtUzYB5XF27AlxAvdmXu7Mj391g60hSw//c1r
-	eaCysIvpXkkTKCYKfk1y4N9+YLxBgm52IStQbkjCLdUSKgYB+gv/eZrHsK/bnO2p0+K2JZ
-	uG2FY9fHDRRt4tJoGtwmVY1XYZTD140SQJlhW8GoZ89xbbtpTzHZgWjC+L8r68DYOqfi14
-	ZKEFTzjKUGsx56A1R4PbTZoK3FcK1RQ9kOmyv0jxSurR65ooILRbOyRCLkoD6Q==
-From: Vasiliy Doylov <nekocwd@mainlining.org>
-Date: Tue, 04 Mar 2025 18:21:04 +0300
-Subject: [PATCH 3/3] media: i2c: Add driver for LC898217XC VCM
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3C927C173;
+	Tue,  4 Mar 2025 15:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.21
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741101733; cv=fail; b=CiJqn8Vq04OeX8OwJPsUrPieREVZWKebaiGVDBtVhx0ifUrwuHjnFlCZDUjeZFX7zeO2I0U2WNrsan1Zqqt0vUvu7NuQlf6u1dwM4hJGQ8lNl4VCImshZU9jzvwmbCQSVwP7Sj/heH/HSn+xhFDDpQWpSDtNqImDOgoMBjHrdKE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741101733; c=relaxed/simple;
+	bh=Z4v6I6xCrM+lMpAhwovjcjgrsqsxHITxIZJHzs3vcA0=;
+	h=Message-ID:Date:Subject:To:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=GVDltjpHvgppq1d+I6sLx/zQlmaeh1Tj/pAZV8WZvj8z8mp1+r2jcH/3XQip/9m7/LO5JwBZ3CSl3gLAZ5XjbVc1IIvr76tmht6ay86EDDFsfRNcW2lvTygU4+8gCGnO6WkBqlasas4PNxD9H9yDf+TuK+cnUZb03iflEuMvdZQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ya5yfLu7; arc=fail smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741101732; x=1772637732;
+  h=message-id:date:subject:to:references:from:in-reply-to:
+   content-transfer-encoding:mime-version;
+  bh=Z4v6I6xCrM+lMpAhwovjcjgrsqsxHITxIZJHzs3vcA0=;
+  b=Ya5yfLu7Raacs9K2nF4prZ+TIXM6fYTSfOwCX/TtVYdpuzKHlEjmsVb0
+   OfiOQfYzRiJzzoXewvgPkMi3sgMTMNcXhrJTWuEvqnh87UIkcxqDCz0OF
+   XxTB856zosvseJqQCHhEsEuvQBer2SpVzV28BYyjXTJNpfcbfF3VysCpJ
+   9IX9Ky8JMFJSIgn09VZ5/QXaX6n1a3XNaSb1O66xDvhz7DYWElxdGEaR+
+   pvv8YM+hlCtKhglSju7WeRiDgvCh8u9AwwvUjJTYNLLQte7CZfl7Sndqh
+   9Z/TBeKpG8quPBW+sxQoWufww5N59EyFd4lYW8GHf8YMcTdLKb1YyPSm6
+   w==;
+X-CSE-ConnectionGUID: W2CAC3qBSDO9us19lB7oMw==
+X-CSE-MsgGUID: ctdJ1CGXQ0WbZU2RNgkbeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41934689"
+X-IronPort-AV: E=Sophos;i="6.14,220,1736841600"; 
+   d="scan'208";a="41934689"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 07:22:11 -0800
+X-CSE-ConnectionGUID: Aj+X1UeRTBS78JgajAnGCg==
+X-CSE-MsgGUID: ZKwIjNeRR8eOsj9Ifv0Dvw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="149345905"
+Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
+  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Mar 2025 07:22:10 -0800
+Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
+ ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Tue, 4 Mar 2025 07:22:09 -0800
+Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
+ orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44 via Frontend Transport; Tue, 4 Mar 2025 07:22:09 -0800
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (104.47.58.175)
+ by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.44; Tue, 4 Mar 2025 07:22:06 -0800
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=E5OLnPEvHCatspR45wLgF6JMb2beeXTNRHIxH+BbFOgAl/FV1aFjZQVoWdO0BKBNwPrp2NGynKTWF1DLGBkuxg6V0crzGf9rKEVoUW4PK6I4H3BunGyfLbogGXG9O1NT/jfgAcZhVHcrQ/V0G4Gnllcw0XLGb9U5uLW/PF9dtwRToJiU/1mz/uNr+DoTKrg/Vd1ErI+h12Alxa9WbbH/+321731zd+0qZvghGh9WrEfJ6187JnJQDM1GRq4nbAYYEKb+bJDtSwaEAp94dHtHeoibLV9be6h+0CkY6VyqVx49dJH2YXjGIJhxMXKwNWutVqnJs7HjPiUIU/6HxllhDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QX5YJ2rlrS7PvjiG067b8hThy7mVm1ocueJm6prPs4E=;
+ b=sORaHHX2CSaihghHZ4HjaT30zQZnWYr8T/PSwYNExHJdZ+GjpkcrBNYtoDu1tYAffGin87C7cBhOkYzEHpMPanEtxLjYqZeCVs6Z+mox+LBG7IIOZ0u73lDW9CTHrLYwEA5/AUnjCQdt4p7VVx289Y78+nQcT4zYDckpSx9H/5dqqmrDVPFwlfWhp4T5Q6jEHV/BhnqMLo/tNQMdewj4zZp9xMX0WnOmj3K1B0Eiv5d4FESE+UzxWfkuZ6hFIDNj/zf/unGhPZuoMR0Dsy4jW27Qwus7rh7E6yVBfJlYTnOPUrkiC3bQh+oesBkD7kN1hf/HDTdKnO73blAOzP2w+g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB3605.namprd11.prod.outlook.com (2603:10b6:a03:f5::33)
+ by IA0PR11MB8397.namprd11.prod.outlook.com (2603:10b6:208:48b::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Tue, 4 Mar
+ 2025 15:21:22 +0000
+Received: from BYAPR11MB3605.namprd11.prod.outlook.com
+ ([fe80::1c0:cc01:1bf0:fb89]) by BYAPR11MB3605.namprd11.prod.outlook.com
+ ([fe80::1c0:cc01:1bf0:fb89%4]) with mapi id 15.20.8489.025; Tue, 4 Mar 2025
+ 15:21:22 +0000
+Message-ID: <21ad7f1c-eb08-45fc-9a2c-3d55787f15d7@intel.com>
+Date: Tue, 4 Mar 2025 17:21:11 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/12] perf script: Make printing flags reliable
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>, Ian Rogers <irogers@google.com>, "James
+ Clark" <james.clark@linaro.org>, Jiri Olsa <jolsa@kernel.org>, "Liang, Kan"
+	<kan.liang@linux.intel.com>, Mark Rutland <mark.rutland@arm.com>, Will Deacon
+	<will@kernel.org>, Mike Leach <mike.leach@linaro.org>, Graham Woodward
+	<graham.woodward@arm.com>, <Paschalis.Mpeis@arm.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+References: <20250304111240.3378214-1-leo.yan@arm.com>
+ <20250304111240.3378214-2-leo.yan@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20250304111240.3378214-2-leo.yan@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: VI1PR04CA0130.eurprd04.prod.outlook.com
+ (2603:10a6:803:f0::28) To BYAPR11MB3605.namprd11.prod.outlook.com
+ (2603:10b6:a03:f5::33)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-media-i2c-lc898217xc-initial-driver-v1-3-e2ffd2b2fd5e@mainlining.org>
-References: <20250304-media-i2c-lc898217xc-initial-driver-v1-0-e2ffd2b2fd5e@mainlining.org>
-In-Reply-To: <20250304-media-i2c-lc898217xc-initial-driver-v1-0-e2ffd2b2fd5e@mainlining.org>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-media@vger.kernel.org, 
- devicetree@vger.kernel.org, Vitalii Skorkin <nikroks@mainlining.org>, 
- Antonio Rische <nt8r@protonmail.com>, 
- Vasiliy Doylov <nekocwd@mainlining.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8497;
- i=nekocwd@mainlining.org; h=from:subject:message-id;
- bh=EUJJFAhaLN4+ccsuF3KGc268dENYUHXD2lop0FfN0uM=;
- b=owGbwMvMwCW2fZ/SFZeSpU2Mp9WSGNKPS6W//FYdrGY4OeOU4qaX8/zPcnubF7dLL+H3yQ6Ys
- UqnZXN8RykLgxgXg6yYIovNRo/ZYvnhkpOmPVWAmcPKBDKEgYtTAC5iz8iw2qzudMPZj37/7Sp8
- H69KKplbyvxkuV5B1NuO15Km8eYeDP+UPcpfzYq4/JbBMaLR5NdHxSU2ihf5LYUXp3x01JTLjGQ
- AAA==
-X-Developer-Key: i=nekocwd@mainlining.org; a=openpgp;
- fpr=3CB1489B166F57199296E520B7BE22D44474A582
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB3605:EE_|IA0PR11MB8397:EE_
+X-MS-Office365-Filtering-Correlation-Id: 915e59bb-4015-482f-55de-08dd5b303843
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014|7053199007|921020;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?MWRVS3Y4dXA0SFJ2R3ZVOHlteGRBWXE2ZFZJb0I4dEM1VERwQ0RJNTVma1U0?=
+ =?utf-8?B?aENmb0NObGNtUCs0TjIvWmNyZG9ySkpwTUlkU3RWb3hHT2FtT2p1VGpqT0xX?=
+ =?utf-8?B?bWN2NUJVSXBRMC9nK2ZBU1RudkthaTFoaUZpd0dmK1dQZWtZUDV1YnVGQWZS?=
+ =?utf-8?B?Y0FWWWVoVHdwK2w3UWZmdWtvSWx5djNmWWlWeVVwR3QxN053WWxkM3F4dm9i?=
+ =?utf-8?B?bjB5a0xUOURlSkhYUU5JOVBsZUE4b0Z4UlN4LzYrN0R3VHBrOG1GWUM1STJQ?=
+ =?utf-8?B?UHV5VTBHbWllcExaNTd1Z1JnNjVGdUJpMit1d3E3MFdwRFkvN2FtYlFSalBT?=
+ =?utf-8?B?SHQ1V1BKam9aNkpNdHJrUXNQYm1SUGc3WjZlcko0YnBwN29PQUhCZjBhcHZl?=
+ =?utf-8?B?bzZMQmtxYkZ1OEFtOVN2anlSeC9Mcjd4dUY3RlJURGNRL0FFVDFsV3JOdjli?=
+ =?utf-8?B?YXdweVlWeGFGRHlKOHRUYXFaZ29aNi9tdkc5dGl1QXpQaC9rSXpOL3NBdXdR?=
+ =?utf-8?B?T21pZ1VIRzhNUERHUUtZcnhZLzZZMWVpQWpYa0VmazFJdjdlbXpUZVhkSDRE?=
+ =?utf-8?B?c1ZUaStNUHVEMFM2TTR3KzdTMndNd2lRWGJCUmFpM2g2NTZYQlp5ckprajRz?=
+ =?utf-8?B?NjdZTGVXaEpSRGRLOHdWVXJoVEVFcjU1Qm1CbEFFNDNCWFRsc1lzaS9sQ0pX?=
+ =?utf-8?B?bWttZS9xSDRqUEgvRWN3R2x6VDZqVU16ZURobzFOOFFLZkNON2hrMUR5d01D?=
+ =?utf-8?B?RC8wVmkyRERBQkNMcFY2ejVGMldBODBTSHg1NFA4UW90U1czL1dCWk03WUZI?=
+ =?utf-8?B?QXRTRnRrNGljVGhRQ0NVKy9QL2Vwd0N0NkQ1YWNrR3VIdllWMXVxRUx4ZjVs?=
+ =?utf-8?B?ay9QK1BCVGJMaC9XR1RGQjRTVzB1eExTY1R4UllKSVVMc2pzakhxQWswd2Fl?=
+ =?utf-8?B?eCtpYlc4UGF3aFJzeEpVWHN4cExZVlZVSDZMZGE0Ukxsb3p2bzA3SHBMQVNJ?=
+ =?utf-8?B?cE1BN0llL0w0b1JRT25XQStIdWtFaXYrR2x5RUVDTGFoTzRtOHc3aTN4eUxs?=
+ =?utf-8?B?UFMzTDVtalBraWo2Z1UrR2toN0FCbTlxSFRlajZtMG9rVk1JN0t6ZGx6ZlZB?=
+ =?utf-8?B?M0xnMWxJZ0tQU1paMHFubUtKWWtKOW1hbXNKTWtpcnJIYXV2VHpIWm9Ub2tx?=
+ =?utf-8?B?ZzhIR211L1RzTkJ3MkUxUFJZL1k2MUVxUEZNRWI5K09GaXo4bUJpMGJ5K3Fj?=
+ =?utf-8?B?THBCQkpWN2ZVbThVZi8xd3FEZklsTVdGOEFMYWJQdWxoMmNnWWpDeFc1UHdZ?=
+ =?utf-8?B?OUJUbGNnZ0Mxdm90YSt4NS9BZHJqMDdpcHJpVnBqbExWclhEaWlLbWdIVGdz?=
+ =?utf-8?B?UTIwKzFuZGNWSk5lSzQyeCs1c1VlU0NJSDNuYU5NdGE1Yk1JWUNUUW52VXB5?=
+ =?utf-8?B?Ry9uckROalRmcExTeWN4ZGFtcDRkQWxDQmhsVUtSeElvMUROdndPbFZHTVhI?=
+ =?utf-8?B?Y0trNlFURlFuZUxmQXM2NUxnUGFjTXQ1a3BpUkZJZS9uNjFIZ0kyNi8xUUx4?=
+ =?utf-8?B?NTZVeStRMW5NUWJ4Y0VDOEZBRmhUQlpUdlE1MldUSnIzMVdtZHcyQW9aYjBT?=
+ =?utf-8?B?MTA1T3dIRDM2Ry9aa2lDWjZwZnJLcjFqbklvWUpTZHNNNWVoVzVvKzJZaTdm?=
+ =?utf-8?B?cVFQWk5BaUQrcVVDV29jeW5hQjYzZlZYQm44ZmhqNlJQRzBNWERFVTFkY0VI?=
+ =?utf-8?B?bnRoc1hKbDN0MDlTZXBvT25MYmMwN204SnExZHJKa1dpV3ZkMXoyYzZwNXQ4?=
+ =?utf-8?B?MFhzRm1SVzc1R1VBVXlKVkx0UWhMMCtOVWhrVlNIN3RDK2pMU1krVDdMeHFo?=
+ =?utf-8?B?WEZtSFpEUzNhWDRQYXVEZUljMzVGcjl4VmFTYjk3NHVpSk9tUDREazYyeXdk?=
+ =?utf-8?Q?QTzB7emK0+k=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB3605.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014)(7053199007)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aXZaWkJYTEFSVmJwZC9vaDBRY2ZJSnd0YVF6S3N3aXBRNFpBcGlpZVdsMlN0?=
+ =?utf-8?B?Z29KTDk5bExxc3ZDUStKSGRLdlpaS2V2YXM0RllJb24ybkRsc0l5VmNwSzF6?=
+ =?utf-8?B?YnIvWkNSSzJQNDZPb1N6d0dZV1R3ZWw5eGYvb2xOMWlKQ3hmRnNSSjVOR3Vi?=
+ =?utf-8?B?MlYxRTdMTGptVEU5TlUrakR1WDBuWlc3ZWQ3RjQ0VlEzNlBPOVZ3RFJsTElD?=
+ =?utf-8?B?NmhUNHo4OHQ4NElOVEg1ZE82SkV4NFdjMFJEL1Zud09oZG5hKytEYVNnaFFB?=
+ =?utf-8?B?UTFzbVA0SnNQKzA4bHIwcVR4SUpWZkJZeUlQbU9jTllHVlJzRStITFR4cUIr?=
+ =?utf-8?B?UkxUcFFMaldiZjc3azdmb3l3S1lIanNyVnZZTUVmMmFiN3Q1cmJkaGw5TUdr?=
+ =?utf-8?B?U1VtQVN4c25rN2czUy9tSTljQ3IvVUlKNTdFRUw2RkNFelVtK0w2QnlYbHhU?=
+ =?utf-8?B?eEV6SmJoWW0rQzVISFUxc2NtcXdOaUpVaitBRFkyLzNZZk9EWkRpQUQxQk9M?=
+ =?utf-8?B?NStXdnBCS1NXUlRQbUZNKzZ4ZG9xVWZBcTdneGVFNmJEN25lR29ia01mKzUz?=
+ =?utf-8?B?QmVRcUx6aFhuS2prd013TXJYZmJCSlZVOUh1TVZMZ0hTUmtEbHQyVUR0akg1?=
+ =?utf-8?B?TFVxcnhnK0hWMlBsQ01MTjE3Z1YzU2Z1RDduT0NHdWczY0hWR1VWQ09JUTVu?=
+ =?utf-8?B?eUZSWDk5aWZGVDhYNHQ5QUtIT2daN2Y3eGllVWl6Z2dBZUpmb0tUeHVhTE5a?=
+ =?utf-8?B?enpjYUREbmZaT0FsNkxJYzVVZm5ZbmhZa05yUVZjU3U5cXg5bG5oQjM2a0gy?=
+ =?utf-8?B?R0pja0sxOFlYRmUzVjk4cnc5S25QcWppV0diaVBpK21OTHgwWFNtOVM1TVlz?=
+ =?utf-8?B?cURjYlNlNWlnUWt4TXN6RHJZaWhqMTVESThRb01xTUg2RnkvWEIyeSs2MjJ2?=
+ =?utf-8?B?TzUzT1V0aktUNTEyWVdBTis5eE8vKzJaUis4d1RiOUppNE13bUNVZUpMaE8r?=
+ =?utf-8?B?dTQ0NHYvcEpiU05xeSt2K0ZHcVJobE84ZTY0aWxESFBhaEEwdi9FalU5NG1S?=
+ =?utf-8?B?ZFlwdDkwZDl6Nnl2a3lhK2xocVptYWY3dGNGWUR6VjRSaGNTMUxZQlNGeTZt?=
+ =?utf-8?B?QzNSeEZzSVlhNEYzdWFqNXNZOGtKdDRjSWhVZ05VMy9vZm1XckhmMHFoTEJs?=
+ =?utf-8?B?Qm11Qy91d3pOS1gySk45YTNsWUczYnVYRCtjaU9XbjdRS1g2QStES1Q2RkhP?=
+ =?utf-8?B?TUZ3cnBqMlNRelVTNlFqM2NlWmlLd0h6RUwyNXpPUitFL2E0b25wU0pvaGVt?=
+ =?utf-8?B?WVN2elZHNzA0RkVtYXl5RytpcUpNVFpqQ25EK3Y1OFVXTjN1Y3ZMRjIrL1N1?=
+ =?utf-8?B?eUFvRXZhc0lBSU9vNHdEQmFIcXpKWWpFcUFQcmswRThBZzNpeWd1UmtpUzEw?=
+ =?utf-8?B?cWI4VjRYOU1NSXZ3S3FRL2RNblVtNlBpRGlSQ2tNbGVwQ3VaZmZnSzJQR0h6?=
+ =?utf-8?B?eTRCVzZFZ0RMaVM1WlNKYjFGZ0RreTRVS3V4aWYzYmZzTUQ1elVVem5henEr?=
+ =?utf-8?B?SEpPTTBzMk83Um9mYmlaSU5aVVUxcG5mNXd2c3Q1bzc0SkMvTWFYRG13WTJ0?=
+ =?utf-8?B?RXdiTzlWSzVMa2d2NDVQSjRMNGtrUlI1T29nS3lmL0l4elVoOS9XNTE2amJW?=
+ =?utf-8?B?M0ltQnFVdm9mb3NFWjBFY2ZyejhtUUdUd2ZTZHU5ME85K21TSVVoRWF2YUoy?=
+ =?utf-8?B?ZHpSY2VhdXl4QmlhSm5FaWJUVWFoSGF6VkxBcXRQaHVnc21DdFl1NmYrTzQ0?=
+ =?utf-8?B?TzgydEhUR3hmb2lHL05UaWxYSE41Z2Q5QjBBWGJIcmoyUmYvamh0WTlFTjJI?=
+ =?utf-8?B?NlVUYlhkbjFwdGZ0TG9wSHpxcklJUHpCU3hpQzdObWVXUjlSeWNjRUNLMWJw?=
+ =?utf-8?B?LzZnc2Z0NDBYZ1I3ZFQxL2gxaFFhblUySFA4VHhOemZ3aHdQZExpUFVDYWpF?=
+ =?utf-8?B?ZGNtbE51dUZnNkxEelI1L2RqQU03R1lzMmpYZjNCbE4zK3V1UDBzZ3hBbC9i?=
+ =?utf-8?B?dGFSZEhiLzJHS0tidzRDcDRLMERUYlFGMmZQelNaTFF1clM3SGdXR2YzdXJO?=
+ =?utf-8?B?Wjl1TDlOclVWbG85bVpFdHQrTURHTXFmc2hQbzB1ei95SExqTzkwM1F0YU5L?=
+ =?utf-8?B?dVE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 915e59bb-4015-482f-55de-08dd5b303843
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB3605.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 15:21:22.4685
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 23KEuyJmoxspTIj4IdTW+hXtDLb3zC2SrFeGm2NDPiFeoBAkYziwPjFMydivg5PjSj0NUD1U7sliU1FMl9+Jow==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR11MB8397
+X-OriginatorOrg: intel.com
 
-LC898217XC is a 11 bit DAC, designed for linear control
-of voice coil motor. This driver creates a V4L2 subdevice
-and provides control to set the desired focus.
+On 4/03/25 13:12, Leo Yan wrote:
+> Add a check for the generated string of flags.  Print out the raw number
+> if the string generation fails.
+> 
+> Use the SAMPLE_FLAGS_STR_ALIGNED_SIZE macro to replace the value '21'.
+> 
+> Reviewed-by: Ian Rogers <irogers@google.com>
+> Reviewed-by: James Clark <james.clark@linaro.org>
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
 
-Tested on Oneplus 6 (oneplus-enchilada)
+Reviewed-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Signed-off-by: Vasiliy Doylov <nekocwd@mainlining.org>
----
- drivers/media/i2c/Kconfig      |  11 ++
- drivers/media/i2c/Makefile     |   1 +
- drivers/media/i2c/lc898217xc.c | 230 +++++++++++++++++++++++++++++++++++++++++
- 3 files changed, 242 insertions(+)
-
-diff --git a/drivers/media/i2c/Kconfig b/drivers/media/i2c/Kconfig
-index 85ecb2aeefdbfff744c8de86866560518abeace1..aa16d4729ba914e774da2ada228b00cfd2462080 100644
---- a/drivers/media/i2c/Kconfig
-+++ b/drivers/media/i2c/Kconfig
-@@ -794,6 +794,17 @@ config VIDEO_DW9807_VCM
- 	  capability. This is designed for linear control of
- 	  voice coil motors, controlled via I2C serial interface.
- 
-+config VIDEO_LC898217XC
-+	tristate "LC898217XC lens voice coil support"
-+	depends on I2C && VIDEO_DEV
-+	select MEDIA_CONTROLLER
-+	select VIDEO_V4L2_SUBDEV_API
-+	select V4L2_ASYNC
-+	help
-+	  This is a driver for the LC898217XC camera lens voice coil.
-+	  LC898217XC is a 11 bit DAC with 110mA output current sink
-+	  capability. This is designed for linear control of
-+	  voice coil motors, controlled via I2C serial interface.
- endmenu
- 
- menu "Flash devices"
-diff --git a/drivers/media/i2c/Makefile b/drivers/media/i2c/Makefile
-index fbb988bd067a1b8b577248811f18a15671eb8932..514b61a7e8769457c2e831df4cbe3c4aabc6ed1c 100644
---- a/drivers/media/i2c/Makefile
-+++ b/drivers/media/i2c/Makefile
-@@ -62,6 +62,7 @@ obj-$(CONFIG_VIDEO_IMX415) += imx415.o
- obj-$(CONFIG_VIDEO_IR_I2C) += ir-kbd-i2c.o
- obj-$(CONFIG_VIDEO_ISL7998X) += isl7998x.o
- obj-$(CONFIG_VIDEO_KS0127) += ks0127.o
-+obj-$(CONFIG_VIDEO_LC898217XC) += lc898217xc.o
- obj-$(CONFIG_VIDEO_LM3560) += lm3560.o
- obj-$(CONFIG_VIDEO_LM3646) += lm3646.o
- obj-$(CONFIG_VIDEO_M52790) += m52790.o
-diff --git a/drivers/media/i2c/lc898217xc.c b/drivers/media/i2c/lc898217xc.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..f71d3d24261bc1e2b1ebc27d6256b01e0fca857a
---- /dev/null
-+++ b/drivers/media/i2c/lc898217xc.c
-@@ -0,0 +1,230 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+// Copyright (c) 2025 Vasiliy Doylov <nekocwd@mainlining.org>
-+
-+#include <linux/delay.h>
-+#include <linux/i2c.h>
-+#include <linux/module.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
-+#include <media/v4l2-async.h>
-+#include <media/v4l2-ctrls.h>
-+#include <media/v4l2-device.h>
-+#include <media/v4l2-fwnode.h>
-+#include <media/v4l2-subdev.h>
-+
-+#define LC898217XC_NAME "lc898217xc"
-+/* Actuator has 11 bit resolution */
-+#define LC898217XC_MAX_FOCUS_POS (2048 - 1)
-+#define LC898217XC_MIN_FOCUS_POS 0
-+#define LC898217XC_FOCUS_STEPS 1
-+
-+#define LC898217XC_MSB_ADDR 132
-+
-+static const char *const lc898217xc_supply_names[] = {
-+	"vcc",
-+};
-+
-+struct lc898217xc {
-+	struct regulator_bulk_data supplies[ARRAY_SIZE(lc898217xc_supply_names)];
-+	struct v4l2_ctrl_handler ctrls;
-+	struct v4l2_ctrl *focus;
-+	struct v4l2_subdev sd;
-+};
-+
-+static inline struct lc898217xc *sd_to_lc898217xc(struct v4l2_subdev *subdev)
-+{
-+	return container_of(subdev, struct lc898217xc, sd);
-+}
-+
-+static int lc898217xc_set_dac(struct lc898217xc *lc898217xc, u16 val)
-+{
-+	struct i2c_client *client = v4l2_get_subdevdata(&lc898217xc->sd);
-+
-+	return i2c_smbus_write_word_swapped(client, LC898217XC_MSB_ADDR, val);
-+}
-+
-+static int lc898217xc_runtime_suspend(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct lc898217xc *lc898217xc = sd_to_lc898217xc(sd);
-+
-+	regulator_bulk_disable(ARRAY_SIZE(lc898217xc_supply_names),
-+			       lc898217xc->supplies);
-+
-+	return 0;
-+}
-+
-+static int lc898217xc_runtime_resume(struct device *dev)
-+{
-+	struct v4l2_subdev *sd = dev_get_drvdata(dev);
-+	struct lc898217xc *lc898217xc = sd_to_lc898217xc(sd);
-+	int ret;
-+
-+	ret = regulator_bulk_enable(ARRAY_SIZE(lc898217xc_supply_names),
-+				    lc898217xc->supplies);
-+
-+	if (ret < 0) {
-+		dev_err(dev, "failed to enable regulators\n");
-+		return ret;
-+	}
-+
-+	usleep_range(8000, 10000);
-+
-+	return ret;
-+}
-+
-+static int lc898217xc_set_ctrl(struct v4l2_ctrl *ctrl)
-+{
-+	struct lc898217xc *lc898217xc =
-+		container_of(ctrl->handler, struct lc898217xc, ctrls);
-+
-+	if (ctrl->id == V4L2_CID_FOCUS_ABSOLUTE)
-+		return lc898217xc_set_dac(lc898217xc, ctrl->val);
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_ctrl_ops lc898217xc_ctrl_ops = {
-+	.s_ctrl = lc898217xc_set_ctrl,
-+};
-+
-+static int lc898217xc_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-+{
-+	return pm_runtime_resume_and_get(sd->dev);
-+}
-+
-+static int lc898217xc_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
-+{
-+	pm_runtime_mark_last_busy(sd->dev);
-+	pm_runtime_put_autosuspend(sd->dev);
-+
-+	return 0;
-+}
-+
-+static const struct v4l2_subdev_internal_ops lc898217xc_int_ops = {
-+	.open = lc898217xc_open,
-+	.close = lc898217xc_close,
-+};
-+
-+static const struct v4l2_subdev_ops lc898217xc_ops = {};
-+
-+static int lc898217xc_init_controls(struct lc898217xc *lc898217xc)
-+{
-+	struct v4l2_ctrl_handler *hdl = &lc898217xc->ctrls;
-+	const struct v4l2_ctrl_ops *ops = &lc898217xc_ctrl_ops;
-+
-+	v4l2_ctrl_handler_init(hdl, 1);
-+
-+	lc898217xc->focus = v4l2_ctrl_new_std(hdl, ops, V4L2_CID_FOCUS_ABSOLUTE,
-+					      LC898217XC_MIN_FOCUS_POS,
-+					      LC898217XC_MAX_FOCUS_POS,
-+					      LC898217XC_FOCUS_STEPS, 0);
-+
-+	if (hdl->error)
-+		return hdl->error;
-+
-+	lc898217xc->sd.ctrl_handler = hdl;
-+
-+	return 0;
-+}
-+
-+static int lc898217xc_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct lc898217xc *lc898217xc;
-+	unsigned int i;
-+	int ret;
-+
-+	lc898217xc = devm_kzalloc(dev, sizeof(*lc898217xc), GFP_KERNEL);
-+	if (!lc898217xc)
-+		return -ENOMEM;
-+
-+	/* Initialize subdev */
-+	v4l2_i2c_subdev_init(&lc898217xc->sd, client, &lc898217xc_ops);
-+
-+	for (i = 0; i < ARRAY_SIZE(lc898217xc_supply_names); i++)
-+		lc898217xc->supplies[i].supply = lc898217xc_supply_names[i];
-+
-+	ret = devm_regulator_bulk_get(dev, ARRAY_SIZE(lc898217xc_supply_names),
-+				      lc898217xc->supplies);
-+
-+	if (ret) {
-+		dev_err(dev, "failed to get regulators\n");
-+		return ret;
-+	}
-+
-+	/* Initialize controls */
-+	ret = lc898217xc_init_controls(lc898217xc);
-+	if (ret)
-+		goto err_free_handler;
-+
-+	/* Initialize subdev */
-+	lc898217xc->sd.flags |= V4L2_SUBDEV_FL_HAS_DEVNODE;
-+	lc898217xc->sd.internal_ops = &lc898217xc_int_ops;
-+
-+	ret = media_entity_pads_init(&lc898217xc->sd.entity, 0, NULL);
-+	if (ret < 0)
-+		goto err_free_handler;
-+
-+	lc898217xc->sd.entity.function = MEDIA_ENT_F_LENS;
-+
-+	pm_runtime_enable(dev);
-+	ret = v4l2_async_register_subdev(&lc898217xc->sd);
-+
-+	if (ret < 0) {
-+		dev_err(dev, "failed to register V4L2 subdev: %d", ret);
-+		goto err_power_off;
-+	}
-+
-+	pm_runtime_set_autosuspend_delay(dev, 1000);
-+	pm_runtime_use_autosuspend(dev);
-+	pm_runtime_idle(dev);
-+
-+	return 0;
-+
-+err_power_off:
-+	pm_runtime_disable(dev);
-+	media_entity_cleanup(&lc898217xc->sd.entity);
-+err_free_handler:
-+	v4l2_ctrl_handler_free(&lc898217xc->ctrls);
-+
-+	return ret;
-+}
-+
-+static void lc898217xc_remove(struct i2c_client *client)
-+{
-+	struct v4l2_subdev *sd = i2c_get_clientdata(client);
-+	struct lc898217xc *lc898217xc = sd_to_lc898217xc(sd);
-+	struct device *dev = &client->dev;
-+
-+	v4l2_async_unregister_subdev(&lc898217xc->sd);
-+	v4l2_ctrl_handler_free(&lc898217xc->ctrls);
-+	media_entity_cleanup(&lc898217xc->sd.entity);
-+	pm_runtime_disable(dev);
-+}
-+
-+static const struct of_device_id lc898217xc_of_table[] = {
-+	{ .compatible = "onnn,lc898217xc" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, lc898217xc_of_table);
-+
-+static const struct dev_pm_ops lc898217xc_pm_ops = {
-+	SET_RUNTIME_PM_OPS(lc898217xc_runtime_suspend,
-+			   lc898217xc_runtime_resume, NULL)
-+};
-+
-+static struct i2c_driver lc898217xc_i2c_driver = {
-+	.driver = {
-+		.name = LC898217XC_NAME,
-+		.pm = &lc898217xc_pm_ops,
-+		.of_match_table = lc898217xc_of_table,
-+	},
-+	.probe = lc898217xc_probe,
-+	.remove = lc898217xc_remove,
-+};
-+module_i2c_driver(lc898217xc_i2c_driver);
-+
-+MODULE_AUTHOR("Vasiliy Doylov <nekocwd@mainlining.org>");
-+MODULE_DESCRIPTION("Onsemi LC898217XC VCM driver");
-+MODULE_LICENSE("GPL");
-
--- 
-2.48.1
+> ---
+>  tools/perf/builtin-script.c   | 9 +++++++--
+>  tools/perf/util/trace-event.h | 2 ++
+>  2 files changed, 9 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+> index d797cec4f054..8ca04293d335 100644
+> --- a/tools/perf/builtin-script.c
+> +++ b/tools/perf/builtin-script.c
+> @@ -1709,9 +1709,14 @@ static int perf_sample__fprintf_bts(struct perf_sample *sample,
+>  static int perf_sample__fprintf_flags(u32 flags, FILE *fp)
+>  {
+>  	char str[SAMPLE_FLAGS_BUF_SIZE];
+> +	int ret;
+> +
+> +	ret = perf_sample__sprintf_flags(flags, str, sizeof(str));
+> +	if (ret < 0)
+> +		return fprintf(fp, "  raw flags:0x%-*x ",
+> +			       SAMPLE_FLAGS_STR_ALIGNED_SIZE - 12, flags);
+>  
+> -	perf_sample__sprintf_flags(flags, str, sizeof(str));
+> -	return fprintf(fp, "  %-21s ", str);
+> +	return fprintf(fp, "  %-*s ", SAMPLE_FLAGS_STR_ALIGNED_SIZE, str);
+>  }
+>  
+>  struct printer_data {
+> diff --git a/tools/perf/util/trace-event.h b/tools/perf/util/trace-event.h
+> index ac9fde2f980c..71e680bc3d4b 100644
+> --- a/tools/perf/util/trace-event.h
+> +++ b/tools/perf/util/trace-event.h
+> @@ -145,6 +145,8 @@ int common_flags(struct scripting_context *context);
+>  int common_lock_depth(struct scripting_context *context);
+>  
+>  #define SAMPLE_FLAGS_BUF_SIZE 64
+> +#define SAMPLE_FLAGS_STR_ALIGNED_SIZE	21
+> +
+>  int perf_sample__sprintf_flags(u32 flags, char *str, size_t sz);
+>  
+>  #if defined(LIBTRACEEVENT_VERSION) &&  LIBTRACEEVENT_VERSION >= MAKE_LIBTRACEEVENT_VERSION(1, 5, 0)
 
 
