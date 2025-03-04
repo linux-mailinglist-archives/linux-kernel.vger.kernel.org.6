@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-543073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9382A4D128
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:45:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FBDAA4D126
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:45:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08B54171678
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:45:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF09E1893F98
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647321DBB2E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 534181DACA7;
 	Tue,  4 Mar 2025 01:44:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="fm+JHYug"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ak4uWnPZ"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A400E156C76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3FC714A4CC
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741052671; cv=none; b=L3HXiyqbi9DlLrW00+4v0ud27oX8y+yV5SL2hMxQnPqCquLS2kGwv86L1yQREPUSZXz/7QuK9KupxxPCELjtdJ1guLY/zOAcPbhRnRHnP4maZxP/UadcHWClzy4fzjNQZxU8hxuQsZBXXBJx+VE+0WzVJSVF3HnJjeGcx6Ol7xQ=
+	t=1741052671; cv=none; b=EYdk+J6ds2DIM7NrmKEWi6SrdU7jBlqr5Hv2W7C8rAhIG0ytH6au6CZKMuYaSVBhNwRuTQD7XluH4KbhdejY0JeVZ9M3JhmLzO86drw+x2gXnqnzW1+njpQRnllzl18HuVLj0fRSgnoZpE9c6Vo2k8P+viyEutyXZc8lNZHlmQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741052671; c=relaxed/simple;
-	bh=LKBWZilk673ctxQEeILgPIQ3LqxLckDuXu63lTUoX4Q=;
+	bh=sVknEgGNvct3p8aN+CRi6/k6aF+awKULL5O/9DK0SkA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=p4wM0Ql/Lqxy2Rn1BzuN3x/dPjqF5Ooy+coonIdVbMhP1PA4ImwjhsSVQzwNsn7eaV8oSu3fSeyFbReWDXiDRD9jK/1XOjxZHMmN97OuADwqBTW7Avp09KVAIuYvAOSc7YCrgEr1R55FCgRo7zxHAaWXqdj2bNGaUd05kxdjkks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=fm+JHYug; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=MvsNTmoDrhBCF+rMv+vr6GZiRhLW5oXzh8ovnoynuhk4EcWO9zz9h6yVklUBxwU6It14lVfPcTyU5yfFD1P04pGeHv/Zhq0psk77F0nDmjbiHUEUz99IWVfNZtcaJlUm8rnwLiN4GasrKRm8az6tWAZHGLoykP734+ZQoyBz9ME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ak4uWnPZ; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741052663;
-	bh=LKBWZilk673ctxQEeILgPIQ3LqxLckDuXu63lTUoX4Q=;
+	s=mail; t=1741052664;
+	bh=sVknEgGNvct3p8aN+CRi6/k6aF+awKULL5O/9DK0SkA=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=fm+JHYugMrJH5URrrPFG+WukT55qsfr7vqZVRzZfiDL+hXHiptEdtw5dbwwcHvtHl
-	 NRCCIVwl9e1gZ0yA0b5tmKPKU1ZSilon4jD3zhEhjKibTvmq0Tbz3MV9h3aJRoCbBR
-	 BejUtWufVcI2INnURcl+Mxs4vA9sCfWBT3PMP9ZMZSuVjHeNN1kAeXWrdX7O/2MY0g
-	 5cZIZyH7ryFuHhxM+NVY7NjeSECueg8K+mfDnnrr0Q+0Ak8OGA0rA8Jj6yPGgoQsvi
-	 WWPIMfcOF3+ikHlWXMUcXzyubbGBuuWueVRRWF83KJdIVL894GB+I5Z3g1B/MUWuzO
-	 uDAGKnUO8sDjw==
+	b=ak4uWnPZXqtzuQ1GE+TpAm/gdOwpFUg1+TvLQS8H7koUNRxZjYQ+xSUf74miLb04e
+	 KnZP5d2MhRpyvKRYn3i3XxNTODrfdGY87iM1H2KhA8PdTd2jVbhQyyTCaQeclXF5s6
+	 4ljvESwXIUKgKEIrRhL8zdZfwZ09VlgiPPax/1qpcgsXeOd9XVx2lUK9p0eJ/FFCfu
+	 qzV0lRs8pUBp1EWWgQnQdROrb6OumxNWt7LZVQ6meN25gjlWfR+zuvE5VRB0IFfD0V
+	 J13fkfpXCiCHWT+KdpW04Ptp01E7/AKz+Kd0dUWYi0FJVz57cSyzQKahZRJpD2VBwy
+	 dUg8UMTZ7k/DQ==
 Received: from localhost (unknown [188.27.58.83])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 69A7C17E1022;
-	Tue,  4 Mar 2025 02:44:23 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 468E817E1023;
+	Tue,  4 Mar 2025 02:44:24 +0100 (CET)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 04 Mar 2025 03:44:06 +0200
-Subject: [PATCH v4 07/12] phy: rockchip: samsung-hdptx: Setup TMDS char
- rate via phy_configure_opts_hdmi
+Date: Tue, 04 Mar 2025 03:44:07 +0200
+Subject: [PATCH v4 08/12] phy: rockchip: samsung-hdptx: Provide config
+ params validation support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-phy-sam-hdptx-bpc-v4-7-8657847c13f7@collabora.com>
+Message-Id: <20250304-phy-sam-hdptx-bpc-v4-8-8657847c13f7@collabora.com>
 References: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
 In-Reply-To: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -72,108 +72,58 @@ Cc: Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
 
-The current workaround to setup the TMDS character rate relies on the
-unconventional usage of phy_set_bus_width().
-
-Make use of the recently introduced HDMI PHY configuration API to
-properly handle the setup.  The workaround will be dropped as soon as
-the switch has been completed on both ends.
+Implement the phy_ops.validate() callback to allow checking the PHY
+configuration parameters without actually applying them.
 
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 54 ++++++++++++++++-------
- 1 file changed, 38 insertions(+), 16 deletions(-)
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 23 +++++++++++++++++++++++
+ 1 file changed, 23 insertions(+)
 
 diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index 2bf525514c1991a1299265d12e1e85f66333c604..7e1d1c10758249aa5bbddbdaae0108bba04f30df 100644
+index 7e1d1c10758249aa5bbddbdaae0108bba04f30df..47db1395051f5d900197871694bab90ca4d6e38e 100644
 --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
 +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -394,6 +394,7 @@ struct rk_hdptx_phy {
+@@ -1482,6 +1482,17 @@ static int rk_hdptx_phy_verify_hdmi_config(struct rk_hdptx_phy *hdptx,
+ 	if (!hdmi->tmds_char_rate || hdmi->tmds_char_rate > HDMI20_MAX_RATE)
+ 		return -EINVAL;
  
- 	int phy_id;
- 	struct phy *phy;
-+	struct phy_configure_opts_hdmi hdmi_cfg;
- 	struct clk_bulk_data *clks;
- 	int nr_clks;
- 	struct reset_control_bulk_data rsts[RST_MAX];
-@@ -1409,19 +1410,25 @@ static int rk_hdptx_dp_aux_init(struct rk_hdptx_phy *hdptx)
- static int rk_hdptx_phy_power_on(struct phy *phy)
- {
- 	struct rk_hdptx_phy *hdptx = phy_get_drvdata(phy);
--	int bus_width = phy_get_bus_width(hdptx->phy);
- 	enum phy_mode mode = phy_get_mode(phy);
-+	unsigned int rate = 0;
- 	int ret, lane;
- 
--	/*
--	 * FIXME: Temporary workaround to pass pixel_clk_rate
--	 * from the HDMI bridge driver until phy_configure_opts_hdmi
--	 * becomes available in the PHY API.
--	 */
--	unsigned int rate = bus_width & 0xfffffff;
--
--	dev_dbg(hdptx->dev, "%s bus_width=%x rate=%u\n",
--		__func__, bus_width, rate);
-+	if (mode != PHY_MODE_DP) {
-+		if (!hdptx->hdmi_cfg.tmds_char_rate) {
-+			/*
-+			 * FIXME: Temporary workaround to setup TMDS char rate
-+			 * from the RK DW HDMI QP bridge driver.
-+			 * Will be removed as soon the switch to the HDMI PHY
-+			 * configuration API has been completed on both ends.
-+			 */
-+			rate = phy_get_bus_width(hdptx->phy) & 0xfffffff;
-+			hdptx->hdmi_cfg.tmds_char_rate = rate * 100;
-+		} else {
-+			rate = hdptx->hdmi_cfg.tmds_char_rate / 100;
-+		}
-+		dev_dbg(hdptx->dev, "%s rate=%u\n", __func__, rate);
-+	}
- 
- 	ret = rk_hdptx_phy_consumer_get(hdptx, rate);
- 	if (ret)
-@@ -1469,8 +1476,17 @@ static int rk_hdptx_phy_power_off(struct phy *phy)
- 	return rk_hdptx_phy_consumer_put(hdptx, false);
- }
- 
--static int rk_hdptx_phy_verify_config(struct rk_hdptx_phy *hdptx,
--				      struct phy_configure_opts_dp *dp)
-+static int rk_hdptx_phy_verify_hdmi_config(struct rk_hdptx_phy *hdptx,
-+					   struct phy_configure_opts_hdmi *hdmi)
-+{
-+	if (!hdmi->tmds_char_rate || hdmi->tmds_char_rate > HDMI20_MAX_RATE)
++	u32 bit_rate = hdmi->tmds_char_rate / 100;
++	int i;
++
++	for (i = 0; i < ARRAY_SIZE(ropll_tmds_cfg); i++)
++		if (bit_rate == ropll_tmds_cfg[i].bit_rate)
++			break;
++
++	if (i == ARRAY_SIZE(ropll_tmds_cfg) &&
++	    !rk_hdptx_phy_clk_pll_calc(bit_rate, NULL))
 +		return -EINVAL;
 +
-+	return 0;
+ 	return 0;
+ }
+ 
+@@ -1789,10 +1800,22 @@ static int rk_hdptx_phy_configure(struct phy *phy, union phy_configure_opts *opt
+ 	return 0;
+ }
+ 
++static int rk_hdptx_phy_validate(struct phy *phy, enum phy_mode mode,
++				 int submode, union phy_configure_opts *opts)
++{
++	struct rk_hdptx_phy *hdptx = phy_get_drvdata(phy);
++
++	if (mode != PHY_MODE_DP)
++		return rk_hdptx_phy_verify_hdmi_config(hdptx, &opts->hdmi);
++
++	return rk_hdptx_phy_verify_dp_config(hdptx, &opts->dp);
 +}
 +
-+static int rk_hdptx_phy_verify_dp_config(struct rk_hdptx_phy *hdptx,
-+					 struct phy_configure_opts_dp *dp)
- {
- 	int i;
- 
-@@ -1730,12 +1746,18 @@ static int rk_hdptx_phy_configure(struct phy *phy, union phy_configure_opts *opt
- 	enum phy_mode mode = phy_get_mode(phy);
- 	int ret;
- 
--	if (mode != PHY_MODE_DP)
--		return 0;
-+	if (mode != PHY_MODE_DP) {
-+		ret = rk_hdptx_phy_verify_hdmi_config(hdptx, &opts->hdmi);
-+		if (ret)
-+			dev_err(hdptx->dev, "invalid hdmi params for phy configure\n");
-+		else
-+			hdptx->hdmi_cfg = opts->hdmi;
-+		return ret;
-+	}
- 
--	ret = rk_hdptx_phy_verify_config(hdptx, &opts->dp);
-+	ret = rk_hdptx_phy_verify_dp_config(hdptx, &opts->dp);
- 	if (ret) {
--		dev_err(hdptx->dev, "invalid params for phy configure\n");
-+		dev_err(hdptx->dev, "invalid dp params for phy configure\n");
- 		return ret;
- 	}
+ static const struct phy_ops rk_hdptx_phy_ops = {
+ 	.power_on  = rk_hdptx_phy_power_on,
+ 	.power_off = rk_hdptx_phy_power_off,
+ 	.configure = rk_hdptx_phy_configure,
++	.validate  = rk_hdptx_phy_validate,
+ 	.owner	   = THIS_MODULE,
+ };
  
 
 -- 
