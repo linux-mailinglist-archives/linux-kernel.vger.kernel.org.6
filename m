@@ -1,269 +1,249 @@
-Return-Path: <linux-kernel+bounces-544204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04221A4DEA8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:06:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47B52A4DF10
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:20:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 236973B1A61
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:06:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4CD77189055D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:20:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F15203713;
-	Tue,  4 Mar 2025 13:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b="sblV3Ovx"
-Received: from linux1587.grserver.gr (linux1587.grserver.gr [185.138.42.100])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C40442C;
-	Tue,  4 Mar 2025 13:06:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.138.42.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FE92040A4;
+	Tue,  4 Mar 2025 13:20:06 +0000 (UTC)
+Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42509202F68
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:20:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741093604; cv=none; b=lfPoVC4KbgPcmF8xq5ge/czp1W7+q8jpi9eK2YUhG5JPKjj9C0UsMxSRssS1Zlutvu/FkaU2OUWxzncuyI+DBMcxbOHbu3HjBoHI3R5UMyPPQgr/aG8dmmr1ueN57pP2vX90pXJee8nWbt32/zg3nwzt3sdkL3zhvJoWlwWxN3U=
+	t=1741094406; cv=none; b=N9ciFJH+l9HEaIBrcqmA2eMNwFYEG/XvMSkhFh+gIzNsGmfu4I8Ra0T2t21/k7hD+eTcrwPfxSwBcE2M9kZPEtoA3v8PcPXHUpydqKB+752Srl9MF/H4s5+h5zWQAkJAFaDVO9PWfkwBM2HwrOrndqcRB5ZAj9Ft6k+0yLYyvS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741093604; c=relaxed/simple;
-	bh=2qFKPgKeSpXTxp5Z7iZJSjbB0aua6k7j3YFcJG4fNvc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FQXZaTP0lgUhpRLJHSyqcR4bonqyLD7o2IxpWmZ5WzEzNgWUJrYMKr7frzorrRDGUjW3nIeqXDnrRcsdpFPXgRtBMRdU5jVAPjIEaooaHbP2+e23JW7+Pp5ITiUUy2pLY/sqGCF2LXW3/ED7AkorR6lH4o6+N0GsnkMNLFFvFIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev; spf=pass smtp.mailfrom=antheas.dev; dkim=pass (1024-bit key) header.d=antheas.dev header.i=@antheas.dev header.b=sblV3Ovx; arc=none smtp.client-ip=185.138.42.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=antheas.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antheas.dev
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
-	by linux1587.grserver.gr (Postfix) with ESMTPSA id 602E12E09248;
-	Tue,  4 Mar 2025 15:06:33 +0200 (EET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=antheas.dev;
-	s=default; t=1741093597;
-	bh=XyB/DGaQkImLkGe99KO54A695D+1O0zvTZx7KK1o7qc=;
-	h=Received:From:Subject:To;
-	b=sblV3OvxcufcZeJwjUtftOq7C+F+2uY3VHKmUARnHm0cFo1jAzriIHTeL7krwhs43
-	 HE4vnLvcOj16PFGkpA8ba98+BqAbSA0UGr1tChhoYAQoEcP3PpHsUW2HN1vTTrxgc5
-	 h90uNi+sTVLmBPQpgQB6X9nEUmY/xY7x6alhysnw=
-Authentication-Results: linux1587.grserver.gr;
-        spf=pass (sender IP is 209.85.167.42) smtp.mailfrom=lkml@antheas.dev smtp.helo=mail-lf1-f42.google.com
-Received-SPF: pass (linux1587.grserver.gr: connection is authenticated)
-Received: by mail-lf1-f42.google.com with SMTP id
- 2adb3069b0e04-547bcef2f96so6340823e87.1;
-        Tue, 04 Mar 2025 05:06:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1;
- AJvYcCVyVqUzGOszSzqD1klHi8pMc1fbUEwBvni9U6KpmiJlUU5E94kzqvH2AtFfUqxV73+TywHL61rPzoBIpnma2P/lVzMRgA==@vger.kernel.org,
- AJvYcCWrHwy59lJBi0hqGoTJ8FWP7q2DVCsy4FQGd4gF5tQJXnsQDGR9Xuvkc1iwpvE1NWJgAqTl3j8g9nL9SFRQ@vger.kernel.org,
- AJvYcCX419kcpZAvLLy6LNsfJHnfoHbQQ0u3GYaOcYyvK0fKYiOiJ+84bwOdhI46n/MstDd4vqNOL9NEvmrH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnKs3qsBZof7xMtt53oBHS+B9HmpDO+ehxpSGRWT7J+9zaopok
-	OGLSuVOXhxwdKuKJ3nIoKju6LMCSHnkUUma3xjr2GGYeP5nq52+lQoaMw+bSo2fuvVEpXOwgG3e
-	oHsGeMwrfcVuk+zstoCLFDt4Ri8c=
-X-Google-Smtp-Source: 
- AGHT+IFJsSNNyRwEAefYPtBzSpVROivz24nz3zetzkFWa1k9sdlp2Tv3EG40u6Jg9A2pWi68fJtr3aIhUNxR4yK51pI=
-X-Received: by 2002:a05:6512:1103:b0:545:d54:2ebe with SMTP id
- 2adb3069b0e04-5494c36c16dmr6539057e87.43.1741093592629; Tue, 04 Mar 2025
- 05:06:32 -0800 (PST)
+	s=arc-20240116; t=1741094406; c=relaxed/simple;
+	bh=m9Je7f6LGEVPu9cjBmXbrgZ/ibfBq4qHWPcQbiitp5Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=RSVtCskhTkZw5accwsOKBDKqcthM1+hWzydFE9wgnt7spjBGJUtwgiynbq5TyaUUX6LPcszrzGtKdlQ9DSUxjClWW5JQT7goFbHDK0EwAn5QjcUA1UQvuItpSGwhxkV3zHCzAGW5Xn5NeEcNJWw10z/IZ+q6Ll0+ONO9W9BVxi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
+Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
+	by localhost (Postfix) with ESMTP id 4Z6bYB4Jp9z9ssM;
+	Tue,  4 Mar 2025 14:06:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from pegase2.c-s.fr ([172.26.127.65])
+	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id bALd6RdimFkt; Tue,  4 Mar 2025 14:06:38 +0100 (CET)
+Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
+	by pegase2.c-s.fr (Postfix) with ESMTP id 4Z6bYB3FN1z9ssL;
+	Tue,  4 Mar 2025 14:06:38 +0100 (CET)
+Received: from localhost (localhost [127.0.0.1])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id 5AC468B773;
+	Tue,  4 Mar 2025 14:06:38 +0100 (CET)
+X-Virus-Scanned: amavisd-new at c-s.fr
+Received: from messagerie.si.c-s.fr ([127.0.0.1])
+	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
+	with ESMTP id QXxqVrulQ7mE; Tue,  4 Mar 2025 14:06:38 +0100 (CET)
+Received: from [192.168.235.99] (unknown [192.168.235.99])
+	by messagerie.si.c-s.fr (Postfix) with ESMTP id E49218B763;
+	Tue,  4 Mar 2025 14:06:37 +0100 (CET)
+Message-ID: <c4fe2f76-e6b8-4445-84b0-8509235e1fef@csgroup.eu>
+Date: Tue, 4 Mar 2025 14:06:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304064745.1073770-1-superm1@kernel.org>
- <20250304064745.1073770-2-superm1@kernel.org>
- <CAGwozwHniWGQ7qK6FYD_WK5zNjkro7-Q1nTcFPAuWDt9UQ+noA@mail.gmail.com>
- <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
-In-Reply-To: <23d6c735-e94f-4d43-87b0-ff119941fcac@kernel.org>
-From: Antheas Kapenekakis <lkml@antheas.dev>
-Date: Tue, 4 Mar 2025 14:06:21 +0100
-X-Gmail-Original-Message-ID: 
- <CAGwozwE0qn_vypYHpfJY8muo=e6XuLRJ6d9Fy_LSAa5VG=sEgg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jq8Nt82M34pyIU1pZ1pM_EAc5ddAiY26i3J3wjOWWxvYJzHwrbkXyW9qw8
-Message-ID: 
- <CAGwozwE0qn_vypYHpfJY8muo=e6XuLRJ6d9Fy_LSAa5VG=sEgg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] ACPI: platform_profile: Treat quiet and low power
- the same
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Kurt Borja <kuurtb@gmail.com>,
- Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
- Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	"Luke D . Jones" <luke@ljones.dev>, Mark Pearson <mpearson-lenovo@squebb.ca>,
-	"open list:AMD PMF DRIVER" <platform-driver-x86@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
- "Derek J . Clark" <derekjohn.clark@gmail.com>,
-	me@kylegospodneti.ch, Denis Benato <benato.denis96@gmail.com>,
-	Mario Limonciello <mario.limonciello@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-X-PPP-Message-ID: 
- <174109359388.10457.17049499079140763422@linux1587.grserver.gr>
-X-PPP-Vhost: antheas.dev
-X-Virus-Scanned: clamav-milter 0.103.11 at linux1587.grserver.gr
-X-Virus-Status: Clean
+User-Agent: Mozilla Thunderbird
+Subject: Re: Build Warnings at arch/powerpc/
+To: Madhavan Srinivasan <maddy@linux.ibm.com>,
+ Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+ linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+ Stephen Rothwell <sfr@canb.auug.org.au>,
+ Michael Ellerman <mpe@ellerman.id.au>
+References: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
+ <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
+ <8ba544e7-cf2a-4807-a056-683115805721@csgroup.eu>
+ <bfcce9ce-bc26-4088-8d27-0797fc0d22d3@linux.ibm.com>
+ <fe937273-d81a-4f6c-9eba-b96b711b4644@linux.ibm.com>
+Content-Language: fr-FR
+From: Christophe Leroy <christophe.leroy@csgroup.eu>
+In-Reply-To: <fe937273-d81a-4f6c-9eba-b96b711b4644@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 4 Mar 2025 at 13:49, Mario Limonciello <superm1@kernel.org> wrote:
->
->
->
-> On 3/4/25 02:38, Antheas Kapenekakis wrote:
-> > On Tue, 4 Mar 2025 at 07:48, Mario Limonciello <superm1@kernel.org> wrote:
-> >>
-> >> From: Mario Limonciello <mario.limonciello@amd.com>
-> >>
-> >> When two drivers don't support all the same profiles the legacy interface
-> >> only exports the common profiles.
-> >>
-> >> This causes problems for cases where one driver uses low-power but another
-> >> uses quiet because the result is that neither is exported to sysfs.
-> >>
-> >> If one platform profile handler supports quiet and the other
-> >> supports low power treat them as the same for the purpose of
-> >> the sysfs interface.
-> >>
-> >> Fixes: 688834743d67 ("ACPI: platform_profile: Allow multiple handlers")
-> >> Reported-by: Antheas Kapenekakis <lkml@antheas.dev>
-> >> Closes: https://lore.kernel.org/platform-driver-x86/e64b771e-3255-42ad-9257-5b8fc6c24ac9@gmx.de/T/#mc068042dd29df36c16c8af92664860fc4763974b
-> >> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> >> ---
-> >>   drivers/acpi/platform_profile.c | 38 ++++++++++++++++++++++++++++++---
-> >>   1 file changed, 35 insertions(+), 3 deletions(-)
-> >>
-> >> diff --git a/drivers/acpi/platform_profile.c b/drivers/acpi/platform_profile.c
-> >> index 2ad53cc6aae53..d9a7cc5891734 100644
-> >> --- a/drivers/acpi/platform_profile.c
-> >> +++ b/drivers/acpi/platform_profile.c
-> >> @@ -73,8 +73,20 @@ static int _store_class_profile(struct device *dev, void *data)
-> >>
-> >>          lockdep_assert_held(&profile_lock);
-> >>          handler = to_pprof_handler(dev);
-> >> -       if (!test_bit(*bit, handler->choices))
-> >> -               return -EOPNOTSUPP;
-> >> +       if (!test_bit(*bit, handler->choices)) {
-> >> +               switch (*bit) {
-> >> +               case PLATFORM_PROFILE_QUIET:
-> >> +                       *bit = PLATFORM_PROFILE_LOW_POWER;
-> >> +                       break;
-> >> +               case PLATFORM_PROFILE_LOW_POWER:
-> >> +                       *bit = PLATFORM_PROFILE_QUIET;
-> >> +                       break;
-> >> +               default:
-> >> +                       return -EOPNOTSUPP;
-> >> +               }
-> >> +               if (!test_bit(*bit, handler->choices))
-> >> +                       return -EOPNOTSUPP;
-> >> +       }
-> >>
-> >>          return handler->ops->profile_set(dev, *bit);
-> >>   }
-> >> @@ -252,8 +264,16 @@ static int _aggregate_choices(struct device *dev, void *data)
-> >>          handler = to_pprof_handler(dev);
-> >>          if (test_bit(PLATFORM_PROFILE_LAST, aggregate))
-> >>                  bitmap_copy(aggregate, handler->choices, PLATFORM_PROFILE_LAST);
-> >> -       else
-> >> +       else {
-> >> +               /* treat quiet and low power the same for aggregation purposes */
-> >> +               if (test_bit(PLATFORM_PROFILE_QUIET, handler->choices) &&
-> >> +                   test_bit(PLATFORM_PROFILE_LOW_POWER, aggregate))
-> >> +                       set_bit(PLATFORM_PROFILE_QUIET, aggregate);
-> >> +               else if (test_bit(PLATFORM_PROFILE_LOW_POWER, handler->choices) &&
-> >> +                        test_bit(PLATFORM_PROFILE_QUIET, aggregate))
-> >> +                       set_bit(PLATFORM_PROFILE_LOW_POWER, aggregate);
-> >>                  bitmap_and(aggregate, handler->choices, aggregate, PLATFORM_PROFILE_LAST);
-> >> +       }
-> >
-> > So you end up showing both? If that's the case, isn't it equivalent to
-> > just make amd-pmf show both quiet and low-power?
-> >
-> > I guess it is not ideal for framework devices. But if asus devices end
-> > up showing both, then it should be ok for framework devices to show
-> > both.
-> >
-> > I like the behavior of the V1 personally.
->
-> No; this doesn't cause it to show both.  It only causes one to show up.
-> I confirmed it with a contrived situation on my laptop that forced
-> multiple profile handlers that supported a mix.
 
-If you can somehow force it to show the same option every time with a
-tie breaker against amd-pmf it should be good enough. Still does not
-solve balanced-power so unlike V1 it is not a permanent fix. Hidden
-options was a nice tiebreaker imo.
 
->
-> # cat /sys/firmware/acpi/platform_profile*
-> low-power
-> low-power balanced performance
->
-> # cat /sys/class/platform-profile/platform-profile-*/profile
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> quiet
-> low-power
->
-> >
-> >>          return 0;
-> >>   }
-> >> @@ -305,6 +325,13 @@ static int _aggregate_profiles(struct device *dev, void *data)
-> >>          if (err)
-> >>                  return err;
-> >>
-> >> +       /* treat low-power and quiet as the same */
-> >> +       if ((*profile == PLATFORM_PROFILE_LOW_POWER &&
-> >> +            val == PLATFORM_PROFILE_QUIET) ||
-> >> +           (*profile == PLATFORM_PROFILE_QUIET &&
-> >> +            val == PLATFORM_PROFILE_LOW_POWER))
-> >> +               *profile = val;
-> >> +
-> >>          if (*profile != PLATFORM_PROFILE_LAST && *profile != val)
-> >>                  *profile = PLATFORM_PROFILE_CUSTOM;
-> >>          else
-> >> @@ -531,6 +558,11 @@ struct device *platform_profile_register(struct device *dev, const char *name,
-> >>                  dev_err(dev, "Failed to register platform_profile class device with empty choices\n");
-> >>                  return ERR_PTR(-EINVAL);
-> >>          }
-> >> +       if (test_bit(PLATFORM_PROFILE_QUIET, pprof->choices) &&
-> >> +           test_bit(PLATFORM_PROFILE_LOW_POWER, pprof->choices)) {
-> >> +               dev_err(dev, "Failed to register platform_profile class device with both quiet and low-power\n");
-> >> +               return ERR_PTR(-EINVAL);
-> >> +       }
-> >
-> > Can you avoid failing here? It caused a lot of issues in the past (the
-> > WMI driver bails). a dev_err should be enough. Since you do not fail
-> > maybe it can be increased to dev_crit.
-> >
-> > There is at least one driver that implements both currently, and a fix
-> > would have to precede this patch.
->
-> Oh, acer-wmi?  Kurt; can you please comment?  Are both simultaneous?
+Le 04/03/2025 à 13:38, Madhavan Srinivasan a écrit :
+> 
+> 
+> On 3/4/25 4:58 PM, Madhavan Srinivasan wrote:
+>>
+>>
+>> On 3/4/25 2:26 PM, Christophe Leroy wrote:
+>>>
+>>>
+>>> Le 04/03/2025 à 07:13, Madhavan Srinivasan a écrit :
+>>>>
+>>>>
+>>>> On 3/4/25 10:42 AM, Venkat Rao Bagalkote wrote:
+>>>>> Greetings!!
+>>>>>
+>>>>>
+>>>>> Observing build warnings with linux-next and powerpc repo's. Issue is currently not seen on mainline yet.
+>>>>>
+>>>>> PPC Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fpowerpc%2Flinux.git&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C48de41657f8341b927e708dd5b198b84%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766887458137690%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=P9JQJ7joMFHGDws1H0iaxpj6blYAqsh4ATzrmB1A8Yc%3D&reserved=0 merge branch
+>>>>>
+>>>>> PPC Kernel Version: 6.14.0-rc4-g1304f486dbf1
+>>>>> next Repo: https://eur01.safelinks.protection.outlook.com/?url=https%3A%2F%2Fgit.kernel.org%2Fpub%2Fscm%2Flinux%2Fkernel%2Fgit%2Fnext%2Flinux-next.git&data=05%7C02%7Cchristophe.leroy%40csgroup.eu%7C48de41657f8341b927e708dd5b198b84%7C8b87af7d86474dc78df45f69a2011bb5%7C0%7C0%7C638766887458152652%7CUnknown%7CTWFpbGZsb3d8eyJFbXB0eU1hcGkiOnRydWUsIlYiOiIwLjAuMDAwMCIsIlAiOiJXaW4zMiIsIkFOIjoiTWFpbCIsIldUIjoyfQ%3D%3D%7C0%7C%7C%7C&sdata=ZVQdCx62Z3ekoXOrWoE6SdHv4RvgjDFSE9CHPPJ%2FiyI%3D&reserved=0 master branch
+>>>>>
+>>>>> next Kernel Version: 6.14.0-rc5-next-20250303
+>>>>>
+>>>>>
+>>>>> On linux-next kernel issue got introduced b/w next-20250227 and next-20250303
+>>>>>
+>>>>>
+>>>>> Build Warnings:
+>>>>>
+>>>>> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
+>>>>> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
+>>>>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+>>>>>
+>>>>>
+>>>>
+>>>> Can you please specific the compiler and compiler version you found this issue with
+>>>>
+>>>
+>>> Can you also tell which defconfig you are using or provide your .config
+>>>
+>>> It might also be helpfull if you can provide a disassembly of the three file.o around the warned address.
+>>
+>> I could recreate the issue with gcc 11.4.1 20231218 with today's linux-next (but could not recreate with gcc 14 or gcc 11.3.0)
+>>
+>> (20d5c66e1810 (HEAD -> master, tag: next-20250304, origin/master, origin/HEAD) Add linux-next specific files for 20250304)
+>>
+>> warning for one of the switch.S file :
+>>
+>>    CC      arch/powerpc/kernel/syscalls.o
+>>    AS      arch/powerpc/kernel/switch.o
+>> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+> 
+> I guess this is becos, for bl .+4, we recently added in the arch_decode_instruction (decode.c) to set the type as INSN_OTHER
+> 
+>          case 18: /* b[l][a] */
+>                  if (ins == 0x48000005)  /* bl .+4 */
+>                          typ = INSN_OTHER;
+> 
+> Which I think is the issue here, changing it to INSN_CALL from INSN_OTHER fixes the warning
 
-I do not have access to my kernel tree but when looking at it I
-remember an if block that did a set_bit on both for certain laptops in
-one of the drivers. Unsure if it was acer. But it was not ambiguous.
+Yes indeed I ended up with the same conclusion. However if you change it 
+back to INSN_CALL you just bring back the issue with clang using bl .+4 
+for relocatable code.
 
-> >
-> >>
-> >>          guard(mutex)(&profile_lock);
-> >>
-> >> --
-> >> 2.43.0
-> >>
->
+The warning is from here:
+
+static int __annotate_ifc(struct objtool_file *file, int type, struct 
+instruction *insn)
+{
+	unsigned long dest_off;
+
+	if (type != ANNOTYPE_INTRA_FUNCTION_CALL)
+		return 0;
+
+	if (insn->type != INSN_CALL) {
+		WARN_INSN(insn, "intra_function_call not a direct call");
+		return -1;
+	}
+
+
+Now that arch_decode_instruction() does not consider bl .+4 an INSN_CALL 
+anymore, we have to remove the ANNOTATE_INTRA_FUNCTION_CALL annotations 
+here:
+
+arch/powerpc/kernel/switch.S:42:        ANNOTATE_INTRA_FUNCTION_CALL
+arch/powerpc/kvm/book3s_hv_rmhandlers.S:1527:   ANNOTATE_INTRA_FUNCTION_CALL
+arch/powerpc/kvm/book3s_hv_rmhandlers.S:1534:   ANNOTATE_INTRA_FUNCTION_CALL
+
+The one in arch/powerpc/kexec/relocate_32.S is not a problem at the 
+moment but it looks buggy and that "bl 1f" should be replaced by a 
+branch to the "bcl 20,31,$+4"
+
+I will try to cook a couple patches for all that.
+
+The last one from the report is:
+
+arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: 
+unannotated intra-function call
+
+That one is different, we need to reproduce it to understand what it is.
+
+Christophe
+
+
+> 
+> diff --git a/tools/objtool/arch/powerpc/decode.c b/tools/objtool/arch/powerpc/decode.c
+> index 26d5050424a9..ffd63a61a585 100644
+> --- a/tools/objtool/arch/powerpc/decode.c
+> +++ b/tools/objtool/arch/powerpc/decode.c
+> @@ -56,7 +56,7 @@ int arch_decode_instruction(struct objtool_file *file, const struct section *sec
+>          switch (opcode) {
+>          case 18: /* b[l][a] */
+>                  if (ins == 0x48000005)  /* bl .+4 */
+> -                       typ = INSN_OTHER;
+> +                       typ = INSN_CALL;
+>                  else if (ins & 1)       /* bl[a] */
+>                          typ = INSN_CALL;
+>                  else            /* b[a] */
+> 
+> 
+> Maddy
+> 
+>>    CC      arch/powerpc/kernel/irq.o
+>>    CC      arch/powerpc/kernel/align.o
+>>    CC      arch/powerpc/kernel/signal_64.o
+>>
+>> Objdump of switch.o:
+>> arch/powerpc/kernel/switch.o:     file format elf64-powerpcle
+>>
+>> Disassembly of section .text:
+>>
+>> 0000000000000000 <flush_branch_caches>:
+>>         0:	a6 02 28 7d 	mflr    r9
+>>         4:	05 00 00 48 	bl      8 <flush_branch_caches+0x8>
+>>         8:	05 00 00 48 	bl      c <flush_branch_caches+0xc>
+>>         c:	05 00 00 48 	bl      10 <flush_branch_caches+0x10>
+>>        10:	05 00 00 48 	bl      14 <flush_branch_caches+0x14>
+>>        14:	05 00 00 48 	bl      18 <flush_branch_caches+0x18>
+>>        18:	05 00 00 48 	bl      1c <flush_branch_caches+0x1c>
+>>        1c:	05 00 00 48 	bl      20 <flush_branch_caches+0x20>
+>>        20:	05 00 00 48 	bl      24 <flush_branch_caches+0x24>
+>>        24:	05 00 00 48 	bl      28 <flush_branch_caches+0x28>
+>>        28:	05 00 00 48 	bl      2c <flush_branch_caches+0x2c>
+>>
+>>
+>> arch/powerpc/kernel/switch.S failing src section:
+>>
+>> .balign 32
+>> .global flush_branch_caches
+>> flush_branch_caches:
+>>          /* Save LR into r9 */
+>>          mflr    r9
+>>
+>>          // Flush the link stack
+>>          .rept 64
+>>          ANNOTATE_INTRA_FUNCTION_CALL
+>>          bl      .+4
+>>          .endr
+>>          b       1f
+>>          nops    6
+>>
+>> Maddy
+>>
+>>
+>>>
+>>> Christophe
+>>
+>>
+> 
+
 
