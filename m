@@ -1,44 +1,45 @@
-Return-Path: <linux-kernel+bounces-545526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B346A4EE30
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:17:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 29185A4EE33
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:17:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C29723A8AF5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:16:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 609B13AAD96
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:17:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0179C259C83;
-	Tue,  4 Mar 2025 20:16:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28634264623;
+	Tue,  4 Mar 2025 20:16:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="AxBwrcVt"
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="lR9/f9tq"
 Received: from smtp.forwardemail.net (smtp.forwardemail.net [121.127.44.59])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61FB025290A
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:16:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B44A2620FA
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:16:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=121.127.44.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741119412; cv=none; b=UAJ0W/Q5bw3/GA5rrKtuG6/Ql762yJJHB14djM52ETkEdmrvkXXpWPt0CkbLmjfVhLW/DzhxdIn1mbrOxCUs7O0hxCzHSa4FsHr49781NQQGucJTD07MVpjbszFlHzpa+uMEi3erRGlUpQ8WMX7ByuTOFOyDaVwIlt2OiZrpGiI=
+	t=1741119416; cv=none; b=T7V29rWDC+LmNW0DMkr/4GwQJ8n84/voogHT90GxFVMEY9TMnpBNxK0EtnMCHAmwyGwqrgypiesQlSG9VyMyJM57B81DpwB4uQZdQ0urdoBcAQeW76pEnXh8tNDcc6qXeWadJJCSn6TLCRc4qbERjozCIf5nMh1YzGYg0SjshvI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741119412; c=relaxed/simple;
-	bh=EmMWOomx3FjbJAk9f9oWfiptvCOHUBMN2s0iOlnY9Zw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UooXHXDl9nTpKrgpoRxWWruWPtt0eMo0PFx4tvQL4HrSSMglhkqT6rKfuOmuUURCO6gyyA0XmXQiRVMp9P4dX1ELzRv0Tswt/K95f+ic2mlClh7i8HmWUSDS3yo/kNGAFQRm882vAIk5AZPOydJ47D05ae6v98loiSOoJ+9SBWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=AxBwrcVt; arc=none smtp.client-ip=121.127.44.59
+	s=arc-20240116; t=1741119416; c=relaxed/simple;
+	bh=1pBjN+M54c4yoJxTfu43erS/zABWeh1qQQsS9UcHdBk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=WuJSY2eKWkHWmwRTw5iTdF+b/lcuWiPcfjai0gJ82/04Fzc2RDDq1XhYCXDlvpYfBzmqcOJ0twxJ2Gk8EbhlQgK0UoU7sfBtG5ynM9XiFCYzsZ9/Iu+H2X/is0g+X1Lpc5eojSwOuzlz+0LpuoGnr0yDjqMKQcJnVaRiUePNCdo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=lR9/f9tq; arc=none smtp.client-ip=121.127.44.59
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
- To: From; q=dns/txt; s=fe-e1b5cab7be; t=1741119409;
- bh=x6BDfPh0O1Xw4+eoI5OG+FYUEnRuz8BZ8BPs7Zf9ilk=;
- b=AxBwrcVt6/Go17UIOq9TMQDukY8ScLhMR6KqlqnTZnBC7j2XlD9QJCK2Nv99wXMDLETD7NN+T
- TnFsUatgya+acoGcyvWrLafe0nC4lcUSizq12x4KIqdz5lLMDLo5XntKNkgxBroIl7lnV0MdiyG
- TH8MI3q3RU67wuic4vxaqbADTx/VJEevGfE1izbmp6tXRopNVwJHbTR0PGduBjeHzNr04QfLGHi
- N806a7lji2X8npCmoAUpYWoiNmbwmWJRovq1Oa62TAcjYlMvGPOjZDMRUhA3sGv4epOC9khlfMj
- aslX3KOzBe4htNCdronzoNMUY2GMQC42duYpWTV1iKrA==
-X-Forward-Email-ID: 67c75faf66a4509299dbdf39
+ h=Content-Transfer-Encoding: MIME-Version: References: In-Reply-To:
+ Message-ID: Date: Subject: Cc: To: From; q=dns/txt; s=fe-e1b5cab7be;
+ t=1741119414; bh=44nkz0sv0GIrmXFRGFsYFzWfaFRmrSwGCiy2zDwKAPQ=;
+ b=lR9/f9tq8JEmCBhFZtEjEnMZTKsMkL/RaoEC8jgfuiXLD7IGPiCxR1hB/MzsvSSRjUA2XtL7Z
+ lA6y+j+J9YoK0yOmpK8esDexFAz6WPk9xqkbJxA5C3YtrJV6J5WSbvNZDxCxWqj0z89CjY4o1D1
+ fFHLAnw0THaN6e+xkFH8nLJz50mYJZYma+jHCT2IeUFlLzQy5eWK4u6ilUDKqv0kezF/hoXaWWB
+ UAkod2aoc3RKjgCch/4BeoEYt23xD2FH6VNfR5p19o9ov3VwiIDQy9lGyOiQPl3iOuNAbtIJd0D
+ T7QhPNZw+vx191mSV3SAHj7y33dXfX7ZETUr6yPsf7ag==
+X-Forward-Email-ID: 67c75fb366a4509299dbdf53
 X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
  121.127.44.59
 X-Forward-Email-Version: 0.4.40
@@ -57,10 +58,12 @@ Cc: Yao Zi <ziyao@disroot.org>,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Jonas Karlman <jonas@kwiboo.se>
-Subject: [PATCH v2 0/4] rockchip: Add support for leds and buttons on Radxa E20C
-Date: Tue,  4 Mar 2025 20:16:33 +0000
-Message-ID: <20250304201642.831218-1-jonas@kwiboo.se>
+Subject: [PATCH v2 1/4] arm64: dts: rockchip: Add leds node to Radxa E20C
+Date: Tue,  4 Mar 2025 20:16:34 +0000
+Message-ID: <20250304201642.831218-2-jonas@kwiboo.se>
 X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250304201642.831218-1-jonas@kwiboo.se>
+References: <20250304201642.831218-1-jonas@kwiboo.se>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,32 +72,84 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The Radxa E20C has three GPIO leds, one SARADC maskrom button and one
-GPIO user button.
+Radxa E20C has three gpio controlled leds (sys, wan and lan).
 
-This series add leds, gpio-keys and adc-keys nodes to board DT to
-describe the leds and buttons found on Radxa E20C.
+Add led nodes and set default trigger to heartbeat for the sys led and
+netdev for the lan and wan leds.
 
-Changes in v2:
-- Change gpio-leds node name to leds
-- Drop patches already applied
-- Merge saradc and gpio button series
-- Reorder patches
+Signed-off-by: Jonas Karlman <jonas@kwiboo.se>
+---
+v2: Rename gpio-leds node to leds
+---
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 48 +++++++++++++++++++
+ 1 file changed, 48 insertions(+)
 
-Board schematics for Radxa E20C can be found at [1].
-
-[1] https://dl.radxa.com/e/e20c/v1.10/radxa_e20c_v1100_schematic.pdf
-
-Jonas Karlman (4):
-  arm64: dts: rockchip: Add leds node to Radxa E20C
-  arm64: dts: rockchip: Add user button to Radxa E20C
-  arm64: dts: rockchip: Add SARADC node for RK3528
-  arm64: dts: rockchip: Add maskrom button to Radxa E20C
-
- .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 116 ++++++++++++++++++
- arch/arm64/boot/dts/rockchip/rk3528.dtsi      |  13 ++
- 2 files changed, 129 insertions(+)
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+index 5161d22330ab..7f0237206405 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+@@ -6,6 +6,8 @@
+  */
+ 
+ /dts-v1/;
++
++#include <dt-bindings/leds/common.h>
+ #include "rk3528.dtsi"
+ 
+ / {
+@@ -15,6 +17,52 @@ / {
+ 	chosen {
+ 		stdout-path = "serial0:1500000n8";
+ 	};
++
++	leds {
++		compatible = "gpio-leds";
++		pinctrl-names = "default";
++		pinctrl-0 = <&lan_led_g>, <&sys_led_g>, <&wan_led_g>;
++
++		led-lan {
++			color = <LED_COLOR_ID_GREEN>;
++			default-state = "off";
++			function = LED_FUNCTION_LAN;
++			gpios = <&gpio4 RK_PB5 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "netdev";
++		};
++
++		led-sys {
++			color = <LED_COLOR_ID_GREEN>;
++			default-state = "on";
++			function = LED_FUNCTION_HEARTBEAT;
++			gpios = <&gpio4 RK_PC1 GPIO_ACTIVE_LOW>;
++			linux,default-trigger = "heartbeat";
++		};
++
++		led-wan {
++			color = <LED_COLOR_ID_GREEN>;
++			default-state = "off";
++			function = LED_FUNCTION_WAN;
++			gpios = <&gpio4 RK_PC0 GPIO_ACTIVE_HIGH>;
++			linux,default-trigger = "netdev";
++		};
++	};
++};
++
++&pinctrl {
++	leds {
++		lan_led_g: lan-led-g {
++			rockchip,pins = <4 RK_PB5 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		sys_led_g: sys-led-g {
++			rockchip,pins = <4 RK_PC1 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++
++		wan_led_g: wan-led-g {
++			rockchip,pins = <4 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
+ };
+ 
+ &uart0 {
 -- 
 2.48.1
 
