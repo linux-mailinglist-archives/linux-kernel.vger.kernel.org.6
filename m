@@ -1,100 +1,144 @@
-Return-Path: <linux-kernel+bounces-543750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA9BA4D95C
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:55:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01C4FA4D9A1
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:59:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33B207A543E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:53:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890F63B2D9A
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD8691FCFE6;
-	Tue,  4 Mar 2025 09:54:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 931E51FCFDB
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EC591FDE12;
+	Tue,  4 Mar 2025 09:54:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RWVQS5Xz"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A21E1FDA62
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 09:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741082080; cv=none; b=lEUT97CAc50Xu5Fms1vSYwpYwSiGdgHtWyOwD3tA83XyLpSeVqkOGSwV7euhDfjiSH6Uf3ko4n9GvkARb7wFOkggiQuJjBlgnkIC7Zp7sgIZKRGro6qe6XlmKPi/2OUdBgb6clYcsnBthpkdB45qHxhlYQJuTKCvVWIxgg4oPw8=
+	t=1741082082; cv=none; b=OyJYZNuNRZLUlEqCeHJt1giEr5D1EWLQ1G1l1BGIwk+QODz28SSSoa3LZySNfJhMurfzxWyGWJV0fapGSZ/L6VzMao0/3N8ev2vNJv0gbxgfbp0pjI729i4GxfpnBgnqeZNTLfyKtE/8w/qs9OczvXVYzR8DLeoYGXoiktDc+yM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741082080; c=relaxed/simple;
-	bh=aAAx0WCfVD9Yht0Hjqf+5lQdm3MbQGouHvs42YNXPAI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ANtvmURu1ah1OxKaPXadOVwtY8SWzUHUpWpd4mjSplZz628FvgOJJ188y4nNhOKc6Haa1zEqYlyh5x3/nI+ovpGpA5COlI4QGi4w/GfZ3f128YkWkjO6MJRIZSORhvZkeNNLz/Dvbz/xl8U83f9N4d+S4O7gqMPcMJwbNWVW24o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9EBE9FEC;
-	Tue,  4 Mar 2025 01:54:51 -0800 (PST)
-Received: from bogus (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 676D93F5A1;
-	Tue,  4 Mar 2025 01:54:35 -0800 (PST)
-Date: Tue, 4 Mar 2025 09:54:32 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: Will Deacon <will@kernel.org>
-Cc: Marc Zyngier <maz@kernel.org>, Sebastian Ene <sebastianene@google.com>,
-	Sudeep Holla <sudeep.holla@arm.com>, catalin.marinas@arm.com,
-	joey.gouly@arm.com, oliver.upton@linux.dev, snehalreddy@google.com,
-	suzuki.poulose@arm.com, vdonnefort@google.com, yuzenghui@huawei.com,
-	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v2 2/4] KVM: arm64: Move the ffa_to_linux definition to
- the ffa header
-Message-ID: <Z8bN2MI5GYdVtGyE@bogus>
-References: <20250227181750.3606372-1-sebastianene@google.com>
- <20250227181750.3606372-3-sebastianene@google.com>
- <20250227202557.d3fd6ylzbaho4pvx@bogus>
- <Z8DxZY-09R6lwEW3@google.com>
- <86wmdapei8.wl-maz@kernel.org>
- <20250303234426.GB30749@willie-the-truck>
+	s=arc-20240116; t=1741082082; c=relaxed/simple;
+	bh=bEZtTwPyY37XnL+BOrDB3iYLlnxsxgbs+5Nwb5ZPZ5I=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DY0rm2NxqvjZX6fDt4KaafkoRdIHqGy4IN/rjE0C0sX2I8Dl3cfhyT6UEJ1pBzL7avmb8Wdxqfg1KpixRsiDkF2mFhlb6K8PUKNMYdZtkSz5krDK1TMpR8S6gzQZDvd64Tsqgqfv37LBDm/9AMJ15AQ6lMk9AuBxqvQ87oTL30A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RWVQS5Xz; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741082080;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=u7cLRomgT9aYrM8YJE7hwcT94wlH0qz2XRoudr3Vr10=;
+	b=RWVQS5XzZ+5urYa4wOaIkotNHLblYgcLT3pKOqqA2NXgi3lLgSSPmskuFhs8yRuU/gH1IO
+	ZEKLqyF7gQnjijNoZNhOGTQeHPDDjIsl4XuW6kiZuWk5MF7tILhw0SR2EdaJOWPhq+x7cS
+	ABVrfAskfh2MqemzQ+nQ5KCKerLUETI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-121-c5yccIkGPvGswLjZsD71pQ-1; Tue, 04 Mar 2025 04:54:38 -0500
+X-MC-Unique: c5yccIkGPvGswLjZsD71pQ-1
+X-Mimecast-MFC-AGG-ID: c5yccIkGPvGswLjZsD71pQ_1741082077
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4394c0a58e7so38063485e9.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 01:54:38 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741082077; x=1741686877;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u7cLRomgT9aYrM8YJE7hwcT94wlH0qz2XRoudr3Vr10=;
+        b=W4yLaDvbMlfPKmuz7Mr9BQLjMZNJi8+/Z7DuewKGSGpdLp0kMrG17OK7EUBb8v5G7Q
+         /yIg2gPTWoGbG8nwkLBy8Q8DRr7urYDaXQMNmjToX/w5mzcOw94FzWDqNhSIiYVr6MwW
+         oLwB4TYtqOKq6ywSknoJIfOMHHXTp3k3XSLzzHo6UVIR3BCgfQ+1OFU7yxqDxcRAA6oq
+         G4iiLObrcETvATKZMpwxCqEbF+9FK+U9KlDyVdaB1ZhK9I7cxgxVSKprB9ZOHJhqE68B
+         2DWj+7WraW4IGed0/ZlGk/pMYdir/apAG4t+Ut8qFQNebxFGjcpVGywhbdu6jLZoUdhL
+         Eygg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdWXeyz0UqCd+wj1yTurFADl3RrlfZ588N2SCTBVUDzoiT/5QUKGHLgVnFcsgkqcQcFBcM2drmn2FSAcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFrmDQYdZxeGWvC9ijUhIchj+28a0qWP14EUqc7bCQiSWPdHC/
+	vvJ7BFa0dbir7ywarCI+2da5/89zElB5JEuWVtzMW/3xZKHbT8rdAoKuPu9hXmidg2j0K0jL4Fx
+	VBQDCZ8ZZOaiiUfh/QNMziYvWhVr+gqPeF2zOH8WzC9f48xgbxiabYFG5ViQhPw==
+X-Gm-Gg: ASbGnctgMKzIGtCiCQjOmDshQHY3q1fYZD3al/LO1AKXt7WQQ606ScG0QcVrwE7PCac
+	4+o7L7ARH6bn+RoWRj3YtFq4OR9mB1wQ9SI4w93pckQlAIotLgTQEKgnk6BRI05SrdAJXvSd5Pf
+	rr3ptE5BMqOnbahi+5eKI4ghJuoF9ffd0mxE5e6Cl+O7kmE9wjk7vh3gEyctAUjXdEYMHI5yYCc
+	7/gz4xdDRZliaXPMMBtQMxSGljwZ0+jjvKnSCZJPBh7gZFRbPgABh0X8Zrpyu2qryOqyC2/NHmq
+	DXz4x+CHMG2x3x8KvtlurdNHdR/zIqusBr+BKssaBi1TSQ==
+X-Received: by 2002:a05:600c:1c8c:b0:439:9ba1:5f7e with SMTP id 5b1f17b1804b1-43ba675a843mr118312735e9.21.1741082077458;
+        Tue, 04 Mar 2025 01:54:37 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGCYvnIe76LEUSPaxBjczhESkT9xksjygv9YFGPgN7D+cz81nubOVGbUrKCatMMMLTJvcstbw==
+X-Received: by 2002:a05:600c:1c8c:b0:439:9ba1:5f7e with SMTP id 5b1f17b1804b1-43ba675a843mr118312285e9.21.1741082077032;
+        Tue, 04 Mar 2025 01:54:37 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bbc030d24sm82094335e9.22.2025.03.04.01.54.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 01:54:36 -0800 (PST)
+Message-ID: <48885074-b590-41e6-9794-49ec12713cce@redhat.com>
+Date: Tue, 4 Mar 2025 10:54:34 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250303234426.GB30749@willie-the-truck>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v9 3/6] arch: x86: add IPC mailbox accessor
+ function and add SoC register access
+To: Hans de Goede <hdegoede@redhat.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: x86@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ platform-driver-x86@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Simon Horman <horms@kernel.org>, Jose Abreu <joabreu@synopsys.com>,
+ Jose Abreu <Jose.Abreu@synopsys.com>,
+ David E Box <david.e.box@linux.intel.com>,
+ Thomas Gleixner <tglx@linutronix.de>,
+ Rajneesh Bhardwaj <irenic.rajneesh@gmail.com>, Ingo Molnar
+ <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ Dave Hansen <dave.hansen@linux.intel.com>, "H . Peter Anvin"
+ <hpa@zytor.com>, David E Box <david.e.box@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Heiner Kallweit <hkallweit1@gmail.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Richard Cochran <richardcochran@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Jiawen Wu <jiawenwu@trustnetic.com>, Mengyuan Lou
+ <mengyuanlou@net-swift.com>, Russell King <linux@armlinux.org.uk>,
+ Serge Semin <fancer.lancer@gmail.com>
+References: <20250227121522.1802832-1-yong.liang.choong@linux.intel.com>
+ <20250227121522.1802832-4-yong.liang.choong@linux.intel.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250227121522.1802832-4-yong.liang.choong@linux.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 03, 2025 at 11:44:28PM +0000, Will Deacon wrote:
-> On Fri, Feb 28, 2025 at 10:09:19AM +0000, Marc Zyngier wrote:
-> > On Thu, 27 Feb 2025 23:12:37 +0000,
-> > Sebastian Ene <sebastianene@google.com> wrote:
-> > >
-> > > On Thu, Feb 27, 2025 at 08:25:57PM +0000, Sudeep Holla wrote:
-> > > > On Thu, Feb 27, 2025 at 06:17:47PM +0000, Sebastian Ene wrote:
-> > > > > Keep the ffa_to_linux error map in the header and move it away
-> > > > > from the arm ffa driver to make it accessible for other components.
-> > > >
-> > > > Do you plan to push/target these changes for v6.15 ? If not, I can take
-> > > > this patch with other FF-A changes in my tree for v6.15. Otherwise, it
-> > > > is must go along with other changes.
-> > > >
-> > >
-> > > Yes, feel free to pick them with your changes and we can push them
-> > > later.
-> >
-> > So this series is not a 6.15 candidate?
->
-> I think this is 6.15 stuff once it's been reviewed. Sudeep's message is
-> a little confusing as it refers to 6.15 twice (I guess he meant 6.14 the
-> first time?).
->
+On 2/27/25 1:15 PM, Choong Yong Liang wrote:
+> From: "David E. Box" <david.e.box@linux.intel.com>
+> 
+> - Exports intel_pmc_ipc() for host access to the PMC IPC mailbox
+> - Enables the host to access specific SoC registers through the PMC
+> firmware using IPC commands. This access method is necessary for
+> registers that are not available through direct Memory-Mapped I/O (MMIO),
+> which is used for other accessible parts of the PMC.
+> 
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> Signed-off-by: Chao Qin <chao.qin@intel.com>
+> Signed-off-by: Choong Yong Liang <yong.liang.choong@linux.intel.com>
 
-No I meant v6.15 both times 😉. Since not much time before v6.15, I was
-thinking if this is not v6.15 material, I can just take the driver change
-for v6.15 itself via my tree. Now that, you have clarified, I will leave
-it to you. I think it doesn't conflict with any of driver changes in -next.
+Hans, Ilpo, are you ok with this patch going through the netdev/net-next
+tree?
 
-In short, just to avoid any further confusion, please take it via arm64/kvm
-tree.
+Thanks,
 
---
-Regards,
-Sudeep
+Paolo
+
 
