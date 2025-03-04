@@ -1,96 +1,160 @@
-Return-Path: <linux-kernel+bounces-544453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD82A4E1C1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:52:18 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C284A4E166
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:43:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CC5880CA5
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:36:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C3D16F769
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D186264618;
-	Tue,  4 Mar 2025 14:34:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0ADE253F23;
+	Tue,  4 Mar 2025 14:35:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KTdCEV/z"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrG21Sfl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1E6020A5C1;
-	Tue,  4 Mar 2025 14:34:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55545253B50;
+	Tue,  4 Mar 2025 14:35:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098889; cv=none; b=didiwaKlSP8O3eHJBszwkTEMBYVuo2UR9tEgQSy4QtUtU5dWygKb/WV717ISOWS2BnoyITC6uFBeNOzFqwQN/sv6ii7M+1AG1bm6QB/53aXoMGN0fAPErKB6pFthDc4rchwg5wi8q39+Ojd2uiiGWDjp37Z3l3rCY+yYiEbxh74=
+	t=1741098924; cv=none; b=ZvKKShG0VW0P8ZUGoFNc0yf9qB+qiAH0p9li1q9mVsTYGT38S9ftItM7Tu9upqOZ8r1/3YdmTdANSBHzH975QWczJR0rQSPmjQAzNqtBGtsiZfZ0MMj9xcUBs2MW6p20Gmf1UORc1/clqb3k1u4ymVLkSkQFBpdZucUQ56kq7i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098889; c=relaxed/simple;
-	bh=lHCP7UG5o883B54j8Ri/yU9SpSbtzNptQnMdgCOoXo0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j6hEEAHoesl4MC/nt9+gQTJlrEY1MBzzv9ipratB/21mSeF9C2V1bcbEcphFfK8Kfv2cKyhO4EzAw6CYG0Eya9kijssELXJl280mWwmf0llro6i5pgGRifM1ix/mX8B9TbkVj1g90DHjGJUmpw4Av0HpZ5HBrzj/wIr37553/ZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KTdCEV/z; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=4Gqyom2Qw8VXFf3AYIpGbjCuS8c9RY7yiAyJBWvJUfc=; b=KTdCEV/zTusAeUlTIrBuBAb6SW
-	QOPuOTIm7BL/bYx2YPLJAYBFDF28jitg9fxcPZ6HfAEBuQ/bthkTDwK5mTWRX18uOq1FNvKIvh7J6
-	nTZB1nFXW3Y9YXExh4df+JzoAmiG3am5R5qRJ7iGejoN6o5z8ZsxZtlZXjVud8XaTZOA/wZPmNnTU
-	gyqZTRpr2ewIXAoPpKPAfT8rwGqDQ6/IUPt7HnGhQrwTp9dhdUv2IhbA+BD94/tn+iAIwwDt931X8
-	61QfDmBDGVaoGcaaRbJJCC8q/qOP13pFtoMMx9v14XgF/L+KL4Bq5OYk1nh6j816lZCTw6sCXW70X
-	Ucn1A1wQ==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=phil..)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tpTM2-0003uT-SQ; Tue, 04 Mar 2025 15:34:42 +0100
-From: Heiko Stuebner <heiko@sntech.de>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Heiko Stuebner <heiko@sntech.de>
-Subject: Re: [PATCH 1/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3399 ROC PC PLUS
-Date: Tue,  4 Mar 2025 15:34:40 +0100
-Message-ID: <174109881585.132749.2987468837584062976.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
-References: <20250304104200.76178-1-krzysztof.kozlowski@linaro.org>
+	s=arc-20240116; t=1741098924; c=relaxed/simple;
+	bh=HA/EqEu0cw/BtzLiMnQRIy7r8rN4w8ZK+l6Ngj/Zlk8=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HYQav3Y2yGdKL+dHm0wewLrFxImEQu2tOhmK8VLv43Jhjt0cyK0Tqs75rrfsh1ssBMyJPzh/0R2eqEPh1A8oGIfwstbGpT52eLVnGxHjjBmTdtk9HHnyUlTaWfGe5ySUeaPt03nC6yLB3mc639i1cwFhWf17u7DGDGbro7WlZP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrG21Sfl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DAC2C4CEE7;
+	Tue,  4 Mar 2025 14:35:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741098923;
+	bh=HA/EqEu0cw/BtzLiMnQRIy7r8rN4w8ZK+l6Ngj/Zlk8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=QrG21Sfl+iAOpw2chf7PBTK8AJg39XjitXV8A7NkvlO/xKNvffN4S4DLsETfFHGon
+	 2BsUYuFXus7so6UwWlsQ2DNZpMpDRvCuUtxMlywfs791DQ3yQtxaaqelaGR3ssC5qC
+	 0NGWgYmEMTmp5PIJ2igP/Yw2PHJx3oPHD9n+CzxpekyG/Gxxw22i/xB92TsEu0SQ+g
+	 Dz5yozoFX2SCya1Wv2/AjHF9bMHillEu008CTGk40ChJO988Gyo/cy2inzJM73wfql
+	 d0k5GGoxLDHpOdYBGt5GrS6acJhcw7/79rFu4p2rPtkwR70ZNcHUDoGY0lzLFwwL0m
+	 ypnff4/CTEDqQ==
+Date: Tue, 4 Mar 2025 14:35:11 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Saalim Quadri <danascape@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com,
+ gregkh@linuxfoundation.org, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH] staging: iio: ad9832: Use devm_regulator_get_enable()
+Message-ID: <20250304143511.1f5e8e70@jic23-huawei>
+In-Reply-To: <20250303221427.30964-1-danascape@gmail.com>
+References: <20250303221427.30964-1-danascape@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
+On Tue,  4 Mar 2025 03:44:27 +0530
+Saalim Quadri <danascape@gmail.com> wrote:
+Hi Saalim,
 
-On Tue, 04 Mar 2025 11:41:59 +0100, Krzysztof Kozlowski wrote:
-> Devicetree bindings for ES8388 audio codec expect the device to be
-> marked as compatible with ES8328.
+Thanks for your patch - a few comments inline.
+
+> Use devm_regulator_get_enable() to reduce boiler plate
+> code.
+
+Wrap patch descriptions to 75 chars.
+
 > 
+> Signed-off-by: Saalim Quadri <danascape@gmail.com>
+> ---
+>  drivers/staging/iio/frequency/ad9832.c | 37 +++-----------------------
+>  1 file changed, 4 insertions(+), 33 deletions(-)
 > 
+> diff --git a/drivers/staging/iio/frequency/ad9832.c b/drivers/staging/iio/frequency/ad9832.c
+> index 140ee4f9c137..a26d7caac131 100644
+> --- a/drivers/staging/iio/frequency/ad9832.c
+> +++ b/drivers/staging/iio/frequency/ad9832.c
+> @@ -74,8 +74,6 @@
+>  /**
+>   * struct ad9832_state - driver instance specific data
+>   * @spi:		spi_device
+> - * @avdd:		supply regulator for the analog section
+> - * @dvdd:		supply regulator for the digital section
+>   * @mclk:		external master clock
+>   * @ctrl_fp:		cached frequency/phase control word
+>   * @ctrl_ss:		cached sync/selsrc control word
+> @@ -94,8 +92,6 @@
+>  
+>  struct ad9832_state {
+>  	struct spi_device		*spi;
+> -	struct regulator		*avdd;
+> -	struct regulator		*dvdd;
+>  	struct clk			*mclk;
+>  	unsigned short			ctrl_fp;
+>  	unsigned short			ctrl_ss;
+> @@ -297,11 +293,6 @@ static const struct iio_info ad9832_info = {
+>  	.attrs = &ad9832_attribute_group,
+>  };
+>  
+> -static void ad9832_reg_disable(void *reg)
+> -{
+> -	regulator_disable(reg);
+> -}
+> -
+>  static int ad9832_probe(struct spi_device *spi)
+>  {
+>  	struct ad9832_platform_data *pdata = dev_get_platdata(&spi->dev);
+> @@ -320,33 +311,13 @@ static int ad9832_probe(struct spi_device *spi)
+>  
+>  	st = iio_priv(indio_dev);
+>  
+> -	st->avdd = devm_regulator_get(&spi->dev, "avdd");
+> -	if (IS_ERR(st->avdd))
+> -		return PTR_ERR(st->avdd);
+> -
+> -	ret = regulator_enable(st->avdd);
+> -	if (ret) {
+> -		dev_err(&spi->dev, "Failed to enable specified AVDD supply\n");
+> -		return ret;
+> -	}
+> -
+> -	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->avdd);
+> +	ret = devm_regulator_get_enable(&spi->dev, "avdd");
+>  	if (ret)
+> -		return ret;
+> -
+> -	st->dvdd = devm_regulator_get(&spi->dev, "dvdd");
+> -	if (IS_ERR(st->dvdd))
+> -		return PTR_ERR(st->dvdd);
+> +			return dev_err_probe(&spi->dev, ret, "failed to get AVDD voltage\n");
 
-Applied, thanks!
-
-[1/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3399 ROC PC PLUS
-      commit: d83f6c32d70f96037cb187e63785e7a58f9e751b
-[2/2] arm64: dts: rockchip: Add ES8388 audio codec fallback on RK3588 boards
-      commit: ced36c336d241eafbc812fed27e6a52908d249bb
-
-Thanks for the heads up Krzysztof, about the asoc patches getting accepted
-for 6.15.
+Please fix indentation. Should only be 1 tab more than if (ret)
 
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+>  
+> -	ret = regulator_enable(st->dvdd);
+> -	if (ret) {
+> -		dev_err(&spi->dev, "Failed to enable specified DVDD supply\n");
+> -		return ret;
+> -	}
+> -
+> -	ret = devm_add_action_or_reset(&spi->dev, ad9832_reg_disable, st->dvdd);
+> +	ret = devm_regulator_get_enable(&spi->dev, "dvdd");
+>  	if (ret)
+> -		return ret;
+> +			return dev_err_probe(&spi->dev, ret, "Failed to enable specified DVDD supply\n");
+
+As above.
+
+>  
+>  	st->mclk = devm_clk_get_enabled(&spi->dev, "mclk");
+>  	if (IS_ERR(st->mclk))
+
 
