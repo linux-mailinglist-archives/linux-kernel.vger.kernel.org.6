@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-543070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2653DA4D125
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:45:19 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52EF4A4D127
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:45:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B458D171793
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:45:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E561C7A7510
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:44:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43F218A6D3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3CE18952C;
 	Tue,  4 Mar 2025 01:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="NLY3E68D"
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QYmfu+AW"
 Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71982147C9B
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5939E143759
 	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 01:44:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741052670; cv=none; b=UBNQ8Z3N8uHh/ZQufQdIu73KGexaBso6uRTr5MHLRMFNMY0glM2DYNrm6KcwjeVnP+PDwmX8gaP4CCNULBw8lXJbO91DXEPgVV6ikoSWDjykMLJywUeUM6pAbZ1AgqDcIUSeFl3c4/wVRgBJvcd8jdA/vmI0R7wqLvThGIjx+kw=
+	t=1741052670; cv=none; b=O4wai+0N+qi3FJQNVqWRW9g/56kZdXCldrCDd3L4DIKyzqEUeXUcmFWMf5nyNZDpwiqwRUc7C9ozuM5LiMnMcHX0G0Spi7g+kcxf/sddrH4oQ4T+6ksiOlQbu56TnAMN2GWFxQgnMART1s01DYEvCt0V/wZ/GETEqxHkC7YdYpQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741052670; c=relaxed/simple;
-	bh=XP3rwzkTa1mXnGdnUHFUWqLPHJxazgMc4cL1Dqwrxk8=;
+	bh=H52on9OF9VHErJX/F0Xzfni4+/Tw4ZDeMorcaCchiac=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=V+J0nb+ku46yXQ+MZY4s98wsQGFVwyyc19EI79zZ8xwuXpIuwqiR7pZzgDfnZ6HmYLbnYcGGfkhx/OEbrbeZnjFpK5yLGvVpuV1Q1A4kzQyJQMS9RHETSPXL6PtNlcn8ju2H1WerNURHFgrxyhuW725Hh3Y9B/ahlMvRRTklf0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=NLY3E68D; arc=none smtp.client-ip=148.251.105.195
+	 In-Reply-To:To:Cc; b=bLj8SzG2XRTtinyzATgPULap/O3Vn1nwCPkFna10um8FWhJAI/D7sqzkBxCL8wwAEvyv3sOaka9Hv0gn0ONzFY1pgjx3yetlRUWlkgYPIdlcIKRr/FrhRGNNIFGUh9ax527Et8ErLY/ffEafC9tOGYfNJ29PThBXw4cPFTJT+/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QYmfu+AW; arc=none smtp.client-ip=148.251.105.195
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741052660;
-	bh=XP3rwzkTa1mXnGdnUHFUWqLPHJxazgMc4cL1Dqwrxk8=;
+	s=mail; t=1741052661;
+	bh=H52on9OF9VHErJX/F0Xzfni4+/Tw4ZDeMorcaCchiac=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=NLY3E68DYDkzVvAkCnu5VDpYvpn0xoEudpCXALBbfaiQT5f/rtb9Zmv3NXOqbxhGc
-	 qdFzoXkH76VoYcLBaFtPqDQYM/MnetZFz817LDvf2hwzaqHjXTxHms9vw/OqGH+6Ic
-	 T3qMqUrZ5Czeea6MobKuohAB+gvJXJQbklJEwacwomyXO+OhPpgXazTOT6ZIi5pZuz
-	 0ePEsUgElXEisUlqex5CtEqpiHJ97rUcrXXy1FqJSrdLrTNkfis/WIlwqewRaC77Z6
-	 m5T0p0JaKYpbtOrXr9mmCVMfr8MgyQaDCgVKlUFM5NrmFrOXXJ3PRXwKKMR4C3L5vf
-	 fW7VxK7rVOkXA==
+	b=QYmfu+AWVA0I9gARdMIhIblPwsKGPekxWE6sUE2o+lgcdl2KQogWTJ1tvMLNaeQ7X
+	 DHl6a2mwQvMTZYbUNkzHOhGlLaleNp1IZqn5XW8HFOufkMDa0JcH3LaXh42Z2rYX/D
+	 TfAndEAQ1hDyM4WSNJcSOK0M+qoIH7Bnky5dgRouAm3fl3ufaztanDXwKro1Yoo8ps
+	 4QzDqkICQsCzaB57g5m1TP4HBC9iYJkbcxmTF5xWteYZYaRfPFQ1RnnDZBH/qcpqeD
+	 gwqq9pBlBgxteMnpQCJTaZc+7XYwuStUdimhOka6R7RfCWYBBu+ReqUjrroKdbDt6T
+	 SOedM8N5yrYcQ==
 Received: from localhost (unknown [188.27.58.83])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
 	(Authenticated sender: cristicc)
-	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id B13CF17E0FD1;
-	Tue,  4 Mar 2025 02:44:20 +0100 (CET)
+	by bali.collaboradmins.com (Postfix) with UTF8SMTPSA id 9552E17E1010;
+	Tue,  4 Mar 2025 02:44:21 +0100 (CET)
 From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
-Date: Tue, 04 Mar 2025 03:44:03 +0200
-Subject: [PATCH v4 04/12] phy: rockchip: samsung-hdptx: Drop unused struct
- lcpll_config
+Date: Tue, 04 Mar 2025 03:44:04 +0200
+Subject: [PATCH v4 05/12] phy: rockchip: samsung-hdptx: Drop unused phy_cfg
+ driver data
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,7 +59,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250304-phy-sam-hdptx-bpc-v4-4-8657847c13f7@collabora.com>
+Message-Id: <20250304-phy-sam-hdptx-bpc-v4-5-8657847c13f7@collabora.com>
 References: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
 In-Reply-To: <20250304-phy-sam-hdptx-bpc-v4-0-8657847c13f7@collabora.com>
 To: Vinod Koul <vkoul@kernel.org>, 
@@ -72,56 +72,26 @@ Cc: Algea Cao <algea.cao@rock-chips.com>, Sandor Yu <Sandor.yu@nxp.com>,
  linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
 X-Mailer: b4 0.14.2
 
-This is just a leftover from downstream support for HDMI 2.1.
-Remove the unused struct for now.
+There is no usage of phy_cfg in the upstream driver data, nor in the
+downstream one, hence remove it.
 
 Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
 ---
- drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 31 -----------------------
- 1 file changed, 31 deletions(-)
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 1 -
+ 1 file changed, 1 deletion(-)
 
 diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-index cf2c3a46604cb9d8c26fe5ec8346904e0b62848f..f9b5c96d6c789e435657e224032d35b5a6950945 100644
+index f9b5c96d6c789e435657e224032d35b5a6950945..06644c3d98d3f8b697fc704704df5acdd3c85bad 100644
 --- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
 +++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
-@@ -329,37 +329,6 @@ enum dp_link_rate {
- 	DP_BW_HBR2,
- };
+@@ -397,7 +397,6 @@ struct rk_hdptx_phy {
+ 	int phy_id;
  
--struct lcpll_config {
--	u32 bit_rate;
--	u8 lcvco_mode_en;
--	u8 pi_en;
--	u8 clk_en_100m;
--	u8 pms_mdiv;
--	u8 pms_mdiv_afc;
--	u8 pms_pdiv;
--	u8 pms_refdiv;
--	u8 pms_sdiv;
--	u8 pi_cdiv_rstn;
--	u8 pi_cdiv_sel;
--	u8 sdm_en;
--	u8 sdm_rstn;
--	u8 sdc_frac_en;
--	u8 sdc_rstn;
--	u8 sdm_deno;
--	u8 sdm_num_sign;
--	u8 sdm_num;
--	u8 sdc_n;
--	u8 sdc_n2;
--	u8 sdc_num;
--	u8 sdc_deno;
--	u8 sdc_ndiv_rstn;
--	u8 ssc_en;
--	u8 ssc_fm_dev;
--	u8 ssc_fm_freq;
--	u8 ssc_clk_div_sel;
--	u8 cd_tx_ser_rate_sel;
--};
--
- struct ropll_config {
- 	u32 bit_rate;
- 	u8 pms_mdiv;
+ 	struct phy *phy;
+-	struct phy_config *phy_cfg;
+ 	struct clk_bulk_data *clks;
+ 	int nr_clks;
+ 	struct reset_control_bulk_data rsts[RST_MAX];
 
 -- 
 2.48.1
