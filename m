@@ -1,142 +1,99 @@
-Return-Path: <linux-kernel+bounces-544119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08247A4DD99
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:13:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17441A4DD9D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:14:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2196B1895CBD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:13:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 45DD8177C66
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:14:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FE6B202960;
-	Tue,  4 Mar 2025 12:13:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10293201261;
+	Tue,  4 Mar 2025 12:14:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="m8DaGVaq"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n4TyB7P5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E4951FCFF8;
-	Tue,  4 Mar 2025 12:13:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBF61E7C20;
+	Tue,  4 Mar 2025 12:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741090412; cv=none; b=jGstIcfOhhmR3+m7ZOpv+rwSjLX30UL9mTeWFcBYkTzxZ6bW+S861ZDryOABkZ6OGjNeCSzyiRhTAr9+jdPIRvP5Z6Eg/ueg1KM30rrtTqNy1zJHFZui+77NJEztZAIPXcX8xrm8HqfvzZFIkfA0GZZzrFG19idKFt4gjatSr68=
+	t=1741090458; cv=none; b=qXCXYXfBKL2sTRNnzdkSvbjUwlhtGOEZhFlMUtx4Ma4lMp5y8k0yvxj8mHKo3Qh7nabpDZWBxDMUSnm+eXHDEjhPu+qjZm+xODmu2umu0ubvMJRf6nIBvWiXpC1huomBb1XmFX65c0GYBq3huBTaHmbaqwAxXsbCXJGA/QBwXJQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741090412; c=relaxed/simple;
-	bh=7ST/V5T4ufxfAK6zfRrOh7zOoHPojg42a5i8W4jN7d4=;
-	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=GevOanvOmpRauPLpdDL8NnOmrZt2Xo4jMP3fTNAXjOnb8QeHKYEA/eQo4TPtULWWtmh4JYDovHIpZWGMkz+K/UDpKvoyBgQFUk9NcBSG7mOeaRijYtYT3H01cZFk6a0xqkLQ1jAbaLxWcjt4KYIFj1HQJy/751aamooG/JpJjGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=m8DaGVaq; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741090405; x=1741695205; i=markus.elfring@web.de;
-	bh=8jLjvIsrxt1ztOb88CQZSdoEqMwJ+liiQTGsFG0knkg=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
-	 Subject:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=m8DaGVaqUR1LtPhqrf1AwI4q/Paf4BbEkZ/0RJ1p7izz9zjemsm41mUIOFArfEeB
-	 dRutbmbaAPP2jbZs+NZ/sTJDfQSmSYb4G3J0KC8m04gDc2BBo+5QtLwjDBMhRSI/w
-	 2jhmvzyVA+b7GNTCJQItAdBQJrnAfzcXIraTZd74MQ2OPxk3mgElaP+9SmQXYZ3XT
-	 a6QBqEH7xgLk/dsOK7bIyawoVFueN0wJ7U21p/uZcn7g+E77o1JrWrn7hNOTkhMOt
-	 Ez2K25lNPZMfRPkvFHEwoahP2iU0iLYDMZPoj/rP81olT1wPknW7AuA0ocOE9I93c
-	 UVO/kjqj47ltPe++Ng==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.64]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N45xz-1t7TWu2fgX-00tTfp; Tue, 04
- Mar 2025 13:13:25 +0100
-Message-ID: <5b73ab68-fab6-417a-a410-69efc1f7b97b@web.de>
-Date: Tue, 4 Mar 2025 13:13:20 +0100
+	s=arc-20240116; t=1741090458; c=relaxed/simple;
+	bh=kui0QV/IEFvVSILBBHTF00Vexk7F9pOPjaXpcJBzIZM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFvZXOLK82789ygWUCRxNgnBTK43meRguoc7d1rch6kmJbL9Ujrw9pbtTtM90u+hL0uX9rOf56U/hYedlVeoOybzB/S3x4m4+59pCzmFaXl7qZfLbM96bPJIg9KCHRJBLJzaXRWkPeLDdunTADjxjagjnJRjgmr+T9Wp3MsU2j8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n4TyB7P5; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741090457; x=1772626457;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kui0QV/IEFvVSILBBHTF00Vexk7F9pOPjaXpcJBzIZM=;
+  b=n4TyB7P5NpomZDTeHfWY1OSbfew6E7Je0Hi0A0Z+I3QHSn0Wy1PW1bHz
+   MjTiCg6yz6MM9MWLQWyIdSS5PVHRESvLT+WS+ulY0R0VynkaPg0AFBIAX
+   qBN20vN3NnLZMoEwxoVeBeQ9650dRg8X+XXR4D49KKSn9D5xM7yoeCYh4
+   +3x28oZdKCcE9FYS+/QjPMaihjn1+VICX7AP3Yu/ufzaaU7YCHp5JwuMO
+   8LQ+ayff55weeXi+84849J2W9qPwePu9cH9VQlrfm5KbTmI6k3Qm6erHb
+   yKHetrmpNbm2XGV5w5ASw1/j039wo02FkL4xJy3Pq2BJp7OoWiI6Q9iEr
+   g==;
+X-CSE-ConnectionGUID: utYvqpsaQXO4AgFjDPT2xw==
+X-CSE-MsgGUID: ePwGyj2DQZu4ULAYOcsHSw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53407950"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="53407950"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 04:14:16 -0800
+X-CSE-ConnectionGUID: f3y5gVtGRZ+HymDffO776A==
+X-CSE-MsgGUID: WdkTj8vQRfuz24mHlj/0pA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="118225136"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 04:14:15 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tpRA4-0000000H7N2-1OzN;
+	Tue, 04 Mar 2025 14:14:12 +0200
+Date: Tue, 4 Mar 2025 14:14:12 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
+Subject: Re: [PATCH v1 0/4] Input: Increase size of phys in the drivers
+Message-ID: <Z8bulFaTKJ06YLrL@smile.fi.intel.com>
+References: <20250228121147.242115-1-andriy.shevchenko@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: linux-perf-users@vger.kernel.org, Adrian Hunter
- <adrian.hunter@intel.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>,
- Ingo Molnar <mingo@redhat.com>, James Clark <james.clark@linaro.org>,
- Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
- Mark Rutland <mark.rutland@arm.com>, Namhyung Kim <namhyung@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>
-Content-Language: en-GB
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Gaosheng Cui <cuigaosheng1@huawei.com>,
- Jing Zhang <renyu.zj@linux.alibaba.com>, John Garry
- <john.g.garry@oracle.com>, Kajol Jain <kjain@linux.ibm.com>,
- Ravi Bangoria <ravi.bangoria@amd.com>, Rob Herring <robh@kernel.org>
-From: Markus Elfring <Markus.Elfring@web.de>
-Subject: [PATCH] perf pmu: Improve exception handling in perf_pmu__lookup()
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0OubccCHVQhlmpwYMG5xgA/CpBovpnSMBDhgzGtKvcLodpvCVjd
- VqbpdJSMLP727VOxVDRFqTa7ieI3lWFBqdLirfvGSDsXjpeqeZSzddm+wkoQno+V1oR5Do5
- Bazzdp8/wrunUSWLQzG/tbbr2v47fUW1nEyuVByHstsBDwTmSIKWr9dy/oZUwHx5a6otk3C
- BieYAzx5syD0OIo7dY9gA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:wGbjeNQv/YQ=;IGWOgLk/VsQNZnnrc02749sWvfa
- RBmVLo188gAN3iXeOtKsuvoP6j0/VTAsyBYaHEaofzpwMjjRe6pegkMnYVsIs2BM46mCVDQbJ
- XEAqGS1gMhXix76bwPn9FXT+aVDPh3ZJ8SWoyxC/H7CKfd+bu3GREk0HSW4F48G/uh07VBLLN
- 6BBp02djnUI5OuNwxP/3LnQzOpNKvjN23l2BDr/ghdXu1WWn/L0fuo9IHUfNvrTuZ1fjlIMnC
- 204T1ZC5wJO12AEtH3WSi/Uiclt7VIdKxT2IUryrMdpX3wh9TcSIhbBYBmJVBWvWrmoWez0a+
- 0YYMZLprLm53rIChiZE7RpF9qGBh2wfQkWByczIiRpaRd7F4tuM4w3lziTMSv6ubeUXCTSk4v
- 9z6Il+n/fZMFBzbfs4PK1ZCRdjoI8Eliv/hfpXVos2lyKf+KeAAEevn7BFrRTDuVXo3CN/YGr
- 1djPxLr14h2CToLIUl36W9kKgYtt8575cud/WtYpNFZCV9TTVPnbG1UhZKxHE3n1DaTJ4A0Bs
- f87wUGHYXtkXUAglGXL4H7IqwcCCsxRHpWciQN0WBpVsa6dcl8P4xb7DXgjgEiym7pc4vHAnv
- O5Z5rFDpfEHBRfCVcK/2pEcrUwasMhVhadI8g8wUDQDPE5LNvPeHENfcHIVWIvshJPrIBiL2I
- tDzUl42tsCBVDxq8lkvn6zoGl0Jj1v1c0viAYvKakwhYUQs1i/Nuo6Dr30TIoEn9idN//sTKq
- nBvCIFC6M/viJYz0TbMABFMyR+X88qhtoWTVUWMhhTIQyQ+8l983Ll4IQetzvdcIuJIK8Pw/w
- vu8IV6/NSecArB7d5vtkrGBN+7+qzzWXQHLBbLjlXemnqtE/757bR59p+EfcMZix5Ki5hETr7
- 6NJLduv7dw4E4yDUXVZ9xtkCa8szJWqkf/YI8OMOPAY3EaVsuuXGohcTLanr4Fr5QoR8/JdV7
- iUoMJ50D58iupu3qkdJICV0o2JGYb6g9sfOCrae1ieC3qe4ytSPyLO65b8T167oNZHFAo/pcV
- wGE9CsQCXeq2Z+fzLMn/5U3ppBO+8+06oVr2UNkjDcVHAqyjr8HHombdDJT6OUMCY38PiywuM
- IWDLVkj2IP1fETmqr2QN/1k25gA5bQjlMHMkulsc0WKPBP6gzN9WPWpQtXo0MUKlHZdqheS8+
- In27X3uDIIT2qyru+Lg9XIXtoHJBR3Yf6u7qfxkSrv+ZTYuUtt+sDQjiqIAKc21nsi9LNjSQ+
- donvfUyvD2IBBu9sbIWPuAQ7+PL1nLmhUpF82R8OlQcePXxQ6CDj50b4+Zd6UvpaszA1pLMGv
- RiRag6MVOK3ZQZ89fkTKuzPVehk3cwSUQQC4WkIdSplhcQB8Cl8suGC/6WWHRK1Yp7qLuIq4l
- 9W0XTjf3DE5D37lTnKRXpwqDGN7wLZvEZNlyb9TpoMbERmcK9jHsELBM7OF4FSgykglErvBjy
- uCLpMZAToikZ4pKccUDE0YCYnlSM=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250228121147.242115-1-andriy.shevchenko@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Tue, 4 Mar 2025 12:55:05 +0100
+On Fri, Feb 28, 2025 at 02:07:43PM +0200, Andy Shevchenko wrote:
+> The drivers are using local member of 32 bytes to hold up to 40 (one-byte)
+> characters. GCC complains on that. This series fixes the issue in the affected
+> input drivers. Note, this is currently the biggest part of the warnings that
+> are being treated as errors with the default configurations on x86. With this
+> being applied we become quite close to enable CONFIG_WERROR=y (which is default
+> and basically reverted) in CIs. Clang, OTOH, has currently no issues with that.
 
-A zfree() call is not helpful after a failed strdup(name) call in
-this function implementation.
-Thus use an other jump target instead.
+Would be nice to have a comment on this rather sooner as this impacts
+the compilation by `make W=1` with WERROR=y (which is default).
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- tools/perf/util/pmu.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+-- 
+With Best Regards,
+Andy Shevchenko
 
-diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-index 57450c73fb63..74eb46390233 100644
-=2D-- a/tools/perf/util/pmu.c
-+++ b/tools/perf/util/pmu.c
-@@ -1107,7 +1107,7 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *=
-pmus, int dirfd, const char
-
- 	pmu->name =3D strdup(name);
- 	if (!pmu->name)
--		goto err;
-+		goto free_pmu;
-
- 	/*
- 	 * Read type early to fail fast if a lookup name isn't a PMU. Ensure
-@@ -1155,6 +1155,7 @@ struct perf_pmu *perf_pmu__lookup(struct list_head *=
-pmus, int dirfd, const char
- 	return pmu;
- err:
- 	zfree(&pmu->name);
-+free_pmu:
- 	free(pmu);
- 	return NULL;
- }
-=2D-
-2.48.1
 
 
