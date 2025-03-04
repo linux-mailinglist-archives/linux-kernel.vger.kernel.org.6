@@ -1,78 +1,74 @@
-Return-Path: <linux-kernel+bounces-543262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 146FCA4D38B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:11:48 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F932A4D395
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:14:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1389F1730BF
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:11:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 184A57A3F9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:13:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 162651F4E4F;
-	Tue,  4 Mar 2025 06:11:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAA01F4E37;
+	Tue,  4 Mar 2025 06:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="AUPfMz6H"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gX6nNpzk"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864DB1F473C
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:11:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F416C1F473C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741068698; cv=none; b=FA+/iFMInKdRbbg56Iax8cxmJwWldgXke7hzMoR/Z8O9YjNGUWsKVSh99hj9qbksBD0nHTfxU3apz3g22dXPpolZ5xgDmYrFwYKb0YVjgCM80YfIMN7ME8fZ4pjiIcNamkDu59VKAPoiYb25FCsn1R51YTVhD3Nu9teXPUvAnZQ=
+	t=1741068849; cv=none; b=LDoPhHPstuusOb90TyqdVx9DeA6rMV6Ciy+3vPob0iNoul/BGCM9ckMXQ5IjqGXpLzy9e0+Bx8vP1Jm5K3IXi97fHA09PzVkky1yxfb+Et7aJhxcMN1u5ybPihQ7c/Z/Cbn2BurHG+CEjnzfEeyBY69mR6bFyfIU7OuqJctkOfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741068698; c=relaxed/simple;
-	bh=xVZb2uxImUx0ECcSqYKHOxrGyYGp1I4gtxr8DYt1oOg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kEeKuCPrpUvu+n7YIhiYfHRuL0ioNLKR7dM4ZPIb4lZmbox/MfNFAVs9T5f/9STJCkCSQVsKxZoRarBvAmALZI6fLt9N9d7nMDh8kh5IHSXNBo/hRcEGBEDYPWn8mWzPIP/q6eeXapNMoXSdk4GQfRe9lV1BszVGOn/YIsE+SWQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=AUPfMz6H; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2feb9078888so8399677a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 22:11:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741068696; x=1741673496; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4FvNFViwfp2APOt2jux8SKthZ9o17Z2NZrToAsK4eao=;
-        b=AUPfMz6HBETFK4R0Mgs28jh2E0iSLs4SSEp7XTmoiALoDkS//Uy7h4hJbFXzCH3UcR
-         lGIj13pM/OuDs+VBhkjVDmvJpWnMaiqk3LM4WUKgsyzn/uq3QVeTneYl9F5gefREB3Es
-         UYCXiAMwlluep6lkTCQAPfgOCzsmZm86Hl+GwRNInToF+9pD95vYLhQ4ute8JQsrKTXi
-         yBQXB2yWVOzjPbFf2j5JZnM+ScKcqEVfgVBLLa+05TxvwRCNF3TBP2jVaSOiI4nBuv33
-         t27pXqg5Pf3y1O8teLeBXMcQc8bZr2I5Rv3DKEAWMgJUq9Uek4VgjicA9lYrdV/B9XMI
-         3PCw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741068696; x=1741673496;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=4FvNFViwfp2APOt2jux8SKthZ9o17Z2NZrToAsK4eao=;
-        b=Tt8zyPrEXsnPWtd/u8UxxWZRhWieZEW6bPP4eCkaqUTUpnYfbNTQKsFWKAcElFEFLc
-         Qepi1SXuAStzZFFw4yrwrHXNMeldVqbKGS9uzk9jl6WF7CaRgJkSjQS0OnNSjsbqdZBm
-         qGHU+qLDkGYEaUS0vsAd788NnfkXbJnxxf7fWwLcPlYyi0b705UdGtg5nnvO66DYh9pt
-         6EwcqzLrmEbbgrU+u/WHlW9ApsYTpKNdeJyCPOTuQz+pQ3mfCie6JEK2dUB1s/DHekGq
-         lO1Lj2u8x0sCoYogkVbLTLEIkQZuzaVHoXHzGp7CdB6YuEKGi3UiV3qYbiajZdx+cnhH
-         8B6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXO8jkumP/BzQMNof2K9dXM4nWG/DGzw1ArES3yyVzFcDKKUd04EoydWqPasO6qEUEk6YgmFxMz4bszpsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrUPSdzIlN1C/VwVOtcsHpmY53jLitkD8aWldaBfujCEo3UG//
-	HQBoTKQl+5uPwMvWTAdgjonZvJ+n07SbolQ5M1w0musuq53rGXec0QKGVuyauHw=
-X-Gm-Gg: ASbGnctJK12Qh0gpPJoQCX4gXdxq2am59oxFFas3OpUmjd3fjUqWSN+tZAaWm5OBpfH
-	0HLKG0EZXtz9m3LRKBWqjUjPd+UR1oeiNVuW6BrdRhbH89cQgWijQ71tQmfjUFgkpRkhys+kex0
-	FaglkNBUlWafX6kBdvLJ0fkRMRtoqfVd2lnLqSJTWUG4tVIBY5oonYCAX21DRQFE3iDprFSzENm
-	TXG/jUSv3ZQCy+kmlYGqkbh04M/AlTEK4Br9ykXXG0fNFU565iADNw2a9LF0JP8ocxmoFbpbdg7
-	GopFHl4xWdK28T0/ooW0NGbsrLWlvC0vJEMqcu6zDbXnIfFu8HSZt/MWdUpvWuLhzAY6
-X-Google-Smtp-Source: AGHT+IEXDQyCMQ8sBrL+0HeKoJpZdetEfwPwd6LYj+c4cbVY5/CTPcBDN/0v1nn1xNdV90cajxorag==
-X-Received: by 2002:a05:6a20:db0a:b0:1f3:40d3:67d4 with SMTP id adf61e73a8af0-1f340d369d8mr504424637.30.1741068695820;
-        Mon, 03 Mar 2025 22:11:35 -0800 (PST)
-Received: from [10.68.122.90] ([63.216.146.178])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf23b6sm9305805a12.15.2025.03.03.22.11.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 03 Mar 2025 22:11:35 -0800 (PST)
-Message-ID: <7d1c834d-bc65-4979-9b72-0d1d91019501@bytedance.com>
-Date: Tue, 4 Mar 2025 14:11:24 +0800
+	s=arc-20240116; t=1741068849; c=relaxed/simple;
+	bh=im/716aKdF1FfmPuAkp4HiYlnjxxN1BasODt1lHp0e8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=X4kReIQCpnpV/+ooYn4dk6Kt7GsZUUUt5aJ0Rg8UJTMR5EGeHwVP4w0j3wfx8JUhgkUqXwmgKRoc9kk2yE5KP0mVV8+obPPWe2DRYKUQf9r2ktHJEhDma6Sm1LII2M294cwz3VVGHGcalzUkabB9JMePTiEPD+GG9ASjyJzoLCU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gX6nNpzk; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523KdhZi019982;
+	Tue, 4 Mar 2025 06:13:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=a5BV+S
+	xL8+Es1imNgFblJNa3ir2+3xn4jrC/hhK3tVY=; b=gX6nNpzkqudh7X+mT7ypfv
+	dSx2em3igMxsOC2Mr9DEo2PCVvyb2k9wExRfcKAjGtQ6M3rus2NSik6zGndFkdJo
+	S4OQTObJoytSkkW2MvlJnzUF08b5ebp+EINBwt/Z2z7B0uUHS4YC4KOn3UQUl3GT
+	udrz2Q6KZNBFUYE1n//eZ/OC8bZ/ZvL9EuZTmw50Dj+kdHuwtW290F4DTIlrj9cm
+	AVhpisERwihU9xsfVKlcFIdxdqhBmfwCke3TO9W3OHmd99v7IuOIncgDZoC6EGMS
+	qKAZNtq0B2wOJT2LXCTicRdH/7wYE1AfHA9tvOGaFVIANbOYYnOIXk4z4zxeIwpg
+	==
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455kmyj2cr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 06:13:51 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5242uaGH032680;
+	Tue, 4 Mar 2025 06:13:50 GMT
+Received: from smtprelay03.dal12v.mail.ibm.com ([172.16.1.5])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 454cjsv5t1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 06:13:50 +0000
+Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
+	by smtprelay03.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5246DoKL25363126
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Tue, 4 Mar 2025 06:13:50 GMT
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 585AE58059;
+	Tue,  4 Mar 2025 06:13:50 +0000 (GMT)
+Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D499758055;
+	Tue,  4 Mar 2025 06:13:46 +0000 (GMT)
+Received: from [9.43.105.169] (unknown [9.43.105.169])
+	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Tue,  4 Mar 2025 06:13:46 +0000 (GMT)
+Message-ID: <47aa8b75-96b6-4e37-bb62-ad758b414076@linux.ibm.com>
+Date: Tue, 4 Mar 2025 11:43:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,63 +76,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/6 update] mm: pgtable: convert some architectures to
- use tlb_remove_ptdesc()
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: peterz@infradead.org, kevin.brodsky@arm.com, riel@surriel.com,
- vishal.moola@gmail.com, david@redhat.com, jannh@google.com,
- hughd@google.com, willy@infradead.org, yuzhao@google.com,
- muchun.song@linux.dev, will@kernel.org, aneesh.kumar@kernel.org,
- npiggin@gmail.com, arnd@arndb.de, dave.hansen@linux.intel.com,
- rppt@kernel.org, alexghiti@rivosinc.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, linux-csky@vger.kernel.org,
- linux-hexagon@vger.kernel.org, loongarch@lists.linux.dev,
- linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
- linux-openrisc@vger.kernel.org, linux-sh@vger.kernel.org,
- linux-um@lists.infradead.org, Geert Uytterhoeven <geert@linux-m68k.org>
-References: <19db3e8673b67bad2f1df1ab37f1c89d99eacfea.1740454179.git.zhengqi.arch@bytedance.com>
- <20250303072603.45423-1-zhengqi.arch@bytedance.com>
- <20250303155331.de9b2fff9b04984a255a7bc2@linux-foundation.org>
- <c48715aa-8c1f-41bf-92a0-bacf401c2f7c@bytedance.com>
- <20250303200815.53007fb79e5049a99f24c999@linux-foundation.org>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <20250303200815.53007fb79e5049a99f24c999@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: Build Warnings at arch/powerpc/
+To: Venkat Rao Bagalkote <venkat88@linux.ibm.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        Stephen Rothwell <sfr@canb.auug.org.au>,
+        Michael Ellerman <mpe@ellerman.id.au>
+References: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
+Content-Language: en-US
+From: Madhavan Srinivasan <maddy@linux.ibm.com>
+In-Reply-To: <8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: NEfGyNMC3dJmZxbfR_uXgeNFAFsu3hBe
+X-Proofpoint-GUID: NEfGyNMC3dJmZxbfR_uXgeNFAFsu3hBe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_03,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=913
+ priorityscore=1501 bulkscore=0 impostorscore=0 lowpriorityscore=0
+ mlxscore=0 malwarescore=0 clxscore=1015 phishscore=0 suspectscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040049
 
 
 
-On 3/4/25 12:08 PM, Andrew Morton wrote:
-> On Tue, 4 Mar 2025 10:31:07 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+On 3/4/25 10:42 AM, Venkat Rao Bagalkote wrote:
+> Greetings!!
 > 
->>
->>
->> On 3/4/25 7:53 AM, Andrew Morton wrote:
->>> On Mon,  3 Mar 2025 15:26:03 +0800 Qi Zheng <zhengqi.arch@bytedance.com> wrote:
->>>
->>>> Now, the nine architectures of csky, hexagon, loongarch, m68k, mips,
->>>> nios2, openrisc, sh and um do not select CONFIG_MMU_GATHER_RCU_TABLE_FREE,
->>>> and just call pagetable_dtor() + tlb_remove_page_ptdesc() (the wrapper of
->>>> tlb_remove_page()). This is the same as the implementation of
->>>> tlb_remove_{ptdesc|table}() under !CONFIG_MMU_GATHER_TABLE_FREE, so
->>>> convert these architectures to use tlb_remove_ptdesc().
->>>>
->>>
->>> checkpatch warns.
->>>
->>> Do these things have to be macros?  Switching to static inline fixes
->>> the unused-arg warning in a nice fashion.
->>
->> This can be switched to static inline. In addition, I found that alpha,
->> arc, microblaze, parisc, sparc32 and xtensa also have the unused-arg
->> issue. Do I need to add a new patch to fix all of them, or just fix the
->> newly added 11 warnings?
 > 
-> I guess leave things as they are now.  Switching all these to C
-> functions can be addressed at a later time?
+> Observing build warnings with linux-next and powerpc repo's. Issue is currently not seen on mainline yet.
+> 
+> PPC Repo: https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git merge branch
+> 
+> PPC Kernel Version: 6.14.0-rc4-g1304f486dbf1
+> next Repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git master branch
+> 
+> next Kernel Version: 6.14.0-rc5-next-20250303
+> 
+> 
+> On linux-next kernel issue got introduced b/w next-20250227 and next-20250303
+> 
+> 
+> Build Warnings:
+> 
+> arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
+> arch/powerpc/crypto/ghashp8-ppc.o: warning: objtool: .text+0x22c: unannotated intra-function call
+> arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
+> 
+> 
 
-Okay, let's leave it for later.
+Can you please specific the compiler and compiler version you found this issue with
 
+maddy
 
+> If you fix this issue, please add below tag.
+> 
+> 
+> Reported-By: Venkat Rao Bagalkote <venkat88@linux.vnet.ibm.com>
+> 
+> 
+> Regards,
+> 
+> Venkat.
+> 
 
 
