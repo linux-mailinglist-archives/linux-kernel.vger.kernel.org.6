@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-545541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D46AA4EE58
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:29:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0733FA4EE59
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7414175004
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:29:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A2753A949D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6981324C691;
-	Tue,  4 Mar 2025 20:29:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1105225FA09;
+	Tue,  4 Mar 2025 20:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Y2yeFByn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QChqHiPG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nySXIn4T"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C12C47DA93;
-	Tue,  4 Mar 2025 20:29:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DEC1FBE9E
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 20:30:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741120178; cv=none; b=noQFT0RZerPEbNEscgxA/GetuAvzssNE1TT9p6swJsfgCxPhNAvnqjJEUiacXRgSbSJ4CVLMRnuZYybCVCBYS7Y1ZTW8PtaViIJLuqAF9W2TGzcg3mB7zdFJ0zBnQq4uX5kB0xWiTCO9jTI5RyWGWFmzc1MjooKsaXmyynnYD+Y=
+	t=1741120208; cv=none; b=XBOBPhP9ztXkSLEXlTFh0cHck24M4OhfCd3O37L6X3/NNHByK4KFP74bD50Aa7t98QbhPHY/e5Y0yKyIjzRgDIZ931KXVuCBI9ThuRf/il9VOmpbTPidHaQ+LwEzvhSGiVuhj5b8uYE4jZocCONWicipnw1q8bklyGppo5N23U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741120178; c=relaxed/simple;
-	bh=yl1gXSlJsN8H9ydbR5FXEj2taPLWGcn+Mnk5OyzW3m4=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=geSfWQizDo8ST5Uk5yzD5Wqe2j2/1D3hMIv0cgDDAcsAMLI6lIB+p0H/7xErAsd7ei1g9afAaB91mUcALCCEgWGl8z1rZVUPTPO7ntun3VT0kLc8pkwJ6YN/z1rqNRKGki8o3d83Z8OaisQ9MaU7JOg77vwPlBY9PIzi9YPh1+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Y2yeFByn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6403C4CEE5;
-	Tue,  4 Mar 2025 20:29:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1741120178;
-	bh=yl1gXSlJsN8H9ydbR5FXEj2taPLWGcn+Mnk5OyzW3m4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Y2yeFByn+oSPCNEL82Hkg+IOzetq1PUlN3DRPy/iym6rskp5rF5lsyGUl7awLGrQw
-	 0NKzhdQrSQZcJYUhV5uvGhFCak77wio46k4fiRtPYhmu2Trn4OpRMHO6CT11X50f7N
-	 pXOLKgfU3ljauU1VP9xjfba4Jr0yqAjukiYRCAr4=
-Date: Tue, 4 Mar 2025 12:29:37 -0800
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>, Ryan Roberts
- <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, Yang Shi
- <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>, Kefeng
- Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>, John
- Hubbard <jhubbard@nvidia.com>, Baolin Wang <baolin.wang@linux.alibaba.com>,
- linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, Kairui Song
- <kasong@tencent.com>, Liu Shixin <liushixin2@huawei.com>
-Subject: Re: [PATCH v9 2/8] mm/huge_memory: add two new (not yet used)
- functions for folio_split()
-Message-Id: <20250304122937.069e539c99c3b1b51985c467@linux-foundation.org>
-In-Reply-To: <408B0C17-E144-4729-9461-80E8B5D1360C@nvidia.com>
-References: <20250226210032.2044041-1-ziy@nvidia.com>
-	<20250226210032.2044041-3-ziy@nvidia.com>
-	<2fae27fe-6e2e-3587-4b68-072118d80cf8@google.com>
-	<408B0C17-E144-4729-9461-80E8B5D1360C@nvidia.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741120208; c=relaxed/simple;
+	bh=n+XCb/mQEAvyAxQV+XgBHDE6MBmGaRcXkZI7v7tKpzk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k8nfxPa9wNdRsVxRNUFkUa5sCDO4dPrdG6l2i6F5MJl0ucBKLtxAl3zU3NWzogJgnp+Hq3M/Mi5lNLAx2PDFx26wnVhAKT9P61arqUQAfgiq/EDuURn30i4UDR+aS4EihJI6D7toDipmUA8aldUCBNd3nMdw99r+LZNmTONZwwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QChqHiPG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nySXIn4T; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741120205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tawQ88tVituZhPa5H5T3lpBwSfKDNHrvVgtDD+CYQI4=;
+	b=QChqHiPG+CnvjO/82iHkHr0B6rZPgzrx84YI0CN76pOtl+4UVQHEaHcxI84EgHYsN8i02V
+	IpWTawcy/nd29Ff7nK83zCdXk1/30084p2kgpqSwX3RaifwT4Uigl+pqritJ+j7Wf75Oq1
+	tzNvL2QwEZtnmFQvYpmzCiRpBu4c8t4wRng6n/Y6m956IxzwQTjncU5yqtLLGy3FuOYi+t
+	IKtxcU3YyTcDeBz4xx32gZulQa6lM5r/X/M1MTPygjXA/UC9e7CUbk/5QA9+ih/dSiWJWd
+	BJzaMAu2l5pYjTxhNIb3hntUhFgK6oG2nq3Ncc0dEu71O0CMXHE3CfE5salwyw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741120205;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tawQ88tVituZhPa5H5T3lpBwSfKDNHrvVgtDD+CYQI4=;
+	b=nySXIn4T8CjjAkp1ZzKiHZ6kL47T+Yl7S7Wo2p0xYx7ivX2Y4LfpdDAk66BqNStm0WmSUx
+	bd3KxpKcJiXzP6Ag==
+To: Cyrill Gorcunov <gorcunov@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, Frederic Weisbecker <frederic@kernel.org>,
+ Benjamin Segall <bsegall@google.com>, Eric Dumazet <edumazet@google.com>,
+ Andrey Vagin <avagin@openvz.org>, Pavel Tikhomirov
+ <ptikhomirov@virtuozzo.com>, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch V2 10/17] posix-timers: Make
+ signal_struct::next_posix_timer_id an atomic_t
+In-Reply-To: <Z8c-vvnMpPjYRvOn@grain>
+References: <20250302185753.311903554@linutronix.de>
+ <20250302193627.543399558@linutronix.de> <Z8YPQn0UpxucZLJP@grain>
+ <87sentbyer.ffs@tglx> <Z8c-vvnMpPjYRvOn@grain>
+Date: Tue, 04 Mar 2025 21:30:04 +0100
+Message-ID: <87mse05yk3.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0
+Content-Type: text/plain
 
-On Tue, 04 Mar 2025 11:20:53 -0500 Zi Yan <ziy@nvidia.com> wrote:
+On Tue, Mar 04 2025 at 20:56, Cyrill Gorcunov wrote:
+> On Mon, Mar 03, 2025 at 10:24:28PM +0100, Thomas Gleixner wrote:
+>> 
+>> Welcome. Some quick validation with CRIU would be appreciated.
+>
+> Just tested in criu: works without problem, both modes -- with new
+> prctl and without it. Note that I only have ran separate posix-timers
+> test case, probably virtuozzo team might do more deep tesing.
 
-> Do you mind folding Hugh’s fixes to this patch? Let me know if you prefer
-> a V10. Thanks.
+Thank you very much!
 
-I think a new series, please. I'll remove the current version from mm.git.
-
-Can I suggest that you repeat Hugh's testing, hopefully see the same
-failures and then get in and debug them?
+      tglx
 
