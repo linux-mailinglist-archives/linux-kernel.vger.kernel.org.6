@@ -1,152 +1,116 @@
-Return-Path: <linux-kernel+bounces-545639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3FFAA4EF7F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:43:38 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1224A4EF81
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:44:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 20057188FA53
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:43:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E53D3A9EA4
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:43:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34FB4277028;
-	Tue,  4 Mar 2025 21:43:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E76242777EE;
+	Tue,  4 Mar 2025 21:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m7M13DMR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="LbGXHHBl"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87ADC24C06A;
-	Tue,  4 Mar 2025 21:43:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AE1A259CB0;
+	Tue,  4 Mar 2025 21:43:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741124611; cv=none; b=qcS/Uo3TqQuDJyZ9krtrtLWjv5pQKF+xnVpCd+SoC6X//Qt1DIA+O1vLSUP90GNOCGRVXnw71kgqFLOMg7kxDwDk77+zYFYG7aMzBB/wpnQht0ZDJ+Tj47Mn6dSsH1wBjwyTOChBAwRCWwFMzNJQVGZ/TKnz8zFv1rHm0HovQ6g=
+	t=1741124640; cv=none; b=MXoTXkLdtyN7fj6INF9yUSPOOFRWLSpXF5k+PN+spAFiMYdxeb+tEhMaLYzMMrktRvfhn3v7xeU1yz2m4AeWAIg3b1pOm4JRmlB5xmXRDhDeGMAIZuAFmFWTZwBEn6rLUb54RvBtR6uDTSV8wxSkt7XjLYEuu7N+xHaoXVEsHHg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741124611; c=relaxed/simple;
-	bh=poIfZ6zxpAupZhduwjOEwwCNb5TCatwUR+RgFojwMQU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GqUergLfBiSJYUQ51zPw14iTX6Y9SSlM9Pt0aGyH9yzkkZSwqI1VWT/3i8fqzqTZ3bCRXrxTIqtoygi939FwLJE+wzTCh4/8B/hn1HBzEFwi3E8MLCQQzt08eMwksAdud9bFWJs6H3WQP/EiAqAWs7h+2W342scM/+18JlT7rH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m7M13DMR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E8D8C4CEE5;
-	Tue,  4 Mar 2025 21:43:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741124610;
-	bh=poIfZ6zxpAupZhduwjOEwwCNb5TCatwUR+RgFojwMQU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m7M13DMRjwg+vDheRJTY+qkx6bKmvLxcYOQpZXq1uAj0Lo11e5hVpGofX/NDmd/Ww
-	 Eg4BwxN9BIo1acUHnq1sDEwnXrdWNFizQ4a6sUB+DkrVgPWZ1AAZXMkd00CYdbwpCS
-	 juAV+L4Nvoqt64c1Qk3IAoMGOIaXCxiZVoqqD5h75RCjBdJFXJRfd5mZMEwuDmRIgK
-	 P7R6gM4mIdIOxiyDdBTXD3BhtxlSpvHcK5LaGrCC+hoocZRt2IfhJBfwL1CWpiHtgx
-	 NEzO4orCP5eqyr8kLxVZPx5nlIvgOpuF7a4qf/lMjtgXXZbBOzS+5m57eT0xOfMsyw
-	 5WOfTT8RL7xxA==
-Message-ID: <2b3aad9e-5288-45d5-bcdd-9dbc4f7298b4@kernel.org>
-Date: Tue, 4 Mar 2025 14:43:13 -0700
+	s=arc-20240116; t=1741124640; c=relaxed/simple;
+	bh=uJqRyRDrhR+bFdnuWX2kCJ50vTE2fJm3kzGtsIJnJxA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PEgip5fbDRaRY35ze/dXk2CaO7bet/Em+/u+hs2m1jndCbu8uV5iGMGwmnQWzL+goMw69Na7/X+AYkKQLDi9aduytULU/cSOZcvqiVQJDK2J75D9sVn9SsH47zm4i9Pnxv5bF3UOyWkU0d2Ckyl99WZsSMnUhxSJAxtvhr8knkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=LbGXHHBl; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741124636;
+	bh=uJqRyRDrhR+bFdnuWX2kCJ50vTE2fJm3kzGtsIJnJxA=;
+	h=From:Date:Subject:To:Cc:From;
+	b=LbGXHHBl6KhPy/rpTrUoczuClXv2maOy4LlaICgDAB0XkxKniLAlukTFjfjubpynP
+	 /YHL9hz9jarB6GSaY96TCvaTf1wUfIfEV0HZwyYnD8X5t0nAarZfqh5ztcJ2/bbBi3
+	 tBc6LXK4gsnMjbFgHBXXgdJYtkp9T0ozQ0r/kQAsJI7329SbgnUwbV5jlWNLpx04YI
+	 wyOo2oAUEcHs+8UTT87+rvVbNAAxKG3NweMNkLqIDcgcVMXLh8MZugLJ1nqwSa2hpC
+	 lDW1+UdyN9D9l+l2pKTYJpbibsbARcOeLL9yLXcnhJPP8X9uKgoScCdS0m7Sh8ecj5
+	 6IbI5zRDLFtQg==
+Received: from [192.168.0.47] (unknown [IPv6:2804:14c:1a9:53ee::1001])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2D20C17E087E;
+	Tue,  4 Mar 2025 22:43:53 +0100 (CET)
+From: =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+Date: Tue, 04 Mar 2025 18:43:49 -0300
+Subject: [PATCH] arm64: dts: mediatek: mt8390-genio-common: Add jack
+ detection with accdet
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation/CoC: Spell out the TAB role in enforcement
- decisions
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Shuah Khan <shuah@kernel.org>
-Cc: gregkh@linuxfoundation.org, corbet@lwn.net, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, conduct@kernel.org,
- tab@lists.linux.dev, Miguel Ojeda <ojeda@kernel.org>,
- Steven Rostedt <rostedt@goodmis.org>
-References: <20250304194813.11049-1-shuah@kernel.org>
- <20250304200947.GF30583@pendragon.ideasonboard.com>
-Content-Language: en-US
-From: Shuah <shuah@kernel.org>
-In-Reply-To: <20250304200947.GF30583@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250304-genio700-accdet-dts-v1-1-86d77c5cc745@collabora.com>
+X-B4-Tracking: v=1; b=H4sIABR0x2cC/x3MQQqAIBBA0avErBuYzBK6SrQQHWs2GhoRSHdPW
+ r7F/xUKZ+ECS1ch8y1FUmwY+g7cYePOKL4ZFKmJRtK4c5RkiNA65/lCfxXUVpvZBA7KeGjlmTn
+ I81/X7X0/CZbG82UAAAA=
+X-Change-ID: 20250304-genio700-accdet-dts-4a4767fef27d
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, 
+ =?utf-8?q?N=C3=ADcolas_F=2E_R=2E_A=2E_Prado?= <nfraprado@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 3/4/25 13:09, Laurent Pinchart wrote:
-> Hi Shuah,
-> 
-> Thank you for the patch.
-> 
-> On Tue, Mar 04, 2025 at 12:48:12PM -0700, Shuah Khan wrote:
->> Updates to clarify and spell out the TAB role in approving and overturning
->> enforcement measures for Code of Conduct violations.
-> 
-> As with any technical change, I think it would help reviewers if the
-> commit message could explain *why* this change is appropriate at this
-> time. For instance, it would be good to know if this is meant to ensure
-> the document clearly describes the existing practices without a change
-> of rules, or if there's another reason.
+Enable audio jack detection for the Genio 700 and 510 EVK boards. This
+is handled by the MT6359 ACCDET block, which on these boards has the
+HP_EINT pin pulled high and connected to a normally open 3.5mm jack.
 
-This change is to clarify and clearly describe the scope and role the
-TAB plays in making decisions on violations that don't resolve. When
-the CoC has to make a call on instituting a ban, it doesn't act without
-the TAB's approval and when the TAB okays it with 2/3 vote in favor.
+Add a phandle to the accdet in the sound card node so the machine sound
+driver can initialize the accdet.
 
-This is an update to the rules spelled out a few months ago and to
-ensure the document is consistent throughout.
-> 
-> Without an explanation of the intent, the CoC and TAB would appear more
-> opaque, especially given the tags present on v1 that shows the patch has
-> been discussed behind closed doors.
+Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+---
+This patch depends on both "Allow retrieving accessory detection
+reference on MT8188" [1] and "Get mt6359-accdet ready for usage in
+Devicetree" [2].
 
-No decisions are made behind the closed doors. As mentioned above, the
-document had inconsistent in when it described the TAB role. This patch
-is fixing the inconsistency.
+[1] https://lore.kernel.org/all/20250304-mt8188-accdet-v2-0-27f496c4aede@collabora.com
+[2] https://lore.kernel.org/all/20250304-mt6359-accdet-dts-v3-0-5b0eafc29f5b@collabora.com
+---
+ arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 1 +
+ 1 file changed, 1 insertion(+)
 
-> 
->> Reviewed-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
->> Acked-by: Miguel Ojeda <ojeda@kernel.org>
->> Acked-by: Steven Rostedt <rostedt@goodmis.org>
->> Acked-by: Jonathan Corbet <corbet@lwn.net>
->> Signed-off-by: Shuah Khan <shuah@kernel.org>
->> ---
->>   .../process/code-of-conduct-interpretation.rst  | 17 +++++++++++------
->>   1 file changed, 11 insertions(+), 6 deletions(-)
->>
->> diff --git a/Documentation/process/code-of-conduct-interpretation.rst b/Documentation/process/code-of-conduct-interpretation.rst
->> index 1d1150954be3..4cdef8360698 100644
->> --- a/Documentation/process/code-of-conduct-interpretation.rst
->> +++ b/Documentation/process/code-of-conduct-interpretation.rst
->> @@ -145,13 +145,16 @@ kernel community.
->>   
->>   Any decisions regarding enforcement recommendations will be brought to
->>   the TAB for implementation of enforcement with the relevant maintainers
->> -if needed.  A decision by the Code of Conduct Committee can be overturned
->> -by the TAB by a two-thirds vote.
->> +if needed.  Once the TAB approves one or more of the measures outlined
->> +in the scope of the ban by two-thirds of the members voting for the
-> 
-> There was no mention of "ban" in this section, is the addition of that
-> word on purpose ?
+diff --git a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
+index 992bf60c097ae3b1fd6d4e62ef1a327b146496ef..e53c6b0b5a53a616a1684e6efc3758f449294bb9 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
++++ b/arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi
+@@ -1189,6 +1189,7 @@ &sound {
+ 		"AP DMIC", "AUDGLB",
+ 		"AP DMIC", "MIC_BIAS_0",
+ 		"AP DMIC", "MIC_BIAS_2";
++	mediatek,accdet = <&accdet>;
+ 	mediatek,adsp = <&adsp>;
+ 	status = "okay";
+ 
 
-It previously stated that the TAB can overturn any decision made by CoC.
-This document moves it into a direction where the CoC will not act without
-the approval from the TAB. This applies to if and when "ban" is required
-which is rather infrequent. This word "ban" is not a new addition to the
-document in this patch as it is mentioned in the last paragraph in the
-"Remedial measures" section.
+---
+base-commit: 20d5c66e1810e6e8805ec0d01373afb2dba9f51a
+change-id: 20250304-genio700-accdet-dts-4a4767fef27d
 
-The reason for adding the word "ban" here is to make the text consistent
-with the "Remedial measures" section.
+Best regards,
+-- 
+Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-> 
->> +measures, the Code of Conduct Committee will enforce the TAB approved
->> +measures.  Any Code of Conduct Committee members serving on the TAB will
->> +not vote on the measures.
-> 
-> We're switching from a 2/3 majority to *not* implement a recommendation
-> to a 2/3 majority to implement it. Without judging the merit of this (at
-> first sight I feel positive about the change), I think it's worth
-> explaining why.
-
-Right. I think this is a positive change and gives the TAB oversight
-on the CoC decisions before they are enforced as opposed afterwords.
-
-I can add the above explanation to the change log.
-
-thanks,
--- Shuah
 
