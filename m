@@ -1,224 +1,108 @@
-Return-Path: <linux-kernel+bounces-545611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0BB7A4EF3F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:14:37 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FD7DA4EF41
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 22:14:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB3433A62BE
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:14:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 96B15165314
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 21:14:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11FA81F76A8;
-	Tue,  4 Mar 2025 21:14:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 086F2264FBD;
+	Tue,  4 Mar 2025 21:14:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxeaMso+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="p++C3az+"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56B751FDA9D;
-	Tue,  4 Mar 2025 21:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DC3264F8C;
+	Tue,  4 Mar 2025 21:14:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741122870; cv=none; b=aGYzoL+WpdTaYtB+EfNbqFHoWTA74lwGLkicis3vHPV5GGZ8x87DYAlNRJa2i8gIYWDVJEGXmrg3XpOBAfKdaLS9JT867CclXvxwVrY0zAcetZU0IuCvw0ku1tuXCAJDiFeauOoICSXXKo6RcpGQTV16qnJ8+pZQz46FvW9bGRw=
+	t=1741122892; cv=none; b=ixRT0vHUnugbZ604JyhNeqFz0Vy4BD39ANIxr2dRsJXdQo7mVRvzP0Hl/1hLsXB67RVXXAtQkhcNa6wEOeWe2Ih1wlvmAKadzoQtofysV+jXxdBUfbCwph+erINy2wW/Ld/mIyS6G4ZDaHJJJcMgrq7JU6D8TWPI0iwigzNc3PI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741122870; c=relaxed/simple;
-	bh=9+zCNKmwNKnjGxDu60SDej4Qy7w6cwAgW7GjsjzZzO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=l5JB8IcxBUAbG5c0jzFv1pqBKn3KrSg4Ujcd1+IWkjMTDdgz7BMILU7+2CDBEhyvXBUYWCQ+Wv+BvQRygNurzNQ6ygh7LqQTLqe8xMM2WT1SiO8naHry6k+siidrXIYXVyEPfwBDjFESDqBTdnwLtkPH3MT7Hy3qtf2t29ttq5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxeaMso+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 976D2C4CEE5;
-	Tue,  4 Mar 2025 21:14:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741122869;
-	bh=9+zCNKmwNKnjGxDu60SDej4Qy7w6cwAgW7GjsjzZzO4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=WxeaMso+2o3FdrfLYBd13Y4/EhpLSq1MnT1cgAa/pvHzCnXNHWNEA4x+Uk2tc1A3s
-	 oNYwospfrQ6/jrr8KN40IfQa9/nd0OXF1rNq6askJ/MjYfD4Vw93gz5A/MN18Ef4Hq
-	 2homxCLZu+5UmthqT77SGhYvhc7VLruEFdgTAMBC/DhawAGVz8e2tuYX9sNANYN6cc
-	 aBJyn6AK5Jxe7wRWcH+4zOzeextzHkiYD3UTihxBa9t762eUn/txBoxU/y5nJp9iJG
-	 r9M+dux+AxqM1Ooos59NYw55Bk95Ascw168aaTBYRtrMr0YogbBS/j40R2VRqSulZz
-	 B7dDQ6VEzFw3Q==
-Date: Tue, 4 Mar 2025 15:14:28 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	s=arc-20240116; t=1741122892; c=relaxed/simple;
+	bh=efnq8Mr7Ibo3+ZpAROc7hzy9XWIKXwDMX3NADJ+xG2w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=oFZMUpBG+bSuvniqHVGJEbLFjdzPQq432NPlHSwXFHifiLwLjYPCC4i4FOMV4mDd8gxOrz3CMXnAEAQ9rn67iO9GXGVkaiDOHyrgays13iwTXdb2DoEOf1RAk/nxU2DfF/s/dJLKZ5KlIrJbiKlOPkQqK3P9GqQWJivoToR+ezY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=p++C3az+; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=0rIfnbOrf1l0fsM5aMUO2r8IAn6taUUuSG0I0y1QBiA=; b=p++C3az+ikBnh5BzwTYj/7f8ki
+	hW7fPGnn2rUPRj4xsGpDFTXIJRR86v3jPX583cyWDlGrRFd8Hs4COTw1tGbYAdWn+sNOGqNBEh3fs
+	J+ri/KYCqBaJgOkirKuc5lw00mv57MASyI7IiNYA3vqCiBWA75nr9j91/hvbOLgVlJWvoUFj7IBMf
+	frDNmARAVI+LLbWWOgtSVPVXA/oh1fMrQDdS9uP0ealKj7+HXbLdeFbhE3P9I7mPoUDmiJMSsFXny
+	llOdGrwkTDNAL1Pi/0PVkp07ZKf6DBgSuvnkYGylWwa0L/bio2EvRyzJduX3N4AlgiptwvVJ4k/g7
+	JMwYvPOg==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=localhost.localdomain)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tpZb9-0006Ex-UJ; Tue, 04 Mar 2025 22:14:44 +0100
+From: Heiko Stuebner <heiko@sntech.de>
+To: Andy Yan <andyshrk@163.com>
+Cc: Heiko Stuebner <heiko@sntech.de>,
+	detlev.casanova@collabora.com,
+	krzk+dt@kernel.org,
+	robh@kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	Dan Williams <dan.j.williams@intel.com>
-Subject: Re: [RFC PATCH 1/1] PCI: Add Extended Tag + MRRS quirk for Xeon 6
-Message-ID: <20250304211428.GA258044@bhelgaas>
+	linux-rockchip@lists.infradead.org,
+	Andy Yan <andy.yan@rock-chips.com>
+Subject: Re: [PATCH v3 0/3] Add display subsystem dt node on rk3576
+Date: Tue,  4 Mar 2025 22:14:34 +0100
+Message-ID: <174112278794.341367.445088781126200714.b4-ty@sntech.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20241231095728.253943-1-andyshrk@163.com>
+References: <20241231095728.253943-1-andyshrk@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250304135108.2599-1-ilpo.jarvinen@linux.intel.com>
 
-On Tue, Mar 04, 2025 at 03:51:08PM +0200, Ilpo Järvinen wrote:
-> Disallow Extended Tags and Max Read Request Size (MRRS) larger than
-> 128B for devices under Xeon 6 Root Ports if the Root Port is bifurcated
-> to x2. Also, 10-Bit Tag Requester should be disallowed for device
-> underneath these Root Ports but there is currently no 10-Bit Tag
-> support in the kernel.
-> 
-> The normal path that writes MRRS is through
-> pcie_bus_configure_settings() -> pcie_bus_configure_set() ->
-> pcie_write_mrrs() and contains a few early returns that are based on
-> the value of pcie_bus_config. Overriding such checks with the host
-> bridge flag check on each level seems messy. Thus, simply ensure MRRS
-> is always written in pci_configure_device() if a device requiring the
-> quirk is detected.
 
-This is kind of weird.  It's apparently not an erratum in the sense
-that something doesn't *work*, just something for "optimized PCIe
-performance"?
+On Tue, 31 Dec 2024 17:57:17 +0800, Andy Yan wrote:
+> As the VOP[0] and HDMI[1] driver have already been submitted for review.
+> This series enable hdmi display on sige5 board.
+> 
+> [0] https://lore.kernel.org/linux-rockchip/20241231090802.251787-1-andyshrk@163.com/T/#t
+> [1] https://lore.kernel.org/linux-rockchip/20241231094425.253398-1-andyshrk@163.com/T/#t
+> 
+> Changes in v3:
+> - Split from https://lore.kernel.org/linux-rockchip/3330586.aeNJFYEL58@diego/T/#t
+> 
+> [...]
 
-What are we supposed to do with this?  Add similar quirks for every
-random PCI controller?  Scratching my head about what this means for
-the future.
+Applied, thanks!
 
-What bad things happen if we *don't* do this?  Is this something we
-could/should rely on BIOS to configure for us?
+[1/3] arm64: dts: rockchip: Add vop for rk3576
+      commit: d74b842cab0860e41a45df0dac41e4e56202c766
+[2/3] arm64: dts: rockchip: Add hdmi for rk3576
+      commit: ad0ea230ab2a3535b186f7fb863b4bca7050e06f
+[3/3] arm64: dts: rockchip: Enable hdmi display on sige5
+      commit: 2062b91b9f3c6afe9c2a7d1ddf0f3e6af5f3fa31
 
-> Link: https://cdrdv2.intel.com/v1/dl/getContent/837176
-> Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
-> ---
-> 
-> The normal path that writes MRRS is somewhat convoluted so I ensure MRRS
-> gets written in a more direct way, I'm not sure if that's the best
-> approach. Thus sending this as RFC.
-> 
->  drivers/pci/pci.c    | 15 ++++++++-------
->  drivers/pci/probe.c  |  8 +++++++-
->  drivers/pci/quirks.c | 27 +++++++++++++++++++++++++++
->  include/linux/pci.h  |  1 +
->  4 files changed, 43 insertions(+), 8 deletions(-)
-> 
-> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
-> index 869d204a70a3..81ddad81ccb8 100644
-> --- a/drivers/pci/pci.c
-> +++ b/drivers/pci/pci.c
-> @@ -5913,7 +5913,7 @@ EXPORT_SYMBOL(pcie_get_readrq);
->  int pcie_set_readrq(struct pci_dev *dev, int rq)
->  {
->  	u16 v;
-> -	int ret;
-> +	int ret, max_mrrs = 4096;
->  	struct pci_host_bridge *bridge = pci_find_host_bridge(dev->bus);
->  
->  	if (rq < 128 || rq > 4096 || !is_power_of_2(rq))
-> @@ -5933,13 +5933,14 @@ int pcie_set_readrq(struct pci_dev *dev, int rq)
->  
->  	v = FIELD_PREP(PCI_EXP_DEVCTL_READRQ, ffs(rq) - 8);
->  
-> -	if (bridge->no_inc_mrrs) {
-> -		int max_mrrs = pcie_get_readrq(dev);
-> +	if (bridge->no_inc_mrrs)
-> +		max_mrrs = pcie_get_readrq(dev);
-> +	if (bridge->only_128b_mrrs)
-> +		max_mrrs = 128;
->  
-> -		if (rq > max_mrrs) {
-> -			pci_info(dev, "can't set Max_Read_Request_Size to %d; max is %d\n", rq, max_mrrs);
-> -			return -EINVAL;
-> -		}
-> +	if (rq > max_mrrs) {
-> +		pci_info(dev, "can't set Max_Read_Request_Size to %d; max is %d\n", rq, max_mrrs);
-> +		return -EINVAL;
->  	}
->  
->  	ret = pcie_capability_clear_and_set_word(dev, PCI_EXP_DEVCTL,
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index b6536ed599c3..ceaa34b0525b 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2342,7 +2342,11 @@ static void pci_configure_serr(struct pci_dev *dev)
->  
->  static void pci_configure_device(struct pci_dev *dev)
->  {
-> +	struct pci_host_bridge *host_bridge = pci_find_host_bridge(dev->bus);
-> +
->  	pci_configure_mps(dev);
-> +	if (host_bridge && host_bridge->only_128b_mrrs)
-> +		pcie_set_readrq(dev, 128);
->  	pci_configure_extended_tags(dev, NULL);
->  	pci_configure_relaxed_ordering(dev);
->  	pci_configure_ltr(dev);
-> @@ -2851,13 +2855,15 @@ static void pcie_write_mps(struct pci_dev *dev, int mps)
->  
->  static void pcie_write_mrrs(struct pci_dev *dev)
->  {
-> +	struct pci_host_bridge *host_bridge = pci_find_host_bridge(dev->bus);
->  	int rc, mrrs;
->  
->  	/*
->  	 * In the "safe" case, do not configure the MRRS.  There appear to be
->  	 * issues with setting MRRS to 0 on a number of devices.
->  	 */
-> -	if (pcie_bus_config != PCIE_BUS_PERFORMANCE)
-> +	if (pcie_bus_config != PCIE_BUS_PERFORMANCE &&
-> +	    (!host_bridge || !host_bridge->only_128b_mrrs))
->  		return;
->  
->  	/*
-> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
-> index b84ff7bade82..987cd94028e1 100644
-> --- a/drivers/pci/quirks.c
-> +++ b/drivers/pci/quirks.c
-> @@ -5564,6 +5564,33 @@ DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0144, quirk_no_ext_tags);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0420, quirk_no_ext_tags);
->  DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_SERVERWORKS, 0x0422, quirk_no_ext_tags);
->  
-> +static void quirk_pcie2x_no_tags_no_mrrs(struct pci_dev *pdev)
-> +{
-> +	struct pci_host_bridge *bridge = pci_find_host_bridge(pdev->bus);
-> +	u32 linkcap;
-> +
-> +	if (!bridge)
-> +		return;
-> +
-> +	pcie_capability_read_dword(pdev, PCI_EXP_LNKCAP, &linkcap);
-> +	if (FIELD_GET(PCI_EXP_LNKCAP_MLW, linkcap) != 0x2)
-> +		return;
-> +
-> +	bridge->no_ext_tags = 1;
-> +	bridge->only_128b_mrrs = 1;
-> +	pci_info(pdev, "Disabling Extended Tags and forcing MRRS to 128B (performance reasons due to 2x PCIe link)\n");
-> +}
-> +
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db0, quirk_pcie2x_no_tags_no_mrrs);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db1, quirk_pcie2x_no_tags_no_mrrs);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db2, quirk_pcie2x_no_tags_no_mrrs);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db3, quirk_pcie2x_no_tags_no_mrrs);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db6, quirk_pcie2x_no_tags_no_mrrs);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db7, quirk_pcie2x_no_tags_no_mrrs);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db8, quirk_pcie2x_no_tags_no_mrrs);
-> +DECLARE_PCI_FIXUP_EARLY(PCI_VENDOR_ID_INTEL, 0x0db9, quirk_pcie2x_no_tags_no_mrrs);
-> +
-> +
->  #ifdef CONFIG_PCI_ATS
->  static void quirk_no_ats(struct pci_dev *pdev)
->  {
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 47b31ad724fa..def29c8c0f84 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -601,6 +601,7 @@ struct pci_host_bridge {
->  	unsigned int	ignore_reset_delay:1;	/* For entire hierarchy */
->  	unsigned int	no_ext_tags:1;		/* No Extended Tags */
->  	unsigned int	no_inc_mrrs:1;		/* No Increase MRRS */
-> +	unsigned int	only_128b_mrrs:1;	/* Only 128B MRRS */
->  	unsigned int	native_aer:1;		/* OS may use PCIe AER */
->  	unsigned int	native_pcie_hotplug:1;	/* OS may use PCIe hotplug */
->  	unsigned int	native_shpc_hotplug:1;	/* OS may use SHPC hotplug */
-> 
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> -- 
-> 2.39.5
-> 
+I've adapted the patches where needed.
+- Moved the grf to it's address-related position
+- updated the irq names
+
+With all the driver patches in place, dtbscheck for the sige5 is happy.
+
+
+Best regards,
+-- 
+Heiko Stuebner <heiko@sntech.de>
 
