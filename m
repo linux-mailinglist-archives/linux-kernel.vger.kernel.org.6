@@ -1,112 +1,181 @@
-Return-Path: <linux-kernel+bounces-543844-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543845-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BD12A4DA98
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:32:58 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28916A4DA9C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:33:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1400B1885F34
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:31:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2750189B6A8
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:31:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 916221FFC69;
-	Tue,  4 Mar 2025 10:29:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UILNwCCN"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD2520012C;
+	Tue,  4 Mar 2025 10:29:54 +0000 (UTC)
+Received: from mail78-58.sinamail.sina.com.cn (mail78-58.sinamail.sina.com.cn [219.142.78.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4AC1FFC4C;
-	Tue,  4 Mar 2025 10:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A861FAC50
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 10:29:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741084187; cv=none; b=WZL3vqPFPzTTpoEiuy/q/M/AAdxAB1DHmrmKhN6F46eh34HoaAunYUG1KNGjRXaua1vn3fZq2pud+Ll52SPhFNBs5c4oJAn2bcKU26Ca2LUhJOH9OVykAQQISPABK7pdrsCHNM5T64OwWrb6H3EuANNK4TJpXyXRhDv3sRkY+ec=
+	t=1741084194; cv=none; b=UIb7YPkkLG01wGTdTDbeFwhfkVgnB13JxJ9VXqFQ6bO+XnLzNM8XjU3Rea8Xg0b/gGtneDrlmxy5GVl2x06uF5BTBbXkpfh17UrQvsETg1FB45d4g/5xsN8F7FvXTxK7tDaVT0uux6B8tCW+pGkNCDfjD7tgNGGuZD3Dwc+HYf0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741084187; c=relaxed/simple;
-	bh=pI0HJfwpbAZaW1922lZNHz2lBW0wLacOGRUyghQ1l8c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P0ETrgZGjt3ejxlk5Z4etOpntsgWluLtcZL89E2P6GZzhP/ihfnRa2tndjk1c5b8KSK/ALwSZDVZth0eYh9JECiobDTJTNsEtk/sPFlghw0uIZIZlwzaWSE6PyqpwIABJt2GED5VcT7tH4PuYAiFDQf9fYHxnakCpvSpro4u0ps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UILNwCCN; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id E98C840E0216;
-	Tue,  4 Mar 2025 10:29:39 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id CAE7udcNv7Us; Tue,  4 Mar 2025 10:29:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741084175; bh=qp7g7t4g+xuD39/na+PShGGbLo7cwlzyR6sGXzc71sQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UILNwCCNd9Yu8FvBz86+UZarp09ZZcfFagyUDl/8edLiIlpQlmRUqRzgIoha8fKDl
-	 lvbJlwoFqHAJZZHzxppxwaFEnmGdX0gZHKkTX1dmxGWHusbqPcYXK29pN2wpINDXq4
-	 ApIFUwU7Xa5LOewX0pUFeYpmyFyudevUAMz2E/X1esTrV5VVRY6OONZpkJVnGgKrLf
-	 avQm7q9gdu7tq1AB1YuHXZ0ztYX6sqrE3bq87zIOCd3o6wetGbLAZgH8B7sCaakdz7
-	 IMbLU3QIYYjEIRE347rkaF26V/QyRn4zLlm+fRfdoBQFAeXVNSKNKcxLIq+2Qit9LM
-	 ZCOygS2slQyojNuY7ZQ13ArM9jRSKg7avhD5aRvHFLYfzPTfebKBLjnkSsH+EFNlAN
-	 llE/629/EtehYezxEgbjkPlha13VZJc2uniFpuy0Q+fIMfwwj6Ybns/O20HwFZK1Tt
-	 kGpYy/wpq0z984cHsxS4hnTrSjKeQHNnWkLK2ARC5FtkSuWD0hL9r11RgM8EEC0haC
-	 caQGFKc8CZe4mWiJVOHPNktH+rH+ioZV2SSoSBMciAZaWv9UnMiRGyGK/tc2InFYok
-	 l1VPnIH8/FGbLELfwxqvUEbpbJ0BMO5sLPrSansDNSCwhG7m0A4DwoTIwnWjeMszkY
-	 afdelxI8J/2GjQcI5LYe56kY=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BEE3540E0214;
-	Tue,  4 Mar 2025 10:29:16 +0000 (UTC)
-Date: Tue, 4 Mar 2025 11:29:10 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Xin Li <xin@zytor.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, "Aithal, Srikanth" <sraithal@amd.com>,
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	x86@kernel.org, will@kernel.org, peterz@infradead.org,
-	yury.norov@gmail.com, akpm@linux-foundation.org, acme@kernel.org,
-	namhyung@kernel.org, brgerst@gmail.com, andrew.cooper3@citrix.com,
-	nik.borisov@suse.com
-Subject: Re: [PATCH v6 3/5] x86/cpufeatures: Generate a feature mask header
- based on build config
-Message-ID: <20250304102910.GAZ8bV9hXqVb5tA9rs@fat_crate.local>
-References: <20250228082338.73859-1-xin@zytor.com>
- <20250228082338.73859-4-xin@zytor.com>
- <7c3b4623-45ea-4340-ac47-334071c1d15f@amd.com>
- <D03DAFD2-5EC9-4D16-BA66-FDA4B51F45DD@zytor.com>
- <20250303132505.GEZ8WtsXqFpuMOpDjT@fat_crate.local>
- <8e4e1723-321a-4e8e-bbac-e2e5d8b08bfc@zytor.com>
+	s=arc-20240116; t=1741084194; c=relaxed/simple;
+	bh=6M9vMD3m8RcahDfKt4U9A6z7ib3A7FvvznwiPTpZVtg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=TRHUX7+oJSonw7riEapB8P3+AirUzBEpMm532lw7mG6lYzmR8ovSoIJLIrCeYawf4429mhUhuP8VqGhgXb1oSC60mwNaXb22NKC90G7iUXfY7DMZ4+h5uMBQLH/WRGN6axlYvRzBq+ALjcqNdFKYHNDYeOhA2/fin17GtTXfQxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.49.155])
+	by sina.com (10.185.250.24) with ESMTP
+	id 67C6D618000021E6; Tue, 4 Mar 2025 18:29:46 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 55183410748496
+X-SMAIL-UIID: C4D1D13C98534C22922D15BBC552A9A8-20250304-182946-1
+From: Hillf Danton <hdanton@sina.com>
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+Date: Tue,  4 Mar 2025 18:29:33 +0800
+Message-ID: <20250304102934.2999-1-hdanton@sina.com>
+In-Reply-To: <0d17fc70-01a8-43b4-aec6-5cede5c8f7ba@amd.com>
+References: <20250102140715.GA7091@redhat.com> <e813814e-7094-4673-bc69-731af065a0eb@amd.com> <20250224142329.GA19016@redhat.com> <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt> <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <8e4e1723-321a-4e8e-bbac-e2e5d8b08bfc@zytor.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 02:18:51AM -0800, Xin Li wrote:
-> It seems that 'archprepare' works, however I'm not sure if it's the best
-> choice.  Any suggestion?
+On Tue, 4 Mar 2025 11:05:57 +0530 K Prateek Nayak <kprateek.nayak@amd.com>
+>On 3/4/2025 10:36 AM, Hillf Danton wrote:
+>> On Mon, 3 Mar 2025 15:16:34 +0530 "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+>>> On 2/28/2025 10:03 PM, Oleg Nesterov wrote:
+>>>> And... I know, I know you already hate me ;)
+>>>>
+>>>
+>>> Not at all :)
+>>>
+>>>> but if you have time, could you check if this patch (with or without the
+>>>> previous debugging patch) makes any difference? Just to be sure.
+>>>>
+>>>
+>>> Sure, I will give this a try.
+>>>
+>>> But in the meanwhile me and Prateek tried some of the experiments in the weekend.
+>>> We were able to reproduce this issue on a third generation EPYC system as well as
+>>> on an Intel Emerald Rapids (2 X INTEL(R) XEON(R) PLATINUM 8592+).
+>>>
+>>> We tried heavy hammered tracing approach over the weekend on top of your debug patch.
+>>> I have attached the debug patch below. With tracing we found the following case for
+>>> pipe_writable():
+>>>
+>>>     hackbench-118768  [206] .....  1029.550601: pipe_write: 000000005eea28ff: 0: 37 38 16: 1
+>>>
+>>> Here,
+>>>
+>>> head = 37
+>>> tail = 38
+>>> max_usage = 16
+>>> pipe_full() returns 1.
+>>>
+>>> Between reading of head and later the tail, the tail seems to have moved ahead of the
+>>> head leading to wraparound. Applying the following changes I have not yet run into a
+>>> hang on the original machine where I first saw it:
+>>>
+>>> diff --git a/fs/pipe.c b/fs/pipe.c
+>>> index ce1af7592780..a1931c817822 100644
+>>> --- a/fs/pipe.c
+>>> +++ b/fs/pipe.c
+>>> @@ -417,9 +417,19 @@ static inline int is_packetized(struct file *file)
+>>>    /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
+>>>    static inline bool pipe_writable(const struct pipe_inode_info *pipe)
+>>>    {
+>>> -	unsigned int head = READ_ONCE(pipe->head);
+>>> -	unsigned int tail = READ_ONCE(pipe->tail);
+>>>    	unsigned int max_usage = READ_ONCE(pipe->max_usage);
+>>> +	unsigned int head, tail;
+>>> +
+>>> +	tail = READ_ONCE(pipe->tail);
+>>> +	/*
+>>> +	 * Since the unsigned arithmetic in this lockless preemptible context
+>>> +	 * relies on the fact that the tail can never be ahead of head, read
+>>> +	 * the head after the tail to ensure we've not missed any updates to
+>>> +	 * the head. Reordering the reads can cause wraparounds and give the
+>>> +	 * illusion that the pipe is full.
+>>> +	 */
+>>> +	smp_rmb();
+>>> +	head = READ_ONCE(pipe->head);
+>>>    
+>>>    	return !pipe_full(head, tail, max_usage) ||
+>>>    		!READ_ONCE(pipe->readers);
+>>> ---
+>>>
+>>> smp_rmb() on x86 is a nop and even without the barrier we were not able to
+>>> reproduce the hang even after 10000 iterations.
+>>>
+>> My $.02 that changes the wait condition.
+>> Not sure it makes sense for you.
+>> 
+>> --- x/fs/pipe.c
+>> +++ y/fs/pipe.c
+>> @@ -430,7 +430,7 @@ pipe_write(struct kiocb *iocb, struct io
+>>   {
+>>   	struct file *filp = iocb->ki_filp;
+>>   	struct pipe_inode_info *pipe = filp->private_data;
+>> -	unsigned int head;
+>> +	unsigned int head, tail;
+>>   	ssize_t ret = 0;
+>>   	size_t total_len = iov_iter_count(from);
+>>   	ssize_t chars;
+>> @@ -573,11 +573,13 @@ pipe_write(struct kiocb *iocb, struct io
+>>   		 * after waiting we need to re-check whether the pipe
+>>   		 * become empty while we dropped the lock.
+>>   		 */
+>> +		tail = pipe->tail;
+>>   		mutex_unlock(&pipe->mutex);
+>>   		if (was_empty)
+>>   			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+>>   		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+>> -		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
+>> +		wait_event_interruptible_exclusive(pipe->wr_wait,
+>> +				!READ_ONCE(pipe->readers) || tail != READ_ONCE(pipe->tail));
+>
+>That could work too for the case highlighted but in case the head too
+>has moved by the time the writer wakes up, it'll lead to an extra
+>wakeup.
+>
+Note wakeup can occur even if pipe is full, and more important, taking
+the pipe lock after wakeup is the price paid for curing the hang in
+question.
 
-Why do you even need featuremasks_hdr as a prereq?
+		 * So we still need to wake up any pending writers in the
+		 * _very_ unlikely case that the pipe was full, but we got
+		 * no data.
+		 */
 
-I still don't get the dependency there.
-
-In any case, you'd have to redo your patches - we've zapped them from tip.
-
-> Want me to add it btw?
-
-Yes pls.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+>Linus' diff seems cleaner and seems to cover all racy scenarios.
+>
+>>   		mutex_lock(&pipe->mutex);
+>>   		was_empty = pipe_empty(pipe->head, pipe->tail);
+>>   		wake_next_writer = true;
+>> --
+>
+>-- 
+>Thanks and Regards,
+>Prateek
 
