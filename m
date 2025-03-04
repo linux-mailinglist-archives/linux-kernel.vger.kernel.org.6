@@ -1,139 +1,164 @@
-Return-Path: <linux-kernel+bounces-542961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-542962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13642A4CFE6
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:24:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5C2EA4CFE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:25:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B0F61717A0
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:24:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0208171BCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 00:25:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 114E2175A5;
-	Tue,  4 Mar 2025 00:24:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA4F2DDDC;
+	Tue,  4 Mar 2025 00:25:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kwHW5ku4"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XqwVkBOu"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBE3BA2D;
-	Tue,  4 Mar 2025 00:24:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F3011A260
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 00:25:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741047867; cv=none; b=cpYKMh+Bfu8CkATByEy5pvMswpUNKdA6ekC4HlSP3JrBj2MOPDiGYF1WZqVY1C+mriP9RGA1/W/4AFcesR0hnbL6XQbnN0zzZplnfmCnEB3LwozdR4fc19m6bNiaZYCd+NCH5DvijDmOG3LPFHdV3AD/eTFlfYbhrnZd55yl90A=
+	t=1741047923; cv=none; b=HtEfND5/Vps3gfUexE6EAUztBW+Y9SIrhir4THM5OPE7gPw8qGLQ5PA/MFwUYc+moCMo1w6oPklIDMIG7Uxaood7/9XiFtEbqxi7ydYWqt5TMEk0nlvBFQi+bmQmMmca8R8sA/WqYnhGnACiMa8yfGtGlnW/r2peIijA5T0Dc8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741047867; c=relaxed/simple;
-	bh=K+qvmYmkY5zyeTiJUrEHNt3d/YMLC1K3rD/CHwp9e4Q=;
+	s=arc-20240116; t=1741047923; c=relaxed/simple;
+	bh=+Zrm1MV11CyznMqTplgKdlEe784avoc0c272vJzfiHU=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fOGaosiH4yLuNJeBlDTBja7EeZeo/c4+9Tsc+QYUwu04jxUb6um4y+LL7MuaTEQLlcKqVAQ6C/rXhg6rvNmaukj+x1TbeGjETrQPJjOknrulVQM6A60iv793shk2l6BQGTFZBsjpsKcbdw2qsya2XJtXbcYu/rrSK+PEJcKjOs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kwHW5ku4; arc=none smtp.client-ip=209.85.128.43
+	 To:Cc:Content-Type; b=C3N9YdU3MbFpNeNiM3i9m2OBMqjicVsxkfWIKLoZgSFHoJY5+/NbRufxwHK3IvHyb/0Z3zeW0bH5W3IE/I7e6coneHnO0FCS/QhHT+JOYp848AwKRocrFMEF37RRbgL8Tq0Vtz9w4VbCDsQHRzOugVf61nz5Vf2XI7xI6Xtdhek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XqwVkBOu; arc=none smtp.client-ip=209.85.167.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bc31227ecso9754955e9.1;
-        Mon, 03 Mar 2025 16:24:25 -0800 (PST)
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-548409cd2a8so5257727e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 16:25:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741047864; x=1741652664; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741047918; x=1741652718; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=urfZQlGq/pVWGO0zyd3wt9oayIr9+WV6zda/5R7lTs4=;
-        b=kwHW5ku42m1fNWq345IJwHZA3EqGCcsVnKenPzP6mDqfFmqHUPUu6Qqzg1anwypD2z
-         7B0SSnXCOkiRLM99V4Z+g5+CxmmO/sDGekF2eFmUifM7Ejxg4IVTCxjhc2FdaLBAOwa5
-         DO9TIlSiMFFx4D8Pma6nlzfRKy67EaxkIc2f5oEhBMWfgIklxghkYr2NbdRg5aN/1fxK
-         y7gQkQoLy0AIlKMfYicTqe1c2LQ/+r9ghN1WLeVdrnwOk8SGQIpqNfvSb9JhVwzJicKt
-         hpT7xw+LARSDqoMB9Sc6Jm+Nx4/QPytblhCyvuUqL9Ha3U6/4GFsLmbRTBT5vfEAGF4L
-         vx4w==
+        bh=gxI/GG4PNTB3m1Ugu6g6VlWiKM3FjEsAmkg2oUQx6FA=;
+        b=XqwVkBOusbjuBw2xStxt8S0pe7AIQjPKGqnvT78JUOfK0JmJFOzDFNu0Om1wyQhL63
+         JPqAO41iG6NL13airtGBsnh6Gh9u4eW2oz7nSq0BvhugL1/ShoJpfo39GAHjqkEkk2Uk
+         FPayPCGFhUrAXM1eixi525S1b4HFtD/aqnMni4D+A9hXGNZO7XzePaSEkeOgyq/uUIZ8
+         oYSd+A/3OAZNfrePXBT53wz/MMq05KGJORNixNfDxusyUfigpIkjCP2X1s4FHPMa6mR1
+         5EiSGO59kdt2NPWoG02vbexZTb7SB7Jj+HhMrP1Q0q+AmGMga1pZ9WhqsESZwRYvPFDl
+         BK8w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741047864; x=1741652664;
+        d=1e100.net; s=20230601; t=1741047918; x=1741652718;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=urfZQlGq/pVWGO0zyd3wt9oayIr9+WV6zda/5R7lTs4=;
-        b=VIYZgbfiTgC482SPxicSV1mHrWHpmsxAPgWZPThO+x4zxeuhBJbJ4GcLhJa2aX7IJ5
-         jJWEK1wRAW15iX9iyTQxAth8973TTw6ViqCmE4fiYya2DKmUKgVfkhf3FAz2tiaYN+1q
-         dsWdOkYDS3YOO44mwqyhKuwE0vaNwkrhiJrYVjgQOZEAy0FzOwshDIuGYkHyWI8TYBG2
-         8/iSFo61cnvxA/tzemM8gTjgj6TsN/CtdOoErBUdqXBiGSU089HapQqZAWH2VH5AXasl
-         9Mbyh6EW4KQPzwBFGCGHQLM1ZDsHbi2vQgGc1fcH2I2rW3H3dLPKaAAGRjMBEBytoaKN
-         eSJw==
-X-Forwarded-Encrypted: i=1; AJvYcCURAM76/wq5cTfQlfXMV7NVcsA0RMYd7pkU8JemZQVWQDgZ5Cxm61zQIjPzY5y6IacCgg3+foSbr0xmalM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA27m7Zv2bAvU6eP4CYxNkl9nTVnC997ObwibEsh0mS684s8OY
-	BNlIfT1uEreC4xk4czjIeobgf3Nc1L1BX0VhqSehpAPokyvE+UAYNGmkuWIjjTm/Jy8HUUwB+bU
-	hPMkxhSfkqUi2M8sHqS9uEft4vjw=
-X-Gm-Gg: ASbGncvjmvc9s2GkRJCn/wFqejlga0f/WYuCnaH38+aMrX0fb/viA+n0FcGjYY4Jo6A
-	dDMeJyV+Dz4Jb7YrTFKrJULLd3GUPxZK9tUkNDQvHyCG0uqizwjekThU9Ban7ob3AFTiqoaBsx5
-	6bv8VrioJ09vPTKf5JsOVXognGVX4rcSXOyCQ6sY2zqQ==
-X-Google-Smtp-Source: AGHT+IHO+uVmNNZv/qkoEu5z4sgYhqObHiMzlFXLnOjF27YhrY281zOCVH1Tw0rSTwju5ncIQJYZex/bg3HsNm15TPA=
-X-Received: by 2002:a5d:598d:0:b0:390:f0ff:2bf8 with SMTP id
- ffacd0b85a97d-390f0ff2f85mr11378429f8f.10.1741047863798; Mon, 03 Mar 2025
- 16:24:23 -0800 (PST)
+        bh=gxI/GG4PNTB3m1Ugu6g6VlWiKM3FjEsAmkg2oUQx6FA=;
+        b=lzfSgVpNMUc73ZyzJxzi1knR+xS+cBos51sqz/ZBP3OcGze/qVnD+V49uVf4mINlex
+         quGO6z1aCcBbjXN6riO2dV/NFT2y7iOc8DRXQBxmEqOx6ILT7S0Oe+9InqZ5LR8vAz4r
+         FXI5xcVaMl6gHXK242khG9WelblODUveN1XWbh/2rTjpLbhfEQld93BQIb0A69cU81Sd
+         f6g7ogcDu5cb6VI9y891BbbpgriEETso3hnxaEMykne3lnoo0wnBs5ReG1EP0sXrAHkb
+         C94h3LPXBFdYsKTHI26aABEdTRQWjDmidCIsD2B7u4QVe9NSEp464rP6lFYLyrLCSI38
+         fKzQ==
+X-Gm-Message-State: AOJu0YyoKMUNCxYE6i/RPhgNw/Eu1QlhYs14nyueceM6WH+VepZ/4GmH
+	AlGBEagCEcDaHAoBVE6D4UKXnXWqyGtxZWqshMRsrBTlPiMdFMa9QdTaOSTIZh5VS6+TKW63ddF
+	WzTa4zaWsVFsd7NTAdV+tCf01qg==
+X-Gm-Gg: ASbGnctw7hmCAOiKdDtyV16nTx+56CH3DJ4LCpGbyWFC0+6liGO+FA9v/MUXpzfVIxr
+	iwX+INADLWr4+KGVJrturTDzqe/W71qpIXoPM+bJV1TkMPXDmZt+fdJF1ZCVNAobzeHjILchfyD
+	z9JWlEttSSz038njlyweGAvJ6mLMPtQqnprHSQwP96
+X-Google-Smtp-Source: AGHT+IH7jePv/cleojM+C8gSVOOrHi6BQQdnULIZr3BC9WdguRpPQOgH9wX4FKVe4fltWVuLdv9DeiOmEDyv8zz8RS0=
+X-Received: by 2002:a05:6512:3d0e:b0:545:16f0:6ca2 with SMTP id
+ 2adb3069b0e04-5494c34ea28mr5030547e87.42.1741047918127; Mon, 03 Mar 2025
+ 16:25:18 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1741046028.git.yepeilin@google.com> <b0042990da762f5f6082cb6028c0af6b2b228c54.1741046028.git.yepeilin@google.com>
-In-Reply-To: <b0042990da762f5f6082cb6028c0af6b2b228c54.1741046028.git.yepeilin@google.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Mon, 3 Mar 2025 16:24:12 -0800
-X-Gm-Features: AQ5f1JrTqby__bpiM0CWE4k0H7GR2tFUkKqgrjo6SaastgWB_5YIMYTwEno1ALo
-Message-ID: <CAADnVQKX+PoSUqPBB2+eZrR7wdq-8EVaMxy_Wur7g8wyy3Dcmg@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v5 1/6] bpf: Introduce load-acquire and
- store-release instructions
-To: Peilin Ye <yepeilin@google.com>
-Cc: bpf <bpf@vger.kernel.org>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, bpf@ietf.org, 
-	Alexei Starovoitov <ast@kernel.org>, Xu Kuohai <xukuohai@huaweicloud.com>, 
-	Eduard Zingerman <eddyz87@gmail.com>, David Vernet <void@manifault.com>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Puranjay Mohan <puranjay@kernel.org>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Quentin Monnet <qmo@kernel.org>, Mykola Lysenko <mykolal@fb.com>, Shuah Khan <shuah@kernel.org>, 
-	Ihor Solodrai <ihor.solodrai@linux.dev>, Yingchi Long <longyingchi24s@ict.ac.cn>, 
-	Josh Don <joshdon@google.com>, Barret Rhoden <brho@google.com>, Neel Natu <neelnatu@google.com>, 
-	Benjamin Segall <bsegall@google.com>, LKML <linux-kernel@vger.kernel.org>
+References: <20250303183111.2245129-1-brgerst@gmail.com> <9FC474C9-284D-4EB5-BF8A-7B938247E577@zytor.com>
+In-Reply-To: <9FC474C9-284D-4EB5-BF8A-7B938247E577@zytor.com>
+From: Brian Gerst <brgerst@gmail.com>
+Date: Mon, 3 Mar 2025 19:25:06 -0500
+X-Gm-Features: AQ5f1JrRarMEBfsqBG8IB4cdTewkZmaQsRRRpufSv16xTyd0gz9Lwds8lB4DL9k
+Message-ID: <CAMzpN2jjcBtr73iuw8QaJ6MQxnnSRzr2SqDDKhfyDVnRETzLPg@mail.gmail.com>
+Subject: Re: [PATCH] x86/asm: Merge KSTK_ESP() implementations
+To: "H. Peter Anvin" <hpa@zytor.com>
+Cc: linux-kernel@vger.kernel.org, x86@kernel.org, 
+	Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 3, 2025 at 4:13=E2=80=AFPM Peilin Ye <yepeilin@google.com> wrot=
-e:
+On Mon, Mar 3, 2025 at 7:01=E2=80=AFPM H. Peter Anvin <hpa@zytor.com> wrote=
+:
 >
->         switch (insn->imm) {
-> @@ -7780,6 +7813,24 @@ static int check_atomic(struct bpf_verifier_env *e=
-nv, struct bpf_insn *insn)
->         case BPF_XCHG:
->         case BPF_CMPXCHG:
->                 return check_atomic_rmw(env, insn);
-> +       case BPF_LOAD_ACQ:
-> +#ifndef CONFIG_64BIT
-> +               if (BPF_SIZE(insn->code) =3D=3D BPF_DW) {
-> +                       verbose(env,
-> +                               "64-bit load-acquires are only supported =
-on 64-bit arches\n");
-> +                       return -EOPNOTSUPP;
-> +               }
-> +#endif
+> On March 3, 2025 10:31:11 AM PST, Brian Gerst <brgerst@gmail.com> wrote:
+> >Commit 263042e4630a ("Save user RSP in pt_regs->sp on SYSCALL64
+> >fastpath") simplified the 64-bit implementation of KSTK_ESP() which is
+> >now identical to 32-bit.  Merge them into a common definition.
+> >
+> >No functional change.
+> >
+> >Signed-off-by: Brian Gerst <brgerst@gmail.com>
+> >---
+> > arch/x86/include/asm/processor.h | 5 +----
+> > arch/x86/kernel/process_64.c     | 5 -----
+> > 2 files changed, 1 insertion(+), 9 deletions(-)
+> >
+> >diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/pro=
+cessor.h
+> >index a969bea1ed07..55f0e48413b0 100644
+> >--- a/arch/x86/include/asm/processor.h
+> >+++ b/arch/x86/include/asm/processor.h
+> >@@ -652,8 +652,6 @@ static __always_inline void prefetchw(const void *x)
+> >       .sysenter_cs            =3D __KERNEL_CS,                         =
+   \
+> > }
+> >
+> >-#define KSTK_ESP(task)                (task_pt_regs(task)->sp)
+> >-
+> > #else
+> > extern unsigned long __top_init_kernel_stack[];
+> >
+> >@@ -661,8 +659,6 @@ extern unsigned long __top_init_kernel_stack[];
+> >       .sp     =3D (unsigned long)&__top_init_kernel_stack,             =
+ \
+> > }
+> >
+> >-extern unsigned long KSTK_ESP(struct task_struct *task);
+> >-
+> > #endif /* CONFIG_X86_64 */
+> >
+> > extern void start_thread(struct pt_regs *regs, unsigned long new_ip,
+> >@@ -676,6 +672,7 @@ extern void start_thread(struct pt_regs *regs, unsig=
+ned long new_ip,
+> > #define TASK_UNMAPPED_BASE            __TASK_UNMAPPED_BASE(TASK_SIZE_LO=
+W)
+> >
+> > #define KSTK_EIP(task)                (task_pt_regs(task)->ip)
+> >+#define KSTK_ESP(task)                (task_pt_regs(task)->sp)
+> >
+> > /* Get/set a process' ability to use the timestamp counter instruction =
+*/
+> > #define GET_TSC_CTL(adr)      get_tsc_mode((adr))
+> >diff --git a/arch/x86/kernel/process_64.c b/arch/x86/kernel/process_64.c
+> >index 4ca73ddfb30b..f983d2a57ac3 100644
+> >--- a/arch/x86/kernel/process_64.c
+> >+++ b/arch/x86/kernel/process_64.c
+> >@@ -979,8 +979,3 @@ long do_arch_prctl_64(struct task_struct *task, int =
+option, unsigned long arg2)
+> >
+> >       return ret;
+> > }
+> >-
+> >-unsigned long KSTK_ESP(struct task_struct *task)
+> >-{
+> >-      return task_pt_regs(task)->sp;
+> >-}
+> >
+> >base-commit: 693c8502970a533363e9ece482c80bb6db0c12a5
+>
+> Why using the macro version?
 
-Your earlier proposal of:
-if (BPF_SIZE(insn->code) =3D=3D BPF_DW && BITS_PER_LONG !=3D 64) {
+Why call an out-of-line function?  I guess it could be an inline
+function (along with KSK_EIP()).
 
-was cleaner.
-Why did you pick ifndef ?
 
-> +               return check_atomic_load(env, insn);
-> +       case BPF_STORE_REL:
-> +#ifndef CONFIG_64BIT
-> +               if (BPF_SIZE(insn->code) =3D=3D BPF_DW) {
-> +                       verbose(env,
-> +                               "64-bit store-releases are only supported=
- on 64-bit arches\n");
-> +                       return -EOPNOTSUPP;
-> +               }
-> +#endif
+Brian Gerst
 
