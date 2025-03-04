@@ -1,186 +1,142 @@
-Return-Path: <linux-kernel+bounces-544101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75295A4DD5F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:02:52 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 514E6A4DD61
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:03:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F54B3A5EED
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:02:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 496EC177E2C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:02:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6C22204864;
-	Tue,  4 Mar 2025 12:00:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51388201021;
+	Tue,  4 Mar 2025 12:01:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="TRq7FFwn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="SQjeh8ZA"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="syG/lZKj"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AC1202C40;
-	Tue,  4 Mar 2025 12:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536E9202C40;
+	Tue,  4 Mar 2025 12:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089649; cv=none; b=a8U7gM3y5mIiMWuPPwXamgyUhbVYnF8InQXdYWu/YtlwR1ycEIfuxNgXhnB3xuBAUEcYbmY6ndpaZIgnHQT7cE5HQ1pvEQlUS20cVEucEYHtz9RLnz0+H1KUh9eKxponet0TpA4fHUdzgvsbDqEVzU29sGChB3CwclzRFcAQlg8=
+	t=1741089668; cv=none; b=HiLMogdz24qk5v8R2qZeuwU2KhAIp1D+bt95YgknpbAexZkDj7ADGNHu4UAYbbUYOLHQtw9fQp/1HNA4Sx/F9COxHp8RrmidbjEBmBmj1FC4r+5Xi7I6ogEGjgKZKbBO2UBcCqzxJnBcRnvQevakvFkl6RysApyL3shB9gShfNw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089649; c=relaxed/simple;
-	bh=llzvKCGJNXnxmJEoqeRL2gqLJuprf35ORc99c8kkCVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cwDAkJXsoZTIvYjKSJXPouUfRR0oWD5SUmWjq7E5g7tvPTtifHDzA4qfjkOFGG6UhHvcUiCG+HeslFPYDpg3Uh05oNiMNf2WpIOdCdRbGwP8Meoq+rtfFU1/MEDQSq9S+lbOuyKo40GwmwE/uYzhvs6chgj/Tzn2K6/8RPxFWKk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=TRq7FFwn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=SQjeh8ZA; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id CDD731140223;
-	Tue,  4 Mar 2025 07:00:44 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-09.internal (MEProxy); Tue, 04 Mar 2025 07:00:44 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1741089644; x=
-	1741176044; bh=uIiaTK+BiKB8xl9aYkMLVI+7Bb2XzXCNKJ0MtNy8+xc=; b=T
-	Rq7FFwn0tjeqvPJXVToq0krNscd+7Pqg7/Z1pSkJacvdXDlQSmloA2GYCQrT7aV5
-	Lv6tOyLRzMzJM0HnzOG31jgjxtjtXalRFJ3tMIhkxaD/lNGABcOJjPv/hQWAF771
-	kP2Tq8zV9xJHwZ4kjMQhh0ZFc5nFm49bYISxuHF4R419wYJK5MfdzhpaZdQW94f1
-	Pe+ytFzjnPbYU4BErmpMbSHXnYq37NApCaWB4ghwahPM6T0+Y1ZXeZSSxOlj2eFj
-	Bac/A+3sz11lTwyw/ASGv+rOLHZuk4/dPDhl0JuVSw3YgiAEOkSLpBIAMLakiS8k
-	PuhRf6HxibJT4puIgD/Wg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741089644; x=1741176044; bh=uIiaTK+BiKB8xl9aYkMLVI+7Bb2XzXCNKJ0
-	MtNy8+xc=; b=SQjeh8ZA/fuP84rWIG4fVWw21Orc9eeiSdC+1TcJOaP/GwwLkv8
-	wlLmMtm17BBGFwo90VzcOlhYEYUYAMZQcsU6xO4SOhQKOmQBddGl2QBx06zuxL7o
-	rtF8ZUaerOB7LxZ6MtIErpsiPIBPOpabF7COocR6o9TW2IcyA5MCfpUBRqw8gC69
-	GZZjCGCMTzP3YZNpVgqfjDFqbvCW1kaAqQKijIZmUejmUDVN2jWuTeC2u8MdSwZs
-	kXuwRee6QMI05cfxlTMhZjW25ddzVODYlbAswTnEvhtv84Edw0Lb/3OU1YvNpIvc
-	cMj7wVRvA683rqfo9aGsAcZtC8ArAxgTFQA==
-X-ME-Sender: <xms:bOvGZ58ceUWGQvEBj9siiUDVi2hhV88YKvswfjVIUndu3D0yRL2HeA>
-    <xme:bOvGZ9sl0vALrmx6uWrhisvC2aCe4dG0gWnoCP1XJHY3l__IgHdMxfwjPrg-4BRx3
-    bNeKzEWAYG8uvkBQ24>
-X-ME-Received: <xmr:bOvGZ3A4wR6uiJg4CFjAPyHBqb8M8nCFav_34PlFHqbG6uWNGjQw5t9p19-P>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdduleekucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:bOvGZ9cTHR1uzoFISZDtd1gg9PRMs5FE-PYBfv_55hRT0Lkd_Fpq3w>
-    <xmx:bOvGZ-NgrH3k6H8BF5hv9qw2RgFI5ZoaYYiDDPmv2odt9kq8wXXcPA>
-    <xmx:bOvGZ_nOmw2zZzm3MGXqPM0tVYkUitd_ECG-83PMS0LSRe4h0Am1kQ>
-    <xmx:bOvGZ4tndPVZk8yknlu0hoKSx-Xunmyr9-6gZWyRQCSQXe3kiJOLFw>
-    <xmx:bOvGZ1kjv23uJ3slutM5OiUjnjLf7KcG2Mc8HeigCrNy1H9zEg4L4mq6>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Mar 2025 07:00:43 -0500 (EST)
-Date: Tue, 4 Mar 2025 13:00:42 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH v21 20/24] ovpn: implement key add/get/del/swap via
- netlink
-Message-ID: <Z8braoc3yeBY7lcE@hog>
-References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
- <20250304-b4-ovpn-tmp-v21-20-d3cbb74bb581@openvpn.net>
+	s=arc-20240116; t=1741089668; c=relaxed/simple;
+	bh=EKGYVOnPQeV4jyxf5xLUnRIXP1NMDnSM0m8tT/yQTA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qx8w5KMI3lUGIDlzxCItM5b+qHe4gUsa9Rryi4gUymYaUhsZlHXQHnDBHKBdcCto2WnuaRDr0BeO7vG+KUkCUgM/sPYY9Nokhdhd3riW1lXtXDC0z84O+eZM97vOcxuinjut5K5d35luYl8l48/WOVfX2apPOnRGQmQrqQ2qzFY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=syG/lZKj; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-158-153-178.elisa-laajakaista.fi [91.158.153.178])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id EA44C8FA;
+	Tue,  4 Mar 2025 12:59:30 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1741089572;
+	bh=EKGYVOnPQeV4jyxf5xLUnRIXP1NMDnSM0m8tT/yQTA4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=syG/lZKjCqoKe3tjMpDmhBTJZGYWPF9TI+iXY0+Oh2pDGCOuMzoYCgbth5rjDJggE
+	 /8OJplGw9HX8/qhiI9lIUQh0y8hLJUojzPfiIqkXKeqsv9XeuCV9ZJ7fGdz30qPX4Y
+	 BNUl4nhZtsOetMSp76xLLsgdsSpHeXHVfCF6uRIM=
+Message-ID: <62e404d1-3e77-473f-b73a-4cdcb9d03306@ideasonboard.com>
+Date: Tue, 4 Mar 2025 14:00:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250304-b4-ovpn-tmp-v21-20-d3cbb74bb581@openvpn.net>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/4] drm/tidss: Mark AM65x OLDI code separately
+To: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Maxime Ripard <mripard@kernel.org>,
+ David Airlie <airlied@gmail.com>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Simona Vetter <simona@ffwll.ch>, Nishanth Menon <nm@ti.com>,
+ Vignesh Raghavendra <vigneshr@ti.com>, Devarsh Thakkar <devarsht@ti.com>,
+ Praneeth Bajjuri <praneeth@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+ Jayesh Choudhary <j-choudhary@ti.com>,
+ Francesco Dolcini <francesco@dolcini.it>,
+ DRI Development List <dri-devel@lists.freedesktop.org>,
+ Devicetree List <devicetree@vger.kernel.org>,
+ Linux Kernel List <linux-kernel@vger.kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jyri Sarha <jyri.sarha@iki.fi>
+References: <20250226181300.756610-1-aradhya.bhatia@linux.dev>
+ <20250226181300.756610-4-aradhya.bhatia@linux.dev>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <20250226181300.756610-4-aradhya.bhatia@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-2025-03-04, 01:33:50 +0100, Antonio Quartulli wrote:
->  int ovpn_nl_key_new_doit(struct sk_buff *skb, struct genl_info *info)
->  {
-...
-> +	pkr.slot = nla_get_u8(attrs[OVPN_A_KEYCONF_SLOT]);
-> +	pkr.key.key_id = nla_get_u16(attrs[OVPN_A_KEYCONF_KEY_ID]);
-> +	pkr.key.cipher_alg = nla_get_u16(attrs[OVPN_A_KEYCONF_CIPHER_ALG]);
+On 26/02/2025 20:12, Aradhya Bhatia wrote:
+> The dss dt schema and the tidss driver have kept the single-link OLDI in
+> AM65x integrated with the parent video-port (VP) from DSS (as the OLDI
+> configuration happens from the source VP only).
+> To help configure the dual-lvds modes that the OLDI has to offer in
+> devices AM62x and later, a new OLDI bridge driver will be introduced.
+> 
+> Mark the existing OLDI code separately by renaming all the current OLDI
+> identifiers with the 'AM65X_' prefix in tidss driver, to help
+> distinguish from the upcoming OLDI bridge driver.
+> 
+> Signed-off-by: Aradhya Bhatia <aradhya.bhatia@linux.dev>
+> ---
+>   drivers/gpu/drm/tidss/tidss_dispc.c      | 68 ++++++++++++------------
+>   drivers/gpu/drm/tidss/tidss_dispc.h      |  2 +-
+>   drivers/gpu/drm/tidss/tidss_dispc_regs.h | 15 +++---
+>   drivers/gpu/drm/tidss/tidss_kms.c        |  2 +-
+>   4 files changed, 44 insertions(+), 43 deletions(-)
 
+Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
 
-[...]
-> +static int ovpn_nl_send_key(struct sk_buff *skb, const struct genl_info *info,
-> +			    u32 peer_id, enum ovpn_key_slot slot,
-> +			    const struct ovpn_key_config *keyconf)
-> +{
-...
-> +	if (nla_put_u32(skb, OVPN_A_KEYCONF_SLOT, slot) ||
-> +	    nla_put_u32(skb, OVPN_A_KEYCONF_KEY_ID, keyconf->key_id) ||
-> +	    nla_put_u32(skb, OVPN_A_KEYCONF_CIPHER_ALG, keyconf->cipher_alg))
+  Tomi
 
-That's a bit inconsistent. nla_put_u32 matches the generated policy,
-but the nla_get_u{8,16} don't (and nla_get_u16 also doesn't match "u8
-key_id" it's getting stored into).
-
-[also kind of curious that the policy/spec uses U32 with max values of 1/2/7]
-
-
-
->  int ovpn_nl_key_get_doit(struct sk_buff *skb, struct genl_info *info)
->  {
-...
-> +	slot = nla_get_u32(attrs[OVPN_A_KEYCONF_SLOT]);
-
-
-
->  int ovpn_nl_key_del_doit(struct sk_buff *skb, struct genl_info *info)
->  {
-...
-> +	slot = nla_get_u8(attrs[OVPN_A_KEYCONF_SLOT]);
-
-
-
-A few more inconsistencies:
-
-* OVPN_A_IFNAME is defined in the uapi but never used (I guess
-  leftover from genl link creation)
-
-* OVPN_A_PEER_DEL_REASON (u32 vs u8)
-drivers/net/ovpn/netlink-gen.c:52:      [OVPN_A_PEER_DEL_REASON] = NLA_POLICY_MAX(NLA_U32, 4),
-drivers/net/ovpn/netlink.c:1131:        if (nla_put_u8(msg, OVPN_A_PEER_DEL_REASON, peer->delete_reason))
-
-* OVPN_A_PEER_LINK_TX_PACKETS/OVPN_A_PEER_LINK_RX_PACKETS (uint vs u32):
-drivers/net/ovpn/netlink-gen.c-57-      [OVPN_A_PEER_LINK_RX_BYTES] = { .type = NLA_UINT, },
-drivers/net/ovpn/netlink-gen.c-58-      [OVPN_A_PEER_LINK_TX_BYTES] = { .type = NLA_UINT, },
-drivers/net/ovpn/netlink-gen.c-59-      [OVPN_A_PEER_LINK_RX_PACKETS] = { .type = NLA_U32, },
-drivers/net/ovpn/netlink-gen.c:60:      [OVPN_A_PEER_LINK_TX_PACKETS] = { .type = NLA_U32, },
---
-drivers/net/ovpn/netlink.c-618-     /* link RX stats */
-drivers/net/ovpn/netlink.c-619-     nla_put_uint(skb, OVPN_A_PEER_LINK_RX_BYTES,
-drivers/net/ovpn/netlink.c-620-                  atomic64_read(&peer->link_stats.rx.bytes)) ||
-drivers/net/ovpn/netlink.c-621-     nla_put_uint(skb, OVPN_A_PEER_LINK_RX_PACKETS,
-drivers/net/ovpn/netlink.c-622-                  atomic64_read(&peer->link_stats.rx.packets)) ||
-drivers/net/ovpn/netlink.c-623-     /* link TX stats */
-drivers/net/ovpn/netlink.c-624-     nla_put_uint(skb, OVPN_A_PEER_LINK_TX_BYTES,
-drivers/net/ovpn/netlink.c-625-                  atomic64_read(&peer->link_stats.tx.bytes)) ||
-drivers/net/ovpn/netlink.c:626:     nla_put_uint(skb, OVPN_A_PEER_LINK_TX_PACKETS,
-drivers/net/ovpn/netlink.c-627-                  atomic64_read(&peer->link_stats.tx.packets)))
-
-I guess all the stats should be UINT.
-
--- 
-Sabrina
 
