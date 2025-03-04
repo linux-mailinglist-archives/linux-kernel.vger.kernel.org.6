@@ -1,108 +1,161 @@
-Return-Path: <linux-kernel+bounces-544734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8FB0A4E497
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:00:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 358A8A4E4A6
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 17:01:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33B57189EC60
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:51:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC91842415F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:51:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5435627E1BE;
-	Tue,  4 Mar 2025 15:35:15 +0000 (UTC)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20A4C27EC77;
+	Tue,  4 Mar 2025 15:35:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g1O6+LnX"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 923A127E1C9;
-	Tue,  4 Mar 2025 15:35:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FC027E1C8;
+	Tue,  4 Mar 2025 15:35:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741102515; cv=none; b=VdhF7VANgOcNm1IE09+GagKVLETM4V9Iiv/LLWd5OJXTl9Z0JLMhqPBa1U+NI2uKTaPU5+l2GPY5UedmC73MzPSqPOR/ZACpiJds/QzCdZGDS08VcMrraJKD8/TRTT6uOq29SrrcLDLY3+qVhu+qlUD1j124ppfi5dDuNU+tHkQ=
+	t=1741102535; cv=none; b=ResRaJB70/w0jZ2o3PvIKVuTKytNrTGh9dR9E9ju8cqIV2CvdGLuzfb8EL6lxdD4/MBIOtgr/4Fo5VXn11idLh/bcR9G2LcaU1IoAxcv6fdVpCRber0XfWAv5h/yElW9mQn0/0iPsV9Ef/r47isk8+KXqOplQaimANs8ZsbEkeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741102515; c=relaxed/simple;
-	bh=25lxY0rRFzscOEISUUTmtF8cqJFNHESfhXic2drv9Xc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AEg+wG2W38UCTL+mu+fOEjaSGQ8ovUwyW5lgjwszS6qpAJGNwCKqnrbveKJiTT08KqBXtGJ0c1x9QGZTcz336Uojgu9IFjVQgeZsUXBLRMxM/eX6Ngsj9CL1KGfj3MVsPIQ7rdPGhZUi3wiYcoF2M88Je6AQP2DfrRsjuvDoPos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+	s=arc-20240116; t=1741102535; c=relaxed/simple;
+	bh=+XnwmcoN6IdY4KUT0KmaHLzlKg0KsHizlhJ8kKoAkr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ui27S6jXhfa1SgLR41p+T+0TbwGjfU1G/WBwKsiUZkN2LwjB6Oi5gkQd02llJCUes7mXA6IiZ4yymtzv/keAyzCLHOzGbr03WKD2v0S74FnKHw+xfHSP/M0icn2+OpmYBR1hMxO5QIfs6udGADHbQdwpG53YFEeWfo7ut8fyrrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g1O6+LnX; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2239c066347so52775695ad.2;
-        Tue, 04 Mar 2025 07:35:13 -0800 (PST)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e52c1c3599so4518744a12.2;
+        Tue, 04 Mar 2025 07:35:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741102532; x=1741707332; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=49i4+pEDVoWipnogjrd+XrcmFWqDzMU2u47MulqAQXM=;
+        b=g1O6+LnXnwWPBWSUjUm34Az4JlVlYuSj9ihVR8G9slxLBvRlATY8YsPFfMw2Ir708y
+         GGyQV3TiuzW2L1pnnWM5iBT4dtGbZkGFKUfTfalJP9NjZ4sK0IoDdrSuI+1UqDl2GdnG
+         nSCCZF4xLzAYj5ODok+/yk/czMCuaIqkWAtVwSfk5cK073jsD2rHsFbw9P/JEIH8gY13
+         HFOJvGA3+0UhfvOLZCsgyjZZXOeVWlGjz0QgbqHLwRd7StyoIag7GMn0FnsKm+yJevz6
+         C3T+ewHZhukj2XTokVPLqn6YXY7cDVbpgACunuhrMhJlTmgRe8fIBzoYytO91JLXE7CQ
+         djNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741102513; x=1741707313;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aPksOpIsWmD4LD84U/zyiEQF/6uAhUOVlj8rScJ6yGY=;
-        b=MxGyosFLpa+q5WnPDwFlu4Mf6J9WfI7gwf3+SXdVXWTHgxhc0K/Aj3Mtk6MEYfmIEY
-         NoYNeLTQRgWfoRwUft8/APav2coBkND7dVLVCW/rTUmMSkd+lKvOP5lRD0L8R/1/F9RG
-         jB/pl3LdnjuC8cOfR9/TK7NWVZMRQ61axRPoCzTmyfqYaa7MzDcmVOI1mBCEndjy9nwu
-         bOXmxpsIJhk8GMjxNHTK5WsOrp4RxKLeZZzpdRFXXyZjUNBpoKKJBljfRw43YamNcRR8
-         Xp0lNSMZSoHN7EzP21yriMLbH5usK0moyF9Glh/TPlb+LXvYQD1AlCV2i338UJnNLFLc
-         xFrg==
-X-Forwarded-Encrypted: i=1; AJvYcCUvYJ3B8hNRltxWwsO3VsvSPaz52Ib4OD2yFL8jMtsZUkbaohq9OGvESHKuLC+rzDi3U9Ha3ZKdDcFX@vger.kernel.org, AJvYcCVrWbv9WA0VHbbPcMIETCv/j0lnlIKDTu2nMK9QXfjekRjmrE39mFqHQ7bakk0EQC+xdVNxRksKmCcurtZqGjpSZw==@vger.kernel.org, AJvYcCWGAHG0brgQy2RWjwyZKFM6jMz3S9WQiCFKPvwfXmoZsRhfc4DK4dX0+vYNYX4W66SGG9sHmH1c4f0UKYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKpyGxowldE8IXSTmiMEI1hFT0hONAZOx814UZXJ9zE1EwMaxI
-	RxhZtzx3izJ4GTLGWlJn7vp3KA/o/iMw+pvRUTsJTbt06ygWs0IM
-X-Gm-Gg: ASbGncsaveqgrrwsTrqHStgY4xFjR/gYGlrHfL0VUoRZczjEU1791rPVQA5h0xVbnJp
-	bv+qUcqfDfcbk8r9k2SskNRlWRXFVvAF74mz/SNEyGoo02DuDpIB6bi3p9PD6L/QBtVLrLrTfWW
-	z/9+XlDRcD01Hzc2WUhPHDTXabKzOU5XHbFSIZfC6IHEL338+ofzPRtm28+5ohKJjkdoiJ+ckYi
-	ZRkr5iBpbOkZE8iD37YrmxjMB/62j+T/WX+HwVur1WjEPubjl+w+kBIBPvbEwOdaK9R+IVup96A
-	5p6NY9rIxZ0+NZeb62Qnyt/mTzaobuIq6V6zckGx/WFCYH0AWNmfbXyo8IiQsihw9sAE2T0mHYF
-	9FuA=
-X-Google-Smtp-Source: AGHT+IHqM19CmKxrc3+/5zghLWm7z3K7HlW9tJVgM1xGFI0z5/AxnNorz6ln5aNsioCk4N/uTqY9lA==
-X-Received: by 2002:a17:902:eccc:b0:215:6489:cfb8 with SMTP id d9443c01a7336-22368f6365emr341829405ad.10.1741102512747;
-        Tue, 04 Mar 2025 07:35:12 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-2235053e41asm96451805ad.255.2025.03.04.07.35.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 07:35:12 -0800 (PST)
-Date: Wed, 5 Mar 2025 00:35:09 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Shradha Todi <shradha.t@samsung.com>, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@huawei.com, fan.ni@samsung.com,
-	nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 4/5] Add debugfs based error injection support in DWC
-Message-ID: <20250304153509.GA2310180@rocinante>
-References: <20250221131548.59616-1-shradha.t@samsung.com>
- <CGME20250221132039epcas5p31913eab0acec1eb5e7874897a084c725@epcas5p3.samsung.com>
- <20250221131548.59616-5-shradha.t@samsung.com>
- <20250303095200.GB1065658@rocinante>
- <20250304152952.pal66goo2dwegevh@thinkpad>
+        d=1e100.net; s=20230601; t=1741102532; x=1741707332;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=49i4+pEDVoWipnogjrd+XrcmFWqDzMU2u47MulqAQXM=;
+        b=ItyBsIdEBg4o8OWTRohuE5rri7Y7aRSZyyMOCxoG9SCSAzX2jTgqQYRvMmKKRIC+7A
+         lRjmVQp+zMWl34GfwmNx5wdbvO+ftpjly6f7T0Dp4pPAVss84G6DO7Rx8diXf8uQB48m
+         sdyyJIYYFqi/W4GcC5tPIHEHzEYkFE94GwXcT1BO5Tk70gqRnVvMGp/Oe4mklvHuBIOY
+         YquVdzBZJVaiYPppeBdrWuk4DpZlvW7k2Q8HEHcMd4ZEDoz6vA/toG4mkKi0h6G/wvRP
+         23X0+wBhH2XHn5PaiNSPu31G7Ej4vYR+dtHgkz2g7y6Towa+FKyRI+6vU8eCFRSbBtSp
+         sDEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVdiVrqvfHvXmORhs4ik72Iz0iTdJSVvqMk16fEnfKcLimdGZzzJmUhMeQKPCbM260vfyiTw8JitD5+Zj92oFcQPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWnxDdu7FDV2/0bAQ8nTPJRyvMpD19e84cmlDVuRWA68WlcoJf
+	jLhkpm2taUzV9f0lIaZZlIjMXM43DYijMkhGt4NEHIYZbXI5p3jo
+X-Gm-Gg: ASbGncuegfEMWNucQcESRoA+ndHO2HnOnkgx6YPeFOqkDEzZ0K8yKijcRgK45acnW7w
+	rSWLfOPjF6KHFWUHt9V6vIm3CJdw1OioffyTe6X2QIwOJAijW9kOjvlULwCe75diafwSBGBT4zv
+	0dhQDJOhUeWV9Oy+VwsCSKDiNxg3mJP8ZMqiKUaABjCZuU/0SkzpPep07ZJuC45tER4PpJMmLHD
+	SfmJkMfHSMwu+H60Jz09m4Gqj35haXxcHhhT71/swleHzBHUKWvdgrGWrNEQX8V90rG3LrQh1mo
+	Oh5sbqyn2cssy4goESZMYUZAFfZLyux37MsizAo+netKdw==
+X-Google-Smtp-Source: AGHT+IH+/FlQ/+zOEynwiecOCpyNj0oAUZDq5BuZa2aESgVwjIWMvEl5pJUTW0/4g/ok8cIItKkk0A==
+X-Received: by 2002:a17:907:7e93:b0:ac1:e332:b1f6 with SMTP id a640c23a62f3a-ac1e332b48dmr680935066b.0.1741102531841;
+        Tue, 04 Mar 2025 07:35:31 -0800 (PST)
+Received: from [192.168.1.100] ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf7b3882dfsm340283666b.143.2025.03.04.07.35.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 07:35:31 -0800 (PST)
+Message-ID: <aebc3572-43a9-984b-1c47-1f06b17b2972@gmail.com>
+Date: Tue, 4 Mar 2025 16:35:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304152952.pal66goo2dwegevh@thinkpad>
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [tip: x86/asm] x86/asm: Make ASM_CALL_CONSTRAINT conditional on
+ frame pointers
+Content-Language: en-US
+To: "H. Peter Anvin" <hpa@zytor.com>, Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+ tip-bot2 for Josh Poimboeuf <tip-bot2@linutronix.de>,
+ linux-tip-commits@vger.kernel.org, Ingo Molnar <mingo@kernel.org>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Brian Gerst <brgerst@gmail.com>, x86@kernel.org
+References: <174099976188.10177.7153571701278544000.tip-bot2@tip-bot2>
+ <C77024F6-3087-40A3-8AFB-A642EECAFF4E@zytor.com>
+ <20250303224548.pghzo2j4hdww7nxt@jpoimboe>
+ <20250303224758.2ugmmy7f7zsqti4m@jpoimboe>
+ <28D821BB-96B5-4389-839E-5B7CB4D49F5F@zytor.com>
+From: Uros Bizjak <ubizjak@gmail.com>
+In-Reply-To: <28D821BB-96B5-4389-839E-5B7CB4D49F5F@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
 
-[....]
-> > > +		29) Generates duplicate TLPs - duplicate_dllp
-> > > +		30) Generates Nullified TLPs - nullified_tlp
-> > 
-> > Would the above field called "duplicate_dllp" for duplicate TLPs be
-> > a potential typo?  Perhaps this should be called "duplicate_tlp"?
-> > 
+
+On 4. 03. 25 01:35, H. Peter Anvin wrote:
+> On March 3, 2025 2:47:58 PM PST, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>> On Mon, Mar 03, 2025 at 02:45:50PM -0800, Josh Poimboeuf wrote:
+>>> On Mon, Mar 03, 2025 at 02:31:50PM -0800, H. Peter Anvin wrote:
+>>>>> +#ifdef CONFIG_UNWINDER_FRAME_POINTER
+>>>>> #define ASM_CALL_CONSTRAINT "r" (__builtin_frame_address(0))
+>>>>> +#else
+>>>>> +#define ASM_CALL_CONSTRAINT
+>>>>> +#endif
+>>>>>
+>>>>> #endif /* __ASSEMBLY__ */
+>>>>>
+>>>>
+>>>> Wait, why was this changed? I actually tested this form at least once
+>>>> and found that it didn't work under all circumstances...
+>>>
+>>> Do you have any more details about where this didn't work?  I tested
+>>> with several configs and it seems to work fine.  Objtool will complain
+>>> if it doesn't work.
+>>>
+>>> See here for the justification (the previous version was producing crap
+>>> code in Clang):
+>>
+>> Gah, that link doesn't work because I forgot to cc lkml.
+>>
+>> Here's the tip bot link:
+>>
+>>   https://lore.kernel.org/all/174099976253.10177.12542657892256193630.tip-bot2@tip-bot2/
+>>
 > 
-> Looks like a typo. As per Synopsys documentation, there is only 'duplicate TLP'
-> field.
-> 
-> Good catch!
+> One more thing: if we remove ASM_CALL_CONSTRAINTS, we will not be able to use the redzone in future FRED only kernel builds.
 
-Updated.  Thank you!
+Actually, GCC 15+ will introduce "redzone" clobber, so you will be able 
+to write e.g.:
 
-	Krzysztof
+void foo (void) { asm ("" : : : "cc", "memory", "redzone"); }
+
+Please see [1] and:
+
++@item "redzone"
++The @code{"redzone"} clobber tells the compiler that the assembly code
++may write to the stack red zone, area below the stack pointer which on
++some architectures in some calling conventions is guaranteed not to be
++changed by signal handlers, interrupts or exceptions and so the compiler
++can store there temporaries in leaf functions.  On targets which have
++no concept of the stack red zone, the clobber is ignored.
++It should be used e.g.@: in case the assembly code uses call instructions
++or pushes something to the stack without taking the red zone into account
++by subtracting red zone size from the stack pointer first and restoring
++it afterwards.
++
+
+[1] https://gcc.gnu.org/bugzilla/show_bug.cgi?id=117312
+
+Uros.
 
