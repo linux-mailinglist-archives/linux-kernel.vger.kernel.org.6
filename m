@@ -1,118 +1,124 @@
-Return-Path: <linux-kernel+bounces-543968-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543969-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3817A4DC10
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:12:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E63EEA4DC14
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:12:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8E283B3011
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:10:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 286643B320D
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:10:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86981FF1DD;
-	Tue,  4 Mar 2025 11:10:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 705461FF611;
+	Tue,  4 Mar 2025 11:10:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uu6G7HoH"
-Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3wPPBYO6";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="i6/56Pwy"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 908C11FCFC9
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 11:10:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7FA1FCFC9;
+	Tue,  4 Mar 2025 11:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741086620; cv=none; b=joBPY626GwiDg1vHwP0uGuWZnfumgNcKQM7HpXwZ/lm9ztT29v08eebKSJF3Xlnq8O6Ux4fpnULeMgH2WME0HJOiGUhsdTKyapxovzffTwGkg2kHULNBWQo2P8YvehJ9TsVrnOjVh97Gd+GXVeBsaPHZ8c/JS+9n0nOzC3xuU7Q=
+	t=1741086636; cv=none; b=AngtJWqCcNc1qdpYJw/FiuYGp1v+C9CrVoY1FBrp3W4awTQ1ck06DZvSZ82Bhnd7kTBLFaMXOTPv9WJvBa/vacZKOvqrotEXnzP4Fk/bWrG4FvfgFu4xXkr0IlMxNqNgPInZPDqA9ZLXP0IH9g28PThf3MIZDH5xD1Y1zCv9+hs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741086620; c=relaxed/simple;
-	bh=orq1R91M8c7dbpXtuEOgzh42cNSPrB9DSV2M6evhgEw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MV8PIk/TiMcaeNqwv+PDE+sLxyWC2/1nVBSsQNUOHSfbseCTgW4T3EWUcdTVzlbB8nKHPUo3c4HFEj2kG8OW//sLbSnSlWugy9Wiz0xScU/ddupbm3xloiobJ89SavnxSs1hzgdJ5h9TE+XVmCLekmsCm1E838RWoZ664VrAY5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uu6G7HoH; arc=none smtp.client-ip=209.85.161.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5fd19b469b0so1512934eaf.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 03:10:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741086617; x=1741691417; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=nQbFhcoDrZBPCIQTDm/+1b8V56ThPOVb0NP4CFpNh3Q=;
-        b=uu6G7HoHasu8+ttQ9ueKU8i7O5rmNcpOYtwegexQ3L64JgPnqq9YXgC8cgsz8+7XyN
-         y3WfH3fX6SsQ/C9OhgLpINNvNNypB1ALO6K8lMyDAvXrcMCiArDJ9OCHZV95GQlNdbNV
-         MxPfHKNVWxPmkoNDvZ/jDXPCUIGVbwZ5XfR4buQUu6HasdRFYOQgiCej68SaRYjLThly
-         5FOQtyqxOkyWTmCc2Y685E2NccJ+QzdgrHGQcRdg8qnaQQVQ2lz06MtfybjwRePnVxwV
-         xp1CRzY3j3WypR/vNzyJPWxOjJAu+RoGFpJKCK6Csj9lnBld4FJiC8oDi5Ep7SR6re5o
-         ZxRA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741086617; x=1741691417;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nQbFhcoDrZBPCIQTDm/+1b8V56ThPOVb0NP4CFpNh3Q=;
-        b=LMNcAupStHMrQMsBUx3Hh3zcnOkJxap2Y9KVNo8aqlYiEvkAnjiXWugvzteqPe4Y5l
-         O2y70hbREKQWcH6EAHMvHTZBKs6oXTv6ct05/Q0I3WbPPjqQYhsAS0FgzzoUZtTLS+q5
-         gloPuSa4QcpEJr7vC2nlzwBa+K96eX6JU4lzXmKnAj3YfBowJVhJ+mta8HXima2BvoWt
-         9yewqHlglr42aJ9Igz+kio4vQIR/2Ew0vNXWjklgVI9uoIV3maxJq6jUSMDMsAPWyKLZ
-         7iczYaDAnDXDljet4qI2wwjRPwyASz+HI2ZfHRBTUiR0srsmdEnTCrXn5tT7oBt3LOKs
-         DnHw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpVLhzb+XK6m2304AamUMEFVmRsN5zBrfQbbifeHTlTZ0x0ZtttI8fB6mcmCE9NdUG+sflehWjMWnn54E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxakrdaO+weXWI31uhQhHW2ExPpjZZ5ENdPoWRclXUU3DULNWiU
-	Q0GD/ZJQiy2x3ComzGZg+uCQRYXlnolk3Z37WZnkFNsuYlinMS+f8xpGSI1scDnMX1thnTnLbUh
-	wQpB8sSTw21PNSgdV344ePPBazJnFLJnLRvrWEA==
-X-Gm-Gg: ASbGncsfyhg/07zig6i5np9KCAVAIxs0RDFaxU9WHEUuWFtuzTGKHSIvBfodUgs4ng0
-	2x/yR7aDC8XRFndDLdmA7sAGVlI7fbBpl0ZiuVCzdN2cvdhx72ebXyqkUiKTBZwXt3hOf+PhlA6
-	35xR7wpBkdM9bRmNX540CixUhsudk=
-X-Google-Smtp-Source: AGHT+IEINRiNLM5nuBLFCz1du/UfXjBpJa2EipBY+f1wkfnUA0YwZBo+sl10akF+u4qE0h1ovmH6xsuQeboW1BoOyFs=
-X-Received: by 2002:a05:6820:260d:b0:5fd:c5f:3937 with SMTP id
- 006d021491bc7-5feb34b8657mr9224249eaf.1.1741086617654; Tue, 04 Mar 2025
- 03:10:17 -0800 (PST)
+	s=arc-20240116; t=1741086636; c=relaxed/simple;
+	bh=o8pV7LiC1HAPjce0nZYzrkmFV9kB16o0ZyOOSic1Roc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dLYYq1cPM+O7VGWnELrxd+XBCeFwXo+b3Vx66L+I+nnfIwuhJ+Fbxay/gyfJT3FY9uEazH25VJSGMNf4k7pCGqth/CeqRaYj1+sqCteYG98wp90TcjppVfb0jNgo/r6yRulV9v+wUmWAgC1awtocT2d7c5sIQTHDQUfmt7Gcs94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3wPPBYO6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=i6/56Pwy; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Tue, 4 Mar 2025 12:10:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741086633;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y86laKqtxZGXfzc8gw8EE43zQLw75ddKvx0R7AfVXYI=;
+	b=3wPPBYO6A9bcv7fi+C0tb0a/l1lp3nepoagyNIul9JN+LprR9LEQ4LbE8xgW+xafWQqsEY
+	4k8aER88f3dExfknJHD4xQuIxz/T6HAh+YwYhgGcSLgosY+hxhT7FEbiE422Gr2enJXtNA
+	SZrMpMG55OfkQRNbk+M6g6pse7hdiTxD7De/FtAtwtAQnH5H8cw8hgdl5qBpYRFoUtADYn
+	hLKa900OyqsmcBj5x42N0bTEm+8oKgK2eZw089/qtAYWpINGSegTje0/JsEKUgQF1x+/bz
+	7HZeNRGljo5YiG9W40t4u6+frCknAuC4bfOR+IWi05lZe96MWWh5kTEnFOyaeg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741086633;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Y86laKqtxZGXfzc8gw8EE43zQLw75ddKvx0R7AfVXYI=;
+	b=i6/56PwyySHprOiuvCBL5lQ6LHKZW+byBmFagA3vt2+8wH1rE14rbLIetN4QnFr79GP0YS
+	uGWqWdCJmUaXKeDg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Willy Tarreau <w@1wt.eu>
+Cc: Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH 25/32] tools/nolibc: allow different write callbacks in
+ printf
+Message-ID: <20250304120932-827df661-9aa6-488e-8935-70915caaab15@linutronix.de>
+References: <20250304-nolibc-kselftest-harness-v1-0-adca7cd231e2@linutronix.de>
+ <20250304-nolibc-kselftest-harness-v1-25-adca7cd231e2@linutronix.de>
+ <20250304075923.GC9911@1wt.eu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250226220414.343659-1-peter.griffin@linaro.org>
- <20250226220414.343659-6-peter.griffin@linaro.org> <51ec6f40-c62a-418b-a538-082e3ad887cb@acm.org>
-In-Reply-To: <51ec6f40-c62a-418b-a538-082e3ad887cb@acm.org>
-From: Peter Griffin <peter.griffin@linaro.org>
-Date: Tue, 4 Mar 2025 11:10:06 +0000
-X-Gm-Features: AQ5f1Jqwsn9oJaTqNHIYgxQUuylO7zocGAli9flyfTI1wTMKlEft2huZY8mFVSM
-Message-ID: <CADrjBPqw-kt+4fLfJCziAJrtcV4gVM9Gubtq=7Xb8sgxq-i8uQ@mail.gmail.com>
-Subject: Re: [PATCH 5/6] scsi: ufs: exynos: Move phy calls to .exit() callback
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com, 
-	martin.petersen@oracle.com, krzk@kernel.org, linux-scsi@vger.kernel.org, 
-	linux-samsung-soc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, willmcvicker@google.com, 
-	tudor.ambarus@linaro.org, andre.draszik@linaro.org, ebiggers@kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250304075923.GC9911@1wt.eu>
 
-Hi Bart,
+On Tue, Mar 04, 2025 at 08:59:23AM +0100, Willy Tarreau wrote:
+> On Tue, Mar 04, 2025 at 08:10:55AM +0100, Thomas Weiﬂschuh wrote:
+> > Decouple the formatting logic from the writing logic to later enable
+> > writing straight to a buffer in sprintf().
+> > 
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> > ---
+> >  tools/include/nolibc/stdio.h | 21 +++++++++++++++++----
+> >  1 file changed, 17 insertions(+), 4 deletions(-)
+> > 
+> > diff --git a/tools/include/nolibc/stdio.h b/tools/include/nolibc/stdio.h
+> > index 262d0da4da9062e0c83b55661b2509f36548cf88..434fbaddae7a216159fecf618da85889d631dff7 100644
+> > --- a/tools/include/nolibc/stdio.h
+> > +++ b/tools/include/nolibc/stdio.h
+> > @@ -208,13 +208,15 @@ char *fgets(char *s, int size, FILE *stream)
+> >  }
+> >  
+> >  
+> > -/* minimal vfprintf(). It supports the following formats:
+> > +/* minimal printf(). It supports the following formats:
+> >   *  - %[l*]{d,u,c,x,p}
+> >   *  - %s
+> >   *  - unknown modifiers are ignored.
+> >   */
+> > -static __attribute__((unused, format(printf, 2, 0)))
+> > -int vfprintf(FILE *stream, const char *fmt, va_list args)
+> > +typedef int (*_printf_cb)(intptr_t state, const char *buf, size_t size);
+> 
+> Keep in mind these ones will appear in the application, so you'd rather
+> appropriate the type name by prefixing it with "nolibc" as we've done in
+> a few macros and internal structs.
 
-Thanks for your review feedback!
+Ack. Technically it should be fine as names with leading underscores are
+reserved for the implementation, but let's make it clearer.
 
-On Fri, 28 Feb 2025 at 19:20, Bart Van Assche <bvanassche@acm.org> wrote:
->
-> On 2/26/25 2:04 PM, Peter Griffin wrote:
-> > +static void exynos_ufs_exit(struct ufs_hba *hba)
-> > +{
-> > +     struct exynos_ufs *ufs = ufshcd_get_variant(hba);
-> > +
-> > +     phy_power_off(ufs->phy);
-> > +     phy_exit(ufs->phy);
-> > +}
-> > +
-> > +
->
-> For future patches, please follow the convention that is used elsewhere
-> in the kernel and separate functions with a single blank line instead of
-> two.
+> > +static __attribute__((unused, format(printf, 3, 0)))
+> > +int _printf(_printf_cb cb, intptr_t state, const char *fmt, va_list args)
+>        ^^^^^^^
+> Here as well, since it's not meant to be exposed to the application.
 
-That was an oversight on my part, will fix.
+Ack.
 
-Thanks,
+> > +static int _fprintf_cb(intptr_t state, const char *buf, size_t size)
+> 
+> Likewise here I think.
 
-Peter
+Ack, also to the same remarks in the other patches.
 
