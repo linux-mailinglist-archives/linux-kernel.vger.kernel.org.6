@@ -1,160 +1,169 @@
-Return-Path: <linux-kernel+bounces-544085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DE61A4DD37
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:58:24 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BCDDA4DD34
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:58:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4289A17314E
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:58:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C3EC176F96
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5002C201017;
-	Tue,  4 Mar 2025 11:58:04 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 508A11FECAA;
-	Tue,  4 Mar 2025 11:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F04E201017;
+	Tue,  4 Mar 2025 11:57:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYZ0d05B"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC2B93D561;
+	Tue,  4 Mar 2025 11:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741089483; cv=none; b=tclJTbagBVzM3oqXYehdpRZZyMcWJiKRbiQe4YcmW5jjQ0T40IFNLDgCYW5rOIeBmI6Svj3AwU6z4Xc5rlq7z6WFu9psya+CRY6i6vuPgMdxgX/i3rKl1BJt+VMYH4CQF9wwCgfCxxVDxFKt2LmAe696ARacrmtq3CGeIUpycbc=
+	t=1741089472; cv=none; b=H9LmrjhykNwZVlhn9wsy3/Ncxr2wZiXBJ4r5rOdau2x2hc7uiFoy4SYzmOzjkuPJsS8BJ3N4DkYUt7l9WoFtD7iHWQpH4R+Ylwd83Xzub0sJMcJlLZik/2PTGxaoiEv59alnRqjk25S8d5O0AlaEHT287gHvpZb8dQnkpSw6fv8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741089483; c=relaxed/simple;
-	bh=Nhu10BBEZYqhWwvbHcZpp6y3LPzTzrFgTqW0s1XBdmU=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=u9spylQ8Y+eyVaNjBY2jsyVvpt8GOxsSDUQsK4udq0KsqixAyBf/arHXi+eW0vkBtbILPdaj3G6gFXztFXaOirAVI8U21RN9bsBJI+uHhwzA+kElkNrMGCe7Zqr/sJY7BnuPXsb2vlthul5r5vH0A29evm1HHE2dTZhCQqvo3Rc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8AxmnHG6sZnKg+KAA--.39228S3;
-	Tue, 04 Mar 2025 19:57:58 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMCxLcXD6sZnQ401AA--.65028S3;
-	Tue, 04 Mar 2025 19:57:57 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: KVM: Reload guest CSR registers after S4
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: Tianrui Zhao <zhaotianrui@loongson.cn>, WANG Xuerui <kernel@xen0n.name>,
- kvm@vger.kernel.org, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org, Xianglai Li <lixianglai@loongson.cn>
-References: <20250303091114.1511496-1-maobibo@loongson.cn>
- <CAAhV-H7VGkmRhu+bV0ueLdbaaxuY7W9tLu3yyYeK75FLSvRaug@mail.gmail.com>
-From: bibo mao <maobibo@loongson.cn>
-Message-ID: <8f3ae3e5-6827-7c8d-2b80-726b56254ea1@loongson.cn>
-Date: Tue, 4 Mar 2025 19:57:19 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	s=arc-20240116; t=1741089472; c=relaxed/simple;
+	bh=7ypZWnjPrV7w6TeeTckAB6eHJ6/xsg2qkTe/LybKhEs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NcTxkiiS3kUsuCCTOqAK2UZOLK2WyZ27apyPE2Za+XEjVZW2eWLNMnYStNEovkaGcuRANxaufqjeWyhsUioYFkihUFJltrPvjv/7nop44x7G7+3f7zJcmXpqDrIVZztunfDSZmuKDrjeB2AEe5JqcZp4ktSuR1apwReFk/PrRis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYZ0d05B; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5e538388dd1so3094210a12.1;
+        Tue, 04 Mar 2025 03:57:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741089469; x=1741694269; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oFfYVSo4B+UXub+GZI2qGn4jwqa9bMIxNlJj7fXOijE=;
+        b=GYZ0d05BQ7Rbm6godUG0RiCglK0lqr2pH6CgfQB7n+pPKa44BD3SUo6pDDt/aLqdfE
+         BPkMqQfTOT2cqoyfMwBP4eelEEqhKX3LMQRL7oTR1ipjZrtJ2sY/m3dR1/qjoB8h+Eqv
+         hsqnZZ6VFLRw+SzbL/kDuAN/dIy+xeSjZ+R/4QPssPWU/5CcJeDJKk3N1p5/ygPFdCh+
+         5FgnVyY0z7zLuXxLRWNtXh8k03DT0R/C7o8VvZrCLnLB59hCYDBp69I871VWFzi2tpTj
+         AT214sOk005Tq+Zl0luOqOTnbrLUcy75m8k3EzwKVCLFNuBR43g3NPUureJ1fiH1q7pZ
+         5YFw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741089469; x=1741694269;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=oFfYVSo4B+UXub+GZI2qGn4jwqa9bMIxNlJj7fXOijE=;
+        b=FDM6rszPoNsk95OQwtu6moaWDehM3s+pvEkakuRimy4OmpB+9f4Kky3vfOCQlLhgKa
+         Rx222q/kCPM7J3aD0/yBZ9h524JfSh0eRtkVWEjkDGaXMEYYX30cbVuTt92ceIE+y5Gp
+         tAFekGefj3pvFTqckC998yYHiAWj2SCOOqJWhQ1Kuba6rHRPBkCLivvwavwUXCYNImWK
+         EHyuy9nB8DqfcEKKt9VwUowUy2e5B/TWZhOGFkTlGMwW1D0izW1BuQzLqZDnxZxoGWbN
+         PIKoDAt03z6/TEb+SfhTkq8bf2lNvnQ7L30QgeJ5k11PJA2Ggqijhtklk/0nPMnIObd1
+         /eGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUBldQktjgO8kLyCIjolGrazeeof9aCyoJUR1viBMYw5CLP2siAd54g5KfTBIhCfXS15uacg/dsQ3CpcFYh@vger.kernel.org, AJvYcCXXIZ44Un0U0+rSDvJenAW4qlq0qb5CC1odQXiefUzDF5cMs80IE+SrK6kt33P57iecOT0wBeLs8qH76+KU@vger.kernel.org
+X-Gm-Message-State: AOJu0YygcgT0bMUi4t17hu3zkG7mG93O8lKm25BFFGULI34dzUzFDcpF
+	ryc3q4zzL47dAW0yZidoRtQS3cXSu78OFVtRw3RjIN9acS/XFqNIZpDzpP76T4HThuppKyz/XUN
+	Se7I1N+Npqf1j0QhH7yjhh8BTJp8=
+X-Gm-Gg: ASbGncsLZNdQgy0bvXnAixFGwLEXQvAz8yQenIiA+UUQyHrQauOXrniQ311TlSQir0K
+	419lGL9B339iBI2axJY8h1q8L+UJPp8UV1/FqeMWXRzGXaHYvj1wQtGKVCKjca06KliU6KAX0cO
+	OJU5iIyXIzysR2eki6t84TnvpMsg==
+X-Google-Smtp-Source: AGHT+IG/gH8xF2QSpMAqKv1eZxLbdC2fhOMhNMkCv6JUkbQ36wboE4Ypr1n30rVoJmN+b7m089jSauZwbUd5xsRhN3g=
+X-Received: by 2002:a17:907:7fa6:b0:abf:615d:58c2 with SMTP id
+ a640c23a62f3a-abf615d6016mr1192362066b.34.1741089468592; Tue, 04 Mar 2025
+ 03:57:48 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H7VGkmRhu+bV0ueLdbaaxuY7W9tLu3yyYeK75FLSvRaug@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxLcXD6sZnQ401AA--.65028S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxXw4kAF48Wr45JryDXryxJFc_yoW5XF48pr
-	WUC3Z8trWrKr1Ik34qv3Z0qr4DuryDKr1Iv3yqqFyay3saqF1FgrWrKayDZFyUu3yFkF4I
-	qryrK3WY9F45JwcCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
-	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU25EfUUUU
-	U
+References: <20250304080044.7623-1-ImanDevel@gmail.com>
+In-Reply-To: <20250304080044.7623-1-ImanDevel@gmail.com>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Tue, 4 Mar 2025 12:57:36 +0100
+X-Gm-Features: AQ5f1JoU6Vvq5Hm7n116SaG8VrOOy_nKyTWmNXwcxfBElDzY3PzC1Sz2EnC7Mxc
+Message-ID: <CAOQ4uxiaY9cZFpj4m65SrAVXm7MqB2OFSfyH5D03hEwmdtiBVQ@mail.gmail.com>
+Subject: Re: [PATCH] inotify: disallow watches on unsupported filesystems
+To: Seyediman Seyedarab <imandevel@gmail.com>
+Cc: jack@suse.cz, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kernel-mentees@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Mar 4, 2025 at 8:59=E2=80=AFAM Seyediman Seyedarab <imandevel@gmail=
+.com> wrote:
+>
+> currently, inotify_add_watch() allows adding watches on filesystems
+> where inotify does not work correctly, without returning an explicit
+> error. This behavior is misleading and can cause confusion for users
+> expecting inotify to work on a certain filesystem.
 
+That maybe so, but it's not that inotify does not work at all,
+in fact it probably works most of the time for those fs,
+so there may be users setting inotify watches on those fs,
+so it is not right to regress those users.
 
-On 2025/3/3 下午10:06, Huacai Chen wrote:
-> Hi, Bibo,
-> 
-> On Mon, Mar 3, 2025 at 5:11 PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> On host HW guest CSR registers are lost after suspend and resume
->> operation. Since last_vcpu of boot CPU still records latest vCPU pointer
->> so that guest CSR register skips to reload when boot CPU resumes and
->> vCPU is scheduled.
->>
->> Here last_vcpu is cleared so that guest CSR register will reload from
->> scheduled vCPU context after suspend and resume.
->>
->> Also there is another small fix for Loongson AVEC support, bit 14 is added
->> in CSR ESTAT register. Macro CSR_ESTAT_IS is replaced with hardcoded value
->> 0x1fff and AVEC interrupt status bit 14 is supported with macro
->> CSR_ESTAT_IS.
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
->> ---
->>   arch/loongarch/kvm/main.c | 8 ++++++++
->>   arch/loongarch/kvm/vcpu.c | 2 +-
->>   2 files changed, 9 insertions(+), 1 deletion(-)
->>
->> diff --git a/arch/loongarch/kvm/main.c b/arch/loongarch/kvm/main.c
->> index f6d3242b9234..b177773f38f6 100644
->> --- a/arch/loongarch/kvm/main.c
->> +++ b/arch/loongarch/kvm/main.c
->> @@ -284,6 +284,7 @@ long kvm_arch_dev_ioctl(struct file *filp,
->>   int kvm_arch_enable_virtualization_cpu(void)
->>   {
->>          unsigned long env, gcfg = 0;
->> +       struct kvm_context *context;
->>
->>          env = read_csr_gcfg();
->>
->> @@ -317,6 +318,13 @@ int kvm_arch_enable_virtualization_cpu(void)
->>          kvm_debug("GCFG:%lx GSTAT:%lx GINTC:%lx GTLBC:%lx",
->>                    read_csr_gcfg(), read_csr_gstat(), read_csr_gintc(), read_csr_gtlbc());
->>
->> +       /*
->> +        * HW Guest CSR registers are lost after CPU suspend and resume
->> +        * Clear last_vcpu so that Guest CSR register forced to reload
->> +        * from vCPU SW state
->> +        */
->> +       context = this_cpu_ptr(vmcs);
->> +       context->last_vcpu = NULL;
-> This can be simplified as this_cpu_ptr(vmcs)->last_vcpu = NULL;
-Sure, will do.
-> 
->>          return 0;
->>   }
->>
->> diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
->> index 20f941af3e9e..9e1a9b4aa4c6 100644
->> --- a/arch/loongarch/kvm/vcpu.c
->> +++ b/arch/loongarch/kvm/vcpu.c
->> @@ -311,7 +311,7 @@ static int kvm_handle_exit(struct kvm_run *run, struct kvm_vcpu *vcpu)
->>   {
->>          int ret = RESUME_GUEST;
->>          unsigned long estat = vcpu->arch.host_estat;
->> -       u32 intr = estat & 0x1fff; /* Ignore NMI */
->> +       u32 intr = estat & CSR_ESTAT_IS;
-> This part has nothing to do with S4, please split to another patch.
-ok, will split into two patches.
+>
+> This patch explicitly rejects inotify usage on filesystems where it
+> is known to be unreliable, such as sysfs, procfs, overlayfs, 9p, fuse,
+> and others.
 
-Regards
-Bibo Mao
-> 
-> Huacai
-> 
->>          u32 ecode = (estat & CSR_ESTAT_EXC) >> CSR_ESTAT_EXC_SHIFT;
->>
->>          vcpu->mode = OUTSIDE_GUEST_MODE;
->>
->> base-commit: 1e15510b71c99c6e49134d756df91069f7d18141
->> --
->> 2.39.3
->>
->>
+Where did you get this list of fs from?
+Why do you claim that inotify does not work on overlayfs?
+Specifically, there are two LTP tests inotify07 and inotify08
+that test inotify over overlayfs.
 
+This makes me question other fs on your list.
+
+>
+> By returning -EOPNOTSUPP, the limitation is made explicit, preventing
+> users from making incorrect assumptions about inotify behavior.
+>
+> Signed-off-by: Seyediman Seyedarab <ImanDevel@gmail.com>
+> ---
+>  fs/notify/inotify/inotify_user.c | 22 ++++++++++++++++++++++
+>  1 file changed, 22 insertions(+)
+>
+> diff --git a/fs/notify/inotify/inotify_user.c b/fs/notify/inotify/inotify=
+_user.c
+> index b372fb2c56bd..9b96438f4d46 100644
+> --- a/fs/notify/inotify/inotify_user.c
+> +++ b/fs/notify/inotify/inotify_user.c
+> @@ -87,6 +87,13 @@ static const struct ctl_table inotify_table[] =3D {
+>         },
+>  };
+>
+> +static const unsigned long unwatchable_fs[] =3D {
+> +       PROC_SUPER_MAGIC,      SYSFS_MAGIC,       TRACEFS_MAGIC,
+> +       DEBUGFS_MAGIC,        CGROUP_SUPER_MAGIC, SECURITYFS_MAGIC,
+> +       RAMFS_MAGIC,          DEVPTS_SUPER_MAGIC, BPF_FS_MAGIC,
+> +       OVERLAYFS_SUPER_MAGIC, FUSE_SUPER_MAGIC,   NFS_SUPER_MAGIC
+> +};
+> +
+>  static void __init inotify_sysctls_init(void)
+>  {
+>         register_sysctl("fs/inotify", inotify_table);
+> @@ -690,6 +697,14 @@ static struct fsnotify_group *inotify_new_group(unsi=
+gned int max_events)
+>  }
+>
+>
+> +static inline bool is_unwatchable_fs(struct inode *inode)
+> +{
+> +       for (int i =3D 0; i < ARRAY_SIZE(unwatchable_fs); i++)
+> +               if (inode->i_sb->s_magic =3D=3D unwatchable_fs[i])
+> +                       return true;
+> +       return false;
+> +}
+
+This is not a good practice for black listing fs.
+
+See commit 0b3b094ac9a7b ("fanotify: Disallow permission events
+for proc filesystem") for a better practice, but again, we cannot just
+stop supporting inotify on fs where it was supported.
+
+The assumption with the commit above was that setting permission
+events on procfs is possible, but nobody (except for fuzzers) really does t=
+hat
+and if we have found out that there were actual users that do it, we
+would have needed to revert that commit.
+
+Thanks,
+Amir.
 
