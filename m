@@ -1,103 +1,262 @@
-Return-Path: <linux-kernel+bounces-544145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BB60A4DDE1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:27:17 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F95A4DDE7
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:28:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1897F7A2AFC
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:26:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5A4E178A65
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 12:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4262E202C20;
-	Tue,  4 Mar 2025 12:27:06 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2EA78F4C;
-	Tue,  4 Mar 2025 12:27:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7019F202C55;
+	Tue,  4 Mar 2025 12:28:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5BD12010E3;
+	Tue,  4 Mar 2025 12:28:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741091225; cv=none; b=nDvBiPOrbGLSIWz6K/2mjshuhCrOUd9C7UsgVzj7HcaPFjL2GU8k0rkjTfxWZ3Dd28AH7sw6L66DM7M213VHlWY0jT4SvTDRGu/gNNf6vdUt6+6vHGy/UipuvEYZRkFK92HwgRlv659XDTB/+E3SViJAJ3k2zJk22PxmvAU5HIs=
+	t=1741091322; cv=none; b=AI7kaeoOZgCDAXSK1TO8kBMdJtfA/swJcsr4RilxMoM/HgijIVSFS3mwVnX4i9VVayirfDTAvCXShatT7Y+3fsVSk/gnFvGApmkYSAzLzxP1fgp5Bl73xcOVo2Oyyr63XejqImHdmjdlkKQYWifFJvkv17w2oZUNYj3+cmt6YO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741091225; c=relaxed/simple;
-	bh=VZwo7yIopqaSoCkScnbhAKG3Hk9pFePeDrDhz1+e4Xg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=u1huOQNuAMEqTbB36c7F2uwb0cpDNeUqArXVTjU9Od8pg5S1rTAubYwUMO4+D/90485UClsEhd2e1IXIYqXVVyWs3rndTJl7l+yZmYqU298hOeBkqQdSkP48Bf5wIxxFXq6nRm4KPKEfhcQOi+vHcMQcnrAAViJehn72zmsayOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4Z6Zc45k1Yz6M4c3;
-	Tue,  4 Mar 2025 20:24:04 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 612E7140415;
-	Tue,  4 Mar 2025 20:27:00 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml500008.china.huawei.com (7.182.85.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Tue, 4 Mar 2025 13:27:00 +0100
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Tue, 4 Mar 2025 13:27:00 +0100
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v2 0/3] update live migration configuration region
-Thread-Topic: [PATCH v2 0/3] update live migration configuration region
-Thread-Index: AQHbjP24f+s3bC9JCk6yB9EQqmW997Ni5NVQ
-Date: Tue, 4 Mar 2025 12:26:59 +0000
-Message-ID: <0b5399e306f841b794120e6ca91c1edd@huawei.com>
-References: <20250304120528.63605-1-liulongfang@huawei.com>
-In-Reply-To: <20250304120528.63605-1-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1741091322; c=relaxed/simple;
+	bh=7CVK5RriPNiuTywe/Ytj/4JBL8PgijKTyYnsve+78ps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yp1sozUlYMwbOx2jg1EdVbGJP2PL9lWI7UidI9kK8d1QZvd/wLkoBvy6lOWZKntebMNAKKoiSq8k6yormRrrgIpP7wTgdxX06tryJc03lc2ErIhIMd4TOgTboFiZsY84xTbQRFisqmsNHJkw/iMCf4euQoxERyjFF2u6ahyxcC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4573BFEC;
+	Tue,  4 Mar 2025 04:28:52 -0800 (PST)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 54D7C3F5A1;
+	Tue,  4 Mar 2025 04:28:36 -0800 (PST)
+Message-ID: <0be31ecd-4386-4eb6-ad6f-a4409a3fc6ad@arm.com>
+Date: Tue, 4 Mar 2025 12:28:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 10/10] arm64: dts: qcom: sa8775p: Add CTCU and ETR
+ nodes
+To: Jie Gan <quic_jiegan@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+ Jinlong Mao <quic_jinlmao@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-stm32@st-md-mailman.stormreply.com,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
+ <20250303032931.2500935-11-quic_jiegan@quicinc.com>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250303032931.2500935-11-quic_jiegan@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+On 03/03/2025 03:29, Jie Gan wrote:
+> Add CTCU and ETR nodes in DT to enable related functionalities.
+> 
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+
+Assuming this goes via the soc tree,
+
+Acked-by: Suzuki K Poulose <suzuki.poulose@arm.com>
 
 
-
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Tuesday, March 4, 2025 12:05 PM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v2 0/3] update live migration configuration region
->=20
-> On the new hardware platform, the configuration register space
-> of the live migration function is set on the PF, while on the
-> old platform, this part is placed on the VF.
->=20
-> Change v1 -> v2
-> 	Delete the vf_qm_state read operation in Pre_Copy
-
-If I understand correctly, previously this was discussed in your bug fix se=
-ries here,
-https://lore.kernel.org/all/fa8cd8c1cdbe4849b445ffd8f4894515@huawei.com/
-
-And why we are having it here in this new hardware support series now?
-
-Could we please move all the existing bug fixes in one series and support f=
-or
-new platform in another series, please.
-
-Thanks,
-Shameer
+> ---
+>   arch/arm64/boot/dts/qcom/sa8775p.dtsi | 153 ++++++++++++++++++++++++++
+>   1 file changed, 153 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> index 3394ae2d1300..31aa94d2a043 100644
+> --- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+> @@ -2429,6 +2429,35 @@ crypto: crypto@1dfa000 {
+>   			interconnect-names = "memory";
+>   		};
+>   
+> +		ctcu@4001000 {
+> +			compatible = "qcom,sa8775p-ctcu";
+> +			reg = <0x0 0x04001000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb";
+> +
+> +			in-ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					ctcu_in0: endpoint {
+> +						remote-endpoint = <&etr0_out>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					ctcu_in1: endpoint {
+> +						remote-endpoint = <&etr1_out>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+>   		stm: stm@4002000 {
+>   			compatible = "arm,coresight-stm", "arm,primecell";
+>   			reg = <0x0 0x4002000 0x0 0x1000>,
+> @@ -2633,6 +2662,122 @@ qdss_funnel_in1: endpoint {
+>   			};
+>   		};
+>   
+> +		replicator@4046000 {
+> +			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
+> +			reg = <0x0 0x04046000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			in-ports {
+> +				port {
+> +					qdss_rep_in: endpoint {
+> +						remote-endpoint = <&swao_rep_out0>;
+> +					};
+> +				};
+> +			};
+> +
+> +			out-ports {
+> +				port {
+> +					qdss_rep_out0: endpoint {
+> +						remote-endpoint = <&etr_rep_in>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		tmc_etr: tmc@4048000 {
+> +			compatible = "arm,coresight-tmc", "arm,primecell";
+> +			reg = <0x0 0x04048000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +			iommus = <&apps_smmu 0x04c0 0x00>;
+> +
+> +			arm,scatter-gather;
+> +
+> +			in-ports {
+> +				port {
+> +					etr0_in: endpoint {
+> +						remote-endpoint = <&etr_rep_out0>;
+> +					};
+> +				};
+> +			};
+> +
+> +			out-ports {
+> +				port {
+> +					etr0_out: endpoint {
+> +						remote-endpoint = <&ctcu_in0>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		replicator@404e000 {
+> +			compatible = "arm,coresight-dynamic-replicator", "arm,primecell";
+> +			reg = <0x0 0x0404e000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +
+> +			in-ports {
+> +				port {
+> +					etr_rep_in: endpoint {
+> +						remote-endpoint = <&qdss_rep_out0>;
+> +					};
+> +				};
+> +			};
+> +
+> +			out-ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					etr_rep_out0: endpoint {
+> +						remote-endpoint = <&etr0_in>;
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					etr_rep_out1: endpoint {
+> +						remote-endpoint = <&etr1_in>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		tmc_etr1: tmc@404f000 {
+> +			compatible = "arm,coresight-tmc", "arm,primecell";
+> +			reg = <0x0 0x0404f000 0x0 0x1000>;
+> +
+> +			clocks = <&aoss_qmp>;
+> +			clock-names = "apb_pclk";
+> +			iommus = <&apps_smmu 0x04a0 0x40>;
+> +
+> +			arm,scatter-gather;
+> +			arm,buffer-size = <0x400000>;
+> +
+> +			in-ports {
+> +				port {
+> +					etr1_in: endpoint {
+> +						remote-endpoint = <&etr_rep_out1>;
+> +					};
+> +				};
+> +			};
+> +
+> +			out-ports {
+> +				port {
+> +					etr1_out: endpoint {
+> +						remote-endpoint = <&ctcu_in1>;
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+>   		funnel@4b04000 {
+>   			compatible = "arm,coresight-dynamic-funnel", "arm,primecell";
+>   			reg = <0x0 0x4b04000 0x0 0x1000>;
+> @@ -2708,6 +2853,14 @@ out-ports {
+>   				#address-cells = <1>;
+>   				#size-cells = <0>;
+>   
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					swao_rep_out0: endpoint {
+> +						remote-endpoint = <&qdss_rep_in>;
+> +					};
+> +				};
+> +
+>   				port@1 {
+>   					reg = <1>;
+>   					swao_rep_out1: endpoint {
 
 
