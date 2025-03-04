@@ -1,174 +1,159 @@
-Return-Path: <linux-kernel+bounces-543247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543246-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC5D8A4D32B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:55:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD9C8A4D327
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26DC33AE259
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:55:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ED54189366C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3291C1F463B;
-	Tue,  4 Mar 2025 05:55:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B31A31F4717;
+	Tue,  4 Mar 2025 05:53:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="idbZ++H2"
-Received: from mail-vk1-f175.google.com (mail-vk1-f175.google.com [209.85.221.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="XWTy7dxe"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D763D561;
-	Tue,  4 Mar 2025 05:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA7F3D561;
+	Tue,  4 Mar 2025 05:53:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741067719; cv=none; b=H8rc676BD0W4mhnFYxDCdxneUSXh5vO6/7gbZD9JSkkRUs7ludWm+iPt7LShKtwNfokqDulmGh0CBA0yOPrVVwfAvf0F97b0r/3oQXlgfpaq1LXkyKoZrBgDOM9n3m5Y/sNoO/O9qhkr4kY4hkqfve00meQAtCIp4p0bolyL0fA=
+	t=1741067612; cv=none; b=YEEtoSBuiUpuvs6PB6FwguMHhUMtTrNW7G1gpSp4TfP1E0G2Z4YHAEIa0y9Q7cvumBq2tU1aVhNZ4E/O6NbZfCGJz3yCuodqfU/EcvzTDQab9iHPnIRDZ6xETvplC4HEAmLcrBLQ82THNTQ1dfbABYBNdnM8hQwhB9+8oWcfo0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741067719; c=relaxed/simple;
-	bh=HM4DVfNkfrRlI4k3ON1o90sWtnATPXYTdEpU1u1k/S8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F5rHBLIlfP/r0hcmQPkinIqhaHbc5ApnK6SW0uEfiRcPqc3H6V18PBrNC7lqt0uNWM0ClF+KoEWo694hMzIoQLGHOGWiPolVXGnCS2+mDqWKcLzOnS3k6kcYsSX0ctHucS88KmFbLFwbsvFLU9lUDvGADkccoG426RTXvpT0luc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=idbZ++H2; arc=none smtp.client-ip=209.85.221.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f175.google.com with SMTP id 71dfb90a1353d-52379e9b7d2so923658e0c.1;
-        Mon, 03 Mar 2025 21:55:16 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741067716; x=1741672516; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=3YIX6yetjJBn5MFAQdtHY/u8Ku9kLavFSpuBk7UEr4g=;
-        b=idbZ++H25A80Wwv4GpcZrSvFqfNLlrHv6RoQqhiHSKe1HNYXpBJ8hhODkQs/c9rP4S
-         B5nhar6ER2M5XUjca75qyqePf8P5udP6r0ROQwvd4morhECobJDhzRmnXwEEg9EKBvP3
-         QgN+N+En350yqDlun/3XM93HmsMDbUkB141JguROX5Hc59+huHOYlUXzdanuroE8R73m
-         gmY37FwSBTqeaRyoAYUwwGcKjtkrvw9v7XpFTRyEdqnl3lHPX66jotUtlKrmb5RZzji5
-         e2ulijblOaDVd9t0t08f0LNH85RvdaXNgjMY6SY1i63kygD1txZDC8JMXefr5OlsjTaL
-         oM1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741067716; x=1741672516;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=3YIX6yetjJBn5MFAQdtHY/u8Ku9kLavFSpuBk7UEr4g=;
-        b=nW+2VDgAl+OUbAm1RJV5woVejdE3EHfo1z5rmcUWSHfSEGqvhgC4zCxHXxx1e5no/d
-         uq4HlY0VJVCrwCvkFlQaSE81g9LtJAwjZBCPjwJLNtNt4dOjOZYhzrWXP6LgoGSMBw2o
-         GtMvRWSWnd5PF68oco8uKNQovSzuXuJc0i+qapMJkx0W7gJ4CGR6moORGhuIEgbG8pj2
-         aMK20EHJHUstNm7foj7c6foiYGOCQd+W9ZDGLHgxLo8emqyxDc5uLSzXruxBLF1wRXWw
-         U02qs+JD7l5AT3dbPvzlstpI29PrjB301MiE20B7ZsgyiupBST0UKqKs7oAlpoP6M+bp
-         f5yw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKQYlUTkA1WPgs2olw56/IiwOQi7ceniL04jZ/WCy3I8V/gMeknBB4JlYB5igIPz+izX9FnkW/BKHItgw=@vger.kernel.org, AJvYcCVMk4ZLT0bF5UXlPXBCniGqcZPQ08OA0oMEGUAZedHrGKGakH2O5ZQcwj1fm0VkQs98VuTjiVjZEJF4MmC+@vger.kernel.org, AJvYcCWc2YXnyRImbjNqj+oLvVvD3ns5dpkz+nLPoCDDK5/h1Yw/qnG5DDhJifrJivBD2Rkd/ljvF944QiI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhiTcq/N12Zb/ZziyP5o31rHYJZCU7JKTHM3aDY1LZF8AFl6bh
-	Mbae7U6YMsnZr6Wnc+dN09v8Toy9Jn1HYLh/ppJkWzI1v36V0c/R
-X-Gm-Gg: ASbGnctgel0nUG+s42Ak9XMJn6EiNfjBJuNhxduOVqBCKxk73Gx2hVhZjPgp2Q7ZFkj
-	HLmYdbSmnEYaYJgIX3EK336oaHxEsVv2+jwO9fsrAoWhAUa2pTfEvrlkOvEYDrbHBzIEyVUIPLQ
-	flIO0DD3niP4+4cdcn96n68Ey94dtgv0mHZiG62JEN5NFSDhcKLf2P/p+ytGt1+6RORUO3568h2
-	Q9dqSMJ0h0vThTMZJbpiZdWVHBmA6LQQYlXOvf0s9Swv/L5YNnMdQGd0zaiGhDg1taQ/dFHsYJN
-	V1kiOT5cUPDIEJzqkal8kuawiH5YCeKQ45fUVxyA3mA1FmtZBNzT
-X-Google-Smtp-Source: AGHT+IHAPEz+xNmNjACUxa/zmnzhr7l/KyPzJKeIISYokuv32Jl399bCDKD+k4VEeKmPk2/TXc1P3A==
-X-Received: by 2002:a05:6122:2388:b0:50b:e9a5:cd7b with SMTP id 71dfb90a1353d-5235bdaa6aamr9940941e0c.9.1741067715771;
-        Mon, 03 Mar 2025 21:55:15 -0800 (PST)
-Received: from localhost.localdomain ([2800:bf0:82:3d2:9e61:1a62:1a8c:3e62])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-5237c8951absm1063791e0c.19.2025.03.03.21.55.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 21:55:14 -0800 (PST)
-From: Kurt Borja <kuurtb@gmail.com>
-To: Kurt Borja <kuurtb@gmail.com>,
-	linux-hwmon@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Jonathan Corbet <corbet@lwn.net>,
-	=?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-Subject: [PATCH v1 1/1] hwmon: (dell-smm) Increment the number of fans
-Date: Tue,  4 Mar 2025 00:52:50 -0500
-Message-ID: <20250304055249.51940-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741067612; c=relaxed/simple;
+	bh=bQR5ObqMTP1GwQDLeSy5/aqOwHMuH+cQMoCYo7xZ2jI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=G13n9yFvGlxxBHrgepn+YVdUcHcwe6UhDPvR9GBh3emD0fIkTESvfyUcXM/WFZzzQyWjaL8aspbVVIRHJ0BGjgqM4yhQyRUzSIkQplv52qqSEnEhZTppV2c81oWjqA3y9TFjLenmIwxnbOHVHSYlmL43iz1mKpc0OK7dtk0TX+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=XWTy7dxe; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 523NX9q8021675;
+	Tue, 4 Mar 2025 05:53:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	97sqRophQCOYVvNdbg1Cr94sp2Vpw2syWk+rVmsMi5o=; b=XWTy7dxeB/Iz/D/1
+	3K/ZHb0wVIhUos/cPxrYe0D0Yj3DF3oQFtluq7tH8lQpVt9woBKNmTC3+9r8vwgb
+	FVMXbpHvYsH1oO09EcR9P+4ludqIb5Yu/nYOLePfr7QAWpJxCLyxeXOVvcVq6Yhf
+	QaV19Pl0QhqEXt6cysapX+EzDwefMDZELadfpxF4unKeQCOmUExRJ/ySrX+9K+gq
+	qH6GUGo63fuWuIR85JycIJTgPv4MQfNAAInyP2RZ6rxBXj/j6QrzVOLXS3K2lSZM
+	th4he/9D6oF6cSGVuOVyZ8R//KPejQBYmQY9qldq0nib8EZtf4aRQZOi1FtIe8su
+	n/0k7Q==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6t0s5t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 04 Mar 2025 05:53:14 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5245rDem012976
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Tue, 4 Mar 2025 05:53:13 GMT
+Received: from [10.218.15.248] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 3 Mar 2025
+ 21:53:07 -0800
+Message-ID: <114b60a4-ab67-4424-afc2-4a400d31de90@quicinc.com>
+Date: Tue, 4 Mar 2025 11:23:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V9 2/7] interconnect: core: Add dynamic id allocation
+ support
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Odelu Kukatla <quic_okukatla@quicinc.com>,
+        "Jeff
+ Johnson" <jeff.johnson@oss.qualcomm.com>,
+        Mike Tipton <mdtipton@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Sibi Sankar
+	<quic_sibis@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-pm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250227155213.404-1-quic_rlaggysh@quicinc.com>
+ <20250227155213.404-3-quic_rlaggysh@quicinc.com>
+ <bv73i444oh4oakgqet7brkdpmusvpf4x5nbi7kgfvykts43roj@jnc5ps2sazeb>
+Content-Language: en-US
+From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+In-Reply-To: <bv73i444oh4oakgqet7brkdpmusvpf4x5nbi7kgfvykts43roj@jnc5ps2sazeb>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=I/ufRMgg c=1 sm=1 tr=0 ts=67c6954a cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=TBUwsZYf_s3QzbKEj0UA:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22
+X-Proofpoint-GUID: iVD32XXkljEB1SVlanefxgnLMSF0GHFe
+X-Proofpoint-ORIG-GUID: iVD32XXkljEB1SVlanefxgnLMSF0GHFe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_03,2025-03-03_04,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
+ spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
+ suspectscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
+ clxscore=1015 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503040048
 
-Some Alienware laptops that support the SMM interface, may have up to 4
-fans.
 
-Tested on an Alienware x15 r1.
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
----
-Hi all,
+On 2/27/2025 9:38 PM, Dmitry Baryshkov wrote:
+> On Thu, Feb 27, 2025 at 03:52:08PM +0000, Raviteja Laggyshetty wrote:
+>> The current interconnect framework relies on static IDs for node
+>> creation and registration, which limits topologies with multiple
+>> instances of the same interconnect provider. To address this, update
+>> the interconnect framework APIs icc_node_create() and icc_link_create()
+>> APIs to dynamically allocate IDs for interconnect nodes during creation.
+>> This change removes the dependency on static IDs, allowing multiple
+>> instances of the same hardware, such as EPSS L3.
+>>
+>> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+>> ---
+>>  drivers/interconnect/core.c  | 13 ++++++++++++-
+>>  include/linux/interconnect.h |  3 +++
+>>  2 files changed, 15 insertions(+), 1 deletion(-)
+>>
+> 
+> 
+> 
+>> diff --git a/include/linux/interconnect.h b/include/linux/interconnect.h
+>> index 97ac253df62c..8b0f892aaed2 100644
+>> --- a/include/linux/interconnect.h
+>> +++ b/include/linux/interconnect.h
+>> @@ -20,6 +20,9 @@
+>>  #define Mbps_to_icc(x)	((x) * 1000 / 8)
+>>  #define Gbps_to_icc(x)	((x) * 1000 * 1000 / 8)
+>>  
+>> +/* macro to indicate dynamic id allocation */
+>> +#define ALLOC_DYN_ID	-1
+> 
+> Nit: ICC_ALLOC_DYN_ID
+> 
+> With that fixed,
+> 
+Will fix it in next revision.
 
-Guenter, if you prefer a different patch for the documentation, let me
-know.
-
-~ Kurt
-
- Documentation/hwmon/dell-smm-hwmon.rst | 14 +++++++-------
- drivers/hwmon/dell-smm-hwmon.c         |  5 ++++-
- 2 files changed, 11 insertions(+), 8 deletions(-)
-
-diff --git a/Documentation/hwmon/dell-smm-hwmon.rst b/Documentation/hwmon/dell-smm-hwmon.rst
-index 74905675d71f..5a4edb6565cf 100644
---- a/Documentation/hwmon/dell-smm-hwmon.rst
-+++ b/Documentation/hwmon/dell-smm-hwmon.rst
-@@ -32,12 +32,12 @@ Temperature sensors and fans can be queried and set via the standard
- =============================== ======= =======================================
- Name				Perm	Description
- =============================== ======= =======================================
--fan[1-3]_input                  RO      Fan speed in RPM.
--fan[1-3]_label                  RO      Fan label.
--fan[1-3]_min                    RO      Minimal Fan speed in RPM
--fan[1-3]_max                    RO      Maximal Fan speed in RPM
--fan[1-3]_target                 RO      Expected Fan speed in RPM
--pwm[1-3]                        RW      Control the fan PWM duty-cycle.
-+fan[1-4]_input                  RO      Fan speed in RPM.
-+fan[1-4]_label                  RO      Fan label.
-+fan[1-4]_min                    RO      Minimal Fan speed in RPM
-+fan[1-4]_max                    RO      Maximal Fan speed in RPM
-+fan[1-4]_target                 RO      Expected Fan speed in RPM
-+pwm[1-4]                        RW      Control the fan PWM duty-cycle.
- pwm1_enable                     WO      Enable or disable automatic BIOS fan
-                                         control (not supported on all laptops,
-                                         see below for details).
-@@ -93,7 +93,7 @@ Again, when you find new codes, we'd be happy to have your patches!
- ---------------------------
- 
- The driver also exports the fans as thermal cooling devices with
--``type`` set to ``dell-smm-fan[1-3]``. This allows for easy fan control
-+``type`` set to ``dell-smm-fan[1-4]``. This allows for easy fan control
- using one of the thermal governors.
- 
- Module parameters
-diff --git a/drivers/hwmon/dell-smm-hwmon.c b/drivers/hwmon/dell-smm-hwmon.c
-index cd00adaad1b4..79e5606e6d2f 100644
---- a/drivers/hwmon/dell-smm-hwmon.c
-+++ b/drivers/hwmon/dell-smm-hwmon.c
-@@ -73,7 +73,7 @@
- #define DELL_SMM_LEGACY_EXECUTE	0x1
- 
- #define DELL_SMM_NO_TEMP	10
--#define DELL_SMM_NO_FANS	3
-+#define DELL_SMM_NO_FANS	4
- 
- struct smm_regs {
- 	unsigned int eax;
-@@ -1074,11 +1074,14 @@ static const struct hwmon_channel_info * const dell_smm_info[] = {
- 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
- 			   HWMON_F_TARGET,
- 			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
-+			   HWMON_F_TARGET,
-+			   HWMON_F_INPUT | HWMON_F_LABEL | HWMON_F_MIN | HWMON_F_MAX |
- 			   HWMON_F_TARGET
- 			   ),
- 	HWMON_CHANNEL_INFO(pwm,
- 			   HWMON_PWM_INPUT | HWMON_PWM_ENABLE,
- 			   HWMON_PWM_INPUT,
-+			   HWMON_PWM_INPUT,
- 			   HWMON_PWM_INPUT
- 			   ),
- 	NULL
--- 
-2.48.1
+> Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+> 
+>> +
+>>  struct icc_path;
+>>  struct device;
+>>  
+>> -- 
+>> 2.43.0
+>>
+> 
 
 
