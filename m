@@ -1,157 +1,140 @@
-Return-Path: <linux-kernel+bounces-545411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0661FA4ED1B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:18:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C1CD1A4ED46
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 20:25:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16036886475
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:04:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 833BC8838DB
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 19:03:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92E0F264623;
-	Tue,  4 Mar 2025 19:04:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D93B255232;
+	Tue,  4 Mar 2025 19:04:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="casVGVZg"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9F7259CA3;
-	Tue,  4 Mar 2025 19:04:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="JWFqyVR+"
+Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919592512C8;
+	Tue,  4 Mar 2025 19:03:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741115047; cv=none; b=KhpnJwkQ3dGcmcjG+dC8i2OEEGlNWaWPG93kiZWOd8suDxYIDgWkvtMdEAb+W1n/U7Qvz5KF8gjrI1l9sShkoaRjvAu59UbzwvJsu6GnAnPudoA5l5zBg/v0cAgcLPSXM/B20soO2SLoA5xTMmD2hCsOl4phIyfkWio1ZUOB+O4=
+	t=1741115039; cv=none; b=Ie+FE+R3//UkxbFbN97i8Ql2eXK3gvEZLShG2lDNWTbda/WnHXEyeYIPt1u5tVyWPJFYlUi4nHl7Zg9ffmS1MtvLrVVoiwRJHm5nPtiuRsFyHwBBlsDihu1pt0F0PmKzsXHvUpbpwDSu8UGMfKIW4UIcTPdPpkgoB/h8ZV3GY0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741115047; c=relaxed/simple;
-	bh=OsxKZ3uF2aRWtW8U5Q0hBt5QMQGFxad/c4GW7JdlzRc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gkGMyiTH1YON0gIpOOQqAlnCLYST41y4CV6AN13ob+7Uzi3Oqcaniw++Bc+U+2EErGgZLJxVXgRxBfAGX9RjICqMMTOvrmWRFeOV0TRZhV8jOuFi0y+x/qrkZ42fKW83j40tzSKskkwlhFTdq4vK6Jl4ipJWy5tBsK/Yk+wQwkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=casVGVZg; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from localhost.localdomain (unknown [167.220.59.4])
-	by linux.microsoft.com (Postfix) with ESMTPSA id BA1D6210EAF9;
-	Tue,  4 Mar 2025 11:03:58 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com BA1D6210EAF9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741115038;
-	bh=C4fpkfAT2qDRSew80giIKdwwL8+StIhxSDKSC7I42as=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=casVGVZgDDZlGFiWiV3hWdWKoyYHaSIQEDZ5oX9eeeCgtOONN/0UQNhCVXntbS03g
-	 9voUHFotE22DmYfcw1/1AfbYJMDF6VmMfarkqJaM1XQw9YLb3C+JWR6o+MSdMBxBEy
-	 Ys6JO5etPNGex+zEulwetmCLvpMK80fd+leFg760=
-From: steven chen <chenste@linux.microsoft.com>
-To: zohar@linux.ibm.com,
-	stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com,
-	roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com,
-	ebiederm@xmission.com,
-	paul@paul-moore.com,
-	code@tyhicks.com,
-	bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org,
-	kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com,
-	nramas@linux.microsoft.com,
-	James.Bottomley@HansenPartnership.com,
-	bhe@redhat.com,
-	vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: [PATCH v9 6/7] ima: make the kexec extra memory configurable
-Date: Tue,  4 Mar 2025 11:03:50 -0800
-Message-Id: <20250304190351.96975-7-chenste@linux.microsoft.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250304190351.96975-1-chenste@linux.microsoft.com>
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
+	s=arc-20240116; t=1741115039; c=relaxed/simple;
+	bh=T2QMug6/HcuzNxtAtbS9Jn2aCBfG39h86vtnhUTbmLk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fSPFCvmuNSPGbz5XKqT9nJXkr3W3vRRZdugv6OnmkYsjE7/PL4vWgXXRVOQkQqS6669XMzPBGP+tQIB5otP53AeZAlqkKKHW5Qqst/Hrq25Kw+9AzbFNCcWWFvfLHboBDzDwBVws9G7pK/Z1T5c8Q9iygQDHvpxFw3VBx/FGK6Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=JWFqyVR+; arc=none smtp.client-ip=109.230.236.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
+	t=1741115035; bh=T2QMug6/HcuzNxtAtbS9Jn2aCBfG39h86vtnhUTbmLk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JWFqyVR+8dD7VNvNXjfb3Q+hTZ/yKakitg36qKEMBGOPLIJz+g/YeY7UEZd9DLUrD
+	 Vdx0zdeo0HSULFw8QnfeUjRDtTnYT+j5OGHj4oKt8oVMu4AYzw5hFJjQSifEMEusSR
+	 dEserCGzfwJF/ZPhYKr4NsCq4NdpMgzNPOfxEsVw=
+Received: from [IPV6:2001:67c:10ec:5784:8000::87] (2001-67c-10ec-5784-8000--87.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::87])
+	by r-passerv.ralfj.de (Postfix) with ESMTPSA id A271D2052D09;
+	Tue,  4 Mar 2025 20:03:55 +0100 (CET)
+Message-ID: <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
+Date: Tue, 4 Mar 2025 20:03:51 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: Allow data races on some read/write operations
+To: Boqun Feng <boqun.feng@gmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
+ robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ airlied@redhat.com, iommu@lists.linux.dev, comex <comexk@gmail.com>,
+ lkmm@lists.linux.dev
+References: <6dea7b6a-1534-47e7-94d2-d67417c3d4c1@proton.me>
+ <tnwDK3QN_Xr0Yoa3U8HVxS5OqjvxIhgmmO_ifTGJR_EtIzjoxawOHtnbOJ9yChsUWXyFPcU9beIdrgbpfGZI8w==@protonmail.internalid>
+ <3202F69F-397E-4BC4-8DD8-E2D4B0AB056F@collabora.com>
+ <87bjuil15w.fsf@kernel.org>
+ <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
+ <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+ <87ikoqjg1n.fsf@kernel.org>
+ <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
+ <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
+ <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
+Content-Language: en-US, de-DE
+From: Ralf Jung <post@ralfj.de>
+In-Reply-To: <Z8YMTiKS4T9wC4t_@boqun-archlinux>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-The extra memory allocated for carrying the IMA measurement list across
-kexec is hard-coded as half a PAGE.  Make it configurable.
+Hi all,
 
-Define a Kconfig option, IMA_KEXEC_EXTRA_MEMORY_KB, to configure the
-extra memory (in kb) to be allocated for IMA measurements added during
-kexec soft reboot.  Ensure the default value of the option is set such
-that extra half a page of memory for additional measurements is allocated
-for the additional measurements.
+Ah, the never-ending LKMM vs Rust concurrency story. :)
 
-Update ima_add_kexec_buffer() function to allocate memory based on the
-Kconfig option value, rather than the currently hard-coded one.
+> In general, this will fall into the exception that we've been given
+> from the Rust people. In cases such as this where the Rust language
+> does not give us the operation we want, do it like you do in C. Since
+> Rust uses LLVM which does not miscompile the C part of the kernel, it
+> should not miscompile the Rust part either.
 
-Suggested-by: Stefan Berger <stefanb@linux.ibm.com>
-Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-Signed-off-by: steven chen <chenste@linux.microsoft.com>
-Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
----
- security/integrity/ima/Kconfig     | 10 ++++++++++
- security/integrity/ima/ima_kexec.c | 16 ++++++++++------
- 2 files changed, 20 insertions(+), 6 deletions(-)
+Right, so to be clear this is all a compromise. :)  We don't want Rust to have 
+two official memory models. We certainly don't want random Rust programs out 
+there experimenting with any non-standard memory models and then expect that to 
+work. (They can't all have a Paul McKenny keeping things together. ;) That's why 
+in all official docs, you'll only find the one Rust concurrency memory model, 
+which is the C++ model.
+But meanwhile, the kernel is not some random Rust program out there (and you do 
+have Paul ;). The LKMM works quite well in practice, and it is a critical part 
+for Rust-for-Linux. Also, we have pretty good contacts with the Rust-for-Linux 
+folks, so when there are issues we can just talk.
 
-diff --git a/security/integrity/ima/Kconfig b/security/integrity/ima/Kconfig
-index 475c32615006..d73c96c3c1c9 100644
---- a/security/integrity/ima/Kconfig
-+++ b/security/integrity/ima/Kconfig
-@@ -321,4 +321,14 @@ config IMA_DISABLE_HTABLE
- 	help
- 	   This option disables htable to allow measurement of duplicate records.
- 
-+config IMA_KEXEC_EXTRA_MEMORY_KB
-+	int "Extra memory for IMA measurements added during kexec soft reboot"
-+	depends on IMA_KEXEC
-+	default 0
-+	help
-+	  IMA_KEXEC_EXTRA_MEMORY_KB determines the extra memory to be
-+	  allocated (in kb) for IMA measurements added during kexec soft reboot.
-+	  If set to the default value of 0, an extra half page of memory for those
-+	  additional measurements will be allocated.
-+
- endif
-diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-index dd49658153ca..9fb1bf5a592a 100644
---- a/security/integrity/ima/ima_kexec.c
-+++ b/security/integrity/ima/ima_kexec.c
-@@ -133,22 +133,26 @@ void ima_add_kexec_buffer(struct kimage *image)
- 				  .buf_min = 0, .buf_max = ULONG_MAX,
- 				  .top_down = true };
- 	unsigned long binary_runtime_size;
--
-+	unsigned long extra_memory;
- 	/* use more understandable variable names than defined in kbuf */
- 	void *kexec_buffer = NULL;
- 	size_t kexec_buffer_size = 0;
- 	int ret;
- 
- 	/*
--	 * Reserve an extra half page of memory for additional measurements
--	 * added during the kexec load.
-+	 * Reserve extra memory for measurements added during kexec.
- 	 */
--	binary_runtime_size = ima_get_binary_runtime_size();
-+	if (CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB <= 0)
-+		extra_memory = PAGE_SIZE / 2;
-+	else
-+		extra_memory = CONFIG_IMA_KEXEC_EXTRA_MEMORY_KB * 1024;
-+	binary_runtime_size = ima_get_binary_runtime_size() + extra_memory;
-+
- 	if (binary_runtime_size >= ULONG_MAX - PAGE_SIZE)
- 		kexec_segment_size = ULONG_MAX;
- 	else
--		kexec_segment_size = ALIGN(ima_get_binary_runtime_size() +
--					   PAGE_SIZE / 2, PAGE_SIZE);
-+		kexec_segment_size = ALIGN(binary_runtime_size, PAGE_SIZE);
-+
- 	if ((kexec_segment_size == ULONG_MAX) ||
- 	    ((kexec_segment_size >> PAGE_SHIFT) > totalram_pages() / 2)) {
- 		pr_err("Binary measurement list too large.\n");
--- 
-2.25.1
+Given that the LKMM is at the edge (or, arguably, somewhat beyond the edge) of 
+what compiler backends can reliably support, I think the lowest-risk strategy is 
+to make LKMM usage from Rust look to the compiler just like LKMM usage in C. 
+Since it works in C, it should then hopefully also work in Rust. To do this, you 
+have to bend (really, break) some of the usual rules for Rust, and that's the 
+special exception mentioned above.
+
+>> For cases where we need to do the equivalent of `memmove`/`memcpy`, what
+>> are is our options?
+>>
+> 
+> Seems we need "volatile" memmove and memcpy in Rust?
+
+Those already exist in Rust, albeit only unstably: 
+<https://doc.rust-lang.org/nightly/std/intrinsics/fn.volatile_copy_memory.html>. 
+However, I am not sure how you'd even generate such a call in C? The standard 
+memcpy function is not doing volatile accesses, to my knowledge.
+
+Kind regards,
+Ralf
+
+>> In case we have no options, do you know who would be the right people on
+>> the Rust Project side to contact about getting an exception for this
+>> case?
+>>
+> 
+> I will say it'll be t-opsem.
+> 
+> Regards,
+> Boqun
+> 
+>>
+>> Best regards,
+>> Andreas Hindborg
+>>
+>>
 
 
