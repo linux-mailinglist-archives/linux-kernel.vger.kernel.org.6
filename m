@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-543781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68728A4D9D8
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:13:10 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE34DA4D9DA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 11:13:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91D75160FAA
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:13:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B79C516F468
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 10:13:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 203751FDA90;
-	Tue,  4 Mar 2025 10:13:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6542C1FDE00;
+	Tue,  4 Mar 2025 10:13:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eCt5zUM1"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WlQOsWhN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 777B6225D6;
-	Tue,  4 Mar 2025 10:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B249D1F3B8C;
+	Tue,  4 Mar 2025 10:13:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741083182; cv=none; b=T8N7WKG5ktBX4yal/tcp6WmCH/nMXCtFiqu4p7ismW7NRKjn28XyxqsIBsc2sQ8nbgj9njLf8oxDhXrFe3yfOfo00gawox/wYwteEF+DPyxLakfsJOPxDV12Bm6vloqHwBm0dVxUZ88Av+2FJiuiZY6htyuKYT2HbSVy333VAbs=
+	t=1741083213; cv=none; b=Pb6ZcKeEz+joQCzf7ciLkqkaKkqUtUkJ2ak4DpzNjHoofqGFGz5DdINKMxsAK1kQsyVuiby2G43Gkt8dWPIwfv4XUevoEHf7LSYtdm1d+Ae4lKKAHUs2vo8R+nBZTA/5nD7PspVYWb17It2eT0lysJSY1Q5htEJEs1dp+vSyqTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741083182; c=relaxed/simple;
-	bh=Vg/RWn3guOlPu3NnhDEqa5mQyoV3f87Ql2/DgfZqpY8=;
+	s=arc-20240116; t=1741083213; c=relaxed/simple;
+	bh=tSly4mCMCg7dVdmVWaL/taV9g1SQHNObtoFQnE+k5hY=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I9Ik/G1o6o+g+fuO8e6G4lpG3lci69mBKGoDnVYFN+s1hYOBbix8UbpW5bLE9Zf2DJlV+DcDw/VOzeafmDLORieqL1DeEoTKXGBNVX101wSqccjeIK5LyiUbDKsGgHg8qSgTRqfzgyswOidztn6shyj6PI/w0F0ZaqFpcGFILlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eCt5zUM1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DADB1C4CEE8;
-	Tue,  4 Mar 2025 10:12:59 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=nZlV7x3FljeV1Vx9tMYFeHppIt/MW79/GkY1IAii5bD4YH90vyQDLkNLDQI5ZLA57qQd1WeJN2Snmt+l4VsRVoCPLWoc039e55qhcKxiiymhpHMSz2UH6hUdEKpmY563rtGCDaPXD/yoo7lYmfXa5Y5SyC0NwmJf9+L3zt94F0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WlQOsWhN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33F49C4CEE5;
+	Tue,  4 Mar 2025 10:13:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741083182;
-	bh=Vg/RWn3guOlPu3NnhDEqa5mQyoV3f87Ql2/DgfZqpY8=;
+	s=k20201202; t=1741083213;
+	bh=tSly4mCMCg7dVdmVWaL/taV9g1SQHNObtoFQnE+k5hY=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eCt5zUM1L+fL4wVKqlQDasmTPvBbpAHR5MaQcksQ0FHFTfoHjxYawj0LKdaCRFIwr
-	 a0Qz5eRCOB9l2tJDPHCar2NhuGwTftQJhpf2E7laUegwtJim9PEYpCHrymDQ4mg5DA
-	 8rmUN4KMn/udyON6eEiioxip8T99gjXOw/WYIp3irI9QanTBRjrCQQPTjWTtAs2oOZ
-	 eEj6JaSjdPFdiI8+e+nFQX8AvynPpB3n1lxzz1M8SKuNF2CBIe+tNeyRdjpKk9XwEi
-	 rjbopWZ27JLOpMRYAoYHGyK/wl+K7iKYvoZ37sSoDzzCq/8aVfB4zv+zIkMTcdOzTT
-	 Nnaaz+I6ztixQ==
-Message-ID: <f6c7feb3-e003-4bbc-8179-3a3df533d2d5@kernel.org>
-Date: Tue, 4 Mar 2025 11:12:57 +0100
+	b=WlQOsWhNXid8j95Bwvji3nwiUxShDmNuzqHiVbnq7s00AOocTk1+QxICKYRb2U+Cx
+	 j7BRgA2bZOFVWj7swi+Dp0sD2HCeLJ9g8V420t7xw3X9F1uam/GaQ3YnLikaagvvkh
+	 Q+RMA+1ovszha6KLoiij5AeSuyk8Bu5CJfIWK2DXk5a0owQPw7WVvCJpVXvc/JaIJy
+	 Tuog+FDKfFw0YK/65KHO/IWpph9TMKlt8EIHgNgPSvBv+qidT0etNvRHvO/kMaol73
+	 blhkmzBX27bfkDpaGkWFCPFBnwRCZP3h5091iLVGlT9QfIOjCB3+E1WBaxla8T9sZX
+	 OEWxTqOJev85g==
+Message-ID: <eb423b6e-6142-4b78-b724-49a526a49d4d@kernel.org>
+Date: Tue, 4 Mar 2025 11:13:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,16 +51,14 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH v2] arm64: dts: corstone1000: Add definitions for
  secondary CPU cores
-To: Sudeep Holla <sudeep.holla@arm.com>,
- Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+To: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>, sudeep.holla@arm.com
 Cc: conor+dt@kernel.org, devicetree@vger.kernel.org, krzk+dt@kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  liviu.dudau@arm.com, lpieralisi@kernel.org, robh@kernel.org
 References: <Z8XSIx75B4mtcV48@bogus>
  <20250303170012.469576-1-hugues.kambampiana@arm.com>
- <174108287362.420865.6246087705407586774.b4-ty@arm.com>
-Content-Language: en-US
 From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
  cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
@@ -104,29 +102,34 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
  7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
  5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
-In-Reply-To: <174108287362.420865.6246087705407586774.b4-ty@arm.com>
+In-Reply-To: <20250303170012.469576-1-hugues.kambampiana@arm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 04/03/2025 11:08, Sudeep Holla wrote:
-> On Mon, 03 Mar 2025 17:00:12 +0000, Hugues KAMBA MPIANA wrote:
->> Add `cpu1`, `cpu2` and `cpu3` nodes to the Corstone1000 device tree to
->> enable support for secondary CPU cores.
->>
->> This update facilitates symmetric multiprocessing (SMP) support on
->> the Corstone1000 Fixed Virtual Platform (FVP), allowing the
->> secondary cores to be properly initialised and utilised.
->>
->> [...]
+On 03/03/2025 18:00, Hugues KAMBA MPIANA wrote:
+> Add `cpu1`, `cpu2` and `cpu3` nodes to the Corstone1000 device tree to
+> enable support for secondary CPU cores.
 > 
-> Applied to sudeep.holla/linux (for-next/juno/updates), thanks!
+> This update facilitates symmetric multiprocessing (SMP) support on
+> the Corstone1000 Fixed Virtual Platform (FVP), allowing the
+> secondary cores to be properly initialised and utilised.
 > 
-> [1/1] arm64: dts: corstone1000: Add definitions for secondary CPU cores
->       https://git.kernel.org/sudeep.holla/c/21b9f56cec8f
+> Only FVP platform will have SMP support and hence the secondary cpu definitions
+> are not added to corstone1000.dtsi.
+> 
+> Signed-off-by: Hugues KAMBA MPIANA <hugues.kambampiana@arm.com>
+> ---
+>  arch/arm64/boot/dts/arm/corstone1000-fvp.dts | 24 ++++++++++++++++++++
+>  arch/arm64/boot/dts/arm/corstone1000.dtsi    |  2 +-
+>  2 files changed, 25 insertions(+), 1 deletion(-)
+> 
+No, nothing improved.
 
-Why? Nothing improved here comparing to v1.
+Provide detailed changelog after the ---.
 
-Your comment are still valid and the patch is still not correct.
+Do not attach (thread) your patchsets to some other threads (unrelated
+or older versions). This buries them deep in the mailbox and might
+interfere with applying entire sets.
 
 Best regards,
 Krzysztof
