@@ -1,343 +1,271 @@
-Return-Path: <linux-kernel+bounces-543233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344FEA4D30A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:34:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE7BBA4D30C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:36:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E08927A11E1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:33:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1AB903ADE4C
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:36:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19FAA1F4284;
-	Tue,  4 Mar 2025 05:33:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 420671F419B;
+	Tue,  4 Mar 2025 05:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lCzzth2u"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="IRuvPAZN"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2054.outbound.protection.outlook.com [40.107.237.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41D3479F5;
-	Tue,  4 Mar 2025 05:33:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741066438; cv=none; b=JMyKuH/d5T0LwipmDZ4Z+ocO0vann5uH4F7HrqRSEauaigP220GRInGfyAXqGbonI//Pxn0gj6uSau5Tk6r893mXUjmjU9gQpqq7yLCnbqbc/LKtQtx6K1EYW6zg4wRzTQ1n2RBS0EDtQydhhtNGIlHvFkeOs4lUonEss0JchEk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741066438; c=relaxed/simple;
-	bh=U8ZJKFlPKmCGOrRJxcbg8oU2vYDjOpDoX6L8eKXkbBQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p248z3gSH46Od6kGx3VjIs06I5sp35ougtswdr9F/zTQsl4q5Y0Dw3Aqd9hnICz1WJtIpVO9b4YNp30HYM+2wrsotm1jifUD62debedEtZdWnQsyYgV1e7rLphpYrEuBxlcIrfAX3DiJztUMExFoR5gIBw5CrqUt9BpynVAbmpw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lCzzth2u; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55480C4CEE5;
-	Tue,  4 Mar 2025 05:33:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741066437;
-	bh=U8ZJKFlPKmCGOrRJxcbg8oU2vYDjOpDoX6L8eKXkbBQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lCzzth2ulUaJHyByN3IlXy01lOytIfbih0MH0PLj8nr9tOEgkGPjkeDTFtMq0MSb+
-	 Hzo0ID/ngEUSejKwf87vNiFy7DyQYyIGNXGC+tFB5yrUe5K2rELRQPgo0J1IUM2cKT
-	 Z2/EyOFM/FkzFYQWp61nzas/1/KB0IUUcqAXG5Nw=
-Date: Tue, 4 Mar 2025 06:33:55 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: raoxu <raoxu@uniontech.com>
-Cc: mathias.nyman@intel.com, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, wangyuli@uniontech.com,
-	zhanjun@uniontech.com
-Subject: Re: [PATCH V2] usb: xhci: Add debugfs support for xHCI port bandwidth
-Message-ID: <2025030442-deafness-oboe-7319@gregkh>
-References: <20250303105635.21290-1-raoxu@uniontech.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5F0179F5;
+	Tue,  4 Mar 2025 05:36:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741066578; cv=fail; b=icJVtOLxRUHXRjuiaC3tshQ5gDo5Vaq5GahaO/FylYziaOTxaIUA/vdKtnOAtIBqb0cfK+l5Rza2Oy6103IaQmRRSOpUwnuep2DAzYnsEWafDmCeOTkDJDIzMUKl8iwj8tAukRYBjsMeqwCyTqbMgG3j42Mka2l4Y63lkZlyONQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741066578; c=relaxed/simple;
+	bh=Tm+lgYaUHH+mm9DXpohK9tfctnVpbTb1NGvZTHlXLBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=jv/NFZgcCE5mpMiU8ONqVSpARsWBlEUpKLbVXmtHTFnsaEfCYCfZRl6RUIV7Jr1OysfJIKSShbs+ZldqV3gQG4PBt0f3HUYvLxvUQ9NoYONZL3E5FEGe4rVwqVnw43GpX8KOzN+ZLYeNS2mUDPnP5/xcO29y15mV5qHE3sPODI8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=IRuvPAZN; arc=fail smtp.client-ip=40.107.237.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=J2KjxIp2D5iIn7Aaz4q38UJcTO1Jt1xngJF3yFJO6oQ2pUFLGXmG5fq01T/vBijtj4IzDZCLv8P9j/fuOPbiUrgMx11iW5qrvQE4xnf3TkM1rPKiCfB3vhZlvLkIm0cFSK2D/SlKPxv92LkVrLretI7cJmZaVN+20gJVleLqMZKzAgKdJ8WvV/N0Oi+ezwNL2fgC8/HJewKR8Y/qPoOt1GhXNk5HEvPcAqI5o8YL31wrmsZy7MuGd60/6JvmkHdFQOlFEzquwDldIosQyNdnuyji2rEvD+iHoJu/hQQJ8OZ7DgJo1QyqJA46k56vdRjlWlSjRzwH9f/wQ64geAl8sA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=oxMYT1sDwLjr3kCwojn6t5lQml+V8pWBp6jtoHv/eCE=;
+ b=Qac7+gE4v5uEodQWNOg2Wx0rFyazF1p4qI+Nlz6vXSlWxv9TmwPuBteB6Hj04q4X4PTdNO/hCwx+I5X1S8uu/Uk1IcxQPKJP7EaNoqJ3aasG4hoxYerqhZL0AN+tnkI/286tM3CM/IafD/SAbU8pyy/pmehlKA2q93uWeb/zA08bvtvTF1Hgq9p/V1DCvkfuz7+S+FPLtvJRXdGV2Gm2iIZgOlEl23f7UQJJoL8q9+GgOD1edWwEca7zXsIKMpWpeuAaCE+qeu8kn2GDIx+PAIKOwx1rVcgLWM2BtKWLj5cX4Btr/KROSjAegBql4OThGFh57MuAWcRCxUi8UDWjPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=sina.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=oxMYT1sDwLjr3kCwojn6t5lQml+V8pWBp6jtoHv/eCE=;
+ b=IRuvPAZNxfhhM1GL5glINa5L74DhOc9U8ErHn5lic2s51KZq5gwobEBBEmloFyg1tRXRdecShHibT1PpuiFMWeVdcFtDahGKN3hY2vGHp614Z9T3qq5AzJqTzbHq43SdTohBN0jLFVjrmuz5NfunFxXnTovNENMo1dqe2iev+oo=
+Received: from CH5PR02CA0015.namprd02.prod.outlook.com (2603:10b6:610:1ed::9)
+ by SN7PR12MB8603.namprd12.prod.outlook.com (2603:10b6:806:260::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Tue, 4 Mar
+ 2025 05:36:12 +0000
+Received: from DS3PEPF0000C37A.namprd04.prod.outlook.com
+ (2603:10b6:610:1ed:cafe::40) by CH5PR02CA0015.outlook.office365.com
+ (2603:10b6:610:1ed::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.29 via Frontend Transport; Tue,
+ 4 Mar 2025 05:36:12 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS3PEPF0000C37A.mail.protection.outlook.com (10.167.23.4) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Tue, 4 Mar 2025 05:36:10 +0000
+Received: from [10.136.44.144] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 3 Mar
+ 2025 23:36:06 -0600
+Message-ID: <0d17fc70-01a8-43b4-aec6-5cede5c8f7ba@amd.com>
+Date: Tue, 4 Mar 2025 11:05:57 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303105635.21290-1-raoxu@uniontech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still
+ full
+To: Hillf Danton <hdanton@sina.com>, "Sapkal, Swapnil"
+	<swapnil.sapkal@amd.com>
+CC: Oleg Nesterov <oleg@redhat.com>, Mateusz Guzik <mjguzik@gmail.com>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250102140715.GA7091@redhat.com>
+ <e813814e-7094-4673-bc69-731af065a0eb@amd.com>
+ <20250224142329.GA19016@redhat.com>
+ <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt>
+ <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com>
+ <20250227211229.GD25639@redhat.com>
+ <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com>
+ <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com>
+ <20250304050644.2983-1-hdanton@sina.com>
+Content-Language: en-US
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250304050644.2983-1-hdanton@sina.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS3PEPF0000C37A:EE_|SN7PR12MB8603:EE_
+X-MS-Office365-Filtering-Correlation-Id: 428ae5c9-c08c-49a8-f1a6-08dd5ade785e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TndiNlNoS2RiaUh4NTVpcmYzb3owMDBNSmplSkViUTFlakVZUFZLcXVyZkV1?=
+ =?utf-8?B?V3pKb3dTcGQzbTdMVWxuSmNQUGZHMlpVQmllak9aMXVPbmgzSWUvV0IwakNZ?=
+ =?utf-8?B?eUFCZ1RmZURKd3hvdVJlcElnOFpDN0ViK1pMQ09tMnlBS3F3Y3paKzU5cWcx?=
+ =?utf-8?B?bHFTSk5wYWFRQVdpdllvQ2RPRTVOcWZINzdXeE1WZnh1aXBuVkp2K2hiWW02?=
+ =?utf-8?B?UW11RjY2ZzVnYzdObTlRREZnVUxCZVhlUHI1dWZHYk8rV1VRVWRnYWVjRHk0?=
+ =?utf-8?B?bjU4eVdiT2RDdURWNUFIOEJFcThVNC9ZWFE1NzJWMjNLS3d2a1NqZHhCTE1o?=
+ =?utf-8?B?M244UzhsVjJWNUtVYkJzbXBNR1BaUXB5NVpyR0FOS1pSN0svTlJKelhHYVBk?=
+ =?utf-8?B?eEJ2ejRUZEZhQWdLY1ZjdFVnb2Y1VWU2ZVBGeEo2czI3Y29OdnJxUWpCTjUw?=
+ =?utf-8?B?UmlzTkZ6N1RLVUVGZ3J1MmFJR2RRdEIrUTc2UkZDZWFjR1Y0dGFqbHVTMEZM?=
+ =?utf-8?B?R3BDa012c2Fyb3JRamMvSkU0OGw1WFJLdUIxSlhlT0hoWjNsbmpkRVB5YjFp?=
+ =?utf-8?B?b3g0SUh6bjgrdVV4U2hIOTQ5ZlFzWDlLY3p0SlFwZTRsc2hKNTBMaWdOMUcw?=
+ =?utf-8?B?c2daZWF2RGttMTRqUkRpcjB4NnFOVzNpOGY4ZlFaQWhndWdYMzZ5cG9VaHZq?=
+ =?utf-8?B?eTQxRGQ2OXZ0UGdLQmFSMTR4MUFtMUNxL05qN0FhNkhMWitLckpzaG9JcGhw?=
+ =?utf-8?B?OVd6M2tVcUh5Z04ybmViWkJxRGVrVEZ5TEpNQXJERm8zRWdVT0hTMzg3Qkh5?=
+ =?utf-8?B?V09maWQwNkE2ZWE0R0MrRXQzbDZON2dZa294TU9IbWlGZm1oS1IzdlAyc3Fn?=
+ =?utf-8?B?c2Q2SnVPaXVrT005MnRoV2pQaHk3dFRHbFJJbVBWYmc0MUcwbFF1YWZRY3dQ?=
+ =?utf-8?B?QzVuQ09zdDZ2Yk8xMVdBWW1IZ01iOEZ6c3NmbEdDTE1mUXlJUEFYcmNJclpl?=
+ =?utf-8?B?cmh0SGx6V1hnbVNXeTMzYnI0SFZWRUpmR0QyT1FWRTVia0UvaTVpS3g5VG5R?=
+ =?utf-8?B?VVFkNlR0QncrbUpvanBadGZiQ0U2SUdlOVZzdGdXZWRSV2J2TFFqem9uQmxy?=
+ =?utf-8?B?bGtvbFYzeEtqY05xZngxcCtXQXphNmxra3h3aitWaGg0R0RsUTZMancxUmxQ?=
+ =?utf-8?B?RzBQV0pVejJVaVdlTDNMZEF5WmVlcm1jMGtUUWRDSzlJR1Q2a21ZWG5LOUxj?=
+ =?utf-8?B?WDRVWjRwa2pGOUpQeDJaazZ4ckxhWHRsUGdwdWI1eGI1M2RGYlFTb2FRK0dK?=
+ =?utf-8?B?VjFtc0Jjd1cxZ0VEbUx0OHMzclNrWHM2Nng1VzdtUS9NalQ2QVFiS2ZBZDBs?=
+ =?utf-8?B?dWlUY0k4MWI2OFhXTUQwaDlXQy8yTHcrWW1wNDVFVGtpV2JYOWxpVzd0T2lU?=
+ =?utf-8?B?azRWYzRSa2J3UmVYSkJUcjdLc2tNenVvc0t0U25CcjFPY1Y1d01YQyttMTVK?=
+ =?utf-8?B?MHg0aHdyQjQvQ3lkNDFkeS93NS85UEw4MkFlNyt6NmNodUFOakROcDM5MHZV?=
+ =?utf-8?B?SHdqUWxsL1NIQW1rQVZPTCt6MFRqcEhlYXJQeHZibnZnOFVYTU9BQ3ZTM0Vi?=
+ =?utf-8?B?RC9UYkYvUExoZC9IaTRrYWMzUUpmdWh4MCtGc1E2MytldTVRQ09RZytrL1Zn?=
+ =?utf-8?B?ay9JTTI1VVBPTkdCVUNsaElxQ3Uwa2ZHN1A4Q25vTDJzZEdLOXZ6TmphTmQ2?=
+ =?utf-8?B?UXhtV2RwcWZEdi9ac2dkMUJrb1Y5ekdoc1VGbWZIcDZ6SDhGekpzR1kzN0Ju?=
+ =?utf-8?B?OXROak4rUVNKa1I0Uk5XeWUveW5RUkxlNFptR2NyUUpZZkI4NmVNUENNRVh0?=
+ =?utf-8?B?eG9NN1dVRWE2SG1ZbDZ3ZnNWVEZNMXgyYWxBOW02clh4UTR6aEwzTit5SlVt?=
+ =?utf-8?B?dEFKVGJFRTBBTElOZzdFT2xrTmhQUUFodHBvWGRiTTdvVHdaSjRWakY2VDZL?=
+ =?utf-8?Q?kVsCGOPXiGy5NKiVJwQYXEMKNg4gZk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Mar 2025 05:36:10.4423
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 428ae5c9-c08c-49a8-f1a6-08dd5ade785e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS3PEPF0000C37A.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8603
 
-On Mon, Mar 03, 2025 at 06:56:35PM +0800, raoxu wrote:
-> From: Xu Rao <raoxu@uniontech.com>
+Hello Hillf,
+
+On 3/4/2025 10:36 AM, Hillf Danton wrote:
+> On Mon, 3 Mar 2025 15:16:34 +0530 "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+>> On 2/28/2025 10:03 PM, Oleg Nesterov wrote:
+>>> And... I know, I know you already hate me ;)
+>>>
+>>
+>> Not at all :)
+>>
+>>> but if you have time, could you check if this patch (with or without the
+>>> previous debugging patch) makes any difference? Just to be sure.
+>>>
+>>
+>> Sure, I will give this a try.
+>>
+>> But in the meanwhile me and Prateek tried some of the experiments in the weekend.
+>> We were able to reproduce this issue on a third generation EPYC system as well as
+>> on an Intel Emerald Rapids (2 X INTEL(R) XEON(R) PLATINUM 8592+).
+>>
+>> We tried heavy hammered tracing approach over the weekend on top of your debug patch.
+>> I have attached the debug patch below. With tracing we found the following case for
+>> pipe_writable():
+>>
+>>     hackbench-118768  [206] .....  1029.550601: pipe_write: 000000005eea28ff: 0: 37 38 16: 1
+>>
+>> Here,
+>>
+>> head = 37
+>> tail = 38
+>> max_usage = 16
+>> pipe_full() returns 1.
+>>
+>> Between reading of head and later the tail, the tail seems to have moved ahead of the
+>> head leading to wraparound. Applying the following changes I have not yet run into a
+>> hang on the original machine where I first saw it:
+>>
+>> diff --git a/fs/pipe.c b/fs/pipe.c
+>> index ce1af7592780..a1931c817822 100644
+>> --- a/fs/pipe.c
+>> +++ b/fs/pipe.c
+>> @@ -417,9 +417,19 @@ static inline int is_packetized(struct file *file)
+>>    /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
+>>    static inline bool pipe_writable(const struct pipe_inode_info *pipe)
+>>    {
+>> -	unsigned int head = READ_ONCE(pipe->head);
+>> -	unsigned int tail = READ_ONCE(pipe->tail);
+>>    	unsigned int max_usage = READ_ONCE(pipe->max_usage);
+>> +	unsigned int head, tail;
+>> +
+>> +	tail = READ_ONCE(pipe->tail);
+>> +	/*
+>> +	 * Since the unsigned arithmetic in this lockless preemptible context
+>> +	 * relies on the fact that the tail can never be ahead of head, read
+>> +	 * the head after the tail to ensure we've not missed any updates to
+>> +	 * the head. Reordering the reads can cause wraparounds and give the
+>> +	 * illusion that the pipe is full.
+>> +	 */
+>> +	smp_rmb();
+>> +	head = READ_ONCE(pipe->head);
+>>    
+>>    	return !pipe_full(head, tail, max_usage) ||
+>>    		!READ_ONCE(pipe->readers);
+>> ---
+>>
+>> smp_rmb() on x86 is a nop and even without the barrier we were not able to
+>> reproduce the hang even after 10000 iterations.
+>>
+> My $.02 that changes the wait condition.
+> Not sure it makes sense for you.
 > 
-> In many projects, you need to obtain the available bandwidth of the
-> xhci roothub port. Refer to xhci rev1_2 and use the TRB_GET_BW
-> command to obtain it.
-> 
-> hardware tested:
-> 03:00.3 USB controller: Advanced Micro Devices, Inc. [AMD] Raven USB 3.1
-> (prog-if 30 [XHCI])
-> Subsystem: Huawei Technologies Co., Ltd. Raven USB 3.1
-> Flags: bus master, fast devsel, latency 0, IRQ 30
-> Memory at c0300000 (64-bit, non-prefetchable) [size=1M]
-> Capabilities: [48] Vendor Specific Information: Len=08 <?>
-> Capabilities: [50] Power Management version 3
-> Capabilities: [64] Express Endpoint, MSI 00
-> Capabilities: [a0] MSI: Enable- Count=1/8 Maskable- 64bit+
-> Capabilities: [c0] MSI-X: Enable+ Count=8 Masked-
-> Kernel driver in use: xhci_hcd
-> 
-> test progress:
-> 1.cd /sys/kernel/debug/usb/xhci/0000:03:00.3
-> cat port_bandwidth
-> /sys/kernel/debug/usb/xhci/0000:03:00.3# cat port_bandwidth
-> port[1] available bw: 79%.
-> port[2] available bw: 79%.
-> port[3] available bw: 79%.
-> port[4] available bw: 79%.
-> port[5] available bw: 90%.
-> port[6] available bw: 90%.
-> port[7] available bw: 90%.
-> port[8] available bw: 90%.
-> 2.plug in usb video cammer open it
-> cat port_bandwidth
-> port[1] available bw: 39%.
-> port[2] available bw: 39%.
-> port[3] available bw: 39%.
-> port[4] available bw: 39%.
-> port[5] available bw: 90%.
-> port[6] available bw: 90%.
-> port[7] available bw: 90%.
-> port[8] available bw: 90%.
-> 
-> Signed-off-by: Xu Rao <raoxu@uniontech.com>
-> ---
->  drivers/usb/host/xhci-debugfs.c | 42 +++++++++++++++++++
->  drivers/usb/host/xhci-ring.c    | 14 +++++++
->  drivers/usb/host/xhci.c         | 74 +++++++++++++++++++++++++++++++++
->  drivers/usb/host/xhci.h         |  7 ++++
->  4 files changed, 137 insertions(+)
-> 
-> diff --git a/drivers/usb/host/xhci-debugfs.c b/drivers/usb/host/xhci-debugfs.c
-> index 1f5ef174abea..573b6c25f3af 100644
-> --- a/drivers/usb/host/xhci-debugfs.c
-> +++ b/drivers/usb/host/xhci-debugfs.c
-> @@ -631,6 +631,46 @@ static void xhci_debugfs_create_ports(struct xhci_hcd *xhci,
->  	}
->  }
-> 
-> +static int xhci_port_bw_show(struct seq_file *s, void *unused)
-> +{
-> +	struct xhci_hcd		*xhci = (struct xhci_hcd *)s->private;
-> +	unsigned int		num_ports;
-> +	unsigned int		i;
-> +	int			ret;
-> +	u8			bw_table[MAX_HC_PORTS] = {0};
-> +
-> +	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
-> +
-> +	/* get roothub port bandwidth */
-> +	ret = xhci_get_port_bandwidth(xhci, bw_table);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/* print all roothub ports available bandwidth */
-> +	for (i = 1; i < num_ports+1; i++)
-> +		seq_printf(s, "port[%d] available bw: %d%%.\n", i, bw_table[i]);
-> +
-> +	return ret;
-> +}
-> +
-> +static int bw_open(struct inode *inode, struct file *file)
-> +{
-> +	return single_open(file, xhci_port_bw_show, inode->i_private);
-> +}
-> +
-> +static const struct file_operations bw_fops = {
-> +	.open			= bw_open,
-> +	.read			= seq_read,
-> +	.llseek			= seq_lseek,
-> +	.release		= single_release,
-> +};
-> +
-> +static void xhci_debugfs_create_bandwidth(struct xhci_hcd *xhci,
-> +					struct dentry *parent)
-> +{
-> +	debugfs_create_file("port_bandwidth", 0644, parent, xhci, &bw_fops);
-> +}
-> +
->  void xhci_debugfs_init(struct xhci_hcd *xhci)
->  {
->  	struct device		*dev = xhci_to_hcd(xhci)->self.controller;
-> @@ -681,6 +721,8 @@ void xhci_debugfs_init(struct xhci_hcd *xhci)
->  	xhci->debugfs_slots = debugfs_create_dir("devices", xhci->debugfs_root);
-> 
->  	xhci_debugfs_create_ports(xhci, xhci->debugfs_root);
-> +
-> +	xhci_debugfs_create_bandwidth(xhci, xhci->debugfs_root);
->  }
-> 
->  void xhci_debugfs_exit(struct xhci_hcd *xhci)
-> diff --git a/drivers/usb/host/xhci-ring.c b/drivers/usb/host/xhci-ring.c
-> index 965bffce301e..af1cd4f8ace9 100644
-> --- a/drivers/usb/host/xhci-ring.c
-> +++ b/drivers/usb/host/xhci-ring.c
-> @@ -1867,6 +1867,8 @@ static void handle_cmd_completion(struct xhci_hcd *xhci,
->  	case TRB_NEC_GET_FW:
->  		xhci_handle_cmd_nec_get_fw(xhci, event);
->  		break;
-> +	case TRB_GET_BW:
-> +		break;
->  	default:
->  		/* Skip over unknown commands on the event ring */
->  		xhci_info(xhci, "INFO unknown command type %d\n", cmd_type);
-> @@ -4414,6 +4416,18 @@ int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
->  			command_must_succeed);
->  }
-> 
-> +/* Queue a get root hub port bandwidth command TRB */
-> +int xhci_queue_get_rh_port_bw(struct xhci_hcd *xhci,
-> +		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
-> +		u8 dev_speed, u32 slot_id, bool command_must_succeed)
-> +{
-> +	return queue_command(xhci, cmd, lower_32_bits(in_ctx_ptr),
-> +		upper_32_bits(in_ctx_ptr), 0,
-> +		TRB_TYPE(TRB_GET_BW) | DEV_SPEED_FOR_TRB(dev_speed) |
-> +		SLOT_ID_FOR_TRB(slot_id),
-> +		command_must_succeed);
-> +}
-> +
->  /* Queue an evaluate context command TRB */
->  int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
->  		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed)
-> diff --git a/drivers/usb/host/xhci.c b/drivers/usb/host/xhci.c
-> index 45653114ccd7..84092fe981e8 100644
-> --- a/drivers/usb/host/xhci.c
-> +++ b/drivers/usb/host/xhci.c
-> @@ -3088,6 +3088,80 @@ void xhci_reset_bandwidth(struct usb_hcd *hcd, struct usb_device *udev)
->  }
->  EXPORT_SYMBOL_GPL(xhci_reset_bandwidth);
-> 
-> +/* Get the available bandwidth of the ports under the xhci roothub,
-> + * including USB 2.0 port and USB 3.0 port.
-> + */
-> +int xhci_get_port_bandwidth(struct xhci_hcd *xhci, u8 *bw_table)
-> +{
-> +	unsigned int		num_ports;
-> +	unsigned int		i;
-> +	struct xhci_command	*cmd;
-> +	dma_addr_t		dma_handle;
-> +	void			*dma_buf;
-> +	int			ret;
-> +	unsigned long		flags;
-> +	struct device		*dev  = xhci_to_hcd(xhci)->self.sysdev;
-> +
-> +	num_ports = HCS_MAX_PORTS(xhci->hcs_params1);
-> +
-> +	cmd = xhci_alloc_command(xhci, true, GFP_KERNEL);
-> +	if (!cmd)
-> +		return -ENOMEM;
-> +
-> +	dma_buf = dma_alloc_coherent(dev, xhci->page_size, &dma_handle,
-> +					GFP_KERNEL);
-> +	if (!dma_buf) {
-> +		xhci_free_command(xhci, cmd);
-> +		return -ENOMEM;
-> +	}
-> +
-> +	/* get xhci hub usb3 port bandwidth */
-> +	/* refer to xhci rev1_2 protocol 4.6.15*/
-> +	spin_unlock_irqrestore(&xhci->lock, flags);
-> +	ret = xhci_queue_get_rh_port_bw(xhci, cmd, dma_handle, USB_SPEED_SUPER,
-> +					0, false);
-> +	if (ret < 0) {
-> +		spin_unlock_irqrestore(&xhci->lock, flags);
-> +		goto out;
-> +	}
-> +	xhci_ring_cmd_db(xhci);
-> +	spin_unlock_irqrestore(&xhci->lock, flags);
-> +
-> +	wait_for_completion(cmd->completion);
-> +
-> +	/* refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved */
-> +	for (i = 1; i < num_ports+1; i++) {
-> +		if (((u8 *)dma_buf)[i])
-> +			bw_table[i] = ((u8 *)dma_buf)[i];
-> +	}
-> +
-> +	/* get xhci hub usb2 port bandwidth */
-> +	/* refer to xhci rev1_2 protocol 4.6.15*/
-> +	spin_unlock_irqrestore(&xhci->lock, flags);
-> +	ret = xhci_queue_get_rh_port_bw(xhci, cmd, dma_handle, USB_SPEED_HIGH,
-> +					0, false);
-> +	if (ret < 0) {
-> +		spin_unlock_irqrestore(&xhci->lock, flags);
-> +		goto out;
-> +	}
-> +	xhci_ring_cmd_db(xhci);
-> +	spin_unlock_irqrestore(&xhci->lock, flags);
-> +
-> +	wait_for_completion(cmd->completion);
-> +
-> +	/* refer to xhci rev1_2 protocol 6.2.6 , byte 0 is reserved */
-> +	for (i = 1; i < num_ports+1; i++) {
-> +		if (((u8 *)dma_buf)[i])
-> +			bw_table[i] = ((u8 *)dma_buf)[i];
-> +	}
-> +
-> +out:
-> +	dma_free_coherent(dev, xhci->page_size, dma_buf, dma_handle);
-> +	xhci_free_command(xhci, cmd);
-> +
-> +	return ret;
-> +}
-> +
->  static void xhci_setup_input_ctx_for_config_ep(struct xhci_hcd *xhci,
->  		struct xhci_container_ctx *in_ctx,
->  		struct xhci_container_ctx *out_ctx,
-> diff --git a/drivers/usb/host/xhci.h b/drivers/usb/host/xhci.h
-> index 8c164340a2c3..a137097b0404 100644
-> --- a/drivers/usb/host/xhci.h
-> +++ b/drivers/usb/host/xhci.h
-> @@ -999,6 +999,9 @@ enum xhci_setup_dev {
->  /* bits 16:23 are the virtual function ID */
->  /* bits 24:31 are the slot ID */
-> 
-> +/* bits 19:16 are the dev speed */
-> +#define DEV_SPEED_FOR_TRB(p)    ((p) << 16)
-> +
->  /* Stop Endpoint TRB - ep_index to endpoint ID for this TRB */
->  #define SUSPEND_PORT_FOR_TRB(p)		(((p) & 1) << 23)
->  #define TRB_TO_SUSPEND_PORT(p)		(((p) & (1 << 23)) >> 23)
-> @@ -1907,6 +1910,10 @@ int xhci_queue_isoc_tx_prepare(struct xhci_hcd *xhci, gfp_t mem_flags,
->  int xhci_queue_configure_endpoint(struct xhci_hcd *xhci,
->  		struct xhci_command *cmd, dma_addr_t in_ctx_ptr, u32 slot_id,
->  		bool command_must_succeed);
-> +int xhci_queue_get_rh_port_bw(struct xhci_hcd *xhci,
-> +		struct xhci_command *cmd, dma_addr_t in_ctx_ptr,
-> +		u8 dev_speed, u32 slot_id, bool command_must_succeed);
-> +int xhci_get_port_bandwidth(struct xhci_hcd *xhci, u8 *bw_table);
->  int xhci_queue_evaluate_context(struct xhci_hcd *xhci, struct xhci_command *cmd,
->  		dma_addr_t in_ctx_ptr, u32 slot_id, bool command_must_succeed);
->  int xhci_queue_reset_ep(struct xhci_hcd *xhci, struct xhci_command *cmd,
+> --- x/fs/pipe.c
+> +++ y/fs/pipe.c
+> @@ -430,7 +430,7 @@ pipe_write(struct kiocb *iocb, struct io
+>   {
+>   	struct file *filp = iocb->ki_filp;
+>   	struct pipe_inode_info *pipe = filp->private_data;
+> -	unsigned int head;
+> +	unsigned int head, tail;
+>   	ssize_t ret = 0;
+>   	size_t total_len = iov_iter_count(from);
+>   	ssize_t chars;
+> @@ -573,11 +573,13 @@ pipe_write(struct kiocb *iocb, struct io
+>   		 * after waiting we need to re-check whether the pipe
+>   		 * become empty while we dropped the lock.
+>   		 */
+> +		tail = pipe->tail;
+>   		mutex_unlock(&pipe->mutex);
+>   		if (was_empty)
+>   			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+>   		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+> -		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
+> +		wait_event_interruptible_exclusive(pipe->wr_wait,
+> +				!READ_ONCE(pipe->readers) || tail != READ_ONCE(pipe->tail));
+
+That could work too for the case highlighted but in case the head too
+has moved by the time the writer wakes up, it'll lead to an extra
+wakeup.
+
+Linus' diff seems cleaner and seems to cover all racy scenarios.
+
+>   		mutex_lock(&pipe->mutex);
+>   		was_empty = pipe_empty(pipe->head, pipe->tail);
+>   		wake_next_writer = true;
 > --
-> 2.43.4
-> 
 
-Hi,
+-- 
+Thanks and Regards,
+Prateek
 
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- This looks like a new version of a previously submitted patch, but you
-  did not list below the --- line any changes from the previous version.
-  Please read the section entitled "The canonical patch format" in the
-  kernel file, Documentation/process/submitting-patches.rst for what
-  needs to be done here to properly describe this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
