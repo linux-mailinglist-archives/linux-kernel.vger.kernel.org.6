@@ -1,119 +1,319 @@
-Return-Path: <linux-kernel+bounces-544270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1D40A4DF86
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:43:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B86DA4DF8F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:45:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36200189C75D
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:43:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6EC13B356F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:45:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 582A9204689;
-	Tue,  4 Mar 2025 13:43:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11C32054E2;
+	Tue,  4 Mar 2025 13:44:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="XsnQUsgS"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIWXcXBm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480FD2045A6
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:43:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFF7620469F;
+	Tue,  4 Mar 2025 13:44:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741095801; cv=none; b=UvMhrt4n1zd47zzjLEwGm0P5u6AteYeOoKgOdGomHjnHKfKNQeSQKUyzdkzYgr5obooOdK71mAIImH2sZG+hSyfU6qarPT5yl3OiHwI5HocvztmKs2wo5t95WvQGfImvjmRFN8lXYrJXzyD1SSqrmqKRnB6utw/RlBD7InBlWCE=
+	t=1741095851; cv=none; b=PSMa1cTiX9kIe6sHI/3xYg4qfsxYLHQ4DR3gupOaae3BLK2i8qrCfMCL1tJQ1cs2iJbfKmYyYjhLsjvV/kqFEG9TDI4bCr+sP/tZmMET4J5FlkzZKMvXpk2pHXL9guFDihhFyYbs4Qke+HxCqKVyuNIzNmRp1Ejc1r7juWgjx+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741095801; c=relaxed/simple;
-	bh=0pGZ555KSvs9RkZQ2TF9sAp3mz0s0plHDaitzlJaP9w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yp6WayzVUA3J+xy5eu52hPDpZqgcg7OzPfRIswSliWyrVJMwTZpTEExyYV4Gwe8hhP99xGHW5idBh9l6e9fzEMWs+IvmHURKITyIoDUWC1QeD9ImV7H+rwW1+N2HzDMvFIS0X/wpwEqfcMeUxU5d/n2xLRXoEB+zT/plDBeAWBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=XsnQUsgS; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-548430564d9so5981740e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:43:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741095797; x=1741700597; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0pGZ555KSvs9RkZQ2TF9sAp3mz0s0plHDaitzlJaP9w=;
-        b=XsnQUsgSWo4iPO/7DEA6P6yo1Vd8HfWDljiu7o+GWXt/lAC1/RanTa9riq6LJye4uu
-         6XAntWQ0EUvhPkp7FPaJy9I4i7qGNksgjVqXIo0Ivs97pHsZxkUiqRR8J9e2JIPWDkEs
-         ty+TehVPr1yoX2Bs4EAsZTMstv9cIi/gtqnLGZ3CWQpRFFXJN4UHWyViK9GgsGPmZ2ME
-         LemNwzL5DBbeRqVM16UZVpzMAJbPLnmdXlaXFXaVeSMHjNKJjog2YuV+dPOVr4J9uEiA
-         jO+r3Sptp+AgpfMM2+iRc/AyHcfIl+6m30SaAEWPIGU0JcxkRIRDUS8GmwiIibjDur6X
-         0n8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741095797; x=1741700597;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0pGZ555KSvs9RkZQ2TF9sAp3mz0s0plHDaitzlJaP9w=;
-        b=DC8oNlzSDLowqyHP86Unl4nZvhR3lNXXSXIV3bPpON4sxlgKqrGFfSAvypnUrhRTi9
-         MB/7AFC/QOar0ZLfJtcfGkOdrzS0L5KF1vYecUMR6+Eu16FZ9gYKYpuM98GN5DIu5oe1
-         mYmZ4wXLn+qryHgfzSkBxbLm2vM018rRHMt5IViJ0/mu5b5yScZJ3IfSaZzcz06qJKrH
-         HIXXUkbdZLx6XlxR93n9yXCcErEQjb6xRmNId8SEDujtz4lu/sa+76qivEUsOKjw6mfo
-         G6jvgXPobEtUyhyePj5sC3jueQxMF8ESN6wqy3denxeuO5L9+N8/TAzg+EfeyvNwipN9
-         OLFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW8xNRnWjTgRphv1a0Fl3pclyw2AzuI9uM1570G2W0nO3rHvBn8fTGNxC0MxA5M/n1IqtsHBNqQ9kCB4FQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4+7xhTOdDKVxpt+s6QwfBezS8jDYZx4hTKr1tMbxf/gHlBe3U
-	wSIDBJ5zeCnIvph0mMvK8Q/x/ZcYD8rfuMvIfORhstydJfALnuB9eoozUsYfwB72lDC2KXBSOVf
-	nX5r3KmunoWKwvBTFBVe06erppNtsJl69j2EjCw==
-X-Gm-Gg: ASbGnctxmzE+WOeP3boFRH/EFeJLJDJ/2Zcj1OoCyYoxkQu4dPzk8bxlDAbBn68oUXW
-	NZ5bCbbuqmPBao+xgRBGhmKtnlwapKO4uBzfaYvqS0FO4KNumgUwIXQ0RiIccilZVQcTGXr7x2E
-	cKLrMDcSCdsLq8nvQ/qcpkeOjg6nWYmEzPQEa9v/ruZ+lfLehgkZGk5lBPnQ==
-X-Google-Smtp-Source: AGHT+IFWh03wXh64Ao3HRMlhJCKQLtqt910EoDBcwZtN1H8wHZ6DUI6QiDtsoKY7O3tRh80hbzaOHl+pKFDQV/B60Os=
-X-Received: by 2002:a05:6512:2398:b0:545:a5e:b4ef with SMTP id
- 2adb3069b0e04-5494c31ca37mr7947524e87.16.1741095797400; Tue, 04 Mar 2025
- 05:43:17 -0800 (PST)
+	s=arc-20240116; t=1741095851; c=relaxed/simple;
+	bh=yniI/zUBKnpp3li+eEXmoILiIoVM6nSrypH9r4g1WLI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=np/64Wko7nTn+SIJBsGC/gCl3N686eQX0hT/TDvOLaZ/Ijeey/XCqPUPuHi2PdFpJHfcGUjog41tZcb5uP7MWaZvFV/3Le66aAJ5Y7P6poSb0LczkGjq/SONpHbc8MpiDja3JKKT6G/P4ISI8/rRkSXGCvRoOcNY1nI+Ist+DiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIWXcXBm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8DB9CC4AF09;
+	Tue,  4 Mar 2025 13:44:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741095850;
+	bh=yniI/zUBKnpp3li+eEXmoILiIoVM6nSrypH9r4g1WLI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=KIWXcXBmPFmvT2w+szLK0UrGdej1WC+U4IV3Npemn8RpctAF1OpWvuzCzcysdA/Tv
+	 0b1NkCEohVwnhRw3jG7kCUR4te/XrvjIzvLbicHjBV9Smz5ezaC5CkqaYaKh6nnviB
+	 RWyp3e8hN2WqJmFNeSoOUgMHkBez2Wi7USqJOMkRMblVNY40jKxjqMfDduaegO9c+K
+	 e5RwtbOijrnNvTtuHp4IKZKYujwVgBoMl0t9jwdVPmFB5oT3f6yl6MhyTwtCTnpBh2
+	 pD7rQnPwt2s5uDyrm+s6f359g3F7TAk9GhfXCBM/WM6QynJGtnkKeBZVbuWk/jRhMl
+	 ziwKYuOPxg+6w==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+Cc: <ojeda@kernel.org>,  <alex.gaynor@gmail.com>,  <boqun.feng@gmail.com>,
+  <gary@garyguo.net>,  <bjorn3_gh@protonmail.com>,
+  <benno.lossin@proton.me>,  <tmgross@umich.edu>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>,
+  "Alice Ryhl" <aliceryhl@google.com>
+Subject: Re: [PATCH v2] rust: irq: add support for request_irq()
+In-Reply-To: <20250122163932.46697-1-daniel.almeida@collabora.com> (Daniel
+	Almeida's message of "Wed, 22 Jan 2025 13:39:30 -0300")
+References: <u-vC1KbeOK3Fd2PClzinb8LmqS_dntOW-pOSmZIFWotCZeTOg30xR_GYUc4oReAKZeuuu7ZaXWzfeTkpGMlr0A==@protonmail.internalid>
+	<20250122163932.46697-1-daniel.almeida@collabora.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Tue, 04 Mar 2025 14:43:20 +0100
+Message-ID: <87cyewhpxj.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303160341.1322640-1-andriy.shevchenko@linux.intel.com>
- <20250303160341.1322640-3-andriy.shevchenko@linux.intel.com>
- <20250304091804.GG3713119@black.fi.intel.com> <Z8bdDQGg_xcamZv2@smile.fi.intel.com>
- <20250304111157.GJ3713119@black.fi.intel.com> <Z8bhJq3kn_uw3iYE@smile.fi.intel.com>
- <20250304113135.GK3713119@black.fi.intel.com> <Z8brYjfL1yj_BvpN@smile.fi.intel.com>
- <CAMRc=MfsKc+r=uhDZVbd_BW=Gs1BpaidPC1tfF6TGqcq9bgP6Q@mail.gmail.com> <Z8cCQPWBmJXFgKAe@smile.fi.intel.com>
-In-Reply-To: <Z8cCQPWBmJXFgKAe@smile.fi.intel.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Tue, 4 Mar 2025 14:43:05 +0100
-X-Gm-Features: AQ5f1JpqX_GHUguz2RwObiRuAUFX8DZ0DsNPbeLxo7WFuOXHLfYuwvzPP9w3pks
-Message-ID: <CAMRc=McQY1r-Ni4buuvhD8DP6LGz22PAxk_QC9ENYBEzYTc+7g@mail.gmail.com>
-Subject: Re: [PATCH v1 2/3] gpiolib: Rename gpio_set_debounce_timeout() to gpiod_do_set_debounce()
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Mika Westerberg <westeri@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
-	Kent Gibson <warthog618@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Mar 4, 2025 at 2:38=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
->
-> >
-> > I'm definitely in favor of consolidation instead of renaming to
-> > gpiod_go_set_debounce(). If anything a better name would be:
-> > gpiod_set_debounce_nocheck() to indicate the actual functionality.
-> >
-> > How about first extending gpio_set_config_with_argument() to take a
-> > boolean "optional" argument and removing
-> > gpio_set_config_with_argument_optional() altogether? Both are internal
-> > to drivers/gpio/ so it would have no effect on consumers.
->
-> Consider this series as a report then, I am not going to spend time on it=
-.
-> Thank you for the review.
->
+"Daniel Almeida" <daniel.almeida@collabora.com> writes:
 
-No worries. I applied patch 1/3. 3/3 doesn't apply on its own so feel
-free to resend it if you still want it.
+> Add support for registering IRQ handlers in Rust.
+>
+> IRQ handlers are extensively used in drivers when some peripheral wants to
+> obtain the CPU attention. Registering a handler will make the system invoke the
+> passed-in function whenever the chosen IRQ line is triggered.
+>
+> Both regular and threaded IRQ handlers are supported through a Handler (or
+> ThreadedHandler) trait that is meant to be implemented by a type that:
+>
+> a) provides a function to be run by the system when the IRQ fires and,
+>
+> b) holds the shared data (i.e.: `T`) between process and IRQ contexts.
+>
+> The requirement that T is Sync derives from the fact that handlers might run
+> concurrently with other processes executing the same driver, creating the
+> potential for data races.
+>
+> Ideally, some interior mutability must be in place if T is to be mutated. This
+> should usually be done through the in-flight SpinLockIrq type.
+>
+> Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
 
-Bartosz
+What is the base commit to apply this patch to? I am getting some
+compiler errors when trying it out:
+
+    error[E0308]: mismatched types
+      --> /home/aeh/src/linux-rust/linux/rust/kernel/irq/request.rs:240:21
+        |
+    237 |                 bindings::request_irq(
+        |                 --------------------- arguments to this function are incorrect
+    ...
+    240 |                     flags.0,
+        |                     ^^^^^^^ expected `usize`, found `u64`
+        |
+
+[...]
+
+> diff --git a/rust/kernel/irq.rs b/rust/kernel/irq.rs
+> new file mode 100644
+> index 000000000000..3ab83c5bdb83
+> --- /dev/null
+> +++ b/rust/kernel/irq.rs
+> @@ -0,0 +1,6 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! IRQ abstractions
+
+We could do with a longer story here. Also, missing a period.
+
+> +
+> +/// IRQ allocation and handling
+> +pub mod request;
+> diff --git a/rust/kernel/irq/request.rs b/rust/kernel/irq/request.rs
+> new file mode 100644
+> index 000000000000..61e7d4a8f555
+> --- /dev/null
+> +++ b/rust/kernel/irq/request.rs
+> @@ -0,0 +1,517 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +// SPDX-FileCopyrightText: Copyright 2025 Collabora ltd.
+> +
+> +//! IRQ allocation and handling
+> +
+> +use core::marker::PhantomPinned;
+> +use core::ptr::addr_of_mut;
+> +
+> +use init::pin_init_from_closure;
+> +
+> +use crate::error::to_result;
+> +use crate::prelude::*;
+> +use crate::str::CStr;
+> +
+> +/// Flags to be used when registering IRQ handlers.
+> +///
+> +/// They can be combined with the operators `|`, `&`, and `!`.
+> +///
+> +/// Values can be used from the [`flags`] module.
+> +#[derive(Clone, Copy)]
+> +pub struct Flags(u64);
+> +
+> +impl core::ops::BitOr for Flags {
+> +    type Output = Self;
+> +    fn bitor(self, rhs: Self) -> Self::Output {
+> +        Self(self.0 | rhs.0)
+> +    }
+> +}
+> +
+> +impl core::ops::BitAnd for Flags {
+> +    type Output = Self;
+> +    fn bitand(self, rhs: Self) -> Self::Output {
+> +        Self(self.0 & rhs.0)
+> +    }
+> +}
+> +
+> +impl core::ops::Not for Flags {
+> +    type Output = Self;
+> +    fn not(self) -> Self::Output {
+> +        Self(!self.0)
+> +    }
+> +}
+> +
+> +/// The flags that can be used when registering an IRQ handler.
+> +pub mod flags {
+> +    use super::Flags;
+> +
+> +    use crate::bindings;
+> +
+> +    /// Use the interrupt line as already configured.
+> +    pub const TRIGGER_NONE: Flags = Flags(bindings::IRQF_TRIGGER_NONE as _);
+
+What is the reason for the `as _` in all these? Should the flag type be
+something else?
+
+> +
+> +    /// The interrupt is triggered when the signal goes from low to high.
+> +    pub const TRIGGER_RISING: Flags = Flags(bindings::IRQF_TRIGGER_RISING as _);
+> +
+> +    /// The interrupt is triggered when the signal goes from high to low.
+> +    pub const TRIGGER_FALLING: Flags = Flags(bindings::IRQF_TRIGGER_FALLING as _);
+> +
+> +    /// The interrupt is triggered while the signal is held high.
+> +    pub const TRIGGER_HIGH: Flags = Flags(bindings::IRQF_TRIGGER_HIGH as _);
+> +
+> +    /// The interrupt is triggered while the signal is held low.
+> +    pub const TRIGGER_LOW: Flags = Flags(bindings::IRQF_TRIGGER_LOW as _);
+> +
+> +    /// Allow sharing the irq among several devices.
+> +    pub const SHARED: Flags = Flags(bindings::IRQF_SHARED as _);
+> +
+> +    /// Set by callers when they expect sharing mismatches to occur.
+
+What is a sharing mismatch?
+
+> +    pub const PROBE_SHARED: Flags = Flags(bindings::IRQF_PROBE_SHARED as _);
+> +
+> +    /// Flag to mark this interrupt as timer interrupt.
+
+The "Flag to ..." strikes me as odd when most of the other descriptions
+have a different wording.
+
+> +    pub const TIMER: Flags = Flags(bindings::IRQF_TIMER as _);
+> +
+> +    /// Interrupt is per cpu.
+> +    pub const PERCPU: Flags = Flags(bindings::IRQF_PERCPU as _);
+> +
+> +    /// Flag to exclude this interrupt from irq balancing.
+> +    pub const NOBALANCING: Flags = Flags(bindings::IRQF_NOBALANCING as _);
+> +
+> +    /// Interrupt is used for polling (only the interrupt that is registered
+> +    /// first in a shared interrupt is considered for performance reasons).
+> +    pub const IRQPOLL: Flags = Flags(bindings::IRQF_IRQPOLL as _);
+> +
+> +    /// Interrupt is not reenabled after the hardirq handler finished. Used by
+> +    /// threaded interrupts which need to keep the irq line disabled until the
+> +    /// threaded handler has been run.
+> +    pub const ONESHOT: Flags = Flags(bindings::IRQF_ONESHOT as _);
+> +
+> +    /// Do not disable this IRQ during suspend. Does not guarantee that this
+> +    /// interrupt will wake the system from a suspended state.
+> +    pub const NO_SUSPEND: Flags = Flags(bindings::IRQF_NO_SUSPEND as _);
+> +
+> +    /// Force enable it on resume even if [`NO_SUSPEND`] is set.
+
+Perhaps: Force enable the interrupt even if ...
+
+> +    pub const FORCE_RESUME: Flags = Flags(bindings::IRQF_FORCE_RESUME as _);
+> +
+> +    /// Interrupt cannot be threaded.
+> +    pub const NO_THREAD: Flags = Flags(bindings::IRQF_NO_THREAD as _);
+> +
+> +    /// Resume IRQ early during syscore instead of at device resume time.
+> +    pub const EARLY_RESUME: Flags = Flags(bindings::IRQF_EARLY_RESUME as _);
+> +
+> +    /// If the IRQ is shared with a NO_SUSPEND user, execute this interrupt
+
+Please link `NO_SUSPEND`.
+
+> +    /// handler after suspending interrupts. For system wakeup devices users
+> +    /// need to implement wakeup detection in their interrupt handlers.
+> +    pub const COND_SUSPEND: Flags = Flags(bindings::IRQF_COND_SUSPEND as _);
+> +
+> +    /// Don't enable IRQ or NMI automatically when users request it. Users will
+> +    /// enable it explicitly by `enable_irq` or `enable_nmi` later.
+> +    pub const NO_AUTOEN: Flags = Flags(bindings::IRQF_NO_AUTOEN as _);
+> +
+> +    /// Exclude from runnaway detection for IPI and similar handlers, depends on
+> +    /// `PERCPU`.
+> +    pub const NO_DEBUG: Flags = Flags(bindings::IRQF_NO_DEBUG as _);
+> +}
+> +
+> +/// The value that can be returned from an IrqHandler or a ThreadedIrqHandler.
+> +pub enum IrqReturn {
+
+I learned recently that if you choose the right representation here, you
+don't need to cast here and when you call `Handler::handle_irq`. I think
+`#[repr(u32)]` is the one to use here.
+
+> +    /// The interrupt was not from this device or was not handled.
+> +    None = bindings::irqreturn_IRQ_NONE as _,
+> +
+> +    /// The interrupt was handled by this device.
+> +    Handled = bindings::irqreturn_IRQ_HANDLED as _,
+> +}
+> +
+> +/// Callbacks for an IRQ handler.
+> +pub trait Handler: Sync {
+> +    /// The actual handler function. As usual, sleeps are not allowed in IRQ
+> +    /// context.
+> +    fn handle_irq(&self) -> IrqReturn;
+> +}
+
+What is the reason for moving away from the following:
+
+
+    pub trait Handler {
+        /// The context data associated with and made available to the handler.
+        type Data: ForeignOwnable;
+
+        /// Called from interrupt context when the irq happens.
+        fn handle_irq(data: <Self::Data as ForeignOwnable>::Borrowed<'_>) -> Return;
+    }
+
+
+I think we will run into problems if we want to pass `Arc<Foo>` as the
+handler. I don't think we can `impl Handler for Arc<Foo>` in a driver
+crate, since both `Handler` and `Arc` are defined in external crates
+
+
+[...]
+
+> +#[pin_data(PinnedDrop)]
+> +pub struct ThreadedRegistration<T: ThreadedHandler> {
+> +    irq: u32,
+> +    #[pin]
+> +    handler: T,
+> +    #[pin]
+> +    /// Pinned because we need address stability so that we can pass a pointer
+> +    /// to the callback.
+> +    _pin: PhantomPinned,
+> +}
+
+As others have mentioned, I wonder if we can avoid the code duplication
+that makes up most of the rest of this patch.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
