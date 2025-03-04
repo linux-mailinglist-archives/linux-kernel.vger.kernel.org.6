@@ -1,217 +1,183 @@
-Return-Path: <linux-kernel+bounces-543064-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FFA7A4D11F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:44:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC5AA4D135
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 02:48:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A08813ACE71
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:44:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 588C93AB7EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 01:47:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC4A143759;
-	Tue,  4 Mar 2025 01:44:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0E6733D8;
-	Tue,  4 Mar 2025 01:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA39E14830C;
+	Tue,  4 Mar 2025 01:47:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="D0mGKI6u"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0E6A136347;
+	Tue,  4 Mar 2025 01:47:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741052646; cv=none; b=ajpJoocNxcgtDbxaVEoNtDauL0PBlMXtLxIGp7I7ESO57pbiujW39yN59OM8bhIYrez2cW72VIuxenf21f6eizNTs1J9XlBptRLKLaktz6PS6JTaSZgBFRge+HlQ2sYdWuI/EdmnkLAMrZWNMVzsFfRhigAaxrqnQ9JqYatbyAI=
+	t=1741052851; cv=none; b=YAOtCvL9rO/Z9Uc+/NGgPDrO3+s2sCishrGwLHjnqYm5SyTUqUAr4jIErGRnobmCZHCrDtE/5pmQWPLyN+t/ljkuMb3X0YGWoZOr7MaZokGnWud4hws3+HSaoXqtejhT3Ybqh4nj1cv4W1vdiYaCBoEKrPcxP0g9pR0pQJj4JQA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741052646; c=relaxed/simple;
-	bh=Hm8/JkSd6ej479ogJ1QTyYgA3ezyJHCm2ycDRDJXQAE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hli6e3NDUzYi+n+hzLHl5luYKINqwmvQ8kHIuCTTZ6yA2ww2SH/tXGMgsMmoGmCGpGeyHxBeRKynL4o464nzftqfpXAlAMdaSyCTuurmH2mreR28SBJ8wFchf0FqFQN7N6n3DpIqI9vbVCpQJ9cUsCqBjpwberDbthhecECaWcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E424C4CEE4;
-	Tue,  4 Mar 2025 01:44:02 +0000 (UTC)
-Date: Mon, 3 Mar 2025 20:44:55 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: Kees Cook <kees@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>,
- Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, Ian
- Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, "David S. Miller"
- <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
- Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Gerald
- Schaefer <gerald.schaefer@linux.ibm.com>, Thomas Gleixner
- <tglx@linutronix.de>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, x86@kernel.org, "H. Peter Anvin"
- <hpa@zytor.com>, "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown
- <lenb@kernel.org>, linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, sparclinux@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-acpi@vger.kernel.org
-Subject: Re: [PATCH 3/8] ftrace: Move trace sysctls into trace.c
-Message-ID: <20250303204455.69723c20@gandalf.local.home>
-In-Reply-To: <20250218-jag-mv_ctltables-v1-3-cd3698ab8d29@kernel.org>
-References: <20250218-jag-mv_ctltables-v1-0-cd3698ab8d29@kernel.org>
-	<20250218-jag-mv_ctltables-v1-3-cd3698ab8d29@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741052851; c=relaxed/simple;
+	bh=itatnIBL9MuZ4JyVcFNO6XYKdUfb6qT39ConBCUndNA=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=r1C518cMLcZzIb62Zr2XlGpkPYiGK/I0PbdtuEyC1sEoxVvmQCpAXxv3orXAtuAsz65IvkQ+mFaZrr6YwP+Qlf0TQKQ8F3Q2ZZXpTv2+gVsffJTqxvpC5/Unq8PcRAwGfUPopxTFEbEq+AnyWzRabXg+hXYeNdGT2Am5f9FHzVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=D0mGKI6u; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+	id 126D9204E5B9; Mon,  3 Mar 2025 17:47:29 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 126D9204E5B9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+	s=default; t=1741052849;
+	bh=bSP8AbizQps9S7CQl+lE3G/sxd1tc37Q1iVyE0aCu4E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=D0mGKI6uNQC7M8tBttoqq04lMw5G7hJuaBOvg8Ik25rMIlz0LVhg9gc8g9KhJl5LW
+	 aAGnM6+7DQA37FbOt2xvRVvgYjMjtHd+KDyJzouq6xnrdQfWD4NN25CdebFgXS55Yc
+	 fl/n09UL+OV3MLYe0NSOTTlItLTOha3XtvRKC7GI=
+From: longli@linuxonhyperv.com
+To: Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	Long Li <longli@microsoft.com>
+Subject: [Patch rdma-next v2] RDMA/mana_ib: handle net event for pointing to the current netdev
+Date: Mon,  3 Mar 2025 17:47:27 -0800
+Message-Id: <1741052847-8271-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Tue, 18 Feb 2025 10:56:19 +0100
-Joel Granados <joel.granados@kernel.org> wrote:
+From: Long Li <longli@microsoft.com>
 
-Nit, change the subject to:
+When running under Hyper-V, the master device to the RDMA device is always
+bonded to this RDMA device. This is not user-configurable.
 
-  tracing: Move trace sysctls into trace.c
+The master device can be unbind/bind from the kernel. During those events,
+the RDMA device should set to the current netdev to relect the change of
+master device from those events.
 
-as I try to only have the "ftrace:" label for modifications that affect
-attaching to functions, and "tracing:" for everything else.
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+Change in v2:
+Add missing error handling when register_netdevice_notifier() fails.
 
-Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+ drivers/infiniband/hw/mana/device.c  | 46 ++++++++++++++++++++++++++--
+ drivers/infiniband/hw/mana/mana_ib.h |  1 +
+ 2 files changed, 45 insertions(+), 2 deletions(-)
 
--- Steve
-
-
-> Move trace ctl tables into their own const array in
-> kernel/trace/trace.c. The sysctl table register is called with
-> subsys_initcall placing if after its original place in proc_root_init.
-> This is part of a greater effort to move ctl tables into their
-> respective subsystems which will reduce the merge conflicts in
-> kerenel/sysctl.c.
-> 
-> Signed-off-by: Joel Granados <joel.granados@kernel.org>
-> ---
->  include/linux/ftrace.h |  7 -------
->  kernel/sysctl.c        | 24 ------------------------
->  kernel/trace/trace.c   | 36 +++++++++++++++++++++++++++++++++++-
->  3 files changed, 35 insertions(+), 32 deletions(-)
-> 
-> diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
-> index fbabc3d848b3..59774513ae45 100644
-> --- a/include/linux/ftrace.h
-> +++ b/include/linux/ftrace.h
-> @@ -1298,16 +1298,9 @@ static inline void unpause_graph_tracing(void) { }
->  #ifdef CONFIG_TRACING
->  enum ftrace_dump_mode;
->  
-> -#define MAX_TRACER_SIZE		100
-> -extern char ftrace_dump_on_oops[];
->  extern int ftrace_dump_on_oops_enabled(void);
-> -extern int tracepoint_printk;
->  
->  extern void disable_trace_on_warning(void);
-> -extern int __disable_trace_on_warning;
-> -
-> -int tracepoint_printk_sysctl(const struct ctl_table *table, int write,
-> -			     void *buffer, size_t *lenp, loff_t *ppos);
->  
->  #else /* CONFIG_TRACING */
->  static inline void  disable_trace_on_warning(void) { }
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 6514c13800a4..baa250e223a2 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -51,7 +51,6 @@
->  #include <linux/nfs_fs.h>
->  #include <linux/acpi.h>
->  #include <linux/reboot.h>
-> -#include <linux/ftrace.h>
->  #include <linux/perf_event.h>
->  #include <linux/oom.h>
->  #include <linux/kmod.h>
-> @@ -1684,29 +1683,6 @@ static const struct ctl_table kern_table[] = {
->  		.proc_handler	= stack_trace_sysctl,
->  	},
->  #endif
-> -#ifdef CONFIG_TRACING
-> -	{
-> -		.procname	= "ftrace_dump_on_oops",
-> -		.data		= &ftrace_dump_on_oops,
-> -		.maxlen		= MAX_TRACER_SIZE,
-> -		.mode		= 0644,
-> -		.proc_handler	= proc_dostring,
-> -	},
-> -	{
-> -		.procname	= "traceoff_on_warning",
-> -		.data		= &__disable_trace_on_warning,
-> -		.maxlen		= sizeof(__disable_trace_on_warning),
-> -		.mode		= 0644,
-> -		.proc_handler	= proc_dointvec,
-> -	},
-> -	{
-> -		.procname	= "tracepoint_printk",
-> -		.data		= &tracepoint_printk,
-> -		.maxlen		= sizeof(tracepoint_printk),
-> -		.mode		= 0644,
-> -		.proc_handler	= tracepoint_printk_sysctl,
-> -	},
-> -#endif
->  #ifdef CONFIG_MODULES
->  	{
->  		.procname	= "modprobe",
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index 0e6d517e74e0..abfc0e56173b 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -117,6 +117,7 @@ static int tracing_disabled = 1;
->  
->  cpumask_var_t __read_mostly	tracing_buffer_mask;
->  
-> +#define MAX_TRACER_SIZE		100
->  /*
->   * ftrace_dump_on_oops - variable to dump ftrace buffer on oops
->   *
-> @@ -139,7 +140,40 @@ cpumask_var_t __read_mostly	tracing_buffer_mask;
->  char ftrace_dump_on_oops[MAX_TRACER_SIZE] = "0";
->  
->  /* When set, tracing will stop when a WARN*() is hit */
-> -int __disable_trace_on_warning;
-> +static int __disable_trace_on_warning;
-> +
-> +int tracepoint_printk_sysctl(const struct ctl_table *table, int write,
-> +			     void *buffer, size_t *lenp, loff_t *ppos);
-> +static const struct ctl_table trace_sysctl_table[] = {
-> +	{
-> +		.procname	= "ftrace_dump_on_oops",
-> +		.data		= &ftrace_dump_on_oops,
-> +		.maxlen		= MAX_TRACER_SIZE,
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dostring,
-> +	},
-> +	{
-> +		.procname	= "traceoff_on_warning",
-> +		.data		= &__disable_trace_on_warning,
-> +		.maxlen		= sizeof(__disable_trace_on_warning),
-> +		.mode		= 0644,
-> +		.proc_handler	= proc_dointvec,
-> +	},
-> +	{
-> +		.procname	= "tracepoint_printk",
-> +		.data		= &tracepoint_printk,
-> +		.maxlen		= sizeof(tracepoint_printk),
-> +		.mode		= 0644,
-> +		.proc_handler	= tracepoint_printk_sysctl,
-> +	},
-> +};
-> +
-> +static int __init init_trace_sysctls(void)
-> +{
-> +	register_sysctl_init("kernel", trace_sysctl_table);
-> +	return 0;
-> +}
-> +subsys_initcall(init_trace_sysctls);
->  
->  #ifdef CONFIG_TRACE_EVAL_MAP_FILE
->  /* Map of enums to their values, for "eval_map" file */
-> 
+diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
+index 3416a85f8738..8c922a6d6720 100644
+--- a/drivers/infiniband/hw/mana/device.c
++++ b/drivers/infiniband/hw/mana/device.c
+@@ -51,6 +51,37 @@ static const struct ib_device_ops mana_ib_dev_ops = {
+ 			   ib_ind_table),
+ };
+ 
++static int mana_ib_netdev_event(struct notifier_block *this,
++				unsigned long event, void *ptr)
++{
++	struct mana_ib_dev *dev = container_of(this, struct mana_ib_dev, nb);
++	struct net_device *event_dev = netdev_notifier_info_to_dev(ptr);
++	struct gdma_context *gc = dev->gdma_dev->gdma_context;
++	struct mana_context *mc = gc->mana.driver_data;
++	struct net_device *ndev;
++
++	if (event_dev != mc->ports[0])
++		return NOTIFY_DONE;
++
++	switch (event) {
++	case NETDEV_CHANGEUPPER:
++		rcu_read_lock();
++		ndev = mana_get_primary_netdev_rcu(mc, 0);
++		rcu_read_unlock();
++
++		/*
++		 * RDMA core will setup GID based on updated netdev.
++		 * It's not possible to race with the core as rtnl lock is being
++		 * held.
++		 */
++		ib_device_set_netdev(&dev->ib_dev, ndev, 1);
++
++		return NOTIFY_OK;
++	default:
++		return NOTIFY_DONE;
++	}
++}
++
+ static int mana_ib_probe(struct auxiliary_device *adev,
+ 			 const struct auxiliary_device_id *id)
+ {
+@@ -109,17 +140,25 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	}
+ 	dev->gdma_dev = &mdev->gdma_context->mana_ib;
+ 
++	dev->nb.notifier_call = mana_ib_netdev_event;
++	ret = register_netdevice_notifier(&dev->nb);
++	if (ret) {
++		ibdev_err(&dev->ib_dev, "Failed to register net notifier, %d",
++			  ret);
++		goto deregister_device;
++	}
++
+ 	ret = mana_ib_gd_query_adapter_caps(dev);
+ 	if (ret) {
+ 		ibdev_err(&dev->ib_dev, "Failed to query device caps, ret %d",
+ 			  ret);
+-		goto deregister_device;
++		goto deregister_net_notifier;
+ 	}
+ 
+ 	ret = mana_ib_create_eqs(dev);
+ 	if (ret) {
+ 		ibdev_err(&dev->ib_dev, "Failed to create EQs, ret %d", ret);
+-		goto deregister_device;
++		goto deregister_net_notifier;
+ 	}
+ 
+ 	ret = mana_ib_gd_create_rnic_adapter(dev);
+@@ -148,6 +187,8 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	mana_ib_gd_destroy_rnic_adapter(dev);
+ destroy_eqs:
+ 	mana_ib_destroy_eqs(dev);
++deregister_net_notifier:
++	unregister_netdevice_notifier(&dev->nb);
+ deregister_device:
+ 	mana_gd_deregister_device(dev->gdma_dev);
+ free_ib_device:
+@@ -164,6 +205,7 @@ static void mana_ib_remove(struct auxiliary_device *adev)
+ 	mana_ib_gd_destroy_rnic_adapter(dev);
+ 	mana_ib_destroy_eqs(dev);
+ 	mana_gd_deregister_device(dev->gdma_dev);
++	unregister_netdevice_notifier(&dev->nb);
+ 	ib_dealloc_device(&dev->ib_dev);
+ }
+ 
+diff --git a/drivers/infiniband/hw/mana/mana_ib.h b/drivers/infiniband/hw/mana/mana_ib.h
+index b53a5b4de908..d88187072899 100644
+--- a/drivers/infiniband/hw/mana/mana_ib.h
++++ b/drivers/infiniband/hw/mana/mana_ib.h
+@@ -64,6 +64,7 @@ struct mana_ib_dev {
+ 	struct gdma_queue **eqs;
+ 	struct xarray qp_table_wq;
+ 	struct mana_ib_adapter_caps adapter_caps;
++	struct notifier_block nb;
+ };
+ 
+ struct mana_ib_wq {
+-- 
+2.34.1
 
 
