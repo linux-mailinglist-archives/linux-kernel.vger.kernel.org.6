@@ -1,143 +1,121 @@
-Return-Path: <linux-kernel+bounces-543486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F36B3A4D63B
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:25:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6663CA4D637
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 09:24:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 019431897358
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:25:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94A6D173FCA
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 08:24:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A8A1FBE9D;
-	Tue,  4 Mar 2025 08:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98B811FBEA2;
+	Tue,  4 Mar 2025 08:24:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="NUq8Bkte";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="xl53Kcz7"
-Received: from fout-a7-smtp.messagingengine.com (fout-a7-smtp.messagingengine.com [103.168.172.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FH1AGMd8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE5A1F7580;
-	Tue,  4 Mar 2025 08:24:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E24621FBC99;
+	Tue,  4 Mar 2025 08:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741076701; cv=none; b=GW/JBEnYu/76g5hSWIxsP0RVC4SOVEruSlOVihPQqZB/Dq2UUHsZWGG0bGtJHl8r1XJpj3MQewtdzsQsOO4dEv1UpoojYR8HEl3ZpWAa5+nOfQ34VeXE45+ze1H9O/9L7SMyGbz+XkP/5iL2IvSmTs0426Z6xk8e2ahbw+Bh2Pg=
+	t=1741076686; cv=none; b=KYAETYMo5fdrk51Uz2ij+gQFvO3QO4QDKo9JXuadTrIDYsDpeZhaKKHRt3L55kGPBWqS/4U1uDKfZX5izvLtYLprW6XnxWsv0FuQ0AHbEmJV3VcdWVmerIZZWx4R4AyNwIyuh2dsBmAYYJ1+3uDSItjlU5UXnHOvUKJcWUu2+pM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741076701; c=relaxed/simple;
-	bh=Y27aUZUPxKEH7unyFscw2X5BcFy8avKpTq7I1tRtmds=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=EHy1ay+x3+qGHY8obkU41y7UJFZl/aAhwnjOGRZd6p18yB76Azw8K7LFqTa1gioZL7th2JC3yxfN1fpsOnnQBLK/tDA0eMX9Xnxp3JKrA1pTvMBqffJaV0T8FKaI8TL8unNl2X5FhXBi1UTR56a+IUdXxsNk3laD9ffZH9pGEB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=NUq8Bkte; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=xl53Kcz7; arc=none smtp.client-ip=103.168.172.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfout.phl.internal (Postfix) with ESMTP id 3755A138271B;
-	Tue,  4 Mar 2025 03:24:57 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-09.internal (MEProxy); Tue, 04 Mar 2025 03:24:57 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741076697;
-	 x=1741163097; bh=zM8W7tdbTUdh4T3yYERRBHG5NlNdx6XcKTrnIct3zRg=; b=
-	NUq8BkteQO6SDuLIORjsSkvajlvhU0vmiYacEBWhSW03bgh650C3v0bWKr5s46Td
-	riWSiSr0oA8W18I3RoDBz8CPAHAkyUy7yEMDGasexuzv+Ycky3MnIBGB+k33c1nw
-	nmkQ01VFlBTOfAlWhJh1IkurVsumBzOLe9LnvC/tIqix95bQBamre4ja7OdKnq9N
-	mIqKikbutblaiAgDLTuPNF2dAKHScNfnbLaa1or3d9xnbhc8ZSUoVvcbiLlo7kIb
-	mnHXXJDYdaRhl83XYWEpHjLaLTTOZj7be4UzShhBuHYlrk6PSbJXGkQBS9sB+VQv
-	FQABJrie9F0CutJk+bTR0w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741076697; x=
-	1741163097; bh=zM8W7tdbTUdh4T3yYERRBHG5NlNdx6XcKTrnIct3zRg=; b=x
-	l53Kcz7eoJFaWQ3J80H/MML1fxGTcZZVNXX6xkWLLDQc4Lmaw3N/mxQiO5vG2xRQ
-	AbF3v6GkKXcrfDs07L9QY0QfXUS86yTwVu1iy7Vvj3co519RCBsudtCAMG7xfDS1
-	yesQIgiG8Al68a3NzBAgB+1doLcgKSEv9c4wPesA5Eq7xP2bTr2iFY7NUEyz4rJt
-	iq1tp4C6z9uOiAz3DVYvdjMaAc91lceHrhRVnrHq8kRICJ2RONPEns4d8j1nlj1G
-	1dzhrvF0+U1RqlIaDU2klIdiTpFKpmE/YrgcWrpNQ12evxJ27xAZ3bD+IJRJJgKC
-	a9QtpDfwr7r6LSlqU1TVA==
-X-ME-Sender: <xms:2LjGZ2lX9OfR4lGZuLLRFZg7KDUv9_hRnViHfTziVrX3m07gNPsP3w>
-    <xme:2LjGZ92pUzSj-Ya5NUmKCsML3ldN90dsm3icq5Enp85JAb8Dgo4O-K726OPeQ6jtq
-    3R6P0iV0_XP-4Pexr0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdduheegucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    udelpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghvvghmsegurghvvghmlh
-    hofhhtrdhnvghtpdhrtghpthhtohepjhhonhgrthhhrghnrdhlvghmohhnsehgmhgrihhl
-    rdgtohhmpdhrtghpthhtoheprhhitghhrghruggtohgthhhrrghnsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthho
-    pehtihgrnhhfvghirdiihhgrnhhgsehinhhtvghlrdgtohhmpdhrtghpthhtoheprghrnh
-    gusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepthhhohhmrghsrdifvghishhsshgthhhuhheslhhinhhuthhrohhnih
-    igrdguvgdprhgtphhtthhopehvrgguihhmrdhfvgguohhrvghnkhhosehlihhnuhigrdgu
-    vghv
-X-ME-Proxy: <xmx:2LjGZ0o5WKeDUjYeoVcADYBT1YDKDZrZMuwPclwev2XUMqDqG5_C7Q>
-    <xmx:2LjGZ6lMJMUzvr9YtGi3OE6Aoen1JeNiEGUZ6pWqfW6_9uNCsWxcHA>
-    <xmx:2LjGZ00-ZAOpXYzNNzMAdFkk56eWG7NSDp5nwVwHwh6ujX7mxIxZNw>
-    <xmx:2LjGZxtRijeuEEYADWPTTa007tr36CMAFgbpXtJ4ipsNvinR8QLJwg>
-    <xmx:2bjGZ7uvsRHe2_21oQ-V2KHV9q2qGTbCMXAvb9jx2m2DyDUA8JruI20p>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 29A7C2220072; Tue,  4 Mar 2025 03:24:56 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741076686; c=relaxed/simple;
+	bh=TAw6fNcNSg7YEvEqtiZRQve5lHtjiupPT421lnC+KgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q7fCaB8or9jiPlCSxplWFHwwmoHWZvPU/Ruv6Ljbrq01HDianO28cZ9Ec49edp6tKMDxFCMpF70iy8aSHe50aktujU2oRSakCKO/xcyWWYmJ5UAn8qA4FsqYqoE4jNRo/FPniR4//8EnKiawW/XsWiTVMQLn1q44MRaPlCOm79s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FH1AGMd8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 965A7C4CEE9;
+	Tue,  4 Mar 2025 08:24:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741076685;
+	bh=TAw6fNcNSg7YEvEqtiZRQve5lHtjiupPT421lnC+KgY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FH1AGMd8G1LRCF9lw6vdX7tGzR5edBc4ZLYek88tB93kOeyrHhacKB0a5T4MF/1XJ
+	 qLOnmf2SAi4ZGkCxli6zkzeK7pRgFyVrWk+ZO+L1FcwqiRFCUFDRCu82m+zFyoXzF0
+	 zHumQyHi27uzUh6slpVEc4pV8rhJR6xhAx4E3d0Ld8Z6SSfgN5zWPyRlWHAGxhfP74
+	 p4xXpRekD0Wb/i7AqnlldQWvGQWG2Fgrv9487/gmQQDwy79VhFZ/xBtzbjLLogl2yt
+	 nNqRQ8TgMtMn5a1AnFPkgll67VwUgYJ95m+amQ+poVrtLFwq+Y6NqmA9+UyFJc1vk2
+	 zMkxoqBrjSZaw==
+Date: Tue, 4 Mar 2025 09:24:41 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 05/15] dt-bindings: clk: sunxi-ng: add compatible for
+ the A523 PRCM-CCU
+Message-ID: <20250304-rare-hyrax-of-criticism-1c7b12@krzk-bin>
+References: <20250304012805.28594-1-andre.przywara@arm.com>
+ <20250304012805.28594-6-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Tue, 04 Mar 2025 09:24:35 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Richard Cochran" <richardcochran@gmail.com>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>,
- "Andrew Lunn" <andrew+netdev@lunn.ch>,
- "David S . Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>, "Tianfei Zhang" <tianfei.zhang@intel.com>,
- "Jonathan Lemon" <jonathan.lemon@gmail.com>,
- "Vadim Fedorenko" <vadim.fedorenko@linux.dev>,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>,
- "Calvin Owens" <calvin@wbinvd.org>, "Philipp Stanner" <pstanner@redhat.com>,
- Netdev <netdev@vger.kernel.org>, linux-kernel@vger.kernel.org,
- linux-fpga@vger.kernel.org
-Message-Id: <7fd3c712-4c31-435c-80c1-1e042c9b5999@app.fastmail.com>
-In-Reply-To: <Z8Z87mkuRqE6VOTy@hoboy.vegasvil.org>
-References: <20250227141749.3767032-1-arnd@kernel.org>
- <Z8CDhIN5vhcSm1ge@smile.fi.intel.com> <Z8TFrPv1oajA3H4V@hoboy.vegasvil.org>
- <Z8VfKYMGEKhvluJV@smile.fi.intel.com> <Z8Z87mkuRqE6VOTy@hoboy.vegasvil.org>
-Subject: Re: [PATCH] RFC: ptp: add comment about register access race
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250304012805.28594-6-andre.przywara@arm.com>
 
-On Tue, Mar 4, 2025, at 05:09, Richard Cochran wrote:
-> On Mon, Mar 03, 2025 at 09:50:01AM +0200, Andy Shevchenko wrote:
->> Perhaps it's still good to have a comment, but rephrase it that the code is
->> questionable depending on the HW behaviour that needs to be checked.
->
-> IIRC both ixp4xx and the PCH are the same design and latch high reg on
-> read of low.
+On Tue, Mar 04, 2025 at 01:27:55AM +0000, Andre Przywara wrote:
+> The Allwinner A523/T527 SoCs have four CCUs, this adds the binding for
+> the PRCM R_CCU.
+> 
+> Add the new compatible string, along with the required input clock
+> lists. There is now an extra input clock (PLL_AUDIO), so add this to the
+> list of allowed clocks and required it for the A523 PRCM CCU.
+> Also add the DT binding headers, listing all the clocks with their ID
+> numbers.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+> ---
+>  .../clock/allwinner,sun55i-a523-ccu.yaml      | 23 +++++++++++-
+>  include/dt-bindings/clock/sun55i-a523-r-ccu.h | 37 +++++++++++++++++++
+>  include/dt-bindings/reset/sun55i-a523-r-ccu.h | 25 +++++++++++++
+>  3 files changed, 83 insertions(+), 2 deletions(-)
+>  create mode 100644 include/dt-bindings/clock/sun55i-a523-r-ccu.h
+>  create mode 100644 include/dt-bindings/reset/sun55i-a523-r-ccu.h
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
+> index 2eacaeaeabac7..a64a35b423736 100644
+> --- a/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
+> +++ b/Documentation/devicetree/bindings/clock/allwinner,sun55i-a523-ccu.yaml
+> @@ -19,17 +19,18 @@ properties:
+>    compatible:
+>      enum:
+>        - allwinner,sun55i-a523-ccu
+> +      - allwinner,sun55i-a523-r-ccu
+>  
+>    reg:
+>      maxItems: 1
+>  
+>    clocks:
+>      minItems: 4
+> -    maxItems: 4
+> +    maxItems: 5
 
-Ok, if that's a common thing, let's assume that the drivers are
-all correct for the respective hardware and discard my patch.
+You just added these lines in previous patch, so squash these and make a
+complete binding in one patch.
 
-With the patch I have queued up in the asm-generic tree, the
-behavior changes so ioread64_lo_hi() no longer gets turned
-into a single 64-bit access, and that is then more likely to
-be correct for both 32-bit and 64-bit architectures in case the
-device doesn't actually implement 64-bit transactions but does
-correctly latch the contents.
+Otherwise you will get comment like:
 
-      Arnd
+>  
+>    clock-names:
+>      minItems: 4
+
+This is not supposed to be here in previous patch...
+
+> -    maxItems: 4
+> +    maxItems: 5
+
+Best regards,
+Krzysztof
+
 
