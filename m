@@ -1,251 +1,177 @@
-Return-Path: <linux-kernel+bounces-544224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38BCA4DF09
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:18:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F3F7A4DF0B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:19:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EE5F3A6360
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:18:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6F12D188C88F
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 13:19:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A16204090;
-	Tue,  4 Mar 2025 13:18:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="zRI6tJ5O"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE662040A8;
+	Tue,  4 Mar 2025 13:19:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBA02040A8
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14865202977
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 13:19:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741094303; cv=none; b=AFeWKcG8lS1qby6NGR/uDhDR3zsgI/KwsEfqq84qZknJfozknwPY9iXXvb6N2R9Yyy/4cWNl4u+t884jgg9Jl83XpoGtu5uGvGrjFpwjEOTPMsQ0qcCrg9wFkUw10Zk4pCV88/XiA0OiIdWDT0QTTGLfEXnlAzUudJqtnziMjis=
+	t=1741094344; cv=none; b=efMP7hC1hMMdD0i8rUgM4XKEqaeqdWm4hHpcjzUHRnv1blkPNqjyleq+uPDKS34ksiMz25YAG0jwZDmeFAMVa27cx4xXy8wFn5Xm5nLSBVvEH9YQCzsXhShQdu7zguS7gT/w4wIYXt144L+vsQrJuIr6vdpwMafhNZlnRxMIiJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741094303; c=relaxed/simple;
-	bh=Eqt5zR/YJ5b+Wj94wvEYhKqOmg1PAbLn7HBDDtiqXYU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=IkqvtTcp7vfMlzu6OUkGEtIyJvUgD4nP9aNItjTK51jJwMcnwmUk6E83M9/I/uzdoaNWPrQiOiDay0KyCLXoC4DdDk18lQmZbMzp4DTTwZT0o2pLQ8udu2Ni21yQGLdhjcFQ9UFx+2SF1X1G8iURyL4Q9wKEGS0kp97QDs4i+WM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=zRI6tJ5O; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43bbb440520so25033285e9.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:18:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741094299; x=1741699099; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MW5kUntubaDIQWagA8yaVJ6BvgFmQoLHNp/d0jaynvw=;
-        b=zRI6tJ5OorvHsH+0wIorEfWcy3iaIfVdykzQG3DYWgcvwBxZcoCT/vTE6cV1/fs2mo
-         dZJuV3q3FWV5sMMTEvJuMBIhrT6jq8LDAPs0jAOkF+x2jsU7L+7bdVLOTaYdPjNcNoqb
-         Kcczfh3XIBeSaH5rfsRtRUY+chqnHDYnIgmkQhV9PfmPNiR8jwEoyxKjSLrfF+mcTL1l
-         RAJ0ZEeK/oVnN9Fyglwa5CrA1NtMgnUdczUjHghPt51M9SazOpMV+52wAzSV6CLGSQ2I
-         7zITX1Kmnq+fEvVfwB0+uN3V6+WVynh8V7Hdzzcv1kGvyFQIih2M92SaTOME8hGxH9Vh
-         XBNQ==
+	s=arc-20240116; t=1741094344; c=relaxed/simple;
+	bh=Ib6Bkhe2dkdXNKo65leYaRGh+Z38gPJe6OAGqV39zAY=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=TKCVU2BMsE6VLKF1pwoTvPhFRhH1ELOdjZLzKGSKWYqG8169vokI4M+qHRHBlPRNmVOrU20YbSXXmUMtqGmRDSinTK5IPcK4gi4xKHsS7n3oAUlvBREv0uW5BSbM41VsbwivJuTIaURwZa+ZUWpXdzyJauSwXYxvD++Sp3NeL6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3d2a6102c1aso132813155ab.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 05:19:02 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741094299; x=1741699099;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MW5kUntubaDIQWagA8yaVJ6BvgFmQoLHNp/d0jaynvw=;
-        b=vKT1NnwE72wCxSKjd09cPNkxPPmGZ0jfiIeZQqqUFDw1Lhjg65tstsMrIgTpOBgu/v
-         KB3oRtGsqIkFm4qxdgqvw+Rs+fndKHpk85qb4KQ94+RftjqlcdD1MPwMHkUvstYAvs6q
-         yirMdMsYIst0y7+bjFC0Ye0OnxTcSBZQzd+dbf4Il38wzyOdJdVqxziTzbf9ODJYeQY6
-         sq5QCmF3vyPF8U+/Q7OcvCRge6uJxdqaRqoeiuB2QLZwH+li6+cMQ9uNo2q1mgO6lnnr
-         RpcukEdK/cF20CosxGSSQyYSXmVNeYtMJvvbpJxHADcYCMC3DB3zlETpRX488g+eoPqN
-         /BAA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5bzZ4WrtrcffaUWTFDDtqC9d55j5TL41ZDgaJXaWz4zJOc3bjCTYqICpx9q72IOACqKrq6b+5NYs7A9A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuliWhTQ5mNrFufVOXlOk839CrgSzDjfeMIqPHaPJimpJDLS1a
-	T8nHWZnyS2p7vNaLltKDZQDutpiHKu6nZCcgpvZWh+szpxhbNOEYOp/tRaPEhWc=
-X-Gm-Gg: ASbGnctMplUP29os8e9PYV6CO1FjDP8JymNxzmRJa+bqPRF4iv/v5fYYI9giXrhf5qv
-	zKyxUhNFBRVneGCafWcaRnSy0IRgdNTquao1xGgDFaxDBe9/viJE22A7yU/rct8BvER+/cj4C4p
-	t68yhDMgvRTvfOxvWaTX0qUJmkP5IChZpoHgkdf7F4Vv6PxYJowrwvo/f/9EIdtOSGAV0mi978c
-	7qlxyAhU1bct473OCeYSk6xA1qvPqbaoUgiUHbs0zVAjQ1I71PGkKsYdTaQmg6idUUMw+ljLD2Y
-	xKutkWkdBwcqaXzM79N6wp9jUmFjCSpg9MYUOcebzBUm
-X-Google-Smtp-Source: AGHT+IF2PB3JIwFkQ/IoI14wzgDJzP7fz9S7sdWqpHpbFlU2+2ElCaz504decofi9DRWSmcB7J4Qiw==
-X-Received: by 2002:a05:600c:4182:b0:43b:ce36:756e with SMTP id 5b1f17b1804b1-43bce3676dbmr16293955e9.12.1741094299293;
-        Tue, 04 Mar 2025 05:18:19 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:6018:7257:350d:e85e])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bad347823sm144931545e9.0.2025.03.04.05.18.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 05:18:18 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Russell King <linux@armlinux.org.uk>,
-	Thomas Gleixner <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] irqchip: davinci-cp-intc: remove public header
-Date: Tue,  4 Mar 2025 14:18:14 +0100
-Message-ID: <20250304131815.86549-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+        d=1e100.net; s=20230601; t=1741094342; x=1741699142;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=pd5Z1XscTEg5Eg98KWcCxo/rxj6KfcqY4fBd0WTbbsE=;
+        b=qhqMHT9xljHxtn2fc1+H4jVBEi3469DnMEPjo8nG3I5yGj0cMg8rQMeslr8keV56kW
+         Z4D56xjBXybIidWiDvwd6EVAWLYP9ZHCBSMshGyqS2tq/5R3MFpoLScTzlQZX0rccepO
+         V+8oGnhQMwbVzyr+dZdXIHsnPLRsMsSwPx95zf40K8cehcPnw75xi7FMWVKPmYN/QVJJ
+         WGPtIUQ6YAoy3sZc4/fwJV/el1oFJs5vyjrHqmaYd6QIn9vKK9PdHBpPo5iwxMnf4OvY
+         n6abmylPYu0vMxrCAnwTMnxdiFarmMVcGqpggEFS68OgH9lvGwTl069w9tg9nHUR73Pr
+         0ZJg==
+X-Forwarded-Encrypted: i=1; AJvYcCW+uCR0H1nMRNKa8W/AJdilfBvPV9aOUytXm5cik3p9V5ZtWRC94ERu4ciirarmhXfSUGA1JrAtUdMiOlg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvDOWcP0iFkrCsj/cLh/C9JGxRsuXttwa+jv9Hxx1dYJp7b7Cm
+	CzgU3E7RANmlmHLLVi3ryFk0b0z9wlquMRQmvuf8uxGe9EgLmUxUE2atIrC7leuW693Z0WxQIY1
+	t8EbGn6dWBUcUV/fbgs5xBNjhrng1Dy681P8NSgrChlkKH3HEJ9+p7wU=
+X-Google-Smtp-Source: AGHT+IF0R4uDy07nerIOy+Dzz3yHkgHtlR/3CAI6xvFGoLKw2aliIfqP8J9jOtimY7G3uJMFo+uCKaEzO/JlFXAGDnac1LdLSyIp
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1d13:b0:3d2:b0f1:f5b5 with SMTP id
+ e9e14a558f8ab-3d3e6e64ceemr178654645ab.3.1741094342127; Tue, 04 Mar 2025
+ 05:19:02 -0800 (PST)
+Date: Tue, 04 Mar 2025 05:19:02 -0800
+In-Reply-To: <tencent_D86ED06EEDCC9767C7C6E012F1065F09AA06@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c6fdc6.050a0220.38b91b.0180.GAE@google.com>
+Subject: Re: [syzbot] [xfs?] [mm?] WARNING: bad unlock balance in __mm_populate
+From: syzbot <syzbot+8f9f411152c9539f4e59@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello,
 
-There are no more users of irq-davinci-cp-intc.h (da830.c doesn't use
-any of its symbols). Remove the header and make the driver stop using the
-config structure.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING: bad unlock balance in __mm_populate
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- arch/arm/mach-davinci/da830.c               |  1 -
- drivers/irqchip/irq-davinci-cp-intc.c       | 31 ++++++++-------------
- include/linux/irqchip/irq-davinci-cp-intc.h | 25 -----------------
- 3 files changed, 12 insertions(+), 45 deletions(-)
- delete mode 100644 include/linux/irqchip/irq-davinci-cp-intc.h
+XFS (loop0): Mounting V5 Filesystem bfdc47fc-10d8-4eed-a562-11a831b3f791
+XFS (loop0): Ending clean mount
+XFS (loop0): Quotacheck needed: Please wait.
+XFS (loop0): Quotacheck: Done.
+mm: 000000001ba89fe1, mmap lock held: 0, locked: 1, __mm_populate
+=====================================
+WARNING: bad unlock balance detected!
+6.14.0-rc4-syzkaller-00034-ge056da87c780-dirty #0 Not tainted
+-------------------------------------
+syz.0.16/7463 is trying to release lock (&mm->mmap_lock) at:
+[<ffff800080a63ca4>] mmap_read_unlock include/linux/mmap_lock.h:217 [inline]
+[<ffff800080a63ca4>] __mm_populate+0x378/0x42c mm/gup.c:2045
+but there are no more locks to release!
 
-diff --git a/arch/arm/mach-davinci/da830.c b/arch/arm/mach-davinci/da830.c
-index 2e497745b624..a044ea5cb4f1 100644
---- a/arch/arm/mach-davinci/da830.c
-+++ b/arch/arm/mach-davinci/da830.c
-@@ -11,7 +11,6 @@
- #include <linux/gpio.h>
- #include <linux/init.h>
- #include <linux/io.h>
--#include <linux/irqchip/irq-davinci-cp-intc.h>
- 
- #include <clocksource/timer-davinci.h>
- 
-diff --git a/drivers/irqchip/irq-davinci-cp-intc.c b/drivers/irqchip/irq-davinci-cp-intc.c
-index f4f8e9fadbbf..42224ca43d5e 100644
---- a/drivers/irqchip/irq-davinci-cp-intc.c
-+++ b/drivers/irqchip/irq-davinci-cp-intc.c
-@@ -11,7 +11,6 @@
- #include <linux/init.h>
- #include <linux/irq.h>
- #include <linux/irqchip.h>
--#include <linux/irqchip/irq-davinci-cp-intc.h>
- #include <linux/irqdomain.h>
- #include <linux/io.h>
- #include <linux/of.h>
-@@ -155,23 +154,21 @@ static const struct irq_domain_ops davinci_cp_intc_irq_domain_ops = {
- };
- 
- static int __init
--davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
-+davinci_cp_intc_do_init(struct resource *res, unsigned int num_irqs,
- 			struct device_node *node)
- {
--	unsigned int num_regs = BITS_TO_LONGS(config->num_irqs);
-+	unsigned int num_regs = BITS_TO_LONGS(num_irqs);
- 	int offset, irq_base;
- 	void __iomem *req;
- 
--	req = request_mem_region(config->reg.start,
--				 resource_size(&config->reg),
-+	req = request_mem_region(res->start, resource_size(res),
- 				 "davinci-cp-intc");
- 	if (!req) {
- 		pr_err("%s: register range busy\n", __func__);
- 		return -EBUSY;
- 	}
- 
--	davinci_cp_intc_base = ioremap(config->reg.start,
--				       resource_size(&config->reg));
-+	davinci_cp_intc_base = ioremap(res->start, resource_size(res));
- 	if (!davinci_cp_intc_base) {
- 		pr_err("%s: unable to ioremap register range\n", __func__);
- 		return -EINVAL;
-@@ -200,12 +197,12 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
- 	davinci_cp_intc_write(1, DAVINCI_CP_INTC_HOST_ENABLE_IDX_SET);
- 
- 	/* Default all priorities to channel 7. */
--	num_regs = (config->num_irqs + 3) >> 2;	/* 4 channels per register */
-+	num_regs = (num_irqs + 3) >> 2; /* 4 channels per register */
- 	for (offset = 0; offset < num_regs; offset++)
- 		davinci_cp_intc_write(0x07070707,
- 			DAVINCI_CP_INTC_CHAN_MAP(offset));
- 
--	irq_base = irq_alloc_descs(-1, 0, config->num_irqs, 0);
-+	irq_base = irq_alloc_descs(-1, 0, num_irqs, 0);
- 	if (irq_base < 0) {
- 		pr_err("%s: unable to allocate interrupt descriptors: %d\n",
- 		       __func__, irq_base);
-@@ -213,7 +210,7 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
- 	}
- 
- 	davinci_cp_intc_irq_domain = irq_domain_add_legacy(
--					node, config->num_irqs, irq_base, 0,
-+					node, num_irqs, irq_base, 0,
- 					&davinci_cp_intc_irq_domain_ops, NULL);
- 
- 	if (!davinci_cp_intc_irq_domain) {
-@@ -229,31 +226,27 @@ davinci_cp_intc_do_init(const struct davinci_cp_intc_config *config,
- 	return 0;
- }
- 
--int __init davinci_cp_intc_init(const struct davinci_cp_intc_config *config)
--{
--	return davinci_cp_intc_do_init(config, NULL);
--}
--
- static int __init davinci_cp_intc_of_init(struct device_node *node,
- 					  struct device_node *parent)
- {
--	struct davinci_cp_intc_config config = { };
-+	unsigned int num_irqs;
-+	struct resource res;
- 	int ret;
- 
--	ret = of_address_to_resource(node, 0, &config.reg);
-+	ret = of_address_to_resource(node, 0, &res);
- 	if (ret) {
- 		pr_err("%s: unable to get the register range from device-tree\n",
- 		       __func__);
- 		return ret;
- 	}
- 
--	ret = of_property_read_u32(node, "ti,intc-size", &config.num_irqs);
-+	ret = of_property_read_u32(node, "ti,intc-size", &num_irqs);
- 	if (ret) {
- 		pr_err("%s: unable to read the 'ti,intc-size' property\n",
- 		       __func__);
- 		return ret;
- 	}
- 
--	return davinci_cp_intc_do_init(&config, node);
-+	return davinci_cp_intc_do_init(&res, num_irqs, node);
- }
- IRQCHIP_DECLARE(cp_intc, "ti,cp-intc", davinci_cp_intc_of_init);
-diff --git a/include/linux/irqchip/irq-davinci-cp-intc.h b/include/linux/irqchip/irq-davinci-cp-intc.h
-deleted file mode 100644
-index 8d71ed5b5a61..000000000000
---- a/include/linux/irqchip/irq-davinci-cp-intc.h
-+++ /dev/null
-@@ -1,25 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
-- * Copyright (C) 2019 Texas Instruments
-- */
--
--#ifndef _LINUX_IRQ_DAVINCI_CP_INTC_
--#define _LINUX_IRQ_DAVINCI_CP_INTC_
--
--#include <linux/ioport.h>
--
--/**
-- * struct davinci_cp_intc_config - configuration data for davinci-cp-intc
-- *                                 driver.
-- *
-- * @reg: register range to map
-- * @num_irqs: number of HW interrupts supported by the controller
-- */
--struct davinci_cp_intc_config {
--	struct resource reg;
--	unsigned int num_irqs;
--};
--
--int davinci_cp_intc_init(const struct davinci_cp_intc_config *config);
--
--#endif /* _LINUX_IRQ_DAVINCI_CP_INTC_ */
--- 
-2.45.2
+other info that might help us debug this:
+no locks held by syz.0.16/7463.
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 7463 Comm: syz.0.16 Not tainted 6.14.0-rc4-syzkaller-00034-ge056da87c780-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+Call trace:
+ show_stack+0x2c/0x3c arch/arm64/kernel/stacktrace.c:466 (C)
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0xe4/0x150 lib/dump_stack.c:120
+ dump_stack+0x1c/0x28 lib/dump_stack.c:129
+ print_unlock_imbalance_bug+0x254/0x2ac kernel/locking/lockdep.c:5289
+ __lock_release kernel/locking/lockdep.c:5518 [inline]
+ lock_release+0x410/0x9e4 kernel/locking/lockdep.c:5872
+ up_read+0x24/0x3c kernel/locking/rwsem.c:1619
+ mmap_read_unlock include/linux/mmap_lock.h:217 [inline]
+ __mm_populate+0x378/0x42c mm/gup.c:2045
+ mm_populate include/linux/mm.h:3386 [inline]
+ vm_mmap_pgoff+0x304/0x3c4 mm/util.c:580
+ ksys_mmap_pgoff+0x3a4/0x5c8 mm/mmap.c:607
+ __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
+ __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
+ __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+------------[ cut here ]------------
+DEBUG_RWSEMS_WARN_ON(tmp < 0): count = 0xffffffffffffff00, magic = 0xffff0000d584dee0, owner = 0x1, curr 0xffff0000c4da5b80, list empty
+WARNING: CPU: 1 PID: 7463 at kernel/locking/rwsem.c:1346 __up_read+0x3bc/0x5f8 kernel/locking/rwsem.c:1346
+Modules linked in:
+CPU: 1 UID: 0 PID: 7463 Comm: syz.0.16 Not tainted 6.14.0-rc4-syzkaller-00034-ge056da87c780-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 12/27/2024
+pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : __up_read+0x3bc/0x5f8 kernel/locking/rwsem.c:1346
+lr : __up_read+0x3bc/0x5f8 kernel/locking/rwsem.c:1346
+sp : ffff80009e0979e0
+x29: ffff80009e097a60 x28: 1ffff00011f760cb x27: ffff80008fbb0000
+x26: dfff800000000000 x25: ffffffffffffff00 x24: ffff0000d584df38
+x23: ffff0000d584dee0 x22: ffffffffffffff00 x21: 0000000000000001
+x20: ffff0000c4da5b80 x19: ffff0000d584dee0 x18: 0000000000000008
+x17: 0000000000000000 x16: ffff8000832b41c0 x15: 0000000000000001
+x14: 1ffff00013c12e94 x13: 0000000000000000 x12: 0000000000000000
+x11: 0000000000000003 x10: 0000000000ff0100 x9 : 3ef51d0da1723500
+x8 : 3ef51d0da1723500 x7 : 0000000000000001 x6 : 0000000000000001
+x5 : ffff80009e097198 x4 : ffff80008fc9f780 x3 : ffff8000832461d4
+x2 : 0000000000000001 x1 : 0000000100000001 x0 : 0000000000000000
+Call trace:
+ __up_read+0x3bc/0x5f8 kernel/locking/rwsem.c:1346 (P)
+ up_read+0x2c/0x3c kernel/locking/rwsem.c:1620
+ mmap_read_unlock include/linux/mmap_lock.h:217 [inline]
+ __mm_populate+0x378/0x42c mm/gup.c:2045
+ mm_populate include/linux/mm.h:3386 [inline]
+ vm_mmap_pgoff+0x304/0x3c4 mm/util.c:580
+ ksys_mmap_pgoff+0x3a4/0x5c8 mm/mmap.c:607
+ __do_sys_mmap arch/arm64/kernel/sys.c:28 [inline]
+ __se_sys_mmap arch/arm64/kernel/sys.c:21 [inline]
+ __arm64_sys_mmap+0xf8/0x110 arch/arm64/kernel/sys.c:21
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x198/0x19c arch/arm64/kernel/entry.S:600
+irq event stamp: 75153
+hardirqs last  enabled at (75153): [<ffff8000804aebf4>] __up_console_sem kernel/printk/printk.c:344 [inline]
+hardirqs last  enabled at (75153): [<ffff8000804aebf4>] __console_unlock+0x70/0xc4 kernel/printk/printk.c:2869
+hardirqs last disabled at (75152): [<ffff8000804aebdc>] __up_console_sem kernel/printk/printk.c:342 [inline]
+hardirqs last disabled at (75152): [<ffff8000804aebdc>] __console_unlock+0x58/0xc4 kernel/printk/printk.c:2869
+softirqs last  enabled at (74970): [<ffff8000801283e0>] local_bh_enable+0x10/0x34 include/linux/bottom_half.h:32
+softirqs last disabled at (74968): [<ffff8000801283ac>] local_bh_disable+0x10/0x34 include/linux/bottom_half.h:19
+---[ end trace 0000000000000000 ]---
+
+
+Tested on:
+
+commit:         e056da87 Merge remote-tracking branch 'will/for-next/p..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=11f31464580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d6b7e15dc5b5e776
+dashboard link: https://syzkaller.appspot.com/bug?extid=8f9f411152c9539f4e59
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=13f51464580000
 
 
