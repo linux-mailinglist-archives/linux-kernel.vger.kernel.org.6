@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-545774-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D084CA4F144
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:15:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E93FA4F147
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:15:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE231188D58F
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:15:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FEDB167BE3
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 23:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DF1C278170;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFD4B27935D;
 	Tue,  4 Mar 2025 23:15:23 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9C81F8697;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6269927933B;
 	Tue,  4 Mar 2025 23:15:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741130122; cv=none; b=ngciAZlNCn6BtCwxon1pY5aMDUxFVmVUUkgindJIttfbUAVlMjC3GzMcW+h/3NhD9AZkn5WiW/rUS+c+lgaAEK9z2qVgC0Kb8opOJBHMzk+QOtbZeCTu5QZmZxGb9nQ73dUMSK27dO6pvodRTmFVbAOsxOmvne0sTN/chVg14iI=
+	t=1741130123; cv=none; b=UTLuG4cYowytoR/lFBHFDU/RJoLE4r/ZzGuk75r5DrjbAXlZUHGLw/gGvW28uMp30oo9eoUKfIrVIJKNYBpbluLSxmKBucpCFdoOS4FLejHrqTqfZyQLIQTHYOcCVCBJmYHso11DGSVWK2tpnf7fyTSSUL5VKKi79BzoEpXYi9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741130122; c=relaxed/simple;
-	bh=wC/IeTaVY4YGXDLvAUqyWXaYfQfr59gdDdHoBxGilKY=;
+	s=arc-20240116; t=1741130123; c=relaxed/simple;
+	bh=+QANBucFIezUoXX7P8kYb2sbC27r0CAnf9rNssJhRm8=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=XYuBQaXuc/tVOwRRYomfU2Q+vN8tyNDEMX8I3MfQdbkxIoojuzBo2HkXeBu1rpAIGMWKXKNgEbPagfPvx0bal+c064UFrSo8pYyWSOkWVpiuIKKH2ygcm3DT9G0hSM9g8dsRz+L7iBm5u/rIwnfU5iC07gGl6kT0cxcagKCGEb8=
+	 Content-Type; b=glULuwBFJfNPGixmY2d6hRY0Uv49nMVJY0Z05Pk4x44/QrI5Y9frbAtURH362JCoW+vSHErgPONV/DbPDL+zLD8F8QlZpvvXi9RIYvJR6pHQufOliHAp7qxmSikE8eg9b2eYu/0BsNl1IVhOr0MFay9DyzytPkDDZuozkLTNAFc=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D1AEC4CEEC;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5F07C4CEE8;
 	Tue,  4 Mar 2025 23:15:22 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1tpbUo-0000000CSaQ-2R1E;
+	id 1tpbUo-0000000CSau-39dy;
 	Tue, 04 Mar 2025 18:16:18 -0500
-Message-ID: <20250304231618.438023367@goodmis.org>
+Message-ID: <20250304231618.602571527@goodmis.org>
 User-Agent: quilt/0.68
-Date: Tue, 04 Mar 2025 18:15:48 -0500
+Date: Tue, 04 Mar 2025 18:15:49 -0500
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org,
  linux-trace-kernel@vger.kernel.org
@@ -42,8 +42,7 @@ Cc: Masami Hiramatsu <mhiramat@kernel.org>,
  Mark Rutland <mark.rutland@arm.com>,
  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
  Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH 3/4] tracing: Only return an adjusted address if it matches the kernel
- address
+Subject: [PATCH 4/4] tracing: Adjust addresses for printing out fields
 References: <20250304231545.708806702@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -55,44 +54,91 @@ Content-Type: text/plain; charset=UTF-8
 
 From: Steven Rostedt <rostedt@goodmis.org>
 
-The trace_adjust_address() will take a given address and examine the
-persistent ring buffer to see if the address matches a module that is
-listed there. If it does not, it will just adjust the value to the core
-kernel delta. But if the address was for something that was not part of
-the core kernel text or data it should not be adjusted.
-
-Check the result of the adjustment and only return the adjustment if it
-lands in the current kernel text or data. If not, return the original
-address.
+Add adjustments to the values of the "fields" output if the buffer is a
+persistent ring buffer to adjust the addresses to both the kernel core and
+kernel modules if they match a module in the persistent memory and that
+module is also loaded.
 
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- kernel/trace/trace.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ kernel/trace/trace_output.c | 38 ++++++++++++++++++++-----------------
+ 1 file changed, 21 insertions(+), 17 deletions(-)
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index c37dd3b6acb3..2ad2686f39f3 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -6005,6 +6005,7 @@ static DEFINE_MUTEX(scratch_mutex);
- unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 3a43128e604a..aa716cf69caa 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -857,6 +857,9 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 			 struct list_head *head)
  {
- 	struct trace_scratch *tscratch;
-+	unsigned long raddr;
- 	int i;
+ 	struct ftrace_event_field *field;
++	struct trace_array *tr = iter->tr;
++	unsigned long long laddr;
++	unsigned long addr;
+ 	int offset;
+ 	int len;
+ 	int ret;
+@@ -893,8 +896,8 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 		case FILTER_PTR_STRING:
+ 			if (!iter->fmt_size)
+ 				trace_iter_expand_format(iter);
+-			pos = *(void **)pos;
+-			ret = strncpy_from_kernel_nofault(iter->fmt, pos,
++			addr = trace_adjust_address(tr, *(unsigned long *)pos);
++			ret = strncpy_from_kernel_nofault(iter->fmt, (void *)addr,
+ 							  iter->fmt_size);
+ 			if (ret < 0)
+ 				trace_seq_printf(&iter->seq, "(0x%px)", pos);
+@@ -903,8 +906,8 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 						 pos, iter->fmt);
+ 			break;
+ 		case FILTER_TRACE_FN:
+-			pos = *(void **)pos;
+-			trace_seq_printf(&iter->seq, "%pS", pos);
++			addr = trace_adjust_address(tr, *(unsigned long *)pos);
++			trace_seq_printf(&iter->seq, "%pS", (void *)addr);
+ 			break;
+ 		case FILTER_CPU:
+ 		case FILTER_OTHER:
+@@ -934,24 +937,25 @@ static void print_fields(struct trace_iterator *iter, struct trace_event_call *c
+ 					break;
+ 				}
  
- 	/* If we don't have last boot delta, return the address */
-@@ -6020,7 +6021,9 @@ unsigned long trace_adjust_address(struct trace_array *tr, unsigned long addr)
- 		return addr + tr->module_delta[i - 1];
- 	}
- 
--	return addr + tr->text_delta;
-+	raddr = addr + tr->text_delta;
-+	return is_kernel_core_data(raddr) || is_kernel_rodata(raddr) ||
-+		__is_kernel(raddr) ? raddr : addr;
- }
- 
- static int save_mod(struct module *mod, void *data)
+-				if (sizeof(long) == 4)
++				addr = *(unsigned int *)pos;
++				if (sizeof(long) == 4) {
++					addr = trace_adjust_address(tr, addr);
+ 					trace_seq_printf(&iter->seq, "%pS (%d)",
+-							 *(void **)pos,
+-							 *(unsigned int *)pos);
+-				else
++							 (void *)addr, (int)addr);
++				} else {
+ 					trace_seq_printf(&iter->seq, "0x%x (%d)",
+-							 *(unsigned int *)pos,
+-							 *(unsigned int *)pos);
++							 (unsigned int)addr, (int)addr);
++				}
+ 				break;
+ 			case 8:
+-				if (sizeof(long) == 8)
++				laddr = *(unsigned long long *)pos;
++				if (sizeof(long) == 8) {
++					laddr = trace_adjust_address(tr, (unsigned long)laddr);
+ 					trace_seq_printf(&iter->seq, "%pS (%d)",
+-							 *(void **)pos,
+-							 *(unsigned long long *)pos);
+-				else
+-					trace_seq_printf(&iter->seq, "0x%llx (%lld)",
+-							 *(unsigned long long *)pos,
+-							 *(unsigned long long *)pos);
++							 (void *)laddr, laddr);
++				} else {
++					trace_seq_printf(&iter->seq, "0x%llx (%lld)", laddr, laddr);
++				}
+ 				break;
+ 			default:
+ 				trace_seq_puts(&iter->seq, "<INVALID-SIZE>");
 -- 
 2.47.2
 
