@@ -1,130 +1,159 @@
-Return-Path: <linux-kernel+bounces-543208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543215-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2802AA4D2D1
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:07:19 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 737B6A4D2DC
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:12:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A768F3AE3D7
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 34E7C170164
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 05:12:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F28C41F4CA7;
-	Tue,  4 Mar 2025 05:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0RL2eoUX"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AC721F461C;
+	Tue,  4 Mar 2025 05:12:35 +0000 (UTC)
+Received: from mail78-59.sinamail.sina.com.cn (mail78-59.sinamail.sina.com.cn [219.142.78.59])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF9841F891D
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 05:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A471F4179
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 05:12:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=219.142.78.59
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741064690; cv=none; b=hLgStJFCDKt51fWxO30S9xJWoexHsEqoN+SFnIYqb3WMo301/ErcCIZeDybDpvo6m4xbt3Sq86mfNos6912TLajxy+47ghAdGdcZZ0ooGAhwzfoHEHm5ihDB+TQB/jKslgmuJc5/zp+5lQRmLYIA03yz03TQ0MI2BL/tZv08EFg=
+	t=1741065154; cv=none; b=YyJuLlkvqV3bORPL2d/UxB0hGhrqUQ2cPiyCfdiQSnLORZIdysp2SqjIybCV7rBOBqyeFIxhpK6feJ1SNkZ3P8LccLn5BmfOrZEqYBqIT09iFWwfZND8YVe+8YhFI8ZwJjtSAyywFzFR/dQcvz0VHzHtvkn7W/JjDs5vx2Y0F8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741064690; c=relaxed/simple;
-	bh=nhCPtbgEZDkd1Kvn3UPUrTlm5xI1UpW+IfGhCPsfYms=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=M7258C3cvuZ9u9TUirEX9cXh3CgUcEksrK0cVYEcoSKvYpwsB/JdMno8fqGTZVHWw91cSkk+DgXq43In9cwRLzVqkKdKlKq8IxR/jeA+lHlvuLNx/8uZTnLnURzQMuosSiy9K3VGL0Z1dpfe4Q6NlzBmlME4AYZOCCrm11qtdMU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0RL2eoUX; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6f27dd44f86so73664577b3.0
-        for <linux-kernel@vger.kernel.org>; Mon, 03 Mar 2025 21:04:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741064688; x=1741669488; darn=vger.kernel.org;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=tzAqyNBDcatrD/dNYr5THRvvcwinanMOXL+SW4MgEks=;
-        b=0RL2eoUX7RIfqZXCSjM5SQhU/z4TknpBx6tfJnMTpIjku5f9aHfQIGDExbZKHZSzQH
-         zuNtG8qkuxoM+tLl+A5zLimPhqq74v4XiBT9AFpPR//UQkAnMcUL3W8x6FkJkVZWUYez
-         rJu1rucnNPFRjJPZ6nc8XaINgE7XOCp0abzB0wNYqG47Rs03cNW34m9TzjXbmlze1cSv
-         EysktXmM3R3eALOHxbj5WkaEBpsGKfK+IO+Tv+WZ0cjR+ZdFszFHxgnsNIlZNiJVr3Up
-         qHRo7bMI4+xCFSZKIcGX0qgOKdBvIwrXSm5Dvynm19ifKhLjGYtBBcn81kh6upR/Ey7e
-         976Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741064688; x=1741669488;
-        h=to:from:subject:references:mime-version:message-id:in-reply-to:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=tzAqyNBDcatrD/dNYr5THRvvcwinanMOXL+SW4MgEks=;
-        b=pA47IyeuJQOKlztfndGdPQEtr9WXUMKm4+nQnX/zTCdMDDAKZN5wFmh68DyL4S3Axe
-         nPsnVywWhKLhe7b6AUQWy1aAJSutwkrMVEbhmihtc16By0j44Xm68a1Fv/Uhj/co9asN
-         ksOaF3RUJAfsTrEWJG6nsR1nfgMTXvK3wqFWzXxBV8FA5G2JjL511sAn9RPVltkLiwib
-         7N0xtW3sOj3qiuo1W8JacZ8fDtXmTG+6NYiHqM1jlZkjOxCMuTo0xsNAoorlRcfY9SUK
-         ridjW7exCv1sTjO+HZ1vRKH06FXyg882Tag0RewKIWX2bhxiJETTvDLbq9ZNNBF+mZFN
-         Y6Wg==
-X-Forwarded-Encrypted: i=1; AJvYcCWDSiofh8j0NMtqlB7kJ87MjEjAMPefirsao5dE1k6NTYHEPxRQh1ouNv8Y5rTfPtCRAhl/zFWcKX6cpts=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD/y1AWoH8kFqexpq5pB0t/MT2ikjl5AoEAqh794idpSWI3BgG
-	MkFgZ0stKbI5M5sRWo3P3kTH+EsOgTy4VWudZnVutMt/7LwN2u9T/UZ0ZRGurx+OQl2ChbeU7kG
-	eqQuN3w==
-X-Google-Smtp-Source: AGHT+IGcXI4xtcRg7TZCt539wnaKT0i5MXbKrcmjSAdt+8/cOoexhcuHk6pVgzO15AtSpOO1xbrgGJNcQRci
-X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:8af9:d1f7:bca9:da2])
- (user=irogers job=sendgmr) by 2002:a05:690c:2a81:b0:6f9:ad6e:5945 with SMTP
- id 00721157ae682-6fd49e2336dmr19606227b3.0.1741064687649; Mon, 03 Mar 2025
- 21:04:47 -0800 (PST)
-Date: Mon,  3 Mar 2025 21:03:05 -0800
-In-Reply-To: <20250304050305.901167-1-irogers@google.com>
-Message-Id: <20250304050305.901167-12-irogers@google.com>
+	s=arc-20240116; t=1741065154; c=relaxed/simple;
+	bh=voFWHS+/rEfXx/fOignyfmiLmDA597FXjb8TCQXTn8g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=FmRmuC33/zD6GkWbJ976G0PvimFFlKk653Msdsy85DLkFbIUnDJwQGq8oOBotS9LI2YGSUuBf0HW/LRyC3hG5mXHJJbZe4/amLEitItWX+0Wg426K/7PklxIzVdlHuzveWVTfiSr2PJk0i7zMLQktgH3wRU9cTQdZIS1hRTJsxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=219.142.78.59
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([113.88.49.155])
+	by sina.com (10.185.250.24) with ESMTP
+	id 67C68A6E00007DBC; Tue, 4 Mar 2025 13:06:57 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 17763010748466
+X-SMAIL-UIID: 9A6D555A5EB148519F5EA3B1EE6E3CF0-20250304-130657-1
+From: Hillf Danton <hdanton@sina.com>
+To: "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+Cc: Oleg Nesterov <oleg@redhat.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Mateusz Guzik <mjguzik@gmail.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+Date: Tue,  4 Mar 2025 13:06:43 +0800
+Message-ID: <20250304050644.2983-1-hdanton@sina.com>
+In-Reply-To: <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com>
+References: <20250102140715.GA7091@redhat.com> <e813814e-7094-4673-bc69-731af065a0eb@amd.com> <20250224142329.GA19016@redhat.com> <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt> <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250304050305.901167-1-irogers@google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Subject: [PATCH v4 11/11] perf syscalltbl: Mask off ABI type for MIPS system calls
-From: Ian Rogers <irogers@google.com>
-To: Ian Rogers <irogers@google.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>, 
-	James Clark <james.clark@linaro.org>, Mike Leach <mike.leach@linaro.org>, 
-	Leo Yan <leo.yan@linux.dev>, guoren <guoren@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Charlie Jenkins <charlie@rivosinc.com>, 
-	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Jiri Slaby <jirislaby@kernel.org>, 
-	"=?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?=" <bjorn@rivosinc.com>, Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>, linux-riscv@lists.infradead.org, 
-	Arnd Bergmann <arnd@arndb.de>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-Arnd Bergmann described that MIPS system calls don't necessarily start
-from 0 as an ABI prefix is applied:
-https://lore.kernel.org/lkml/8ed7dfb2-1e4d-4aa4-a04b-0397a89365d1@app.fastmail.com/
-When decoding the "id" (aka system call number) for MIPS ignore values
-greater-than 1000.
+On Mon, 3 Mar 2025 15:16:34 +0530 "Sapkal, Swapnil" <swapnil.sapkal@amd.com>
+> On 2/28/2025 10:03 PM, Oleg Nesterov wrote:
+> > And... I know, I know you already hate me ;)
+> > 
+> 
+> Not at all :)
+> 
+> > but if you have time, could you check if this patch (with or without the
+> > previous debugging patch) makes any difference? Just to be sure.
+> > 
+> 
+> Sure, I will give this a try.
+> 
+> But in the meanwhile me and Prateek tried some of the experiments in the weekend.
+> We were able to reproduce this issue on a third generation EPYC system as well as
+> on an Intel Emerald Rapids (2 X INTEL(R) XEON(R) PLATINUM 8592+).
+> 
+> We tried heavy hammered tracing approach over the weekend on top of your debug patch.
+> I have attached the debug patch below. With tracing we found the following case for
+> pipe_writable():
+> 
+>    hackbench-118768  [206] .....  1029.550601: pipe_write: 000000005eea28ff: 0: 37 38 16: 1
+> 
+> Here,
+> 
+> head = 37
+> tail = 38
+> max_usage = 16
+> pipe_full() returns 1.
+> 
+> Between reading of head and later the tail, the tail seems to have moved ahead of the
+> head leading to wraparound. Applying the following changes I have not yet run into a
+> hang on the original machine where I first saw it:
+> 
+> diff --git a/fs/pipe.c b/fs/pipe.c
+> index ce1af7592780..a1931c817822 100644
+> --- a/fs/pipe.c
+> +++ b/fs/pipe.c
+> @@ -417,9 +417,19 @@ static inline int is_packetized(struct file *file)
+>   /* Done while waiting without holding the pipe lock - thus the READ_ONCE() */
+>   static inline bool pipe_writable(const struct pipe_inode_info *pipe)
+>   {
+> -	unsigned int head = READ_ONCE(pipe->head);
+> -	unsigned int tail = READ_ONCE(pipe->tail);
+>   	unsigned int max_usage = READ_ONCE(pipe->max_usage);
+> +	unsigned int head, tail;
+> +
+> +	tail = READ_ONCE(pipe->tail);
+> +	/*
+> +	 * Since the unsigned arithmetic in this lockless preemptible context
+> +	 * relies on the fact that the tail can never be ahead of head, read
+> +	 * the head after the tail to ensure we've not missed any updates to
+> +	 * the head. Reordering the reads can cause wraparounds and give the
+> +	 * illusion that the pipe is full.
+> +	 */
+> +	smp_rmb();
+> +	head = READ_ONCE(pipe->head);
+>   
+>   	return !pipe_full(head, tail, max_usage) ||
+>   		!READ_ONCE(pipe->readers);
+> ---
+> 
+> smp_rmb() on x86 is a nop and even without the barrier we were not able to
+> reproduce the hang even after 10000 iterations.
+>
+My $.02 that changes the wait condition.
+Not sure it makes sense for you.
 
-Signed-off-by: Ian Rogers <irogers@google.com>
----
- tools/perf/util/syscalltbl.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-index db0d2b81aed1..ace66e69c1bc 100644
---- a/tools/perf/util/syscalltbl.c
-+++ b/tools/perf/util/syscalltbl.c
-@@ -46,6 +46,14 @@ const char *syscalltbl__name(int e_machine, int id)
+--- x/fs/pipe.c
++++ y/fs/pipe.c
+@@ -430,7 +430,7 @@ pipe_write(struct kiocb *iocb, struct io
  {
- 	const struct syscalltbl *table = find_table(e_machine);
- 
-+	if (e_machine == EM_MIPS && id > 1000) {
-+		/*
-+		 * MIPS may encode the N32/64/O32 type in the high part of
-+		 * syscall number. Mask this off if present. See the values of
-+		 * __NR_N32_Linux, __NR_64_Linux, __NR_O32_Linux and __NR_Linux.
-+		 */
-+		id = id % 1000;
-+	}
- 	if (table && id >= 0 && id < table->num_to_name_len)
- 		return table->num_to_name[id];
- 	return NULL;
--- 
-2.48.1.711.g2feabab25a-goog
-
+ 	struct file *filp = iocb->ki_filp;
+ 	struct pipe_inode_info *pipe = filp->private_data;
+-	unsigned int head;
++	unsigned int head, tail;
+ 	ssize_t ret = 0;
+ 	size_t total_len = iov_iter_count(from);
+ 	ssize_t chars;
+@@ -573,11 +573,13 @@ pipe_write(struct kiocb *iocb, struct io
+ 		 * after waiting we need to re-check whether the pipe
+ 		 * become empty while we dropped the lock.
+ 		 */
++		tail = pipe->tail;
+ 		mutex_unlock(&pipe->mutex);
+ 		if (was_empty)
+ 			wake_up_interruptible_sync_poll(&pipe->rd_wait, EPOLLIN | EPOLLRDNORM);
+ 		kill_fasync(&pipe->fasync_readers, SIGIO, POLL_IN);
+-		wait_event_interruptible_exclusive(pipe->wr_wait, pipe_writable(pipe));
++		wait_event_interruptible_exclusive(pipe->wr_wait,
++				!READ_ONCE(pipe->readers) || tail != READ_ONCE(pipe->tail));
+ 		mutex_lock(&pipe->mutex);
+ 		was_empty = pipe_empty(pipe->head, pipe->tail);
+ 		wake_next_writer = true;
+--
 
