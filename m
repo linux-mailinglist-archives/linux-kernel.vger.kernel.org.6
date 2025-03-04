@@ -1,187 +1,99 @@
-Return-Path: <linux-kernel+bounces-544460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-544462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDE4AA4E17A
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:45:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F140A4E1EE
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 15:57:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D244117AEAD
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:38:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7412A3B79F5
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 14:38:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F4CE20A5F3;
-	Tue,  4 Mar 2025 14:35:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371EA2777FD;
+	Tue,  4 Mar 2025 14:36:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="EIrBXdyf";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="4lu1rqgU";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="2620yZ3G";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="WGQfANsK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ud6yEq5m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E752425DD04
-	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 14:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96CB5277035;
+	Tue,  4 Mar 2025 14:36:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741098957; cv=none; b=tshSj6fDprRXdx8zIac7zRiFAfrLWj20Wf0aRDu/TnPw7CTRo2bIexVVr0wGSWxwt910XlojKembXhMhJ/wlh+nmPosunMgE5DzPjdOzydOS2p6QvQvQ+QCrPibuYiuyr+vIcK/Q36Ydw9pi0EOcHYDijk2oAK8xM6xQQsnZJ30=
+	t=1741098968; cv=none; b=qCEjPBCn4d+9riKqD9aB9TYzoAoRCOVu8KOY/IFmzGUl7CoMp/1HIHc/27Lrzc3PXUzFC/+2VwZOz72971NVh/Zd3iNHb7TPnWtwTAB8UXmFp+CwBbcJ4qIGOLntMerxhBWGCJCisHKd7l7gMB6CxThBTi6+bYp5oivWCgluMoo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741098957; c=relaxed/simple;
-	bh=h/Jv2Bg+zwrMEi6UloOZSsQCVI0CghmSdrAIUKv2TCY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tXb8INyuMOAQJF5yd/uAr9gEOSNkiwN5VwHxHiIK6abQQeMKG+epSt1u/r+bmXvj0fT+DLVSsRGTCrx9znLv2ltkOelv4YjZk1EY969vFb1FsttzDyk0NpXj1H5JhasBlFIw54zfryUXvGtaGcTTbIMvBtrz5KD0gX7cUbyLTH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=EIrBXdyf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=4lu1rqgU; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=2620yZ3G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=WGQfANsK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E44781F74C;
-	Tue,  4 Mar 2025 14:35:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741098954; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r2GzlZuQCiYZqEHklmJ416V+7zdr1A6iSNiLyZDc1R4=;
-	b=EIrBXdyf89Ms32ytqK+GRB1D2FNW/to7N3h1EtaSrJ8JtZx0yjutbmmJIR+e8FfBw0HJWc
-	2kQH+M0yMIaS/kPpaJErTQb6luO3kGdJ+dbFKcpsEdqg4D28dcY0JaIdKdYuKQ/dhNykNF
-	p04cL0UAovvoHlfxnTz64dbTwo20Bi0=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741098954;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r2GzlZuQCiYZqEHklmJ416V+7zdr1A6iSNiLyZDc1R4=;
-	b=4lu1rqgUjx/Ps5rhwIOlXVbwKBg0UkZCpxYVdl1VwSD/C5enCLx8ENca5cKYRtY4LaK3N3
-	wP9uJCXhJK0WXmCw==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=2620yZ3G;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=WGQfANsK
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741098952; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r2GzlZuQCiYZqEHklmJ416V+7zdr1A6iSNiLyZDc1R4=;
-	b=2620yZ3G8GnJHwTkWcB34dTQH4Cn3ILl1dsqDMjSTFBdOVK6s+Ky0nyzvchnu5mQ1pXzjH
-	KKVBCL8nLxXfP9ydGcEAZwRd0gR8BevdijPZc5THTwgM67nir2/Zc8TI9ZOESAbiN9IvhA
-	XhvuN6qi1ExaHgqV5Pxq6j4UHz5iZQE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741098952;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=r2GzlZuQCiYZqEHklmJ416V+7zdr1A6iSNiLyZDc1R4=;
-	b=WGQfANsKGzo4/axnvGNqT/KTsfNZooEIlTrzVRkUAQCDd9gEhxSgdEhgALtAWm+v1qyh1c
-	hNWeuEtZAVJc0qDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CE2AE1393C;
-	Tue,  4 Mar 2025 14:35:52 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FvhPMsgPx2fqMwAAD6G6ig
-	(envelope-from <jack@suse.cz>); Tue, 04 Mar 2025 14:35:52 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id 879BFA087F; Tue,  4 Mar 2025 15:35:52 +0100 (CET)
-Date: Tue, 4 Mar 2025 15:35:52 +0100
-From: Jan Kara <jack@suse.cz>
-To: Tang Yizhou <yizhou.tang@shopee.com>
-Cc: tj@kernel.org, jack@suse.cz, brauner@kernel.org, willy@infradead.org, 
-	akpm@linux-foundation.org, rostedt@goodmis.org, mhiramat@kernel.org, ast@kernel.org, 
-	linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND 2/2] writeback: Fix calculations in
- trace_balance_dirty_pages() for cgwb
-Message-ID: <rcfl3znyagtikvvzobic4hfuwzdjtrzwh3cuy4f6vbuq3emehl@2zx2bs75mszo>
-References: <20250303100617.223677-1-yizhou.tang@shopee.com>
- <20250303100617.223677-3-yizhou.tang@shopee.com>
+	s=arc-20240116; t=1741098968; c=relaxed/simple;
+	bh=cxAHcKn3pjMzcqMsPbIcMtnWuN6ttXQC0+V/fkbmKvQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KhD8/dw6HFmoxWRDeEHNRKGwIN47AX+nDfU+I/CDWXghPFODtGoiDFfg8fi/oWM9wAvdoPr3WJ+MQvle1z4mp7BsrogCBjkIOGU4TUluScdmRGJCTkEPox9u2l8s9GsGjh/93AS+1iUV8C064q9k0xSh8iP/wCYt08a0vgeMV4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ud6yEq5m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A992CC4CEE5;
+	Tue,  4 Mar 2025 14:36:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741098968;
+	bh=cxAHcKn3pjMzcqMsPbIcMtnWuN6ttXQC0+V/fkbmKvQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=Ud6yEq5mfVrYRwCmVwBJFAvYm8IltOAiJpTsxkTEiOYRE+uWDkrMs2RfI0KWQ8wrc
+	 UNeiBIlohenNoHU8xHMU+Uvt/LspNi8+jZ1L8UfV6QlYxKT8b50fh2xneXHSkITqqT
+	 5cfw612VG2efzL1hKWtdJZi/mA8fbyw6kw0hW6jFQegx9t7dANi2rwH/+wuBjcxj1Z
+	 dIbb7KW3MX2kstip183XraPRL1iuWnzUx2reYHpYWeiD9oz10/JeYUx5OSJ8p/Upg6
+	 arFUETT1VglWZkDDGtdeJEFN7kj4t7OwoZdo3ORAqq19eVuOIO/uNLJl8wUUOzHbME
+	 xferlzQb5QSPg==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	Fan Ni <fan.ni@samsung.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Shiju Jose <shiju.jose@huawei.com>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] EDAC: fix dev_set_name() format string
+Date: Tue,  4 Mar 2025 15:35:58 +0100
+Message-Id: <20250304143603.995820-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303100617.223677-3-yizhou.tang@shopee.com>
-X-Rspamd-Queue-Id: E44781F74C
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.01 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	MIME_TRACE(0.00)[0:+];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	RCVD_TLS_LAST(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.com:email,shopee.com:email]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.01
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-On Mon 03-03-25 18:06:17, Tang Yizhou wrote:
-> From: Tang Yizhou <yizhou.tang@shopee.com>
-> 
-> In the commit dcc25ae76eb7 ("writeback: move global_dirty_limit into
-> wb_domain") of the cgroup writeback backpressure propagation patchset,
-> Tejun made some adaptations to trace_balance_dirty_pages() for cgroup
-> writeback. However, this adaptation was incomplete and Tejun missed
-> further adaptation in the subsequent patches.
-> 
-> In the cgroup writeback scenario, if sdtc in balance_dirty_pages() is
-> assigned to mdtc, then upon entering trace_balance_dirty_pages(),
-> __entry->limit should be assigned based on the dirty_limit of the
-> corresponding memcg's wb_domain, rather than global_wb_domain.
-> 
-> To address this issue and simplify the implementation, introduce a 'limit'
-> field in struct dirty_throttle_control to store the hard_limit value
-> computed in wb_position_ratio() by calling hard_dirty_limit(). This field
-> will then be used in trace_balance_dirty_pages() to assign the value to
-> __entry->limit.
-> 
-> Fixes: dcc25ae76eb7 ("writeback: move global_dirty_limit into wb_domain")
-> Signed-off-by: Tang Yizhou <yizhou.tang@shopee.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-In principle this looks fine but one nit below:
+Passing a variable string as the format to dev_set_name() causes a W=1 warning:
 
-> diff --git a/include/linux/writeback.h b/include/linux/writeback.h
-> index 32095928365c..58bda3347914 100644
-> --- a/include/linux/writeback.h
-> +++ b/include/linux/writeback.h
-> @@ -326,6 +326,7 @@ struct dirty_throttle_control {
->  	unsigned long		dirty;		/* file_dirty + write + nfs */
->  	unsigned long		thresh;		/* dirty threshold */
->  	unsigned long		bg_thresh;	/* dirty background threshold */
-> +	unsigned long		limit;		/* hard dirty limit */
-				^^^ I'd call this dirty_limit to not invent
-a new name for the same thing. I've noticed the tracepoint has 'limit' as
-well but that is the outlier that should be modified if anything. Also I'd
-modify the comment to /* smoothed dirty limit */ to better explain what
-this is about.
+drivers/edac/edac_device.c:736:9: error: format not a string literal and no format arguments [-Werror=format-security]
+  736 |         ret = dev_set_name(&ctx->dev, name);
+      |         ^~~
 
-								Honza
+Use a literal "%s" instead so the name can be the argument.
+
+Fixes: db99ea5f2c03 ("EDAC: Add support for EDAC device features control")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+---
+ drivers/edac/edac_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/edac/edac_device.c b/drivers/edac/edac_device.c
+index 16611515ab34..0734909b08a4 100644
+--- a/drivers/edac/edac_device.c
++++ b/drivers/edac/edac_device.c
+@@ -733,7 +733,7 @@ int edac_dev_register(struct device *parent, char *name,
+ 	ctx->private = private;
+ 	dev_set_drvdata(&ctx->dev, ctx);
+ 
+-	ret = dev_set_name(&ctx->dev, name);
++	ret = dev_set_name(&ctx->dev, "%s", name);
+ 	if (ret)
+ 		goto data_mem_free;
+ 
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.39.5
+
 
