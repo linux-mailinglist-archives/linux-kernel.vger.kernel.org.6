@@ -1,81 +1,73 @@
-Return-Path: <linux-kernel+bounces-543307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-543308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F16DA4D418
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:50:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B99B7A4D41B
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 07:52:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37EAC1897017
-	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:50:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DB223ADE49
+	for <lists+linux-kernel@lfdr.de>; Tue,  4 Mar 2025 06:51:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DE01F542A;
-	Tue,  4 Mar 2025 06:50:06 +0000 (UTC)
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CDFE1F4E4F;
+	Tue,  4 Mar 2025 06:51:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aF/Xk+hK"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A54C13C67C;
-	Tue,  4 Mar 2025 06:50:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35F7913C67C
+	for <linux-kernel@vger.kernel.org>; Tue,  4 Mar 2025 06:51:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741071006; cv=none; b=svUy4UO3WnFb/CbYOJ+7GGbLBXcAnfWJD7jJqTplMEnAF37wtXt4URoq+w9PBn/no7Ty8WW7gnONpI+8DmZ+QWXvUTtB/h6VB4dKf31epkqYD7mISJhoncZkLO8jt7kXcsoIsvl+8oKfXjnhEo3af8EDSXzmnqdiVMYMPqIxlbI=
+	t=1741071116; cv=none; b=Nfh9gr4lYYQ7qvIzMFJFSMVqia6Mcg48KnFvZGYnDuvd/6xPLTV55rIzvFPpuObbCALJPSKZtmWs1f8r9FHzSX2A4g1I0e/JoPQIIntBhf6jT0MCrZFQWRW+3ZPY3xXL2w8mjPmqmzcAGnXwQQJft9BWGX0Mu0Crxhs3KMbKKEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741071006; c=relaxed/simple;
-	bh=xKkQdbXWEuT09IaRYhW1OQKL5RSJXdUnAd1yXKspPdg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbS7iQtsbCkOiG7zLD+QBagmE6Q5WH1fL+jnV6WnjASwdf2qGdax0IeSeU1F2HCkuXUEvfu5GJaHM2zdP5E7oK/bgpEJrxe7nLK/zJIArhFOKBQ5byuLYx6IcDIQ0ba/xFAupAgfZRcF8IOI+yQgHBWGnO0ReKXlEE/1ItSWNbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22355618fd9so89754665ad.3;
-        Mon, 03 Mar 2025 22:50:04 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741071004; x=1741675804;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wdiYB6hv/Q3Efvv78nZapqYNYn3PY60w2vwZzb6NEH4=;
-        b=j+HQ9POuA7SNB6pcvSuH37F32ewhyhqHBro+VQ01ujrKbkc95ZycV/iTwmv3muKpQV
-         w14YoIFdJbrPeGZrKeq4Qaz6ptHjor7JV+JI0UnEay5J+O30ra+kCsrwyPa2wPcwJXvI
-         RM5tKZ5GPqBHZsxYLlPoUhUibL2cqDtbJJt+QN6/rq+7AXhQJkpJMCgeaeQJ4+SZksph
-         FFFbe4apdFtsuAPy70Qanp9obK2r0CiU/8cd3jVp+XVQ30PcJgCYNIGHRLt7M/gbMuj6
-         ecT4RwvVGbOevXBGQvwwK8QSWuUJNd8BamC6mb52RpGnvt2rw2TVFng+CQAwMXAfJf57
-         3dWg==
-X-Forwarded-Encrypted: i=1; AJvYcCXHMjCil5r+eAbxiCiMtTf8UuD5fMyg8mVafNQsEUsS6pHZoo71mwCfir9k5OUrXpIjPYMStgDZZhw=@vger.kernel.org, AJvYcCXNmt63B9bnLxjU6CGb0gjNhz+Fx4Guk9vHn7c4IDw9GgJxPZRIGy5lUDyS1/Au1oh9fTa42oQ2hYRybWql5/tBgg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2u7FA4zjM/52gavp7s2MFNp35PqgW+33FGy75QsRJgn1Ubnct
-	PSCigWW308iDK20ficT9nRpuHxwtqdPRWY5hyEjjjlMBibZiMSktxS0q2eBcrmA=
-X-Gm-Gg: ASbGncupyqa9DXHQTqhJvGkbSiCxXrMolb/cHjJbkLmHUOmgbfpXqeZQ1N8jiVUu/JA
-	ZyX//8UkXV37fcJRD+Cts6HLdpeTkk6rWuuEQ8oLgEzPUISW8tOhIc6Ki7+pvjcl60JkFEUc3aJ
-	NxN/Ut6QYaUGe+6r/ujH5y69DJVcgGHWg528QD7OPlmHQQa1GV99CU/qJuNn3MUwBq6Xd/CHjvv
-	NCRk/td5eWRapIRcngOfGMPMQi1zG6eLkrL4wTIPneyUmyD0xcwj3H0E9ddT/nsAGrDxRvExZoE
-	nyE2daBzvsPYfVT6TToCdKSJ2wyoI51MTzixin9CTzs7pnNoMMpF2T+568oWz0AZ+Bgd8hwCq7F
-	Wu6s=
-X-Google-Smtp-Source: AGHT+IGcV4aYk/OpEVH73Ug+c1C0USAo6FdZmKpOcH30W1Dx1DXHv8XdmGwDQ56GkfHpVhuZmtZPUA==
-X-Received: by 2002:a17:902:ea0c:b0:21f:136a:a374 with SMTP id d9443c01a7336-22369268794mr260988655ad.43.1741071003728;
-        Mon, 03 Mar 2025 22:50:03 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-223501f9dc2sm87929895ad.61.2025.03.03.22.50.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 03 Mar 2025 22:50:03 -0800 (PST)
-Date: Tue, 4 Mar 2025 15:50:00 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
-	fan.ni@samsung.com, nifan.cxl@gmail.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 4/5] Add debugfs based error injection support in DWC
-Message-ID: <20250304065000.GB2615015@rocinante>
-References: <20250221131548.59616-1-shradha.t@samsung.com>
- <CGME20250221132039epcas5p31913eab0acec1eb5e7874897a084c725@epcas5p3.samsung.com>
- <20250221131548.59616-5-shradha.t@samsung.com>
- <20250303095200.GB1065658@rocinante>
+	s=arc-20240116; t=1741071116; c=relaxed/simple;
+	bh=B8pwLAH5PRmaaLqV4s0UhtVNmaChZZBxuDzE6LonftQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=OiaZuKZ5ZPreVRx6IQJT8y4xIb/nNIKE77UwaQOTYhajzb4PmksewQ+YdqDveAGBkGkC/S98Zd81zfj2+WCCX3j74VXqoO56ZaUEZ3sP54+CHk2ILot6jK2o4OtMd/6FHtb5kjhsYdsnAhHtxDSTRU8Vio5A2FCkRbPUMMJJ3Tg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aF/Xk+hK; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741071115; x=1772607115;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=B8pwLAH5PRmaaLqV4s0UhtVNmaChZZBxuDzE6LonftQ=;
+  b=aF/Xk+hKjhiAf5zwVgzA4JZEx/SFvQEgezK1/QMu9azg/avMWooycIAr
+   H/ECzKLMUwY1e1YEouWTXykfqnKKP+nzIw4Nk+iJxvwWclMcmkAHUZnLV
+   RFWwntc+/TfVaQzDcuHIE1YrRYQsciscFKxWEelB1BryXSeIX+uWsYlS9
+   ZiBZpvoUs39qWz1syuz98FgNejwdNwnkuvaEeH5qNiSaBgN1PL4w9pnMU
+   ghzgCjvE+QTI+VXbTT9DHlqYQcSHhowwjGX+8DLAGpxYW2jA5+2bZQp6i
+   kuUaTlOr7NevgQtD//sDAXfTpJqATfmZvL6AffeJrLXkJxkImQCTLHnef
+   g==;
+X-CSE-ConnectionGUID: GQxvA0Z6RZ2BsvC5dqqRLg==
+X-CSE-MsgGUID: Q2FyopADTaCByZZ3KlaXkw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11362"; a="53368480"
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="53368480"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Mar 2025 22:51:53 -0800
+X-CSE-ConnectionGUID: Oe6jlvS/S3WYUXEfNPDdUg==
+X-CSE-MsgGUID: IteWVqepSrWNR7Uvrq7aBA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.13,331,1732608000"; 
+   d="scan'208";a="118768560"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 03 Mar 2025 22:51:51 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpM7p-000JNW-0X;
+	Tue, 04 Mar 2025 06:51:37 +0000
+Date: Tue, 4 Mar 2025 14:51:22 +0800
+From: kernel test robot <lkp@intel.com>
+To: Mark Pearson <markpearson@lenovo.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Hans de Goede <hdegoede@redhat.com>
+Subject: drivers/platform/x86/think-lmi.c:758:51: warning: '%s' directive
+ argument is null
+Message-ID: <202503041429.NcONo2Xk-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,24 +76,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250303095200.GB1065658@rocinante>
 
-Hello,
+Hi Mark,
 
-[...]
-> > +		29) Generates duplicate TLPs - duplicate_dllp
-> > +		30) Generates Nullified TLPs - nullified_tlp
-> 
-> Would the above field called "duplicate_dllp" for duplicate TLPs be
-> a potential typo?  Perhaps this should be called "duplicate_tlp"?
-> 
-> I wanted to make sure we have the correct field name.
+FYI, the error/warning still remains.
 
-Fan or Shradha, any thoughts on this?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   99fa936e8e4f117d62f229003c9799686f74cebc
+commit: b49f72e7f96d4ed147447428f2ae5b4cea598ca7 platform/x86: think-lmi: Certificate authentication support
+date:   3 years ago
+config: x86_64-randconfig-161-20230920 (https://download.01.org/0day-ci/archive/20250304/202503041429.NcONo2Xk-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250304/202503041429.NcONo2Xk-lkp@intel.com/reproduce)
 
-Would the problem be with the name of the property of the description?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503041429.NcONo2Xk-lkp@intel.com/
 
-Thank you!
+All warnings (new ones prefixed by >>):
 
-	Krzysztof
+   drivers/platform/x86/think-lmi.c: In function 'certificate_store':
+>> drivers/platform/x86/think-lmi.c:758:51: warning: '%s' directive argument is null [-Wformat-overflow=]
+     758 |                 auth_str = kasprintf(GFP_KERNEL, "%s,%s",
+         |                                                   ^~
+
+
+vim +758 drivers/platform/x86/think-lmi.c
+
+   727	
+   728	static ssize_t certificate_store(struct kobject *kobj,
+   729					  struct kobj_attribute *attr,
+   730					  const char *buf, size_t count)
+   731	{
+   732		struct tlmi_pwd_setting *setting = to_tlmi_pwd_setting(kobj);
+   733		char *auth_str, *new_cert;
+   734		char *guid;
+   735		int ret;
+   736	
+   737		if (!capable(CAP_SYS_ADMIN))
+   738			return -EPERM;
+   739	
+   740		if (!tlmi_priv.certificate_support)
+   741			return -EOPNOTSUPP;
+   742	
+   743		new_cert = kstrdup(buf, GFP_KERNEL);
+   744		if (!new_cert)
+   745			return -ENOMEM;
+   746		/* Strip out CR if one is present */
+   747		strip_cr(new_cert);
+   748	
+   749		/* If empty then clear installed certificate */
+   750		if (new_cert[0] == '\0') { /* Clear installed certificate */
+   751			kfree(new_cert);
+   752	
+   753			/* Check that signature is set */
+   754			if (!setting->signature || !setting->signature[0])
+   755				return -EACCES;
+   756	
+   757			/* Format: 'serial#, signature' */
+ > 758			auth_str = kasprintf(GFP_KERNEL, "%s,%s",
+   759					dmi_get_system_info(DMI_PRODUCT_SERIAL),
+   760					setting->signature);
+   761			if (!auth_str)
+   762				return -ENOMEM;
+   763	
+   764			ret = tlmi_simple_call(LENOVO_CLEAR_BIOS_CERT_GUID, auth_str);
+   765			kfree(auth_str);
+   766			if (ret)
+   767				return ret;
+   768	
+   769			kfree(setting->certificate);
+   770			setting->certificate = NULL;
+   771			return count;
+   772		}
+   773	
+   774		if (setting->cert_installed) {
+   775			/* Certificate is installed so this is an update */
+   776			if (!setting->signature || !setting->signature[0]) {
+   777				kfree(new_cert);
+   778				return -EACCES;
+   779			}
+   780			guid = LENOVO_UPDATE_BIOS_CERT_GUID;
+   781			/* Format: 'Certificate,Signature' */
+   782			auth_str = kasprintf(GFP_KERNEL, "%s,%s",
+   783					new_cert, setting->signature);
+   784		} else {
+   785			/* This is a fresh install */
+   786			if (!setting->valid || !setting->password[0]) {
+   787				kfree(new_cert);
+   788				return -EACCES;
+   789			}
+   790			guid = LENOVO_SET_BIOS_CERT_GUID;
+   791			/* Format: 'Certificate,Admin-password' */
+   792			auth_str = kasprintf(GFP_KERNEL, "%s,%s",
+   793					new_cert, setting->password);
+   794		}
+   795		if (!auth_str) {
+   796			kfree(new_cert);
+   797			return -ENOMEM;
+   798		}
+   799	
+   800		ret = tlmi_simple_call(guid, auth_str);
+   801		kfree(auth_str);
+   802		if (ret) {
+   803			kfree(new_cert);
+   804			return ret;
+   805		}
+   806	
+   807		kfree(setting->certificate);
+   808		setting->certificate = new_cert;
+   809		return count;
+   810	}
+   811	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
