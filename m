@@ -1,158 +1,92 @@
-Return-Path: <linux-kernel+bounces-547470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C01F0A5099B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:22:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F15EA509C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:23:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01A4C169042
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:22:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9B141702E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBBF0255E51;
-	Wed,  5 Mar 2025 18:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yM7PyJ8X"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41D6255E53
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:18:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E693252905;
+	Wed,  5 Mar 2025 18:22:07 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1CA41FC7D0
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:22:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741198713; cv=none; b=gKRuge8XSi9wUvashcAwSvP0Xm9VJwbXfsgzUDwJP4JH2R3V6XVYq4y1QtEMwnGQzcfRqI0e2Cl87hSk/89tPzD9yVLnGrB7zfD1wfittie2Nb49buur93kbj3F3yJHMFhtwxDzxACcLv+UeLGFNRYERWNk4N3M2jefWps+l48o=
+	t=1741198927; cv=none; b=K6IstplFAieiuL1xEGRTPFLilTxhU4sI1Hi2zLGm+Q3Z7i0sVSe35N9rwvXj8wyaJLsxtYSXk/9eP7krnwa/meQ3f2pUXllqfJ9pGZDrX+asiV40CbW1FyBM0rtLByori9eawv6r9INynxpB2lWpml4H+PzSx55DnYqQr0w7Dr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741198713; c=relaxed/simple;
-	bh=CHVPeNV4aZlMVIMSYfYeSO8Ba+Yk0fM8VLR/eAjSu4I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mCVBscya434vfX/OAVLI7wkrVbOEnWvuCh4d98wWAlyEV80kIXqinuK+PkmWRq3X3Z+rv4MAt4d3p3oC3911vvp3vNQS/vc/482xFxzLl/redig3/JmZKMdlo8mIqF0vdGTnwPJGWPt3TqSCoxDi2CvG5fRkx6lt9XPA1huP6tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yM7PyJ8X; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22401f4d35aso12832985ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 10:18:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741198710; x=1741803510; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=oqKBFVD7BmtZnDhxGEB2Az6asxUlkas0B0Pi0JaurnM=;
-        b=yM7PyJ8X4kk63j4ccy9lJ0gMgtJ5teBQflWki6SSlA+gugv6ZOhbi+XXFQnSP3f1TJ
-         Z6U+mpkx5qRk3MRLL/T0XZggZBuCa6Pobkf+NSrBNmiIkDbs6HH10CDpdor79mZdafrf
-         SHw8QZHVtJt7ODMkHICpOHoBneG+dhYOCD9o/o2koj8poTkM9QegttakW7r7Q5uS8X+8
-         vPULZJ+wCAD1j+yTbCg+0tEIlNNdtPsmDRFpR1uphrFUzVLgVgI02CU1fj62ltwrRYuF
-         whdZeqfJOAmdV6DOr92JhLy6vz20mO099Zm+USL434UxpcOjTRiyIgxFwPhq+vcbHIwu
-         fqNw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741198710; x=1741803510;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oqKBFVD7BmtZnDhxGEB2Az6asxUlkas0B0Pi0JaurnM=;
-        b=Ua6pLNG8daoc5U8994xwFxhX14w0q2i0zNrMLHLkiErEhTAOcW2WHVr5raazpLYtnq
-         ateyh1PGd6iroVyzenwqcbEy7zRug9frjpinSM3HTxHcKLm52s6i78OAwjE0Gnd9zFkP
-         8qdYXQapaHc1bhIYbWZWOz1lhjnI9s1dvT2HR3W40D7lg7ugXpR5n49VX3t69tjkW+PL
-         HtV0VLyQOr7jTFtP9MpAfFb+PoEYh8XXoxS1SqQj9nHGTenNxOdIWqM29re3OAwBD2bF
-         YOb8uzgm74yzZUWHKblh7fQkKgRU7J5wxaHRCj/CGtLI3NJJ0/3MHy5FPjBKWYBci99m
-         Djmw==
-X-Forwarded-Encrypted: i=1; AJvYcCUFQ2+URGpWwbQXLRvUWDHcpnQR6kDZ67cg96HNMURRPgA61pb12wwPUWW8zRYpfR7rFasEm2xrJI3phEA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSSfIACVyV5r7EV6qRQtOV6DIZcItIYhlFnM0UaRzQJvHMjRvd
-	YHdiFR58uCFlhmM0g9awSlg0tadz7r9llpKBcN5kr0aHP8IpfOAn820uPSMRew==
-X-Gm-Gg: ASbGnctEJIED+sM95oSNYa/CLD5LhPXJuC28QAA7rc00oXWbOcixxOCArvutGiNOd5B
-	tMnB1tOo8X/RlXEFEJ0FaJB52BOT+Wag9Tsf+uloFJ+o7mfAgQKtaKqX8g3uLQtHd7oKVQtOnke
-	Lv2xtZnQG+iQWHCgI7nmjZ+epEhRu2azMsXeWPHqn1b/9wMiw6UHeaMTNbidH5eTyKHLgynByE2
-	YNVhD4Bxi8JLsnM9ue073Vzsr28TvZSpomfV+965alnYoG4vbj8UjWzimyiZU/CFN4yYgYQKkl4
-	fLKzCydjQWgCO+uzxkALDPtm/E8UUsAnOL8vXORFMyBzBl9WerCVmxzr
-X-Google-Smtp-Source: AGHT+IHTeeIhNi/0pb7+gb1R76gjf4Wb38QT5wJFtMtan4n6WS8u6zPjBJy02e3tGW2OydQi15Tvtw==
-X-Received: by 2002:a17:903:240a:b0:224:6a7:a5b0 with SMTP id d9443c01a7336-22406a7a82amr15559775ad.2.1741198710127;
-        Wed, 05 Mar 2025 10:18:30 -0800 (PST)
-Received: from thinkpad ([120.60.140.239])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350514239sm116134605ad.219.2025.03.05.10.18.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 10:18:29 -0800 (PST)
-Date: Wed, 5 Mar 2025 23:48:23 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: cros-qcom-dts-watchers@chromium.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Jingoo Han <jingoohan1@gmail.com>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com,
-	quic_mrana@quicinc.com, quic_vpernami@quicinc.com,
-	mmareddy@quicinc.com
-Subject: Re: [PATCH v4 3/4] PCI: dwc: Reduce DT reads by allocating host
- bridge via DWC glue driver
-Message-ID: <20250305181823.ltm54e4yxaj5etw5@thinkpad>
-References: <20250207-ecam_v4-v4-0-94b5d5ec5017@oss.qualcomm.com>
- <20250207-ecam_v4-v4-3-94b5d5ec5017@oss.qualcomm.com>
+	s=arc-20240116; t=1741198927; c=relaxed/simple;
+	bh=l/PkJFK/9HQoD0x4hoRGgG2Dz3UoUWKgmxJNMwGkR4A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r17v0Hl1A65WMWLNXa3t+A1rLD3fy4bEklR0cc0c3U+I1BEAhMKo82BzoE5dlyIdd0skBM10XXuVQdbdB4hpJcx3FEf5fjXvsNBOV2LavIFc6K787wPYXXhGiTXtuT1RazaRJ/RtohqfLJrW1tinN/6VOjRUsNQeBsFp/9Og4P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5733FEC;
+	Wed,  5 Mar 2025 10:22:17 -0800 (PST)
+Received: from [192.168.178.6] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B0BB23F66E;
+	Wed,  5 Mar 2025 10:22:02 -0800 (PST)
+Message-ID: <4394f2a7-b4e8-419a-a299-f1afa560c944@arm.com>
+Date: Wed, 5 Mar 2025 19:22:00 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250207-ecam_v4-v4-3-94b5d5ec5017@oss.qualcomm.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/uclamp: Let each sched_class handle uclamp
+To: Hongyan Xia <hongyan.xia2@arm.com>, Ingo Molnar <mingo@redhat.com>,
+ Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+ Vincent Guittot <vincent.guittot@linaro.org>,
+ Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+ Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
+ Tejun Heo <tj@kernel.org>, David Vernet <void@manifault.com>,
+ Andrea Righi <arighi@nvidia.com>, Changwoo Min <changwoo@igalia.com>
+Cc: linux-kernel@vger.kernel.org
+References: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
+From: Dietmar Eggemann <dietmar.eggemann@arm.com>
+Content-Language: en-US
+In-Reply-To: <84441660bef0a5e67fd09dc3787178d0276dad31.1740664400.git.hongyan.xia2@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Feb 07, 2025 at 04:58:58AM +0530, Krishna Chaitanya Chundru wrote:
-> dw_pcie_ecam_supported() needs to read bus-range to find the maximum
-> bus range value. The devm_pci_alloc_host_bridge() is already reading
-> bus range and storing it in host bridge.If devm_pci_alloc_host_bridge()
-> moved to start of the controller probe, the dt reading can be avoided
-> and use values stored in the host bridge.
-> 
-> Allow DWC glue drivers to allocate the host bridge, avoiding redundant
-> device tree reads primarily in dw_pcie_ecam_supported().
-> 
-> Suggested-by: Bjorn Helgaas <bhelgaas@google.com>
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ---
->  drivers/pci/controller/dwc/pcie-designware-host.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/dwc/pcie-designware-host.c b/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 826ff9338646..a18cb1e411e4 100644
-> --- a/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ b/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -484,8 +484,8 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  	struct device *dev = pci->dev;
->  	struct device_node *np = dev->of_node;
->  	struct platform_device *pdev = to_platform_device(dev);
-> +	struct pci_host_bridge *bridge = pp->bridge;
->  	struct resource_entry *win;
-> -	struct pci_host_bridge *bridge;
->  	struct resource *res;
->  	int ret;
->  
-> @@ -527,7 +527,12 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  	if (!bridge)
->  		return -ENOMEM;
->  
-> -	pp->bridge = bridge;
-> +	if (!pp->bridge) {
+On 27/02/2025 14:54, Hongyan Xia wrote:
 
-'pp->bridge' is getting dereferenced above as I indicated in patch 1.
+[...]
 
-> +		bridge = devm_pci_alloc_host_bridge(dev, 0);
-> +		if (!bridge)
-> +			return -ENOMEM;
-> +		pp->bridge = bridge;
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 857808da23d8..7e5a653811ad 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -6941,8 +6941,10 @@ enqueue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+>  	 * Let's add the task's estimated utilization to the cfs_rq's
+>  	 * estimated utilization, before we update schedutil.
+>  	 */
+> -	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE))))
+> +	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & ENQUEUE_RESTORE)))) {
+> +		uclamp_rq_inc(rq, p);
+>  		util_est_enqueue(&rq->cfs, p);
+> +	}
 
-There is already a previous devm_pci_alloc_host_bridge() call before this and
-you are just duplicating the code here.
+So you want to have p uclamp-enqueued so that its uclamp_min value
+counts for the cpufreq_update_util()/cfs_rq_util_change() calls later in
+enqueue_task_fair?
 
-- Mani
+  if (p->in_iowait)
+    cpufreq_update_util(rq, SCHED_CPUFREQ_IOWAIT);
 
--- 
-மணிவண்ணன் சதாசிவம்
+  enqueue_entity() -> update_load_avg() -> cfs_rq_util_change() ->
+  cpufreq_update_util()
+
+But if you do this before requeue_delayed_entity() (1) you will not
+uclamp-enqueue p which got his ->sched_delayed just cleared in (1)?
+
+[...]
 
