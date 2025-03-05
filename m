@@ -1,217 +1,118 @@
-Return-Path: <linux-kernel+bounces-546790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E785A4FEC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:38:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56401A4FEC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:38:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E1287A813E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:37:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C032189511E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:38:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85DB02459CC;
-	Wed,  5 Mar 2025 12:37:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D202475E8;
+	Wed,  5 Mar 2025 12:37:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Pt8WYRXD"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Twpy4oN/"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB97124503E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5E8F2459F4
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178252; cv=none; b=cZoU856LCE2jX80GfRd+XxUSBLTxKoSWG0rLbdNJFnXBIwtX3UltsR1M696ZXaVEAEQ0ZwovzoknNALzGPx5EwfAHQhpU3k82jU2f5k630ByrS1+llcmVZ/JV0VqQt+umHQI3mUXKU5c6rT5QCJyFP3i/ZmQM5ZUN3rJsg1+Kgk=
+	t=1741178257; cv=none; b=FvV7HPlIy3dK/LggXTPsY+8blhFdmGvPi4BjdfVkSjK7XYPHhn2Of0PLxT3wUzxIwkIO/c1JULqP9XbI32oOTqkI2zITqnvS8Uh/piZDc+opHMkCm9b+dPCy10g09CJ3BUVP2NHf1tVTWQr2grP1cwuzSNTe72IxVMBp4l4KsGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178252; c=relaxed/simple;
-	bh=OtJFU5RFSF/iU9HnbJIYxncMmtViUwvZNHatBwiB638=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=to3PEZngp2corfFdUj5W59lFCTztM3k+pFO85bSYqyjl8tv33VWfsL/tDOqS/RuRgrr9IMkzVMOShgGlosJfV1LwVlJD7kkJFdFt2olid39ZyORkZQAgHy/XrOa7WvEy5tQQGFmN22JGMLm9yMXFqYY/gmNolP72nIqHo7vMIJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Pt8WYRXD; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741178249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=EZduhyNOp254MaPFfXIPaYa8kRm3c1WjabQs6DC6fI0=;
-	b=Pt8WYRXDqqhr2hlm4pF/AEuy0q/sHyhjZn1FVqN0LwJGElWQWmx4t747NINCLQrdn4Tgt6
-	h9ZGZwQArtrAWzGM72A2S59U4RYGogZDJCH3mS93Qp+7XYRhDzngu8d5z1um0F1MWmpfy3
-	z6AhTRgb4GLUy97ApVS6zpiMeT0BDeo=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-149-ibpPt9VsO-iXHgqmpj8QAg-1; Wed,
- 05 Mar 2025 07:37:24 -0500
-X-MC-Unique: ibpPt9VsO-iXHgqmpj8QAg-1
-X-Mimecast-MFC-AGG-ID: ibpPt9VsO-iXHgqmpj8QAg_1741178242
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 77EDD19560A2;
-	Wed,  5 Mar 2025 12:37:21 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.32])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 46AD2193EFD8;
-	Wed,  5 Mar 2025 12:37:18 +0000 (UTC)
-Date: Wed, 5 Mar 2025 20:37:13 +0800
-From: Baoquan He <bhe@redhat.com>
-To: steven chen <chenste@linux.microsoft.com>
-Cc: zohar@linux.ibm.com, stefanb@linux.ibm.com,
-	roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-	eric.snowberg@oracle.com, ebiederm@xmission.com,
-	paul@paul-moore.com, code@tyhicks.com, bauermann@kolabnow.com,
-	linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-	madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-	James.Bottomley@hansenpartnership.com, vgoyal@redhat.com,
-	dyoung@redhat.com
-Subject: Re: [PATCH v9 3/7] ima: kexec: skip IMA segment validation after
- kexec soft reboot
-Message-ID: <Z8hFeYKVraybzy10@MiWiFi-R3L-srv>
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
- <20250304190351.96975-4-chenste@linux.microsoft.com>
+	s=arc-20240116; t=1741178257; c=relaxed/simple;
+	bh=l53mtTm1nvomhA7dpzGfvMPDXgd66j/IsHSn2dDcCv8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KyaxC1u0mOuO+ziWGvQts8n6fMIaF26+WT3tCE4zEU7o/PsfXApWbsok5hKtE4PAZ2QVmLkiRS7nKTLuIPo/QzvOuhACsldC+A1gp34ymPVcDHoLPy+fWM2rIjSCi0Ad8Br3JcRc2BFdtbTqVtsJ2/zwO7O3Zx3ilu9CN46vE3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Twpy4oN/; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741178252; x=1741437452;
+	bh=uNHoSRbX257IpSfUVe2wyy5qbNguq0YknAjDzbCQFyM=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Twpy4oN/UbcDY9/fV3ZjeFLamZ9bXT233X/rr6Af7v17pFZu2EYj1Fcnz+EyWSddE
+	 1UMHEff8WQkC8uz2jZmsrXcG8ZqRExaCQoMNeW3tBD+9s7hlQOlaSc5wriCUq0N+bE
+	 EBcfCI/qDYJKeYDRt2hz5j4SgeN1jW95dCv1jj75sduiKEM+xVfe3z8Rl5+Kg6Mzd9
+	 qC7TLrG9MuOlaR3083BJwZdBylA1/1mezl++R6utto36p3pfUBqMZdLENcgniAB9fc
+	 9EaodDVPC0BCCFxA2WXsKIdvEw9CdELjwgEg+Kz7HC6q2N/4NZQUr5DIab30y6vFqy
+	 NT+etn7h1kSgA==
+Date: Wed, 05 Mar 2025 12:37:24 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/22] rust: pin-init: move `InPlaceInit` and impls of `InPlaceWrite` into the kernel crate
+Message-ID: <D88C68C0N7RH.2EZYDFGZDNUYY@proton.me>
+In-Reply-To: <87r03bbr0w.fsf@kernel.org>
+References: <20250304225245.2033120-1-benno.lossin@proton.me> <iamkKusKoPQ37SKTEy2SbZjH0szdD4f3Zss6AcRF5jAkltpuR9blYqQ3Qc0Vd_gJBwPbefblnClu4okTA-TLLg==@protonmail.internalid> <20250304225245.2033120-9-benno.lossin@proton.me> <87frjrene8.fsf@kernel.org> <yOvQB5qHfHQi6IYDiDOUtboOxQ-0xzUQZNt63_wDaqGcBbQeUy87JtAW-euoLQvXgZYu9JbaqpsDGyGaZXRJCw==@protonmail.internalid> <D88BIUUNXQK5.3BFLFUBWAS0H2@proton.me> <87r03bbr0w.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 25ade23883a253c33a9527c1515d0cc05176f208
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304190351.96975-4-chenste@linux.microsoft.com>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 03/04/25 at 11:03am, steven chen wrote:
-> The kexec_calculate_store_digests() function calculates and stores the
-> digest of the segment during the kexec_file_load syscall, where the 
-> IMA segment is also allocated.
-> 
-> With this series, the IMA segment will be updated with the measurement 
-> log at the kexec execute stage when a soft reboot is initiated. 
-> Therefore, the digests should be updated for the IMA segment in the 
-> normal case.
-> 
-> The content of memory segments carried over to the new kernel during the
-> kexec systemcall can be changed at kexec 'execute' stage, but the size
-> and the location of the memory segments cannot be changed at kexec
-> 'execute' stage.
-> 
-> However, during the kexec execute stage, if kexec_calculate_store_digests()
-> API is call to update the digest, it does not reuse the same memory segment
-         ~ called
-> allocated during the kexec 'load' stage and the new memory segment required
-> cannot be transferred/mapped to the new kernel.
-> 
-> As a result, digest verification will fail in verify_sha256_digest() 
-> after a kexec soft reboot into the new kernel. Therefore, the digest
-> calculation/verification of the IMA segment needs to be skipped.
-> 
-> To address this, skip the calculation and storage of the digest for the
-> IMA segment in kexec_calculate_store_digests() so that it is not added 
-> to the purgatory_sha_regions.
-> 
-> Since verify_sha256_digest() only verifies 'purgatory_sha_regions',
-> no change is needed in verify_sha256_digest() in this context.
-> 
-> With this change, the IMA segment is not included in the digest
-> calculation, storage, and verification.
-> 
-> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
-> Cc: Eric Biederman <ebiederm@xmission.com>
-> Cc: Baoquan He <bhe@redhat.com> 
-> Cc: Vivek Goyal <vgoyal@redhat.com>
-> Cc: Dave Young <dyoung@redhat.com>
-> Signed-off-by: steven chen <chenste@linux.microsoft.com>
-> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> Reviewed-by: Mimi Zohar <zohar@linux.ibm.com>
-> ---
->  include/linux/kexec.h              |  3 +++
->  kernel/kexec_file.c                | 22 ++++++++++++++++++++++
->  security/integrity/ima/ima_kexec.c |  3 +++
->  3 files changed, 28 insertions(+)
+On Wed Mar 5, 2025 at 1:28 PM CET, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
+>
+>> On Wed Mar 5, 2025 at 12:18 PM CET, Andreas Hindborg wrote:
+>>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>>
+>>>> In order to make pin-init a standalone crate, move kernel-specific cod=
+e
+>>>> directly into the kernel crate. This includes the `InPlaceInit<T>`
+>>>> trait, its implementations and the implementations of `InPlaceWrite` f=
+or
+>>>> `Arc` and `UniqueArc`. All of these use the kernel's error type which
+>>>> will become unavailable in pin-init.
+>>>>
+>>>> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+>>>> ---
+>>>>  rust/kernel/alloc/kbox.rs |   3 +-
+>>>>  rust/kernel/init.rs       |  55 +++++++++++++++++
+>>>>  rust/kernel/prelude.rs    |   3 +-
+>>>>  rust/kernel/sync/arc.rs   |  65 +++++++++++++++++++-
+>>>>  rust/pin-init/src/lib.rs  | 125 ++-----------------------------------=
+-
+>>>>  5 files changed, 127 insertions(+), 124 deletions(-)
+>>>>
+>>>
+>>> [...]
+>>>
+>>>> --- a/rust/pin-init/src/lib.rs
+>>>> +++ b/rust/pin-init/src/lib.rs
+>>>> @@ -10,7 +10,7 @@
+>>>>  //! To initialize a `struct` with an in-place constructor you will ne=
+ed two things:
+>>>>  //! - an in-place constructor,
+>>>>  //! - a memory location that can hold your `struct` (this can be the =
+[stack], an [`Arc<T>`],
+>>>> -//!   [`UniqueArc<T>`], [`KBox<T>`] or any other smart pointer that i=
+mplements [`InPlaceInit`]).
+>>>> +//!   [`KBox<T>`] or any other smart pointer that supports this libra=
+ry).
+>>>
+>>> Would you not want to remove references to `KBox` here as well? Even
+>>> though you don't have to move the impl, I don't imagine `KBox` exist in
+>>> user space?
+>>
+>> Yes, this is done in "rust: pin-init: fix documentation links".
+>
+> Yea, maybe I should have read the entire thing before firing off emails.
 
-Other than the nit, LGTM.
+No worries, happens to me as well :)
 
-> 
-> diff --git a/include/linux/kexec.h b/include/linux/kexec.h
-> index 7d6b12f8b8d0..107e726f2ef3 100644
-> --- a/include/linux/kexec.h
-> +++ b/include/linux/kexec.h
-> @@ -362,6 +362,9 @@ struct kimage {
->  
->  	phys_addr_t ima_buffer_addr;
->  	size_t ima_buffer_size;
-> +
-> +	unsigned long ima_segment_index;
-> +	bool is_ima_segment_index_set;
->  #endif
->  
->  	/* Core ELF header buffer */
-> diff --git a/kernel/kexec_file.c b/kernel/kexec_file.c
-> index 3eedb8c226ad..606132253c79 100644
-> --- a/kernel/kexec_file.c
-> +++ b/kernel/kexec_file.c
-> @@ -38,6 +38,21 @@ void set_kexec_sig_enforced(void)
->  }
->  #endif
->  
-> +#ifdef CONFIG_IMA_KEXEC
-> +static bool check_ima_segment_index(struct kimage *image, int i)
-> +{
-> +	if (image->is_ima_segment_index_set && i == image->ima_segment_index)
-> +		return true;
-> +	else
-> +		return false;
-> +}
-> +#else
-> +static bool check_ima_segment_index(struct kimage *image, int i)
-> +{
-> +	return false;
-> +}
-> +#endif
-> +
->  static int kexec_calculate_store_digests(struct kimage *image);
->  
->  /* Maximum size in bytes for kernel/initrd files. */
-> @@ -764,6 +779,13 @@ static int kexec_calculate_store_digests(struct kimage *image)
->  		if (ksegment->kbuf == pi->purgatory_buf)
->  			continue;
->  
-> +		/*
-> +		 * Skip the segment if ima_segment_index is set and matches
-> +		 * the current index
-> +		 */
-> +		if (check_ima_segment_index(image, i))
-> +			continue;
-> +
->  		ret = crypto_shash_update(desc, ksegment->kbuf,
->  					  ksegment->bufsz);
->  		if (ret)
-> diff --git a/security/integrity/ima/ima_kexec.c b/security/integrity/ima/ima_kexec.c
-> index 6195df128482..0465beca8867 100644
-> --- a/security/integrity/ima/ima_kexec.c
-> +++ b/security/integrity/ima/ima_kexec.c
-> @@ -169,6 +169,7 @@ void ima_add_kexec_buffer(struct kimage *image)
->  	kbuf.buffer = kexec_buffer;
->  	kbuf.bufsz = kexec_buffer_size;
->  	kbuf.memsz = kexec_segment_size;
-> +	image->is_ima_segment_index_set = false;
->  	ret = kexec_add_buffer(&kbuf);
->  	if (ret) {
->  		pr_err("Error passing over kexec measurement buffer.\n");
-> @@ -179,6 +180,8 @@ void ima_add_kexec_buffer(struct kimage *image)
->  	image->ima_buffer_addr = kbuf.mem;
->  	image->ima_buffer_size = kexec_segment_size;
->  	image->ima_buffer = kexec_buffer;
-> +	image->ima_segment_index = image->nr_segments - 1;
-> +	image->is_ima_segment_index_set = true;
->  
->  	/*
->  	 * kexec owns kexec_buffer after kexec_add_buffer() is called
-> -- 
-> 2.25.1
-> 
+---
+Cheers,
+Benno
 
 
