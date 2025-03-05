@@ -1,290 +1,169 @@
-Return-Path: <linux-kernel+bounces-547000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A19A501A5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:19:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EA6EA501AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:20:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D22E1896085
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:19:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C68F81892210
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:20:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254D524BC15;
-	Wed,  5 Mar 2025 14:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BE5124C076;
+	Wed,  5 Mar 2025 14:19:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Sh50veTd"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="S7w4FCBd"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAC4C2ED;
-	Wed,  5 Mar 2025 14:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6429BC2ED;
+	Wed,  5 Mar 2025 14:19:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184333; cv=none; b=GXV+QOEVwX8rAyWrxcDjmNdo8BPwpTBlrqpj7qm5TVMcb7+WiVbgxXdRHYsMWZe6FuVWb8zzpa8WTUxoKZi4gfoEXy2PvQzZfCCHIVOhUmxFXt3otwZtFPdehY1FAKGIUyRTLfqvrF4CBsWaywHygtLu5yBeozwa3SKdMgsSoFo=
+	t=1741184386; cv=none; b=tSaUIDXPR6pzyQ3iC4yKQ0/hFZFLXQqXUtLCmp7U2luG70CdBRWiCmx5EmmUItNIsOxaGULpvbJqu6RUXMAwJT7OoNlkaGxGFLai/t+/X0XCFEJMXZQZV3mCseZbx1LgKp6cpkc3cEynycQ4VgGLq3bs5TpDGKmDAZ3HdQfD6V0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184333; c=relaxed/simple;
-	bh=0J92A5LvTsuUoj8S58HAT5l2cuzaDjiqZLtyLWAyTe0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mvVwLFkUNpn17rSq4rzUcU04dmHKY2qRdExeGp14w6yjlpmku4NzyiUpLfkiUadn+ZhTbv4JgnzQ6ChCQOCrPbkgAv8Qici7RrYSTyOmUp2zrpxBs8NvocTpW4vbW61K0mVKzYf37W3v0ba1p1BX05hwKIJNFAbjQwtdpedwtBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Sh50veTd; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4394a823036so63108755e9.0;
-        Wed, 05 Mar 2025 06:18:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741184329; x=1741789129; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uVxEKUGPmST9SVCsY1zuL15uHcxYusVnASOLADTY7W0=;
-        b=Sh50veTdbwVEH50375/nXG0ZvMUQ0RzWIyTpp7RJcQheZrRSSHpMBVUftGVS86BHZT
-         eAyPpTziUz+n/ETFwLSKIGK5ntzXrko8MTBg41/qH7B5Gpyst6zX22eWcPbJyM+35/T3
-         ZjD5Xfl2XHYrVROikgHHuanhtZ5VArWIOH9B/HbXLt1tI4MJoC4xdVahpL8OWkQOL1bd
-         kMn1miWeMRWYMsEiZezJFlUcdaWaxJmgVOwnS6BpTg9gJvSog6tVfayLeudeUpF9bPPP
-         5tjRls60oh/+Qr094UrKiabnDTeyQDfI3+ELWSU8+zM9nEYPmqGnBPjYEWf77l+u2OpJ
-         e8gw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741184329; x=1741789129;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uVxEKUGPmST9SVCsY1zuL15uHcxYusVnASOLADTY7W0=;
-        b=doGm99E360x3SvhumYMdFX9JyjPM3qCt2laADpTXL9hn9Mwku3nS4MB2PAKtcOm1/5
-         N6Ying4ZHfNK0SCVrnGNHTdIeFRRKY/bXYNjjQNyOkq7cjXGWqfzWqOtDTo9DbDc3wsp
-         kLE8DyzKjTdDtxvD8rs23e0Oow/YAUstKhqYXdqQMOUgvs7dD/Wvx5xxfW3ZsqTeQXXp
-         EIcy0SxOvWfVHWcAQTQt8YqXUVWPxVDFABusAVl3WPdChb21OuJ/JAe5+iPRO1JZedF+
-         ZxTJ0ZvrlmbMGVJEotRTU0F9k3RRYeN9Kz/n0r9ZG7837cWuvoEN5ATZYAqZj0kMsEEj
-         gFUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUbtm5lnTVnsAAf1WzMm27GD9sx/Eh7vxLjQQatL1I7pd9bsdrJAHLALVnGiKfsyJZMo6VtFhpWH0SF+qE=@vger.kernel.org, AJvYcCVe4+Kxj1vESgkhoJA7vZ6y77l8mR27iR/Jy/FBZ9KMHjepwXwmpP8/t5tWGWx7cp9bLfXdU1/9mWjw7gbF@vger.kernel.org, AJvYcCWQnQtT3WkO2HZxEXirCE8eA4vh0ldcSH/74HuY+E4oyUUSD0qke7kX+SzzBQz/5BmRl7nr2vMAHH3S@vger.kernel.org, AJvYcCWRM2vOUkbJqe+HevfMYqLlqvaldxTSCcku7TXlg0CbhLNCd/YOSGmDq+NB5mt8S6st3q0EG+CtcQzl@vger.kernel.org, AJvYcCX5gEjJgEwK18u+iKmPiyxud4BjNEgvKtxb1iXg7ATBPzH6e6OA1kvYqUY1MpF4D5o7XgBfc1Xpz/nN9g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yys+tHfcUM+RTFV173dwROAz/z+ccelLUSAedGYM8g3Y7L834wJ
-	bLyH+mQvWwG/vNZBZLrCXI26A37Mz4Tt+kq+Mc9ubQ+BD0Scw/xG1J+lA3wgX+lYUwWLXtcPAi0
-	ivFpRzu6/n4Z8SPjXwptLf+8uuqw=
-X-Gm-Gg: ASbGncsrhrgp5fdMcgB2GiBt+1yQkwTwodzEYVvFJB+2fGyaMocERjo71Pxxr9dG0WO
-	bMIXa9rGfV7KjVdfjjTWuCtWh5j5PkiKE7b91Y84QTDAe43HxD1H4Q6HOkrzePYo8gTZJa7qtY1
-	Ox6hFH3/6LVRWpu9ucm5CjAW9rNnI=
-X-Google-Smtp-Source: AGHT+IGtt5kKKBiJjBbm2DU1GbYl+vKb+nT4lkgnAmQUxI2KsqJnS5S/wjYJqyjYIYU15T1CQievr7HPF4XKPY8Qlu8=
-X-Received: by 2002:a5d:5986:0:b0:38d:d664:67d8 with SMTP id
- ffacd0b85a97d-3911f7200cbmr2836278f8f.11.1741184329266; Wed, 05 Mar 2025
- 06:18:49 -0800 (PST)
+	s=arc-20240116; t=1741184386; c=relaxed/simple;
+	bh=9h8JYw79AeYdd1PACJ3GnM6FZYS0z3cvnIAcFNoR+lA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uYQQwonVR+SNW3V3P0dYRW1YHjP5Xv1ziDx3o67PKdb6RhMicDP8UrHs5GCS6y8QoWwDQhCYEs7qG0991Rp271Gh8LS2ePj4I56aYn9E2Rj5mATwpxq7XXhXkzKoqLpEWr7Lv/kmmzzt6a6S1VIi97JyjzekRZqfbOcZHDpB0U4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=S7w4FCBd; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 48B3B44113;
+	Wed,  5 Mar 2025 14:19:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741184382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=YY4Pp+CzXGStQ9eEENpuYpVt2ERsOCjh5tfjvgZMmCk=;
+	b=S7w4FCBdwNrZeSsprQWO8JntEcQMcq0RLJjZLZf5MSJhvF7zYCuP5/sqYWfqWQXBjyhU+v
+	78OpFEnsC5hD2uIqed0xkZKSHC6KNPdtlaRsbfu1ElwAPtjdkiG3kzHFJ4pyKRamZqpQKB
+	FW18ZJhYra6vlFB4yNFmt8vCLSrJRTv7lc86bTZdF2ygxCBnDUC1+3ODmzAMe/hrAn1k8A
+	EQqFvAjkzon8tWFnFbHXnfGYSg0Ec3iz1CLd3EsV3j36aUjkQfFr/edHkW+zL/CtH6Z/Yd
+	PdTW4ElgGQRmRGgvGJHBJlkDhKx3HCHIhjNQJlnVnEvFJ+Yn9ddwef6esQup4Q==
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net,
+	Andrew Lunn <andrew@lunn.ch>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>
+Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	thomas.petazzoni@bootlin.com,
+	linux-arm-kernel@lists.infradead.org,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Herve Codina <herve.codina@bootlin.com>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Simon Horman <horms@kernel.org>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
+Subject: [PATCH net-next 0/7] net: ethtool: Introduce ethnl dump helpers
+Date: Wed,  5 Mar 2025 15:19:30 +0100
+Message-ID: <20250305141938.319282-1-maxime.chevallier@bootlin.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224114815.146053-1-clamor95@gmail.com> <20250224114815.146053-3-clamor95@gmail.com>
- <20250228085927.GM824852@google.com> <CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
- <20250305134455.2843f603@jic23-huawei>
-In-Reply-To: <20250305134455.2843f603@jic23-huawei>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 5 Mar 2025 16:18:38 +0200
-X-Gm-Features: AQ5f1JpXA6J5TL49b1DAVq6n5wnuuTukD3GyYGoSYEpxJIiUmzK9BkiZvUPOFTs
-Message-ID: <CAPVz0n3Qt00my1ejoyEgxTRi-mQszHybwhPq70eO=94oxMfECQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] mfd: lm3533: convert to use OF
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, Daniel Thompson <danielt@kernel.org>, 
-	Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-leds@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdehtdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffoggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeeiueduleekjeeigeeffeelgfehvedufeejueevgeekgfdtjedtteekffffheejnecuffhomhgrihhnpehgihhthhhusgdrtghomhenucfkphepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvpdhhvghlohepfhgvughorhgrrdhhohhmvgdpmhgrihhlfhhrohhmpehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvuddprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepkhhusggrsehkvghrnhgvl
+ hdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhmpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtghomhdprhgtphhtthhopehhkhgrlhhlfigvihhtudesghhmrghilhdrtghomhdprhgtphhtthhopehmrgigihhmvgdrtghhvghvrghllhhivghrsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-=D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 15:45 Jonat=
-han Cameron <jic23@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Fri, 28 Feb 2025 11:30:51 +0200
-> Svyatoslav Ryhel <clamor95@gmail.com> wrote:
->
-> > =D0=BF=D1=82, 28 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 10:59 =
-Lee Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> > >
-> > > On Mon, 24 Feb 2025, Svyatoslav Ryhel wrote:
-> > >
-> > > > Remove platform data and fully relay on OF and device tree
-> > > > parsing and binding devices.
-> > > >
-> > > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > > ---
-> > > >  drivers/iio/light/lm3533-als.c      |  40 ++++---
-> > > >  drivers/leds/leds-lm3533.c          |  46 +++++---
-> > > >  drivers/mfd/lm3533-core.c           | 159 ++++++++----------------=
-----
-> > > >  drivers/video/backlight/lm3533_bl.c |  71 ++++++++++---
-> > > >  include/linux/mfd/lm3533.h          |  35 +-----
-> > > >  5 files changed, 164 insertions(+), 187 deletions(-)
-> > > >
-...
-> > > >       /* ALS input is always high impedance in PWM-mode. */
-> > > > -     if (!pdata->pwm_mode) {
-> > > > -             ret =3D lm3533_als_set_resistor(als, pdata->r_select)=
-;
-> > > > +     if (!als->pwm_mode) {
-> > > > +             ret =3D lm3533_als_set_resistor(als, als->r_select);
-> > >
-> > > You're already passing 'als'.
-> > >
-> > > Just teach lm3533_als_set_resistor that 'r_select' is now contained.
-> > >
-> >
-> > This is not scope of this patchset. I was already accused in too much
-> > changes which make it unreadable. This patchset is dedicated to
-> > swapping platform data to use of the device tree. NOT improving
-> > functions, NOT rewriting arbitrary mechanics. If you feed a need for
-> > this change, then propose a followup. I need from this driver only one
-> > thing, that it could work with device tree. But it seems that it is
-> > better that it just rots in the garbage bin until removed cause no one
-> > cared.
->
-> This is not an unreasonable request as you added r_select to als.
-> Perhaps it belongs in a separate follow up patch.
+Hi everyone,
 
-I have just moved values used in pdata to private structs of each
-driver. Without changing names or purpose.
+This series adds some scaffolding into ethnl to ease the support of
+DUMP operations.
 
-> However
-> it is worth remembering the motivation here is that you want get
-> this code upstream, the maintainers don't have that motivation.
+As of today when using ethnl's default ops, the DUMP requests will
+simply perform a GET for each netdev.
 
-This driver is already upstream and it is useless and incompatible
-with majority of supported devices. Maintainers should encourage those
-who try to help and instead we have what? A total discouragement. Well
-defined path into nowhere.
+That hits limitations for commands that may return multiple messages for
+a single netdev, such as :
 
->
-> Greg KH has given various talks on the different motivations in the
-> past. It maybe worth a watch.
->
->
-> >
-> > > >               if (ret)
-> > > >                       return ret;
-> > > >       }
-> > > > @@ -828,22 +833,16 @@ static const struct iio_info lm3533_als_info =
-=3D {
-> > > >
-> > > >  static int lm3533_als_probe(struct platform_device *pdev)
-> > > >  {
-> > > > -     const struct lm3533_als_platform_data *pdata;
-> > > >       struct lm3533 *lm3533;
-> > > >       struct lm3533_als *als;
-> > > >       struct iio_dev *indio_dev;
-> > > > +     u32 val;
-> > >
-> > > Value of what, potatoes?
-> > >
-> >
-> > Oranges.
->
-> A well named variable would avoid need for any discussion of
-> what it is the value of.
->
+ - RSS (listing contexts)
+ - All PHY-specific commands (PLCA, PSE-PD, phy)
+ - tsinfo (one item for the netdev +  one per phy)
 
-This is temporary placeholder used to get values from the tree and
-then pass it driver struct.
+ Commands that need a non-default DUMP support have to re-implement
+ ->dumpit() themselves, which prevents using most of ethnl's internal
+ circuitry.
 
-> >
-> > > >       int ret;
-> > > >
-> > > >       lm3533 =3D dev_get_drvdata(pdev->dev.parent);
-> > > >       if (!lm3533)
-> > > >               return -EINVAL;
-> > > >
-> > > > -     pdata =3D dev_get_platdata(&pdev->dev);
-> > > > -     if (!pdata) {
-> > > > -             dev_err(&pdev->dev, "no platform data\n");
-> > > > -             return -EINVAL;
-> > > > -     }
-> > > > -
-> > > >       indio_dev =3D devm_iio_device_alloc(&pdev->dev, sizeof(*als))=
-;
-> > > >       if (!indio_dev)
-> > > >               return -ENOMEM;
-> > > > @@ -864,13 +863,21 @@ static int lm3533_als_probe(struct platform_d=
-evice *pdev)
-> > > >
-> > > >       platform_set_drvdata(pdev, indio_dev);
-> > > >
-> > > > +     val =3D 200 * KILO; /* 200kOhm */
-> > >
-> > > Better to #define magic numbers; DEFAULT_{DESCRIPTION}_OHMS
-> > >
-> >
-> > Why? that is not needed.
-> If this variable had a more useful name there would be no need for
-> the comment either.
->
->         val_resitor_ohms =3D 200 * KILLO;
->
-> or similar.
->
+This series therefore introduces a better support for dump operations in
+ethnl.
 
-So I have to add a "reasonably" named variable for each property I
-want to get from device tree? Why? It seems to be a bit of overkill,
-no? Maybe I am not aware, have variables stopped being reusable?
+The patches 1 and 2 introduce the support for filtered DUMPs, where an
+ifindex/ifname can be passed in the request header for the DUMP
+operation. This is for when we want to dump everything a netdev
+supports, but without doing so for every single netdev. ethtool's
+"--show-phys ethX" option for example performs a filtered dump.
 
-> >
-> > > > +     device_property_read_u32(&pdev->dev, "ti,resistor-value-ohm",=
- &val);
-> > > > +
-> > > > +     /* Convert resitance into R_ALS value with 2v / 10uA * R */
-> > >
-> > > Because ...
-> > >
-> >
-> > BACAUSE the device DOES NOT understand human readable values, only 0s
-> > and 1s, hence mOhms must be converted into value lm3533 chip can
-> > understand.
-> A comment that gave the motivation would be much more useful than
-> repeating the maths.
->
-> /* Convert resistance to equivalent register value */
->
+Patch 3 introduces 3 new ethnl ops : 
+ ->dump_start() to initialize a dump context
+ ->dump_one_dev(), that can be implemented per-command to dump
+ everything on a given netdev
+ ->dump_done() to release the context
 
-ok, this is reasonable.
+The default behaviour for dumps remains the same, calling the whole
+->doit() path for each netdev.
 
-> >
-> > > > +     als->r_select =3D DIV_ROUND_UP(2 * MICRO, 10 * val);
-> > > > +
-> > > > +     als->pwm_mode =3D device_property_read_bool(&pdev->dev, "ti,p=
-wm-mode");
-> > > > +
-> > > >       if (als->irq) {
-> > > >               ret =3D lm3533_als_setup_irq(als, indio_dev);
-> > > >               if (ret)
-> > > >                       return ret;
-> > > >       }
-> > > >
-> > > > -     ret =3D lm3533_als_setup(als, pdata);
-> > > > +     ret =3D lm3533_als_setup(als);
-> > > >       if (ret)
-> > > >               goto err_free_irq;
-> > > >
-> > > > @@ -907,9 +914,16 @@ static void lm3533_als_remove(struct platform_=
-device *pdev)
-> > > >               free_irq(als->irq, indio_dev);
-> > > >  }
-> > > >
-> > > > +static const struct of_device_id lm3533_als_match_table[] =3D {
-> > > > +     { .compatible =3D "ti,lm3533-als" },
-> > > > +     { }
-> > > > +};
-> > > > +MODULE_DEVICE_TABLE(of, lm3533_als_match_table);
-> > > > +
-> > > >  static struct platform_driver lm3533_als_driver =3D {
-> > > >       .driver =3D {
-> > > >               .name   =3D "lm3533-als",
-> > > > +             .of_match_table =3D lm3533_als_match_table,
-> > > >       },
-> > > >       .probe          =3D lm3533_als_probe,
-> > > >       .remove         =3D lm3533_als_remove,
->
-> Anyhow, I'm short on time so only looking at the IIO related part.
->
-> Jonathan
+Patch 4 introduces a set of ->dump_start(), ->dump_one_dev() and
+->dump_done() callback implementations that can simply be plugged into
+the existing commands that list objects per-phy, making the 
+phy-targeting command behaviour more coherent.
+
+Patch 5 uses that new set of helpers to rewrite the phy.c support, which
+now uses the regulat ethnl_ops instead of fully custom genl ops. This
+one is the hardest to review, sorry about that, I couldn't really manage
+to incrementally rework that file :(
+
+Patches 6 and 7 are where the new dump infra shines, adding per-netdev
+per-phy dump support for PLCA and PSE-PD.
+
+We could also consider converting tsinfo/tsconfig, rss and tunnels to
+these new ->dump_***() operations as well, but that's out of this
+series' scope.
+
+I've tested that series with some netdevsim PHY patches that I plan to
+submit (they can be found here [1]), with the refcount tracker
+for net/netns enabled to make sure the lock usage is somewhat coherent.
+
+Thanks,
+
+Maxime
+
+[1]: https://github.com/minimaxwell/linux/tree/mc/netdevsim-phy
+
+
+
+Maxime Chevallier (7):
+  net: ethtool: netlink: Allow per-netdevice DUMP operations
+  net: ethtool: netlink: Rename ethnl_default_dump_one
+  net: ethtool: netlink: Introduce command-specific dump_one_dev
+  net: ethtool: netlink: Introduce per-phy DUMP helpers
+  net: ethtool: phy: Convert the PHY_GET command to generic phy dump
+  net: ethtool: plca: Use per-PHY DUMP operations
+  net: ethtool: pse-pd: Use per-PHY DUMP operations
+
+ net/ethtool/netlink.c | 161 ++++++++++++++------
+ net/ethtool/netlink.h |  46 +++++-
+ net/ethtool/phy.c     | 335 ++++++++++++------------------------------
+ net/ethtool/plca.c    |  12 ++
+ net/ethtool/pse-pd.c  |   6 +
+ 5 files changed, 277 insertions(+), 283 deletions(-)
+
+-- 
+2.48.1
+
 
