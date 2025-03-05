@@ -1,146 +1,120 @@
-Return-Path: <linux-kernel+bounces-547973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547974-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6A81A53E46
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:15:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 791FBA53E4C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:18:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C1C51887E3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:15:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EBB3A8845
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:18:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEA682066FA;
-	Wed,  5 Mar 2025 23:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA2511FCCE8;
+	Wed,  5 Mar 2025 23:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BU3rURh2"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="niAwEltb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4714141C85;
-	Wed,  5 Mar 2025 23:14:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 471751EDA24
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741216490; cv=none; b=d4LFC4Fu/OlqJpXeDSccqFztSKyH5sJ2eS0qYfmxbN1E53CkN7mbgxR1G3n/rw/oxJFlyaRJotsM63Nh0cnV9tx+n1O192B0eJEr9CXvU20Q/j9b3J69mHX7xgM3lkiiyaSIk4n5WA3e+clZFO5bbf2Ia1+Ukzh6QC4c0EYDi18=
+	t=1741216692; cv=none; b=Tuj217qa0201buRJuzMx/qMvC6sz//0256OJ34QsRz/8jLYGQr3ZsIj4V4qyH70QUzT0vMhEGJn7RWfDXK0geSP/Pj/g0FE7PiQDoiuXHbVxV+TNUCSBkbboVvEXRkupRj+8jRTuZM9eaoN2ovJkJEAy4Yro18AMwhtJfPjCmiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741216490; c=relaxed/simple;
-	bh=xzcNzQCQI05nT+orbSUWP8MClliAPHzBH3EdWb4UZ6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RW2esFh+Yq3/fEIR1GfDN6Edh7irCq0ymnB7Xv8WtPOsuVWPIrUWK1/5CAPyWBbTsVlHkeh1CJ3ZQTYT87Jb6EbrFSwq9f4ztdfFEdkJe2R2hGt3OkedVADT7N5o8lmRRlM1BGuj8AOFKs8qTGu67KcbqEdfdbiNL+K71XIIqT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BU3rURh2; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5496bc767abso11204e87.2;
-        Wed, 05 Mar 2025 15:14:47 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741216486; x=1741821286; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wUGuIKSVgfj5PkulMXy+9B3uvmZJaSgoO5LYtespsTk=;
-        b=BU3rURh2uRjPjjMW3W5u2I6D1IgVhMawyeeGWIRnISVQ+G1ajBIVWzXkGsSfN5rdrh
-         lHglkiUN4iwJZFShcCE2BVAoCFiyfswf9uzA3ZRLa94IoaZpoPAUbxelbwdUSlh/Nbh4
-         Sh+/avHUvTnWKqzQ6AwDECpL3fbhUBu7/Wu9GT1p4MeS189x8fMIdSLyICUrxc3t2p/Z
-         GNvUUz1uL+mRITOVHCeR4jjsgUL3vTzdWCCyPvkGtrNHAhBrETzHfci8bxm31dkAd8Hn
-         dRT0xZQk0Qt5YQO+T0Wd1k6bRx0yybTnphsre+TxKw1KwcNMJB7OWFqL7779XylhEjf4
-         3JMQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741216486; x=1741821286;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=wUGuIKSVgfj5PkulMXy+9B3uvmZJaSgoO5LYtespsTk=;
-        b=wPmblf6MT0nI1iuQbX2lcPJry+pO01mat1qNc0apkCnrIIoAVZGJqL3x0zPnRctBmS
-         JqTg9II0uDrBcjNVsCc74OvzM5vpZiugW7xUHyNdGkCfPHGawdIiwi/3gL5wwyCnnPJu
-         6qIfPwbOCVuTYaGcfSzuChm2sLohlU4tcHKX5vDSC4ZQ/TDrJHhemKJ4dB5xC6iCx+j/
-         fsmW5Hlw9i0GURgzWsGoYKuTCZXWO0VkMnndDO3xUt2qxxHGLCtVZBw4RPewkmQX8I9u
-         sKY8djnfD/+cwY0/FMly01pn3Gj3mmIgQ/HXOZwwLudqNf55U4vLtxnTsG/3s1BAES4o
-         rtnA==
-X-Forwarded-Encrypted: i=1; AJvYcCVx6lNGDok/jZrA0x8MJ3PLpAVWYzwYiAC08C/G4tagi7hpv94JUI7PytIQYdNgVsPL+rjKV21uiXwhTRIIlyA=@vger.kernel.org, AJvYcCWMp6M8XQN12XClucn4EWS6iJmvTnqiCltjlYSY9MxNq2HdIH3dAqKSKLAfAGjCqtYLz6Y1sa6aAUpuT/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2OXOVoLXwXE56zyvk01l8ThCtWcdRHKbvdep86mLVo7F6yDAz
-	732VrTUzJon22B1lK19f7Z6iT09CNeJBmq1BpvN/n+TM2e2mNZqCkWVAlg2Gz3y4/bWAjGo381C
-	TO1kXj1slSw0cW30XLxzrP6SdKPQlxfzi1OcOEA==
-X-Gm-Gg: ASbGnctNuemeby2i3YOm35ZTYcDlgfrw+zhGtFOhOlGdiTOT3oj6Imh/IAcbYevvulK
-	GZfeeMnTc5qTFHPSFtRlogbNbHdmrrZPznPtxR5QNciKj4YU23X0mYiCtSn01+Ob6yJdSKF77gz
-	veDXdMiVt3rUdKcGN+IzekjQlt5w==
-X-Google-Smtp-Source: AGHT+IEr9pv/Ty6qoqALxAu2aJ1hniw0q+/wjFtUb5Krnv70uLpYyT7wk9+0Lt39dL1lEjK8WJs9xv+e1E05Sqex5Zc=
-X-Received: by 2002:a05:651c:1507:b0:308:ed4d:6291 with SMTP id
- 38308e7fff4ca-30bd7a49e53mr6286981fa.3.1741216486028; Wed, 05 Mar 2025
- 15:14:46 -0800 (PST)
+	s=arc-20240116; t=1741216692; c=relaxed/simple;
+	bh=Y82WkIdjvwXX3jwmN+3B1pKPgPbYXzZBKTIzlLto9nI=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hEZOK7Whax4H0WkWd+tcKHecCH/9kBsRUHCXeg4lR9QmfjDSFyVwLRNN3CUI7HP0Ov2p2QnwGgf5KZ2T04NitKjzyhCe1qaG4+zYlTymDMr1NIWWxhG7rDoXBJDkmF6LS5MHb9k6qOKCbPlknSZI3x//p9Ok2nl9jmRAazwvUbM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=niAwEltb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7894EC4CED1;
+	Wed,  5 Mar 2025 23:18:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741216691;
+	bh=Y82WkIdjvwXX3jwmN+3B1pKPgPbYXzZBKTIzlLto9nI=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=niAwEltbnzwP8yIN3X4gQL6p8S0DtDkSW4sdRbfXMqiot5fwsrgIoCi6h0t5Kjruv
+	 kpt2IUi0IkpRckfudJEkGXvST/HyZ/EhtLIF/lZCsecZ3u5Ag3Gs2EA+hN0B3p3z89
+	 2g1xD/hjkpzQuW9GIxZBygg2tr5V/rDsQ13B/ZaqjO1UypCvgLRC6TwgwsZcxMbEIA
+	 Av9eulIREaOOaari3MUKErZ+LbQaaGXllUd0F2GL4Yay256B3F211ivAyIVpBowJUm
+	 ymwMGhGkCqU+xloliLy3r3mmuHcBmrBgd1DRJaL9WF4a96Bmoh0HbFCbm3WUTr4oqR
+	 lfIUi2XbMcNVQ==
+From: SeongJae Park <sj@kernel.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Liam R. Howlett" <howlett@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 02/16] mm/madvise: split out populate behavior check logic
+Date: Wed,  5 Mar 2025 15:18:09 -0800
+Message-Id: <20250305231809.136776-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <kic3iznofvqvkljvelk6c7l2jigdwtlrrlhebkrh4tnundfp6h@upfyjh5hr6k5>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250210-rust-analyzer-macros-core-dep-v3-1-45eb4836f218@gmail.com>
-In-Reply-To: <20250210-rust-analyzer-macros-core-dep-v3-1-45eb4836f218@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Mar 2025 00:14:29 +0100
-X-Gm-Features: AQ5f1JrcrHxe4U5dLj0y88YDDb8_c31Nb34eN7reE1F_5k9VWPv9YuiQUkFemDM
-Message-ID: <CANiq72mvhp-LiWAKEuiptyCV=-nh5i_7kJMgPq3yLbAQOqq09A@mail.gmail.com>
-Subject: Re: [PATCH v3] scripts: generate_rust_analyzer.py: add missing macros deps
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Boris-Chengbiao Zhou <bobo1239@web.de>, Fiona Behrens <me@kloenk.dev>, Kees Cook <kees@kernel.org>, 
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Chayim Refael Friedman <chayimfr@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Feb 10, 2025 at 6:03=E2=80=AFPM Tamir Duberstein <tamird@gmail.com>=
- wrote:
->
-> The macros crate has depended on std and proc_macro since its
-> introduction in commit 1fbde52bde73 ("rust: add `macros` crate"). These
-> dependencies were omitted from commit 8c4555ccc55c ("scripts: add
-> `generate_rust_analyzer.py`") resulting in missing go-to-definition and
-> autocomplete, and false-positive warnings emitted from rust-analyzer
-> such as:
->
->   [{
->         "resource": "/Users/tamird/src/linux/rust/macros/module.rs",
->         "owner": "_generated_diagnostic_collection_name_#1",
->         "code": {
->                 "value": "non_snake_case",
->                 "target": {
->                         "$mid": 1,
->                         "path": "/rustc/",
->                         "scheme": "https",
->                         "authority": "doc.rust-lang.org",
->                         "query": "search=3Dnon_snake_case"
->                 }
->         },
->         "severity": 4,
->         "message": "Variable `None` should have snake_case name, e.g. `no=
-ne`",
->         "source": "rust-analyzer",
->         "startLineNumber": 123,
->         "startColumn": 17,
->         "endLineNumber": 123,
->         "endColumn": 21
->   }]
->
-> Add the missing dependencies to improve the developer experience.
->
-> Fixes: 8c4555ccc55c ("scripts: add `generate_rust_analyzer.py`")
-> Reviewed-by: Fiona Behrens <me@kloenk.dev>
-> Suggested-by: Chayim Refael Friedman <chayimfr@gmail.com>
+On Wed, 5 Mar 2025 12:32:52 -0800 Shakeel Butt <shakeel.butt@linux.dev> wrote:
 
-If this is a fix, then it should use Reported-by -- or the suggestion
-was about the implementation?
+> On Wed, Mar 05, 2025 at 10:15:57AM -0800, SeongJae Park wrote:
+> > madvise_do_behavior() has a long open-coded 'behavior' check for
+> > MADV_POPULATE_{READ,WRITE}.  It adds multiple layers[1] and make the
+> > code arguably take longer time to read.  Like is_memory_failure(), split
+> > out the check to a separate function.  This is not technically removing
+> > the additional layer but discourage further extending the switch-case.
+> > Also it makes madvise_do_behavior() code shorter and therefore easier to
+> > read.
+> > 
+> > [1] https://lore.kernel.org/bd6d0bf1-c79e-46bd-a810-9791efb9ad73@lucifer.local
+> > 
+> > Signed-off-by: SeongJae Park <sj@kernel.org>
+> > ---
+> >  mm/madvise.c | 20 +++++++++++++-------
+> >  1 file changed, 13 insertions(+), 7 deletions(-)
+> > 
+> > diff --git a/mm/madvise.c b/mm/madvise.c
+> > index dbc8fec05cc6..4a91590656dc 100644
+> > --- a/mm/madvise.c
+> > +++ b/mm/madvise.c
+> > @@ -1633,6 +1633,17 @@ static bool is_valid_madvise(unsigned long start, size_t len_in, int behavior)
+> >  	return true;
+> >  }
+> >  
+> > +static bool is_memory_populate(int behavior)
+> 
+> No strong opinion on this patch but if you want to keep it, the above
+> name feels weird. How about either is_madvise_populate() or
+> is_populate_memory()?
 
-Anyway, I can fix it on my side, but I am also supposed to add a link
-to the report/suggestion -- do you have one?
+I wanted to make this reads consistent with other similar purpose ones like
+is_memory_failure(behavior).  I have no strong opinions, either, though.
+Unless someone makes a voice here, I will rename this to is_madvise_populate()
+in the next version.
 
-Thanks!
+> 
+> > +{
+> > +	switch (behavior) {
+> > +	case MADV_POPULATE_READ:
+> > +	case MADV_POPULATE_WRITE:
+> > +		return true;
+> > +	default:
+> > +		return false;
+> > +	}
+> > +}
 
-(Tested-by's welcome, by the way!)
+Thanks,
+SJ
 
-Cheers,
-Miguel
+[...]
 
