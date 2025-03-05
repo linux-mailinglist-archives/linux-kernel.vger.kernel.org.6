@@ -1,172 +1,287 @@
-Return-Path: <linux-kernel+bounces-547412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2F7A506BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:48:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D5C0A50794
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:58:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7962D18913D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:48:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E56C616B563
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:58:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57E7C2512F2;
-	Wed,  5 Mar 2025 17:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1472517B3;
+	Wed,  5 Mar 2025 17:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="ufUEqlMz"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2086.outbound.protection.outlook.com [40.107.94.86])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ccXFIVh4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 188C62512C7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741196914; cv=fail; b=WWoKjeH+0XyF90Wxu1m+ByrEPpI4D5K1r8pGrVmjVtIx2GAert+xB3mQgMWu1N9zVGG3bdB7SBzA+SlXM0VMvrNAy71LoZjzQQgoeyiTMZUDGp6SF19Jd1P6NxSmRAvxTFIu4Qpva2nuBcO0hkp8rbazEj+1scczKtBWs4g1oDw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741196914; c=relaxed/simple;
-	bh=6IQWmfCUt2AXKtx96E+C2/x7UreywHJxW7i+fd/W/Oo=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NfbjpKpIA7R7StvNgxYXDOuVfv7tbyvd3HhYvsI0Otyu44VU5AccprdYVu2XinQvshSJt9Bv9fCsL7MJr9ESosLYdrkiBdwKdpVFhDQI7AQ2iY7nobh3iTnwxHAbSzobbjqFOtO+UbleqUpm2HucfeowoTyD2/+To/92cAaZ9z4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=ufUEqlMz; arc=fail smtp.client-ip=40.107.94.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Cw1qgAjaV6iUtQCOXObfklCyCraGKNRR8g+jeqXeMyt8/PcaaGkmHqPlI3oTADfXcNIjW/Irwz+02KQy4i1IkxNOCDlOUfHQHUXQM3r8Vp7O/13wL0dQAnsdxmbY54HMcqHETSy00tOTqzrLcKcuOLK3VH9ExPoTkKPDPz+3uwRxfjAjASjWxFJfeLxmUuyqNcUM3EYBNPSIWHZbagWBaMDwZpu3SKRP0pXU0QP1VMGnvppN+9ECC0bO464YxlSptGiBT+5grbRFWZ8jszmvwSGPkF0JImA8WHCI4kUkdfBZsi9mO4mxgn3LtiNQVKTPpoIzfQe1lq2/ujUtULwm+Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=VFkolJwb7UXVUaCki7EomyFqKxLYsISEINh0r4TA+Jg=;
- b=OPp3+epT03aI6R6N3HfJxzUUmE5D6I0dLK94PljRUF+aCi5bjwo69+z3NlqUurTjPj9vQ9PnqE/90P8Y0CH99VXn6A7Aa+gPxLmUt4xTPjQzbnU9g9SZCpxFyeLeSG7cgShlTK6QWb4xNefVfbF7lyvos6V/TH1oCQXzX8NPv1ii7hbJBC2T3H8tEudFjE61MRfHjxH/rxvbp04yj26Qg4oc4TelWio88ywYbNpyy1UBQ94TCqtzretHLAHUs14Bd30lhA7hTrLgbCJ9KO18IyPUivJne9FAC8IM8m2ii5wAxXysJrOOgJIqAs0FA6JQZ765PraWe/+UM/uYItMpGg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=arm.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=VFkolJwb7UXVUaCki7EomyFqKxLYsISEINh0r4TA+Jg=;
- b=ufUEqlMzrakgE9pZ2xEPolj3M4MPyzM+6a2OozePIdqmNCAfoK891R5Ob+iIpglMlYVzqBKUYlVwqr04pMuKQGJc0eXUzBoG7ULCk6eTfvVgzoRETf4uxjnk+S7AeE9OMWpN5eqP2eHw9SBLOumBJs6z2+UgtZZ+F3l1EdJFNFakHRVkC5WcBeEaW9okojD42d61OWdNJ0ZUPzfQLyPM9clMIMbT1F/OcDqcaGe3S/rvLQsxiM/3nb5vJMS7OHtdGVCZ0ucI7P2dFws6Z5FNuj0TylhiKChHbjgRK7mlBXR5HJZSWp/2QkEWDl+fhFiFrMbmwn8/5gby9hHrNCbLvA==
-Received: from SA1P222CA0131.NAMP222.PROD.OUTLOOK.COM (2603:10b6:806:3c2::12)
- by IA1PR12MB8519.namprd12.prod.outlook.com (2603:10b6:208:44c::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Wed, 5 Mar
- 2025 17:48:28 +0000
-Received: from SA2PEPF000015C8.namprd03.prod.outlook.com
- (2603:10b6:806:3c2:cafe::9b) by SA1P222CA0131.outlook.office365.com
- (2603:10b6:806:3c2::12) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.16 via Frontend Transport; Wed,
- 5 Mar 2025 17:48:27 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SA2PEPF000015C8.mail.protection.outlook.com (10.167.241.198) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.15 via Frontend Transport; Wed, 5 Mar 2025 17:48:27 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 5 Mar 2025
- 09:48:11 -0800
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 5 Mar
- 2025 09:48:10 -0800
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.7)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Wed, 5 Mar 2025 09:48:10 -0800
-Date: Wed, 5 Mar 2025 09:48:08 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Robin Murphy <robin.murphy@arm.com>
-CC: kernel test robot <lkp@intel.com>, <jgg@nvidia.com>,
-	<kevin.tian@intel.com>, <joro@8bytes.org>, <will@kernel.org>,
-	<oe-kbuild-all@lists.linux.dev>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] iommu: Sort out domain user data
-Message-ID: <Z8iOWB1vH+bBMPWo@Asurada-Nvidia>
-References: <74a3bf91b52563faaf7ef7de065931e4df47e63f.1741034886.git.nicolinc@nvidia.com>
- <202503052255.t1N6KrAn-lkp@intel.com>
- <3699641b-c7bc-4fec-b8e2-828f5b1f2d70@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C731C6FFE;
+	Wed,  5 Mar 2025 17:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741197494; cv=none; b=sf494lFG57a84BXWmRGyyWAEjshU120NahyhUjbk9zOe1vT1KbUOeEhVbTMrXS6S7gwAEVp4g+ymkABl3RK+JTASKVPhgxsijF8Sw7+Zkgs8ORLoyBMzdbP11s0C9vE6dvKvt/E/q2o6SGtGNo6e1bq3MaTyuH9w241/wZl4muE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741197494; c=relaxed/simple;
+	bh=/6xHPLL6GhXalpIRi3UgVjQ+8XkBGM2Q/FIQre3NnhY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=COiSOGAfoD6CxUhCXsoOaJAyfkDTIb7+0GEwLHgaXoU/kKJF4p3VcVNYZOzph11RwWgMSS4jU1OUNB5hHamCkOdyv72wKCjOkVqhBaHCgf4bh1WR4qz0bqkfuXJ9khAZlPsKRGEqVsRfGfy2xYEmiZ3qUAeKz59AN/m0uWU2c+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ccXFIVh4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BD9BC4CED1;
+	Wed,  5 Mar 2025 17:58:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741197493;
+	bh=/6xHPLL6GhXalpIRi3UgVjQ+8XkBGM2Q/FIQre3NnhY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=ccXFIVh48eiBCWqpU+6gEsuWw7UWwZknfNWHJZ924RvmY4kw3/FnV5KYhnr/KarsS
+	 4MeCoEwqC1nUg4PKI8Oodpxrk8HzVSmrK03hL1EuYxmicUhsizfhptgPrzfYMOu16Q
+	 jcX4KRP3PIKfCWDg5feWUkXxSRV8YeJtZz6zpikI=
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: stable@vger.kernel.org
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	patches@lists.linux.dev,
+	David Howells <dhowells@redhat.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lstoakes@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>,
+	Al Viro <viro@zeniv.linux.org.uk>,
+	Matthew Wilcox <willy@infradead.org>,
+	Jan Kara <jack@suse.cz>,
+	Jeff Layton <jlayton@kernel.org>,
+	Jason Gunthorpe <jgg@nvidia.com>,
+	Logan Gunthorpe <logang@deltatee.com>,
+	Hillf Danton <hdanton@sina.com>,
+	Christian Brauner <brauner@kernel.org>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-fsdevel@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	Christoph Hellwig <hch@lst.de>,
+	Sasha Levin <sashal@kernel.org>
+Subject: [PATCH 6.1 143/176] mm: Dont pin ZERO_PAGE in pin_user_pages()
+Date: Wed,  5 Mar 2025 18:48:32 +0100
+Message-ID: <20250305174511.186748725@linuxfoundation.org>
+X-Mailer: git-send-email 2.48.1
+In-Reply-To: <20250305174505.437358097@linuxfoundation.org>
+References: <20250305174505.437358097@linuxfoundation.org>
+User-Agent: quilt/0.68
+X-stable: review
+X-Patchwork-Hint: ignore
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <3699641b-c7bc-4fec-b8e2-828f5b1f2d70@arm.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF000015C8:EE_|IA1PR12MB8519:EE_
-X-MS-Office365-Filtering-Correlation-Id: 565b1a7b-3d45-4fe5-0353-08dd5c0def5b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?7t5Nr48OD31ZOFtZac+ALIIgFj0jKjdqMd79Vg7+NMwDAMVWJMa2AqENbvfC?=
- =?us-ascii?Q?MPbJMP7UybugQb5lIWMdCzOC0t7E4mVkWFHgwZ6NXFg21ojIpKOSCSDaSULJ?=
- =?us-ascii?Q?ya5G7l0mbuCOqgZ33zql8z2G8sfNSENfrQ9apynDrMqWt+rQ5giNIEfe24Is?=
- =?us-ascii?Q?0c9kINSNutDWDYAenopASSaKHmWkdutLveGqMl+rU40iBlcgTd+Frwr+wOSq?=
- =?us-ascii?Q?aBDogIO164g7K13NrYIGL4uRshuSiA28Xae73Lpx6gWfo9RjSP7MNE0auBn1?=
- =?us-ascii?Q?bLEc9ZEZY5EchtijhP0JXzBLY5tUBvkPW60xgxWBOaKTfkeK6T9sDVrqGGUi?=
- =?us-ascii?Q?emqfxAAGFLnEtX/OaftAKzSifTcBePLpq+7oIyeIsN9Cak5At5xm283eO9ic?=
- =?us-ascii?Q?7u0hredymaHimZHM7J9bNtUf+TPGEb1qkVK9KsUgHXhFptxsrO0pyDk4v8DD?=
- =?us-ascii?Q?XJf1zH9roCP0qjR5GyGrNNfdg+arw72QkRQu6Q5X3axBQqkNE02EbjXmpk7C?=
- =?us-ascii?Q?GrWTYxK2MIhMnq5kZhcDjRSnzzU6lQyNyKJYZbC3+tRhLvZOPCkYX4m0y0/s?=
- =?us-ascii?Q?6O1RZ6tHvo3+XwFZJCKS4M9mSakRImVKTfBMcXTx0GFHNPXOZsgmwH+ebE2c?=
- =?us-ascii?Q?gmBUd7JUq3ARPM0VQndMadd8H3BTBLsS5vJv1vgh1ltB9vCp0uc8M6M6Cx4P?=
- =?us-ascii?Q?oZGEweW4NPNiMKjlcY1VoGrZcisQmXYLRI9RhwZaSoH2dQDxJRcpCQh6L3fW?=
- =?us-ascii?Q?Zsq0vS1p2hSsB8BNfFWAcR31/VJ/qK9BxQpKNVnk2gfnptka/rpvwDVjBh22?=
- =?us-ascii?Q?MVshTwhh9mm83Hy0655lbegK126eaRfOkjig0nEyXincYOERiOQ1RWvnn25H?=
- =?us-ascii?Q?JClC7notXpkw15CQt3WcKKliDDOaWNj120oWCnIijjsG1ztGzuHm4EiPgQB2?=
- =?us-ascii?Q?7e1onRzP4jUs2fEcYZ1RFgHPxCid2bHUKkV+H0uCmFJb5krlEYTyY7Bwdodj?=
- =?us-ascii?Q?FvK9jGKUiaH08MCSY8OM/181JgRCyYnj0NBBA4IwCBzYXETboEGnvB2Kk5C4?=
- =?us-ascii?Q?JaH6EyZB6jlmRbNdmsiH3uw7cZIYHGCJydKAdibFeKa76y/atNjo5eA2Mx7j?=
- =?us-ascii?Q?erkXy0Gk14weSAcGD3Bd2fCxQLrjYfGlWpdN3q7oz9kLzxkuuOC2KW7Ve5Fd?=
- =?us-ascii?Q?r64Y6uGNi5TN7eZDsxPcvcLrw68bUMVXJ51XQt+/Xp/uXsCsclgIDiQvFyfl?=
- =?us-ascii?Q?wdyxzHriAb2tK1c0lxqCDCNgM4/BDVKUjTmKTH1jrD8b0jOkjZZvFUgN/2gL?=
- =?us-ascii?Q?52W+Letts9FLsLIexyMsaT/akLQF2utOrFuQZDzZKKs9P4FuFfi2USqVQkgs?=
- =?us-ascii?Q?TjF8Y64Po67msn4NYr6wdFoKI16+PZEBVdmXicdGrB23GeqezzJWmoF6kv2/?=
- =?us-ascii?Q?J12yFZvCiokkiDB6sSzv9dAqzcKMUaKO4wnTF8ordUb7Iw8fcHbJbnpAnDJ1?=
- =?us-ascii?Q?p/LGmmyRvkwkrlE=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 17:48:27.5277
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 565b1a7b-3d45-4fe5-0353-08dd5c0def5b
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF000015C8.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR12MB8519
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 05, 2025 at 03:45:21PM +0000, Robin Murphy wrote:
-> > All errors (new ones prefixed by >>):
-> > 
-> > > > drivers/iommu/iommu.c:2039:10: error: label at end of compound statement: expected statement
-> >             default:
-> >                     ^
-> >                      ;
-> >     1 error generated.
-> 
-> Oops, my bad... omitting an extra break here was a semi-conscious brainfart.
-> Weird that my AArch64 GCC doesn't complain about this construct though, even
-> with "-ansi -Wall" - I have to go all the way to -Wpedantic before it
-> notices :/
+6.1-stable review patch.  If anyone has any objections, please let me know.
 
-Mine doesn't complain about this either.
+------------------
 
-I will add a break and respin.
+From: David Howells <dhowells@redhat.com>
 
-Thanks
-Nicolin
+[ Upstream commit c8070b78751955e59b42457b974bea4a4fe00187 ]
+
+Make pin_user_pages*() leave a ZERO_PAGE unpinned if it extracts a pointer
+to it from the page tables and make unpin_user_page*() correspondingly
+ignore a ZERO_PAGE when unpinning.  We don't want to risk overrunning a
+zero page's refcount as we're only allowed ~2 million pins on it -
+something that userspace can conceivably trigger.
+
+Add a pair of functions to test whether a page or a folio is a ZERO_PAGE.
+
+Signed-off-by: David Howells <dhowells@redhat.com>
+cc: Christoph Hellwig <hch@infradead.org>
+cc: David Hildenbrand <david@redhat.com>
+cc: Lorenzo Stoakes <lstoakes@gmail.com>
+cc: Andrew Morton <akpm@linux-foundation.org>
+cc: Jens Axboe <axboe@kernel.dk>
+cc: Al Viro <viro@zeniv.linux.org.uk>
+cc: Matthew Wilcox <willy@infradead.org>
+cc: Jan Kara <jack@suse.cz>
+cc: Jeff Layton <jlayton@kernel.org>
+cc: Jason Gunthorpe <jgg@nvidia.com>
+cc: Logan Gunthorpe <logang@deltatee.com>
+cc: Hillf Danton <hdanton@sina.com>
+cc: Christian Brauner <brauner@kernel.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>
+cc: linux-fsdevel@vger.kernel.org
+cc: linux-block@vger.kernel.org
+cc: linux-kernel@vger.kernel.org
+cc: linux-mm@kvack.org
+Reviewed-by: Lorenzo Stoakes <lstoakes@gmail.com>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Acked-by: David Hildenbrand <david@redhat.com>
+Link: https://lore.kernel.org/r/20230526214142.958751-2-dhowells@redhat.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+Stable-dep-of: bddf10d26e6e ("uprobes: Reject the shared zeropage in uprobe_write_opcode()")
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ Documentation/core-api/pin_user_pages.rst |  6 +++++
+ include/linux/mm.h                        | 26 +++++++++++++++++--
+ mm/gup.c                                  | 31 ++++++++++++++++++++++-
+ 3 files changed, 60 insertions(+), 3 deletions(-)
+
+diff --git a/Documentation/core-api/pin_user_pages.rst b/Documentation/core-api/pin_user_pages.rst
+index b18416f4500fe..7995ce2b9676a 100644
+--- a/Documentation/core-api/pin_user_pages.rst
++++ b/Documentation/core-api/pin_user_pages.rst
+@@ -113,6 +113,12 @@ pages:
+ This also leads to limitations: there are only 31-10==21 bits available for a
+ counter that increments 10 bits at a time.
+ 
++* Because of that limitation, special handling is applied to the zero pages
++  when using FOLL_PIN.  We only pretend to pin a zero page - we don't alter its
++  refcount or pincount at all (it is permanent, so there's no need).  The
++  unpinning functions also don't do anything to a zero page.  This is
++  transparent to the caller.
++
+ * Callers must specifically request "dma-pinned tracking of pages". In other
+   words, just calling get_user_pages() will not suffice; a new set of functions,
+   pin_user_page() and related, must be used.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 971186f0b7b07..03357c196e0ba 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -1610,6 +1610,28 @@ static inline bool page_needs_cow_for_dma(struct vm_area_struct *vma,
+ 	return page_maybe_dma_pinned(page);
+ }
+ 
++/**
++ * is_zero_page - Query if a page is a zero page
++ * @page: The page to query
++ *
++ * This returns true if @page is one of the permanent zero pages.
++ */
++static inline bool is_zero_page(const struct page *page)
++{
++	return is_zero_pfn(page_to_pfn(page));
++}
++
++/**
++ * is_zero_folio - Query if a folio is a zero page
++ * @folio: The folio to query
++ *
++ * This returns true if @folio is one of the permanent zero pages.
++ */
++static inline bool is_zero_folio(const struct folio *folio)
++{
++	return is_zero_page(&folio->page);
++}
++
+ /* MIGRATE_CMA and ZONE_MOVABLE do not allow pin pages */
+ #ifdef CONFIG_MIGRATION
+ static inline bool is_longterm_pinnable_page(struct page *page)
+@@ -1620,8 +1642,8 @@ static inline bool is_longterm_pinnable_page(struct page *page)
+ 	if (mt == MIGRATE_CMA || mt == MIGRATE_ISOLATE)
+ 		return false;
+ #endif
+-	/* The zero page may always be pinned */
+-	if (is_zero_pfn(page_to_pfn(page)))
++	/* The zero page can be "pinned" but gets special handling. */
++	if (is_zero_page(page))
+ 		return true;
+ 
+ 	/* Coherent device memory must always allow eviction. */
+diff --git a/mm/gup.c b/mm/gup.c
+index e31d00443c4e6..b1daaa9d89aab 100644
+--- a/mm/gup.c
++++ b/mm/gup.c
+@@ -51,7 +51,8 @@ static inline void sanity_check_pinned_pages(struct page **pages,
+ 		struct page *page = *pages;
+ 		struct folio *folio = page_folio(page);
+ 
+-		if (!folio_test_anon(folio))
++		if (is_zero_page(page) ||
++		    !folio_test_anon(folio))
+ 			continue;
+ 		if (!folio_test_large(folio) || folio_test_hugetlb(folio))
+ 			VM_BUG_ON_PAGE(!PageAnonExclusive(&folio->page), page);
+@@ -128,6 +129,13 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+ 	else if (flags & FOLL_PIN) {
+ 		struct folio *folio;
+ 
++		/*
++		 * Don't take a pin on the zero page - it's not going anywhere
++		 * and it is used in a *lot* of places.
++		 */
++		if (is_zero_page(page))
++			return page_folio(page);
++
+ 		/*
+ 		 * Can't do FOLL_LONGTERM + FOLL_PIN gup fast path if not in a
+ 		 * right zone, so fail and let the caller fall back to the slow
+@@ -177,6 +185,8 @@ struct folio *try_grab_folio(struct page *page, int refs, unsigned int flags)
+ static void gup_put_folio(struct folio *folio, int refs, unsigned int flags)
+ {
+ 	if (flags & FOLL_PIN) {
++		if (is_zero_folio(folio))
++			return;
+ 		node_stat_mod_folio(folio, NR_FOLL_PIN_RELEASED, refs);
+ 		if (folio_test_large(folio))
+ 			atomic_sub(refs, folio_pincount_ptr(folio));
+@@ -217,6 +227,13 @@ bool __must_check try_grab_page(struct page *page, unsigned int flags)
+ 	if (flags & FOLL_GET)
+ 		folio_ref_inc(folio);
+ 	else if (flags & FOLL_PIN) {
++		/*
++		 * Don't take a pin on the zero page - it's not going anywhere
++		 * and it is used in a *lot* of places.
++		 */
++		if (is_zero_page(page))
++			return 0;
++
+ 		/*
+ 		 * Similar to try_grab_folio(): be sure to *also*
+ 		 * increment the normal page refcount field at least once,
+@@ -3149,6 +3166,9 @@ EXPORT_SYMBOL_GPL(get_user_pages_fast);
+  *
+  * FOLL_PIN means that the pages must be released via unpin_user_page(). Please
+  * see Documentation/core-api/pin_user_pages.rst for further details.
++ *
++ * Note that if a zero_page is amongst the returned pages, it will not have
++ * pins in it and unpin_user_page() will not remove pins from it.
+  */
+ int pin_user_pages_fast(unsigned long start, int nr_pages,
+ 			unsigned int gup_flags, struct page **pages)
+@@ -3225,6 +3245,9 @@ EXPORT_SYMBOL_GPL(pin_user_pages_fast_only);
+  *
+  * FOLL_PIN means that the pages must be released via unpin_user_page(). Please
+  * see Documentation/core-api/pin_user_pages.rst for details.
++ *
++ * Note that if a zero_page is amongst the returned pages, it will not have
++ * pins in it and unpin_user_page*() will not remove pins from it.
+  */
+ long pin_user_pages_remote(struct mm_struct *mm,
+ 			   unsigned long start, unsigned long nr_pages,
+@@ -3260,6 +3283,9 @@ EXPORT_SYMBOL(pin_user_pages_remote);
+  *
+  * FOLL_PIN means that the pages must be released via unpin_user_page(). Please
+  * see Documentation/core-api/pin_user_pages.rst for details.
++ *
++ * Note that if a zero_page is amongst the returned pages, it will not have
++ * pins in it and unpin_user_page*() will not remove pins from it.
+  */
+ long pin_user_pages(unsigned long start, unsigned long nr_pages,
+ 		    unsigned int gup_flags, struct page **pages,
+@@ -3282,6 +3308,9 @@ EXPORT_SYMBOL(pin_user_pages);
+  * pin_user_pages_unlocked() is the FOLL_PIN variant of
+  * get_user_pages_unlocked(). Behavior is the same, except that this one sets
+  * FOLL_PIN and rejects FOLL_GET.
++ *
++ * Note that if a zero_page is amongst the returned pages, it will not have
++ * pins in it and unpin_user_page*() will not remove pins from it.
+  */
+ long pin_user_pages_unlocked(unsigned long start, unsigned long nr_pages,
+ 			     struct page **pages, unsigned int gup_flags)
+-- 
+2.39.5
+
+
+
 
