@@ -1,124 +1,133 @@
-Return-Path: <linux-kernel+bounces-547112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3535BA50327
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:07:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A598AA50328
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:07:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AA0E189716F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:02:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34FE6188AA7B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1EDA2500C0;
-	Wed,  5 Mar 2025 15:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="jf8Hzd7N"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94CC224EF78
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6284E24EF86;
+	Wed,  5 Mar 2025 15:02:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7FDD24C68D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:02:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741186925; cv=none; b=qF1MFqFy4XA4ME5YwfvuyHROdlNNFnTT/rhiwu0Rr20PJnnuQnEAiPF1609PHJ4BtzRqRwo3v9/a9XmOGFaje2UOca6+5PqYEQRlFdJrC+uL0tWtLupF+YybzAS4lyCUOj0sVFsbchB/6xi/4cEH0nonEJIWeGGXLSdFdXKsbG0=
+	t=1741186978; cv=none; b=Zdjq+B1GP6NEVRIbUhq4SCh8CCFywHgFekL1R2r4l5k11zP6qUFZjSE6wIYvww9KdfO5kcWxPckIZ3GO1naSny2aymgdIXKu9Ycsb0U5Qsem3W1QlZUk+1C+1G8K0pvZDKTXVC4oteRQ4AtFODqRTeYhzlBMQSKo1EO70ZgCmPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741186925; c=relaxed/simple;
-	bh=AZOTwFYWbPNw3YuwetCS180YuQ8bs6mW3Lff9LCM/Hw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hHOmitMsE71BrPVhQPF5TrjDHZQqtfUV2g2pjEQWY1xNr5fOWq7K8ZGxgKCm+Z426tqPpvGRdm/y+Y5u+yB/T9p7E3S/nuLwbbQ9yXFmpueZ7HKZURdKElmVZe64TuKlh72nXEo0EmzajcQGJtoTFR+eqFZ2jjZG5n1f64Jap54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=jf8Hzd7N; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390f5f48eafso2509053f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 07:02:03 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741186922; x=1741791722; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=quIzHQCFH7E36KayRdIr1tq1n0GnpOtfG9r6i1uUzGM=;
-        b=jf8Hzd7N1UQieBqwMtFyPFlowLytWYKCN2izwlkXdGE/fFZxuPXH9ITKUWQY45qqPe
-         z/9QT+gf1DhrV9ICaotrstqCK6hsMLtJp9CkUySUv/SSPysceC7cMdNJ+TOiVZ8wpgh/
-         nnShK1NpTg1xrcC/LOlvUjFCWVbahnAjLuAunx6b0/WAHQSuLEItm47REGKmSjnA7Do+
-         LKBoYRqQqOkrKpeDxi6V7O6Ogq0oScNR3vf7Nmed2JidNd2eQZw0Rj/WX1Wh/N9/8DJv
-         /9QPytj0KcIFgGRqps8NcHd2fMxeZk8I9kT1GppGXhOP93wOlmhCkWjslcYhk3ROPylr
-         5rmQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741186922; x=1741791722;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=quIzHQCFH7E36KayRdIr1tq1n0GnpOtfG9r6i1uUzGM=;
-        b=k7SyJcBdSf6G/yP27obpc9ZdPUUXsbnPND49vcVLEBP+bXSNLgOjQjd/Ostb1XYldO
-         +bd2S4386NFUmRs37Uwjkhk1wB11LbsI8+9vD9yCbnoruRYL/+qh7bz5xcq5/sUxgoC1
-         BY21sxyqqPCYGSxxVFoOQg+EfapSEiLbstmoVWfttuGHFFT5HScpHzH8WtgrFzemBxJp
-         bgJV5sJAI8Vg1eQ45hi+k3oxo53ZrFcc/mYGBM2QL7bKbOtd44I1a5qcFcr6TA7N5yzH
-         PyJR3G/Pb1zZvPaFowzqEBBSEjqEC7N3OU7DaEpfKnraWcABzr7o9pgR/XiijFce/wE+
-         2u7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVg6UCqpBgRSIzJHP0fZnKMAUKafGuyJStzQVtfMLqYq1XVnxkFK6GM0WSAszTh0ugfyAVz9L4yu+s+4w8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7FAAsPBqfwGmxjy+MKFa3IBWN8j9/lSw15RHD5y2OpY0upc45
-	hUPKxtwa7nbu77jwiUM/cUEk6V5R0SDSUZNqpoPaW65S7lQMJUmhTu6c+8QoubQ=
-X-Gm-Gg: ASbGncsLG5I9cN3az0KstlkywKNQJY5Xfi9+Z6JqnezcP9G2eB+wRSbSUFFXSAY5pC3
-	WyvQpPssDuyeUhs8noE5fIbDsWPWz/auv7ZsbjUPCe2L9ykeaAYccrHBfQV9xywye47nNvi396h
-	l2q3zfzjqLhjObFiLktuaDaidpZU2iEQWMFA48nhwoOEq0Dfd+L7gzGf8R63RwHimfnikfE4o8Q
-	554376xQ6wsnSRW1nm+NxKbruHHDZSzZZjIYgHMremDT5PPcUBV07CXmKelbEUHy6Fxojvyn303
-	NImpH8yTxn4UaPcKtBCaIy+SJEmhhYAYnGQbT4PRaLLcpkyIEw==
-X-Google-Smtp-Source: AGHT+IFepSDmvEhbE2UKLwqNcX3nTfRjGIucY9eQ6hTOqgtRykqc80R9HD8DtvfhRl/fMPeU5nq5wA==
-X-Received: by 2002:a05:6000:1fa6:b0:390:f6aa:4e80 with SMTP id ffacd0b85a97d-3911f7d238dmr2965078f8f.53.1741186921645;
-        Wed, 05 Mar 2025 07:02:01 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd4352e29sm19571995e9.32.2025.03.05.07.02.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 07:02:01 -0800 (PST)
-Date: Wed, 5 Mar 2025 18:01:57 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Chris Mason <clm@fb.com>
-Cc: Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH] btrfs: return a literal instead of a variable
-Message-ID: <2b27721b-7ef9-482d-91bb-55a9fed2c0f7@stanley.mountain>
+	s=arc-20240116; t=1741186978; c=relaxed/simple;
+	bh=rwxs2qHmdeQKe1U8LtwGFdJo7B87r155p+txMieverQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=X/15uvKZ5pgGYU3rQEGSi19ItiXYs7MomHAy5iRjaEVhVkSgvOe+pvw2NVv+RRNXQGIGDHfex0sxblBq1Z0C3+Se0+1i17R8F4AeuDLlJ/GbHAyQOPNZCuDb9Fq634oyvw7s+eQ5ADhjukkxnFxvAzZ4zRmVjTjWDITGI9ezXqQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9535FFEC;
+	Wed,  5 Mar 2025 07:03:08 -0800 (PST)
+Received: from [10.174.36.147] (unknown [10.174.36.147])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 065973F673;
+	Wed,  5 Mar 2025 07:02:52 -0800 (PST)
+Message-ID: <3c3f3cfe-9fa7-41d7-9759-cc67306f13f5@arm.com>
+Date: Wed, 5 Mar 2025 20:32:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+User-Agent: Mozilla Thunderbird
+Subject: Re: [QUESTION] Plain dereference and READ_ONCE() in fault handler
+To: David Hildenbrand <david@redhat.com>, willy@infradead.org,
+ ziy@nvidia.com, hughd@google.com, ryan.roberts@arm.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250305102159.96420-1-dev.jain@arm.com>
+ <8477d9ec-b9ce-4a3d-b61f-1bd44d3360a5@redhat.com>
+Content-Language: en-US
+From: Dev Jain <dev.jain@arm.com>
+In-Reply-To: <8477d9ec-b9ce-4a3d-b61f-1bd44d3360a5@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-This is just a small clean up, it doesn't change how the code works.
-Originally this code had a goto so we needed to set "ret = 0;" but now
-it returns directly and so we can simplify it a bit by doing a
-"return 0;" and removing the assignment.
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/btrfs/dev-replace.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/fs/btrfs/dev-replace.c b/fs/btrfs/dev-replace.c
-index 1a82e88ec5c1..53d7d85cb4be 100644
---- a/fs/btrfs/dev-replace.c
-+++ b/fs/btrfs/dev-replace.c
-@@ -103,7 +103,6 @@ int btrfs_init_dev_replace(struct btrfs_fs_info *fs_info)
- 			"found replace target device without a valid replace item");
- 			return -EUCLEAN;
- 		}
--		ret = 0;
- 		dev_replace->replace_state =
- 			BTRFS_IOCTL_DEV_REPLACE_STATE_NEVER_STARTED;
- 		dev_replace->cont_reading_from_srcdev_mode =
-@@ -120,7 +119,7 @@ int btrfs_init_dev_replace(struct btrfs_fs_info *fs_info)
- 		dev_replace->tgtdev = NULL;
- 		dev_replace->is_valid = 0;
- 		dev_replace->item_needs_writeback = 0;
--		return ret;
-+		return 0;
- 	}
- 	slot = path->slots[0];
- 	eb = path->nodes[0];
--- 
-2.47.2
+On 05/03/25 4:16 pm, David Hildenbrand wrote:
+> On 05.03.25 11:21, Dev Jain wrote:
+>> In __handle_mm_fault(),
+>>
+>> 1. Why is there a barrier() for the PUD logic?
+> 
+> Good question. It was added in
+> 
+> commit a00cc7d9dd93d66a3fb83fc52aa57a4bec51c517
+> Author: Matthew Wilcox <willy@infradead.org>
+> Date:   Fri Feb 24 14:57:02 2017 -0800
+> 
+>      mm, x86: add support for PUD-sized transparent hugepages
+> 
+> Maybe it was an alternative to performing a READ_ONCE(*vmf.pud).
+> 
+> Maybe it was done that way, because pudp_get_lockless() does not exist. 
+> And it would likely not be required, because on architectures where 
+> ptep_get_lockless() does some magic (see below, mostly 32bit), PUD THP 
+> are not applicable.
+
+Thanks for your reply David.
+
+> 
+> 
+>> 2. For the PMD logic, in the if block, we use *vmf.pmd, and in the 
+>> else block
+>>     we use pmdp_get_lockless(); what if someone changes the pmd just 
+>> when we
+>>     have begun processing the conditions in the if block, fail in the 
+>> if block
+>>     and then the else block operates on a different pmd value. 
+>> Shouldn't we cache
+>>     the value of the pmd and operate on a single consistent value 
+>> until we take the
+>>     lock and then finally check using pxd_same() and friends?
+> 
+> The pmd_none(*vmf.pmd) is fine. create_huge_pmd() must be able to deal 
+> with races, because we are not holding any locks.
+
+I had a mental hiccup, yes we don't need the cached value even before 
+the if block, as the relevant path will eventually check after taking 
+the lock. I was thinking of all sorts of weird races.
+
+> 
+> We only have to use pmdp_get_lockless() when we want to effectively 
+> perform a READ_ONCE(), and make sure that we read something "reasonable" 
+> that we can operate on, even with concurrent changes. (e.g., not read a 
+> garbage PFN just because of some concurrent changes)
+
+Oh I just looked at the arm64 definition and assumed ptep_get_lockless() 
+== READ_ONCE() :) Now this makes sense. So I am guessing that we can 
+still get away with a *vmf.pmd on 64-bit arches?
+
+A separate question: When taking the create_huge_pmd() path with a read 
+fault and after taking the pmd lock, why shouldn't we check with 
+pmd_none(pmdp_get_lockless(vmf.pmd)) instead of plain *vmf.pmd...surely 
+now we must load the actual correct value from memory since we are 
+committing into mapping the huge zero folio?
+And after looking somewhat more, why even is a pmd_none(*pmd) there in 
+set_huge_zero_folio()...it should be the responsibility of the caller to 
+verify this? Any caller will just assume that it got the huge zero folio 
+mapped so this check should be redundant.
+
+> 
+> We'll store the value in vmf.orig_pmd, on which we'll operate and try to 
+> detect later changes using pmd_same(). So we really want something 
+> consistent in there.
+> 
+> See the description above ptep_get_lockless(), why we cannot simply do a 
+> READ_ONCE on architectures where a PTE cannot be read atomically (e.g., 
+> 8 byte PTEs on 32bit architecture).
+>
+
 
 
