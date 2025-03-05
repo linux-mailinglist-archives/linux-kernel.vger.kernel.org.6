@@ -1,700 +1,285 @@
-Return-Path: <linux-kernel+bounces-546578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 355BAA4FC6A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:42:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 11F4EA4FC6F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:42:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A0D23A9415
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:40:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B6EE3ACE0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:40:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DBE207DF5;
-	Wed,  5 Mar 2025 10:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="agjdR7Rw"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9616B2080E9;
+	Wed,  5 Mar 2025 10:40:25 +0000 (UTC)
+Received: from MA0PR01CU009.outbound.protection.outlook.com (mail-southindiaazon11020102.outbound.protection.outlook.com [52.101.227.102])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28374207A09
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:40:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741171220; cv=none; b=CLRgs7tN5V3ACzdHwIM1fIEIKDiHxeyjrVpeA/MCEdJ0RZSgfUl9k0JSz14PORB9/8BF+a0iKSNSEpXkNnxLILAAs22AgQqb8YP6VRoDzGyPrA0TPo5Mnqo0cylAjcKf8AodXWioHVPAQNUrMFR3a2bp9S6OeruS+hKhSjAO40Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741171220; c=relaxed/simple;
-	bh=JFvgq7ao/ymDU28XHKEnRDC0Mib0SgN3h70y90DKD58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=U/UYifbBj3WxdYPTykyicxSFMNxSnl0uQMAxlOlN1YLAOqlPn9yyZLS4xNyaLbY7sJz0nvUhxQWNbD32+XrrmxpvcI733e0yCfttpGSJAmryvg1KkYudZehnpmIlOpIikmeNQoMkCcoD2fDbjI3RDVknf3zW1Yk+UhJyc0lZi3A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=agjdR7Rw; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf5358984bso666391066b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 02:40:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741171216; x=1741776016; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QJPeC7WGwlWYhB/uzB+1DEBtKYGH9tap2u2rbrtGD5k=;
-        b=agjdR7Rwm8lOXN0KK5vYWWHk4kprIqzICl/Z0w0qoE6JUEV59ruAAe1OnSPYYE+egN
-         VJ8TKQeJkRnuB+AplOwlwz8OTI5/w0asxQ+H9kLJQejBiUMw2PZFw0lEsT8d2GHgRT3s
-         pzW3hzxwxYGcF8P2YRb1IeA2ysWNmgjDRA4igWd9JTJXkd+sCp8b4m0gPLg27IXo8qgz
-         OtkwpbG+tN68uasOSlWSNbGAN2A/J8LsLDHB5SgurPuHs0krv8M+l4HlRXnzmU3EHnpS
-         gNnqDq9XjYUMRmyzzJay/uLM0mDO/e15J/3Nz9V+D1Uha/X0LUTIHarvRgFj9s2Kt+S5
-         iULw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741171216; x=1741776016;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QJPeC7WGwlWYhB/uzB+1DEBtKYGH9tap2u2rbrtGD5k=;
-        b=dm+ux6XngEihOAHfZpRmbEhSnJF4DL/HWwRNQ/5P/35wzjBJeMV3IQnFf8YHxFiA6T
-         DtKVAzqRG7IsZPKzw0ssfPAo5BXlQyw5w+aRjvrVlZhu4zp+2M2ZqbASfj3oGQcUUInw
-         IajmfpB1b1Ztx1UsCBd0k3uqP9U/NMtWt83ZHNg+4rRkJMGm0GtpqoF7lGuQbtY72fmt
-         GnIp9EqVtb4XUBZlQcjjv8g78yjuwHFLyGgexiTWT7sh0hzAjXJ+71sJaFjL58HxJeL8
-         +CwMu+uzdmQYN8FkcKwxTWWszOWf2QOH8Y7y9YIdS6p+gN6TPDdc3QPS0CLwO8OkyDBd
-         QYow==
-X-Forwarded-Encrypted: i=1; AJvYcCW6L464tt3ktGbgPTDQjPgU/ydTrSfOl3q22vSL1ycy/7vM0LYxd/A5G8MmgP9DJD8LlCQ7tzbXAYUoENE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzHdxjp0Rknj262rADb+leYmSznVxuYzaBbqAJxciMwpr/yUpz
-	josWjv6Sd2qNg9+h0J8ldcMNvYwVzXnSEv3dnVnOFpAr0AATVVvTev5xzNeLLjJLyNqul+EdmSq
-	3pYERxXPcEeHxz0KnP9W+9NNlyIQ940sQdbx+
-X-Gm-Gg: ASbGnct9R7kznz1EcEtTxoD1TTYBR5SFoFLLjyuaQNff7gXgtNaPrt2F6YbF6EasW0L
-	UyZaruibJLOnixbIvLar32cOiC91hUn6MAVY/ijivTdtfQ11U8SpA5+3B5M5voOv3Z62cd2gqD9
-	bldq9i+GFHcaQUkTAW4O7XtqRPZDbmPO8c7gMIdlLfm58nbUFDGNQKaIw=
-X-Google-Smtp-Source: AGHT+IFNcZPME2war2VRyPrCxxqPQYR5G2WucJc73GcnEZ2EKj1EJMiaBAsFyx2Ad7AfFcHrITY0w9Jam3jimjxY6i8=
-X-Received: by 2002:a17:906:7950:b0:abf:4521:eb2a with SMTP id
- a640c23a62f3a-ac20db09298mr293383166b.49.1741171215889; Wed, 05 Mar 2025
- 02:40:15 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5450207A1D;
+	Wed,  5 Mar 2025 10:40:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.227.102
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741171224; cv=fail; b=IvXnSoWuy7Sl+raIIXtgjit/RpRXsYRbP4OMBpsTTSA1juzsS5DESwuSnag3b7Bb+p3rE/wgA1kJnnhnrI4tAeQrdfWllEFlhz1O0gG/bhurjnrYaEjixQixIGyHytTnCOFMQEuWHXAzRHPvr14WG6S0c1TOsZZxjH8UbwM9jso=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741171224; c=relaxed/simple;
+	bh=UMr6XcslBxPv8gZooZJ6jAcjildLVJlxrl0CJk8aMnE=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Z5D7zgfcK9hY2lp3UHb+fXgCSK9UTR3Db+JahrnYES+JmonwNAH2t9jGuXxVPuSqSLGS7LFGb9W6EfplcCGuSVnRV97Z3E9XxJvRbHlCRmOCBFpkmRtLh+q2EvBNIOGi9io+sfxBYo/iGqjQe4KxSvOdrHm6x/famHp0aIeBnrw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.227.102
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VsoRsomHN5e2EWYjaxj5paq3uueCZrycPi3WMiu3UTeMO8OFnjg26v+ere4wUqUCxkQJR5m+RukYHdkQl5nCoLaBpUEw7r+vjFEyQkxgHwxezcH9lIffrdoo6WmWMCKwxstWE7awxsn9EwKgJy/COSTOXj/vw5oGN5zxXo9y8kJV54lftd/CtLa4bOyUdV8Mb2kIpBu4rkfagnOhRClKQZRy3vB0PQKFv3/96jSrRpcZlcMYBZ04TARr9K436JTo3TPBA3vgC5uogX5Oj2YsS1tUSJ9pSM47WYjHV7XTUdPBZ50QqpGxIzxdGb5s2M1Yvm/mkCxG0d3mW8HGHicQ/Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=UMr6XcslBxPv8gZooZJ6jAcjildLVJlxrl0CJk8aMnE=;
+ b=sTZv8i79uxU0wHpKkc0496LmrjnGBOzDcKTPh1GIenQWB/uQ9WNDx4G0yVxxvUrsa2aBDaCMlG3HEfIR3kJtKLSSTvzgHbYW1Ba3iYfBq+Kn0GQgeajqH8ezovCw2dqDRF1cZ7FFvLFrZnN1R0ns/JHTr0SvqH084ozseoHrFuK+ecjtRCk4lr6XmahR6ZEpfV6KMlJ3a8HzY1Rk1O3nwwrFDXDQf4zJtpC+P/fl2oYQJ8upZR8LwuGueCY/XKK2ItQLYmBbrnCfncgf87a5mZDnvR5SIae7txgmPVawOMpTD9ujK16L8aFZhXQFslYHYl+DBtNyglbExXEHM8szew==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
+ by PN0P287MB0389.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:e0::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Wed, 5 Mar
+ 2025 10:40:18 +0000
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f%3]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 10:40:18 +0000
+From: Tarang Raval <tarang.raval@siliconsignals.io>
+To: "Shravan.Chippa@microchip.com" <Shravan.Chippa@microchip.com>,
+	"kieran.bingham@ideasonboard.com" <kieran.bingham@ideasonboard.com>
+CC: "mchehab@kernel.org" <mchehab@kernel.org>, "linux-media@vger.kernel.org"
+	<linux-media@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "Conor.Dooley@microchip.com"
+	<Conor.Dooley@microchip.com>, "Valentina.FernandezAlanis@microchip.com"
+	<Valentina.FernandezAlanis@microchip.com>, "Praveen.Kumar@microchip.com"
+	<Praveen.Kumar@microchip.com>, "sakari.ailus@linux.intel.com"
+	<sakari.ailus@linux.intel.com>
+Subject: Re: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p and 480p
+ resolutions
+Thread-Topic: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p and 480p
+ resolutions
+Thread-Index: AQHbjY3ybopw7eby3UKDaLaWcVfpRrNkSL0AgAANEQCAAAEK5Q==
+Date: Wed, 5 Mar 2025 10:40:18 +0000
+Message-ID:
+ <PN3P287MB182928F331D4494E423BA3158BCB2@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
+References: <20250305051442.3716817-1-shravan.chippa@microchip.com>
+ <20250305051442.3716817-5-shravan.chippa@microchip.com>
+ <174116732611.2914008.9738053002324304147@ping.linuxembedded.co.uk>
+ <PH0PR11MB5611988F18EF02394E983AA881CB2@PH0PR11MB5611.namprd11.prod.outlook.com>
+In-Reply-To:
+ <PH0PR11MB5611988F18EF02394E983AA881CB2@PH0PR11MB5611.namprd11.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3P287MB1829:EE_|PN0P287MB0389:EE_
+x-ms-office365-filtering-correlation-id: 7b6e0d5d-a76d-469d-4ae0-08dd5bd21f40
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|366016|376014|38070700018;
+x-microsoft-antispam-message-info:
+ =?Windows-1252?Q?/e35OtdoYE+02vQFjQXGRM0KFR6bFOCro6gUmt0+cZSIDNXHUMr8i0ot?=
+ =?Windows-1252?Q?MisS/C/t+x8veMkRwGsWPrZ9y4wcbN05SAfHwy1efE70+lW9AeixYm0U?=
+ =?Windows-1252?Q?X1z/A18AZ64xOAx/loFH5yUL+rKOtuYg3q/GbbK5GFH4BVrin/h9wBCN?=
+ =?Windows-1252?Q?n5M3ENmeXUzS77uvT7v06ozRXFSpu82r6AnYF4anTcYea2bYzNF0gcWO?=
+ =?Windows-1252?Q?hRC5dX4krYf4ynY1BIv9J+6Rd0meOELW935F7KVQ5L4m+TGfE5BOo2Qy?=
+ =?Windows-1252?Q?jrnBhmI+eBkouG9a3qp1KPdovC+gpdUXSZQxFp2lMoowZL4Xkxj+WgOD?=
+ =?Windows-1252?Q?Sy7NGyOy+eEZz9OYg1zPOjJaCqqY5lIedgVXP4oLC5hH0Pel07BzD2+Z?=
+ =?Windows-1252?Q?/PSVxY9XlTrJyTXVupwphdF+igB3epMftGpZQj2uxCs75vupEXzEOYoD?=
+ =?Windows-1252?Q?9uCCBPASHIkpFp1b6bOgvBmynSkjym/RenEmYTU9SgiqH7xH1hZ3D/Lh?=
+ =?Windows-1252?Q?2t0ceuwsYc8RUzB0FjE2XxInJ/WuuDwhi2Uo2ke35JOre0nlKvKXMUxn?=
+ =?Windows-1252?Q?JrcBjyjwMFf4IQRbGEKXnzaXcACPMxeemdiLh43G60+v7n/HfjlUfDGN?=
+ =?Windows-1252?Q?AnUTpyQWKB9YtzXQHsXjrl8hdJfCEH/jeVLR/1fyJnmDwxAC6kaWDCx7?=
+ =?Windows-1252?Q?CIJxgV/zxD+LQctscpFMKIoIrZjVEbsQq0xRhYSwHkihouX1rMvyZ7/2?=
+ =?Windows-1252?Q?j5AE0SCaKvNoFz4fWJuBVm1mekOx+4TmLK31IPv2G919M05xu7Jwca7I?=
+ =?Windows-1252?Q?TB+2c40As+u4viWbsNTuK1zTiGuUTJe2Upebj6uYxrHyhy8qOU5dT2V1?=
+ =?Windows-1252?Q?S6z31jjWyaK+ed+77IL19PEmZNETQ4wKJVbahzd+D+01oe1Ve+wG9sO5?=
+ =?Windows-1252?Q?Xp8f1KjnCNU+DSCWKnIPGITJa1RUf+IrFITE/6sk1xtUBFsFokZsCAkj?=
+ =?Windows-1252?Q?JAffCIWN1/rX9gxqaxybzw/BXWqVYy8rkUyVvSeier3BwBhSzPItIh4H?=
+ =?Windows-1252?Q?6yeHFk+rK5OCpQT4K5/qPJi0XscNIAab3/xS3z7lDXI1xhpKtZdmC0mr?=
+ =?Windows-1252?Q?3oYRBZCqruUGw6FM/lxOULcGceb7+oXJ092x8IYz1EeL4ZeXJvawxl8b?=
+ =?Windows-1252?Q?TD3I0/xHCwY1npFslwXQuUqJIg2TpafjslS8//JOyDwc6qL25VeeBvCs?=
+ =?Windows-1252?Q?RZKmanp1yre/7XYpjUBTZqplUg4HUvJtWtFxEQsVm3s2/cHQhqNwoTzG?=
+ =?Windows-1252?Q?BjFHAXxEk9xzLY25vU3pbW6MUvI/TrXnjbKH15Io8Ci952j8WTTg47vK?=
+ =?Windows-1252?Q?wqLjiqX7lVnfthF/3ctGKrtmj8uomQZS28UlTJVnrtHBFldJomcFttT8?=
+ =?Windows-1252?Q?wUQyzOZHDvgOlyfvcLoEsf8I/RLzdLM6Q/lzzpsYRHL4OMibfLjdfl4Y?=
+ =?Windows-1252?Q?X+v1RlVOn4WmoXpSbs1XdGrA9ZG4PiuAFLhQSWIk8eaJAfqRmgqtLLvg?=
+ =?Windows-1252?Q?bDdGN1FvqpmEAEJX?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?Windows-1252?Q?kSdaq7aYlMfYusHul9ZhvNNYGm3LDmq+IzEk9UaU3ayMw/j8VfZ8O4Rb?=
+ =?Windows-1252?Q?Hkqat3YETb/POWIs+N1UG2ZW72/3T5WtdusOGfXbTsHYL64wgALIXsjL?=
+ =?Windows-1252?Q?xXUeiFpe6SuK3ZspSPH4D3R/igb2kzCdvdyu0B54Iz90A7hh484digql?=
+ =?Windows-1252?Q?6dcTjIHfeSzOalvm91wY3NHz3kQWXb15SoKNBy4dZ3LCHk7l95xBdPbF?=
+ =?Windows-1252?Q?AlFUZdnye3+/JxVKvF7/9RWcEi4mbFU4/qqdUsDPmRUN4I6sa/+m+vaO?=
+ =?Windows-1252?Q?bdDopFlzPbKPUwLzsOJmHuHZ351LXgE9Gu5SwogWky3BEoNRzK6Eh8EN?=
+ =?Windows-1252?Q?/ZFBh2fWWJkjRPvK6oF9ojOpigyXtCjuJ7K2pZmFdbK7j4BkZ7NUNil6?=
+ =?Windows-1252?Q?++Mesc5fvH+Kww5JKzshJeenKYmqDTDrOiJvQ1mWIB0UxfwBxCU77UMx?=
+ =?Windows-1252?Q?+/vTtRrhG/MyxDjy4QOm72wodrYttDralKOKwHB8KlhXpL358FhJiFMF?=
+ =?Windows-1252?Q?uSTwOXZuKf5SAnwlKNcXeu3wCQXlSeVoJhWKfXzJ7WcVaC2gBx7AcrvW?=
+ =?Windows-1252?Q?90LpHqTMJBQ+UbIhTNkhOdBzvmaokLRazHIcxht/+rBcww+3Yxxflvmc?=
+ =?Windows-1252?Q?sj2CrFqIa2GuXoSsfeJln/nTuTpXnOZYyzRPOHRZXN2+jfUSYO67jvxu?=
+ =?Windows-1252?Q?qSz18qfHwkbEkkdq/9/0ulr3cK2TUqq5Rbc0dELkCYfyUDj6QnGhM2Si?=
+ =?Windows-1252?Q?/ijLExXiqXBkhZIbCzMnJ2EuwI02zR/1J4DIipijlve/m6GsWONwB60Z?=
+ =?Windows-1252?Q?6zuaWUo5JSYlSmOcKGBYaY2ZbiC7IKznAHR/g+6sw4vAJqQr7MCc5KG8?=
+ =?Windows-1252?Q?W8ACTTBhho+Z7ldEmN4KlXMOOF52OHXKnUysZD/oVanMcYUzDus2Dcq+?=
+ =?Windows-1252?Q?BkmbT2E702Yu5ErybODbUAJGhTLqcVHKW2iPOhKmO0KEVsMhK2eQwWr4?=
+ =?Windows-1252?Q?Ztsn2+p4M3oy4UWxJuEtmqyq52OqWG3WmXgN/DGVpCrJGGLYn0RYMV91?=
+ =?Windows-1252?Q?hmm+qt0HdyPqN2+40geoBLwuvcRh9rWS7aX7g5rHLNa/bE4HzexPY4+w?=
+ =?Windows-1252?Q?osVE3dZ/UFC7eum2DcbfR/HmGoxcH7EdORbUKoYOWsAPbT79fW8Kp/6w?=
+ =?Windows-1252?Q?eFs8AtGutlkYkRjjGSK4gv/IM1NLk0X2lF0V+92NkIW4VR4Bt3PkKiPp?=
+ =?Windows-1252?Q?I4d3zY0hzGA4DbeZbWCQQCD4qTRw3FLBKAdDWMS+guKfzWHwY5bFE9fU?=
+ =?Windows-1252?Q?LuMiKyt6AzA5nLpr8cY+RR1nyqQ8tEjq8JqB8RINsvYihRuVb1S/srAx?=
+ =?Windows-1252?Q?gHqEJjfN3P/OXigT0UY6AZABoZfbPQJs/HfVp8z/eqq8DwhblHx7bBt8?=
+ =?Windows-1252?Q?rUj7WCvgr3AOvbH6bfTcGWQTfHBX7vnLmVMqz5IK8HhbQlhIHLNAmXtf?=
+ =?Windows-1252?Q?stw6wFm/Obh+TZGHXfwpawlq1kjE6ND4/uu3ES/O7moxIBEmwunmjjad?=
+ =?Windows-1252?Q?HM8/oQwBMuh7v1aovpVnmiFBzqZTS5Hv8H/FNtetLFAHg24JpK3vFBS6?=
+ =?Windows-1252?Q?Btsg4GtkQ3khXzvi41x6v1xfQIfgbqrU+9xgL9YTcqDMATIKemRpomX3?=
+ =?Windows-1252?Q?5ORuolnnruSQNydnVPD5bMLb4Lso0uQC3MOVcolsozFVKtip+wTnDA?=
+ =?Windows-1252?Q?=3D=3D?=
+Content-Type: text/plain; charset="Windows-1252"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1737577229.git.babu.moger@amd.com> <76b02daf-1b45-473e-9d75-5988a11c6887@intel.com>
- <8ef51f28-e01a-4a7d-ba86-059437edb60b@amd.com> <a07fca4c-c8fa-41a6-b126-59815b9a58f9@intel.com>
- <CALPaoCh7WpohzpXhSAbumjSZBv1_+1bXON7_V1pwG4bdEBr52Q@mail.gmail.com>
- <ccd9c5d7-0266-4054-879e-e084b6972ad5@intel.com> <CALPaoCj1TH+GN6+dFnt5xuN406u=tB-8mj+UuMRSm5KWPJW2wg@mail.gmail.com>
- <2b5a11e3-ee19-47ba-b47e-b7de2818f237@intel.com> <CALPaoChXvLNMg240C7RyBvg0SxXfGf_ozKC6X7Qe4OxyEcL2tw@mail.gmail.com>
- <a3b46f6f-a844-4648-905e-53d662e5715f@intel.com> <CALPaoCi0mFZ9TycyNs+SCR+2tuRJovQ2809jYMun4HtC64hJmA@mail.gmail.com>
- <fc3a67ee-6e97-4b9f-88d9-c24c6dab20c3@intel.com> <CALPaoCg97cLVVAcacnarp+880xjsedEWGJPXhYpy4P7=ky4MZw@mail.gmail.com>
- <a9078e7d-9ce6-4096-a2da-b2c6aae1e3ed@amd.com> <CALPaoCgN+oGgdp40TOJ9NgF9WYPdN0cG8A8BtOOMXOP6iMVfzw@mail.gmail.com>
- <f1744c45-9edf-4012-89bc-47393b4c53fc@amd.com> <CALPaoCiii0vXOF06mfV=kVLBzhfNo0SFqt4kQGwGSGVUqvr2Dg@mail.gmail.com>
- <d1ca9220-1ab7-4a39-819a-03a6069b7ac4@amd.com>
-In-Reply-To: <d1ca9220-1ab7-4a39-819a-03a6069b7ac4@amd.com>
-From: Peter Newman <peternewman@google.com>
-Date: Wed, 5 Mar 2025 11:40:04 +0100
-X-Gm-Features: AQ5f1Jp2XjXUz1htmJKqxKcBSjIy7LONfvJmHEJ2buLZ8tf-PYo6uZ9pALohx8U
-Message-ID: <CALPaoChLL8p49eANYgQ0dJiFs7G=223fGae+LJyx3DwEhNeR8A@mail.gmail.com>
-Subject: Re: [PATCH v11 00/23] x86/resctrl : Support AMD Assignable Bandwidth
- Monitoring Counters (ABMC)
-To: babu.moger@amd.com
-Cc: Reinette Chatre <reinette.chatre@intel.com>, "Moger, Babu" <bmoger@amd.com>, 
-	Dave Martin <Dave.Martin@arm.com>, corbet@lwn.net, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, tony.luck@intel.com, 
-	x86@kernel.org, hpa@zytor.com, paulmck@kernel.org, akpm@linux-foundation.org, 
-	thuth@redhat.com, rostedt@goodmis.org, xiongwei.song@windriver.com, 
-	pawan.kumar.gupta@linux.intel.com, daniel.sneddon@linux.intel.com, 
-	jpoimboe@kernel.org, perry.yuan@amd.com, sandipan.das@amd.com, 
-	kai.huang@intel.com, xiaoyao.li@intel.com, seanjc@google.com, 
-	xin3.li@intel.com, andrew.cooper3@citrix.com, ebiggers@google.com, 
-	mario.limonciello@amd.com, james.morse@arm.com, tan.shaopeng@fujitsu.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	maciej.wieczor-retman@intel.com, eranian@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7b6e0d5d-a76d-469d-4ae0-08dd5bd21f40
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2025 10:40:18.1779
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: kXfeNGo2OePzdAxqBLg876SQxto3St5ey17vZkH4iVarOJf+EJYoYPVNJcsNVYhB1Zc3QXBFzVotaou9QnaNyyuONA+czPS0HKr3yE8TRQs=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN0P287MB0389
 
-Hi Babu,
-
-On Tue, Mar 4, 2025 at 10:49=E2=80=AFPM Moger, Babu <babu.moger@amd.com> wr=
-ote:
->
-> Hi Peter,
->
-> On 3/4/25 10:44, Peter Newman wrote:
-> > On Mon, Mar 3, 2025 at 8:16=E2=80=AFPM Moger, Babu <babu.moger@amd.com>=
- wrote:
-> >>
-> >> Hi Peter/Reinette,
-> >>
-> >> On 2/26/25 07:27, Peter Newman wrote:
-> >>> Hi Babu,
-> >>>
-> >>> On Tue, Feb 25, 2025 at 10:31=E2=80=AFPM Moger, Babu <babu.moger@amd.=
-com> wrote:
-> >>>>
-> >>>> Hi Peter,
-> >>>>
-> >>>> On 2/25/25 11:11, Peter Newman wrote:
-> >>>>> Hi Reinette,
-> >>>>>
-> >>>>> On Fri, Feb 21, 2025 at 11:43=E2=80=AFPM Reinette Chatre
-> >>>>> <reinette.chatre@intel.com> wrote:
-> >>>>>>
-> >>>>>> Hi Peter,
-> >>>>>>
-> >>>>>> On 2/21/25 5:12 AM, Peter Newman wrote:
-> >>>>>>> On Thu, Feb 20, 2025 at 7:36=E2=80=AFPM Reinette Chatre
-> >>>>>>> <reinette.chatre@intel.com> wrote:
-> >>>>>>>> On 2/20/25 6:53 AM, Peter Newman wrote:
-> >>>>>>>>> On Wed, Feb 19, 2025 at 7:21=E2=80=AFPM Reinette Chatre
-> >>>>>>>>> <reinette.chatre@intel.com> wrote:
-> >>>>>>>>>> On 2/19/25 3:28 AM, Peter Newman wrote:
-> >>>>>>>>>>> On Tue, Feb 18, 2025 at 6:50=E2=80=AFPM Reinette Chatre
-> >>>>>>>>>>> <reinette.chatre@intel.com> wrote:
-> >>>>>>>>>>>> On 2/17/25 2:26 AM, Peter Newman wrote:
-> >>>>>>>>>>>>> On Fri, Feb 14, 2025 at 8:18=E2=80=AFPM Reinette Chatre
-> >>>>>>>>>>>>> <reinette.chatre@intel.com> wrote:
-> >>>>>>>>>>>>>> On 2/14/25 10:31 AM, Moger, Babu wrote:
-> >>>>>>>>>>>>>>> On 2/14/2025 12:26 AM, Reinette Chatre wrote:
-> >>>>>>>>>>>>>>>> On 2/13/25 9:37 AM, Dave Martin wrote:
-> >>>>>>>>>>>>>>>>> On Wed, Feb 12, 2025 at 03:33:31PM -0800, Reinette Chat=
-re wrote:
-> >>>>>>>>>>>>>>>>>> On 2/12/25 9:46 AM, Dave Martin wrote:
-> >>>>>>>>>>>>>>>>>>> On Wed, Jan 22, 2025 at 02:20:08PM -0600, Babu Moger =
-wrote:
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> (quoting relevant parts with goal to focus discussion on n=
-ew possible syntax)
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>> I see the support for MPAM events distinct from the su=
-pport of assignable counters.
-> >>>>>>>>>>>>>>>>>> Once the MPAM events are sorted, I think that they can=
- be assigned with existing interface.
-> >>>>>>>>>>>>>>>>>> Please help me understand if you see it differently.
-> >>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>> Doing so would need to come up with alphabetical lette=
-rs for these events,
-> >>>>>>>>>>>>>>>>>> which seems to be needed for your proposal also? If we=
- use possible flags of:
-> >>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>> mbm_local_read_bytes a
-> >>>>>>>>>>>>>>>>>> mbm_local_write_bytes b
-> >>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>> Then mbm_assign_control can be used as:
-> >>>>>>>>>>>>>>>>>> # echo '//0=3Dab;1=3Db' >/sys/fs/resctrl/info/L3_MON/m=
-bm_assign_control
-> >>>>>>>>>>>>>>>>>> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_rea=
-d_bytes
-> >>>>>>>>>>>>>>>>>> <value>
-> >>>>>>>>>>>>>>>>>> # cat /sys/fs/resctrl/mon_data/mon_L3_00/mbm_local_byt=
-es
-> >>>>>>>>>>>>>>>>>> <sum of mbm_local_read_bytes and mbm_local_write_bytes=
->
-> >>>>>>>>>>>>>>>>>>
-> >>>>>>>>>>>>>>>>>> One issue would be when resctrl needs to support more =
-than 26 events (no more flags available),
-> >>>>>>>>>>>>>>>>>> assuming that upper case would be used for "shared" co=
-unters (unless this interface is defined
-> >>>>>>>>>>>>>>>>>> differently and only few uppercase letters used for it=
-). Would this be too low of a limit?
-> >>>>>>>>>>>>>>
-> >>>>>>>>>>>>>> As mentioned above, one possible issue with existing inter=
-face is that
-> >>>>>>>>>>>>>> it is limited to 26 events (assuming only lower case lette=
-rs are used). The limit
-> >>>>>>>>>>>>>> is low enough to be of concern.
-> >>>>>>>>>>>>>
-> >>>>>>>>>>>>> The events which can be monitored by a single counter on AB=
-MC and MPAM
-> >>>>>>>>>>>>> so far are combinable, so 26 counters per group today means=
- it limits
-> >>>>>>>>>>>>> breaking down MBM traffic for each group 26 ways. If a user=
- complained
-> >>>>>>>>>>>>> that a 26-way breakdown of a group's MBM traffic was limiti=
-ng their
-> >>>>>>>>>>>>> investigation, I would question whether they know what they=
-'re looking
-> >>>>>>>>>>>>> for.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> The key here is "so far" as well as the focus on MBM only.
-> >>>>>>>>>>>>
-> >>>>>>>>>>>> It is impossible for me to predict what we will see in a cou=
-ple of years
-> >>>>>>>>>>>> from Intel RDT, AMD PQoS, and Arm MPAM that now all rely on =
-resctrl interface
-> >>>>>>>>>>>> to support their users. Just looking at the Intel RDT spec t=
-he event register
-> >>>>>>>>>>>> has space for 32 events for each "CPU agent" resource. That =
-does not take into
-> >>>>>>>>>>>> account the "non-CPU agents" that are enumerated via ACPI. T=
-ony already mentioned
-> >>>>>>>>>>>> that he is working on patches [1] that will add new events a=
-nd shared the idea
-> >>>>>>>>>>>> that we may be trending to support "perf" like events associ=
-ated with RMID. I
-> >>>>>>>>>>>> expect AMD PQoS and Arm MPAM to provide related enhancements=
- to support their
-> >>>>>>>>>>>> customers.
-> >>>>>>>>>>>> This all makes me think that resctrl should be ready to supp=
-ort more events than 26.
-> >>>>>>>>>>>
-> >>>>>>>>>>> I was thinking of the letters as representing a reusable, use=
-r-defined
-> >>>>>>>>>>> event-set for applying to a single counter rather than as ind=
-ividual
-> >>>>>>>>>>> events, since MPAM and ABMC allow us to choose the set of eve=
-nts each
-> >>>>>>>>>>> one counts. Wherever we define the letters, we could use more=
- symbolic
-> >>>>>>>>>>> event names.
-> >>>>>>>>>>
-> >>>>>>>>>> Thank you for clarifying.
-> >>>>>>>>>>
-> >>>>>>>>>>>
-> >>>>>>>>>>> In the letters as events model, choosing the events assigned =
-to a
-> >>>>>>>>>>> group wouldn't be enough information, since we would want to =
-control
-> >>>>>>>>>>> which events should share a counter and which should be count=
-ed by
-> >>>>>>>>>>> separate counters. I think the amount of information that wou=
-ld need
-> >>>>>>>>>>> to be encoded into mbm_assign_control to represent the level =
-of
-> >>>>>>>>>>> configurability supported by hardware would quickly get out o=
-f hand.
-> >>>>>>>>>>>
-> >>>>>>>>>>> Maybe as an example, one counter for all reads, one counter f=
-or all
-> >>>>>>>>>>> writes in ABMC would look like...
-> >>>>>>>>>>>
-> >>>>>>>>>>> (L3_QOS_ABMC_CFG.BwType field names below)
-> >>>>>>>>>>>
-> >>>>>>>>>>> (per domain)
-> >>>>>>>>>>> group 0:
-> >>>>>>>>>>>  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>>>>  counter 1: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>>>> group 1:
-> >>>>>>>>>>>  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>>>>  counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>>>> ...
-> >>>>>>>>>>>
-> >>>>>>>>>>
-> >>>>>>>>>> I think this may also be what Dave was heading towards in [2] =
-but in that
-> >>>>>>>>>> example and above the counter configuration appears to be glob=
-al. You do mention
-> >>>>>>>>>> "configurability supported by hardware" so I wonder if per-dom=
-ain counter
-> >>>>>>>>>> configuration is a requirement?
-> >>>>>>>>>
-> >>>>>>>>> If it's global and we want a particular group to be watched by =
-more
-> >>>>>>>>> counters, I wouldn't want this to result in allocating more cou=
-nters
-> >>>>>>>>> for that group in all domains, or allocating counters in domain=
-s where
-> >>>>>>>>> they're not needed. I want to encourage my users to avoid alloc=
-ating
-> >>>>>>>>> monitoring resources in domains where a job is not allowed to r=
-un so
-> >>>>>>>>> there's less pressure on the counters.
-> >>>>>>>>>
-> >>>>>>>>> In Dave's proposal it looks like global configuration means
-> >>>>>>>>> globally-defined "named counter configurations", which works be=
-cause
-> >>>>>>>>> it's really per-domain assignment of the configurations to howe=
-ver
-> >>>>>>>>> many counters the group needs in each domain.
-> >>>>>>>>
-> >>>>>>>> I think I am becoming lost. Would a global configuration not bre=
-ak your
-> >>>>>>>> view of "event-set applied to a single counter"? If a counter is=
- configured
-> >>>>>>>> globally then it would not make it possible to support the full =
-configurability
-> >>>>>>>> of the hardware.
-> >>>>>>>> Before I add more confusion, let me try with an example that bui=
-lds on your
-> >>>>>>>> earlier example copied below:
-> >>>>>>>>
-> >>>>>>>>>>> (per domain)
-> >>>>>>>>>>> group 0:
-> >>>>>>>>>>>  counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>>>>  counter 1: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>>>> group 1:
-> >>>>>>>>>>>  counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>>>>  counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>>>> ...
-> >>>>>>>>
-> >>>>>>>> Since the above states "per domain" I rewrite the example to hig=
-hlight that as
-> >>>>>>>> I understand it:
-> >>>>>>>>
-> >>>>>>>> group 0:
-> >>>>>>>>  domain 0:
-> >>>>>>>>   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 1: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>  domain 1:
-> >>>>>>>>   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 1: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>> group 1:
-> >>>>>>>>  domain 0:
-> >>>>>>>>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>  domain 1:
-> >>>>>>>>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>
-> >>>>>>>> You mention that you do not want counters to be allocated in dom=
-ains that they
-> >>>>>>>> are not needed in. So, let's say group 0 does not need counter 0=
- and counter 1
-> >>>>>>>> in domain 1, resulting in:
-> >>>>>>>>
-> >>>>>>>> group 0:
-> >>>>>>>>  domain 0:
-> >>>>>>>>   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 1: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>> group 1:
-> >>>>>>>>  domain 0:
-> >>>>>>>>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>  domain 1:
-> >>>>>>>>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>
-> >>>>>>>> With counter 0 and counter 1 available in domain 1, these counte=
-rs could
-> >>>>>>>> theoretically be configured to give group 1 more data in domain =
-1:
-> >>>>>>>>
-> >>>>>>>> group 0:
-> >>>>>>>>  domain 0:
-> >>>>>>>>   counter 0: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 1: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>> group 1:
-> >>>>>>>>  domain 0:
-> >>>>>>>>   counter 2: LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 3: VictimBW,LclNTWr,RmtNTWr
-> >>>>>>>>  domain 1:
-> >>>>>>>>   counter 0: LclFill,RmtFill
-> >>>>>>>>   counter 1: LclNTWr,RmtNTWr
-> >>>>>>>>   counter 2: LclSlowFill,RmtSlowFill
-> >>>>>>>>   counter 3: VictimBW
-> >>>>>>>>
-> >>>>>>>> The counters are shown with different per-domain configurations =
-that seems to
-> >>>>>>>> match with earlier goals of (a) choose events counted by each co=
-unter and
-> >>>>>>>> (b) do not allocate counters in domains where they are not neede=
-d. As I
-> >>>>>>>> understand the above does contradict global counter configuratio=
-n though.
-> >>>>>>>> Or do you mean that only the *name* of the counter is global and=
- then
-> >>>>>>>> that it is reconfigured as part of every assignment?
-> >>>>>>>
-> >>>>>>> Yes, I meant only the *name* is global. I assume based on a parti=
-cular
-> >>>>>>> system configuration, the user will settle on a handful of useful
-> >>>>>>> groupings to count.
-> >>>>>>>
-> >>>>>>> Perhaps mbm_assign_control syntax is the clearest way to express =
-an example...
-> >>>>>>>
-> >>>>>>>  # define global configurations (in ABMC terms), not necessarily =
-in this
-> >>>>>>>  # syntax and probably not in the mbm_assign_control file.
-> >>>>>>>
-> >>>>>>>  r=3DLclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >>>>>>>  w=3DVictimBW,LclNTWr,RmtNTWr
-> >>>>>>>
-> >>>>>>>  # legacy "total" configuration, effectively r+w
-> >>>>>>>  t=3DLclFill,RmtFill,LclSlowFill,RmtSlowFill,VictimBW,LclNTWr,Rmt=
-NTWr
-> >>>>>>>
-> >>>>>>>  /group0/0=3Dt;1=3Dt
-> >>>>>>>  /group1/0=3Dt;1=3Dt
-> >>>>>>>  /group2/0=3D_;1=3Dt
-> >>>>>>>  /group3/0=3Drw;1=3D_
-> >>>>>>>
-> >>>>>>> - group2 is restricted to domain 0
-> >>>>>>> - group3 is restricted to domain 1
-> >>>>>>> - the rest are unrestricted
-> >>>>>>> - In group3, we decided we need to separate read and write traffi=
-c
-> >>>>>>>
-> >>>>>>> This consumes 4 counters in domain 0 and 3 counters in domain 1.
-> >>>>>>>
-> >>>>>>
-> >>>>>> I see. Thank you for the example.
-> >>>>>>
-> >>>>>> resctrl supports per-domain configurations with the following poss=
-ible when
-> >>>>>> using mbm_total_bytes_config and mbm_local_bytes_config:
-> >>>>>>
-> >>>>>> t(domain 0)=3DLclFill,RmtFill,LclSlowFill,RmtSlowFill,VictimBW,Lcl=
-NTWr,RmtNTWr
-> >>>>>> t(domain 1)=3DLclFill,RmtFill,VictimBW,LclNTWr,RmtNTWr
-> >>>>>>
-> >>>>>>    /group0/0=3Dt;1=3Dt
-> >>>>>>    /group1/0=3Dt;1=3Dt
-> >>>>>>
-> >>>>>> Even though the flags are identical in all domains, the assigned c=
-ounters will
-> >>>>>> be configured differently in each domain.
-> >>>>>>
-> >>>>>> With this supported by hardware and currently also supported by re=
-sctrl it seems
-> >>>>>> reasonable to carry this forward to what will be supported next.
-> >>>>>
-> >>>>> The hardware supports both a per-domain mode, where all groups in a
-> >>>>> domain use the same configurations and are limited to two events pe=
-r
-> >>>>> group and a per-group mode where every group can be configured and
-> >>>>> assigned freely. This series is using the legacy counter access mod=
-e
-> >>>>> where only counters whose BwType matches an instance of QOS_EVT_CFG=
-_n
-> >>>>> in the domain can be read. If we chose to read the assigned counter
-> >>>>> directly (QM_EVTSEL[ExtendedEvtID]=3D1, QM_EVTSEL[EvtID]=3DL3CacheA=
-BMC)
-> >>>>> rather than asking the hardware to find the counter by RMID, we wou=
-ld
-> >>>>> not be limited to 2 counters per group/domain and the hardware woul=
-d
-> >>>>> have the same flexibility as on MPAM.
-> >>>>
-> >>>> In extended mode, the contents of a specific counter can be read by
-> >>>> setting the following fields in QM_EVTSEL: [ExtendedEvtID]=3D1,
-> >>>> [EvtID]=3DL3CacheABMC and setting [RMID] to the desired counter ID. =
-Reading
-> >>>> QM_CTR will then return the contents of the specified counter.
-> >>>>
-> >>>> It is documented below.
-> >>>> https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs=
-/programmer-references/24593.pdf
-> >>>>  Section: 19.3.3.3 Assignable Bandwidth Monitoring (ABMC)
-> >>>>
-> >>>> We previously discussed this with you (off the public list) and I
-> >>>> initially proposed the extended assignment mode.
-> >>>>
-> >>>> Yes, the extended mode allows greater flexibility by enabling multip=
-le
-> >>>> counters to be assigned to the same group, rather than being limited=
- to
-> >>>> just two.
-> >>>>
-> >>>> However, the challenge is that we currently lack the necessary inter=
-faces
-> >>>> to configure multiple events per group. Without these interfaces, th=
-e
-> >>>> extended mode is not practical at this time.
-> >>>>
-> >>>> Therefore, we ultimately agreed to use the legacy mode, as it does n=
-ot
-> >>>> require modifications to the existing interface, allowing us to cont=
-inue
-> >>>> using it as is.
-> >>>>
-> >>>>>
-> >>>>> (I might have said something confusing in my last messages because =
-I
-> >>>>> had forgotten that I switched to the extended assignment mode when
-> >>>>> prototyping with soft-ABMC and MPAM.)
-> >>>>>
-> >>>>> Forcing all groups on a domain to share the same 2 counter
-> >>>>> configurations would not be acceptable for us, as the example I gav=
-e
-> >>>>> earlier is one I've already been asked about.
-> >>>>
-> >>>> I don=E2=80=99t see this as a blocker. It should be considered an ex=
-tension to the
-> >>>> current ABMC series. We can easily build on top of this series once =
-we
-> >>>> finalize how to configure the multiple event interface for each grou=
-p.
-> >>>
-> >>> I don't think it is, either. Only being able to use ABMC to assign
-> >>> counters is fine for our use as an incremental step. My longer-term
-> >>> concern is the domain-scoped mbm_total_bytes_config and
-> >>> mbm_local_bytes_config files, but they were introduced with BMEC, so
-> >>> there's already an expectation that the files are present when BMEC i=
-s
-> >>> supported.
-> >>>
-> >>> On ABMC hardware that also supports BMEC, I'm concerned about enablin=
-g
-> >>> ABMC when only the BMEC-style event configuration interface exists.
-> >>> The scope of my issue is just whether enabling "full" ABMC support
-> >>> will require an additional opt-in, since that could remove the BMEC
-> >>> interface. If it does, it's something we can live with.
-> >>
-> >> As you know, this series is currently blocked without further feedback=
-.
-> >>
-> >> I=E2=80=99d like to begin reworking these patches to incorporate Peter=
-=E2=80=99s feedback.
-> >> Any input or suggestions would be appreciated.
-> >>
-> >> Here=E2=80=99s what we=E2=80=99ve learned so far:
-> >>
-> >> 1. Assignments should be independent of BMEC.
-> >> 2. We should be able to specify multiple event types to a counter (e.g=
-.,
-> >> read, write, victimBM, etc.). This is also called shared counter
-> >> 3. There should be an option to assign events per domain.
-> >> 4. Currently, only two counters can be assigned per group, but the des=
-ign
-> >> should allow flexibility to assign more in the future as the interface
-> >> evolves.
-> >> 5. Utilize the extended RMID read mode.
-> >>
-> >>
-> >> Here is my proposal using Peter's earlier example:
-> >>
-> >> # define event configurations
-> >>
-> >> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D
-> >> Bits    Mnemonics       Description
-> >> =3D=3D=3D=3D   =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >> 6       VictimBW        Dirty Victims from all types of memory
-> >> 5       RmtSlowFill     Reads to slow memory in the non-local NUMA dom=
-ain
-> >> 4       LclSlowFill     Reads to slow memory in the local NUMA domain
-> >> 3       RmtNTWr         Non-temporal writes to non-local NUMA domain
-> >> 2       LclNTWr         Non-temporal writes to local NUMA domain
-> >> 1       mtFill          Reads to memory in the non-local NUMA domain
-> >> 0       LclFill         Reads to memory in the local NUMA domain
-> >> =3D=3D=3D=3D    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >>
-> >> #Define flags based on combination of above event types.
-> >>
-> >> t =3D LclFill,RmtFill,LclSlowFill,RmtSlowFill,VictimBW,LclNTWr,RmtNTWr
-> >> l =3D LclFill, LclNTWr, LclSlowFill
-> >> r =3D LclFill,RmtFill,LclSlowFill,RmtSlowFill
-> >> w =3D VictimBW,LclNTWr,RmtNTWr
-> >> v =3D VictimBW
-> >>
-> >> Peter suggested the following format earlier :
-> >>
-> >> /group0/0=3Dt;1=3Dt
-> >> /group1/0=3Dt;1=3Dt
-> >> /group2/0=3D_;1=3Dt
-> >> /group3/0=3Drw;1=3D_
-> >
-> > After some inquiries within Google, it sounds like nobody has invested
-> > much into the current mbm_assign_control format yet, so it would be
-> > best to drop it and distribute the configuration around the filesystem
-> > hierarchy[1], which should allow us to produce something more flexible
-> > and cleaner to implement.
-> >
-> > Roughly what I had in mind:
-> >
-> > Use mkdir in a info/<resource>_MON subdirectory to create free-form
-> > names for the assignable configurations rather than being restricted
-> > to single letters.  In the resulting directory, populate a file where
-> > we can specify the set of events the config should represent. I think
-> > we should use symbolic names for the events rather than raw BMEC field
-> > values. Moving forward we could come up with portable names for common
-> > events and only support the BMEC names on AMD machines for users who
-> > want specific events and don't care about portability.
->
->
-> I=E2=80=99m still processing this. Let me start with some initial questio=
-ns.
->
-> So, we are creating event configurations here, which seems reasonable.
->
-> Yes, we should use portable names and are not limited to BMEC names.
->
-> How many configurations should we allow? Do we know?
-
-Do we need an upper limit?
-
->
-> >
-> > Next, put assignment-control file nodes in per-domain directories
-> > (i.e., mon_data/mon_L3_00/assign_{exclusive,shared}). Writing a
-> > counter-configuration name into the file would then allocate a counter
-> > in the domain, apply the named configuration, and monitor the parent
-> > group-directory. We can also put a group/resource-scoped assign_* file
-> > higher in the hierarchy to make it easier for users who want to
-> > configure all domains the same for a group.
->
-> What is the difference between shared and exclusive?
-
-Shared assignment[1] means that non-exclusively-assigned counters in
-each domain will be scheduled round-robin to the groups requesting
-shared access to a counter. In my tests, I assigned the counters long
-enough to produce a single 1-second MB/s sample for the per-domain
-aggregation files[2].
-
-These do not need to be implemented immediately, but knowing that they
-work addresses the overhead and scalability concerns of reassigning
-counters and reading their values.
-
->
-> Having three files=E2=80=94assign_shared, assign_exclusive, and unassign=
-=E2=80=94for each
-> domain seems excessive. In a system with 32 groups and 12 domains, this
-> results in 32 =C3=97 12 =C3=97 3 files, which is quite large.
->
-> There should be a more efficient way to handle this.
->
-> Initially, we started with a group-level file for this interface, but it
-> was rejected due to the high number of sysfs calls, making it inefficient=
-.
-
-I had rejected it due to the high-frequency of access of a large
-number of files, which has since been addressed by shared assignment
-(or automatic reassignment) and aggregated mbps files.
-
->
-> Additionally, how can we list all assignments with a single sysfs call?
->
-> That was another problem we need to address.
-
-This is not a requirement I was aware of. If the user forgot where
-they assigned counters (or forgot to disable auto-assignment), they
-can read multiple sysfs nodes to remind themselves.
-
->
->
-> >
-> > The configuration names listed in assign_* would result in files of
-> > the same name in the appropriate mon_data domain directories from
-> > which the count values can be read.
-> >
-> >  # mkdir info/L3_MON/counter_configs/mbm_local_bytes
-> >  # echo LclFill > info/L3_MON/counter_configs/mbm_local_bytes/event_fil=
-ter
-> >  # echo LclNTWr > info/L3_MON/counter_configs/mbm_local_bytes/event_fil=
-ter
-> >  # echo LclSlowFill > info/L3_MON/counter_configs/mbm_local_bytes/event=
-_filter
-> >  # cat info/L3_MON/counter_configs/mbm_local_bytes/event_filter
-> > LclFill
-> > LclNTWr
-> > LclSlowFill
->
-> I feel we can just have the configs. event_filter file is not required.
-
-That's right, I forgot that we can implement kernfs_ops::open(). I was
-only looking at struct kernfs_syscall_ops
-
->
-> #cat info/L3_MON/counter_configs/mbm_local_bytes
-> LclFill <-rename these to generic names.
-> LclNTWr
-> LclSlowFill
->
-
-I think portable and non-portable event names should both be available
-as options. There are simple bandwidth measurement mechanisms that
-will be applied in general, but when they turn up an issue, it can
-often lead to a more focused investigation, requiring more precise
-events.
-
--Peter
+Hi Kieran, Shravan=0A=
+=0A=
+> > -----Original Message-----=0A=
+> > From: Kieran Bingham <kieran.bingham@ideasonboard.com>=0A=
+> > Sent: Wednesday, March 5, 2025 3:05 PM=0A=
+> > To: mchehab@kernel.org; sakari.ailus@linux.intel.com; shravan Chippa -=
+=0A=
+> > I35088 <Shravan.Chippa@microchip.com>=0A=
+> > Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org; Conor Do=
+oley=0A=
+> > - M52691 <Conor.Dooley@microchip.com>; Valentina Fernandez Alanis -=0A=
+> > M63239 <Valentina.FernandezAlanis@microchip.com>; Praveen Kumar -=0A=
+> > I30718 <Praveen.Kumar@microchip.com>; shravan Chippa - I35088=0A=
+> > <Shravan.Chippa@microchip.com>=0A=
+> > Subject: Re: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p and =
+480p=0A=
+> > resolutions=0A=
+> >=0A=
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you know =
+the=0A=
+> > content is safe=0A=
+> >=0A=
+> > Quoting shravan kumar (2025-03-05 05:14:42)=0A=
+> > > From: Shravan Chippa <shravan.chippa@microchip.com>=0A=
+> > >=0A=
+> > > Added support for 1280x720@30 and 640x480@30 resolutions=0A=
+> > >=0A=
+> > > Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>=0A=
+> > > ---=0A=
+> > >=A0 drivers/media/i2c/imx334.c | 66=0A=
+> > > ++++++++++++++++++++++++++++++++++++++=0A=
+> > >=A0 1 file changed, 66 insertions(+)=0A=
+> > >=0A=
+> > > diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c=
+=0A=
+> > > index a7c0bd38c9b8..8cd1eecd0143 100644=0A=
+> > > --- a/drivers/media/i2c/imx334.c=0A=
+> > > +++ b/drivers/media/i2c/imx334.c=0A=
+> > > @@ -314,6 +314,46 @@ static const struct imx334_reg=0A=
+> > > common_mode_regs[] =3D {=0A=
+> > >=A0=A0=A0=A0=A0=A0=A0=A0 {0x3002, 0x00},=0A=
+> > >=A0 };=0A=
+> > >=0A=
+> > > +/* Sensor mode registers for 640x480@30fps */ static const struct=0A=
+> > > +imx334_reg mode_640x480_regs[] =3D {=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x302c, 0x70},=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x302d, 0x06},=0A=
+> >=0A=
+> > These two are a single 16 bit register HTRIMMING_START =3D 1648=0A=
+> >=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x302e, 0x80},=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x302f, 0x02},=0A=
+> >=0A=
+> > These two are a single 16 bit register HNUM =3D 640=0A=
+> >=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x3074, 0x48},=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x3075, 0x07},=0A=
+> >=0A=
+> > These two are a single 16 bit (well, 12 bit value) AREA3_ST_ADR_1 =3D 1=
+864=0A=
+> >=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x308e, 0x49},=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x308f, 0x07},=0A=
+> >=0A=
+> > These two are a single 16 bit register AREA3_ST_ADR_2 =3D 1865=0A=
+> >=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x3076, 0xe0},=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x3077, 0x01},=0A=
+> >=0A=
+> > These two are a single 16 bit register AREA3_WIDTH_1 =3D 480=0A=
+> >=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x3090, 0xe0},=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x3091, 0x01},=0A=
+> >=0A=
+> > These two are a single 16 bit register AREA3_WIDTH_2 =3D 480=0A=
+> >=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x3308, 0xe0},=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x3309, 0x01},=0A=
+> >=0A=
+> > These two are a single 16 bit register Y_OUT_SIZE=0A=
+> >=0A=
+> > Don't you think=0A=
+> >=A0=A0=A0=A0=A0=A0=A0=A0 { Y_OUT_SIZE, 480 },=0A=
+> >=0A=
+> > Is so much more readable and easier to comprehend and maintain?=0A=
+> >=0A=
+> >=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x30d8, 0x30},=0A=
+> > > +=A0=A0=A0=A0=A0=A0 {0x30d9, 0x0b},=0A=
+> >=0A=
+> > These two are a single 16 bit register UNREAD_ED_ADR =3D 2864=0A=
+> >=0A=
+> > > +};=0A=
+> >=0A=
+> > I'm still sad that we can all know the names of all these registers and=
+ yet this=0A=
+> > is writing new tables of hex values.=0A=
+>=0A=
+> Do you want me use call like bellow API with register names:=0A=
+> CCI_REG16_LE(0x30d8);=0A=
+> cci_write();=0A=
+> cci_multi_reg_write();=0A=
+> devm_cci_regmap_init_i2c();=0A=
+=0A=
+I have made a patch series for this sensor driver's improvement, in which =
+=0A=
+I added the V4L2 CCI helper.=0A=
+=0A=
+I am just waiting for this patch series to be applied so I can send my =0A=
+changes on top of it.=0A=
+=0A=
+However, if Shravan wants to make these changes on his own, I don=92t mind.=
+=0A=
+=0A=
+Best Regards,=0A=
+Tarang=
 
