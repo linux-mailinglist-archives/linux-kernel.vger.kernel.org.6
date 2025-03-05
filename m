@@ -1,140 +1,131 @@
-Return-Path: <linux-kernel+bounces-547508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62287A50A44
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:50:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9763AA50A47
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:51:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 827D1172793
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EE5717288F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:51:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D871DD9AC;
-	Wed,  5 Mar 2025 18:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADA0B253333;
+	Wed,  5 Mar 2025 18:50:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C8ZS6KpX"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="YdKISRre"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7FB1A5BB7;
-	Wed,  5 Mar 2025 18:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236F12512EB
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:50:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741200633; cv=none; b=W347/qwx/OSKwtyku332G6ysP3C7hMqYrkLCi9099bTRunx+CQP95dtzceQZQehz4arcq9ygglffq8CAprshzNWfkPcM0xyfYyj/yvQpiXqTdAxwanNw6qP7VrV41B2VOi1iu7VZ8bVA6Kei6x3zkD2JeJbIupNCKpC1vzzSOsg=
+	t=1741200659; cv=none; b=ctp4qCG9oZkr+jlb+VUompub0S+5oKJ4783teXfja8/+oqIRVrGqsgzuNrlQmdT2ZfQRnI232MRsy2V1wkRf8gEFvjFtG2D6MSQnJk8bs4+VOl60JsVPogM9wMsTJU3VYu/fgEmB6cw3chQ/NAhzi4k4aDVJOVwJeh4giN47jdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741200633; c=relaxed/simple;
-	bh=gQTj8Q5JHzsGXzIfa7+8g2ZZ2VR4JimKv96wf/5CAZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ggyIFOCkl0oQ6vIcBK6BDkq9wZdQ3urP6oSbNceLrADBC0g4yZKHLO5f+mYlw17V8Ah05LB00M1d75Vp0rEQlqH2VcYGfH7rte0/ggfTnTFvKxDCOfKJV89dGrUpqLT4+v0IsQiujlRBAFST2MDQFo8ne6HlsuJgjjIH/XyIau4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C8ZS6KpX; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43995b907cfso46648535e9.3;
-        Wed, 05 Mar 2025 10:50:31 -0800 (PST)
+	s=arc-20240116; t=1741200659; c=relaxed/simple;
+	bh=QbaAYVsuHtR4sFbwYlItPyeMtj1+0TldiW7il+PRxZc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4nv2jahyUC8VnynXKPvhbessRDO5GSVMFyAZxImjcrb77cNm84uP4xHSYlmLqbaihfkor4jU0fMo8op1iJqxnw3ApWYJjnJ+Z85wgB+rQormBRi9F6npLqeLG7m5zO6ZCfKzEjDjVrYEDl3k9RN5c6KgJR+LCNVPtvSAj1sRYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=YdKISRre; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-471fe5e0a80so64131431cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 10:50:54 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741200630; x=1741805430; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H5H2Dkfo/vt5zHKiZMetuzkN/iESwQof/o51gqGwt4o=;
-        b=C8ZS6KpXR830pkcEt18lvgyrU170W8jRLI1BgxYehBcvQ+u1DTYcs71MSVHGL94n5d
-         Z2ooxhBjdiDJNtZ357L2hM6+4xNVT14ZeVQi13si7W9FXXXgfLL+hvqPf0Evupa9KUXP
-         uuKUV/1psdOgXy+S1ZdUk7iO2Zl4xdy7M9owQ6dv4getJ878shmUjFLUiJbLjgHcUBju
-         ExIdNRXTJXhLZyyjoSatn1z/TGQa3QAgWNKoeW0l6B96TfXaJrHqUovMtRR8t8sZDLyD
-         6YBjDqIhvhOLkaWiro1rb+srQMRVu0+GEbW457UXHCHOYnC1l1d/nY3kY08bThSNY3i7
-         QjPA==
+        d=ziepe.ca; s=google; t=1741200654; x=1741805454; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z7/tB8dYiu5A38nEKy58/W/Pt5oX/QvBFHO/wQ46XSc=;
+        b=YdKISRre2vQzP5L91LnjrMPLlIWIMUyv0FCKNrb8H8ZEwRFG3hWoxi3tw6UQImAN8P
+         dC2T8/fDqHcn71EDd95kew5KAHCLbRwWCmexzmO8KLYbo76tEQX/rL+/kFE13HKznSXJ
+         VPIvClo7wJ+3I28B+lVMxtM19Ei0Rhm8tDZojPF9tqbMc+e8OOrMiHTNSgHxNPlw5Rxr
+         Vy16yI2bw8ut1ptKtqydSYdWwQSjMtnzG3m6YpR914NO6TEEAmife16dDa1QUsA40Exw
+         D+fz4MvGGySafE1nvAuaB1u0tWCggL2iFCW27B0Lh86hakThRBKcKgstH3wz4mk1Bz2X
+         HM/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741200630; x=1741805430;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H5H2Dkfo/vt5zHKiZMetuzkN/iESwQof/o51gqGwt4o=;
-        b=g6MJbOK+tih0ZlLbiBMXFnZZYsZK0VvvYah+jZDaeUG57PcISHmEQrdcJM5xMqbUWB
-         9lZPy6Xk1HTiOEpAZMNYu7vZWXxInQmxi7/kDe6l18zPNGWK30CpWSJw8mIzC9nFFEDn
-         v/HV+6WKyOP+oyvspbKajRRPatQW9yRWy1OmrzH2H5raTSrnizCacwEKNe48UN+vbrCa
-         H3cPlAwYFT5t9+m2iEa3ieHIGRJQosQ0Tj6ab/58QC9+L8jhSIAs37xRVfCwwqIA4Jz0
-         gcEJzjQMQDY8MNNKN9PtWepw1vC6uXdPF/rMFaQmbd/LRzZ/JMr7+SIG26pq4yiRMpLI
-         YifQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoeOv1x7NwS6nBYMkzCuEEC4+pU5xzfDIj3zmCT76vOFkue47kDkg9mv+6MD5iHTe7G7fqAmlNuLjcoCk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDKkvEskgWTzHAcaKKaJPt9m1uSQuISF2wQhZgDC9HhPRkWK5u
-	vZgH3Ic605qjAJoP84g3WzR5LjjX1rqU9OIe1jd9Tha2k7Yl/hP7
-X-Gm-Gg: ASbGncuvAslFCRYrLGR00P1AxsudtOSVkEX9WAdc+HVCxOEoBwd7UtyLVSSDgIYBlG5
-	pnDLr2nUogQmQh5L6qHx48bZfpJd7l6oxRGJr1kYZAmYf+moWVYVCe2RROLwoxf03MUNiVMwW3Y
-	KsEerndekjIJujv8dHbQTXRGMvYeWXhl6KO77SOcs0YOKRzLbIxtaLpb/wgoeN918ipwT/WNlnz
-	742PCzlftJUvnRMscTUqHIRka+tlbq+GlE9ZI+M+DxYYgr3R5P/idMWUQqkhW78sPoD8NKhYbtU
-	JTRK0XyymBrMcP2BVVCDllS9AFbe9oGQABMcyp/q3AoC35BGhS5mh/1nLKXTQUEKus/Lnk3mMSR
-	y5Sv93E+qi++MNJkg6V6l
-X-Google-Smtp-Source: AGHT+IHnaRGavcvn0zG6fKQ1AhWlIi2RHdXvleFHrMhG9CHQJjG0/o2DM0tO1YMGeqqMtj5xnwthcA==
-X-Received: by 2002:a05:600c:458a:b0:439:99d1:d4a4 with SMTP id 5b1f17b1804b1-43bd29c3ecdmr34059305e9.18.1741200629617;
-        Wed, 05 Mar 2025 10:50:29 -0800 (PST)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd6530f26sm20378815e9.4.2025.03.05.10.50.28
+        d=1e100.net; s=20230601; t=1741200654; x=1741805454;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Z7/tB8dYiu5A38nEKy58/W/Pt5oX/QvBFHO/wQ46XSc=;
+        b=WWCTm6uV/aUMZz1DRxwLIKXMP/3CryyuF8o9WLBzkizW7S8bhRW73Wjemi9d/14qh5
+         p/GIvtiM0CKPAaIDrskUKgGAQveVmRQneiBS+HOMst5BvfP9Apx+7+hQknBVSbjEnsWu
+         jgDsIVKWybMnIZCc7mZm65t+tzWW6G8yJ4jNiiH6jkP67CvtVF1XbTfqQ9a7JOb5+GGz
+         m69DdxfRCTPSVeerFwHxaA7v18YO6O7EF64090v+vS0BMINbiRV/rHDn/iuvnsSWY9vT
+         St4FlBkE/TN0ZqjI7PPyryNtZ+nIsuqBKSnGpHhpAFXnaQwY4fwGwe11V4SWEAOZvBbj
+         NpMg==
+X-Forwarded-Encrypted: i=1; AJvYcCVacIOFAsECkMap8fiHvcQ8HmhaoDl0unIB5qSeJZxO1VOZiQ8MslgyagflLhgLbPLywhWy2QlnkgwVBB4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1lCUTejgGScWRCGBEEjJ5JH6iKSR9QC4q27kCIVDNj/bMC2ea
+	6N/yT0mBUDLo9bzqtjKPmjL6ajwlQSjuvOv2dZ/ZzOMSs6AD3pfZ56vVmYsEFtE=
+X-Gm-Gg: ASbGncuw7PWNxMTN49UGAASN6D6zE+77jblDN+Aaavgblnimsb7b7PTodIpuuO4bCfO
+	MdPLACJr1+ZV3rZjhI1Rrd6D38RBGFyaiy/Wx4FD2tRgYKB4Z2e52ayTo+8Wphoe/o7iC2aKfcS
+	XeMWsUFGeg8DzUNrJvPv5rZ0HgeEMKpYkvCAtKYNOpmInZmCQ5HFpdoohrkNvz0+5+lRor/5r1k
+	fGTa9fKapUy6ZzoByg/0H2P0m4OpcmWhLCSKAyAaHOZnogqj4XFP07cG2Ip42XW5j7IfQMfMejh
+	60D6I2/yDpkq0tqORjuuywyl6k8cZ+LptIkC8mnL1m4uBHyvjrhT0ovdJxCwRBQ8LpC5bnGOd/3
+	T02rFtkdI5B4s8PGPQg==
+X-Google-Smtp-Source: AGHT+IHBfk4VjAwwmewmwy7/cD04QxrX3NO7CkQZxs6uiHniAKBSHBOE/omselhSlxfJQQW6JbT7mg==
+X-Received: by 2002:a05:6214:518b:b0:6e6:60f6:56cf with SMTP id 6a1803df08f44-6e8e6cfffa9mr54007756d6.5.1741200653911;
+        Wed, 05 Mar 2025 10:50:53 -0800 (PST)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8e8f52086sm10432506d6.63.2025.03.05.10.50.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 10:50:29 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, Andre Przywara <andre.przywara@arm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 12/15] arm64: dts: allwinner: a523: add X96Q-Pro+ support
-Date: Wed, 05 Mar 2025 19:50:28 +0100
-Message-ID: <3805591.MHq7AAxBmi@jernej-laptop>
-In-Reply-To: <20250304222309.29385-13-andre.przywara@arm.com>
-References:
- <20250304222309.29385-1-andre.przywara@arm.com>
- <20250304222309.29385-13-andre.przywara@arm.com>
+        Wed, 05 Mar 2025 10:50:53 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tptpU-00000001UT9-2uWT;
+	Wed, 05 Mar 2025 14:50:52 -0400
+Date: Wed, 5 Mar 2025 14:50:52 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: longli@linuxonhyperv.com
+Cc: Leon Romanovsky <leon@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	linux-rdma@vger.kernel.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-hyperv@vger.kernel.org,
+	Long Li <longli@microsoft.com>
+Subject: Re: [patch rdma-next v3 1/2] net: mana: Change the function
+ signature of mana_get_primary_netdev_rcu
+Message-ID: <20250305185052.GA354403@ziepe.ca>
+References: <1741132802-26795-1-git-send-email-longli@linuxonhyperv.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <1741132802-26795-1-git-send-email-longli@linuxonhyperv.com>
 
-Dne torek, 4. marec 2025 ob 23:23:06 Srednjeevropski standardni =C4=8Das je=
- Andre Przywara napisal(a):
-> The X96QPro+ is a TV box using the Allwinner H728 SoC. That SoC seems to
-> be a package variant of the A523 family, at least it uses the same SoC
-> ID and is compatible as far as we can assess.
->=20
-> It comes with the following specs:
->   - Allwinner H728 SoC: 8 Arm Cortex-A55 cores, Mali-G57 MC1 GPU
->   - 2 or 4GiB DDR3L DRAM
->   - 32, 64, or 128 GiB eMMC flash
->   - AXP717 + AXP323 PMICs
->   - Gigabit Ethernet (using MAXIO PHY)
->   - HDMI port
->   - 2 * USB 2.0 ports
->   - 1 * USB 3.0 port
->   - microSD card slot
->   - TOSLINK digital audio output
->   - 3.5mm A/V port
->   - infrared sensor
->   - 7-segment display
->   - 5V barrel plug power supply
->   - power button
->=20
-> The PCB provides holes for soldering a UART header or cable, this is
-> connected to the debug UART0. There is another set of UART pins
-> available. The board also features a FEL button (accessible through the
-> 3.5mm socket) and a reset button (only accessible when case is open).
->=20
-> This .dts just describes the basic peripherals as far as we support them
-> at the moment. The PMIC rail assignments are reverse engineered as far
-> as possible, by dumping them from a running Android system, and correlati=
-ng
-> them to other boards using the same SoC.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+On Tue, Mar 04, 2025 at 04:00:01PM -0800, longli@linuxonhyperv.com wrote:
+>  
+> -struct net_device *mana_get_primary_netdev_rcu(struct mana_context *ac, u32 port_index)
+> +struct net_device *mana_get_primary_netdev(struct mana_context *ac, u32 port_index)
+>  {
+>  	struct net_device *ndev;
+>  
+> -	RCU_LOCKDEP_WARN(!rcu_read_lock_held(),
+> -			 "Taking primary netdev without holding the RCU read lock");
+>  	if (port_index >= ac->num_ports)
+>  		return NULL;
+>  
+> +	rcu_read_lock();
+> +
+>  	/* When mana is used in netvsc, the upper netdevice should be returned. */
+>  	if (ac->ports[port_index]->flags & IFF_SLAVE)
+>  		ndev = netdev_master_upper_dev_get_rcu(ac->ports[port_index]);
+>  	else
+>  		ndev = ac->ports[port_index];
+>  
+> +	dev_hold(ndev);
+> +	rcu_read_unlock();
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+That's much better, yes
 
-Best regards,
-Jernej
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-
+Jason
 
