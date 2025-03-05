@@ -1,198 +1,239 @@
-Return-Path: <linux-kernel+bounces-547985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D05D2A53E7E
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:29:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AC2AA53E82
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:32:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44A527A2E16
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:28:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B55DE16CF18
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:32:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28DE7206F2E;
-	Wed,  5 Mar 2025 23:29:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A561207A14;
+	Wed,  5 Mar 2025 23:32:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="D8YyoBVU"
-Received: from BL2PR02CU003.outbound.protection.outlook.com (mail-eastusazon11020110.outbound.protection.outlook.com [52.101.51.110])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hvOS3Qpq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9CC1E505;
-	Wed,  5 Mar 2025 23:29:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.51.110
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741217365; cv=fail; b=Zng/vgeiujSDTHVPhT5RUhf93XiXD3FkvZuYWZD6BGd6UeKUsB1HsDa1TqX/mpNkVkOuQtksAlM7Np8RN9OgGwoHzXSQ87lEeqkq6KLGGxvPcmvz16mmk24a9wVCsJNh/RlATU6yA4ZmsriEVJQ1WOng+vMy+SYILIEJgl2eG5w=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741217365; c=relaxed/simple;
-	bh=iAesW/EGZu5WeCiCBkvZQtPAUE0L3J03cE+W3FgldiI=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=m0xrEnblF92cR769jdHV36Z3clkpe9MKjqb77qfXmZGmKX74gH5VcFBTRR0s/vAPAMBC+XcVnHWIio1Af0kQh7ObvSCM+F76yBh3Jp4lKol2RWGoDKBi/B/24+UrrT+YSVE5JLlylDdsF+0GfUzmsE+KLezf8Br5XaXK2mSRbfg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=D8YyoBVU; arc=fail smtp.client-ip=52.101.51.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=qRuyA4OW4SSfmVxz+V6lm/UYFAX5qRupTn00hgwZFAUh/CR8sr2/H+zohIIQwMNwbxXpQgq30tFDVCOfK4iN2srnDlDuTUyAbWrKOuu1glqZlX/Dy7SfT5g/9uA7MY4M3WxE8F1DZ+SoHB2uajkpRrmYTv/PK6BccDoWxJGFecIYt+pdicJmrGGvy9BYTSxvdDIuDX+NehFOT/0fpjBu+7PuCh+IWa9Uy2ZByDLuhy8ho1GRUyttnT3zZntvKTuZ3y4Y8VIbS3Uc57cxQ7Pj49Bjk4e9ZG6fFowNm6fBRKzNjH9vQajkXJHsIJTNVFajO/w3L9jTwwGmpL61dZ5/iA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=iAesW/EGZu5WeCiCBkvZQtPAUE0L3J03cE+W3FgldiI=;
- b=L5TgP/r2HTisCa2qJBSpvue2pQr0YzjTirqJA/fqDP9z/rtQlfNYyPteIPHMeO8f196OGTyJTsV9nDrGwDloRKIDXA8Q/NpzMgl7QMrzb080j9IxNkdV4fPQjztWvNTxKi/yAf0fGXx8GhBhfwmvA5wv+hk1xpFfBORfCNfpA4uAHW6RDi7B84m5nbcdWzXNpHel4O1QBB6KTU2EU5LMkEdSoUpD8bIwz2Z8Pv7RNg04mJb3IJtIkZbEqDKcqzi/U4PU3+p45KppI3Z4Qc2oWwA7KEKLJPddO5+mihVoxCm34f5LBQONbc03jvfla/5v/WjO0Fujo9vxCuZoqXgCSA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microsoft.com; dmarc=pass action=none
- header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=iAesW/EGZu5WeCiCBkvZQtPAUE0L3J03cE+W3FgldiI=;
- b=D8YyoBVU3BZ0gF8Bh51akLKpeDIxY+6sRdOhqEjBTrxaO3T5XQ2wvjnmpRUwuzOjGSdWchoDpGrDlXCCxm2Ny8dH51w0kcuemc503t24Mc655UWXcczLmrDfmu4k8n0imlC5i9+i9CZrVOdF8BGemya9cCfJYTOeWr8IvrAnIDM=
-Received: from SA6PR21MB4231.namprd21.prod.outlook.com (2603:10b6:806:412::20)
- by IA1PR21MB3665.namprd21.prod.outlook.com (2603:10b6:208:3e2::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.8; Wed, 5 Mar
- 2025 23:29:21 +0000
-Received: from SA6PR21MB4231.namprd21.prod.outlook.com
- ([fe80::5c62:d7c6:4531:3aff]) by SA6PR21MB4231.namprd21.prod.outlook.com
- ([fe80::5c62:d7c6:4531:3aff%4]) with mapi id 15.20.8511.012; Wed, 5 Mar 2025
- 23:29:20 +0000
-From: Long Li <longli@microsoft.com>
-To: Jakub Kicinski <kuba@kernel.org>, "longli@linuxonhyperv.com"
-	<longli@linuxonhyperv.com>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
-	Konstantin Taranov <kotaranov@microsoft.com>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
-	<pabeni@redhat.com>, "linux-rdma@vger.kernel.org"
-	<linux-rdma@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>
-Subject: RE: [EXTERNAL] Re: [patch rdma-next v4 1/2] net: mana: Change the
- function signature of mana_get_primary_netdev_rcu
-Thread-Topic: [EXTERNAL] Re: [patch rdma-next v4 1/2] net: mana: Change the
- function signature of mana_get_primary_netdev_rcu
-Thread-Index: AQHbjiHJfgMGf6TR5k+NnjkKQsEYgbNlL49A
-Date: Wed, 5 Mar 2025 23:29:20 +0000
-Message-ID:
- <SA6PR21MB423103A7760280380AAED1EBCECB2@SA6PR21MB4231.namprd21.prod.outlook.com>
-References: <1741213360-14567-1-git-send-email-longli@linuxonhyperv.com>
- <20250305145604.56855467@kernel.org>
-In-Reply-To: <20250305145604.56855467@kernel.org>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
- MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=cb974313-e458-49b6-b152-0f8c4768222d;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-03-05T23:25:42Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
- 3, 0, 1;
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microsoft.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA6PR21MB4231:EE_|IA1PR21MB3665:EE_
-x-ms-office365-filtering-correlation-id: 21727e7f-eb5d-4502-cae0-08dd5c3d8e54
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|366016|10070799003|1800799024|376014|7416014|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?RzE2VGJIUmdIL1dKT2VLWlI5aVdmZjZucVgyU29zaGNZYThFVDRWMXliaTc1?=
- =?utf-8?B?bFBUOWVidTY5Q3lyZHQreGFlZVJaZitDL1ZWT2I0NFlNczFLckJNN1J1RzRM?=
- =?utf-8?B?QUNaUUFSamUxL3JGbFBHM3YreUpPbGhZUzZoWjNzb3NKbEpBOVdWdEtVS29Q?=
- =?utf-8?B?Y05GaDNpOWs1OTRwenJiYy9KQVoxckNnSnlQYVhBVFNmaXFjMEV1eHp4eStH?=
- =?utf-8?B?TnpVUXZoRGV4MXB3dTNkdTJWME5iSHJzcCtHRW53RzArUUloOFNrZks3Tk5o?=
- =?utf-8?B?R3k4am81elBJMUhtOXQ3Q3dLczY2R1BmQjkzMmlZL09BamhlZGMwM1dsSmdw?=
- =?utf-8?B?TUpLMlNjbmlZNDFzWGN1bUJRN3NscDRFTGdQazNLY3ZNZWNzUklPRWd0dzlY?=
- =?utf-8?B?L1ptUzBpbUZ6NDJkQWhScW91ZU5DbnhTaFJ3WndycnNPcW9oQ25aSmsrYnVp?=
- =?utf-8?B?RTl1SEdSZzhSNkxhMlhEc2YvQWlLQWFmNnN0amVmUFlJM0xUQmpZc3V0UnhH?=
- =?utf-8?B?SWNGa2ZPUlJkdkw5TDR1ZWhUeEo1K0NYYmR1YUNXdmZKZitNV0t5blYyelgv?=
- =?utf-8?B?a0QwVzRGMlhMMmJ3cXQ3NU5jd25rUVpwczBDZkM0Q0RDQ2RjZ2w1dkIrSzdW?=
- =?utf-8?B?Q2U4K1c2MGc1Y3RyUXh6Rjh6T1hlK1FLaEo4eGsyS1Jpb0NBaVJlN3FMY21P?=
- =?utf-8?B?T3JTK3BxZ1JudW4wZVNBSnVxUmllclpXbzJlcFBWS1RrTG12b28wMk9xV0pV?=
- =?utf-8?B?Rkp1ZUhFMDJkLzNkVWNhZUQxRDIyMFd1Q2xERWk0RWlxdTdPcVkrSE9heDhZ?=
- =?utf-8?B?dmdaekhVZCtVbXpIK1pYdnNPMjhWOHYvQ0RjaGd1M3h4MktmeUdWaXppTWUy?=
- =?utf-8?B?dlBsSmdIdFJYMnh5L1U3WEh3V3lBYzE0WnY1K3hHOEZpN1Q5UFdtdk1tbmUr?=
- =?utf-8?B?RXJDejFDTm9ka2NRYmhmMWxXQTlUL1poYlVibDRPZXdUV2svTlZjdVhjcGV2?=
- =?utf-8?B?R3dRU2VHK1hlZC93Unl1eDB3SHhFdjZwUDFtY0lqNlVuTjhRQitPSlorK0dC?=
- =?utf-8?B?d1U4U0JxNFQ2Nk5vUzR1Mk1qVG9VV2tFVjdiQkdhb1ZCMklkR09DTmVYY2wy?=
- =?utf-8?B?OWowVUQ5OGlaSVpvNzd1TUNiUElwdlhZenZDT0FsK1YrU2FRZUtCOExHMGNR?=
- =?utf-8?B?K1FWMVNEendGWWxVT0I0UisyVTNueHRPQk1kQXlpQzR6VWNsRkNEdG1FbnA3?=
- =?utf-8?B?RVhiRWRzenI5aVQwUm9XTmVIak1BdjBPV0NPYkhSNTIxZjY2ZGp2VUZTMTVu?=
- =?utf-8?B?VHByOFZXRVZwQVg2ZnBTT2FpeWNGRE5OeE1pM0VMNUlad0ZIU1NOcFY0WTJo?=
- =?utf-8?B?dHdLSjZ4cTFRZk9HM3ZLU0RXRFJXc0dJV0VsTFFRWVVWc213Z3JZZ2kxZktM?=
- =?utf-8?B?MTJHSzdMVElxMXZtMCtwdVMyUkgwWjAwdHN0UWZMWmlkVjBJSTVxaHQ2VXhw?=
- =?utf-8?B?c285SSt6SlBzZzZmUnMvTnFBZ1JiMkhtOWVvVk5oV3ZSV1R2NHFKKzNDNElx?=
- =?utf-8?B?elNJcWlPQXJLeXgxQmRMbDVSeERCZ0JsNWpQMzl5c1FPVXFwNHViL2R3YytL?=
- =?utf-8?B?N2dvRVFqRVJNUmsxRGxJRThvMVU4VHdObFZ5RUNQVmNSWjloQnl4RkJHMGI4?=
- =?utf-8?B?U0YyTXhia2MxNWxwK0g1VWNoNHk4NHROQ1NIczE0NWFNMGJkTlNmRnpPWkl1?=
- =?utf-8?B?aGU2R2Fjc1lDWFdEYXBkZWVUNjV5MTNoQ25LWFFWL0xEdmw2b2RJeEQ5MVhz?=
- =?utf-8?B?VURZODFFZnNRTmVzRXdQQW0yUGNldGkzU2N0YXQrY2F5K1lDQllGbjd4clhs?=
- =?utf-8?B?eTl1alpLb2VHYU1PaHYycE00bjJWY3MwQzkxUXVtZXFuVHZwZENsMkQzaDl0?=
- =?utf-8?Q?dPTQDVaUoIo=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA6PR21MB4231.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(1800799024)(376014)(7416014)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?MVdZSVhuYUd6WHVaYkt2T2p2OFVWeDB3UmhBbW1wdDhiNXBlQkQzbXkzeExm?=
- =?utf-8?B?U3dtQnhFUTBwbEZoKzRiRGlYdzhDL1R0TGFwRFNwMmVrRnh6d2JUUDQ1cGdp?=
- =?utf-8?B?REFNY1dqbnhpbjB1WS9kd2o0V0o5ZUZDV0l0TE8za1JSWjBVT3llTlppZGJj?=
- =?utf-8?B?SHg5MEwrZWxzQkdvSkd0WnFHRlg5Qit1TjB3WHdFa0sya1FpTzY0YVBzbFEr?=
- =?utf-8?B?V1FEcEprZ1FISmVpN2FKNjhneWxHaTU1ZXZ5cWVKKzBMTmdGaFdVQlAyNTEw?=
- =?utf-8?B?T3FKNSt6ODdTaDdweFVJRjZmaDgvUnlVaEdueldLdmRQMVZNcUpkb1hBUlNt?=
- =?utf-8?B?L1R5RGR6cXVyaUMxSHlkVkpmazdXRlZHRkRuWTJOOUtCZ3liTU1pei83T1VS?=
- =?utf-8?B?eS9CcGdvN1VnT0RrS1JML0VVQlF4ZDFTYVJyTVZhRmo1WGJYVW1ZRFdWckF0?=
- =?utf-8?B?eHMrRDkvVUtOOEMwandKVFNWOERzVnM5eTg5Yk9JM1I0MmI5TU5RRjlabk1p?=
- =?utf-8?B?U1VrL1BraG9TeUljV1Nvd0dmTHpIVEdyTFVkbVVuTU9xSXFmM205K0VseHY0?=
- =?utf-8?B?TllSYVVVcW03cjJXMU1TYlhINGRkeFZDSlJEd1BXRitReVF5VE45eDNHeDZy?=
- =?utf-8?B?ZnNNRzQ4R25rTU5rR2hRVEpmVzQvNTF4RTRubzE1Sm5mdDVqdkxrTnBpZXFL?=
- =?utf-8?B?bTBoMHZ5cUc4Z2hQYlNMbUJKRVkzZkVqdkpKVTkxSTlhdWZMczcrTzYyRGVo?=
- =?utf-8?B?RkRVSzZUWHQrVXQvcnJ2RUNmZXBGNFp3VzF6bk5ESTgvczNqV0pWczhxbGwy?=
- =?utf-8?B?VEtlaHhySEl6L0p6ZkZRSUl0bFZkQW9kVHN3MHlhb0JwYmNLTzg0K2NNQldM?=
- =?utf-8?B?eEdXQnV3V0xTVTdQNlExUllJNXpHdTZoYUNiR0YwRGZ1bEJQMzBqTDlVVTg1?=
- =?utf-8?B?elFFeFJ5NjBWbVhWMzZUVTN0YVVpbE15RHZtTGQ3N01sdkhtMjlXSlhDRDh1?=
- =?utf-8?B?UVRVR2lYWmlCNWQ0MGQyNjVNeUFvVnFDNWF4UW5aVXhSYkE2T0tGSkt5WENr?=
- =?utf-8?B?MFBCQ1ZXREd3ekN3U0ZqRENWcFlxeW5tL0tuV2xoeHFMZkdLRXJyMkxhVWI5?=
- =?utf-8?B?YjE1cG5zeUNzQlVicGlTbzlDc0FKVWNTRUswRjlOYkkxSmR6S0p1Nzd4VW9i?=
- =?utf-8?B?Y1RGWjRRcVV2cDdoNmFwR1hGV2tQVEJESjg0TDVva05PbEMyL0RCK2RSNGY4?=
- =?utf-8?B?V2FBdWZ6eVFrWDhSK2luNFlvSHh1ajdROWNib2NFci9ZWEZBWUErSWg2UnRM?=
- =?utf-8?B?VVlmRUo5S3AwVVIxSE9aQ2h5b2QyZzhZUGF4KzhjbzYrT1ZZOVJFbW96bXZ1?=
- =?utf-8?B?YW15N2VxZklBQ3Rhc205Sy9TOWhrUDBDWnU2Q0xpNjlzNnU0Y2NjNWRJdUpU?=
- =?utf-8?B?c3FUZEx4OHA2eTJpMmFOb2YvZUVKTGlaVkdPeWFqbmtZKzAyWVNITFUwQzhs?=
- =?utf-8?B?SGFVVUxORlZCQjRUc1NkZE9NK09xQmp5L1ltNE9UWDd5a09LUGVlT3FKdUd1?=
- =?utf-8?B?UXRyOG5QYm1TWXF4YWtrTHp6OTB4amNKVTB6bWpuNTV5Sm05L0hvVmwweWV1?=
- =?utf-8?B?K3lmQWJldkR4SUg3WGwzMVBBRFduSTN4YndFZCtDaWhWM0F1N0hUK3FJTFVw?=
- =?utf-8?B?SjFJSDNrUm9GQXBSNnRNWHZWOUViWm5PRGNqeUl4emY1SDVuODVPUGFKNFd1?=
- =?utf-8?B?cDk4a3h2YmZqSUk0ajJhd2dwQkp0Ym1tWWg4S3NSUnhwSVlmZ2VUWlJET3Nw?=
- =?utf-8?B?ZUFVVnM1cGl1czNaNUlkOU5IdDNqNWlUS0MzRGFCTURsR1R3UjZRSFo3b0V3?=
- =?utf-8?B?M1BaaTdna3NoZ1JjNWlaejBJT2V3ZnhPMkNQUGRjQU8rd3BQMi9nb2dtcWhL?=
- =?utf-8?B?Ynp6VjZDYkorazVab1Q4MThVN00xdFN6MVJZMGJ2bVZtYk5tazNwaVhwK05S?=
- =?utf-8?B?VUdYTzZIMFF4U1FPbDFiWnRKTG1EVVR0alVhYlFwM25NY2JhQmwwSVlWWXNX?=
- =?utf-8?B?a2FzOWhkVHF3eHFmRE9wZzk3WDlWUDZxWmdpTGdpL2cweDc1bUtCRm1MVVRn?=
- =?utf-8?B?cUpyVHdiTEs5SjFSWFU1b3lBL1F1ZEZ5Tm5LdnRIYnVrMnpiMmZKVkpKM2dT?=
- =?utf-8?Q?isZF/B4X+leeuw4kFiGPIRUvLDxoU9zRwYiNmESDyFy8?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BFBD207A10
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741217532; cv=none; b=fV4MSC+JLFKTI1JRu8OYgZD55h/GjiypxvPrDImg39UafZT1Y53UP8vpAVS1t9D9sd1lD3tMDgWJz8ej286kjxQuA2PjBCCkZoR7ZA8ovr2PAubJvl5YnmniJ/hMUqXYBn3+cbPnMiwrRR2QUGp2KYoHvfQvaoWB5BgdBbughrs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741217532; c=relaxed/simple;
+	bh=REQ/IfjD8heLKs2fU0174gHx+56fArKa2gF2nY/f/EM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UZ+Eu+NjWvTpqw0V/bRuP5UU/9N8PNSmtNSkWqQwE3PjkSm5W0rPs/3lp+mdtudwSn2bRTAsB7ty5AosobPByes2d8YXzpo6FrMbt5RaH0mWp24vFOQHvx83akrhR4pYB7uG+hwVb/7RgUoxTWIQ11O9ekHQJcOdsyFXJazCu6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hvOS3Qpq; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741217530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kFCm6qFAyYGc4VFf2sS3vwJnAyvK+30pL4l8MO3Di54=;
+	b=hvOS3Qpqg69Bo0rWgfYx9imbaxGQ1Zu5j4ekTDapb6ojOgdAIuj5hcE2ULYYDg7HFap9tN
+	+13WPCYXJiDVEPYZlaLYd2R8+WOo7EoD3+M9P5VyiFV+Zt9it9A+gQjBffmcCtApMI+drF
+	3nqnaoQUtvylmZ6cWpSmXfHZnORlbAU=
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com
+ [209.85.214.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-180-i6_bvazVNYep-dGwz6NXMQ-1; Wed, 05 Mar 2025 18:31:54 -0500
+X-MC-Unique: i6_bvazVNYep-dGwz6NXMQ-1
+X-Mimecast-MFC-AGG-ID: i6_bvazVNYep-dGwz6NXMQ_1741217513
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-22380c707d3so244405ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 15:31:53 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741217513; x=1741822313;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kFCm6qFAyYGc4VFf2sS3vwJnAyvK+30pL4l8MO3Di54=;
+        b=CpWrH5DHRFAtFWA2k7l0AyOHIC0pPLVkmGUAs6REzB5akn1CsmFmlmFKci6ji3WsXz
+         RgDimE2UqL/45gt+gLgDKQ5B+cO+BlRX64pCRKgBJGCOMhwH6z5c9RdHO8XSiooxW0VU
+         oInnYBOUyBxciZ7S9S36pEkiGYOQ9JIPK/bjebTCnQbNv96PXQNKKgdipwbzqagEivMh
+         08JeJ3N5xyc878jeCAED+9lyTwbywQ+EOTrqbJ7w5DRTSBvbfUEodwBQ9Lm/RmoVRQBK
+         95+ImmBmP3RJIjFeZpkXDleqQXAIuEN3DB9XovfhGO3Tw/w/eUkyPchZliXPizZHpWsf
+         Y4Cg==
+X-Forwarded-Encrypted: i=1; AJvYcCX8Z8FC42limciAzm4M1r1l2ullI7hTZwJaIf3Cp2n9SJE0iE0BOCU/xFfKPxxQpH1cvwGQpNSUsvi+YbU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxipvomgT8R0NtmUlAiI3ofiAxk1xCdEh3RmOZoGugvI/gOBLgR
+	TQMsu1okHpZ9QbDobdyWDPP7wNE7OJhjOe+k6b/TbLpYmcKDReZitrUv6SYWZwct3KNVVacsC/u
+	5Nqeve6awY/FmhrASEAMUSzKWpFSb47HmgGg1Vj2YbBmq+KihukpFA60mMWxtdQ==
+X-Gm-Gg: ASbGncsGPy7564IMUCjcWbBbWGHFpUdtiml0+sm+Hn4H/1CpiKYjRMWMA/RWiUCuG8Q
+	cTTxupyplYIKpahBXb48JznM7MI0ZhMz/XI0xAMUWyp6kr7ggOCaaNMi2eK06LdyDm97NyQavyz
+	raTn1n4skEfPE/Zr1A4r2r2828/hN1yqhUJ3Xjf/RBUU1n39GmkQckysZ6tKZFrYGZEMx/uKFle
+	2qiyFaJinU+1JMVVnnlQBka8m1XUX7cQWmMaqSX+AO1y7m7bikt0+LKgI5Lr70VhLSgdJAqz5fx
+	gA6Fxi5yFaRS9Do=
+X-Received: by 2002:a05:6a00:856:b0:736:51a6:78b1 with SMTP id d2e1a72fcca58-73682bdf13fmr5864406b3a.11.1741217512909;
+        Wed, 05 Mar 2025 15:31:52 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFr5llQOo8uwX2X7Rw/daISqoaMPhAadKna3dfRjuli6+dA3NfteMRLNkx9LXdBAsG0P/3xwA==
+X-Received: by 2002:a05:6a00:856:b0:736:51a6:78b1 with SMTP id d2e1a72fcca58-73682bdf13fmr5864388b3a.11.1741217512567;
+        Wed, 05 Mar 2025 15:31:52 -0800 (PST)
+Received: from [192.168.68.55] ([180.233.125.1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a00400a0sm13952388b3a.140.2025.03.05.15.31.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 15:31:51 -0800 (PST)
+Message-ID: <3190c4b0-4826-4d9b-9b12-8063acff57fa@redhat.com>
+Date: Thu, 6 Mar 2025 09:31:43 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microsoft.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA6PR21MB4231.namprd21.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 21727e7f-eb5d-4502-cae0-08dd5c3d8e54
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2025 23:29:20.6788
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: CUi0qGFjn7NHF1d2rJxLHn8LKiZU04IVuP9I1SodyqClc76jk5++Au5SEkw1ZGPhWq6hejG61NcVM7opRZxwHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR21MB3665
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 09/45] kvm: arm64: Expose debug HW register numbers for
+ Realm
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-10-steven.price@arm.com>
+ <cec600f2-2ddc-4c71-9bab-0a0403132b43@redhat.com>
+ <ea9bb982-cf31-4079-8fea-dc39e91a975b@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <ea9bb982-cf31-4079-8fea-dc39e91a975b@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-PiBPbiBXZWQsICA1IE1hciAyMDI1IDE0OjIyOjM5IC0wODAwIGxvbmdsaUBsaW51eG9uaHlwZXJ2
-LmNvbSB3cm90ZToNCj4gPiArCW5ldGRldl9ob2xkKG5kZXYsIE5VTEwsIEdGUF9BVE9NSUMpOw0K
-PiANCj4g8J+Yhe+4jw0KPiANCj4gSSBhc2tlZCB5b3UgdG8gdXNlIHRoaXMgQVBJIGZvciB0aGUg
-dHJhY2tlciBmdW5jdGlvbmFsaXR5LCBvYnZpb3VzbHkuDQo+IFBsZWFzZSBkb24ndCBwYXNzIE5V
-TEwgaW4uDQoNCklzIGl0IG9rYXkgdG8gcHV0IHRoZSB0cmFja2VyIGluIGFub3RoZXIgZGV2aWNl
-PyAoaXQncyBub3QgdGhlIHNhbWUgZGV2aWNlIGFzIHRoZSBldmVudCBuZXRkZXYgd2hlcmUgbmV0
-ZGV2X2hvbGQoKSBpcyB1c2VkKQ0KDQpTb3JyeSBJJ20gbm90IGNsZWFyIGFib3V0IHdoZXJlIHRv
-IHB1dCB0aGUgdHJhY2tlci4NCg==
+Hi Steven,
+
+On 3/6/25 2:25 AM, Steven Price wrote:
+> On 03/03/2025 04:48, Gavin Shan wrote:
+>> On 2/14/25 2:13 AM, Steven Price wrote:
+>>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>
+>>> Expose VM specific Debug HW register numbers.
+> 
+> Looking at this now, this patch description is garbage. Probably the
+> patch has changed over time - so I suspect it's my fault not Suzuki's.
+> We're not exposing anything new here. This is purely about telling the
+> VMM that a realm cannot (currently) be debugged. Something like the
+> below would be more accurate:
+> 
+> """
+> kvm: arm64: Don't expose debug capabilities for realm guests
+> 
+> RMM v1.0 provides no mechanism for the host to perform debug operations
+> on the guest. So don't expose KVM_CAP_SET_GUEST_DEBUG and report 0
+> breakpoints and 0 watch points.
+> """
+> 
+
+Yes, the improved change log looks good to me.
+
+>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>> Signed-off-by: Steven Price <steven.price@arm.com>
+>>> ---
+>>>    arch/arm64/kvm/arm.c | 24 +++++++++++++++++++++---
+>>>    1 file changed, 21 insertions(+), 3 deletions(-)
+>>>
+>>
+>> Documentation/virt/kvm/api.rst needs to be updated accordingly.
+> 
+> I don't think (with the above clarification) there's anything to update
+> in the API documentation. There's nothing new being added, just
+> capabilities being hidden where the functionality isn't available.
+> 
+> And eventually we hope to add support for this (in a later RMM spec) - I
+> don't yet know exactly what form this will take, but I hope to keep the
+> interfaces as close as possible to what we already have so that existing
+> tooling can be used.
+> 
+
+Ok.
+
+>>> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+>>> index b8fa82be251c..df6eb5e9ca96 100644
+>>> --- a/arch/arm64/kvm/arm.c
+>>> +++ b/arch/arm64/kvm/arm.c
+>>> @@ -78,6 +78,22 @@ bool is_kvm_arm_initialised(void)
+>>>        return kvm_arm_initialised;
+>>>    }
+>>>    +static u32 kvm_arm_get_num_brps(struct kvm *kvm)
+>>> +{
+>>> +    if (!kvm_is_realm(kvm))
+>>> +        return get_num_brps();
+>>> +    /* Realm guest is not debuggable. */
+>>> +    return 0;
+>>> +}
+>>> +
+>>> +static u32 kvm_arm_get_num_wrps(struct kvm *kvm)
+>>> +{
+>>> +    if (!kvm_is_realm(kvm))
+>>> +        return get_num_wrps();
+>>> +    /* Realm guest is not debuggable. */
+>>> +    return 0;
+>>> +}
+>>> +
+>>
+>> The above two comments "Realm guest is not debuggable." can be dropped
+>> since
+>> the code is self-explanatory, and those two functions are unnecessary to be
+>> kept in that way, for example:
+>>
+>>      case KVM_CAP_GUEST_DEBUG_HW_BPS:
+>>          return kvm_is_realm(kvm) ? 0 : get_num_brps();
+>>      case KVM_CAP_GUEST_DEBUG_HW_WRPS:
+>>          return kvm_is_realm(kvm) ? 0 : get_num_wrps();
+>>
+>>
+>>>    int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
+>>>    {
+>>>        return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
+>>> @@ -323,7 +339,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm,
+>>> long ext)
+>>>        case KVM_CAP_ARM_IRQ_LINE_LAYOUT_2:
+>>>        case KVM_CAP_ARM_NISV_TO_USER:
+>>>        case KVM_CAP_ARM_INJECT_EXT_DABT:
+>>> -    case KVM_CAP_SET_GUEST_DEBUG:
+>>>        case KVM_CAP_VCPU_ATTRIBUTES:
+>>>        case KVM_CAP_PTP_KVM:
+>>>        case KVM_CAP_ARM_SYSTEM_SUSPEND:
+>>> @@ -331,6 +346,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm,
+>>> long ext)
+>>>        case KVM_CAP_COUNTER_OFFSET:
+>>>            r = 1;
+>>>            break;
+>>> +    case KVM_CAP_SET_GUEST_DEBUG:
+>>> +        r = !kvm_is_realm(kvm);
+>>> +        break;
+>>>        case KVM_CAP_SET_GUEST_DEBUG2:
+>>>            return KVM_GUESTDBG_VALID_MASK;
+>>>        case KVM_CAP_ARM_SET_DEVICE_ADDR:
+>>> @@ -376,10 +394,10 @@ int kvm_vm_ioctl_check_extension(struct kvm
+>>> *kvm, long ext)
+>>>            r = cpus_have_final_cap(ARM64_HAS_32BIT_EL1);
+>>>            break;
+>>>        case KVM_CAP_GUEST_DEBUG_HW_BPS:
+>>> -        r = get_num_brps();
+>>> +        r = kvm_arm_get_num_brps(kvm);
+>>>            break;
+>>>        case KVM_CAP_GUEST_DEBUG_HW_WPS:
+>>> -        r = get_num_wrps();
+>>> +        r = kvm_arm_get_num_wrps(kvm);
+>>>            break;
+>>>        case KVM_CAP_ARM_PMU_V3:
+>>>            r = kvm_arm_support_pmu_v3();
+>>
+
+Thanks,
+Gavin
+
 
