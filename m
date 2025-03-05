@@ -1,55 +1,64 @@
-Return-Path: <linux-kernel+bounces-545861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B884A4F2BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:29:40 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EF18A4F2C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:30:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A64168EAE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:29:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE52E1696EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:30:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF0D9210FB;
-	Wed,  5 Mar 2025 00:29:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E8A1E531;
+	Wed,  5 Mar 2025 00:30:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="FHfCmAIR"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="BquQOM0Y"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8BA17579;
-	Wed,  5 Mar 2025 00:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF680770E2;
+	Wed,  5 Mar 2025 00:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741134572; cv=none; b=e4HcSJzdTYbq2TsrsFudIlqu/J7Laf+7vEq+bly/c6SsMWYnoYLfVRLMs2nE4yP9m9RYfH8XdV9D45HN1HPmiFeoxB0RzVSXNkcAzzN49/dxL+sKfov5AhGbmajowWQdyDxaBdjpRunGlZJv7R05AlyZqvwpXUbfvHZS+WgVSUk=
+	t=1741134606; cv=none; b=rlz7l9Ml1xY77uovAngPYbE+qzcVCVduzJ6gEtshu8VAin1VNuFwMO6YVpSsMMyMtFskdlDepolO3DLvkrAAOJwykFohmN2RkRVjRuGDFd3od262mi3DSg59pz7V/D2CCR+IqQBF53XjQNXt6qCuH7xmDfx45eWOAxZ03rlNx3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741134572; c=relaxed/simple;
-	bh=ll7RRmYem5Y1GrzMRxIhpfncsuiytDg1O9oFC71uxG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=jbZ1CThF0g38TeRGdKHCKEzD//tkPCjOYkRqHRbb9txtzOJB3+fCFLTxdneZG+oxKxKObHRhl2nSpi5G61++RIDuQkyW/gjEKlY1OyBUxGBuip35507YHqEobwDVmnmHfIdzHI7l6jkwtMObjiONIMB9h8PHM6NILtYnfFWkTRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=FHfCmAIR; arc=none smtp.client-ip=212.227.15.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1741134567; x=1741739367; i=w_armin@gmx.de;
-	bh=86aR1VeqAwIPLf53I3/MJ3n0rRnYudftjP6rX3IfOZc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FHfCmAIRKOMK8yQ9FDYTOt4cENvdDr7F0AmgrtAxywDjqLoOonMgZ6nBwN1bfpDH
-	 NOHdTf+5/7E3O+jZ2vFlKG9gDbIZ0AnzTzuy8lT5K7bnlOhdxIRWObSwwDC5ctGSl
-	 LskIVTXYVKHEs1WeCRTdt6I8AxosN+FbDbBEJntF7QoxfXCItsBQIH6x8WSbaxKay
-	 mLAr1h4qL8vAx0ogGB+efYiYH40mDWUr/zL71onTdDlF1pihsviaXl2Pcn7bCAqV6
-	 LwjopJYdKee+cNbL4frSuzdcMEf8y/QokhzBevtYdmH1Q2ExPDtjS47tqVkqsJS0j
-	 Z7rtaPYho3Q56n5PMg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.24] ([87.177.78.219]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N63Ra-1tEACk3nYG-00qrhD; Wed, 05
- Mar 2025 01:29:27 +0100
-Message-ID: <3f779992-1a3b-475b-b07b-3a4ca02f5b35@gmx.de>
-Date: Wed, 5 Mar 2025 01:29:24 +0100
+	s=arc-20240116; t=1741134606; c=relaxed/simple;
+	bh=0sz9JyaFM4AW02eLnUFW4u7RuQ0LwqbQWROiCrtRaA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rjGBT0brZIOfRAodCNjU5re2wmfr3/yviUMXp3Er66qgiBKzlanJxhY1ewJ50zco0hH1034ehA2WRyZVtIcG8zg8d/tbvvkEXzyU6r7DAWHGvEEA/CUK6BLhuewc/fPYSE2et20553gTBdJGaNnOc6P2RveMHqcu+cjycAnTWHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=BquQOM0Y; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741134605; x=1772670605;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=0sz9JyaFM4AW02eLnUFW4u7RuQ0LwqbQWROiCrtRaA4=;
+  b=BquQOM0YEUJ9NdATSTpYxO4eNa4HRurPpRRYs8nGfHEQouD8bC0/oKsU
+   hs+GS2l1UKycbtaupFEwnT8QEAa74CImP6f+16ID0/sndtohqH3nB3Dgh
+   +NzhUjj5mGQNjlCKDxIpbN4n9/71OZhvBRa0s6x3VcMYyYac9kn3NXtUY
+   654ExMEmEScd5w9vouB/yloFzqZiwljMpiXguJGlFVLcWVAuxE/DNewkO
+   AfGrZjGfz/gLUOvp3sFE+X95Cli8SHUAdN0DuSYN6ip23a00Z2hl9Os/o
+   DY9xgxjnTvy2YUn3VgEHoquXaA1zQJGa9Cxbbk8jeRbVUI+X+k5cSPph2
+   A==;
+X-CSE-ConnectionGUID: 6lRjvywPR8e1teAshU09Hw==
+X-CSE-MsgGUID: wrr8C/CcTnSW/KqkNrQzlQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42209690"
+X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
+   d="scan'208";a="42209690"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 16:30:03 -0800
+X-CSE-ConnectionGUID: p3zUzFJkQr6zbXgQJdZsuw==
+X-CSE-MsgGUID: /Z14XJZhRna9Q1RIM0s03A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
+   d="scan'208";a="141782792"
+Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.125.109.165]) ([10.125.109.165])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 16:30:02 -0800
+Message-ID: <379e2198-55bb-4fd9-bf54-7fe0b3e33803@intel.com>
+Date: Tue, 4 Mar 2025 16:30:21 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,92 +66,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] platform/x86: samsung-galaxybook: Fix block_recording
- not supported logic
-To: Joshua Grisham <josh@joshuagrisham.com>, thomas@t-8ch.de,
- kuurtb@gmail.com, ilpo.jarvinen@linux.intel.com, hdegoede@redhat.com,
- platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250303132433.348653-1-josh@joshuagrisham.com>
+Subject: Re: [PATCH v2] arch/x86: Fix size overflows in sgx_encl_create()
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: linux-integrity@vger.kernel.org, Dave Hansen
+ <dave.hansen@linux.intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+ x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>, linux-sgx@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250305000602.127665-1-jarkko@kernel.org>
+ <8255b211-5510-4c09-b13f-c4e3bd0d0aba@intel.com>
+ <Z8eYfALmwN68F39V@kernel.org>
 Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250303132433.348653-1-josh@joshuagrisham.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:4fbc+RRPLpTjkPe2SlLqdjyFuK9KYbtHnM4aFnnHbkSROCchJdx
- 1zyuZDiN2pV87sU8wsxg4Qg13eYwJdmuNWxCsK3iCckxcJ01GhuCNQkvnMQ27q6qLH7IAHA
- rLAZalJNJlKEAqyIX3hAvmsSveizDE5hGRCHuPOHB1+FUpCrgqfiXikWswld2phFpX7vs/1
- ke5kZrlhsrFwyECAZg9tw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:oP7IkrN8iJA=;xeGJpYCYCb0hpKT3M9R3IwXwcOA
- KaRn++YhunMpZHkLoW7+YilONW1llI2FmT/qOPq/1e8TEgib7vBxV8k8BABZ5ISda2A/fg11f
- ImBI0KJ4/lVS3Ntiul1MJUy9NlF3tOfcdI6PZZF/wKZX76RbC+ZHynv8Hfj27gBBlPnOigDOw
- SiSI9OIG9xtnaH5gpoM2HaecfKmU3qpPw6JB/zxhNXkrY0b5Jy9Yp8tXcnxOJcMEcoPF1H0bv
- ZT9OMJjFsHekqz0BMAGF9/9xGKItkCisgdZ6ljp7gMomL/8H/0ewrCsFYjndOv+dTibmjH1bD
- XA8GoPbFz8OdmBLwQzFnlhEpPEyaiwnoOnMS2+M+H8VsgKOAbyVyxFMmGSLyqmIdYrP7a1RlD
- zClJDHssz6c/Kz4eP5lJELT/qlj8/jzMDur6BF+3D2GBs7cGXhbAJaVep5gzu1Alv56Qil/Y+
- xksuKy9UtQuTPvDomziSiQu5zv3p24JMXn3tY4yxVQsk1uRIWGsQ3vzwtPVnnhdBHhBv8Kl5x
- yNcqGVnAvjqAUr/AuhDo49vTY90L5InwnrH4ceNnJn9f8pjJeG0ZYL7wzTrHiiTUJ5ZtKPj4k
- cxPjiHcoTGiJSa/DMHJa/ZmUjKz6iDH3zKieK0/NBD8WDaHNhOHUURTzg+ypz3ein7xHmgb5K
- lPwUmFE4AhtqXLB+5XXmtiXBRoPUrmF3VVsh4Gms3UC+KpkRblrqJAzQdJ6Sq49Nmnim6MoO7
- 0dPLA81+ADZvSfAnPfzxxbR2TU+cJwFd8VFinNgEbxQFwvctoafjSo2aAji1JSSL5XB7Mw6wy
- CztB9W4zmAdKVobgO7zSELr8iosXNjpN8oZN2ffd3vZkJaSglSr0Ju0XSW5QEis9XIvcY6vjS
- hWn/k1tXA+5PuztJ4j5UZzXHTe1fzW1oLBTKJM7r2+tSAsdgAdGw6Gym6ShUqB2weUI8sUWyT
- P3Awv6RlSc46xGbZ9SkQKloNP0tvZdh++BFwIadjPxnLUxyrwtEnpDpOBbRopYTGPLXNtg88W
- vjT3eMLyK6oeS8+COSU7PwLLSWPcMf08PmjS9MqWzc2cvFhQdIVQIGwK1u57Hwtlb1Ld9jePO
- 6TzlgQKSmOEKIAXXAm7P5qi7XGUGcrCh1Paf1pxL8uVflatGgsCa3nqwzGXSVOWWLFrPeHszy
- hTA3nckFH+yEfZ1TtY8Kzpfo/2ODkotEOCYgES0R4s/r19oOpSDOPDaT29UUPdSLELWPH0Pzo
- 0JrxOKLTqrgfZynnxUluiC0+iyLi4XKsfNIGVwOuNPbmpjr3WdeGg8iFHGR3wj9yKDo9QMw36
- p5zI886GVb4YodzZMPe8xMTD5HuWUgEibY2bm+TTO9popTxiTIkLfpsCLes0unRdTqezp2X2k
- K6BlRzahtKf0KnFWyQY3gYBbmj2Ks2Cc55BHCet0pKBW8Vs1WnvcFmYz9n
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z8eYfALmwN68F39V@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Am 03.03.25 um 14:24 schrieb Joshua Grisham:
+On 3/4/25 16:19, Jarkko Sakkinen wrote:
+> On Tue, Mar 04, 2025 at 04:18:03PM -0800, Dave Hansen wrote:
+>> On 3/4/25 16:06, Jarkko Sakkinen wrote:
+>>> +	/*
+>>> +	 * This is a micro-architectural requirement. ECREATE would detect this
+>>> +	 * too without mentionable overhead but this check guarantees also that
+>>> +	 * the space calculations for EPC and shmem allocations never overflow.
+>>> +	 */
+>>> +	if (!is_power_of_2(secs->size))
+>>> +		return -EINVAL;
+>> Isn't it a plain old documented architectural requirement?
+> Yes, but it requires some explanation why it exists here instead of
+> counting on ECREATE.
+> 
+> What do you suggest?
 
-> Fixes logic error when block_recording is not supported but the fw attr =
-was
-> being added anyway (reported by GitHub user bbregeault).
->
-> Tested myself on a Samsung Galaxy Book2 Pro (has block_recording) and by
-> bbregeault on a Galaxy Book2 Business (does not have block_recording).
+	/*
+	 * ECREATE would detect this too, but checking here also ensures
+	 * that the 'encl_size' calculations below can never overflow.
+	 */
 
-For the future you can use Tested-by tags to indicate who tested this patc=
-h.
-For now:
 
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-
-> Fixes: 56f529ce4370 ("platform/x86: samsung-galaxybook: Add samsung-gala=
-xybook driver")
->
-> Signed-off-by: Joshua Grisham <josh@joshuagrisham.com>
->
-> ---
-> v1->v2:
-> - Add Fixes tag with prior commit (thanks Ilpo for catching!)
-> ---
->   drivers/platform/x86/samsung-galaxybook.c | 8 +++++---
->   1 file changed, 5 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/platform/x86/samsung-galaxybook.c b/drivers/platfor=
-m/x86/samsung-galaxybook.c
-> index de1ed2dc6..5878a3519 100644
-> --- a/drivers/platform/x86/samsung-galaxybook.c
-> +++ b/drivers/platform/x86/samsung-galaxybook.c
-> @@ -1100,11 +1100,13 @@ static int galaxybook_fw_attrs_init(struct samsu=
-ng_galaxybook *galaxybook)
->   	}
->
->   	err =3D galaxybook_block_recording_init(galaxybook);
-> -	if (!err)
-> -		galaxybook->has_block_recording =3D true;
-> -	else if (err !=3D GB_NOT_SUPPORTED)
-> +	if (err =3D=3D GB_NOT_SUPPORTED)
-> +		return 0;
-> +	else if (err)
->   		return err;
->
-> +	galaxybook->has_block_recording =3D true;
-> +
->   	return galaxybook_fw_attr_init(galaxybook,
->   				       GB_ATTR_BLOCK_RECORDING,
->   				       &block_recording_acpi_get,
 
