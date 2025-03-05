@@ -1,155 +1,293 @@
-Return-Path: <linux-kernel+bounces-547365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76240A5064C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:25:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0102A5064D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:25:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FFBD17138B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:25:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 225A51887E18
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:25:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9637D1EDA2D;
-	Wed,  5 Mar 2025 17:25:26 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 287AB24CEED;
+	Wed,  5 Mar 2025 17:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LjaItOsh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882291C7011
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4469C1A4F09
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741195526; cv=none; b=bzytEZlbnaviPv8thTw+JirAdavTNYUcAaORZxc5HQK8SaIuj+dzALFoF/5f38TKEqBZq7Gc6ScrFiLk8DsS1CtDv0SGTRQ0q5HMNdQRf6HoDjCkVOCFoaMpj3n35kxY1CqictBpDPacndownia422NSAtoRyy37zk8qM8e/Pfw=
+	t=1741195529; cv=none; b=uQQGNnpPOZL+6zOxYhMrVFRDEsWWxnJRNaKxbCApr1EQRpAU9xUVG6urUaptqzqMfIg33f8IaYI7UHrayKsr4LMhG2JULQm1Mz+te7gvT5EzBdnbCCfuH4ytKH3dwmETp1lZggc8F0JUnrBQYfGf17g4UKdW3OjS/l2lV993Me8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741195526; c=relaxed/simple;
-	bh=isU2KcR+Fc5IeSMj/3VUz+YxBSVpY6egRjgQpVu+WIY=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mh4vLvNM5W8lAIrHAS6HcUzmBAfKfjcPrfqaobESpGpwFVUBfF7uXeevZv2J3mLL++7uMspNqwWM/E50eEO09ydDbj2NFsEnFWpQyIosEa8klCzlwy6FsmnDzjejcHKPEYbTmC/4keqkGv4i67MfOvMzaYmZj3VKrd73JnQ2gQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d3dd7f01cbso131272895ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:25:24 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741195523; x=1741800323;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=76cFd9GTQUM+SI1YOG4WZgV51ROqXYBfRO68m84vkvU=;
-        b=kx7kMz4ml2Q3N8UhGEVJ6mLvoQO1Dt7lk7qYxQbQT9lEJhobeu/NbxR1NNC9pqU3x+
-         /AoNUYPN+TTY72fYmGoNr5zBNoMByAkTuDwLEwvn0V/6MSZoYtbwoprPLc+lbu3mfdTZ
-         NywuMYtQF5JmTQ1Q06lJc4V0M6iLiDtAiWoZWBVJ8kjgaqFKnOSA7k7YSilL9e0ajrMx
-         HKzEFqBKk/7FrV7d2IvzkFyrJ1GCJzf9Uawg60LFaVE5c6qLMHU/R1akwsQ90KR9F3xp
-         Kc40DS2F35Xws0w9dVkfTRCVe6pXAJ/PR3I/EuLEUV8Q3iTp0UgIMe8yjt5vOzwYVdBu
-         8acg==
-X-Gm-Message-State: AOJu0YxXqIq/6sB5gbXBFugNq9g3KsOFmf0/+fmx5ZUOdynm4zTk7HI/
-	iAoeTWXY88355gVGGB/LqLGEoVLnX9IvpGfrsA82Z91PWiADIEeVqtogGxY3NffH51cCdq9eG+j
-	/x5q7T7nKR4ajgnUhxL4RGeIu1EsxnFKOntv8pukm6juchYbSMEiaDQujdA==
-X-Google-Smtp-Source: AGHT+IH9wgZ7e93TVUTcam44ff5H/1ADzcH+Wo9y+7mtzZ/yrv6WY/MHHIPCcignXb7olaFpK04DatK0+JDzTDrn6aq3ZtcRXzM6
+	s=arc-20240116; t=1741195529; c=relaxed/simple;
+	bh=/9lALd+9Zj5t2LHqte/RJr2nlfUVYg/mag+NGFZhrCg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mwly8siLSshl7WJrdAxjZwXxKo+bT4GJz2WDh4YHMdGkMDZ2xSTiSd6Y9UPf+lqIwGUjAbWahyRYGv67o5e08a3pM2R+Ww/zzCeLE7ZwCyk6By7KzKjlzQk+/7NF5AtyCkkYCuH6IZsJ9Ci9eu2qRgjvHrkKGzsDohO7yVMqdio=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LjaItOsh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E10EC4CEE0;
+	Wed,  5 Mar 2025 17:25:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741195528;
+	bh=/9lALd+9Zj5t2LHqte/RJr2nlfUVYg/mag+NGFZhrCg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LjaItOshie131gq0GX7DGNyLKv9gv9WWfq/7XshnJ8erde/MyMvCw5X1qAh6sPirA
+	 gpChfin5SmEYA57DKQPRGAAPXXyBDnqdp723G6EQdRZMKwABbY/1ZYs6NN98MZZzbr
+	 9G9PFAbb3pQ+pMTOEzvcNp+/R+nI/pKyWJ3bQCD0LEIezhJwaVEX9YCvG3uXwOi7aC
+	 L/qK6biemsxgGsrfZgztL3xEFG472F/upSWUQV/339l8gFZ9EfAQYoaC75u/SJUNP6
+	 GowQ96ir4EN+FT1sXZssCjPplH44m0p34V5I8AoJMUmjliDl8+fyLMrfTvFp6CQ+E+
+	 8m2SqRSxpUHpg==
+Date: Wed, 5 Mar 2025 18:25:25 +0100
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Benjamin Segall <bsegall@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Andrey Vagin <avagin@openvz.org>,
+	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
+	Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [patch V2 01/17] posix-timers: Initialise timer before adding it
+ to the hash table
+Message-ID: <Z8iJBXFQLUkcndsI@localhost.localdomain>
+References: <20250302185753.311903554@linutronix.de>
+ <20250302193626.974094734@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3a08:b0:3d0:4c9c:965f with SMTP id
- e9e14a558f8ab-3d42b995fbcmr41695335ab.20.1741195523627; Wed, 05 Mar 2025
- 09:25:23 -0800 (PST)
-Date: Wed, 05 Mar 2025 09:25:23 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c88903.050a0220.15b4b9.0028.GAE@google.com>
-Subject: [syzbot] [sound?] KCSAN: data-race in snd_seq_poll / snd_seq_pool_init
-From: syzbot <syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
-	syzkaller-bugs@googlegroups.com, tiwai@suse.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250302193626.974094734@linutronix.de>
 
-Hello,
+Le Sun, Mar 02, 2025 at 08:36:44PM +0100, Thomas Gleixner a écrit :
+> From: Eric Dumazet <edumazet@google.com>
+> 
+> A timer is only valid in the hashtable when both timer::it_signal and
+> timer::it_id are set to their final values, but timers are added without
+> those values being set.
+> 
+> The timer ID is allocated when the timer is added to the hash in invalid
+> state. The ID is taken from a monotonically increasing per process counter
+> which wraps around after reaching INT_MAX. The hash insertion validates
+> that there is no timer with the allocated ID in the hash table which
+> belongs to the same process. That opens a mostly theoretical race condition:
+> 
+> If other threads of the same process manage to create/delete timers in
+> rapid succession before the newly created timer is fully initialized and
+> wrap around to the timer ID which was handed out, then a duplicate timer ID
+> will be inserted into the hash table.
+> 
+> Prevent this by:
+> 
+>   1) Setting timer::it_id before inserting the timer into the hashtable.
+>  
+>   2) Storing the signal pointer in timer::it_signal with bit 0 set before
+>      inserting it into the hashtable.
+> 
+>      Bit 0 acts as a invalid bit, which means that the regular lookup for
+>      sys_timer_*() will fail the comparison with the signal pointer.
+> 
+>      But the lookup on insertion masks out bit 0 and can therefore detect a
+>      timer which is not yet valid, but allocated in the hash table.  Bit 0
+>      in the pointer is cleared once the initialization of the timer
+>      completed.
+> 
+> [ tglx: Fold ID and signal iniitializaion into one patch and massage change
+>   	log and comments. ]
+> 
+> Signed-off-by: Eric Dumazet <edumazet@google.com>
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> Link: https://lore.kernel.org/all/20250219125522.2535263-3-edumazet@google.com
 
-syzbot found the following issue on:
+Looking at this more or less lockless whole thing again, is the
+ordering between creation and subsequent operations sufficiently guaranteed?
 
-HEAD commit:    48a5eed9ad58 Merge tag 'devicetree-fixes-for-6.14-2' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1657d8b7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=523b0e2f15224775
-dashboard link: https://syzkaller.appspot.com/bug?extid=2d373c9936c00d7e120c
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+    T0                                                T1
+---------                                             -----------
+do_timer_create()
+    posix_timer_add()
+        spin_lock(hash_lock)
+        // A
+        timer->it_id = ...
+        spin_unlock(hash_lock)
+    // Initialize timer fields
+    // B
+    new_timer->.... = ....
+    common_timer_create()
+        // C
+        hrtimer_init()
+    spin_lock(current->sighand)
+    // D
+    WRITE_ONCE(new_timer->it_signal, current->signal)
+    spin_unlock(current->sighand)
+                                                      do_timer_settime()
+                                                          lock_timer()
+                                                              // observes A && D
+                                                              posix_timer_by_id()
+                                                              spin_lock_irqsave(&timr->it_lock)
+                                                              // recheck ok
+                                                              if (timr->it_signal == current->signal)
+                                                                  return timr
+                                                              common_timer_get()
+                                                                  // fiddle with timer fields
+                                                                  // but doesn't observe B
+                                                                  // for example doesn't observe SIGEV_NONE
+                                                                  sig_none = timr->it_sigev_notify == SIGEV_NONE;
+                                                                  ...
+                                                                  // doesn't observe C
+                                                                  // hrtimer_init() isn't visible yet
+                                                                  // It might mess up after the hrtimer_start()
+                                                                  hrtimer_start()
 
-Unfortunately, I don't have any reproducer for this issue yet.
+How about the following instead?
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/877a63ac53f2/disk-48a5eed9.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/7b3a614d4df6/vmlinux-48a5eed9.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/2ce987fd9e0c/bzImage-48a5eed9.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com
-
-==================================================================
-BUG: KCSAN: data-race in snd_seq_poll / snd_seq_pool_init
-
-write to 0xffff888114535610 of 4 bytes by task 7006 on cpu 1:
- snd_seq_pool_init+0x1c1/0x200 sound/core/seq/seq_memory.c:469
- snd_seq_write+0x17f/0x500 sound/core/seq/seq_clientmgr.c:1022
- vfs_write+0x27d/0x920 fs/read_write.c:677
- ksys_write+0xe8/0x1b0 fs/read_write.c:731
- __do_sys_write fs/read_write.c:742 [inline]
- __se_sys_write fs/read_write.c:739 [inline]
- __x64_sys_write+0x42/0x50 fs/read_write.c:739
- x64_sys_call+0x287e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:2
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-read to 0xffff888114535610 of 4 bytes by task 7005 on cpu 0:
- snd_seq_total_cells sound/core/seq/seq_memory.h:83 [inline]
- snd_seq_write_pool_allocated sound/core/seq/seq_clientmgr.c:95 [inline]
- snd_seq_poll+0x103/0x170 sound/core/seq/seq_clientmgr.c:1139
- vfs_poll include/linux/poll.h:82 [inline]
- __io_arm_poll_handler+0x1e5/0xd50 io_uring/poll.c:582
- io_arm_poll_handler+0x464/0x5b0 io_uring/poll.c:707
- io_queue_async+0x89/0x320 io_uring/io_uring.c:1925
- io_queue_sqe io_uring/io_uring.c:1954 [inline]
- io_req_task_submit+0xb9/0xc0 io_uring/io_uring.c:1373
- io_handle_tw_list+0x1b9/0x200 io_uring/io_uring.c:1059
- tctx_task_work_run+0x6e/0x1c0 io_uring/io_uring.c:1123
- tctx_task_work+0x40/0x80 io_uring/io_uring.c:1141
- task_work_run+0x13a/0x1a0 kernel/task_work.c:227
- get_signal+0xe78/0x1000 kernel/signal.c:2809
- arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
- exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
- __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
- syscall_exit_to_user_mode+0x62/0x120 kernel/entry/common.c:218
- do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-value changed: 0x00000000 -> 0x000001f4
-
-Reported by Kernel Concurrency Sanitizer on:
-CPU: 0 UID: 0 PID: 7005 Comm: syz.2.1455 Tainted: G        W          6.14.0-rc5-syzkaller-00016-g48a5eed9ad58 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 44ba7db07e90..8769a1ccf69a 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -72,26 +72,29 @@ static int hash(struct signal_struct *sig, unsigned int nr)
+ 	return hash_32(hash32_ptr(sig) ^ nr, HASH_BITS(posix_timers_hashtable));
+ }
+ 
+-static struct k_itimer *__posix_timers_find(struct hlist_head *head,
+-					    struct signal_struct *sig,
+-					    timer_t id)
++static struct k_itimer *posix_timer_by_id(timer_t id)
+ {
++	struct signal_struct *sig = current->signal;
++	struct hlist_head *head = &posix_timers_hashtable[hash(sig, id)];
+ 	struct k_itimer *timer;
+ 
+-	hlist_for_each_entry_rcu(timer, head, t_hash, lockdep_is_held(&hash_lock)) {
+-		/* timer->it_signal can be set concurrently */
+-		if ((READ_ONCE(timer->it_signal) == sig) && (timer->it_id == id))
++	hlist_for_each_entry_rcu(timer, head, t_hash) {
++		if (timer->it_signal == sig && timer->it_id == id &&
++		    !hlist_unhashed_lockless(&timer->list))
+ 			return timer;
+ 	}
+ 	return NULL;
+ }
+ 
+-static struct k_itimer *posix_timer_by_id(timer_t id)
++static bool posix_timer_hashed(struct hlist_head *head, struct signal_struct *sig, timer_t id)
+ {
+-	struct signal_struct *sig = current->signal;
+-	struct hlist_head *head = &posix_timers_hashtable[hash(sig, id)];
++	struct k_itimer *timer;
+ 
+-	return __posix_timers_find(head, sig, id);
++	hlist_for_each_entry_rcu(timer, head, t_hash, lockdep_is_held(&hash_lock)) {
++		if (timer->it_signal == sig && timer->it_id == id)
++			return true;
++	}
++	return false;
+ }
+ 
+ static int posix_timer_add(struct k_itimer *timer)
+@@ -112,7 +115,15 @@ static int posix_timer_add(struct k_itimer *timer)
+ 		sig->next_posix_timer_id = (id + 1) & INT_MAX;
+ 
+ 		head = &posix_timers_hashtable[hash(sig, id)];
+-		if (!__posix_timers_find(head, sig, id)) {
++		if (!posix_timer_hashed(head, sig, id)) {
++			/*
++			 * Set the timer ID and the signal pointer to make
++			 * it identifiable in the global hash table. Its
++			 * lookup is only valid to lock_timer() once it is
++			 * hashed within the process itself.
++			 */
++			timer->it_id = (timer_t)id;
++			timer->it_signal = sig;
+ 			hlist_add_head_rcu(&timer->t_hash, head);
+ 			spin_unlock(&hash_lock);
+ 			return id;
+@@ -406,8 +417,7 @@ static int do_timer_create(clockid_t which_clock, struct sigevent *event,
+ 
+ 	/*
+ 	 * Add the timer to the hash table. The timer is not yet valid
+-	 * because new_timer::it_signal is still NULL. The timer id is also
+-	 * not yet visible to user space.
++	 * after insertion, but has a unique ID allocated.
+ 	 */
+ 	new_timer_id = posix_timer_add(new_timer);
+ 	if (new_timer_id < 0) {
+@@ -415,7 +425,6 @@ static int do_timer_create(clockid_t which_clock, struct sigevent *event,
+ 		return new_timer_id;
+ 	}
+ 
+-	new_timer->it_id = (timer_t) new_timer_id;
+ 	new_timer->it_clock = which_clock;
+ 	new_timer->kclock = kc;
+ 	new_timer->it_overrun = -1LL;
+@@ -453,7 +462,7 @@ static int do_timer_create(clockid_t which_clock, struct sigevent *event,
+ 	}
+ 	/*
+ 	 * After succesful copy out, the timer ID is visible to user space
+-	 * now but not yet valid because new_timer::signal is still NULL.
++	 * now but not yet valid until it's hashed to the process list.
+ 	 *
+ 	 * Complete the initialization with the clock specific create
+ 	 * callback.
+@@ -462,11 +471,15 @@ static int do_timer_create(clockid_t which_clock, struct sigevent *event,
+ 	if (error)
+ 		goto out;
+ 
+-	spin_lock_irq(&current->sighand->siglock);
+-	/* This makes the timer valid in the hash table */
+-	WRITE_ONCE(new_timer->it_signal, current->signal);
++	spin_lock_irq(&new_timer->it_lock);
++	spin_lock(&current->sighand->siglock);
+ 	hlist_add_head(&new_timer->list, &current->signal->posix_timers);
+-	spin_unlock_irq(&current->sighand->siglock);
++	spin_unlock(&current->sighand->siglock);
++	/*
++	 * Release initialization and ->timer_create() job to subsequent
++	 * lock_timer()
++	 */
++	spin_unlock_irq(&new_timer->it_lock);
+ 	/*
+ 	 * After unlocking sighand::siglock @new_timer is subject to
+ 	 * concurrent removal and cannot be touched anymore
+@@ -526,7 +539,7 @@ static struct k_itimer *__lock_timer(timer_t timer_id, unsigned long *flags)
+ 	 * rest of the initialization succeeded.
+ 	 *
+ 	 * Timer destruction happens in steps:
+-	 *  1) Set timr::it_signal to NULL with timr::it_lock held
++	 *  1) Delete timr::list under timr::it_lock held
+ 	 *  2) Release timr::it_lock
+ 	 *  3) Remove from the hash under hash_lock
+ 	 *  4) Put the reference count.
+@@ -551,10 +564,12 @@ static struct k_itimer *__lock_timer(timer_t timer_id, unsigned long *flags)
+ 	if (timr) {
+ 		spin_lock_irqsave(&timr->it_lock, *flags);
+ 		/*
+-		 * Validate under timr::it_lock that timr::it_signal is
+-		 * still valid. Pairs with #1 above.
++		 * Validate under timr::it_lock that the timer hasn't been
++		 * deleted. If so, timr::it_signal isn't expected to change
++		 * within the same RCU critical section. Pairs with #1 above.
+ 		 */
+-		if (timr->it_signal == current->signal) {
++		if (hlist_unhashed(&timr->list) ||
++		    WARN_ON_ONCE(timr->it_signal != current->signal)) {
+ 			rcu_read_unlock();
+ 			return timr;
+ 		}
+@@ -1009,7 +1024,7 @@ SYSCALL_DEFINE1(timer_delete, timer_t, timer_id)
+ 	}
+ 
+ 	spin_lock(&current->sighand->siglock);
+-	hlist_del(&timer->list);
++	hlist_del_init(&timer->list);
+ 	posix_timer_cleanup_ignored(timer);
+ 	/*
+ 	 * A concurrent lookup could check timer::it_signal lockless. It
 
