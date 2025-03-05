@@ -1,142 +1,167 @@
-Return-Path: <linux-kernel+bounces-546187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB407A4F776
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:48:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D636EA4F779
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:50:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F0A716EF1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:48:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2B51890574
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:50:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB311EA7CA;
-	Wed,  5 Mar 2025 06:48:22 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C751E5B94;
+	Wed,  5 Mar 2025 06:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="StbLSnVR"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 896B11E0DB3;
-	Wed,  5 Mar 2025 06:48:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD88D19CC2E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741157301; cv=none; b=OtBWJiUWVj3OYMrx54jSwVM2co8GEMq+h/NAjW3mZ6FUB7CWzFYWkV6tBe8rScjL9g5G6bsKHAYHcL7HR/Z5Fmw0UhZTGS7Enxd1GPK/QaC8dvE0CuHBqMeAYgqraaKywf0mO+M6NVDlIQCJZFnxLWEhH6sHktbLg5DhMP646QQ=
+	t=1741157408; cv=none; b=Y2WxjS4dNFdGo8yyKWDtO8E68NCaATGWGa/xhvjqeA77bN7Yy3wZSjdiNMtCIPy2vXKguvAGe8sgivxunhqw83ChLId1kmzlCJAn/pN9abz+l81fCKQgmGMbv7e4BnXW6Nwt7hhpOyZoBGPRsUvjnuMn0o8btB+qjYNX7O5NMQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741157301; c=relaxed/simple;
-	bh=vUMkbdgNDewqNNntuY+ZVtniT88cSX2GO7xcfQ2QhwQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nQ8IFVmJYeVODIrMPa6HFArgDDoYg5YI+/VE1nmsouW3wZ9fLRMEfHSio0cPP8QWaysoTzjRHBS9qCA8cTkCtNmqmd4eSta4+1Jke9O+6pB/hy0L7am/KHV2noPY3xVUDJawtADJXHPiH5bQffMD3wY/pH/6N0F589iW9YisdaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4Z73252f4CzCs6y;
-	Wed,  5 Mar 2025 14:44:45 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 114901800C9;
-	Wed,  5 Mar 2025 14:48:15 +0800 (CST)
-Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Mar 2025 14:48:14 +0800
-Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
- (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Mar
- 2025 14:48:14 +0800
-Message-ID: <5738e05f-fa1c-0aa7-78f3-3d38f9f0ae3c@huawei.com>
-Date: Wed, 5 Mar 2025 14:48:13 +0800
+	s=arc-20240116; t=1741157408; c=relaxed/simple;
+	bh=4UV7QZVZwFPv3Fm0jyRU+cvccfeEyZxyE0mnjA1Ckd0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PhdPvMTmEnFonOHvgLvXWK4DsXxKiidDu4gi1VQvp+AfcBDR4jcToB2K/qY4/qtLD7PETZ5UXRp+hauraI/ck5tHk+wGChzJo9Flbm00Z74UVxlT7zedKM6a5I9SZXKGndeUOESTd81qc6bGukrMI6h1BWpYBhBkc8yeH9xGTK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=StbLSnVR; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 5 Mar 2025 07:49:50 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741157393;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3yJ3HXbtbrwSp8wZ1o1sZDbX+tC39VktPX7S71ja4Eg=;
+	b=StbLSnVRJ3zF7qjkkCDFDCs0Dt014q72/lHKewofR/nN+BdhTxHeK3kf+SaLM1FnSxY027
+	CrX5Mga8NaLEUN98R8LSCd9yodK7hibID2pjv8LK+sdT0Ir/rkmL0+on0uIK6Z749WedDN
+	M71URIUZJezWcUq0mLScW+OjeODLf1Y=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/3] Add flash/strobe support for ov9282
+Message-ID: <2jaan6jm5abml3pve5hdesc5pj6kzbw4qaa5xofpwphxvp37rx@hyqq5ccn3n2h>
+References: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
+ <CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.2.0
-Subject: Re: [PATCH 07/14] mailbox: pcc: Move pcc_mbox_ioremap() before
- pcc_mbox_request_channel()
-To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Jassi Brar <jassisinghbrar@gmail.com>, Adam Young
-	<admiyo@os.amperecomputing.com>
-References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
- <20250303-pcc_fixes_updates-v1-7-3b44f3d134b1@arm.com>
-From: "lihuisong (C)" <lihuisong@huawei.com>
-In-Reply-To: <20250303-pcc_fixes_updates-v1-7-3b44f3d134b1@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemn100009.china.huawei.com (7.202.194.112)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Tue, Mar 04, 2025 at 05:46:34PM +0000, Dave Stevenson wrote:
+> Hi Richard
+> 
+> Thanks for the series.
 
-在 2025/3/3 18:51, Sudeep Holla 写道:
-> In order to add support of mapping the generic communication shared
-> memory region in the PCC mailbox driver when the PCC channel is requested,
-> we need to move pcc_mbox_ioremap() before pcc_mbox_request_channel().
-This patch is supposed to merge into patch 8/14 because it depend on 
-this moving.
->
-> No functional change.
->
-> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
-> ---
->   drivers/mailbox/pcc.c | 38 +++++++++++++++++++-------------------
->   1 file changed, 19 insertions(+), 19 deletions(-)
->
-> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-> index e693675ce1fbd8d01d0640b3053a5c1882bdbce7..f230e512c29b79fc03e429145180ff049a250d2d 100644
-> --- a/drivers/mailbox/pcc.c
-> +++ b/drivers/mailbox/pcc.c
-> @@ -357,6 +357,25 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
->   	return IRQ_HANDLED;
->   }
->   
-> +int pcc_mbox_ioremap(struct mbox_chan *chan)
-> +{
-> +	struct pcc_chan_info *pchan_info;
-> +	struct pcc_mbox_chan *pcc_mbox_chan;
-> +
-> +	if (!chan || !chan->cl)
-> +		return -1;
-> +	pchan_info = chan->con_priv;
-> +	pcc_mbox_chan = &pchan_info->chan;
-> +
-> +	pcc_mbox_chan->shmem = acpi_os_ioremap(pcc_mbox_chan->shmem_base_addr,
-> +					       pcc_mbox_chan->shmem_size);
-> +	if (!pcc_mbox_chan->shmem)
-> +		return -ENXIO;
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL_GPL(pcc_mbox_ioremap);
-> +
->   /**
->    * pcc_mbox_request_channel - PCC clients call this function to
->    *		request a pointer to their PCC subspace, from which they
-> @@ -419,25 +438,6 @@ void pcc_mbox_free_channel(struct pcc_mbox_chan *pchan)
->   }
->   EXPORT_SYMBOL_GPL(pcc_mbox_free_channel);
->   
-> -int pcc_mbox_ioremap(struct mbox_chan *chan)
-> -{
-> -	struct pcc_chan_info *pchan_info;
-> -	struct pcc_mbox_chan *pcc_mbox_chan;
-> -
-> -	if (!chan || !chan->cl)
-> -		return -1;
-> -	pchan_info = chan->con_priv;
-> -	pcc_mbox_chan = &pchan_info->chan;
-> -
-> -	pcc_mbox_chan->shmem = acpi_os_ioremap(pcc_mbox_chan->shmem_base_addr,
-> -					       pcc_mbox_chan->shmem_size);
-> -	if (!pcc_mbox_chan->shmem)
-> -		return -ENXIO;
-> -
-> -	return 0;
-> -}
-> -EXPORT_SYMBOL_GPL(pcc_mbox_ioremap);
-> -
->   /**
->    * pcc_send_data - Called from Mailbox Controller code. Used
->    *		here only to ring the channel doorbell. The PCC client
->
+Hi Dave,
+
+thanks for your quick and detailled review!
+
+> 
+> On Mon, 3 Mar 2025 at 22:59, Richard Leitner <richard.leitner@linux.dev> wrote:
+> >
+> > This series adds basic flash/strobe support for ov9282 sensors using
+> > their "hardware strobe output".
+> >
+> > Apart from en-/disabling the flash/strobe output, setting a timeout
+> > (duration of activated strobe per frame) is implemented. The calculation
+> > of this timeout is only interpolated from various measurements, as no
+> > documentation was found.
+> 
+> The bigger picture question is whether using these flash controls is
+> appropriate for controlling the strobe output on a sensor. That's a
+> question for others (mainly Sakari and Laurent).
+
+Thanks. So I'm looking forward to their response :-)
+
+> V4L2_CID_FLASH_TIMEOUT feels wrong for setting the duration of the strobe pulse.
+> Whilst the description in the docs [1] is a little brief, you then
+> have the description of V4L2_FLASH_FAULT_TIMEOUT for
+> V4L2_CID_FLASH_FAULT
+> "The flash strobe was still on when the timeout set by the user ---
+> V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
+> controllers may set this in all such conditions."
+> which implies it is the hardware watchdog timeout to ensure the flash
+> LEDs don't burn out, not configuring the duration of the flash pulse.
+> Then again adp1653 adopts it as the flash duration.
+
+I also thought of (and in fact did) implementing this using sensor
+specific used CIDs, but then decided to go for FLASH_TIMEOUT.
+
+If you think it's a better way to introduce either a completely new
+"common control" or use another one I'm perfectly fine with that and
+will try that for a v2.
+
+> 
+> Is there an expectation that V4L2_CID_FLASH_STROBE_SOURCE should also
+> be implemented, even if it is fixed to
+> V4L2_FLASH_STROBE_SOURCE_EXTERNAL?
+
+I've already done this in my local tree, but was not sure if it "fits"
+in this series...
+
+So I guess I should include it in v2?
+
+> 
+> The one saving grace with this sensor is that it has a global shutter,
+> so the strobe does correspond to the exposure period. With rolling
+> shutter sensors, the flash duration is typically two frames to cover
+> the exposure duration of all lines as the shutter rolls down.
+
+Totally agree. Without global shutter configuring the flash duration
+would not make that much sense.
+
+Just to have mentioned it: I tested this quite heavily using an ov9281,
+ran analysis on the resulting images and did lots of scope measurements
+to make sure it really works as described.
+
+regards;rl
+
+> 
+>   Dave
+> 
+> [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
+> 
+> > Further flash/strobe-related controls as well as a migration to v4l2-cci
+> > helpers will likely be implemented in future series.
+> >
+> > All register addresses/values are based on the OV9281 datasheet v1.53
+> > (january 2019). This series was tested using an ov9281 VisionComponents
+> > camera module.
+> >
+> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > ---
+> > Richard Leitner (3):
+> >       media: i2c: ov9282: add output enable register definitions
+> >       media: i2c: ov9282: add led_mode v4l2 control
+> >       media: i2c: ov9282: add strobe_timeout v4l2 control
+> >
+> >  drivers/media/i2c/ov9282.c | 89 ++++++++++++++++++++++++++++++++++++++++++++--
+> >  1 file changed, 86 insertions(+), 3 deletions(-)
+> > ---
+> > base-commit: f41427b3bdee7d9845b13a80c0d03882212f4b20
+> > change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
+> > prerequisite-change-id: 20250225-b4-ov9282-gain-ef1cdaba5bfd:v1
+> > prerequisite-patch-id: 86f2582378ff7095ab65ce4bb25a143eb639e840
+> > prerequisite-patch-id: b06eb6ec697aaf0b3155b4b2370f171d0d304ae2
+> > prerequisite-patch-id: b123047d71bfb9b93f743bbdd6893d5a98495801
+> >
+> > Best regards,
+> > --
+> > Richard Leitner <richard.leitner@linux.dev>
+> >
+> >
 
