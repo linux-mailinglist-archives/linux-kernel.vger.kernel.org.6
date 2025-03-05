@@ -1,133 +1,87 @@
-Return-Path: <linux-kernel+bounces-546124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8554A4F6A3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:40:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1D27A4F694
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:36:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCE433A8302
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:39:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84EC97A354F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:35:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AF461D8E01;
-	Wed,  5 Mar 2025 05:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6896E1C878E;
+	Wed,  5 Mar 2025 05:36:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gWI0k/hh"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SBTY+qNX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 256581C6FE4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 05:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C30272E336D;
+	Wed,  5 Mar 2025 05:36:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741153171; cv=none; b=MJQXAwNRIXFhayVpRDO2LWNY3fxaHay7LwY88/V5DMKN1jsYfur5Nyt04SRSVk8OYPXRUej5tP6qwGPHTYe4FBVCcHsIwyG45IbXw9SkxnsSThhECK88xHcZbYy5cKNsVgVpMl0JnWZgg94RtJXsktnDKbPetXpTHDyVztAu/1s=
+	t=1741152977; cv=none; b=L4UWouXTjUPv+XPWzLZkk0IrPApvoAcfi8VQdt3uZdLiHB65YJhE/RwLpd4ui+56LXzkgALN9k9iu2JfTqEq/eOaMY6spjphWWzBHZlnulRcLX/YBaW+9rR3vSbSZAAb9sNk42BsYuhdmqXLX0It6ZUv1cCVUdKDXOzQPfkjsAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741153171; c=relaxed/simple;
-	bh=AmrnCmsQvKDavdaqMUpAgT8D+53xpeBI3PNIM0WAudY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hXoZw56SFRqC1tMkG8oUc76b8Idt7NE5veGFRCNTkaCMps9gu8u+gqPvDjD8OsreoXTHi9mzYrLiAJEo9o9/y3tKWvAGUrMnTufHoPOxRLDKgr7Ds+pRCrwbiYWZquWd1HkZ2MDp3c51yzLsqlR2jaFxYrH5eGS05xiK+KrZeSQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gWI0k/hh; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741153170; x=1772689170;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=AmrnCmsQvKDavdaqMUpAgT8D+53xpeBI3PNIM0WAudY=;
-  b=gWI0k/hhDaG9IeeRZKqjophgBNqKqgTDOYzrQmQqlQuh4h28dGR0O75h
-   SYs0kxRZHjTG8zTG4ejHzLiO/N+NbInasZnZGTUbpJHh+EKY8mj+N5FDJ
-   ABLO5Mblz07PqhvfgW0So7NMvhPjaqBZdBRyeHTEVowWNRrdsXoiW8nw8
-   GcsTURLmZAZEfeytW6qJ01Gh2KB1Yr2ZsMH16KguKHj10/QsxDynwOt8o
-   x4ATY8bJXTrITir+XVi/NUWjCsoY5Xp/TWRQWlKyqLpzLMPTDhnKOPAeM
-   Q4RNiBb225gYeqHFm9/OaYAW1OcvzPIyey1n0xS6SkhkTcJAztGzxNERT
-   A==;
-X-CSE-ConnectionGUID: DtrdedG/T02Qs5lU1p3xvg==
-X-CSE-MsgGUID: ZG7zho19TX6wrj8M+Bs/Lg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="41349595"
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="41349595"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 21:39:29 -0800
-X-CSE-ConnectionGUID: sJmDI49ERvKccI/5alj7UQ==
-X-CSE-MsgGUID: E7UbQgR4QI6+MASRlWaZFg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="118736138"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 21:39:26 -0800
-Message-ID: <c6d20839-f4c1-429c-b12c-c8d06ae0ce03@linux.intel.com>
-Date: Wed, 5 Mar 2025 13:36:00 +0800
+	s=arc-20240116; t=1741152977; c=relaxed/simple;
+	bh=tZP4YUw7nd/tn+RFskuM/HRZLjVtCMrW6UhnVbuKhp8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=vFYbxO2UC3c80hkAlnjsZ58hjSguF6cbEhBqywqSBzWaPspZBAxW8ghg7wEadEo5jU6HeJOGHgdZJ/EFLKzZge4yfLu9uan4X8+veEyMtaRAXp16pXtGt49kNQqGiGWv8WK16Jpr2JmQw5XN5NOMwMhqJcq7r1m8URkgpBd8jS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SBTY+qNX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ADF2AC4CEE2;
+	Wed,  5 Mar 2025 05:36:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741152974;
+	bh=tZP4YUw7nd/tn+RFskuM/HRZLjVtCMrW6UhnVbuKhp8=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=SBTY+qNXfAVIxBiuDjxsr0yMoI4ZpdD+kfpPTZd88o8ObmgNzGI1ylmc+WTtBpqAD
+	 +oPoaRMC3uSoUrdikCNurl/gc9CPMxKVSwmtGSfiRP6aJyCqhcxOlcHTiMKVOyd339
+	 Fu0De4I2hIwGGOItOD17F8dCa4MdO9bg6vjJ5uFtTiGlmnaBVkxrBKEiu1nIVsZtZJ
+	 zClmbjSc/j5bPzmYxMHxJVtHIkXSFZwQY8q7TMaL/MdFH4lHbAP2lGCDrLWZTrpYZh
+	 nxop0/TS7v4MG9tE1yem59EtiyhONXFR0RHTMdaXixGscTwi1fCwT2xtFCDNZ1SYWc
+	 ABP3f2A9CFyww==
+Date: Wed, 5 Mar 2025 06:36:11 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: "Xu, Even" <even.xu@intel.com>
+cc: "bentiss@kernel.org" <bentiss@kernel.org>, 
+    "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>, 
+    "mpearson-lenovo@squebb.ca" <mpearson-lenovo@squebb.ca>, 
+    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH RESEND v1] HID: Intel-thc-hid: Intel-quickspi: Correct
+ device state after S4
+In-Reply-To: <IA1PR11MB6098ECF413F5F4E8FD120B4EF4CB2@IA1PR11MB6098.namprd11.prod.outlook.com>
+Message-ID: <68roqo71-3887-ro16-0qss-52q455sqoo1s@xreary.bet>
+References: <20250304032255.1131067-1-even.xu@intel.com> <96qpo784-8r1o-sor7-p42q-q06n1p389913@xreary.bet> <IA1PR11MB6098ECF413F5F4E8FD120B4EF4CB2@IA1PR11MB6098.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/12] iommu/vt-d: Cleanup
- intel_context_flush_present()
-To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
- Fenghua Yu <fenghuay@nvidia.com>, Zhangfei Gao <zhangfei.gao@linaro.org>,
- Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
- <20250224051627.2956304-7-baolu.lu@linux.intel.com>
- <f7d84e3d-a648-4292-a652-408f704411c7@intel.com>
- <51cb2ef8-3cce-4af7-b6ce-c3e3d490e6a3@linux.intel.com>
- <338ee285-ae28-4e3f-a7de-57205d9e9873@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <338ee285-ae28-4e3f-a7de-57205d9e9873@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=US-ASCII
 
-On 3/5/25 11:34, Yi Liu wrote:
-> On 2025/3/5 10:21, Baolu Lu wrote:
->> On 3/4/25 16:43, Yi Liu wrote:
->>> On 2025/2/24 13:16, Lu Baolu wrote:
->>>> The intel_context_flush_present() is called in places where either the
->>>> scalable mode is disabled, or scalable mode is enabled but all PASID
->>>> entries are known to be non-present. In these cases, the flush_domains
->>>> path within intel_context_flush_present() will never execute. This dead
->>>> code is therefore removed.
->>>
->>> The reason for this path is the remaining caller of
->>> intel_context_flush_present() is only the domain_context_clear_one() 
->>> which
->>> is called in legacy mode path. Is it?
->>> If so, it seems unnecessary to keep __context_flush_dev_iotlb(info); 
->>> in the
->>> end of the new intel_context_flush_present(). Also, since this helper 
->>> is more for legacy mode, might be good to move it out of pasid.c.:)
->>
->> This helper is for invalidating various caches when a context entry is
->> present and certain fields are changed. It is used in both legacy and
->> scalable modes.
+On Wed, 5 Mar 2025, Xu, Even wrote:
+
+> > I'll now apply this as-is because the code is already in, but perhaps renaming the
+> > flag to QUICKI2C_RESET would be in order.
 > 
-> hmmm. the kdoc says all the pasid entries are non-present, is it necessary
-> to flush dev_tlb in such scenario? I suppose no present pasid entry means
-> no pagetable as well.
+> Current patch is still needed, quickspi device init flow is: init -> 
+> resetting -> reset -> enabled. Exiting code in pm restore() callback 
+> takes reset operation and puts device into reset state, but forgets move 
+> to enabled state after init flow is done.
+>
+> Thanks for your suggestion! Let me refine the patch in V2.
 
-The spec has defined the software behavior for cache invalidation in
-"Table 28: Guidance to Software for Invalidations". This helper was
-written according to it.
+I have already applied your v1 patch to upstream-fixes queue so that it 
+could go to Linus quickly, as an important functional fix.
 
-> 
->> In the past, this helper would work even if some PASIDs were still in
->> use. After the changes introduced in this series, this PASID-in-use case
->> is removed. So remove the dead code.
-> 
-> yeah, I got this part. As I mentioned, the only caller now is the
-> domain_context_clear_one() which is used in the legacy path. That's why I
-> feel like it is now more for legacy mode path now after this series.
-
-It's also called by device_pasid_table_teardown().
+So please base the naming fixup on top of that.
 
 Thanks,
-baolu
+
+-- 
+Jiri Kosina
+SUSE Labs
+
 
