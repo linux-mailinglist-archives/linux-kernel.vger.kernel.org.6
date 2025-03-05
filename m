@@ -1,233 +1,119 @@
-Return-Path: <linux-kernel+bounces-546694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 226E6A4FDB9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:35:52 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A7E8A4FD96
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:27:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4DF04189136C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:35:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA27A7AA155
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:26:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E37023373F;
-	Wed,  5 Mar 2025 11:34:33 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3ADDC2343C6;
+	Wed,  5 Mar 2025 11:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyhjVzSB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68DD124394C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99EF1230BD9;
+	Wed,  5 Mar 2025 11:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741174473; cv=none; b=IPrtxawY2fC/aveA/l+R/r0GEKRsc3iQqigzFiiAU4JTp7uPwIWON7t4yuD+KHGPJKNBOO1z6wPA/Fs9QwHAjJP/moWbtkH2kZMMvSoa78Vmt4lpZC4d1bdHBxkwhEuT2gh/X3LMESyvIhgdr+bGdq+NGcuP8RoGO9R23rzjKrk=
+	t=1741174019; cv=none; b=DSPQS/liJFbDG5ojn5pmpw+p+DnQLhe9WwaVr8cdc/GglHMz3HL1ZCiLQ2H3ccAF/N3NvT1V8mrGaBfKn+SCyg+NDi7pMQYrZaWemruNRd5gLvMjOoPPaqH1/gK9h1zVTi0DMgMc6HZAkI4LXlhKCAiMkX1PG+mJn0jumEB0Hk8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741174473; c=relaxed/simple;
-	bh=6UJKGlmdGivwMHxMlXpwMO7SxD02BvwZHYFn3ohrFbw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Pr5zNKRLoZmB2Wi/B0YdcFtTfoyVkQfTaJ5wS25MiDOFCzPCbX89hvxr8XysD/ZvA2c/8C+jMcb8qjOccIdXHPD5yzNZjmpOndyM3mkGPNKDlLqo3Xn7A3+LwuY6qsRhgfifAAbRWmC2UfMq1q/h9qts/qcL7zu4c4vpcqA1MXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Z79T1530Sz17NSv;
-	Wed,  5 Mar 2025 19:35:01 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 167891402DE;
-	Wed,  5 Mar 2025 19:34:28 +0800 (CST)
-Received: from localhost.huawei.com (10.169.71.169) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Wed, 5 Mar 2025 19:34:26 +0800
-From: Yongbang Shi <shiyongbang@huawei.com>
-To: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>
-CC: <liangjian010@huawei.com>, <chenjianmin@huawei.com>,
-	<lidongming5@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v4 drm-dp 8/8] drm/hisilicon/hibmc: Add MSI irq getting and requesting for HPD
-Date: Wed, 5 Mar 2025 19:26:47 +0800
-Message-ID: <20250305112647.2344438-9-shiyongbang@huawei.com>
-X-Mailer: git-send-email 2.33.0
-In-Reply-To: <20250305112647.2344438-1-shiyongbang@huawei.com>
-References: <20250305112647.2344438-1-shiyongbang@huawei.com>
+	s=arc-20240116; t=1741174019; c=relaxed/simple;
+	bh=FLt3n2UnwaL8j5dWbJnGnF4+8gws9xOWp3kSckS9sEs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tnvLv5/COJGR+0HnRm8ndEr0w4q6BN0ynJeiukB9NJwN9oIwwtIATnaAVKxBwsMU9YKxlmUxCchzc3kWDIVxUiU339/RdWwXm86wUDPri5Og0PQqdHohyh6b4fEnX7/rRCQNY0RTpDOJkuqtr1veJ5/5jtg87mWPjSg40VfIGvg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyhjVzSB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B55AC4CEE2;
+	Wed,  5 Mar 2025 11:26:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741174019;
+	bh=FLt3n2UnwaL8j5dWbJnGnF4+8gws9xOWp3kSckS9sEs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hyhjVzSBZjkLVFiqc12SCL9U3/ffzq0tcmH9B+5S/eUW7QgFlWvDMWzCB/Dwgyuua
+	 BfLr8NnDdXeUKQTcMRFWQJi96myN1Acj4Bur+CqE1trXwzlGEp3fElZkXU6IzqpGqG
+	 zRr42KR5zKdIsdB+JMCFfP2n4DDB2Y0qtOi6rlosM2tdQNMD4RmOfUhEbxbhh4dIKU
+	 7E4JABicDbKngUOywVG6PA6u5Nj/NjKlFzF8FhDXRK5FiypEVeRg5ydqrrIRIscylC
+	 VZzgrZUnKL6bUv9UNdSag0BPmi1CO6BWW1HH8hbik+SX2QtS9ithzneL9uE6rSQROu
+	 4AglAV92D6FKA==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 09/22] rust: pin-init: move impl `Zeroable` for `Opaque`
+ and `Option<KBox<T>>` into the kernel crate
+In-Reply-To: <20250304225245.2033120-10-benno.lossin@proton.me> (Benno
+	Lossin's message of "Tue, 04 Mar 2025 22:54:23 +0000")
+References: <20250304225245.2033120-1-benno.lossin@proton.me>
+	<msi970CObD4bpxAIjK__fZnRG2q-BXd4FHuA1U1NR80D_dTqSXuQ-0-4R1TS7-7CglN6StcS3Os-IumgWcVLqw==@protonmail.internalid>
+	<20250304225245.2033120-10-benno.lossin@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 05 Mar 2025 12:26:50 +0100
+Message-ID: <87a59zen0l.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemd500013.china.huawei.com (7.221.188.12)
 
-From: Baihan Li <libaihan@huawei.com>
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-To realize HPD feature, request irq for HPD , add its handler function.
-We use pci_alloc_irq_vectors() to get our msi irq, because we have two
-interrupts now.
+> In order to make pin-init a standalone crate, move kernel-specific code
+> directly into the kernel crate. Since `Opaque<T>` and `KBox<T>` are part
+> of the kernel, move their `Zeroable` implementation into the kernel
+> crate.
+>
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> ---
+>  rust/kernel/alloc/kbox.rs | 8 +++++++-
+>  rust/kernel/types.rs      | 5 ++++-
+>  rust/pin-init/src/lib.rs  | 8 +-------
+>  3 files changed, 12 insertions(+), 9 deletions(-)
+>
+> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+> index 39a3ea7542da..9861433559dc 100644
+> --- a/rust/kernel/alloc/kbox.rs
+> +++ b/rust/kernel/alloc/kbox.rs
+> @@ -15,7 +15,7 @@
+>  use core::ptr::NonNull;
+>  use core::result::Result;
+>
+> -use crate::init::{InPlaceWrite, Init, PinInit};
+> +use crate::init::{InPlaceWrite, Init, PinInit, Zeroable};
+>  use crate::init_ext::InPlaceInit;
+>  use crate::types::ForeignOwnable;
+>
+> @@ -100,6 +100,12 @@
+>  /// ```
+>  pub type KVBox<T> = Box<T, super::allocator::KVmalloc>;
+>
+> +// SAFETY: All zeros is equivalent to `None` (option layout optimization guarantee).
+> +//
+> +// In this case we are allowed to use `T: ?Sized`, since all zeros is the `None` variant and there
+> +// is no problem with a VTABLE pointer being null.
+> +unsafe impl<T: ?Sized, A: Allocator> Zeroable for Option<Box<T, A>> {}
 
-Signed-off-by: Baihan Li <libaihan@huawei.com>
-Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  3 +
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   | 76 +++++++++++++++----
- .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h   |  3 +
- 3 files changed, 68 insertions(+), 14 deletions(-)
+Could you elaborate the statement related to vtable pointers? How does
+that come into play for `Option<Box<_>>`? Is it for fat pointers to
+trait objects?
 
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-index 4a31334f0420..37dadcd67194 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h
-@@ -99,6 +99,9 @@
- 
- #define HIBMC_DP_TIMING_SYNC_CTRL		0xFF0
- 
-+#define HIBMC_DP_INTSTAT			0x1e0724
-+#define HIBMC_DP_INTCLR				0x1e0728
-+
- /* dp serdes reg */
- #define HIBMC_DP_HOST_OFFSET		0x10000
- #define HIBMC_DP_LANE0_RATE_OFFSET	0x4
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-index 8586f7bb11eb..30c2ac2a3da7 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c
-@@ -32,6 +32,8 @@
- 
- DEFINE_DRM_GEM_FOPS(hibmc_fops);
- 
-+static const char *g_irqs_names_map[HIBMC_MAX_VECTORS] = { "vblank", "hpd" };
-+
- static irqreturn_t hibmc_interrupt(int irq, void *arg)
- {
- 	struct drm_device *dev = (struct drm_device *)arg;
-@@ -49,6 +51,22 @@ static irqreturn_t hibmc_interrupt(int irq, void *arg)
- 	return IRQ_HANDLED;
- }
- 
-+static irqreturn_t hibmc_dp_interrupt(int irq, void *arg)
-+{
-+	struct drm_device *dev = (struct drm_device *)arg;
-+	struct hibmc_drm_private *priv = to_hibmc_drm_private(dev);
-+	u32 status;
-+
-+	status = readl(priv->mmio + HIBMC_DP_INTSTAT);
-+	if (status) {
-+		priv->dp.irq_status = status;
-+		writel(status, priv->mmio + HIBMC_DP_INTCLR);
-+		return IRQ_WAKE_THREAD;
-+	}
-+
-+	return IRQ_HANDLED;
-+}
-+
- static int hibmc_dumb_create(struct drm_file *file, struct drm_device *dev,
- 			     struct drm_mode_create_dumb *args)
- {
-@@ -250,15 +268,50 @@ static int hibmc_hw_init(struct hibmc_drm_private *priv)
- 	return 0;
- }
- 
--static int hibmc_unload(struct drm_device *dev)
-+static void hibmc_unload(struct drm_device *dev)
- {
--	struct pci_dev *pdev = to_pci_dev(dev->dev);
--
- 	drm_atomic_helper_shutdown(dev);
- 
--	free_irq(pdev->irq, dev);
--
- 	pci_disable_msi(to_pci_dev(dev->dev));
-+}
-+
-+static int hibmc_msi_init(struct drm_device *dev)
-+{
-+	struct pci_dev *pdev = to_pci_dev(dev->dev);
-+	char name[32] = {0};
-+	int valid_irq_num;
-+	int irq;
-+	int ret;
-+
-+	ret = pci_alloc_irq_vectors(pdev, HIBMC_MIN_VECTORS,
-+				    HIBMC_MAX_VECTORS, PCI_IRQ_MSI);
-+	if (ret < 0) {
-+		drm_err(dev, "enabling MSI failed: %d\n", ret);
-+		return ret;
-+	}
-+
-+	valid_irq_num = ret;
-+
-+	for (int i = 0; i < valid_irq_num; i++) {
-+		snprintf(name, ARRAY_SIZE(name) - 1, "%s-%s-%s",
-+			 dev->driver->name, pci_name(pdev), g_irqs_names_map[i]);
-+
-+		irq = pci_irq_vector(pdev, i);
-+
-+		if (i)
-+			/* PCI devices require shared interrupts. */
-+			ret = devm_request_threaded_irq(&pdev->dev, irq,
-+							hibmc_dp_interrupt,
-+							hibmc_dp_hpd_isr,
-+							IRQF_SHARED, name, dev);
-+		else
-+			ret = devm_request_irq(&pdev->dev, irq, hibmc_interrupt,
-+					       IRQF_SHARED, name, dev);
-+		if (ret) {
-+			drm_err(dev, "install irq failed: %d\n", ret);
-+			return ret;
-+		}
-+	}
- 
- 	return 0;
- }
-@@ -290,15 +343,10 @@ static int hibmc_load(struct drm_device *dev)
- 		goto err;
- 	}
- 
--	ret = pci_enable_msi(pdev);
-+	ret = hibmc_msi_init(dev);
- 	if (ret) {
--		drm_warn(dev, "enabling MSI failed: %d\n", ret);
--	} else {
--		/* PCI devices require shared interrupts. */
--		ret = request_irq(pdev->irq, hibmc_interrupt, IRQF_SHARED,
--				  dev->driver->name, dev);
--		if (ret)
--			drm_warn(dev, "install irq failed: %d\n", ret);
-+		drm_err(dev, "hibmc msi init failed, ret:%d\n", ret);
-+		goto err;
- 	}
- 
- 	/* reset all the states of crtc/plane/encoder/connector */
-@@ -374,7 +422,7 @@ static void hibmc_pci_remove(struct pci_dev *pdev)
- 
- static void hibmc_pci_shutdown(struct pci_dev *pdev)
- {
--	drm_atomic_helper_shutdown(pci_get_drvdata(pdev));
-+	hibmc_pci_remove(pdev);
- }
- 
- static const struct pci_device_id hibmc_pci_table[] = {
-diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-index daed1330b961..274feabe7df0 100644
---- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-+++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_drv.h
-@@ -22,6 +22,9 @@
- 
- #include "dp/dp_hw.h"
- 
-+#define HIBMC_MIN_VECTORS	1
-+#define HIBMC_MAX_VECTORS	2
-+
- struct hibmc_vdac {
- 	struct drm_device *dev;
- 	struct drm_encoder encoder;
--- 
-2.33.0
+Otherwise LGTM.
+
+
+Best regards,
+Andreas Hindborg
+
+
 
 
