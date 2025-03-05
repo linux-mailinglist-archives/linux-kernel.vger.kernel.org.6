@@ -1,156 +1,148 @@
-Return-Path: <linux-kernel+bounces-546237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BC1AA4F838
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:48:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2964BA4F839
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:48:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D6257A6495
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:47:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B20616D61A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:48:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 642831DE2C1;
-	Wed,  5 Mar 2025 07:48:14 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28E391EF0B4;
+	Wed,  5 Mar 2025 07:48:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="wJkdAGWG";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="sWLAyG57"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC6D32E338C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:48:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EB81D86FB
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741160894; cv=none; b=fFz0rxg4GxVdu7hMHjqrxLT7ysmtxzcn3670+9I5Bvl/jvx4ogQ8QXATUk3APiuNtJghozTHsfgksZbbcqJrmzExYXOlfIBqIQR5vKwuBFxhkJSWskfM+6DN0TMubwCg05ALa8/Lo8wF23Ex/wUKBSSe9UW+H0rGpXWvQbSStdk=
+	t=1741160917; cv=none; b=thTfve+1dNPgJyfTMj7nDcsT1LRG5NvmMsy9FSjIma49OF9RARTV2hcVWUashr0GY/Bsgdtdf0MXJ+grnIegOZPklY2D5YTOpQ2oIyB+KY6JHdKt5VtyxBKMp7eLqwAcX5GlsfaT/Wmk+xoRHWPogqOOFopuT2cSZZjf2W3ZBr0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741160894; c=relaxed/simple;
-	bh=9bco8vryGMjh/mWNs97gBG+DV3eTJlVDcgjyIBN4kwE=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=kdEo1gZH76yNnwDyd4sq/Vsdud71JpXFJ1KCmCXzTAIIUUAfGYiCXjccbEl8hM9BiC557vqJtVFV58n+LlYQEEvk6zRNV9LDYvIdboYN2mIr6P1mJHWzMAsoeyqCGfkMiVwpGN83nojDjulbpvpZuabS3v64ZxvJeeduabS0J14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201603.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202503051548036510;
-        Wed, 05 Mar 2025 15:48:03 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201603.home.langchao.com (10.100.2.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 15:48:04 +0800
-Received: from locahost.localdomain (10.94.3.63) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 15:48:03 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <willy@infradead.org>, <viro@zeniv.linux.org.uk>, <josef@toxicpanda.com>,
-	<brauner@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] ufs: fix inconsistent indenting warning
-Date: Wed, 5 Mar 2025 15:48:01 +0800
-Message-ID: <20250305074801.5026-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741160917; c=relaxed/simple;
+	bh=MOVxLsldxSzzkncdFrsmbwgGBG9+y57xSR00hWfN4QY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TU32sNJOMjBXOfcbxC9Z1l/tRAPedRhmr49lfMaKXqSAH97HnBcOapElaelyIyVLkZULLtn5dXU2z3Aihga4teh75qZCAHczOocdDcG6INfD4ARw1agYfzXQJNk0zm47mfL1QGFwFGzEo4kO+u6wkWTfz7Pi5qgCIYe4ovi30nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=wJkdAGWG; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=sWLAyG57; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741160914;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EKIJdoZTaWwWUpQrkFTqmWnQgJD8NqxVx8MOFMvcjOk=;
+	b=wJkdAGWGUetiJaYajWut595+keRaDuDTB20KpD3a/k+zi/eIpU7xmDNu047gJYKL9V5iz0
+	s5NPoNAYoklBocvkt80wpZvzDtee8syW8LAw5pUPy3xmVIn0ZyfWw7czmezM4Yximl+6y/
+	GkOlog1AUbG4/L+A+HoeA3mKnYhO/gOiSrNjepRZUsy6Q/kg3FLiXJJBm+I66FY9kGWmNu
+	wUStQcCJQFtJ2gDOHhejouvm5vHOEKb0c2ZSAaWvCdgv3RdODtR2ZTWCu4dMn4WCk47Caq
+	oZCCFa+sMmSlI7b9H+tgcCzINEEp/DiIckQB0pimgFwhiOKWplhj1fOKAOx6Gg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741160914;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EKIJdoZTaWwWUpQrkFTqmWnQgJD8NqxVx8MOFMvcjOk=;
+	b=sWLAyG57LfZJ34TMSmr1yqMOc1CKvErWad5KMWXSi5IQIl6p5a5EAYD3Dkz02KYJY0yW/U
+	Kj/2FCYmzGxr4BAQ==
+Date: Wed, 05 Mar 2025 08:48:13 +0100
+Subject: [PATCH] tools/nolibc: don't use asm/ UAPI headers
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2025305154803e390c1d5ff094a653e4c2037508d1666
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Message-Id: <20250305-nolibc-asm-headers-v1-1-f2053def2ee7@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIALwByGcC/x3MTQqAIBBA4avErBswpR+6SrSwGnOgLByIQLx70
+ vJbvJdAKDIJjFWCSA8LX6GgqStYvQ07IW/FoJVulVEthuvgZUUrJ3qyG0VB0+tBd84Ozjgo4R3
+ J8ftPpznnD3n3WqpkAAAA
+X-Change-ID: 20250305-nolibc-asm-headers-372826fa8f3f
+To: Willy Tarreau <w@1wt.eu>, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: linux-kernel@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741160913; l=2210;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=MOVxLsldxSzzkncdFrsmbwgGBG9+y57xSR00hWfN4QY=;
+ b=fTenldmkupcWVow4C/ZhNNo8nlv3Gadny7TtkBUaOK3UAjfr4Dcr3X4cgCgXfRLHEZS5UYoxS
+ zrkliX03mokBmi66IV4pIyBXvTRGX4gsNczqViIYdKckVVxLVuiz6BZ
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-fs/ufs/inode.c:1063 ufs_alloc_lastblock() warn: inconsistent indenting
-fs/ufs/inode.c:1077 ufs_alloc_lastblock() warn: inconsistent indenting
+The asm/ and asm-generic/ namespaces are implementation details of the UAPI
+headers and not meant for direct usage.
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
+Use the equivalent headers from the linux/ namespace instead.
+
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 ---
- fs/ufs/inode.c | 64 +++++++++++++++++++++++++-------------------------
- 1 file changed, 32 insertions(+), 32 deletions(-)
+ tools/include/nolibc/arch-s390.h | 4 ++--
+ tools/include/nolibc/errno.h     | 2 +-
+ tools/include/nolibc/sys.h       | 8 ++++----
+ 3 files changed, 7 insertions(+), 7 deletions(-)
 
-diff --git a/fs/ufs/inode.c b/fs/ufs/inode.c
-index 7dc38fdef2ea..e67475f6e0db 100644
---- a/fs/ufs/inode.c
-+++ b/fs/ufs/inode.c
-@@ -1060,41 +1060,41 @@ static int ufs_alloc_lastblock(struct inode *inode, loff_t size)
- 	for (i = 0; i < end; ++i)
- 		bh = bh->b_this_page;
+diff --git a/tools/include/nolibc/arch-s390.h b/tools/include/nolibc/arch-s390.h
+index acfee7e9d5e2bb65718cb947110d2c5e1cdeba9b..df4c3cc713accd45551e07e1f02d3638e49e300e 100644
+--- a/tools/include/nolibc/arch-s390.h
++++ b/tools/include/nolibc/arch-s390.h
+@@ -5,8 +5,8 @@
  
--       err = ufs_getfrag_block(inode, lastfrag, bh, 1);
--
--       if (unlikely(err))
--	       goto out_unlock;
--
--       if (buffer_new(bh)) {
--	       clear_buffer_new(bh);
--	       clean_bdev_bh_alias(bh);
--	       /*
--		* we do not zeroize fragment, because of
--		* if it maped to hole, it already contains zeroes
--		*/
--	       set_buffer_uptodate(bh);
--	       mark_buffer_dirty(bh);
-+	err = ufs_getfrag_block(inode, lastfrag, bh, 1);
-+
-+	if (unlikely(err))
-+		goto out_unlock;
-+
-+	if (buffer_new(bh)) {
-+		clear_buffer_new(bh);
-+		clean_bdev_bh_alias(bh);
-+		/*
-+		 * we do not zeroize fragment, because of
-+		 * if it maped to hole, it already contains zeroes
-+		 */
-+		set_buffer_uptodate(bh);
-+		mark_buffer_dirty(bh);
- 		folio_mark_dirty(folio);
--       }
--
--       if (lastfrag >= UFS_IND_FRAGMENT) {
--	       end = uspi->s_fpb - ufs_fragnum(lastfrag) - 1;
--	       phys64 = bh->b_blocknr + 1;
--	       for (i = 0; i < end; ++i) {
--		       bh = sb_getblk(sb, i + phys64);
--		       lock_buffer(bh);
--		       memset(bh->b_data, 0, sb->s_blocksize);
--		       set_buffer_uptodate(bh);
--		       mark_buffer_dirty(bh);
--		       unlock_buffer(bh);
--		       sync_dirty_buffer(bh);
--		       brelse(bh);
--	       }
--       }
-+	}
-+
-+	if (lastfrag >= UFS_IND_FRAGMENT) {
-+		end = uspi->s_fpb - ufs_fragnum(lastfrag) - 1;
-+		phys64 = bh->b_blocknr + 1;
-+		for (i = 0; i < end; ++i) {
-+			bh = sb_getblk(sb, i + phys64);
-+			lock_buffer(bh);
-+			memset(bh->b_data, 0, sb->s_blocksize);
-+			set_buffer_uptodate(bh);
-+			mark_buffer_dirty(bh);
-+			unlock_buffer(bh);
-+			sync_dirty_buffer(bh);
-+			brelse(bh);
-+		}
-+	}
- out_unlock:
--       ufs_put_locked_folio(folio);
-+	ufs_put_locked_folio(folio);
- out:
--       return err;
-+	return err;
- }
+ #ifndef _NOLIBC_ARCH_S390_H
+ #define _NOLIBC_ARCH_S390_H
+-#include <asm/signal.h>
+-#include <asm/unistd.h>
++#include <linux/signal.h>
++#include <linux/unistd.h>
  
- static void ufs_truncate_blocks(struct inode *inode)
+ #include "compiler.h"
+ #include "crt.h"
+diff --git a/tools/include/nolibc/errno.h b/tools/include/nolibc/errno.h
+index a44486ff047745bc9bcf9748c3e5074213430f80..1d8d8033e8ff766ee4b3cf7efdb741d4208db04e 100644
+--- a/tools/include/nolibc/errno.h
++++ b/tools/include/nolibc/errno.h
+@@ -7,7 +7,7 @@
+ #ifndef _NOLIBC_ERRNO_H
+ #define _NOLIBC_ERRNO_H
+ 
+-#include <asm/errno.h>
++#include <linux/errno.h>
+ 
+ #ifndef NOLIBC_IGNORE_ERRNO
+ #define SET_ERRNO(v) do { errno = (v); } while (0)
+diff --git a/tools/include/nolibc/sys.h b/tools/include/nolibc/sys.h
+index 8f44c33b121300e80b41c971019484007d050b17..cbf7345c4b8dcda8cc0832c487383606672366eb 100644
+--- a/tools/include/nolibc/sys.h
++++ b/tools/include/nolibc/sys.h
+@@ -10,10 +10,10 @@
+ #include "std.h"
+ 
+ /* system includes */
+-#include <asm/unistd.h>
+-#include <asm/signal.h>  /* for SIGCHLD */
+-#include <asm/ioctls.h>
+-#include <asm/mman.h>
++#include <linux/unistd.h>
++#include <linux/signal.h>  /* for SIGCHLD */
++#include <linux/termios.h>
++#include <linux/mman.h>
+ #include <linux/fs.h>
+ #include <linux/loop.h>
+ #include <linux/time.h>
+
+---
+base-commit: cb839e0cc881b4abd4a2e64cd06c2e313987a189
+change-id: 20250305-nolibc-asm-headers-372826fa8f3f
+
+Best regards,
 -- 
-2.43.0
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
