@@ -1,133 +1,176 @@
-Return-Path: <linux-kernel+bounces-546001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90C1EA4F50A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:00:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BC39EA4F50B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:01:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C14401885AAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:00:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAAAB1655E0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:01:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0E4E1624CF;
-	Wed,  5 Mar 2025 02:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70E0746E;
+	Wed,  5 Mar 2025 03:01:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hhfcpH3D"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="M2vR4jVe"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D260415CD4A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 02:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A76B2E337F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 03:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741143598; cv=none; b=T5UCm76X9JzKgF2UzTsSaVTd2Oi9r0ckRD9VWDNwA9vVYIk6DQOfrBiKMJVtv3RlICKX/ewf4r3qsWgYkqE/MwnkdhxRRlUFDqO3YkCuL5Pex33s8SOS/kg4MtwUw9N8iWQf4AjwL3knv7jmloLXWVWJ1PrUIjt2oNVKdcmlDBY=
+	t=1741143691; cv=none; b=cbZIeD0YN5an/MVSWD4hzTBnxJGt0nPPfXkznt47s1F6AZUS+2rWN6u3OQfk7lN5yTcRoIMOwzIi59MmyS17dZrQnkXwfQYVVNxqNfyfZY2lqKeSQruKHJGFbyMcewhF+IguVEDi8foy8Obeyxw81KRfpAdsI31TwbkTBYMp+P0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741143598; c=relaxed/simple;
-	bh=mPfqHmUHSKSQaPUHjpb/9HaN5cORCw2qlntCpea6OSQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pHPZim4SOnSWjyGyqw0Ffz4GfBZ/0dVmxAgrYRSadLd3UKc14Rh6qSYbK6f+YJGEMeSku3cCHvSmkdNtbJxFKEGbTNBVO+snGy5ox1W5rR3vIJV/e2OLdqifc6IbzeOzImFx0OBxJL+srWkX5u4RnnqVk6yX/m+IVZt+7QTWr50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hhfcpH3D; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-54958009d4dso4146328e87.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 18:59:54 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741143593; x=1741748393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=WJvKJ68rlC+sLGTBZdabg/gqDqFQctmrcG+n8a+ztWA=;
-        b=hhfcpH3DgQDHlNmLDjqVdm7pv7/hbZyVaAikr+HqQjlP2ZoLaXUf18cpGQerOi0QN9
-         rore8oT+1oDsxSwkjZAaKEMyrjAUQrQYvYphBj8GR56FIo/i9hR847DWKW4K31QWh679
-         n7bcbLXWNakusR1jNmx4tMDsQuJn4UIraeraHt2wJ/JGvstLOPs7ra6F9L4HwWL4Ve1c
-         ncoI+AWZSxl0xYw6emH1iqCPWax4Q6iDaCYLyuMi82i+8a8Z/cgvKuj9eniLF2YygUmU
-         ee21AaQnfD9H88fkOA413xZg0K66ZuADh/4YjfLt6hRHOaa9ULx1qlh0LCSSPhRKquI2
-         jNOQ==
+	s=arc-20240116; t=1741143691; c=relaxed/simple;
+	bh=SQDr5ldeyrak0fqcgofevKyTUAamPcCphiDxThQmsj0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=avIGKUPUxF9diD3ojGhD0fGDiM6rV1uTQXOjPLCLqmpjsHflvmZApwKwdIjob+5HS7zjeVcf0XHqhmSEDu0oTXCEEa5KCosyjHC9J+MW22DpfKDgOVuz4ZMYIWTHMwKCCkKfcIMpSiiPPPt820K/m0JkT+nE///h+LZlwq+Hwfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=M2vR4jVe; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741143688;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LXFMmu1EgcReOCw6/NPEyCwNwAPUOuUmwhoOj3Bw9K4=;
+	b=M2vR4jVe0gpvAHQSBptqcX+txSnLf0mxRPa58K6sUDEH313KX5DIpHmQj/F34dBC9Rw+5g
+	HbHHTU+aF5bs0BRDIn48YHPnW3KSjoLUSobn7trI7WJCz3bjRalODBfTiVMSlco4gmDrfy
+	Ttw6BPKl/QuOJWVcuzW5zr3FGemsbr4=
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com
+ [209.85.222.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-635-tZdNvPoPN1KwUeqgcbKGlg-1; Tue, 04 Mar 2025 22:01:27 -0500
+X-MC-Unique: tZdNvPoPN1KwUeqgcbKGlg-1
+X-Mimecast-MFC-AGG-ID: tZdNvPoPN1KwUeqgcbKGlg_1741143687
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7c0a8583e60so1219307585a.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 19:01:27 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741143593; x=1741748393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WJvKJ68rlC+sLGTBZdabg/gqDqFQctmrcG+n8a+ztWA=;
-        b=gCg7YF8BcaCk8M3ZYd3o2fPihi5OnTkhNBF55dhffdllCw9okOH+MxSgH5ybjAjeQZ
-         G3VSmbQ71m2i0lHyYwJEU+tWfhOLL8bmm1n9eGlrQ2+b0b5qpRHRJEz+4kgZTDvV0eai
-         WGEk3GB4FjcxB3HDQbvnc5cHCRyXMpM8h1v/PG4gDKVXRTte+LY00qEbCMeIXCi7bTJ1
-         tRzdQri6/G7q7DxUKnasJkmSgx2qQ4Y/UtvzR01hYmDXYzltxAvo/GiqDg2Fg1vkU72m
-         hrb3/4POP5YhGLHDLHbBtyveYkiWLoT2/7Uunb/ZmpOVTe7oZGxqfOpoLusCJMlFUkZU
-         9Nnw==
-X-Forwarded-Encrypted: i=1; AJvYcCUloLtfRNZ8hg+gb1KN8HjD0nabszf2EXSGxjs4cdsa95ThV8k/zJIqsBn2lRP2Kyix84w1loBGwSm6WxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjgWEtjIJV2ZdQ45KMWrKXCqkZrPxUo8YXDLhTmV//7/TpkoSU
-	dmI8Y3t1V31BYwGQz4ayAnyxN0pXEISUhepVhtj5zn9Qnx2+60r7jw4zh373xio=
-X-Gm-Gg: ASbGncvKCDjxsGoOJN9+uGZRxU8syi2txx8OjKEc3u5BfAxi1xwIVj1BB56Ajw0VdXj
-	GfTpimGm2SBGe15g4yKH8CPPKMBOeZpACGUuZUUWOAbDhBmORyznPxJ14IjSzH7/dFF66N1vBlq
-	5o75JXTOh9bl/t44gbyxAS68iXEU1ajZRL3g/4ZsHaXgaDKh9vVTX+TMkIe5zQzAawmTv4O+GPF
-	6opGqQ5j32Q2K4WgRsoLFIunPlBBPO1tTMAyjpxDTTXd64hSRB4nBhMAQ4V1svABFVIdQre/34w
-	OUc38pDTUfhV/x4hHir9eQwKdPeXoLh+jSob59chxRQO0SZ8T2XR5z0HdE7OANWApV19ZtNVb4r
-	lCECK2KvmoUmjVtbmuG4YhEC3
-X-Google-Smtp-Source: AGHT+IGkLyEj88NKFgMk5Dc/qcrMMu5c5mz/edvqKr7cxRFirThc+Fkx33VXvY/6F71lJ9O4B98xLQ==
-X-Received: by 2002:a05:6512:ac7:b0:549:39ca:13fc with SMTP id 2adb3069b0e04-5497d382f6bmr469921e87.49.1741143592852;
-        Tue, 04 Mar 2025 18:59:52 -0800 (PST)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54962415d13sm925305e87.257.2025.03.04.18.59.50
+        d=1e100.net; s=20230601; t=1741143687; x=1741748487;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=LXFMmu1EgcReOCw6/NPEyCwNwAPUOuUmwhoOj3Bw9K4=;
+        b=ZX5//ou+qt9I2bY6RyrDdVSLnxTHEVQ4U/N/L1HXz7dvwDnzg3A1rYaA6hZSvIjQgj
+         VBnKAMzMZpWbaNAR2YSnqzJtTO3LyIjIpmooQ5NmkXb0w9Evi0abqmNuYLO3UO4JF0Vi
+         IJs3arConLohY7IgYNQtal0cMvVu/DK3zdjE9StqxucpnHdC/LQjtPg/F0tBdjlJwVYF
+         phMv6CkhNQZqPoiBJW3zFAOBJHLE/BxyfUCt23nMg1HPFmc54Fe4pFNAfinozC2ksNPg
+         PyR0dDM8Rmc9ECQlxE4grlof5fIT+rqbim8V2/Hx4kEk6paCInffaXztUCi9Ctl6F6jn
+         Iv8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVLVJliEn9HIEWB2LwRp6DCRphA/ipJFKtGnWq1IV4Ln4c69JasgUsaErajtaL+KOVGi3ttESUsYdvDti0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw64BVCPMuT//NVwwMlksBsPVDpV5gnLazfmzt0fSxqBj0Zj/X7
+	+Pds6UdpiCKXzYuBQ6+W0TbtDdHkkvUEKa+ut3G4alF2qoqrp3vyfU9nNj/72+397nyXLp5sVpM
+	RQaF5f0svWm++gpCDBAZlY0wXzb4q+Y3OMVq4CxCNN8dBmL/Kx2r24GAI0PHKiVmgRxq6MQ==
+X-Gm-Gg: ASbGnct2gGMfCroU3YuJshMMgjCKYp5g4QP3QMy4JQgKj+y5Qc4EKMkMlqFKvLcDwDu
+	YQXWQeoVIFJKfNjWciN2oeGCvcTUhPd0Txzk/WCcpRT4pX7Wq5tR6lLoFKA/TufiXs7BJAlNBnd
+	lbo8yS5X25xDbmqtyZJxxGiz9FpFvqslyKh/Wz/B4u7hAhLLOeKxS7cDPLIwQmtJNapmvfwGkSc
+	XbAM+4ep3AEQawIHgeh0/kcfWn+0tWA/S45hwZwZR/3ostISj72wEQEdKnNZ+GFMbwWfntp1lJD
+	zvoYh6kTplnLz/0=
+X-Received: by 2002:a05:620a:8082:b0:7c0:7eab:64a1 with SMTP id af79cd13be357-7c3d8ef3013mr310968485a.48.1741143686738;
+        Tue, 04 Mar 2025 19:01:26 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEiUQqBZbHKRH29Clw9QqtOwZBLjg2B9QS4anWF5COImXioekphqyo3RllkC40LZOUKPHUGWA==
+X-Received: by 2002:a05:620a:8082:b0:7c0:7eab:64a1 with SMTP id af79cd13be357-7c3d8ef3013mr310963385a.48.1741143686408;
+        Tue, 04 Mar 2025 19:01:26 -0800 (PST)
+Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3c880f022sm246398085a.3.2025.03.04.19.01.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 18:59:51 -0800 (PST)
-Date: Wed, 5 Mar 2025 04:59:49 +0200
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wesley Cheng <quic_wcheng@quicinc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Philipp Zabel <p.zabel@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2 9/9] arm64: defconfig: Add M31 eUSB2 PHY config
-Message-ID: <xgryihmtcbvhimm4fr2pcrhjcwdp6djfrgtwj4a5kl4tukeavb@de5irgx54w5p>
-References: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
- <20250304-sm8750_usb_master-v2-9-a698a2e68e06@quicinc.com>
+        Tue, 04 Mar 2025 19:01:26 -0800 (PST)
+Message-ID: <6345e31c7973a2ec32b11ed54cede142a901044e.camel@redhat.com>
+Subject: Re: [RFC PATCH 11/13] KVM: nSVM: Do not reset TLB_CONTROL in VMCB02
+ on nested entry
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 04 Mar 2025 22:01:25 -0500
+In-Reply-To: <Z8YpxLONlmy91Eot@google.com>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+	 <20250205182402.2147495-12-yosry.ahmed@linux.dev>
+	 <a70458e20e98da9cd6dd1d272cc16b71bfdd4842.camel@redhat.com>
+	 <Z8YpxLONlmy91Eot@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304-sm8750_usb_master-v2-9-a698a2e68e06@quicinc.com>
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 01:56:42PM -0800, Melody Olvera wrote:
-> Add configs for the M31 eUSB2 PHY for SM8750 USB.
+On Mon, 2025-03-03 at 22:14 +0000, Yosry Ahmed wrote:
+> On Fri, Feb 28, 2025 at 09:17:52PM -0500, Maxim Levitsky wrote:
+> > On Wed, 2025-02-05 at 18:24 +0000, Yosry Ahmed wrote:
+> > > TLB_CONTROL is reset to TLB_CONTROL_DO_NOTHING on nested transitions to
+> > > L2. This is unnecessary because it should always be
+> > > TLB_CONTROL_DO_NOTHING at this point.
+> > > 
+> > > The flow for setting TLB_CONTROL is as follows:
+> > > 1. In vcpu_enter_guest(), servicing a TLB flush request may set it to
+> > > TLB_CONTROL_FLUSH_ASID in svm_flush_tlb_asid().
+> > > 2. In svm_vcpu_run() -> pre_svm_run(), it may get upgraded to
+> > > TLB_CONTROL_FLUSH_ALL_ASID when assigning a new ASID.
+> > > 3. In svm_cpu_run(), it gets reset to TLB_CONTROL_DO_NOTHING after the
+> > > guest is run.
+> > > 
+> > > Hence, TLB_CONTROL is reset after each run and there is no need to do it
+> > > again on every nested transition to L2.
+> > > 
+> > > There is a TODO in nested_svm_transition_tlb_flush() about this reset
+> > > crushing pending TLB flushes. Remove it, as the reset is not really
+> > > crushing anything as explained above.
+> > 
+> > I am not sure that we don't crush a pending tlb request: 
+> > 
+> > svm_flush_tlb_asid can also be called by KVM_REQ_TLB_FLUSH
+> > and set the flush request in both vmcbs, thus later the nested_svm_exit_tlb_flush
+> > can crush this request.
+> 
+> How so?
+> 
+> nested_svm_exit_tlb_flush() makes a KVM_REQ_TLB_FLUSH_GUEST request.
+> svm_flush_tlb_asid() is called when servicing KVM_REQ_TLB_* requests.
 
-Please use git log on the defconfig to check what is usually required
-from the commit messages. The defconfig is not Qcom-specific so you can
-not expect somebody to know what is SM8750 or why does it require a PHY.
+I am probably missing something but:
+
+Suppose KVM_REQ_TLB_FLUSH is raised and then processed while ordinary L1 entry is happening,
+but nested state is allocated.
+
+(KVM_REQ_TLB_FLUSH can be raised anytime MMU wants a 'big hammer flush everything')
+
+In this case svm_flush_tlb_all will call svm_flush_tlb_asid on both vmcbs (see patch 8),
+and that will set TLB_CONTROL_FLUSH_ASID in both vmcbs.
+In particular it will be set in vmcb02.
+
+Later, maybe even hours later in theory, L1 issues VMRUN, we reach nested_vmcb02_prepare_control,
+and crush the value (TLB_CONTROL_FLUSH_ASID) set in vmcb02.
+
+I think that this is what the removed comment referred to.
+
+
+Best regards,
+	Maxim Levitsky
 
 > 
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
->  arch/arm64/configs/defconfig | 1 +
->  1 file changed, 1 insertion(+)
+> So svm_flush_tlb_asid() does not make a request in the sense of
+> KVM_REQ_*, it sets TLB_CONTROL or invalidates the ASID, which is can
+> more-or-less be described as "requesting" a TLB flush on VM-enter, but
+> is not the same thing as KVM_REQ_TLB_FLUSH.
 > 
-> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
-> index 3a3706db29822036d25a7228f8936e2ad613b208..7a7187475a11206e708a5a2c6dd51736e16932e9 100644
-> --- a/arch/arm64/configs/defconfig
-> +++ b/arch/arm64/configs/defconfig
-> @@ -1587,6 +1587,7 @@ CONFIG_PHY_QCOM_QUSB2=m
->  CONFIG_PHY_QCOM_SNPS_EUSB2=m
->  CONFIG_PHY_QCOM_EUSB2_REPEATER=m
->  CONFIG_PHY_QCOM_M31_USB=m
-> +CONFIG_PHY_QCOM_M31_EUSB=m
->  CONFIG_PHY_QCOM_USB_HS=m
->  CONFIG_PHY_QCOM_USB_SNPS_FEMTO_V2=m
->  CONFIG_PHY_QCOM_USB_HS_28NM=m
+> So I am not sure there are any requests being crushed here.
 > 
-> -- 
-> 2.46.1
+> > But the patch itself does look OK to me, although I might be mistaken.
+> > 
+> > Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
 > 
+> Thanks!
+> 
+> > 
+> > Best regards,
+> > 	Maxim Levitsky
 
--- 
-With best wishes
-Dmitry
+
 
