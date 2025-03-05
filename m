@@ -1,163 +1,132 @@
-Return-Path: <linux-kernel+bounces-546776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0424AA4FEA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:30:21 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF3FA4FEB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:35:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 110783A961A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:30:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 344FF3AF3EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0EC245029;
-	Wed,  5 Mar 2025 12:30:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF57245016;
+	Wed,  5 Mar 2025 12:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="LmI72CSt"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UGPrZMkE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 881BB2A1BF;
-	Wed,  5 Mar 2025 12:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84587244EAB;
+	Wed,  5 Mar 2025 12:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741177813; cv=none; b=muS2W1ofiQgA2ThAoLjwyVFJVjtmiuYBsZ9jEKeXDAHQbjj5wM75iVjKzuTkVsOWJasl0Ynnou2RggOVCSkv4953bwwudSYD+TvS9NKJ908oDeueXIrDQ6bPcJzCBKHmx517XA3Ac1J74OyVN4nOrdcPbjDV0SgbQeEdy7B3DXs=
+	t=1741178053; cv=none; b=b57AlbAvEvRyCge9DoSjpR7xDvCJzHmF0Ok+vuMKh5yQrc97KFunlaL3gIkSV1dCLwuuNofEUaGNEQkSrZPirZmQooXBhyjlPQfZ93uTy+TSakoPerXtpoSJNC0ohZdy63OWjln6gsgKNS3aPxmQrjKrYLyY1U/Ch5+A5pS5/kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741177813; c=relaxed/simple;
-	bh=XUYFquD2kF7krYW6kimapa9xXRvl53m+sHdaVBDWrg0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=vA/XAN7jvw5Ch8/mafxeJI9OHZOZb4FLMD5LUepjmBqa0zrMgYQ4NSc3bmbxDEMYqlEUMuS26eMzOD7iiyMIIh9BJLiK5movSO8yq0CG0mQD0tqePz9AQKzbZ8R3AUgz5B+5Wv9d66tjftp6KLdu4+a4mDs1ns461f6SjEd21qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=LmI72CSt; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 1DB85C001B;
-	Wed,  5 Mar 2025 15:30:01 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 1DB85C001B
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1741177801; bh=jwfiOKN+C1alB3gS3qmr0uc2qIJJ9i/ducBeeGQwW5k=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=LmI72CStgcWWaWzQbPfDk2TeA2dNAw1/zxz9w4rltvJGmKJZmLg9PXkYa8PRzKBVT
-	 UGjoA21Hu+cXHtOOHmAL5TJHVKEnEqf46aH025ZhpVbmH0Y4ywdQVFnJz4d8POQ7Ef
-	 Fsmmxz3CaSccae4tValibP5bwu4CuA6NDgcVzG4OnQV/aJFAGp4RVMdvXD2C7tRohY
-	 ZzjNrQPRkS28SOwBVtTfHHZ3tHWk+90/hWCAmeCua/fdakNDARAPK91ZUzDzIMUnxC
-	 PLOYqCLKabmkNH3fzPAyexycXydUgKMNvm0qRgEILHAVjKuaTRblBvGftrK2nyTDuY
-	 LKwiV/RLW9MYA==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Wed,  5 Mar 2025 15:30:00 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (178.236.220.168) by
- mmail-p-exch01.mt.ru (81.200.124.61) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.1544.4; Wed, 5 Mar 2025 15:29:59 +0300
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-CC: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH] media: cec: use us_to_ktime() where appropriate
-Date: Wed, 5 Mar 2025 17:26:39 +0500
-Message-ID: <20250305122728.2317-1-v.shevtsov@mt-integration.ru>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741178053; c=relaxed/simple;
+	bh=HtDB4LHLVUdi5nQk0sqUMa3TbwIfRW7AwbxUSS/ZPAk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jmHS9HowhFYR0D/Qh2Bz2o6wxaPg61oJdv7SI1ZbV5UBf+k3XrEYe0G6PI045Zs2yNIj7IATzNnCFIQBuXrPLl305hg7UxSfGs5iqCApYk9hddlgGpUvLE8xCbmoub/hyiF8NoAOQKDbhyJ7rIoLibewtuQ/h+16iX/O18gUqWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UGPrZMkE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DB85C4CEE2;
+	Wed,  5 Mar 2025 12:34:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741178053;
+	bh=HtDB4LHLVUdi5nQk0sqUMa3TbwIfRW7AwbxUSS/ZPAk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=UGPrZMkEXSNHSjD5BHMFcMgDyj0u4e2rp18AEGJ0JW054go7MaUkcLEOYHV5Li5HK
+	 D+ntpx/EFVJhU4PgPGxqfZyxytmEcfrJAXkM8tPExrRYUrF6Z+n+cwxq+CflyKr5H4
+	 wmxUk3MBUGQ5AhBWr07H1bamLZYsgZ86qxw3aC7hOie/ndPK8VO3HCyvP53wX/g/v/
+	 hKGysS4mEv/6HlabQm1gmF2G2J8xW0ZOKBnS/mt08I2AlldGQRpJiRwyXWaxJlDIYM
+	 Z+ALQY9dm8v3VMZ8LqAI/4tysHm8q6AckvjE8Qwa5/KTAEFMXmh5lhXkJraCcOPumS
+	 s8O0ZH3A5aPaQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Danilo Krummrich" <dakr@kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 12/22] rust: pin-init: remove kernel-crate dependency
+In-Reply-To: <D88BDOC74W1T.IMRXO8BE868S@proton.me> (Benno Lossin's message of
+	"Wed, 05 Mar 2025 12:00:06 +0000")
+References: <20250304225245.2033120-1-benno.lossin@proton.me>
+	<3-KVPpYsvS6jLhJOL7kCLrypBUWO1rtUDTDUTfy8T_iGZObM3CP6YUK_QLHmL_QTivMtd3jfnRbZOGpClk37cQ==@protonmail.internalid>
+	<20250304225245.2033120-13-benno.lossin@proton.me>
+	<87senrd7eq.fsf@kernel.org>
+	<TtSwFcuhXiTGV4L74Ufe2hmXRw7Mtkty8owmqzxhfZtUt_jMJM_hWq_u47IlR5AobLRcddkgvZ4LzwhYY5cLPg==@protonmail.internalid>
+	<D88BDOC74W1T.IMRXO8BE868S@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 05 Mar 2025 13:27:38 +0100
+Message-ID: <87wmd3br2d.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/03/05 10:40:00
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mt-integration.ru:7.1.1;ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;lore.kernel.org:7.1.1;127.0.0.199:7.1.2;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191499 [Mar 05 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/05 09:56:00 #27614020
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/03/05 10:40:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
 
-[Why]
-There are several ns_to_ktime() calls that require using nanoseconds. It is
-better to replace them with us_to_ktime() to make code clear, getting rid
-of multiplication by 1000.
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-Also the timer function code may have an integer wrap-around issue. Since
-both tx_custom_low_usecs and tx_custom_high_usecs can be set to up to
-9999999 from the user space via cec_pin_error_inj_parse_line(), this may
-cause usecs to be overflowed when adap->monitor_pin_cnt is zero and usecs
-is multiplied by 1000.
+> On Wed Mar 5, 2025 at 12:49 PM CET, Andreas Hindborg wrote:
+>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>
+>>> In order to make pin-init a standalone crate, remove dependencies on
+>>> kernel-specific code such as `ScopeGuard` and `KBox`.
+>>>
+>>> `ScopeGuard` is only used in the `[pin_]init_array_from_fn` functions
+>>> and can easily be replaced by a primitive construct.
+>>>
+>>> `KBox` is only used for type variance of unsized types and can also
+>>> easily be replaced.
+>>>
+>>> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+>>
+>> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+>>
+>>> ---
+>>>  rust/pin-init/src/__internal.rs |  2 +-
+>>>  rust/pin-init/src/lib.rs        | 41 +++++++++++----------------------
+>>>  2 files changed, 15 insertions(+), 28 deletions(-)
+>>>
+>>> diff --git a/rust/pin-init/src/__internal.rs b/rust/pin-init/src/__internal.rs
+>>> index 0db800819681..74086365a18a 100644
+>>> --- a/rust/pin-init/src/__internal.rs
+>>> +++ b/rust/pin-init/src/__internal.rs
+>>> @@ -105,7 +105,7 @@ fn make_closure<F, O, E>(self, f: F) -> F
+>>>      }
+>>>  }
+>>>
+>>> -pub struct AllData<T: ?Sized>(PhantomData<fn(KBox<T>) -> KBox<T>>);
+>>> +pub struct AllData<T: ?Sized>(Invariant<T>);
+>>
+>> Off topic, trying to learn something: You define `Invariant<T>` like so:
+>>
+>>   pub(super) type Invariant<T> = PhantomData<fn(*mut T) -> *mut T>;
+>>
+>> Consulting the variance table at [1], could you define it as
+>>
+>>   pub(super) type Invariant<T> = PhantomData<*mut T>;
+>>
+>> or is there another reason for using `fn`?
+>
+> Yes! There is another reason: `Send` and `Sync`, my `Invariant` type
+> will always be `Send` and `Sync`, but `PhantomData<*mut T>` is always
+> `!Send` and `!Sync`.
+> One could argue that an `Invariant<T>` type should impl `Send`/`Sync`
+> if and only if `T` does, but for my usage it doesn't matter. If you do
+> need to use that, you could use `PhantomData<(fn(*mut T) -> *mut T, T)>`
 
-[How]
-Take advantage of using an appropriate helper func us_to_ktime() instead of
-ns_to_ktime() to improve readability and to make the code clearer. This also
-mitigates possible integer wrap-arounds when usecs value is too large and
-it is multiplied by 1000.
+Awesome, thanks for explaining.
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
+Could you add this info to the docstring for `Invariant<T>`?
 
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
----
-This patch was created after the Christophe JAILLET's comment at
-https://lore.kernel.org/all/cff4d412-abbf-44b5-9705-ba14dff7d5d0@wanadoo.fr/
 
- drivers/media/cec/core/cec-pin.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+Best regards,
+Andreas Hindborg
 
-diff --git a/drivers/media/cec/core/cec-pin.c b/drivers/media/cec/core/cec-pin.c
-index a70451d99ebc..f232c3df7ee1 100644
---- a/drivers/media/cec/core/cec-pin.c
-+++ b/drivers/media/cec/core/cec-pin.c
-@@ -873,19 +873,19 @@ static enum hrtimer_restart cec_pin_timer(struct hrtimer *timer)
- 		if (pin->wait_usecs > 150) {
- 			pin->wait_usecs -= 100;
- 			pin->timer_ts = ktime_add_us(ts, 100);
--			hrtimer_forward_now(timer, ns_to_ktime(100000));
-+			hrtimer_forward_now(timer, us_to_ktime(100));
- 			return HRTIMER_RESTART;
- 		}
- 		if (pin->wait_usecs > 100) {
- 			pin->wait_usecs /= 2;
- 			pin->timer_ts = ktime_add_us(ts, pin->wait_usecs);
- 			hrtimer_forward_now(timer,
--					ns_to_ktime(pin->wait_usecs * 1000));
-+					us_to_ktime(pin->wait_usecs));
- 			return HRTIMER_RESTART;
- 		}
- 		pin->timer_ts = ktime_add_us(ts, pin->wait_usecs);
- 		hrtimer_forward_now(timer,
--				    ns_to_ktime(pin->wait_usecs * 1000));
-+				    us_to_ktime(pin->wait_usecs));
- 		pin->wait_usecs = 0;
- 		return HRTIMER_RESTART;
- 	}
-@@ -1020,13 +1020,12 @@ static enum hrtimer_restart cec_pin_timer(struct hrtimer *timer)
- 	if (!adap->monitor_pin_cnt || usecs <= 150) {
- 		pin->wait_usecs = 0;
- 		pin->timer_ts = ktime_add_us(ts, usecs);
--		hrtimer_forward_now(timer,
--				ns_to_ktime(usecs * 1000));
-+		hrtimer_forward_now(timer, us_to_ktime(usecs));
- 		return HRTIMER_RESTART;
- 	}
- 	pin->wait_usecs = usecs - 100;
- 	pin->timer_ts = ktime_add_us(ts, 100);
--	hrtimer_forward_now(timer, ns_to_ktime(100000));
-+	hrtimer_forward_now(timer, us_to_ktime(100));
- 	return HRTIMER_RESTART;
- }
- 
--- 
-2.48.1
 
 
