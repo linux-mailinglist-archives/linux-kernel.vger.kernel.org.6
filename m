@@ -1,160 +1,194 @@
-Return-Path: <linux-kernel+bounces-547071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563ECA502A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:50:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C077A502BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:53:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C283C165CD8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AFAD189C61B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6566524EF84;
-	Wed,  5 Mar 2025 14:46:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E4124EF70;
+	Wed,  5 Mar 2025 14:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FT3IPME9"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YMCRN1wq"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FF7204C35;
-	Wed,  5 Mar 2025 14:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1E224E4D9;
+	Wed,  5 Mar 2025 14:46:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185960; cv=none; b=luAuxk4X6Kjx9PGfSVVyJSRIkzaJxA/nwv32iPz8C/9fVOwWe+rBgErhKe0T4KMHU5Dt2OjlG3iSsQVUSvIsHhUJ/NpJ+DHGKBrkdfKlnIG+T5HKrKaVxKp78nP0npSasUXCY7S3YQHf7itpTgDI7pMwPM6WIkiVuax+/budC84=
+	t=1741186003; cv=none; b=fCvi1kjFSKM0cfI7cW+ONZrz1b+r0twHcDBGe2D2nRLzMJMiQ89Y6olNHCcTp6dhVMkcaWADKnlrq/hhT1O0oAA3E8lXca5qoK/DvUHtSmnS03ckNtdVWO57sYkWulA/9ynPg/KQxGKeFADZZFoo9aa+lqMERESei7ptlHHPOCQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185960; c=relaxed/simple;
-	bh=IJITA4ytTmUFMzhJpi0Z7MN58Xcdm8gfOaBFwHxdNW0=;
+	s=arc-20240116; t=1741186003; c=relaxed/simple;
+	bh=L3jUhS/r+JH2pja+AgnftKyj5qnxWl+7BgssdXVj2gw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PCwni12AMGyiz5E8GVcO1LsCXtcPhgLlhvvttV8SZGoUbTbWg7v9Kx/hjrRyZ5WnznO1nj03p8Z5ExKLqIDYHPtqcsCEWe8Krjh0Z1ql6XoIpg7t1ZgJS4pRpiaeyib7QQgEUZiK4TZMKuL00UE0ZhsVeKtsR71Txp8LGQzxmwU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FT3IPME9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 933EEC4CED1;
-	Wed,  5 Mar 2025 14:45:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741185960;
-	bh=IJITA4ytTmUFMzhJpi0Z7MN58Xcdm8gfOaBFwHxdNW0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=FT3IPME95VlP5ie8KtxCMaGhv9WI7HkAgfV5txTXgSUAmriapmls6XY88Bc6Uq/sD
-	 scdeXCE3d2n4As1YBHd89RRWC77MAo8l3T0nfGCDIxatUROgcdF58Dhkvwl1RXq9G7
-	 TmBB2FsZdA9RmziGtrzZ94Xi1GnIIu8Nkm7MtN/j2aBJ3m598Oow/b4Juv/dsH3q/t
-	 KVPHICTnHEFuWXQdnokU77/RHvyM4lEBeILVBEE/t82FMtoHuM9CJeSCjFu3UbtdNe
-	 4phE+5IAs10TfByEyJ6wDCa7r4k/BvQ7dF+VRhNh6OKKhyyajodAuWWNkQPIuy372O
-	 +F0IYyZO+GtGA==
-Date: Wed, 5 Mar 2025 15:45:54 +0100
-From: Nathan Chancellor <nathan@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Nicolas Schier <nicolas@fjasle.eu>, llvm@lists.linux.dev,
-	linux-kbuild@vger.kernel.org, David Gow <davidgow@google.com>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] kbuild: clang: Support building UM with SUBARCH=i386
-Message-ID: <20250305144554.GA3574115@ax162>
-References: <20250303215240.work.379-kees@kernel.org>
- <05a25510-ab44-4eb1-a878-71e84c8aff0d@t-8ch.de>
- <20250304102536.GB2529736@ax162>
- <e1a1531d-6968-4ae8-a3b5-5ea0547ec4b3@t-8ch.de>
- <202503040842.1177A1F15B@keescook>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EYv6rv+w0ObreoGEnHx4qhzBpkJCilz5ba8/+6a/U/qQbZTFKLCoemef+5TJucUT/ODEzZwaq+9wcfNqFI4Rd15jgX4Yc/nWVPQYJwmbBC6XrefKVePM9041XkqQ3rSiDr34va8kueus5pYOdliLAq64WD1ErCCcJUcCz+LlTM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YMCRN1wq; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741186002; x=1772722002;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=L3jUhS/r+JH2pja+AgnftKyj5qnxWl+7BgssdXVj2gw=;
+  b=YMCRN1wqjrZz0jVq2oA5gvJJXEE9JLqpd74quaAQ4VwV2oS63S/mZcY9
+   HmSyQQ2exkoBRWBIs95jfa9JSFsuPEq0j/wxsfXuy8/i+ZTJFKraqeebG
+   UmBL7hLlKikrFLi5hJCqr3OG1YdMil5i7njA8H9Mf9ERHWq9IeAah42ZA
+   oE8gngIMsJ6CNJHl7EbB2ThN+AldTEEPnxPz2KrFMlSQES1X/Sz+oKAD1
+   5JTaYC/cerR+uYn4clANO5hNTq2PzBmbrAkDRseoVv/U+61HrleVJHcjj
+   i90JIAeHhF3lr5iDjDTr+IoAagTOkxcP3Hd4z2eJilzptHc3ZBKhV2C94
+   Q==;
+X-CSE-ConnectionGUID: DxY+jS37SFapsqkH3qK0Kg==
+X-CSE-MsgGUID: LPwkdlqKSJqKdrq3HkcpYw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="52792665"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="52792665"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:46:41 -0800
+X-CSE-ConnectionGUID: jF6/yAj2RoqpY3HCtIYkbw==
+X-CSE-MsgGUID: prA7QD4NTSOMacJKP8SD3Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="118864143"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:46:39 -0800
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id BD44F11FB58;
+	Wed,  5 Mar 2025 16:46:35 +0200 (EET)
+Date: Wed, 5 Mar 2025 14:46:35 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Tarang Raval <tarang.raval@siliconsignals.io>
+Cc: kieran.bingham@ideasonboard.com,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] media: i2c: imx219: switch to
+ {enable,disable}_streams
+Message-ID: <Z8hjy8CiM-QcjTME@kekkonen.localdomain>
+References: <20250305142117.29182-1-tarang.raval@siliconsignals.io>
+ <20250305142117.29182-2-tarang.raval@siliconsignals.io>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <202503040842.1177A1F15B@keescook>
+In-Reply-To: <20250305142117.29182-2-tarang.raval@siliconsignals.io>
 
-On Tue, Mar 04, 2025 at 09:07:57AM -0800, Kees Cook wrote:
-> On Tue, Mar 04, 2025 at 03:51:19PM +0100, Thomas Weißschuh wrote:
-> > No, it doesn't.
-> > 
-> > Running tests with:
-> > $ .kunit/linux kunit.filter_glob=overflow.DEFINE_FLEX_test kunit.enable=1 mem=1G console=tty kunit_shutdown=halt
-> > [15:48:30] =================== overflow (1 subtest) ===================
-> > [15:48:30] # DEFINE_FLEX_test: EXPECTATION FAILED at lib/overflow_kunit.c:1200
-> > [15:48:30] Expected __builtin_dynamic_object_size(two_but_zero, 0) == expected_raw_size, but
-> > [15:48:30]     __builtin_dynamic_object_size(two_but_zero, 0) == 12 (0xc)
-> > [15:48:30]     expected_raw_size == 8 (0x8)
-> > [15:48:30] [FAILED] DEFINE_FLEX_test
-> > [15:48:30] # module: overflow_kunit
-> > [15:48:30] ==================== [FAILED] overflow =====================
-> > [15:48:30] ============================================================
-> > [15:48:30] Testing complete. Ran 1 tests: failed: 1
-> > [15:48:31] Elapsed time: 43.985s total, 0.001s configuring, 43.818s building, 0.133s running
-> > 
-> > If I force CONFIG_CC_HAS_COUNTED_BY=n then the test succeeds.
-> > Clang 19.1.7 from the Arch Linux repos.
-> 
-> I wasn't seeing with Clang 20 from git:
-> ClangBuiltLinux clang version 20.0.0git (git@github.com:llvm/llvm-project.git 72901fe19eb1e55d0ee1c380ab7a9f57d2f187c5)
-> 
-> But I do see the error with ToT Clang:
-> ClangBuiltLinux clang version 21.0.0git (git@github.com:llvm/llvm-project.git eee3db5421040cfc3eae6e92ed714650a6f741fa)
-> 
-> Clang 17.1: (does not support counted_by)
-> 
->     # DEFINE_FLEX_test: missing counted_by
->     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
->     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
-> 
-> Clang 19.1.1: (actually is _does_ support counted_by, but Linux disables it)
-> 
->     # DEFINE_FLEX_test: missing counted_by
->     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
->     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
-> 
-> GCC 13.3:
-> 
->     # DEFINE_FLEX_test: missing counted_by
->     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
->     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 4
-> 
-> Clang 21 (ToT):
-> 
->     # DEFINE_FLEX_test: has counted_by
->     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
->     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 0
-> 
-> GCC 15 (ToT):
-> 
->     # DEFINE_FLEX_test: has counted_by
->     # DEFINE_FLEX_test: sizeof(two_but_zero): 8
->     # DEFINE_FLEX_test: __struct_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero): 12
->     # DEFINE_FLEX_test: __member_size(two_but_zero->array): 0
-> 
-> It seems like the on-stack sizes with __bdos all agree now, regardless
-> of the used compiler features. It is only the array size calculation
-> that now gets masked by counted_by. (i.e. the stack size is overridden
-> by the zero "count" for the array elements.)
-> 
-> I'll send a fix for the test...
+Hi Tarang,
 
-Just for my own understanding, is this because of the adjustment that
-Bill did to the __bdos() calculation in [1]? I think that tracks because
-the version of LLVM 20 that you have is pretty old and does not have
-that change. I know for a fact I tested the original change to the
-overflow KUnit test to adjust the expected calculation result and it
-passed but it was before that change as well. If I use a current version
-of LLVM 20, I see the failure. If I allow LLVM 18 to use __counted_by(),
-the test passes with it. Not that it truly matters but it does explain
-how we got to this point.
+Thanks for the update.
 
-[1]: https://github.com/llvm/llvm-project/commit/8c62bf54df76e37d0978f4901c6be6554e978b53
+On Wed, Mar 05, 2025 at 07:51:15PM +0530, Tarang Raval wrote:
+> Switch from s_stream to enable_streams and disable_streams callbacks.
+> 
+> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
+> ---
+>  drivers/media/i2c/imx219.c | 36 +++++++++++++++++-------------------
+>  1 file changed, 17 insertions(+), 19 deletions(-)
+> 
+> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
+> index f662c9d75511..12f1aa8824fe 100644
+> --- a/drivers/media/i2c/imx219.c
+> +++ b/drivers/media/i2c/imx219.c
+> @@ -723,12 +723,17 @@ static int imx219_configure_lanes(struct imx219 *imx219)
+>  				  ARRAY_SIZE(imx219_4lane_regs), NULL);
+>  };
+>  
+> -static int imx219_start_streaming(struct imx219 *imx219,
+> -				  struct v4l2_subdev_state *state)
+> +static int imx219_enable_streams(struct v4l2_subdev *sd,
+> +				 struct v4l2_subdev_state *state, u32 pad,
+> +				 u64 streams_mask)
+>  {
+> +	struct imx219 *imx219 = to_imx219(sd);
+>  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
+>  	int ret;
+>  
+> +	if (pad != 0)
+> +		return -EINVAL;
 
-Cheers,
-Nathan
+There's no need to check for the pad argument: {enable,disable}_streams may
+be called on source pads only.
+
+> +
+>  	ret = pm_runtime_resume_and_get(&client->dev);
+>  	if (ret < 0)
+>  		return ret;
+> @@ -778,11 +783,17 @@ static int imx219_start_streaming(struct imx219 *imx219,
+>  	return ret;
+>  }
+>  
+> -static void imx219_stop_streaming(struct imx219 *imx219)
+> +static int imx219_disable_streams(struct v4l2_subdev *sd,
+> +				  struct v4l2_subdev_state *state, u32 pad,
+> +				  u64 streams_mask)
+>  {
+> +	struct imx219 *imx219 = to_imx219(sd);
+>  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
+>  	int ret;
+>  
+> +	if (pad != 0)
+> +		return -EINVAL;
+
+Ditto.
+
+> +
+>  	/* set stream off register */
+>  	ret = cci_write(imx219->regmap, IMX219_REG_MODE_SELECT,
+>  			IMX219_MODE_STANDBY, NULL);
+> @@ -793,22 +804,7 @@ static void imx219_stop_streaming(struct imx219 *imx219)
+>  	__v4l2_ctrl_grab(imx219->hflip, false);
+>  
+>  	pm_runtime_put(&client->dev);
+> -}
+> -
+> -static int imx219_set_stream(struct v4l2_subdev *sd, int enable)
+> -{
+> -	struct imx219 *imx219 = to_imx219(sd);
+> -	struct v4l2_subdev_state *state;
+> -	int ret = 0;
+> -
+> -	state = v4l2_subdev_lock_and_get_active_state(sd);
+> -
+> -	if (enable)
+> -		ret = imx219_start_streaming(imx219, state);
+> -	else
+> -		imx219_stop_streaming(imx219);
+>  
+> -	v4l2_subdev_unlock_state(state);
+>  	return ret;
+>  }
+>  
+> @@ -992,7 +988,7 @@ static int imx219_init_state(struct v4l2_subdev *sd,
+>  }
+>  
+>  static const struct v4l2_subdev_video_ops imx219_video_ops = {
+> -	.s_stream = imx219_set_stream,
+> +	.s_stream = v4l2_subdev_s_stream_helper,
+>  };
+>  
+>  static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
+> @@ -1001,6 +997,8 @@ static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
+>  	.set_fmt = imx219_set_pad_format,
+>  	.get_selection = imx219_get_selection,
+>  	.enum_frame_size = imx219_enum_frame_size,
+> +	.enable_streams = imx219_enable_streams,
+> +	.disable_streams = imx219_disable_streams,
+>  };
+>  
+>  static const struct v4l2_subdev_ops imx219_subdev_ops = {
+
+-- 
+Regards,
+
+Sakari Ailus
 
