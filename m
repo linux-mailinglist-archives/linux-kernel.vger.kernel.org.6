@@ -1,168 +1,122 @@
-Return-Path: <linux-kernel+bounces-546110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 736E7A4F681
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:21:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B011BA4F688
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:30:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E285816AA05
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:21:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C12FD3A82A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:30:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 878831C8635;
-	Wed,  5 Mar 2025 05:21:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 920491CD1E4;
+	Wed,  5 Mar 2025 05:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="d3k3IzMM"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="aVLJOYd+"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52EB5103F;
-	Wed,  5 Mar 2025 05:21:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D0E213DDAA;
+	Wed,  5 Mar 2025 05:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741152087; cv=none; b=GFwhnVAwaMHyayjtuwY/JF2hIqGw86GuZLvXB43AaKkzQ0x8xa2Dlfpr7XGmk0ZN4EyX12TiHldGEvHfcGmAhEPi/gbK9zP+2vATID/D/GHwexi+WKAwAZyxeyxnsezS6+ENzRTG/OLkbiS6ywkRt7YIyruR1+Gv/lbhrk2/ovQ=
+	t=1741152626; cv=none; b=iM7AY/v9qXIt4WEtOagjPxWIFfNLdNaR/+aGdqUNONDp4LQxLbtUv+RNglo9kLxbCUc5j4NPf94yfJKg2KIvNwdXGtMR0+/PFUZFpVyCBG83nnyuJl3V39OfPJ8izsEedIUeZUsXwCcWbiRnFVjN8+qzbp1DwiHCV0mAsTSsl/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741152087; c=relaxed/simple;
-	bh=FHL8mgJUPxbUe+Hq6oSBmF+pjKynbkkOWQzLA/C/blA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dHfGLHk0cqUuLZuknom4Imr4gc166z3+6cWQtc7FtcDOvve7TA27ucf9NP+mIqh/tzNFe8/drWud1B3VupBv+zkKrSfPlLXxIhgSJZep75tV2G+/kbAX/yY8FkFv1+OPKbAhd9VapmM+eYlJrDK/bv1h/aLSDFXrAMWi6pAbw2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=d3k3IzMM; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 5255KrIT3769565
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Tue, 4 Mar 2025 23:20:53 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741152053;
-	bh=ijoXj6D3ao9xjhKDSHIBWiEm1mRJLo6+iyZj8hvRuuk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=d3k3IzMMwQHMqRvHIz1I3WSFLblEUfV3ckhP5Qq3G+yJxAUkwldRjER9dxjHSQ/cM
-	 wPY1FFGyDl3rxZA+I/UgPXsEFix7rod1VUimOi8Wk/y8Apqw8+3ukjImUrl/GTipVb
-	 2Ke63Sx08evB8dIGxDSJiYd93XWZ/04huCX5ofMY=
-Received: from DLEE107.ent.ti.com (dlee107.ent.ti.com [157.170.170.37])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 5255Kqao026316
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Tue, 4 Mar 2025 23:20:53 -0600
-Received: from DLEE104.ent.ti.com (157.170.170.34) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Tue, 4
- Mar 2025 23:20:52 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Tue, 4 Mar 2025 23:20:52 -0600
-Received: from [10.24.69.25] (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 5255KmhZ080040;
-	Tue, 4 Mar 2025 23:20:48 -0600
-Message-ID: <cf468c08-6808-49a2-b6d9-5c2b00d654de@ti.com>
-Date: Wed, 5 Mar 2025 10:50:47 +0530
+	s=arc-20240116; t=1741152626; c=relaxed/simple;
+	bh=9/O6eC/4zNAuaXLevTITJSjS0IzNi+cg48P7488KcUA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rFZzLlgUkj14Cd/1p9b9G2c611PkaKSc4SSsAf2iH6ELnfqruzMF6aUQ9hHtgh4wObByj5xNjQ90YipmBgDKGIdwSRlqcQZpnWGvsxOg0r1RaZ94XraOtSJpHa5d3w+iGHgeSvfJAwQKqbphPXoGAoE0/SMOxxduVYiIJrk9KZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=aVLJOYd+; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741152617; x=1741757417; i=w_armin@gmx.de;
+	bh=uG1a4CRHX27/o/TyVcRaubBbKW4uTRuiaKb+dj05CP0=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=aVLJOYd+YV3tPdbPUMadzpbNmp0x63Fe3NvosIOZyz+l8h9M2A8nwISx/XoJdSuK
+	 BivIGyLQpm2ocVENnDp08zdwlxqe3mJk/tlHGIZJb+SqfF2AGiRdd/quM0g+sBC51
+	 8TBbbDsDZCEQUHzqiE+n75sOZhPKKya7ibq21hoMCAymKCBOzCeUxMJQ5qPPcJmj/
+	 kipqq1JtNsP/uZRUX3u6J2m+M1Pb+/cKUuozgI/OFE4fQP9eIEc/i/pZqc6t0oquC
+	 Fp8zIrnCnnOxhndvcLlwsiUIngNNLhUgvyFJz2M5NQ5vc6E6ZxrlLqc/R1wwABiTm
+	 xNiEWTThAEThr4A46g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
+ (mrgmx005 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1Mg6e4-1tLLSp0MU2-00aS52; Wed, 05 Mar 2025 06:30:17 +0100
+From: Armin Wolf <W_Armin@gmx.de>
+To: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	sre@kernel.org
+Cc: platform-driver-x86@vger.kernel.org,
+	linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/3] platform/x86: dell-ddv: Rework battery temperature handling
+Date: Wed,  5 Mar 2025 06:30:06 +0100
+Message-Id: <20250305053009.378609-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net: ti: icssg-prueth: Add ICSSG FW Stats
-To: Jakub Kicinski <kuba@kernel.org>
-CC: Meghana Malladi <m-malladi@ti.com>, Diogo Ivo <diogo.ivo@siemens.com>,
-        Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>,
-        "David
- S. Miller" <davem@davemloft.net>,
-        Andrew Lunn <andrew+netdev@lunn.ch>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>
-References: <20250227093712.2130561-1-danishanwar@ti.com>
- <20250303172543.249a4fc2@kernel.org>
- <33c38844-4fbe-469c-bb5f-06bdb7721114@ti.com>
- <20250304162437.0160f687@kernel.org>
-Content-Language: en-US
-From: MD Danish Anwar <danishanwar@ti.com>
-In-Reply-To: <20250304162437.0160f687@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:WfLybaArPwXi41VeJAoFUxdH6578atxcp48rWoCYh17E/ALZeGA
+ 0ONWqfw5qLjDQAC6DaOjq9YANWzom/poXKrrNbFhBLrSJba4XWuUJpgsSkn87VhK/c9JKCb
+ Kc9cNffZHkl1iz7qyaQG6YaV0OqsW4D4S11fdywvoB99euyZdpSGNDOFKmCNzA6vWjGtYE4
+ EKjfalVg9hSo7fDLWNdaw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:f2myFpWQbkk=;+tToephdm4xP8+Ov+R/lRwa4twh
+ Na5rkXoWI5FgNCwpT75Ur4hv6lLPYVnNaX9+4cO0OR1t7eDgGhp8Wu9eH8x4QbkrElI8Qvj91
+ xokwyRF5lnkzROEMX0RBRVewCnyG58gWF/Ijw13rgdXDlt+y4NZE6zjDt2KOCLXahzZ/otm8T
+ tq9maSqTQgM9Wy6ixA67zXebUY0YNxaNQYEXC1cNbGfy1NBjNZdlo5oP6vWPNcy5n5atk7xXY
+ DaFASc1jYqD/h71Hc4Q07JxBoAw3OMWMtmECwBYuJ59MBd7CSN8iBXH59aq+b5PCYObMA9GnN
+ AnpAg7UAFef5zIc9xsvDxleypVsS7QfFxmekfMAEqw1CNB1aCZeXPqaUBiNwZ0kEE9Qv5PE8k
+ 0dsM7Rkqd285h22W+3USm3uCUqfiD63phbupBN0Hm55P3KRPXP8TziPwaanmKgOqunvlPnWWx
+ od33OwEn1yZqPJiTOKXYH3i+G+YaFjQB8DdaRgr9Kiv5B3NrlPjZQzyZonzjemTqR1Qape0pa
+ JQgehhTyj9wW+U34ICnXXZRr0aDYT0OBB2TkW+q9mGibanT0f4wnyow1hBfKYYRhXIsTXQg6Y
+ 4Pc0yo3VPgbHx3+M2YdGHyfvk8U1/UZU782iCxojYti3jq3nU9Re7P1943xgFiF8m3FWUiq1l
+ Azl7ny50VUr8Yt2gGvzMZp5iqyd3Ux+lKtDdsj/aoWnxr4AqRfY+psGOlxXpAPixpb8cnBRpa
+ vKpHcW1HNq5B8JWqAU0hF6/MF/ZrP2p+lglEvP8zSSTZtyV1BuQkIC+tUmQRj8I0+4bPYW83S
+ n37YBFm4uEGnQt67mAEu8wbrjGK129QQi03C1AW48ry+JOPuj3y4VQIyBIjk+8CQpeF0owlz8
+ 5f3XT3rZK2aVPO+2WX0N1VBKnkDAEj/zxxsX7gbYtgLwjaB7cBOz2CxzlEb7AC4wTLlGte6zW
+ 45RN86ibLBZ4AAYApHNqiokIrpGqtHwDtgsPttqjqoITwAs3+LgVvltvo4nTzf9hYMA9xyfTP
+ z3jIbay1K2JoL985fbcLcOxTdEcvp+CYWcWd3D4S43muDSDKvz9vmoS84KaBB0r+vQgjSA1zJ
+ QGYfGwTWOZv5otkSGqXWH6M5unBgLiQOnw3ETAwAklGniSsg6/n5oM/0t9wVLf240VLFQkwRq
+ Ky1qw0CS0sQnNLM9RJxSfjRzbPrnzIlLHfSB/XAIYPg/4MiQTJf9nfdadiUeAwDDjNNusMN3S
+ zgckynf2D0s/32bZ4hR8wT44CLH3WQe8bzjujhRkiay2T/HUnpD2VHyHpxaSZZZbpH7vGFfI9
+ plKGV62eUBuhJ95w0feMU9wvu6jKnl+WiiftZaJjgPaJcPazcHmMFhkJH7lHqnxHSvLgFHvBr
+ jzzT+cGAEawS6dijkXR1AEeMeGBR5hzILfGOViG6Rk0c8BOg3XwEoua61C
 
-Hi Jakub,
+This patch series reworks the handling of the battery temperature
+inside the dell-wmi-ddv driver.
 
-On 05/03/25 5:54 am, Jakub Kicinski wrote:
-> On Tue, 4 Mar 2025 13:46:39 +0530 MD Danish Anwar wrote:
->> On 04/03/25 6:55 am, Jakub Kicinski wrote:
->>> On Thu, 27 Feb 2025 15:07:12 +0530 MD Danish Anwar wrote:  
->>>> +	ICSSG_PA_STATS(FW_PREEMPT_BAD_FRAG),
->>>> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_ERR),
->>>> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_TX),
->>>> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_OK),
->>>> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_RX),  
->>>
->>> I presume frame preemption is implemented in silicon? If yes -
->>> what makes these "FW statistics"? Does the FW collect them from   
->>
->> The statistics are maintained / updated by firmware and thus the name.
->>
->> Preemption is implemented partially in both the hardware and firmware.
->> The STATE MACHINE for preemption is in the firmware. The decision to
->> when to PREEMEPT / ASSEMBLE a packet is made in firmware.
->>
->> These preemption statistics are updated by the firmware based on the
->> action performed by the firmware. Driver can read these to know the
->> statistics of preemption. These stats will be able used by
->> ethtool_mm_stats once the support for Preemption is added in the driver.
-> 
-> That was going to be my next question. If the statistic is suitable 
-> for a standard interface it should not be reported via ethtool -S.
-> 
+The first patch fixes an issue inside the calculation formula for
+the temperature value that resulted in strange temperature values
+like 29.1 degrees celcius.
 
-Sure. I will not report it via `ethtool -S`. This will only be reported
-via ethtool_get_mm_stats. I will do something similar to
-`icssg_miig_stats`. Have a boolean to indicate whether the stat is
-getting reported by some standard interface or not.
+The second patch then simplifies the battery hook handling by using
+devm_battery_hook_register().
 
-> Please leave the stats for unimplemented features out.
-> 
+The third patch finally makes use of the new power supply extension
+mechanism to expose the battery temperature to userspace. The
+power supply extension mechanism also takes care that the temperature
+shows up inside the hwmon interface of the associated battery.
 
-Sure. For now I will remove the FW_PREEMPT stats since the feature is
-not implemented yet. Once the implementation is done, I will add the
-stats to icssg_all_pa_stats() and read it via
-emac_update_hardware_stats() and report it via ethtool_get_mm_stats.
+All patches where tested on a Dell Inspiron 3505 and appear to work.
 
->>>> +/* Incremented if a packet is dropped at PRU because of a rule violation */
->>>> +#define FW_DROPPED_PKT		0x00F8  
->>>
->>> Instead of adding comments here please add a file under
->>> Documentation/networking/device_drivers/ with the explanations.
->>> That's far more likely to be discovered by users, no?  
->>
->> Sure I will drop these MACRO comments and create a .rst file in
->> Documentation/networking/device_drivers/
->>
->> One question though, should I create a table for the stats and it's
->> description or should I create a section for each stats?
->>
->> Something like this,
->>
->> FW_RTU_PKT_DROP
->> ---------------
-> 
-> Let's document the user-visible names! The strings from ethtool -S
-> 
->> Diagnostic error counter which increments when RTU drops a locally
->> injected packet due to port being disabled or rule violation.
->>
->> Please let me know what do you think.
-> 
-> Taking inspiration from:
->   Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-> should be a safe choice, I hope.
+Armin Wolf (3):
+  platform/x86: dell-ddv: Fix temperature calculation
+  platform/x86: dell-ddv: Use devm_battery_hook_register
+  platform/x86: dell-ddv: Use the power supply extension mechanism
 
-This looks to be a good choice. I will do the changes and send out a v2.
-Thanks for the review.
+ drivers/platform/x86/dell/dell-wmi-ddv.c | 84 +++++++++++++-----------
+ 1 file changed, 46 insertions(+), 38 deletions(-)
 
--- 
-Thanks and Regards,
-Danish
+=2D-
+2.39.5
+
 
