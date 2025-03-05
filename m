@@ -1,118 +1,99 @@
-Return-Path: <linux-kernel+bounces-546918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32619A50091
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:32:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CBBC1A50092
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:32:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 565203AB3DC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17AD23A43B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82435242936;
-	Wed,  5 Mar 2025 13:31:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF7E24501D;
+	Wed,  5 Mar 2025 13:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MSNoeO90"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BBkRY4SB"
+Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D750C2ED
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D13BC2ED
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:32:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741181518; cv=none; b=OhlKAeB9tU7i+0xPe8R7Zr63kkEBS+NHaTiJ/kYzr2n0+B/2JWA4rqVcO4MbOIkih/FHcSRtBOcKkRKPeAd01GBnHt73qzxEp3409AScCWXGw2ffYgz0w3N2h9x7dzLVf/uFoH2tDRRIyUV9iPGkW5hjcSeYY4vsbZ5prWyxtVU=
+	t=1741181540; cv=none; b=bRBiHhZIuQEAuJam/SQIPmDQNKTKe2b83MV599i205lp0JMC0WSF+tK7Xmt6wrAENEcswa5ZA0LgR9AcI48Hs06Q2yNP4YnTQwMwZA+ao603aP/yhBTMaclCnLVLmrqaRHENzrbpLotzFAAqfRDaf+rNXxk3gbANcLM0K47pe5E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741181518; c=relaxed/simple;
-	bh=u2oWUXx1pOYjOKkp+cRuBclke+M/qTXSU/sDancxH1A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=eUf0gNTTdYMJPMWmC8cmcYHHPcjvpHFVbzDAF0v8dmkO/8qiGSv7BQe5Txpq5DaLzP+7JBVAojMyQrXTbW8zdnuIen6AdERMfeHxZ4JQXVYLMuUl19IywgDFl38C8q2iQ9RGqCWhIRdvhlopRtX9oPX1uI1Px5p6lfItyq/C/K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MSNoeO90; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741181516;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0dqn34a07lKcr5dJFV5JIso+d1clQqATo1u77Mk28XM=;
-	b=MSNoeO906KJfcKllPxmOstquLh/F+R7/ISBl3rX27zuctZ9OYZCJWSCI3td2ckxCt5af2d
-	aQcetASfmJ6oNozzkhL+ZRSzm7r5FT7mU0IM0PsO0x2UKo7g0k2YjYF1N/cgSiU+T/pp+B
-	YAG60I8p6e99p5nA3IUhZ+sRX/yK4wU=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-477-ruOJmhlKOcWyr5Ni33JG6Q-1; Wed, 05 Mar 2025 08:31:49 -0500
-X-MC-Unique: ruOJmhlKOcWyr5Ni33JG6Q-1
-X-Mimecast-MFC-AGG-ID: ruOJmhlKOcWyr5Ni33JG6Q_1741181509
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43935e09897so49632155e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 05:31:49 -0800 (PST)
+	s=arc-20240116; t=1741181540; c=relaxed/simple;
+	bh=MA/Tl5K/HzeGHY11yV+JGFQTHKF6NRYd26L2b8QqFyE=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Dd1In50DmxkbIKkQ24m20WW+RmyIEUY1dVEakLrxSppTw5mDDbvaSSmpbX1U3XG1qgBt1aQ8/qY5lO051HAy++v5mYqGsVeVdu2kitn4WpxVqkfzE8O++Lg9G/VPrjm45UrgQ8f7PKIO5FofAlmHzmUxdbQhSSnyVMNaWGReHPU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BBkRY4SB; arc=none smtp.client-ip=209.85.221.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3910b93cb1eso1550697f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 05:32:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741181536; x=1741786336; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jhZGVnCd1LrD1r7cIo0XuyDXMDAukxGRXDEbG9YaT9M=;
+        b=BBkRY4SBFth7JiXR1NcIKNRPFp3Zbo0aw+tS8SJkPtCT11RxGZouVhU73Qr3AVcwZS
+         CkeeogZi8PLjLQGh/GPFLtoQFRgJWxgCUMd1DZyhjJyA7PXU3Nl+9yS5y/In2aEdEJE2
+         SXmemAE/W2y6ZD5lgWqrfrlrQDdMDuNoS8uOqcqVFHF1jPvUUlV2i4TeqzoF2K3bsIWb
+         v5820P6avKywS7f0ThGy/B81G2HNDGbad20rEjITW5IYfKdvbnVufn7jdcTBkq0QQ2Li
+         3D2YWf893AAV/xzPM0giFzWdLA0PTXMLEXGanI1+Q8cR5q+tCeGfWWRGX0TZXZH6WLp1
+         dBPg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741181509; x=1741786309;
-        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0dqn34a07lKcr5dJFV5JIso+d1clQqATo1u77Mk28XM=;
-        b=f+J/3MrB0ZsmOaa+diuNXqlTlLWCt5YATqZ0LPE6niyhkSCDvi0K76R4as7WkAyTT9
-         RAesl931vILVvaqCKQ8FWWcoHz9/Wb5nCHeFfEs7uwnzsImxAu0wmYj6tnGbDFT4Jznb
-         4JJ+ugDAtP8vZyjJ00O4IZnqTQtHfKWJTjlVdO/mU2vQBNidInBODUgMxDcuu3+rIWyj
-         8a3vHPQ1f9BVW3ZzUYiOe9iOHxC/SHmuApE6yKVp78JPuu5ErFjeCjMVmhBbvnWApsZi
-         28g391aRaksn3XMp0CA7FWCl1ab4YltzZ4IddFsTB7IcaGj3uNgSnpdTyFEQ1hTkZzwB
-         cvkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQPc1RoRQRHTblGMCAs3Qqzj9A4V8SzHdP3Y+gUOrRKUO8J/RA1PoNWzxyqAxtP0DpkMWk/0ISOom+3CY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzd4K3E3eGC25Q+p9G9FNvZ78jmbQt4RrdrAFJGbVdIvleFp+b+
-	nwybqbmAJf8KuXPNU7pxtr3sKdB1TyMOkw6tMOFUo7maatSmOiQXjxhqVtTiJMzVqXCtf7gL9hH
-	o8xLg4KGFAexGiCKID4neR4+LPF+vE1tqAz6Bv1iw+WxvFgFwsLp7P6+n283UpA==
-X-Gm-Gg: ASbGncvluuH+GZG12ihPQ4SmREZOryoOgyVcGibLk3+00aQmthD+DBqgd0+MXzuj1DV
-	8N323UHbLnwp47yUw6Nx0AN55St9x8z/VxWM7gVoirO4CRjekYzf9uTeQdrof/PX9ahcy8+Fl4l
-	jLs9+2L6Z6LDjN9YuZj6atPe4jmpib2G1O07dzXN+uiKG/aQqzJ8zvuJd1zn9v+pf3zd2gk2ijc
-	29HAVBpeoKyU8OhUfJA5LeMwi8zvfost6rCC9w1ItEGMzQEae5mpyvtct0498xwHvf8+9DbRwEo
-	03onnDXPSCYLYeGPGD9ecTmN8gmqIU0oyXAkVf+SMVgf9XA0yvobQ94Sh9TICxsi15/iTolvVw=
-	=
-X-Received: by 2002:a05:600c:4ece:b0:43b:c94d:e1e2 with SMTP id 5b1f17b1804b1-43bd2ae54bcmr21140255e9.25.1741181508719;
-        Wed, 05 Mar 2025 05:31:48 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IG7F9v/2ONxk8xFOjzjpCwwBkyc6Bvd4KwZ9m8e5e3MHZoEGLxssf5K5UetRRU+tpmyYly/Lw==
-X-Received: by 2002:a05:600c:4ece:b0:43b:c94d:e1e2 with SMTP id 5b1f17b1804b1-43bd2ae54bcmr21140075e9.25.1741181508323;
-        Wed, 05 Mar 2025 05:31:48 -0800 (PST)
-Received: from localhost (62-151-111-63.jazzfree.ya.com. [62.151.111.63])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4795da5sm21372477f8f.15.2025.03.05.05.31.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 05:31:47 -0800 (PST)
-From: Javier Martinez Canillas <javierm@redhat.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>, Linus Walleij
- <linus.walleij@linaro.org>, Yixun Lan <dlan@gentoo.org>
-Cc: linux-gpio@vger.kernel.org, linux-riscv@lists.infradead.org,
- spacemit@lists.linux.dev, linux-kernel@vger.kernel.org, Bartosz
- Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] pinctrl: spacemit: destroy mutex at driver detach
-In-Reply-To: <20250305102710.52762-1-brgl@bgdev.pl>
-References: <20250305102710.52762-1-brgl@bgdev.pl>
-Date: Wed, 05 Mar 2025 14:31:45 +0100
-Message-ID: <878qpj8uym.fsf@minerva.mail-host-address-is-not-set>
+        d=1e100.net; s=20230601; t=1741181536; x=1741786336;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jhZGVnCd1LrD1r7cIo0XuyDXMDAukxGRXDEbG9YaT9M=;
+        b=omGvr6OMYJ9XEPpJzNDtabcikuT99ctTmia+AzTa+C2XcC/Nbsy1xSBa2JGFL/YWV4
+         VB8V1B+GZ9e31wnkup9ERLX5foxNok1b+XbOWwAEeVU9n6pkd+klMTqVyJL7h2qBOMmU
+         W8T8LqrjnSwAhPdC/5EgeCzmG2GTZnnBRpXZJLC+ZZkJyaTn46jRnrRyVsTjhSv/SBBq
+         EwwLNA3txTGLKmSwTar30rSL4rQgZyZoxl7ZqgwhhE+ZTPe9iGPkK+kjhSn+GnWaoFXp
+         PiqQYg7jqsVEkyhlhv9IgXbgOVkLT/p7GiDVyJxPYWhll4S6alftsWsKCF3k0bnsV3Fv
+         3f5w==
+X-Forwarded-Encrypted: i=1; AJvYcCXtGlLzA29DjQ9rJYFafNzzrqg6XjWbevzDntQBhFjnwzkaLUlS0bJ5QCa87aJNCpvQ30ovi8YUmIKno8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZhCfzIs2CTs1gz/vIPbnqJgkIXZhLMQvY981tJ/Yp8jgB/Ggt
+	ChP7yq00qd35yQIOcT2uLcdad0MTtV0SS3AROHkdKGiMiU0pvYaYIW3xOka8uy/xQNjY+d6F1pF
+	GXLbHj/wS+3cuow==
+X-Google-Smtp-Source: AGHT+IGqv7w5ZYvUvIWCvfPNCsKIl2w0sI3jypHqC/lLiiOmT2zEfZbYg6IijEn1V2yDy4haEHjOc40D25h5t60=
+X-Received: from wmbhc17.prod.google.com ([2002:a05:600c:8711:b0:439:8e3e:b51b])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6000:188c:b0:391:23db:f218 with SMTP id ffacd0b85a97d-39123dbf45cmr901576f8f.40.1741181536569;
+ Wed, 05 Mar 2025 05:32:16 -0800 (PST)
+Date: Wed, 5 Mar 2025 13:32:14 +0000
+In-Reply-To: <20250305132836.2145476-1-benno.lossin@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+References: <20250305132836.2145476-1-benno.lossin@proton.me>
+Message-ID: <Z8hSXgC-ecXCEPiS@google.com>
+Subject: Re: [PATCH] rust: init: fix `Zeroable` implementation for
+ `Option<NonNull<T>>` and `Option<KBox<T>>`
+From: Alice Ryhl <aliceryhl@google.com>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, stable@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-Bartosz Golaszewski <brgl@bgdev.pl> writes:
+On Wed, Mar 05, 2025 at 01:29:01PM +0000, Benno Lossin wrote:
+> According to [1], `NonNull<T>` and `#[repr(transparent)]` wrapper types
+> such as our custom `KBox<T>` have the null pointer optimization only if
+> `T: Sized`. Thus remove the `Zeroable` implementation for the unsized
+> case.
+> 
+> Link: https://doc.rust-lang.org/stable/std/option/index.html#representation [1]
+> Cc: stable@vger.kernel.org # v6.12+ (a custom patch will be needed for 6.6.y)
+> Fixes: 38cde0bd7b67 ("rust: init: add `Zeroable` trait and `init::zeroed` function")
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> The mutex initialized in probe() is never cleaned up. Use
-> devm_mutex_init() to destroy it automatically.
->
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
-
-Reviewed-by: Javier Martinez Canillas <javierm@redhat.com>
-
--- 
-Best regards,
-
-Javier Martinez Canillas
-Core Platforms
-Red Hat
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
