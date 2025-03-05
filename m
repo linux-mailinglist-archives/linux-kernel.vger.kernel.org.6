@@ -1,169 +1,211 @@
-Return-Path: <linux-kernel+bounces-547056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FBE5A50270
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:43:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB38EA5027A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:44:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07A3C1729CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:41:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 413B1189202F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:41:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A81324E006;
-	Wed,  5 Mar 2025 14:40:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3EC8E1EDA2D;
-	Wed,  5 Mar 2025 14:40:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185658; cv=none; b=BoWo+KD/9P8P4YARcoDUlK94bdxa5kz2LoklO/CFA9DTlGwxalmuMORxncU46twcquNoL4LwJ5HvLZRXLsXpmhZEAJOtKcBTAv8W2VkCRjOnS4CnLYev5sw/kpMllNFWxudPtw/cTdjZMEc8DQ5pHmAUstxzsIeLjVcNqfFJQIU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185658; c=relaxed/simple;
-	bh=5U/l8tp3eXkOkoO0GNc25qWdsPJ4RZ44ItczgZrbGDQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u1e1tf+/e5lSk3G4PP+d5/PQFLxPvNkSZNvkScT7l8ZBsJkyKXLMmZaxZ3ee2PEHvE/3dpuWoRh0hMeJyyPhlz2hrZpnpvJ/89DdtU3XclWOVQyHIXXcCIp8Pli5mR+Xab+sSge+9FSfLEC1G9QNTq+knoEQqirNUleTNzPhSio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AA650FEC;
-	Wed,  5 Mar 2025 06:41:09 -0800 (PST)
-Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 725733F673;
-	Wed,  5 Mar 2025 06:40:53 -0800 (PST)
-Message-ID: <39aa741e-8522-497d-a8f2-d43bc93fb29f@arm.com>
-Date: Wed, 5 Mar 2025 14:40:51 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B20E24E4A7;
+	Wed,  5 Mar 2025 14:41:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="se24ZEZr"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01olkn2046.outbound.protection.outlook.com [40.92.107.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C389124113C;
+	Wed,  5 Mar 2025 14:41:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.107.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741185676; cv=fail; b=IN9TaEzkAc+9QGGz39OP0BNwpQ3lJmHQzhCNteN1uwp00RSiELV0fEQWya4UZDbP8fcdEBLUa2O3irFRieCmgc1kF9AifhyDMmmLQ6/Z4k/MwSSMZGi8te52jBkDI3hUOUTycEICx1g2bniGlpU8WLBXPziidfPQnAOSajPn2GQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741185676; c=relaxed/simple;
+	bh=0mmiaeepogOCssgfcF4/Iblqgr3xmjLIA1iRjbC4MrE=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=QPqMxNXk5XGzpJ7G9/CPEzZYO/FQj6tQFN0781hapkA6lXZd4+nAm353vhWqQS+/IOTUNgfIFwfkRn257jMfFHI55UEBrSLFVt5xm9aRRjzoZv8l+H0NxClGjoH61m8JMKYPnaVikubeyZ09J2BqLpMEhKcOLHWYiAStDQYKlwc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=se24ZEZr; arc=fail smtp.client-ip=40.92.107.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Cn6F6XglrgDmN1DkAsH2o1SnM4an5rikiYQgq0KP3XyiOA5EPMexxilsBMBkzlQjNky8o10AUJRsllExI8OGLHWB8HebL3SoIC0QCo7MllF5ieAfaqj9AHgMbKFIbmCu+X3uKvMFxSqHW8hcz2r1KHIJ5Q4o2jErgVsHVo5VG/PrkNNOoHGoBZTBaCCYJc+0wcbq3moIAGd0yXiyD/sl3zIhJQaU4UaMGpsiF8vNLVAOlD+SZmhyAG7nE4aK6LCtQ6lU6y8eQXcDxEL3A2df2a+JQfw5iNLa+OR1hMCLdcH+q7CQbcDnGK77boCuXS2wrzNZcfIWzxisqkv+V8skYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3MtEgRtV+K+fvxLInrRkANPOBFJhE3mizTO3erIZG74=;
+ b=eE856ppfU/79xJJlUJsJ3XM3c/ss+0Mu5ogPAcwJ2ux5HPIASyvQyRsxAf3eLY8o/kf1C/wGDCTVYZDsAvYkEyS1zCjG09nP4zv8+CfCBDh6YqBGbFUBWzdgW+daGaNM1410TsOd9qwhA6Rog0GeUQVh0Ub5VTJ/jS5N8I74m5q3mYqR/2gEaGkK0+urRehC7k0lw/9O2pbp6g/XX6mAHHkMwzk9ZIrYKg93r2CjYBIkSwA7dTTm9jECWtG3QUt1wjC1V8gQZJLDjNTV19I0OUWS5O3LDSukM/nv+Nus0ILTFYhxUytaXCituy2ACdwsw1FC/g0b4nTrjpdmW7BD7Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3MtEgRtV+K+fvxLInrRkANPOBFJhE3mizTO3erIZG74=;
+ b=se24ZEZrp9wADtcvKQiV2x+uepXSe4VhriPiu0H0iN+UKOZIKutB53Rs1xbDEDloUG46m9vQ5TB3UraVLOUhvh7mzrZWnAF1LS8nymsO0t1A85y1HFyQ3s2sP6zsY5f1FS+XZ4AOA5ufDpwijT61fQ0k+W1MzcpayeqdQtvQPW2+Ek+qgtlkQjdiJ4+d6oWHd0awbFZ+xESYL6PRZ2WlbFFbQNRr6ypsxN9Pf2XFLlAw+VgeV7Nx9/JTsVu17h1jeh9tyQdkxvlkJRjtPt2G2jXgKZ2CDb2Lz1p3eXNpOzZqAAafUANA1d5pf938l452RlMLSNmEMdyovx4bhPGTBw==
+Received: from TYZPR01MB5556.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:363::9) by SEZPR01MB6077.apcprd01.prod.exchangelabs.com
+ (2603:1096:101:21e::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Wed, 5 Mar
+ 2025 14:41:07 +0000
+Received: from TYZPR01MB5556.apcprd01.prod.exchangelabs.com
+ ([fe80::3641:305b:41e2:6094]) by TYZPR01MB5556.apcprd01.prod.exchangelabs.com
+ ([fe80::3641:305b:41e2:6094%5]) with mapi id 15.20.8489.025; Wed, 5 Mar 2025
+ 14:41:07 +0000
+Message-ID:
+ <TYZPR01MB5556CB47BC21C5015F698CA4C9CB2@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
+Date: Wed, 5 Mar 2025 22:41:00 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] dt-bindings: net: dsa: qca8k: add internal-PHY-to-PHY
+ CPU link example
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: "olteanv@gmail.com" <olteanv@gmail.com>,
+ "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "rmk+kernel@armlinux.org.uk" <rmk+kernel@armlinux.org.uk>,
+ "javier.carrasco.cruz@gmail.com" <javier.carrasco.cruz@gmail.com>,
+ "john@phrozen.org" <john@phrozen.org>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <TYZPR01MB555632DC209AA69996309B58C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
+ <TYZPR01MB5556D90A3778BDF7AB9A7030C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
+ <ae329902-c940-4fd3-a857-c6689fa35680@lunn.ch>
+ <TYZPR01MB5556C13F2BE2042DDE466C95C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
+ <55a2e7d3-f201-48d7-be4e-5d1307e52f56@lunn.ch>
+ <dbd0e376-d7c3-4ba9-886b-ba9529a2ec4e@outlook.com>
+ <f7ac97f4-7677-402d-99f1-ae82709a3549@lunn.ch>
+From: Ziyang Huang <hzyitc@outlook.com>
+In-Reply-To: <f7ac97f4-7677-402d-99f1-ae82709a3549@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SI1PR02CA0060.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::17) To TYZPR01MB5556.apcprd01.prod.exchangelabs.com
+ (2603:1096:400:363::9)
+X-Microsoft-Original-Message-ID:
+ <2235ab04-79fd-4e27-a4f1-5d70e9ae2361@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Allow data races on some read/write operations
-To: Ralf Jung <post@ralfj.de>, Alice Ryhl <aliceryhl@google.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, comex <comexk@gmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
- rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Trevor Gross <tmgross@umich.edu>, Valentin Obst <kernel@valentinobst.de>,
- linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
- iommu@lists.linux.dev, lkmm@lists.linux.dev
-References: <87bjuil15w.fsf@kernel.org>
- <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
- <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
- <87ikoqjg1n.fsf@kernel.org>
- <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
- <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
- <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
- <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
- <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
- <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
- <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
- <CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
- <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de>
-From: Robin Murphy <robin.murphy@arm.com>
-Content-Language: en-GB
-In-Reply-To: <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: TYZPR01MB5556:EE_|SEZPR01MB6077:EE_
+X-MS-Office365-Filtering-Correlation-Id: b9c4d4ae-caf7-441b-6913-08dd5bf3c366
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|461199028|15080799006|8060799006|6090799003|19110799003|5072599009|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?dy9McFZBN0crTDFTTEVvdy9yamJrWDJxK3RNUm1RaTZCRjVFeUVwZlhzODBl?=
+ =?utf-8?B?QmtmK3lPNWd3bVBvOHBuQURrb0dBaGhYcS9wVEgybXgrOVRpRHhLMS9la3pC?=
+ =?utf-8?B?cFhJSWM4blBnQzBCclRvcUJ4bHMyazBqbTRBWkl5ZHBFbVhOS2h2R3R2UWJr?=
+ =?utf-8?B?N0pldE1vQ1BHZlorMWxvNGc0ZTVyOXFBK0VLUEMwRHpjYk1RZEdyZFZMUlhZ?=
+ =?utf-8?B?RjdtSXpLTWFmL0ViOVptUHhzVkt6dFQrNlpOZVdVeTlQTU9udFpiTiszSjYw?=
+ =?utf-8?B?d3lKLytzajdhdjhWWldsOUhudnE5djdsSDNXWjA3eTRIVVNIZ0xZZHJNZWUy?=
+ =?utf-8?B?Unh0OE9HMmFKUzZjNXF6ajBEUkltYmpuSlY3eC9SNE1QMEpXQ1lLQVlNZkF2?=
+ =?utf-8?B?Wk8rN1YvZDh2Y0lPNklpdm83Rkt3SkRYMEhXVndWajBNc2NZdGkyVGY0TkVh?=
+ =?utf-8?B?aUJ5VnFVSStkaW1QeXZSUEtmbklHQkcrTHZXV0ZybGI0VzZ0NmJhSzFKTGdl?=
+ =?utf-8?B?RFpkWTc2S0JJbEpQR0ZDK0hPM3htTFdPcE5YODY2RDc3SmkvZVZZazRqT1U1?=
+ =?utf-8?B?cWVVaXNaaGJzWkhCd2FDdHpwUnBqV1cwd1RucUVYL1ZGSHhpeWkzQUo2UGQ5?=
+ =?utf-8?B?aDY0ME15VVN1NmVwMGlwL045aW9FL21Xb0NsYThQaGNoY2k0bWgxMFpKYlBK?=
+ =?utf-8?B?ekFmMEFXSWJBTjJpSlArUVcxUTluTytLczZFUlBmbTJKbS9odzQrSGtPOFpM?=
+ =?utf-8?B?emg2K1g3VEZWQzRRQkw0N1ZrY2Y3c3cyclc2QlBNNjdQZ2UybVVOTjRNeGNq?=
+ =?utf-8?B?VE5QRzN3Y2U3RkVtaTVtSytNUUZDcDRhZ2tuTWltV0JsbC9laVVacmliSkdr?=
+ =?utf-8?B?dGVma0JqVWt2UStUcDJqY3lOd3ZRd0FsREVvNmkybFJQa3hZajZYQW12RThO?=
+ =?utf-8?B?Qmlicmo1eEhpeFpxWVoxaUNPMEx6SUFvS0F0MWFMTm9FN05Ob3B3RGtjSnE1?=
+ =?utf-8?B?MGlSWlRWaVNPRWRJZC9OdGJENUJhVHBzSkdLVnlUd2l4YjJyWGVsRTNUN2wr?=
+ =?utf-8?B?My9TZVE4N0lqeTZrbWZVUzZxZ3V0UDhlVDhmRHFhOGpTNGJYMUJ5blV2Ympm?=
+ =?utf-8?B?eWhiZnZqR2xya3BoUGtTSEl2MWhONUFzL3hOd25oUVUxR3h3Y3VrK0cyRUxi?=
+ =?utf-8?B?aklTK1RKYUJpZGNVZkQweUZiMGxuZEtEckhnaFRCTGZlenZiWGY3Q01qRWpr?=
+ =?utf-8?B?M3dId2Q2Y1FRWG82QTVVeEhScWlCNHpFYjYrYlZJcVNoYWVZTS8zbFlKQ1Rt?=
+ =?utf-8?B?VVg5M1M1QTlBeGNpeSthZ3h5V2hFTmQzaEtNYWFnc1FLbE9PL0ZRWjVyZGFI?=
+ =?utf-8?B?UHplNDlmWWNWajc5M0FGNjJ6NDFOMCt0dHZDNGxqVVN4bjFYNmh0NnNCVkE5?=
+ =?utf-8?B?SWFpTEZVaHlFaGllTzhMa0p4TVVYWjM4V3NKSHRRPT0=?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c04wTEU4ZTljNENYdlBKaXJWOWU3VkJibE0wK1RnT3Bwa1hKNkZJUHkvWURH?=
+ =?utf-8?B?eUtVQ1NpN3BUUW5mTzFqOURFV0dQeUg5U200UlhJMDcwcVI1L1MrWHZKOUVa?=
+ =?utf-8?B?Mnk1WEpKc1F5SE1pQ0V2MXN2ci91by9BL0JZM3RwaEdvV1ZZOHZXM1BFNW9k?=
+ =?utf-8?B?VGYrNThpZEpMQURVb2I5bE5lWHlsT0p0UjBBMks4QXU3eU1RVTVCeVVoZVA5?=
+ =?utf-8?B?ZmhNZGVLZDZTWlkyOWpQYThZUzJtd213OGRZT1o4Z1NiQXllU0p0Y3lVa2dm?=
+ =?utf-8?B?MWdFclNyQ0tRak5lNnprQ1kxSm9id1dqRmd2N1JmVGt2OCtpOE56RTQ2WmJV?=
+ =?utf-8?B?ajJOeUhQZWp1YnlGbytHSGpsVEFBcXFNOUFXTVV6L2pZUjhWZFJrWDdJcXA5?=
+ =?utf-8?B?Vy9CekFBV05GeFpsb2V2OXpWbHVVZXY5RVYzOHoyWm8zVkp6cU01NlVMNWtQ?=
+ =?utf-8?B?TDNrY29SWEMyTS9mL0ZiSzA0TlFpOC8rNjhxQnNRbXhQNlQ0cnNaY3VUNnFq?=
+ =?utf-8?B?R2h6cnhnRWZzRnZWSnp6R3RXM3BId1Zzb01oTUozRDlJM2hZTjFUQnhGZFhN?=
+ =?utf-8?B?NUVEWm9QUno1NXdneSt4WkNZOFZReXViV3FqSVZCUXRTU3AyNmNFblZKZ1kz?=
+ =?utf-8?B?eFd3cHhDYTFtL2hYVS8va1hxb1orRGpnMzg5OWxRMnAwSjYwNWRqM0gzRy9h?=
+ =?utf-8?B?OVMrWXpwc1l0T1UraTJrZ0lHN3ltajFGNFZQLzEwQUxnU1NGVmRMUndJeSt0?=
+ =?utf-8?B?YzZnaVRqRTUzcDduOUxicC95V2FFdThyUDFjeUdSQW9ucSt0MDF6OUhlSllS?=
+ =?utf-8?B?T3pGQm8wL1VMdWtyMUhySzhCTk1TV296Ym9UT3BmNjBKY0pCMzJnTEdGbk00?=
+ =?utf-8?B?T2NOcytPTnZBM3N3KzRTV2lHekZHMjBiYTRKNG5odlQ0TzhFRDN6YXh2MHdD?=
+ =?utf-8?B?QTgrL1JwL2NucXRsR0p3amFZb2dWVzJyL2xoRHREVldZS1dydGJVSGltK3hZ?=
+ =?utf-8?B?ZWJrc0o0QnFTNjhoMlUzSHpycVNOY0d5MVVIYnpvdHRTUkM2Y01MMEluMmJI?=
+ =?utf-8?B?b0dpOTZoMVhYL1d2aEJtdjZxUDZ5OTlaOXVQRHAzVXlBUHNlYVRCQjRDUTlI?=
+ =?utf-8?B?NUFveWw3Q2dmSnVsUUEvQmxoSTF6bm56VE5MeGNKSzVDY1VpL1NNbFBXRElt?=
+ =?utf-8?B?VUt6RkEyTC9FbWoxYkxHY2dnbHA4YllFWFRQUFhzTGU3eGdsSVdiNHlOc3lO?=
+ =?utf-8?B?djFicVRDOTF6MzVMSFphbnRZaTFQT3UvMGNnaG5lS0RqK1dLRTNwM25pWFBy?=
+ =?utf-8?B?bm5TWmVvUFIvblQ0RW9aYlhERFN0SS9nQUcvY3R2VWJybWorTUIzbER6M3hH?=
+ =?utf-8?B?TWhJNERwTUNuY2RtM1pYbXJuaXF5Y3pqMDc2bkRhdjdkU1RsWXNScXRYbytS?=
+ =?utf-8?B?R0oyQ2x2QllJQUJ1OU9TR01wSG5kamI4NTRBU1BJVEtCOXRyYUdYV3Q1dkZ0?=
+ =?utf-8?B?eEttTStqVnZGMVJFeEZwRTZ5dVkwdXVrUGNVNnVaWGxiN2lHZDFiT05vNC9D?=
+ =?utf-8?B?aEE0aU9jdHk1YTIvaloySTQzQ2xJTUhadytkc21wWVhvRzRSRjNQcUZuV0Vr?=
+ =?utf-8?Q?BgjMOH5+Oz+OLLyn1ErJn4lLhtvGI+KJ6DKoD+RyzwPg=3D?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b9c4d4ae-caf7-441b-6913-08dd5bf3c366
+X-MS-Exchange-CrossTenant-AuthSource: TYZPR01MB5556.apcprd01.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 14:41:07.3082
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR01MB6077
 
-On 05/03/2025 1:27 pm, Ralf Jung wrote:
-> Hi,
+在 2025/3/4 22:11, Andrew Lunn 写道:
+>> (Port0 and Port6). Could I just keep this or should I need to add a new
+>> case ?
 > 
-> On 05.03.25 14:23, Alice Ryhl wrote:
->> On Wed, Mar 5, 2025 at 2:10 PM Ralf Jung <post@ralfj.de> wrote:
->>>
->>> Hi,
->>>
->>> On 05.03.25 04:24, Boqun Feng wrote:
->>>> On Tue, Mar 04, 2025 at 12:18:28PM -0800, comex wrote:
->>>>>
->>>>>> On Mar 4, 2025, at 11:03 AM, Ralf Jung <post@ralfj.de> wrote:
->>>>> However, these optimizations should rarely trigger misbehavior in
->>>>> practice, so I wouldn’t be surprised if Linux had some code that
->>>>> expected memcpy to act volatile…
->>>>>
->>>>
->>>> Also in this particular case we are discussing [1], it's a memcpy (from
->>>> or to) a DMA buffer, which means the device can also read or write the
->>>> memory, therefore the content of the memory may be altered outside the
->>>> program (the kernel), so we cannot use copy_nonoverlapping() I believe.
->>>>
->>>> [1]: https://lore.kernel.org/rust-for-linux/87bjuil15w.fsf@kernel.org/
->>>
->>> Is there actually a potential for races (with reads by hardware, not 
->>> other
->>> threads) on the memcpy'd memory? Or is this the pattern where you 
->>> copy some data
->>> somewhere and then set a flag in an MMIO register to indicate that 
->>> the data is
->>> ready and the device can start reading it? In the latter case, the 
->>> actual data
->>> copy does not race with anything, so it can be a regular non-atomic 
->>> non-volatile
->>> memcpy. The flag write *should* be a release write, and release 
->>> volatile writes
->>> do not exist, so that is a problem, but it's a separate problem from 
->>> volatile
->>> memcpy. One can use a release fence followed by a relaxed write instead.
->>> Volatile writes do not currently act like relaxed writes, but you 
->>> need that
->>> anyway for WRITE_ONCE to make sense so it seems fine to rely on that 
->>> here as well.
->>>
->>> Rust should have atomic volatile accesses, and various ideas have 
->>> been proposed
->>> over the years, but sadly nobody has shown up to try and push this 
->>> through.
->>>
->>> If the memcpy itself can indeed race, you need an atomic volatile 
->>> memcpy --
->>> which neither C nor Rust have, though there are proposals for atomic 
->>> memcpy (and
->>> arguably, there should be a way to interact with a device using 
->>> non-volatile
->>> atomics... but anyway in the LKMM, atomics are modeled with volatile, 
->>> so things
->>> are even more entangled than usual ;).
+> The existing examples are probably sufficient. Just check the text to
+> make sure it does not limit it to ports 0 and 6.
+> 
+>>> So is this actually internally? Or do you have a IPQ50xx SoC connected
+>>> to a qca8337 switch, with copper traces on a PCB? If so, it is not
+>>> internal.
 >>
->> For some kinds of hardware, we might not want to trust the hardware.
->> I.e., there is no race under normal operation, but the hardware could
->> have a bug or be malicious and we might not want that to result in UB.
->> This is pretty similar to syscalls that take a pointer into userspace
->> memory and read it - userspace shouldn't modify that memory during the
->> syscall, but it can and if it does, that should be well-defined.
->> (Though in the case of userspace, the copy happens in asm since it
->> also needs to deal with virtual memory and so on.)
+>> The "internal" is used to describe the localcation of PHY not the link.
+>> In current code, qca8k has supported to use a external PHY to do a
+>> PHY-to-PHY link (Port0 and Port6). This patch make the internal PHYs
+>> support it too (Port1-5).
+>>
+>> The followiing topology is existed in most IPQ50xx-based router:
+>>      _______________________         _______________________
+>>     |        IPQ5018        |       |        QCA8337        |
+>>     | +------+   +--------+ |       | +--------+   +------+ |
+>>     | | MAC0 |---| GE Phy |-+--MDI--+-|  Phy4  |---| MAC5 | |
+>>     | +------+   +--------+ |       | +--------+   +------+ |
+>>     | +------+   +--------+ |       | +--------+   +------+ |
+>>     | | MAC1 |---| Uniphy |-+-SGMII-+-| SerDes |---| MAC0 | |
+>>     | +------+   +--------+ |       | +--------+   +------+ |
+>>     |_______________________|       |_______________________|
 > 
-> Wow you are really doing your best to combine all the hard problems at 
-> the same time. ;)
-> Sharing memory with untrusted parties is another tricky issue, and even 
-> leaving aside all the theoretical trouble, practically speaking you'll 
-> want to exclusively use atomic accesses to interact with such memory. So 
-> doing this properly requires atomic memcpy. I don't know what that is 
-> blocked on, but it is good to know that it would help the kernel.
+> So logically, it does not matter if the PHY is internal or
+> external. The patch would be the same. I've even see setups where the
+> SGMII link would have a PHY, then a connection to a daughter board,
+> and then a PHY back to SGMII before connecting to the switch. Running
+> Ethernet over the connector is easier than SERDES lines.
+> 
+> So i would probably drop the word internal from this discussion,
+> unless it is really relevant.
+> 
+> 	Andrew
 
-If you don't trust the device then I wouldn't think it actually matters 
-what happens at this level - the higher-level driver is already going to 
-have to carefully check and sanitise whatever data it reads back from 
-the buffer before consuming it, at which point reading a torn value due 
-to a race would be essentially indistinguishable from if the device had 
-gone wrong and simply written that nonsense value itself.
-
-I think the more significant case is when polling for the device to 
-write back some kind of status word, where in C code the driver would 
-use READ_ONCE() to ensure a single-copy-atomic read of the same size the 
-device is going to write - sticking a regular memcpy() into the middle 
-of that can't necessarily be trusted to work correctly (even if it may 
-appear to 99% of the time).
-
-Thanks,
-Robin.
+Ok, will remove the word in next patch
 
