@@ -1,116 +1,124 @@
-Return-Path: <linux-kernel+bounces-546210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217D7A4F7C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:19:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61B7AA4F7CB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:21:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 503ED3A6037
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:18:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A08531889698
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684C71EA7E9;
-	Wed,  5 Mar 2025 07:18:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B0C71EA7F7;
+	Wed,  5 Mar 2025 07:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XsMULsQn"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P/q8Ntel"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CDBB84D08;
-	Wed,  5 Mar 2025 07:18:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D35C84D08
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:21:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741159137; cv=none; b=bpPT+IlIB2bDVTMGN4oJXQ0rOxIJs8lxZwmprWAMj1KsJQ3Z1UhmJrxfwCeztK8iJg02h2q104oJsDcA85O/TsNcU7MR4t0K2u+Cb790i+nnbkjsi0qIPsWjUaT4hu/iCRCc9JoDrh2oc5lTdILQ4SeusI1ReQN1/F9gh69CwgA=
+	t=1741159293; cv=none; b=JtB5f0SGvlb5rXWtW2sFfvwqwdqhvle4YUfU+qAkvB/s0+UUTyM3Dj6eIwvj/hlr3TO+lsB8evoxiCq/0fR+U9Tbi/7xNdfCyUd7LSgd4SuaItbCDWxO9Dtj+4kXWcrzWAO1hdoouq0C3ruPFU2X6Ex+IZgTqEd4ziBGw6sRlxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741159137; c=relaxed/simple;
-	bh=/zT0/aEZz/bFk5evh2Bt4bylvJ7seck4/y5hF8UUwpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ORTsvVeETOWHSqgUPfezTsOOTN6K185Q2vs7q4JZCZYLg6Qy39E9YG5Oq9Pda6Gpm/Yje8SlVap8JvEmxbys2pQ3pJro7GnopmSRP0i8/ZRfg7eWStbNr8WO921igQNqaLAt5ad/3LDX7kq6PhNQJzIvmz85uxxkU+ukZysbaEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XsMULsQn; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-22356471820so104290935ad.0;
-        Tue, 04 Mar 2025 23:18:56 -0800 (PST)
+	s=arc-20240116; t=1741159293; c=relaxed/simple;
+	bh=FWiVbgrVSDx7efTDRnApyDcSfeAwaYu37v9yc/EX6jI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VUP0QeragrtoVXukxbpxb9t2KQWVK2qYThN+esQjta+Fg1cchE9s/lHq5LUsBlqnRZJShRmsgHUuaehPCsISskXHX4SsrLyYTx/UUArNtxBALOz+3AdJw3wMIXFY5GeBGMHFOoAPhdBSK6eIZeNQlhKhzkPp6DjYx6K1bjllBhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P/q8Ntel; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac21c5d0ea0so13033066b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:21:30 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741159136; x=1741763936; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kH/cZ5DivUQPBY7pbsVy9JuHqIfz3Lrs9JDw6PfArnk=;
-        b=XsMULsQnN9xy1tp+JqGEFExd4KHTOugcNvq5fBgLFyl6kNWL8s/sdH17N0i1IuJi7b
-         LlFOBY3j1e0wfBi9pvNxOMGi09Jg30xjAd5hEIg7vDHixsTjBcMT7cTIXcLbfcfztviR
-         h9QIMeVoFk+XIqIIm/2OyV4ebrqtU+aLKzMfj/P+xFOODWyCYDkbLDYHrmtuUnB6GPkB
-         rMmgoIKdpEtWctMBl1W+W90/uz8CIgJ294QdogZexeTMCukRGyFK1/Lw95nif6zlGi7t
-         QstqaY4YehypGHWorGyd++fg/QTGLEn88/8wv3mub3PwWpJs8Xrn8p7ClKRPSkJEh6ey
-         mZBg==
+        d=suse.com; s=google; t=1741159289; x=1741764089; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=n7E2iIxbquV5DEhVAqL/jOB6AynE5bJgRlahEKaSwEo=;
+        b=P/q8NtelURS2Zi3uRe8BgP3C0gYZXu/mb1udx8hPpRQ/VLRSEMrTKmwjd+W+Jtnz2M
+         wLV/9oVDrcc8DNjdsNOLHo4L26Y2y2UQrroGIEPX3bP0ijznzilLOP8KmHn4UR1vdaTZ
+         ODkcTTM5OnpUky2F1acXTLYb4yxiDAy2lGC96KUauPQEwk6YVImf29B0VRq99f8M8olt
+         5KMSL8PW5ddxsVI+PllEd7GoTAVUL2XYJ4PSIw7LRcykMC+jJbwI2uiaW6SrfsDnG/0N
+         1jcBQk+NFK3X5cOZ50JDCVDqYoGv2ben3873F6aVLyMuCpJerSKwEGa/7QJ/pHKmJrQ1
+         ArSA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741159136; x=1741763936;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kH/cZ5DivUQPBY7pbsVy9JuHqIfz3Lrs9JDw6PfArnk=;
-        b=fcssvr8X7pg75tmTTuHMWSTXdFcgACW+n04FUfkEsGfInMluVYAt0LHs1H70wvAcDv
-         LbiHSZUbAwoj6aBP01cRAkgXK+/AtghPTK9xBADdxomqiVvsG8paNunQGD1p4yaqAw5N
-         TbnQADAloIhiXSY3Vs7u/O82p8+NGrtNBl2EAcycqdct9riUGxY/u8OF2ANxrbg+jvEt
-         HPcYlV94Cp1us8/5zoY/0wlaNMoS5Pz9QneKNUKalCfpfjQTCklHpBddiMCO3LzPMJEB
-         onJvYr6eGDYesn3g3KGj1T/H7BILffCUUADI0Ce8bTvjUXmuCg6sSHTr8VNBvA+Io/F7
-         gOng==
-X-Forwarded-Encrypted: i=1; AJvYcCVpR+pYeVZjdc1Xv4gAu+yt5Dxvny5oanVlEHkXkTD9O+tzSQtiMXow4QGXsyM6c/M7tGn6Sx0Wk0ADHnw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxwlgqlGdPaFlOf5Z4PumtCpz3Yzij87uSdqfbYHzW+8fALOnbv
-	lMIMHQdDgi4Q4QmllgNs60HshYWZgo65PhMEof0Yj+gJriBUdzWF
-X-Gm-Gg: ASbGncuQdDzp//sG00tWNZVN7lhn7neqnPnRE9SH8oEyv9NIlliZxwx7n/iYYFhqGER
-	V6ZvIFnpmUfEOu6PKUS+HaOtfWpp56DxGyxGA5IrEgQNcFfA2zPqwexwW8vIjY1tEX55r8VoPFf
-	ICCE66IEbkexvzIN89YNsMRvZTnM9+J+z/Yr3nE9jvLKNKa0oLld5L23c8itzPiyQ4Z/dQL8+Pl
-	iv8hoITCdQ1IMbRIfJoeQ63N0Gc7XN42+WMPrhvbu0mAgxo/jeR0nvmNDHqnYVYjgp8RY2zu6x5
-	XiqaKV25mU/VpQUJyMeKsGU/sEiLhqW8OVc2pnhRx2Cz0w==
-X-Google-Smtp-Source: AGHT+IGFXEiv0DaEo6/DRJTfQPM7VNMKkefxST+1FyR3NRZNpPC9HUwQUA+jChITs0SgD80bG1fDvQ==
-X-Received: by 2002:a05:6a21:7001:b0:1ee:cdda:b8f8 with SMTP id adf61e73a8af0-1f34947ed20mr4497607637.7.1741159135705;
-        Tue, 04 Mar 2025 23:18:55 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:438c:d5a2:41a6:66d1])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003eb8csm12208988b3a.128.2025.03.04.23.18.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 23:18:55 -0800 (PST)
-Date: Tue, 4 Mar 2025 23:18:52 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>
-Subject: Re: [PATCH v1 0/4] Input: Increase size of phys in the drivers
-Message-ID: <Z8f63ImfQMB-Wp5R@google.com>
-References: <20250228121147.242115-1-andriy.shevchenko@linux.intel.com>
- <Z8bulFaTKJ06YLrL@smile.fi.intel.com>
+        d=1e100.net; s=20230601; t=1741159289; x=1741764089;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=n7E2iIxbquV5DEhVAqL/jOB6AynE5bJgRlahEKaSwEo=;
+        b=JXSHf0g93sUzhbwK0NV7JtC5w9qzrhgQW0ZQwxQ2A2Ry//rZ8lkWpy8rtQY7BjB6oF
+         Ln1RlMmQxzEKu9917X68Nxnc7zIrxaehuWuGyjlJjFa41TsxRxsuCFRE0eWwjLqQhnGg
+         BqX09mzB9+g576fRC7jg3a+eYfJpi6QJ2IXyT7lCpIbvvUM7NGong5Pt6GHKrgWdioPt
+         P8iPzfZLZ9l416eA8lIm0JQiXYozL49GE7X/6f6qxt1sA3BMOKkaJuP/VaYOkQh+2HYN
+         sdN10Ys2Wof3pe7tzZLeuVNd6o6vPmyi79P2hSKv/euNuYJY7+HzCUYZawgD3UCZY27R
+         qiwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXlcbFRb/gf1Ru1uk/lMCEJglu1b2SiYhaYb4w2SsD7jdefOVtVL7+nOgk5OpZ/Q7a+JW6Ghe7KQ+6bFNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+P00cXS/gPABhUVyB/5IfIaBTVgrDX1jZS7z4QcqLRIiV2c+1
+	Cjj+KWGDTEvBUcgum1owFC3TgT9o4ZSLhtubMItegZCU8YontSGINni07Rf9XVmyWbd0N0QfDJL
+	8NTg90/ErvJbJf5353o6SQIHSllU6SQn7XPfFmw==
+X-Gm-Gg: ASbGnctOSXEHjDeiqhwR7jDRbEX6N93deViEPFleskJAMckimDvvdSwcwJKIgHOtW45
+	nXTpFWlM6NmikW8TbY7j6VsYJvw9ibYBurUbgMaFu8Bb7NQ3PAurLi6cnuf7hp/30iX7DNoTlwP
+	Tr+wqdtMge6/whGwQFK8ndoy0Q
+X-Google-Smtp-Source: AGHT+IHuApDPVDRFRbrTPuLSdVBnC7FHJHTSc8gozyAwKc2e8pXdXmijruollANCPFDROEIL6rBLbccCqt4VOclfcG0=
+X-Received: by 2002:a05:6402:2351:b0:5e4:af36:2315 with SMTP id
+ 4fb4d7f45d1cf-5e59f3d4a3dmr5029582a12.12.1741159289212; Tue, 04 Mar 2025
+ 23:21:29 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8bulFaTKJ06YLrL@smile.fi.intel.com>
+References: <20250304171403.571335-1-neelx@suse.com> <bc3446ce-347f-41da-9255-233e2e08f91c@gmx.com>
+ <CAPjX3FcZ6TJZnHNf3sm00F49BVsDzQaZr5fJHMXRUXne3gLZ2w@mail.gmail.com> <20250305070521.GZ5777@suse.cz>
+In-Reply-To: <20250305070521.GZ5777@suse.cz>
+From: Daniel Vacek <neelx@suse.com>
+Date: Wed, 5 Mar 2025 08:21:18 +0100
+X-Gm-Features: AQ5f1Jrjsdd5CDdoZsEd_DpUb66xQjOsH_XPes7FPtkCWeHTerUTjPR-8XsLj1M
+Message-ID: <CAPjX3Fe-_vcVvkMvmgaVCoVU3kAXVH84rN=_77NpMUMSYw3G7A@mail.gmail.com>
+Subject: Re: [PATCH] btrfs/defrag: implement compression levels
+To: dsterba@suse.cz
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Andy,
+On Wed, 5 Mar 2025 at 08:05, David Sterba <dsterba@suse.cz> wrote:
+>
+> On Wed, Mar 05, 2025 at 08:02:28AM +0100, Daniel Vacek wrote:
+> > > > @@ -1376,10 +1377,19 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
+> > > >               return -EINVAL;
+> > > >
+> > > >       if (do_compress) {
+> > > > -             if (range->compress_type >= BTRFS_NR_COMPRESS_TYPES)
+> > > > -                     return -EINVAL;
+> > > > -             if (range->compress_type)
+> > > > -                     compress_type = range->compress_type;
+> > > > +             if (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL) {
+> > > > +                     if (range->compress.type >= BTRFS_NR_COMPRESS_TYPES)
+> > > > +                             return -EINVAL;
+> > > > +                     if (range->compress.type) {
+> > > > +                             compress_type = range->compress.type;
+> > > > +                             compress_level= range->compress.level;
+> > > > +                     }
+> > >
+> > > I am not familiar with the compress level, but
+> > > btrfs_compress_set_level() does extra clamping, maybe we also want to do
+> > > that too?
+> >
+> > This is intentionally left to be limited later. There's no need to do
+> > it at this point and the code is simpler. It's also compression
+> > type/method agnostic.
+>
+> This is input parameter validation so we should not postpone it until
+> the whole process starts. The complexity can be wrapped in helpers, we
+> already have that for various purposes like
+> compression_decompress_bio().
 
-On Tue, Mar 04, 2025 at 02:14:12PM +0200, Andy Shevchenko wrote:
-> On Fri, Feb 28, 2025 at 02:07:43PM +0200, Andy Shevchenko wrote:
-> > The drivers are using local member of 32 bytes to hold up to 40 (one-byte)
-> > characters. GCC complains on that. This series fixes the issue in the affected
-> > input drivers. Note, this is currently the biggest part of the warnings that
-> > are being treated as errors with the default configurations on x86. With this
-> > being applied we become quite close to enable CONFIG_WERROR=y (which is default
-> > and basically reverted) in CIs. Clang, OTOH, has currently no issues with that.
-> 
-> Would be nice to have a comment on this rather sooner as this impacts
-> the compilation by `make W=1` with WERROR=y (which is default).
+OK, that makes sense. I'll add the check in v2.
 
-I do not like the change. There are no bugs, only GCC being paranoid.
-Are there any other ways to shut it up? In [1] Jeff says that switching
-to scnprintf() shuts GCC up...
-
-[1] https://lore.kernel.org/r/Z3rIvp0hzS+yzvJA@nixie71
-
-Thanks.
-
--- 
-Dmitry
+Thaks guys.
 
