@@ -1,121 +1,231 @@
-Return-Path: <linux-kernel+bounces-547577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BF2EA50B13
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:09:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39D23A50B1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:10:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83666188669D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:10:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93C62171824
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8936725334A;
-	Wed,  5 Mar 2025 19:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HK//WSce"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82C6125334A;
+	Wed,  5 Mar 2025 19:10:00 +0000 (UTC)
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22DD1204F98
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7433A2E339F;
+	Wed,  5 Mar 2025 19:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741201782; cv=none; b=IQCrZr40rANVzT023PnZZeYXQO5Ir23bJnOpno/f4vTu6/ihWEH3BcoDZC36m6q2RGApIdU5F0Waxm/ruN71ibSuGfoUKWcOTmisUfiJoUzigrfICaQIjT9S908t+IRpriPel37WEeKQ0q61TUCk08Ded7NmnzkXzuj5d3zITYc=
+	t=1741201800; cv=none; b=Rw3LJ5BTJv8QMKQ8Q8npFgTAA93LqzqCbGUz9NlMhpSFTMm7xoL5vWhUCouthtvx9bU4g/8PozzTe02iePq6fnspZUFsOCk2z6w+BhrCzcJzFtt3HO/nputvd/YAHreGJ2pRAOdmtQpKYo837jGLJhRLSVAyBK+2XY/75glVarQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741201782; c=relaxed/simple;
-	bh=YXN8hyLuHQAhrc9NEQKCCoyB39SPARw+nLAxEXiu7nI=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=TGQWghpzGkolpVZS5lI9NSfcDeFOZk+WRoIC1q65QaxKmEFlIB4nsdjXiw8bNIVHqt5tc0MCMhRsJHLo8eRB/JSCdlJuBAGCGvoChghC5K6PCPzx30Lu52yq4Cjudb91I9kP8qubFfKAGMVZ9gdkzOiksV4balbhM7SGczhhRqQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HK//WSce; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bca8cabc8so3338705e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:09:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741201779; x=1741806579; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fgIFZoxkbW0KwVO6zN97CfpiFd7piOBwwsm3LQac8GU=;
-        b=HK//WSce+NmDOQYZFWgdWys+wby4qnHuMCS5n2Rjuhcya/4pyAFjzGvs5I7CHqcRgE
-         CdjC8VZtrBOxUae7KZZencwDRWQP19KjHX/vZq3huCisginCQiNtENcOekHH07hNIqzJ
-         LJ4zTJP7zNZq1zYgjGiL3GoqrMvxLH21LKzY49aX+GhTEesCBsuJZ8UrGDIskynoyNBh
-         xJi9ViscitYAEmuX8oGV4TovYxzhZnDInwFQdkKQwDhOOVj9LkbaE8zuqY0sHHZLQSN/
-         bNy5xVFVNi7KxJamVYw4htiZV8lyWq80236h7UAguTCICsfrDL3yrAlC5pUFMhz7yR0r
-         2MEA==
+	s=arc-20240116; t=1741201800; c=relaxed/simple;
+	bh=KW8symAa9+ElA7tol8KYpclJp8NcgDvhtncZvNKzDks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WpTNBoBS0rU415N/pBq0KRuk4MGh3TYkk55r7NcaftjBLLSw7GwIMyyiNm9EiBurGIFUurirtsjcGF62g+LCZeefeEo0ATiV0c8soHc/sgqyXR3ah8M0G/N79m6EoYFc7I5ZKXUppDoj/MtyOjv5/m4eeme3IsunRupQRo4zzYQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2ff615a114bso306894a91.0;
+        Wed, 05 Mar 2025 11:09:58 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741201779; x=1741806579;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fgIFZoxkbW0KwVO6zN97CfpiFd7piOBwwsm3LQac8GU=;
-        b=B4avi06axJgQblQjZQc5jm0rF3iGLlOHVUAv7jzDL1LLBEQRkHzDl9mAgsuVFWK0Ob
-         XXVXgAjuWreppfYo/2kSX4tnwuxkJzv7TiQ3OBqIAIcXmXmeFSFsqsw5RfKwAVH8nv3y
-         64JQasd4NErGhA7kwEd7Ajx30ia0rRjEum+kJqKXG0CBMwrgPZMR+cXS4jWaBmgYsI13
-         nwHf58ufnSAyH0JzA6V0oZA28klfSnhuvEHH9dl06E0M3T/TeqkIOsfcbTLLs4YXkMfi
-         pr/UzHY7H26+JJy1oMXZr/GKOJegJOY6Ll0xz0E0Gfd/Db56KNFzLHzfUP07YxJPxTnr
-         bLiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvhQUdCbnVrbPrZ1G9TomHw53Pwq541xmyCjbJG/i4UyOLPlBDKBZD8B6HokbtyhFzXhM/tGx+CMLEP/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/L0r3z6SmdP3eNVB5xsQ6ie81IObXp+9eRPhHZtQlBJiKq4w7
-	JKS2dD44iEfeL+5jRTmcFxyvZ2fnMt2Shna0xMegrlUxtXqcpNWV0fLLu2tRTog=
-X-Gm-Gg: ASbGncspLBdPvzxlAo2SPzkk3gjx1AN96vpsxmWB0bySO4NybsmZpXgXwCXHD2FDaJi
-	mOgpjAGeth0b0d5M3I/D0ZJXKT6XyynHVuk8T6fjE/pkx7hb6ab8H7EMzL9HNzxLz+epkq96cpD
-	LAaxcwTkbj9u9npHFUCAvif7FQqOGogSwkcTIYUS/S5dmydJJuVzADkyd2tMh/6VxdmV6Eys7wF
-	q6E7XmqnfqqPeQDIhHYZ6rqyk97sVvsFfZg+0nns3fHRRkMs+PEYJwV2sjN1AmuCzRX7GV9SSrs
-	ohCI3Of1tiBP62klZAHmJ3C6aLZMkwAlrHshsttwGO6H+RjXAINkSWRjYeH1
-X-Google-Smtp-Source: AGHT+IFrSoo3gOE5FHktH87GAqLOOH8zzQprfwlqJYQydb/cjo2MTzmjtJwGHriaXSDaH9mOaM27Tg==
-X-Received: by 2002:a05:600c:4750:b0:439:9b3f:2dd9 with SMTP id 5b1f17b1804b1-43bd29d8578mr15177295e9.7.1741201779287;
-        Wed, 05 Mar 2025 11:09:39 -0800 (PST)
-Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352eb1sm25628705e9.31.2025.03.05.11.09.36
+        d=1e100.net; s=20230601; t=1741201798; x=1741806598;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Zodeiabiec4o+24nRPQhB7bjurm79o/P+gs1t8Gp0w0=;
+        b=a6qjIMSEtnzUT0DE0JD6g7ecO+bUMzqm9xFhijJqyfx+GiaSAprV5VPtfgXes09hV/
+         mwtJuGkrFPh3qagG2n9aSdpEdYZohi4QHlMqcbOAPPFs3oxe82UcNJeJwF+8OKNGPpX8
+         Jm86/biXjK2gH5eEesQQav4KpiTbAw5FB+Zh+JzBS1PvdMQ8OaIxHk8WPSBpKgdtqrt7
+         Ha9c40XlIzkObFz/ihGwm7a035eN/3jYJ9ScQyIwl9jCbj5JP2jwKa0Et9JREaz/Rdzx
+         v1lqFpG/2Q21URm3RlM/hOEGBCVikZOg9AnIVUGDQ0M//evr8FsgLNrHpMX7bBEkPEzv
+         NPeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUyxAmHRBnDgjkZVJemCXEaFHgTMincMIepQixOT1FYNtZMjhHL+gF2Fuw2ha5KvQU5XCSFTI8jLDjARRU=@vger.kernel.org, AJvYcCW1g2/3le/85SCV1lQIK2p0uMPxUwZa9N5Nr6lHjZeRC1gxa1rK2t3m/n2QetXJnYFQJ1JL2zkQn8CO@vger.kernel.org, AJvYcCWEDegVTSIqphc+M0zDp3jXn5Cf2QDAn3w64iKQrBPV36zBk7RtXezEZcVCQk+H6jjWSl7S5d67z0kFGtT7aCIR4TA=@vger.kernel.org, AJvYcCXef0zkBurVqxdRS3EypgQlAFAK1D2+g9GQ2iqaiCHN89XB0DIXSJZN+or53xCvh7sPsTPDKS+PZ166LbrP4eXF3w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyshFbjHYlb/LRLlnXxidSlUW/xB7V9VEzFqQopkysjZvrKpdAL
+	ERhKWfJfrPr5AHFc0IEpeyleeBTmBAl6td0M+eg20odOQ6lnwBSo
+X-Gm-Gg: ASbGnctZvhEi/V0J7AB4tzfah+wCSyCdRhvxqj7IboqvW1caeEC8iICA/cMew3Cvy78
+	4t85P5mBYuZ8MIyadrZQhhOeBnpOk5BA9RIvmFxedw0q13Me82C08eC3mEX2uUbvcJrCb5r+Byh
+	E6umDsQhmJ18fMNCh7IOSZ8GxbN4LZwA9CznYIT/f934Y6SMGoqRq8LClxgJHdlui++vcN6xlus
+	6Bw4U2Gzywa2wqjsodrx2KpLCN9jULuL/oazg4+C8dF6LXzurkP8PUa84BM7oQsuyA5GbZFfEMK
+	cXAC0Nyd+2uDZDkfZKhzRq5t60iOcUYkZW9Sz5JagrTDmzGiXJ6MI9SW3hxinU5bLIR6nd3bGSb
+	FKlM=
+X-Google-Smtp-Source: AGHT+IGNbRJpJbMeXjomF31jB4KIZE5TJ2wjy21GKVWmGQR/3PyTIYjAGlF+BWxQ8A3iKolTn3utJQ==
+X-Received: by 2002:a17:90b:3ec5:b0:2ea:8aac:6ac1 with SMTP id 98e67ed59e1d1-2ff617b5145mr663825a91.15.1741201797566;
+        Wed, 05 Mar 2025 11:09:57 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id 98e67ed59e1d1-2ff53eda418sm1213607a91.45.2025.03.05.11.09.56
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 11:09:38 -0800 (PST)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
- Tudor Ambarus <tudor.ambarus@linaro.org>, 
- Krzysztof Kozlowski <krzk@kernel.org>, 
- Sylwester Nawrocki <s.nawrocki@samsung.com>, 
- Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>, Peter Griffin <peter.griffin@linaro.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
- linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, willmcvicker@google.com, kernel-team@android.com
-In-Reply-To: <20250303-clk-suspend-fix-v1-1-c2edaf66260f@linaro.org>
-References: <20250303-clk-suspend-fix-v1-1-c2edaf66260f@linaro.org>
-Subject: Re: [PATCH] clk: samsung: gs101: fix synchronous external abort in
- samsung_clk_save()
-Message-Id: <174120177454.75135.6216013717633178470.b4-ty@linaro.org>
-Date: Wed, 05 Mar 2025 20:09:34 +0100
+        Wed, 05 Mar 2025 11:09:57 -0800 (PST)
+Date: Thu, 6 Mar 2025 04:09:55 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Fan Ni <nifan.cxl@gmail.com>, Shradha Todi <shradha.t@samsung.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
+Message-ID: <20250305190955.GK847772@rocinante>
+References: <20250304171154.njoygsvfd567pb66@thinkpad>
+ <20250305173826.GA303920@bhelgaas>
+ <20250305182833.cgrwbrcwzjscxmku@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305182833.cgrwbrcwzjscxmku@thinkpad>
 
+Hello,
 
-On Mon, 03 Mar 2025 13:11:21 +0000, Peter Griffin wrote:
-> EARLY_WAKEUP_SW_TRIG_*_SET and EARLY_WAKEUP_SW_TRIG_*_CLEAR
-> registers are only writeable. Attempting to read these registers
-> during samsung_clk_save() causes a synchronous external abort.
+[...]
+> > > Even though debugfs_init() failure is not supposed to fail the probe(),
+> > > dwc_pcie_rasdes_debugfs_init() has a devm_kzalloc() and propagating that
+> > > failure would be canolically correct IMO.
+> > 
+> > I'm not sure about this.  What's the requirement to propagate
+> > devm_kzalloc() failures?  I think devres will free any allocs that
+> > were successful regardless.
+> > 
+> > IIUC, we resolved the Gray Hawk Single issue by changing
+> > dwc_pcie_rasdes_debugfs_init() to return success without doing
+> > anything when there's no RAS DES Capability.
+> > 
+> > But dwc_pcie_debugfs_init() can still return failure, and that still
+> > causes dw_pcie_ep_init_registers() to fail, which breaks the "don't
+> > propagate debugfs issues upstream" rule:
+> > 
+> >   int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+> >   {
+> >           ...
+> >           ret = dwc_pcie_debugfs_init(pci);
+> >           if (ret)
+> >                   goto err_remove_edma;
+> > 
+> >           return 0;
+> > 
+> >   err_remove_edma:
+> >           dw_pcie_edma_remove(pci);
+> > 
+> >           return ret;
+> >   }
+> > 
+> > We can say that kzalloc() failure should "never" happen, and therefore
+> > it's OK to fail the driver probe if it happens, but that doesn't seem
+> > like a strong argument for breaking the "don't propagate debugfs
+> > issues" rule.  And someday there may be other kinds of failures from
+> > dwc_pcie_debugfs_init().
+> > 
 > 
-> Remove these 8 registers from cmu_top_clk_regs[] array so that
-> system suspend gets further.
-> 
-> [...]
+> Fine with me. I was not too sure about propagating failure either.
 
-Applied, thanks!
+What if we do this?
 
-[1/1] clk: samsung: gs101: fix synchronous external abort in samsung_clk_save()
-      https://git.kernel.org/krzk/linux/c/f2052a4a62465c0037aef7ea7426bffdb3531e41
+diff --git i/drivers/pci/controller/dwc/pcie-designware-debugfs.c w/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+index 586a9d107434..fddf71f014c4 100644
+--- i/drivers/pci/controller/dwc/pcie-designware-debugfs.c
++++ w/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+@@ -162,7 +162,7 @@ void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
+ 	debugfs_remove_recursive(pci->debugfs->debug_dir);
+ }
 
-Best regards,
--- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+-int dwc_pcie_debugfs_init(struct dw_pcie *pci)
++void dwc_pcie_debugfs_init(struct dw_pcie *pci)
+ {
+ 	char dirname[DWC_DEBUGFS_BUF_MAX];
+ 	struct device *dev = pci->dev;
+@@ -174,17 +174,15 @@ int dwc_pcie_debugfs_init(struct dw_pcie *pci)
+ 	snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
+ 	dir = debugfs_create_dir(dirname, NULL);
+ 	debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
+-	if (!debugfs)
+-		return -ENOMEM;
++	if (!debugfs) {
++		dev_err(dev, "failed to allocate memory for debugfs\n");
++		return;
++	}
 
+ 	debugfs->debug_dir = dir;
+ 	pci->debugfs = debugfs;
+ 	err = dwc_pcie_rasdes_debugfs_init(pci, dir);
+-	if (err) {
+-		dev_err(dev, "failed to initialize RAS DES debugfs, err=%d\n",
+-			err);
+-		return err;
+-	}
+-
+-	return 0;
++	if (err)
++		dev_warn(dev, "failed to initialize RAS DES debugfs, err=%d",
++			 err);
+ }
+diff --git i/drivers/pci/controller/dwc/pcie-designware-ep.c w/drivers/pci/controller/dwc/pcie-designware-ep.c
+index c6e76a07c2c9..11ff292ca87d 100644
+--- i/drivers/pci/controller/dwc/pcie-designware-ep.c
++++ w/drivers/pci/controller/dwc/pcie-designware-ep.c
+@@ -838,9 +838,7 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+
+ 	dw_pcie_ep_init_non_sticky_registers(pci);
+
+-	ret = dwc_pcie_debugfs_init(pci);
+-	if (ret)
+-		goto err_remove_edma;
++	dwc_pcie_debugfs_init(pci);
+
+ 	return 0;
+
+diff --git i/drivers/pci/controller/dwc/pcie-designware-host.c w/drivers/pci/controller/dwc/pcie-designware-host.c
+index 2081e8c72d12..6501fb062c70 100644
+--- i/drivers/pci/controller/dwc/pcie-designware-host.c
++++ w/drivers/pci/controller/dwc/pcie-designware-host.c
+@@ -548,9 +548,7 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
+ 	if (pp->ops->post_init)
+ 		pp->ops->post_init(pp);
+
+-	ret = dwc_pcie_debugfs_init(pci);
+-	if (ret)
+-		goto err_stop_link;
++	dwc_pcie_debugfs_init(pci);
+
+ 	return 0;
+
+diff --git i/drivers/pci/controller/dwc/pcie-designware.h w/drivers/pci/controller/dwc/pcie-designware.h
+index 7f9807d4e5de..dd129718fb41 100644
+--- i/drivers/pci/controller/dwc/pcie-designware.h
++++ w/drivers/pci/controller/dwc/pcie-designware.h
+@@ -815,12 +815,11 @@ dw_pcie_ep_get_func_from_ep(struct dw_pcie_ep *ep, u8 func_no)
+ #endif
+
+ #ifdef CONFIG_PCIE_DW_DEBUGFS
+-int dwc_pcie_debugfs_init(struct dw_pcie *pci);
++void dwc_pcie_debugfs_init(struct dw_pcie *pci);
+ void dwc_pcie_debugfs_deinit(struct dw_pcie *pci);
+ #else
+-static inline int dwc_pcie_debugfs_init(struct dw_pcie *pci)
++static inline void dwc_pcie_debugfs_init(struct dw_pcie *pci)
+ {
+-	return 0;
+ }
+ static inline void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
+ {
+
+I think this would be fine, especially given the rules around debugfs and
+a quick look around Git history to see what the prefernce would be typically.
+
+Thank you!
+
+	Krzysztof
 
