@@ -1,375 +1,204 @@
-Return-Path: <linux-kernel+bounces-547142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED9EA50364
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:26:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 999F3A50366
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:26:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1804C188A0D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:26:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BD8F7166FF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FB4324FC18;
-	Wed,  5 Mar 2025 15:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44A3F24FC0A;
+	Wed,  5 Mar 2025 15:26:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GJVcKOMy"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T10SyE6D"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B4DD1465AD;
-	Wed,  5 Mar 2025 15:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C3624E4A0;
+	Wed,  5 Mar 2025 15:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741188378; cv=none; b=mK2aIHmmO8YjDx4k6Hacy47VKlLMvBJJH4oUqd1iKxiOZkLsXGTGZkfl+VTgXlr4DJYexEX81oy/VFamJQGJKOBGi1ZxcINU6IJ8oN5HSZkIw1eXzMVDfAQO8QMoaf0waddLIUX+dhkwGtQsMhJEJwCuvmezkYT5S3r9yZzP+vQ=
+	t=1741188391; cv=none; b=ODwEUv/0sav213QvhHqVOM+1M2zDR9oayBpOs7TTMhoexqqy93/ULLyFXjPwN+0klE542Ib5RVlbxkoNu3EFmZIhni2+5T2io98jDXFTo85BS/mKc6vxnwUifzP/LX5lREYkZWYt1MB6GymlML3iKs9D104tnOINxrPKV8CHne4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741188378; c=relaxed/simple;
-	bh=n4hZoaZrrTXXu2vkhQ0Y13l7eE6qx2qHmpdJFxJEQDw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=bOvfB9vHFUR50uc+mfKHfa+v0NapVG97i4Z5FJcVdGdb8rGmBAQfBbPxt/NXuMlApRALP1Nd+fIoDDUA2HNBuByFZqMH6Uiwd9n+0LEll1gpBpikeriwQKh67LMD0xXybGlt4XQBTNus9pcfdJqoo1A3t2Kzf5JhHkXcNoP5ip0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GJVcKOMy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525B9eVc023734;
-	Wed, 5 Mar 2025 15:25:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dKvxObN86d4Vbg+X52/nftAyUjn6LRPj22SlDXkazqE=; b=GJVcKOMyIUk/HEQo
-	iG4q8/AOapjM2jqcHqdyP7zT6qhD014PwUkN0MbNR3XEc/jY5Wkqb34fr3/6YBdG
-	YStWK12SiDyPX0ww3T1ZGHmb8srctEMg0Dm8vyVR5K2N2MDuOrV0ib3KphoOMiUg
-	LbKa1KDxjU0vR3mYQxPO7d96Q8LEG6OY83DZgnNetFVIx1psJsXEtYklH5ucXHcH
-	ETpqcXTzj+WBkcTaulI4eIa2xlZcwW+/cix9+GrbQW+ciq1cXEUVwTdaNm969tBD
-	L3e4nh5zOtYBwFS/JSY82iFC0fjSfV53Qw354srHYRoA0Ri2F1Z4m+zDZlqXvXvY
-	4L72Cw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6t5tqk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 15:25:53 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 525FPqUX018053
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 15:25:52 GMT
-Received: from [10.133.33.61] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Mar 2025
- 07:25:47 -0800
-Message-ID: <d4ae3dc1-e722-43cd-8e3e-aa13b21de8ba@quicinc.com>
-Date: Wed, 5 Mar 2025 23:25:34 +0800
+	s=arc-20240116; t=1741188391; c=relaxed/simple;
+	bh=c0C/8k2NcvsPFWNP1zfNmrJf1Virv11f4zz8laCgVAY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qdXyMJLrQdQ/0XGYPTl+2DFyZ/zRBVdZnHawdZCzeaoXFvmp9jAsZc8s9jpLlYMAAjR12eDic/XdwUFAbuEEG/n30bvnXShWoczjYaU9cPspLnzvyVagbIm+4ydNEWvDaA6wCd/JbdKwjTZLOOAEr4ZH/9qd0KPByeIy6Nrw0iM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T10SyE6D; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-30613802a59so77636931fa.0;
+        Wed, 05 Mar 2025 07:26:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741188388; x=1741793188; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K2CveGYR3dMGbaWlRSW+hSiMZrtxGbB7gR1yx1BQsF0=;
+        b=T10SyE6D0Vso7J795Os9NDVcx4+YE4Zygjxstw7rVcR48QbW0WZ97jZYlHw7t0lpwA
+         SY/JjYfPg/6HMQGdQ//5WAl9e0gsx1zDu51TR/gBb2YFHkvW7+Y/mrXar2r8Da7tml0U
+         5uqvEnlLpFX0+37sOLAbTXNhAO0zn5TZXj+w5EdObxyiN0hloxvrnrfD16mHA7Aclp9i
+         XSkDRdTQDxnyJC5uC57K4QqYbtjsm8l+HDJfv9/c+NJHjKl1YEMIpVHU/2PkNOv01Ebf
+         MVmhBBki0bVX1TYVO3QE8dA1nF1Cw+GCaBx8vw3xJWADqblt8gSMLSb2yqXqnfnvtsPk
+         P4Bg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741188388; x=1741793188;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=K2CveGYR3dMGbaWlRSW+hSiMZrtxGbB7gR1yx1BQsF0=;
+        b=BaGHv2odHiyYzpa5PTn3ouVRp4nELqMpd8F3sEZ7Zm3Ylk5CoQ+0M0bfWnFtAZhVs0
+         ZCAE2PGas4NgE1QoLvI9/nxKLG0LaKFwh2JCMwWSDVOq+kN3zi5OCGb3U3OUYz9AdFso
+         /8xYGp9xhndhJztXgCODyq6F60w1LwQy6rgeWT6yPg2W/YhRTti/NcwbQb1DFcC2a5IN
+         wuV+MQC3HsIQ7opzHuNDwUIU/0/Hn2ZUtSS80agYk2PDM/CD7kC7w+V6gCqi/O0psb4r
+         XoI/7zy8cd9GnRhcfuxhd0ZF6zdQ4i+S//MEdkYugReggZTp4/8oPRIZYMPWsdqEd7+w
+         pjMw==
+X-Forwarded-Encrypted: i=1; AJvYcCUM3+xPIr0Y9P0/zaCV7yAJNqs5gbGrUjVQDm/GmIIEUhX9BBunWMB2k6ClmANMShfggb6qLy5QSWIxUdYTNoAY@vger.kernel.org, AJvYcCW6G+PRn3lh1wJPN8yhuX8pkSv4GKxVbAvPw6BOhhpd2xW78thr3oOvidgqL2P3rYthObAF3AhOR6zcDWs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxbj/ETZB016NU7nDQXEAPuCzlp07T5Cis5tKjOXIqKnJyvX+O6
+	GnvemzNBNCz2ub1JlXJ2eYRmCvcwV5hPz6m9W8k1+L3CfuHSC8ZJcuYmgUtMZC2CmC4t3uWIhmJ
+	fsjx1T8sMJjcxtgR8MMXUpx06xeBporAbe/mQ1g==
+X-Gm-Gg: ASbGncubSuZMPKlNJu9ODRtCi337JCGkZUyXnn1TZKV4+kukzUXiLrWhWJX8x99F+xg
+	ByUvGzTw4qKR9fWi1tDq/xpUaiht/mLkYLFLI1cCJ6JmZZXOpcLAulA68JwwXmwiBZxSCuElL30
+	e5Q7FyHHfVCfd1MWnhhxroghjC+y5hQakqN5uPCzMC2Q==
+X-Google-Smtp-Source: AGHT+IFswMYJlFKw6rcEI+lBq/Ofs1NDqK93sLM1XX+uZwHU+bAvw51/fBUsKyls/CSjsXtDGvPDClTtGTYP6MrNV60=
+X-Received: by 2002:a2e:95d0:0:b0:30b:b28d:f0a7 with SMTP id
+ 38308e7fff4ca-30bd7a5732dmr14309601fa.18.1741188387503; Wed, 05 Mar 2025
+ 07:26:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 02/10] Coresight: Add trace_id function to retrieving
- the trace ID
-To: Mike Leach <mike.leach@linaro.org>
-CC: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        James Clark
-	<james.clark@linaro.org>,
-        Alexander Shishkin
-	<alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Tingwei Zhang
-	<quic_tingweiz@quicinc.com>,
-        Jinlong Mao <quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
- <20250303032931.2500935-3-quic_jiegan@quicinc.com>
- <CAJ9a7VgGp4YqzN-yx0x+NiZG8now6SCmnimaou2Z=exYcoiegw@mail.gmail.com>
- <7fe6c345-85cf-4114-b419-f50d1a6cbef1@quicinc.com>
- <CAJ9a7Vhx293H6r6HGwVOQ46PDu+sQ8LPONvAbwAtxGFt0ad+Ww@mail.gmail.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <CAJ9a7Vhx293H6r6HGwVOQ46PDu+sQ8LPONvAbwAtxGFt0ad+Ww@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=I/ufRMgg c=1 sm=1 tr=0 ts=67c86d01 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=KKAkSRfTAAAA:8 a=LpQP-O61AAAA:8
- a=IxFrTbeWSl6y_tmf9k8A:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22 a=pioyyrs4ZptJ924tMmac:22
-X-Proofpoint-GUID: lUObeaWTcVJyVCpjgXepAivPMFWNp7Ps
-X-Proofpoint-ORIG-GUID: lUObeaWTcVJyVCpjgXepAivPMFWNp7Ps
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_06,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 lowpriorityscore=0
- suspectscore=0 phishscore=0 malwarescore=0 mlxlogscore=999 impostorscore=0
- clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050119
+References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
+ <20250214-scanf-kunit-convert-v8-4-5ea50f95f83c@gmail.com> <Z8hnXIrMV0ct1YR6@pathway.suse.cz>
+In-Reply-To: <Z8hnXIrMV0ct1YR6@pathway.suse.cz>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 5 Mar 2025 10:25:51 -0500
+X-Gm-Features: AQ5f1Jq56dRx7DvhN80Y413j-_SP-TssQKHq2qIdENoUsZ-WHtOgbBs35tb-2Jk
+Message-ID: <CAJ-ks9k7G31uBqygXNtfXcwVQXWvkaAWJh1vkFw2_VZ5bAz=Vg@mail.gmail.com>
+Subject: Re: [PATCH v8 4/4] scanf: break kunit into test cases
+To: Petr Mladek <pmladek@suse.com>
+Cc: David Gow <davidgow@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 5, 2025 at 10:01=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrot=
+e:
+>
+> On Fri 2025-02-14 11:20:01, Tamir Duberstein wrote:
+> > Use `suite_init` and move some tests into `scanf_test_cases`. This
+> > gives us nicer output in the event of a failure.
+> >
+> > Reviewed-by: David Gow <davidgow@google.com>
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  lib/tests/scanf_kunit.c | 95 ++++++++++++++++++++++++++---------------=
+--------
+> >  1 file changed, 51 insertions(+), 44 deletions(-)
+> >
+> > diff --git a/lib/tests/scanf_kunit.c b/lib/tests/scanf_kunit.c
+> > index 3bbad9ebe437..fa215a7db366 100644
+> > --- a/lib/tests/scanf_kunit.c
+> > +++ b/lib/tests/scanf_kunit.c
+> > @@ -4,14 +4,10 @@
+> >   */
+> >
+> >  #include <kunit/test.h>
+> > -#include <linux/bitops.h>
+> > -#include <linux/kernel.h>
+> >  #include <linux/module.h>
+> > -#include <linux/overflow.h>
+> > -#include <linux/printk.h>
+> >  #include <linux/prandom.h>
+> >  #include <linux/slab.h>
+> > -#include <linux/string.h>
+> > +#include <linux/sprintf.h>
+> >
+> >  #define BUF_SIZE 1024
+>
+> It would make more sense to do this clean up in the 3rd patch
+> where some code was replaced by the kunit macros.
+>
+> Also I am not sure about the choice. It might make sense to remove
+> <include/printk.h> because the pr_*() calls were removed.
+> But what about the others? Did anyone request the clean up, please?
+>
+> I do not want to open a bike shadding because different people
+> have different opinion.
+>
+> I would personally prefer to keep the explicit includes when the
+> related API is still used. It helps to optimize nested includes
+> in the header files which helps to speedup build. AFAIK, there
+> are people working in this optimization and they might need
+> to revert this change.
 
+Yeah, I don't feel strongly. I'll just restore all the includes.
 
-On 3/5/2025 10:58 PM, Mike Leach wrote:
-> Hi Jie
-> 
-> On Wed, 5 Mar 2025 at 13:27, Jie Gan <quic_jiegan@quicinc.com> wrote:
->>
->>
->>
->> On 3/5/2025 7:07 PM, Mike Leach wrote:
->>> Hi,
->>>
->>> On Mon, 3 Mar 2025 at 03:30, Jie Gan <quic_jiegan@quicinc.com> wrote:
->>>>
->>>> Add 'trace_id' function pointer in coresight_ops. It's responsible for retrieving
->>>> the device's trace ID.
->>>>
->>>> Co-developed-by: James Clark <james.clark@linaro.org>
->>>> Signed-off-by: James Clark <james.clark@linaro.org>
->>>> Reviewed-by: James Clark <james.clark@linaro.org>
->>>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->>>> ---
->>>>    drivers/hwtracing/coresight/coresight-core.c  | 30 +++++++++++++++++++
->>>>    drivers/hwtracing/coresight/coresight-dummy.c | 13 +++++++-
->>>>    .../coresight/coresight-etm3x-core.c          |  1 +
->>>>    .../coresight/coresight-etm4x-core.c          |  1 +
->>>>    drivers/hwtracing/coresight/coresight-stm.c   | 11 +++++++
->>>>    drivers/hwtracing/coresight/coresight-tpda.c  | 11 +++++++
->>>>    include/linux/coresight.h                     |  5 ++++
->>>>    7 files changed, 71 insertions(+), 1 deletion(-)
->>>>
->>>> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
->>>> index ab55e10d4b79..32aa07f4f8c1 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-core.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-core.c
->>>> @@ -24,6 +24,7 @@
->>>>    #include "coresight-etm-perf.h"
->>>>    #include "coresight-priv.h"
->>>>    #include "coresight-syscfg.h"
->>>> +#include "coresight-trace-id.h"
->>>>
->>>>    /*
->>>>     * Mutex used to lock all sysfs enable and disable actions and loading and
->>>> @@ -1557,6 +1558,35 @@ void coresight_remove_driver(struct amba_driver *amba_drv,
->>>>    }
->>>>    EXPORT_SYMBOL_GPL(coresight_remove_driver);
->>>>
->>>> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
->>>> +                              struct coresight_device *sink)
->>>> +{
->>>> +       int trace_id;
->>>> +       int cpu = source_ops(csdev)->cpu_id(csdev);
->>>> +
->>>
->>> This is a global funciton so need to check that this csdev is a
->>> source,. and does provide a cpu  function before calling it.
->>>
->>
->> Hi Mike,
->>
->> I put this function here because it's required by etm3x and etm4x. It's
->> intended to be called only by ETM devices, which are definitely source
->> devices and have a cpu function.
->>
-> 
-> I fully understand the intent, but for a function that can be accessed
-> from anywhere, it is safer to validate input rather than assume any
-> caller will always respect the input conditions.
-> Lots of other places in the coresight drivers check that these
-> functions exist before calling them.
-> 
+> > @@ -50,10 +46,9 @@ do {                                                =
+                               \
+> >       for (; n_args > 0; n_args--, expect++) {                         =
+       \
+> >               typeof(*expect) got =3D *va_arg(ap, typeof(expect));     =
+         \
+> >               if (got !=3D *expect) {                                  =
+         \
+> > -                     KUNIT_FAIL(test,                                 =
+       \
+> > -                                "%s:%d: vsscanf(\"%s\", \"%s\", ...) e=
+xpected " arg_fmt " got " arg_fmt, \
+> > -                                file, line, str, fmt, *expect, got);  =
+       \
+> > -                     return;                                          =
+       \
+> > +                     KUNIT_FAIL_AND_ABORT(test,                       =
+       \
+> > +                                          "%s:%d: vsscanf(\"%s\", \"%s=
+\", ...) expected " arg_fmt " got " arg_fmt, \
+> > +                                          file, line, str, fmt, *expec=
+t, got); \
+>
+> I am just curious. Is there any particular reason why
+> KUNIT_FAIL() is replaced with KUNIT_FAIL_AND_ABORT()?
+>
+> Did the move of some tests into KUNIT_CASE() increased the number of
+> reported errors?
+>
+> Why is _ABORT() variant used in _check_numbers_template() and not in _tes=
+t()?
+>
+> I do not have strong opinion. The change just looks a bit ad-hoc and
+> inconsistent.
+>
+>
+> >               }                                                        =
+       \
+> >       }                                                                =
+       \
+> >  } while (0)
 
-Hi Mike,
+Honestly I don't remember. The effect is definitely to kill tests
+earlier in the case of failure, but you're right to point out the
+inconsistency with _test. The original code had the same behavior in
+both cases, so I will restore that.
 
-I agree with you. I will send another patch to fix it. Thanks for comment.
+>
+> Otherwise, the change looks good to me.
+>
+> Best Regards,
+> Petr
+>
+> PS: I suggest to wait at least one or two days with the respin. Other
+>     reviewers might want to add their own opinion.
 
-Jie
-
-> Regards
-> 
-> Mike
-> 
->> Jie
->>
->>>> +       switch (mode) {
->>>> +       case CS_MODE_SYSFS:
->>>> +               trace_id = coresight_trace_id_get_cpu_id(cpu);
->>>> +               break;
->>>> +       case CS_MODE_PERF:
->>>> +               if (WARN_ON(!sink))
->>>> +                       return -EINVAL;
->>>> +
->>>> +               trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink->perf_sink_id_map);
->>>> +               break;
->>>> +       default:
->>>> +               trace_id = -EINVAL;
->>>> +               break;
->>>> +       }
->>>> +
->>>> +       if (!IS_VALID_CS_TRACE_ID(trace_id))
->>>> +               dev_err(&csdev->dev,
->>>> +                       "Failed to allocate trace ID on CPU%d\n", cpu);
->>>> +
->>>> +       return trace_id;
->>>> +}
->>>> +EXPORT_SYMBOL_GPL(coresight_etm_get_trace_id);
->>>> +
->>>>    MODULE_LICENSE("GPL v2");
->>>>    MODULE_AUTHOR("Pratik Patel <pratikp@codeaurora.org>");
->>>>    MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
->>>> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
->>>> index 9be53be8964b..b5692ba358c1 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-dummy.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
->>>> @@ -41,6 +41,16 @@ static void dummy_source_disable(struct coresight_device *csdev,
->>>>           dev_dbg(csdev->dev.parent, "Dummy source disabled\n");
->>>>    }
->>>>
->>>> +static int dummy_source_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
->>>> +                                __maybe_unused struct coresight_device *sink)
->>>> +{
->>>> +       struct dummy_drvdata *drvdata;
->>>> +
->>>> +       drvdata = dev_get_drvdata(csdev->dev.parent);
->>>> +
->>>> +       return drvdata->traceid;
->>>> +}
->>>> +
->>>>    static int dummy_sink_enable(struct coresight_device *csdev, enum cs_mode mode,
->>>>                                   void *data)
->>>>    {
->>>> @@ -62,7 +72,8 @@ static const struct coresight_ops_source dummy_source_ops = {
->>>>    };
->>>>
->>>>    static const struct coresight_ops dummy_source_cs_ops = {
->>>> -       .source_ops = &dummy_source_ops,
->>>> +       .trace_id       = dummy_source_trace_id,
->>>> +       .source_ops     = &dummy_source_ops,
->>>>    };
->>>>
->>>>    static const struct coresight_ops_sink dummy_sink_ops = {
->>>> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
->>>> index c103f4c70f5d..c1dda4bc4a2f 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
->>>> @@ -704,6 +704,7 @@ static const struct coresight_ops_source etm_source_ops = {
->>>>    };
->>>>
->>>>    static const struct coresight_ops etm_cs_ops = {
->>>> +       .trace_id       = coresight_etm_get_trace_id,
->>>>           .source_ops     = &etm_source_ops,
->>>>    };
->>>>
->>>> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
->>>> index 2c1a60577728..cfd116b87460 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
->>>> @@ -1067,6 +1067,7 @@ static const struct coresight_ops_source etm4_source_ops = {
->>>>    };
->>>>
->>>>    static const struct coresight_ops etm4_cs_ops = {
->>>> +       .trace_id       = coresight_etm_get_trace_id,
->>>>           .source_ops     = &etm4_source_ops,
->>>>    };
->>>>
->>>> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
->>>> index b581a30a1cd9..aca25b5e3be2 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-stm.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-stm.c
->>>> @@ -281,12 +281,23 @@ static void stm_disable(struct coresight_device *csdev,
->>>>           }
->>>>    }
->>>>
->>>> +static int stm_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
->>>> +                       __maybe_unused struct coresight_device *sink)
->>>> +{
->>>> +       struct stm_drvdata *drvdata;
->>>> +
->>>> +       drvdata = dev_get_drvdata(csdev->dev.parent);
->>>> +
->>>> +       return drvdata->traceid;
->>>> +}
->>>> +
->>>>    static const struct coresight_ops_source stm_source_ops = {
->>>>           .enable         = stm_enable,
->>>>           .disable        = stm_disable,
->>>>    };
->>>>
->>>>    static const struct coresight_ops stm_cs_ops = {
->>>> +       .trace_id       = stm_trace_id,
->>>>           .source_ops     = &stm_source_ops,
->>>>    };
->>>>
->>>> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
->>>> index 573da8427428..94c2201fc8d3 100644
->>>> --- a/drivers/hwtracing/coresight/coresight-tpda.c
->>>> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
->>>> @@ -241,12 +241,23 @@ static void tpda_disable(struct coresight_device *csdev,
->>>>           dev_dbg(drvdata->dev, "TPDA inport %d disabled\n", in->dest_port);
->>>>    }
->>>>
->>>> +static int tpda_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
->>>> +                        __maybe_unused struct coresight_device *sink)
->>>> +{
->>>> +       struct tpda_drvdata *drvdata;
->>>> +
->>>> +       drvdata = dev_get_drvdata(csdev->dev.parent);
->>>> +
->>>> +       return drvdata->atid;
->>>> +}
->>>> +
->>>>    static const struct coresight_ops_link tpda_link_ops = {
->>>>           .enable         = tpda_enable,
->>>>           .disable        = tpda_disable,
->>>>    };
->>>>
->>>>    static const struct coresight_ops tpda_cs_ops = {
->>>> +       .trace_id       = tpda_trace_id,
->>>>           .link_ops       = &tpda_link_ops,
->>>>    };
->>>>
->>>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
->>>> index c7cd5886c908..ce9a5e71b261 100644
->>>> --- a/include/linux/coresight.h
->>>> +++ b/include/linux/coresight.h
->>>> @@ -335,6 +335,7 @@ enum cs_mode {
->>>>           CS_MODE_PERF,
->>>>    };
->>>>
->>>> +#define coresight_ops(csdev)   csdev->ops
->>>>    #define source_ops(csdev)      csdev->ops->source_ops
->>>>    #define sink_ops(csdev)                csdev->ops->sink_ops
->>>>    #define link_ops(csdev)                csdev->ops->link_ops
->>>> @@ -421,6 +422,8 @@ struct coresight_ops_panic {
->>>>    };
->>>>
->>>>    struct coresight_ops {
->>>> +       int (*trace_id)(struct coresight_device *csdev, enum cs_mode mode,
->>>> +                       struct coresight_device *sink);
->>>>           const struct coresight_ops_sink *sink_ops;
->>>>           const struct coresight_ops_link *link_ops;
->>>>           const struct coresight_ops_source *source_ops;
->>>> @@ -709,4 +712,6 @@ int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
->>>>
->>>>    void coresight_remove_driver(struct amba_driver *amba_drv,
->>>>                                struct platform_driver *pdev_drv);
->>>> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
->>>> +                              struct coresight_device *sink);
->>>>    #endif         /* _LINUX_COREISGHT_H */
->>>> --
->>>> 2.34.1
->>>>
->>>
->>>
->>
-> 
-> 
-
+Will do. Thanks for the reviews.
+Tamir
 
