@@ -1,125 +1,101 @@
-Return-Path: <linux-kernel+bounces-547418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC55A506F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:52:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64BF6A506F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:52:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DAF1173A1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:52:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8081891F82
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:52:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F545250BFC;
-	Wed,  5 Mar 2025 17:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4964F2517B3;
+	Wed,  5 Mar 2025 17:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="KpRJ85NW"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="STRmevfN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB13624FBE8;
-	Wed,  5 Mar 2025 17:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E38250BFB;
+	Wed,  5 Mar 2025 17:52:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741197116; cv=none; b=LKy7rzb6R8M7yNUD/OvBzEhzkeBiingix2QTZkkhQ4V1EENDjDKCp7z08aYtPJwMdN/qHqkGfuM/uhq3TKHjKB1FZ1iXsd2di8Fw8qOsX/rJEeW2xusmzJyc3nJE6WeiMo/cCihU81cCPA1B3Vy3/BiTK4qNvNFpcAjqsw2upkU=
+	t=1741197126; cv=none; b=VL+rnsAX540Zzp7+yYCufBpDa/K3j49gnkZqnMCf/8V5SRByqtoVHLIM7Nq6QMtyeCXMCDVtGNNoXbHTR9ZttlA6BPlvh0Wa1RnM4VmQnfhUj5dpI17aXKRr5t491gx3vwg9DYSLwKFUYoqPASWcEzXoZgECPkU2OYSGxV9P73U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741197116; c=relaxed/simple;
-	bh=KGHc3nvmYgVzQbmJ2PrgAgs03W9zzriGyZFlHGeWr6M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=saUKOibqAetUs1yBnJDBco12p7sA8P1aN3G+J8lTxWbgteu+IIdzu5WPbZf72VY/5sIrgRdaogn0az8BdtOWXsk/kUtFkVzWneP8ObYAUFxca7PXVpjRLyxFhDxSBLm/n/SIJEzJmk/I+XhAWYO4IM4Slc6bKmpB87st+k6viQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=KpRJ85NW; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=n3fedP2j29dzJv3iQBEaY09Mv/bRRJcSGOL0UIdLpZg=; b=KpRJ85NWygyAHN8HbcxaakUNFO
-	ihqAWFrDoZvZSe3SuhLCxT6YmmPsamgr+rOxHYubtTj4ZNO44WafHpBCOaVzOF4DDJnnB73QCFQIX
-	GwjN8YdXhA67meKqscS22p4I+iMizwIpETGqUuvZMmLVCXnMi5R2sNgtxkRJW5jWRU4LlLa49fIAG
-	3TrXWVo3v26EVFt1pW28cHu8r0DiP1SNirY4lnvF6sgk5ynJ3TYZoIpF3fNnuWHrgIheZrZ/MgBas
-	8ovbdMmbCBml1e8DNHxKaaTUr268Ejk/scgoABYiTiL+eTp8KtZq7w0J5EOad+NpLyAW9WeSacMJx
-	nq6ghPaQ==;
-Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1tpsuF-0004MI-U0; Wed, 05 Mar 2025 18:51:43 +0100
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>
-Cc: Chukun Pan <amadeus@jmu.edu.cn>, Yao Zi <ziyao@disroot.org>,
- Lee Jones <lee@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add rk3528 QoS register node
-Date: Wed, 05 Mar 2025 18:51:43 +0100
-Message-ID: <3543865.CbtlEUcBR6@diego>
-In-Reply-To: <20250305171724.GA2149138-robh@kernel.org>
-References:
- <20250305140009.2485859-1-amadeus@jmu.edu.cn>
- <52155b03-20f3-4e64-b636-70042db03ffa@kernel.org>
- <20250305171724.GA2149138-robh@kernel.org>
+	s=arc-20240116; t=1741197126; c=relaxed/simple;
+	bh=m+51MfRoAL5YdS0vGlWIL8DUV0nJk+PB4wItTsuzwCo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N+OacX93kv26kByeq0vgRCdkTqhnTv/47qLqB8eEJhZ3//MIYGjQryacMzqfKgJU9MdAmLM3DG3T512YMrxaYI1TBq6N57MveLIp1ngmfRLHh1QbTAM6C/e1+m5X6nRTO4O7t1STnQSAugibZFhSk6rs6h6kLtve06pPPJS2eXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=STRmevfN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08EABC4CEE0;
+	Wed,  5 Mar 2025 17:52:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741197126;
+	bh=m+51MfRoAL5YdS0vGlWIL8DUV0nJk+PB4wItTsuzwCo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=STRmevfNga2G8P5ufkAmYwxxw+WpeSEZPY3kLeBZkCLjtMeQutO0/nT8+33BI9w3j
+	 ukqGlkV+9iE/bD7u1+fnFWRgDWnYzhRX4+MZxCS5m5vlRVlUN7YysjduUqvZ8DwwvW
+	 cC5yn7nJdMS8ZwGXLeXTOb8bRyQ4lhBZG62DRYlWVD47fMSvl82kx5szV2pl+a0JEh
+	 tvad8OpUoJIfpl8kG4gE08meNH99RqZWSCWy2oKMtuOBfkywazqd7A35gLEcEDtTao
+	 A2qgYkB8H3q/7HYIt16fVMYnuz6OKEFDwbR5Yr0GbtEuGxk9NMwtjJAfmt1awbmUEs
+	 c6XVY+dVQ1Hxw==
+Date: Wed, 5 Mar 2025 09:52:03 -0800
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH 2/4] perf test: Skip perf probe tests when running as
+ non-root
+Message-ID: <Z8iPQ-IVxIcAZIUU@google.com>
+References: <20250301040252.1586750-1-namhyung@kernel.org>
+ <20250301040252.1586750-3-namhyung@kernel.org>
+ <Z8iNr0Lh61o_GZgg@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <Z8iNr0Lh61o_GZgg@x1>
 
-Am Mittwoch, 5. M=C3=A4rz 2025, 18:17:24 MEZ schrieb Rob Herring:
-> On Wed, Mar 05, 2025 at 04:41:23PM +0100, Krzysztof Kozlowski wrote:
-> > On 05/03/2025 15:00, Chukun Pan wrote:
-> > > Copy QoS nodes and add rk3528 compatible from bsp kernel,
-> >=20
-> > No, don't copy stuff from BSP kernel. It results in terrible DTS.
-> >=20
-> > > these can be used for power-domain.
-> > >=20
-> > > Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
-> > > ---
-> > >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 160 +++++++++++++++++++++=
-++
-> > >  1 file changed, 160 insertions(+)
-> > >=20
-> > > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/bo=
-ot/dts/rockchip/rk3528.dtsi
-> > > index 5b334690356a..794f35654975 100644
-> > > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
-> > > @@ -122,6 +122,166 @@ gic: interrupt-controller@fed01000 {
-> > >  			#interrupt-cells =3D <3>;
-> > >  		};
-> > > =20
-> > > +		qos_crypto_a: qos@ff200000 {
-> > > +			compatible =3D "rockchip,rk3528-qos", "syscon";
-> > > +			reg =3D <0x0 0xff200000 0x0 0x20>;
-> > > +		};
-> > > +
-> > > +		qos_crypto_p: qos@ff200080 {
-> > > +			compatible =3D "rockchip,rk3528-qos", "syscon";
-> > > +			reg =3D <0x0 0xff200080 0x0 0x20>;
-> > > +		};
-> >=20
-> >=20
-> > Did you just define syscon per few registers? Third case last weeks...
-> > so no, define what is your device here. 8 registers is not a device usu=
-ally.
->=20
-> Well, it is just a new compatible on top of existing 'qos' compatibles.
-> And in a quick scan I didn't see other things adjacent.=20
+Hi Arnaldo,
 
-Also, those "Quality-of-Service" register-sets are generally identically and
-configure the interconnect-voodoo for the individual devices they're
-attached to.
+On Wed, Mar 05, 2025 at 02:45:19PM -0300, Arnaldo Carvalho de Melo wrote:
+> On Fri, Feb 28, 2025 at 08:02:50PM -0800, Namhyung Kim wrote:
+> > perf trace requires root because it needs to use [ku]probes.
+> > Skip those test when it's not run as root.
+> > 
+> > Before:
+> >   $ perf test probe
+> >    47: Probe SDT events                                                : Ok
+> >   104: test perf probe of function from different CU                   : FAILED!
+> >   115: perftool-testsuite_probe                                        : FAILED!
+> >   117: Add vfs_getname probe to get syscall args filenames             : FAILED!
+> >   118: probe libc's inet_pton & backtrace it with ping                 : FAILED!
+> >   119: Use vfs_getname probe to get syscall args filenames             : FAILED!
+> 
+> Do you have ShellCheck installed?
+> 
+>   TEST    /tmp/build/perf-tools-next/tests/shell/probe_vfs_getname.sh.shellcheck_log
+>   TEST    /tmp/build/perf-tools-next/tests/shell/record+probe_libc_inet_pton.sh.shellcheck_log
+>   TEST    /tmp/build/perf-tools-next/tests/shell/record+script_probe_vfs_getname.sh.shellcheck_log
+> 
+> In tests/shell/probe_vfs_getname.sh line 11:
+> [ "$(id -u)" == 0 ] || exit 2
+>              ^-- SC3014 (warning): In POSIX sh, == in place of = is undefined.
+> 
+> For more information:
+>   https://www.shellcheck.net/wiki/SC3014 -- In POSIX sh, == in place of = is ...
 
-And while we are not "tuning" stuff at the moment, the register contents
-need to be saved and restored when the device's power-domain is
-turned off or on.
+Sorry for the noise, it's fixed in v2.
 
-
+Thanks,
+Namhyung
 
