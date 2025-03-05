@@ -1,157 +1,166 @@
-Return-Path: <linux-kernel+bounces-546434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AC1FA4FAA6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:52:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38329A4FAA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:52:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329E41892DED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:53:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68CDA170248
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:52:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44B3F2054FA;
-	Wed,  5 Mar 2025 09:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="cZFNLMc8"
-Received: from mx0b-001ae601.pphosted.com (mx0a-001ae601.pphosted.com [67.231.149.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 056992054E6;
-	Wed,  5 Mar 2025 09:52:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.149.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4BFD205507;
+	Wed,  5 Mar 2025 09:52:22 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 290ED2054E6;
+	Wed,  5 Mar 2025 09:52:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741168368; cv=none; b=eqQSQK5DjB0OhUMMgqMPkR2TYYyDHbJvWgSDIt6opPml92A2zakvrxEu+4jY0x0vdZVGFojXPAqn6IIlZufe9ux9C1jB4r3Zqg/QASB1AwyF7P/3pB9uBioppCzPUmyltVqBe83k+GObncUb9Dacd3I5ACOSt7XSFuZ6auVlrdk=
+	t=1741168342; cv=none; b=CmTlZfo0Ao+YCZfgmSLdtJk5/wRVE8VRF6bj4MVOpQQJyhNahnBTvIDE7w7gIY49KGQkwLyBwD5Zg9HWBIVoEPpNP5BTp805u0HHPO4U+Ong90IIwCtfSf+yBWuRLxBCLxOrXBH+JGO9bnaLIazzWVIVV1aWx/nZoEr312AqIsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741168368; c=relaxed/simple;
-	bh=f1mtud/yW9wQbOh1V2OywbZmiXFNmrbADFJ8CE9Hmn4=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NX5jamp57RffKIZ1krIxFS1gohy44ot8WuaK7a2ZYdSFpN4r0UniD2LutqhrdX4JrecNz+KwwoiDDjglnIeTTkuHepb7or+ruDp9AUfdibGh8CdM4HFrVGuVs/EOUf8O4o/tUKl9HjgpJnILMGshPRedhu6CUMrd/f7GUXYSHBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=cZFNLMc8; arc=none smtp.client-ip=67.231.149.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077473.ppops.net [127.0.0.1])
-	by mx0a-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5253vccD015864;
-	Wed, 5 Mar 2025 03:52:13 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=PODMain02222019; bh=l4O2tAc3nHmi1ElovV
-	b0CMq8ms8e2pPhJCOKTF4kppU=; b=cZFNLMc82MkmtpUQ3zZB+OajgUx/YdPxmb
-	W85CcuVF694+JOpfdLvW86m2xGGK6abacjO8HKAum1zLwmAoyNLdeuULervLnPAp
-	O1H9uD3qwfdekGR/LojP0ZCZPnTSUmK/Je0vPcQ/+AXwP1AIVIqE5wcD2TZiUDoL
-	B1aGwu/jML9hMbFd/ZFvr3k4RECdMcPnTOt/INjF7sRyMzwjfIuHMcc475fry/j/
-	T2ZI1uxOIlyOqn61dACKNWcOz5u3oWM/5G2g0HaaVrrjadsy3soOFArkw3c43vK7
-	PcUxmJkCL/aVkVIsG85H3vxC231dGd0TuUe8nxApk851F32tNVsg==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0a-001ae601.pphosted.com (PPS) with ESMTPS id 455fyym3uf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 03:52:13 -0600 (CST)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Wed, 5 Mar
- 2025 09:52:11 +0000
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.14 via Frontend Transport; Wed, 5 Mar 2025 09:52:11 +0000
-Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id EE9E0820248;
-	Wed,  5 Mar 2025 09:52:10 +0000 (UTC)
-Date: Wed, 5 Mar 2025 09:52:09 +0000
-From: Charles Keepax <ckeepax@opensource.cirrus.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Ernest Van Hoecke <ernestvanhoecke@gmail.com>,
-        Francesco Dolcini
-	<francesco@dolcini.it>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Saravana Kannan
-	<saravanak@google.com>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
-	<tiwai@suse.com>,
-        <patches@opensource.cirrus.com>,
-        Ernest Van Hoecke
-	<ernest.vanhoecke@toradex.com>,
-        <linux-sound@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        "Francesco
- Dolcini" <francesco.dolcini@toradex.com>
-Subject: Re: [PATCH v2 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC
- and EQ support
-Message-ID: <Z8geyb9ilUPmDUXk@opensource.cirrus.com>
-References: <20250224155500.52462-1-francesco@dolcini.it>
- <20250224155500.52462-4-francesco@dolcini.it>
- <20250225-delicate-tortoise-of-management-e43fa2@krzk-bin>
- <er4bcixggriqp6idl6xmr7bjetf5kkhadyeplkbyxvrffuiknc@ews752x4ugh7>
- <f690d858-a427-4db4-81ee-d5eb6223368c@kernel.org>
+	s=arc-20240116; t=1741168342; c=relaxed/simple;
+	bh=ceuSJAT3QrXodpoT1Pny1OHh3M18ay1mM3xm6QAoicE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DXeT5TnpJE4R3Qcxbyl3yK89Hl6uR2+f0wEH6qxOBcr8t5MEpJKaowFgkSuGVdZGQuFLrRounVwzbftJI7mdbf1vqg7kX81i2w/Y2Z5Rq8BiBmApm7NgKVkk1dV0OiEDkYf+Btdo1NAlFqSE334xaZ6DwJdgC0IupGnr4e0nLVI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF11AFEC;
+	Wed,  5 Mar 2025 01:52:32 -0800 (PST)
+Received: from [10.57.64.200] (unknown [10.57.64.200])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7B87A3F673;
+	Wed,  5 Mar 2025 01:52:17 -0800 (PST)
+Message-ID: <3bc7c5a5-8fe7-4c4b-a80e-23522922debb@arm.com>
+Date: Wed, 5 Mar 2025 09:52:15 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <f690d858-a427-4db4-81ee-d5eb6223368c@kernel.org>
-X-Proofpoint-GUID: Y0SbGx_LqAM5I0nHUEImwHbaW5SidVM0
-X-Proofpoint-ORIG-GUID: Y0SbGx_LqAM5I0nHUEImwHbaW5SidVM0
-X-Authority-Analysis: v=2.4 cv=DaftqutW c=1 sm=1 tr=0 ts=67c81ecd cx=c_pps a=uGhh+3tQvKmCLpEUO+DX4w==:117 a=uGhh+3tQvKmCLpEUO+DX4w==:17 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=fwLFyu2rHDo0oW4pvNQA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-Spam-Reason: safe
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] thermal: thermal-generic-adc: add temperature
+ sensor channel
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ Laxman Dewangan <ldewangan@nvidia.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20250303122151.91557-1-clamor95@gmail.com>
+ <20250303122151.91557-3-clamor95@gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <20250303122151.91557-3-clamor95@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 05, 2025 at 07:45:50AM +0100, Krzysztof Kozlowski wrote:
-> On 27/02/2025 16:34, Ernest Van Hoecke wrote:
-> > On Tue, Feb 25, 2025 at 09:41:17AM +0100, Krzysztof Kozlowski wrote:
-> >> On Mon, Feb 24, 2025 at 04:54:58PM +0100, Francesco Dolcini wrote:
-> >>> +  wlf,drc-cfg-regs:
-> >>> +    $ref: /schemas/types.yaml#/definitions/uint16-array
-> >>> +    description:
-> >>> +      Default register values for R40/41/42/43 (DRC).
-> >>> +      The list must be 4 times the length of wlf,drc-cfg-names.
-> >>> +      If absent, DRC is disabled.
-> >>> +
-> >>> +  wlf,retune-mobile-cfg-names:
-> >>> +    $ref: /schemas/types.yaml#/definitions/string-array
-> >>> +    description:
-> >>> +      List of strings for the available retune modes.
-> >>> +      If absent, retune is disabled.
-> >>
-> >> How is this retune supposed to be used? If by user-space I can easily
-> >> imagine that static DTS configuration won't be enough, because you need
-> >> to factor for example temperature or some other minor differences
-> >> between same boards.
-> > 
-> > This is intended for integrators to be able to specify some EQ options,
-> > mirroring the previous behaviour that was possible via platform data.
-> > 
-> > I expect most users to use the first five Retune Mobile registers and
-> > not care about the rest, which require a proprietary tool and are not
-> > well documented. The example in the binding shows how some simple
-> > static EQ can be configured. Anyone interested in the extended config
-> > can also use it (statically).
-> > 
-> > If someone requires dynamic behaviour at runtime that could be a
-> > separate patch that should not be hindered by this static config.
+
+
+On 3/3/25 12:21, Svyatoslav Ryhel wrote:
+> To avoid duplicating sensor functionality and conversion tables, this design
+> allows converting an ADC IIO channel's output directly into a temperature IIO
+> channel. This is particularly useful for devices where hwmon isn't suitable
+> or where temperature data must be accessible through IIO.
 > 
+> One such device is, for example, the MAX17040 fuel gauge.
 > 
-> No, if this is suitable for dynamic configuration then it's a proof it
-> is not suitable for DT.
+> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> ---
+>   drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++-
+>   1 file changed, 53 insertions(+), 1 deletion(-)
 > 
+> diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
+> index ee3d0aa31406..a8f3b965b39b 100644
+> --- a/drivers/thermal/thermal-generic-adc.c
+> +++ b/drivers/thermal/thermal-generic-adc.c
+> @@ -7,6 +7,7 @@
+>    * Author: Laxman Dewangan <ldewangan@nvidia.com>
+>    */
+>   #include <linux/iio/consumer.h>
+> +#include <linux/iio/iio.h>
+>   #include <linux/kernel.h>
+>   #include <linux/module.h>
+>   #include <linux/platform_device.h>
+> @@ -73,6 +74,57 @@ static const struct thermal_zone_device_ops gadc_thermal_ops = {
+>   	.get_temp = gadc_thermal_get_temp,
+>   };
+>   
+> +static const struct iio_chan_spec gadc_thermal_iio_channel[] = {
+> +	{
+> +		.type = IIO_TEMP,
+> +		.info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
 
-Whilst I can see the argument that this could be exposed as an
-ALSA control. I would also suggest that this is not adding some new
-feature, these values have been filled in from pdata for 16 years
-now. Changing the way such a vintage part works at this point feels
-more problematic to me than a slightly iffy DT property.
+I would add the IIO_CHAN_INFO_SCALE and say it's in milli-degrees.
 
-On the flip side of the argument, the parameters that are filled
-into this are almost certainly specific tuning for the hardware,
-so in many ways this is hardware description and there is a
-certain appeal to shipping the tuning with the hardware (ie. in
-DT).
+> +	}
+> +};
+> +
+> +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
+> +				 struct iio_chan_spec const *chan,
+> +				 int *temp, int *val2, long mask)
+> +{
+> +	struct gadc_thermal_info *gtinfo = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	if (mask != IIO_CHAN_INFO_PROCESSED)
+> +		return -EINVAL;
 
-Thanks,
-Charles
+Therefore, here it would need to handle such case as well, when
+a client is asking about scale.
+
+> +
+> +	ret = gadc_thermal_get_temp(gtinfo->tz_dev, temp);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	*temp /= 1000;
+
+IMO we shouldn't cut the precision if it's provided.
+The user of this would know what to do with the value (when
+the proper information about scale is also available).
+
+> +
+> +	return IIO_VAL_INT;
+> +}
+> +
+> +static const struct iio_info gadc_thermal_iio_info = {
+> +	.read_raw = gadc_thermal_read_raw,
+> +};
+> +
+> +static int gadc_iio_register(struct device *dev, struct gadc_thermal_info *gti)
+> +{
+> +	struct gadc_thermal_info *gtinfo;
+> +	struct iio_dev *indio_dev;
+> +
+> +	indio_dev = devm_iio_device_alloc(dev, sizeof(struct gadc_thermal_info));
+> +	if (!indio_dev)
+> +		return -ENOMEM;
+> +
+> +	gtinfo = iio_priv(indio_dev);
+> +	memcpy(gtinfo, gti, sizeof(struct gadc_thermal_info));
+> +
+> +	indio_dev->name = dev_name(dev);
+> +	indio_dev->info = &gadc_thermal_iio_info;
+> +	indio_dev->modes = INDIO_DIRECT_MODE;
+> +	indio_dev->channels = gadc_thermal_iio_channel;
+> +	indio_dev->num_channels = ARRAY_SIZE(gadc_thermal_iio_channel);
+> +
+> +	return devm_iio_device_register(dev, indio_dev);
+> +}
+> +
+>   static int gadc_thermal_read_linear_lookup_table(struct device *dev,
+>   						 struct gadc_thermal_info *gti)
+>   {
+> @@ -153,7 +205,7 @@ static int gadc_thermal_probe(struct platform_device *pdev)
+>   
+>   	devm_thermal_add_hwmon_sysfs(dev, gti->tz_dev);
+>   
+> -	return 0;
+> +	return gadc_iio_register(&pdev->dev, gti);
+>   }
+>   
+>   static const struct of_device_id of_adc_thermal_match[] = {
 
