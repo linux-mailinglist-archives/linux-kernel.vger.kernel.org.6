@@ -1,160 +1,146 @@
-Return-Path: <linux-kernel+bounces-547348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C0BA50621
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:14:22 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C189A5061C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:13:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 599D37A4365
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF7D3A2B57
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:13:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8F91A841A;
-	Wed,  5 Mar 2025 17:12:13 +0000 (UTC)
-Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55D21C84AC;
+	Wed,  5 Mar 2025 17:13:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JpgsoTK/"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C039189919;
-	Wed,  5 Mar 2025 17:12:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F80419CC31;
+	Wed,  5 Mar 2025 17:13:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194733; cv=none; b=bWfNV7xoBTJqivUlYNHFuSyiWxukPbvr0Wh8wqtvzD4IquxRh+rgQulxxrWWILWbS04naUPO1bxfrQaT7QcLfQvMcyumHujWI1Y4WBagxZjicOU3GWyvwdhq2bJcjQuKKLg12XowQHSkCeFYR7uuGXrnnc34i4uhcFQqThi9tfI=
+	t=1741194801; cv=none; b=iaOXIm400vIfXzqQ6GhwkR0XKf6q/yDJKJmk0Q0te6gC7smsUrwtJlhl+Duu7dbcgjM4GnXO0+JkPZ89ZIKb1LtdXSlKZUQXiAudAKffHCeFhIHIUgr9TKR251PTn8Qg5G9XTc+yGG509LiBM9p0Ihx8peGEOXVsssueNQJJYoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194733; c=relaxed/simple;
-	bh=ymdjfPVj3Gx6VMSsnlo3NNdGoCg5MQjlKLzXkCVz3hk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kdk9aL8kL8s/0u9dH4DyYmhW+veBVG7WyuwSK+CRKhfvUrMGwPd48IUQ+jN1DaY8RevJkYXolWa5+sm/29XYctPPXUoSCGZa3piDQtF7sj8OjmkjP2sfKDEExH/HbWjamk4m8D3k+VSTScbkUO7VIuk4wTZ0YTXGxBsO3TUqa+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c3b4c4b409so605688285a.3;
-        Wed, 05 Mar 2025 09:12:11 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741194729; x=1741799529;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xwvfJ3zSM1ne0HhPozptDXxYsyU2cKa7T+hm9UKjZ2o=;
-        b=D76UdXgt8XMbNoMg3jFnSy7hdhRpjgZ1GUQwQPdv3xmQzhBSF51yWui3tk5S3MbsWX
-         RtPOrZWHs28qm+f15U2wNZIbUFEBIVFwn8RYgcvzbZqv3CESBKNPO+FZ6E2mI5SX3i3X
-         dNnUc8NLRiYmyyxjvdW5gF9Syqsz2wgdzXa1VUmfNtQ7qoZ9WMGC7UM3VNW7LuPrB7WW
-         vCBaXmuAtYJ+2pljQVzhJ3BRpEvA9VcRcKdf8R0hJBpiKN62R+60uqf5x9UvJOLF+ajt
-         8ZmLI/Kxw1NcEiuRNn+CXcDx6cBKsNCdg3cHA+qSDVrG6OegLSv3Y6BTycoxTjOHXe5z
-         XU3A==
-X-Forwarded-Encrypted: i=1; AJvYcCUmuz5Lu/n44f6RkofkyNpbnyMKqg/pqyH6+cTRY/5DKbg4rtc3ALxWQoLcNql3vQUQLMhJXmsW2hHPfHw1@vger.kernel.org, AJvYcCVOYCkFDqjYfprgKifjGk6uJdKL6XpRjxwQdr1qnzrRpOTexhhT3UdBr6eKqz4iOOaKvk3NalkUdoFDTp7l4sFO0E8=@vger.kernel.org, AJvYcCWrtJjEv/sJeYjHSariV6Yho2lId96k/jF7ES5NGpzKCrRBXbU0zx5Ouyhrf7U4hJsRkcglMbfhT10=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3oYDiJlv+2KBVVMXOoUEpbPoffxZZp+X+SrKYfA8fienSrFvL
-	2DQ+C2+qvXKnTS7hm7yvu/xJUIuNteao4/dml0uRT5RbALx9qxw3GI3NhKeM
-X-Gm-Gg: ASbGncvLH8hTnVnPpsYKfcpoV5x5Emdq6xjqiBzcJv3oFNKEipZzMyMvVAh+K3NctMj
-	oBzM0qyRAJfYTYjT3zTf/0NB8Ek3mHWQ2Plt8OgdRbgIQ3LDvKSqOGOZ5azgqDMjGvd8Hhi2igU
-	Ug2HYVCKNwDkBCRhhXRLh9ekhlispFCjPrYo9SRdU4bRg7DBmgLmGtzKUUG+u76/jdQLhpKyafY
-	zMKnyE8FtmkDxG6HphK4hyMR3vtedu6pdIWgbIyig6CbEMccVrYfMP2iMTFyiwtX+beuAFbOp/E
-	yG60dgecal9a1m54YP+XIoTyd2aKrhIUezwmv3237s+8nq1Gr/S3Kk3QVtotCkPl9OWRd5ofIAz
-	L+GGyEsRmHds=
-X-Google-Smtp-Source: AGHT+IEBwVWbIXQ/xgbiO3Ai+oTFWUpJ8O6nu2UYjJyaymQtru8AIaeCIVhqBqus8TBFvqvJu41Scw==
-X-Received: by 2002:a05:620a:8806:b0:7c3:cd38:9be8 with SMTP id af79cd13be357-7c3d8e5f40bmr693787585a.25.1741194728905;
-        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
-Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9fe2bsm901948085a.88.2025.03.05.09.12.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
-Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-474faf23fbeso28943101cf.2;
-        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUVep2sMP7vEV6vFUgOi7MBDiu17DUn6bstsiIey9idXBuS9qQkp6VsQdXpP9J79zBeVxgk4izXJ9M=@vger.kernel.org, AJvYcCWK1Oiu2xho1W/NQiw9yKFjiNMZNLwEAKNl0dH/U5+9pGNqyoVDj6rBbSu/nMP3vXxNtq7srJvBa3YqZTuwu8xo8QE=@vger.kernel.org, AJvYcCX7/XuIXYlPCckEfQ8WJYIfPkFjZXwGb2DbtaB8Q3muJL4sOswVAll4xOCXqfiUAbxrhGvReHh7CbPYqScw@vger.kernel.org
-X-Received: by 2002:ac8:7f83:0:b0:472:1f07:7a9 with SMTP id
- d75a77b69052e-4750b496c02mr55280851cf.31.1741194728486; Wed, 05 Mar 2025
- 09:12:08 -0800 (PST)
+	s=arc-20240116; t=1741194801; c=relaxed/simple;
+	bh=/FRsVPcWYshzIJlWkEQR7nspZsvkMq5f/xjb/gPflc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M30LRASug2+3HX6OoWv6hohkHJgyfKaQ3EInay5JdiZOoCk1ctwzdeZ/ptrRmrIJspc1z9mPShuTN8ASqnZnM/1l24uO/Cx4Vue6cB1KEVHxCSAqYd9fGaafai+CbbY58o/hg7CUx0KSssW8g2LxLxg3/U3yuHv8pULYDK0EjwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JpgsoTK/; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741194800; x=1772730800;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=/FRsVPcWYshzIJlWkEQR7nspZsvkMq5f/xjb/gPflc8=;
+  b=JpgsoTK/SuppCgSMpkMlh1njY9stTjcwPgbJEMly/zzvKwVHNpIrjull
+   sq6dHJsNPxplg/2EoZgZe0KdGIWC5GQusLsCuEPv6kdA99hw3VX1WycKG
+   WzxSBhn8lhRCelLaRgTftzyZ4opdutXCrGls7zYq6nt9Q94sDZBudxVfC
+   03f9/oXUyWTsMzSUG19CnHFnYFrycd58AshMO+4ozAHPaUWah7nmCvJLO
+   ojzj9cMae9wzsAYowOPntReUTGbRJE9vhbC/simV6hceI1uvwPFZY6JkV
+   /4EY+cnTtOXwIbM8DGuaJX17JBlWNu5BaN4cgc1wIDY6rmYNiDX1ttTtv
+   Q==;
+X-CSE-ConnectionGUID: pXfVCoxMRfKJc/yYCCaOQg==
+X-CSE-MsgGUID: 7upAjiZ8RIS/PewUt4iwHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53582232"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="53582232"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:13:18 -0800
+X-CSE-ConnectionGUID: 17jggO0yS3SFRA7/BU4e/A==
+X-CSE-MsgGUID: owFNWFWSROeZGA6HfX2iVg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="119254412"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by fmviesa010.fm.intel.com with ESMTP; 05 Mar 2025 09:13:13 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpsIx-000LI6-1y;
+	Wed, 05 Mar 2025 17:13:11 +0000
+Date: Thu, 6 Mar 2025 01:13:05 +0800
+From: kernel test robot <lkp@intel.com>
+To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
+	andersson@kernel.org, konradybcio@kernel.org,
+	johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, quic_msavaliy@quicinc.com,
+	quic_anupkulk@quicinc.com,
+	Viken Dadhaniya <quic_vdadhani@quicinc.com>
+Subject: Re: [PATCH v3 6/9] soc: qcom: geni-se: Add support to load QUP SE
+ Firmware via Linux subsystem
+Message-ID: <202503060042.qiMGnPlW-lkp@intel.com>
+References: <20250303124349.3474185-7-quic_vdadhani@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250218114353.406684-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250218114353.406684-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <CAMuHMdVwVemQfrDFH48n9Csp6=KtFs5MpZ6e+wLWSnEuh2gdvg@mail.gmail.com> <CA+V-a8sj-jEu8y_qPv-KvVCu_YQCQ1MDK9zrRB93LjfhmB_qfQ@mail.gmail.com>
-In-Reply-To: <CA+V-a8sj-jEu8y_qPv-KvVCu_YQCQ1MDK9zrRB93LjfhmB_qfQ@mail.gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 5 Mar 2025 18:11:56 +0100
-X-Gmail-Original-Message-ID: <CAMuHMdVfnGhaJwfK93_StWsUDWDfwNp_9uwZB6VvKLMMNga9tg@mail.gmail.com>
-X-Gm-Features: AQ5f1Jp0YyLAxKgAuapwsJ9uQO_sQxnabNdrvwWGoyLAOSsLGNVRJc3_g6dsEy4
-Message-ID: <CAMuHMdVfnGhaJwfK93_StWsUDWDfwNp_9uwZB6VvKLMMNga9tg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] clk: renesas: rzv2h-cpg: Move PLL access macros to
- source file
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303124349.3474185-7-quic_vdadhani@quicinc.com>
 
-Hi Prabhakar,
+Hi Viken,
 
-On Wed, 5 Mar 2025 at 17:38, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> On Wed, Mar 5, 2025 at 4:19=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
-8k.org> wrote:
-> > On Tue, 18 Feb 2025 at 12:44, Prabhakar <prabhakar.csengg@gmail.com> wr=
-ote:
-> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > >
-> > > Move the `PLL_CLK_ACCESS()`, `PLL_CLK1_OFFSET()`, and `PLL_CLK2_OFFSE=
-T()`
-> > > macros from `rzv2h-cpg.h` to `rzv2h-cpg.c`, as they are not intended =
-for
-> > > use by SoC-specific CPG drivers.
-> > >
-> > > Additionally, update `PLL_CLK1_OFFSET()` and `PLL_CLK2_OFFSET()` to u=
-se
-> > > the `FIELD_GET()` macro for better readability and simplify the
-> > > `PLL_CLK_ACCESS()` macro.
-> > >
-> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
->
-> >
-> > Thanks for your patch!
-> >
-> > The changes look correct to me, so
-> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> > but I still have some comments...
-> >
-> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
-> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
-> > > @@ -56,6 +56,10 @@
-> > >
-> > >  #define CPG_CLKSTATUS0         (0x700)
-> > >
-> > > +#define PLL_CLK_ACCESS(n)      (!!((n) & BIT(31)))
-> >
-> > OK
-> >
-> > > +#define PLL_CLK1_OFFSET(n)     FIELD_GET(GENMASK(15, 0), (n))
-> > > +#define PLL_CLK2_OFFSET(n)     (PLL_CLK1_OFFSET(n) + (0x4))
-> >
-> > IMO, the original versions are more readable, as they clearly show
-> > the symmetry between encoding and decoding.
-> >
-> > Perhaps a good alternative would be a structure with bitfields and
-> > a PACK() macro, like is used for DDIV and SMUX?
-> >
-> Sure, I'll do that. Is it OK if I make that change on top of this
-> series or do you want me to rework and send a v2?
+kernel test robot noticed the following build warnings:
 
-I think there will be a v2 ;-)
+[auto build test WARNING on andi-shyti/i2c/i2c-host]
+[also build test WARNING on robh/for-next tty/tty-testing tty/tty-next tty/tty-linus linus/master v6.14-rc5 next-20250305]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Gr{oetje,eeting}s,
+url:    https://github.com/intel-lab-lkp/linux/commits/Viken-Dadhaniya/dt-bindings-qcom-geni-se-Add-firmware-name-property-for-firmware-loading/20250303-204936
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
+patch link:    https://lore.kernel.org/r/20250303124349.3474185-7-quic_vdadhani%40quicinc.com
+patch subject: [PATCH v3 6/9] soc: qcom: geni-se: Add support to load QUP SE Firmware via Linux subsystem
+config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250306/202503060042.qiMGnPlW-lkp@intel.com/config)
+compiler: m68k-linux-gcc (GCC) 14.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503060042.qiMGnPlW-lkp@intel.com/reproduce)
 
-                        Geert
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202503060042.qiMGnPlW-lkp@intel.com/
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+All warnings (new ones prefixed by >>):
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+   In file included from drivers/soc/qcom/qcom-geni-se.c:19:
+>> include/linux/soc/qcom/qup-fw-load.h:148:9: warning: "out_be32" redefined
+     148 | #define out_be32(a, v) writel_relaxed(v, a)
+         |         ^~~~~~~~
+   In file included from arch/m68k/include/asm/io_mm.h:25,
+                    from arch/m68k/include/asm/io.h:8,
+                    from include/linux/scatterlist.h:9,
+                    from include/linux/dma-mapping.h:8,
+                    from drivers/soc/qcom/qcom-geni-se.c:11:
+   arch/m68k/include/asm/raw_io.h:32:9: note: this is the location of the previous definition
+      32 | #define out_be32(addr,l) (void)((*(__force volatile u32 *) (unsigned long)(addr)) = (l))
+         |         ^~~~~~~~
+>> include/linux/soc/qcom/qup-fw-load.h:149:9: warning: "in_be32" redefined
+     149 | #define in_be32(a) readl_relaxed(a)
+         |         ^~~~~~~
+   arch/m68k/include/asm/raw_io.h:23:9: note: this is the location of the previous definition
+      23 | #define in_be32(addr) \
+         |         ^~~~~~~
+
+
+vim +/out_be32 +148 include/linux/soc/qcom/qup-fw-load.h
+
+   147	
+ > 148	#define out_be32(a, v) writel_relaxed(v, a)
+ > 149	#define in_be32(a) readl_relaxed(a)
+   150	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
