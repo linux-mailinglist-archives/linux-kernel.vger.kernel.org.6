@@ -1,63 +1,91 @@
-Return-Path: <linux-kernel+bounces-545867-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5480FA4F2D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:38:22 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3CFDA4F2D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:39:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EFAE3AA95C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:38:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12B0916716D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:39:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093C6210FB;
-	Wed,  5 Mar 2025 00:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3325D8F0;
+	Wed,  5 Mar 2025 00:39:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sygvpcht"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gp++zdng"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D501BC3C;
-	Wed,  5 Mar 2025 00:38:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28FBF1F957;
+	Wed,  5 Mar 2025 00:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741135095; cv=none; b=cwp31A5SUCVB+bcj5+K4Uwixmwz0zAkVey2NXjhlHjt196nAtQ6iELGH7omIEyha1+QCVvJ50FB+N5ww1M2YW9F9ThjOeYD+DpNQjJOyLcv/x0cHA5DWGpTCqhfIUD4NCWp7On42FbAJb9cYhCEf++g3LfIm6BjBhEK3ANWUdxk=
+	t=1741135148; cv=none; b=BfCXbI1ds4bTIlJtdVxG/Nb+uyIGt4YLyw+Wzax/m54+btDYszZBs50aq0aaZbydQZ4nd8jvTGpVH47m942hc8lK1Bam8iLD7gR86Uwq912OEHZGqMgwIPvzmfQ4ydWRed/ZGNTaw+P0vlwxku9pFEqSyZ84us3xpVQ9mD24CbM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741135095; c=relaxed/simple;
-	bh=pHEcWCG/8MyiAl1bVQnLutpSDPdKJFxtF27iTUsZguI=;
+	s=arc-20240116; t=1741135148; c=relaxed/simple;
+	bh=GffaeRHQ+IZsy69KXO82DY5gWnWpz0RqxgHkgUms0Rg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Vf/9EI5R0dKT5XXosjQzwn8jhdC72M/UiMgKUQ6iI93hPSZb8ggcp0IVl0xjYw7gM2vug1Sc/cT9D/ATPqzxaCZ/H9QLotRdoM6ah1uYHOxIB5vAt4QSXazGNGCcURRZaYO+AzoH5VBSpzlXnQmx818D9bFhvosabINuXt0lQ1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sygvpcht; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57C9FC4CEE5;
-	Wed,  5 Mar 2025 00:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741135094;
-	bh=pHEcWCG/8MyiAl1bVQnLutpSDPdKJFxtF27iTUsZguI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=sygvpchtb82JtF/P1QkuJ6+GK6LhxLJB/tpVdL323+X6MyNJ9J4QuxbqqnQJYzEH2
-	 xx8NEewsgfZ9RLnc3Bu2/JUQ17vRSzoAJfL+Y2TM7937WXlCcBW/rcF31Hxy8OOz2j
-	 53jaLPN0JCFm0Az5WrYah0RpFhUbhtx8QGyOvVCnc322K8FjPvbdHj5ytArwgsUxN/
-	 ZMF4JbDIS6PLS6DiDWsk9BhlLSJKJXQV8IwKDi072VoJRRNtkxKKfS8vdcrl6d4RBr
-	 xy/alpB8n6ilcLBfP0rzhmvXyoOtopnpytffeSVANYBZxQ4ib5g8VSyl7x+T2KUQra
-	 A8qeD6PRvWDxA==
-Date: Wed, 5 Mar 2025 00:38:08 +0000
-From: Will Deacon <will@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
-	oliver.upton@linux.dev, snehalreddy@google.com,
-	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com,
-	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com
-Subject: Re: [PATCH v2 3/4] KVM: arm64: Map the hypervisor FF-A buffers on
- ffa init
-Message-ID: <20250305003808.GA31667@willie-the-truck>
-References: <20250227181750.3606372-1-sebastianene@google.com>
- <20250227181750.3606372-4-sebastianene@google.com>
- <20250303234259.GA30749@willie-the-truck>
- <Z8ZPBZF7J-qKdb_i@google.com>
- <20250304015633.GA30882@willie-the-truck>
- <Z8c6enoolJe7Zeqk@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BDlA5lU3an+RSyrVMAkIHfPXRHlRho55Fst+qyqGdujVCab+e6trwCt+nxuYQrJmY5U0wk3/BeLxF9GpeZvPBwcxf148MbUptLTv5cvOvJQpcfosbwQpdcMDoCFTy0YuTYqCQo9RAGfdADWGS8lRWeA3pPPea0oIta3rTFPOqxY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gp++zdng; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22349dc31bcso110143595ad.3;
+        Tue, 04 Mar 2025 16:39:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741135145; x=1741739945; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=UprHo0WfBiVLbk323XZc3dMbOaIjPzElNygx0f4wgwc=;
+        b=gp++zdngeCzxnHRDJ8C9SHDV7cnxs2mfR1BJm3IgDEJnGEIsciw+Y5uOsnj2m0eZ4+
+         z3p7te8G1+hZ8LEX1fedbYygXZzpkI53Z4iPBvYUf8i2Z4yWNJ7tREj4RhaXTry5/xrJ
+         VJiNHX/zVy4F5HVaeaT/tFE0gg/iZA/S2CSOI0pS/Vst4RrfDnnCV02CRFQJlaberIBE
+         LJCmCdXLiB1vm8xFUa3O+a/rJuGtbfuqu7ThZz5DVsobx7dIyfRR6No9eNEdYY7xEx3V
+         03yV1r87v37dS5e/3ttW3pTYOPeltH0y9+B8vFow1x4ag3wtFqYHTWMWLnRtbCM9/Xzn
+         Q7/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741135145; x=1741739945;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UprHo0WfBiVLbk323XZc3dMbOaIjPzElNygx0f4wgwc=;
+        b=B6B4Y8hEzjcG0pcoTIybEwyRCnS5OmA3GAsnnEPo075a7d0NKxzH+6DU1aR8ghVlPq
+         4mrN8kGL8WRIVAZW4GqJfQ6PpX8kSDojloVzN/cRnoteQFnRSKrN3sAYaEv/uSxfhBtA
+         Z6zN/hdfYJu+5XUt5ShkIYGysOatRQ9zfWDfKkbHI0JZCPE5j7h7hlpKjq1/8/b5aMI7
+         mPhKFRLQo08pRXe16wDlphHrgfj5hWtGk/eYqdcn5CVzhGu3QGiJZ/DNNVAhIZPDLdeM
+         7JTwwKOOaD/cfE3sm0Ska7ubVsdb6OQ8MjMN7+toeNXLqlZ7MK2+T0g+ww7izuHEasJO
+         BI/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2y+rm8Ch6w7yEYw2wyh4KTk6uhgGGpVtrG8bZ3dlaC6mrjucHUdKstuNhXXNl7iyinOqb/zICwUctAXuA@vger.kernel.org, AJvYcCVqIHdhaW4PH8BIcRpa1NcgysuIyDqWJHv+bFB1NGOtXfdteeWaH+FA7KSHinkBG3OI6YF+uhCW9L4fWJWS@vger.kernel.org, AJvYcCX/5yNqL//nbAh3VuOok9h1H34x448nkUk+vjUOhbbc3dzS0g821ZWLfktmE3/JjGBKQx4=@vger.kernel.org, AJvYcCXxzXmCg3TuTZzWRgibG9hSOixpwiC2aqRlVNK0ZdlP5OdKGhSSt4ESpu1yQUDu0m7LRRkBUgD4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/rsVoSjWDDnN7Hhz7v7Xdk44bmz2ftOO5JIn1MEkIU5ZP76cL
+	TG6Nidjna7lIMC3u4SoY3U7+/9VsamGAFtYi7VgjpBQOUittSe8epIerVrm1
+X-Gm-Gg: ASbGncsEuIpsFYNJYyfE7ECkf/VgYRGzvUdImOFOYoXa0Fc71fi1AvIWzL1/ZJJpmDf
+	usLJuzf6hianBI2y3KQgZkP0E83IitOQdZUaaNi3kxYgLFKz558iRIY/J4Y9Pe+qMUv8yBW0nAI
+	dxJe7HB9nH/kIUhMvutDGRMxpCBFBdK0CTM65VQwtzeoT0OZhNQI/7ZLasD0kVO9kt5fbY7hWSy
+	B+evQ58UGUtYWveWJz9ZA1QvmfoZt2GyZsXPmqx8AbG9WOLcEagvj9m/7qiYZgjLrrbaEb0wtWC
+	v6h+6x6oM3cVml5BsiQ6gInoxkDL4jzA/UvigQwV7jt/o09Sja0Ua9hyv245pw/RlQ==
+X-Google-Smtp-Source: AGHT+IECiYjFVxf6raN09EdNcRoqe9t6RTi4k2HhtgndswCUxU53XDMOZQ0P2qwRcfTEsZetXhEh+g==
+X-Received: by 2002:a17:902:d50f:b0:223:5e76:637a with SMTP id d9443c01a7336-223f1c97445mr13662535ad.23.1741135145249;
+        Tue, 04 Mar 2025 16:39:05 -0800 (PST)
+Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:3::])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d28desm102409635ad.16.2025.03.04.16.39.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 16:39:04 -0800 (PST)
+Date: Tue, 4 Mar 2025 16:39:02 -0800
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: Jason Wang <jasowang@redhat.com>, davem@davemloft.net,
+	Stefan Hajnoczi <stefanha@redhat.com>,
+	"Michael S. Tsirkin" <mst@redhat.com>, linux-kernel@vger.kernel.org,
+	Jorgen Hansen <jhansen@vmware.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+	netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>
+Subject: Re: [PATCH net-next 0/3] vsock: support network namespace
+Message-ID: <Z8edJjqAqAaV3Vkt@devvm6277.cco0.facebook.com>
+References: <20200116172428.311437-1-sgarzare@redhat.com>
+ <20200427142518.uwssa6dtasrp3bfc@steredhat>
+ <224cdc10-1532-7ddc-f113-676d43d8f322@redhat.com>
+ <20200428160052.o3ihui4262xogyg4@steredhat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,102 +94,47 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8c6enoolJe7Zeqk@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20200428160052.o3ihui4262xogyg4@steredhat>
 
-On Tue, Mar 04, 2025 at 05:38:02PM +0000, Sebastian Ene wrote:
-> On Tue, Mar 04, 2025 at 01:56:35AM +0000, Will Deacon wrote:
-> > On Tue, Mar 04, 2025 at 12:53:25AM +0000, Sebastian Ene wrote:
-> > > On Mon, Mar 03, 2025 at 11:43:03PM +0000, Will Deacon wrote:
-> > > > On Thu, Feb 27, 2025 at 06:17:48PM +0000, Sebastian Ene wrote:
-> > > > > Map the hypervisor's buffers irrespective to the host and return
-> > > > > a linux error code from the FF-A error code on failure. Remove
-> > > > > the unmap ff-a buffers calls from the hypervisor as it will
-> > > > > never be called.
-> > > > > Prevent the host from using FF-A directly with Trustzone
-> > > > > if the hypervisor could not map its own buffers.
-> > > > > 
-> > > > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
-> > > > > ---
-> > > > >  arch/arm64/kvm/hyp/nvhe/ffa.c | 46 +++++++++++++----------------------
-> > > > >  1 file changed, 17 insertions(+), 29 deletions(-)
-> > > > 
-> > > > [...]
-> > > > 
-> > > > > @@ -861,6 +842,7 @@ int hyp_ffa_init(void *pages)
-> > > > >  {
-> > > > >  	struct arm_smccc_res res;
-> > > > >  	void *tx, *rx;
-> > > > > +	int ret;
-> > > > >  
-> > > > >  	if (kvm_host_psci_config.smccc_version < ARM_SMCCC_VERSION_1_2)
-> > > > >  		return 0;
-> > > > > @@ -911,5 +893,11 @@ int hyp_ffa_init(void *pages)
-> > > > >  		.lock	= __HYP_SPIN_LOCK_UNLOCKED,
-> > > > >  	};
-> > > > >  
-> > > > > +	/* Map our hypervisor buffers into the SPMD */
-> > > > > +	ret = ffa_map_hyp_buffers();
-> > > > > +	if (ret)
-> > > > > +		return ret;
-> > > > 
-> > > > Doesn't calling RXTX_MAP here undo the fix from c9c012625e12 ("KVM:
-> > > > arm64: Trap FFA_VERSION host call in pKVM") where we want to allow for
-> > > > the host to negotiate the version lazily?
-> > > 
-> > > We still have the same behaviour where we don't allow memory
-> > > sharing to happen until the version is negotiated but this
-> > > separates the hypervisor buffer mapping part from the host.
+On Tue, Apr 28, 2020 at 06:00:52PM +0200, Stefano Garzarella wrote:
+> On Tue, Apr 28, 2020 at 04:13:22PM +0800, Jason Wang wrote:
 > > 
-> > Sadly, the spec doesn't restrict this to the memory sharing calls:
 > > 
-> >   | [...] negotiation of the version must happen before an invocation of
-> >   | any other FF-A ABI
+> > As we've discussed, it should be a netdev probably in either guest or host
+> > side. And it would be much simpler if we want do implement namespace then.
+> > No new API is needed.
 > > 
 > 
-> We do that, as the hypervisor negotiates its own version in
-> hyp_ffa_init.
-
-hyp_ffa_init() only issues FFA_VERSION afaict, which is the one call
-that you're allowed to make during negotiation. So the existing code is
-fine.
-
-> I think the host shouldn't be allowed to overwrite the
-> hyp_ffa_version obtained from _init, this feels wrong as you
-> can have a driver that forcefully downgrades the hypervisor to an old
-> version.
-
-I think that's also fine. The FFA code in the hypervisor exists solely
-to proxy requests from the host; it's not used for anything else and so,
-from the host's persective, FFA should behave identically to the case in
-which the proxy is not present (e.g. if we were just using VHE). That
-means that we're doing the right thing by deferring to the host for
-version negotation.
-
-Are you saying there's a bug in the current code if the host negotiates
-the downgrade?
-
-> We need to do three things, Sudeep & Will please correct me if I am
-> wrong, but this is how I see it:
+> Thanks Jason!
 > 
-> - the hypervisor should act as a separate entity (it has a different ID and
-> in the current implementation we don't do a distinction between host/hyp) and
-> it should be able to lock its own version from init.
+> It would be cool, but I don't have much experience on netdev.
+> Do you see any particular obstacles?
+> 
+> I'll take a look to understand how to do it, surely in the guest would
+> be very useful to have the vsock device as a netdev and maybe also in the host.
+> 
 
-I strongly disagree with that. The hypervisor isn't using FFA for
-anything other than proxying the host and so we don't need to negotiate
-a separate version.
+WRT netdev, do we foresee big gains beyond just leveraging the netdev's
+namespace?
 
-What would we gain by doing this? Is there a bug with what we're doing
-at the moment?
+IIUC, the idea is that we could follow the tcp/ip model and introduce
+vsock-supported netdevs. This would allow us to have a netdev associated
+with the virtio-vsock device and create virtual netdev pairs (i.e.,
+veth) that can bridge namespaces. Then, allocate CIDs or configure port
+mappings for those namespaces?
 
-> - keep a separate version negotiated for the host
-> - trap FFA_ID_GET from the host and return ID=1 because
->   currently we forward the call to the TZ and it returns the same ID
->   as the (hypervisor == 0).
+I think it might be a lot of complexity to bring into the picture from
+netdev, and I'm not sure there is a big win since the vsock device could
+also have a vsock->net itself? I think the complexity will come from the
+address translation, which I don't think netdev buys us because there
+would still be all of the work work to support vsock in netfilter?
 
-Why is this beneficial? It just looks like complexity at EL2 for no gain
-to me, but maybe I'm missing something.
+Some other thoughts I had: netdev's flow control features would all have
+to be ignored or disabled somehow (I think dev_direct_xmit()?), because
+queueing introduces packet loss and the vsock protocol is unable to
+survive packet loss. Netfilter's ability to drop packets would have to
+be disabled too.
 
-Will
+Best,
+Bobby
 
