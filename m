@@ -1,118 +1,168 @@
-Return-Path: <linux-kernel+bounces-546197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00C94A4F79D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:05:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F34CA4F79F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:05:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22521188CD47
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:05:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45338188CDB1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:05:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08D691EA7EF;
-	Wed,  5 Mar 2025 07:05:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E5A91624F4;
+	Wed,  5 Mar 2025 07:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pj/yz0O7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0NcL3xhQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AH4AJ9uZ";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="0NcL3xhQ";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="AH4AJ9uZ"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2B0156F44;
-	Wed,  5 Mar 2025 07:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751491E5B98
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:05:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741158307; cv=none; b=TEnNTeTpDzrs6NY7668RqV8iAasobPu05S36s5s2Etzhz4Uj4A66ZB1edN2Vk6JooLRY9o4BpziwdxS33s8MGCHipWw/oJeP+8UIAmAP37JSb/6uxyzljietpmlYxOjRbSdy0kO652gMuzjjvQPvHi4cZZnDQ92Zz1WYg+1Q50U=
+	t=1741158329; cv=none; b=BycRVL3oPzVWk613vaM3/hSl94felg37nddsUM2zC/ne0myWymXTgf5q3aWxanaS3tCIK2x+HLU/fFglh/lPBgNmEQctXue6MjmyGysG7/zyvoj0eMLWsQe6KFLRtbKUohWFRqvTU3QA9dYHHrZbDdilPjioStjYYfLXjE4i/Ck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741158307; c=relaxed/simple;
-	bh=UzdLNCI0bfSar6q7q7rZ73KBcX1BCzYbwcMYrNzDXQs=;
+	s=arc-20240116; t=1741158329; c=relaxed/simple;
+	bh=pBgn2Vvl8TrcsMCBj8xs+jDOIWgUFWCGYIOsPPi46X0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cBLRaUoi705TJxZQ+EWGVKQKgER2vexS56asqbS7h+gJh2lnFsf3Nbj/g7pBmqmCHVisHdw1Q+Nky0/Oj/Od7K6cuGTeeeq8H+LipyEYpbb08HN4GAmG4ysdBpjieb2Aoves1QLka4UjvQ0oBlx8QsavXAgoGw+nGjl+CkD+3/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pj/yz0O7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B58AC4CEE2;
-	Wed,  5 Mar 2025 07:05:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741158305;
-	bh=UzdLNCI0bfSar6q7q7rZ73KBcX1BCzYbwcMYrNzDXQs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pj/yz0O7pjEBKga/lkQ2UIlP5JHjwdc95mwGGdwFtSrK2EF3Sw5hVWJQZcDgdxMch
-	 zuyubpPULuh80KoCz19ZE0hlZJ9I+2L61+WT2wH98AqF/1Cc3f9NnkbXUlLO+bKPQe
-	 3ZSGMPGGW8Adzo/1FNjDXzE+Z612U5iacNThZ0KoIcSXPFbnAiR2QE/y79RMvGNlyy
-	 USKcSDi7NdhVkos0GFyQ9ffkAmo/X8aRZPE9vIZgboDD//IIyliPAyxgTyZxdV/los
-	 SYZMXwdKK4/RjMZZc1DoLMBZQ7NYFgK/JZe2xQCtq6xrRnY9tqLrBRWWu1gAwWFbjZ
-	 RKwdxU+NI5YfQ==
-Date: Wed, 5 Mar 2025 08:05:02 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sen Chu <sen.chu@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
-	Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, kernel@collabora.com, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 01/20] ASoC: dt-bindings: Add document for
- mt6359-accdet
-Message-ID: <20250305-stylish-grumpy-chital-ea6e4c@krzk-bin>
-References: <20250304-mt6359-accdet-dts-v3-0-5b0eafc29f5b@collabora.com>
- <20250304-mt6359-accdet-dts-v3-1-5b0eafc29f5b@collabora.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=m9mHAQY4OYan9HvTmP+pkCsmMWMg5hBd4NjkeP0ASF8Q2mn1fr36gAIRSd7BODfn+BNe70A/0djlLd1oTwwvsFfHvcyPxzMa+uFEd+IyCSoDvQJNki47ZvECLKgiJ1zQFSiH7LPcEVrA214e8OthllkE55MJAMT7Z/cp+LEtQg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0NcL3xhQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AH4AJ9uZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=0NcL3xhQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=AH4AJ9uZ; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id A101A1F745;
+	Wed,  5 Mar 2025 07:05:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741158326;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1eOblpaJ1zzQavk+ic7I8+tCeMixfJT4izG2BoZoACg=;
+	b=0NcL3xhQhOygjCZMygDTrkDPhYMh+HfAX1CbPgXRAZ/Eh+ubUIvlfcsrM83+EJ+i2bM20t
+	pf6e+Ad2LD5xDTlgcPNXfrR9Nj79tPm6jlbxdu9qHbjEMDar7KqqTPjwTo3duaJVoWYgYZ
+	2Eu6CmTxf9vvP5GnooYknYJeKzfVmSs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741158326;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1eOblpaJ1zzQavk+ic7I8+tCeMixfJT4izG2BoZoACg=;
+	b=AH4AJ9uZmW7NWPL9P9GVj3JW+9cxiC775sOy6WAs7vkCL4JcR63w5T4likU034qndJnn7W
+	CxPKaYjgKfHLi1Cw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741158326;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1eOblpaJ1zzQavk+ic7I8+tCeMixfJT4izG2BoZoACg=;
+	b=0NcL3xhQhOygjCZMygDTrkDPhYMh+HfAX1CbPgXRAZ/Eh+ubUIvlfcsrM83+EJ+i2bM20t
+	pf6e+Ad2LD5xDTlgcPNXfrR9Nj79tPm6jlbxdu9qHbjEMDar7KqqTPjwTo3duaJVoWYgYZ
+	2Eu6CmTxf9vvP5GnooYknYJeKzfVmSs=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741158326;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1eOblpaJ1zzQavk+ic7I8+tCeMixfJT4izG2BoZoACg=;
+	b=AH4AJ9uZmW7NWPL9P9GVj3JW+9cxiC775sOy6WAs7vkCL4JcR63w5T4likU034qndJnn7W
+	CxPKaYjgKfHLi1Cw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 728FC13939;
+	Wed,  5 Mar 2025 07:05:26 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zYY7G7b3x2c8QQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 05 Mar 2025 07:05:26 +0000
+Date: Wed, 5 Mar 2025 08:05:21 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Daniel Vacek <neelx@suse.com>
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs/defrag: implement compression levels
+Message-ID: <20250305070521.GZ5777@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20250304171403.571335-1-neelx@suse.com>
+ <bc3446ce-347f-41da-9255-233e2e08f91c@gmx.com>
+ <CAPjX3FcZ6TJZnHNf3sm00F49BVsDzQaZr5fJHMXRUXne3gLZ2w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250304-mt6359-accdet-dts-v3-1-5b0eafc29f5b@collabora.com>
+In-Reply-To: <CAPjX3FcZ6TJZnHNf3sm00F49BVsDzQaZr5fJHMXRUXne3gLZ2w@mail.gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmx.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gmx.com,fb.com,toxicpanda.com,suse.com,vger.kernel.org];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:replyto];
+	URIBL_BLOCKED(0.00)[suse.cz:mid,suse.cz:replyto,imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Mar 04, 2025 at 12:15:42PM -0300, N=C3=ADcolas F. R. A. Prado wrote:
-> Add dt-binding for the MT6359 ACCDET hardware block.
->=20
-> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
-ora.com>
-> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->  .../bindings/sound/mediatek,mt6359-accdet.yaml     | 42 ++++++++++++++++=
-++++++
->  1 file changed, 42 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/sound/mediatek,mt6359-accd=
-et.yaml b/Documentation/devicetree/bindings/sound/mediatek,mt6359-accdet.ya=
-ml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..1d27148ed7bffee3f73015c8a=
-f88bfffa8701843
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/sound/mediatek,mt6359-accdet.yaml
-> @@ -0,0 +1,42 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/sound/mediatek,mt6359-accdet.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MT6359 Accessory Detection
-> +
-> +maintainers:
-> +  - N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> +
-> +description:
-> +  The MT6359 Accessory Detection block is part of the MT6359 PMIC and al=
-lows
-> +  detecting audio jack insertion and removal, as well as identifying the=
- type of
-> +  events connected to the jack.
-> +
-> +properties:
-> +  compatible:
-> +    const: mediatek,mt6359-accdet
+On Wed, Mar 05, 2025 at 08:02:28AM +0100, Daniel Vacek wrote:
+> > > @@ -1376,10 +1377,19 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
+> > >               return -EINVAL;
+> > >
+> > >       if (do_compress) {
+> > > -             if (range->compress_type >= BTRFS_NR_COMPRESS_TYPES)
+> > > -                     return -EINVAL;
+> > > -             if (range->compress_type)
+> > > -                     compress_type = range->compress_type;
+> > > +             if (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL) {
+> > > +                     if (range->compress.type >= BTRFS_NR_COMPRESS_TYPES)
+> > > +                             return -EINVAL;
+> > > +                     if (range->compress.type) {
+> > > +                             compress_type = range->compress.type;
+> > > +                             compress_level= range->compress.level;
+> > > +                     }
+> >
+> > I am not familiar with the compress level, but
+> > btrfs_compress_set_level() does extra clamping, maybe we also want to do
+> > that too?
+> 
+> This is intentionally left to be limited later. There's no need to do
+> it at this point and the code is simpler. It's also compression
+> type/method agnostic.
 
-There are no resources here, so this should be folded into parent node.
-
-Best regards,
-Krzysztof
-
+This is input parameter validation so we should not postpone it until
+the whole process starts. The complexity can be wrapped in helpers, we
+already have that for various purposes like
+compression_decompress_bio().
 
