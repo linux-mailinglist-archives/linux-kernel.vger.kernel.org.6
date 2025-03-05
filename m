@@ -1,241 +1,204 @@
-Return-Path: <linux-kernel+bounces-547749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E476A50D0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:08:22 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 479BFA50D41
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:24:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD8E61890E7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:08:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6AAEB188A79A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:24:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F2B2517A5;
-	Wed,  5 Mar 2025 21:08:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EAFF1FDA62;
+	Wed,  5 Mar 2025 21:23:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="s5OpZnv9"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2044.outbound.protection.outlook.com [40.107.101.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ic4KHpXX"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 527D11EE7AD;
-	Wed,  5 Mar 2025 21:08:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.44
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741208895; cv=fail; b=EIZxtMzV+3Df52aDGt3uKy9EbPLvC5yIqtjlK//i+xadGcBBRnsR/Kw15NKQD840qzC7wD+frJ8TtkcHV/8HvdQYZ8J0SHUt2cmxBaRO5WKgQkjFRMit4sk8T5y3je1aDVmh8jiHqbbCFkG0C5p3jtylaXsuEjYyLcS/Gyt8RzU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741208895; c=relaxed/simple;
-	bh=xFeMDmyv14l+O15f0k62Q2e4W/ULVHijDj6cC5LX0Xk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HCfSm/Kc4VdYTMX0ro6n9zS7tnnIUqdrwv5c8bShMIxmmndCKHwZetYoRyzQnPeI1GamIqEoEE9YF+3pqMBG5tYVARBSMhh9vS5qhw961aGnT9W6YrWrPwrE/SYBXO4l3c44BSWTN6D+EU/iJ3VTF+uzPleyn0gu48zB8ZW+0QM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=s5OpZnv9; arc=fail smtp.client-ip=40.107.101.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vEdgB6azp5IZiWeGV46m61q77FcU1nmfCXJffjT+vYCBZjcVLwEqfrrDCkR7Zvn0BZ1FISO6PibM1Gs8NG/VaOTf2qOQadXbwNxt5t8j9EWbWEgaE3mMxq4QmAIf332kNW0GkjOqcdoq34usxVjX7KZrHWgW3ZWNarXNXahTysx2JqmNVpiHnk3ELsjntr/88oz012ybv4EXNEz1WpXo0yKjz5O0uh0LtO4QZQM1h/EKdnr8vvnzCFwJalmhSw3McQaFRqwDwCpczYNSerewZ4CMpgR+qZJ2WkZN3ggVGGnVPjPvy3hLb9Wsq3PEFWYlvg5HvVQtKRSc8jf9tC3VTA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=fFuSZXbmc8APE4wrOzdBdMzELWP5V2p3sNY3S4ztZHw=;
- b=Zduwb6qmhYq05vsrLVyaPvEIBHz+M7zp/PElAQIFyDS8DrO+E6KRXn54B4GDHd9YtaZtWZymzZFEVzcivWItBgRL3SAMiCCrKdPncTIIEuJpl0dI7kjdsQwpbpBuVNudRWqptZ/5IW8hTseeIWwTlmvC3gguCddwNyJPFNb6k8MVLviJ3K9rCEJefqdQOTklk3pjlYku2cL5camMGvqc7e1YpYjbw+s2X3Rsi+761fwZ0EfbwF+d42F7ZYyPdn2TZLEPlFImOaVBHX0qdLeWkcZnWbLF65hT6I8p/tPAjzeh9d/t+pYQOOQaLn/txn5+S6noRNHJmAKdaiiEidIzfA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=fFuSZXbmc8APE4wrOzdBdMzELWP5V2p3sNY3S4ztZHw=;
- b=s5OpZnv9q1EcJ7PVnXdRjnb7sA5AAwSFN9zRx7SBhen6I1m27fozblgUHuNo2Ikj75iFK+VHdDqr+aJ7HicCSqxbGSaeiYN9Nkg6LVAlNBKHL6q51ZOc1EDmd9w7WFbaigQcl2Jhk8x+DDXVmnQj9POinnxhiaY9CJiYclXhOnX8lLwbV8nS7/hOEO7BZ0Uhsy17RdU88S80j0nkpxHTGbmhlgXS7vGS/1MVPflsusBaQ5jDr7E3PKk/F5CILR8m4SW6Rav7NgooWL5VLVlNVTX2tmH2perjy/dPtIMstF6xt+i1PNM9IY6x1IJkLdEwhm8drI8xffQ22aKcmE6uXQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com (2603:10b6:8:252::5) by
- SA1PR12MB6971.namprd12.prod.outlook.com (2603:10b6:806:24e::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
- 2025 21:08:09 +0000
-Received: from DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a]) by DS7PR12MB9473.namprd12.prod.outlook.com
- ([fe80::5189:ecec:d84a:133a%5]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
- 21:08:09 +0000
-From: Zi Yan <ziy@nvidia.com>
-To: Hugh Dickins <hughd@google.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>,
- Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>,
- John Hubbard <jhubbard@nvidia.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, Kairui Song <kasong@tencent.com>,
- Liu Shixin <liushixin2@huawei.com>
-Subject: Re: [PATCH v9 2/8] mm/huge_memory: add two new (not yet used)
- functions for folio_split()
-Date: Wed, 05 Mar 2025 16:08:04 -0500
-X-Mailer: MailMate (2.0r6233)
-Message-ID: <43642DB0-17E5-4B3E-9095-665806FE38C5@nvidia.com>
-In-Reply-To: <238c28cb-ce1c-40f5-ec9e-82c5312f0947@google.com>
-References: <20250226210032.2044041-1-ziy@nvidia.com>
- <20250226210032.2044041-3-ziy@nvidia.com>
- <2fae27fe-6e2e-3587-4b68-072118d80cf8@google.com>
- <FB1376C8-E0AD-40CE-BDE8-AF9269EA68CC@nvidia.com>
- <238c28cb-ce1c-40f5-ec9e-82c5312f0947@google.com>
-Content-Type: text/plain
-X-ClientProxiedBy: PH7P221CA0016.NAMP221.PROD.OUTLOOK.COM
- (2603:10b6:510:32a::20) To DS7PR12MB9473.namprd12.prod.outlook.com
- (2603:10b6:8:252::5)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2ABC4A33
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:23:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741209836; cv=none; b=iZTZp7iTyDAU0KFLHZBuV726mITuUQ2jo/kdWN7cdgKnFYuACbHntEV2VqbP51kkHcvNdN+g1bU/9Pl3nyMTX1s1DpVG5rEjaM3YyHDWjkTxcR0oiNGLZW7aqQcJYExfh5Xbnzb+BXwVtERESMLYHtyih3kxKXT4OGLGPxaHvPQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741209836; c=relaxed/simple;
+	bh=8ySDjGy6ifVT9nBen+e+y8tngjg0FvnAc2do9GydDKU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Pt8Yi1MvHbw1veOb2TYer/4bHUhyUD6JhjzxB9vtlQWA8TWwXDW6zo8cha6hLBQo240n+3CtsnHg43R2tBi+K49MTuSKyp/5/bY3Rgsz3rDmK7FMVBqB/WIY561kV2cSa2LPW0IYe9fTP4BQuUoCni1m33cwnyR0ysQi4BCe+Fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ic4KHpXX; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abf42913e95so825002666b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 13:23:54 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741209833; x=1741814633; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=k8Dkf2Am7BkCc6xwiEJIkFESnAy6N6xXMin3A5PDXG4=;
+        b=Ic4KHpXX6A+W7fmcFBhAKv15IfDjhrWdM/VvJS5xcMYx+41cEppoZzzk7edIftZD+N
+         i+zmJGTT7/FT3ChyjsZy1iyfc9/sKhlUZGtJZ2Q6v1VE0ufrJwp+wO0kcUPD+XlB8D65
+         T6eXuj4wrnghW3PB3nbppfhw2aGd6rxBp+CUhsdBhHR1vjq4lKE7OAjg1F4xuFsffjul
+         Jncb59WmAhW1k5dZmV2ZGGIIxMhIBhEP+fMuVpq0dIT41cd0k1js5eQSiHHyBH+20mAa
+         650I5dVsiu9cZ0vIau0wfax7Zeh5+Ykh0iMK97z0b1zBUw9GdId9ESNHko7SSb/yNs7j
+         kwcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741209833; x=1741814633;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=k8Dkf2Am7BkCc6xwiEJIkFESnAy6N6xXMin3A5PDXG4=;
+        b=R0/yLC+gm2n20fm6V9Fd/7Zo8UWS2tvEDbmlj+SyMURKKxKPgIKzGRbVH7x3XsPrwv
+         bvMZtC+xTLMB8z8INXlyce4R+5heC+r7ZB9po/B+ZvlSDYYkGR9VHJSaDq88rpNVcifH
+         yjt/vn92iQBCiwJXpXPjtrba8ASYHO1d+sJWpPWUPgPi3XUm9B1m34t8BNGN4xhhV74G
+         aAoB8QemcPOzQwjsJkx6d50nsATnMlhIEd17oPbWk/25hBqdapzexJrpPKw93OLJM218
+         5UPwPkgHSAtLR5QJUCgHtj5WOZuepNTUCl/XQgio2h1Gezl7HZZyd083t3kYi6ZUO+tN
+         LN6g==
+X-Forwarded-Encrypted: i=1; AJvYcCV4rXE18UzTQ3xoSM1IQ+WqyHTUldD6r3bMFtRcxEnMBa9ZLza0brof4PWgnJjNMcz9qZDtMuIjixMCmXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7RUV8RqEcArQup/rfvulAysRmw2C3NkPxj8mGa77jQ4faBu76
+	GNvEUWBZEiqxbGV6LBkEKbXe5s051yWv100suyTfMSk66cVyV1R0
+X-Gm-Gg: ASbGncvQKNT9dJc5DIE8uPFQSveCDETwtAItF920dNNx7jNNvyuaoxNXs+/A/bLffun
+	wmmR1dh+/X6glQv/UWEYJ2OQ+xF1aGLVw1fBeMB1cHMsfzIOJbMnoNfi0bmjPsq0HW4wyGZnoz7
+	85Jg3wtiPGDsuyYi5/SOIFgPxunAGxuo/vculLCf9JukUh9sagLyI1OOjllXkNreg+6SacL9FoP
+	9eT3OacDGnzeUuyO2XZo9bFF0v4zfyWFlujBYeSngYZicyfJHDurggD8E9MgY16V2IvYesf/zU4
+	UuyqDgj0JQ0fklkn8aohH1SqZGvNfjnrQG6qLpD3UuwGCFZMrxk7TlgBXDRT
+X-Google-Smtp-Source: AGHT+IHCUgJSczMALJRUQsNQJij5yTp/ZhVwBJWdsbeRmE1+G/jwWDZcuvPQrej8azlFaVtQAjkeOQ==
+X-Received: by 2002:a17:907:c018:b0:abf:7964:f9e5 with SMTP id a640c23a62f3a-ac20e03b1d0mr507213766b.56.1741209832560;
+        Wed, 05 Mar 2025 13:23:52 -0800 (PST)
+Received: from localhost.localdomain ([196.235.231.34])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1ea7dd823sm404025866b.109.2025.03.05.13.23.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 13:23:52 -0800 (PST)
+From: Salah Triki <salah.triki@gmail.com>
+To: Felix Kuehling <Felix.Kuehling@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Salah Triki <salah.triki@gmail.com>
+Subject: [PATCH] drm: amdkfd: Replace (un)register_chrdev() by (unregister/alloc)_chrdev_region()
+Date: Wed,  5 Mar 2025 22:08:09 +0100
+Message-Id: <20250305210809.218138-1-salah.triki@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB9473:EE_|SA1PR12MB6971:EE_
-X-MS-Office365-Filtering-Correlation-Id: b8c08d10-85ca-49b4-fc0e-08dd5c29d4b4
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?QQ5TKV7cwWSC/R0rckTBReA2yy6eWH2iyRC28D0PadxdF23nH7kTlqOotfKq?=
- =?us-ascii?Q?Lqr248zHAW9/ugM7UskE7Jtbk9AyeAXHlekm2r08XPsDT7hKcrlMaxJWQg+9?=
- =?us-ascii?Q?pwEd0Qjch2diGZQwXY1oVNnQkwbCIj0JzkKhAFBJqbrUlXSpn02t9pbHoohh?=
- =?us-ascii?Q?6BRMm4V3CDULYzAiVm2vDkcC7YPXP2pENG241OVz90wJ0IjkItAPsNIbGwrM?=
- =?us-ascii?Q?5vLb/t0Rt732CUtIqIWmI/u7Bgc0JSiVf579wiSgQ9W++J/RYWfd1uKOE89g?=
- =?us-ascii?Q?DmY1SNo7WP1NaENJ+xA3X7B15ItWlf4MyGbGZJlfz4QDRJg9ZBTbizjjFFB4?=
- =?us-ascii?Q?DFUK32Gj1w0F5SXTgyulQDRUJ4xl3vZMYhMPm2dxNNfwm6FFb0Z4W+UIxogB?=
- =?us-ascii?Q?u0DT2bpgaKe0+etz2dxR1Lmh5fVI0JXJigoakLCLfwd2yUj5F52Toxg+mHno?=
- =?us-ascii?Q?PFOju9wgDVqIyuujBbU1jsm547yW22t4TECCVGPWbdmLy1+KRp9ZUV1QnOzt?=
- =?us-ascii?Q?FnS6FEPu7d4qIDJ59Q+OmAOTpkSEX/RzQeZwwLQiq1tZDPGKIPcJ9zAAMRW5?=
- =?us-ascii?Q?iKGaK2bir0xQp9ZzpZNcTZv6TZqHJukQ05/w+JlNcjxy5Yyy1ZYWxznHMgPb?=
- =?us-ascii?Q?9y4afh4JH1dY9XjDporfYLuBnz2D4FwpqBkKeZbT3w4VGBrw5uX9ZjSe9/rJ?=
- =?us-ascii?Q?mtRDSwqx98kSxFQbIlam1ywdS3DeDp0PncmeLOEy/R203IWC+1MaHA19vuSK?=
- =?us-ascii?Q?AtI+3CkQSXOLRAWab/n7JccEyTl7s4BvrdEcTMbWEiKCMu/w92PryoM0o0mz?=
- =?us-ascii?Q?Ri0sbza1Hkde9Ho2RS+7Tpja5WpEeuaXid4C5iAGog/mtxdrwrzedhbqV8Il?=
- =?us-ascii?Q?leB2kMtaFE7rHdS8QYQXOtcyXz+V7FdzPpjXZ7yrRWAydNw2/Tp5C3bumNHP?=
- =?us-ascii?Q?Mbs4L0ZEgF0LyqNh3FDSysX7EsI06fXmbVbcsbm/EJRMKnnxtSn68zG3fdpd?=
- =?us-ascii?Q?1LFiQX6ebbZoF/U+fI851uPWP5L/4Rc7PR0qHcuS12/pcT93+yJSEbd4p3w7?=
- =?us-ascii?Q?1mShUPBOSihpRJq/KxEjbrITPee5jbFDykm5xD9jDKLY5DRsxUmbE+OHpdZs?=
- =?us-ascii?Q?VFnlL7wNawP+qe/0e3V52x3Je0qBIEg/he5oBtAiC/zqIPTZjM17CUMJH3fy?=
- =?us-ascii?Q?96PqQaJJ92JusU0vpnOqgQeyMIEXgy3/e0LlogBcAbvP/AnKC/LYWAdkwFWk?=
- =?us-ascii?Q?d+77hg6urmfDz2zqUbqrY18tBz10jC8wWyUBO56pMTV93hiUHzjrGCbl6SZX?=
- =?us-ascii?Q?1KCng/bAD7trnW/Ism00OAZw4pFXpX1upjuPLYqX+S/go4UIZI7K94GWcKBI?=
- =?us-ascii?Q?+CwNWs7NSymlyp6XztczKAtJVhGF?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB9473.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?L4d3/7JUvGi8E1faxTAusLSUaMd7C3NiErtdK8GJL56Y7efQ+9YMr7kWzHvx?=
- =?us-ascii?Q?pgfrpFwYOVBQ6SJwu439sCbX/blLQp4flneRYzgzC8KlKDZfsMFWBAA4lZsZ?=
- =?us-ascii?Q?c2PqLSk6VJTv6VD5bIXQBOdHvccfVJhA1WXrGmrqeBDP5ns6FUZubgLSNYlM?=
- =?us-ascii?Q?BGas8DzGpROhzG48BHp2ij0zr4yXkVC5rUw6YyyQU/2WMH2xQfJIkPm2SRfQ?=
- =?us-ascii?Q?fO/c23QuEIoA2FyHdNTcG36l2AAkml2OnfOA0CUeTi+ipPwvq6ggc1+maoYd?=
- =?us-ascii?Q?HrFDRIPbTaThWP6iwn1Sd26Bz18xdfRSl/OAdPjVwCfNayW56z7RzH89eDGN?=
- =?us-ascii?Q?anrO14U7cfQPDUayxKH5yNxa6ykTxd+heNktLxi1U5Gmj5ImUhITnBYdGJCh?=
- =?us-ascii?Q?zaHdCGs9nLYRj3VZezR66mO3pzBV8ztSxeFDdWjNGHd7jUYXteZGVn4IYBk+?=
- =?us-ascii?Q?uxFS2t9ZQipRxp/b+5TTtJV6C+eMzl1BTIWGaEQPVqJrQ78HrynIVFl88f6+?=
- =?us-ascii?Q?MSa8ZKzm/bRkLRFCUEctQ1hqUSVOxLBBSnkuC75kpDm3GlGLd+Tw/A89NtLB?=
- =?us-ascii?Q?FL9RxVsOxpfL/qg3b7MQiB02qdtf7DCFlHSwY/uGdPJerWO7//gkemadQ8GQ?=
- =?us-ascii?Q?zIPZxXoQ9ha/S24vrt6jTVbVFfgRNYGTnMky/V7pN99FVefScq6QegB4AhuH?=
- =?us-ascii?Q?WImo2aZ/Nc1+xcyJ/iQGPhNj69JSG9Oz6aIf0a0sITxcY+vbZEMk0zIw4EC2?=
- =?us-ascii?Q?ydoEUMCIk43kRLrcj8+Ggt6gVXrWvL8ZGkEKnFhfWuHNnYyttAridXSJ8qZ2?=
- =?us-ascii?Q?PncriiMaMi4ROOJcKZaRkDLorjEAbp40Nbjq4EuoO6T0V02jyRwt3lUZGLDu?=
- =?us-ascii?Q?44qFwF+BYvDy0EDF3Kbqk7voZes+bmmyaga17PiGomtuKPThwybgbXggjDWL?=
- =?us-ascii?Q?DVnZwBw/om199iwv4V/0cbcQYdGBUbnGjf4YmsY/gapvPKh8iHJWnxCs09u0?=
- =?us-ascii?Q?lMDRidr4II4bUN2u/3BPTUrNb+t83IhHwKkqyigziVVUFFxai8mDoiLXKUWh?=
- =?us-ascii?Q?BzEItpmOhJwSwU7htypwaWf7LaTUF13vtvw+2t1LselDgi5n5GYuubSwapRd?=
- =?us-ascii?Q?EEyePJREzFdYRVsnA5PRCEPJymkbOmjcyZ7FqznX865R2iGIyupyA+vfwyo8?=
- =?us-ascii?Q?3uP6OtI884ahd3CWje+rm/31KaYUqa3olOkavxlvu6Zi2hpv+dwE+zYErC2K?=
- =?us-ascii?Q?AcEpFA4lkWeqH8gQl0MtONhnSEhRXz/ETzuhdwtiUDQ+Wc56d0bA3ObG63MX?=
- =?us-ascii?Q?woa3nB6ntf1K/XrNQlGheVw81kNC7AibR67jmMuW7Z7Rok3rd9ZFFVKSm0Bh?=
- =?us-ascii?Q?nSzOa8tkXs2gawHw17RNvPLVvJ+NuzkOfXY3MZQMoh0mE0Ej1NsdoBb7JuQm?=
- =?us-ascii?Q?snpcb78h7B59GyTiTNVP69z0qvbhrPZE7rjffyIQRXh6W01xmbLHUlhnRJow?=
- =?us-ascii?Q?lgL5Xu5eXH7fMf2v48JH+1n/mCvUGtEXE7N/2KQaL+yK1DiAecNQmxl/KLbJ?=
- =?us-ascii?Q?azrNya460xKNQ5iLJEs=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: b8c08d10-85ca-49b4-fc0e-08dd5c29d4b4
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB9473.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 21:08:08.9797
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: jhRtwYHhQuoynK+Frfu7QrXSG3g5gxcLpJ+/Jy0Ok42smtLm71DHE+c7WOfSmQ/8
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB6971
+Content-Transfer-Encoding: 8bit
 
-On 5 Mar 2025, at 15:50, Hugh Dickins wrote:
+Replace (un)register_chrdev() by (unregister/alloc)_chrdev_region() as
+they are deprecated since kernel 2.6. alloc_chrdev_region() generates a
+dev_t value, so replace the kfd_char_dev_major int variable by the
+kfd_char_dev_id dev_t variable and drop the MKDEV() call. Initialize a
+cdev structure and add it to the device driver model as register_chrdev()
+used to do and since alloc_chrdev_region() does not do it. Drop the
+iminor() call since alloc_chrdev_region() allocates only one minor number.
+On error and in the module exit function, remove the cdev structure from
+the device driver model as unregister_chrdev() used to do.
 
-> On Wed, 5 Mar 2025, Zi Yan wrote:
->> On 4 Mar 2025, at 6:49, Hugh Dickins wrote:
->>>
->>> I think (might be wrong, I'm in a rush) my mods are all to this
->>> "add two new (not yet used) functions for folio_split()" patch:
->>> please merge them in if you agree.
->>>
->>> 1. From source inspection, it looks like a folio_set_order() was missed.
->>
->> Actually no. folio_set_order(folio, new_order) is called multiple times
->> in the for loop above. It is duplicated but not missing.
->
-> I was about to disagree with you, when at last I saw that, yes,
-> it is doing that on "folio" at the time of setting up "new_folio".
->
-> That is confusing: in all other respects, that loop is reading folio
-> to set up new_folio.  Do you have a reason for doing it there?
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+---
+ drivers/gpu/drm/amd/amdkfd/kfd_chardev.c | 35 ++++++++++++++++--------
+ 1 file changed, 23 insertions(+), 12 deletions(-)
 
-No. I agree your fix is better. Just point out folio_set_order() should
-not trigger a bug.
+diff --git a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+index 065d87841459..55c74466d2c5 100644
+--- a/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
++++ b/drivers/gpu/drm/amd/amdkfd/kfd_chardev.c
+@@ -37,6 +37,8 @@
+ #include <linux/ptrace.h>
+ #include <linux/dma-buf.h>
+ #include <linux/processor.h>
++#include <linux/cdev.h>
++
+ #include "kfd_priv.h"
+ #include "kfd_device_queue_manager.h"
+ #include "kfd_svm.h"
+@@ -61,12 +63,14 @@ static const struct file_operations kfd_fops = {
+ 	.mmap = kfd_mmap,
+ };
+ 
+-static int kfd_char_dev_major = -1;
++static dev_t kfd_char_dev_id;
+ struct device *kfd_device;
+ static const struct class kfd_class = {
+ 	.name = kfd_dev_name,
+ };
+ 
++static struct cdev kfd_cdev;
++
+ static inline struct kfd_process_device *kfd_lock_pdd_by_id(struct kfd_process *p, __u32 gpu_id)
+ {
+ 	struct kfd_process_device *pdd;
+@@ -90,17 +94,24 @@ int kfd_chardev_init(void)
+ {
+ 	int err = 0;
+ 
+-	kfd_char_dev_major = register_chrdev(0, kfd_dev_name, &kfd_fops);
+-	err = kfd_char_dev_major;
++	err = alloc_chrdev_region(&kfd_char_dev_id, 0, 1, kfd_dev_name);
++
+ 	if (err < 0)
+-		goto err_register_chrdev;
++		goto err_alloc_chrdev_region;
++
++	cdev_init(&kfd_cdev, &kfd_fops);
++	kfd_cdev.owner = THIS_MODULE;
++
++	err = cdev_add(&kfd_cdev, kfd_char_dev_id, 1);
++	if (err)
++		goto err_cdev_add;
+ 
+ 	err = class_register(&kfd_class);
+ 	if (err)
+ 		goto err_class_create;
+ 
+ 	kfd_device = device_create(&kfd_class, NULL,
+-				   MKDEV(kfd_char_dev_major, 0),
++				   kfd_char_dev_id,
+ 				   NULL, kfd_dev_name);
+ 	err = PTR_ERR(kfd_device);
+ 	if (IS_ERR(kfd_device))
+@@ -111,16 +122,19 @@ int kfd_chardev_init(void)
+ err_device_create:
+ 	class_unregister(&kfd_class);
+ err_class_create:
+-	unregister_chrdev(kfd_char_dev_major, kfd_dev_name);
+-err_register_chrdev:
++	cdev_del(&kfd_cdev);
++err_cdev_add:
++	unregister_chrdev_region(kfd_char_dev_id, 1);
++err_alloc_chrdev_region:
+ 	return err;
+ }
+ 
+ void kfd_chardev_exit(void)
+ {
+-	device_destroy(&kfd_class, MKDEV(kfd_char_dev_major, 0));
++	device_destroy(&kfd_class, kfd_char_dev_id);
+ 	class_unregister(&kfd_class);
+-	unregister_chrdev(kfd_char_dev_major, kfd_dev_name);
++	cdev_del(&kfd_cdev);
++	unregister_chrdev_region(kfd_char_dev_id, 1);
+ 	kfd_device = NULL;
+ }
+ 
+@@ -130,9 +144,6 @@ static int kfd_open(struct inode *inode, struct file *filep)
+ 	struct kfd_process *process;
+ 	bool is_32bit_user_mode;
+ 
+-	if (iminor(inode) != 0)
+-		return -ENODEV;
+-
+ 	is_32bit_user_mode = in_compat_syscall();
+ 
+ 	if (is_32bit_user_mode) {
+-- 
+2.34.1
 
->
-> The transient "nested folio" situation is anomalous either way.
-> I'd certainly prefer it to be done at the point where you
-> ClearPageCompound when !new_order; but if you think there's an issue
-> with racing isolate_migratepages_block() or something like that, which
-> your current placement handles better, then please add a line of comment
-> both where you do it and where I expected to find it - thanks.
-
-Sure. I will use your patch unless I find some racing issue.
-
->
-> (Historically, there was quite a lot of difficulty in getting the order
-> of events in __split_huge_page_tail() to be safe: I wonder whether we
-> shall see a crop of new weird bugs from these changes. I note that your
-> loops advance forwards, whereas the old ones went backwards: but I don't
-> have anything to say you're wrong.  I think it's mainly a matter of how
-> the first tail or two gets handled: which might be why you want to
-> folio_set_order(folio, new_order) at the earliest opportunity.)
-
-I am worried about that too. In addition, in __split_huge_page_tail(),
-page refcount is restored right after new tail folio split is done,
-whereas I needed to delay them until all new after-split folios
-are done, since non-uniform split is iterative and only the after-split
-folios NOT containing the split_at page will be released. These
-folios are locked and frozen after __split_folio_to_order() like
-the original folio. Maybe because there are more such locked frozen
-folios than before?
-
-
->>
->>>
->>> 2. Why is swapcache only checked when folio_test_anon? I can see that
->>>    you've just copied that over from the old __split_huge_page(), but
->>>    it seems wrong to me here and there - I guess a relic from before
->>>    shmem could swap out a huge page.
->>
->> Yes, it is a relic, but it is still right before I change another relic
->> in __folio_split() or split_huge_page_to_list_to_order() from mainline,
->> if (!mapping) { ret = -EBUSY; goto out; }. It excludes the shmem in swap
->> cache case. I probably will leave it as is in my next folio_split() version
->> to avoid adding more potential bugs, but will come back later in another
->> patch.
->
-> I agree.  The "Truncated ?" check.  Good.  But I do prefer that you use
-> that part of my patch, referring to mapping and swap_cache instead of anon,
-> rather than rely on that accident of what's done at the higher level.
-
-Definitely.
-
-
-Best Regards,
-Yan, Zi
 
