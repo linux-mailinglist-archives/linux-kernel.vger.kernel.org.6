@@ -1,67 +1,68 @@
-Return-Path: <linux-kernel+bounces-546782-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 072B4A4FEB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:35:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E84A4FEAD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0C342188F93B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:35:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6E2EA188EA98
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:34:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEEF0245036;
-	Wed,  5 Mar 2025 12:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770ED2475CE;
+	Wed,  5 Mar 2025 12:34:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mt/LR+7K"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mzp9nCoQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C88244EAB;
-	Wed,  5 Mar 2025 12:34:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5C8B2459D7;
+	Wed,  5 Mar 2025 12:34:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178058; cv=none; b=jN4sRw3kOu4OpAheNIuXjBG2f4eBHo19D8Hp5C/KcYSN92l+sahMnRhJylU6zv0E5hqIl7kwovW0/Rkzoo+eKFaOSsrVrAVcm/CWg0QJJ6+w+qbUZONzYl4awfTzKD/Z+JG9039jNOTQn/euI+N3Fd0dHfnMg4L3riNOl0Dh7lQ=
+	t=1741178049; cv=none; b=GrK/4rr9gtPPXS1lOtar5XMk0lii+U8HOI7ukGsdBq6PxvdPBCGHA82pf7y0UJBNugFA+qvQFAU5naVPau/NyFtq8cq8GubFhmcZbERV2fCqthDDfg1qN++zyIQkd8S3KLvLIk9Gf/5wKqguS/H/O0/p6P2RIbanBqBfdgLl24Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178058; c=relaxed/simple;
-	bh=16uSByWLg025WnpH3q9e76OHGQdq4UuQLT0RSk+r/Jw=;
+	s=arc-20240116; t=1741178049; c=relaxed/simple;
+	bh=OcU4+ln57Mx3+12+GqCg48APIqwdDXzWbUa+3kLqSa4=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ul99ZH5rfAXaqqzkKtA2K40NgVz8co1ibSmH1xwGJQ62FzZEMkqMSdoCe8uqVr2pUQlA3Bp83DQywJVeVUWt19gFJg2LLs2XQk7sf5UDluBVVRkIyIn4C74rWju/VOQ47/e0kcR9Z7pXdCanOUWGKLHHAA96hIbcGCMhiGDOE28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mt/LR+7K; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D629C4CEE7;
-	Wed,  5 Mar 2025 12:34:13 +0000 (UTC)
+	 MIME-Version:Content-Type; b=m6HHN7Vnh4BK6Hf1oxRC082dr23jGh8SFdBIovqH8K48aHa4w91fofxE8RCqFDW0xW8SxdvGYPC+mw18yHBU0S73XE+8K/SdRA0rwS8qn1l79T7usObLmXSgGMd8MJKhS3PA1v2p/xz/iiVEfPlGawm6VukpiXV5sk1pvYUWlN8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mzp9nCoQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 744DCC4CEE2;
+	Wed,  5 Mar 2025 12:34:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741178056;
-	bh=16uSByWLg025WnpH3q9e76OHGQdq4UuQLT0RSk+r/Jw=;
+	s=k20201202; t=1741178049;
+	bh=OcU4+ln57Mx3+12+GqCg48APIqwdDXzWbUa+3kLqSa4=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Mt/LR+7KvlmKcLWsX3w9K1Yt1tDVvjNTkBldwk8//XjC4uMiFiyhJVAOuxDJ16TJ4
-	 W986iNTkUkyZld2DmjdTqrX8FpMiOd99/8h3Y41WOKX2LFMPYzuldykffDiJ2BlVUF
-	 uLxba1uuv+f0sH6yDwNFRvfwbLvzrSyugsyb5NqdYGedwhYHdafl/Us4WsFumfL8mu
-	 Ph7XUuetARr6366eqR1BNaVfhA7uMWYUJi0Ez3w5QP/4THlhzxnAEhTlZhtbpjTpxn
-	 3nFwkGPifyL6h7aaGIVispo9EWz2rCsRbodVGljVppxPP8xgU1GhAw+N7Q/e41YX4X
-	 iD3Zvhbh64sqQ==
+	b=Mzp9nCoQHpaIQCSSg9ZH6omx0gzE5YeGEDCdT7cJwgvP3vSoab53xqfkdkoU9E9Q/
+	 4lYlIupjCTRQW9P/jnJA4cuXBllqYJjyiihf8wC1dkPZfzcja4BdrVR9U0IzEEZhwH
+	 Ce2+oYxZfsbAbfgdqAXWC5byAbrySsVT+ynPAk8E5/S8gJaGPQJioHwTdtfBDWHa+L
+	 yfjrZL4jCCRavF7RrTUY/q0QIEU65T0Mj7QcDEHKrzguN/puQKKjAcSZC6IDhx+64S
+	 PKBJpGQ0/FdbSyaJaMRvqCqRpMwI0H+z2lzuzXp9UxQfiBzqNsTWsq+xq5yUP3X3CN
+	 WhXy5HVOrvJNQ==
 From: Andreas Hindborg <a.hindborg@kernel.org>
 To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Danilo Krummrich" <dakr@kernel.org>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 08/22] rust: pin-init: move `InPlaceInit` and impls of
- `InPlaceWrite` into the kernel crate
-In-Reply-To: <D88BIUUNXQK5.3BFLFUBWAS0H2@proton.me> (Benno Lossin's message of
-	"Wed, 05 Mar 2025 12:06:52 +0000")
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Danilo Krummrich" <dakr@kernel.org>,  "Masahiro Yamada"
+ <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
+  "Nicolas Schier" <nicolas@fjasle.eu>,  <linux-kernel@vger.kernel.org>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH 14/22] rust: add pin-init crate build infrastructure
+In-Reply-To: <D88BLHENDH8Y.HQUKEXN1XB7C@proton.me> (Benno Lossin's message of
+	"Wed, 05 Mar 2025 12:10:20 +0000")
 References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<iamkKusKoPQ37SKTEy2SbZjH0szdD4f3Zss6AcRF5jAkltpuR9blYqQ3Qc0Vd_gJBwPbefblnClu4okTA-TLLg==@protonmail.internalid>
-	<20250304225245.2033120-9-benno.lossin@proton.me>
-	<87frjrene8.fsf@kernel.org>
-	<yOvQB5qHfHQi6IYDiDOUtboOxQ-0xzUQZNt63_wDaqGcBbQeUy87JtAW-euoLQvXgZYu9JbaqpsDGyGaZXRJCw==@protonmail.internalid>
-	<D88BIUUNXQK5.3BFLFUBWAS0H2@proton.me>
+	<jpQp16UCJ00pInqOI-QFULU6-FKl2bBtAlmnxtXWLgXPVb7gy6d727nr7THeyks3ERF5Yqu3R6bikD0OK4mqXA==@protonmail.internalid>
+	<20250304225245.2033120-15-benno.lossin@proton.me>
+	<87h647d6xg.fsf@kernel.org>
+	<cdfBMmuIl8Wl-KpI-koNDQJOCGBr9z9dOi5fxQvFbgNWQHHw6JtMizaMMbMniNlE841-9b7TdLuZ9Xh_hFsf7w==@protonmail.internalid>
+	<D88BLHENDH8Y.HQUKEXN1XB7C@proton.me>
 User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 13:28:31 +0100
-Message-ID: <87r03bbr0w.fsf@kernel.org>
+Date: Wed, 05 Mar 2025 13:31:25 +0100
+Message-ID: <87ldtjbqw2.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,43 +73,81 @@ Content-Type: text/plain
 
 "Benno Lossin" <benno.lossin@proton.me> writes:
 
-> On Wed Mar 5, 2025 at 12:18 PM CET, Andreas Hindborg wrote:
+> On Wed Mar 5, 2025 at 12:59 PM CET, Andreas Hindborg wrote:
 >> "Benno Lossin" <benno.lossin@proton.me> writes:
 >>
->>> In order to make pin-init a standalone crate, move kernel-specific code
->>> directly into the kernel crate. This includes the `InPlaceInit<T>`
->>> trait, its implementations and the implementations of `InPlaceWrite` for
->>> `Arc` and `UniqueArc`. All of these use the kernel's error type which
->>> will become unavailable in pin-init.
+>>> From: Miguel Ojeda <ojeda@kernel.org>
 >>>
+>>> Add infrastructure for moving the initialization API to its own crate.
+>>> Covers all make targets such as `rust-analyzer` and `rustdoc`. The tests
+>>> of pin-init are not added to `rusttest`, as they are already tested in
+>>> the user-space repository [1].
+>>
+>> If it's not too much hassle, why not add them in the kernel as well? I
+>> would rather not have to go fetch the user space repo from github, in
+>> the event that I ever need to patch pin-init.
+>
+> I tried to add them, but encountered a lot of problems. Maybe the new
+> build system can help with that. But if you insist, I can try to get
+> them to work again in a different series now.
+>
+> The tests run every day in the GitHub CI and any changes that go through
+> the pin-init-next tree will also be tested there before I submit any
+> PRs.
+
+I _really_ think that the ability to run the tests should be present in
+the kernel repository. But I also do not want to block this series on it,
+if it is something that will be easier to achieve with the build system
+overhaul that is in the pipeline.
+
+>
+>>> Link: https://github.com/Rust-for-Linux/pin-init [1]
+>>> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+>>> Co-developed-by: Benno Lossin <benno.lossin@proton.me>
 >>> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 >>> ---
->>>  rust/kernel/alloc/kbox.rs |   3 +-
->>>  rust/kernel/init.rs       |  55 +++++++++++++++++
->>>  rust/kernel/prelude.rs    |   3 +-
->>>  rust/kernel/sync/arc.rs   |  65 +++++++++++++++++++-
->>>  rust/pin-init/src/lib.rs  | 125 ++------------------------------------
->>>  5 files changed, 127 insertions(+), 124 deletions(-)
+>>>  rust/Makefile                      | 75 +++++++++++++++++++++++-------
+>>>  rust/pin-init/internal/src/_lib.rs |  3 ++
+>>>  rust/pin-init/internal/src/lib.rs  |  4 ++
+>>>  rust/pin-init/src/_lib.rs          |  5 ++
+>>>  scripts/Makefile.build             |  2 +-
+>>>  scripts/generate_rust_analyzer.py  | 17 ++++++-
+>>>  6 files changed, 86 insertions(+), 20 deletions(-)
+>>>  create mode 100644 rust/pin-init/internal/src/_lib.rs
+>>>  create mode 100644 rust/pin-init/src/_lib.rs
 >>>
+>>> diff --git a/rust/Makefile b/rust/Makefile
+>>> index ea3849eb78f6..90310f0620eb 100644
+>>> --- a/rust/Makefile
+>>> +++ b/rust/Makefile
 >>
 >> [...]
 >>
->>> --- a/rust/pin-init/src/lib.rs
->>> +++ b/rust/pin-init/src/lib.rs
->>> @@ -10,7 +10,7 @@
->>>  //! To initialize a `struct` with an in-place constructor you will need two things:
->>>  //! - an in-place constructor,
->>>  //! - a memory location that can hold your `struct` (this can be the [stack], an [`Arc<T>`],
->>> -//!   [`UniqueArc<T>`], [`KBox<T>`] or any other smart pointer that implements [`InPlaceInit`]).
->>> +//!   [`KBox<T>`] or any other smart pointer that supports this library).
+>>> @@ -110,11 +113,24 @@ rustdoc-compiler_builtins: $(src)/compiler_builtins.rs rustdoc-core FORCE
+>>>  rustdoc-ffi: $(src)/ffi.rs rustdoc-core FORCE
+>>>  	+$(call if_changed,rustdoc)
+>>>
+>>> -rustdoc-kernel: private rustc_target_flags = --extern ffi \
+>>> +rustdoc-pin_init_internal: private rustdoc_host = yes
+>>> +rustdoc-pin_init_internal: private rustc_target_flags = --cfg kernel \
+>>> +    --extern proc_macro --crate-type proc-macro
+>>> +rustdoc-pin_init_internal: $(src)/pin-init/internal/src/_lib.rs FORCE
+>>> +	+$(call if_changed,rustdoc)
+>>> +
+>>> +rustdoc-pin_init: private rustdoc_host = yes
+>>> +rustdoc-pin_init: private rustc_target_flags = --extern pin_init_internal \
+>>> +    --extern macros --extern alloc --cfg kernel --cfg feature=\"alloc\"
+>>> +rustdoc-pin_init: $(src)/pin-init/src/_lib.rs rustdoc-pin_init_internal \
+>>> +    rustdoc-macros FORCE
+>>> +	+$(call if_changed,rustdoc)
 >>
->> Would you not want to remove references to `KBox` here as well? Even
->> though you don't have to move the impl, I don't imagine `KBox` exist in
->> user space?
+>> Is it possible to do some code sharing here, such that when we add a
+>> crate, it's just a matter of putting the path/name on a list somewhere?
 >
-> Yes, this is done in "rust: pin-init: fix documentation links".
+> Miguel informed me that this Makefile won't exist in the new build
+> system, so I'd rather not do that.
 
-Yea, maybe I should have read the entire thing before firing off emails.
+OK, cool.
 
 
 Best regards,
