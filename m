@@ -1,108 +1,91 @@
-Return-Path: <linux-kernel+bounces-546485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2870FA4FB32
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:07:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 795EDA4FB31
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:07:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A409165C48
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:07:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA850164F3B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:07:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910AB205E34;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6330B205E2E;
 	Wed,  5 Mar 2025 10:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="hJpocj7v";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u/NHKT/Z"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GpoRO1+Y"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4148F1F3D30;
-	Wed,  5 Mar 2025 10:06:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1AE186340
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:06:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741169213; cv=none; b=b+Z46M0y7ABTWQfbCXYgepex/lMonMvCwGse1QPmDHUqNzqsj/eESJbosZGVo3Y2qYGLNhdLki5SqXN/NEqS3jt3SVsXQPqSsKGhjhMLs+SfJHLcxSZyimdqiZOUfBOgMOqJVzSDMx1FUqL0h3o3zzOv5mzobCBB830n6BIgGnI=
+	t=1741169213; cv=none; b=YduXyVfzoJRe0x9FSRS3+ZPaeh8+su4J/lSDpDcmGSYu4LVV+Kbd9FMASPv7G50eh0u885ryYFggjll/47Q2w0C9KEwEaKUqd4GgQQWxMyUfd4wB6cTKo8AO8ta6ERoBBAPN4TkNfv0/OWU+iPCMlAM4C89ejDSSngY348v++Uw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741169213; c=relaxed/simple;
-	bh=POFkgzO8rm1oQNp6ytUtiiNRXbGm7AOdYqXhxPgh4sc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=R8olgLNdYNl3XCAPUdKGnx0EiDEIPYB9vMsqnrNQPQi4m937oyZFQ7Ft9bl2xI6Vo9VVUH6bYMpJ4BXOaBcdhqFgo+32glCdx2HGKwi3qWcCGFXHqm5PMq0qrByPiuJ9Tl6JcwMYpeCs28qxndG+K6vNlx4kGhOcdlq4Ksfn8Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=hJpocj7v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u/NHKT/Z; arc=none smtp.client-ip=202.12.124.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id C036025401EA;
-	Wed,  5 Mar 2025 05:06:48 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-04.internal (MEProxy); Wed, 05 Mar 2025 05:06:49 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm2; t=1741169208; x=
-	1741255608; bh=OV22lrFV3DQBTGcw06CXISDEH3SxqJT8NlQedF2+oH8=; b=h
-	Jpocj7vtNqNLdr/VV90HwI4omf9lvjbPmLOfpwnKOH6B7DiFJld7FF9oKKoHZTbN
-	l+ELUcNjW7/sa3MguXc5X2c6axxaNzrMAzSF5o9uP5haAgGogOvVHA8M9CLxcWoH
-	xIQSt0GkHsqaxorzOMT9UF3cIN2by8apiQd4df5JzJALX35BqlHw5CTDROBuHwrA
-	l3JW8pngLevn7peJbN/2cob+O4Jdfk8PQNzaH4550AvAiE0K6+P+cq/czxcgXeno
-	oFYBW4OXOln3ARE6Aw6zctlNOchroRZPJ9L/gq+LJzORNuq0PqbNg8FabrQhipxR
-	+0UBXkK3JQbq3/CjHT92w==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741169208; x=1741255608; bh=OV22lrFV3DQBTGcw06CXISDEH3SxqJT8NlQ
-	edF2+oH8=; b=u/NHKT/ZQpVgl5aBzzP59XVl/aCDb4nvJ2ZY5LWWM5PurauNq6/
-	W8Q91FenyD/jdrEEVIlO59jQG5OzxQ6fBt4kBfX9rYkggrEAFPcHs6cZrcd/R+Vy
-	wynEPhKFHqHtBn3e5cZwXvs68QC+l3K8BpacUCE3Y+JjsHK9rkAxZg3VaEwxyVoe
-	YJBBrdCgLrxBsg+IrdufdIPyE+UCZrmi9dYzrvSL8yd0Ud2sbxoSPVNv+5JoZQlv
-	cb1p/prCwrzwJAXESNJTtvT0g5Q6je/eBK4bPq0rHhQe9hu3SuqUUeYhYDLaUtIH
-	2/Dl/Q8rqBhG1/aqMI8lfltciwE3+kXzfaA==
-X-ME-Sender: <xms:NyLIZ-MYNr-jPlNECyHoRQo8x3eET31MTCVcp3Rnoky1eaWR5NZ7fg>
-    <xme:NyLIZ8-mnhcmeDFjLUUAi0Z4pIECapTlB-TrXy8ob69K4qxPPDl-UGtB3mJyJ7yaG
-    -Gp1zhI4uwsqUFZXII>
-X-ME-Received: <xmr:NyLIZ1RYn9jL2cyfIOWhBijdan2Z6qfoQXWZTpuZaopB8o5cedW7mJ1cuUDS>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdegheefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
-    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
-    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
-    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
-    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
-    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
-    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
-    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
-    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
-    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
-    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
-    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
-    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
-X-ME-Proxy: <xmx:OCLIZ-t_h-9lFtez33rBhZBpt-3v6dALYDF2d7_Mm2mxSQStfF_VIQ>
-    <xmx:OCLIZ2ddhqzYJbEY-MnrzkuBFVDrL0gqPjro7dOdCFxIkUAsNiWHZA>
-    <xmx:OCLIZy3r-hp_mMMb_0tAGapuBE-PDYZpWp3zLlhaRBsXQZ26wqAPDQ>
-    <xmx:OCLIZ68hOjID9-T7dJuLvtMLrY3Q_NZdNAHaBMdpLPtlsggfh8RPMQ>
-    <xmx:OCLIZ98PVQUB5BNVcHQeXGESQtEWdNuRxrhAlZyFDCv3qG5U9wEl9KON>
-Feedback-ID: i934648bf:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 5 Mar 2025 05:06:47 -0500 (EST)
-Date: Wed, 5 Mar 2025 11:06:45 +0100
-From: Sabrina Dubroca <sd@queasysnail.net>
-To: Antonio Quartulli <antonio@openvpn.net>
-Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Donald Hunter <donald.hunter@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
-Subject: Re: [PATCH v21 09/24] ovpn: implement packet processing
-Message-ID: <Z8giNYKBWzQEtZJu@hog>
-References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
- <20250304-b4-ovpn-tmp-v21-9-d3cbb74bb581@openvpn.net>
- <Z8dOOy9tSpJ1UCiR@hog>
- <8abd4290-cef5-4ea3-bdfc-b872c16efb8a@openvpn.net>
+	bh=DfA3zBuxNA+dq5Oyhc3DMrV3+lTOF6LiJ8VaD61ecCo=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3DpsXOEoD9wSaqSBXOho0vcll7KhMQwy2zoT4d1zZ7Ou7s4Te/qBnsCla6bpefuCaJh7QibiT7CFGc0eBcE6tPcFEpcnUdeW70Xsq75Wr2MH5+CHHbf021FVpn7b9Rc2hcv1JzAK9p8clEoItqrlFLmvaRSu/KOGqQBMEysaA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GpoRO1+Y; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30b9f7c4165so39688021fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 02:06:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741169210; x=1741774010; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Nz0m9XjljqPblAse0sZQMRClnBy6VQjPdVLGpt3wUIM=;
+        b=GpoRO1+YmpCZoXeDNOjucvh24qALqcxTLRL+Zo/KKoFiWNjfQ0k4EXsVdjE8rdv1mv
+         kDYW2DDai26AvzinTK95c1KNwsCzZ8vPI9/FDRLZGp7TNRkqXtEp7YktCfFP5eWw+raU
+         JOUzUb/GyYKS+MHosnEmnmtdr955o3YTS5vIgobWm0jIOePBwd+25N/Wan18OMr2AA6z
+         z/X5pwmyIH4NAnIdyN1qMTkKxD3mHM1cfF9DOXJrkDeRY/3kyV/9OwXmOJTRoWycB/aH
+         KJdLdwUN8+JIDBgi9Kn4+4Z2Ac3Vcb7mTp4cmcrVlqJbL5YyFA+SOP8hPQM3+nG+MGII
+         5FIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741169210; x=1741774010;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:date:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nz0m9XjljqPblAse0sZQMRClnBy6VQjPdVLGpt3wUIM=;
+        b=NzS7m6fBvEpxQuMeeuEgtLLe9aJlKk1boDqs0ORqG8hbe2dqvPPBXiSUu3SNVuJgc7
+         2lF8nuDaQrHkZgEN/AIWJ8ZIyymmayiQt/YJ0j+RJn8ve09pn5zUq5RwVyRggKFGj806
+         XolgEfB8/els5WrzBTckKdYtV6Y+gXzatsbF6mDjecvaVNZ7lmg5BjvzfxdliPC+ZF5C
+         6gpNa34eHYgfNokwJV1vQNBP7hd1b1KjfyF31geEdmLU7ec7qQzHz+mXPJK+diCAU7ZU
+         zinY0vcir+CKHVG3FMyvm9jfXSo28SIdq0azypdpIPkws61TlhsM2uPQbxpFepWU2HWA
+         uVvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVCaLN6HhLbnT8GI3H1sC1jfdLN2DJd9aVHqcrlNjjQjdT1d2QKuHqlTzcN3HpEpGPoQQv9heHFloN8+cA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNRfX5dHuf3FAWw+RFw8ctf+0ikPo1BN/9vnEOihPLe2JY8Vyp
+	poc+ywIv+PJ3pXbfqOzJ/7OtbKV5H7wTO2ldojdk0F7Pi6jo2gEY
+X-Gm-Gg: ASbGncsKL0XpZUjyyi7ZTlECKMsOj0TNvAXGTEnp8SJ5CTGjeS9/QqwDhDk4Av7Ce7G
+	sNOfv1hi//GVtSEqQ7f4KrQRlOLTb/KXHLVQmRv16cq/UbNEt6NBG2gCx5WisA3f7Kbq4OXPO76
+	wTKql67R+T1Nz/6QKM716XCysEU36SxUb2OvDGAMyLoxK/+i5tBAskpRBpBc5zUqF16Zk2FR3mQ
+	kgiFqP76qkey3kv+wB9sb4Bpt76MJRljvzPYPw7tn1LxGq8V/2P5vZOyNiezh/atY3ZJZrEBeSa
+	Z457slxN4TGz/F72KYd0KTfOS8Ec49yL4i50x5vrh8CZLBT7D45iUaUlbfSoTbENPxI=
+X-Google-Smtp-Source: AGHT+IG9+VyiFJ8Bg58dftnhDOV3AWLXhGy/UlIQSuO5xKlJiv2sStd/Ls9bdEQrSRkUxRJdhxXgzA==
+X-Received: by 2002:a05:651c:9:b0:300:3307:389d with SMTP id 38308e7fff4ca-30bd7a583ebmr8662591fa.19.1741169209563;
+        Wed, 05 Mar 2025 02:06:49 -0800 (PST)
+Received: from pc636 (host-95-203-6-24.mobileonline.telia.com. [95.203.6.24])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-30bb1098ef6sm10975301fa.42.2025.03.05.02.06.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 02:06:49 -0800 (PST)
+From: Uladzislau Rezki <urezki@gmail.com>
+X-Google-Original-From: Uladzislau Rezki <urezki@pc636>
+Date: Wed, 5 Mar 2025 11:06:46 +0100
+To: Baoquan He <bhe@redhat.com>, liuye <liuye@kylinos.cn>
+Cc: liuye <liuye@kylinos.cn>, Uladzislau Rezki <urezki@gmail.com>,
+	akpm@linux-foundation.org, hch@infradead.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] mm/vmalloc: Remove unnecessary size ALIGN in
+ __vmalloc_node_range_noprof
+Message-ID: <Z8giNq5CMtbYnlo-@pc636>
+References: <20250303094410.437985-1-liuye@kylinos.cn>
+ <20250303094410.437985-2-liuye@kylinos.cn>
+ <Z8X1U-3f35-JZTUr@pc636>
+ <6701d375-8d7c-4e13-b0db-486a48088446@kylinos.cn>
+ <Z8ghK22l7USzuBWY@MiWiFi-R3L-srv>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -111,46 +94,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <8abd4290-cef5-4ea3-bdfc-b872c16efb8a@openvpn.net>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <Z8ghK22l7USzuBWY@MiWiFi-R3L-srv>
 
-2025-03-05, 00:35:09 +0100, Antonio Quartulli wrote:
-> On 04/03/2025 20:02, Sabrina Dubroca wrote:
-> > 2025-03-04, 01:33:39 +0100, Antonio Quartulli wrote:
-> > [...]
-> > > +static inline struct ovpn_crypto_key_slot *
-> > > +ovpn_crypto_key_id_to_slot(const struct ovpn_crypto_state *cs, u8 key_id)
-> > > +{
-> > > +	struct ovpn_crypto_key_slot *ks;
-> > > +	u8 idx;
-> > > +
-> > > +	if (unlikely(!cs))
-> > > +		return NULL;
-> > > +
-> > > +	rcu_read_lock();
-> > > +	idx = cs->primary_idx;
+On Wed, Mar 05, 2025 at 06:02:19PM +0800, Baoquan He wrote:
+> On 03/05/25 at 09:46am, liuye wrote:
 > > 
-> > I'd go with slots[0] and slots[1], since it doesn't really matter
-> > whether we check the primary or secondary first. It would avoid a
-> > possible reload of cs->primary_idx (which might be updated
-> > concurrently by a key swap and cause us to look into the same slot
-> > twice) -- a READ_ONCE would also prevent that.
+> > 在 2025/3/4 02:30, Uladzislau Rezki 写道:
+> > > On Mon, Mar 03, 2025 at 05:44:07PM +0800, Liu Ye wrote:
+> > >> The same operation already exists in the function __get_vm_area_node,
+> > >> so delete the duplicate operation to simplify the code.
+> > >>
+> > >> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+> > >> ---
+> > >>  mm/vmalloc.c | 1 -
+> > >>  1 file changed, 1 deletion(-)
+> > >>
+> > >> diff --git a/mm/vmalloc.c b/mm/vmalloc.c
+> > >> index dc658d4af181..20d9b9de84b1 100644
+> > >> --- a/mm/vmalloc.c
+> > >> +++ b/mm/vmalloc.c
+> > >> @@ -3798,7 +3798,6 @@ void *__vmalloc_node_range_noprof(unsigned long size, unsigned long align,
+> > >>  			shift = arch_vmap_pte_supported_shift(size);
+> > >>  
+> > >>  		align = max(real_align, 1UL << shift);
+> > >> -		size = ALIGN(real_size, 1UL << shift);
+> > >>  	}
+> > >>  
+> > >>  again:
+> > >> -- 
+> > >> 2.25.1
+> > >>
+> > > There is a mess with:
+> > >
+> > >  unsigned long real_size = size;
+> > >  unsigned long real_align = align;
+> > >
+> > > "real_size" and "real_align". Those are useless. What is about:
+> > 
+> > Sorry, the order of the patches may be misleading.
+> > 
+> > The correct order is as follows：
+> > 
+> > PATCH1.  mm/vmalloc: Size should be used instead of real_size "
+> > PATCH2.  mm/vmalloc: Remove unnecessary size ALIGN in __vmalloc_node_range_noprof                 
+> > PATCH3.  mm/vmalloc: Remove the real_size variable to simplify the code "
+> > PATCH4.  mm/vmalloc: Rename the variable real_align to original_align to prevent misunderstanding
+> > 
+> > If PATCH1 is the correct fix, then consider PATCH2, PATCH3, and PATCH4.
 > 
-> Reason for looking into primary first is that we will most likely need the
-> primary key to decrypt the incoming traffic.
+> Well, seems the patch split is done too subtly. It's only about the
+> size/align inside one function, maybe one patch is enough in this case.
+> My personal opinion.
 > 
-> Secondary is used only during a small (if at all) time window where we moved
-> to a new key, but our peer was still sending traffic encrypted with the old
-> (secondary) key.
-> 
-> Therefore optimizing for primary-first may make a non-negligible difference
-> under heavy load.
-> 
-> Code doesn't get more complex due to this logic, therefore I'd keep this
-> version (with READ_ONCE(cs->primary_idx)), unless there is a strong argument
-> against it.
+I agree. One patch would be enough.
 
-Ok, sounds reasonable.
-
--- 
-Sabrina
+--
+Uladzislau Rezki
 
