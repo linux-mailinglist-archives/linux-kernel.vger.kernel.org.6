@@ -1,44 +1,46 @@
-Return-Path: <linux-kernel+bounces-546141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4B4A4F6E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:12:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 793DBA4F6E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:12:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC3F116EEF2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:12:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA9453A5EBA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A9FC1C8FBA;
-	Wed,  5 Mar 2025 06:11:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B9E31D7985;
+	Wed,  5 Mar 2025 06:11:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="BMpXDLVH"
-Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tK8A0eF3"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 782BB1DDA0C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EDC01DE2C1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741155115; cv=none; b=WBSxuyV4v8OFeiWRxUYRPUkcz9GvOOZcx0/0Dzx7CikO2YXdUp9iEHA+fhhRnNhcncODyRylQ16rIHc/pD4Sq/LUvlHJi0ixh+5Cp0Lp7QtILqmvdURirwY8YdEhV5J5bNmY01ITzSQ7bskpFP3uU1n/mtQ2QkxJIjPZ6LuWxBE=
+	t=1741155117; cv=none; b=ibjg0IXPWXIRF2KHkBW+tljXXx43OX2Vrq3W3UfGQNKtTgs8ly/qzR4OjUr42SYbF6qZ/Yst8+v5sqcvBQrV7TQrK9iJ4Me7GI7TWThCo8rX1Ct7EPEQPQ45bFePQEglfOGzIWDqIAEvMqnMtSoEkEBr0XS/zq2pk5FtsnyR3zU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741155115; c=relaxed/simple;
-	bh=B/h1xUzz3GWMga/m+nh+B6acXOAhdQBi0bfPZWm9FKc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=t6qiNFidfA2cjGfd8TYY9Ggce1cHnk7Yd3hyG/zX1iSsSz8GolNGleAIvNkZoUH5aP8QBQSnJu1Jh78b9HAplnaPNGbN1gE4Bzzb59tKyLLRRYZ+7vCIIrZaAvDtoL4dwCm39nyxPbOrqkH0OUc+TyyuYd9WvBLO7uAVHaaSHG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=BMpXDLVH; arc=none smtp.client-ip=95.215.58.181
+	s=arc-20240116; t=1741155117; c=relaxed/simple;
+	bh=4dy+m/XxTgeCzQ7zVcCdW+/Lm2thUR9Kdc8yM1twUBo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OIp6V17rBAnnayQpMbRuI6MF6E7Rrt4Mqb4HuGJGz7PRli0Qce4jzUTTneQyRQo13xxYSPSTsBOpT0gG5QQqWF75ZYUYm3Jd4QKFn7P1/ezpE9u3cTFK1TZyYs9JZyCuGshbqk43SU9POYkqh4/KtwbhHfW374unBzteexfV/TI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tK8A0eF3; arc=none smtp.client-ip=95.215.58.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741155110;
+	t=1741155112;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=DGV3NqkAzmPvaMleyfC1/0RAiA4ZDXfweSNW83tscmE=;
-	b=BMpXDLVHdTANYIV7oWSC1xvpBCuOlZbEQfDti58iGKS9fF1qmxpDIv8lPx0fXQfnxv9l7i
-	7TY3WYx4NQ6LqPVVBY1phLf/uL47YviJI+A6kp77NkzjS7Bp5/3KhzsPJw8dfY6UUrlYPg
-	9b0nZe02toud0idNMlzkTMI5phFOf9U=
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WoO6FUy5jZ5BOBiD7+tifxnzM0sl78f3lOIy/v/d1Yo=;
+	b=tK8A0eF3Xlefw6CMLjm18bHwmIKhLt12hIUd+n5xuMqL3BbtRIYg5Gaj8g5jd+DEaWgwwz
+	/Bwog36MMW0mCFIHU/kOoYr9xP/Xz/kmzC90sgmkI3tV66KzlJIjgoPnnqSrOz/5v/3rAn
+	Y1ADaz2vPlUZexNOEZegHZGBkvOqNkw=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Johannes Weiner <hannes@cmpxchg.org>,
@@ -52,9 +54,11 @@ Cc: Johannes Weiner <hannes@cmpxchg.org>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH mm-unstable 0/5] Switch zswap to object read/write APIs
-Date: Wed,  5 Mar 2025 06:11:28 +0000
-Message-ID: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
+Subject: [PATCH mm-unstable 1/5] mm: zpool: Add interfaces for object read/write APIs
+Date: Wed,  5 Mar 2025 06:11:29 +0000
+Message-ID: <20250305061134.4105762-2-yosry.ahmed@linux.dev>
+In-Reply-To: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
+References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,31 +68,149 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-This patch series updates zswap to use the new object read/write APIs
-defined by zsmalloc in [1], and remove the old object mapping APIs and
-the related code from zpool and zsmalloc.
+Zsmalloc introduce new APIs to read/write objects besides mapping them.
+Add the necessary zpool interfaces.
 
-This depends on the zsmalloc/zram series introducing the APIs [1] and
-the series removing zbud and z3fold [2].
+Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+---
+ include/linux/zpool.h | 17 +++++++++++++++
+ mm/zpool.c            | 48 +++++++++++++++++++++++++++++++++++++++++++
+ mm/zsmalloc.c         | 21 +++++++++++++++++++
+ 3 files changed, 86 insertions(+)
 
-[1]https://lore.kernel.org/lkml/20250227043618.88380-1-senozhatsky@chromium.org/
-[2]https://lore.kernel.org/lkml/20250129180633.3501650-1-yosry.ahmed@linux.dev/
-
-Yosry Ahmed (5):
-  mm: zpool: Add interfaces for object read/write APIs
-  mm: zswap: Use object read/write APIs instead of object mapping APIs
-  mm: zpool: Remove object mapping APIs
-  mm: zsmalloc: Remove object mapping APIs and per-CPU map areas
-  mm: zpool: Remove zpool_malloc_support_movable()
-
- include/linux/cpuhotplug.h |   1 -
- include/linux/zpool.h      |  42 ++----
- include/linux/zsmalloc.h   |  21 ---
- mm/zpool.c                 |  93 +++++--------
- mm/zsmalloc.c              | 263 +++----------------------------------
- mm/zswap.c                 |  37 ++----
- 6 files changed, 75 insertions(+), 382 deletions(-)
-
+diff --git a/include/linux/zpool.h b/include/linux/zpool.h
+index 5e6dc46b8cc4c..1784e735ee049 100644
+--- a/include/linux/zpool.h
++++ b/include/linux/zpool.h
+@@ -52,6 +52,16 @@ void *zpool_map_handle(struct zpool *pool, unsigned long handle,
+ 
+ void zpool_unmap_handle(struct zpool *pool, unsigned long handle);
+ 
++
++void *zpool_obj_read_begin(struct zpool *zpool, unsigned long handle,
++			   void *local_copy);
++
++void zpool_obj_read_end(struct zpool *zpool, unsigned long handle,
++			void *handle_mem);
++
++void zpool_obj_write(struct zpool *zpool, unsigned long handle,
++		     void *handle_mem, size_t mem_len);
++
+ u64 zpool_get_total_pages(struct zpool *pool);
+ 
+ 
+@@ -90,6 +100,13 @@ struct zpool_driver {
+ 				enum zpool_mapmode mm);
+ 	void (*unmap)(void *pool, unsigned long handle);
+ 
++	void *(*obj_read_begin)(void *pool, unsigned long handle,
++				void *local_copy);
++	void (*obj_read_end)(void *pool, unsigned long handle,
++			     void *handle_mem);
++	void (*obj_write)(void *pool, unsigned long handle,
++			  void *handle_mem, size_t mem_len);
++
+ 	u64 (*total_pages)(void *pool);
+ };
+ 
+diff --git a/mm/zpool.c b/mm/zpool.c
+index 4bbd12d4b6599..378c2d1e5638f 100644
+--- a/mm/zpool.c
++++ b/mm/zpool.c
+@@ -320,6 +320,54 @@ void zpool_unmap_handle(struct zpool *zpool, unsigned long handle)
+ 	zpool->driver->unmap(zpool->pool, handle);
+ }
+ 
++/**
++ * zpool_obj_read_begin() - Start reading from a previously allocated handle.
++ * @zpool:	The zpool that the handle was allocated from
++ * @handle:	The handle to read from
++ * @local_copy:	A local buffer to use if needed.
++ *
++ * This starts a read operation of a previously allocated handle. The passed
++ * @local_copy buffer may be used if needed by copying the memory into.
++ * zpool_obj_read_end() MUST be called after the read is completed to undo any
++ * actions taken (e.g. release locks).
++ *
++ * Returns: A pointer to the handle memory to be read, if @local_copy is used,
++ * the returned pointer is @local_copy.
++ */
++void *zpool_obj_read_begin(struct zpool *zpool, unsigned long handle,
++			   void *local_copy)
++{
++	return zpool->driver->obj_read_begin(zpool->pool, handle, local_copy);
++}
++
++/**
++ * zpool_obj_read_end() - Finish reading from a previously allocated handle.
++ * @zpool:	The zpool that the handle was allocated from
++ * @handle:	The handle to read from
++ * @handle_mem:	The pointer returned by zpool_obj_read_begin()
++ *
++ * Finishes a read operation previously started by zpool_obj_read_begin().
++ */
++void zpool_obj_read_end(struct zpool *zpool, unsigned long handle,
++			void *handle_mem)
++{
++	zpool->driver->obj_read_end(zpool->pool, handle, handle_mem);
++}
++
++/**
++ * zpool_obj_write() - Write to a previously allocated handle.
++ * @zpool:	The zpool that the handle was allocated from
++ * @handle:	The handle to read from
++ * @handle_mem:	The memory to copy from into the handle.
++ * @mem_len:	The length of memory to be written.
++ *
++ */
++void zpool_obj_write(struct zpool *zpool, unsigned long handle,
++		     void *handle_mem, size_t mem_len)
++{
++	zpool->driver->obj_write(zpool->pool, handle, handle_mem, mem_len);
++}
++
+ /**
+  * zpool_get_total_pages() - The total size of the pool
+  * @zpool:	The zpool to check
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index 63c99db71dc1f..d84b300db64e7 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -507,6 +507,24 @@ static void zs_zpool_unmap(void *pool, unsigned long handle)
+ 	zs_unmap_object(pool, handle);
+ }
+ 
++static void *zs_zpool_obj_read_begin(void *pool, unsigned long handle,
++				     void *local_copy)
++{
++	return zs_obj_read_begin(pool, handle, local_copy);
++}
++
++static void zs_zpool_obj_read_end(void *pool, unsigned long handle,
++				  void *handle_mem)
++{
++	zs_obj_read_end(pool, handle, handle_mem);
++}
++
++static void zs_zpool_obj_write(void *pool, unsigned long handle,
++			       void *handle_mem, size_t mem_len)
++{
++	zs_obj_write(pool, handle, handle_mem, mem_len);
++}
++
+ static u64 zs_zpool_total_pages(void *pool)
+ {
+ 	return zs_get_total_pages(pool);
+@@ -522,6 +540,9 @@ static struct zpool_driver zs_zpool_driver = {
+ 	.free =			  zs_zpool_free,
+ 	.map =			  zs_zpool_map,
+ 	.unmap =		  zs_zpool_unmap,
++	.obj_read_begin =	  zs_zpool_obj_read_begin,
++	.obj_read_end  =	  zs_zpool_obj_read_end,
++	.obj_write =		  zs_zpool_obj_write,
+ 	.total_pages =		  zs_zpool_total_pages,
+ };
+ 
 -- 
 2.48.1.711.g2feabab25a-goog
 
