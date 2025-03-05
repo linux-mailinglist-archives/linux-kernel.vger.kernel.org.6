@@ -1,91 +1,187 @@
-Return-Path: <linux-kernel+bounces-546580-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68BCAA4FC65
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:41:11 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3AEA4FC76
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:44:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 946CE16B2D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54BE51893160
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD192207E05;
-	Wed,  5 Mar 2025 10:41:05 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1E820B1F2;
+	Wed,  5 Mar 2025 10:42:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8604F207A2E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE5E20B1E4
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741171265; cv=none; b=iOB8ZiuLr50D9kXmdfCqB++i/phrxNQHQffvkF47sVG5SoSFw59RkE/bFNjxPRLalC32/fhT0OCokuGGOMIUZRCPAAeklikOzOQU81oEwARX52D+zAOm/TgKqvLrjo+uDQTdxKlXaD+wCgJdE7CdlBF80RR5GyMyRVGK6/bmoT8=
+	t=1741171373; cv=none; b=gm1is1vXy3HM7gqu3uNIsCNOzq3dJllRGMWioCYtVba9omddazpHqecjuHk/lKUp36jFAN2ZbpMr7Doc6taOO0ezNzblXVLeDjCSnhrJnPt7XClEv5g77IlOVhly8mPBXUTrs7WCX/PZdH4Xnlo60yORTD4HyzSi+nTSpo9pIQQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741171265; c=relaxed/simple;
-	bh=3JPySr5dw3NPFVc4Lyn2JzIWtNxdbjeavFZy+IqtDX8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FbW/C5Xa6xJbH7Xi+HljMmaNVFld2yA57GfRp4OXxY3Yv5qwuAnu21oUyIKrWbfUDu+Kur1frfEnHDugPJlsxCcHONEuZN1yCUBZheULiJcmto405sJ69CRuqc/4S88T5DRAhY167nE1DBOlFPvlwlq85RbP00VGmL+tLcrJhW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201620.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202503051840595898;
-        Wed, 05 Mar 2025 18:40:59 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201620.home.langchao.com (10.100.2.20) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 18:40:59 +0800
-Received: from locahost.localdomain (10.94.12.149) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 18:40:58 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <alexander.deucher@amd.com>, <christian.koenig@amd.com>,
-	<airlied@gmail.com>, <simona@ffwll.ch>, <Jesse.zhang@amd.com>,
-	<Hawking.Zhang@amd.com>, <mario.limonciello@amd.com>, <tim.huang@amd.com>,
-	<Likun.Gao@amd.com>, <kevinyang.wang@amd.com>, <dan.carpenter@linaro.org>
-CC: <amd-gfx@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] drm/amdgpu: fix inconsistent indenting warning
-Date: Wed, 5 Mar 2025 18:40:57 +0800
-Message-ID: <20250305104057.3416-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741171373; c=relaxed/simple;
+	bh=q+P1kxlxk9nhHGxz1YAHbBytE232Dzrq0K9V62hixoA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VDFVryQo2TByiIR2k62wJfU+I1eGNvfN2aba1ytw7nAfleycdh8SNVlyyDkEzzhNjdFisnNqEljsWEkyco1PUOJ+cJTxEKTdxZzhPA24dbE7EdrijnvpvIvD9ugEO37bgdTaeRSMkcnawAEjRFt0maReHiUZBTxG50aSwdRxm2A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tpmCM-00054k-Ob; Wed, 05 Mar 2025 11:41:58 +0100
+Message-ID: <43fb0965-04b7-41dc-ae3f-54676eefdbb5@pengutronix.de>
+Date: Wed, 5 Mar 2025 11:41:49 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2025305184059bb5983e679e3534c0473304859018e69
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Add stop_on_panic support for watchdog
+To: George Cherian <george.cherian@marvell.com>, linux@roeck-us.net,
+ wim@linux-watchdog.org, jwerner@chromium.org, evanbenn@chromium.org,
+ kabel@kernel.org, krzk@kernel.org, mazziesaccount@gmail.com,
+ thomas.richard@bootlin.com, lma@chromium.org, bleung@chromium.org,
+ support.opensource@diasemi.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+ kernel@pengutronix.de, festevam@gmail.com, andy@kernel.org,
+ paul@crapouillou.net, alexander.usyskin@intel.com, andreas.werner@men.de,
+ daniel@thingy.jp, romain.perier@gmail.com, avifishman70@gmail.com,
+ tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
+ yuenn@google.com, benjaminfair@google.com, maddy@linux.ibm.com,
+ mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
+ naveen@kernel.org, mwalle@kernel.org, xingyu.wu@starfivetech.com,
+ ziv.xu@starfivetech.com, hayashi.kunihiko@socionext.com, mhiramat@kernel.org
+Cc: chrome-platform@lists.linux.dev, linux-watchdog@vger.kernel.org,
+ imx@lists.linux.dev, patches@opensource.cirrus.com,
+ openbmc@lists.ozlabs.org, linux-mips@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org
+References: <20250305101025.2279951-1-george.cherian@marvell.com>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20250305101025.2279951-1-george.cherian@marvell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c:582 amdgpu_sdma_reset_engine() warn: inconsistent indenting
+Hi George,
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 05.03.25 11:10, George Cherian wrote:
+> This series adds a new kernel command line option to watchdog core to
+> stop the watchdog on panic. This is useul in certain systems which prevents
+> successful loading of kdump kernel due to watchdog reset.
+> 
+> Some of the watchdog drivers stop function could sleep. For such
+> drivers the stop_on_panic is not valid as the notifier callback happens
+> in atomic context. Introduce WDIOF_STOP_MAYSLEEP flag to watchdog_info
+> options to indicate whether the stop function would sleep.
 
-diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c
-index 42a7b86e41c3..1037a2f9e3b9 100644
---- a/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c
-+++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_sdma.c
-@@ -579,5 +579,5 @@ int amdgpu_sdma_reset_engine(struct amdgpu_device *adev, uint32_t instance_id, b
- 	if (suspend_user_queues)
- 		amdgpu_amdkfd_resume(adev, false);
- 
--       return ret;
-+	return ret;
- }
+Did you consider having a reset_on_panic instead, which sets a user-specified
+timeout on panic? This would make the mechanism useful also for watchdogs
+that can't be disabled and would protect against system lock up:
+Consider a memory-corruption bug (perhaps externally via DMA), which partially
+overwrites both main and kdump kernel. With a disabled watchdog, the system
+may not be able to recover on its own.
+
+If you did consider it, what made you decide against it?
+
+Thanks,
+Ahmad
+
+> 
+> 
+> Changelog:
+> v1 -> v2
+> - Remove the per driver flag setting option
+> - Take the parameter via kernel command-line parameter to watchdog_core.
+> 
+> v2 -> v3
+> - Remove the helper function watchdog_stop_on_panic() from watchdog.h.
+> - There are no users for this. 
+> 
+> v3 -> v4
+> - Since the panic notifier is in atomic context, watchdog functions
+>   which sleep can't be called. 
+> - Add an options flag WDIOF_STOP_MAYSLEEP to indicate whether stop
+>   function sleeps.
+> - Simplify the stop_on_panic kernel command line parsing.
+> - Enable the panic notiffier only if the watchdog stop function doesn't
+>   sleep
+> 
+> George Cherian (2):
+>   watchdog: Add a new flag WDIOF_STOP_MAYSLEEP
+>   drivers: watchdog: Add support for panic notifier callback
+> 
+>  drivers/watchdog/advantech_ec_wdt.c |  3 ++-
+>  drivers/watchdog/arm_smc_wdt.c      |  3 ++-
+>  drivers/watchdog/armada_37xx_wdt.c  |  2 +-
+>  drivers/watchdog/asm9260_wdt.c      |  2 +-
+>  drivers/watchdog/bcm47xx_wdt.c      |  3 ++-
+>  drivers/watchdog/bd9576_wdt.c       |  2 +-
+>  drivers/watchdog/bd96801_wdt.c      |  2 +-
+>  drivers/watchdog/cgbc_wdt.c         |  2 +-
+>  drivers/watchdog/cros_ec_wdt.c      |  5 ++++-
+>  drivers/watchdog/da9052_wdt.c       |  3 ++-
+>  drivers/watchdog/da9055_wdt.c       |  4 +++-
+>  drivers/watchdog/da9062_wdt.c       |  4 +++-
+>  drivers/watchdog/da9063_wdt.c       |  4 +++-
+>  drivers/watchdog/db8500_wdt.c       |  5 ++++-
+>  drivers/watchdog/dw_wdt.c           |  5 +++--
+>  drivers/watchdog/f71808e_wdt.c      |  3 ++-
+>  drivers/watchdog/gpio_wdt.c         |  2 +-
+>  drivers/watchdog/i6300esb.c         |  5 ++++-
+>  drivers/watchdog/imx_sc_wdt.c       |  2 +-
+>  drivers/watchdog/intel-mid_wdt.c    |  5 ++++-
+>  drivers/watchdog/it87_wdt.c         |  5 ++++-
+>  drivers/watchdog/jz4740_wdt.c       |  5 ++++-
+>  drivers/watchdog/kempld_wdt.c       |  3 ++-
+>  drivers/watchdog/lenovo_se10_wdt.c  |  5 ++++-
+>  drivers/watchdog/max77620_wdt.c     |  5 ++++-
+>  drivers/watchdog/mei_wdt.c          |  3 ++-
+>  drivers/watchdog/menf21bmc_wdt.c    |  4 +++-
+>  drivers/watchdog/mlx_wdt.c          |  2 +-
+>  drivers/watchdog/msc313e_wdt.c      |  5 ++++-
+>  drivers/watchdog/npcm_wdt.c         |  3 ++-
+>  drivers/watchdog/omap_wdt.c         |  5 ++++-
+>  drivers/watchdog/pm8916_wdt.c       |  5 +++--
+>  drivers/watchdog/pseries-wdt.c      |  2 +-
+>  drivers/watchdog/rave-sp-wdt.c      |  5 ++++-
+>  drivers/watchdog/renesas_wdt.c      |  7 ++++--
+>  drivers/watchdog/retu_wdt.c         |  5 ++++-
+>  drivers/watchdog/rn5t618_wdt.c      |  6 +++--
+>  drivers/watchdog/rzg2l_wdt.c        |  5 ++++-
+>  drivers/watchdog/rzv2h_wdt.c        |  5 ++++-
+>  drivers/watchdog/shwdt.c            |  6 +++--
+>  drivers/watchdog/sl28cpld_wdt.c     |  5 ++++-
+>  drivers/watchdog/softdog.c          |  5 ++++-
+>  drivers/watchdog/sp805_wdt.c        |  5 ++++-
+>  drivers/watchdog/starfive-wdt.c     |  3 ++-
+>  drivers/watchdog/stpmic1_wdt.c      |  5 ++++-
+>  drivers/watchdog/ts4800_wdt.c       |  5 ++++-
+>  drivers/watchdog/twl4030_wdt.c      |  5 ++++-
+>  drivers/watchdog/uniphier_wdt.c     |  3 ++-
+>  drivers/watchdog/w83627hf_wdt.c     |  5 ++++-
+>  drivers/watchdog/watchdog_core.c    | 35 +++++++++++++++++++++++++++++
+>  drivers/watchdog/wm831x_wdt.c       |  5 ++++-
+>  drivers/watchdog/wm8350_wdt.c       |  5 ++++-
+>  drivers/watchdog/xen_wdt.c          |  5 ++++-
+>  drivers/watchdog/ziirave_wdt.c      |  5 ++++-
+>  include/linux/watchdog.h            |  2 ++
+>  include/uapi/linux/watchdog.h       |  1 +
+>  56 files changed, 198 insertions(+), 58 deletions(-)
+> 
+
+
 -- 
-2.43.0
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
