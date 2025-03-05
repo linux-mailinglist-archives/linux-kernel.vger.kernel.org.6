@@ -1,187 +1,105 @@
-Return-Path: <linux-kernel+bounces-547358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCC76A5063B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:18:50 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55F52A5063A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:17:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0F9816A5B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:18:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94F5517040C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:17:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B106819E806;
-	Wed,  5 Mar 2025 17:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 612B11C860B;
+	Wed,  5 Mar 2025 17:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="N12n9sYK"
-Received: from out.smtpout.orange.fr (out-11.smtpout.orange.fr [193.252.22.11])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npHNn9Hm"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001EC567D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0374170A13;
+	Wed,  5 Mar 2025 17:17:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741195124; cv=none; b=JUjvFHVOMHKf9MM8FDtm8y/6qiZ2faEOkkut6z82uNk8FVWyEf9FK02aBFsvSs75fvoimkMfla6bjlQdhmSMlEcrSCkxdr4nyEcJPToLyKuGTdcpYgh6gndFF2zhnjAjFMi2M/MlnLboOOwOqXAs9ZHvjUaTxnrMHfS2YHKfcdE=
+	t=1741195046; cv=none; b=BN4P5aVLuNgnTJJwSWioyc6K7BQUlZOZVk+j2t0MFISSrLGEBWbXZgghMMAHcZhBXMf+23Sllc8h21+64Fu1bH45HeB1TCMbgq8dRJeTncMkBny45XU3JW49ZvR+uzSYxHgZOqB3/ou5ZORDgdR00HBalCkMvXDL7dHbVda+ov0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741195124; c=relaxed/simple;
-	bh=S4c+Zjbnc/RFWyEaa7V9IsOeL7RkBBVUWBlY4CuP05M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b+LyLicGwwyaU8C/++vXUiq61QJvH6UwOw4kiHWMN/rNIKTOZDHP4ZQfj19Tbrkj4SLs+Nshl6EynzDijqvZOO6lo4MuI6qeuhsR8zdigjoial24zyUiMw5NqyS2gLyx6gBrLZFDlcN//CHOKUWdaMP3I+Cl0p71icmBYTVJN3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=N12n9sYK; arc=none smtp.client-ip=193.252.22.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id psMxtJc0ArlYrpsN1tsZVO; Wed, 05 Mar 2025 18:17:32 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741195052;
-	bh=mjKe+ryvw34j4ffHLP7uzkbmqMNR5Softa/w5p2heeM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=N12n9sYK2XIy4AYRo4rRhIwr7fT5AxTN7msq3Aa/Puc4i5eGtI5VqdUd571MJ2Rok
-	 Bw1jd+GZgxVoRYcSEIhIiKYzoeTJVuOpHjqTP1J1Ks8OD+CpPMWJ7Kqc354mmcOoAc
-	 Bx/0vzUcS3zi4rwzji5ULu5KS4DIkpsf1q7SwDTLBkHTvCeYwvQbymkdhldUZj6d/o
-	 y+WI5YV1t2qCsElAqFsSKbekM/RhApTwKMPbvIWrZdw+3zKW+DeFl/jN2C/psOxBmd
-	 7XzifnbrXUq+xwoSIbcw0OTn6crTlcUFnGUzDzE5jGPlcpjZuqyuHu+y1XR18noflQ
-	 bsof5v0HxwwqA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 05 Mar 2025 18:17:32 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <824dc1d1-14f0-433e-aa3f-679527b87077@wanadoo.fr>
-Date: Thu, 6 Mar 2025 02:17:18 +0900
+	s=arc-20240116; t=1741195046; c=relaxed/simple;
+	bh=XJWPRUoTb/Vx4G3uOprbaaDyJtXhaxTE+VvpTzPkG1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=O8p3fE7fF8qLodaPDhZgaWhTV3zkzRfaprgU8cI7p78LhnVuMFQQAdHimUMalKVdOWzd4V0/4LKtz1FCJRhqMq7YHZhLLUXM961uIzeki6bPTfZZcozbukEjfn4aL1/IncGpRYfXP1B3CN1I8QsM+CpxUteJdOqsii4uLBa3iX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npHNn9Hm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BA68C4CEE2;
+	Wed,  5 Mar 2025 17:17:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741195046;
+	bh=XJWPRUoTb/Vx4G3uOprbaaDyJtXhaxTE+VvpTzPkG1Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=npHNn9Hmu0fwIcubnTn9GlArjuS6TL3Le08tOoG0Soe9wBKd4EwVUMJeSv1U/jb1W
+	 6OCxCiDHqv82nOa7lFPKLlhLWpXaznbxEzkzosghO/Ep3XnyBy268838yYrLQrV5he
+	 6qFNHtJKRh17Au2J7AzpWsefiGnQlPD8xPi42tugTUNry9eFcMg/rBYk4Ol5jwEOIn
+	 tWkn0ltdEVZGNOm+bO8l4j4/lee8wIG453yx7V1KOpTQdsRz/g9wf+LoTodjlhLzBn
+	 FAYuhG1isYF30vh/OBCBN/Ni5/Gg0tkMJKZmO4OM9xMjzuKPZ+ER/mr2w23ce78c1q
+	 CKrpbE9CDpOIQ==
+Date: Wed, 5 Mar 2025 11:17:24 -0600
+From: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Chukun Pan <amadeus@jmu.edu.cn>, Yao Zi <ziyao@disroot.org>,
+	Lee Jones <lee@kernel.org>, Heiko Stuebner <heiko@sntech.de>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add rk3528 QoS register node
+Message-ID: <20250305171724.GA2149138-robh@kernel.org>
+References: <20250305140009.2485859-1-amadeus@jmu.edu.cn>
+ <20250305140009.2485859-2-amadeus@jmu.edu.cn>
+ <52155b03-20f3-4e64-b636-70042db03ffa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/8] bits: introduce fixed-type BIT
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-4-1873dcdf6723@wanadoo.fr>
- <Z8hgqOB5Ym-GGykS@smile.fi.intel.com>
- <d7f3150d-0167-44be-90b2-17f8a050687c@wanadoo.fr>
- <Z8hyNXVZxLzhEzNy@smile.fi.intel.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z8hyNXVZxLzhEzNy@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <52155b03-20f3-4e64-b636-70042db03ffa@kernel.org>
 
-On 06/03/2025 at 00:48, Andy Shevchenko wrote:
-> On Wed, Mar 05, 2025 at 11:48:10PM +0900, Vincent Mailhol wrote:
->> On 05/03/2025 at 23:33, Andy Shevchenko wrote:
->>> On Wed, Mar 05, 2025 at 10:00:16PM +0900, Vincent Mailhol via B4 Relay wrote:
+On Wed, Mar 05, 2025 at 04:41:23PM +0100, Krzysztof Kozlowski wrote:
+> On 05/03/2025 15:00, Chukun Pan wrote:
+> > Copy QoS nodes and add rk3528 compatible from bsp kernel,
 > 
-> ...
+> No, don't copy stuff from BSP kernel. It results in terrible DTS.
 > 
->>>> +#define BIT_U8(b) (BIT_INPUT_CHECK(u8, b) + (unsigned int)BIT(b))
->>>> +#define BIT_U16(b) (BIT_INPUT_CHECK(u16, b) + (unsigned int)BIT(b))
->>>
->>> Why not u8 and u16? This inconsistency needs to be well justified.
->>
->> Because of the C integer promotion rules, if casted to u8 or u16, the
->> expression will immediately become a signed integer as soon as it is get
->> used. For example, if casted to u8
->>
->>   BIT_U8(0) + BIT_U8(1)
->>
->> would be a signed integer. And that may surprise people.
+> > these can be used for power-domain.
+> > 
+> > Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> > ---
+> >  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 160 +++++++++++++++++++++++
+> >  1 file changed, 160 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > index 5b334690356a..794f35654975 100644
+> > --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> > @@ -122,6 +122,166 @@ gic: interrupt-controller@fed01000 {
+> >  			#interrupt-cells = <3>;
+> >  		};
+> >  
+> > +		qos_crypto_a: qos@ff200000 {
+> > +			compatible = "rockchip,rk3528-qos", "syscon";
+> > +			reg = <0x0 0xff200000 0x0 0x20>;
+> > +		};
+> > +
+> > +		qos_crypto_p: qos@ff200080 {
+> > +			compatible = "rockchip,rk3528-qos", "syscon";
+> > +			reg = <0x0 0xff200080 0x0 0x20>;
+> > +		};
 > 
-> Yes, but wouldn't be better to put it more explicitly like
 > 
-> #define BIT_U8(b)	(BIT_INPUT_CHECK(u8, b) + (u8)BIT(b) + 0 + UL(0)) // + ULL(0) ?
+> Did you just define syscon per few registers? Third case last weeks...
+> so no, define what is your device here. 8 registers is not a device usually.
 
-OK, the final result would be unsigned. But, I do not follow how this is
-more explicit.
-
-Also, why doing:
-
-  (u8)BIT(b) + 0 + UL(0)
-
-and not just:
-
-  (u8)BIT(b) + UL(0)
-
-?
-
-What is that intermediary '+ 0' for?
-
-I am sorry, but I am having a hard time understanding how casting to u8
-and then doing an addition with an unsigned long is more explicit than
-directly doing a cast to the desired type.
-
-As I mentioned in my answer to Yuri, I have a slight preference for the
-unsigned int cast, but I am OK to go back to the u8/u16 cast as it was
-in v3.
-
-However, I really do not see how that '+ 0 + UL(0)' would be an improvement.
-
-> Also, BIT_Uxx() gives different type at the end, shouldn't they all be promoted
-> to unsigned long long at the end? Probably it won't work in real assembly.
-> Can you add test cases which are written in assembly? (Yes, I understand that it will
-> be architecture dependent, but still.)
-
-No. I purposely guarded the definition of the BIT_Uxx() by a
-
-  #if !defined(__ASSEMBLY__)
-
-so that these are never visible in assembly. I actually put a comment to
-explain why the GENMASK_U*() are not available in assembly. I can copy
-paste the same comment to explain why why BIT_U*() are not made
-available either:
-
-  /*
-   * Missing asm support
-   *
-   * BIT_U*() depends on BITS_PER_TYPE() which would not work in the asm
-   * code as BITS_PER_TYPE() relies on sizeof(), something not available
-   * in asm.  Nethertheless, the concept of fixed width integers is a C
-   * thing which does not apply to assembly code.
-   */
-
-I really believe that it would be a mistake to make the GENMASK_U*() or
-the BIT_U*() available to assembly.
-
->> David also pointed this in the v3:
->>
->> https://lore.kernel.org/intel-xe/d42dc197a15649e69d459362849a37f2@AcuMS.aculab.com/
->>
->> and I agree with his comment.
->>
->> I explained this in the changelog below the --- cutter, but it is
->> probably better to make the explanation more visible. I will add a
->> comment in the code to explain this.
->>
->>>> +#define BIT_U32(b) (BIT_INPUT_CHECK(u32, b) + (u32)BIT(b))
->>>> +#define BIT_U64(b) (BIT_INPUT_CHECK(u64, b) + (u64)BIT_ULL(b))
-> 
-
-Yours sincerely,
-Vincent Mailhol
-
+Well, it is just a new compatible on top of existing 'qos' compatibles.
+And in a quick scan I didn't see other things adjacent. 
 
