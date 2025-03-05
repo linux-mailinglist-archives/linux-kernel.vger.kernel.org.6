@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-546277-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F2A6A4F8A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:22:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98F81A4F8AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:23:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7088116FF2B
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBC9D3A7D85
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE58A1FC0E5;
-	Wed,  5 Mar 2025 08:21:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AC8F1F584A;
+	Wed,  5 Mar 2025 08:22:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="A2bhTYH2"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gZitgGbq"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581221F582D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:21:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FB8D1F5826
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741162899; cv=none; b=VegDeBSqGtOB3p6k6M3tsBpPjicX/UWara9WePCkXeoxTwNLZJecYQ6KTwgkjIxKZJmarrZhURQsr0t9iCDBqv4u6KjZZVjvw6akbRSnwtvyejJ4GEfWtQqBctWNm3EKOVdZvZaWqReWLxGA6cYVEXwM+QXQTsnazDx5fOP2Gz0=
+	t=1741162933; cv=none; b=WdgNMNmdnOYjFpYnNWGpt/y/b4irreWRIJ7OjI41CMkWUoBHrl2EJcNbb6v5oIUuu1gb8/Tyo7YKGr4TSD2Jf2hY+QkrhEDKESi8gyP2OXS0n2QHab+6ppoLZ2bmlByvzapkAv+Sw9slz1SK6Bm0lAO6Et+02ytd0XfWkt2P6Ng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741162899; c=relaxed/simple;
-	bh=Dd3fU7x3Zyy9J91IPT2gBtr3RmiUZhQvAeaOmlAbIPA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BC5aSKoJy8cKh2xdLgWb+z5yTK65w3txHlOakHfo4as8kNPLZWbRUHd4TUJYYE0onreBNKRhCQiF3f9BVTHa80oi2QOpLQeVwpFyqkrzuCqhTnkjeA77Vmh46WjYafFmGQgKKfOiHY3ddBeoLBs1/RPqjACb96dafpr7mEE9JfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=A2bhTYH2; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ac0b6e8d96cso431720166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:21:37 -0800 (PST)
+	s=arc-20240116; t=1741162933; c=relaxed/simple;
+	bh=7dbxBIp1KdSmrxY2YrczBEJIi2mdKiVw3dJRiuom3S4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Y/OYgWfxSqk3290p8/nE/lNKwz0YMD/5IlRCL9CJ6gMwcZY6FabFVrdZNbps04JqbDRgHmZqzFi4/Y4kLbllDGRR6S0w33l+ltbsPhA8+yDcONHLDHL9/WX263NGOQ3Q8LKzc4mHNpdjO229pgU90zVSl7baU3ORYlMH+LQJyWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gZitgGbq; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-390ec449556so5299166f8f.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:22:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1741162896; x=1741767696; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsv6iruxF/55s5GG7wPPBagKb4juSNlpcghKgAFq1qg=;
-        b=A2bhTYH2IUKPMamHYkFV5kaQY8j11XM1Rkzkh8OksbViihKIHdIyYaOl68RIpO6mJ9
-         0hS5ZGLixOaBzMhOI+yG6WhYFTQ4GvqL9Nc/G3etuoWG7vQVXGzS+zuwOJPAXifC/UTl
-         XF/kDOlaCo9md4uupo/S3HQC0igucI4fKqBDm52qzqnPbGZwkujc/SsZj7uw3a/yqdsK
-         R2R5d+LjtiqUYkiv8EgQiG4rLJm21gZmemC1eIyLxXGlwhxKO3jmhAf8UIXj0PwCpkfj
-         sGTOddwdQTN5kI4jOrmHFMWg2zZHCLBhrGM/Fzp0lRv+M3RkPsvVT00gLuCjUT+aoHAy
-         Qp3Q==
+        d=linaro.org; s=google; t=1741162928; x=1741767728; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=7RMNh6sUr+MEi0nX1lz7f3n/Y4qaP5HXPTyxG0vSMbo=;
+        b=gZitgGbqCD+a0EhD7Vdvxvq0JOtfBL7JfSL1RiYeivBdsJyUiQuB9DyaCZFRdRyLSg
+         PMfp5xbZOqq3QSBowEpp0bRUusD0vGMFVqSlL32aijlMmlBJjfOYgNiSKGphLlHwb/tU
+         4StCE0vvwJC9Ho1ty2UVJCrVo2CsgUle+MyiXfOh4OUhFJrbLUZA9jnopI0bluXqv2A/
+         /LzyjcCvmdsC4zkNxjUBienoE/eJ68bGbbAUiDyFjoaEfDakejDP2aCmuJ51j+fXXLHT
+         Rz5pzi2v5y3aQ/bXTWcPPw4BMN7IG9qVMfjBwpKqJrYOQC3Zn1y3BgGRu95aBxTWEmXt
+         1R9g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741162896; x=1741767696;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nsv6iruxF/55s5GG7wPPBagKb4juSNlpcghKgAFq1qg=;
-        b=YxioI+UAoxoIZbtnK5vRtTfSdUlJQOHIZdz4Jv1bxzULYpzw/6GUOamRHa24Ht0Bz8
-         Utta0x792Gl+nIOO16BcMZ+zRSULdkIOfQtygGUzEg80KI7ELZ4IG0CsYZtJE5qml0LN
-         Btt7NOyBtLn7jlUjUrwfVuixgIA255nhGAtuawmw67JzfEbYBo3g0fp8BX9RIK/a7Wbz
-         zC6BWS6+LG/Wfap1Gec2VNiCqsuq3PS8YQSAgdckwXgGk1k9fImR+Djf/FOdZMxHYIxP
-         DS3bmnWuXW6n8bJKvLRgXg9dUAe530kP2Vkmt81tZdytAUg/TKL4r1RVvV1/BRGMyCWN
-         7lvg==
-X-Forwarded-Encrypted: i=1; AJvYcCXvAggnwCpQ/OYn5dHVnHhUhqng8NGuiKNMV8HOwjgnV+Wii/EbWJa4Gk8svKs6F+YR+SZeqkIXVK8x2sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxr3L7+hyf6+AZe0ACvnGN1ykCmN0RdjGz6A5/qqIXVdsxTZRj
-	w3dk3p03mLVB+oLTXysx3BE60LI9NmctGY/vbsXqNK4HY7wCYYHUwlLD+OM+Z1w=
-X-Gm-Gg: ASbGncu3U6dLzpWdkdWFtG3ThDDxZO4a2kyxMkfQv8MB7rK6rPFWSA8y0OqUvCEae4j
-	LwjReEaKSY9cHAZMnDyfYDLTKESvVtceEqURkin48kuAVv0KhRjPQsaHvuLa1lAYWMrovym/hYp
-	HfyHl1sbfSZeU8ohNycv5xMsG/uAFbLq1P6I7GkaNxvHOPe2fYuL3pwUpaZQ/YlWBUbonUPqL6C
-	ZgPGR/a0Te2j6VKoDe3ksJpEBufyXAnE39Dt4sEXK9eiAtSG5yWuzFFK3X2eA98EiYSO4W8gsGL
-	CqlQua3cSSJ40vQFnu5/BMr/f+IyOSdVsnXzYprTHDd4KUHB9OVjMbtawm/UrMSfwmO3eCV/r6X
-	r
-X-Google-Smtp-Source: AGHT+IGaoXnq3lSxzaaUwAuVfK+jenlYaXFrv+TPSgSHSnmbmoUQLeCI462sahYSphebEzq/qYnUHQ==
-X-Received: by 2002:a17:907:7f0b:b0:ac1:fb60:2269 with SMTP id a640c23a62f3a-ac20d925048mr217259766b.27.1741162895402;
-        Wed, 05 Mar 2025 00:21:35 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf58804b49sm693744066b.26.2025.03.05.00.21.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 00:21:34 -0800 (PST)
-Message-ID: <b3b5418c-65d5-48bf-8868-2d9abcb4f758@blackwall.org>
-Date: Wed, 5 Mar 2025 10:21:33 +0200
+        d=1e100.net; s=20230601; t=1741162928; x=1741767728;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=7RMNh6sUr+MEi0nX1lz7f3n/Y4qaP5HXPTyxG0vSMbo=;
+        b=VkgY0D1I/HE7cQWPWOu3aTR3cZ2x3pTtK34x7XLN5o5b4F/z4HI/iicHJ462UfiZBg
+         7c/U1FobmjlsGxTO4xyHOJseTwEZHrg/pBLFjYb3z/upzE6ecLNPAUY8bQn//VURTGpT
+         3MYU/gsv+0ufwxRp0Ztw3sSwHiwhtWyncgqu2TYiVxjSVBgEzJrQUjOViFoSY75JE/GX
+         fYu+UnhC3cHIBLi5B7sSWBTbgg8qdet/CRkSNqevw76BA1/6mQOwgyVDqSQ75lMkLXVp
+         2QJKc+VbzodqNZ5twsALlpNhfm9eIe5GEeKzu3ySGfYlCDjo0D/sLub6UB23TbtAb34s
+         rvvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhWZk11dCjMb9hxYzYHmCf0gztZbr6WLHx5OGvEsX17eddHNH4xzukVeUci2o/+NOdSKsOqAMX32IYHuk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7lyf0MqNqyDbTHotuJEEqkvBJAj5AkNdIYMSBv7NQoAfr0+Su
+	xpw9ck8bb4nhRIuo16iufIhvRil1gXLsCxU+sKuh4P3Uetrm/f77OV7/SXF8ncNnFd1JeWEU514
+	r3r6dOS8dmFee2JQ/5XEZ1eHjRr4MWVQUHcqVXQ==
+X-Gm-Gg: ASbGncujXads5IbPeBCt1moDVBgcdnf7Tlvul5NBFEYIgTKUSjxFiTzWcI9N7+46868
+	VWhKY+JXITZVwbyBko9hCRKHeISVBFnBGXvf/UIKjqAkDj8lyvDUthYtdzkNolmoxssFr8B7txa
+	ONdl1Fr7oPAdCvVwKdweKhjn4jwaAa0T91gNSpktOEzk3txuC1JYMRixg=
+X-Google-Smtp-Source: AGHT+IFuIXbmhLu1A6V2C/og0vYQWo77sEyep3TN1K0LxyXzovDiav8k2aiku7uTfPX/HcYgYJyzaudNlt0YAeRhA14=
+X-Received: by 2002:a05:6000:2cc:b0:391:13ef:1b35 with SMTP id
+ ffacd0b85a97d-3911f757771mr1293184f8f.29.1741162927747; Wed, 05 Mar 2025
+ 00:22:07 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 net-next 01/15] net: pppoe: avoid zero-length arrays in
- struct pppoe_hdr
-To: Eric Woudstra <ericwouds@gmail.com>,
- Michal Ostrowski <mostrows@earthlink.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Jiri Pirko <jiri@resnulli.us>,
- Ivan Vecera <ivecera@redhat.com>, Roopa Prabhu <roopa@nvidia.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Ahmed Zaki <ahmed.zaki@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Vladimir Oltean <olteanv@gmail.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-References: <20250228201533.23836-1-ericwouds@gmail.com>
- <20250228201533.23836-2-ericwouds@gmail.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20250228201533.23836-2-ericwouds@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250304170007.245261-1-aboorvad@linux.ibm.com>
+In-Reply-To: <20250304170007.245261-1-aboorvad@linux.ibm.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 5 Mar 2025 09:21:56 +0100
+X-Gm-Features: AQ5f1Jon-wuJX4mx4VpRDNI6TfgENDmRlr7mSh0fUITpglImFdohiT9i1_nLJG0
+Message-ID: <CAKfTPtCJKkwFeMKUrD3o224Nz4N+1qjtq0LvL945k9tJ8t8h-g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] sched/fair: Fix invalid pointer dereference in child_cfs_rq_on_list()
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
+	riel@surriel.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, odin@uged.al, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 2/28/25 22:15, Eric Woudstra wrote:
-> Jakub Kicinski suggested following patch:
-> 
-> W=1 C=1 GCC build gives us:
-> 
-> net/bridge/netfilter/nf_conntrack_bridge.c: note: in included file (through
-> ../include/linux/if_pppox.h, ../include/uapi/linux/netfilter_bridge.h,
-> ../include/linux/netfilter_bridge.h): include/uapi/linux/if_pppox.h:
-> 153:29: warning: array of flexible structures
-> 
-> It doesn't like that hdr has a zero-length array which overlaps proto.
-> The kernel code doesn't currently need those arrays.
-> 
-> PPPoE connection is functional after applying this patch.
-> 
-> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
+On Tue, 4 Mar 2025 at 18:00, Aboorva Devarajan <aboorvad@linux.ibm.com> wrote:
+>
+> In child_cfs_rq_on_list(), leaf_cfs_rq_list.prev is expected to point to
+> a valid cfs_rq->leaf_cfs_rq_list in the hierarchy. However, when accessed
+> from the first node in a list, leaf_cfs_rq_list.prev can incorrectly point
+> back to the list head (rq->leaf_cfs_rq_list) instead of another
+> cfs_rq->leaf_cfs_rq_list.
+>
+> The function does not handle this case, leading to incorrect pointer
+> calculations and unintended memory accesses, which can result in a kernel
+> crash.
+>
+> A recent attempt to reorder fields in struct rq exposed this issue by
+> modifying memory offsets and affecting how pointer computations are
+> resolved. While the problem existed before, it was previously masked by
+> specific field arrangement. The reordering caused erroneous pointer
+> accesses, leading to a NULL dereference and a crash, as seen in the
+> following trace:
+>
+> [    2.152852] Call Trace:
+> [    2.152855] __update_blocked_fair+0x45c/0x6a0 (unreliable)
+> [    2.152862] sched_balance_update_blocked_averages+0x11c/0x24c
+> [    2.152869] sched_balance_softirq+0x60/0x9c
+> [    2.152876] handle_softirqs+0x148/0x3b4
+> [    2.152884] do_softirq_own_stack+0x40/0x54
+> [    2.152891] __irq_exit_rcu+0x18c/0x1b4
+> [    2.152897] irq_exit+0x20/0x38
+> [    2.152903] timer_interrupt+0x174/0x30c
+> [    2.152910] decrementer_common_virt+0x28c/0x290
+> [    2.059873] systemd[1]: Hostname set to ...
+> [    2.152682] BUG: Unable to handle kernel data access on read at 0x100000125
+> [    2.152717] Faulting instruction address: 0xc0000000001c0270
+> [    2.152724] Oops: Kernel access of bad area, sig: 7 [#1]
+> ..
+>
+> To fix this, introduce a check to detect when prev points to the list head
+> (&rq->leaf_cfs_rq_list). If this condition is met, return early to prevent
+> the use of an invalid prev_cfs_rq.
+>
+> Fixes: fdaba61ef8a2 ("sched/fair: Ensure that the CFS parent is added after unthrottling")
+> Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
 > ---
->  drivers/net/ppp/pppoe.c       | 2 +-
->  include/uapi/linux/if_pppox.h | 4 ++++
->  2 files changed, 5 insertions(+), 1 deletion(-)
-> 
+>  kernel/sched/fair.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+>
+> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+> index 1c0ef435a7aa..a4daa7a9af0b 100644
+> --- a/kernel/sched/fair.c
+> +++ b/kernel/sched/fair.c
+> @@ -4045,12 +4045,15 @@ static inline bool child_cfs_rq_on_list(struct cfs_rq *cfs_rq)
+>  {
+>         struct cfs_rq *prev_cfs_rq;
+>         struct list_head *prev;
+> +       struct rq *rq;
+> +
+> +       rq = rq_of(cfs_rq);
+>
+>         if (cfs_rq->on_list) {
+>                 prev = cfs_rq->leaf_cfs_rq_list.prev;
+> +               if (prev == &rq->leaf_cfs_rq_list)
+> +                       return false;
 
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
+what about the else case below , prev can also point to rq->leaf_cfs_rq_list
 
+>         } else {
+> -               struct rq *rq = rq_of(cfs_rq);
+> -
+>                 prev = rq->tmp_alone_branch;
+>         }
+>
+> --
+> 2.43.5
+>
 
