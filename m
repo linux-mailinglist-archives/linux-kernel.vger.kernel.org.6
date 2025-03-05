@@ -1,58 +1,60 @@
-Return-Path: <linux-kernel+bounces-547900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE44A50F06
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:47:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66357A50F0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:48:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 682A5188F740
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:47:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17A163AA6F6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE322066F4;
-	Wed,  5 Mar 2025 22:47:14 +0000 (UTC)
-Received: from mail115-100.sinamail.sina.com.cn (mail115-100.sinamail.sina.com.cn [218.30.115.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8AD20767C;
+	Wed,  5 Mar 2025 22:48:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="h4ZCL+WE"
+Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617DD206F17
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 22:47:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=218.30.115.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD6F31EEA5D;
+	Wed,  5 Mar 2025 22:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741214834; cv=none; b=ogRLDs7xGyStfS4B0fxs0tf7Fqqdddkg79d2HhFrBw6VRVUgdJ1og7YethqVistSI6xc6cR3wVSysx7ULQ4iRxvdNHEjRVMP2p5E+Ory4CyIPmJJBcJcVgITratvbxfI1E4L3KcWgJcH2U3PIf3Sg77Z1+614gLZ9ETNQg4xyjQ=
+	t=1741214880; cv=none; b=qboWZw4vaWIX+lpwWZ8UFdNw8iqCNM02LDAq/NuzVgJHuEcmlKPikYMm/u5cWIaar4loWYhZ++xWuJMNCwF2oFngjXwvYFpn1GECQJGLi2oTKRnSov/RgI7NwfM7DpeVAJOMFgfou6QtBjr3WRezKK00wBXP/ZZr7lDg7TIrzrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741214834; c=relaxed/simple;
-	bh=Giysu/tjLy7TiFQnaV1VHgDDO4OdNnanXoD5UIaaXJ4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=HrdSDAeSfMetjk69eTafs6i6DbjSd5oD7QkC94mF5O+uGMXMjDD+8rfGhmnB/LGR5FrhleWObbtXfDl/jeKqwLjE4Ahq7hOBjgu4+/tg68r6ZXh9dLwumsMiyhE6FziO8Ak38JORk9qh+8Pnvy2c6GjQp33rMsZqGx49wat7dtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=218.30.115.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([116.24.8.13])
-	by sina.com (10.185.250.23) with ESMTP
-	id 67C8D4620000619E; Wed, 6 Mar 2025 06:47:00 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 6462088913194
-X-SMAIL-UIID: 8718048AE1954DBFBAC9D1D84D431635-20250306-064700-1
-From: Hillf Danton <hdanton@sina.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-Date: Thu,  6 Mar 2025 06:46:45 +0800
-Message-ID: <20250305224648.3058-1-hdanton@sina.com>
-In-Reply-To: <20250305114433.GA28112@redhat.com>
-References: <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt> <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com> <20250305045617.3038-1-hdanton@sina.com>
+	s=arc-20240116; t=1741214880; c=relaxed/simple;
+	bh=j690KMyiLxuuR24G6j9sZerB6/YuInfz3g49qZUsgvQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DvBSqmxuCq4BFdpy3nFIfx8BraHMt9blhmFRAkgHyOILrw/Smctd7/y5l1LYpRwdiml3s8c5jw2qJzyUmzcSvw5qSOcyJTIpFAkCFSpvsW7XaEPtySP3Ibg7vO5Ssw6S/Bhg9/02+GxeRfrGymmvEMWJpnfkD1W5MO6wVCgmZCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=h4ZCL+WE; arc=none smtp.client-ip=178.238.236.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=kemnade.info; s=20220719; h=Cc:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References;
+	bh=7fAKyPcFLbipyj8e2+HaYX8ZN0IQD4FgvUWGz9wiNuY=; b=h4ZCL+WExFSPRI+oi7iGgFW+yy
+	gjmzS3Ki/r2yubN8dEfbBxkmDm69I0j96wpiL0X5wnLPU3+GwHBGdXQXci1MaRq8r8y42C+BSh8pM
+	Yh+dVJNI5dPat7hrnubUkrPOWJFtz5O3qs0+vSQwI8HgqFrw/l9uRubI4ZOu4Wqebnm3yFCGg6pld
+	dZ1UDrNkA8+5wUTuCsHLhyNbKL3DDORA8PQ1Hj96+xgvpLSGfYOf0cGObfdqpQUXRiV7t7TgL2eCE
+	oZnpAK84atGBwcgVaroU9Sumv60buX6pyc4yjlarRxvvwCLsiIXjGFX4QGoYpa3WXrdiTo7r9eoRH
+	ccfANGDA==;
+From: Andreas Kemnade <andreas@kemnade.info>
+To: mturquette@baylibre.com,
+	sboyd@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	tony@atomide.com,
+	linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-omap@vger.kernel.org
+Cc: Andreas Kemnade <andreas@kemnade.info>
+Subject: [PATCH] dt-bindings: clock: ti: Convert ti-clkctrl.txt to json-schema
+Date: Wed,  5 Mar 2025 23:47:22 +0100
+Message-Id: <20250305224722.66360-1-andreas@kemnade.info>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,25 +63,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-On Wed, 5 Mar 2025 12:44:34 +0100 Oleg Nesterov <oleg@redhat.com>
-> On 03/05, Hillf Danton wrote:
-> > See the loop in  ___wait_event(),
-> >
-> > 	for (;;) {
-> > 		prepare_to_wait_event();
-> >
-> > 		// flip
-> > 		if (condition)
-> > 			break;
-> >
-> > 		schedule();
-> > 	}
-> >
-> > After wakeup, waiter will sleep again if condition flips false on the waker
-> > side before waiter checks condition, even if condition is atomic, no?
-> 
-> Yes, but in this case pipe_full() == true is correct, this writer can
-> safely sleep.
-> 
-No, because no reader is woken up before sleep to make pipe not full.
+Convert the TI clkctrl clock device tree binding to json-schema.
+Specify the creator of the original binding as a maintainer.
+
+reg property is used mostly with one item, in am3xxx also with
+an arbitrary number of items, so divert from the original binding
+specifying two (probably meaning one address and one size).
+The consumer part of the example is left out because the full consumer
+node would be needed.
+
+Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+---
+@Tony: you seem to be the only contributor to the txt binding,
+so we could go with dual-licensing if you agree.
+
+ .../devicetree/bindings/clock/ti,clkctrl.yaml | 64 +++++++++++++++++++
+ 1 file changed, 64 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
+
+diff --git a/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
+new file mode 100644
+index 0000000000000..bf4119c9c61fe
+--- /dev/null
++++ b/Documentation/devicetree/bindings/clock/ti,clkctrl.yaml
+@@ -0,0 +1,64 @@
++# SPDX-License-Identifier: GPL-2.0-only
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/clock/ti,clkctrl.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Texas Instruments clkctrl clock
++
++maintainers:
++  - Tony Lindgren <tony@atomide.com>
++
++description: |
++  Texas Instruments SoCs can have a clkctrl clock controller for each
++  interconnect target module. The clkctrl clock controller manages functional
++  and interface clocks for each module. Each clkctrl controller can also
++  gate one or more optional functional clocks for a module, and can have one
++  or more clock muxes. There is a clkctrl clock controller typically for each
++  interconnect target module on omap4 and later variants.
++
++  The clock consumers can specify the index of the clkctrl clock using
++  the hardware offset from the clkctrl instance register space. The optional
++  clocks can be specified by clkctrl hardware offset and the index of the
++  optional clock.
++
++properties:
++  compatible:
++    enum:
++      - ti,clkctrl
++      - ti,clkctrl-l4-cfg
++      - ti,clkctrl-l4-per
++      - ti,clkctrl-l4-secure
++      - ti,clkctrl-l4-wkup
++
++  "#clock-cells":
++    const: 2
++
++  clock-output-names:
++    maxItems: 1
++
++  reg:
++    minItems: 1
++    maxItems: 8 # arbitrary, should be enough
++
++required:
++  - compatible
++  - "#clock-cells"
++  - clock-output-names
++  - reg
++
++additionalProperties: false
++
++examples:
++  - |
++    bus {
++      #address-cells = <1>;
++      #size-cells = <1>;
++
++      clock@20 {
++        compatible = "ti,clkctrl";
++        clock-output-names = "l4_per";
++        reg = <0x20 0x1b0>;
++        #clock-cells = <2>;
++      };
++    };
+-- 
+2.39.5
+
 
