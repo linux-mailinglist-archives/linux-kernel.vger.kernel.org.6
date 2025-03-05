@@ -1,178 +1,323 @@
-Return-Path: <linux-kernel+bounces-547758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1D28A50D2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:14:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69EB3A50D30
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:14:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC9E7171F1A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:14:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0E033AC836
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:14:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77B982561AC;
-	Wed,  5 Mar 2025 21:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9825C257AC3;
+	Wed,  5 Mar 2025 21:14:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZrxRev3s"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="guq1SyaF"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DA27255223
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:13:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D8F2571CB
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:14:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741209229; cv=none; b=DeTxRIrrokTgYj8ZWsNr0PdburiPDg/wJ7G3Pg/43Y/sG72yLS1I6741QbTVUc22O7WrU+h0Oh4wzVM1uQQ+IIARt77MxE9y5ZtCUNuESLBB9Qw9Y7WFvy8QEJtSBrnuYfHqsaK0b5cRH0v/y2ZEmLpQ2XY5GJHVnYbUA5v4YiQ=
+	t=1741209250; cv=none; b=d/niq751cz6jxUEsT3QbgmeUOWIaXuos9f3jLNxDF9RR2D0s3EedJo5pNAnLtnrXKsrB3TdEUpZRp3LLRpqI6fjwUc1DoEqI5iFilcnz38wBVNgbTO3DQLdgyOt9F+Y6QVuGkdtS21zFt6COkOt5WixC/GxYaDODwPDDydyrSy0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741209229; c=relaxed/simple;
-	bh=Bk1PHrizI9T3q1Sb7gFQU5nIriCehLNjici2Uhuip2M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qZ63bzJnd4FxCWJpcIj3HPwmG5bxM4zRCOOTai4UJvd607ouz/O0hFGWGUdUfUmvma9u02StxNTQ+EvOB03Gk6pmSucGdxcPgr4KcKCfwfzdJKbQR5OHxl9dcUzYaSxr/4uhArEVMsj5IPv5eoplCjz0xKRPgHV3nI9ilDNxMNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZrxRev3s; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bd03ed604so15549695e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 13:13:47 -0800 (PST)
+	s=arc-20240116; t=1741209250; c=relaxed/simple;
+	bh=3MaNDi24LETBXCeUYm9yqEAxHq21DHXzZARkz6n+HDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QGyQYMM+S+pmcPf4rGC8yA/CSa194dUKUek0v3WHvZ7dq6aEZSU9cTaMedOlh4vUrqg+ynCRbU9HGYR7o+i164gdIEp0CUoLCjk/fcjooejvfMla3l2VbN67gxlFouknHVWfnylRrnx/5BY+LwMRS4q/Z7oxrFjpuuya/prSJSI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=guq1SyaF; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-549681574e0so4219119e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 13:14:06 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741209226; x=1741814026; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mBRrY/yBfxvuLgMlXhSkD7HMQ9Yj7k44KHWuqIjXDEE=;
-        b=ZrxRev3suyauDon67PwqQO3DWGc0UxzPzQZDfYZ0HaNGH2hE9LuY15U7Omw1666Szi
-         xixdHafAk5/IZykEVDz5RCTuTTbNCfHGcbnAgwLm1tq0UF6Qals/AQgVrpFc+LoqEt1s
-         DB/ksCeCAATFMiyT0E/fmsokpNemEUQDEW+oGs/XCbYv45FF6Lwp2oxRSi3Ffg42jcQ4
-         i0gXwE1AiWZtzTK81BRuaO+Hy693Gg8VfATpqQWZvLIgG6315xvD6Y0V0LkylcFC9uy7
-         rroUD6xtAqMBCtWk/ptHwAUFHFYNC6G58visdjl0yBS2HdTUcK/MpjAaFfHAnUwHyl98
-         23qQ==
+        d=linaro.org; s=google; t=1741209245; x=1741814045; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=4jAKYbTUJpewVNmKScs/KV5h9MR6DBwgVHxpvatN8NY=;
+        b=guq1SyaFZawwXcYbHaxYdfpBYVjbsTGbB5+BvnzFqZklT+0MXrBT0cC2ywFsZR+pUJ
+         megzBGA1kr9lxC9U09F8S86ghsjSh4qVHLd9ZcMyLoe3QiFdwdgczL5jq9qRTTsamhRb
+         8BoRUQvvXQK8dXum5raqYXJba7IZ/nHUrH1uSs3D2gNYJlKl9IMKOPJDMfgjSek/smLd
+         6Bk0tiN27sIXLmf/iD2rr47yQeLQVOZbQMHUY3nCTlDNwLU4qbIuWDbRc/X6hC/qLBxU
+         toinImx8W5LvN3xR7oCQ//Lj1Gy6OA3ooczWdG+HeHNQEXuCwU1exARBkb1dxprxVDq6
+         PJOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741209226; x=1741814026;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mBRrY/yBfxvuLgMlXhSkD7HMQ9Yj7k44KHWuqIjXDEE=;
-        b=rJadQxbiIw8JbxCZatVkrkuceZfRdUdK+PrxKBGEuoxSMMGuc8ADEZIwpUxhffSJNd
-         /O6iDC3EWf9kHe3a2L82iAqgnWnQWNeq9WpmnrM3g8+U7Eggey8Zz3jv2ktC1cfpmWV2
-         gmwuYy5JUwF6yEqdvJS8XbVKEwM6Sk4x1P4TRkx1BxM5BiU7telrvojjUgSTGVGulkoL
-         WUwFfqcYX9yfAPPDzf3jmyiwGTIk+gBwKmPEaiT9T/cILAugO7ucYG96kqOpE9K0bEn1
-         fxKLXeI1xwQEAg2YqIKY82wWvkQJv6d9OW6+tEmYOlf1FNPH3yhTpfAB2LhMhUeIdYP2
-         rrwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWOpUuyn5bE7WAFY+cdeuf8GakViG1SzZZxCPCnr7tK1AyO/byfJ8oQS3omkpvuwygEMLCknQRCXrIhKb4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxmw3zyfkXpH9aylNjBlzsJ/DxMA8Mw77/LIPRYmQ3C4p49vXOt
-	ZuKhvBUDpNqXiKhMVEEbSfglQd2lvK/o5HHqONf4joUUmXPeg2JH
-X-Gm-Gg: ASbGnctKkS85EFR8NNf3KwLPdWMfTeDokX8cJGELo5zjTkJk3UxbFxap+pLz+PmYahq
-	1AHBu6DPHrh5iz0DfbhmIJ+30NdwlvkoM1r1MwK4Y81vH3lVQPwLVjfPHj283KkUdLiCYhtmUZ8
-	NGNXUaH+nPREWowQFGqCGJjUe7RzU2tqq083dPTjHbXAkHuPJQ8UNbWdDvcSogz9JzQYrQqAZtY
-	Cl9kbJQMLnDQePV4CkutL4OSGYSBekltqpjuOlwlRKAg3Qymdhzv6+IiFzwNofM11ZA05uCm5gk
-	Sa5SEMj52pQjbeKLY+YcqbDorFu+zx7gXlrX46ID5CYEuK0Bwyb+hEIlUlLjsYx4GPS/9rhXFQF
-	9PmJou0E=
-X-Google-Smtp-Source: AGHT+IHVQz7StEb3E7vwY+wN9yjtbQ30ziK4JQuHk7WcBp+0Xfw+qMA37Ery803rfsIYjDm2WSDeiQ==
-X-Received: by 2002:a05:600c:198f:b0:43a:b0b5:b0 with SMTP id 5b1f17b1804b1-43bd293ef18mr37803035e9.4.1741209226004;
-        Wed, 05 Mar 2025 13:13:46 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6a9fsm22432775f8f.36.2025.03.05.13.13.45
+        d=1e100.net; s=20230601; t=1741209245; x=1741814045;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4jAKYbTUJpewVNmKScs/KV5h9MR6DBwgVHxpvatN8NY=;
+        b=sI3CcpGeoVtebl8rbgJtbDtDYZv+UV/oEji8VVsvhKiRsuRD+oFwHz9skUfIoLhYVB
+         uWE1SEAFHGfm4PbD6g4OOgycjNkuZEXBvRNIpWbIa7bz7EYm1vxun8NPftcwz3eSnFq8
+         VpD9dwnvPhFQ+l3CKJJ5Wnw4UVGvMzQi0gTavbvusFB6E3Lzsv21RMiOjg+mGeBX2+gA
+         ANj7lEfT9Sp5jGimK84VDXhh29jF+uXOBlD/jftlyfOnicCsSjqinlO1JBZap3J7z1tk
+         NOiti/ZsgcLSFgoWRVF8QPxibAkwCRgtCGIK/fx8xhwOAPF+gOx2dA1Qk2JC9flZN9lt
+         C1eQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV14wVNNopjELofDpNPxyoxCU5HzPp52Fwo3bVEcrDfZom79xBBmHyOiaPzQUZz5Fdg7FklQCEbW6IEvXM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1jvipc8tY8fT1BUzE8actiShL0Jy30I2rQRdJIYPBpoLRh7mL
+	/J/1PafrONQkiFlSNvyqh84r0BmM2+LGUeKCLYJTs0fpn9aS5BVdyPQ0I3fROjA=
+X-Gm-Gg: ASbGncsgZz95rw7NH3dF1Onu/Hlw6JjS1e1XL7ZP2NPTT5k1pwrhrDeK7NUfb1xnTwe
+	3cuaDMKZ+QbXOnjenBqqvo89MNSwPOqGeLJwKCNpi3c7GjZPVPL0icOc4/A6od87+qvjX2kMNlz
+	VLDq7rivAw8zuu9Imj8se+LeppRRCtdZvvqbJcg8jn075YnZPjHjhvGGjV9bTIegx7GVsYsfqU2
+	X1ViuFimPRA+MB2TEdAtvdvYifs8vur3edvqAdzn3QpDzReTS/GeXtGdMvmrB6A6YlOKfNtx2CE
+	ZMF0wQm+Rse9OfEvIZ4PQkeT11loXUEoD+fhQdv99xuY3nTLeeU1qWF4VJwiQfznlWp7JkIpL08
+	JVd7toVwrV+xmUeKJLM7nFAht
+X-Google-Smtp-Source: AGHT+IHASTT0I2RZzxvHW6GJOilteC+6lJrj4HK7/2n8Ey2P5/4CP44E+Gzu2m+8VSksWNVCFKgRdQ==
+X-Received: by 2002:a05:6512:b8f:b0:545:62c:4b13 with SMTP id 2adb3069b0e04-5497d37704fmr1656131e87.40.1741209244983;
+        Wed, 05 Mar 2025 13:14:04 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-54986c730e2sm24619e87.18.2025.03.05.13.14.02
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 13:13:45 -0800 (PST)
-Date: Wed, 5 Mar 2025 21:13:44 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Vincent Mailhol <mailhol.vincent@wanadoo.fr>, Yury Norov
- <yury.norov@gmail.com>, Lucas De Marchi <lucas.demarchi@intel.com>, Rasmus
- Villemoes <linux@rasmusvillemoes.dk>, Jani Nikula
- <jani.nikula@linux.intel.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v4 4/8] bits: introduce fixed-type BIT
-Message-ID: <20250305211344.0c7c3782@pumpkin>
-In-Reply-To: <Z8hyNXVZxLzhEzNy@smile.fi.intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
-	<20250305-fixed-type-genmasks-v4-4-1873dcdf6723@wanadoo.fr>
-	<Z8hgqOB5Ym-GGykS@smile.fi.intel.com>
-	<d7f3150d-0167-44be-90b2-17f8a050687c@wanadoo.fr>
-	<Z8hyNXVZxLzhEzNy@smile.fi.intel.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        Wed, 05 Mar 2025 13:14:03 -0800 (PST)
+Date: Wed, 5 Mar 2025 23:14:01 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, 
+	Abhinav Kumar <quic_abhinavk@quicinc.com>, Sean Paul <sean@poorly.run>, 
+	Marijn Suijten <marijn.suijten@somainline.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Kuogee Hsieh <quic_khsieh@quicinc.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, quic_lliu6@quicinc.com, quic_fangez@quicinc.com, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org, 
+	linux-gpio@vger.kernel.org
+Subject: Re: [PATCH 5/8] drm/msm/dp: Add support for lane mapping
+ configuration
+Message-ID: <td4dkb6qoxfa7lfmfszlowov6qxdukqq5qnwnhmajnskr5mu2u@todczb6inttv>
+References: <20241129-add-displayport-support-for-qcs615-platform-v1-0-09a4338d93ef@quicinc.com>
+ <20241129-add-displayport-support-for-qcs615-platform-v1-5-09a4338d93ef@quicinc.com>
+ <CAA8EJpoY8hySQd00yODGeHjSpVZpEBLjF3aBiKGJPUhpr-2mgw@mail.gmail.com>
+ <d2a3cd6f-1077-4edb-9f0c-0c940a639050@quicinc.com>
+ <zvapsvfftai4fp6vwrn33edqsyuuprq2pxz6spij6j7t4y6xmn@zzgp7gbsivbk>
+ <93ddb63c-42da-43c8-9a77-c517ca5d6432@quicinc.com>
+ <CAA8EJprAFYD6ykN10-r=JwHM4A4XeDDcZVcVWYp_5A5FP-=RyA@mail.gmail.com>
+ <e647d143-dc6e-483d-ac81-2733fb526fc3@quicinc.com>
+ <h6tmbuv26tdv633udphttsydpbvnwownulvglcxktdaxqdhtvw@ereftfs5hiso>
+ <9fb34496-d823-414a-b7dc-54b4677829e5@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9fb34496-d823-414a-b7dc-54b4677829e5@quicinc.com>
 
-On Wed, 5 Mar 2025 17:48:05 +0200
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-
-> On Wed, Mar 05, 2025 at 11:48:10PM +0900, Vincent Mailhol wrote:
-> > On 05/03/2025 at 23:33, Andy Shevchenko wrote:  
-> > > On Wed, Mar 05, 2025 at 10:00:16PM +0900, Vincent Mailhol via B4 Relay wrote:  
+On Wed, Mar 05, 2025 at 06:16:45PM +0800, Xiangxu Yin wrote:
 > 
-> ...
 > 
-> > >> +#define BIT_U8(b) (BIT_INPUT_CHECK(u8, b) + (unsigned int)BIT(b))
-> > >> +#define BIT_U16(b) (BIT_INPUT_CHECK(u16, b) + (unsigned int)BIT(b))
-
-Why even pretend you are checking against a type - just use 8 or 16.
-
-> > > 
-> > > Why not u8 and u16? This inconsistency needs to be well justified.
-
-What is the type of BIT(b) ?
-it really ought to be unsigned int (so always 32bit), but I bet it
-is unsigned long (possibly historically because someone was worried
-int might be 16 bits!)
-
+> On 12/20/2024 5:45 AM, Dmitry Baryshkov wrote:
+> > On Thu, Dec 19, 2024 at 06:36:38PM +0800, Xiangxu Yin wrote:
+> >>
+> >>
+> >> On 12/5/2024 7:40 PM, Dmitry Baryshkov wrote:
+> >>> On Thu, 5 Dec 2024 at 13:28, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+> >>>>
+> >>>>
+> >>>>
+> >>>> On 12/2/2024 6:46 PM, Dmitry Baryshkov wrote:
+> >>>>> On Mon, Dec 02, 2024 at 04:40:05PM +0800, Xiangxu Yin wrote:
+> >>>>>>
+> >>>>>>
+> >>>>>> On 11/29/2024 9:50 PM, Dmitry Baryshkov wrote:
+> >>>>>>> On Fri, 29 Nov 2024 at 09:59, Xiangxu Yin <quic_xiangxuy@quicinc.com> wrote:
+> >>>>>>>>
+> >>>>>>>> Add the ability to configure lane mapping for the DP controller. This is
+> >>>>>>>> required when the platform's lane mapping does not follow the default
+> >>>>>>>> order (0, 1, 2, 3). The mapping rules are now configurable via the
+> >>>>>>>> `data-lane` property in the devicetree. This property defines the
+> >>>>>>>> logical-to-physical lane mapping sequence, ensuring correct lane
+> >>>>>>>> assignment for non-default configurations.
+> >>>>>>>>
+> >>>>>>>> Signed-off-by: Xiangxu Yin <quic_xiangxuy@quicinc.com>
+> >>>>>>>> ---
+> >>>>>>>>  drivers/gpu/drm/msm/dp/dp_catalog.c | 11 +++++------
+> >>>>>>>>  drivers/gpu/drm/msm/dp/dp_catalog.h |  2 +-
+> >>>>>>>>  drivers/gpu/drm/msm/dp/dp_ctrl.c    |  2 +-
+> >>>>>>>>  drivers/gpu/drm/msm/dp/dp_panel.c   | 13 ++++++++++---
+> >>>>>>>>  drivers/gpu/drm/msm/dp/dp_panel.h   |  3 +++
+> >>>>>>>>  5 files changed, 20 insertions(+), 11 deletions(-)
+> >>>>>>>>
+> >>>>>
+> >>>>>>>> @@ -461,6 +460,7 @@ static int msm_dp_panel_parse_dt(struct msm_dp_panel *msm_dp_panel)
+> >>>>>>>>         struct msm_dp_panel_private *panel;
+> >>>>>>>>         struct device_node *of_node;
+> >>>>>>>>         int cnt;
+> >>>>>>>> +       u32 lane_map[DP_MAX_NUM_DP_LANES] = {0, 1, 2, 3};
+> >>>>>>>>
+> >>>>>>>>         panel = container_of(msm_dp_panel, struct msm_dp_panel_private, msm_dp_panel);
+> >>>>>>>>         of_node = panel->dev->of_node;
+> >>>>>>>> @@ -474,10 +474,17 @@ static int msm_dp_panel_parse_dt(struct msm_dp_panel *msm_dp_panel)
+> >>>>>>>>                 cnt = drm_of_get_data_lanes_count(of_node, 1, DP_MAX_NUM_DP_LANES);
+> >>>>>>>>         }
+> >>>>>>>>
+> >>>>>>>> -       if (cnt > 0)
+> >>>>>>>> +       if (cnt > 0) {
+> >>>>>>>> +               struct device_node *endpoint;
+> >>>>>>>> +
+> >>>>>>>>                 msm_dp_panel->max_dp_lanes = cnt;
+> >>>>>>>> -       else
+> >>>>>>>> +               endpoint = of_graph_get_endpoint_by_regs(of_node, 1, -1);
+> >>>>>>>> +               of_property_read_u32_array(endpoint, "data-lanes", lane_map, cnt);
+> >>>>>>>> +       } else {
+> >>>>>>>>                 msm_dp_panel->max_dp_lanes = DP_MAX_NUM_DP_LANES; /* 4 lanes */
+> >>>>>>>> +       }
+> >>>>>>>
+> >>>>>>> Why? This sounds more like dp_catalog or (after the refactoring at
+> >>>>>>> [1]) dp_ctrl. But not the dp_panel.
+> >>>>>>>
+> >>>>>>> [1] https://patchwork.freedesktop.org/project/freedreno/series/?ordering=-last_updated
+> >>>>>>>
+> >>>>>> We are used the same prop 'data-lanes = <3 2 0 1>' in mdss_dp_out to keep similar behaviour with dsi_host_parse_lane_data.
+> >>>>>> From the modules used, catalog seems more appropriate, but since the max_dp_lanes is parsed at dp_panel, it has been placed here.
+> >>>>>> Should lane_map parsing in msm_dp_catalog_get, and keep max_dp_lanes parsing at the dp_panel?
+> >>>>>
+> >>>>> msm_dp_catalog_get() is going to be removed. Since the functions that
+> >>>>> are going to use it are in dp_ctrl module, I thought that dp_ctrl.c is
+> >>>>> the best place. A better option might be to move max_dp_lanes and
+> >>>>> max_dp_link_rate to dp_link.c as those are link params. Then
+> >>>>> lane_mapping also logically becomes a part of dp_link module.
+> >>>>>
+> >>>>> But now I have a more important question (triggered by Krishna's email
+> >>>>> about SAR2130P's USB): if the lanes are swapped, does USB 3 work on that
+> >>>>> platform? Or is it being demoted to USB 2 with nobody noticing that?
+> >>>>>
+> >>>>> If lanes 0/1 and 2/3 are swapped, shouldn't it be handled in the QMP
+> >>>>> PHY, where we handle lanes and orientation switching?
+> >>>>>
+> >>>> I have checked the DP hardware programming guide and also discussed it with Krishna.
+> >>>>
+> >>>> According to the HPG section '3.4.2 PN and Lane Swap: PHY supports PN swap for mainlink and AUX, but it doesn't support lane swap feature.'
+> >>>>
+> >>>> The lane swap mainly refers to the logical to physical mapping between the DP controller and the DP PHY. The PHY handles polarity inversion, and the lane map does not affect USB behavior.
+> >>>>
+> >>>> On the QCS615 platform, we have also tested when DP works with lane swap, other USB 3.0 ports can works normally at super speed.
+> >>>
+> >>> "Other USB 3.0 ports"? What does that mean? Please correct me if I'm
+> >>> wrong, you should have a USB+DP combo port that is being managed with
+> >>> combo PHY. Does USB 3 work on that port?
+> >>>
+> >>> In other words, where the order of lanes is actually inverted? Between
+> >>> DP and combo PHY? Within combo PHY? Between the PHY and the pinout?
+> >>> Granted that SM6150 was supported in msm-4.14 could you possibly point
+> >>> out a corresponding commit or a set of commits from that kernel?
+> >>>
+> >> For "Other USB 3.0 ports", as replied in USBC driver, USB3 primary phy works for other four USB type-A port.
 > > 
-> > Because of the C integer promotion rules, if casted to u8 or u16, the
-> > expression will immediately become a signed integer as soon as it is get
-> > used. For example, if casted to u8
+> > So if that's the USB3 primary, then why do you mention here at all? We
+> > are taling about the secondary USB3 + DP.
 > > 
-> >   BIT_U8(0) + BIT_U8(1)
+> OK, sorry for confusing you.
+> >> The REG_DP_LOGICAL2PHYSICAL_LANE_MAPPING mapping determines how logical lanes (0, 1, 2, 3) map to physical lanes sent to the PHY.
+> >> This ensures alignment with hardware requirements.
+> >> The PHY’s polarity inversion only adjusts signal polarity and doesn’t affect lane mapping.
+> >> Both DP ctrl and PHY lane related config will not affect USB phy.
 > > 
-> > would be a signed integer. And that may surprise people.
+> > Probably we misundersand each other. The DP PHY should have orientation
+> > switch register, which controls whether 2-lane DP uses lanes 0/1 or 2/3.
+> > Can you use that register?
+> > 
+> Yes, DP PHY have orientation register as below.
+> DP_PHY_DP_PHY_CFG_1(0x88e9014) bit(7) SW_PORTSELECT
+> > Also, could you _please_ answer the question that I have asked? Is the
+> > order of lanes inverted between the DP controller and DP PHY? Or between
+> > DP PHY and the DP connector? If one uses USB3 signals coming from this
+> > port (yes, on the other board, not on the Ride), would they also need to
+> > switch the order of USB3 lanes? If one uses a DP-over-USB-C, are DP
+> > lanes are swapped?
+> > 
+> It's inverted between the DP controller and DP PHY.
+> If other use USB3 on the other board, will not need switch order of USB3 lanes,
+> If one use DP-over-USB-C, then need DP lanes swap.
 
-They always get 'surprised' by that.
-I found some 'dayjob' code that was doing (byte_var << 1) >> 1 in order
-to get the high bit discarded.
-Been like that for best part of 30 years...
-I wasn't scared to fix it :-)
+Thanks!
 
-> Yes, but wouldn't be better to put it more explicitly like
+> >> Without extra Type-C mapping, the DP controller’s mapping indirectly decides how signals are transmitted through Type-C.
+> >> Mapping ensures proper data transmission and compatibility across interfaces.
+> >>
+> >> We only found sm6150 need this lane mapping config, 
+> >> For msm 4.14, please refer these links,
+> >> https://android.googlesource.com/kernel/msm/+/af03eef7d4c3cbd1fe26c67d4f1915b05d0c1488/arch/arm64/boot/dts/qcom/sm6150-sde.dtsi (qcom,logical2physical-lane-map)
+> >> https://android.googlesource.com/kernel/msm/+/af03eef7d4c3cbd1fe26c67d4f1915b05d0c1488/drivers/gpu/drm/msm/dp/dp_parser.c (dp_parser_misc)
+> >> https://android.googlesource.com/kernel/msm/+/af03eef7d4c3cbd1fe26c67d4f1915b05d0c1488/drivers/gpu/drm/msm/dp/dp_catalog_v200.c (dp_catalog_ctrl_lane_mapping_v200)
+> >>
+> >> If need process orientation info like dp_catalog_ctrl_lane_mapping_v200, 
+> >> then 
+> >> if implement in DP phy, then we need config dp_link register in PHY,
+> >> if implement in DP link, then we need pass orientation info to DP driver, perhaps we could add a new attribute to the phy_configure_opts_dp structure to pass this.
+> >> Do you have any suggestions?
+> > 
+> > Does SW_PORTSEL_VAL affect the DP lanes on this platform?
+> > 
+> SW_PORTSEL_VAL for USB3PHY_PCS_MISC_TYPEC_CTRL will not affect DP lanes in this DP or USB3 chip series.
+> USB3 will use USB3PHY_PCS_MISC_TYPEC_CTRL(SW_PORTSEL_VAL BIT_0) and DP will use DP_PHY_DP_PHY_CFG_1(SW_PORTSELECT BIT_7)
+
+Is it possible to set this bit from the PHY driver rather than remapping
+the lanes in the DP driver?
+
+> >>
+> >>>>
+> >>>> Additionally, if it were placed on the PHY side, the PHY would need access to dp_link’s domain which can access REG_DP_LOGICAL2PHYSICAL_LANE_MAPPING.
+> >>>
+> >>> I was thinking about inverting the SW_PORTSEL_VAL bit.
+> >>>
+> >>>> Therefore, we believe that the  max_dp_link_rate,max_dp_lanes and lane_map move to dp_link side is better.
+> >>>>
+> >>>>>>>> +
+> >>>>>>>> +       memcpy(msm_dp_panel->lane_map, lane_map, msm_dp_panel->max_dp_lanes * sizeof(u32));
+> >>>>>>>>
+> >>>>>>>>         msm_dp_panel->max_dp_link_rate = msm_dp_panel_link_frequencies(of_node);
+> >>>>>>>>         if (!msm_dp_panel->max_dp_link_rate)
+> >>>>>>>> diff --git a/drivers/gpu/drm/msm/dp/dp_panel.h b/drivers/gpu/drm/msm/dp/dp_panel.h
+> >>>>>>>> index 0e944db3adf2f187f313664fe80cf540ec7a19f2..7603b92c32902bd3d4485539bd6308537ff75a2c 100644
+> >>>>>>>> --- a/drivers/gpu/drm/msm/dp/dp_panel.h
+> >>>>>>>> +++ b/drivers/gpu/drm/msm/dp/dp_panel.h
+> >>>>>>>> @@ -11,6 +11,8 @@
+> >>>>>>>>  #include "dp_aux.h"
+> >>>>>>>>  #include "dp_link.h"
+> >>>>>>>>
+> >>>>>>>> +#define DP_MAX_NUM_DP_LANES    4
+> >>>>>>>> +
+> >>>>>>>>  struct edid;
+> >>>>>>>>
+> >>>>>>>>  struct msm_dp_display_mode {
+> >>>>>>>> @@ -46,6 +48,7 @@ struct msm_dp_panel {
+> >>>>>>>>         bool video_test;
+> >>>>>>>>         bool vsc_sdp_supported;
+> >>>>>>>>
+> >>>>>>>> +       u32 lane_map[DP_MAX_NUM_DP_LANES];
+> >>>>>>>>         u32 max_dp_lanes;
+> >>>>>>>>         u32 max_dp_link_rate;
+> >>>>>>>>
+> >>>>>>>>
+> >>>>>>>> --
+> >>>>>>>> 2.25.1
+> >>>>>>>>
+> >>>>>>>
+> >>>>>>>
+> >>>>>>
+> >>>>>>
+> >>>>>> --
+> >>>>>> linux-phy mailing list
+> >>>>>> linux-phy@lists.infradead.org
+> >>>>>> https://lists.infradead.org/mailman/listinfo/linux-phy
+> >>>>>
+> >>>>
+> >>>
+> >>>
+> >>
+> > 
 > 
-> #define BIT_U8(b)	(BIT_INPUT_CHECK(u8, b) + (u8)BIT(b) + 0 + UL(0)) // + ULL(0) ?
 
-I don't think you should force it to 'unsigned long'.
-On 64bit a comparison against a 32bit 'signed int' will sign-extend the
-value before making it unsigned.
-While that shouldn't matter here, someone might copy it.
-You just want to ensure that all the values are 'unsigned int', trying
-to return u8 or u16 isn't worth the effort.
-
-When I was doing min_unsigned() I did ((x) + 0u + 0ul + 0ull) to ensure
-that values would always be zero extended.
-But I was doing the same to both sides of the expression - and the compiler
-optimises away all the 'known 0' extension to 64bits.
-
-> Also, BIT_Uxx() gives different type at the end, shouldn't they all be promoted
-> to unsigned long long at the end? Probably it won't work in real assembly.
-> Can you add test cases which are written in assembly? (Yes, I understand that it will
-> be architecture dependent, but still.)
-
-There is no point doing multiple versions for asm files.
-The reason UL(x) and ULL(x) exist is because the assembler just has integers.
-Both expand to (x).
-There might not even be a distinction between signed and unsigned.
-I'm not sure you can assume that a shift right won't replicate the sign bit.
-Since the expression can only be valid for constants, something simple
-like ((2 << (hi)) - (1 << (lo)) really is the best you are going to get
-for GENMASK().
-
-So just define a completely different version for asm any nuke the UL() etc
-for readability.
-
-	David
+-- 
+With best wishes
+Dmitry
 
