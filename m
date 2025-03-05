@@ -1,276 +1,296 @@
-Return-Path: <linux-kernel+bounces-546194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26E6EA4F791
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:02:55 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C46A4F793
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:03:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CADD188DDC2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:03:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DCED188CB95
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 908DF1EA7CE;
-	Wed,  5 Mar 2025 07:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DB651E5B96;
+	Wed,  5 Mar 2025 07:03:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="eL2S3cyn"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="aHc+QVBg"
+Received: from mout-p-103.mailbox.org (mout-p-103.mailbox.org [80.241.56.161])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B5C11D7E42
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:02:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEB2E1624F4;
+	Wed,  5 Mar 2025 07:03:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.161
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741158164; cv=none; b=FlRoJe+O5D0JX9f9DmeUjHhWHvfejBbsAIzvcfNVSLc2Ng8ofEZXjg2abC2wtHYgMNNFUB2jjwNC0t/vZSu8nxFWX2EZNC7V5HjFJBno0vvxiYDQYOWP0l7ufGZYoHsFpBVjjdp22iYjRDVEVPhYXpogkcToKfrNpJ+wd/CgShw=
+	t=1741158229; cv=none; b=Ji2tEcAg0sQ8UFRUFzpev8Avv1+rWqmLEGob65yii6+KdCd5vHcLtpuUM3r3HKmzT3Kpo2X5tZUC1c7Ll0+fySiYzx1hj9o5Ul4fDOspYaHY/1exQYow7Yozh0leyx7KBvwFyl17L7+JNnpDX0kdeL6ncaqrAav8nS/3nzb166w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741158164; c=relaxed/simple;
-	bh=CA3noS0KFeluZ2pLvltfZMdIWvYnaiUAKLBld55KqhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TRdIbajUXqIM2fzYGrE3JPjzzsITS5adO5OfNXK7wQ5D/jytjQMG5axEMYownNR9pUZJaaxx+nuS8ybsfe1yK7JgGYXDFUvd4xY0nvscaoqYTgUPAi6Kbg43t2meKBpTptqoyWdfmAnFWIsCxwu2Hxg49W1tWYz2yLqiXcdl2dA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=eL2S3cyn; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e4f88ea298so8448355a12.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:02:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741158160; x=1741762960; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5/89VcL4o2IORG4LK3l3dkQHPeS2GoSKMM8yqnTe+6w=;
-        b=eL2S3cynW4tfiDTtsPQra9uIW4qQqbszVPzOxLTmaacf/bHzeeoZnLq26Paf5IO99u
-         sBb/ZgRsfmKuDPYtIPodcRq6cLcY4FBnDlZzGVkdKXiyYz3mn1wA7PakdZwODO1dNihL
-         +G+gosPfF7sm1dJ+JyosREkxfZqT6c9mdBWeN/cFSa+qmnqIxgsePlm/nM0RQx1S2/IK
-         9z9nsNDvjDd8i69Y5qGa/jT28t+rH+/OwKeILOFR/Q58qOhsuKs0SvbdXOTvGd3r6p4U
-         Gx4H2zb/Nn7VNxoeycwYUMPV/1aJIs/Vkzmf0nUh4a15iQv+w+xLELKf6hUPAvDCgBIC
-         ekbQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741158160; x=1741762960;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5/89VcL4o2IORG4LK3l3dkQHPeS2GoSKMM8yqnTe+6w=;
-        b=dWvlp5Vjv97NtlLQErtzIMF6tJIBpwKmjXgqC5iicE0ytbFYDLbm50x3EbULBUhX1w
-         O5vz3mr/w7RJQi12GFbSpfidR37JvTDOqdP/eXEave8WRnInvIclpOHx6FUZ2PYMsfg9
-         mcjWdysTUsbolPK9edD+mWxy3oTCUpvAFn344r2jecWZpSAr5AS39bYRJyH1ZYFqJzTk
-         EJ8DolRPJa2YuI1nyiywFvIVWGspuYAfB48fMp4BvwaST8QaswbEnfvx9RQicQg+5Sdq
-         B/HPMG/P7v9x0sM/alrZ3RP/3n20tXm/jjQ9Lsar5IycLZehn83J+/M+fsorD1aNDLf/
-         zrIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWUZM4rIJFnTz+EzzAxIaF+bDjswtnrMCUGmZ+VqII26i1FTXTioBXjqXRvMrRPi0a4ciSHycIgGMSKtss=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrifthHUG3kTcwMdocCx0VqTMyw2Xcr8Ym26qCYa6VJgJGsmDV
-	6Lj8hRFS50ps7XUUJLHL98yf7N6+XUw4fd9/7kMP4K0XsFdtyu+ps+M/mDRTMH0JKxaL2OE+6zj
-	UoAYHIYyIKXELOoin8M1/TK0wr+LyvjsXxS6HJQ==
-X-Gm-Gg: ASbGncsu3yWtsaFdg8mSipZMRwh3zvyIo+RMLCBhudBlOz4eVd6dASq+C2KYnOLkgil
-	5QRJxhtgsX0yunmXiQZ5y9CKcHpt/hsKJFMBUXkM0OBJ571aF5vMJn+B106wE3Kus/Oy5nf2lXG
-	LOALEC+ajwXpGJ9OeEpAVHnFuH
-X-Google-Smtp-Source: AGHT+IGIIgqjVyDZW4/Ols9OIZe07V2W62/11Brg6QiJW0at8363ju49p3wJjCP4RV7cH39KnBlGT2+Cqgfwkziv7/w=
-X-Received: by 2002:a17:907:9451:b0:ac1:ef3c:61d4 with SMTP id
- a640c23a62f3a-ac20d8bcc75mr163310666b.21.1741158159570; Tue, 04 Mar 2025
- 23:02:39 -0800 (PST)
+	s=arc-20240116; t=1741158229; c=relaxed/simple;
+	bh=q4xpQb+6+YSUnyImlArI6oWO4a/8VjfSPXyBOGk2qz8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=QW+C5tOAGJLFRlqsYxz0et3B16pGEbqpKL3o9+lUg/s/r2M5qBnXWq6fUCALxRaMyV5fMzQSb+IWGpf/IO8x8WWoY3MhWWf6zFPd4rzTjJTEm8O7azUCX06W5lLaGrepBjLrDni5QGPQdgfxDL0/pCsrx++HSw2u30PLDGGYIQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=aHc+QVBg; arc=none smtp.client-ip=80.241.56.161
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
+Received: from smtp102.mailbox.org (smtp102.mailbox.org [IPv6:2001:67c:2050:b231:465::102])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-103.mailbox.org (Postfix) with ESMTPS id 4Z73Rt0TNyz9sSf;
+	Wed,  5 Mar 2025 08:03:38 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
+	t=1741158218; h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DixBmUDBTMybbHMZPiht6bmfAxxM9bk/dkydsd/IiGA=;
+	b=aHc+QVBgFG9RiL5iRcYoX7+bFjLQHHHrgiLW4uyiOsdjI8UDIEWgWOjAqHWDyJaU6EL+Bd
+	1qbBTecUktEzysYmuVpRiiekiIt4VQw+vIbzNXqt0oX4+IIuWi80T5DBMb2KKJgtfkSSD3
+	gXVGNEGc1SFGGwKxMT4L134idzhPBvx8Piq5Hm5eUhw0yelDnhGp2KrehwWjZojM+MbLqm
+	Lu+0PieJ5zdm3LAYptcisTUbnGY7ToSYvm7qraw1+F4e4kYosEsapDgoswRwrJDQGC1i1L
+	ONqyp8eQdMQURWDaWX2/UpPdvVdUOTfA109+KAfPUeaKqwwxQ46LcI44JtWuhg==
+Message-ID: <d667d29337c49ebebb82d69b12bd48cad66ce595.camel@mailbox.org>
+Subject: Re: [PATCH] PCI: Check BAR index for validity
+From: Philipp Stanner <phasta@mailbox.org>
+Reply-To: phasta@kernel.org
+To: Philipp Stanner <phasta@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, Bingbu Cao
+	 <bingbu.cao@linux.intel.com>
+Date: Wed, 05 Mar 2025 08:03:35 +0100
+In-Reply-To: <20250304143112.104190-2-phasta@kernel.org>
+References: <20250304143112.104190-2-phasta@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304171403.571335-1-neelx@suse.com> <bc3446ce-347f-41da-9255-233e2e08f91c@gmx.com>
-In-Reply-To: <bc3446ce-347f-41da-9255-233e2e08f91c@gmx.com>
-From: Daniel Vacek <neelx@suse.com>
-Date: Wed, 5 Mar 2025 08:02:28 +0100
-X-Gm-Features: AQ5f1Jpd-GaOlgBsn1u5cEwCfvBU3onwxOKl6ZsqVu6TLjcNVpq5EnwXFtTiE1c
-Message-ID: <CAPjX3FcZ6TJZnHNf3sm00F49BVsDzQaZr5fJHMXRUXne3gLZ2w@mail.gmail.com>
-Subject: Re: [PATCH] btrfs/defrag: implement compression levels
-To: Qu Wenruo <quwenruo.btrfs@gmx.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MBO-RS-ID: e7f6647a2ca0481098c
+X-MBO-RS-META: scmt9z1poqkpkg19ieq8njqowunirj85
 
-On Tue, 4 Mar 2025 at 22:31, Qu Wenruo <quwenruo.btrfs@gmx.com> wrote:
->
-> The feature itself looks good to me.
->
-> Although not sure if a blank commit message is fine for this case.
+On Tue, 2025-03-04 at 15:31 +0100, Philipp Stanner wrote:
+> Many functions in PCI use accessor macros such as pci_resource_len(),
+> which take a BAR index. That index, however, is never checked for
+> validity, potentially resulting in undefined behavior by overflowing
+> the
+> array pci_dev.resource in the macro pci_resource_n().
+>=20
+> Since many users of those macros directly assign the accessed value
+> to
+> an unsigned integer, the macros cannot be changed easily anymore to
+> return -EINVAL for invalid indexes. Consequently, the problem has to
+> be
+> mitigated in higher layers.
+>=20
+> Add pci_bar_index_valid(). Use it where appropriate.
+>=20
+> Reported-by: Bingbu Cao <bingbu.cao@linux.intel.com>
+> Closes:
+> https://lore.kernel.org/all/adb53b1f-29e1-3d14-0e61-351fd2d3ff0d@linux.in=
+tel.com/
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> ---
+> =C2=A0drivers/pci/devres.c | 16 ++++++++++++++--
+> =C2=A0drivers/pci/iomap.c=C2=A0 | 30 +++++++++++++++++++++---------
+> =C2=A0drivers/pci/pci.c=C2=A0=C2=A0=C2=A0 |=C2=A0 6 ++++++
+> =C2=A0drivers/pci/pci.h=C2=A0=C2=A0=C2=A0 |=C2=A0 8 ++++++++
+> =C2=A04 files changed, 49 insertions(+), 11 deletions(-)
+>=20
+> diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+> index 3431a7df3e0d..d2c09589c537 100644
+> --- a/drivers/pci/devres.c
+> +++ b/drivers/pci/devres.c
+> @@ -577,7 +577,7 @@ static int
+> pcim_add_mapping_to_legacy_table(struct pci_dev *pdev,
+> =C2=A0{
+> =C2=A0	void __iomem **legacy_iomap_table;
+> =C2=A0
+> -	if (bar >=3D PCI_STD_NUM_BARS)
+> +	if (!pci_bar_index_is_valid(bar))
+> =C2=A0		return -EINVAL;
+> =C2=A0
+> =C2=A0	legacy_iomap_table =3D (void __iomem
+> **)pcim_iomap_table(pdev);
+> @@ -622,7 +622,7 @@ static void
+> pcim_remove_bar_from_legacy_table(struct pci_dev *pdev, int bar)
+> =C2=A0{
+> =C2=A0	void __iomem **legacy_iomap_table;
+> =C2=A0
+> -	if (bar >=3D PCI_STD_NUM_BARS)
+> +	if (!pci_bar_index_is_valid(bar))
+> =C2=A0		return;
+> =C2=A0
+> =C2=A0	legacy_iomap_table =3D (void __iomem
+> **)pcim_iomap_table(pdev);
+> @@ -655,6 +655,9 @@ void __iomem *pcim_iomap(struct pci_dev *pdev,
+> int bar, unsigned long maxlen)
+> =C2=A0	void __iomem *mapping;
+> =C2=A0	struct pcim_addr_devres *res;
+> =C2=A0
+> +	if (!pci_bar_index_is_valid(bar))
+> +		return NULL;
+> +
+> =C2=A0	res =3D pcim_addr_devres_alloc(pdev);
+> =C2=A0	if (!res)
+> =C2=A0		return NULL;
+> @@ -722,6 +725,9 @@ void __iomem *pcim_iomap_region(struct pci_dev
+> *pdev, int bar,
+> =C2=A0	int ret;
+> =C2=A0	struct pcim_addr_devres *res;
+> =C2=A0
+> +	if (!pci_bar_index_is_valid(bar))
+> +		return IOMEM_ERR_PTR(-EINVAL);
+> +
+> =C2=A0	res =3D pcim_addr_devres_alloc(pdev);
+> =C2=A0	if (!res)
+> =C2=A0		return IOMEM_ERR_PTR(-ENOMEM);
+> @@ -823,6 +829,9 @@ static int _pcim_request_region(struct pci_dev
+> *pdev, int bar, const char *name,
+> =C2=A0	int ret;
+> =C2=A0	struct pcim_addr_devres *res;
+> =C2=A0
+> +	if (!pci_bar_index_is_valid(bar))
+> +		return -EINVAL;
+> +
+> =C2=A0	res =3D pcim_addr_devres_alloc(pdev);
+> =C2=A0	if (!res)
+> =C2=A0		return -ENOMEM;
+> @@ -991,6 +1000,9 @@ void __iomem *pcim_iomap_range(struct pci_dev
+> *pdev, int bar,
+> =C2=A0	void __iomem *mapping;
+> =C2=A0	struct pcim_addr_devres *res;
+> =C2=A0
+> +	if (!pci_bar_index_is_valid(bar))
+> +		return IOMEM_ERR_PTR(-EINVAL);
+> +
+> =C2=A0	res =3D pcim_addr_devres_alloc(pdev);
+> =C2=A0	if (!res)
+> =C2=A0		return IOMEM_ERR_PTR(-ENOMEM);
+> diff --git a/drivers/pci/iomap.c b/drivers/pci/iomap.c
+> index 9fb7cacc15cd..0cab82cbcc99 100644
+> --- a/drivers/pci/iomap.c
+> +++ b/drivers/pci/iomap.c
+> @@ -9,6 +9,8 @@
+> =C2=A0
+> =C2=A0#include <linux/export.h>
+> =C2=A0
+> +#include "pci.h" /* for pci_bar_index_is_valid() */
+> +
+> =C2=A0/**
+> =C2=A0 * pci_iomap_range - create a virtual mapping cookie for a PCI BAR
+> =C2=A0 * @dev: PCI device that owns the BAR
+> @@ -33,12 +35,18 @@ void __iomem *pci_iomap_range(struct pci_dev
+> *dev,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long offset,
+> =C2=A0			=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 unsigned long maxlen)
+> =C2=A0{
+> -	resource_size_t start =3D pci_resource_start(dev, bar);
+> -	resource_size_t len =3D pci_resource_len(dev, bar);
+> -	unsigned long flags =3D pci_resource_flags(dev, bar);
+> +	resource_size_t start, len;
+> +	unsigned long flags;
+> =C2=A0
+> +	if (!pci_bar_index_is_valid(bar))
+> +		return NULL;
+> =C2=A0	if (len <=3D offset || !start)
+> =C2=A0		return NULL;
 
-Sigh, that's a mistake. I'll send a v2 with a few sentences.
+Argh, damn, this is a bug of course.
+'start' is undefined at this point, as is 'len'.
 
-> =E5=9C=A8 2025/3/5 03:44, Daniel Vacek =E5=86=99=E9=81=93:
-> > Signed-off-by: Daniel Vacek <neelx@suse.com>
-> > ---
-> >   fs/btrfs/btrfs_inode.h     |  2 ++
-> >   fs/btrfs/defrag.c          | 22 +++++++++++++++++-----
-> >   fs/btrfs/fs.h              |  2 +-
-> >   fs/btrfs/inode.c           | 10 +++++++---
-> >   include/uapi/linux/btrfs.h | 10 +++++++++-
-> >   5 files changed, 36 insertions(+), 10 deletions(-)
-> >
-> > diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-> > index aa1f55cd81b79..5ee9da0054a74 100644
-> > --- a/fs/btrfs/btrfs_inode.h
-> > +++ b/fs/btrfs/btrfs_inode.h
-> > @@ -145,6 +145,7 @@ struct btrfs_inode {
-> >        * different from prop_compress and takes precedence if set.
-> >        */
-> >       u8 defrag_compress;
-> > +     s8 defrag_compress_level;
-> >
-> >       /*
-> >        * Lock for counters and all fields used to determine if the inod=
-e is in
-> > diff --git a/fs/btrfs/defrag.c b/fs/btrfs/defrag.c
-> > index 968dae9539482..03a0287a78ea0 100644
-> > --- a/fs/btrfs/defrag.c
-> > +++ b/fs/btrfs/defrag.c
-> > @@ -1363,6 +1363,7 @@ int btrfs_defrag_file(struct inode *inode, struct=
- file_ra_state *ra,
-> >       u64 last_byte;
-> >       bool do_compress =3D (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS)=
-;
-> >       int compress_type =3D BTRFS_COMPRESS_ZLIB;
-> > +     int compress_level =3D 0;
-> >       int ret =3D 0;
-> >       u32 extent_thresh =3D range->extent_thresh;
-> >       pgoff_t start_index;
-> > @@ -1376,10 +1377,19 @@ int btrfs_defrag_file(struct inode *inode, stru=
-ct file_ra_state *ra,
-> >               return -EINVAL;
-> >
-> >       if (do_compress) {
-> > -             if (range->compress_type >=3D BTRFS_NR_COMPRESS_TYPES)
-> > -                     return -EINVAL;
-> > -             if (range->compress_type)
-> > -                     compress_type =3D range->compress_type;
-> > +             if (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL) {
-> > +                     if (range->compress.type >=3D BTRFS_NR_COMPRESS_T=
-YPES)
-> > +                             return -EINVAL;
-> > +                     if (range->compress.type) {
-> > +                             compress_type =3D range->compress.type;
-> > +                             compress_level=3D range->compress.level;
-> > +                     }
->
-> I am not familiar with the compress level, but
-> btrfs_compress_set_level() does extra clamping, maybe we also want to do
-> that too?
+> +
+> +	start =3D pci_resource_start(dev, bar);
+> +	len =3D pci_resource_len(dev, bar);
+> +	flags =3D pci_resource_flags(dev, bar);
+> +
+> =C2=A0	len -=3D offset;
+> =C2=A0	start +=3D offset;
+> =C2=A0	if (maxlen && len > maxlen)
+> @@ -77,17 +85,21 @@ void __iomem *pci_iomap_wc_range(struct pci_dev
+> *dev,
+> =C2=A0				 unsigned long offset,
+> =C2=A0				 unsigned long maxlen)
+> =C2=A0{
+> -	resource_size_t start =3D pci_resource_start(dev, bar);
+> -	resource_size_t len =3D pci_resource_len(dev, bar);
+> -	unsigned long flags =3D pci_resource_flags(dev, bar);
+> -
+> +	resource_size_t start, len;
+> +	unsigned long flags;
+> =C2=A0
+> -	if (flags & IORESOURCE_IO)
+> +	if (!pci_bar_index_is_valid(bar))
+> =C2=A0		return NULL;
+> -
+> =C2=A0	if (len <=3D offset || !start)
+> =C2=A0		return NULL;
 
-This is intentionally left to be limited later. There's no need to do
-it at this point and the code is simpler. It's also compression
-type/method agnostic.
+Same here.
 
-> > +             } else {
-> > +                     if (range->compress_type >=3D BTRFS_NR_COMPRESS_T=
-YPES)
-> > +                             return -EINVAL;
-> > +                     if (range->compress_type)
-> > +                             compress_type =3D range->compress_type;
-> > +             }
-> >       }
-> >
-> >       if (extent_thresh =3D=3D 0)
-> > @@ -1430,8 +1440,10 @@ int btrfs_defrag_file(struct inode *inode, struc=
-t file_ra_state *ra,
-> >                       btrfs_inode_unlock(BTRFS_I(inode), 0);
-> >                       break;
-> >               }
-> > -             if (do_compress)
-> > +             if (do_compress) {
-> >                       BTRFS_I(inode)->defrag_compress =3D compress_type=
-;
-> > +                     BTRFS_I(inode)->defrag_compress_level =3D compres=
-s_level;
-> > +             }
-> >               ret =3D defrag_one_cluster(BTRFS_I(inode), ra, cur,
-> >                               cluster_end + 1 - cur, extent_thresh,
-> >                               newer_than, do_compress, &sectors_defragg=
-ed,
-> > diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-> > index be6d5a24bd4e6..2dae7ffd37133 100644
-> > --- a/fs/btrfs/fs.h
-> > +++ b/fs/btrfs/fs.h
-> > @@ -485,7 +485,7 @@ struct btrfs_fs_info {
-> >       u64 last_trans_log_full_commit;
-> >       unsigned long long mount_opt;
-> >
-> > -     unsigned long compress_type:4;
-> > +     int compress_type;
-> >       int compress_level;
-> >       u32 commit_interval;
-> >       /*
-> > diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-> > index fa04b027d53ac..156a9d4603391 100644
-> > --- a/fs/btrfs/inode.c
-> > +++ b/fs/btrfs/inode.c
-> > @@ -925,6 +925,7 @@ static void compress_file_range(struct btrfs_work *=
-work)
-> >       unsigned int poff;
-> >       int i;
-> >       int compress_type =3D fs_info->compress_type;
-> > +     int compress_level=3D fs_info->compress_level;
-> >
-> >       inode_should_defrag(inode, start, end, end - start + 1, SZ_16K);
-> >
-> > @@ -1007,13 +1008,15 @@ static void compress_file_range(struct btrfs_wo=
-rk *work)
-> >               goto cleanup_and_bail_uncompressed;
-> >       }
-> >
-> > -     if (inode->defrag_compress)
-> > +     if (inode->defrag_compress) {
-> >               compress_type =3D inode->defrag_compress;
-> > -     else if (inode->prop_compress)
-> > +             compress_level=3D inode->defrag_compress_level;
-> > +     } else if (inode->prop_compress) {
-> >               compress_type =3D inode->prop_compress;
-> > +     }
-> >
-> >       /* Compression level is applied here. */
-> > -     ret =3D btrfs_compress_folios(compress_type, fs_info->compress_le=
-vel,
-> > +     ret =3D btrfs_compress_folios(compress_type, compress_level,
-> >                                   mapping, start, folios, &nr_folios, &=
-total_in,
-> >                                   &total_compressed);
-> >       if (ret)
-> > diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
-> > index d3b222d7af240..3540d33d6f50c 100644
-> > --- a/include/uapi/linux/btrfs.h
-> > +++ b/include/uapi/linux/btrfs.h
-> > @@ -615,7 +615,9 @@ struct btrfs_ioctl_clone_range_args {
-> >    */
-> >   #define BTRFS_DEFRAG_RANGE_COMPRESS 1
-> >   #define BTRFS_DEFRAG_RANGE_START_IO 2
-> > +#define BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL 4
-> >   #define BTRFS_DEFRAG_RANGE_FLAGS_SUPP       (BTRFS_DEFRAG_RANGE_COMPR=
-ESS |          \
-> > +                                      BTRFS_DEFRAG_RANGE_COMPRESS_LEVE=
-L |    \
-> >                                        BTRFS_DEFRAG_RANGE_START_IO)
-> >
-> >   struct btrfs_ioctl_defrag_range_args {
-> > @@ -643,7 +645,13 @@ struct btrfs_ioctl_defrag_range_args {
-> >        * for this defrag operation.  If unspecified, zlib will
-> >        * be used
-> >        */
-> > -     __u32 compress_type;
-> > +     union {
-> > +             __u32 compress_type;
-> > +             struct {
-> > +                     __u8 type;
-> > +                     __s8 level;
-> > +             } compress;
-> > +     };
-> >
-> >       /* spare for later */
-> >       __u32 unused[4];
->
-> We have enough space left here, although u32 is overkilled for
-> compress_type, using the unused space for a new s8/s16/s32 member should
-> be fine.
+Shall I send a v2 or do you want to rebase, Bjorn?
 
-That is what I did originally, but discussing with Dave he suggested
-this solution.
+sry bout that.
 
->
-> Thanks,
-> Qu
+P.
+
+> =C2=A0
+> +	start =3D pci_resource_start(dev, bar);
+> +	len =3D pci_resource_len(dev, bar);
+> +	flags =3D pci_resource_flags(dev, bar);
+> +
+> +	if (flags & IORESOURCE_IO)
+> +		return NULL;
+> +
+> =C2=A0	len -=3D offset;
+> =C2=A0	start +=3D offset;
+> =C2=A0	if (maxlen && len > maxlen)
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 869d204a70a3..da82d734d09c 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -3921,6 +3921,9 @@ EXPORT_SYMBOL(pci_enable_atomic_ops_to_root);
+> =C2=A0 */
+> =C2=A0void pci_release_region(struct pci_dev *pdev, int bar)
+> =C2=A0{
+> +	if (!pci_bar_index_is_valid(bar))
+> +		return;
+> +
+> =C2=A0	/*
+> =C2=A0	 * This is done for backwards compatibility, because the old
+> PCI devres
+> =C2=A0	 * API had a mode in which the function became managed if it
+> had been
+> @@ -3965,6 +3968,9 @@ EXPORT_SYMBOL(pci_release_region);
+> =C2=A0static int __pci_request_region(struct pci_dev *pdev, int bar,
+> =C2=A0				const char *name, int exclusive)
+> =C2=A0{
+> +	if (!pci_bar_index_is_valid(bar))
+> +		return -EINVAL;
+> +
+> =C2=A0	if (pci_is_managed(pdev)) {
+> =C2=A0		if (exclusive =3D=3D IORESOURCE_EXCLUSIVE)
+> =C2=A0			return pcim_request_region_exclusive(pdev,
+> bar, name);
+> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
+> index 01e51db8d285..ae8b2f5c118b 100644
+> --- a/drivers/pci/pci.h
+> +++ b/drivers/pci/pci.h
+> @@ -167,6 +167,14 @@ static inline void pci_wakeup_event(struct
+> pci_dev *dev)
+> =C2=A0	pm_wakeup_event(&dev->dev, 100);
+> =C2=A0}
+> =C2=A0
+> +static inline bool pci_bar_index_is_valid(int bar)
+> +{
+> +	if (bar < 0 || bar >=3D PCI_NUM_RESOURCES)
+> +		return false;
+> +
+> +	return true;
+> +}
+> +
+> =C2=A0static inline bool pci_has_subordinate(struct pci_dev *pci_dev)
+> =C2=A0{
+> =C2=A0	return !!(pci_dev->subordinate);
+
 
