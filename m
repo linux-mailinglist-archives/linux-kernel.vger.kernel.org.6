@@ -1,259 +1,152 @@
-Return-Path: <linux-kernel+bounces-546189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6759A4F77C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:50:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80C4DA4F781
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:54:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C3A97A3916
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:49:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE07B3ABE24
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2188F1E5B77;
-	Wed,  5 Mar 2025 06:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F75D1E991A;
+	Wed,  5 Mar 2025 06:54:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xQ6LRuGL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dO/tRhij";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xQ6LRuGL";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dO/tRhij"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CQIqfsv2"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643731E5B94
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C0219CC2E;
+	Wed,  5 Mar 2025 06:54:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741157435; cv=none; b=pT4U7R4XApB8SP0h59T1P2zMsTPFIi3vDW40jXJP0I17B+yqqbPfpqwWHtgen0XU+FJ+3YOHoCaOv9s3+rQO3qJks9ggVHaAluWsTmuieolzuS3bau+O5F9zB5bLvD54VxP7FKw49V60kCF2nXtKVO6FxT/ITT97kW7t6Ti/pOk=
+	t=1741157657; cv=none; b=chAGPYcCCOgQDgp8TorKhv7bGPUadOVCN7vf/Gwc9IlQQvxzSl2w5B0gBOG2Cw6w5h5/pPf7eNB8iSCYtZTmjfcRJKnNelgnM/OXcH1y+r9OcZCqq6oT+55p8gFQ6iYOudDKVfY827OBwi3ZVOHI9d8L2wQmrR4soyK7vGINgPs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741157435; c=relaxed/simple;
-	bh=2ZRfVP1/5pNF+Is9mmU8Ks777wCzXWClrWQqvJMl2nQ=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=G2IDHV03lQ+qPMgOZhIfn5w4Gl5VRMetDfxU96DgeDMO+z5euMfgR/1PK3oHQ4UWKE83w9J8lDo2i1HPYdrPvkMN00mPqmLl3SsDM5/LNCZGzXN9zjmUdUjY2TR1DAmEGXCRUr8F+np98l5xW3bR9VOUE/xvIpJ3cgaeq3gjlfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xQ6LRuGL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dO/tRhij; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xQ6LRuGL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dO/tRhij; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 171001F38A;
-	Wed,  5 Mar 2025 06:50:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741157431; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nV9qaf3NFxje2X4qJSoqYCRF5SUEn38UF+EhAhqn2Dc=;
-	b=xQ6LRuGLxPqfEVXRu9qTFMG4Yb3pqvXN6f0wJH+aOGooexXQoB16AXaIFnfRaUaJIwyyLD
-	qPeBVggXZCI/7u5VmJhBkg+eijNQJ3oHEQtohipPt6DF6pxlI5q9Sq3IvL19Oziq3/uxm7
-	cjxfqFexkix9IyHlAxGFZSODc/j73n8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741157431;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nV9qaf3NFxje2X4qJSoqYCRF5SUEn38UF+EhAhqn2Dc=;
-	b=dO/tRhij2jJqqRiQlqihdrxnZxcZbT/lw/5Ls3Qj5Z6IB6TGNUTiYxHZbyy3wRWADJNDGe
-	lm6Uagwnjl79VYBg==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741157431; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nV9qaf3NFxje2X4qJSoqYCRF5SUEn38UF+EhAhqn2Dc=;
-	b=xQ6LRuGLxPqfEVXRu9qTFMG4Yb3pqvXN6f0wJH+aOGooexXQoB16AXaIFnfRaUaJIwyyLD
-	qPeBVggXZCI/7u5VmJhBkg+eijNQJ3oHEQtohipPt6DF6pxlI5q9Sq3IvL19Oziq3/uxm7
-	cjxfqFexkix9IyHlAxGFZSODc/j73n8=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741157431;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=nV9qaf3NFxje2X4qJSoqYCRF5SUEn38UF+EhAhqn2Dc=;
-	b=dO/tRhij2jJqqRiQlqihdrxnZxcZbT/lw/5Ls3Qj5Z6IB6TGNUTiYxHZbyy3wRWADJNDGe
-	lm6Uagwnjl79VYBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDC2613939;
-	Wed,  5 Mar 2025 06:50:30 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id TIqdLDb0x2dRPQAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 05 Mar 2025 06:50:30 +0000
-Message-ID: <37397082-833f-4e3b-8dda-76a51d2369e6@suse.de>
-Date: Wed, 5 Mar 2025 07:50:30 +0100
+	s=arc-20240116; t=1741157657; c=relaxed/simple;
+	bh=lbrLsrc0f/KpgvFOW+aP7fOarbgqjao+EbshI2MGYTI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fOX2lybOe0Nzkm3SRNTBs+WrNGoX72wIMYMbyibSt7frS2zxRo2td09iOyO1Ij4RnzqZVxxRClhJJ1e2NCtS9cms3Gvx0On1iB/jJq/vXaw0TQJNaEAGlBg3W0dv8QmrdmSrlSYCJD2sV831O80ycPIUNoWmcD2cVuNvvjHbCuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CQIqfsv2; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-223959039f4so73062745ad.3;
+        Tue, 04 Mar 2025 22:54:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741157655; x=1741762455; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Pm3yCWSSanh1nyNMvpTXA2nPULwGPxjg/RKYPkuTPVg=;
+        b=CQIqfsv2McWHMG7uXbfveNccj/gV4xUKpxuaYPAfJaMEYgbWxk2+dKF9M55VstCwa9
+         ubZYsP4P7LIc4nud5/VGn9Mfx1ubJlRk7tw0ys1PjCeiF+Td3kDKFqN64ORcjhRonS+q
+         Vm5l30gOW9n9q4brDe8JcRuCjsg6rhqqMG7CmhSDM5ggnAXX2cDruXJV7fUjg5oYd9Dp
+         0wPJ/c15APb1lTwLhxcbIRwF5Hf4BAKJeUIUWegdhoWnR7y8hvj3V4EbZq7ix3lrDyZg
+         z+cvgnh0gsCeUaSY41/RdkHgkBRwahCJlU03GftuIW99TovDUy5Gzk299ShJS4q6FMhE
+         KHxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741157655; x=1741762455;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Pm3yCWSSanh1nyNMvpTXA2nPULwGPxjg/RKYPkuTPVg=;
+        b=FWy8Sn+wolt1kvjplYw8Opdn/0p1XkdClPu+23E+SlfpkLu6TTGrQGcKfomg6Xkpi0
+         FAwUyJE6Y435cs2hUF9yA3n/9g8UzQLJGiokw8j4tUCsjKDRL0+85xz8C89xbF++DHsQ
+         XAvllcibeyLy6irM/wEX2oLTYuSG8xA7kFv4oEwuT3npPuznj218U9uk+fEPqpA9ovRc
+         JeC3r+rswxrI/lGyMXAjUDJagdjmuqbVHtYocUT/Prc8m34EKgS7gqS5TMNJnIvTZD4c
+         +bBIKH3/pa4BGx6Tt/F+GjWO34r6AevRY2K+BIaOQ4B59WuvHl6eIp5GAq43ISPZNyBp
+         U4dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUNfDfZVKPDpzyGwGSXraYSDHVk8+rdexmIIXOzJhssr8kjhQ9H2FmzsMo0zsA5ztonnI/LIjQWpe57aA==@vger.kernel.org, AJvYcCV0bPY55CfWa1wXvhqdPTqkLaRg4FzOVJIMhy87XND0nRquWIWEg7Jn26Nfm61A2gd1y7q4KAptidudTl/f@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5m0spbUTt0JvdiE5AB4OowouLNn5nzZNVf7KEXzKViQ8a5j1O
+	wEGUz/fRAaMmX+bKwL/SRJLDHRAeckksY7w5c6s/vY3R1QDKdCF7
+X-Gm-Gg: ASbGncvI98E9re41XZy6DoVZVknEUzKs3sLEbCJg3zNgL6n4p/eKKv+pUimJnnQXmwi
+	tGl+gwQaghpb8ioKx8KCbLjav7I4HnYc55NdN4fzxV2LLcgBME5rZ8gnziINwddpO92HF0R8v1/
+	6H92kJZwTlaMCl87lnLzteueX2yvYa50FU6sFXjJOAD2UAo6tH6JLVzIi8vrZ2aRi9uJf9QNC/C
+	KEZxugcbkhivTk09UDXKqKWV0wbMR2xp7XDghjf2d3XNPYF84k/YI74Yy3IaCoodloJtoNkp6D8
+	J34R2mkmiPNwPq5RI8NstamkoyMILFcGsB1YCIPr9mNJ4w==
+X-Google-Smtp-Source: AGHT+IF2NcE4j3SzgHTM9IYbNe6hAbSXey7uBr6yRsyB9CgwM3JdBoX+IcmS9QwOxCq21HM6NTCSCQ==
+X-Received: by 2002:a17:903:2283:b0:215:acb3:3786 with SMTP id d9443c01a7336-223f1c8011fmr29506265ad.19.1741157655133;
+        Tue, 04 Mar 2025 22:54:15 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:438c:d5a2:41a6:66d1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350533186sm106833075ad.243.2025.03.04.22.54.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 22:54:14 -0800 (PST)
+Date: Tue, 4 Mar 2025 22:54:11 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: mario.limonciello@amd.com, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/2] Input: atkbd - map F21 key to support touchpad
+ toggle keys
+Message-ID: <Z8f1EzASdCfa2h_7@google.com>
+References: <20250303190442.551961-1-wse@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/i915: implement vmap/vunmap GEM object functions
-From: Thomas Zimmermann <tzimmermann@suse.de>
-To: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <asbjorn@asbjorn.st>,
- intel-gfx@lists.freedesktop.org
-Cc: Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?Q?Jouni_H=C3=B6gander?=
- <jouni.hogander@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240629182513.78026-1-asbjorn@asbjorn.st>
- <5674b73c-3bf3-4ec5-a1a7-44c9ce62ef68@suse.de>
-Content-Language: en-US
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <5674b73c-3bf3-4ec5-a1a7-44c9ce62ef68@suse.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[12];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[linux.intel.com,intel.com,ursulin.net,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_SOME(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303190442.551961-1-wse@tuxedocomputers.com>
 
+Hi Werner,
 
+On Mon, Mar 03, 2025 at 08:04:34PM +0100, Werner Sembach wrote:
+> In the default xkeyboard-config used by both X11 and wayland touchpad
+> toggle is assigned to F21.
 
-Am 02.07.24 um 09:17 schrieb Thomas Zimmermann:
-> Hi
->
-> Am 29.06.24 um 20:25 schrieb Asbjørn Sloth Tønnesen:
->> Implement i915_gem_vmap_object() and i915_gem_vunmap_object(),
->> based on i915_gem_dmabuf_vmap() and i915_gem_dmabuf_vunmap().
->>
->> This enables a drm_client to use drm_client_buffer_vmap() and
->> drm_client_buffer_vunmap() on hardware using the i915 driver.
->>
->> Tested with a currently out of tree pixelflut drm_client[1] on:
->> - Lenovo ThinkCentre M720q (CoffeeLake-S GT2 / Intel UHD Graphics 630)
->> - Dell Wyse N06D - 3030 LT (ValleyView on Intel Celeron N2807 SOC)
->>
->> [1] XDP->DRM pixelflut: https://labitat.dk/wiki/Pixelflut-XDR
->>
->> Signed-off-by: Asbjørn Sloth Tønnesen <asbjorn@asbjorn.st>
->
-> I didn't do a review, but
->
-> Ack-by: Thomas Zimmermann <tzimmermann@suse.de>
+We have dedicated KEY_TOUCHPAD_TOGGLE that is being used by several
+platform drivers:
 
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
+dtor@dtor-ws:~/kernel/work $ git grep -l KEY_TOUCHPAD_TOGGLE --
+drivers/platform/x86/
+drivers/platform/x86/acer-wmi.c
+drivers/platform/x86/asus-laptop.c
+drivers/platform/x86/asus-nb-wmi.c
+drivers/platform/x86/eeepc-wmi.c
+drivers/platform/x86/fujitsu-laptop.c
+drivers/platform/x86/ideapad-laptop.c
+drivers/platform/x86/msi-wmi.c
+drivers/platform/x86/toshiba_acpi.c
 
->
->
-> as it would possible allow to share more code with the fbdev helpers.
->
-> Best regards
-> Thomas
->
->> ---
->> This patch applies on top of drm-intel/drm-intel-next (32a120f52a4c)
->>
->>   drivers/gpu/drm/i915/gem/i915_gem_object.c | 26 ++++++++++++++++++++++
->>   1 file changed, 26 insertions(+)
->>
->> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c 
->> b/drivers/gpu/drm/i915/gem/i915_gem_object.c
->> index 58e6c680fe0d..356530b599ce 100644
->> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
->> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
->> @@ -873,6 +873,30 @@ bool i915_gem_object_needs_ccs_pages(struct 
->> drm_i915_gem_object *obj)
->>       return lmem_placement;
->>   }
->>   +static int i915_gem_vmap_object(struct drm_gem_object *gem_obj,
->> +                struct iosys_map *map)
->> +{
->> +    struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
->> +    void *vaddr;
->> +
->> +    vaddr = i915_gem_object_pin_map(obj, I915_MAP_WB);
->> +    if (IS_ERR(vaddr))
->> +        return PTR_ERR(vaddr);
->> +
->> +    iosys_map_set_vaddr(map, vaddr);
->> +
->> +    return 0;
->> +}
->> +
->> +static void i915_gem_vunmap_object(struct drm_gem_object *gem_obj,
->> +                   struct iosys_map *map)
->> +{
->> +    struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
->> +
->> +    i915_gem_object_flush_map(obj);
->> +    i915_gem_object_unpin_map(obj);
->> +}
->> +
->>   void i915_gem_init__objects(struct drm_i915_private *i915)
->>   {
->>       INIT_WORK(&i915->mm.free_work, __i915_gem_free_work);
->> @@ -896,6 +920,8 @@ static const struct drm_gem_object_funcs 
->> i915_gem_object_funcs = {
->>       .free = i915_gem_free_object,
->>       .close = i915_gem_close_object,
->>       .export = i915_gem_prime_export,
->> +    .vmap = i915_gem_vmap_object,
->> +    .vunmap = i915_gem_vunmap_object,
->>   };
->>     /**
->
+Instead of piling on F21 hacks we should be using it.
+
+> 
+> This patch is in preparation for i8042 filter patches to be able to remap
+> bogus scancode(-combinations), produced by notebooks uppon pressing a
+> touchpad toggle key.
+
+Since you already creating a vendor-specific platform driver I think it
+would be better for it to register a separate input device and have it
+emit KEY_TOUCHPAD_TOGGLE instead of involving atkbd.
+
+> 
+> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
+> Cc: <stable@vger.kernel.org>
+> ---
+>  drivers/input/keyboard/atkbd.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
+> index adf0f311996c9..2ba3493de88cc 100644
+> --- a/drivers/input/keyboard/atkbd.c
+> +++ b/drivers/input/keyboard/atkbd.c
+> @@ -88,7 +88,7 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
+>  	  0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
+>  	  0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
+>  	  0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22,  8,  9,185,
+> -	  0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
+> +	  0, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
+>  	  0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
+>  	  0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
+>  	 82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
+> -- 
+> 2.43.0
+> 
+
+Thanks.
 
 -- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Dmitry
 
