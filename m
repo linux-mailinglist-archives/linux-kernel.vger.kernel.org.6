@@ -1,49 +1,54 @@
-Return-Path: <linux-kernel+bounces-546576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B35CFA4FC6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:42:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 391FBA4FC67
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:41:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B988B1893D78
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:39:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B86DF3AFC27
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0A8207DE3;
-	Wed,  5 Mar 2025 10:36:54 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61642063F2;
-	Wed,  5 Mar 2025 10:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 588682066F2;
+	Wed,  5 Mar 2025 10:38:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UHdB+/8O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B24131FBC84;
+	Wed,  5 Mar 2025 10:38:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741171014; cv=none; b=iR4iXpnabN3jZlPzJQIltvS/TDa86jE/5r6gL39lJXQXls4xkWzRTmb0umOOf8cCT11ywxPMvFUOZEeKCZTt2d3ZuTDum6CPNGAsBlDEMJvMNZgxV6AaMcBZaGWEJrPogFbifoI0Or9UWLWRRvBJ+6lCebqSTBA5v9vPxbC7Blg=
+	t=1741171132; cv=none; b=ls2GeNrpJ3Y93ZBTugYgNJ/s6sfM3T/mcBHCMCN3+Syi0BmXxqAscjlchSz8adk6fvaLgfTEB8TnNvM6QZh3CF78p9Ou+ntS4HxMw4TCfSSw07Mwckts6y1mhlpZOdJIEbLebNuqSDGaxX9zq3BlCPAPMYcQXhNXhql5/7ZcHXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741171014; c=relaxed/simple;
-	bh=xUctAWGKbbNWM8E5A2NXPQGDPvrVmG4lSKCcjM20LEI=;
+	s=arc-20240116; t=1741171132; c=relaxed/simple;
+	bh=Csp6GVyKJhlpTqY4qJzrrUmCc24wfHMu90CB/DuDtSs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WNciQoWOCRO2OrcjKI0j08x2j9/p6ARcTmHKycdmTjJwKn9dnKaxTe6rUqWg//uPl/QoY6uWu/E3kyg3jC4eLP72sK4r39JWQdTbhwzMt6KZdZV5eMKwxG980jkciG5RuzbQgTsQLitJcGBxX8aC2ZiaodwpjtN5qosUHPqQlhY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7606CFEC;
-	Wed,  5 Mar 2025 02:37:05 -0800 (PST)
-Received: from bogus (unknown [10.57.37.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4D8B13F673;
-	Wed,  5 Mar 2025 02:36:51 -0800 (PST)
-Date: Wed, 5 Mar 2025 10:36:48 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Adam Young <admiyo@os.amperecomputing.com>
-Subject: Re: [PATCH 03/14] mailbox: pcc: Drop unnecessary endianness
- conversion of pcc_hdr.flags
-Message-ID: <20250305103648.7e2ajxlkwza7axzc@bogus>
-References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
- <20250303-pcc_fixes_updates-v1-3-3b44f3d134b1@arm.com>
- <5093286f-1db6-bab2-920d-71fe274ad251@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sWjfJ/dmdcH1lOdOTIkUfqSVRbk9ZYHW333wpp4eI7uM2x40i6FWn5hEWq6nl8vruxpXpZXJVF8tTOJBQFTykvMcac75iaeO/CsGUiDGYL5TY0cOpSmJ43LjZlvPyBWt7uBHOI1Bz42aKHl6wGmZ/+noK8ElJQHUmP+q2HjpMVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UHdB+/8O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA7CC4CEE2;
+	Wed,  5 Mar 2025 10:38:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741171132;
+	bh=Csp6GVyKJhlpTqY4qJzrrUmCc24wfHMu90CB/DuDtSs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UHdB+/8OqDlOt+yoEyMZA3mnNIj03tjF/dSApmSbB34R3G0cu4NDZV5bAD02V7VtE
+	 YqFYOEazNSp+pKLNDMO868DTQg8wSYR00NjiJHelHiIVLeuuEGFw4uT1AMaMMaSnUB
+	 zRtkKRjBAjeMDrjxAfMjlvJ0YPRL2erARnJXt+oZ80Q1uYfiShagK1OBUETJB8QyKL
+	 H03GpfHWsataIGOtJh1GTbwNym2jczF0rwpOD3WubMuID7TlCFllGhb81KrRMPh6Ww
+	 lyZu+6JszPU+vbZgysljKdBXlDUdHwanI2eQQ68Zu/qIi8qKbuj9aqudnOBQqI1v4h
+	 TyZ+W8387KOGA==
+Date: Wed, 5 Mar 2025 11:38:47 +0100
+From: Christian Brauner <brauner@kernel.org>
+To: Mateusz Guzik <mjguzik@gmail.com>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [RFC PATCH v v2 0/4] avoid the extra atomic on a ref when
+ closing a fd
+Message-ID: <20250305-sofern-visite-70a6134399cb@brauner>
+References: <20250304183506.498724-1-mjguzik@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,31 +57,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5093286f-1db6-bab2-920d-71fe274ad251@huawei.com>
+In-Reply-To: <20250304183506.498724-1-mjguzik@gmail.com>
 
-On Wed, Mar 05, 2025 at 12:02:13PM +0800, lihuisong (C) wrote:
+On Tue, Mar 04, 2025 at 07:35:02PM +0100, Mateusz Guzik wrote:
+> The stock kernel transitioning the file to no refs held penalizes the
+> caller with an extra atomic to block any increments.
 > 
-> 在 2025/3/3 18:51, Sudeep Holla 写道:
-> > The Sparse static checker flags a type mismatch warning related to
-> > endianness conversion:
-> > 
-> >    |  warning: incorrect type in argument 1 (different base types)
-> >    |     expected restricted __le32 const [usertype] *p
-> >    |     got unsigned int *
-> > 
-> > This is because an explicit endianness conversion (le32_to_cpu()) was
-> > applied unnecessarily to a pcc_hdr.flags field that is already in
-> > little-endian format.
-> > 
-> > The PCC driver is only enabled on little-endian kernels due to its
-> > dependency on ACPI and EFI, making the explicit conversion unnecessary.
-> How to confirm ACPI works only on little-endian?
+> For cases where the file is highly likely to be going away this is
+> easily avoidable.
+> 
+> In the open+close case the win is very modest because of the following
+> problems:
+> - kmem and memcg having terrible performance
 
-Sorry I didn't notice this question. ACPI depends on ARCH_SUPPORTS_ACPI
-and it is selected only from EFI which is disabled if CPU_BIG_ENDIAN=y
+I thought that was going to be addressed by Vlastimil, i.e., the mm guys
+to provide a new memcg api.
 
---
-Regards,
-Sudeep
+> - putname using an atomic (I have a wip to whack that)
+> - open performing an extra ref/unref on the dentry (there are patches to
+>   do it, including by Al. I mailed about them in [1])
+> - creds using atomics (I have a wip to whack that)
+> - apparmor using atomics (ditto, same mechanism)
+> 
+> On top of that I have a WIP patch to dodge some of the work at lookup
+> itself.
+> 
+> All in all there is several % avoidably lost here.
+> 
+> stats colected during a kernel build with:
+> bpftrace -e 'kprobe:filp_close,kprobe:fput,kprobe:fput_close* { @[probe] = hist(((struct file *)arg0)->f_ref.refcnt.counter > 0); }'
+> 
+> @[kprobe:filp_close]:
+> [0]                32195 |@@@@@@@@@@                                          |
+> [1]               164567 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> 
+> @[kprobe:fput]:
+> [0]               339240 |@@@@@@                                              |
+> [1]              2888064 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> 
+> @[kprobe:fput_close]:
+> [0]              5116767 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> [1]               164544 |@                                                   |
+> 
+> @[kprobe:fput_close_sync]:
+> [0]              5340660 |@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@|
+> [1]               358943 |@@@                                                 |
+> 
+> 
+> 0 indicates the last reference, 1 that there is more.
+> 
+> filp_close is largely skewed because of close_on_exec.
+> 
+> vast majority of last fputs are from remove_vma. I think that code wants
+> to be patched to batch them (as in something like fput_many should be
+> added -- something for later).
+
+We used to have that for io_uring and got rid of it. The less fput()
+primitives the better tbh. But let's see.
+
+> 
+> [1] https://lore.kernel.org/linux-fsdevel/20250304165728.491785-1-mjguzik@gmail.com/T/#u
+> 
+> v2:
+> - patch filp_close
+> - patch failing open
+> 
+> Mateusz Guzik (4):
+>   file: add fput and file_ref_put routines optimized for use when
+>     closing a fd
+>   fs: use fput_close_sync() in close()
+>   fs: use fput_close() in filp_close()
+>   fs: use fput_close() in path_openat()
+> 
+>  fs/file.c                | 75 ++++++++++++++++++++++++++++++----------
+>  fs/file_table.c          | 72 +++++++++++++++++++++++++++-----------
+>  fs/namei.c               |  2 +-
+>  fs/open.c                |  4 +--
+>  include/linux/file.h     |  2 ++
+>  include/linux/file_ref.h |  1 +
+>  6 files changed, 114 insertions(+), 42 deletions(-)
+> 
+> -- 
+> 2.43.0
+> 
 
