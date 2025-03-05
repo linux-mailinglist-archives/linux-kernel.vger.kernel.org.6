@@ -1,118 +1,134 @@
-Return-Path: <linux-kernel+bounces-547623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E122A50BAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:42:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 149F0A50BAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:43:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F464188A864
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:42:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499BB1741F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:43:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786E325484C;
-	Wed,  5 Mar 2025 19:42:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D398C254849;
+	Wed,  5 Mar 2025 19:42:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="FOd0Hne9"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="BHsjmw1N"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5512512F6;
-	Wed,  5 Mar 2025 19:42:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D641C2512F6;
+	Wed,  5 Mar 2025 19:42:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741203736; cv=none; b=XCT/hzDYuVDOMbUn0d5gFtDsC4AcPNBP7eDcAbpoVQYwjVXo+5s7tXpW14dIpBqOaBXSxPw3LSmhRZhhoTB2tpVGVwfPZo5NdmEKyXzrfxpD4n2cH5vuubwgTzY959sCBQOqSt2Rtog2xsJGiQVrKloHPyX6IU/4vUGxCdpjPSM=
+	t=1741203776; cv=none; b=sc4wTNMA8iQkorMnKoBiPU3qi4KXFhimZH0ny6vUxys0x4Jx1tDFuM6eYISF+JrObbfZY3o/1T5qXzDVuKU499dG1SyzBdMsjEnU2PORMQQ1KTkJ74Nx668vDzxpZINZqAc6gvegCARwtLkXmoQv0QlPb0tqiYc79l9dG2ptU0A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741203736; c=relaxed/simple;
-	bh=jvgDE48yAFQRM5GDptUv9cYZLwD0HT8HVoLIV3xxIss=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YcFl46kKrt/8BQ8yvYANhv/Cr+zukmmSM8AFhDviUbM0Iu3Ew4Lb6/K2x96zFNDJ1nCdy+XmnpiGWEi25cVGj3SiT8A75i7UtqfkVz+voalyzKGDgGFw+MI4TsPhROeAiBoHBUgag5WIYB+fO6G7M2ZQSfqHYvRySdBj9bpyriA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=FOd0Hne9; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1741203727; bh=jvgDE48yAFQRM5GDptUv9cYZLwD0HT8HVoLIV3xxIss=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=FOd0Hne964De2cbX/O5PqOkWir9XktbgHn7/3cLuvwXfbfAd3Jo/qAKckE5sG4VxJ
-	 6mhvJClqCvWSrNTN7fszGMzxRK/v+NRyFGI8w//o55T1gEzr2cVkIG+Nv4yvsCzeXt
-	 CVX4hzl/lQ7OYRGk//vFDxx05u5BPNfjdedKSHPs=
-Received: from [IPV6:2001:8e0:207e:3500:4ab6:48fe:df57:b084] (2001-8e0-207e-3500-4ab6-48fe-df57-b084.ewm.ftth.ip6.as8758.net [IPv6:2001:8e0:207e:3500:4ab6:48fe:df57:b084])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 1ABFA2052A89;
-	Wed,  5 Mar 2025 20:42:07 +0100 (CET)
-Message-ID: <915eacce-cfd8-4bed-a407-32513e43978f@ralfj.de>
-Date: Wed, 5 Mar 2025 20:42:05 +0100
+	s=arc-20240116; t=1741203776; c=relaxed/simple;
+	bh=xhnqWstTVBqsoGCfx5R5bpNmekaP3M85MkZUJ3rzXvI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rFZDkFWb8XQHKNIaBtLQjQfk2KAaWJcgAQ34QOFUY3SSMh8OAfnZTFDmn0EIXsum1cn7RESCF71UEgKZIpRYFAKToFISPC0cc05jPzD02kMyMFcOd2ktv8u5VgZFGjZYJKP+jbb1JOijUaAyPi5wcBQ1tYLQCEA4viOZkJ10nOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=BHsjmw1N; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id AEBE820A23;
+	Wed,  5 Mar 2025 20:42:51 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id jLjYbJU3XEKF; Wed,  5 Mar 2025 20:42:47 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1741203767; bh=xhnqWstTVBqsoGCfx5R5bpNmekaP3M85MkZUJ3rzXvI=;
+	h=From:To:Cc:Subject:Date;
+	b=BHsjmw1NIdU8Vfb/85SnYm8FxLRazHlpx5yPR5c2KLnT645/cqBdRgqVeP1bmahOi
+	 Oyp6VqYtoI/BEa/elWERqHd89ixylu8sBKE8rxrEnRVoid+OvpXsvkX7Q6JPxEaVDt
+	 IiQBPZB4NubJ6Z3cd2B7/SbjJ2Xs0cY1lg57sssGtcAgr3BNSma06qCVM98ISlDD//
+	 obyzDfFulvUggNZHymTaNuQ04t8grtiKHmM7qFwufypzqgvIF/vKKM+OgBqnmXH8wD
+	 8MuhLKl915iuJcwGltjGtit45NvV1dEhbqlBWE2WkChXC92a1g45kv0M7iz6vkJ+G/
+	 aSrEWYkQi/U0Q==
+From: Yao Zi <ziyao@disroot.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Cc: linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v2 0/8] Support SD/SDIO controllers on RK3528
+Date: Wed,  5 Mar 2025 19:42:09 +0000
+Message-ID: <20250305194217.47052-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Allow data races on some read/write operations
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
- comex <comexk@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
- robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
- Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com, iommu@lists.linux.dev, lkmm@lists.linux.dev
-References: <87bjuil15w.fsf@kernel.org>
- <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
- <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
- <87ikoqjg1n.fsf@kernel.org>
- <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
- <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
- <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
- <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
- <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
- <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
- <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
- <CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
- <18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
- <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de> <87eczb71xs.fsf@kernel.org>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <87eczb71xs.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hi all,
+RK3528 features two SDIO controllers and one SD/MMC controller. This
+series adds essential support for their tuning clocks, document the
+controller in dt-bindings and bring the SD/MMC one up on Radxa E20C
+board. Both HS and SDR104 mode are verified.
 
->>> For some kinds of hardware, we might not want to trust the hardware.
->>> I.e., there is no race under normal operation, but the hardware could
->>> have a bug or be malicious and we might not want that to result in UB.
->>> This is pretty similar to syscalls that take a pointer into userspace
->>> memory and read it - userspace shouldn't modify that memory during the
->>> syscall, but it can and if it does, that should be well-defined.
->>> (Though in the case of userspace, the copy happens in asm since it
->>> also needs to deal with virtual memory and so on.)
->>
->> Wow you are really doing your best to combine all the hard problems at the same
->> time. ;)
->> Sharing memory with untrusted parties is another tricky issue, and even leaving
->> aside all the theoretical trouble, practically speaking you'll want to
->> exclusively use atomic accesses to interact with such memory. So doing this
->> properly requires atomic memcpy. I don't know what that is blocked on, but it is
->> good to know that it would help the kernel.
-> 
-> I am sort of baffled by this, since the C kernel has no such thing and
-> has worked fine for a few years. Is it a property of Rust that causes us
-> to need atomic memcpy, or is what the C kernel is doing potentially dangerous?
+This is based on v2 of the SARADC series[1]
 
-It's the same in C: a memcpy is a non-atomic access. If something else 
-concurrently mutates the memory you are copying from, or something else 
-concurrently reads/writes the memory you are copying two, that is UB.
-This is not specific to memcpy; it's the same for regular pointer loads/stores. 
-That's why you need READ_ONCE and WRITE_ONCE to specifically indicate to the 
-compiler that these are special accesses that need to be treated differently. 
-Something similar is needed for memcpy.
+- Changed from v1
+  - Apply review tags
+  - Rebase on top of linux-rockchip/for-next and saradc v2 series
+  - rk3528 clock driver:
+    - explicitly include minmax.h, replace MAX() with more robust max()
+    - readability improvements
+    - fix error checks: ERR_PTR(-ENODEV), instead of ERR_PTR(ENODEV), is
+      returned when syscon_regmap_lookup_by_compatible() fails for missing
+      such syscon
+  - RK3528 devicetree
+    - Add default pinctrl
+    - Move the per-SoC property, rockchip,default-sample-phase, into the
+      SoC devicetree
+  - rk3528-radxa-e20c devicetree
+    - Assign sdcard to mmc1
+    - Add missing regulators
+    - Apply no-sdio for the sdmmc controller
+    - Sort nodes
+  - Link to v1: https://lore.kernel.org/all/20250301104250.36295-1-ziyao@disroot.org/
 
-Kind regards,
-Ralf
+Thanks for your time and review.
+
+[1]: https://lore.kernel.org/all/20250304201642.831218-1-jonas@kwiboo.se/
+
+Yao Zi (8):
+  dt-bindings: soc: rockchip: Add RK3528 VO GRF syscon
+  dt-bindings: soc: rockchip: Add RK3528 VPU GRF syscon
+  dt-bindings: mmc: rockchip-dw-mshc: Add compatible string for RK3528
+  dt-bindings: clock: Add GRF clock definition for RK3528
+  clk: rockchip: Support MMC clocks in GRF region
+  clk: rockchip: rk3528: Add SD/SDIO tuning clocks in GRF region
+  arm64: dts: rockchip: Add SDMMC/SDIO controllers for RK3528
+  arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
+
+ .../bindings/mmc/rockchip-dw-mshc.yaml        |  1 +
+ .../devicetree/bindings/soc/rockchip/grf.yaml |  2 +
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 34 +++++++++
+ arch/arm64/boot/dts/rockchip/rk3528.dtsi      | 70 +++++++++++++++++++
+ drivers/clk/rockchip/clk-mmc-phase.c          | 24 +++++--
+ drivers/clk/rockchip/clk-rk3528.c             | 61 ++++++++++++++--
+ drivers/clk/rockchip/clk.c                    | 42 +++++++++++
+ drivers/clk/rockchip/clk.h                    | 23 +++++-
+ .../dt-bindings/clock/rockchip,rk3528-cru.h   |  6 ++
+ 9 files changed, 252 insertions(+), 11 deletions(-)
+
+-- 
+2.48.1
 
 
