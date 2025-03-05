@@ -1,270 +1,190 @@
-Return-Path: <linux-kernel+bounces-546668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9DFA4FD7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:21:59 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B246CA4FD80
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:22:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 174E43ABF48
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:21:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5543168C8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83282E3377;
-	Wed,  5 Mar 2025 11:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="reqEhmgk"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF841207E04;
+	Wed,  5 Mar 2025 11:21:55 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7435121421B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:21:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74744233D98
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:21:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741173710; cv=none; b=SE2ZJ0ER3Oc0Sw+fBmBJrm79TEVX250tIrIO/+y2FOaWKYdyu2G70dY6SbvZkSv/69Y531pyjSgN7bmXJb1GeIQbGjTCvVqk3dCIBiCgDEiFvOkLQuqNo8DJqJC5C52+FBD+x/aNDOrrJiZWWp+fC8RzIxWLUcDEUCDkWdCEK/8=
+	t=1741173715; cv=none; b=UeZIATywwK4z76ABurjtWXcyMrZ/oJIp0zNxUZbrBQiPRmZYsxysj4n+dkvG/Bgy4yKbKE4SR/Y5LI+pa+8OM4NpkJK1n2+/c5itY3ZzwcM59/Y7uChQo0Alu7SzwlBzEnpvszFsFb4cWmXitmvWLJu1GSt5yCHoAYdlLa8BOvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741173710; c=relaxed/simple;
-	bh=vgYM/G984m2BWXqCa/TQZidOi3XOLL2rDeS0Z8QWpNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Z9pixyoZ/W2MFykvTnDx/rXu4YRRmoobcfv6XohA/V+URMYHBr9cPL+wyUw7QjmcQbQWtCtDmxvHcNJwI2KQvoZYzvoISAzUVkegNa2BMSN1Nw/fhQiXv/YxGmhaXF0Tk/wOJEijhkXeUrdHuDf0+ZtHipIk0Hn/fq2YcRovfeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=reqEhmgk; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-471fe5e0a80so60111751cf.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 03:21:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741173707; x=1741778507; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Upd1AM9RnmsMENNaYkv4Fw777JX+i9QYUqGfa9fv560=;
-        b=reqEhmgkJnXBSyG/2n629SCVWEsl2utAOCNv9HoUJzvlfUJTeFdFUbUawhuNUw+jNs
-         Sr0I16eAZitd+GWYZmVle5oYYGEg70N5Ku41J3tJlO7bHdKwaX2/VN8N2vibMIIdYoeQ
-         IQvttaoVYxda+UuSFxuxNAp5gm7fXkNv3FyUb41pvcuo4kVYRt1H/sDecZ60g87TQBa/
-         gjNc403Q6clnvYtDB501nm1WY8ejt5Les5T0kGKAzOdSQyM6WzArSiW/AKRGcC2/B7cH
-         jOgKOU6pNBJVA7hTkklrTKmeFlyqdAcYYQNXhFcjP0oVx+d2/BS3CinzDUAnq/KEclpZ
-         16QQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741173707; x=1741778507;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Upd1AM9RnmsMENNaYkv4Fw777JX+i9QYUqGfa9fv560=;
-        b=YUF4SWM5vF0Atp6THZA+no6Q2A0IuALLR0MZyCvIoOdoU4goNfKmC1nApVBDLZu9u8
-         pqHHJZDEJdcHZXU/HFXZiMn0X33V2y9Zk27GwSRkmL8hK4hj+euU5obmzFP5vlae5Mby
-         YOe7QxnNhRGLuG6X0iDq5KJQKd5mkMqL6EzWZOIx1/rIIRCZOZpZQ3JUknJV5HbT4My/
-         ZrfrJ6Lwa4AJkqLcYQN3aXHGTyFIAtm7LKkPcp1uCXlYLuGyComUNP+UTQINiXq5iJKK
-         LYAPpvPQocVj3anUtrNlvIhRV1bKdO1/r8NuLGnIxpq6VE9lvVtyoaPcsaehcuVo6Ocb
-         ljHw==
-X-Forwarded-Encrypted: i=1; AJvYcCXuTaRWWkOBy9ZAWhOj6wDkJLW9VuMQauiadnqxY5tV3cLmWVvewhYfuSBQSiTf2lwN/XoaRFhvjHJnKkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqSiZ3SKpyO8P+9cUu5YHLPO1zOoxzidQk/RZtXoJ29EzqMMur
-	+3dA/HoYpIvB0kupNvQfbpsYE5nZ59eh2WSM5NE9sMrB4n7r5AC2LEBt+f4xaUH3xXVHqsbDi50
-	pa92BCg55VRqrzqE8t/R96TO2Ji17ivci6R2o
-X-Gm-Gg: ASbGncskmpsANKbOkxetNV+ehMbEzJbPnh8bSxFUJjNd0AQvOZHgdzQOGe8DLQev3hw
-	RGN+dn+s/M9O2epIJZGO4Wr5GM8Mg0fwqcv7MFbU4ILITf+iAefY0BlafSalbTHW5M6c0QDMAcj
-	f+EmEWypuHIfRFKclvzQiVx3kflOBFBQ73cjvKDCireBeZuMXtKPdXx+f1
-X-Google-Smtp-Source: AGHT+IEqQsuKupb9s1R3c2KxmcUEAV1XkN36/VR4Nqu6/DaNfCll0Q4SQR3x+nnbmujQQlnkeK7JRBuPMmX1r4KYX98=
-X-Received: by 2002:a05:622a:52:b0:472:2021:b76a with SMTP id
- d75a77b69052e-4750b23c744mr43074751cf.11.1741173706925; Wed, 05 Mar 2025
- 03:21:46 -0800 (PST)
+	s=arc-20240116; t=1741173715; c=relaxed/simple;
+	bh=cKw/GBwi1r2ynnUZuQRdHg6Kf+u557P6wNhvPGP8X9Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=V0hmZn7lCn5htnpZndsXX61nu3xKXo14wzDk9D95e1CYPpc0gsnedDJPPgyDJZUWfN2iUkd3QXyYFRxJ2bm4g/nkfU7Cfh7d+0dihWJDeMUy3235sVtVBXsbVz1Zy6VqoLowFVx+yAIFZMPFq7AbQIduJ6DQQylu4ApnKSg8flg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4Z795Q0wqczvWpG;
+	Wed,  5 Mar 2025 19:18:02 +0800 (CST)
+Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9E65B18009E;
+	Wed,  5 Mar 2025 19:21:49 +0800 (CST)
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Wed, 5 Mar 2025 19:21:48 +0800
+Message-ID: <e1f74c95-7ecb-4a71-9e5e-8533b2ff14fc@huawei.com>
+Date: Wed, 5 Mar 2025 19:21:47 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303070501.2740392-1-danielsftsai@google.com>
- <87a5a2cwer.ffs@tglx> <CAK7fddD4Y5CJ3hKQvppGB2Bof4ibYDX4mBK3N1y8qt-NVoBb7w@mail.gmail.com>
- <87eczd6scg.ffs@tglx>
-In-Reply-To: <87eczd6scg.ffs@tglx>
-From: Tsai Sung-Fu <danielsftsai@google.com>
-Date: Wed, 5 Mar 2025 19:21:36 +0800
-X-Gm-Features: AQ5f1Jr3IP4TOG8eFM-qcQy0d0rB_UNy-xtMP7FquL3wzjxfVKpoUu3AZcI7WYY
-Message-ID: <CAK7fddAqDPw1CuvBDUsQApbs1ZSE_ruyTAdsp+c4116C0ZjvVw@mail.gmail.com>
-Subject: Re: [PATCH] PCI: dwc: Chain the set IRQ affinity request back to the parent
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Jingoo Han <jingoohan1@gmail.com>, 
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Andrew Chant <achant@google.com>, 
-	Brian Norris <briannorris@google.com>, Sajid Dalvi <sdalvi@google.com>, 
-	Mark Cheng <markcheng@google.com>, Ben Cheng <bccheng@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 drm-dp 7/8] drm/hisilicon/hibmc: Enable this hot plug
+ detect of irq feature
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	<shiyongbang@huawei.com>
+References: <vrsy4hao4qu3hlcbmjyfyibeearhhjgtik3e6o3v2eyzkatdve@kdb7cyvl45tu>
+ <ade54ddd-79ea-4335-9058-c17e4525e83f@huawei.com>
+ <4hicem4rbz5l7wnzaaz3krrl3euh2dmvlah2rb7errrdq5fann@44dvdxirkuzh>
+ <6506e448-3851-436f-9354-42f9ef844d27@huawei.com>
+ <njnz5hxumrvqrgsfq7zlunle3jgfan3be34ao5xtkmzczpi6af@waywds2ww6qw>
+ <c87613aa-1d17-4a88-acce-269ea9eddc22@huawei.com>
+ <CAA8EJpo71m_ae9siT7f4Tsfr0C4XeoraqPYPsPp0gz-N+oMOjw@mail.gmail.com>
+ <6e54c88f-dfaf-462d-b66b-c237d19faec6@huawei.com>
+ <zzi2h52xiernm32h7i7xtrlnjwaqc3n2tx33ypmhw6quoi5qyg@pilzj5zantii>
+ <fce2e5e8-ba38-474d-891c-f8ab0de8d07e@huawei.com>
+ <kdk7p6yhuvby2nyqriufj3jo7kkyxv4ml4awdhszkehv2r2om3@cvho3j27hmwx>
+ <3465ce51-a844-4c77-8e80-179d5ca279cc@huawei.com>
+ <CAA8EJprPAdsUS7FJCDmMnk7YZ7yM-=M15dEFcJhAg+CEezQSaQ@mail.gmail.com>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <CAA8EJprPAdsUS7FJCDmMnk7YZ7yM-=M15dEFcJhAg+CEezQSaQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd500013.china.huawei.com (7.221.188.12)
 
-On Tue, Mar 4, 2025 at 5:46=E2=80=AFPM Thomas Gleixner <tglx@linutronix.de>=
- wrote:
->
-> On Tue, Mar 04 2025 at 13:48, Tsai Sung-Fu wrote:
-> > On Mon, Mar 3, 2025 at 5:10=E2=80=AFPM Thomas Gleixner <tglx@linutronix=
-.de> wrote:
-> >> > +     hwirq =3D ctrl * MAX_MSI_IRQS_PER_CTRL;
-> >> > +     end =3D hwirq + MAX_MSI_IRQS_PER_CTRL;
-> >> > +     for_each_set_bit_from(hwirq, pp->msi_irq_in_use, end) {
-> >> > +             if (hwirq =3D=3D hwirq_to_check)
-> >> > +                     continue;
-> >> > +             virq =3D irq_find_mapping(pp->irq_domain, hwirq);
-> >> > +             if (!virq)
-> >> > +                     continue;
-> >> > +             mask =3D irq_get_affinity_mask(virq);
-> >>
-> >> What protects @mask against a concurrent modification?
-> >
-> > We hold the &pp->lock in the dw_pci_msi_set_affinity before calling
-> > this function
-> > so that should help to protect against concurrent modification ?
->
-> So that's the same domain, right?
->
+> On Wed, 5 Mar 2025 at 08:29, Yongbang Shi <shiyongbang@huawei.com> wrote:
+>>
+>>> On Tue, Mar 04, 2025 at 10:23:14AM +0800, Yongbang Shi wrote:
+>>>>> On Mon, Mar 03, 2025 at 01:02:44PM +0800, Yongbang Shi wrote:
+>>>>>>> On Sat, 1 Mar 2025 at 11:54, Yongbang Shi <shiyongbang@huawei.com> wrote:
+>>>>>>>>> On Sat, Mar 01, 2025 at 04:45:40PM +0800, Yongbang Shi wrote:
+>>>>>>>>>>> On Thu, Feb 27, 2025 at 09:46:10PM +0800, Yongbang Shi wrote:
+>>>>>>>>>>>>> On Tue, Feb 25, 2025 at 09:57:17PM +0800, Yongbang Shi wrote:
+>>>>>>>>>>>>>>> On Mon, 24 Feb 2025 at 16:03, Yongbang Shi <shiyongbang@huawei.com> wrote:
+>>>>>>>>>>>>>>>>> On Sat, Feb 22, 2025 at 06:35:48PM +0800, Yongbang Shi wrote:
+>>>>>>>>>>>>>>>>>>>> +static int hibmc_dp_hpd_event(struct drm_client_dev *client)
+>>>>>>>>>>>>>>>>>>>> +{
+>>>>>>>>>>>>>>>>>>>> +  struct hibmc_dp *dp = container_of(client, struct hibmc_dp, client);
+>>>>>>>>>>>>>>>>>>>> +  struct hibmc_drm_private *priv = to_hibmc_drm_private(dp->drm_dev);
+>>>>>>>>>>>>>>>>>>>> +  struct drm_display_mode *mode = &priv->crtc.state->adjusted_mode;
+>>>>>>>>>>>>>>>>>>>> +  int ret;
+>>>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>>>> +  if (dp->hpd_status) {
+>>>>>>>>>>>>>>>>>>>> +          hibmc_dp_hpd_cfg(&priv->dp);
+>>>>>>>>>>>>>>>>>>>> +          ret = hibmc_dp_prepare(dp, mode);
+>>>>>>>>>>>>>>>>>>>> +          if (ret)
+>>>>>>>>>>>>>>>>>>>> +                  return ret;
+>>>>>>>>>>>>>>>>>>>> +
+>>>>>>>>>>>>>>>>>>>> +          hibmc_dp_display_en(dp, true);
+>>>>>>>>>>>>>>>>>>>> +  } else {
+>>>>>>>>>>>>>>>>>>>> +          hibmc_dp_display_en(dp, false);
+>>>>>>>>>>>>>>>>>>>> +          hibmc_dp_reset_link(&priv->dp);
+>>>>>>>>>>>>>>>>>>>> +  }
+>>>>>>>>>>>>>>>>>>> If I understand this correctly, you are using a separate drm_client to
+>>>>>>>>>>>>>>>>>>> enable and disable the link & display. Why is it necessary? Existing
+>>>>>>>>>>>>>>>>>>> drm_clients and userspace compositors use drm framework, they should be
+>>>>>>>>>>>>>>>>>>> able to turn the display on and off as required.
+>>>>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>>>> Thanks for your asking, there are cfg/reset process when the connector 's pluging in/out.
+>>>>>>>>>>>>>>>>>> We want to cfg DP registers again when the connector changes. Not only dp link training, but also cfg
+>>>>>>>>>>>>>>>>>> the different video modes into DP registers.
+>>>>>>>>>>>>>>>>> Why? The link training and mode programming should happen during
+>>>>>>>>>>>>>>>>> pre_enable / enable stage (legacy or atomic).
+>>>>>>>>>>>>>>>> Hi Dmitry,
+>>>>>>>>>>>>>>>>
+>>>>>>>>>>>>>>>> Right, that's what I'm curious about. It won't call encoder enble/disable functions when I triggered HPD.
+>>>>>>>>>>>>>>>> And I'm sure the drm_connector_helper_hpd_irq_event() is called. So I add a drm_client for it.I
+>>>>>>>>>>>>>>> It should be userspace, who triggers the enable/disable (or it should
+>>>>>>>>>>>>>>> be the in-kernel fbdev / fbcon, which interface through the generic
+>>>>>>>>>>>>>>> drm_fbdev client).
+>>>>>>>>>>>>>> Right, I knew it. When I insmode my driver firstly (or restart display service), it will call disable, modeset and enable,
+>>>>>>>>>>>>>> by user, but it won't call when HPD triggered .
+>>>>>>>>>>>>> - Is HPD even properly delivered to userspace? What kind of compsitor
+>>>>>>>>>>>>>          are you using? Is .detect working properly and reporting a correct
+>>>>>>>>>>>>>          plug-in state?
+>>>>>>>>>>>> Thanks for your answering. I'm not very good understanding about userspace in framework. In my opinion, when I call
+>>>>>>>>>>>> this drm_connector_helper_hpd_irq_event(), the HPD will deliver to userspace.
+>>>>>>>>>>>> I use Xorg, and the display service is GDM.
+>>>>>>>>>>>> The .detect is called and the getting modes info is correct.
+>>>>>>>>>>>> I find that it would only trigger(disable, modeset and enable), when I changed resolutions, restart display service and insmod driver.
+>>>>>>>>>>> You can go to the display settings in GDM. It would be interesting to
+>>>>>>>>>>> observe if it notes the second monitor or not. Last, but not least, you
+>>>>>>>>>>> can use a simple tool like 'xrandr' under your XOrg session to set the
+>>>>>>>>>>> display resolution.
+>>>>>>>>>> Thank you for your advice!
+>>>>>>>>>> Right, there are DP and VGA two monitors. I tried to totally remove the vga connector in driver, the problem is gone.
+>>>>>>>>>> So do I need to clear the vga connector, if dp is plugged in?
+>>>>>>>>> Unless your hardware can not manage two outputs at the same time, no,
+>>>>>>>>> you don't have to. Just check how it behaves on x86 systems. Ideally
+>>>>>>>>> your driver should have the same behaviour.
+>>>>>>>> Our hardware cannot support two outputs with different timing, so I used the one crtc and one plane that DP and VGA share. And just add a new DP connector
+>>>>>>>> with a encoder, just like the previous VGA's code logic. But the HPD problem makes me feel confused, should I change the framwork structure to slove this problem?
+>>>>>>> I think registering a single CRTC is a correct way. Then it is logical
+>>>>>>> that there is no mode set on the DP when you connect it. The userspace
+>>>>>>> can not output any data. However if you disconnect VGA and connect DP
+>>>>>>> then it should become active and should output your desktop
+>>>>>>> environment.
+>>>>>> Okay, Thank you for your guidance. So I need to disconnect VGA when I get the HPD (plugged in) , then
+>>>>>> userapce will active and enanble DP, right?
+>>>>> Yes.
+>>>> I'm sorry for that, just wanna make sure one more thing. I found if I only set the VGA connector's status to disconnected when HPD plugged in, it won't be active.
+>>> Huh? You should implement hibmc_connector_funcs.detect() or
+>>> .detect_ctx() to report VGA connector's status. Use
+>>> ast_vga_connector_helper_detect_ctx() as an inspiration.
+>> Okay, thanks for your correcting, I'll try to add drm_connector_helper_detect_from_ddc() in VGA's detect_ctx.
+>> And also, I wanna make sure that do I need to unplug the VGA monitor manually when I plug in DP, or just
+>> set the status of VGA connector to disconnected in interrupt handler.
+> If the HPD reports the status of the DP connector, why do you want to
+> change the status of the VGA connector?
 
-Yes, all from pp->irq_domain allocated by the driver by calling to
-irq_domain_create_linear().
+I'm not sure how VGA is influenced the userspace active and enable, because you said "disconnect VGA and connect DP then it should become active", so I try to do it.
 
-I will add the lockdep_assert_held() check.
+After just adding VGA's detect, it works good in Xorg session, but when I start GDM, it won't enable in HPD plugged in. It's kind of complicated to me, (different Xorg usages,
 
-> >> > +     /*
-> >> > +      * Update all the irq_data's effective mask
-> >> > +      * bind to this MSI controller, so the correct
-> >> > +      * affinity would reflect on
-> >> > +      * /proc/irq/XXX/effective_affinity
-> >> > +      */
-> >> > +     hwirq =3D ctrl * MAX_MSI_IRQS_PER_CTRL;
-> >> > +     end =3D hwirq + MAX_MSI_IRQS_PER_CTRL;
-> >> > +     for_each_set_bit_from(hwirq, pp->msi_irq_in_use, end) {
-> >> > +             virq_downstream =3D irq_find_mapping(pp->irq_domain, h=
-wirq);
-> >> > +             if (!virq_downstream)
-> >> > +                     continue;
-> >> > +             desc_downstream =3D irq_to_desc(virq_downstream);
-> >> > +             irq_data_update_effective_affinity(&desc_downstream->i=
-rq_data,
-> >> > +                                                effective_mask);
-> >>
-> >> Same here.
-> >
-> > We hold the &pp->lock in the dw_pci_msi_set_affinity before calling
-> > here, so that could help I think ?
+  different results). So I wanna send the patches first, and then follow up on this issue whether the configuration of GDM is correct.
+
+
+>>
+>>>> And If I add drm_cleanup_connector() for VGA, it work. So is this okay that I use this cleanup in HPD?
+>>> drm_connector_cleanup() should only be callsed if the connector is going
+>>> to be destroyed. You should not be callign that function.
+>>>
+>>>>>>>> And also, I will check whether this driver works good on the x86 server. Right now, I'm testing on arm64 server.
+>>>>>>>>
+>>>>>>>>>> And also, I used xrandr to set modes after 'startx'. Changing resolutions works,
+>>>>>>>>>> but there are errs when set some low resolutions.
+>>>>>>>>> That's a separate topic, most likely related to timing or to some other
+>>>>>>>>> issues. You can fix that separately (but please do, switching modes
+>>>>>>>>> should work).
+>>>>>>>> Okay!
+>>>>>>>>
+>>>>>>>>
 >
-> A comment would be helpful for the casual reader.
-
-Sure, will also add the lockdep_assert_held() check
-
 >
-> >>
-> >> > +     }
-> >> > +}
-> >> > +
-> >> > +static int dw_pci_msi_set_affinity(struct irq_data *d,
-> >> > +                                const struct cpumask *mask, bool fo=
-rce)
-> >> > +{
-> >> > +     struct dw_pcie_rp *pp =3D irq_data_get_irq_chip_data(d);
-> >> > +     struct dw_pcie *pci =3D to_dw_pcie_from_pp(pp);
-> >> > +     int ret;
-> >> > +     int virq_parent;
-> >> > +     unsigned long hwirq =3D d->hwirq;
-> >> > +     unsigned long flags, ctrl;
-> >> > +     struct irq_desc *desc_parent;
-> >> > +     const struct cpumask *effective_mask;
-> >> > +     cpumask_var_t mask_result;
-> >> > +
-> >> > +     ctrl =3D hwirq / MAX_MSI_IRQS_PER_CTRL;
-> >> > +     if (!alloc_cpumask_var(&mask_result, GFP_ATOMIC))
-> >> > +             return -ENOMEM;
-> >>
-> >> This does not work on a RT enabled kernel. Allocations with a raw spin
-> >> lock held are not possible.
-> >>
-> >
-> > Even with the GFP_ATOMIC flag ? I thought that means it would be safe
-> > to do allocation in the atomic context ?
-> > Didn't work on the RT kernel before, so please enlighten me if I am
-> > wrong and if you don't mind.
->
-> https://www.kernel.org/doc/html/latest/locking/locktypes.html#preempt-rt-=
-caveats
-> https://www.kernel.org/doc/html/latest/locking/locktypes.html#raw-spinloc=
-k-t-on-rt
->
-
-I will remove the Allocation and move the cpumask to the device structure.
-Thanks for the doc.
-
-> >> > +     /*
-> >> > +      * Loop through all possible MSI vector to check if the
-> >> > +      * requested one is compatible with all of them
-> >> > +      */
-> >> > +     raw_spin_lock_irqsave(&pp->lock, flags);
-> >> > +     cpumask_copy(mask_result, mask);
-> >> > +     ret =3D dw_pci_check_mask_compatibility(pp, ctrl, hwirq, mask_=
-result);
-> >> > +     if (ret) {
-> >> > +             dev_dbg(pci->dev, "Incompatible mask, request %*pbl, i=
-rq num %u\n",
-> >> > +                     cpumask_pr_args(mask), d->irq);
-> >> > +             goto unlock;
-> >> > +     }
-> >> > +
-> >> > +     dev_dbg(pci->dev, "Final mask, request %*pbl, irq num %u\n",
-> >> > +             cpumask_pr_args(mask_result), d->irq);
-> >> > +
-> >> > +     virq_parent =3D pp->msi_irq[ctrl];
-> >> > +     desc_parent =3D irq_to_desc(virq_parent);
-> >> > +     ret =3D desc_parent->irq_data.chip->irq_set_affinity(&desc_par=
-ent->irq_data,
-> >> > +                                                        mask_result=
-, force);
-> >>
-> >> Again. Completely unserialized.
-> >>
-> >
-> > The reason why we remove the desc_parent->lock protection is because
-> > the chained IRQ structure didn't export parent IRQ to the user space, s=
-o we
-> > think this call path should be the only caller. And since we have &pp->=
-lock hold
-> > at the beginning, so that should help to protect against concurrent
-> > modification here ?
->
-> "Should be the only caller" is not really a technical argument. If you
-> make assumptions like this, then you have to come up with a proper
-> explanation why this is correct under all circumstances and with all
-> possible variants of parent interrupt chips.
->
-> Aside of that fiddling with the internals of interrupt descriptors is
-> not really justified here. What's wrong with using the existing
-> irq_set_affinity() mechanism?
->
-> Thanks,
->
->         tglx
->
-
-Using irq_set_affinity() would give us some circular deadlock warning
-at the probe stage.
-irq_startup() flow would hold the global lock from irq_setup_affinity(), so
-deadlock scenario like this below might happen. The irq_set_affinity()
-would try to acquire &irq_desc_lock_class
-while the dw_pci_msi_set_affinity() already hold the &pp->lock. To
-resolve that we would like to reuse the idea to
-replace the global lock in irq_set_affinity() with PERCPU structure
-from this patch ->
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?=
-id=3D64b6d1d7a84538de34c22a6fc92a7dcc2b196b64
-Just would like to know if this looks feasible to you ?
-
-  Chain exists of:
-  &irq_desc_lock_class --> mask_lock --> &pp->lock
-  Possible unsafe locking scenario:
-        CPU0                            CPU1
-        ----                                   ----
-   lock(&pp->lock);
-                                               lock(mask_lock);
-                                               lock(&pp->lock);
-   lock(&irq_desc_lock_class);
-
-  *** DEADLOCK ***
-
-Thanks
 
