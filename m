@@ -1,92 +1,88 @@
-Return-Path: <linux-kernel+bounces-546184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79859A4F770
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:47:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAD5A4F771
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:48:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A99E816E439
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:47:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94D391890524
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:48:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121DE1E0DB3;
-	Wed,  5 Mar 2025 06:47:52 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A26D1E5B8E;
+	Wed,  5 Mar 2025 06:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NhGfd9M9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D541CAA62
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:47:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98DA61CAA62;
+	Wed,  5 Mar 2025 06:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741157271; cv=none; b=KxgFlqbag+mXEIlSEbrZH6jNfydu+Nm6CcD34ueQ+Adia5spgzcJdjLq5FEQghQtQVumYj6vwu4iC8icqf7Ne8QjDWFM+ugZaBlWg16HudlvOgE68G0q+RppnD/6rxan3Jz/hBzEq3KJzW/Ta5196DfS1OzalLRPf9FxQWwlXUU=
+	t=1741157277; cv=none; b=ut5AE85MFJnVQG7kRDhwhdpidjEIU6EUNh8/rNeRY390hnZd2a27FzdkXY2l8cI6tV/WSbddVi/BOXyUlUjx5P5S2D3vH2Vq6swwpGvOlhmDOVqoMgFwqFXGfrKIUEWDhya9C/bTvc+OzzeDDyTfaDWAEHlHuVHVKq0JCXZ0o7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741157271; c=relaxed/simple;
-	bh=t8VfyHDZC4bVNk1Nn6fkD8LXrD8BV61swQ7pdkt9cR4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SeUH23UMeyyozvqQFHNrx8W7DiI5o8ZOu6AoizA1n45XVerhjdRFY3a1DZBMkPQbgRUpoRkuycQp+YqFbDDfaqADrt58eA7hmfd8R5C8A0Tb7BmRDfAMijnVZaDuY2ToQHAg7/EdmSFXvcs0vo1xncL3IrT2+dC9Rv1uOzqetJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201615.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202503051447413826;
-        Wed, 05 Mar 2025 14:47:41 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- Jtjnmail201615.home.langchao.com (10.100.2.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 14:47:42 +0800
-Received: from locahost.localdomain (10.94.3.63) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 14:47:41 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
-	<vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
-	<rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>
-CC: <linux-kernel@vger.kernel.org>, Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] sched/fair: fix inconsistent indenting warning
-Date: Wed, 5 Mar 2025 14:47:40 +0800
-Message-ID: <20250305064740.4206-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741157277; c=relaxed/simple;
+	bh=fhRAF87/QEA7Em0a04Y82ATE0ensxZoTQPPkiTbfW7E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gq/EldFctyUsl5uH8JnPKOm1q2ILaQ0Hmbx1GDMR/2x3E0BmUmeeGYAWFS1I78k6YHIKQczT5puz8D1p8eO4wjIslCL06PyustBUyM4PeEzXHz1r0JgBrloiqzLgwA5Pw9UbaVYwZP4qoUND/TrkubBqQLxvLDkTSj2UQPfzJuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NhGfd9M9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA121C4CEE2;
+	Wed,  5 Mar 2025 06:47:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741157277;
+	bh=fhRAF87/QEA7Em0a04Y82ATE0ensxZoTQPPkiTbfW7E=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NhGfd9M9W4HyDwG9OxtMSlU688I7ghN20pVP8ix6GhP1xM9didXDiTizBwfBS5VOV
+	 pyfUqP3zfC0OonUN0/qStfa+o030EHqTfCcihNUcL/RmeMqqFrbA4cZ/z65nw/ECMD
+	 HuWbc31f8t1j6SQNKvVC1CVoFTm2k9ErgrwTy1aBRcK/gdm10key6jbkN/VDdQfz/k
+	 u9RIxvBCL9uHB3WC4VImo0gNOh+4Zzktaqxgs1SrhndEuC0wPi4r2NOaMLoLPiBMnP
+	 EkgN+hXnWwJ9/fIv/A5zowqxd8W5OTzoWQFXJaH06/1iRErTBmaPA4jaRw7DusEHYS
+	 psmeRy+if+XRA==
+Date: Wed, 5 Mar 2025 08:47:43 +0200
+From: Mike Rapoport <rppt@kernel.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH] x86/ftrace: fix boot time slowdown
+Message-ID: <Z8fzj5VjtbTOS4Vn@kernel.org>
+References: <20241124140705.2883-1-rppt@kernel.org>
+ <Z07KnNk5AK_Jq6CU@kernel.org>
+ <20241210230056.185826cd@batman.local.home>
+ <20250303172427.1ae6c924@gandalf.local.home>
+ <Z8am3EgVK9qADIgJ@kernel.org>
+ <20250304095505.4716c41e@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2025305144741f31dba94903055772951cb9b1fa1699e
-X-CorpSPAM-Fhash: Yes
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304095505.4716c41e@gandalf.local.home>
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-kernel/sched/fair.c:3444 task_numa_work() warn: inconsistent indenting
+On Tue, Mar 04, 2025 at 09:55:05AM -0500, Steven Rostedt wrote:
+> On Tue, 4 Mar 2025 09:08:12 +0200
+> Mike Rapoport <rppt@kernel.org> wrote:
+> 
+> > It's not relevant anymore, the commit that changed text_poke_early() to
+> > text_poke() is now reverted in tip tree.
+> >  
+> 
+> Will that be going into 6.14?
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- kernel/sched/fair.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index d042e94a79c3..df13a4fd8f09 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -3441,7 +3441,7 @@ static void task_numa_work(struct callback_head *work)
- 			 * to prevent VMAs being skipped prematurely on the
- 			 * first scan:
- 			 */
--			 vma->numab_state->prev_scan_seq = mm->numa_scan_seq - 1;
-+			vma->numab_state->prev_scan_seq = mm->numa_scan_seq - 1;
- 		}
+It seems so.
  
- 		/*
--- 
-2.43.0
+> -- Steve
 
+-- 
+Sincerely yours,
+Mike.
 
