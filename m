@@ -1,194 +1,178 @@
-Return-Path: <linux-kernel+bounces-547345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8879A5060A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:11:04 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D989AA5060F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:11:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EF27B169D83
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5EF1C1883999
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 830B21AAE28;
-	Wed,  5 Mar 2025 17:09:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5F96221D83;
+	Wed,  5 Mar 2025 17:10:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="P1p3UOO0"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hqBiFcvR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 818721A841A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:09:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BE8919E806
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:10:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194582; cv=none; b=DcgTBS8GE5DMoM812ao6N6MJHx8XJGhj9/i2eM/qI/dDWQTrp4wnAv7SWUSJk31zFVKaZ107KFdx0ZUjH3Be6mM0KI+xrquMVBPXUybhOfvehyNd+BCs20exJLBdCmLi0ruEWfgdviTzn/tG9saWKPtB5cuhe+9mIppU7KifR08=
+	t=1741194605; cv=none; b=R17DKA3BYhaG6ty0v18y9Rq0KaOExTO/lN7fw4WLGnYkEXCTcySKP0qWSsYvyqW9k4ZJKYwrvMnZ6qUr0u4xFEg74IeOS/V8bsNVx4iqkCGe9e8G/Ak38YVB/zZX0ShZFDC1CqyP1QHB6KMh2aPkYmUCUbEWKBnluwTiesVzFfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194582; c=relaxed/simple;
-	bh=irFcCVMJ+YoW6k8byXnRJIVW9wTUS4yGDTwhsoaB6Ak=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=I2gGiM9WdvoC0vM5LePqwWfNmfDTZP2Ky7fH2Qj175KSsHpZSdnFAKHmRPG2s8xPDgoBSf6lk2Q05xWIUKrhnyx0Qp+BlWcXGeSWd5pGX7Hqdkgvd7Tk/RKhSz4dPdYuVsWILioeb+YROiAEoFMDRI/COzkx+YkiTtadnFWotB0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=P1p3UOO0; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-43bbc8b7c65so41438075e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:09:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741194579; x=1741799379; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Xwduz/qNPiyy4RhwG9d9PScJsmgmVdCqCQSC6jOGw4=;
-        b=P1p3UOO0b9YDJTFpWR4YE+ZSKZf6Xcn52yudVG+sPHwyBxBtardW009r9baCZcBeB4
-         4YrBwUNx2JnWKUZCwE8P5GXIHIEPQ0jNvCevdy2YOChbqBHkzpHt/1wzFn5RYouw4lg7
-         Ubnyj/AmJTt084JQMIhTcWp0jpVFjR0Xndt2RDe864mTy2ddPAAr0onst3U6rKkFxD45
-         H0M4bgWyKxC98MlJmxb9oAlG/J9F2VNQt4FJxc+tUtjyiDfKCDHtPn8v130bldZUxkdd
-         1L/Pie03mBgGdJDVfupW8ScDCv5mNHuWB5VmdaSSZ68xZEXatoTBkzENiNCy/KsCr8T5
-         oqQw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741194579; x=1741799379;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8Xwduz/qNPiyy4RhwG9d9PScJsmgmVdCqCQSC6jOGw4=;
-        b=ktBpBQa+TKudCas7iZ1VDcl49Ka5pMu9/t+FkGN5PaC0L8y7d7ezelwquKrR+hvzeu
-         EmfZcr17rXnvxyM8QbtME5aXengHm5n8wWddTxxDknamtQr25HCKnm4q/uA6OpfUmb+C
-         1yPtNAshsvTxWp3FucT9NF+3hunzz/EENTVy8m1YTn7L9Ab99+NNnG9ZEwameD0RdX5T
-         X3eYwL1fe9A6KnVIdYOubhh/XJU7TwokCT8s6rOQlUr///lPNfBsTfpNonT60Fw7DcTB
-         6S71G/QuI2NJWOB6MqtwO65crxJWgxePBka4fy2JjpNYF/fjrZcKYcekybvU+nimO/La
-         fCzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+nzsR9lRy9dCekAmbiloEBiQyBEE8cGwu2qdojChzEW/Cim8t5Y8qPFN08kQ+wDKw4JlBbZeRHYdls1U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKxrLyyt9GY3xJyliit/4LLwgaWFa63NNjTWdN6KO//++cgMNW
-	iQkjtczcrjwxMH6MsKrR36IBl3VOxQlm653pT84Tz1ivgupbyCrIWGUJVhq6r3c=
-X-Gm-Gg: ASbGncuL8VZ2SH7UWgCHAzuZBA08sZqIS+SsQvDnTCrriewyNfqW8K8iDN9SAA0noe0
-	vZtBGP0cqe4N1TB7OKWFP6Y2LPhnaiUSuFPZBo5xKW53l6P6bibUqD9EgMzcF7cXG2jmOoyrUcM
-	iIb7cgRbhfCeDtjVOa9BrfFkneaMNiL3zJKNL7zytuCBL4xma/B6ut1JzJzM+LRGFvJMYzgUygM
-	7hO3iHYY2tZ5MOAhEY1UODr+uq6CtyRK/NAX2D8+hmTJA0A6vT8eVcdWeQbiITISUbSynNupiZz
-	zthbaBe9ypfT2y0DDLVPpqpQt95cA7aaye2pPxMxmpHrLX4=
-X-Google-Smtp-Source: AGHT+IHtALOlZRY8OEkAfMy/8LP4eO3WEczzKfPhSQDmbP+zhNlJTZUTR0mJ/R+5FMnzK/l5vhD0mw==
-X-Received: by 2002:a05:600c:1d01:b0:43b:cf12:2ca6 with SMTP id 5b1f17b1804b1-43bd292e1cemr28484335e9.1.1741194578635;
-        Wed, 05 Mar 2025 09:09:38 -0800 (PST)
-Received: from blackdock.suse.cz ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b6ceesm21323862f8f.45.2025.03.05.09.09.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 09:09:38 -0800 (PST)
-From: =?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-To: netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
-	Jozsef Kadlecsik <kadlec@netfilter.org>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Simon Horman <horms@kernel.org>,
-	cgroups@vger.kernel.org,
-	Jan Engelhardt <ej@inai.de>,
-	Florian Westphal <fw@strlen.de>,
-	=?UTF-8?q?Michal=20Koutn=C3=BD?= <mkoutny@suse.com>
-Subject: [PATCH v2] netfilter: Make xt_cgroup independent from net_cls
-Date: Wed,  5 Mar 2025 18:09:35 +0100
-Message-ID: <20250305170935.80558-1-mkoutny@suse.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741194605; c=relaxed/simple;
+	bh=NUnw3w4zHpUUxzHAOjlde1jApGndTD9n9qsIaxBYZ98=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rXfsxilAPrNlvRdj4vr25X6OUrL49DihnIYADTZwuXOaAFINGgWW4YYlNCXk0egyY7Mn8PQhSdCRrB4KPO4JCl1EFCpNNfJu1AnIr+GReGSUjs1kUbWHcgDOJd8tccRRNkZw/OFTXw9aehwx/Pufg3swIaGGljYIn8VR2dsDb6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hqBiFcvR; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741194603; x=1772730603;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NUnw3w4zHpUUxzHAOjlde1jApGndTD9n9qsIaxBYZ98=;
+  b=hqBiFcvRKnuir8+rFFXpafKtA7Hvsp7UC3UD7hKgotqt6fiCdpTPac3E
+   5W9TSGf0fzlCANuOEgRJ2g8SVm5WpXSpCHq1C04JbTt7+QF92VuM8/iw3
+   YyTbok04ayL3Nlk5G4Wgan8nGuecuuBo8zLoBVNoJcXAZoPwoquRP8yu2
+   m2S6Wj7QpbComjP9KxGXcHYiqp1FS5LZv1QJggfMUaeLYx4AtYbmts1TE
+   IeHZnjtvQ+WtJB7DAv9mJFqR19E+hkHYD+E+BdOABfaSLeiSnzIozVfd/
+   37bKz4zEKzd70hoVHtZJdSD8rIfeK7+XLpcRoCTp00D08lt1ckXbHoOcW
+   A==;
+X-CSE-ConnectionGUID: l09wEgTESgGKQ4SI0csdGg==
+X-CSE-MsgGUID: OLG9Lb64TxWst5cFY3vJuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="67540056"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="67540056"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:09:27 -0800
+X-CSE-ConnectionGUID: kFXu1EydSj+Xt4FR9HCBrg==
+X-CSE-MsgGUID: gzcg3VfsSO6C3pgbEodciw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="123779360"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.196]) ([10.125.109.196])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:09:27 -0800
+Message-ID: <e2f9c22d-d09c-46b5-9695-a052859d04d2@intel.com>
+Date: Wed, 5 Mar 2025 09:09:47 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+To: Borislav Petkov <bp@alien8.de>
+Cc: Joerg Roedel <jroedel@suse.de>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Ingo Molnar <mingo@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+ x86@kernel.org, hpa@zytor.com, Tom Lendacky <thomas.lendacky@amd.com>,
+ Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+ Larry.Dewey@amd.com
+References: <20250305105234.235553-1-joro@8bytes.org>
+ <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
+ <Z8g01YhM_FtdB5n6@gmail.com>
+ <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
+ <Z8g4sU_dsZgY0PuS@gmail.com>
+ <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
+ <Z8hYEsHvwUwlOold@suse.de>
+ <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
+ <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
+ <20250305165502.GLZ8iB5kAtQmW6fu1F@fat_crate.local>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20250305165502.GLZ8iB5kAtQmW6fu1F@fat_crate.local>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-The xt_group matching supports the default hierarchy since commit
-c38c4597e4bf3 ("netfilter: implement xt_cgroup cgroup2 path match").
-The cgroup v1 matching (based on clsid) and cgroup v2 matching (based on
-path) are rather independent. Downgrade the Kconfig dependency to
-mere CONFIG_SOCK_GROUP_DATA so that xt_group can be built even without
-CONFIG_NET_CLS_CGROUP for path matching.
-Also add a message for users when they attempt to specify any
-non-trivial clsid.
+On 3/5/25 08:55, Borislav Petkov wrote:
+> On Wed, Mar 05, 2025 at 08:40:29AM -0800, Dave Hansen wrote:
+>> TDX guests have CPUID to tell them that they're running that way.
+> 
+> And those CPUID leafs cannot be modified or intercepted or so by the
+> hypervisor?
 
-Link: https://lists.opensuse.org/archives/list/kernel@lists.opensuse.org/thread/S23NOILB7MUIRHSKPBOQKJHVSK26GP6X/
-Signed-off-by: Michal Koutný <mkoutny@suse.com>
----
- net/netfilter/Kconfig     |  2 +-
- net/netfilter/xt_cgroup.c | 22 ++++++++++++++++++++++
- 2 files changed, 23 insertions(+), 1 deletion(-)
+They are documented as coming straight from the TDX module when TDX is
+in place. But there's nothing stopping an evil hypervisor from faking
+them, except attestation.
 
-Changes from v1 (https://lore.kernel.org/r/20250228165216.339407-1-mkoutny@suse.com)
-- terser guard (Jan)
-- verboser message (Florian)
-- better select !CGROUP_BPF (kernel test robot)
+>> We've just got X86_FEATUREs for hosts and guests:
+>>
+>> 	#define X86_FEATURE_TDX_HOST_PLATFORM ( 7*32+ 7)
+>> 	#define X86_FEATURE_TDX_GUEST ( 8*32+22)
+>>
+>> and that's it.
+> 
+> And there are no new ones coming down the pipe?
 
-diff --git a/net/netfilter/Kconfig b/net/netfilter/Kconfig
-index df2dc21304efb..346ac2152fa18 100644
---- a/net/netfilter/Kconfig
-+++ b/net/netfilter/Kconfig
-@@ -1180,7 +1180,7 @@ config NETFILTER_XT_MATCH_CGROUP
- 	tristate '"control group" match support'
- 	depends on NETFILTER_ADVANCED
- 	depends on CGROUPS
--	select CGROUP_NET_CLASSID
-+	select SOCK_CGROUP_DATA
- 	help
- 	Socket/process control group matching allows you to match locally
- 	generated packets based on which net_cls control group processes
-diff --git a/net/netfilter/xt_cgroup.c b/net/netfilter/xt_cgroup.c
-index c0f5e9a4f3c65..c3055e74aa0ea 100644
---- a/net/netfilter/xt_cgroup.c
-+++ b/net/netfilter/xt_cgroup.c
-@@ -23,6 +23,13 @@ MODULE_DESCRIPTION("Xtables: process control group matching");
- MODULE_ALIAS("ipt_cgroup");
- MODULE_ALIAS("ip6t_cgroup");
- 
-+#define NET_CLS_CLASSID_INVALID_MSG "xt_cgroup: classid invalid without net_cls cgroups\n"
-+
-+static bool possible_classid(u32 classid)
-+{
-+	return IS_ENABLED(CONFIG_CGROUP_NET_CLASSID) || classid == 0;
-+}
-+
- static int cgroup_mt_check_v0(const struct xt_mtchk_param *par)
- {
- 	struct xt_cgroup_info_v0 *info = par->matchinfo;
-@@ -30,6 +37,11 @@ static int cgroup_mt_check_v0(const struct xt_mtchk_param *par)
- 	if (info->invert & ~1)
- 		return -EINVAL;
- 
-+	if (!possible_classid(info->id)) {
-+		pr_info(NET_CLS_CLASSID_INVALID_MSG);
-+		return -EINVAL;
-+	}
-+
- 	return 0;
- }
- 
-@@ -51,6 +63,11 @@ static int cgroup_mt_check_v1(const struct xt_mtchk_param *par)
- 		return -EINVAL;
- 	}
- 
-+	if (!possible_classid(info->classid)) {
-+		pr_info(NET_CLS_CLASSID_INVALID_MSG);
-+		return -EINVAL;
-+	}
-+
- 	info->priv = NULL;
- 	if (info->has_path) {
- 		cgrp = cgroup_get_from_path(info->path);
-@@ -83,6 +100,11 @@ static int cgroup_mt_check_v2(const struct xt_mtchk_param *par)
- 		return -EINVAL;
- 	}
- 
-+	if (info->has_classid && !possible_classid(info->classid)) {
-+		pr_info(NET_CLS_CLASSID_INVALID_MSG);
-+		return -EINVAL;
-+	}
-+
- 	info->priv = NULL;
- 	if (info->has_path) {
- 		cgrp = cgroup_get_from_path(info->path);
+Not really. There are always new features in the pipeline, but no real
+fundamental changes to the threat model like SEV has had throughout its
+iterations.
 
-base-commit: dd83757f6e686a2188997cb58b5975f744bb7786
--- 
-2.48.1
+>> Folks certainly _want_ something in sysfs to dump the TDX module version
+>> and so forth, but we've resisted the urge so far.
+> 
+> Perhaps now is the time do design something together...
+> 
+> I was thinking
+> 
+> /sys/guest/...
+> 
+> or something tied to the x86_platform gunk so that we can stick always some
+> info there about any platform arch/x86/ has detected and is running on...
 
+Xen has a bunch of gunk in:
+
+	/sys/hypervisor
+
+Joerg, why do folks care if they're running under SEV? What kind of
+stuff are they doing after they do the rdmsr and see that SEV is in play?
 
