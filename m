@@ -1,147 +1,118 @@
-Return-Path: <linux-kernel+bounces-547048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7922A50261
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C42AA50260
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7373B189C418
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:38:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A51162954
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:38:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C676F24EA93;
-	Wed,  5 Mar 2025 14:37:31 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52A4248863;
-	Wed,  5 Mar 2025 14:37:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA15521480C;
+	Wed,  5 Mar 2025 14:38:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MkyQhRRb"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997A714A09A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185451; cv=none; b=BWRp0GhaMbrmnszorY9Ttom/wAPwB8yjXRtENO0n1A6WV7RFE8pKKhdOZhU5MgTbJIqKShGhnXa4fvSRSPvUnIoq0GpAk1abIIw30vAC0S32kRq9MVweIV8Tbai7GT5mm6KXenRQgKLHB97+FHr466Z1mJxecaqUEgK8W7XElkg=
+	t=1741185480; cv=none; b=R39XzfUeg7pRAKcDg0nwymqCUHqaMW1Yjb+kXpZ5lsTiBo1hJJ1ptNJoXa44TY06zbux+cFJyZfGweHQuLquNBjyiZbEJuhSgHdHhJWKZwsMSONUDcrWedfhJN+0t05hbmdssgEFJLT4cYTprWYfBmSDRl3HkKYu4LGy9vmaPus=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185451; c=relaxed/simple;
-	bh=FCa9GNr5wiSR3agXv7JxEUWV07u9VhwbOu9Cr08Q50Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PuGLrTUyJYvsHPpda6ssH/XInF22L8IsN8eybwaQS5KES+CHJN79Mm6Vdw82BapbSm2DgsszBForVh6EaG/4aSfaOAJn7LVGRFPx/fQx+hqeuM3N0QCvMSpBYXaNwpmxkhG3jfv8Z5gHkJIGAHuJxxyEj7B7NSKnlC1+WnbIffY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A2F4FEC;
-	Wed,  5 Mar 2025 06:37:41 -0800 (PST)
-Received: from [10.57.64.200] (unknown [10.57.64.200])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0698C3F673;
-	Wed,  5 Mar 2025 06:37:25 -0800 (PST)
-Message-ID: <f56596fe-92e8-481b-b15b-29b531eaec32@arm.com>
-Date: Wed, 5 Mar 2025 14:37:23 +0000
+	s=arc-20240116; t=1741185480; c=relaxed/simple;
+	bh=CSy21FFYCfkrs1Vebz77But+YBdPWb0R0yTM3O4u1EQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nN1SU1HGZw8vL1ZNU++ceMV5bnCjdMFSKG+E6LEYGzgJJl93ePNLIIwiVZHIS6gthKe69Cui5JXiKu06aIJbADwEe6haLT8dm7DmxhB7YCRlGg54k0C8p+nTRjZ1ZA83Q4JAUNOKAtCukQp9n4vHijd2AXsC4PgZkg/ewwHUtdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MkyQhRRb; arc=none smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741185479; x=1772721479;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CSy21FFYCfkrs1Vebz77But+YBdPWb0R0yTM3O4u1EQ=;
+  b=MkyQhRRbGYeqsqbCAlcP6CCPDuIsAwMq1+2oSTocrslkoWuBuOw7hSOu
+   3jIovb/vMpcOAPuZ8DR4ZEX28XH9Y29jOsh+dJ7hgIQQE0qHGeju6s76W
+   at8E5olK4YRqMiS5+QzGySLu+S3ABARGekVhV6D9NsvJ4/Zy2kZ5UplK2
+   eJGth1pRaVIvkNRq3CplQ0wrKZp/MQTnhsbM7ilYYx4HT/dNhJ+bHVnYf
+   nfcU4KnIxLFcpEIwyS/tfa4pD4xPjNeNXmbpOK0Ar7Qp1rowbz2g6sfJZ
+   Lq1B/VkYmeRAAeDB2cDb5hFnOaMGCqVssWb8ibYiQGLVHp3i3dN5o2Tqh
+   g==;
+X-CSE-ConnectionGUID: 4zYksdVrQra0k+2vs+xOHQ==
+X-CSE-MsgGUID: RnR1kQ1TTgmJJg43fr6vFw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42350773"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="42350773"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:37:58 -0800
+X-CSE-ConnectionGUID: yba5WHXCRs6NCv7yprlgGg==
+X-CSE-MsgGUID: /XxRzxeSShWGF56o44N/DA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="118526770"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:37:54 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tppsc-0000000HRDU-3UrN;
+	Wed, 05 Mar 2025 16:37:50 +0200
+Date: Wed, 5 Mar 2025 16:37:50 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: mailhol.vincent@wanadoo.fr
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v4 5/8] drm/i915: Convert REG_GENMASK* to fixed-width
+ GENMASK_*
+Message-ID: <Z8hhvovVmX-xLStQ@smile.fi.intel.com>
+References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
+ <20250305-fixed-type-genmasks-v4-5-1873dcdf6723@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] thermal: thermal-generic-adc: add temperature
- sensor channel
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- Jonathan Cameron <jic23@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
- Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-References: <20250303122151.91557-1-clamor95@gmail.com>
- <20250303122151.91557-3-clamor95@gmail.com>
- <3bc7c5a5-8fe7-4c4b-a80e-23522922debb@arm.com>
- <CAPVz0n0yvw4kyYKSve9sSZEvcZrCYZ6RqCjFSO5OCqtvRZSfJg@mail.gmail.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CAPVz0n0yvw4kyYKSve9sSZEvcZrCYZ6RqCjFSO5OCqtvRZSfJg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305-fixed-type-genmasks-v4-5-1873dcdf6723@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-
-
-On 3/5/25 10:06, Svyatoslav Ryhel wrote:
-> ср, 5 бер. 2025 р. о 11:52 Lukasz Luba <lukasz.luba@arm.com> пише:
->>
->>
->>
->> On 3/3/25 12:21, Svyatoslav Ryhel wrote:
->>> To avoid duplicating sensor functionality and conversion tables, this design
->>> allows converting an ADC IIO channel's output directly into a temperature IIO
->>> channel. This is particularly useful for devices where hwmon isn't suitable
->>> or where temperature data must be accessible through IIO.
->>>
->>> One such device is, for example, the MAX17040 fuel gauge.
->>>
->>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
->>> ---
->>>    drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++-
->>>    1 file changed, 53 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
-> ...
->>>
->>> +static const struct iio_chan_spec gadc_thermal_iio_channel[] = {
->>> +     {
->>> +             .type = IIO_TEMP,
->>> +             .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
->>
->> I would add the IIO_CHAN_INFO_SCALE and say it's in milli-degrees.
->>
+On Wed, Mar 05, 2025 at 10:00:17PM +0900, Vincent Mailhol via B4 Relay wrote:
+> From: Lucas De Marchi <lucas.demarchi@intel.com>
 > 
-> I have hit this issue already with als sensor. This should definitely
-> be a IIO_CHAN_INFO_PROCESSED since there is no raw temp data we have,
-> it gets processed into temp data via conversion table. I will add
-> Jonathan Cameron to list if you don't mind, he might give some good
-> advice.
+> Now that include/linux/bits.h implements fixed-width GENMASK_*, use them
 
-I'm not talking about 'PROCESSED' vs 'RAW'...
-I'm asking if you can add the 'SCALE' case to handle and report
-that this device will report 'processed' temp value in milli-degrees
-of Celsius.
+GENMASK_*()
 
-> 
->>> +     }
->>> +};
->>> +
->>> +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
->>> +                              struct iio_chan_spec const *chan,
->>> +                              int *temp, int *val2, long mask)
->>> +{
->>> +     struct gadc_thermal_info *gtinfo = iio_priv(indio_dev);
->>> +     int ret;
->>> +
->>> +     if (mask != IIO_CHAN_INFO_PROCESSED)
->>> +             return -EINVAL;
->>
->> Therefore, here it would need to handle such case as well, when
->> a client is asking about scale.
->>
->>> +
->>> +     ret = gadc_thermal_get_temp(gtinfo->tz_dev, temp);
->>> +     if (ret < 0)
->>> +             return ret;
->>> +
->>> +     *temp /= 1000;
->>
->> IMO we shouldn't cut the precision if it's provided.
->> The user of this would know what to do with the value (when
->> the proper information about scale is also available).
->>
-> 
-> The it will not fit existing IIO framework and thermal readings will
-> be 1000 off. I have had to adjust this since my battery suddenly got
-> temperature reading of 23200C which obviously was not true. With
-> adjustment temperature will be in 10th of C (yes, odd, I know but it
-> is what it is).
+and in the Subject
 
-Your battery driver should get and check the 'SCALE' info first, then
-it will know that the value is in higher resolution than it needs.
-Therefore, it can divide the value inside its code.
-Your proposed division here is creating a limitation.
+REG_GENMASK*()
 
-You shouldn't force all other drivers to ignore and drop the
-available information about milli-degC (which is done in this patch).
+> to implement the i915/xe specific macros. Converting each driver to use
+> the generic macros are left for later, when/if other driver-specific
+> macros are also generalized.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
