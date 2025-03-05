@@ -1,84 +1,126 @@
-Return-Path: <linux-kernel+bounces-547293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA58A50592
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:49:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C2FA50584
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:47:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 675B73AAC3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:45:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F540188C026
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:46:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B14A91A317E;
-	Wed,  5 Mar 2025 16:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VQVBuKCV"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014111A83E7;
+	Wed,  5 Mar 2025 16:46:10 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1602B19DF41;
-	Wed,  5 Mar 2025 16:45:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866211A3172;
+	Wed,  5 Mar 2025 16:46:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741193130; cv=none; b=meTzbuXXBKSdU1YLWrdQxdm8eWNviSx2EdyiaKWjGLTvT9rLJfOKEf2n0YY7omueTsmy8zWZ58lMqrfmYywBO2IINWHV1Egflz6HsmhYcWZXW6BOgDr2bjeh+ABjw244YOMgnTNeFNKNizW4Sbff3tXf/GkaQwpyyxn+DL33R5E=
+	t=1741193169; cv=none; b=TjMNZaXcwZ8gJAG9HUJk1V4MhPevHSv6B+deRceqBLvHuyZvlxJ+QRpZ2+o3mlo3E/vKfw2ZTeHnpZRs3j7Jyf5okf8VgtR8m4I98qNoPzwvut6wP2TWySIppLLc+980Q7Msy1qACTts3GNAQZc/AzXiOEIEVyCcmCFYNvnhVWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741193130; c=relaxed/simple;
-	bh=a79LJ8dE3ma4v7t2qwXAq36pAAKFq9q6whg86nhPw/s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=APaaNvExaTT0iMQifnetyG85JQMHOKEQQaKiASO3hmAxkWoPMssKAb1SN5yKdhtZ/fQV8O2dgMxrL85VmsT5hjSyDTWBZ7Ram91hr6JXx7CNzW9v7keB49kcHdm2oQtz/YVywfHooZoFAbARQ+wPuRXZlRwbe40u5QmPA5Qf8tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VQVBuKCV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44266C4CED1;
-	Wed,  5 Mar 2025 16:45:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741193129;
-	bh=a79LJ8dE3ma4v7t2qwXAq36pAAKFq9q6whg86nhPw/s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=VQVBuKCV3aenPt1tOXmQ8qWVFYaHkJ3HO+Tv4aSzhqwQ2CLIvzl/w5v/mJ3fv73+X
-	 EV/4lTWIhT5Z0gYRUVi65s6Ni+L8DyqvMDV5WHixHA8DRnIDG82zF3Yyr9NY20wC1s
-	 5dOXksUekCGosTTxfMFj1FWe7/s1WruHXX4nZlfeM8YkDO5YAbewuoyJPgUyu0NU+z
-	 W9YkTHtg8XDc3nLqRh3nhis1D7MztwMYjZvXpdE6FevkXfSBVHccLcITShxGlIDzU2
-	 kY3o27C7vmY+smfUTrBq6DaLpDC6CHEpwHF0St59viSNMnwhz5ADLanZC1hGfTGQjq
-	 hWrM+puQjHidQ==
-Date: Wed, 5 Mar 2025 10:45:27 -0600
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Andre Przywara <andre.przywara@arm.com>
-Cc: Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>,
-	Thomas Gleixner <tglx@linutronix.de>, linux-sunxi@lists.linux.dev,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Chen-Yu Tsai <wens@csie.org>, Conor Dooley <conor+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 05/15] dt-bindings: irq: sun7i-nmi: document the
- Allwinner A523 NMI controller
-Message-ID: <174119312747.2117747.1409262151131178032.robh@kernel.org>
-References: <20250304222309.29385-1-andre.przywara@arm.com>
- <20250304222309.29385-6-andre.przywara@arm.com>
+	s=arc-20240116; t=1741193169; c=relaxed/simple;
+	bh=7SB+xD3fwwgE5z6/xkgEiXKOXWhLQXIYjVX8jl7BSj8=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=c2VJnrs/lozMudv6pmpEP7OsStQktt4LG3zbFPYbZAJtLooWe4E7hQNoY+UbmeF8X1j9ACa5UO/2BAv5L1AIvO4M6bOEzwtnimjDnVCs6Gu5q9PZHt+BSyOS6tzjcfBYa5hK7zfDMPFevxZgKLForlDzcU3Rp4vNADIEK/kEtGo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FEAAC4CED1;
+	Wed,  5 Mar 2025 16:46:09 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1tprsm-0000000D0uT-10Rm;
+	Wed, 05 Mar 2025 11:46:08 -0500
+Message-ID: <20250305164539.379008535@goodmis.org>
+User-Agent: quilt/0.68
+Date: Wed, 05 Mar 2025 11:45:39 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v4 0/8] ring-buffer/tracing: Save module information in persistent memory
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304222309.29385-6-andre.przywara@arm.com>
 
 
-On Tue, 04 Mar 2025 22:22:59 +0000, Andre Przywara wrote:
-> The Allwinner A523 SoC contains an NMI controller very close to the one
-> used in the recent Allwinner SoCs, but it adds another bit that needs to
-> be toggled to actually deliver the IRQs. Sigh.
-> 
-> Add the A523 specific name to the list of allowed compatible strings.
-> 
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
-> ---
->  .../interrupt-controller/allwinner,sun7i-a20-sc-nmi.yaml         | 1 +
->  1 file changed, 1 insertion(+)
-> 
+This updates the persistent instance to record what modules were
+loaded and what addresses they were loaded at.
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+First the KASLR offset is recorded in the persistent ring buffer instead of
+a text address. This can be used to calculated the address offset.
 
+Next the persistent memory is divided up differently so that there's
+a single global meta data for the entire buffer that can hold the
+global data, and each per CPU meta data can just hold what it needs.
+
+A scratch area can be created by the caller, in this case the tracing
+system, to store data in the persistent memory area.
+
+As the KASLR offset is only needed by the tracer, that data is moved
+from the ring buffer meta data into this new storage.
+
+Next the modules that are loaded and where they are loaded is stored in this
+new persistent storage.
+
+The module list along with the KASLR offset is now exposed in the
+last_boot_info if the buffer is from a previous boot. If it is from the
+current boot, the file will only contain:
+
+   # Current
+
+in order to not leak the KASLR offset.
+
+Finally, when new modules are loaded while the trace is active, they too
+will be added to this persistent memory. Note, if tracing is stopped, and
+then restarted, it clears the module list and will reload all the modules
+again so that it doesn't need to keep track of what is loaded or unloaded
+while no tracing is going on.
+
+Changse since v3: https://lore.kernel.org/linux-trace-kernel/20250304012516.282694507@goodmis.org/
+
+- Added kerneldoc for scratch_size parameter for __ring_buffer_alloc_range()
+
+Changes since v2: https://lore.kernel.org/linux-trace-kernel/20250215034301.624019422@goodmis.org/
+
+- Have the module loop be protected by RCU and not preemption disabling
+
+- Take the scratch_mutex outside of save_mod() to prevent deadlocks
+
+Changes since v1: https://lore.kernel.org/all/20250205225031.799739376@goodmis.org/
+
+- Rebased on top of the urgent branch
+
+- Allow the size of the scratch area in the persistent ring buffer to be
+  defined by the caller.
+
+- Change the output of the last_boot_info to show the kaslr instead of:
+  "Offset: <offset>" to "<offset>\t[kernel]" to make it consistent with
+  the module output.
+
+
+Steven Rostedt (8):
+      ring-buffer: Use kaslr address instead of text delta
+      ring-buffer: Add buffer meta data for persistent ring buffer
+      ring-buffer: Add ring_buffer_meta_scratch()
+      tracing: Have persistent trace instances save KASLR offset
+      module: Add module_for_each_mod() function
+      tracing: Have persistent trace instances save module addresses
+      tracing: Show module names and addresses of last boot
+      tracing: Update modules to persistent instances when loaded
+
+----
+ include/linux/module.h      |   6 +
+ include/linux/ring_buffer.h |   8 +-
+ kernel/module/main.c        |  13 +++
+ kernel/trace/ring_buffer.c  | 246 ++++++++++++++++++++++++-----------------
+ kernel/trace/trace.c        | 264 ++++++++++++++++++++++++++++++++++++++++----
+ kernel/trace/trace.h        |  15 ++-
+ kernel/trace/trace_events.c |  40 +++++--
+ 7 files changed, 449 insertions(+), 143 deletions(-)
 
