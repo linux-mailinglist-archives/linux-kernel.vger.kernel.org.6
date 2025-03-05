@@ -1,56 +1,88 @@
-Return-Path: <linux-kernel+bounces-547044-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E04F8A5024D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:39:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB22A50251
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40E63B0200
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:37:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A01D318921C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E740F24E008;
-	Wed,  5 Mar 2025 14:35:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C498424E4CE;
+	Wed,  5 Mar 2025 14:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFdsha0E"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mEC7jkFy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560DC15746E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD97324E014
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:36:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185321; cv=none; b=GJn/DkLh6Z+k5N7yWt9BHU4zjkaYS6FjojlSThnxpcoRUQxVaVpxPSoxXC2a+g+rWItqCz9qB8E2TTiiM+fhzbY4uCLssNFp/jllT8DF5l4gMIoJNmjVRuu5eAAwlpwAdwb/8OC8PAjaUmEximxNNc2fLDHjJK+DRE9+hZ1RnXM=
+	t=1741185383; cv=none; b=GINth3eZr7YCEiSy6AO6bmRVnseiMh0phfZCrG34gc7qqeLP6lI4D5Q7jqJHHogjJQRu+XydeB+izwl7/sBM+zN0dPUvxVzvY3A52DODnjVKpHLHIhjO4cdKs1vxtuc2oUKB7iJ3r5DjQjr2QFuciMV/SSx37uYY21AaQaaa2So=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185321; c=relaxed/simple;
-	bh=+/POTIBYu3YbxycBA5ufAE7WLG0Xfu9i9jwITjW3woE=;
+	s=arc-20240116; t=1741185383; c=relaxed/simple;
+	bh=BL5wzMcYzMDHHSMVfNy1tXsgecG11VaBErErwu3GcfY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BxAOtPyx3TSuKhOGWY5XE7EtzX7Bszt95P3gQ7xTGuXLeQEao/7BQqb3Rjjvsc7a+dsFcSdbyAPD7e4Ik5Q/BGFqqbX1vwfHLQuhZ6qsWEm5WN4RZ3+dpoQTffWETGfxGYOC3OhGuzQhgkW0j6LEV28ppeB6spJI5DddYNGuFpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFdsha0E; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F3BC4CED1;
-	Wed,  5 Mar 2025 14:35:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741185320;
-	bh=+/POTIBYu3YbxycBA5ufAE7WLG0Xfu9i9jwITjW3woE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AFdsha0E3TTkHFrh6locq319Bxuu3oaoMsKrRFGmfy/6GzfzT2Omi/6LAuuPhOoUR
-	 7nuN17GDWc1onwbWAXeoSSCARVFlJ3gAVT0EGgbR65cFmn7iwEXTabW3XCK827pQFk
-	 2OvbXCV4tP6leP0w9LGHFN6BdPnRfHot7I43kQY5uMZWzy8oCWjBBhHp3Qf4A8rwod
-	 D/cTaTg/1LsHXDN/z2+dgTPJ+WGJwPLmW5u5PLmLFF3hdCPbi1GnVgjq4IwSVYQWWO
-	 1BVExHEXc0+xi00u7b0G/CppFbabY5v2YoWv5E9u5kohoIoq0DTFw40gz3yOHROTR1
-	 kTMeFzdi5PkPQ==
-Date: Wed, 5 Mar 2025 14:35:18 +0000
-From: Jaegeuk Kim <jaegeuk@kernel.org>
-To: Chao Yu <chao@kernel.org>
-Cc: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
-	linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
-	Daeho Jeong <daehojeong@google.com>
-Subject: Re: [f2fs-dev] [PATCH] f2fs: subtract current_reserved_blocks from
- total
-Message-ID: <Z8hhJs_fUOBN7U8y@google.com>
-References: <20250304192041.4048741-1-daeho43@gmail.com>
- <41160b37-16ad-4c12-aad2-1214d87d3df0@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PLWhbMMfCVKmtrpwCXmj4XR2B9m8qgj1HLXRPyBBl+NcXLP9aREHyD1/ZDdGx14GBvTTGhnUmZF+85xNRRD3j4fVOWldqC519PnaIPdcFWYR2aNjp2I5JJS1wA/ZzPGLyo7fGkjVb4RWci0AA4MgesEG8Oq2q2Ix50/+/bcaQN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mEC7jkFy; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741185381; x=1772721381;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BL5wzMcYzMDHHSMVfNy1tXsgecG11VaBErErwu3GcfY=;
+  b=mEC7jkFyX8oV9aW7iUvlW09CiLu87YFfMwB6aUWboF+kj2fpwfEjQzdu
+   F/yOjWwuOO4WDVoKLOsj7yw1lUI28Q4+gKLYGz2IMkzCKVrvfaY+l3Nh3
+   FrdF6YQvhuvZ05nS0iD3H+n/O/IGdDISEJwIUTG2iJLyYHJDJtlNVA8xl
+   pPTIsCH6z2KWFcJqF0AUCzD1LQsiPFg6KzrgzqQK0OKuzTETop6Yrpq0a
+   yxN/fSnX8S6qc6xmLeM7Ze+WMNlemCucmBBroLmm2A7jpDK9Mmf4Tfl9v
+   LBoV3fpgSKFu7zdsIiaS/bm2dh4ishX0aYah/dqsV/ba0R3aZtlCI1zv7
+   w==;
+X-CSE-ConnectionGUID: bfUMMi0GTUKJ9RYwCCGEHg==
+X-CSE-MsgGUID: vUy/C5BgSWqvs/NpUx9PYg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59694992"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="59694992"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:36:21 -0800
+X-CSE-ConnectionGUID: Kubf5F1mSWyeEAQtTZpFUQ==
+X-CSE-MsgGUID: c95c5OybSYSiGNW3kpTMlg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="123909099"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:36:16 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tppr3-0000000HRBz-1DLE;
+	Wed, 05 Mar 2025 16:36:13 +0200
+Date: Wed, 5 Mar 2025 16:36:12 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: mailhol.vincent@wanadoo.fr, Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Subject: Re: [PATCH v4 1/8] bits: fix typo 'unsigned __init128' -> 'unsigned
+ __int128'
+Message-ID: <Z8hhXHporoJ6Y39X@smile.fi.intel.com>
+References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
+ <20250305-fixed-type-genmasks-v4-1-1873dcdf6723@wanadoo.fr>
+ <Z8hf_MNL3MeoXW5O@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,53 +91,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <41160b37-16ad-4c12-aad2-1214d87d3df0@kernel.org>
+In-Reply-To: <Z8hf_MNL3MeoXW5O@thinkpad>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 03/05, Chao Yu wrote:
-> On 3/5/25 03:20, Daeho Jeong wrote:
-> > From: Daeho Jeong <daehojeong@google.com>
+On Wed, Mar 05, 2025 at 09:30:20AM -0500, Yury Norov wrote:
+> On Wed, Mar 05, 2025 at 10:00:13PM +0900, Vincent Mailhol via B4 Relay wrote:
+> > From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
 > > 
-> > current_reserved_blocks is not allowed to utilize. For some zoned
-> > storage devices, vendors will provide extra space which was used for
-> > device level GC than specs and we will use this space for filesystem
-> > level GC. This extra space should not be shown to users, otherwise,
-> > users will see not standardized size number like 530GB, not 512GB.
+> > "int" was misspelled as "init" in GENMASK_U128() comments. Fix the typo.
 > 
-> Hi Daeho,
-> 
-> However, if there are other users e.g. oem or vendor want to use
-> reserved_blocks and current_reserved_blocks sysfs interface to
-> reserve space, then, total size will be less than 512GB?
-> 
-> What do you think of adding a new variable to indicate reserved
-> space for zoned storage case only?
+> Thanks for respinning the series. I'll take this fix in bitmap-for-next, so
+> if you need v2, you'll not have to bear this thing too.
 
-Or, adding a sysfs entry like "carve_out" to determine this?
+Before doing that, please read my comment first.
 
-> 
-> Thanks,
-> 
-> > 
-> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
-> > ---
-> >  fs/f2fs/super.c | 3 +--
-> >  1 file changed, 1 insertion(+), 2 deletions(-)
-> > 
-> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
-> > index 19b67828ae32..c346dcc2518a 100644
-> > --- a/fs/f2fs/super.c
-> > +++ b/fs/f2fs/super.c
-> > @@ -1833,10 +1833,9 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
-> >  	buf->f_type = F2FS_SUPER_MAGIC;
-> >  	buf->f_bsize = sbi->blocksize;
-> >  
-> > -	buf->f_blocks = total_count - start_count;
-> > -
-> >  	spin_lock(&sbi->stat_lock);
-> >  
-> > +	buf->f_blocks = total_count - start_count - sbi->current_reserved_blocks;
-> >  	user_block_count = sbi->user_block_count;
-> >  	total_valid_node_count = valid_node_count(sbi);
-> >  	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
-> 
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
