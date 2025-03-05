@@ -1,160 +1,144 @@
-Return-Path: <linux-kernel+bounces-547184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547186-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73BBCA503EB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:55:17 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B852BA503F4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:56:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D4E521889F9E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:55:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8A271885B35
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F367250C04;
-	Wed,  5 Mar 2025 15:54:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B45AE2505CF;
+	Wed,  5 Mar 2025 15:55:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DIvVpIET"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="C0lcNt+r"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6611F5826;
-	Wed,  5 Mar 2025 15:54:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC8117583;
+	Wed,  5 Mar 2025 15:55:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741190080; cv=none; b=T6CyYGT1ZQy9e5j+fV5PgdyEAeq8iSzoEN+/Lmhsbtf/s0B8CKZXrrNYhRGKZam7fjCHNHesYEnda0JKb+mqJ/8dNsYHQ8v4ob8113cN3PkNOTltl47cz2JHLEiurnQymfir7ULYwPiOha/pQdJpn5JK06DFchdBFwW1NyjcSjs=
+	t=1741190155; cv=none; b=L/HHcrsvtcYPxFx+fLRTCrT2E1xeh0JAYz1uwAMIFsKZlpIIq3Mrr+lS5lDAod3JX/VtV2RjWiNpb7PPTHlGAXvW4NPpK5eCoq9CSPrXAnNHNMOjiNeny7CFx3gAbVG7lzji34wekgZQe1+iQFmUKMI7SGoJHxTZj3uLHQVFjj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741190080; c=relaxed/simple;
-	bh=ruhS78A+AtEtKl22culYdzmPSc1jjG/Tbxd9IG/FgJQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eBu0zl3K5X8VHpHjMJDTxyn9Adt6AfmXtWMNf5ZO0NKVLQrVl+LqsA2rupqK/pz+NbqNYra5SW2XG4fPRS0ynujU9X+OU0oYujB4yn59CUCHJSpjsavtlv+wZcvAdFmQhsx6ADUoXT7BEqnpn6FkJDHkzgfhsBogAoNIJsMfHXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DIvVpIET; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22403cbb47fso9644125ad.0;
-        Wed, 05 Mar 2025 07:54:38 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741190078; x=1741794878; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+vIc0DMsQO6eS51lnk/KHT+RqFvDL3u0FZpOodk49SU=;
-        b=DIvVpIETOg0tDGBa86hGjoc4lYTlUjjBO67yZRuDF4rbhF75s3xLeLqzzve63eQEP9
-         0bXEKwErCy8ggFEa1Ud0LvA6t9S5SvFtSqUEGTrjILrojIKqmDCe0BSbpZBXfKGZrZkv
-         UKDcQIKZzCtqOw0PqQ77op9nEcV8CS7N2JcnBktArjsqd7HqdZzvbz/r9Isb0t+fxgPD
-         o1EGYo9OX1wQ7cXfpw2AU0rg29G9j2wyJP2XMUJBiTmmk77BbVyKfDMLTy3Jv/cGd9N4
-         4btnh27xTW8cB7lFthvX89D7VdrldxXyT9eKhBs17vq/qwWFdSX9Gfi3a3KoGegIHgwJ
-         IjGQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741190078; x=1741794878;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+vIc0DMsQO6eS51lnk/KHT+RqFvDL3u0FZpOodk49SU=;
-        b=lzwC8fG0xZdAHAhsbkbeVNjpUE9e92J65zsKZbTK1xVPbr36B2eD9q6CTi3/gnRojq
-         KYs+8cmybb6vHGG2d0KvW9Dh6dHOXYNwk7GDHIzV2g37kgfNnAMCAKClYSz5DhkOYW7E
-         5FlyOmgt5soCZZ6d9Aax4x+Oe1eRc5NyFnhAqw8+svT7wNqWaU+cFHJB4mZP0h8PpZSu
-         6+6TcZcZYI+3/3+5fCR+ihh3E31iH96Rlcy0neUHbRsm839vE8p40Ai5+O37PGIPsGDJ
-         lqLZc9egO1tkXClKtgfUtKy2V7OYM2BHC4w6PXW655ILZ0dXVui+ySaDovPWd6yf/VcE
-         F4Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCUIS1tqKVaawdcgagSY6/7XERpKZsUtRkLwKGWFQOiG8VXLMyvF+Jxo7ENsxGEp1M6Gde+GsDfBwaQNFo1w@vger.kernel.org, AJvYcCUoM7K2Q1LhPuOO4w9AtXYaANHRvV8E5v35NHg8JN/0M/d2qGJXyuV5w65lOxUXoYu+uUSlfj09@vger.kernel.org, AJvYcCVTRM1EjDLiSTDluD6Slty8J62pq5Y4Dm8x5xRdGf6lgiebMje/22gYet7Ez8ygLv+44ms=@vger.kernel.org, AJvYcCX3AU/X+XwzbOyP6ba3xF6lLsGn/Tkfe5oJqh3P+b1VYi4XTTcE0PRqDm1GrWhq24l+o7p67WsGkMiFJVQM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjZ693eUleTyYRr1EujH/XVOQvkDHVquQsxOkfFrtlxAC5LFZU
-	qD1R2XPzHCRUCguIi3+zgoYUPXmVUUdi8/bVd6+VP0+5etB5roka
-X-Gm-Gg: ASbGncsOhHuGrxQCyhlJgKzI06fDhL62UMFCwjxciJZspR9bn0Nxf1FP283dxB8MkwU
-	I75fkotIqemeFYWZNfjgC9Xwh2bzD48nYTNQw5Z7p8b47nfbk/fWR/BN0fXrB3BJLpJw5K+hg+3
-	ySa9HGH55Oe6+44gex62cl35RWLbBvk9yF/nkn4ZemURBBAp4D49wYa7s8vU8n7OjbNJsXz2LuS
-	qfF6LRE8IS/kQuWoOiM/pnM+ELrfD3JDRgeNaNRp7EM1pEBj8y5wK1wk+6HemxwBT+WRyKKI80+
-	vYcrrHtlh31EM9ATU4/IWpFbHvwU9ig/HRtkHfacCcP7CSauT+vB7XrVi5TIHiNTHQ==
-X-Google-Smtp-Source: AGHT+IGxwYNgRJxj/Y20mv0OZbh6G4d3argbKiFxAPkI+V5vuufD3HZdLhPGHXdzRe1CMg/k0x2Reg==
-X-Received: by 2002:a05:6a21:78a8:b0:1ee:e58d:aa67 with SMTP id adf61e73a8af0-1f34945f651mr7240995637.8.1741190077952;
-        Wed, 05 Mar 2025 07:54:37 -0800 (PST)
-Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:3::])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af15490ae3csm9391147a12.78.2025.03.05.07.54.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 07:54:37 -0800 (PST)
-Date: Wed, 5 Mar 2025 07:54:35 -0800
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
-	davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jorgen Hansen <jhansen@vmware.com>,
-	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	virtualization@lists.linux-foundation.org,
-	linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>
-Subject: Re: [PATCH net-next 1/3] vsock: add network namespace support
-Message-ID: <Z8hzu3+VQKKjlkRN@devvm6277.cco0.facebook.com>
-References: <20200116172428.311437-1-sgarzare@redhat.com>
- <20200116172428.311437-2-sgarzare@redhat.com>
- <20250305022900-mutt-send-email-mst@kernel.org>
- <CAGxU2F5C1kTN+z2XLwATvs9pGq0HAvXhKp6NUULos7O3uarjCA@mail.gmail.com>
+	s=arc-20240116; t=1741190155; c=relaxed/simple;
+	bh=wSi4NsrLXEqOWKZwt5ZSjZ0vy/liXqMnOy+vciBTxj8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=n9gg1MfoQu8y7vxNx2egyV+QEQ/ghZC04PLnKeoJjPmOJmVYtIxPGh/FVMXwouWancuKcdqH4+sO+D8HpTr7TOLsl+Ho445oZbXjYKLwAeK5ghiXXubVy2sMUH/IKBM41YF/h96bJBxlSC80d0eLkCeXgBPw0dY2fJsyalEkEDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=C0lcNt+r; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525AcJDe031396;
+	Wed, 5 Mar 2025 15:55:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DZgRpmaBZtbAqYDslfy5CjEsE76Qm+DsXoRMOfnvUBg=; b=C0lcNt+rkPgDZEfq
+	FIL0oT48F+3UxsdV8e6MyNsYlc1mH1sPu1iMtwxRSB50aKVhbZ45+mMj07FkzoYg
+	LvfkQGqLU1uvizclJ3HYHtyXgBosf1PBKlR9sE1vA5ZS+PokrpiXKFFC4l41xqpW
+	YJrmqrGvL0IZy2E0akGSiF9gbYaCfkg49JqhsafXavYgYKXXRtQIcbi41qQwPNMw
+	5vqZoeFVOYIhwEjvitFqXq91BfHqpPFr35MtfXSgVy5d5iDKVokoC5vjU8LKvjrS
+	Z6LLKNSS61ViecmA27k98qe6qw3M18gA3ISPX3sERtURg8+ZMikH/Q7G66sHXBSB
+	mWlgYA==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6t5vkv-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 15:55:35 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 525FtZeo007599
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Mar 2025 15:55:35 GMT
+Received: from [10.216.60.184] (10.80.80.8) by nasanex01c.na.qualcomm.com
+ (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Mar 2025
+ 07:55:31 -0800
+Message-ID: <ab08fdfb-9268-4d32-bf3a-552b0f5720a4@quicinc.com>
+Date: Wed, 5 Mar 2025 21:24:59 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAGxU2F5C1kTN+z2XLwATvs9pGq0HAvXhKp6NUULos7O3uarjCA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcom6490-idp: Add IPA nodes
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_rpavan@quicinc.com>,
+        <quic_sharathv@quicinc.com>, <quic_sarata@quicinc.com>
+References: <20250304152133.GA2763820@hu-kapandey-hyd.qualcomm.com>
+ <7jupetl37t6nshmme5raxavvbjo3vo5eajusroh6j3ccdxnpo5@7qaz2nckghcf>
+Content-Language: en-US
+From: Kaustubh Pandey <quic_kapandey@quicinc.com>
+In-Reply-To: <7jupetl37t6nshmme5raxavvbjo3vo5eajusroh6j3ccdxnpo5@7qaz2nckghcf>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: KbTHDqhUjolITGTBZ6o82JkKqNjO52WC
+X-Authority-Analysis: v=2.4 cv=KfMosRYD c=1 sm=1 tr=0 ts=67c873f7 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=Fs2MnD1DZPIK8juJ1mAA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: KbTHDqhUjolITGTBZ6o82JkKqNjO52WC
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_06,2025-03-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ spamscore=0 suspectscore=0 phishscore=0 malwarescore=0 clxscore=1011
+ priorityscore=1501 impostorscore=0 mlxlogscore=611 adultscore=0
+ bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503050122
 
-On Wed, Mar 05, 2025 at 10:23:08AM +0100, Stefano Garzarella wrote:
-> On Wed, 5 Mar 2025 at 08:32, Michael S. Tsirkin <mst@redhat.com> wrote:
-> >
-
-[...]
-
-> >
-> >
-> > I'm not sure I understand the usecase. Can you explain a bit more,
-> > please?
+On 3/5/2025 2:28 AM, Dmitry Baryshkov wrote:
+> On Tue, Mar 04, 2025 at 08:51:33PM +0530, Kaustubh Pandey wrote:
+>> Add IPA nodes for Qualcomm qcm6490 board.
+>>
+>> Signed-off-by: Kaustubh Pandey <quic_kapandey@quicinc.com>
+>> ---
+>>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 +++++++-
+>>  1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>> index 9209efcc49b5..ba47786d6474 100644
+>> --- a/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>> +++ b/arch/arm64/boot/dts/qcom/qcm6490-idp.dts
+>> @@ -19,7 +19,6 @@
+>>  #include "pm8350c.dtsi"
+>>  #include "pmk8350.dtsi"
+>>
+>> -/delete-node/ &ipa_fw_mem;
+>>  /delete-node/ &rmtfs_mem;
+>>  /delete-node/ &adsp_mem;
+>>  /delete-node/ &cdsp_mem;
+>> @@ -515,6 +514,13 @@ &gpu_zap_shader {
+>>  	firmware-name = "qcom/qcm6490/a660_zap.mbn";
+>>  };
+>>
+>> +&ipa {
+>> +	qcom,gsi-loader = "self";
+>> +	memory-region = <&ipa_fw_mem>;
+>> +	firmware-name = "qcom/qcm6490/ipa_fws.mdt";
 > 
-> It's been five years, but I'm trying!
-> We are tracking this RFE here [1].
+> "qcom/qcm6490/ipa_fws.mbn". There is no .mdt in linux-firmware.
 > 
-> I also add Jakub in the thread with who I discussed last year a possible 
-> restart of this effort, he could add more use cases.
-> 
-> The problem with vsock, host-side, currently is that if you launch a VM 
-> with a virtio-vsock device (using vhost) inside a container (e.g., 
-> Kata), so inside a network namespace, it is reachable from any other 
-> container, whereas they would like some isolation. Also the CID is 
-> shared among all, while they would like to reuse the same CID in 
-> different namespaces.
-> 
-> This has been partially solved with vhost-user-vsock, but it is 
-> inconvenient to use sometimes because of the hybrid-vsock problem 
-> (host-side vsock is remapped to AF_UNIX).
-> 
-> Something from the cover letter of the series [2]:
-> 
->   As we partially discussed in the multi-transport proposal, it could
->   be nice to support network namespace in vsock to reach the following
->   goals:
->   - isolate host applications from guest applications using the same ports
->     with CID_ANY
->   - assign the same CID of VMs running in different network namespaces
->   - partition VMs between VMMs or at finer granularity
-> 
-> Thanks,
-> Stefano
+>> +	status = "okay";
+>> +};
+>> +
+>>  &mdss {
+>>  	status = "okay";
+>>  };
 > 
 
-Do you know of any use cases for guest-side vsock netns?
+Sure, thanks for review.
+Will post another patch with correct format.
 
-Our use case is also host-side. vsock is used to communicate with a
-host-side shim/proxy/debug console. Each vmm and these components share
-a namespace and are isolated from other vmm + components. The VM
-connects back to the host via vsock after startup and communicates its
-port of choice out-of-band (fw_cfg).  The main problem is in security:
-untrusted VM programs can potentially connect with and exploit the
-host-side vsock services meant for other VMs. If vsock respected
-namespaces, then these host-side services would be unreachable by other
-VMs and protected.  Namespaces would also allow the vsock port to be
-static across VMs, and avoid the need for the out-of-band mechanism for
-communicating the port.
-
-Jakub can jump in to add anything, but I think this is the same use case
-/ user he was probably referring to.
-
-Best,
-Bobby
+Thanks,
+Kaustubh
 
