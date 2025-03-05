@@ -1,137 +1,134 @@
-Return-Path: <linux-kernel+bounces-546729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD5BBA4FE19
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:57:31 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF5EBA4FE1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:00:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C9516FF36
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:57:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972583AA957
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:59:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 115932417D8;
-	Wed,  5 Mar 2025 11:57:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6C0242916;
+	Wed,  5 Mar 2025 11:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Me3XjAeq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tq8prO7G"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCEB61FDA97
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:57:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3015A20DD7F;
+	Wed,  5 Mar 2025 11:59:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741175848; cv=none; b=AK/KYHvSBtFBc59kl0R0qHZI9mVTH3xMNRaHYbKRcHSsY0Igs9rO4B1pHNf4HhIZxZTYXfEwITDOq9VNxm4q4d1rjT7LPcoijY+AN8OMMQecSDmOb/oOLzAd/GtElDuNRZ9UmdLJ4Q/jSsSeEMRY3mvgwKoVwjcMUt2Agkf5Sug=
+	t=1741175999; cv=none; b=bJomzGPsyMj1woHzfO77cHAfJVQ/PC0EZkCmV7JQqDRJpAHge0dEg3EXMAWBOECP+fEqga91OnXmlqUtcvBp8NodGoQYOTHU3VB3iKmekf+C89fj+AwbXdLnv+VZ/qimhGPBFXogA3yF29BPxhcJGvLEhlIDuIUM7ExQPANqqJc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741175848; c=relaxed/simple;
-	bh=KUvTkzD8ZdVvFMlqnAmrsjZYnS0TavK1VWfGeCYlXFw=;
+	s=arc-20240116; t=1741175999; c=relaxed/simple;
+	bh=1itfz5Dn/ifmwpBxuvw4a+A/Z8sq2airca0/Wm8mM/o=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=EzeoBl31ixEoWXuia0uVzTWTmu05oqhjHeVzv4Nidbzqu7vd0JmR7lPi2ekcuPmLXFEs426KCu+EfMHfA3aXFbj5lkg5Wb0rn85CDpcpHKUD6P3iG9pwczJdZ195T3g6UJynhYnNgsO88iPAo8Ta6aIm7gcJ+gxKLtwRMzgRkkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Me3XjAeq; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741175847; x=1772711847;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=KUvTkzD8ZdVvFMlqnAmrsjZYnS0TavK1VWfGeCYlXFw=;
-  b=Me3XjAeqGMB8q+cFmSQOh9QFztlFJQUNYbHnNvV/j3ai+Is8u6lMXNN4
-   GGwXW/rliLd//XcmAZPYXl47hjT6fBsL+8LAwjP7SMQPseQtrYQC+ELWX
-   z85ZfzBIGGw3HwMzXgp2cEt8WXsoC+McfOCaMkeO26wUbIXSmZ2fPwXEy
-   Y1lSzFYIBxFT31uIO1RJUs23wvc/7R9riv4QS3ydagx1gDG5VKfj9aOJ5
-   XJU80nhG+3nNT8wwPk/Dq5ugdaNmYC/Vzpdpp0chR3CE9X10wGYjhD2k5
-   BdKqiHOHlNeXRql+HZt3H1S1uQF7DRkQGCnSiCQDvjaWB7fyNTkWebPsy
-   A==;
-X-CSE-ConnectionGUID: S0kvySVaQ1qRCP4uasut5Q==
-X-CSE-MsgGUID: szS452vCT9Gb+Asl6/sF/w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="46060838"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="46060838"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 03:57:26 -0800
-X-CSE-ConnectionGUID: TghoJe+CRSCXQvevc1s4bg==
-X-CSE-MsgGUID: WQatGI/eRC6jtjchl6Mcjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="123262532"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.49])
-  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 03:57:22 -0800
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: "Avizrat, Yaron" <yaron.avizrat@intel.com>, Ofir Bitton
- <obitton@habana.ai>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "airlied@gmail.com" <airlied@gmail.com>,
- "daniel@ffwll.ch" <daniel@ffwll.ch>, "gregkh@linuxfoundation.org"
- <gregkh@linuxfoundation.org>, "dri-devel@lists.freedesktop.org"
- <dri-devel@lists.freedesktop.org>, "sfr@canb.auug.org.au"
- <sfr@canb.auug.org.au>
-Cc: "jgg@nvidia.com" <jgg@nvidia.com>, koby.elbaz@intel.com,
- konstantin.sinyuk@intel.com
-Subject: Re: [PATCH 1/1] MAINTAINERS: Change habanalabs maintainer
-In-Reply-To: <dc139f06-3f5a-4216-93c2-1e8b3b9c27ba@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20240729121718.540489-1-obitton@habana.ai>
- <20240729121718.540489-2-obitton@habana.ai>
- <dc139f06-3f5a-4216-93c2-1e8b3b9c27ba@intel.com>
-Date: Wed, 05 Mar 2025 13:57:19 +0200
-Message-ID: <87cyevy9k0.fsf@intel.com>
+	 MIME-Version:Content-Type; b=kLzjt4tD/SRHMgnLp9eZIXdxF7fM4D7WYVgYA1w+4X8S/SNzVkL/GEG68HYlk0HXN8KEaChDPRMkzrdmuDsdcfOyRgY4FdGNlT+XXmk9hiuRGS/L0JO51UgqwepaW3JxsMRILo/7SecpCdGqAQckn82bIsIByg/hkRbHj/7IgLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tq8prO7G; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15241C4CEE2;
+	Wed,  5 Mar 2025 11:59:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741175998;
+	bh=1itfz5Dn/ifmwpBxuvw4a+A/Z8sq2airca0/Wm8mM/o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=tq8prO7GuKGKr0n+6VxzhdZcbv6UyEHnV1+2FJLmOkhTzVD+kxJqs4BOa4UTzuHo9
+	 kKUwi/oZJOqJErJMFmzorjEbyW3/GVgXYqHmdUi3g3F5uEJTOUYzXqJeIMgDEzry1J
+	 o7BKjOYLkXMDVQU0/FkHa0m0M3Idkja1NHIBMlrOSsq3X91Oz7VCxHGqiHAV2qywsp
+	 F/Wb1tiEE6awH0XXn7blfbdNp2Vsr+9LR2fWfeq4dh0VrsJmWp6pDbmn2bLvHwv0aF
+	 Tevk4DQ6JkXFGj1ErpKOpMSl9+A15+osehcXGm+GVzpfvGSQS8gTKR/Gm2Gd9DUtI7
+	 2NJhK+KKY8FxQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Danilo Krummrich" <dakr@kernel.org>,  "Masahiro Yamada"
+ <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
+  "Nicolas Schier" <nicolas@fjasle.eu>,  <linux-kernel@vger.kernel.org>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH 14/22] rust: add pin-init crate build infrastructure
+In-Reply-To: <20250304225245.2033120-15-benno.lossin@proton.me> (Benno
+	Lossin's message of "Tue, 04 Mar 2025 22:55:09 +0000")
+References: <20250304225245.2033120-1-benno.lossin@proton.me>
+	<jpQp16UCJ00pInqOI-QFULU6-FKl2bBtAlmnxtXWLgXPVb7gy6d727nr7THeyks3ERF5Yqu3R6bikD0OK4mqXA==@protonmail.internalid>
+	<20250304225245.2033120-15-benno.lossin@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 05 Mar 2025 12:59:39 +0100
+Message-ID: <87h647d6xg.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, 05 Mar 2025, "Avizrat, Yaron" <yaron.avizrat@intel.com> wrote:
-> On 29/07/2024 15:17, Ofir Bitton wrote:
->> I will be leaving Intel soon, Yaron Avizrat will take the role
->> of habanalabs driver maintainer.
->>
->> Signed-off-by: Ofir Bitton <obitton@habana.ai>
->> ---
->>  MAINTAINERS | 2 +-
->>  1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index ed2d2dbcec81..a4b36590061e 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -9599,7 +9599,7 @@ S:	Maintained
->>  F:	block/partitions/efi.*
->>=20=20
->>  HABANALABS PCI DRIVER
->> -M:	Ofir Bitton <obitton@habana.ai>
->> +M:	Yaron Avizrat <yaron.avizrat@intel.com>
->>  L:	dri-devel@lists.freedesktop.org
->>  S:	Supported
->>  C:	irc://irc.oftc.net/dri-devel
+"Benno Lossin" <benno.lossin@proton.me> writes:
+
+> From: Miguel Ojeda <ojeda@kernel.org>
 >
-> Acked-by: Yaron Avizrat <yaron.avizrat@intel.com>
+> Add infrastructure for moving the initialization API to its own crate.
+> Covers all make targets such as `rust-analyzer` and `rustdoc`. The tests
+> of pin-init are not added to `rusttest`, as they are already tested in
+> the user-space repository [1].
+
+If it's not too much hassle, why not add them in the kernel as well? I
+would rather not have to go fetch the user space repo from github, in
+the event that I ever need to patch pin-init.
+
+
 >
-> Apologies for the long silence =E2=80=94 it=E2=80=99s been a challenging =
-period with
-> the Habanalabs-Intel merger, but we're back and ready to continue
-> contributing.
+> Link: https://github.com/Rust-for-Linux/pin-init [1]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Co-developed-by: Benno Lossin <benno.lossin@proton.me>
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> ---
+>  rust/Makefile                      | 75 +++++++++++++++++++++++-------
+>  rust/pin-init/internal/src/_lib.rs |  3 ++
+>  rust/pin-init/internal/src/lib.rs  |  4 ++
+>  rust/pin-init/src/_lib.rs          |  5 ++
+>  scripts/Makefile.build             |  2 +-
+>  scripts/generate_rust_analyzer.py  | 17 ++++++-
+>  6 files changed, 86 insertions(+), 20 deletions(-)
+>  create mode 100644 rust/pin-init/internal/src/_lib.rs
+>  create mode 100644 rust/pin-init/src/_lib.rs
 >
-> We'll be moving forward with our roadmap =E2=80=94 upstreaming the latest
-> HabanaLabs driver, including recent changes and full support for the
-> entire GaudiX series.
+> diff --git a/rust/Makefile b/rust/Makefile
+> index ea3849eb78f6..90310f0620eb 100644
+> --- a/rust/Makefile
+> +++ b/rust/Makefile
+
+[...]
+
+> @@ -110,11 +113,24 @@ rustdoc-compiler_builtins: $(src)/compiler_builtins.rs rustdoc-core FORCE
+>  rustdoc-ffi: $(src)/ffi.rs rustdoc-core FORCE
+>  	+$(call if_changed,rustdoc)
 >
-> To support this effort, Koby Elbaz and Konstantin Sinyuk will join me
-> as co-maintainers on a regular basis.
+> -rustdoc-kernel: private rustc_target_flags = --extern ffi \
+> +rustdoc-pin_init_internal: private rustdoc_host = yes
+> +rustdoc-pin_init_internal: private rustc_target_flags = --cfg kernel \
+> +    --extern proc_macro --crate-type proc-macro
+> +rustdoc-pin_init_internal: $(src)/pin-init/internal/src/_lib.rs FORCE
+> +	+$(call if_changed,rustdoc)
+> +
+> +rustdoc-pin_init: private rustdoc_host = yes
+> +rustdoc-pin_init: private rustc_target_flags = --extern pin_init_internal \
+> +    --extern macros --extern alloc --cfg kernel --cfg feature=\"alloc\"
+> +rustdoc-pin_init: $(src)/pin-init/src/_lib.rs rustdoc-pin_init_internal \
+> +    rustdoc-macros FORCE
+> +	+$(call if_changed,rustdoc)
 
-Should they be added as maintainers in the MAINTAINERS entry too?
-
-Are you going to pick this up and apply to the Habanalabs repo, and send
-a pull request with it? Or how do you propose to proceed?
+Is it possible to do some code sharing here, such that when we add a
+crate, it's just a matter of putting the path/name on a list somewhere?
 
 
-BR,
-Jani.
+Best regards,
+Andreas Hindborg
 
 
---=20
-Jani Nikula, Intel
 
