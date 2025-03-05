@@ -1,42 +1,42 @@
-Return-Path: <linux-kernel+bounces-546371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 566CBA4F9C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:19:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2DFA4F9C4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:19:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0431D16CA01
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:18:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5ABD9188676E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62DE0204859;
-	Wed,  5 Mar 2025 09:18:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29E9C2045B5;
+	Wed,  5 Mar 2025 09:19:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="ksPkvL1n"
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="YTVKsgtW"
 Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4CA20297E;
-	Wed,  5 Mar 2025 09:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C5120409A;
+	Wed,  5 Mar 2025 09:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741166321; cv=none; b=F9a1krXmmXb4hVEkrwBvnhJ9S0W5M8ijbWv0EaCTA72En3aAaiT419SaOlRMhpFSJlbf5SbR1lRpZZSn9xUU94vPHjqrHaXyKsseMvmRkT98r8nR9PnAuZ+yfRz1Xm6L6DENgFUfjNvhSTnY9Zc7dhFcV9iC7izeg5u7BmulwRE=
+	t=1741166369; cv=none; b=ZQP8OuF//5Xj3Lob9VCsLvdkkr24fzgT8J2Z2RQ43JuZW6rrAYJaKVCEHdtVwRw1UcDZcqGf+4740vk3/rnN5hqXUnEuId0/LX0UC+HTHMsqpSm0t708fNNV38c5V9OV4IAiJtUK5ateqDFNh7Q3Fnsv58tACQaJ478rWPGwGPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741166321; c=relaxed/simple;
-	bh=E/FKPevlAxP3oxUVkYlXCqIls7TTWoJBsmljo3PBFgU=;
+	s=arc-20240116; t=1741166369; c=relaxed/simple;
+	bh=Z1XS6ukud7fp1OfWOfCX8gJb/w0mT1sUEAYzKF88IzU=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=c/fOOQYpvRSfqA8dBd8+3WLtkLP7YmWBL80I4cf/wg+EKJaXf25jBNI8VrF/ypTW4G+kxHeEoGK60P7yIOILjCZ+gRxXWKI2U5//U9+6wbyA/4AMha68fsqeKsMCde5ZTqa60o4OzICGaksMxtSWZjXrde0GO58EmdxZE3ZdKBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=ksPkvL1n; arc=none smtp.client-ip=49.12.72.200
+	 MIME-Version:Content-Type; b=SiQUY7qPgT+qaCUZVtaN7sWlEyx+tSv4C/mEmPYflzylYq0HcnceRczPa2/ueEf+FIuK5vTF2lZ6qWKIphg6yRYOJtUn9+9a7fpqrOUfyqldkGxF4D+n6e61D/PeFeJvcAAib76kUqyMa/iSuZeDCwGAWfV8S09MHqw8QSsDBks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=YTVKsgtW; arc=none smtp.client-ip=49.12.72.200
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
 From: Fiona Behrens <me@kloenk.dev>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
-	t=1741166318; bh=E/FKPevlAxP3oxUVkYlXCqIls7TTWoJBsmljo3PBFgU=;
+	t=1741166366; bh=Z1XS6ukud7fp1OfWOfCX8gJb/w0mT1sUEAYzKF88IzU=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date;
-	b=ksPkvL1nqL/RMhgb1y9F9V9zGTvTgLcRQfKIcb5plR+ohQW+9frFSh5S58VCx5xnM
-	 HQEz+WGWRUlEsSUuljHP1eOZEwSd04R/NZZsDxeZ2FH+SCYTUYFBFC1pS/gCOccFGB
-	 f/PoIMXS0lRND7WepaMO6TGDQVjOvNYhYvfhob6k=
+	b=YTVKsgtWce2AD1opLOHPCpOsmTwJYH4rSO0ZzjYryIXLlPK+nEWdbd/RS1BsDI/WF
+	 F7CQyFcJfKVL4yQsTTv9pGJOqhHeQwProrn/gja7muJT14mAbRZsq6jl5I41lbrYLX
+	 DRexkrklTiB6144gfgKlLLEtUTN7J4T2G24Mh9gY=
 To: Benno Lossin <benno.lossin@proton.me>
 Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
   Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
@@ -44,15 +44,15 @@ Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
  Roy Baron <bjorn3_gh@protonmail.com>,  Andreas Hindborg
  <a.hindborg@kernel.org>,  Alice Ryhl <aliceryhl@google.com>,  Trevor Gross
  <tmgross@umich.edu>,  Danilo Krummrich <dakr@kernel.org>,
-  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 04/22] rust: pin-init: move proc-macro documentation
- into pin-init crate
-In-Reply-To: <20250304225245.2033120-5-benno.lossin@proton.me> (Benno Lossin's
-	message of "Tue, 04 Mar 2025 22:53:36 +0000")
+  linux-kernel@vger.kernel.org,  rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 05/22] rust: pin-init: change examples to the user-space
+ version
+In-Reply-To: <20250304225245.2033120-6-benno.lossin@proton.me> (Benno Lossin's
+	message of "Tue, 04 Mar 2025 22:53:46 +0000")
 References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<20250304225245.2033120-5-benno.lossin@proton.me>
-Date: Wed, 05 Mar 2025 10:18:37 +0100
-Message-ID: <m28qpjj0nm.fsf@kloenk.dev>
+	<20250304225245.2033120-6-benno.lossin@proton.me>
+Date: Wed, 05 Mar 2025 10:19:26 +0100
+Message-ID: <m234frj0m9.fsf@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,11 +63,17 @@ Content-Type: text/plain
 
 Benno Lossin <benno.lossin@proton.me> writes:
 
-> Move the documentation of proc-macros from pin-init-internal into
-> pin-init. This is because documentation can only reference types from
-> dependencies and pin-init-internal cannot have pin-init as a dependency,
-> as that would be cyclic.
+> Replace the examples in the documentation by the ones from the
+> user-space version and introduce the standalone examples from the
+> user-space version such as the `CMutex<T>` type.
 >
+> The `CMutex<T>` example from the pinned-init repository [1] is used in
+> several documentation examples in the user-space version instead of the
+> kernel `Mutex<T>` type (as it's not available). In order to split off
+> the pin-init crate, all examples need to be free of kernel-specific
+> types.
+>
+> Link: https://github.com/rust-for-Linux/pinned-init [1]
 > Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 
 Reviewed-by: Fiona Behrens <me@kloenk.dev>
