@@ -1,118 +1,169 @@
-Return-Path: <linux-kernel+bounces-548002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08ECBA53EB0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:55:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F3AFA53EB1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:56:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 436FF3AB4F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:55:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5838B16E579
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:56:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5437A207A3B;
-	Wed,  5 Mar 2025 23:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97612207A23;
+	Wed,  5 Mar 2025 23:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="i2ZFcOc2"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sp0K89Em"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B0E4A06;
-	Wed,  5 Mar 2025 23:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AAC4A06
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:56:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741218938; cv=none; b=uz7S5z0Pa4yld2iBGpSkKLHCHU7PEfGuxP2hmQ3uSQcsHUMbo3t/DqtINPdlPRxdc8R+1lC7KNm5sq6RFx4q+Q8zR8GlubysV/cQ5cQfrZ5bY0P34sDhMMNeG3KSzVG3taXgArLBdjf24qayQUu1JwO8KbPW1Jjny7Bfrj3UyE0=
+	t=1741218996; cv=none; b=FLhfwrw8ZXaeg6pfD1OheD8Wd7tpukX78VZt0KYeO8gItgiTZ+Oi+6jbRJea1Zx/TUOWNsZNqVOdygKRp0nZZbdwZ8EulmLGmu8r65HtPE3TiqdYsL8rdy7a1ea9cGJNCFm3ZqgWl1/Otj8BNWwhNl3OE11vb48Bl5LGPToIStk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741218938; c=relaxed/simple;
-	bh=09myHZqFz0X5dCEv1x8Z5EOSdfzJmm3vhAIz3wlbHiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=L/Vx7pmdH47rEQapqaAl1ClXZUEAXKDqMSB8Ts9CjzJxrcWpYZ+G9g4aqwEMkS7YarcfeBn5bguDGW4VcrL6NMJr2HFmmZh1kwqwJFrtDAAkCexzsshzM5ziEsVVzqawpFQhJsX0OItIbyd/orBwBOaaHFzmJaz5zlFhHpdg+cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=i2ZFcOc2; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-30be7eecc2bso93601fa.1;
-        Wed, 05 Mar 2025 15:55:36 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741218935; x=1741823735; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=09myHZqFz0X5dCEv1x8Z5EOSdfzJmm3vhAIz3wlbHiI=;
-        b=i2ZFcOc2r79IUhGz/bh59ds3bHkQckrlGqCBF67xv3oAODod7B8fcwFE6VBIpuMzUh
-         PC+KN3+HsSHjirlroQmR6Kf0qTPXz4JEwpgkPXt0eznWdVI8ZQ/5oXcqU8cAoc6TDZif
-         YIRS6a0baY2CCuqtBP/TuJnt89Qr+CSF/qATtSGl15QI3iOdkxF9zQPmwb0c/bQFOnxj
-         RCD4JnIX7N3kHYlElcP1QY/zNt6VocJ7RgXMKBlyfV48a3Xw2JSRmvkQc62Rw+/ykKAP
-         G+6g9951lmfDyLnysMv/ffGEhJIg80nYXQ8ex+o2vmZCF18npyE4CtG6RNgQQGpMcyRk
-         cdYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741218935; x=1741823735;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=09myHZqFz0X5dCEv1x8Z5EOSdfzJmm3vhAIz3wlbHiI=;
-        b=kvBH8QN5FWHOZLp+Nsx+HfSYMojcBy98d9IaJe6LOXQxEeji60qIq0+YIesBrTZ9pZ
-         XE7/2Jp34cawhdXhEfqiMJp9J4Lf67OFB2BIuCkulQ6AJxqZWoZW8sWpBC9bzndjuU5k
-         XSfDrVl+DKXytMyPxUZqiFZpeUalSc68/1v0O9qeGGzKnHB9H97kJCoAMylA3QkqhbvY
-         ttYPBxVDcDyIP2FcEZIauCmBTB/v0f8qn1+1BQWioAIpQ76AHo0Wk7ZNo2tiQzRK9sCC
-         /CthottqKANWdEjfIDe5hYVfBdaVgzjIZVVBtvdk/W1d/QuQ9B2JkXjk63AOVC7INBjO
-         Na1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Y//VhDC3hJIxRG+u72btuhJcJvYKoLuM8GpO8+rI7P9Z/o6ApPvNxoqY50tRuo9MfmZmqCSnsywqQzdqsWM=@vger.kernel.org, AJvYcCV2g0rk1pnMG7d5w+kLDJRpVTFASs124VReo58qhIv0HGeUp04G1ITIVXq0Ku8rH1fOQxw2qYquyn0=@vger.kernel.org, AJvYcCVHsEClHJOQTZewazeA+etrATK1YgjePuX+UDWGibnqvQgMThSlEFRQhZAtgV/kNMiAXBB4X5ZCOp7jUP93@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiY5J8yXxKJfbku3EvWBE6dNPFH/ElnLpZe75h0DPay+YN9hNv
-	uOEq9VSkIh8TAA7nEx6EuKzJZqh8xV0fHYhuJw9ZpmwYpb08dIHHjH3W28g/cLKRv+F7us5fikq
-	i23RpWZTmlYlbCAnssd/T5S99Uww=
-X-Gm-Gg: ASbGnctgvqusehyFv0nmiDcm0ctUa8jHBA/UM47qOrN9dh+OpuCbHguOS/iGJVw3Jvh
-	yeSJgsmeOPC0shamKltwRMwpoafqLRyE4vA12q/ni0JIVgnS8jDB4UFh1X6p35m+1Y1/nwYFoLz
-	QKafWi/+ejsrBOig+1TDCNxccG6Q==
-X-Google-Smtp-Source: AGHT+IFULoPEpothLfwjh0swnKSIsOSLdiBNQJwOvKbn87HppFWWvrmA08t4MfTHgBorZusYx9XzpR2AijXL9kxjXtY=
-X-Received: by 2002:ac2:4c49:0:b0:545:6f8:232a with SMTP id
- 2adb3069b0e04-5497d38b2e6mr692464e87.13.1741218934699; Wed, 05 Mar 2025
- 15:55:34 -0800 (PST)
+	s=arc-20240116; t=1741218996; c=relaxed/simple;
+	bh=Hzjlp30dCTBYdo66QorfE8yUiVB8YP6kBzBJxDX0R+A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=icnemr5PpWixNBKeVDzrI1l7xkr/+GOpljJmm+UM3l0V1mpV4YA8RraBP29NSfubQm0Telkg8Uvo1voyYSy0b51XlsTG+CdZVVfkB49jwnkgi0hx1WduQEYAq6r5lSDuhkbRw5rOA/cHvnUNaUztKJP1cLRbKV8jO2a36Ekds40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sp0K89Em; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42D62C4CED1;
+	Wed,  5 Mar 2025 23:56:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741218995;
+	bh=Hzjlp30dCTBYdo66QorfE8yUiVB8YP6kBzBJxDX0R+A=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=sp0K89EmUnXwOfMGrDv2rVmOfvJa34KCMUlf5QQdeNyCarMumtlKYuy73SpMyL5+D
+	 nTG99D69EXqv2S0UY53v75I4CQxpOdKD2srh6pI5SQKuBuW5T3/Kw0AinZePl9IQ2W
+	 2nV/z2whuFiDh7Zx8Hr3OkbmFSB8IlV17nu2pYMEMImG6AnBy095LbkmF0iZoEmBDT
+	 0ULEJvXR1S8bNdW5tzg3gyaV0lpdorVRHwugWq+UVPdPKPL3en7sjTNCajT6l3M9GJ
+	 fVwoFr2wfUnaTJTCfoPWTVTd342LAUO1HUddYQsGGZXSiZ1pFMZ2NC/INYoISYS/Vy
+	 ay+SYFquH2kdw==
+From: SeongJae Park <sj@kernel.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Liam R. Howlett" <howlett@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 05/16] mm/madvise: define and use madvise_behavior struct for madvise_do_behavior()
+Date: Wed,  5 Mar 2025 15:56:32 -0800
+Message-Id: <20250305235632.137169-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <wdre2a4y6xmkvn4pgoptaqc67b6t646hgypbyjbin23u32zd3h@qrrdupkncnea>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206-printing_fix-v3-0-a85273b501ae@invicto.ai> <20250206-printing_fix-v3-6-a85273b501ae@invicto.ai>
-In-Reply-To: <20250206-printing_fix-v3-6-a85273b501ae@invicto.ai>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Mar 2025 00:55:19 +0100
-X-Gm-Features: AQ5f1Jp0pj2pbUiKB4mJ1sMtL21NUUzLe-Ulw_OnHrv7vqdUo2CLF-fBvmJ5JwE
-Message-ID: <CANiq72neqbD=zJ3jAizwMewxx4s2YhAvh6M-Y4sNfq9+ca3P2A@mail.gmail.com>
-Subject: Re: [PATCH v3 6/6] rust: samples: add missing newline to pr_info!
- calls in rust_print_main
-To: Alban Kurti <kurti@invicto.ai>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Jonathan Corbet <corbet@lwn.net>, David Gow <davidgow@google.com>, 
-	Dirk Behme <dirk.behme@de.bosch.com>, Asahi Lina <lina@asahilina.net>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Wedson Almeida Filho <walmeida@microsoft.com>, 
-	"Andreas Hindborg (Samsung)" <nmi@metaspace.dk>, Tejun Heo <tj@kernel.org>, Fiona Behrens <me@kloenk.dev>, 
-	Vincenzo Palazzo <vincenzopalazzodev@gmail.com>, Xiangfei Ding <dingxiangfei2009@gmail.com>, 
-	rust-for-linux@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Martin Rodriguez Reboredo <yakoyoku@gmail.com>, 
-	Fox Chen <foxhlchen@gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 6, 2025 at 10:08=E2=80=AFPM Alban Kurti <kurti@invicto.ai> wrot=
-e:
->
-> Fixes: f431c5c581fa ("samples: rust: print: Add sample code for Arc print=
-ing")
-> Fixes: 47cb6bf7860c ("rust: use derive(CoercePointee) on rustc >=3D 1.84.=
-0")
+On Wed, 5 Mar 2025 13:40:17 -0800 Shakeel Butt <shakeel.butt@linux.dev> wrote:
 
-Thanks Alban for making the effort of splitting the patch into several
-and finding the right commits to tag.
+> On Wed, Mar 05, 2025 at 01:02:15PM -0800, Shakeel Butt wrote:
+> > On Wed, Mar 05, 2025 at 10:16:00AM -0800, SeongJae Park wrote:
+> > > To implement batched tlb flushes for MADV_DONTNEED[_LOCKED] and
+> > > MADV_FREE, an mmu_gather object in addition to the behavior integer need
+> > > to be passed to the internal logics.  Define a struct for passing such
+> > > information together with the behavior value without increasing number
+> > > of parameters of all code paths towards the internal logic.
+> > > 
+> > > Signed-off-by: SeongJae Park <sj@kernel.org>
+> > > ---
+> > >  mm/madvise.c | 15 ++++++++++++---
+> > >  1 file changed, 12 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/mm/madvise.c b/mm/madvise.c
+> > > index c5e1a4d1df72..3346e593e07d 100644
+> > > --- a/mm/madvise.c
+> > > +++ b/mm/madvise.c
+> > > @@ -1665,9 +1665,15 @@ static bool is_memory_populate(int behavior)
+> > >  	}
+> > >  }
+> > >  
+> > > +struct madvise_behavior {
+> > > +	int behavior;
+> > > +};
+> > 
+> > I think the patch 5 to 8 are just causing churn and will be much better
+> > to be a single patch.
 
-I will take the first 5 patches already, but I think this last one in
-particular will need to be split, because one Fixes tag points to some
-LTSs and the other is very recent, so it wouldn't be backported.
+I agree.  I will do so in the next version.
 
-Cheers,
-Miguel
+> > Also why not make the above struct a general
+> > madvise visit param struct which can be used by both
+> > madvise_vma_anon_name() and madvise_vma_behavior()?
+
+I was also thinking we can further extend the struct for more clean and
+efficient code, so agree to your fundamental point.  I ended up desiring to
+focus on tlb flushes batching at the moment, though.
+
+However, what you are suggesting is bit different from what I was thinking.  To
+me, madvise_walk_vmas() is for general purposes and hence the visit functions
+should be able to recieve an argument of arbitrary types.  It is true that
+there are only two visit functions, but they seems doing very different purpose
+works to me, so having a same type argument doesn't seem very straightforward
+to understand its usage, nor efficient to my humble viewpoint.
+
+> 
+> Something like following:
+> 
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index c5e1a4d1df72..cbc3817366a6 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -890,11 +890,17 @@ static bool madvise_dontneed_free_valid_vma(struct vm_area_struct *vma,
+>  	return true;
+>  }
+>  
+> +struct madvise_walk_param {
+> +	int behavior;
+> +	struct anon_vma_name *anon_name;
+> +};
+
+Only madvise_vma_behavior() will use 'behavior' field.  And only
+madvise_vma_anon_name() will use 'anon_name' field.  But I will have to assume
+both function _might_ use both fields when reading the madvise_walk_vmas()
+function code.  That doesn't make my humble code reading that simple and
+straightforward.
+
+Also populating and passing a data structure that has data that would not
+really be used seems not very efficient to me.
+
+[...]
+> @@ -1666,8 +1674,10 @@ static bool is_memory_populate(int behavior)
+>  }
+>  
+>  static int madvise_do_behavior(struct mm_struct *mm,
+> -		unsigned long start, size_t len_in, int behavior)
+> +		unsigned long start, size_t len_in,
+> +		struct madvise_walk_param *arg)
+>  {
+> +	int behavior = arg->behavior;
+>  	struct blk_plug plug;
+>  	unsigned long end;
+>  	int error;
+> @@ -1681,7 +1691,7 @@ static int madvise_do_behavior(struct mm_struct *mm,
+>  	if (is_memory_populate(behavior))
+>  		error = madvise_populate(mm, start, end, behavior);
+
+'arg' is for madvise_walk_vmas() visit function, but we're using it as a
+capsule for passing an information that will be used for madvise_do_behavior().
+This also seems not very straightforward to my humble perspective.
+
+I have no strong opinion and maybe my humble taste is too peculiar.  But, if
+this is not a blocker for tlb flushes batcing, I'd like to suggest keep this
+part as is for now, and revisit for more code cleanup later.  What do you
+think, Shakeel?
+
+
+Thanks,
+SJ
 
