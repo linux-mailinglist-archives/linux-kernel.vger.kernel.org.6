@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-547043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547044-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BAC2A5024B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:39:08 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id E04F8A5024D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:39:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C13B2DCB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:36:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F40E63B0200
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:37:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FED24EF75;
-	Wed,  5 Mar 2025 14:34:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E740F24E008;
+	Wed,  5 Mar 2025 14:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="X+nq+VyV"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AFdsha0E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E618024C69D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560DC15746E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:35:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185284; cv=none; b=IczdlLyBEonsozZAVJqNj8e+qXabaF4DDKkwArmV5uyIHvttjjw1L77FKJGBO7QTTJNJPNEOa14p2Knej+4HE113oGMiEmkf/H4GKV3kFHTuDNHMxOXScfeet7hli/53Q44JpKGvYyb8L2I0Whpk0n720Hvai9h02HOi3J0GDeU=
+	t=1741185321; cv=none; b=GJn/DkLh6Z+k5N7yWt9BHU4zjkaYS6FjojlSThnxpcoRUQxVaVpxPSoxXC2a+g+rWItqCz9qB8E2TTiiM+fhzbY4uCLssNFp/jllT8DF5l4gMIoJNmjVRuu5eAAwlpwAdwb/8OC8PAjaUmEximxNNc2fLDHjJK+DRE9+hZ1RnXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185284; c=relaxed/simple;
-	bh=+3KZycyRQWg6AONdj6MUvhWQ0yttj5flpyUcA4hxWz8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dme+TpIWB3Vzx6n9Z+2DVuoqG74oQOoaVV1VS2wc3CwPhrU7tW//Z7RhnunWJWhEBkuWQ75sHBhpD5WLilobeBJ4nbCHO8ZWQne/nvVfK4Z2467jvWUv2NCWUPOnHv2voHP+JEJeQ9jMjR+32HgHTqCp8yTxyUtHXJbCmq8keGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=X+nq+VyV; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=cogdqg55erhcjfmdfg247whv2y.protonmail; t=1741185280; x=1741444480;
-	bh=+3KZycyRQWg6AONdj6MUvhWQ0yttj5flpyUcA4hxWz8=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=X+nq+VyVUTJl6QdqXVEonz5IDPa9VbvjAvmcPlCsjHps5CeP/6HaxVKnCJ7Y4SC9M
-	 zLC/D5VHdBgK1qo/Ne32jj7FjEkYxYJ3cfxWfU3Jz7HwXPzBTG5oOP0x4TtSe4sFA2
-	 vrwSUItLtT0Pxp6RSWiBB1hA8O8cwAYx/+jMVduu8Mv2T09ooDQm7Km3c4lGM5zhSb
-	 Kai3cw9sdqjjbQcEbEL2sQPjCgd3GiT+k5+pRNL+fauHYqiDjuCeoIhOeIoiVFrxZj
-	 /iMYgsKhbmY5ex+74sl2YhcrROOs60341LtJHZ2yLO9/UUV+8IkYhtpe5iZ01TXZ6J
-	 AhusOW/Rp4qFw==
-Date: Wed, 05 Mar 2025 14:34:35 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH 14/22] rust: add pin-init crate build infrastructure
-Message-ID: <D88ENUE2B49N.FGSNLEB107E1@proton.me>
-In-Reply-To: <878qpja7b5.fsf@kernel.org>
-References: <20250304225245.2033120-1-benno.lossin@proton.me> <jpQp16UCJ00pInqOI-QFULU6-FKl2bBtAlmnxtXWLgXPVb7gy6d727nr7THeyks3ERF5Yqu3R6bikD0OK4mqXA==@protonmail.internalid> <20250304225245.2033120-15-benno.lossin@proton.me> <87h647d6xg.fsf@kernel.org> <cdfBMmuIl8Wl-KpI-koNDQJOCGBr9z9dOi5fxQvFbgNWQHHw6JtMizaMMbMniNlE841-9b7TdLuZ9Xh_hFsf7w==@protonmail.internalid> <D88BLHENDH8Y.HQUKEXN1XB7C@proton.me> <87ldtjbqw2.fsf@kernel.org> <okP1iZelIm5t6CfgoFyh0m8LiVEQW3ULUroZHdSQ97ul_BmPr47HBpB3RgHDMtm_2jzF4sTJszuUACsCGBEXcQ==@protonmail.internalid> <CANiq72k=KiYhKr9XHU38==Rx0df4rERyOL1abRG_cDo+4NNa0g@mail.gmail.com> <878qpja7b5.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: eb7d669969bb2d542e365fcae0c70997690124b9
+	s=arc-20240116; t=1741185321; c=relaxed/simple;
+	bh=+/POTIBYu3YbxycBA5ufAE7WLG0Xfu9i9jwITjW3woE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BxAOtPyx3TSuKhOGWY5XE7EtzX7Bszt95P3gQ7xTGuXLeQEao/7BQqb3Rjjvsc7a+dsFcSdbyAPD7e4Ik5Q/BGFqqbX1vwfHLQuhZ6qsWEm5WN4RZ3+dpoQTffWETGfxGYOC3OhGuzQhgkW0j6LEV28ppeB6spJI5DddYNGuFpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AFdsha0E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66F3BC4CED1;
+	Wed,  5 Mar 2025 14:35:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741185320;
+	bh=+/POTIBYu3YbxycBA5ufAE7WLG0Xfu9i9jwITjW3woE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AFdsha0E3TTkHFrh6locq319Bxuu3oaoMsKrRFGmfy/6GzfzT2Omi/6LAuuPhOoUR
+	 7nuN17GDWc1onwbWAXeoSSCARVFlJ3gAVT0EGgbR65cFmn7iwEXTabW3XCK827pQFk
+	 2OvbXCV4tP6leP0w9LGHFN6BdPnRfHot7I43kQY5uMZWzy8oCWjBBhHp3Qf4A8rwod
+	 D/cTaTg/1LsHXDN/z2+dgTPJ+WGJwPLmW5u5PLmLFF3hdCPbi1GnVgjq4IwSVYQWWO
+	 1BVExHEXc0+xi00u7b0G/CppFbabY5v2YoWv5E9u5kohoIoq0DTFw40gz3yOHROTR1
+	 kTMeFzdi5PkPQ==
+Date: Wed, 5 Mar 2025 14:35:18 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: Daeho Jeong <daeho43@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net, kernel-team@android.com,
+	Daeho Jeong <daehojeong@google.com>
+Subject: Re: [f2fs-dev] [PATCH] f2fs: subtract current_reserved_blocks from
+ total
+Message-ID: <Z8hhJs_fUOBN7U8y@google.com>
+References: <20250304192041.4048741-1-daeho43@gmail.com>
+ <41160b37-16ad-4c12-aad2-1214d87d3df0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <41160b37-16ad-4c12-aad2-1214d87d3df0@kernel.org>
 
-On Wed Mar 5, 2025 at 3:19 PM CET, Andreas Hindborg wrote:
-> "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
->
->> On Wed, Mar 5, 2025 at 1:34=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
-el.org> wrote:
->>>
->>> I _really_ think that the ability to run the tests should be present in
->>> the kernel repository. But I also do not want to block this series on i=
-t,
->>> if it is something that will be easier to achieve with the build system
->>> overhaul that is in the pipeline.
->>
->> No, that is not the plan. Even with the new build system, this is
->> supposed to be developed upstream as far as I understand, so you will
->> need to run them there anyway.
->>
->> Unless there is a reason we could catch more bugs here, that is.
->
-> I guess it would be no different than `syn`. But I think it is a shame
-> that we move something that people could contribute to via the kernel
-> development flow - out of the kernel development flow.
+On 03/05, Chao Yu wrote:
+> On 3/5/25 03:20, Daeho Jeong wrote:
+> > From: Daeho Jeong <daehojeong@google.com>
+> > 
+> > current_reserved_blocks is not allowed to utilize. For some zoned
+> > storage devices, vendors will provide extra space which was used for
+> > device level GC than specs and we will use this space for filesystem
+> > level GC. This extra space should not be shown to users, otherwise,
+> > users will see not standardized size number like 530GB, not 512GB.
+> 
+> Hi Daeho,
+> 
+> However, if there are other users e.g. oem or vendor want to use
+> reserved_blocks and current_reserved_blocks sysfs interface to
+> reserve space, then, total size will be less than 512GB?
+> 
+> What do you think of adding a new variable to indicate reserved
+> space for zoned storage case only?
 
-You *can* send patches via the list, I will pick them up and run them
-through the GitHub CI.
+Or, adding a sysfs entry like "carve_out" to determine this?
 
-Patches that arrive via GitHub will also go through the list and people
-can add their tags there.
-
-Also I don't think that pin-init will receive a lot of contributions in
-the first place. I do have a lot of changes planned for when we get
-`syn`, but other than that, I don't think it will change a lot in the
-future.
-
----
-Cheers,
-Benno
-
+> 
+> Thanks,
+> 
+> > 
+> > Signed-off-by: Daeho Jeong <daehojeong@google.com>
+> > ---
+> >  fs/f2fs/super.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+> > index 19b67828ae32..c346dcc2518a 100644
+> > --- a/fs/f2fs/super.c
+> > +++ b/fs/f2fs/super.c
+> > @@ -1833,10 +1833,9 @@ static int f2fs_statfs(struct dentry *dentry, struct kstatfs *buf)
+> >  	buf->f_type = F2FS_SUPER_MAGIC;
+> >  	buf->f_bsize = sbi->blocksize;
+> >  
+> > -	buf->f_blocks = total_count - start_count;
+> > -
+> >  	spin_lock(&sbi->stat_lock);
+> >  
+> > +	buf->f_blocks = total_count - start_count - sbi->current_reserved_blocks;
+> >  	user_block_count = sbi->user_block_count;
+> >  	total_valid_node_count = valid_node_count(sbi);
+> >  	avail_node_count = sbi->total_node_count - F2FS_RESERVED_NODE_NUM;
+> 
 
