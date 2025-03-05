@@ -1,141 +1,105 @@
-Return-Path: <linux-kernel+bounces-546631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 509F3A4FD15
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:03:46 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 563FCA4FD0E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:02:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8220916693F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:03:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C80D27A2F43
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D437233158;
-	Wed,  5 Mar 2025 11:03:07 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CFE230274;
+	Wed,  5 Mar 2025 11:02:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxtHUvNh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84D6C20D508
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:03:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD7C1F55FA;
+	Wed,  5 Mar 2025 11:02:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172587; cv=none; b=s9zkV0jiKmpL5qJw7XFxyd4qvvCezf3tysOHOkF8n8Q0gmCsW/8+41EB79ROb57+NfFrwica88tQ4VZbPn8ZPloMr6LLpOpkPkfVGUkhKQ4DlKP4QW9guiZQ/qZd6gcUMPc+1uU98zYk4pTKP/VrlC9NFZt75kcSOd4iA7cVLAc=
+	t=1741172540; cv=none; b=gJs8XZ2mJnAyj2aoZojfEndl2E86CtopL/xxY/9kXccvllSXc69RMRMJoWbldWiqwmgsxoJmU2/GR7+9exkP3W3J2DIa0HU5bbKleyRgvOg+rN5GqaRMp41oEYltlfZBgUzCR1i4Hk4SWh2s2W3OF6zOPi3SZ3gbubT1IVHFrmE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172587; c=relaxed/simple;
-	bh=JAUm4+VWC+SmkWP2S8QleEY91rM70SFeEbmpI/d5+Fo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VaISIvrrCSvM2GGnANBmebjORo/KMryo2+xglr9pt3ZEaYI78DtNBRpkaN4h/K6VAU5ah5y++51Ktgg7wgD6B1ImHdmdW9jroQ0uUuPsqISzRRsr7kXbv2p/ShGb3Ce+MDQ7phDiE6BTlm5KFSo9b0IzNDYB10qibJP+vsRFos0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tpmVq-0008LI-3s; Wed, 05 Mar 2025 12:02:06 +0100
-Message-ID: <7ac2b8db-22c7-4168-b1b7-4f9f0ab10531@pengutronix.de>
-Date: Wed, 5 Mar 2025 12:01:53 +0100
+	s=arc-20240116; t=1741172540; c=relaxed/simple;
+	bh=yTpT/u9tOJzbuDrIadcgJIx+4mrWB9CtBxj4SvKyNVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=orU7YF6jW4kCEW2M+F9JzmFzFpisydVQW8twCJHzmyxD4zYPrm02NUO9fnFtPytJv1rzYfkhCq0hAkBLnlenZw/Ra7r/xJo5hl+rBlcGfjOLr7sIAzzx02N4mXU/8TTnmaXX7GIswgONTVZ6mPNH0AkBm4I2PDuKre/5uYI1/sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxtHUvNh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DB4C4CEE8;
+	Wed,  5 Mar 2025 11:02:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741172539;
+	bh=yTpT/u9tOJzbuDrIadcgJIx+4mrWB9CtBxj4SvKyNVY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KxtHUvNhQeoGIAQx62mLp1ON9SskQGRYRGf+ejfCPoQ3Y2s9L3dc2OBP6vcFOXXgx
+	 pFwpLVhkPhWYWX9jCff69oXdzxx7Okvcdmv9iqrr0L2g8YWKm0E0P8K/68X+gUhPAG
+	 5nCax0DIjz+w0yQpABLStA3AJ1T2hLmZx3VCk4eSeQah8YcBHFU32sFXST0sAw9JCy
+	 AyI+3GXHX4wEYJQiSW/ZvHqITHjATYfGIxqg004eEqAxr40qUDjxo1ICG2j7BOfxR1
+	 A4CT8lRjhjs+YUhrvZq+3r85Cfl5/zIFm+vixipZYY18eBUbuJe1WwMWIDLQCOUY/d
+	 wVjSvqv34jxtA==
+Date: Wed, 5 Mar 2025 20:02:15 +0900
+From: William Breathitt Gray <wbg@kernel.org>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: Kamel Bouhara <kamel.bouhara@bootlin.com>,
+	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] counter: microchip-tcb-capture: Fix undefined counter
+ channel state on probe
+Message-ID: <Z8gvN1CvcSV8nfVP@ishi>
+References: <20250305-preset-capture-mode-microchip-tcb-capture-v1-1-632c95c6421e@kernel.org>
+ <93ce1511-53f6-42a3-b1a5-b6732105e87d@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/2] watchdog: Add a new flag WDIOF_STOP_MAYSLEEP
-To: George Cherian <gcherian@marvell.com>,
- "linux@roeck-us.net" <linux@roeck-us.net>
-Cc: "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
- "jwerner@chromium.org" <jwerner@chromium.org>,
- "evanbenn@chromium.org" <evanbenn@chromium.org>,
- "krzk@kernel.org" <krzk@kernel.org>,
- "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
- "thomas.richard@bootlin.com" <thomas.richard@bootlin.com>,
- "lma@chromium.org" <lma@chromium.org>,
- "bleung@chromium.org" <bleung@chromium.org>,
- "support.opensource@diasemi.com" <support.opensource@diasemi.com>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>, "andy@kernel.org"
- <andy@kernel.org>, "paul@crapouillou.net" <paul@crapouillou.net>,
- "alexander.usyskin@intel.com" <alexander.usyskin@intel.com>,
- "andreas.werner@men.de" <andreas.werner@men.de>,
- "daniel@thingy.jp" <daniel@thingy.jp>,
- "romain.perier@gmail.com" <romain.perier@gmail.com>,
- "avifishman70@gmail.com" <avifishman70@gmail.com>,
- "tmaimon77@gmail.com" <tmaimon77@gmail.com>,
- "tali.perry1@gmail.com" <tali.perry1@gmail.com>,
- "venture@google.com" <venture@google.com>,
- "yuenn@google.com" <yuenn@google.com>,
- "benjaminfair@google.com" <benjaminfair@google.com>,
- "maddy@linux.ibm.com" <maddy@linux.ibm.com>,
- "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
- "npiggin@gmail.com" <npiggin@gmail.com>,
- "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
- "naveen@kernel.org" <naveen@kernel.org>,
- "mwalle@kernel.org" <mwalle@kernel.org>,
- "xingyu.wu@starfivetech.com" <xingyu.wu@starfivetech.com>,
- "ziv.xu@starfivetech.com" <ziv.xu@starfivetech.com>,
- "hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>,
- "mhiramat@kernel.org" <mhiramat@kernel.org>,
- "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
- "patches@opensource.cirrus.com" <patches@opensource.cirrus.com>,
- =?UTF-8?Q?Marek_Beh=C3=BAn?= <kabel@kernel.org>,
- Pengutronix Kernel Team <kernel@pengutronix.de>
-References: <20250305101025.2279951-1-george.cherian@marvell.com>
- <20250305101025.2279951-2-george.cherian@marvell.com>
- <irmewriceyzxr6jvbiao5vqrvelpftbjalmheodx5w63zi6k2y@dg3wlvs6zryd>
- <PH8PR18MB538122CE6706872B8A836A94C5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
-Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <PH8PR18MB538122CE6706872B8A836A94C5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
-
-Hi George,
-Hi Guenter,
-
-On 05.03.25 11:34, George Cherian wrote:
->> why is armada_37xx_wdt also here?
->> The stop function in that driver may not sleep.
-> Marek,
-> 
-> Thanks for reviewing.
-> Since the stop function has a regmap_write(), I thought it might sleep.
-> Now that you pointed it out, I assume that it is an MMIO based regmap being used for armada.
-> I will update the same in the next version
-
-Failure to add WDIOF_STOP_MAYSLEEP when it's needed can lead to
-kernel hanging. Failure to add an alternative WDIOF_STOP_ATOMIC
-would lead to the kernel option being a no-op.
-
-I think a no-op stop_on_panic (or reset_on_panic) is a saner default.
-
-Cheers,
-Ahmad
-
-> 
->>
->> Marek
-> 
-> -George
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="pFddjXJg41wFrn79"
+Content-Disposition: inline
+In-Reply-To: <93ce1511-53f6-42a3-b1a5-b6732105e87d@prolan.hu>
 
 
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
+--pFddjXJg41wFrn79
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Wed, Mar 05, 2025 at 11:50:27AM +0100, Cs=F3k=E1s Bence wrote:
+> This duplicates a lot of `mchp_tc_count_function_write()`. I'd much rather
+> have this code in a separate function called something like
+> `mchp_tc_setup_channels()`, that, depending on `priv->qdec_mode`, sets up
+> the BMR, CCR and CMRs, and then have both probe() and function_write() ca=
+ll
+> it. Or alternatively, have probe() call function_write() at the end, but
+> that's not as nice.
+
+Hi Bence,
+
+I agree, the mchp_tc_count_function_write() could be cleaned up and
+divided into separate functions dedicated to configuring each mode
+(perhaps regmap_update_bits() could be leveraged too), but that would be
+a much more invasive update. For the sake of making backporting easy to
+address this particular issue, I've kept the changes here localized to
+just the probe() function. Once the fix is merged, someone can try
+tackling a more proper refactor of the mchp_tc_count_function_write()
+code.
+
+William Breathitt Gray
+
+--pFddjXJg41wFrn79
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8gvNwAKCRC1SFbKvhIj
+K0q6AQCykzFD3ZbJXRdRLZExpEPQHYVKRM2NITaUgXmy4R80pQD/fjGX1DSzN4Z0
+gFKcYKH+sV0KGDTjDpoqS0rFmXIJjw0=
+=sVWK
+-----END PGP SIGNATURE-----
+
+--pFddjXJg41wFrn79--
 
