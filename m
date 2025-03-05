@@ -1,169 +1,159 @@
-Return-Path: <linux-kernel+bounces-547696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70014A50C78
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:27:04 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D3EA50C87
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75D0D18905C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:27:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 181213A8D3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AF1256C74;
-	Wed,  5 Mar 2025 20:26:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA0A25CC78;
+	Wed,  5 Mar 2025 20:27:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HaFsi8qD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qHLt63Lw"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F109425524D;
-	Wed,  5 Mar 2025 20:26:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D6925CC68
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:27:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741206406; cv=none; b=Sh4ZRxtQNWQrjnkU3q89MXTs2nJTU6Cz3EVHSjq7kkOHIo/11VPp8UXgB/goZzbj5U0qcjDf4uWVoRtL2zE5wtAwtCTfjTbp7zHQBxb9WgKG67zloT5Jhct3lOPP5oYI25SYKk/1WALXq0VYamj5vV5Cyo28tunGFR/FS53C5WQ=
+	t=1741206454; cv=none; b=PrcUx5/4H/nkt6NcONrpoLgAbJxMzZGkYXU++fnNXPQn7zZ2xnrwBogh0nSIjvQI43tend3UNIWulW28zsPhoBCJb09jnQfFYG2r2ivDtFrpLFd1sJM3tETfKb/JMaAldhbA6BUIGtwB8qJfJpvtDJuQCU965+gnGajukW8di1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741206406; c=relaxed/simple;
-	bh=0Ss8o6p9OpxjRooVXnCwtLf8ZlT4HLr0yLlZ/0eVlz8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DzJ2xdxaPuZkqsF4ZRZJbLdh8b7l7bhyWg5XbdNG89i2V9eht73WlaeUfLUj93NUm0WH50kzpjeBGwB9pS0Rb50ZCulTr90GvD5MaEEo+iVcUyvr3ODwD9Gkc2oREeXIOS6QJvjXpxhGSXUARJmMlph8CYK7o304tdKIwPMhN5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HaFsi8qD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 812D5C4CEE7;
-	Wed,  5 Mar 2025 20:26:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741206405;
-	bh=0Ss8o6p9OpxjRooVXnCwtLf8ZlT4HLr0yLlZ/0eVlz8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=HaFsi8qDt7Nu9vvTolC3BwFEy6Cw604CuOmHSUsiSwWULnMJ1wDKIBXqMMnsxzc7m
-	 UhcxXox3TYkpK2iQZ32R0Dfjt1l/V9wvq7LM3TE1PDCRLlyXw7+R7xkLMCArMhE74w
-	 DbRXj3kD5TtkAP26zozNViBiSO/Ldq/FJC7COoNVp+CzBHvJ8ndh8ZIGvmUOqinHB5
-	 WCeobUFcwybdT0dWF8VFHLkpPz6TRNtvdMpfjONuwNHWWJiWHUA3VLTkrVijUexuWJ
-	 WIYFWPy9eqMBW02UVKZHe/ip96/7gkP1j2hJ4bd0D2ZRCF6Rp8rrZ5Uv2gB4f2Vse1
-	 z3HLoBfRu65+g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 695AEC282DE;
-	Wed,  5 Mar 2025 20:26:45 +0000 (UTC)
-From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
-Date: Wed, 05 Mar 2025 21:26:39 +0100
-Subject: [PATCH 1/3] dt-bindings: spmi: Add Apple SPMI controller
+	s=arc-20240116; t=1741206454; c=relaxed/simple;
+	bh=OWgwLOrMv67MfxJKRE8m5Kf8eyoz3earbUPxJfEF97k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=hyFa8LboiLJ2VJ0+VZlfdW6V2xdYTmb6TPjiprvNjDNc/IE/J/NY9ALUkixo4+k0mlGiHEnHy/2ZOux8ynVuG1hVLtA69RxoWZaRmOERQaaZPYU+m9UQ6Xn11rv1vZQETfZQCQ/9xmOuqZA0E9dKRV8Sv0fNdPsyQuJJd2b2Is0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qHLt63Lw; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741206450;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=eVgORfieP46l47Y1ih2whfkZuPDhyjhKZ7HsIZ/P4wo=;
+	b=qHLt63LwDOhaaKkpSvpjMTafkL8FU+ocgC4c55iKIgyMeGtObQlJP9epa1dm8OCP8d8gOY
+	whBbL0oLMGC55muBrjOTs838M030O5QGwKLmMdrA109Lv7YNDMtUmTsapkEX+evQbRy51K
+	Ee7G8j7EWbhVgIwo7e0hMUdLaqeb9cg=
+From: Oliver Upton <oliver.upton@linux.dev>
+To: kvmarm@lists.linux.dev
+Cc: Marc Zyngier <maz@kernel.org>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Mingwei Zhang <mizhang@google.com>,
+	Colton Lewis <coltonlewis@google.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Janne Grunau <j@jannau.net>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: [PATCH v3 12/14] drivers/perf: apple_m1: Provide helper for mapping PMUv3 events
+Date: Wed,  5 Mar 2025 12:26:39 -0800
+Message-Id: <20250305202641.428114-13-oliver.upton@linux.dev>
+In-Reply-To: <20250305202641.428114-1-oliver.upton@linux.dev>
+References: <20250305202641.428114-1-oliver.upton@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-spmi-v1-1-c98f561fa99f@gmail.com>
-References: <20250305-spmi-v1-0-c98f561fa99f@gmail.com>
-In-Reply-To: <20250305-spmi-v1-0-c98f561fa99f@gmail.com>
-To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
- Alyssa Rosenzweig <alyssa@rosenzweig.io>, Stephen Boyd <sboyd@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- Sasha Finkelstein <fnkl.kernel@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741206403; l=2492;
- i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
- bh=KNCBkhvO52J1kQqvsaBk59bvzteIeD2Qg+hhwDOkSh8=;
- b=5o0WZ1+c0ucvdM6/lf9SLYn/flQjuj4eWosyV4AxUFxiT4FxuzkMZec1i08klmCfEx8z9wf/4
- ATiUt9Vffn2B0+YTjEQYhTnH48l4lXt5vU448Lw2lGvREW9KrEGKqpR
-X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
- pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
-X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
- auth_id=283
-X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
-Reply-To: fnkl.kernel@gmail.com
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Apple M* parts carry some IMP DEF traps for guest accesses to PMUv3
+registers, even though the underlying hardware doesn't implement PMUv3.
+This means it is possible to virtualize PMUv3 for KVM guests.
 
-Add bindings for the SPMI controller present on most Apple SoCs
+Add a helper for mapping common PMUv3 event IDs onto hardware event IDs,
+keeping the implementation-specific crud in the PMU driver rather than
+KVM proper. Populate the pmceid_bitmap based on the supported events so
+KVM can provide synthetic PMCEID* values to the guest.
 
-Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Tested-by: Janne Grunau <j@jannau.net>
+Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 ---
- .../devicetree/bindings/spmi/apple,spmi.yaml       | 56 ++++++++++++++++++++++
- MAINTAINERS                                        |  1 +
- 2 files changed, 57 insertions(+)
+ drivers/perf/apple_m1_cpu_pmu.c | 35 +++++++++++++++++++++++++++++++++
+ 1 file changed, 35 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spmi/apple,spmi.yaml b/Documentation/devicetree/bindings/spmi/apple,spmi.yaml
-new file mode 100644
-index 0000000000000000000000000000000000000000..6404af8adec52f4631200c48956f4c1695e88a39
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spmi/apple,spmi.yaml
-@@ -0,0 +1,56 @@
-+# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spmi/apple,spmi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
+diff --git a/drivers/perf/apple_m1_cpu_pmu.c b/drivers/perf/apple_m1_cpu_pmu.c
+index d6d4ff6da862..6be703619a97 100644
+--- a/drivers/perf/apple_m1_cpu_pmu.c
++++ b/drivers/perf/apple_m1_cpu_pmu.c
+@@ -12,6 +12,7 @@
+ 
+ #include <linux/of.h>
+ #include <linux/perf/arm_pmu.h>
++#include <linux/perf/arm_pmuv3.h>
+ #include <linux/platform_device.h>
+ 
+ #include <asm/apple_m1_pmu.h>
+@@ -174,6 +175,17 @@ static const unsigned m1_pmu_perf_map[PERF_COUNT_HW_MAX] = {
+ 	[PERF_COUNT_HW_BRANCH_MISSES]		= M1_PMU_PERFCTR_BRANCH_MISPRED_NONSPEC,
+ };
+ 
++#define M1_PMUV3_EVENT_MAP(pmuv3_event, m1_event)				\
++	[ARMV8_PMUV3_PERFCTR_##pmuv3_event]	= M1_PMU_PERFCTR_##m1_event
 +
-+title: Apple SPMI controller
++static const u16 m1_pmu_pmceid_map[ARMV8_PMUV3_MAX_COMMON_EVENTS] = {
++	[0 ... ARMV8_PMUV3_MAX_COMMON_EVENTS - 1]	= HW_OP_UNSUPPORTED,
++	M1_PMUV3_EVENT_MAP(INST_RETIRED,	INST_ALL),
++	M1_PMUV3_EVENT_MAP(CPU_CYCLES,		CORE_ACTIVE_CYCLE),
++	M1_PMUV3_EVENT_MAP(BR_RETIRED,		INST_BRANCH),
++	M1_PMUV3_EVENT_MAP(BR_MIS_PRED_RETIRED,	BRANCH_MISPRED_NONSPEC),
++};
 +
-+maintainers:
-+  - Sasha Finkelstein <fnkl.kernel@gmail.com>
+ /* sysfs definitions */
+ static ssize_t m1_pmu_events_sysfs_show(struct device *dev,
+ 					struct device_attribute *attr,
+@@ -558,6 +570,26 @@ static int m2_pmu_map_event(struct perf_event *event)
+ 	return armpmu_map_event(event, &m1_pmu_perf_map, NULL, M1_PMU_CFG_EVENT);
+ }
+ 
++static int m1_pmu_map_pmuv3_event(unsigned int eventsel)
++{
++	u16 m1_event = HW_OP_UNSUPPORTED;
 +
-+description: A SPMI controller present on most Apple SoCs
++	if (eventsel < ARMV8_PMUV3_MAX_COMMON_EVENTS)
++		m1_event = m1_pmu_pmceid_map[eventsel];
 +
-+allOf:
-+  - $ref: spmi.yaml#
++	return m1_event == HW_OP_UNSUPPORTED ? -EOPNOTSUPP : m1_event;
++}
 +
-+properties:
-+  compatible:
-+    items:
-+      - enum:
-+          - apple,t8103-spmi
-+          - apple,t6000-spmi
-+          - apple,t8112-spmi
-+      - const: apple,spmi
++static void m1_pmu_init_pmceid(struct arm_pmu *pmu)
++{
++	unsigned int event;
 +
-+  reg:
-+    maxItems: 1
++	for (event = 0; event < ARMV8_PMUV3_MAX_COMMON_EVENTS; event++) {
++		if (m1_pmu_map_pmuv3_event(event) >= 0)
++			set_bit(event, pmu->pmceid_bitmap);
++	}
++}
 +
-+required:
-+  - compatible
-+  - reg
+ static void m1_pmu_reset(void *info)
+ {
+ 	int i;
+@@ -618,6 +650,9 @@ static int m1_pmu_init(struct arm_pmu *cpu_pmu, u32 flags)
+ 	cpu_pmu->reset		  = m1_pmu_reset;
+ 	cpu_pmu->set_event_filter = m1_pmu_set_event_filter;
+ 
++	cpu_pmu->map_pmuv3_event  = m1_pmu_map_pmuv3_event;
++	m1_pmu_init_pmceid(cpu_pmu);
 +
-+patternProperties:
-+  "pmu@[0-9a-f]$":
-+    type: object
-+
-+    description:
-+      PMIC properties, which are specific to the used SPMI PMIC device(s).
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/spmi/spmi.h>
-+
-+    spmi@920a1300 {
-+        compatible = "apple,t6000-spmi", "apple,spmi";
-+        reg = <0x920a1300 0x100>;
-+        #address-cells = <2>;
-+        #size-cells = <0>;
-+
-+        pmu@f {
-+            reg = <0xf SPMI_USID>;
-+            /* PMIC-specific properties */
-+        };
-+    };
-diff --git a/MAINTAINERS b/MAINTAINERS
-index 8e0736dc2ee0e33544fa373a4978b7dae18c040c..271ff8110df83c2d4fe7fbbfffc0a72259460bc5 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -2236,6 +2236,7 @@ F:	Documentation/devicetree/bindings/pci/apple,pcie.yaml
- F:	Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
- F:	Documentation/devicetree/bindings/power/apple*
- F:	Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
-+F:	Documentation/devicetree/bindings/spmi/apple,spmi.yaml
- F:	Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
- F:	arch/arm64/boot/dts/apple/
- F:	drivers/bluetooth/hci_bcm4377.c
-
+ 	bitmap_set(cpu_pmu->cntr_mask, 0, M1_PMU_NR_COUNTERS);
+ 	cpu_pmu->attr_groups[ARMPMU_ATTR_GROUP_EVENTS] = &m1_pmu_events_attr_group;
+ 	cpu_pmu->attr_groups[ARMPMU_ATTR_GROUP_FORMATS] = &m1_pmu_format_attr_group;
 -- 
-2.48.1
-
+2.39.5
 
 
