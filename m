@@ -1,131 +1,99 @@
-Return-Path: <linux-kernel+bounces-545894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5459DA4F336
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 037EFA4F338
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF2D188E7D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:06:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30CD116ED8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:06:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102DF4AEE0;
-	Wed,  5 Mar 2025 01:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC23F1519B8;
+	Wed,  5 Mar 2025 01:05:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BS4ZOw+o"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vTBHuufH"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124D712CDBE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:05:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034FF13D26B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741136742; cv=none; b=piBvYvAeki4+AXnudUYL6qggaJVhg2SfTDu0Km0FyLRODuVJ7y/Q/Iy3B2WANKN3vVITgvBNSSoTun1IUpQjpdSHxD2/7+tRXG0wh4g4INb/c7e9b82PLik93AxQ+c1DeTSPU1PVJsdsQZQjSSJ3646KA4OtsChQ15sADfajFGQ=
+	t=1741136748; cv=none; b=mY7dMTaHddMcgGlxA51q7GnjEjr7+K/sW/YQNeorDln4SQBF/0kyWSMX3YklciYvKjLN/DjCONfSw3huDsRZNfFGAoj+yW6ZRfwGxVihlt7dabWrLqMxtrWfQgXYFZY7dSKcUu2rFOVzf2EzWfZ/9udnS1c9mPpo8F5d2VGERAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741136742; c=relaxed/simple;
-	bh=qTU8K2PWIG1V1RbO4Ak1BhgHZu1oSVP5mINIUP9TCOQ=;
+	s=arc-20240116; t=1741136748; c=relaxed/simple;
+	bh=+MuQymkPvSHXZsgm1lXYQi7Jvrv7xbuEriYb3Z+IedU=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=fRq2CMIUJBznZvYgBM6l0PgzLuHwJLNy+XMiRjkVgxavHZv6owez01Q/WY2m2zAQsy0uagd6T9amUVDTFwBjvt91qk6k/uwf7iupsTgE/WnM8VnQT/4d8TBVFw2jKIcu55TKGczPOCrQUT49wRUICQl7k9BMOzzX08Gbrg/P9xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BS4ZOw+o; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=DIDkA1oZa/+WAr4D4560edLbmR5NYc0MbqnN30zIQe6fKozMX3zCMp5t2GJ8g0LeFS7WAvt0LYhwswoDmAim35NHB5dugewIETyXTHYqi5z65oMS556gGa3UMbKMehBfNMZIdj5NJ1LYQD6wyHLHIGQVLkUHeToYy9LqtfQCpMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vTBHuufH; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2feda472a4aso6602133a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:05:40 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fe8de1297eso670200a91.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:05:46 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741136740; x=1741741540; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741136746; x=1741741546; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=BR5XnJZFVFkwGJLxiaHHW5HYcb+++VvFcuEr2xoZe5k=;
-        b=BS4ZOw+olRvQCKOkqlXhRaf9tYiWaAeaOwqkp+IxhurG3IbwS5QMaMmrPuPNMMTL+1
-         Ahss6t0e/1M2KhveNTb+IPdVbvfgzDrAXwTG1HjlLfuc0aVuQwfBHUvhFGfWl/rSur2F
-         OJ0i0DVMZTGgp9LDtN4OKF8mMoP4v51hm+pBekpJSRX8ZOy6LgnGgWGYF7SgyMnqfTDE
-         6nlZPoLXiR9WwTuF6Kf60RHftv0jPmKJsCs08Mhe2aoecV7Ju/Qw8az5y47CDqn6VbGG
-         LWiXJ/sPGCN4wR+0SoJlmF7AA+ISxc2KWK19+uESzcKHgCyhTZv4vqkP7MPuh5iCAufu
-         n3SQ==
+        bh=NNX6vH12pYMK3VyoT3q3MRD9hVixADS4zVQV9SN8avY=;
+        b=vTBHuufHoDkxBi+/JeiCfMhqKI75H46nIcGPMxi+Ku1QURbUPerdG4DoT/1cv+ZY4L
+         /oyTOgWmfqBRk8S0ydjbBTBymhWvB3yFsKkNPNoBz4v9/CRJK9q1J2DJ2uAd5EN+m/pp
+         NpQC9pJdkriCZMhQftU6WCzpmfw8qiyJ256m6MSfpjPHHFUvSCNCB+nnFeaHDN03hWGo
+         ioIfeiunLXCunkFl1g2wb1o1DTSiTRz/SzA75xFj4PdqXtk0aSCqpsXDyeneK0T+iNjv
+         /dILGDQjPl+H5p7fTQvpSX183rF/LoUGcK0iFnhOSqDcfA52XhLmgg+Tk/kFb/ZQgekz
+         kA0g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741136740; x=1741741540;
+        d=1e100.net; s=20230601; t=1741136746; x=1741741546;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=BR5XnJZFVFkwGJLxiaHHW5HYcb+++VvFcuEr2xoZe5k=;
-        b=TkdSXrhlHz8J0Ff/N8u7CUPupoC+DrOZoZOnYAw7lD19KOI6UQU3ntgZOVRRXLEaXo
-         B+RjBv7XGgHt9wADpKRU/xk3VJ4MSuvc5pmrgrs9TdByDybfkCw1WvcqfjD0V72peZ4l
-         gNlZUSwQkUeiAhph23GUOfPKWK8E05Zn1KWItil9BPAd+BGQ2vBaU4aRPQN9JBc0WTTJ
-         NY+lQe9OnwYJikhP5DBHVLetT6IcRJiIr/ioKqMkLCqnVL8kncDlYTKsRRQapTfV7j87
-         bDLffGF8E4/SkxEjq9pnzTTBSSoXafgVVFPcFf8Fn8HxCAhvoEqTppL5WJixbZy9btyB
-         SF6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXSeslEiho6zvvdJ8k7uZjiNn7dNCRiVUNn3W6+p93rLAHOSKXleImHAFPFovu3Oy9kRBEwZdzg1Q4EpFg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0dWxW9zThRcW+loTY6WGUTx7ZSlbiEkwvsTxZfHosLqcmGKr8
-	T2Jrfku/lzBbXPKOqfH99v+Ppg2DtuR+dFChWIiodpYjFDCo/iL7yBgi31M6aXbf3WOLacQLJeO
-	ENw==
-X-Google-Smtp-Source: AGHT+IEgPfc6N3fp4PBiuSUOF/fXueFSpK+l5s5ONQlc7a3R9W7NXupP1/iDjCYnKuCRn/mgvD7uIz9BV8A=
-X-Received: from pjbnb1.prod.google.com ([2002:a17:90b:35c1:b0:2f7:d453:e587])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:258b:b0:2ee:f80c:6889
- with SMTP id 98e67ed59e1d1-2ff49856dd9mr2501980a91.33.1741136740431; Tue, 04
- Mar 2025 17:05:40 -0800 (PST)
-Date: Tue,  4 Mar 2025 17:05:12 -0800
-In-Reply-To: <20250227012541.3234589-1-seanjc@google.com>
+        bh=NNX6vH12pYMK3VyoT3q3MRD9hVixADS4zVQV9SN8avY=;
+        b=BHtPgy1OpAUaG6oYwa65Pt+wJJdK+ZZm8fAeY5BPYA0REGwrnqtQJZeaLhllER1oi/
+         qB3lv1ont/2vhjUX1GUzVwIYgcdRc/TJ3sfjEr96RB18morNahhenximTBFvyf93K0nf
+         nmxQSP3uPXaISqYNr09jWXzW8zPpvuVIsmV45ngvBxACd6nNwUFOQ/4Eqm/pfvrZHMe3
+         bObgh8Fm8SsAiTwiOiSSuyWIVzHAnKYKLCMc3wiY94CLM6pHy1oQjKLMo+TWRETxAGZQ
+         GRWnSkeyG8BXih8T6jY7Cm0LVRPUS7M14b7Us46YCQLBTyBs0hhk+AS42MNA/4f4r9Sg
+         RxWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWgtsRPAOfESMa3U3G1wSFMNpVWE09opJdX7BkYqg9zc90Jo636enhderjHA2COhu4CdRf1fNs/n4slTVw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzUXURRhIbYnRNriIAB7pkGj0MLt9G8mPNCJLpCHdpUGJA+sNUp
+	rWEHTlTu/zqo52cocqyMz22k5m4nE6OA18BJS799t3I9qOJYdH4/6LzgnFJUGrqGBfd3ouxEBDl
+	4Dw==
+X-Google-Smtp-Source: AGHT+IEQQzqVhfJxOgHOkMbN4KViM02emhSFsqxk/o7BP+xd9QQa4Wlrdd5/eK4O2MhvjeCbxbYdiDp43lE=
+X-Received: from pjbph16.prod.google.com ([2002:a17:90b:3bd0:b0:2f9:e05f:187f])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5684:b0:2fb:fe21:4841
+ with SMTP id 98e67ed59e1d1-2ff33b937f1mr9676522a91.8.1741136746296; Tue, 04
+ Mar 2025 17:05:46 -0800 (PST)
+Date: Tue,  4 Mar 2025 17:05:14 -0800
+In-Reply-To: <20250224174156.2362059-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250227012541.3234589-1-seanjc@google.com>
+References: <20250224174156.2362059-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <174101578385.3894748.13921615638949593871.b4-ty@google.com>
-Subject: Re: [PATCH v2 00/10] KVM: SVM: Attempt to cleanup SEV_FEATURES
+Message-ID: <174078620474.3857606.12481651463517277322.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: x86: Always set mp_state to RUNNABLE on wakeup from HLT
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Alexey Kardashevskiy <aik@amd.com>, 
-	Pankaj Gupta <pankaj.gupta@amd.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="utf-8"
 
-On Wed, 26 Feb 2025 17:25:31 -0800, Sean Christopherson wrote:
-> Try to address the worst of the issues that arise with guest controlled SEV
-> features (thanks AP creation)[1].  The most pressing issue is with DebugSwap,
-> as a misbehaving guest could clobber host DR masks (which should be relatively
-> benign?).
-> 
-> The other notable issue is that KVM doesn't guard against userspace manually
-> making a vCPU RUNNABLE after it has been DESTROYED (or after a failed CREATE).
-> This shouldn't be super problematic, as VMRUN is supposed to "only" fail if
-> the VMSA page is invalid, but passing a known bad PA to hardware isn't exactly
-> desirable.
+On Mon, 24 Feb 2025 09:41:56 -0800, Sean Christopherson wrote:
+> When emulating HLT and a wake event is already pending, explicitly mark
+> the vCPU RUNNABLE (via kvm_set_mp_state()) instead of assuming the vCPU is
+> already in the appropriate state.  Barring a KVM bug, it should be
+> impossible for the vCPU to be in a non-RUNNABLE state, but there is no
+> advantage to relying on that to hold true, and ensuring the vCPU is made
+> RUNNABLE avoids non-deterministic behavior with respect to pv_unhalted.
 > 
 > [...]
 
-Thanks for the reviews and testing!
+Applied to kvm-x86 misc, thanks!
 
-Applied:
-
-[01/10] KVM: SVM: Save host DR masks on CPUs with DebugSwap
-        https://github.com/kvm-x86/linux/commit/b2653cd3b75f
-[02/10] KVM: SVM: Don't rely on DebugSwap to restore host DR0..DR3
-        https://github.com/kvm-x86/linux/commit/807cb9ce2ed9
-
-to kvm-x86 fixes, and:
-
-[3/10] KVM: SVM: Refuse to attempt VRMUN if an SEV-ES+ guest has an invalid VMSA
-       https://github.com/kvm-x86/linux/commit/72d12715edcd
-[4/10] KVM: SVM: Don't change target vCPU state on AP Creation VMGEXIT error
-       https://github.com/kvm-x86/linux/commit/d26638bfcdfc
-[5/10] KVM: SVM: Require AP's "requested" SEV_FEATURES to match KVM's view
-       https://github.com/kvm-x86/linux/commit/745ff82199b1
-[6/10] KVM: SVM: Simplify request+kick logic in SNP AP Creation handling
-       https://github.com/kvm-x86/linux/commit/c6e129fb2ad2
-[7/10] KVM: SVM: Use guard(mutex) to simplify SNP AP Creation error handling
-       https://github.com/kvm-x86/linux/commit/46332437e1c5
-[8/10] KVM: SVM: Mark VMCB dirty before processing incoming snp_vmsa_gpa
-       https://github.com/kvm-x86/linux/commit/e268beee4a25
-[9/10] KVM: SVM: Use guard(mutex) to simplify SNP vCPU state updates
-       https://github.com/kvm-x86/linux/commit/5279d6f7e43d
-[10/10] KVM: SVM: Invalidate "next" SNP VMSA GPA even on failure
-       https://github.com/kvm-x86/linux/commit/4e96f010afb2
-
-to kvm-x86 svm.
+[1/1] KVM: x86: Always set mp_state to RUNNABLE on wakeup from HLT
+      https://github.com/kvm-x86/linux/commit/2a289aed3fcd
 
 --
 https://github.com/kvm-x86/linux/tree/next
