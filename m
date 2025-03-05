@@ -1,94 +1,145 @@
-Return-Path: <linux-kernel+bounces-547206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58687A5042A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:09:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3F54A5042E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:10:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00F37173DD5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:09:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 742FE3A60B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:09:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40EC2505DF;
-	Wed,  5 Mar 2025 16:09:22 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF8318FC90;
-	Wed,  5 Mar 2025 16:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7582512C9;
+	Wed,  5 Mar 2025 16:09:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OqxuMXdw"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 275A8250BE1;
+	Wed,  5 Mar 2025 16:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741190962; cv=none; b=n077AEagBZDMSaw7pePJ6OyAkItq1BSSJA8PhtaKlY9CVfPpMp6IRFQtTQN7avLEMQcovGDSh3rTN3ZoqdZYTOpTOtOreUXgkSOg9aXRVHqK6p8p5waxezAMEltrcjO/G8DmHXbfmWn0ld8RIMvGOyGLgLd9AN1ckGRALZ0eiUQ=
+	t=1741190976; cv=none; b=MbOAB+Y8UyGbpe23xRZPsq8SvH18fVcSAqFB4r5Eofu4BxPYTxwnXzpB6tP/vWNUmPuBj5PDoyHjU6EBz6McZRpP/t6wRNcFXtfp8fZrFYUJmH54GTVpR8Udkp35HXpLtt1+OfewqE6XjNEvwcpnlVrLQE5bWzFwhPbnK0/RubY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741190962; c=relaxed/simple;
-	bh=QlRhJpb/e5hXiFz0CcYu2ha8VdnvKoFkYUAtASfFzTg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kwpXfjv4LndjiH+LB1suAEFlayUW2WIXoyPTxc3lXDV6SErX4XR/6yiVoiSQNFQFbJbpX+nIgiBPLueiV6kL3iRvm+0IUJDSVgM6x7mWYnXm92rVG4UivfYeq3O8x8H9X3Z/MJbpTp7EQevKmWmCKW0RWv/VXaGoNjKRSXUFMB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 93949FEC;
-	Wed,  5 Mar 2025 08:09:32 -0800 (PST)
-Received: from [10.122.49.92] (unknown [10.122.49.92])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F38FE3F5A1;
-	Wed,  5 Mar 2025 08:09:18 -0800 (PST)
-Message-ID: <d1270a11-6587-432e-9ea5-5fb3b4ca559a@arm.com>
-Date: Wed, 5 Mar 2025 10:09:18 -0600
+	s=arc-20240116; t=1741190976; c=relaxed/simple;
+	bh=GKmV83MRa5t4NkQJ3esvrmWFVjgUKTVYEu/IX/vnRuE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7Xea7VQ85j4FQf8Omid1dhnQVOak95lwWUmgWp0IP3T2FNDpTQjQo9kxJEeOm2Rg8DIBxe8IqECk9QtTSa0Aj3DpBh3KbIVCmc25jNDGlhyzW8wpLY+odaCRVX/QwuJ+6FRUSQeKqUL1BOfgIEuujQ1BqiahrRbsDcEstlgTM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OqxuMXdw; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2234e4b079cso130383205ad.1;
+        Wed, 05 Mar 2025 08:09:34 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741190974; x=1741795774; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=W3ZvhVCBXJoVmMj/QDYwjnvrQ0tg00IV0Ab5gY5yAEQ=;
+        b=OqxuMXdws3OWw0P7ds8BSRPa+IXzPOrlywOJ5fnHh9XFfwyey7iYNq0pmQi40j3YOg
+         cMHvRwyw9vnKf5nWBnYiv3X58jPnjRlA/hUaJacuD/fDCIke42ZBT8R2oTyk9EwQdVHR
+         C7zGSy9vlHhK9JzWRQETywUlUndgiR8hzmp9Bncrk3uqiB9NhJm0WgRaWEa2lpo4lRG1
+         GRczrWTtBxdy7g7IzAjzLir9heAj6f/mPESiY69znZhG8b40H9tMd95tuSSD2dRZsy4I
+         oRRejS+BdMe1/h0BdHaKV9N7CCslUMMafhNmHf9WaMbAXUw7IeXMXF4Zdh/fZql1JPKa
+         5AWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741190974; x=1741795774;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=W3ZvhVCBXJoVmMj/QDYwjnvrQ0tg00IV0Ab5gY5yAEQ=;
+        b=V4DQBnbMA7lbsnMjGkMeGN9FDFwfiY9+y66qgGZTgNKUWURt3UYrMkrnz+1OYiso1F
+         GRFxYTPYd11G4vKduB/rR675dgCaXcasHeH9KVzpro8CiLrEKFErzMotbbQKQmzTszQj
+         1gtLuKtlHFnWlV/KCJ3hhHmEAdJpSNwYUqayxv4hq5B0/QzOq6I6PJUlaRZuoxyrf/jh
+         e74CUISWav9pl3ugu48MqObrXcZbbBNDFST8vQmj/blx2ovx9A3tI02xHbC3WHDBxyhb
+         wLZXSk4GO/1oykdewwFNd8J/zU8kcw/jv0xgqsX9MAfIi0hZOI5kwC17nIhvNMU8pxmO
+         XLSw==
+X-Forwarded-Encrypted: i=1; AJvYcCUFCFGEt2zPXi5VeeQcxZ3UYVwi3KWlM6l2ukecqb/EPTnTli7++seLoy/XS+ITnr99GeA9aj2Q+wqgZgLD@vger.kernel.org, AJvYcCVOcdgU4dArYOur+EnPeCUY6MTvj0Vjo5f+5YT+hbLUrq3Ty11ZiFHEnY5dmO2yJ3KXPBO6fVeJiAkkPpLh@vger.kernel.org, AJvYcCWIey76QEiPHrQR2lziWToNMPtkR1xzvW3yGGFgmLXMdVRcoeQ1JaZbIlMrHQ30CV0I+tw=@vger.kernel.org, AJvYcCXTZTepMbqRvuTAqBGUIr9cMLIlZ9cyMNixdHCz1UNrqrhrwr7flsTSdImA1JfRtnip5mLJmXfS@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFLGYplRrJG7d08HxQ2f7tKBBGYrphIN1iFBI9UB1qm0KMTrtG
+	5Prh8E2L6awGZj3WdjK2aYOF7A8hpCWCEwE5XmVU/AWgo0I+3R6v
+X-Gm-Gg: ASbGncvqOViXB9qNXA48o2z9y5eXjg6WLoEFGFrLhpxTePPuXR+tydL+IUDV7f6MnPt
+	9BBINGAoIMqf7+uBm9ICjUn4YmEjrOiwvvEO0eMhzg6SNy1j6ml26QsW/3bStisLG807E8D3J6A
+	gO75hXsgNMT8IGCcpNq1tJkIulPvSs5Z1OLGRkQb3cKwL2nB0iiy8D79o9MAE/bzPykee78N/Nx
+	ThvQCjpBU0Fm2igNfPYFgOmtpCcS6uXAhKILVhQQxacyA8qDUBpyFoaGuqcr9frDWiAVqHborjq
+	mnBYaTOCV6pfoJuDoY/1WslaI+oNZQkfTURDNm1X5GWgluvoddFJHM/zbVIuHz/kqA==
+X-Google-Smtp-Source: AGHT+IECEBns91C5EwHlCoDWNpwg07LFYchP/SxyUo4u1fqpcLi7anWcXaFI4dnLEJw/KAKqFZuNdw==
+X-Received: by 2002:a05:6a00:3ccd:b0:736:5f75:4a44 with SMTP id d2e1a72fcca58-73682cc409dmr5359182b3a.22.1741190972845;
+        Wed, 05 Mar 2025 08:09:32 -0800 (PST)
+Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:2::])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7358603f4a2sm10921810b3a.173.2025.03.05.08.09.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 08:09:32 -0800 (PST)
+Date: Wed, 5 Mar 2025 08:09:30 -0800
+From: Bobby Eshleman <bobbyeshleman@gmail.com>
+To: Stefano Garzarella <sgarzare@redhat.com>
+Cc: "Michael S. Tsirkin" <mst@redhat.com>, Jakub Kicinski <kuba@kernel.org>,
+	Jason Wang <jasowang@redhat.com>, davem@davemloft.net,
+	Stefan Hajnoczi <stefanha@redhat.com>, linux-kernel@vger.kernel.org,
+	Jorgen Hansen <jhansen@vmware.com>, kvm@vger.kernel.org,
+	virtualization@lists.linux-foundation.org,
+	linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 0/3] vsock: support network namespace
+Message-ID: <Z8h3OsmQxL3e48ZJ@devvm6277.cco0.facebook.com>
+References: <20200116172428.311437-1-sgarzare@redhat.com>
+ <20200427142518.uwssa6dtasrp3bfc@steredhat>
+ <224cdc10-1532-7ddc-f113-676d43d8f322@redhat.com>
+ <20200428160052.o3ihui4262xogyg4@steredhat>
+ <Z8edJjqAqAaV3Vkt@devvm6277.cco0.facebook.com>
+ <20250305022248-mutt-send-email-mst@kernel.org>
+ <v5c32aounjit7gxtwl4yxo2q2q6yikpb5yv3huxrxgfprxs2gk@b6r3jljvm6mt>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/5] Add support for the TPM FF-A start method
-To: Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-integrity@vger.kernel.org, peterhuewe@gmx.de, sudeep.holla@arm.com,
- rafael@kernel.org, lenb@kernel.org, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250217224946.113951-1-stuart.yoder@arm.com>
- <Z8SypwnbJR4g8Bho@kernel.org> <20250303165535.GT5011@ziepe.ca>
- <3b9141a372e9e787089a28beeb4bf11d5a144553.camel@kernel.org>
-Content-Language: en-US
-From: Stuart Yoder <stuart.yoder@arm.com>
-In-Reply-To: <3b9141a372e9e787089a28beeb4bf11d5a144553.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <v5c32aounjit7gxtwl4yxo2q2q6yikpb5yv3huxrxgfprxs2gk@b6r3jljvm6mt>
 
-
-
-On 3/4/25 10:02 AM, Jarkko Sakkinen wrote:
-> On Mon, 2025-03-03 at 12:55 -0400, Jason Gunthorpe wrote:
->> On Sun, Mar 02, 2025 at 09:33:59PM +0200, Jarkko Sakkinen wrote:
->>> WARNING: line length of 102 exceeds 100 columns
->>> #764: FILE: drivers/char/tpm/tpm_crb.c:821:
->>> +                              FW_BUG "TPM2 ACPI table has wrong
->>> size %u for start method type %d\n",
->>
->> Just ignore that, it is an error in checkpatch. Strings are required
->> to
->> be long. I suspect FW_BUG confused it.
+On Wed, Mar 05, 2025 at 10:30:17AM +0100, Stefano Garzarella wrote:
+> On Wed, Mar 05, 2025 at 02:27:12AM -0500, Michael S. Tsirkin wrote:
+> > On Tue, Mar 04, 2025 at 04:39:02PM -0800, Bobby Eshleman wrote:
+> > > I think it might be a lot of complexity to bring into the picture from
+> > > netdev, and I'm not sure there is a big win since the vsock device could
+> > > also have a vsock->net itself? I think the complexity will come from the
+> > > address translation, which I don't think netdev buys us because there
+> > > would still be all of the work work to support vsock in netfilter?
+> > 
+> > Ugh.
+> > 
+> > Guys, let's remember what vsock is.
+> > 
+> > It's a replacement for the serial device with an interface
+> > that's easier for userspace to consume, as you get
+> > the demultiplexing by the port number.
+> > 
+> > The whole point of vsock is that people do not want
+> > any firewalling, filtering, or management on it.
+> > 
+> > It needs to work with no configuration even if networking is
+> > misconfigured or blocked.
 > 
-> Yep, as its own issue I think you are right.
+> I agree with Michael here.
 > 
-> I also noticed couple of additional style issues not picked
-> by checkpatch:
+> It's been 5 years and my memory is bad, but using netdev seemed like a mess,
+> especially because in vsock we don't have anything related to
+> IP/Ethernet/ARP, etc.
 > 
-> 	if (rc == -ENOENT) {  // FF-A driver is not available yet
-> 		rc = -EPROBE_DEFER;
-> 	}
-> 
-> I.e. extra curly braces and "//" comment.
-> 
-> Should be:
-> 
-> 	/* If driver is not available yet, request probe retry: */
-> 	if (rc == -ENOENT)
-> 		rc = -EPROBE_DEFER;
+> I see vsock more as AF_UNIX than netdev.
 > 
 
-I will respin and fix this.
++1, I also agree with this.
 
-Thanks,
-Stuart
+For reference I added netdev to vsock before [1] to use qdisc and at
+least from the qdisc perspect the juice wasn't worth the squeeze (tldr:
+only pfifo_fast worked because vsock can't recover when other qdiscs silently
+drop packets).
+
+[1] https://lore.kernel.org/all/5a93c5aad99d79f028d349cb7e3c128c65d5d7e2.1660362668.git.bobby.eshleman@bytedance.com/
+
+Best,
+Bobby
 
