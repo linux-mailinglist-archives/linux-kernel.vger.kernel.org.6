@@ -1,124 +1,149 @@
-Return-Path: <linux-kernel+bounces-547211-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A08F5A5043E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C969A5043F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F7A189702F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:10:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7027817466E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1383A250C0B;
-	Wed,  5 Mar 2025 16:10:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428CF250BF3;
+	Wed,  5 Mar 2025 16:11:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZivWpuY3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dJTQ41Fe"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6461A24A07A;
-	Wed,  5 Mar 2025 16:10:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9FF24CEF1;
+	Wed,  5 Mar 2025 16:11:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741191034; cv=none; b=aKngFtcsjFAAs5d5vhHEUpzzF5VFY44G8DomPg2QtnXhGp4oPh34rWRhXXzVNHCZ/iAf+4fVaFaM3Wi/jlKaoj2dMKmyQGRZJSOZgabsU36iGzJUnVX0Qn510fBmC/kqVA4M4qB+/zsoj7nWlK8+vE+V4NH2+63iEi4xzgojf50=
+	t=1741191083; cv=none; b=WuKKOzph4HYj832ZI0kw0FhSzoS+cPLmLkBC2FhXgTajSUpU8AstcmAiL5ELjsaZRVldDxo6r/m+HhJOD1E6sY5vDSDCrLjSCvh/sKJ78g2cS4lYAx/BzS8ko7ft85Mzz9ACzi4cjF1DP5/kwN6IVI8T38NE2NF0cKVAFz4q1xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741191034; c=relaxed/simple;
-	bh=NuzZ1W9S6mA+Pg9tyI3RTRMxgpOiMuBenFty3J3Rgy0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HGRIMQMsqfzCV/1Ose137SC5chhcwm3DUyAzQAkPnziFsNMaRU6SkilHs7/Fxgnf6aUJdOyxQh+GOHc73ptnQZSnBjnRnEZ8znO2LYeEISNvga0Vh4z08XFlZqLDAENhdaP3Xj73b7liQJn2+qMsKTKBxKNIWoaMGA902oonx4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZivWpuY3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3ADC4CED1;
-	Wed,  5 Mar 2025 16:10:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741191033;
-	bh=NuzZ1W9S6mA+Pg9tyI3RTRMxgpOiMuBenFty3J3Rgy0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZivWpuY3laRUWhZhuByMXRUc0TlOvrWH6dbQtLBoUUzxX3y1vXxgcu5EcPnk28XS3
-	 T/VeBVjXXeSERqjnC9t9XjOFinEqgQDbwSO1m+6x3ft+ZomOY87LxUHneFm/LcPpst
-	 luumKC2HBXDUKd5MMbWjMj0lBAspP3PMl7N7/YVOT1wDTWihzajfExwmKwJAX+LVNR
-	 OdX24Tvo+BKFl0/u7jAcqrmEtArZMiuZd3l1jc1ewagg9kMwYv2AQz7N1ta6b1t9y4
-	 Nuqv8y4iGKh0bbt+QzcFRG+3NJLVhgmjAP7UxP7MKovwFph+jzVdQNGCqKkEsz0gOd
-	 0nwZVkRU0p5pw==
-Date: Wed, 5 Mar 2025 10:10:32 -0600
-From: Rob Herring <robh@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>
-Subject: Re: [PATCH v3 1/2] dt-bindings: thermal: generic-adc: Add optional
- io-channel-cells property
-Message-ID: <20250305161032.GA2068051-robh@kernel.org>
-References: <20250303122151.91557-1-clamor95@gmail.com>
- <20250303122151.91557-2-clamor95@gmail.com>
- <08f305fa-0dbe-4ed9-bec5-cf8b5bbecfdb@arm.com>
- <CAPVz0n0G+0_f3MONV0Y-tYAb1KOwkUNiY2Pms8CZ6ZGtxRmFFA@mail.gmail.com>
+	s=arc-20240116; t=1741191083; c=relaxed/simple;
+	bh=6QXaCKQRsaurIu3iwN0Cxq8aCQHGXHhdeI3bUW8oYCw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=W7W8nWEKi3OYf51Yx2J1Idf/M9D84nGjfeP6/E7HJ83CW2ceIgq6ezXujwvqo7ckzvNPL/l76eKH+aevYopuZTjN3hUKIuCAEOYpjOAOMflaBFPamjcWkyOD2qBXzsNC7fSuATvRabMYhNz+nQ6v1H4iQhTNvV7rc1iZ7/ZEO+Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dJTQ41Fe; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741191082; x=1772727082;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=6QXaCKQRsaurIu3iwN0Cxq8aCQHGXHhdeI3bUW8oYCw=;
+  b=dJTQ41FeiUK+xwmslNZE62onYlONI8FjWnTOFHSmRMkn53kKFWVeZgzU
+   C6ctLNVvk9eyMH838HGVscJn2VQbyNKKakfoN7fwKnAvO0Akg+DmlFqfP
+   1Rg9prGq8wTyFXG+s//YF3PixEtlbKMtLbM9VRw8sODrHh8XhXt0nr2Ye
+   ZY0cktGKaM0fEEeTr+91vTYNW2ejbpc3VSnopMZDnxnabwTwLNB2suik+
+   toJ2M6jHyuAeLEAdOULZNO0wUlc6eP/IHrPPcKUgZIvk6CzRIWUXFrSUE
+   7GUO+TbQbzNFNX7iQGFkk6iBriDjojYNHBGQwlRmVWfM13Yr7k+l1t2ww
+   Q==;
+X-CSE-ConnectionGUID: BUTiOH1+Se6FbpGsg/UHKg==
+X-CSE-MsgGUID: ZBzKnLB2RIiVMXiSQ+qYZQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45818928"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="45818928"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:11:21 -0800
+X-CSE-ConnectionGUID: QepDo20IRPG2e/dHSgWkUw==
+X-CSE-MsgGUID: bjAmI4rWQTeYYKH4z7qinQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="141972117"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.196]) ([10.125.109.196])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:11:20 -0800
+Message-ID: <293158f0-d36f-4569-bad3-6be1db938457@intel.com>
+Date: Wed, 5 Mar 2025 08:11:40 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPVz0n0G+0_f3MONV0Y-tYAb1KOwkUNiY2Pms8CZ6ZGtxRmFFA@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] perf/x86/intel/bts: allocate bts_ctx only if necessary
+To: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <olsajiri@gmail.com>
+Cc: lirongqing <lirongqing@baidu.com>, peterz@infradead.org,
+ mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
+ mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+ irogers@google.com, kan.liang@linux.intel.com, tglx@linutronix.de,
+ bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250122074103.3091-1-lirongqing@baidu.com>
+ <Z8hV3WYuHxHBNoNV@krava> <Z8hXsvloKEb7ia3V@krava>
+ <d70b6f8d-0e86-4814-bf05-4c3d9acd313d@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
+Content-Language: en-US
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <d70b6f8d-0e86-4814-bf05-4c3d9acd313d@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 05, 2025 at 12:03:20PM +0200, Svyatoslav Ryhel wrote:
-> ср, 5 бер. 2025 р. о 12:00 Lukasz Luba <lukasz.luba@arm.com> пише:
-> >
-> >
-> >
-> > On 3/3/25 12:21, Svyatoslav Ryhel wrote:
-> > > This implements a mechanism to derive temperature values from an existing ADC IIO
-> > > channel, effectively creating a temperature IIO channel. This approach avoids adding
-> > > a new sensor and its associated conversion table, while providing IIO-based temperature
-> > > data for devices that may not utilize hwmon.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >   .../devicetree/bindings/thermal/generic-adc-thermal.yaml      | 4 ++++
-> > >   1 file changed, 4 insertions(+)
-> > >
-> > > diff --git a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
-> > > index 12e6418dc24d..4bc2cff0593c 100644
-> > > --- a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
-> > > +++ b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
-> > > @@ -30,6 +30,9 @@ properties:
-> > >     io-channel-names:
-> > >       const: sensor-channel
-> > >
-> > > +  '#io-channel-cells':
-> > > +    const: 1
-> > > +
-> > >     temperature-lookup-table:
-> > >       description: |
-> > >         Lookup table to map the relation between ADC value and temperature.
-> > > @@ -60,6 +63,7 @@ examples:
-> > >           #thermal-sensor-cells = <0>;
-> > >           io-channels = <&ads1015 1>;
-> > >           io-channel-names = "sensor-channel";
-> > > +        #io-channel-cells = <1>;
-> > >           temperature-lookup-table = <
-> > >                 (-40000) 2578
-> > >                 (-39000) 2577
-> >
-> > Do we really need this change in the DT?
-> > Won't the code in the thermal driver that registers a new iio device
-> > would just be enough?
-> >
-> > I agree with Rob that it looks odd.
+Jiri, thanks for the report!
+
+On 3/5/25 06:58, Adrian Hunter wrote:
+> It looks like there are 3 functions affected:
 > 
-> Building tree will complain on missing cells property if you try to
-> bind it. It is not in required category anyway.
+> 	intel_bts_enable_local()
+> 	intel_bts_disable_local()
+> 	intel_bts_interrupt()
+> 
+> Perhaps make them static calls?
 
-Sorry, I don't follow nor see why you need the property if there are no 
-DT consumers.
+That, or a few:
 
-Rob
+	if (!bts_ctx)
+		return;
+
+if you're not feeling as fancy would do.
+
+Would someone be interested in sending an actual tested patch, ideally
+the patch author of the regression? <hint, hint>
 
