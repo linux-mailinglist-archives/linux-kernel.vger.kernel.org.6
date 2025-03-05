@@ -1,87 +1,112 @@
-Return-Path: <linux-kernel+bounces-546723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7129A4FE07
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:53:14 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D61BA4FE08
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:53:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A75116D5AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:53:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E31016BE5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90C41241C8B;
-	Wed,  5 Mar 2025 11:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8A5241697;
+	Wed,  5 Mar 2025 11:53:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SU2wo6CN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LNzY0xwB"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF19824113C;
-	Wed,  5 Mar 2025 11:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5861EA7F5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:53:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741175585; cv=none; b=dFWNSEu28yx6BLrppXHCs9Aw3RsZYQKEuDuP+n3HQvwMmuDzTdjEBuYM4pqOpu7X/VrCGoWGlmPSUFzsJE3K/D+z4K7S3SNmJC4QePZJbJIAvOrWj7nfqgbRC1vDgPulDaQTryKZnHv1YjO7dOpFJt8NDyB0krTlZUQEW4wVfjg=
+	t=1741175614; cv=none; b=Wf6E1OFFeb8L++tyZxh9p/6Fr1RZIMaLRnsaBxCasJtZM6aUrHWLapPsaKJRbOalSNdsSMVRW2FTZvphnD35eO+Rd0ryFrWoot7GOwshPRYEkRAt2w5/DeV5Llip2ezAcgQ/M5cdSwKHNT6soeUd9asoKb5ZelVtBLty5Qd/dJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741175585; c=relaxed/simple;
-	bh=2GoCmIcV993cxIjEsl1N3trg01ol0+mfVmDuWOICbp4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ipa/mKpWzzjPPbWKJmpcI+tO8zW2PpAoxyXU7SGW3qJ8ol/12u1LiiX6OKHQOn+LdUeCYyof7lYl/P5XoATfndiypzKI8vFsO60dyo3smMMlzVMBI1FvEzlWRYSb3iry4QCFO9/Z7D/k5qLglQ967/bgE3X68HvqqQegKPPEnFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SU2wo6CN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C3730C4CEE2;
-	Wed,  5 Mar 2025 11:53:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741175584;
-	bh=2GoCmIcV993cxIjEsl1N3trg01ol0+mfVmDuWOICbp4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=SU2wo6CNBiPkasjedW91gzGU8lmZESjAJRhpjn6P+QYvXkbqWjBgk2WQKRInKp5K9
-	 91D9XEK4wbKwIZqW/ipoxB6E0IrEyuFq3ro8yJ5ZVkJ2Vx+b5GpWqQsyTz5EzF0txL
-	 MImBh7P2uOV+f4V8ija4OlsYC1fhtUGbKOIkJDIgYX8jvDNypLx0EG1ukYbRmnHFLY
-	 90ObgdjHhrRX9fZE5vR1c9wX2cJGb72b+MORVdhLgPoEJ9yfJaJ3py/T39Dg3Z+yr9
-	 vAyh79UG3dRVkQKgDAfy70XdCCfZhhdpR1y7IvliCV9yJxgLzrhmHCAOY8RdywJ19R
-	 81tabYygrsBYQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Danilo Krummrich" <dakr@kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 13/22] rust: pin-init: change the way the `paste!` macro
- is called
-In-Reply-To: <20250304225245.2033120-14-benno.lossin@proton.me> (Benno
-	Lossin's message of "Tue, 04 Mar 2025 22:55:00 +0000")
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<gnfOo6-8PDd-rRWT6TyvxLWydmpuSbxaEsw5Dyg6BjjEuJXL1mG9q9vKqAshVJo72Kc7xHDV8A1eKGP17ZUXAw==@protonmail.internalid>
-	<20250304225245.2033120-14-benno.lossin@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 12:52:55 +0100
-Message-ID: <87msdzd78o.fsf@kernel.org>
+	s=arc-20240116; t=1741175614; c=relaxed/simple;
+	bh=ETscUFb3W9g8uoK4dXkEOb0mnNFPQQG2xbrhc/DTp+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qVbyKgMDjkoUQH/leS0GzDYI33t5YKIY6aj/KxioSX5Jfm9d4ZZQ2qVtp0pIbct96/b19TC67lucYEL5aD4+rpMil4JM/1M2LOCGpQBArvacgitSCXPjEyi/pYAMNrLGDEjxGE7qyODKyqu7WvRntuDUf6ECNuYBRHKLrTl+mMI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LNzY0xwB reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0FAD340E0214;
+	Wed,  5 Mar 2025 11:53:30 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id xMO1CcNIzyuP; Wed,  5 Mar 2025 11:53:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741175605; bh=Icqf4IZRc494aUQLMvtjKf8rwo7CZb/O4JmauOKLlYo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LNzY0xwBPGxJy9tJQeWyRDFvomzJ8hdXAxR1CRXJqsxFL8V9XsGVWVuZ9ykJ4aMjE
+	 VtSLh3zXMle1gFnTo0TXtn8QXWP/mbYnUV0EOZdXzqCRidQhERd3UF9d0BaJWF5wAX
+	 s9M4BGOwtQdeJaV4LNUGkpnURWfBEzjFXmPulyuhAWfe7UGYPm+hM1OEO2W5IKbtZk
+	 vR8KI/0lm0P9gVVCRSpB7j3bJC8YDKTWgE+jTIx8t+rHdq6bNOe0EcC2d2mOzg6B7s
+	 RPvRy8gYXg7j5OW3CyzBb3Bfh+IS8sJlls/y2/O6MhaSiouQ/jktNXXHUXQVLT47zf
+	 DD8Yje6VDjractrRxVRX1CaSn0DPLegPx8QrCEwRWcVqNEsrHyUv04TvINKimUq8LN
+	 b0h2sM0N5nLDvH+PPz4EAhS6hFitw1ApiM7GIPy07g4RysKUKLGqo+L+yQi8zBOp7F
+	 NVgs38EmSMm7cbsUB24epyaVbG9gLI/RN7QlZ7btBfhv5ct7rN0nOY8ojWQCkPh2fx
+	 c5X9BTL5Xm7aRIWJvmFVVngLM77uQCiSxtrrk1RulcWnfU4b6hNQJSAnrqlz7HkCqS
+	 5nMcWUWPjBALH3miscioEzqqrq4Ozy/YrRlgYmsrcIh3jfM/YGFRAuSpAwsN3VqLAF
+	 kM/VRITg8SizlcQuIgJpvdLY=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8E04740E0176;
+	Wed,  5 Mar 2025 11:53:15 +0000 (UTC)
+Date: Wed, 5 Mar 2025 12:53:14 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
+Cc: Ingo Molnar <mingo@kernel.org>, Joerg Roedel <joro@8bytes.org>,
+	x86@kernel.org, hpa@zytor.com,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+	Larry.Dewey@amd.com, Joerg Roedel <jroedel@suse.de>
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+Message-ID: <20250305115314.GFZ8g7KlmTa-eApiwK@fat_crate.local>
+References: <20250305105234.235553-1-joro@8bytes.org>
+ <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
+ <Z8g01YhM_FtdB5n6@gmail.com>
+ <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
+ <d9a1a460-2982-429c-b29d-cf2483e9380a@suse.com>
+ <20250305114132.GDZ8g4bNdM-I5OQd4B@fat_crate.local>
+ <b21842d7-0355-4630-b293-2d29b003918b@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <b21842d7-0355-4630-b293-2d29b003918b@suse.com>
+Content-Transfer-Encoding: quoted-printable
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+On Wed, Mar 05, 2025 at 12:48:11PM +0100, J=C3=BCrgen Gro=C3=9F wrote:
+> And?
+>=20
+> Under Xen there is e.g. /sys/hypervisor/guest_type which shows in which
+> mode the guest is running ("PV" or "HVM").
 
-> Change the paste macro path from `::kernel::macros::paste!` to use
-> `$crate::init::macros::paste!` instead, which links to
-> `::macros::paste!`. This is because the pin-init crate will be a
-> dependency of the kernel, so it itself cannot have the kernel as a
-> dependency.
->
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+And looking for guest features in /sys/hypervisor - especially for
+confidential guests which do not trust the hypervisor - is ironic and wro=
+ng to
+say the least. :)
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+/sys/guest
 
+or=20
 
-Best regards,
-Andreas Hindborg
+sys/guest/coco
 
+Now that's more like it.
 
+--=20
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
