@@ -1,173 +1,171 @@
-Return-Path: <linux-kernel+bounces-547013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EB62A501C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:24:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E548A501D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:25:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E6A1895BDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:23:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AF003B3DD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1A224E4B5;
-	Wed,  5 Mar 2025 14:21:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipGjJ/CD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4FB24DFF4;
+	Wed,  5 Mar 2025 14:22:58 +0000 (UTC)
+Received: from PNYPR01CU001.outbound.protection.outlook.com (mail-centralindiaazon11020129.outbound.protection.outlook.com [52.101.225.129])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EFA24889C;
-	Wed,  5 Mar 2025 14:21:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184463; cv=none; b=bo3DSmDMqhzbDE2JUkxhjj3HxnZXWRNucJSAy8Nkfnydj7T7Ev8xhv/A/jLSm/BZWJjmfGhSDQieVLXYD6SqZ5cVC4mM/giia+E6xUllDFJR9ORIEmAJlr2ed/5UUZtTVBc8AxV+4EzCBNsE1CXel5lYmkPWqz7ZQtkyJv4l4ns=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184463; c=relaxed/simple;
-	bh=g9ktS8K7rRoujwZfqZdfcH5n9clfO1z5LX6Sxgf2RCs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Tw6mJcmQrqHW67gFLRaN+koJTPlNuG7Ypx84vhwSVj6dVF1RyAgcZ4eRmZ8uT0CspBIc8mz2iIon0GPtl1eKHuKzI/oxUnFI4vVNRXeQnixa/dxSZxUpdza3p23EkQ8PixLi10KAKVhsswa6jqzk5EjfCE+fFmYkkhxsgxmXeIo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipGjJ/CD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4537C4CED1;
-	Wed,  5 Mar 2025 14:20:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741184462;
-	bh=g9ktS8K7rRoujwZfqZdfcH5n9clfO1z5LX6Sxgf2RCs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ipGjJ/CDS553s7hCyO5v/E+vJZlgFG9NmHvjPEPf8pwx3dNVMg6flc/QnRXE3B+sh
-	 Xfq2cR8sCeDWINY8+XaAivWuEe1Toa4f1bWbfJGEL6351o1A+bZQV/nrHMguyToUww
-	 Oth2H+nrmhEhcWZD5kner56fcVNsu9vYAorn9n1dFHtuPKeN+sFxWmlyjdk32mVTcw
-	 Boo14ca5igGp7sKnEVJS4vjx72ZiBypv1T+KjVJmbRplXVj82xc9tPw6+g6qAHGE6e
-	 Awgr1VM4GXzX4BzP5/0oQ/b2gTM9VagRP7xgQ3GvxvFOjA5yAwjQo6DCsHNy6Qx7OQ
-	 s4UTUJ8HR9k/w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Danilo Krummrich" <dakr@kernel.org>,  "Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
-  "Peter Zijlstra" <peterz@infradead.org>,  "Ingo Molnar"
- <mingo@redhat.com>,  "Will Deacon" <will@kernel.org>,  "Waiman Long"
- <longman@redhat.com>,  <linux-kernel@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <linux-block@vger.kernel.org>
-Subject: Re: [PATCH 15/22] rust: make pin-init its own crate
-In-Reply-To: <D88DIE85YT01.11H51NPNE3HP6@proton.me> (Benno Lossin's message of
-	"Wed, 05 Mar 2025 13:40:19 +0000")
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<LBAOJwgDK3vs6V-k9Olh9PVQ69a3qCaCgLZctAshaNi73epZNKVgY4rKa-81-5us0Tpj3m3U_W3pCHFTKlIbVQ==@protonmail.internalid>
-	<20250304225245.2033120-16-benno.lossin@proton.me>
-	<87bjufd6bj.fsf@kernel.org>
-	<p2Xt1iMJJIRI9ZD65zucf5N-1vUDxFzg2l66bCD-rZNCrBdZwPi8iu9rKdmEUMlh-gEWESr5rEOuejJGRNF4pw==@protonmail.internalid>
-	<D88DIE85YT01.11H51NPNE3HP6@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 15:20:49 +0100
-Message-ID: <8734fra79a.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5C324C68D;
+	Wed,  5 Mar 2025 14:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.225.129
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741184577; cv=fail; b=SzztnlQuWuU/OXqBRBIPF0TOqGzOsEBDo4jPHJVgQusRpnSVFLKiSri130Sr9dizqDm3DFzAWOjZGo1vi7sqLB9n6kfa6LDq4gmiFPzzgygVFHd20CMqFjrQhUb8l+FvFER43vrwHp06Bc2Ds+pg+5U2D8cBW8XCc3/cLm8vt+0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741184577; c=relaxed/simple;
+	bh=mcyCQG0hkTm3j/oHJf4p7PcA9PafMu5K2wSTemthCbM=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=gjD+jrvVuTHKe0LBkIgbJZZ0Y9F9v9J3RScolClANQZaesA/B1bMlIdQcmrQu739zcNp37B60+AtOFqPfr2yL/flwExPxu2gltkg7K0CPBNeqqXKaVYs2kU10/s8SjAPlcWk1ZJFrSNTTqQpJccKo3mfjlJMHRrrJm1y3KmrtPk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io; spf=pass smtp.mailfrom=siliconsignals.io; arc=fail smtp.client-ip=52.101.225.129
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=siliconsignals.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=siliconsignals.io
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FXQSJ/uIPCWMRq6JJgCLg1PUTYYBptkNjFwlNf17z2JTyxBPVz5YSACm5KGW+hm7NXh91aSsMSNEgm2nfmO5j75/AEwnpXzs9uvWe1OGQCUNR3rY2F8U/G9O0C0XkSb+ii2o5FXN0ZESNJlQKsT72ibAink/khfKyNXHQjGZDygzKeYEcXY2k6376MqjshGaUBSlhKVMNCsGnvVrt0Q138YLBznb1j9mX77F04uAaXgubonRyDKq1rKbH9VVJlQ6umvg0N+z2M7poFyW1uovUnL9Rql5UIyqEht9mz/515HxNqRQRgs2uGC+bTzfRsWrFoE37yVr2lOTiD2KNrojJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ayQ1+8+50Phz9Cauw/t/0yRMaG7/CxszamS9+ch5xmE=;
+ b=cKe7Pcimzq+Vw1CgSONPKl6FUzty1nho8yn6c/MxScpgNXSNHxPWzHKd+/xvqwgMi+xt9zZxaTfDVYjHVMI3rEmVtiGpf3D8otshib0/t1LC04TxyRGmolvfHTrZ1faG9zcMO1vhTV2VszfPPiTcOJ93BCXYMSlJ8TeFJw9Uu5XTFyhgVYOFI69eOnybaEVlJM8I0QiBWUT0jJKiTSHEDRJ4gIOBD5hNgPrlJRf+MxKoTwbnhfzOqellq2puDNGbHD1oe4zuICSCAIdi78s5Srm6gs9gVgHdaFuNE2kyoHbnJJL6lj3aLH2tI42ovVSyXE8RPHfkuTgkMnXcXf6j4Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=siliconsignals.io; dmarc=pass action=none
+ header.from=siliconsignals.io; dkim=pass header.d=siliconsignals.io; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=siliconsignals.io;
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:199::7)
+ by MAZP287MB0486.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:d5::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
+ 2025 14:22:51 +0000
+Received: from PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f]) by PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ ([fe80::58ec:81a0:9454:689f%3]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 14:22:51 +0000
+From: Tarang Raval <tarang.raval@siliconsignals.io>
+To: sakari.ailus@linux.intel.com
+Cc: kieran.bingham@ideasonboard.com,
+	Tarang Raval <tarang.raval@siliconsignals.io>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 0/2] media: i2c: imx219: Minor improvements for runtime PM and stream handling
+Date: Wed,  5 Mar 2025 19:51:14 +0530
+Message-Id: <20250305142117.29182-1-tarang.raval@siliconsignals.io>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: BMXP287CA0005.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:2c::19) To PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:c01:199::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PN3P287MB1829:EE_|MAZP287MB0486:EE_
+X-MS-Office365-Filtering-Correlation-Id: fab63553-bb60-4623-e4d1-08dd5bf1364d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|52116014|366016|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?Ct8oObcahlswVENbAN/CqgLfROwV/SUeRz0HQ/79ymZKYzAW8Cyn9IW8JIVE?=
+ =?us-ascii?Q?jgvnIxQMvhfM+jY6ra+KXN4KMvBYA5D8xd5mZWR76yPmoGoAAQX2gASIzKGz?=
+ =?us-ascii?Q?VDxcpMANaQm6tBVO9xH8Te6VjD9qPmQp4bIiLC3Es8Anx/rr//3x/0ELknod?=
+ =?us-ascii?Q?ETdzXaN+eT7Q0aF4mGtN6alJa4xUgn078tbEEV+wl1D2TwDHNuWu1eNhkwhs?=
+ =?us-ascii?Q?VIBSh6K6UEb+bwwa8LRsVL7BTkVHG00hxTssqjXZ3eSX0clVwuLV+71CLLlz?=
+ =?us-ascii?Q?FmP37+aMMTqlm3LEHmguTL9YPcw0sArH2wtApt1uSjmRasvhgXqVmp7Hxc42?=
+ =?us-ascii?Q?GK14iJ25wCgcr6FK7oEW2qsCYcgmpluibKHg7tMm1Xf1tt4yew/azG7CXP5t?=
+ =?us-ascii?Q?AGw7ZyyeAcQbllTwlml47O8LmOAecZf0CbW6+v6uedbbFMKcsHTYqgbn0kxG?=
+ =?us-ascii?Q?u9/OuLfVKv4i+u52i9opoF5Q7wH8/iQGaELk5ltsOA+4/hO+UAfyzNTqYo3p?=
+ =?us-ascii?Q?lJ0xwC38qNnnWkkYFSqQU/2yhd8Z/pBGL/i2TjHjLz6ZFzFlvJgdlT3CAI47?=
+ =?us-ascii?Q?tZgqodSHNKB87ZwdDAkWuFRIgSWj3eTlAxKi5MtT95HxSOHzEdPN1unyqMpe?=
+ =?us-ascii?Q?oMTZWaf0jNDpaU8VkTmMrGznpyuow7tdnEaXl6Nc/Fiz10tZtYxUJq8a72BJ?=
+ =?us-ascii?Q?aVoGvZig6eyRcmr3qDwG5oCpfsBNjLIZlGu2TbxvjMlV4IJHREBKJ51tqsio?=
+ =?us-ascii?Q?bkODhKVAqh2KJ3hZo2FIqY/qfbIzsIwRxf9Ohlp1w7XvK7fEqOPfVBSX6fOt?=
+ =?us-ascii?Q?9t3RDyAqrpvJSURdTqFCAKfvkZxG1x/FZ3o//9Q/PKMl1Be8MUYNyZMdBHia?=
+ =?us-ascii?Q?ZR2z0EN6QfeVyFDF172mz+AXYkOkf8oonqPKvy/fQd7fcxc9pOiHK5DAYzO3?=
+ =?us-ascii?Q?22aoJfArSLn6d/myBsCPJe1Hzq+ge5AukSxS4wQdJZlq2cqxZu2WowxrC4+9?=
+ =?us-ascii?Q?ibNF4hnEgZD7quQYs9V9SLG4kOOZn6hCH2kvcdjIVitV9sRNBuo4qihbEIBn?=
+ =?us-ascii?Q?S9Kwtt/uT7HNVhsv4cVW/D0SBXmYeZyM2WNmK9A20jgslOetmYUhufak0ten?=
+ =?us-ascii?Q?xpQ6KiBSyRo3gRnqwEG5LN5rzQG0HYvMdWlhmH/tCM9KYXKcDBXsBw4LjD76?=
+ =?us-ascii?Q?h08MFjdnfAp+c/snXIOukQd/XjNbtBYSimds6JiOVDcAyqrXXQdvDNAAlYz+?=
+ =?us-ascii?Q?v3TqS1vAPOiNG/sgI5wjcxAvACdfC+smGayuzAgf2wAsVD5svMaMEjG7mAo/?=
+ =?us-ascii?Q?XlBM2QEDfjY6ZZ42Cma/NFszhSm3JI2ivrYY5fZisS/HTvUSoJ4ZeQANR7L3?=
+ =?us-ascii?Q?h801AhqNcckbZdj/cA76oNTF4c1Ci+d0FK/E+Q5t9cdcpusFTT0E6LpM1VRH?=
+ =?us-ascii?Q?Ndeg2FFmQENQ3wNHrm30EdzGejP2Eico?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PN3P287MB1829.INDP287.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(52116014)(366016)(1800799024)(38350700014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?nY4eCthyBkBTA/mthNMKcqq7y6oPOuj4Mt+s41blT1jshYydclWePiijegKJ?=
+ =?us-ascii?Q?OunaDOL4BxaeeN/MH0de7foSIPHKymAworSkqsTBdCvZkkQ6Smi/7ddgedL+?=
+ =?us-ascii?Q?ZqQXBLCJabvmBo+48uXCLTYoHb2qWfzqVuwJcDIZJWDz5tACA/Lnb6jUyqcZ?=
+ =?us-ascii?Q?c6ukB29U89qqmP4ZfTNj8j9491F3mdFulS3j3D0mZEkjghbqdjVPJ2fOKg+h?=
+ =?us-ascii?Q?YBBTdzs9QSDNVe6y8VDpvvN0sx5BM7bPrVjvANAY5bzTwC3W+dssLblf+grH?=
+ =?us-ascii?Q?6HbFqvKT22mCamkIB640a1UWB/UqoY4wcLnf0sAxka5/qRlu6qgYTKkeJ8x0?=
+ =?us-ascii?Q?XbBgMAtX9p8nMw+8EReDsWPLRJPgdCr2fHZV6dfA2C107w/grhLy47ZJPAB5?=
+ =?us-ascii?Q?Ib6Kou2JZrKvkKJ/mj1IApqoy0DTyaIKQKiOc1ptsPHUVyHKdnSBd2eKuvv6?=
+ =?us-ascii?Q?/xbqAizRjD+czMygELsigCtWjJZUZwF8rhgk8EImrOiIb3xiBAHKxQskfbj0?=
+ =?us-ascii?Q?1UUN/sCWdMCAhNPF+hjWFWS7i/ZL8iC73lHT9svUHaaheo3kP2gmqTSVGScy?=
+ =?us-ascii?Q?qOvlWWZGtB5a3i/y2zp7eLks1uFW5mxpJpb3o10knfpbXJoL+VgL7QeyoM7r?=
+ =?us-ascii?Q?LA7anLuZogwaLAVwcBDXBWKZ/KfCvppKDUV2LE2aV+QXiCE4vZqYsE69T1XJ?=
+ =?us-ascii?Q?dHePgX2aXCXbaPsIC1Hu4Y9xPrZ6rTvh88zN5+9XT70ejhTvLc2M4vSJD3ly?=
+ =?us-ascii?Q?u8uvMwYb15yHfcM4keXiD9iTtt9LayL1PpW4p6IJR65MOBq4Jd5jcrpW5G8I?=
+ =?us-ascii?Q?LE40lSk5TfnttOQz6K7RO42hrHqRqlWwTAjEj6UrxZdyCPmlB5IlZImU8Rxx?=
+ =?us-ascii?Q?4nskwubshOShEXYMzhQRAWX++GWLOuY+vN2NcWt6cFLskeKgfk5XLTlpG4MQ?=
+ =?us-ascii?Q?yXGkrOS/l33c5JdNv+miSQdq39gZTtrgcABbwY3duI76BxwHdesBfc0q47Vt?=
+ =?us-ascii?Q?+AfEhM815LlL/F2oY/6nCJ/jyR8L+Ie1rDWYf2lLhl+IqyzYIdBjUO03MTY4?=
+ =?us-ascii?Q?h7pLYXivoR1brOtz3ui9eUfAO1sH5BtEpoFEdZd7wo8ZfTR3sRperrnlpkhe?=
+ =?us-ascii?Q?rASC+aZHv7mxHF+ROQgrcX2c/0KTn7XdYZ89HK1GnKRGT7XUiy1F7xOS3+qu?=
+ =?us-ascii?Q?1HE6qzptLpMJdz25MTVCv8pWhtfoM4F0bFzMY1zl+1ulhYLP4iVnn83CB/DV?=
+ =?us-ascii?Q?whEjLk2TlUJvbrH+/IusshWG24VbQmT8sim/vYCAYO2IB3YBzJN2vOwSf1u5?=
+ =?us-ascii?Q?QKH0ssqsVNrCPol0NyoPYRnvGHztuJJ1Eg6GQkp/Xa7GsENBeftC/r45HLNR?=
+ =?us-ascii?Q?8tZxzZsBcspSzcHpvxyS/ngF06iz2Ntb+/hW5BlH+l10vtsoaaQ0n2MNj9sH?=
+ =?us-ascii?Q?IY1AkgkDrRj/cmR9AVsTFq1OHqxrzfIg72u9mM6xWPfZmg00Rbm9ZCWqMtSL?=
+ =?us-ascii?Q?Ax0XXOU2G6FnqK7uhQ3/gT8RbeLb7PzfRvgdSlFpF+UZG5RdnC0t3R35ld20?=
+ =?us-ascii?Q?jjjKMvSMU27X76OrTumvfgmbe97GAN5mV26lmImu93brMbuvjmAW6dBP/hgJ?=
+ =?us-ascii?Q?dQ=3D=3D?=
+X-OriginatorOrg: siliconsignals.io
+X-MS-Exchange-CrossTenant-Network-Message-Id: fab63553-bb60-4623-e4d1-08dd5bf1364d
+X-MS-Exchange-CrossTenant-AuthSource: PN3P287MB1829.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 14:22:51.4560
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 7ec5089e-a433-4bd1-a638-82ee62e21d37
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: o8nMtAZg+cqLelVz2xuj6lWIH147QPNLcBFIgoO1delwmKttcEMOlvDUtvmiMoN//M1rLsQpXuaTzz+gCTi9SlFqa3a+C8j4IDesg9ZjWuQ=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MAZP287MB0486
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+v2 -> v3
 
-> On Wed Mar 5, 2025 at 1:12 PM CET, Andreas Hindborg wrote:
->> "Benno Lossin" <benno.lossin@proton.me> writes:
->>
->>> Rename relative paths inside of the crate to still refer to the same
->>> items, also rename paths inside of the kernel crate and adjust the build
->>> system to build the crate.
->>>
->>> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
->>> ---
->>
->> [...]
->>
->>> diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
->>> index 7ff82c82ce0c..8e116e266524 100644
->>> --- a/rust/macros/lib.rs
->>> +++ b/rust/macros/lib.rs
->>> @@ -2,23 +2,20 @@
->>>
->>>  //! Crate for all kernel procedural macros.
->>>
->>> +#![feature(lint_reasons)]
->>
->> Commit message should probably say something about this.
->
-> Done.
->
->>> +
->>>  // When fixdep scans this, it will find this string `CONFIG_RUSTC_VERS=
-ION_TEXT`
->>>  // and thus add a dependency on `include/config/RUSTC_VERSION_TEXT`, w=
-hich is
->>>  // touched by Kconfig when the version string from the compiler change=
-s.
->>>
->>>  #[macro_use]
->>> +#[expect(unused_macros)]
->>>  mod quote;
->>>  mod concat_idents;
->>>  mod helpers;
->>>  mod module;
->>>  mod paste;
->>> -#[path =3D "../pin-init/internal/src/pin_data.rs"]
->>> -mod pin_data;
->>> -#[path =3D "../pin-init/internal/src/pinned_drop.rs"]
->>> -mod pinned_drop;
->>>  mod vtable;
->>> -#[path =3D "../pin-init/internal/src/zeroable.rs"]
->>> -mod zeroable;
->>>
->>>  use proc_macro::TokenStream;
->>>
->>> @@ -374,5 +371,3 @@ pub fn paste(input: TokenStream) -> TokenStream {
->>>      paste::expand(&mut tokens);
->>>      tokens.into_iter().collect()
->>>  }
->>> -
->>> -include!("../pin-init/internal/src/lib.rs");
->>> diff --git a/rust/macros/module.rs b/rust/macros/module.rs
->>> index cdf94f4982df..bdd94c79b0d4 100644
->>> --- a/rust/macros/module.rs
->>> +++ b/rust/macros/module.rs
->>> @@ -236,7 +236,7 @@ impl kernel::ModuleMetadata for {type_} {{
->>>              mod __module_init {{
->>>                  mod __module_init {{
->>>                      use super::super::{type_};
->>> -                    use kernel::init::PinInit;
->>> +                    use pin_init::PinInit;
->>>
->>>                      /// The \"Rust loadable module\" mark.
->>>                      //
->>> diff --git a/rust/macros/quote.rs b/rust/macros/quote.rs
->>> index 33a199e4f176..11d241b85ac3 100644
->>> --- a/rust/macros/quote.rs
->>> +++ b/rust/macros/quote.rs
->>> @@ -2,6 +2,7 @@
->>>
->>>  use proc_macro::{TokenStream, TokenTree};
->>>
->>> +#[allow(dead_code)]
->>
->> #[expect(dead_code)] ?
->
-> `expect` can't be used here, since `quote.rs` is imported in
-> `pin-init/internal/src/lib.rs` and used in that crate. But it is unused
-> in the `macros` crate, hence we need to allow it.
+- Add locking/unlocking of vflip and hflip controls,
+  which was mistakenly removed. 
 
-Got it =F0=9F=91=8D
+v1 -> v2                                                           
+                                                                   
+- Dropped "Enable runtime PM before sub-device registration" patch,
+  as it has already been applied.                                  
 
+Tarang Raval (2):
+  media: i2c: imx219: switch to {enable,disable}_streams
+  media: i2c: imx219: Enable runtime PM autosuspend
 
-Best regards,
-Andreas Hindborg
+ drivers/media/i2c/imx219.c | 44 ++++++++++++++++++++------------------
+ 1 file changed, 23 insertions(+), 21 deletions(-)
 
-
+-- 
+2.34.1
 
 
