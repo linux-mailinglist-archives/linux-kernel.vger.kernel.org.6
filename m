@@ -1,54 +1,75 @@
-Return-Path: <linux-kernel+bounces-547441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F3F2A50891
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:09:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 745E8A50899
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:09:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D78B16A560
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:08:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88E3D3B0E38
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:08:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 702FB25290F;
-	Wed,  5 Mar 2025 18:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654422517AE;
+	Wed,  5 Mar 2025 18:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="BgTVMv1f"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="TKV11OXR"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2070.outbound.protection.outlook.com [40.107.94.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85BED2512D6;
-	Wed,  5 Mar 2025 18:08:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741198093; cv=none; b=qg+NKB645tzdqjUImun+iya0f6MN076+Xz9iUst4/R8vq6k6pjAy6+3koVl+SthBDzOLvt/Fjsb7wfwrFMqnQ+7lftidz59pVZbvLJ7inhbnno3FlaT/rPwrLE09SwV43gHzMwQf/okq4IrQNAJh0heGk7Ho6gPmWP7n1ar13gk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741198093; c=relaxed/simple;
-	bh=RSrGA34yP7qtDktQg873/4X5XR2J1ZoUMnU85sv0+14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UEWLH1/y8j1yL06GTr5SxU1nLvjd4fJImlVHnQX3I4n6JVkEtbwMEClJmJIYg2xoeBtOWNO4ZCSlshq7vSObRpeX1YZ2VElQ9RuY5c2425lhKtCFRIi5efPVT6McE4m9rLPs/D1rjUSU7oo/g90PQIpccQVdlkGTKNaWk8It+9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=BgTVMv1f; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741198089;
-	bh=RSrGA34yP7qtDktQg873/4X5XR2J1ZoUMnU85sv0+14=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=BgTVMv1fqV1j9qJ2GNvgOfdOeYCxa7JsX7HymNujv2pzgOhAjxjWwXSRmfJh1ZtSd
-	 q8XiB5unEJBko8+PkZ1NJR0TND/dAh8rLegGtjSE481p+QUbIqoc6ZI6FMSc6AwCpz
-	 9d81cYy/gblpx+soZ4ar8a+HBXjnVJSNiGujXU1DAaU6Orddlt/Q+JhZpnMflYQ5mO
-	 A2bk7clUtWz38Z0QhdU5v1uG2qKkLVspiGm/8LyNyB6KBpt1TfV3+tDgKKxmhHEmpR
-	 vqkF6UnYlgkl06AXSAew8RVcYM0kFfhowcGXAb537SkzF8CtqBD9eMC3q4LWWGsESf
-	 GnDhTNmP1RxMw==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 2B21117E0599;
-	Wed,  5 Mar 2025 19:08:08 +0100 (CET)
-Message-ID: <d02b6bbe-0d32-4e3f-985e-a0b610f72d98@collabora.com>
-Date: Wed, 5 Mar 2025 19:08:07 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E978F1C6FF9;
+	Wed,  5 Mar 2025 18:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.70
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741198134; cv=fail; b=rLHHQ+7cGTkUnitWzavCdprlWeHmogrmOEmrN0uV/Nl59+W5IM6aIlbw6pE8+Ep/M0eD6jwGKIGxlg+zWL9DFfX169n3V90aQT81CujEd5K3HTIlDH8qFusW88xxxG3LNVOeHrQCcBWZYd1qnY9i/mymFbEsVyEVo/B9q9dA4S8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741198134; c=relaxed/simple;
+	bh=2UyDv2Z2UiVPCoTPnCyz1UVNrkTAZmKto2f4vPxPGV4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=o6SzR4ufM2jGqGdFu1s6EegQmlvf2qmqQYNm4Z0oShNs6f7qalIL8IztAi0mQnOvm4Ou5TTMJlq/bI2Sv9oPv3pUkUHnz/9KFU0qAM+7PNX7C7G13XH6RbS2PIdp4lAflw0d29EcZjNnvTgaWQoGDN7ciUds8zwbK9xGzyvAoUQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=TKV11OXR; arc=fail smtp.client-ip=40.107.94.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=b93CI4VRIQyGy0gVEsDhrM1iwDo1x/tkzhEwUhuXL3E2t5TbH9mlbYMjbsYK8y9jaSE4cwNLG0RJztrau+qrsGNLBQwQmhA4NQSceDJQclsEZpeTxEKZBAToK8+sbGr+I+0j/pT61M5n8oQ8Hcrf3CchqQnTYEGa32QEEHS3FywmY7Mmu3pbvFH/F64koWoMbPNScYizev0XktvfIaOdTIFWKWHQqqAqAkIxYQh/o6rrg8e7YRgvdu3iDTv7m66lK8/T1sqQQpRYP7TfQivTGhXxVpjH1Qjs2U1R4+GlYAH7qtfh3lNS6XjfBhCYniNV35hWfLO8eLtd9wJgX22wmQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lPAP/HtFikRXry5PVvjO9L0UPd+MsUdW+ORPPb9r7Kw=;
+ b=fIb5sChwzC7K5nrdVvliCTjDOMzwZ9hdljKyXZNZyjKH6uKu0qpnbJO2J5SLGkyVtpfXNXTBX29SEF9aGv75YtHFI/tQaXifF0NgmpdZSIBEQ1SMGXhCAWOrnnXFQ8mw4V+BX0SAMliXwebrsXlo1Kfwz0QO5SCGP3Jlq2eN7s5lgNpEY9UGo/7tHlUO9JMyMIEaYWK3SL7DlMxQZjL/5ZwMoChy735SMNGEMs8E+YVPZ1epqG7T57JdVZMLV8yXZDcWvCVF0Hk5Iry4ddcdhd5pCrG2YRV8T1b2UB4u5IJxaPTCfmSnd+hq6AIywUseq1O+oh+I8StaLeGluozrJw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=linux-foundation.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lPAP/HtFikRXry5PVvjO9L0UPd+MsUdW+ORPPb9r7Kw=;
+ b=TKV11OXRRaOvvHwJoiY1Z8+Jhzp5fopVNxcqUiRovlPsHLVAq/UmCAuGwzDip9rUL8HSNtbAA1V00pMZzZfzkYxjc/NZeJrBVqiouJZGtKnOtavXj/LcbzwVcaLRgMH1bnzLsQPB+ecSC8ti4MHRq9x/d6ltMHOB5gahow0rllk=
+Received: from DM6PR03CA0021.namprd03.prod.outlook.com (2603:10b6:5:40::34) by
+ MW6PR12MB8736.namprd12.prod.outlook.com (2603:10b6:303:244::5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.17; Wed, 5 Mar 2025 18:08:49 +0000
+Received: from DS1PEPF00017092.namprd03.prod.outlook.com
+ (2603:10b6:5:40:cafe::c) by DM6PR03CA0021.outlook.office365.com
+ (2603:10b6:5:40::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.16 via Frontend Transport; Wed,
+ 5 Mar 2025 18:08:49 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ DS1PEPF00017092.mail.protection.outlook.com (10.167.17.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Wed, 5 Mar 2025 18:08:48 +0000
+Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 5 Mar
+ 2025 12:08:46 -0600
+Message-ID: <e6cb4e60-9525-4d42-8912-7ce3f7fa4abb@amd.com>
+Date: Wed, 5 Mar 2025 23:38:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,164 +77,131 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 6/8] soc: mediatek: Add programming flow for
- unsupported subsys ID hardware
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "mchehab@kernel.org" <mchehab@kernel.org>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
- =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
- =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
- =?UTF-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
- <Xiandong.Wang@mediatek.com>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "fshao@chromium.org" <fshao@chromium.org>,
- =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- =?UTF-8?B?WGF2aWVyIENoYW5nICjlvLXnjbvmlocp?= <Xavier.Chang@mediatek.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "treapking@chromium.org" <treapking@chromium.org>
-References: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
- <20250218054405.2017918-7-jason-jh.lin@mediatek.com>
- <c52b132b-fc08-4d1c-8276-1771f7457014@collabora.com>
- <ddcf01c82f92ee461875e1122b009b7fca691127.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Subject: Re: [PATCH] include/linux/pipe_fs_i: Add htmldoc annotation for
+ "head_tail" member
+To: Linus Torvalds <torvalds@linux-foundation.org>
+CC: Oleg Nesterov <oleg@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>,
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>, Swapnil Sapkal <swapnil.sapkal@amd.com>
+References: <20250305204609.5e64768e@canb.auug.org.au>
+ <20250305112301.2897-1-kprateek.nayak@amd.com>
+ <CAHk-=whuh+f8C4u+gCkxRZyrt7Gw_FFw_pKn-2SnTovZOvEKmg@mail.gmail.com>
 Content-Language: en-US
-In-Reply-To: <ddcf01c82f92ee461875e1122b009b7fca691127.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <CAHk-=whuh+f8C4u+gCkxRZyrt7Gw_FFw_pKn-2SnTovZOvEKmg@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS1PEPF00017092:EE_|MW6PR12MB8736:EE_
+X-MS-Office365-Filtering-Correlation-Id: 67e20466-6b2a-445a-5e20-08dd5c10c73e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?VWxBTTVVa0pJd0FHNmIvK2RIRlFPb0x0SmFDTjUwSk1jRlV3b2IrckViTWNF?=
+ =?utf-8?B?R3lBUXZFcXhIU0I5emxPdFA2TG14cTRqbDNyaytoSDF2Ti9xUnFrMzB6TkQz?=
+ =?utf-8?B?N0s5QnErWHlwcjBGN2VGZXZBVDMwekVtTDFjUkp1RzV3KzJnbUROamFBb1BC?=
+ =?utf-8?B?aGU0aTdiSUFsRXFOYXNKOHFidmZnTG5QM3R6aWtCYmw1ME9yck9pQlVIdG1U?=
+ =?utf-8?B?WkxodWgvVTFnSGw1c01XOVo3YnlLTmdXbTJpK0RLS1NYb2QxNkZZRGRVWFlZ?=
+ =?utf-8?B?VDJuWFpBL3FYNkc5RVdBTGJ3RkVRRi9BM1Z2dmRPR2pFWHM5VURsQ2VmVmRu?=
+ =?utf-8?B?OHFJRG1GOUZDc2NkcnJTVDdVOHV5ZVVEbVZYa2NoNFNSS3REWG9uT0g3NHRB?=
+ =?utf-8?B?WUJicENFN1N1YzlLc3ozMVFTMng1eGZWL0diS3lkdi9QUHMzQmRrNWV1OHJV?=
+ =?utf-8?B?cFRoYlpCRzd4SjE3M01vbmIrYTc5RHRkbmRpOUN1cDZVUDdDUVZuSTJCZ2N3?=
+ =?utf-8?B?d2U3amtVcVl5emI5S0U1S2ZwOExySmI2MWFpZkVQdnJQQlB0aXluQ0YwUGFS?=
+ =?utf-8?B?c1RmVjlSeXIxSm5Eb1BxOC9lU0FDclZBcE5vMlI0cTgxeHhwZklZZU11OXIx?=
+ =?utf-8?B?ekVNcEhTYXdvT2xOelRheERkNTFWREUwYlh3YnFjQ1l0WjhMVDFkYVNzZklm?=
+ =?utf-8?B?VFgwWkNNbTBQNE13MnJFM1FvRDJJMCtoZjNtZVZjZ255U2J1L1BGMU5sNmk5?=
+ =?utf-8?B?VFJYUlM2bkRhZnN3QUd1RDBNWFZ6N1FGdDQyblFYSXZSWmdIN1ROZkt6NEpO?=
+ =?utf-8?B?WVlac1hNUzhuejU2dElhS1huZW5zR2FyOXRIYzY3aEM1T0Q2UXNQR28rOUt5?=
+ =?utf-8?B?NmVkMm1lTEdsSnFQTkNyblNKYUhNTmNRZ2FLLzNCaHZnVXBtZktLeUl3SXl4?=
+ =?utf-8?B?aU1GeWYrTERvWEJTWEIvNFhuT2d4SHZPbXhTTGlwcWtHUkNMQWVsanI5S2Nm?=
+ =?utf-8?B?N3N1b2xvajJlTEZMWGdqMmRtT3NTMk5OaFVQVG9RRWljb2JmdFZIR0p6eFFL?=
+ =?utf-8?B?SXZRcW0xeE52WTZCTkdTMEJYM1JxRVlMaVpxOUVLWTZXMTF3SFhLNjJWS0VK?=
+ =?utf-8?B?azc3RFlEb1FjL0F2YWZ1dTE1N3VuS1RZOWE1UDZrWHkwUmJSVkhrWW1XTlQw?=
+ =?utf-8?B?Q0Zwam5YTEx4OERZZzZQVGZTT29WZGN0b052VUlJaHIyOFFpWUNaN1laenJ3?=
+ =?utf-8?B?ck54Z25KMklSWVhSU0ozZzZpcTcwNVBnczZmRVg5TjBnZGtmM1dSallnRHdQ?=
+ =?utf-8?B?Q1NVR2Npem4xbzZGS3FYQ2VBSTFKVDdCMWx0Sm9sVjJQRnJ3N294QTcxTXR4?=
+ =?utf-8?B?RTFyaExFakt5SUNyTnZ0b3JkakQ4NDR6Uzk3aVZYV2tQalpONHhnbVVzTk93?=
+ =?utf-8?B?empKQWJSdkplR05OUlRtMjN5TnZKVlAvZEZvSk9XVzVIQTh5ajc1TU9UUjdn?=
+ =?utf-8?B?a0FEWWpvL1FBTyt4dTJqd1hYaTBWZk40QmZnbkE0eW5CNjk0ZW1heHBEcEtt?=
+ =?utf-8?B?RVI1ZGZVd1J0bU9KOWRrOGEyekRCczVRK2lsek9Oa2w4WWE4Y3FhcU9sS0Qx?=
+ =?utf-8?B?aFdrWmFhS0lnSTc3R3JYbDFZckFKdG5HdlFBRSs4d0swM0paMG5kMjJVNVRE?=
+ =?utf-8?B?SzVReGcyVzhDK3lITG54dlVoMGlveWhvcTkrSFd0KzQ4MHVOSVFtNitNVUNB?=
+ =?utf-8?B?dTRYd1BRTTZuaEU2RURwOEhPQnU2RHNCcEZxT3B3YW43M1NqQjJPNGVWeGp5?=
+ =?utf-8?B?MnVUZ1oxS0lIOWFwUTF3TTJzcFRKQXBPbzkwaW9xeSt6RG5OQTUzalY5NTEz?=
+ =?utf-8?B?OUU0MGhOa3hmRTYvc0dsRjdxZmx4Rk5UemQ0ZGduaHphRGg5VFFLWkdLbDJI?=
+ =?utf-8?B?T0xLcEFjRXczeWU3dCtUSnJiOTNMa2dMeHVZODk4YkUvbnhGbDN0VlhVVlg3?=
+ =?utf-8?Q?81ri9/EuENK7kgIaRfwPN9cdtSYu1M=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(82310400026)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 18:08:48.7526
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 67e20466-6b2a-445a-5e20-08dd5c10c73e
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DS1PEPF00017092.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8736
 
-Il 05/03/25 17:12, Jason-JH Lin (林睿祥) ha scritto:
-> On Tue, 2025-03-04 at 10:41 +0100, AngeloGioacchino Del Regno wrote:
+Hello Linus,
+
+On 3/5/2025 11:05 PM, Linus Torvalds wrote:
+> On Wed, 5 Mar 2025 at 01:24, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
 >>
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> Il 18/02/25 06:41, Jason-JH Lin ha scritto:
->>> To support hardware without subsys IDs on new SoCs, add a
->>> programming
->>> flow that checks whether the subsys ID is valid. If the subsys ID
->>> is
->>> invalid, the flow will call 2 alternative CMDQ APIs:
->>> cmdq_pkt_assign() and cmdq_pkt_write_s_value() to achieve the same
->>> functionality.
->>>
->>> Signed-off-by: Jason-JH Lin <jason-jh.lin@mediatek.com>
->>> ---
->>>    drivers/soc/mediatek/mtk-mmsys.c | 14 +++++++++++---
->>>    drivers/soc/mediatek/mtk-mutex.c | 11 +++++++++--
->>>    2 files changed, 20 insertions(+), 5 deletions(-)
->>>
->>> diff --git a/drivers/soc/mediatek/mtk-mmsys.c
->>> b/drivers/soc/mediatek/mtk-mmsys.c
->>> index bb4639ca0b8c..ce949b863b05 100644
->>> --- a/drivers/soc/mediatek/mtk-mmsys.c
->>> +++ b/drivers/soc/mediatek/mtk-mmsys.c
->>> @@ -167,9 +167,17 @@ static void mtk_mmsys_update_bits(struct
->>> mtk_mmsys *mmsys, u32 offset, u32 mask,
->>>        u32 tmp;
->>>
->>>        if (mmsys->cmdq_base.size && cmdq_pkt) {
->>> -             ret = cmdq_pkt_write_mask(cmdq_pkt, mmsys-
->>>> cmdq_base.subsys,
->>> -                                       mmsys->cmdq_base.offset +
->>> offset, val,
->>> -                                       mask);
->>> +             offset += mmsys->cmdq_base.offset;
->>> +             if (mmsys->cmdq_base.subsys != CMDQ_SUBSYS_INVALID) {
->>
->> You're still anyway passing the subsys to cmdq_pkt_write_mask(),
->> right?!
->> Why don't you just handle this in cmdq_pkt_write_mask() then? ;-)
->>
->> I can see this pattern being repeated over and over in both
->> drm/mediatek and MDP3
->> drivers, and it's not necessary to duplicate this many times when you
->> can write it
->> just once.
->>
->> Would've also been faster for you to implement... :-D
->>
+>> Add htmldoc annotation for the newly introduced "head_tail" member
+>> describing it to be a union of the pipe_inode_info's @head and @tail
+>> members.
 > 
-> I think did it in the series V1:
-> https://patchwork.kernel.org/project/linux-mediatek/patch/20241121042602.32730-5-jason-jh.lin@mediatek.com/
+> Applied.
+
+Thank you.
+
 > 
-> Because it'll need to passing the base_pa and that will need to change
-> the interface for original APIs.
+> I also committed the pipe_occupancy() fix for 32-bit, but did so
+> without testing - it was ObviouslyCorrect(tm), but considering that
+> everybody missed it in the original patch, "obvious" is all relative.
 > 
-> And CK think that's not a necessary to change the APIs. It can be done
-> by cmdq_pkt_assign() + cmdq_pkt_write_s_mask_value() in the client
-> drivers. Then you can see this pattern in everywhere. :-)
+> And it turns out my worry about pipe_discard_from() was unnecessary.
+> Yes, the code is buggy. But no, it doesn't matter. Why? There are no
+> callers of that function ;)
+
+On the topic of pipe_discard_from(), Al had added that helper in commit
+c3497fd009ef ("fix short copy handling in copy_mc_pipe_to_iter()") to
+discard unused buffer for copy_mc_to_iter()
+
+Its usage in copy_mc_pipe_to_iter() was later removed in commit
+8fad7767edcf ("ITER_PIPE: allocate buffers as we go in copy-to-pipe
+primitives) in favor of iov_iter_revert()
+
+pipe_advance() started using it in from commit 2c855de93314 ("ITER_PIPE:
+clean pipe_advance() up") however all of that was nuked in commit
+3fc40265ae2b ("iov_iter: Kill ITER_PIPE")
+
+generic_file_splice_read() started using it from commit 0d9649341363
+("splice: stop abusing iov_iter_advance() to flush a pipe") but
+generic_file_splice_read() was later removed in commit c6585011bc1d
+("splice: Remove generic_file_splice_read()")
+
+I don't see any in kernel user of this helper currently so can the
+wrap-around issue be addressed and the helper be removed later?
+
 > 
+> That said, I still hope people will take a look at the code and see if
+> there's anything else I missed.
+> 
+> Oh, and testing. Testing would be good.
+> 
+>          Linus
 
-Using likely(x) and unlikely(x) should be avoided, really, unless it's something
-that is really really really really ... really ... rea.... likely or unlikely :-)
-
-Btw. Changing the APIs is a bit difficult, but I disagree with CK about not
-"inventing" a new API for the unsupported-subsys flow.
-
-It's true, it is not *strictly* needed to add a function, but it's good for any
-kind of future maintainability - as I explained, it's easier then to fix a problem
-if there's one.... and well, I can see that you agree with me, because effectively
-you did it the first time :-)
-
-CK mentioned using cmdq_pkt_write() *or* cmdq_pkt_assignwrite/cmdq_pkt_write_pa()
-(however you wanna call it, it's fine for me), in drivers that know that there
-always is or there always isn't a subsys ID: that's a good suggestion, as this can
-be eventually done with assigning a function pointer, so, no conditionals at each
-operation.
-
-My point of view, finally, is:
-  - This is just another way of doing cmdq_pkt_write()
-    - This, at the end of the day, does exactly what cmdq_pkt_write() is doing,
-      except it's doing it with two instructions instead of one;
-  - The same thing can be done in two different ways (depending on SoC)
-    - This same thing should have a function that does it.
-
-A function that does it can be
-
-int cmdq_pkt_write_pa(struct cmdq_pkt *pkt, u8 subsys /*unused*/, u32 pa_base, u16 
-offset, u32 value)
-{
-	err = cmdq_pkt_assign(pkt, 0, CMDQ_ADDR_HIGH(pa_base));
-	if (err < 0)
-		return err;
-
-	return cmdq_pkt_write_s_value( .... etc)
-}
-
-int cmdq_pkt_write() <--- unchanged, scheduled for removal after all drivers migrated
-
-int cmdq_pkt_write_subsys(struct cmdq_pkt *pkt, u8 subsys, u32 pa_base /*unused*/, 
-u16 offset, u32 value)
-{
-	/* This function will get the contents of cmdq_pkt_write once removed,
-            but, in the meanwhile, to avoid duplication we just call that: */
-
-	return cmdq_pkt_write(pkt, subsys, offset, value);
-}
-
-- Are we adding one more function parameter? Yes
-- Is this impacting performance overall? Not really
-
-After all, we're living in an ARMv8 (actually, ARMv9 for new ones) world, so
-one more function param won't hurt anyone.
-
-I think that's the best of both worlds, and makes everyone happy.
-Are you happy with that? :-)
-
-Cheers,
-Angelo
+-- 
+Thanks and Regards,
+Prateek
 
 
