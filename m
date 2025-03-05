@@ -1,192 +1,135 @@
-Return-Path: <linux-kernel+bounces-546955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43EEDA5011E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:55:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09486A50123
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:56:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3488F16B90B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4CA163ABBE8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:56:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A024424886C;
-	Wed,  5 Mar 2025 13:55:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17BA324A048;
+	Wed,  5 Mar 2025 13:56:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="APkCaIdc"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OOvluREM"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4312243955
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:55:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC67D241115;
+	Wed,  5 Mar 2025 13:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741182914; cv=none; b=UFFpI9Cq/Y2mtYk7K5uIeb+qhOFUjt7YiZxj6YP6rsjCzzCu8ugZcvZ6oJ53VwrYwObtHHKTtBq4st/lHEYiiMpsQSxCbLMUMOq4TsN44FSAmYo3ZMW7G4DYiXt/fYZIcMUWlrd8siolQRATPZuyJpkeA4BQzrZfxCrdWWVHAJk=
+	t=1741182989; cv=none; b=TnN8tHrR1QUn4Sa8/Y05+ODpMvfSB7kVxHKsS7RSB6YWViHukZks7qEHZjEg/96jTKnpQvZaZzbQT0F1oi3dZXXWkXcLUNUJ+FMsrW82HTdn2RQCs2ifMbRNVw16RWTTvmmH/gnN5+7nzjS29WnFElA42bnox1cEyDaMasHryr4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741182914; c=relaxed/simple;
-	bh=lxn/ISYLtLolpUg3cD1NNu0tzs5f5F6c3XgSUA+EVnI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tKaNZOzZ7pfljFVVqXNUQMUWRAn2YYBvKXUz5vhuJzhkT2fBMmD0/0ONAbiwoB5sKuqIDHP9N9KL/dakWx265oRaJgteOFKUi1FlJREixPRQxNe/dmuzKRa1TmvIFyL5mTvvL/3keb93uHfFLwd0J76mn2GrQ6P2s2BuOYeaNU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=APkCaIdc; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741182910; x=1741442110;
-	bh=9I2t8Jen9Sp/023mOypECwCKp+A0wRlfzVIzsvmaau4=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=APkCaIdcU843vEtDvd9gTzgTOr6ZQuq48GLkAUILiXsFA7Jh7wfgftRU/ineiHXvP
-	 BCUrfoOrMfJ75lUpSP0VilwMqOUrZHuNShBS/8CA88E+mNT9HMKWTZfsJ5up93lT0n
-	 mLXSNBUGmC3zWRLCPY6BbFVArA+dfveCI//FXFdxWQqm0QRhu7/wFvJW7tNYjSo9Dd
-	 A5WDK6Tbo6Wd7+P+t7Q0TOBesK4E+FxFHPftySnDWaQjKNsahE21cx9vx8a1Qq2lb3
-	 bvxdGeXtZ0Cw1/c3pNfZ+saaDdKvGuGBBLh/uvUdM5nZxWqj3NZ/HgZuIIbKYNjm0A
-	 ZL789plEoiIuQ==
-Date: Wed, 05 Mar 2025 13:55:03 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 16/22] rust: pin-init: add `std` and `alloc` support from the user-space version
-Message-ID: <D88DTO6ZIXMN.26SWTE440RP9K@proton.me>
-In-Reply-To: <8734frd5v6.fsf@kernel.org>
-References: <20250304225245.2033120-1-benno.lossin@proton.me> <qEIYcaF5eMmpiaRI_4rpApjyuiQMjms1LdZhmHXO5l9_HqN32upj8ZVbCnvI3hfDDTJeYT_9N7z3kyvOR-whRg==@protonmail.internalid> <20250304225245.2033120-17-benno.lossin@proton.me> <8734frd5v6.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 2482b951e84ad25537860ad8dffc2fa0918366c0
+	s=arc-20240116; t=1741182989; c=relaxed/simple;
+	bh=7tKVO1/yFtKo8AxMa+9eBPIXNrWvUam3daAFVJ/GPxo=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=AgMv1YR46MEg9uboXYLvxWIB1HZx4YvsqaLpVkvjNeH2INTPX4KZVW3qazaQDeyuPWWABcKS1/pTOjxqf4FK05s/zBMt3sTLQsLmAyQOayBTdKvg3VSb1Jga2rarVVpGKI1TdCquf3EwMfzaBIbU86DLvu8xHLlxJuo3Q57gdV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OOvluREM; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-abf4cebb04dso173813066b.0;
+        Wed, 05 Mar 2025 05:56:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741182986; x=1741787786; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7tKVO1/yFtKo8AxMa+9eBPIXNrWvUam3daAFVJ/GPxo=;
+        b=OOvluREM3cpYCuCH4n0CMdx2pew5SdU1oLPkTJsJVokuHeBAQoqK+jN8YJv3RttHHO
+         mEu/w6mTsrSsHhXiijPUnU/vthNt6eX/0xUKmKH1EhomF44mn3/OwyplssqtPcugJ5xB
+         szFZpZcJbMyHGUyNnoj7n21O/PphwrA1T7DzPgXFJSeFWkWIEC+m2zyORjoJSfA2AXsK
+         bhXGvBTmISFHE596PELNwCMoKwura6RrlZejDEHFP16YTVh78majSee6EfkRYv+0fpcv
+         Uog91gou1OTIxkb7sXZjeVuGikFPEspeu+L1djE++CSoDCEoh3L1+ftUMus6BVbjFQc9
+         KTyw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741182986; x=1741787786;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7tKVO1/yFtKo8AxMa+9eBPIXNrWvUam3daAFVJ/GPxo=;
+        b=tHSbz63TFc+Y+/9XLcNwb7PEGTikudp2IhStRZNx2E4G8XG+2ODjNsPsxIfyKkDPBF
+         4I+UPVL9NR6p8q77Qf6aCxbvjKizAPAlQ83nCfUlL/KC9/z/JgXmUg8n1eyXuEWjBCqO
+         7vXXedheozC5jQfd22x7XAVgNkkkDLWZTOAuAdEqava6Frh0cty49RXFDTI87v86q8+y
+         O5BW2CgNZmM2dzHm35dCZSa0AcFsPs7HMTKcZyuUtsIlG40203uJjKYqzbAFPMVvMKkx
+         opD0IRSW49zAt36eurEqp2EtJum2+jzkS3s7ri7+WHpnNGfCtQ0n3d7z5RGJhxK+5pyh
+         2K0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUS61B3EW7Fb1oIH/h9pkU7i/sEjfEY4OG9dnMfsHkPHmQg6cPXegD8kNx/XPxpFdIZVkTOQS5jSzDC@vger.kernel.org, AJvYcCWNlcbrg21GTe5fQPA1MAldTzWDtm+sNWfPAtHJbGxxcF8jwfJBerX3f3Mk6jHem3rEUwrkpGYTsW/XKGoF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxrFSPb2s9Gv8GG+OQXpfm3kwrWyeIl+dJmAwSpIaMBfQ3keCNc
+	W9Nr6PktaHPYxaN95oS9qhlAHd3Y0NY9Avi89/9kdmvldMwt42ap
+X-Gm-Gg: ASbGncvd5KzymqEVSQUR73kK7mkGxW54igfmXug0saUF296RQaE2y6KDoLo8ctxkhKt
+	Qct0PtgzDkEwpOsAwzbXFpoUMFxcYXa6AW4oS/RaLZZ9WwkrdWowA8iPabBMLP2TN2CJNjoI5jT
+	lxgxqWZslkiTP3C0bBLDW1e+R+99cZQEogkTG4QbQMHskrCE1cp1MxdT36pW1gQamuR61D5A/9o
+	AvBU7eZxNbJsWSCqk8eVsArZxngifXExi3lnmSKTlaqhNzn3ZTxQOWTTXobjEvg1+uJdozDUW4x
+	iGJIHLy8+FV3u3hO4wOmY5WwJvxvtHWhS2rJJqy+CaDQ4GFQj6RSYmMhmPGGJ9kJU6tWUayzc5i
+	OeOdOyHTfqRKAAT5Ir6LFcsdVhg==
+X-Google-Smtp-Source: AGHT+IFPKwZUivV9o2egwM9HtqA1X+Wqp5ZNIRNxx/29F/9iRwcSuupsGjgksk9DPk6Csl6LQmklyQ==
+X-Received: by 2002:a17:907:7216:b0:abf:6951:4bc2 with SMTP id a640c23a62f3a-ac1f0edc6b9mr612346766b.7.1741182985565;
+        Wed, 05 Mar 2025 05:56:25 -0800 (PST)
+Received: from smtpclient.apple (89-66-237-154.dynamic.chello.pl. [89.66.237.154])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf7663b935sm550196266b.150.2025.03.05.05.56.23
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 05 Mar 2025 05:56:25 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.400.131.1.6\))
+Subject: Re: [PATCH 0/6] Add support for RK3588 DisplayPort Controller
+From: Piotr Oniszczuk <piotr.oniszczuk@gmail.com>
+X-Priority: 3
+In-Reply-To: <25401bfa.291d.19564244e54.Coremail.andyshrk@163.com>
+Date: Wed, 5 Mar 2025 14:56:12 +0100
+Cc: heiko@sntech.de,
+ neil.armstrong@linaro.org,
+ sebastian.reichel@collabora.com,
+ devicetree@vger.kernel.org,
+ hjc@rock-chips.com,
+ mripard@kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ yubing.zhang@rock-chips.com,
+ dri-devel@lists.freedesktop.org,
+ Andy Yan <andy.yan@rock-chips.com>,
+ krzk+dt@kernel.org,
+ robh@kernel.org,
+ linux-arm-kernel@lists.infradead.org
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <75189787-28E1-4FC2-8E10-4960B3877A6F@gmail.com>
+References: <25401bfa.291d.19564244e54.Coremail.andyshrk@163.com>
+To: Andy Yan <andyshrk@163.com>
+X-Mailer: Apple Mail (2.3826.400.131.1.6)
 
-On Wed Mar 5, 2025 at 1:22 PM CET, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
->
->> To synchronize the kernel's version of pin-init with the user-space
->> version, introduce support for `std` and `alloc`. While the kernel uses
->> neither, the user-space version has to support both. Thus include the
->> required `#[cfg]`s and additional code.
->>
->> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
->> ---
->>  rust/pin-init/src/__internal.rs |  27 ++++++
->>  rust/pin-init/src/alloc.rs      | 158 ++++++++++++++++++++++++++++++++
->>  rust/pin-init/src/lib.rs        |  17 ++--
->>  3 files changed, 196 insertions(+), 6 deletions(-)
->>  create mode 100644 rust/pin-init/src/alloc.rs
->>
->> diff --git a/rust/pin-init/src/__internal.rs b/rust/pin-init/src/__inter=
-nal.rs
->> index 74086365a18a..27d4a8619c04 100644
->> --- a/rust/pin-init/src/__internal.rs
->> +++ b/rust/pin-init/src/__internal.rs
->> @@ -186,6 +186,33 @@ pub fn init<E>(self: Pin<&mut Self>, init: impl Pin=
-Init<T, E>) -> Result<Pin<&mu
->>      }
->>  }
->>
->> +#[test]
->
-> I think the kunit support we have in the pipeline will pick this up?
 
-Is that support also enabled for crates outside of the `kernel` crate?
-I would argue it shouldn't and then this isn't a problem.
 
->> +fn stack_init_reuse() {
->> +    use ::std::{borrow::ToOwned, println, string::String};
->> +    use core::pin::pin;
->> +
->> +    #[derive(Debug)]
->> +    struct Foo {
->> +        a: usize,
->> +        b: String,
->> +    }
->> +    let mut slot: Pin<&mut StackInit<Foo>> =3D pin!(StackInit::uninit()=
-);
->> +    let value: Result<Pin<&mut Foo>, core::convert::Infallible> =3D
->> +        slot.as_mut().init(crate::init!(Foo {
->> +            a: 42,
->> +            b: "Hello".to_owned(),
->> +        }));
->> +    let value =3D value.unwrap();
->> +    println!("{value:?}");
->> +    let value: Result<Pin<&mut Foo>, core::convert::Infallible> =3D
->> +        slot.as_mut().init(crate::init!(Foo {
->> +            a: 24,
->> +            b: "world!".to_owned(),
->> +        }));
->> +    let value =3D value.unwrap();
->> +    println!("{value:?}");
->> +}
->> +
->
-> [...]
->
->> diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
->> index 55d8953620f0..1fdca35906a0 100644
->> --- a/rust/pin-init/src/lib.rs
->> +++ b/rust/pin-init/src/lib.rs
->> @@ -204,8 +204,8 @@
->>  //! [structurally pinned fields]:
->>  //!     https://doc.rust-lang.org/std/pin/index.html#pinning-is-structu=
-ral-for-field
->>  //! [stack]: crate::stack_pin_init
->> -//! [`Arc<T>`]: ../kernel/sync/struct.Arc.html
->> -//! [`Box<T>`]: ../kernel/alloc/struct.KBox.html
->> +//! [`Arc<T>`]: https://doc.rust-lang.org/stable/alloc/sync/struct.Arc.=
-html
->> +//! [`Box<T>`]: https://doc.rust-lang.org/stable/alloc/boxed/struct.Box=
-.html
->
-> Now these will render incorrect in the kernel docs, right?
+> Wiadomo=C5=9B=C4=87 napisana przez Andy Yan <andyshrk@163.com> w dniu =
+5 mar 2025, o godz. 03:30:
+>=20
+>>=20
+>=20
+> I only see the HDMI connector from your dri/state ; so it appears the =
+DP driver hasn't been successfully
+> initialized=EF=BC=88I think kernel dmesg can tell that=EF=BC=89.=20
+> Have you enabled CONFIG_ROCKCHIP_DW_DP ? This is needed.
+>=20
 
-What do you mean by that? The link will resolve to the std versions of
-`Arc` and `Box`. But that is also what this crate will support, as it
-doesn't know about the kernel's own alloc.
 
->>  //! [`impl PinInit<Foo>`]: PinInit
->>  //! [`impl PinInit<T, E>`]: PinInit
->>  //! [`impl Init<T, E>`]: Init
->> @@ -239,6 +239,11 @@
->>  #[doc(hidden)]
->>  pub mod macros;
->>
->> +#[cfg(any(feature =3D "std", feature =3D "alloc"))]
->> +mod alloc;
->> +#[cfg(any(feature =3D "std", feature =3D "alloc"))]
->> +pub use alloc::InPlaceInit;
->
-> Do we really need to have this entire file sitting dead in the kernel
-> tree? If you are not building the user space version from the kernel
-> sources, I don't think we need it here. Even when you want to sync
-> between the two repositories, it should be easy to handle an entire file
-> being not present on one side.
+Andy,
 
-I do have a script that does the commit porting, you can find it at [1].
-So I could easily add that file there. However, I think it also is
-important that it's easy to remember which files are synchronized and
-which files aren't. At the moment it's very simple, the synchronized
-files are:
-- README.md
-- CONTRIBUTING.md
-- src/*
-- internal/src/*
-- examples/*
+Do you mean CONFIG_ROCKCHIP_DW_DP or CONFIG_DRM_DW_DP ?
 
-If I introduce special cases for files in src, I fear that I might get
-confused at some point, making a change that shouldn't be done etc.
+If CONFIG_DRM_DW_DP - then yes - i have it: =
+https://github.com/warpme/minimyth2/blob/2e267842b1033bbc4c2c5d80c1756a142=
+e347cc5/script/kernel/linux-6.14/files/linux-6.14-arm64-armv8.config#L5024=
 
-I understand your worry about the dead file, but at the same time, I
-think it's vital to keep the pattern of synchronized files as simple as
-possible.
 
-[1]: https://github.com/Rust-for-Linux/pin-init/commit/7eda8fda7cb48883511d=
-b4b5f4fff8d574eef25a
+Kernel dmesg: https://termbin.com/uiup
 
----
-Cheers,
-Benno
+
 
 
