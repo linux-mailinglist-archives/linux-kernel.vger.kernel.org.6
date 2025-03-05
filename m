@@ -1,59 +1,104 @@
-Return-Path: <linux-kernel+bounces-546247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CAB9A4F85A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:57:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E88A4F861
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:02:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A1F3A71B0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:57:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C14B3A713D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:01:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B161F4276;
-	Wed,  5 Mar 2025 07:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CCDD1EE03D;
+	Wed,  5 Mar 2025 08:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MWpWHrmM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MH+IkW4G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3pabyOn9";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="MH+IkW4G";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="3pabyOn9"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC27E1547E2;
-	Wed,  5 Mar 2025 07:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F65D2E3360
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741161457; cv=none; b=fU4GSsX8sn1Aw9lR4OqG6GV03B04krGnt8fxzZ/ZCSIwhCDfikU7wh+ySZmM+Q5kJi7pTUyPftwgoCqCQzs/nVwlQ2djxd4SgxUxfNJwulE2JHKINLC9NmnLXie/bjlhdAVFf1AsBXDU3qGCtYH11+fMRfJMIujgLThqRZN1bt4=
+	t=1741161715; cv=none; b=NkAmogcdl+6y/QgAgbWYTsRg3jeQscpTflt43f2AvSydBfuOEOd4Fu7cUqBV6NWX+bQ9b+o2POVfy44yZyX7kd8wuIIsDjgCK7XMxO03zHI3FQanWL2h15Rc3/WG9UVzfXrERWM4CYgfadg8h9MMpIWPNKzVRMxSk7oB8d/nrcw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741161457; c=relaxed/simple;
-	bh=1qfqTAY5g4rU5BKvohe/wSQnKZRFwIwUMMFb18lwqUU=;
+	s=arc-20240116; t=1741161715; c=relaxed/simple;
+	bh=7BL52QoPe33AnShF5DGRGCF6ImqqLvlMhy0Fo8VYsY0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y2x/QL+6xxtCV8b9HJS/q6x8FSan1fJdxmHOzPJPIE8JuCwGloFQ5tiFhv2flKi7VLsz4Ra3UmX6DlPskJ1qf4HRHXpSN/k0unX7kiA1lajfJHI0vbc5f/bklw8I5Ns8+EbiEcMJsisYUQhyW1bqIp8GeHnUQKapu1XO3/Af2uU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MWpWHrmM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E045C4CEE2;
-	Wed,  5 Mar 2025 07:57:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741161456;
-	bh=1qfqTAY5g4rU5BKvohe/wSQnKZRFwIwUMMFb18lwqUU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MWpWHrmM6FO5slFEe1awm0P61uonDdfX3ReUfsTLsL7J86m5wr+uuhUcH+qImGhCX
-	 SB46SjNYa6B1UYlZl6TrKQDxTT9vpRnYwNXt65iGD+vs1lRX5+4k8rilVsH1TF0Rn7
-	 WnAmmnavwtnnrgNysNzXEnisr77zmZJ+hv5bcsX8=
-Date: Wed, 5 Mar 2025 08:57:33 +0100
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, "cocci@inria.fr" <cocci@inria.fr>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [v2] mei: Improve exception handling in mei_cl_irq_read_msg()
-Message-ID: <2025030508-iodize-diagram-3e0f@gregkh>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <00589154-00ac-4ed5-2a37-60b3c6f6c523@web.de>
- <b7b6db19-055e-ace8-da37-24b4335e93b2@web.de>
- <MN2PR11MB40930A824DF68F96A93E1B7FE5859@MN2PR11MB4093.namprd11.prod.outlook.com>
- <df3ce733-955b-45f3-98bd-04ddb2200eca@web.de>
- <CY5PR11MB6366D07A7F302780A87160E6EDCB2@CY5PR11MB6366.namprd11.prod.outlook.com>
- <ccdac63a-4a04-4243-9350-05acc23f413b@web.de>
- <CY5PR11MB6366E6F52B68E8258EE47F3FEDCB2@CY5PR11MB6366.namprd11.prod.outlook.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=pzahIn/20lNYSMSYDyCzMDtzcDHNuRvleweEMxlRxsZBHO67oEttCtOOlolAb8A+b4+EE9LtjzJnF6UE0+hQnQP1Ps6Us/xxVItgjl0XTs5HRTM6LMIaIDAmAg8QtKGnoj4keCkAYFEFdxTJHmQsWLyHVE+jezQBW0GA4VXE5Dg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MH+IkW4G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3pabyOn9; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=MH+IkW4G; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=3pabyOn9; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 53BFB1F393;
+	Wed,  5 Mar 2025 08:01:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741161712;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WZPU7khVOLeHOi07wk2l2vKH7+JIqQRqRn0aMjHTqoo=;
+	b=MH+IkW4GjeDcoyLSAHjUun0pW0T19TMJKAhq3yDn4Sv4I1AMjFF23AsJRSnM0z9pJDG+Jo
+	6lDKeXvTZVadcszfe0r031lbk/15FT5XPxJ7vO8G46DLZriOjwUuv4Tv1MRw8dBGvNC+b0
+	Tn5umZGIVWK172RWzABVkWH1mSrKTYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741161712;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WZPU7khVOLeHOi07wk2l2vKH7+JIqQRqRn0aMjHTqoo=;
+	b=3pabyOn9/A8MIcUzzb5lHsTsGWFjWFyWQXxleYG9SQ413CnkEZU4KJebYxcknXv4cvcnlc
+	nLLfUiylLoBmX2AA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1741161712;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WZPU7khVOLeHOi07wk2l2vKH7+JIqQRqRn0aMjHTqoo=;
+	b=MH+IkW4GjeDcoyLSAHjUun0pW0T19TMJKAhq3yDn4Sv4I1AMjFF23AsJRSnM0z9pJDG+Jo
+	6lDKeXvTZVadcszfe0r031lbk/15FT5XPxJ7vO8G46DLZriOjwUuv4Tv1MRw8dBGvNC+b0
+	Tn5umZGIVWK172RWzABVkWH1mSrKTYw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1741161712;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WZPU7khVOLeHOi07wk2l2vKH7+JIqQRqRn0aMjHTqoo=;
+	b=3pabyOn9/A8MIcUzzb5lHsTsGWFjWFyWQXxleYG9SQ413CnkEZU4KJebYxcknXv4cvcnlc
+	nLLfUiylLoBmX2AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2EDA61366F;
+	Wed,  5 Mar 2025 08:01:52 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id CmMpC/AEyGfgUQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Wed, 05 Mar 2025 08:01:52 +0000
+Date: Wed, 5 Mar 2025 09:01:50 +0100
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Daniel Vacek <neelx@suse.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs/defrag: implement compression levels
+Message-ID: <20250305080150.GB5777@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20250304171403.571335-1-neelx@suse.com>
+ <bc3446ce-347f-41da-9255-233e2e08f91c@gmx.com>
+ <CAPjX3FcZ6TJZnHNf3sm00F49BVsDzQaZr5fJHMXRUXne3gLZ2w@mail.gmail.com>
+ <29ec66bd-27a0-443e-b19b-fb759a847dcb@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,40 +107,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CY5PR11MB6366E6F52B68E8258EE47F3FEDCB2@CY5PR11MB6366.namprd11.prod.outlook.com>
+In-Reply-To: <29ec66bd-27a0-443e-b19b-fb759a847dcb@suse.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -4.00
+X-Spamd-Result: default: False [-4.00 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmx.com];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.com,gmx.com,fb.com,toxicpanda.com,vger.kernel.org];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Wed, Mar 05, 2025 at 07:41:25AM +0000, Usyskin, Alexander wrote:
-> > >
-> > > In general, why not, but the label naming is bad.
-> > > It hides the original intent to discard this message.
-> > > Let's rename existing label to discard_nocb: and leave a new one as discard:.
-> > > Also, the patch will be smaller in this way.
+On Wed, Mar 05, 2025 at 06:14:16PM +1030, Qu Wenruo wrote:
+> [...]
+> >>>        /* spare for later */
+> >>>        __u32 unused[4];
+> >>
+> >> We have enough space left here, although u32 is overkilled for
+> >> compress_type, using the unused space for a new s8/s16/s32 member should
+> >> be fine.
 > > 
-> > Do you expect a third patch version according to your naming preferences?
-> > 
-> > Regards,
-> > Markus
+> > That is what I did originally, but discussing with Dave he suggested
+> > this solution.
 > 
-> I prefer to, as the current patch reduces this code readability.
+> Normally I would be fine with the union, to save some memory.
 > 
-> - - 
-> Thanks,
-> Sasha
+> Maybe I'm a little paranoid, but the defrag ioctl flag check is only 
+> introduced last year by commit 173431b274a9 ("btrfs: defrag: reject 
+> unknown flags of btrfs_ioctl_defrag_range_args").
+
+The commit has been backported to stable trees 4.19.307 5.10.210 5.15.149
+5.4.269 6.1.76 6.6.15 6.7.3 , so we could assume the flags are
+validated.
+
+> So it's possible that some older kernels don't have that commit, and may 
+> incorrectly continue by ignoring the flag.
+> Thankfully that should fail with -EINVAL (type always in the higher 
+> bits, thus always tricking the NR_COMPRESS_TYPES check.
 > 
+> If that layout (type in higher bits, level in lower bits) is 
+> intentionally, I'd say it's very clever.
 > 
+> Anyway either solution looks fine to me now.
 
-Hi,
-
-This is the semi-friendly patch-bot of Greg Kroah-Hartman.
-
-Patch submitter, please ignore Markus's suggestion; you do not need to
-follow it at all.  The person/bot/AI that sent it is being ignored by
-almost all Linux kernel maintainers for having a persistent pattern of
-behavior of producing distracting and pointless commentary, and
-inability to adapt to feedback.  Please feel free to also ignore emails
-from them.
-
-thanks,
-
-greg k-h's patch email bot
+The layout also depends on endianness, but should not matter as long as
+the flgags are validated. If not, either the level is ignored or it
+fails due to the >= NR_COMPRESS_TYPES check. Both should be acceptable
+as fallback.
 
