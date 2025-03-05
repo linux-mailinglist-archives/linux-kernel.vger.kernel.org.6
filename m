@@ -1,235 +1,205 @@
-Return-Path: <linux-kernel+bounces-547154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547155-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EE25A50385
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:33:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70C47A5038A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:33:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE43C16A5D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:33:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87B26188B9A9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9A6617BEC5;
-	Wed,  5 Mar 2025 15:32:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6F2224FBE7;
+	Wed,  5 Mar 2025 15:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dxoCQqR3"
-Received: from mail-ot1-f46.google.com (mail-ot1-f46.google.com [209.85.210.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="mtc6ewIP"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2040.outbound.protection.outlook.com [40.107.20.40])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 689C91F5826
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:32:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.46
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741188779; cv=none; b=qHRn2xZPBg7SCm4AInncjvVomwX58jhiCD6mewwbhC2OuOEjkQ+xQUiHXJ//op/KlW+Ws3GJUAhK3Tkd0gZR3QD1L/FDlkd8ge5sq33c7BzT6F9KzOEHIxpusE64cn6bGfev6WmzNyqVmvH+QoZivb0D3Tv21U2R8W23Xmoc2ow=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741188779; c=relaxed/simple;
-	bh=TfTznDHxpfcuoOq7SmzlrxC65Gw8TiLrqyQHhdNlTDo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HV74O+NSPtp2PfAS2lBqnjJAZRLpH/Osc37hZTFUDwoYyxxlAEnU299Z6PHvab9ce6U3RtbMjX1qqRyV5LLPDB/aj5/L3pZMH3vJ6kuNUmIrDl4rAphou4yV//zfJcOMaRZvFXTwLMzDM+9NkWfDGmkbq2pY2LcHAi60mY0kidc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dxoCQqR3; arc=none smtp.client-ip=209.85.210.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f46.google.com with SMTP id 46e09a7af769-724daedf8c3so1080218a34.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 07:32:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741188775; x=1741793575; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SS6BzhqiixXwpgZ1lOCUu0lGg37nPCW8otcVBfAF/jU=;
-        b=dxoCQqR3qwmiReFGOMfBj1KrjQg7EipMS2rPGB+9vxWWRJ7luvyIG1YbArF+41xKH1
-         BXRknyQTEA7f4MA32v/2P/g7fs3nFI/t/3rGMbZKO70E+LzKcFIKm4dfLCuRR8DBTrAP
-         NA7oJVKa6PsvnqR7bciI8VZw/vgQfJtf4l5Vs=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741188775; x=1741793575;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SS6BzhqiixXwpgZ1lOCUu0lGg37nPCW8otcVBfAF/jU=;
-        b=O/IGzCSPGDgwX5FtSeFMfzUcyhdg+aTBabofYcmq3KWtJyiKEjkJDw1AIQ5j6jbNS4
-         vh8OGP/3Ulec6diAmr6dtAOTwSB5GpnMxcj8gHNNYh2MoAarAHEc7yrsybO2HojtsjTh
-         iZudYVqr9lztxD9AlNObxMHVQ2d3SN+KlhKGUK7BmdFs3rO+wjCSOxwawv3iqYqMlH6y
-         T6JAKcbE0ErqdV423SkFn+0NgpRSPLaWcieGP8If7kuP+DEdUQyqlMEYUFDXoUo2Dd9M
-         9zlUSWHPjicltD8vLnX6Yf5/f05WyYnCNfFq5pgFkO+4veRAqqxdJGYVTTxWzwLvbUuJ
-         +EIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVKRmebT/Oe96iqMKQye/Z7dAQ04jpd6Nigk35hmmsBT91xF5KDsPWPf6uPUrQiq8+tYNnJ8qD8oQyM+CM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwjUlna5K+1MvbXqU2xMv8/As4rL5u52kdhEioqGlzRin32wt5
-	w/NNK7gO4+Qx2+6Zj9/7M1I53Cp2EXRkrPEF1uIceiXw7YfP71ZxO92w6iRjYAyKZcLDJecz6ZE
-	8q8n4nzvpxoFYxzDWO7pP0AZPGxxRSlclYFoi
-X-Gm-Gg: ASbGncvp7oEGQe7cZH/rRq5F7OTQyCmIzBbocGHwDPiQfzD/MYm32qRiCpySqYb96th
-	uLEkhJFfBZ88MwnMl3Lr0Or2LmzYS96QmOBrLAAatajN586gPwKUEBT1ZNtud9lX7Q0XfS2U3ED
-	EOOFnfRcBa5jiUW99p37BhPJEHgWq+xMo7MHKuOXa5fekyF5AHjzc9rNJYTms=
-X-Google-Smtp-Source: AGHT+IFmgQ/jsM4ekshudszqyy/BHab2n0718o5/RoujAOysfXPRGiP2FfWjW9zuj0BCFQvhc76kV7MrdK1QvZDlJA0=
-X-Received: by 2002:a05:6830:4490:b0:727:2f27:2a5d with SMTP id
- 46e09a7af769-72a1fcbf088mr630865a34.3.1741188775377; Wed, 05 Mar 2025
- 07:32:55 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B45C17BEC5;
+	Wed,  5 Mar 2025 15:33:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741188805; cv=fail; b=GxGxZxQSeJqcDdVWJLe4O+HCafS0Dk9FRYwT79OS+LDohE33kR1fdLmSu0lLu41HBKiGVHMQxjPwQeQShNVKgftg/kbtixnpfHV1MLqmIHiOI3sMC7Ibw3fGXcaTpt1169VVOVmTnXJLpmLiK0Q0YmLkurhmqwH0v3XfwyOaV9g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741188805; c=relaxed/simple;
+	bh=732vRvUfz8WBsM/MIaLusTbjPp2EV65ZqiwVT3WfUIc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CaHERS4cfsTBuB0yZTysTA2mpChidSjAjX677yjVbWh3VLsdqIA80Sot/7oWCV902T3IQNkXOMIgols/kXjHygsMt+4CGu2DIfckweYmj0bNwaYsbWYLiefHqOzDcpwYqs05q1gBL9beK8/uESxHu4tFsv5S1QcK4WnTAegUjUk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=mtc6ewIP; arc=fail smtp.client-ip=40.107.20.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=L4ke8TRk2kqQWtmdNk+KZyyveHv+uQOeV/OIN+H6kWCg1YnGaOlBLd36YxRe5j1NakRU/NHByyulHeS8QfpUjNsoQNkm0e7XGwemeCxEaVQP5Mtd9y5hIwdFh7QGQrzGti0plAd3wMdjMZ58qjZDsxuicYktl5wjDRRS+QBiYa6I1fAFngcdUy4hoLuKlabcMdwfULcdoZltuKR5PIBt1NkvVm5NvzYj5NxJ3WUvUwUasUjagMQieMCJ6zOnATUOTr5v3DoWwN+e3PkCRl8v6rpmtYDVzYip2Pk26u0TnPJx7SGAUqK7bDSvS9KGIS/EiwSvJraG3Qr+1kvaedSSMQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=AqMEPikRzroReWWrXA/nq4Khfij98Joguqp8vXS6nOc=;
+ b=P0MybKkTXebSYGRDqWgb1Jp0caeiFvpslGHqk9VjjdWXxVg2gkuABhhfnm5LCIfxLnPJQ3PbgU+GtUZhuqucqbmXcuAip9CgSYjJbd5Zk8xIDN1cG5U5BSZ6Ln/qacYy4GFJQ13ST7uXHm806RJ8nqf8A23RC0f67NyvnLc0CpX5byiDutMTj+iu5GSwUrQUYAYShiEUIOgAQ9Oil2XHuBg99xZqvBOJieMdQ1hpAEcwg/FG8+8H+BnMPsBEyPN4/Na9ZnaoM735AiMY9yyNnSEv3BBhAq3ep3Jpq58NNatUrPgA9Ro1MN+dd090n/ux/vxLEvECIo9BkGTfnffvEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 195.60.68.100) smtp.rcpttodomain=google.com smtp.mailfrom=axis.com;
+ dmarc=pass (p=none sp=none pct=100) action=none header.from=axis.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=AqMEPikRzroReWWrXA/nq4Khfij98Joguqp8vXS6nOc=;
+ b=mtc6ewIP0DiN5JZo+wLlo/ZdHB2sVMa3WVESfLQVY3W4P8XtdgwCkibM5XFMYZi3WC5d0xDlEZXUiF3URBcw6RC+y0K0UYLcNi7ekVUV9vp1S0LzpGgVtmVI0vWreg9t5kGwohHYZFG01oyKwPmB8TwVDrxJ89tJI1RkFOm96j0=
+Received: from AM0PR06CA0105.eurprd06.prod.outlook.com (2603:10a6:208:fa::46)
+ by AM7PR02MB6324.eurprd02.prod.outlook.com (2603:10a6:20b:1bd::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Wed, 5 Mar
+ 2025 15:33:20 +0000
+Received: from AMS1EPF00000045.eurprd04.prod.outlook.com
+ (2603:10a6:208:fa:cafe::ae) by AM0PR06CA0105.outlook.office365.com
+ (2603:10a6:208:fa::46) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.18 via Frontend Transport; Wed,
+ 5 Mar 2025 15:33:20 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 195.60.68.100)
+ smtp.mailfrom=axis.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=axis.com;
+Received-SPF: Pass (protection.outlook.com: domain of axis.com designates
+ 195.60.68.100 as permitted sender) receiver=protection.outlook.com;
+ client-ip=195.60.68.100; helo=mail.axis.com; pr=C
+Received: from mail.axis.com (195.60.68.100) by
+ AMS1EPF00000045.mail.protection.outlook.com (10.167.16.42) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8466.11 via Frontend Transport; Wed, 5 Mar 2025 15:33:19 +0000
+Received: from SE-MAIL21W.axis.com (10.20.40.16) by se-mail02w.axis.com
+ (10.20.40.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Wed, 5 Mar
+ 2025 16:33:19 +0100
+Received: from se-mail01w.axis.com (10.20.40.7) by SE-MAIL21W.axis.com
+ (10.20.40.16) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.44; Wed, 5 Mar
+ 2025 16:33:19 +0100
+Received: from se-intmail01x.se.axis.com (10.4.0.28) by se-mail01w.axis.com
+ (10.20.40.7) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Wed, 5 Mar 2025 16:33:19 +0100
+Received: from pc36611-1939.se.axis.com (pc36611-1939.se.axis.com [10.88.125.175])
+	by se-intmail01x.se.axis.com (Postfix) with ESMTP id 0016B263;
+	Wed,  5 Mar 2025 16:33:19 +0100 (CET)
+Received: by pc36611-1939.se.axis.com (Postfix, from userid 363)
+	id F0509627BF; Wed,  5 Mar 2025 16:33:18 +0100 (CET)
+Date: Wed, 5 Mar 2025 16:33:18 +0100
+From: Jesper Nilsson <jesper.nilsson@axis.com>
+To: Frank Li <Frank.Li@nxp.com>
+CC: Jesper Nilsson <jesper.nilsson@axis.com>, Lars Persson
+	<lars.persson@axis.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lorenzo Pieralisi
+	<lpieralisi@kernel.org>, Krzysztof =?utf-8?Q?Wilczy=C5=84ski?=
+	<kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, <linux-arm-kernel@axis.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>
+Subject: Re: [PATCH RFC NOT TESTED 0/2] PCI: artpec6: Try to clean up
+ artpec6_pcie_cpu_addr_fixup()
+Message-ID: <Z8huvkENIBxyPKJv@axis.com>
+References: <20250304-axis-v1-0-ed475ab3a3ed@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305021711.3867874-1-jeffxu@google.com> <20250305021711.3867874-2-jeffxu@google.com>
- <2a42ac63-d7a2-48ae-ae86-568d0fc59d51@lucifer.local> <544138c0-5668-4a6b-9160-59da95b990f6@lucifer.local>
-In-Reply-To: <544138c0-5668-4a6b-9160-59da95b990f6@lucifer.local>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Wed, 5 Mar 2025 07:32:43 -0800
-X-Gm-Features: AQ5f1JotN2ty1jvx9pG2bDT15L1-P_rvXknb6-3kPtBF4GqlDgBfa9YcB410LUQ
-Message-ID: <CABi2SkXoRWQ7_xaYZECWWRZOMcVhzwJK_y8guhdCMYMV9Of=yw@mail.gmail.com>
-Subject: Re: [PATCH v9 1/7] mseal sysmap: kernel config and header change
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, jannh@google.com, 
-	torvalds@linux-foundation.org, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	adhemerval.zanella@linaro.org, oleg@redhat.com, avagin@gmail.com, 
-	benjamin@sipsolutions.net, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org, jorgelo@chromium.org, sroettger@google.com, 
-	hch@lst.de, ojeda@kernel.org, thomas.weissschuh@linutronix.de, 
-	adobriyan@gmail.com, johannes@sipsolutions.net, pedro.falcato@gmail.com, 
-	hca@linux.ibm.com, willy@infradead.org, anna-maria@linutronix.de, 
-	mark.rutland@arm.com, linus.walleij@linaro.org, Jason@zx2c4.com, 
-	deller@gmx.de, rdunlap@infradead.org, davem@davemloft.net, peterx@redhat.com, 
-	f.fainelli@gmail.com, gerg@kernel.org, dave.hansen@linux.intel.com, 
-	mingo@kernel.org, ardb@kernel.org, mhocko@suse.com, 42.hyeyoo@gmail.com, 
-	peterz@infradead.org, ardb@google.com, enh@google.com, rientjes@google.com, 
-	groeck@chromium.org, mpe@ellerman.id.au, aleksandr.mikhalitsyn@canonical.com, 
-	mike.rapoport@gmail.com, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20250304-axis-v1-0-ed475ab3a3ed@nxp.com>
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AMS1EPF00000045:EE_|AM7PR02MB6324:EE_
+X-MS-Office365-Filtering-Correlation-Id: 53a7fdd3-e070-424e-6135-08dd5bfb0ed0
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|7416014|376014|13003099007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?c1LE3LGYUx6dQ+wH3v3PbsO/09Cp7jSWO1VxXpSPZ/uLIQ0ok7LgxhM+Se4u?=
+ =?us-ascii?Q?QR9JKCVv10Oy3+ECr5K+NWJiDszQawZCwSTtTdcYraTBywcm1OYpclj9tXna?=
+ =?us-ascii?Q?Z7aYq0ygl0lvd/TCb62cYnj/3jI6MHeANA8Hwz5rmaTOUjXtWOiAS0d2p2Y/?=
+ =?us-ascii?Q?WP767pppbl4VA7X/dIlGQqQM2IrIpoqnnvHoaMGsM/PRDrHTQfsYg9jWeALF?=
+ =?us-ascii?Q?VAuWt3ozGpQPGzhvmiCdRmR/y8fsPbm6apkR4UqBoQgHmKH3t8IFRtXLoF/0?=
+ =?us-ascii?Q?jXSnpiHiJUjBGKFobgXqUsKn2mltGl2jGtEMRSFLEU4Js4p+SV+KAuyUoNg4?=
+ =?us-ascii?Q?UQu3M7HW1xXLs1N05LFqmYUojFYC3+d3cAi3IhElLtrFopr8m2ZxV3qgAaMh?=
+ =?us-ascii?Q?CgGd7XVE7Y6qWD4qHwgNZMpvN83/LFQX0bGdzAk0IT8S90mYq4Rl1bHQuloh?=
+ =?us-ascii?Q?phIYi3ZyqILdTMasNbMymkWdLTWXBvbvAtxZn0XIssI67EpKT8oELAnBRQqv?=
+ =?us-ascii?Q?PsiTJ3KA2NUqgpBL65ubSKnwphIAwxF9nGTVHOEEhAlRSp4CIVte+1ioLdFV?=
+ =?us-ascii?Q?AMC0DlvIsenVVGpFnwOG7ygcp3+Cff1SXGxQld1UwhqaG2IJYURP5QEnHRFm?=
+ =?us-ascii?Q?UfWfgqU+nFTijNwBJW/1pztvigRZ3iU9aFfpELfsOe5f0J8L/fdGQui9Bg5R?=
+ =?us-ascii?Q?Te/vSbf6uRqqomUUc/XPhibU5TH9ygHhkI8LRxKLHtbaqhsgtrGAA2Mu5E4m?=
+ =?us-ascii?Q?k3QEtfvSNB9QEMJishidjW5QPRIc7Nh6Phhovuskv7wWGcR4pOd18AmCohQn?=
+ =?us-ascii?Q?/3AR5VyfJKRtxj47K9lyXjRlIX3xaZ+GqP8fDhnsE8w6WiiI8hRwqlhJMPeG?=
+ =?us-ascii?Q?5VI1zTA88ftgUb+2Yk5num2v8Cr7H6HB/eVYM9OcLg/KTKWPT+KsAE5Rwfj7?=
+ =?us-ascii?Q?vhJ3ug57mENw/WCLh0qSmleShhEnKpbUHFgAteoeUseAUqcLceobrUlxrE3I?=
+ =?us-ascii?Q?RiOBQ49AfxNEbaf7iZ+K/o6s73gJqT3GaVKiIDoEhZR9SlJ4ZLQjgvbRJ3fy?=
+ =?us-ascii?Q?OOb5WRyiSw9Qw3oIxeFFHjTRxGC0DBVzENd3VCgMbh+WZlKUFzOLy2rlp6vy?=
+ =?us-ascii?Q?1ExJH8dslYBMLI7eCQILvb3J4isK+bStxyUqKKx+SFmU9oDObJYK87NXFr9i?=
+ =?us-ascii?Q?LsLSBajkPS0mhWffbjZ9+4j1yl5YcYvakvEtfqSUqd53cuUcmwu4jxQh0vzS?=
+ =?us-ascii?Q?StuUWmUtecJpsnPbQH5kTPjfjjTiBlVvkSJt8MQiHu5ImdCq/041kgt6Kin1?=
+ =?us-ascii?Q?qNyfQiMdSmdPh6OftZZEzDh+ujx7aTLkkhwm5csqW4TQ7RmcNh6khshVfW2d?=
+ =?us-ascii?Q?WxQOCS2zKZBh9pZW+5qEKJBUZmosTUxCPq17SsDa280iYdWNCo9AbO0Ys00n?=
+ =?us-ascii?Q?Ht9weJeCTYb3syVLNn1q4ifM9hTYAbtXOcOYgxJtUotEuT+eRr45D7C3c3XW?=
+ =?us-ascii?Q?8NO7Unf+aP9sf48=3D?=
+X-Forefront-Antispam-Report:
+	CIP:195.60.68.100;CTRY:SE;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.axis.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(7416014)(376014)(13003099007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 15:33:19.9622
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 53a7fdd3-e070-424e-6135-08dd5bfb0ed0
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=78703d3c-b907-432f-b066-88f7af9ca3af;Ip=[195.60.68.100];Helo=[mail.axis.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AMS1EPF00000045.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM7PR02MB6324
 
-On Tue, Mar 4, 2025 at 9:57=E2=80=AFPM Lorenzo Stoakes
-<lorenzo.stoakes@oracle.com> wrote:
->
-> On Wed, Mar 05, 2025 at 05:54:24AM +0000, Lorenzo Stoakes wrote:
-> > On Wed, Mar 05, 2025 at 02:17:05AM +0000, jeffxu@chromium.org wrote:
-> > > From: Jeff Xu <jeffxu@chromium.org>
-> > >
-> > > Provide infrastructure to mseal system mappings. Establish
-> > > two kernel configs (CONFIG_MSEAL_SYSTEM_MAPPINGS,
-> > > ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS) and VM_SEALED_SYSMAP
-> > > macro for future patches.
-> > >
-> > > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > > Reviewed-by: Kees Cook <kees@kernel.org>
-> >
-> > Umm... I reviewed this too? :) unless you made substantial changes here
-> > (doesn't appear so), please do propagate tags for each revision :>)
-> >
-> > Anyway, FWIW:
-> >
-> > Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> >
->
-> (you also forgot to propagate Liam's tag here)
->
-Sorry about that, I missed  "Reviewed-by" from you and Liam's from V8 [1] [=
-2]
-[1] https://lore.kernel.org/all/maamck3gjqjikefwlubtzg4ymaa6vh47hlxqqn4v23g=
-qwl2tli@t372meccgycq/
-[2] https://lore.kernel.org/all/0ea20f84-bd66-4180-aa04-0f66ce91bdf6@lucife=
-r.local/
+Hi Frank,
 
-Thanks
+I'm the current maintainer of this driver. As Niklas Cassel wrote in
+another email, artpec-7 was supposed to be upstreamed, as it is in most
+parts identical to the artpec-6, but reality got in the way. I don't
+think there is very much left to support it at the same level as artpec-6,
+but give me some time to see if the best thing is to drop the artpec-7
+support as Niklas suggested.
+
+Unfortunately, I'm travelling right now and don't have access to any
+of my boards. I'll perform some testing next week when I'm back and
+help to clean this up.
+
+Best regards,
+
+/Jesper
 
 
-> > > ---
-> > >  include/linux/mm.h | 10 ++++++++++
-> > >  init/Kconfig       | 22 ++++++++++++++++++++++
-> > >  security/Kconfig   | 21 +++++++++++++++++++++
-> > >  3 files changed, 53 insertions(+)
-> > >
-> > > diff --git a/include/linux/mm.h b/include/linux/mm.h
-> > > index 7b1068ddcbb7..8b800941678d 100644
-> > > --- a/include/linux/mm.h
-> > > +++ b/include/linux/mm.h
-> > > @@ -4155,4 +4155,14 @@ int arch_get_shadow_stack_status(struct task_s=
-truct *t, unsigned long __user *st
-> > >  int arch_set_shadow_stack_status(struct task_struct *t, unsigned lon=
-g status);
-> > >  int arch_lock_shadow_stack_status(struct task_struct *t, unsigned lo=
-ng status);
-> > >
-> > > +
-> > > +/*
-> > > + * mseal of userspace process's system mappings.
-> > > + */
-> > > +#ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
-> > > +#define VM_SEALED_SYSMAP   VM_SEALED
-> > > +#else
-> > > +#define VM_SEALED_SYSMAP   VM_NONE
-> > > +#endif
-> > > +
-> > >  #endif /* _LINUX_MM_H */
-> > > diff --git a/init/Kconfig b/init/Kconfig
-> > > index d0d021b3fa3b..7f67d8942a09 100644
-> > > --- a/init/Kconfig
-> > > +++ b/init/Kconfig
-> > > @@ -1882,6 +1882,28 @@ config ARCH_HAS_MEMBARRIER_CALLBACKS
-> > >  config ARCH_HAS_MEMBARRIER_SYNC_CORE
-> > >     bool
-> > >
-> > > +config ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
-> > > +   bool
-> > > +   help
-> > > +     Control MSEAL_SYSTEM_MAPPINGS access based on architecture.
-> > > +
-> > > +     A 64-bit kernel is required for the memory sealing feature.
-> > > +     No specific hardware features from the CPU are needed.
-> > > +
-> > > +     To enable this feature, the architecture needs to update their
-> > > +     special mappings calls to include the sealing flag and confirm
-> > > +     that it doesn't unmap/remap system mappings during the life
-> > > +     time of the process. The existence of this flag for an architec=
-ture
-> > > +     implies that it does not require the remapping of the system
-> > > +     mappings during process lifetime, so sealing these mappings is =
-safe
-> > > +     from a kernel perspective.
-> > > +
-> > > +     After the architecture enables this, a distribution can set
-> > > +     CONFIG_MSEAL_SYSTEM_MAPPING to manage access to the feature.
-> > > +
-> > > +     For complete descriptions of memory sealing, please see
-> > > +     Documentation/userspace-api/mseal.rst
-> > > +
-> > >  config HAVE_PERF_EVENTS
-> > >     bool
-> > >     help
-> > > diff --git a/security/Kconfig b/security/Kconfig
-> > > index f10dbf15c294..a914a02df27e 100644
-> > > --- a/security/Kconfig
-> > > +++ b/security/Kconfig
-> > > @@ -51,6 +51,27 @@ config PROC_MEM_NO_FORCE
-> > >
-> > >  endchoice
-> > >
-> > > +config MSEAL_SYSTEM_MAPPINGS
-> > > +   bool "mseal system mappings"
-> > > +   depends on 64BIT
-> > > +   depends on ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
-> > > +   depends on !CHECKPOINT_RESTORE
-> > > +   help
-> > > +     Apply mseal on system mappings.
-> > > +     The system mappings includes vdso, vvar, vvar_vclock,
-> > > +     vectors (arm compat-mode), sigpage (arm compat-mode), uprobes.
-> > > +
-> > > +     A 64-bit kernel is required for the memory sealing feature.
-> > > +     No specific hardware features from the CPU are needed.
-> > > +
-> > > +     WARNING: This feature breaks programs which rely on relocating
-> > > +     or unmapping system mappings. Known broken software at the time
-> > > +     of writing includes CHECKPOINT_RESTORE, UML, gVisor, rr. Theref=
-ore
-> > > +     this config can't be enabled universally.
-> > > +
-> > > +     For complete descriptions of memory sealing, please see
-> > > +     Documentation/userspace-api/mseal.rst
-> > > +
-> > >  config SECURITY
-> > >     bool "Enable different security models"
-> > >     depends on SYSFS
-> > > --
-> > > 2.48.1.711.g2feabab25a-goog
-> > >
+On Tue, Mar 04, 2025 at 12:49:34PM -0500, Frank Li wrote:
+> This patches basic on
+> https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
+> 
+> I have not hardware to test and there are not axis,artpec7-pcie in kernel
+> tree.
+> 
+> Look for driver owner, who help test this and start move forward to remove
+> cpu_addr_fixup() work.
+> 
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+> Frank Li (2):
+>       ARM: dts: artpec6: Move PCIe nodes under bus@c0000000
+>       PCI: artpec6: Use use_parent_dt_ranges and clean up artpec6_pcie_cpu_addr_fixup()
+> 
+>  arch/arm/boot/dts/axis/artpec6.dtsi       | 92 +++++++++++++++++--------------
+>  drivers/pci/controller/dwc/pcie-artpec6.c | 20 +------
+>  2 files changed, 52 insertions(+), 60 deletions(-)
+> ---
+> base-commit: 1552be4855dacca5ea39b15b1ef0b96c91dbea0d
+> change-id: 20250304-axis-6d12970976b4
+> 
+> Best regards,
+> ---
+> Frank Li <Frank.Li@nxp.com>
+
+/^JN - Jesper Nilsson
+-- 
+               Jesper Nilsson -- jesper.nilsson@axis.com
 
