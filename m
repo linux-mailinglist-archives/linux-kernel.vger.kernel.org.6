@@ -1,139 +1,173 @@
-Return-Path: <linux-kernel+bounces-547012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF1D3A501C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:23:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EB62A501C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:24:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99081173DCE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:22:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4E6A1895BDE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3575F24CEF0;
-	Wed,  5 Mar 2025 14:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F1A224E4B5;
+	Wed,  5 Mar 2025 14:21:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OlThstys"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ipGjJ/CD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC09924BC18;
-	Wed,  5 Mar 2025 14:20:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EFA24889C;
+	Wed,  5 Mar 2025 14:21:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184452; cv=none; b=Alp6AqohuF0yaYyqoOpibynLW5EX2pS4SGsgpb80z7qWbCJCkkKpar1xwprwaHplQ1eU0hkdPIwCL9Qg1NRIioO5k4cN/h4J3Hn0qvIxA0FOkzVXYRiTciRWA2qm3fIvi7QC5Be/wdjTN6LxyuyCSUWm+x3pGzlEFxYERQ8AW8k=
+	t=1741184463; cv=none; b=bo3DSmDMqhzbDE2JUkxhjj3HxnZXWRNucJSAy8Nkfnydj7T7Ev8xhv/A/jLSm/BZWJjmfGhSDQieVLXYD6SqZ5cVC4mM/giia+E6xUllDFJR9ORIEmAJlr2ed/5UUZtTVBc8AxV+4EzCBNsE1CXel5lYmkPWqz7ZQtkyJv4l4ns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184452; c=relaxed/simple;
-	bh=xpcQbs4tyQQ+SW3I3wZ517Ns00JpxHyOOR9gZd4k3L4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mMkS7Y2wL+xiZrlprRuWCwkG7dE6laCuUaT7zn3br6H35B5BXW0QrmSVq5ZiLXCOyGfei9gNPS4VMy9owiNGS3gcLL1wfTpqqIrZcFH2nRGlzEUYhpvArgNga72oqipUaq4NBpXOL6Z8xWoODTsjAnzeahJMmTCzfo63t/5NZr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OlThstys; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741184442; x=1741789242; i=markus.elfring@web.de;
-	bh=C1xWGzwYPulTit0Q4OqYEAYIGUZud3a18Yr5KId4AB8=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=OlThstys6j83TWzkyFcMswl/GOTcM3VEpAu3qt2qK287aJw8yBDslqMH3mQ/imIc
-	 ynQHBbnKQG5Ku/za3XWJ5+m3vA/mZH4zv/KYgsSIHBDHSgA7/u7mxkHI9WuyaXFH+
-	 uCOkNJq52SDtbgZ/26funprLFb4NWXM8wuA3/+OQHNl5A9761SFHclRVPxQflTdws
-	 4RMzskm0NStsYCiPDTo/wZlPopdK1S+5b+wDDYy8uD2xPyKTJXaSkF3TmeymsJi8C
-	 w8WQEPCUwEB9J04At8isQwHb9dQy6u8ztBApGfpf4LXZyixHJC30zN1OWrm/jnAZt
-	 sMqhz2G6D4M2sdfkXQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MN6Fj-1tZX9L08H7-00I6c4; Wed, 05
- Mar 2025 15:20:42 +0100
-Message-ID: <20a1a47c-8906-44e8-92e6-9b3e698b1491@web.de>
-Date: Wed, 5 Mar 2025 15:20:41 +0100
+	s=arc-20240116; t=1741184463; c=relaxed/simple;
+	bh=g9ktS8K7rRoujwZfqZdfcH5n9clfO1z5LX6Sxgf2RCs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Tw6mJcmQrqHW67gFLRaN+koJTPlNuG7Ypx84vhwSVj6dVF1RyAgcZ4eRmZ8uT0CspBIc8mz2iIon0GPtl1eKHuKzI/oxUnFI4vVNRXeQnixa/dxSZxUpdza3p23EkQ8PixLi10KAKVhsswa6jqzk5EjfCE+fFmYkkhxsgxmXeIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ipGjJ/CD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4537C4CED1;
+	Wed,  5 Mar 2025 14:20:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741184462;
+	bh=g9ktS8K7rRoujwZfqZdfcH5n9clfO1z5LX6Sxgf2RCs=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=ipGjJ/CDS553s7hCyO5v/E+vJZlgFG9NmHvjPEPf8pwx3dNVMg6flc/QnRXE3B+sh
+	 Xfq2cR8sCeDWINY8+XaAivWuEe1Toa4f1bWbfJGEL6351o1A+bZQV/nrHMguyToUww
+	 Oth2H+nrmhEhcWZD5kner56fcVNsu9vYAorn9n1dFHtuPKeN+sFxWmlyjdk32mVTcw
+	 Boo14ca5igGp7sKnEVJS4vjx72ZiBypv1T+KjVJmbRplXVj82xc9tPw6+g6qAHGE6e
+	 Awgr1VM4GXzX4BzP5/0oQ/b2gTM9VagRP7xgQ3GvxvFOjA5yAwjQo6DCsHNy6Qx7OQ
+	 s4UTUJ8HR9k/w==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Danilo Krummrich" <dakr@kernel.org>,  "Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,  "Rafael J. Wysocki" <rafael@kernel.org>,
+  "Peter Zijlstra" <peterz@infradead.org>,  "Ingo Molnar"
+ <mingo@redhat.com>,  "Will Deacon" <will@kernel.org>,  "Waiman Long"
+ <longman@redhat.com>,  <linux-kernel@vger.kernel.org>,
+  <rust-for-linux@vger.kernel.org>,  <linux-block@vger.kernel.org>
+Subject: Re: [PATCH 15/22] rust: make pin-init its own crate
+In-Reply-To: <D88DIE85YT01.11H51NPNE3HP6@proton.me> (Benno Lossin's message of
+	"Wed, 05 Mar 2025 13:40:19 +0000")
+References: <20250304225245.2033120-1-benno.lossin@proton.me>
+	<LBAOJwgDK3vs6V-k9Olh9PVQ69a3qCaCgLZctAshaNi73epZNKVgY4rKa-81-5us0Tpj3m3U_W3pCHFTKlIbVQ==@protonmail.internalid>
+	<20250304225245.2033120-16-benno.lossin@proton.me>
+	<87bjufd6bj.fsf@kernel.org>
+	<p2Xt1iMJJIRI9ZD65zucf5N-1vUDxFzg2l66bCD-rZNCrBdZwPi8iu9rKdmEUMlh-gEWESr5rEOuejJGRNF4pw==@protonmail.internalid>
+	<D88DIE85YT01.11H51NPNE3HP6@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 05 Mar 2025 15:20:49 +0100
+Message-ID: <8734fra79a.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH] RDMA/erdma: Prevent use-after-free in erdma_accept_newconn()
-To: kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
- Cheng Xu <chengyou@linux.alibaba.com>, Jason Gunthorpe <jgg@ziepe.ca>,
- Kai Shen <kaishen@linux.alibaba.com>, Leon Romanovsky <leon@kernel.org>,
- Yang Li <yang.lee@linux.alibaba.com>
-Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
- <f0f96f74-21d1-f5bf-1086-1c3ce0ea18f5@web.de>
- <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:K5YWpl1afCIz0GSstMdQrjpKFA5E9zL+d6oUnGlMOn9oeASRXMM
- cxOSbYvrdMcL5omgjTJmGrvhAgOtgemjkpRpepr+oDPbfmNlOhHZBpyRHqrh7cZ7doD1Ioy
- EiDLvYTClCslBiG7DVhc9QPEG9vvNLD9gmYVv1EgQCmnXuJaR/anSsQ/o/eDgMZV1CRGZay
- k0BnV2DvSPWrF3Z170RuA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gkDAiXcZH1k=;xz6JkpFjlNnnbsnyId4VAAQBYB9
- gj4Beb6FayFHM+1bAX90V/bSG3/gQmPupHRKxKzdED9+llmecmGpdQnrUTdasLiJ7oQ/8PEaQ
- zn+NaH5ZETr5WC0U47QwQQFrwZn/poog0ZDEUs2AKFsHlyMGMQ6sO2pYhHXbQsWZZ4qXIiyhv
- bgKWlf1CJPC/2AuLxrk0WZWIBF6Hs0yG68fbjCFl1o8KXdutMD/LufdhzdhZdjdZaNnAWU2QJ
- yWyFLulaOpFNT0fHwx+AgrGJbEKigSIPLM3Du9kYJYBy3h9rQDjdx9vQGClDCs9Q0BiVoxVH+
- 85AGZPGzYGhK8kgZuaO02XX8WaP4Rsf9WZpc4weY0A5Hw+atGKJnJUQ4nSMLnZLO6qFOfz/Zc
- 1Nx6ezUnWDFFyQffJOKJJpX6R0RA2IrMjXvvojeJAKytVrk8nx+c/9rKw/LQmOnLYKts+lo9B
- /Uc1aLKXi6oaHYE/XaMG5cuLyrwUwVBVrE7UH2J1eoF8wNsQDWRYYSj03nw5yaPivMsTPX/sE
- EGuhlXedguV7tvfa4yS5LQDZc6XlGWcxEOFFpTmxhHUCygUr002AQtANhzNA7TfytfSP0Sk0H
- qrQpVo6c8qNk/TyARLXSwrFOs/cq0Idb86qSZjD/OK5x/VlKCGyDuZrkhBdTGC9uUKj4UgU2C
- h8XYp0qRz/hpf7mmgEHR50eiBnG4AFCzZ3rNRvrOhONSOvkIlvW5JO/UH/Bp3ySsMWRVcGHqT
- wgIFVGOUrCdB1tErrx5DBJ+aruL7TQhouko8vWxlz5r7tvyD84TFi8B/PneQEc6MTIskZm9Xs
- o4vL91KQ/rqLx0e2aKQyLHVEV6wkRwfx0nha+UF//r9sXleqZ+0bmUZm+WDRSo/5xg9vUt0FQ
- +0k9RUnnpILrviowSwiwSQ8vqHAd2ZyLAWSigXVca6ZC3ZI/JekwWPSAhdmzO89j/k6wLV+5F
- iPmj4Ud9diSnNOqarGsbbTJo4oR1UlgIm34w2aaAdEnAhbNcBmKLtZCpH2g8ZhiGBSRmY5/M5
- lnsTAGHxnIISkPnULX/RcI8UlS47DRqE+WVky3nRng1SGq3V8tM0ibq7QgnAOtq48L3tIpOPm
- xBjJXJp28BArO2+pkH+SVh45iDfnzwQfqjNuFPEfxK66aK5RaNb1+QvTL3L78DDj9/+LMSdi8
- KbL8JvI8pa0CDu6YxCRBcK71mnnhq0i/LuLMATBifXFX6UAfGDcTpkAXcfMFsQqOcLlgErtqx
- t3Mt9dbeEQe4YZnomN9dKlTX2QE+r8aneg8h7XiRCjEItR9Itp2UYgqA65mRuIe547q0/fAz9
- go/TF8a/wRy7S89tN567WnVAp08wKSMMPcJFL/lw2s6UyuEvq8SnApJJDLt31+AmWV71H3XdP
- FHtEE/450w7P9JH+VL220PGPgt6m2BkYgMYmWUOwBSaKYmj6V87D/NO7OiZwNsDvrJJ/5d0Kw
- sw0WY6+fVlliAzq2pP77dif5eDBk=
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 5 Mar 2025 15:07:51 +0100
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-The implementation of the function =E2=80=9Cerdma_accept_newconn=E2=80=9D =
-contained
-still the statement =E2=80=9Cnew_cep->sock =3D NULL=E2=80=9D after
-the function call =E2=80=9Cerdma_cep_put(new_cep)=E2=80=9D.
-Thus delete an inappropriate reset action.
+> On Wed Mar 5, 2025 at 1:12 PM CET, Andreas Hindborg wrote:
+>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>
+>>> Rename relative paths inside of the crate to still refer to the same
+>>> items, also rename paths inside of the kernel crate and adjust the build
+>>> system to build the crate.
+>>>
+>>> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+>>> ---
+>>
+>> [...]
+>>
+>>> diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
+>>> index 7ff82c82ce0c..8e116e266524 100644
+>>> --- a/rust/macros/lib.rs
+>>> +++ b/rust/macros/lib.rs
+>>> @@ -2,23 +2,20 @@
+>>>
+>>>  //! Crate for all kernel procedural macros.
+>>>
+>>> +#![feature(lint_reasons)]
+>>
+>> Commit message should probably say something about this.
+>
+> Done.
+>
+>>> +
+>>>  // When fixdep scans this, it will find this string `CONFIG_RUSTC_VERS=
+ION_TEXT`
+>>>  // and thus add a dependency on `include/config/RUSTC_VERSION_TEXT`, w=
+hich is
+>>>  // touched by Kconfig when the version string from the compiler change=
+s.
+>>>
+>>>  #[macro_use]
+>>> +#[expect(unused_macros)]
+>>>  mod quote;
+>>>  mod concat_idents;
+>>>  mod helpers;
+>>>  mod module;
+>>>  mod paste;
+>>> -#[path =3D "../pin-init/internal/src/pin_data.rs"]
+>>> -mod pin_data;
+>>> -#[path =3D "../pin-init/internal/src/pinned_drop.rs"]
+>>> -mod pinned_drop;
+>>>  mod vtable;
+>>> -#[path =3D "../pin-init/internal/src/zeroable.rs"]
+>>> -mod zeroable;
+>>>
+>>>  use proc_macro::TokenStream;
+>>>
+>>> @@ -374,5 +371,3 @@ pub fn paste(input: TokenStream) -> TokenStream {
+>>>      paste::expand(&mut tokens);
+>>>      tokens.into_iter().collect()
+>>>  }
+>>> -
+>>> -include!("../pin-init/internal/src/lib.rs");
+>>> diff --git a/rust/macros/module.rs b/rust/macros/module.rs
+>>> index cdf94f4982df..bdd94c79b0d4 100644
+>>> --- a/rust/macros/module.rs
+>>> +++ b/rust/macros/module.rs
+>>> @@ -236,7 +236,7 @@ impl kernel::ModuleMetadata for {type_} {{
+>>>              mod __module_init {{
+>>>                  mod __module_init {{
+>>>                      use super::super::{type_};
+>>> -                    use kernel::init::PinInit;
+>>> +                    use pin_init::PinInit;
+>>>
+>>>                      /// The \"Rust loadable module\" mark.
+>>>                      //
+>>> diff --git a/rust/macros/quote.rs b/rust/macros/quote.rs
+>>> index 33a199e4f176..11d241b85ac3 100644
+>>> --- a/rust/macros/quote.rs
+>>> +++ b/rust/macros/quote.rs
+>>> @@ -2,6 +2,7 @@
+>>>
+>>>  use proc_macro::{TokenStream, TokenTree};
+>>>
+>>> +#[allow(dead_code)]
+>>
+>> #[expect(dead_code)] ?
+>
+> `expect` can't be used here, since `quote.rs` is imported in
+> `pin-init/internal/src/lib.rs` and used in that crate. But it is unused
+> in the `macros` crate, hence we need to allow it.
 
-Reported-by: Cheng Xu <chengyou@linux.alibaba.com>
-Link: https://lore.kernel.org/cocci/167179d0-e1ea-39a8-4143-949ad57294c2@l=
-inux.alibaba.com/
-Link: https://lkml.org/lkml/2023/3/19/191
-Fixes: 920d93eac8b9 ("RDMA/erdma: Add connection management (CM) support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
- drivers/infiniband/hw/erdma/erdma_cm.c | 1 -
- 1 file changed, 1 deletion(-)
+Got it =F0=9F=91=8D
 
-diff --git a/drivers/infiniband/hw/erdma/erdma_cm.c b/drivers/infiniband/h=
-w/erdma/erdma_cm.c
-index 1b23c698ec25..e0acc185e719 100644
-=2D-- a/drivers/infiniband/hw/erdma/erdma_cm.c
-+++ b/drivers/infiniband/hw/erdma/erdma_cm.c
-@@ -709,7 +709,6 @@ static void erdma_accept_newconn(struct erdma_cep *cep=
-)
- 		erdma_cancel_mpatimer(new_cep);
 
- 		erdma_cep_put(new_cep);
--		new_cep->sock =3D NULL;
- 	}
+Best regards,
+Andreas Hindborg
 
- 	if (new_s) {
-=2D-
-2.48.1
+
 
 
