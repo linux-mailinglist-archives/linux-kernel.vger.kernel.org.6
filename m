@@ -1,277 +1,163 @@
-Return-Path: <linux-kernel+bounces-546220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3878A4F7E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:30:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBEC2A4F7EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:31:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E582316A9F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:30:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 04959189146D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40E4226AD9;
-	Wed,  5 Mar 2025 07:30:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7621F236B;
+	Wed,  5 Mar 2025 07:31:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b="jRTO0s8y"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="hnNoddCi"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5FF86324
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0555486324;
+	Wed,  5 Mar 2025 07:31:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741159841; cv=none; b=se/9EL1iOqbl/kYBsgUhzTrn16fWM5CpdBx9zRDq3dSOUgb5vjA5eCz282lT/9KveoHWQ3xPeXYEa+wnMf0+1N2aBzO5LlNi7NIId0vHK8UtmYfueYXh9Nhca/2p6DZSwA7pICYB7oX0FfARrMBNcTejKoAenzfAeFxomwkjOJI=
+	t=1741159893; cv=none; b=EWxVMi5rPCu2i6/OzdYASNoM+hCqBF76DUSk7EQhkAcrdU+uEheEvd9HpfoZzJDewcZmzNBXCso7RZfULSunp6tjvL30sgKW0buNbOMrHaqI4q1tYBuJHEUQhwCMZYqhCAiaKoUQ7PReE4rHfZurJ1X51QzONlbFykt/TLWBP4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741159841; c=relaxed/simple;
-	bh=E9d/ZYRDweWef9J6nm+N37n6i90JPaipsMFkzvOxEHw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cMx6vM9L2gYPnp0kTbjM1AzV39JNr+w6WBOE1wx8nWzdajWAuxMMW9fwg8r2ROwr3rnx0Sye77PxRnDtcl7digCciFB5AGpjUzoxe4/Ap4JO2jQn4otV+vvv7hWszIDjAMbR1iG4ytaGfTJo5UhPei9ogVvuijW6InNOYS4iDPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch; spf=none smtp.mailfrom=ffwll.ch; dkim=pass (1024-bit key) header.d=ffwll.ch header.i=@ffwll.ch header.b=jRTO0s8y; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ffwll.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ffwll.ch
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so43746685e9.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:30:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ffwll.ch; s=google; t=1741159838; x=1741764638; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6eIPjoywVHzslmjO8vs+eTHuxI6qCJTL5FwNFg9NfBw=;
-        b=jRTO0s8yBID2JL6Q4Ibt7Q6zqZv72n+v6fKAaEP9vsvcRdv302j81GRZfFA+NPMhGX
-         NCbYYSbxnZSmPL6VRdHgqgxuIXEvyImCfhQz6hV95IKiyy3FJuRuCTyXxKKDVUqR0OVX
-         JEtEM7smY6vqKMfGmZYjODH5b4UbIDtoltkk0=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741159838; x=1741764638;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6eIPjoywVHzslmjO8vs+eTHuxI6qCJTL5FwNFg9NfBw=;
-        b=SFZuv9mwuiM1cxE4vI8OEAe+pIl3PetNXivJgBDnIFz2Vc3FPOBnz1aWfgeT4d0pNv
-         wAYKS/1nujKbRKa+6YOLo3ppJzPKPDE0Bm7j9/fWb0T3Rj3VlmixZa1HxK8OgNNGLPcS
-         J7Rl/PaZkIduda77S3AvW3a0RghdNEGZ5SqdwCyzmABFO1Fze3zpAI7+e999lYI0+CyY
-         QklB2nbUU/PPL+pHW72ssfVkcYkDRzWkmQwyRQa57DWSFU7iuURUVXM0+dJTuMg/e6DM
-         q6q8g9GVnk9BoBpJJHEt4zN/fcQnlAVCmxK7SZX84k0WJnOZEWWgyZcf4WtoGH8xYv4t
-         gJrA==
-X-Forwarded-Encrypted: i=1; AJvYcCVD2hjGMgeX0T8lHFUECad/uJ04PfceEQ62JQy0lf7gLfI3aRKJB2/VZdo1OH25dkYprHk5nI3Ik49yXcg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEW2ubmh5YtBH+gv7fc1qbqQhvuwC30EPG3PKD51OhYldbo3Hc
-	qTWRwh2cbhjIaKI9Yiu9g4TEbbdV3N7CAN14e37F8Seg5MFqYY6ftXH02xU7I/g=
-X-Gm-Gg: ASbGncu0SWl9CiQuZ8fpBMHys4qTDQkPeOsePWKfEn/iC8buKdbP1eNa/3hwMFKGuwE
-	dSki9e6O/5eHRL+IAdVh1A/UUQtGuokG5GOSTt4UFbu4wZBRtxX0hEn4fXto6e3JZkP7eCsQc5t
-	gp/IfeiB7jb21Tx0gmiF/u9uM7gi0DT9n6z+Eza/EaUHqteT/SQEdsQr1gQ3SAfbCICu1IQoUc5
-	wyJVjT+QTKaofQUaHdBwpyChYXJAvqgv99uQH5yi0mf+7U/lJgShr9KMR2aa21o0RkeLGtOSOAR
-	L3dJaODE03IqnF+8yghwNFtOE7/1khmQLhWWysqSuaTsLe6IELdCR4GM
-X-Google-Smtp-Source: AGHT+IGLEHkW+RyaKKz2KrNndnwh4djhORTNBKpw376Kno8bWHtJQuS7EruIxE2wip3vv6xuWjSI3w==
-X-Received: by 2002:a05:600c:1d0f:b0:43b:d203:da18 with SMTP id 5b1f17b1804b1-43bd295494bmr11723085e9.13.1741159837590;
-        Tue, 04 Mar 2025 23:30:37 -0800 (PST)
-Received: from phenom.ffwll.local ([2a02:168:57f4:0:5485:d4b2:c087:b497])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426cbc2sm8898505e9.4.2025.03.04.23.30.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 23:30:37 -0800 (PST)
-Date: Wed, 5 Mar 2025 08:30:34 +0100
-From: Simona Vetter <simona.vetter@ffwll.ch>
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: John Hubbard <jhubbard@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-Subject: Re: [RFC PATCH 0/3] gpu: nova-core: add basic timer subdevice
- implementation
-Message-ID: <Z8f9mgD4LUJN_dWw@phenom.ffwll.local>
-Mail-Followup-To: Jason Gunthorpe <jgg@nvidia.com>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Joel Fernandes <joelagnelf@nvidia.com>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	Dave Airlie <airlied@gmail.com>, Gary Guo <gary@garyguo.net>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Boqun Feng <boqun.feng@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	nouveau@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	paulmck@kernel.org
-References: <Z75riltJo0WvOsS5@cassiopeiae>
- <20250226172120.GD28425@nvidia.com>
- <Z7-IHgcVVS8XBurW@cassiopeiae>
- <20250226234730.GC39591@nvidia.com>
- <2025022644-fleshed-petite-a944@gregkh>
- <D82UB3V6NZ55.3OEPPW2W8MFZV@nvidia.com>
- <Z8GViQzZJVFPxfNd@phenom.ffwll.local>
- <20250228184013.GF39591@nvidia.com>
- <Z8cmBWB8rl97-zSG@phenom.ffwll.local>
- <20250304164201.GN133783@nvidia.com>
+	s=arc-20240116; t=1741159893; c=relaxed/simple;
+	bh=95hQjzkQgPmB6GdlaDjrGS1l1Wn4Kbw4p82WGKXM0+8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PlmhFOzXDkqcKDYCzltj+IHv/tPLF21C/i2uZZINFCMuQVYuh0TY2h95d0WhgKY/xUg8+whzByfLdQemxVXa5dGJMRfa9Yk1t3TgixTcV5PiOxzAg0PmY+BDcqGpxLPJUdasSadAWC+eIXnDloFChtZrwKDQkBjLM+9Y7OumOgw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=hnNoddCi; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5257Uhoh3004301
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Tue, 4 Mar 2025 23:30:44 -0800
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5257Uhoh3004301
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025021701; t=1741159845;
+	bh=liVnbeunrklLqTSuhTlsju+GyrmoYRAVBsQLrw1di6Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=hnNoddCijzVWKzG3yqXdiFrIxKCdqI7oL+LIKCz9EzVmRRTdRvt4wXkECr9quuvEs
+	 ZhAIEsw4meAKUi0luhn6X8SGwu+ottMwRKwakZodxuAVmn8cp7MRxPDxXHBzPOmDOw
+	 XGlLD7qD7M1342G+PNtZJqK3tX3VEbKD1u3/sxtbgF3oR4HMMNciwRiwFgGAfcbeln
+	 UcX43u6k+F+B5/8D5ewKZlNzT6RjOIzT/Cro26X1hhwlAZ0ro7t0Fz8YpuGNe4QYw7
+	 0I8J7wcDPk5tfhdNQQF+eNYn3dHn7Te+pda5URX9cBotHmxfNmLtivYFXWmCyMkHPB
+	 lVcL9YKDFXh8Q==
+Message-ID: <81677e85-ff7f-4986-8e0a-6bf54a63ba49@zytor.com>
+Date: Tue, 4 Mar 2025 23:30:43 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304164201.GN133783@nvidia.com>
-X-Operating-System: Linux phenom 6.12.11-amd64 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/5] x86/cpufeatures: Generate a feature mask header
+ based on build config
+To: Borislav Petkov <bp@alien8.de>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, "Aithal, Srikanth" <sraithal@amd.com>,
+        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+        tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+        x86@kernel.org, will@kernel.org, peterz@infradead.org,
+        yury.norov@gmail.com, akpm@linux-foundation.org, acme@kernel.org,
+        namhyung@kernel.org, brgerst@gmail.com, andrew.cooper3@citrix.com,
+        nik.borisov@suse.com
+References: <20250228082338.73859-1-xin@zytor.com>
+ <20250228082338.73859-4-xin@zytor.com>
+ <7c3b4623-45ea-4340-ac47-334071c1d15f@amd.com>
+ <D03DAFD2-5EC9-4D16-BA66-FDA4B51F45DD@zytor.com>
+ <20250303132505.GEZ8WtsXqFpuMOpDjT@fat_crate.local>
+ <8e4e1723-321a-4e8e-bbac-e2e5d8b08bfc@zytor.com>
+ <20250304102910.GAZ8bV9hXqVb5tA9rs@fat_crate.local>
+Content-Language: en-US
+From: Xin Li <xin@zytor.com>
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <20250304102910.GAZ8bV9hXqVb5tA9rs@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 12:42:01PM -0400, Jason Gunthorpe wrote:
-> On Tue, Mar 04, 2025 at 05:10:45PM +0100, Simona Vetter wrote:
-> > On Fri, Feb 28, 2025 at 02:40:13PM -0400, Jason Gunthorpe wrote:
-> > > On Fri, Feb 28, 2025 at 11:52:57AM +0100, Simona Vetter wrote:
-> > > 
-> > > > - Nuke the driver binding manually through sysfs with the unbind files.
-> > > > - Nuke all userspace that might beholding files and other resources open.
-> > > > - At this point the module refcount should be zero and you can unload it.
-> > > > 
-> > > > Except developers really don't like the manual unbind step, and so we're
-> > > > missing try_module_get() in a bunch of places where it really should be.
-> > > 
-> > > IMHO they are not missing, we just have a general rule that if a
-> > > cleanup function, required to be called prior to module exit, revokes
-> > > any .text pointers then you don't need to hold the module refcount.
-> > > 
-> > > file_operations doesn't have such a cleanup function which is why it
-> > > takes the refcount.
-> > > 
-> > > hrtimer does have such a function which is why it doesn't take the
-> > > refcount.
-> > 
-> > I was talking about a bunch of other places, where it works like
-> > file_operations, except we don't bother with the module reference count.
-> > I've seen patches fly by where people "fix" these things because module
-> > unload is "broken".
+On 3/4/2025 2:29 AM, Borislav Petkov wrote:
+> On Tue, Mar 04, 2025 at 02:18:51AM -0800, Xin Li wrote:
+>> It seems that 'archprepare' works, however I'm not sure if it's the best
+>> choice.  Any suggestion?
 > 
-> Sure, but there are only two correct API approaches, either you
-> require the user to make a cancel call that sanitizes the module
-> references, or you manage them internally.
+> Why do you even need featuremasks_hdr as a prereq?
+
+I'm not sure I'm calling it a prereq; it needs to be generated after we
+have a build config and before any kernel source file is built.
+
+"perpare" is defined as a post config build target used before starting
+building the kernel or the modules, and "archprepare" is used in arch
+Makefiles.  E.g., on x86, "archprepare" is already used for ORC header
+generation:
+
+ifdef CONFIG_UNWINDER_ORC
+orc_hash_h := arch/$(SRCARCH)/include/generated/asm/orc_hash.h
+orc_hash_sh := $(srctree)/scripts/orc_hash.sh
+targets += $(orc_hash_h)
+quiet_cmd_orc_hash = GEN     $@
+	cmd_orc_hash = mkdir -p $(dir $@); \
+                      $(CONFIG_SHELL) $(orc_hash_sh) < $< > $@
+$(orc_hash_h): $(srctree)/arch/x86/include/asm/orc_types.h 
+$(orc_hash_sh) FORCE
+	$(call if_changed,orc_hash)
+archprepare: $(orc_hash_h)
+endif
+
 > 
-> Hope and pray isn't an option :)
+> In any case, you'd have to redo your patches - we've zapped them from tip.
+
+Sorry for the build noise.  Ofc they should be zapped.
+
+BTW, I'm asking if this build check could be added to Intel-LKP.
+
 > 
-> > gpu drivers can hog console_lock (yes we're trying to get away from that
-> > as much as possible), at that point a cavalier attitude of "you can just
-> > wait" isn't very appreciated.
+>> Want me to add it btw?
 > 
-> What are you trying to solve here? If the system is already stuck
-> infinitely on the console lock why is module remove even being
-> considered?
-> 
-> module remove shouldn't be a remedy for a crashed driver...
+> Yes pls.
 
-I mean hotunplug here, and trying to make that correct.
+Sure.
 
-This confusion is is why this is so hard, because there's really two main
-users for all this:
+However it needs to change Makefile in the root directory, which is not
+maintained in tip, so I will send a separate patch to KERNEL BUILD
+maintainers and list.  Make sense?
 
-- developers who want to quickly test new driver versions without full
-  reboot. They're often preferring convenience over correctness, like with
-  the removal of module refcounting that's strictly needed but means they
-  first have to unbind drivers in sysfs before they can unload the driver.
-
-  Another one is that this use-case prefers that the hw is cleanly shut
-  down, so that you can actually load the new driver from a well-known
-  state. And it's entirely ok if this all fails occasionally, it's just
-  for development and testing.
-
-- hotunplug as an actual use-case. Bugs are not ok. The hw can go away at
-  any moment. And it might happen while you're holding console_lock. You
-  generally do not remove the actual module here, which is why for the
-  actual production use-case getting that part right isn't really
-  required. But getting the lifetimes of all the various
-  structs/objects/resources perfectly right is required.
-
-So the "stuck on console_lock" is the 2nd case, not the first. Module
-unload doesn't even come into play on that one.
-
-> > > But so is half removing the driver while it is doing *anything* and
-> > > trying to mitigate that with a different kind of hard to do locking
-> > > fix. *shrug*
-> > 
-> > The thing is that rust helps you enormously with implementing revocable
-> > resources and making sure you're not cheating with all the bail-out paths.
-> 
-> Assuming a half alive driver with MMIO and interrupts ripped away
-> doesn't lock up.
-
-Rust's drop takes care of that for you. It's not guaranteed, but it's a
-case of "the minimal amount of typing yields correct code", unlike C,
-where that just blows up for sure.
-
-> Assuming all your interrupt triggered sleeps have gained a shootdown
-> mechanism.
-
-Hence why I want revocable to only be rcu, not srcu.
-
-> Assuming all the new extra error paths this creates don't corrupt the
-> internal state of the driver and cause it to lockup.
-
-Yeah this one is a bit scary. Corrupting the state is doable, locking up
-is much less likely I think, it seems to be more leaks that you get if
-rust goes wrong.
-
-> Meh. It doesn't seem like such an obvious win to me. Personally I'm
-> terrified of the idea of a zombie driver half sitting around in a
-> totally untestable configuration working properly..
-
-Yeah agreed. I might really badly regret this all. But I'm not sold that
-switching to message passing design is really going to be better, while
-it's definitely going to be a huge amount of work.
-
-> > It cannot help you with making sure you have interruptible/abortable
-> > sleeps in all the right places. 
-> 
-> :(
-> 
-> > > Like, I see a THIS_MODULE in driver->fops == amdgpu_driver_kms_fops ?
-> > 
-> > Yeah it's there, except only for the userspace references and not for the
-> > kernel internal ones. Because developers get a bit prickle about adding
-> > those unfortunately due to "it breaks module unload". Maybe we just should
-> > add them, at least for rust.
-> 
-> Yeah, I think such obviously wrong things should be pushed back
-> against. We don't want EAF bugs in the kernel, we want security...
-
-Maybe the two different use-cases above help explain why I'm a bit more
-pragmatic here. As long as the hotunplug case does not gain bugs (or gets
-some fixed) I'm fairly lax with hacks for the driver developer use-case of
-reloading modules.
-
-> > You've missed the "it will upset developers part". I've seen people remove
-> > module references that are needed, to "fix" driver unloading.
-> 
-> When done properly the module can be unloaded. Most rdma driver
-> modules are unloadable, live, while FDs are open.
-> 
-> > The third part is that I'm not aware of anything in rust that would
-> > guarantee that the function pointer and the module reference actually
-> > belong to each another. Which means another runtime check most likely, and
-> > hence another thing that shouldn't fail which kinda can now.
-> 
-> I suspect it has to come from the C code API contracts, which leak
-> into the binding design.
-> 
-> If the C API handles module refcounting internally then rust is fine
-> so long as it enforces THIS_MODULE.
-
-You could do contrived stuff and pass function pointers around, so that
-THIS_MODULE doesn't actually match up with the function pointer. Sure it's
-really stupid, but the idea with rust is that for memory safety stuff like
-this, it's not just stupid, but impossible and the compiler will catch
-you. So we need a tad more for rust.
-
-> If the C API requires cancel then rust is fine so long as the binding
-> guarantees cancel before module unload.
-
-Yeah this is again where I think rust needs a bit more, because the
-compiler can't always nicely proof this for you in all the "obvious"
-cases.
--Sima
--- 
-Simona Vetter
-Software Engineer, Intel Corporation
-http://blog.ffwll.ch
+Thanks!
+     Xin
 
