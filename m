@@ -1,80 +1,94 @@
-Return-Path: <linux-kernel+bounces-545918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64A89A4F39E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:26:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C688A4F3A2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3CB73AB3BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5976F16EA95
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 934A5142903;
-	Wed,  5 Mar 2025 01:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8D63142903;
+	Wed,  5 Mar 2025 01:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ed0PkaVf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A16I2H7i"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D8511185;
-	Wed,  5 Mar 2025 01:26:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3972113D8A3;
+	Wed,  5 Mar 2025 01:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741137999; cv=none; b=VrTZ0njar6hQZsgLFaCkxHafhraxfuIXVZrn0vKpwn2yM9eQPsI5UWIFw7f5Lt3xNneW0GThUMjRODsR66waXtsXjVjHPLfAT38zo3qsLgvQrciBIYGl0b5GTtpHnHesbB4gvFRlc/KreiXsZO+obYFxrGBfN0l8YEPLOZ2KzB8=
+	t=1741138017; cv=none; b=r7oZpR+2EbY2v8u7iCrUBcncfupbaR6Qju2xde08BuI97mb8q/PBcwpk9JjIHCDoC96Q2ZElRWfGc6cIR9+msceGhz756CJp01w7mNj3PvqRZEW5VQLxhUHkGAfSaGdwPEHj+GsyYlG+hS9Z5VwggdLJvc/UpRSJ71yRLy85lsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741137999; c=relaxed/simple;
-	bh=No48rJZ9BUtGKhIoMFiw/HS/FMwjx8s58pDxfgR/Z5E=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b16uJTBrLnYjVVCcQoa7O9ry+Uz9aj617OXmslnlweNrVgntNJhBBwqt0kxgOaKXWWLwzcZQCWk1zGqGMDDYcUhg1Hnc7Gp+ZXJzcDgiirl1ikxmWwm3zGtiKsVE2XC+UM6zdkcPppvHfSarfeZKLvbLluOSHN795Fsq9HvaDHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ed0PkaVf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11F7AC19422;
-	Wed,  5 Mar 2025 01:26:36 +0000 (UTC)
+	s=arc-20240116; t=1741138017; c=relaxed/simple;
+	bh=YOOQJ9TyKIHAYBy14/1WKrRIG8jkNv2bKTA6Sm1UngY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GY/1AhIbPjbgmC/Z5GCUfALCsh1uzNLnnkeaRJhcpu5uvInZVcQCOD3iQVWA5wUVvdlBqZxph4mMJmasuBO+B4r6GZuyE6d8ALSzUaBCiNWFuU1M7u5VSJNvZZMvFNlIFdnypdB/rgm6DS0oW1MrTv+VhfnYPaVmGRUnCgJoIR8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A16I2H7i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E235DC4CEE5;
+	Wed,  5 Mar 2025 01:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741137998;
-	bh=No48rJZ9BUtGKhIoMFiw/HS/FMwjx8s58pDxfgR/Z5E=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Ed0PkaVfMacdhTE89Pj6FIh4ALkwsAL5apZItPR2KuoIaMVRGAcYubTKPCkNw1VIc
-	 3E2XY7ADkMBUFVQjyZCB83XqPJ3pRFnSfH/zbnuMA50wXiqZON+WPo50nR8gR/hyya
-	 434Zn6+kCqlWT+1/6EhJPp/gvxmK8GQl5Xluuz9To0ferdBtRSLesP0O8cHo/ZaYPv
-	 ryIV6300mXSIj7Wa2o5qTRuvVRydPrCef+0M5ZcO6vZSQIHbPaa73+bUrkQFyGUlu/
-	 CiqY/Y1gUzZH4eVI1DslBxcLKBCx71cGvtD23ImTahwgI+WjpB2O/wDPZ4rBwMjq+K
-	 8ofqeBMakFaDg==
-Date: Tue, 4 Mar 2025 17:26:35 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: Sai Krishna <saikrishnag@marvell.com>
-Cc: <davem@davemloft.net>, <edumazet@google.com>, <pabeni@redhat.com>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <sgoutham@marvell.com>, <gakula@marvell.com>, <lcherian@marvell.com>,
- <jerinj@marvell.com>, <hkelam@marvell.com>, <sbhatta@marvell.com>,
- <andrew+netdev@lunn.ch>, <bbhushan2@marvell.com>, <nathan@kernel.org>,
- <ndesaulniers@google.com>, <morbo@google.com>, <justinstitt@google.com>,
- <llvm@lists.linux.dev>, kernel test robot <lkp@intel.com>
-Subject: Re: [net-next PATCH] octeontx2-af: fix build warnings flagged by
- clang, sparse ,kernel test robot
-Message-ID: <20250304172635.000866fb@kernel.org>
-In-Reply-To: <20250303191339.2679028-1-saikrishnag@marvell.com>
-References: <20250303191339.2679028-1-saikrishnag@marvell.com>
+	s=k20201202; t=1741138016;
+	bh=YOOQJ9TyKIHAYBy14/1WKrRIG8jkNv2bKTA6Sm1UngY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=A16I2H7iiqzfsbvkKwtE2dR64gsS0boUzr5gUE6OVhzy6szLnJRERRbzGPe1VNWoo
+	 EyG2ss6/f4AYi7SQh8EGUdt3kQLr4zpKFxj0LyQjFzvdgUtLWxU9YdUtH5L5EYINMm
+	 074LL6cz151GYNcyzk6ys7RwdftsNW/Trj0rsSIaPjbHF83qGdd2T2WnbSRf4UDyA1
+	 aL9RBKuV7C7CV1U96Q/Pm+1PobKVUORm8m7NPExgowY+5DPJdxKoBOlkxuZza1HGln
+	 73qPJ2MbFMugOn6t19uUeGn4jHGkM/QR8QS12/WIpFLED+EknZQT8qulJsp/cF1nqf
+	 tuKk6ZtewwKjw==
+Date: Wed, 5 Mar 2025 03:26:51 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: linux-integrity@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>, linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arch/x86: Fix size overflows in sgx_encl_create()
+Message-ID: <Z8eoW4rUV5U9JUci@kernel.org>
+References: <20250305000602.127665-1-jarkko@kernel.org>
+ <8255b211-5510-4c09-b13f-c4e3bd0d0aba@intel.com>
+ <Z8eYfALmwN68F39V@kernel.org>
+ <379e2198-55bb-4fd9-bf54-7fe0b3e33803@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <379e2198-55bb-4fd9-bf54-7fe0b3e33803@intel.com>
 
-On Tue, 4 Mar 2025 00:43:39 +0530 Sai Krishna wrote:
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes:
-> https://urldefense.proofpoint.com/v2/url?u=https-3A__lore.kernel.org_o
-> e-2Dkbuild-2Dall_202410221614.07o9QVjo-2Dlkp-40intel.com_&d=DwIBAg&c=n
-> KjWec2b6R0mOyPaz7xtfQ&r=c3MsgrR-U-HFhmFd6R4MWRZG-8QeikJn5PkjqMTpBSg&m=
-> 3BTQZwLYQz62kiZ1f9l4NBS35e13zrdP_5Hx9-1k5Xt-PgWUMdRcW7G4m5xytsHn&s=OeX
-> wAXPel9ALwlzw4B26ORCXJF_gbqT9Sk3-opDDfgA&e=
-> Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
+On Tue, Mar 04, 2025 at 04:30:21PM -0800, Dave Hansen wrote:
+> On 3/4/25 16:19, Jarkko Sakkinen wrote:
+> > On Tue, Mar 04, 2025 at 04:18:03PM -0800, Dave Hansen wrote:
+> >> On 3/4/25 16:06, Jarkko Sakkinen wrote:
+> >>> +	/*
+> >>> +	 * This is a micro-architectural requirement. ECREATE would detect this
+> >>> +	 * too without mentionable overhead but this check guarantees also that
+> >>> +	 * the space calculations for EPC and shmem allocations never overflow.
+> >>> +	 */
+> >>> +	if (!is_power_of_2(secs->size))
+> >>> +		return -EINVAL;
+> >> Isn't it a plain old documented architectural requirement?
+> > Yes, but it requires some explanation why it exists here instead of
+> > counting on ECREATE.
+> > 
+> > What do you suggest?
+> 
+> 	/*
+> 	 * ECREATE would detect this too, but checking here also ensures
+> 	 * that the 'encl_size' calculations below can never overflow.
+> 	 */
 
-Your email server massacred the tags.
--- 
-pw-bot: cr
+Looks reasonable to me!
+
+BR, Jarkko
 
