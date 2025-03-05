@@ -1,121 +1,174 @@
-Return-Path: <linux-kernel+bounces-547287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547285-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8804A50581
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:47:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4982DA5056C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:43:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F063B2AD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:43:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2ADA11887018
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:43:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2831A0BFE;
-	Wed,  5 Mar 2025 16:40:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F97198842;
+	Wed,  5 Mar 2025 16:39:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="veW3wVRx"
-Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MDwAySty"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03E92512EF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC3419F464;
+	Wed,  5 Mar 2025 16:39:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192817; cv=none; b=CrlLLyOl1xjdDKa8qJuUfpEHTpWJLaK5ctbnDAXtb/F01LYlBnF7XWKovnMD2tZQgguTzpYI0th8q8yDybO7NHoZ3mZBX5HMbwzmxHmmXYtUxtL9K0vTyn1EIxTZGhOI2Sy5DzuAysOXDU/z0CDwjd8NzuccPsEb/mo7cBQOmcE=
+	t=1741192783; cv=none; b=GpwsEKJ2f8SlGh/Qit/8CJ66RLlQ8/KwkjI5nZBeSUIurxbYAUTd8wck8nHDjYfzMqwuAIliuTr9tfP83dC8Lw74qiy8zaYyUmZps3SUOt+mFLtoJxFXrQ5PZIYtiGNBE9r4dR4nQySGi1okdx6R1sjrWeReqAsNNiwhn4yvGWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192817; c=relaxed/simple;
-	bh=IQV0Yy/1k1IBFJFocoUYByRRAozlm7jKeZVmuUQRG8s=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tayi1OnLZ5aLASNhdW/LjyM3O2zrRrl5m14Vv/jATBygFedBBCkgfgc8TI52g88/+IUfcklI10j8iBcPpAWRXIRovMf2G/B4vqAep2edPGq5WfvsCgFZejp1EgZcsBLKMV24djMw7txe0TO8oGWiOe5/N6BDiBbgBcqoD6vNE34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=veW3wVRx; arc=none smtp.client-ip=91.218.175.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
-	s=key1; t=1741192812;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=jdlcaeLgpRGJb4WYxQLcnWtC/c9dZ1uqwhfx8n90Igk=;
-	b=veW3wVRx/5NFTXbzOGBD5dHeuKAc9xZrmmidqKHhtwZ8eqxAQZizfNIZflx2AxELm4Sy55
-	tPvi19YwvxMctpqHZUZ+vbo95LC1Owaj0S/nyM0bY5QNucCJAL+V1KgUjssvd0UejzXTrA
-	gCvbJEf+CtzD/4lxRc5Kw6PPtYO4m0itXLcmCVMs1zKY61hKQJwScPCtBdgdK+CnD3DPLm
-	8GKFQ7v+V9/E8UNMT4wXtZKbnIjpai0+b5MQJdW2SJwqyqKTUjRYP4Rb+KRTphNMQYh7lT
-	Ko/AK9ZQXPe3ugMsSRT5sKB2/EwnPeoz7vbPh3Z1HAInmM2osu2rAOl+lkSm/A==
-From: Ignacio Encinas <ignacio@iencinas.com>
-Date: Wed, 05 Mar 2025 17:39:28 +0100
-Subject: [PATCH] selftests: riscv: fix v_exec_initval_nolibc.c
+	s=arc-20240116; t=1741192783; c=relaxed/simple;
+	bh=efGm+CDj3LTdh3alC0Ckg9zTZdQqJT1m6V4O4rKRtjM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ehAuIxmPvsE3uyx4YXZD9Zu0Zpwm4lEULcpTQlEjd9UzxxrBxM3ZvfI9NVi9bz4M6/FfjMP14CvOGEpbZapmpKxMYa/M/CzK2wz1wfnIYz82wCPxa3D9F6mIug4hXWlUs0vsvenkboiloG267nec4uF0X4kIlYjuKz5FZKjQ4ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MDwAySty; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741192782; x=1772728782;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=efGm+CDj3LTdh3alC0Ckg9zTZdQqJT1m6V4O4rKRtjM=;
+  b=MDwAyStytZR/pu6vPH7I/HQPWrMZ9MfvZRDW8+0CwrTM/6qgC++9Lqlh
+   QCFQhzaDYyYn0pVdWmR3Vvk+LvUtFZ2kApn0oH0sRjYr1/ZB7FIbAsfKh
+   igbCR/i2hCMsADcRPfT3okdDzO/LjYa0YGFA2KJnbiYETbXiH6p2vG9H5
+   6pJ/mzaUiJJYj183ZAfrcOFFhSA9lH8Zudga4qyWy3bg8aFpcxZx2C6ws
+   AHdU/rgVcVFIIWc1nDm/jWarTEFUvRxdvD2OhcnhHK+wxqsH7PStUO3Bj
+   BMsrBzXwdprHDNHXYpmSkvI6Bg8AxqqnhNcbriBxWAfhP1YiZNcbwWYIV
+   g==;
+X-CSE-ConnectionGUID: H08mWiDxToStllL4udwpKg==
+X-CSE-MsgGUID: i5GkMpPDRD25LOx3JXGTJQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45821660"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="45821660"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:39:40 -0800
+X-CSE-ConnectionGUID: IGB1P7FESDi+JSbZoysNvw==
+X-CSE-MsgGUID: 1eAEE1b/QWaqNRUn2JTvxg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119251836"
+Received: from tfalcon-desk.amr.corp.intel.com (HELO tfalcon-desk.intel.com) ([10.124.222.229])
+  by orviesa007.jf.intel.com with ESMTP; 05 Mar 2025 08:39:39 -0800
+From: Thomas Falcon <thomas.falcon@intel.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Thomas Falcon <thomas.falcon@intel.com>,
+	Kan Liang <kan.liang@intel.com>
+Subject: [PATCH v6] perf script: Fix output type for dynamically allocated core PMU's
+Date: Wed,  5 Mar 2025 10:39:35 -0600
+Message-ID: <20250305163935.1605312-1-thomas.falcon@intel.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-fix-v_exec_initval_nolibc-v1-1-b87b60e43002@iencinas.com>
-X-B4-Tracking: v=1; b=H4sIAD9+yGcC/x2MWwqAIBAArxL7nWDa+yoRYrrVQlhoSBDePelzY
- GZeCOgJA4zFCx4jBTpdhqoswOzabcjIZgbBRcMlr9hKD4sKHzSKHN1RH8qdBy2G1UNvh641shM
- Wcn95zPL/nuaUPqBdQ0lrAAAA
-X-Change-ID: 20250301-fix-v_exec_initval_nolibc-498d976c372d
-To: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
- Paul Walmsley <paul.walmsley@sifive.com>, 
- Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
- Charlie Jenkins <charlie@rivosinc.com>
-Cc: linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Ignacio Encinas <ignacio@iencinas.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-Vector registers are zero initialized by the kernel. Stop accepting
-"all ones" as a clean value.
+This patch was originally posted here:
 
-Note that this was not working as expected given that
-	value == 0xff
-can be assumed to be always false by the compiler as value's range is
-[-128, 127]. Both GCC (-Wtype-limits) and clang
-(-Wtautological-constant-out-of-range-compare) warn about this.
+https://lore.kernel.org/all/20241213215421.661139-1-thomas.falcon@intel.com/
 
-Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
+I have rebased on top of Arnaldo's patch here:
+
+https://lore.kernel.org/all/Z2XCi3PgstSrV0SE@x1/
+
+The original commit message:
+"
+perf script output may show different fields on different core PMU's
+that exist on heterogeneous platforms. For example,
+
+perf record -e "{cpu_core/mem-loads-aux/,cpu_core/event=0xcd,\
+umask=0x01,ldlat=3,name=MEM_UOPS_RETIRED.LOAD_LATENCY/}:upp"\
+-c10000 -W -d -a -- sleep 1
+
+perf script:
+
+chromium-browse   46572 [002] 544966.882384:      10000 	cpu_core/MEM_UOPS_RETIRED.LOAD_LATENCY/: 7ffdf1391b0c     10268100142 \
+ |OP LOAD|LVL L1 hit|SNP None|TLB L1 or L2 hit|LCK No|BLK    N/A    5   7    0   7fad7c47425d [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
+
+perf record -e cpu_atom/event=0xd0,umask=0x05,ldlat=3,\
+name=MEM_UOPS_RETIRED.LOAD_LATENCY/upp -c10000 -W -d -a -- sleep 1
+
+perf script:
+
+gnome-control-c  534224 [023] 544951.816227:      10000 cpu_atom/MEM_UOPS_RETIRED.LOAD_LATENCY/:   7f0aaaa0aae0  [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
+
+Some fields, such as data_src, are not included by default.
+
+The cause is that while one PMU may be assigned a type such as
+PERF_TYPE_RAW, other core PMU's are dynamically allocated at boot time.
+If this value does not match an existing PERF_TYPE_X value,
+output_type(perf_event_attr.type) will return OUTPUT_TYPE_OTHER.
+
+Instead search for a core PMU with a matching perf_event_attr type
+and, if one is found, return PERF_TYPE_RAW to match output of other
+core PMU's.
+"
+
+Suggested-by: Kan Liang <kan.liang@intel.com>
+Suggested-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
 ---
-I tried looking why "all ones" was previously deemed a "clean" value but
-couldn't find any information. It looks like the kernel always 
-zero-initializes the vector registers.
-
-If "all ones" is still acceptable for any reason, my intention is to 
-spin a v2 changing the types of `value` and `prev_value` to unsigned 
-char.
+v2: restrict pmu lookup to platforms with more than one core pmu
+v3: only scan core pmu list
+v4: rebase on top of Arnaldo's patch
+v5: update based on Namhyung's feedback here
+https://lore.kernel.org/lkml/Z8YcOidenzGofq7R@google.com/
+v6: update based on Ian's feedback here
+https://lore.kernel.org/linux-perf-users/CAP-5=fVwrG5ZViysO7qKYUw0326WFfa7nOzwe70drYfHq=AXhA@mail.gmail.com/
 ---
- tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
-index 35c0812e32de0c82a54f84bd52c4272507121e35..b712c4d258a6cb045aa96de4a75299714866f5e6 100644
---- a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
-+++ b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
-@@ -6,7 +6,7 @@
-  * the values. To further ensure consistency, this file is compiled without
-  * libc and without auto-vectorization.
-  *
-- * To be "clean" all values must be either all ones or all zeroes.
-+ * To be "clean" all values must be all zeroes.
-  */
+ tools/perf/builtin-script.c | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
+
+diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
+index d797cec4f054..253c4ca395e1 100644
+--- a/tools/perf/builtin-script.c
++++ b/tools/perf/builtin-script.c
+@@ -400,10 +400,20 @@ static inline int output_type(unsigned int type)
  
- #define __stringify_1(x...)	#x
-@@ -46,7 +46,7 @@ int main(int argc, char **argv)
- 			: "=r" (value));					\
- 		if (first) {							\
- 			first = 0;						\
--		} else if (value != prev_value || !(value == 0x00 || value == 0xff)) { \
-+		} else if (value != prev_value || value != 0x00) {              \
- 			printf("Register " __stringify(register)		\
- 				" values not clean! value: %u\n", value);	\
- 			exit(-1);						\
-
----
-base-commit: 03d38806a902b36bf364cae8de6f1183c0a35a67
-change-id: 20250301-fix-v_exec_initval_nolibc-498d976c372d
-
-Best regards,
+ static inline int evsel__output_type(struct evsel *evsel)
+ {
+-	if (evsel->script_output_type == OUTPUT_TYPE_UNSET)
+-		evsel->script_output_type = output_type(evsel->core.attr.type);
++	int type = evsel->script_output_type;
+ 
+-	return evsel->script_output_type;
++	if (type == OUTPUT_TYPE_UNSET) {
++		type = output_type(evsel->core.attr.type);
++		if (type == OUTPUT_TYPE_OTHER) {
++			struct perf_pmu *pmu = evsel__find_pmu(evsel);
++
++			if (pmu && pmu->is_core)
++				type = PERF_TYPE_RAW;
++		}
++		evsel->script_output_type = type;
++	}
++
++	return type;
+ }
+ 
+ static bool output_set_by_user(void)
 -- 
-Ignacio Encinas <ignacio@iencinas.com>
+2.48.1
 
 
