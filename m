@@ -1,62 +1,90 @@
-Return-Path: <linux-kernel+bounces-546093-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB26AA4F63E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:00:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C36FA4F640
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1618B16F5FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:00:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3138516F5C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:05:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF901C84CC;
-	Wed,  5 Mar 2025 05:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 792A81C701C;
+	Wed,  5 Mar 2025 05:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwVbWvR7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="k6RB4w4D"
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2040.outbound.protection.outlook.com [40.107.102.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA004A06;
-	Wed,  5 Mar 2025 05:00:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741150823; cv=none; b=a/B4LDrfNT3bNDoJWVqEKbCO8ndqyfsPOlDC8uqI7SsOvorOiAAW7bIbsvVYSDYTQVrCOzQ7nyvJQWGaRld7nv8h1iiUaClwWGytZ9lEt9x2khNH3b7oDoOJY6MBblChkdoql3n58tD35AdGlPHl4rkAfxy1xW4YGLPssepMPHs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741150823; c=relaxed/simple;
-	bh=Tu9pHHMhYpuvyvA4UcT8a/MRI55uAHM1EzWCIW5bxXc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=INUGUFOeGW5cPky96bL9U2EO3i9xBBmzzVE7N/Vhm2e+uihicUwRM4akKGJe68hYHoe9ehqf5mB7uEhLWMLGZkMq5kz5wCAtp7L0GQ6CUz4sAm0yOlBKdlFEPaL5Jsx49wuvStjNHRkVQ/Nnf7hWh82RlGIkICzVlOWG1g/3lMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwVbWvR7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46ECCC4CEE2;
-	Wed,  5 Mar 2025 05:00:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741150822;
-	bh=Tu9pHHMhYpuvyvA4UcT8a/MRI55uAHM1EzWCIW5bxXc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=XwVbWvR7rGQYmhkjddx9319FAP7mfMYhh/7rU0uE/Dqh1myjLuzWr/XfC75jOAO5Y
-	 G9NO7jpSiYPZuIxgerUP+6sASYSaRGjHA3Z4OdIp1AQBsUzeWA9jN99ARkrAj0NWBb
-	 VWaEJI1beXhBgyEKcY1G/fH4mJWTYemzuap5JFgRm+wEnJTYVjohKcmmSSR6ilp1DM
-	 sqBg8o6zU/8sfDqd9wD7cqhmHKZ2VaKiLYdhgnKyvuZsho9/XB9ZDk5ByudmjrK/+/
-	 vjNHkQhmaUydnn1RJzcMoC5JXorw006MiJoj4x9ii4Z7fy+jnlFaBzzaFZJj9x/H2q
-	 quCV/lQwGCVYg==
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-sgx@vger.kernel.org,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>
-Cc: stable@vger.kernel.org,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Borislav Petkov <bp@suse.de>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] arch/x86: Fix size overflows in sgx_encl_create()
-Date: Wed,  5 Mar 2025 07:00:05 +0200
-Message-ID: <20250305050006.43896-1-jarkko@kernel.org>
-X-Mailer: git-send-email 2.48.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196501A23BF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 05:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741151129; cv=fail; b=DTdTUmk4ZhUyya3Gsgd7gT87BB9oqqTw2Qektu7MMhvfUbvOEj2ZF0dRBQVu5oOTAWpuzxqOTGBjhVMD70hbsNjHOornm3yl2bYdBGVbHF0y3ei3VwtzFwGLCNtWaUJDyqnyEJDKZbSt9R9UDnUbjTBZAntHnX6q79hUHFEuouY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741151129; c=relaxed/simple;
+	bh=Fm5WyRMLhpTNRDw8hskUdDOfilC/hFepbUqYv8YKF0I=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hexelWX1xiz1Nv0sGftlENquImUnfPowpfJ/aOjSFK/Q0U193FhnVYdqwYdBvtWDIcDLVpkKMtjsFA8b9G0B3z6zzGjeGosFvPRZaw1frcGrLhCh7M0gvRr2yOcbLlYQE8+uUgc2DJgw8dFh/D+2/wEG3ZCrBKe9zw3O/1e/LAU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=k6RB4w4D; arc=fail smtp.client-ip=40.107.102.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XnfTHNYIsYe5/EMxpDN4BaxskKfdmvuEFDf1KK8rdOk7r5eu/f3iEUfyhyIRqpYLjHuXsBLHvDYqvP1faWNJL0wiiZPK7MuAazLG7LSImOYBzpQgatEzq4oItAHTFIAGJ+IYGZaQ5shCW0EJGCOWNZC6us7ZQYHfDnaMbzpj31hRzAaLwFodmkGV+gtme5SdcGUNy5na2+A1o01wLLybSSneVVRMX/Gg0p2EwsJvKpe+uafy0+dqzFovGTkCSYDA7EkGfEgvuWbBjGgqSAA4qtcMHqEG7WurcOViNkpy2+HD1xxqmPxjrbHrHnHFs1Un5oVx4wlKuw3tKyDr1AL5Ag==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RYa9ziV3fAfLnRoHuRqhSw7BPRwDZKHoXUgzZ5QCvk0=;
+ b=N1d6ZsJtKXZZ3BJRfprzSwqYk/LU5XlR5KgDFOe6nBK5JqRiUFoWGcDIYwZcVBp1p7kx1bYzNaksMlnqEWr/T2tTgEfVcyaaxlEhKQx/M9+oD35NVio7FLUmCDO1+F1qeCVLvnCK03mydu1ZsuZ7PYfr7ouV6vrZ9TpUP/zZQP4TX8uaa4bL55HdZQtBTkcKFIEcCiurwGif7k40SUFscdxSFzkD/vHcknPq3V+l1IFTz1HuTzVTm+UssU0mB2T56JJEWLv6TooMhqpv74AKBkkWyxh09kAItOp0DAH8di/d20zw9NdgRy7IUJHV7bigletu7/PE3ZpXURsIOS2g0Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.160) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RYa9ziV3fAfLnRoHuRqhSw7BPRwDZKHoXUgzZ5QCvk0=;
+ b=k6RB4w4DWuKNl7RO3qyB7+c8tm+1V0dkaH+M/fWqxJ1KqS4XqacNvQbIdOlMsfDDHIsHmMlMw3QuGYL+hQxZ+aTFZHR+GN8CPZnl/sOO4b7gWMHxzpMubg9l5XaIQ4csmxElipv2sgNBTGFtzT2d+kuVNS3Gdc65w2nvbD8uEF180xe4xgssMTN4++Cnr4VbHdQl87zpG/tCD/+IQqL3tMpiw1AXiV1KzC5wYPCh7Om/M9EnAigZ0zj7XBPzOg6IwNbRgjW8hZo55dJW7zduBTuzJ2DLHK9ZcoK69N9ZETg+IDMf5HnkdNuiSaNCPDgkWEMeqdbKmDFJ21U9bKsk9A==
+Received: from BN9PR03CA0171.namprd03.prod.outlook.com (2603:10b6:408:f4::26)
+ by MW6PR12MB8957.namprd12.prod.outlook.com (2603:10b6:303:23a::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Wed, 5 Mar
+ 2025 05:05:22 +0000
+Received: from BN2PEPF000044A6.namprd04.prod.outlook.com
+ (2603:10b6:408:f4:cafe::9e) by BN9PR03CA0171.outlook.office365.com
+ (2603:10b6:408:f4::26) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.16 via Frontend Transport; Wed,
+ 5 Mar 2025 05:05:22 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.160) by
+ BN2PEPF000044A6.mail.protection.outlook.com (10.167.243.100) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8511.15 via Frontend Transport; Wed, 5 Mar 2025 05:05:21 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Tue, 4 Mar 2025
+ 21:05:08 -0800
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Tue, 4 Mar
+ 2025 21:05:07 -0800
+Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
+ Transport; Tue, 4 Mar 2025 21:05:07 -0800
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: <will@kernel.org>, <robin.murphy@arm.com>, <jgg@nvidia.com>
+CC: <joro@8bytes.org>, <linux-arm-kernel@lists.infradead.org>,
+	<iommu@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<shameerali.kolothum.thodi@huawei.com>
+Subject: [PATCH v1 0/4] iommu/arm-smmu-v3: Allocate vmid per vsmmu instead of s2_parent
+Date: Tue, 4 Mar 2025 21:03:59 -0800
+Message-ID: <cover.1741150594.git.nicolinc@nvidia.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,51 +92,100 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: AnonymousSubmission
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A6:EE_|MW6PR12MB8957:EE_
+X-MS-Office365-Filtering-Correlation-Id: 7699f96f-959d-49d1-9de0-08dd5ba354fb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|82310400026|1800799024|36860700013;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?sbZEbjJ8B+Fno9R1v30qvb6qRZwOJug+k3LC0XUiT8A4HuDPtNBs7qKfWuPs?=
+ =?us-ascii?Q?CAlC8HQTj/+LO1DGHylzLEombJPxI2nDn2JR0XhmkFUl3T9Dv5+iFBGeYAWn?=
+ =?us-ascii?Q?jrYFUFadhLGwbkR9rJtfGB2Hdn7A05sanXOXl1qjIJO3BycI0SqlAQEQq11S?=
+ =?us-ascii?Q?6hIz6Ss+Fj+dmAuZtwOGnGWd2hBl+271d49baUi3ngAs4BF5fWvIsTli5CCS?=
+ =?us-ascii?Q?3/1ydHTYEsMLkha1D3t16Cg0d1u3e+elER/jD4N+qTtDgsbfDZUHDjhfWclZ?=
+ =?us-ascii?Q?aC7dLkxa4JGLVtvh+Z3zW7cxVceC2LiBKCM7YSRPIbppX6/IAdQ1vwmYpZZo?=
+ =?us-ascii?Q?CFTi0LEVPMvzyx6Aeo8X0tlov3nLyam6UfZI/EQRKPvxsCzugwGWRub/1b1l?=
+ =?us-ascii?Q?7ynTSRDWTUgu37EQa/+2zbKOfs5rruISeeMmvnsxxOczoqhMgYvQV7eRIRoB?=
+ =?us-ascii?Q?1IN1iCFJtR5YHTfzOk77swLnYSKeFMuhkThT5HuaaKjbxtKep8+5v9ljNBh0?=
+ =?us-ascii?Q?/B0GnbSoPkdX3sHJe9LkuVrQ+WmD8EFdfpCZVNm7YJ4GvEYfqqrftO07mS8v?=
+ =?us-ascii?Q?VIj9R0I+JA4aSosa4W1gQ9TFUu6UhY+5Zmm6wxL0Z5fcmXNvGpqjO8z2D+JL?=
+ =?us-ascii?Q?t3HZV8tBGbuFEoX2gdmNL6OIPd4gJAytQNL7bTssDdMc3XmDSLoaUgQvxt2R?=
+ =?us-ascii?Q?awmQANvsFL7Uuz21Bpg5BLQhaVQU2hdFSTBEQ/nKkWSVIiNiX6iD6AiVT02L?=
+ =?us-ascii?Q?4XizN3HHozoYtCVnx0R3NFGoQFoycobPx4NeU78zVwtwZg89o2iMZfhecOHg?=
+ =?us-ascii?Q?1mnErVsULNg818hO+zq6t5XScWS+nZpkFdPMfgyqa9dPTXDdzQNvDQFohnzh?=
+ =?us-ascii?Q?jdUJszNomNBxQPMDBVq41peLIlhXHVLL7iJbUJHnRw02/j8o1ogCF6Ma+eh3?=
+ =?us-ascii?Q?sw1padgxAhooaZf/n/bMplalMAxs3NapKLjAORN5hIhCk/MxAoJcTcVKbc5C?=
+ =?us-ascii?Q?q58oXL5AcZxSxB3VHMq1UMCrllYOfX2OdLxKeLIVRY0ShU1Pu0onFwrtehWO?=
+ =?us-ascii?Q?kwQOU9j7j39SBWzHHcxtJ8bBi4oV5ZwNsTL8qyvVK0/l14LsO1LT7G2pe4/J?=
+ =?us-ascii?Q?tTsc95X5xUNFAMAcoYxYoHdZJxHnRFrU8hQjG4V3W9r93HLOEtYLjENDb7q+?=
+ =?us-ascii?Q?5/4ovXdNptbG0/qNwjFpQQO/GyCWLIdQFxYxawvLvrjA99OZHqsf0po35Idm?=
+ =?us-ascii?Q?GcBO3gtWzSNY6u447j9kNtyCsVRRRp9G1xMmQ4xjf7OpcD6pUl9P78PmpLk3?=
+ =?us-ascii?Q?74ig8Z0z/HMAO/yUZEERQ6aa0cDNFD5X/nV63ptrpkrxbqpmVzaJ8V8Gxlc6?=
+ =?us-ascii?Q?NQX0E2uIx8E9Xk+Y3f6K01TKkFhB0d0Hw0WGt8CQ3/mEexZfPZeUlndimBCi?=
+ =?us-ascii?Q?3bGtpE/mZc/OM8m2q5yBI7skQgDEQSWN0p3I+l1DXjUeY78VQWYtqMPFT7wm?=
+ =?us-ascii?Q?Pxlffv/evbOoN8Y=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(82310400026)(1800799024)(36860700013);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 05:05:21.8176
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 7699f96f-959d-49d1-9de0-08dd5ba354fb
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A6.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8957
 
-The total size calculated for EPC can overflow u64 given the added up page
-for SECS.  Further, the total size calculated for shmem can overflow even
-when the EPC size stays within limits of u64, given that it adds the extra
-space for 128 byte PCMD structures (one for each page).
+With a system having multiple SMMU physical instances, multiple vSMMUs can
+be allocated for a VM that deivces behind different SMMUs are assigned to.
+In such a use case, the IPA->PA mappings (i.e. the stage-2 I/O page table)
+can be shared across the vSMMU instances.
 
-Address this by pre-evaluating the micro-architectural requirement of
-SGX: the address space size must be power of two. This is eventually
-checked up by ECREATE but the pre-check has the additional benefit of
-making sure that there is some space for additional data.
+With a shareable S2 parent domain, it is more natural to store a vmid per
+vSMMU instance v.s. a shared S2 domain, since each physical SMMU instance
+maintains its own vmid bitmap.
 
-Cc: stable@vger.kernel.org # v5.11+
-Fixes: 888d24911787 ("x86/sgx: Add SGX_IOC_ENCLAVE_CREATE")
-Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-Closes: https://lore.kernel.org/linux-sgx/c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain/
-Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
----
-v3: Updated the commit message according to Dave's suggestion and added
-    fixes tag.
-v2: Simply check the micro-architetural requirement in order to address
-    Dave's comment:
-    https://lore.kernel.org/linux-sgx/45e68dea-af6a-4b2a-8249-420f14de3424@intel.com/
----
- arch/x86/kernel/cpu/sgx/ioctl.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Have a pair of patches getting the functions ready for the vmid migration.
+Decouple the vmid from S2 parent domains and move its allocation to vSMMU
+instances. Note that a regular S2 domain (!nest_parent) has to retain the
+s2_cfg and vmid for non-nesting use cases, if the SMMU HW doesn't support
+stage 1. Then, an S2 invalidation has to be iterated for all the vmids in
+the vSMMU list introduced in the S2 parent domain.
 
-diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
-index b65ab214bdf5..776a20172867 100644
---- a/arch/x86/kernel/cpu/sgx/ioctl.c
-+++ b/arch/x86/kernel/cpu/sgx/ioctl.c
-@@ -64,6 +64,13 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
- 	struct file *backing;
- 	long ret;
- 
-+	/*
-+	 * ECREATE would detect this too, but checking here also ensures
-+	 * that the 'encl_size' calculations below can never overflow.
-+	 */
-+	if (!is_power_of_2(secs->size))
-+		return -EINVAL;
-+
- 	va_page = sgx_encl_grow(encl, true);
- 	if (IS_ERR(va_page))
- 		return PTR_ERR(va_page);
+This is on Github:
+https://github.com/nicolinc/iommufd/commits/smmuv3_vmid-v1
+
+To test it with RMR:
+https://github.com/nicolinc/iommufd/commits/smmuv3_vmid-v1-with-rmr
+Pairing QEMU branch:
+https://github.com/nicolinc/qemu/commits/wip/for_smmuv3_vmid-v1
+
+Thanks
+Nicolin
+
+Nicolin Chen (4):
+  iommu/arm-smmu-v3: Pass in vmid to arm_smmu_make_s2_domain_ste()
+  iommu/arm-smmu-v3: Share arm_smmu_cmdq_issue_cmd_with_sync() with
+    vsmmu
+  iommu/arm-smmu-v3: Decouple vmid from S2 nest_parent domain
+  iommu/arm-smmu-v3-iommufd: Allow a shared s2_parent to allocate vSMMU
+
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h   | 14 ++++-
+ .../arm/arm-smmu-v3/arm-smmu-v3-iommufd.c     | 44 +++++++++++---
+ .../iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c  |  3 +-
+ drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c   | 57 ++++++++++++++-----
+ 4 files changed, 93 insertions(+), 25 deletions(-)
+
+
+base-commit: 7eb172143d5508b4da468ed59ee857c6e5e01da6
 -- 
-2.48.1
+2.43.0
 
 
