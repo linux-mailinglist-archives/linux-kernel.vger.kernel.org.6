@@ -1,201 +1,268 @@
-Return-Path: <linux-kernel+bounces-546026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7194A4F554
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:24:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DA02A4F55B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:26:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A83701888F66
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:24:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810963A912C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F471632E4;
-	Wed,  5 Mar 2025 03:24:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35C816DC12;
+	Wed,  5 Mar 2025 03:26:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A0/4pCLM"
-Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLzEGAuG"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865D2A95C;
-	Wed,  5 Mar 2025 03:24:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DEF41A8F;
+	Wed,  5 Mar 2025 03:26:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741145060; cv=none; b=Y7uoJZJn4/WAAv47f4vbj3C212hP3+fz7LykBwMYmpJUh4+tUFXwPxdOC3C8FT2dO53jkmFao9Tymww1CtEnhPzXPC4/5fmWCSuTQrwctK0D7qmfYqkJaZGqtT+kWS6t9QCJEuMGPpdVbhGGWvYb2ZGrt1AaoN1A/8Jn0uiaGJc=
+	t=1741145187; cv=none; b=D9JDcpQDYzc32wuoRWUslxFdhbaWUG47/fe7kozLLE467lMVdji7WNPXFQFVLb2er1KbCWA/tX9d+r3YF9D9MlbVZRpmi6Nqb8oSbpUq1XoQ+dGhpvKVikSztRS3zIaSqJACHpY1r4MhRvJdNoxx6hw58ugC21LlHRTBnm97q5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741145060; c=relaxed/simple;
-	bh=IalM6GcSrc2FXSX/2tWDq59g6jT4l3qYVHbrQtNGqOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFkLeGEldDjdGw+0S28hZWnu6UkukH+Wt6f3zyGNjzJUudq5Gdzw3lBgnxUpgKBIE43yL2EHHqfF5IOK1HVZZKRuzgEVtDQ4vKe5jZxZyWijy7ydbgmSixxrH7TUaT0W6WID3mIX3EiQl0u/iLVjYckC4KJcZGiuejFG3EsrN6U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A0/4pCLM; arc=none smtp.client-ip=209.85.222.179
+	s=arc-20240116; t=1741145187; c=relaxed/simple;
+	bh=mHtkAZ4vLe3KUwCdyIh3cqKytMRkKRIQ55rcWBYcONo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Yqtc+qLhZ91fv11ftJMzoTD1XgxyBxJ84zMIXCfgO33ZSdCmfGfI9k7+HVXSnV7vMbMSMme5M4lVDPHK2CRCT9xNgAsFByEK6xDlaMyKZ1XEJdKZntWyQIdhB+D3JPs07eZaQNbxx2h7DP+CnyUztEiJE9YY1a6YZFZFM+zODJo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLzEGAuG; arc=none smtp.client-ip=209.85.128.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7c3b4c4b409so498723785a.3;
-        Tue, 04 Mar 2025 19:24:16 -0800 (PST)
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so42928415e9.0;
+        Tue, 04 Mar 2025 19:26:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741145055; x=1741749855; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=VCYzw7AYHEWhjh2pCKxrHo8DdwWDp+puWkHCQL3OAfM=;
-        b=A0/4pCLMtqKeHHt/gzhCZRLLBnfaIq4gqTgnmvz/L0zI6WTj87LCD8jv/DeX3HFoNk
-         DF8BTqYuwyZ/j/znebjlzFNiBs5dYwVoqFtAQ0K+Ix46mf5VvuefMWwTGletm4IyR2zE
-         HctXgAKXiYJgGgQHQ82NfiukIq0H3tOj5w3c5Ez1JA6DetZ3FheCef8jU6h9ePbiJaOk
-         drgmC1r+v6kDPFYMIsXHs+FI1IBO5sO1zoiBo6DkczfSttIOTeYUMvsPOL9pUAk3/lKk
-         p1pvMNqSa7nXKiZmYbW6rc0pNspEwu3m7GSvt8OR2XYthxB+WVQcax5xpTfgsm0rg0Fc
-         hnsA==
+        d=gmail.com; s=20230601; t=1741145183; x=1741749983; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VretaU5v/1hLOHdXy1ltl2QWR/a5vZVhU8PtvFmcdBs=;
+        b=WLzEGAuGA91mVUcyJNVVuwUOU3Z6mO17847LN94LGJ7303hm4HI5XUY89ZR4q2SyP+
+         VNdrSRp4wRnugwq1MygAYJZRX10AVh3HYZr+cfBGYFp/KCzbu2uGePTzpDriyTez0H4i
+         aaCss+Nz0uBODCeuE/sk0I+M0FkTKmJiqvQjUfRcFncO6VIGSYDOQD41o7fRu8Vbzk9V
+         ChodrjbMMFy/0PEg7vxWo6qR7qT/5JimQms9KEQ7X0RdMfjo/2rlhHlpSo1nzwUAnvKt
+         bB+LlGYH9cqAjhoxQv+2akdUgfkvvjWe9A+QFKtHQgSQVnFT8avL0amnHkYd6QIx4viQ
+         j/lw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741145055; x=1741749855;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=VCYzw7AYHEWhjh2pCKxrHo8DdwWDp+puWkHCQL3OAfM=;
-        b=VGiq4I1mEkVLFL4cF54zFEgBmHGNYey0D5fqK1Z4sjvDlNyIMjF7z4dgVPZCKdV5Xm
-         n6NQ06bKDZ5sPTfZvGNI4S/0wP4vWwEmG32nRy7xzguh6j1JaWXzkDOqcZw5jXxjPggu
-         z1dDgVHty6xO7KfBA36MCnhRydMLE4it5/JuAsLSGt4jdKhDzuqpyxWHC/96hbEWUnch
-         uDa3a2dE6bFvfXhxXpbk/s7xeTB++m7a4OA6xicIGhDT/OPs++Q4dLGDPlitSXQE9lE4
-         xfRYmivojoY7lPl8YypQI3mjJp5NQ5mj0rLaAtDD+Cerz/mT/bvlI+c8Q95pjxlIA/k7
-         eg/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVF9cdAcVDK+YjWefbSulf0Msdq7iCQrpzfWGHABbt8GJcf+kPSi2sa5g0171k3O0gifmPluyCXYkqattQ=@vger.kernel.org, AJvYcCXYAJD4T/f0iZn11dT3G3QFK86S3ikHzi2kIwG0wpFeUhmbpSybj5zi01i2y2g8dbuWhpMM/elWXrswLFqHGTI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyclXd+nrhd1eYpRCiNUd8ES34V8NLfKv86p0sK/fuhAih4CqTr
-	c1nEt5yFmIcP5udLJPvSECsB4dgN/pTBBopaYCRl7QjjmLhQ9meR
-X-Gm-Gg: ASbGncv3/o4Ome8eVaEa3qqZ9S6hzTunYIv/vStVlwxLOo8jWLYlIbMYZ85rYBt6Xsc
-	OvdckIQg1yFSZ3pGSGXlpPy47p0gWvaZpSQ9+Jtcecolm3EpxJ+EDJ1ah2AMObh7VZtEkC9iv0O
-	P/e+cWfJo1uP8nitffaRQ4JP3HgraFPZTjeVcF3YG2vFjYoZYMCxQ8mXabdv0ECS/jVSjAjID5/
-	uMqvPQ8zRiVTSyYJsI7XZpI63UfW2iPzPpQFzZainomq5WZqNS8Q8VffH2ET4jV39tK66JCWXmm
-	jyR+gGuoHB3k/PrnByiMAMQHuY8W/2HzL3ZojHGbdQsTSyPR05TvgDpW7wdNpC/Ei62v3M7Iw2j
-	Wh2J9js5HLfxSULEJ+pZSZOaO0BkIZxClP5U=
-X-Google-Smtp-Source: AGHT+IFkyQ73hd8BMJx+FC6q+VcIyRCQMDhKffer4K2eUcYMOGHylCr7hZHPBGmpGtT4iP9zVL947g==
-X-Received: by 2002:a05:620a:6087:b0:7c0:97d7:27dd with SMTP id af79cd13be357-7c3d8ec7ebdmr335437485a.48.1741145055135;
-        Tue, 04 Mar 2025 19:24:15 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3c3edff13sm291499985a.69.2025.03.04.19.24.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 19:24:14 -0800 (PST)
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 0DC551200074;
-	Tue,  4 Mar 2025 22:24:14 -0500 (EST)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-01.internal (MEProxy); Tue, 04 Mar 2025 22:24:14 -0500
-X-ME-Sender: <xms:3cPHZxPDh_XhD3GBFoAYAvygkcvXFCcn57YSjIdiUZx01UJKNk2W2Q>
-    <xme:3cPHZz89ixupj5JKX_bBZoIIAORmtaivv-bxCC4OTSp8w8cJNttQUh656XAn3IITF
-    x6vtyrDjIXGafZhrw>
-X-ME-Received: <xmr:3cPHZwQGxOJe9SmxeS21xY5OBvZZ3Zik0482r-TSjEtzNvcs5hPEC9aATA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdefjeefucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtkefstddt
-    tdejnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhephfekvddvtdekgedvgefgveduhfeihfej
-    heffkeefveehffehhfehkeetheeileejnecuffhomhgrihhnpehruhhsthdqlhgrnhhgrd
-    horhhgpdhkvghrnhgvlhdrohhrghdplhhlvhhmrdhorhhgpdhgihhthhhusgdrtghomhen
-    ucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquh
-    hnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudej
-    jeekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrd
-    hnrghmvgdpnhgspghrtghpthhtohepvdefpdhmohguvgepshhmthhpohhuthdprhgtphht
-    thhopegtohhmvgigkhesghhmrghilhdrtghomhdprhgtphhtthhopehpohhsthesrhgrlh
-    hfjhdruggvpdhrtghpthhtoheprgdrhhhinhgusghorhhgsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopegrlhhitggvrhihhhhlsehgohhoghhlvgdrtghomhdprhgtphhtthhope
-    gurghnihgvlhdrrghlmhgvihgurgestgholhhlrggsohhrrgdrtghomhdprhgtphhtthho
-    pegsvghnnhhordhlohhsshhinhesphhrohhtohhnrdhmvgdprhgtphhtthhopegrsgguih
-    gvlhdrjhgrnhhulhhguhgvsehgmhgrihhlrdgtohhmpdhrtghpthhtohepuggrkhhrsehk
-    vghrnhgvlhdrohhrghdprhgtphhtthhopehrohgsihhnrdhmuhhrphhhhiesrghrmhdrtg
-    homh
-X-ME-Proxy: <xmx:3cPHZ9uTcfObnarRoojUAy1B_6gP4rES_VkXm8sJwlr1UboBuD-JSQ>
-    <xmx:3sPHZ5d6WiZvDs9uXESVzy4wnfv3ZEHD2c1vVWrS9vx80O3ecyIZiw>
-    <xmx:3sPHZ514xBSASLkKzslb0SuhJGoVZCT8EOi3vDjXTV0-oht4gz3jJA>
-    <xmx:3sPHZ1_6XSVlJL4v7FeTINqX_Csf78PYDrJ2m-IDjBRJLfcR26ud_g>
-    <xmx:3sPHZ0_BOZIPQUysHVDA8plP6TjC8p2sFvHD77OMAoU1956cqb_cnRtZ>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Mar 2025 22:24:12 -0500 (EST)
-Date: Tue, 4 Mar 2025 19:24:11 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: comex <comexk@gmail.com>
-Cc: Ralf Jung <post@ralfj.de>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Daniel Almeida <daniel.almeida@collabora.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org, 
-	robin.murphy@arm.com, rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>, 
-	Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com, iommu@lists.linux.dev, lkmm@lists.linux.dev
-Subject: Re: Allow data races on some read/write operations
-Message-ID: <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
-References: <87bjuil15w.fsf@kernel.org>
- <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
- <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
- <87ikoqjg1n.fsf@kernel.org>
- <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
- <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
- <87mse2hrd8.fsf@kernel.org>
- <Z8YMTiKS4T9wC4t_@boqun-archlinux>
- <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
- <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
+        d=1e100.net; s=20230601; t=1741145183; x=1741749983;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VretaU5v/1hLOHdXy1ltl2QWR/a5vZVhU8PtvFmcdBs=;
+        b=QWgTqpam5LxDA1YHPYFixZEEpidU9BCDobybDLBrUvi2d+naiduSwCHHViKXobhv8u
+         cXa8CHFYZrhzxgqws9A3PinBlTmh2r6JP6xunUYX3QG64MwFA1JdX7Ac+1GXNOiOLYwR
+         aWVf+1hNRah8Yrv9FLE5WXfKKPHCXhJNzTfkBRSUSqbGii1D6KqfJSoqaujSBpAaeD5x
+         L86x7Ys43Uf8nezAzyh+me0a+IjYjBg9x/elOb3YtzSSGu+wdDcnucGtVVtTuDvJjKFk
+         Tp6rtIWdC8/NFLVqHmEmZkNcAHvsxpAn0361SSy4VbqUDlnr/k4csL0Po8FHmI5FR1nB
+         cN0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUADUSbDf9lCmPzjrbguHv5rM47cVREbwHXy3FQU3JqAPbxitONYxnQ2soSYqWArUQU2jA=@vger.kernel.org, AJvYcCUkYwNmllbv+0zDQNPxXezAJYDlqKXHagyL1FJ2PSrtXiyyRCpgHL2VRVYqqANI9ehYYpESWafE4cQb8yUH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMRBs/GlMVGXQpBmUHlNivz6xawD/3cTaaeVGrwe53nHAzciw7
+	Sl+DWRAe6kvPUhyQf7QPpMIc1pLh0dqhK3ScfBrEg0v6mfIV3ZZFxsad3G74c4lu8sy+s721hlc
+	/5X+IcA64E73LF8QsZmKeCL3CAu8=
+X-Gm-Gg: ASbGncsU2Thg6D/juggslYjFAn0N4ayxqj5kulYYnRk9zBV+iqijZLt7E1w7PqgAHIQ
+	Y6rW5Gu/MYowlhpjb5fXI33b1RisZstO/Y9UfXbaQtfhbjVFPOI5S/txpB3+ruAqMdmRj2ePUHp
+	nwbUy0/b+mGdudshuOBfRirdXIBsMMo3VzBdkS9MURog==
+X-Google-Smtp-Source: AGHT+IGzIMM7zQQRVkBbsNXSeTx6I8p3O2hYNgu0XDTLHu0kIfXx9/HT2hCa4nZS4sHy1z+ltogZRtDVFBUrzn8DqIU=
+X-Received: by 2002:a05:6000:1a8e:b0:391:136c:1346 with SMTP id
+ ffacd0b85a97d-3911f74bdfbmr773726f8f.19.1741145183408; Tue, 04 Mar 2025
+ 19:26:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
+References: <20250206105435.2159977-1-memxor@gmail.com> <20250210093840.GE10324@noisy.programming.kicks-ass.net>
+ <20250210104931.GE31462@noisy.programming.kicks-ass.net> <CAADnVQ+3wu0WB2pXs4cccxfkbTb3TK8Z+act5egytiON+qN9tA@mail.gmail.com>
+ <20250211104352.GC29593@noisy.programming.kicks-ass.net> <CAADnVQJ=81PE19JWeNjq6aNOy+GM-wo6n7WU9StX1b6kevqCUw@mail.gmail.com>
+ <20250213095918.GB28068@noisy.programming.kicks-ass.net> <CAADnVQJJbi-52mP6BivyAudWSk95f1mgGQXWnjD-H37b7_AtLw@mail.gmail.com>
+ <20250304104648.GD11590@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250304104648.GD11590@noisy.programming.kicks-ass.net>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Tue, 4 Mar 2025 19:26:12 -0800
+X-Gm-Features: AQ5f1Jqc1OcxFdpHXxviILWN5ATrQ8sjCyiJy-0TOJ3kpk8iy_sBSEBkr25uumA
+Message-ID: <CAADnVQ+hR6WB9=WVP73uxhetAZMTugcT2z_N=89qhjFJPoWT=Q@mail.gmail.com>
+Subject: Re: [PATCH bpf-next v2 00/26] Resilient Queued Spin Lock
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf <bpf@vger.kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, 
+	Waiman Long <llong@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
+	Eduard Zingerman <eddyz87@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>, 
+	Barret Rhoden <brho@google.com>, Josh Don <joshdon@google.com>, Dohyun Kim <dohyunkim@google.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kernel Team <kernel-team@meta.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 04, 2025 at 12:18:28PM -0800, comex wrote:
-> 
-> > On Mar 4, 2025, at 11:03 AM, Ralf Jung <post@ralfj.de> wrote:
-> > 
-> > Those already exist in Rust, albeit only unstably:
-> > <https://doc.rust-lang.org/nightly/std/intrinsics/fn.volatile_copy_memory.html>.
-> > However, I am not sure how you'd even generate such a call in C? The
-> > standard memcpy function is not doing volatile accesses, to my
-> > knowledge.
-> 
-> The actual memcpy symbol that exists at runtime is written in
-> assembly, and should be valid to treat as performing volatile
-> accesses.
-> 
-> But both GCC and Clang special-case the memcpy function.  For example,
-> if you call memcpy with a small constant as the size, the optimizer
-> will transform the call into one or more regular loads/stores, which
-> can then be optimized mostly like any other loads/stores (except for
-> opting out of alignment and type-based aliasing assumptions).  Even if
-> the call isn’t transformed, the optimizer will still make assumptions.
-> LLVM will automatically mark memcpy `nosync`, which makes it undefined
-> behavior if the function “communicate[s] (synchronize[s]) with another
-> thread”, including through “volatile accesses”. [1]
-> 
-> However, these optimizations should rarely trigger misbehavior in
-> practice, so I wouldn’t be surprised if Linux had some code that
-> expected memcpy to act volatile…
-> 
+On Tue, Mar 4, 2025 at 2:46=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+>
+> Anyway; the situation I was thinking of was something along the lines
+> of: you need data from 2 buckets, so you need to lock 2 buckets, but
+> since hash-table, there is no sane order, so you need a 3rd lock to
+> impose order.
 
-Also in this particular case we are discussing [1], it's a memcpy (from
-or to) a DMA buffer, which means the device can also read or write the
-memory, therefore the content of the memory may be altered outside the
-program (the kernel), so we cannot use copy_nonoverlapping() I believe.
+Not quite. This is a typical request to allow locking two buckets
+and solution to that is run-time lock address check.
 
-[1]: https://lore.kernel.org/rust-for-linux/87bjuil15w.fsf@kernel.org/
+> > q1 =3D bpf_map_lookup_elem(&vqueue, &key1);
+> > q2 =3D bpf_map_lookup_elem(&vqueue, &key2);
+> >
+> > both will point to two different locks,
+> > and since the key is dynamic there is no way to know
+> > the order of q1->lock vs q2->lock.
+>
+> I still feel like I'm missing things, but while they are two dynamic
+> locks, they are both locks of vqueue object. What lockdep does is
+> classify locks by initialization site (by default). Same can be done
+> here, classify per dynamic object.
+>
+> So verifier can know the above is invalid. Both locks are same class, so
+> treat as A-A order (trivial case is where q1 and q2 are in fact the same
+> object since the keys hash the same).
 
-Regards,
-Boqun
+Sounds like you're saying that the verifier should reject
+the case when two locks of the same class like q1->lock and q2->lock
+need to be taken ?
+But that is one of the use cases where people requested to allow
+multiple locks.
+The typical solution to this is to order locks by addresses at runtime.
+And nf_conntrack_double_lock() in net/netfilter/nf_conntrack_core.c
+does exactly that.
 
-> But I’m not familiar enough with the codebase to know whether such
-> code actually exists, or where.
-> 
-> (Incidentally, there is a compiler flag to turn the memcpy
-> special-casing off, -fno-builtin.  I pretty much expected that Linux
-> used it.  But I just checked, and it doesn’t.)
-> 
-> For Rust, I don’t know why we haven’t exposed volatile_copy_memory
-> yet.  All I can find are some years-old discussions with no obvious
-> blockers.  I guess nobody has cared enough.  There is also a somewhat
-> stagnant RFC for *atomic* memcpy. [2]
-> 
-> [1] https://llvm.org/docs/LangRef.html, search for 'nosync'
-> [2] https://github.com/rust-lang/rfcs/pull/3301
-> 
+if (lock1 < lock2) {
+  spin_lock(lock1);spin_lock(lock2);
+} else {
+  spin_lock(lock2);spin_lock(lock1);
+}
+
+> Now, going back to 3rd lock, if instead you write it like:
+>
+>   bpf_spin_lock(&glock);
+>   q1 =3D bpf_map_lookup_elem(&vqueue, &key1);
+>   q2 =3D bpf_map_lookup_elem(&vqueue, &key2);
+>   ...
+>   bpf_spin_unlock(&glock);
+>
+> then (assuming q1 !=3D q2) things are fine, since glock will serialize
+> everybody taking two vqueue locks.
+>
+> And the above program snippet seems to imply maps are global state, so
+
+Not quite. Some maps are global, but there are dynamic maps too.
+That's what map-in-map is for.
+
+> you can keep lock graph of maps, such that:
+>
+>   bpf_map_lookup_elem(&map-A, &key-A);
+>   bpf_map_lookup_elem(&map-B, &key-B);
+>
+> vs
+>
+>   bpf_map_lookup_elem(&map-B, &key-B);
+>   bpf_map_lookup_elem(&map-A, &key-A);
+>
+> trips AB-BA
+
+If everything was static and _keys_ known statically too, then yes,
+such analysis by the verifier would be possible.
+But both maps and keys are dynamic.
+
+Note, to make sure that the above example doesn't confuse people,
+bpf_map_lookup_elem() lookup itself is completely lockless.
+So nothing wrong with the above sequence as written.
+Only when:
+q1 =3D bpf_map_lookup_elem(&map-A, &key-A);
+q2 =3D bpf_map_lookup_elem(&map-B, &key-B);
+if (bpf_res_spin_lock(&q1->lock))
+if (bpf_res_spin_lock(&q2->lock))
+
+the deadlocks become a possibility.
+Both maps and keys are only known at run-time.
+So locking logic has to do run-time checks too.
+
+> I am not at all sure how res_spin_lock is helping with the q1,q2 thing.
+> That will trivially result in lock cycles.
+
+Right and AA or ABBA will be instantly detected at run-time.
+
+> And you said any program that would trigger deadlock is invalid.
+> Therefore the q1,q2 example from above is still invalid and
+> res_spin_lock has not helped.
+
+res_spin_lock will do its job and will prevent a deadlock.
+As we explained earlier such a program will be marked as broken
+and will be detached/stopped by the bpf infra.
+Also we're talking root privileges.
+None of this is allowed in unpriv.
+
+> > Just to make it clear... there is a patch 18:
+> >
+> >  F: kernel/bpf/
+> >  F: kernel/trace/bpf_trace.c
+> >  F: lib/buildid.c
+> > +F: arch/*/include/asm/rqspinlock.h
+> > +F: include/asm-generic/rqspinlock.h
+> > +F: kernel/locking/rqspinlock.c
+> >  F: lib/test_bpf.c
+> >  F: net/bpf/
+> >
+> > that adds maintainer entries to BPF scope.
+> >
+> > We're not asking locking experts to maintain this new res_spin_lock.
+> > It's not a generic kernel infra.
+> > It will only be used by bpf infra and by bpf progs.
+> > We will maintain it and we will fix whatever bugs
+> > we introduce.
+>
+> While that is appreciated, the whole kernel is subject to the worst case
+> behaviour of this thing. As such, I feel I need to care.
+
+Not sure why you're trying to relitigate the years worth of
+discussions around locks in the bpf community.
+Static analysis of 2+ locks by the verifier is impossible.
+Full lock graph cycle detection lockdep-style is too slow in run-time.
+Hence res_spin_lock with AA, ABBA, and timeout as a last resort
+is our solution to real reported bugs.
+
+This res_spin_lock patchset fixes the following syzbot reports:
+
+https://lore.kernel.org/bpf/675302fd.050a0220.2477f.0004.GAE@google.com
+https://lore.kernel.org/bpf/000000000000b3e63e061eed3f6b@google.com
+https://lore.kernel.org/bpf/CAPPBnEa1_pZ6W24+WwtcNFvTUHTHO7KUmzEbOcMqxp+m2o=
+15qQ@mail.gmail.com
+https://lore.kernel.org/bpf/CAPPBnEYm+9zduStsZaDnq93q1jPLqO-PiKX9jy0MuL8LCX=
+mCrQ@mail.gmail.com
+https://lore.kernel.org/lkml/000000000000adb08b061413919e@google.com
+
+It fixes the real issues.
+Some of them have hacky workarounds, some are not fixed yet.
+
+More syzbot reports will be fixed in follow ups when we
+adopt res_spin_lock in other parts of bpf infra.
+
+Note, all of the above syzbot reports are _not_ using direct
+locks inside the bpf programs. All of them hit proper kernel
+spin_locks inside bpf infra (like inside map implementations and such).
+The verifier cannot do anything. syzbot generated programs
+are trivial. They do one bpf_map_update_elem() call or similar.
+It's a combination of attaching to tricky tracepoints
+like trace_contention_begin or deep inside bpf infra.
+We already have these workarounds:
+CFLAGS_REMOVE_percpu_freelist.o =3D $(CC_FLAGS_FTRACE)
+CFLAGS_REMOVE_bpf_lru_list.o =3D $(CC_FLAGS_FTRACE)
+CFLAGS_REMOVE_queue_stack_maps.o =3D $(CC_FLAGS_FTRACE)
+CFLAGS_REMOVE_lpm_trie.o =3D $(CC_FLAGS_FTRACE)
+CFLAGS_REMOVE_ringbuf.o =3D $(CC_FLAGS_FTRACE)
+to prevent recursion anywhere in these files,
+but it's helping only so much.
+
+So please take a look at patches 1-18 and help us make
+sure we implemented AA, ABBA, timeout logic without obvious bugs.
+I think we did, but extra review would be great.
+
+Thanks!
 
