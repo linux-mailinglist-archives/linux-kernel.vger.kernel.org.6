@@ -1,112 +1,132 @@
-Return-Path: <linux-kernel+bounces-547259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94141A5050B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:35:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C80A50503
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:35:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0030D1889B4E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:33:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE92C1652AF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:33:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A72201922C4;
-	Wed,  5 Mar 2025 16:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1031419049B;
+	Wed,  5 Mar 2025 16:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Jwz4vhS0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z26IdHd6"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04D31862BD;
-	Wed,  5 Mar 2025 16:32:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5A2818D65C;
+	Wed,  5 Mar 2025 16:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192370; cv=none; b=iVrM70wQNUG4xBWJDW2JCHpQlpH5rGfW6kL83OlvtAwTWyMHT5wCW45J+9iZYJu7bavzzlhspBvcGDPPIC+dkYiWJ4+jdvt+MEk6AhlUxceAMrg2qRRoxSpp+szKZsFmiTEhld6jY+tx2qbvTFugw8HhBQczoSNvBnoTSGo+BO0=
+	t=1741192400; cv=none; b=tUoyEmqadmrEQmTJJRQGrtTD51t8Sbg3VYwf9O+X0y0hpMMikp2jJKro9mTKHE9B513Y7nk3/Mez8igwpv0Rp4RP3MD6/JAekB2Q1fIzgXkLkvxfu7nCdOO3ZmGvKB+LJ2UmwYcbje6Qb9ZZRkZXlJeoNo0evkbLH5FWax3PJak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192370; c=relaxed/simple;
-	bh=C407SjEtF5EwtDuKzqsoF8QnQAa+zhjlXin0WeMt4nM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bgCrgrTzERXYS1zICOn6Bwew8oIi0CFZL4nc3U8gB8+UYAQ2YIoZPt0YXGzffmow6RYcuU6ryeV6m6c7x4/oB3Vg/CfR+Wtu2BfoSJ9AB0+KZn6gwg8WLeEpTuSVsEsarXGNyh9r3eXfgj2pHMJwJvK7vToJg4PYRNyEO2vcOOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Jwz4vhS0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF0A6C4CED1;
-	Wed,  5 Mar 2025 16:32:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741192369;
-	bh=C407SjEtF5EwtDuKzqsoF8QnQAa+zhjlXin0WeMt4nM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Jwz4vhS0imWRcGJiRLA4qIUoweASXnEpf6CBKZwpsqd/taeSgnKkWrdDj/Tb5qw0W
-	 qFZgFg84IhtayaqgH3zYeGszGoi7SzajMMhDZTzYpbNV32aXWzHXlE3KcQ9VfV68iO
-	 qOUOaCM+29l6VZsxLBgucuDeOJwEV65IAg4zSy+iQyiZXni546MM5YKlJnppFAqAop
-	 dVTjrUrioCb8HpcSg9Pp+rfXPAT4/CthE1xqGvx2T9TZEJsdVh3H9bRacmfoheTJ8F
-	 jLzfLOzRSAaRazBOrYvEeDySJWYKxflomn7HO5XOdtFoTAvo4H+6dkCMMqm6iUAfTv
-	 n5hIiPoeAGGbg==
-Date: Wed, 5 Mar 2025 16:32:43 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Niklas Cassel <cassel@kernel.org>,
-	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
-	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org, Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: pci: Add Sophgo SG2044 PCIe host
-Message-ID: <20250305-sank-hypnosis-5a41d4e59d38@spud>
-References: <20250221-cavalier-cramp-6235d4348013@spud>
- <2egxw3r63cbsygpwqaltp4jjlkuwoh4rkwpgv4haj4sgz5sked@vkotadyk4g6y>
- <20250224-enable-progress-e3a47fdb625c@spud>
- <7ht3djv7zgrbkcvmdg6tp62nmxytlxzhaprsuvyeshyojhochn@ignvymxb3vfa>
- <20250225-lapel-unhappy-9e7978e270e4@spud>
- <ynefy5x672dlhctjzyhkitxoihuucxxki3xqvpimwpcedpfl2u@lmklah5egof4>
- <pbj22qvat76t74nppabekvyncc4ptt6wede4q6wfygbrzcj3ag@ruvt26eqiybu>
- <je4falvfemkemlvdfzdmgc7jx2gz6grpbmo6hwtpedjm7xi2gk@jr4frv3tn3l5>
- <20250303-aground-snitch-40d6dfe95238@spud>
- <ktnqf4s4hw2o6x6ir4n5hsrvbxri5cxgjyofrl76by6fwazda3@4ejw2k7k2ush>
+	s=arc-20240116; t=1741192400; c=relaxed/simple;
+	bh=0kwY9FUG53nPfgHq+lB9nZ9aS4CCvz8fHFIvv5R3HGM=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=LKXIa8spqUnYXsW8MFm6CGubRUzCMxIQ3y+2hxKTgV2xmLHkhPPYXeGkmDjtbdqmk+GT8sWi2BHIoWr/zsYkox7g+hXE7bayuXRLJ8wvsIoRQAsyBowciW4EFSSuX9psrcUyyLVJPYyzU/HCXZbN1BikE7/sLEYSKrkwOD3h+Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z26IdHd6; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abf6f3b836aso614797666b.3;
+        Wed, 05 Mar 2025 08:33:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741192397; x=1741797197; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JK4O2zf61Cn8wpdWW5Btx9mD0jmIMmD6EG+2ZAdy0IY=;
+        b=Z26IdHd6DMr5IfaEV0CAPpCGi7mB7dZU4TxPmOdeherk21cs4z/+xem1bfuTtT6pGM
+         4mUEqlkR+fpdmEoeHYefwTgBZRz67cRmpEJcJkaO5+ffMefWJQ2JUGBjJ9cHcdmSRMnn
+         dLgAieW3lYadVKWGeF6KgyIKdG5w4heCXB6sUuVbQn6zHBtq+uoXmKr5l/EpxF4qS6wH
+         qypstyjKOVpQA4OI/vKWrurCDVfHtmQzGHvRYORuDsKcb5tmsafL8nKo7LzNgtKAn8bN
+         5llq/9pMNOubUsKdfG4uSrJhEUtEo/esoPFInqYUXqAap6g2X9pmVuK+TZoEhrDbUb6U
+         7wiQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741192397; x=1741797197;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JK4O2zf61Cn8wpdWW5Btx9mD0jmIMmD6EG+2ZAdy0IY=;
+        b=qNqt03ChQS9RVbFapI6Y6MHrAx5SW7+eD8RHGY40TB28xWMCFC2g8/vsMN3YXtL7g3
+         KSp7zeCapupR+a5n2N6SEtPV/sEUWDD2YDGT0MvIeVwl6ngwpJYEzoXyke7y0TRs0Cme
+         buMk3DeMS4iq76/nP49Mnqg7ToHGN7rBpHEeqht5IX8Dar2kSYtrM88KH4xBacx7+YuY
+         jPzjJPqiKFiSJld7sjGQSAqw8PCQIEb4lPTDs8gbOVWDGyp+4WvxE5IEhaQO/NNayvPi
+         vcST7VWPDGe0wENOnw1V+zJE5V/3jGHW374VeYmCWzCRxVkH/tecK2z79jLCoLhCGf+W
+         VoIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX7ECQFFCbWtUN97PpRMePElFSrENQJduM+AruvILe/HoyND2PvCrm3C2zYmwZZxlnVb98oEWxA8Sfn9X4=@vger.kernel.org, AJvYcCXJ3Ij5os9OKxUffhZrDAI1kKuIdiVMsgSPki1vkkPW3mjhbAJM+kDnEv4v5pfBp5WMMJDHsPNP@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJqyh9GIGVb+dQRL6XALU9TPX6lafEkqH8TWjCkGW10lp0tW8f
+	FV3MNQvJ0XJHWx1YnYqNpcJh12vvcvM8Nlzm8xSdudGzupOLyShhwTfC6rXQ3PcXNPK4AVRubW9
+	FHyiMG4SmHO4ONqJk8Vcjb9N6Mto=
+X-Gm-Gg: ASbGncvIVPW4d8F4s4Q8cJLz0ecAUeZLCcsxZBEZ7C0Gg2WObqwtu+TOQXslGQ/XA2r
+	Mukia96LhJcnwoonokF5FrbgfkDoCMILM10FD/rNd9C89oaAQTKKETN6AxnUaWpC3viF/SkzVU+
+	aq5Mpah/z5UadTlcmORt+Hw9FU
+X-Google-Smtp-Source: AGHT+IHSHs2TnczkyuMBUdfcfAqotKfdhX9hyFyaHZ1GF4bnrCI3S8DVGv8T1MW99UUFRzlGXjXZR9k54XKDo435ao0=
+X-Received: by 2002:a17:906:dc8f:b0:abf:4bde:51b9 with SMTP id
+ a640c23a62f3a-ac20dd078b9mr357854266b.35.1741192396600; Wed, 05 Mar 2025
+ 08:33:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="m+dlkPVoXaUWfOU9"
-Content-Disposition: inline
-In-Reply-To: <ktnqf4s4hw2o6x6ir4n5hsrvbxri5cxgjyofrl76by6fwazda3@4ejw2k7k2ush>
+From: =?UTF-8?Q?Se=C3=AFfane_Idouchach?= <seifane53@gmail.com>
+Date: Thu, 6 Mar 2025 00:32:59 +0800
+X-Gm-Features: AQ5f1JozTIGBqPbsdq4tnmrTjBsGE02f-EjWfm9qmjROqDAlMIVVEXpdJMzEuzM
+Message-ID: <CAMpRfLORiuJOgUmpmjgCC1LZC1Kp0KFzPGXd9KQZELtr35P+eQ@mail.gmail.com>
+Subject: [REGRESSION] Long boot times due to USB enumeration
+To: dirk.behme@de.bosch.com
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, dakr@kernel.org, 
+	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
+Dear all,
 
---m+dlkPVoXaUWfOU9
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+I am reporting what I believe to be regression due to
+c0a40097f0bc81deafc15f9195d1fb54595cd6d0.
 
-On Wed, Mar 05, 2025 at 12:43:54PM +0800, Inochi Amaoto wrote:
+After this change I am experiencing long boot times on a setup that
+has what seems like a bad usb.
+The progress of the boot gets halted while retrying (and ultimately
+failing) to enumerate the USB device and is only allowed to continue
+after giving up enumerating the USB device.
+On Arch Linux this manifests itself by a message from SystemD having a
+wait job on journald. Journald starts just after the enumeration fails
+with "unable to enumerate USB device".
+This results in longer boot times on average 1 minute longer than
+usual (usually around 10s).
+No stable kernel before this change exhibits the issue all stable
+kernels after this change exhibit the issue.
 
-> It is complete a mess. I think it is more clear to just make the
-> dmac and eth device as noncoherent, and use one soc bus for all.
-> Do you have any suggestions on it?
+See the related USB messages attached below (these messages are
+continuous and have not been snipped) :
 
+[...]
+[    9.640854] usb 1-9: device descriptor read/64, error -110
+[   25.147505] usb 1-9: device descriptor read/64, error -110
+[   25.650779] usb 1-9: new high-speed USB device number 5 using xhci_hcd
+[   30.907482] usb 1-9: device descriptor read/64, error -110
+[   46.480900] usb 1-9: device descriptor read/64, error -110
+[   46.589883] usb usb1-port9: attempt power cycle
+[   46.990815] usb 1-9: new high-speed USB device number 6 using xhci_hcd
+[   51.791571] usb 1-9: Device not responding to setup address.
+[   56.801594] usb 1-9: Device not responding to setup address.
+[   57.010803] usb 1-9: device not accepting address 6, error -71
+[   57.137485] usb 1-9: new high-speed USB device number 7 using xhci_hcd
+[   61.937624] usb 1-9: Device not responding to setup address.
+[   66.947485] usb 1-9: Device not responding to setup address.
+[   67.154086] usb 1-9: device not accepting address 7, error -71
+[   67.156426] usb usb1-port9: unable to enumerate USB device
+[...]
 
-If splitting is worse for read/usability, then yes, keep it as one bus.
+This issue does not manifest in 44a45be57f85.
+I am available to test any patches to address this on my system since
+I understand this could be quite hard to replicate on any system.
+I am available to provide more information if I am able or with
+guidance to help troubleshoot the issue further.
 
---m+dlkPVoXaUWfOU9
-Content-Type: application/pgp-signature; name="signature.asc"
+Wishing you all a good day.
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8h8qwAKCRB4tDGHoIJi
-0lgsAP9/rO13dyY/5sap1YMKjbfizrx1aPd+M21mdzhKleFSAAEA/3Y6yihO5r3K
-7gUW5/g2qHLCepdOrlLdq8AiMiYjmwI=
-=hMTi
------END PGP SIGNATURE-----
-
---m+dlkPVoXaUWfOU9--
+#regzbot introduced: c0a40097f0bc81deafc15f9195d1fb54595cd6d0
 
