@@ -1,115 +1,112 @@
-Return-Path: <linux-kernel+bounces-545916-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545917-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F45A4F38F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:25:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B161A4F397
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:26:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 485501888809
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:25:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 913B716F4F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79FA144D21;
-	Wed,  5 Mar 2025 01:24:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 188C8144D21;
+	Wed,  5 Mar 2025 01:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="IUfeufbC"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D29E1411DE;
-	Wed,  5 Mar 2025 01:24:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="YclVKH64"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9107711185;
+	Wed,  5 Mar 2025 01:26:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741137899; cv=none; b=X+pvb04pGQMe9zF6X2brp90Hvm9xGG0okL2FcUOxJvWWn9gE9K2t6p5vYf4UsRv9ppx0Ed/jHcTmcubVit1hIvb4WpF5OiT4mCU3FhAL1tL3YoITAKvN2xWGTWTmSp63huQjx91P4/NF1jz1k7QpPiFtSjk8SYGzg9Tjb5Bw79c=
+	t=1741137964; cv=none; b=nD/Z5ovw/QSEJWPmwFIUtanaKMIAhNskDsWNHTfcQ0ZPQHyaJ0af8ReBlG/m17GzWuNPhRy3E89kHEAons6NSa8wHytL2A9tYH3U98zKVrN7y6sj7rGD+BAA1Te4uOgZjiFSu+TqXvMRMgjMNl7HrvRzrZy45IN/iG/UUylM10w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741137899; c=relaxed/simple;
-	bh=3Ph3oqRgO+q2RGVMQyfyxHJM7Y30LoLLhU8T3WLPmZE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JtBumgxraM+P8WNmrHQoNKMgE47aF/1GpxlEjKgFVgcR9JRpn7YHot1TOqPrR16bdH9n5+KIgW/hv9KxwAGRvRiWmCs2mXDcKt9e9F0sXLzlMWBrFaHVubO1glOiqjI6pAOWPi0STdj24QMwoDejQREDa1sjaTjQQ+u+fjhsqsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=IUfeufbC; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=6MUV6
-	8mNmpYgUP6QfuCmMxdeFLghS+WsQcZYfEe/f0A=; b=IUfeufbCBk8UrgwiS676y
-	qVYbeXj2O7OqHRGXV7C/MMRuAKd6llGloQw7hQhf0ajuISGjiCOmoBqYufpnyHcS
-	vYsfhQq33usAzwHflnG+deNS6+50l1FfIOys1wdqra01Jquu59XieGuO2L92cjfx
-	mqlPglMMusv0FGxFtwgnSU=
-Received: from localhost.localdomain (unknown [])
-	by gzsmtp1 (Coremail) with SMTP id PCgvCgAXz3bcp8dnCh_CFw--.52995S2;
-	Wed, 05 Mar 2025 09:24:46 +0800 (CST)
-From: Miao Li <limiao870622@163.com>
-To: gregkh@linuxfoundation.org
-Cc: limiao870622@163.com,
-	limiao@kylinos.cn,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org
-Subject: Re: Re: [PATCH] usb: quirks: Add DELAY_INIT and NO_LPM for Prolific PL2303 Serial Port
-Date: Wed,  5 Mar 2025 09:24:44 +0800
-Message-Id: <20250305012444.19742-1-limiao870622@163.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <2025030339-morbidly-relax-80c0@gregkh>
-References: <2025030339-morbidly-relax-80c0@gregkh>
+	s=arc-20240116; t=1741137964; c=relaxed/simple;
+	bh=cyJfAdufLg+9eRiT4JlIUas7NAJvFa6ffHqtZWHg7YY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=MYECoyPB53apsWESHPHIxL7hC9gvIGBdpWktWBX1cV7ABOmzZoIQyDXb5c/7mmJ03pW6ZhmkWeZTGGSJ07aM/ryd5w721T5FopPHepXFoZiLttr65T7Q4p50tAalf+at/VykQDUTakoJzhemUgJ32pzly7Oo2xlXYO+ye2O2/sM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=YclVKH64; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from narnia (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 6B7C2210EAF9;
+	Tue,  4 Mar 2025 17:25:53 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 6B7C2210EAF9
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741137962;
+	bh=0ktGKWEegiCPPqEj0r+J7PeMMxQp947aXt6g4Uv8qdk=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=YclVKH64wUlKUqvg/dvVsp7eoUdk2XoxcQSAqiGFYiKKhCKSJspMclpOKHfi4yvDp
+	 Gt32X2m0icsmL2gZ/WYmE3tauj5IuLUn1Hx2PjEEYR93VYDqX33QlXfXR6luf1d9Tb
+	 8/5JFavccisPbFuyWc9w/4CDHOWAngzYfGMeEh+o=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
+ <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, Andrii
+ Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>,
+ Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong
+ Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, Stanislav
+ Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa
+ <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter
+ to LSM/bpf test programs
+In-Reply-To: <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+ <20250304203123.3935371-3-bboscaccy@linux.microsoft.com>
+ <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
+Date: Tue, 04 Mar 2025 17:25:50 -0800
+Message-ID: <877c54jmjl.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:PCgvCgAXz3bcp8dnCh_CFw--.52995S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7tr17KF1rCr1DCFWrWFWUtwb_yoW8uFWrpa
-	y5XFZagFsrGr1xK34jy3Z7ZFyrCws5CayrKrZxt34j9wn8XrZ3Kr1xGF45GFW7Zr1UGw10
-	vw48KF98Ja4kCaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0JUJCztUUUUU=
-X-CM-SenderInfo: 5olpxtbryxiliss6il2tof0z/1tbiYBYHzWfHo0+iygAAsY
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
->On Mon, Mar 03, 2025 at 03:00:47PM +0800, Miao Li wrote:
->> From: Miao Li <limiao@kylinos.cn>
->> 
->> When used on Huawei hisi platforms, Prolific PL2303 Serial Port which
->> the VID:PID is in 067b:2731 might fail to enumerate at boot time and
->> doesn't work well with LPM enabled, combination quirks:
->> USB_QUIRK_DELAY_INIT + USB_QUIRK_NO_LPM
->> fixed the problems.
->> 
->> Signed-off-by: Miao Li <limiao@kylinos.cn>
+Paul Moore <paul@paul-moore.com> writes:
+
+> On Tue, Mar 4, 2025 at 3:31=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+>>
+>> The security_bpf LSM hook now contains a boolean parameter specifying
+>> whether an invocation of the bpf syscall originated from within the
+>> kernel. Here, we update the function signature of relevant test
+>> programs to include that new parameter.
+>>
+>> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
 >> ---
->>  drivers/usb/core/quirks.c | 4 ++++
->>  1 file changed, 4 insertions(+)
->> 
->> diff --git a/drivers/usb/core/quirks.c b/drivers/usb/core/quirks.c
->> index dfcfc142bd5e..8aca5518e003 100644
->> --- a/drivers/usb/core/quirks.c
->> +++ b/drivers/usb/core/quirks.c
->> @@ -341,6 +341,10 @@ static const struct usb_device_id usb_quirk_list[] = {
->>  	{ USB_DEVICE(0x0638, 0x0a13), .driver_info =
->>  	  USB_QUIRK_STRING_FETCH_255 },
->>  
->> +	/* Prolific PL2303 Serial Port */
->> +	{ USB_DEVICE(0x067b, 0x2731), .driver_info = USB_QUIRK_DELAY_INIT |
->> +	  USB_QUIRK_NO_LPM },
+>>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
+>>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++--
+>>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++---
+>>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
+>>  7 files changed, 11 insertions(+), 10 deletions(-)
 >
->But this is not the device id for a pl2303 device (or at least one that
->Linux supports), so how was this tested?
+> I see that Song requested that the changes in this patch be split out
+> back in the v3 revision, will that cause git bisect issues if patch
+> 1/2 is applied but patch 2/2 is not, or is there some BPF magic that
+> ensures that the selftests will still run properly?
 >
->And why would this device suddenly stop working?  This chipset has been
->working with Linux for decades now, what is new about this device that
->requires this change?
 
-Hi greg k-h,
-we received this patch from Huawei hisi, but without device info,
-I use deepseek to search device info for 067b:2731,  
-but got the incorrect answer,I'm sorry for making this mistake,
-then I visit Prolific official website for device 067b:2731,
-https://www.prolific.com.tw/US/ShowProduct.aspx?p_id=326&pcid=153,
-067b:2731 is a USB 3.0 Single-LUN Mass Storage Card Reader.
-Hisi tested the related device on kirin990/9a0/9000c/9006c platforms
-with reboot/suspend/hibernation circles more than two thousand times,
-they found the device might fail to enumerate or experiences intermittent disconnections on reboot test,
-and this patch has been practically applied to the mentioned platforms to resolve the problems.
-I've modified the device description information in patch V2.
+So there isn't any type checking in the bpf program's function
+arguments against the LSM hook definitions, so it shouldn't cause any
+build issues. To the best of my knowledge, the new is_kernel boolean
+flag will end up living in r3. None of the current tests reference
+that parameter, so if we bisected and ended up on the previous commit,
+the bpf test programs would in a worst-case scenario simply clobber that
+register, which shouldn't effect any test outcomes unless a test program
+was somehow dependent on an uninitialized value in a scratch register.=20
 
-Best Regards,
-Miao Li
+-blaise
 
+> --=20
+> paul-moore.com
 
