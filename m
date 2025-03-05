@@ -1,95 +1,156 @@
-Return-Path: <linux-kernel+bounces-546621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6215A4FCE3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:55:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FF58A4FCE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:55:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F19B2165A96
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:55:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15641885809
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:55:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F5522ACDF;
-	Wed,  5 Mar 2025 10:55:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46632219310;
+	Wed,  5 Mar 2025 10:55:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B9DVaemP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eihXWYMQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3Ox8Dgbr";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eihXWYMQ";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3Ox8Dgbr"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E60622154B;
-	Wed,  5 Mar 2025 10:55:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE544221F1B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:55:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172127; cv=none; b=NAaQtCJJls/oCF19Xbn7UjiR5swsxlNQ5qIcHmabz9vU80U+eJMu6buRFTNWcLuvboYh/WmMxa7fFDj82Mz8Z3BS+Aeqyq1rhhDUDPiw7OkD0t4MQGBEahovVvGPg4PHw6RSU0a0j9vOg1D2VlX1pFzCC/FIpluxhZYTS1Estsk=
+	t=1741172122; cv=none; b=qw1ut2BOs3mnGYwIklT+NSXg0pGSssnUGR63T7fAyP+wHz1aXvwQTEcJigxnA/2dseowWQ0VeTkqbtGv2hfSL+INPIqPRQrp/hboaX/jtCAYqsiJVKSQ9yJmgIYPmv3jZRij+2L2oXT5E6I2cd78EGmPz6f9Ku4/2UiumrVrj2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172127; c=relaxed/simple;
-	bh=Wlhyf0USg/tu1XOgzH5NxGUkooy3w2wOgrCLVWvycyI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nJA/o5Vlk4WZ0/BDX+IAQtCi7yPSxz+U74J3ptTEF0Sb5Q6K9Td4tUJv/s9VbE4V6Dfy1R8O2vxI5azIjpgyqmovWCYZdDetwxiGGgn2/bTfM2iZxspx93+NUt5SF22WK2ADstQTFSrgkV0wBcNI0+WqgNl9K5EwrFUHi+55W3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B9DVaemP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C56D6C4CEE2;
-	Wed,  5 Mar 2025 10:55:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741172126;
-	bh=Wlhyf0USg/tu1XOgzH5NxGUkooy3w2wOgrCLVWvycyI=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=B9DVaemP3felO8/LqxjBzCuCdtwi88e9jfFVqqu5z5z/LITUlrfnKL3D9R5jvjbOE
-	 cpD2IAbgb343QaDENfsx52Wz1Kp5mY/EuD8giZvGuaDtHH6cGVyh784KqZ20GXpiy+
-	 TdxX8/+Vdt5T+A9JOjhLofig9gtkGZ4aWpba/3ynIV0YX4n3wMMEe0x8YXuxgdoTDd
-	 8zXbN81NOCp5r3iOTtLDGOxYI3ZgwdvXZdn390w4Ze/gzVBIbaSasqEz5+p+2eVe88
-	 Mrhgb7v43oWUb3voCogUGRpVqTWxvlrsp6zpyDIXxf5HMS7ZEvuURanuaLvphaQ3q1
-	 Hdqq3Bu1hzbOA==
-From: Christian Brauner <brauner@kernel.org>
-To: Aiden Ma <jiaheng.ma@foxmail.com>
-Cc: Christian Brauner <brauner@kernel.org>,
-	sforshee@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	corbet@lwn.net
-Subject: Re: [RESEND] doc: correcting two prefix errors in idmappings.rst
-Date: Wed,  5 Mar 2025 11:54:55 +0100
-Message-ID: <20250305-wacht-lauwarm-77a350b8a936@brauner>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <tencent_4E7B1F143E8051530C21FCADF4E014DCBB06@qq.com>
-References: <tencent_4E7B1F143E8051530C21FCADF4E014DCBB06@qq.com>
+	s=arc-20240116; t=1741172122; c=relaxed/simple;
+	bh=4Z26Vif/aLrAcH6THndljTALT5UsksrHmQWG/Qss53M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fa82CP3SbLp5ODvzi8XZNIOuD9dwIchfe/WPuG+Ycut0pGQ9+bJR2LzvR/d4e5lu7PoYSVOqJoUnOO30phJjyDLRKfIyuuj/gvlJIfszmf5bjLEQes2EuSUe2cWT2W5sy9EMMSDv/kAjESb/e59kAFxBcvMUGcZMvRnJbzHek4I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eihXWYMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3Ox8Dgbr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eihXWYMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3Ox8Dgbr; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 180DC21197;
+	Wed,  5 Mar 2025 10:55:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741172119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zoSrOB8+uoMpops6QDXFLLwXLeVYc8uZptIC6rmNHGE=;
+	b=eihXWYMQE7yWm8Ckrn+PeKUx/zgLjBvONFy7DGM+U71y7Q0nbj5oXvftb5xMVHPXbR91bQ
+	4R2axuuBf6+zFlTYyidLakugL1I4Nt4QDt7V0DP9p+BoznQl2+j1ltTrFgUVLTjM2U6/FF
+	Qiwd20y7KEQJXnLmH1wV1e4vELCvbm4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741172119;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zoSrOB8+uoMpops6QDXFLLwXLeVYc8uZptIC6rmNHGE=;
+	b=3Ox8DgbrTHEeUZ8eTs8AKIcgxEWlTS6fISSh5oO8vD/e7JWExdYkDSYAEBw9+AtKYDG6st
+	jRfGiSQq21XrlRAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741172119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zoSrOB8+uoMpops6QDXFLLwXLeVYc8uZptIC6rmNHGE=;
+	b=eihXWYMQE7yWm8Ckrn+PeKUx/zgLjBvONFy7DGM+U71y7Q0nbj5oXvftb5xMVHPXbR91bQ
+	4R2axuuBf6+zFlTYyidLakugL1I4Nt4QDt7V0DP9p+BoznQl2+j1ltTrFgUVLTjM2U6/FF
+	Qiwd20y7KEQJXnLmH1wV1e4vELCvbm4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741172119;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zoSrOB8+uoMpops6QDXFLLwXLeVYc8uZptIC6rmNHGE=;
+	b=3Ox8DgbrTHEeUZ8eTs8AKIcgxEWlTS6fISSh5oO8vD/e7JWExdYkDSYAEBw9+AtKYDG6st
+	jRfGiSQq21XrlRAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52A4513939;
+	Wed,  5 Mar 2025 10:55:17 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oS3iApUtyGdjCQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Wed, 05 Mar 2025 10:55:17 +0000
+Date: Wed, 5 Mar 2025 21:55:06 +1100
+From: David Disseldorp <ddiss@suse.de>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Christian Brauner <brauner@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warnings after merge of the vfs-brauner tree
+Message-ID: <20250305215506.1f34f920.ddiss@suse.de>
+In-Reply-To: <20250305210702.66402528@canb.auug.org.au>
+References: <20250305210702.66402528@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1037; i=brauner@kernel.org; h=from:subject:message-id; bh=Wlhyf0USg/tu1XOgzH5NxGUkooy3w2wOgrCLVWvycyI=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMaSf0J35sGx5Z9ndKsezinx3WLvf1rW2zFp7ZPthL+8v+ hLb2rbLdZSyMIhxMciKKbI4tJuEyy3nqdhslKkBM4eVCWQIAxenAEzEw5qR4XmKsmf2f52fB/QF wxmzT9ndj2lfq8jW42qr21Tcnc8izfA/4p5Pa8U7gW6DxwW9pnIzv9bK3N09JfX0+sKNb8W/q37 lAAA=
-X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_THREE(0.00)[4];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_ALL(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On Tue, 04 Mar 2025 19:54:01 +0800, Aiden Ma wrote:
-> Add the 'k' prefix to id 21000. And id `u1000` in the third
-> idmapping should be mapped to `k31000`, not `u31000`.
+Hi Stephen,
+
+On Wed, 5 Mar 2025 21:07:02 +1100, Stephen Rothwell wrote:
+
+> Hi all,
 > 
+> After merging the vfs-brauner tree, today's linux-next build (powerpc
+> allyesconfig) produced these warnings:
 > 
+> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x0 (section: .data) -> initramfs_test_extract (section: .init.text)
+> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x30 (section: .data) -> initramfs_test_fname_overrun (section: .init.text)
+> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x60 (section: .data) -> initramfs_test_data (section: .init.text)
+> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x90 (section: .data) -> initramfs_test_csum (section: .init.text)
+> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0xc0 (section: .data) -> initramfs_test_hardlink (section: .init.text)
+> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0xf0 (section: .data) -> initramfs_test_many (section: .init.text)
+> 
+> Introduced by commit
+> 
+>   b6736cfccb58 ("initramfs_test: kunit tests for initramfs unpacking")
 
-It's good to know that there's at least some people that read this document. :)
+The new warnings are being discussed in a thread at:
+https://lore.kernel.org/linux-kselftest/20250305114701.28c0ee0b.ddiss@suse.de/T/#u
 
----
-
-Applied to the vfs.fixes branch of the vfs/vfs.git tree.
-Patches in the vfs.fixes branch should appear in linux-next soon.
-
-Please report any outstanding bugs that were missed during review in a
-new review to the original patch series allowing us to drop it.
-
-It's encouraged to provide Acked-bys and Reviewed-bys even though the
-patch has now been applied. If possible patch trailers will be updated.
-
-Note that commit hashes shown below are subject to change due to rebase,
-trailer updates or similar. If in doubt, please check the listed branch.
-
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
-branch: vfs.fixes
-
-[1/1] doc: correcting two prefix errors in idmappings.rst
-      https://git.kernel.org/vfs/vfs/c/50dc696c3a48
+Thanks, David
 
