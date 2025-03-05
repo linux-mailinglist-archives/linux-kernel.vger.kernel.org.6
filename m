@@ -1,269 +1,370 @@
-Return-Path: <linux-kernel+bounces-547037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 632B6A5020A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:33:06 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB248A5020B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDD827A41C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F396A18888C0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF03E24633D;
-	Wed,  5 Mar 2025 14:32:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B92248886;
+	Wed,  5 Mar 2025 14:33:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="arCxSNTe"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i+BQJ2xv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEA3A156669
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1CC20C497
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185176; cv=none; b=c//fz7LN+0oRZMG7lXYbn96H2zqLWme7evKETBe1VYgEjrC3xtAMIS2G2WdqLNtdc4iF4jLWDpiMHTKBt/bRPBHnIT9AlpZtbzWoYdePS+b5zaVvK7854HUbpBGUKXSqI1DbEtkFsrY4LsJbzyGFH/izTQTviiGo3DbXJV+Hm4k=
+	t=1741185188; cv=none; b=QYvfT7c91dUHVuQQI8DjST0Alebr0Wuq4JFXMoEMtRn2mKdZfTUHKjOlD89ydGJQGZxC2ZCg2eJHW7WMRT9RlhRNWx+z9B625j4h6DaoOkDJHPqzEuYQiTFi9w78ivcAkD+8/iIfvWerZNfQFvA+AWMQEXzfyxFGduEqfeLk0gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185176; c=relaxed/simple;
-	bh=sd7TPE/d3JgGRw6PG/R3kWQGpab/KpIkkHlXD/668nE=;
+	s=arc-20240116; t=1741185188; c=relaxed/simple;
+	bh=xMJaFhhT+0GdGsdZ126ngW0w7y3Be4VvG7zPWmEQJVs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BAZdQ35cwK4Zhi8iX6OUS+nd0UpVkOIUVGgz5ypwshHaRrrFrSCxN0Px1WIMh3/ChcMcIemNql86PjOuDIdFgOpFsaX0vjkvqXeYG21ffbSbaZIbysOWCNn2cxpm8HIg5+vgc/NcRF04KNvOwQzwe1KAI2jQnDzbmknZkhFL0xM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=arCxSNTe; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5e5b56fc863so597780a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:32:53 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741185172; x=1741789972; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CbWU81zQtv408Xqq4RqPzIYJc74nIIr6NJj34yo9wfw=;
-        b=arCxSNTe3W+Kgu9w/bqqy+dJm+V6uWh1CVBtXzrxY84maKnobw5cHO1XjkVTgiunYe
-         D4kmiLRv0Jv6tOttdCBxrwM30b5BfGWbmxoQ6T88XuU5bwHhycIeCMEImi4SmUvGjrN8
-         VyksZb4wixwYcU8aZbaWb8HuRLG+9vfDC/SR0BuXjFnLl3PHKIxgI3uSbQ8GkW8uchYl
-         7Nr2N07rY6zkutHbZoByBxKiWSgRtN7sKzEHe8VFREcF+H0b1rjdu71gSsER62OBq9dM
-         C+XNUZQxN5rG7kJJnAQXqoW+fLLfOGWTKo/1H3oMYt5KfpcV7aM0G0qnxR8GkievofW9
-         qY1g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741185172; x=1741789972;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CbWU81zQtv408Xqq4RqPzIYJc74nIIr6NJj34yo9wfw=;
-        b=vs8J7GNiwolnsZOivYPb84nhI0WNIVDDR/l8Q0WdLfIIn4W79PGo2UQmEtMpfQEcWC
-         ryGEq/qZDbHqH2ENMf1M56WM/aA5Ddi8R9pOCjX0XUbZENn3KfRxQ7XLiDCAAE8eYMBm
-         wVDmUcc9bE7FSViF1VukDQl64iR5aFZ83hrbwMOAMQ2bMMYtQaLki4Bz9+2uwkgSljD2
-         kdzTm3JZHFjlnf0PjKHMnZkz675VlrYMhvwFIc0NNBmD+9Fpv6Ia/d9fvMaSwTo51EaW
-         zD/S+1KjS6ornOCAcFoeR21fJWPtPli3foot5EJoZfZACufG0GbDshfnHDm7DE6JyT4V
-         486A==
-X-Forwarded-Encrypted: i=1; AJvYcCWD5kM6VihhZxLrJ8cs8ysBW6GANRnyl62TsIDbSWicrjUL7s2P6WfHH2kOQWye5xG79wLDCNIeYNKFxgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzBcPeH44dV2loAQN3qAOHw2GU1CwU1o4Dc+Xy+NNwsVb2WkkH
-	3uOUX8MZ/o1psA030laqM2bfGV5Ed6mzLoLX3qfx7H+lkLOUpXQsQnegPfBh4nk=
-X-Gm-Gg: ASbGncuw6rdJHBGKgmJ0gdGhUfDyiX8hZ+8cyVvqYu+2VqDaUcONXbp5aKuaFPAO9q9
-	ARUEXaRCx2u1kWkpoKNDlpWeSwtrs8gguYyEe+X5/AUrhE/Aq+JvNbrKOeyiLFtxd8RJ+lBeUoB
-	s8E7CMdQQCzxX/yAvg17DioZUtVnbr1eeah0VY9MmL2FpoRXhRIlmAphY/KFqrD9SOhbNLXGmwl
-	Ka59eex/Y1uI/pvZHtX8AlJ32w3IFhoCXlYUXptui295QMobgObvmcR+9Yhr0QKls3BpDQc0vIr
-	SMKhq/9KHXfmGrPF9WeeWJDLiivweeHsbGzzeLJeXg==
-X-Google-Smtp-Source: AGHT+IHAqoBQT9Hk+U5fDiJxTYejm1CM0gFhnnswNHn6T8yBkT5kBmmJaaPOzv4fJvwsqsNj1NB98g==
-X-Received: by 2002:a05:6402:1ece:b0:5e4:d75a:573e with SMTP id 4fb4d7f45d1cf-5e59f4f8e28mr3246228a12.32.1741185171960;
-        Wed, 05 Mar 2025 06:32:51 -0800 (PST)
-Received: from linaro.org ([62.231.96.41])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c43a6f2bsm9723207a12.75.2025.03.05.06.32.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:32:50 -0800 (PST)
-Date: Wed, 5 Mar 2025 16:32:47 +0200
-From: Abel Vesa <abel.vesa@linaro.org>
-To: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
-	Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
-	Kamal Wadhwa <quic_kamalw@quicinc.com>,
-	Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Johan Hovold <johan@kernel.org>, Sebastian Reichel <sre@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, linux-leds@vger.kernel.org,
-	linux-pwm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
- period instead
-Message-ID: <Z8hgj11p+TY1546x@linaro.org>
-References: <20250303-leds-qcom-lpg-compute-pwm-value-using-period-v1-1-833e729e3da2@linaro.org>
- <ylnkjxnukss7askv7ip5htrb4tyjzhpw7jim2se6rloleq5h6w@ngk7lbk26hxj>
- <Z8bGHV4PIkY4te6V@linaro.org>
- <5uk75v3cpy2hymdgjyvqdwyda34t2pn7jqyupyvhmqgo3wlxkl@uim4lth7lipa>
+	 Content-Type:Content-Disposition:In-Reply-To; b=q5rTHo858iz2QPKs2jxeO8oC3e7rxbLTC0CLYb/RP0gP/2KO/eKuRrCFq0NGcfhercymYvlebYqpom1vXni5qHMWba+b8C+WGNDu5e1CtoJBAk7dwnoBJq4+UvlRqIRpTYe41LKs0TpBFHqkmkRoSHWuoQVTwZbaj43g/geY07A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i+BQJ2xv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B70FBC4CED1;
+	Wed,  5 Mar 2025 14:33:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741185187;
+	bh=xMJaFhhT+0GdGsdZ126ngW0w7y3Be4VvG7zPWmEQJVs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=i+BQJ2xv3S/t6Vz7t9/BHJGU3MLl8yb8WakJiwRilIHJRYqrH0ATV0cRMz0MbxoMy
+	 pWyTT/XUDrFW+hMjJYtVcNcBqtIm5MPDbpyi2Rt/in8KpNhLyXr3l5Pd9437jjtwv2
+	 TUc4u6ajll1icGQuFkEE6PBo9Ff8x5idDWwobOdlOZG1/oHiHgIUe3wFtncbs+DUmN
+	 nEfsHLhBivLxZptAQPa8dcM4a6xKxLFg/K20yqix4tno9qLFXrDNWDWEw9LEf17etz
+	 EZr/OX1c2L6+jhg2+rvuCgqkA25cBXpwJbj6t2Eghl/hycj5+RngwHfqZQn16JK7dI
+	 fN2wbyBwE2KuQ==
+Date: Wed, 5 Mar 2025 14:33:05 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] Revert "f2fs: rebuild nat_bits during umount"
+Message-ID: <Z8hgoRHUbdaGxtpz@google.com>
+References: <20250305110712.2114200-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <5uk75v3cpy2hymdgjyvqdwyda34t2pn7jqyupyvhmqgo3wlxkl@uim4lth7lipa>
+In-Reply-To: <20250305110712.2114200-1-chao@kernel.org>
 
-On 25-03-04 16:38:57, Uwe Kleine-König wrote:
-> On Tue, Mar 04, 2025 at 11:21:33AM +0200, Abel Vesa wrote:
-> > On 25-03-04 07:24:32, Uwe Kleine-König wrote:
-> > > Hello Abel,
-> > > 
-> > > On Mon, Mar 03, 2025 at 06:14:36PM +0200, Abel Vesa wrote:
-> > > > Currently, the implementation computes the best matched period based
-> > > > on the requested one, by looping through all possible register
-> > > > configurations. The best matched period is below the requested period.
-> > > 
-> > > The best matched period *isn't above* the requested one. An exact match
-> > > is fine.
-> > > 
-> > 
-> > Yep, that's better. Will re-word.
-> > 
-> > > > This means the PWM consumer could request duty cycle values between
-> > > > the best matched period and the requested period, which with the current
-> > > > implementation for computing the PWM value, it will result in values out
-> > > > of range with respect to the selected resolution.
-> > > 
-> > > I still don't understand what you mean with resolution here.
-> > 
-> > Resolution in this context means the number of bits the PWM value
-> > (register value) is represented in. Currently, the driver supporst two PWM
-> > HW subtypes: normal and Hi-Res. Normal ones recently got support for changing
-> > the resolution between 6 bits or 9 bits. The high resolution ones support
-> > anything between 8 bits and 15 bits.
-> > 
-> > > 
-> > > I guess you spend some time understanding the workings of the driver and
-> > > you also have an example request that results in a hardware
-> > > configuration you don't like. Please share the latter to a) support your
-> > > case and b) make it easier for your reviewers to judge if your change is
-> > > indeed an improvement.
-> > 
-> > Sure, will bring up the 5ms period scenario again.
-> > 
-> > When the consumer requests a period of 5ms, the closest the HW can do in
-> > this case is actually 4.26ms. Since the PWM API will continue to ask for
-> > duty cycle values based on the 5ms period, for any duty cycle value
-> > between 4.26ms and 5ms, the resulting PWM value will be above 255, which
-> > has been selected as best resolution for the 4.26ms best matched period.
-> > 
-> > For example, when 5ms duty cycle value is requested, it will result in a
-> > PWM value of 300, which overflows the 255 selected resolution.
+Chao,
+
+How about disabling nat_bits during mount and removing all the relevant codes
+together?
+
+On 03/05, Chao Yu wrote:
+> It reports that there is potential corruption in node footer,
+> the most suspious feature is nat_bits, let's revert recovery
+> related code.
 > 
-> this is the bug you have to fix then. The PWM value (that defines the
-> duty cycle) has to be calculated based on .period = 4.26 ms and capped
-> at 255. So assuming that 0 yields a duty cycle of 0 ms and 255 yields
-> 4.26 ms, a request for .duty_cycle = 4; + .period = 5 should result in an
-> actual .duty_cycle = 239 / 255 * 4.26 ms = 3.992705882352941 ms;
-> + .period = 4.26 ms.
-
-OK then. The patchset that fixes this according to your suggestion is
-already on the list (re-spun):
-
-https://lore.kernel.org/all/20250305-leds-qcom-lpg-fix-max-pwm-on-hi-res-v4-0-bfe124a53a9f@linaro.org/
-
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/checkpoint.c |  21 +++------
+>  fs/f2fs/f2fs.h       |  32 +++++++++++++-
+>  fs/f2fs/node.c       | 101 ++++++++++---------------------------------
+>  3 files changed, 59 insertions(+), 95 deletions(-)
 > 
-> > > > So change the way the PWM value is determined as a ratio between the
-> > > > requested period and duty cycle, mapped on the resolution interval.
-> > > 
-> > > Is the intention here that (for the picked period) a duty_cycle is
-> > > selected that approximates the requested relative duty_cycle (i.e.
-> > > .duty_cycle / .period)?
-> > 
-> > Yes, that exactly what the intention is.
-> > 
-> > > If it's that: Nack. This might be the right thing for your use case, but
-> > > it's wrong for others, it complicates the driver because you have spend
-> > > more effort in the calculation and (from my POV even worse) the driver's
-> > > behaviour deviates from the usual one for pwm drivers. I admit there are
-> > > some other lowlevel pwm drivers that are not aligned to the procedure I
-> > > described that should be used to determine the register settings for a
-> > > given request. But I target a common behaviour of all pwm drivers
-> > > because that is the only way the pwm API functions can make a promise to
-> > > its consumers about the resulting behaviour. Reaching this is difficult,
-> > > because some consumers might depend on the "broken" behaviour of a given
-> > > lowlevel driver (and also because analysing a driver to check and fix
-> > > its behaviour is an effort). But "fixing" a driver to deviate from the
-> > > declared right behaviour is wrong and includes all downsides that make
-> > > me hesitate to align the old drivers to the common policy.
-> > 
-> > OK, fair enough. But I still don't get what you expect from the provider
-> > that can't give the exact requested period. Do you expect the consumer
-> > to request a period, then provider compute a best matched one, which in
-> > our case is pretty far, and then still give exact duty cycle values ?
-> > 
-> > Like: request 5ms period, get 4.26ms instead, then request 4ms duty
-> > cycle and get exact 4ms duty cycle when measured, instead of a
-> > proportional value to the best matched period?
-> 
-> Yes.
+> diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+> index bc9369ea6607..1bc5c2006c56 100644
+> --- a/fs/f2fs/checkpoint.c
+> +++ b/fs/f2fs/checkpoint.c
+> @@ -1348,21 +1348,13 @@ static void update_ckpt_flags(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+>  	unsigned long flags;
 >  
-> > If so, then what happens when consumer asks for 5ms duty cycle?
-> > Everything above the 4.26ms will just represent 100% duty cycle.
-> 
-> Yes.
-
-I still think this is wrong.
-
-I do agree with the exact value. I advocated for it on the other
-thread.
-
-But the fact that the API allows requests with values above what the
-provider can do is wrong.
-
-In this specific case, we are talking about top 15% that it just
-thrown away. But it becomes even worse for others.
-
-> 
-> > > The policy to pick a hardware setting is a compromise between consumer
-> > > needs and what is straight forward to implement for (most) hardware
-> > > drivers. Please stick to that. If you want more flexibility and
-> > > precision in your consumer, please consider converting the pwm driver to
-> > > the waveform API.
-> > 
-> > That means the pwm_bl driver will have to switch to waveform API, IIUC.
-> 
-> Yes, if the pwm_bl driver cares about that precision it has to switch.
-> 
-> While the waveform API isn't expressive enough, just use 4260000 as
-> period in the pwm_bl device, or ignore the missing precision.
-> 
-> > That might break other providers for the pwm_bl consumer, wouldn't it?
-> 
-> Given that the consumer side of the waveform API only works with drivers
-> that are converted: maybe. You could fall-back to the legacy API.
-
-Based on the provider's best matched period? Hm.
-
+> -	if (cpc->reason & CP_UMOUNT) {
+> -		if (le32_to_cpu(ckpt->cp_pack_total_block_count) +
+> -			NM_I(sbi)->nat_bits_blocks > BLKS_PER_SEG(sbi)) {
+> -			clear_ckpt_flags(sbi, CP_NAT_BITS_FLAG);
+> -			f2fs_notice(sbi, "Disable nat_bits due to no space");
+> -		} else if (!is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG) &&
+> -						f2fs_nat_bitmap_enabled(sbi)) {
+> -			f2fs_enable_nat_bits(sbi);
+> -			set_ckpt_flags(sbi, CP_NAT_BITS_FLAG);
+> -			f2fs_notice(sbi, "Rebuild and enable nat_bits");
+> -		}
+> -	}
+> -
+>  	spin_lock_irqsave(&sbi->cp_lock, flags);
 >  
-> > > > [...]
-> > > > ---
-> > > > base-commit: 0067a4b21c9ab441bbe6bf3635b3ddd21f6ca7c3
-> > > 
-> > > My git repo doesn't know that commit. Given that you said your patch
-> > > bases on that other series, this isn't surprising. Please use a publicly
-> > > available commit as base parameter, otherwise you (and I) don't benefit
-> > > from the armada of build bots because they just silently fail to test in
-> > > this case.
-> > 
-> > Well, this is a pretty common practice. When the patch relies on other
-> > patches that haven't been merged yet, but are still on the list, you
-> > can't really base it on a publicly available commit.
-> > 
-> > And the fixes patchset that this is based on is needed for this to work.
-> > 
-> > So I really don't get how this can be done differently.
-> 
-> You can still use --base=$newestpubliccommit and git-format-patch will
-> at least give a chance to the build bots by emitting patch-ids for all
-> the commits between the public base and the start of your patch series.
-
-Got it. I use b4 for most patches nowadays. I'll try to make use of it's
---edit-deps and see where that lands.
-
-> 
-> Best regards
-> Uwe
-
-Thanks,
-Abel
+> +	if ((cpc->reason & CP_UMOUNT) &&
+> +			le32_to_cpu(ckpt->cp_pack_total_block_count) >
+> +			sbi->blocks_per_seg - NM_I(sbi)->nat_bits_blocks)
+> +		disable_nat_bits(sbi, false);
+> +
+>  	if (cpc->reason & CP_TRIMMED)
+>  		__set_ckpt_flags(ckpt, CP_TRIMMED_FLAG);
+>  	else
+> @@ -1545,8 +1537,7 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	start_blk = __start_cp_next_addr(sbi);
+>  
+>  	/* write nat bits */
+> -	if ((cpc->reason & CP_UMOUNT) &&
+> -			is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG)) {
+> +	if (enabled_nat_bits(sbi, cpc)) {
+>  		__u64 cp_ver = cur_cp_version(ckpt);
+>  		block_t blk;
+>  
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index 6b4579b05dbf..8d8917b92b5d 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -2231,6 +2231,36 @@ static inline void f2fs_up_write(struct f2fs_rwsem *sem)
+>  #endif
+>  }
+>  
+> +static inline void disable_nat_bits(struct f2fs_sb_info *sbi, bool lock)
+> +{
+> +	unsigned long flags;
+> +	unsigned char *nat_bits;
+> +
+> +	/*
+> +	 * In order to re-enable nat_bits we need to call fsck.f2fs by
+> +	 * set_sbi_flag(sbi, SBI_NEED_FSCK). But it may give huge cost,
+> +	 * so let's rely on regular fsck or unclean shutdown.
+> +	 */
+> +
+> +	if (lock)
+> +		spin_lock_irqsave(&sbi->cp_lock, flags);
+> +	__clear_ckpt_flags(F2FS_CKPT(sbi), CP_NAT_BITS_FLAG);
+> +	nat_bits = NM_I(sbi)->nat_bits;
+> +	NM_I(sbi)->nat_bits = NULL;
+> +	if (lock)
+> +		spin_unlock_irqrestore(&sbi->cp_lock, flags);
+> +
+> +	kvfree(nat_bits);
+> +}
+> +
+> +static inline bool enabled_nat_bits(struct f2fs_sb_info *sbi,
+> +					struct cp_control *cpc)
+> +{
+> +	bool set = is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG);
+> +
+> +	return (cpc) ? (cpc->reason & CP_UMOUNT) && set : set;
+> +}
+> +
+>  static inline void f2fs_lock_op(struct f2fs_sb_info *sbi)
+>  {
+>  	f2fs_down_read(&sbi->cp_rwsem);
+> @@ -3695,7 +3725,6 @@ int f2fs_truncate_inode_blocks(struct inode *inode, pgoff_t from);
+>  int f2fs_truncate_xattr_node(struct inode *inode);
+>  int f2fs_wait_on_node_pages_writeback(struct f2fs_sb_info *sbi,
+>  					unsigned int seq_id);
+> -bool f2fs_nat_bitmap_enabled(struct f2fs_sb_info *sbi);
+>  int f2fs_remove_inode_page(struct inode *inode);
+>  struct page *f2fs_new_inode_page(struct inode *inode);
+>  struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int ofs);
+> @@ -3723,7 +3752,6 @@ int f2fs_recover_xattr_data(struct inode *inode, struct page *page);
+>  int f2fs_recover_inode_page(struct f2fs_sb_info *sbi, struct page *page);
+>  int f2fs_restore_node_summary(struct f2fs_sb_info *sbi,
+>  			unsigned int segno, struct f2fs_summary_block *sum);
+> -void f2fs_enable_nat_bits(struct f2fs_sb_info *sbi);
+>  int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc);
+>  int f2fs_build_node_manager(struct f2fs_sb_info *sbi);
+>  void f2fs_destroy_node_manager(struct f2fs_sb_info *sbi);
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 5f512dd5fadf..8c35fd4fa200 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -2311,24 +2311,6 @@ static void __move_free_nid(struct f2fs_sb_info *sbi, struct free_nid *i,
+>  	}
+>  }
+>  
+> -bool f2fs_nat_bitmap_enabled(struct f2fs_sb_info *sbi)
+> -{
+> -	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> -	unsigned int i;
+> -	bool ret = true;
+> -
+> -	f2fs_down_read(&nm_i->nat_tree_lock);
+> -	for (i = 0; i < nm_i->nat_blocks; i++) {
+> -		if (!test_bit_le(i, nm_i->nat_block_bitmap)) {
+> -			ret = false;
+> -			break;
+> -		}
+> -	}
+> -	f2fs_up_read(&nm_i->nat_tree_lock);
+> -
+> -	return ret;
+> -}
+> -
+>  static void update_free_nid_bitmap(struct f2fs_sb_info *sbi, nid_t nid,
+>  							bool set, bool build)
+>  {
+> @@ -3010,23 +2992,7 @@ static void __adjust_nat_entry_set(struct nat_entry_set *nes,
+>  	list_add_tail(&nes->set_list, head);
+>  }
+>  
+> -static void __update_nat_bits(struct f2fs_nm_info *nm_i, unsigned int nat_ofs,
+> -							unsigned int valid)
+> -{
+> -	if (valid == 0) {
+> -		__set_bit_le(nat_ofs, nm_i->empty_nat_bits);
+> -		__clear_bit_le(nat_ofs, nm_i->full_nat_bits);
+> -		return;
+> -	}
+> -
+> -	__clear_bit_le(nat_ofs, nm_i->empty_nat_bits);
+> -	if (valid == NAT_ENTRY_PER_BLOCK)
+> -		__set_bit_le(nat_ofs, nm_i->full_nat_bits);
+> -	else
+> -		__clear_bit_le(nat_ofs, nm_i->full_nat_bits);
+> -}
+> -
+> -static void update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+> +static void __update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+>  						struct page *page)
+>  {
+>  	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> @@ -3035,7 +3001,7 @@ static void update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+>  	int valid = 0;
+>  	int i = 0;
+>  
+> -	if (!is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG))
+> +	if (!enabled_nat_bits(sbi, NULL))
+>  		return;
+>  
+>  	if (nat_index == 0) {
+> @@ -3046,36 +3012,17 @@ static void update_nat_bits(struct f2fs_sb_info *sbi, nid_t start_nid,
+>  		if (le32_to_cpu(nat_blk->entries[i].block_addr) != NULL_ADDR)
+>  			valid++;
+>  	}
+> -
+> -	__update_nat_bits(nm_i, nat_index, valid);
+> -}
+> -
+> -void f2fs_enable_nat_bits(struct f2fs_sb_info *sbi)
+> -{
+> -	struct f2fs_nm_info *nm_i = NM_I(sbi);
+> -	unsigned int nat_ofs;
+> -
+> -	f2fs_down_read(&nm_i->nat_tree_lock);
+> -
+> -	for (nat_ofs = 0; nat_ofs < nm_i->nat_blocks; nat_ofs++) {
+> -		unsigned int valid = 0, nid_ofs = 0;
+> -
+> -		/* handle nid zero due to it should never be used */
+> -		if (unlikely(nat_ofs == 0)) {
+> -			valid = 1;
+> -			nid_ofs = 1;
+> -		}
+> -
+> -		for (; nid_ofs < NAT_ENTRY_PER_BLOCK; nid_ofs++) {
+> -			if (!test_bit_le(nid_ofs,
+> -					nm_i->free_nid_bitmap[nat_ofs]))
+> -				valid++;
+> -		}
+> -
+> -		__update_nat_bits(nm_i, nat_ofs, valid);
+> +	if (valid == 0) {
+> +		__set_bit_le(nat_index, nm_i->empty_nat_bits);
+> +		__clear_bit_le(nat_index, nm_i->full_nat_bits);
+> +		return;
+>  	}
+>  
+> -	f2fs_up_read(&nm_i->nat_tree_lock);
+> +	__clear_bit_le(nat_index, nm_i->empty_nat_bits);
+> +	if (valid == NAT_ENTRY_PER_BLOCK)
+> +		__set_bit_le(nat_index, nm_i->full_nat_bits);
+> +	else
+> +		__clear_bit_le(nat_index, nm_i->full_nat_bits);
+>  }
+>  
+>  static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+> @@ -3094,7 +3041,7 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  	 * #1, flush nat entries to journal in current hot data summary block.
+>  	 * #2, flush nat entries to nat page.
+>  	 */
+> -	if ((cpc->reason & CP_UMOUNT) ||
+> +	if (enabled_nat_bits(sbi, cpc) ||
+>  		!__has_cursum_space(journal, set->entry_cnt, NAT_JOURNAL))
+>  		to_journal = false;
+>  
+> @@ -3141,7 +3088,7 @@ static int __flush_nat_entry_set(struct f2fs_sb_info *sbi,
+>  	if (to_journal) {
+>  		up_write(&curseg->journal_rwsem);
+>  	} else {
+> -		update_nat_bits(sbi, start_nid, page);
+> +		__update_nat_bits(sbi, start_nid, page);
+>  		f2fs_put_page(page, 1);
+>  	}
+>  
+> @@ -3172,7 +3119,7 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	 * during unmount, let's flush nat_bits before checking
+>  	 * nat_cnt[DIRTY_NAT].
+>  	 */
+> -	if (cpc->reason & CP_UMOUNT) {
+> +	if (enabled_nat_bits(sbi, cpc)) {
+>  		f2fs_down_write(&nm_i->nat_tree_lock);
+>  		remove_nats_in_journal(sbi);
+>  		f2fs_up_write(&nm_i->nat_tree_lock);
+> @@ -3188,7 +3135,7 @@ int f2fs_flush_nat_entries(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+>  	 * entries, remove all entries from journal and merge them
+>  	 * into nat entry set.
+>  	 */
+> -	if (cpc->reason & CP_UMOUNT ||
+> +	if (enabled_nat_bits(sbi, cpc) ||
+>  		!__has_cursum_space(journal,
+>  			nm_i->nat_cnt[DIRTY_NAT], NAT_JOURNAL))
+>  		remove_nats_in_journal(sbi);
+> @@ -3225,18 +3172,15 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+>  	__u64 cp_ver = cur_cp_version(ckpt);
+>  	block_t nat_bits_addr;
+>  
+> +	if (!enabled_nat_bits(sbi, NULL))
+> +		return 0;
+> +
+>  	nm_i->nat_bits_blocks = F2FS_BLK_ALIGN((nat_bits_bytes << 1) + 8);
+>  	nm_i->nat_bits = f2fs_kvzalloc(sbi,
+>  			F2FS_BLK_TO_BYTES(nm_i->nat_bits_blocks), GFP_KERNEL);
+>  	if (!nm_i->nat_bits)
+>  		return -ENOMEM;
+>  
+> -	nm_i->full_nat_bits = nm_i->nat_bits + 8;
+> -	nm_i->empty_nat_bits = nm_i->full_nat_bits + nat_bits_bytes;
+> -
+> -	if (!is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG))
+> -		return 0;
+> -
+>  	nat_bits_addr = __start_cp_addr(sbi) + BLKS_PER_SEG(sbi) -
+>  						nm_i->nat_bits_blocks;
+>  	for (i = 0; i < nm_i->nat_bits_blocks; i++) {
+> @@ -3253,12 +3197,13 @@ static int __get_nat_bitmaps(struct f2fs_sb_info *sbi)
+>  
+>  	cp_ver |= (cur_cp_crc(ckpt) << 32);
+>  	if (cpu_to_le64(cp_ver) != *(__le64 *)nm_i->nat_bits) {
+> -		clear_ckpt_flags(sbi, CP_NAT_BITS_FLAG);
+> -		f2fs_notice(sbi, "Disable nat_bits due to incorrect cp_ver (%llu, %llu)",
+> -			cp_ver, le64_to_cpu(*(__le64 *)nm_i->nat_bits));
+> +		disable_nat_bits(sbi, true);
+>  		return 0;
+>  	}
+>  
+> +	nm_i->full_nat_bits = nm_i->nat_bits + 8;
+> +	nm_i->empty_nat_bits = nm_i->full_nat_bits + nat_bits_bytes;
+> +
+>  	f2fs_notice(sbi, "Found nat_bits in checkpoint");
+>  	return 0;
+>  }
+> @@ -3269,7 +3214,7 @@ static inline void load_free_nid_bitmap(struct f2fs_sb_info *sbi)
+>  	unsigned int i = 0;
+>  	nid_t nid, last_nid;
+>  
+> -	if (!is_set_ckpt_flags(sbi, CP_NAT_BITS_FLAG))
+> +	if (!enabled_nat_bits(sbi, NULL))
+>  		return;
+>  
+>  	for (i = 0; i < nm_i->nat_blocks; i++) {
+> -- 
+> 2.48.1
 
