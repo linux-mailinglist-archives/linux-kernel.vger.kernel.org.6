@@ -1,175 +1,219 @@
-Return-Path: <linux-kernel+bounces-547148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4D85A50373
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:27:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2163A50377
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:28:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 165687A3E5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:26:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B0153A56B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:28:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B0A2500C5;
-	Wed,  5 Mar 2025 15:27:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1BF82500CE;
+	Wed,  5 Mar 2025 15:28:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="W0Jpe6J+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="q8IjToJP"
+Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CBC41465AD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87FD424E4B4;
+	Wed,  5 Mar 2025 15:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741188436; cv=none; b=a78RU1EBkHDKWtF8kw8EbZRJ5tiGzJJw/gSXB13JqC+JM+qWkb5wIrxTtjOcD4xB4sJAosPLC+4VzCbF3Pb5QhnNQ2JJ2GQcoIHEU7l80bFUxoiHm42Z81zksTvzGTR8gdUttq9dG2vk0saEj6RHDwl2YH6Q6bqIpJoJOsBFGuE=
+	t=1741188501; cv=none; b=ag8LI4CosYWiinngQ4LrM9helUVH7e1ISQn+EVkt6plCscrOojyPg1SBWpsD1UaKYqvLS9zrFIKSJn2YcsQsUaIIgq5xuSozYws9RfDnm5O5GIkJfP0kvB2RjQ19ecJDiLXULh4bQfQdPbBM2hglehlEtMPxJF3crkUgaykDWyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741188436; c=relaxed/simple;
-	bh=X2KFKn8H9GBwSj3xFIyJUmnKNNBENXEcEiFQgF0eP0w=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=RM4oSoUvOWiHwLPBE/3SIlA0jqou09CutMUO7/HiJ09Fx7zvFVDU0jpjTxS9aSAVf8T6PGlVFrvBbeUa55pws2ySD+m9riEUwwMm8RByI7KF8Wxc+PSer6uqo4sf5aBAg0w+fUDgqg7wVOe/J3VDS9S3A69AGosuvO/OiNlZfq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=W0Jpe6J+; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741188434; x=1772724434;
-  h=date:from:to:cc:subject:message-id;
-  bh=X2KFKn8H9GBwSj3xFIyJUmnKNNBENXEcEiFQgF0eP0w=;
-  b=W0Jpe6J+efhjqLPSNG94ZYL43fSkMtpFAc+9sShz2npS8/deQTnRzeA9
-   kf54fC/wTN3eBxQAw5Ru0Qs7Xr+8n6lpbGTbQXiuWVmjWCcyfoQSVBP+D
-   6WGMR6aKpJvYLObKGzjWknkG5OKE3b0IA86FBvt8CKCCwMsgPByi0Zen7
-   uJ3aWwS3DP4fnhKuPPHqMc1idW9MNQQTY4PJadls+qehfsY3zS06rTy6u
-   McfYzBI5F8Pmt7gADYjC+vky2g3ysR+OM6AZpLRxli33+VkC6TsDCioEb
-   OTg8GwZZa/4FLTgU6uof8FJQNr7sfwWte0q2opN2MGC8Fc5+fwrGUqPwM
-   Q==;
-X-CSE-ConnectionGUID: 6TFVww3xTXaYUq9psmZGGQ==
-X-CSE-MsgGUID: NB/82C09SvSA3wm0zmZ3mQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42296167"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="42296167"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 07:27:13 -0800
-X-CSE-ConnectionGUID: V7pq7CZaS2ORxqj1ijeyqw==
-X-CSE-MsgGUID: 0qc90rfUTx64MOJ4nWrC6g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="119412518"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 05 Mar 2025 07:27:12 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpqeK-000L9H-2c;
-	Wed, 05 Mar 2025 15:27:08 +0000
-Date: Wed, 05 Mar 2025 23:26:54 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:irq/drivers] BUILD SUCCESS
- 71cbbb7149e3de8c39dfe8a97eaa7f1cbcbff52f
-Message-ID: <202503052348.hgfybaMM-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741188501; c=relaxed/simple;
+	bh=FkSGlxwa6Za9SEd5lVxByYyNMnDEy1BzzOaMm23fdT0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u7ItmLFEsWD1w18WJ+L8EiJtRLZjjZGHlw20juxKHZhONrYKCzKL/O7AtSwJFQjgIakRS0hxqDmkO5E4nOZKghm+pbGo9cnvzySX8S+zitmysoM6a6SMpUWPzFpX8QHG+pos1F7MJAX9uepyOpH2Tw5jyZc4CjdKFhdurFjwbLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=q8IjToJP; arc=none smtp.client-ip=199.89.3.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 003.mia.mailroute.net (Postfix) with ESMTP id 4Z7GfB1L6nzlgrvF;
+	Wed,  5 Mar 2025 15:28:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1741188491; x=1743780492; bh=hY6jxVsAnHOCHywkDBxV1aWm
+	itqfJ1ddK8tCRoZT1RY=; b=q8IjToJPxYBXMsEJewI4PeBnW9SC+ybVJpbMF3on
+	noQNqBpt987nLyB/jSAGEeYz4n2SqdhJpkeRbwFr/rp0QSYVq1jO9fSdc5jz/OCj
+	/1KX/jHLglF53q52/3XvV40TqeX+IB3C08iQJeovSpfKs1M9vtEkrTf+9wDWP/sv
+	CIY+7Ue1s7YQFkSKE7T2/W/ghONy/xGbJWC4d8tWOtAi1+oxIl0ahIfRJ2LBQMGQ
+	9wdmyzMmeZ+YpQKs6i2dInySRAO4G/Z5or48ijPSr12ooKs8N15OUlAfoXkPrycj
+	gYDDRCJ39963QT/H1hKm31lq2oWG6Q4RAKD1pj8Tg64gKw==
+X-Virus-Scanned: by MailRoute
+Received: from 003.mia.mailroute.net ([127.0.0.1])
+ by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id Gnv6XcKP6Kp8; Wed,  5 Mar 2025 15:28:11 +0000 (UTC)
+Received: from [172.20.1.83] (unknown [192.80.0.137])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4Z7GdN2P4fzlgrv7;
+	Wed,  5 Mar 2025 15:27:34 +0000 (UTC)
+Message-ID: <76f8c8e1-5f32-4f31-a960-9285a15340e3@acm.org>
+Date: Wed, 5 Mar 2025 07:27:32 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/34] Compiler-Based Capability- and Locking-Analysis
+To: Peter Zijlstra <peterz@infradead.org>, Marco Elver <elver@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+ "Paul E. McKenney" <paulmck@kernel.org>,
+ Alexander Potapenko <glider@google.com>, Arnd Bergmann <arnd@arndb.de>,
+ Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Dmitry Vyukov <dvyukov@google.com>, Eric Dumazet <edumazet@google.com>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Ingo Molnar <mingo@kernel.org>,
+ Jann Horn <jannh@google.com>, Jiri Slaby <jirislaby@kernel.org>,
+ Joel Fernandes <joel@joelfernandes.org>, Jonathan Corbet <corbet@lwn.net>,
+ Josh Triplett <josh@joshtriplett.org>, Justin Stitt
+ <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+ Kentaro Takeda <takedakn@nttdata.co.jp>, Mark Rutland
+ <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Miguel Ojeda <ojeda@kernel.org>, Nathan Chancellor <nathan@kernel.org>,
+ Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Thomas Gleixner <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>,
+ Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+ kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev, rcu@vger.kernel.org, linux-crypto@vger.kernel.org,
+ linux-serial@vger.kernel.org
+References: <20250304092417.2873893-1-elver@google.com>
+ <20250305112041.GA16878@noisy.programming.kicks-ass.net>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250305112041.GA16878@noisy.programming.kicks-ass.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git irq/drivers
-branch HEAD: 71cbbb7149e3de8c39dfe8a97eaa7f1cbcbff52f  irqchip/davinci-cp-intc: Remove public header
+On 3/5/25 3:20 AM, Peter Zijlstra wrote:
+> diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+> index 248416ecd01c..d27607d9c2dc 100644
+> --- a/include/linux/blkdev.h
+> +++ b/include/linux/blkdev.h
+> @@ -945,6 +945,7 @@ static inline unsigned int blk_boundary_sectors_left(sector_t offset,
+>    */
+>   static inline struct queue_limits
+>   queue_limits_start_update(struct request_queue *q)
+> +	__acquires(q->limits_lock)
+>   {
+>   	mutex_lock(&q->limits_lock);
+>   	return q->limits;
+> @@ -965,6 +966,7 @@ int blk_validate_limits(struct queue_limits *lim);
+>    * starting update.
+>    */
+>   static inline void queue_limits_cancel_update(struct request_queue *q)
+> +	__releases(q->limits_lock)
+>   {
+>   	mutex_unlock(&q->limits_lock);
+>   }
 
-elapsed time: 1451m
+The above is incomplete. Here is what I came up with myself:
 
-configs tested: 83
-configs skipped: 1
+diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
+index 248416ecd01c..0d011270e642 100644
+--- a/include/linux/blkdev.h
++++ b/include/linux/blkdev.h
+@@ -945,15 +945,19 @@ static inline unsigned int 
+blk_boundary_sectors_left(sector_t offset,
+   */
+  static inline struct queue_limits
+  queue_limits_start_update(struct request_queue *q)
++       ACQUIRE(q->limits_lock)
+  {
+         mutex_lock(&q->limits_lock);
+         return q->limits;
+  }
+  int queue_limits_commit_update_frozen(struct request_queue *q,
+-               struct queue_limits *lim);
++               struct queue_limits *lim)
++       RELEASE(q->limits_lock);
+  int queue_limits_commit_update(struct request_queue *q,
+-               struct queue_limits *lim);
+-int queue_limits_set(struct request_queue *q, struct queue_limits *lim);
++               struct queue_limits *lim)
++       RELEASE(q->limits_lock);
++int queue_limits_set(struct request_queue *q, struct queue_limits *lim)
++       EXCLUDES(q->limits_lock);
+  int blk_validate_limits(struct queue_limits *lim);
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+  /**
+@@ -965,6 +969,7 @@ int blk_validate_limits(struct queue_limits *lim);
+   * starting update.
+   */
+  static inline void queue_limits_cancel_update(struct request_queue *q)
++       RELEASE(q->limits_lock)
+  {
+         mutex_unlock(&q->limits_lock);
+  }
 
-tested configs:
-alpha                            allnoconfig    gcc-14.2.0
-alpha                           allyesconfig    gcc-14.2.0
-arc                             allmodconfig    gcc-13.2.0
-arc                              allnoconfig    gcc-13.2.0
-arc                             allyesconfig    gcc-13.2.0
-arc                  randconfig-001-20250305    gcc-13.2.0
-arc                  randconfig-002-20250305    gcc-13.2.0
-arm                             allmodconfig    gcc-14.2.0
-arm                              allnoconfig    clang-17
-arm                             allyesconfig    gcc-14.2.0
-arm                  randconfig-001-20250305    gcc-14.2.0
-arm                  randconfig-002-20250305    clang-19
-arm                  randconfig-003-20250305    gcc-14.2.0
-arm                  randconfig-004-20250305    gcc-14.2.0
-arm64                           allmodconfig    clang-18
-arm64                            allnoconfig    gcc-14.2.0
-arm64                randconfig-001-20250305    clang-15
-arm64                randconfig-002-20250305    gcc-14.2.0
-arm64                randconfig-003-20250305    clang-21
-arm64                randconfig-004-20250305    gcc-14.2.0
-csky                             allnoconfig    gcc-14.2.0
-csky                 randconfig-001-20250305    gcc-14.2.0
-csky                 randconfig-002-20250305    gcc-14.2.0
-hexagon                         allmodconfig    clang-21
-hexagon                          allnoconfig    clang-21
-hexagon                         allyesconfig    clang-18
-hexagon              randconfig-001-20250305    clang-21
-hexagon              randconfig-002-20250305    clang-18
-i386                            allmodconfig    gcc-12
-i386                             allnoconfig    gcc-12
-i386       buildonly-randconfig-001-20250305    clang-19
-i386       buildonly-randconfig-002-20250305    clang-19
-i386       buildonly-randconfig-003-20250305    clang-19
-i386       buildonly-randconfig-004-20250305    clang-19
-i386       buildonly-randconfig-005-20250305    clang-19
-i386       buildonly-randconfig-006-20250305    gcc-12
-i386                               defconfig    clang-19
-loongarch                        allnoconfig    gcc-14.2.0
-loongarch            randconfig-001-20250305    gcc-14.2.0
-loongarch            randconfig-002-20250305    gcc-14.2.0
-nios2                randconfig-001-20250305    gcc-14.2.0
-nios2                randconfig-002-20250305    gcc-14.2.0
-openrisc                         allnoconfig    gcc-14.2.0
-parisc                           allnoconfig    gcc-14.2.0
-parisc               randconfig-001-20250305    gcc-14.2.0
-parisc               randconfig-002-20250305    gcc-14.2.0
-powerpc                          allnoconfig    gcc-14.2.0
-powerpc              randconfig-001-20250305    clang-17
-powerpc              randconfig-002-20250305    gcc-14.2.0
-powerpc              randconfig-003-20250305    gcc-14.2.0
-powerpc64            randconfig-001-20250305    clang-19
-powerpc64            randconfig-002-20250305    clang-17
-powerpc64            randconfig-003-20250305    clang-19
-riscv                            allnoconfig    gcc-14.2.0
-riscv                randconfig-001-20250305    clang-19
-riscv                randconfig-002-20250305    gcc-14.2.0
-s390                            allmodconfig    clang-19
-s390                             allnoconfig    clang-15
-s390                            allyesconfig    gcc-14.2.0
-s390                 randconfig-001-20250305    gcc-14.2.0
-s390                 randconfig-002-20250305    gcc-14.2.0
-sh                              allmodconfig    gcc-14.2.0
-sh                              allyesconfig    gcc-14.2.0
-sh                   randconfig-001-20250305    gcc-14.2.0
-sh                   randconfig-002-20250305    gcc-14.2.0
-sparc                           allmodconfig    gcc-14.2.0
-sparc                randconfig-001-20250305    gcc-14.2.0
-sparc                randconfig-002-20250305    gcc-14.2.0
-sparc64              randconfig-001-20250305    gcc-14.2.0
-sparc64              randconfig-002-20250305    gcc-14.2.0
-um                               allnoconfig    clang-18
-um                   randconfig-001-20250305    clang-19
-um                   randconfig-002-20250305    gcc-12
-x86_64                           allnoconfig    clang-19
-x86_64     buildonly-randconfig-001-20250305    clang-19
-x86_64     buildonly-randconfig-002-20250305    gcc-12
-x86_64     buildonly-randconfig-003-20250305    clang-19
-x86_64     buildonly-randconfig-004-20250305    gcc-12
-x86_64     buildonly-randconfig-005-20250305    clang-19
-x86_64     buildonly-randconfig-006-20250305    clang-19
-x86_64                             defconfig    gcc-11
-xtensa               randconfig-001-20250305    gcc-14.2.0
-xtensa               randconfig-002-20250305    gcc-14.2.0
+> diff --git a/include/linux/device.h b/include/linux/device.h
+> index 80a5b3268986..283fb85d96c8 100644
+> --- a/include/linux/device.h
+> +++ b/include/linux/device.h
+> @@ -1026,21 +1026,25 @@ static inline bool dev_pm_test_driver_flags(struct device *dev, u32 flags)
+>   }
+>   
+>   static inline void device_lock(struct device *dev)
+> +	__acquires(dev->mutex)
+>   {
+>   	mutex_lock(&dev->mutex);
+>   }
+>   
+>   static inline int device_lock_interruptible(struct device *dev)
+> +	__cond_acquires(0, dev->mutex)
+>   {
+>   	return mutex_lock_interruptible(&dev->mutex);
+>   }
+>   
+>   static inline int device_trylock(struct device *dev)
+> +	__cond_acquires(true, dev->mutex)
+>   {
+>   	return mutex_trylock(&dev->mutex);
+>   }
+>   
+>   static inline void device_unlock(struct device *dev)
+> +	__releases(dev->mutex)
+>   {
+>   	mutex_unlock(&dev->mutex);
+>   }
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+I propose to annotate these functions with __no_capability_analysis as a
+first step. Review of all callers of these functions in the entire
+kernel tree learned me that annotating these functions results in a
+significant number of false positives and not to the discovery of any
+bugs. The false positives are triggered by conditional locking. An
+example of code that triggers false positive thread-safety warnings:
+
+static void ath9k_hif_usb_firmware_fail(struct hif_device_usb *hif_dev)
+{
+	struct device *dev = &hif_dev->udev->dev;
+	struct device *parent = dev->parent;
+
+	complete_all(&hif_dev->fw_done);
+
+	if (parent)
+		device_lock(parent);
+
+	device_release_driver(dev);
+
+	if (parent)
+		device_unlock(parent);
+}
+
+Thanks,
+
+Bart.
 
