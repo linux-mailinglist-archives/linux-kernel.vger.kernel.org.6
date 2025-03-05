@@ -1,215 +1,143 @@
-Return-Path: <linux-kernel+bounces-546607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 506BAA4FCC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:52:21 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01190A4FCD5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:54:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 868501890CCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:50:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34E393B190C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:51:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5AD1FBEA6;
-	Wed,  5 Mar 2025 10:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B7DF2192F2;
+	Wed,  5 Mar 2025 10:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="gYhobCx2"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="cdOFHZh9"
+Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A461E505;
-	Wed,  5 Mar 2025 10:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C6F021577C;
+	Wed,  5 Mar 2025 10:50:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741171792; cv=none; b=cAOBBoKWuwuKphHkEAbogjvcXvpMcwFku8cZ3uL8/SvOLVCqgIuionGxe0CXC9ODZiljuGPDLNLd7vKbJJ2cOcssF0CccOFW2pT+gI5ZpYN4O+2RGsGaxziZlTLkeEBe9h3uAsshjIlD4l2R1xg0wN97H8qTW3MuokmJIKJu3y8=
+	t=1741171840; cv=none; b=b+NQfEti2orWdMknc2WEH6bQ2WMgDiSXX8O/+n8N/wsaH5wIAnQ++M34oa18AR2mmGi3FMNJ6GByiod8ZT4KdhQhCq+qNCx3lNm5lhK5iztAHHQxjO3pJgpN+4KyjslmS+JnYKUiVm51Ov9FfEtQA5bnLV3fQFg80GXkeVkdWAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741171792; c=relaxed/simple;
-	bh=wgTlAmCGnVX91xFXCJyKBsX4ZXpvOeTLGhXPWzgA7qE=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=b3KYX6z0oddwv+Lx1h5ErtxJ/e4rTaamyU/LlnBsSgMWgivjBr7iUzj5tJQDiWhqSUDIbcfcHyDTPf6KTe/NW4GP+Vwr35A1jqwbfGrqch+7dQnpRuk0BvlLkqP1/ixZELFcpiF5qBcWp6iB5NhJXTRtaXh/b1LKRDncRbNZVJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=gYhobCx2; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id ABFEB605;
-	Wed,  5 Mar 2025 11:48:16 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1741171696;
-	bh=wgTlAmCGnVX91xFXCJyKBsX4ZXpvOeTLGhXPWzgA7qE=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=gYhobCx20jKM3XQ4vOP0xodleyxT41oczpL9V3No0fcJuyuYVzwVV0YRzyFmYHcbW
-	 5pH6xDL0ScGvr32813VzeNhkkSllMZM4N4nbAEmbcSx6topvw1T/hIYoqZK/1GXODB
-	 17MAZ37JiDdOFTKce1+9nt6dPwb//j5+G+5UdPTU=
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741171840; c=relaxed/simple;
+	bh=y6IQTm/wFI3JULHY3gyjeTxFRdN7WOA8P4kaewwA7HI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=O58LA6yY8+u2xiDcN3mnGwV9GTpjr45migxzfyD4ZGgzNvwFwom0oOOGfvd2LF0LVFauo7SHdepkMT4/NeoDDu+qVp2cLDZ2rHXv9AikhJFqkDzgSiJryWrYfYVQWt51YJ0WJnS15vi6cBfMyvt6Q8vcQCW72dbfWNPqkj1oLx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=cdOFHZh9; arc=none smtp.client-ip=193.68.50.107
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
+Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
+	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 6033EA0A17;
+	Wed,  5 Mar 2025 11:50:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:from:from:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=mail; bh=T7un43lbel7mKoax4H54
+	SGCUpO7TSRceePp36dvszoA=; b=cdOFHZh99rGVM1sM8QuDv5R3kyaOh7HarjnF
+	2Uk3GvTuA6nMgAvWverUak1vcWMlNSQuVoat5zyNOWSIY/aLVLWJYgLrf0wiMZeK
+	R+FMUq+YoLHkRsRmpZF8qMgDcQ0W20fxzkOedgvKH3Pgubfm0sQaE8reTq1ZaFRd
+	HLsiF00eoatIpkjREbC+xM7EIFZsSlSKyEYE5ri0dhyxL1QmRCEQRlzi5/yArL0y
+	03Q0aXQqCBPW5pXT8T1uwrpztTZC8g8+tRBGAg8Xh2ABH3duLXPWW2VbD/ZE8Dar
+	gE73ZZEPWU7yEjTGMcgxruJj7rUDqzLTP4i1EqnT72MdMb68mXcjYrRg7pUOO2f8
+	ETByJwjviTWH/P0EsFCM/NSuyk+bdwuxQ9ZaFy9LCLTGB5rMGHl0WZpzWbIGOC0o
+	4LUillFcFmL3nE/mZtRkXpEd+SLzBSEqVWXxXqmUa44OyGW3t+Q5roexu8Y8Bhul
+	K1jZ1e+NrlxBsK3miDLoBtAUy3f5Lu/Pt0PzZ/2mjax4zpaLUBIGxJW4XJsuKyWu
+	BrxhY5CgZ79SUlhZG+3wZNefo/j/bmiIhosSIa0u1twFf/t+pznyhXuxmTp7YH/7
+	KXmRSa2wizhO/r1lUXcO615G32hiQK4wTbY1T79Sp4lXi9TivMGzgBDvQxv7J5vW
+	Qu6SEeE=
+Message-ID: <93ce1511-53f6-42a3-b1a5-b6732105e87d@prolan.hu>
+Date: Wed, 5 Mar 2025 11:50:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <PN3P287MB182928F331D4494E423BA3158BCB2@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-References: <20250305051442.3716817-1-shravan.chippa@microchip.com> <20250305051442.3716817-5-shravan.chippa@microchip.com> <174116732611.2914008.9738053002324304147@ping.linuxembedded.co.uk> <PH0PR11MB5611988F18EF02394E983AA881CB2@PH0PR11MB5611.namprd11.prod.outlook.com> <PN3P287MB182928F331D4494E423BA3158BCB2@PN3P287MB1829.INDP287.PROD.OUTLOOK.COM>
-Subject: Re: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p and 480p resolutions
-From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-Cc: mchehab@kernel.org <mchehab@kernel.org>, linux-media@vger.kernel.org <linux-media@vger.kernel.org>, linux-kernel@vger.kernel.org <linux-kernel@vger.kernel.org>, Conor.Dooley@microchip.com <Conor.Dooley@microchip.com>, Valentina.FernandezAlanis@microchip.com <Valentina.FernandezAlanis@microchip.com>, Praveen.Kumar@microchip.com <Praveen.Kumar@microchip.com>, sakari.ailus@linux.intel.com <sakari.ailus@linux.intel.com>
-To:
-Date: Wed, 05 Mar 2025 10:49:46 +0000
-Message-ID: <174117178677.2914008.11448984679927360944@ping.linuxembedded.co.uk>
-User-Agent: alot/0.10
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] counter: microchip-tcb-capture: Fix undefined counter
+ channel state on probe
+To: William Breathitt Gray <wbg@kernel.org>, Kamel Bouhara
+	<kamel.bouhara@bootlin.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+References: <20250305-preset-capture-mode-microchip-tcb-capture-v1-1-632c95c6421e@kernel.org>
+Content-Language: en-US, hu-HU
+From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
+In-Reply-To: <20250305-preset-capture-mode-microchip-tcb-capture-v1-1-632c95c6421e@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
+ ATLAS.intranet.prolan.hu (10.254.0.229)
+X-EsetResult: clean, is OK
+X-EsetId: 37303A2980D94852637D66
 
-Quoting Tarang Raval (2025-03-05 10:40:18)
-> Hi Kieran, Shravan
->=20
-> > > -----Original Message-----
-> > > From: Kieran Bingham <kieran.bingham@ideasonboard.com>
-> > > Sent: Wednesday, March 5, 2025 3:05 PM
-> > > To: mchehab@kernel.org; sakari.ailus@linux.intel.com; shravan Chippa -
-> > > I35088 <Shravan.Chippa@microchip.com>
-> > > Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org; Conor =
-Dooley
-> > > - M52691 <Conor.Dooley@microchip.com>; Valentina Fernandez Alanis -
-> > > M63239 <Valentina.FernandezAlanis@microchip.com>; Praveen Kumar -
-> > > I30718 <Praveen.Kumar@microchip.com>; shravan Chippa - I35088
-> > > <Shravan.Chippa@microchip.com>
-> > > Subject: Re: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p an=
-d 480p
-> > > resolutions
-> > >
-> > > EXTERNAL EMAIL: Do not click links or open attachments unless you kno=
-w the
-> > > content is safe
-> > >
-> > > Quoting shravan kumar (2025-03-05 05:14:42)
-> > > > From: Shravan Chippa <shravan.chippa@microchip.com>
-> > > >
-> > > > Added support for 1280x720@30 and 640x480@30 resolutions
-> > > >
-> > > > Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
-> > > > ---
-> > > >=EF=BF=BD drivers/media/i2c/imx334.c | 66
-> > > > ++++++++++++++++++++++++++++++++++++++
-> > > >=EF=BF=BD 1 file changed, 66 insertions(+)
-> > > >
-> > > > diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-> > > > index a7c0bd38c9b8..8cd1eecd0143 100644
-> > > > --- a/drivers/media/i2c/imx334.c
-> > > > +++ b/drivers/media/i2c/imx334.c
-> > > > @@ -314,6 +314,46 @@ static const struct imx334_reg
-> > > > common_mode_regs[] =3D {
-> > > >=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=
-=BF=BD {0x3002, 0x00},
-> > > >=EF=BF=BD };
-> > > >
-> > > > +/* Sensor mode registers for 640x480@30fps */ static const struct
-> > > > +imx334_reg mode_640x480_regs[] =3D {
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x302c, 0x=
-70},
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x302d, 0x=
-06},
-> > >
-> > > These two are a single 16 bit register HTRIMMING_START =3D 1648
-> > >
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x302e, 0x=
-80},
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x302f, 0x=
-02},
-> > >
-> > > These two are a single 16 bit register HNUM =3D 640
-> > >
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x3074, 0x=
-48},
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x3075, 0x=
-07},
-> > >
-> > > These two are a single 16 bit (well, 12 bit value) AREA3_ST_ADR_1 =3D=
- 1864
-> > >
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x308e, 0x=
-49},
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x308f, 0x=
-07},
-> > >
-> > > These two are a single 16 bit register AREA3_ST_ADR_2 =3D 1865
-> > >
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x3076, 0x=
-e0},
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x3077, 0x=
-01},
-> > >
-> > > These two are a single 16 bit register AREA3_WIDTH_1 =3D 480
-> > >
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x3090, 0x=
-e0},
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x3091, 0x=
-01},
-> > >
-> > > These two are a single 16 bit register AREA3_WIDTH_2 =3D 480
-> > >
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x3308, 0x=
-e0},
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x3309, 0x=
-01},
-> > >
-> > > These two are a single 16 bit register Y_OUT_SIZE
-> > >
-> > > Don't you think
-> > >=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=
-=BD { Y_OUT_SIZE, 480 },
-> > >
-> > > Is so much more readable and easier to comprehend and maintain?
-> > >
-> > >
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x30d8, 0x=
-30},
-> > > > +=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD=EF=BF=BD {0x30d9, 0x=
-0b},
-> > >
-> > > These two are a single 16 bit register UNREAD_ED_ADR =3D 2864
-> > >
-> > > > +};
-> > >
-> > > I'm still sad that we can all know the names of all these registers a=
-nd yet this
-> > > is writing new tables of hex values.
-> >
-> > Do you want me use call like bellow API with register names:
-> > CCI_REG16_LE(0x30d8);
-> > cci_write();
-> > cci_multi_reg_write();
-> > devm_cci_regmap_init_i2c();
->=20
-> I have made a patch series for this sensor driver's improvement, in which=
-=20
-> I added the V4L2 CCI helper.
->=20
+Hi,
 
-Has it been posted yet ?
+thanks for fixing this up!
 
-> I am just waiting for this patch series to be applied so I can send my=20
-> changes on top of it.
+On 2025. 03. 05. 11:01, William Breathitt Gray wrote:
+> Hardware initialize of the timer counter channel does not occur on probe
+> thus leaving the Count in an undefined state until the first
+> function_write() callback is executed. Fix this by performing the proper
+> hardware initialization during probe.
+> 
+> Fixes: 106b104137fd ("counter: Add microchip TCB capture counter")
+> Reported-by: Csókás Bence <csokas.bence@prolan.hu>
+> Closes: https://lore.kernel.org/all/bfa70e78-3cc3-4295-820b-3925c26135cb@prolan.hu/
+> Signed-off-by: William Breathitt Gray <wbg@kernel.org>
+> ---
+> This should fix the issue where a user needs to set the count function
+> before they can use the counter. I don't have this hardware in person,
+> so please test this patch and let me know whether it works for you.
+> ---
+>   drivers/counter/microchip-tcb-capture.c | 19 +++++++++++++++++++
+>   1 file changed, 19 insertions(+)
+> 
+> diff --git a/drivers/counter/microchip-tcb-capture.c b/drivers/counter/microchip-tcb-capture.c
+> index 2f096a5b973d18edf5de5a2b33f2f72571deefb7..c391ac38b990939c6764a9120a4bd03289f68469 100644
+> --- a/drivers/counter/microchip-tcb-capture.c
+> +++ b/drivers/counter/microchip-tcb-capture.c
+> @@ -368,6 +368,25 @@ static int mchp_tc_probe(struct platform_device *pdev)
+>   			channel);
+>   	}
+>   
+> +	/* Disable Quadrature Decoder and position measure */
+> +	ret = regmap_update_bits(regmap, ATMEL_TC_BMR, ATMEL_TC_QDEN | ATMEL_TC_POSEN, 0);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Setup the period capture mode */
+> +	ret = regmap_update_bits(regmap, ATMEL_TC_REG(priv->channel[0], CMR),
+> +				 ATMEL_TC_WAVE | ATMEL_TC_ABETRG | ATMEL_TC_CMR_MASK |
+> +				 ATMEL_TC_TCCLKS,
+> +				 ATMEL_TC_CMR_MASK);
+> +	if (ret)
+> +		return ret;
+> +
+> +	/* Enable clock and trigger counter */
+> +	ret = regmap_write(regmap, ATMEL_TC_REG(priv->channel[0], CCR),
+> +			   ATMEL_TC_CLKEN | ATMEL_TC_SWTRG);
+> +	if (ret)
+> +		return ret;
+> +
 
-If the conversion will happen after I'm fine with that - but it will
-need to be tested by someone with the hardware. Changing to CCI regs can
-have impacts that are hard to catch unless you really check and re-test
-the driver - so Shravan is best placed if he is actively working on the
-sensor.
+This duplicates a lot of `mchp_tc_count_function_write()`. I'd much 
+rather have this code in a separate function called something like 
+`mchp_tc_setup_channels()`, that, depending on `priv->qdec_mode`, sets 
+up the BMR, CCR and CMRs, and then have both probe() and 
+function_write() call it. Or alternatively, have probe() call 
+function_write() at the end, but that's not as nice.
 
-Personally - I would like to see the CCI conversion happen *first* and
-then Shravan's changes go on top of that ! It would be /far/ more
-reviewable and readable that way.
+> ---
+> base-commit: 8744dcd4fc7800de2eb9369410470bb2930d4c14
+> change-id: 20250305-preset-capture-mode-microchip-tcb-capture-fa31550ef594
+> 
+> Best regards,
 
-(And we'd have more confidence that Shravan will have tested the full
-CCI implementation on that version).
+Bence
 
---
-Kieran
-
-
->=20
-> However, if Shravan wants to make these changes on his own, I don=EF=BF=
-=BDt mind.
->=20
-> Best Regards,
-> Tarang
 
