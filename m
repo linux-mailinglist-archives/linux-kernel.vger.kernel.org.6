@@ -1,53 +1,45 @@
-Return-Path: <linux-kernel+bounces-546767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DA50A4FE85
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:20:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49179A4FE83
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:20:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C110D167574
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:18:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 083307A8469
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:18:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55D09201270;
-	Wed,  5 Mar 2025 12:18:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="UPWebGGY"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E30DD245014;
+	Wed,  5 Mar 2025 12:19:43 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151FA214818;
-	Wed,  5 Mar 2025 12:18:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A77201270;
+	Wed,  5 Mar 2025 12:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741177112; cv=none; b=TCOutC049vTftPkKRg1lh43wce4SEvquwVV1ZEI695x6GlUaQrLEXsli8yhUmYiA7Yl7RfK0OTM6BS8FXQO8k6B7z/UNub9u3ALXT6PCT+3chBc0fRBOMH2rWozgQFOQ+RPV0AcUbRs+ocmxPkthXQVl5wo9EDC/7EowsSk2vaU=
+	t=1741177183; cv=none; b=pY+hor4Em5yMKTy1v4zR7hiqT57qBy/jIQcvrhuk0qg8PvbsC3vGcyQ1q7G7PvOWRfeSZypXlNPA78SBuyQ8lonbYkTgBwn0e95zOABlYJjEcvdwkbZo0a7CZXcnQHy0uQ58nuNtOgyt1WfYnAwLqk0poyZl5kcfns5Jt1DeDTw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741177112; c=relaxed/simple;
-	bh=cHCNQkRlbbJCycq/FOXZKuwItO75piOrRI8svoO7IeM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EQpGEuM62m9hEWLSYhxs7v9XZwnyshWJ1ty6dTK4EC35Ruw9FiErjMF9Rsw9RdbgM+l3PLPCvryy2wLW3+byHaRz4iJKF5ejcRoWUMdgvzgXYsaTOHXCN3RJbPeIVjlf62KI5WcPYJ6Zirb/rBkzuWQcghAnTpQjOaafYvaxxaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=UPWebGGY; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id DBDE72FC0048;
-	Wed,  5 Mar 2025 13:18:25 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741177106;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nN9wsZwsCAYB5Tf9dubdxQ4GyUYF8whMsNAQF81IBK0=;
-	b=UPWebGGYdQFJAiSjzIeqvXo49cpPs0X1ucZTQMCY95D8HOPxezDEvZhrRkF7lpSbwwYH7N
-	Ah5MfHjQkltsLDl7a0n2JNGCLKCep1lVwV4bm9DwLWC3+oVltez0JsG6asN6AVNzfUS8VP
-	SRHrzjEzQs0m6hG3lNDd4yJbmv0GrSI=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <9f3e1a77-246d-4880-af99-dcbfc94a573f@tuxedocomputers.com>
-Date: Wed, 5 Mar 2025 13:18:25 +0100
+	s=arc-20240116; t=1741177183; c=relaxed/simple;
+	bh=vlhpyamIfu0B4jVYp73PoZHZAQox5ZrifYWqOBNLXog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XIxLXgyXQTAhKYSHsGUs5gv3moGmAXLGkSXz/ZnwtmZNbDVg19NDLnN0NUYAh8PHquUjSUYFdhNs4JK0M8lQbG+J79QsLMpG0YahL6JIGBlUq2z8PQ1saWPoLYwyjl5uRs8UhrPxjNB1atj+qwSWkhJceiNdeDwTTl+hTK6a3a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4Z7BNm3kTtz9w7R;
+	Wed,  5 Mar 2025 20:16:24 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 85DB3140360;
+	Wed,  5 Mar 2025 20:19:32 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 5 Mar 2025 20:19:32 +0800
+Message-ID: <04c85f03-d3b3-4299-90d8-1d8432925993@huawei.com>
+Date: Wed, 5 Mar 2025 20:19:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,86 +47,160 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] Input: atkbd - map F21 key to support touchpad
- toggle keys
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: mario.limonciello@amd.com, hdegoede@redhat.com,
- ilpo.jarvinen@linux.intel.com, linux-input@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250303190442.551961-1-wse@tuxedocomputers.com>
- <Z8f1EzASdCfa2h_7@google.com>
+Subject: Re: [PATCH net-next v10 3/4] page_pool: support unlimited number of
+ inflight pages
+To: Jesper Dangaard Brouer <hawk@kernel.org>, <davem@davemloft.net>,
+	<kuba@kernel.org>, <pabeni@redhat.com>
+CC: <zhangkun09@huawei.com>, <liuyonglong@huawei.com>,
+	<fanghaiqing@huawei.com>, Robin Murphy <robin.murphy@arm.com>, Alexander
+ Duyck <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Eric
+ Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>, Donald Hunter
+	<donald.hunter@gmail.com>, Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Andrew Lunn <andrew+netdev@lunn.ch>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, kernel-team <kernel-team@cloudflare.com>, Yan
+ Zhai <yan@cloudflare.com>
+References: <20250226110340.2671366-1-linyunsheng@huawei.com>
+ <20250226110340.2671366-4-linyunsheng@huawei.com>
+ <d3c7d421-566f-4007-b272-650294edd019@kernel.org>
 Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <Z8f1EzASdCfa2h_7@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <d3c7d421-566f-4007-b272-650294edd019@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-Hi Dmitry,
+On 2025/3/4 17:25, Jesper Dangaard Brouer wrote:
 
-Am 05.03.25 um 07:54 schrieb Dmitry Torokhov:
-> Hi Werner,
->
-> On Mon, Mar 03, 2025 at 08:04:34PM +0100, Werner Sembach wrote:
->> In the default xkeyboard-config used by both X11 and wayland touchpad
->> toggle is assigned to F21.
-> We have dedicated KEY_TOUCHPAD_TOGGLE that is being used by several
-> platform drivers:
->
-> dtor@dtor-ws:~/kernel/work $ git grep -l KEY_TOUCHPAD_TOGGLE --
-> drivers/platform/x86/
-> drivers/platform/x86/acer-wmi.c
-> drivers/platform/x86/asus-laptop.c
-> drivers/platform/x86/asus-nb-wmi.c
-> drivers/platform/x86/eeepc-wmi.c
-> drivers/platform/x86/fujitsu-laptop.c
-> drivers/platform/x86/ideapad-laptop.c
-> drivers/platform/x86/msi-wmi.c
-> drivers/platform/x86/toshiba_acpi.c
->
-> Instead of piling on F21 hacks we should be using it.
-Afaik KEY_TOUCHPAD_TOGGLE is not implemented in userspace, but a patch for 
-xkeboard-configs could probably be enough to change that ... have to look into it.
->
->> This patch is in preparation for i8042 filter patches to be able to remap
->> bogus scancode(-combinations), produced by notebooks uppon pressing a
->> touchpad toggle key.
-> Since you already creating a vendor-specific platform driver I think it
-> would be better for it to register a separate input device and have it
-> emit KEY_TOUCHPAD_TOGGLE instead of involving atkbd.
 
-Thought of that also, but since the scancode was unmapped and unused anyway I 
-thought this could be a much simpler and therefore more elegant solution.
+>>   }
+>> @@ -514,10 +518,42 @@ static struct page_pool_item *page_pool_fast_item_alloc(struct page_pool *pool)
+>>       return llist_entry(first, struct page_pool_item, lentry);
+>>   }
+>>   +static struct page_pool_item *page_pool_slow_item_alloc(struct page_pool *pool)
+>> +{
+>> +    if (unlikely(!pool->slow_items.block ||
+>> +             pool->slow_items.next_to_use >= ITEMS_PER_PAGE)) {
+>> +        struct page_pool_item_block *block;
+>> +        struct page *page;
+>> +
+>> +        page = alloc_pages_node(pool->p.nid, GFP_ATOMIC | __GFP_NOWARN |
+>> +                    __GFP_ZERO, 0);
+>> +        if (!page) {
+>> +            alloc_stat_inc(pool, item_slow_failed);
+>> +            return NULL;
+>> +        }
+> 
+> I'm missing a counter that I can use to monitor the rate of page
+> allocations for these "item" block's.
+> In production want to have a metric that shows me a sudden influx of
+> that cause code to hit this "item_slow_alloc" case (inflight_slow_alloc)
 
-Learning question: What actually is the reason why F13-F24 are not fully mapped 
-in the default config?
+It seems the 'item_fast_empty' stat added in patch 2 is the metric you
+mention above? as we use those slow_items sequentially, the pages allocated
+for slow_items can be calculated by 'item_fast_empty' / ITEMS_PER_PAGE.
 
-Best regards,
+> 
+> BTW should this be called "inflight_block" instead of "item_block"?
+> 
+> 
+>> +
+>> +        block = page_address(page);
+>> +        block->pp = pool;
+>> +        block->flags |= PAGE_POOL_SLOW_ITEM_BLOCK_BIT;
+>> +        refcount_set(&block->ref, ITEMS_PER_PAGE);
+>> +        pool->slow_items.block = block;
+>> +        pool->slow_items.next_to_use = 0;
+>> +
+>> +        spin_lock_bh(&pool->item_lock);
+>> +        list_add(&block->list, &pool->item_blocks);
+>> +        spin_unlock_bh(&pool->item_lock);
+>> +    }
+>> +
+>> +    return &pool->slow_items.block->items[pool->slow_items.next_to_use++];
+>> +}
 
-Werner
+...
 
->
->> Signed-off-by: Werner Sembach <wse@tuxedocomputers.com>
->> Cc: <stable@vger.kernel.org>
->> ---
->>   drivers/input/keyboard/atkbd.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/input/keyboard/atkbd.c b/drivers/input/keyboard/atkbd.c
->> index adf0f311996c9..2ba3493de88cc 100644
->> --- a/drivers/input/keyboard/atkbd.c
->> +++ b/drivers/input/keyboard/atkbd.c
->> @@ -88,7 +88,7 @@ static const unsigned short atkbd_set2_keycode[ATKBD_KEYMAP_SIZE] = {
->>   	  0, 56, 42, 93, 29, 16,  2,  0,  0,  0, 44, 31, 30, 17,  3,  0,
->>   	  0, 46, 45, 32, 18,  5,  4, 95,  0, 57, 47, 33, 20, 19,  6,183,
->>   	  0, 49, 48, 35, 34, 21,  7,184,  0,  0, 50, 36, 22,  8,  9,185,
->> -	  0, 51, 37, 23, 24, 11, 10,  0,  0, 52, 53, 38, 39, 25, 12,  0,
->> +	  0, 51, 37, 23, 24, 11, 10,  0,191, 52, 53, 38, 39, 25, 12,  0,
->>   	  0, 89, 40,  0, 26, 13,  0,193, 58, 54, 28, 27,  0, 43,  0, 85,
->>   	  0, 86, 91, 90, 92,  0, 14, 94,  0, 79,124, 75, 71,121,  0,  0,
->>   	 82, 83, 80, 76, 77, 72,  1, 69, 87, 78, 81, 74, 55, 73, 70, 99,
->> -- 
->> 2.43.0
->>
-> Thanks.
->
+>>   +static void __page_pool_slow_item_free(struct page_pool *pool,
+>> +                       struct page_pool_item_block *block)
+>> +{
+>> +    spin_lock_bh(&pool->item_lock);
+>> +    list_del(&block->list);
+>> +    spin_unlock_bh(&pool->item_lock);
+>> +
+>> +    put_page(virt_to_page(block));
+> 
+> Here again I'm missing a counter that I can use to monitor the rate of
+> page free events.
+> 
+> In production I want a metric (e.g inflight_slow_free_block) that
+> together with "item_slow_alloc" (perhaps named
+> inflight_slow_alloc_block), show me if this code path is creating churn,
+> that I can correlate/explain some other influx event on the system.
+> 
+> BTW subtracting these (alloc - free) counters gives us the memory used.
+
+If I understand it correctly, the 'item_fast_empty' is something like
+the 'alloc' mentioned above, let's discuss the 'free' below.
+
+> 
+>> +}
+>> +
+
+...
+
+>>   }
+>>   +static int page_pool_nl_fill_item_mem_info(struct page_pool *pool,
+>> +                       struct sk_buff *rsp)
+>> +{
+>> +    struct page_pool_item_block *block;
+>> +    size_t resident = 0, used = 0;
+>> +    int err;
+>> +
+>> +    spin_lock_bh(&pool->item_lock);
+>> +
+>> +    list_for_each_entry(block, &pool->item_blocks, list) {
+>> +        resident += PAGE_SIZE;
+>> +
+>> +        if (block->flags & PAGE_POOL_SLOW_ITEM_BLOCK_BIT)
+>> +            used += (PAGE_SIZE - sizeof(struct page_pool_item) *
+>> +                 refcount_read(&block->ref));
+>> +        else
+>> +            used += PAGE_SIZE;
+>> +    }
+>> +
+>> +    spin_unlock_bh(&pool->item_lock);
+> 
+> Holding a BH spin_lock can easily create production issues.
+
+The above is not only give us the total pages used for page_pool_item,
+but also give us the fragmentation info for those pages too.
+So it seems the BH spin_lock is needed if we want the fragmentation info?
+
+And the 'free' memtioned above can be calculated by 'memory used' - 'alloc'.
+
+> I worry how long time it will take to traverse these lists.
+
+I wouldn't worry about that as it is not supposed to be a lot of pages
+in those list, if it is, it seems it is something we should be fixing
+by increasing the size of fast_item or by defragmenting the slow_item
+pages.
+
+> 
+> We (Cc Yan) are currently hunting down a number of real production issue
+> due to different cases of control-path code querying the kernel that
+> takes a _bh lock to read data, hurting the data-path processing.
+
+I am not sure if the above is the control-path here, I would rather
+treat it as the debug-path?
+
+> 
+> If we had the stats counters, then this would be less work, right?
+
+It depends on if we want the fragmentation info or not as mentioned
+above.
+
+> 
+> 
 
