@@ -1,145 +1,288 @@
-Return-Path: <linux-kernel+bounces-546700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC3CA4FDC5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:37:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A5B4A4FDC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:37:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263671721D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:37:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DFE5189303B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:37:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EA6241663;
-	Wed,  5 Mar 2025 11:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D31B241683;
+	Wed,  5 Mar 2025 11:35:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N+wTceM/"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNzwL2Ap"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B83241C87;
-	Wed,  5 Mar 2025 11:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D791C5F27;
+	Wed,  5 Mar 2025 11:35:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741174541; cv=none; b=n+eKdqmiZSce7CVOYtgtGCvjZr1D7J/EH3feF/kYjO926+zU/eKSuzekigDUgiAGSPKCI3n/mutxLIYEFBIIOUxRzHuD50Y5LH2lbXW5HqSiZBZ+5MyF75SuEElMxybTz7jYYdE1l/9FgSHTbbXfBdCkGg/WBkYtqlen3fQa19E=
+	t=1741174526; cv=none; b=XRTagposjHBZL8X2rD8uZUYfcg6VitBGVEo3LusLXvlsPCiWNnpKs+uL9llf4xVijhZ20xpPxlbRZZrPVV3PyP2o7g+vxVZsm2W3Fy0t97wSwBPslTaT78XzeyiMmBMcv0jLYyUOL2GkK62408jOLh1uBLDwi3dhN++KEe+JMRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741174541; c=relaxed/simple;
-	bh=qwopS4a6AUpBAWY4wViPaDXCC4bhryjADZfuqpcpo3s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FzkJjzVZLxeBm5JwoYUJkeWmKMJzZxkaTfPJRUAoN2uPIP1Fy/0RvHgCPd2/OiJElvhTV8H8GgQC82gTyZU8u0mopNvC1D//28A8IzauseXdOJy5NV5sKaRfqUSb7jaFbIVD5zvopsrSOE8c91YGcoHupft9JVZu9VWCGgpiBKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N+wTceM/; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-549490e290dso5277827e87.2;
-        Wed, 05 Mar 2025 03:35:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741174538; x=1741779338; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kQjCJAWWqkAUcjYYgR8Ex2nz8hO/x4lAohvkos16b8E=;
-        b=N+wTceM/Tn8f1/ad1ztR/u23KAnIkNLn+6FIX3mU8qvJpTVxHhUn/dxTnW6ZWfQCJH
-         eNsAGyDNaGAvwSxmZeJoYCZ2PkU2cpSV6jUvBQDz6KJnjJceOCxSmaJLv9pJGnLXzCeu
-         R6c1iEFRpzL8OAP1bmOzER0v4bNrBO7ZtdBtS/iMSurO5XSdtVrRZvqjz76fmj+zMO6E
-         cM/Q5RHOXVO8StKaQWDys72mst7UKLRpj9eJV4O804IFXo6EDTTY/Iqhdorq8eTxrqPg
-         x744Z72r438YX3XjnvAgfrPMdgazDWsidfwFMDOJDOImcb6Q9qx+mwsTYDmkTK9VjK9H
-         tHqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741174538; x=1741779338;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kQjCJAWWqkAUcjYYgR8Ex2nz8hO/x4lAohvkos16b8E=;
-        b=kN8Z0wEOeyVctY9eJDdvgOxMjxDpJi4CZvoYh96x7/C3BNB6j19eNfrsqPLwSA4ksB
-         d+P7vvS3ZmdAzGiTWC2llaC+KqKReCfVnNnWlLuzkpdUPnwqu7NbKER6lNBeAJzBBNzF
-         RTvOuBS/yskMM6oTChJCo4+2UbG3bFJ39lkoJFbibrMLlsryXoB1Y8XwWIzLoroJFZ31
-         YLtKLgrKziEhdDDo6Zy/OMssf8KScTb2Tl9sY9b5Mlcg6LGaJN57IAu2TnkwEURUcR/G
-         vA1qUv8HJhkeDuXmBHcQEC0oTfFisC43KSKIxKqgbAc5MY23BJyQB0G99WZQPeo+gjv8
-         g9dA==
-X-Forwarded-Encrypted: i=1; AJvYcCUUQKQ0JVXgnmuH9clGlgsANiKINEViZ5idDrFtNrueinnMYsgCjkz0YIgmsdazVlgYxTzkLZ5KDKKOgoS6DnSE@vger.kernel.org, AJvYcCV9Hk0JJW4w+ZOs8he161c4d0YI8KloTnIUc9H8HcKAdXOVEd9g/Zany6cgWrQnxVJ3tKHucLXa/8/OnRA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi282VFwX37kS4Fz7ZvFbXGJXP1z3sYVFKA0q1LKL9XGjecPNU
-	ZoZoXHuxVP42m5DKLR9YOX2f59xd8zzia9SmL9k/wvIszebafVqEqZg4RHxjJJrEa753EQQTd5q
-	0syoRKNHp9WFL0iajZGWlK2GC6OE=
-X-Gm-Gg: ASbGncsPU8gwSdr8lBvZodR+QXCWEeUj7T6uDA2IQniZIO0h2WlqAVGXLOe4EuCdAH0
-	t6TbGdLfEa8AQurdldQfzDO7C06fZSJd0nfU+Svk8yM33gTEzO75yAcpHtEQKU1ex4zI890VnTm
-	Ko8HBQ7AxhLj++RBfibzsoHO5jSpk9tc9wdigr7NKhLzifSiTfqrc/DnM+Az6b
-X-Google-Smtp-Source: AGHT+IE7ybsJw30eQldLIuRlyYc2TNW0oVcckLG0r77gXOjbSuKh4AD0gnef3xGyEl0eu2j8/V0f1EfU/WZtdIdLaec=
-X-Received: by 2002:a2e:be91:0:b0:30b:badf:75ee with SMTP id
- 38308e7fff4ca-30bd7a1e168mr8894531fa.7.1741174537682; Wed, 05 Mar 2025
- 03:35:37 -0800 (PST)
+	s=arc-20240116; t=1741174526; c=relaxed/simple;
+	bh=5wKZo1W3/KKJwo73d2ABuM4lG0wjBbXCHJqMn98euFU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=eR9OZKhc3kwjEo0bG7TO39EtaoQO1jOlzFANfFHagavY9r5MUX3tCfS9m2vc6ZArkKs/jfUShRfZNoqMD4JcqwpkAqm/+hltkJ/xDAhhhSMA5MS1wo/yiBN4KC8xjoqJCveS489c9NU7oR5+fNq75knjlILApjxZUzztFpsideo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNzwL2Ap; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD229C4CEE2;
+	Wed,  5 Mar 2025 11:35:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741174525;
+	bh=5wKZo1W3/KKJwo73d2ABuM4lG0wjBbXCHJqMn98euFU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=HNzwL2Apz+ImWcI9E449fJ1uUCaPdrWT870QqZwQokeyeALzznCrATR+82SLgP5iR
+	 PNTj+ohzDf0Us/J46qONWbe9bakWDrN1d/DSgee/1e3NhX4sFWZ/vAVhJk9wwHzW21
+	 TmWMPE3apeOd993whfLADD6duv2C2uwBlf5MRjOuDIXMxf8tiWyj+Ft37yVK9ZrVPA
+	 lUTpnlqwIbVv8M020yEbOpnF74F99Tu4zzBx1DFMpW0MzXg27I0BZ6MQoRE6sX6bkt
+	 Vy48TaeHTxQI3sStfR6kbPjOeajO9cjOxotx/vyq8T5/lW+XWPmD2pOC8l5XjOZ/kQ
+	 4bjv6EnaztQsQ==
+Message-ID: <c7129d8e-87de-444c-be52-b2eedf03585f@kernel.org>
+Date: Wed, 5 Mar 2025 12:35:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
- <20250214-scanf-kunit-convert-v8-1-5ea50f95f83c@gmail.com> <Z8gfsd5V9wrPKkiA@pathway.suse.cz>
-In-Reply-To: <Z8gfsd5V9wrPKkiA@pathway.suse.cz>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 5 Mar 2025 06:35:01 -0500
-X-Gm-Features: AQ5f1JprwBuCn92D2t-WJR_RsVK9zF9GVQwqc4riLjDfAJlrnyUXehNeN7Dw2go
-Message-ID: <CAJ-ks9kXetd0wfy44T0g2r6Jx5eKSXr6N8Zk8wpAWj=5SKwHog@mail.gmail.com>
-Subject: Re: [PATCH v8 1/4] scanf: implicate test line in failure messages
-To: Petr Mladek <pmladek@suse.com>
-Cc: David Gow <davidgow@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
+ subnode into schema and example
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
+ Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
+ devicetree@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux@ew.tq-group.com, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
+References: <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
+ <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
+ <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
+ <4414669.ejJDZkT8p0@steina-w>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <4414669.ejJDZkT8p0@steina-w>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 5, 2025 at 4:56=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrote=
-:
->
-> On Fri 2025-02-14 11:19:58, Tamir Duberstein wrote:
-> > This improves the failure output by pointing to the failing line at the
-> > top level of the test.
-> >
-> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
-> > ---
-> >  lib/test_scanf.c | 66 ++++++++++++++++++++++++++++--------------------=
---------
-> >  1 file changed, 33 insertions(+), 33 deletions(-)
-> >
-> > diff --git a/lib/test_scanf.c b/lib/test_scanf.c
-> > index 44f8508c9d88..d1664e0d0138 100644
-> > --- a/lib/test_scanf.c
-> > +++ b/lib/test_scanf.c
-> > @@ -24,12 +24,12 @@ static char *test_buffer __initdata;
-> >  static char *fmt_buffer __initdata;
-> >  static struct rnd_state rnd_state __initdata;
-> >
-> > -typedef int (*check_fn)(const void *check_data, const char *string,
-> > -                     const char *fmt, int n_args, va_list ap);
-> > +typedef int (*check_fn)(const char *file, const int line, const void *=
-check_data,
-> > +                     const char *string, const char *fmt, int n_args, =
-va_list ap);
-> >
-> > -static void __scanf(4, 6) __init
-> > -_test(check_fn fn, const void *check_data, const char *string, const c=
-har *fmt,
-> > -     int n_args, ...)
-> > +static void __scanf(6, 0) __init
->
-> This should be:
->
-> static void __scanf(6, 8) __init
->
-> The zero (0) is used when the parameters are passed via the va_list.
-> The value must be the position of the first parameter when they are passe=
-d
-> via the variable list of parameters, aka (...).
->
-> Otherwise, it triggers the warnings reported by the lkp@intel.com
-> kernel test robot, see
-> https://lore.kernel.org/r/202502160245.KUrryBJR-lkp@intel.com
->
-> Best Regards,
-> Petr
+On 05/03/2025 10:02, Alexander Stein wrote:
+> Hi,
+> 
+> Am Mittwoch, 5. März 2025, 08:13:04 CET schrieb Krzysztof Kozlowski:
+>> On Tue, Mar 04, 2025 at 04:49:21PM +0100, Alexander Stein wrote:
+>>> Document the LDB bridge subnode and add the subnode into the example.
+>>> For the subnode to work, the block control must scan its subnodes and
+>>
+>> Don't describe drivers, but describe the hardware.
+> 
+> Thanks, I'll rephrase to describe the hardware better regarding LVDS.
+> 
+>>
+>>> bind drivers to them, do not misuse either simple-bus or simple-mfd
+>>> here.
+>>
+>> I don't understand that simple-bus or simple-mfd statement. There are no
+>> such compatibles here.
+> 
+> Same as above, the wording stems from 1cb0c87d27dcc ("dt-bindings: soc:
+> imx8mp-media-blk-ctrl: Add LDB subnode into schema and example").
+> I'll drop it to avoid confusion.
+> 
+>>
+>>>
+>>> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+>>> ---
+>>>  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
+>>>  1 file changed, 51 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+>>> index b3554e7f9e76d..cd785111928bf 100644
+>>> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+>>> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
+>>> @@ -24,6 +24,14 @@ properties:
+>>>    reg:
+>>>      maxItems: 1
+>>>  
+>>> +  ranges: true
+>>> +
+>>> +  '#address-cells':
+>>> +    const: 1
+>>> +
+>>> +  '#size-cells':
+>>> +    const: 1
+>>> +
+>>>    '#power-domain-cells':
+>>>      const: 1
+>>>  
+>>> @@ -46,9 +54,20 @@ properties:
+>>>        - const: csi
+>>>        - const: dsi
+>>>  
+>>> +  bridge@20:
+>>
+>> @20 looks wrong. Use 'ranges;' and try again your DTS...
+>>
+>> Binding is supposed to be complete. We have several examples when people
+>> added children one-by-one, everytime with different reasoning about
+>> child addressing.
+>>
+>> So please confirm: this is complete and no other children will ever be
+>> added here... or you are 100% sure that all future children will be
+>> unit-addressable (will have unit address and appropriate properties).
+> 
+> This block control is a collection of registers for different purposes:
+> * MIPI-DSI
+> * MIPI-CSI
+> * Parallel camera
+> * LVDS
+> * CAMERA_MUX
+> 
+> At lease for parallel camera, another subnode is expected ([1]).
 
-Thanks for explaining!
+
+That one at least have MMIO as well. No I wonder whether the others will
+come without MMIO one day.
+
+Why this cannot be sent all at once? Entire device binding?
+
+> 
+> [1] https://lore.kernel.org/all/20240819024001.850065-1-victor.liu@nxp.com/
+> 
+>> BTW, I don't quite get why this is both syscon and has translation for
+>> child addresses. Does it mean your child does not use the same MMIO as
+>> parent, thus leading to unsynchronized reg access?
+> 
+> I'm not sure what the best practices are. This LDB has two registers
+> inside this block. So it seems reasonable to me to indicate this using
+
+reg is fine, but you added ranges which means there is translation
+between child addressing and parent MMIO. Usually, although not always,
+when child is expected to use parent's syscon, you do not have ranges,
+because the syscon deals with that translation.
+
+What's more, your @20 means you depend on one specific value of ranges.
+
+I would just skip the ranges and claim there is no direct mapping of
+addresses. Reg defines offsets within this device addressing and this
+device will handle it.
+
+> a reg property. On the other hand, access is solely done by accessing
+> via syscon, so unsynchronized reg access is not an issue.
+> 
+> What I am getting from your comments this node should not have 'reg'
+> property, as it uses syscon anyway.
+
+
+> 
+>>> +    type: object
+>>> +    additionalProperties: true
+>>> +    properties:
+>>> +      compatible:
+>>> +        contains:
+>>> +          const: fsl,imx93-ldb
+>>> +
+>>>  required:
+>>>    - compatible
+>>>    - reg
+>>> +  - ranges
+>>> +  - '#address-cells'
+>>> +  - '#size-cells'
+>>>    - power-domains
+>>>    - clocks
+>>>    - clock-names
+>>> @@ -77,4 +96,36 @@ examples:
+>>>                 clock-names = "apb", "axi", "nic", "disp", "cam",
+>>>                               "pxp", "lcdif", "isi", "csi", "dsi";
+>>>        #power-domain-cells = <1>;
+>>> +      #address-cells = <1>;
+>>> +      #size-cells = <1>;
+>>> +      ranges = <0x0 0x4ac10000 0x10000>;
+>>> +
+>>> +      bridge@20 {
+>>> +          compatible = "fsl,imx93-ldb";
+>>> +          reg = <0x20 0x4>, <0x24 0x4>;
+>>> +          reg-names = "ldb", "lvds";
+>>> +          clocks = <&clk IMX93_CLK_LVDS_GATE>;
+>>> +          clock-names = "ldb";
+>>> +
+>>> +          ports {
+>>> +              #address-cells = <1>;
+>>> +              #size-cells = <0>;
+>>> +
+>>> +              port@0 {
+>>> +                  reg = <0>;
+>>> +
+>>> +                  ldb_from_lcdif2: endpoint {
+>>> +                      remote-endpoint = <&lcdif2_to_ldb>;
+>>> +                  };
+>>> +              };
+>>> +
+>>> +              port@1 {
+>>> +                  reg = <1>;
+>>> +
+>>> +                  ldb_lvds: endpoint {
+>>> +                      remote-endpoint = <&ldb_to_panel>;
+>>> +                  };
+>>> +              };
+>>> +          };
+>>
+>> Messed indentation.
+> 
+> This is already from the original binding. I'll fix in a separate commit.
+
+How? I did not see any '-', only adding here.
+
+
+Best regards,
+Krzysztof
 
