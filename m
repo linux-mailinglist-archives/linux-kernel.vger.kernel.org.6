@@ -1,114 +1,88 @@
-Return-Path: <linux-kernel+bounces-547131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B127FA50349
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:16:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B55EA5034C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:18:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EEDC43A7ADE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 996103A82EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F38724E4A0;
-	Wed,  5 Mar 2025 15:16:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 450EA24DFF5;
+	Wed,  5 Mar 2025 15:18:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="L8BQ5Y7o"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nl73jgPh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6998460
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61A223372D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741187786; cv=none; b=JB13A9JbqpCFk70UE/Ld++ifGLKAteJnjxa3pMqO3DegI0r3KHUwPLzcU22dxHpS/6IK1+zuE37fJjSF/GGqqvedvtVR6HcdD6eI8ZZ5h8ssWEx3mNy60PVLni/dIraGe91TtpROh2twvTP7HAQcSBOvNeaCp2mu5nUhtDyEwzk=
+	t=1741187882; cv=none; b=bodsOQZVp+hJGDx94yiPw8j8YiYpJfwuVVD8VXfLb20BzSgN0YzxrArUDlN6FTidy/kuL05NvT5yoYQ6CLFm/QM9yzp1dPkeBuYEbKM2AVxZSt5xlsTHguSSu6Ewp6Kj3TzytMEndFWeqSzA90y8ZlEr20oxEcwQU+NDrCg8Cw4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741187786; c=relaxed/simple;
-	bh=/ShZhVPtJr4+4o6krCssL/Gbe44AN9lbhxnovSZUweU=;
-	h=From:In-Reply-To:References:To:Cc:Subject:MIME-Version:
-	 Content-Type:Date:Message-ID; b=aKQpl50HrmWBdCxndsQ8jN8oLc2cTURMvNat90uU7FYWrW3TfSzvhEicaA8AbxtDrQht8RB/9VJ1d5IbAE7mY4zn+HYAYVWw6c1x5fGeT1wTBQTJ1RfqlNWhMkAVru7b5nWyooSJK2DYsmIpn4TKheHt/NS+utDV42T2n/WgyT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=L8BQ5Y7o; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741187784;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AeISuS/evk/TM3j9QzoSRQzIAJ0c3rz9FhJHNooEGGU=;
-	b=L8BQ5Y7oTk6OwndulU2MZEFfx91sZgq14gxBS3IEAM03MHeKM+ZoWiBJoTa5nbywv1Z2WW
-	1akW42i3idqvf09eYJA6yV2olb5ishRRxBVIHNHlPn5o69sN0PkTgopEsMa70wxYUxZhdw
-	P7AyCvsnDxva6aDlBBGByWDOOvGKXNE=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-48-GOra96h5PjOwAo_MEnkZnA-1; Wed,
- 05 Mar 2025 10:16:10 -0500
-X-MC-Unique: GOra96h5PjOwAo_MEnkZnA-1
-X-Mimecast-MFC-AGG-ID: GOra96h5PjOwAo_MEnkZnA_1741187769
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9F4451954B39;
-	Wed,  5 Mar 2025 15:16:08 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.44.32.200])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id CB38B1956095;
-	Wed,  5 Mar 2025 15:16:05 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <26a4651e-b56c-4350-8f9a-e0e2a2a3b452@stanley.mountain>
-References: <26a4651e-b56c-4350-8f9a-e0e2a2a3b452@stanley.mountain>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org,
-    kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] afs: Fix error code in afs_alloc_cell()
+	s=arc-20240116; t=1741187882; c=relaxed/simple;
+	bh=4/XUH4d6qHByGlAYL7Gr+YXKagxCHVRhwdzC2f31ZOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YmkHunFP7L3FNdlQVAtshw2y/GZojEVu8U3H/5YgyqYrUDK1rKlt6rKnr97bX3RlFkC7mX68Yf1veIL+TkfnFyNAt+XVsBDufInmj0MCm/cwP54ty/6CDuYsGbgtiAVsU63i0Dgqu0Bo/1Z4yX+UlWqBr68/ok1imzKZhqWw/zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nl73jgPh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5474FC4CED1;
+	Wed,  5 Mar 2025 15:18:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741187882;
+	bh=4/XUH4d6qHByGlAYL7Gr+YXKagxCHVRhwdzC2f31ZOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Nl73jgPhaTVbXFF+Cs/OL3fP5WkoaXbJnkKhHT1HzgT8uZk5UPXw4o+Im78AtGGDJ
+	 Px7Jc5A4uaG7Zl2iCzQufMeMhuuKYsWAP1d0euB7b/JNV9RqZZuNlh6Am5fnsNlE0H
+	 6dvl/rAe2U8UwfTiXqWJTNuX8LF8+vvlw/NFKnSSfDTvbJfdMcq9z68iLxRmGC+L1f
+	 P43xWh+eNdUF9nxofS6ZRejz4Y8JFHRjNW2Iy/gsX0PUKjbGjVPPuBKoKlkFXS1t4o
+	 eKodc7Y7es0UkWalQR6lijVH75ldm014ztpzev4pBB2IoFeMBSfP9tgV9avVrVeE/i
+	 ATHAmOyB72t1A==
+Date: Wed, 5 Mar 2025 08:17:59 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Nilay Shroff <nilay@linux.ibm.com>,
+	John Meneghini <jmeneghi@redhat.com>, bmarzins@redhat.com,
+	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
+	axboe@kernel.dk
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+Message-ID: <Z8hrJ5JVqi7TgFCn@kbusch-mbp>
+References: <20250204211158.43126-1-bgurney@redhat.com>
+ <7c588344-f019-4939-8a93-0a450481d4bc@redhat.com>
+ <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
+ <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com>
+ <Z7TARX-tFY3mnuU7@kbusch-mbp>
+ <2ff87386-c6db-4f2e-be91-213504d99a78@linux.ibm.com>
+ <0656b66c-dd9c-495d-b1fc-4f09e763fa66@grimberg.me>
+ <Z7dct_AbaSO7uZ2h@kbusch-mbp>
+ <91ae613a-7b56-4ca0-b91c-6bc1eee798b8@suse.de>
+ <20250305141554.GA18065@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <4167139.1741187764.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 05 Mar 2025 15:16:04 +0000
-Message-ID: <4167140.1741187764@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305141554.GA18065@lst.de>
 
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+On Wed, Mar 05, 2025 at 03:15:54PM +0100, Christoph Hellwig wrote:
+> On Wed, Feb 26, 2025 at 10:55:21AM +0100, Hannes Reinecke wrote:
+> > Plus there are some NVMe devices out there which _despite_ being PCIe do 
+> > report NMIC and CMIC set (I won't name names, if you came across them 
+> > you'll know)
+> 
+> ?????
+> 
+> NMIC and CMIC is perfectly normal and expected for multiported PCIe.
+> WTF are you talking about?
 
-> Return the error code if idr_alloc_cyclic() fails.  Currently it
-> potentially could return either -ENOMEM or an uninitialized variable.
-
-Thanks, but Christian has already pulled an updated version into his tree.=
-  It
-may not have made it into linux-next yet:
-
---- a/fs/afs/cell.c
-+++ b/fs/afs/cell.c
-@@ -203,7 +203,13 @@ static struct afs_cell *afs_alloc_cell(struct afs_net=
- *net,
- 	cell->dns_status =3D vllist->status;
- 	smp_store_release(&cell->dns_lookup_count, 1); /* vs source/status */
- 	atomic_inc(&net->cells_outstanding);
-+	ret =3D idr_alloc_cyclic(&net->cells_dyn_ino, cell,
-+			       2, INT_MAX / 2, GFP_KERNEL);
-+	if (ret < 0)
-+		goto error;
-+	cell->dynroot_ino =3D ret;
- 	cell->debug_id =3D atomic_inc_return(&cell_debug_id);
-+
- 	trace_afs_cell(cell->debug_id, 1, 0, afs_cell_trace_alloc);
- =
-
- 	_leave(" =3D %p", cell);
-
-David
-
+Obviously he's not talking about multiported PCIe. And he's right, the
+behavior of a PCIe hot plug is very different and often undesirable when
+it's under native multipath.
 
