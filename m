@@ -1,115 +1,102 @@
-Return-Path: <linux-kernel+bounces-546261-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AD27A4F880
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:16:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A191A4F881
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:16:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C40F1890335
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:16:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14271678E8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54BC71DE8A5;
-	Wed,  5 Mar 2025 08:16:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A0B1C7007;
+	Wed,  5 Mar 2025 08:16:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DHLnTq9U"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jMnrVf4j"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D973C1632E4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26BED1D86F6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:16:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741162595; cv=none; b=ktxE/LUf+uWLTUUETPbfoeQFUXEIz8IFRak+rHkJJwsgyPzb9UgngoWK80/hKpaWTYm1asnzX0LmgeKB2kjWdYiX9IK+uaHhlnByxUNsALSRPp5Kq0JDZjnjHlsIo8VxL8faaBQtj9iq8474xc2b6jv4RnMse6kQPC/Bnao8fNU=
+	t=1741162596; cv=none; b=fcmpXHeZY9aBqJJxPdsPG20TNWskSFrPl6yP4hhNOH6JtwQ5KtUZvQZdmpwwNZDA0PBXITzOokdX2DJ7q2Rybw+XRXmd+OEhD3Snjr6XLBtI5AmNvI8va9aJ0kDfvDVMIlsKgv4DFfZ7VNIFbca2U2IPRbwB0R5tTqiHJ4o9nss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741162595; c=relaxed/simple;
-	bh=tcWSEMLkdnyh9aSLiaRBtq7lBNnDoTyyz9lHUiNPlc0=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=r+3W5ht/XGVBI0gHr9PEM0oz1P/064rHz6V22Uhb/dA1t0dWgkf+1PLiccY9BrYRsZeAZFKpYmI6CDm2gaml+PVcnOAtGBew8aw6UrjZSKYrq43bTXXNB/qCvWDfXy69juOXCSmOqx76AaOXQJXN+CAxTRGW19ki4d6iTulLt3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.corp-partner.google.com; spf=pass smtp.mailfrom=inventec.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DHLnTq9U; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=inventec.corp-partner.google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inventec.corp-partner.google.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf45d8db04so661289466b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:16:33 -0800 (PST)
+	s=arc-20240116; t=1741162596; c=relaxed/simple;
+	bh=hQBDaitCV3k+RiR+GDeZpY1Mj7OCsP0w4nSs48d2Xig=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0EiC3RJkF0fNr3bxhNiUW2QmcPr1wGYyddLSc/DsggoUm65H0PWZUl97geHiMfTDeFnbwJa8KpqN66J+Hp3AAthKOIj1Bw/aYizxUaqMp+NwBVQSsSRydk+GUY+Txa5vTFEdINCqk3GMe3Vzp54DdhnWq+GTjDlbgGXNnO9Erc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jMnrVf4j; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223fd89d036so867285ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:16:34 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741162592; x=1741767392; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jBluRc4AqYa9mwEBFMC/KLTpnRIQOHur+1Rtne5kToE=;
-        b=DHLnTq9UYlKJcPkKcfY2a/esuqZZZVZUAjghgISX89HAA7NgjqMeekAmZkOo3R7bX9
-         +bO5X2dxKd7+F/DC5JXhh6D5MNYe1PT68daT8DwmIz6rVJX/8E1JURocMI/ouP6mnnfq
-         loIhORYx9UxeX7nbmMax7g3NI/zI6A2qIx0gDk/vaiob5CHuPTRpOOqo+wA4gzSVUPoc
-         AKJhojKDiw1xx4FS7c2VEMg9lZRVioMbEOorqPd2RsmMALm/TjFJPpyZPyakrV1BVSyk
-         XuAzuUKMf1sheywpkOa466Pj0zAPV2woTiY9s8clolCdtkwvrHI1217GTDMsRp0CZU95
-         IxnQ==
+        d=chromium.org; s=google; t=1741162594; x=1741767394; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nTJdzy5tZQOPsL+EA/ogn6tq1I6FNzjC1eSU9Wnz1ds=;
+        b=jMnrVf4j9h2bGHK/eRsOSXYCfK8t4wziNxdF/dSVRFAgC2N72c8U3HOgKTwou+p30U
+         HEjXdkOfp9qx8QVuB6VbAjsFfkVSQUNPcMXroIDBoew/zPqZnFWOrwb+h3If8iNsllR+
+         609MLXfoESGvHQrpnnNMafKkTWID9r1PCz6HA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741162592; x=1741767392;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jBluRc4AqYa9mwEBFMC/KLTpnRIQOHur+1Rtne5kToE=;
-        b=v/t+wYoKpwpvyqdUiysW8gyFO10hMokYmrCIZsY4Qwsh0yyJFDB9agNrq1M/Su5cuh
-         /3V6rdEEt9ipmNVdf4I2bwTcsTa+2DsCEx3+u/NcGRvTdOrI343HK2ygCrgm+6Q/4df0
-         pfPcLN6/hZVfGe7jGR2Du73leqQg/btA06sZJxhaUKcJ5RbKfWVIcBAGMzeRmShQkQBy
-         emFgxKF7ievT5F9he3Wl1qZ/Cp6+0slphRIDya60aPmgpT+4C21fjrUwOUr1ric+jeE7
-         2ubQ5n+PRTji2flsiCEKOpDETnRHMUUwmAdqBr26W13YWuk94WtzSIJZKLtyTGtuQKAw
-         xDHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWILi5RN+rQy9wfZ1vrRhBkuw3VYaB9QWzuI8wAasV+STbSu+xBxj3fcJLRCQbpsVhTpXaBFttoTW8eC8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOVU1b1t1vF18IS9+wIy3rUO/1Kjgfj648EHGAZFzTrnRkgLz4
-	/cMO0HDKSwzR28cpetsG/5J255ytPyhBSFXvm7Y7GcS53Gsg6+1qlxsfjInV1mPIxeLJME0CFRg
-	8qu59Tkw6641H3//wSFOpQDKoGn/VFKjEV33hZ0a0nBBOv/f0msM=
-X-Gm-Gg: ASbGncsX90egO6hd4sX6W9l9VxDX78+BZKskfljyssKk0q24ie+QVcXjHxoIaDJk4jT
-	JT5uIiB/LMJ+dnH2YY4CVfl9ENmHqLfnVGQJUS4LV/UXWdGtA9Db434/VJVUx6gQLzY+0J9gefg
-	ex9AorJw9cyYNzSMCog66c6/yJww==
-X-Google-Smtp-Source: AGHT+IEIhI0imlmnmvEneoZB1CIsEriCFPuIQWHazM6Mp0DX2g8PZfAOrDM3QO+MompArNS2jl892RCCVscXRLKiSk0=
-X-Received: by 2002:a17:907:94c8:b0:abf:44bd:8326 with SMTP id
- a640c23a62f3a-ac20d8bce29mr206694166b.17.1741162592052; Wed, 05 Mar 2025
- 00:16:32 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741162594; x=1741767394;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nTJdzy5tZQOPsL+EA/ogn6tq1I6FNzjC1eSU9Wnz1ds=;
+        b=JztQCkT9tekwQGiiHxDMhizaYbIr5+p36QQUcUcWRUDOHXIWuEUAqPMlPE3UWS0Hem
+         UfxrUHEl7cub0tpzpmfD+BmHDfkVeLehm7F7tXSoi+c4Gkd0WObRs5i2MNZqeLagYJKX
+         7gJSy+gmOVuA+Ocgwzuf8qygxEYKmTWH1v+80xrxRNhIayirxoFzz0bONGX0knlroMCA
+         l3rI5LaV40k+DdgOsk1GkD1zAY4O0fynyYR4TZVbx7QriZ1Rb07hSH13k3JKFpmjOV8F
+         z00ycPJBiLFWMyZIAOa5/TLUJ6c4XqiNoXDUSAWWwQd3H9WLu8KJ6PNO49v4/z1mO5ND
+         zydQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVzn9vs7hYYJ61V3+ZZM94QOD2mvJq4fntCqZKA6kYYqNsK+ak8wlduZYDCUDyGfkT+ZI7oP8CJ24Y/lC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxntofEA5Z13crma9xYcIUruSs9ce/SK6snZf7Ok+v200ClLPNo
+	qFNzgSS32BCsttRtcSRkzPDW/utom5UT9D8lmIrCzXvG9OpHIK5S92FV+TLRsg==
+X-Gm-Gg: ASbGnctfuC+lBAnre2w0cfCl5kTGvnyZnhqBMDcA+Azi1IIkhdoRQmV4J4oGIxpMGTj
+	6DKnwsDREZL0Tqkqn670ctY/WPCBZ+cmLsTxH32S/CVEQXSz8f6YfjiZ4blodncv+fwGvb0dZS2
+	0a6SY0jwinOQ4w3VfRH9LgFZduzPf9LIA1ZTa8WSoIWjx+AtBFlpcwfV73KxruPzcYI4X8IdlLI
+	M9qv231rQtu937rXzmFX3jFMmzy9FxkznME4/vLV8uJUAZKO6vFAETu1Zy36sfqYPTkIsjsDt+w
+	7XrPvBc5vbG6ZChAPnCmcAo+l7uoO+O4TuYUUHLXdtdudh4=
+X-Google-Smtp-Source: AGHT+IH92Jeo2OSG2Dg7iq1RkP1zK7B+m6EcGipbq2fO6N9oT2opfRYcEL70JNIP/8ozxwe1oCHIng==
+X-Received: by 2002:a17:903:8c8:b0:223:28a8:6118 with SMTP id d9443c01a7336-223f1c9bb60mr39254735ad.31.1741162594555;
+        Wed, 05 Mar 2025 00:16:34 -0800 (PST)
+Received: from google.com ([2401:fa00:8f:203:5a4:b795:7bd9:7ab7])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050f5bfsm108087595ad.216.2025.03.05.00.16.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 00:16:34 -0800 (PST)
+Date: Wed, 5 Mar 2025 17:16:29 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Minchan Kim <minchan@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH mm-unstable 4/5] mm: zsmalloc: Remove object mapping APIs
+ and per-CPU map areas
+Message-ID: <lqm6t6nu2mipwjhsjyxhyuyssqjesxt6gx7fv6bkmf4xoa5jd4@nvyqk3nkqjin>
+References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
+ <20250305061134.4105762-5-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Kerry Kang <kang.kerry@inventec.corp-partner.google.com>
-Date: Wed, 5 Mar 2025 16:16:20 +0800
-X-Gm-Features: AQ5f1JrOJG-PHSW4n-sQZJypeRPbHykGGGirbiBu2VW4UdVYsGJR-MgJZ-byFWE
-Message-ID: <CALNGHDC=cCjTpfm6WDN_rdo2A9KBvHPX=0u52s6gTVgPt2xj7w@mail.gmail.com>
-Subject: [PATCH] mtd: spi-nor: Add Winbond w25q512jvdtr
-To: llvm@lists.linux.dev, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305061134.4105762-5-yosry.ahmed@linux.dev>
 
-Similar to the other ones, different size. The "JV-DTR" suffix is in
-the datasheet, I haven't seen mentions of a different one.
+On (25/03/05 06:11), Yosry Ahmed wrote:
+> zs_map_object() and zs_unmap_object() are no longer used, remove them.
+> Since these are the only users of per-CPU mapping_areas, remove them and
+> the associated CPU hotplug callbacks too.
+> 
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-The datasheet indicates DUAL and QUAD are supported.
-
-https://www.winbond.com/resource-files/W25Q512JV%20DTR%20RevD%2006292020%20133.pdf
-
-Signed-off-by: Kang.Kerry <kang.kerry@inventec.corp-partner.google.com>
----
-
-This modification is add BIOS W25Q512JV-DTR chip to winbond list
-
----
- drivers/mtd/spi-nor/winbond.c | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/drivers/mtd/spi-nor/winbond.c b/drivers/mtd/spi-nor/winbond.c
-index 8d0a00d69e12..6ce5f70bc11a 100644
---- a/drivers/mtd/spi-nor/winbond.c
-+++ b/drivers/mtd/spi-nor/winbond.c
-@@ -146,6 +146,11 @@ static const struct flash_info winbond_nor_parts[] = {
-  .name = "w25q512jvq",
-  .size = SZ_64M,
-  .no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-+ }, {
-+ .id = SNOR_ID(0xef, 0x70, 0x20),
-+ .name = "w25q512jvdtr",
-+ .szie = SZ_64M,
-+ .no_sfdp_flags = SECT_4K | SPI_NOR_DUAL_READ | SPI_NOR_QUAD_READ,
-  }, {
-  .id = SNOR_ID(0xef, 0x50, 0x12),
-  .name = "w25q20bw",
---
-2.43.0
+Acked-by: Sergey Senozhatsky <senozhatsky@chromium.org>
 
