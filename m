@@ -1,143 +1,173 @@
-Return-Path: <linux-kernel+bounces-546074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 196D5A4F602
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:17:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BD0CA4F606
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:19:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FA8716F2ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD19616D713
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:19:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A2F1B4248;
-	Wed,  5 Mar 2025 04:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B5151B4248;
+	Wed,  5 Mar 2025 04:19:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PaArDxeJ"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="5aUQaIm2"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2073.outbound.protection.outlook.com [40.107.236.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947433FBA7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:17:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741148239; cv=none; b=LK9hSPnVmXjhoUPVF46960A675Cb+waOCSRe57ajifLfjz/To/xWPVAdKIETdXPGlTYLeLuwR2xxDVBOl6/jR1ZOGI249+OqjMGDIE7jFXzJpWPByZcU4FIY9n9fvT4G+eg+OKzrM1HhhG+wpRxuR1BnLDzNLji0l78/klNYWWo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741148239; c=relaxed/simple;
-	bh=HwBqRobMEjc1RHDutE1Wec8IsX+1zzZJtF0f3kRjfZ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZQa8hWxCj103SOGfsvMGXcMqziwaFRbvevm3bucobwngplPHN9+OkO/fqHP61ZybqsVS74rFAlnsMqZoqf3Otx6Jmz4ydkNOAdOEn2rkeMYSmCqrJVvBEJzDzFrSPEseunFTL/yV2j9udNL7bhPwf0du4aBbhIBni3iMSfzf9DY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PaArDxeJ; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-474bc1aaf5fso87035961cf.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 20:17:17 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741148236; x=1741753036; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XcHAlTO4gyMhCqU3G5F6EtU5yvv2W4gq8broR/6eQhA=;
-        b=PaArDxeJGiGw8KgQgWhIGz6Vw8JFggpR69SIRf6a0wKU+au3ITv4AAPWPLb2/zpT90
-         2Tkg+9xmgIeNZZFcXsvd/HK4324DQtZgrgpFu++7TmFaVUx1ZbndP25InQJhTAn3cl0y
-         brBZOw83YLaDadsD25X9FO2k19int4Z0Kan2/p8D9xRmh2eqAs4zDOUS1hZgAslEkyzm
-         jJ6h2N9aWF0kIQ22RoWuKzurtKfEwVLodNHghDM9VXPAP/aPzcZOtnnMhAkH0PCazwsT
-         74K8jwh9RqmuLIgCHhCO66krZE6B1F2T+fUxBd4gK+xS78fx52/Pk8ovZeIbrqzgCUTM
-         hpaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741148236; x=1741753036;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XcHAlTO4gyMhCqU3G5F6EtU5yvv2W4gq8broR/6eQhA=;
-        b=Yii2U7EvpPB76ZxrgEPjfr9rz1GHpN+makjmwGZgvy4wsZKsY8OjTYOFbr+8GBSxKl
-         3Kdio0nuwvI52vlClLC12YTPBRVCMcVrI/CTwba4U8cgudXnwOntZqVowuES7WkThLAL
-         hPpFgpoD5aF7vCED2gZB40q2Cb1GGae/T+DUZd9+NMx2DahZYZ2i/xUn7Mc08w+Ga4D2
-         9vzj8cyP4erx9I/Gjc71efu16QQ8fZNeDNe9g2ig7CjmjKh4CRY76FBj5eDq4i6Jru4T
-         dfDWvSpWTiZlNzV15Xy1o+p1Xp/oLh2hjiQutqLOyjGDPxB1LlUwXl2EFE7VX2rkp7Ln
-         Nc8w==
-X-Forwarded-Encrypted: i=1; AJvYcCU96d70Df+cZRk7BcW6vRrgJfNTgb5QOyan8/D7GQztYvNWFXqO+hyJCrGm+cuYBkPlSbeTR3BoKxaN69w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHclZR5qUneDGJoWYyZoXByU82TmuDTB6o60In3bJOsKvRxPm+
-	lXruJZlP5Ogfj0+duPS8+D7yEEJ3ioztP45AjNDe+J2kXAMLpszINr2XzhJ0WOZsL9L2/38fWgq
-	njYfBfvCqPEtWJgwvmH1LBJUMRALEW7SnPakL
-X-Gm-Gg: ASbGncvlLmN18lHCn3YRSvhi+zzDddzHl2jQ4nAfkl14r4qQjlWkPBPSaiEG3mLODrR
-	qZ7oMpimZ85A05vMnQm20C9rDD7o/qDv0UcfbYAYcv8Z8Nm2AA60MGH8wvE+SZZOCsCiJ8CdV8K
-	cOMOZTzsbwY+qc6YdqBEeL0F1EzrzV6ipLnbgVANf0oLRTBjXCiBCZBclj
-X-Google-Smtp-Source: AGHT+IFJNFqHI05Gy+INURBdfismHLlToIOAN2sGK8FQGemkQqgtUPkgQBuqxpFP5bBRssTUaN9X8dG7bt2dplInltQ=
-X-Received: by 2002:ac8:5d8d:0:b0:473:8a27:5b70 with SMTP id
- d75a77b69052e-4750b442ffbmr24970761cf.19.1741148236174; Tue, 04 Mar 2025
- 20:17:16 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E637B19258E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:19:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741148380; cv=fail; b=DspPQMLc5/PeNBbJ6rzIKAiIZowI3HO7ImHvK47azjK9VqIdvHBBMkjPVzOQ39wi6aS27//tXwkV/zrXv1E81jyDOh0UCm/R9C/2OmSCepVNHyTDq/GfB6UwmA5MBso15ky6fkewPDa2YB4ImDWr4PNJXW/RrvbQl0ebv6K1CoE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741148380; c=relaxed/simple;
+	bh=g/wgbW6K21H5sWxCn4vnwySsFZ4Uu5ei6I8LVda3QVc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=t59K9iOmtFOFhQVAMApWRMf3hnO/FKcSg3HghJYStAe8AIUqc+B38MQqO8kc0ke5I0NVw4BdcLbiASF9phoJ2zxwqxdbVouUWAfLl3Mt4L8oOHZ4oW2rZLCtky2TsXgX/rFGmvuoy2zdbOqK/XW/85x2ShI8I1qzAA58vXMP6Bo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=5aUQaIm2; arc=fail smtp.client-ip=40.107.236.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P5z5oijxBiE3BFRBLezjkL1t1UrkKatWnbKr8dohnksa8pmYJ62+s57dYesiSku7sBO4Ux/iM7wUV91zBJZK4iU6daigcZ4NT44GltDELB5MYPCxIEL8iSCSd+pxsM5dtx1dZTGE1yw9MzlNTUV23reuJObKk30pvt0ygEsuytuSkpVn5BBMS0keZtszqfr8VW/Ysx7diVTjDMH328oPK+Wpdkrn4TCRnEhPV7oKbW5D4My8qddvJ/p1/qphO44QKp8p3MBFPhttb63M8mWLXIac8ivfrnCaPyA1pt8orxpyQ3zY8/0bVSLEgE7/NgpqzMLcc+ZEcEMbhGJEPs2JMA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=TVMM09LKf+OCIFADXGkiHcNwrx9DEMTZFTVBp63OdwA=;
+ b=TTDX7n/IynZTAiEeGEjAP6qMLoKf6XZsf7siTaopVuatw2EYEDtHug8NkIZqhlz/fb/QJqFxUAUrGEjOcXNQlTVTdTR7bzXGAKDU+cr/hKrsKKa8xJvMGgkIdghLoFmaHXpaP3c5TxoKzNnpOBMLqhpBk2zVfq9rFXrJjbMCIJCrkixWaUmHL5SJgwXByD4KKuut5buarv4YhXWpZVFv8uX8jJv1ENFNQHd+GmIibyNnWqjsdyRqbyE60zgYEHtW5VWXHH081OKibT582CYGEreFJyoWm3YqZkOdI/kOwXf53gg46CoVALkegdpxlRfIIhopqIxAxk8HOR/SGIS3rQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=goodmis.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=TVMM09LKf+OCIFADXGkiHcNwrx9DEMTZFTVBp63OdwA=;
+ b=5aUQaIm2xE29lkxBlHDUZyxUzWG5RCi+ycB0rq3SP4/9z6rH/sbScA0iVVgpWm0sbbiw9twq8OaR9RuF2hSBn8Ly1QKJFxndgCh3bV9PMC8MhscicgIKdC0lKvOYrRYp9C88CbyVfcDUvQWQOqe4vmyWPyjTVuikbdlfu7dlYUU=
+Received: from MN2PR06CA0009.namprd06.prod.outlook.com (2603:10b6:208:23d::14)
+ by PH7PR12MB6665.namprd12.prod.outlook.com (2603:10b6:510:1a7::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
+ 2025 04:19:35 +0000
+Received: from BN1PEPF00004682.namprd03.prod.outlook.com
+ (2603:10b6:208:23d:cafe::4) by MN2PR06CA0009.outlook.office365.com
+ (2603:10b6:208:23d::14) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.18 via Frontend Transport; Wed,
+ 5 Mar 2025 04:19:35 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN1PEPF00004682.mail.protection.outlook.com (10.167.243.88) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Wed, 5 Mar 2025 04:19:34 +0000
+Received: from dellg853host.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 4 Mar
+ 2025 22:19:33 -0600
+From: Ayush Jain <Ayush.jain3@amd.com>
+To: <rostedt@goodmis.org>, <warthog9@eaglescrag.net>
+CC: <linux-kernel@vger.kernel.org>, <srikanth.aithal@amd.com>,
+	<kalpana.shetty@amd.com>, Ayush Jain <Ayush.jain3@amd.com>
+Subject: [PATCH v2] ktest: Fix Test Failures Due to Missing LOG_FILE Directories
+Date: Wed, 5 Mar 2025 04:19:13 +0000
+Message-ID: <20250305041913.1720599-1-Ayush.jain3@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250221053927.486476-1-suleiman@google.com> <20250221053927.486476-3-suleiman@google.com>
- <Z8NCGFcH9H14VOV-@char.us.oracle.com>
-In-Reply-To: <Z8NCGFcH9H14VOV-@char.us.oracle.com>
-From: Suleiman Souhlal <suleiman@google.com>
-Date: Wed, 5 Mar 2025 13:17:04 +0900
-X-Gm-Features: AQ5f1JoH4jwPGSW282LkcEOTlJZEQawNQoZu1dnFNF46VUE5HwqLizIhVtKljd8
-Message-ID: <CABCjUKCU_3q_VfzergdmRK4Tc2BxUcmCotf+E8MpWX6o+g0CTA@mail.gmail.com>
-Subject: Re: [PATCH v4 2/2] KVM: x86: Include host suspended time in steal time
-To: Konrad Rzeszutek Wilk <konrad.wilk@oracle.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson <seanjc@google.com>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Chao Gao <chao.gao@intel.com>, 
-	David Woodhouse <dwmw2@infradead.org>, Sergey Senozhatsky <senozhatsky@chromium.org>, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, ssouhlal@freebsd.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN1PEPF00004682:EE_|PH7PR12MB6665:EE_
+X-MS-Office365-Filtering-Correlation-Id: 50a03494-153b-41f8-8e03-08dd5b9cef9b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|82310400026|36860700013|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3dVfgko/D2Ljs5msJT6urVQtEu9reFoTvx0NBNe1gisfkdDAlcoIXYnXA8lR?=
+ =?us-ascii?Q?7z7PA/uCigZhwlzTDyvqX9OvYp1aAZm04r0g0Ral1mCtAttWeX73I0NNS9oK?=
+ =?us-ascii?Q?QjbrAIhE5pJBy/bLPUbt+aFlCgYkDzivmyzfi7SYMBHY91jxP7uQ4RfaLFP9?=
+ =?us-ascii?Q?4GCWKISoQPeFaLuV/jfKhbdg1er+pLnFyqOW7lpo9t73A1mRuyOhbb6NvKpX?=
+ =?us-ascii?Q?+iPC+t+AxwHrPcK/sKzEtAGN1YEH7gHtgrqs+YtU/vKRMiE5i8C68EEUDWnf?=
+ =?us-ascii?Q?UQRjMuTKC0w1tuyx6TZC1QvlEwMmG9SbSLt/HYzqe+prmKIzFKI5R1HyDkFh?=
+ =?us-ascii?Q?vkxTgkdqFBq0MK2zPjFr27rFieUEMchsrQJqog5aLl6hQ83/QiKxNOSg+Cvz?=
+ =?us-ascii?Q?CfifleyzjonULEfD3/P5iYARHOCa3TkpvjyAE5pCbzM7K2o6nnpoc59F0JSA?=
+ =?us-ascii?Q?Ng0PCS5TZjF3TwbYS19adlHZmsjeitYvI9JzXhzIWFsFzuvUqVmLEQvbedDu?=
+ =?us-ascii?Q?n2NsH85X+6K3p6PBxs8fial1fTdyg3EWn+QG/pmDIwJQsZbJPG/kzGaJDOUq?=
+ =?us-ascii?Q?X02T2TyYpLlXNThp+A25OxtgWJohNxPmxRc3nOywoTpAFt/2w5fs83A/Gtln?=
+ =?us-ascii?Q?7aWShjkRUbWaYUQvCMnPIBQIAHwJ90QtdD/vfjRfgH3/zW5DN92Y5BQHNcB4?=
+ =?us-ascii?Q?3PS+SpZmH0TgVUCtLCahrKDWKdBz2jOtPDihYYueF+ad3ak5VS/KXJfbIWgt?=
+ =?us-ascii?Q?/DWG6Ioyr/ao73UgdHG7qaWvJGrZQbu1RUhMCqqcqxoGegTLiCaqaKD4z/78?=
+ =?us-ascii?Q?njNN/b7jVdaBz8tuJ22c2625URm76drX7EuDxo4PwPLLb6zshA53NLMDJ+Re?=
+ =?us-ascii?Q?6VGcJCpC8ir15jEtJ5r2TD7vfWyj6aHSeqsBtqKPA4dWzLN073vmd6jVC6nK?=
+ =?us-ascii?Q?S4fFopjQLEWnWIWj/F+2EMoBster0LSBwTTzbJkjYuoMuuP4AHGBAqiPSITm?=
+ =?us-ascii?Q?fMcCcdzTG6SKqcDYeEUZXKBOa5qTEYUourvkhFgQZeB6NT24ADE9Tuh3LUqE?=
+ =?us-ascii?Q?qHZ9qA7o81CgrbUgoE6AudSg3V1Wp53ERdpggn377l4R9Q2RuKS5pqMnFvze?=
+ =?us-ascii?Q?BgsHXEagut0Vceb03qCXp64F8HpIUaszdZGcsMk5JbuAhFTrXcEznFAClPV1?=
+ =?us-ascii?Q?NQFcdTNmkC6lyj3Z3GCg5OOj+LUgm0pUrYJAzEIyuwsxRMPo7LJ1rKPx6di9?=
+ =?us-ascii?Q?53qsB8MDZMKWy9HYqbYHbFK4m5lTPRSt4uaTqfjA2CoyDnWIU4HqYi3IlWQk?=
+ =?us-ascii?Q?x2eH/3ONwXunJbPyAcHNPid7+TN7rd/C6edw0/NGcR7G1yEqdN8fdaIAy1be?=
+ =?us-ascii?Q?la59A47sjOl00dvC8O65akfknCuJkYD6thfu0t1v8Zit5W69tns5By6GLI7c?=
+ =?us-ascii?Q?aFe9LQ4mGMudmOywlJyxOaHFh2hQtB2gHaqP0GYWMymXKWDvGwlnQo7uDlSy?=
+ =?us-ascii?Q?zNN89rZcW50kP6o=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(1800799024)(82310400026)(36860700013)(376014);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 04:19:34.8984
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50a03494-153b-41f8-8e03-08dd5b9cef9b
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN1PEPF00004682.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6665
 
-On Sun, Mar 2, 2025 at 2:22=E2=80=AFAM Konrad Rzeszutek Wilk
-<konrad.wilk@oracle.com> wrote:
->
-> On Fri, Feb 21, 2025 at 02:39:27PM +0900, Suleiman Souhlal wrote:
-> > When the host resumes from a suspend, the guest thinks any task
-> > that was running during the suspend ran for a long time, even though
-> > the effective run time was much shorter, which can end up having
-> > negative effects with scheduling.
-> >
-> > To mitigate this issue, the time that the host was suspended is include=
-d
-> > in steal time, which lets the guest can subtract the duration from the
->
-> s/can//
-> > tasks' runtime.
-> >
-> > In order to implement this behavior, once the suspend notifier fires,
-> > vCPUs trying to run block until the resume notifier finishes. This is
->
-> s/run/run will/
-> > because the freezing of userspace tasks happens between these two point=
-s,
-> Full stop at the end of that                                             =
- ^
-> > which means that vCPUs could otherwise run and get their suspend steal
-> > time misaccounted, particularly if a vCPU would run after resume before
-> > the resume notifier.
->
-> s/notifier/notifier fires/
->
-> > Incidentally, doing this also addresses a potential race with the
-> > suspend notifier setting PVCLOCK_GUEST_STOPPED, which could then get
-> > cleared before the suspend actually happened.
-> >
-> > One potential caveat is that in the case of a suspend happening during
-> > a VM migration, the suspend time might not be accounted.
->
-> s/accounted/accounted for./
-> > A workaround would be for the VMM to ensure that the guest is entered
-> > with KVM_RUN after resuming from suspend.
->
-> So ..does that mean there is a QEMU patch as well?
+Handle missing parent directories for LOG_FILE path to prevent test
+failures. If the parent directories don't exist, create them to ensure
+the tests proceed successfully.
 
-No, I am not planning on making a QEMU patch.
-A QEMU patch would only be needed if you cared about the caveat mentioned t=
-here.
+Signed-off-by: Ayush Jain <Ayush.jain3@amd.com>
+---
+v1..v2:
+ https://lore.kernel.org/all/20250128051427.405808-1-Ayush.jain3@amd.com/
+ - Update logic to check for LOG_FILE existence (steven)
+---
+ tools/testing/ktest/ktest.pl | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-Thanks,
--- Suleiman
+diff --git a/tools/testing/ktest/ktest.pl b/tools/testing/ktest/ktest.pl
+index 8c8da966c641..13b97e6b8459 100755
+--- a/tools/testing/ktest/ktest.pl
++++ b/tools/testing/ktest/ktest.pl
+@@ -4303,6 +4303,14 @@ if (defined($opt{"LOG_FILE"})) {
+     if ($opt{"CLEAR_LOG"}) {
+ 	unlink $opt{"LOG_FILE"};
+     }
++
++	if (! -e $opt{"LOG_FILE"} && $opt{"LOG_FILE"} =~ m,^(.*/),) {
++	my $dir = $1;
++	if (! -d $dir) {
++	mkpath($dir) or die "Failed to create directories '$dir': $!";
++	print "\nThe log directory $dir did not exist, so it was created.\n";
++	}
++	}
+     open(LOG, ">> $opt{LOG_FILE}") or die "Can't write to $opt{LOG_FILE}";
+     LOG->autoflush(1);
+ }
+-- 
+2.34.1
+
 
