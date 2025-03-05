@@ -1,110 +1,117 @@
-Return-Path: <linux-kernel+bounces-547927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70C31A53DDE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:03:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C474A53DE5
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:04:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 179A87A83A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:02:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7535E18905A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:04:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3DDB209F25;
-	Wed,  5 Mar 2025 23:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF6420ADD5;
+	Wed,  5 Mar 2025 23:02:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kfgq05JF"
-Received: from mail-pl1-f174.google.com (mail-pl1-f174.google.com [209.85.214.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGQFbKaH"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF2732080EA;
-	Wed,  5 Mar 2025 23:02:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB7420A5D3;
+	Wed,  5 Mar 2025 23:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741215730; cv=none; b=VCMO1ArZr9m1x8m2yKnnhcXRWcAjC++6hXrepmnu4IWDydIOlhePQyh9TNgKhLYdSpscpyNQd+AYh0iknT9fUeSyccx6l+bEqwA+oDDrZDzOHaMkt3CxCDW0y5fI37lx3jpG189vGbfYO1RiST+3Ps0o+zMP/m4K/AbhML4WrTg=
+	t=1741215743; cv=none; b=fCz9CdQjdYD/3l/I5tVu9Qzn2D8e3SnlK3sBCqIykXQ6wl2ks/qt8+ARstV0kL9w7iEGGmquijxkJttLnNNvunMrelobIZOI6Vfc6RG7ZGS9XVj9WAamTRJpnxAi6B7hQzAh4SqcmM+9HG56PVUA03Ikahm+zZro6mcLE55qxks=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741215730; c=relaxed/simple;
-	bh=rgcs8jkGVo3NHV3xZ6/0r5NLYIo7kc98WvHTCah+c3I=;
+	s=arc-20240116; t=1741215743; c=relaxed/simple;
+	bh=CrS8Z2lH5l661WpjSYOQYpm59vMadX9D3uzoIiDzEQ8=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SA15+7j919FkN44IKHeAk6Do+or5YR3FeQBhXvAZZSD5KVRZWM5UzHF+C061igRFmu4Ynj10POd7Vb6pplpkTN7mRNkL61PZmeftHwhvRPfGOXVNgYvWpwueLbtQWQ6YOo+gcqF1KoPDroVnAaH5+4Rf174E3ZQim7iX/8pRVK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kfgq05JF; arc=none smtp.client-ip=209.85.214.174
+	 To:Cc:Content-Type; b=EaA4nCocdKMgm9y+zTPgmn7KszCXeICFJ7oNWttq14jxtkyxAMyGUj/jFE3Q3nj62sFqXmlMr6KDlgm52VH6t3F7f3bqriE3PKPgEUBek2IVYvILFYnV3NlaDyusxl6j2a9w+ddScMOsP/pn/8/vAsRd9xqa2GToOW2M7/kHFD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGQFbKaH; arc=none smtp.client-ip=209.85.216.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f174.google.com with SMTP id d9443c01a7336-223fd44daf8so2415245ad.2;
-        Wed, 05 Mar 2025 15:02:08 -0800 (PST)
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so23084a91.1;
+        Wed, 05 Mar 2025 15:02:20 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741215728; x=1741820528; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741215740; x=1741820540; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=rgcs8jkGVo3NHV3xZ6/0r5NLYIo7kc98WvHTCah+c3I=;
-        b=kfgq05JFNUCR3g6AaysFXceVjCN6gFpN7jTKFqn9eBGPCEkEyTjIrOV5uI++aQ9Z/z
-         EO0mFHyA8r5S7iV4d9C0iHQB8CxEqEfX4ty6kkrfri9Q1VtVw0ohg6Fc3SltdBLXo1NU
-         j8sJc8A021m6j02JisuNQrq/xUtOT7oXghivWHk8lLPcDy/edJv7o/j6CklhTo7wCaRM
-         B5mI4KuxRe/Hq6MbtSBQQonIlEQekUolvfGt5Vs/6njApProPM283Xmoh7Ti39sEfxv3
-         fxCBh/gdYijhJeI4piV7spR9MuP/k8IdAnmbSZPsOBcBm0E0OVK8bAY/o8ri7K/XEryY
-         E7XA==
+        bh=DU0JYgz8loA5MWXHcsC5YAnENw3ohHfJ8gchwQ4NDqk=;
+        b=MGQFbKaHKVnMQ+iTFVWlPy+IhJBiFAyklnxyzzT0LL0aI0pPizaqvtn0jV0bq0Qp2j
+         QQYdIMbK+5NjeYZrg67wW4Y5uEjaOBowzCJc3+4/9TcL8t1nqQ9N6oSnixRfcBTLei5n
+         SMftv4cOxGtNCuTJTjryQh8HFg/nwoWk9JwS6gSMpoYEXYdeLSyUYS15+U8ZAvy95ECa
+         oiPeM11zXP8Ur+htp0wiG/hYUAopqoR0jGXErm8vQzWUaWpF+Htcek6UB6iHwm4Nn45B
+         1CXEEgxqgEI26439hDlVOZGP7pxDMhvDcBcyuSkNqxSRFjY8yqb/AaYx23MJKPOtofwH
+         meXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741215728; x=1741820528;
+        d=1e100.net; s=20230601; t=1741215740; x=1741820540;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=rgcs8jkGVo3NHV3xZ6/0r5NLYIo7kc98WvHTCah+c3I=;
-        b=wlaLkmM+NfsmSUchPlJJ1nPbL98LQQC43kpbzW58D+/YHhAbWOIAvjOHpR9AxmUsG0
-         m9np8+GgeF91OjmK4sWSG+tg/J3rHXnX7XGVr+MGF5nX/BIIMrBZ2OCukYJcMVIuXifv
-         4WudMxlDUNTCouSucM0PzvpSFAEEQvVQFqDrQjPNTo4VdFfUmWHCiVYMVbst3gBBfqip
-         DQVvI8ABEpi82nqLSjkZkzF4cXAcqlyJUDtztIz1rl3w0idQZsprNvcfdEUvj56lr1PA
-         6UVifOZCWdfg3TDiz/k97TTUzEDlgvzu4CqFH6a4Oq2OtCI/1P0rcNqc4/4/EoWnfyND
-         mawQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWjLScoW/F0NKZC4GvNAwjvfJ8VBxVIBkpFBBRhOwF9zXvsBtqxUWTp138FsRyvXLBlgfuYi0c@vger.kernel.org, AJvYcCX8oUsfvCmmQR1koL80TbNsiNu2aIw6Cg/wYErKjc3JWl9ICWUANMXjIxkeTrIgmB5pWLt/SPM/6Ac9ZU9fjuw=@vger.kernel.org, AJvYcCXHcpuoVfaOXXrXCno+v3htsex53ajW/UgEyzYqcIkvT8ed4oiIFy3eQIIe1MYInbQ8Pg3Jk+yK/USjJBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmy7SCjcylnWX+7j4qffi+6nnLRfXWlWMo649Ddcm3wqGIviXE
-	96zAmTzcZEjStm0cQ+mzNg5PeqW2MbP6gSPYYna8eCZeufWeucq3o2ZS3EpK58kI+ulB/5k197F
-	ZOC86VzxVZvBcumT4ijfwio4w7j0=
-X-Gm-Gg: ASbGncv6TVaAmeQSMh1gzuUvpBWSjTukK1rOvIRAFD/7oVoX6ndyXsCZK2MkDyzd75/
-	mq0St3k9vjgtB4kSQN7BpMfB9E2J05OXX8QeFrvDFS/2Ub9AMzqy20F/dwVNRpjFv7VL4sG20CD
-	AVUi6wAVepio0jxY/ULbQWLqFtZw==
-X-Google-Smtp-Source: AGHT+IEOHQytaLDZQAvKtNTBltPyvqtYSsB5GrP/DGnmAkK70fPpVPLtg/WQaJM4nJWg6uLzp9GDjBc7m87M++pdEDE=
-X-Received: by 2002:a17:902:ea08:b0:216:30f9:93db with SMTP id
- d9443c01a7336-223f1b87ad3mr29085005ad.0.1741215728049; Wed, 05 Mar 2025
- 15:02:08 -0800 (PST)
+        bh=DU0JYgz8loA5MWXHcsC5YAnENw3ohHfJ8gchwQ4NDqk=;
+        b=YIg42L/zi2mvYBRkiDflv3dHvdFBD9Y5vX3/I2KwO71KADBxdvLLbUBj4gjJro9T2S
+         Wr9cmTN6KKAoV2Mko/BgXiV2/hbGB8tjAAmONmQ/nYf9gitUkdJbL/yOxGTEUrc9b2Fl
+         vBQasu/MmhfkTyBmINaJCUgmbS8fuFQCIe8Bcwwbw9hlyC6TzP6ug5JQj+pSVz9+WZZd
+         YhQYMtgE52zCpEv7UBPFeow2trp8uswh5EGqA5htQx5wgyL2l4vMLY0vApCS6tle4uec
+         Cms3UWGx9vTAHbpCLe0dVVtbnl/wJr2z3F1jzioozVsth7rIAfu+lkl/xQCw/c0TgSzN
+         lTBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUl2lCp8Pe/qDakHbWTsj23EucF4BxOGV91lS4NmDsNupd33VFZLhGIuI9/gwjVsTIiMXuoQVG4P1JvhKE=@vger.kernel.org, AJvYcCWRB1PWwU9GQX2SX6NlY4N6uvr3ilL0aYdVevK1FkFT/SudR7FipR/dmjKfMMJl6IzgwNt1kxsDsIRpQt1MD4w=@vger.kernel.org, AJvYcCXosqGfV5Fim60CmAKQKLobys03foAW1J3GxQ1qptZRqTfAbGa9PxP7cxPK557MFgQPrRGZnOQqJ0nJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPUTUbiNTkUQakLoeJC5XQYW+RgsDjbqY2BYJ6Q3pnrzCkP86N
+	8m4Tpp9EpWSmTDlcjZYmz8+Y+MlvRdNQcCgpu+EG8VfSUxjA+frwOx87mdXOL0FfFgyb0k5pf3R
+	w/s7pPbNdoGa9x1iMc3N1g+0Id4o=
+X-Gm-Gg: ASbGncuoSOd8WucLxixcwFa0YfSRFCe4j5n/Z4Pme0WwFQCL6EQQjNcQhmEiVR+lMOs
+	/6SHL3olse6F6lyP1pAdYcru5Ww64dsc9hgF1PuZUlRrQwd1hyOzkfCpKDOLPadXqNczMhzX4ez
+	Kybol7jjoCwhIktGGe4BvFTFucpA==
+X-Google-Smtp-Source: AGHT+IFVBDqZbEwRQ9Ywp34UPpcuUXspouep8Y78Gvm7RN1qbm3xmglctYZE8Nva4ApJBxvQskOIEVu0LMqHKJWkOXI=
+X-Received: by 2002:a17:90b:4b4e:b0:2fc:25b3:6a91 with SMTP id
+ 98e67ed59e1d1-2ff497c18e3mr3223253a91.5.1741215739863; Wed, 05 Mar 2025
+ 15:02:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303171030.1081134-1-ojeda@kernel.org>
-In-Reply-To: <20250303171030.1081134-1-ojeda@kernel.org>
+References: <20250213-aligned-alloc-v7-1-d2a2d0be164b@gmail.com>
+In-Reply-To: <20250213-aligned-alloc-v7-1-d2a2d0be164b@gmail.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Mar 2025 00:01:55 +0100
-X-Gm-Features: AQ5f1Jr0OQTle1lIKSehc5uqZjrZL6QS1aOiHJlFeVVcIb6JdJy8vamJVkQrFE4
-Message-ID: <CANiq72n8_rJq5SzRV69JutFmbbJak=pb_ZekSgsLtL1evqy8Qw@mail.gmail.com>
-Subject: Re: [PATCH] rust: remove leftover mentions of the `alloc` crate
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+Date: Thu, 6 Mar 2025 00:02:05 +0100
+X-Gm-Features: AQ5f1JrS4W1LclZjnsUx9LBTl9i9YRM8HAgFLPtAtQHt9lipfjoQYxpBRnKjLf8
+Message-ID: <CANiq72=FhaZrgMTBSTXOQvg8jrAR+pbdUjt2gL2npjBh8881jw@mail.gmail.com>
+Subject: Re: [PATCH v7] rust: alloc: satisfy POSIX alignment requirement
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>, 
+	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
 	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
 	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev, stable@vger.kernel.org
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
+	linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 3, 2025 at 6:10=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
+On Thu, Feb 13, 2025 at 12:34=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
+> wrote:
 >
-> In commit 392e34b6bc22 ("kbuild: rust: remove the `alloc` crate and
-> `GlobalAlloc`") we stopped using the upstream `alloc` crate.
+> ISO C's `aligned_alloc` is partially implementation-defined; on some
+> systems it inherits stricter requirements from POSIX's `posix_memalign`.
 >
-> Thus remove a few leftover mentions treewide.
+> This causes the call added in commit dd09538fb409 ("rust: alloc:
+> implement `Cmalloc` in module allocator_test") to fail on macOS because
+> it doesn't meet the requirements of `posix_memalign`.
 >
-> Cc: stable@vger.kernel.org # Also to 6.12.y after the `alloc` backport la=
-nds
-> Fixes: 392e34b6bc22 ("kbuild: rust: remove the `alloc` crate and `GlobalA=
-lloc`")
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+> Adjust the call to meet the POSIX requirement and add a comment. This
+> fixes failures in `make rusttest` on macOS.
+>
+> Acked-by: Danilo Krummrich <dakr@kernel.org>
+> Fixes: dd09538fb409 ("rust: alloc: implement `Cmalloc` in module allocato=
+r_test")
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
 
 Applied to `rust-fixes` -- thanks everyone!
+
+    [ Added Cc: stable. - Miguel ]
 
 Cheers,
 Miguel
