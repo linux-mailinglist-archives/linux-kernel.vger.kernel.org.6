@@ -1,262 +1,171 @@
-Return-Path: <linux-kernel+bounces-546129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546154-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C671AA4F6B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:52:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 296E2A4F708
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:22:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47CEA7A37C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:51:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B182188D29F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:23:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C97CB1C8621;
-	Wed,  5 Mar 2025 05:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4511DB92A;
+	Wed,  5 Mar 2025 06:22:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="m8fmIL9G";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="pjTat7dP"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="qiS/7FTr"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52B7843AB7
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 05:52:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741153965; cv=fail; b=cJUpdoNkmthqxbsBgcPDBxlfeDQDcZm6Yk2FC7R2/9+CI2BwY8j25vNcBc4pUGEcIRU5blQcQGFfehiN8aQqMZ07dWsOL6d0RpF3534N/lwyCBPeljZEK01xpGERCimKqofy/fF/9+dytS3ndKnqkPOmonDoKoAkCtZdvWfQ9cA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741153965; c=relaxed/simple;
-	bh=fS7BjWopT+1d8SuuFUyYOZwdyQ+vBiWZyo3iIYxwdSo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=bm2gBJHQRuyu6uu3tjEZ811e1ghoxWRCTpbjqnshIxO8FGKE1KxIwYvUVmA+uM18lWHPObhvZyga3t+hA2wvxHDS75K3hIqGIzsrv4EFEEF8mno+RHJ6+rYnx/ZvczppTw3zWWo0a5/r53aoFhe3DecnStKXRVE4S8uaGEgz/+A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=m8fmIL9G; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=pjTat7dP; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5255Mghp004421;
-	Wed, 5 Mar 2025 05:52:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=HIJfNs6TRgDpfFz970
-	86QaL/zRjq0mezMZG3RT8yB3s=; b=m8fmIL9GwQYY5/qNXyRXTMRCoGtMa6LmTb
-	5sgg4CuWfO3M+GLj3orxh2GRKHHJwqhdI8nlgFqJ0fqFJ9RmsNzBiWMtV3qEtcxO
-	gadaQ608JzGsHY1GMNoUe1aP5B+1yrUGrIE7H6jeIaXBhsm0uquN7jOXu9YUGuGM
-	uEM0g+RCgUDnjzG0bu23lEV3Blaqa2vlNc0CWsKLeWtbNDpHFHHjyV4kv+FzZl/c
-	3eXmMyKC/Af4BPciyvM2LZxevPD+oq51mhhaY2StTq8UnuHso7qzB/RVvbFxNwV8
-	6jECQhMN4K29neS+yjmM4ghwIziP/QRXncTJZiEfPVi6JuurDxfA==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 453ub76rsd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Mar 2025 05:52:31 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 52540T0A000326;
-	Wed, 5 Mar 2025 05:52:30 GMT
-Received: from nam12-mw2-obe.outbound.protection.outlook.com (mail-mw2nam12lp2044.outbound.protection.outlook.com [104.47.66.44])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 453rpamt48-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 05 Mar 2025 05:52:30 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Aaq0zcXTJuRQiB9XbXSAivOAFoXyVz68hsmOwsxsv25WQlfDvPIs5VxAq8kJg9YqyMnHScgdpAZzEibTHPeKTGGuKb8brXORByjd3puPX98MeNIpOy4g9Lsb2tw1yd2tu3SlbqtEMkW1sB/LYc1Fh2DvpRS1bnz7YKf8crOdPzH2aXBNdc9zE5p6CFCWHtNcQh7PJVJbVzB+GJSmT02cRp4rKNYaGe5X3v3UCgER8IqLwhxCvWTKuwtaohW+3anoJ8HYK+s9+vbCzGVWFqykh/oYuSDMqz5li8AlFlsxKZYfYJ99Ca+X7PhhFKWTMt9B/tYY7NqUsyW3+9x8eHl49A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HIJfNs6TRgDpfFz97086QaL/zRjq0mezMZG3RT8yB3s=;
- b=biKU5ZKxiI7NusrxW8BVTPmWqWsTXym68FnPGiaWWoIT7lgxQYQ05sRjD7Crk+r+kD/sKw3h1Yak3pWCq6MC7+j2Qn0NePHEzUxKsspnJU+JusShsTkJwjljoWtnSYSIbYA4IA9W2MJfXRiOtaDCP2eX4tghKdBJp37bBXIh6l1iZSyIAZzwdhx1S6vMEcMNQ8/paiHStqkNLcGr0VI99EjYMzO/9MVpHWD/gIXJpA6uKy8Bz7Q/7mdFDh9ckDRTXks1BY8zJC+ZDW7dG+NYaWJAsoQhrBbQGbnvTKyfNiRzVDqItL8AOKS9yCyluZTKxDdo/dlvhzlifwAEtgcYew==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HIJfNs6TRgDpfFz97086QaL/zRjq0mezMZG3RT8yB3s=;
- b=pjTat7dPvSdLVbXDUNBC+7qxtCkzcoabAQTeho9soWa2HdM2t7m3D1UWQfyujdapImieKA3qinAATQLbzIbcEKQFZ6ne2DhxXrVTNsjCM0JJcD8D2ykKSD/N7rJAG9UlM/a/Xu5SCJ8njtYPAIcw81fkrVj1uILSFqdrA2+ervU=
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com (2603:10b6:208:11e::33)
- by IA1PR10MB6073.namprd10.prod.outlook.com (2603:10b6:208:3af::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
- 2025 05:52:28 +0000
-Received: from MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c]) by MN2PR10MB4112.namprd10.prod.outlook.com
- ([fe80::3256:3c8c:73a9:5b9c%7]) with mapi id 15.20.8489.025; Wed, 5 Mar 2025
- 05:52:28 +0000
-Date: Wed, 5 Mar 2025 05:52:26 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Yosry Ahmed <yosry.ahmed@linux.dev>,
-        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 4/7] mm/mremap: initial refactor of move_vma()
-Message-ID: <6ea7dd50-6367-4c1e-878b-1d9b86ab4ff1@lucifer.local>
-References: <cover.1740911247.git.lorenzo.stoakes@oracle.com>
- <b4e64684d6ac753d5a66c0da0da5f4b94d033859.1740911247.git.lorenzo.stoakes@oracle.com>
- <Z8d0d9N26JBGwi8N@google.com>
- <20250304151556.635d9041a7ca36f1960fe664@linux-foundation.org>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304151556.635d9041a7ca36f1960fe664@linux-foundation.org>
-X-ClientProxiedBy: LO4P123CA0137.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:193::16) To MN2PR10MB4112.namprd10.prod.outlook.com
- (2603:10b6:208:11e::33)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73B5B249E5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:22:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741155762; cv=none; b=Bc+bgJMMIf9244l4gKr8SsSIpO47rtjAX+7bSskN1sse1r5nREPUl7Kpx70m2XRqhZPn8GhjIKsrFngCz72vY7lnlKtgjpx3Ze1s8dEa96E9abqzEO94MbOOiYFjmOXim8yH6ay9XrHyPTgWte/XbJIvBijynZ/EIvtKpawbtmc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741155762; c=relaxed/simple;
+	bh=fkp2fED2xqd0CyeP/UptClVayRRsiEKZwX+34pOV0vE=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=OdDV9PSW0mYUsZHhCBLrOAOoLhbLNdYJvg22mGZGuB8A7WpO//4ZxX4JppJp9H8E8mRrqw713KfITLSAXsU60TCMYBQi/HKqo274whFvpb/II3R7oiVmabM8UfBWJDh2vsdjRgSUkEsngGRr4EJGWICDwB6cVoJYMJTRut193Xo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=qiS/7FTr; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250305062237epoutp02c5e6951d7e5580657593411df14face6~p0__8o6Uh0196701967epoutp02w
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:22:37 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250305062237epoutp02c5e6951d7e5580657593411df14face6~p0__8o6Uh0196701967epoutp02w
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741155757;
+	bh=jFB5HnIgaYhpNnZcJsibD9Rcl09ZpJP5bOr4t99km5I=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=qiS/7FTrJIKC1yjbX3OZBZwUA//oTPHdBw7MK31Ul+Jfm7tMXCDArnEgz4O6LMo8h
+	 hhXuPVMmdT6owgtX8O5lkfHtiHj1rmjYLtVKn+uPVptbKF/5tBtkNwRHZo1A+H22iL
+	 1ziDpBGJ0Xj8NTOTI+GL9EDC/NfF5uCX7zK307Uw=
+Received: from epsnrtp2.localdomain (unknown [182.195.42.163]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20250305062237epcas5p213baf8f9ed2c557224b3b3076d2d0b8b~p0__a6q-_1778717787epcas5p2F;
+	Wed,  5 Mar 2025 06:22:37 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.183]) by
+	epsnrtp2.localdomain (Postfix) with ESMTP id 4Z72XW171mz4x9Q0; Wed,  5 Mar
+	2025 06:22:35 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	A9.F1.19933.BADE7C76; Wed,  5 Mar 2025 15:22:35 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250305055904epcas5p45828c732019a847a0852c26d9ef9f2db~p0qafttrE0193201932epcas5p4J;
+	Wed,  5 Mar 2025 05:59:04 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250305055904epsmtrp18f0b98d2351723846834295f7fca51dd~p0qaewnYy3097330973epsmtrp1M;
+	Wed,  5 Mar 2025 05:59:04 +0000 (GMT)
+X-AuditID: b6c32a4a-c1fda70000004ddd-6c-67c7edab7791
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	0B.84.23488.728E7C76; Wed,  5 Mar 2025 14:59:03 +0900 (KST)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250305055902epsmtip159b405f9aa331ca4ab3bfe85806ba8b9~p0qYqTzmt1782217822epsmtip1i;
+	Wed,  5 Mar 2025 05:59:01 +0000 (GMT)
+From: Aakarsh Jain <aakarsh.jain@samsung.com>
+To: linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: m.szyprowski@samsung.com, andrzej.hajda@intel.com, mchehab@kernel.org,
+	hverkuil-cisco@xs4all.nl, krzysztof.kozlowski+dt@linaro.org,
+	linux-samsung-soc@vger.kernel.org, gost.dev@samsung.com,
+	aswani.reddy@samsung.com, pankaj.dubey@samsung.com, Aakarsh Jain
+	<aakarsh.jain@samsung.com>
+Subject: [Patch v3] media: s5p-mfc: Corrected NV12M/NV21M plane-sizes
+Date: Wed,  5 Mar 2025 11:23:07 +0530
+Message-Id: <20250305055308.111300-1-aakarsh.jain@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFKsWRmVeSWpSXmKPExsWy7bCmhu7qt8fTDS5dYrV4umMmq8X9xZ9Z
+	LA5t3spucfPATiaLizPvslj0vXjIbLHp8TVWi8u75rBZ9GzYymox4/w+Jou1R+6yWyzb9IfJ
+	YtHWL+wOvB6L97xk8ti0qpPN4861PWwem5fUe/RtWcXo8XmTnMepr5/ZA9ijsm0yUhNTUosU
+	UvOS81My89JtlbyD453jTc0MDHUNLS3MlRTyEnNTbZVcfAJ03TJzgK5VUihLzCkFCgUkFhcr
+	6dvZFOWXlqQqZOQXl9gqpRak5BSYFOgVJ+YWl+al6+WlllgZGhgYmQIVJmRnLJz6kKXgPn/F
+	2QkLWBsYb/B2MXJySAiYSMw7vYWti5GLQ0hgN6PEzANHGCGcT4wSN1tWskI43xglnh1dywbT
+	8vjGIiaIxF5GiTsv7kP1f2GUaJrXCtTCwcEmoCtxdnsOSIOIQKrEq3VrwSYxCyxhklh05BkT
+	SEJYwFWi4+InsKksAqoSWw60sIDYvAJ2EjOPr2aG2CYvsXrDAWaQZgmBj+wSi19OhTrDReJ7
+	21N2CFtY4tXxLVC2lMTL/jYoO1ni8aKXUINyJNbvmcICYdtLHLgyhwXkUGYBTYn1u/QhwrIS
+	U0+tA7uNWYBPovf3EyaIOK/EjnkwtprEnDs/WCFsGYnDq5cygoyREPCQePdGECQsJBArMW/7
+	JeYJjLKzEBYsYGRcxSiZWlCcm55abFpglJdaDo+o5PzcTYzgRKjltYPx4YMPeocYmTgYDzFK
+	cDArifC+PnU8XYg3JbGyKrUoP76oNCe1+BCjKTDIJjJLiSbnA1NxXkm8oYmlgYmZmZmJpbGZ
+	oZI4b/POlnQhgfTEktTs1NSC1CKYPiYOTqkGpuDlQXImE3lPHzZ3+9LXtP2mzcv8TGGRU4ol
+	Z1T2aXQslPZzqUq0OxpnuH926sp9C+8/bvVwtW1f+9Eva3bEogNJug02u7gXNf53CQq7sOvI
+	TvvFIR9PLrKxntgprjZZ/m2DrCiP6vLVP3QfLNb5VqgQZHSag/PcpZOsewsTlKa5bDUWfLDT
+	7p1CxU83A0dnjck+SSdFWl65dp99u+LcQrdM1TVJ3tx/vyh0z9UWOCatYMx5+ZolE+dGwROW
+	h+TnzxRWbGC89G+u3EKm93/Cb54z2HvRtGSLe/vl+A85stP2WjRvac1YeuVzi1z90e9FHqv+
+	TW/yV/2s/bbgZkmCx5bZ6S9b2/Lj3OefP2g1SYmlOCPRUIu5qDgRAKgTF78NBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrGLMWRmVeSWpSXmKPExsWy7bCSnK76i+PpBrunWlk83TGT1eL+4s8s
+	Foc2b2W3uHlgJ5PFxZl3WSz6Xjxkttj0+BqrxeVdc9gsejZsZbWYcX4fk8XaI3fZLZZt+sNk
+	sWjrF3YHXo/Fe14yeWxa1cnmcefaHjaPzUvqPfq2rGL0+LxJzuPU18/sAexRXDYpqTmZZalF
+	+nYJXBkLpz5kKbjPX3F2wgLWBsYbvF2MnBwSAiYSj28sYupi5OIQEtjNKNG75zobREJG4n/b
+	MXYIW1hi5b/n7BBFnxgllhxZwtjFyMHBJqArcXZ7DkiNiEC6xKQ7X1lAapgF1jFJ7Fw5kRUk
+	ISzgKtFx8RPYUBYBVYktB1pYQGxeATuJmcdXM0MskJdYveEA8wRGngWMDKsYJVMLinPTc5MN
+	CwzzUsv1ihNzi0vz0vWS83M3MYKDUktjB+O7b036hxiZOBgPMUpwMCuJ8L4+dTxdiDclsbIq
+	tSg/vqg0J7X4EKM0B4uSOO9Kw4h0IYH0xJLU7NTUgtQimCwTB6dUA1NFZ4Vv7tK9tiXfLvFa
+	f10W+GbVROOfYkw3VkseZms9UDwl8btfralXa+upw5v08jYk3dQ/1+Jze4b1+0k31BhZTFvt
+	Kyos9u2tdIwqKT7+x/PLvU1dd11Fpp5eWny1/+cVF/vozJQNN5UmSx3etuex64LDfu8erVGO
+	/PLq58PJMz6fXeR8ao93/9JHm4VOPjboDVVdaDVR7c1f738vAjnPZh40nPs3fFF2ykLb2/JG
+	LbembgSmkY2ik923MUux1HR1X9U9tMTsa9zqC3N0nbuZTDjFjlV3MB0tFO54Um0kdTONf3dC
+	quhRI9aC3/WlYi5iHhJWW45/erv90gqhK9d67mz0zFJRuBVy9KXSeVMlluKMREMt5qLiRACU
+	PJzCuQIAAA==
+X-CMS-MailID: 20250305055904epcas5p45828c732019a847a0852c26d9ef9f2db
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250305055904epcas5p45828c732019a847a0852c26d9ef9f2db
+References: <CGME20250305055904epcas5p45828c732019a847a0852c26d9ef9f2db@epcas5p4.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN2PR10MB4112:EE_|IA1PR10MB6073:EE_
-X-MS-Office365-Filtering-Correlation-Id: 547bce0d-bff3-497f-7b06-08dd5ba9e970
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+AKzuvtqEYOfX0GrVB/Ocw/EzN6PTpFTMJaHmeD+hAloYKUQRR8AKmuvWO13?=
- =?us-ascii?Q?WSv2dy4QBkphWKnl0YWscj5S/8g71qWpYkVrQ4ZUvBQdXe/kE3ucJw5DBk1i?=
- =?us-ascii?Q?zVTN44BECu4ftGzifEYDVC3mrqBS3diskxkO7AjxdylZnVrLQB+EoivcNatV?=
- =?us-ascii?Q?XX6Rx/Xrn0AYGDoob5lM2m9XJiCg3Ht2m0bT+mU1CbZZQ4fFdUwXq5uetK6j?=
- =?us-ascii?Q?iUYPBILj3dSswGYDOjGNhhVyWbImQnWLZVWqbpG1xJ5fWpZkwldleUK0dbfA?=
- =?us-ascii?Q?WIle0wqx+b0ZQEHiX+A4sBSyIE13nzspDmzX9Q2kCHX+94SHWRM/+NSsGuxI?=
- =?us-ascii?Q?UkJTThM//8GJmKbXEHmum9vb2fF6ry544yZ3dFL4jGq00VfwywUTao+wWreE?=
- =?us-ascii?Q?I+CexatVvQfJ007P5ubJN47Yykh2bCltrbJEKFdALeMoHlh6QyiZxt2dU8Tb?=
- =?us-ascii?Q?b/6LYJe/ALT0ziuobsh+C2lUlSVma5IVDgXqhxIsnHi/7R8pzqVg8OBtDchr?=
- =?us-ascii?Q?MsGUVW0AZER6p6cibRUsOb7nim7P1RCAt2TAPL7Lrrdj38mUoxwmGci6eO2R?=
- =?us-ascii?Q?CxJDWj6sFckGhkXNT2vdrdHE4GnJhlvrOtx2ey42cA5RUpxQ2YC2ZiWeo8Vx?=
- =?us-ascii?Q?b5HzxTArVkHKXfOlCEXS+ndu4ilRJZjihDk2bmu0tu3q8n4PZo7y0XQc0pCO?=
- =?us-ascii?Q?xxu7PoFY6S2u6MYhC/VjdLwRV9t28gxaWOWHg3GQjX/2MdKXSU3SEut32JZy?=
- =?us-ascii?Q?XRDUoGPQPnJEWjq3qD6H40QRZ6Fy+EsvFrPTUaSb95zdxHaU8pSUN6woBVys?=
- =?us-ascii?Q?K18Hsz85VotHYnV5yvjocBkF1E5oEogsj6C5v92Allr18gd6lNWm7JXTCgsY?=
- =?us-ascii?Q?fNo6OgR6/bSDfjmln/OizjJpm4V7HavqH9H28uZqDV1SGa12Wk8PqCI7LF1s?=
- =?us-ascii?Q?J711W+1ZIlJUyFNlcD0gaed8h1y+OiJtmQH59mSn1SqctSe/PgFn1/PFtYF/?=
- =?us-ascii?Q?kHYWmh26ycl+QTLenKpMl9X7Wcfsc4T6teRNU7FMI6r9rymti63SZT59CsLA?=
- =?us-ascii?Q?/f3flWm8jQzHy2CbGFPin/KNIbOtc1IKDIL1LEW06+N1TngX1b95sl12HOjP?=
- =?us-ascii?Q?34IlTYaZSY0Ooi06xBlLkWtXgY1iW4vjDxcCKcJXRvyY8vuviMIXeLJRo3xd?=
- =?us-ascii?Q?AEA0lP/U4wz/78qAuX9ko3bSfzOVnPaSRx4aEQxnNuPm9pIM6XEfOGnuQzso?=
- =?us-ascii?Q?YT3oHnBWczOO6s7ntiFFnppP/0OWfr9+ifHcfh6rAfAprwDDvNOPLjezOwdk?=
- =?us-ascii?Q?I8vYO/qgYl17bbDPZdcryaX4j+Yc2Uhvs7EqW8FxYp6tgz8xzvYvy6Xlvx2j?=
- =?us-ascii?Q?+tHZ0/FnJT1SfCGZHa8L0fejZ+4C?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN2PR10MB4112.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?MUc5mDRrr6LdhZmdJSycMcqD03tpKh32DhUg+OfIBbwR01OlQYDqAwUjg4gb?=
- =?us-ascii?Q?VT2YIOxKFqQNrAFA9RwJ7WpfEp7WEbt1dQBq57hyKIxm9NebCsyGwl6cTNjr?=
- =?us-ascii?Q?6Q/FAXd5pJbJx79Lk1EjYycx33eaQxWFTpu8WcJArg0zkPWpOIdCIvyCqZ2c?=
- =?us-ascii?Q?ja7+lO8IHeTdnLxnjVmrp7Fb52VWl/tUDlGNLlcgdMGph26cricHqeTF1RUo?=
- =?us-ascii?Q?YbIrZOs3Q7dr4/JoFqtqws1j49UT5peFncapq+Sp3PCqN4enrBmGiJ9IC4Wi?=
- =?us-ascii?Q?PRyr2spEnLn5cRwk0jpkoKgbI3Xc39HdwpKwAf+8A1DLLHd4hM1Ji0uWqOdb?=
- =?us-ascii?Q?vj9iKoIyo3EErYKlPPOAX0tr05dGrLniJaf2zLJjJ3lwuvov6sXvoX0dVwNR?=
- =?us-ascii?Q?enQS+6sqfJW0DJ9pix0wPLoGilv0aK/yQCXhiw3PL899n2hY+pd3Db7P4D22?=
- =?us-ascii?Q?OrVXFNW6OZTKnHrKShjSe1NEuJ/M10WQAdZtVYeoLHU4wIIZbtlRlt91EGQO?=
- =?us-ascii?Q?DzijNq8J6VLeKOFrn0LQ6BsfcHR/Jy/X0XrCQrvZnm88YLUXBueoLxBWTiF2?=
- =?us-ascii?Q?71p57zGzqj/kHhFk5+Kyl7T8/k37hoV8bmXwFfrmKjkAoZj6Bt8EUwG1vH2N?=
- =?us-ascii?Q?dZsBqwDJ6aTygs2m7csVnHzMcPDxiW4XxK64Ok+JY9Bn6o6cunlG0254hYnN?=
- =?us-ascii?Q?cBgvzJGhBiX+iyLd1gn30PoF/bkW/faG7qLaKdV8gq4Q0NK12QqC7eLyjhj2?=
- =?us-ascii?Q?jHtWwfrT7jc50AsWOcfZJ3WrwXyLtnwclBGxPfLIpUAyI+q+BiVNOjt+mRVi?=
- =?us-ascii?Q?hlshwvnJuVcH7iyw2IPFt7ecJrsCTtQtlwEFg2N+rknrZVU7Y22Oiq4fRqZt?=
- =?us-ascii?Q?p9nevwoo8JZAJVn84BLFo3c+D0nTCtCs2Tn6Kx4TieV83DacooX64rchksY4?=
- =?us-ascii?Q?EIryU02C/XvaivvBqJOqrcWlcsHTw9KToNA00nA1yNMmPKuBK4OS52e+h2oY?=
- =?us-ascii?Q?uPVlPSI2WjZrS42kUH55aC6gYhkTqCzcYrypUFLdrmkUhbOXdwBghBc0fpZT?=
- =?us-ascii?Q?qjTnPcMxDTKCA5UAkUOYwfsBdD2ivUvsiYrsAes9f3AJkHb7+u4EMOLkpdJm?=
- =?us-ascii?Q?rOwzaEnYw6Bnkls5nmj7dyNqHy+0RXrCu/KOi/LN1FT/fByHMxapaiJAS4uK?=
- =?us-ascii?Q?lB2Z4D+mv8+nX+Lx/HdApgb9/JR0Lcuao54OHu76oBBw6vwlg96893dKlzCh?=
- =?us-ascii?Q?6cwWzRkd4AciwYiwoiB2H14kuIjSmNi5JrzAiUh2yXLadl2QeCIVzFGY2uGC?=
- =?us-ascii?Q?d3JxYW5Cmf0mBj403yLu8fdrOVz5lPhaoDXS19NbscNl680nfVLdQgAWMgfi?=
- =?us-ascii?Q?knpIRgMQXTsLzz+aGJk0CeoE/db9OdDybH6N9lNhUBfiBbExiKqOlwBjyUAl?=
- =?us-ascii?Q?ApkTsS6GNP4ozNQViuhttfumdNTRWo1SIJGIvlca1qTa9eJsJTKDpoIT3cUm?=
- =?us-ascii?Q?EPR+eBaGwnQxGiRlH12+JiFTwpDPUj91Ck33OPWPCAaY0g3UDW0rv57unEus?=
- =?us-ascii?Q?NT7NoQJsStr4bORrM8BWecausQttFImgwRAtrZnpz8VLWW8MGPtqovWZV1JA?=
- =?us-ascii?Q?mQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	BYMuSWQadyyfrWp5ok0S6Uz/4bYZkuqq6gWBUtZrLvRaTV/s0rI8vZwMGe/g6mdkDLixyPgxY5O+OW1EbtVI4M8qBrmLtH/es1ACqVOtz/QzwsWzce/nUaZ7kVuqY5awQvF2rdi1+Yq2CIOgad0CLLbA1aPYYJmx2u9PbqwgzE6xoQykYUylCgUPuymVXqERrhX9m41tt+K5aWbmyM5zPzyjvgRwpo8bitlwXWsePVPosD05UnGf3SF9QrUMMaTYXA09udBXrqP4T0rra+kl1zI7sQ0z2HhrGbedOKP0EEVwhxthaUi3MQmlNQFmj8gMR1fA6+jrV/GmnVrFCwGH72CPpzrXXX036q2WrMaG8LhOMo52yf4jRj7LIizuot6j6FV6h6qzqnGvI6k4SDI0OPQ3BzOJsHhTCYQw9b80KCq/1lNdUXpLs/H/ESoLAklB9TFYz8rM+rCRP/UvblR8l21ldlwChTTDy5RIEtDtnTUhGF7p6Gb8uMm46HgoXAO8BBVsiPPieR9VlbhOfvv05fYqNFbt1gCmAASZ60kcnF3Deb7GpjoRQ+EiEkfy3heBteYSFpgDGWbZSSrfThUHe+8CmzqzHmNkRYaJXoyS6YQ=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 547bce0d-bff3-497f-7b06-08dd5ba9e970
-X-MS-Exchange-CrossTenant-AuthSource: MN2PR10MB4112.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 05:52:28.3958
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Wrel+Ct8sj5fSSKV1ChhrYWiS4ypDaJA7k+QvANEPmJFhcckS7JhqZNgU2R7UJyWqoQiM5kT4LuF+Ue4PvsWlihURokfiRSRy2zUZqfPZA0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR10MB6073
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_03,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 spamscore=0
- mlxscore=0 mlxlogscore=999 adultscore=0 malwarescore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2502100000
- definitions=main-2503050044
-X-Proofpoint-GUID: Uf9wgtDlvmNeWLwrEGtZFsarDqNPCoal
-X-Proofpoint-ORIG-GUID: Uf9wgtDlvmNeWLwrEGtZFsarDqNPCoal
 
-On Tue, Mar 04, 2025 at 03:15:56PM -0800, Andrew Morton wrote:
-> On Tue, 4 Mar 2025 21:45:27 +0000 Yosry Ahmed <yosry.ahmed@linux.dev> wrote:
->
-> > On Mon, Mar 03, 2025 at 11:08:34AM +0000, Lorenzo Stoakes wrote:
-> > > Update move_vma() to use the threaded VRM object, de-duplicate code and
-> > > separate into smaller functions to aid readability and debug-ability.
-> > >
-> > > This in turn allows further simplification of expand_vma() as we can simply
-> > > thread VRM through the function.
-> > >
-> > > We also take the opportunity to abstract the account charging page count
-> > > into the VRM in order that we can correctly thread this through the
-> > > operation.
-> > >
-> > > We additionally do the same for tracking mm statistics - exec_vm, stack_vm,
-> > > data_vm, and locked_vm.
-> > >
-> > > As part of this change, we slightly modify when locked pages statistics are
-> > > counted for in mm_struct statistics. However this should cause no issues,
-> > > as there is no chance of underflow, nor will any rlimit failures occur as a
-> > > result.
-> > >
-> > > This is an intermediate step before a further refactoring of move_vma() in
-> > > order to aid review.
-> > >
-> > > Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-> > > ---
-> > [..]
-> > > +/*
-> > > + * Perform checks  before attempting to write a VMA prior to it being
-> > > + * moved.
-> > > + */
-> > > +static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
-> > > +				   unsigned long *vm_flags_ptr)
-> > > +{
-> > > +	unsigned long err;
-> >
-> > I am getting a warning on mm-unstable because 'err' is sometimes used
-> > uninitialized, I think here:
-> >
-> >         if (vma->vm_ops && vma->vm_ops->may_split) {
-> >                 if (vma->vm_start != old_addr)
-> >                         err = vma->vm_ops->may_split(vma, old_addr);
-> >                 if (!err && vma->vm_end != old_addr + old_len)
-> >                         err = vma->vm_ops->may_split(vma, old_addr + old_len);
-> >                 if (err)
-> >                         return err;
-> >         }
->
-> yep, thanks.  I added this:
->
-> --- a/mm/mremap.c~mm-mremap-initial-refactor-of-move_vma-fix
-> +++ a/mm/mremap.c
-> @@ -892,7 +892,7 @@ static void vrm_stat_account(struct vma_
->  static unsigned long prep_move_vma(struct vma_remap_struct *vrm,
->  				   unsigned long *vm_flags_ptr)
->  {
-> -	unsigned long err;
-> +	unsigned long err = 0;
->  	struct vm_area_struct *vma = vrm->vma;
->  	unsigned long old_addr = vrm->addr;
->  	unsigned long old_len = vrm->old_len;
-> _
->
+There is a possibility of getting page fault if the overall
+buffer size is not aligned to 256bytes. Since MFC does read
+operation only and it won't corrupt the data values even if
+it reads the extra bytes.
+Corrected luma and chroma plane sizes for V4L2_PIX_FMT_NV12M
+and V4L2_PIX_FMT_NV21M pixel format.
 
-Thanks Andrew! Apologies guys, my bad. I don't know why this wasn't flagged
-locally... :/
+Acked-by: Marek Szyprowski <m.szyprowski@samsung.com>
+Reviewed-by: Nicolas Dufresne <nicolas.dufresne@collabora.com>
+Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+Signed-off-by: Aakarsh Jain <aakarsh.jain@samsung.com>
+---
+changelog:
+v2->v3
+Patch link:https://patchwork.kernel.org/project/linux-media/patch/20250226102251.9040-1-aakarsh.jain@samsung.com/
+Fixed checkpatch warning.
 
-This fix looks correct!
+v1->v2
+Patch link: https://patchwork.kernel.org/project/linux-media/patch/20240806115714.29828-1-aakarsh.jain@samsung.com/
+Removed duplicate code and aligned luma and chroma size
+to multiple of 256bytes as suggested by Hans.
+ drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+index 73f7af674c01..4cf12f33d706 100644
+--- a/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
++++ b/drivers/media/platform/samsung/s5p-mfc/s5p_mfc_opr_v6.c
+@@ -549,8 +549,9 @@ static void s5p_mfc_enc_calc_src_size_v6(struct s5p_mfc_ctx *ctx)
+ 		case V4L2_PIX_FMT_NV21M:
+ 			ctx->stride[0] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+ 			ctx->stride[1] = ALIGN(ctx->img_width, S5P_FIMV_NV12M_HALIGN_V6);
+-			ctx->luma_size = ctx->stride[0] * ALIGN(ctx->img_height, 16);
+-			ctx->chroma_size =  ctx->stride[0] * ALIGN(ctx->img_height / 2, 16);
++			ctx->luma_size = ALIGN(ctx->stride[0] * ALIGN(ctx->img_height, 16), 256);
++			ctx->chroma_size = ALIGN(ctx->stride[0] *
++						ALIGN(ctx->img_height / 2, 16), 256);
+ 			break;
+ 		case V4L2_PIX_FMT_YUV420M:
+ 		case V4L2_PIX_FMT_YVU420M:
+-- 
+2.17.1
+
 
