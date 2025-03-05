@@ -1,123 +1,101 @@
-Return-Path: <linux-kernel+bounces-546248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 776C0A4F85B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:58:30 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CAB9A4F85A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:57:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EED916F19C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:58:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0A1F3A71B0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C431F1F4276;
-	Wed,  5 Mar 2025 07:58:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5B161F4276;
+	Wed,  5 Mar 2025 07:57:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="iQFKH6n3"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MWpWHrmM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C93571547E2;
-	Wed,  5 Mar 2025 07:58:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC27E1547E2;
+	Wed,  5 Mar 2025 07:57:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741161502; cv=none; b=r5iKSBo7AJys5ugnWv5A5ihN9d7+g6hYFA/eEngtJn3cosndefQWSkOjN6vw8P+mu7Zfd39DPcxXlrWcpFCEpIhG5y+pQQO5E/TwbEJo2h31fpQVJQp2NoAWOFZDrMZL1gfnAI2bvrUXsE2684zIHFzC8mVHdgzHMkmwC8EagR4=
+	t=1741161457; cv=none; b=fU4GSsX8sn1Aw9lR4OqG6GV03B04krGnt8fxzZ/ZCSIwhCDfikU7wh+ySZmM+Q5kJi7pTUyPftwgoCqCQzs/nVwlQ2djxd4SgxUxfNJwulE2JHKINLC9NmnLXie/bjlhdAVFf1AsBXDU3qGCtYH11+fMRfJMIujgLThqRZN1bt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741161502; c=relaxed/simple;
-	bh=X5XQrDXEPciRuX9iq2hVuzW/+FG66YoJJMIz1n0bFZQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SldgZYtNWmoLHgabxr42dZawtKFMv9fB4ZNAOt5KWQTF0aBaDMxr9/ai/B1QpGK2irAGAewzOsI9huVUBEqO1e6bbClzTgxaqYoP0zAjRLrmYDv+TJRpArzAtCcBFhXMpp5zwfLT2gAZSwQ9NYBXL7gZ2iBXVQFLo1P6Gtz36Ec=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=iQFKH6n3; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5253vdEs028481;
-	Tue, 4 Mar 2025 23:58:02 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=JIWQDFjaDYN/Y8wWU8cKql+
-	4eIYuROMtD9vaIXBcFaE=; b=iQFKH6n3XXY65uasOFaTQ+xhBkAWPzMBl4eWONO
-	FiocZ9c51uuwkEI3noL+ilIQluuhysxuIdmW3MCelNmSHMHRUsC4TjV4Om7s6SSf
-	W/8d8DtxII5VG/XS0SXQijxEH5Ae+yJ3bJ8AIlf8vOd7Wn2b2nwwUPMzEVOG6THi
-	bKb+2Y+byvQbmfIk0QZ7ikVu6U7DxO2YsCLk8wYUhqJMcpXdU8iNWvRT3kzyQZIz
-	HAd8nX/NKVC4wdy9iyjKlQxA70hKZInokF7hU/ngu3esSmBfrGpWmXTWuaZePR1o
-	Eza8roAzmtPBLghV/+uNV0FAKuh6qa/9yxSfZ09CCNM6HiA==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 456f5tgcr9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Tue, 04 Mar 2025 23:58:02 -0800 (PST)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Tue, 4 Mar 2025 23:58:01 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Tue, 4 Mar 2025 23:58:01 -0800
-Received: from bharat-OptiPlex-3070.marvell.com (bharat-OptiPlex-3070.marvell.com [10.28.8.24])
-	by maili.marvell.com (Postfix) with ESMTP id E7D853F703F;
-	Tue,  4 Mar 2025 23:57:57 -0800 (PST)
-From: Shashank Gupta <shashankg@marvell.com>
-To: Boris Brezillon <bbrezillon@kernel.org>,
-        Arnaud Ebalard
-	<arno@natisbad.org>,
-        Srujana Challa <schalla@marvell.com>,
-        Herbert Xu
-	<herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>,
-        Bharat Bhushan <bbhushan2@marvell.com>,
-        Amit Singh Tomar
-	<amitsinght@marvell.com>,
-        Shashank Gupta <shashankg@marvell.com>,
-        "Sunil
- Kovvuri Goutham" <sgoutham@marvell.com>,
-        <linux-crypto@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH] crypto: octeontx2: suppress auth failure screaming due to negative tests
-Date: Wed, 5 Mar 2025 13:27:05 +0530
-Message-ID: <20250305075704.2987579-1-shashankg@marvell.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741161457; c=relaxed/simple;
+	bh=1qfqTAY5g4rU5BKvohe/wSQnKZRFwIwUMMFb18lwqUU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y2x/QL+6xxtCV8b9HJS/q6x8FSan1fJdxmHOzPJPIE8JuCwGloFQ5tiFhv2flKi7VLsz4Ra3UmX6DlPskJ1qf4HRHXpSN/k0unX7kiA1lajfJHI0vbc5f/bklw8I5Ns8+EbiEcMJsisYUQhyW1bqIp8GeHnUQKapu1XO3/Af2uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MWpWHrmM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E045C4CEE2;
+	Wed,  5 Mar 2025 07:57:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741161456;
+	bh=1qfqTAY5g4rU5BKvohe/wSQnKZRFwIwUMMFb18lwqUU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MWpWHrmM6FO5slFEe1awm0P61uonDdfX3ReUfsTLsL7J86m5wr+uuhUcH+qImGhCX
+	 SB46SjNYa6B1UYlZl6TrKQDxTT9vpRnYwNXt65iGD+vs1lRX5+4k8rilVsH1TF0Rn7
+	 WnAmmnavwtnnrgNysNzXEnisr77zmZJ+hv5bcsX8=
+Date: Wed, 5 Mar 2025 08:57:33 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: "Usyskin, Alexander" <alexander.usyskin@intel.com>
+Cc: Markus Elfring <Markus.Elfring@web.de>,
+	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, "cocci@inria.fr" <cocci@inria.fr>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [v2] mei: Improve exception handling in mei_cl_irq_read_msg()
+Message-ID: <2025030508-iodize-diagram-3e0f@gregkh>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <00589154-00ac-4ed5-2a37-60b3c6f6c523@web.de>
+ <b7b6db19-055e-ace8-da37-24b4335e93b2@web.de>
+ <MN2PR11MB40930A824DF68F96A93E1B7FE5859@MN2PR11MB4093.namprd11.prod.outlook.com>
+ <df3ce733-955b-45f3-98bd-04ddb2200eca@web.de>
+ <CY5PR11MB6366D07A7F302780A87160E6EDCB2@CY5PR11MB6366.namprd11.prod.outlook.com>
+ <ccdac63a-4a04-4243-9350-05acc23f413b@web.de>
+ <CY5PR11MB6366E6F52B68E8258EE47F3FEDCB2@CY5PR11MB6366.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: rV9ak91RPM_aGl2NilWDy29WqeqvyyS7
-X-Authority-Analysis: v=2.4 cv=JtULrN4C c=1 sm=1 tr=0 ts=67c8040a cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=Vs1iUdzkB0EA:10 a=M5GUcnROAAAA:8 a=y9R9rvgWzFRaf_s37dAA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: rV9ak91RPM_aGl2NilWDy29WqeqvyyS7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_03,2025-03-05_01,2024-11-22_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CY5PR11MB6366E6F52B68E8258EE47F3FEDCB2@CY5PR11MB6366.namprd11.prod.outlook.com>
 
-This patch addresses an issue where authentication failures were being
-erroneously reported due to negative test failures in the "ccm(aes)"
-selftest.
-pr_debug suppress unnecessary screaming of these tests.
+On Wed, Mar 05, 2025 at 07:41:25AM +0000, Usyskin, Alexander wrote:
+> > >
+> > > In general, why not, but the label naming is bad.
+> > > It hides the original intent to discard this message.
+> > > Let's rename existing label to discard_nocb: and leave a new one as discard:.
+> > > Also, the patch will be smaller in this way.
+> > 
+> > Do you expect a third patch version according to your naming preferences?
+> > 
+> > Regards,
+> > Markus
+> 
+> I prefer to, as the current patch reduces this code readability.
+> 
+> - - 
+> Thanks,
+> Sasha
+> 
+> 
 
-Signed-off-by: Shashank Gupta <shashankg@marvell.com>
----
- drivers/crypto/marvell/octeontx2/otx2_cptvf_reqmgr.c | 7 ++++---
- 1 file changed, 4 insertions(+), 3 deletions(-)
+Hi,
 
-diff --git a/drivers/crypto/marvell/octeontx2/otx2_cptvf_reqmgr.c b/drivers/crypto/marvell/octeontx2/otx2_cptvf_reqmgr.c
-index b89e245c9aa4..835a2a2de477 100644
---- a/drivers/crypto/marvell/octeontx2/otx2_cptvf_reqmgr.c
-+++ b/drivers/crypto/marvell/octeontx2/otx2_cptvf_reqmgr.c
-@@ -276,9 +276,10 @@ static int cpt_process_ccode(struct otx2_cptlfs_info *lfs,
- 				break;
- 			}
- 
--			dev_err(&pdev->dev,
--				"Request failed with software error code 0x%x\n",
--				cpt_status->s.uc_compcode);
-+			pr_debug("Request failed with software error code 0x%x: algo = %s driver = %s\n",
-+				 cpt_status->s.uc_compcode,
-+				 info->req->areq->tfm->__crt_alg->cra_name,
-+				 info->req->areq->tfm->__crt_alg->cra_driver_name);
- 			otx2_cpt_dump_sg_list(pdev, info->req);
- 			if (uc_ccode == 0x4C)
- 				*res_code = -EBADMSG;
--- 
-2.34.1
+This is the semi-friendly patch-bot of Greg Kroah-Hartman.
 
+Patch submitter, please ignore Markus's suggestion; you do not need to
+follow it at all.  The person/bot/AI that sent it is being ignored by
+almost all Linux kernel maintainers for having a persistent pattern of
+behavior of producing distracting and pointless commentary, and
+inability to adapt to feedback.  Please feel free to also ignore emails
+from them.
+
+thanks,
+
+greg k-h's patch email bot
 
