@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-547706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7187A50C82
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:29:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A332BA50C83
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68AA516E6DA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:29:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B042B16A780
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63B5825A653;
-	Wed,  5 Mar 2025 20:27:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50D22253344;
+	Wed,  5 Mar 2025 20:27:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="j67styIc"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="AJ2201s8"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4746D2571D2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:27:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0570B25B682
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741206438; cv=none; b=T74NSBBVjystukGs19SjtGGgdjrj30sT6tLOguKkxzhgMbgmTbonffP5xtANbseWWNdPfwHdueIb3DPaZFH7P91uLdJCSEz41G9yMJnRCl8pDD+lLCmLQEriCwJhOUuzDP1DtZ39Xjjg8kzPn3ei/EV0cvhoT/fyVEHQTcFQB/A=
+	t=1741206442; cv=none; b=JFvPVL9j03mb4xIhzX0yTUSNSQZwIVqlFqIUV81vsLJxW8NIYZTEfwm5m9xgLM55YSsROvoxbuYNyLeCQaGjqQGEUSysVB95I7Ad495CRXc0n5JkKJfRf8iUsEH20GFJbG5V7PoVN+JBwM4BZbuDhcFplReVNgmKea24oQZIEOQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741206438; c=relaxed/simple;
-	bh=8Lu11TjGp4gyr+MQq1xWXc+p1xthTU7mr1vBgnCMruU=;
+	s=arc-20240116; t=1741206442; c=relaxed/simple;
+	bh=rBIoMuBetC+kOmxpkc17nhmNZBGock7zouwraEBxcws=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GYAPBbOJ4JXl6V6HP0Y+hDeboDU3ZbCJ6ULdo50nHjkG6INklx3zMgqDstaDDp7suI+ddhdKrRVufdZzBFvQ62WlWummMCFHKH8G1ETtp9IhEwSWB53XjUgtij5rJTfCOudiCdzHXr/4o89gM9vj7GYwmpSTg6ZeTr6wa8CnQaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=j67styIc; arc=none smtp.client-ip=95.215.58.174
+	 MIME-Version; b=WI/mizNkpDm59fiDSgt8yfW3kxwt9PuwiKudkSAn50zO3OnO6SqAKpeSD79dQ38ArotGy1jRBmbfUSi0CoZUSkOHBnrQucGqdIjdNCo7yT91ov75HPk8w8n3yIn75Qhtk+Y3NqHbsj9EJ3dvIFC5buVRpLkUttR9/NywIQCIsnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=AJ2201s8; arc=none smtp.client-ip=95.215.58.187
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741206435;
+	t=1741206439;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=THyb2hAFANk49lbyBjrbji8OLhzmvtcpQkFb5J3BMvM=;
-	b=j67styIcO3xSLksWDsU+hmN0s0DezY8cdy3cwllJjFno7nugclMlFNH3q9WtZfSF4yFy1E
-	CETonA9EcFBl3b7bQ15NG2gp4yHf14tCL8EUAFpMKSdiVpaUnNl0dy9Wrf4YWO4zCSfaQ5
-	5Ei9YUOyBeyESBY3OY8pgzOFF+R0u+Y=
+	bh=C7mXQcLDFG9vHyngvUWroV3baipxBj22XKUDjf7cxlY=;
+	b=AJ2201s8OwXe9Gjt+6JP1qVqCwmY1b18pQx6CafRuCltGonKRzPTP8FA/rek6WxuiCI2Df
+	4JWLJjg5GdSgvPDOieomvgtgnNQGYriJQtCY9Ej0T3hyrCpZZGcMAs+WgUX+xmK5peVbPM
+	1+pfGEHTfmBkawBbz8iYtYDjQuEd+fs=
 From: Oliver Upton <oliver.upton@linux.dev>
 To: kvmarm@lists.linux.dev
 Cc: Marc Zyngier <maz@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Janne Grunau <j@jannau.net>,
 	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH v3 07/14] KVM: arm64: Use guard() to cleanup usage of arm_pmus_lock
-Date: Wed,  5 Mar 2025 12:26:34 -0800
-Message-Id: <20250305202641.428114-8-oliver.upton@linux.dev>
+Subject: [PATCH v3 08/14] KVM: arm64: Move PMUVer filtering into KVM code
+Date: Wed,  5 Mar 2025 12:26:35 -0800
+Message-Id: <20250305202641.428114-9-oliver.upton@linux.dev>
 In-Reply-To: <20250305202641.428114-1-oliver.upton@linux.dev>
 References: <20250305202641.428114-1-oliver.upton@linux.dev>
 Precedence: bulk
@@ -71,72 +71,77 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Get rid of some goto label patterns by using guard() to drop the
-arm_pmus_lock when returning from a function.
+The supported guest PMU version on a particular platform is ultimately a
+KVM decision. Move PMUVer filtering into KVM code.
 
 Tested-by: Janne Grunau <j@jannau.net>
 Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 ---
- arch/arm64/kvm/pmu-emul.c | 23 ++++++++---------------
- 1 file changed, 8 insertions(+), 15 deletions(-)
+ arch/arm64/include/asm/cpufeature.h | 23 -----------------------
+ arch/arm64/kvm/pmu-emul.c           | 15 +++++++++------
+ 2 files changed, 9 insertions(+), 29 deletions(-)
 
+diff --git a/arch/arm64/include/asm/cpufeature.h b/arch/arm64/include/asm/cpufeature.h
+index 0eff048848b8..c4326f1cb917 100644
+--- a/arch/arm64/include/asm/cpufeature.h
++++ b/arch/arm64/include/asm/cpufeature.h
+@@ -525,29 +525,6 @@ cpuid_feature_extract_unsigned_field(u64 features, int field)
+ 	return cpuid_feature_extract_unsigned_field_width(features, field, 4);
+ }
+ 
+-/*
+- * Fields that identify the version of the Performance Monitors Extension do
+- * not follow the standard ID scheme. See ARM DDI 0487E.a page D13-2825,
+- * "Alternative ID scheme used for the Performance Monitors Extension version".
+- */
+-static inline u64 __attribute_const__
+-cpuid_feature_cap_perfmon_field(u64 features, int field, u64 cap)
+-{
+-	u64 val = cpuid_feature_extract_unsigned_field(features, field);
+-	u64 mask = GENMASK_ULL(field + 3, field);
+-
+-	/* Treat IMPLEMENTATION DEFINED functionality as unimplemented */
+-	if (val == ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
+-		val = 0;
+-
+-	if (val > cap) {
+-		features &= ~mask;
+-		features |= (cap << field) & mask;
+-	}
+-
+-	return features;
+-}
+-
+ static inline u64 arm64_ftr_mask(const struct arm64_ftr_bits *ftrp)
+ {
+ 	return (u64)GENMASK(ftrp->shift + ftrp->width - 1, ftrp->shift);
 diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index 120f48136a0f..fee3d0003d54 100644
+index fee3d0003d54..0a2023aabe18 100644
 --- a/arch/arm64/kvm/pmu-emul.c
 +++ b/arch/arm64/kvm/pmu-emul.c
-@@ -790,26 +790,23 @@ void kvm_host_pmu_init(struct arm_pmu *pmu)
- 	if (!pmuv3_implemented(kvm_arm_pmu_get_pmuver_limit()))
- 		return;
+@@ -1226,13 +1226,16 @@ int kvm_arm_pmu_v3_has_attr(struct kvm_vcpu *vcpu, struct kvm_device_attr *attr)
  
--	mutex_lock(&arm_pmus_lock);
-+	guard(mutex)(&arm_pmus_lock);
- 
- 	entry = kmalloc(sizeof(*entry), GFP_KERNEL);
- 	if (!entry)
--		goto out_unlock;
-+		return;
- 
- 	entry->arm_pmu = pmu;
- 	list_add_tail(&entry->entry, &arm_pmus);
--
--out_unlock:
--	mutex_unlock(&arm_pmus_lock);
- }
- 
- static struct arm_pmu *kvm_pmu_probe_armpmu(void)
+ u8 kvm_arm_pmu_get_pmuver_limit(void)
  {
--	struct arm_pmu *tmp, *pmu = NULL;
- 	struct arm_pmu_entry *entry;
-+	struct arm_pmu *pmu;
- 	int cpu;
+-	u64 tmp;
++	unsigned int pmuver;
  
--	mutex_lock(&arm_pmus_lock);
-+	guard(mutex)(&arm_pmus_lock);
- 
- 	/*
- 	 * It is safe to use a stale cpu to iterate the list of PMUs so long as
-@@ -830,17 +827,13 @@ static struct arm_pmu *kvm_pmu_probe_armpmu(void)
- 	 */
- 	cpu = raw_smp_processor_id();
- 	list_for_each_entry(entry, &arm_pmus, entry) {
--		tmp = entry->arm_pmu;
-+		pmu = entry->arm_pmu;
- 
--		if (cpumask_test_cpu(cpu, &tmp->supported_cpus)) {
--			pmu = tmp;
--			break;
--		}
-+		if (cpumask_test_cpu(cpu, &pmu->supported_cpus))
-+			return pmu;
- 	}
- 
--	mutex_unlock(&arm_pmus_lock);
--
--	return pmu;
-+	return NULL;
+-	tmp = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
+-	tmp = cpuid_feature_cap_perfmon_field(tmp,
+-					      ID_AA64DFR0_EL1_PMUVer_SHIFT,
+-					      ID_AA64DFR0_EL1_PMUVer_V3P5);
+-	return FIELD_GET(ARM64_FEATURE_MASK(ID_AA64DFR0_EL1_PMUVer), tmp);
++	pmuver = SYS_FIELD_GET(ID_AA64DFR0_EL1, PMUVer,
++			       read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1));
++
++	/* Treat IMPLEMENTATION DEFINED functionality as unimplemented */
++	if (pmuver == ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
++		return 0;
++
++	return min(pmuver, ID_AA64DFR0_EL1_PMUVer_V3P5);
  }
  
- static u64 __compute_pmceid(struct arm_pmu *pmu, bool pmceid1)
+ /**
 -- 
 2.39.5
 
