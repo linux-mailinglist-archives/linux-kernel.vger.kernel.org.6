@@ -1,171 +1,117 @@
-Return-Path: <linux-kernel+bounces-546608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B04A4FCBF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:51:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94BCAA4FCD1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:53:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88C3A171242
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:50:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC24C3B0825
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:50:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4EF8215043;
-	Wed,  5 Mar 2025 10:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B7F21CC61;
+	Wed,  5 Mar 2025 10:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="hV3BorJw"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PAWpI523"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F391220B7E7;
-	Wed,  5 Mar 2025 10:49:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E95E6216E39
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741171796; cv=none; b=bKieDIhYLKTOf9yIugP0gDwMPNw/2mYwm5zRBojESnDJytrPgcXZphO7OCk4bbnBRTDWD5KjgbUIOvEkyPxCLWizqx+YrzcpHuq1Bsz6VD/7CP7NeXMxzDBPUM08uHhJR+xoCYLd8rkoVt9xIjxcWqzfmjEup6x1xxe+7gxrfZY=
+	t=1741171812; cv=none; b=qmpAEJ76nQ2+5ejaGEBWeiKFsk1Au+1fUgi6UnXu6XTkSwtak4SDEV0EOAQfNoZ2DUFRtHqzp7U/zEyt443qYEhHHsAzQmY39TRwLBweZf5+mf/GjKpK/2EnNvWtUyxps8U+xr7NnFr45buIoQL5lYO7pwr1MCfdrMwcFQXd8xk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741171796; c=relaxed/simple;
-	bh=UT5t5cKf18CdLlG0v7nt8XdrJciuVrvT8/nabp56tK4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hvsQAYz6iVo7lHPbccmqVMMz85KR+n4XOFAdG4sXmAktnHHAVAH9C5XFykPW97YPcHmu6uE4LmKq8gVVVoyvzVHi8N/GrRMZX2ZLba7L6o3/qZwFfGgFWVHKj8TgyPqoqaSeyhkFs/A50PWo7VZyTnOpG59ZyGugbC2iD9s4e50=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=hV3BorJw; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 09A8B2026E;
-	Wed,  5 Mar 2025 11:49:45 +0100 (CET)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id AvyoDwTIs3tR; Wed,  5 Mar 2025 11:49:44 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1741171784; bh=UT5t5cKf18CdLlG0v7nt8XdrJciuVrvT8/nabp56tK4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=hV3BorJwYoE13cl35C7YCol2tfRnljeZvqKhzt+XpD0CAmG+tdRxaNJ9nniIDL62w
-	 Q+qx6Z/AuWBqSKQuz8YW7ya4O+anACfd1937x6bQDqGOFNBzcSHpqdEQICG8tInvyH
-	 bIpHKcCIFIubZS2n1U5bGC9FKaUupPgoc++iIhMTCkG83hWrC0N/hRxd5LjNAbT9hM
-	 DZ9ee0boow8/b/1Ng5rWTYa3aG3mW6yqlIMLdyU4ckOU/h85w6heOv+9nEJdRGSndP
-	 zxmwNxvibzGEGcBcK33uJZbMqO9foC9JhSFgCQHXdim6ldgoRuCQswkFOtolLggMHX
-	 M/L8+zNE9m14A==
-Date: Wed, 5 Mar 2025 10:49:21 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Heiko =?iso-8859-1?Q?St=FCbner?= <heiko@sntech.de>,
-	Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Frank Wang <frank.wang@rock-chips.com>,
-	Shresth Prasad <shresthprasad7@gmail.com>,
-	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Jonas Karlman <jonas@kwiboo.se>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org
-Subject: Re: [PATCH 6/8] clk: rockchip: rk3528: Add SD/SDIO tuning clocks in
- GRF region
-Message-ID: <Z8gsGlZ7GgNF-zoc@pie.lan>
-References: <20250301104250.36295-1-ziyao@disroot.org>
- <20250301104724.36399-1-ziyao@disroot.org>
- <2583035.OBFZWjSADL@diego>
+	s=arc-20240116; t=1741171812; c=relaxed/simple;
+	bh=PGBWl9yPog/7ujlW8n28qzNSWC2BA+nZV3uoFclQnYc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R6qQIV2l8XtVFeGkxL5xFBdBKt5LL4UBZ1v86Nr5oBpp/J9XhqWfmA4L6vAC4v854ri5NjlVFRtUW6strTRYLWaxHbFCd/tKHj7XKKnLawvz+Ggh7k1VgF7nvfRhHwXIrG0EjaP96/W9v26FDG+rbHbtazDZvKgHGlldXv4IysQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PAWpI523; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741171808;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=oyuuH1Wtyfod3sQmeqjOasemMV+03bK4/IyWGgNrZfQ=;
+	b=PAWpI523ikOpqESy1MKnatVlRsf7jETQ4a3xuknoEonMYzqRjbbMfgWE3sVnIaAvptp08L
+	/bo94Vcgznp7khYPWwUemjPIAcfOYva1nDWtICdnnn/SbcmrDHRaCyvogM87om98rAAhbS
+	hMuGz6cIRXYOzmkFDUcYYyLXMcBJdHE=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-106-z4bOYVHsNB2mtiR9Wm03Uw-1; Wed,
+ 05 Mar 2025 05:49:58 -0500
+X-MC-Unique: z4bOYVHsNB2mtiR9Wm03Uw-1
+X-Mimecast-MFC-AGG-ID: z4bOYVHsNB2mtiR9Wm03Uw_1741171796
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 57A8D1955DCD;
+	Wed,  5 Mar 2025 10:49:55 +0000 (UTC)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (unknown [10.44.32.95])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CAE451954B32;
+	Wed,  5 Mar 2025 10:49:48 +0000 (UTC)
+From: Valentin Schneider <vschneid@redhat.com>
+To: linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-rt-users@vger.kernel.org
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Mike Galbraith <efault@gmx.de>,
+	Peter Collingbourne <pcc@google.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Kristina Martsenko <kristina.martsenko@arm.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Petr Tesarik <ptesarik@suse.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Phil Auld <pauld@redhat.com>
+Subject: [PATCH 0/1] arm64: enable PREEMPT_LAZY
+Date: Wed,  5 Mar 2025 11:49:24 +0100
+Message-ID: <20250305104925.189198-1-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <2583035.OBFZWjSADL@diego>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Wed, Mar 05, 2025 at 11:21:48AM +0100, Heiko Stübner wrote:
-> Hi,
-> 
-> Am Samstag, 1. März 2025, 11:47:24 MEZ schrieb Yao Zi:
-> > These clocks locate in VO and VPU GRF, serving for SD/SDIO controller
-> > tuning purpose. Add their definitions and register them in driver if
-> > corresponding GRF is available.
-> 
-> (no critique, just an observation :-) )
-> 
-> this puts a completely new meaning on the "general register files"
-> as dumping ground ;-) .
-> 
-> Whoever got the idea of making sdmm/sdio tuning controls part
-> of GRFs that are supposed display and/or video encoder parts :-D
+Hey folks,
 
-Yes, the register layout is quite weird. Additionally some USB2 phy
-registers locate in VO GRF as well...
+This is a resubmission of Mark's patch [1]. I didn't end up changing anything
+other than fluffing up the changelog.
 
-> 
-> > GRFs are looked up by compatible to simplify devicetree binding.
-> > 
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > ---
-> 
-> >  static int __init clk_rk3528_probe(struct platform_device *pdev)
-> >  {
-> > +	unsigned long nr_vpu_branches = ARRAY_SIZE(rk3528_vpu_clk_branches);
-> > +	unsigned long nr_vo_branches = ARRAY_SIZE(rk3528_vo_clk_branches);
-> > +	unsigned long nr_branches = ARRAY_SIZE(rk3528_clk_branches);
-> >  	struct rockchip_clk_provider *ctx;
-> >  	struct device *dev = &pdev->dev;
-> >  	struct device_node *np = dev->of_node;
-> > -	unsigned long nr_branches = ARRAY_SIZE(rk3528_clk_branches);
-> > -	unsigned long nr_clks;
-> > +	struct regmap *vo_grf, *vpu_grf;
-> >  	void __iomem *reg_base;
-> > -
-> > -	nr_clks = rockchip_clk_find_max_clk_id(rk3528_clk_branches,
-> > -					       nr_branches) + 1;
-> > +	unsigned long nr_clks;
-> >  
-> >  	reg_base = devm_platform_ioremap_resource(pdev, 0);
-> >  	if (IS_ERR(reg_base))
-> >  		return dev_err_probe(dev, PTR_ERR(reg_base),
-> >  				     "could not map cru region");
-> >  
-> > +	nr_clks = rockchip_clk_find_max_clk_id(rk3528_clk_branches,
-> > +					       nr_branches) + 1;
-> > +
-> > +	vo_grf = syscon_regmap_lookup_by_compatible("rockchip,rk3528-vo-grf");
-> > +	if (!IS_ERR(vo_grf))
-> 
-> for readability, please make this into something like
-> 	if (!IS_ERR(vo_grf)) {
-> 		nr_vo_clks = rockchip_clk_find_max_clk_id(rk3528_vo_clk_branches,
-> 							   nr_vo_branches) + 1;
-> 		nr_clks = max(nr_vo_clks, nr_clks);
-> 	}
+I ran this under an arm64 VM, added some trace_printk's and checked that
+sched_switch's between runnable hackbench threads would occurr in the right
+conditions:
+o with TIF_NEED_RESCHED_LAZY set
+  o at the tick
+  o at do_notify_resume()
+o with TIF_NEED_RESCHED set  
 
-Thanks for the suggestion, will take it.
-
-> > +	else if (PTR_ERR(vo_grf) != ENODEV)
-> > +		return dev_err_probe(dev, PTR_ERR(vo_grf),
-> > +				     "failed to look up VO GRF\n");
-> > +
-> > +	vpu_grf = syscon_regmap_lookup_by_compatible("rockchip,rk3528-vpu-grf");
-> > +	if (!IS_ERR(vpu_grf))
-> > +		nr_clks = MAX(rockchip_clk_find_max_clk_id(rk3528_vpu_clk_branches,
-> > +							   nr_vpu_branches) + 1,
-> > +			      nr_clks);
-> 
-> same here please
-> 
-> > +	else if (PTR_ERR(vpu_grf) != ENODEV)
-> > +		return dev_err_probe(dev, PTR_ERR(vpu_grf),
-> > +				     "failed to look up VPU GRF\n");
-> > +
-> >  	ctx = rockchip_clk_init(np, reg_base, nr_clks);
-> >  	if (IS_ERR(ctx))
-> >  		return dev_err_probe(dev, PTR_ERR(ctx),
-> 
-> Thanks
-> Heiko
-> 
+[1]: https://lore.kernel.org/linux-rt-users/Z2B5y3HiLuRHPfdv@J2N7QTR9R3.cambridge.arm.com/
 
 Cheers,
-Yao Zi
+Valentin
+
+Mark Rutland (1):
+  arm64: enable PREEMPT_LAZY
+
+ arch/arm64/Kconfig                   |  1 +
+ arch/arm64/include/asm/thread_info.h | 16 +++++++++-------
+ arch/arm64/kernel/entry-common.c     |  2 +-
+ 3 files changed, 11 insertions(+), 8 deletions(-)
+
+--
+2.43.0
+
 
