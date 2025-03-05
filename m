@@ -1,177 +1,139 @@
-Return-Path: <linux-kernel+bounces-546107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B10A6A4F673
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:17:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D301A4F67F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:18:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BE5C16B179
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 571293A52B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:18:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 783061D8E1A;
-	Wed,  5 Mar 2025 05:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A84C1CF5CE;
+	Wed,  5 Mar 2025 05:18:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="w8GkhLlQ"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nqI9M0qx"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452C01C8623;
-	Wed,  5 Mar 2025 05:17:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979021C860B;
+	Wed,  5 Mar 2025 05:18:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741151836; cv=none; b=bU/IxfhO73X+jzl2uDPENIevH/2Tdx2/O6cBalrvaOfM2Z9lLvcHTD5ROpb+KIUX8qVWILosMDzJwZlxhc4xWYhCFqWSSAZxJwHGmt8cpTIqALnE4lq3E5FaKMvrROGYEHEw+WM3/GHPYwuC0VrHuFYEEg1Ccq7EPTNEafclO0k=
+	t=1741151928; cv=none; b=DTyfa5Xeh6tkbxotVCYMnYZKWSOI5Swn1oQn75cu0OMV19jiX5LLtQrqCwAh37aBE1u/PRG3IhUu+30pHD/NEWPKmBFvrOkQD9kWAsSxMIdZGdOjtUQXLWzlvCvRVaNe+en1oKZOHznQ31FzVo8oHBy406iWa0CFJAC6K2f6XUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741151836; c=relaxed/simple;
-	bh=W2Nsx/pqRmI3mmKlVgCwig3ab6N3gpZoWxrsOoAIqjU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T2lDwy6J+hzVh7yhJNHLkN+Z+v2S0ePGuB3SQ3OT46YPbKdlZH4VHymMuZXhMwf4W55v8KuUY2dPFec9aBqOAYAsax0Z0b/S5MzHzzY0KaGKGQFcAVHSENLqgZhucuTh8FM8GnTavi0GC8ISw++M0TBZcm03+hUkWsvEzX7q7Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=w8GkhLlQ; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1741151836; x=1772687836;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=W2Nsx/pqRmI3mmKlVgCwig3ab6N3gpZoWxrsOoAIqjU=;
-  b=w8GkhLlQQ3EeZDLAi38wuEssfmvCa9vQdm4RD7Yu7CCw88E84uXLpYG6
-   VTuWZdYd1ezXGwo6KV/rX6TbSwRTv8aItUFCFe/pk8zW/1cWMuoAKflgF
-   Ha1FzjuD3WZdrIDAMukUXrg7pjq115BTJdEgbpLnH3eTvvDQSKifFeknQ
-   Lwbyncrt67ZAquDLyyrh0yAtzXewEKvp+iNfFfL3s7qqKsCrlJHujedsW
-   Zqu6QZGWxX3p9Znt5NkZ5emve+RZPkCebMlsJVtTmDcRulknHyuNaz+DK
-   VUXjMhxT8ljxAqt5kxcDKOvd6H/5ClhzaWzK/2WuTg15t+mxDJ2Uy81IE
-   w==;
-X-CSE-ConnectionGUID: hd3A3q2XTOaw0tKDefSG0A==
-X-CSE-MsgGUID: 0m1xHRa8QZC7XgUJmo/SkQ==
-X-IronPort-AV: E=Sophos;i="6.14,222,1736838000"; 
-   d="scan'208";a="38432578"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa3.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Mar 2025 22:17:08 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Tue, 4 Mar 2025 22:16:40 -0700
-Received: from microchip1-OptiPlex-9020.microchip.com (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Tue, 4 Mar 2025 22:16:37 -0700
-From: shravan kumar <shravan.chippa@microchip.com>
-To: <sakari.ailus@linux.intel.com>, <mchehab@kernel.org>
-CC: <kieran.bingham@ideasonboard.com>, <linux-media@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <conor.dooley@microchip.com>,
-	<valentina.fernandezalanis@microchip.com>, <praveen.kumar@microchip.com>,
-	<shravan.chippa@microchip.com>
-Subject: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p and 480p resolutions
-Date: Wed, 5 Mar 2025 10:44:42 +0530
-Message-ID: <20250305051442.3716817-5-shravan.chippa@microchip.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250305051442.3716817-1-shravan.chippa@microchip.com>
-References: <20250305051442.3716817-1-shravan.chippa@microchip.com>
+	s=arc-20240116; t=1741151928; c=relaxed/simple;
+	bh=kC87oeOMtl04lb5WrpnzUnxVnwsFKi0GNcv5vmYteyc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jFq0O06BrJKVbx/UTh3SQX3w2lOBRPA54ecxewiJej5JrLMeGmVTtlOEivFMF1EKj0vE4awGq9fSh3fOCtmzQNfA3gm0DiNWAReYGiNfUEq3+0KfDmkcAiVF8oe1rHCQhW4Ay1PH/zZPHjl32udNpfoXn8le68soXFDdIo4nX98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nqI9M0qx; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-47208e35f9cso74221361cf.3;
+        Tue, 04 Mar 2025 21:18:46 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741151925; x=1741756725; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=1P3+iYzJ+YpQ9FI2rKYP4r/ocmp23KFw2lq/RJsTz1Y=;
+        b=nqI9M0qxWGD86tY3SCfSarYGX2THSffymq518qCorOYwkLs6rEQOM+5APuSiR32/mC
+         MEn/s7R/oBAOznXoVzEKa6tsBZ4ZuFIzHU3P8keIIktEIf5AdeCUxr+6+9iMaBmxnsL2
+         jaon7YPUEIN6HBkCxiX/AZPitY2PX1+zkmkzQmC1l6HbxLaJt7lKvHv+pEyVR9TY1ayE
+         wHwlxzZ2HczEKmKaqdUIUVrF1x08RAVje6O7LBuclB4nb1RuIevJJyJpyLnTB5VyhTcY
+         wqfdzKGO6tFXNL+kG4DiFe9Gawtvi5X1YWCXjstvqO3i8J+Wb/DXLykusiZuxoGj73w6
+         4XXA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741151925; x=1741756725;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1P3+iYzJ+YpQ9FI2rKYP4r/ocmp23KFw2lq/RJsTz1Y=;
+        b=TZS3Y8pX5V2g/l/4puEXr6o/1H9SAQQY7GqTu0tm5nCJ9Fzks8Xm8689GKtwAHbRnM
+         LrCcccUh32aMPeYAIydZSRg+8K7xhKS/r/hkzgRc3KJXeIYf7HNnDFTyUtY8BpgORvk2
+         b7VdNw8w9hk2y9pSep6Mgty+zCWbyS6g8uP/RHB0GGLLytqrJbwCY/PE8Nri7ljJttPG
+         3B2G7bKpwJAKgI3hwW86lXY8Rp1BbwkyJQHazM2krn/1d8joCFRs0ZPYBSAC/Tg+GJEP
+         tyGRXB2egBAM+dlhXxdyr9/DUGupRdnLjsKAcrcD0G0h3sGnv/rat+qIUjMZErWZQ7rH
+         652g==
+X-Forwarded-Encrypted: i=1; AJvYcCVN24ClVz7byggYs2MCEjznFTMT4s/6PwF9j0LYAZNKVyH/zenKj9ExrwJ/IkGavXYyoH3IwgzCkUCk@vger.kernel.org, AJvYcCWDvGeVwntI5dRZCT4uyO/cTmmkgEm5L5Ju34NkUZyPD7y+IFVUibIAHOG6q2FHy8tdGB0cw+8GAQEqehk9@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZRVZCdy2M+w6fn1LUDQcPFogo2EZ60GFkw9FJzKGJQ+qRzlAU
+	bJE0Xg1A7jN4b83CsLwP3gJIQTwRphApFRzLum8F/aDsH6pO2CAq
+X-Gm-Gg: ASbGnctA/ZOZ6PiZDpu+FMHstUzuikv3Wp5Wa/Lgs0JCB0sLuYWulS9cPNUfb6f/Vwq
+	78bnWCNtsavaGwrV3KUCcOrJXP2qa36rB5vkqVVz79169QQQC1btbuAhSzjJCb1T5bkWJSCXMyX
+	mHpfOhCEg+G+R5y2TOeAUNipqw0pZ5Ks8cZttBCep34rs0rYqK1nZfPq9GzTGvr4Z5aSflJTWSu
+	7Hwz324ch0qsTMzDnY96K8NQrOKZrj2WnlnqtIkF3/dnUn8G2jndkeJ4NrAPIi1mlPajbP45nxg
+	2fG8ZnE8K8I+02nCoJ20
+X-Google-Smtp-Source: AGHT+IEL+SRXWaxNqoLf2fRqsU51Nuz6KF+mx2D44cet7M+NDkMLl3pM/VonNiECdPjeLo+ew7jsDA==
+X-Received: by 2002:ac8:5715:0:b0:471:bbd5:aff2 with SMTP id d75a77b69052e-4750b23bd92mr21798421cf.10.1741151924641;
+        Tue, 04 Mar 2025 21:18:44 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-474f73d8145sm27595631cf.55.2025.03.04.21.18.43
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 21:18:44 -0800 (PST)
+Date: Wed, 5 Mar 2025 13:18:17 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Johan Hovold <johan+linaro@kernel.org>, 
+	Shashank Babu Chinta Venkata <quic_schintav@quicinc.com>, Niklas Cassel <cassel@kernel.org>
+Cc: linux-pci@vger.kernel.org, devicetree@vger.kernel.org, 
+	sophgo@lists.linux.dev, linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org, 
+	Yixun Lan <dlan@gentoo.org>, Longbin Li <looong.bin@gmail.com>
+Subject: Re: [PATCH 2/2] PCI: sophgo-dwc: Add Sophgo SG2044 PCIe driver
+Message-ID: <borpjzjwtdeigqs4szogy2ozzqsqj3ucvppl3k6cdzfoukgdur@23wwl55dmrfj>
+References: <20250304071239.352486-1-inochiama@gmail.com>
+ <20250304071239.352486-3-inochiama@gmail.com>
+ <PN0PR01MB10393134B6BD714C1F070F0BEFEC82@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <PN0PR01MB10393134B6BD714C1F070F0BEFEC82@PN0PR01MB10393.INDPRD01.PROD.OUTLOOK.COM>
 
-From: Shravan Chippa <shravan.chippa@microchip.com>
+On Wed, Mar 05, 2025 at 07:57:14AM +0800, Chen Wang wrote:
+> 
+> On 2025/3/4 15:12, Inochi Amaoto wrote:
+> > Add support for DesignWare-based PCIe controller in SG2044 SoC.
+> > 
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > ---
+> >   drivers/pci/controller/dwc/Kconfig          |  10 +
+> >   drivers/pci/controller/dwc/Makefile         |   1 +
+> >   drivers/pci/controller/dwc/pcie-dw-sophgo.c | 270 ++++++++++++++++++++
+> Will this driver work for all sophgo chips using dw's IP? If not, it is
+> recommended to rename it to "pcie-dw-sg2044.c".
 
-Added support for 1280x720@30 and 640x480@30 resolutions
+It should. As the DesignWare PCIe ip is widely used and I saw
+limit changed across the vendor. And the implement on SG2044
+is almost like the Synopsys one. I think it is possible to 
+represent all DesignWare based PCIe driver for the Sophgo SoCs.
 
-Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
----
- drivers/media/i2c/imx334.c | 66 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 66 insertions(+)
+Also, please think twice before giving some suggestion like
+this. Although it is a good practice to keep the driver
+specifc. keeping everythings specifc make us miss some common
+things. 
 
-diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
-index a7c0bd38c9b8..8cd1eecd0143 100644
---- a/drivers/media/i2c/imx334.c
-+++ b/drivers/media/i2c/imx334.c
-@@ -314,6 +314,46 @@ static const struct imx334_reg common_mode_regs[] = {
- 	{0x3002, 0x00},
- };
- 
-+/* Sensor mode registers for 640x480@30fps */
-+static const struct imx334_reg mode_640x480_regs[] = {
-+	{0x302c, 0x70},
-+	{0x302d, 0x06},
-+	{0x302e, 0x80},
-+	{0x302f, 0x02},
-+	{0x3074, 0x48},
-+	{0x3075, 0x07},
-+	{0x308e, 0x49},
-+	{0x308f, 0x07},
-+	{0x3076, 0xe0},
-+	{0x3077, 0x01},
-+	{0x3090, 0xe0},
-+	{0x3091, 0x01},
-+	{0x3308, 0xe0},
-+	{0x3309, 0x01},
-+	{0x30d8, 0x30},
-+	{0x30d9, 0x0b},
-+};
-+
-+/* Sensor mode registers for 1280x720@30fps */
-+static const struct imx334_reg mode_1280x720_regs[] = {
-+	{0x302c, 0x30},
-+	{0x302d, 0x05},
-+	{0x302e, 0x00},
-+	{0x302f, 0x05},
-+	{0x3074, 0x84},
-+	{0x3075, 0x03},
-+	{0x308e, 0x85},
-+	{0x308f, 0x03},
-+	{0x3076, 0xd0},
-+	{0x3077, 0x02},
-+	{0x3090, 0xd0},
-+	{0x3091, 0x02},
-+	{0x3308, 0xd0},
-+	{0x3309, 0x02},
-+	{0x30d8, 0x30},
-+	{0x30d9, 0x0b},
-+};
-+
- /* Sensor mode registers for 1920x1080@30fps */
- static const struct imx334_reg mode_1920x1080_regs[] = {
- 	{0x302c, 0xf0},
-@@ -433,6 +473,32 @@ static const struct imx334_mode supported_modes[] = {
- 			.num_of_regs = ARRAY_SIZE(mode_1920x1080_regs),
- 			.regs = mode_1920x1080_regs,
- 		},
-+	}, {
-+		.width = 1280,
-+		.height = 720,
-+		.hblank = 2480,
-+		.vblank = 1170,
-+		.vblank_min = 45,
-+		.vblank_max = 132840,
-+		.pclk = 297000000,
-+		.link_freq_idx = 1,
-+		.reg_list = {
-+			.num_of_regs = ARRAY_SIZE(mode_1280x720_regs),
-+			.regs = mode_1280x720_regs,
-+		},
-+	}, {
-+		.width = 640,
-+		.height = 480,
-+		.hblank = 2480,
-+		.vblank = 1170,
-+		.vblank_min = 45,
-+		.vblank_max = 132840,
-+		.pclk = 297000000,
-+		.link_freq_idx = 1,
-+		.reg_list = {
-+			.num_of_regs = ARRAY_SIZE(mode_640x480_regs),
-+			.regs = mode_640x480_regs,
-+		},
- 	},
- };
- 
--- 
-2.34.1
+Regards,
+Inochi
 
+> >   3 files changed, 281 insertions(+)
+> >   create mode 100644 drivers/pci/controller/dwc/pcie-dw-sophgo.c
+> > 
+> > [...]
+> > +
+> > +static void sophgo_intx_irq_eoi(struct irq_data *d)
+> > +{
+> > +}
+> Why define this empty callback function? Please add a comment if it is
+> really needed.
+
+See https://lore.kernel.org/all/bxwsvluj6amgoelk7r55gqhmhjwpewnfyhvvw6zpxen7kqzvwc@fxcebjzo5axk/
 
