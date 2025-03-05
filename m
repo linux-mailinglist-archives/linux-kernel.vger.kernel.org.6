@@ -1,254 +1,514 @@
-Return-Path: <linux-kernel+bounces-546177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78673A4F755
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:41:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7E49A4F73E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:39:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8159A1890AC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:41:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FF2B3A7FCC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:39:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC7081FC0E0;
-	Wed,  5 Mar 2025 06:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD541DC9BE;
+	Wed,  5 Mar 2025 06:39:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="j/LlYFOt"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqhm5v+K"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D6A1F8AC0;
-	Wed,  5 Mar 2025 06:40:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8428E1078F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:39:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741156810; cv=none; b=q9aRE2VE/773INMlgsMU3S4QZuQRrU7jnw1alphfQmqWfsh7g96QazZ7vjwYBQEVbMcQktWzGnUHS61XMYWOP0PjRnQiAI7clSRuT/jKIdn8PCuMqGVyDIkHTdhqiammcGxzZ/jp21HR+QZALFdwzWmuRk2+iT0hMFl7CuEvOiE=
+	t=1741156786; cv=none; b=AeOsF8/AG8g++VyXn+ScaqOI0LKTx2bCs4OG0V3Izk7BZU4oRUZKeJ8/Q6AkyQ87/JzwXkkW/bx2cUM5K6Y0JRqLPbnGBVHHNo4SekYKPCEi6W8pVVQERBfqsQY2Mc3C3vg3wkibYv1cfX9F9ELKF+q58qtpY4B7p/8hyvnQAng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741156810; c=relaxed/simple;
-	bh=AGPOsmkN5Fae072sh/GeM7rngO+K7bS+aZizA0BpZdU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=umPvNwlNkWCHcPY7k0ozJTbfGZglOaZQeipaXh7AA3lYwY1yKe5SXABmCs6iqR49TKmuz7ZgSztVwWIwsPF6ZCeOJhH96YPCUDtemZmaJ3DBqfIQgC1QVP1zwSr1o2latK2CDcXj08SujEpS5Z01mQ8VBbiKfzt27xkdvL0JRBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=j/LlYFOt; arc=none smtp.client-ip=209.85.222.182
+	s=arc-20240116; t=1741156786; c=relaxed/simple;
+	bh=iXaYjJnSHNdH1sMRh3a8nJmBk0g2ViKrhCScyf0UMd8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SptKjx7rYth0oWnFJiqi2zCMARkjiFGabJCtqScaV9YKHNMwmH6hmOxH5GXNu4ds86GJnYUMqwn9YPISdY8fsELyt3Uq2JDoPTOto+XBsS0S2tx/TO/1Z8W7gqxWNEbIN0CNviCZdUNXXAPEvUdkaLoW/sQJLfJkRhCa/KcXyqM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqhm5v+K; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7c3d0e90c4eso49499585a.1;
-        Tue, 04 Mar 2025 22:40:08 -0800 (PST)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43bbf0fb0d6so3258625e9.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 22:39:44 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741156807; x=1741761607; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741156782; x=1741761582; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cY6Pi0eVXjTj4iYGf3V3W021FfEKM0ai79ohmKI0mfc=;
-        b=j/LlYFOt17K1wD0V3sGeDcP0hN5KIu361bG9rY6CCmK3blmB+mJtZHE51ofEli/VOH
-         OEFgqwGLcjDAqhIikyxvcNPUJOLtVN9j+CkVtxQYZ42GBuy4rBSSMGydEcbRSZtUXh82
-         Z6ih5VRjdVpGqxkr7AlMJU+WnDWNYTvcrNCMMpObfU3oAjmd5JZUvh05iOibV732up/J
-         6QVkBnHffgMMWyvxtlIYmQ016WTO0vxT5Y8AVrCwas9ZHReXs6WDPitQjk3mSPTlcV3A
-         blvb6q3YsCMe4emkP09n4JgB1t7su/2FgD6RjonVTnaS57I1gVQ4prsayfHUy3oRq/Fa
-         B5/w==
+        bh=5GDHFsT1jCkR5dbhbtlNVU9DUwSUkDs9T9prz234+yk=;
+        b=lqhm5v+KguDUkZmbwI5K0787esdwhrOnAZxrfYJiRT7sDvOLtR06xYhoYEo2QD3j4k
+         x+4x4/oFpVX6k0kyLGDgToWM6r0HApMoGz7xR5CdU4l6Z+yUW7DdPoraMyucJrIE4vCd
+         tYHM/puW3UztJbRmn+SW+DzfwwMLVPTgMTGAXYF8/lEqinT/wxWciNUDeasgy8PonsEq
+         fZj1fQKLhE/bFx2/eUDe0XhIEe6FPWwrfBgyBZlYm4lhrMwZVCbrYJ4YQNP8y9sFdDcZ
+         ucLj8saT6R9OseN0xsLOD12oQvpIOv+heub414S0FA6qAHzR4qi1FE8OGUxyCgSRPdIW
+         Tzfg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741156807; x=1741761607;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741156782; x=1741761582;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cY6Pi0eVXjTj4iYGf3V3W021FfEKM0ai79ohmKI0mfc=;
-        b=TULUDDMFElLKFa2KnQ1pnUsP5SmpZTk46fTIVmM7qD/YbG0B32BvfnuK5jPTdyITgG
-         uZ5/715vUc0+ncEo2uVAwgqgokbUCnGJK0khqrKFy2eQQodtbfFt3yOt/el3/6NDzW+U
-         wL2e6esYwLvJZA3XmnvcTmRlzowjsfleZPeIWRBKq1b3tYBP4o7Zps7yM6+Y3dQiaEGg
-         5MKwLGFGA3SMz4p9v5TVt2lfFzzvVOo1wnOtK7PsE1JoRmNT1Uj/hhSpy5krKe4KbX/u
-         yrwPMJ7jr+BWglf8udvX14aLLQGD0znEykTzepuE5IRKPaiDjAW0ue5fUw3kBReAd0ho
-         HPkA==
-X-Forwarded-Encrypted: i=1; AJvYcCW0zaLZzdOp1dUjjzTqgMOt6q2Xp01YNqcjH6gAfFjr/jvDxj0ZYZzD98PmLMdQ/YWmXyOIFX/SNdwRYWli@vger.kernel.org, AJvYcCXZ9wCKosTi8G3G4r0EeeAHI/Af95qKMCmTuW/qOCCCO7va1UHzjEUXHDgH5kGSoSvuUoOrioZftNeo@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUXhImTPtixjp5qaVM2oMKbQWgGIMF6vwFo1VZBHdxh7h8A0Ke
-	Q8wPm028VzIXaWm4ZlKC8+DPK2VCcdd7w+RZOIwvTr2u3W+QDwSJ
-X-Gm-Gg: ASbGncsQrCI0YJpROcu2UXF9P25sV7pR3R11tAvhJhi3qp8PkvyUlvWo0cHRqjDcRFx
-	IzcUiB/8awtcEQszLLLt67X+km6x3LnzJFyD43qdyFlUerkmq3Nj99PsvrO5ne9PO24p7BH7XV8
-	kYxTWEJ6gyRGBCpd51uFP0mfuDtAl4d0IKRElSDFIgELBH9F8F+T+R6uFrBVgX9wPc7tF+Iq+v8
-	na779g/1V3+p9g+ppEtgYB3Lts8vu+X4GCwBrDceLH/BStlAz6lJqii4cahM4rTPJQIVrJeZTUo
-	3F4aKCqiPir6BWdJbSf5
-X-Google-Smtp-Source: AGHT+IGwtGEt3KqPtzEArH9EO6uoLdPaUjiF2hOKrwwHaDa+GSJgxxkM/g83OEgs0VgyrS2u3iChTw==
-X-Received: by 2002:a05:620a:2626:b0:7c3:c500:ca96 with SMTP id af79cd13be357-7c3d9172203mr291491985a.9.1741156807126;
-        Tue, 04 Mar 2025 22:40:07 -0800 (PST)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3d9bcdcc3sm65443785a.60.2025.03.04.22.40.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 22:40:06 -0800 (PST)
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@gmail.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Hariprasad Kelam <hkelam@marvell.com>,
-	Jisheng Zhang <jszhang@kernel.org>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
-	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
-	Simon Horman <horms@kernel.org>,
-	Furong Xu <0x1207@gmail.com>,
-	Lothar Rubusch <l.rubusch@gmail.com>,
-	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>
-Cc: netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	sophgo@lists.linux.dev,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org,
-	Yixun Lan <dlan@gentoo.org>,
-	Longbin Li <looong.bin@gmail.com>
-Subject: [PATCH net-next v6 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-Date: Wed,  5 Mar 2025 14:39:16 +0800
-Message-ID: <20250305063920.803601-5-inochiama@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250305063920.803601-1-inochiama@gmail.com>
-References: <20250305063920.803601-1-inochiama@gmail.com>
+        bh=5GDHFsT1jCkR5dbhbtlNVU9DUwSUkDs9T9prz234+yk=;
+        b=U82aqtXuLW0cYRsLvdvlFwt+mRsDbbBpQiicyXE/HwtHnYsRI3GhOdwrsqiqo0I2sn
+         PI4Sl3QuVlLPRUcEsLXAIf9klekuGm0TMp1t2ayZvuLHzyYu1LjbuHkRJcT4mx89Vpi9
+         9XnK/U2SkeP9Fl6K86Rx0nHhlRTyLT9tk/gAh7MDGW+b3r+yGRpe8DDNRZSVfybX8q3l
+         Nb3ktOQMDSapuWJYTWFR0b9GLpNitV6sb2IhgKxpoktF7GLRqxSwN7c5q/N8lpejdrSO
+         78ve+v2VyZKjBHsf/PVhx7/bb8Xc/aOFLY8rFagOPGfFKYkGhRreOE1bT3GsATLHI2zk
+         VejQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVrHh/DcSvMXp8kwDQE6SY2vY2g9zZwDDi8sJPgLJsCXHjLKfTtnwPe3mp1Cu5JC6jAxc5AzqqPWppCeas=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8/U0aMLoius/XHidHNcMErV+wQvg6A77ZSo7gcsfp64burPyv
+	xc7kNUPiCljP0hOZo2FcNoZKS5doADHYpmdzkTHkqrBtKbifT304EaezNMdlDlYZ8FPIn6SF9kh
+	ev9AucEpuVRhihmz2su32HdDT4r8=
+X-Gm-Gg: ASbGnctycKRD0iZHDAIjCI3uwLKfd8yU/DwA7php7zQXGkEjlZj50D4WQFO09PiUqLy
+	H0vjFC75Qqmabt1F7PSuqfHwkYUYSrZBmlfEfhV3c+uA7WZjLmEeia9J24gA1sGasDu2R6/Vo1d
+	zzuxQWF9JoTAPxy8VdUqosuDPUjMc=
+X-Google-Smtp-Source: AGHT+IFrDIrnAh/9tnpcr6peuZg6sgktPhWdHTUqlJMzOuMsfdPBNX4tOmsb3OfLpSVmdfHXwEiZiiKt61F3iNtMufQ=
+X-Received: by 2002:a5d:6486:0:b0:38d:d69e:1316 with SMTP id
+ ffacd0b85a97d-3911f72725bmr396701f8f.1.1741156782334; Tue, 04 Mar 2025
+ 22:39:42 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250303035423.1357211-1-chao@kernel.org>
+In-Reply-To: <20250303035423.1357211-1-chao@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Wed, 5 Mar 2025 14:39:30 +0800
+X-Gm-Features: AQ5f1JowN4uOjgytqe3gorib3OepvMCqs_aDb8qxqV4vGSoe6v-H89tOi4GmdwM
+Message-ID: <CAHJ8P3K7y_=uJ7R_-cBRt7bnOKT--3+BdzVfyYEUtc8-VNuyKQ@mail.gmail.com>
+Subject: Re: [f2fs-dev] [PATCH 1/3] f2fs: do sanity check on inode footer in f2fs_get_inode_page()
+To: Chao Yu <chao@kernel.org>
+Cc: jaegeuk@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Adds Sophgo dwmac driver support on the Sophgo SG2044 SoC.
-
-Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
----
- drivers/net/ethernet/stmicro/stmmac/Kconfig   | 11 +++
- drivers/net/ethernet/stmicro/stmmac/Makefile  |  1 +
- .../ethernet/stmicro/stmmac/dwmac-sophgo.c    | 75 +++++++++++++++++++
- 3 files changed, 87 insertions(+)
- create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
-
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Kconfig b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-index 4cc85a36a1ab..b6ff51e1ebce 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Kconfig
-+++ b/drivers/net/ethernet/stmicro/stmmac/Kconfig
-@@ -181,6 +181,17 @@ config DWMAC_SOCFPGA
- 	  for the stmmac device driver. This driver is used for
- 	  arria5 and cyclone5 FPGA SoCs.
- 
-+config DWMAC_SOPHGO
-+	tristate "Sophgo dwmac support"
-+	depends on OF && (ARCH_SOPHGO || COMPILE_TEST)
-+	default m if ARCH_SOPHGO
-+	help
-+	  Support for ethernet controllers on Sophgo RISC-V SoCs
-+
-+	  This selects the Sophgo SoC specific glue layer support
-+	  for the stmmac device driver. This driver is used for the
-+	  ethernet controllers on various Sophgo SoCs.
-+
- config DWMAC_STARFIVE
- 	tristate "StarFive dwmac support"
- 	depends on OF && (ARCH_STARFIVE || COMPILE_TEST)
-diff --git a/drivers/net/ethernet/stmicro/stmmac/Makefile b/drivers/net/ethernet/stmicro/stmmac/Makefile
-index b26f0e79c2b3..594883fb4164 100644
---- a/drivers/net/ethernet/stmicro/stmmac/Makefile
-+++ b/drivers/net/ethernet/stmicro/stmmac/Makefile
-@@ -24,6 +24,7 @@ obj-$(CONFIG_DWMAC_ROCKCHIP)	+= dwmac-rk.o
- obj-$(CONFIG_DWMAC_RZN1)	+= dwmac-rzn1.o
- obj-$(CONFIG_DWMAC_S32)		+= dwmac-s32.o
- obj-$(CONFIG_DWMAC_SOCFPGA)	+= dwmac-altr-socfpga.o
-+obj-$(CONFIG_DWMAC_SOPHGO)	+= dwmac-sophgo.o
- obj-$(CONFIG_DWMAC_STARFIVE)	+= dwmac-starfive.o
- obj-$(CONFIG_DWMAC_STI)		+= dwmac-sti.o
- obj-$(CONFIG_DWMAC_STM32)	+= dwmac-stm32.o
-diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
-new file mode 100644
-index 000000000000..3303784cbbf8
---- /dev/null
-+++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
-@@ -0,0 +1,75 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Sophgo DWMAC platform driver
-+ *
-+ * Copyright (C) 2024 Inochi Amaoto <inochiama@gmail.com>
-+ */
-+
-+#include <linux/clk.h>
-+#include <linux/module.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/platform_device.h>
-+
-+#include "stmmac_platform.h"
-+
-+static int sophgo_sg2044_dwmac_init(struct platform_device *pdev,
-+				    struct plat_stmmacenet_data *plat_dat,
-+				    struct stmmac_resources *stmmac_res)
-+{
-+	plat_dat->clk_tx_i = devm_clk_get_enabled(&pdev->dev, "tx");
-+	if (IS_ERR(plat_dat->clk_tx_i))
-+		return dev_err_probe(&pdev->dev, PTR_ERR(plat_dat->clk_tx_i),
-+				     "failed to get tx clock\n");
-+
-+	plat_dat->flags |= STMMAC_FLAG_SPH_DISABLE;
-+	plat_dat->set_clk_tx_rate = stmmac_set_clk_tx_rate;
-+	plat_dat->multicast_filter_bins = 0;
-+	plat_dat->unicast_filter_entries = 1;
-+
-+	return 0;
-+}
-+
-+static int sophgo_dwmac_probe(struct platform_device *pdev)
-+{
-+	struct plat_stmmacenet_data *plat_dat;
-+	struct stmmac_resources stmmac_res;
-+	struct device *dev = &pdev->dev;
-+	int ret;
-+
-+	ret = stmmac_get_platform_resources(pdev, &stmmac_res);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "failed to get platform resources\n");
-+
-+	plat_dat = devm_stmmac_probe_config_dt(pdev, stmmac_res.mac);
-+	if (IS_ERR(plat_dat))
-+		return dev_err_probe(dev, PTR_ERR(plat_dat),
-+				     "failed to parse DT parameters\n");
-+
-+	ret = sophgo_sg2044_dwmac_init(pdev, plat_dat, &stmmac_res);
-+	if (ret)
-+		return ret;
-+
-+	return stmmac_dvr_probe(dev, plat_dat, &stmmac_res);
-+}
-+
-+static const struct of_device_id sophgo_dwmac_match[] = {
-+	{ .compatible = "sophgo,sg2044-dwmac" },
-+	{ /* sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, sophgo_dwmac_match);
-+
-+static struct platform_driver sophgo_dwmac_driver = {
-+	.probe  = sophgo_dwmac_probe,
-+	.remove = stmmac_pltfr_remove,
-+	.driver = {
-+		.name = "sophgo-dwmac",
-+		.pm = &stmmac_pltfr_pm_ops,
-+		.of_match_table = sophgo_dwmac_match,
-+	},
-+};
-+module_platform_driver(sophgo_dwmac_driver);
-+
-+MODULE_AUTHOR("Inochi Amaoto <inochiama@gmail.com>");
-+MODULE_DESCRIPTION("Sophgo DWMAC platform driver");
-+MODULE_LICENSE("GPL");
--- 
-2.48.1
-
+Chao Yu via Linux-f2fs-devel <linux-f2fs-devel@lists.sourceforge.net>
+=E4=BA=8E2025=E5=B9=B43=E6=9C=883=E6=97=A5=E5=91=A8=E4=B8=80 11:57=E5=86=99=
+=E9=81=93=EF=BC=9A
+>
+> This patch introduces a new wrapper f2fs_get_inode_page(), then, caller
+> can use it to load inode block to page cache, meanwhile it will do sanity
+> check on inode footer.
+>
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+>  fs/f2fs/data.c   |  6 ++---
+>  fs/f2fs/dir.c    |  2 +-
+>  fs/f2fs/f2fs.h   |  3 ++-
+>  fs/f2fs/file.c   |  2 +-
+>  fs/f2fs/inline.c | 22 +++++++++----------
+>  fs/f2fs/inode.c  |  4 ++--
+>  fs/f2fs/node.c   | 57 +++++++++++++++++++++++++++++++++---------------
+>  fs/f2fs/node.h   |  6 +++++
+>  fs/f2fs/xattr.c  |  4 ++--
+>  9 files changed, 67 insertions(+), 39 deletions(-)
+>
+> diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+> index f1554a5a3d7a..e29d15d637ff 100644
+> --- a/fs/f2fs/data.c
+> +++ b/fs/f2fs/data.c
+> @@ -3402,7 +3402,7 @@ static int prepare_write_begin(struct f2fs_sb_info =
+*sbi,
+>
+>  restart:
+>         /* check inline_data */
+> -       ipage =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>         if (IS_ERR(ipage)) {
+>                 err =3D PTR_ERR(ipage);
+>                 goto unlock_out;
+> @@ -3465,7 +3465,7 @@ static int __find_data_block(struct inode *inode, p=
+goff_t index,
+>         struct page *ipage;
+>         int err =3D 0;
+>
+> -       ipage =3D f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(F2FS_I_SB(inode), inode->i_ino);
+>         if (IS_ERR(ipage))
+>                 return PTR_ERR(ipage);
+>
+> @@ -3495,7 +3495,7 @@ static int __reserve_data_block(struct inode *inode=
+, pgoff_t index,
+>
+>         f2fs_map_lock(sbi, F2FS_GET_BLOCK_PRE_AIO);
+>
+> -       ipage =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>         if (IS_ERR(ipage)) {
+>                 err =3D PTR_ERR(ipage);
+>                 goto unlock_out;
+> diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+> index 4c74f29a2c73..acd5b2e3e966 100644
+> --- a/fs/f2fs/dir.c
+> +++ b/fs/f2fs/dir.c
+> @@ -552,7 +552,7 @@ struct page *f2fs_init_inode_metadata(struct inode *i=
+node, struct inode *dir,
+>                                 goto put_error;
+>                 }
+>         } else {
+> -               page =3D f2fs_get_node_page(F2FS_I_SB(dir), inode->i_ino)=
+;
+> +               page =3D f2fs_get_inode_page(F2FS_I_SB(dir), inode->i_ino=
+);
+>                 if (IS_ERR(page))
+>                         return page;
+>         }
+> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+> index e45c204c36ec..74a80bb06f06 100644
+> --- a/fs/f2fs/f2fs.h
+> +++ b/fs/f2fs/f2fs.h
+> @@ -3702,7 +3702,8 @@ struct page *f2fs_new_inode_page(struct inode *inod=
+e);
+>  struct page *f2fs_new_node_page(struct dnode_of_data *dn, unsigned int o=
+fs);
+>  void f2fs_ra_node_page(struct f2fs_sb_info *sbi, nid_t nid);
+>  struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid);
+> -struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid)=
+;
+> +struct folio *f2fs_get_inode_folio(struct f2fs_sb_info *sbi, pgoff_t ino=
+);
+> +struct page *f2fs_get_inode_page(struct f2fs_sb_info *sbi, pgoff_t ino);
+>  struct page *f2fs_get_node_page_ra(struct page *parent, int start);
+>  int f2fs_move_node_page(struct page *node_page, int gc_type);
+>  void f2fs_flush_inline_data(struct f2fs_sb_info *sbi);
+> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+> index cd8d366b2fd7..d21fd2ef8bf8 100644
+> --- a/fs/f2fs/file.c
+> +++ b/fs/f2fs/file.c
+> @@ -761,7 +761,7 @@ int f2fs_do_truncate_blocks(struct inode *inode, u64 =
+from, bool lock)
+>         if (lock)
+>                 f2fs_lock_op(sbi);
+>
+> -       ipage =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>         if (IS_ERR(ipage)) {
+>                 err =3D PTR_ERR(ipage);
+>                 goto out;
+> diff --git a/fs/f2fs/inline.c b/fs/f2fs/inline.c
+> index 3e3c35d4c98b..ad92e9008781 100644
+> --- a/fs/f2fs/inline.c
+> +++ b/fs/f2fs/inline.c
+> @@ -119,7 +119,7 @@ int f2fs_read_inline_data(struct inode *inode, struct=
+ folio *folio)
+>  {
+>         struct page *ipage;
+>
+> -       ipage =3D f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(F2FS_I_SB(inode), inode->i_ino);
+>         if (IS_ERR(ipage)) {
+>                 folio_unlock(folio);
+>                 return PTR_ERR(ipage);
+> @@ -237,7 +237,7 @@ int f2fs_convert_inline_inode(struct inode *inode)
+>
+>         f2fs_lock_op(sbi);
+>
+> -       ipage =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>         if (IS_ERR(ipage)) {
+>                 err =3D PTR_ERR(ipage);
+>                 goto out;
+> @@ -265,7 +265,7 @@ int f2fs_write_inline_data(struct inode *inode, struc=
+t folio *folio)
+>         struct f2fs_sb_info *sbi =3D F2FS_I_SB(inode);
+>         struct page *ipage;
+>
+> -       ipage =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>         if (IS_ERR(ipage))
+>                 return PTR_ERR(ipage);
+>
+> @@ -312,7 +312,7 @@ int f2fs_recover_inline_data(struct inode *inode, str=
+uct page *npage)
+>         if (f2fs_has_inline_data(inode) &&
+>                         ri && (ri->i_inline & F2FS_INLINE_DATA)) {
+>  process_inline:
+> -               ipage =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +               ipage =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>                 if (IS_ERR(ipage))
+>                         return PTR_ERR(ipage);
+>
+> @@ -331,7 +331,7 @@ int f2fs_recover_inline_data(struct inode *inode, str=
+uct page *npage)
+>         }
+>
+>         if (f2fs_has_inline_data(inode)) {
+> -               ipage =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +               ipage =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>                 if (IS_ERR(ipage))
+>                         return PTR_ERR(ipage);
+>                 f2fs_truncate_inline_inode(inode, ipage, 0);
+> @@ -361,7 +361,7 @@ struct f2fs_dir_entry *f2fs_find_in_inline_dir(struct=
+ inode *dir,
+>         struct page *ipage;
+>         void *inline_dentry;
+>
+> -       ipage =3D f2fs_get_node_page(sbi, dir->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, dir->i_ino);
+>         if (IS_ERR(ipage)) {
+>                 *res_page =3D ipage;
+>                 return NULL;
+> @@ -609,7 +609,7 @@ int f2fs_try_convert_inline_dir(struct inode *dir, st=
+ruct dentry *dentry)
+>         if (err)
+>                 goto out;
+>
+> -       ipage =3D f2fs_get_node_page(sbi, dir->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, dir->i_ino);
+>         if (IS_ERR(ipage)) {
+>                 err =3D PTR_ERR(ipage);
+>                 goto out_fname;
+> @@ -644,7 +644,7 @@ int f2fs_add_inline_entry(struct inode *dir, const st=
+ruct f2fs_filename *fname,
+>         struct page *page =3D NULL;
+>         int err =3D 0;
+>
+> -       ipage =3D f2fs_get_node_page(sbi, dir->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, dir->i_ino);
+>         if (IS_ERR(ipage))
+>                 return PTR_ERR(ipage);
+>
+> @@ -734,7 +734,7 @@ bool f2fs_empty_inline_dir(struct inode *dir)
+>         void *inline_dentry;
+>         struct f2fs_dentry_ptr d;
+>
+> -       ipage =3D f2fs_get_node_page(sbi, dir->i_ino);
+> +       ipage =3D f2fs_get_inode_page(sbi, dir->i_ino);
+>         if (IS_ERR(ipage))
+>                 return false;
+>
+> @@ -765,7 +765,7 @@ int f2fs_read_inline_dir(struct file *file, struct di=
+r_context *ctx,
+>         if (ctx->pos =3D=3D d.max)
+>                 return 0;
+>
+> -       ipage =3D f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(F2FS_I_SB(inode), inode->i_ino);
+>         if (IS_ERR(ipage))
+>                 return PTR_ERR(ipage);
+>
+> @@ -797,7 +797,7 @@ int f2fs_inline_data_fiemap(struct inode *inode,
+>         struct page *ipage;
+>         int err =3D 0;
+>
+> -       ipage =3D f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(F2FS_I_SB(inode), inode->i_ino);
+>         if (IS_ERR(ipage))
+>                 return PTR_ERR(ipage);
+>
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index 6aec752ac098..aa2f41696a88 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -410,7 +410,7 @@ static int do_read_inode(struct inode *inode)
+>         if (f2fs_check_nid_range(sbi, inode->i_ino))
+>                 return -EINVAL;
+>
+> -       node_page =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +       node_page =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>         if (IS_ERR(node_page))
+>                 return PTR_ERR(node_page);
+>
+> @@ -757,7 +757,7 @@ void f2fs_update_inode_page(struct inode *inode)
+>         struct page *node_page;
+>         int count =3D 0;
+>  retry:
+> -       node_page =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +       node_page =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>         if (IS_ERR(node_page)) {
+>                 int err =3D PTR_ERR(node_page);
+>
+> diff --git a/fs/f2fs/node.c b/fs/f2fs/node.c
+> index 36614a1c2590..ee5daa6f7408 100644
+> --- a/fs/f2fs/node.c
+> +++ b/fs/f2fs/node.c
+> @@ -778,7 +778,7 @@ int f2fs_get_dnode_of_data(struct dnode_of_data *dn, =
+pgoff_t index, int mode)
+>         npage[0] =3D dn->inode_page;
+>
+>         if (!npage[0]) {
+> -               npage[0] =3D f2fs_get_node_page(sbi, nids[0]);
+> +               npage[0] =3D f2fs_get_inode_page(sbi, nids[0]);
+>                 if (IS_ERR(npage[0]))
+>                         return PTR_ERR(npage[0]);
+>         }
+> @@ -1147,7 +1147,7 @@ int f2fs_truncate_inode_blocks(struct inode *inode,=
+ pgoff_t from)
+>                 return level;
+>         }
+>
+> -       folio =3D f2fs_get_node_folio(sbi, inode->i_ino);
+> +       folio =3D f2fs_get_inode_folio(sbi, inode->i_ino);
+>         if (IS_ERR(folio)) {
+>                 trace_f2fs_truncate_inode_blocks_exit(inode, PTR_ERR(foli=
+o));
+>                 return PTR_ERR(folio);
+> @@ -1456,8 +1456,27 @@ void f2fs_ra_node_page(struct f2fs_sb_info *sbi, n=
+id_t nid)
+>         f2fs_put_page(apage, err ? 1 : 0);
+>  }
+>
+> +static int sanity_check_node_footer(struct f2fs_sb_info *sbi,
+> +                                       struct page *page, pgoff_t nid,
+> +                                       enum node_type ntype)
+> +{
+> +       if (unlikely(nid !=3D nid_of_node(page) ||
+> +               (ntype =3D=3D NODE_TYPE_INODE && !IS_INODE(page)))) {
+> +               f2fs_warn(sbi, "inconsistent node block, node_type:%d, ni=
+d:%lu, "
+> +                         "node_footer[nid:%u,ino:%u,ofs:%u,cpver:%llu,bl=
+kaddr:%u]",
+> +                         ntype, nid, nid_of_node(page), ino_of_node(page=
+),
+> +                         ofs_of_node(page), cpver_of_node(page),
+> +                         next_blkaddr_of_node(page));
+> +               set_sbi_flag(sbi, SBI_NEED_FSCK);
+> +               f2fs_handle_error(sbi, ERROR_INCONSISTENT_FOOTER);
+> +               return -EFSCORRUPTED;
+> +       }
+> +       return 0;
+> +}
+> +
+>  static struct folio *__get_node_folio(struct f2fs_sb_info *sbi, pgoff_t =
+nid,
+> -                                       struct page *parent, int start)
+> +                                       struct page *parent, int start,
+> +                                       enum node_type ntype)
+>  {
+>         struct folio *folio;
+>         int err;
+> @@ -1499,16 +1518,9 @@ static struct folio *__get_node_folio(struct f2fs_=
+sb_info *sbi, pgoff_t nid,
+>                 goto out_err;
+>         }
+>  page_hit:
+> -       if (likely(nid =3D=3D nid_of_node(&folio->page)))
+> +       err =3D sanity_check_node_footer(sbi, &folio->page, nid, ntype);
+> +       if (!err)
+>                 return folio;
+> -
+> -       f2fs_warn(sbi, "inconsistent node block, nid:%lu, node_footer[nid=
+:%u,ino:%u,ofs:%u,cpver:%llu,blkaddr:%u]",
+> -                         nid, nid_of_node(&folio->page), ino_of_node(&fo=
+lio->page),
+> -                         ofs_of_node(&folio->page), cpver_of_node(&folio=
+->page),
+> -                         next_blkaddr_of_node(&folio->page));
+> -       set_sbi_flag(sbi, SBI_NEED_FSCK);
+> -       f2fs_handle_error(sbi, ERROR_INCONSISTENT_FOOTER);
+> -       err =3D -EFSCORRUPTED;
+>  out_err:
+>         folio_clear_uptodate(folio);
+>  out_put_err:
+> @@ -1519,14 +1531,22 @@ static struct folio *__get_node_folio(struct f2fs=
+_sb_info *sbi, pgoff_t nid,
+>         return ERR_PTR(err);
+>  }
+>
+> -struct folio *f2fs_get_node_folio(struct f2fs_sb_info *sbi, pgoff_t nid)
+> +struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid)
+> +{
+> +       struct folio *folio =3D __get_node_folio(sbi, nid, NULL, 0,
+> +                                               NODE_TYPE_REGULAR);
+> +
+> +       return &folio->page;
+> +}
+> +
+> +struct folio *f2fs_get_inode_folio(struct f2fs_sb_info *sbi, pgoff_t ino=
+)
+>  {
+> -       return __get_node_folio(sbi, nid, NULL, 0);
+> +       return __get_node_folio(sbi, ino, NULL, 0, NODE_TYPE_REGULAR);
+Hi Chao,
+here should  return __get_node_folio(sbi, ino, NULL, 0, NODE_TYPE_INODE); ?
+thanks=EF=BC=81
+>  }
+>
+> -struct page *f2fs_get_node_page(struct f2fs_sb_info *sbi, pgoff_t nid)
+> +struct page *f2fs_get_inode_page(struct f2fs_sb_info *sbi, pgoff_t ino)
+>  {
+> -       struct folio *folio =3D __get_node_folio(sbi, nid, NULL, 0);
+> +       struct folio *folio =3D f2fs_get_inode_folio(sbi, ino);
+>
+>         return &folio->page;
+>  }
+> @@ -1535,7 +1555,8 @@ struct page *f2fs_get_node_page_ra(struct page *par=
+ent, int start)
+>  {
+>         struct f2fs_sb_info *sbi =3D F2FS_P_SB(parent);
+>         nid_t nid =3D get_nid(parent, start, false);
+> -       struct folio *folio =3D __get_node_folio(sbi, nid, parent, start)=
+;
+> +       struct folio *folio =3D __get_node_folio(sbi, nid, parent, start,
+> +                                                       NODE_TYPE_REGULAR=
+);
+>
+>         return &folio->page;
+>  }
+> @@ -2727,7 +2748,7 @@ int f2fs_recover_inline_xattr(struct inode *inode, =
+struct page *page)
+>         struct page *ipage;
+>         struct f2fs_inode *ri;
+>
+> -       ipage =3D f2fs_get_node_page(F2FS_I_SB(inode), inode->i_ino);
+> +       ipage =3D f2fs_get_inode_page(F2FS_I_SB(inode), inode->i_ino);
+>         if (IS_ERR(ipage))
+>                 return PTR_ERR(ipage);
+>
+> diff --git a/fs/f2fs/node.h b/fs/f2fs/node.h
+> index 281d53c95c9a..5079c6a2298d 100644
+> --- a/fs/f2fs/node.h
+> +++ b/fs/f2fs/node.h
+> @@ -52,6 +52,12 @@ enum {
+>         IS_PREALLOC,            /* nat entry is preallocated */
+>  };
+>
+> +/* For node type in __get_node_folio() */
+> +enum node_type {
+> +       NODE_TYPE_REGULAR,
+> +       NODE_TYPE_INODE,
+> +};
+> +
+>  /*
+>   * For node information
+>   */
+> diff --git a/fs/f2fs/xattr.c b/fs/f2fs/xattr.c
+> index 3f3874943679..d5b42e1005d8 100644
+> --- a/fs/f2fs/xattr.c
+> +++ b/fs/f2fs/xattr.c
+> @@ -282,7 +282,7 @@ static int read_inline_xattr(struct inode *inode, str=
+uct page *ipage,
+>         if (ipage) {
+>                 inline_addr =3D inline_xattr_addr(inode, ipage);
+>         } else {
+> -               page =3D f2fs_get_node_page(sbi, inode->i_ino);
+> +               page =3D f2fs_get_inode_page(sbi, inode->i_ino);
+>                 if (IS_ERR(page))
+>                         return PTR_ERR(page);
+>
+> @@ -449,7 +449,7 @@ static inline int write_all_xattrs(struct inode *inod=
+e, __u32 hsize,
+>                 if (ipage) {
+>                         inline_addr =3D inline_xattr_addr(inode, ipage);
+>                 } else {
+> -                       in_page =3D f2fs_get_node_page(sbi, inode->i_ino)=
+;
+> +                       in_page =3D f2fs_get_inode_page(sbi, inode->i_ino=
+);
+>                         if (IS_ERR(in_page)) {
+>                                 f2fs_alloc_nid_failed(sbi, new_nid);
+>                                 return PTR_ERR(in_page);
+> --
+> 2.48.1
+>
+>
+>
+> _______________________________________________
+> Linux-f2fs-devel mailing list
+> Linux-f2fs-devel@lists.sourceforge.net
+> https://lists.sourceforge.net/lists/listinfo/linux-f2fs-devel
 
