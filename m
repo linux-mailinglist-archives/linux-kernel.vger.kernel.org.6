@@ -1,115 +1,158 @@
-Return-Path: <linux-kernel+bounces-545926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3FCA4F3D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:33:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0A0A4F3D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:34:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13F6A3A617B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:33:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB97D16B3C9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839CA1459F6;
-	Wed,  5 Mar 2025 01:33:23 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68D61426C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3BF1465AD;
+	Wed,  5 Mar 2025 01:33:55 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BE7143736
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741138403; cv=none; b=rfsN4VDzrcRzV8BrbivzVPWjZtM5EP/pP986NdTe/UehBUqjQ0Lqj1IELKY2+tZ7sQHlxyhHwdHaZnDqRnCVcSdSP/S2jhPHwOa3z8doJ8Tlb7I2n3CZpuaeYASNqozrdu7IH8HotjCZ4hJW0L6EHTMV7ElEykraG8eHSmAc50M=
+	t=1741138435; cv=none; b=rLrO1Ug1gMUG89g5BOZRjyzH/0Beu9cAXBmQnVR+MVwYh+PaYchp+0f8P6iwdITi/GkXuJNyp96kl3cTpajmrV6B6bn0l5caLDS8hlQ2Ez6fkys+yS4n+cqTpN+A+ZjdVYZiJ9gh6/mnez+qGaL/g2NsQ+TOPKDtpEX0sLeSeEA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741138403; c=relaxed/simple;
-	bh=a2YxTZNCtN9SLn5Dl8H2Ghi94RIBMXtd0poWhdlap8c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qaKNh9ytYQi+SPl1vbUeciSQcYVSe/Vky3ioo8jkfRc2trOrim0a5Y+fVjMDb+MpjPvbfKRBQQnl+74uXVz8CHOFCdAgtbfgPIyVB/6Khbhva/dthWSWXlaE30DgxjdQLiO+ExixYiqlIRqIPPjTZbK4voBlIg9KWsFP7/CC9MU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: cbf05f4cf96111efa216b1d71e6e1362-20250305
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:29ed36d9-0967-429d-b844-b4bf550975e6,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6493067,CLOUDID:c5fa19545ebb2597eaf527003577d700,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 1,FCT|NGT
-X-CID-BAS: 1,FCT|NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: cbf05f4cf96111efa216b1d71e6e1362-20250305
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <liuye@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 131484311; Wed, 05 Mar 2025 09:33:10 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id 8D39CB803947;
-	Wed,  5 Mar 2025 09:33:09 +0800 (CST)
-X-ns-mid: postfix-67C7A9D5-483792230
-Received: from [172.30.70.73] (unknown [172.30.70.73])
-	by node2.com.cn (NSMail) with ESMTPA id 5BAD0B803CA3;
-	Wed,  5 Mar 2025 01:33:07 +0000 (UTC)
-Message-ID: <c3c638fb-e61f-47c1-860c-0cc024961fe4@kylinos.cn>
-Date: Wed, 5 Mar 2025 09:33:04 +0800
+	s=arc-20240116; t=1741138435; c=relaxed/simple;
+	bh=RJSsvUkwE1psIq7jswRIkOyjYBcD9wsUQCVHvA2sFwc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=NF7v2EC4tIhBwNDSh3U9E4s2Lg6MWbkwF3rMsilflP9fK3H3SWNBIZx5l08oQ/ce2zZONsqa7qssCvxLlJDcw2izvFMyNfwwWNSJ3bdrZ9QrCXdbHWl+MHK3QeQdFejl3cae21V6h32YOXD4ppj7IloeIp3PJmzVjxbfQTk2gu8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8BxYa_8qcdnPrGKAA--.64530S3;
+	Wed, 05 Mar 2025 09:33:48 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMDxPcX5qcdnIbg2AA--.4576S3;
+	Wed, 05 Mar 2025 09:33:47 +0800 (CST)
+Subject: Re: [PATCH] LoongArch: mm: Set max_pfn with the PFN of the last page
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250304112708.1810033-1-maobibo@loongson.cn>
+ <CAAhV-H7ZAK15ob3M=5eQrOhPvkSFhkrmVHd-mn6RXgQqQV_Ebg@mail.gmail.com>
+From: bibo mao <maobibo@loongson.cn>
+Message-ID: <3a04b960-e3ad-0656-d69d-6e85079d305a@loongson.cn>
+Date: Wed, 5 Mar 2025 09:33:09 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/4] Optimize __vmalloc_node_range_noprof function.
-To: Dev Jain <dev.jain@arm.com>, Uladzislau Rezki <urezki@gmail.com>
-Cc: akpm@linux-foundation.org, hch@infradead.org, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org
-References: <20250303094410.437985-1-liuye@kylinos.cn>
- <Z8XUP10G3cTJlbuw@pc636> <921fb496-ae14-4b6d-86a5-a18c492872f9@arm.com>
+In-Reply-To: <CAAhV-H7ZAK15ob3M=5eQrOhPvkSFhkrmVHd-mn6RXgQqQV_Ebg@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Language: en-US
-From: liuye <liuye@kylinos.cn>
-In-Reply-To: <921fb496-ae14-4b6d-86a5-a18c492872f9@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDxPcX5qcdnIbg2AA--.4576S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoWxur1UWr1xXr1xXr1fXr4xGrX_yoW5Zry5pr
+	W8AF1DWr4UGr1xC34Fqw1kuryfW3s0k3y3Wa1rKF1Syr15Xrn3Xw40qrnxuF1qqw4xJa1F
+	qrZ0gFyqvFWUtagCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
+	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
+	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
+	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
+	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
+	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
+	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
+	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU24SoDUUU
+	U
 
 
-=E5=9C=A8 2025/3/4 13:58, Dev Jain =E5=86=99=E9=81=93:
->
->
-> On 03/03/25 9:39 pm, Uladzislau Rezki wrote:
->> On Mon, Mar 03, 2025 at 05:44:06PM +0800, Liu Ye wrote:
->>> The use of variables real_size and real_align in function
->>> __vmalloc_node_range_noprof is unreadable. Optimize it in four patche=
-s.
->>>
->>> Liu Ye (4):
->>> =C2=A0=C2=A0 mm/vmalloc: Remove unnecessary size ALIGN in
->>> =C2=A0=C2=A0=C2=A0=C2=A0 __vmalloc_node_range_noprof
->>> =C2=A0=C2=A0 mm/vmalloc: Size should be used instead of real_size in
->>> =C2=A0=C2=A0=C2=A0=C2=A0 __vmalloc_node_range_noprof
->>> =C2=A0=C2=A0 mm/vmalloc: Remove the real_size variable to simplify th=
-e code in
->>> =C2=A0=C2=A0=C2=A0=C2=A0 __vmalloc_node_range_noprof
->>> =C2=A0=C2=A0 mm/vmalloc: Rename the variable real_align to original_a=
-lign to
->>> =C2=A0=C2=A0=C2=A0=C2=A0 prevent misunderstanding
->>>
->>> =C2=A0 mm/vmalloc.c | 20 ++++++++------------
->>> =C2=A0 1 file changed, 8 insertions(+), 12 deletions(-)
->>>
->>> --=C2=A0
->> Let me double check it. Quick question, this series does not
->> introduce any functional change?
->
-> Yeah, the cover letter subject is misleading. IMHO it should be more li=
-ke "Refactor" instead of "Optimize".
 
-Yes, refactoring is more accurate, regarding real_size and real_align.
-
+On 2025/3/4 下午8:25, Huacai Chen wrote:
+> Hi, Bibo,
+> 
+> On Tue, Mar 4, 2025 at 7:27 PM Bibo Mao <maobibo@loongson.cn> wrote:
 >>
->> --=20
->> Uladzislau Rezki
+>> The current max_pfn equals to zero. In this case, it caused users cannot
+>> get some page information through /proc such as kpagecount. The following
+>> message is displayed by stress-ng test suite with the command
+>> "stress-ng --verbose --physpage 1 -t 1".
 >>
->
+>>   # stress-ng --verbose --physpage 1 -t 1
+>>   stress-ng: error: [1691] physpage: cannot read page count for address 0x134ac000 in /proc/kpagecount, errno=22 (Invalid argument)
+>>   stress-ng: error: [1691] physpage: cannot read page count for address 0x7ffff207c3a8 in /proc/kpagecount, errno=22 (Invalid argument)
+>>   stress-ng: error: [1691] physpage: cannot read page count for address 0x134b0000 in /proc/kpagecount, errno=22 (Invalid argument)
+>>   ...
+>>
+>> After applying this patch, the kernel can pass the test.
+>>   # stress-ng --verbose --physpage 1 -t 1
+>>   stress-ng: debug: [1701] physpage: [1701] started (instance 0 on CPU 3)
+>>   stress-ng: debug: [1701] physpage: [1701] exited (instance 0 on CPU 3)
+>>   stress-ng: debug: [1700] physpage: [1701] terminated (success)
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+> I think this patch are mainly fix commit
+> ff6c3d81f2e86b63a3a530683f89ef39 ("NUMA: optimize detection of memory
+> with no node id assigned by firmware"). So it is better to add a
+> Fixes: tag and Cc stable.
+> 
+> And the patch itself can be improved. there are three cases of
+> calculating max_low_pfn:
+> ACPI with NUMA, handled in numa.c
+> ACPI without NUMA, handled in mem.c
+> FDT, handled in setup.c
+> 
+> You have missed the 2nd case. The simplest way is add "max_pfn =
+> max_low_pfn" at the beginning of arch_mem_init() because all cases can
+> be handled here.
+yes, that is actually one problem:)  Will do this simply in 
+arch_mem_init() in next patch.
+
+Regards
+Bibo Mao
+> 
+> Huacai
+> 
+>> ---
+>>   arch/loongarch/kernel/numa.c  | 2 +-
+>>   arch/loongarch/kernel/setup.c | 2 +-
+>>   2 files changed, 2 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
+>> index 84fe7f854820..002dbe62b329 100644
+>> --- a/arch/loongarch/kernel/numa.c
+>> +++ b/arch/loongarch/kernel/numa.c
+>> @@ -356,7 +356,7 @@ int __init init_numa_memory(void)
+>>                  node_mem_init(node);
+>>                  node_set_online(node);
+>>          }
+>> -       max_low_pfn = PHYS_PFN(memblock_end_of_DRAM());
+>> +       max_low_pfn = max_pfn = PHYS_PFN(memblock_end_of_DRAM());
+>>
+>>          setup_nr_node_ids();
+>>          loongson_sysconf.nr_nodes = nr_node_ids;
+>> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
+>> index edcfdfcad7d2..ab8c9336d8f5 100644
+>> --- a/arch/loongarch/kernel/setup.c
+>> +++ b/arch/loongarch/kernel/setup.c
+>> @@ -294,7 +294,7 @@ static void __init fdt_setup(void)
+>>          early_init_dt_scan(fdt_pointer, __pa(fdt_pointer));
+>>          early_init_fdt_reserve_self();
+>>
+>> -       max_low_pfn = PFN_PHYS(memblock_end_of_DRAM());
+>> +       max_low_pfn = max_pfn = PFN_PHYS(memblock_end_of_DRAM());
+>>   #endif
+>>   }
+>>
+>> --
+>> 2.39.3
+>>
+
 
