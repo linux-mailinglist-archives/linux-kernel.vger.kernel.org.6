@@ -1,163 +1,136 @@
-Return-Path: <linux-kernel+bounces-546146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613C5A4F6E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:13:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D092CA4F6EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:14:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6EB188F827
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:13:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CD343A79B4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399451F150D;
-	Wed,  5 Mar 2025 06:12:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C61FD1DB92A;
+	Wed,  5 Mar 2025 06:13:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ozyCJOAF"
-Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Rovov+zv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4511EEA4E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE13170A13;
+	Wed,  5 Mar 2025 06:13:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741155129; cv=none; b=jrSuLC/9KfuiH6zxc93lPubAt6sRhGZr0Sk87aAe58Bz4Vi2p5RWTMkLca9xZJpsNsED29DGF2BqZZx9SgR9DAbnSGxarhGjjXQNbwRcdHwnn06mCWEV5Y0rzFYG45Mi48gIRy4jI/WdHE9WJF2A7niETduF+zcuF+4ECmt/8MA=
+	t=1741155189; cv=none; b=b1X7CyjubPIKqdsXVw4CLn9vjs4Tjo9ionTF4u77rxAzJBxYUelwremR8I1ktnT5jG5GFSTG++lGJu5i1XLo9jx9BUCQsgiuwRPcDKViYMLxEpdLdndqgX7dT6+DFSky2uIzCqxgR4PV8m4GnRWroX0rmAksWhottiKwSC7+KN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741155129; c=relaxed/simple;
-	bh=1QAFUlkYxX/Tklmd9ajQ/kSRC1rOe18Q6iFJn5NEU1A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bzgQlT/mq/zDakG1FYaAtFQg3LiTT93R67PnGM2vv3pu7IunumSMqex+hLmOl41sNw9EL935d68sj0OUhLCa7J0IcuGS1rHVe6DxrAlTZNymzmklbMqGd7uzkzYCBILzM2Ya6bykLXvVuawTOOjOCXE8DVrDMXeKDiaEUfLiA4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ozyCJOAF; arc=none smtp.client-ip=95.215.58.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741155124;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VdDtOHvnm2EdaYulJZ60u1Fa0OrG84atgPrUT7g6aEw=;
-	b=ozyCJOAFVQ+Nj7hdVEjapmmpRc/yILNSg+asLJmivfnQbe0r7mlmBhAfvkGYGIIsMqKhxY
-	NLWVcMHJVaFpc9N7qkZlz2xZGUOcUpXCLilpMemMKftlWVS8i2Ha5Ny8xG/vdmiX2JfxBT
-	xivQEpxxLKZIZFu9RF4irEUJT/E8fQU=
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Johannes Weiner <hannes@cmpxchg.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH mm-unstable 5/5] mm: zpool: Remove zpool_malloc_support_movable()
-Date: Wed,  5 Mar 2025 06:11:33 +0000
-Message-ID: <20250305061134.4105762-6-yosry.ahmed@linux.dev>
-In-Reply-To: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
-References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1741155189; c=relaxed/simple;
+	bh=bsjLj/RdvfYHKtMWDIUAr7/t8NiumHbZXtyrawtMVnY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Nn3XCgmISkDYpYZ8fv2zmv8p2qZqSV0QyoXT56snQs34t5+HelNNmMKhKLsH5jlsYSquuPdYYHYzq4sEPeXne8E4rC2Wnqve4liWWmignKK7c+zCrd90PzioSkMte3ZbAhmhyECb4QQrgTniPV1BMQs733q8StIElPMVMpZ2Qa0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Rovov+zv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524N9xbL006945;
+	Wed, 5 Mar 2025 06:13:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	lthvfMRpFe/t5AUZVu98pEhGrG/C0dkSNEneanWo0AM=; b=Rovov+zvpDysf+Qs
+	azPvi+3+LP0xfbWlTNNcPnJ74A29/E5hQGBj0WTOjXBofIsvbby80PVDaDnIN44j
+	tQgvRxQ+pFbgJ1ZTNNJVgUIvHXzCkzPGo8mJwjz+mEum+A+haBQD782l59DrY8gX
+	XiFPMRZU/zyhEtfNjMdnLeXGJ9KhNLNJ0r6X2K8Yc+9qe+3pc5EAE3SXcyc+VUIT
+	kbabTZF3z7KQB4kSmh9UCJqD+JiD7erIbSYj84rdO4bw6odDr19F3n48tHUT3ZH7
+	436bYsl6xVtUugUAiqbbFkGcS4h8YX8Sf3sIL6n+SLxFop3/8tjQc6M/owIqDHMN
+	jJ9htg==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6um975-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 06:13:01 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5256D0tg022674
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Mar 2025 06:13:00 GMT
+Received: from [10.216.38.32] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
+ 22:12:56 -0800
+Message-ID: <bd783642-5806-405e-b52c-1ff0aa619e78@quicinc.com>
+Date: Wed, 5 Mar 2025 11:42:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3 2/2] mailbox: tmelite-qmp: Introduce TMEL QMP mailbox
+ driver
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <jassisinghbrar@gmail.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <manivannan.sadhasivam@linaro.org>
+References: <20250228045356.3527662-1-quic_srichara@quicinc.com>
+ <20250228045356.3527662-3-quic_srichara@quicinc.com>
+ <lakoxihaqlu3vq42eoqtlip23ggdieizotyzax5up5n6ndbwsi@ddqyzvsdtmkv>
+ <1359984c-2ace-450b-a3ff-bac0b9fb5cc9@quicinc.com>
+ <2xpu26pu4ovnchumwx7xzlp2gldpfgsurnhuqaioygb4a6xmsp@ygmpk6furqs6>
+ <3e326578-ab46-4d7e-ad1e-3d572613498b@quicinc.com>
+ <CAA8EJppXHXafwx+GPh0UhFLRLW5DNj8RwXdO4+fDdXp=SE13Uw@mail.gmail.com>
+Content-Language: en-US
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+In-Reply-To: <CAA8EJppXHXafwx+GPh0UhFLRLW5DNj8RwXdO4+fDdXp=SE13Uw@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: zva7B2HAq-jYLsd9T0AnvN6qXo42MkBA
+X-Authority-Analysis: v=2.4 cv=H40hw/Yi c=1 sm=1 tr=0 ts=67c7eb6d cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=JxPl7ORNNP5S0vLHAkUA:9 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: zva7B2HAq-jYLsd9T0AnvN6qXo42MkBA
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_03,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
+ impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=812
+ classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
+ reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503050047
 
-zpool_malloc_support_movable() always returns true for zsmalloc, the
-only remaining zpool driver. Remove it and set the gfp flags in
-zswap_compress() accordingly. Opportunistically use GFP_NOWAIT instead
-of __GFP_NOWARN | __GFP_KSWAPD_RECLAIM for conciseness as they are
-equivalent.
 
-Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
----
- include/linux/zpool.h |  3 ---
- mm/zpool.c            | 16 ----------------
- mm/zsmalloc.c         |  1 -
- mm/zswap.c            |  4 +---
- 4 files changed, 1 insertion(+), 23 deletions(-)
 
-diff --git a/include/linux/zpool.h b/include/linux/zpool.h
-index 2c8a9d2654f6f..52f30e526607f 100644
---- a/include/linux/zpool.h
-+++ b/include/linux/zpool.h
-@@ -21,8 +21,6 @@ const char *zpool_get_type(struct zpool *pool);
- 
- void zpool_destroy_pool(struct zpool *pool);
- 
--bool zpool_malloc_support_movable(struct zpool *pool);
--
- int zpool_malloc(struct zpool *pool, size_t size, gfp_t gfp,
- 			unsigned long *handle);
- 
-@@ -65,7 +63,6 @@ struct zpool_driver {
- 	void *(*create)(const char *name, gfp_t gfp);
- 	void (*destroy)(void *pool);
- 
--	bool malloc_support_movable;
- 	int (*malloc)(void *pool, size_t size, gfp_t gfp,
- 				unsigned long *handle);
- 	void (*free)(void *pool, unsigned long handle);
-diff --git a/mm/zpool.c b/mm/zpool.c
-index 4fc665b42f5e9..6d6d889309324 100644
---- a/mm/zpool.c
-+++ b/mm/zpool.c
-@@ -220,22 +220,6 @@ const char *zpool_get_type(struct zpool *zpool)
- 	return zpool->driver->type;
- }
- 
--/**
-- * zpool_malloc_support_movable() - Check if the zpool supports
-- *	allocating movable memory
-- * @zpool:	The zpool to check
-- *
-- * This returns if the zpool supports allocating movable memory.
-- *
-- * Implementations must guarantee this to be thread-safe.
-- *
-- * Returns: true if the zpool supports allocating movable memory, false if not
-- */
--bool zpool_malloc_support_movable(struct zpool *zpool)
--{
--	return zpool->driver->malloc_support_movable;
--}
--
- /**
-  * zpool_malloc() - Allocate memory
-  * @zpool:	The zpool to allocate from.
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index cd1c2a8ffef05..961b270f023c2 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -503,7 +503,6 @@ static struct zpool_driver zs_zpool_driver = {
- 	.owner =		  THIS_MODULE,
- 	.create =		  zs_zpool_create,
- 	.destroy =		  zs_zpool_destroy,
--	.malloc_support_movable = true,
- 	.malloc =		  zs_zpool_malloc,
- 	.free =			  zs_zpool_free,
- 	.obj_read_begin =	  zs_zpool_obj_read_begin,
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 4c474b692828d..138b50ba832b8 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -964,9 +964,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 		goto unlock;
- 
- 	zpool = pool->zpool;
--	gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
--	if (zpool_malloc_support_movable(zpool))
--		gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
-+	gfp = GFP_NOWAIT | __GFP_NORETRY | __GFP_HIGHMEM | __GFP_MOVABLE;
- 	alloc_ret = zpool_malloc(zpool, dlen, gfp, &handle);
- 	if (alloc_ret)
- 		goto unlock;
--- 
-2.48.1.711.g2feabab25a-goog
+On 3/4/2025 3:16 PM, Dmitry Baryshkov wrote:
+> On Tue, 4 Mar 2025 at 10:33, Sricharan Ramabadhran
+> <quic_srichara@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 3/3/2025 6:34 PM, Dmitry Baryshkov wrote:
+>>> On Mon, Mar 03, 2025 at 03:58:42PM +0530, Sricharan Ramabadhran wrote:
+>>>>
+>>>>
+>>>> On 2/28/2025 12:03 PM, Dmitry Baryshkov wrote:
+>>>>> On Fri, Feb 28, 2025 at 10:23:56AM +0530, Sricharan R wrote:
+>>>
+>>>>>> +          dev_err(dev, "Failed with status: %d\n", msg.resp.status);
+>>>>>> +          ret = msg.resp.status;
+>>>>>
+>>>>> return msg.resp.status (is it really errno?)
+>>>>>
+>>>> ok, yes error.
+>>>
+>>> The question was if it is an errno, not if it is an error.
+>> status != 0 is an error always.
+> 
+> Is it an _errno_ ?
+Ho ok, good catch, checked the firmware spec, does not map to a standard 
+Linux error code. Will check and return a standard __errno__.
 
+Regards,
+  Sricharan
 
