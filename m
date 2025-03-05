@@ -1,187 +1,283 @@
-Return-Path: <linux-kernel+bounces-546945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 758E6A50108
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:47:47 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B72FA50112
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:48:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06E3616C6D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:47:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECEE63A500B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:47:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7025D250BF2;
-	Wed,  5 Mar 2025 13:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7164F2459FD;
+	Wed,  5 Mar 2025 13:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BkBtHD6j"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2N9zCYQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C75912505CF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:44:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F4F248898;
+	Wed,  5 Mar 2025 13:45:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741182263; cv=none; b=tdr+dJkj9xYITi4hDm9BRcN1GUtDNnyO2GcBIy9XqjJHUv85PlpLA7/DqAmmiD0irO3BIv0GnjNQZuIIpTjmQzQjvWWAfQ6X9yuuAuPkXQNLyo+rilcLmGm3q6PP/BRRpNHdzd5B56BwUxTx/ZK+9XsYl/tk0J4IYy83J1LvvgE=
+	t=1741182312; cv=none; b=l8zwGfuUrgA3uAbVq2w0JujbC7+b8XIr4+9UqWB40Mdb/Ytm7PmxiTrKtiLMEPm7tfhO/rKGB5UBzS3KCx9Z/JPg8ikB88/s/RNXyADlRIe4phXs7SAbGaN5VwC0fpKFuerRLD6h5bsJwQaJhU2GrqVY2YHMIri5mJzi8EfjpL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741182263; c=relaxed/simple;
-	bh=xrrAddc0Dux542IExfOiJL20FzbLUh8sACsEll+OBQQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=J5ibtI3ESFKkMuReclUh4Prrsu3v6S5XXb2+DUpslZuD+8k6mMqjgM7dneznxdUGYkcjKI9G/ZL2hgrY4U41j/qlMaSQzmrPDhvXBto5eAwmORajEwSKir2tUvmI3bq1QQlJxLPaIGREStY2Z6EtpMivxmikQGn0M7E66+BB8AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BkBtHD6j; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3910e101d0fso2237363f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 05:44:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741182260; x=1741787060; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=2Yuyf18O1C9beAnXo5r2fUqE9fJzKJV0tNnseaOAJ1I=;
-        b=BkBtHD6j60IDzu33eU+NVm/9jJSPtB5JKPUjFlnDy9wSCKQph1quInznsIyVl6+1y+
-         ReukChC0MRf5f4Oat03PtE+shK2Z5TBO+pC6B9rHbtCu6iE4orAXyYYSsbBirAZQh2AE
-         EJhkBH4q+EDi/hwnWxlQm8qmum+EQpyJI2Gk1vhEhc703OGsAAtb6tJrwutIjhALXiVJ
-         vhL2l8VoVjCFPDgQgtEYY/A8i0EYP1vAQVdA7/1yD111QKofYoPBEX1E/SAxmLY0c1dA
-         GdLg7DMt78AkHlIiS5WD0QgYIH2j7Iz/Kcw1xYNwHrTUxKsumU4yCC4WTi1BK5OjnGlA
-         V9AA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741182260; x=1741787060;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Yuyf18O1C9beAnXo5r2fUqE9fJzKJV0tNnseaOAJ1I=;
-        b=RLllcC+55VeR74nwh0AJWr8lY+vRRP4cyNvLPfVZ/YYpLh9/UIB/RiB4cIK/qmgpMb
-         /2QNCMzzdts3C7pnkCEDMUADqN3K0s8gL5TUcDAzeAS/fCtYqiFZZSdFhU/2g5bnGgQx
-         dssgCa7CElpLJ6b4gUElqORrcnat5NSNX7HfpuXBH5yssv8c1hF16uOzw08XpFzA2Rc1
-         2KEFp534ruuYmL8jHauZaC7vWyhaY0Glgrstl8LRZF9AzGq7qavGKOO5eWqTWqbQqZJp
-         QfQioPVIIydxmLQEiZqQ6etPKjT6zdVAFPTREJQZdq7fs0+bxc64BCqH0x24zd2L2jSq
-         TRaw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9kF7GfHSJJILh8H15vQ5kbsZNHcHYQiF2ZKEZhYyshVCnxKmrhom989xJMj4xvR7yAorPlkxpFgFUtck=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRZgakbba3w02AFJYkvrHoptMBa3B4QSZTkv2LEMnvd8yDQhYb
-	mXmDnTLBbn6cF1GzB9OF8okRDQOUpr7flMHdbNFL6mtXupOjieDQvaSkXLdBFjs=
-X-Gm-Gg: ASbGncu+mwmJDJTQKcNOKzWEmtLXCZQZjVCYNsfCwImtiQogaUWfCatqpwwS6cE+iYY
-	rh+av0CJ3LrHpBNFIeHeccat6FM1umrbr2rJQth5u6aILstUdUdjAz+bYl3ZFYSBMCT0JlzyxU5
-	TPGTRb1gY6S6TcihV7Tc0ZBXkArCSP9nLtPUTDw+Y5FmM1Xq8EsgalHjnnDN+QLHn38BxKtVTaL
-	aJAwV3rm1QplP9kege/Trgw1FKbeC7BDnm6asYIpU5tDSX56cPW4UrA1E+XIui0cvJ8CJqwtxXC
-	78mm45FoeabZQQSDywUF5f8Shlg/14XDc1HqQqrvgq1+mTpKxb4LLJE=
-X-Google-Smtp-Source: AGHT+IHMWvLxl1WDyzDe67fQu7NHQ3gH4J0xuhCCrvkx6C7VPkprgfxVwtlDiiEjL9nH+nz8AmxYVQ==
-X-Received: by 2002:a5d:60cc:0:b0:390:fd23:c145 with SMTP id ffacd0b85a97d-3911f7bda8fmr2112624f8f.36.1741182259933;
-        Wed, 05 Mar 2025 05:44:19 -0800 (PST)
-Received: from [192.168.1.247] ([209.198.129.225])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd430c2e9sm17754905e9.33.2025.03.05.05.44.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 05:44:19 -0800 (PST)
-Message-ID: <e2ea3776-12d2-41c2-9b7b-836c7c249c45@linaro.org>
-Date: Wed, 5 Mar 2025 13:44:18 +0000
+	s=arc-20240116; t=1741182312; c=relaxed/simple;
+	bh=NtUoC0VQyUdE370wsFKvWqUjQFFfXTqScOu1x2M24Uc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ll5jLvRsZPc6vEZe5l4/HcwjywUrtEMDcsabA/xVGUf0QWHQL6im85w0q+KCPMXKorBAm4no7El+eCF9w8xWiGL29qOk57ldZy7aNnwVaXCuwWwqUx4vHCdHPs1VMoPCwo4HxNMOJXUl4Vi7+/Qjw7gSVInu7eKfxIIKq5lI2kA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2N9zCYQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80314C4CEEA;
+	Wed,  5 Mar 2025 13:45:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741182311;
+	bh=NtUoC0VQyUdE370wsFKvWqUjQFFfXTqScOu1x2M24Uc=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=b2N9zCYQiyKajWKuPAN7A9e2NlmNSFw1jku5bIiRlE51oWAQR8XOLEJpKvIemJ9KY
+	 0ngWi+lb83jrmf6KLujUcnf4ZNhzStSBXsp7MpXJDRpTXEzYJwzrq94B8UIEKjDWmv
+	 d5hqUlARJ0qQ2CN3rQoe1SSP34o2XeC1w5Ln5VAMsbExuivTSHTT6mBoqvH5VpT6Wk
+	 J+jqeZwzxADD25eKACQB2spsApEe0QAdzWaAd6+tGzlz3X94/MvZeWDwnt59GAx2aA
+	 Ep3H6mWIzYhMeATj/JYBfmQEicHfEUuIohkSZQ5da0nFREPv/B4VNah4ioTDHb4vZw
+	 kB8oK6lYGsIMA==
+Date: Wed, 5 Mar 2025 13:44:55 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, Daniel
+ Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge
+ Deller <deller@gmx.de>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
+ <u.kleine-koenig@baylibre.com>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+ linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org,
+ linux-fbdev@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] mfd: lm3533: convert to use OF
+Message-ID: <20250305134455.2843f603@jic23-huawei>
+In-Reply-To: <CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
+References: <20250224114815.146053-1-clamor95@gmail.com>
+	<20250224114815.146053-3-clamor95@gmail.com>
+	<20250228085927.GM824852@google.com>
+	<CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/2] perf parse-events: Corrections to topdown sorting
-To: Ian Rogers <irogers@google.com>
-References: <20250305083735.393333-1-irogers@google.com>
- <20250305083735.393333-2-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>,
- Dominique Martinet <asmadeus@codewreck.org>, Andi Kleen
- <ak@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Thomas Falcon <thomas.falcon@intel.com>
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250305083735.393333-2-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+
+On Fri, 28 Feb 2025 11:30:51 +0200
+Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+
+> =D0=BF=D1=82, 28 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 10:59 Le=
+e Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
+> >
+> > On Mon, 24 Feb 2025, Svyatoslav Ryhel wrote:
+> > =20
+> > > Remove platform data and fully relay on OF and device tree
+> > > parsing and binding devices.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >  drivers/iio/light/lm3533-als.c      |  40 ++++---
+> > >  drivers/leds/leds-lm3533.c          |  46 +++++---
+> > >  drivers/mfd/lm3533-core.c           | 159 ++++++++------------------=
+--
+> > >  drivers/video/backlight/lm3533_bl.c |  71 ++++++++++---
+> > >  include/linux/mfd/lm3533.h          |  35 +-----
+> > >  5 files changed, 164 insertions(+), 187 deletions(-)
+> > >
+> > > diff --git a/drivers/iio/light/lm3533-als.c b/drivers/iio/light/lm353=
+3-als.c
+> > > index 99f0b903018c..cb52965e93c6 100644
+> > > --- a/drivers/iio/light/lm3533-als.c
+> > > +++ b/drivers/iio/light/lm3533-als.c
+> > > @@ -16,9 +16,12 @@
+> > >  #include <linux/module.h>
+> > >  #include <linux/mutex.h>
+> > >  #include <linux/mfd/core.h>
+> > > +#include <linux/mod_devicetable.h>
+> > >  #include <linux/platform_device.h>
+> > > +#include <linux/property.h>
+> > >  #include <linux/slab.h>
+> > >  #include <linux/uaccess.h>
+> > > +#include <linux/units.h>
+> > >
+> > >  #include <linux/mfd/lm3533.h>
+> > >
+> > > @@ -56,6 +59,9 @@ struct lm3533_als {
+> > >
+> > >       atomic_t zone;
+> > >       struct mutex thresh_mutex;
+> > > +
+> > > +     unsigned pwm_mode:1;            /* PWM input mode (default anal=
+og) */
+> > > +     u8 r_select;                    /* 1 - 127 (ignored in PWM-mode=
+) */
+> > >  };
+> > >
+> > >
+> > > @@ -753,18 +759,17 @@ static int lm3533_als_set_resistor(struct lm353=
+3_als *als, u8 val)
+> > >       return 0;
+> > >  }
+> > >
+> > > -static int lm3533_als_setup(struct lm3533_als *als,
+> > > -                         const struct lm3533_als_platform_data *pdat=
+a)
+> > > +static int lm3533_als_setup(struct lm3533_als *als)
+> > >  {
+> > >       int ret;
+> > >
+> > > -     ret =3D lm3533_als_set_input_mode(als, pdata->pwm_mode);
+> > > +     ret =3D lm3533_als_set_input_mode(als, als->pwm_mode);
+> > >       if (ret)
+> > >               return ret;
+> > >
+> > >       /* ALS input is always high impedance in PWM-mode. */
+> > > -     if (!pdata->pwm_mode) {
+> > > -             ret =3D lm3533_als_set_resistor(als, pdata->r_select);
+> > > +     if (!als->pwm_mode) {
+> > > +             ret =3D lm3533_als_set_resistor(als, als->r_select); =20
+> >
+> > You're already passing 'als'.
+> >
+> > Just teach lm3533_als_set_resistor that 'r_select' is now contained.
+> > =20
+>=20
+> This is not scope of this patchset. I was already accused in too much
+> changes which make it unreadable. This patchset is dedicated to
+> swapping platform data to use of the device tree. NOT improving
+> functions, NOT rewriting arbitrary mechanics. If you feed a need for
+> this change, then propose a followup. I need from this driver only one
+> thing, that it could work with device tree. But it seems that it is
+> better that it just rots in the garbage bin until removed cause no one
+> cared.
+
+This is not an unreasonable request as you added r_select to als.
+Perhaps it belongs in a separate follow up patch.  However
+it is worth remembering the motivation here is that you want get
+this code upstream, the maintainers don't have that motivation.
+
+Greg KH has given various talks on the different motivations in the
+past. It maybe worth a watch.
 
 
+>=20
+> > >               if (ret)
+> > >                       return ret;
+> > >       }
+> > > @@ -828,22 +833,16 @@ static const struct iio_info lm3533_als_info =
+=3D {
+> > >
+> > >  static int lm3533_als_probe(struct platform_device *pdev)
+> > >  {
+> > > -     const struct lm3533_als_platform_data *pdata;
+> > >       struct lm3533 *lm3533;
+> > >       struct lm3533_als *als;
+> > >       struct iio_dev *indio_dev;
+> > > +     u32 val; =20
+> >
+> > Value of what, potatoes?
+> > =20
+>=20
+> Oranges.
 
-On 05/03/2025 8:37 am, Ian Rogers wrote:
-> In the case of '{instructions,slots},faults,topdown-retiring' the
-> first event that must be grouped, slots, is ignored causing the
-> topdown-retiring event not to be adjacent to the group it needs to be
-> inserted into. Don't ignore the group members when computing the
-> force_grouped_index.
-> 
-> Make the force_grouped_index be for the leader of the group it is
-> within and always use it first rather than a group leader index so
-> that topdown events may be sorted from one group into another.
-> 
-> Reported-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> Closes: https://lore.kernel.org/lkml/20250224083306.71813-2-dapeng1.mi@linux.intel.com/
-> Signed-off-by: Ian Rogers <irogers@google.com>
+A well named variable would avoid need for any discussion of
+what it is the value of.
 
-Testing on Arm seems ok, but presumably this doesn't change anything 
-there because arch_evsel__must_be_in_group() is always false.
+>=20
+> > >       int ret;
+> > >
+> > >       lm3533 =3D dev_get_drvdata(pdev->dev.parent);
+> > >       if (!lm3533)
+> > >               return -EINVAL;
+> > >
+> > > -     pdata =3D dev_get_platdata(&pdev->dev);
+> > > -     if (!pdata) {
+> > > -             dev_err(&pdev->dev, "no platform data\n");
+> > > -             return -EINVAL;
+> > > -     }
+> > > -
+> > >       indio_dev =3D devm_iio_device_alloc(&pdev->dev, sizeof(*als));
+> > >       if (!indio_dev)
+> > >               return -ENOMEM;
+> > > @@ -864,13 +863,21 @@ static int lm3533_als_probe(struct platform_dev=
+ice *pdev)
+> > >
+> > >       platform_set_drvdata(pdev, indio_dev);
+> > >
+> > > +     val =3D 200 * KILO; /* 200kOhm */ =20
+> >
+> > Better to #define magic numbers; DEFAULT_{DESCRIPTION}_OHMS
+> > =20
+>=20
+> Why? that is not needed.
+If this variable had a more useful name there would be no need for
+the comment either.
 
-On x86 I ran into the topdown metrics not opening on cpu_core at all, so 
-I'm not sure if I'm able to test that the original issue is fixed on my 
-machine. From looking at the link the issue is that the ungrouped 
-topdown event is "<not supported>", but I always see that regardless of 
-grouping despite perf list saying it exists:
+	val_resitor_ohms =3D 200 * KILLO;
 
-  $ perf list --unit cpu_core | grep -i topdown
-   topdown-bad-spec OR cpu_core/topdown-bad-spec/     [Kernel PMU event]
-   topdown-be-bound OR cpu_core/topdown-be-bound/     [Kernel PMU event]
-   topdown-br-mispredict OR cpu_core/topdown-br-mispredict/[Kernel PMU 
-event]
-   topdown-fe-bound OR cpu_core/topdown-fe-bound/     [Kernel PMU event]
-   topdown-fetch-lat OR cpu_core/topdown-fetch-lat/   [Kernel PMU event]
-   topdown-heavy-ops OR cpu_core/topdown-heavy-ops/   [Kernel PMU event]
-   topdown-mem-bound OR cpu_core/topdown-mem-bound/   [Kernel PMU event]
-   topdown-retiring OR cpu_core/topdown-retiring/     [Kernel PMU event]
-   topdown.backend_bound_slots
-   topdown.bad_spec_slots
-   topdown.br_mispredict_slots
-   topdown.memory_bound_slots
-        [TOPDOWN.MEMORY_BOUND_SLOTS. Unit: cpu_core]
+or similar.
 
+>=20
+> > > +     device_property_read_u32(&pdev->dev, "ti,resistor-value-ohm", &=
+val);
+> > > +
+> > > +     /* Convert resitance into R_ALS value with 2v / 10uA * R */ =20
+> >
+> > Because ...
+> > =20
+>=20
+> BACAUSE the device DOES NOT understand human readable values, only 0s
+> and 1s, hence mOhms must be converted into value lm3533 chip can
+> understand.
+A comment that gave the motivation would be much more useful than
+repeating the maths.
 
-  $ sudo perf stat -e topdown-retiring -- true
-  Performance counter stats for 'true':
-      <not counted>   cpu_atom/topdown-retiring/           (0.00%)
-    <not supported>   cpu_core/topdown-retiring/
+/* Convert resistance to equivalent register value */
 
+>=20
+> > > +     als->r_select =3D DIV_ROUND_UP(2 * MICRO, 10 * val);
+> > > +
+> > > +     als->pwm_mode =3D device_property_read_bool(&pdev->dev, "ti,pwm=
+-mode");
+> > > +
+> > >       if (als->irq) {
+> > >               ret =3D lm3533_als_setup_irq(als, indio_dev);
+> > >               if (ret)
+> > >                       return ret;
+> > >       }
+> > >
+> > > -     ret =3D lm3533_als_setup(als, pdata);
+> > > +     ret =3D lm3533_als_setup(als);
+> > >       if (ret)
+> > >               goto err_free_irq;
+> > >
+> > > @@ -907,9 +914,16 @@ static void lm3533_als_remove(struct platform_de=
+vice *pdev)
+> > >               free_irq(als->irq, indio_dev);
+> > >  }
+> > >
+> > > +static const struct of_device_id lm3533_als_match_table[] =3D {
+> > > +     { .compatible =3D "ti,lm3533-als" },
+> > > +     { }
+> > > +};
+> > > +MODULE_DEVICE_TABLE(of, lm3533_als_match_table);
+> > > +
+> > >  static struct platform_driver lm3533_als_driver =3D {
+> > >       .driver =3D {
+> > >               .name   =3D "lm3533-als",
+> > > +             .of_match_table =3D lm3533_als_match_table,
+> > >       },
+> > >       .probe          =3D lm3533_als_probe,
+> > >       .remove         =3D lm3533_als_remove,
 
-  $ sudo perf stat -e topdown-retiring -vvv -- true
-Control descriptor is not initialized
-Opening: topdown-retiring
-------------------------------------------------------------
-perf_event_attr:
-   type                             10 (cpu_atom)
-   size                             136
-   config                           0xc2 (topdown-retiring)
-   sample_type                      IDENTIFIER
-   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-   disabled                         1
-   inherit                          1
-   enable_on_exec                   1
-------------------------------------------------------------
-sys_perf_event_open: pid 151404  cpu -1  group_fd -1  flags 0x8 = 3
-Opening: topdown-retiring
-------------------------------------------------------------
-perf_event_attr:
-   type                             4 (cpu_core)
-   size                             136
-   config                           0x8000 (topdown-retiring)
-   sample_type                      IDENTIFIER
-   read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
-   disabled                         1
-   inherit                          1
-   enable_on_exec                   1
-------------------------------------------------------------
-sys_perf_event_open: pid 151404  cpu -1  group_fd -1  flags 0x8
-sys_perf_event_open failed, error -22
-switching off exclude_guest for PMU cpu_core
-Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit, 
-falling back to no-inherit.
-Warning:
-topdown-retiring event is not supported by the kernel.
+Anyhow, I'm short on time so only looking at the IIO related part.
 
+Jonathan
 
