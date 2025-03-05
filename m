@@ -1,157 +1,146 @@
-Return-Path: <linux-kernel+bounces-546298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AD7DA4F8E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:35:26 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1A0BA4F8EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:36:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C93CE7A4F5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:34:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECCA7188E398
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D464B1F5845;
-	Wed,  5 Mar 2025 08:35:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E62C1FC0F1;
+	Wed,  5 Mar 2025 08:36:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AaJnrsaT"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mRucgZbg"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B9282E3385
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE1831F5424
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:36:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741163718; cv=none; b=l5wsm+ba/lELlZCeET4SiIpPAwpx1NBcDRJGPTO/1P05K/zaFe3XgpIB56cqJlDhlTmt8i0Y71ApvJHj3ILX9f9kqtlcvBsRxktNF1vwmqP6nDlaS9iQf+Y7tRCsvNZCaOWAxpG66lNM2ggaB7E8pNjTRAwNs3OBFoICl5q5ySc=
+	t=1741163778; cv=none; b=N3wsWq3+7RmMzwk+NHAMhzxQdlEoMBcH+KbKortnhvVRbMRB5OQmo+vIQOzia5sMpjCQ6bk+nX4yqKbNGKUN3efNiUnYUrLtSAFRbhAcmgJ0RSxmIzPN0m3WaIGxzo0K+ucWUXZW0bBZTqveZsrc7OQU3D4mVlucM8WRqo/aIrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741163718; c=relaxed/simple;
-	bh=pTqm9220dgrcn0n+OL0BvmV7k0SkCm58CdrYAm9Pd58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=euzC8fztiHCQeqFjXIUuPwtenpiGCqngRoBPoRB08VKs5Xl7/JyMNCh0JrrsyIYYGn8eQlRl6opsw8XqSVn2mcxZhA4ItfU805r2GuVuWO6nf9aBjkv5uXrjaNLI+X+bKErZprDadO3tE3rMl2BKRfS6vmbJrWY6gqsXf9TcLOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AaJnrsaT; arc=none smtp.client-ip=209.85.208.46
+	s=arc-20240116; t=1741163778; c=relaxed/simple;
+	bh=tclfnaQ+78uJUqE4m2J8GwrNwDst3SKOWGjXQTac2LE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LW+Idvi8PDfdPIq0h0a630OvO7XRtu4CsIIW2i9OndEc+odnebFOya+zkNi9XmBt+MFYWpvYvqzy8q8dlQi0Kxl5YpBhI9cHrVFT0ZDRjZ90CT91D+AdrPcWT3LnZFEdwPx0dQPJmiYNQUuSKZSjH9V8xOlD07r5+Ef06shw9Kg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mRucgZbg; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5e52c1c3599so5485347a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:35:15 -0800 (PST)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43bcad638efso11640295e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:36:15 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741163714; x=1741768514; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=hQTmFT6mApmwuRzRL0A7qIRG9jv/Hs1V82D1ok1SIDM=;
-        b=AaJnrsaTMLzJCx4a8HAMDVz4eoxqtggI5UmjxM35xqgM0BOLVNhKxvOLg45GP1eNSu
-         RfbxMU/OsxYEJhcj2cG02bjEZkxqrwdp7qh8+N/sbn8MCzGZYvChWAnhaZ/hmjCo9rid
-         Uym4suDR7lEVEjPT/pCW5eVd0xoa/gJQfrx74jE+tyepvbuC9dpmIXUPEX0nhrQp0Rxv
-         +JaGzKMMyC04fathsc9n62rgVQhDLgyPucvHUroI5LptN3iT4cbpidtd7TjYPHtuPBKE
-         1tYKgP7da0wenv92t6rFDtoUCrXzKJi1dWnyn8BNu+gd+uzmsukdr1hTiTdNkVvy3i8j
-         ArPg==
+        d=linaro.org; s=google; t=1741163774; x=1741768574; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZfQXwUL3Ydz7mR+cjRUeO/xqWRGS7uJqxxJMkaNfgT0=;
+        b=mRucgZbgodwpnJ/LEwx6AquTZQHVsPy5Wt7PkYj3/3iuVXlzlfYtpsV5C2wYRBmbjw
+         3EoNk2BCWG1GAhSntBmEettOHYWTw2qcwjQFFgUL1MBd4YosDoTysLdpXDjaGw4dS5/N
+         Afz6ZJnF3JarVvhJSD/cRh7RFuYL7ulENxsauISFdD0pBKnaBVNiVDZ1LdAb5/NKn++B
+         5iWGnQFlmfBbr4Dr/jZayWeKdN15hWB7yQvny/iE3hdmhtMSsRKqZKIQU6aD7hHmimWU
+         5BgNaV21Aa7Kck9JS9G6E/zL3yh/A8g5Gr1dvG6j87h9dCZniNs542brkWusvVD9JHQo
+         W0fw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741163714; x=1741768514;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hQTmFT6mApmwuRzRL0A7qIRG9jv/Hs1V82D1ok1SIDM=;
-        b=qLXhwQEZvOmQbm/Ok11BN1GV9RvtD1kZ86ywv1So8kgnHT4RH8oxLXKo3HFOLEY4mx
-         haxW6oT8feG5NjCESQwk4n13jrFvaQhXJ0Hjpi9TQkZgpBdqx42TDdjErVzXMWG3LOpp
-         APon+luBFBYHGnwQMY1va0d3G7V90bTkJ13eRA1LT4ltK+Z8uL7D6oMdX9oLdeXpFDJT
-         fF8jqasUInO80i5uBkpUwTqYslPtRPJ4OLliQrpPvNn/nwBqEIL3LDuLAfu0cqlQIZRs
-         mPqyDolCN3HBMsSbY153K1+pxFQ7UDCaVRvkMM8ydib6j1zYagDAMw1PBLwK1OpWxLXa
-         8hRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVWlu3wouryQRvkzea3bkEO6ok3FjhumIH2scGA5e4Qchwe0OARfoGMyFoepYGbLS3FyBQmldo5SGBFUr4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDb4EoBO4Kw98Zt83/XRDb2ffkAtloNCQeJsqeVX6/tbbaXq0k
-	1788p7B1tYMEHX/cSfF8KsP96Jj+juIqc4aMr+etc3/aCU3ZP2s9FSjqu+bnBsJms6D0qhD3yoh
-	BszaghR21evl3i2QFDX8L06pfsyL6MQjahWe/Kw==
-X-Gm-Gg: ASbGncu6NGtjKQnu7RE17jOoGdfhy+VrWD/0HxY34CdS3QaeKnrjdhCrYUOfavsv2lA
-	f5O/XuYGCkWcHGCMe3g6cDaS4qULKODc7b5fZLI0/NjrRhRaVlT0bPYzLlWxKjxTvn3cRGJQ5EG
-	7E9NjEq0EmurRPhcAwF7uCudaNCPTmWG8g1jwNuPVeKAZ9WEabM6CEzdM=
-X-Google-Smtp-Source: AGHT+IEL3AAsnjQfkXQh7NTc9KjW/yVJkq3GC7739pQTQ3oZAl3a2dyh29NrzdAuzEV/+cKWcrip/BXhumn4F/iZ/RI=
-X-Received: by 2002:a17:907:3f89:b0:abf:3f82:1218 with SMTP id
- a640c23a62f3a-ac20dd0539fmr234687466b.46.1741163714374; Wed, 05 Mar 2025
- 00:35:14 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741163774; x=1741768574;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZfQXwUL3Ydz7mR+cjRUeO/xqWRGS7uJqxxJMkaNfgT0=;
+        b=dV3CQzA1UdVGzalZWYMEMonbb37krS7zk3sK5tL4iVncaVbDzZT8FUCae7+BMCXZ1r
+         ktmNg7O29PeN8TA7kWOrpmwDA0JzFZhRejPKsnP+QDrxTwcD/ZkYlNOWZhQTN7GZTIEX
+         kD9z5fdNf9tcJQYAgw9dTlccB0S5nvYmwhHwywAoJV2daykTBQmiLpVSiOQIptxISBhY
+         t1w8PW7WTJ1GSPgtV2Z28jAW6u3t1COgoOJnzomq0oTll/o+BESnIvPtSlqn87akbz2F
+         9D5naq0gw9fZiL3/K6yVR4w3gnLt+Sv3SS5TwOVp9c0RQDM/sNFNOzIcNG2BnL3KXqYm
+         zB4w==
+X-Forwarded-Encrypted: i=1; AJvYcCUQfFab72BSBKX+GaZaMZNQU8prRSX/4GRrSEXila3FT/KsaQaduUU4dPUBqAXFRlanh2TSc6mhZYkZ700=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwWuqi1JuUcesxYfMuIBs7ggWeEVoz1FwCa3bIazn6/irbFgSR
+	AIIRGIe6Enag5YU/dAoHAUJzmWREAm6k6uy/cvdzohETZK7Ocx0oPDuNDw5qMys=
+X-Gm-Gg: ASbGncvj+I8JA9YBd4nx3eaEdhulOytzqSC87Wa5Pcw2hOic/GQ3KhCjpHdWGPVH/z/
+	h7AaZtAJOBhrYBwRswSV6yIV+fxOP0HqD5NDW7c0/xxV9SvLG1tax3FSGqvex+uT/5uIep1tlMg
+	qXS7XMcDxAP3Z0jFQWrHW4XqV0TR7139oi7s4wKl2+lmzw2Rs7boKO2jIpYLKfV2Mkgn6UIC/Wp
+	YzUkP3wA4pX8vow4kJOGHxqO/iBJAv6u1wbBVIxRBpDizrnfyVB9uus9hAY1uhCw3VRKNJNMnbk
+	dcx4J2m9q3az3aQRJ+B7u6MLtE68aqKEFOco896Dt+Evk0YKNg==
+X-Google-Smtp-Source: AGHT+IG1TdRy5Kvu8p1cmT5U4TYJbrUoCcVGa1tX1dkQIqW9WiR2lgUQPgvjP/3zB9IzHIHCvQwYww==
+X-Received: by 2002:a05:6000:184c:b0:391:23de:b1b4 with SMTP id ffacd0b85a97d-39123deb51dmr497486f8f.45.1741163774150;
+        Wed, 05 Mar 2025 00:36:14 -0800 (PST)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e479608fsm20564933f8f.14.2025.03.05.00.36.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 00:36:13 -0800 (PST)
+Date: Wed, 5 Mar 2025 11:36:10 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Marco Elver <elver@google.com>
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Arnd Bergmann <arnd@arndb.de>, Bart Van Assche <bvanassche@acm.org>,
+	Bill Wendling <morbo@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
+	Kentaro Takeda <takedakn@nttdata.co.jp>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
+	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, rcu@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-serial@vger.kernel.org
+Subject: Re: [PATCH v2 01/34] compiler_types: Move lock checking attributes
+ to compiler-capability-analysis.h
+Message-ID: <f76a48fe-09da-41e0-be2e-e7f1b939b7e3@stanley.mountain>
+References: <20250304092417.2873893-1-elver@google.com>
+ <20250304092417.2873893-2-elver@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304214031.2882646-1-zecheng@google.com>
-In-Reply-To: <20250304214031.2882646-1-zecheng@google.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Wed, 5 Mar 2025 09:35:03 +0100
-X-Gm-Features: AQ5f1JpVyUNRW1uAMbY6oc7mf-_2EYLYp2LPWSUwwZ5nfZ6HHK18ZR1Rho-ilH4
-Message-ID: <CAKfTPtDLtm2Z6PvXSvZ3XcF3PK2Nd6zF2Xei17eXGkgRGc70KQ@mail.gmail.com>
-Subject: Re: [PATCH] sched/fair: Fix potential memory corruption in child_cfs_rq_on_list
-To: Zecheng Li <zecheng@google.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Juri Lelli <juri.lelli@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
-	Valentin Schneider <vschneid@redhat.com>, Josh Don <joshdon@google.com>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304092417.2873893-2-elver@google.com>
 
-On Tue, 4 Mar 2025 at 22:40, Zecheng Li <zecheng@google.com> wrote:
->
-> child_cfs_rq_on_list attempts to convert a 'prev' pointer to a cfs_rq.
-> This 'prev' pointer can originate from struct rq's leaf_cfs_rq_list,
-> making the conversion invalid and potentially leading to memory
-> corruption. Depending on the relative positions of leaf_cfs_rq_list and
-> the task group (tg) pointer within the struct, this can cause a memory
-> fault or access garbage data.
->
-> The issue arises in list_add_leaf_cfs_rq, where both
-> cfs_rq->leaf_cfs_rq_list and rq->leaf_cfs_rq_list are added to the same
-> leaf list. Also, rq->tmp_alone_branch can be set to rq->leaf_cfs_rq_list.
->
-> This adds a check `if (prev == &rq->leaf_cfs_rq_list)` after the main
-> conditional in child_cfs_rq_on_list. This ensures that the container_of
-> operation will convert a correct cfs_rq struct.
->
-> This check is sufficient because only cfs_rqs on the same CPU are added
-> to the list, so verifying the 'prev' pointer against the current rq's list
-> head is enough.
->
-> Fixes a potential memory corruption issue that due to current struct
-> layout might not be manifesting as a crash but could lead to unpredictable
-> behavior when the layout changes.
-
-Would be good to add a fix tag
-Fixes: fdaba61ef8a2 ("sched/fair: Ensure that the CFS parent is added
-after unthrottling")
-
->
-> Signed-off-by: Zecheng Li <zecheng@google.com>
-> ---
->  kernel/sched/fair.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 857808da23d8..9dafb374d76d 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4061,15 +4061,17 @@ static inline bool child_cfs_rq_on_list(struct cfs_rq *cfs_rq)
->  {
->         struct cfs_rq *prev_cfs_rq;
->         struct list_head *prev;
-> +       struct rq *rq = rq_of(cfs_rq);
->
->         if (cfs_rq->on_list) {
->                 prev = cfs_rq->leaf_cfs_rq_list.prev;
->         } else {
-> -               struct rq *rq = rq_of(cfs_rq);
-> -
->                 prev = rq->tmp_alone_branch;
->         }
->
-> +       if (prev == &rq->leaf_cfs_rq_list)
-> +               return false;
-
-Reviewed-by: Vincent Guittot <vincent.guittot@linaro.org>
-
-
+On Tue, Mar 04, 2025 at 10:21:00AM +0100, Marco Elver wrote:
+> +#ifndef _LINUX_COMPILER_CAPABILITY_ANALYSIS_H
+> +#define _LINUX_COMPILER_CAPABILITY_ANALYSIS_H
 > +
->         prev_cfs_rq = container_of(prev, struct cfs_rq, leaf_cfs_rq_list);
->
->         return (prev_cfs_rq->tg->parent == cfs_rq->tg);
->
-> base-commit: 7ab02bd36eb444654183ad6c5b15211ddfa32a8f
-> --
-> 2.48.1
->
+> +#ifdef __CHECKER__
+> +
+> +/* Sparse context/lock checking support. */
+> +# define __must_hold(x)		__attribute__((context(x,1,1)))
+> +# define __acquires(x)		__attribute__((context(x,0,1)))
+> +# define __cond_acquires(x)	__attribute__((context(x,0,-1)))
+> +# define __releases(x)		__attribute__((context(x,1,0)))
+> +# define __acquire(x)		__context__(x,1)
+> +# define __release(x)		__context__(x,-1)
+> +# define __cond_lock(x, c)	((c) ? ({ __acquire(x); 1; }) : 0)
+> +
+
+The other thing you might want to annotate is ww_mutex_destroy().
+
+I'm happy about the new __guarded_by annotation.
+
+regards,
+dan carpenter
+
 
