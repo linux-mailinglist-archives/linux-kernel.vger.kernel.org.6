@@ -1,146 +1,168 @@
-Return-Path: <linux-kernel+bounces-547630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29FFEA50BC1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:44:19 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27189A50BC8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:45:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 694AF3A4858
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65D533A5070
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7ECDC254B13;
-	Wed,  5 Mar 2025 19:44:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7112512D9;
+	Wed,  5 Mar 2025 19:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DTjB6yIw"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KWn6sKyF"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73A4625486E;
-	Wed,  5 Mar 2025 19:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7281DE4D3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741203846; cv=none; b=XqA87YcPntP+ZwJ09SpFgjmitkYCbFiT0W9zinS9eqjcXLxYlYtkFVY9/JpZtU7l/i7H6Hf+Gb0t6WJJ6gLTCJISPICOzZfJpHs0yMLwL3jsfjTSHrGjp9y5pcQTE3Iem7UimbA3KrDJUi5Dco8WoeD5AJULToxvdqZTLqCTiwg=
+	t=1741203912; cv=none; b=LwwJsIORPoC99SyQJwGfJJb1E7+K4+hjSOGvxzW15gKHhJ1VlExdL48L5OawUiM0hCV59PA/Q8vtYdu9FpDbMjuDfNn9KNW3wWWRNGuNEH8R4OFpYNYnDHp95f3M8P3xlaK5XhEEJwlyhdWgp9Ktj6Hrm2K6WtCa/02SoaUV5bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741203846; c=relaxed/simple;
-	bh=iuMAshD4bk3c1DXvxZqphmHEvfIZrLNQXSbR2588DH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uwH8vY72k5Qhs3o3ZlJQJekyi0AGAfWIvod4poYqTOrTnatAy3U3JnQpIriy8TO7ipeXIwLUKgODrielxvSEZvN69AMb75UJ1NMBntKcuAnvqzqeKykJv/CAe9Q23pG3ZtBvqOWLsrYQW/lPfYNuEQEBgD15DtpZ0n3ytR3CSe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DTjB6yIw; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22359001f1aso166879315ad.3;
-        Wed, 05 Mar 2025 11:44:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741203844; x=1741808644; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TCjogQfkKhbdMF0UGzixY7XrKAjTABD1okRnqIJZJIw=;
-        b=DTjB6yIwEEJBclkmyOlq+leQlGBGXTRN5aQJFyOJZribDnfeLC76QWwZYZRw9meGaR
-         jtJbw7vbGAtS3B/FQgNox/o0ilpeKx0N7j8upp95iMTzgqWWnVDbJukA9b/+nb/xFZZy
-         ordpV3RIAwN3lF2sKejt4HczQiTQuqWTdDnp21PxriO/FvTV+VjMP2u6eiTmUDseEkXs
-         lPTRg2g2Y+VxEcETf3qLAb7nLuvxbt3mONeQSZyTwZ+oZtZuaT+Dj1Tp/wBg+CtVbbNv
-         Uao4jsLKNUhSpqaxmN0iUZ3t9YodJaJvjCqfaID6zht42Wi8asGTVe8Tgn1xZw+mMfSr
-         hg5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741203844; x=1741808644;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TCjogQfkKhbdMF0UGzixY7XrKAjTABD1okRnqIJZJIw=;
-        b=GGh90kp5p5G5SkP95KU8tudVAvOESRohnCei6MOh4ns9lD1/zb52avvDA0+ma2VTYN
-         yLM5h2ydKutv/i4FVJZ5z840mh4LDlEcAwCyUd8Y0AH8sO+kf38SeRJB9xCYljE/He2n
-         9kTzIyjtErRd9s/gZKRLf+QcDFq1Bv1vgLx/iXIhP5cKZoJW3lVCL3sARJOKf3ZDoItP
-         GperbXU74CWKuXoPPDsudvutaxIi+J6ulRFfpjy24vzzKuP/DFlyuaFuUbeZLRaDNwnv
-         ey5m3NcAwxzxsZjODNJhc0cqGa90x+SMabZLneIo8yzVQVsFjqfOhv7jqb8m6mvwo0I+
-         Tduw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOcdlfs1NT8z+PgwkNiVISER++H+Fg/TmZo5fOSTC75PYAJPixX3hO/Oaf5DICAFngM2CdjWYg78FNaW/uVdHFlExD@vger.kernel.org, AJvYcCUfrA00+vo2isPbVH9hc5+ojgIQBoc4GgkEPLXMLwOw4cAHo1HnN81oxz/BF1jNsWjau+i86y/uN4XbfTE=@vger.kernel.org, AJvYcCWQAeXu/kb1tinnZ/akYi5R8u7kvO3Br8ECjmNSaluq4IGPrSeZtl/AaEouyQcx/+sjI9mRzlGXcjEbGpSBWoq2Ig==@vger.kernel.org
-X-Gm-Message-State: AOJu0YztYtfL4D8PFU6owiNbAfzB0FTAC5jl8XW2OjhXlbuJ7WQsJibs
-	MOLlbADisfTFRnKWAjqPQJuROTckr+rStuLOhvll4rlskT8DMBHz25vBs0sO861iob36Qs7MAVA
-	Bb3nTowcMACWlL7TNHypBy0w4xTs=
-X-Gm-Gg: ASbGnctysBlu/SLEZi3pkb754vuWeHBzBrJEJfsPkZA3BgUyE0cykzTeZDNHe53MvSi
-	y80MYMgE/2x8GHlsApz2hGzuUxbZCTtU0qBftXD9w+L6mqbgs2GYD7q06+lCwRFI08UYhAfD3uy
-	kwLwsllL7voN6gk8LOqaoZnI3W
-X-Google-Smtp-Source: AGHT+IFdCDYj/agpQVhv3dAYVCWS6XsBw5aAFSnr2mfwdcK9Y4FN9aCNwjHl/acg8MGpJUB2P/zufNqUs3lMvnM53KY=
-X-Received: by 2002:a05:6a00:21cc:b0:736:457b:9858 with SMTP id
- d2e1a72fcca58-73682b7405dmr6071779b3a.10.1741203844549; Wed, 05 Mar 2025
- 11:44:04 -0800 (PST)
+	s=arc-20240116; t=1741203912; c=relaxed/simple;
+	bh=18ZM1//KmWlpxbNtgrT5Ib/LlAyiKm/m64pVpWJqYVY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmAXX6Xf9vfitO7pzOjZPaDOAQxlMvdqSNarjitLe1VgvdjZwP4HhgTxEkfrAvcNecM1q5vrzfEKJzy4H7+bcC6J1ihDvRvUCUJNPOQYFhmcUgzaxfVaMgtBxJcYvI+3Snq2/qSiV9ZUTTyrsFXtwRq33mieROyC0KrVAlTiKGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KWn6sKyF; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741203911; x=1772739911;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=18ZM1//KmWlpxbNtgrT5Ib/LlAyiKm/m64pVpWJqYVY=;
+  b=KWn6sKyFBim14ZkCWl2uQaCnXYDrZFSif1SfsXfmlHTyoi7/fjRVxUPW
+   RUNMYU4ZFL9cIIgXgkqIhvCkEqXsty4/15Is3biUdeiHPz99lvP7U/1/V
+   Cz8c7YRQXbOuOVQc/BGQAAJLXdjY1BYXfQS4EIb9ZqrecMKbwpF7xfaMI
+   3UtlJQprPdLMEkwNzQkltejkYWujjfPSYbuhgJ3S0YXCLlDT0WsvQOf4g
+   +8kKtEzBVjtZ6MDxgoksp85ZhSkwmm1UWa8unYNqEdsiHdiV75XT6T2sv
+   WdTvT//qjdKW7bvVOfFd/Rj/3dDJA1hNqt/XLyXdVUGuJLlNxVY/JBuX+
+   g==;
+X-CSE-ConnectionGUID: usGBetMhTTOHIq0vsEX8OA==
+X-CSE-MsgGUID: rsYaxRIGRaqjqcIbsZjk/g==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53585765"
+X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
+   d="scan'208";a="53585765"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 11:45:11 -0800
+X-CSE-ConnectionGUID: ka/lj1c3SCCQmIutfsiqfw==
+X-CSE-MsgGUID: XUV/fNJYRWG8hLjPhRMhIA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
+   d="scan'208";a="118507028"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 11:45:06 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tpufu-0000000HVgZ-1HsU;
+	Wed, 05 Mar 2025 21:45:02 +0200
+Date: Wed, 5 Mar 2025 21:45:02 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
+Message-ID: <Z8ipvnURG_iejzSX@smile.fi.intel.com>
+References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
+ <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
+ <Z8hx9AaUX_GvYq_A@thinkpad>
+ <8301ecbc-d035-4257-9b04-c6ef9be4ce32@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304154846.1937958-1-david@redhat.com> <20250305152055.GB28112@redhat.com>
-In-Reply-To: <20250305152055.GB28112@redhat.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 5 Mar 2025 11:43:52 -0800
-X-Gm-Features: AQ5f1JrrjsXo3LTI9gnU7JfioqsYSvoLENxHqqnaxX48DOE6niZSlJc8m2hl6mM
-Message-ID: <CAEf4BzbyFy0eQHLac3zR8GiGDOUqYoTGAWDbFaeou903OGOTpg@mail.gmail.com>
-Subject: Re: [PATCH -next v1 0/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Russell King <linux@armlinux.org.uk>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Tong Tiangen <tongtiangen@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8301ecbc-d035-4257-9b04-c6ef9be4ce32@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Mar 5, 2025 at 7:22=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> wrot=
-e:
->
-> On 03/04, David Hildenbrand wrote:
-> >
-> > Currently, uprobe_write_opcode() implements COW-breaking manually, whic=
-h is
-> > really far from ideal.
->
-> To say at least ;)
->
-> David, thanks for doing this. I'll try to read 3/3 tomorrow, but I don't
-> think I can really help. Let me repeat, this code was written many years
-> ago, I forgot everything, and today my understanding of mm/ is very poor.
-> But I'll try anyway.
->
-> > Are there any uprobe tests / benchmarks that are worth running?
->
-> All I know about uprobe tests is that bpf people run a lot of tests which
-> use uprobes.
->
-> Andrii, Jiri, what you advise?
->
+On Thu, Mar 06, 2025 at 01:48:49AM +0900, Vincent Mailhol wrote:
+> On 06/03/2025 at 00:47, Yury Norov wrote:
+> > On Wed, Mar 05, 2025 at 10:00:15PM +0900, Vincent Mailhol via B4 Relay wrote:
 
-We do have a bunch of tests within BPF selftests:
+...
 
-cd tools/testing/selftest/bpf && make -j$(nproc) && sudo ./test_progs -t up=
-robe
+> > Having, in fact, different implementations of the same macro for kernel
+> > and userspace is a source of problems. Can we move GENMASK_TYPE() to uapi,
+> > and implement __GENMASK() on top of them? If not, I'd prefer to keep
+> > GENMASK and GENMASK_ULL untouched.
+> 
+> This is something which I tried to explain in the cover letter. I am not
+> confident to declare GENMASK_TYPE() in the uapi and expose it to the
+> userland. If we do so, any future change in the parameters would be a
+> user breaking change. __GENMASK_U128() looks already too much to me for
+> the uapi, I am not keen to bloat it even more with GENMASK_TYPE().
+> 
+> This plus the fact that if we use GENMASK_TYPE() to generate the asm
+> variant, then we can not rely on sizeof() in the definition which makes
+> everything over complicated.
 
-I also built an uprobe-stress tool to validate uprobe optimizations I
-was doing, this one is the most stand-alone thing to use for testing,
-please consider checking that. You can find it at [0], and see also
-[1] and [2] where  I was helping Peter to build it from sources, so
-that might be useful for you as well, if you run into problems with
-building. Running something like `sudo ./uprobe-stress -a10 -t5 -m5
--f3` would hammer on this quite a bit.
+I am with you here. The less we done in uAPI the better.
+uAPI is something carved in stone, once done it's impossible to change.
 
-I'm just about to leave on a short vacation, so won't have time to go
-over patches, but I plan to look at them when I'm back next week.
+> I acknowledge that not having a common denominator is not best, but I
+> see this as an acceptable tradeoff.
 
-  [0] https://github.com/libbpf/libbpf-bootstrap/tree/uprobe-stress
-  [1] https://lore.kernel.org/linux-trace-kernel/CAEf4BzZ+ygwfk8FKn5AS_Ny=
-=3DigvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com/
-  [2] https://lore.kernel.org/linux-trace-kernel/CAEf4BzZqKCR-EQz6LTi-YvFY4=
-RnYb_NnQXtwgZCv6aUo7gjkHg@mail.gmail.com
+...
 
-> Oleg.
->
+> >> +#define GENMASK_U8(h, l) ((unsigned int)GENMASK_t(u8,  h, l))
+> >> +#define GENMASK_U16(h, l) ((unsigned int)GENMASK_t(u16, h, l))
+> > 
+> > Typecast to the type that user provides explicitly?  And maybe do
+> > in GENMASK_TYPE()
+> 
+> I have a slight preference for the cast to unsigned int for the reason
+> explained above. But that is not a deal breaker. If you believe that the
+> u8/u16 casts are better, let me know, I will be happy to change it :)
+
+At least can you provide an existing use case (or use cases) that need
+this castings? Also still a big question what will happen with it on asm.
+Can it cope with 0x000000f0 passed as imm8, for example?
+
+> >> +#define GENMASK_U32(h, l) GENMASK_t(u32, h, l)
+> >> +#define GENMASK_U64(h, l) GENMASK_t(u64, h, l)
+
+...
+
+> > But GENMASK_U128() becomes a special case now.
+> > The 128-bit GENMASK is unsued, but it's exported in uapi. Is there any
+> > simple way to end up with a common implementation for all fixed-type
+> > GENMASKs?
+> 
+> What bothers me is that the 128 bit types are not something available on
+> all architectures, c.f. the CONFIG_ARCH_SUPPORTS_INT128. So, I would
+> need a U128() equivalent to the ULL() but which does not break on
+> architectures which do not support 128 bits integers.
+> 
+> This is where I am stuck. If someone can guide me on how to write a
+> robust U128() macro, then I think the common implementation could be
+> feasible.
+
+I think we may leave that U128 stuff alone for now.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
