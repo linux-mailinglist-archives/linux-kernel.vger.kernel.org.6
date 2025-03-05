@@ -1,187 +1,96 @@
-Return-Path: <linux-kernel+bounces-546204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 168CDA4F7B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:13:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F275A4F7B7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:14:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35AE3AA657
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:13:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D6EB7A42CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:13:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E051EDA1F;
-	Wed,  5 Mar 2025 07:13:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U+/l0hOb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60271EB5D4;
+	Wed,  5 Mar 2025 07:14:34 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02EB33993;
-	Wed,  5 Mar 2025 07:13:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2157433993;
+	Wed,  5 Mar 2025 07:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741158788; cv=none; b=D84KA3/NLGRcEcQXBBaZQuhoYeEZdTrHE5zbSFbhkJ+00q0Xg8zH23H8IzSe4BQRR0jpoFKtRW1McbU+8uNpLVCx1nExp64XaArTMnbv9AbDWHfBMG+U5Jv/3M3aDv7BL/CS39NtTd7DEmbfsLAY0X1nFztTx3zHiDR8R94XlJM=
+	t=1741158874; cv=none; b=EIZLVTExBNrvWxV7VYGD4c4LkJzMj8b7NjFIWNF5heS4DXKD8yRWvEoDoG0Iz3Kv6MejEUFa5onPFjJZdtvncNofW0fsdtEjsDyMxBFrYa8GyVjBqfk4EUR73KgD6DWF33LSEHfBYZgRMCnP4wTXhS8MFmkz+XXXixFY3iYNBiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741158788; c=relaxed/simple;
-	bh=XALvqM3rTWffhLsWC4ScvJKu3JsXVYqY3UUNekYl9No=;
+	s=arc-20240116; t=1741158874; c=relaxed/simple;
+	bh=SQ6LjtibRZusomOEhTDVhNlZ3tr9i+EtD6bCbW9qTTU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rJl+XPitl8GA96RdUtagqjyH9STmNkPoOewlrTvGkZnvCx5wo17NHm+4FnJXe3gYKJLfVdFybDXOXFDT0WQQ1jGlE+IyWi4Qn56FbqTAoQ1/jGmcgkjtMJaAESI5eyjiKCm6vRmkcdfgkg0BQkO8dpl9k06VNiLaeDli5GTXpdE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U+/l0hOb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71F00C4CEEA;
-	Wed,  5 Mar 2025 07:13:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741158788;
-	bh=XALvqM3rTWffhLsWC4ScvJKu3JsXVYqY3UUNekYl9No=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=U+/l0hObN4qKsYWxBrpFijsi02TehWWysBo4MjWPA8ItPzuoALg9Uaez6f5FmwXY+
-	 EOMyRWxseN3yrkKFDCbKFYldEFyWxReQhqsaJQcNeAXHtyAGu7bPgpgmAh3u468eiF
-	 2ddsAG64Ft1sBD8NwU6gOfhdP6qO4r42pBdbe7ys41rmbi4NmTSTP3Z5r9WFKJjkAC
-	 +cTk7qkt+mDJmmEcuHaOC+jASwD1KrY8LtfnY7PWy6Q8Nh6zITlyAmAvKWMAKIwAFZ
-	 GAv8p+Mqg3Czhe5X3OLm2S59GThK88/bPQrG06wjar9NNJHdE9lDyVOS+4cYPqcuGV
-	 l1HqCvQPSZdDg==
-Date: Wed, 5 Mar 2025 08:13:04 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, 
-	Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, 
-	Abel Vesa <abelvesa@kernel.org>, Peng Fan <peng.fan@nxp.com>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
-	Ulf Hansson <ulf.hansson@linaro.org>, devicetree@vger.kernel.org, imx@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux@ew.tq-group.com, 
-	linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
- subnode into schema and example
-Message-ID: <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
-References: <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
- <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PYVxgDIffxAdougAydyXQY3r5f4laAdraE8TzqQvlFgBEDLyMSeEPVuCnLZ4W96hYaiCijS6iC3mTytfZ9m0BzR7VoS8K0IP4u6rL3KaeMEr7fNK8wb8CfKcRRMOW8bNtgyxog4F5WdyVRjbEIxvTZXehFmcGvsb2us9njCvwA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223480ea43aso161232335ad.1;
+        Tue, 04 Mar 2025 23:14:32 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741158872; x=1741763672;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QHSxE97Z/19fRfnaBRW98qLuvS9sZYnITb+wBOsP0To=;
+        b=KFDC3jXc0ImnhTXl50dLh33qUO1uDLDf1uwGpkeBRjRdwE8s4Pb6VS9GMemlr3UXk/
+         fE0BnZmAwj7s0KtpNK+/qMV2BcYRY7/Owyfzp4LMcRV6+L1Ec5CxFAwRKScPZZ1btQDF
+         FOAGBZenAd/l4hDiHQ9X/sEs1hoCPbmsD5IGFNnXQjc+tWhBPQTtvd+QoknLA4c6RPpB
+         mKOQdmTg7fU6YIRqUTrf/HZ/ROnR0zNtS8msXzAJxmdXYkmqT/VjiHxkt7kuDsjxg00d
+         t96JaHh7XDfyS0LF/UhwhfEmFcsS+BpBd2l5kYb48WMX1Pb6UEVfR/8nFwiNMIvV6LXx
+         BFgw==
+X-Forwarded-Encrypted: i=1; AJvYcCWIZ510Ye2KUs3F1Hv68n4N5Kc6/6XQj8MNOlcJkXWKmXda5CCqzktSMUejk4Mcdy4S/IbK5nVz2146ZuQ=@vger.kernel.org, AJvYcCWnauXSLRG+2U66zHjjqwGO+OajJQQ1ruOuU6VLDmuCGy3B/tJX81AXuZcjaXNTzWGcD+LSvVuTR3Gq@vger.kernel.org
+X-Gm-Message-State: AOJu0YxULqoGM1HXHTZDHYlqjacsakT7ox26ZpBjOP1Us4bSI8QWrUcz
+	Ik0iSebMJ9MSQAL1B0cHo9SDCWHC8UALSWbaFsgWc50Nx9smGusa
+X-Gm-Gg: ASbGncvw210nhwSjm7zQ7zB6c82Sq1enPner8Q5LF1782I+hxce9zWNzu7rquQJtshT
+	FGmckhNsjPKDQBtwYfYadOJDmXf4JiCRxJJ6pFpk8lbYvZXdToe+ouMaKhU/dD3D7lN8/SZZgfD
+	K0uTnuKBh5bPMU2z085OfPDGGWBp/ZvqmC0uo1YIxTNmZSGzom7B+qXQc4KJj6fqT8ZFSCYwtAk
+	JuopN/BgMNJRZunfUy9qBEKMvfIP0iGyjEdi138fbLXU0Y5F8yul0EcVQm3mIvHzrtlYb/y/xek
+	goUrT2koOTlPNXJPQK4CBBU1YFgH6fKPXs47SC32brGFQyv35yT4CrTDCjtENATssc7ma+Mwg+C
+	HhdQ=
+X-Google-Smtp-Source: AGHT+IFjwJnf4pYdKy9H+Sj318w3civ3R8+DUQqlTLpVZsAp4jFdqVYT+jVun/KKKaDFmZwvXFvu6A==
+X-Received: by 2002:a05:6a00:b81:b0:730:8a5b:6e61 with SMTP id d2e1a72fcca58-73682b4b1dbmr3263549b3a.2.1741158872158;
+        Tue, 04 Mar 2025 23:14:32 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7363b7d81b3sm7894587b3a.53.2025.03.04.23.14.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 23:14:31 -0800 (PST)
+Date: Wed, 5 Mar 2025 16:14:30 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: phasta@kernel.org
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bingbu Cao <bingbu.cao@linux.intel.com>
+Subject: Re: [PATCH] PCI: Check BAR index for validity
+Message-ID: <20250305071430.GA847772@rocinante>
+References: <20250304143112.104190-2-phasta@kernel.org>
+ <d667d29337c49ebebb82d69b12bd48cad66ce595.camel@mailbox.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
+In-Reply-To: <d667d29337c49ebebb82d69b12bd48cad66ce595.camel@mailbox.org>
 
-On Tue, Mar 04, 2025 at 04:49:21PM +0100, Alexander Stein wrote:
-> Document the LDB bridge subnode and add the subnode into the example.
-> For the subnode to work, the block control must scan its subnodes and
+Hello,
 
-Don't describe drivers, but describe the hardware.
+[...]
+> Shall I send a v2 or do you want to rebase, Bjorn?
 
+If the changes are relatively small, then you can send a patch top be
+applied atop the existing branch.  I will squash things as needed.
 
-> bind drivers to them, do not misuse either simple-bus or simple-mfd
-> here.
+Otherwise, a v2.
 
-I don't understand that simple-bus or simple-mfd statement. There are no
-such compatibles here.
+> sry bout that.
 
-> 
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
->  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
-> index b3554e7f9e76d..cd785111928bf 100644
-> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
-> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
-> @@ -24,6 +24,14 @@ properties:
->    reg:
->      maxItems: 1
->  
-> +  ranges: true
-> +
-> +  '#address-cells':
-> +    const: 1
-> +
-> +  '#size-cells':
-> +    const: 1
-> +
->    '#power-domain-cells':
->      const: 1
->  
-> @@ -46,9 +54,20 @@ properties:
->        - const: csi
->        - const: dsi
->  
-> +  bridge@20:
+No worries.  Things happen.  We can fix everything. :)
 
-@20 looks wrong. Use 'ranges;' and try again your DTS...
-
-Binding is supposed to be complete. We have several examples when people
-added children one-by-one, everytime with different reasoning about
-child addressing.
-
-So please confirm: this is complete and no other children will ever be
-added here... or you are 100% sure that all future children will be
-unit-addressable (will have unit address and appropriate properties).
-
-BTW, I don't quite get why this is both syscon and has translation for
-child addresses. Does it mean your child does not use the same MMIO as
-parent, thus leading to unsynchronized reg access?
-
-> +    type: object
-> +    additionalProperties: true
-> +    properties:
-> +      compatible:
-> +        contains:
-> +          const: fsl,imx93-ldb
-> +
->  required:
->    - compatible
->    - reg
-> +  - ranges
-> +  - '#address-cells'
-> +  - '#size-cells'
->    - power-domains
->    - clocks
->    - clock-names
-> @@ -77,4 +96,36 @@ examples:
->                 clock-names = "apb", "axi", "nic", "disp", "cam",
->                               "pxp", "lcdif", "isi", "csi", "dsi";
->        #power-domain-cells = <1>;
-> +      #address-cells = <1>;
-> +      #size-cells = <1>;
-> +      ranges = <0x0 0x4ac10000 0x10000>;
-> +
-> +      bridge@20 {
-> +          compatible = "fsl,imx93-ldb";
-> +          reg = <0x20 0x4>, <0x24 0x4>;
-> +          reg-names = "ldb", "lvds";
-> +          clocks = <&clk IMX93_CLK_LVDS_GATE>;
-> +          clock-names = "ldb";
-> +
-> +          ports {
-> +              #address-cells = <1>;
-> +              #size-cells = <0>;
-> +
-> +              port@0 {
-> +                  reg = <0>;
-> +
-> +                  ldb_from_lcdif2: endpoint {
-> +                      remote-endpoint = <&lcdif2_to_ldb>;
-> +                  };
-> +              };
-> +
-> +              port@1 {
-> +                  reg = <1>;
-> +
-> +                  ldb_lvds: endpoint {
-> +                      remote-endpoint = <&ldb_to_panel>;
-> +                  };
-> +              };
-> +          };
-
-Messed indentation.
-
-> +        };
-
-Best regards,
-Krzysztof
-
+	Krzysztof
 
