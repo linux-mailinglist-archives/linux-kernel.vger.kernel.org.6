@@ -1,115 +1,92 @@
-Return-Path: <linux-kernel+bounces-546253-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546254-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42361A4F86E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:07:27 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C1B0A4F870
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7149816F730
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:07:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC38016F74B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06841EDA1F;
-	Wed,  5 Mar 2025 08:07:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="af8dMLy4"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC0D1EF0B7;
+	Wed,  5 Mar 2025 08:07:55 +0000 (UTC)
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 725C62E3360;
-	Wed,  5 Mar 2025 08:07:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F13FE2E3360;
+	Wed,  5 Mar 2025 08:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741162040; cv=none; b=OreH8LLlSCMS9TbjebjhZygGAcdxfwgoU2e6qhVL94xLBYFokDEvZEtvXEuNM7MOVxJxdY3k4QZat7nAEn89NDblDRooiSe8Zw4Gs6oAQ9fmdzdFkB8X/KiA4Gzf6oIFMMdhaWSuywYDVkvKtCjJ16ctKPAi+b8XeZM1E4dEvS0=
+	t=1741162075; cv=none; b=dVM4HdJtxbNBM1JPBHxt/FKUBsyhqatoYSs+gGx5JdswQMrmlzXsee1UiO5tUp6ijdrMNPM5ywo/HHCPc+AgWn18pp0FKb/h9ZRT23v+j4p6rVt3WpjVpcZQx/2TbqfedGgNsIRnlF22fotm1oPAE2VRUEKekzoaT14BHxWd2Xs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741162040; c=relaxed/simple;
-	bh=6DsWC/+nahLAYdKgf4seqrfXxUEZ8iRaABBCntrYhKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OMJx58L/J9qv2wEcGm5+YA+EnMP3sbGDrM3+aNOy08lw94XcbVbeQ8wuBerBugFwqtUPj7Xp3dK5nSObBU+I9tTg6B60PwLgFCpZXYQn90EXHiTpvO+xPFRELeE9wyivuBqYfUt4NndyvR1mNs2I2gQdjD9+w6ot3+jDiT5PVTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=af8dMLy4; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 136D74429B;
-	Wed,  5 Mar 2025 08:07:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741162027;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mDyr92Uh765Z+tERpM9Qj4wP6zVRRYDO3RATjXNlnGI=;
-	b=af8dMLy4abxWO1JCP4+dQhpdf3jav/99AL3ZCcWCA/KPZyi8+J+usqtOVoN+Uk+57otTJh
-	n21Cqnuld0MNqXqaZ6V0ZkAQMkuoJ8ecG2rf5He135KZ4ASYlOarQEsk60JEScDQsgml1O
-	Orm0Me8iC2gajkEB91+2oIVISL7XabQD/c2Bs2OljyPg/mp1HvLhow+aiiemmpPQJTfd1o
-	oYhlrhIfe9cxWIe1NJ0aOFbbURhciFrRgWdX5elntm/KLMjrWHesdajmE+fk3R1YHRxYyl
-	qIuIA6mJWc5jEmlfVf7YTIPNSFKWIIGJxkmBAKYGsLu1Oy15BeTQqxofve3+zA==
-Date: Wed, 5 Mar 2025 09:07:05 +0100
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich
- <dakr@kernel.org>, Saravana Kannan <saravanak@google.com>, Thomas Petazzoni
- <thomas.petazzoni@bootlin.com>, =?UTF-8?B?SGVydsOp?= Codina
- <herve.codina@bootlin.com>, linux-kernel@vger.kernel.org, Andrew Morton
- <akpm@linux-foundation.org>, stable@vger.kernel.org
-Subject: Re: [PATCH RESEND v2] drivers: core: fix device leak in
- __fw_devlink_relax_cycles()
-Message-ID: <20250305090705.4b2eb1e9@booty>
-In-Reply-To: <2025030332-tumble-seduce-7650@gregkh>
-References: <20250303-fix__fw_devlink_relax_cycles_missing_device_put-v2-1-3854d249d54e@bootlin.com>
-	<2025030332-tumble-seduce-7650@gregkh>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741162075; c=relaxed/simple;
+	bh=apu10s+fJZ911Ijxj7kIStbMqlzymKqe1ad5pAatUoU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T6itUcaGNQg6h7VpJvVfrYTqS/z4acJKp2iBEZPmATo8Wbl8KLD5tX4tKIRGE+iPOkVPKejLlfgVv7s18poiU7vyjMxvCyeYhhPAR85fRkurA18Qve42iSvLgbrw84YSpjim8DTSDugsMODIlWMEjxzh3e9DN/jNbii4G21q2Lw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223594b3c6dso112415535ad.2;
+        Wed, 05 Mar 2025 00:07:52 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741162072; x=1741766872;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qsivklTW2AXV/DvWE4vPkKDoYBnAOF+SydcaTbdXRsE=;
+        b=aJfX8Im4FMb7dmc5MonxPneWDTvYW/cvMMw/QWhgg4v068kw51IhuKcOV2hrKeCMFg
+         a9KkeuUsMAsQhtupKofBSf3dFmyZPjVgROKX6Rc1Nq+trR/4fksbzz0Xor2dugqiNeSv
+         xa9IHykvjTF1aRqFg6yHYas3JTwyNGSeer2xZe8TSbJNVk19DGBzWB7LUO0r1SUKRBED
+         dJO9XjkcaGgzEPI+jsuOrT4JJEOm72ZgTyvCI3KCGTUT2zV3Po40T89dY3qfyxdNcTIN
+         7rsZzmIczWG/4bllxobX7ES3EbAOcL56LWmQFWsl1Ht+YWBahXr3zEEnITfYIR0AzEKm
+         Ywag==
+X-Forwarded-Encrypted: i=1; AJvYcCWmUL8kbMgOSRqw0G2Ca0sVcNSkvUFKDl43wJz3pNgqydomMzEmGKMg//kiZaA/RCmPcipwsJtc9dJD@vger.kernel.org, AJvYcCWyIYKkJ8T2I9Ske/X4YDVd3llF4e7sSGtNbTv6zaMWZQ1DnaubfClasE8YPFhHBA/JrEZ9FCkV4iw632Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfV+wZMNDIe6lU7WrJhNi5VCIhuQeDkBJMWgHtzcpdVnpTPuqY
+	GSSc1BgmOlau6J2DNMbp/CssI70GcejFAnUO2SqwkTjFVpuV6P+mr6wU3Md6EQw=
+X-Gm-Gg: ASbGncuXniJFNuLR1i6k3iUHnAfLPFp7fQdJEAsASsZZmEi13vJy8NY/3SwXgTDn4oO
+	mQ+FQtYyEPPd5QAkQpMoy0OF+27eYg7tAji2UIrDEv/N79lb8Aro1XfnOTgjFpWQwf/6c2pQgZm
+	jonY4Sf6n6JPAiUfcaSQoIJGgVDD+CEUGYrXthnFq592Pg7xpfJXTW0jPgcrHHaGkCMd9Tq6rBe
+	Y01FP3UAALWi+WO/55z1Y3Dkf6b5iW1+cN79FmjHyMzPh4XL5NZ6SsHCSsuNAgJ3TapsNTdLWdm
+	DLGeb8yCI6jdjKe9Cp/qbX5v/V2cavTksJkZ4pQj6TZA5hAi0ieX0m6hvkNIVZLLkzrykV/aTQO
+	W8MU=
+X-Google-Smtp-Source: AGHT+IEGVdmdmbudgucIJ5Oa63AI2sZEMBdwoKYYxzedpSNOed5sO7wx/obuA734VhDurdZMT4+6fQ==
+X-Received: by 2002:a05:6a00:3d14:b0:732:2484:e0ce with SMTP id d2e1a72fcca58-73682c89e09mr3232937b3a.17.1741162071997;
+        Wed, 05 Mar 2025 00:07:51 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-73590058fbcsm10092225b3a.13.2025.03.05.00.07.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 00:07:51 -0800 (PST)
+Date: Wed, 5 Mar 2025 17:07:49 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Philipp Stanner <phasta@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] PCI: Follow-up fix for BAR hardening
+Message-ID: <20250305080749.GE847772@rocinante>
+References: <20250305075354.118331-2-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdegvdekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnheptdeljeejuddvudetffdtudelfedugfduledtueffuedufefgudegkeegtdeihedunecuffhomhgrihhnpehkvghrnhgvlhdrohhrghdpsghoohhtlhhinhdrtghomhenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghlohepsghoohhthidpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtohepghhrvghgkhhhsehlihhnuhigfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrheskhgvr
- hhnvghlrdhorhhgpdhrtghpthhtohepshgrrhgrvhgrnhgrkhesghhoohhglhgvrdgtohhmpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohephhgvrhhvvgdrtghoughinhgrsegsohhothhlihhnrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghkphhmsehlihhnuhigqdhfohhunhgurghtihhonhdrohhrgh
-X-GND-Sasl: luca.ceresoli@bootlin.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305075354.118331-2-phasta@kernel.org>
 
-Hello Greg,
+Hello,
 
-On Mon, 3 Mar 2025 15:07:53 +0100
-Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
-
-> On Mon, Mar 03, 2025 at 10:30:51AM +0100, Luca Ceresoli wrote:
-> > Commit bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize
-> > cycle detection logic") introduced a new struct device *con_dev and a
-> > get_dev_from_fwnode() call to get it, but without adding a corresponding
-> > put_device().
-> > 
-> > Closes: https://lore.kernel.org/all/20241204124826.2e055091@booty/
-> > Fixes: bac3b10b78e5 ("driver core: fw_devlink: Stop trying to optimize cycle detection logic")
-> > Cc: stable@vger.kernel.org
-> > Reviewed-by: Saravana Kannan <saravanak@google.com>
-> > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
-> > ---
-> > Changes in v2:
-> > - add 'Cc: stable@vger.kernel.org'
-> > - use Closes: tag, not Link:
-> > - Link to v1: https://lore.kernel.org/r/20250212-fix__fw_devlink_relax_cycles_missing_device_put-v1-1-41818c7d7722@bootlin.com
-> > ---
-> >  drivers/base/core.c | 1 +
-> >  1 file changed, 1 insertion(+)  
+> Fixes a bug where variables were used before being initialized.
 > 
-> This was applied to my tree on Feb 20, right?  Or is this a new version?
-> Why was it resent?
+> To be squashed into commit "PCI: Check BAR index for validity"
 
-I just didn't know it got applied, sorry for the noise. Being a fix, I
-was expecting to see it in current master where but it isn't there yet.
-Assuming it will be soon, you can ignore it.
+Squashed against the existing code on the branch.  Have a look:
 
-Luca
+  https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/commit/?h=devres&id=ba10e5011d05f20bd71d3f765fd3a77f7577ff34
 
--- 
-Luca Ceresoli, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Thank you!
+
+	Krzysztof
 
