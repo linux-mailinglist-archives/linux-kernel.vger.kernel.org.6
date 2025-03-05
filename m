@@ -1,105 +1,118 @@
-Return-Path: <linux-kernel+bounces-546629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 563FCA4FD0E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:02:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 035C2A4FD10
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:03:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C80D27A2F43
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:01:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 340E016F7D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CFE230274;
-	Wed,  5 Mar 2025 11:02:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A0E6230999;
+	Wed,  5 Mar 2025 11:03:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KxtHUvNh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t+W0SDdm"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAD7C1F55FA;
-	Wed,  5 Mar 2025 11:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0643820D508;
+	Wed,  5 Mar 2025 11:03:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172540; cv=none; b=gJs8XZ2mJnAyj2aoZojfEndl2E86CtopL/xxY/9kXccvllSXc69RMRMJoWbldWiqwmgsxoJmU2/GR7+9exkP3W3J2DIa0HU5bbKleyRgvOg+rN5GqaRMp41oEYltlfZBgUzCR1i4Hk4SWh2s2W3OF6zOPi3SZ3gbubT1IVHFrmE=
+	t=1741172581; cv=none; b=j66qhNe5BBr+j0TUGfqeyITvx81SA9DOeKRSoLkSwU+yJyVhOw6wt4VIdNP65191BxYx1rrtQZLjbtbLp1cARlpFTSciw8cs2Y32ZkUR9Q9yZeFHH5w7M+JI/mlny6mUD2dQHAhDn7CA0ARYOzdt99+qpc/mi374hgjUr+jyZLc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172540; c=relaxed/simple;
-	bh=yTpT/u9tOJzbuDrIadcgJIx+4mrWB9CtBxj4SvKyNVY=;
+	s=arc-20240116; t=1741172581; c=relaxed/simple;
+	bh=rGJv2pMYOWgOkuJv/QdJlZWmnY/QX+rPMnbrawdSm8M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=orU7YF6jW4kCEW2M+F9JzmFzFpisydVQW8twCJHzmyxD4zYPrm02NUO9fnFtPytJv1rzYfkhCq0hAkBLnlenZw/Ra7r/xJo5hl+rBlcGfjOLr7sIAzzx02N4mXU/8TTnmaXX7GIswgONTVZ6mPNH0AkBm4I2PDuKre/5uYI1/sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KxtHUvNh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43DB4C4CEE8;
-	Wed,  5 Mar 2025 11:02:18 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=J3WJC2N47eZ9EGRJ5f1UOzsOpasNz3mdfvteu9sqwox/oFb1quEtB9csFxPXyQurjYQPmO6IJ1D+prlQ3GK8DXGhPlaPj/DJ+kLB/GDDGdJnIdiP3vHDnm8fnwvd5zcxQddukStceb43WgzWI60S3EyPA2AtlNVuAY9ZhgM4LqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t+W0SDdm; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CB79AC4CEE2;
+	Wed,  5 Mar 2025 11:02:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741172539;
-	bh=yTpT/u9tOJzbuDrIadcgJIx+4mrWB9CtBxj4SvKyNVY=;
+	s=k20201202; t=1741172580;
+	bh=rGJv2pMYOWgOkuJv/QdJlZWmnY/QX+rPMnbrawdSm8M=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KxtHUvNhQeoGIAQx62mLp1ON9SskQGRYRGf+ejfCPoQ3Y2s9L3dc2OBP6vcFOXXgx
-	 pFwpLVhkPhWYWX9jCff69oXdzxx7Okvcdmv9iqrr0L2g8YWKm0E0P8K/68X+gUhPAG
-	 5nCax0DIjz+w0yQpABLStA3AJ1T2hLmZx3VCk4eSeQah8YcBHFU32sFXST0sAw9JCy
-	 AyI+3GXHX4wEYJQiSW/ZvHqITHjATYfGIxqg004eEqAxr40qUDjxo1ICG2j7BOfxR1
-	 A4CT8lRjhjs+YUhrvZq+3r85Cfl5/zIFm+vixipZYY18eBUbuJe1WwMWIDLQCOUY/d
-	 wVjSvqv34jxtA==
-Date: Wed, 5 Mar 2025 20:02:15 +0900
-From: William Breathitt Gray <wbg@kernel.org>
-To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
-Cc: Kamel Bouhara <kamel.bouhara@bootlin.com>,
-	linux-arm-kernel@lists.infradead.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] counter: microchip-tcb-capture: Fix undefined counter
- channel state on probe
-Message-ID: <Z8gvN1CvcSV8nfVP@ishi>
-References: <20250305-preset-capture-mode-microchip-tcb-capture-v1-1-632c95c6421e@kernel.org>
- <93ce1511-53f6-42a3-b1a5-b6732105e87d@prolan.hu>
+	b=t+W0SDdmuFH/fy2F4X2vmwmZmw8TLa3gGMQdlozWhJ39ZicCwr2e5witl5Yy8K15K
+	 5UiUXkCqUnSOEwLX3PSQDNZQf/CmNcaRBdbzXx7JJEiS9XvG+I7jsVvP7VlCDuGRmf
+	 GPuh4/D7ReBU7J3IMKMShLnjNTEuYSlQ/+ZMK8cVexYeYTY8alHVZNDdie1Tshpw26
+	 BF1NfocQFIMrRMbyg8JARr3JMNx9aODQKuZ1F8VGCekQi4AYKb3WmA9weTqsNxJ+pd
+	 /5Bjo0ilP70Z8CrlyYL8fP5uqV86aFNuVFFYrTvuMHl2zCZ/lyZFdh7Oig7RJBp1wS
+	 cIozVZQZkwNgA==
+Date: Wed, 5 Mar 2025 12:02:56 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: linux-kernel@vger.kernel.org, linux-tip-commits@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [tip: perf/core] perf/x86: Annotate struct bts_buffer with
+ __counted_by()
+Message-ID: <Z8gvYIYXMHRC-btB@gmail.com>
+References: <20250304183056.78920-2-thorsten.blum@linux.dev>
+ <174111554764.14745.14213573362217486017.tip-bot2@tip-bot2>
+ <Z8gW1rihV0aIp8Oo@gmail.com>
+ <04A79410-77DA-40F9-8904-44DC2DE1E810@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pFddjXJg41wFrn79"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <93ce1511-53f6-42a3-b1a5-b6732105e87d@prolan.hu>
+In-Reply-To: <04A79410-77DA-40F9-8904-44DC2DE1E810@linux.dev>
 
 
---pFddjXJg41wFrn79
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+* Thorsten Blum <thorsten.blum@linux.dev> wrote:
 
-On Wed, Mar 05, 2025 at 11:50:27AM +0100, Cs=F3k=E1s Bence wrote:
-> This duplicates a lot of `mchp_tc_count_function_write()`. I'd much rather
-> have this code in a separate function called something like
-> `mchp_tc_setup_channels()`, that, depending on `priv->qdec_mode`, sets up
-> the BMR, CCR and CMRs, and then have both probe() and function_write() ca=
-ll
-> it. Or alternatively, have probe() call function_write() at the end, but
-> that's not as nice.
+> On 5. Mar 2025, at 10:18, Ingo Molnar wrote:
+> > Actually, on a second thought:
+> > 
+> >> - buf = kzalloc_node(offsetof(struct bts_buffer, buf[nbuf]), GFP_KERNEL, node);
+> >> + buf = kzalloc_node(struct_size(buf, buf, nbuf), GFP_KERNEL, node);
+> > 
+> > Firstly, in what world is 'buf, buf' more readable? One is a member of 
+> > a structure, the other is the name of the structure - and they match, 
+> > which shows that this function's naming conventions are a mess.
+> > 
+> > Which should be fixed first ...
+> 
+> Yes, I noticed this too, but since buf->buf[] is used all over the place
+> (also in other functions), I didn't rename it in this patch.
+> 
+> We could just keep offsetof(struct bts_buffer, buf[nbuf]), or use
+> struct_size_t(struct bts_buffer, buf, nbuf) and still benefit from
+> additional compile-time checks, or rename the local variable to struct
+> bts_buffer *bts and use struct_size(bts, buf, nbuf), for example. Any
+> preferences or other ideas?
 
-Hi Bence,
+To clean up this code before changing it, so that the changes become 
+obvious to review.
 
-I agree, the mchp_tc_count_function_write() could be cleaned up and
-divided into separate functions dedicated to configuring each mode
-(perhaps regmap_update_bits() could be leveraged too), but that would be
-a much more invasive update. For the sake of making backporting easy to
-address this particular issue, I've kept the changes here localized to
-just the probe() function. Once the fix is merged, someone can try
-tackling a more proper refactor of the mchp_tc_count_function_write()
-code.
+Please also split out the annotation for instrumentation, it's separate 
+from any struct_size() changes, right?
 
-William Breathitt Gray
+> > I'm also not sure the code is correct ...
+> 
+> Which part of it?
 
---pFddjXJg41wFrn79
-Content-Type: application/pgp-signature; name="signature.asc"
+The size calculation. On a second reading I *think* it's correct, but 
+it's unnecessarily confusing due to the buf<->buf aliasing.
 
------BEGIN PGP SIGNATURE-----
+So in a cleaned up version of the code:
 
-iHUEARYKAB0WIQSNN83d4NIlKPjon7a1SFbKvhIjKwUCZ8gvNwAKCRC1SFbKvhIj
-K0q6AQCykzFD3ZbJXRdRLZExpEPQHYVKRM2NITaUgXmy4R80pQD/fjGX1DSzN4Z0
-gFKcYKH+sV0KGDTjDpoqS0rFmXIJjw0=
-=sVWK
------END PGP SIGNATURE-----
+  - If we name 'struct bts_buffer' objects 'bb'
+  - and bb:buf[] is the var-array
+  - and we rename 'nbuf' to 'nr_buf' (the number of bb:buf[] elements)
 
---pFddjXJg41wFrn79--
+then the code right now does:
+
+        bb = kzalloc_node(offsetof(struct bts_buffer, bb[nr_buf]), GFP_KERNEL, node);
+
+... which looks correct.
+
+Thanks,
+
+	Ingo
 
