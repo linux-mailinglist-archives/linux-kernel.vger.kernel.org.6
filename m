@@ -1,119 +1,153 @@
-Return-Path: <linux-kernel+bounces-545872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42BBAA4F2E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:45:36 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D337BA4F2EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:47:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C411885421
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:45:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B2617A3879
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:46:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8712A2AF1D;
-	Wed,  5 Mar 2025 00:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 080E382C60;
+	Wed,  5 Mar 2025 00:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZi4Nst1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="HXB4NY93"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E140D11187;
-	Wed,  5 Mar 2025 00:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A97F1EB36
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 00:47:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741135530; cv=none; b=GYHt13iFMTxkQMXXlqtnqXaRKN4Mo0oxoaKjnXTU/76QHjye8hvHWC2eypp5OJBGfWatLV/oZdq0JqDws8ZiWz1x9lRE2Eeih3bebO30d6pGzqYbYv96RPFn8Hd5wQXO4JAQxSg2w5FM9CLecGIsw9nsCFY/fMTo9JveJcHJoho=
+	t=1741135635; cv=none; b=sorSUvj8ESq3t58ZsZGU5Ar+l0YRzWYG27LXt6ZOhzNex8UhQjFt8n3kSNU/hl+Gnq5Ccj2P21NY2s3u1M5TwYG+EYeaojkH6iOW8FhDHrJq6ZZ5jWq8rtTga5bkoso7a1/cTKzd5vWCdDGHTktOqAXiAiBbaOPSwHy5oKzu0kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741135530; c=relaxed/simple;
-	bh=gFLlK8tKubCvB0zH2AmLKFcC0Bw0FyNX/KP5Xafjw14=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cr510PGddRqyy3peMxEuR72tNyxsSLM9mFZNGkDucz/6WnJ/R3pQV8dka2rld/qBLQZYrNC4SBxThRRuzxXS+JPEVAoV6lLxTvDXUJo8J05ek5Ky7s9BBAxsewurN1yZmD9ZsJssKywH68vsjnBSl2TGJ+0QJguzyaIK+P1maA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZi4Nst1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D50C4CEE5;
-	Wed,  5 Mar 2025 00:45:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741135529;
-	bh=gFLlK8tKubCvB0zH2AmLKFcC0Bw0FyNX/KP5Xafjw14=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pZi4Nst1ORWhKWhrislwqJ0nN6gzS2masD/TWLsThj5T1FkvvBjYE4H6+bduYuIb2
-	 6lp8GbvTwxeuLUMoCFXb+QKNPQclw6Or4uh7PHcKLTMXVFCXaIPS4tgRJAQbAZ3U3V
-	 uFl67ncSydHcttrWPwd8UnI62QJafNDziGcEoBo6ZhuFqR3GObn+OhqBQwtKSc7AgV
-	 wuoZnF8pUu84XipAeYsvSDz9v6BCPZSGJQnf7LfFNdlhQVpY+08EAtvBgRSzMhkDx1
-	 dmFQovKTn0qh7ndZlU8fUG6icPeISOQMOJrSXW34dEdzNIx5b7nkzOAkva4kK43VnJ
-	 vZRYw3jRpHdng==
-Date: Wed, 5 Mar 2025 00:45:23 +0000
-From: Will Deacon <will@kernel.org>
-To: Sebastian Ene <sebastianene@google.com>
-Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
-	oliver.upton@linux.dev, snehalreddy@google.com,
-	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com,
-	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-team@android.com, Andrei Homescu <ahomescu@google.com>
-Subject: Re: [PATCH v2 4/4] KVM: arm64: Release the ownership of the hyp rx
- buffer to Trustzone
-Message-ID: <20250305004522.GC31667@willie-the-truck>
-References: <20250227181750.3606372-1-sebastianene@google.com>
- <20250227181750.3606372-5-sebastianene@google.com>
+	s=arc-20240116; t=1741135635; c=relaxed/simple;
+	bh=KrZPhWHQh1C/FXJrXVtu/3D6Cl4fRehYGt6yzWML13w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mBuMwFBbnPABKxioubzikf+rOlmZhUOEdP9kMcSs/o/KrUebxI3Ikn0IJ/fLdQj07XzRm8hYihJJlDjnPAfqjXU6AAsJgCDOUIIi1UCVbE0517vLRrftA5Nqnnz96il61yJKIVoOCriXDBZcxPOJ/Jfct4YmK2gbFVwpp7GPewI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=HXB4NY93; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e461015fbd4so4460693276.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 16:47:13 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741135632; x=1741740432; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U0JWW3fTWBnh7K7+SqgqWW2WjvJa1HaPLK+y4schvYw=;
+        b=HXB4NY93Mv1adQF0nefzgX5in0YyUQcM/o+PkBcaO7bqYOxJV/KVJFxA+mvnP2H7bX
+         VbKy8zMjropMV2M/CPD5wR5DrGxGM/Wu3ZIleI2llwqDr1hz+mTSTmwAqEZgsfUGt6vN
+         uHb8/+P6o6TyY+jexQQgFVBWgfxCuU59AwEo6C5f5obqM/StUqEYlSsrxVIwhm5pQvXJ
+         xFbpa7Wb2BDwK/JrutICXsHbEnbUKUPWOhUoCg78SuLFB1GN02/Q+4wlN3MUiAEOs13D
+         ioHwP8xsFgI7jqstQXGv66HiJSczlVm8cOAXeP8fKGqAmLXcgYWuC5wE2q1wn73fTD5K
+         b/vQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741135632; x=1741740432;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=U0JWW3fTWBnh7K7+SqgqWW2WjvJa1HaPLK+y4schvYw=;
+        b=ZySyVdOiDGD37EHxejgEqdO0jMBF+OM1PDfhSdPJ62Hw0E7ihyOXCI92WZYAO3tRQ0
+         GX/sYBQiCtSN/fozVO6A/2jCT6K2ZMDSFk7BKMcdzTMk1QRm5cJrV9ZJvlCCFu7smL0P
+         vbjX+pAjfvIGmTRLvFUSuH4w2POF0UrYWsW86xtEYBFC4hdjOb2NO7+vLBBImwZMcizH
+         at39IHdOxABjt2MSR7pZzPjsVkC2UqFeoevh5ns+TGCFJUH5x0wcEeChDdv390NlAePQ
+         OT+Ue0LXXhbD4ePrc+cZWIwxejO65gB4x2bXQQzblCiciW432jmMUWuL4aXKZCWJQHcA
+         Ke+g==
+X-Forwarded-Encrypted: i=1; AJvYcCX178qLDymPmxIMj4E0yMZD4ALLY6arG3Ux82OUyIJ0Yd8CPpLrFj6tIvPMO4dGljIMH6S3j78XHJnS3UM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6zcB3mrjZe/bgpHxbTr4bgG8LtDQZbrtj8pFUq3y/bC+5cU5I
+	vEF3xgXpWlCSTmQn5YFPB9kIjLuUO+no47EfgRFK7apEmUEj2pIQHuBI0NHE6XFCStQYcIKdXCY
+	O2qBbx/p/RcryiW/aGyr7DUSTPcbVhCB/06E6
+X-Gm-Gg: ASbGncsexnECss/5t4XWyZVGomp31BU9dnyEx3wLs0xkDi1F9qLNbls5zZMWrrPyL34
+	oiy3j7eTrxatRuBf3+qfvgcNU2YUbpO/rz8TFEy8JAqpE5owmZrnJ4rze4XQwv3Fa5SNAyER7uP
+	yeNh6Pr75hC2oDRzeNSYmT8t3GcA==
+X-Google-Smtp-Source: AGHT+IFsin2dnAoII47KpfiYxuCKNvaOHTWGt38UM0/AeWRCKVn6GpsI/Mpf2AghCcvXGb4Vk3GRSbaU2mFwSKGkBmg=
+X-Received: by 2002:a05:6902:124c:b0:e5b:248a:bf3a with SMTP id
+ 3f1490d57ef6-e611e305897mr1727393276.30.1741135629678; Tue, 04 Mar 2025
+ 16:47:09 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227181750.3606372-5-sebastianene@google.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com> <20250304203123.3935371-2-bboscaccy@linux.microsoft.com>
+In-Reply-To: <20250304203123.3935371-2-bboscaccy@linux.microsoft.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 4 Mar 2025 19:46:58 -0500
+X-Gm-Features: AQ5f1JpLlLzJjcKMPOWcUJShk8j8ocFRlSTUH6_R8CutO6bLPL3P9GSwEAw9ZLk
+Message-ID: <CAHC9VhQ+R1nxsp6aPDqH9trjcPadb6yPsj+fEv47mYQqZ50yeQ@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 1/2] security: Propagate caller information in
+ bpf hooks
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
+	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Feb 27, 2025 at 06:17:49PM +0000, Sebastian Ene wrote:
-> Introduce the release FF-A call to notify Trustzone that the hypervisor
-> has finished copying the data from the buffer shared with Trustzone to
-> the non-secure partition.
-> 
-> Reported-by: Andrei Homescu <ahomescu@google.com>
-> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+On Tue, Mar 4, 2025 at 3:31=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> Certain bpf syscall subcommands are available for usage from both
+> userspace and the kernel. LSM modules or eBPF gatekeeper programs may
+> need to take a different course of action depending on whether or not
+> a BPF syscall originated from the kernel or userspace.
+>
+> Additionally, some of the bpf_attr struct fields contain pointers to
+> arbitrary memory. Currently the functionality to determine whether or
+> not a pointer refers to kernel memory or userspace memory is exposed
+> to the bpf verifier, but that information is missing from various LSM
+> hooks.
+>
+> Here we augment the LSM hooks to provide this data, by simply passing
+> a boolean flag indicating whether or not the call originated in the
+> kernel, in any hook that contains a bpf_attr struct that corresponds
+> to a subcommand that may be called from the kernel.
+>
+> Signed-off-by: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+> Acked-by: Song Liu <song@kernel.org>
 > ---
->  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 +++++--
->  1 file changed, 5 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> index 861f24de97cb..7da0203f1ee9 100644
-> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
-> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
-> @@ -725,6 +725,7 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
->  	DECLARE_REG(u32, uuid3, ctxt, 4);
->  	DECLARE_REG(u32, flags, ctxt, 5);
->  	u32 count, partition_sz, copy_sz;
-> +	struct arm_smccc_res _res;
->  
->  	hyp_spin_lock(&host_buffers.lock);
->  	if (!host_buffers.rx) {
-> @@ -741,7 +742,7 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
->  
->  	count = res->a2;
->  	if (!count)
-> -		goto out_unlock;
-> +		goto release_rx;
->  
->  	if (hyp_ffa_version > FFA_VERSION_1_0) {
->  		/* Get the number of partitions deployed in the system */
-> @@ -757,10 +758,12 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
->  	copy_sz = partition_sz * count;
->  	if (copy_sz > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
->  		ffa_to_smccc_res(res, FFA_RET_ABORTED);
-> -		goto out_unlock;
-> +		goto release_rx;
->  	}
->  
->  	memcpy(host_buffers.rx, hyp_buffers.rx, copy_sz);
-> +release_rx:
-> +	ffa_rx_release(&_res);
+>  include/linux/lsm_hook_defs.h |  6 +++---
+>  include/linux/security.h      | 12 ++++++------
+>  kernel/bpf/syscall.c          | 10 +++++-----
+>  security/security.c           | 15 +++++++++------
+>  security/selinux/hooks.c      |  6 +++---
+>  5 files changed, 26 insertions(+), 23 deletions(-)
 
-Hmm, the FFA spec is characteristically unclear as to whether or not we
-need to release the rx buffer in the case that the flags indicate use of
-the rx buffer but the returned partition count is 0.
+...
 
-Sudeep -- do you know what we should be doing in that case?
+> diff --git a/security/security.c b/security/security.c
+> index 143561ebc3e89..38c977091a7fd 100644
+> --- a/security/security.c
+> +++ b/security/security.c
+> @@ -5627,6 +5627,7 @@ int security_audit_rule_match(struct lsm_prop *prop=
+, u32 field, u32 op,
+>   * @cmd: command
+>   * @attr: bpf attribute
+>   * @size: size
+> + * @is_kernel: whether or not call originated from kernel
 
-Will
+This is really nitpicky so please only make this change if you are
+respinning the patchset for another reason (it looks like you may need
+to do so for other reasons, so I mentioning it), but please change
+"is_kernel" to just "kernel" in all the LSM hooks you're updating so
+it is more consistent with the other LSM hook boolean parameter flags.
+
+Regardless of the above, this looks good to me.  My ACK is below in
+case the BPF folks want to merge this, but I'm also happy to take this
+via the LSM tree once the selftest changes are resolved and ACK'd.
+
+Acked-by: Paul Moore <paul@paul-moore.com>
+
+--=20
+paul-moore.com
 
