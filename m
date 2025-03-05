@@ -1,118 +1,205 @@
-Return-Path: <linux-kernel+bounces-546228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FC43A4F80D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:40:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FF6A4F850
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:54:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA5D1188A8E0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:40:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2FD543A6811
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 714861F3FF8;
-	Wed,  5 Mar 2025 07:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951431F63E1;
+	Wed,  5 Mar 2025 07:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BLnx6i7j"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CdQXpNRi"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258481EEA5D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 182451DED5F;
+	Wed,  5 Mar 2025 07:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741160441; cv=none; b=chSWsYFchdncUoT/82LlBk/GCKVx6DY4LvpPjYWUTfn64XtmIRHANAt2SYrjFBr3J5JE6p6AkHXledpXTQGzG+kIPjxvzbHi8Zjc6ZSD3JG1lIeB29H+cPRbm1uKiavGli1eUgMqoDlNgE8OefT+tDH4OZV9wW0vm2lwlB65UCY=
+	t=1741161225; cv=none; b=p/JFsVY8VyQxV1g5O+T4zvYaRLbaqfqnkcyBdFTYBM3rLP/FPEaktwyI2mmt2715rLx+eawyjcAdOO37Q6/wFLnqeU+EVUrmKjVY4i0Kx1CLqWcU+4AKCTr2SsyiyagKpmJ/DlVbIStVxI9V8GJRksdImR8tJu3ZpxtuqibODJ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741160441; c=relaxed/simple;
-	bh=VDTDjXL2VmXwu5SJw3B4Qg8I7zdkWtnn7A7EnShICWQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BmyxZ09nTNvdx3TxZnN1gT/IVUOhkfDUUkzGYMcAIRmFOE5T+oV1+bbsau2707K0R2W1SEEVyDDCOh6uPFhA0P8797xqMvswj5PONrzZMeibai8h6vJUuFQcK5LDlyNPNZrPPoZUPTN7pEPoZdF3nytS2SRpP6YCWFx7LV9eX+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BLnx6i7j; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-307bc125e2eso71985451fa.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:40:39 -0800 (PST)
+	s=arc-20240116; t=1741161225; c=relaxed/simple;
+	bh=RkEPUdpXCIQ3dj7yOMrlnTANphhK5Xv+8N4c/wD3VrY=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=Fh25bPdBiG1hkFji40xpbexMhTI+9BCaVUVbKLBBzznk+1IZ9CJEJYD5I5zcu6m/5vsrTbjKFXIenUmehhkzvdnDxMJpXWe2efAAiTGm8tPwj4SVpGe1j9dXR1hA2vrmEdGJS8LTTr33rKU4gB4hf9+RYOllSNSwgD+AnSYc2TY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CdQXpNRi; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5494cb8c2e7so5617894e87.0;
+        Tue, 04 Mar 2025 23:53:43 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741160438; x=1741765238; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741161221; x=1741766021; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VDTDjXL2VmXwu5SJw3B4Qg8I7zdkWtnn7A7EnShICWQ=;
-        b=BLnx6i7jGlmHnQuSbg0Mesv+Qbc8vu8kKur26c+UmhcRUaUE+QUMmkgjqK8DcpidNS
-         HkqZFwSXw+C55RUszX46OC9J441awi6L/Q1nYtsOZyIrWrgeKirkAID34j0CNvGLfgKf
-         HNDXzKSiSWM1NtbfliWcUqWpEHkobfPIOoO6f5AJ1UCv3VefQ2A/3I5wo74Dmvgz8z6c
-         nMMHIAbiwX+7w0DZi/WitzGmg7Z6XRr1640lUjZFI3UkQFxRQQ8Gnf1RRF65YBb+eObP
-         Ui5UZeL7982Ub01JPiX0MyohOuKLYIayN9gixaH8LQhYaWif//IkH4lfEf1SDby9Luy2
-         B2NQ==
+        bh=HiTpS6soFncX3ap+JUlkCx1cOPiDwgUNOLW0huS1jJo=;
+        b=CdQXpNRiqZvfTs57gRAIg578FCEikb1pnfMcsDec6oQUNEWlGlL/ElWWxXpFII4bG0
+         GbM8jWFOVDkPvkfY7d7CZy8V6+P9DRA6jQxnQeR72WMGIdQsS7Hd1Tke/S52Swk6NQ8A
+         B4y1p/yP4N4jRkMBGAsA/qsJWCKkG6hu0NPS9VbA57squ7SioAPk9RPclDp6gglrroZZ
+         4LgS7Y0kIdxsdKyI1QGRKU2k2dKi4PRqqzeTUO2OTfl3+UTxjjcK000wLkMT06F0HgD7
+         1ZkHbUEhqTs8tC0Oi/6t6AYFvrt1U2xAXvp227m7lQBOP/c2CW2AUJ7i6+Wyuu/djr9l
+         ouWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741160438; x=1741765238;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VDTDjXL2VmXwu5SJw3B4Qg8I7zdkWtnn7A7EnShICWQ=;
-        b=aDGS+QZeRk5j8RbJV+l+hkfpwh++JIwIwtSi56mAqn2xdLi8w1xnLnGtAW4+NFBfAg
-         M4D8uv7g1x3PsX8yKC6UD9gRoC/ITTcNPtA1aMNCiY24WHjnC7hz87CdP1xWISViTjTF
-         8C5AKbDqtrfMCi0g21h4k9bi5FRS6SM82lx9RFZhgeaajiD/T8iAvWn71lslHhpZNnna
-         k+PyfWlFGGreURND1nSfc4HKW9bwP26uky9PvQ5WdZxAgT6WBgJfSKqbVY0N6QdJgh2m
-         kpxs3KCdSjFprn0YaDfjXjyO3vVWIVuvjpf7UW64ZfPj/wpgijBIXuMTDs6jKY8lZfVT
-         NkNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWmtQ3rYjHx2qDIP15GxrB61zJHV/ZzE6CJW9xg9qxm750m82XLXaxnvlUoZ7C97Vf+m3a53vDSiMRifKg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZao/d/Cr9nNL25zJfm/BwZ0JDygavX+ExT+6zWOBR2BlNArmL
-	5ejtgdNivmO01wufOiWem6KHGEXALt1VigMmFwwwPuVujn6E94LYCVPcuv1YrQa2TM3h1kGRnrJ
-	1seBbQywLIahDqRT8q+BaIHvIV0cor857ZMubJg==
-X-Gm-Gg: ASbGncueIYb2MatnqBH+eisbWmfRqmW6MVv4Yv6jgAvW7WkTRd9LkJ6DEWQq6UCt+OM
-	f0n4w5mbRWFAQ3cOZdu3Dqgtu0cR5izSVIB2D+LiKgQzHMMo/6SkprVSd1uMOqyU6/r9y31rxEg
-	/1itUI3QQL95bkeZODTs8GcYxF+A==
-X-Google-Smtp-Source: AGHT+IGcwWgEry+6tzHBD+mNnxIVE6sKBlzFgi1RRA6m0uvCysoF6DsDJJB/fX8qwDEYMA9UPY6ZXQV3WzLO+Ixih90=
-X-Received: by 2002:a05:651c:556:b0:30b:d44d:e76a with SMTP id
- 38308e7fff4ca-30bd7acab1bmr7711201fa.25.1741160438099; Tue, 04 Mar 2025
- 23:40:38 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741161221; x=1741766021;
+        h=content-transfer-encoding:mime-version:message-id:in-reply-to:date
+         :subject:cc:to:from:user-agent:references:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HiTpS6soFncX3ap+JUlkCx1cOPiDwgUNOLW0huS1jJo=;
+        b=FUmvpJExzhaSCkZV0TfNFRY6LLd7gq9B1EAXUyu2w3avEPcjcegdMBH4GluJGcgpXW
+         T/w/+Snir69MqGUcjmNKDZpQn7yF8oOP9jmX7s0asc1uUxYAc8BDKZmlR97+sqXSC34E
+         YnBrckY9JtRLDRyv4mERgueIpXUd0MGed9CUKJjF+PZNC1HcPmYaw3zCxxE4JtC86DRW
+         eVQpmAL11mvrVKOWa0+Baf1ASwnmRr4lVfc3YZ8g9HsI5ZAUB+mQN8dZqghhhYwhy6pn
+         bUuB9yGsf1nGuAuG9NO5akwtMT0kBUgwo4wS50NiZa6rVDE065wSC8hMsTxxSA0m7Tx5
+         o0PQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4NOrbHASM75eWij0xwgL1zm7M/Af6YKtl7U2uS0M8nZigNPAvYPeSChKYd/q76GeDojGRs3SNN65y8xs=@vger.kernel.org, AJvYcCUNdzYpLqbH0UuCzoO0qizDZWoN6ByITZAMPzLvIU0lEAIllK0xoQRqjW0qywzgl2ILhkHy81Al@vger.kernel.org, AJvYcCVxpInp7vf//7qiH5hswbuis+x4QopRWsGyIlwC2xBLtpAchhN/R6FplNHvtVBSmboZ0ikPi5rDJgTSFzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxujdT7dymKPHFFdWsUbcaq7UmWTdhImn4Y9KGbdChTe0poEYR9
+	ao0otgKkcQn4Yz+V49wxqpuFtYlwYsIMQ1DTI5a2GCtDO9TOORCKT6wGgUHd
+X-Gm-Gg: ASbGnct6CRmVLF7O3qM2Sok6rV5eVGEX1fBzBtdpaC4SFPXqhS5eR61NQSfe0Bu3u7K
+	AByz+hEOp+l+LaPuxRZRkZNfh/ox9zjnCcMoN2UnLjEUfP/NcKhA4T77ImnHrGRRJrs+SBDBlmL
+	DkBeouvAJ+G8bKTZoE0OJkcjovu69KRvG9KBVsw4vLh8ZC5hODRhhZSOTb0rV9P4SHjw7fyjwR0
+	9BpDy9B/+PQ98htm2YwUq0stLfjY4CmikdeJkAFmKehcYCXh2deY/Tnr0q2BrOK1eoCHsRl0on0
+	dzoF7h16HJLv32PF4JR4I1178QQk1uzSnYDrJSqWkFOyu9X5wPlXm5So2fKdJ7E1YrJD2jxwi6R
+	EsTZotnEqoPTfMwTXUGaKt5EbN9LxcoFb
+X-Google-Smtp-Source: AGHT+IGoSfXFo2jQfX6zwJukiQLZftqM9VYE26ir2v2Z98LPwA2YNZbRZg8LePVsUKETExIau4wjew==
+X-Received: by 2002:a05:6512:3190:b0:549:7c64:3bc0 with SMTP id 2adb3069b0e04-5497d35028emr565104e87.29.1741161221096;
+        Tue, 04 Mar 2025 23:53:41 -0800 (PST)
+Received: from razdolb (static.248.157.217.95.clients.your-server.de. [95.217.157.248])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495b3f4ebdsm1155605e87.102.2025.03.04.23.53.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 23:53:40 -0800 (PST)
+References: <20250303-b4-rkisp-noncoherent-v4-0-e32e843fb6ef@gmail.com>
+ <20250303-b4-rkisp-noncoherent-v4-1-e32e843fb6ef@gmail.com>
+ <8b3dac7baed1de9542452547454c53188c384391.camel@ndufresne.ca>
+User-agent: mu4e 1.10.9; emacs 30.1
+From: Mikhail Rudenko <mike.rudenko@gmail.com>
+To: Nicolas Dufresne <nicolas@ndufresne.ca>
+Cc: Dafna Hirschfeld <dafna@fastmail.com>, Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Mauro Carvalho Chehab
+ <mchehab@kernel.org>, Heiko Stuebner <heiko@sntech.de>, Tomasz Figa
+ <tfiga@chromium.org>, Marek Szyprowski <m.szyprowski@samsung.com>, Hans
+ Verkuil <hverkuil@xs4all.nl>, Sergey  Senozhatsky
+ <senozhatsky@chromium.org>, linux-media@vger.kernel.org,
+ linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Mauro  Carvalho Chehab
+ <mchehab+huawei@kernel.org>, stable@vger.kernel.org
+Subject: Re: [PATCH v4 1/2] media: videobuf2: Fix dmabuf cache sync/flush in
+ dma-contig
+Date: Wed, 05 Mar 2025 10:40:31 +0300
+In-reply-to: <8b3dac7baed1de9542452547454c53188c384391.camel@ndufresne.ca>
+Message-ID: <87y0xj29rz.fsf@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303164928.1466246-1-andriy.shevchenko@linux.intel.com>
- <20250303164928.1466246-4-andriy.shevchenko@linux.intel.com>
- <CACRpkdbCfhqRGOGrCgP-e3AnK_tmHX+eUpZKjitbfemzAXCcWg@mail.gmail.com>
- <Z8YThNku95-oPPNB@surfacebook.localdomain> <CACRpkdbqYoY1vYGii1SyPL1mkULGXYX7vFwu+U9u2w9--EYAsQ@mail.gmail.com>
- <Z8bgYFUds3UU96Mo@smile.fi.intel.com>
-In-Reply-To: <Z8bgYFUds3UU96Mo@smile.fi.intel.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 5 Mar 2025 08:40:27 +0100
-X-Gm-Features: AQ5f1JqBv5lkq_yKaz9gG-53y85X9EsVUbvHy0t75prGe4GI8Z-EcKjHUiR6o4k
-Message-ID: <CACRpkdYCxPjF2E-jd1OkdYawYJLnFfHUDSL737sr_Zkjz9gVkQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 3/3] ieee802154: ca8210: Switch to using gpiod API
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-wpan@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	Alexander Aring <alex.aring@gmail.com>, Stefan Schmidt <stefan@datenfreihafen.org>, 
-	Miquel Raynal <miquel.raynal@bootlin.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Bartosz Golaszewski <brgl@bgdev.pl>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 4, 2025 at 12:13=E2=80=AFPM Andy Shevchenko
-<andy.shevchenko@gmail.com> wrote:
-> On Tue, Mar 04, 2025 at 01:03:41AM +0100, Linus Walleij wrote:
-> > On Mon, Mar 3, 2025 at 9:39=E2=80=AFPM Andy Shevchenko
-> > <andy.shevchenko@gmail.com> wrote:
-> >
-> > > > Maybe add a comment in the code that this is wrong and the
-> > > > driver and DTS files should be fixed.
-> > >
-> > > Or maybe fix in the driver and schema and add a quirk to gpiolib-of.c=
-?
-> >
-> > Even better!
+Hi Nicolas,
+
+On 2025-03-03 at 10:24 -05, Nicolas Dufresne <nicolas@ndufresne.ca> wrote:
+
+> Hi Mikhail,
 >
-> I am about to send a v3, I'm going to leave your tag despite a few change=
-s as
-> discussed. I hope this is okay with you.
+> Le lundi 03 mars 2025 =C3=A0 14:40 +0300, Mikhail Rudenko a =C3=A9crit=C2=
+=A0:
+>> When support for V4L2_FLAG_MEMORY_NON_CONSISTENT was removed in
+>> commit 129134e5415d ("media: media/v4l2: remove
+>> V4L2_FLAG_MEMORY_NON_CONSISTENT flag"),
+>> vb2_dc_dmabuf_ops_{begin,end}_cpu_access() functions were made
+>> no-ops. Later, when support for V4L2_MEMORY_FLAG_NON_COHERENT was
+>> introduced in commit c0acf9cfeee0 ("media: videobuf2: handle
+>> V4L2_MEMORY_FLAG_NON_COHERENT flag"), the above functions remained
+>> no-ops, making cache maintenance for non-coherent dmabufs allocated
+>> by
+>> dma-contig impossible.
+>>
+>> Fix this by reintroducing dma_sync_sgtable_for_{cpu,device} and
+>> {flush,invalidate}_kernel_vmap_range calls to
+>> vb2_dc_dmabuf_ops_{begin,end}_cpu_access() functions for non-coherent
+>> buffers.
+>>
+>> Fixes: c0acf9cfeee0 ("media: videobuf2: handle
+>> V4L2_MEMORY_FLAG_NON_COHERENT flag")
+>> Cc: stable@vger.kernel.org
+>> Signed-off-by: Mikhail Rudenko <mike.rudenko@gmail.com>
+>> ---
+>> =C2=A0.../media/common/videobuf2/videobuf2-dma-contig.c=C2=A0 | 22
+>> ++++++++++++++++++++++
+>> =C2=A01 file changed, 22 insertions(+)
+>>
+>> diff --git a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+>> b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+>> index
+>> a13ec569c82f6da2d977222b94af32e74c6c6c82..d41095fe5bd21faf815d6b035d7
+>> bc888a84a95d5 100644
+>> --- a/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+>> +++ b/drivers/media/common/videobuf2/videobuf2-dma-contig.c
+>> @@ -427,6 +427,17 @@ static int
+>> =C2=A0vb2_dc_dmabuf_ops_begin_cpu_access(struct dma_buf *dbuf,
+>> =C2=A0				=C2=A0=C2=A0 enum dma_data_direction
+>> direction)
+>> =C2=A0{
+>> +	struct vb2_dc_buf *buf =3D dbuf->priv;
+>> +	struct sg_table *sgt =3D buf->dma_sgt;
+>> +
+>> +	if (!buf->non_coherent_mem)
+>> +		return 0;
+>> +
+>> +	if (buf->vaddr)
+>> +		invalidate_kernel_vmap_range(buf->vaddr, buf->size);
+>
+> What would make me a lot more confortable with this change is if you
+> enable kernel mappings for one test. This will ensure you cover the
+> call to "invalidate" in your testing. I'd like to know about the
+> performance impact. With this implementation it should be identical to
+> the VB2 one.
 
-Of course!
+I'll enable kernel mappings and rerun my tests later this week.
 
-Linus Walleij
+> What I was trying to say in previous comments, is that my impression is
+> that we can skip this for CPU read access, since we don't guaranty
+> concurrent access anyway. Both address space can keep their cache in
+> that case. Though, I see RKISP does not use kernel mapping plus I'm not
+> reporting a bug, but checking if we should leave a comment for possible
+> users of kernel mapping in the future ?
+
+I trust Tomasz here, I'd wait for his comment on v4.
+
+>> +
+>> +	dma_sync_sgtable_for_cpu(buf->dev, sgt, direction);
+>> +
+>> =C2=A0	return 0;
+>> =C2=A0}
+>>
+>> @@ -434,6 +445,17 @@ static int
+>> =C2=A0vb2_dc_dmabuf_ops_end_cpu_access(struct dma_buf *dbuf,
+>> =C2=A0				 enum dma_data_direction direction)
+>> =C2=A0{
+>> +	struct vb2_dc_buf *buf =3D dbuf->priv;
+>> +	struct sg_table *sgt =3D buf->dma_sgt;
+>> +
+>> +	if (!buf->non_coherent_mem)
+>> +		return 0;
+>> +
+>> +	if (buf->vaddr)
+>> +		flush_kernel_vmap_range(buf->vaddr, buf->size);
+>> +
+>> +	dma_sync_sgtable_for_device(buf->dev, sgt, direction);
+>> +
+>> =C2=A0	return 0;
+>> =C2=A0}
+>>
+>>
+
+
+--
+Best regards,
+Mikhail Rudenko
 
