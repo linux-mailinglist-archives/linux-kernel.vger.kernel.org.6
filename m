@@ -1,112 +1,100 @@
-Return-Path: <linux-kernel+bounces-545970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545968-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93EC4A4F4AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:25:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12FAAA4F4A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:22:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BC39216D686
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:25:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51495188C71B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:22:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D873615854A;
-	Wed,  5 Mar 2025 02:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF8D157A5C;
+	Wed,  5 Mar 2025 02:21:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fl+VHX73"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cy8R0kju"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D77C5155333
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 02:24:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437B8BA33;
+	Wed,  5 Mar 2025 02:21:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741141496; cv=none; b=EuUnIPnS6EJl21SS4EIXDxQhxi7ucvkX/1i53wScQmY0IUV2IJymSt665gPpaOIYk2hpI61kpFAYj9juCoyXmO7r/OhQXmT3FNLpwQqSybjrCT0eRtdPTSlKxG4Qy+hmFYxIP485uf/aSKT9BjhBfy+EvnjGoYCY1VtaGnqBkSI=
+	t=1741141314; cv=none; b=SkTkY8JOBWA2VJsWMV2TpSkm45sPE+I0qpPB7MUgAnFAGnCbAizXpUHwKwjli1q0UVrHZ6qVZCUvOuLBa+X7GlLMVgaqxBQRDNKhwTOBSsPCQrHMPXTTV7Ml3sNC6mRVVKkq2VHQwoHftzlXbQZfh7MnOP1beO0wOprSYK+NHS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741141496; c=relaxed/simple;
-	bh=GSgAqk9yvA1DXvwWKyeI0fJEO1h1TplFSVnjk/scBB8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XSMpp3HQ9L9TAVfbX5BYl5dO3vasPdfMXuivG/s5EqDYAvkOTth6GEOdqQC1T1SfMQOughQNQFeyqmr8AiNhLieF5I+CFeo0V/A8pfNbHmKN404z0zVf0FSF0wUQ7Rx5105c7cg78toQsN23+mXVUY3gkHlCCWFtf6anjDxpV5w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fl+VHX73; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741141494; x=1772677494;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=GSgAqk9yvA1DXvwWKyeI0fJEO1h1TplFSVnjk/scBB8=;
-  b=Fl+VHX73oewUgtVFnbB8Y7SQqfzhDVdVPP+4kb6pNKWWDZzrR5DJyAZd
-   Tj4CYL6/98+qrtgcBqmhiJYXQwaRB2EBY/aV2TiJA07zNw7ASW5xeHcwY
-   ASoZbdUSmtc3m0F3IpGSMie8aBBQjtP8utko0RFo+jEZ8OXhmyAXedr6M
-   o3WY/OcBeXM5DHYJyEpkaTeKWg6y0D6hJ6UgTJx7gWJMub3+6HS+oIrgD
-   HUyL8H0tmfrtymwWCLM2sY73Bk0Lymrml8qaGxUA2QAjlTN/SwrhIAuk7
-   9RfRGzKQ5AvkxgHkFWd+HmX9+FFvdhPx8g8sDcY2cm6TPLAeBBLnzwLrg
-   g==;
-X-CSE-ConnectionGUID: 2ydKSyYARQqgxmchHZZ45A==
-X-CSE-MsgGUID: RDY74YM4RHKgVxmlVzj54A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="52727139"
-X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
-   d="scan'208";a="52727139"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 18:24:54 -0800
-X-CSE-ConnectionGUID: sezbqabCR+y7DRXQkkd3wg==
-X-CSE-MsgGUID: iEGEkacMRV+US2HDWxAfNA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
-   d="scan'208";a="118273495"
-Received: from allen-sbox.sh.intel.com (HELO [10.239.159.30]) ([10.239.159.30])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 18:24:51 -0800
-Message-ID: <51cb2ef8-3cce-4af7-b6ce-c3e3d490e6a3@linux.intel.com>
-Date: Wed, 5 Mar 2025 10:21:24 +0800
+	s=arc-20240116; t=1741141314; c=relaxed/simple;
+	bh=UO/TvK4vKOHMd2HwznLJIieYDqfvKmx0FSgvO5v2Y/Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gQqi737GXXpbt3/NyfQQ3+xmSM+4VlUoa/Ce2tuSMY8BG2z6RKYOHVuL5vYx/+bbnwAzqTOTRoQmWtdr+5XLHFfu1wj1fWkfRh1fnP+RVycy4yLClPeeYdkKGHZu6AiFttZlySDmAEat3u6aEX3LerEnLvIDdmE1CXeAZF7C95w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cy8R0kju; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAEA6C4CEE5;
+	Wed,  5 Mar 2025 02:21:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741141313;
+	bh=UO/TvK4vKOHMd2HwznLJIieYDqfvKmx0FSgvO5v2Y/Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Cy8R0kjukfj4USuc6R+O+CL6gF0wlG6SeDI8udpTBzIFwHkLFRxXc2VLh6EOvG/lu
+	 KQCIoDWErXR8jSwhWIvROBt0u7xqX9cznPNq4CVSQC4Be7lqmfTtn1zD6K+Vdmjlpt
+	 mlFckezMHilur50GFlGZhXEi5SqJxYYxfsPxGYwjmTZ950pBIFpPDDfYSH3cocix2m
+	 G4jtoJUCGRhHP2QPzOP6JbXLhrzSpu12OgJfirexaFSS/H2KwGL60I8iBSK/yfs7Oh
+	 qN8jbTSDe8zqNYhSBI7t2Ae5TXvmsOUWRGrET4v5LmLrVMwPQ9yZF+8w1qa3gfxn19
+	 7GDxbNhZtdrVQ==
+Date: Tue, 4 Mar 2025 18:21:53 -0800
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>
+Cc: Carlos Maiolino <cem@kernel.org>, linux-hardening@vger.kernel.org,
+	linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] xfs: Replace deprecated strncpy() with strscpy()
+Message-ID: <20250305022153.GC2803771@frogsfrogsfrogs>
+References: <20250305011020.160220-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/12] iommu/vt-d: Cleanup
- intel_context_flush_present()
-To: Yi Liu <yi.l.liu@intel.com>, Joerg Roedel <joro@8bytes.org>,
- Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
- Jason Gunthorpe <jgg@ziepe.ca>, Kevin Tian <kevin.tian@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>, Vinod Koul <vkoul@kernel.org>,
- Fenghua Yu <fenghuay@nvidia.com>, Zhangfei Gao <zhangfei.gao@linaro.org>,
- Zhou Wang <wangzhou1@hisilicon.com>, iommu@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250224051627.2956304-1-baolu.lu@linux.intel.com>
- <20250224051627.2956304-7-baolu.lu@linux.intel.com>
- <f7d84e3d-a648-4292-a652-408f704411c7@intel.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <f7d84e3d-a648-4292-a652-408f704411c7@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305011020.160220-2-thorsten.blum@linux.dev>
 
-On 3/4/25 16:43, Yi Liu wrote:
-> On 2025/2/24 13:16, Lu Baolu wrote:
->> The intel_context_flush_present() is called in places where either the
->> scalable mode is disabled, or scalable mode is enabled but all PASID
->> entries are known to be non-present. In these cases, the flush_domains
->> path within intel_context_flush_present() will never execute. This dead
->> code is therefore removed.
+On Wed, Mar 05, 2025 at 02:10:21AM +0100, Thorsten Blum wrote:
+> strncpy() is deprecated for NUL-terminated destination buffers. Use
+> strscpy() instead and remove the manual NUL-termination.
 > 
-> The reason for this path is the remaining caller of
-> intel_context_flush_present() is only the domain_context_clear_one() which
-> is called in legacy mode path. Is it?
-> If so, it seems unnecessary to keep __context_flush_dev_iotlb(info); in the
-> end of the new intel_context_flush_present(). Also, since this helper is 
-> more for legacy mode, might be good to move it out of pasid.c.:)
+> No functional changes intended.
+> 
+> Link: https://github.com/KSPP/linux/issues/90
+> Cc: linux-hardening@vger.kernel.org
+> Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+> ---
+>  fs/xfs/xfs_xattr.c | 4 +---
+>  1 file changed, 1 insertion(+), 3 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_xattr.c b/fs/xfs/xfs_xattr.c
+> index 0f641a9091ec..9f9a866ab803 100644
+> --- a/fs/xfs/xfs_xattr.c
+> +++ b/fs/xfs/xfs_xattr.c
+> @@ -243,9 +243,7 @@ __xfs_xattr_put_listent(
+>  	offset = context->buffer + context->count;
+>  	memcpy(offset, prefix, prefix_len);
+>  	offset += prefix_len;
+> -	strncpy(offset, (char *)name, namelen);			/* real name */
+> -	offset += namelen;
+> -	*offset = '\0';
+> +	strscpy(offset, (char *)name, namelen + 1);		/* real name */
 
-This helper is for invalidating various caches when a context entry is
-present and certain fields are changed. It is used in both legacy and
-scalable modes.
+Please read the list archives before you post:
+https://lore.kernel.org/linux-xfs/20230211050641.GA2118932@ceph-admin/
 
-In the past, this helper would work even if some PASIDs were still in
-use. After the changes introduced in this series, this PASID-in-use case
-is removed. So remove the dead code.
+If anything, memcpy() would be appropriate here.
 
-Thanks,
-baolu
+--D
+
+>  
+>  compute_size:
+>  	context->count += prefix_len + namelen + 1;
+> -- 
+> 2.48.1
+> 
 
