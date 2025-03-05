@@ -1,214 +1,175 @@
-Return-Path: <linux-kernel+bounces-547598-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547600-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 19D28A50B78
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:28:56 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA0EBA50B81
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:30:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F577188900A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:28:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2CE41702A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:30:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50566253F3A;
-	Wed,  5 Mar 2025 19:28:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78211253B70;
+	Wed,  5 Mar 2025 19:29:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="DyMfLyM2"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lhE8fjC0"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BB519F438;
-	Wed,  5 Mar 2025 19:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741202914; cv=none; b=TDHoQC9dQfwFKV775VdSGA8pwH/5jNTJRBYxYd2gxTk/ET9DSYnvk4TzSvpCU9o+dknkjaNUyk8Sf2v5jFaHo8jINN3qvZj5xV0Ovrp3pBcfIpAoiRkm2mil6kvYpDmRtHp8rxK36Xq+kIJ5o6kd14gmDnX7jkw3zUBSNZZAwHk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741202914; c=relaxed/simple;
-	bh=GNL0K+Zm8sPa6uZ6xJkLDdmfP36t6ZfM3ghJIcH1dXY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ZhTBvFsO579Gy/nphkfLTfpdTTnH0N1UePSW/jusC9iNN83ycwCldYd4KyvASsYZFBIERnxoA/EX1fNjyKsaROG1Ij4T37/pQdkwhOggPzmeWPcC1YRcq4ciQQJDNw/1NGg7QTHox8iYrOBBTdAZ4vTKSRBcBUbRRJgxFxdLgZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=DyMfLyM2; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525B4W0u025488;
-	Wed, 5 Mar 2025 19:28:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Kyw5fiMLd0ITsHzLG43UR740fhNTgpgXfvtAkSdLCfU=; b=DyMfLyM2E7+R1PyS
-	1s/qSu7MT6bhg475Rh/9DG/hbFefFcjfxBeDV/kQWG+5NN7LGDAd0fo23QI8ta7z
-	VHa1WmHb3QNu3peEOiLzMlmXPRsgi+s51T8zJxTGUvH/WfJQzpdMOYB4YuZU3d7+
-	+r0RDoRvHHBIR/T2Gfr93zXf92xr/pXeza6ualSd9OxWLq8haSv/hILeaVU6Vza3
-	CIFa1pp2d8hMM1mxT+4eF8BuuI6QY7Czw5RH8Uy3uakMvenPMdFPLyeXnjVzhPws
-	tvhtbdr1LXgSB/TgE/Oe7EQyDaVPHC3NRTbOzMa6nyA/jLEXyn3cnaUBJLjWcDjw
-	1JFPog==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6txhpk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 19:28:13 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 525JSCgv026672
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 19:28:12 GMT
-Received: from [10.110.60.163] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Mar 2025
- 11:28:11 -0800
-Message-ID: <0dfca6b2-2875-4aef-be95-9ed0a33beebd@quicinc.com>
-Date: Wed, 5 Mar 2025 11:28:10 -0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAD51B4234
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:29:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.54
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741202995; cv=fail; b=QeheFPYzsF0MxNHWLn8jf5ZRVQbqkFFVg8WmzfVxlbAc9t4AJt5aWlufyaxKR3xRkcWDHMvc8mrGV/kS9wDE5XbezkRlBeelZUu6KtT1xj/moIdIWLc3nRdnkBUmoyBwvnBiiDIkfdawe4eyxfeoIPUTWSviNvXqIhU7M7Ak5Ks=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741202995; c=relaxed/simple;
+	bh=B3cvYi8v82/b1k+8T3awon9M2TxcwyemCI9bEQ9SQw0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=iqyopYG5OPWcF1GYgXdWdJYMOGmunk1eIJWnUvl94B30TM/i4effycT4Ch9XMevaRcHve5id8kemWY5Ty06fTsSdt+N/qGKjW1Y5gGmD6XXQeFLDLUzKehtK74l66ktlLgsRNZDVBF3FehoKqbHKCxfXRede4/XWH2lUNBiVieg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lhE8fjC0; arc=fail smtp.client-ip=40.107.92.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=abyGwFz4maN8E4Kq3KeVkiRwIYmrZleKVD+Qvt0f8sSzn2klawWPQwVeHFKVwLeq6k9yg+jIOQIQXf1gCMqMLpmIPAkK7nYnK/4wkFz0gyRtr2u9d+EqG1cS3MY3rbzQEVB/7Yvp1obCWbJQqkUuhdAEWgLqcEtL1xqxrxc5fnRDAnK7GIAbc8cX/wgGxNYyfO0n8IxrMwDeGeAIf0WRx0PvbMRGyzp2/1Q77Qxj+MB3Wtc3wmrcsZd+DTOjc4/grieUetwoKr5xDB/wVcFYYFxz2IkOncVJKpqKan3wC6vk2wZhWjxoPKU0PgOuIMMLP+e90nErxmUf1QFooWu5Ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=s9fhe+iq5MNQnYd+Q+WEAREYOMcvtyPkhZmXSGknjpo=;
+ b=UtMgtzi4AvXH5q6PMPtP6HtlkeVhXrf6FMDaq71kMn7BoEV9TVvojGl0dBBys3b5AURYz0RvH59/rDkpmyE2+7Aw4AvixToRWbgfxcrpnYj76my+2gzvx3S+7ICDnqDxNvsqwz0NS7223RWDpQ6kJAIL7QnOFONnx+00F8QX73zqYPtOoTgTqMmnQJ9FoRfqeSrDFuQpbID5ksX142vm6gTf1YO87Ts4IXNtGbUSy01qZBYXxDfEPP1ZL61dhJya+ngrJJcQiNgCob269YAdWDHrl/BXOXCWVDGkwdIx8jOL3VHbhwP70ejHb2qnlWZr9SMXKiXFAiYXbNRBxLTTvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=s9fhe+iq5MNQnYd+Q+WEAREYOMcvtyPkhZmXSGknjpo=;
+ b=lhE8fjC0SkFLbq/EPY8sOavULne8MQa64awZzN9bwPjmfGNBxx/g9PcBFUMB5Ob/BP6TPeNSKLJcijVFqQY3Q3c8bWF900tRjNlxQ/4GbZtLCwTbZGP21igWyVEp+z2jGbGkbwxsC0N1kuKrjJes4yxAhxZ2YH7tg9eYRFsjJk8ajMQPPaAjeMA7C0HAUzkF+xg7PvEKM7J+oxJIKpe1u2JPzq+YtxupkuZzLWaHskHxuaz3n+iN2TN3OHXpBI/VLlzmd9eUYhBcFrX0jYFLQqWbhZlB9sU7Y5cBDl6svlY29cbIBtz01jpZCDG2vjI56nk2iV2FPj6knnbCAjNm3Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by MW3PR12MB4442.namprd12.prod.outlook.com (2603:10b6:303:55::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
+ 2025 19:29:51 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 19:29:51 +0000
+Date: Wed, 5 Mar 2025 15:29:50 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, shameerali.kolothum.thodi@huawei.com
+Subject: Re: [PATCH v1 0/4] iommu/arm-smmu-v3: Allocate vmid per vsmmu
+ instead of s2_parent
+Message-ID: <20250305192950.GA354511@nvidia.com>
+References: <cover.1741150594.git.nicolinc@nvidia.com>
+ <20250305165452.GY133783@nvidia.com>
+ <Z8iWqOBga8Xdunac@Asurada-Nvidia>
+ <20250305183151.GE133783@nvidia.com>
+ <Z8idOr67A0EG1/PN@Asurada-Nvidia>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8idOr67A0EG1/PN@Asurada-Nvidia>
+X-ClientProxiedBy: BL0PR02CA0070.namprd02.prod.outlook.com
+ (2603:10b6:207:3d::47) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v35 00/31] Introduce QC USB SND audio offloading support
-To: Stephan Gerhold <stephan.gerhold@linaro.org>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>
-CC: Greg KH <gregkh@linuxfoundation.org>, <srinivas.kandagatla@linaro.org>,
-        <mathias.nyman@intel.com>, <perex@perex.cz>, <conor+dt@kernel.org>,
-        <dmitry.torokhov@gmail.com>, <corbet@lwn.net>, <broonie@kernel.org>,
-        <lgirdwood@gmail.com>, <tiwai@suse.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <robh@kernel.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-sound@vger.kernel.org>,
-        <linux-input@vger.kernel.org>, <linux-usb@vger.kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-doc@vger.kernel.org>
-References: <20250219004754.497985-1-quic_wcheng@quicinc.com>
- <Z7W_Vz_kVDjIcp5N@linaro.org>
- <82ce69a3-d248-494f-6ddb-098f392c78a0@quicinc.com>
- <Z8a4WYq4GqWBVNyX@linaro.org>
- <ee5cb6bc-963a-4e31-8ac4-07120fb9ff70@quicinc.com>
- <Z8ikt2K0uekU2dVZ@linaro.org>
-Content-Language: en-US
-From: Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <Z8ikt2K0uekU2dVZ@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: XEk_VzWDUbK1S4q_1dOj7KYELWxNwc_i
-X-Proofpoint-ORIG-GUID: XEk_VzWDUbK1S4q_1dOj7KYELWxNwc_i
-X-Authority-Analysis: v=2.4 cv=Sf4NduRu c=1 sm=1 tr=0 ts=67c8a5cd cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=qC_FGOx9AAAA:8 a=HTecfl5s7U67J0CcF8QA:9 a=QEXdDO2ut3YA:10
- a=fsdK_YakeE02zTmptMdW:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_08,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
- priorityscore=1501 lowpriorityscore=0 impostorscore=0 phishscore=0
- suspectscore=0 clxscore=1011 malwarescore=0 bulkscore=0 mlxlogscore=999
- mlxscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050148
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW3PR12MB4442:EE_
+X-MS-Office365-Filtering-Correlation-Id: ac63929f-335a-4c19-6411-08dd5c1c1936
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?2gzgAsU3oLF7kjwzXrUO5iNOdiE2SCLdYbM2vZjpTjTSpGO4X5JCMEJUaAEF?=
+ =?us-ascii?Q?VErnRqOK5sZ41vKv6jdr3/5Y7keBi/uHDWCHnvDVYwjso4sqBKTgGsqHCfQF?=
+ =?us-ascii?Q?RTABY5jFv7xBTZoTutXVk+UOFWMp7/v52NwTzWzTasw8hRiSWrI4L7O/Db9X?=
+ =?us-ascii?Q?VEI+XRqyuFXAVyb5Oo8lQ4URHB0yF/u99cUM+dzKy1IzH4CfaWUL7VEfy/IN?=
+ =?us-ascii?Q?+/1HXYEkXdN8X2PMfBH8/17bbP9NQfCQws9QcG8pDGHK0+hCbtJ9rXAfryw2?=
+ =?us-ascii?Q?Nz8Q5QAXPOLyo8urSIcALdHo3n99BDZXnyRmxsed/BZI14nvuONUoAoHTCo9?=
+ =?us-ascii?Q?iS3IjaWbprOFdnQbeL+eHjtUkhvNTdxXcG6NOg8u5LFYri+FIPaP8n3Z58UH?=
+ =?us-ascii?Q?J0ahUY/M6+w/qgDajGAYa3IAco/uTZO4YuqIDQtIzQVpn8RNKiBWRzKA1M/c?=
+ =?us-ascii?Q?FMVPHB3QK7h2aJiE+3q5ODz4fpW/y9YQXIpwSh7K6wrGPtHKFJs6NZVBJaRg?=
+ =?us-ascii?Q?mJjG7ILdCiN6cHoWP3DJA2WOlvaMdZ5umiRTdaHS1GvXtB/sevyOqQT1xobk?=
+ =?us-ascii?Q?KrLh/Wre3S+E8MldV5ZLfjbdojfAS0Ta0/JnE4Y2WAruxQvwD6NnW66Eefj2?=
+ =?us-ascii?Q?+PTOsytx5U+o3+sX+39zF8fXEzHiJ5C2Slb3FrMxBL67w4PDoywEy9dRYFDd?=
+ =?us-ascii?Q?lSgTM6JpRD92jWHLpbY7P0gyc+35Nb8pgBNJ9b4BZUq2hksK6gOnUUKIZZTf?=
+ =?us-ascii?Q?7RilgJsNWUn+hAx7ZI4HUJa/8+mQRlupf20xqr8ncXwPqW5cRQ6TfHzcAPDp?=
+ =?us-ascii?Q?Zfb45c/0p/Djcsg9aDivKlLyHPaBwbjrSKmKgg4dl90XdoFzPA9/OWRKPveL?=
+ =?us-ascii?Q?KwgIYGpTFwKLL3FCwPotoBSN70DgmDyOMLVxhVkz0YtvVaOLIaodf8zQSz6F?=
+ =?us-ascii?Q?OdkaTvinTXakoBMjwdwttQMjk2W05NCrXdOxG4eNo78rtTR2/G+bN4R4EsBi?=
+ =?us-ascii?Q?n8A/4FH6MfnnfA7YkWMGcUiqFYZMeiucXomksfzfT1hkMM59fm171Iizyidx?=
+ =?us-ascii?Q?TjHaR7+0SdKH6BoayjlIbTz9p7JIixma3D8WYKIaz+XEJUt8VcTuNes05JDC?=
+ =?us-ascii?Q?/oSwheoy9AwKpAm7AEAT9+wUWASdJT7uv28cKSD0EzoWz71p4d7AMdzycAYn?=
+ =?us-ascii?Q?Zfmef5iXQxNzZ5D4KSRYeGKzkKF09+RU0imlGcOz7E07GnO+WdB9R3NgJwJ3?=
+ =?us-ascii?Q?+jPmc5UVFANJ7K54jv1uN7kUnXmq/0RZitaCMwB7++yK3HAV3IxZRDvR0sQi?=
+ =?us-ascii?Q?b42scWOpUgGKl6C8MeHcp8Jj7/6e+WRqqFHC7hyVgG3ywy7XlmFVp6NFsKHG?=
+ =?us-ascii?Q?Xp9mOeokucKcSrQ8lfDVsvst+vrb?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?6ztApsXILw9hc/PMq849MXKz7VNYec+KCJG7vEB9e8YlMvBXFboAC731F+Uf?=
+ =?us-ascii?Q?Q89t1T9AWyS+IK7Hdmkz5StmHNXfIKZtjIEUWV9YivfLyF5NC8QtrAn8+uGb?=
+ =?us-ascii?Q?sjGiP4Z1tepVjx5Y83aSe8g2L6SoV6YQPlEzAe/zVwXlrIhYzYPpNf7R85rC?=
+ =?us-ascii?Q?SFHffo3+3UY+xQ5FCIGs1vjHIOaH5Zre5qE5PYo/isckklQ001LUtpoyB5Jw?=
+ =?us-ascii?Q?rAQ2UuSFO7wSPTDPOSK3+1a3BGUQaQ7QzOWD5Pctzb/ojwg9SLIdcJBkDz5d?=
+ =?us-ascii?Q?z22VHF2VOTiczDa3xFfOrOF+Y6C7hCqQPanwdIUYfvcl8bcIjtR0hT2t63GW?=
+ =?us-ascii?Q?7lahZ2hqiJkMRtz3nFZqS5GuhSAxfnhtN9KdHqEUGqzWRnuT3C1AnXg8jO9Z?=
+ =?us-ascii?Q?lTaSmlMtz+PdTRlSyOBDqFlaAkIMDRv9dI4Cw0677Kic3Wqv2J3cuAzKaWg4?=
+ =?us-ascii?Q?wgWxmtLKdFU09cbk0JWlhgk1vZbfWfvSAZw6obtycCt96Fz23kSRTbWvq4f5?=
+ =?us-ascii?Q?64Dr6ZtGBvZ2d6R+DymMajsId1a1R72sdresBZZOhXMdofY2DyvFSBwIulbB?=
+ =?us-ascii?Q?OEeXdjbnGEhDu6nWFt3b+PEmbfUfFC0893e3/HtamcSpziU7On6hbBIa+EhQ?=
+ =?us-ascii?Q?n8zxnX67wD+1N0BRHhaYa+7Gqj/wR6h51VaDk3t4SA1NOtF06CrN2ia8ACu2?=
+ =?us-ascii?Q?5TVScsVrf5Hq3oEJtJzvWQ2jjbQisKMlCvWnLLkt2dbIeWZwV05Oq0LD2TM+?=
+ =?us-ascii?Q?Mh8QklopT4rTWO+imIjM9AdwXPsZVXMTMtXtwIR72w7OFIdz81KcpceXqwkn?=
+ =?us-ascii?Q?QcIeNgS3AStAjoCJYDI6E5+2uihWS9EWg1edm/cn4P9HQjJNEYZhJDmA35Hs?=
+ =?us-ascii?Q?nMtRhHDHnMFgQ4DMWjQLKqUEab3FBWRHXsijnImmQtIbHBFHN96Q/ioZUmbE?=
+ =?us-ascii?Q?ZCpsu9AzZw8XKaR8/8jklCPr5X9O64b7ao16k/EowY+yIxhqIvs2sZgeswPm?=
+ =?us-ascii?Q?vrW8Nl/cujep2x4A8EG4PXWuDUN6Yi9qszzlxYhHaaa6MpMxtCLREq5Ripcs?=
+ =?us-ascii?Q?ulHCPSAxEhqBkpLQSUAV7wGHuZmYBRhoeqVnSh4cUAFFDwhUS9nwG70fK7Dv?=
+ =?us-ascii?Q?VZZ27+i+bU2ewahdOl6ZqDJ/1IzciCFeEM5aWP4CoTcff47au71RfSdktlts?=
+ =?us-ascii?Q?U19zGpWwgwNymurVbFNjt8f7xPkhhy8zbSIyakeS7eS0rWWcOeJxehJWpBlw?=
+ =?us-ascii?Q?P10HbJok3odKIKOKaoxWsHIATGl/o1R2e15O3ePndJU4V3FMXwUsp2TKQ+zo?=
+ =?us-ascii?Q?gdq5UJDX2rxu7boet5jx8+8d1DEeW6b3qrnPM89MWa+b+OqKc1TFOXwXHpbF?=
+ =?us-ascii?Q?Itf8j+kcItpfrvKLwIOYxSR/qM7+/59CPWSgRHmlYM0wSrMOdNW3dUvb2Eni?=
+ =?us-ascii?Q?k6PU0m5KPh6i8SYHSuSCn7qf1KmI4+EmkUmkV6bDZv/hfAFEY0b7Wlls4oZc?=
+ =?us-ascii?Q?7C+0KCtf8SuwLnaQt8WAPrIrhTDPDigl/DvQyBNiVH/6ojg5m3BaRWnRItt6?=
+ =?us-ascii?Q?8D4IMkHuW11zhZhpyAo=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ac63929f-335a-4c19-6411-08dd5c1c1936
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 19:29:51.0017
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: p+YtqNB3Sy/dnp2pdxmEXc50N+lQiSSwRxJYWgnJYESBAHHDrQMpIz0QFPWBtmIV
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4442
 
-On 3/5/2025 11:23 AM, Stephan Gerhold wrote:
-> On Tue, Mar 04, 2025 at 02:46:28PM -0800, Wesley Cheng wrote:
->> On 3/4/2025 12:22 AM, Stephan Gerhold wrote:
->>> On Mon, Mar 03, 2025 at 06:39:52PM -0800, Wesley Cheng wrote:
->>>> On 2/19/2025 3:24 AM, Stephan Gerhold wrote:
->>>>> On Tue, Feb 18, 2025 at 04:47:23PM -0800, Wesley Cheng wrote:
->>>>>> Requesting to see if we can get some Acked-By tags, and merge on usb-next.
->>>>>>
->>>>>> Several Qualcomm based chipsets can support USB audio offloading to a
->>>>>> dedicated audio DSP, which can take over issuing transfers to the USB
->>>>>> host controller.  The intention is to reduce the load on the main
->>>>>> processors in the SoC, and allow them to be placed into lower power modes.
->>>>>> There are several parts to this design:
->>>>>>   1. Adding ASoC binding layer
->>>>>>   2. Create a USB backend for Q6DSP
->>>>>>   3. Introduce XHCI interrupter support
->>>>>>   4. Create vendor ops for the USB SND driver
->>>>>>
->>>>>>       USB                          |            ASoC
->>>>>> --------------------------------------------------------------------
->>>>>>                                    |  _________________________
->>>>>>                                    | |sm8250 platform card     |
->>>>>>                                    | |_________________________|
->>>>>>                                    |         |           |
->>>>>>                                    |      ___V____   ____V____
->>>>>>                                    |     |Q6USB   | |Q6AFE    |
->>>>>> |     |"codec" | |"cpu"    |
->>>>>>                                    |     |________| |_________|
->>>>>>                                    |         ^  ^        ^
->>>>>>                                    |         |  |________|
->>>>>>                                    |      ___V____    |
->>>>>>                                    |     |SOC-USB |   |
->>>>>>    ________       ________               |        |   |
->>>>>>   |USB SND |<--->|QC offld|<------------>|________|   |
->>>>>>   |(card.c)|     |        |<----------                |
->>>>>>   |________|     |________|___     | |                |
->>>>>>       ^               ^       |    | |    ____________V_________
->>>>>>       |               |       |    | |   |APR/GLINK             |
->>>>>>    __ V_______________V_____  |    | |   |______________________|
->>>>>>   |USB SND (endpoint.c)     | |    | |              ^
->>>>>>   |_________________________| |    | |              |
->>>>>>               ^               |    | |   ___________V___________
->>>>>>               |               |    | |->|audio DSP              |
->>>>>>    ___________V_____________  |    |    |_______________________|
->>>>>>   |XHCI HCD                 |<-    |
->>>>>>   |_________________________|      |
->>>>>>
->>>>>
->>>>> As I noted on v34 [1], this version is still missing instructions and
->>>>> changes needed for testing this series. The device tree changes don't
->>>>> need to be part of the same series, but there should be at least a link
->>>>> provided to give other people the chance to provide Tested-by tags.
->>>>>
->>>>> IMO we shouldn't merge this series without those instructions, otherwise
->>>>> we risk that this just ends up being dead code that no one can use.
->>>>>
->>>>> Can you please share the device tree changes for a board upstream and
->>>>> any other changes needed to be able to test this series? E.g. for
->>>>> sm8250-mtp.dts, based on the examples in your cover letter.
->>>>>
->>>>
->>>> To clarify I'm testing this on sm8350 in recent times, but utilizing sm8250
->>>> definitions for the ASoC platform card, as the platform sound card is more
->>>> or less the same between the two SoCs.  Back
->>>> when I started this series, sm8350 was missing a bunch of dependent
->>>> components, such as aDSP not being loaded, and missing platform sound card
->>>> definition, so I had to define and enable those on my own, which required a
->>>> slew of new DT nodes, hence why it wasn't as straight forward to include
->>>> the DT definitions yet for sm8350.  Not thinking that this series would
->>>> take as long as it did, I was planning on separating out the DT changes in
->>>> a different series to enable offloading for the devices I have tested with.
->>>> (sm8150, sm8250 and sm8350)
->>>>
->>>> There's still a pretty big chunk of dependencies missing from sm8350, so
->>>> those would also be handled in the follow up DT submission.  For now, its a
->>>> much bigger hurdle to get the main/functional changes in, and that was
->>>> taking a significant amount of time from my end to manage.
->>>>
->>>> If you want, I can give you the changes I have offline to enable this for
->>>> sm8350, since I haven't spent time formatting/prepping the changes for
->>>> submission yet.
->>>>
->>>
->>> Can you push it to a public branch somewhere (e.g. on CodeLinaro)? I was
->>> talking to some people from the community about testing this on some of
->>> the smartphones we have in upstream, so it wouldn't help if I just have
->>> the changes privately.
->>
->> Which CLO project/branch did you want me to push it to?  Sorry, I haven't
->> worked too much with the CLO open branches.  I have an account though.
->>
+On Wed, Mar 05, 2025 at 10:51:38AM -0800, Nicolin Chen wrote:
+
+> > I mean a normal S2 domain attaching to multiple devices on multiple
+> > instances.
 > 
-> Any project/branch is fine for me, I suggested CLO only because I
-> assumed you already have an account there.
+> Oh, I haven't thought about a !nest_parent S2 case.
 > 
-> You should be able to create a personal project and push it there. You
-> could also use the fork button on
-> https://git.codelinaro.org/linaro/linux/kernel/torvalds/linux to avoid
-> having to push the full history yourself. It should result in a project
-> similar to mine: https://git.codelinaro.org/stephan.gerhold/linux
+> A nest_parent case will not allow devices to attach the S2 but
+> always to a proxy nested S1 as we discussed previously. So, I
+> think the implementation could be very different?
 
-Wesley - if not CLO, feel free to use the github. We can help you offline. 
+It could, and that is what you show here
 
--- 
----Trilok Soni
+But also, it could be the same implementation.
+
+Jason
 
