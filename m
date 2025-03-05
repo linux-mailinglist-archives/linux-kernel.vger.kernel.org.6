@@ -1,263 +1,181 @@
-Return-Path: <linux-kernel+bounces-546424-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546425-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B76CA4FA91
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:47:07 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95D1A4FA92
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:47:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFB397A436F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:46:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACFD3A6690
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456AD20551E;
-	Wed,  5 Mar 2025 09:46:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD18A204F82;
+	Wed,  5 Mar 2025 09:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="jAP8dNVQ"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="epMLIdSe"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC77F1F3D30;
-	Wed,  5 Mar 2025 09:46:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8171204694
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741168007; cv=none; b=DublnFlQfRieOtmwmupFQ9TlU5C+ucUVdfoml62B+d9H1s1ESsW5regxuIoDkFVYxJJ3pyl8oo54wWr+lCWITZh4Wj2JqMXHR/MeSs2/YJlz+MDW+TDpplF89mx3W9KRLNQLNBt4cT+VmbeWaruFZuNsF3wuLMPk+fJypgi6L58=
+	t=1741168044; cv=none; b=uIcFLiwldaaG9csq2lAza3mfFbhMTnWBYe+P/Lz3grgaHNN00py8/d040E+mib2VVCFrP0/JhRV0vrKyyy9EQuByG+MjiEAaerJvga5ZFTF60Dj1WLht/V9EjT9q92yeqWUQk4alQxQqVvgWpwqN6zZV8fTK0Mh/B2ASbvg8ZQY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741168007; c=relaxed/simple;
-	bh=FXfioV8CaRb4Kj7KM42BiGBBy9+db0YNett6CYn56Fs=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ezNCdvOBBXyJ8PygjoFhMvTuStiyge3r0brHIIXB5D3UkrrudnWlOK7quYRYMPMbEYcfsfYIgGP1r0mq/EruRAvqQkbgHY6eJ+GZeVf1yvfj6/B13fA1haxgIUebCr4kCcg8CJ8vAbifyezHvxpBk6XyqHnsWvlVJhryVomMU+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=jAP8dNVQ; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5253vexe028541;
-	Wed, 5 Mar 2025 01:46:33 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=pfpt0220; bh=4XnuYIJ9q/vf3IyjBHXgo0K
-	gvgu4V7P4DYMXtFG23GI=; b=jAP8dNVQ8OE4R4LGlU1l9pue0RxBYMfNf1Svwu7
-	hCLb8aGBJDI+K7DHSqo/xqCFxNHMNDwSlvRvGcUG9NmJub0//rBb5fR+8B15PoRZ
-	YvL3Q0+wwuKoU5+ZpDvceVMbWz8gZreV0L0Wz5xQQKWhffCI4htOhJrCK01YGUYX
-	A/QxtyIkRdMDx1FwKn9qGTjXHnQkHJcbF1JCJHjJicilwhIFeLSrNxLW18fj0SR2
-	pRfyIMFMLAA1ua+VpZtvRhzQrRX5EoDxEEWRevz28zE54qH453RePHaRel8X5y/4
-	F83uhdNopvLNvnIo/tVIoaE5366QwrTp7ohfoE3lEJUXbzg==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 456f5tgk7x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 01:46:32 -0800 (PST)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Wed, 5 Mar 2025 01:46:31 -0800
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Wed, 5 Mar 2025 01:46:31 -0800
-Received: from hyd1425.marvell.com (unknown [10.29.37.152])
-	by maili.marvell.com (Postfix) with ESMTP id 2414B3F705C;
-	Wed,  5 Mar 2025 01:46:24 -0800 (PST)
-From: Sai Krishna <saikrishnag@marvell.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
-        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
-        <hkelam@marvell.com>, <sbhatta@marvell.com>, <andrew+netdev@lunn.ch>,
-        <bbhushan2@marvell.com>, <nathan@kernel.org>,
-        <ndesaulniers@google.com>, <morbo@google.com>,
-        <justinstitt@google.com>, <llvm@lists.linux.dev>
-CC: Sai Krishna <saikrishnag@marvell.com>, kernel test robot <lkp@intel.com>
-Subject: [net-next PATCH v2] octeontx2-af: fix build warnings flagged by clang, sparse ,kernel test robot
-Date: Wed, 5 Mar 2025 15:16:23 +0530
-Message-ID: <20250305094623.2819994-1-saikrishnag@marvell.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1741168044; c=relaxed/simple;
+	bh=Z+VMDSOKrwtG6lviKJiCsWBEfYDhlcUqD9qS1eoXGw4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gLq42SvtFMOYAaK49C1TyMWfXUhFoFJwrDZnlsjdcDRL/+neK6R1hZUaIn4ClcegOqtF+E8YIXnXyrXWG/A5lBjbl2zKrWr4N+0GMekGbH9g9mfP6jePzIMSudXmJxt4AaTSpTpXrNJ+BkNArs7HwEdJsWlaYg3Tb0wrlWX3YbE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=epMLIdSe; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso3452239f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:47:21 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741168040; x=1741772840; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=EMPfkT27lV8Ojg2DFZYdlrmMaeah6M4ccrm/4GlS09M=;
+        b=epMLIdSeTSMn7obw5QuRDczC5fsK7bKRQQLbYNU+9nGOtoIo0ZRyhK/uk4T7A/SltK
+         QsdQXKvkQKNZYqR8/cSsKU15Pma014EUYQEeEVe2LQ3V6wIu+2poI90gL+auiSW0fCOt
+         Cqx/DJIlPFRUrFhTGMLoNzokeMxnc930S2ykHwMZUFUKEmSXul1tYOGjTeeEmdMWG+1L
+         5BDXrKR/dZYc1kCRZBoAVJTEPNclxddEBhnQOu87oNtvdTsIs6QyNborgl/OI3X8lNxY
+         u5yLEmTnIsLGmgKOY9lO8N8LpTkq6gqJRSNHUyPNqpjwqV0LD/OM3vSVNPEFGu9j0glH
+         4q3g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741168040; x=1741772840;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EMPfkT27lV8Ojg2DFZYdlrmMaeah6M4ccrm/4GlS09M=;
+        b=LW8Ftl63oH+GGEqapNeL/9761+RmBZBky+xCRKefoU5rjOs56ZQH3oTccrVbdZ+2I9
+         IsEl61yMriLh0Oj5f3h1sLhXAeGvAUYAQP/LKFn6Qx8k5HgMQ7ljNxbWNiz0zcHyBmGI
+         JuZ8IU4BnzuDY0Qillk0bX5EOfcmkHynEm7m/mPZxHiWno0fWIOig00G/JOHjwOQg4V5
+         pmYuRYvyPNylnuN5gmWjpI8DVdJxzbU9b19BMBRkwoJUbcL9hOiNzR+vCztIe2MHdAJa
+         uHtyLtwYYr4oWGB8g7huFrWEA2otmaqsk98uyKWpkbnfcE+cDyNzhlJBViYHeMn+ptYS
+         9wAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWnLlDdI8y3EZMflk6+nSu2kgEv9RtzN3nKRrw9gbF9GdxWQWkyUO0oDrtbF41NQmarMdPr8AgRUwNvKyY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yym6UDsU7kzTSj+fMD5SY6tu77A3jJJ/lBfQGX+G64VrxcUcggj
+	M1vPHZD0EhLX6gA5SXMKREvp7SrXc1zsjz/8VXrD/GXC0o59+wnjqLstbzeQoF8=
+X-Gm-Gg: ASbGncvJh+3saysZ4RwLdLXGPOIEMTXmvcbLEfR4i7ebjowVkgd1gmyrKRUh+EbEOEg
+	911TBKTucJy1+emsSZ3dJHZbKsLerNRoa4O9+Wh1x4TRuccLHeHI3swtXkDumVi1n7GbFRLPMfS
+	RX03nfoNsInT7FEUeNGivPkFHOqy7TQ5XQKOpzrK4AwPr8O89V7QqBikMDP59/iFZ1UoKyLluST
+	6fFvMWQ+oeZTYIbNLLupywR7cRz8cv3YOcpdaQhCSG8vwhjHQ9uclvJJQztw9sxwxROI+LYuZYc
+	42IumUxCn8xEkfTQUTCHzLn67ql7v3ezqEbdkH72q3NarhY=
+X-Google-Smtp-Source: AGHT+IFcrWp+Eg2JeW3nr+EIF9j4IDp9lzyAN7AdFjhbyzx7Y+kawoeWfXaT79Mlsm2wvfce/91S1g==
+X-Received: by 2002:a5d:6486:0:b0:391:a74:d7dc with SMTP id ffacd0b85a97d-3911f7ce121mr1800951f8f.50.1741168040117;
+        Wed, 05 Mar 2025 01:47:20 -0800 (PST)
+Received: from pathway.suse.cz ([176.114.240.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd429215asm12099625e9.11.2025.03.05.01.47.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 01:47:19 -0800 (PST)
+Date: Wed, 5 Mar 2025 10:47:17 +0100
+From: Petr Mladek <pmladek@suse.com>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: kernel test robot <lkp@intel.com>, David Gow <davidgow@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	oe-kbuild-all@lists.linux.dev,
+	Linux Memory Management List <linux-mm@kvack.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH v8 3/4] scanf: convert self-test to KUnit
+Message-ID: <Z8gdpSErMCMCZZNP@pathway.suse.cz>
+References: <20250214-scanf-kunit-convert-v8-3-5ea50f95f83c@gmail.com>
+ <202502160245.KUrryBJR-lkp@intel.com>
+ <CAJ-ks9kkigKG=Nf_mZrA5CA=SUV2sSyY51_rLef42T+ZxCmk1Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: 6jqXsFNlzlCDwlEM9sofaMbTmMtiDIKX
-X-Authority-Analysis: v=2.4 cv=JtULrN4C c=1 sm=1 tr=0 ts=67c81d78 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=M5GUcnROAAAA:8 a=mOT8R8ziQExDnPD9evEA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-ORIG-GUID: 6jqXsFNlzlCDwlEM9sofaMbTmMtiDIKX
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_03,2025-03-05_01,2024-11-22_01
+In-Reply-To: <CAJ-ks9kkigKG=Nf_mZrA5CA=SUV2sSyY51_rLef42T+ZxCmk1Q@mail.gmail.com>
 
-This cleanup patch avoids build warnings flagged by clang,
-sparse, kernel test robot.
+On Sat 2025-02-15 14:52:22, Tamir Duberstein wrote:
+> On Sat, Feb 15, 2025 at 1:51 PM kernel test robot <lkp@intel.com> wrote:
+> >
+> > Hi Tamir,
+> >
+> > kernel test robot noticed the following build warnings:
+> >
+> > [auto build test WARNING on 7b7a883c7f4de1ee5040bd1c32aabaafde54d209]
+> >
+> > url:
+> https://github.com/intel-lab-lkp/linux/commits/Tamir-Duberstein/scanf-implicate-test-line-in-failure-messages/20250215-002302
+> > base:   7b7a883c7f4de1ee5040bd1c32aabaafde54d209
+> > patch link:
+> https://lore.kernel.org/r/20250214-scanf-kunit-convert-v8-3-5ea50f95f83c%40gmail.com
+> > patch subject: [PATCH v8 3/4] scanf: convert self-test to KUnit
+> > config: sh-randconfig-002-20250216 (
+> https://download.01.org/0day-ci/archive/20250216/202502160245.KUrryBJR-lkp@intel.com/config
+> )
+> > compiler: sh4-linux-gcc (GCC) 14.2.0
+> > reproduce (this is a W=1 build): (
+> https://download.01.org/0day-ci/archive/20250216/202502160245.KUrryBJR-lkp@intel.com/reproduce
+> )
+> >
+> > If you fix the issue in a separate patch/commit (i.e. not just a new
+> version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes:
+> https://lore.kernel.org/oe-kbuild-all/202502160245.KUrryBJR-lkp@intel.com/
+> >
+> > All warnings (new ones prefixed by >>):
+> >
+> >    In file included from <command-line>:
+> >    lib/tests/scanf_kunit.c: In function 'numbers_list_ll':
+> > >> include/linux/compiler.h:197:61: warning: function 'numbers_list_ll'
+> might be a candidate for 'gnu_scanf' format attribute
+> [-Wsuggest-attribute=format]
+> 
+> I am not able to reproduce these warnings with clang 19.1.7. They also
+> don't obviously make sense to me.
 
-Warning reported by clang:
-drivers/net/ethernet/marvell/octeontx2/af/rvu.c:2993:47:
-warning: arithmetic between different enumeration types
-('enum rvu_af_int_vec_e' and 'enum rvu_pf_int_vec_e')
-[-Wenum-enum-conversion]
- 2993 | return (pfvf->msix.max >= RVU_AF_INT_VEC_CNT +
-RVU_PF_INT_VEC_CNT) &&
+I have reproduced the problem with gcc:
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes:
-https://lore.kernel.org/oe-kbuild-all/202410221614.07o9QVjo-lkp@intel.com/
-Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
----
- drivers/net/ethernet/marvell/octeontx2/af/common.h |  2 +-
- drivers/net/ethernet/marvell/octeontx2/af/rvu.c    | 14 ++++++++------
- .../ethernet/marvell/octeontx2/nic/otx2_common.c   | 10 +++++-----
- .../net/ethernet/marvell/octeontx2/nic/otx2_pf.c   |  9 ++++-----
- 4 files changed, 18 insertions(+), 17 deletions(-)
+$> gcc --version
+gcc (SUSE Linux) 14.2.1 20250220 [revision 9ffecde121af883b60bbe60d00425036bc873048]
 
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/common.h b/drivers/net/ethernet/marvell/octeontx2/af/common.h
-index 406c59100a35..8a08bebf08c2 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/common.h
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/common.h
-@@ -39,7 +39,7 @@ struct qmem {
- 	void            *base;
- 	dma_addr_t	iova;
- 	int		alloc_sz;
--	u16		entry_sz;
-+	u32		entry_sz;
- 	u8		align;
- 	u32		qsize;
- };
-diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-index cd0d7b7774f1..c850ea5d1960 100644
---- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
-@@ -591,7 +591,7 @@ static void rvu_check_min_msix_vec(struct rvu *rvu, int nvecs, int pf, int vf)
+$> make W=1 lib/test_scanf.ko
+  CALL    scripts/checksyscalls.sh
+  DESCEND objtool
+  INSTALL libsubcmd_headers
+  CC [M]  lib/test_scanf.o
+In file included from <command-line>:
+lib/test_scanf.c: In function ‘numbers_list_ll’:
+./include/linux/compiler.h:197:61: warning: function ‘numbers_list_ll’ might be a candidate for ‘gnu_scanf’ format attribute [-Wsuggest-attribute=format]
+  197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
+      |                                                             ^
+[...]
+
+It seems that it is a regression introduced by the first
+patch of this patch set. And the fix is:
+
+diff --git a/lib/test_scanf.c b/lib/test_scanf.c
+index d1664e0d0138..e65b10c3dc11 100644
+--- a/lib/test_scanf.c
++++ b/lib/test_scanf.c
+@@ -27,7 +27,7 @@ static struct rnd_state rnd_state __initdata;
+ typedef int (*check_fn)(const char *file, const int line, const void *check_data,
+ 			const char *string, const char *fmt, int n_args, va_list ap);
  
- check_pf:
- 	if (pf == 0)
--		min_vecs = RVU_AF_INT_VEC_CNT + RVU_PF_INT_VEC_CNT;
-+		min_vecs = (int)RVU_AF_INT_VEC_CNT + (int)RVU_PF_INT_VEC_CNT;
- 	else
- 		min_vecs = RVU_PF_INT_VEC_CNT;
- 
-@@ -819,13 +819,14 @@ static int rvu_fwdata_init(struct rvu *rvu)
- 		goto fail;
- 
- 	BUILD_BUG_ON(offsetof(struct rvu_fwdata, cgx_fw_data) > FWDATA_CGX_LMAC_OFFSET);
--	rvu->fwdata = ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
-+	rvu->fwdata = (__force struct rvu_fwdata *)
-+		ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
- 	if (!rvu->fwdata)
- 		goto fail;
- 	if (!is_rvu_fwdata_valid(rvu)) {
- 		dev_err(rvu->dev,
- 			"Mismatch in 'fwdata' struct btw kernel and firmware\n");
--		iounmap(rvu->fwdata);
-+		iounmap((void __iomem *)rvu->fwdata);
- 		rvu->fwdata = NULL;
- 		return -EINVAL;
- 	}
-@@ -838,7 +839,7 @@ static int rvu_fwdata_init(struct rvu *rvu)
- static void rvu_fwdata_exit(struct rvu *rvu)
+-static void __scanf(6, 0) __init
++static void __scanf(6, 8) __init
+ _test(const char *file, const int line, check_fn fn, const void *check_data, const char *string,
+ 	const char *fmt, int n_args, ...)
  {
- 	if (rvu->fwdata)
--		iounmap(rvu->fwdata);
-+		iounmap((void __iomem *)rvu->fwdata);
- }
- 
- static int rvu_setup_nix_hw_resource(struct rvu *rvu, int blkaddr)
-@@ -2384,7 +2385,8 @@ static int rvu_get_mbox_regions(struct rvu *rvu, void **mbox_addr,
- 				bar4 = rvupf_read64(rvu, RVU_PF_VF_BAR4_ADDR);
- 				bar4 += region * MBOX_SIZE;
- 			}
--			mbox_addr[region] = (void *)ioremap_wc(bar4, MBOX_SIZE);
-+			mbox_addr[region] = (__force void *)
-+				ioremap_wc(bar4, MBOX_SIZE);
- 			if (!mbox_addr[region])
- 				goto error;
- 		}
-@@ -2407,7 +2409,7 @@ static int rvu_get_mbox_regions(struct rvu *rvu, void **mbox_addr,
- 					  RVU_AF_PF_BAR4_ADDR);
- 			bar4 += region * MBOX_SIZE;
- 		}
--		mbox_addr[region] = (void *)ioremap_wc(bar4, MBOX_SIZE);
-+		mbox_addr[region] = (__force void *)ioremap_wc(bar4, MBOX_SIZE);
- 		if (!mbox_addr[region])
- 			goto error;
- 	}
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-index 2b49bfec7869..e0e592fd02f7 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
-@@ -29,10 +29,10 @@ static void otx2_nix_rq_op_stats(struct queue_stats *stats,
- 	u64 incr = (u64)qidx << 32;
- 	u64 *ptr;
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_OCTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_OCTS);
- 	stats->bytes = otx2_atomic64_add(incr, ptr);
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_PKTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_PKTS);
- 	stats->pkts = otx2_atomic64_add(incr, ptr);
- }
- 
-@@ -42,10 +42,10 @@ static void otx2_nix_sq_op_stats(struct queue_stats *stats,
- 	u64 incr = (u64)qidx << 32;
- 	u64 *ptr;
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_OCTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_OCTS);
- 	stats->bytes = otx2_atomic64_add(incr, ptr);
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_PKTS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_PKTS);
- 	stats->pkts = otx2_atomic64_add(incr, ptr);
- }
- 
-@@ -853,7 +853,7 @@ void otx2_sqb_flush(struct otx2_nic *pfvf)
- 	struct otx2_snd_queue *sq;
- 	u64 incr, *ptr, val;
- 
--	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_STATUS);
-+	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_STATUS);
- 	for (qidx = 0; qidx < otx2_get_total_tx_queues(pfvf); qidx++) {
- 		sq = &pfvf->qset.sq[qidx];
- 		if (!sq->sqb_ptrs)
-diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-index e1dde93e8af8..6c23d64e81f8 100644
---- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-+++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
-@@ -595,8 +595,7 @@ static int otx2_pfvf_mbox_init(struct otx2_nic *pf, int numvfs)
- 		base = pci_resource_start(pf->pdev, PCI_MBOX_BAR_NUM) +
- 		       MBOX_SIZE;
- 	else
--		base = readq((void __iomem *)((u64)pf->reg_base +
--					      RVU_PF_VF_BAR4_ADDR));
-+		base = readq(pf->reg_base + RVU_PF_VF_BAR4_ADDR);
- 
- 	hwbase = ioremap_wc(base, MBOX_SIZE * pf->total_vfs);
- 	if (!hwbase) {
-@@ -645,7 +644,7 @@ static void otx2_pfvf_mbox_destroy(struct otx2_nic *pf)
- 	}
- 
- 	if (mbox->mbox.hwbase)
--		iounmap(mbox->mbox.hwbase);
-+		iounmap((void __iomem *)mbox->mbox.hwbase);
- 
- 	otx2_mbox_destroy(&mbox->mbox);
- }
-@@ -1309,7 +1308,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
- 
- 	/* CQ */
- 	for (qidx = 0; qidx < pf->qset.cq_cnt; qidx++) {
--		ptr = otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
-+		ptr = (__force u64 *)otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
- 		val = otx2_atomic64_add((qidx << 44), ptr);
- 
- 		otx2_write64(pf, NIX_LF_CQ_OP_INT, (qidx << 44) |
-@@ -1348,7 +1347,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
- 		 * these are fatal errors.
- 		 */
- 
--		ptr = otx2_get_regaddr(pf, NIX_LF_SQ_OP_INT);
-+		ptr = (__force u64 *)otx2_get_regaddr(pf, NIX_LF_SQ_OP_INT);
- 		val = otx2_atomic64_add((qidx << 44), ptr);
- 		otx2_write64(pf, NIX_LF_SQ_OP_INT, (qidx << 44) |
- 			     (val & NIX_SQINT_BITS));
--- 
-2.25.1
 
+Best Regards,
+Petr
 
