@@ -1,163 +1,191 @@
-Return-Path: <linux-kernel+bounces-547066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0A2A50290
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:47:59 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E79A5027E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:45:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DED323AABC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:44:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337DE3A4105
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D968B2500AE;
-	Wed,  5 Mar 2025 14:44:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD3524E4A7;
+	Wed,  5 Mar 2025 14:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CVwPIcCr"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATZ2mKXs"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9F224FBFF;
-	Wed,  5 Mar 2025 14:44:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B918E2356A8;
+	Wed,  5 Mar 2025 14:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185855; cv=none; b=utjceKNDTDyFjcIBBIMdpp5eDCH4M7GhCX2JFiYltiU9pgPt/3nq8izAtZXXDFfIfTxLIPbLpCN9K1vBDeKza4MDVvILckW3t/yqjGDCPrAmPVhA4P9PaUCNg71FvCuKCiSt9tCzRpP3YymTIoutlqs1/oBAzCVR1FphFprZqII=
+	t=1741185830; cv=none; b=cAHEn3zetcGFVSsKwxezf7M7j0M3E11KvudGtJVKTse6c1+bpUQg/wr/KZfwkJmI+oEg1K9e5mSxSMgaEXnkZaWvEs3Fanw0N7trI3gxGBzHDfp5wpEW6sKCRvrxreMetzvphe2RhLefDdyQ04oXCCNbxdxCUPZDbHBpHpTO470=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185855; c=relaxed/simple;
-	bh=8YPkqmU4X8iTIjEGD6+u3qjdqvLAhcHfMt6fUOhJLtM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RaiSLW2C5Zt73r8mUN/MocRCOnu15Zjaz9l2tmcu+Nd3ZWZRb3j3r17Yb+EbTVkK4xVz15syd3elkK0lo1FDn5ORRW8SJjWEjOBZE9z6ssBqm5rVEI0Bgmphhjygbnx51mckeBZE9o+c5AIGAtw6Btsr2r4XjxSrJwjjHw9DFfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CVwPIcCr; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1741185830; c=relaxed/simple;
+	bh=+AqUlKzCTWCV8gJp+rDWglTxdmVYfG/0hrgQCsIkfp8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=n6R/j2Fl5MlO4AumtkSTuMWPL72tgvBj9DE+l85ETSe9ZVcANCT14yaaqXONFVjFv2BhSEz2LWnmhvJzVxCFYqtnlK1dQnVRbhwJlTo/8bzNvjcCGQ3VOskxvMRXpLkMYwyvmjiPdUc1CuyMtNzUXr55Kk6yO0onVXNOeQnrYMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATZ2mKXs; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43948021a45so62821255e9.1;
-        Wed, 05 Mar 2025 06:44:13 -0800 (PST)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3911748893aso1521345f8f.3;
+        Wed, 05 Mar 2025 06:43:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741185852; x=1741790652; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741185827; x=1741790627; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gNwIlbvFX4QRldBXaIs5/RL9LSC9AEjKyZahDbOst8Q=;
-        b=CVwPIcCrsyAlLoV29YpftDIttE/vnozdzs7MTAg5idVEI1s9yQqyiLPHop5u4NjjoE
-         vyOVfIaD/JwYeeVO1x8MdpdKnw3AZP1uVVcHuqjfd/cvGVB2ClaJ4yX9mXh7FEB/sPqW
-         tcJOXcNFoce0nPzIHyIr0WnK+THlvn6+no0KQBPFrSzdCocsS+MxSY1Hil5chAF930PI
-         J9/tqQ6o4Q7nSeuGkHcrcA8ZcaGdXUTxu+KtZYAowFT/tHc8RHw3ol86e/LBLMnsA3xR
-         3/m8q380CJrAEMgEHxEUGS/o3epOGKzJB3/LLeaKiE16xpxbXwO4nF2UqDUgx0drlgMS
-         DE4Q==
+        bh=W+czHJw0+drcfBudBMvI20HD9M6Zg630DEJar/Aqg1E=;
+        b=ATZ2mKXstbBjV2J2Vv2VTF3crdNJREkUeyXxYqkNmmqOwDd1wQV7Ejs/lzQKMWzVQL
+         AdgPSNvyIryryHFfwp0C0II04VfyBCwPhFVg1BVPL9ogmfdXRm0zksqbKzOmSFGOuwGn
+         OP6FLBfi3HKNFNSDxzLvJnTL+O+6jsiJMPlk1ENZxVdpjGiUVIapJ5HOFGzpIcuScCdu
+         +a3Croxy7YnrViM6gxez4RLIufR6/VC8iNPo8UCrutk+hfzOzio7EEE01JXE3ieYJbO4
+         7SL86ead/BuKckxwjaMCBjBH6VLr8LaFI/fRB1Nl2oJSLw4dbuaItCyRSXFkt5RLXNhv
+         VfTw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741185852; x=1741790652;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741185827; x=1741790627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=gNwIlbvFX4QRldBXaIs5/RL9LSC9AEjKyZahDbOst8Q=;
-        b=sAeyAwnC76hcPgE8USzf/vMCEyc75WJfxEGiOpGaF8BHttfaKUlrk60X8G6xsTCv4O
-         0/8R1bJpfk8OwpzHCAVFVJbsYsAUCPa+QV2B5QtmJa7tHUkjCNYkjgIHiAB8GmNxXZBw
-         B84DP/7liIu6HsSFNkA2QohT3bGW2POP0x+lid8O3Hbs+gNCGgi5OA6x9810HkFUBo5m
-         3jcyWh/exG5Rvq3U/gJ3vWIn8+Io7RpSeUanGW+Pha/ei+DOutIRQ1V3a0pQs004ZVjG
-         R+4dP8RVWVABCIt6qHiCVnrv1DBvjO5Lj3QGZRAaa3hW49QB/cOhc9ddKgNSZfIl0sPc
-         9mzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxwicMoCga04bmqXii8vur1iZGAEDZyDCqvq7oINrw/IvW4Y20UzYzbys1jiQPFSj/9OxzSfKc@vger.kernel.org, AJvYcCXipwupwsQmZYERhDskMMr5kO5uq7sgsyDHJrw5XRzJcYyZpe0/xytPbDrr3db/GdZzmwv7PjLlKLmLKHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyjCV8YX3AXRzHZjVy/3NNl7Su/fTPGMO6LLmQW4bhGH1Z2fwmJ
-	dNPmoHJeCTdwzhr6HhdZF9aapfPd5aa9A8Xt7743X9F31OMAdRoH
-X-Gm-Gg: ASbGncsGjAYIoe6GgLzXEvBHAm0AshgG7ca/62c2pHd5i9blHmPnZ7/PgXil4HkSodz
-	63rpktiv/KM9g86kZhex/UiGW4Um/DoWzQnl8GaeRT0nrJjaQhjVst10z0zLvdFjx6CAtyAT6bI
-	jiz8j5/lxTBMfLGIEHdudIGxumbkYjLACK8Haz9t9AffJX9TVe1oCEYIvX0r/ox0xwvPnHq1EJ9
-	nEgXs2GlNSwi5Va1v1NLj5f0Czxoubb0JTDQ7pyNDlIvWdpvtiIAV/T4ChsFWRjD6LGvb5D6YWm
-	h67CO4qLfXyTR/5EJnNKZMox0qB/i42ELve1iMhsGgwpzRCs
-X-Google-Smtp-Source: AGHT+IFJVniNBPju7U0+Zkvo7cT0yiY6E+Oe3yG3cuVYvnJhnTUke2U3Jt13V/c1QPsHTlV77FcZzw==
-X-Received: by 2002:a05:600c:1c94:b0:439:7c0b:13f6 with SMTP id 5b1f17b1804b1-43bd2ae52d7mr27450545e9.31.1741185851384;
-        Wed, 05 Mar 2025 06:44:11 -0800 (PST)
-Received: from eichest-laptop.. ([178.197.169.96])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd435cd8csm19314375e9.40.2025.03.05.06.44.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:44:11 -0800 (PST)
-From: Stefan Eichenberger <eichest@gmail.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	shawnguo@kernel.org,
-	s.hauer@pengutronix.de,
-	kernel@pengutronix.de,
-	festevam@gmail.com,
-	p.zabel@pengutronix.de,
-	tharvey@gateworks.com,
-	hongxing.zhu@nxp.com,
-	francesco.dolcini@toradex.com
-Cc: linux-phy@lists.infradead.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>,
-	stable@vger.kernel.org
-Subject: [PATCH v2 2/2] phy: freescale: imx8m-pcie: assert phy reset and perst in power off
-Date: Wed,  5 Mar 2025 15:43:16 +0100
-Message-ID: <20250305144355.20364-3-eichest@gmail.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20250305144355.20364-1-eichest@gmail.com>
-References: <20250305144355.20364-1-eichest@gmail.com>
+        bh=W+czHJw0+drcfBudBMvI20HD9M6Zg630DEJar/Aqg1E=;
+        b=LPM/kI/DphDJ2/L4xvMbfGmc5rTOniTwhvuqExfJrdbjlllfL2c3iV2DfwbS8ZzWIe
+         7bHSFu+u+I/mijgL1v+a6M34jTKXIHGAlKj6p6/8JEJC2LT0UG3c83wx1pGDS+8rCfJv
+         XKjMDqC8M5gs9w1zyHcPp1i1Sn3+TLWZ2z6QJdD2gXw51SVIpCV89l+BdHPLfv80PgkV
+         RfEKd3zT4ZNL2Sa8ldHEDchB/aBqoNMw9nVVsQyU4SmywufUIzyeFr0sh7a9jYqXXLv4
+         C6wRt/5SOKtq+n86xMxf+5sUiqGajo8JU/zkkE3OdeP4koIkLwDFbfcn4qvbblU/kQ+H
+         EIcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUN5gflP5hVEAoklxiY7SYxESiXY9+jRY8NumzIUe3D1zGJp3NqU71sH2rZnMnDzlUfSnRkKEI18KPb@vger.kernel.org, AJvYcCUphpSLa990SwyrzTOd53YhWcJvbuURGH+I7JbQc+7W/0MeV9OaROMU0MuRDGQb8AWMZq2vh8t1H4rAC9sM@vger.kernel.org
+X-Gm-Message-State: AOJu0YxslkVIiM8Zhbw8PPZIHfdJUXmMHIRV+WMP/53qOroqvEQwGjxE
+	v61puetGAWjgKzlsUK2V5EDdM06p+qMXHspYeQoh+9QBCQtKNtRT0swl+ivKSMvMcLUmfrNt4/4
+	oi6D7d5FH3lqdTrYG5dT7GH/K4eo=
+X-Gm-Gg: ASbGncvwbwlMw3+dWX6PydCbu45JFC3SrfbopCTCKJpFy9EFw8fPjIlWkScA7RzePcp
+	8ez69TisZgpmasR4KQiZdOzAgEjMrWPBgRDtpNRfmfbBr10AleliffTN7tCOVhN0coRsVDC2WfU
+	tTGxxej3qhwiyB8QKLI7gbap7n3g0=
+X-Google-Smtp-Source: AGHT+IE0Wg93XW7daRT3+XvEJc5G1E0Ewc2aulgOkHuquQ7ry8l0r3PqMhb4dWbor0wlFwrkNcLUG1zinJ4UztxNR90=
+X-Received: by 2002:a05:6000:18a6:b0:391:13f7:92ad with SMTP id
+ ffacd0b85a97d-3911f764115mr2516233f8f.27.1741185826776; Wed, 05 Mar 2025
+ 06:43:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250303122151.91557-1-clamor95@gmail.com> <20250303122151.91557-3-clamor95@gmail.com>
+ <3bc7c5a5-8fe7-4c4b-a80e-23522922debb@arm.com> <CAPVz0n0yvw4kyYKSve9sSZEvcZrCYZ6RqCjFSO5OCqtvRZSfJg@mail.gmail.com>
+ <f56596fe-92e8-481b-b15b-29b531eaec32@arm.com>
+In-Reply-To: <f56596fe-92e8-481b-b15b-29b531eaec32@arm.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 5 Mar 2025 16:43:34 +0200
+X-Gm-Features: AQ5f1JpUpSPyJFPDEyOWhAfjUiTXaiQV-NWZBlTtwhwrqamQpYjovRQ1ribZIWA
+Message-ID: <CAPVz0n164wQw1HZ4XVPXyg1w=cwC4-xtqBpgmmE5uKXJtATKmg@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] thermal: thermal-generic-adc: add temperature
+ sensor channel
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	Jonathan Cameron <jic23@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, 
+	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+=D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 16:37 Lukas=
+z Luba <lukasz.luba@arm.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+>
+>
+> On 3/5/25 10:06, Svyatoslav Ryhel wrote:
+> > =D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 11:52 L=
+ukasz Luba <lukasz.luba@arm.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >>
+> >>
+> >>
+> >> On 3/3/25 12:21, Svyatoslav Ryhel wrote:
+> >>> To avoid duplicating sensor functionality and conversion tables, this=
+ design
+> >>> allows converting an ADC IIO channel's output directly into a tempera=
+ture IIO
+> >>> channel. This is particularly useful for devices where hwmon isn't su=
+itable
+> >>> or where temperature data must be accessible through IIO.
+> >>>
+> >>> One such device is, for example, the MAX17040 fuel gauge.
+> >>>
+> >>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> >>> ---
+> >>>    drivers/thermal/thermal-generic-adc.c | 54 +++++++++++++++++++++++=
++++-
+> >>>    1 file changed, 53 insertions(+), 1 deletion(-)
+> >>>
+> >>> diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/=
+thermal-generic-adc.c
+> > ...
+> >>>
+> >>> +static const struct iio_chan_spec gadc_thermal_iio_channel[] =3D {
+> >>> +     {
+> >>> +             .type =3D IIO_TEMP,
+> >>> +             .info_mask_separate =3D BIT(IIO_CHAN_INFO_PROCESSED),
+> >>
+> >> I would add the IIO_CHAN_INFO_SCALE and say it's in milli-degrees.
+> >>
+> >
+> > I have hit this issue already with als sensor. This should definitely
+> > be a IIO_CHAN_INFO_PROCESSED since there is no raw temp data we have,
+> > it gets processed into temp data via conversion table. I will add
+> > Jonathan Cameron to list if you don't mind, he might give some good
+> > advice.
+>
+> I'm not talking about 'PROCESSED' vs 'RAW'...
+> I'm asking if you can add the 'SCALE' case to handle and report
+> that this device will report 'processed' temp value in milli-degrees
+> of Celsius.
+>
 
-Ensure the PHY reset and perst is asserted during power-off to
-guarantee it is in a reset state upon repeated power-on calls. This
-resolves an issue where the PHY may not properly initialize during
-subsequent power-on cycles. Power-on will deassert the reset at the
-appropriate time after tuning the PHY parameters.
+Sure, I take this into account.
 
-During suspend/resume cycles, we observed that the PHY PLL failed to
-lock during resume when the CPU temperature increased from 65C to 75C.
-The observed errors were:
-  phy phy-32f00000.pcie-phy.3: phy poweron failed --> -110
-  imx6q-pcie 33800000.pcie: waiting for PHY ready timeout!
-  imx6q-pcie 33800000.pcie: PM: dpm_run_callback(): genpd_resume_noirq+0x0/0x80 returns -110
-  imx6q-pcie 33800000.pcie: PM: failed to resume noirq: error -110
-
-This resulted in a complete CPU freeze, which is resolved by ensuring
-the PHY is in reset during power-on, thus preventing PHY PLL failures.
-
-Cc: stable@vger.kernel.org
-Fixes: 1aa97b002258 ("phy: freescale: pcie: Initialize the imx8 pcie standalone phy driver")
-Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
----
- drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 11 +++++++++++
- 1 file changed, 11 insertions(+)
-
-diff --git a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-index 5b505e34ca364..7355d9921b646 100644
---- a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-+++ b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-@@ -156,6 +156,16 @@ static int imx8_pcie_phy_power_on(struct phy *phy)
- 	return ret;
- }
- 
-+static int imx8_pcie_phy_power_off(struct phy *phy)
-+{
-+	struct imx8_pcie_phy *imx8_phy = phy_get_drvdata(phy);
-+
-+	reset_control_assert(imx8_phy->reset);
-+	reset_control_assert(imx8_phy->perst);
-+
-+	return 0;
-+}
-+
- static int imx8_pcie_phy_init(struct phy *phy)
- {
- 	struct imx8_pcie_phy *imx8_phy = phy_get_drvdata(phy);
-@@ -176,6 +186,7 @@ static const struct phy_ops imx8_pcie_phy_ops = {
- 	.init		= imx8_pcie_phy_init,
- 	.exit		= imx8_pcie_phy_exit,
- 	.power_on	= imx8_pcie_phy_power_on,
-+	.power_off	= imx8_pcie_phy_power_off,
- 	.owner		= THIS_MODULE,
- };
- 
--- 
-2.45.2
-
+> >
+> >>> +     }
+> >>> +};
+> >>> +
+> >>> +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
+> >>> +                              struct iio_chan_spec const *chan,
+> >>> +                              int *temp, int *val2, long mask)
+> >>> +{
+> >>> +     struct gadc_thermal_info *gtinfo =3D iio_priv(indio_dev);
+> >>> +     int ret;
+> >>> +
+> >>> +     if (mask !=3D IIO_CHAN_INFO_PROCESSED)
+> >>> +             return -EINVAL;
+> >>
+> >> Therefore, here it would need to handle such case as well, when
+> >> a client is asking about scale.
+> >>
+> >>> +
+> >>> +     ret =3D gadc_thermal_get_temp(gtinfo->tz_dev, temp);
+> >>> +     if (ret < 0)
+> >>> +             return ret;
+> >>> +
+> >>> +     *temp /=3D 1000;
+> >>
+> >> IMO we shouldn't cut the precision if it's provided.
+> >> The user of this would know what to do with the value (when
+> >> the proper information about scale is also available).
+> >>
+> >
+> > The it will not fit existing IIO framework and thermal readings will
+> > be 1000 off. I have had to adjust this since my battery suddenly got
+> > temperature reading of 23200C which obviously was not true. With
+> > adjustment temperature will be in 10th of C (yes, odd, I know but it
+> > is what it is).
+>
+> Your battery driver should get and check the 'SCALE' info first, then
+> it will know that the value is in higher resolution than it needs.
+> Therefore, it can divide the value inside its code.
+> Your proposed division here is creating a limitation.
+>
+> You shouldn't force all other drivers to ignore and drop the
+> available information about milli-degC (which is done in this patch).
 
