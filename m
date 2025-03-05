@@ -1,271 +1,194 @@
-Return-Path: <linux-kernel+bounces-546705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 671F8A4FDDA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:40:04 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70AAAA4FDE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:40:32 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D1263AFA5E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 943D8164ACE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:40:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96C0123F291;
-	Wed,  5 Mar 2025 11:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="hh9ogRET"
-Received: from DB3PR0202CU003.outbound.protection.outlook.com (mail-northeuropeazon11011063.outbound.protection.outlook.com [52.101.65.63])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F190423F291;
+	Wed,  5 Mar 2025 11:40:26 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0487235BE4;
-	Wed,  5 Mar 2025 11:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.65.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741174722; cv=fail; b=L7plCDwoJ7P0k0SSb4C2kRewl+kSty+YgDekgGs7hg6pNtMg93D/Op2mO7cHJyXXMowkr+JX0sCnvqV1nHQClWdNRE2MjHD1+aOlr+9itjx50Z/OBv0R60s9pzO53PJ314CJba5GICDfd1lyt1FLw6c8+EjzbBgaGSBhR3d1XTo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741174722; c=relaxed/simple;
-	bh=zrZJE1SQwUV8YIDym7vMruuUPOPAdciS04ObPbl7GKQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Zo0G0dJn1itCywtC6V7VYaF2z/2i1jNBOaTeVSz6RSuYUo/04rM/g2Llx+xAW5NEf9LH+OchUtJuA/NzIF9GTuoey5TpxiH2CGeiTESxv9oaO28Z3QBghbKY9auaHkfiL04XSFYUXHMwo+N1Onp5FyF0P/l5G2S127vK1vhhne4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=hh9ogRET; arc=fail smtp.client-ip=52.101.65.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ZPfSATkrTUhJhVk+S8aNXKEttf0BMheXMabhfkwWvRSzqGMftyECIzSFfxL0/6aUPQPoyFMN+PhLmV8JGjwR1LnTgyazVFFg0K/Heg+UEmgHkGz6XiYXlHfaT+j/izXK9pLEmd1ZqFqWK7InlLeEjBvzqCz2DJoEQm1dELBb5KlAEzgfk1DR/Y881hsREhlgMQKQkwRkjtassC4moCk1qvVE28snD0hCVnf+2prVs0V1P7+0sTB8r1HyNimgqh5iYF/4S4H2/HkLDiJFuj9eq8B829TBTNJk2BuyOAXTYqZAYPN4KX1CXtqjMo9wo9HJo1Bh5UqH1hqIrEdmIMinkg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ON3V7YtH/qR1tqarWspQ7zeUE8pqKgUK7jAGyBfOzfo=;
- b=QyqNUhNB5dbu/ZB8j2eiMe5qlR97Xp5+J49FL0TvK1Ckk70x+wm6Wb8Q3MuTy3M9KmZxqwxgrXhBgjuKxMGNGLQ14joTkR+mXeg1VNi0p2D+UI33y8M03AMWRzRPVYbXYUmF8L+OKzB5hrPt4NrG9gpPThahpxxHeiC6y+AISSFWZs+taZF4SiwszkR7C0/qWcxaIUls+OgEk8G6HQSw8tVtZE/kN4n4pF0yYPcKhOmdspE9UMhzGDk6tiZL7qu2v80Dcyz96eHt+/+6IjiFuxGaYygDpxiwoj5D59ScLobvghIuz4G0fQs/uhaimF3cT7xQ7fSKXhEA4U8RHkkW6Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ON3V7YtH/qR1tqarWspQ7zeUE8pqKgUK7jAGyBfOzfo=;
- b=hh9ogRETXqbBY0zVwD7JtlMRBt5Tz2pVOrgyaHFW98wLamDThlJqIuPSH4ZRScrToGmjHKgoe1nPmqNcafAV3z5icY9hkE/AHMOGPWwwvfHFDOm/V03byrsKJzmuwkQ/zpQJsioc8iSm7gqsNG8qEQkKnCqHQRnAIk7Z+uSa2uineQ44ESjFSFLXH1xN7KBzQEBC5/4DdWPM6GxCVdA6rrTx7O3F+r8eXqQ7kriGvxqpSNoHxysTo4FpAH3YOf9CriZTt9Ck3UfbwTox4oXLhaYj/SzzvB1YueF5CBBd6bdxhdcv0Kb4V3Hv+zEH2RD3DAClg3QbjiGJ80F7hERnrA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com (2603:10a6:10:53a::11)
- by VI1PR03MB6574.eurprd03.prod.outlook.com (2603:10a6:800:17f::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
- 2025 11:38:38 +0000
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf]) by DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf%7]) with mapi id 15.20.8511.015; Wed, 5 Mar 2025
- 11:38:38 +0000
-From: Mathis Foerst <mathis.foerst@mt.com>
-To: linux-kernel@vger.kernel.org
-Cc: Mathis Foerst <mathis.foerst@mt.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	manuel.traut@mt.com,
-	mathis.foerst@zuehlke.com
-Subject: [PATCH v1 1/1] media: imx: csi: Parse link configuration from fw_node
-Date: Wed,  5 Mar 2025 12:38:02 +0100
-Message-Id: <20250305113802.897087-2-mathis.foerst@mt.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250305113802.897087-1-mathis.foerst@mt.com>
-References: <20250305113802.897087-1-mathis.foerst@mt.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ZR0P278CA0195.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:44::11) To DBBPR03MB10396.eurprd03.prod.outlook.com
- (2603:10a6:10:53a::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCB1F233733
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:40:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741174826; cv=none; b=lh54Y2psgssS0tZNn3YpVA/jOX3cQVQTzzGhq0eU5ckPMiWW3e3JyDEW4N+An1GZzkDS07Qc7LkQzzRsOO5NeNn5/F+X+3eyjBLXtPTju6pcVWVxxAw3RbqUKimHKXNBdVVs8gKnrzH6NVE/ZwrhfG7ThJDOSwcHfiYKnDskEZI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741174826; c=relaxed/simple;
+	bh=KjbdCa5mHmz6tOrINizK6azCxgWEUUVZ4E5WLiHWBWI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mlczxoKa39HqDiIUqv8UkUaS/IVhVoTuByZIl2BFEqgBh3oPor0ylHdGQPXn3srWHPfqoussS9l9sZOkjrGml0nAtNVb52FSOp/HDe5Jq8/DdXffTYStlxXjKWeJEqkQAjtp9MnbY5GdV7TYYLsoVTLaqJQobicQvnbm49W2Xes=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tpn64-0004on-HO; Wed, 05 Mar 2025 12:39:32 +0100
+Message-ID: <28d0ea70-db7a-40e7-aac9-86808320f252@pengutronix.de>
+Date: Wed, 5 Mar 2025 12:39:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR03MB10396:EE_|VI1PR03MB6574:EE_
-X-MS-Office365-Filtering-Correlation-Id: 70779bdb-1e49-49a0-bfce-08dd5bda4562
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?YtFZQUlrg/mOQx+iFsH/w7qtupRqhSEMDrmpYbbFOzMP1QW/kbe14qqtbkgi?=
- =?us-ascii?Q?6qcZHNmJlSlJyTOMY6sGR6uyhTuXuQwXP2Y9B27d3/9c4BRSL0G3hTlGU7S3?=
- =?us-ascii?Q?v4BtVpF/aUoCbWJVPnejrEmBxl5Ol76yEwhmQWgSxD+ApzDenwXiAt3jdy84?=
- =?us-ascii?Q?4N3l9w3Hrh08xs4w0Uk4Fo/6GAu0Ka25y8MsUFy0hQNT/UCUe70t9sX8x/vm?=
- =?us-ascii?Q?v2UZnkB4EmupKglJMv8bGcnO4LB7xHDejoYwvRI1/lSWPQdesq6S78ZmF/Ba?=
- =?us-ascii?Q?TodrvuzKqeTouLsVpkfN434NQr+gRa6wSvLkpkwj0lMdWsHUOCenj6O3yMUE?=
- =?us-ascii?Q?wgm6Y8r88rW3d4YzBs3WuvX9aKpxM4h8iR3iUiY1tNAeleC27E85P+f6SUJr?=
- =?us-ascii?Q?MqtvI5DL77eAZjnpa+rXNpLwNWoicHsvSsrJiWtieqyfw2s36E0QeaW8OXqt?=
- =?us-ascii?Q?dh1HXUD3FCMy77oPLZivHMN/yLHNO7xY/PFWLmsbHYxkG60gYurd3twXHVgL?=
- =?us-ascii?Q?I40OIsbulQRmqJfyYv4kSYvAsgQJntnedB8sSkKu6SfaoczLC8dgtw/W1Aaa?=
- =?us-ascii?Q?1iYzWfVh6epHXHgo/3mTs/fk+6aWW08kJO1dNcwC7nMP/SAl2YWdFp4LkG0m?=
- =?us-ascii?Q?eJrxeCj0MFLTCxgNAynEkU93o9D4hvoorFpJDhf+7qLYegYLPaZWt79Blv/Q?=
- =?us-ascii?Q?H3bcAOZb2Ekw2mih8r3JxLIBz4ggfMj/Zr0wj/CL5rXpmghuQ64ZSE2BIaXf?=
- =?us-ascii?Q?RmJXD5i7ngjUM5T15ivE1p3aYHPMLosIx0q+fwOuJ3COhjQ5Zdy5UAJBg1KA?=
- =?us-ascii?Q?AuR+Hyj1l6DL15jvgP1dvtQXzgvKHcYBcPTM5SkGy0q6CRDIzTqyrqcSmzny?=
- =?us-ascii?Q?XGgaY+nXXjN92y+ogdVyBGN5vfwVTq1iy6d/8/YC/Co7PL9XmEdFba5Ehg/p?=
- =?us-ascii?Q?6gFWzDfu0h+/8IuO/rzC04MIV8U+QiyQmSqRJA0qPcN0Qg6EYF6+s8nRzcKz?=
- =?us-ascii?Q?PJNhW9KOFzSTYpW7feyty9X5oBUELP/HS4ilDEID3fVtiWtlbMqriJih3fgN?=
- =?us-ascii?Q?rNfkqes9gQCv95sopXnsUHdH8OHbsrayqiUcllnlhl9AkPduYor6TyfTYODf?=
- =?us-ascii?Q?JXNyCTXpjHs7+HIpksSJgxMcIPLtt3KKCpOE1UEEe98V4BkhqMmQGdqdH717?=
- =?us-ascii?Q?LiHNR6DUibNSFyqUNUESM4avHQskc5pGgNl6AsrxubvXJ3zQwJvJAISlvznE?=
- =?us-ascii?Q?ZAGSsQamqnybz3JkhgzFwqLQH85W3qDGd39yvTuPj+shCjqs+HxXecZg1MZP?=
- =?us-ascii?Q?1Aan2a+TTB3UmjJZ7FVyVp9vf6JgM8dmAAiK774VeXZfwwkOPNhHswMK1N19?=
- =?us-ascii?Q?HSXpTQdIBN4nRytfUr8rMZs1+b4TVQIZ98ZR/2Ui6GiHT6YEu4hrlthIYmmo?=
- =?us-ascii?Q?KRIVe+ohszPLNSMarzJzAjNmXDCSIeQ9?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR03MB10396.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?YJ+rZTHwIzYuMI/a3Fxo9FwWXcG2iMvlCkSwURWK54hB+ZxQD1JTMjUcDABj?=
- =?us-ascii?Q?f0n8tv+UHQM3x9OqjF3+89dP/PW4SxL5yFd2alU5t/5T6FmhmrcAzcxLs9Mv?=
- =?us-ascii?Q?hB+NiD0haBjOfMVa3wy4lfI09V0SmvSCC41+/AhiTT48cjWNMakfPTAqHt/x?=
- =?us-ascii?Q?73Go0VEuxiHuxc5LjiiJDeLOAbhf9nzb8tZ1U8xblDaOxOE0V+LRZzakK1P2?=
- =?us-ascii?Q?0PyTlBeVEfxscek6dYteM1RS0OurDK4/Fr15aICOOYHlj3yVqtXoSBLclVHE?=
- =?us-ascii?Q?9hXWzDT8h1jYr8nCzNTLMryg834OjrFMEWPN9vF8NVM0QQb0sve1YIEm7J/l?=
- =?us-ascii?Q?qy9k+85qAPDkiCoqrPwkt+XRMLxOt7J1YuitJ6mo8pE4ntHgqAzuJqCkhD+d?=
- =?us-ascii?Q?pyfEGd5CDKyQFDVpnjI5YbSTdbSysxgpH62rjaBKmnVCwtlqwIX+ugAFke9H?=
- =?us-ascii?Q?NAUB/LAMdzP9hQVIiZpIGCgtIA1kmFV+o2asm9kPyQvccf3k6JFHFqEZGVpj?=
- =?us-ascii?Q?Lt8G4NnAY8bXy5rH5xk4UmJUPpe4Q9M1N9FXI/A0qR36ScCUF2Kc/w/zDuh/?=
- =?us-ascii?Q?/DGbWm+y4JtitZsaIM5cl6Al4Eo20XCtvyhXQ9y57jqOMlk+GhmakAK1+pg6?=
- =?us-ascii?Q?PChkV3YwB9pTv4UpSD+ZkKqBFZ3uwxN4ABkHYfNLbF+Hr8squUEfOU3pUbiD?=
- =?us-ascii?Q?laCm3RsnlD/+p64G5fqTXwGnIFLSZDJi83huz6Dp27i/Dq/+C3/QkhdYraKI?=
- =?us-ascii?Q?oLCPjGYqPueLIWT5JB8Zis6nza7jdGYxNtBcmR1mu5hKTYqu1FseJFKsVbRf?=
- =?us-ascii?Q?R2FFh84pXuMX+nv8R4TYNKNOGBpvmgv13tl5hml/Yvnl/1K/QaCjU4CiROpp?=
- =?us-ascii?Q?HAQuVdaC1tZIQ44aJnqKFfITaRG0c+OqTRPE8IU/l0Iwk1Fze8XXzQqkgqiX?=
- =?us-ascii?Q?f6H+i31C8FvN9qiTgCWRTJ3DVKTawKUlDpaSolv3Pxe6283Flt0d7yTV0BuA?=
- =?us-ascii?Q?t1iooeIGNYoY1QCgRTf8TTj6KGuEu6nKwbPYLOnWYSQH6690HxDkvHvccueU?=
- =?us-ascii?Q?Hj3ExwaEdlvbEYiXIYOa5j1ZMCe7ZcwLmg8rx8sN9eUfikDLqXPU5FojOw/L?=
- =?us-ascii?Q?6nJrnfGATG8sPzR0gh0PmgHuWR41xCNBTdnXYL0p9sMVshuhY4LQ7b2ufepp?=
- =?us-ascii?Q?AA/3Vl62R97Y8RVlshd0jAq3WpFq796QdoUgiry7KzTgiqDAheh3RsWf4ai4?=
- =?us-ascii?Q?pjmjZxiUqqUx4iexWiWoHjFPs5FpplATAVDKxHRz5ZUD98XLZHQeEvLB4Gfm?=
- =?us-ascii?Q?opmAvt1CIq6AnSP09FGri4Y1N9HtyPTcmRyYaNe8i+NolWqlDb0aa4evDF5B?=
- =?us-ascii?Q?rGIzNPWsUdVcF6CGRbPsoqNJmddqc8yg8Es3DQlMhEOKn+tbBqDZYrCnf2Il?=
- =?us-ascii?Q?TcKcQjNry8KzY1EMooT1LgZTHJY0kBQ7BrxeM4DgRTMqAgQd5YgCpUtEkuu/?=
- =?us-ascii?Q?Gr+RVdDHuFaqihIJNXpTq901tvNUj14Fg7XS8yKwFfC60BK9MYC9tAo0/eDO?=
- =?us-ascii?Q?RSc4iyyurZnZO9D5gQt3goUIDJ6Iu7zG/wbwc8LY?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70779bdb-1e49-49a0-bfce-08dd5bda4562
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR03MB10396.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 11:38:38.3072
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ylKkhgYGfM862H7ivK+CaREFCZCcPoBOD909QSpEEvv+EXHTgQPO+1Kd5RKTaflzc30a8RBPzlgh1YHvfCgGJQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR03MB6574
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: [PATCH v4 0/2] Add stop_on_panic support for
+ watchdog
+To: George Cherian <gcherian@marvell.com>,
+ "linux@roeck-us.net" <linux@roeck-us.net>,
+ "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+ "jwerner@chromium.org" <jwerner@chromium.org>,
+ "evanbenn@chromium.org" <evanbenn@chromium.org>,
+ "kabel@kernel.org" <kabel@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>,
+ "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+ "thomas.richard@bootlin.com" <thomas.richard@bootlin.com>,
+ "lma@chromium.org" <lma@chromium.org>,
+ "bleung@chromium.org" <bleung@chromium.org>,
+ "support.opensource@diasemi.com" <support.opensource@diasemi.com>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>, "andy@kernel.org"
+ <andy@kernel.org>, "paul@crapouillou.net" <paul@crapouillou.net>,
+ "alexander.usyskin@intel.com" <alexander.usyskin@intel.com>,
+ "andreas.werner@men.de" <andreas.werner@men.de>,
+ "daniel@thingy.jp" <daniel@thingy.jp>,
+ "romain.perier@gmail.com" <romain.perier@gmail.com>,
+ "avifishman70@gmail.com" <avifishman70@gmail.com>,
+ "tmaimon77@gmail.com" <tmaimon77@gmail.com>,
+ "tali.perry1@gmail.com" <tali.perry1@gmail.com>,
+ "venture@google.com" <venture@google.com>,
+ "yuenn@google.com" <yuenn@google.com>,
+ "benjaminfair@google.com" <benjaminfair@google.com>,
+ "maddy@linux.ibm.com" <maddy@linux.ibm.com>,
+ "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+ "npiggin@gmail.com" <npiggin@gmail.com>,
+ "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+ "naveen@kernel.org" <naveen@kernel.org>,
+ "mwalle@kernel.org" <mwalle@kernel.org>,
+ "xingyu.wu@starfivetech.com" <xingyu.wu@starfivetech.com>,
+ "ziv.xu@starfivetech.com" <ziv.xu@starfivetech.com>,
+ "hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>,
+ "mhiramat@kernel.org" <mhiramat@kernel.org>
+Cc: "chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
+ "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "patches@opensource.cirrus.com" <patches@opensource.cirrus.com>,
+ "openbmc@lists.ozlabs.org" <openbmc@lists.ozlabs.org>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20250305101025.2279951-1-george.cherian@marvell.com>
+ <43fb0965-04b7-41dc-ae3f-54676eefdbb5@pengutronix.de>
+ <PH8PR18MB53817EC09B918852B78DF3AAC5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <PH8PR18MB53817EC09B918852B78DF3AAC5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-The imx-media-csi driver requires upstream camera drivers to implement
-the subdev-pad-op "get_mbus_config" [0]. Camera drivers that don't
-implement this function are not usable on the i.MX6.
+Hi George,
 
-The docs for get_mbus_config [1] say:
-@get_mbus_config: get the media bus configuration of a remote sub-device.
-            The media bus configuration is usually retrieved from the
-            firmware interface at sub-device probe time, immediately
-            applied to the hardware and eventually adjusted by the
-            driver.
+On 05.03.25 12:28, George Cherian wrote:
+> Hi Ahmad,
+>> Hi George,
+>> On 05.03.25 11:10, George Cherian wrote:
+>>> This series adds a new kernel command line option to watchdog core to
+>>> stop the watchdog on panic. This is useul in certain systems which prevents
+>>> successful loading of kdump kernel due to watchdog reset.
+>>>
+>>> Some of the watchdog drivers stop function could sleep. For such
+>>> drivers the stop_on_panic is not valid as the notifier callback happens
+>>> in atomic context. Introduce WDIOF_STOP_MAYSLEEP flag to watchdog_info
+>>> options to indicate whether the stop function would sleep.
+>>
+>> Did you consider having a reset_on_panic instead, which sets a user-specified
+>> timeout on panic? This would make the mechanism useful also for watchdogs
+> 
+> /proc/sys/kernel/panic already provides that support. You may echo a non-zero value 
+> and the system tries for a soft reboot after those many seconds. But this doesn't happen 
+> in case of a kdump kernel load after panic.
 
-Currently, the imx-media-csi driver is not incorporating the information
-from the firmware interface and therefore relies on the implementation of
-get_mbus_config by the camera driver.
+The timeout specified to the Watchdog reset_on_panic option would be programmed into
+the active watchdogs and not be used to trigger a software-induced reboot.
 
-To be compatible with camera drivers not implementing get_mbus_config
-(which is the usual case), use the bus information from the fw interface:
+>> that can't be disabled and would protect against system lock up: 
+>> Consider a memory-corruption bug (perhaps externally via DMA), which partially
+>> overwrites both main and kdump kernel. With a disabled watchdog, the system
+>> may not be able to recover on its own.
+> 
+> Yes, that is the reason why the kernel command-line is optional and by default it is set to zero.
+> So that in cases if you have a corrupted kdump kernel then watchdog kicks in.
 
-The camera does not necessarily has a direct media bus link to the CSI as
-the video-mux and/or the MIPI CSI-2 receiver of the i.MX6 might be in
-between them on the media pipeline.
-The CSI driver already implements the functionality to find the connected
-camera sub-device to call get_mbus_config on it.
+The existing option isn't enough for the kdump kernel use case.
+If we (i.e. you) are going to do something about it, wouldn't it be
+better to have a solution that's applicable to a wider number of
+watchdog devices?
 
-At this point the driver is modified as follows:
-In the case that get_mbus_config is not implemented by the upstream
-camera, try to get its endpoint configuration from the firmware interface
-usign v4l2_fwnode_endpoint_parse.
-For the supported mbus_types (V4L2_MBUS_PARALLEL, V4L2_MBUS_BT656 and
-V4L2_MBUS_CSI2_DPHY), extract the mbus_config from the endpoint
-configuration.
-For all other mbus_types, return an error.
+>> If you did consider it, what made you decide against it?
+> watchdog.stop_on_panic=1 is specifically for systems which can't boot a kdump kernel due to the fact 
+> that the kdump kernel gets a watchdog reset while booting, may be due to a shorter watchdog time.
+> For eg: a 32-bit watchdog down counter running at 1GHz.
+> reset_on_panic can guarantee only the largest watchdog timeout supported by HW, 
+> since there is no one to ping the watchdog.
 
-Note that parsing the mbus_config from the fw interface is not done during
-probing because the camera that's connected to the CSI can change based on
-the selected input of the video-mux at runtime.
+If you are serious with the watchdog use, you'll want to use the watchdog to
+monitor kernel startup as well. If the bootloader can set a watchdog timeout
+just before starting the kernel and it doesn't expire before the kernel watchdog
+driver takes over, why can't we do the same just before starting the dumpkernel?
 
-[0] drivers/staging/media/imx/imx-media-csi.c - line 211..216
-[1] include/media/v4l2-subdev.h - line 814
+Thanks,
+Ahmad
 
-Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
----
- drivers/staging/media/imx/imx-media-csi.c | 36 ++++++++++++++++++++---
- 1 file changed, 32 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/staging/media/imx/imx-media-csi.c b/drivers/staging/media/imx/imx-media-csi.c
-index 3edbc57be2ca..394a9321a10b 100644
---- a/drivers/staging/media/imx/imx-media-csi.c
-+++ b/drivers/staging/media/imx/imx-media-csi.c
-@@ -169,6 +169,8 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
- {
- 	struct v4l2_subdev *sd, *remote_sd;
- 	struct media_pad *remote_pad;
-+	struct fwnode_handle *ep_node;
-+	struct v4l2_fwnode_endpoint ep = { .bus_type = 0 };
- 	int ret;
  
- 	if (!priv->src_sd)
-@@ -210,11 +212,37 @@ static int csi_get_upstream_mbus_config(struct csi_priv *priv,
- 
- 	ret = v4l2_subdev_call(remote_sd, pad, get_mbus_config,
- 			       remote_pad->index, mbus_cfg);
--	if (ret == -ENOIOCTLCMD)
--		v4l2_err(&priv->sd,
--			 "entity %s does not implement get_mbus_config()\n",
--			 remote_pad->entity->name);
-+	if (ret == -ENOIOCTLCMD) {
-+		/*
-+		 * If the upstream sd does not implement get_mbus_config,
-+		 * try to parse the link configuration from its fw_node
-+		 */
-+		ep_node = fwnode_graph_get_endpoint_by_id(dev_fwnode(remote_sd->dev),
-+							  0, 0,
-+							  FWNODE_GRAPH_ENDPOINT_NEXT);
-+		if (!ep_node)
-+			return -ENOTCONN;
-+
-+		ret = v4l2_fwnode_endpoint_parse(ep_node, &ep);
-+		fwnode_handle_put(ep_node);
-+		if (ret)
-+			return ret;
- 
-+		mbus_cfg->type = ep.bus_type;
-+		switch (ep.bus_type) {
-+		case V4L2_MBUS_PARALLEL:
-+		case V4L2_MBUS_BT656:
-+			mbus_cfg->bus.parallel = ep.bus.parallel;
-+			break;
-+		case V4L2_MBUS_CSI2_DPHY:
-+			mbus_cfg->bus.mipi_csi2 = ep.bus.mipi_csi2;
-+			break;
-+		default:
-+			v4l2_err(&priv->sd, "Unsupported mbus_type: %i\n",
-+				 ep.bus_type);
-+			return -EINVAL;
-+		}
-+	}
- 	return ret;
- }
- 
+>>
+>> Thanks,
+>> Ahmad
+>>
+>>>
+>>>
+>> Changelog:
+>> v1 -> v2
+>> - Remove the per driver flag setting option
+>> - Take the parameter via kernel command-line parameter to watchdog_core.
+>>
+>> v2 -> v3
+>> - Remove the helper function watchdog_stop_on_panic() from watchdog.h.
+>> - There are no users for this. 
+>>
+>> v3 -> v4
+>> - Since the panic notifier is in atomic context, watchdog functions
+>>   which sleep can't be called. 
+>> - Add an options flag WDIOF_STOP_MAYSLEEP to indicate whether stop
+>>   function sleeps.
+>> - Simplify the stop_on_panic kernel command line parsing.
+>> - Enable the panic notiffier only if the watchdog stop function doesn't
+>>   sleep
+>>
+>> George Cherian (2):
+>>   watchdog: Add a new flag WDIOF_STOP_MAYSLEEP
+>>   drivers: watchdog: Add support for panic notifier callback
+> 
+> - George
+
+
 -- 
-2.34.1
-
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
