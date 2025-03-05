@@ -1,149 +1,131 @@
-Return-Path: <linux-kernel+bounces-547212-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547213-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C969A5043F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:36 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F9D9A50442
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:12:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7027817466E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:11:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6735816F049
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:12:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428CF250BF3;
-	Wed,  5 Mar 2025 16:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E905124CEF1;
+	Wed,  5 Mar 2025 16:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="dJTQ41Fe"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="GRCmUsk+"
+Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C9FF24CEF1;
-	Wed,  5 Mar 2025 16:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BD91F63C3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:12:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741191083; cv=none; b=WuKKOzph4HYj832ZI0kw0FhSzoS+cPLmLkBC2FhXgTajSUpU8AstcmAiL5ELjsaZRVldDxo6r/m+HhJOD1E6sY5vDSDCrLjSCvh/sKJ78g2cS4lYAx/BzS8ko7ft85Mzz9ACzi4cjF1DP5/kwN6IVI8T38NE2NF0cKVAFz4q1xc=
+	t=1741191140; cv=none; b=jeBDPqPukbxiKOwt4l0Ns7dmmwNqDZzKVar45zDY1M2MnIxHKZRNxk6ZdPlu67PAPSqWGTw+mGBquzEGXvrhXc4OQDcoaMfXyF0aF0ZWpSfMX7SRMl+Vsa+T1vEYxMWrE3nJ4EUMmJcMau0rEmNFSLCOGMEwGoDeDgT2Akl4U9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741191083; c=relaxed/simple;
-	bh=6QXaCKQRsaurIu3iwN0Cxq8aCQHGXHhdeI3bUW8oYCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W7W8nWEKi3OYf51Yx2J1Idf/M9D84nGjfeP6/E7HJ83CW2ceIgq6ezXujwvqo7ckzvNPL/l76eKH+aevYopuZTjN3hUKIuCAEOYpjOAOMflaBFPamjcWkyOD2qBXzsNC7fSuATvRabMYhNz+nQ6v1H4iQhTNvV7rc1iZ7/ZEO+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=dJTQ41Fe; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741191082; x=1772727082;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=6QXaCKQRsaurIu3iwN0Cxq8aCQHGXHhdeI3bUW8oYCw=;
-  b=dJTQ41FeiUK+xwmslNZE62onYlONI8FjWnTOFHSmRMkn53kKFWVeZgzU
-   C6ctLNVvk9eyMH838HGVscJn2VQbyNKKakfoN7fwKnAvO0Akg+DmlFqfP
-   1Rg9prGq8wTyFXG+s//YF3PixEtlbKMtLbM9VRw8sODrHh8XhXt0nr2Ye
-   ZY0cktGKaM0fEEeTr+91vTYNW2ejbpc3VSnopMZDnxnabwTwLNB2suik+
-   toJ2M6jHyuAeLEAdOULZNO0wUlc6eP/IHrPPcKUgZIvk6CzRIWUXFrSUE
-   7GUO+TbQbzNFNX7iQGFkk6iBriDjojYNHBGQwlRmVWfM13Yr7k+l1t2ww
-   Q==;
-X-CSE-ConnectionGUID: BUTiOH1+Se6FbpGsg/UHKg==
-X-CSE-MsgGUID: ZBzKnLB2RIiVMXiSQ+qYZQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45818928"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="45818928"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:11:21 -0800
-X-CSE-ConnectionGUID: QepDo20IRPG2e/dHSgWkUw==
-X-CSE-MsgGUID: bjAmI4rWQTeYYKH4z7qinQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="141972117"
-Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.196]) ([10.125.109.196])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:11:20 -0800
-Message-ID: <293158f0-d36f-4569-bad3-6be1db938457@intel.com>
-Date: Wed, 5 Mar 2025 08:11:40 -0800
+	s=arc-20240116; t=1741191140; c=relaxed/simple;
+	bh=2q39nFob89uGjhIZ3SJiCBavEHz6XphRtukgeM+fPHU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KqUVP4ejTmyLm0jmkoZdbdaFbVLnnRG1VdLZlxP6HhsrMC5b5F2a8HB+UQ+REfd8XK/iOh7Q00Yu90Vlz4/nrE5UfXZ19/gHg1c9QXKV4OepPGEVoZOU5fnwsiTHJtDdQxDp7CF1ryZjDXB+2R+ISmMouxxsRSidRMcEpAUbJa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=GRCmUsk+; arc=none smtp.client-ip=209.85.219.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e60c4412127so3250672276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 08:12:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741191138; x=1741795938; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HR6v/qJNcz2018VPIy19J59hCQI20OhNaLeBeMvMyms=;
+        b=GRCmUsk+KxmEFI1arAP0wyX/T/tWMTzc9ZJ+oF37MOw5vKZfVPQfE3GS0AImNbqEV1
+         t/WJ2kUcsQ5FaifEqil2ms5vhwPJQ+hEC63dbLxWoLgBqQ6trVqZ7E+zSPAJrxuxa0g7
+         MW+oYixfDflRvccCzn4GSy30B9Ya+nS/f8qDuQuD0CxpbB+bWLdykfDgr9KVSQkJljrN
+         l1y0PRKxER4TdC3RI1kd3hAyKXX42y6Qa+rcMX4VXy1WjHKFMx0rfPllrQhKasdPcE9S
+         9TSKHrYxV5yE1TujVK03fCfYDAsz+IqXT49919qukuVWrrwcJqugFSc1Lpg4PPv5OeQF
+         fEsw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741191138; x=1741795938;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HR6v/qJNcz2018VPIy19J59hCQI20OhNaLeBeMvMyms=;
+        b=RciJMmtdpZnr5yCqjTgDh8z/17QJKUj4HrcaF8GbaY7VG2OOGON2xh+Oa1r2t8Qckw
+         dAphBNORonlVzZiJgR0n4SehR9WDrRHJGjnSKvv1HAmXHoJGL1SfIw6ejOzkIujwkHAv
+         nbiDnkh5sSTBK3Qv+c4eYv67PS2DsutS7wAWR1cuutQZLQsrvvoBehMquLJTr4znepPb
+         wjZ1jzCSFrrA3rmrfHrx1zJlb/PzG1uTm1rn038JqbdLIDGg7X1D3c8gNmf/vNlQUIfI
+         UbFTBAJwACItLnAzJ5FKrwhUfMHZjwClFMqgcobPkP4RIdyZxdK52CGgPAMkpJuXBVTb
+         ETUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZWIvs12DpTvdrnhHps3enrttOACa3Xw0XR3+4WpaLO+kbA8VdXcRvcbAcROdHbcxaF4+iIjTJ1goRY60=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1/yufRCu6Z5UyNnRiojCcX704tnctNEZkHNsWbmhVMsq5olNU
+	QTii5G7PWuU3p7J93Q7aZvCEZm5Q2drCr/SUai1h4u141xosfJJZMepH1ZAT40jcIomcVtCZHqj
+	Smb9NOphKdmz5bJ2hggKj9uabcqc9QfhlSi3q
+X-Gm-Gg: ASbGncud8BvjRUGIDUu7y6HQ5mBTSZCK5VgzmJd3uMg6owS+1oqUKCnZsPo5GcSs2QM
+	X0gFW2ICD5l1SyDUVNoNVkJ5HKO8K+AJkqlP48540nD5UZwhEDoXxMtd3g0QCor2oH7Nz6snKcR
+	/4Tpw+dsZQq9ZPaOpv+WjSqaTafg==
+X-Google-Smtp-Source: AGHT+IG2+ri9TiG/+pR3y5KkKxoz0d2KVOY8e3WkmBgUHc2qC5BioAV59fgj/NVLtTUT4F32NzzVt7ytF05Eu8bmAsg=
+X-Received: by 2002:a05:6902:1583:b0:e61:1be5:d0ae with SMTP id
+ 3f1490d57ef6-e611e196a54mr5413376276.5.1741191137730; Wed, 05 Mar 2025
+ 08:12:17 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] perf/x86/intel/bts: allocate bts_ctx only if necessary
-To: Adrian Hunter <adrian.hunter@intel.com>, Jiri Olsa <olsajiri@gmail.com>
-Cc: lirongqing <lirongqing@baidu.com>, peterz@infradead.org,
- mingo@redhat.com, acme@kernel.org, namhyung@kernel.org,
- mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
- irogers@google.com, kan.liang@linux.intel.com, tglx@linutronix.de,
- bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
- linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250122074103.3091-1-lirongqing@baidu.com>
- <Z8hV3WYuHxHBNoNV@krava> <Z8hXsvloKEb7ia3V@krava>
- <d70b6f8d-0e86-4814-bf05-4c3d9acd313d@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <d70b6f8d-0e86-4814-bf05-4c3d9acd313d@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+ <20250304203123.3935371-3-bboscaccy@linux.microsoft.com> <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
+ <877c54jmjl.fsf@microsoft.com> <CAHC9VhQO_CVeg0sU_prvQ_Z8c9pSB02K3E5s84pngYN1RcxXGQ@mail.gmail.com>
+ <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com>
+In-Reply-To: <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Wed, 5 Mar 2025 11:12:07 -0500
+X-Gm-Features: AQ5f1Jpzk8xNhqaDNcdEV_2AlQwGfaf4RmRxkPjJlwjeTek1OtX3R3sL0LkAbEc
+Message-ID: <CAHC9VhQ1BHXfQSxMMbFtGDb2yVtBvuLD0b34=eSrCAKEtFq=OQ@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
+ LSM/bpf test programs
+To: Song Liu <song@kernel.org>
+Cc: Blaise Boscaccy <bboscaccy@linux.microsoft.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Jiri, thanks for the report!
+On Tue, Mar 4, 2025 at 10:32=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+> On Tue, Mar 4, 2025 at 6:14=E2=80=AFPM Paul Moore <paul@paul-moore.com> w=
+rote:
+> > On Tue, Mar 4, 2025 at 8:26=E2=80=AFPM Blaise Boscaccy
+> > <bboscaccy@linux.microsoft.com> wrote:
+> > > Paul Moore <paul@paul-moore.com> writes:
+> > > > On Tue, Mar 4, 2025 at 3:31=E2=80=AFPM Blaise Boscaccy
+> > > > <bboscaccy@linux.microsoft.com> wrote:
 
-On 3/5/25 06:58, Adrian Hunter wrote:
-> It looks like there are 3 functions affected:
-> 
-> 	intel_bts_enable_local()
-> 	intel_bts_disable_local()
-> 	intel_bts_interrupt()
-> 
-> Perhaps make them static calls?
+...
 
-That, or a few:
+> Do we need this in the LSM tree before the upcoming merge window?
+> If not, we would prefer to carry it in bpf-next.
 
-	if (!bts_ctx)
-		return;
+As long as we can send this up to Linus during the upcoming merge
+window I'll be happy; if you feel strongly and want to take it via the
+BPF tree, that's fine by me.  I'm currently helping someone draft a
+patchset to implement the LSM/SELinux access control LSM callbacks for
+the BPF tokens and I'm also working on a fix for the LSM framework
+initialization code, both efforts may land in a development tree
+during the next dev cycle and may cause a merge conflict with Blaise's
+changes.  Not that a merge conflict is a terrible thing that we can't
+work around, but if we can avoid it I'd be much happier :)
 
-if you're not feeling as fancy would do.
+Please do make the /is_kernel/kernel/ change I mentioned in patch 1/2,
+and feel free to keep my ACK from this patchset revision.
 
-Would someone be interested in sending an actual tested patch, ideally
-the patch author of the regression? <hint, hint>
+Thanks everyone!
+
+--=20
+paul-moore.com
 
