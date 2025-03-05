@@ -1,117 +1,107 @@
-Return-Path: <linux-kernel+bounces-546570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC40A4FC5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:39:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C93FA4FC50
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:38:46 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5FA3AEF6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:38:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BB5016E325
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE79B20AF62;
-	Wed,  5 Mar 2025 10:33:58 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3BB207A0E;
-	Wed,  5 Mar 2025 10:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AC8320AF98;
+	Wed,  5 Mar 2025 10:34:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09CBD207A23;
+	Wed,  5 Mar 2025 10:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170838; cv=none; b=pm2fdg0S7NBLe5bachI8ctXwF3fNAjGGYGx1pcuGe05PE+dmn+YWNoRMV9/MAutNLxnTBAneaXhKP7pfvqtD5r1AlbBSRtXUMJKxRO/GDG8LUVeTYKagEXtqzgiJn1uxq7mwNGBNLqULmPz6icny30bGIvR+2ciHb3s/N7RX2ME=
+	t=1741170881; cv=none; b=YFDcggEcKTJiUmxe2smNDBh73/m0CVJGJpLVh6oSjY0/bMF+3VNWySf31g7uoE9EbR5jaBVoxmU35yp9gAkvL7TL/Kk4at8azZFy4SgU9+W8kBYTUqbmq+zeKpmqp7RrCtEUPjfpLby/LNNg+OuWL4DucuAhy3bvdi3hNKMzdkI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170838; c=relaxed/simple;
-	bh=/kfliGAoBPvG2knwQZdrlMxpuZZfEtlJZ3KKuBQ/FTY=;
+	s=arc-20240116; t=1741170881; c=relaxed/simple;
+	bh=Q5R8aeHwPAXVXsXv1i1SqxENOrR8VBTs6sXUnEeVorE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=plDC9sMDOCHCjbPXb7pXVBxnwonkWmKNNqQf2aV386GgzmjUpWILRupi+EzjZ2owNdMpwKWbWX2KhyfEgtBTJBeLV60k88jbvwd1XkeXmvJi2PgzvtWXiWLHWM63lOHCoY5uuXQakwro1zzSWVEQMHZ5X6H7f3H087BdamQk7pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: t4huneS6T/yGNZN0mL9lRQ==
-X-CSE-MsgGUID: pYN75pXjStKsuePUmcp1lA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="44936599"
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="44936599"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:33:56 -0800
-X-CSE-ConnectionGUID: Pmo02+QiRyuCyBTsLyBQKA==
-X-CSE-MsgGUID: +3/qaz49Qz6WtsiJJYV/Ng==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="123579370"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:33:46 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1tpm4L-0000000HNsf-1gjT;
-	Wed, 05 Mar 2025 12:33:41 +0200
-Date: Wed, 5 Mar 2025 12:33:41 +0200
-From: Andy Shevchenko <andy@kernel.org>
-To: George Cherian <george.cherian@marvell.com>
-Cc: linux@roeck-us.net, wim@linux-watchdog.org, jwerner@chromium.org,
-	evanbenn@chromium.org, kabel@kernel.org, krzk@kernel.org,
-	mazziesaccount@gmail.com, thomas.richard@bootlin.com,
-	lma@chromium.org, bleung@chromium.org,
-	support.opensource@diasemi.com, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	paul@crapouillou.net, alexander.usyskin@intel.com,
-	andreas.werner@men.de, daniel@thingy.jp, romain.perier@gmail.com,
-	avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-	venture@google.com, yuenn@google.com, benjaminfair@google.com,
-	maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
-	christophe.leroy@csgroup.eu, naveen@kernel.org, mwalle@kernel.org,
-	xingyu.wu@starfivetech.com, ziv.xu@starfivetech.com,
-	hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	chrome-platform@lists.linux.dev, imx@lists.linux.dev,
-	linux-mips@vger.kernel.org, openbmc@lists.ozlabs.org,
-	linuxppc-dev@lists.ozlabs.org, patches@opensource.cirrus.com
-Subject: Re: [PATCH v4 2/2] drivers: watchdog: Add support for panic notifier
- callback
-Message-ID: <Z8gohVIQqlA6QquZ@smile.fi.intel.com>
-References: <20250305101025.2279951-1-george.cherian@marvell.com>
- <20250305101025.2279951-3-george.cherian@marvell.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MhPnwG6nVBv/gX4hF3tL/ridkxiYEgtvfCN3XxjOOpxWrxJFPumsSLyAvn3RemzCMejsHqSysTrxOomDznjHqeveYxAokVPlZw+m/obIkNgbfB7X8pMBlTNE1E4EVvA7JZ5shzJpsh+o7VtFt6jRomHqpVfZ7c2K24kaM7Ormz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BC340FEC;
+	Wed,  5 Mar 2025 02:34:52 -0800 (PST)
+Received: from bogus (unknown [10.57.37.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 7A3DE3F673;
+	Wed,  5 Mar 2025 02:34:38 -0800 (PST)
+Date: Wed, 5 Mar 2025 10:34:35 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	Adam Young <admiyo@os.amperecomputing.com>
+Subject: Re: [PATCH 03/14] mailbox: pcc: Drop unnecessary endianness
+ conversion of pcc_hdr.flags
+Message-ID: <20250305103435.nl5q2uvyqftal7en@bogus>
+References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
+ <20250303-pcc_fixes_updates-v1-3-3b44f3d134b1@arm.com>
+ <5093286f-1db6-bab2-920d-71fe274ad251@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250305101025.2279951-3-george.cherian@marvell.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5093286f-1db6-bab2-920d-71fe274ad251@huawei.com>
 
-On Wed, Mar 05, 2025 at 10:10:25AM +0000, George Cherian wrote:
-> Watchdog is not turned off in kernel panic situation.
-> In certain systems this might prevent the successful loading
-> of kdump kernel. The kdump kernel might hit a watchdog reset
-> while it is booting.
+On Wed, Mar 05, 2025 at 12:02:13PM +0800, lihuisong (C) wrote:
 > 
-> To avoid such scenarios add a panic notifier call back function
-> which can stop the watchdog. This provision can be enabled by
-> passing watchdog.stop_on_panic=1 via kernel command-line parameter.
+> 在 2025/3/3 18:51, Sudeep Holla 写道:
+> > The Sparse static checker flags a type mismatch warning related to
+> > endianness conversion:
+> > 
+> >    |  warning: incorrect type in argument 1 (different base types)
+> >    |     expected restricted __le32 const [usertype] *p
+> >    |     got unsigned int *
+> > 
+> > This is because an explicit endianness conversion (le32_to_cpu()) was
+> > applied unnecessarily to a pcc_hdr.flags field that is already in
+> > little-endian format.
+> > 
+> > The PCC driver is only enabled on little-endian kernels due to its
+> > dependency on ACPI and EFI, making the explicit conversion unnecessary.
+> How to confirm ACPI works only on little-endian?
+> > 
+> > The redundant conversion occurs in pcc_chan_check_and_ack() for the
+> > pcc_hdr.flags field. Drop this unnecessary endianness conversion of
+> > pcc_hdr.flags.
+> > 
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >   drivers/mailbox/pcc.c | 2 +-
+> >   1 file changed, 1 insertion(+), 1 deletion(-)
+> > 
+> > diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> > index 4c582fa2b8bf4c9a9368dba8220f567555dba963..c87a5b7fa6eaf7bcabe0d55f844961c499376938 100644
+> > --- a/drivers/mailbox/pcc.c
+> > +++ b/drivers/mailbox/pcc.c
+> > @@ -292,7 +292,7 @@ static void check_and_ack(struct pcc_chan_info *pchan, struct mbox_chan *chan)
+> >   	 *
+> >   	 * The PCC master subspace channel clears chan_in_use to free channel.
+> >   	 */
+> > -	if (le32_to_cpup(&pcc_hdr.flags) & PCC_ACK_FLAG_MASK)
+> > +	if (pcc_hdr.flags & PCC_ACK_FLAG_MASK)
+> It's recommanded to delete PCC_ACK_FLAG_MASK and use
+> PCC_CMD_COMPLETION_NOTIFY.
+> They are from the same place, namely, 'Initiator Responder Communications
+> Channel Flags'.
 
-...
+Good point, I will use PCC_CMD_COMPLETION_NOTIFY and drop even the definition
+of PCC_ACK_FLAG_MASK as it got added for no good reason.
 
-First of all, do we really need a new module parameter for that? Why can't it
-be done automatically if kdump is expected?
-
-> +static bool stop_on_panic;
-> +module_param(stop_on_panic, bool, 0444);
-> +MODULE_PARM_DESC(stop_on_panic, "Stop watchdogs on panic (0=keep watching, 1=stop)");
-
-+ blank line.
-
-Also I do not see the documentation update. Where is it lost?
-
->  /*
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--
+Regards,
+Sudeep
 
