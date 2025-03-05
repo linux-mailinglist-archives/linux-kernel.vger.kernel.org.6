@@ -1,87 +1,92 @@
-Return-Path: <linux-kernel+bounces-546242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6A96A4F847
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:51:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A755BA4F84B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:53:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390703A5E1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:51:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DBC916D28A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1C81F153A;
-	Wed,  5 Mar 2025 07:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGTIN5MW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 369441F416D;
+	Wed,  5 Mar 2025 07:53:07 +0000 (UTC)
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C6E17555;
-	Wed,  5 Mar 2025 07:51:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 759EF17555;
+	Wed,  5 Mar 2025 07:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741161101; cv=none; b=ZNNL9jZUr5iFy+wA8GlxfYczeNDUuk5kS+JsHGdPTBRux60NxOihh/wAFQUBGfiXlnJoq4IgEyeT2pwuOYbBXDdG4w3o1tBI3P247Oib3EdIt1yrhfh/WG04RQSuAimpFfBCN4SeEYez+VZ3cH12DQmtzyUE7aMPJvPgGkeyIPA=
+	t=1741161186; cv=none; b=mTWzXMtNYXANNa7FjnlMvq8TSYfYbZteojrRm1jG2mai+SLJJ4HNy3jQuMvIa+vYm8Y6NxrcPFlwCwI1BjhJ/NIahOe7b2o/oQPFueActPewQZfQuZWdVkKObX2etk6DdHe7YRSHOjgUfUnpzoEbg5CP2mqq0ESZ2bQ8CpsUoUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741161101; c=relaxed/simple;
-	bh=QyFRWvas24e4KFCBZT6GjOM6RBxXtM6JmFhw+HxMXC0=;
+	s=arc-20240116; t=1741161186; c=relaxed/simple;
+	bh=Sq/v/OM/1qS45H4g0YlraJb50W42tf5JVWHwZD4MlSQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LGGY8RXdOoIwZNihDgD1rqCnIFMSLjPofyMw/+YmJMkdRcBmyNKDLQJ2xifLf0kX8DODkm8p3pD0BKPCqYlundI3QPp3ojDgkBEs10dg8m+qyqd61UXpVj5x3K8vbblXvUO3cc1ksalnAMGy2RpbV43wL1UptJu8+9cU4fHKpcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGTIN5MW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19D2C4CEE2;
-	Wed,  5 Mar 2025 07:51:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741161099;
-	bh=QyFRWvas24e4KFCBZT6GjOM6RBxXtM6JmFhw+HxMXC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WGTIN5MW2xH/jYQsYk7OaCKGbVAnVS1qUqybaNHjTY3DW+0wnGQ/qFcXFsK7ojCzV
-	 eFDDIp3WSCk48TAx/mNGH4e1R8rE6cC7wfNvNka/3/ezu8q3jbhWxBoHZDmxQ1H/IQ
-	 xSeqI1glSzLexuE1/sAG+xdxSby4Yye97ToTijmVpkFe78+i9xK1tvnggp+zgSLiqx
-	 Prsp/d3TV/nwoeY655ghQHPAcmEEPRJgXzwCoxC9KWBJp0R0Gd0MTwUcLYaSTEit7K
-	 V9Jmmhwx/tktmAmp2fb3muPRDDW9c9pSldd20LpuRRGmXsv0UlrEWSWEJ3fDK3i4/j
-	 iOCvRKsELfoeQ==
-Date: Wed, 5 Mar 2025 08:51:35 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
-	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
-	jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
-	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-Subject: Re: [PATCH 1/5] dt-bindings: display: Document DPI color codings
-Message-ID: <20250305-important-quizzical-chamois-ff48af@krzk-bin>
-References: <20250304101530.969920-1-victor.liu@nxp.com>
- <20250304101530.969920-2-victor.liu@nxp.com>
- <20250304-deer-of-striking-pride-ff6e86@houat>
+	 Content-Type:Content-Disposition:In-Reply-To; b=OvOIqVtA9VK5BzKJnwOaO9LpgypWIGwat94q9xRdztFXXOGdoZnGBRZ+k8ZLgAYB3fyf4VeQX0ukNw/pQeJ0MH46u3vDlHvMar6sqSjnvaDWPk4TQifHecBx7VgfBxWIuqbeLopzajTxSZoWzYDL25JQPBbZkp0/t0VyGqtQlrE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2239aa5da08so57775275ad.3;
+        Tue, 04 Mar 2025 23:53:05 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741161185; x=1741765985;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QUsr/iCnKd/GZUSiPP0qg3YZq8O3ABD8811wmqc6RIE=;
+        b=KbVG2M9Rz+DMzGUsAtv5UvxiHokzg70Y+2JMuNOoP8ZUT9ZYbspFot/HtkQqdaMjVv
+         5UwWQQSx/HiZFGLJknyXMRfJfZWhKDFe9BPpX9aUuqbbzsawnpQbNgQ+knMIsq5RtKLg
+         uGOndaxoK5sjO+hIQrPEaPhxShGuNohpo2WC16DFn+DaTCiQI/Ez/2LVR8yK/zDm6aa3
+         O3VB82TMTfkkYcRoq3rphjVJIHRETwXVQVcK0Plm2np0qq8eczVLoh2IZIZgyTfob77e
+         ZyWbvHQviJrDqKaWeVF5dU7blZrzbbM2bU7Gus3RK2fagQ/wTE7pL+VK7eJU1OjJJQ6o
+         eKWg==
+X-Forwarded-Encrypted: i=1; AJvYcCUpnlwk7VPzNhZ5zwYBi2z51kQQ/QwMnCtOxaozNxBzeFNu5B0sXpTQBj1SdPg7T+/6sDjYASwLTfPx9ns=@vger.kernel.org, AJvYcCW0BKaQqVqJOs/j0VLuL3MoSP38tw89GweM9gyOwtsRHuD5R2LPf8LjLyA2FAHSHePAJhtLvYujBQQs@vger.kernel.org
+X-Gm-Message-State: AOJu0YxbVtiEIaALTITAcbydJRrbyE7Ze8OapcAii5W4R6npkUbUMFVk
+	3ucEriv40tc1XVHKnvISU1+6XbEnpCAM5UQMKEOrdMtw7RL5CAc3
+X-Gm-Gg: ASbGncvtjG47ToUQ/CARWyU8+IB+NqK0RjpEaxO0HzXok3eCC3/4sfEN3n5lvwLGkrI
+	U/9tDSKSEbpPpQABQaISI5PAI687qPukhwAxn5Z6JfoSxbeV2Jg/Tdhv7mKXDIpiey+pVTRnDNv
+	1bWorLXuZ+apGqbtpXH5wZbO97U5iJ8b0oGmctdFpqCPHG2R1MLUF5siOWa8FQfsfW6AgzxU8sR
+	JXSuR4aAQcHpGK5b8bXW1drHMJGmaUgth2LmvKmEgsHCXEsYGVcx3MT+DBgylukvWShtLAlOzyV
+	LHndRDie2zNmLzvtniiHoysSYmxueUpShjv3gqE4BKbWYpLzNlftuOyt29S1IKwWf64QCI6pHEj
+	CaEc=
+X-Google-Smtp-Source: AGHT+IGc/QGITU1VyyG2bR8BE8zXWKg2nLipJcMYsipV+Ey8nHltBSogWbamh50FAZrr7Q2bpkYmww==
+X-Received: by 2002:a17:903:1987:b0:21f:85d0:828 with SMTP id d9443c01a7336-223f1d6cd19mr34190085ad.41.1741161184651;
+        Tue, 04 Mar 2025 23:53:04 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-223501fd276sm107054275ad.104.2025.03.04.23.53.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 23:53:04 -0800 (PST)
+Date: Wed, 5 Mar 2025 16:53:02 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Charles Han <hanchunchao@inspur.com>
+Cc: ryder.lee@mediatek.com, jianjun.wang@mediatek.com,
+	lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+	robh@kernel.org, bhelgaas@google.com, matthias.bgg@gmail.com,
+	angelogioacchino.delregno@collabora.com, linux-pci@vger.kernel.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] PCI: mediatek-gen3: fix inconsistent indenting warning
+Message-ID: <20250305075302.GD847772@rocinante>
+References: <20250305070022.4668-1-hanchunchao@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250304-deer-of-striking-pride-ff6e86@houat>
+In-Reply-To: <20250305070022.4668-1-hanchunchao@inspur.com>
 
-On Tue, Mar 04, 2025 at 11:33:44AM +0100, Maxime Ripard wrote:
-> > +properties:
-> > +  dpi-color-coding:
-> > +    enum:
-> > +      - 16bit-configuration1
-> > +      - 16bit-configuration2
-> > +      - 16bit-configuration3
-> > +      - 18bit-configuration1
-> > +      - 18bit-configuration2
-> > +      - 24bit
-> 
-> Do we really needs strings there? It would be much better to use an int
-> plus a header
+Hello,
 
-So DTS would sill have a name, just being a define? Then what is the
-benefit comparing to strings above in DTS readability?
+> Fix below inconsistent indenting smatch warning.
+> smatch warnings:
+> drivers/pci/controller/pcie-mediatek-gen3.c:922 mtk_pcie_parse_port() warn: inconsistent indenting
 
-Best regards,
-Krzysztof
+Applied to controller/mediatek, thank you!
 
+	Krzysztof
 
