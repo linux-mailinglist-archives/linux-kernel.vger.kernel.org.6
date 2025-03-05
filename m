@@ -1,316 +1,205 @@
-Return-Path: <linux-kernel+bounces-546643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546647-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40CA1A4FD38
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:08:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9352A4FD42
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:10:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 631A91662C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:08:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931F61885D19
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:10:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DEE233120;
-	Wed,  5 Mar 2025 11:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D31232392;
+	Wed,  5 Mar 2025 11:10:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ifMWveS3"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VmccNY89"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FE0E21D5B5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3515A214A68;
+	Wed,  5 Mar 2025 11:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172878; cv=none; b=fXndOBsYegIl+B++gXBcVstgQMMV3aPCSU6wYNj+ZCpb7Gq3yua74zAqy3LW2mx1ujTzP1LA3aYVPaNYONIZmk4a2kg9HOcb0f7jk+H1Y75X7B6tRfX7H7k3EROIbOUUyuEY404EWez+jeFUkkhIGadtwZJjuuGo1AYHo9XvLRw=
+	t=1741173010; cv=none; b=TBxDDohKvgdUyPwRtrjXM0geX6fAE/vq0Jj3J55cA5vTR1iwRpD+7Cywiu5NPn1GaGY6mnxzZ7Z+fYnaQ2X5g8nrIgM+VEenDGAtt983gtNDVEOUNMpxDlMRLAgCA49w2QpN1p5qWZvI2ZLLEvgknT3hyt0fwXvcgHwzGwQWASo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172878; c=relaxed/simple;
-	bh=VIoJ7LBjd2nSqGic2dxC8wBbweOUxEp3YMTToF1Hdqw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oyxjBwsqpRNzclKPAZ0Ck7yOPmmQW/JV43GfCGomvEHy3RIZ4Wv4Q2afkI1qf4sqVmpxyDOPnkCdsI6D/NE9Ot3ANDPKPV+XH6e1dXvfPbtiUJdf4ks7aAqvevC96ZEWvbCGLdJjGxKdRkai91GX84o6gi94Pu4CbcxL8apPzZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ifMWveS3; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22374f56453so125374315ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 03:07:56 -0800 (PST)
+	s=arc-20240116; t=1741173010; c=relaxed/simple;
+	bh=p1h54BOh8Q9XBTfcRZnJQ9PmT0Z8qvm1fYbU8PCxoBg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h5YgMkJCiXGh/sqoajeW0sva9obL7c39s5dRBOHrGY1N7v7ppagnIK7JUVJrg9XOKM9vRa/qxXp9MeFpBWQYEjqC8SxxmzIzs3Wdc8fwgkP9ZDw1ouYiXgUGrEqnFSFVG6fZMTaAWvNmNPr6VaFE0OcbpddgCZOc7865eTZ5lx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VmccNY89; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2feaca4e99cso9862746a91.0;
+        Wed, 05 Mar 2025 03:10:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741172876; x=1741777676; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=h8Cx5fHR+4jmiXuXaT5oD7FRlDS4S8GZIWX7AhsEi0w=;
-        b=ifMWveS3ojmB9qpQQglswmWNkENufeZCerQQ0/Vb9g3T4WFabuiW+OdGSIiLJcfd+m
-         k4DBIszwkGESCrDZVkg+BGkfSeK/Q1I+eT6Ei6tZS0A2TSXrZJ372WJv19wENcDqBd+Q
-         91sAj5OAP+QF1GtGlm4lG1oblaio5MPwRQXN45qKVD+4fF1XpJhftRHi3WaBcCfgtKfV
-         gfYrB5n1RnTOvvSbSIAbByPwlZU+yT+mdkcrNvn/i8wNb5288Ord5mXrWjxONMXxpcUW
-         gQ8WCcuz7k9ltlzNb/IWn0MTv/gM4TUA5meDURKcsoeLP3k+ou0lZC+KIafNCYem7jpA
-         jrcg==
+        d=gmail.com; s=20230601; t=1741173008; x=1741777808; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iMVkt8VvD9u0w9McePyp8QpG5OxxVEdJnPN4xngSa2I=;
+        b=VmccNY89vD6MDTzcHbNuM6mCkQbZ9rI8uv9fZVvTBwaWRJgmOVeziyIhXQ8f0XM1mE
+         Prczn78qj0Lk2rK5/6VA7rZwvEvAjcUKoXG7mEVuNSP5rtFgcKbaeRtGdsfUxDgSeeUy
+         9bjMBJW/BBvuF0yvyrf8/c3LSTmeMtWHEnacexO+HhVMIfZXqGMJWbodPtrD1SQrnSAO
+         mccncik3AGa61hzfIIBvE2TYSCnEJ1o6uqag3T4IYIlWOlrCVI5hL2BsUWicVi2aau/2
+         ucqfAoaLcjzj0O0S+sLbM9t0GGkp9HhtMRKd7bCqLVWpCZQ7Pr0xHbtYzg/RkYNK88eo
+         qszA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741172876; x=1741777676;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1741173008; x=1741777808;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=h8Cx5fHR+4jmiXuXaT5oD7FRlDS4S8GZIWX7AhsEi0w=;
-        b=Z97JJ62wKHBzrEADJFvjuBmI/K2ESDGxqMX8vgZd+K++F+y/YhJ+gjwE8o5x5kBcmb
-         quHqfuouIy4m62egnIxtLtS+8F4hU6hwHk5KgLWQVmFCcWJv/NSNIqX8e4ddx5EvDSXc
-         qKL4Xo5mo9PO3FPoQzboe43E3fcy8ihRtO/EQnQPlHpXBh+6YvAFGTajnaDXO5goIbi+
-         gijm/nsRhOQKcgyZKsGQgYLfsgXKrt0gNfSDY2K4sG45Qk2nP6IM+Gq+96NM03UwyVtx
-         bI3LZm5ramfWonDafypgXCiAO2+y/zbt/Q47GxXDLSo6sZcVkji2BLyf3VnzjbV+cQGe
-         IdGA==
-X-Forwarded-Encrypted: i=1; AJvYcCVIQ6d4YlrFIOqZnpIdwzBc4Ag3HWBEDHHiPruT7iO8zwMDdBZiFmbXUyW9TalUjxtjkgtPsMtRi2/C7WI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA71j8t6oF9V+ToLNv+l4Z42WGvz2Ay7AZ3riUGUrRDyrnB5yN
-	2YSm3hHh9LX6GK4eOxz/7QFJgcRutyGpVleR/fomNhnMDBZhC6M7keOT5mBagK/XwH5Yg2GJJSZ
-	Z2ylRAjU7SwSX6tfY/KHascLoM7dulIsIp9H9sQ==
-X-Gm-Gg: ASbGncsomJXvOdtNlqlqGTlA5Bb3f/1ys+qKwagUYFqrjyfQhBjt4VQzWWizzlQjMrA
-	5fWjTtXMZZpkPH71uOx0J7jeRwsLu1w/dGpHIOprWeAuzexFgeO61v2JSrp5pQ6LXZL7oBCYxKx
-	JvWuu4FLg6uQAqUFRE6PSMpbyeU56GkzinwPSSQjkSLSWbjrKeF+hbOF+fVOU=
-X-Google-Smtp-Source: AGHT+IGeHajtM6a8RKzvxRCPhC7Gav1e5qdV7p0kvwl/9Chh9iSgselzALrtnrWd7JtUMEd3C1yGOLe31+tUVRNx8X0=
-X-Received: by 2002:a05:6a00:3d4a:b0:736:4b08:cc0e with SMTP id
- d2e1a72fcca58-73682c53721mr3253307b3a.17.1741172875711; Wed, 05 Mar 2025
- 03:07:55 -0800 (PST)
+        bh=iMVkt8VvD9u0w9McePyp8QpG5OxxVEdJnPN4xngSa2I=;
+        b=NyXSv4l26koyjujc7bRH21qQLe+mfmuHxIYPUFzVgBleyYvIx+3RVIklT+eb3LSpwI
+         CH+daM8rCtAJcl5UzjxzD9g0gfbjiAPmHie3gEmAvCtcy78D2mK5feMhoOA439D8VqHW
+         La7eZfxJ5P00qHHGy9qd8qSQgxma96AcVbgkN9p0ZwSfymXFj0MDuBSsuVwAoj8h12j3
+         2U1fZ0v/v8EUamQhOQGsoHMnSQ4d0/almhGH1CKlqOsMAHKjtm+B6XYbMzNUFPjH5l7J
+         uPpQuxEdVT1goUYdtUMvtc5Lc+zPysgzs66LP+bKyNh8nxE4ZEvNwQePG2gHmabN2K+2
+         4Jkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZD/l1p8mlxBviQvVK/OUgmVdWChcH2DHLSVYZlI6mPyadv0JSYnOE5i/xRnCWfzBVV28rlUfXRpdyTiwsPg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YylJTET0wWdaZis7cC5AnLJkJiDJ8iTSWrYN6LaW4p3xwY4a2l0
+	1QdR2tWivKmM53LNe35Sb7xQCF8OF5OxEag/JBGbwjerNiQnQ9RcPBTYi4FD
+X-Gm-Gg: ASbGncs0eG9lgRX8paL605W19aNyw3XT/+IF5H6E2Q8czzDI2lx2pwRo5ODrlMGFzVM
+	Osz9byEeQoYsjqtewiHF1MW22HdX7/Qumkl00u4JGQ5U87lxY5gejwHXhN3h2E9cp5r0YI11wMK
+	12Ksj4OS6zA0Q63Vi1fX6pkpQWeC8GZ6V/3q39CJI35FcpCNt3jUOMZQluMBD3VGhoT8SgUMzQ1
+	7Jxh/6qD7jDhKXaIX/FOBuyzThZ/ZF1OnESY3mJV+ChkQsiyb3czbYdLI8k9RcIkmLU7aQNtIFU
+	MPof3x0CJt0m9ddnZMsBBRcHiU/3+E7Cfk2bTd+YzE2LPmUh9XJhKboPzctRJM1afrXPWtUhXwI
+	keV4ZKha2QbvETnSOsieDfw==
+X-Google-Smtp-Source: AGHT+IFluiMV7JrX1O1X/v1UbVS/X37LSME/ig8/X1xAoOdMRtTxpinwMPddXbT0s26nxPYJt9KENA==
+X-Received: by 2002:a17:90a:d2c3:b0:2ff:502e:62d4 with SMTP id 98e67ed59e1d1-2ff502e645cmr1921672a91.32.1741173007728;
+        Wed, 05 Mar 2025 03:10:07 -0800 (PST)
+Received: from mew.. (p4204131-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.160.176.131])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7737a5sm1060925a91.13.2025.03.05.03.10.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 03:10:07 -0800 (PST)
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+To: linux-kernel@vger.kernel.org,
+	rust-for-linux@vger.kernel.org
+Cc: x86@kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	loongarch@lists.linux.dev,
+	tglx@linutronix.de,
+	mingo@redhat.com,
+	bp@alien8.de,
+	dave.hansen@linux.intel.com,
+	peterz@infradead.org,
+	hpa@zytor.com,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	catalin.marinas@arm.com,
+	will@kernel.org,
+	chenhuacai@kernel.org,
+	kernel@xen0n.name,
+	tangyouling@loongson.cn,
+	hejinyang@loongson.cn,
+	yangtiezhu@loongson.cn,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	benno.lossin@proton.me,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu
+Subject: [PATCH v4 0/4] rust: Add bug/warn abstractions
+Date: Wed,  5 Mar 2025 20:08:10 +0900
+Message-ID: <20250305110814.272792-1-fujita.tomonori@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303032931.2500935-1-quic_jiegan@quicinc.com> <20250303032931.2500935-3-quic_jiegan@quicinc.com>
-In-Reply-To: <20250303032931.2500935-3-quic_jiegan@quicinc.com>
-From: Mike Leach <mike.leach@linaro.org>
-Date: Wed, 5 Mar 2025 11:07:43 +0000
-X-Gm-Features: AQ5f1Jotwj7vHwxJWb6wdXEyjYphyVf5Uwhw-vghsgB9wb3Lu4bYOf2iNdASjeU
-Message-ID: <CAJ9a7VgGp4YqzN-yx0x+NiZG8now6SCmnimaou2Z=exYcoiegw@mail.gmail.com>
-Subject: Re: [PATCH v15 02/10] Coresight: Add trace_id function to retrieving
- the trace ID
-To: Jie Gan <quic_jiegan@quicinc.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, James Clark <james.clark@linaro.org>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Tingwei Zhang <quic_tingweiz@quicinc.com>, Jinlong Mao <quic_jinlmao@quicinc.com>, 
-	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi,
+This patchset adds warn_on macro with the bug/warn abstraction that
+utilizes the kernel's BUG/WARN feature via assembly.
 
-On Mon, 3 Mar 2025 at 03:30, Jie Gan <quic_jiegan@quicinc.com> wrote:
->
-> Add 'trace_id' function pointer in coresight_ops. It's responsible for retrieving
-> the device's trace ID.
->
-> Co-developed-by: James Clark <james.clark@linaro.org>
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> Reviewed-by: James Clark <james.clark@linaro.org>
-> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
-> ---
->  drivers/hwtracing/coresight/coresight-core.c  | 30 +++++++++++++++++++
->  drivers/hwtracing/coresight/coresight-dummy.c | 13 +++++++-
->  .../coresight/coresight-etm3x-core.c          |  1 +
->  .../coresight/coresight-etm4x-core.c          |  1 +
->  drivers/hwtracing/coresight/coresight-stm.c   | 11 +++++++
->  drivers/hwtracing/coresight/coresight-tpda.c  | 11 +++++++
->  include/linux/coresight.h                     |  5 ++++
->  7 files changed, 71 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index ab55e10d4b79..32aa07f4f8c1 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -24,6 +24,7 @@
->  #include "coresight-etm-perf.h"
->  #include "coresight-priv.h"
->  #include "coresight-syscfg.h"
-> +#include "coresight-trace-id.h"
->
->  /*
->   * Mutex used to lock all sysfs enable and disable actions and loading and
-> @@ -1557,6 +1558,35 @@ void coresight_remove_driver(struct amba_driver *amba_drv,
->  }
->  EXPORT_SYMBOL_GPL(coresight_remove_driver);
->
-> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
-> +                              struct coresight_device *sink)
-> +{
-> +       int trace_id;
-> +       int cpu = source_ops(csdev)->cpu_id(csdev);
-> +
+Currently, Rust code simply wraps BUG() macro; however the approach
+doesn't provide the proper debug information. For example, I added
+bindings::BUG() to rnull's init method and got the following output:
 
-This is a global funciton so need to check that this csdev is a
-source,. and does provide a cpu  function before calling it.
+# insmod /root/rnull_mod.ko
+rnull_mod: Rust null_blk loaded
+------------[ cut here ]------------
+kernel BUG at rust/helpers/bug.c:7!
+Oops: invalid opcode: 0000 [#1] SMP CPU: 0 UID: 0 PID: 31 Comm: insmod Not tainted 6.14.0-rc1+ #103
+RIP: 0010:rust_helper_BUG+0x8/0x10
+(snip)
 
-> +       switch (mode) {
-> +       case CS_MODE_SYSFS:
-> +               trace_id = coresight_trace_id_get_cpu_id(cpu);
-> +               break;
-> +       case CS_MODE_PERF:
-> +               if (WARN_ON(!sink))
-> +                       return -EINVAL;
-> +
-> +               trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink->perf_sink_id_map);
-> +               break;
-> +       default:
-> +               trace_id = -EINVAL;
-> +               break;
-> +       }
-> +
-> +       if (!IS_VALID_CS_TRACE_ID(trace_id))
-> +               dev_err(&csdev->dev,
-> +                       "Failed to allocate trace ID on CPU%d\n", cpu);
-> +
-> +       return trace_id;
-> +}
-> +EXPORT_SYMBOL_GPL(coresight_etm_get_trace_id);
-> +
->  MODULE_LICENSE("GPL v2");
->  MODULE_AUTHOR("Pratik Patel <pratikp@codeaurora.org>");
->  MODULE_AUTHOR("Mathieu Poirier <mathieu.poirier@linaro.org>");
-> diff --git a/drivers/hwtracing/coresight/coresight-dummy.c b/drivers/hwtracing/coresight/coresight-dummy.c
-> index 9be53be8964b..b5692ba358c1 100644
-> --- a/drivers/hwtracing/coresight/coresight-dummy.c
-> +++ b/drivers/hwtracing/coresight/coresight-dummy.c
-> @@ -41,6 +41,16 @@ static void dummy_source_disable(struct coresight_device *csdev,
->         dev_dbg(csdev->dev.parent, "Dummy source disabled\n");
->  }
->
-> +static int dummy_source_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
-> +                                __maybe_unused struct coresight_device *sink)
-> +{
-> +       struct dummy_drvdata *drvdata;
-> +
-> +       drvdata = dev_get_drvdata(csdev->dev.parent);
-> +
-> +       return drvdata->traceid;
-> +}
-> +
->  static int dummy_sink_enable(struct coresight_device *csdev, enum cs_mode mode,
->                                 void *data)
->  {
-> @@ -62,7 +72,8 @@ static const struct coresight_ops_source dummy_source_ops = {
->  };
->
->  static const struct coresight_ops dummy_source_cs_ops = {
-> -       .source_ops = &dummy_source_ops,
-> +       .trace_id       = dummy_source_trace_id,
-> +       .source_ops     = &dummy_source_ops,
->  };
->
->  static const struct coresight_ops_sink dummy_sink_ops = {
-> diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> index c103f4c70f5d..c1dda4bc4a2f 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-> @@ -704,6 +704,7 @@ static const struct coresight_ops_source etm_source_ops = {
->  };
->
->  static const struct coresight_ops etm_cs_ops = {
-> +       .trace_id       = coresight_etm_get_trace_id,
->         .source_ops     = &etm_source_ops,
->  };
->
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 2c1a60577728..cfd116b87460 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -1067,6 +1067,7 @@ static const struct coresight_ops_source etm4_source_ops = {
->  };
->
->  static const struct coresight_ops etm4_cs_ops = {
-> +       .trace_id       = coresight_etm_get_trace_id,
->         .source_ops     = &etm4_source_ops,
->  };
->
-> diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-> index b581a30a1cd9..aca25b5e3be2 100644
-> --- a/drivers/hwtracing/coresight/coresight-stm.c
-> +++ b/drivers/hwtracing/coresight/coresight-stm.c
-> @@ -281,12 +281,23 @@ static void stm_disable(struct coresight_device *csdev,
->         }
->  }
->
-> +static int stm_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
-> +                       __maybe_unused struct coresight_device *sink)
-> +{
-> +       struct stm_drvdata *drvdata;
-> +
-> +       drvdata = dev_get_drvdata(csdev->dev.parent);
-> +
-> +       return drvdata->traceid;
-> +}
-> +
->  static const struct coresight_ops_source stm_source_ops = {
->         .enable         = stm_enable,
->         .disable        = stm_disable,
->  };
->
->  static const struct coresight_ops stm_cs_ops = {
-> +       .trace_id       = stm_trace_id,
->         .source_ops     = &stm_source_ops,
->  };
->
-> diff --git a/drivers/hwtracing/coresight/coresight-tpda.c b/drivers/hwtracing/coresight/coresight-tpda.c
-> index 573da8427428..94c2201fc8d3 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpda.c
-> +++ b/drivers/hwtracing/coresight/coresight-tpda.c
-> @@ -241,12 +241,23 @@ static void tpda_disable(struct coresight_device *csdev,
->         dev_dbg(drvdata->dev, "TPDA inport %d disabled\n", in->dest_port);
->  }
->
-> +static int tpda_trace_id(struct coresight_device *csdev, __maybe_unused enum cs_mode mode,
-> +                        __maybe_unused struct coresight_device *sink)
-> +{
-> +       struct tpda_drvdata *drvdata;
-> +
-> +       drvdata = dev_get_drvdata(csdev->dev.parent);
-> +
-> +       return drvdata->atid;
-> +}
-> +
->  static const struct coresight_ops_link tpda_link_ops = {
->         .enable         = tpda_enable,
->         .disable        = tpda_disable,
->  };
->
->  static const struct coresight_ops tpda_cs_ops = {
-> +       .trace_id       = tpda_trace_id,
->         .link_ops       = &tpda_link_ops,
->  };
->
-> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
-> index c7cd5886c908..ce9a5e71b261 100644
-> --- a/include/linux/coresight.h
-> +++ b/include/linux/coresight.h
-> @@ -335,6 +335,7 @@ enum cs_mode {
->         CS_MODE_PERF,
->  };
->
-> +#define coresight_ops(csdev)   csdev->ops
->  #define source_ops(csdev)      csdev->ops->source_ops
->  #define sink_ops(csdev)                csdev->ops->sink_ops
->  #define link_ops(csdev)                csdev->ops->link_ops
-> @@ -421,6 +422,8 @@ struct coresight_ops_panic {
->  };
->
->  struct coresight_ops {
-> +       int (*trace_id)(struct coresight_device *csdev, enum cs_mode mode,
-> +                       struct coresight_device *sink);
->         const struct coresight_ops_sink *sink_ops;
->         const struct coresight_ops_link *link_ops;
->         const struct coresight_ops_source *source_ops;
-> @@ -709,4 +712,6 @@ int coresight_init_driver(const char *drv, struct amba_driver *amba_drv,
->
->  void coresight_remove_driver(struct amba_driver *amba_drv,
->                              struct platform_driver *pdev_drv);
-> +int coresight_etm_get_trace_id(struct coresight_device *csdev, enum cs_mode mode,
-> +                              struct coresight_device *sink);
->  #endif         /* _LINUX_COREISGHT_H */
-> --
-> 2.34.1
->
+The kernel's BUG/WARN feature (lib/bug.c) can only be used from
+assembly. Rust code needs to directly execute the same assembly code
+used on the C side. To avoid duplicating the assembly code, this
+approach follows the same strategy as the static branch code: it
+generates the assembly code for Rust using the C preprocessor at
+compile time.
+
+The 1st to 3th patches export the BUG/WARN assembly code for Rust on
+x86, RISC-V, and ARM64 architecture, with no functional changes on the
+C side. They have already been acked by the maintainers of their
+respective architectures.
+
+The change for LoongArch assembly hasn't been acked yet so the v4
+doesnt' include it. LoongArch still uses the current approach; just
+wrapping C's macro.
+
+UML doesn't use the assembly BUG/WARN feature; just wrapping generic
+BUG/WARN functions implemented in C works.
+
+The last patch adds warn_on implementation on the top of the
+abstraction. To make the patchset easier to review, the remaining
+features such as bug() are not included in this patchset. These
+features will be added after this patchset is merged.
+
+This has been tested on x86, ARM64, and RISC-V (QEMU), with only a
+compile test performed for LoongArch and UML.
+
+v4:
+- added Acked-by tag to the RISC-V and ARM64 asm change
+- simplify the asm code
+- use the cfgs on the macro rather in its expansion
+- use a const fn for bugflag_taint over macro
+- dropped LoongArch assembly change
+- dropped warn_on_once; make the patch easier to review
+v3: https://lore.kernel.org/rust-for-linux/20250213135759.190006-1-fujita.tomonori@gmail.com/
+- rebased on rust-next
+- use ANNOTATE_REACHABLE macro (replaced ASM_REACHABLE)
+- added Acked-by tag to the x86 change
+v2: https://lore.kernel.org/linux-arm-kernel/20241218062009.2402650-1-fujita.tomonori@gmail.com/
+- remove target_arch cfg by using asm comment
+- clean up the changes to loongarch asm
+v1: https://lore.kernel.org/linux-arm-kernel/20241210001802.228725-1-fujita.tomonori@gmail.com/
 
 
+FUJITA Tomonori (4):
+  x86/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code sharing with
+    Rust
+  riscv/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code sharing with
+    Rust
+  arm64/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code sharing with
+    Rust
+  rust: Add warn_on macro
+
+ arch/arm64/include/asm/asm-bug.h              |  33 ++++-
+ arch/riscv/include/asm/bug.h                  |  37 +++---
+ arch/x86/include/asm/bug.h                    |  56 ++++-----
+ rust/Makefile                                 |   8 ++
+ rust/helpers/bug.c                            |   5 +
+ rust/kernel/.gitignore                        |   2 +
+ rust/kernel/bug.rs                            | 113 ++++++++++++++++++
+ rust/kernel/generated_arch_reachable_asm.rs.S |   7 ++
+ rust/kernel/generated_arch_warn_asm.rs.S      |   7 ++
+ rust/kernel/lib.rs                            |   1 +
+ 10 files changed, 222 insertions(+), 47 deletions(-)
+ create mode 100644 rust/kernel/bug.rs
+ create mode 100644 rust/kernel/generated_arch_reachable_asm.rs.S
+ create mode 100644 rust/kernel/generated_arch_warn_asm.rs.S
+
+
+base-commit: beeb78d46249cab8b2b8359a2ce8fa5376b5ad2d
 -- 
-Mike Leach
-Principal Engineer, ARM Ltd.
-Manchester Design Centre. UK
+2.43.0
+
 
