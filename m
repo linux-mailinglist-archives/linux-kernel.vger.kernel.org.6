@@ -1,116 +1,177 @@
-Return-Path: <linux-kernel+bounces-546362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546363-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D2A2A4F9B1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:15:48 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB693A4F9B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:16:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D97616D2B4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:15:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B653ACF6C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:16:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E49891A0BD0;
-	Wed,  5 Mar 2025 09:15:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3999C1F416F;
+	Wed,  5 Mar 2025 09:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DIi25aln";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m9kdaBF0"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSyL9xcr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E17931EA7C5;
-	Wed,  5 Mar 2025 09:15:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9690A2E3387
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:16:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741166142; cv=none; b=OEdX1wVNiDnp+Qjk64ijhuPRwC5HEa7aliZ2QZtFysvKGP5kdPI9NnbrDrG8Ym/bPlBrycpPP6Cc2AHlSPhsjPJZIG2dB4dRatlxffmFBrNpKd0ZNgH4IHxwKK2/NlS10tOaUbKUDP7bYMlqRRb4RB35yACs59lvU+Mitt9yw0o=
+	t=1741166189; cv=none; b=kUtpQ414Mi6H3rmxungdB0DTiTfLSSDcJUo2fsjjb3bJQI5m+lE5AKZ4A/kqGue/ucUOq/f3pYkvRC3yH5bgsL5xo9sD3ftZ0Cefhfe8H+j18XFQfNrV+bOem3g22aCv/EyBOR/+HAyMhDaPE/5TV4iNiNUFEC4eqBKpVV03p5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741166142; c=relaxed/simple;
-	bh=qskMcPhLIecxh61O8GIRR/1oooYOU4etXpowKAgsw9I=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=F8fvz5je+Hy9/8gvQpYnNXy4xyynXnSJ/bTsXwebAEgsNaHn4SHxuwV0gotftbcuAGEm1AQmZ0TiVZs4F/Bmxi7i0L7hSgQzZhAd7x8wQwAKc8QCsKqrdMs7LsMotILS22Fwec+c7WufANLPGwTbaSEEKTCrXPcFEo3yUBbP220=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DIi25aln; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m9kdaBF0; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 05 Mar 2025 09:15:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741166139;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PE07If5USuUI/PuupiyISWQ3+V5PhmirBThQEmg2Ues=;
-	b=DIi25alnYyyVB3kYli9iGurmqqSZuLWKvaU1B/mZZvYS1i/TVKGgc9YwqOP5piUTmrrhIX
-	IVNCB2xccXfmiYdwMk/fa+WvfbNBHr1n3huqeCNop1fZf+KnpTkFEbNpTOjbHDjyM5JG6C
-	2cxLrQIoMa/GkRhb8j5GSgyMUNeTE88qUhaz6Qn2E7z1SUGbVN4VGJ5Ie3eDsnKh77CtqU
-	Xs3OgydiJfXj1v67bvtoMl0QrAHBH+qKsWzOQKPF+sCazT/575szOtoA9DZEHTV7tMQb9G
-	HNyBgEVs5zIltJTTkFPhWytiKXD5zno6b7dzXCObDlKAbawbvCdO6jAr2eP1iA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741166139;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=PE07If5USuUI/PuupiyISWQ3+V5PhmirBThQEmg2Ues=;
-	b=m9kdaBF0sk5vJm7T3oOFXPyr8G9xKkD7u5yn1Jlwj+7C5Vc7hD1wxmJSH/m7u/4x4H5QXk
-	Vvv13dyjfC3HCqDA==
-From: "tip-bot2 for Charles Han" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/cleanups] x86/delay: Fix inconsistent whitespace
-Cc: Charles Han <hanchunchao@inspur.com>, Ingo Molnar <mingo@kernel.org>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250305063515.3951-1-hanchunchao@inspur.com>
-References: <20250305063515.3951-1-hanchunchao@inspur.com>
+	s=arc-20240116; t=1741166189; c=relaxed/simple;
+	bh=kJfhrOkYBZK257yyh7KPJtYTba5DWjhEPU1ijD/QhwE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Z3ngb7f/aOpkkwLSmKGgPlWDigq7VBigtk9c3g7YqOBD/2HIZxf5eQiXUmiyEI4mrll456vG9NmqvV0gBDgRjoH38hyoXh2MRrofCizJPBG4aGgBlkCE6Oz88XE+IdcicyfZ0YwK2XAjPH3usXHJgO7qd+UxRoc+BKQdYLvcLbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSyL9xcr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0479C4CEE2;
+	Wed,  5 Mar 2025 09:16:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741166189;
+	bh=kJfhrOkYBZK257yyh7KPJtYTba5DWjhEPU1ijD/QhwE=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=eSyL9xcrA7P7YdahqoF3nfZyKoTGnSQrPbOKz0CpsOlsDlhavhc+lFN/DPQXKR9k9
+	 JDMyhb0b6FCEXM8DGG/3J694oVM4JSZQ4+iJ5iaTeKnsnDHBYqJVYc9E228feEdwsa
+	 FN+Z4sEweoBZOhbXlNLZXHAJ0YzSUPFONOmq2JnrCkeoKcOL9V5vWT/6j6um9NtkvA
+	 Kegbbs5fPqPfJpxCPus+R21HM+Xa9P38UsFEJDnMuSfxfoSRV/AneESBuyVYDoLnqF
+	 +o+NNOCmpVrho2c0HeH65AwTx1KnzkpJ3knvxoXZ6oC7HdVmcBzW6UBwj8yNEi/YSs
+	 p51U3hkSgEDpA==
+Message-ID: <9be24599-39de-4440-bd49-8f0629fa8a2b@kernel.org>
+Date: Wed, 5 Mar 2025 17:16:25 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <174116613685.14745.14513872226506732439.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org,
+ syzbot+b6b347b7a4ea1b2e29b6@syzkaller.appspotmail.com
+Subject: Re: [PATCH v2] f2fs: fix to avoid accessing uninitialized curseg
+To: jaegeuk@kernel.org
+References: <20250224102923.93758-1-chao@kernel.org>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20250224102923.93758-1-chao@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-The following commit has been merged into the x86/cleanups branch of tip:
+Jaegeuk, missed to check this patch?
 
-Commit-ID:     f739365158a33549cf1827968b12a370ab75589e
-Gitweb:        https://git.kernel.org/tip/f739365158a33549cf1827968b12a370ab75589e
-Author:        Charles Han <hanchunchao@inspur.com>
-AuthorDate:    Wed, 05 Mar 2025 14:35:14 +08:00
-Committer:     Ingo Molnar <mingo@kernel.org>
-CommitterDate: Wed, 05 Mar 2025 09:51:04 +01:00
+On 2/24/25 18:29, Chao Yu wrote:
+> syzbot reports a f2fs bug as below:
+> 
+> F2FS-fs (loop3): Stopped filesystem due to reason: 7
+> kworker/u8:7: attempt to access beyond end of device
+> BUG: unable to handle page fault for address: ffffed1604ea3dfa
+> RIP: 0010:get_ckpt_valid_blocks fs/f2fs/segment.h:361 [inline]
+> RIP: 0010:has_curseg_enough_space fs/f2fs/segment.h:570 [inline]
+> RIP: 0010:__get_secs_required fs/f2fs/segment.h:620 [inline]
+> RIP: 0010:has_not_enough_free_secs fs/f2fs/segment.h:633 [inline]
+> RIP: 0010:has_enough_free_secs+0x575/0x1660 fs/f2fs/segment.h:649
+>  <TASK>
+>  f2fs_is_checkpoint_ready fs/f2fs/segment.h:671 [inline]
+>  f2fs_write_inode+0x425/0x540 fs/f2fs/inode.c:791
+>  write_inode fs/fs-writeback.c:1525 [inline]
+>  __writeback_single_inode+0x708/0x10d0 fs/fs-writeback.c:1745
+>  writeback_sb_inodes+0x820/0x1360 fs/fs-writeback.c:1976
+>  wb_writeback+0x413/0xb80 fs/fs-writeback.c:2156
+>  wb_do_writeback fs/fs-writeback.c:2303 [inline]
+>  wb_workfn+0x410/0x1080 fs/fs-writeback.c:2343
+>  process_one_work kernel/workqueue.c:3236 [inline]
+>  process_scheduled_works+0xa66/0x1840 kernel/workqueue.c:3317
+>  worker_thread+0x870/0xd30 kernel/workqueue.c:3398
+>  kthread+0x7a9/0x920 kernel/kthread.c:464
+>  ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:148
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> Commit 8b10d3653735 ("f2fs: introduce FAULT_NO_SEGMENT") allows to trigger
+> no free segment fault in allocator, then it will update curseg->segno to
+> NULL_SEGNO, though, CP_ERROR_FLAG has been set, f2fs_write_inode() missed
+> to check the flag, and access invalid curseg->segno directly in below call
+> path, then resulting in panic:
+> 
+> - f2fs_write_inode
+>  - f2fs_is_checkpoint_ready
+>   - has_enough_free_secs
+>    - has_not_enough_free_secs
+>     - __get_secs_required
+>      - has_curseg_enough_space
+>       - get_ckpt_valid_blocks
+>       : access invalid curseg->segno
+> 
+> To avoid this issue, let's:
+> - check CP_ERROR_FLAG flag in prior to f2fs_is_checkpoint_ready() in
+> f2fs_write_inode().
+> - in has_curseg_enough_space(), save curseg->segno into a temp variable,
+> and verify its validation before use.
+> 
+> Fixes: 8b10d3653735 ("f2fs: introduce FAULT_NO_SEGMENT")
+> Reported-by: syzbot+b6b347b7a4ea1b2e29b6@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/67973c2b.050a0220.11b1bb.0089.GAE@google.com
+> Signed-off-by: Chao Yu <chao@kernel.org>
+> ---
+> v2:
+> - get rid of potential blocking on curseg_mutex
+>  fs/f2fs/inode.c   | 7 +++++++
+>  fs/f2fs/segment.h | 9 ++++++++-
+>  2 files changed, 15 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/f2fs/inode.c b/fs/f2fs/inode.c
+> index d6ad7810df69..6aec752ac098 100644
+> --- a/fs/f2fs/inode.c
+> +++ b/fs/f2fs/inode.c
+> @@ -793,6 +793,13 @@ int f2fs_write_inode(struct inode *inode, struct writeback_control *wbc)
+>  		!is_inode_flag_set(inode, FI_DIRTY_INODE))
+>  		return 0;
+>  
+> +	/*
+> +	 * no need to update inode page, ultimately f2fs_evict_inode() will
+> +	 * clear dirty status of inode.
+> +	 */
+> +	if (f2fs_cp_error(sbi))
+> +		return -EIO;
+> +
+>  	if (!f2fs_is_checkpoint_ready(sbi)) {
+>  		f2fs_mark_inode_dirty_sync(inode, true);
+>  		return -ENOSPC;
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 943be4f1d6d2..0465dc00b349 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -559,13 +559,16 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+>  			unsigned int node_blocks, unsigned int data_blocks,
+>  			unsigned int dent_blocks)
+>  {
+> -
+>  	unsigned int segno, left_blocks, blocks;
+>  	int i;
+>  
+>  	/* check current data/node sections in the worst case. */
+>  	for (i = CURSEG_HOT_DATA; i < NR_PERSISTENT_LOG; i++) {
+>  		segno = CURSEG_I(sbi, i)->segno;
+> +
+> +		if (unlikely(segno == NULL_SEGNO))
+> +			return false;
+> +
+>  		left_blocks = CAP_BLKS_PER_SEC(sbi) -
+>  				get_ckpt_valid_blocks(sbi, segno, true);
+>  
+> @@ -576,6 +579,10 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
+>  
+>  	/* check current data section for dentry blocks. */
+>  	segno = CURSEG_I(sbi, CURSEG_HOT_DATA)->segno;
+> +
+> +	if (unlikely(segno == NULL_SEGNO))
+> +		return false;
+> +
+>  	left_blocks = CAP_BLKS_PER_SEC(sbi) -
+>  			get_ckpt_valid_blocks(sbi, segno, true);
+>  	if (dent_blocks > left_blocks)
 
-x86/delay: Fix inconsistent whitespace
-
-Smatch warns about this whitespace damage:
-
-	arch/x86/lib/delay.c:134 delay_halt_mwaitx() warn: inconsistent indenting
-
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
-Signed-off-by: Ingo Molnar <mingo@kernel.org>
-Link: https://lore.kernel.org/r/20250305063515.3951-1-hanchunchao@inspur.com
----
- arch/x86/lib/delay.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/x86/lib/delay.c b/arch/x86/lib/delay.c
-index 23f81ca..e86eda2 100644
---- a/arch/x86/lib/delay.c
-+++ b/arch/x86/lib/delay.c
-@@ -131,7 +131,7 @@ static void delay_halt_mwaitx(u64 unused, u64 cycles)
- 	 * Use cpu_tss_rw as a cacheline-aligned, seldom accessed per-cpu
- 	 * variable as the monitor target.
- 	 */
--	 __monitorx(raw_cpu_ptr(&cpu_tss_rw), 0, 0);
-+	__monitorx(raw_cpu_ptr(&cpu_tss_rw), 0, 0);
- 
- 	/*
- 	 * AMD, like Intel, supports the EAX hint and EAX=0xf means, do not
 
