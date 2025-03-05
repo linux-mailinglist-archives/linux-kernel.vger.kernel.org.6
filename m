@@ -1,177 +1,144 @@
-Return-Path: <linux-kernel+bounces-547327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07D23A505E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:03:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FE8A505EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:04:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E522A1704B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:03:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D583A149F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:04:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AE51A316B;
-	Wed,  5 Mar 2025 17:03:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86AB19E806;
+	Wed,  5 Mar 2025 17:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GQoWGHo/"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AYQaspob"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11B8151992;
-	Wed,  5 Mar 2025 17:03:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD7D151992
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194185; cv=none; b=nU1AGw5ojbk/2l8R4gjxlEoRBBjqrhrVlIKxymsVRUDOnMi6HQweTfhbtdLPuSaPZhiC4o1jUAp819eXzNkpkpmwxqIUfk5X9/gQqJgE4cY4pMq1ZG9h/xB3dG870HquhpdCefsNFbV2c2Mz02xKPpMLCNeCmj+H1vtfwRMhRZk=
+	t=1741194272; cv=none; b=QSnjFLpnVYxB8yP+LEnNP6jb3hfJCEs8n1vMlP0lW5QI6K0hIRSUIW4wfUp++pEY188p8guObMxNeU+eSpj/mU5GE4R1jAz8j+P/vWFM00528tismWMuAv2uECnW7CFzV9QwAWU7JlplXTvGokOnEBTn5buW/xKfyk3fEgFm4Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194185; c=relaxed/simple;
-	bh=OcJoKzORqXVnDNepmErBN3tw8ndKhUmT6pwHugKrtRw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mKXh5xD96t8enb+pmJq9GDvjnVI1kkyRLMELFxAdNT3doce6uuy9yI2XsKtdCg1e952YoPyheLVrsRW9vyTa3/qXC2vo2mJu0M1sgF/zgv+NWaR0tkF3epOTWYVSk00d18wXCnWb7Hs61i3ayvp1njRhseA/OcOmUdXfGUD0sVk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GQoWGHo/; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A0845443F3;
-	Wed,  5 Mar 2025 17:02:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741194175;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TPyWHc+8KiHi21EkIlCnv3oAaCqNgg8vVnv8v5oHtoM=;
-	b=GQoWGHo/UcXuWM5+M2p+ufkz2NxvtTKkX7cXWb9rICvOTm1tE0DFBFqym0cuD3G6YbSQ16
-	iCwOa+FsBbPlIBYpNlJJzXTucmSoJxeBLxn97OiC/9rZfVoeBdhfkVVnQfTOby5xGMNLuS
-	Gc0tU0Hqrz4xXQa0Yxqkdy91z6FBY5s60ckVmysNr+UxZqCfEVBYPyY5tCxc40eTRGGsI2
-	puejnC5ToaRwTYbRqIwhvaVB0XQOD7aEhLMcxmixXcnur2OtwlgyyQ5bYynaYkmR7ow908
-	bYwafXGx20/WcvxkXmrXEekb0CPkjgcQq9BnfSow+NJLiR8gb1SnFbCLZTA4qw==
-Date: Wed, 5 Mar 2025 18:02:52 +0100
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
- <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
- <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
- Russell King <linux@armlinux.org.uk>, Vladimir Oltean
- <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
- <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
- Simon Horman <horms@kernel.org>, Romain Gantois
- <romain.gantois@bootlin.com>, Piergiorgio Beruto
- <piergiorgio.beruto@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>
-Subject: Re: [PATCH net-next 0/7] net: ethtool: Introduce ethnl dump helpers
-Message-ID: <20250305180252.5a0ceb86@fedora.home>
-In-Reply-To: <20250305141938.319282-1-maxime.chevallier@bootlin.com>
-References: <20250305141938.319282-1-maxime.chevallier@bootlin.com>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1741194272; c=relaxed/simple;
+	bh=5kHn73F9ooUedujzkLSBcxrE4SVUuBll3iK/r3WIPYk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G7QSGBk9hFDiompa+pr6oPNTItX0aS271UDoxfB6l4VkQznLf3CSGITb5tc9r0sLSf3Aknt9xFQhtefNXZ9S5dKx63iAj2zs879IKzVTMA4ZDmcOpdA7tU04TWG4xcoNyHRjWRJz/T9U4Hpv/70fmThJRsapLrU3PgNPYYKZrzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AYQaspob; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaecf50578eso1348173466b.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:04:29 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linuxfoundation.org; s=google; t=1741194268; x=1741799068; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=kv40UN7CTmHsOioabQRDHDmDGt8SWK8BQaYTRtTR1Aw=;
+        b=AYQaspoboi50ZvEtAH3lRH0q/ceq5SuJgLIDd4aAq7C00pwt9QF8UhxMW+r7pYKpvl
+         vhC7DkC0qKBA3VDW5xe5bNyKclWJUq7SnnAJvaYNtK0F5SL4KeJxzKnfN6aq9YYmQd1v
+         UgxCeNXGpMcgDhxYATropyD3Qx4bsNOwMpkJ4=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741194268; x=1741799068;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=kv40UN7CTmHsOioabQRDHDmDGt8SWK8BQaYTRtTR1Aw=;
+        b=vrjJ1lUILsBmzzE8KPCMUgTAyFks88oeSy0mSyXI6ig/RYTlFiemUwFRB8JhNKKw0d
+         nZcw/zk4MlpT1QU2bf3FFYr/rba91wZbXHTQAyhf91kNmE4W/5+En0nEPOCIDqWqq47O
+         Rjrp66bGfBKZU5niC0a0j1sSFcEfGioliX+uulz+NIopY0Atnfhi7Rp5le2cfaZisiAo
+         NpT9D8wCTylPWlKPTphctjCQq+e5/q9FVsIm93ls7OjPJBwiHI48/1xgQqosSxpj32L/
+         Dm7ujVn4IEiOubP1sH2Uv5tqcCQSamqGEGd2b2ra8NEQ4FVo42X63tkK0sUxtLeEOm9O
+         aliQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUjh0CTk9fAfVjuqkRFHvktM0WM+oAGNzEhr4nYWAQngz1HgvTfW7qU1P3eNEbD3UGIUvLTCqK7wNNnCaw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxAS/f3DKuC/rprck28HH5nrQNX/Fr6ODg6uTGID9NDzVqXDLEy
+	SewISkYzwsgpsW6AgDxstgXRQbb4+Sg88048Z5atXvny71nocAkaQsXdubDuJDT6blvmxr3eEJX
+	aw75YQg==
+X-Gm-Gg: ASbGncuTltl63k9tfcxBRk29NVzIbQNd2b8Q2KUQeRBKhFNVHYJFgH0Y1sObGTrOspQ
+	8TEUL5cHTjvZHLo9ZAkyOknZfuZz1jjIFnDxpuhTtnuk0ImqgPwPnoG0uyZj+z7hxwDn0hPTjz1
+	c10GapbQjpmZ0qSHq1TG9AnDQxz5uAcfPRGz8aoLo1mMU3YIXNxvVO6kPgFIXQ+qm7ZsICJFabC
+	CQ6AasMAvamNpg/imnf+foW53Z3pQWyJ0U/bGstEvqPNktR2VFFERusHckZfCzWSq/Ryx3mAN6p
+	DQdJ3nbA6Tr7cNaI2mObImCELgdK9ZSkeo8x/f1/2Muw4WBwrwHlGwK1AuNlKXMsIbMoADmR5Q3
+	6I4yQqgTBBl6jJJcNUQ==
+X-Google-Smtp-Source: AGHT+IEcXO+eMYxmNYnaYXAG/AQKHRZIIFkmNh5MZwhwVJiK/PnVjbOPDJWYxY2P8moAyz1yZRvpsg==
+X-Received: by 2002:a17:906:f587:b0:ac1:e1e1:1f37 with SMTP id a640c23a62f3a-ac20da4dd5cmr409247966b.10.1741194267637;
+        Wed, 05 Mar 2025 09:04:27 -0800 (PST)
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e917b70asm375108566b.151.2025.03.05.09.04.25
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 09:04:26 -0800 (PST)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab7430e27b2so1129088866b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:04:25 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCXhFoLB+5MsPgqY8qWOaaeEPivANV4qnP/HjOY/FXed6GRnQf8YPu8OjrrsSt7dNIoFqpGbpyE2hR7fjp8=@vger.kernel.org
+X-Received: by 2002:a17:907:d8e:b0:ac1:f003:be08 with SMTP id
+ a640c23a62f3a-ac20da4e45bmr357515766b.12.1741194265100; Wed, 05 Mar 2025
+ 09:04:25 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdehfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepteefgeehvdeitdeihfeuvdejkeevkeekieefkedvjefhudfhheeiveeuveefhefhnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtp
- hhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
-X-GND-Sasl: maxime.chevallier@bootlin.com
+References: <20250228123825.2729925-1-ubizjak@gmail.com> <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+ <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
+ <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com> <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
+ <20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local> <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
+In-Reply-To: <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
+From: Linus Torvalds <torvalds@linuxfoundation.org>
+Date: Wed, 5 Mar 2025 07:04:08 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
+X-Gm-Features: AQ5f1JpkQB5ShJPy0vuOavXhzF6M9md3GlU_-2Z0AWpteRo47ZA3BSSBHkk-2vk
+Message-ID: <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed,  5 Mar 2025 15:19:30 +0100
-Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
+On Tue, 4 Mar 2025 at 22:54, Uros Bizjak <ubizjak@gmail.com> wrote:
+>
+> Even to my surprise, the patch has some noticeable effects on the
+> performance, please see the attachment in [1] for LMBench data or [2]
+> for some excerpts from the data. So, I think the patch has potential
+> to improve the performance.
 
-> Hi everyone,
-> 
-> This series adds some scaffolding into ethnl to ease the support of
-> DUMP operations.
-> 
-> As of today when using ethnl's default ops, the DUMP requests will
-> simply perform a GET for each netdev.
-> 
-> That hits limitations for commands that may return multiple messages for
-> a single netdev, such as :
-> 
->  - RSS (listing contexts)
->  - All PHY-specific commands (PLCA, PSE-PD, phy)
->  - tsinfo (one item for the netdev +  one per phy)
-> 
->  Commands that need a non-default DUMP support have to re-implement
->  ->dumpit() themselves, which prevents using most of ethnl's internal  
->  circuitry.
-> 
-> This series therefore introduces a better support for dump operations in
-> ethnl.
-> 
-> The patches 1 and 2 introduce the support for filtered DUMPs, where an
-> ifindex/ifname can be passed in the request header for the DUMP
-> operation. This is for when we want to dump everything a netdev
-> supports, but without doing so for every single netdev. ethtool's
-> "--show-phys ethX" option for example performs a filtered dump.
-> 
-> Patch 3 introduces 3 new ethnl ops : 
->  ->dump_start() to initialize a dump context
->  ->dump_one_dev(), that can be implemented per-command to dump  
->  everything on a given netdev
->  ->dump_done() to release the context  
-> 
-> The default behaviour for dumps remains the same, calling the whole
-> ->doit() path for each netdev.  
-> 
-> Patch 4 introduces a set of ->dump_start(), ->dump_one_dev() and
-> ->dump_done() callback implementations that can simply be plugged into  
-> the existing commands that list objects per-phy, making the 
-> phy-targeting command behaviour more coherent.
-> 
-> Patch 5 uses that new set of helpers to rewrite the phy.c support, which
-> now uses the regulat ethnl_ops instead of fully custom genl ops. This
-> one is the hardest to review, sorry about that, I couldn't really manage
-> to incrementally rework that file :(
-> 
-> Patches 6 and 7 are where the new dump infra shines, adding per-netdev
-> per-phy dump support for PLCA and PSE-PD.
-> 
-> We could also consider converting tsinfo/tsconfig, rss and tunnels to
-> these new ->dump_***() operations as well, but that's out of this
-> series' scope.
-> 
-> I've tested that series with some netdevsim PHY patches that I plan to
-> submit (they can be found here [1]), with the refcount tracker
-> for net/netns enabled to make sure the lock usage is somewhat coherent.
-> 
-> Thanks,
-> 
-> Maxime
-> 
-> [1]: https://github.com/minimaxwell/linux/tree/mc/netdevsim-phy
-> 
+I suspect some of the performance difference - which looks
+unexpectedly large - is due to having run them on a CPU with the
+horrendous indirect return costs, and then inlining can make a huge
+difference.
+kvm
+Regardless, I absolutely think that using asm_inline here is the right
+thing for the locked instructions.
 
-This series will very likely conflict with Stanislav's netdev lock
-work [2], I'll of course be happy to rebase should it get merged :)
+That said, I do want to bring up another issue: maybe it's time to
+just retire the LOCK_PREFIX thing entirely?
 
-Thanks,
+It harkens back to Ye Olde Days when UP was the norm, and we didn't
+want to pay the cost of lock prefixes when the kernel was built for
+SMP but was run on an UP machine.
 
-Maxime
+And honestly, none of that makes sense any more. You can't buy a UP
+machine any more, and the only UP case would be some silly minimal
+virtual environment, and if people really care about that minimal
+case, they should just compile the kernel without SMP support.
+Becxause UP has gone from being the default to being irrelevant. At
+least for x86-64.
 
-[2]: https://lore.kernel.org/netdev/20250305163732.2766420-1-sdf@fomichev.me/T/#t
+So I think we should just get rid of LOCK_PREFIX_HERE and the
+smp_locks section entirely.
 
-> 
-> Maxime Chevallier (7):
->   net: ethtool: netlink: Allow per-netdevice DUMP operations
->   net: ethtool: netlink: Rename ethnl_default_dump_one
->   net: ethtool: netlink: Introduce command-specific dump_one_dev
->   net: ethtool: netlink: Introduce per-phy DUMP helpers
->   net: ethtool: phy: Convert the PHY_GET command to generic phy dump
->   net: ethtool: plca: Use per-PHY DUMP operations
->   net: ethtool: pse-pd: Use per-PHY DUMP operations
-> 
->  net/ethtool/netlink.c | 161 ++++++++++++++------
->  net/ethtool/netlink.h |  46 +++++-
->  net/ethtool/phy.c     | 335 ++++++++++++------------------------------
->  net/ethtool/plca.c    |  12 ++
->  net/ethtool/pse-pd.c  |   6 +
->  5 files changed, 277 insertions(+), 283 deletions(-)
-> 
+Which would probably obviate the need for your patch, since then the
+compiler wouldn't see it as some big instruction. But your patch isn't
+wrong, so this is absolutely not a NAK, more of a "we should go
+further".
 
+Hmm?
+
+                  Linus
 
