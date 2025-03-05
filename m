@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-546804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AF79A4FEEA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:44:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64468A4FEEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:45:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7EFE916BDD0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:44:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 760BE16BAA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9854C2451F3;
-	Wed,  5 Mar 2025 12:44:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49946245032;
+	Wed,  5 Mar 2025 12:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ml+cxoto"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="sJETZT0d"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96828245022;
-	Wed,  5 Mar 2025 12:44:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8246B201270
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:44:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178656; cv=none; b=L72Ur/qbb7jgOk6bMhlVXJV7EvzOLp6sZlG5/vz8IFczXoqI3sXUxA02TDxSlGIgEhztpQHuhFOZa31J5W/7wWXuGnjuEJs9a0jq6ljuaKOLc2ygG7xAAFGmSr2QW/O7YufKIQbNHZGAhML5ZqSak1dhFHONCFRLHvNMQl4AjHI=
+	t=1741178701; cv=none; b=PSta89gOF2Nupnr17dhfVnGWUTrT7isadKi09O6EqZbvCeTHa4iVS50vsL8pK0MSDdlY2jcpHH4iRyIKxKu4zFl8St/oEHR9SDTjk+ya0ETpD1NAmVjgGlvqVMJXj5flG/9kfYNttrxpfj6tauhb2acj3RD+XhTRvWRm10VuZsQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178656; c=relaxed/simple;
-	bh=igMH8rYOpGMy0k866Hx2ao0n8XoLlbiwESN1HFH2HU0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FQfITUHcJI+SZQSBaWtD3aBFJKLnljZLsBYPAM6AWbhVy3oP7SjtwellnqZH4cttHQyYaVV5YUajQD6tcXYd/XfxDMoJTrsrl97ZU05F714a12Gc5NjqIzCbCE//lXMGXnZbt+VsXGfoo9MzD6eQNNAGmqqB2t1aHsrqCjuXxcE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ml+cxoto; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5fcd686fe0fso3435243eaf.3;
-        Wed, 05 Mar 2025 04:44:14 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741178653; x=1741783453; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=igMH8rYOpGMy0k866Hx2ao0n8XoLlbiwESN1HFH2HU0=;
-        b=ml+cxotoMnlOTbYYG4dlRAHcOzA9HGupqMkyI29ddVpFQmHWQKbbefkvw2Or0cYUck
-         mM8aFgmIxbIn71k34tPnXgpzGH1Ehk1aj6EWiMw02a8KLrVj2bb2cAsBUvHZpOUmUBxH
-         sXh2NXz/VjqaAu4B8keKrHfz2yLTtABCzx6dMB7dlLhC6wxrbwgeHQ0fcAjrsHs0eXOT
-         9ZtoGR/tXQ7ao56GHYwbHPP8tjPITxuIkfUebqsi7pLMslmGy8zbvfVDFSjDGTVquOi8
-         0ob21muCck/WGW2BAIaVSDLstuIASTe2bgIzlLgZ8eOHv2VtCEcgNfYg/f8Jx2EwwPKj
-         aCdA==
+	s=arc-20240116; t=1741178701; c=relaxed/simple;
+	bh=yO9RSssbgEUbbG6Eui7gZpTUFd8pnSYgqrFrmf0GkAw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ocsf2AWMTq4jaS74xnbtey/u0hfRzKY8Y9/9xwNxH1kDCNgd0Bf2u8xekcrP48uv0q0sLawWLojK/nEFYJKo0c2kwiQJPtmWcT5KWDGwqeh7nI6oYEdxxTC4vnSYvdc7FP2hZBivhMnJCra1I617klnoZZYMNO2fZQ0ts27dYLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=sJETZT0d; arc=none smtp.client-ip=185.125.188.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id 4FB373FCD7
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
+	s=20210705; t=1741178691;
+	bh=urCwtfpYBHrLbpDpp7U+vepeooaJV4Q4tWy+4UvDFzE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:In-Reply-To;
+	b=sJETZT0dmmtDqVpxunBVGXvxh3A3ncpsrIflMBlHW/QCpj8RYYF/i2DdQN3u9Ylho
+	 uEcVqykXxnzZiECvpW/jT6Pjulc+/2CGsMVevZiTmX86Pdhoamj0aQubPIr2+PURH/
+	 qOM0t/8K+gWJPHJeKMDS95c+5OLB4AgsPqE7LEgRn0Kzhd8RoCozf+tTne4evbHMUF
+	 6E/oZCWPYh6xqetTaWMp0pXIHoQUD0rPlszhwEDldW2JgLEN8mLsV3Lj26kC85EbcN
+	 2Qtj9P9R21CuHz/TT6fcAM9Ia4CPeOlswtsM8LriT7FgsqeQx69nNNuTNxsjZ0m+BU
+	 TTUD8lDPqNURA==
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-223878ae339so60383685ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 04:44:51 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741178653; x=1741783453;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=igMH8rYOpGMy0k866Hx2ao0n8XoLlbiwESN1HFH2HU0=;
-        b=w3Mgt+XlEhihzAwU9tNFGZJRpdoNN/6q0aJtmN4g7ITRKw4fVJ9k0yX46DFCM82ml6
-         VKWBrknkaiKxQy2eV7D5199KHX4y8fYtrZlmPvsKtPeyRgC5p8JBpBijlH06Bdw1LnRL
-         PA8Z1lThb2RSy+eD2LQr2kPlZOKMMwk1v2Vh++ke8RoHCZrHeAhAv9oYQv5Jgngz5d+W
-         wUYReeIInTVVD120p5sdbC9gcPAm9Be9Alc3hSiGaNnhYhSBcZWf5oHsoXdGZJPTAxbI
-         680pFZ91m/UrtjdXtnNFJgpeM8hdhDwCeRvGiTTQ7kMCblCcMKKC9SOkjycyrrXXpvW6
-         oqog==
-X-Forwarded-Encrypted: i=1; AJvYcCUjhVmRoKdhoya6lmWndY+p9YhvfVS8uZfuamDSYVn45XiTwlHhF5lkhXeS1He5akTzLfA5Hucpw3wwTtke@vger.kernel.org, AJvYcCVyQXf792ysZzapYHrSx73bpA8gW1NYiXVoZ7kSKvPivIhwxVJSsErOQyb8wV2APRC2CS2ATVcf8TOXUQKU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTfO4IMzQyg34WY0SD34mesK3Z/ilUv/D+nWvF9Dba9lq4rliY
-	BSWRlChdPx6ddydOvFukBLL6mxGff9bjhSVOyVpOukUAESc3i3znPRJwfYgLreoY5x1RGFKzjh4
-	+ddS3DxqeFAsCwrEWIWfgYjqUQ+c=
-X-Gm-Gg: ASbGnctVN7cK33r7keTfAh0l8RIm5CcY09CWVquf9qVwXngjod9TfkHyNOwi2xjdMzc
-	/Eh9pxoMVsbYHJlVlZ6wg6Y5OU3g97QMobST6Hg6xyV2xgGo8UJB6mjO9KgI7aJNpm0NOZBBhpQ
-	rQjGsECJwbzpyP/PnD3tpIII3w
-X-Google-Smtp-Source: AGHT+IEtx6mSNk9bnGomPiLwZ0DgZSoKO9LEBoR3r+gcmhsbntIW8k7x/qnqH+g6LpgVV4KrR/ActGrJ8Qy1d2PFNMU=
-X-Received: by 2002:a05:6820:1891:b0:600:29ef:48bc with SMTP id
- 006d021491bc7-600336485bamr1331704eaf.8.1741178653602; Wed, 05 Mar 2025
- 04:44:13 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741178689; x=1741783489;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=urCwtfpYBHrLbpDpp7U+vepeooaJV4Q4tWy+4UvDFzE=;
+        b=VibyldWpA+Uya3HM6Vn7RToWhprQ/hcjE/95g1iw8/5s9SFaBOWOlv/QnIUQMsaxKz
+         q4WsiIi+wc7c4zP068XNKT0B0qNj7j6B/hq5SP7GSg90PDQJmtaPMpyyd7ompnKSFwTR
+         eYKIKu8ZslivYhoNCx3ztUN5vIzn+pnFUaGZFeyKBm3rGMqVmxM1k8rDT34k93J1zb9m
+         /TzCwEQcsjWQsMYHpsdh86XKHotD0S0QP+AhqvIk/5Ts1iivIJ3B/Bur/G0YsJbW92Em
+         8sOKIQnUwc9HoqtrkQgzSkLQZrGyKY/IFJz7i1bVWSUxafQuSy02TFMHCGitssuBgMXA
+         HBeA==
+X-Forwarded-Encrypted: i=1; AJvYcCWernw2TdRpObJs+fjuDdlNx1f/8huE8PnaX01IAqSbtN52XgiRSBRotlPAbfqpEf7mGVYevjYJtUhwpKs=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3wi2hsq3XXfeu0nM+V6tTExeWWq2uWhl1HvHcxU8h2+Tkadrn
+	DaUqWMTNlHGCiesRRGBmf+PUHbux8trrmhKfttQh7FDOA3K7muesSSN0MWOWvXJQZk/ob5AnZtx
+	bDD8eQV5PWd6cIBCtnyJMazD7xUiRIcx9qSp4EG4uRiIEDi/Ocus8kHguauAH6s8Iy6Edvcx6kV
+	GYK93S188sIQ==
+X-Gm-Gg: ASbGncvdQ5xA1+oueStuCiUwIX+T4A5Us5Ks13xdjUrFfBnUYWDPVSdFc2HaBmxKjug
+	Qek1hps3Ee/AYv4VClEmtaMPqfx33KVS6jGXVi1W4zvngLkGXJ3K0KjGWtPr2MceUBMHHX8WT/L
+	Hpw2grJdMVQrPqIg2L3fzpqzAFSdQZI7OKYb7HB1CDf8W3ehv0jd2eB3/OogRWyKfM6GMIiDlJm
+	z+Opi7XVJpwTuSGrAsPKr61eYK9S8C37o3mdkJO+nh97bD0xm0B0U0SD0ks8EZ+9nU28QcVJUoe
+	Fhn9PMKMLqJs1gHu
+X-Received: by 2002:a17:903:1aa8:b0:223:5645:8e1a with SMTP id d9443c01a7336-223f1d24c43mr39977625ad.51.1741178689711;
+        Wed, 05 Mar 2025 04:44:49 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFDAT8zt0xy6LiC4EWYqcnGzlPoc6M+Lwdom0HGZWoZiXyYU2ER+E9bGNsMCb2zeHuOhGe9Mw==
+X-Received: by 2002:a17:903:1aa8:b0:223:5645:8e1a with SMTP id d9443c01a7336-223f1d24c43mr39977395ad.51.1741178689425;
+        Wed, 05 Mar 2025 04:44:49 -0800 (PST)
+Received: from localhost ([240f:74:7be:1:b58:f691:f9bf:7104])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-2235050f11fsm112505365ad.196.2025.03.05.04.44.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 04:44:49 -0800 (PST)
+Date: Wed, 5 Mar 2025 21:44:47 +0900
+From: Koichiro Den <koichiro.den@canonical.com>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, geert+renesas@glider.be, 
+	linus.walleij@linaro.org, maciej.borzecki@canonical.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v5 5/9] gpio: aggregator: add 'name' attribute for custom
+ GPIO line names
+Message-ID: <m3a6hcsh2a3j3rcw7x2f3tn3gif6mtor7bfxdmwkgp435vmxpg@upgh5b2t3ukh>
+References: <20250224143134.3024598-1-koichiro.den@canonical.com>
+ <20250224143134.3024598-6-koichiro.den@canonical.com>
+ <CAMRc=MdoMKdqyzGMFDa3aMz3h=vfZ0OtwARxY7FdsPKcBu9HQA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304183506.498724-1-mjguzik@gmail.com> <20250305021936.71e837ea@pumpkin>
-In-Reply-To: <20250305021936.71e837ea@pumpkin>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 5 Mar 2025 13:43:59 +0100
-X-Gm-Features: AQ5f1Jr8hkYlx_kmiXaZrtFsodK2Gn8ZCzsnCy-R9P2qrOcci-g_CnFugs_MC8E
-Message-ID: <CAGudoHEqJggeQGSzXAFrQKdgh3tCzo47B_hCjSznw=w-5YUXuA@mail.gmail.com>
-Subject: Re: [RFC PATCH v v2 0/4] avoid the extra atomic on a ref when closing
- a fd
-To: David Laight <david.laight.linux@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MdoMKdqyzGMFDa3aMz3h=vfZ0OtwARxY7FdsPKcBu9HQA@mail.gmail.com>
 
-On Wed, Mar 5, 2025 at 3:19=E2=80=AFAM David Laight
-<david.laight.linux@gmail.com> wrote:
-> Have you looked at the problem caused by epoll() ?
-> The epoll code has a 'hidden' extra reference to the fd.
-> This doesn't usualy matter, but some of the driver callbacks add and
-> remove an extra reference - which doesn't work well if fput() has
-> just decremented it to zero.
->
-> The fput code might need to do a 'decrement not one' so that the
-> epoll tidyup can be done while the refcount is still one.
->
-> That would save the extra atomic pair that (IIRC) got added into
-> the epoll callback code.
->
-> Thoughts?
+On Thu, Feb 27, 2025 at 10:50:34AM GMT, Bartosz Golaszewski wrote:
+> On Mon, Feb 24, 2025 at 3:32 PM Koichiro Den <koichiro.den@canonical.com> wrote:
+> >
+> > Previously, there was no way to assign names to GPIO lines exported
+> > through the aggregator when the device was created via sysfs.
+> >
+> > Allow users to set custom line names via a 'name' attribute and
+> > expose them using swnode.
+> >
+> > Signed-off-by: Koichiro Den <koichiro.den@canonical.com>
+> > ---
+> 
+> IMO this should be part of the previous commit, there's no reason to
+> split the configfs implementation. But only change that if there'll be
+> a v6, otherwise I'll take it as is.
 
-I am not aware of this problem and don't have particular interest in
-looking at it either, sorry.
+Honestly, I held off replying here, hoping to get some input on:
+https://lore.kernel.org/all/CAMRc=MegKxwX-RjQQcWMGe_JQyRCv82WRRbD0naYkeXshTGXGQ@mail.gmail.com/
+since I thought the decision on sending v6 might depend on the feedback.
+Anyhow, thank you for reviewing.
 
-Good thing you are free to make the case to Christian. :)
---=20
-Mateusz Guzik <mjguzik gmail.com>
+Koichiro
+
+> 
+> Bart
 
