@@ -1,102 +1,71 @@
-Return-Path: <linux-kernel+bounces-546399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4726FA4FA29
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:33:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85482A4FA2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:33:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D82016F3B6
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C440A3AD697
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:33:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEA2D204C24;
-	Wed,  5 Mar 2025 09:33:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9BE8204C24;
+	Wed,  5 Mar 2025 09:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KeV51H9g"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b="nDmgViY2"
+Received: from gimli.kloenk.de (gimli.kloenk.de [49.12.72.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDE2204086;
-	Wed,  5 Mar 2025 09:33:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1043C1FDA7A;
+	Wed,  5 Mar 2025 09:33:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=49.12.72.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741167206; cv=none; b=CfHLF3WXw8AopMFeW61euk8bkk9H7fI+pMzopvzfQJYyvYKSbJivFxH2l8DCuEgvEDSDyUGzxhESq5XLZawMz8X6VBKB3M4P7eq6ZxmZlPgx7+xpuibzakGlYbcq1jBSLmbEL5U/ydKLniEuzZ/QCnroDLUkfHqI1WhgfMXKT7I=
+	t=1741167214; cv=none; b=gvLXIqsHA5MS5DsqCI9oOiPNcp2E2Fwt7DHcLCuAWLAU7d/zLZdB71my9wVDC3EswvVTTHDgpLpWxPMZJa6bYP99AyREb34TdQWn9Co12WXyal54nfcJOd7GtAW7oHQCxT5h0EDA47dAb5gdXWtlU1lzc7S0KMCzTfnFnQuGuHU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741167206; c=relaxed/simple;
-	bh=cE3BdINxmDVdlp4p98lix8XVrGl0TyJDlwMDc2Hi2PI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=mbxHYgtULGLK/bXffuR2qguzejx2glsFCQf32+UOjJRVkkzFcSATFKccVj2QgawkNN9ReShjJoYYJnat6TgtVowjWViLKGu2hA3altPwNqn32bNdVQKN2T74f01qZk8N+XJePKB5WGje9KW/++UrWh/5EmS5lQNb5cKHZpFioOQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KeV51H9g; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741167194;
-	bh=dMTMkXVe4wJDdMfe6l1hUtcjcjB1pXE4cvjDuqj/YWU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=KeV51H9gPIqMqMLELcBw3ccQzp7Doh5XXMppJVURQp32ycTB5gXeKwnSNYduRC68R
-	 D/4JTXFbd3JXVdCVt8TWUWk/f2hU4DufcoH4LsWv+Y2Dp4XwnqZOx6xbuzV1lH00+c
-	 DsFcoiKhPZl5L95P/pM/neW0GvycTa+FTH2kH80xiEsyDkAr+lOJqlSWh9OsbfVeYq
-	 qv4ZaNraf3VAK8mvP3jAPv5o432np3PUol4IUU4jLo4fyCkZqGN93rRHVVDzCQbv/i
-	 RT299UUATfgZ4o/uwpDtFm0BZHlptXOx1lMC0LuffCQh1PxyjBpfD/fMyBHtHbZw0r
-	 elzfPBiGn29nA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z76mV18FBz4whq;
-	Wed,  5 Mar 2025 20:33:13 +1100 (AEDT)
-Date: Wed, 5 Mar 2025 20:33:12 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the mm tree
-Message-ID: <20250305203312.6f30e9c2@canb.auug.org.au>
+	s=arc-20240116; t=1741167214; c=relaxed/simple;
+	bh=Tr7xXGYgnHGG5ptfWz4kyX2lZc9vIm3Oo3afbBKYIfE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=fuV6kLAuO7AigWOdOOP95Kt2RaDNJjauugU2XIrB+Sb11hxsTVZMHJjyP0OcaklCl3FzrRKAuFIPA1R9ZxsPMTlIwD7JCgOypKBq5yrKX94JXiO0iF9XZWF//wPZk0JK3dFvXakOxpt7PHbLFa3PyB3SnxY/z+r821H/LeCApII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev; spf=pass smtp.mailfrom=kloenk.dev; dkim=pass (1024-bit key) header.d=kloenk.dev header.i=@kloenk.dev header.b=nDmgViY2; arc=none smtp.client-ip=49.12.72.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kloenk.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kloenk.dev
+From: Fiona Behrens <me@kloenk.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kloenk.dev; s=mail;
+	t=1741167211; bh=Tr7xXGYgnHGG5ptfWz4kyX2lZc9vIm3Oo3afbBKYIfE=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date;
+	b=nDmgViY2RVGHIjxx/jlr8GoMISK0bGDPx4qFOESI/tNtPzmNoktGBEGtgbURnz8xr
+	 Yt+IjV5aEOLIQC0sWJwG2dHOm9AdRySXtSEAxSALnGgbNDMlrJKexKJpC5TifAFfEb
+	 rAZm3k99dVSrhUOtK9Y5745VULK/GZaysXLjKqP8=
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>,  Alex Gaynor <alex.gaynor@gmail.com>,
+  Boqun Feng <boqun.feng@gmail.com>,  Gary Guo <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?=
+ Roy Baron <bjorn3_gh@protonmail.com>,  Andreas Hindborg
+ <a.hindborg@kernel.org>,  Alice Ryhl <aliceryhl@google.com>,  Trevor Gross
+ <tmgross@umich.edu>,  Danilo Krummrich <dakr@kernel.org>,
+  rust-for-linux@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 17/22] rust: pin-init: synchronize documentation with
+ the user-space version
+In-Reply-To: <20250304225245.2033120-18-benno.lossin@proton.me> (Benno
+	Lossin's message of "Tue, 04 Mar 2025 22:55:42 +0000")
+References: <20250304225245.2033120-1-benno.lossin@proton.me>
+	<20250304225245.2033120-18-benno.lossin@proton.me>
+Date: Wed, 05 Mar 2025 10:33:30 +0100
+Message-ID: <m2bjufg6tx.fsf@kloenk.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/uT5l70R1Nr5me0zgpy4dEhy";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain
 
---Sig_/uT5l70R1Nr5me0zgpy4dEhy
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Benno Lossin <benno.lossin@proton.me> writes:
 
-Hi all,
+> Synchronize documentation and examples with the user-space version.
+>
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 
-After merging the mm tree, today's linux-next build (htmldocs) produced
-this warning:
-
-Documentation/mm/damon/design.rst:342: WARNING: undefined label: 'damon_des=
-ign_region_based_sample' [ref.ref]
-
-Introduced by commit
-
-  8a2e41c7ecfd ("Docs/mm/damon/design: document for intervals auto-tuning")
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/uT5l70R1Nr5me0zgpy4dEhy
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfIGlgACgkQAVBC80lX
-0GwdCAf+OO2WecnWsRahsERETJ5D0XBRZAyF9vVjbhRx1KGa6FUCnDJj8MxD4zoT
-k07mF6pr49oyAxyGzvNCmdMiyeZTxBHKqrxEhavVDAj1RHhV1zn7LM80x5M7ctwP
-w1prldIPh1ZcuTPEhUBVgbX+yakaRWxleZXStsAr7NxkkizB5tNjsl+gsqwlVfc/
-UBugISPKEoA8KKEaIAkUSdFemZCLQT/8NNR6I8wYA6BV8c5o7BZlhCwZXEzI08cA
-1uyLEX5AdmmfxaypP8usWCTxNfjt/baA/pQasxE0GFGPv0/Q35ASg8R2f8IZPAFg
-d+3HqKRKPsS/u+3BXKdExz5lVWotYA==
-=YFl4
------END PGP SIGNATURE-----
-
---Sig_/uT5l70R1Nr5me0zgpy4dEhy--
+Reviewed-by: Fiona Behrens <me@kloenk.dev>
 
