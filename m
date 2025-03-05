@@ -1,207 +1,118 @@
-Return-Path: <linux-kernel+bounces-547439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14286A50878
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:08:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4470A5088B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:09:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9CD33A35E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:07:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1036D1894610
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:08:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2215B1A840E;
-	Wed,  5 Mar 2025 18:07:15 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E77017B505;
-	Wed,  5 Mar 2025 18:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 362D11C6FF9;
+	Wed,  5 Mar 2025 18:08:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GGkR8iA8"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0839D199920;
+	Wed,  5 Mar 2025 18:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741198034; cv=none; b=RSEU3Y/OVeiMjUJ33xef/NCeyHF5PUNjSNtzuxA+NoZc184i+Q4ChdTN3VYni2UHkixXX0Qz2nYINMoZGDSzvmpsUpeVtqki/jWAsucGxUcZaNgRYtzeldWt13FNMCJAo89Tn/LpRdobaShShXKM2l9L8rN8oJHtML5XN19ZXRY=
+	t=1741198087; cv=none; b=aD1/b3rwVXg6FWu1AFpVq2nvaSsxdqyjS1mpk1VyLW0EKkleuZ1nCzRwof2fPC1AZ0hp/zU6MuWuV5p/87weinU26E3blKwbym+8SUz49poH8G9yIl/UBrkBcfCIJUrLHb8UNIYbYDruh4L5rH1htPHnupP0xLTbtq+Hc2lNxi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741198034; c=relaxed/simple;
-	bh=Dgyu/TYmFa2Ai76zST8/MhLUutsM7nY/dhPZG8raPOc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tL1/mGmRCn0xF/cL4yt4YsvqggU8dNZWXxj884Bw+phwyX9++6T56vs2AOxkdWsngvuezCIUbdVMnSsebqDS/dCehpvv0M4/HYKzN09y1EPyJcbazQlozzRP7Bm/3kbw/xmErxv6zlrXFYBtIEcS4DFXM7alSgxklS4Y2YfkL+s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D4331FEC;
-	Wed,  5 Mar 2025 10:07:24 -0800 (PST)
-Received: from e133380.arm.com (e133380.arm.com [10.1.197.51])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 123993F66E;
-	Wed,  5 Mar 2025 10:07:06 -0800 (PST)
-Date: Wed, 5 Mar 2025 18:06:55 +0000
-From: Dave Martin <Dave.Martin@arm.com>
-To: "Luck, Tony" <tony.luck@intel.com>
-Cc: "Chatre, Reinette" <reinette.chatre@intel.com>,
-	"Moger, Babu" <babu.moger@amd.com>,
-	"corbet@lwn.net" <corbet@lwn.net>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"peternewman@google.com" <peternewman@google.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"paulmck@kernel.org" <paulmck@kernel.org>,
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-	"thuth@redhat.com" <thuth@redhat.com>,
-	"rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"xiongwei.song@windriver.com" <xiongwei.song@windriver.com>,
-	"pawan.kumar.gupta@linux.intel.com" <pawan.kumar.gupta@linux.intel.com>,
-	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-	"perry.yuan@amd.com" <perry.yuan@amd.com>,
-	"sandipan.das@amd.com" <sandipan.das@amd.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	"Li, Xiaoyao" <xiaoyao.li@intel.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"Li, Xin3" <xin3.li@intel.com>,
-	"andrew.cooper3@citrix.com" <andrew.cooper3@citrix.com>,
-	"ebiggers@google.com" <ebiggers@google.com>,
-	"mario.limonciello@amd.com" <mario.limonciello@amd.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"tan.shaopeng@fujitsu.com" <tan.shaopeng@fujitsu.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
-	"Eranian, Stephane" <eranian@google.com>
-Subject: Re: [PATCH v11 22/23] x86/resctrl: Introduce interface to list
- assignment states of all the groups
-Message-ID: <Z8iSrcTKSnxLx9n4@e133380.arm.com>
-References: <Z7XiQ+u3Pc+uvJCK@e133380.arm.com>
- <45a0a88a-b31e-447e-9d62-bc0cdedf06f7@amd.com>
- <Z7dN2KpsQjVUb3KR@e133380.arm.com>
- <7802f9e9-9a63-463d-a51e-e9ad0e60f77f@amd.com>
- <Z7ijCphcSM58AqA6@e133380.arm.com>
- <09f2f512-0428-4649-b8ef-33e5a03d5dcb@intel.com>
- <Z7ydx6vfuw8OdJzL@e133380.arm.com>
- <SJ1PR11MB608377BD540169FF3B0FF82DFCC02@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <Z8H3bKmTKQr7N2wG@e133380.arm.com>
- <SJ1PR11MB6083186EB2D63441E2D4BC04FCC92@SJ1PR11MB6083.namprd11.prod.outlook.com>
+	s=arc-20240116; t=1741198087; c=relaxed/simple;
+	bh=G97yehnfCUaEkX4rJ+36HP/dRpAjXYP1giHtMFjur7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qSmRickj5ZkJDvnr0pHLZSPjYFhBw/yJDrtQAvKbuAc+hCbYZJD/QlPkvJ9TQP9ECAYjULcCWQq6vO/UawqwdLZEdzcRAhdPBiIaXHKx+DR0HHaPNg3MqHakRAwb03pkDkQ09kWjtUTfwHtdLDo+9o19v+zd5S2bs6cwrgiuTNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GGkR8iA8; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso3797595f8f.3;
+        Wed, 05 Mar 2025 10:08:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741198084; x=1741802884; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G97yehnfCUaEkX4rJ+36HP/dRpAjXYP1giHtMFjur7M=;
+        b=GGkR8iA8duWxxM82ga8TnJQ+f9XyhBSCGpTeBIPApTYXxdPwgmbXyyMaR5t5MDLZ8B
+         dEsDCzMD0YxZD6mGjV5XYNt+ojv0lXXTlYasB/8xuoAJk2YzBhUF4aZwj9izcTLtjymD
+         Sw8zL7Sih6dyTtT7YU+RFvz37m3XUHuslA65/qEdYfnXP9FDM6yY2G2Sg8MNJQ9udG5L
+         HND7yId4LbDvAGL9ihb44Sr69YQ8WimR/rSsoR7kBbF7So15pyMvP71rdN/LWMPp0vYs
+         bFz3SH1Ye4hKDR+hcBkQ43nCb9CrORElKHXaj+U3VnqCN8qxL2yAhWLonegZMac3BwjI
+         Q8jA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741198084; x=1741802884;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=G97yehnfCUaEkX4rJ+36HP/dRpAjXYP1giHtMFjur7M=;
+        b=N25DKxfQhcpRYBRmYa5DqAUksQQwD8tWlC21gKrfNlqHJtEoa/l5YcGoHsdSDbKvwr
+         /nc8tCqyRORI67OvoS7eUzO9ZHruUgd03Xky1W3CdSKP4slWK6dHui5M6uPhRS2k4+2s
+         Nx/WlG/UNWjAOxPezPbvwivj/+9aOv4UZ6PDiY2GS62nI+2gFX8ve1vbiNYsaoD1hfB6
+         OeLhwgWzxuZP0ah8adfgi/jqxyMAJyFVETSOgWcLkomazSrHrw0Oh9t/U1y6RLPUCi8f
+         3jLzl3C/BP3Raw7zMEmH40CFpvMnZiahBvyNbWOm9SjfINhtiOOoVr4R9qvuszvgSlva
+         2f7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWlvFWyy7fGIx5MmrjA8ywYp0zYD/tz0Wf//qmwo9Urq6CgjcYf9cYewhmS3WnW/PtZ4XfALwb3cGxwMiJA@vger.kernel.org, AJvYcCX/lyoIS3P7hnebDxFJjyd1yTyO3RQlU1q/5Ae9wh7F5+c5hgV4//DxAMZAlOw1EZozAOvsjsG4RB50@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyVyZU3SqNVNadP4JCE4ikOKhL/ioFYjN3UwQV47Tf9Roa1nOa
+	nSZ8aYFfZhodwOTvaIPvA3lvAaonmyA4eeppjs6tvB7ZbD5iLPLZ
+X-Gm-Gg: ASbGnct48ZYANLo/HeUkx8njke0t62MnNfVz9PIg0nIHZ3oeEW82svdvdb6ap+i+z/J
+	MPpslWQpt4hP7RG0KQSq1FBhoDWatWPyt7N4svaPZb/CCHnJvo0yEQBQm3GlQYoTp5vRieEKgGn
+	JP8oscraIBbFSMurv690SLmexWhk1bp+kPvnlXiM83QVoDbsbPLeCjbzET5S5hhgqOm+OUg/4nE
+	s6h3rENpuUxt4adqDz2Y15a5viCJmBwVwnmxjSFa74ouC1delfc4EqfGbzEzAHoW2X3fNlniJ6t
+	3dNehwNM/o1lVEll7pLgV9mvEYtjWqPmt/+76MGuV8mb6kF3I3kGuf0RoUcwniLBtiVhadbtm4x
+	Dehiw7gAXyxl9mJJ7MAcP
+X-Google-Smtp-Source: AGHT+IFm8od6qyXXyVja7heRv60Cgy26NzGQfpPsD4T/2EJzs0OY9LJVVvkUZl+F0di/z2dnO6/Ysw==
+X-Received: by 2002:a5d:5982:0:b0:38d:e401:fd61 with SMTP id ffacd0b85a97d-3911f7cb463mr3396313f8f.49.1741198084189;
+        Wed, 05 Mar 2025 10:08:04 -0800 (PST)
+Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-391254508b3sm1765425f8f.79.2025.03.05.10.08.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 10:08:03 -0800 (PST)
+From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+ Andre Przywara <andre.przywara@arm.com>
+Cc: linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Subject:
+ Re: [PATCH v3 8/8] pinctrl: sunxi: Add support for the secondary A523 GPIO
+ ports
+Date: Wed, 05 Mar 2025 19:08:02 +0100
+Message-ID: <3535684.QJadu78ljV@jernej-laptop>
+In-Reply-To: <20250227231447.20161-9-andre.przywara@arm.com>
+References:
+ <20250227231447.20161-1-andre.przywara@arm.com>
+ <20250227231447.20161-9-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <SJ1PR11MB6083186EB2D63441E2D4BC04FCC92@SJ1PR11MB6083.namprd11.prod.outlook.com>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Mon, Mar 03, 2025 at 07:30:48PM +0000, Luck, Tony wrote:
-> > After having spent a bit of time looking into this, I think we are probably
-> > OK, at least for reading these files.
-> >
-> > seq_file will loop over the file's show() callback, growing the seq_file
-> > buffer until show() can run without overrunning the buffer.
-> >
-> > This means that the show() callback receives a buffer that is magically big
-> > enough, but there may be some "speculative" calls whose output never goes
-> > to userspace.  Once seq_file has the data, it deals with the userspace-
-> > facing I/O buffering internally, so we shouldn't have to worry about that.
-> 
-> Doesn't this depend on the size of the user read(2) syscall request?
+Dne petek, 28. februar 2025 ob 00:14:47 Srednjeevropski standardni =C4=8Das=
+ je Andre Przywara napisal(a):
+> As most other Allwinner SoCs before, the A523 chip contains a second
+> GPIO controller, managing banks PL and PM.
+> Use the newly introduced DT based pinctrl driver to describe just the
+> generic pinctrl properties, so advertise the number of pins per bank
+> and the interrupt capabilities. The actual function/mux assignment is
+> taken from the devicetree.
+>=20
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-Yes and no.
+Reviewed-by: Jernej Skrabec <jernej.skrabec@gmail.com>
 
-If I've understood correctly:
-
-To service a given read() call, seq_file calls down into the backend to
-generate some whole record, then copies it out to userspace, then
-repeats this process so long as there is any space left in the user
-buffer.
-
-For resctrl files, we don't implement a seq_file iterator: there is no
-.next(), no .llseek(), and we don't implement any notion of file
-position.  So our _show() functions generate a single big record that
-contains the whole dump -- frequently multiple lines of text.
-
-(This might or might not be desirable, but it is at least simple.)
-
-If a _show() function in resctrl holds rdtgroup_mutex throughout, then
-whatever it dumps will be dumped atomically with respect to other
-resctrl operations that take this mutex.
+Best regards,
+Jernej
 
 
-So, to flesh out your scenario:
-
-> 
-> If the total size of the resctrl file is very large, we have a potential issue:
-
-Let's say it's 5KB.
-
-> 1) User asks for 4KB, owns the resctrl mutex.
-
-(Note, rdtgroup_mutex is only held temporarily inside the resctrlfs
-backend to these operations; at the start of the process, it is not
-held.)
-
-> 2) resctrl uses seq_file and fills with more than 4KB
-
-(It's actually seq_file that uses resctrl here via callbacks: seq_file
-sits in between the VFS layer and resctrl.)
-
-When a .show() callback is called, resctrl doesn't know how much data
-to generate; it just writes stuff out with seq_printf() etc.
-
-If there's too much to fit in the default seq_file buffer, the data
-gets truncated and the seq_file will get internally marked as having
-overflowed.  resctrl could check for this condition in order to avoid
-formatting text that will get thrown away due to truncation, but this
-is not required.  When the .show() callback returns, the seq_file
-implementation will respond to the overflow by growing the buffer and
-retrying the whole thing until this doesn't occur (see the loop
-preceding the "Fill" label in seq_file.c:seq_read_iter().)
-
-This terminates with a seq_file buffer that contains all the output
-(untruncated), or with an -ENOMEM failure (which would be punted to
-userspace).
-
-So, assuming nothing went wrong, the seq_file buffer now has the 5KB of
-data.  rdtgroup_mutex is not held (it was only held in the _show()
-callback).
-
-> 3) User gets the first 4KB, releases the resctrl mutex
-
-Userspace gets the first 4KB, and seq_file's notion of the file
-position is advanced by this amount, and the generated text is
-kept in the seq_file's buffer.
-
-> 4) Some other pending resctrl operation now gets the mutex and makes changes that affect the contents of this file
-
-The un-read data remains buffered in seq_file.  Other resctrl
-operations can happen, so the buffered data may become stale, but it is
-still an atomic snapshot.
-
-> 5) User asks for next 4K (when it reaquires resctrl mutex)
-
-If an iterator is implemented, seq_file might try to generate another
-record to fill the requested space.  But we don't have an iterator, so
-the generated data remains as-is.
-
-> 6) resctrl uses seq_file() to construct new image of file incorporating changes because of step 4
-
-I think this happens only if the file is reopened or lseek()'d, and
-only if .llseek() is wired up in struct file_operations.  Resctrl
-doesn't seem to do this (whether by accident or by design).
-
-So userspace just sees a non-seekable file.
-
-> 7) User gets the second 4KB from the seq_file buffer (which doesn't fit cleanly next to data it got in step 3).
-
-Userspace gets the final 1K of the data that was generated in response
-to the original read() call.
-
-If userspace tries to read again, it will get EOF (again, because we
-don't have an iterator -- meaning that no additional records can be
-generated).
-
-
-I haven't traced in detail through the code, but that's my
-understanding.
-
-Cheers
----Dave
 
