@@ -1,100 +1,95 @@
-Return-Path: <linux-kernel+bounces-545923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8708BA4F3B2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:30:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5FACA4F3B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:30:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ECE4E188F185
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:30:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6D5A416DAA4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A882D148855;
-	Wed,  5 Mar 2025 01:29:58 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5201547E9;
+	Wed,  5 Mar 2025 01:30:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iLG9cOuI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61EF6144D21;
-	Wed,  5 Mar 2025 01:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D720E1EB3E;
+	Wed,  5 Mar 2025 01:30:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741138198; cv=none; b=t6a0pMsbO1k/agPjyYfUCfKvAlTCIPzJv2WrS0ZOVvxI6eHGxofUlE7uktjuoPp3jXwPk8YfrkN05A6B7L5EjCPE7OkshdxQVhHN0BEjjUMOsM/PcVx57hAOUIpOk2r2sLsDyaO9ZTYesy/YoWWRquTu3pU7Lk4rV7cNrOUovPc=
+	t=1741138200; cv=none; b=XmlCEsq6FXrA0MWAQl4GSeIWRWOmTUv+OgCbT47bXBUQuWlgCLjvzgwadYU8An5abSleMR7FVUHbJmcgBfykTMllOb8Yh/cLxmfudLsvrdMt+8qzVAj/giQplHebr2Fm885D/LgWKQN3dTR5deeBpQplvDOCIpdf8xkFiYq+sQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741138198; c=relaxed/simple;
-	bh=Z82A1GypgMf51psxKEymQiZYIfSF+fYhtm8JSfxC4Mw=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=PMAECtrflcoeeT7vKWMu56dp8SsRbCM62y7xxTsK59mr4mA/krU/SaFj11hDT+cMYDhd6qI14KjXY2AzC8dCUUG7hhy2qbKhO6hgYZnWByeX79Xnj6I/a5tuXtKwVOK5uUE6oFioKPhZNNjq/bTlyyurNwzhy9YpgxX0QYuvFog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z6w2R6v1bz4f3jtx;
-	Wed,  5 Mar 2025 09:29:35 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id ADAD51A138F;
-	Wed,  5 Mar 2025 09:29:52 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAHa18PqcdnevVKFg--.56374S3;
-	Wed, 05 Mar 2025 09:29:52 +0800 (CST)
-Subject: Re: [PATCH V2 12/12] badblocks: use sector_t instead of int to avoid
- truncation of badblocks length
-To: Ira Weiny <ira.weiny@intel.com>,
- Zheng Qixing <zhengqixing@huaweicloud.com>, axboe@kernel.dk,
- song@kernel.org, dan.j.williams@intel.com, vishal.l.verma@intel.com,
- dave.jiang@intel.com, dlemoal@kernel.org, kch@nvidia.com,
- yanjun.zhu@linux.dev, hare@suse.de, zhengqixing@huawei.com,
- colyli@kernel.org, geliang@kernel.org, xni@redhat.com
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, nvdimm@lists.linux.dev, yi.zhang@huawei.com,
- yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250227075507.151331-1-zhengqixing@huaweicloud.com>
- <20250227075507.151331-13-zhengqixing@huaweicloud.com>
- <67c0844fe82af_b2959294d1@iweiny-mobl.notmuch>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <6f2cafc4-7b18-7bce-94cc-b58a1707f630@huaweicloud.com>
-Date: Wed, 5 Mar 2025 09:29:50 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1741138200; c=relaxed/simple;
+	bh=NUZjngEXeYxpimSSSAeNij0pHTgmJHmkCNjSjzSFNuQ=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=pMU0O4HOdcDEV3AvI8zdaGTwnEAB9Jb1xrhmEXbWSiP6wr/Lrga5yn0yVwLRZgauiWXDDGtZ4vokOlKRjpPe5XRpfB/I8f1CT9pJGuP6BGVUYn3gaJiCM7oRGQgsolermTQNCPLqTZD9CCuR8j1+n60uCghQ28+fiWT1Gl6Rbpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iLG9cOuI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B783C4CEE5;
+	Wed,  5 Mar 2025 01:30:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741138200;
+	bh=NUZjngEXeYxpimSSSAeNij0pHTgmJHmkCNjSjzSFNuQ=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=iLG9cOuIaakOlu2hRE21qWRn/jJ3pmZMSM0Bfz+5sVDC7R1DqW7AqGxuHmVHFozTg
+	 dw0ol+06V34DiEAmIgpzOCuoQgRd2Wcaef7u5TJDIefX2+ZQlkCvm8dl2QO4ZrwUna
+	 20g0+w3VceCixzTboaveBmAzXtisl5aP1HT75B9b4ZxcgRt1ZqWk1VATxcVv9lISF8
+	 2xhyFZYx6pB+fuGxzcKvSIrO+Sxn4ucTGszeP+Ud/eDRs9dedMOW8UWatcUnLLefLe
+	 Xtzgh8fqvPLJpwgkHlSAzKMMm+oU2K1YWNq2vmPM5PYxLoDba6+tj/ncDMslqwiviF
+	 YRE62Vm7DZy5w==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7109C380CFEB;
+	Wed,  5 Mar 2025 01:30:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <67c0844fe82af_b2959294d1@iweiny-mobl.notmuch>
-Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHa18PqcdnevVKFg--.56374S3
-X-Coremail-Antispam: 1UD129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
-	VFW2AGmfu7bjvjm3AaLaJ3UjIYCTnIWjp_UUUYH7kC6x804xWl14x267AKxVW5JVWrJwAF
-	c2x0x2IEx4CE42xK8VAvwI8IcIk0rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII
-	0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xv
-	wVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4
-	x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG
-	64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_JrI_JrylYx0Ex4A2jsIE14v26r
-	1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxAIw28IcxkI7VAKI48JMxAqzxv26xkF7I0En4
-	kS14v26r4a6rW5MxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4l
-	x2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXwCIc40Y0x0EwIxGrw
-	CI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI
-	42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z2
-	80aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IUbG2NtUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Subject: Re: [PATCH net-next v2] net: ethernet: ti: cpsw_new: populate netdev
+ of_node
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174113823325.360063.2190869561934533102.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Mar 2025 01:30:33 +0000
+References: <20250303074703.1758297-1-alexander.sverdlin@siemens.com>
+In-Reply-To: <20250303074703.1758297-1-alexander.sverdlin@siemens.com>
+To: A. Sverdlin <alexander.sverdlin@siemens.com>
+Cc: rogerq@kernel.org, netdev@vger.kernel.org, s-vadapalli@ti.com,
+ andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, linux-omap@vger.kernel.org,
+ linux-kernel@vger.kernel.org, andrew@lunn.ch
 
-Hi,
+Hello:
 
-ÔÚ 2025/02/27 23:27, Ira Weiny Ð´µÀ:
-> __add_badblock_range() in drivers/nvdimm/badrange.c limits the number of
-> badblocks which can be set in each call to badblocks_set().
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon,  3 Mar 2025 08:46:57 +0100 you wrote:
+> From: Alexander Sverdlin <alexander.sverdlin@siemens.com>
 > 
-> After this change can that algorithm be eliminated?  I'm not familiar with
-> the badblocks code to know for certain.
+> So that of_find_net_device_by_node() can find CPSW ports and other DSA
+> switches can be stacked downstream. Tested in conjunction with KSZ8873.
+> 
+> Reviewed-by: Siddharth Vadapalli <s-vadapalli@ti.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@siemens.com>
+> 
+> [...]
 
-This is another story, badblocks records are at most 512, and each
-record is at most 512 sectors, so pass in INT_MAX will fail 100%.
+Here is the summary with links:
+  - [net-next,v2] net: ethernet: ti: cpsw_new: populate netdev of_node
+    https://git.kernel.org/netdev/net-next/c/7ff1c88fc896
 
-Thanks,
-Kuai
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
