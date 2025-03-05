@@ -1,156 +1,109 @@
-Return-Path: <linux-kernel+bounces-545830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91CB5A4F215
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:06:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18285A4F21A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:06:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7346F16E6DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:06:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8363A6B33
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E59153BE;
-	Wed,  5 Mar 2025 00:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4236B134AB;
+	Wed,  5 Mar 2025 00:06:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jVNm3Wcc"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsBfEBZa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03BCA163;
-	Wed,  5 Mar 2025 00:06:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 972D01078F;
+	Wed,  5 Mar 2025 00:06:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741133167; cv=none; b=sjVV0Na/4RntekVWVmyZGMmoXUuT601wyF45pf9XW83G9xdSKCOgjpkTnXaGa3yTNOLm5Oyad+vUV8jdS2+QCPrp4BzQ1g+hs0eTyEQJkx5ztrRRyxMELv+zqqGynMeDh4eaomou1V2HGRsC95jgRgtp0PEH8eFzy7zI3Vjqxpo=
+	t=1741133171; cv=none; b=kycKkJ9Lc8is/i/1DAGf+up10Te1jbgd32/GiHv7YZCPqpzhTJ9YLHEFLYo/Myg2qjee68sixAyJnY+KeIy8fuBussRdKYLKjNqegQDozok8rHBQjTcQtMVYlhOFImhVByglygq88xs02a5fxK8mRnvohQp5j92vkvNz+uhjRnQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741133167; c=relaxed/simple;
-	bh=yumEBOrSKRVXTEceLp63BWKfaVOLc1xa6xzRclgxWJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uN+dUzi6SZ7kq8pb6k0E+2DpNqvK58i3xThQ8YDfj3BPbEC9JAcQrr4dP/RM6mv2xL33Spd/ZbjKLAaUL3YbaiZOBo5DwZfX86udxv6wYOuqya4W0TWIfCHCaY+cAG/YlttV8t4ZQs32V5X5fcG+hdWcHx6mohpuX1/6x0Ork3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jVNm3Wcc; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-22385253e2bso85037285ad.1;
-        Tue, 04 Mar 2025 16:06:05 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741133165; x=1741737965; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1bX8gifnWEanUXpwx5uYv2DpmwKxBi/IwZcv/puhYts=;
-        b=jVNm3WccQR+f57U67i5Jm/VqljCbyurJ3p/THSi6Z1dYLAWjuBzy+Q5t1KOvUtq2R1
-         k7FOY3T2X9dcxGL4NwSawO0gu25AlyZZpQys1aST0A2dszUEsbOGpXJdNCnw5cXYV3a3
-         eR92iCKleQMvHa95C1Yvo/kwSw5C8j1x0VQHn7ycNuZEbGhf8gebEHZfBInuDJmN5vZv
-         3aKIACTKtgSCWKtKdFFDKKOmEg+aC3/3xOkQqnz9pIgdPiXNSRYi5v5JImg5y20+sa8O
-         IggXm28a6D/g+R8CHSSdJ7bcde1Ia7eh1JsLeuGsa8XivNXoj+hiwgodg+xm3sDGIB9O
-         6JgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741133165; x=1741737965;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1bX8gifnWEanUXpwx5uYv2DpmwKxBi/IwZcv/puhYts=;
-        b=CsWI1X8BQLQUNX51EIDpJWdgCqIgYGUH8IiO48xUhXwKR/pH22A9EXEVCHf91WWiv3
-         cCER4DZgIbRfSdf16rxKoyC7CwRsrGq4iPZssb0d9V+H63fbuFWIBqSbkFNQuGJ4av8i
-         XLRb1WqxdnbblcjBMeRULjH4y0l56z4Wm8tcwm15ZH7n2GzhSratrlmZ4y2yr3Wj/7r9
-         23KClsmz248qJ+WdoZV8INR2cfAKidk8wvnZH9j6XmxFuqImjE/SU4SDz31Ruv6QgSvp
-         Kya5PbgeccIWYSb5gIYBUR7Pjf+58cdijIOtZUaj+SASEfW5LrAiHPMnDTjjmc2le8mB
-         YMKw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0gYEEwOw0vQB55o9+r1x+vFY1kOcznQZ2yQljLCYo9dsNvx+aiQlbPfB+kYtyZWVcjONdNQShkRN1I6A+@vger.kernel.org, AJvYcCV11Dgr859uouODDat5NVjo2Guhimy7DXLViw78+vrh87RrlT9+z1yJQUoF2VlHA8Of4Q0IxGDjJlLU2iFk@vger.kernel.org, AJvYcCWzxtd9AWmKzRwANTZ18mFUMGcEyC2rI5JDrzqlPGAPcElmCTDdx30CTh9BN+SfH9Ry71g=@vger.kernel.org, AJvYcCXq87OmiCJE7w1UHilnk30ScCEhaCKKLURfZYvTwpGHh89Q+htNiwX4VvMtCRxpYtaoE07TC+5R@vger.kernel.org
-X-Gm-Message-State: AOJu0YxRVA1KqAOW6v0eqZkNLPlJ/HBcsONIcLURw6jC5n2XMXjD3keG
-	LOfbylvk7mLTsjAeGYDpFPKASmjw31CGbABWXPJwHfMLoV0W3NOa
-X-Gm-Gg: ASbGncsxBbFupKsWOXMDk+ch2sPEEkCUO9v0Z6tXwnpZcbOVS9ogy2B2qJywlbd7PTL
-	dZO5JAEei639/qRNGUlQyGPvML0VDdul2xG+ZCryPJB5aQw4rcKca6CFBrbsPKQb+Gx/FxLnGoT
-	HQBz5TQZnK1bDF7BWjKVF9diXXrjRP5qYAGemqRz7gCLZmZdU9AxvrgdFGAxMQAw/eVzKGa2VkU
-	xDVj4jzXJuTXgMDxGQ+e67k3JxPyKzuuhM/2DjFeo0Vtv6/uSzkNQqZWFlLkZ4z2hSRKxUVSvmh
-	eXXxC/OUS5iJtZQDnpnMxaGLCTUL6VfYuE58o8lhtZBY+Pc8PU3tt3TNBnank15gRw==
-X-Google-Smtp-Source: AGHT+IH4ftklKoOo2W4okOysYcXlnHpssR8tMCp5JJW1u2ezJYFalFzx+cpxzztCmDjNwc5X5W1I0w==
-X-Received: by 2002:a05:6a00:2311:b0:736:728b:5f1f with SMTP id d2e1a72fcca58-73682c89fb9mr1219777b3a.19.1741133164866;
-        Tue, 04 Mar 2025 16:06:04 -0800 (PST)
-Received: from devvm6277.cco0.facebook.com ([2a03:2880:2ff:2::])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7365bb4090csm4251725b3a.35.2025.03.04.16.06.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 16:06:04 -0800 (PST)
-Date: Tue, 4 Mar 2025 16:06:02 -0800
-From: Bobby Eshleman <bobbyeshleman@gmail.com>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Jorgen Hansen <jhansen@vmware.com>,
-	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org,
-	Stefan Hajnoczi <stefanha@redhat.com>,
-	virtualization@lists.linux-foundation.org,
-	linux-hyperv@vger.kernel.org, "Michael S. Tsirkin" <mst@redhat.com>,
-	Dexuan Cui <decui@microsoft.com>, Jakub Kicinski <kuba@kernel.org>
-Subject: Re: [PATCH net-next 0/3] vsock: support network namespace
-Message-ID: <Z8eVanBR7r90FK7m@devvm6277.cco0.facebook.com>
-References: <20200116172428.311437-1-sgarzare@redhat.com>
+	s=arc-20240116; t=1741133171; c=relaxed/simple;
+	bh=4d0t/Os2/GGQ6qNG/OGV8T4IdUwA2m6Stm5czZf5DrI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=aanS/xVNUxEV4TAgyWd/PNFL3h9dTAB0QYy3fymjeo0nnyECZdxiSi8xI0rkc51ctLUkLLl5TgIzHTe/tx+sCmqoNwLItRO/1q5KD5XionqaVM4CPb7AiUeA0XT4fm26vyt20RzLjfI8IFVIkANNyChOTslJa4butjS9Pc3UzTg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsBfEBZa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 85AA5C4CEE5;
+	Wed,  5 Mar 2025 00:06:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741133171;
+	bh=4d0t/Os2/GGQ6qNG/OGV8T4IdUwA2m6Stm5czZf5DrI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=GsBfEBZaVxGKwilAHG/ScWxdCIBsmwK+XJmLfPUQYAgZNfCubB5pFME5Zfqoc4Bo8
+	 3fSXhWZLKm0Y7o8eYVO1JEPxeigdAPGzeW0xB9btJQZsjW54JsAnwpBsWxAAS5uSTM
+	 qobkLvRs0UodevrZiMOE7NGtG8Axqc/DrFNAgaLIyzQdv9nhMnmdor5bBh4hrgOP5L
+	 vte5FDi2uYnk7iIMbMV6PTHrltF7uoyC6HDApKDSpFK44jPyuxSp/SioVa9dpU85nH
+	 F1UmI0H9V3eGl8LjkunhbS1EWIlGyf99QxGSg3dYJDURv3hsHk0i0XS0qzXYdAOb+M
+	 cK60uxx6JIieA==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+	linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] arch/x86: Fix size overflows in sgx_encl_create()
+Date: Wed,  5 Mar 2025 02:06:02 +0200
+Message-ID: <20250305000602.127665-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20200116172428.311437-1-sgarzare@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jan 16, 2020 at 06:24:25PM +0100, Stefano Garzarella wrote:
-> RFC -> v1:
->  * added 'netns' module param to vsock.ko to enable the
->    network namespace support (disabled by default)
->  * added 'vsock_net_eq()' to check the "net" assigned to a socket
->    only when 'netns' support is enabled
-> 
-> RFC: https://patchwork.ozlabs.org/cover/1202235/
-> 
-> Now that we have multi-transport upstream, I started to take a look to
-> support network namespace in vsock.
-> 
-> As we partially discussed in the multi-transport proposal [1], it could
-> be nice to support network namespace in vsock to reach the following
-> goals:
-> - isolate host applications from guest applications using the same ports
->   with CID_ANY
-> - assign the same CID of VMs running in different network namespaces
-> - partition VMs between VMMs or at finer granularity
-> 
-> This new feature is disabled by default, because it changes vsock's
-> behavior with network namespaces and could break existing applications.
-> It can be enabled with the new 'netns' module parameter of vsock.ko.
-> 
-> This implementation provides the following behavior:
-> - packets received from the host (received by G2H transports) are
->   assigned to the default netns (init_net)
-> - packets received from the guest (received by H2G - vhost-vsock) are
->   assigned to the netns of the process that opens /dev/vhost-vsock
->   (usually the VMM, qemu in my tests, opens the /dev/vhost-vsock)
->     - for vmci I need some suggestions, because I don't know how to do
->       and test the same in the vmci driver, for now vmci uses the
->       init_net
-> - loopback packets are exchanged only in the same netns
+The total size calculated for EPC can overflow u64 given the added up page
+for SECS.  Further, the total size calculated for shmem can overflow even
+when the EPC size stays within limits of u64, given that it adds the extra
+space for 128 byte PCMD structures (one for each page).
 
+Address this by pre-evaluating the micro-architectural requirement of
+SGX: the address space size must be power of two. This is eventually
+checked up by ECREATE but the pre-check has the additional benefit of
+making sure that there is some space for additional data.
 
-Hey Stefano,
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-sgx/c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v2: Simply check the micro-architetural requirement in order to address
+    Dave's comment:
+    https://lore.kernel.org/linux-sgx/45e68dea-af6a-4b2a-8249-420f14de3424@intel.com/
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
 
-I recently picked up this series and am hoping to help update it / get
-it merged to address a known use case. I have some questions and
-thoughts (in other parts of this thread) and would love some
-suggestions!
-
-I already have a local branch with this updated with skbs and using
-/dev/vhost-vsock-netns to opt-in the VM as per the discussion in this
-thread.
-
-One question: what is the behavior we expect from guest namespaces?  In
-v2, you mentioned prototyping a /dev/vsock ioctl() to define the
-namespace for the virtio-vsock device. This would mean only one
-namespace could use vsock in the guest? Do we want to make sure that our
-design makes it possible to support multiple namespaces in the future if
-the use case arrives?
-
-More questions/comments in other parts of this thread.
-
-Thanks!
-
-- Bobby
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index b65ab214bdf5..fedd5f666b5e 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -64,6 +64,14 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	struct file *backing;
+ 	long ret;
+ 
++	/*
++	 * This is a micro-architectural requirement. ECREATE would detect this
++	 * too without mentionable overhead but this check guarantees also that
++	 * the space calculations for EPC and shmem allocations never overflow.
++	 */
++	if (!is_power_of_2(secs->size))
++		return -EINVAL;
++
+ 	va_page = sgx_encl_grow(encl, true);
+ 	if (IS_ERR(va_page))
+ 		return PTR_ERR(va_page);
+-- 
+2.48.1
 
 
