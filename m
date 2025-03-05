@@ -1,141 +1,114 @@
-Return-Path: <linux-kernel+bounces-546092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE4FA4F639
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:57:36 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB26AA4F63E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:00:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCDD3A51A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:57:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1618B16F5FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FED1C84D9;
-	Wed,  5 Mar 2025 04:57:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF901C84CC;
+	Wed,  5 Mar 2025 05:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtFMdnVB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XwVbWvR7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF80E2AD2D;
-	Wed,  5 Mar 2025 04:57:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AA004A06;
+	Wed,  5 Mar 2025 05:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741150642; cv=none; b=gOZJnGwS4BCp6kG0YWvjKBVZT52gosAhZ4Vna99/m/hEfBN5Dm/pT5u+SvMjoFVlgLWy9wFlqGD2u/RQWaQI9Ct9yXNigS3ztazU4rIM3pUV2pjmJ9tf7A/sf5xz25b1yVWQU/bVNh8ce8Zx7w/QsZpHkl9CC/mAwRsAIlaEqhE=
+	t=1741150823; cv=none; b=a/B4LDrfNT3bNDoJWVqEKbCO8ndqyfsPOlDC8uqI7SsOvorOiAAW7bIbsvVYSDYTQVrCOzQ7nyvJQWGaRld7nv8h1iiUaClwWGytZ9lEt9x2khNH3b7oDoOJY6MBblChkdoql3n58tD35AdGlPHl4rkAfxy1xW4YGLPssepMPHs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741150642; c=relaxed/simple;
-	bh=QL7FR8XfXuKE/HaEdkkItoNfp3tRJjrQsT++UDGTAFw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ijpp4ou7Ylq7HusU3dJqllSsGj221xBXwrWikPsW/4xYIg572ns/VL3XYcJkFjOjsOOSLV3SNO7mgSt4yhqUk1evLvx6JbIFRKE9fhgNa9YPXUUDe2ivrC2iR404fsJ3C3LeT2GuvbHgBS+VJLc8qYofURX/bLwGwLhWFxG4BMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtFMdnVB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D858C4CEE2;
-	Wed,  5 Mar 2025 04:57:21 +0000 (UTC)
+	s=arc-20240116; t=1741150823; c=relaxed/simple;
+	bh=Tu9pHHMhYpuvyvA4UcT8a/MRI55uAHM1EzWCIW5bxXc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=INUGUFOeGW5cPky96bL9U2EO3i9xBBmzzVE7N/Vhm2e+uihicUwRM4akKGJe68hYHoe9ehqf5mB7uEhLWMLGZkMq5kz5wCAtp7L0GQ6CUz4sAm0yOlBKdlFEPaL5Jsx49wuvStjNHRkVQ/Nnf7hWh82RlGIkICzVlOWG1g/3lMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XwVbWvR7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46ECCC4CEE2;
+	Wed,  5 Mar 2025 05:00:22 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741150641;
-	bh=QL7FR8XfXuKE/HaEdkkItoNfp3tRJjrQsT++UDGTAFw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=BtFMdnVBZWuel0MXl4Dxo7sHRQbj4edNcK8Lkrs9hVdYUl/h46m0UCsRrBFuvngGa
-	 5zoL9CHnI+PeJnfEdTwQ3yBUA646+EMFO53+pXtoAM8N2pwtLNKbGMOHv4e5B4Y1pw
-	 AZhT23wUvayMkSbzbxAL1/7MJ3ThxeLBMrpgSvx+ryM+JDjewzU/2vlx0fca9B72TC
-	 IzxAidVxF84CLX9TKhzCISKAF3yWqf8elSbErt8nn4FlS8E5ZMtVV02avjCqxFVFHW
-	 mkaaI0hFXAMHjkWkfhJvFBl2SHJ54ItWpYxYUwsYDTAdYVBF7Mfm/BvJT/fLmQxhaG
-	 9KQFDuQIzkTVw==
-Date: Tue, 4 Mar 2025 20:57:16 -0800
-From: Kees Cook <kees@kernel.org>
-To: Thorsten Blum <thorsten.blum@linux.dev>,
-	Qing Zhao <qing.zhao@oracle.com>, Bill Wendling <morbo@google.com>
-Cc: Peter Rosin <peda@axentia.se>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [RESEND PATCH] mux: Convert mux_control_ops to a flex array
- member in mux_chip
-Message-ID: <202503041935.AE2093CFFA@keescook>
-References: <20250302230220.245739-3-thorsten.blum@linux.dev>
- <202503031040.223DEF2781@keescook>
- <20A47316-D274-45DD-BA15-F66139654D44@linux.dev>
+	s=k20201202; t=1741150822;
+	bh=Tu9pHHMhYpuvyvA4UcT8a/MRI55uAHM1EzWCIW5bxXc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=XwVbWvR7rGQYmhkjddx9319FAP7mfMYhh/7rU0uE/Dqh1myjLuzWr/XfC75jOAO5Y
+	 G9NO7jpSiYPZuIxgerUP+6sASYSaRGjHA3Z4OdIp1AQBsUzeWA9jN99ARkrAj0NWBb
+	 VWaEJI1beXhBgyEKcY1G/fH4mJWTYemzuap5JFgRm+wEnJTYVjohKcmmSSR6ilp1DM
+	 sqBg8o6zU/8sfDqd9wD7cqhmHKZ2VaKiLYdhgnKyvuZsho9/XB9ZDk5ByudmjrK/+/
+	 vjNHkQhmaUydnn1RJzcMoC5JXorw006MiJoj4x9ii4Z7fy+jnlFaBzzaFZJj9x/H2q
+	 quCV/lQwGCVYg==
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-sgx@vger.kernel.org,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Sean Christopherson <seanjc@google.com>
+Cc: stable@vger.kernel.org,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Borislav Petkov <bp@suse.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] arch/x86: Fix size overflows in sgx_encl_create()
+Date: Wed,  5 Mar 2025 07:00:05 +0200
+Message-ID: <20250305050006.43896-1-jarkko@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20A47316-D274-45DD-BA15-F66139654D44@linux.dev>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 09:58:21AM +0100, Thorsten Blum wrote:
-> On 3. Mar 2025, at 19:44, Kees Cook wrote:
-> > On Mon, Mar 03, 2025 at 12:02:22AM +0100, Thorsten Blum wrote:
-> >> Convert mux_control_ops to a flexible array member at the end of the
-> >> mux_chip struct and add the __counted_by() compiler attribute to
-> >> improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-> >> CONFIG_FORTIFY_SOURCE.
-> >> 
-> >> Use struct_size() to calculate the number of bytes to allocate for a new
-> >> mux chip and to remove the following Coccinelle/coccicheck warning:
-> >> 
-> >> WARNING: Use struct_size
-> >> 
-> >> Use size_add() to safely add any extra bytes.
-> >> 
-> >> Compile-tested only.
-> > 
-> > I believe this will fail at runtime. Note that sizeof_priv follows the
-> > allocation, so at the very least, you'd need to update:
-> > 
-> > static inline void *mux_chip_priv(struct mux_chip *mux_chip)
-> > {
-> >       return &mux_chip->mux[mux_chip->controllers];
-> > }
-> > 
-> > to not use the mux array itself as a location reference because it will
-> > be seen as out of bounds.
-> 
-> Getting the address doesn't fail at runtime, does it? For this example
-> it works, but maybe I'm missing some compiler flag?
-> 
-> https://godbolt.org/z/qTEdqn9WW
+The total size calculated for EPC can overflow u64 given the added up page
+for SECS.  Further, the total size calculated for shmem can overflow even
+when the EPC size stays within limits of u64, given that it adds the extra
+space for 128 byte PCMD structures (one for each page).
 
-Uhn. I can't explain that. :( We've seen this calculation get tripped
-in the real world, though:
+Address this by pre-evaluating the micro-architectural requirement of
+SGX: the address space size must be power of two. This is eventually
+checked up by ECREATE but the pre-check has the additional benefit of
+making sure that there is some space for additional data.
 
-https://git.kernel.org/linus/a26a5107bc52
+Cc: stable@vger.kernel.org # v5.11+
+Fixes: 888d24911787 ("x86/sgx: Add SGX_IOC_ENCLAVE_CREATE")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Closes: https://lore.kernel.org/linux-sgx/c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain/
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+---
+v3: Updated the commit message according to Dave's suggestion and added
+    fixes tag.
+v2: Simply check the micro-architetural requirement in order to address
+    Dave's comment:
+    https://lore.kernel.org/linux-sgx/45e68dea-af6a-4b2a-8249-420f14de3424@intel.com/
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-But yeah, when I build local test cases, grabbing an integral trips it,
-but taking an address does not, as your godbolt shows. This makes no
-sense to me at all.
-
-Here's my version, doing a direct comparison of int to *(int *) ...
-https://godbolt.org/z/e1bKGz739
-
-#include <stdlib.h>
-#include <stdio.h>
-
-struct foo {
-    int count;
-    int array[] __attribute__((__counted_by__(count)));
-};
-
-int main(int argc, char *argv[]) {
-    int num_elems = 2 + argc;
-
-    struct foo *p = malloc(sizeof(*p) + num_elems * sizeof(*p->array) + sizeof(int));
-    p->count = num_elems;
-
-    // this correctly trips sanitizer:
-    int val = p->array[num_elems];
-    printf("%d\n", val);
-
-    // this does not?!
-    int *valp = &p->array[num_elems];
-    printf("%p %d\n", valp, *valp);
-
-    return 0;
-}
-
-Qing and Bill, are you able to explain this? If I set p->count = 0, 1, or
-2, this trips. Is this somehow an off-by-one error in both GCC and Clang?
-
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index b65ab214bdf5..776a20172867 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -64,6 +64,13 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	struct file *backing;
+ 	long ret;
+ 
++	/*
++	 * ECREATE would detect this too, but checking here also ensures
++	 * that the 'encl_size' calculations below can never overflow.
++	 */
++	if (!is_power_of_2(secs->size))
++		return -EINVAL;
++
+ 	va_page = sgx_encl_grow(encl, true);
+ 	if (IS_ERR(va_page))
+ 		return PTR_ERR(va_page);
 -- 
-Kees Cook
+2.48.1
+
 
