@@ -1,147 +1,141 @@
-Return-Path: <linux-kernel+bounces-546904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FD4A50066
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:23:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B429DA50068
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:24:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64DC1899A62
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:17:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE9E018871BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:18:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BB7D2459C0;
-	Wed,  5 Mar 2025 13:17:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F8C5248873;
+	Wed,  5 Mar 2025 13:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="fS4XQQaj"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="S1SpsoBa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB77D24886E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:17:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D54CC1EDA0E;
+	Wed,  5 Mar 2025 13:18:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741180651; cv=none; b=t2OtY2Lxo13+JTr2xmuoBpHqtT3by8IsVGMviZI4jDv2BGwjy17y1BusuptzsYzPJHQbAchkQJ7t5pPzzmpo4M60p2fTmtqB0Vrt4nCga29Kg3wVEekKDzcGgWwhO8KVnqAaX7PKDszKok5/zHf1XXK5Zi/EZB5P0vmoay486QE=
+	t=1741180693; cv=none; b=Qke9J7zS47xERXRH/ewrvIAK6ecU6syUAH9wJkTcxnUstK9d0r/pFCRVUPOAqQJZCndubq8FvkKPZ9untSRPVA3Ey1Ta/L/FBuI2wWTK0LVuQh5AWrpE5fFNhKKXVVA13ndnSaUltsbuU5tsiE4dwMX7Wt8Ph2DNrUbmPu6Fv7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741180651; c=relaxed/simple;
-	bh=WdD2fE2doVPjaQz9GJUZJaK7tAEw7PihudDpfYH+olQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZqdRaYvB/DyLjBIq1Q30NmmmLPBOZQzq5yUFsRx3U5CJw/soVsF8R1PFCyKH+DbZy+OciVDF0/hG3nOecWK/5ZQ1EouVkkp8x1SbrfpmJa8vr9RQ2wvFoReWhz1nH1V8B36sYqwLWUSpsiA+u8S3E/1VfujIs1wihdrRBbh4NCQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=fS4XQQaj; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [IPv6:2001:67c:2050:b231:465::1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4Z7Cl44XZDz9snt;
-	Wed,  5 Mar 2025 14:17:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1741180640; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZUzKOWOCIhPnb+TETbrLF5OWTM2YthK9kRDKkAN5Rvc=;
-	b=fS4XQQajnG1J3xe+bh4mdgY/H1BNgZf+UWH2R/iyRZTio1jo4jwko/6pYSZ9ESXL3lpEvN
-	YBt64pZInW6ZVxKJ3xK5rxHNvefaSfsfgKQDDphddOC/w9gYlCFlVSEtItGJLvAB+zuyBo
-	TzdRPQs2dmjQoAlPe6YDk74tKnPM2c26oRQ7l9W0lWAVB35vSy7E/yuFPcQmQEyqzA35ZP
-	ZO28tbMWFxuaQn5wUPa3tz/UZgvDiEQiZz/BSRwhxLVFb1r0+S19LmiSRwmBks7sXEMyS7
-	iuUHwyYav6rdNDa58gWRDWAzN1fZq+xW+xWCzf9MRh6zBmvJ5YNGN89QRgJfgg==
-Message-ID: <5d645ef9fa26c0de82135755d4fa573ec409e3ef.camel@mailbox.org>
-Subject: Re: [PATCH v2] drm/sched: drm_sched_job_cleanup(): correct false doc
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Philipp Stanner <phasta@kernel.org>, Matthew Brost
- <matthew.brost@intel.com>,  Danilo Krummrich <dakr@kernel.org>, Christian
- =?ISO-8859-1?Q?K=F6nig?= <ckoenig.leichtzumerken@gmail.com>, Maarten
- Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>,  Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Tvrtko Ursulin
- <tvrtko.ursulin@igalia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Date: Wed, 05 Mar 2025 14:17:15 +0100
-In-Reply-To: <20250304141346.102683-2-phasta@kernel.org>
-References: <20250304141346.102683-2-phasta@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1741180693; c=relaxed/simple;
+	bh=mkvPJ4QumDqS6HAf3LUJzR0K1EUYms/KQSx5cZsbzRk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LU4IA2D24up3x7s3P6p7XNvARbzhH6cxNQ/evm3v/tot4BgZ5DUCddzXzz+lE1SKWTuhHQDxPw9pmlJdzjrhDWNOrFhn038tlL4zLxVANFH6VN4s0GobOfkgn760jlXXTokZKKBw2xaJxIKa1lCzODyJY9YS1G2HQlPeksR09RU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=S1SpsoBa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FA67C4CEE2;
+	Wed,  5 Mar 2025 13:18:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741180693;
+	bh=mkvPJ4QumDqS6HAf3LUJzR0K1EUYms/KQSx5cZsbzRk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=S1SpsoBaX76DjvOnqlwAYpuPI11km6TAPDAp98v0+WMjohMzhFxzPSsOo5IFua2zj
+	 UPlidR4UrL9KeINpe8nhRzE/LYSoDOdOXaFeZblF6KyJ1QS9dEGns5XJWyvolVDwTT
+	 gd8emGKyrJKeC/ZQpH5DuekMOl1xP0H52/278jei4+COPFG3r2Tv7X6WObTDdrW1Dt
+	 u31C3GTt9Ftme6cGJx/h58KYNUMz5Ed+7DIRCsz7awDfZomHMnl+NoBX+699mkv3z6
+	 7HdvwzrnjJO+kYQKU0IEzvl3daEB+nnHzPgJ0eMrlIAOgCg8+WljsvEWgEexJZSUws
+	 wQoVBqrclmDcg==
+Date: Wed, 5 Mar 2025 13:18:05 +0000
+From: Mark Brown <broonie@kernel.org>
+To: Charles Keepax <ckeepax@opensource.cirrus.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Ernest Van Hoecke <ernestvanhoecke@gmail.com>,
+	Francesco Dolcini <francesco@dolcini.it>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	patches@opensource.cirrus.com,
+	Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
+	linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Francesco Dolcini <francesco.dolcini@toradex.com>
+Subject: Re: [PATCH v2 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC
+ and EQ support
+Message-ID: <f0be0cc3-4349-4300-9fd2-9aecdcd9d099@sirena.org.uk>
+References: <20250224155500.52462-1-francesco@dolcini.it>
+ <20250224155500.52462-4-francesco@dolcini.it>
+ <20250225-delicate-tortoise-of-management-e43fa2@krzk-bin>
+ <er4bcixggriqp6idl6xmr7bjetf5kkhadyeplkbyxvrffuiknc@ews752x4ugh7>
+ <f690d858-a427-4db4-81ee-d5eb6223368c@kernel.org>
+ <Z8geyb9ilUPmDUXk@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-ID: a47c344584a60e8564b
-X-MBO-RS-META: km497d9y37qnoo9aj9huetitu4zpkfgd
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="2SZ6TScEb313MOV6"
+Content-Disposition: inline
+In-Reply-To: <Z8geyb9ilUPmDUXk@opensource.cirrus.com>
+X-Cookie: Everybody gets free BORSCHT!
 
-On Tue, 2025-03-04 at 15:13 +0100, Philipp Stanner wrote:
-> drm_sched_job_cleanup()'s documentation claims that calling
-> drm_sched_job_arm() is a "point of no return", implying that
-> afterwards
-> a job cannot be cancelled anymore.
->=20
-> This is not correct, as proven by the function's code itself, which
-> takes a previous call to drm_sched_job_arm() into account. In truth,
-> the
-> decisive factors are whether fences have been shared (e.g., with
-> other
-> processes) and if the job has been submitted to an entity already.
->=20
-> Correct the wrong docstring.
->=20
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 
-Applied to drm-misc-next.
+--2SZ6TScEb313MOV6
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-P.
+On Wed, Mar 05, 2025 at 09:52:09AM +0000, Charles Keepax wrote:
+> On Wed, Mar 05, 2025 at 07:45:50AM +0100, Krzysztof Kozlowski wrote:
+> > On 27/02/2025 16:34, Ernest Van Hoecke wrote:
 
-> ---
-> Changes in v2:
-> =C2=A0 - Also adjust comment about arm inside function's body. (Tvrtko)
-> ---
-> =C2=A0drivers/gpu/drm/scheduler/sched_main.c | 12 +++++++-----
-> =C2=A01 file changed, 7 insertions(+), 5 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c
-> b/drivers/gpu/drm/scheduler/sched_main.c
-> index c634993f1346..7e71e89cea89 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1013,11 +1013,13 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
-> =C2=A0 * Cleans up the resources allocated with drm_sched_job_init().
-> =C2=A0 *
-> =C2=A0 * Drivers should call this from their error unwind code if @job is
-> aborted
-> - * before drm_sched_job_arm() is called.
-> + * before it was submitted to an entity with
-> drm_sched_entity_push_job().
-> =C2=A0 *
-> - * After that point of no return @job is committed to be executed by
-> the
-> - * scheduler, and this function should be called from the
-> - * &drm_sched_backend_ops.free_job callback.
-> + * Since calling drm_sched_job_arm() causes the job's fences to be
-> initialized,
-> + * it is up to the driver to ensure that fences that were exposed to
-> external
-> + * parties get signaled. drm_sched_job_cleanup() does not ensure
-> this.
-> + *
-> + * This function must also be called in &struct
-> drm_sched_backend_ops.free_job
-> =C2=A0 */
-> =C2=A0void drm_sched_job_cleanup(struct drm_sched_job *job)
-> =C2=A0{
-> @@ -1028,7 +1030,7 @@ void drm_sched_job_cleanup(struct drm_sched_job
-> *job)
-> =C2=A0		/* drm_sched_job_arm() has been called */
-> =C2=A0		dma_fence_put(&job->s_fence->finished);
-> =C2=A0	} else {
-> -		/* aborted job before committing to run it */
-> +		/* aborted job before arming */
-> =C2=A0		drm_sched_fence_free(job->s_fence);
-> =C2=A0	}
-> =C2=A0
+> > > I expect most users to use the first five Retune Mobile registers and
+> > > not care about the rest, which require a proprietary tool and are not
+> > > well documented. The example in the binding shows how some simple
+> > > static EQ can be configured. Anyone interested in the extended config
+> > > can also use it (statically).
 
+> > No, if this is suitable for dynamic configuration then it's a proof it
+> > is not suitable for DT.
+
+> Whilst I can see the argument that this could be exposed as an
+> ALSA control. I would also suggest that this is not adding some new
+> feature, these values have been filled in from pdata for 16 years
+> now. Changing the way such a vintage part works at this point feels
+> more problematic to me than a slightly iffy DT property.
+
+> On the flip side of the argument, the parameters that are filled
+> into this are almost certainly specific tuning for the hardware,
+> so in many ways this is hardware description and there is a
+> certain appeal to shipping the tuning with the hardware (ie. in
+> DT).
+
+Right, the intended use case for the dynamic configuration is lab tuning
+rather than with end users - most things that are configured like this
+*can* be tuned interactively (or interactively from the point of view of
+the driver) but that doesn't translate to end users doing it.  It's more
+like coefficient data that could also be loaded from a firmware blob
+(but again, there's a proprietary tool here and it's not expecting to
+produce anything except a list of register values), we do have some EFI
+examples of pulling tuning data from the firmware for things like
+speaker correction (which is one of the use cases here) IIRC.
+
+Like Charles says this scheme has been deployed for a decade or
+something, it seems unhelpful to upend everything right now.  We could
+also implement an alternative scheme but providing something that makes
+DT transition easy seems productive.
+
+--2SZ6TScEb313MOV6
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfITw0ACgkQJNaLcl1U
+h9C39wf9EwzxjxnqwmMPXRA6fF+xUJYybxJvfyV1u5DNHECxtYqJWZsEuQpRp2CD
+v0OmfZHyVfUcFSWA4+1Tdv5u+F7lxmqCZ6dzeqRz3AAginWJeXiwXR2bwlDJ61oq
+3yHkNm3j0uElMkjJEAP5bw/MHgBE+4Be/PvdnYHipApgEOgQ4TIgHH8yRFCPY3Wo
+kTxPYkufiLRPTmH7t1oonaLddybuyXOlxL9lq+xuhsSDnAbQoOcq4DBg/AcBhMG0
+D+DJr+5C/WCXPRfAqNznBX7wCJNQvfXtwYW0GA13OOWqoTwsjjoeNgK++W73+5/v
+N9IoR2lXdMQWqAexh3v8q3dm33IhbQ==
+=c6jI
+-----END PGP SIGNATURE-----
+
+--2SZ6TScEb313MOV6--
 
