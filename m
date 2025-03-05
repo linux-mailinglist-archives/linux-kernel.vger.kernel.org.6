@@ -1,154 +1,210 @@
-Return-Path: <linux-kernel+bounces-546926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9766A500BF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:40:40 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A375A500CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:43:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DE5611886B5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:40:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A32C9188B637
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3853524A057;
-	Wed,  5 Mar 2025 13:40:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8988824A061;
+	Wed,  5 Mar 2025 13:43:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="XqpyKo8J"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="nRJ2lW8q"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10olkn2014.outbound.protection.outlook.com [40.92.40.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3822629D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741182030; cv=none; b=QotfXTzpbLqDK0R4SFnFUBq3j1g9ssv3Wapvg3AS4b7SOjiXWveO/0wtdto78m5/QlJ/FxZf98Yc2/dlKVkio1OdpZMS1Tmdd0vmgkaq4anGE32t4iazjbO7ExD6GuPO6m80vQoCV+EIyYCHNOU7BrrNmDNYowsPkkznIlFy0vo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741182030; c=relaxed/simple;
-	bh=e7TwOMbFJdMvoNvcZfuVrdeGdnthTvDUILUYFsO8VBI=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A2X9dAZx3URf6nLbNFp6Jck/tdY8sFfM2ISu5+LSB3sCxwOR3MioELSAtjpNpyQXxAFZOp5dQzgRKz4tQpucL3X1LmRGZYmRi4gBW+BsQvNfFya5i3g55oUpw1APV4F1T8E03ZWg+SYj7u6UiG1nfStxx1nG8hv31HbaIwghIcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=XqpyKo8J; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741182026; x=1741441226;
-	bh=/msXaYvJoXRol2eVFsyCSpVGRa8zIZ7dH7ygPIw/Gi0=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=XqpyKo8JRbrIZgKvxFwFPDDt8PMeOd0C40l00ZyDo4UlckLy4MdbyI4dNPLHTPqso
-	 DEHJIvr/zKJYpyYAywHCT1E+EjKj5d92ahqEO/TAns0EgMVaYkhapNI3OOuJSAOkk6
-	 HWp1sjRNDciTwBqJk0IQwY1mffNeR/LrxVMrPn630FUuEVjE98ZpaLDfYyiJz8EBe9
-	 CTOC2+YlXA4m39Dng3/YwLDc+Dsr/2qI6xMi5fe4SES25DtiQGoRo4R+IBNBnhMJYM
-	 feTZLevmHDvoXkDHtIcFUnFeYQ9FMtINYryQJzeru3EhABaPil6g78GJA2zZ/aA6xu
-	 krchaoJuLEimw==
-Date: Wed, 05 Mar 2025 13:40:19 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-block@vger.kernel.org
-Subject: Re: [PATCH 15/22] rust: make pin-init its own crate
-Message-ID: <D88DIE85YT01.11H51NPNE3HP6@proton.me>
-In-Reply-To: <87bjufd6bj.fsf@kernel.org>
-References: <20250304225245.2033120-1-benno.lossin@proton.me> <LBAOJwgDK3vs6V-k9Olh9PVQ69a3qCaCgLZctAshaNi73epZNKVgY4rKa-81-5us0Tpj3m3U_W3pCHFTKlIbVQ==@protonmail.internalid> <20250304225245.2033120-16-benno.lossin@proton.me> <87bjufd6bj.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 5a0669a79793708d4be68c804eb6d559404b7c94
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18BC1C2ED;
+	Wed,  5 Mar 2025 13:42:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.40.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741182181; cv=fail; b=V/+MeRsfQuaVs6TZUjIdtC3/6FDdNqWlwtGK7obadefx9bRnv86oFjtxFS1GNU+PmqkJ07+XddYkhNNquzGsMOAQ3sdnDWwWoXboU56rIKi6cT3ZbVRLN04G7Fe2yb93647dAGasAxgLvDnqKwFe7QKRZ8gIGdpYx6C/X0XOxig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741182181; c=relaxed/simple;
+	bh=1tTBZun0tEJn+W/regELtZV84Bs7DVFwAJXUXNhBMLI=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=bfS6JlGJF6VT9Os5nHirtADP4yFMLmQXXNrqZs4ljlKnDgPWjXmSkcifbw/Z490UedSNGSIdrpi6F17Oa2P29//3ON1q3ELIVDJ5wH1OlE4DPh3YtpmG2Sv/IhN7ogdoQ+RM0pSt4EE54F05J2qJXjtTHdP+YwDPca8eZmWHKaE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=nRJ2lW8q; arc=fail smtp.client-ip=40.92.40.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ud3+XplZdtV9q54xWnbRAr/xr128Tzb/vG1y1BRFe/WSL4C6P19u6zP4gDZKTzqbdSo0J3exRFEfnLlKHdIrO30mAslsdfAUGV4uU+pae73tN9L3K7Y2LaP1HwGUbBeVycfhWChnhRSZH1RS2qxHIsmd7416+88ZEjfxXeWV6d3iGlcEHKHLQW0u7XkfZDaOoWHY4cteecaEV8YoILC2EgXkjFMo2RKNLDGvUQSGuYfm/qG6r6iyAfBh2k04kkTU0LiqjtPJ25n5fptCd+ZAZvt+VtRMMvlPHlJNs4c8FochrMjGs09hBkayzOXC6AgID1WCdvfl5/nAA3GbwX1Dyw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lW/QQynphTA6Fcq6XZvrBXh4x/2H4gbrIdKMAzUOo3w=;
+ b=xo/fgGKjxgUrA98F6orvhIcK/k/5NHcl8FkKAK71KzI8tZvpGEHRDg/9SYtEdL754RZjkfQAA4OCVw1/48/sKRey3GzMrNYCMeizbDiBS6x6hVLvxRdn8d4k0dhbdgwr7A+PcP5Y/px6392Y8hv4Z9inQBEOeTopdD8Gx+8m8mtF2AOqDlHPXy05bHs+v4uLli2DA/JQkc8XRSf2Cl7x98ui66+l2EGzcWHN34nVZrcAypFrimScm1sJCc8kxI+Py8GQ7piNLNseGEPXW8KwlhGlQY12uhpiLpwGljciARzKtBCirC+V3Gm3Us63IIhzB1LfFLKgUFOW8Gigiv7q2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lW/QQynphTA6Fcq6XZvrBXh4x/2H4gbrIdKMAzUOo3w=;
+ b=nRJ2lW8qN5NNtTOJrObcoxLx/NA70BcX4tPQa3mky0tNsErYsAnpspUzm9TRWGG13pxpWBL3fZ+PnVVe2b9VKMBY5iLD7bVeL6OajxF8TqgrZdldWWhbTnl1C/SrIXlpx3fuoIZVf8yr9seb8CjszwvOwZwVN1SoVVGr2hrJ2Drn96khluhgs4+v6FSmd+Q2NMkqowqI+BCREmfzQZps5bfqXEt90efjXhggjLdPo6cR3nCLrGNo5kNo/SB5hIU4tEcxRRYC6KY5TT3hXvwV+g8ujdTM1TPLhfmIu9fkNv0I6D3uXgDeiBmLIlUVUnUw7jYBNuD+92vByl+R39Ml3g==
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com (2603:10b6:8:253::16)
+ by CH2PR19MB8895.namprd19.prod.outlook.com (2603:10b6:610:283::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.27; Wed, 5 Mar
+ 2025 13:42:57 +0000
+Received: from DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::e0c2:5b31:534:4305]) by DS7PR19MB8883.namprd19.prod.outlook.com
+ ([fe80::e0c2:5b31:534:4305%6]) with mapi id 15.20.8489.025; Wed, 5 Mar 2025
+ 13:42:57 +0000
+From: George Moussalem <george.moussalem@outlook.com>
+To: linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	linux-phy@lists.infradead.org,
+	andersson@kernel.org,
+	bhelgaas@google.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	dmitry.baryshkov@linaro.org,
+	kishon@kernel.org,
+	konradybcio@kernel.org,
+	krzk+dt@kernel.org,
+	kw@linux.com,
+	lpieralisi@kernel.org,
+	manivannan.sadhasivam@linaro.org,
+	p.zabel@pengutronix.de,
+	quic_nsekar@quicinc.com,
+	robh@kernel.org,
+	robimarko@gmail.com,
+	vkoul@kernel.org
+Cc: quic_srichara@quicinc.com
+Subject: [PATCH v3 0/6] Enable IPQ5018 PCI support
+Date: Wed,  5 Mar 2025 17:41:24 +0400
+Message-ID:
+ <DS7PR19MB8883BC190797BECAA78EC50F9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
+X-Mailer: git-send-email 2.48.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: DX0P273CA0025.AREP273.PROD.OUTLOOK.COM
+ (2603:1086:300:5b::19) To DS7PR19MB8883.namprd19.prod.outlook.com
+ (2603:10b6:8:253::16)
+X-Microsoft-Original-Message-ID:
+ <20250305134239.2236590-1-george.moussalem@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS7PR19MB8883:EE_|CH2PR19MB8895:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2f4440b0-473c-4c52-1cfe-08dd5beba339
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|5062599005|7092599003|8060799006|19110799003|5072599009|461199028|15080799006|440099028|4302099013|10035399004|3412199025|1602099012;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?PQUUIu7iQpxbM/lqQZGO/GhsIof87ylS4o+434tV5ipap3rc7xADYAA4f/Jm?=
+ =?us-ascii?Q?gNtcfdjFQc+Y1G72Q5F6eoX7d0Jq91mBpkGLGu8zXiIBge6GLPl6b9jMNXvl?=
+ =?us-ascii?Q?+s03FtYOpgkU0iZlNT5/mZvjI0ytC2lj62IGPjMsicHacf79c11kcWUs+IIF?=
+ =?us-ascii?Q?rH/zX7QQsKd76QRrZ29M0TbNwTvjXhvJ6atk4yEcQG+JAHzRptBo2oxLZNB+?=
+ =?us-ascii?Q?5AUqZAqZOcAANjWcQfaZpQAC8FaQKvdTcz509IgLRccq8XJ+snlazfAqGjvr?=
+ =?us-ascii?Q?xLXD7Fzb4SJm04MwJz/GpjmLj1b0fIK+kQ3XeuLD4LIlQMJkmQ10yGmSKFS2?=
+ =?us-ascii?Q?rvBk/iv4BkuSKPS8eL+wWxfoJBAuaalFmdPwpBCH0WibWq0GHDCf5QhrQ1t2?=
+ =?us-ascii?Q?SXHEe3AwXKxxDxbSCtyjQshlAqtXoR2U3/1Yu62PceeAssexhY3BeIDusE52?=
+ =?us-ascii?Q?YvT7B/glarTlJ1crkVjRfK4H0r95+a10pJ/qab3ewL1J34MihyD8E99PtLjb?=
+ =?us-ascii?Q?jyehSNtufLYTnY7KUNYOTC9pZGA/ErbR3bbDQwMd6Xojcjp9HC1cjRrgKT+r?=
+ =?us-ascii?Q?6WM/Kz+pdCDL22bAt6Pguq6kq0algfU2VM1sIH8dxAbfIIUvASDdFOyJ3aG0?=
+ =?us-ascii?Q?DIxLjGlbwN04DACIDjYvCYt4gRD/t3D1jAMR3AVG4WfvxUU3rll/R0kXoqyR?=
+ =?us-ascii?Q?IzxQZjcMdWHA1qI51lJOQe8Fw1599svNAm/FPJSNCRgofkQH37PYMrM3JlFQ?=
+ =?us-ascii?Q?PueQaqVbWEZyjNMelyH3mzW5msPxBeYlPUiFvRp9+YgmtsXC0iLN8FSjhx9h?=
+ =?us-ascii?Q?mLWJTIDnIHjTWBHlwsbUJagS6JysxJkkCUWZAjuKuPDK133sprbGsrMpC5vc?=
+ =?us-ascii?Q?jPgedOAUPoVYJPuV6xrXxOXU+V80ZZwq9qhg1em8mGToEOFIHjAIrQk+vU+t?=
+ =?us-ascii?Q?cFAdpl3QX+tOhrLTVcowJ84HBskVR2YMSpLBM7Xk485E05z24yP+Q6bzpm1m?=
+ =?us-ascii?Q?ACT3dTiOH/DuPUqKr8ZhPBLKH1iuh7h9geLVgH6wHJjTdj9PULNt2ejnQfab?=
+ =?us-ascii?Q?lD3i4JuykTqA8PjwXsKhE/E2yp48yUfpv91VOFJk5I38VYzQGBjMyL8G0+pt?=
+ =?us-ascii?Q?VFfjkG8vAa0muP6rs2OY3HfozRTh0V95gSea9cTEwlMEtAtC1FkNMSVfCj6u?=
+ =?us-ascii?Q?Ox5t8+foFGQZAOMbyyRbdMy62lMUeX+A3WiIbFOOBUeePluBvCk3d/SAK8A?=
+ =?us-ascii?Q?=3D?=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fr4VGScwV5K9WNaTcxbN4kl8zBeNreM08bPENp2CfPSxgk6zMXmCyamkR5nH?=
+ =?us-ascii?Q?Mj+kf3zRTJhJXtOwjQ9JDI/qdY6QNe/cicPmBT4FeG43rdphqUdqilSmK8o6?=
+ =?us-ascii?Q?xUBTK/aUthD2/fT9DQoBg4+UEh7THT7NVixvGOg23wnHM5C2+Uwv0WUO5acW?=
+ =?us-ascii?Q?vuyCHZEXdJ9+mdXOSR1o9QxYXi1LhHysXUB5tWZVIglzEW6qUMKPOyWGChkG?=
+ =?us-ascii?Q?f0rv7PrdDp5Nkc623gWMXmey1ioFmaR6JgilXxR1XQjBoystk0XtBt6iAMmp?=
+ =?us-ascii?Q?ARSGDah4/bnE0MxfgRYWM57YYhKXzUVQCTYNH3XgCHNg8tbpyqE+Rgnria31?=
+ =?us-ascii?Q?OAoPcfowVzwPQZHY+iJv1Q2ALU49dfVVbyMWudlR14/Cf6CLFeVhmz8v/A6G?=
+ =?us-ascii?Q?QYEacDq6JMUHBYXlNcxcsqO1gHYUeGroAFP7PsyjJ7be7p4jOmvdtBG2Y/xz?=
+ =?us-ascii?Q?Y5WUn58MUcw9O2UL5eimN1WqsEMVAcFHoi/5OQEVpDdBdMvXB8nOoFaQyRhW?=
+ =?us-ascii?Q?gdLw4r3xtAgtRvvEzuC8TqJD89lAv5oe4csNwQzjeEETHDpyNdww8A3jYlud?=
+ =?us-ascii?Q?KPDQdd0BgBkSl0peUV2pkP7M6EtRnwL9NNLlBW/Ex01PA2DOHEx4zBpnHQPa?=
+ =?us-ascii?Q?8LgjPT/hwrPTJd9XXdEGNVGOgFqoARxA6MTZcSswK+i1VfraV8m0crqzGFsE?=
+ =?us-ascii?Q?5sg+fW0ueKuYA7UMDfHBXsOdYRBULen5jCq7Jc9SxpY6W7TYodmp+8kRp9k6?=
+ =?us-ascii?Q?Odm1HF8kRECQxEHmrLoYefB8GX/E6abwBlvtTdw0ZDDhRdtjrvH1sm+99lgA?=
+ =?us-ascii?Q?3WF1tvZ71eaY4qVvxUXbILrO0lx9mWGfs0l/sPttFj2a+Qby4TI7lVQ2nSfZ?=
+ =?us-ascii?Q?xw2GBbGejX55gjNcGwLpnhwIZZytR59K1MHvZGuAcFJ4e9bBLIxQW2OkkQdL?=
+ =?us-ascii?Q?zRov1CuET0HYb0sw6ToLKpqv12O/N1aAfFbqpZkJ7f1kjNljALJDgjjFkK5D?=
+ =?us-ascii?Q?3Or2RXN0YDYIrxrIaonO04GqUXdp7m69Lsl+WpIf5X23MLbdlMvG6okXsKr+?=
+ =?us-ascii?Q?6+bxlgAXD9qb3/++bwCE+Pd85Jk7xTzPxnxuufpw8PROROPe2BnMn1HeE34W?=
+ =?us-ascii?Q?YFPDnI3AVqYvuAvOpKeQBJMcXAXSGrk5AdSLrWT9CPzt2GOiW+DpKq/UEbOh?=
+ =?us-ascii?Q?zXqjbG07jwNaVndz9Wku8h+Xl/dimsyIVzgXsazfQ10cKC3VW+j0m0tmCbPA?=
+ =?us-ascii?Q?r0xnbED4zw2cLlVS+Yz0?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2f4440b0-473c-4c52-1cfe-08dd5beba339
+X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB8883.namprd19.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 13:42:57.6038
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR19MB8895
 
-On Wed Mar 5, 2025 at 1:12 PM CET, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
->
->> Rename relative paths inside of the crate to still refer to the same
->> items, also rename paths inside of the kernel crate and adjust the build
->> system to build the crate.
->>
->> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
->> ---
->
-> [...]
->
->> diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
->> index 7ff82c82ce0c..8e116e266524 100644
->> --- a/rust/macros/lib.rs
->> +++ b/rust/macros/lib.rs
->> @@ -2,23 +2,20 @@
->>
->>  //! Crate for all kernel procedural macros.
->>
->> +#![feature(lint_reasons)]
->
-> Commit message should probably say something about this.
+From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
 
-Done.
+This patch series adds the relevant phy and controller
+DT configurations for enabling PCI gen2 support
+on IPQ5018. IPQ5018 has two phys and two controllers, 
+one dual-lane and one single-lane.
 
->> +
->>  // When fixdep scans this, it will find this string `CONFIG_RUSTC_VERSI=
-ON_TEXT`
->>  // and thus add a dependency on `include/config/RUSTC_VERSION_TEXT`, wh=
-ich is
->>  // touched by Kconfig when the version string from the compiler changes=
-.
->>
->>  #[macro_use]
->> +#[expect(unused_macros)]
->>  mod quote;
->>  mod concat_idents;
->>  mod helpers;
->>  mod module;
->>  mod paste;
->> -#[path =3D "../pin-init/internal/src/pin_data.rs"]
->> -mod pin_data;
->> -#[path =3D "../pin-init/internal/src/pinned_drop.rs"]
->> -mod pinned_drop;
->>  mod vtable;
->> -#[path =3D "../pin-init/internal/src/zeroable.rs"]
->> -mod zeroable;
->>
->>  use proc_macro::TokenStream;
->>
->> @@ -374,5 +371,3 @@ pub fn paste(input: TokenStream) -> TokenStream {
->>      paste::expand(&mut tokens);
->>      tokens.into_iter().collect()
->>  }
->> -
->> -include!("../pin-init/internal/src/lib.rs");
->> diff --git a/rust/macros/module.rs b/rust/macros/module.rs
->> index cdf94f4982df..bdd94c79b0d4 100644
->> --- a/rust/macros/module.rs
->> +++ b/rust/macros/module.rs
->> @@ -236,7 +236,7 @@ impl kernel::ModuleMetadata for {type_} {{
->>              mod __module_init {{
->>                  mod __module_init {{
->>                      use super::super::{type_};
->> -                    use kernel::init::PinInit;
->> +                    use pin_init::PinInit;
->>
->>                      /// The \"Rust loadable module\" mark.
->>                      //
->> diff --git a/rust/macros/quote.rs b/rust/macros/quote.rs
->> index 33a199e4f176..11d241b85ac3 100644
->> --- a/rust/macros/quote.rs
->> +++ b/rust/macros/quote.rs
->> @@ -2,6 +2,7 @@
->>
->>  use proc_macro::{TokenStream, TokenTree};
->>
->> +#[allow(dead_code)]
->
-> #[expect(dead_code)] ?
+Last patch series (v2) submitted dates back to August 27, 2024.
+As I've worked to add IPQ5018 platform support in OpenWrt, I'm
+continuing the efforts to add Linux kernel support.
 
-`expect` can't be used here, since `quote.rs` is imported in
-`pin-init/internal/src/lib.rs` and used in that crate. But it is unused
-in the `macros` crate, hence we need to allow it.
+v3:
+  *) Depends on: https://patchwork.kernel.org/project/linux-arm-msm/cover/20250220094251.230936-1-quic_varada@quicinc.com/
+  *) Added 8 MSI SPI and 1 global interrupts (Thanks Mani for confirming)
+  *) Added hw revision (internal/synopsys) and nr of lanes in patch 4
+     commit msg
+  *) Sorted reg addresses and moved PCIe nodes accordingly
+  *) Moved to GIC based interrupts
+  *) Added rootport node in controller nodes
+  *) Tested on Linksys devices (MX5500/SPNMX56)
+  *) Link to v2: https://lore.kernel.org/all/20240827045757.1101194-1-quic_srichara@quicinc.com/
 
----
-Cheers,
-Benno
+v2:
+  Fixed all review comments from Krzysztof, Robert Marko,
+  Dmitry Baryshkov, Manivannan Sadhasivam, Konrad Dybcio.
+  Updated the respective patches for their changes.
+
+v1:
+ https://lore.kernel.org/lkml/32389b66-48f3-8ee8-e2f1-1613feed3cc7@gmail.com/T/
+
+Sricharan Ramabadhran (6):
+  dt-bindings: phy: qcom: uniphy-pcie: Add ipq5018 compatible
+  phy: qualcomm: qcom-uniphy-pcie 28LP add support for IPQ5018
+  dt-bindings: PCI: qcom: Add IPQ5018 SoC
+  PCI: qcom: Add support for IPQ5018
+  arm64: dts: qcom: ipq5018: Add PCIe related nodes
+  arm64: dts: qcom: ipq5018: Enable PCIe
+
+ .../devicetree/bindings/pci/qcom,pcie.yaml    |  49 ++++
+ .../phy/qcom,ipq5332-uniphy-pcie-phy.yaml     |   3 +-
+ .../arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts |  38 +++
+ arch/arm64/boot/dts/qcom/ipq5018.dtsi         | 232 +++++++++++++++++-
+ drivers/pci/controller/dwc/pcie-qcom.c        |   1 +
+ .../phy/qualcomm/phy-qcom-uniphy-pcie-28lp.c  |  45 ++++
+ 6 files changed, 365 insertions(+), 3 deletions(-)
+
+-- 
+2.48.1
+
 
 
