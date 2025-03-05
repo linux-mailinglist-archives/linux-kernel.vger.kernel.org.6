@@ -1,134 +1,117 @@
-Return-Path: <linux-kernel+bounces-547361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55116A50644
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:23:16 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3790AA50646
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:23:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 964AA3A8BE1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:23:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FE37171305
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:23:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5BF51A4F09;
-	Wed,  5 Mar 2025 17:23:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06B331C7011;
+	Wed,  5 Mar 2025 17:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GmJ4ZI91"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ri8Ar6n5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 431B6567D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:23:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625C2567D;
+	Wed,  5 Mar 2025 17:23:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741195391; cv=none; b=Te15B9+IxLtnM+0+kBnEzFgRFowch3u2ZIOB4JDRTnkmvCsSsar9e3b2I2JpJnxVEvgFH2Nrh1F86ewZO1mv3VrMiek7cVJ/nipUrNAhnYjn5Dk2NSG34VePyQEotv0XuxmU8bzE9Gavd63gupfYkhjhAn4LlzXaNvR2rGvj0+I=
+	t=1741195416; cv=none; b=Ng53FnzJibp2xRe9FRNtRR/l3cuRVXq+E6rrFv2rXZEbA7TS9ktKEtlfsyOu+1Nr7Utl4vUCCmB6JSILYwGsmoU8h+DTxXcraUku5L06RDfBKr+br7uRHx/h5qWBmbdg3anhYw4/kbfGNjm0/2vOGqLigtKIkrXoFKaahGekzco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741195391; c=relaxed/simple;
-	bh=HJfR+xHb9jE57f61TzWWYQYP4wsfQGvXPp263t9iA/k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YqR3lr33cjGuOYvNi4Aypdu+BGJfvoS9jRrzEEtzim41StbDCTz6yDfG8LNfwVBlP4nlWe250s6AQ8sWhKSXc3S0ltxm6TLH9P/xCi7+9X4h1JvDI8fj9tM2oer4KQ1W/5MWPIsW3Cv0Hw4t6Xyc/qZReQLk5sAl9uh7AArReGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GmJ4ZI91; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4394a823036so65131485e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:23:08 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741195387; x=1741800187; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=alT+zALmOJxTVW5BnA8w1UfBmWenGfChKrkcnTMAdpQ=;
-        b=GmJ4ZI91qBstfwzfRPJpGnZpaJj/ypJt0Yc9KuQRyNz+l8Qs65id4aNQloTWekdoJ/
-         nNPCkwIliPlzCs02/VIGCcsoILkkpOj9e+S6icLFITIQftIfaqajn7if08IR0eL4X9vj
-         aUzXNmhkaWsJ1OseJ4G7TvefANOh17nj27vjsNCl4fkPOqfawApa8SUK0J2fz+u0FmOG
-         c3J/IvzcndUltDmEziWvsmmBcWLSe6XPWPh+7eYlob/12cOy5rWs/K1ePFRT6HH8w+Uy
-         +7OevSg1YfvYi3ESn88WL4u894lrJlNW68vW4P/BXaf5HPAwUcJ/rMxKTv2O1rss5DWh
-         oaHw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741195387; x=1741800187;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=alT+zALmOJxTVW5BnA8w1UfBmWenGfChKrkcnTMAdpQ=;
-        b=tyfGKwvFoOlX6RaJsisMFuM4JWoChHP29DeEY9adKHDjaFC6XJ4ReyxZ8Mx1bUFd47
-         8YibwPiESSK5aJTg3doZPID4Dzg4qkdxXKj4GYxJVC8IEx8k3EjceKIX5L93YKfL7Tp8
-         Q8GN9mBcFqBu4Av6AORNACymq7FoV0Yi5OLdZdDOjIsNZBS2IIuQyCTsD8WJO/LFd3kf
-         keRRcSEIF4iJRgRBi1qOm5WPr3NjwfPH5Tqh+OgBTsHZlNusHlO5v/T4Fygb5dO8Y4x6
-         ShxA5u4RoeFS5Zp/rdH9Bf1kNNhszBEBCitfk3IBlFoZpiw1BpXndjluy0CbGzrHE6Wn
-         Pnwg==
-X-Forwarded-Encrypted: i=1; AJvYcCWYa/gWfsXpd39iI+MwbV9RaIRG7hua7KjzrzzlMdAyOyYOYmQA9pLXM/p8ppgO23eaVQLQwdLpUTOUSOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd7NQV4NhuigY1GiWsC4UR3fBeAjBt/m/N1t5KnPUuLBS0A/oQ
-	3/E/WjhYSm7j1DFeMn9InysVJ82s9qztWEgp/7Sy8BE6nN5whJ1WaJGy03DrR0Q=
-X-Gm-Gg: ASbGnct6mlWD/SpNjmfuTqerUOEPT7HBCObbpyodfnQB62iU76gEry/jf0hqlbMF1dn
-	LFTVw8oCHVlQJw8VIhyogIJBKgXIJbZ2jvNIh6Md7SXa747Q1LuuOuljHyLd9slq6nc6nzAGLz8
-	VewimLVD3oug7/cklzQSIpcnQlXQNlja2AIWj8zcypK3B91M5Y8AsTarFfqm6wSgpD4IpM5EXCm
-	D9VRvIJwK7mEJfYGmsQM2AVGphdhOGWyDkg8qqwkBhH8nMe8XPkZm/d5NNH/7RO6QpAn+yVHup2
-	aUT5upQZl986J+HsnPzwEmaXtwcUTo1K/0v6eSXgI6SXmmEimeRgJqsv8HLts306ZkbtG4r7gFk
-	wrIUv4kD3
-X-Google-Smtp-Source: AGHT+IGpqFVx176QiSlOJSi7wc2dopFl/WDHZbSXP9T991xV1xy9GzI6/Dnmfiz+XboGhP5rub1OWw==
-X-Received: by 2002:a05:600c:1d0e:b0:439:969e:d80f with SMTP id 5b1f17b1804b1-43bd2aefa41mr32049945e9.31.1741195387395;
-        Wed, 05 Mar 2025 09:23:07 -0800 (PST)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43bd42c8050sm23402385e9.21.2025.03.05.09.23.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 09:23:06 -0800 (PST)
-Message-ID: <a7489f16-ca31-4530-8ef1-33079b3c99a9@linaro.org>
-Date: Wed, 5 Mar 2025 18:23:06 +0100
+	s=arc-20240116; t=1741195416; c=relaxed/simple;
+	bh=Uo3mWNGatWCN9U9NdsHgYs4FZPyOo5lVBCESSB/+w6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tA/v5pmUTurT/dGLDe6WmV6k9Xziy64u/zANrme7ig1CJCTVzF9coe7KYXmyvF8DmbmQJKOHOIvK2Ey8S6NCBKjMY6pJwg6bBDfzFVZfirTBLp/4ryfBL0pERCKKyUIQL7t45YiRdnTbAPtLkJ142Iw1+dXDRXN/SYfHyescP4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ri8Ar6n5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72558C4CED1;
+	Wed,  5 Mar 2025 17:23:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741195415;
+	bh=Uo3mWNGatWCN9U9NdsHgYs4FZPyOo5lVBCESSB/+w6k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ri8Ar6n5p2xBm9RoUR7lfLv/IX2/ebTBuDpaaCIcqGbViU7c/W9BiAWxLFXRF1t8I
+	 WzrFyqkvMHHNSXk48gJh8mxR2cSBXtaaNZMoWhdG6c0irXIjWomD+jTcJJG9OptBY6
+	 tM12CgTHcUHN/D1DrarJbIaOe9D9fUGJtZrT2eu0tFX6Re47o4ujUEYkCLIzfV+KI5
+	 3whidGPBut1xFRiGsqHXl6vpPDo6cKVvGtgbRMlaobOuq8xHNncI9ySvGBFasbZGPN
+	 ZZbFpugpS+3MAtNF5RekqT95D7Tee8/rh1FoJleciexP88k3zTO5MYFWV1mT0XkoJp
+	 1Mrl17smqux+A==
+Date: Wed, 5 Mar 2025 17:23:29 +0000
+From: Mark Brown <broonie@kernel.org>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: =?iso-8859-1?Q?N=EDcolas_F=2E_R=2E_A=2E?= Prado <nfraprado@collabora.com>,
+	Liam Girdwood <lgirdwood@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Trevor Wu <trevor.wu@mediatek.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	kernel@collabora.com, linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Zoran Zhan <zoran.zhan@mediatek.com>
+Subject: Re: [PATCH v2 3/3] ASoC: mediatek: mt8188-mt6359: Add accdet headset
+ jack detect support
+Message-ID: <7661b71a-9d5a-46c4-9639-0fba1b118b52@sirena.org.uk>
+References: <20250304-mt8188-accdet-v2-0-27f496c4aede@collabora.com>
+ <20250304-mt8188-accdet-v2-3-27f496c4aede@collabora.com>
+ <59d0d382-1d15-46c4-b9e4-b66c32c188d3@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clocksource: stm32-lptimer: use wakeup capable instead of
- init wakeup
-To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>, tglx@linutronix.de
-Cc: alexandre.torgue@foss.st.com, olivier.moysan@foss.st.com,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20250305125146.1858978-1-fabrice.gasnier@foss.st.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250305125146.1858978-1-fabrice.gasnier@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-On 05/03/2025 13:51, Fabrice Gasnier wrote:
-> From: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> 
-> "wakeup-source" property describes a device which has wakeup capability
-> but should not force this device as a wakeup source.
-
-Is that a fix to be carried on ?
-
-> Signed-off-by: Alexandre Torgue <alexandre.torgue@foss.st.com>
-> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-> ---
->   drivers/clocksource/timer-stm32-lp.c | 4 +---
->   1 file changed, 1 insertion(+), 3 deletions(-)
-> 
-> diff --git a/drivers/clocksource/timer-stm32-lp.c b/drivers/clocksource/timer-stm32-lp.c
-> index 96d975adf7a4..f08baa6720f8 100644
-> --- a/drivers/clocksource/timer-stm32-lp.c
-> +++ b/drivers/clocksource/timer-stm32-lp.c
-> @@ -186,9 +186,7 @@ static int stm32_clkevent_lp_probe(struct platform_device *pdev)
->   	}
->   
->   	if (of_property_read_bool(pdev->dev.parent->of_node, "wakeup-source")) {
-> -		ret = device_init_wakeup(&pdev->dev, true);
-> -		if (ret)
-> -			goto out_clk_disable;
-> +		device_set_wakeup_capable(&pdev->dev, true);
->   
->   		ret = dev_pm_set_wake_irq(&pdev->dev, irq);
->   		if (ret)
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="A3lZokx9nkSuQ7Eg"
+Content-Disposition: inline
+In-Reply-To: <59d0d382-1d15-46c4-b9e4-b66c32c188d3@collabora.com>
+X-Cookie: Everybody gets free BORSCHT!
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+--A3lZokx9nkSuQ7Eg
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+On Wed, Mar 05, 2025 at 06:18:41PM +0100, AngeloGioacchino Del Regno wrote:
+
+> Get to that mt6359-accdet.h header and:
+
+> #if IS_ENABLED(CONFIG_SND_SOC_MT6359_ACCDET)
+
+> function signatures
+
+> #else
+
+> static .... { return -EINVAL; (or whatever else) }
+
+> #endif
+>=20
+
+It should probably be return 0 for the registration/unregistration
+functions so the caller doesn't fail if it checks the return code when
+the accessory detection is configured out.
+
+--A3lZokx9nkSuQ7Eg
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmfIiJAACgkQJNaLcl1U
+h9CMZQf+Ifm+gO7vy+HK8RUWgpgzNwyEaaG9mU1+cZEDRedSC6PkwGHGr6nahS9G
+34+jdkZ/QUiRaiC9wFejUo6yDAxGAmn0vp4U1En2P1lzrjK/aa0mNneVXmN/p7bJ
+hAoLZr4RQ3iKCSqrWdpUVf/uLZ97LMNi7q7Gu13BbWJl0VYdfpcWyMcXWpZr62Is
+F5CSNUwZkvpcy6wzcj5P6Y1PSlR8c5SmygJ1ohNt9ujhNWNSxNqQoKajIgI+3oWK
+6Uw59dXmeWtFsCpcuB6/w2fKw+UdwYpnAbnwtGwlJivbRqa0vgt4Cxzzgflz0V4I
+AU2ee5PAEVtbq/r4fJ5EtqWBRE5yLg==
+=n+jb
+-----END PGP SIGNATURE-----
+
+--A3lZokx9nkSuQ7Eg--
 
