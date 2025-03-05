@@ -1,119 +1,94 @@
-Return-Path: <linux-kernel+bounces-547139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A284A50358
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:22:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6222A50352
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:20:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D201888C43
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:23:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F67A165A19
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5374824EA9A;
-	Wed,  5 Mar 2025 15:22:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uz6QuXb1"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 631A82505A2;
+	Wed,  5 Mar 2025 15:20:06 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F08920B21D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:22:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03EF624FC18;
+	Wed,  5 Mar 2025 15:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741188167; cv=none; b=BK3J67164pl67Br8sBS1HI6YNqay7lf9Yd9/f2+x+E4WlVsk4mLV/aOdT/59dtohbn/L1CA/pCt1sG7HlfBB6EL/4yJBsQFsriViEQVFmaS1CE1MPgMs0neLJ14JkGit0kDoxCkD6tLojc9OrIhsj57tamoiIeAa+NyvB2VFL6c=
+	t=1741188006; cv=none; b=PHZjG12k0Noj0VMmeD9ztDkK7KPpI6OE6nR8HquNYRoG/YBetqUlydRvmuYGfVrS+8U0itv+moSP1fKLCnsBt2PQ4VNvJIsag2Qb7ScCDpW1nyEdic1FuHYPQhLlyMckGQd0mUsX0r2jpHI+mUmoxz5+YFd868DF5Xgx09Tm63I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741188167; c=relaxed/simple;
-	bh=VWigdSJtvf2WxMxfGPfKwCzDKILPSKtbmZRomoBqut8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxwEaWQSJRIkKihCJcZzX/3nz2y8MOZRWGcSg5x1DbneCT5pRv3ys8IRy5sLyKIW8hOV9NFYPNqX4V9vPesbI4NrNcjmhdNnD6yjtOHTxhD5GiNboStMKjmYr/G8P3NVXYndEIn78yuwiTEaznDJmoENZ2rjaHMgPkn5Ux+Bbms=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uz6QuXb1; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741188159;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VWigdSJtvf2WxMxfGPfKwCzDKILPSKtbmZRomoBqut8=;
-	b=Uz6QuXb1/EXPWgnFDEEncDDqcJR7miboRi/oKTd+Hqao5S8jRtkpQb63ql2LQ1OTJlm3I0
-	WwGiP/GuI88zm7u9SrnanxnEhDJM4Pv8TfkPhz2BDb1mDjkuAKI53NWTOFvZKOhih6XKuK
-	LamQxianjDT/z3iNfhNIV9rXHNJrxWI=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-696-23qFcZJ4NrSH5Me2lVeGFg-1; Wed,
- 05 Mar 2025 10:21:55 -0500
-X-MC-Unique: 23qFcZJ4NrSH5Me2lVeGFg-1
-X-Mimecast-MFC-AGG-ID: 23qFcZJ4NrSH5Me2lVeGFg_1741188097
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C55451801A07;
-	Wed,  5 Mar 2025 15:21:35 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.66])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B2E781800266;
-	Wed,  5 Mar 2025 15:21:27 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Wed,  5 Mar 2025 16:21:05 +0100 (CET)
-Date: Wed, 5 Mar 2025 16:20:55 +0100
-From: Oleg Nesterov <oleg@redhat.com>
-To: David Hildenbrand <david@redhat.com>,
-	Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Matthew Wilcox <willy@infradead.org>,
-	Russell King <linux@armlinux.org.uk>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Tong Tiangen <tongtiangen@huawei.com>
-Subject: Re: [PATCH -next v1 0/3] kernel/events/uprobes:
- uprobe_write_opcode() rewrite
-Message-ID: <20250305152055.GB28112@redhat.com>
-References: <20250304154846.1937958-1-david@redhat.com>
+	s=arc-20240116; t=1741188006; c=relaxed/simple;
+	bh=sNP+NNEDqcfz55fVq14lJl9O8BqjCihgzDa7tqzQcgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=XUbyaYTaVmpJUPVyhIuPp0iqIti3Y/nt5x0J0WKwJJL7lLGj7rNeajB8Mn7gmOCFV1T/s/ncXJQZSpDEU2dA/amX8VcGluy+wbBS4nsXnFmkcT14gYGMNt3FpgWEodiEUaTdv8rrJ+A/OzRSuqIBki21ukYah5wHDyHdCy7nMBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F748C4CED1;
+	Wed,  5 Mar 2025 15:20:04 +0000 (UTC)
+Date: Wed, 5 Mar 2025 10:21:01 -0500
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Andrew Morton
+ <akpm@linux-foundation.org>, Sami Tolvanen <samitolvanen@google.com>,
+ Daniel Gomez <da.gomez@samsung.com>, linux-modules@vger.kernel.org
+Subject: Re: [PATCH v3 5/8] module: Add module_for_each_mod() function
+Message-ID: <20250305102101.2178feab@gandalf.local.home>
+In-Reply-To: <17c0cce7-03c7-488a-b61a-6c41d5bacfa1@suse.com>
+References: <20250304012516.282694507@goodmis.org>
+	<20250304012548.433669427@goodmis.org>
+	<20250304095714.47a171fa@gandalf.local.home>
+	<17c0cce7-03c7-488a-b61a-6c41d5bacfa1@suse.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304154846.1937958-1-david@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 03/04, David Hildenbrand wrote:
->
-> Currently, uprobe_write_opcode() implements COW-breaking manually, which is
-> really far from ideal.
+On Wed, 5 Mar 2025 09:47:49 +0100
+Petr Pavlu <petr.pavlu@suse.com> wrote:
 
-To say at least ;)
+> On 3/4/25 15:57, Steven Rostedt wrote:
+> > 
+> > Luis,
+> > 
+> > Can I get an Acked-by from you?
+> > 
+> > This follows the changes you have in linux-next.  
+> 
+> Hi Steven,
+> 
+> I'm not Luis, but we started rotating the modules maintenance every six
+> months and I'm currently looking after the modules tree. I see Luis
+> seemed ok with the change in the previous discussion and the patch looks
+> reasonable to me.
 
-David, thanks for doing this. I'll try to read 3/3 tomorrow, but I don't
-think I can really help. Let me repeat, this code was written many years
-ago, I forgot everything, and today my understanding of mm/ is very poor.
-But I'll try anyway.
+Ah, you may want to update the MAINTAINERS file. Right now it has:
 
-> Are there any uprobe tests / benchmarks that are worth running?
+M:      Luis Chamberlain <mcgrof@kernel.org>
+R:      Petr Pavlu <petr.pavlu@suse.com>
+R:      Sami Tolvanen <samitolvanen@google.com>
+R:      Daniel Gomez <da.gomez@samsung.com>
 
-All I know about uprobe tests is that bpf people run a lot of tests which
-use uprobes.
+Which puts Luis as maintainer and you as a reviewer. If you rotate
+maintainerships, you should update that to have an M: next to all that are
+in that rotation.
 
-Andrii, Jiri, what you advise?
+> 
+> Acked-by: Petr Pavlu <petr.pavlu@suse.com>
+> 
 
-Oleg.
+Appreciate it.
+
+-- Steve
 
 
