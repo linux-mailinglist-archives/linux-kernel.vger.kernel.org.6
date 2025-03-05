@@ -1,103 +1,87 @@
-Return-Path: <linux-kernel+bounces-546241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528B8A4F842
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:49:27 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6A96A4F847
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:51:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1DF211891886
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:49:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390703A5E1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F6F41F4194;
-	Wed,  5 Mar 2025 07:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1C81F153A;
+	Wed,  5 Mar 2025 07:51:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ZX1h+g50"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WGTIN5MW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB6C2E338C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:49:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C6E17555;
+	Wed,  5 Mar 2025 07:51:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741160953; cv=none; b=uF5BJpS8kTwKZo+WaMFOeQvdUKjq2u9fxVN79raQm4kroyu1kt2xQE1l51+GHlSuAkAWIaFbIMcHrX9Q1NXIUempD5Zi16qGEtWoF3M+QNdXEcnSwQ+gEoFGW6flurmL+h3hGummbbZWcW3a/6uVWNm8pxJ4amMYXrKJc/wCRwA=
+	t=1741161101; cv=none; b=ZNNL9jZUr5iFy+wA8GlxfYczeNDUuk5kS+JsHGdPTBRux60NxOihh/wAFQUBGfiXlnJoq4IgEyeT2pwuOYbBXDdG4w3o1tBI3P247Oib3EdIt1yrhfh/WG04RQSuAimpFfBCN4SeEYez+VZ3cH12DQmtzyUE7aMPJvPgGkeyIPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741160953; c=relaxed/simple;
-	bh=YgJ7FqNNfYxDm0I1ccxKkOvd8zuPiF2Sp2+E3IVga3Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=o7jfn1PAKyXKeamyjPHidvyA+St6CNGovpJBBE++b56lGejIxgqQx0p2EQ6PfMNNhUMD9v1qyQ+dBmCprFWLgAsacWmgNZoEF6wG3m6a+rgwJVioy/yuqBH4zt80sbChwZClyRWvRjJBD2uLZhKOp/QZH87qC6NeQpBVCMpZnE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ZX1h+g50; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30613802a59so73060641fa.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:49:09 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741160948; x=1741765748; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YgJ7FqNNfYxDm0I1ccxKkOvd8zuPiF2Sp2+E3IVga3Q=;
-        b=ZX1h+g50gyZtfi8GVOhSL9P+Iywhb4BguZ5BkK4J+i7aUKCJ7peyBnj8JxqUlLq8DH
-         dh2srg5vm7xD/fsSnD62YnYp3+kEYAYpkp2ZGr7QA8v8KXRUKMptKpANFJG3Vss+Q3u0
-         5ocWX9jKTBQPNBIxi8kNv3RIZGzalIjcb3Rcd4hslJI9g5WA9FFUuETTh6XMt1CCswQ9
-         q5p2bqLzpbsNIq2plsBWrIHwpuO0U4VNqCo3uYPvuuMr3bOo/OCBsbRGVEzCecV9mlbz
-         JfuM37HEzANrzJFlRAenR7j9RJe8eZhHcZJwdvqpJ9qgJdp+o4bne+NaCEwFLUhP7HQ8
-         rOcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741160948; x=1741765748;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YgJ7FqNNfYxDm0I1ccxKkOvd8zuPiF2Sp2+E3IVga3Q=;
-        b=c6QIL+N5XEBiv5Patv0Iw5dFJv/iLoHmrTf5hX3frO/yyHj6LV/R1SKsuBoGo/G0bJ
-         Qot7tmGW6xLarJvb8Y/sMth7Ak57CNzaRmNwf4OO+9lVIrcP8qIim1nKld/Xnm++AbxN
-         MPXMJVXosii2kbECvtBGsUVtDQL82cARuXyd7CJt8ZuHS8iDhSitHaGRtvez8KsCSP6x
-         eTkFn0XcS1ZMAsXJnpUPwWzaUAW8pVE15UHYaNRU+ACP9tZtG+EzzXOHqpssM/wWYl/F
-         OBjVWGXicqIo6sybpupwKaHk/y8KufeTmX24pLV+LDOsLn+4YOmPoS24q1oCLpuOHmSf
-         ry4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVwJXue6UXgy3QqJQBgS01r3hs2YIp64TioOaqHvpyofCmwL4xV4v1ieDZ8HibsaPjUjGBova2HzonMjLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw4GJmEMaiE/dAxvRS0xto0uP4ayR9HQK4CIvhqR9rNxFpnyfsJ
-	eN4wooBspQc7oQEk9s2/9/7akdHZ05S9hvV1IQg1eRwQAXZMZ3w0isbs5qElOmgzy+dZBv7f0ku
-	6jr3OA7nVNuGvk4+YurKJY1gLpszSWu6p8+0tYA==
-X-Gm-Gg: ASbGncuLR2myO0WBawJYRFUWvhPV3iaqUXOMEAWMOxxy9DAy/CppTDaST7/kiKix5sA
-	jjFoiFkLAT4p4Fuubaly20kJkLbgwK7NuJ+u6/BupFkb/EoTXQCljK7gvRN/Wgn+Wlp3shpr5ko
-	MZAYotBxVHDyZbXImqaQCSi9OoYQ==
-X-Google-Smtp-Source: AGHT+IFHtDRRBP8bp5gdkXIA/EIpFpVmPLRt714LmAp0yuV8fT6QJ4wXCx6DXthE/zk4hC6vZIUQxWhAmu28h9aTZAU=
-X-Received: by 2002:a05:651c:1a0c:b0:30b:b908:cddb with SMTP id
- 38308e7fff4ca-30bd7a41efemr6683181fa.16.1741160947020; Tue, 04 Mar 2025
- 23:49:07 -0800 (PST)
+	s=arc-20240116; t=1741161101; c=relaxed/simple;
+	bh=QyFRWvas24e4KFCBZT6GjOM6RBxXtM6JmFhw+HxMXC0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LGGY8RXdOoIwZNihDgD1rqCnIFMSLjPofyMw/+YmJMkdRcBmyNKDLQJ2xifLf0kX8DODkm8p3pD0BKPCqYlundI3QPp3ojDgkBEs10dg8m+qyqd61UXpVj5x3K8vbblXvUO3cc1ksalnAMGy2RpbV43wL1UptJu8+9cU4fHKpcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WGTIN5MW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C19D2C4CEE2;
+	Wed,  5 Mar 2025 07:51:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741161099;
+	bh=QyFRWvas24e4KFCBZT6GjOM6RBxXtM6JmFhw+HxMXC0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WGTIN5MW2xH/jYQsYk7OaCKGbVAnVS1qUqybaNHjTY3DW+0wnGQ/qFcXFsK7ojCzV
+	 eFDDIp3WSCk48TAx/mNGH4e1R8rE6cC7wfNvNka/3/ezu8q3jbhWxBoHZDmxQ1H/IQ
+	 xSeqI1glSzLexuE1/sAG+xdxSby4Yye97ToTijmVpkFe78+i9xK1tvnggp+zgSLiqx
+	 Prsp/d3TV/nwoeY655ghQHPAcmEEPRJgXzwCoxC9KWBJp0R0Gd0MTwUcLYaSTEit7K
+	 V9Jmmhwx/tktmAmp2fb3muPRDDW9c9pSldd20LpuRRGmXsv0UlrEWSWEJ3fDK3i4/j
+	 iOCvRKsELfoeQ==
+Date: Wed, 5 Mar 2025 08:51:35 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com, 
+	neil.armstrong@linaro.org, rfoss@kernel.org, Laurent.pinchart@ideasonboard.com, 
+	jonas@kwiboo.se, jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com, 
+	tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
+Subject: Re: [PATCH 1/5] dt-bindings: display: Document DPI color codings
+Message-ID: <20250305-important-quizzical-chamois-ff48af@krzk-bin>
+References: <20250304101530.969920-1-victor.liu@nxp.com>
+ <20250304101530.969920-2-victor.liu@nxp.com>
+ <20250304-deer-of-striking-pride-ff6e86@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304232051.2936557-1-pratap.nirujogi@amd.com>
-In-Reply-To: <20250304232051.2936557-1-pratap.nirujogi@amd.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 5 Mar 2025 08:48:55 +0100
-X-Gm-Features: AQ5f1JpcS2hDMJY0zmeOcS9nhyjweLA5ITBHgv88yn7QrJ2qKvgEdvrG7E06mzo
-Message-ID: <CACRpkdYxZ=7RRvjKpQW9_mZG_KDXuAt6kdDZDKWJxx-f1BRvCA@mail.gmail.com>
-Subject: Re: [PATCH v2] pinctrl: amd: isp411: Add amdisp GPIO pinctrl
-To: Pratap Nirujogi <pratap.nirujogi@amd.com>
-Cc: krzk@kernel.org, linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	benjamin.chan@amd.com, bin.du@amd.com, king.li@amd.com, 
-	gjorgji.rosikopulos@amd.com, dominic.antony@amd.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250304-deer-of-striking-pride-ff6e86@houat>
 
-On Wed, Mar 5, 2025 at 12:21=E2=80=AFAM Pratap Nirujogi <pratap.nirujogi@am=
-d.com> wrote:
+On Tue, Mar 04, 2025 at 11:33:44AM +0100, Maxime Ripard wrote:
+> > +properties:
+> > +  dpi-color-coding:
+> > +    enum:
+> > +      - 16bit-configuration1
+> > +      - 16bit-configuration2
+> > +      - 16bit-configuration3
+> > +      - 18bit-configuration1
+> > +      - 18bit-configuration2
+> > +      - 24bit
+> 
+> Do we really needs strings there? It would be much better to use an int
+> plus a header
 
-> Add pinctrl driver support for AMD SoC with isp41 hw ip block.
->
-> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+So DTS would sill have a name, just being a define? Then what is the
+benefit comparing to strings above in DTS readability?
 
-OK, driver looks really good after the fixes, it's also simple, elegant
-and self-contained.
-Patch applied!
+Best regards,
+Krzysztof
 
-Yours,
-Linus Walleij
 
