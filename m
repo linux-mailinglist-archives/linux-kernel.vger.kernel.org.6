@@ -1,181 +1,176 @@
-Return-Path: <linux-kernel+bounces-546425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95D1A4FA92
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:47:32 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BDBA4FA95
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:49:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ACFD3A6690
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:47:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC7CD1892234
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:49:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD18A204F82;
-	Wed,  5 Mar 2025 09:47:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="epMLIdSe"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8171204694
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:47:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3DF12054ED;
+	Wed,  5 Mar 2025 09:49:29 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.skhynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 818F21FDA89;
+	Wed,  5 Mar 2025 09:49:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741168044; cv=none; b=uIcFLiwldaaG9csq2lAza3mfFbhMTnWBYe+P/Lz3grgaHNN00py8/d040E+mib2VVCFrP0/JhRV0vrKyyy9EQuByG+MjiEAaerJvga5ZFTF60Dj1WLht/V9EjT9q92yeqWUQk4alQxQqVvgWpwqN6zZV8fTK0Mh/B2ASbvg8ZQY=
+	t=1741168169; cv=none; b=d1+DilOfpqb/e64oyDr14WIND4N/h37CZpKiGbHgFamTIIRMLXO+Da/vM2NvJXL3buupxrKj10a6ezu6rPgD/WpxRsDbJ9QSvQX+uP03ZqGetDgkhwpxXZ3NtUAbCOqxCOuL0xBmGLw78OIUbpmLPsbNWveIYiGvcp1EoyybduM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741168044; c=relaxed/simple;
-	bh=Z+VMDSOKrwtG6lviKJiCsWBEfYDhlcUqD9qS1eoXGw4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gLq42SvtFMOYAaK49C1TyMWfXUhFoFJwrDZnlsjdcDRL/+neK6R1hZUaIn4ClcegOqtF+E8YIXnXyrXWG/A5lBjbl2zKrWr4N+0GMekGbH9g9mfP6jePzIMSudXmJxt4AaTSpTpXrNJ+BkNArs7HwEdJsWlaYg3Tb0wrlWX3YbE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=epMLIdSe; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso3452239f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:47:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741168040; x=1741772840; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=EMPfkT27lV8Ojg2DFZYdlrmMaeah6M4ccrm/4GlS09M=;
-        b=epMLIdSeTSMn7obw5QuRDczC5fsK7bKRQQLbYNU+9nGOtoIo0ZRyhK/uk4T7A/SltK
-         QsdQXKvkQKNZYqR8/cSsKU15Pma014EUYQEeEVe2LQ3V6wIu+2poI90gL+auiSW0fCOt
-         Cqx/DJIlPFRUrFhTGMLoNzokeMxnc930S2ykHwMZUFUKEmSXul1tYOGjTeeEmdMWG+1L
-         5BDXrKR/dZYc1kCRZBoAVJTEPNclxddEBhnQOu87oNtvdTsIs6QyNborgl/OI3X8lNxY
-         u5yLEmTnIsLGmgKOY9lO8N8LpTkq6gqJRSNHUyPNqpjwqV0LD/OM3vSVNPEFGu9j0glH
-         4q3g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741168040; x=1741772840;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EMPfkT27lV8Ojg2DFZYdlrmMaeah6M4ccrm/4GlS09M=;
-        b=LW8Ftl63oH+GGEqapNeL/9761+RmBZBky+xCRKefoU5rjOs56ZQH3oTccrVbdZ+2I9
-         IsEl61yMriLh0Oj5f3h1sLhXAeGvAUYAQP/LKFn6Qx8k5HgMQ7ljNxbWNiz0zcHyBmGI
-         JuZ8IU4BnzuDY0Qillk0bX5EOfcmkHynEm7m/mPZxHiWno0fWIOig00G/JOHjwOQg4V5
-         pmYuRYvyPNylnuN5gmWjpI8DVdJxzbU9b19BMBRkwoJUbcL9hOiNzR+vCztIe2MHdAJa
-         uHtyLtwYYr4oWGB8g7huFrWEA2otmaqsk98uyKWpkbnfcE+cDyNzhlJBViYHeMn+ptYS
-         9wAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnLlDdI8y3EZMflk6+nSu2kgEv9RtzN3nKRrw9gbF9GdxWQWkyUO0oDrtbF41NQmarMdPr8AgRUwNvKyY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yym6UDsU7kzTSj+fMD5SY6tu77A3jJJ/lBfQGX+G64VrxcUcggj
-	M1vPHZD0EhLX6gA5SXMKREvp7SrXc1zsjz/8VXrD/GXC0o59+wnjqLstbzeQoF8=
-X-Gm-Gg: ASbGncvJh+3saysZ4RwLdLXGPOIEMTXmvcbLEfR4i7ebjowVkgd1gmyrKRUh+EbEOEg
-	911TBKTucJy1+emsSZ3dJHZbKsLerNRoa4O9+Wh1x4TRuccLHeHI3swtXkDumVi1n7GbFRLPMfS
-	RX03nfoNsInT7FEUeNGivPkFHOqy7TQ5XQKOpzrK4AwPr8O89V7QqBikMDP59/iFZ1UoKyLluST
-	6fFvMWQ+oeZTYIbNLLupywR7cRz8cv3YOcpdaQhCSG8vwhjHQ9uclvJJQztw9sxwxROI+LYuZYc
-	42IumUxCn8xEkfTQUTCHzLn67ql7v3ezqEbdkH72q3NarhY=
-X-Google-Smtp-Source: AGHT+IFcrWp+Eg2JeW3nr+EIF9j4IDp9lzyAN7AdFjhbyzx7Y+kawoeWfXaT79Mlsm2wvfce/91S1g==
-X-Received: by 2002:a5d:6486:0:b0:391:a74:d7dc with SMTP id ffacd0b85a97d-3911f7ce121mr1800951f8f.50.1741168040117;
-        Wed, 05 Mar 2025 01:47:20 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd429215asm12099625e9.11.2025.03.05.01.47.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 01:47:19 -0800 (PST)
-Date: Wed, 5 Mar 2025 10:47:17 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: kernel test robot <lkp@intel.com>, David Gow <davidgow@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v8 3/4] scanf: convert self-test to KUnit
-Message-ID: <Z8gdpSErMCMCZZNP@pathway.suse.cz>
-References: <20250214-scanf-kunit-convert-v8-3-5ea50f95f83c@gmail.com>
- <202502160245.KUrryBJR-lkp@intel.com>
- <CAJ-ks9kkigKG=Nf_mZrA5CA=SUV2sSyY51_rLef42T+ZxCmk1Q@mail.gmail.com>
+	s=arc-20240116; t=1741168169; c=relaxed/simple;
+	bh=Ymdcw4KQcFPIRedKH+oPy1rkKOVqH6QgEneB1FD+r9E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ijCt3gIuwsChOrS8TLoQMXQHU5OB73S/hoST3QW0+9J4A0HIyVqD4kgGcC71HmhgqSv8Oxeub2YsC+WgwxZMSNmdUSdNBM0xZhGkGtP2SZCyp41qv0vlAbrVZ+G6XqE68fGjY/6XPJ+KpfE7zo8XESkBQ30zlLIumJUQAyVOBq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-3c9ff7000001d7ae-66-67c81e2012fe
+From: Yunjeong Mun <yunjeong.mun@sk.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: honggyu.kim@sk.com,
+	gregkh@linuxfoundation.org,
+	rakie.kim@sk.com,
+	akpm@linux-foundation.org,
+	rafael@kernel.org,
+	lenb@kernel.org,
+	dan.j.williams@intel.com,
+	Jonathan.Cameron@huawei.com,
+	dave.jiang@intel.com,
+	horen.chuang@linux.dev,
+	hannes@cmpxchg.org,
+	linux-kernel@vger.kernel.org,
+	linux-acpi@vger.kernel.org,
+	linux-mm@kvack.org,
+	kernel-team@meta.com,
+	kernel_team@skhynix.com
+Subject: Re: [PATCH 1/2 v6] mm/mempolicy: Weighted Interleave Auto-tuning
+Date: Wed,  5 Mar 2025 18:49:11 +0900
+Message-ID: <20250305094918.968-1-yunjeong.mun@sk.com>
+X-Mailer: git-send-email 2.48.1.windows.1
+In-Reply-To: <20250304222252.3805581-1-joshua.hahnjy@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJ-ks9kkigKG=Nf_mZrA5CA=SUV2sSyY51_rLef42T+ZxCmk1Q@mail.gmail.com>
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrHLMWRmVeSWpSXmKPExsXC9ZZnoa6C3Il0g79L1C3mrF/DZjF96gVG
+	ixM3G9ksmhevZ7NYvcnX4nb/OVaLVQuvsVkc3zqP3WLfRaCynQ/fslks39fPaHF51xw2i3tr
+	/rNazP0yldmBz+Pwm/fMHjtn3WX3aDnyltVj8Z6XTB6bVnWyeWz6NInd48SM3yweCxumMnvs
+	n7uG3ePcxQqPz5vkArijuGxSUnMyy1KL9O0SuDJ27HrKUnBPumLf3uesDYwLRbsYOTkkBEwk
+	NkyewtrFyAFm33/BCBJmE9CQOHjoJDOILSKgKXGidRKQzcXBLDCdWaLxwUZWkISwgKdE25GV
+	jCC9LAKqEkfuiYCEeQXMJJ437GaFGK8p0XDpHhOIzSlgL7H+zAQWEFtIgEfi1Yb9jBD1ghIn
+	Zz4BizMLyEs0b50NtktCoJ9dYvfFHcwQgyQlDq64wTKBkX8Wkp5ZSHoWMDKtYhTKzCvLTczM
+	MdHLqMzLrNBLzs/dxAiMlWW1f6J3MH66EHyIUYCDUYmHN+DnsXQh1sSy4srcQ4wSHMxKIryv
+	Tx1PF+JNSaysSi3Kjy8qzUktPsQozcGiJM5r9K08RUggPbEkNTs1tSC1CCbLxMEp1cDY6phT
+	d/XtLL6TNYvfF+o05vYtvetlKasS1Hc6IUP1+ptTMomemlbF/H+Z11YlBx5rzelOv7u4ZEPT
+	A5EdazjYp381v3HwRtPNhs2Vd2tezTF/UB33o0jMLGaXx7azRkdF7a6e8BVZeWvh1OKl31O1
+	d08/+N9c86HlRKtg4wAWf3GnnXvSlJcosRRnJBpqMRcVJwIAREFuWJECAAA=
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrMLMWRmVeSWpSXmKPExsXCNUNWR1dB7kS6wc1ecYs569ewWUyfeoHR
+	4sTNRjaL5sXr2SxWb/K1+PzsNbPF7f5zrBarFl5jszi+dR67xb6LQLWH555ktdj58C2bxfJ9
+	/YwWl3fNYbO4t+Y/q8XcL1OZLQ5de87qIOhx+M17Zo+ds+6ye7QcecvqsXjPSyaPTas62Tw2
+	fZrE7nFixm8Wj4UNU5k99s9dw+5x7mKFx7fbHh6LX3xg8vi8SS6AN4rLJiU1J7MstUjfLoEr
+	Y8eupywF96Qr9u19ztrAuFC0i5GDQ0LAROL+C8YuRk4ONgENiYOHTjKD2CICmhInWicB2Vwc
+	zALTmSUaH2xkBUkIC3hKtB1ZyQjSyyKgKnHknghImFfATOJ5w26wEgmg3oZL95hAbE4Be4n1
+	ZyawgNhCAjwSrzbsZ4SoF5Q4OfMJWJxZQF6ieets5gmMPLOQpGYhSS1gZFrFKJKZV5abmJlj
+	qlecnVGZl1mhl5yfu4kRGBXLav9M3MH45bL7IUYBDkYlHt6An8fShVgTy4orcw8xSnAwK4nw
+	vj51PF2INyWxsiq1KD++qDQntfgQozQHi5I4r1d4aoKQQHpiSWp2ampBahFMlomDU6qBUfzh
+	3hmsOsqHfncsvrRAYP6JH5PXebVP32S8orPM953JGvmNlevTHsbcq8u72rO85+H+W4k6p+T/
+	TPgy4Xjjy8x5Om91pky+slbw1z2hhdd1F/WeytwSvl4v1HFleG/8P0FLMa+CjIfvDtpYmF3m
+	SFz4QP5OtMqHkEvZkVNqtykvDHDL+GT2+qoSS3FGoqEWc1FxIgCS39kfhgIAAA==
+X-CFilter-Loop: Reflected
 
-On Sat 2025-02-15 14:52:22, Tamir Duberstein wrote:
-> On Sat, Feb 15, 2025 at 1:51 PM kernel test robot <lkp@intel.com> wrote:
-> >
-> > Hi Tamir,
-> >
-> > kernel test robot noticed the following build warnings:
-> >
-> > [auto build test WARNING on 7b7a883c7f4de1ee5040bd1c32aabaafde54d209]
-> >
-> > url:
-> https://github.com/intel-lab-lkp/linux/commits/Tamir-Duberstein/scanf-implicate-test-line-in-failure-messages/20250215-002302
-> > base:   7b7a883c7f4de1ee5040bd1c32aabaafde54d209
-> > patch link:
-> https://lore.kernel.org/r/20250214-scanf-kunit-convert-v8-3-5ea50f95f83c%40gmail.com
-> > patch subject: [PATCH v8 3/4] scanf: convert self-test to KUnit
-> > config: sh-randconfig-002-20250216 (
-> https://download.01.org/0day-ci/archive/20250216/202502160245.KUrryBJR-lkp@intel.com/config
-> )
-> > compiler: sh4-linux-gcc (GCC) 14.2.0
-> > reproduce (this is a W=1 build): (
-> https://download.01.org/0day-ci/archive/20250216/202502160245.KUrryBJR-lkp@intel.com/reproduce
-> )
-> >
-> > If you fix the issue in a separate patch/commit (i.e. not just a new
-> version of
-> > the same patch/commit), kindly add following tags
-> > | Reported-by: kernel test robot <lkp@intel.com>
-> > | Closes:
-> https://lore.kernel.org/oe-kbuild-all/202502160245.KUrryBJR-lkp@intel.com/
-> >
-> > All warnings (new ones prefixed by >>):
-> >
-> >    In file included from <command-line>:
-> >    lib/tests/scanf_kunit.c: In function 'numbers_list_ll':
-> > >> include/linux/compiler.h:197:61: warning: function 'numbers_list_ll'
-> might be a candidate for 'gnu_scanf' format attribute
-> [-Wsuggest-attribute=format]
+Hi Joshua, thanks for reviewing my patch and for your kind explanation.
+
+On Tue,  4 Mar 2025 14:22:51 -0800 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+> Hi Yunjeong, sorry for the noise, but I have discovered another potential
+> concern that your patch introduces, which I have explained below. 
 > 
-> I am not able to reproduce these warnings with clang 19.1.7. They also
-> don't obviously make sense to me.
+> On Tue,  4 Mar 2025 13:56:11 -0800 Joshua Hahn <joshua.hahnjy@gmail.com> wrote:
+> 
+> > On Fri, 28 Feb 2025 15:39:55 +0900 Yunjeong Mun <yunjeong.mun@sk.com> wrote:
+> > 
+> > Hi Yunjeong,
+> > 
+> > While applying your patch, I realized that it re-introduces a build error
+> > that was fixed in v6, which I am noting below. 
+> > 
+> > > Hi, Joshua. 
+> > 
+> > [...snip...]
+> >  
+> > > In my understanding, new_iw[nid] values are scaled twice, first to 100 and then to a 
+> > > weightines value of 32. I think this scaling can be done just once, directly 
+> > > to weightness value as follows:
+> > > 
+> > > diff --git a/mm/mempolicy.c b/mm/mempolicy.c
+> > > index 50cbb7c047fa..65a7e2baf161 100644
+> > > --- a/mm/mempolicy.c
+> > > +++ b/mm/mempolicy.c
+> > > @@ -176,47 +176,22 @@ static u8 get_il_weight(int node)
+> > >  static void reduce_interleave_weights(unsigned int *bw, u8 *new_iw)
+> > >  {
+> > > 	u64 sum_bw = 0;
+> > > -	unsigned int cast_sum_bw, sum_iw = 0;
+> > > -	unsigned int scaling_factor = 1, iw_gcd = 1;
+> > > +	unsigned int scaling_factor = 1, iw_gcd = 0;
+> > > 	int nid;
+> > > 
+> > > 	/* Recalculate the bandwidth distribution given the new info */
+> > > 	for_each_node_state(nid, N_MEMORY)
+> > > 		sum_bw += bw[nid];
+> > > 
+> > > -       for (nid = 0; nid < nr_node_ids; nid++) {
+> > >  			[...snip...]
+> 			^^^^^^^^^^^^
+> When I was originally writing the response, I missed reviewing the contents
+> inside this snipped section, which looks like this:
+> 		if (!node_state(nid, N_MEMORY)) {
+> 			new_iw[nid] = 1;
+> 			continue;
+> 		}
+> I introduced this check in v6 because without this, we end up with the
+> possibility of memoryless nodes having a 0 in the table, which can lead to some
+> problems down the line (e.g. div by 0 in alloc_pages_bulk_weighted_interleave).
 
-I have reproduced the problem with gcc:
+To prevent division by 0 errors, how about setting new_iw to 1 when it is first 
+created, instead of setting it in the reduce function?
 
-$> gcc --version
-gcc (SUSE Linux) 14.2.1 20250220 [revision 9ffecde121af883b60bbe60d00425036bc873048]
+> 
+> Respectfully, I would prefer to write my own version that takes your
+> suggestion, as opposed to applying this patch directly on top of mine so that
+> we do not introduce the build error or the potential div0. However, v7 will
+> include your suggestion, so it will go through only one loop as opposed to two.
 
-$> make W=1 lib/test_scanf.ko
-  CALL    scripts/checksyscalls.sh
-  DESCEND objtool
-  INSTALL libsubcmd_headers
-  CC [M]  lib/test_scanf.o
-In file included from <command-line>:
-lib/test_scanf.c: In function ‘numbers_list_ll’:
-./include/linux/compiler.h:197:61: warning: function ‘numbers_list_ll’ might be a candidate for ‘gnu_scanf’ format attribute [-Wsuggest-attribute=format]
-  197 | #define __BUILD_BUG_ON_ZERO_MSG(e, msg) ((int)sizeof(struct {_Static_assert(!(e), msg);}))
-      |                                                             ^
-[...]
+Thanks for considering my suggestion. I look forward to the v7.
 
-It seems that it is a regression introduced by the first
-patch of this patch set. And the fix is:
-
-diff --git a/lib/test_scanf.c b/lib/test_scanf.c
-index d1664e0d0138..e65b10c3dc11 100644
---- a/lib/test_scanf.c
-+++ b/lib/test_scanf.c
-@@ -27,7 +27,7 @@ static struct rnd_state rnd_state __initdata;
- typedef int (*check_fn)(const char *file, const int line, const void *check_data,
- 			const char *string, const char *fmt, int n_args, va_list ap);
- 
--static void __scanf(6, 0) __init
-+static void __scanf(6, 8) __init
- _test(const char *file, const int line, check_fn fn, const void *check_data, const char *string,
- 	const char *fmt, int n_args, ...)
- {
-
-Best Regards,
-Petr
+Best regards,
+Yunjeong
+> 
+> Thank you for your feedback again. I hope you have a great day!
+> Joshua
+> 
+> > > -		/*
+> > > -		 * Try not to perform 64-bit division.
+> > > -		 * If sum_bw < scaling_factor, then sum_bw < U32_MAX.
+> > > -		 * If sum_bw > scaling_factor, then bw[nid] is less than
+> > > -		 * 1% of the total bandwidth. Round up to 1%.
+> > > -		 */
+> > >  			[...snip...]
+> > 
+> > We cannot remove this part here, since this is what allows us to divide
+> > in the next for loop below. sum_bw is a u64, so performing division
+> > by this value will create a build error for 32-bit machines. I've gone and
+> > re-added this comment and parts to the bottom part; the logic should not
+> > change at all from the patch that you proposed (except for the build error).
+> 
+> [...snip...]
+> 
+> Sent using hkml (https://github.com/sjp38/hackermail)
+> 
+> 
 
