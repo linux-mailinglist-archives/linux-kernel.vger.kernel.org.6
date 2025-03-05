@@ -1,134 +1,157 @@
-Return-Path: <linux-kernel+bounces-547654-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A79A50C09
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:57:01 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27A56A50B4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:16:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAAED18954AF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:57:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CAEE188E098
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F422571C9;
-	Wed,  5 Mar 2025 19:56:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F90253352;
+	Wed,  5 Mar 2025 19:16:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="RI+/h5ml"
-Received: from mx11lb.world4you.com (mx11lb.world4you.com [81.19.149.121])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQ9Q1udn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A85BC2566D0;
-	Wed,  5 Mar 2025 19:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.121
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5905324CEE3;
+	Wed,  5 Mar 2025 19:16:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741204573; cv=none; b=qoc2sLc3KZi4LQ+XiVOvd497Y9pWr0x+N99EEI5xwMFYIDR1631vosDhq2Xt6Env+8oWPPzIpxutlous/3/B/B+4bU8vKwPsyTCc785tNzZo7FeuzrCrhMzpzJKb1ZdPCNVoOR8P/MoCmggFctQOFfLXtqaIWNkcXsv9rTQdwzw=
+	t=1741202171; cv=none; b=c5HtRBr7rC8Dn6owXdNybh+ikp4w/xOXKbFDgN9hqHJgCzs59IrTJVM3623ozsnGyKaRk/7jfzPdy3xYdvb4eZsYZ5ue4zxpN9Ijs/UCIghULLabkXEXHwShT5JQdR+0VYnipxiPiiaEyv1nDAEq8VV67Em+K38Vy7Eyiq/IqCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741204573; c=relaxed/simple;
-	bh=WYEC+ArfSwlKN3FeDLKk0TQMOhpIceugzbJo5Kd8ysc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HOXDGoKO3wFoPPW2tFyXpRI/TqTETtWJ7579ZLzZn4xwBSXlo8IaHb1+rQW98z3iaJfbxBDOc04Ilro2rBfx1vBscGkucTPpoUasQ3ir7kW2daScV360EdUAUpQvS5xLVwrwomA2MM0jvWq1+x20KRbdX/keP5LAvQYYdGYX+q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=RI+/h5ml; arc=none smtp.client-ip=81.19.149.121
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=x0KQuzyFQUEThFLdYlVvZUJ1cH4hBNZAmoJdDiFksag=; b=RI+/h5mlwDs65E0J/YyCgTt05p
-	a//6ia9q7THHUJjoOvsmkpQr52QzRjnYVtgNBGH+dTSvVXju2HjaUP30mnI4VLvlMfrNn9FnnhTmr
-	+tv+B9/4GtcBM88IRfc6S0l7fbJXX/wnygN3l0PkoOx7ZlndkhxJAnvKBkjWP4Ckx3yk=;
-Received: from [80.121.79.4] (helo=[10.0.0.160])
-	by mx11lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <gerhard@engleder-embedded.com>)
-	id 1tpuDg-000000006hj-2m9f;
-	Wed, 05 Mar 2025 20:15:53 +0100
-Message-ID: <c0adcf60-4fb5-411f-84ef-e409cecf8a75@engleder-embedded.com>
-Date: Wed, 5 Mar 2025 20:15:51 +0100
+	s=arc-20240116; t=1741202171; c=relaxed/simple;
+	bh=fubuqMlM2Oo+8Icg3TWKdYQa/lCj0hx58ocM+KyVbgk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GAILJq7RyW0w1OniMfdNwdAWRki3yDzrCdf8aBhBUXp+gNva3Qj8WWx7WSP131HAvRoAUplEBR+JmYUQeQ6X+P2lZeEnLVdV1vpOE96CIywOoXF4RYyM0rNKuDKkW1sFBxWExeUKeFvks3w/Q3S/gEelIOiIt9fh77a/a/gKu4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQ9Q1udn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E83C4CED1;
+	Wed,  5 Mar 2025 19:16:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741202170;
+	bh=fubuqMlM2Oo+8Icg3TWKdYQa/lCj0hx58ocM+KyVbgk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kQ9Q1udnJ68GCD1jFiiTzPgeSSS5VMfZveMn/1zpJQBDvv5yc70hyqvAsnij9q52k
+	 KOxrgKUB3LNd7KdtwOtwvRJ+EhMWg5K+9h1zKPnkUlQ3siibjMWiiMPuESXNt4CimP
+	 s+14lE1XgnOq06UG1O7u4a80DMc5NQFGLrW68tV+HAnA1erm7Pbh56IeslO7sUiaPU
+	 Btsjp5hQ9N4nBR2LcqHZk3jQ5KoTaeQJdDoejoRJVjWQW8o8r1mqTZ9OU0jJCZAD1v
+	 ZkW1F8mlax5weiwXLKout3xc0phW0pziQEYKzlXaZwJS4zOq758M9tWm/tprfN6MWO
+	 bvcPzpYqGSECA==
+Date: Wed, 5 Mar 2025 11:16:08 -0800
+From: Eric Biggers <ebiggers@kernel.org>
+To: David Laight <david.laight.linux@gmail.com>
+Cc: linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: Re: [PATCH] x86/crc32: optimize tail handling for crc32c short inputs
+Message-ID: <20250305191608.GA19889@sol.localdomain>
+References: <20250304213216.108925-1-ebiggers@kernel.org>
+ <20250305142653.751d9840@pumpkin>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH iwl-net] igc: Fix XSK queue NAPI ID mapping
-To: Joe Damato <jdamato@fastly.com>
-Cc: vitaly.lifshits@intel.com, avigailx.dahan@intel.com,
- anthony.l.nguyen@intel.com, stable@vger.kernel.org,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
- "David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Jesper Dangaard Brouer <hawk@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>,
- Przemek Kitszel <przemyslaw.kitszel@intel.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>, Eric Dumazet <edumazet@google.com>,
- Paolo Abeni <pabeni@redhat.com>,
- "open list:XDP (eXpress Data Path)" <bpf@vger.kernel.org>,
- "moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
- open list <linux-kernel@vger.kernel.org>, netdev@vger.kernel.org
-References: <20250305180901.128286-1-jdamato@fastly.com>
-Content-Language: en-US
-From: Gerhard Engleder <gerhard@engleder-embedded.com>
-In-Reply-To: <20250305180901.128286-1-jdamato@fastly.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-AV-Do-Run: Yes
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305142653.751d9840@pumpkin>
 
-On 05.03.25 19:09, Joe Damato wrote:
-> In commit b65969856d4f ("igc: Link queues to NAPI instances"), the XSK
-> queues were incorrectly unmapped from their NAPI instances. After
-> discussion on the mailing list and the introduction of a test to codify
-> the expected behavior, we can see that the unmapping causes the
-> check_xsk test to fail:
+On Wed, Mar 05, 2025 at 02:26:53PM +0000, David Laight wrote:
+> On Tue,  4 Mar 2025 13:32:16 -0800
+> Eric Biggers <ebiggers@kernel.org> wrote:
 > 
-> NETIF=enp86s0 ./tools/testing/selftests/drivers/net/queues.py
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
+> > do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
+> > taking advantage of wider CRC instructions.  Note that crc32c-3way.S
+> > already uses this same optimization too.
 > 
-> [...]
->    # Check|     ksft_eq(q.get('xsk', None), {},
->    # Check failed None != {} xsk attr on queue we configured
->    not ok 4 queues.check_xsk
+> An alternative is to add extra zero bytes at the start of the buffer.
+> They don't affect the crc and just need the first 8 bytes shifted left.
 > 
-> After this commit, the test passes:
+> I think any non-zero 'crc-in' just needs to be xor'ed over the first
+> 4 actual data bytes.
+> (It's over 40 years since I did the maths of CRC.)
 > 
->    ok 4 queues.check_xsk
+> You won't notice the misaligned accesses all down the buffer.
+> When I was testing different ipcsum code misaligned buffers
+> cost less than 1 clock per cache line.
+> I think that was even true for the versions that managed 12 bytes
+> per clock (including the one Linus committed).
 > 
-> Note that the test itself is only in net-next, so I tested this change
-> by applying it to my local net-next tree, booting, and running the test.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: b65969856d4f ("igc: Link queues to NAPI instances")
-> Signed-off-by: Joe Damato <jdamato@fastly.com>
-> ---
->   drivers/net/ethernet/intel/igc/igc_xdp.c | 2 --
->   1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/intel/igc/igc_xdp.c b/drivers/net/ethernet/intel/igc/igc_xdp.c
-> index 13bbd3346e01..869815f48ac1 100644
-> --- a/drivers/net/ethernet/intel/igc/igc_xdp.c
-> +++ b/drivers/net/ethernet/intel/igc/igc_xdp.c
-> @@ -86,7 +86,6 @@ static int igc_xdp_enable_pool(struct igc_adapter *adapter,
->   		napi_disable(napi);
->   	}
->   
-> -	igc_set_queue_napi(adapter, queue_id, NULL);
->   	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
->   	set_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
->   
-> @@ -136,7 +135,6 @@ static int igc_xdp_disable_pool(struct igc_adapter *adapter, u16 queue_id)
->   	xsk_pool_dma_unmap(pool, IGC_RX_DMA_ATTR);
->   	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &rx_ring->flags);
->   	clear_bit(IGC_RING_FLAG_AF_XDP_ZC, &tx_ring->flags);
-> -	igc_set_queue_napi(adapter, queue_id, napi);
->   
->   	if (needs_reset) {
->   		napi_enable(napi);
-> 
-> base-commit: 3c9231ea6497dfc50ac0ef69fff484da27d0df66
+> 	David
 
-igc_set_queue_napi() could be made static as it only used within
-igc_main.c after this change.
+Sure, but that only works when len >= sizeof(unsigned long).  Also, the initial
+CRC sometimes has to be divided between two unsigned longs.
 
-Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
+The following implements this, and you can play around with it a bit if you
+want.  There may be a way to optimize it a bit more.
+
+But I think you'll find it's a bit more complex than you thought.
+
+I think I'd like to stay with the shorter and simpler 4-2-1 step-down.
+
+u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
+{
+	if (!static_branch_likely(&have_crc32))
+		return crc32c_base(crc, p, len);
+
+	if (IS_ENABLED(CONFIG_X86_64) && len >= CRC32C_PCLMUL_BREAKEVEN &&
+	    static_branch_likely(&have_pclmulqdq) && crypto_simd_usable()) {
+		kernel_fpu_begin();
+		crc = crc32c_x86_3way(crc, p, len);
+		kernel_fpu_end();
+		return crc;
+	}
+
+	if (len % sizeof(unsigned long) != 0) {
+		unsigned long msgpoly;
+		u32 orig_crc = crc;
+
+		if (len < sizeof(unsigned long)) {
+			if (sizeof(unsigned long) > 4 && (len & 4)) {
+				asm("crc32l %1, %0"
+				    : "+r" (crc) : ASM_INPUT_RM (*(u32 *)p));
+				p += 4;
+			}
+			if (len & 2) {
+				asm("crc32w %1, %0"
+				    : "+r" (crc) : ASM_INPUT_RM (*(u16 *)p));
+				p += 2;
+			}
+			if (len & 1)
+				asm("crc32b %1, %0"
+				    : "+r" (crc) : ASM_INPUT_RM (*p));
+			return crc;
+		}
+		msgpoly = (get_unaligned((unsigned long *)p) ^ orig_crc) <<
+			  (8 * (-len % sizeof(unsigned long)));
+		p += len % sizeof(unsigned long);
+		crc = 0;
+		asm(CRC32_INST : "+r" (crc) : "r" (msgpoly));
+
+		msgpoly = get_unaligned((unsigned long *)p) ^
+			  (orig_crc >> (8 * (len % sizeof(unsigned long))));
+		p += sizeof(unsigned long);
+		len -= (len % sizeof(unsigned long)) + sizeof(unsigned long);
+		asm(CRC32_INST : "+r" (crc) : "r" (msgpoly));
+	}
+
+	for (len /= sizeof(unsigned long); len != 0;
+	     len--, p += sizeof(unsigned long))
+		asm(CRC32_INST : "+r" (crc) : ASM_INPUT_RM (*(unsigned long *)p));
+
+	return crc;
+}
 
