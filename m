@@ -1,268 +1,158 @@
-Return-Path: <linux-kernel+bounces-546028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DA02A4F55B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:26:36 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35483A4F55D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:27:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 810963A912C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:26:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC803AAAF1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:26:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E35C816DC12;
-	Wed,  5 Mar 2025 03:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8D015D5C4;
+	Wed,  5 Mar 2025 03:26:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WLzEGAuG"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PrFXm5Tl"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50DEF41A8F;
-	Wed,  5 Mar 2025 03:26:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B2D8828
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 03:26:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741145187; cv=none; b=D9JDcpQDYzc32wuoRWUslxFdhbaWUG47/fe7kozLLE467lMVdji7WNPXFQFVLb2er1KbCWA/tX9d+r3YF9D9MlbVZRpmi6Nqb8oSbpUq1XoQ+dGhpvKVikSztRS3zIaSqJACHpY1r4MhRvJdNoxx6hw58ugC21LlHRTBnm97q5U=
+	t=1741145211; cv=none; b=kau8yTHt/Y1OHnMT+Y6qmQa99CEoEg565cwgaebxK2OUidFDh/ZZfpihMO4gD8eqnrIyGkhZe+2WD9cYiLjyGKULx3OJKms8Yx0gBBDu8JoBG+YfyPtJysS6OQzUmCMMdYLJlqKcKBaRCffrFa+Rl8y0kDjGZDeHrqnzeL1/Kms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741145187; c=relaxed/simple;
-	bh=mHtkAZ4vLe3KUwCdyIh3cqKytMRkKRIQ55rcWBYcONo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yqtc+qLhZ91fv11ftJMzoTD1XgxyBxJ84zMIXCfgO33ZSdCmfGfI9k7+HVXSnV7vMbMSMme5M4lVDPHK2CRCT9xNgAsFByEK6xDlaMyKZ1XEJdKZntWyQIdhB+D3JPs07eZaQNbxx2h7DP+CnyUztEiJE9YY1a6YZFZFM+zODJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WLzEGAuG; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so42928415e9.0;
-        Tue, 04 Mar 2025 19:26:24 -0800 (PST)
+	s=arc-20240116; t=1741145211; c=relaxed/simple;
+	bh=bbEei7+FrCui96t1/FVtgiNjItcOM479XXEbS4UhfoY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mEY0a1n3e+RKNyfMqUpOgXJP6hU7AE2ewJk6G/gFA3Dg2nUPOZhkHfzYF+I0+NItQER+JUHr3fqT6j85T7xjgVlQ5eyfUoTOMN7s1oolIDhRqGYc1VwVBlJlB6piFybIdxLrgxHW5wFb/6cpes1yn2DCA1NjFCKiWmEyNzmKsIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PrFXm5Tl; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2239aa5da08so55333245ad.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 19:26:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741145183; x=1741749983; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=bytedance.com; s=google; t=1741145208; x=1741750008; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=VretaU5v/1hLOHdXy1ltl2QWR/a5vZVhU8PtvFmcdBs=;
-        b=WLzEGAuGA91mVUcyJNVVuwUOU3Z6mO17847LN94LGJ7303hm4HI5XUY89ZR4q2SyP+
-         VNdrSRp4wRnugwq1MygAYJZRX10AVh3HYZr+cfBGYFp/KCzbu2uGePTzpDriyTez0H4i
-         aaCss+Nz0uBODCeuE/sk0I+M0FkTKmJiqvQjUfRcFncO6VIGSYDOQD41o7fRu8Vbzk9V
-         ChodrjbMMFy/0PEg7vxWo6qR7qT/5JimQms9KEQ7X0RdMfjo/2rlhHlpSo1nzwUAnvKt
-         bB+LlGYH9cqAjhoxQv+2akdUgfkvvjWe9A+QFKtHQgSQVnFT8avL0amnHkYd6QIx4viQ
-         j/lw==
+        bh=yKFINBa+Q1e4WG77Sg/agAnuGFQablMbFUvpvYj4kDs=;
+        b=PrFXm5TlRdgousJnXbLddtcTVkkffs8Grnn4rnARJFtlHBcnj2wXruKqgS1EtPMPgx
+         IVJVaq48ut4KR9njEfkHIR+k9cK89hmf13k82HqYzXlRpXHHF45xrMlBQdM6MTOnVr6M
+         8s2BDZoo8ZNccyLtThiSIVM3FZUL8M4mqKsQAw9MQbSlbIxzsyHgtFFbsMvVFNc8oPtD
+         28PQDnbTfYMup1i95Z3SgGU4osJSfMKQ+HJILwhhFFPFTr3t4JLPSrFzzcfyyEoS6C8t
+         dGJ1Baq5XM8nraqkOQ3sL57NFiM4sT227y4b2GY+/ekUrxkoQbASxAgJi3C4FD5cpZtz
+         Ipdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741145183; x=1741749983;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VretaU5v/1hLOHdXy1ltl2QWR/a5vZVhU8PtvFmcdBs=;
-        b=QWgTqpam5LxDA1YHPYFixZEEpidU9BCDobybDLBrUvi2d+naiduSwCHHViKXobhv8u
-         cXa8CHFYZrhzxgqws9A3PinBlTmh2r6JP6xunUYX3QG64MwFA1JdX7Ac+1GXNOiOLYwR
-         aWVf+1hNRah8Yrv9FLE5WXfKKPHCXhJNzTfkBRSUSqbGii1D6KqfJSoqaujSBpAaeD5x
-         L86x7Ys43Uf8nezAzyh+me0a+IjYjBg9x/elOb3YtzSSGu+wdDcnucGtVVtTuDvJjKFk
-         Tp6rtIWdC8/NFLVqHmEmZkNcAHvsxpAn0361SSy4VbqUDlnr/k4csL0Po8FHmI5FR1nB
-         cN0A==
-X-Forwarded-Encrypted: i=1; AJvYcCUADUSbDf9lCmPzjrbguHv5rM47cVREbwHXy3FQU3JqAPbxitONYxnQ2soSYqWArUQU2jA=@vger.kernel.org, AJvYcCUkYwNmllbv+0zDQNPxXezAJYDlqKXHagyL1FJ2PSrtXiyyRCpgHL2VRVYqqANI9ehYYpESWafE4cQb8yUH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwMRBs/GlMVGXQpBmUHlNivz6xawD/3cTaaeVGrwe53nHAzciw7
-	Sl+DWRAe6kvPUhyQf7QPpMIc1pLh0dqhK3ScfBrEg0v6mfIV3ZZFxsad3G74c4lu8sy+s721hlc
-	/5X+IcA64E73LF8QsZmKeCL3CAu8=
-X-Gm-Gg: ASbGncsU2Thg6D/juggslYjFAn0N4ayxqj5kulYYnRk9zBV+iqijZLt7E1w7PqgAHIQ
-	Y6rW5Gu/MYowlhpjb5fXI33b1RisZstO/Y9UfXbaQtfhbjVFPOI5S/txpB3+ruAqMdmRj2ePUHp
-	nwbUy0/b+mGdudshuOBfRirdXIBsMMo3VzBdkS9MURog==
-X-Google-Smtp-Source: AGHT+IGzIMM7zQQRVkBbsNXSeTx6I8p3O2hYNgu0XDTLHu0kIfXx9/HT2hCa4nZS4sHy1z+ltogZRtDVFBUrzn8DqIU=
-X-Received: by 2002:a05:6000:1a8e:b0:391:136c:1346 with SMTP id
- ffacd0b85a97d-3911f74bdfbmr773726f8f.19.1741145183408; Tue, 04 Mar 2025
- 19:26:23 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741145208; x=1741750008;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=yKFINBa+Q1e4WG77Sg/agAnuGFQablMbFUvpvYj4kDs=;
+        b=Psofuj0Nl+F7yiuKdLpG3tBG7ze95KkES5AerO15jKMsa4WtL3/9zq3i8oqq0g+hAq
+         7i+lHtQwJwo+Co8esjTGh4puug3Ojc5e84lfF/0fSA/tq0dmqLzzx4di7QXgO2/KvFDA
+         pwHGelapxVuwvViDyYUKZFQsYeWfC9FY3R2EymoeNLsfHWGh6JDiMvMB+ALsLTcutRUu
+         MQ+0mgANtWOB8rEu16s/3+5Mfue8miDQOBIXdWHK1fmbISDUM5d6LyFAlEZ9XLhNYimN
+         RrmJVCb74VavtbCFjwpVZmPdQLwj0bENe2pyk+LZSu1/qs8o8zMu2i3bGHq8fCXTF5EG
+         syIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXoK1tGYZ7sH5Ij3ghaeBp8bB/WvbRwBHhmZI32gx526cA49tE0se79207jTjvFn8eW8Owt8w8fG9Y+FYo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPZwlhPaBkoraeASG2NFJiSTrNdYjFsFFa6lELkVJ7lRwc6NmB
+	jxTx+ztO15GS/f9Haq6+OHz3kE/W4MWN/PmBiNiHPtROpxpc++XxUP5WvcSDf+8=
+X-Gm-Gg: ASbGnct88oR9rkkcq+XkVrc+/qnzKjny3/6qUWGSP1IR2NRzweEWsK4PosczG6PPvwI
+	cNIWKDoNN77YRnVfR7cEUJizp+W0yzFX7ObtEnK5SaVGcnsOBHt4a58QthRZ6hq1XKZ9eGgKp7L
+	M7W8uxkqztbQLJNNeNTODamkpzvDH77J3jXxZMF261m6gBy9ueXDCt4LHt250fPt7rrnx7ZB5FJ
+	jbj50tGsLSBMkiW4D9jRU9uG/WbiErVTKABnYxTS40Ct2mhTzESDepu4PdzpqznXTnv57o372Gx
+	TZ62OSxL11jWMRHe+fV2KlcTKslAescr7Epm2hiRWZTk1njoX6bqg5/sxUqarlf4PcuWDQ==
+X-Google-Smtp-Source: AGHT+IGBGORdCLvFd42QG25wNcfjd3DkQHwAlOsYf+nq4bbOhvYPNGfhM8vZksdKWT1yBD7TzeaJwA==
+X-Received: by 2002:a05:6a20:244c:b0:1f1:235:a358 with SMTP id adf61e73a8af0-1f349449723mr2570710637.6.1741145207973;
+        Tue, 04 Mar 2025 19:26:47 -0800 (PST)
+Received: from [10.68.122.90] ([203.208.167.148])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003e28fsm11741707b3a.127.2025.03.04.19.26.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 19:26:47 -0800 (PST)
+Message-ID: <a2b3609c-9907-4ee6-a0df-6b4c84100d33@bytedance.com>
+Date: Wed, 5 Mar 2025 11:26:43 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250206105435.2159977-1-memxor@gmail.com> <20250210093840.GE10324@noisy.programming.kicks-ass.net>
- <20250210104931.GE31462@noisy.programming.kicks-ass.net> <CAADnVQ+3wu0WB2pXs4cccxfkbTb3TK8Z+act5egytiON+qN9tA@mail.gmail.com>
- <20250211104352.GC29593@noisy.programming.kicks-ass.net> <CAADnVQJ=81PE19JWeNjq6aNOy+GM-wo6n7WU9StX1b6kevqCUw@mail.gmail.com>
- <20250213095918.GB28068@noisy.programming.kicks-ass.net> <CAADnVQJJbi-52mP6BivyAudWSk95f1mgGQXWnjD-H37b7_AtLw@mail.gmail.com>
- <20250304104648.GD11590@noisy.programming.kicks-ass.net>
-In-Reply-To: <20250304104648.GD11590@noisy.programming.kicks-ass.net>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Tue, 4 Mar 2025 19:26:12 -0800
-X-Gm-Features: AQ5f1Jqc1OcxFdpHXxviILWN5ATrQ8sjCyiJy-0TOJ3kpk8iy_sBSEBkr25uumA
-Message-ID: <CAADnVQ+hR6WB9=WVP73uxhetAZMTugcT2z_N=89qhjFJPoWT=Q@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v2 00/26] Resilient Queued Spin Lock
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Kumar Kartikeya Dwivedi <memxor@gmail.com>, bpf <bpf@vger.kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Will Deacon <will@kernel.org>, 
-	Waiman Long <llong@redhat.com>, Alexei Starovoitov <ast@kernel.org>, Andrii Nakryiko <andrii@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Martin KaFai Lau <martin.lau@kernel.org>, 
-	Eduard Zingerman <eddyz87@gmail.com>, "Paul E. McKenney" <paulmck@kernel.org>, Tejun Heo <tj@kernel.org>, 
-	Barret Rhoden <brho@google.com>, Josh Don <joshdon@google.com>, Dohyun Kim <dohyunkim@google.com>, 
-	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, Kernel Team <kernel-team@meta.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/shrinker_debug: Fix possible memory leak in
+ shrinker_debugfs_rename function.
+To: Muchun Song <muchun.song@linux.dev>, Liu Ye <liuye@kylinos.cn>
+Cc: akpm@linux-foundation.org, david@fromorbit.com, roman.gushchin@linux.dev,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250305020123.605496-1-liuye@kylinos.cn>
+ <99A7645C-B8FB-4F28-B4B8-D5372F4C001E@linux.dev>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+In-Reply-To: <99A7645C-B8FB-4F28-B4B8-D5372F4C001E@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 4, 2025 at 2:46=E2=80=AFAM Peter Zijlstra <peterz@infradead.org=
-> wrote:
->
->
-> Anyway; the situation I was thinking of was something along the lines
-> of: you need data from 2 buckets, so you need to lock 2 buckets, but
-> since hash-table, there is no sane order, so you need a 3rd lock to
-> impose order.
 
-Not quite. This is a typical request to allow locking two buckets
-and solution to that is run-time lock address check.
 
-> > q1 =3D bpf_map_lookup_elem(&vqueue, &key1);
-> > q2 =3D bpf_map_lookup_elem(&vqueue, &key2);
-> >
-> > both will point to two different locks,
-> > and since the key is dynamic there is no way to know
-> > the order of q1->lock vs q2->lock.
->
-> I still feel like I'm missing things, but while they are two dynamic
-> locks, they are both locks of vqueue object. What lockdep does is
-> classify locks by initialization site (by default). Same can be done
-> here, classify per dynamic object.
->
-> So verifier can know the above is invalid. Both locks are same class, so
-> treat as A-A order (trivial case is where q1 and q2 are in fact the same
-> object since the keys hash the same).
+On 3/5/25 11:17 AM, Muchun Song wrote:
+> 
+> 
+>> On Mar 5, 2025, at 10:01, Liu Ye <liuye@kylinos.cn> wrote:
+>>
+>> After calling debugfs_change_name function, the return value should be
+>> checked and the old name restored. If debugfs_change_name fails, the new
+>> name memory should be freed.
+> 
+> Seems it is not a big problem, no memory leak at least. The effect is that
+> the shrinker->name is not consistent with the name displayed in debugfs.
+> Right? But the improvement LGTM. So:
 
-Sounds like you're saying that the verifier should reject
-the case when two locks of the same class like q1->lock and q2->lock
-need to be taken ?
-But that is one of the use cases where people requested to allow
-multiple locks.
-The typical solution to this is to order locks by addresses at runtime.
-And nf_conntrack_double_lock() in net/netfilter/nf_conntrack_core.c
-does exactly that.
+Right, so the subject needs to be changed.
 
-if (lock1 < lock2) {
-  spin_lock(lock1);spin_lock(lock2);
-} else {
-  spin_lock(lock2);spin_lock(lock1);
-}
+Maybe:
 
-> Now, going back to 3rd lock, if instead you write it like:
->
->   bpf_spin_lock(&glock);
->   q1 =3D bpf_map_lookup_elem(&vqueue, &key1);
->   q2 =3D bpf_map_lookup_elem(&vqueue, &key2);
->   ...
->   bpf_spin_unlock(&glock);
->
-> then (assuming q1 !=3D q2) things are fine, since glock will serialize
-> everybody taking two vqueue locks.
->
-> And the above program snippet seems to imply maps are global state, so
+mm: shrinker: fix name consistency issue in shrinker_debugfs_rename()
 
-Not quite. Some maps are global, but there are dynamic maps too.
-That's what map-in-map is for.
+?
 
-> you can keep lock graph of maps, such that:
->
->   bpf_map_lookup_elem(&map-A, &key-A);
->   bpf_map_lookup_elem(&map-B, &key-B);
->
-> vs
->
->   bpf_map_lookup_elem(&map-B, &key-B);
->   bpf_map_lookup_elem(&map-A, &key-A);
->
-> trips AB-BA
+BTW, it seems that the callers of shrinker_debugfs_rename() did not
+process the return value of the function?
 
-If everything was static and _keys_ known statically too, then yes,
-such analysis by the verifier would be possible.
-But both maps and keys are dynamic.
+> 
+> Reviewed-by: Muchun Song <muchun.song@linux.dev>
+> 
+> Thanks.
+> 
+>>
+>> Signed-off-by: Liu Ye <liuye@kylinos.cn>
+>> ---
+>> mm/shrinker_debug.c | 8 ++++++--
+>> 1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/shrinker_debug.c b/mm/shrinker_debug.c
+>> index 794bd433cce0..20eaee3e97f7 100644
+>> --- a/mm/shrinker_debug.c
+>> +++ b/mm/shrinker_debug.c
+>> @@ -214,10 +214,14 @@ int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
+>> ret = debugfs_change_name(shrinker->debugfs_entry, "%s-%d",
+>> shrinker->name, shrinker->debugfs_id);
+>>
+>> + 	if (ret) {
+>> + 		shrinker->name = old;
+>> + 		kfree_const(new);
+>> + 	} else {
+>> + 		kfree_const(old);
+>> + 	}
+>> 	mutex_unlock(&shrinker_mutex);
+>>
+>> - 	kfree_const(old);
+>> -
+>> 	return ret;
+>> }
+>> EXPORT_SYMBOL(shrinker_debugfs_rename);
+>> -- 
+>> 2.25.1
+>>
+> 
 
-Note, to make sure that the above example doesn't confuse people,
-bpf_map_lookup_elem() lookup itself is completely lockless.
-So nothing wrong with the above sequence as written.
-Only when:
-q1 =3D bpf_map_lookup_elem(&map-A, &key-A);
-q2 =3D bpf_map_lookup_elem(&map-B, &key-B);
-if (bpf_res_spin_lock(&q1->lock))
-if (bpf_res_spin_lock(&q2->lock))
-
-the deadlocks become a possibility.
-Both maps and keys are only known at run-time.
-So locking logic has to do run-time checks too.
-
-> I am not at all sure how res_spin_lock is helping with the q1,q2 thing.
-> That will trivially result in lock cycles.
-
-Right and AA or ABBA will be instantly detected at run-time.
-
-> And you said any program that would trigger deadlock is invalid.
-> Therefore the q1,q2 example from above is still invalid and
-> res_spin_lock has not helped.
-
-res_spin_lock will do its job and will prevent a deadlock.
-As we explained earlier such a program will be marked as broken
-and will be detached/stopped by the bpf infra.
-Also we're talking root privileges.
-None of this is allowed in unpriv.
-
-> > Just to make it clear... there is a patch 18:
-> >
-> >  F: kernel/bpf/
-> >  F: kernel/trace/bpf_trace.c
-> >  F: lib/buildid.c
-> > +F: arch/*/include/asm/rqspinlock.h
-> > +F: include/asm-generic/rqspinlock.h
-> > +F: kernel/locking/rqspinlock.c
-> >  F: lib/test_bpf.c
-> >  F: net/bpf/
-> >
-> > that adds maintainer entries to BPF scope.
-> >
-> > We're not asking locking experts to maintain this new res_spin_lock.
-> > It's not a generic kernel infra.
-> > It will only be used by bpf infra and by bpf progs.
-> > We will maintain it and we will fix whatever bugs
-> > we introduce.
->
-> While that is appreciated, the whole kernel is subject to the worst case
-> behaviour of this thing. As such, I feel I need to care.
-
-Not sure why you're trying to relitigate the years worth of
-discussions around locks in the bpf community.
-Static analysis of 2+ locks by the verifier is impossible.
-Full lock graph cycle detection lockdep-style is too slow in run-time.
-Hence res_spin_lock with AA, ABBA, and timeout as a last resort
-is our solution to real reported bugs.
-
-This res_spin_lock patchset fixes the following syzbot reports:
-
-https://lore.kernel.org/bpf/675302fd.050a0220.2477f.0004.GAE@google.com
-https://lore.kernel.org/bpf/000000000000b3e63e061eed3f6b@google.com
-https://lore.kernel.org/bpf/CAPPBnEa1_pZ6W24+WwtcNFvTUHTHO7KUmzEbOcMqxp+m2o=
-15qQ@mail.gmail.com
-https://lore.kernel.org/bpf/CAPPBnEYm+9zduStsZaDnq93q1jPLqO-PiKX9jy0MuL8LCX=
-mCrQ@mail.gmail.com
-https://lore.kernel.org/lkml/000000000000adb08b061413919e@google.com
-
-It fixes the real issues.
-Some of them have hacky workarounds, some are not fixed yet.
-
-More syzbot reports will be fixed in follow ups when we
-adopt res_spin_lock in other parts of bpf infra.
-
-Note, all of the above syzbot reports are _not_ using direct
-locks inside the bpf programs. All of them hit proper kernel
-spin_locks inside bpf infra (like inside map implementations and such).
-The verifier cannot do anything. syzbot generated programs
-are trivial. They do one bpf_map_update_elem() call or similar.
-It's a combination of attaching to tricky tracepoints
-like trace_contention_begin or deep inside bpf infra.
-We already have these workarounds:
-CFLAGS_REMOVE_percpu_freelist.o =3D $(CC_FLAGS_FTRACE)
-CFLAGS_REMOVE_bpf_lru_list.o =3D $(CC_FLAGS_FTRACE)
-CFLAGS_REMOVE_queue_stack_maps.o =3D $(CC_FLAGS_FTRACE)
-CFLAGS_REMOVE_lpm_trie.o =3D $(CC_FLAGS_FTRACE)
-CFLAGS_REMOVE_ringbuf.o =3D $(CC_FLAGS_FTRACE)
-to prevent recursion anywhere in these files,
-but it's helping only so much.
-
-So please take a look at patches 1-18 and help us make
-sure we implemented AA, ABBA, timeout logic without obvious bugs.
-I think we did, but extra review would be great.
-
-Thanks!
 
