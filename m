@@ -1,133 +1,146 @@
-Return-Path: <linux-kernel+bounces-547318-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547315-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A982A505C3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:55:46 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BA92A505BF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:55:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14E0C168900
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:55:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3D2C188CAFC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:55:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6EF1A5BB2;
-	Wed,  5 Mar 2025 16:55:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE841A5BB2;
+	Wed,  5 Mar 2025 16:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="UCiTlCjJ"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cW2L5KRv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 163111A841A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:55:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A958119F121;
+	Wed,  5 Mar 2025 16:54:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741193732; cv=none; b=M8TZgDRe+Bk3/f7OrVGnMxKP1vUif3TDE0RNRHWTaRNPN7jP0v+bOg2LwruenWhmMSxJ3UrXBx5XlPcAGfptigwqlXOnmjYX1pTNjzPG1RG056HnawAyjjkf4HRHya6Rfg9+FyQeVuqjrUTkiJeX4qqyzkMjMxZkkbTmhwyuA7s=
+	t=1741193695; cv=none; b=oVtsXSMHDaoIsaNTnWPs9ACYrX5CnJbI6ClSz9Xza0PAX2U/8cxgZFLJ3DcxX9Oe+ctxFB44EcaPkN1WXlmPoBAInsT3Ciez2AVUDeoyMtJLVTS/gukUMvwIokyc/pfk2ErutFUDVI3zuACSNZLbl2HhYmS12aDp7+JrbsRGm5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741193732; c=relaxed/simple;
-	bh=+ZHAoC5/XH+Kp4y7MRD85mxe9mA9Yvxiw8OiH60ZiM8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qn0xuaTJ5+e2fKVB1pXx7RW/KrzMZvBdIUwOQmBO2u3ygfcA6DNZC9+s+TFdYHjeMotuVYTeLpFj5LoizcXyfdkhkfv5QABdVubmVhcPh5whKqfevV3yYFJgYlPVql6w3+b9uWnfkh84Nc8agyI6//GaiPMi/7JhOCpA3aS64j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=UCiTlCjJ; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8C41040E01AD;
-	Wed,  5 Mar 2025 16:55:26 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id NaeKXCfs7a2D; Wed,  5 Mar 2025 16:55:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741193719; bh=yc9clRNUvycc1EqfX1lWh0ZXIWhaV7yOaVPNcOlRBno=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UCiTlCjJF74l7NxoelzD8jtCH+BmMG4rV8ojaWCOwUggrrZMkbB5PQMtNzdPmRlkk
-	 c1B3HwpehlCz5X+86feMHuEi9KjoVejS6BgrGjuQ/N/4cCQnSfWL/uz0haMJEiHmYB
-	 B1RxM2acNktNVKqslRI/lVULNPhxsh1CfgMOAU1eP1mxDxVpZJ6mvz0GBUWSJjSe2D
-	 yaYxlzn06uoIZnO+AIQqZa9liRXv8zPPZcVgI9Dd8dZ87s5aRPpNzRZoCHMW5Q39E5
-	 pWn7nqS1i9VjmthaYrXuCGgQWWZJdNYMMtM6nUNqy5iTFtSHqW2wZA3LYDQ8cHXXvz
-	 vL2OYeLhfeGmzuoB52nSNlhD8NLCo6cr4+9NftZ7Wb0+CGSDPeSbj633viGQdXSAwh
-	 ytxpU3UitopX+DRxRHnP+CO/oLxLSqHz3bPcIudMRgIkTIKXADNusfyX2y6rg80HTS
-	 NeQr+0iBNzMPnlySBLF0mN79ShqzTHeykMKvh554qJTs4sc7RB+D8ObWH4vpIWHaDX
-	 yRzWQRWL4rvLnt11rTwtS9Eo+AizbCwBs6uOhQFmWrLu09HRsIrwL3RducOmZ8UWqm
-	 mUGmbAEXDw+is5gpiNAIxcBLG+TNa7S3jN90GukeuMErtQdLXVH5DZcWUyUrT8GDJU
-	 mBXNJG08goAnGF7kfmHC9jkk=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 5051540E0215;
-	Wed,  5 Mar 2025 16:55:08 +0000 (UTC)
-Date: Wed, 5 Mar 2025 17:55:02 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Joerg Roedel <jroedel@suse.de>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <20250305165502.GLZ8iB5kAtQmW6fu1F@fat_crate.local>
-References: <20250305105234.235553-1-joro@8bytes.org>
- <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
- <Z8g01YhM_FtdB5n6@gmail.com>
- <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
- <Z8g4sU_dsZgY0PuS@gmail.com>
- <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
- <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
+	s=arc-20240116; t=1741193695; c=relaxed/simple;
+	bh=by9CUytUjedo8xlzZB67O5RkiEv4zNflkG0tNZJ7ezw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nCQtGsPOorYH4z8USWrfYXE87ejbNDiKpK+PnlBufdcpQmIfoC5DeuRqCbk11Yqq3n68PHcYL7gsluJoBtSlcMLQnWgf7QAt8hp4zcrHWHJr0LgrtQnNx7RTx/qwWKUIbOyvE8qHheluZAdQYYk1A1TF2CdbgjdYFABRE14R7q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cW2L5KRv; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741193694; x=1772729694;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=by9CUytUjedo8xlzZB67O5RkiEv4zNflkG0tNZJ7ezw=;
+  b=cW2L5KRv/A05P8JFQUfOoy0fYYEungEcmyO6QXqSoyLiFCadkaGsl8cu
+   nJsJSaMchQ66drlQfdGTVcjTtPyRfhVN5Sa1mG9aH49a5Wz1k+L8Epy7I
+   fl3CszXYtkegcIxENdcAAo+/6d2tQAPfsgH3qxCgMcsJu+n9dnlXKDEDp
+   p0oLuc1Qha6greIuUv+SYWeQlS2+jgsRZOrty0B+dGXuU8i1+bDYCE1Xp
+   4I23OHw427w3Sj62tQVTDWk7JwzRTQtXnOq84EK9I1sdMtHCis9kon4fc
+   ipeUT6t7VqymoTZ2Fp+DyhmbQda7L9gIkPzVh2BibDSN2j1AEZqZwjhov
+   Q==;
+X-CSE-ConnectionGUID: uvq4lCxGSmK3pXGcgtyRkw==
+X-CSE-MsgGUID: F/tkcDIsTwuJ3IZ1vtSEfg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="52806738"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="52806738"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:54:53 -0800
+X-CSE-ConnectionGUID: 4bY42/ZWT3mud0h6ff0LEg==
+X-CSE-MsgGUID: pe0aydXnQTmUdrIQGld36g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="155958796"
+Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.196]) ([10.125.109.196])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:54:53 -0800
+Message-ID: <b6a80f6d-8469-429d-b03a-8fa71a33046b@intel.com>
+Date: Wed, 5 Mar 2025 08:55:12 -0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2] x86/fpu: make kernel-mode FPU reliably usable in
+ softirqs
+To: Ingo Molnar <mingo@kernel.org>, Eric Biggers <ebiggers@kernel.org>
+Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+ Ben Greear <greearb@candelatech.com>, Xiao Liang <shaw.leon@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Andy Lutomirski <luto@kernel.org>, "Jason A . Donenfeld" <Jason@zx2c4.com>,
+ "Bae, Chang Seok" <chang.seok.bae@intel.com>
+References: <20250304204954.3901-1-ebiggers@kernel.org>
+ <Z8gUYamgBr4M5ZaB@gmail.com>
+Content-Language: en-US
+From: Dave Hansen <dave.hansen@intel.com>
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <Z8gUYamgBr4M5ZaB@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 05, 2025 at 08:40:29AM -0800, Dave Hansen wrote:
-> TDX guests have CPUID to tell them that they're running that way.
-
-And those CPUID leafs cannot be modified or intercepted or so by the
-hypervisor?
-
-> TDX hosts are much more arcane. You can't _actually_ know that it's a
-> TDX host until you actually start making successful SEAMCALLs and the
-> TDX module answers them. But we fudge it by just looking at
-> MSR_IA32_MKTME_KEYID_PARTITIONING at boot and assuming that anything
-> with that MSR will be able to be a TDX host.
-
-Fun. :)
-
-> We've just got X86_FEATUREs for hosts and guests:
+On 3/5/25 01:07, Ingo Molnar wrote:>> Alternatives considered:
+>> - Make kernel-mode FPU sections fully preemptible.  This would require
+>>   growing task_struct by another struct fpstate which is more than 2K.
 > 
-> 	#define X86_FEATURE_TDX_HOST_PLATFORM ( 7*32+ 7)
-> 	#define X86_FEATURE_TDX_GUEST ( 8*32+22)
-> 
-> and that's it.
+> So that's something that will probably happen once the kernel is built 
+> using APX anyway?
 
-And there are no new ones coming down the pipe?
+I was expecting that building the kernel with APX would be very
+different than a kernel_fpu_begin(). We don't just need *one* more save
+area for APX registers: we need a stack, just like normal GPRs.
 
-> Folks certainly _want_ something in sysfs to dump the TDX module version
-> and so forth, but we've resisted the urge so far.
+We'd effectively need to enlarge pt_regs and fix up things like
+PUSH_AND_CLEAR_REGS to save the APX registers in addition to the good
+old GPRs before calling C code.
 
-Perhaps now is the time do design something together...
-
-I was thinking
-
-/sys/guest/...
-
-or something tied to the x86_platform gunk so that we can stick always some
-info there about any platform arch/x86/ has detected and is running on...
-
-Hmmm.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+That's what I was thinking at least. Did folks have more clever ideas?
 
