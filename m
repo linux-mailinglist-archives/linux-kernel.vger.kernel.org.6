@@ -1,286 +1,210 @@
-Return-Path: <linux-kernel+bounces-547400-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDF0EA50698
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:41:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86E37A50699
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A356B3A77FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:41:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 260443AAE4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EB49252907;
-	Wed,  5 Mar 2025 17:40:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74A1F2512D4;
+	Wed,  5 Mar 2025 17:41:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="RLXmrKGX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="n+zEhU6x"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2048.outbound.protection.outlook.com [40.107.244.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50ABC19F436;
-	Wed,  5 Mar 2025 17:40:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741196437; cv=none; b=cd15y0TfKid7iIFIzI/gkl0M9HRqCbdINaa+OcVCNIo/3kIVEEE/temjP+iOOUtnaOR1GrKitsTHUGzDVRV45RWrvLmMgFS4ozuU7RxPaZ1e7m2Rw5Yq4cuuMdCrOyWgq9GHivvDYnLUF4rYCXx+cYrIGFIRPDor3CHbMGEg938=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741196437; c=relaxed/simple;
-	bh=xeU6W8dr+Xx44tYwHCvYEUZQm+N4fX/QzQxV0VbFOsk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t2Yjz/e6ua1l444uCNI0buXtHdch05sRViA3BboBtiKcGJqfJvov7FJUyJc8aCSusXKk4fjDtSVdZr3yghEDKAZoim8GSO981+f2zOPu9EzHbcbxw4BJPOAzNBnwYpbP6LvudJq6ggtRdXl5Rw8JCd4iuoFwvXcrF6L6MFb1rQE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=RLXmrKGX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741196433;
-	bh=xeU6W8dr+Xx44tYwHCvYEUZQm+N4fX/QzQxV0VbFOsk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=RLXmrKGXAheI/WPSgzRwEz2WzIRFcgBxYpDBX74aJUqV1KexEyqvFt/sZmqmk1zXm
-	 l9rrps+gwi0tDOkPcX23wGNh91SuAoNVFUATwSBCT31Wy5ftA4ioHN0punSnOyQ0Yq
-	 NGnn1cemoH48NiNr2OZA1DdiKD+uz7kY7AJoGTGA+YFWISYFPmZS1WCYjroDOjkTWj
-	 IJDFG3Dac5hktsfbV51IFrBrn9gqmJOHJHeInrHif7XXzVK0C3QWfWOuW5ELyYyrgf
-	 AjjPN69aKvN7JXQKKbjx4DOgqqlvq7hgZOtsRm6bCPoP+c5H2jSJBNKXQB4iqSR0kw
-	 NeE/Ee80U3o8w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 3831917E0880;
-	Wed,  5 Mar 2025 18:40:32 +0100 (CET)
-Message-ID: <0d929810-1189-41ce-8f8a-3b7230c3b2a9@collabora.com>
-Date: Wed, 5 Mar 2025 18:40:31 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020C719F121;
+	Wed,  5 Mar 2025 17:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741196484; cv=fail; b=C+NU8O42NJkQJg7DekXHPecigOXmAsHFyk4lixZx5dcC9cZ8kxv5iDgKWBUYK2TCilCXYuihFiih1j0qsrUpC0mjQ3NPZf6dJvGddIAFLC+P4Ao5j0fnI8V8PS27l+F4v2GKfjuK7PKEqf4NQv3xK9V06980bjeD46uE/N52OlU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741196484; c=relaxed/simple;
+	bh=tl/kBQBn9XHg6NueHjV0vy1xXhJ0Ufvs687ur1SmwW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OGMrhYDY3KamDw4Pwwhbme32t8U+k+racUyPusQMJnSVf26XMf3qrvaMHnXWYghbRP9YB3lr28S+58jf5DAXz19hm1UHmNzq3ASAoZ7JqCQnj8Nh4ZKB+sgoRURXnAC6gKNEQFsn4/PiB82GNk4oIBeurjLfTYs4CxLegyGqSp0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=n+zEhU6x; arc=fail smtp.client-ip=40.107.244.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ug7cbtSI/Ec/hjOGYZqDUrqFJlVBYGbs7EaiPpMWha4mI94hSp03LoII48kcSmIgp1b/KJKgaL1kbFzhYDeApTXHEGF357padAkzQBMRCWeqB3GHTIQEwxQm9HVyHiSUaJeDa8Ruoxh1Hwl7GtnKg6clnu1VUVk4PvCj3kV+o1EcPxwCNbWw6olEQ3a6+ueield1a6LrZBusuMyQSVFwVUlYExaotPO5Btd7Dkv7hB7sfLVHUgwfXSmHOO97eUFYJPY5B8srWlUR0+XTwnHF53umEuD0/b/FPXYUTh6wtz2XYR4Pue0QFp0xF45BJj3ALyRq8QjWovWk+uycqQyNYQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=mEpKK7OO7b5WrL6ySOcrliyw2DYavjGjYyDXpgvyDGI=;
+ b=QgsWV0F3L6GMmQFqVLbNq+q4nmi0bRNuSmhmHUYcN3EjSHnKfiQWjmv2H2VSe7kyXWbNkOHsl49beLDeV4gR1b5xPpyaFj5in29oCx4aJs2imzbMXT1kE4XL4QgDBWkMRLHNFIbXWkxdp99rcoYhrdF1UFYY1NJFGaToJiWKPyOONOok5NvECSQhx87mcCr+Ihd9F9faRzeTNmQYldWrTGuddaWaLBUQ4c2uaLXPZ25PivJxRERP0Os3thutMzseyJBeJkeYvCzDwHzbkJci4Cgc2k6c7A9zuPkJnrhwzTLCbesaHQAF31qgjGGSucyBaf9QlBsEaXxMoOFpFwEh0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=mEpKK7OO7b5WrL6ySOcrliyw2DYavjGjYyDXpgvyDGI=;
+ b=n+zEhU6xQNyF0mW39xZThnCL/dUXEBeyRQVSss7wxIakF8ScihfCSSPFRoLRD2ltO3vuf3+fQZy45gJZ3+a4V448IVswCtg4dz9sPnAjDaevucZ7FJEV2WLYYFhnYXHoSOUphPAC1cJHGI4vQavM4/tEX877ILALVnVtaxm+r4U8B+5PJfVZjc+UAnfb25A3lxhCwDhYc4HflgDLD2UA8ithrVeMhwfQDv2SDJVOlx8DXUHb/2d7+eRfP14nVMVneUcOlyfoE1EI+XQ8/wEZGYsAX4m23KFxQOxzsC8Rjy1prPbGKHNWRIGrnMf9ipoX7Tv+cqN/PZjpXJZ6Rl9Llg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by SN7PR12MB6816.namprd12.prod.outlook.com (2603:10b6:806:264::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
+ 2025 17:41:20 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 17:41:20 +0000
+Date: Wed, 5 Mar 2025 13:41:19 -0400
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: aliceryhl@google.com, dakr@kernel.org, robin.murphy@arm.com,
+	daniel.almeida@collabora.com, rust-for-linux@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	open list <linux-kernel@vger.kernel.org>,
+	Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	"open list:DMA MAPPING HELPERS" <iommu@lists.linux.dev>
+Subject: Re: [PATCH v12 2/3] rust: add dma coherent allocator abstraction.
+Message-ID: <20250305174118.GA351188@nvidia.com>
+References: <20250224115007.2072043-1-abdiel.janulgue@gmail.com>
+ <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250224115007.2072043-3-abdiel.janulgue@gmail.com>
+X-ClientProxiedBy: YQBPR0101CA0196.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:67::8) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/8] soc: mediatek: mtk-cmdq: Add pa_base parsing for
- unsupported subsys ID hardware
-To: =?UTF-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "mchehab@kernel.org" <mchehab@kernel.org>,
- "chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
- "jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>
-Cc: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
- =?UTF-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
- =?UTF-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
- =?UTF-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
- <Xiandong.Wang@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- =?UTF-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "fshao@chromium.org" <fshao@chromium.org>,
- =?UTF-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- =?UTF-8?B?WGF2aWVyIENoYW5nICjlvLXnjbvmlocp?= <Xavier.Chang@mediatek.com>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "treapking@chromium.org" <treapking@chromium.org>
-References: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
- <20250218054405.2017918-5-jason-jh.lin@mediatek.com>
- <581fc075-25d8-4104-a4ee-8c97e1a017e6@collabora.com>
- <03c523e66fd56442f49c38456476cf18be59e8fb.camel@mediatek.com>
- <8203317e-7f99-4ea5-bda0-fcd791602a9f@collabora.com>
- <c27653233ed2ee2ee6eb0d40ad2167721a2b1476.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <c27653233ed2ee2ee6eb0d40ad2167721a2b1476.camel@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|SN7PR12MB6816:EE_
+X-MS-Office365-Filtering-Correlation-Id: 9085e34b-748b-4cea-89af-08dd5c0cf07e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3mlogApHaeygcnmfTK3w0x4Fd/2uvdMWxw6ThwloZ6wQAvz/YgxQ6Sp7H2Sn?=
+ =?us-ascii?Q?YU+YacVzyhSUckv5g8ff+LUaf0zFdXS93J/XzZQxVcJTBC4DlmRBwd21S+3i?=
+ =?us-ascii?Q?Qw+mTsnTVzNpwZgVliGenxTklytPxAfOoRpUB1kU/7iLd9QGJe4kHICnIDbJ?=
+ =?us-ascii?Q?/5p8mFuZJHeF+0fGqcgJR3o5f3VJ12fXvJ3bLaGGq+KfztP7vd1EzFzTZbCj?=
+ =?us-ascii?Q?UnXnEF6Snrcb8MeewJzBUg03eo8mCXmUT9DjhhpmYGZfAjt/4CzgiOZCzXCZ?=
+ =?us-ascii?Q?n9/tHbLn1WHg/2sJ4gpnTx617qdSPitcXmmH2AHckRsiZRMJH41k/LVYckuc?=
+ =?us-ascii?Q?z0dAhucrSX/4RUggHYsYfpbb9tu2r8AeeJrcqKRiASM0dlch/pRlauT4VzAW?=
+ =?us-ascii?Q?u8f6oBQ+0/r/wQnPPJ4u1u2aQonTTBWqVLctKSzQihA7x4zLnGblMpLSxE7v?=
+ =?us-ascii?Q?3xtBapU0Hn30Dyv7LZQ8rKRoMtzzTCP8cYDj8Ud5LXi7pU3e88lrk2wCDUnN?=
+ =?us-ascii?Q?kI4Y1CBUGYhMdy8g3ZsQhACVdwi9lxeIAWcOyfYv8vAEG8aOorQLLTeiyMSo?=
+ =?us-ascii?Q?R4THNl7szbv6no082V/+NPqCHbfeR6VX3lDEU1bLtOvte2UAidK9Cz3wPBSj?=
+ =?us-ascii?Q?k5wH9+Yn4d+DkPWvT6WChiil06cxJOP4ad3jgUtn7MG4V7IOXQLI3Qk4RADT?=
+ =?us-ascii?Q?5Gpx0VZTTPCpjdXKfK1ADFsp+rwS/eOqc2aN9uT0xvsLbijhJoC03wSPXX6X?=
+ =?us-ascii?Q?j4H+GBfTJj4bMts64Vs79RJ3rsEYYfYU0TyYWhz9xEtY03LYZjcPcz7vShxh?=
+ =?us-ascii?Q?660t5DLa7mRDwKnXJRqTneikoAeJBi1dA+LYfO9mUPePmsg1EGlcOtIczIn8?=
+ =?us-ascii?Q?t4lzF6LQ96JskiMYZoymhuZaHvuiMAWkcWo3gK/04kAQGYzOe5akiIV/O67Q?=
+ =?us-ascii?Q?IhkJ5NYsP7pdpeOh/d24wKz6xljLadR5PMActqZ+CbXBM1AOTsntUJ/RX7cj?=
+ =?us-ascii?Q?mnGy9RDSvZOX0ikUoHQyMI/6j5JrsjlRDar6ThYFqliFZqPyDLXLgEezPAYl?=
+ =?us-ascii?Q?NDsG02mLpwOlPjWy8GH0ISLkOQS88wsoifM0CyDEoxWPTIQaZz+UvJqN/h8C?=
+ =?us-ascii?Q?umw7bFyXxyi1/YxRbMWpGGb6zjnRNXLDuokQsNCeJzmOMSfzk+fRiFF86cQ6?=
+ =?us-ascii?Q?VlWWxpZozoGXsonvxwFSRNYCiR6yzRMFx2NsHER3YS+3DXruMU4RaQh+uSJX?=
+ =?us-ascii?Q?O1iKkRktr37I1siUEsqKLetcy9YDXPpdwZ5mHF9InchYwAQc3xxMK7lUsTgd?=
+ =?us-ascii?Q?o/39IpBwWcXfe66B6gJlCrxeOs4AoXmF6y01iaKgxVvkFTSCTiG4X439NbNo?=
+ =?us-ascii?Q?iSqxIMxUw/jERbBIRlgZjwkEeDGQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?s9kjgC36NWtr6lIftfF1dBP8kR7W0w2CwsBDnyNtv8u308nbvYxTXw4VL+zj?=
+ =?us-ascii?Q?6D2hiZDdZOsmVosg2ayh2wqASC2a93SOoRF/m2F2iPhATf5P3BQtEvSPj1+5?=
+ =?us-ascii?Q?K0/tEjPTpXOIgez7RByLYUstIUhqdRzMPzKBdMhfntT/Ju/PZ0CFU4uq3L7s?=
+ =?us-ascii?Q?hUP/0zDZg2VvJeEa1E4o1qOF75TnOcT1zR2OAfwcosHMiGfy7sJqQSvEkK5R?=
+ =?us-ascii?Q?7JrlwpH3WKZgbOhjAoP2LizKz9POboItHI/1cffgxd/aYLk1JYilrx0MYiBW?=
+ =?us-ascii?Q?zDg5y7V7d9kAriMwwKMzJM7Aew0d7LLcWtCED+N7dKa600fIkfXVfygDGOj6?=
+ =?us-ascii?Q?mwxgTXHYGN0arJi2As8WY6LH4hZmzff8aSHuSGLt730j3F+8y8ow6OBoyqbH?=
+ =?us-ascii?Q?1EfRp8Y2DtjjBfdw5qpcA66PNZETNSYg4rfcN6K0PJ/iH0EpL0AK3BELmMIl?=
+ =?us-ascii?Q?Dnp1XwU9FPFBlnvdXLaxCa8RHZiXGaLUPMShw1tCTz0AstP06xm83UZ/dZwb?=
+ =?us-ascii?Q?KYUYdFqQRzvrZv6tRmLnXNaGqXd0V4J+3kj1jHvmzAxwMrxFP25rsANUUld8?=
+ =?us-ascii?Q?VIZHf7aaMv/KiyyggeBEZSaGqtPxtx5gRSK4kK5+1SZ0KGRpNKTFqUNER3vj?=
+ =?us-ascii?Q?sbFZseMHn6ClW+9HiPsRjy2C47q8N9xGOgPjICAyDzE24H6TZnnuwmgYNUQL?=
+ =?us-ascii?Q?KBQmLu3KDlgvNdvp/UDqxAxVQ4axhfqhFbPq+0irASIBE0A5fo+DCMccI2nw?=
+ =?us-ascii?Q?+3DNcWF3cFt09phzetKqalW6ZQltzJI+VQ/Xm4J14XqhAWGV2gW7XBuJbC5r?=
+ =?us-ascii?Q?BzA2gyQ07G3tQ8dsT3Y0UeV2+DP7HYssMBl/jNw6R4iA3HC3oZlaUcuFJ1sN?=
+ =?us-ascii?Q?5T6ordUvS63IRJptHysOuPGktgD9ekQmGkhNSzfz3HwrzFdmUKILsp730iGv?=
+ =?us-ascii?Q?ofA+0IazgokCB3I31UulgJUOU8GSWDyhj3ZzEal7JEEPHrjYm2haLASfOvoQ?=
+ =?us-ascii?Q?xIlcTp7q9Sie+qux8F1AX6W3leG0W92rpERU4xpqiWa2MjFdSKznbwcRGqjX?=
+ =?us-ascii?Q?J9K4IjNW6j3ZWxv/1EIwUm5baKygZQCl2Dl5ep5BYy4xpYOngPsa1rHw1jYP?=
+ =?us-ascii?Q?r81yVzcZHcw6WuMGBom2E7ytSwWB9lQ1VW52/xbCGIxzYDIz1xlKEwLT9NIa?=
+ =?us-ascii?Q?TH+hi2WSgi49KyfQ0niRjpucZexhNrczL5YAVyr2429vyz5Mvs/jWxoXMgxk?=
+ =?us-ascii?Q?2D+g/e2PchaPhgkLX6SLpq0GIN3CfkzikNGfoptx94HJspZDlH4Qq3n5jHYS?=
+ =?us-ascii?Q?iDahYlet2vtk3uM5je8VauEfvVafQAuUv25JIeXhjK2/fiQNGXLZk4kLXYzx?=
+ =?us-ascii?Q?/yz2x3pjvlqzL0ZEyS404nIagxsk7lT05TGHhSCySrAFCYImtAoO02blpAe/?=
+ =?us-ascii?Q?4HJBY+JnxItd00f9roEnsm9G5eAu6hIjbs5AHn1QyhuEbCzdJmgpPwkq59pd?=
+ =?us-ascii?Q?LgplsjBtEoIEiHxJoAda1ia5MBCsyKI+HZeDuWhPt+Q4iPL4kRwq9MfKr23N?=
+ =?us-ascii?Q?QOzFsvFnDWR2Fs3QTwoGXhB5TfVf6fr8Bm1I/ByQ?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 9085e34b-748b-4cea-89af-08dd5c0cf07e
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 17:41:20.4641
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UH1WHKmbHPZSU8iLM36LekKZVzR2+qxR9JlYTdNwx1b69QfNm2q6ANWb2cpC4gyB
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB6816
 
-Il 05/03/25 16:58, Jason-JH Lin (林睿祥) ha scritto:
-> On Wed, 2025-03-05 at 12:03 +0100, AngeloGioacchino Del Regno wrote:
->>
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>
->>
->> Il 05/03/25 10:46, Jason-JH Lin (林睿祥) ha scritto:
->>> On Tue, 2025-03-04 at 10:35 +0100, AngeloGioacchino Del Regno
->>> wrote:
->>>>
->>>> External email : Please do not click links or open attachments
->>>> until
->>>> you have verified the sender or the content.
->>>>
->>>>
->>>> Il 18/02/25 06:41, Jason-JH Lin ha scritto:
->>>>> When GCE executes instructions, the corresponding hardware
->>>>> register
->>>>> can be found through the subsys ID. For hardware that does not
->>>>> support
->>>>> subsys ID, its subsys ID will be set to invalid value and its
->>>>> physical
->>>>> address needs to be used to generate GCE instructions.
->>>>>
->>>>> This commit adds a pa_base parsing flow to the cmdq_client_reg
->>>>> structure
->>>>> for these unsupported subsys ID hardware.
->>>>>
->>>>
->>>> Does this work only for the MMINFRA located GCEs, or does this
->>>> work
->>>> also for
->>>> the legacy ones in MT8173/83/88/92/95 // MT6795/6893/etc?
->>>>
->>>> In order to actually review and decide, I do need to know :-)
->>>>
->>>
->>> Yes, it's for the SoCs without subsys ID, it's not related to the
->>> MMINFRA.
->>>
->>> This can also work on MT8173/83/92/95 // MT6795/6893/etc.
->>> You can remove the `mediatek,gce-client-reg` properties in their
->>> dtsi
->>> and cherry-pick this series to verify it. :-)
->>>
->>
->> This is curious - and that brings more questions to the table (for
->> curiosity
->> more than anything else at this point).
->>
->> Since this is a way to make use of the CMDQ for address ranges that
->> are not tied
->> to any subsys id (hence no gce-client-reg and just physical address
->> parsing for
->> generating instructions), do you know what are the performance
->> implications of
->> using this, instead of subsys IDs on SoCs that do support them?
->>
-> 
-> The main advantage of using subsys ID is to reduce the number of
-> instruction.
-> Without subsy ID, you will need one more `ASSIGN` instruction to assign
-> the high bytes of the physical address.
-> 
-> E,g. In mt8195-gce.h: #define SUBSYS_1c00XXXX 3
-> 
-> If you want GCE to write the value 0x0000000f to 0x1c00_002c.
-> 
-> With subsys ID, you can use only one instruction to achieve it:
-> 1. WRITE value: 0x000000f to subsys: 0x3 + offset: 0x0002c
-> - OP code: WRTIE = 0x90
-> - subsys ID: 0x1c00XXXX = 0x03
-> - offset: 0x002c
-> - value: 0x0000000f
-> 
-> Without subsys ID, you will need 2 instructions to achieve it:
-> 1. ASSIGN address high bytes: 0x1c00 to GCE temp register: SPR0
-> - OP code: LOGIC = 0xa0
-> - arg_type: register, value, value = (0x8)
-> - sub OP: ASSIGN = 0x0
-> - register index to store the assign value: SPR0 = 0x0
-> - value to assign: 0x1c00
-> 2. WRITE value: 0x0000000f to temp register: SPR0 + offset:0x002c
-> - OP code: WRITE = 0x90
-> - sub OP(temp register index): SPR0 = 0x0
-> - offset for temp register: 0x002c
-> - value: 0x0000000f
-> 
->> Being clear: if we were to migrate a SoC like MT8195 to using this
->> globally
->> instead of using subsys ids, would the performance be degraded?
->> And if yes, do you know by how much?
->>
-> 
-> E,g. If the inst number with subsys ID is N.
-> 1. If CMDQ is implement like this, then inst number will be (N * 2):
-> assign SPR0 = 0x1c00
-> write A to SPR0 + offset: 0x2c
-> assign SPR0 = 0x1c00
-> write B to SPR0 + offset: 0x3c
-> assign SPR0 = 0x1c00
-> write C to SPR0 + offset: 0x4c
-> ...
-> 
-> 2. If CMDQ is implement like this, the inst number will be (N + 1 * n):
-> assign SPR0 = 0x1c00
-> write A to SPR0 + offset: 0x2c
-> write B to SPR0 + offset: 0x3c
-> write C to SPR0 + offset: 0x4c
-> ...
-> 
-> When the same cmd buffer changes the base address for n times:
-> assign SPR0 = 0x1c00
-> write A to SPR0 + offset: 0x2c
-> assign SPR0 = 0x1c01
-> write B to SPR0 + offset: 0x2c
-> assign SPR0 = 0x1c02
-> write C to SPR0 + offset: 0x2c
-> assign SPR0 = 0x1c00
-> write D to SPR0 + offset: 0x3c
-> ...
-> 
-> So you can imagine the performance will increase, but maybe not too
-> much if we use it in the right way...
-> Except the old SoC that didn't support SPR and CPR. The reason will be
-> addressed in the next paragraph.
-> 
->> What you're proposing almost looks like being too good to be true -
->> and makes
->> me wonder, at this point, why the subsys id was used in the first
->> place :-)
->>
-> 
-> That's because of the old GCE version in the old SoC only support GPR,
-> it didn't support SPR and CPR.
-> 
-> GPR:
-> All 32 GCE threads share the same GPR0~GPR15, GPR will be affected by
-> other GCE threads if they use it at the same time.
-> 
-> SPR:
-> Each GCE thread has 4 SPR, SPR won't be affected by another GCE thread.
-> 
-> CPR:
-> All 32 GCE threads share the same CPR, there are over 1000 CPR can be
-> used. It need to be managed properly to avoid the resource conflicting.
-> 
-> Due to the GPR resource restriction in the old GCE version, the usage
-> of subsys ID can avoid GPR conflicting issues when multiple GCE threads
-> are using GPR to physical assign high bytes all the time.
-> 
-> 
-> I have simplified some complicate instruction rules, so the description
-> above may not be 100% matched to the CMDQ helper driver code.
-> But I think the main concept is correct.
-> Hope these explanation can help well :-)
-> 
+On Mon, Feb 24, 2025 at 01:49:06PM +0200, Abdiel Janulgue wrote:
 
-Jason, that's simply wonderful. Thanks a lot for this precious description.
+> +impl<T: AsBytes + FromBytes> Drop for CoherentAllocation<T> {
+> +    fn drop(&mut self) {
+> +        let size = self.count * core::mem::size_of::<T>();
+> +        // SAFETY: the device, cpu address, and the dma handle is valid due to the
+> +        // type invariants on `CoherentAllocation`.
+> +        unsafe {
+> +            bindings::dma_free_attrs(
+> +                self.dev.as_raw(),
+> +                size,
+> +                self.cpu_addr as _,
+> +                self.dma_handle,
+> +                self.dma_attrs.as_raw(),
+> +            )
 
-Yes, this has clarified even more than I was asking for, and besides,
-yeah I know that there are some rules to follow, some of which I know,
-some of which I imagine - and describing all of that would need lots
-and lots of text - again, I know, and no worries about that! :-D
+I mentioned this in another thread..
 
-Thanks again!
-Angelo
+There is an additional C API restriction here that the DMA API
+functions may only be called by a driver after probe() starts and
+before remove() completes. This applies to dma_free_attrs().
 
-> Regards,
-> Jason-JH Lin
-> 
->> Cheers!
->> Angelo
->>
->>> Regards,
->>> Jason-JH Lin
->>>
->>>> Thanks,
->>>> Angelo
->>>>
->>>>
->>>
->>
->>
->>
-> 
+It is not enough that a refcount is held on device.
 
+Otherwise the kernel may crash as the driver core allows resources
+used by the DMA API to be changed once the driver is removed.
+
+See the related discussion here, with an example of what the crash can
+look like:
+
+https://lore.kernel.org/lkml/8067f204-1380-4d37-8ffd-007fc6f26738@kernel.org/T/#m0c7dda0fb5981240879c5ca489176987d688844c
+
+ > a device with no driver bound should not be passed to the DMA API,
+ > much less a dead device that's already been removed from its parent
+ > bus.
+
+My rust is non-existent, but I did not see anything about this
+point.
+
+Also note that any HW configured to do DMA must be halted before the
+free is allowed otherwise it is a UAF bug. It is worth mentioning that
+in the documentation.
+
+Jason
 
