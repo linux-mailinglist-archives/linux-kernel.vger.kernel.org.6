@@ -1,121 +1,160 @@
-Return-Path: <linux-kernel+bounces-547347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7829CA50611
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:11:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C0BA50621
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:14:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EB033AADF4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 599D37A4365
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE37A24E4CF;
-	Wed,  5 Mar 2025 17:10:30 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A692624C062;
-	Wed,  5 Mar 2025 17:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8F91A841A;
+	Wed,  5 Mar 2025 17:12:13 +0000 (UTC)
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C039189919;
+	Wed,  5 Mar 2025 17:12:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194630; cv=none; b=V8s2FUtHOzd3JL2DmAsl2iuo4S9RjSHqY/E8cQd9iGQE9a7h3MmfDpsWsC1aZ74Nrt5vj25jcMLk6QsPhmZEmj2JTAe/AL6GvBds2+OvShtqQV5hPt5IRpySt6MV9vfakk9i9xQPJn/C53DjsrzHifGuU2vWzvb1eCoQxv+UXLM=
+	t=1741194733; cv=none; b=bWfNV7xoBTJqivUlYNHFuSyiWxukPbvr0Wh8wqtvzD4IquxRh+rgQulxxrWWILWbS04naUPO1bxfrQaT7QcLfQvMcyumHujWI1Y4WBagxZjicOU3GWyvwdhq2bJcjQuKKLg12XowQHSkCeFYR7uuGXrnnc34i4uhcFQqThi9tfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194630; c=relaxed/simple;
-	bh=c7Q5onhWsSDWAX2jLrf0Ra38TOsQ0z+XcvaFQ0m/W/I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RJ0ScUqB5fwKf59KOQQuSUtOgCrdP08v0SO/M9fHzvuVD60kE58MyX3UYTQf5b+Bb69993JaS1qm57a2rcGHgoGCHw+tQuvNV5y98uyaY/+FnuEJVHKSeHp+DtlEs9+CuA5QzMmkzC6ca0nQb+jT0JemcNCFBfxXtDddhsPBAFs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EF9EEFEC;
-	Wed,  5 Mar 2025 09:10:39 -0800 (PST)
-Received: from pluto (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD4223F66E;
-	Wed,  5 Mar 2025 09:10:25 -0800 (PST)
-Date: Wed, 5 Mar 2025 17:10:16 +0000
-From: Cristian Marussi <cristian.marussi@arm.com>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Sudeep Holla <sudeep.holla@arm.com>,
-	Cristian Marussi <cristian.marussi@arm.com>,
-	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [Bug report] Memory leak in scmi_device_create
-Message-ID: <Z8iFeEWq16pNQdMa@pluto>
-References: <Z8g8vhS9rqQ_ez48@google.com>
+	s=arc-20240116; t=1741194733; c=relaxed/simple;
+	bh=ymdjfPVj3Gx6VMSsnlo3NNdGoCg5MQjlKLzXkCVz3hk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Kdk9aL8kL8s/0u9dH4DyYmhW+veBVG7WyuwSK+CRKhfvUrMGwPd48IUQ+jN1DaY8RevJkYXolWa5+sm/29XYctPPXUoSCGZa3piDQtF7sj8OjmkjP2sfKDEExH/HbWjamk4m8D3k+VSTScbkUO7VIuk4wTZ0YTXGxBsO3TUqa+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c3b4c4b409so605688285a.3;
+        Wed, 05 Mar 2025 09:12:11 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741194729; x=1741799529;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xwvfJ3zSM1ne0HhPozptDXxYsyU2cKa7T+hm9UKjZ2o=;
+        b=D76UdXgt8XMbNoMg3jFnSy7hdhRpjgZ1GUQwQPdv3xmQzhBSF51yWui3tk5S3MbsWX
+         RtPOrZWHs28qm+f15U2wNZIbUFEBIVFwn8RYgcvzbZqv3CESBKNPO+FZ6E2mI5SX3i3X
+         dNnUc8NLRiYmyyxjvdW5gF9Syqsz2wgdzXa1VUmfNtQ7qoZ9WMGC7UM3VNW7LuPrB7WW
+         vCBaXmuAtYJ+2pljQVzhJ3BRpEvA9VcRcKdf8R0hJBpiKN62R+60uqf5x9UvJOLF+ajt
+         8ZmLI/Kxw1NcEiuRNn+CXcDx6cBKsNCdg3cHA+qSDVrG6OegLSv3Y6BTycoxTjOHXe5z
+         XU3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUmuz5Lu/n44f6RkofkyNpbnyMKqg/pqyH6+cTRY/5DKbg4rtc3ALxWQoLcNql3vQUQLMhJXmsW2hHPfHw1@vger.kernel.org, AJvYcCVOYCkFDqjYfprgKifjGk6uJdKL6XpRjxwQdr1qnzrRpOTexhhT3UdBr6eKqz4iOOaKvk3NalkUdoFDTp7l4sFO0E8=@vger.kernel.org, AJvYcCWrtJjEv/sJeYjHSariV6Yho2lId96k/jF7ES5NGpzKCrRBXbU0zx5Ouyhrf7U4hJsRkcglMbfhT10=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3oYDiJlv+2KBVVMXOoUEpbPoffxZZp+X+SrKYfA8fienSrFvL
+	2DQ+C2+qvXKnTS7hm7yvu/xJUIuNteao4/dml0uRT5RbALx9qxw3GI3NhKeM
+X-Gm-Gg: ASbGncvLH8hTnVnPpsYKfcpoV5x5Emdq6xjqiBzcJv3oFNKEipZzMyMvVAh+K3NctMj
+	oBzM0qyRAJfYTYjT3zTf/0NB8Ek3mHWQ2Plt8OgdRbgIQ3LDvKSqOGOZ5azgqDMjGvd8Hhi2igU
+	Ug2HYVCKNwDkBCRhhXRLh9ekhlispFCjPrYo9SRdU4bRg7DBmgLmGtzKUUG+u76/jdQLhpKyafY
+	zMKnyE8FtmkDxG6HphK4hyMR3vtedu6pdIWgbIyig6CbEMccVrYfMP2iMTFyiwtX+beuAFbOp/E
+	yG60dgecal9a1m54YP+XIoTyd2aKrhIUezwmv3237s+8nq1Gr/S3Kk3QVtotCkPl9OWRd5ofIAz
+	L+GGyEsRmHds=
+X-Google-Smtp-Source: AGHT+IEBwVWbIXQ/xgbiO3Ai+oTFWUpJ8O6nu2UYjJyaymQtru8AIaeCIVhqBqus8TBFvqvJu41Scw==
+X-Received: by 2002:a05:620a:8806:b0:7c3:cd38:9be8 with SMTP id af79cd13be357-7c3d8e5f40bmr693787585a.25.1741194728905;
+        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
+Received: from mail-qt1-f169.google.com (mail-qt1-f169.google.com. [209.85.160.169])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c378d9fe2bsm901948085a.88.2025.03.05.09.12.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
+Received: by mail-qt1-f169.google.com with SMTP id d75a77b69052e-474faf23fbeso28943101cf.2;
+        Wed, 05 Mar 2025 09:12:08 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUVep2sMP7vEV6vFUgOi7MBDiu17DUn6bstsiIey9idXBuS9qQkp6VsQdXpP9J79zBeVxgk4izXJ9M=@vger.kernel.org, AJvYcCWK1Oiu2xho1W/NQiw9yKFjiNMZNLwEAKNl0dH/U5+9pGNqyoVDj6rBbSu/nMP3vXxNtq7srJvBa3YqZTuwu8xo8QE=@vger.kernel.org, AJvYcCX7/XuIXYlPCckEfQ8WJYIfPkFjZXwGb2DbtaB8Q3muJL4sOswVAll4xOCXqfiUAbxrhGvReHh7CbPYqScw@vger.kernel.org
+X-Received: by 2002:ac8:7f83:0:b0:472:1f07:7a9 with SMTP id
+ d75a77b69052e-4750b496c02mr55280851cf.31.1741194728486; Wed, 05 Mar 2025
+ 09:12:08 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8g8vhS9rqQ_ez48@google.com>
+References: <20250218114353.406684-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250218114353.406684-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <CAMuHMdVwVemQfrDFH48n9Csp6=KtFs5MpZ6e+wLWSnEuh2gdvg@mail.gmail.com> <CA+V-a8sj-jEu8y_qPv-KvVCu_YQCQ1MDK9zrRB93LjfhmB_qfQ@mail.gmail.com>
+In-Reply-To: <CA+V-a8sj-jEu8y_qPv-KvVCu_YQCQ1MDK9zrRB93LjfhmB_qfQ@mail.gmail.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 5 Mar 2025 18:11:56 +0100
+X-Gmail-Original-Message-ID: <CAMuHMdVfnGhaJwfK93_StWsUDWDfwNp_9uwZB6VvKLMMNga9tg@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp0YyLAxKgAuapwsJ9uQO_sQxnabNdrvwWGoyLAOSsLGNVRJc3_g6dsEy4
+Message-ID: <CAMuHMdVfnGhaJwfK93_StWsUDWDfwNp_9uwZB6VvKLMMNga9tg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: rzv2h-cpg: Move PLL access macros to
+ source file
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 05, 2025 at 11:59:58AM +0000, Alice Ryhl wrote:
-> Dear SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE (SCPI/SCMI) Message
-> Protocol drivers maintainers,
-> 
-> I flashed a v6.13-rc3 kernel onto a Rock5B board and noticed the
-> following output in my terminal:
-> 
-> [  687.694465] kmemleak: 4 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
-> 
-> It seems that there is a memory leak for devices created with
-> scmi_device_create.
-> 
-`
-Hi Alice,
+Hi Prabhakar,
 
-thanks for this report.
+On Wed, 5 Mar 2025 at 17:38, Lad, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> On Wed, Mar 5, 2025 at 4:19=E2=80=AFPM Geert Uytterhoeven <geert@linux-m6=
+8k.org> wrote:
+> > On Tue, 18 Feb 2025 at 12:44, Prabhakar <prabhakar.csengg@gmail.com> wr=
+ote:
+> > > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > >
+> > > Move the `PLL_CLK_ACCESS()`, `PLL_CLK1_OFFSET()`, and `PLL_CLK2_OFFSE=
+T()`
+> > > macros from `rzv2h-cpg.h` to `rzv2h-cpg.c`, as they are not intended =
+for
+> > > use by SoC-specific CPG drivers.
+> > >
+> > > Additionally, update `PLL_CLK1_OFFSET()` and `PLL_CLK2_OFFSET()` to u=
+se
+> > > the `FIELD_GET()` macro for better readability and simplify the
+> > > `PLL_CLK_ACCESS()` macro.
+> > >
+> > > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com=
+>
+> >
+> > Thanks for your patch!
+> >
+> > The changes look correct to me, so
+> > Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> > but I still have some comments...
+> >
+> > > --- a/drivers/clk/renesas/rzv2h-cpg.c
+> > > +++ b/drivers/clk/renesas/rzv2h-cpg.c
+> > > @@ -56,6 +56,10 @@
+> > >
+> > >  #define CPG_CLKSTATUS0         (0x700)
+> > >
+> > > +#define PLL_CLK_ACCESS(n)      (!!((n) & BIT(31)))
+> >
+> > OK
+> >
+> > > +#define PLL_CLK1_OFFSET(n)     FIELD_GET(GENMASK(15, 0), (n))
+> > > +#define PLL_CLK2_OFFSET(n)     (PLL_CLK1_OFFSET(n) + (0x4))
+> >
+> > IMO, the original versions are more readable, as they clearly show
+> > the symmetry between encoding and decoding.
+> >
+> > Perhaps a good alternative would be a structure with bitfields and
+> > a PACK() macro, like is used for DDIV and SMUX?
+> >
+> Sure, I'll do that. Is it OK if I make that change on top of this
+> series or do you want me to rework and send a v2?
 
-> This was with a kernel running v6.13-rc3, but as far as I can tell, no
-> relevant changes have landed since v6.13-rc3. My tree *does* include
-> commit 295416091e44 ("firmware: arm_scmi: Fix slab-use-after-free in
-> scmi_bus_notifier()"). I've only seen this kmemleak report once, so it's
-> not happening consistently.
-> 
-> See below for the full kmemleak report.
-> 
-> Alice
-> 
-> $ sudo cat /sys/kernel/debug/kmemleak
-> unreferenced object 0xffffff8106c86000 (size 2048):
->   comm "swapper/0", pid 1, jiffies 4294893094
->   hex dump (first 32 bytes):
->     02 00 00 00 10 00 00 00 c0 01 bc 03 81 ff ff ff  ................
->     60 67 ba 03 81 ff ff ff 18 60 c8 06 81 ff ff ff  `g.......`......
->   backtrace (crc feae9680):
->     [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
->     [<0000000056fe02c9>] __kmalloc_cache_noprof+0x1e0/0x450
->     [<00000000a8b3dfe1>] __scmi_device_create+0xb4/0x2b4
->     [<000000008714917b>] scmi_device_create+0x40/0x194
->     [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
->     [<00000000970bad38>] scmi_probe+0x584/0xa78
->     [<000000002600d2fd>] platform_probe+0xbc/0xf0
->     [<00000000f6f556b4>] really_probe+0x1b8/0x520
->     [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
->     [<00000000d613b754>] driver_probe_device+0x6c/0x208
->     [<00000000187a9170>] __driver_attach+0x168/0x328
->     [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
->     [<00000000984a3176>] driver_attach+0x34/0x44
->     [<00000000fc35bf2a>] bus_add_driver+0x1bc/0x358
->     [<00000000747fce19>] driver_register+0xc0/0x1a0
->     [<0000000081cb8754>] __platform_driver_register+0x40/0x50
-> unreferenced object 0xffffff8103bc01c0 (size 32):
+I think there will be a v2 ;-)
 
-I could not reproduce on my setup, even though I run a system with
-all the existent SCMI protocols (and related drivers) enabled (and
-so a lot of device creations) and a downstream test driver that causes
-even more SCMI devices to be created/destroyed at load/unload.
+Gr{oetje,eeting}s,
 
-Coming down the path from scmi_chan_setup(), it seems something around
-transport devices creation, but it is not obvious to me where the leak
-could hide....
+                        Geert
 
-...any particular setup on your side ? ...using LKMs, loading/unloading,
-any usage pattern that could help me reproduce ?
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Thanks,
-Cristian
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
