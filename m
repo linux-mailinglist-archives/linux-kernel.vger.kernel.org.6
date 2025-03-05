@@ -1,129 +1,133 @@
-Return-Path: <linux-kernel+bounces-547355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 549A2A50630
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:16:18 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63CE1A50637
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:17:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF9DE188B8DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:16:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBABC3A5FCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFA93248899;
-	Wed,  5 Mar 2025 17:15:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B726019D897;
+	Wed,  5 Mar 2025 17:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="D6buxw3T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R6bwMf49"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 784111A316B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:15:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 388BC567D;
+	Wed,  5 Mar 2025 17:17:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194903; cv=none; b=Arq2pVzATbRh++CV8k85/zFIPz4d/NDWkCAaEcbtbk/qkkoaK98wxikyMjs4DFFaOS5O31E1qr04IIKHVYKjdniZJxgqCHkrKV+VEjFeKrlo7X++Rw9BE1mCEV8wHH9B36UTJJ5B5MtEUZ8I0QWduN9FBW6rU0KReLfjZJeR/FA=
+	t=1741195045; cv=none; b=VmLlw1forfPuWfmRWD0E8Q2f6Wzsj6ItWtroi7qWsGrWxYzsBlnUh2c4yZqZNEPl3iJr9oU8xXGvBNj739kttU3uyk3JwsJdA4D+lovnPgdG+X6pkukJmGLbmW9Gi/+m+fd/AZVsgCgSJ62u+FeRsqerDqpp4ie3db5kYEVOAa4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194903; c=relaxed/simple;
-	bh=NRyIecO563t4ImdsW1jXI5+TuemGsKbjSkF61FbeBh0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QVhCgjlj1lyX1uRKs36sTMlV0r13GBP93/2JkNsd0emPtVA4bR9iYsqAcsBbTi8l5qeR2AsCPf033GNsw+u54kdvwzKZ3Fzod7UHYf88jKiOszbdXV7ILxP/4UQobff4lD9sxDDSFWo/lsY3Hoi5vwxqDCSLYUhKKE9kzzUtbs8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=D6buxw3T; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741194900;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Fq/qFJHlaiGnCpFW2MwqaXdlBcGCWunAFoUN3TsxIqk=;
-	b=D6buxw3Tl15ICdcGCCP8iNH13QLv1EFC2n0qIiIvlYy3BnTZ7MXJEB7SmGgwFfGmCaL819
-	iSZuFUnXCaN/pUibvqlO8SSzLkQPnzK55SxGuPu1uEfsCKobDxaG4tm1URuBdH2nKJXTQU
-	yAvLiZH0G++GDZsuIZhJG+GHhK7Sz7E=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-641-RCaTDZ4vN1KprYPjCjOS4A-1; Wed,
- 05 Mar 2025 12:14:47 -0500
-X-MC-Unique: RCaTDZ4vN1KprYPjCjOS4A-1
-X-Mimecast-MFC-AGG-ID: RCaTDZ4vN1KprYPjCjOS4A_1741194886
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A45EE180AF4E;
-	Wed,  5 Mar 2025 17:14:45 +0000 (UTC)
-Received: from pauld.westford.csb (unknown [10.22.65.55])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B6EE3300019E;
-	Wed,  5 Mar 2025 17:14:43 +0000 (UTC)
-Date: Wed, 5 Mar 2025 12:14:41 -0500
-From: Phil Auld <pauld@redhat.com>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Waiman Long <longman@redhat.com>,
-	Vishal Chourasia <vishalc@linux.ibm.com>,
-	Vineeth Reddy <vineethr@linux.ibm.com>
-Subject: Re: [PATCH v2] sched/isolation: Make use of more than one
- housekeeping cpu
-Message-ID: <20250305171441.GC51446@pauld.westford.csb>
-References: <20250218184618.1331715-1-pauld@redhat.com>
- <Z8b_A4YnOcNzGcaU@localhost.localdomain>
+	s=arc-20240116; t=1741195045; c=relaxed/simple;
+	bh=rgaJ8Vl+DVZyMaAeb8l37NkQiLBSOoKduXMe+7d8pA8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sjODuCFgbCCxHbyUWL2LZ/QtJLiwsZTYzjNE8nUb1yTO6DuajmFXr+ze0RjNfpgKM3AuWomYp4XeOUyNs+pQI5C+jG4RVG/JIXLMfnbDKp7MnjsVPqkEdHQHj5ruybhG+J9Sz8dwnJUlsF9c2tx+YxRJZvJkyIjrXgWZFjhUu/4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R6bwMf49; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741195043; x=1772731043;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=rgaJ8Vl+DVZyMaAeb8l37NkQiLBSOoKduXMe+7d8pA8=;
+  b=R6bwMf49MV/Tbvm5voY39fmTyABwvgNwX+CtDpBSoyyHrjFQgtq7H6Ib
+   9KVV2rR3XziuUUpHvEBo3HaOVA0DN4JE+BKL3N/Kd356Gc4KV0KYHtVxQ
+   tV7Ujvy1tSErh8JuCSkTR84+jUME22i21FWAI4tdOGI51Nc1/XvUaIfYK
+   UF8LOD5hKiew7LKUECCDr7KJGwexuC3htpeawD+yV88sByx6pQR7sgtuS
+   ud1dz2oLH5gT0Kj10/vH004JULjUMzLEz9iEAb1qx0UUUxlNFX0J4Wvbr
+   +bubQoblckHvhX5EVQJ1L3b5ZbjMykauptQ3PBVIt0syC/GAW4I2fO582
+   g==;
+X-CSE-ConnectionGUID: bBpFmfLdQf6FQUAkLUThJQ==
+X-CSE-MsgGUID: A/vvGbDFRZGerVt4IOTbqA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59717255"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="59717255"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:17:23 -0800
+X-CSE-ConnectionGUID: AFdM3JGSScqtVQ+GbsGbVg==
+X-CSE-MsgGUID: V0HpwSGmRH2oG5k/Wqy/Sw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="119672490"
+Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.49])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:17:19 -0800
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Wentao Liang <vulab@iscas.ac.cn>, thierry.reding@gmail.com,
+ mperttunen@nvidia.com, airlied@gmail.com, simona@ffwll.ch,
+ jonathanh@nvidia.com
+Cc: dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Wentao Liang <vulab@iscas.ac.cn>,
+ stable@vger.kernel.org
+Subject: Re: [PATCH] drm/tegra: Handle EDID allocation failures in
+ tegra_output_connector_get_modes()
+In-Reply-To: <20250305154038.2062-1-vulab@iscas.ac.cn>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20250305154038.2062-1-vulab@iscas.ac.cn>
+Date: Wed, 05 Mar 2025 19:17:15 +0200
+Message-ID: <874j07xuqs.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Z8b_A4YnOcNzGcaU@localhost.localdomain>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain
 
-On Tue, Mar 04, 2025 at 02:24:19PM +0100 Frederic Weisbecker wrote:
-> Le Tue, Feb 18, 2025 at 06:46:18PM +0000, Phil Auld a écrit :
-> > The exising code uses housekeeping_any_cpu() to select a cpu for
-> > a given housekeeping task. However, this often ends up calling
-> > cpumask_any_and() which is defined as cpumask_first_and() which has
-> > the effect of alyways using the first cpu among those available.
-> > 
-> > The same applies when multiple NUMA nodes are involved. In that
-> > case the first cpu in the local node is chosen which does provide
-> > a bit of spreading but with multiple HK cpus per node the same
-> > issues arise.
-> > 
-> > We have numerous cases where a single HK cpu just cannot keep up
-> > and the remote_tick warning fires. It also can lead to the other
-> > things (orchastration sw, HA keepalives etc) on the HK cpus getting
-> > starved which leads to other issues.  In these cases we recommend
-> > increasing the number of HK cpus.  But... that only helps the
-> > userspace tasks somewhat. It does not help the actual housekeeping
-> > part.
-> > 
-> > Spread the HK work out by having housekeeping_any_cpu() and
-> > sched_numa_find_closest() use cpumask_any_and_distribute()
-> > instead of cpumask_any_and().
-> > 
-> > Signed-off-by: Phil Auld <pauld@redhat.com>
-> > Reviewed-by: Waiman Long <longman@redhat.com>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Juri Lelli <juri.lelli@redhat.com>
-> > Cc: Frederic Weisbecker <frederic@kernel.org>
-> > Cc: Waiman Long <longman@redhat.com>
-> > Cc: linux-kernel@vger.kernel.org
-> > Link: https://lore.kernel.org/lkml/20250211141437.GA349314@pauld.westford.csb/
-> 
-> Acked-by: Frederic Weisbecker <frederic@kernel.org>
+On Wed, 05 Mar 2025, Wentao Liang <vulab@iscas.ac.cn> wrote:
+> The return values of `drm_edid_dup()` and `drm_edid_read_ddc()` must
+> be checked in `tegra_output_connector_get_modes()` to prevent NULL
+> pointer dereferences. If either function fails, the function should
+> immediately return 0, indicating that no display modes can be retrieved.
+
+No. It works as designed, and drm_edid_connector_update() and
+cec_notifier_set_phys_addr() *must* be called with NULL drm_edid in case
+of failure.
+
+> A proper implementation can be found in `vidi_get_modes()`, where the
+> return values are carefully validated, and the function returns 0 upon
+> failure.
+
+That case is slightly different, as it doesn't actually access the
+display at that point, but it wouldn't be wrong to skip the early
+!drm_edid check there too.
+
+> Fixes: 98365ca74cbf ("drm/tegra: convert to struct drm_edid")
+
+When you claim to fix a commit, it's encouraged to Cc: the author and
+possibly reviewers of said commit.
+
+
+BR,
+Jani.
+
+
+> Cc: stable@vger.kernel.org # 6.12+
+> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> ---
+>  drivers/gpu/drm/tegra/output.c | 3 +++
+>  1 file changed, 3 insertions(+)
 >
-
-Thanks Frederic!
-
-Anyone with commit powers willing to pick this up?
-
-Thanks,
-Phil
+> diff --git a/drivers/gpu/drm/tegra/output.c b/drivers/gpu/drm/tegra/output.c
+> index 49e4f63a5550..360c4f83a4f8 100644
+> --- a/drivers/gpu/drm/tegra/output.c
+> +++ b/drivers/gpu/drm/tegra/output.c
+> @@ -39,6 +39,9 @@ int tegra_output_connector_get_modes(struct drm_connector *connector)
+>  	else if (output->ddc)
+>  		drm_edid = drm_edid_read_ddc(connector, output->ddc);
+>  
+> +	if (!drm_edid)
+> +		return 0;
+> +
+>  	drm_edid_connector_update(connector, drm_edid);
+>  	cec_notifier_set_phys_addr(output->cec,
+>  				   connector->display_info.source_physical_address);
 
 -- 
-
+Jani Nikula, Intel
 
