@@ -1,65 +1,57 @@
-Return-Path: <linux-kernel+bounces-547717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B66A50C93
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:31:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF4BA50C95
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:33:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA778188311E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:31:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B5880188388A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1251F4E3B;
-	Wed,  5 Mar 2025 20:31:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143E92045A8;
+	Wed,  5 Mar 2025 20:33:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kOrGQWMP"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SyboO6iu"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9E21917E4;
-	Wed,  5 Mar 2025 20:31:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5736917B50B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:33:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741206694; cv=none; b=bg3YEsmMjFNRyqCXgLMdilYylgmsZ0056z3MR72IHaNNaojiEugSWZUmbRTtFVgSmgco/rT03Btp9TfehBbuhWcSD1d27DYkOm2x2XaUqqH1tz0H7f3DN4GtYNxjyK5lkmk6xdM1NTSvmTE4d32+vbOKAYZtXR3SvnjRA2Ix1Eg=
+	t=1741206789; cv=none; b=I/7LDER/zDvBCSQ+PaKEHW52BvKj3J/Vpcw2z5Nu/EvmAh6JaP3EWFtFOLuDpyaRNEo39eiXYwF/VQZ+EL8/3bTf+/8n6VMgS9hMGoocQl2L4g4ENx+W1XFmDTiW8Hrn4lngFcf7zOfps3O5oKfJ6YcOr/fiDMnrw46z4K5hb+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741206694; c=relaxed/simple;
-	bh=WBNDtdCWGQh9oPEY49ejtX299nQF0XieKRNkEJJ79/o=;
+	s=arc-20240116; t=1741206789; c=relaxed/simple;
+	bh=8rSiXhWy6zq6zyHtUk/mVzvcEvHUJdwLGZ3WCE2SW/g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NgP3hfF9wRw0lzsD2sMVxH4Dwg9D6/EWuNJYKpPgj3NE4cSJ3U9CAhendonb0bYsh/3i68rpCX0psRky/Ii6sJfU2TxHIOijOaYar1swq25pJDqRSk19s4MLCpx8vW4k4HuNqj8vOnxaEk7tSbwONcIJ1uYJWvsiWds8vApp6zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kOrGQWMP; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=5N69iuSZpEP3m1sQZOVuMhRR/phcnv3Nm9ASp7xyfVE=; b=kOrGQWMPRD/iroQXeR6iOyX+Md
-	dbgAFsc4t/jIFa9ZM8NoLIbQsKZ+dtf3Ij7mnzbq36sVOtO4vHIV+tpJYXN+HqzGCWB85f4OQ4CtU
-	8InbhiB+XTG2vIqws1nkEbSwXzsIXXpDLu8X1/AZvSAD/iutOU1iEmRb7QQ6EYeoZtkX8drblW3s1
-	1QDV4bd9tCdaff5Nbq6CQWFy5paBSEpPEt3hLVsXCU4sONMHDcVoQcM4HCB2BZBgz6Tmkkj9NSfx0
-	+Tq+zt0qNZf5ys2CHT81hyPUVOij7RJ6AFbrO0VG4DRbok4roLlyAPY8luYiGUI8C0xbO4skAZX53
-	G/XUnQyw==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpvOh-00000006AwN-1uRx;
-	Wed, 05 Mar 2025 20:31:19 +0000
-Date: Wed, 5 Mar 2025 20:31:19 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Liu Shixin <liushixin2@huawei.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Barry Song <baohua@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Hugh Dickins <hughd@google.com>,
-	Charan Teja Kalla <quic_charante@quicinc.com>,
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH v3] mm/migrate: fix shmem xarray update during migration
-Message-ID: <Z8i0l8apxDsThD9s@casper.infradead.org>
-References: <20250305200403.2822855-1-ziy@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FTjSrel6/1VNWYaHFAlh+dj24iwgm5K75CI/B3png/6lsjEGsA1Vn81n468S26tHbxKBmgR2vIi2bN9PEPEeSk4bYAoB7nNVdBrtBSdva6nG8TcjIhV5n/+zrRSYVoXZIdDwiQwAUBpHvMfzbixQVKZltYG9YG2OljuZH/wdSF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SyboO6iu; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 5 Mar 2025 12:32:52 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741206785;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M2TU4SraGYQgOb4W04xqs17RGU2mlizF+kj6Iy1M9wM=;
+	b=SyboO6iudiY0EqVHWiluZ74ViPJLPszqqPnxYZ7GLgmsCAVR7jymRQdsCDozstNxY+Cgzq
+	AQJaIf5ND3aQh1zZVRwaHq0q6ta+oUM9iXUBpoTq+uhPmiSja9UZ9Nz2wvC9mD25CPwuX9
+	QugJLrlwTJvlz44pZduZNttsfo1uDXM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: SeongJae Park <sj@kernel.org>
+Cc: "Liam R. Howlett" <howlett@gmail.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, 
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, kernel-team@meta.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: Re: [RFC PATCH 02/16] mm/madvise: split out populate behavior check
+ logic
+Message-ID: <kic3iznofvqvkljvelk6c7l2jigdwtlrrlhebkrh4tnundfp6h@upfyjh5hr6k5>
+References: <20250305181611.54484-1-sj@kernel.org>
+ <20250305181611.54484-3-sj@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,39 +60,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305200403.2822855-1-ziy@nvidia.com>
+In-Reply-To: <20250305181611.54484-3-sj@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Mar 05, 2025 at 03:04:03PM -0500, Zi Yan wrote:
-> A shmem folio can be either in page cache or in swap cache, but not at the
-> same time. Namely, once it is in swap cache, folio->mapping should be NULL,
-> and the folio is no longer in a shmem mapping.
+On Wed, Mar 05, 2025 at 10:15:57AM -0800, SeongJae Park wrote:
+> madvise_do_behavior() has a long open-coded 'behavior' check for
+> MADV_POPULATE_{READ,WRITE}.  It adds multiple layers[1] and make the
+> code arguably take longer time to read.  Like is_memory_failure(), split
+> out the check to a separate function.  This is not technically removing
+> the additional layer but discourage further extending the switch-case.
+> Also it makes madvise_do_behavior() code shorter and therefore easier to
+> read.
 > 
-> In __folio_migrate_mapping(), to determine the number of xarray entries
-> to update, folio_test_swapbacked() is used, but that conflates shmem in
-> page cache case and shmem in swap cache case. It leads to xarray
-> multi-index entry corruption, since it turns a sibling entry to a
-> normal entry during xas_store() (see [1] for a userspace reproduction).
-> Fix it by only using folio_test_swapcache() to determine whether xarray
-> is storing swap cache entries or not to choose the right number of xarray
-> entries to update.
+> [1] https://lore.kernel.org/bd6d0bf1-c79e-46bd-a810-9791efb9ad73@lucifer.local
 > 
-> [1] https://lore.kernel.org/linux-mm/Z8idPCkaJW1IChjT@casper.infradead.org/
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  mm/madvise.c | 20 +++++++++++++-------
+>  1 file changed, 13 insertions(+), 7 deletions(-)
 > 
-> Note:
-> In __split_huge_page(), folio_test_anon() && folio_test_swapcache() is used
-> to get swap_cache address space, but that ignores the shmem folio in swap
-> cache case. It could lead to NULL pointer dereferencing when a
-> in-swap-cache shmem folio is split at __xa_store(), since
-> !folio_test_anon() is true and folio->mapping is NULL. But fortunately,
-> its caller split_huge_page_to_list_to_order() bails out early with EBUSY
-> when folio->mapping is NULL. So no need to take care of it here.
-> 
-> Fixes: fc346d0a70a1 ("mm: migrate high-order folios in swap cache correctly")
-> Reported-by: Liu Shixin <liushixin2@huawei.com>
-> Closes: https://lore.kernel.org/all/28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com/
-> Suggested-by: Hugh Dickins <hughd@google.com>
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> Cc: stable@vger.kernel.org
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index dbc8fec05cc6..4a91590656dc 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -1633,6 +1633,17 @@ static bool is_valid_madvise(unsigned long start, size_t len_in, int behavior)
+>  	return true;
+>  }
+>  
+> +static bool is_memory_populate(int behavior)
 
-Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
+No strong opinion on this patch but if you want to keep it, the above
+name feels weird. How about either is_madvise_populate() or
+is_populate_memory()?
+
+> +{
+> +	switch (behavior) {
+> +	case MADV_POPULATE_READ:
+> +	case MADV_POPULATE_WRITE:
+> +		return true;
+> +	default:
+> +		return false;
+> +	}
+> +}
+> +
+>  static int madvise_do_behavior(struct mm_struct *mm,
+>  		unsigned long start, size_t len_in, size_t len, int behavior)
+>  {
+> @@ -1646,16 +1657,11 @@ static int madvise_do_behavior(struct mm_struct *mm,
+>  	end = start + len;
+>  
+>  	blk_start_plug(&plug);
+> -	switch (behavior) {
+> -	case MADV_POPULATE_READ:
+> -	case MADV_POPULATE_WRITE:
+> +	if (is_memory_populate(behavior))
+>  		error = madvise_populate(mm, start, end, behavior);
+> -		break;
+> -	default:
+> +	else
+>  		error = madvise_walk_vmas(mm, start, end, behavior,
+>  					  madvise_vma_behavior);
+> -		break;
+> -	}
+>  	blk_finish_plug(&plug);
+>  	return error;
+>  }
+> -- 
+> 2.39.5
 
