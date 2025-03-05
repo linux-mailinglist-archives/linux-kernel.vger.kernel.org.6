@@ -1,144 +1,155 @@
-Return-Path: <linux-kernel+bounces-547364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FA64A5064B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:25:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76240A5064C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:25:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7AB7117133F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:25:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9FFBD17138B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:25:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F6AA1C7011;
-	Wed,  5 Mar 2025 17:25:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isfr5Yqk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9637D1EDA2D;
+	Wed,  5 Mar 2025 17:25:26 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CFD7567D;
-	Wed,  5 Mar 2025 17:25:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882291C7011
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741195505; cv=none; b=Pj/ksdWHrLOezOJBoTcWfRd2n3yxPV2QjmrksYCMla5AhZOZyXWlQe4D3EIoolOU0oN1pEuYiVkbJw++JtMeugKfenTqFPP1L8bxi3kd0Dbt6iX5d7/IzYAj0hwapjxdjGN0p8fJM3LbpLlxTTdczqt0YU2DojsqZZZzUzDyFxw=
+	t=1741195526; cv=none; b=bzytEZlbnaviPv8thTw+JirAdavTNYUcAaORZxc5HQK8SaIuj+dzALFoF/5f38TKEqBZq7Gc6ScrFiLk8DsS1CtDv0SGTRQ0q5HMNdQRf6HoDjCkVOCFoaMpj3n35kxY1CqictBpDPacndownia422NSAtoRyy37zk8qM8e/Pfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741195505; c=relaxed/simple;
-	bh=U18Wfl4pQFaaYNIJzuQEGPdF/5EFkPOj+sQlvfXNzwI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rrNj1DXTFo5sveD268Yzf0L1GHoHOuA5T2KcOIE/2RbZ7ModdvErJ1QNXrBWX/iB8haHBiiToMHxM//9NEl9s1eYQQVuFRzIPIQuTFQJ7IB9tRV7Gmw2KoQW9b3Mu0kSGEOVoLEoPuieQkXj4YGjN3RMg0BvMwFHAshu2ul7oSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isfr5Yqk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B992C4CED1;
-	Wed,  5 Mar 2025 17:25:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741195505;
-	bh=U18Wfl4pQFaaYNIJzuQEGPdF/5EFkPOj+sQlvfXNzwI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=isfr5YqkrSHxijEbW83wwx73H9aHLvHo8eU+AEzJN9GQOVvjVVjja2/+jVwCaz1T1
-	 4gb8nfkVojSaUqQLS3m/Cz2JuurqyGBx16qNIFiRpqnW4uatm1NJS8gQPUSBKATPFv
-	 MixExuJEHlqWES55sGDYrGGmSTDGyBmQwP8gYaEzGF82riCx3dYrcK56bSFyxwJIwr
-	 PutuH+CccgN4/5yAfYL6nr4JzR3wf/+sbreFPieG/DLXLMxeeM+ejH5j8DvnY2uzuB
-	 7WOT96PrF2aNL7euNM8lx9zCjHZL/H+Y0NDjFsjukUbLHOxnP3MNbtu8MvTVssRKIk
-	 Uoy/Ie5q7Odhg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Alice Ryhl" <aliceryhl@google.com>
-Cc: "Oliver Mangold" <oliver.mangold@pm.me>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Trevor Gross" <tmgross@umich.edu>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4] rust: adding UniqueRefCounted and UniqueRef types
-In-Reply-To: <CAH5fLgirYTV6K2QoH9LLwhHxJzz=h1R0jB4G2kpKQ_pBtBgePg@mail.gmail.com>
- (Alice
-	Ryhl's message of "Wed, 05 Mar 2025 17:02:10 +0100")
-References: <20250305-unique-ref-v4-1-a8fdef7b1c2c@pm.me>
-	<Z8hUIPtE_9P60fAf@google.com> <Z8hmCkeZGPwc5MuU@mango>
-	<mE_To6ll96gFJQD9YKkT-mwa2KCHFCgOaZFxxczeDVJd0hr1rZCKFHD-vHQfm6deCjlUJIu4U-reNMtrwfyT7w==@protonmail.internalid>
-	<CAH5fLgjFBknTmhxQBPUdB-iNMjEkcyuLiu22-Nj-DGB1Gb7NkA@mail.gmail.com>
-	<87ldtj8p2m.fsf@kernel.org>
-	<JPqvzrz3Zy0HgwNoHh2psup7imFItiN_j_VmmjVPBfwJzf040DTvZAwUDjNv1FQiLXFiSAANIxc2IegeKGCJvA==@protonmail.internalid>
-	<CAH5fLgirYTV6K2QoH9LLwhHxJzz=h1R0jB4G2kpKQ_pBtBgePg@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 18:24:56 +0100
-Message-ID: <875xkn8k5z.fsf@kernel.org>
+	s=arc-20240116; t=1741195526; c=relaxed/simple;
+	bh=isU2KcR+Fc5IeSMj/3VUz+YxBSVpY6egRjgQpVu+WIY=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=mh4vLvNM5W8lAIrHAS6HcUzmBAfKfjcPrfqaobESpGpwFVUBfF7uXeevZv2J3mLL++7uMspNqwWM/E50eEO09ydDbj2NFsEnFWpQyIosEa8klCzlwy6FsmnDzjejcHKPEYbTmC/4keqkGv4i67MfOvMzaYmZj3VKrd73JnQ2gQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3d3dd7f01cbso131272895ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:25:24 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741195523; x=1741800323;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=76cFd9GTQUM+SI1YOG4WZgV51ROqXYBfRO68m84vkvU=;
+        b=kx7kMz4ml2Q3N8UhGEVJ6mLvoQO1Dt7lk7qYxQbQT9lEJhobeu/NbxR1NNC9pqU3x+
+         /AoNUYPN+TTY72fYmGoNr5zBNoMByAkTuDwLEwvn0V/6MSZoYtbwoprPLc+lbu3mfdTZ
+         NywuMYtQF5JmTQ1Q06lJc4V0M6iLiDtAiWoZWBVJ8kjgaqFKnOSA7k7YSilL9e0ajrMx
+         HKzEFqBKk/7FrV7d2IvzkFyrJ1GCJzf9Uawg60LFaVE5c6qLMHU/R1akwsQ90KR9F3xp
+         Kc40DS2F35Xws0w9dVkfTRCVe6pXAJ/PR3I/EuLEUV8Q3iTp0UgIMe8yjt5vOzwYVdBu
+         8acg==
+X-Gm-Message-State: AOJu0YxXqIq/6sB5gbXBFugNq9g3KsOFmf0/+fmx5ZUOdynm4zTk7HI/
+	iAoeTWXY88355gVGGB/LqLGEoVLnX9IvpGfrsA82Z91PWiADIEeVqtogGxY3NffH51cCdq9eG+j
+	/x5q7T7nKR4ajgnUhxL4RGeIu1EsxnFKOntv8pukm6juchYbSMEiaDQujdA==
+X-Google-Smtp-Source: AGHT+IH9wgZ7e93TVUTcam44ff5H/1ADzcH+Wo9y+7mtzZ/yrv6WY/MHHIPCcignXb7olaFpK04DatK0+JDzTDrn6aq3ZtcRXzM6
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:3a08:b0:3d0:4c9c:965f with SMTP id
+ e9e14a558f8ab-3d42b995fbcmr41695335ab.20.1741195523627; Wed, 05 Mar 2025
+ 09:25:23 -0800 (PST)
+Date: Wed, 05 Mar 2025 09:25:23 -0800
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67c88903.050a0220.15b4b9.0028.GAE@google.com>
+Subject: [syzbot] [sound?] KCSAN: data-race in snd_seq_poll / snd_seq_pool_init
+From: syzbot <syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org, perex@perex.cz, 
+	syzkaller-bugs@googlegroups.com, tiwai@suse.com
+Content-Type: text/plain; charset="UTF-8"
 
-"Alice Ryhl" <aliceryhl@google.com> writes:
+Hello,
 
-> On Wed, Mar 5, 2025 at 4:39=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->>
->> "Alice Ryhl" <aliceryhl@google.com> writes:
->>
->> > On Wed, Mar 5, 2025 at 3:56=E2=80=AFPM Oliver Mangold <oliver.mangold@=
-pm.me> wrote:
->> >>
->> >> Hi Alice,
->> >>
->> >> On 250305 1339, Alice Ryhl wrote:
->> >> > On Wed, Mar 05, 2025 at 11:31:44AM +0000, Oliver Mangold wrote:
->> >> >
->> >> > > +impl<T: UniqueRefCounted> Deref for UniqueRef<T> {
->> >> > > +    type Target =3D T;
->> >> > > +
->> >> > > +    fn deref(&self) -> &Self::Target {
->> >> > > +        // SAFETY: The type invariants guarantee that the object=
- is valid.
->> >> > > +        unsafe { self.ptr.as_ref() }
->> >> > > +    }
->> >> > > +}
->> >> >
->> >> > What stops people from doing this?
->> >> >
->> >> > let my_unique: UniqueRef<T> =3D ...;
->> >> > let my_ref: &T =3D &*my_unique;
->> >> > let my_shared: ARef<T> =3D ARef::from(my_ref);
->> >> >
->> >> > Now it is no longer unique.
->> >> >
->> >> Oh, indeed. That's a serious problem. I see 2 options to deal with th=
-at:
->> >>
->> >> 1. remove ARef::From<&T>
->> >>
->> >> I checked the users of this, and it looks to me like there is rather
->> >> a limited number and they are easy to fix by replacing the &T with AR=
-ef<T>.
->> >> But I assume that wouldn't be welcome as it is intrusive nonetheless
->> >> and of course there is ergonomic value in having the function around.
->> >
->> > Definitely not an option. There are many users of this function that
->> > are in the process of being upstreamed. The ability to go &T ->
->> > ARef<T> is pretty fundamental for ARef.
->>
->> Not having `impl From<&T> for UniqueArc` seems to work out fine.
->>
->> It would be unfortunate if `impl From<&T> for ARef<T>` would prevent us
->> from having a unique version of `ARef`. I would say that is a valid
->> reason to consider removing that impl.
->
-> I think the impl is really important. It's required to do things such as:
->
-> let mm =3D ARef::from(&*current!().mm());
->
-> Without the impl (or something equivalent), it's not possible to
-> increment the refcount of the &Mm returned by `current!().mm()`. There
-> are many other examples of this.
+syzbot found the following issue on:
 
-Right. Let's see what we can figure out of other solutions then.
+HEAD commit:    48a5eed9ad58 Merge tag 'devicetree-fixes-for-6.14-2' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1657d8b7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=523b0e2f15224775
+dashboard link: https://syzkaller.appspot.com/bug?extid=2d373c9936c00d7e120c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/877a63ac53f2/disk-48a5eed9.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/7b3a614d4df6/vmlinux-48a5eed9.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/2ce987fd9e0c/bzImage-48a5eed9.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+2d373c9936c00d7e120c@syzkaller.appspotmail.com
+
+==================================================================
+BUG: KCSAN: data-race in snd_seq_poll / snd_seq_pool_init
+
+write to 0xffff888114535610 of 4 bytes by task 7006 on cpu 1:
+ snd_seq_pool_init+0x1c1/0x200 sound/core/seq/seq_memory.c:469
+ snd_seq_write+0x17f/0x500 sound/core/seq/seq_clientmgr.c:1022
+ vfs_write+0x27d/0x920 fs/read_write.c:677
+ ksys_write+0xe8/0x1b0 fs/read_write.c:731
+ __do_sys_write fs/read_write.c:742 [inline]
+ __se_sys_write fs/read_write.c:739 [inline]
+ __x64_sys_write+0x42/0x50 fs/read_write.c:739
+ x64_sys_call+0x287e/0x2dc0 arch/x86/include/generated/asm/syscalls_64.h:2
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+read to 0xffff888114535610 of 4 bytes by task 7005 on cpu 0:
+ snd_seq_total_cells sound/core/seq/seq_memory.h:83 [inline]
+ snd_seq_write_pool_allocated sound/core/seq/seq_clientmgr.c:95 [inline]
+ snd_seq_poll+0x103/0x170 sound/core/seq/seq_clientmgr.c:1139
+ vfs_poll include/linux/poll.h:82 [inline]
+ __io_arm_poll_handler+0x1e5/0xd50 io_uring/poll.c:582
+ io_arm_poll_handler+0x464/0x5b0 io_uring/poll.c:707
+ io_queue_async+0x89/0x320 io_uring/io_uring.c:1925
+ io_queue_sqe io_uring/io_uring.c:1954 [inline]
+ io_req_task_submit+0xb9/0xc0 io_uring/io_uring.c:1373
+ io_handle_tw_list+0x1b9/0x200 io_uring/io_uring.c:1059
+ tctx_task_work_run+0x6e/0x1c0 io_uring/io_uring.c:1123
+ tctx_task_work+0x40/0x80 io_uring/io_uring.c:1141
+ task_work_run+0x13a/0x1a0 kernel/task_work.c:227
+ get_signal+0xe78/0x1000 kernel/signal.c:2809
+ arch_do_signal_or_restart+0x95/0x4b0 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:329 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x62/0x120 kernel/entry/common.c:218
+ do_syscall_64+0xd6/0x1c0 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+value changed: 0x00000000 -> 0x000001f4
+
+Reported by Kernel Concurrency Sanitizer on:
+CPU: 0 UID: 0 PID: 7005 Comm: syz.2.1455 Tainted: G        W          6.14.0-rc5-syzkaller-00016-g48a5eed9ad58 #0
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 02/12/2025
+==================================================================
 
 
-Best regards,
-Andreas Hindborg
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
