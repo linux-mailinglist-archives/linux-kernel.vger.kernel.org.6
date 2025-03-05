@@ -1,99 +1,106 @@
-Return-Path: <linux-kernel+bounces-545895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545897-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 037EFA4F338
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E123A4F33B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30CD116ED8D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9610F1890129
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:07:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC23F1519B8;
-	Wed,  5 Mar 2025 01:05:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E842184FAD;
+	Wed,  5 Mar 2025 01:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vTBHuufH"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qCdbfATg"
 Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 034FF13D26B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:05:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02B0B136672
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:06:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741136748; cv=none; b=mY7dMTaHddMcgGlxA51q7GnjEjr7+K/sW/YQNeorDln4SQBF/0kyWSMX3YklciYvKjLN/DjCONfSw3huDsRZNfFGAoj+yW6ZRfwGxVihlt7dabWrLqMxtrWfQgXYFZY7dSKcUu2rFOVzf2EzWfZ/9udnS1c9mPpo8F5d2VGERAc=
+	t=1741136773; cv=none; b=GQ0JjVA5O52ne+2qHMnNt/n1zFFv1cHPD9o2BEbWBELgSlCJB+MTpMcKq72GCMxbr6y7QAccRZiKnSG6+/OTvVvcw/PQ+t0ctueAH2izNbHwb/7GRFYsOyNulG2fUxg481NV1IQ1+NtKsaB0vvjYOHIFsA0E8jlsDSDVZY+UonU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741136748; c=relaxed/simple;
-	bh=+MuQymkPvSHXZsgm1lXYQi7Jvrv7xbuEriYb3Z+IedU=;
+	s=arc-20240116; t=1741136773; c=relaxed/simple;
+	bh=SXzjYBAmbixh9anaRr1dJ7QeFFB+ALNffscWjHcghG0=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=DIDkA1oZa/+WAr4D4560edLbmR5NYc0MbqnN30zIQe6fKozMX3zCMp5t2GJ8g0LeFS7WAvt0LYhwswoDmAim35NHB5dugewIETyXTHYqi5z65oMS556gGa3UMbKMehBfNMZIdj5NJ1LYQD6wyHLHIGQVLkUHeToYy9LqtfQCpMM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vTBHuufH; arc=none smtp.client-ip=209.85.216.74
+	 To:Cc:Content-Type; b=oupl1zuN5C1f1T7jygMsJSaI/Di1i0FmaPh36UzdbiiVVP5CGXT1cVo0iQC0G8Nvi306386QxyULI3wnsWk+VGpFERgzRWw87dUe79Nk3ZsN67DpA2U1TflmXd1jlv+6aLm1V1s4AUexD3xtL8rNsI0Ic1k6zdDwf/IKUAx3EvI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qCdbfATg; arc=none smtp.client-ip=209.85.216.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fe8de1297eso670200a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:05:46 -0800 (PST)
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2fee7f85d03so10374076a91.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:06:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741136746; x=1741741546; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741136771; x=1741741571; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=NNX6vH12pYMK3VyoT3q3MRD9hVixADS4zVQV9SN8avY=;
-        b=vTBHuufHoDkxBi+/JeiCfMhqKI75H46nIcGPMxi+Ku1QURbUPerdG4DoT/1cv+ZY4L
-         /oyTOgWmfqBRk8S0ydjbBTBymhWvB3yFsKkNPNoBz4v9/CRJK9q1J2DJ2uAd5EN+m/pp
-         NpQC9pJdkriCZMhQftU6WCzpmfw8qiyJ256m6MSfpjPHHFUvSCNCB+nnFeaHDN03hWGo
-         ioIfeiunLXCunkFl1g2wb1o1DTSiTRz/SzA75xFj4PdqXtk0aSCqpsXDyeneK0T+iNjv
-         /dILGDQjPl+H5p7fTQvpSX183rF/LoUGcK0iFnhOSqDcfA52XhLmgg+Tk/kFb/ZQgekz
-         kA0g==
+        bh=9dQMVONACc/ChRDXXSj2E+97tCqbKUw9XyI1vlcsxSA=;
+        b=qCdbfATguF9tMgJYnfARBowRR1ttJaSweCJC5ZmzROf6uFT/af4T8ttPHeC6oQAw1M
+         Q5gpLPQyugj/L8QFMTlchzw9iL++QfMQ0Ky903PkLEDAcc2IMqe0GCe4lPL4PGOZVJDB
+         l+kvwoGVn54V7DI74E+kNfHXJ8sMwHAL6j9/QwmMG0H3GF8P3SCvj/kgJcblwNaqiF4d
+         R1NxxEQjPUc2LJtsnTVHpInaEQaYl7fteI5iVgSrENbQDeQC21ohoguK/+jyrJuXaj68
+         2PjwykNtrSlMtHow/JmZtL/070w8StuA82d5FG9TzBCVdRCHyNjuV72ZDoj9yDScdbD3
+         JsqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741136746; x=1741741546;
+        d=1e100.net; s=20230601; t=1741136771; x=1741741571;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=NNX6vH12pYMK3VyoT3q3MRD9hVixADS4zVQV9SN8avY=;
-        b=BHtPgy1OpAUaG6oYwa65Pt+wJJdK+ZZm8fAeY5BPYA0REGwrnqtQJZeaLhllER1oi/
-         qB3lv1ont/2vhjUX1GUzVwIYgcdRc/TJ3sfjEr96RB18morNahhenximTBFvyf93K0nf
-         nmxQSP3uPXaISqYNr09jWXzW8zPpvuVIsmV45ngvBxACd6nNwUFOQ/4Eqm/pfvrZHMe3
-         bObgh8Fm8SsAiTwiOiSSuyWIVzHAnKYKLCMc3wiY94CLM6pHy1oQjKLMo+TWRETxAGZQ
-         GRWnSkeyG8BXih8T6jY7Cm0LVRPUS7M14b7Us46YCQLBTyBs0hhk+AS42MNA/4f4r9Sg
-         RxWA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgtsRPAOfESMa3U3G1wSFMNpVWE09opJdX7BkYqg9zc90Jo636enhderjHA2COhu4CdRf1fNs/n4slTVw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUXURRhIbYnRNriIAB7pkGj0MLt9G8mPNCJLpCHdpUGJA+sNUp
-	rWEHTlTu/zqo52cocqyMz22k5m4nE6OA18BJS799t3I9qOJYdH4/6LzgnFJUGrqGBfd3ouxEBDl
-	4Dw==
-X-Google-Smtp-Source: AGHT+IEQQzqVhfJxOgHOkMbN4KViM02emhSFsqxk/o7BP+xd9QQa4Wlrdd5/eK4O2MhvjeCbxbYdiDp43lE=
-X-Received: from pjbph16.prod.google.com ([2002:a17:90b:3bd0:b0:2f9:e05f:187f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:5684:b0:2fb:fe21:4841
- with SMTP id 98e67ed59e1d1-2ff33b937f1mr9676522a91.8.1741136746296; Tue, 04
- Mar 2025 17:05:46 -0800 (PST)
-Date: Tue,  4 Mar 2025 17:05:14 -0800
-In-Reply-To: <20250224174156.2362059-1-seanjc@google.com>
+        bh=9dQMVONACc/ChRDXXSj2E+97tCqbKUw9XyI1vlcsxSA=;
+        b=dzuGXKwaGFK5Y0MRUrTQ8/WiTe6YF2JvdT2yPJCowRrHPUzg8ZZOxE89UmcAGbKnf3
+         o2zKlhJODDdFxz8fRqRKGFo3PSLvST0bAVUid54wh9B8OH1M7FtxIM56eZTooFVImGS+
+         3kJcFQWJ4ocDck5P5bnq2zxRLoXgIFS0Knbu0XeOLJvwfdL2RI6JjVM1ET/Q4+BaD/eA
+         yTy3tljcSNLSweXt1cdTsOCVSr9HFQcShYTofzB7p91iFaC3VYddzsRRjWtj6R+augBr
+         MJ4t3co44vovEbeuywwaDHrLMeDGfLQ1tM44/gHi7zW+1AZDrmUQcnuEsq4DDlmMeKHK
+         gJVg==
+X-Forwarded-Encrypted: i=1; AJvYcCXl+HRh5SBvvuv57laRiEODZLoczM7EBLpu8PjN56VUeke9hs34XaXIsTGsAU1a7EQZXqIJHViz3IB/YwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZYAtCEIZOiHs4SZsu4x1b1non3/oUwUjUpOaIxGTk1a7yGjnN
+	xEZ23+vy6GgkvXwyh/h8x/9hsxnCuZ0UMcpxGVkDGP4PmKJ/24wxAL5BZlxKxKWkn71aUzyMKZd
+	tgA==
+X-Google-Smtp-Source: AGHT+IFJyL5DSsPfc7J5dgze+5EPuz9vZ84n5U1hHAIRYR+TQzk1rbdMEvItgD8yqCyw/CELtjntpL3YSIs=
+X-Received: from pjboe13.prod.google.com ([2002:a17:90b:394d:b0:2f4:4222:ebba])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:51cb:b0:2ee:d193:f3d5
+ with SMTP id 98e67ed59e1d1-2ff4978fe91mr2442244a91.7.1741136771305; Tue, 04
+ Mar 2025 17:06:11 -0800 (PST)
+Date: Tue,  4 Mar 2025 17:05:16 -0800
+In-Reply-To: <20250226231809.3183093-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250224174156.2362059-1-seanjc@google.com>
+References: <20250226231809.3183093-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <174078620474.3857606.12481651463517277322.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: x86: Always set mp_state to RUNNABLE on wakeup from HLT
+Message-ID: <174078621049.3857714.9685413190678445101.b4-ty@google.com>
+Subject: Re: [PATCH] KVM: selftests: Relax assertion on HLT exits if CPU
+ supports Idle HLT
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Manali Shukla <Manali.Shukla@amd.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Mon, 24 Feb 2025 09:41:56 -0800, Sean Christopherson wrote:
-> When emulating HLT and a wake event is already pending, explicitly mark
-> the vCPU RUNNABLE (via kvm_set_mp_state()) instead of assuming the vCPU is
-> already in the appropriate state.  Barring a KVM bug, it should be
-> impossible for the vCPU to be in a non-RUNNABLE state, but there is no
-> advantage to relying on that to hold true, and ensuring the vCPU is made
-> RUNNABLE avoids non-deterministic behavior with respect to pv_unhalted.
+On Wed, 26 Feb 2025 15:18:09 -0800, Sean Christopherson wrote:
+> If the CPU supports Idle HLT, which elides HLT VM-Exits if the vCPU has an
+> unmasked pending IRQ or NMI, relax the xAPIC IPI test's assertion on the
+> number of HLT exits to only require that the number of exits is less than
+> or equal to the number of HLT instructions that were executed.  I.e. don't
+> fail the test if Idle HLT does what it's supposed to do.
+> 
+> Note, unfortunately there's no way to determine if *KVM* supports Idle HLT,
+> as this_cpu_has() checks raw CPU support, and kvm_cpu_has() checks what can
+> be exposed to L1, i.e. the latter would check if KVM supports nested Idle
+> HLT.  But, since the assert is purely bonus coverage, checking for CPU
+> support is good enough.
 > 
 > [...]
 
-Applied to kvm-x86 misc, thanks!
+Applied to kvm-x86 selftests, thanks!
 
-[1/1] KVM: x86: Always set mp_state to RUNNABLE on wakeup from HLT
-      https://github.com/kvm-x86/linux/commit/2a289aed3fcd
+[1/1] KVM: selftests: Relax assertion on HLT exits if CPU supports Idle HLT
+      https://github.com/kvm-x86/linux/commit/62838fa5eade
 
 --
 https://github.com/kvm-x86/linux/tree/next
