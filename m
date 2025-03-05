@@ -1,211 +1,124 @@
-Return-Path: <linux-kernel+bounces-547028-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ACCDA501EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:29:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E779A501EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:28:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2513AA454
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:27:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 054143B28AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:26:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F305C24CEF0;
-	Wed,  5 Mar 2025 14:27:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2024BD1A;
+	Wed,  5 Mar 2025 14:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="RekStM0K"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDfRs4YW"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E8424C691;
-	Wed,  5 Mar 2025 14:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184823; cv=pass; b=Vb3LuiTggm4LUZOl6hfWEIf3Lr3lRKtbiVhKXmq5jC7ozfbIlc0gVaak3L6vKyFWmzvAXP8PZSFe1TLnbu3AT7R/Kn6ieMXxNp39QUhCI1UG3DR0loly8wHNzgF5gMMUSnl4vvUBvYkPccGqlvC3484QANTrNGqZ+oyvMtIpQPk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184823; c=relaxed/simple;
-	bh=/Z9S0QzKDsuLG0+3X3XdL82r5DXrvOFAaAskQNYSId4=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=j5JX+/rj148hUYQNnmTIkCZdtVMmD8hQJ/w5An/hnxRP74gw3nAqKc5RTiWeGiafTYFAJlXD6C9sillsstWnVHcDMPVwNChESA55W/QkaVQ5nH+TvTBa5IF+x3feQqJlWs1W/jwXUWiV1outdqCaUGUPBvScjdEwUrWOvkT6Zy8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=RekStM0K; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741184778; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=UNe32RR04FyEtxJr78wuwJoPPVIRQJ/9ZZVrbt8MSyvtwmPpfoQlWjDO6l2ibYVqLMdcFelA5vds3leEP0F4NFkbOsjRHu644aLrsSDHwUqcVpCxiBw+TcvbQiSsdvHSKyjUJ8yT5kBIJNwtauWVdquf8RomVTEXIOlT4r6jhjA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741184778; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=AdsW+1At4dzqwKDMRG+xhUkB9QjIq0jRnj5pAKgqr7Q=; 
-	b=OXt96sUQvHVTNUyBiyYNSAjazgswZrJYRHmjY537bKwCQcl0w9CKzRYO8t+/3+mybKlS8XOrrCs07zXBl49bjHw/UaNji5pvZOAaPeZFYpFsFLjIrwNGMNFx3iVf0jAhjXGOyu1By8r0WaIxSmTvp25Qh0mFTJcXDH3keQzF110=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741184778;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=AdsW+1At4dzqwKDMRG+xhUkB9QjIq0jRnj5pAKgqr7Q=;
-	b=RekStM0KWIrf2d7tmLV0YwK/ffv+lYmKJenAW06PEzAbke5LQEb7vHepf7wdPP2M
-	0LQHWJwHa7RIV1CF5IIDXBR5jwGf6ItIj9K5PdOa/rrvdeLJBjPIWKrwnne+CqyK30v
-	qHIWs7N7ed3dkSwT0fr3oZuRjxhJ8KCNhXT8lm/k=
-Received: by mx.zohomail.com with SMTPS id 1741184776075416.8048596435848;
-	Wed, 5 Mar 2025 06:26:16 -0800 (PST)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FE724A077;
+	Wed,  5 Mar 2025 14:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741184818; cv=none; b=uCN7JUg8Z/0kvO/2zizBqtA+fHVD9HVEFUZDuinlVVeHkADsTmoAGRi0Wxs3BwyxLsfCs3hxCoLxhRah5zmeljS9zU18Fhr1t3RTYsM7sXI94XRA2xzqXy922Yxx0RHrjxFrtl09eJS+mcpc3Z1/wOHhGYEG0/Kk8vm5IC9bCa8=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741184818; c=relaxed/simple;
+	bh=eUK2lpiP1FoSgc9h1gORMk92bbuPc9yvLgGu1Z6Qwhk=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=awyAYf9eC5X0ofKwZOfpw2stFOKmLglGE0XteYt/vHuYr4Y8rafvHeNMKaoxKMU6sBNWZkk1Ku8q0kcO4muOZObn3igeNmvXGiIlP6FvYMlLzttCddwtJwOQNs0NqAEExaLXAcl5YVRa2jIVgXuVwUutYJlE/8xEt4j/UGsWPqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDfRs4YW; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bc0b8520cso22445615e9.1;
+        Wed, 05 Mar 2025 06:26:56 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741184815; x=1741789615; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5w41DRiJ/9J1ZtMFKS35HZz81JTi9tqzjEpSgeekIgk=;
+        b=jDfRs4YWY9ZTDNq0IjY8oATG3naABg7HWzf/ZLoyifBgDNsRmW2/GBhqaOAOc+0ByG
+         V7O6XIWaNbH+M/5mzQ1aZC+Ui7crxaH3J3WepzjCKN3atJWrIVGXDwMqbnT/Knvtq3GI
+         fEkC2+bobNkcH5SkOJ2MHHxGiL/usyx+6MIrf2uplgBpI98VPYl7SYQNaz56RoskZC0W
+         QHtIX8TnHM6qxCU7sARlMbtsmIse/4QdFa40nr0Sn2FLPGeRyvoMGxdAoyWtqy/dy5xR
+         dq6Szkqjb8DOW/Psl4ArOMNuZyMoixvAO1XJXoUPfmo9Ldo520K+Lkc1vyE6o18/UsSY
+         Oj7g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741184815; x=1741789615;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5w41DRiJ/9J1ZtMFKS35HZz81JTi9tqzjEpSgeekIgk=;
+        b=iEEndm8YSaicMgEoxox4y+h+QH+d9yR4g2C2XtYj3heX9x7CHez0JozHp8YxnjziJo
+         Rvy+1BgbhiMkA3lRkDVMOJoQnpLC+HTIsgeIXYizRKvdgPdSHejVH2gwpShYI7FEUIFv
+         z0e/XX3TzPd+En71uDBtXcMTONA8bfU2p6FcbNR58UGHNQC01gcGAUETfm3WZyVM4q6F
+         AqEz5h4V9vhQodxuPvFhJfWf3jMJ4rE1ewsoC2OVMci+T/soqlW84S8sPKivjI0rmHoq
+         2tsESewF5JuX/OyvIIQAFrKhD7sXE4lacosqa4dX3xGsGMMeK6+e8rzVhHKWxl6bWoVd
+         c+iw==
+X-Forwarded-Encrypted: i=1; AJvYcCUyeC3sWqbVjjMIb8Yan2H9Esyhp094n9TuaL1NvJuk2tbGIcmPRJkJvjQEiwzY2Bb2xVGbcwie8kJkFUw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxmmnPR7daN49yTiTRD+4pW9z8T0uXbn6H4aS8OYQ3KVZGtvrl
+	Knekn0UY3RmdGMN8j/8Rkxv83ZxTXE+Phk9J6Zf4LRCYWty64toT6rHwFg==
+X-Gm-Gg: ASbGncuWNB33+zmaQDxKlrPyNNgyFOOgXxQR0uBBeMDPTSIqf6qW20e/sJfS2boadvP
+	d0YBlwiP3inobZcPGwyXroQKjx5egvc1us9U9rRwahGwF5x2Wq/IOehJqGs1jIcfS2Ju68evb6v
+	Y+9N+R9l8wl7EI4c/iEjYzikUKgyhf2uvUdNnaumwz/b0jpxuhRKimrk1XS3/xM9xEqF7izLapT
+	Y2UliPT0jSeD4Oa3wra5bCnCWDPucHZ4NrsiwS+HO0dCTXEBIsaKcUyzEAyG0cOJfbZBo1zdO0+
+	itFNVnUMIqpPLO6pniEKTyOwej6BJl7x70Wel17C45i26FoQUorK7QiPFXG4E6fN/zaUVLzAezo
+	5grRSL0c=
+X-Google-Smtp-Source: AGHT+IF0B41RHaO5k5y1Clubg7F9JL3YEVmmZXW9Ppx3hJLmnuQaUQzgcDjx+6PEq+4SMBuJY10G4w==
+X-Received: by 2002:a05:6000:4007:b0:390:f45e:c84a with SMTP id ffacd0b85a97d-3911f7cb10fmr3522154f8f.48.1741184814990;
+        Wed, 05 Mar 2025 06:26:54 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4848252sm21356612f8f.69.2025.03.05.06.26.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 06:26:54 -0800 (PST)
+Date: Wed, 5 Mar 2025 14:26:53 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+ x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel
+ <ardb@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
+ <nick.desaulniers+lkml@gmail.com>, Justin Stitt <justinstitt@google.com>,
+ linux-crypto@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] x86/crc32: optimize tail handling for crc32c short
+ inputs
+Message-ID: <20250305142653.751d9840@pumpkin>
+In-Reply-To: <20250304213216.108925-1-ebiggers@kernel.org>
+References: <20250304213216.108925-1-ebiggers@kernel.org>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
-Subject: Re: Allow data races on some read/write operations
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
-Date: Wed, 5 Mar 2025 11:25:58 -0300
-Cc: Boqun Feng <boqun.feng@gmail.com>,
- comex <comexk@gmail.com>,
- Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>,
- dakr@kernel.org,
- robin.murphy@arm.com,
- rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Trevor Gross <tmgross@umich.edu>,
- Valentin Obst <kernel@valentinobst.de>,
- linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com,
- iommu@lists.linux.dev,
- lkmm@lists.linux.dev
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <23E19975-0AF5-4223-B05D-4891747B7C15@collabora.com>
-References: <87bjuil15w.fsf@kernel.org>
- <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
- <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
- <87ikoqjg1n.fsf@kernel.org>
- <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
- <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
- <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
- <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
- <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
- <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
- <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
-To: Ralf Jung <post@ralfj.de>
-X-Mailer: Apple Mail (2.3826.300.87.4.3)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Rafl,
+On Tue,  4 Mar 2025 13:32:16 -0800
+Eric Biggers <ebiggers@kernel.org> wrote:
 
-> On 5 Mar 2025, at 10:10, Ralf Jung <post@ralfj.de> wrote:
->=20
-> Hi,
->=20
-> On 05.03.25 04:24, Boqun Feng wrote:
->> On Tue, Mar 04, 2025 at 12:18:28PM -0800, comex wrote:
->>>=20
->>>> On Mar 4, 2025, at 11:03=E2=80=AFAM, Ralf Jung <post@ralfj.de> =
-wrote:
->>>>=20
->>>> Those already exist in Rust, albeit only unstably:
->>>> =
-<https://doc.rust-lang.org/nightly/std/intrinsics/fn.volatile_copy_memory.=
-html>.
->>>> However, I am not sure how you'd even generate such a call in C? =
-The
->>>> standard memcpy function is not doing volatile accesses, to my
->>>> knowledge.
->>>=20
->>> The actual memcpy symbol that exists at runtime is written in
->>> assembly, and should be valid to treat as performing volatile
->>> accesses.
->=20
-> memcpy is often written in C... and AFAIK compilers understand what =
-that function does and will, for instance, happily eliminate the call if =
-they can prove that the destination memory is not being read from again. =
-So, it doesn't behave like a volatile access at all.
->=20
->>> But both GCC and Clang special-case the memcpy function.  For =
-example,
->>> if you call memcpy with a small constant as the size, the optimizer
->>> will transform the call into one or more regular loads/stores, which
->>> can then be optimized mostly like any other loads/stores (except for
->>> opting out of alignment and type-based aliasing assumptions).  Even =
-if
->>> the call isn=E2=80=99t transformed, the optimizer will still make =
-assumptions.
->>> LLVM will automatically mark memcpy `nosync`, which makes it =
-undefined
->>> behavior if the function =E2=80=9Ccommunicate[s] (synchronize[s]) =
-with another
->>> thread=E2=80=9D, including through =E2=80=9Cvolatile accesses=E2=80=9D=
-. [1]
->=20
-> The question is more,  what do clang and GCC document / guarantee in a =
-stable way regarding memcpy? I have not seen any indication so far that =
-a memcpy call would ever be considered volatile, so we have to treat it =
-like a non-volatile non-atomic operation.
->=20
->>> However, these optimizations should rarely trigger misbehavior in
->>> practice, so I wouldn=E2=80=99t be surprised if Linux had some code =
-that
->>> expected memcpy to act volatile=E2=80=A6
->>>=20
->> Also in this particular case we are discussing [1], it's a memcpy =
-(from
->> or to) a DMA buffer, which means the device can also read or write =
-the
->> memory, therefore the content of the memory may be altered outside =
-the
->> program (the kernel), so we cannot use copy_nonoverlapping() I =
-believe.
->> [1]: =
-https://lore.kernel.org/rust-for-linux/87bjuil15w.fsf@kernel.org/
->=20
-> Is there actually a potential for races (with reads by hardware, not =
-other threads) on the memcpy'd memory? Or is this the pattern where you =
-copy some data somewhere and then set a flag in an MMIO register to =
-indicate that the data is ready and the device can start reading it? In =
-the latter case, the actual data copy does not race with anything, so it =
-can be a
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
+> do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
+> taking advantage of wider CRC instructions.  Note that crc32c-3way.S
+> already uses this same optimization too.
 
-This is device-specific.
+An alternative is to add extra zero bytes at the start of the buffer.
+They don't affect the crc and just need the first 8 bytes shifted left.
 
-e.g.: for video codecs, if you don=E2=80=99t set a bit that starts the =
-decode or
-encode process for the current frame, everything remains as-is, i.e.: =
-untouched
-by the hardware. I can=E2=80=99t vouch for all other devices, and people =
-have
-already chimed in to say this is not necessarily the case for some of =
-them.
+I think any non-zero 'crc-in' just needs to be xor'ed over the first
+4 actual data bytes.
+(It's over 40 years since I did the maths of CRC.)
 
-> regular non-atomic non-volatile memcpy. The flag write *should* be a =
-release write, and release volatile writes do not exist, so that is a =
-problem, but it's a separate problem from volatile memcpy. One can use a =
-release fence followed by a relaxed write instead. Volatile writes do =
-not currently act like relaxed writes, but you need that anyway for =
-WRITE_ONCE to make sense so it seems fine to rely on that here as well.
->=20
-> Rust should have atomic volatile accesses, and various ideas have been =
-proposed over the years, but sadly nobody has shown up to try and push =
-this through.
->=20
-> If the memcpy itself can indeed race, you need an atomic volatile =
-memcpy -- which neither C nor Rust have, though there are proposals for =
-atomic memcpy (and arguably, there should be a way to interact with a =
-device using non-volatile atomics... but anyway in the LKMM, atomics are =
-modeled with volatile, so things are even more entangled than usual ;).
->=20
-> Kind regards,
-> Ralf
->=20
+You won't notice the misaligned accesses all down the buffer.
+When I was testing different ipcsum code misaligned buffers
+cost less than 1 clock per cache line.
+I think that was even true for the versions that managed 12 bytes
+per clock (including the one Linus committed).
 
-=E2=80=94 Daniel
-
+	David
 
