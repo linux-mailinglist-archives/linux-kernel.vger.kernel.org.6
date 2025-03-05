@@ -1,166 +1,191 @@
-Return-Path: <linux-kernel+bounces-547126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 239FFA5033F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:13:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39A85A5033B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:13:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA414164B7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:13:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51AB83A757F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7047224EF9F;
-	Wed,  5 Mar 2025 15:13:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F27724EF7A;
+	Wed,  5 Mar 2025 15:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b="Bqv864iw"
-Received: from ksmg01.maxima.ru (ksmg01.maxima.ru [81.200.124.38])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G/fiRUVw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FC2824C68D;
-	Wed,  5 Mar 2025 15:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.200.124.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A0378635D;
+	Wed,  5 Mar 2025 15:12:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741187611; cv=none; b=RCrBCzhyXhqP4kzssgZ3FKwA3POuUod26902kFwiMtM0Cb8Zu6qVsGtSOB2IMY5EAIadOk4nz80VKKm6cAtmd935rbB3rZYb03MWe/GZWLWsJOL8ExJWj3aYw4NjNpH7r8aSM1uPJ0BWKYA4XDBQWEOXDng2GxJR0ZgBW1u8czk=
+	t=1741187577; cv=none; b=g99hbq/n6SUEvIOD0K0G1w4ZpTgvxwnBE7XnBiYhOcJqj4tkJyKRSQ7EimPYVbJgAtWTu85fHUmlplG6QiVp3TGmbG0358gbnPJuilEof891iWj968nQAEbNH9wvsZyeA/C12DhvFvSv3va9BF6Gnau33a/rbi3th0ANwn9WcMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741187611; c=relaxed/simple;
-	bh=A30K9ZC21AEWOAnZDI/LtiVBGGSU4L6zt2FCIEN/Wog=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hBp8mUFx3Pjt5WitRTDnMQOhpMCnde86/HHmRdzodABoxILcFvWgm1T8Kx3nTZzDWgiDZ0WJxoKLewCDXOFZzAw5OGWuPwLDUpibBbrZvGpILTRkir/TdSxzuRRfexIbCXN3UKLUsYXPXnp3w3LASdBEVzROehpFgy/iTDVJ06E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru; spf=pass smtp.mailfrom=mt-integration.ru; dkim=pass (2048-bit key) header.d=mt-integration.ru header.i=@mt-integration.ru header.b=Bqv864iw; arc=none smtp.client-ip=81.200.124.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=mt-integration.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt-integration.ru
-Received: from ksmg01.maxima.ru (localhost [127.0.0.1])
-	by ksmg01.maxima.ru (Postfix) with ESMTP id 1F3B9C001C;
-	Wed,  5 Mar 2025 18:13:25 +0300 (MSK)
-DKIM-Filter: OpenDKIM Filter v2.11.0 ksmg01.maxima.ru 1F3B9C001C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt-integration.ru;
-	s=sl; t=1741187605; bh=n5v3qc83BGal1rN0v71QU7IveSQvkixZaWHpHWiEcIQ=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
-	b=Bqv864iwas3lLZxl3csNK+tXIldo4W/kctViiASVgRtIBWOFZl/o1fLLcbVkbysP3
-	 LkdVKuD5yCHygC96t5bj6cC4wwfbRe4tzXr6y2Y9qYUSwjlfc9HllfxYduxYEoUeI6
-	 jxuJp7Sljfu+irrKPqtNAQxDWE89veg0s8m4AtO5ieaAAVHJtZjiNntnBkBlBVsW+S
-	 qFUhFRx8OWMyXTDQeQzhpcHO6o9A1iV7IPcOZ4qhTOnDxaEjL4Gp3c+eq6Wb0aGSoM
-	 5GbfCID1X2Qci5Yh5hB+K0avuO1+pimOscq2RBnd9Z2OFn8zvb+pXfHK/6BWy54K/l
-	 J6NwhXgeDTblA==
-Received: from ksmg01.maxima.ru (autodiscover.maxima.ru [81.200.124.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(Client CN "*.maxima.ru", Issuer "GlobalSign GCC R3 DV TLS CA 2020" (verified OK))
-	by ksmg01.maxima.ru (Postfix) with ESMTPS;
-	Wed,  5 Mar 2025 18:13:24 +0300 (MSK)
-Received: from localhost.maximatelecom.ru (5.1.51.168) by mmail-p-exch01.mt.ru
- (81.200.124.61) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.2.1544.4; Wed, 5 Mar 2025
- 18:13:23 +0300
-From: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
-To: Hans Verkuil <hverkuil@xs4all.nl>
-CC: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>, Mauro Carvalho Chehab
-	<mchehab@kernel.org>, Jani Nikula <jani.nikula@intel.com>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<lvc-project@linuxtesting.org>
-Subject: [PATCH v2] media: cec: use us_to_ktime() where appropriate
-Date: Wed, 5 Mar 2025 20:11:25 +0500
-Message-ID: <20250305151212.13660-1-v.shevtsov@mt-integration.ru>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741187577; c=relaxed/simple;
+	bh=4zHaL04CB0Fya4HCFRotOuAVke6Rb0AyD3EyARxmoZE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MURhALZuqJgHXPLn58NIj2hWCLV8Fa+LsqLSHLa8mSlLPUZQB/uu8J7cLU8ji18bvJg6GQ1Nj3w0YTjRhJxxWsu4WuxiMe+wQN0gCIQTcLD0M4sFKdnKF6r2E/QusQ+Q/sdyeHjzKMQIivul+a6xGXtN6dGfSfvFXkZfRVj+uHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G/fiRUVw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 858D5C4CED1;
+	Wed,  5 Mar 2025 15:12:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741187576;
+	bh=4zHaL04CB0Fya4HCFRotOuAVke6Rb0AyD3EyARxmoZE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G/fiRUVwGRsFHKTa7NN3r6GwkLo1RlvTiHhJlIKJdwnkqsjdGIUwSwR8Mr8k6Xkxy
+	 wbl+IxpLDDKH24bvfRPfh2YO6TddwmUJHjWy1d++9vByaZtWgHZRG2yae7kj2zq4RV
+	 gY6NqLyXTZpyPrZUqon0DgXHM5/VxY6433iWU23qNBbttiMozpGlmGhBEcNQeVi4Y9
+	 TijtoFVKRBs3KRq+ALxYAdtm2uinBvBvcDvL1ez96H7wtXPETjPSS+CwVLLqVG3oyH
+	 uFjd5MdSiXGxMEW0x1Z2AnPr5cYlwadRZJ0dtBK9ujqfDfdhHB9h8NajCHQ0/rzwtI
+	 woXWbl7OHqSDA==
+Date: Wed, 5 Mar 2025 16:12:51 +0100
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+	llvm@lists.linux.dev, Geert Uytterhoeven <geert+renesas@glider.be>,
+	David Gow <davidgow@google.com>,
+	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Ard Biesheuvel <ardb@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] kunit/stackinit: Use fill byte different from Clang i386
+ pattern
+Message-ID: <20250305151251.GA1538566@ax162>
+References: <20250304225606.work.030-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: mt-exch-01.mt.ru (91.220.120.210) To mmail-p-exch01.mt.ru
- (81.200.124.61)
-X-KSMG-AntiPhishing: NotDetected, bases: 2025/03/05 13:16:00
-X-KSMG-AntiSpam-Auth: dmarc=none header.from=mt-integration.ru;spf=none smtp.mailfrom=mt-integration.ru;dkim=none
-X-KSMG-AntiSpam-Envelope-From: v.shevtsov@mt-integration.ru
-X-KSMG-AntiSpam-Info: LuaCore: 51 0.3.51 68896fb0083a027476849bf400a331a2d5d94398, {rep_avail}, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, ksmg01.maxima.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;mt-integration.ru:7.1.1;lore.kernel.org:7.1.1;81.200.124.61:7.1.2, FromAlignment: s, ApMailHostAddress: 81.200.124.61
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiSpam-Lua-Profiles: 191511 [Mar 05 2025]
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Version: 6.1.1.11
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 2.1.1.8310, bases: 2025/03/05 13:56:00 #27617700
-X-KSMG-AntiVirus-Status: NotDetected, skipped
-X-KSMG-LinksScanning: NotDetected, bases: 2025/03/05 13:16:00
-X-KSMG-Message-Action: skipped
-X-KSMG-Rule-ID: 7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304225606.work.030-kees@kernel.org>
 
-[Why]
-There are several ns_to_ktime() calls that require using nanoseconds. It is
-better to replace them with us_to_ktime() to make code clear, getting rid
-of multiplication by 1000.
+On Tue, Mar 04, 2025 at 02:56:11PM -0800, Kees Cook wrote:
+> The byte initialization values used with -ftrivial-auto-var-init=pattern
+> (CONFIG_INIT_STACK_ALL_PATTERN=y) depends on the compiler, architecture,
+> and byte position relative to struct member types. On i386 with Clang,
+> this includes the 0xFF value, which means it looks like nothing changes
+> between the leaf byte filling pass and the expected "stack wiping"
+> pass of the stackinit test.
+> 
+> Use the byte fill value of 0x99 instead, fixing the test for i386 Clang
+> builds.
+> 
+> Reported-by: ernsteiswuerfel
+> Closes: https://github.com/ClangBuiltLinux/linux/issues/2071
+> Fixes: 8c30d32b1a32 ("lib/test_stackinit: Handle Clang auto-initialization pattern")
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-Also the timer function code may have an integer wrap-around issue. Since
-both tx_custom_low_usecs and tx_custom_high_usecs can be set to up to
-9999999 from the user space via cec_pin_error_inj_parse_line(), this may
-cause usecs to be overflowed when adap->monitor_pin_cnt is zero and usecs
-is multiplied by 1000.
+stackinit passes with arm, arm64, i386, and x86_64 when using
+LLVM 20.1.0-rc3. Hopefully they do not change the init pattern :)
 
-[How]
-Take advantage of using an appropriate helper func us_to_ktime() instead of
-ns_to_ktime() to improve readability and to make the code clearer. And this
-also mitigates possible integer wrap-arounds when usecs value is too large
-and it is multiplied by 1000.
+Tested-by: Nathan Chancellor <nathan@kernel.org>
 
-Found by Linux Verification Center (linuxtesting.org) with Svace.
-
-Signed-off-by: Vitaliy Shevtsov <v.shevtsov@mt-integration.ru>
----
-v2: Wrapped some lines in the commit description to fit into 75 characters.
-    Reported by Patchwork Integration <patchwork@media-ci.org>
-
-This patch was created after the Christophe JAILLET's comment at
-https://lore.kernel.org/all/cff4d412-abbf-44b5-9705-ba14dff7d5d0@wanadoo.fr/
-
- drivers/media/cec/core/cec-pin.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
-
-diff --git a/drivers/media/cec/core/cec-pin.c b/drivers/media/cec/core/cec-pin.c
-index a70451d99ebc..f232c3df7ee1 100644
---- a/drivers/media/cec/core/cec-pin.c
-+++ b/drivers/media/cec/core/cec-pin.c
-@@ -873,19 +873,19 @@ static enum hrtimer_restart cec_pin_timer(struct hrtimer *timer)
- 		if (pin->wait_usecs > 150) {
- 			pin->wait_usecs -= 100;
- 			pin->timer_ts = ktime_add_us(ts, 100);
--			hrtimer_forward_now(timer, ns_to_ktime(100000));
-+			hrtimer_forward_now(timer, us_to_ktime(100));
- 			return HRTIMER_RESTART;
- 		}
- 		if (pin->wait_usecs > 100) {
- 			pin->wait_usecs /= 2;
- 			pin->timer_ts = ktime_add_us(ts, pin->wait_usecs);
- 			hrtimer_forward_now(timer,
--					ns_to_ktime(pin->wait_usecs * 1000));
-+					us_to_ktime(pin->wait_usecs));
- 			return HRTIMER_RESTART;
- 		}
- 		pin->timer_ts = ktime_add_us(ts, pin->wait_usecs);
- 		hrtimer_forward_now(timer,
--				    ns_to_ktime(pin->wait_usecs * 1000));
-+				    us_to_ktime(pin->wait_usecs));
- 		pin->wait_usecs = 0;
- 		return HRTIMER_RESTART;
- 	}
-@@ -1020,13 +1020,12 @@ static enum hrtimer_restart cec_pin_timer(struct hrtimer *timer)
- 	if (!adap->monitor_pin_cnt || usecs <= 150) {
- 		pin->wait_usecs = 0;
- 		pin->timer_ts = ktime_add_us(ts, usecs);
--		hrtimer_forward_now(timer,
--				ns_to_ktime(usecs * 1000));
-+		hrtimer_forward_now(timer, us_to_ktime(usecs));
- 		return HRTIMER_RESTART;
- 	}
- 	pin->wait_usecs = usecs - 100;
- 	pin->timer_ts = ktime_add_us(ts, 100);
--	hrtimer_forward_now(timer, ns_to_ktime(100000));
-+	hrtimer_forward_now(timer, us_to_ktime(100));
- 	return HRTIMER_RESTART;
- }
- 
--- 
-2.48.1
-
+> ---
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Bill Wendling <morbo@google.com>
+> Cc: Justin Stitt <justinstitt@google.com>
+> Cc: llvm@lists.linux.dev
+> ---
+>  lib/tests/stackinit_kunit.c | 30 ++++++++++++++++++++----------
+>  1 file changed, 20 insertions(+), 10 deletions(-)
+> 
+> diff --git a/lib/tests/stackinit_kunit.c b/lib/tests/stackinit_kunit.c
+> index 135322592faf..63aa78e6f5c1 100644
+> --- a/lib/tests/stackinit_kunit.c
+> +++ b/lib/tests/stackinit_kunit.c
+> @@ -184,6 +184,15 @@ static bool stackinit_range_contains(char *haystack_start, size_t haystack_size,
+>  #define INIT_UNION_assigned_copy(var_type)		\
+>  	INIT_STRUCT_assigned_copy(var_type)
+>  
+> +/*
+> + * The "did we actually fill the stack?" check value needs
+> + * to be neither 0 nor any of the "pattern" bytes. The
+> + * pattern bytes are compiler, architecture, and type based,
+> + * so we have to pick a value that never appears for those
+> + * combinations. Use 0x99 which is not 0xFF, 0xFE, nor 0xAA.
+> + */
+> +#define FILL_BYTE	0x99
+> +
+>  /*
+>   * @name: unique string name for the test
+>   * @var_type: type to be tested for zeroing initialization
+> @@ -206,12 +215,12 @@ static noinline void test_ ## name (struct kunit *test)		\
+>  	ZERO_CLONE_ ## which(zero);				\
+>  	/* Clear entire check buffer for 0xFF overlap test. */	\
+>  	memset(check_buf, 0x00, sizeof(check_buf));		\
+> -	/* Fill stack with 0xFF. */				\
+> +	/* Fill stack with FILL_BYTE. */			\
+>  	ignored = leaf_ ##name((unsigned long)&ignored, 1,	\
+>  				FETCH_ARG_ ## which(zero));	\
+> -	/* Verify all bytes overwritten with 0xFF. */		\
+> +	/* Verify all bytes overwritten with FILL_BYTE. */	\
+>  	for (sum = 0, i = 0; i < target_size; i++)		\
+> -		sum += (check_buf[i] != 0xFF);			\
+> +		sum += (check_buf[i] != FILL_BYTE);		\
+>  	/* Clear entire check buffer for later bit tests. */	\
+>  	memset(check_buf, 0x00, sizeof(check_buf));		\
+>  	/* Extract stack-defined variable contents. */		\
+> @@ -222,7 +231,8 @@ static noinline void test_ ## name (struct kunit *test)		\
+>  	 * possible between the two leaf function calls.	\
+>  	 */							\
+>  	KUNIT_ASSERT_EQ_MSG(test, sum, 0,			\
+> -			    "leaf fill was not 0xFF!?\n");	\
+> +			    "leaf fill was not 0x%02X!?\n",	\
+> +			    FILL_BYTE);				\
+>  								\
+>  	/* Validate that compiler lined up fill and target. */	\
+>  	KUNIT_ASSERT_TRUE_MSG(test,				\
+> @@ -234,9 +244,9 @@ static noinline void test_ ## name (struct kunit *test)		\
+>  		(int)((ssize_t)(uintptr_t)fill_start -		\
+>  		      (ssize_t)(uintptr_t)target_start));	\
+>  								\
+> -	/* Look for any bytes still 0xFF in check region. */	\
+> +	/* Validate check region has no FILL_BYTE bytes. */	\
+>  	for (sum = 0, i = 0; i < target_size; i++)		\
+> -		sum += (check_buf[i] == 0xFF);			\
+> +		sum += (check_buf[i] == FILL_BYTE);		\
+>  								\
+>  	if (sum != 0 && xfail)					\
+>  		kunit_skip(test,				\
+> @@ -271,12 +281,12 @@ static noinline int leaf_ ## name(unsigned long sp, bool fill,	\
+>  	 * stack frame of SOME kind...				\
+>  	 */							\
+>  	memset(buf, (char)(sp & 0xff), sizeof(buf));		\
+> -	/* Fill variable with 0xFF. */				\
+> +	/* Fill variable with FILL_BYTE. */			\
+>  	if (fill) {						\
+>  		fill_start = &var;				\
+>  		fill_size = sizeof(var);			\
+>  		memset(fill_start,				\
+> -		       (char)((sp & 0xff) | forced_mask),	\
+> +		       FILL_BYTE & forced_mask,			\
+>  		       fill_size);				\
+>  	}							\
+>  								\
+> @@ -469,7 +479,7 @@ static int noinline __leaf_switch_none(int path, bool fill)
+>  			fill_start = &var;
+>  			fill_size = sizeof(var);
+>  
+> -			memset(fill_start, forced_mask | 0x55, fill_size);
+> +			memset(fill_start, (forced_mask | 0x55) & FILL_BYTE, fill_size);
+>  		}
+>  		memcpy(check_buf, target_start, target_size);
+>  		break;
+> @@ -480,7 +490,7 @@ static int noinline __leaf_switch_none(int path, bool fill)
+>  			fill_start = &var;
+>  			fill_size = sizeof(var);
+>  
+> -			memset(fill_start, forced_mask | 0xaa, fill_size);
+> +			memset(fill_start, (forced_mask | 0xaa) & FILL_BYTE, fill_size);
+>  		}
+>  		memcpy(check_buf, target_start, target_size);
+>  		break;
+> -- 
+> 2.34.1
+> 
 
