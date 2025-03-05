@@ -1,122 +1,158 @@
-Return-Path: <linux-kernel+bounces-546180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2DFA4F765
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:45:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D527FA4F769
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:46:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04C03ABC39
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:45:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 101471890732
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0771EA7F7;
-	Wed,  5 Mar 2025 06:45:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1571EA7C3;
+	Wed,  5 Mar 2025 06:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dzs0A9Ba"
-Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AEC8v5zr"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A141156F44;
-	Wed,  5 Mar 2025 06:45:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 300991DFD83;
+	Wed,  5 Mar 2025 06:46:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741157141; cv=none; b=ZxWHX+tWTocpAoYA0WT/sVtiwNJIjq9f8bqCKz8bDF+whFq3jWr85+JP4GfFh2DAMmO0WGppLHTV5Ak367qW/7hIgg7JsKOZMtxfvIHyzw/oBUsvjXnxh6P8kf0rJ8teo5oNiRNfJKKmmncgzGfxzZyziSmD3X452qmttQE4U/Q=
+	t=1741157161; cv=none; b=oHncKow+vCm5dl4GvKEt45d65IwuolgiE5QGRQq9SZ4n4zwkiOQX6ePe79rMfbUXrHcI0Y/zyzBI1UZXoDmlcgprjSBxFqNJS5IFMlf0xOrSLxOS0bDMWOsMbytXcii8tu2aXZwsL2mfrn3CvWkn6ilVP9f/K+goSCZLANxMYjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741157141; c=relaxed/simple;
-	bh=auSqLtZpa8wrO19Iq/uk2LvKfjGhoCGt5+ZC/eDQM2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=X349bkzZvzB/D7d8Jj9r7yN6ZyqLZu0t6SUQzKntCwQZifmhmo/MV2JvMlt0MA94d6+exWFoTYBvwMBIqp0FPitKQnCNEjOcQwS+YL5KKWYPCh6IQHzJls29Boe782caEsMFwY7wUxT/QEX9zWoIKMOicgASkMtlqxsen0mxF+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dzs0A9Ba; arc=none smtp.client-ip=209.85.216.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2febaaf175fso8289423a91.3;
-        Tue, 04 Mar 2025 22:45:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741157139; x=1741761939; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=G8mCPsB48bmF8aTewO/RfZWrdCX2gTYrS/X2ZpOkCts=;
-        b=Dzs0A9BaM/H/Dlx0NvS1W1KfmzP1y4Nb5Konm1JNHkrwIOESGOwk0XTlBQT5MUhRO/
-         mXmAyyV0BYbnnlYNg9irP2Zt075nqo3n8tAP6/RdhBNRPKDd6Z7N+Hhygo5vISn8EhIl
-         uLo4egJN4RgWhGcmsXAzE7PMsHf+RDumR4UstzaSTTHzAlZHtq4dAz0+tycM2DT1J/U0
-         yH32d6cr3MFUxfSCFFVQ1fhmkFGkbr3X5uL8SoSKK8cqXYlK4WNR4gPfJ0bdoQkfGtoR
-         shaiMwgIBRJXU5f4GtK5BroW9haNBpVTUvNfYqGEDEz+Q8Tw1D18gpYrbG46OXZLZd3p
-         9lAw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741157139; x=1741761939;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G8mCPsB48bmF8aTewO/RfZWrdCX2gTYrS/X2ZpOkCts=;
-        b=gsA9+SeW+NAVGjXVy6GHRHYeo4GB4+gEPNSKRehn/beJZ1Ak9NRsqYQuOfXtsgeVzC
-         nLd1x9+3Uezr9DPW0PHdWFNFcJ0p+/h9Tagejyl/B9LKMIarKPPMfMzZMb47fJ8LNJ6Q
-         lHumXGJtjYWihRt8bHeWdorBFn7Ek9Jvuf7fbNCsplx4xEH2OLpo9w4PeVZPwo428d3j
-         kvfDGvyad08ToQc7HD3uhHpH60wCE4Ob9u6VQun7eUqECHeNDK2ddKYJXn/g8P3+YQ5b
-         k7FFo3G1KldonP4eIfJrgOlDy51GbWr/YC88BUEguMsmK0r3hvNK1bddT0gRD1Ws4Qt5
-         NtJw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAxS1gWT5XPDnAF+ikxFsYnrAVVUEVoqykgBkzbOMF7wQH/cPVY4huAQRJgU/I391XShDzQTh1BE+T@vger.kernel.org, AJvYcCW12+5KB9FBN756hDyzRF73ShrdEL0MBRUqTFomVSBEePp6s6xisfnJ/uSWaettEkgmwn2V9txVBrRk31k=@vger.kernel.org, AJvYcCW2SOU9KGTBEqm00jatC2/3bINK2VJA1w8c8gAsfutkBbAJO12DMnBdKmOey4z/RB9riC4pP2lmTjXBRUo+3w==@vger.kernel.org, AJvYcCWYLhZBhjaRhQoqTt3wUpYu3/1sjyvq3EwWHNAkLF/JfZqL1CUr86rwVJtLZfVijpLLt9RJPKGh4Of1KM0Z@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxp6GU0nWCT8pDVa23tGAJCC2FxXHL4g7HfZ1XokVEirlYXYqpT
-	scJ577m4Kg2l0n/X+cCw9yAYcHiTGL52xSSTrx/dZ2JjgJ/5XKxNbVRkVw==
-X-Gm-Gg: ASbGncslMjX2Uq91r2KHPOzoYXzSAvQ07GqautoyKxWdF18jgh3r1X3iA3G8VBNJDUp
-	6qzNZs8e3C28KsQTkcwPSdUuJpUa4bMNGgb3dU4tZexrNPFFJE/JgozUzkryvZSv9VDBqoqJ0Sk
-	+GuTFCPsc2kElcwYBS/KfUmIRZdM5rb07ouhLYbTOfr84lDCpyhoA+zpGnukRwA0TGZPFrAlq11
-	rPwCCObB/CaCy0HzejSJdJqjm3uVqpVFZyfye9gVqUeNTy/SX8E1zaIUi626V/dLzbVSVBLvvWs
-	UYqBig6fb4dWZEoEFvzdYdmhbOFjDpt2vytx/5WdlA3wsg==
-X-Google-Smtp-Source: AGHT+IGVH2wtIlAGIOQtGVzGD0CuvkOPmb/y/Y1xOui07mAMEjGJ65jR706zmjbyQkUklwU66ojQhA==
-X-Received: by 2002:a17:90b:2d8f:b0:2ee:c2df:5d30 with SMTP id 98e67ed59e1d1-2ff49841e81mr3287562a91.26.1741157139110;
-        Tue, 04 Mar 2025 22:45:39 -0800 (PST)
-Received: from google.com ([2620:15c:9d:2:438c:d5a2:41a6:66d1])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7bda78sm626452a91.48.2025.03.04.22.45.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 22:45:38 -0800 (PST)
-Date: Tue, 4 Mar 2025 22:45:35 -0800
-From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
-To: foss@joelselvaraj.com
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH v4 1/4] dt-bindings: input: touchscreen: edt-ft5x06: use
- unevaluatedProperties
-Message-ID: <Z8fzD-aF-hN0PeyD@google.com>
-References: <20250303-pocof1-touchscreen-support-v4-0-cdc3bebc3942@joelselvaraj.com>
- <20250303-pocof1-touchscreen-support-v4-1-cdc3bebc3942@joelselvaraj.com>
+	s=arc-20240116; t=1741157161; c=relaxed/simple;
+	bh=SMaJCz2LeQnN5psd2ci+mMQcqdxF4t7eL4mO4g+1mp0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nXES4hyJvNAafSR4DGwI0m9atYCIWBMy5ZlC+0ZsLu3No5h6aWyTjHNEVTu8mC0lZ5w4N+h5iSTk988N3EwdKn33QdbsegXk7zyAj9UpmhiKKxMAxEgN+odc7CTnoAcfRHEEoF+fe9RLe6UZELsM4d6kXk4631Bsf3bcs5Om2dY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AEC8v5zr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F16AC4CEEA;
+	Wed,  5 Mar 2025 06:45:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741157160;
+	bh=SMaJCz2LeQnN5psd2ci+mMQcqdxF4t7eL4mO4g+1mp0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=AEC8v5zruSLkxEj1X2aDkMVY0KSaCC0AhA6YGBhGzSeaA8UbHKDnMxFh0Zm/KzDKe
+	 g2meU7hC2I/QWUpqNRds3b2aKIg8nsTGoob78tG0/bGUcUyx6a8E7pk+xL0MFN/xwv
+	 E5INUt9R0kRvMvDH5IuKa/uug8QBqv52suYYzfXB1znaI5VR0aLWqn6anMaXAfdvsy
+	 3FS9x+ybMdjoj5m7zNt3Io4P9pmlH7x4E3+KBX/6S4mG0BstZB07QZZjiKcohF0Pnf
+	 RNUSy+Ip6uCUCMDyKaLW08pm3pFrR1K7NCWv4CNgohgM5/GawtySV+ezjFEfojNwPd
+	 RyWsVXu85OcHw==
+Message-ID: <f690d858-a427-4db4-81ee-d5eb6223368c@kernel.org>
+Date: Wed, 5 Mar 2025 07:45:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303-pocof1-touchscreen-support-v4-1-cdc3bebc3942@joelselvaraj.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 3/5] ASoC: dt-bindings: wm8904: Add DMIC, GPIO, MIC and
+ EQ support
+To: Ernest Van Hoecke <ernestvanhoecke@gmail.com>
+Cc: Francesco Dolcini <francesco@dolcini.it>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Saravana Kannan <saravanak@google.com>,
+ Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+ patches@opensource.cirrus.com,
+ Ernest Van Hoecke <ernest.vanhoecke@toradex.com>,
+ linux-sound@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Francesco Dolcini <francesco.dolcini@toradex.com>,
+ Charles Keepax <ckeepax@opensource.cirrus.com>
+References: <20250224155500.52462-1-francesco@dolcini.it>
+ <20250224155500.52462-4-francesco@dolcini.it>
+ <20250225-delicate-tortoise-of-management-e43fa2@krzk-bin>
+ <er4bcixggriqp6idl6xmr7bjetf5kkhadyeplkbyxvrffuiknc@ews752x4ugh7>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <er4bcixggriqp6idl6xmr7bjetf5kkhadyeplkbyxvrffuiknc@ews752x4ugh7>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Mar 03, 2025 at 04:36:55PM -0600, Joel Selvaraj via B4 Relay wrote:
-> From: Joel Selvaraj <foss@joelselvaraj.com>
+On 27/02/2025 16:34, Ernest Van Hoecke wrote:
+> On Tue, Feb 25, 2025 at 09:41:17AM +0100, Krzysztof Kozlowski wrote:
+>> On Mon, Feb 24, 2025 at 04:54:58PM +0100, Francesco Dolcini wrote:
+>>> +  wlf,drc-cfg-regs:
+>>> +    $ref: /schemas/types.yaml#/definitions/uint16-array
+>>> +    description:
+>>> +      Default register values for R40/41/42/43 (DRC).
+>>> +      The list must be 4 times the length of wlf,drc-cfg-names.
+>>> +      If absent, DRC is disabled.
+>>> +
+>>> +  wlf,retune-mobile-cfg-names:
+>>> +    $ref: /schemas/types.yaml#/definitions/string-array
+>>> +    description:
+>>> +      List of strings for the available retune modes.
+>>> +      If absent, retune is disabled.
+>>
+>> How is this retune supposed to be used? If by user-space I can easily
+>> imagine that static DTS configuration won't be enough, because you need
+>> to factor for example temperature or some other minor differences
+>> between same boards.
 > 
-> In Xiaomi Poco F1 (qcom/sdm845-xiaomi-beryllium-ebbg.dts), the FocalTech
-> FT8719 touchscreen is integrally connected to the display panel
-> (EBBG FT8719) and thus should be power sequenced together with display
-> panel using the panel property. Since the edt-ft5x06 touchscreen binding
-> uses almost all the properties present in touchscreen.yaml, let's remove
-> additionalProperties: false and use unevaluatedProperties to include all
-> the properties, including the needed panel property.
+> This is intended for integrators to be able to specify some EQ options,
+> mirroring the previous behaviour that was possible via platform data.
 > 
-> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
+> I expect most users to use the first five Retune Mobile registers and
+> not care about the rest, which require a proprietary tool and are not
+> well documented. The example in the binding shows how some simple
+> static EQ can be configured. Anyone interested in the extended config
+> can also use it (statically).
+> 
+> If someone requires dynamic behaviour at runtime that could be a
+> separate patch that should not be hindered by this static config.
 
-I believe this is better be merged through the arch tree together with
-the dts changes.
 
-Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+No, if this is suitable for dynamic configuration then it's a proof it
+is not suitable for DT.
 
-Thanks.
-
--- 
-Dmitry
+Best regards,
+Krzysztof
 
