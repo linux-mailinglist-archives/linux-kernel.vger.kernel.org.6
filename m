@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-546143-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A05FA4F6E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:12:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9570A4F6E3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:12:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D84A97A4638
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:11:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B28DE188FA99
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34D6D1E5B98;
-	Wed,  5 Mar 2025 06:12:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9929D1EA7FA;
+	Wed,  5 Mar 2025 06:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="cifFrb0J"
-Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NqpAebb+"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AC01D5159
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:11:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16D51E5B91
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:11:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741155119; cv=none; b=mKabpE4ADgUgJknk3e1U4FEfx/ACsl0k+JVU4JAJ9OpnXhCkkEuDTnEwaE6FUYOpb+AJyCWaHYiLSfX2/r+2ofhzs3nVcerVSxF3ucAFvJ2txstgmTInb+aSOG410Gs4M8mD6w7PUaotRe/T/iDapARsnEIj3gMuvOgz2xaaeUc=
+	t=1741155121; cv=none; b=SmDnBqrwaFi5VpQ4YmLWTJlGhUsDkgKs/beZbvBbndi7HY9/ycGySMePZ9mL4SHsFqcjh5mvZu6woycIFCrT8ArBbpagnNF70V0JMBfDxVbk2VNM9bQcSeFlEaBnxpDqD3/Eh9JTKrPxwMXNNgkvZxSVaOdjNf4fPTNsSggsMtA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741155119; c=relaxed/simple;
-	bh=3vDhgAAJC9AGnwTh0lEEl6+JTyqM2vOXcT2aPBYg3M0=;
+	s=arc-20240116; t=1741155121; c=relaxed/simple;
+	bh=iRStbOpLVIAApdbemlh9RwFlXe/MGEHVpH8/IZ4iju0=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G8QFiZRBrixomKnoZ2H5smkYCq0+IVKO0+Pk7c+QnKBF0NQNLLf0LVGOSQF3Pd6x+wBYLk3snNHMV60zEKMSKtQUsZhYwe+6A4RO+7QOvTrSCeHFx/RpEHFKZIkMFTQC1RumIefrNC5/UVsmafiCljl2GhLuXpwmy7G2Lcxxwt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=cifFrb0J; arc=none smtp.client-ip=95.215.58.175
+	 MIME-Version; b=p4e9BInpvWFMCLtVFw0K//CadSw1Ag0bGQ4zeJrGSmUJgPfT304vtz5IP5JMjMgB1gZpxywgh1j4uETNGJ6CUiXB0QDH1cjL0vnvFywk7i54UD260XQxs5cWt3IA2eVgfr3uAT0O4WjE5s/uGAoU+ZpGQZ1QWYtgHgUjbuQcL1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NqpAebb+; arc=none smtp.client-ip=95.215.58.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741155115;
+	t=1741155118;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UHSh+fRW+hK9gv2DRy9l80+ev7l5Ymp5fdm86lOdRKo=;
-	b=cifFrb0JgHRG/57JZ+Mr7M1biLTy24E8MBJu0NSeL4yBba2WzMq9kV83VyVoa8v8fO66+K
-	xYm4fDL+06wlMYNY2zJY/bfIQyNjq1a3UXkuU0ff/RacIWMgjkcl+bSYrX1S3zl27OPYWh
-	KucFgxjj3j3khybeKNnjCvbaqXJ2d3c=
+	bh=+8Bqfcz7PgVEFtBp+cmFfADLG6mXxpRGvGVC/yYU2bs=;
+	b=NqpAebb+VPXqgePqnox4fJ1VPtXsFc4mX0lvtiEvRaIO7un0c0kK81tIPtimYMIf0mHt5I
+	qBouqrSMQGWWnETMPaO7V3U4BGHWZdo8lGyRML8GKKWHuk+6zj4LtNG8zbeurpCtpJT2RJ
+	1+YQeUtblKbQzHmBW0/C243DqnMvGhY=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Johannes Weiner <hannes@cmpxchg.org>,
@@ -54,9 +54,9 @@ Cc: Johannes Weiner <hannes@cmpxchg.org>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH mm-unstable 2/5] mm: zswap: Use object read/write APIs instead of object mapping APIs
-Date: Wed,  5 Mar 2025 06:11:30 +0000
-Message-ID: <20250305061134.4105762-3-yosry.ahmed@linux.dev>
+Subject: [PATCH mm-unstable 3/5] mm: zpool: Remove object mapping APIs
+Date: Wed,  5 Mar 2025 06:11:31 +0000
+Message-ID: <20250305061134.4105762-4-yosry.ahmed@linux.dev>
 In-Reply-To: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
 References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -68,109 +68,194 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Use the new object read/write APIs instead of mapping APIs.
-
-On compress side, zpool_obj_write() is more concise and provides exactly
-what zswap needs to write the compressed object to the zpool, instead of
-map->copy->unmap.
-
-On the decompress side, zpool_obj_read_begin() is sleepable, which
-allows avoiding the memcpy() for zsmalloc and slightly simplifying the
-code by:
-- Avoiding checking if the zpool driver is sleepable, reducing special
-  cases and shrinking the huge comment.
-- Having a single zpool_obj_read_end() call rather than multiple
-  conditional zpool_unmap_handle() calls.
-
-The !virt_addr_valid() case can be removed in the future if the crypto
-API supports kmap addresses or by using kmap_to_page(), completely
-eliminating the memcpy() path in zswap_decompress(). This a step toward
-that. In that spirit, opportunistically make the comment more specific
-about the kmap case instead of generic non-linear addresses. This is the
-only case that needs to be handled in practice, and the generic comment
-makes it seem like a bigger problem that it actually is.
+zpool_map_handle(), zpool_unmap_handle(), and zpool_can_sleep_mapped()
+are no longer used. Remove them with the underlying driver callbacks.
 
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
+ include/linux/zpool.h | 30 ---------------------
+ mm/zpool.c            | 61 -------------------------------------------
+ mm/zsmalloc.c         | 27 -------------------
+ 3 files changed, 118 deletions(-)
 
-Herbert, I think we can completely get rid of the memcpy() in
-zswap_decompress() if we can pass a highmem address to sg and crypto. I
-believe your new virtual address API may be used here for this?
-
----
- mm/zswap.c | 33 +++++++++++++--------------------
- 1 file changed, 13 insertions(+), 20 deletions(-)
-
-diff --git a/mm/zswap.c b/mm/zswap.c
-index 10f2a16e75869..4c474b692828d 100644
---- a/mm/zswap.c
-+++ b/mm/zswap.c
-@@ -930,7 +930,6 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	unsigned int dlen = PAGE_SIZE;
- 	unsigned long handle;
- 	struct zpool *zpool;
--	char *buf;
- 	gfp_t gfp;
- 	u8 *dst;
+diff --git a/include/linux/zpool.h b/include/linux/zpool.h
+index 1784e735ee049..2c8a9d2654f6f 100644
+--- a/include/linux/zpool.h
++++ b/include/linux/zpool.h
+@@ -13,25 +13,6 @@
  
-@@ -972,10 +971,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
- 	if (alloc_ret)
- 		goto unlock;
+ struct zpool;
  
--	buf = zpool_map_handle(zpool, handle, ZPOOL_MM_WO);
--	memcpy(buf, dst, dlen);
--	zpool_unmap_handle(zpool, handle);
+-/*
+- * Control how a handle is mapped.  It will be ignored if the
+- * implementation does not support it.  Its use is optional.
+- * Note that this does not refer to memory protection, it
+- * refers to how the memory will be copied in/out if copying
+- * is necessary during mapping; read-write is the safest as
+- * it copies the existing memory in on map, and copies the
+- * changed memory back out on unmap.  Write-only does not copy
+- * in the memory and should only be used for initialization.
+- * If in doubt, use ZPOOL_MM_DEFAULT which is read-write.
+- */
+-enum zpool_mapmode {
+-	ZPOOL_MM_RW, /* normal read-write mapping */
+-	ZPOOL_MM_RO, /* read-only (no copy-out at unmap time) */
+-	ZPOOL_MM_WO, /* write-only (no copy-in at map time) */
 -
-+	zpool_obj_write(zpool, handle, dst, dlen);
- 	entry->handle = handle;
- 	entry->length = dlen;
+-	ZPOOL_MM_DEFAULT = ZPOOL_MM_RW
+-};
+-
+ bool zpool_has_pool(char *type);
  
-@@ -996,24 +992,22 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
- 	struct zpool *zpool = entry->pool->zpool;
- 	struct scatterlist input, output;
- 	struct crypto_acomp_ctx *acomp_ctx;
--	u8 *src;
-+	u8 *src, *obj;
+ struct zpool *zpool_create_pool(const char *type, const char *name, gfp_t gfp);
+@@ -47,12 +28,6 @@ int zpool_malloc(struct zpool *pool, size_t size, gfp_t gfp,
  
- 	acomp_ctx = acomp_ctx_get_cpu_lock(entry->pool);
--	src = zpool_map_handle(zpool, entry->handle, ZPOOL_MM_RO);
-+	obj = zpool_obj_read_begin(zpool, entry->handle, acomp_ctx->buffer);
-+
- 	/*
--	 * If zpool_map_handle is atomic, we cannot reliably utilize its mapped buffer
--	 * to do crypto_acomp_decompress() which might sleep. In such cases, we must
--	 * resort to copying the buffer to a temporary one.
--	 * Meanwhile, zpool_map_handle() might return a non-linearly mapped buffer,
--	 * such as a kmap address of high memory or even ever a vmap address.
--	 * However, sg_init_one is only equipped to handle linearly mapped low memory.
--	 * In such cases, we also must copy the buffer to a temporary and lowmem one.
-+	 * zpool_obj_read_begin() might return a kmap address of highmem when
-+	 * acomp_ctx->buffer is not used.  However, sg_init_one() does not
-+	 * handle highmem addresses, so copy the object to acomp_ctx->buffer.
- 	 */
--	if ((acomp_ctx->is_sleepable && !zpool_can_sleep_mapped(zpool)) ||
--	    !virt_addr_valid(src)) {
--		memcpy(acomp_ctx->buffer, src, entry->length);
-+	if (virt_addr_valid(obj)) {
-+		src = obj;
-+	} else {
-+		WARN_ON_ONCE(obj == acomp_ctx->buffer);
-+		memcpy(acomp_ctx->buffer, obj, entry->length);
- 		src = acomp_ctx->buffer;
--		zpool_unmap_handle(zpool, entry->handle);
- 	}
+ void zpool_free(struct zpool *pool, unsigned long handle);
  
- 	sg_init_one(&input, src, entry->length);
-@@ -1023,8 +1017,7 @@ static void zswap_decompress(struct zswap_entry *entry, struct folio *folio)
- 	BUG_ON(crypto_wait_req(crypto_acomp_decompress(acomp_ctx->req), &acomp_ctx->wait));
- 	BUG_ON(acomp_ctx->req->dlen != PAGE_SIZE);
+-void *zpool_map_handle(struct zpool *pool, unsigned long handle,
+-			enum zpool_mapmode mm);
+-
+-void zpool_unmap_handle(struct zpool *pool, unsigned long handle);
+-
+-
+ void *zpool_obj_read_begin(struct zpool *zpool, unsigned long handle,
+ 			   void *local_copy);
  
--	if (src != acomp_ctx->buffer)
--		zpool_unmap_handle(zpool, entry->handle);
-+	zpool_obj_read_end(zpool, entry->handle, obj);
- 	acomp_ctx_put_unlock(acomp_ctx);
+@@ -95,11 +70,6 @@ struct zpool_driver {
+ 				unsigned long *handle);
+ 	void (*free)(void *pool, unsigned long handle);
+ 
+-	bool sleep_mapped;
+-	void *(*map)(void *pool, unsigned long handle,
+-				enum zpool_mapmode mm);
+-	void (*unmap)(void *pool, unsigned long handle);
+-
+ 	void *(*obj_read_begin)(void *pool, unsigned long handle,
+ 				void *local_copy);
+ 	void (*obj_read_end)(void *pool, unsigned long handle,
+diff --git a/mm/zpool.c b/mm/zpool.c
+index 378c2d1e5638f..4fc665b42f5e9 100644
+--- a/mm/zpool.c
++++ b/mm/zpool.c
+@@ -277,49 +277,6 @@ void zpool_free(struct zpool *zpool, unsigned long handle)
+ 	zpool->driver->free(zpool->pool, handle);
  }
  
+-/**
+- * zpool_map_handle() - Map a previously allocated handle into memory
+- * @zpool:	The zpool that the handle was allocated from
+- * @handle:	The handle to map
+- * @mapmode:	How the memory should be mapped
+- *
+- * This maps a previously allocated handle into memory.  The @mapmode
+- * param indicates to the implementation how the memory will be
+- * used, i.e. read-only, write-only, read-write.  If the
+- * implementation does not support it, the memory will be treated
+- * as read-write.
+- *
+- * This may hold locks, disable interrupts, and/or preemption,
+- * and the zpool_unmap_handle() must be called to undo those
+- * actions.  The code that uses the mapped handle should complete
+- * its operations on the mapped handle memory quickly and unmap
+- * as soon as possible.  As the implementation may use per-cpu
+- * data, multiple handles should not be mapped concurrently on
+- * any cpu.
+- *
+- * Returns: A pointer to the handle's mapped memory area.
+- */
+-void *zpool_map_handle(struct zpool *zpool, unsigned long handle,
+-			enum zpool_mapmode mapmode)
+-{
+-	return zpool->driver->map(zpool->pool, handle, mapmode);
+-}
+-
+-/**
+- * zpool_unmap_handle() - Unmap a previously mapped handle
+- * @zpool:	The zpool that the handle was allocated from
+- * @handle:	The handle to unmap
+- *
+- * This unmaps a previously mapped handle.  Any locks or other
+- * actions that the implementation took in zpool_map_handle()
+- * will be undone here.  The memory area returned from
+- * zpool_map_handle() should no longer be used after this.
+- */
+-void zpool_unmap_handle(struct zpool *zpool, unsigned long handle)
+-{
+-	zpool->driver->unmap(zpool->pool, handle);
+-}
+-
+ /**
+  * zpool_obj_read_begin() - Start reading from a previously allocated handle.
+  * @zpool:	The zpool that the handle was allocated from
+@@ -381,23 +338,5 @@ u64 zpool_get_total_pages(struct zpool *zpool)
+ 	return zpool->driver->total_pages(zpool->pool);
+ }
+ 
+-/**
+- * zpool_can_sleep_mapped - Test if zpool can sleep when do mapped.
+- * @zpool:	The zpool to test
+- *
+- * Some allocators enter non-preemptible context in ->map() callback (e.g.
+- * disable pagefaults) and exit that context in ->unmap(), which limits what
+- * we can do with the mapped object. For instance, we cannot wait for
+- * asynchronous crypto API to decompress such an object or take mutexes
+- * since those will call into the scheduler. This function tells us whether
+- * we use such an allocator.
+- *
+- * Returns: true if zpool can sleep; false otherwise.
+- */
+-bool zpool_can_sleep_mapped(struct zpool *zpool)
+-{
+-	return zpool->driver->sleep_mapped;
+-}
+-
+ MODULE_AUTHOR("Dan Streetman <ddstreet@ieee.org>");
+ MODULE_DESCRIPTION("Common API for compressed memory storage");
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index d84b300db64e7..56d6ed5c675b2 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -482,31 +482,6 @@ static void zs_zpool_free(void *pool, unsigned long handle)
+ 	zs_free(pool, handle);
+ }
+ 
+-static void *zs_zpool_map(void *pool, unsigned long handle,
+-			enum zpool_mapmode mm)
+-{
+-	enum zs_mapmode zs_mm;
+-
+-	switch (mm) {
+-	case ZPOOL_MM_RO:
+-		zs_mm = ZS_MM_RO;
+-		break;
+-	case ZPOOL_MM_WO:
+-		zs_mm = ZS_MM_WO;
+-		break;
+-	case ZPOOL_MM_RW:
+-	default:
+-		zs_mm = ZS_MM_RW;
+-		break;
+-	}
+-
+-	return zs_map_object(pool, handle, zs_mm);
+-}
+-static void zs_zpool_unmap(void *pool, unsigned long handle)
+-{
+-	zs_unmap_object(pool, handle);
+-}
+-
+ static void *zs_zpool_obj_read_begin(void *pool, unsigned long handle,
+ 				     void *local_copy)
+ {
+@@ -538,8 +513,6 @@ static struct zpool_driver zs_zpool_driver = {
+ 	.malloc_support_movable = true,
+ 	.malloc =		  zs_zpool_malloc,
+ 	.free =			  zs_zpool_free,
+-	.map =			  zs_zpool_map,
+-	.unmap =		  zs_zpool_unmap,
+ 	.obj_read_begin =	  zs_zpool_obj_read_begin,
+ 	.obj_read_end  =	  zs_zpool_obj_read_end,
+ 	.obj_write =		  zs_zpool_obj_write,
 -- 
 2.48.1.711.g2feabab25a-goog
 
