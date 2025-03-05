@@ -1,105 +1,225 @@
-Return-Path: <linux-kernel+bounces-545857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53851A4F2AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:26:41 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8925FA4F2B5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:28:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73913167E7E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:26:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617BC169150
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:28:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CF62629F;
-	Wed,  5 Mar 2025 00:26:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D383FBA7;
+	Wed,  5 Mar 2025 00:28:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="awvP7fr8"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RqzuRCDb"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E3317548;
-	Wed,  5 Mar 2025 00:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C149B17BA1;
+	Wed,  5 Mar 2025 00:27:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741134393; cv=none; b=s1aqqE4zbwGdAq7X2aIqt9QXOE3RhLXOdTX9mXCOdWnnjKf4s+lmgtg9Tdtr8IDd3GYsJWy7VFPtS6PZ4salypr4XsBriq1KcREwU+kV1qe3Olnx6400GZd1mSMADS2ofR8UGdfsEv7vNSmtP3GKmHzRChn4fx4QQDomFMJH7fY=
+	t=1741134479; cv=none; b=W/veTYJf5JarCNfnzDzqDTSv5VqkPZfHEbUvIv0jtmRitnQA+TBQ2Job+Lr12rc/hgYsxF291hSV0bBPzkmWr7wLFXVOB4U/2sYgSByC0aJuMO9FYnOL0DvjWCxH/SJoFElsF6MLSoKOsYdpKuDzBgIif0EOLIsivi/Jz9oV3Nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741134393; c=relaxed/simple;
-	bh=eX8pDDXLntPgbvz5jz4y2gDu9qBJgtjaZyWUOUUwn4o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LjFVXaQJSsVMOr8GEAq9ZRwmFzpuAz9fVSNowRfKtC1lFRJSnoRqErsoBf/Mnc493E24m1/H72KRxxsvsdjbMXm4z0OMFOGb50zzElOoUUalwjUxblpYS672BWyw8h+r7UnwWpLxufJg9cbKKSfAr6vzDwk2M2ac0O8wxl03ipU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=awvP7fr8; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1741134386;
-	bh=8UATZmOJQXiF6YcKV6u4m3dUJZra17NIVWNPrQkYtRw=;
-	h=Date:From:To:Cc:Subject:From;
-	b=awvP7fr88rZzltyrssZH5xW+z/BU7nIGkTXzawinIVqZFLvPAUoLrKD+cKibCzw2O
-	 TAgBLHsfGo/1ODAh24MRadfRrYKDVmPmELM/bhudAdKMQm0O5+1LPS7y4oo2bSrRyc
-	 VhiQZ1wm8QIWCtVJjoncFGCCIUHFGra6+B+2MfZ8z6r8RRPXGtmTE+XQBaj+Nsw5JE
-	 6DGKrXcsVbCr5+a9sfg3wW1Cx300pt5u8HeeIirtvWP2TVxwWTwC0PBmizghngpREj
-	 omgR6lj3aFb4bVUEziObQXD2yIkoq4Oep6xcLBAl+0MVcjhzzSz/BmK75fuI7123LG
-	 29hoIm2EHt0yg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z6tdY3Bvbz4whq;
-	Wed,  5 Mar 2025 11:26:25 +1100 (AEDT)
-Date: Wed, 5 Mar 2025 11:26:24 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Andy Gross <agross@kernel.org>, Mike Turquette
- <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the qcom tree
-Message-ID: <20250305112624.0806472d@canb.auug.org.au>
+	s=arc-20240116; t=1741134479; c=relaxed/simple;
+	bh=x/VIknukD9fSBBRaVll1/APH4ZffDIGAts7O+IzGyi8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qJj7yTMazOMpFmEd71Sb8U1JDtGrTsmqA46qkknq5krM1bc7D14o/Y0lU8o3++9tBcNcot9CUDsAado+i+T26WT1gFGTFUTakvgFZUHDHeQo6WdtLJGdRkXyOiK7/6ucfh0ec6tCE967DFUPtkfir6tAjVcqKGUpZVmNK/8W3hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RqzuRCDb; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524NA9gS005776;
+	Wed, 5 Mar 2025 00:27:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Gde7r6M8hsg4DO9rU31kG6
+	3LkAxdcHyxutXtMX3cnuc=; b=RqzuRCDb5qWR39nOKwhRgQbD/5BHXNqo8eY3Pu
+	bAi1RGZoL2AucbOdLq3KQOzGiPFL2pn2bSs/CfQyhs4mxLNu5C5sBekrMf0q+9qI
+	XoGZFmPRHHhy8No8IZ3HOZ3awiSY0mdjF/jiGnDbRBDCXmLVSV+ciLW5PwXlPefX
+	cGUu+9oi16T23bV42A39Kg3YEIEZy7WRktV4Q/V62uXcxWr9tWf4JMU+C5YaOpa9
+	nazHEnHxFWA4M/g80u3HU7mI9f8YHOdXOqZLaK0xf/KEwtOTBQlYGeTWx494FwLw
+	B0XCenOK8Qvh/Eg5p7A8VVO/ErrNKlLFw1wXchF978oo9W6A==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6v3hrr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 00:27:52 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5250RpJg003536
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Mar 2025 00:27:51 GMT
+Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 4 Mar 2025 16:27:51 -0800
+From: Melody Olvera <quic_molvera@quicinc.com>
+Date: Tue, 4 Mar 2025 16:27:45 -0800
+Subject: [PATCH v2] arm64: dts: qcom: sm8750: Add BWMONs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/PgKxN4OkTXT2C1Vc4Qf_Ohw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20250304-sm8750_bwmon_master-v2-1-ead16909397d@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAICax2cC/22NwQ7CIBAFf6XZs5gFbIqe/A/TNJRSuwdAoVZNw
+ 7+LjUePM8mbt0KykWyCU7VCtAslCr6A2FVgJu2vltFQGASKGjk2LDnV1Nj1Txd853SabWRmOPT
+ KclRojlCWt2hHem3VS1t4ojSH+N5OFv61vx6Xf3sLZ8hGVGLQUkuJ6nx/kCFv9iY4aHPOHyURY
+ Vm4AAAA
+X-Change-ID: 20250107-sm8750_bwmon_master-cd4b8e1080c9
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+        Georgi Djakov
+	<djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Satya
+ Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>,
+        Trilok Soni
+	<quic_tsoni@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Shivnandan
+ Kumar" <quic_kshivnan@quicinc.com>,
+        Melody Olvera <quic_molvera@quicinc.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741134471; l=2648;
+ i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
+ bh=dJ5zGKO9cyYdi4F8ivmircOfcGRI6MbvOTw8Xwp2vDM=;
+ b=rQCEUfWVssQQ7SxGV33uwdgRTtWOwX5sh0jmy+hLeiXan3zgJPAerR5Q56UfCez4xHgFzMyWF
+ qkueOOuHuhLBoyPoOC4L1blr7i3jZ85fhkz+AfDv/LfeCkiVyeoZUHC
+X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
+ pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: hxilbSsKKeniz5BbKWZRM5mqJZsG4YJc
+X-Proofpoint-ORIG-GUID: hxilbSsKKeniz5BbKWZRM5mqJZsG4YJc
+X-Authority-Analysis: v=2.4 cv=fatXy1QF c=1 sm=1 tr=0 ts=67c79a89 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=3H110R4YSZwA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=7yo25iZzBaeJ0hjbOj0A:9
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ spamscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=813 mlxscore=0 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503050002
 
---Sig_/PgKxN4OkTXT2C1Vc4Qf_Ohw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
 
-Hi all,
+Add the CPU BWMONs for SM8750 SoCs.
 
-The following commit is also in the clk-fixes tree as a different commit
-(but the same patch):
+Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+---
+Changes in v2:
+- Change destination interconnect to tag active only from tag always
+- Link to v1: https://lore.kernel.org/r/20250113-sm8750_bwmon_master-v1-0-f082da3a3308@quicinc.com
+---
+ arch/arm64/boot/dts/qcom/sm8750.dtsi | 74 ++++++++++++++++++++++++++++++++++++
+ 1 file changed, 74 insertions(+)
 
-  787289a1d13d ("clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARE=
-NT on byte intf parent")
+diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+index 3bbd7d18598ee0a3a0d5130c03a3166e1fc14d82..3f2b949524708eec8247fd453b8ea9e2dea32285 100644
+--- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
++++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+@@ -2802,6 +2802,80 @@ rpmhpd_opp_super_turbo_no_cpr: opp-480 {
+ 			};
+ 		};
+ 
++		/* cluster0 */
++		pmu@240b3400 {
++			compatible = "qcom,sm8750-cpu-bwmon", "qcom,sdm845-bwmon";
++			reg = <0x0 0x240b3400 0x0 0x600>;
++
++			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
++
++			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>;
++
++			operating-points-v2 = <&cpu_bwmon_opp_table>;
++
++			cpu_bwmon_opp_table: opp-table {
++				compatible = "operating-points-v2";
++
++				opp-0 {
++					opp-peak-kBps = <800000>;
++				};
++
++				opp-1 {
++					opp-peak-kBps = <2188000>;
++				};
++
++				opp-2 {
++					opp-peak-kBps = <5414400>;
++				};
++
++				opp-3 {
++					opp-peak-kBps = <6220800>;
++				};
++
++				opp-4 {
++					opp-peak-kBps = <6835200>;
++				};
++
++				opp-5 {
++					opp-peak-kBps = <8371200>;
++				};
++
++				opp-6 {
++					opp-peak-kBps = <10944000>;
++				};
++
++				opp-7 {
++					opp-peak-kBps = <12748800>;
++				};
++
++				opp-8 {
++					opp-peak-kBps = <14745600>;
++				};
++
++				opp-9 {
++					opp-peak-kBps = <16896000>;
++				};
++
++				opp-10 {
++					opp-peak-kBps = <19046400>;
++				};
++			};
++		};
++
++		/* cluster1 */
++		pmu@240b7400 {
++			compatible = "qcom,sm8750-cpu-bwmon", "qcom,sdm845-bwmon";
++			reg = <0x0 0x240b7400 0x0 0x600>;
++
++			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
++
++			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
++					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
++
++			operating-points-v2 = <&cpu_bwmon_opp_table>;
++		};
++
+ 		timer@16800000 {
+ 			compatible = "arm,armv7-timer-mem";
+ 			reg = <0x0 0x16800000 0x0 0x1000>;
 
-This is commit
+---
+base-commit: 20d5c66e1810e6e8805ec0d01373afb2dba9f51a
+change-id: 20250107-sm8750_bwmon_master-cd4b8e1080c9
 
-  b8501febdc51 ("clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARE=
-NT on byte intf parent")
+Best regards,
+-- 
+Melody Olvera <quic_molvera@quicinc.com>
 
-in the clk-fixes tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/PgKxN4OkTXT2C1Vc4Qf_Ohw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfHmjAACgkQAVBC80lX
-0GwFeQgAgTQssEjgjJxRtgllfb0q0DNU98zAI8qMAxjXoBu2aqTbuNW9oYkAKh16
-AfvivDFPJYQZ4SZYEP7uslsJz50glkWxcgiGQbLLSctjbimkbmui0pJf5DmfnaEG
-I3vWq/KEYpgdQ6h96okSfh6e2B1oZ6guWd3PKP3w3dt/TCN8G3aYi2eyF+1OXOCX
-EHjr3SWXfUfnR6nMTmoh46EgRRSItsi3fn26GcDq7W5/yQndZq8qkNLUKRF8LzCe
-gfWFasnJeX5GkJYoVFqyJjZfr9LKWkKuWomp5ujG0krp+cHRRwzXZKMB5WyhtCW/
-fXeQdvec/chr5eEq3+9TC4ykoF1jig==
-=56SK
------END PGP SIGNATURE-----
-
---Sig_/PgKxN4OkTXT2C1Vc4Qf_Ohw--
 
