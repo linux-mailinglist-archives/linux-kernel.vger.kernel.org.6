@@ -1,103 +1,98 @@
-Return-Path: <linux-kernel+bounces-546572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D69A4FC51
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:38:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8053EA4FC56
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:39:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74FDC7A53C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:37:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 303A916E023
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:38:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A27C20B204;
-	Wed,  5 Mar 2025 10:35:05 +0000 (UTC)
-Received: from smtp.gentoo.org (woodpecker.gentoo.org [140.211.166.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C2920AF97;
+	Wed,  5 Mar 2025 10:35:50 +0000 (UTC)
+Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 783E220AF97;
-	Wed,  5 Mar 2025 10:35:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.211.166.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42426207A2B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170904; cv=none; b=LZwJ3he4rvUwqbKOZpx2HpPHvRD8G/X7yi58jFh4n3JVpdG4xjn+GQmiOJ79LDDTtlNw9W74/7wl5amof5MSr8ADTIkIbNy/sz82E/0+KVmK9e9RIhyAsZmUArc9DTbO5PTQauSzU/D8P/rRuFqKf7drbSX8fCMtPo/K5z8xbTU=
+	t=1741170950; cv=none; b=sYpg+DFqh5NAjNB8HLCDbdkSh5MBLZT4R4YoX9+InwS1U4pGJxFE4kFovzI7ni5wGL2jEF7Tbd5dVWR9xCqq35vm0Mx+0livebaRmR+wYPLQ7bJt82Mjg/HfvtqcqtZuwl70KA3BUfNmrChdXaJpz7WQ0biHodVEFtG/2I4hPQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170904; c=relaxed/simple;
-	bh=PqrUbqq/B4BhQn1+Wzo5YUBHYxX/JkF9v8e4BTj6EAg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IV3Y8csBL0BZC/cn53jdXS+iLPYs7GeVXsLFPBuR+HyGQGtW60FMMBH5+eBhLpVeD+THpGX4D8jBNsxQ4h6xIAsWMKVH0UqTVFGwQt1uTtOQJLpsWUu6u4KXl7e/ZIflEaZeV3aUEoapKMtcrfPqQEdvkcTExcBfb8nEOSPI1IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org; spf=pass smtp.mailfrom=gentoo.org; arc=none smtp.client-ip=140.211.166.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gentoo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentoo.org
-Received: from localhost (unknown [116.232.55.252])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dlan)
-	by smtp.gentoo.org (Postfix) with ESMTPSA id 6202733C1EB;
-	Wed, 05 Mar 2025 10:35:02 +0000 (UTC)
-Date: Wed, 5 Mar 2025 10:34:58 +0000
-From: Yixun Lan <dlan@gentoo.org>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-riscv@lists.infradead.org, spacemit@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: Re: [PATCH] pinctrl: spacemit: destroy mutex at driver detach
-Message-ID: <20250305103458-GYA63227@gentoo>
-References: <20250305102710.52762-1-brgl@bgdev.pl>
+	s=arc-20240116; t=1741170950; c=relaxed/simple;
+	bh=AWAy+MhAcRApNnHLYuwTVxFiaH4IigRguFa6qkwG8JI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=VnEnEE0Dg8p6XVKZt4orRbwCeEZOZzr850cJxSYvG1U7QUsOHX4PICQJ8YSP46Koldrg9UJUlPh+QiDJ00jAW4uxmtunt8Fe/6xCyJddPAZ4m78ravmBIrHwX0FVNmPjr0J4JjBoe40Ynk1MurUhNnoiPtVcCzSD5nYBPATAXXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
+Received: from Jtjnmail201617.home.langchao.com
+        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202503051835434057;
+        Wed, 05 Mar 2025 18:35:43 +0800
+Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
+ Jtjnmail201617.home.langchao.com (10.100.2.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 5 Mar 2025 18:35:43 +0800
+Received: from locahost.localdomain (10.94.12.149) by
+ jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 5 Mar 2025 18:35:42 +0800
+From: Charles Han <hanchunchao@inspur.com>
+To: <andrzej.hajda@intel.com>, <neil.armstrong@linaro.org>,
+	<rfoss@kernel.org>, <Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
+	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
+	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
+	<simona@ffwll.ch>, <festevam@denx.de>
+CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+	"Charles Han" <hanchunchao@inspur.com>
+Subject: [PATCH] drm/bridge: dw-hdmi-cec: fix inconsistent indenting warning
+Date: Wed, 5 Mar 2025 18:35:41 +0800
+Message-ID: <20250305103541.3207-1-hanchunchao@inspur.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305102710.52762-1-brgl@bgdev.pl>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
+ jtjnmail201607.home.langchao.com (10.100.2.7)
+tUid: 2025305183544ad7ba2d202250f4e9f518ab2a1c59f09
+X-Abuse-Reports-To: service@corp-email.com
+Abuse-Reports-To: service@corp-email.com
+X-Complaints-To: service@corp-email.com
+X-Report-Abuse-To: service@corp-email.com
 
-On 11:27 Wed 05 Mar     , Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> 
-> The mutex initialized in probe() is never cleaned up. Use
-> devm_mutex_init() to destroy it automatically.
-> 
-Reviewed-by: Yixun Lan <dlan@gentoo.org>
+Fix below inconsistent indenting smatch warning.
+smatch warnings:
+drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c:336 dw_hdmi_cec_suspend() warn: inconsistent indenting
 
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> ---
->  drivers/pinctrl/spacemit/pinctrl-k1.c | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> index 59fd555ff38d..67e867b04a02 100644
-> --- a/drivers/pinctrl/spacemit/pinctrl-k1.c
-> +++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
-> @@ -9,6 +9,7 @@
->  #include <linux/seq_file.h>
->  #include <linux/spinlock.h>
->  #include <linux/module.h>
-> +#include <linux/mutex.h>
->  
->  #include <linux/pinctrl/pinconf-generic.h>
->  #include <linux/pinctrl/pinconf.h>
-> @@ -749,7 +750,10 @@ static int spacemit_pinctrl_probe(struct platform_device *pdev)
->  	pctrl->data = pctrl_data;
->  	pctrl->dev = dev;
->  	raw_spin_lock_init(&pctrl->lock);
-> -	mutex_init(&pctrl->mutex);
-> +
-> +	ret = devm_mutex_init(dev, &pctrl->mutex);
-> +	if (ret)
-> +		return ret;
->  
->  	platform_set_drvdata(pdev, pctrl);
->  
-> -- 
-> 2.45.2
-> 
+Signed-off-by: Charles Han <hanchunchao@inspur.com>
+---
+ drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
+diff --git a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
+index 9549dabde941..9d5bded54e8b 100644
+--- a/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
++++ b/drivers/gpu/drm/bridge/synopsys/dw-hdmi-cec.c
+@@ -333,9 +333,9 @@ static int dw_hdmi_cec_suspend(struct device *dev)
+ 	struct dw_hdmi_cec *cec = dev_get_drvdata(dev);
+ 
+ 	/* store interrupt status/mask registers */
+-	 cec->regs_polarity = dw_hdmi_read(cec, HDMI_CEC_POLARITY);
+-	 cec->regs_mask = dw_hdmi_read(cec, HDMI_CEC_MASK);
+-	 cec->regs_mute_stat0 = dw_hdmi_read(cec, HDMI_IH_MUTE_CEC_STAT0);
++	cec->regs_polarity = dw_hdmi_read(cec, HDMI_CEC_POLARITY);
++	cec->regs_mask = dw_hdmi_read(cec, HDMI_CEC_MASK);
++	cec->regs_mute_stat0 = dw_hdmi_read(cec, HDMI_IH_MUTE_CEC_STAT0);
+ 
+ 	return 0;
+ }
 -- 
-Yixun Lan (dlan)
-Gentoo Linux Developer
-GPG Key ID AABEFD55
+2.43.0
+
 
