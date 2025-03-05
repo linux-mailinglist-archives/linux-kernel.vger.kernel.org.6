@@ -1,307 +1,121 @@
-Return-Path: <linux-kernel+bounces-547977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE417A53E5A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:21:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22F1AA53E62
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:25:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B000A1888C1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:21:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A70116D7AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:25:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85145205AAC;
-	Wed,  5 Mar 2025 23:21:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B702066F2;
+	Wed,  5 Mar 2025 23:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="hGpe/Ugq"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="iELWRdRC"
+Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB1DF1FCD07
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6D7F20550F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741216891; cv=none; b=einikRwm4cuv5AErBYdl1cL0IBAj9IjfVR34zWozOYB9Uw+CXcvFY+Hq10r+Y34tdmhTHAvPw+nHNHMwVvJ7Vcnosh7Na7u0RjYW8bvXDztSuTd30iAEOCz3/wx9/rTw+0nMBrj/AoN3dbXf44Yf1YDxb2590HX/QdPWE8znazk=
+	t=1741217114; cv=none; b=BweK0BOwIiIQ9SUOWMExMgiyzHL+rjN8ZVHGwuVykTUMzpt7YZHHbbFCsqzzy6XEqB5JiPg+CVhiTNB+7w0xLh6RlEOv/hek4tYH2B5e8XxpAbB1c1KOBuwbQkcC1NkPr0dToDIZfxukRvdY4Vj/GWQYOquUgRzVPLM0v5E5e+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741216891; c=relaxed/simple;
-	bh=LYXqEZ/GNnF7105I/x7F4cJvGSIdk+36OQUyInKk3dc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SpGu0u9cE9bxiJPyTo8jO95UzgQafIhSJ9dKGduIMe+5/Tn65chSjrYMX3+6o4zoqFwfzOl/S9pBb1aAqhZfzeIlcuCKsLfFo7lNgkBOea0UjIN4I0G7a+u8gJIIbNGhZ+ncJqplcUPx/MxG177yFPBJjQXwUcSodjSggSFY5NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=hGpe/Ugq; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43bc31227ecso24267245e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 15:21:28 -0800 (PST)
+	s=arc-20240116; t=1741217114; c=relaxed/simple;
+	bh=AnJYcyyPuSQ4pNrFrYAJyHf2ljozt32xk7TDdF8nbVM=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=IRKw8oOzSl0lQIX+wmBeaoMK7lLGv5zHPsjBbs9bsF/WY7oMuOPHI0hO/OsvMwP7nl45lqU6ViCxnH0pvpbsm6LESkeKED9GIMMoggPBMibzIIKsFLUp1kpqkLF/BfYAtOBG5Mzj/F0uUEACjvNUpJ0292+RZMwqS45EM2U7uak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=iELWRdRC; arc=none smtp.client-ip=209.85.166.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3d2af701446so601165ab.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 15:25:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1741216887; x=1741821687; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qacB18MzFobUffMftGee8Zz295Q+/XP/67XU9eQDjdA=;
-        b=hGpe/UgqNoOCwxXXz3JThSZEpsBLSH/djAbsHx7RJy0pJX7wfJB4/QhuxyfJ9OLyzS
-         KDoAPfTHAYwQ43LHiQufk+FHU5Z0ZkYMwCYdtg8T3X13DAPIPx2aWIMx+rf0TD2JdxNa
-         WCkOpvmXsqC9e0ix1D07F6OwlzcM7A84xUSxTIdbiCUfS2MtZeh1E8X5gVhe9bhUo4CE
-         WFADMYHz+TaV8LmqbOMQvPYG2tf2AEBAJaDymfgqRrdF0EvTgpE8POGSu5O9PyX4KbXQ
-         J5NHHdt1RbCy8CeTr3WklfsJiHqSi1UAejxFpaXxi3nj+wdr/J1XiIG/Ks4DohJuTOgA
-         dIZw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741216887; x=1741821687;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741217109; x=1741821909; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qacB18MzFobUffMftGee8Zz295Q+/XP/67XU9eQDjdA=;
-        b=wGrHU3olLuS4++woUS+KgwK1d7t17YAoWeNWuyId5aFEz0fymz3oHyHyuZXI8//P4v
-         QReIu8eXIHm0ORsgxz6hMZ2So/BitMhvQrVe79C8EYGEVC6QmmXbdonqBaf+b8QM4gGb
-         X9n5SEVLFYQMPM9XYeWQR7J39kATvuXoRh/3rmZ0tB0DFCxkwqYxurm/L0IKRvHY3JRX
-         R1cJclPB3SmBpnM7AzNOXy/7R8ZGw0PKMZtjN9gSCsrt08t3I+g7ItTdyqkszlfN+in5
-         BC/ITMRVYbw9b6WP1NoDTsNFNW7ZmPVRpTcda1ItaFSx4vTgLHNih2Z92EbJdJzck7z/
-         POoA==
-X-Gm-Message-State: AOJu0YwTLkKMTRDoWQi0aLAzL4HloU1oZRFJe10GQjugHTC7238NuPhw
-	xchFdI6xxFD7ATnx1quXUMcftBE2WBssOtC4PyKvbrRGSC4wYedkR3soejd7y48=
-X-Gm-Gg: ASbGncsozhb7TsDT79IIQ9+Ec9CT0EaPVP8sDA/OvEStp6NPJEcqg6G80z+VU4kAMHh
-	jrGYSCV6YNAhBVVzJ0Ut6BJ/D+Um2fUeCp9nJ0POe6hiER7VGXnmx7+LtFgRO2F4pc0mvGDaxJv
-	X3OXIEamHx1+rYZN2nwObkXH3XJ6Ocn/Dvq6xEV+DP3JRn05gasv08YssM/RZqs9iDSfANS7OYw
-	SvR+O34Fvd9xWK47NAZ+MsfDZXjLZMfgrGyS2wEsJtgtBO5ul0of0bxPfuML+wcjTdeIutpIbq4
-	UvDjbmseIxwNCIN0Sm3ZGwg9a6gM6NCQp+Tis3R74Zct8egE5KIs73tOGbFL9M3zhL1S5w8zcbf
-	f9YMRG+/BN31+Bik=
-X-Google-Smtp-Source: AGHT+IENKXPai5TKebpsO/kveH3cbJuJ1j7cTubmsBuhS47qzTQfgDvOZrssIpixyulc1S2B2GwUAg==
-X-Received: by 2002:a05:600c:3b17:b0:439:8a62:db42 with SMTP id 5b1f17b1804b1-43bd29404eemr37764975e9.8.1741216886433;
-        Wed, 05 Mar 2025 15:21:26 -0800 (PST)
-Received: from localhost (lfbn-nic-1-357-249.w90-116.abo.wanadoo.fr. [90.116.189.249])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bcbcbe64fsm42848815e9.0.2025.03.05.15.21.24
+        bh=l7kX7Ef8fyaxBwW7MaGLY5EScGfcxKucjoKcRNwnL6E=;
+        b=iELWRdRC3yglom12TSoFzTShH7ez6cj5DJdLwQpSMiCr1tpPRtvFGeejPnRu7U/bhy
+         VLGZtGdbRNGNTFbt3UZMv5gblgZatnMJHyOmPVunM6IBx7PCKmiRHCwkmB2X9c9kK+i/
+         WW+JqpkOMWi+51XeZbwKSS7AfratUMT0euXzAHdV/IFSos62bu+zbc1N8Q8HggxPcDfy
+         ptRINXruGoTn85heQ2xEK2ZPR7sp+PS8Ru2FE6DUWlNgK1PHPYaThECuaOFBZ1qGFsZx
+         /qfwcyOjf5at5fV4BpkgETZrVMXFQDV5+QlQwij2AP/NV73hakGO/NZlpjNRpY8pYN+i
+         +yAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741217109; x=1741821909;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=l7kX7Ef8fyaxBwW7MaGLY5EScGfcxKucjoKcRNwnL6E=;
+        b=Xpbj9oc7+PqIHL8DqQ8proZ9cWO+VdMVQIzMWkzoATPd2ylNH7aPVE38KLytTGK9Ua
+         roVWy+tbJkbyUssBGRx8DCc88/ypaww70md+I9xo/QQyvDVVJ6nQJieLKjiJUJCUPh7G
+         dO8Cu3BSi5jtt+zFbkK9gQAf6lMCleW+jL7LXU5iEFUI4vHxK4H8YmTqWf/Dc7zJiKO5
+         k7G60vZIh3wE8TZLUsdjItrIMBFCFUEnbqyZQl2z5Wz2oHwA9okjxEZTgfg4mnAK76q/
+         DsQ4SQ0/B8k6BP/vyW5YqVTG2UShplLRqP0VmdmBl9RCQCfkGKYhfpUQp8IxZQO+9WXy
+         SJXA==
+X-Forwarded-Encrypted: i=1; AJvYcCV+NQ00AL29RnjXOMi2zl0EvcJvCxWP2nO8culFnNWyf5EQbWF/9CaVWXaovJES7GULx0UpyVQy+nw5EZg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyOzbYyGUVAYtXr6J5pttp6Z7jNhJY8yYUPHx7NMlQWrCjOglPH
+	cvWjMTH7ktfDgnnam6ANnqaEcls/yIdZRuvxEVsPonHU75EP6D/sV1hnBZslFA0=
+X-Gm-Gg: ASbGnctmyaqpH1ZAQzuWYVuV2cOoid8M6gz+7b9bjK/qE+098HejlBMGrfO+k48oJs2
+	OVH2PuNnqkFzd6PvL2nguwuqcxQIlUGmTWfGl4N1Z+UUyEvt46sAB0kJyDTPVXjkzoHgkSJhPwP
+	TKo/jiigqqswl+4VcQyeiKuMllSlq0logp0WMreAHDHsuj3vgVv/4WDLlOAecHTyqI3+sNCdaTa
+	m78zm0D/uDOM9DcNaHU7Vokj5w1GHJMsOdrjJTBvPgSa2C/fPC9QzDWQp7yK24gnqEZ2k3q+Du/
+	j+27NXGd8waI6AbzMFJ4c1xaLef10c4n0/p/
+X-Google-Smtp-Source: AGHT+IFw7DOF2AlpkNGRt5nKYLzCwHXDlYJ9rI13bHT9B8yZEwsvGPw15V0L62f7x6TiXP73rO1Krw==
+X-Received: by 2002:a92:c26d:0:b0:3d2:a637:d622 with SMTP id e9e14a558f8ab-3d42b8c1c5bmr71442235ab.12.1741217109024;
+        Wed, 05 Mar 2025 15:25:09 -0800 (PST)
+Received: from [127.0.0.1] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f209df3ea9sm17360173.27.2025.03.05.15.25.07
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 15:21:25 -0800 (PST)
-Date: Thu, 6 Mar 2025 00:21:22 +0100
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: David Jander <david@protonic.nl>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
-	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>, 
-	Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel <o.rempel@pengutronix.de>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
-References: <20250227162823.3585810-1-david@protonic.nl>
- <20250227162823.3585810-2-david@protonic.nl>
- <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
- <20250305164046.4de5b6ef@erd003.prtnl>
+        Wed, 05 Mar 2025 15:25:08 -0800 (PST)
+From: Jens Axboe <axboe@kernel.dk>
+To: ming.lei@redhat.com, tj@kernel.org, josef@toxicpanda.com, 
+ vgoyal@redhat.com, Yu Kuai <yukuai1@huaweicloud.com>
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, yukuai3@huawei.com, yi.zhang@huawei.com, 
+ yangerkun@huawei.com
+In-Reply-To: <20250227120645.812815-1-yukuai1@huaweicloud.com>
+References: <20250227120645.812815-1-yukuai1@huaweicloud.com>
+Subject: Re: [PATCH v2] blk-throttle: fix lower bps rate by
+ throtl_trim_slice()
+Message-Id: <174121710777.165456.10255728984898278903.b4-ty@kernel.dk>
+Date: Wed, 05 Mar 2025 16:25:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="pxoguxghgkglkmsp"
-Content-Disposition: inline
-In-Reply-To: <20250305164046.4de5b6ef@erd003.prtnl>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.3-dev-7b9b9
 
 
---pxoguxghgkglkmsp
-Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-MIME-Version: 1.0
+On Thu, 27 Feb 2025 20:06:45 +0800, Yu Kuai wrote:
+> The bio submission time may be a few jiffies more than the expected
+> waiting time, due to 'extra_bytes' can't be divided in
+> tg_within_bps_limit(), and also due to timer wakeup delay.
+> In this case, adjust slice_start to jiffies will discard the extra wait time,
+> causing lower rate than expected.
+> 
+> Current in-tree code already covers deviation by rounddown(), but turns
+> out it is not enough, because jiffies - slice_start can be a multiple of
+> throtl_slice.
+> 
+> [...]
 
-Hello David,
+Applied, thanks!
 
-On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote:
-> On Fri, 28 Feb 2025 17:44:27 +0100
-> Uwe Kleine-K=F6nig <u.kleine-koenig@baylibre.com> wrote:
-> > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
-> > [...]
-> > > +static int motion_open(struct inode *inode, struct file *file)
-> > > +{
-> > > +	int minor =3D iminor(inode);
-> > > +	struct motion_device *mdev =3D NULL, *iter;
-> > > +	int err;
-> > > +
-> > > +	mutex_lock(&motion_mtx); =20
-> >=20
-> > If you use guard(), error handling gets a bit easier.
->=20
-> This looks interesting. I didn't know about guard(). Thanks. I see the
-> benefits, but in some cases it also makes the locked region less clearly
-> visible. While I agree that guard() in this particular place is nice,
-> I'm hesitant to try and replace all mutex_lock()/_unlock() calls with gua=
-rd().
-> Let me know if my assessment of the intended use of guard() is incorrect.
+[1/1] blk-throttle: fix lower bps rate by throtl_trim_slice()
+      commit: 29cb955934302a5da525db6b327c795572538426
 
-I agree that guard() makes it harder for non-trivial functions to spot
-the critical section. In my eyes this is outweight by not having to
-unlock in all exit paths, but that might be subjective. Annother
-downside of guard is that sparse doesn't understand it and reports
-unbalanced locking.
-=20
-> > > +	list_for_each_entry(iter, &motion_list, list) {
-> > > +		if (iter->minor !=3D minor)
-> > > +			continue;
-> > > +		mdev =3D iter;
-> > > +		break;
-> > > +	} =20
-> >=20
-> > This should be easier. If you use a cdev you can just do
-> > container_of(inode->i_cdev, ...);
->=20
-> Hmm... I don't yet really understand what you mean. I will have to study =
-the
-> involved code a bit more.
+Best regards,
+-- 
+Jens Axboe
 
-The code that I'm convinced is correct is
-https://lore.kernel.org/linux-pwm/00c9f1181dc351e1e6041ba6e41e4c30b12b6a27.=
-1725635013.git.u.kleine-koenig@baylibre.com/
 
-This isn't in mainline because there is some feedback I still have to
-address, but I think it might serve as an example anyhow.
 
-> > > [...]
-> > > +
-> > > +static const struct class motion_class =3D {
-> > > +	.name		=3D "motion",
-> > > +	.devnode	=3D motion_devnode, =20
-> >=20
-> > IIRC it's recommended to not create new classes, but a bus.
->=20
-> Interesting. I did some searching, and all I could find was that the chap=
-ter
-> in driver-api/driver-model about classes magically vanished between versi=
-ons
-> 5.12 and 5.13. Does anyone know where I can find some information about t=
-his?
-> Sorry if I'm being blind...
-
-Half knowledge on my end at best. I would hope that Greg knows some
-details (which might even be "no, classes are fine"). I added him to Cc:
-
-> > [...]
-> > > +	devt =3D MKDEV(motion_major, mdev->minor);
-> > > +	mdev->dev =3D device_create_with_groups(&motion_class, mdev->parent,
-> > > +				devt, mdev, mdev->groups, "motion%d", mdev->minor); =20
-> >=20
-> > What makes sure that mdev doesn't go away while one of the attributes is
-> > accessed?
->=20
-> Good question. I suppose you mean that since mdev is devres-managed and
-> device_create_with_groups() apparently isn't aware of that, so there is no
-> internal lock somewhere that prevents read() or ioctl() being called whil=
-e the
-> devres code is freeing the memory of mdev?
-
-I'm not sure there is an issue, but when I developed the above mentioned
-patch it helped me to test these possible races. Just open the sysfs
-file, unbind the device (or unload the module) and only then start
-reading (or writing).
-
-> > > +	if (IS_ERR(mdev->dev)) {
-> > > +		dev_err(mdev->parent, "Error creating motion device %d\n",
-> > > +				mdev->minor);
-> > > +		mutex_unlock(&motion_mtx);
-> > > +		goto error_free_trig_info;
-> > > +	}
-> > > +	list_add_tail(&mdev->list, &motion_list);
-> > > +	mutex_unlock(&motion_mtx);
-> > > +
-> > > +	return 0;
-> > > +
-> > > +error_free_trig_info:
-> > > +	kfree(trig_info);
-> > > +error_free_trigger:
-> > > +	iio_trigger_free(mdev->iiotrig);
-> > > +error_free_minor:
-> > > +	motion_minor_free(mdev->minor);
-> > > +	dev_info(mdev->parent, "Registering motion device err=3D%d\n", err);
-> > > +	return err;
-> > > +}
-> > > +EXPORT_SYMBOL(motion_register_device);
-> > > [...]
-> > > +struct mot_capabilities {
-> > > +	__u32 features;
-> > > +	__u8 type;
-> > > +	__u8 num_channels;
-> > > +	__u8 num_int_triggers;
-> > > +	__u8 num_ext_triggers;
-> > > +	__u8 max_profiles;
-> > > +	__u8 max_vpoints;
-> > > +	__u8 max_apoints;
-> > > +	__u8 reserved1;
-> > > +	__u32 subdiv; /* Position unit sub-divisions, microsteps, etc... */
-> > > +	/*
-> > > +	 * Coefficients for converting to/from controller time <--> seconds.
-> > > +	 * Speed[1/s] =3D Speed[controller_units] * conv_mul / conv_div
-> > > +	 * Accel[1/s^2] =3D Accel[controller_units] * conv_mul / conv_div
-> > > +	 */
-> > > +	__u32 speed_conv_mul;
-> > > +	__u32 speed_conv_div;
-> > > +	__u32 accel_conv_mul;
-> > > +	__u32 accel_conv_div;
-> > > +	__u32 reserved2;
-> > > +}; =20
-> >=20
-> > https://docs.kernel.org/gpu/imagination/uapi.html (which has some
-> > generic bits that apply here, too) has: "The overall struct must be
-> > padded to 64-bit alignment." If you drop reserved2 the struct is
-> > properly sized (or I counted wrongly).
->=20
-> Oh, thanks for pointing that out... I wouldn't have searched for that
-> information in that particular place tbh. ;-)
->=20
-> I am tempted to add another __u32 reserved3 though instead. Better to have
-> some leeway if something needs to be added in a backwards-compatible way =
-later.
-
-Note that you don't need reserved fields at the end because in the
-ioctl handler you know the size of the passed struct. So if the need to
-add members to the struct arise, you can do that by checking for the
-size. This is even more flexible because otherwise you can only add
-fields that must be 0 when the old behaviour is intended. Most of the
-time this is no problem. But only most.
-=20
-> > > +struct mot_speed_duration {
-> > > +	__u32 channel;
-> > > +	speed_raw_t speed; =20
-> >=20
-> > What is the unit here?
->=20
-> Speed doesn't have a fixed unit in this case. Or rather, the unit is
-> device-dependent. For a motor it could be rotations per second, micro-ste=
-ps per
-> second, etc... while for a linear actuator, it could be micrometers per s=
-econd.
->=20
-> Why no fixed unit? That's because in practice many devices (controllers) =
-have
-> their inherent base-unit, and it would get overly complicated if one need=
-ed to
-> convert back and forth between that and some universal unit just for the =
-sake
-> of uniformity, and user-space most certainly expects the same unit as the
-> hardware device it was initially designed for. So in this case it is a de=
-sign
-> decision to make user-space deal with unit-conversion if it is necessary =
-to do
-> so.
-
-Sad, so a userspace process still has to know some internal things about
-the motor it drives. :-\
-
-Best regards
-Uwe
-
---pxoguxghgkglkmsp
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmfI3G8ACgkQj4D7WH0S
-/k6WWwgAq03768ktc23FO561aNP/9BC0Pt1zK+XHVMrfRyy1A9lsJZ57APt4S4BG
-pUwyaTDT8NutC9OIjjqlhr87nGJhJ01/xiEQskiAwz2oT4V05jIIFmGoVN4EGZWl
-Iyj/H8NR8UxqvFCF2sxJ2bNQFU27h+LoEP/CKEne08tWGOTwAmEkslRWITt3Dbcy
-ZIki1FvxHzGMoH+g9lwJJkFcITRZ5dL2bZhL5iT83o7Vz4MA5VXR4fsmJMDxDeRA
-bAFz1MJ7uVAE6iTKWZOVRsH1bssF3cIWDKfn7W6In3KYSBDAKdCcuJaVMxItbJhp
-2sTlQ7h0o4+RLgXvL9MBLfKQfXyNng==
-=fiHI
------END PGP SIGNATURE-----
-
---pxoguxghgkglkmsp--
 
