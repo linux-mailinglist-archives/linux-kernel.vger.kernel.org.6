@@ -1,146 +1,145 @@
-Return-Path: <linux-kernel+bounces-547349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C189A5061C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:13:32 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FE81A50626
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:14:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EF7D3A2B57
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:13:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9715816FB30
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B55D21C84AC;
-	Wed,  5 Mar 2025 17:13:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF54A202974;
+	Wed,  5 Mar 2025 17:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JpgsoTK/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="av0yX+lz"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F80419CC31;
-	Wed,  5 Mar 2025 17:13:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B381A704B;
+	Wed,  5 Mar 2025 17:14:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194801; cv=none; b=iaOXIm400vIfXzqQ6GhwkR0XKf6q/yDJKJmk0Q0te6gC7smsUrwtJlhl+Duu7dbcgjM4GnXO0+JkPZ89ZIKb1LtdXSlKZUQXiAudAKffHCeFhIHIUgr9TKR251PTn8Qg5G9XTc+yGG509LiBM9p0Ihx8peGEOXVsssueNQJJYoM=
+	t=1741194875; cv=none; b=XiIjIbq1X7sdlhV+1+vf90Yvl5uW158yCC/ZUhDmlwzgWPbhMSMmO9Bfni4pxi2dDWkm2JVbvrVVGhNC5VHy9lDZz1noaLKM4saTj1WzbTAN/c3TyKvmqzy9PrvgnxjPHexZzk1WQrqcugkprkwbBc8Ub2f9RPb4v4PYKySsDK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194801; c=relaxed/simple;
-	bh=/FRsVPcWYshzIJlWkEQR7nspZsvkMq5f/xjb/gPflc8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M30LRASug2+3HX6OoWv6hohkHJgyfKaQ3EInay5JdiZOoCk1ctwzdeZ/ptrRmrIJspc1z9mPShuTN8ASqnZnM/1l24uO/Cx4Vue6cB1KEVHxCSAqYd9fGaafai+CbbY58o/hg7CUx0KSssW8g2LxLxg3/U3yuHv8pULYDK0EjwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JpgsoTK/; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741194800; x=1772730800;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/FRsVPcWYshzIJlWkEQR7nspZsvkMq5f/xjb/gPflc8=;
-  b=JpgsoTK/SuppCgSMpkMlh1njY9stTjcwPgbJEMly/zzvKwVHNpIrjull
-   sq6dHJsNPxplg/2EoZgZe0KdGIWC5GQusLsCuEPv6kdA99hw3VX1WycKG
-   WzxSBhn8lhRCelLaRgTftzyZ4opdutXCrGls7zYq6nt9Q94sDZBudxVfC
-   03f9/oXUyWTsMzSUG19CnHFnYFrycd58AshMO+4ozAHPaUWah7nmCvJLO
-   ojzj9cMae9wzsAYowOPntReUTGbRJE9vhbC/simV6hceI1uvwPFZY6JkV
-   /4EY+cnTtOXwIbM8DGuaJX17JBlWNu5BaN4cgc1wIDY6rmYNiDX1ttTtv
-   Q==;
-X-CSE-ConnectionGUID: pXfVCoxMRfKJc/yYCCaOQg==
-X-CSE-MsgGUID: 7upAjiZ8RIS/PewUt4iwHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53582232"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="53582232"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 09:13:18 -0800
-X-CSE-ConnectionGUID: 17jggO0yS3SFRA7/BU4e/A==
-X-CSE-MsgGUID: owFNWFWSROeZGA6HfX2iVg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="119254412"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa010.fm.intel.com with ESMTP; 05 Mar 2025 09:13:13 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpsIx-000LI6-1y;
-	Wed, 05 Mar 2025 17:13:11 +0000
-Date: Thu, 6 Mar 2025 01:13:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, andi.shyti@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	gregkh@linuxfoundation.org, jirislaby@kernel.org, broonie@kernel.or,
-	andersson@kernel.org, konradybcio@kernel.org,
-	johan+linaro@kernel.org, dianders@chromium.org, agross@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org, linux-spi@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_msavaliy@quicinc.com,
-	quic_anupkulk@quicinc.com,
-	Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Subject: Re: [PATCH v3 6/9] soc: qcom: geni-se: Add support to load QUP SE
- Firmware via Linux subsystem
-Message-ID: <202503060042.qiMGnPlW-lkp@intel.com>
-References: <20250303124349.3474185-7-quic_vdadhani@quicinc.com>
+	s=arc-20240116; t=1741194875; c=relaxed/simple;
+	bh=ER5oulteCDl6wDTtHmCSPNKknH6p6kdvj7AyoPej/mY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=WZCphkVsl+ZJBQUFk/37+tOjGUBmXRNaQauFpBQl0oIRVa1GIlUdfcVkYV/CwXVOBMYBtFZz3Gv8Ehk3K4MLk4kDM2E6fkUstoSWk8VbM6OprpZ6t60pRDw/WKA+zS6spoSg8xTBea41LosaM6W3uLOwRN34ofWPuR7vJD2R8YU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=av0yX+lz; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5258sedl013361;
+	Wed, 5 Mar 2025 17:14:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=NzbcOXyS8UccSas1swTtUVMBhrgYbM34S6IP2OcG1
+	rY=; b=av0yX+lzK/CeFFjnC5tmbETH+aHVAS5BXUSp90uGop1c6PO3VgZojotMH
+	FCmxt1vd5hmL6NKNnGQhuHEbfYjMs8DPqvYmVSzflWVjymCUzvtX600/x1/acDMI
+	FqPwmzpvdOhsuDhr+HTsQkI7rfPFPF4RrUDGPGrdbFxcc/mrrOKxzmoa1X4fd++E
+	1MDa/3fC0Mcldj1JX8laMkvdH034PDxYQP6A6sVFm+y8//Jy3KyULVe/Qx80mz9w
+	n6rQ0WEnt5IKxETApYKAfbXL8VJjWg/LYJ1utvmbLpe+9GK7aWqNGqQhjcghnSeS
+	in7ci+y+SP4Yz9XvOhHagMRKR63uA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4568r0mwp8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 17:14:07 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 525Gu9Wr001625;
+	Wed, 5 Mar 2025 17:14:06 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4568r0mwp3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 17:14:06 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 525GRvpE020794;
+	Wed, 5 Mar 2025 17:14:05 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 454esk3je9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 17:14:05 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 525HE4GI29033014
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Mar 2025 17:14:04 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 09D0620043;
+	Wed,  5 Mar 2025 17:14:04 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C526620040;
+	Wed,  5 Mar 2025 17:13:59 +0000 (GMT)
+Received: from li-621bac4c-27c7-11b2-a85c-c2bf7c4b3c07.ibm.com.com (unknown [9.43.4.86])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Mar 2025 17:13:59 +0000 (GMT)
+From: Saket Kumar Bhaskar <skb99@linux.ibm.com>
+To: bpf@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: ast@kernel.org, hbathini@linux.ibm.com, andrii@kernel.org,
+        aleksander.lobakin@intel.com, daniel@iogearbox.net,
+        davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+        martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+        yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org
+Subject: [PATCH v2 0/2] Fix xdp_adjust_frags_tail_grow selftest on powerpc
+Date: Wed,  5 Mar 2025 22:43:54 +0530
+Message-ID: <cover.1741188826.git.skb99@linux.ibm.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250303124349.3474185-7-quic_vdadhani@quicinc.com>
+Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: iXc6f4iUsoASucweQROor_1hkQicFAOK
+X-Proofpoint-ORIG-GUID: R-X5-IYHLD7Lx-yb13QitYIRMLBdFPcp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_07,2025-03-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ mlxscore=0 phishscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503050130
 
-Hi Viken,
+For platforms on powerpc architecture with a default page size greater
+than 4096, there was an inconsistency in fragment size calculation.
+This caused the BPF selftest xdp_adjust_tail/xdp_adjust_frags_tail_grow
+to fail on powerpc.
 
-kernel test robot noticed the following build warnings:
+The issue occurred because the fragment buffer size in
+bpf_prog_test_run_xdp() was set to 4096, while the actual data size in
+the fragment within the shared skb was checked against PAGE_SIZE
+(65536 on powerpc) in min_t, causing it to exceed 4096 and be set
+accordingly. This discrepancy led to an overflow when
+bpf_xdp_frags_increase_tail() checked for tailroom, as skb_frag_size(frag)
+could be greater than rxq->frag_size (when PAGE_SIZE > 4096).
 
-[auto build test WARNING on andi-shyti/i2c/i2c-host]
-[also build test WARNING on robh/for-next tty/tty-testing tty/tty-next tty/tty-linus linus/master v6.14-rc5 next-20250305]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+This change fixes:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Viken-Dadhaniya/dt-bindings-qcom-geni-se-Add-firmware-name-property-for-firmware-loading/20250303-204936
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git i2c/i2c-host
-patch link:    https://lore.kernel.org/r/20250303124349.3474185-7-quic_vdadhani%40quicinc.com
-patch subject: [PATCH v3 6/9] soc: qcom: geni-se: Add support to load QUP SE Firmware via Linux subsystem
-config: m68k-allmodconfig (https://download.01.org/0day-ci/archive/20250306/202503060042.qiMGnPlW-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250306/202503060042.qiMGnPlW-lkp@intel.com/reproduce)
+1. test_run by getting the correct arch dependent PAGE_SIZE.
+2. selftest by caculating tailroom and getting correct PAGE_SIZE.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503060042.qiMGnPlW-lkp@intel.com/
+Changes:
+v1 -> v2:
+   * Address comments from Alexander
+      * Use dynamic page size, cacheline size and size of
+        struct skb_shared_info to calculate parameters.
+      * Fixed both test_run and selftest.
 
-All warnings (new ones prefixed by >>):
+v1: https://lore.kernel.org/all/20250122183720.1411176-1-skb99@linux.ibm.com/
 
-   In file included from drivers/soc/qcom/qcom-geni-se.c:19:
->> include/linux/soc/qcom/qup-fw-load.h:148:9: warning: "out_be32" redefined
-     148 | #define out_be32(a, v) writel_relaxed(v, a)
-         |         ^~~~~~~~
-   In file included from arch/m68k/include/asm/io_mm.h:25,
-                    from arch/m68k/include/asm/io.h:8,
-                    from include/linux/scatterlist.h:9,
-                    from include/linux/dma-mapping.h:8,
-                    from drivers/soc/qcom/qcom-geni-se.c:11:
-   arch/m68k/include/asm/raw_io.h:32:9: note: this is the location of the previous definition
-      32 | #define out_be32(addr,l) (void)((*(__force volatile u32 *) (unsigned long)(addr)) = (l))
-         |         ^~~~~~~~
->> include/linux/soc/qcom/qup-fw-load.h:149:9: warning: "in_be32" redefined
-     149 | #define in_be32(a) readl_relaxed(a)
-         |         ^~~~~~~
-   arch/m68k/include/asm/raw_io.h:23:9: note: this is the location of the previous definition
-      23 | #define in_be32(addr) \
-         |         ^~~~~~~
+Saket Kumar Bhaskar (2):
+  bpf, test_run: Replace hardcoded page size with dynamic PAGE_SIZE in
+    test_run
+  selftests/bpf: Refactor xdp_adjust_tail selftest with dynamic sizing
 
-
-vim +/out_be32 +148 include/linux/soc/qcom/qup-fw-load.h
-
-   147	
- > 148	#define out_be32(a, v) writel_relaxed(v, a)
- > 149	#define in_be32(a) readl_relaxed(a)
-   150	
+ .../bpf/prog_tests/xdp_adjust_tail.c          | 160 +++++++++++++-----
+ .../bpf/progs/test_xdp_adjust_tail_grow.c     |  41 +++--
+ 2 files changed, 149 insertions(+), 52 deletions(-)
 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.5
+
 
