@@ -1,107 +1,139 @@
-Return-Path: <linux-kernel+bounces-547007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547012-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6F4A501B8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:21:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1D3A501C1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:23:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB071896722
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:21:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99081173DCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:22:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFD824EF9C;
-	Wed,  5 Mar 2025 14:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3575F24CEF0;
+	Wed,  5 Mar 2025 14:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSxM59Hs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="OlThstys"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ABF24EF7E;
-	Wed,  5 Mar 2025 14:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC09924BC18;
+	Wed,  5 Mar 2025 14:20:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184391; cv=none; b=B55jfXNFGWB/MaoUdJeb7d0890E8lpDXSJwmfgmmHSDo0yHqGVQUc8Yd0LxZCDNRBTlC/I0j8BwP6SfDhXYmER8oOPxhLM8XwN5y2IZEODr0Kf5SsJBh+OSrrjOMhzVyf+UtEnplF9idM8kL1OBTJwmHGVKy3taRtStauWIwbTU=
+	t=1741184452; cv=none; b=Alp6AqohuF0yaYyqoOpibynLW5EX2pS4SGsgpb80z7qWbCJCkkKpar1xwprwaHplQ1eU0hkdPIwCL9Qg1NRIioO5k4cN/h4J3Hn0qvIxA0FOkzVXYRiTciRWA2qm3fIvi7QC5Be/wdjTN6LxyuyCSUWm+x3pGzlEFxYERQ8AW8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184391; c=relaxed/simple;
-	bh=0l441pr90rzEMH5F4wcsMjav/46G6mCwscD7MDFRGIw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QZ7ZkeQMAmLAkuMq3jIsSpPlLgnD1B3BaoQQ8KVWsJVDXvQhommpE7OH3j1uzQsFcnR9CmqlfnIVuH96C72m8ayDjVCICdrR0UKROb/4yJX6euv9oLgMZjh0Tb+TuWejr/qvGCzXzX3kzxVwzA40jenXoVWDwIhgPAFEjmZr1Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSxM59Hs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3BBC4CEE2;
-	Wed,  5 Mar 2025 14:19:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741184391;
-	bh=0l441pr90rzEMH5F4wcsMjav/46G6mCwscD7MDFRGIw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=sSxM59HsTjZXoDy/ACPrO7P7UxlCUR+pKPK6Pzb4dMTS5so36XW9JT1PSqOfAm981
-	 PudC78oLV+67xGWMmmojxoyMqbAspNyCfREioT5xyTze8ljpRXWuVwE7BfkOSWmtFh
-	 lcDugb/O03KG97IgZdJXjroeuQqGyeJGjPama2kROC3JDwvTJeZwOgvZmLs+gf/nFe
-	 JRmSIZjNJ17FA//P8v3fq+d0t56YV4k0e6JGSCIUDsGXLlbdK5j306bdPxwo5U71CF
-	 OnU2kJRS25BS9eMiPwKcTiojX3tzzhQQnpO8CtNcQzNrv0LKReIAHWVv8yWVnTZPYi
-	 3sL7EvOXnywVQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
-Cc: "Benno Lossin" <benno.lossin@proton.me>,  "Miguel Ojeda"
- <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
- =?utf-8?Q?=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
- Gross" <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,
-  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
- <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,
-  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kbuild@vger.kernel.org>
-Subject: Re: [PATCH 14/22] rust: add pin-init crate build infrastructure
-In-Reply-To: <CANiq72k=KiYhKr9XHU38==Rx0df4rERyOL1abRG_cDo+4NNa0g@mail.gmail.com>
- (Miguel
-	Ojeda's message of "Wed, 05 Mar 2025 13:50:36 +0100")
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<jpQp16UCJ00pInqOI-QFULU6-FKl2bBtAlmnxtXWLgXPVb7gy6d727nr7THeyks3ERF5Yqu3R6bikD0OK4mqXA==@protonmail.internalid>
-	<20250304225245.2033120-15-benno.lossin@proton.me>
-	<87h647d6xg.fsf@kernel.org>
-	<cdfBMmuIl8Wl-KpI-koNDQJOCGBr9z9dOi5fxQvFbgNWQHHw6JtMizaMMbMniNlE841-9b7TdLuZ9Xh_hFsf7w==@protonmail.internalid>
-	<D88BLHENDH8Y.HQUKEXN1XB7C@proton.me> <87ldtjbqw2.fsf@kernel.org>
-	<okP1iZelIm5t6CfgoFyh0m8LiVEQW3ULUroZHdSQ97ul_BmPr47HBpB3RgHDMtm_2jzF4sTJszuUACsCGBEXcQ==@protonmail.internalid>
-	<CANiq72k=KiYhKr9XHU38==Rx0df4rERyOL1abRG_cDo+4NNa0g@mail.gmail.com>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 15:19:42 +0100
-Message-ID: <878qpja7b5.fsf@kernel.org>
+	s=arc-20240116; t=1741184452; c=relaxed/simple;
+	bh=xpcQbs4tyQQ+SW3I3wZ517Ns00JpxHyOOR9gZd4k3L4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mMkS7Y2wL+xiZrlprRuWCwkG7dE6laCuUaT7zn3br6H35B5BXW0QrmSVq5ZiLXCOyGfei9gNPS4VMy9owiNGS3gcLL1wfTpqqIrZcFH2nRGlzEUYhpvArgNga72oqipUaq4NBpXOL6Z8xWoODTsjAnzeahJMmTCzfo63t/5NZr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=OlThstys; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741184442; x=1741789242; i=markus.elfring@web.de;
+	bh=C1xWGzwYPulTit0Q4OqYEAYIGUZud3a18Yr5KId4AB8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=OlThstys6j83TWzkyFcMswl/GOTcM3VEpAu3qt2qK287aJw8yBDslqMH3mQ/imIc
+	 ynQHBbnKQG5Ku/za3XWJ5+m3vA/mZH4zv/KYgsSIHBDHSgA7/u7mxkHI9WuyaXFH+
+	 uCOkNJq52SDtbgZ/26funprLFb4NWXM8wuA3/+OQHNl5A9761SFHclRVPxQflTdws
+	 4RMzskm0NStsYCiPDTo/wZlPopdK1S+5b+wDDYy8uD2xPyKTJXaSkF3TmeymsJi8C
+	 w8WQEPCUwEB9J04At8isQwHb9dQy6u8ztBApGfpf4LXZyixHJC30zN1OWrm/jnAZt
+	 sMqhz2G6D4M2sdfkXQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MN6Fj-1tZX9L08H7-00I6c4; Wed, 05
+ Mar 2025 15:20:42 +0100
+Message-ID: <20a1a47c-8906-44e8-92e6-9b3e698b1491@web.de>
+Date: Wed, 5 Mar 2025 15:20:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] RDMA/erdma: Prevent use-after-free in erdma_accept_newconn()
+To: kernel-janitors@vger.kernel.org, linux-rdma@vger.kernel.org,
+ Cheng Xu <chengyou@linux.alibaba.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Kai Shen <kaishen@linux.alibaba.com>, Leon Romanovsky <leon@kernel.org>,
+ Yang Li <yang.lee@linux.alibaba.com>
+Cc: cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <f9303bdc-b1a7-be5e-56c6-dfa8232b8b55@web.de>
+ <f0f96f74-21d1-f5bf-1086-1c3ce0ea18f5@web.de>
+ <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <167179d0-e1ea-39a8-4143-949ad57294c2@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:K5YWpl1afCIz0GSstMdQrjpKFA5E9zL+d6oUnGlMOn9oeASRXMM
+ cxOSbYvrdMcL5omgjTJmGrvhAgOtgemjkpRpepr+oDPbfmNlOhHZBpyRHqrh7cZ7doD1Ioy
+ EiDLvYTClCslBiG7DVhc9QPEG9vvNLD9gmYVv1EgQCmnXuJaR/anSsQ/o/eDgMZV1CRGZay
+ k0BnV2DvSPWrF3Z170RuA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:gkDAiXcZH1k=;xz6JkpFjlNnnbsnyId4VAAQBYB9
+ gj4Beb6FayFHM+1bAX90V/bSG3/gQmPupHRKxKzdED9+llmecmGpdQnrUTdasLiJ7oQ/8PEaQ
+ zn+NaH5ZETr5WC0U47QwQQFrwZn/poog0ZDEUs2AKFsHlyMGMQ6sO2pYhHXbQsWZZ4qXIiyhv
+ bgKWlf1CJPC/2AuLxrk0WZWIBF6Hs0yG68fbjCFl1o8KXdutMD/LufdhzdhZdjdZaNnAWU2QJ
+ yWyFLulaOpFNT0fHwx+AgrGJbEKigSIPLM3Du9kYJYBy3h9rQDjdx9vQGClDCs9Q0BiVoxVH+
+ 85AGZPGzYGhK8kgZuaO02XX8WaP4Rsf9WZpc4weY0A5Hw+atGKJnJUQ4nSMLnZLO6qFOfz/Zc
+ 1Nx6ezUnWDFFyQffJOKJJpX6R0RA2IrMjXvvojeJAKytVrk8nx+c/9rKw/LQmOnLYKts+lo9B
+ /Uc1aLKXi6oaHYE/XaMG5cuLyrwUwVBVrE7UH2J1eoF8wNsQDWRYYSj03nw5yaPivMsTPX/sE
+ EGuhlXedguV7tvfa4yS5LQDZc6XlGWcxEOFFpTmxhHUCygUr002AQtANhzNA7TfytfSP0Sk0H
+ qrQpVo6c8qNk/TyARLXSwrFOs/cq0Idb86qSZjD/OK5x/VlKCGyDuZrkhBdTGC9uUKj4UgU2C
+ h8XYp0qRz/hpf7mmgEHR50eiBnG4AFCzZ3rNRvrOhONSOvkIlvW5JO/UH/Bp3ySsMWRVcGHqT
+ wgIFVGOUrCdB1tErrx5DBJ+aruL7TQhouko8vWxlz5r7tvyD84TFi8B/PneQEc6MTIskZm9Xs
+ o4vL91KQ/rqLx0e2aKQyLHVEV6wkRwfx0nha+UF//r9sXleqZ+0bmUZm+WDRSo/5xg9vUt0FQ
+ +0k9RUnnpILrviowSwiwSQ8vqHAd2ZyLAWSigXVca6ZC3ZI/JekwWPSAhdmzO89j/k6wLV+5F
+ iPmj4Ud9diSnNOqarGsbbTJo4oR1UlgIm34w2aaAdEnAhbNcBmKLtZCpH2g8ZhiGBSRmY5/M5
+ lnsTAGHxnIISkPnULX/RcI8UlS47DRqE+WVky3nRng1SGq3V8tM0ibq7QgnAOtq48L3tIpOPm
+ xBjJXJp28BArO2+pkH+SVh45iDfnzwQfqjNuFPEfxK66aK5RaNb1+QvTL3L78DDj9/+LMSdi8
+ KbL8JvI8pa0CDu6YxCRBcK71mnnhq0i/LuLMATBifXFX6UAfGDcTpkAXcfMFsQqOcLlgErtqx
+ t3Mt9dbeEQe4YZnomN9dKlTX2QE+r8aneg8h7XiRCjEItR9Itp2UYgqA65mRuIe547q0/fAz9
+ go/TF8a/wRy7S89tN567WnVAp08wKSMMPcJFL/lw2s6UyuEvq8SnApJJDLt31+AmWV71H3XdP
+ FHtEE/450w7P9JH+VL220PGPgt6m2BkYgMYmWUOwBSaKYmj6V87D/NO7OiZwNsDvrJJ/5d0Kw
+ sw0WY6+fVlliAzq2pP77dif5eDBk=
 
-"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 5 Mar 2025 15:07:51 +0100
 
-> On Wed, Mar 5, 2025 at 1:34=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->>
->> I _really_ think that the ability to run the tests should be present in
->> the kernel repository. But I also do not want to block this series on it,
->> if it is something that will be easier to achieve with the build system
->> overhaul that is in the pipeline.
->
-> No, that is not the plan. Even with the new build system, this is
-> supposed to be developed upstream as far as I understand, so you will
-> need to run them there anyway.
->
-> Unless there is a reason we could catch more bugs here, that is.
+The implementation of the function =E2=80=9Cerdma_accept_newconn=E2=80=9D =
+contained
+still the statement =E2=80=9Cnew_cep->sock =3D NULL=E2=80=9D after
+the function call =E2=80=9Cerdma_cep_put(new_cep)=E2=80=9D.
+Thus delete an inappropriate reset action.
 
-I guess it would be no different than `syn`. But I think it is a shame
-that we move something that people could contribute to via the kernel
-development flow - out of the kernel development flow.
+Reported-by: Cheng Xu <chengyou@linux.alibaba.com>
+Link: https://lore.kernel.org/cocci/167179d0-e1ea-39a8-4143-949ad57294c2@l=
+inux.alibaba.com/
+Link: https://lkml.org/lkml/2023/3/19/191
+Fixes: 920d93eac8b9 ("RDMA/erdma: Add connection management (CM) support")
+Cc: stable@vger.kernel.org
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/infiniband/hw/erdma/erdma_cm.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Ultimately I guess this is for the maintainer to decide, and I don't
-have to like the decision.
+diff --git a/drivers/infiniband/hw/erdma/erdma_cm.c b/drivers/infiniband/h=
+w/erdma/erdma_cm.c
+index 1b23c698ec25..e0acc185e719 100644
+=2D-- a/drivers/infiniband/hw/erdma/erdma_cm.c
++++ b/drivers/infiniband/hw/erdma/erdma_cm.c
+@@ -709,7 +709,6 @@ static void erdma_accept_newconn(struct erdma_cep *cep=
+)
+ 		erdma_cancel_mpatimer(new_cep);
 
+ 		erdma_cep_put(new_cep);
+-		new_cep->sock =3D NULL;
+ 	}
 
-Best regards,
-Andreas Hindborg
-
+ 	if (new_s) {
+=2D-
+2.48.1
 
 
