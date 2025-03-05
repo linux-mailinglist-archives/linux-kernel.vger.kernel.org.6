@@ -1,99 +1,161 @@
-Return-Path: <linux-kernel+bounces-546919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBBC1A50092
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:32:25 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBDE8A5009A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:34:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17AD23A43B9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:32:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184EA1882455
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FF7E24501D;
-	Wed,  5 Mar 2025 13:32:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79711245023;
+	Wed,  5 Mar 2025 13:33:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BBkRY4SB"
-Received: from mail-wr1-f74.google.com (mail-wr1-f74.google.com [209.85.221.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D13BC2ED
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.74
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="JPbIWMSJ"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC862134D4
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:33:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741181540; cv=none; b=bRBiHhZIuQEAuJam/SQIPmDQNKTKe2b83MV599i205lp0JMC0WSF+tK7Xmt6wrAENEcswa5ZA0LgR9AcI48Hs06Q2yNP4YnTQwMwZA+ao603aP/yhBTMaclCnLVLmrqaRHENzrbpLotzFAAqfRDaf+rNXxk3gbANcLM0K47pe5E=
+	t=1741181617; cv=none; b=RpNmHif9U8V1jBC9CRYN33GpAtC6o9651m3qWYqSNjO2afxqm47KlN5fRlIgkI7ZQCuFtifbIezmSi8ZfTSZrdTmhAU7nZcM0mkc36KTnw9J+UT8xW6cNqP+ledFTMp4juXFVjiXMgSXVzDIQGG9H8rNwqMG9cKdQJAlBKbEGKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741181540; c=relaxed/simple;
-	bh=MA/Tl5K/HzeGHY11yV+JGFQTHKF6NRYd26L2b8QqFyE=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Dd1In50DmxkbIKkQ24m20WW+RmyIEUY1dVEakLrxSppTw5mDDbvaSSmpbX1U3XG1qgBt1aQ8/qY5lO051HAy++v5mYqGsVeVdu2kitn4WpxVqkfzE8O++Lg9G/VPrjm45UrgQ8f7PKIO5FofAlmHzmUxdbQhSSnyVMNaWGReHPU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BBkRY4SB; arc=none smtp.client-ip=209.85.221.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wr1-f74.google.com with SMTP id ffacd0b85a97d-3910b93cb1eso1550697f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 05:32:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741181536; x=1741786336; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jhZGVnCd1LrD1r7cIo0XuyDXMDAukxGRXDEbG9YaT9M=;
-        b=BBkRY4SBFth7JiXR1NcIKNRPFp3Zbo0aw+tS8SJkPtCT11RxGZouVhU73Qr3AVcwZS
-         CkeeogZi8PLjLQGh/GPFLtoQFRgJWxgCUMd1DZyhjJyA7PXU3Nl+9yS5y/In2aEdEJE2
-         SXmemAE/W2y6ZD5lgWqrfrlrQDdMDuNoS8uOqcqVFHF1jPvUUlV2i4TeqzoF2K3bsIWb
-         v5820P6avKywS7f0ThGy/B81G2HNDGbad20rEjITW5IYfKdvbnVufn7jdcTBkq0QQ2Li
-         3D2YWf893AAV/xzPM0giFzWdLA0PTXMLEXGanI1+Q8cR5q+tCeGfWWRGX0TZXZH6WLp1
-         dBPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741181536; x=1741786336;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jhZGVnCd1LrD1r7cIo0XuyDXMDAukxGRXDEbG9YaT9M=;
-        b=omGvr6OMYJ9XEPpJzNDtabcikuT99ctTmia+AzTa+C2XcC/Nbsy1xSBa2JGFL/YWV4
-         VB8V1B+GZ9e31wnkup9ERLX5foxNok1b+XbOWwAEeVU9n6pkd+klMTqVyJL7h2qBOMmU
-         W8T8LqrjnSwAhPdC/5EgeCzmG2GTZnnBRpXZJLC+ZZkJyaTn46jRnrRyVsTjhSv/SBBq
-         EwwLNA3txTGLKmSwTar30rSL4rQgZyZoxl7ZqgwhhE+ZTPe9iGPkK+kjhSn+GnWaoFXp
-         PiqQYg7jqsVEkyhlhv9IgXbgOVkLT/p7GiDVyJxPYWhll4S6alftsWsKCF3k0bnsV3Fv
-         3f5w==
-X-Forwarded-Encrypted: i=1; AJvYcCXtGlLzA29DjQ9rJYFafNzzrqg6XjWbevzDntQBhFjnwzkaLUlS0bJ5QCa87aJNCpvQ30ovi8YUmIKno8Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZhCfzIs2CTs1gz/vIPbnqJgkIXZhLMQvY981tJ/Yp8jgB/Ggt
-	ChP7yq00qd35yQIOcT2uLcdad0MTtV0SS3AROHkdKGiMiU0pvYaYIW3xOka8uy/xQNjY+d6F1pF
-	GXLbHj/wS+3cuow==
-X-Google-Smtp-Source: AGHT+IGqv7w5ZYvUvIWCvfPNCsKIl2w0sI3jypHqC/lLiiOmT2zEfZbYg6IijEn1V2yDy4haEHjOc40D25h5t60=
-X-Received: from wmbhc17.prod.google.com ([2002:a05:600c:8711:b0:439:8e3e:b51b])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6000:188c:b0:391:23db:f218 with SMTP id ffacd0b85a97d-39123dbf45cmr901576f8f.40.1741181536569;
- Wed, 05 Mar 2025 05:32:16 -0800 (PST)
-Date: Wed, 5 Mar 2025 13:32:14 +0000
-In-Reply-To: <20250305132836.2145476-1-benno.lossin@proton.me>
+	s=arc-20240116; t=1741181617; c=relaxed/simple;
+	bh=nLZuTD4O5TfThTjoxxiTaCOFqFsWGfW7NribwesxYKs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=tZ5wuM6hQfpJ/Vz2ZENtW5I2yfRREGW9+02bifC6KrMSXZarEo03m1HQgz2CVwdJ6q4RyMMdWyn/9E9ghDBAtVBFuWcpx/C5CK7uaRVMQe1Ucl8MAtbjRMNWpz086hfN/u+X5h5wT+MUqj6G4Ljlz+gWOB5xS5m915pkFpzbPWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=JPbIWMSJ; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=ivZMd
+	f8K4NKd/IimW5p+hBinu9acvKGE4BCqgwtiLqM=; b=JPbIWMSJVIv0dAK4ODLX9
+	Pi1rFdmHQhH8jaYRX7vmwVVrEULWkVRBXBOBESS43vTWObTkm+rWSvITvWmNBrDU
+	jcabFpAxdMAx6BqIBzHa9XUwMzkOEBUnh4lmoKMlBHSvwYtXb7JUXlVE/hLgai/c
+	yesEO2IBey/9vYrZhjtfEI=
+Received: from zhuxin.hobot.cc (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wAn_3qXUshn_yNfQQ--.11325S2;
+	Wed, 05 Mar 2025 21:33:19 +0800 (CST)
+From: Zxyan Zhu <zxyan20@163.com>
+To: gregkh@linuxfoundation.org
+Cc: broonie@kernel.org,
+	rafael@kernel.org,
+	dakr@kernel.org,
+	linux-kernel@vger.kernel.org,
+	Zxyan Zhu <zxyan20@163.com>
+Subject: [PATCH v3] regmap: debugfs: Fix name collision without atomic operations
+Date: Wed,  5 Mar 2025 21:32:52 +0800
+Message-Id: <20250305133251.44082-1-zxyan20@163.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250305132836.2145476-1-benno.lossin@proton.me>
-Message-ID: <Z8hSXgC-ecXCEPiS@google.com>
-Subject: Re: [PATCH] rust: init: fix `Zeroable` implementation for
- `Option<NonNull<T>>` and `Option<KBox<T>>`
-From: Alice Ryhl <aliceryhl@google.com>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, stable@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAn_3qXUshn_yNfQQ--.11325S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxWr47Ww47ur4xKFW8Jr4xZwb_yoW5ZFWDpa
+	1kG3WrKwsrAr4rJrWYya18CFySk392vFy3A3yru3W5Zwnaqr47JF4vgFWYyryDuryUXw1U
+	XF4ay34UCr1UtaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0piF_M3UUUUU=
+X-CM-SenderInfo: p201t0isq6il2tof0z/1tbioBYHXmfIUpsAQAAAsJ
 
-On Wed, Mar 05, 2025 at 01:29:01PM +0000, Benno Lossin wrote:
-> According to [1], `NonNull<T>` and `#[repr(transparent)]` wrapper types
-> such as our custom `KBox<T>` have the null pointer optimization only if
-> `T: Sized`. Thus remove the `Zeroable` implementation for the unsized
-> case.
-> 
-> Link: https://doc.rust-lang.org/stable/std/option/index.html#representation [1]
-> Cc: stable@vger.kernel.org # v6.12+ (a custom patch will be needed for 6.6.y)
-> Fixes: 38cde0bd7b67 ("rust: init: add `Zeroable` trait and `init::zeroed` function")
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+The `dummy_index` global variable caused debugfs file name conflicts
+during re-entry, leading to creation failures. Use atomic operations
+to ensure safe and unique debugfs `dummy%d` naming.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Signed-off-by: Zxyan Zhu <zxyan20@163.com>
+---
+
+Changes since v2:
+- Remove atomic_dec operation if kasprintf() fails
+
+Changes since v1:
+- Replaced atomic_read + atomic_inc with atomic_inc_return.
+- Added atomic_dec in the error path to maintain index consistency.
+- Updated the commit message to clarify the fix.
+
+At 2025-03-05 00:23:02, "Greg KH" <gregkh@linuxfoundation.org> wrote:
+>On Tue, Mar 04, 2025 at 10:24:52PM +0800, Zxyan Zhu wrote:
+>>  	if (!strcmp(name, "dummy")) {
+>>  		kfree(map->debugfs_name);
+>> -		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
+>> -						dummy_index);
+>> -		if (!map->debugfs_name)
+>> +		index = atomic_inc_return(&dummy_index);
+>> +		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d", index);
+>> +		if (!map->debugfs_name) {
+>> +			atomic_dec(&dummy_index);
+>>  			return;
+>> +		}
+>>  		name = map->debugfs_name;
+>> -		dummy_index++;
+>
+>Shouldn't you just use an idr here if there is a race condition?
+>There's a lock built into it that should solve all of these issues.
+>
+>thanks,
+>
+>greg k-h
+
+Thanks for the feedback! I think using atomic_t is a better fit here
+than idr because:
+1. It's lighter and simpler for our basic indexing needs.
+2. No extra resource management is needed. If we use idr, we'd have to
+ handle resource cleanup and add locks for debugfs_init/debugfs_exit
+ concurrency.
+3. As Mark mentioned, id continuity isn't a hard requirement, so we
+ can even skip the atomic_dec on kasprintf failure.
+
+If you still think idr has clear advantages here, I'm happy to adjust
+the code, but it'd be great to understand the specific benefits in
+this context.
+
+Cheers,
+
+Zxyan Zhu
+
+ drivers/base/regmap/regmap-debugfs.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/base/regmap/regmap-debugfs.c b/drivers/base/regmap/regmap-debugfs.c
+index fb84cda92a75..8811c42dccb7 100644
+--- a/drivers/base/regmap/regmap-debugfs.c
++++ b/drivers/base/regmap/regmap-debugfs.c
+@@ -20,7 +20,7 @@ struct regmap_debugfs_node {
+ 	struct list_head link;
+ };
+ 
+-static unsigned int dummy_index;
++static atomic_t dummy_index = ATOMIC_INIT(0);
+ static struct dentry *regmap_debugfs_root;
+ static LIST_HEAD(regmap_debugfs_early_list);
+ static DEFINE_MUTEX(regmap_debugfs_early_lock);
+@@ -549,6 +549,7 @@ void regmap_debugfs_init(struct regmap *map)
+ 	struct regmap_range_node *range_node;
+ 	const char *devname = "dummy";
+ 	const char *name = map->name;
++	int index;
+ 
+ 	/*
+ 	 * Userspace can initiate reads from the hardware over debugfs.
+@@ -595,12 +596,11 @@ void regmap_debugfs_init(struct regmap *map)
+ 
+ 	if (!strcmp(name, "dummy")) {
+ 		kfree(map->debugfs_name);
+-		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d",
+-						dummy_index);
++		index = atomic_inc_return(&dummy_index);
++		map->debugfs_name = kasprintf(GFP_KERNEL, "dummy%d", index);
+ 		if (!map->debugfs_name)
+ 			return;
+ 		name = map->debugfs_name;
+-		dummy_index++;
+ 	}
+ 
+ 	map->debugfs = debugfs_create_dir(name, regmap_debugfs_root);
+-- 
+2.34.1
+
 
