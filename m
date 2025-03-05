@@ -1,171 +1,178 @@
-Return-Path: <linux-kernel+bounces-546409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0701A4FA51
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:38:25 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE1BA4FA56
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:38:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C799A3AC6F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:37:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEF0E16F96F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:38:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9362220551B;
-	Wed,  5 Mar 2025 09:37:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C212054EF;
+	Wed,  5 Mar 2025 09:38:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qsb9rFWx"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ank+NKPJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343DD1FC7CA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:37:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096BF204F81
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741167465; cv=none; b=AUb1OchfxVus1EbfreKL1yhlaVfbHEE2l+nHnpg07znpNznnPylYr8jbzH7+CSzJsL/BTmrlcEKoA5Ac5v0qvibnVmhLRdMWKPTGXdJJuHt5bQA5rAB0L1Bbl0kx3bCgYGPjdBO+u3iz04hAQ4amQBtBgMfPcYzPTNJr9ByINJs=
+	t=1741167492; cv=none; b=ISN8mS+w1UK/zU9eToFHeigH3TrUupDRMxwx1gCw5XYhSgQhv8j/yb5ytdyuCM5K41kWhRpKGTP3L/bhIlO1sYob0yNxFcUmKu6i7TjAzhtsI2mnDuCkTfqCXV6p8DiahP0FysU37+Y/tkSVDVsNj5z3nuqxMFeOEkrYACv9Yzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741167465; c=relaxed/simple;
-	bh=isjro7OOWBCeb6GkdES/x2yquOYlb6X+fXMrG+gQ09k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nKGeNT5pLMYj5JUaWDUAMXiZ6+V+X6xtXAaD8eP7veptfvYscccu05yLm7RMhEF+kTOfGsgxFqL/mLPcHYN+0SoP+AnnH26HylbcIyQkZY4utA3C4AoVvvJUFc5jzJ9cZcHv3mxGbGx7Qtu4Y+xZ5r8CYvEe9cUs7EZdnYUlYik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qsb9rFWx; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4394036c0efso41725345e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:37:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741167462; x=1741772262; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Grr+Ryd7sxW458ZEYnV+lJNtq+fkIQR73sXzq9266bY=;
-        b=qsb9rFWxYeS1w5erYBXTPQUINWG32R01F/sK8zotXtSgjpGLrMw4AvYq9lipiph+rv
-         mZDC32zRZXaf/2Ej0+1RsTGECNvwBvSaqDw9XU35K3yc/Ew+dIDFRmBI1Nxkf4dVt6UU
-         TbTElUmkYvliAfkU/D3cFKERJ5Th8Ar62UWeLYIn25ZToctuqApgWGf00saqDuJjRRRy
-         vPnSjWB6mMltnojQQelLuICyQX6ZXAwUFkk7zs2Xq1/cEwLtzLiQCS8w+l41pbN5j40L
-         i8OGTlDgAhHufJ4Se1ZBRRLpLsPswQlG/kN3GE9/YxrSG611bqVd8eGrXGJlNA0EgEQa
-         vbCg==
+	s=arc-20240116; t=1741167492; c=relaxed/simple;
+	bh=exY4ZR3eJixCKGY9RcS0uPA/+XbPIVQfPexC74yCyy4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YtPGnwEa5MG7DSsxi8y9DS0zVrngd0GW/FaSITwzt13gHYajDHZSjmrZ7azNWXnKNEHJ82yuUBaIFJ3yM+lZkeen3R1Rtv+rp1KBdzV9jKBjw9Y3oyMNbhuHKd2YO2fRL3ewTttBCvLB7ZVkOgGXw1cUEtWOCyI6WmUmnRorqkg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ank+NKPJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741167489;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=0FrWMD0bRhsF9/9bE85tn6Gl17O/CsmNiRx1oo/Ojac=;
+	b=ank+NKPJSN3wkNy6AxSsAUwc8IQpgP5ibKQzFLRXrl9f6/XYRtG6ooXv4aaUYDXeHrZ3PL
+	QO7KKIAwjESxkTrvdM8eI+wllcYf6nLuRocCXB+/8jGFz3+1pfsvUGEmVNZRs9/pfJmMIu
+	245prt8iYz75b8NjtNCr0DXSPXGL4wM=
+Received: from mail-yb1-f198.google.com (mail-yb1-f198.google.com
+ [209.85.219.198]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-615-lsyMe4yPN5qH5vWue8d28w-1; Wed, 05 Mar 2025 04:38:03 -0500
+X-MC-Unique: lsyMe4yPN5qH5vWue8d28w-1
+X-Mimecast-MFC-AGG-ID: lsyMe4yPN5qH5vWue8d28w_1741167483
+Received: by mail-yb1-f198.google.com with SMTP id 3f1490d57ef6-e5798866415so13490340276.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:38:03 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741167462; x=1741772262;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Grr+Ryd7sxW458ZEYnV+lJNtq+fkIQR73sXzq9266bY=;
-        b=JlyIBO52bBGvW9ZhEeriM1mE/fm/crJ7WqizuFc32A0M1L2AzY5gf6Ja0Mkuikz4+H
-         WzPV78iQgSuT6TDyZ16dQ5T+8J4CsnG0XzQc/J78xmDY30lbOmXil+83G5HibshfajQa
-         JIcfnD0iFywD1E9cSE2d8YP3r7xtY+N1aoEZ9bjyEN96iYtvdwa7n+KWDDynKE1ekXlN
-         MGR7/D0y4RTOEkwfABoy003wEw/oG/kGt+kE4BS9Il6rVLmxLU4WEPnazyDrwdzO3mhs
-         JQJM1ptUKc/OQr89NhyqqXEDGVbARgWzucq6cW2I2csg2pEPTHux3URkIYGtFTXWOR9P
-         7q5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUjvClE+PIeZ3/DIUV9z4PdXFEvtlVU6+fNbLifJkMJRLyJPudkaK2FPFrHDQxkWpRdYw/6c+mMLkS/l5M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw45eIQheyEFyX13T3N6DJIPJyRvph0mTY5l7Fv/I7sUsmzdvES
-	euBuSGkcaEbu4f2A8azQZHexVCM+3Y4tUW1BVjYxW+B7FsD/z7k+ITWTpRP+6ds=
-X-Gm-Gg: ASbGncvGwImrzb1LbnWrsImytLqwGFni8gtskYO9p/F7cOGxWhsdtiZY84QK3JOthdU
-	7OPiDWIlkvMNSl/8RK3ROwLWLs0ZgeBXI2uiJ9VyBSXT3oiroHkWMAgP7Iwvm/XQh34X4O0+bRa
-	Bxca7S8oxl9VwtnrSy5qWo4nD3fCUVefxytPPurMxaDZC/tGHH6PkuAwnFQMMtRqvl43gWLLOUP
-	vtOhr+diAIzdjc0dRHXhHrbVf65S9CpLSOugMZw6FDDBLS0zg3bhkTbPKYjJdgTpsKHAoeBu2Hu
-	Ijh3aA2bfMr+yrRY+BO/uMiGqU27JFO1pBVNYvaIt3zQE3ONQyps6/U=
-X-Google-Smtp-Source: AGHT+IHLvj7BNI5tvdYEjWzU14lOUssmMCCnp9Uix4nr7D2htDflU5rgXZLhEFrgq2kEhSCjpXYOag==
-X-Received: by 2002:a5d:5850:0:b0:391:4f9:a039 with SMTP id ffacd0b85a97d-3911f7400aamr2232774f8f.16.1741167462428;
-        Wed, 05 Mar 2025 01:37:42 -0800 (PST)
-Received: from [192.168.1.247] ([209.198.129.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844a38sm20595393f8f.75.2025.03.05.01.37.41
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 01:37:42 -0800 (PST)
-Message-ID: <36123515-a268-40cb-b010-2600c2f5c1c6@linaro.org>
-Date: Wed, 5 Mar 2025 09:37:40 +0000
+        d=1e100.net; s=20230601; t=1741167483; x=1741772283;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=0FrWMD0bRhsF9/9bE85tn6Gl17O/CsmNiRx1oo/Ojac=;
+        b=bJukUEhEkNOdGwxhhevgTIsyy9qlRpcavS2ivBoVVaS08V+fFvu/C87PAIhhXtmh4k
+         i1yVC29L19eVo+oq6b9bExkB1PnLSx6hbt/KuWrSCdwTlJe5I2rsWE1ASkf/3u+S1cXX
+         dEWo59eHNXiCSLwErGLt8v4cAJ6W/nwJP/cjnSdEVcNP5rx/2iFTD+4O2dBvIRgA45gc
+         db6vlYeuGifBj4ziMWtGk2j7zWKezYTONrXmAo1K73XeAtBL3W6wzJGoMtqcfDe/9YC3
+         yvlz10sOD1VS+bIzHOAWwMz3LuqQVGVcrgneXX23CMNmP7K0KwqfxS7yzLOxtNDa1HFm
+         PqhA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLKAUBTCGVRA23XnFHD8cojWdAWYAAoWxqvEMeci7eZepzlAd59OJuFAGAXcZUJwPfkkkuUi0HaHSc2z8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTKBbD6Qshm0DtkUkgSpn0Xo1m1NbVHKuBOJ4J3LWk/1Q/J0Jf
+	1oeRSwi+PvQMluah5LCwg3m7CS+yiNfp0uqj9KsrySicREud9ZWE1ly1ZqClpYEMBplBEzTnRYf
+	J3gA2Jyb0TM8X/VDl8iR3WSM0rwMQCM7p1ugyiADprh3rpYGl0GfBj6nOzjYk3ABt6UudBTm6ah
+	aXFWxC1/qxnW8vzZfmwwoORcOuMv43giNVhEDn
+X-Gm-Gg: ASbGncsQgTcSx0bBKlOtQW3wEqU55rQJHd2G4haOI57oF0BzIlKtsEdkbRHbwkys/Sl
+	350IOgSCdCYKUF9BMBunYbUAxbRjvfEEljoviKpoSvDBCO2cXV0wB4bCWl3mQOUmEx2Cq+NI=
+X-Received: by 2002:a05:6902:1183:b0:e60:99d2:cbc2 with SMTP id 3f1490d57ef6-e611e1d985bmr3487856276.25.1741167483053;
+        Wed, 05 Mar 2025 01:38:03 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHdMsgj9Ydu4+cefxVYhObOl86/wGnTsK/HesSGO3ed6Vl99uqasl92wWHUDOUB2G4pt/8bHopoWWjG9JBFIQE=
+X-Received: by 2002:a05:6902:1183:b0:e60:99d2:cbc2 with SMTP id
+ 3f1490d57ef6-e611e1d985bmr3487834276.25.1741167482716; Wed, 05 Mar 2025
+ 01:38:02 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Remove some PMU events for FUJITSU-MONAKA
-To: "Yoshihiro Furudera (Fujitsu)" <fj5100bi@fujitsu.com>
-Cc: 'John Garry' <john.g.garry@oracle.com>, 'Will Deacon' <will@kernel.org>,
- 'Mike Leach' <mike.leach@linaro.org>, 'Leo Yan' <leo.yan@linux.dev>,
- 'Peter Zijlstra' <peterz@infradead.org>, 'Ingo Molnar' <mingo@redhat.com>,
- 'Arnaldo Carvalho de Melo' <acme@kernel.org>,
- 'Namhyung Kim' <namhyung@kernel.org>, 'Mark Rutland' <mark.rutland@arm.com>,
- 'Alexander Shishkin' <alexander.shishkin@linux.intel.com>,
- 'Jiri Olsa' <jolsa@kernel.org>, 'Ian Rogers' <irogers@google.com>,
- 'Adrian Hunter' <adrian.hunter@intel.com>,
- "'Liang, Kan'" <kan.liang@linux.intel.com>,
- "'linux-arm-kernel@lists.infradead.org'"
- <linux-arm-kernel@lists.infradead.org>,
- "'linux-perf-users@vger.kernel.org'" <linux-perf-users@vger.kernel.org>,
- "'linux-kernel@vger.kernel.org'" <linux-kernel@vger.kernel.org>,
- "Akio Kakuno (Fujitsu)" <fj3333bs@fujitsu.com>
-References: <20250227054045.1340090-1-fj5100bi@fujitsu.com>
- <96b323eb-15b2-4b60-8522-83bf2f57694b@linaro.org>
- <OSZPR01MB6908AA7CEB24ED38F9289D6DD4CC2@OSZPR01MB6908.jpnprd01.prod.outlook.com>
- <OS3PR01MB6903726FDA70250F72A73410D4CB2@OS3PR01MB6903.jpnprd01.prod.outlook.com>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <OS3PR01MB6903726FDA70250F72A73410D4CB2@OS3PR01MB6903.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20200116172428.311437-1-sgarzare@redhat.com> <20200116172428.311437-2-sgarzare@redhat.com>
+ <20250305022900-mutt-send-email-mst@kernel.org> <CAGxU2F5C1kTN+z2XLwATvs9pGq0HAvXhKp6NUULos7O3uarjCA@mail.gmail.com>
+ <20250305042757-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250305042757-mutt-send-email-mst@kernel.org>
+From: Stefano Garzarella <sgarzare@redhat.com>
+Date: Wed, 5 Mar 2025 10:37:51 +0100
+X-Gm-Features: AQ5f1JrrYEAMMHf_xixI6yuzRilW5TDux-F3sq2MEJ4u_iOmeJJo3IO5_LvXWgY
+Message-ID: <CAGxU2F5D=nx8V4d+iDyQvfJvhASMOM1c3AsRZT0R3TqnAVUhUQ@mail.gmail.com>
+Subject: Re: [PATCH net-next 1/3] vsock: add network namespace support
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Jakub Kicinski <kuba@kernel.org>, davem@davemloft.net, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Jorgen Hansen <jhansen@vmware.com>, 
+	Jason Wang <jasowang@redhat.com>, kvm@vger.kernel.org, 
+	Stefan Hajnoczi <stefanha@redhat.com>, virtualization@lists.linux-foundation.org, 
+	linux-hyperv@vger.kernel.org, Dexuan Cui <decui@microsoft.com>, 
+	Bobby Eshleman <bobbyeshleman@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Wed, 5 Mar 2025 at 10:29, Michael S. Tsirkin <mst@redhat.com> wrote:
+>
+> On Wed, Mar 05, 2025 at 10:23:08AM +0100, Stefano Garzarella wrote:
+> > On Wed, 5 Mar 2025 at 08:32, Michael S. Tsirkin <mst@redhat.com> wrote:
+> > >
+> > > On Thu, Jan 16, 2020 at 06:24:26PM +0100, Stefano Garzarella wrote:
+> > > > This patch adds a check of the "net" assigned to a socket during
+> > > > the vsock_find_bound_socket() and vsock_find_connected_socket()
+> > > > to support network namespace, allowing to share the same address
+> > > > (cid, port) across different network namespaces.
+> > > >
+> > > > This patch adds 'netns' module param to enable this new feature
+> > > > (disabled by default), because it changes vsock's behavior with
+> > > > network namespaces and could break existing applications.
+> > > > G2H transports will use the default network namepsace (init_net).
+> > > > H2G transports can use different network namespace for different
+> > > > VMs.
+> > >
+> > >
+> > > I'm not sure I understand the usecase. Can you explain a bit more,
+> > > please?
+> >
+> > It's been five years, but I'm trying!
+> > We are tracking this RFE here [1].
+> >
+> > I also add Jakub in the thread with who I discussed last year a possible
+> > restart of this effort, he could add more use cases.
+> >
+> > The problem with vsock, host-side, currently is that if you launch a VM
+> > with a virtio-vsock device (using vhost) inside a container (e.g.,
+> > Kata), so inside a network namespace, it is reachable from any other
+> > container, whereas they would like some isolation. Also the CID is
+> > shared among all, while they would like to reuse the same CID in
+> > different namespaces.
+> >
+> > This has been partially solved with vhost-user-vsock, but it is
+> > inconvenient to use sometimes because of the hybrid-vsock problem
+> > (host-side vsock is remapped to AF_UNIX).
+> >
+> > Something from the cover letter of the series [2]:
+> >
+> >   As we partially discussed in the multi-transport proposal, it could
+> >   be nice to support network namespace in vsock to reach the following
+> >   goals:
+> >   - isolate host applications from guest applications using the same ports
+> >     with CID_ANY
+> >   - assign the same CID of VMs running in different network namespaces
+> >   - partition VMs between VMMs or at finer granularity
+> >
+> > Thanks,
+> > Stefano
+> >
+> > [1] https://gitlab.com/vsock/vsock/-/issues/2
+> > [2] https://lore.kernel.org/virtualization/20200116172428.311437-1-sgarzare@redhat.com/
+>
+>
+> Ok so, host side. I get it.
 
+Now that we're talking about it, I also came back to a guest side
+case, again related to containers and possible nested VMs.
 
-On 05/03/2025 6:40 am, Yoshihiro Furudera (Fujitsu) wrote:
-> Hi, James
-> 
->>
->> Hi, James
->> Thank you for your comment.
->>
->>> On 27/02/2025 5:40 am, Yoshihiro Furudera wrote:
->>>> The following events are not counted properly:
->>>>
->>>> 0x0037 LL_CACHE_MISS_RD
->>>> 0x400B L3D_CACHE_LMISS_RD
->>>
->>> These two are discoverable so will still appear in
->>> /sys/bus/event_source/devices/armv8_pmuv3_0/events/ if the hardware
->>> says they exist. It might be better to change the json strings of
->>> these two to warn that they don't work if that's the case, otherwise
->>> Perf will still list them and you'll be worse off.
->>
->> I will leave these 2 events and
->> add a warning message to the description in the JSON file.
->> I will handle other events in the same way as these 2 events.
-> 
-> I'm thinking of adding one of the following warnings
-> to the description of events where inaccurate counts
-> occur on FUJITSU-MONAKA.
-> Is this okay?
-> 
-> 1.Simple version
-> "Note: This event does not count accurately."
-> 
-> 2.Detailed version
-> "Note: This event does not count accurately because it counts as a miss regardless of whether the L3 prefetch is a hit or miss."
-> 
-> I think "2.Detailed version" is better.
-> 
-> example:
-> {
->      "EventCode": "0x0396",
->      "EventName": "L2D_CACHE_REFILL_L3D_MISS",
->      "BriefDescription": "This event counts operations that cause a miss of the L3 cache. Note: This event does not count accurately because it counts as a miss regardless of whether the L3 prefetch is a hit or miss."
-> }
-> 
-> Best Regards,
-> Yoshihiro Furudera
+If you launch a container in a L1 guest, for example to launch a
+nested VM, maybe you don't want to have it communicate with the L0
+host, so it would be desirable to be able to isolate the virtio-vsock
+device from it.
 
-You could have both by using BriefDescription and PublicDescription. The 
-longer one being available with 'perf list -v'. I think that's what that 
-feature is for.
+> And the problem with your patches is that
+> they affect the guest side. Fix that, basically.
 
-Either way you should probably also update the description before the 
-note, so add 'hit or miss' to the first sentence:
+My main problem, IIRC, was making sure to allow the old behavior as
+well (but that maybe we had solved with two /dev/vhost-vsock and
+/dev/vhost-vsock-netns).
 
-"EventCode": "0x0396",
-"EventName": "L2D_CACHE_REFILL_L3D_MISS",
-"BriefDescription": "This event counts operations that cause a hit or 
-miss of the L3 cache. Note that this incorrectly counts both hits _and_ 
-misses."
+The other problem was really in the guest, on how to tell that the
+virtio-vsock device (thus communication with the host) was reachable
+from a netnamespace or not.
 
+Stefano
 
 
