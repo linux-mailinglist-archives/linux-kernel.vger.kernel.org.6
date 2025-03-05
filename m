@@ -1,206 +1,130 @@
-Return-Path: <linux-kernel+bounces-546250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A28A4F863
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:04:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 494D5A4F868
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 035543AC43D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:04:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE1CC7A5B6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:03:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 622ED1D88B4;
-	Wed,  5 Mar 2025 08:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C49170A13;
+	Wed,  5 Mar 2025 08:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="AVpjaFAG"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EC7+0PnX"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B356C8837
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:04:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5FD71624CF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741161851; cv=none; b=pgaFQ/Td3/gaLUQTnH9P+UpKvDvFz6PRkjAScl8uzX6bCWaKgstecCCObaNHXY2FH/C5WfijrAg/HtNL3LW8WU75R7coQGE6FAhspd7LUVwAH9CvtANlc0c/gOAS1j+52kE8quaBmmVXimcAx2sCvkzjw0r1H2FD0jttVxO3cG8=
+	t=1741161860; cv=none; b=Ku4VbYBMT+6q4ly7Bp2VtdL6CnnmG+VVAkXQsXYrJt0IqZhh19mAEyMckoIudTQLTd+sURNbq5wemwK0qPRWLJMvkTTjWTXNSxUoIo61qTwT5QlzIpaAvoWI08TX8piH5sPrtjyMpfzCebT8BVT6oO/UOazu3P1x5SE8MMoSLJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741161851; c=relaxed/simple;
-	bh=XxShrfII1iW48sEm+1idv7RpgL37yrsUd3ZA5lWJqmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=KVysewyXY46ja9hzqVFVb2tBp2asDncgKDs2KDPq4sMkmcHgYHEi0OYJYyOkZ0y2RClNKEelZLFAXxSwMKXSc/8cA7YU1CcHyCmU4e+xb32TNLCBgjefuej/5RonXVFf/zkW6T6YNbrZBB4EjrHxa7Kub9BSgwCvwUTVah7BoLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=AVpjaFAG; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250305080405euoutp0120d6e28bcd7b403d971bd6db8fb70777~p2XlGopuP0214202142euoutp01d
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:04:05 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250305080405euoutp0120d6e28bcd7b403d971bd6db8fb70777~p2XlGopuP0214202142euoutp01d
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1741161845;
-	bh=GnXY0ytHs9JstH2dWkqOUDOxCaeFg6+8UfoPoS8CNm0=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=AVpjaFAGCy7hNPB+HGj8BG9cN9i7qCURzC3pzitan2DFXB5OU087zs7nF7hCKde7p
-	 RfAodIFCh5akwzQ/6w0ON7SkKwNRjNQSEAzNxVW2oL/4lAloG8toqrHLVKIZI2g8ib
-	 2MHRe6Sk8fjGvJKdEcHg86Nr3pcdKomQqgBhuUig=
-Received: from eusmges2new.samsung.com (unknown [203.254.199.244]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTP id
-	20250305080405eucas1p269322ff4dff3a7efa7c0217d2d760140~p2Xkksspc1362113621eucas1p2W;
-	Wed,  5 Mar 2025 08:04:05 +0000 (GMT)
-Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
-	eusmges2new.samsung.com (EUCPMTA) with SMTP id F3.C1.20409.57508C76; Wed,  5
-	Mar 2025 08:04:05 +0000 (GMT)
-Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250305080404eucas1p2cff5ea6161b7c6a71cd0ff81aedad061~p2Xj_wj4L1362113621eucas1p2U;
-	Wed,  5 Mar 2025 08:04:04 +0000 (GMT)
-Received: from eusmgms2.samsung.com (unknown [182.198.249.180]) by
-	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20250305080404eusmtrp188a9d70d20b5fa05c891eba7157342f5~p2Xj99l6u3067730677eusmtrp1q;
-	Wed,  5 Mar 2025 08:04:04 +0000 (GMT)
-X-AuditID: cbfec7f4-c0df970000004fb9-04-67c80575adf4
-Received: from eusmtip2.samsung.com ( [203.254.199.222]) by
-	eusmgms2.samsung.com (EUCPMTA) with SMTP id 7A.09.19654.47508C76; Wed,  5
-	Mar 2025 08:04:04 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250305080403eusmtip2e81659e53d59c3b079c327a133bb3e6d~p2XjImQTE2244322443eusmtip2H;
-	Wed,  5 Mar 2025 08:04:03 +0000 (GMT)
-Message-ID: <8f04da41-c868-4ab2-83bc-c06a8f182e81@samsung.com>
-Date: Wed, 5 Mar 2025 09:04:03 +0100
+	s=arc-20240116; t=1741161860; c=relaxed/simple;
+	bh=nwxBqhBj63GsgjlQZRz1t/wShEjjjKEbXH9bVs9ZDNE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HMKasEsGeVjOfvDXk/d8mRTIsMFoI3RnGbs5QqW+snj8Q7zenjDTmxGNCmhuwIyRLdhFPxBi/4J8PwIJleJPphf4noO4bfxJ3yoNicZWqWef+Df5TftWVvvwNWcxwFTX9EQUxwHO3dGq62QhImVAg6dacO/eLmZQyPTjW422NPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EC7+0PnX; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-30613802a6bso68524281fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:04:18 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741161857; x=1741766657; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=a9335U4BYdb3Rpl+HkVOVk0Hdu7mYIBHGPUHbDc6Yk8=;
+        b=EC7+0PnXzkUJzFFo8rHdkcegXuMIif5C8ccumaI/ZsukbDiEyvIIBJ4UHFSlVm0JfV
+         914bxKFr8/WHM/Q44vyKeoQqhOGD+phFsRAdytc7GI7M8P7iinJSmlwTvrBiN3+ysYX0
+         8xEKaGl7ngsjZJ08HdLXRa2Ik1c+d+aRNiFZ6eNb2dY3xswhSZiHlSbj1+x4p3osPxZl
+         AiD1Mb6YCnXAWO8VRebbnH0o5IzuJr5HzHI6kXIiAIRrKzunYt9FlZk7WwtCG50gTR8g
+         ymb9MMTPgBLNWIk0fj8OU44a+LnPrGKLGACVtfZBmXqif+THOCQp2jO+wA2u5m4ANmgh
+         9b5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741161857; x=1741766657;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=a9335U4BYdb3Rpl+HkVOVk0Hdu7mYIBHGPUHbDc6Yk8=;
+        b=xE2g/ZJhnKzswyqJm8ErQ7IZIlrEkspSOszjGzkIllxO5iAoCjxx/9Sq9EoOdWDLdm
+         aKKhD0Y1/HLnQ9JRQHcUfp9WAgySIjTzl8+k4Xwos3uWodfEluV0xwbd5WI092fQ13rj
+         dzpviPu7LwlKhwlwc9k9HjHPe1gZXT0N/uS1U9WxFb1jpi2AoLgN1LclhCIRAeYNKpX2
+         pCQnXzQIZqgwI+nkW/VxHn6kBU+YEJI/inWRY9nqHUKo0O8UIm006wuz7JfJsLm9a+3C
+         h0s+dZHWj/cIcFWZF/1LNY1uDbksG4HUL+2JktYGkScbVJ+1KD/N9u3b0xXd1dSKxl2X
+         0Zjg==
+X-Forwarded-Encrypted: i=1; AJvYcCWPme01WhUHy/OudOzGl5cbZhHdk9HZjO6LJen4401fLQxYMy3U+RcH7x30XYDpFKZxwPfHkm2PsXH30eg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPUEE6ukClW1YJGb//ggOUuLl9k5EHJQIZxzy9CtNIMXqZ8gL+
+	bHEogB+33ZL9LDhuLjpaVgiapZf5EKHO81BFxfht1EiI71LSMKg5320GZdLtweh1Lyaq+EYnd6B
+	w9l4o5biI2hlnKasTfzB9v+BF+OnNTrC5PhMwBQ==
+X-Gm-Gg: ASbGncvA8EZfoyhv2Ouz6nDE7+T3sel9N5tWsfNPU8i8eSt0LXf0sTFlCI8kLAxr2ti
+	niHn9HLCTZVgVnE3Fpnzpxnxy917Ee5q0u4NhoXxtfP1dBinSqD3TcJ0rX+ubstVMjhbWERjRyt
+	i33DE9NoqQQTJ36OHW3I6OCbUCUw==
+X-Google-Smtp-Source: AGHT+IHxONNXRxXY/9SA/ScuPloLBavDa3lTwDH5EUDUvtRMl6Gewl1QIgssFE88vQwX5zwh5iaHK2NYlKSskUdQiJc=
+X-Received: by 2002:a05:651c:2128:b0:30b:bba5:abfc with SMTP id
+ 38308e7fff4ca-30bd7a427d0mr8296691fa.9.1741161856549; Wed, 05 Mar 2025
+ 00:04:16 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/5] TH1520 SoC: Add AON firmware & power-domain
- support
-To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com,
-	guoren@kernel.org, wefu@redhat.com, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	jszhang@kernel.org, ulf.hansson@linaro.org, m.szyprowski@samsung.com
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20250303145901.446791-1-m.wilczynski@samsung.com>
-Content-Transfer-Encoding: 7bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFnrBKsWRmVeSWpSXmKPExsWy7djPc7qlrCfSDf4/4LF4ducrq8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFm82NvIYtF8bD2bxctZ99gsLu+aw2bxufcIo8W2zy1sFmuP3GW3
-	eHm5h9mibRa/xf89O9gtjq8Nt2jZP4XFQdDjzcuXLB6HO76we9w7MY3VY9OqTjaPO9f2sHls
-	XlLv0bL2GJPH+31X2Tz6tqxi9LjUfJ3d4/MmuQDuKC6blNSczLLUIn27BK6MzfeXsBSclar4
-	+G01UwPjXZEuRk4OCQETiTm3DzB2MXJxCAmsYJRY8/8tlPOFUeLQyh/MEM5nRon9O9cAORxg
-	LRsuOYN0CwksZ5RYMFkWouYto8Sim9MZQRK8AnYSP279BLNZBFQkNpz7xQ4RF5Q4OfMJC4gt
-	KiAvcf/WDLC4sECgxINnEMtEBPqZJPqO/GcFSTALVEqsuHCUDcIWl7j1ZD4TiM0mYCTxYPl8
-	VpCDOAXsJT41aEKUyEtsfzsHbI6EwDVOiZ77Z1kh/nSROHhuApQtLPHq+BZ2CFtG4vTkHhYI
-	O1/iwdZPzBB2jcTOnuNQtrXEnXO/2EB2MQtoSqzfpQ8RdpRYdO0FKyRM+CRuvBWEOIFPYtK2
-	6dCg4pXoaBOCqFaTmNrTC7f03IptTBMYlWYhBcosJD/OQvLMLIS9CxhZVjGKp5YW56anFhvl
-	pZbrFSfmFpfmpesl5+duYgQmxtP/jn/Zwbj81Ue9Q4xMHIyHGCU4mJVEeF+fOp4uxJuSWFmV
-	WpQfX1Sak1p8iFGag0VJnHfR/tZ0IYH0xJLU7NTUgtQimCwTB6dUA5PDAo9v4m59Ci0sE2P0
-	J4Ro6/yfvsZpeYzRlacn1E+Lh3jfOt5h0SJRLb/2D8MtS8mjm79xVPMITdrwvZRBgfHfotOr
-	E5ayO13X7P0dvHT7RVGv720z1h2UWK5QV2nsU7vX+r+aVbfQ3STHKuGeNa9Mry4x5Lc/qni0
-	+AL3wZjJiaczLEsfKzKL3lPbrvRrRs5sl32Ojls3bDK4lHz8n7s974KAq8Hl7Y+N3DR8z4bn
-	cRt7ce1te/zJzz6/J9DK5fk33XuTX5U0PHytsCzIvuu4e+ptE6bXnzcU3Gu9pVerMb/kSjXT
-	So0DM3crh543tdV4wTfn4K4NyrLatmcCdMsKJvoqCXBwz3a8fc1OXImlOCPRUIu5qDgRAO0/
-	wbr7AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrFIsWRmVeSWpSXmKPExsVy+t/xe7olrCfSDU58VLJ4ducrq8XW37PY
-	LdbsPcdkMf/IOVaLe5e2MFm82NvIYtF8bD2bxctZ99gsLu+aw2bxufcIo8W2zy1sFmuP3GW3
-	eHm5h9mibRa/xf89O9gtjq8Nt2jZP4XFQdDjzcuXLB6HO76we9w7MY3VY9OqTjaPO9f2sHls
-	XlLv0bL2GJPH+31X2Tz6tqxi9LjUfJ3d4/MmuQDuKD2bovzSklSFjPziElulaEMLIz1DSws9
-	IxNLPUNj81grI1MlfTublNSczLLUIn27BL2MzfeXsBSclar4+G01UwPjXZEuRg4OCQETiQ2X
-	nLsYuTiEBJYySvzc+Zyxi5ETKC4jca37JQuELSzx51oXG4gtJPCaUaJjuziIzStgJ/Hj1k+w
-	ehYBFYkN536xQ8QFJU7OfALWKyogL3H/1gywuLBAoMSDZz+YQZaJCPQzSTw/sh6smVmgUuLx
-	k9usEFdMYpT4vfoGM0RCXOLWk/lMIDabgJHEg+XzWUGu5hSwl/jUoAliMguoS6yfJwRRLS+x
-	/e0c5gmMQrOQnDELyaBZCB2zkHQsYGRZxSiSWlqcm55bbKRXnJhbXJqXrpecn7uJEZgIth37
-	uWUH48pXH/UOMTJxMB5ilOBgVhLhfX3qeLoQb0piZVVqUX58UWlOavEhRlNgUExklhJNzgem
-	orySeEMzA1NDEzNLA1NLM2MlcV62K+fThATSE0tSs1NTC1KLYPqYODilGpimi506cU2gJcFp
-	Em/dhG7G2ojeGsHnWSppJ3fuXLVPZnXsfgXVnWmP9h73/XcwiXP9vaYrGmEiVWZyDttvOitt
-	45/YPPO0tGn+mYjXz26qbXoyuzLq8077FzfOPwmuWnpGn6203eVhYNeLiS8d13hF/a88b7zw
-	u07A99tPzj2R5Z+Ur2jgz1m1N/HvIt6tHl4T11lNsVXiWRex+77My0uzDnc6vzUInSTPseDH
-	zYcmgvxmyY83vW/7xBetJ73P91ZCweFld3XvTft33fS8vVGRzqp4jXXzVJLrthu9D/kU80aa
-	J6tjwSEu/QN7wm9l/7/oHni5csIst9k8e3arVl2cEHHK+ruExrPIOe5Z0/U9lFiKMxINtZiL
-	ihMBc1pqnI0DAAA=
-X-CMS-MailID: 20250305080404eucas1p2cff5ea6161b7c6a71cd0ff81aedad061
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250303145917eucas1p171f8fcccadddc035f5773f7026a281e3
-X-EPHeader: CA
-CMS-TYPE: 201P
-X-CMS-RootMailID: 20250303145917eucas1p171f8fcccadddc035f5773f7026a281e3
-References: <CGME20250303145917eucas1p171f8fcccadddc035f5773f7026a281e3@eucas1p1.samsung.com>
-	<20250303145901.446791-1-m.wilczynski@samsung.com>
+References: <20250303-bcm21664-pinctrl-v3-0-5f8b80e4ab51@gmail.com>
+In-Reply-To: <20250303-bcm21664-pinctrl-v3-0-5f8b80e4ab51@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 5 Mar 2025 09:04:05 +0100
+X-Gm-Features: AQ5f1Jr_36wy4P6iO_K8_dKn2UUlLFsUGnWdDx_V_chS6C1Pbzndlez70ok7ggU
+Message-ID: <CACRpkdYTsym-YqV8CQh7up57q_R2ZGSnsCD8FiYSpQnS5CaFig@mail.gmail.com>
+Subject: Re: [PATCH v3 0/6] pinctrl: bcm281xx: Add support for BCM21664 pinmux
+To: Artur Weber <aweber.kernel@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, 
+	Stanislav Jakubek <stano.jakubek@gmail.com>, ~postmarketos/upstreaming@lists.sr.ht
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 3, 2025 at 9:54=E2=80=AFPM Artur Weber <aweber.kernel@gmail.com=
+> wrote:
 
+> BCM21664 is another chip from the Kona line of Broadcom SoCs, and
+> its pinmux shares a lot of similarities with the BCM281xx pinmux.
+>
+> Add support for the BCM21664 pinmux controller to the BCM281xx driver.
+>
+> This also enables pinmux support for the BCM23550, which has an
+> identical pinmux config to the BCM21664 (hence they can share a
+> single compatible, brcm,bcm21664-pinctrl).
+>
+> While we're at it - fix a bug that affected higher registers in the
+> BCM281XX driver and replace bare "unsigned" with "unsigned int" to
+> comply with checkpatch requirements.
+>
+> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
+(...)
+> Artur Weber (6):
+>       dt-bindings: pinctrl: Add bindings for BCM21664 pin controller
+>       pinctrl: bcm281xx: Use "unsigned int" instead of bare "unsigned"
+>       pinctrl: bcm281xx: Provide pinctrl device info as OF platform data
+>       pinctrl: bcm281xx: Add support for BCM21664 pinmux
 
-On 3/3/25 15:58, Michal Wilczynski wrote:
-> This patch series introduces and documents power management (PM) support and
-> the AON firmware driver for the T-Head TH1520 SoC, as used on the LicheePi 4A
-> board. While part of a larger effort to enable the Imagination BXM-4-64 GPU
-> upstream, these patches can merge independently.
-> 
-> Bigger series cover letter:
-> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
+Bindings are ACKed and not much other feedback so:
 
-This series should be versioned as v6, to maintain continuity with the
-bigger patchset it is a subseries of. Please find below a changelog for
-the AON & power-domain:
+I applied these 4 patches, I had to rebase the one dependent on the
+fix a bit and then Torvalds can fix that up in the merge window.
 
-v6:
-- split the firmware & power-domain patches into a separate series
+>       ARM: dts: bcm2166x-common: Add pinctrl node
+>       ARM: dts: bcm2166x: Add bcm2166x-pinctrl DTSI
 
-v5:
-- changed the AON driver to be a set of library functions rather than a
-  standalone driver
+Please funnel these two through the SoC tree!
 
-v4:
-- added workaround to disable AUDIO power domain to prevent firmware crashes
-
-v3:
- - consolidated device tree representation by merging aon and power-domain nodes
-   while maintaining separate drivers internally
- - power-domain driver is now instantiated from within the aon driver
- - fixed optional module dependencies in Kconfig
- - added kernel-doc comments for all exported functions
- - implemented th1520_aon_remove() to properly clean up mailbox channel
-   resources
-
-v2:
- - introduced a new firmware driver to manage power-related operations.
- - rewrote the power-domain driver to function alongside the firmware driver.
-   These nodes in the device tree lack direct address spaces, despite
-   representing HW blocks. Control is achieved via firmware protocol messages
-   transmitted through a mailbox to the E902 core.
- - added new dt-bindings for power and firmware nodes.
- - ran dtbs_check and dt_binding_check to ensure compliance.
-
-> 
-> Michal Wilczynski (5):
->   dt-bindings: firmware: thead,th1520: Add support for firmware node
->   firmware: thead: Add AON firmware protocol driver
->   dt-bindings: power: Add TH1520 SoC power domains
->   pmdomain: thead: Add power-domain driver for TH1520
->   riscv: Enable PM_GENERIC_DOMAINS for T-Head SoCs
-> 
->  .../bindings/firmware/thead,th1520-aon.yaml   |  53 ++++
->  MAINTAINERS                                   |   5 +
->  arch/riscv/Kconfig.socs                       |   1 +
->  drivers/firmware/Kconfig                      |   9 +
->  drivers/firmware/Makefile                     |   1 +
->  drivers/firmware/thead,th1520-aon.c           | 247 ++++++++++++++++++
->  drivers/pmdomain/Kconfig                      |   1 +
->  drivers/pmdomain/Makefile                     |   1 +
->  drivers/pmdomain/thead/Kconfig                |  12 +
->  drivers/pmdomain/thead/Makefile               |   2 +
->  drivers/pmdomain/thead/th1520-pm-domains.c    | 209 +++++++++++++++
->  .../dt-bindings/power/thead,th1520-power.h    |  19 ++
->  .../linux/firmware/thead/thead,th1520-aon.h   | 200 ++++++++++++++
->  13 files changed, 760 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/firmware/thead,th1520-aon.yaml
->  create mode 100644 drivers/firmware/thead,th1520-aon.c
->  create mode 100644 drivers/pmdomain/thead/Kconfig
->  create mode 100644 drivers/pmdomain/thead/Makefile
->  create mode 100644 drivers/pmdomain/thead/th1520-pm-domains.c
->  create mode 100644 include/dt-bindings/power/thead,th1520-power.h
->  create mode 100644 include/linux/firmware/thead/thead,th1520-aon.h
-> 
+Yours,
+Linus Walleij
 
