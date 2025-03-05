@@ -1,151 +1,153 @@
-Return-Path: <linux-kernel+bounces-547190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B010CA50400
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:58:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4023FA503FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:58:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F731886736
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:58:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 661A33AC549
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:58:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C522505D9;
-	Wed,  5 Mar 2025 15:58:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50BA62505CE;
+	Wed,  5 Mar 2025 15:58:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHQsMgUT"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Y2gqTApg"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233FF230BC6;
-	Wed,  5 Mar 2025 15:58:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD961230BC6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:58:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741190307; cv=none; b=KOF7Rf1pKvzGbJCPaZ2TpLaGrpCrMhVWuSAPc6sea2cuyp2ixteziJK5ZqO1Tq+tFO0u2CdxdrmsZY/x+RCjxokUAdMjiRG+VHt7UwuRjUNvwFD7FRrGrDHAmXiu+k8otrn+uiTJmNe1oJpjiZKJpIcINwDzIgo0BhG507YR138=
+	t=1741190301; cv=none; b=XBU3G5SE0QWPp5to765NIQl2OH5RskfzSiSCMx7vStwHPrGe9qOVuE7sVFyAy0ifLzu6amfATDH4KP1IsuuJYupP0wqM6Y5EKctAK64Kpfa7B+hmbe0z0h0NcsZCYLWeGc7zAf2L2kjAOfiZyIIKpfSAWiWOFyVp5ONVvU56jeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741190307; c=relaxed/simple;
-	bh=+oRhlezTzKi/1jDJ5WTqmL8g/xu4LuaqBsnEOCp/6aA=;
+	s=arc-20240116; t=1741190301; c=relaxed/simple;
+	bh=bYuWvTnxcH9cu35HRFKPtJkB8o67RKS5wYWWIeSxv70=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NJFklu5kQz2KVA6xXu4aAXDgCXgqgQxCiIfqVvnYay3NOpsA44/WPSkKQES7AU+Dpjg42zfCQRXEsYXeUUoKJU+p3vsa3Lj5wIFyZdk7KlJ/Jb3ffA+o96rzt44tWmKqK14ChPYrDAnEbIo3WoavdpyENveyC/rq7LVAys/Z4xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHQsMgUT; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30761be8fcfso75502161fa.0;
-        Wed, 05 Mar 2025 07:58:25 -0800 (PST)
+	 To:Cc:Content-Type; b=YLmKP2ZXjaZX/M2il1N2Gak92hQCWgPxSGv+8j2eFlY8+ciLBp3OgLRQnbFneMJ9YeXICeFS6UGICsj4M9riDoMBcDRBpmuVF3NoRqmLlkEsvCALIqH8T0vQLb7M9aY5PKZZBnlTCXBFJq0sBXo+M8jAq69YpWB1kwu8Stg+Wvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Y2gqTApg; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2fe9fd5e7f8so1971603a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 07:58:19 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741190304; x=1741795104; darn=vger.kernel.org;
+        d=purestorage.com; s=google2022; t=1741190299; x=1741795099; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=BnvbQASgvyl2j7FmmReDnrIkouFUMu43G879AWP2P+g=;
-        b=KHQsMgUT+85QsDfatzBpbrloM50X0Yxg2aQtptk6mjVEQ5EZJbXoVawQz1/RgLitLH
-         xpDErfIBby7snXUgx/Lg9D1dLKUMc3oXXgKnd/jlzQ9f+g7/U5RcYT+unYhnRCjKlbcK
-         uZ99EmumYqt63cl3ZBDQxF3z7zzFOXzZn/f3slvTvjxKpV6z5yLoyYkFZutACLHB3Qky
-         DOjNqKFXNIw93FlzcjkGowjn6myh2XPR743SK4P3SL8K0q7cZoQFg7n7/8EibGMX9gHE
-         WgL86aHpBMDcLztmDcuYW3zPDYjZJk0oFQLy7lrw/8aI1p/QyDuoSoyao4TPRlPmu47a
-         ZsZQ==
+        bh=YYMU1ONvumZN07XPBCtkjUrstfEAtCPPddr7Hfo9Atk=;
+        b=Y2gqTApgoVu023lcE28ic24Z/iILnnSBvedaOlwJ+l4XsHdOMokBtTFXwUg7lFmMvO
+         BwQM2Ors3A7bASOcF6yaOmn6M+1J0OYG1lMVm7untLeN0EwJFC2qhFjypaoxzXvlxgEi
+         KqegLmZaTWnHmYMfwEOFmjAfFecqwcXbA5LBKvIfIz6A1FxDDV9TSt9l9eFXKSS1iLjE
+         plJmFsB2LKf5QBQMDjkf1t0T1SCGd3ukHFu0ySIyJyK58F6DmpRv68TOD0sVw5KH/JFo
+         hV/GYN9rZiLvnZThK3WRZEQ/QTm2K3JESfSjc41U24NGLI8a13bfJtoS0/HQ9gIyxhXQ
+         Z7oQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741190304; x=1741795104;
+        d=1e100.net; s=20230601; t=1741190299; x=1741795099;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=BnvbQASgvyl2j7FmmReDnrIkouFUMu43G879AWP2P+g=;
-        b=G+OpBZ+xlqdWebLrA5EkoGO5u3PdgGFLL69WPbQkND/HvCFvU08XGspg+uatkHkOuS
-         IpINwI61Pd3wtysLdenRjbvflGCdRqiFGH6t1YdUJArRjefCjWmUHrHX7DYcR0C4eLKl
-         Q9blBFtP4dt64nRtCJCjNDwNn481ZPzkriEg5CXpsbiuM/QWV5Aq0lvjCcBc0IDyXXUS
-         oPYKudhAIfOjp0s1Sb1EIkouA3YeRZReBF3AxDkpuyosWpPswXS3Zuu3GmkDtzm1dRBT
-         DjOe/snSUd4ZI9uB8rdTw6StdciOtki4H0YkDieRH35P/L8ZDEWJEozapnW9hnn7QITt
-         tHgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVXGT7Yznz1Qn1mbgVhOhRa6bHAODU0jhRSixug7YJk7UrTN3evRcVC8KTFyiw2PptGjU9AmIbg1oZ74wNsaQO0@vger.kernel.org, AJvYcCWN5IxMq8AZz96Ak4YEeieXoul4BNBPp8pXz7LVP94Ueh4mVJSyvpcMNEjn4I6Kf/qT7ViHY72lS2yGwrs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdYCPvQ8MF3okbM5WbW0pRopnjoYr4OdTHYyvjjohr1YltOeZU
-	fBHlQHEsmeRP+wV99QtAXVTvAPiN7siTNQCBXGq7RPg1UYIMRGHMjtxQAnMChuPs/6OhAwWM6HL
-	1f59EGzfMC5To9EZDcnRAcjhDTxU=
-X-Gm-Gg: ASbGncuB/pHlwyASXqY9HTZSSSXgCNcaJNtMQjUusP16yTqPvqnR0KWz/MmaNnNIeO5
-	I+XPnQAt9wgJD1njJmjgzrTiOJqs+sIwht7yAaJlAUUVYy6JFjCAQK7SpnFCh6RjDsb1vmjOOQA
-	JQcE+lneBP5f72NYPgE7PcZk8k8Oozvt9aXGZvFJHExw==
-X-Google-Smtp-Source: AGHT+IGmkv5mLOUsJScMMmqtWQ6zGpiYx67ym/VV12PdXFxW6/3l6A0lcwQFojikJk+UgnlteFZGHZnbBE+jSgDtaoA=
-X-Received: by 2002:a2e:a583:0:b0:30b:d44d:e76d with SMTP id
- 38308e7fff4ca-30bd7aca44bmr15621771fa.26.1741190303832; Wed, 05 Mar 2025
- 07:58:23 -0800 (PST)
+        bh=YYMU1ONvumZN07XPBCtkjUrstfEAtCPPddr7Hfo9Atk=;
+        b=w/+Sc1cLRuO8Y9lXv/vyj+P/G9p6i7Jnrob/6j50cJqJ54Q9Cg6CpHvu6r7Uh6wPpf
+         n8gYIhpQnoMCaNpoMbtC/n8uX4JcIs4PiVgjANtFKnzxsYOTIb9HhZFGb+sDcyzJMgDV
+         xr8uzJ8C6dpEkupeUnNST7Dsf5tX0FYpWisg0CSTHk2QU2UhQIqGV6/yQc2Vexmoi6pF
+         0uIBWWr543IshwvEx69p3VbC3nLX7HkKOS8UsPMFg7Awu8GBy3vQ82LWjCERGOsQOcnG
+         Q4of1l5B/sZJxf2Pzw6qhSbxqtDNvOkJyPKdg+0kZCUsuGXKO7Sim8I1U3rQCj7w7whj
+         +UpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXp2X5h003MGHWopmOk6LC0ONRwItyhidoq14BSlzLhzCVlR/i83oJY3UQ1i+ur5K1cBnzMXrFLUCA9pRE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPwfuRLNQkeMmqpE4F9hhVnDbzaPrYPqY3gscehptswdgxZyEC
+	5PvY/9C9gBgu2lMKh2RE8rZTaS0ZBMQCVPw6f6C4c85M7tp16TCLhliGBq6q00tHR+tki5GfSRS
+	ZzIeNSilQEfVtXTsHYODbtcbCV9eC3PqixziHUQ==
+X-Gm-Gg: ASbGnctJIqd71cGsMrkiiAaZMhxpsLD3yMDIskKaJDDHCz6g6qk1ufv9i/8a5MCYSGl
+	Y5uOTKRxNNGuWZegAdWvRWvXF+6R7js6lKBqDAamH35RPBlBPoO4lOURHiELofM8hZswardH3qD
+	4SzbMDbefUlnoxqlQyx29xxxVrQzc=
+X-Google-Smtp-Source: AGHT+IE039RKehIzWkPoz9Pwq8myqyy+FZsujwKtDDyBFn8FwGJVt10BuBtMIRgg7fWx3zw0WYibWGpIpl/Q2cToPds=
+X-Received: by 2002:a17:90b:3848:b0:2ff:4e90:3c47 with SMTP id
+ 98e67ed59e1d1-2ff4e9041aamr1711334a91.4.1741190299046; Wed, 05 Mar 2025
+ 07:58:19 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
- <20250214-scanf-kunit-convert-v8-4-5ea50f95f83c@gmail.com>
- <Z8hnXIrMV0ct1YR6@pathway.suse.cz> <CAJ-ks9k7G31uBqygXNtfXcwVQXWvkaAWJh1vkFw2_VZ5bAz=Vg@mail.gmail.com>
- <Z8hz8-Sa6XRC0W5Z@smile.fi.intel.com>
-In-Reply-To: <Z8hz8-Sa6XRC0W5Z@smile.fi.intel.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Wed, 5 Mar 2025 10:57:47 -0500
-X-Gm-Features: AQ5f1JqqN1aImMZd_NPXsUNj4VmLOex6AXk7mvodnkei5XTDi0qnAKX-JBe7Bx8
-Message-ID: <CAJ-ks9kz-fEH1YLiCn3fHR9AtYQLCZS77GKfOObifEL4GLwk8A@mail.gmail.com>
-Subject: Re: [PATCH v8 4/4] scanf: break kunit into test cases
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Petr Mladek <pmladek@suse.com>, David Gow <davidgow@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
+References: <d3661d33-096a-45e3-8304-1123fd031527@stanley.mountain>
+In-Reply-To: <d3661d33-096a-45e3-8304-1123fd031527@stanley.mountain>
+From: Caleb Sander Mateos <csander@purestorage.com>
+Date: Wed, 5 Mar 2025 07:58:07 -0800
+X-Gm-Features: AQ5f1JpSLtbPYSGimhA0YnzX_t62kjsBmHrLeI4W_9M3JJL8fO_onDsebrkT6Ww
+Message-ID: <CADUfDZphhneo1g7TSpCh4iNW_PjgyuM52Nm3mVQrG5PSzDUnnw@mail.gmail.com>
+Subject: Re: [PATCH v2] nvme-tcp: fix signedness bug in nvme_tcp_init_connection()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>, 
+	Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 5, 2025 at 10:55=E2=80=AFAM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Wed, Mar 5, 2025 at 7:53=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
 >
-> On Wed, Mar 05, 2025 at 10:25:51AM -0500, Tamir Duberstein wrote:
-> > On Wed, Mar 5, 2025 at 10:01=E2=80=AFAM Petr Mladek <pmladek@suse.com> =
-wrote:
-> > > On Fri 2025-02-14 11:20:01, Tamir Duberstein wrote:
+> The kernel_recvmsg() function returns an int which could be either
+> negative error codes or the number of bytes received.  The problem is
+> that the condition:
 >
-> ...
+>         if (ret < sizeof(*icresp)) {
 >
-> > > >  #include <kunit/test.h>
-> > > > -#include <linux/bitops.h>
-> > > > -#include <linux/kernel.h>
-> > > >  #include <linux/module.h>
-> > > > -#include <linux/overflow.h>
-> > > > -#include <linux/printk.h>
-> > > >  #include <linux/prandom.h>
-> > > >  #include <linux/slab.h>
-> > > > -#include <linux/string.h>
-> > > > +#include <linux/sprintf.h>
-> > > >
-> > > >  #define BUF_SIZE 1024
-> > >
-> > > It would make more sense to do this clean up in the 3rd patch
-> > > where some code was replaced by the kunit macros.
-> > >
-> > > Also I am not sure about the choice. It might make sense to remove
-> > > <include/printk.h> because the pr_*() calls were removed.
-> > > But what about the others? Did anyone request the clean up, please?
-> > >
-> > > I do not want to open a bike shadding because different people
-> > > have different opinion.
-> > >
-> > > I would personally prefer to keep the explicit includes when the
-> > > related API is still used. It helps to optimize nested includes
-> > > in the header files which helps to speedup build. AFAIK, there
-> > > are people working in this optimization and they might need
-> > > to revert this change.
-> >
-> > Yeah, I don't feel strongly. I'll just restore all the includes.
+> is type promoted to type unsigned long and negative values are treated
+> as high positive values which is success, when they should be treated as
+> failure.  Handle invalid positive returns separately from negative
+> error codes to avoid this problem.
 >
-> It will be blind approach. Please, try to look at them closely and includ=
-e what
-> you use (IWYU principle). I don't think anybody uses kernel.h here, for
-> example.
+> Fixes: 578539e09690 ("nvme-tcp: fix connect failure on receiving partial =
+ICResp PDU")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+> Reviewed-by: Sagi Grimberg <sagi@grimberg.me>
+> Reviewed-by: Chaitanya Kulkarni <kch@nvidia.com>
+> ---
+> v2: Change the style.  Add the Reviewed-by tags.  (I will feel really bad
+>     if I introduced a bug in between v1 and v2 and cause everyone
+>     embarrassment with the R-b tags.)
+
+Still looks good to me.
+Reviewed-by: Caleb Sander Mateos <csander@purestorage.com>
+
 >
+>  drivers/nvme/host/tcp.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/nvme/host/tcp.c b/drivers/nvme/host/tcp.c
+> index 8a9131c95a3d..b23ce31df97d 100644
+> --- a/drivers/nvme/host/tcp.c
+> +++ b/drivers/nvme/host/tcp.c
+> @@ -1495,11 +1495,11 @@ static int nvme_tcp_init_connection(struct nvme_t=
+cp_queue *queue)
+>         msg.msg_flags =3D MSG_WAITALL;
+>         ret =3D kernel_recvmsg(queue->sock, &msg, &iov, 1,
+>                         iov.iov_len, msg.msg_flags);
+> -       if (ret < sizeof(*icresp)) {
+> +       if (ret >=3D 0 && ret < sizeof(*icresp))
+> +               ret =3D -ECONNRESET;
+> +       if (ret < 0) {
+>                 pr_warn("queue %d: failed to receive icresp, error %d\n",
+>                         nvme_tcp_queue_id(queue), ret);
+
+This log line is slightly less informative now if a partial PDU is
+received, since it will log -ECONNRESET instead of the number of bytes
+received before the connection was closed. But I think that's fine.
+
+Best,
+Caleb
+
+> -               if (ret >=3D 0)
+> -                       ret =3D -ECONNRESET;
+>                 goto free_icresp;
+>         }
+>         ret =3D -ENOTCONN;
 > --
-> With Best Regards,
-> Andy Shevchenko
-
-I think I'm getting conflicting instructions here. IWYU is indeed what
-I did: bitops, kernel, overflow, printk are all unused; string is used
-only for sprintf, so I made that replacement.
-
-However Petr said "Did anyone request the clean up, please?" which
-implies to me an aversion to unwanted cleanup. So, which is it please?
+> 2.47.2
+>
 
