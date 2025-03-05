@@ -1,122 +1,100 @@
-Return-Path: <linux-kernel+bounces-547082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C63CA502C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:54:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B02ABA502CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:55:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782493B08F4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:50:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A2008175F90
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:49:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2282500D0;
-	Wed,  5 Mar 2025 14:49:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9546E24FBE2;
+	Wed,  5 Mar 2025 14:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q62lxyjL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jlXYD95U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAC9424E4A8;
-	Wed,  5 Mar 2025 14:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C157F24EF60;
+	Wed,  5 Mar 2025 14:49:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741186179; cv=none; b=h6lsvewqd68Bke7EJM0+ZbghcaHxMXKNqaOOzn/M/sytgtGDI+i2WQ5N3Ntf+JhbFYgkTGYFtVaTwQZCJrEeTw1FWAVXWsBYPFguYTghnWPvT8aGPvMB0IA2SIwmSbHkIajRg19up165c5hOqIxBb6sL9WCrDtbBHq2fAltTj1Y=
+	t=1741186175; cv=none; b=sU8AooIxTPj1R9U6cdWEepxtdFU72qmMEAzMgiOzTBlOLuMbXSz5DwU1ABuPBQjClKu4GVxFhybnZTjWxeOWLW5/khG4RsWEmMYOZ8kbCkMzsvCIFMcHAqtnuTZYy9p6jmeNtyLV0fpsI65rDbBQeNaXvgIletZ6pV33Rm+RNeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741186179; c=relaxed/simple;
-	bh=/2pS9LLpebWQnwTRaJg4p33HB1TGSur25XxkFxt08JU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mfwLS4tNv2EvXBVy/NkMbkNnJcY0v+V8EPShuLKNwzVGH7SrlAXhaxSipP5KCsh2U2FviWOr9DZYRg1A8cDvU34WZ+stWUUDkqnl0UfwS5pRYzoVPhCvuM5cC4NfaIF4mkU9RoXu/QqWqr+Lt7TgouFspcT/0kkFiVv/u6uN3Lc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q62lxyjL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E62E4C4CEEA;
-	Wed,  5 Mar 2025 14:49:36 +0000 (UTC)
+	s=arc-20240116; t=1741186175; c=relaxed/simple;
+	bh=D84ci62grFcuJO70CerFjW0xkC4+IeGaiwJ4WHWUeUk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=embmpk/5aPjpaoPoAPQ8YJJHTGpKlZ3RHScG6qTixuyvzhL54sihu0NveAcCGq6Ub4pX+JrcdmTasGLJb+HaKAPuwtOA1E68QsLp755bAkW+P7o6wuPyS1eEdAVgTCpB/xX/5rt30VH2wHBtDW28YKrIOjGNWQlWHVHidg6cl+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jlXYD95U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B002FC4CEE2;
+	Wed,  5 Mar 2025 14:49:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741186179;
-	bh=/2pS9LLpebWQnwTRaJg4p33HB1TGSur25XxkFxt08JU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=q62lxyjLA1eLIapx51hFTFib1eVwaU7CWiAJ1BLS30Lc1vC9oOOC8Bv2PZfat/YM4
-	 250nIGaagro9AJT8v+0E++7578mwBPWjiKoiWr4D+jItE7Pu5xDt+myStTB8RFFmlq
-	 b9eRLxoqOSp2tcnf23cURKKubUMh08uPpVmCFxbsavD4MWfdhqYuM+bNOWhEaPDa6f
-	 cn122JhqnUoXpNfmezRWbo8vXRNfXH3tGq8WZycvyATevaAQ3aEC6SzeXYwv3hhjTc
-	 gNe12LYwdJz9+A9r9ZPuKN3tfAyZ75vTpxfsOC0v0y3MqCSf8xv7ibgiK72ujlDIVI
-	 pFnUHLFB5U9tQ==
-Date: Wed, 5 Mar 2025 14:49:28 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Gustavo Silva <gustavograzs@gmail.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] iio: imu: bmi270: fix initial sampling frequency
- configuration
-Message-ID: <20250305144928.1b9b483a@jic23-huawei>
-In-Reply-To: <20250304-bmi270-odr-fix-v1-1-384dbcd699fb@gmail.com>
-References: <20250304-bmi270-odr-fix-v1-1-384dbcd699fb@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=k20201202; t=1741186175;
+	bh=D84ci62grFcuJO70CerFjW0xkC4+IeGaiwJ4WHWUeUk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jlXYD95UtYNurBOZKb7cznBPK2Ow4UV4h8WGuk0pIvNT8xpqMzzyAFFzzodRE2QGq
+	 rPWIeyzOGSoilrex9Fqs9HFgGLuSn0DPB0xK/j7lPS240PsPTR9OiO1F/T7cKxczmO
+	 XPn+C4W0p9aZW7PBPYW2q5jzfU0KKV+sEZIxwN/eknFrJcUZNG/CBD42G3GWtUVE49
+	 FPkpinv0EFJFBpc3unSkvG6ySZ1UEYUZMjTsu96JGVCuNaxlgkL1iK0Iu1q/bLKv/T
+	 4tYXNGX1jbisd+KuiW/BauHUirM8tAxxEK/aP4U1RthJof5GEvN6cg/a4Ro26MwJjn
+	 ch7/fVAQWdbWQ==
+Date: Wed, 5 Mar 2025 15:49:30 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: cel@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, 
+	linux-scsi@vger.kernel.org, codalist@coda.cs.cmu.edu, linux-nfs@vger.kernel.org, 
+	nicolas.bouchinet@clip-os.org, Chuck Lever <chuck.lever@oracle.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Clemens Ladisch <clemens@ladisch.de>, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, "Martin K. Petersen" <martin.petersen@oracle.com>, 
+	Jan Harkes <jaharkes@cs.cmu.edu>, Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Bart Van Assche <bvanassche@acm.org>, Zhu Yanjun <yanjun.zhu@linux.dev>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 2/6] sysctl: Fixes nsm_local_state bounds
+Message-ID: <nh4mo25vhojzwf6djsocdmbylu4xrzlle3zoqoxvif3dobygoh@qkwjicufplpq>
+References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
+ <20250224095826.16458-3-nicolas.bouchinet@clip-os.org>
+ <174103811019.30862.13359233350686241870.b4-ty@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <174103811019.30862.13359233350686241870.b4-ty@oracle.com>
 
-On Tue, 04 Mar 2025 15:01:02 -0300
-Gustavo Silva <gustavograzs@gmail.com> wrote:
-
-> In the bmi270_configure_imu() function, the accelerometer and gyroscope
-> configuration registers are incorrectly written with the mask
-> BMI270_PWR_CONF_ADV_PWR_SAVE_MSK, which is unrelated to these registers.
+On Mon, Mar 03, 2025 at 04:42:17PM -0500, cel@kernel.org wrote:
+> From: Chuck Lever <chuck.lever@oracle.com>
 > 
-> As a result, the accelerometer's sampling frequency is set to 200 Hz
-> instead of the intended 100 Hz.
+> On Mon, 24 Feb 2025 10:58:17 +0100, nicolas.bouchinet@clip-os.org wrote:
+> > Bound nsm_local_state sysctl writings between SYSCTL_ZERO
+> > and SYSCTL_INT_MAX.
+> > 
+> > The proc_handler has thus been updated to proc_dointvec_minmax.
+> > 
+> > 
 > 
-> Remove the mask to ensure the correct bits are set in the configuration
-> registers.
+> Applied to nfsd-testing with modifications, thanks!
 > 
-> Signed-off-by: Gustavo Silva <gustavograzs@gmail.com>
-
-Hi Gustavo,
-
-Please reply to this thread with a suitable fixes tag.
-
-Thanks,
-
-Jonathan
-
-
-> ---
->  drivers/iio/imu/bmi270/bmi270_core.c | 6 ++----
->  1 file changed, 2 insertions(+), 4 deletions(-)
+> [2/6] sysctl: Fixes nsm_local_state bounds
+>       commit: 8e6d33ea0159b39d670b7986324bd6135ee9d5f7
 > 
-> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
-> index a86be5af5ccb1f010f2282ee31c47f284c1bcc86..2e4469f30d538ca3e9eb9ef8bbc6eaa8b6a144b8 100644
-> --- a/drivers/iio/imu/bmi270/bmi270_core.c
-> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
-> @@ -918,8 +918,7 @@ static int bmi270_configure_imu(struct bmi270_data *data)
->  			      FIELD_PREP(BMI270_ACC_CONF_ODR_MSK,
->  					 BMI270_ACC_CONF_ODR_100HZ) |
->  			      FIELD_PREP(BMI270_ACC_CONF_BWP_MSK,
-> -					 BMI270_ACC_CONF_BWP_NORMAL_MODE) |
-> -			      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-> +					 BMI270_ACC_CONF_BWP_NORMAL_MODE));
->  	if (ret)
->  		return dev_err_probe(dev, ret, "Failed to configure accelerometer");
->  
-> @@ -927,8 +926,7 @@ static int bmi270_configure_imu(struct bmi270_data *data)
->  			      FIELD_PREP(BMI270_GYR_CONF_ODR_MSK,
->  					 BMI270_GYR_CONF_ODR_200HZ) |
->  			      FIELD_PREP(BMI270_GYR_CONF_BWP_MSK,
-> -					 BMI270_GYR_CONF_BWP_NORMAL_MODE) |
-> -			      BMI270_PWR_CONF_ADV_PWR_SAVE_MSK);
-> +					 BMI270_GYR_CONF_BWP_NORMAL_MODE));
->  	if (ret)
->  		return dev_err_probe(dev, ret, "Failed to configure gyroscope");
->  
-> 
-> ---
-> base-commit: 8cca9edca867350e5f8dc65b71e7a6ef4157981e
-> change-id: 20250304-bmi270-odr-fix-620e7f8daa7a
-> 
-> Best regards,
+> --
+> Chuck Lever
+Thx!
 
+@nicolas: remove this one from your next Version
+
+Best
+
+-- 
+
+Joel Granados
 
