@@ -1,230 +1,300 @@
-Return-Path: <linux-kernel+bounces-545865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582F4A4F2C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:33:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836A9A4F2D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:37:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69838188EA86
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:33:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDA993A5D1E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:36:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6203928DB3;
-	Wed,  5 Mar 2025 00:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA19D2D7BF;
+	Wed,  5 Mar 2025 00:36:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MoSJh2wb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B99415E8B;
-	Wed,  5 Mar 2025 00:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ht//rTAq"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D7915D1;
+	Wed,  5 Mar 2025 00:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741134797; cv=none; b=PsWXwD/gxVoTPS7r8SzfsiFh257zS//QJL5kGsMQbID1J1s2XX/hyntjK1BqtB83+VaqCAkEsouBDaD/rP803OyUX3JeAbYll9xdIq7DLUTF6cNWJ9yglXdj74MTxOArcTJfAV0IX4jYV8XOt4UsaMb5PRVP8GMRQMJga6T1O9A=
+	t=1741135019; cv=none; b=aSTI2t33yzcpF9fJh1zGyn9ajCkVweiyvjrYD60pmVtyTPw5zbuT+C1ccKR0bfCIEEit8CpOIajZzSl8Ovk5CccLXzJ7Ti7hJnxc9I/1DsmnCF0g/gAR0RbEWE4BjPNcFAU+bAte+SY3ZXYatcrobmE7XzclrnGlVGn3yz1Y8xA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741134797; c=relaxed/simple;
-	bh=hFJvxurdV3P1ZwxEkbVLpx0/85a+6vR9LXMqQXFIQmQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=j7jQ95c2cRMPPxhBe6oEWCgecUU5hyNWgveeTdoIquUm8zwlptjRNT3fHODDnM4zGW2sCNlG7N70nyzF/2y27w25DP3YFrxIphxDgJds5OC/4GgiKAHAE11rxa5fm43pk5boWWCle9RSqWfZmwbjbLTgWvjeW5eyQ9D0J5o1DTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MoSJh2wb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524NAMlu006302;
-	Wed, 5 Mar 2025 00:33:11 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=IYBKoKALzhDwDjidbUmULY
-	edyDEEXynn/a2sgcQay5s=; b=MoSJh2wbWRuGQr8+Oj1OqlTAX+naBWsHiX2mqc
-	94gTElcRqx/S2CXSlinyu8cm95jj5BDGtKDx0Ro6yVqeCCkyfN4Kd/2Bc+5zLouo
-	HJJV68UFaLEK2RoPlrE0miL6Z1jxi48JLDCYscRSXbAZOvX7Tri+oaREQx/1IeBD
-	IPjaRxr+Z4Kxob/F00AqQTIJs/ETBh6ihMuZ6TuqH/66CsQl23VwG2HIBSSJIC8n
-	nhQmV6XtLawfscxrQ2JU4kMHs84y6Yn8vDC8LgDcc7JaXoLWzl3BXaFHCaNB14Ly
-	8XvkY0Wi//9riI3Tmp+huP3ammege3uHU67HO+7NIyaWTeBg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6v3j31-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 00:33:11 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5250XAHd025607
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 00:33:10 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 4 Mar 2025 16:33:09 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-Date: Tue, 4 Mar 2025 16:33:02 -0800
-Subject: [PATCH v3] arm64: dts: qcom: sm8750: Add BWMONs
+	s=arc-20240116; t=1741135019; c=relaxed/simple;
+	bh=f65gu9zsK0uIrJL8tye93+UyjS25UdHt6GcdjFUHMlg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qhUpA/6uoxZlAW2kVMQCpxoX8goxKqlMPbi1jmrQBUtfbF9C78/Zglz5GIeNvqvygTTNVl/tchjf2CNKPWvaCoyJRCRWBTt0ufSWZMaBS3yGQHHKtBZMVeu3hahhKKqXprkhMdUtyuG7u5VJ3TcU3CUxzlAlsOG9EpXkuhWY8JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ht//rTAq; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from narnia (unknown [167.220.2.28])
+	by linux.microsoft.com (Postfix) with ESMTPSA id A57FD210EAF8;
+	Tue,  4 Mar 2025 16:36:48 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A57FD210EAF8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1741135016;
+	bh=0Yrz03GWRaNmKFRQL5d2IFkrSopl38bvM4bf0mF157A=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Ht//rTAqlaMLaCJ+Z0QYH09IJ/I0lXzAmJD3S0FAD1KEg2Tp46fVp/JbGuj1bR5L4
+	 8bHmFX3ATYdH8s5kWWrgAFG61VRpjAWxxVCujlYWhsbEFmddH4rcYxjOM1AORf7cf1
+	 HNvt+8YdU8xsellZ7QJ1qFO2ObgTtv/Dql/6u3y4=
+From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+To: Song Liu <song@kernel.org>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
+ "Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>,
+ Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
+ <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
+ KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
+ Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
+ Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri
+ Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
+ Ondrej Mosnacek <omosnace@redhat.com>,
+ linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
+ bpf@vger.kernel.org, selinux@vger.kernel.org
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter
+ to LSM/bpf test programs
+In-Reply-To: <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+ <20250304203123.3935371-3-bboscaccy@linux.microsoft.com>
+ <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
+Date: Tue, 04 Mar 2025 16:36:44 -0800
+Message-ID: <87a5a0jotf.fsf@microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250304-sm8750_bwmon_master-v3-1-01a5cb330dd9@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAL2bx2cC/23N0Q6CIBTG8VdxXEc7gCZ21Xu05hAwuQAKjGrOd
- w9dW2vz8v9t53cmFHUwOqJjMaGgk4nGuxxsVyA5CHfV2KjciAKtgECNo+V1BW33tN61VsRRByx
- V2XFNgINsUL68Bd2b16qeL7kHE0cf3uuTRJb16xG26SWCAffAqRJMMAb8dH8YaZzcS2/RIib6U
- xiU2wrFBGuhyKGBhjW1+lfmef4Ax1qBS/4AAAA=
-X-Change-ID: 20250107-sm8750_bwmon_master-cd4b8e1080c9
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Georgi Djakov
-	<djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Satya
- Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Shivnandan
- Kumar" <quic_kshivnan@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741134789; l=2854;
- i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
- bh=uawzDRup0eIXqY1Tvypd8LNPWXkTAI9JqzCY51TwOHA=;
- b=+CoX97mbOL4mZeRKi0yxaEWcQNE2UpVWEE8DrQt26l1NzJ7QdTysBo4V3vj38OgIkkL1OVxLW
- hHcpP5SyPICBWF9mK2SoXhpl+gBtRv3meaWT1d3uL6jZ8IEmb5JiI2j
-X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
- pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: BstvoG_Mfqq5nXrF03XSGbDpfQr1kufJ
-X-Proofpoint-ORIG-GUID: BstvoG_Mfqq5nXrF03XSGbDpfQr1kufJ
-X-Authority-Analysis: v=2.4 cv=fatXy1QF c=1 sm=1 tr=0 ts=67c79bc7 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=3H110R4YSZwA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=X10Tml71RCsn4LbydEcA:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- spamscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=851 mlxscore=0 adultscore=0 suspectscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050002
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+Song Liu <song@kernel.org> writes:
 
-Add the CPU BWMONs for SM8750 SoCs.
+> On Tue, Mar 4, 2025 at 12:31=E2=80=AFPM Blaise Boscaccy
+> <bboscaccy@linux.microsoft.com> wrote:
+>>
+>> The security_bpf LSM hook now contains a boolean parameter specifying
+>> whether an invocation of the bpf syscall originated from within the
+>> kernel. Here, we update the function signature of relevant test
+>> programs to include that new parameter.
+>>
+>> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
+> ^^^ The email address is broken.
+>
 
-Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
----
-Changes in v3:
-- Change cluster 1 destination interconnect to tag active only from tag
-  always
-- Link to v2: https://lore.kernel.org/r/20250304-sm8750_bwmon_master-v2-1-ead16909397d@quicinc.com
+Whoops, appologies, will get that fixed.=20
 
-Changes in v2:
-- Change destination interconnect to tag active only from tag always
-- Link to v1: https://lore.kernel.org/r/20250113-sm8750_bwmon_master-v1-0-f082da3a3308@quicinc.com
----
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 74 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+>> ---
+>>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
+>>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++--
+>>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++---
+>>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
+>>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
+>>  7 files changed, 11 insertions(+), 10 deletions(-)
+>
+> It appears you missed a few of these?
+>
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 3bbd7d18598ee0a3a0d5130c03a3166e1fc14d82..68ca2ad44975ee0b12e5e939d678b407080e2dc5 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -2802,6 +2802,80 @@ rpmhpd_opp_super_turbo_no_cpr: opp-480 {
- 			};
- 		};
- 
-+		/* cluster0 */
-+		pmu@240b3400 {
-+			compatible = "qcom,sm8750-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0x0 0x240b3400 0x0 0x600>;
-+
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&cpu_bwmon_opp_table>;
-+
-+			cpu_bwmon_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-0 {
-+					opp-peak-kBps = <800000>;
-+				};
-+
-+				opp-1 {
-+					opp-peak-kBps = <2188000>;
-+				};
-+
-+				opp-2 {
-+					opp-peak-kBps = <5414400>;
-+				};
-+
-+				opp-3 {
-+					opp-peak-kBps = <6220800>;
-+				};
-+
-+				opp-4 {
-+					opp-peak-kBps = <6835200>;
-+				};
-+
-+				opp-5 {
-+					opp-peak-kBps = <8371200>;
-+				};
-+
-+				opp-6 {
-+					opp-peak-kBps = <10944000>;
-+				};
-+
-+				opp-7 {
-+					opp-peak-kBps = <12748800>;
-+				};
-+
-+				opp-8 {
-+					opp-peak-kBps = <14745600>;
-+				};
-+
-+				opp-9 {
-+					opp-peak-kBps = <16896000>;
-+				};
-+
-+				opp-10 {
-+					opp-peak-kBps = <19046400>;
-+				};
-+			};
-+		};
-+
-+		/* cluster1 */
-+		pmu@240b7400 {
-+			compatible = "qcom,sm8750-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0x0 0x240b7400 0x0 0x600>;
-+
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&cpu_bwmon_opp_table>;
-+		};
-+
- 		timer@16800000 {
- 			compatible = "arm,armv7-timer-mem";
- 			reg = <0x0 0x16800000 0x0 0x1000>;
+Some of these don't require any changes. I ran into this as well while doin=
+g a
+search.=20
 
----
-base-commit: 20d5c66e1810e6e8805ec0d01373afb2dba9f51a
-change-id: 20250107-sm8750_bwmon_master-cd4b8e1080c9
+These are all accounted for in the patch.=20
+> tools/testing/selftests/bpf/progs/rcu_read_lock.c:SEC("?lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm/bpf")
+> tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm.s/bpf=
+")
+> tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s/b=
+pf")
+> tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s/b=
+pf")
+> tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("lsm.s/bp=
+f")
 
-Best regards,
--- 
-Melody Olvera <quic_molvera@quicinc.com>
+security_bpf_map wasn't altered, it can't be called from the kernel. No
+changes needed.
+> tools/testing/selftests/bpf/progs/test_libbpf_get_fd_by_id_opts.c:SEC("ls=
+m/bpf_map")
 
+These are also all accounted for in the patch.=20
+> tools/testing/selftests/bpf/progs/test_lookup_key.c:SEC("lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/test_ptr_untrusted.c:SEC("lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/test_task_under_cgroup.c:SEC("lsm.s/bpf=
+")
+> tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c:SEC("lsm.s/bpf")
+
+bpf_token_cmd and bpf_token_capabable aren't callable from the kernel,
+no changes to that hook either currently.
+
+> tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_capable")
+> tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_cmd")
+
+
+This program doesn't take any parameters currently.
+> tools/testing/selftests/bpf/progs/verifier_global_subprogs.c:SEC("?lsm/bp=
+f")
+
+These are all naked calls that don't take any explicit parameters.
+> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
+>
+
+-blaise
+
+>>
+>> diff --git a/tools/testing/selftests/bpf/progs/rcu_read_lock.c b/tools/t=
+esting/selftests/bpf/progs/rcu_read_lock.c
+>> index ab3a532b7dd6d..f85d0e282f2ae 100644
+>> --- a/tools/testing/selftests/bpf/progs/rcu_read_lock.c
+>> +++ b/tools/testing/selftests/bpf/progs/rcu_read_lock.c
+>> @@ -242,7 +242,8 @@ int inproper_sleepable_helper(void *ctx)
+>>  }
+>>
+>>  SEC("?lsm.s/bpf")
+>> -int BPF_PROG(inproper_sleepable_kfunc, int cmd, union bpf_attr *attr, u=
+nsigned int size)
+>> +int BPF_PROG(inproper_sleepable_kfunc, int cmd, union bpf_attr *attr, u=
+nsigned int size,
+>> +            bool is_kernel)
+>>  {
+>>         struct bpf_key *bkey;
+>>
+>> diff --git a/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c =
+b/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+>> index 44628865fe1d4..0e741262138f2 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
+>> @@ -51,13 +51,13 @@ static int bpf_link_create_verify(int cmd)
+>>  }
+>>
+>>  SEC("lsm/bpf")
+>> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+>> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size,=
+ bool is_kernel)
+>>  {
+>>         return bpf_link_create_verify(cmd);
+>>  }
+>>
+>>  SEC("lsm.s/bpf")
+>> -int BPF_PROG(lsm_s_run, int cmd, union bpf_attr *attr, unsigned int siz=
+e)
+>> +int BPF_PROG(lsm_s_run, int cmd, union bpf_attr *attr, unsigned int siz=
+e, bool is_kernel)
+>>  {
+>>         return bpf_link_create_verify(cmd);
+>>  }
+>> diff --git a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c=
+ b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+>> index cd4d752bd089c..ce36a55ba5b8b 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
+>> @@ -36,7 +36,7 @@ char _license[] SEC("license") =3D "GPL";
+>>
+>>  SEC("?lsm.s/bpf")
+>>  __failure __msg("cannot pass in dynptr at an offset=3D-8")
+>> -int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr, unsigned =
+int size)
+>> +int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr, unsigned =
+int size, bool is_kernel)
+>>  {
+>>         unsigned long val;
+>>
+>> @@ -46,7 +46,7 @@ int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr=
+ *attr, unsigned int size)
+>>
+>>  SEC("?lsm.s/bpf")
+>>  __failure __msg("arg#0 expected pointer to stack or const struct bpf_dy=
+nptr")
+>> -int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr, unsigned =
+int size)
+>> +int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr, unsigned =
+int size, bool is_kernel)
+>>  {
+>>         unsigned long val =3D 0;
+>>
+>> @@ -55,7 +55,7 @@ int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr=
+ *attr, unsigned int size)
+>>  }
+>>
+>>  SEC("lsm.s/bpf")
+>> -int BPF_PROG(dynptr_data_null, int cmd, union bpf_attr *attr, unsigned =
+int size)
+>> +int BPF_PROG(dynptr_data_null, int cmd, union bpf_attr *attr, unsigned =
+int size, bool is_kernel)
+>>  {
+>>         struct bpf_key *trusted_keyring;
+>>         struct bpf_dynptr ptr;
+>> diff --git a/tools/testing/selftests/bpf/progs/test_lookup_key.c b/tools=
+/testing/selftests/bpf/progs/test_lookup_key.c
+>> index c73776990ae30..c46077e01a4ca 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_lookup_key.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_lookup_key.c
+>> @@ -23,7 +23,7 @@ extern struct bpf_key *bpf_lookup_system_key(__u64 id)=
+ __ksym;
+>>  extern void bpf_key_put(struct bpf_key *key) __ksym;
+>>
+>>  SEC("lsm.s/bpf")
+>> -int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+>> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, boo=
+l is_kernel)
+>>  {
+>>         struct bpf_key *bkey;
+>>         __u32 pid;
+>> diff --git a/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c b/to=
+ols/testing/selftests/bpf/progs/test_ptr_untrusted.c
+>> index 2fdc44e766248..21fce1108a21d 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c
+>> @@ -7,7 +7,7 @@
+>>  char tp_name[128];
+>>
+>>  SEC("lsm.s/bpf")
+>> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+>> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size,=
+ bool is_kernel)
+>>  {
+>>         switch (cmd) {
+>>         case BPF_RAW_TRACEPOINT_OPEN:
+>> diff --git a/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c =
+b/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+>> index 7e750309ce274..18ad24a851c6c 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
+>> @@ -49,7 +49,7 @@ int BPF_PROG(tp_btf_run, struct task_struct *task, u64=
+ clone_flags)
+>>  }
+>>
+>>  SEC("lsm.s/bpf")
+>> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
+>> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size,=
+ bool is_kernel)
+>>  {
+>>         struct cgroup *cgrp =3D NULL;
+>>         struct task_struct *task;
+>> diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b=
+/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+>> index 12034a73ee2d2..135665f011c7e 100644
+>> --- a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+>> +++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
+>> @@ -37,7 +37,7 @@ struct {
+>>  char _license[] SEC("license") =3D "GPL";
+>>
+>>  SEC("lsm.s/bpf")
+>> -int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
+>> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, boo=
+l is_kernel)
+>>  {
+>>         struct bpf_dynptr data_ptr, sig_ptr;
+>>         struct data *data_val;
+>> --
+>> 2.48.1
+>>
 
