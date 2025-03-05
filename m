@@ -1,96 +1,100 @@
-Return-Path: <linux-kernel+bounces-546911-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546912-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8439A50081
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:28:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EEC3A5007D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:27:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 424191649EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:25:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60C28188C642
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:27:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 876981EDA0E;
-	Wed,  5 Mar 2025 13:25:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44ABF245038;
+	Wed,  5 Mar 2025 13:27:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ZcYinbhi"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b="gzOp9btd"
+Received: from xry111.site (xry111.site [89.208.246.23])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F97624633D;
-	Wed,  5 Mar 2025 13:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375C61E531;
+	Wed,  5 Mar 2025 13:27:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.208.246.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741181133; cv=none; b=ONcT2OfaYPwvLIZGjH+vDhH18Wg9mnIueXKP2e0ooe90P1CSmC4WPr6lujkddcZwyCVZSgxJs6jm4KB0vvTVfuHhpQr1OGIMtI4MDsD4MSL32vR+po+n9DqiE/a4vkbOuPd85P6/zM55L/ieDf41t9vhOC0ZA2Pkq8dHxr95PPA=
+	t=1741181239; cv=none; b=NuvYumnpRFmhC48h5/3x6mvy08CF+PODkdyNbji7uFHtcZcq/E+psGzklO/e0wJOj/WNKeH95d7bt1I0utlGQN7zkpwK51UEq2Q1OjTxb7U4e9iaRkHAdV2qgxQ+76AVgawnVYPcvqRtCRK93t15OpHIDeLeMtrQs5M6D/ITF38=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741181133; c=relaxed/simple;
-	bh=xpWMmO1wQXH2vk0FpYl6JJDiWe8u0L3QtbU61Zx+7qE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=fuU1qsKwK78Kc3qrRpIX6lJ5zxYNqOrpifLgss43QOZm2Aj9COhJmSpspngMRr1phZwintNpMFSKVyd/CGgJdmI+4GmZQVIurucyYu/C8INzWpSmHiqCid7lFMoNQX+zs6WnbnAWjXbW1hLQARwthojDnYk9Oz1SEIbsZCe8Epg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ZcYinbhi; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1741181129;
-	bh=xpWMmO1wQXH2vk0FpYl6JJDiWe8u0L3QtbU61Zx+7qE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ZcYinbhivIFekiC7RNjjkEI8thGBwmjW+zc2kLFxN6YMEU1ucrnVu1BGpMyUOgXgJ
-	 euhq6gKs88DuQDaNCxEsAz4WPTMP2H3uXZ10R/CEQ6/vGiSfNl2VRJHES+NtB5nUsx
-	 UbM1nAkXgeBpRRVgzRX2ToDHjYHRPsJjPoGg9/QVvR+ukmWDWhZVUZOSdhK0jtpifE
-	 M5/MIO6lKVPMZ7otXK4rs1AYbdJmEk4f9WFfHLBYk65iayY41EM/Dq7urue6dcbn47
-	 SUKCJWHko2WzHJdrKB38iwEmj2sx0s+9/FnwO563K3BVtXHW2aQ0ukYOq7CaLhprMH
-	 ikuPVAnQ45vsQ==
-Received: from IcarusMOD.eternityproject.eu (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	s=arc-20240116; t=1741181239; c=relaxed/simple;
+	bh=cB1DxsX8g+WgYZpFQF3xzyK6n2FY/ODCE60uSgp0XO8=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D/73sMzyNpIylG5lzux9jJW+oJBfCf/Q9AjWK1Bcf5poaBdboI0AGOTnBa7M+kzHmpuEowzjhLm/U/HeQcDejKcGiIsx/WHovAseB2KzZZu1Y7hA7J6SjrlsRREUaNLTyfUHRDDQZJZdReuai58p7XfGqdwZ1G56zoFQV1s6UWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site; spf=pass smtp.mailfrom=xry111.site; dkim=pass (1024-bit key) header.d=xry111.site header.i=@xry111.site header.b=gzOp9btd; arc=none smtp.client-ip=89.208.246.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=xry111.site
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xry111.site
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=xry111.site;
+	s=default; t=1741181228;
+	bh=cB1DxsX8g+WgYZpFQF3xzyK6n2FY/ODCE60uSgp0XO8=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=gzOp9btd675nz7oHVq1TNOboLUEF3CpNFjY2HnMRh/CFxbVp+UUV1zpMNIeuVrIJV
+	 2NQtinq7RTEwKbYykS7zcKl/+SqOfSoGa1qUkNLZpDQiBmmthTgOL8sFunEleETm3k
+	 OUHea7Ij4e5FyjDxJcJV+rZLYptOEKXJd2bfJSAg=
+Received: from [127.0.0.1] (unknown [IPv6:2001:470:683e::1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 6F0CE17E0880;
-	Wed,  5 Mar 2025 14:25:28 +0100 (CET)
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: kernel@collabora.com, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Matthias Brugger <matthias.bgg@gmail.com>, 
- Julien Massot <julien.massot@collabora.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
- kernel@collabora.com
-In-Reply-To: <20250304-radxa-panel-overlay-v2-0-3ee6797d3f86@collabora.com>
-References: <20250304-radxa-panel-overlay-v2-0-3ee6797d3f86@collabora.com>
-Subject: Re: [PATCH v2 0/2] mt8395-radxa-nio-12l: Add overlay for Radxa 8HD
- panel
-Message-Id: <174118112837.81899.67489907591418089.b4-ty@collabora.com>
-Date: Wed, 05 Mar 2025 14:25:28 +0100
+	 key-exchange ECDHE (prime256v1) server-signature ECDSA (secp384r1) server-digest SHA384)
+	(Client did not present a certificate)
+	(Authenticated sender: xry111@xry111.site)
+	by xry111.site (Postfix) with ESMTPSA id A784866DBD;
+	Wed,  5 Mar 2025 08:27:06 -0500 (EST)
+Message-ID: <91797ac4bbe27d7d60b89053050e429bcd630db3.camel@xry111.site>
+Subject: Ping: [PATCH 0/3] Drop explicit --hash-style= setting for new
+From: Xi Ruoyao <xry111@xry111.site>
+To: Guo Ren <guoren@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG
+ Xuerui <kernel@xen0n.name>, Palmer Dabbelt <palmer@dabbelt.com>, Fangrui
+ Song <i@maskray.me>
+Cc: Tiezhu Yang <yangtiezhu@loongson.cn>, linux-csky@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-riscv@lists.infradead.org, 
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 05 Mar 2025 21:27:04 +0800
+In-Reply-To: <20250224112042.60282-1-xry111@xry111.site>
+References: <20250224112042.60282-1-xry111@xry111.site>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
 
-On Tue, 04 Mar 2025 15:01:54 +0100, Julien Massot wrote:
-> small series to enable a DSI panel on Radxa NIO 12L.
-> 
-> The first patch adds missing dts nodes to expose some
-> feature of the DSI0 port.
-> 
-> The second patch adds the Radxa 8 HD panel as an overlay.
-> 
-> [...]
+Ping.
 
-Applied to v6.14-next/dts64, thanks!
+On Mon, 2025-02-24 at 19:20 +0800, Xi Ruoyao wrote:
+> For riscv, csky, and LoongArch, GNU hash had already become the de-
+> facto
+> standard when they borned, so there's no Glibc/Musl releases for them
+> without GNU hash support, and the traditional SysV hash is just
+> wasting
+> space for them.
+>=20
+> Remove those settings and follow the distro toolchain default, which
+> is
+> likely --hash-style=3Dgnu.=C2=A0 In the past it could break vDSO self tes=
+ts,
+> but now the issue has been addressed by commit
+> e0746bde6f82 ("selftests/vDSO: support DT_GNU_HASH").
+>=20
+> Xi Ruoyao (3):
+> =C2=A0 riscv: vDSO: Remove --hash-style=3Dboth
+> =C2=A0 csky: vDSO: Remove --hash-style=3Dboth
+> =C2=A0 LoongArch: vDSO: Remove --hash-style=3Dsysv
+>=20
+> =C2=A0arch/csky/kernel/vdso/Makefile=C2=A0 | 2 +-
+> =C2=A0arch/loongarch/vdso/Makefile=C2=A0=C2=A0=C2=A0 | 2 +-
+> =C2=A0arch/riscv/kernel/vdso/Makefile | 2 +-
+> =C2=A03 files changed, 3 insertions(+), 3 deletions(-)
+>=20
 
-[1/2] arm64: dts: mediatek: mt8395-nio-12l: Prepare MIPI DSI port
-      commit: d4642e25bede20135d84e0ffdc234b72aaa1b6ba
-[2/2] arm64: dts: mediatek: mt8395-radxa-nio-12l: Add Radxa 8 HD panel
-      commit: 052cb5d105721a1bb517d278a005b0a100d27a62
-
-Cheers,
-Angelo
-
-
+--=20
+Xi Ruoyao <xry111@xry111.site>
+School of Aerospace Science and Technology, Xidian University
 
