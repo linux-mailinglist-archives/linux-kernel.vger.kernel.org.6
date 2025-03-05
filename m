@@ -1,158 +1,114 @@
-Return-Path: <linux-kernel+bounces-545927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0A0A4F3D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:34:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EBA6A4F3D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:34:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB97D16B3C9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:34:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3836F7A2248
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E3BF1465AD;
-	Wed,  5 Mar 2025 01:33:55 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55BE7143736
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056D6151992;
+	Wed,  5 Mar 2025 01:34:37 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BAFB149C53;
+	Wed,  5 Mar 2025 01:34:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741138435; cv=none; b=rLrO1Ug1gMUG89g5BOZRjyzH/0Beu9cAXBmQnVR+MVwYh+PaYchp+0f8P6iwdITi/GkXuJNyp96kl3cTpajmrV6B6bn0l5caLDS8hlQ2Ez6fkys+yS4n+cqTpN+A+ZjdVYZiJ9gh6/mnez+qGaL/g2NsQ+TOPKDtpEX0sLeSeEA=
+	t=1741138476; cv=none; b=mtAsw7MHfHKRChhv6TDt0Z4GvcQ1N8vzxGvd1qNtw+M+1yKKXTfJ7J7vlZiazM/ZBd9i1zVz5MZ9kYik/7x7BYJxxt2PadHVgr7XEeWyamP+4NRG3sRxNXSadMc5Vgkr6fhERx2yezh6fHruZ65osdxTXoaFIilDJ6FnUhupB7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741138435; c=relaxed/simple;
-	bh=RJSsvUkwE1psIq7jswRIkOyjYBcD9wsUQCVHvA2sFwc=;
+	s=arc-20240116; t=1741138476; c=relaxed/simple;
+	bh=0c3GK+61GsVm5hCZWyw8H0pMy0garXAIfRJcwXOqRbo=;
 	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=NF7v2EC4tIhBwNDSh3U9E4s2Lg6MWbkwF3rMsilflP9fK3H3SWNBIZx5l08oQ/ce2zZONsqa7qssCvxLlJDcw2izvFMyNfwwWNSJ3bdrZ9QrCXdbHWl+MHK3QeQdFejl3cae21V6h32YOXD4ppj7IloeIp3PJmzVjxbfQTk2gu8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.20.42.62])
-	by gateway (Coremail) with SMTP id _____8BxYa_8qcdnPrGKAA--.64530S3;
-	Wed, 05 Mar 2025 09:33:48 +0800 (CST)
-Received: from [10.20.42.62] (unknown [10.20.42.62])
-	by front1 (Coremail) with SMTP id qMiowMDxPcX5qcdnIbg2AA--.4576S3;
-	Wed, 05 Mar 2025 09:33:47 +0800 (CST)
-Subject: Re: [PATCH] LoongArch: mm: Set max_pfn with the PFN of the last page
-To: Huacai Chen <chenhuacai@kernel.org>
-Cc: WANG Xuerui <kernel@xen0n.name>, loongarch@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250304112708.1810033-1-maobibo@loongson.cn>
- <CAAhV-H7ZAK15ob3M=5eQrOhPvkSFhkrmVHd-mn6RXgQqQV_Ebg@mail.gmail.com>
-From: bibo mao <maobibo@loongson.cn>
-Message-ID: <3a04b960-e3ad-0656-d69d-6e85079d305a@loongson.cn>
-Date: Wed, 5 Mar 2025 09:33:09 +0800
-User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
- Thunderbird/68.7.0
+	 In-Reply-To:Content-Type; b=ehWEAOI52QgXzpAhHPh+3qTkxtO0PEuQ7vASAz84qA/rR/z1P515inJGtV0t0kUw6gazUdb2j+JhFzJap6wnqkeWKXRRj0qjirJZktPkX/V82x0QgOs9UXqno09w7gqW03iIo/MoO45j6ckj3l35ge305W4mhbmzp7zPPWWZsi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z6w7g2fBxz4f3m6j;
+	Wed,  5 Mar 2025 09:34:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id E53491A0DED;
+	Wed,  5 Mar 2025 09:34:30 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgD3W2Amqsdn_UVLFg--.57461S3;
+	Wed, 05 Mar 2025 09:34:30 +0800 (CST)
+Subject: Re: [PATCH 0/7 md-6.15] md: introduce md_submodle_head
+To: Yu Kuai <yukuai1@huaweicloud.com>, song@kernel.org
+Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yi.zhang@huawei.com, yangerkun@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <d7519311-8726-a837-ac0f-62482b4f95b0@huaweicloud.com>
+Date: Wed, 5 Mar 2025 09:34:30 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAAhV-H7ZAK15ob3M=5eQrOhPvkSFhkrmVHd-mn6RXgQqQV_Ebg@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
+In-Reply-To: <20250215092225.2427977-1-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMDxPcX5qcdnIbg2AA--.4576S3
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBj93XoWxur1UWr1xXr1xXr1fXr4xGrX_yoW5Zry5pr
-	W8AF1DWr4UGr1xC34Fqw1kuryfW3s0k3y3Wa1rKF1Syr15Xrn3Xw40qrnxuF1qqw4xJa1F
-	qrZ0gFyqvFWUtagCm3ZEXasCq-sJn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7ZEXa
-	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
-	0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
-	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
-	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
-	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
-	GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27wAqx4
-	xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v2
-	6r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67
-	vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAF
-	wI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCIc4
-	0Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AK
-	xVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr
-	1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU24SoDUUU
-	U
+X-CM-TRANSID:gCh0CgD3W2Amqsdn_UVLFg--.57461S3
+X-Coremail-Antispam: 1UD129KBjvdXoWrtF45uF48CFyDGr47Kr1xZrb_yoWkAFc_Za
+	4jqFyfXryUXF18Ja4rWrsIvrWkAF40vr1rXFy2grWFvr13uFWxGr1093yUX3W8uFyqq3Z8
+	Jr10k34Fy3y0qjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUbVkFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUXVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCYjI0SjxkI62AI1cAE67vI
+	Y487MxkF7I0En4kS14v26r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r
+	1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CE
+	b7AF67AKxVWUAVWUtwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0x
+	vE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAI
+	cVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2Kf
+	nxnUUI43ZEXa7VUbPl1PUUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+ÔÚ 2025/02/15 17:22, Yu Kuai Ð´µÀ:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> This set introduce md_submodle_head and related API to replace
+> personality and md-cluter registration, and remove lots of exported
+> helpers and global variables.
+> 
+> Also prepare to add kconfig for md-bitmap.
+> 
+> Yu Kuai (7):
+>    md: merge common code into find_pers()
+>    md: only include md-cluster.h if necessary
+>    md: introduce struct md_submodule_head and APIs
+>    md: switch personalities to use md_submodule_head
+>    md/md-cluster: cleanup md_cluster_ops reference
+>    md: don't export md_cluster_ops
+>    md: switch md-cluster to use md_submodle_head
+> 
 
+Applied to md-6.15
+Thanks
 
-On 2025/3/4 ä¸‹åˆ8:25, Huacai Chen wrote:
-> Hi, Bibo,
+>   drivers/md/md-bitmap.c  |   8 +-
+>   drivers/md/md-cluster.c |  18 ++-
+>   drivers/md/md-cluster.h |   6 +
+>   drivers/md/md-linear.c  |  15 ++-
+>   drivers/md/md.c         | 259 +++++++++++++++++++---------------------
+>   drivers/md/md.h         |  48 +++++---
+>   drivers/md/raid0.c      |  18 +--
+>   drivers/md/raid1-10.c   |   4 +-
+>   drivers/md/raid1.c      |  33 ++---
+>   drivers/md/raid10.c     |  41 ++++---
+>   drivers/md/raid5.c      |  70 +++++++----
+>   11 files changed, 297 insertions(+), 223 deletions(-)
 > 
-> On Tue, Mar 4, 2025 at 7:27â€¯PM Bibo Mao <maobibo@loongson.cn> wrote:
->>
->> The current max_pfn equals to zero. In this case, it caused users cannot
->> get some page information through /proc such as kpagecount. The following
->> message is displayed by stress-ng test suite with the command
->> "stress-ng --verbose --physpage 1 -t 1".
->>
->>   # stress-ng --verbose --physpage 1 -t 1
->>   stress-ng: error: [1691] physpage: cannot read page count for address 0x134ac000 in /proc/kpagecount, errno=22 (Invalid argument)
->>   stress-ng: error: [1691] physpage: cannot read page count for address 0x7ffff207c3a8 in /proc/kpagecount, errno=22 (Invalid argument)
->>   stress-ng: error: [1691] physpage: cannot read page count for address 0x134b0000 in /proc/kpagecount, errno=22 (Invalid argument)
->>   ...
->>
->> After applying this patch, the kernel can pass the test.
->>   # stress-ng --verbose --physpage 1 -t 1
->>   stress-ng: debug: [1701] physpage: [1701] started (instance 0 on CPU 3)
->>   stress-ng: debug: [1701] physpage: [1701] exited (instance 0 on CPU 3)
->>   stress-ng: debug: [1700] physpage: [1701] terminated (success)
->>
->> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> I think this patch are mainly fix commit
-> ff6c3d81f2e86b63a3a530683f89ef39 ("NUMA: optimize detection of memory
-> with no node id assigned by firmware"). So it is better to add a
-> Fixes: tag and Cc stable.
-> 
-> And the patch itself can be improved. there are three cases of
-> calculating max_low_pfn:
-> ACPI with NUMA, handled in numa.c
-> ACPI without NUMA, handled in mem.c
-> FDT, handled in setup.c
-> 
-> You have missed the 2nd case. The simplest way is add "max_pfn =
-> max_low_pfn" at the beginning of arch_mem_init() because all cases can
-> be handled here.
-yes, that is actually one problem:)  Will do this simply in 
-arch_mem_init() in next patch.
-
-Regards
-Bibo Mao
-> 
-> Huacai
-> 
->> ---
->>   arch/loongarch/kernel/numa.c  | 2 +-
->>   arch/loongarch/kernel/setup.c | 2 +-
->>   2 files changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/numa.c
->> index 84fe7f854820..002dbe62b329 100644
->> --- a/arch/loongarch/kernel/numa.c
->> +++ b/arch/loongarch/kernel/numa.c
->> @@ -356,7 +356,7 @@ int __init init_numa_memory(void)
->>                  node_mem_init(node);
->>                  node_set_online(node);
->>          }
->> -       max_low_pfn = PHYS_PFN(memblock_end_of_DRAM());
->> +       max_low_pfn = max_pfn = PHYS_PFN(memblock_end_of_DRAM());
->>
->>          setup_nr_node_ids();
->>          loongson_sysconf.nr_nodes = nr_node_ids;
->> diff --git a/arch/loongarch/kernel/setup.c b/arch/loongarch/kernel/setup.c
->> index edcfdfcad7d2..ab8c9336d8f5 100644
->> --- a/arch/loongarch/kernel/setup.c
->> +++ b/arch/loongarch/kernel/setup.c
->> @@ -294,7 +294,7 @@ static void __init fdt_setup(void)
->>          early_init_dt_scan(fdt_pointer, __pa(fdt_pointer));
->>          early_init_fdt_reserve_self();
->>
->> -       max_low_pfn = PFN_PHYS(memblock_end_of_DRAM());
->> +       max_low_pfn = max_pfn = PFN_PHYS(memblock_end_of_DRAM());
->>   #endif
->>   }
->>
->> --
->> 2.39.3
->>
 
 
