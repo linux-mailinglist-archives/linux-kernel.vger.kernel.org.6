@@ -1,128 +1,119 @@
-Return-Path: <linux-kernel+bounces-545871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F040A4F2E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:43:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42BBAA4F2E9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:45:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FB5188FB9F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:43:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C411885421
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:45:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9CCC502B1;
-	Wed,  5 Mar 2025 00:43:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8712A2AF1D;
+	Wed,  5 Mar 2025 00:45:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="nifRQEjK"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZi4Nst1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB86E15D1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 00:43:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E140D11187;
+	Wed,  5 Mar 2025 00:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741135408; cv=none; b=Vjxe/K0Rlnq50MPx8ivdM/re02pVGNf9gxuuHm33RU5RtQpxu2LgiiJmtweCrrJN9CAJKzH/OfcBkqu8EUeV+dQwJB276JkmGLCEtiSR6zHOgVuLtiULyaPDgQFNiyf2Vl2FN7lQhmW1t5ngxWVq6+uHXkQtoPTwX7cxvqKcekg=
+	t=1741135530; cv=none; b=GYHt13iFMTxkQMXXlqtnqXaRKN4Mo0oxoaKjnXTU/76QHjye8hvHWC2eypp5OJBGfWatLV/oZdq0JqDws8ZiWz1x9lRE2Eeih3bebO30d6pGzqYbYv96RPFn8Hd5wQXO4JAQxSg2w5FM9CLecGIsw9nsCFY/fMTo9JveJcHJoho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741135408; c=relaxed/simple;
-	bh=OKHDmjwimxOhnW7rYl67IZUwnThMZFxl+dKmmw13jnw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EO05UFVFThVb66326Q4eVzr13+CyUQNirFR1TyMFO29FisdsuMDqHSkTkTnFHbyFWgP0RzW60z9B1ssn/vPlwggQS0nenlGFwQku5AL47x3U/6DxAb6plCRdRBTRB6OcHStfCG4gDseeu/sWesGRLTbl8x6FA+znHoVRKFOIRLs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=nifRQEjK; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=3uh6k4mdevdztoqxvfqc4bjqgu.protonmail; t=1741135404; x=1741394604;
-	bh=dIrvwY3gB1CriE8+CIS56SQUkbk7cXnqzrPo4rZ63FU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=nifRQEjKdHZaMqLLKkLYXVtrVGLLydNHSVkmWmk1aqksYjIU+rB+D4ediv568XcGs
-	 HyjOnHsZT1W2qM+BzGXKtVcs4IHYiwLVSyrOTz6vkY2Ks0QxEoYdK0yY65q4av1xF3
-	 fJZB7W5XGIktXCVhZ5iiZ73iN/86kzKRtiVOXe3l8ibhXFy0gYp8CEVlWW51G6fRO3
-	 L2530YW10zHZpvbsS+4czTg7GTUkHz+DtjofZ6KrLNHml7oH7KPAClYkKLcl6mnodW
-	 5Zdfifn4Jhi4HgsqBmfJ/b00PcKV73Q4VO5+I9bZwLet2s/P1NHiRmWroEUqmDYt9W
-	 frN7+SZUpvO6g==
-Date: Wed, 05 Mar 2025 00:43:18 +0000
-To: Jarkko Sakkinen <jarkko@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 22/22] MAINTAINERS: add entry for the `pin-init` crate
-Message-ID: <D87WZI6NPPOG.EJ4OGCTG4O9R@proton.me>
-In-Reply-To: <Z8eYKXCl0co-GLaf@kernel.org>
-References: <20250304225245.2033120-1-benno.lossin@proton.me> <20250304225245.2033120-23-benno.lossin@proton.me> <Z8eYKXCl0co-GLaf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: a090e1ffc9ea20c64209e66d6bd9d552dfa070e0
+	s=arc-20240116; t=1741135530; c=relaxed/simple;
+	bh=gFLlK8tKubCvB0zH2AmLKFcC0Bw0FyNX/KP5Xafjw14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cr510PGddRqyy3peMxEuR72tNyxsSLM9mFZNGkDucz/6WnJ/R3pQV8dka2rld/qBLQZYrNC4SBxThRRuzxXS+JPEVAoV6lLxTvDXUJo8J05ek5Ky7s9BBAxsewurN1yZmD9ZsJssKywH68vsjnBSl2TGJ+0QJguzyaIK+P1maA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZi4Nst1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7D50C4CEE5;
+	Wed,  5 Mar 2025 00:45:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741135529;
+	bh=gFLlK8tKubCvB0zH2AmLKFcC0Bw0FyNX/KP5Xafjw14=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pZi4Nst1ORWhKWhrislwqJ0nN6gzS2masD/TWLsThj5T1FkvvBjYE4H6+bduYuIb2
+	 6lp8GbvTwxeuLUMoCFXb+QKNPQclw6Or4uh7PHcKLTMXVFCXaIPS4tgRJAQbAZ3U3V
+	 uFl67ncSydHcttrWPwd8UnI62QJafNDziGcEoBo6ZhuFqR3GObn+OhqBQwtKSc7AgV
+	 wuoZnF8pUu84XipAeYsvSDz9v6BCPZSGJQnf7LfFNdlhQVpY+08EAtvBgRSzMhkDx1
+	 dmFQovKTn0qh7ndZlU8fUG6icPeISOQMOJrSXW34dEdzNIx5b7nkzOAkva4kK43VnJ
+	 vZRYw3jRpHdng==
+Date: Wed, 5 Mar 2025 00:45:23 +0000
+From: Will Deacon <will@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, snehalreddy@google.com,
+	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com,
+	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com, Andrei Homescu <ahomescu@google.com>
+Subject: Re: [PATCH v2 4/4] KVM: arm64: Release the ownership of the hyp rx
+ buffer to Trustzone
+Message-ID: <20250305004522.GC31667@willie-the-truck>
+References: <20250227181750.3606372-1-sebastianene@google.com>
+ <20250227181750.3606372-5-sebastianene@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250227181750.3606372-5-sebastianene@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed Mar 5, 2025 at 1:17 AM CET, Jarkko Sakkinen wrote:
-> On Tue, Mar 04, 2025 at 10:56:27PM +0000, Benno Lossin wrote:
->> Add maintainers entry for the `pin-init` crate.
->>
->> This crate is already being maintained by me, but until now there
->> existed two different versions: the version inside of the kernel tree
->> and a user-space version at [1]. The previous patches synchronized these
->> two versions to reduce the maintenance burden. In order to keep them
->> synchronized from now on, separate the maintenance from other Rust code.
->>
->> Link: https://github.com/Rust-for-Linux/pin-init [1]
->> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
->> ---
->>  MAINTAINERS | 13 +++++++++++++
->>  1 file changed, 13 insertions(+)
->>
->> diff --git a/MAINTAINERS b/MAINTAINERS
->> index 8e0736dc2ee0..ced7fac4dbbe 100644
->> --- a/MAINTAINERS
->> +++ b/MAINTAINERS
->> @@ -20735,6 +20735,19 @@ S:=09Maintained
->>  F:=09rust/kernel/alloc.rs
->>  F:=09rust/kernel/alloc/
->>
->> +RUST [PIN-INIT]
->
-> In some subsystems the order is exactly the opposite. E.g.,
->
-> ASIX PHY DRIVER [RUST]
+On Thu, Feb 27, 2025 at 06:17:49PM +0000, Sebastian Ene wrote:
+> Introduce the release FF-A call to notify Trustzone that the hypervisor
+> has finished copying the data from the buffer shared with Trustzone to
+> the non-secure partition.
+> 
+> Reported-by: Andrei Homescu <ahomescu@google.com>
+> Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> ---
+>  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> index 861f24de97cb..7da0203f1ee9 100644
+> --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> @@ -725,6 +725,7 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+>  	DECLARE_REG(u32, uuid3, ctxt, 4);
+>  	DECLARE_REG(u32, flags, ctxt, 5);
+>  	u32 count, partition_sz, copy_sz;
+> +	struct arm_smccc_res _res;
+>  
+>  	hyp_spin_lock(&host_buffers.lock);
+>  	if (!host_buffers.rx) {
+> @@ -741,7 +742,7 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+>  
+>  	count = res->a2;
+>  	if (!count)
+> -		goto out_unlock;
+> +		goto release_rx;
+>  
+>  	if (hyp_ffa_version > FFA_VERSION_1_0) {
+>  		/* Get the number of partitions deployed in the system */
+> @@ -757,10 +758,12 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+>  	copy_sz = partition_sz * count;
+>  	if (copy_sz > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
+>  		ffa_to_smccc_res(res, FFA_RET_ABORTED);
+> -		goto out_unlock;
+> +		goto release_rx;
+>  	}
+>  
+>  	memcpy(host_buffers.rx, hyp_buffers.rx, copy_sz);
+> +release_rx:
+> +	ffa_rx_release(&_res);
 
-I think that `RUST [PIN-INIT]` makes sense in this case, since it is a
-core Rust library. In the example you gave above, the `ASIX PHY DRIVER`
-subsystem already exists, so it makes sense to have a rustified version.
-With pin-init, there is no C counterpart. So IMO the only other
-alternative would be just `PIN-INIT`.
+Hmm, the FFA spec is characteristically unclear as to whether or not we
+need to release the rx buffer in the case that the flags indicate use of
+the rx buffer but the returned partition count is 0.
 
----
-Cheers,
-Benno
+Sudeep -- do you know what we should be doing in that case?
 
->> +M:=09Benno Lossin <benno.lossin@proton.me>
->> +L:=09rust-for-linux@vger.kernel.org
->> +S:=09Maintained
->> +W:=09https://rust-for-linux.com/pin-init
->> +B:=09https://github.com/Rust-for-Linux/pin-init/issues
->> +C:=09zulip://rust-for-linux.zulipchat.com
->> +P:=09rust/pin-init/CONTRIBUTING.md
->> +T:=09git https://github.com/Rust-for-Linux/linux.git pin-init-next
->> +F:=09rust/kernel/init.rs
->> +F:=09rust/pin-init/
->> +K:=09\bpin-init\b|pin_init\b|PinInit
->> +
->>  RXRPC SOCKETS (AF_RXRPC)
->>  M:=09David Howells <dhowells@redhat.com>
->>  M:=09Marc Dionne <marc.dionne@auristor.com>
->> --
->> 2.47.2
->>
->>
->>
->
-> BR, Jarkko
-
-
+Will
 
