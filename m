@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-547458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABEC5A50964
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:18:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A390FA50965
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:18:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8244F168583
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:17:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DCCA3ADF32
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:17:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB6B0254B19;
-	Wed,  5 Mar 2025 18:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19E20255E30;
+	Wed,  5 Mar 2025 18:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sN32lAfO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sIdVI7Ez"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7F925484D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:16:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CF1F255238
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:16:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741198589; cv=none; b=WUAZAKIrXYoZHt3SlUM3cFrvzVfyxAPrPhHLo0aZqnl5JVXsfnrXY/vp+bYQ56u/3cEFXyRI2c6ZIes4HPuI6yMt9dm2o2egkr8bAcUQEbTlFIDe3vlL/IOdkc+L1huZoQy/bv4pFY/WgEjrkR5hOqKyhQc60hzGBOqWXr/VzHA=
+	t=1741198590; cv=none; b=f32vVZvQR9nUUXY3+qxvQmps6IZ5SYHhk7oI3YbM7vnTd51YcaSBrGJFzGlb7VHcwmUEM4vR96YdmOfyY6jJJLeYyWW7wOkHgCX1MHqKNObAQEZyEHmU7hWfrc0dCfuQ02ikz8nLg5UFpzBhNpUGgFJmJFgBcgCevgCPJE1ec6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741198589; c=relaxed/simple;
-	bh=5ks7fx/Q1sCl0dg2a2snRfWoft6X+IgkXl2rMy0gCGQ=;
+	s=arc-20240116; t=1741198590; c=relaxed/simple;
+	bh=2xphIriEKA8i5rp9aYhxLxFxGr/HuEVyUJQbKTIJ9W0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qVXi5gBNsgLDub0zqgIVS0wX39FIB5OQlI6FlualoABdBEFV6CNFNbwX6UvaCCfuZydTEMLVNaGPiCAcsMM5g6lmGrAXaj/vnBx695ee4UNHdgJZabkp5T5bgLz6ABJ1pkzjsNYQqN2fOssIepyaqkcSizDqORCpNtdUBddbe+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sN32lAfO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16D77C4CEE2;
-	Wed,  5 Mar 2025 18:16:29 +0000 (UTC)
+	 MIME-Version; b=YNZIk18IpYZzvRacujPoT6BziVboX4ZsTWBuRozEE2CytdcPwtLFlTdWct96FopA4HkB2fy9N6LHNw/1/xB3BKnOwGOkVzdGtbS5Kc1eBPnN+dE6OcI5iqA/6e5MPdrhKHy+O/29QYikRwEa0Wz/3bpipwpI+dqrtF2dnkSMcxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sIdVI7Ez; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D2FFC4CEEC;
+	Wed,  5 Mar 2025 18:16:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741198589;
-	bh=5ks7fx/Q1sCl0dg2a2snRfWoft6X+IgkXl2rMy0gCGQ=;
+	s=k20201202; t=1741198590;
+	bh=2xphIriEKA8i5rp9aYhxLxFxGr/HuEVyUJQbKTIJ9W0=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sN32lAfOUBUATYQrwl4BKcRsrxm4mSQ3kaYsz2Z0kSriFn1jgHlzV2U6C0xBm4hsD
-	 7coxL6aUxhuXz8dmZDGAsaUAqHV7ZEehscytuEa1vzbq5q8IyAtkZv7VEsjmKuJud/
-	 nTE3QtKiSWsnOMNuDEtJc+rEEuERdsBPbstKTMn31F18ss5rnYWoEV1kGzrwhf9So+
-	 Oh78y+Kz0NuzwnB6DhGgCOqIyb7sWaPAX/f+xGUuDF9HqCWId0tYJK2QPmxz+eb4WU
-	 oQOBVsBu52cCCIl3YKWmT+1GhR+dupStWnrMDZwC2FnOPaLGckhmNZGnmQWJRAYYG1
-	 kn3rTbJOOUrVA==
+	b=sIdVI7Ezc8/ZF2n0e2HlbbzQczYnvzGI5HusymbHblTUb8ZINUYydPwmj3Ni8dGNU
+	 QylfDQt4OmqKTwR0TDaBNDmpHfEvCzdEbqbG+yzY8YFAbZ2JpoKjQYMf//LdaQIXjX
+	 YrN7k4OweALQuFfzViR1+pHQmbV+YkvlqVzz2NEVMRkCRUvWciCj/FXV5PmE23qEaJ
+	 3a2AlWAM7CkaK/nFKTlG154acKna2tJovPZeBSrDc/OMc4qnOIR5detGdZsRiJ7cCa
+	 DrCp0ukPkgd8e/ouCQ2KiOQXvIFe8tTgEil7tRhrPP7G9gIvHyQSPx54gaSXTp7HJo
+	 orNrTtIB5HhqQ==
 From: SeongJae Park <sj@kernel.org>
 To: 
 Cc: SeongJae Park <sj@kernel.org>,
@@ -52,9 +52,9 @@ Cc: SeongJae Park <sj@kernel.org>,
 	kernel-team@meta.com,
 	linux-kernel@vger.kernel.org,
 	linux-mm@kvack.org
-Subject: [RFC PATCH 08/16] mm/madvise: pass madvise_behavior struct to madvise_dontneed_free()
-Date: Wed,  5 Mar 2025 10:16:03 -0800
-Message-Id: <20250305181611.54484-9-sj@kernel.org>
+Subject: [RFC PATCH 09/16] mm/memory: split non-tlb flushing part from zap_page_range_single()
+Date: Wed,  5 Mar 2025 10:16:04 -0800
+Message-Id: <20250305181611.54484-10-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250305181611.54484-1-sj@kernel.org>
 References: <20250305181611.54484-1-sj@kernel.org>
@@ -66,61 +66,83 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-madvise_dontneed_free() can be optimized to batch tlb flushes by
-receiving mmu_gather object that initialized and finished outside, and
-doing only gathering of tlb entries that need to be flushed into the
-received mmu_gather object.  But the function is receiving only one
-single behavior integer value.  Update it to receive
-'struct madvise_behavior' object so that upcoming tlb flushes batching
-optimization can pass the mmu_gather object.
+Some of zap_page_range_single() callers such as [process_]madvise() with
+MADV_DONEED[_LOCKED] cannot batch tlb flushes because
+zap_page_range_single() does tlb flushing for each invocation.  Split
+out core part of zap_page_range_single() except mmu_gather object
+initialization and gathered tlb entries flushing part for such batched
+tlb flushing usage.
 
 Signed-off-by: SeongJae Park <sj@kernel.org>
 ---
- mm/madvise.c | 13 +++++++------
- 1 file changed, 7 insertions(+), 6 deletions(-)
+ mm/memory.c | 36 ++++++++++++++++++++++--------------
+ 1 file changed, 22 insertions(+), 14 deletions(-)
 
-diff --git a/mm/madvise.c b/mm/madvise.c
-index 6fa7dabe5bad..73a4323197e2 100644
---- a/mm/madvise.c
-+++ b/mm/madvise.c
-@@ -890,11 +890,16 @@ static bool madvise_dontneed_free_valid_vma(struct vm_area_struct *vma,
- 	return true;
+diff --git a/mm/memory.c b/mm/memory.c
+index a838c8c44bfd..aadb2844c701 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -2011,38 +2011,46 @@ void unmap_vmas(struct mmu_gather *tlb, struct ma_state *mas,
+ 	mmu_notifier_invalidate_range_end(&range);
  }
  
-+struct madvise_behavior {
-+	int behavior;
-+};
-+
- static long madvise_dontneed_free(struct vm_area_struct *vma,
- 				  struct vm_area_struct **prev,
- 				  unsigned long start, unsigned long end,
--				  int behavior)
-+				  struct madvise_behavior *madv_behavior)
+-/**
+- * zap_page_range_single - remove user pages in a given range
+- * @vma: vm_area_struct holding the applicable pages
+- * @address: starting address of pages to zap
+- * @size: number of bytes to zap
+- * @details: details of shared cache invalidation
+- *
+- * The range must fit into one VMA.
+- */
+-void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
++static void unmap_vma_single(struct mmu_gather *tlb,
++		struct vm_area_struct *vma, unsigned long address,
+ 		unsigned long size, struct zap_details *details)
  {
-+	int behavior = madv_behavior->behavior;
- 	struct mm_struct *mm = vma->vm_mm;
+ 	const unsigned long end = address + size;
+ 	struct mmu_notifier_range range;
+-	struct mmu_gather tlb;
  
- 	*prev = vma;
-@@ -1241,10 +1246,6 @@ static long madvise_guard_remove(struct vm_area_struct *vma,
- 			       &guard_remove_walk_ops, NULL);
+ 	mmu_notifier_range_init(&range, MMU_NOTIFY_CLEAR, 0, vma->vm_mm,
+ 				address, end);
+ 	hugetlb_zap_begin(vma, &range.start, &range.end);
+-	tlb_gather_mmu(&tlb, vma->vm_mm);
+ 	update_hiwater_rss(vma->vm_mm);
+ 	mmu_notifier_invalidate_range_start(&range);
+ 	/*
+ 	 * unmap 'address-end' not 'range.start-range.end' as range
+ 	 * could have been expanded for hugetlb pmd sharing.
+ 	 */
+-	unmap_single_vma(&tlb, vma, address, end, details, false);
++	unmap_single_vma(tlb, vma, address, end, details, false);
+ 	mmu_notifier_invalidate_range_end(&range);
+-	tlb_finish_mmu(&tlb);
+ 	hugetlb_zap_end(vma, details);
  }
  
--struct madvise_behavior {
--	int behavior;
--};
--
- /*
-  * Apply an madvise behavior to a region of a vma.  madvise_update_vma
-  * will handle splitting a vm area into separate areas, each area with its own
-@@ -1276,7 +1277,7 @@ static int madvise_vma_behavior(struct vm_area_struct *vma,
- 	case MADV_FREE:
- 	case MADV_DONTNEED:
- 	case MADV_DONTNEED_LOCKED:
--		return madvise_dontneed_free(vma, prev, start, end, behavior);
-+		return madvise_dontneed_free(vma, prev, start, end, arg);
- 	case MADV_NORMAL:
- 		new_flags = new_flags & ~VM_RAND_READ & ~VM_SEQ_READ;
- 		break;
++/**
++ * zap_page_range_single - remove user pages in a given range
++ * @vma: vm_area_struct holding the applicable pages
++ * @address: starting address of pages to zap
++ * @size: number of bytes to zap
++ * @details: details of shared cache invalidation
++ *
++ * The range must fit into one VMA.
++ */
++void zap_page_range_single(struct vm_area_struct *vma, unsigned long address,
++		unsigned long size, struct zap_details *details)
++{
++	struct mmu_gather tlb;
++
++	tlb_gather_mmu(&tlb, vma->vm_mm);
++	unmap_vma_single(&tlb, vma, address, size, details);
++	tlb_finish_mmu(&tlb);
++}
++
+ /**
+  * zap_vma_ptes - remove ptes mapping the vma
+  * @vma: vm_area_struct holding ptes to be zapped
 -- 
 2.39.5
 
