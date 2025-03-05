@@ -1,112 +1,113 @@
-Return-Path: <linux-kernel+bounces-546724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D61BA4FE08
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:53:41 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3652A4FE0B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E31016BE5B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:53:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A28197A534D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:53:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B8A5241697;
-	Wed,  5 Mar 2025 11:53:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC31242904;
+	Wed,  5 Mar 2025 11:53:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="LNzY0xwB"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQkPTaO2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5861EA7F5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:53:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48BA5235BE4;
+	Wed,  5 Mar 2025 11:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741175614; cv=none; b=Wf6E1OFFeb8L++tyZxh9p/6Fr1RZIMaLRnsaBxCasJtZM6aUrHWLapPsaKJRbOalSNdsSMVRW2FTZvphnD35eO+Rd0ryFrWoot7GOwshPRYEkRAt2w5/DeV5Llip2ezAcgQ/M5cdSwKHNT6soeUd9asoKb5ZelVtBLty5Qd/dJ4=
+	t=1741175637; cv=none; b=f3HjBbqoufF+v+CSGQFtmYvfT4i/KtB1DL5i/tST8nJM/9fvH66WEL0Yy1O5By+qOzpl1zUq84OUEcuO3cmZYUwuLynIkH8SfmfrWxN16mdF1x4FLCQDJdKWY8aCsuItIy66Mts5EXinFOMfNorhoe89MmmjbZ1ashaOnMLTzqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741175614; c=relaxed/simple;
-	bh=ETscUFb3W9g8uoK4dXkEOb0mnNFPQQG2xbrhc/DTp+Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVbyKgMDjkoUQH/leS0GzDYI33t5YKIY6aj/KxioSX5Jfm9d4ZZQ2qVtp0pIbct96/b19TC67lucYEL5aD4+rpMil4JM/1M2LOCGpQBArvacgitSCXPjEyi/pYAMNrLGDEjxGE7qyODKyqu7WvRntuDUf6ECNuYBRHKLrTl+mMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=LNzY0xwB reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0FAD340E0214;
-	Wed,  5 Mar 2025 11:53:30 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id xMO1CcNIzyuP; Wed,  5 Mar 2025 11:53:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1741175605; bh=Icqf4IZRc494aUQLMvtjKf8rwo7CZb/O4JmauOKLlYo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LNzY0xwBPGxJy9tJQeWyRDFvomzJ8hdXAxR1CRXJqsxFL8V9XsGVWVuZ9ykJ4aMjE
-	 VtSLh3zXMle1gFnTo0TXtn8QXWP/mbYnUV0EOZdXzqCRidQhERd3UF9d0BaJWF5wAX
-	 s9M4BGOwtQdeJaV4LNUGkpnURWfBEzjFXmPulyuhAWfe7UGYPm+hM1OEO2W5IKbtZk
-	 vR8KI/0lm0P9gVVCRSpB7j3bJC8YDKTWgE+jTIx8t+rHdq6bNOe0EcC2d2mOzg6B7s
-	 RPvRy8gYXg7j5OW3CyzBb3Bfh+IS8sJlls/y2/O6MhaSiouQ/jktNXXHUXQVLT47zf
-	 DD8Yje6VDjractrRxVRX1CaSn0DPLegPx8QrCEwRWcVqNEsrHyUv04TvINKimUq8LN
-	 b0h2sM0N5nLDvH+PPz4EAhS6hFitw1ApiM7GIPy07g4RysKUKLGqo+L+yQi8zBOp7F
-	 NVgs38EmSMm7cbsUB24epyaVbG9gLI/RN7QlZ7btBfhv5ct7rN0nOY8ojWQCkPh2fx
-	 c5X9BTL5Xm7aRIWJvmFVVngLM77uQCiSxtrrk1RulcWnfU4b6hNQJSAnrqlz7HkCqS
-	 5nMcWUWPjBALH3miscioEzqqrq4Ozy/YrRlgYmsrcIh3jfM/YGFRAuSpAwsN3VqLAF
-	 kM/VRITg8SizlcQuIgJpvdLY=
-Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 8E04740E0176;
-	Wed,  5 Mar 2025 11:53:15 +0000 (UTC)
-Date: Wed, 5 Mar 2025 12:53:14 +0100
-From: Borislav Petkov <bp@alien8.de>
-To: =?utf-8?B?SsO8cmdlbiBHcm/Dnw==?= <jgross@suse.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Joerg Roedel <joro@8bytes.org>,
-	x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com, Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <20250305115314.GFZ8g7KlmTa-eApiwK@fat_crate.local>
-References: <20250305105234.235553-1-joro@8bytes.org>
- <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
- <Z8g01YhM_FtdB5n6@gmail.com>
- <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
- <d9a1a460-2982-429c-b29d-cf2483e9380a@suse.com>
- <20250305114132.GDZ8g4bNdM-I5OQd4B@fat_crate.local>
- <b21842d7-0355-4630-b293-2d29b003918b@suse.com>
+	s=arc-20240116; t=1741175637; c=relaxed/simple;
+	bh=gArcLFfpKivakEz7CtL6CfPKFdqu7fmiUQZy/61/I7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qnpxRXKnjZg/qFp/2gEsxJt0hoa16z5KRCO3BU+sj/BgpFIKGoezTCGY9NMd3VQJE6QMy9BB9eETmKxPcpZKvRgXhe99BGwoZt6YDNlh+4jPQvqzodp/ySh54GzxSGr+ulvD55PoUe17RSNO+x2pcLB/yTYhMATEC6GdJo02BKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQkPTaO2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B34DFC4CEE7;
+	Wed,  5 Mar 2025 11:53:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741175636;
+	bh=gArcLFfpKivakEz7CtL6CfPKFdqu7fmiUQZy/61/I7Y=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=eQkPTaO2ybpDpyvxRBnZCwEJiDOUYN34PexWdJkR/ybt/YYmcnUm6M3vwVJ7jgQ1x
+	 R76lHi1X6N+ht923+ud27JAVo9KZ40fD60HCR4sO1zNoSZy6F7Kf51N6Sk9DlCNtme
+	 07kuzx6MGUxFagV6b5aENy5t2vz/ai++KdkjMoNTviNwNcnYradekUKb0FwdnmVzrr
+	 eFib51GlMZa6kZl0aOWSACyLUTAyUqg1+NOlKY74GwoqiAGzsZPm7PjJRcfzdofZqb
+	 uXnrZ4QQkAuO/0fYtG2g1jewDRyDGciHqg6ja3gZ3LKA7u+ibG+sndoiLKCvGP9FJH
+	 A8oXRr9av5CYQ==
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e4ebc78da5so10179316a12.2;
+        Wed, 05 Mar 2025 03:53:56 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUXDHp2Az+zyjraeAUu2cpZ887Iv11KnX5jmSNkRDdtz2EGnrmvp2tJ8xsSk7CKI/xo5XXd0Rmjx1nizaWm@vger.kernel.org, AJvYcCW4Vv6rX/bKK6941mdzh/NYIJqyPzaDlkXHm9cTt+MsGPaeaQUCVaGspojZ8/oEj6sqNjz8b3mCcBuOPg==@vger.kernel.org, AJvYcCX6+GsV9Ncpmzh253XDF/HjhFa09w/tWvgx0apxNxnGkW56RhOl7ufoYzWQPymYkjKYqHVJGNPG@vger.kernel.org
+X-Gm-Message-State: AOJu0YyW6d9t0kx9XI7p9+oHCQWlT57qM9rx3SfFMHYRUhg1BW1xuDaj
+	ohdJ5or1RtZ7uqxEGVeCyMTZIwR/mIATz3aZEZ+9+oNb+ZqcpNMOC8Zkd8eDpV4BtDcWU1r2srg
+	qWGb1I5MAHxHdy17T0YgAGMsiLNU=
+X-Google-Smtp-Source: AGHT+IEtu/EQCES06k/Bc8EPSEewrmkKqHE7wO1dQxTrgUo47y+6mmHiwOWvaRXnymriudN4xCZdwdaV6KPcNhmHTpk=
+X-Received: by 2002:a17:907:7da6:b0:abf:b2d5:9692 with SMTP id
+ a640c23a62f3a-ac20d930712mr234821366b.29.1741175635065; Wed, 05 Mar 2025
+ 03:53:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <b21842d7-0355-4630-b293-2d29b003918b@suse.com>
+References: <20250303024233.3865292-1-haoxiang_li2024@163.com>
+In-Reply-To: <20250303024233.3865292-1-haoxiang_li2024@163.com>
+From: Filipe Manana <fdmanana@kernel.org>
+Date: Wed, 5 Mar 2025 11:53:17 +0000
+X-Gmail-Original-Message-ID: <CAL3q7H7btKGFi9iVrYgo0RoKrkW8uXBvmng0UekSLB-OhUp1WQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrhSNzMCD5RQ-nIUwOTJLLFTxwB7sNQ-rT-XLzQHwX1r7N5jhuhXra2eRo
+Message-ID: <CAL3q7H7btKGFi9iVrYgo0RoKrkW8uXBvmng0UekSLB-OhUp1WQ@mail.gmail.com>
+Subject: Re: [PATCH] btrfs: fix a memory leak issue in read_one_chunk()
+To: Haoxiang Li <haoxiang_li2024@163.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com, fdmanana@suse.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 05, 2025 at 12:48:11PM +0100, J=C3=BCrgen Gro=C3=9F wrote:
-> And?
->=20
-> Under Xen there is e.g. /sys/hypervisor/guest_type which shows in which
-> mode the guest is running ("PV" or "HVM").
+On Mon, Mar 3, 2025 at 2:43=E2=80=AFAM Haoxiang Li <haoxiang_li2024@163.com=
+> wrote:
+>
+> Add btrfs_free_chunk_map() to free the memory allocated
+> by btrfs_alloc_chunk_map() if btrfs_add_chunk_map() fails.
+>
+> Fixes: 7dc66abb5a47 ("btrfs: use a dedicated data structure for chunk map=
+s")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 
-And looking for guest features in /sys/hypervisor - especially for
-confidential guests which do not trust the hypervisor - is ironic and wro=
-ng to
-say the least. :)
+Reviewed-by: Filipe Manana <fdmanana@suse.com>
 
-/sys/guest
+Pushed into the github for-next branch, thanks.
 
-or=20
 
-sys/guest/coco
 
-Now that's more like it.
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+> ---
+>  fs/btrfs/volumes.c | 1 +
+>  1 file changed, 1 insertion(+)
+>
+> diff --git a/fs/btrfs/volumes.c b/fs/btrfs/volumes.c
+> index fb22d4425cb0..3f8afbd1ebb5 100644
+> --- a/fs/btrfs/volumes.c
+> +++ b/fs/btrfs/volumes.c
+> @@ -7155,6 +7155,7 @@ static int read_one_chunk(struct btrfs_key *key, st=
+ruct extent_buffer *leaf,
+>                 btrfs_err(fs_info,
+>                           "failed to add chunk map, start=3D%llu len=3D%l=
+lu: %d",
+>                           map->start, map->chunk_len, ret);
+> +               btrfs_free_chunk_map(map);
+>         }
+>
+>         return ret;
+> --
+> 2.25.1
+>
+>
 
