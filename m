@@ -1,151 +1,113 @@
-Return-Path: <linux-kernel+bounces-546585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7EEAFA4FC7D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:45:29 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E039A4FC7C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:45:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49D5C3A84D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:44:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F03817059A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04BCC20AF69;
-	Wed,  5 Mar 2025 10:44:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252C720E32F;
+	Wed,  5 Mar 2025 10:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aODQPCWp"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ekHgbt7x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C70CE20C46C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:44:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EDE20CCC2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741171448; cv=none; b=EcQ13Q0LVGuaqHCiSnZvMX3wxBRzE5+mAGWhAAuECJPricps2CB/+YkIiqfl/HhbJpmy89THaPl7e+oSf9MGrKHiWUtYDRRg5OBcJDRatQHrQvoRRtU8Gb7qRbCuh6RtHNHHm5BQJ+cKAlp8ZKoEdYhBi+dcoPae0OVAZ6krHhQ=
+	t=1741171480; cv=none; b=LZ0IHWewQ+FGuHOxw4HsTLHwoTm0ZMo2rmYdJHwTySKqzhJXMk3+WRATDTPdPOae0tql8yajxDxbm5NxpO+kZi0ewLr7arT3HTjgHN7hNO5kLnB91STuLhxBlcpdqnBDh7OsGJNiMoVJEEgOJz1FI0HTPIAkr6fxCmLmd4hNIEg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741171448; c=relaxed/simple;
-	bh=pnb1XIoRVPvlKMtRz+d0FdZ4RSoph+8TZDhNZ6cm7q4=;
+	s=arc-20240116; t=1741171480; c=relaxed/simple;
+	bh=npi3WSqljcR+mGqxg1OuLdeU51YsUoRMSP7hkd+cUKY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ByUL372tVYFU+XLvoYH4g/RHG3SLvTErNfd8s0UPqQ7Rr3ykHhd8x45kNWv2Sja4snQ7TuiocQvXvgI6LxksLoTXPnpsfaxhNZ5x21T/kH8zqMqP9UTU1ninRogmEcwWCP4deRltr5Yh3yTfHA7GVAeIX3bToMOmEbGB+3KPxYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aODQPCWp; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741171445;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=d+3VZ7mTjx3GCM+QoBE9ZjOyMpVhYxq40Dj4O52FkRI=;
-	b=aODQPCWpV/fqqICaEoQgkcMQ4lfH4FIU3wEl6IHubZS+X+al8+DFUPn+9iPKob6FyqbSlS
-	9HOkzL8O8MedIR4hjJtw19KUeuzxY3A8CpKN47ak0/oVKHZC+gXae1nDfuPoe45AsLidas
-	Y2aj6RWJlS5J3/C41tP2huQodnlPVRY=
-Received: from mail-qv1-f72.google.com (mail-qv1-f72.google.com
- [209.85.219.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-511-55TctnptOq6h9ORIL89eBg-1; Wed, 05 Mar 2025 05:43:59 -0500
-X-MC-Unique: 55TctnptOq6h9ORIL89eBg-1
-X-Mimecast-MFC-AGG-ID: 55TctnptOq6h9ORIL89eBg_1741171439
-Received: by mail-qv1-f72.google.com with SMTP id 6a1803df08f44-6e897598070so143623926d6.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 02:43:59 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741171439; x=1741776239;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d+3VZ7mTjx3GCM+QoBE9ZjOyMpVhYxq40Dj4O52FkRI=;
-        b=ENLuXvCla+gsQ1aqqRKo6mex9DlW3RaHtGYvFkZq24QYvfUBB1BsUZxrmDgwhpPb2n
-         1nLtYu2PAZIM474YcRJ4H5cYi73KWlerx/Zlfp3oGAPId1MCATfkTR2ALL1P3YJ3vhwZ
-         3GiHevf4Lr/zaK8iVBOOzdU4jWJDMa45ybPGUqMK1EVYaBUQ4anmMXHlhQZs4xKsOni4
-         muw3JH3OZzRTeene7VZ+gp/NOS+tOGW2vu57k+1Y1JkHf2GoZbHA/4Bwpdwrs4ulJWmI
-         vKcbwF+G9Zs4kslWmzv6DV2/DUCNFStnDUOcpPdipq4q+ACzJ0A48vQ/trJ7G0BXhtFK
-         n0zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOnc+vlXrT7XFMkWBXGmoBJqAPFLcpNtD0+doJb5AMOiHI/5jI+2L432oqKIXAGrsPeqPD/tnUxoZ90+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxkGpqK46KZzcpsvpSIlrQuVlhJMYq6eZJ94udyVdOU3B1pAKmd
-	3rrtzreax0RUH6K5vzO5RPrCusZ9PAYGvlGU4gXNqrskwTvsqlijVaISu6U8prluyAYX8D/K3me
-	r3hiMcNNrRr2gJyiAvOJ5v+0Muj+iKxUJ6ppdGXNGW6i+kaKwP+cezOihLiJJXw==
-X-Gm-Gg: ASbGncucZq1LWXRKWvTLfAtKKKcTQ7OTBNHtCXpdztm81K5F/Tr8mTvSKTCoNc8Z2tG
-	OZdXn9cMoptvWspSpDUwt/Vb4+A0HtwKiG+qtbXlf97OoAWsI4KKMj9thIQH/+g/hwdVERRjaJ9
-	9rmamxP0uJdyaVNGH3TXLhrt41mTovhm6/D8Za4Lg1DeEb45oXUI8IEytx8kpM76azpUsMEXTho
-	RhfqnoE5/3an6VmcTKI+jzZMzogPCdR7Q08STc9OfMe3grXHwX1DBNUAOpcp6fiO3RnQ7zAg2AT
-	EplxmAqj5by/4iydMu55gR8wGosp+C+8/+esrvlFOOJdZmrILGgwDE+YDb2GTDon6DnLXqOxWHv
-	hFqX6
-X-Received: by 2002:a05:6214:2122:b0:6e8:9b55:b0ab with SMTP id 6a1803df08f44-6e8e6cc7655mr37526316d6.4.1741171438988;
-        Wed, 05 Mar 2025 02:43:58 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGdlHjzz7+7wDbWNIybVn4Volb3Dg5cZdQXTOpT7OoT7JX+QAw9eiw2fXX/FzYzQ1jmLHgwkQ==
-X-Received: by 2002:a05:6214:2122:b0:6e8:9b55:b0ab with SMTP id 6a1803df08f44-6e8e6cc7655mr37526166d6.4.1741171438699;
-        Wed, 05 Mar 2025 02:43:58 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976d9fb8sm77893696d6.94.2025.03.05.02.43.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 02:43:57 -0800 (PST)
-Date: Wed, 5 Mar 2025 10:43:53 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Harshit Agarwal <harshit@nutanix.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Jon Kohler <jon@nutanix.com>,
-	Gauri Patwardhan <gauri.patwardhan@nutanix.com>,
-	Rahul Chunduru <rahul.chunduru@nutanix.com>,
-	Will Ton <william.ton@nutanix.com>,
-	"stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v3] sched/rt: Fix race in push_rt_task
-Message-ID: <Z8gq6bWNPDtnUYsW@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250225180553.167995-1-harshit@nutanix.com>
- <Z8bEyxZCf8Y_JReR@jlelli-thinkpadt14gen4.remote.csb>
- <20250304103001.0f89e953@gandalf.local.home>
- <Z8cnwcHxDxz1TmfL@jlelli-thinkpadt14gen4.remote.csb>
- <9688E172-585C-423B-ACF6-8E8DEAE3AB59@nutanix.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PEGIy2rQJQGW0BReBuzh8C9zWztQzmjsyqP+jusULpo+4riwELF0Q35y8yekQq+C05divilpsOwEQCxmyeKOy34LgiTtoUqIHIgaIxiM1Wl79wAqMn3oGAfZ5qAGKTJC0hYCFJC37ASuQVyHedyp8YkT3Hixkhn0SHv5LuN35as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ekHgbt7x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3B07C4CEE8;
+	Wed,  5 Mar 2025 10:44:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741171480;
+	bh=npi3WSqljcR+mGqxg1OuLdeU51YsUoRMSP7hkd+cUKY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ekHgbt7xB7qUQ0HGovY5cQi1lK8k8GHd5cz/nY8XNNWRgS73kNOQg2AlcthZijp8q
+	 eq6dUYPIkrFlG4OuPNR60/W7XGL76PYfmiFbIjGsBM15bDiF0M51qmOH/y2E+aVWX7
+	 8C5gcBFr00rjWFu6MDqRS8ldeL3UiQ+58SwYF2uRG1zx9HehHOPZL/ZZcXTvvdW0+B
+	 5WuZmXb1CKJB4/QZZuOnTK0llHyM1ct6WgApN0hoNzv7Wqe5X1MAGexjYW12CEk43n
+	 kxwNBnRrGvuMaobgNn6Jnw6t2pgNdCrF4g9GUD+NbiSzPr1f9D8PrWhdRsQkqLzZLB
+	 h+J5e0+dw1vtw==
+Date: Wed, 5 Mar 2025 11:44:34 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Tom Lendacky <thomas.lendacky@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>, "H. Peter Anvin" <hpa@zytor.com>,
+	"Jason A. Donenfeld" <Jason@zx2c4.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] x86: coco: mark cc_mask as __maybe_unused
+Message-ID: <Z8grEnsAcMrm9sCc@gmail.com>
+References: <20250304143340.928503-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <9688E172-585C-423B-ACF6-8E8DEAE3AB59@nutanix.com>
+In-Reply-To: <20250304143340.928503-1-arnd@kernel.org>
 
-On 04/03/25 18:37, Harshit Agarwal wrote:
-> Thanks Juri for pointing this out.
-> I can send the fix for deadline as well. 
-> Is it okay if I do it in a separate patch?
 
-Yes, we would need a separate patch.
+* Arnd Bergmann <arnd@kernel.org> wrote:
 
-> From taking a quick look at the code, I can see that the same fix won’t 
-> apply as is in case of deadline since it has two different callers for
-> find_lock_later_rq.
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> When extra warnings are enabled, the cc_mask definition in asm/coco.h
+> causes a build failure with gcc:
+> 
+> arch/x86/include/asm/coco.h:28:18: error: 'cc_mask' defined but not used [-Werror=unused-const-variable=]
+>    28 | static const u64 cc_mask = 0;
+> 
+> Mark this one as __maybe_unused.
+> 
+> Fixes: a0a8d15a798b ("x86/tdx: Preserve shared bit on mprotect()")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  arch/x86/include/asm/coco.h | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/arch/x86/include/asm/coco.h b/arch/x86/include/asm/coco.h
+> index aa6c8f8ca958..9e9204cfca6f 100644
+> --- a/arch/x86/include/asm/coco.h
+> +++ b/arch/x86/include/asm/coco.h
+> @@ -25,7 +25,7 @@ u64 cc_mkdec(u64 val);
+>  void cc_random_init(void);
+>  #else
+>  #define cc_vendor (CC_VENDOR_NONE)
+> -static const u64 cc_mask = 0;
+> +static const __maybe_unused u64 cc_mask = 0;
 
-Right, indeed.
+So I detest __maybe_unused with a vengeance: the 'maybe' unnecessarily 
+inserts uncertainty & probability language into the text, while there's 
+nothing uncertain about this interface or the code. Why cannot the 
+compiler figure it out?
 
-> One is push_dl_task for which we can call pick_next_pushable_dl_task
-> and make sure it is at the head. This is where we have the bug.
+Anyway, I'd suggest we change direct usage of cc_mask to a 
+get_cc_mask() inline function instead, this will resolve the warning, 
+plus it avoids some messy looking variable shadowing in tdx.c AFAICS:
 
-OK.
-
-> Another one is dl_task_offline_migration which gets the task from
-> dl_task_timer which in turn gets it from sched_dl_entity.
-> I haven’t gone through the deadline code thoroughly but I think this race
-> shouldn’t exist for the offline task (2nd) case. If that is true then the fix
-> could be to check in push_dl_task if the task returned by find_lock_later_rq
-> is still at the head of the queue or not.
-
-I believe that won't work as dl_task_offline_migration() gets called in
-case the replenishment timer for a task fires (to unthrottle it) and it
-finds the old rq the task was running on has been offlined in the
-meantime. The task is still throttled at this point and so it is not
-enqueued in the dl_rq nor in the pushable task list/tree, so the check
-you are adding won't work I am afraid. Maybe we can use dl_se->dl_throttled
-to differentiate this different case.
+  arch/x86/coco/tdx/tdx.c:static void tdx_setup(u64 *cc_mask)
 
 Thanks,
-Juri
 
+	Ingo
 
