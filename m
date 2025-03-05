@@ -1,248 +1,182 @@
-Return-Path: <linux-kernel+bounces-547845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7045FA50E4C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:02:51 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1650AA50E4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:03:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C898169DE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:02:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EBBD16B39C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:03:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACC2266562;
-	Wed,  5 Mar 2025 22:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AD42661B8;
+	Wed,  5 Mar 2025 22:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ivK2Z0AY"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3uZLot+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9EF1C84B9;
-	Wed,  5 Mar 2025 22:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA1C26562D;
+	Wed,  5 Mar 2025 22:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741212142; cv=none; b=NmHmcC+bKPS8jrTV8pSMLQ/VfjzmPUsR+2BuyitwPFjEJhEVhfJW4eAutxDAa+5Z5gq0Us9pnrE3gkCxk3BTD+KmtRqH78mSjlUHqgO455osPsgO3C8j1LJdBCeOIjHBIqK2TVi+31m7XscVdgX9rOwaBaZJJtJXMo0BF2hL54Y=
+	t=1741212214; cv=none; b=svPhvqocTJeYRhxIyaTTQqRKugv0s+WT/TThFpqBr5OiF/TqSRNwBzPvkfZMddKwtevgK0eU98rsuV7IWs0fRdAYDGkm10k7jtpe+xkK/FJNtD9optDgo55WItYG6zwcBDirlfJBEqzLr23MbmfOMm4+5MXrjubKjbVCAOEuWHk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741212142; c=relaxed/simple;
-	bh=DPv+Ob6rW5/y0ptYNACzq7SuNUkYWcFNJctdua23Tug=;
-	h=From:Message-ID:Date:MIME-Version:To:Cc:References:Subject:
-	 In-Reply-To:Content-Type; b=BbzMTaZJ1ppofeH2fEI8y6ynvTiCSQMieKbJRLV2/EwpEdLRpD1uuo+uL8TT/NV1Ca9YywEmaf4RZ1l/fuiD2LOi5McmxFxt3B/DuSIz4d8ndPaLkR8bzRA68eRAj4BmBvLBTKaMGKtKyuGnBMK6rXuLCtG3LdPSWtQtpcWPwsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ivK2Z0AY; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5dccaaca646so92275a12.0;
-        Wed, 05 Mar 2025 14:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741212139; x=1741816939; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=8Y9Iis2Hifb4TLyYQkPbjOpHcznh9p/seonioxnf3p8=;
-        b=ivK2Z0AYd0mrakdXoxIAcPUQ8h2el9fnPlAoL3WvX9tC94fyfXb5KBgI85+XGjSmhu
-         VKVdwi8OnSY5XWB6JNlk2X/NGdlZK6jvKyBldceaDyMJTh/+emiMEZYuobEDYJEcbTiV
-         qQ7FMa1vN9Y86kNOYm8fr7S6z13B4dX+j4jJEraK2KGghR3qAc+mmMxZ8hdxZwqEBB4E
-         FSaLVeieW1/4WrGWJ6JbCoNXM9WDEqHjH8SRhX3FO3KtCJNMisiZNfgsqU3PN5/k73EL
-         k/lqftaqjaDNhvcsRKZUBMZIW9eo8kGzEi1SHHwvRdSIAWFDDLK4EVZHlsxR/eWlWGTr
-         jPYg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741212139; x=1741816939;
-        h=content-transfer-encoding:in-reply-to:content-language:subject
-         :references:cc:to:user-agent:mime-version:date:message-id:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8Y9Iis2Hifb4TLyYQkPbjOpHcznh9p/seonioxnf3p8=;
-        b=sW+tVUohgmkfUwfUT+fY2YCkatPMaYEo7N5IFh18LTCRQ/ZxADOW7nhKb6g/HG9+PQ
-         K+HV/VPtu6xB+ia/Dc5l2dICuYdeAjLflU/K1P7h8viMC+SrVNp7ivQ9NIQvKfyYZFT4
-         PaD5pEv1CbPzV8FIrtMpTSWlFikDf6LLQzhZhcc5t19pfbi4JBcxSZPanP6JmRLti4lC
-         rx7/uH6lwV2z2oR2kMxCiqruLnyht2JrpckzG5dMEQH777RqasNp+VNDxzSMtFCIHG7i
-         Cl41YAyCWT7MgPfeniYnCwTPR0HaQMQqDoXaPXSVxpN6FlpbbuWb2lFTDkxg3fbJwWdy
-         E99g==
-X-Forwarded-Encrypted: i=1; AJvYcCU27yyIHlbj+FvKJi0fRThYhUCEEI4x20cZvHeHJMdssZi+wsfHBaK0eNnfyXtylbKtaoJbkG+5@vger.kernel.org, AJvYcCU5Ua9Uni4oqjtn4OPKobK2c4dKTLxTNU75D74BNYE+bi7Eb+1J2bGRheR1FkWuzL6NndMg58qY4m6KH80=@vger.kernel.org, AJvYcCX6FDOXimQATNzHfLApwWUMJfoGfy+kGUHO6ma7XYJe45QkAMbKM+D8RmYJYrnRb42j4nReL8lhJfMM@vger.kernel.org
-X-Gm-Message-State: AOJu0YytahAC7Ga4boebtNH2r+5eeUNgENk+YXMKQLKfN/uQ9vlAOUVT
-	duHmLyBfJItH6b5y4M8McW66AiS/vS+C58xt18XMHJprY4pyveY0
-X-Gm-Gg: ASbGncvr+pRDCHQM19q2AmwjJS29dUzIm6SS5oAI0GsYoPdkLp77BQGxVUfw2GfK5E0
-	uigehCxKVsoFPQK/bAkFL2VeSEeuROs5xE0qRxTB5OdbV1vnfpXPrjB7Tu/rEgiJeu1EFoRBJc4
-	XoLNX+9hgJ8DAokzTm2/wRBMGDkrS9JkWtsjt/8YZXwJkkkQiuVQIPuXhj6xm/jjpCa7VVDuR4i
-	ndyh+c/nlBVarjUlVs1OArMiU5tr6glGYIuLWrdVc1C9kuVJ5o2nCuO2s3CJQapjCzW6YrQNxg5
-	TyfkfTvw4s2IqgTP4nkerQZ0Mrg1Td0739Lh5RQY6D+8j/8HLQvIUhcW3DzDY5RgYV0ZFETt71N
-	U/w==
-X-Google-Smtp-Source: AGHT+IF6L4s29kwZnkkouItJ5sNLY9Pd2U7jawux+fC/NcLBvWom9ith1hIO1J5uAOF7LxuXsarzLg==
-X-Received: by 2002:a05:6402:274c:b0:5e0:8a27:cd36 with SMTP id 4fb4d7f45d1cf-5e5c1b35612mr1084079a12.8.1741212138144;
-        Wed, 05 Mar 2025 14:02:18 -0800 (PST)
-Received: from [192.168.0.66] (host-89-241-217-23.as13285.net. [89.241.217.23])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3fb526fsm10023783a12.51.2025.03.05.14.02.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 14:02:17 -0800 (PST)
-From: incansvl <colin.evans.parkstone@gmail.com>
-X-Google-Original-From: incansvl <incansvl@gmail.com>
-Message-ID: <857c8982-f09f-4788-b547-1face254946d@gmail.com>
-Date: Wed, 5 Mar 2025 22:02:15 +0000
+	s=arc-20240116; t=1741212214; c=relaxed/simple;
+	bh=AuZX0k4J+y7Fl597Q3qYcQ62dP5uV+mEmKMcR183I8A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ebeDREuV8Cvk7S/tQ2MEYoGP3mFMcEt/i3uocHDeXr89orRF5uFJX9OAIZPaROeSpkegUKokXbAfUW16dlx2plZpj18pD9vBk88erylzPE3xs0lT1lEBlQXWcikCdPlOxIBOCytPpyVXDyHH8/ZOMnqVeHYTfTud1oOqrRRgvUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3uZLot+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9695C4CEEC;
+	Wed,  5 Mar 2025 22:03:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741212213;
+	bh=AuZX0k4J+y7Fl597Q3qYcQ62dP5uV+mEmKMcR183I8A=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=E3uZLot++NoX1QuGeuB1ywM0iMCW9BY/dUHozSIe6YeMEaBBo+FNkou2slG2sTT16
+	 XtrSbn+LHOsUMWCEzOHVMk/oCWHRZO24VGEOekKZ/IO4Qj3b5fcToUZlUNQuZ63kRf
+	 MyUm91vjFKVTt7r+PVskaiE3V1lw/mj3eKe8/E24pUVs6adZU1yFry+LBff+QEL//E
+	 mtszwk2/AhusFbB8SaPR0qD1gCmH4Ihz6V7odZyhSCI4M3fboFZzGezcE8bdAkFXN2
+	 Bkp8vKGFq+015ojJivNycoBbiys1th1vAPplXsmmpiCYTDy94q1ggXBpHyaq9lNKGD
+	 bYdv1twsOaJnw==
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e4bed34bccso10437405a12.3;
+        Wed, 05 Mar 2025 14:03:33 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVbcWszQupkoHppjjCeTcOcVw+TgmFT0U2CEBe8gVKzOdMfjOOhLdg8mkmBUEnBoOW1YGb70MjeLZAw@vger.kernel.org, AJvYcCXCJvCJYnVt4yfqOBlF+oxM2qiGCNq5VtZTb/KkRdVa2PBYb4gfYCTPw+7b15hN3whWT5C6c8Hy0MLYgPTv@vger.kernel.org
+X-Gm-Message-State: AOJu0YxnbXJRSbxzGMvacnk8ulPJuq27OGmtT3NaZeDxtUqpizJE29Kr
+	rNUSr07G9MECM5+At+Ot1Pz2MtsfaibEuICsoqL3Tf18TVYk2a56lkCElsMbYofptvv9xravjXH
+	9aR30BHKzZqS/1H4HrjuwIA0HTw==
+X-Google-Smtp-Source: AGHT+IEgVRtlsezpX5b++OEHsLeJ5YfSiDLhg2WTfyj9apRylNyWIq49BTWXdchR23XeZP/6kY22w/WIpF8duYPGXC8=
+X-Received: by 2002:a05:6402:278c:b0:5e4:cbee:234c with SMTP id
+ 4fb4d7f45d1cf-5e59f37da3amr3722807a12.10.1741212212066; Wed, 05 Mar 2025
+ 14:03:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Linux)
-To: eichest@gmail.com
-Cc: francesco.dolcini@toradex.com, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
- stable@vger.kernel.org, stefan.eichenberger@toradex.com,
- stern@rowland.harvard.edu
-References: <Z6HxHXrmeEuTzE-c@eichest-laptop>
-Subject: Re: [PATCH v1] usb: core: fix pipe creation for get_bMaxPacketSize0
-Content-Language: en-US
-In-Reply-To: <Z6HxHXrmeEuTzE-c@eichest-laptop>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20250305-spmi-v1-0-c98f561fa99f@gmail.com> <20250305-spmi-v1-1-c98f561fa99f@gmail.com>
+In-Reply-To: <20250305-spmi-v1-1-c98f561fa99f@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 5 Mar 2025 16:03:20 -0600
+X-Gmail-Original-Message-ID: <CAL_JsqJU0AqQcVNTJqrHTAu7wDP4bbLC8vPHP-XvdojuS8nDiQ@mail.gmail.com>
+X-Gm-Features: AQ5f1JrZJb27R_ZaDMQImLR-ewtli_PZor_H4oY5_eu3nzcS9Zd_Cj-X6G4QAXw
+Message-ID: <CAL_JsqJU0AqQcVNTJqrHTAu7wDP4bbLC8vPHP-XvdojuS8nDiQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] dt-bindings: spmi: Add Apple SPMI controller
+To: fnkl.kernel@gmail.com
+Cc: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Stephen Boyd <sboyd@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Team,
+On Wed, Mar 5, 2025 at 2:26=E2=80=AFPM Sasha Finkelstein via B4 Relay
+<devnull+fnkl.kernel.gmail.com@kernel.org> wrote:
+>
+> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+>
+> Add bindings for the SPMI controller present on most Apple SoCs
+>
+> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+> ---
+>  .../devicetree/bindings/spmi/apple,spmi.yaml       | 56 ++++++++++++++++=
+++++++
+>  MAINTAINERS                                        |  1 +
+>  2 files changed, 57 insertions(+)
+>
+> diff --git a/Documentation/devicetree/bindings/spmi/apple,spmi.yaml b/Doc=
+umentation/devicetree/bindings/spmi/apple,spmi.yaml
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..6404af8adec52f4631200c489=
+56f4c1695e88a39
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/spmi/apple,spmi.yaml
+> @@ -0,0 +1,56 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/spmi/apple,spmi.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Apple SPMI controller
+> +
+> +maintainers:
+> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
+> +
+> +description: A SPMI controller present on most Apple SoCs
+> +
+> +allOf:
+> +  - $ref: spmi.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    items:
+> +      - enum:
+> +          - apple,t8103-spmi
+> +          - apple,t6000-spmi
+> +          - apple,t8112-spmi
+> +      - const: apple,spmi
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +
+> +patternProperties:
+> +  "pmu@[0-9a-f]$":
 
-     I am experiencing a problem on multiple versions of the 6.x kernel, where initialisation
-of a motherboard usb hub device fails and causes a stream of errors. The performance of the
-machine is badly affected.
+Typically 'pmic' is the name used here. However, you should just drop
+this because spmi.yaml already defines child node structure.
 
-I would have considered this most likely a hardware fault except-
+With that,
 
-1) I am seeing the same issue on 2 machines of very different age and spec.
-2) In each case the hub generating errors has no external devices connected to it, so
-    the error can't be caused by an external device that has failed. In fact on
-    "machine 2", having no devices plugged in seems to be a necessary condition for the
-    error to occur (see details below).
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-I found the discussion of this patch, but I am not clear about this description-
-
-> > When usb_control_msg is used in the get_bMaxPacketSize0 function, the > > USB pipe does not include the endpoint device number. This can 
-cause > > failures when a usb hub port is reinitialized after 
-encountering a bad > > cable connection. As a result, the system logs 
-the following error > > messages: > > usb usb2-port1: cannot reset (err 
-= -32) > > usb usb2-port1: Cannot enable. Maybe the USB cable is bad? > 
- > usb usb2-port1: attempt power cycle > > usb 2-1: new high-speed USB 
-device number 5 using ci_hdrc > > usb 2-1: device descriptor read/8, 
-error -71 If this is saying that ALL of these error messages will be issued for each "bad" port,
-that is not what i'm seeing, and I might have a new issue to report.
-
-However if the description above means that ANY ONE OF these errors might be issued, and
-that single error will be consistent and repeatable for a specific kernel+hardware combo,
-then that is consistent with the problem I am seeing.
-
-I have included more information below to help determine if this IS the same issue or not.
-If it is not the same issue, and not yours to look into, I would appreciate your steer on
-which maintainer + mailing list to forward it to.
-
-Regards: Incans
-
-
------------------------- Additional Info ------------------------
-
-Symptoms
---------
-
-1) From boot, the console then dmesg show repeated messages of the form:
-
-        |usb usb2-port3: Cannot enable. Maybe the USB cable is bad?|
-
-|2) Performance is badly affected. Boot and login times can be 10x or 
-more slower than a comparable (in fact slower) machine running a 5.x 
-kernel. Desktop Environment (KDE Plasma) performance and stability are 
-both impacted. E.g. in KDE panel widgets can stop updating requiring a 
-plasmashell (Wayland) restart 3) A "canary" command to show the error is 
-lsusb. This will show symptoms like- * lsusb run as root (sudo) can be 
-30-100x slower than when run as normal user * A variant such as "lsusb 
--t" might sidestep the performance problem and run in a 'sane' amount of 
-time |
-
-4) On both machines the errors relate to a USB root hub that has NO DEVICES connected to it.
-    On "machine 2", having a powered USB3.0 hub (which has a number of downstream devices
-    connected) plugged in to one port on the hub is enough to suppress the errors, although
-    I note the that "bad" port number (hub 2 : port 3) is not enumerated (skipped?).
-
-
-Software Versions
------------------
-I have seen the same errors in:
-
-OS: KDE neon 6.3 (Wayland)                       Kernel: 6.11.0-17-generic (64-bit)
-OS: EndeavourOS (2025-03-05)(KDE 6.3.2 Wayland)  Kernel: 6.13.5-arch1-1 (64-bit)
-OS: EndeavourOS (2025-03-05)(KDE 6.3.2 Wayland)  Kernel: linux-lts 6.12.17-1
-
-
-Hardware
---------
-
-*Machine 1*
-Processors: Intel® i7-6700K 4 Core 8 Thread @ 4.60GHz
-Memory: 32 GiB RAM
-GPU: AMD Radeon RX 6700 XT
-Motherboard: Gigabyte Z170X-GamingG1
-Primary Disk: Orico 4TB NVME (Gen4 but limited to Gen 2 by motherboard)
-
-*Machine 2*
-Processors: AMD Ryzen 7 7700 8 Core 16 Thread @ 5.3GHz
-Memory: 32 GiB RAM
-GPU: AMD Radeon RX 6700 XT
-Motherboard: ASRock B650 LiveMixer
-Primary Disk: Orico 4TB NVME (Gen4, motherboard supports up to Gen 5)
-
-
-Example (Taken from Machine 1 while the problem is active)
-----------------------------------------------------------
-
-$ sudo -s
-[root@EdeavourOS admin]# time lsusb
-Bus 001 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 001 Device 002: ID 045b:0209 Hitachi, Ltd
-Bus 001 Device 003: ID 045b:0209 Hitachi, Ltd
-Bus 001 Device 004: ID 045e:07f8 Microsoft Corp. Wired Keyboard 600
-(model 1576)
-Bus 001 Device 005: ID 0cf3:e300 Qualcomm Atheros Communications QCA61x4
-Bluetooth 4.0
-Bus 001 Device 006: ID 045e:00cb Microsoft Corp. Basic Optical Mouse v2.0
-Bus 002 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-Bus 002 Device 002: ID 045b:0210 Hitachi, Ltd
-Bus 003 Device 001: ID 1d6b:0002 Linux Foundation 2.0 root hub
-Bus 004 Device 001: ID 1d6b:0003 Linux Foundation 3.0 root hub
-
-real    0m22.861s
-user    0m0.031s
-sys     0m0.013s
-
-
-[root@EdeavourOS admin]# time lsusb -t
-/:  Bus 001.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/16p, 480M
-     |__ Port 003: Dev 002, If 0, Class=Hub, Driver=hub/4p, 480M
-         |__ Port 001: Dev 004, If 0, Class=Human Interface Device,
-Driver=usbhid, 1.5M
-         |__ Port 001: Dev 004, If 1, Class=Human Interface Device,
-Driver=usbhid, 1.5M
-         |__ Port 002: Dev 006, If 0, Class=Human Interface Device,
-Driver=usbhid, 1.5M
-     |__ Port 004: Dev 003, If 0, Class=Hub, Driver=hub/4p, 480M
-     |__ Port 013: Dev 005, If 0, Class=Wireless, Driver=btusb, 12M
-     |__ Port 013: Dev 005, If 1, Class=Wireless, Driver=btusb, 12M
-/:  Bus 002.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/10p, 5000M
-     |__ Port 004: Dev 002, If 0, Class=Hub, Driver=hub/4p, 5000M
-/:  Bus 003.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/2p, 480M
-/:  Bus 004.Port 001: Dev 001, Class=root_hub, Driver=xhci_hcd/2p, 10000M
-
-real    0m0.024s
-user    0m0.013s
-sys     0m0.011s
-
-
-(tail of "dmesg -w")
-[  781.020436] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  784.990637] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  788.960543] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  792.933684] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  796.906907] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  800.883545] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  804.863692] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  808.840075] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  812.810130] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  816.790281] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  820.783424] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  824.760157] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-[  828.730143] usb usb2-port3: Cannot enable. Maybe the USB cable is bad?
-
-
+> +    type: object
+> +
+> +    description:
+> +      PMIC properties, which are specific to the used SPMI PMIC device(s=
+).
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/spmi/spmi.h>
+> +
+> +    spmi@920a1300 {
+> +        compatible =3D "apple,t6000-spmi", "apple,spmi";
+> +        reg =3D <0x920a1300 0x100>;
+> +        #address-cells =3D <2>;
+> +        #size-cells =3D <0>;
+> +
+> +        pmu@f {
+> +            reg =3D <0xf SPMI_USID>;
+> +            /* PMIC-specific properties */
+> +        };
+> +    };
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 8e0736dc2ee0e33544fa373a4978b7dae18c040c..271ff8110df83c2d4fe7fbbff=
+fc0a72259460bc5 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -2236,6 +2236,7 @@ F:        Documentation/devicetree/bindings/pci/app=
+le,pcie.yaml
+>  F:     Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
+>  F:     Documentation/devicetree/bindings/power/apple*
+>  F:     Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
+> +F:     Documentation/devicetree/bindings/spmi/apple,spmi.yaml
+>  F:     Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
+>  F:     arch/arm64/boot/dts/apple/
+>  F:     drivers/bluetooth/hci_bcm4377.c
+>
+> --
+> 2.48.1
+>
+>
 
