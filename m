@@ -1,62 +1,79 @@
-Return-Path: <linux-kernel+bounces-547187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547188-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84196A503F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:56:42 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3458BA503FB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:57:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3CEC188400C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:56:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D0F77A3C74
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:56:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A98642505CF;
-	Wed,  5 Mar 2025 15:56:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36CD2505C4;
+	Wed,  5 Mar 2025 15:57:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="dQV0vHQv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEzTjKoL"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF45117583;
-	Wed,  5 Mar 2025 15:56:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7495218FC90
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741190195; cv=none; b=eKPksVUp01KolK51yRjEAoZogPA0rG8EUAJDqYX/WVMBvsRt13tuOc6Z+vLLskwG5tkdmO4lTPIwQ5jhTsbRg8bRAYQ5pozVhj7/lgXPnT4GCWuEzBBnrgnBO2F0aFx6D69/Yi3l080eCrWEYNro3HAWtRUstlDLdd+EvGFNGqg=
+	t=1741190250; cv=none; b=rknR0j9785UQLseOnfTQUCMiFf1uqK85HIqeTNoQEZYTzwskRgzwuYakLskdcJt/IUsHZNND1Vv9/d5VvGfUDc3n0GWGjQhfqFhUTf8g0sXPHbVFJMqqVaXeGSMdaYT1aQpZiQcSlRK8EPOibt4KoLipri40/7X/JPkO9Z/GQ5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741190195; c=relaxed/simple;
-	bh=oQsw9htoZyxwQw/DmSFXH6adXQmd1lXtCHHo9uwy0Ck=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ehgsHyiqxJnVsn8wNyNWzzllRa3mjkG+v6MfdvD+91O3IvnR1Ol1rRDXc2+Q2z2asu4Cbgu2dUL+L634CyZGLyFMMVJ+UA1Xun6LD8EYk0Y6iBmamG4hndtDvD4ucBANiW+ObcnLtCf4LzeBBALM3msnTA5PRCYErgqTu1vOXa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=dQV0vHQv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525AVASW022020;
-	Wed, 5 Mar 2025 15:56:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Mk1ob+/x6BrwtUiB6U5SUajg1O+M3YRlAxF6UW/pTT8=; b=dQV0vHQvkYekOsub
-	aCl7K2/fmYbl2Ei7+IWq0gotAdOcecgh/AripHMR6JQ3lTNlS336dDLXq/tk+f0W
-	CNCn6FuDbmFzb+8LjfL13W9oIcGj6jquLADh5nVb/Z5XTN3teNlgYsYzktDeV6xX
-	6rj926QoSZpxLwrb2WC974XzWc/lCsTFqsEdUsH/STC/7uxrrc7a2+15fPJShPX6
-	o+49GM4Lc0/J+Eko7KtUyeSql+LPEcfa8XRfNApyZfeejLvtFBqiUF/Hb5zQq8rU
-	rMbwVrCI4Kmg0VvKyqPTNGizIR0JJW7lcXu6nZYK3nXl2YZGkHbObxLcbUQXcSM8
-	avgJDQ==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6untgh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 15:56:30 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 525FuUDu028287
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 15:56:30 GMT
-Received: from [10.216.60.184] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Mar 2025
- 07:56:26 -0800
-Message-ID: <d93cba49-5355-4394-83a2-e585296cc849@quicinc.com>
-Date: Wed, 5 Mar 2025 21:26:26 +0530
+	s=arc-20240116; t=1741190250; c=relaxed/simple;
+	bh=rm0St075dWDOE0wO9ICObW1pv94kcsYVDUSel8Aq/W8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pF7oseuPNz+e2nTP5AnPGMv5tvNcyQ23kLSIX2cJpZBuQMl4EgfaXnKhitsJzm2vvDcdYmg2kcP+drBlEy8i6P4BxXqob1SomtOKYWObLGVQVn9ewnJm+SL4eqKokTS4BNlip3WrFt7886cnTsvZRaWAg1atlrIgde8wHZjnEO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEzTjKoL; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38dcac27bcbso703249f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 07:57:28 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741190246; x=1741795046; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XI41wk7TJF7vmtgJL7omJXUR4bG71r2Wzk7v83CVjD0=;
+        b=DEzTjKoL9kyI6yvpo9oayVrnEc/SU7GsMsHNtGCXWp6hYBNl4cuuEXTopyeFtdKIez
+         ARbqBLAWQdpLKJ7jhM7EQfI00ZuwHobRKsux66nmVJd/TooZRJ9mJt07rvRrrrMQD9r5
+         yKJYHQ/stOwajgfntidtG8fK1Xl2qyBNj5rykg8dCVyI4yN1VHHxsKPaMEgepmJKmYG1
+         MVruv+IKdEcRr0dukFE96s019pn2BmEJvOx7msBfscok9DHsZ4ov9G2YyvlubsOOlcsr
+         Zr6+SFNbrFQhItuVr9JYNXUn90e6f1h+eRwryQH37lgJWEIoJhOhYqNpJ8Qwfgmqllrr
+         NnZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741190246; x=1741795046;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XI41wk7TJF7vmtgJL7omJXUR4bG71r2Wzk7v83CVjD0=;
+        b=MSv/Ju+3di8qcyVlzxSxRJNfLoT+FDHTd70VAyIASnRCjXDqCdc8WNrR9J38MF0gsT
+         NsDmkGH0bbE027kg7qTVN9sRAbT5F5jA4OcmVYI7+6yIb6fgblFee9H5QmoTIe2LT4Sh
+         zaTEuquMl/Zi0wK+PI10Y8kM+3gnRUh0+tbObUCCIqbGyyvFy9S7w3Ox7eie/osQS/lO
+         RiktC2rVG19/MljgvJh/s9usj7vwd3IPN84N6amfGM6JyxoWCTumdfZRG6AjnDweHMCY
+         EQlfpawrm/yD2eVZ9towXdNV4YUTbXMFLApH/s/BnD0Vg/2kTo1Y42WNvKc17ih5aM3i
+         WD/g==
+X-Forwarded-Encrypted: i=1; AJvYcCWXltZK2XHIkLY/lNqPbPDqT97YREyX0UcsumWqsVjZF+0tImNH4F5IjmMNvit1Hwc6pv8bhPOHiUXZP+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxD53AsrHM3veqaNBvhY3tNsWIeo+oiIGewdEuhNqLiginkSito
+	W4eofBOKxQ1cFl6lz22iPQovWSrivsigEBNVwNnAQKuWa5KC0zZ7
+X-Gm-Gg: ASbGncusvPZBLwzrfr/jQvXKX6GkPWX+HjiuSd1NsY1X0JhkjwbDfvrrzpdP/fdGC9b
+	FXu4CzQEgkJtjVOecAc4MxFOiyZyBogGqhnkOdrP80jZEx5LKj7pXhl99z/O8jvHChfhNTrNsAO
+	1U4Fubew9hD+dwW9p0b1/+CKfxauiOVttzn7Q7U5ogq+psHCekPU/1oNo4sBTDqQhTyJjBFLmix
+	mom9dln4m+fm8EaY/lT/tYQII/1GX3waJi+qw+Y9lpFgJACGduzjPbD2J1UzJBbvYtaXGDBclwC
+	uE3Nu0mJ/KmNTQ8o5qT2Bnen+eB2yau6sJEoPIYugNDrlr6CzJ1LWT5ofMRMjMgzgsy0x/01tA=
+	=
+X-Google-Smtp-Source: AGHT+IG8pXdepBcJ1AR4MauBkYvzdHDIviuaQyGBb5FOBK8tpHOPFUi2Wq2zbnf73b21vVo0+XSzYA==
+X-Received: by 2002:a5d:64cf:0:b0:385:faf5:ebb8 with SMTP id ffacd0b85a97d-3911e9df687mr3609690f8f.7.1741190244836;
+        Wed, 05 Mar 2025 07:57:24 -0800 (PST)
+Received: from [10.254.108.83] (munvpn.amd.com. [165.204.72.6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a7b88sm21222369f8f.40.2025.03.05.07.57.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 07:57:24 -0800 (PST)
+Message-ID: <f54b78d8-2f10-484f-a1a9-4659aac2b251@gmail.com>
+Date: Wed, 5 Mar 2025 16:57:22 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,81 +81,75 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: qcom: qcom6490-idp: Add IPA nodes
+Subject: Re: [PATCH v2] drm/sched: drm_sched_job_cleanup(): correct false doc
+To: Philipp Stanner <phasta@kernel.org>,
+ Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250304141346.102683-2-phasta@kernel.org>
 Content-Language: en-US
-To: "Rob Herring (Arm)" <robh@kernel.org>
-CC: <krzk+dt@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <quic_rpavan@quicinc.com>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <quic_sarata@quicinc.com>, <conor+dt@kernel.org>,
-        <devicetree@vger.kernel.org>, <quic_sharathv@quicinc.com>
-References: <20250304152133.GA2763820@hu-kapandey-hyd.qualcomm.com>
- <174112750057.3751450.15783784234696025160.robh@kernel.org>
-From: Kaustubh Pandey <quic_kapandey@quicinc.com>
-In-Reply-To: <174112750057.3751450.15783784234696025160.robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: EWHCzSKUB-lhQQ_6re9Ic63iV_hy6vW7
-X-Authority-Analysis: v=2.4 cv=H40hw/Yi c=1 sm=1 tr=0 ts=67c8742f cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=7VjZp_oamj8JExNPJH4A:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: EWHCzSKUB-lhQQ_6re9Ic63iV_hy6vW7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_06,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 adultscore=0
- impostorscore=0 clxscore=1015 malwarescore=0 priorityscore=1501 mlxscore=0
- lowpriorityscore=0 phishscore=0 suspectscore=0 spamscore=0 mlxlogscore=912
- classifier=spam authscore=0 authtc=n/a authcc= route=outbound adjust=0
- reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050122
+From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
+In-Reply-To: <20250304141346.102683-2-phasta@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 3/5/2025 4:03 AM, Rob Herring (Arm) wrote:
-> 
-> On Tue, 04 Mar 2025 20:51:33 +0530, Kaustubh Pandey wrote:
->> Add IPA nodes for Qualcomm qcm6490 board.
->>
->> Signed-off-by: Kaustubh Pandey <quic_kapandey@quicinc.com>
->> ---
->>  arch/arm64/boot/dts/qcom/qcm6490-idp.dts | 8 +++++++-
->>  1 file changed, 7 insertions(+), 1 deletion(-)
->>
-> 
-> 
-> My bot found new DTB warnings on the .dts files added or changed in this
-> series.
-> 
-> Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-> are fixed by another series. Ultimately, it is up to the platform
-> maintainer whether these warnings are acceptable or not. No need to reply
-> unless the platform maintainer has comments.
-> 
-> If you already ran DT checks and didn't see these error(s), then
-> make sure dt-schema is up to date:
-> 
->   pip3 install dtschema --upgrade
-> 
-> 
-> New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/qcom/' for 20250304152133.GA2763820@hu-kapandey-hyd.qualcomm.com:
-> 
-> arch/arm64/boot/dts/qcom/qcm6490-idp.dts:119.31-122.5: ERROR (duplicate_label): /reserved-memory/ipa-fw@8b300000: Duplicate label 'ipa_fw_mem' on /reserved-memory/ipa-fw@8b300000 and /reserved-memory/ipa-fw@8b700000
-> ERROR: Input tree has errors, aborting (use -f to force output)
-> make[3]: *** [scripts/Makefile.dtbs:131: arch/arm64/boot/dts/qcom/qcm6490-idp.dtb] Error 2
-> make[2]: *** [scripts/Makefile.build:461: arch/arm64/boot/dts/qcom] Error 2
-> make[2]: Target 'arch/arm64/boot/dts/qcom/qcm6490-idp.dtb' not remade because of errors.
-> make[1]: *** [/home/rob/proj/linux-dt-testing/Makefile:1462: qcom/qcm6490-idp.dtb] Error 2
-> make: *** [Makefile:251: __sub-make] Error 2
-> 
-> 
-> 
-> 
-> 
-Sure, Rob. Thanks for review.
-Will check on these warnings and update new patch.
+Am 04.03.25 um 15:13 schrieb Philipp Stanner:
+> drm_sched_job_cleanup()'s documentation claims that calling
+> drm_sched_job_arm() is a "point of no return", implying that afterwards
+> a job cannot be cancelled anymore.
+>
+> This is not correct, as proven by the function's code itself, which
+> takes a previous call to drm_sched_job_arm() into account. In truth, the
+> decisive factors are whether fences have been shared (e.g., with other
+> processes) and if the job has been submitted to an entity already.
+>
+> Correct the wrong docstring.
+>
+> Signed-off-by: Philipp Stanner <phasta@kernel.org>
+> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
 
-Thanks,
-Kaustubh
+Reviewed-by: Christian König <christian.koenig@amd.com>
+
+> ---
+> Changes in v2:
+>   - Also adjust comment about arm inside function's body. (Tvrtko)
+> ---
+>  drivers/gpu/drm/scheduler/sched_main.c | 12 +++++++-----
+>  1 file changed, 7 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
+> index c634993f1346..7e71e89cea89 100644
+> --- a/drivers/gpu/drm/scheduler/sched_main.c
+> +++ b/drivers/gpu/drm/scheduler/sched_main.c
+> @@ -1013,11 +1013,13 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
+>   * Cleans up the resources allocated with drm_sched_job_init().
+>   *
+>   * Drivers should call this from their error unwind code if @job is aborted
+> - * before drm_sched_job_arm() is called.
+> + * before it was submitted to an entity with drm_sched_entity_push_job().
+>   *
+> - * After that point of no return @job is committed to be executed by the
+> - * scheduler, and this function should be called from the
+> - * &drm_sched_backend_ops.free_job callback.
+> + * Since calling drm_sched_job_arm() causes the job's fences to be initialized,
+> + * it is up to the driver to ensure that fences that were exposed to external
+> + * parties get signaled. drm_sched_job_cleanup() does not ensure this.
+> + *
+> + * This function must also be called in &struct drm_sched_backend_ops.free_job
+>   */
+>  void drm_sched_job_cleanup(struct drm_sched_job *job)
+>  {
+> @@ -1028,7 +1030,7 @@ void drm_sched_job_cleanup(struct drm_sched_job *job)
+>  		/* drm_sched_job_arm() has been called */
+>  		dma_fence_put(&job->s_fence->finished);
+>  	} else {
+> -		/* aborted job before committing to run it */
+> +		/* aborted job before arming */
+>  		drm_sched_fence_free(job->s_fence);
+>  	}
+>  
+
 
