@@ -1,125 +1,114 @@
-Return-Path: <linux-kernel+bounces-547563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6217DA50AF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:07:27 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00842A50AD8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:06:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35A7F3AD8C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:05:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 374A0188DADB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F3AA1A9B2C;
-	Wed,  5 Mar 2025 19:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F193253B77;
+	Wed,  5 Mar 2025 19:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="NVRO0vNM"
-Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b="PsscIedk"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 494B62528E4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:02:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54F59251785;
+	Wed,  5 Mar 2025 19:05:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741201353; cv=none; b=WrymwktxZKAEZLqja6DtHBG0HYaqc2QEQoWvyH2NRC2jDbtO56AmPEGsfQM3urW3mq2ZCxxY8U1Ot5Q1XlBdfP3VaJ7iaIGvb5BKP9Bl8p1kavQc/x8bdQgTrpDjZctfg60XfT8JCX7jKC/7QV33FNaFfAXrjcYvhzCms1zh4t4=
+	t=1741201505; cv=none; b=r68wkuVKBhxuj1LL5+AalAU8HvKpQtzyNV7aCBooNiyYqRpw981PW1dme6eWC9KCk9Du4SdLXMd5E2xHzJ+gn5WnBpYO02oI7s3IWVXBgqJ7BpGiKwcTIDfKAdbrl03IKDU4DpB1a3t88M9tzlKzx3LtlJhxPcudr6f+MYkxcgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741201353; c=relaxed/simple;
-	bh=PImNvEb9R7mU674MFRkVo7MQticSDFJlq5WrSF4+QLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tzu+FI0b0s49qZNw+39qlFgLZSNilB89dHS9PZzhwy6lY7IH7zD+ag18YDt/TESHuaLfoIK5K3PEHg33iQDptVAATzNOasUPXKct0lPQVepgdXEsEx9Mkmx0Q18bRTK1eG3hhGNO4UsqF9/XO+AaftwrsxyGot4Edo4lV4AX1Ys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=NVRO0vNM; arc=none smtp.client-ip=209.85.219.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e89ccbbaa9so48924006d6.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:02:32 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1741201351; x=1741806151; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PImNvEb9R7mU674MFRkVo7MQticSDFJlq5WrSF4+QLo=;
-        b=NVRO0vNMMP1xb5l7yHeeZHtiu30SNJmMnG5TGDpZzC2ZPgqkxt9C1VlqqHdoYF6F3b
-         DXmaIBjL/zBVH9EvOBV7G4+KhXZoaryYs4+h66JHvkQFCx2Dh0TW1xHDhqP68mgosR+H
-         Ov7+ccF/9aXpTP26/fHZlJqXJS6u6zS/NToVqd60eZ0Bnx4I+3Lf/zGYiIgcZzIesIKv
-         moUJEyAWUa46Ak5Ww+ksWe/M9kc/dWNFU2rkeuaEZysHnKsje4l/Ylyi7KsE7T7X8a9A
-         3kT6BmnnKtxT9Scl3i403/D7KuYC3XRTJB4/DIDwNaGl6D7vxQb6encGf+V9KOboRA5Y
-         19nw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741201351; x=1741806151;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PImNvEb9R7mU674MFRkVo7MQticSDFJlq5WrSF4+QLo=;
-        b=Ig09Q/VXOjqr1oOx0XTIcQnj3MvdeGRewCfcGmpIKMcNVJngAB7gNE0BtcgCLvXqsr
-         jUpA6/ZtzA2YKSV1fJCDk8HTBefH9OZowQgZb56ypoIYnAK6q47wGsU+XhdN1cGHOJru
-         6vSYhsiqCLG1SyggJXGvMPXX5vXRfgF9Ui/bpIqSNuIrSBxKhkTGmNaHfRUcJLfMSLco
-         uVpItbShzpsDQWDck0pnXEOOt0cYJyJih1Hrbzt3PWT3YQePj191RTZHI9ztVaneT8uZ
-         sWxZ7GRwQZs6oSSnxY0jNRQQcfwednxiyVtr0ECiHsKdqyY0J4AlqHGb4KVXSCb6ISHs
-         njwA==
-X-Forwarded-Encrypted: i=1; AJvYcCWMQY+0qNXx//3ZupLrj3MjKVwqThDGZ1Ddxi16cJ2UqApkeNMNKMI36ZUkB4Kxr/WTuke/4zt7JYZ1mWE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8AW7n6USpAPKN/i59L/pcOkIR6ADC0U4S+Ugha3NJ8wIdAd81
-	ZUY7Q/A4IPAGAUQd6wW3lYWV0fOoWn5+ydxffWhZTRNgRvxqTnr81X2sgexobZs=
-X-Gm-Gg: ASbGncsW2PZIHrH+kCqM8mc1p2ZYf1QX5CiLJSffxpmcSI8VB/BvwtcXBnSjg57LFuM
-	WfZlCWDj/fXSbhV/qMkAlfo0e+u/gBxVZ/GpvfSjFSwI8KIokaUS/QRGIj37L+lYbCn40ZqOsGZ
-	1lBVjDyqNrEzWhTa/mn2ioUFCm+CtW+FBXTiqcufHpzAG4/rHdyPq3LZeK2bixCDFsgyxZmcwMU
-	c58uPbAUQKN/axTai90MAEznFHq67VQDo0ESRGEQnmUIYu1Cg8hQ1hG0CvEn4n39EGFaA3b0HMy
-	3Ek4YfahEDJvR8oMV/yWYC9wOoxHEBAZ2wcDBy38P+CnII49q19Qwedx2wuzEelUmB6gnNelwzG
-	G7sKPnD/ng7xqIcRyaQ==
-X-Google-Smtp-Source: AGHT+IFj/qwQTwKG8SNNtgVxRj9GZyBrMpWQIs1ECNvXkzZ0QEhM4dpXu10vspXzdcAPMQORADqmUA==
-X-Received: by 2002:a05:6214:c48:b0:6e8:952a:240 with SMTP id 6a1803df08f44-6e8e6d1366emr58222716d6.32.1741201351058;
-        Wed, 05 Mar 2025 11:02:31 -0800 (PST)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8e885f85csm11121396d6.100.2025.03.05.11.02.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 11:02:30 -0800 (PST)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1tpu0j-00000001Ucp-3R2H;
-	Wed, 05 Mar 2025 15:02:29 -0400
-Date: Wed, 5 Mar 2025 15:02:29 -0400
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Stefano Garzarella <sgarzare@redhat.com>
-Cc: Jarkko Sakkinen <jarkko@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
-Message-ID: <20250305190229.GC354403@ziepe.ca>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-4-sgarzare@redhat.com>
- <Z8Jmps6AF_geaHUw@kernel.org>
- <3p5erujbhxw7ozdnfpmresv3dqdh2xszolv6mh4khkagoy3wit@ow5qht4keh4h>
- <0e156883acf95d31b9358831550d6d675e3ce4ff.camel@kernel.org>
- <Z8dg46Mj81Q9Z0WV@kernel.org>
- <jkr5z4thb55gs2jcmtcfipgg6p7z6ikhr6etd6l3nqpf723hf7@3fns3z5cjqk4>
+	s=arc-20240116; t=1741201505; c=relaxed/simple;
+	bh=qfh1wvTEekJMFX55T0b8yCRRJrvfpZkth0Am/jyMk78=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LlRrH5cm0/5n+mVXNa5PTqKMuE681jTuVCPOcWygnMHIy3O+lKDJ40Gj+v2B9vciptZHrGdnhWyHZlpQwBHQnQ4Bx3AAttpwuCiO0QnEGrPLJsVjfxy4be1LtdnvcxEffPMZbSPgXrJcIEWNe8Ul8zvZDLwqb+b+QKx0vyoCYI4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=rwarsow@gmx.de header.b=PsscIedk; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1741201469; x=1741806269; i=rwarsow@gmx.de;
+	bh=qfh1wvTEekJMFX55T0b8yCRRJrvfpZkth0Am/jyMk78=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=PsscIedkjgdlpwl34XrLbToSKwJPKgf0DCFY9DsZQBiKcGRQGmB1tMa+RWrEwlLu
+	 XdIfPreCOAwb1XA8WMj4PobSESv55ayci6TPFXkGTZdxDS5QnZm14i/t0OoGkdyiN
+	 D3OUnaLTd9wl2oyW2mOfZsLRPAtNo/gHDLDjFJuGxqE4yaOvI02XeJXUymb9+iSee
+	 MjED7yisXeZKMLMQFbp7HHFCQtEl6mFkOSfS2Nf9tQVFSC02ti1qfohz60eBr1P5Y
+	 3k1FhGtBcxcVp5xIGP3S+6Oa6ZQOgGxQ1Qxzyabs5uryk9i/SOf0Zev55Cn/1apX6
+	 wZ1S1WPRes6Z+ZkT8A==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.200.20] ([46.142.33.164]) by mail.gmx.net (mrgmx104
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MJE6F-1tX0g33fNj-00HxZu; Wed, 05
+ Mar 2025 20:04:28 +0100
+Message-ID: <891abe3f-af74-47ee-8f5f-b5d43f11d8fa@gmx.de>
+Date: Wed, 5 Mar 2025 20:04:26 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <jkr5z4thb55gs2jcmtcfipgg6p7z6ikhr6etd6l3nqpf723hf7@3fns3z5cjqk4>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.13 000/157] 6.13.6-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
+ conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+References: <20250305174505.268725418@linuxfoundation.org>
+From: Ronald Warsow <rwarsow@gmx.de>
+Content-Language: de-DE, en-US
+In-Reply-To: <20250305174505.268725418@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:tNDvVouYmro8bAiidG6lpf8M40FmtwQwS6QlR7jR5Y0OkNhZrt+
+ DUZIk3TEoiy538mcuKKxH7cD0SrNpGeA9lb94D8EpzRC1V0LvDSntF8DvhrHqUBODOZK6z+
+ 57rZeAsRHIlAapTvE7suUmwgKi4C0alwZfN9r4ErIK1zTorovAhNx6bdvVpJn4wqP78W7t3
+ yrlLyXmjh+mcw+hed9vwA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:PsAhI9xQdaI=;CAykRxy4U7e8/bzivqWPzFYMJRX
+ 47nPoaN54BzHoAzIYE/zTXyLqNvbLLFZeX3adz8SMWvW43EnsMrvR4J5EqJs6+b21Hsim8IW7
+ P6KwLHdImhPQglXsElvMz+8HJlmBEEkVyGFkiwOtM9ITzMUm50ZxaPi9WMF0MfE6nUcOgpNKV
+ d/HmkxIe54O00kD1uJTYx92z0isCjuZTFY0/5jj/EFFB9yO3xdGVA/kKjthTj5wJYwxkKcCsW
+ ssKsUQv84UpqbmvmaslScjEh0rruq3c9KimBEspUy0YlxxFP8ZoTA8vU78/3X8qO502hU6eNK
+ 1UVCsry7/jd27eX54aJgOvZb8f6m11PCxL6PnGfC7CBIGDzWaEEwYN2/ZkR2B8P6AwCEXOJo+
+ e+Of0i8pUMB5P4HRq7FlfpgCGfurgXv9D8Disy9Lh9PUg61mtPKajdhQebkIO7/vLAY9beDTe
+ +OUIstaSn39D6oNjF7xvW2RL8A0HEH0PE3o0fpoksi46lVUuBPs9kd0IJtWjKKMGxL92tZ71H
+ XmITugWy2iSwGG7wsUf8NENRduG+MhXDM1Jt+HEc9+XFmHBFwHz3fh+gTPUuYXyOXYQI6WTsD
+ RdMIbTGI9vW7+qAKJE4oOSr4QH9Z9PVKKSxJthpgX40OU2ddUtnR2+RypoyAfKIPLQcQXx3Pc
+ iPbfhDToH0MKW7rlE8PIfzUu2h3wkXjyp6wJ7XQSo3Eq24QwkdI1A5YbRTKEguv6h0v3lCPLw
+ p1IWxx9aDgmIYlsqEqZyzWc0aXXWgSLdZE+jpduIKHVcIz05VaPSLVAVAXF7EX+GQVxA7Agkb
+ yoxf/7Vy51uQB6nYQs6zCbizeft6O5Bid+GODu90HDpaWIRWQ7RYxXVryLxdr65Y7t+HOW3qe
+ QuAHuaF2AkDd1vDmkCjRLKgZt+1FN1EvxrVChS3CPUN3hes3zLNtYV9ceRrZRaVWDxmzHvZia
+ SDSCeDtZ3ilL525pMJ4nSTTP5uehEZ0+UUDs2Qnxfvyn2hCyoeXLF1gKDGSH0L1hKzNQvs+iN
+ IpoDVML7y+8ApOLLdMqKrzdl48wwxVNsSPeO03H8IRyxXHPAadXLk5SxOnVfUMTROVawBSMQk
+ ayiHs418UMZU8HmynLNZWjd3rXv+zwgu69baFCDuD6JDuAvNSmihQfX92Fjm4GyZi6Li9PK9y
+ XmmiYrCHOWQ/StJ+zUjcv5ceRoC2NsASao7MfJ33ijfa7mM7blHFB19DvXYFlUMApqBKsf28D
+ 96vSk5rAvspMiJO7I/qNH4zG0dYL9fwbJM83oXqFNCUntU7tHBFi7QDM8xcAppKkp+21QDAhi
+ d/ZTgTwokDkOMjVhMgVCjEzHT3EGkUrkEaAWtmyPvfTviOSQp1NgVEJk8bn/th8Q7W8v69vHf
+ FRsMEwpWjkCtr1x+JZmsGrN+F/d8FNPPcNJgKt2vDyXHKolCIDReihMPmQ
 
-On Wed, Mar 05, 2025 at 10:04:25AM +0100, Stefano Garzarella wrote:
-> Jason suggested the send_recv() ops [2], which I liked, but if you prefer to
-> avoid that, I can restore what we did in v1 and replace the
-> TPM_CHIP_FLAG_IRQ hack with your point 2 (or use TPM_CHIP_FLAG_IRQ if you
-> think it is fine).
+Hi Greg
 
-I think it is a pretty notable simplification for the driver as it
-does not need to implement send, status, req_canceled and more ops.
+no regressions here on x86_64 (RKL, Intel 11th Gen. CPU)
 
-Given the small LOC on the core side I'd call that simplification a
-win..
+Thanks
 
-Jason
+Tested-by: Ronald Warsow <rwarsow@gmx.de>
+
+
+P.S.
+
+is it necessary to have all cc'ed user informed or should I leave them off ?
+
 
