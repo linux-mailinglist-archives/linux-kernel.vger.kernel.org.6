@@ -1,260 +1,203 @@
-Return-Path: <linux-kernel+bounces-546457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34D82A4FAEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:00:08 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDD86A4FAF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:00:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9503A7A5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:59:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A06216AE24
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:00:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25E49205AAA;
-	Wed,  5 Mar 2025 09:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E6E203712;
+	Wed,  5 Mar 2025 10:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b="MdE/YNJX"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2085.outbound.protection.outlook.com [40.107.20.85])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E0T2bHOT"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775801C8612;
-	Wed,  5 Mar 2025 09:59:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.85
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741168797; cv=fail; b=dixMbn+ksx+v9SEDaTZXr8XB2clT2otNZL8rcFsUylmw/OjbekjvxB3VUAieDrB26TwrAp3uGEPfQJfd55mJ+01OAJAJ54SOTEO6jogUAhC6YnXGU7dmW9XO30xtASvaH1e8av4kAuwtUk/UrqaaBg7UVJyZO5FOtSGhTyrq/yA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741168797; c=relaxed/simple;
-	bh=Ypcn1ZXYLUABHRafSKJCeZCrayEFQTrNvRDa46yGG+U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=rFWkGfUpkCZDJKVJ6/orwKyxUqq1Q4WbG0AmpL4DMjbPjYIpOHzLBAdPCdSS2STjMCEn1gkW2KOGjKMAljdNp6Z22J7F/yekkqDmUkwLfBmWbpZl7mzAkfTwU8gdz86q+7Bgw9+ATRADQevpV/TZLan1qAozoi547y5YH5M6Yww=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com; spf=pass smtp.mailfrom=mt.com; dkim=pass (2048-bit key) header.d=mt.com header.i=@mt.com header.b=MdE/YNJX; arc=fail smtp.client-ip=40.107.20.85
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mt.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mt.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Yadd5pg/zuTfkQEWZ3YaGNIxhcf/4EmCkg4kg3NEdJRPjbHeoNui8sRxT/G5v9109gOiAF6WyvIge2jM+A/7UrqmJYkfA+OuIQekNBoJw6rkhx2yCLbh2YoebAi7VPL0at7k4c9oFp1tPiJp3r8yyZuuLSlVjMUF1rHkgYqUsGiGPR6BQ5BFOZkYjWaJGO8ElKrT6v9S4GBSnqaorORIWzpmAAMpJpSbBx5me3+bqMZO1XuS4oAUgwOkPHw3cvS+UbbQHi5Dos2whpgNLEMohbkU7gk8B+XcX7xo8KVNoSXbvBUWlBlR6c4/giPlH6fx9yytxIIken4zGugVSguSDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=oxlP4M7ZCzgDrl2K4Rw6JE8KP6M8sjrHYWqmiS+x8UI=;
- b=WYhieZ0PokatfE+m0GTRLjpopGPQEwwTWD9qYucALNZOYC8ADBCWRCa9sx/dVOekvEtvY9FaTYZqSRZX1PhU6xxGkEejSol/NUmc6AZ+3tZ6Phw9VMjqDjlmpSXslfnVBl7c968e2sVp++oWeIllRkO1ofRuwuiHcEbvemrJgIKYtDUPGwPkk12BKL9r6OvaZbX1R6Ytml8OWkeeiWjA255x+n3LZzzm0VW5UBCzRsidHrn9kHG2b4wYul8VHlaqBb9Ytbv2a+0qlANmrU45Tyt09jGuD7vpumjrTgzw56KTS9q8kTPp67eBvfkocGOUkXntffG0tRMc2gZbX9kXTw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mt.com; dmarc=pass action=none header.from=mt.com; dkim=pass
- header.d=mt.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mt.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=oxlP4M7ZCzgDrl2K4Rw6JE8KP6M8sjrHYWqmiS+x8UI=;
- b=MdE/YNJXI5u8YrJl2va52rIkVpkHXY65Zp3ZVTZuiMfYGGAwXXpTBeEPQxf6hfpAifTtevzo0JGEEfbmGNBVlWbHFQTv+9RhGMEv5yVbKm090bIJcwuQW4tQxi5H/8rUUobpXyv/FU9ezGoXeilAuU/gT5nIhSKACTNV/hbsIue7mLHAmd3EIooKI18VR1u+YT4uEqKsAIk9rJ7hmNGHrwKh8UXy4ax8UpejKrlGhfWQ2UBGb5MEB8mbuSGWjaqqDB+u3esDogT+lFyBupKaBGZiRklY0avof0l/Zrmv1jETFBXa8Bmb0S0b++DtrVt73D+AS+BrzvvlZK1WU25x+g==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mt.com;
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com (2603:10a6:10:53a::11)
- by VI1PR03MB6381.eurprd03.prod.outlook.com (2603:10a6:800:192::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.18; Wed, 5 Mar
- 2025 09:59:50 +0000
-Received: from DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf]) by DBBPR03MB10396.eurprd03.prod.outlook.com
- ([fe80::ee3c:c9be:681:c0bf%7]) with mapi id 15.20.8511.015; Wed, 5 Mar 2025
- 09:59:50 +0000
-Date: Wed, 5 Mar 2025 10:59:27 +0100
-From: Mathis Foerst <mathis.foerst@mt.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	MauroCarvalhoChehab@mt.com, mchehab@kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-media@vger.kernel.org,
-	devicetree@vger.kernel.org, manuel.traut@mt.com
-Subject: Re: [PATCH v1 2/8] MT9M114: Add pad-slew-rate DT-binding
-Message-ID: <Z8ggf4wXX6HAoCpS@mt.com>
-References: <20250226153929.274562-1-mathis.foerst@mt.com>
- <20250226153929.274562-3-mathis.foerst@mt.com>
- <Z8A66l02Et4J7hj4@kekkonen.localdomain>
- <20250228-helpless-delivery-42162772caa3@spud>
- <Z8boqvxEAhx7rG9Q@mt.com>
- <20250304-expend-isotope-cea613f4e9d5@spud>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304-expend-isotope-cea613f4e9d5@spud>
-X-ClientProxiedBy: ZR2P278CA0036.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:47::14) To DBBPR03MB10396.eurprd03.prod.outlook.com
- (2603:10a6:10:53a::11)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C58C20551F;
+	Wed,  5 Mar 2025 10:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741168811; cv=none; b=HUxyAW5E5z2czEayCh6xU6IaULQR3AJrd8onLx2iVX5ztgfDK8otFbIClsZykvKz/HIj6F1XnTTGHp9PaQ3tBsVxx5GUK+PjQ9ABdugzwpkniWl7MS+W2GEv18nbB5dY7kfskTBrzJY283j8BLfSGwzw8xQJ7CUrMcQ4MyDGd4Q=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741168811; c=relaxed/simple;
+	bh=9AKHIt39EdqvkjHlj2wT3ud7NdHaZNclpnxb3Ax38TM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HtQpvJAmsHLJLIGOk2Gve8M7D60cE94rlvI1n5g+odcFwEbi4AhHbsrRwRA4CWWpJ8aM4WF06A4BNXcmG20mQL5/ZlhjkyTmzzWLJLZrpTe3Qbvj4iK6jTNBbI/VWbHPNLrXGbkawa7UOX8aRNMt6gZ6xld2RyhT5JeqScRW9ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E0T2bHOT; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741168808; x=1772704808;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=9AKHIt39EdqvkjHlj2wT3ud7NdHaZNclpnxb3Ax38TM=;
+  b=E0T2bHOTbWFa53QoXpyr/d4swQ8g+C9o1qD+EXgs0HPfpe4QVlagA90l
+   NUIX0vah+QoRqhpKRYPgcEzeIVa7diwD2BGbBSxYZYdQsE+vS7SM0Q82f
+   zNtAQFxfMj9RE2pCaZhI1ib2ARIgIYltceBqkyAiTu7yvWh5Z6sa5dpKt
+   JQ2+EGRadvui+ovtTOgojy3TYy/IYH9ugt8sMUI63kVS5NWpfdEZF3WGj
+   OMJKJ4MFjVJ/5QboOpY770Sb7iDfxzsNnJo9RWmp2Akhs/GMD1Z0Htqwy
+   g4nwmRn1VUmtyEcTXU07Vfn5VdSlALZ3ZNdqKMtrEarVlAsa16aUIqKid
+   g==;
+X-CSE-ConnectionGUID: UhpzxuUITBOApBptkub1cQ==
+X-CSE-MsgGUID: UtbwXEMuRbe4sf8A8DugCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="44932341"
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="44932341"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:00:07 -0800
+X-CSE-ConnectionGUID: BeuCliEWR0Ofj/db2Rg7rA==
+X-CSE-MsgGUID: sE7nJ2EQRDW8J61KQiHmkA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="119133426"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:00:05 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tplXm-0000000HNNt-09xm;
+	Wed, 05 Mar 2025 12:00:02 +0200
+Date: Wed, 5 Mar 2025 12:00:01 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: Paolo Abeni <pabeni@redhat.com>, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Rasesh Mody <rmody@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH net v1 1/1] bnx2: Fix unused data compilation warning
+Message-ID: <Z8ggoUoKpSPPcs5S@smile.fi.intel.com>
+References: <20250228100538.32029-1-andriy.shevchenko@linux.intel.com>
+ <20250303172114.6004ef32@kernel.org>
+ <Z8bcaR9MS7dk8Q0p@smile.fi.intel.com>
+ <5ec0a2cc-e5f6-42dd-992c-79b1a0c1b9f5@redhat.com>
+ <Z8bq6XJGJNbycmJ9@smile.fi.intel.com>
+ <Z8cC_xMScZ9rq47q@smile.fi.intel.com>
+ <20250304083524.3fe2ced4@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DBBPR03MB10396:EE_|VI1PR03MB6381:EE_
-X-MS-Office365-Filtering-Correlation-Id: ccf03427-58c4-4d57-1b30-08dd5bcc7821
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|376014|52116014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?SjdbBjMVUTn68CigJq+R3AOJWCtixNDMLkj+Eur/0bgVqOUxNWy0one91RiJ?=
- =?us-ascii?Q?h5SZv+NVr/gFVWzqJ3AxuVTW+ucuerbkkdFuZxjAXn4DvIav2Oxfcm1DnI+6?=
- =?us-ascii?Q?DkvvQMnmAJpFnabhlLch9NSf8SVKq4Xp8h5EZurmI3BIEXnuHxTh0TZCNb8r?=
- =?us-ascii?Q?NZTtvLuh0JVOQqDFELqy/lscpPUF8F4hRdqSMo3As1Uo/5IWpQlXpLuRPAMn?=
- =?us-ascii?Q?yRb8REvIPdTqvLzeljZl1viWXWP3Ck23bs1CbIkjYn9rds6H8ShwD0UqIl9n?=
- =?us-ascii?Q?aIclnFxCUFOSdAARBrCQo9KeRZeDdlPaq/tXwgptArkHuG9xI8tYX5PyZajg?=
- =?us-ascii?Q?qbjDhfmCgBOR8VSSWuJiIEgirvAp2gqIKvBWAuul83b3+2WVWOhvSY8ZJ1uF?=
- =?us-ascii?Q?c1+g4KjX82ipaXf8M/VVWFCaVSY75tvx8hvvDb51UjyLhHh/pMVFhVeXtGH9?=
- =?us-ascii?Q?3UuYRzB1Al3lhnQMd9kXGg35WiPvBMECcg+SOTW30mFxR6lUxXc12iPRkmZL?=
- =?us-ascii?Q?ffWQrj7JgtQX1jTc5jut61LxWyfcNTqZlyX+M264d/2Itv7dzcUEAEhKaIwV?=
- =?us-ascii?Q?2zctYg8iCIXHEH3LhAV7vMNSdxBnxcvfeNgVL5E2mxhN9f76jey6L7gIBqq0?=
- =?us-ascii?Q?EkLcOJpTw0BqvqD94bqpHUhuC29rX5y4Y/4kkEpZsGj8Vf+lh+i3jEoWpSSl?=
- =?us-ascii?Q?hd63NOgeTGDY9fSQhD4LikI3+GgjK3lDJmIunYBKxWOjTcYtKLdJrM8Nqv+r?=
- =?us-ascii?Q?eU5kHfiwpBh57738GhtKGAXZD3mgAKslUg/hKn8zzt8I85VOZqpALb7UyjCI?=
- =?us-ascii?Q?huoVPaBvg7Iq55Be9963LSG/vf9Ib1CcpGjbkAOeTWTcTBiym2TYipG4/bkC?=
- =?us-ascii?Q?GTbISKcBP8DdXldnxcRHaotmmF/hnqmrTQ/Z3Ra7Rxmz5ql9RE9ukJPaVN70?=
- =?us-ascii?Q?uhGOwRuKVIpxKdw/1K9wrzoTaje+w0Vqv2MtRjVbbCUJrqwcd3pxPXpRYj3s?=
- =?us-ascii?Q?Iy7PXLvknrE4q3ngPMUQjhxcmBe5T5JO7yPjrieTnbnLLiiB7XfKmjgu0w04?=
- =?us-ascii?Q?zzjnjHTQO46GqPO2E8JLZqOqscrlihB4/aDAIqU5bFfEzssNuOHfHMHmlr7C?=
- =?us-ascii?Q?5smxTCfJ+boldfhJdRCf7R1Y81paphPCmVDcr+e4C5JfEg956WyiddZQ4WGb?=
- =?us-ascii?Q?+S+ijYL3dxrqDG/w8N2/zaLIO+NzNPb2XFiM52MBEqa31QbDuO8oEIMNQiqy?=
- =?us-ascii?Q?WLacppXWR70JR/xe6XSQVUDRv12tiN4TdhM40IS4P5BruD2j1SdZFYGgC7rp?=
- =?us-ascii?Q?AvgwACBz530iJ6uLIV2z0dRz4wwjf7aXfPY7sJUEwW42/8viKzsWgRV6CxY/?=
- =?us-ascii?Q?R6LYlzxMz3zYk/EEQrFYv0aNgjSIHFRpjLJad3R0Vkz0MoA4gwbhAprHkNBR?=
- =?us-ascii?Q?wklHqHRh/gLPpGsVjeRH2YQDPul4M2b+?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DBBPR03MB10396.eurprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?VaxYntRTotnIovXhoHXt64bmyTw6Ks6CAxtw7m5MRESU8p0nH5GQlcUpW8b6?=
- =?us-ascii?Q?lVxM24O3zk4pQkpG+DpJxv5BY46PUkQ6QlOmX/ghYRqBDQ4W84KRFIp8qvtr?=
- =?us-ascii?Q?sFDbLwDdoUh/mHyD29Q+mDIEfChPxBHX07hKmS6M3o3jMn3bb2pKCo3rAF9s?=
- =?us-ascii?Q?m3WOtwASnxOtPaXvEOIpqDCt6nRWCJ1h4kEvh+45KuqgkayFsiS9h3qBt2iY?=
- =?us-ascii?Q?BfuO+VEKDboLjHxnN5jQKoi8db9W2teVxbbTEtwDDVhXFDgNzIUIcVPuCrJV?=
- =?us-ascii?Q?cpEQUu5dR7TY+fPTzBCzTf3hxCNdTAO69LPwyGKwFaLUUAkYMNpFH5G2FPmC?=
- =?us-ascii?Q?dTDl/WuUTJqk4S6bvOloFe8vNYK7r8+MtVf+b5VQ+vnENtk2V9anJubWRVbD?=
- =?us-ascii?Q?Vp3p/ombz/RPqmjF2+JhCkddk8csZZxxpTP/0toP4JyQEW4jKw4YJcEzb6II?=
- =?us-ascii?Q?KneD//Jw4b7oI7Harx8aBYQdfOuzpLulRVKHtfSGG+ONlr7lMVDKFTABERbt?=
- =?us-ascii?Q?nP9GRM/pxihjaY0AtMc5zSpWhBqzRuxlI60XdMWuxc9k9d5AhnSrmCCzs/O1?=
- =?us-ascii?Q?dSikpbZ/sG1zN1U9oup/BCF4l0bkPjaELudBAzUu7rT/5WOq+EJMrVdPLaGI?=
- =?us-ascii?Q?R53PAs0nAK9U8dsblRfsKumyEosS7Gm6v7riHzJqc4azXk7vj0EqMjVwuPVv?=
- =?us-ascii?Q?zJzNG6kOqoMIdrJHMd7pIchkvu48xeI6v+T8aL7E7/UBzECZiZae5Auto08S?=
- =?us-ascii?Q?0OQuZrNKpLVJ46KMcJAn1qiYn9ULeMGNl2+UACFxaobyaDtAc3sqsn20hRoc?=
- =?us-ascii?Q?qyykxZEoLOn/82NuMjwfJOp4n04mSsqouUt7PK9doGXMJmfg6As/76mjbbN7?=
- =?us-ascii?Q?aqCzpY7ZMSFX78BQzRjrl2w8Oj6eGW2hC1B+jNNhIKaUFC90C2ZJr+rNjLGY?=
- =?us-ascii?Q?ZKAwJS/yXcs+yLhzvP3f8SJoZX+1jOBsf6G0IWJnAPTkQijEqglG+AgDVOPV?=
- =?us-ascii?Q?XHF0a1JjfcFu3wVapXGk73XztQOuywa68MPinJZ8mx+KcwovXhwQZ8TC0RfO?=
- =?us-ascii?Q?eUWZFfJSOh0Y2kDhKhr91oqK+LVsfVczQZin1WUPo+4Z9RH7qqstOoK74W3l?=
- =?us-ascii?Q?Hc4f2rGZnfC6x6mbMAspQ61syju3Jb58U3sT3QHu4SPS1/KrEtmCcSeB8hYb?=
- =?us-ascii?Q?DbmZGU6sKyfxhyXJkHk8L67pdrtYFTyTTfqT6ldtRMwEseTCRFXjqJsZesWJ?=
- =?us-ascii?Q?kVndDAjU2sEdH+dnfKH+b3FP4z8szQnQqlq9C2I39QaYSF6alLgmeEb2E9Sw?=
- =?us-ascii?Q?1+WYKTGTomTomiiOBoSzOufkjy0w9yS1py17iroogKb4VBaf1dJuZSEdImDb?=
- =?us-ascii?Q?BY8Pj86X4PjTJ26xju78QYc4CHeVjguyMnRf+q94/kAsIqk7IXis7d0B9V+C?=
- =?us-ascii?Q?jUT2RxMXngLK47r8TWclZQY5w2dQNI1yN426HL0B1nzxSarJDWCtdh69WShL?=
- =?us-ascii?Q?H3EB/QVqoC3WcZw7BYAv2ZMzCXcD6oaiTi9cCwF40RktbBWO7Kn1uHpeE/Bq?=
- =?us-ascii?Q?SeLfYnYSE8EmCge6gwXzDDzywnQsk09BnG82nJXI?=
-X-OriginatorOrg: mt.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ccf03427-58c4-4d57-1b30-08dd5bcc7821
-X-MS-Exchange-CrossTenant-AuthSource: DBBPR03MB10396.eurprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 09:59:50.5668
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: fb4c0aee-6cd2-482f-a1a5-717e7c02496b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 21TD1f6c566vjMNTIFsLzKFobYIxe1+LmAm+IlGmdoilI3zJoxIsNj0BW/WzSHK+K3aDpuhrp9elz4p5BR3Ohg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI1PR03MB6381
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304083524.3fe2ced4@kernel.org>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Tue, Mar 04, 2025 at 04:39:34PM +0000, Conor Dooley wrote:
-> On Tue, Mar 04, 2025 at 12:48:58PM +0100, Mathis Foerst wrote:
-> > Hi Conor, Hi Sakari,
+On Tue, Mar 04, 2025 at 08:35:24AM -0800, Jakub Kicinski wrote:
+> On Tue, 4 Mar 2025 15:41:19 +0200 Andy Shevchenko wrote:
+
+...
+
+> > > > Would that work?  
 > > 
-> > On Fri, Feb 28, 2025 at 07:11:31PM +0000, Conor Dooley wrote:
-> > > On Thu, Feb 27, 2025 at 10:14:02AM +0000, Sakari Ailus wrote:
-> > > > Hi Mathis,
-> > > > 
-> > > > On Wed, Feb 26, 2025 at 04:39:23PM +0100, Mathis Foerst wrote:
-> > > > > The MT9M114 supports the different slew rates (0 to 7) on the output pads.
-> > > > 
-> > > > "the output pads" probably means pixel data interface (DVP or CSI-2)
-> > > > signals in this cases? I suppose this is about clock modulation?
-> > > > It'd be good to say that.
-> > 
-> > The slew rate defines the slope of the voltage flanks on the output pads (how fast
-> > the pads go from LOW to HIGH or vice versa). I tried to clarify the description.
-> > 
-> > > > 
-> > > > > At the moment, this is hardcoded to 7 (the fastest rate).
-> > > > > The user might want to change this values due to EMC requirements.
-> > > > > 
-> > > > > Add the 'pad-slew-rate' property to the MT9M114 DT-bindings for selecting
-> > > > > the desired slew rate.
-> > > > > 
-> > > > > Signed-off-by: Mathis Foerst <mathis.foerst@mt.com>
-> > > > > ---
-> > > > >  .../devicetree/bindings/media/i2c/onnn,mt9m114.yaml         | 6 ++++++
-> > > > >  1 file changed, 6 insertions(+)
-> > > > > 
-> > > > > diff --git a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> > > > > index 72e258d57186..666afe10c538 100644
-> > > > > --- a/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> > > > > +++ b/Documentation/devicetree/bindings/media/i2c/onnn,mt9m114.yaml
-> > > > > @@ -74,6 +74,12 @@ properties:
-> > > > >      description: Bypass the internal PLL of the sensor to use EXTCLK directly as SYSCLK.
-> > > > >      type: boolean
-> > > > >  
-> > > > > +  onnn,slew-rate:
-> > > > > +    $ref: /schemas/types.yaml#/definitions/uint8
-> > > > 
-> > > > No need to make this 8-bit (i.e. just use 32 bits).
-> > 
-> > Okay, I thought 8-bit would fit the small value range [0,7]. Changed it to 32 bits.
-> > 
-> > > > 
-> > > > > +    description: Slew rate ot the output pads DOUT[7:0], LINE_VALID, FRAME_VALID and PIXCLK
-> > > > 
-> > > > Please wrap at 80 characters.
-> > > > 
-> > > > Is there more information on the effect than 7 is the fastest?
-> > 
-> > There is no more information about the exact meaning of the values.
-> > As described above, the higher the value, the steeper the voltage flanks.
-> > 
-> > > > 
-> > > > > +    minimum: 0
-> > > > > +    maximum: 7
-> > > > 
-> > > > Please also add a default.
-> > 
-> > Sure, I added the default value 7 that matches the currently hardcoded 
-> > value in the driver.
-> > 
-> > > 
-> > > It'd also be great (IMO) if it were given in terms of actual units, not
-> > > nebulous values that I assume to be the register values.
-> > 
-> > I agree, but the documentation does not provide further details about the
-> > unit of the value. So using the register value is my best-effort approach.
+> > Actually it won't work because the variable is under the same ifdeffery.
+> > What will work is to spreading the ifdeffery to the users, but it doesn't any
+> > better than __maybe_unsused, which is compact hack (yes, I admit that it is not
+> > the nicest solution, but it's spread enough in the kernel).
 > 
-> If they don't provide em, how is anyone meant to calculate what's
-> correct? Trial and error?
+> I meant something more like (untested):
 
-The correct slew-rate is a trade-off:
+We are starving for the comment from the DMA mapping people.
 
-You would usually start with the fastest slew-rate as it leads to an
-output signal that's as close as possible to a perfect square-wave.
-On higher link frequencies a too slow slew rate can cause the signal to
-not reach the HIGH voltage level before going to LOW again s.t. the
-reveiver cannot interpret the digital signal correctly.
+> diff --git a/include/linux/dma-mapping.h b/include/linux/dma-mapping.h
+> index b79925b1c433..a7ebcede43f6 100644
+> --- a/include/linux/dma-mapping.h
+> +++ b/include/linux/dma-mapping.h
+> @@ -629,10 +629,10 @@ static inline int dma_mmap_wc(struct device *dev,
+>  #else
+>  #define DEFINE_DMA_UNMAP_ADDR(ADDR_NAME)
+>  #define DEFINE_DMA_UNMAP_LEN(LEN_NAME)
+> -#define dma_unmap_addr(PTR, ADDR_NAME)           (0)
+> -#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { } while (0)
+> -#define dma_unmap_len(PTR, LEN_NAME)             (0)
+> -#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { } while (0)
+> +#define dma_unmap_addr(PTR, ADDR_NAME)           ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
+> +#define dma_unmap_addr_set(PTR, ADDR_NAME, VAL)  do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
+> +#define dma_unmap_len(PTR, LEN_NAME)             ({ typeof(PTR) __p __maybe_unused = PTR; 0; )}
+> +#define dma_unmap_len_set(PTR, LEN_NAME, VAL)    do { typeof(PTR) __p __maybe_unused = PTR; } while (0)
+>  #endif
+>  
+>  #endif /* _LINUX_DMA_MAPPING_H */
+> 
+> I just don't know how much code out there depends on PTR not
+> existing if !CONFIG_NEED_DMA_MAP_STATE
 
-But steeper voltage flanks lead to higher electromagnetic emissions s.t.
-a device might not pass the electromagnetic compatibility (EMC)
-certification with the high slew rate.
-In this case you would lower the slew rate until your emissions are
-within the allowed range.
+Brief checking shows that only drivers/net/ethernet/chelsio/* comes
+with ifdeffery, the rest most likely will fail in the same way
+(note, overwhelming majority of the users is under the network realm):
 
-The actual emissions depend on many factors like the PCB layout, the
-length and shielding of cables etc. This makes it hard to fully simulate
-them.
-So even if would know the exact unit of the configured slew rate of the
-camera sensor, it would not fully allow us to calculate the correct value
-for it.
+$ git grep -lw dma_unmap_[al][de].*
+
+drivers/infiniband/hw/cxgb4/cq.c
+drivers/infiniband/hw/cxgb4/qp.c
+drivers/infiniband/hw/mthca/mthca_allocator.c
+drivers/infiniband/hw/mthca/mthca_eq.c
+drivers/net/ethernet/alacritech/slicoss.c
+drivers/net/ethernet/alteon/acenic.c
+drivers/net/ethernet/amazon/ena/ena_netdev.c
+drivers/net/ethernet/arc/emac_main.c
+drivers/net/ethernet/atheros/alx/main.c
+drivers/net/ethernet/broadcom/asp2/bcmasp_intf.c
+drivers/net/ethernet/broadcom/bcmsysport.c
+drivers/net/ethernet/broadcom/bnx2.c
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.c
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_cmn.h
+drivers/net/ethernet/broadcom/bnx2x/bnx2x_ethtool.c
+drivers/net/ethernet/broadcom/bnxt/bnxt.c
+drivers/net/ethernet/broadcom/bnxt/bnxt_xdp.c
+drivers/net/ethernet/broadcom/genet/bcmgenet.c
+drivers/net/ethernet/broadcom/tg3.c
+drivers/net/ethernet/brocade/bna/bnad.c
+drivers/net/ethernet/chelsio/cxgb/sge.c
+drivers/net/ethernet/chelsio/cxgb3/sge.c
+drivers/net/ethernet/emulex/benet/be_main.c
+drivers/net/ethernet/engleder/tsnep_main.c
+drivers/net/ethernet/google/gve/gve_tx.c
+drivers/net/ethernet/google/gve/gve_tx_dqo.c
+drivers/net/ethernet/intel/fm10k/fm10k_main.c
+drivers/net/ethernet/intel/fm10k/fm10k_netdev.c
+drivers/net/ethernet/intel/i40e/i40e_main.c
+drivers/net/ethernet/intel/i40e/i40e_txrx.c
+drivers/net/ethernet/intel/i40e/i40e_xsk.c
+drivers/net/ethernet/intel/iavf/iavf_txrx.c
+drivers/net/ethernet/intel/ice/ice_txrx.c
+drivers/net/ethernet/intel/ice/ice_txrx_lib.c
+drivers/net/ethernet/intel/idpf/idpf_singleq_txrx.c
+drivers/net/ethernet/intel/idpf/idpf_txrx.c
+drivers/net/ethernet/intel/igb/igb_ethtool.c
+drivers/net/ethernet/intel/igb/igb_main.c
+drivers/net/ethernet/intel/igc/igc_dump.c
+drivers/net/ethernet/intel/igc/igc_main.c
+drivers/net/ethernet/intel/ixgbe/ixgbe_ethtool.c
+drivers/net/ethernet/intel/ixgbe/ixgbe_main.c
+drivers/net/ethernet/intel/ixgbe/ixgbe_xsk.c
+drivers/net/ethernet/intel/ixgbevf/ixgbevf_main.c
+drivers/net/ethernet/marvell/skge.c
+drivers/net/ethernet/marvell/sky2.c
+drivers/net/ethernet/mediatek/mtk_eth_soc.c
+drivers/net/ethernet/mscc/ocelot_fdma.c
+drivers/net/ethernet/myricom/myri10ge/myri10ge.c
+drivers/net/ethernet/qlogic/qla3xxx.c
+drivers/net/ethernet/rocker/rocker_main.c
+drivers/net/ethernet/wangxun/libwx/wx_lib.c
+drivers/net/wireless/intel/iwlegacy/3945-mac.c
+drivers/net/wireless/intel/iwlegacy/3945.c
+drivers/net/wireless/intel/iwlegacy/4965-mac.c
+drivers/net/wireless/intel/iwlegacy/common.c
+drivers/net/wireless/marvell/mwl8k.c
+
+include/net/libeth/tx.h
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
