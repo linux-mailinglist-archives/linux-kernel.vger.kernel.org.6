@@ -1,212 +1,331 @@
-Return-Path: <linux-kernel+bounces-547160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DDEEA50395
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:41:03 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5361A5039D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:41:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AA11188D743
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9F9188D7F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2103224EF93;
-	Wed,  5 Mar 2025 15:40:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA1B2500B1;
+	Wed,  5 Mar 2025 15:40:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="EwDZAsr+"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11013023.outbound.protection.outlook.com [52.101.67.23])
+	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="Qk+UO+6v"
+Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31BF8230BC6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:40:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.67.23
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741189254; cv=fail; b=sc+iQd0OaLI4niDKxuIZo8SLRkCVvlKJUoalFoHjSzvzLPIStF4plTprsIIX0R29USb3fd/pylEKGSxVnZdXxZ6vunFleoLTZ5CrltSlJL+Vc399BENWWJmONNEHiz/K9uje8d5juiAc/jkSqQwn1QlQPwzOPuyLWgQQgRfE+rw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741189254; c=relaxed/simple;
-	bh=ikFrHG1kf0/MgTgyNMxc2ROZl5EnSSUMz6LjI4B2e0I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=q8KhTV5Vt84mCu1xqfYaGNW+V8HSKw4VbEoieu9T6XiNNa5Q2XQhvHU1uokhbCKHTUsbIpVMEiv5JUz3lhUR9YidkNC2SOhvfZ4GfhGnDlKg9M8NK4POkDAeD1Br0IWd8sB4BfH6O7w27bW5IV1ffP56QkhEBsQELmpMcUzfQXA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=EwDZAsr+; arc=fail smtp.client-ip=52.101.67.23
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CRAifUkzmuM3Xs7xpsCKgAcyPpb8iljOxaO2RuxHBWtRowFsrbYW4iGZztuMv9ioeYmbc5XiWqJ/rKarOztM5h9g+kh2nYGLVYJM9ZbnDmkz7L9dUARg5YVo4NUTQ5HiC5fQdf7gN0Q2m0RxQ2SirrK8Fcr9yPOx8T7XiGsS2Xgvy6FBMy6xF1GiWlNQMpmyz/J25O1+x1CYS+l69Mr8DjExr6uFMfYfz84aDLOMh8IfWuTJZTDhxZYwEi9xFzxy9NKZ9nOpaJBdlpFd/TvvAqEkdrdOG+VQxgmG9AcNzz0kchi3VfeuzJ4kcoJqB/juGbHBW8jHRY0lyI7GLOSAMw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9atSSRmENsknLKlNDsBOc2L2Bg1hnrtuYMZiaOGff4o=;
- b=l5yWvSUyD+f61lc8VdSfIl8wHODPjD6LR1Gy6dwJMMUDUHiNtW9H7/9MqrSCwAxf+kApmUE4tGvZl/FU3TcTkzekektIurjnSDGruiIo4LkffYJbEof+kW+HLwgl712B64tvDCXyh8fnN/ONzChRoK1LU7VLYtu37fctF/um24Z9iP4Il6jqDwSrUMym5Xt2Db/QIJLjmgh7WD7goohV8U26h5S+l2emPOxPaMn2O3GZwbBby9jjA9jka9bG8CN6OlIy0Cnxc7F3sf7q4EyRJoO+LWmOFtY+LawRKAUZ465VYfBWe+1qW0ltRLmz4TYF1UFg1PEl3Kl4e9mFGuofLA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=9atSSRmENsknLKlNDsBOc2L2Bg1hnrtuYMZiaOGff4o=;
- b=EwDZAsr+DRTztcQU2yR40RpReRStIiZKKB6dQDIS7eGCpQOIjcrLlg/WVruvGDGhqCydlcJvm038gAGTtyUpiNXAV6sPcAOjCnjHHQwLA1Kf/9T7KXj8pT8oNXz2GSLm+CYTVYly7M/xINgaZC8tlHKWAnkF2+cH+y7q7iO6QxZtUkXgY+EPrQbn5Xu4ZYYH9I6s5SINM+PDYBcsDDsdlHKs8iYDVTBoKZaXLWu092YdH7RMDQnXWovelbY7G1h1SNm0ZfGW54boYcSOEbkvmpL8T5Nai2yWPmrFmvLDiBumtb4tGWPaYHAzzM0shzo76fO/YT3FIHMVoYZ/McSwLg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com (2603:10a6:10:309::18)
- by AM9PR04MB8162.eurprd04.prod.outlook.com (2603:10a6:20b:3b5::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Wed, 5 Mar
- 2025 15:40:49 +0000
-Received: from DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d]) by DB9PR04MB9626.eurprd04.prod.outlook.com
- ([fe80::e81:b393:ebc5:bc3d%4]) with mapi id 15.20.8489.025; Wed, 5 Mar 2025
- 15:40:49 +0000
-Date: Wed, 5 Mar 2025 10:40:40 -0500
-From: Frank Li <Frank.li@nxp.com>
-To: Stefan Eichenberger <eichest@gmail.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, shawnguo@kernel.org,
-	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
-	p.zabel@pengutronix.de, tharvey@gateworks.com, hongxing.zhu@nxp.com,
-	francesco.dolcini@toradex.com, linux-phy@lists.infradead.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2 1/2] phy: freescale: imx8m-pcie: cleanup reset logic
-Message-ID: <Z8hweDIy0AuxzBRR@lizhi-Precision-Tower-5810>
-References: <20250305144355.20364-1-eichest@gmail.com>
- <20250305144355.20364-2-eichest@gmail.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305144355.20364-2-eichest@gmail.com>
-X-ClientProxiedBy: SJ0PR05CA0137.namprd05.prod.outlook.com
- (2603:10b6:a03:33d::22) To DB9PR04MB9626.eurprd04.prod.outlook.com
- (2603:10a6:10:309::18)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E362500C6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:40:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741189258; cv=none; b=ir162gIbmbDZofTIyDw5XB64uakLXPD9PXjZ0RbrC+JOJDY2YBHasvxsmf/Mc/3oTAdDik9k3LNiEp6vIPzVYPqQ3xnBGhlpcxLsh1xJPtBiC7plaC9guMdNCq+sC/jLxqB/Ex0R44A/QrQyTH3EmtIKWEfPZrc5Uj8D+F1P7lk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741189258; c=relaxed/simple;
+	bh=S5V4K4G9/5vJWNMjiayM1hFuWoqlo2JQsadqMzM6j4s=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qALWIs+bRdYjpGvDhmWmZssux1o6ZyOJ8P4BsvrMrvr+hlje3ppZqE3MJZRFpne28LZDlng6ZZXhNdzq/4Q+JGG0ZagmcFSaniRTQdDhaJR9C61a//qIfbivcqXetQ3mDNFCdv9ghgFBxuu/nTdQ13FJiAOTUxonP6wPI+q6ItM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=Qk+UO+6v; arc=none smtp.client-ip=94.124.121.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=protonic.nl; s=202111;
+	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
+	 message-id:subject:cc:to:from:date:from;
+	bh=E+kuQhjj9xzNE6BQn+tsChkhWmfrDEIZBYOWMsZmgiI=;
+	b=Qk+UO+6vvgBlPcvycrq9X9afftKz9msDJkOE4JHf9WXUXPHPlDemBTl6Ow4XjhWWOX8wlJfzCpxib
+	 aOlPD38wDrVUqO9xCaJ2kdtI/nY7hFlIS5xz4peuoSM/nPQFVd0a21QBOXFZC2HDtJH4Ac3i/KzSfX
+	 Oe5rqDbpHNRkglhrSfp9ki803Bxw/F2P3m5Dsob6QFhhTIajO1VhK7z/LdPNGeAsgebx5uYAKlSeJe
+	 uhEqeA3Te23Ec9/ctbFt3XU2h2F2WDzXYWI7GI6IS2qBkpAapzGHuvnNZyjUgadFJG50U8Jpw7xvY7
+	 EN6XLHNM+2dvv0oJCmnKzo6Xg4glinA==
+X-MSG-ID: 34bb63cf-f9d8-11ef-a39e-00505681446f
+Date: Wed, 5 Mar 2025 16:40:45 +0100
+From: David Jander <david@protonic.nl>
+To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
+ <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
+ <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
+Message-ID: <20250305164046.4de5b6ef@erd003.prtnl>
+In-Reply-To: <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
+References: <20250227162823.3585810-1-david@protonic.nl>
+	<20250227162823.3585810-2-david@protonic.nl>
+	<6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
+Organization: Protonic Holland
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DB9PR04MB9626:EE_|AM9PR04MB8162:EE_
-X-MS-Office365-Filtering-Correlation-Id: 6c858de7-3496-4ee9-02eb-08dd5bfc1a70
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
- BCL:0;ARA:13230040|1800799024|366016|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
- =?us-ascii?Q?1Z9hkwQBfYbZ35SKjhdOsgX5OvnOnafFVIh4I3H2FkhpCm14SWl3PXmj/5UH?=
- =?us-ascii?Q?UEgUUfu745T9CEp2eLFMzkHZON6HesOXNcx5WbxFrsMvlsWyGp2xVuvdI6DM?=
- =?us-ascii?Q?w6GFV++YvexaX+/fA/PktXn/jEQjKIYihaYiCATQodBl5r/9ygxhX5cblkZu?=
- =?us-ascii?Q?AfYKj5mYwFv693cAQiPhVtBmUJntyht/BMmRAtsZhTqh6MahQLUOlCLS0H3M?=
- =?us-ascii?Q?TdSKQO8vnoK3Voh6eEYWZKbLGqXk2MVmDjuEWFJ80jT6VXv6nF/lWJSjA56E?=
- =?us-ascii?Q?z+GYDwhVTU7Dqh/oGb+7oXMHawhzM+0r6QcqJ4ajEE+0oS3dc7dhZJU9yrL0?=
- =?us-ascii?Q?o14oYYdmtJQKik+mk0dieyUCJJQiiX8/aKrDDyQS8dm0P6Ow8X7SEzJzjklq?=
- =?us-ascii?Q?qvZ46uwVp8kTbG46PsdSkohCmobE/y5SeacSz9vKFJI4RkAc/C6K35+2jSXf?=
- =?us-ascii?Q?lWJlbAiQzzecyql+4K4bCXZTHyViM1+OaMYTDwGuQyQHN9Z2Q1tBsHmu3omq?=
- =?us-ascii?Q?mzO58QtZDHRIzVSSSUxR/pEMXEh1GX8SXO6GS2W7Fl+olA6/fpUwI4rzsjjf?=
- =?us-ascii?Q?wIrKSSVQ6OgmP59SpQggSl8Cp+0ATYVUe2H5QG/bLHBMcoCK0AWkOoU5GIxD?=
- =?us-ascii?Q?eALZ7lHaSH97jYSHe1gLcqDkxj5Ts7bpgIymSJl0UGyyTnjWEDS8mJMnT4qY?=
- =?us-ascii?Q?3OUYMt0r9DbjbsfonQKVFUx7N4GY7YemAlEE711uHngvLXly5VbJsUWKZU1H?=
- =?us-ascii?Q?mbs1Tl5Jwwf2M0xh9O5JHZDPuGe8NmmFi/fIY1wjJ/t9Oh9N9zmDmsgiazSC?=
- =?us-ascii?Q?hCUmrbNgqafOgFyGjS8DF7iByEZK91oH7jTlO0XRLC5dwrlzQTwjG1pAO++U?=
- =?us-ascii?Q?PFdVd6/9vtJraf6VczGhnzF/kTz9ha16MsydMpXNP8PRwOlBBuz0pV/l3orR?=
- =?us-ascii?Q?OOERHLZ6PpAG1rXQLv3BrTlfWA3sjmxzj1ZFHo3zsFDUyrCCS5SrhdjfONCs?=
- =?us-ascii?Q?P7yGhZKTBg5nlFBsJuxeapyp0rcI2dc8JR3d1SPobCZq0RJtrpWtXhKY2O0z?=
- =?us-ascii?Q?ikCRPk1w81shd1fsUIlEppdL8cGVJIzbWSQV7eoWM6dD/S9E5uf1rtJMBe6z?=
- =?us-ascii?Q?WW4+0v+9b2sEGWPkLLiALqcu9nvPeYKBTelZaSPIfQIONk0U+zKmPly1cuZr?=
- =?us-ascii?Q?okY2rxrjJHpSjaHfrNqWgIsqYDp654l2IFgctbBPjeSLgxlV4LOtDbCJAnu9?=
- =?us-ascii?Q?CA9D3uiiNtiK8V4JYzoOH6VQA4Yaldqm6H4zjNvDCvaRuSvCXKFlbElkj8qO?=
- =?us-ascii?Q?+7MLyKyYJZ81TMHs5WoxxshSEe58cQQpTc4w/aRPH13DqzJwbf31JpwnJXE/?=
- =?us-ascii?Q?udCnhZZykLLLuX58TS2+2JY3z81agSQdZ2EXLO1bzz46S/n2A0/QLP+yw6zT?=
- =?us-ascii?Q?JS3XwwkwD9S5P/ex4QY6/ayRBi4W5vgQ?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB9626.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?us-ascii?Q?H6D+xPdSmV/w/J/Cp1+iA59g+q3OhXU5Pc8kdxT8CFE1fYEgAwwh6oVHsn9g?=
- =?us-ascii?Q?u4jK7Bz9KqjlAY6/xJm/zYK144k2WeAqPp2iDeTd757iC4azF4y2b+oRkwp7?=
- =?us-ascii?Q?fqAGqyEo8XsIqma5ROv59QXQxNoKAT0UUYIBk6D/pyggtDz3/DON8YiGeR+S?=
- =?us-ascii?Q?e2zSDnWSY26vNTA6v5dwDZnbtRsJtsdYfdx6vrZUQ56fB3UH9u7G414jZnX5?=
- =?us-ascii?Q?PqdexAiyzl0PXN3T8pVLX+VBRzKwGQzkV076y+d8x7cGkudFeXRhMRBkrc2/?=
- =?us-ascii?Q?vLs+QTFDPk0m2iwFoYuZFkOASPERUkxA2f23p0zUEoadZ0CxWv0FI+yvOVBb?=
- =?us-ascii?Q?cVADGkQw01ao+aPd/QTgHVwsTYxBV7ut/H4ZJdgqtyMbVps7MFzD1C5nOn7P?=
- =?us-ascii?Q?EL9Ep2Zt1MEzKv06ysaJQ3VCIIhe3MXCpDyZw4EcItg2J3kYMlMzZwL7Lbxj?=
- =?us-ascii?Q?YFw8KILqtcG6Hp7s0wKFlwnuhk2nYlTzu5VUeGmJcraD2+RhaKp8mCV3dC78?=
- =?us-ascii?Q?HbBEvn7D0ok5fauu5EIJkv9xjqctfLo8Hf+vTMat2OnObIXW0dQt6lTJd09p?=
- =?us-ascii?Q?Mzg50m/CzjTAF4fE4UIrR7sP7Z1S2AR1cMTyi6dXoH17nZu4rimU+YPbyU2d?=
- =?us-ascii?Q?9I/hmgetYp86BWP4XukAouWUy2ELwzyCOEyygxaix+WZQsqWIyozy0WWGy28?=
- =?us-ascii?Q?ysSi2lTi8RDfQVEgrev8RfsxbOK7Cte6kZXU754o2Wzr5hrLfwuuT1z/pGpN?=
- =?us-ascii?Q?+4NnIsF1LLo+aFRBb0OzCf33ZEkc4XTGMaE1AzhSyI6kW/bSQr0gTOiS/I+y?=
- =?us-ascii?Q?h32JZ6iwZAkRe3mgaHOSoqIF1riLoNHAqKXAfDiZHz+5iKcVETy7p1BSaZvQ?=
- =?us-ascii?Q?9dIg/1jOKku3fasRJ89jrbctMHTVqIrO5yRWe9xmdOOHeyDI4b0RvL958gP4?=
- =?us-ascii?Q?HvOWQ9OpQcz//7dBKGZF7GUHR2+YGmNZt8FaFqwbiti4FuKnBjkrVC1AzSCf?=
- =?us-ascii?Q?XW9MyNiqBpFxxHHHycxzU55ntQ8piYXYRDKS0XG7cj2i4FPKUX96YcxkJo40?=
- =?us-ascii?Q?2KFEpVaVXGWJnn46Zvn1PtzpPshEk/a2ktz28g30KGTF13PGtBq8Hmap/aMv?=
- =?us-ascii?Q?yu3Isx26EuDLyqf23M6aYFf3RyO/4E7mTK8iYSdNtkXgjg2J8Q60UaNzt/zW?=
- =?us-ascii?Q?mtPjZpfEjIZE4sgQLgm7Oiyny56Ml5eI/7lVtCfi8HLJErQw3KCh7jBKALBt?=
- =?us-ascii?Q?uS1BMvUrBrbMXOAxl2WeB3HlWPJwZ/qDkkbB2D+7q6dt7JahDIErKbevfAyN?=
- =?us-ascii?Q?E/tY65CxYfQjfepyr5aw8jn9DJ05ey0H7LoX5BIb5WByNLRdwIPqEDZ9g9un?=
- =?us-ascii?Q?xsfdKl7z9MWkXfaTbak9pb5cEOlsRLqTLqj/f+33Ap8JsP4wNcOS1gTOvusK?=
- =?us-ascii?Q?QX4NXI7OTkm00eALNqdhvm5zlZXbPwGLLDbhnIVjAVUlBuVxgek6hUhNexCD?=
- =?us-ascii?Q?/5d9DWNTNHpOLn9rKjsGxfvWMr/LiZVYLKxR2xDGOIKfmwSgqqIQ7jsxM7Ls?=
- =?us-ascii?Q?JNI2tUWW3EU3x2AYKb9RvyS5COHtwEuCODHseEKc?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6c858de7-3496-4ee9-02eb-08dd5bfc1a70
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB9626.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 15:40:49.2917
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0sWqJZZC1mJHBVgubHanxboOQ0rN2E23xYLw/CTQ7y3rXtPL3H6MPH8xCZgT2xvvztQL5ReybVg5chz+4iJ1/A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8162
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 05, 2025 at 03:43:15PM +0100, Stefan Eichenberger wrote:
-> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
->
-> Remove the switch statement and base perst release on whether it is
-> found in the device tree. The probe function fails without the reset
-> property, making it mandatory. Therefore, always release reset
-> independent of the variant.
 
-Thanks for clean up this.
+Hi Uwe,
 
-"Remove the switch statement for releasing 'perst' and 'reset' since they
-are already correctly set at probe and are no-ops for
-reset_control_deassert(NULL). Call these unconditionally."
+On Fri, 28 Feb 2025 17:44:27 +0100
+Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
 
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> Hello David,
+>=20
+> just a few highlevel review comments inline.
 
->
-> This does not change the behavior of the driver but reduces driver
-> complexity and allows for easier future modifications.
->
-> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> ---
->  drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 12 +++---------
->  1 file changed, 3 insertions(+), 9 deletions(-)
->
-> diff --git a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-> index e98361dcdeadf..5b505e34ca364 100644
-> --- a/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-> +++ b/drivers/phy/freescale/phy-fsl-imx8m-pcie.c
-> @@ -141,15 +141,9 @@ static int imx8_pcie_phy_power_on(struct phy *phy)
->  			   IMX8MM_GPR_PCIE_REF_CLK_PLL);
->  	usleep_range(100, 200);
->
-> -	switch (imx8_phy->drvdata->variant) {
-> -	case IMX8MP:
-> -		reset_control_deassert(imx8_phy->perst);
-> -		fallthrough;
-> -	case IMX8MM:
-> -		reset_control_deassert(imx8_phy->reset);
-> -		usleep_range(200, 500);
-> -		break;
-> -	}
-> +	reset_control_deassert(imx8_phy->perst);
-> +	reset_control_deassert(imx8_phy->reset);
-> +	usleep_range(200, 500);
->
->  	/* Do the PHY common block reset */
->  	regmap_update_bits(imx8_phy->iomuxc_gpr, IOMUXC_GPR14,
-> --
-> 2.45.2
->
+Thanks...
+
+> On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
+> [...]
+> > +static int motion_open(struct inode *inode, struct file *file)
+> > +{
+> > +	int minor =3D iminor(inode);
+> > +	struct motion_device *mdev =3D NULL, *iter;
+> > +	int err;
+> > +
+> > +	mutex_lock(&motion_mtx); =20
+>=20
+> If you use guard(), error handling gets a bit easier.
+
+This looks interesting. I didn't know about guard(). Thanks. I see the
+benefits, but in some cases it also makes the locked region less clearly
+visible. While I agree that guard() in this particular place is nice,
+I'm hesitant to try and replace all mutex_lock()/_unlock() calls with guard=
+().
+Let me know if my assessment of the intended use of guard() is incorrect.
+
+> > +	list_for_each_entry(iter, &motion_list, list) {
+> > +		if (iter->minor !=3D minor)
+> > +			continue;
+> > +		mdev =3D iter;
+> > +		break;
+> > +	} =20
+>=20
+> This should be easier. If you use a cdev you can just do
+> container_of(inode->i_cdev, ...);
+
+Hmm... I don't yet really understand what you mean. I will have to study the
+involved code a bit more.
+
+> [...]
+> > +static int motion_release(struct inode *inode, struct file *file)
+> > +{
+> > +	struct motion_device *mdev =3D file->private_data;
+> > +	int i;
+> > +
+> > +	if (mdev->ops.device_release)
+> > +		mdev->ops.device_release(mdev);
+> > +
+> > +	for (i =3D 0; i < mdev->num_gpios; i++) {
+> > +		int irq;
+> > +		struct motion_gpio_input *gpio =3D &mdev->gpios[i];
+> > +
+> > +		if (gpio->function =3D=3D MOT_INP_FUNC_NONE)
+> > +			continue;
+> > +		irq =3D gpiod_to_irq(gpio->gpio);
+> > +		devm_free_irq(mdev->dev, irq, gpio); =20
+>=20
+> It seems devm is just overhead here if you release by hand anyhow.
+
+Ack. This looks indeed unnecessary... I'll try to use non-devres calls here.
+
+> > [...]
+> > +
+> > +static const struct class motion_class =3D {
+> > +	.name		=3D "motion",
+> > +	.devnode	=3D motion_devnode, =20
+>=20
+> IIRC it's recommended to not create new classes, but a bus.
+
+Interesting. I did some searching, and all I could find was that the chapter
+in driver-api/driver-model about classes magically vanished between versions
+5.12 and 5.13. Does anyone know where I can find some information about thi=
+s?
+Sorry if I'm being blind...
+
+> [...]
+> > +int motion_register_device(struct motion_device *mdev)
+> > +{
+> > +	dev_t devt;
+> > +	int err =3D 0;
+> > +	struct iio_motion_trigger_info *trig_info;
+> > +
+> > +	if (!mdev->capabilities.num_channels)
+> > +		mdev->capabilities.num_channels =3D 1;
+> > +	if (mdev->capabilities.features | MOT_FEATURE_PROFILE)
+> > +		mdev->capabilities.max_profiles =3D MOT_MAX_PROFILES;
+> > +	if (!mdev->capabilities.speed_conv_mul)
+> > +		mdev->capabilities.speed_conv_mul =3D 1;
+> > +	if (!mdev->capabilities.speed_conv_div)
+> > +		mdev->capabilities.speed_conv_div =3D 1;
+> > +	if (!mdev->capabilities.accel_conv_mul)
+> > +		mdev->capabilities.accel_conv_mul =3D 1;
+> > +	if (!mdev->capabilities.accel_conv_div)
+> > +		mdev->capabilities.accel_conv_div =3D 1;
+> > +
+> > +	mutex_init(&mdev->mutex);
+> > +	mutex_init(&mdev->read_mutex);
+> > +	INIT_KFIFO(mdev->events);
+> > +	init_waitqueue_head(&mdev->wait);
+> > +
+> > +	err =3D motion_of_parse_gpios(mdev);
+> > +	if (err)
+> > +		return err;
+> > +
+> > +	mdev->minor =3D motion_minor_alloc();
+> > +
+> > +	mdev->iiotrig =3D iio_trigger_alloc(NULL, "mottrig%d", mdev->minor);
+> > +	if (!mdev->iiotrig) {
+> > +		err =3D -ENOMEM;
+> > +		goto error_free_minor;
+> > +	}
+> > +
+> > +	trig_info =3D kzalloc(sizeof(*trig_info), GFP_KERNEL);
+> > +	if (!trig_info) {
+> > +		err =3D -ENOMEM;
+> > +		goto error_free_trigger;
+> > +	}
+> > +
+> > +	iio_trigger_set_drvdata(mdev->iiotrig, trig_info);
+> > +
+> > +	trig_info->minor =3D mdev->minor;
+> > +	err =3D iio_trigger_register(mdev->iiotrig);
+> > +	if (err)
+> > +		goto error_free_trig_info;
+> > +
+> > +	mdev->iiowork =3D IRQ_WORK_INIT_HARD(motion_trigger_work);
+> > +
+> > +	INIT_LIST_HEAD(&mdev->list);
+> > +
+> > +	mutex_lock(&motion_mtx);
+> > +
+> > +	devt =3D MKDEV(motion_major, mdev->minor);
+> > +	mdev->dev =3D device_create_with_groups(&motion_class, mdev->parent,
+> > +				devt, mdev, mdev->groups, "motion%d", mdev->minor); =20
+>=20
+> What makes sure that mdev doesn't go away while one of the attributes is
+> accessed?
+
+Good question. I suppose you mean that since mdev is devres-managed and
+device_create_with_groups() apparently isn't aware of that, so there is no
+internal lock somewhere that prevents read() or ioctl() being called while =
+the
+devres code is freeing the memory of mdev?
+
+I will try to search for some example code to see how something like this is
+handled in other places. I assume I'd need to add a per-mdev lock or use the
+big motion_mtx everywhere... which sounds like a performance penalty that
+should be avoidable. If you know of a good example to learn from, I'd be
+grateful to know.
+
+> > +	if (IS_ERR(mdev->dev)) {
+> > +		dev_err(mdev->parent, "Error creating motion device %d\n",
+> > +				mdev->minor);
+> > +		mutex_unlock(&motion_mtx);
+> > +		goto error_free_trig_info;
+> > +	}
+> > +	list_add_tail(&mdev->list, &motion_list);
+> > +	mutex_unlock(&motion_mtx);
+> > +
+> > +	return 0;
+> > +
+> > +error_free_trig_info:
+> > +	kfree(trig_info);
+> > +error_free_trigger:
+> > +	iio_trigger_free(mdev->iiotrig);
+> > +error_free_minor:
+> > +	motion_minor_free(mdev->minor);
+> > +	dev_info(mdev->parent, "Registering motion device err=3D%d\n", err);
+> > +	return err;
+> > +}
+> > +EXPORT_SYMBOL(motion_register_device);
+> > [...]
+> > +struct mot_capabilities {
+> > +	__u32 features;
+> > +	__u8 type;
+> > +	__u8 num_channels;
+> > +	__u8 num_int_triggers;
+> > +	__u8 num_ext_triggers;
+> > +	__u8 max_profiles;
+> > +	__u8 max_vpoints;
+> > +	__u8 max_apoints;
+> > +	__u8 reserved1;
+> > +	__u32 subdiv; /* Position unit sub-divisions, microsteps, etc... */
+> > +	/*
+> > +	 * Coefficients for converting to/from controller time <--> seconds.
+> > +	 * Speed[1/s] =3D Speed[controller_units] * conv_mul / conv_div
+> > +	 * Accel[1/s^2] =3D Accel[controller_units] * conv_mul / conv_div
+> > +	 */
+> > +	__u32 speed_conv_mul;
+> > +	__u32 speed_conv_div;
+> > +	__u32 accel_conv_mul;
+> > +	__u32 accel_conv_div;
+> > +	__u32 reserved2;
+> > +}; =20
+>=20
+> https://docs.kernel.org/gpu/imagination/uapi.html (which has some
+> generic bits that apply here, too) has: "The overall struct must be
+> padded to 64-bit alignment." If you drop reserved2 the struct is
+> properly sized (or I counted wrongly).
+
+Oh, thanks for pointing that out... I wouldn't have searched for that
+information in that particular place tbh. ;-)
+
+I am tempted to add another __u32 reserved3 though instead. Better to have
+some leeway if something needs to be added in a backwards-compatible way la=
+ter.
+
+> > +struct mot_speed_duration {
+> > +	__u32 channel;
+> > +	speed_raw_t speed; =20
+>=20
+> What is the unit here?
+
+Speed doesn't have a fixed unit in this case. Or rather, the unit is
+device-dependent. For a motor it could be rotations per second, micro-steps=
+ per
+second, etc... while for a linear actuator, it could be micrometers per sec=
+ond.
+
+Why no fixed unit? That's because in practice many devices (controllers) ha=
+ve
+their inherent base-unit, and it would get overly complicated if one needed=
+ to
+convert back and forth between that and some universal unit just for the sa=
+ke
+of uniformity, and user-space most certainly expects the same unit as the
+hardware device it was initially designed for. So in this case it is a desi=
+gn
+decision to make user-space deal with unit-conversion if it is necessary to=
+ do
+so.
+
+> > +	mot_time_t duration; =20
+>=20
+> duration_ns? That makes usage much more ideomatic and there should be no
+> doubts what the unit is.
+
+Yes, mot_time_t is defined as nanoseconds, so I'll add the _ns suffix here.
+
+> > +	pos_raw_t distance; =20
+>=20
+> What is the unit here?
+
+Again this unit can have different meanings: micrometers, micro-steps,
+angle-degrees, etc... so what suffix to use?
+
+> > +	__u32 reserved[3]; =20
+>=20
+> Again the padding is wrong here.
+
+Will fix. thanks.
+=20
+Best regards,
+
+--=20
+David Jander
 
