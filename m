@@ -1,232 +1,181 @@
-Return-Path: <linux-kernel+bounces-547840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03724A50E39
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:57:49 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1B7A50E41
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:01:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 419CF7A3748
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:56:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 301E07A36F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5640265633;
-	Wed,  5 Mar 2025 21:57:37 +0000 (UTC)
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955512661AD;
+	Wed,  5 Mar 2025 22:01:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="CgcToDdR"
+Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70EAB2571C6;
-	Wed,  5 Mar 2025 21:57:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2784A1C84B9;
+	Wed,  5 Mar 2025 22:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741211857; cv=none; b=Rquon8wcHx3hvbJTn+ap1RlcXy/9XD1Ka7qaFZIabZ3+pFBE+VlGugk74+BpkRohbSfLm62qgLFvM7ASjUA+eOqOQ0H1gMII8EXAVckSkG0TRUwtIQnQnVPVCnb6xoyrfmbkyJ5dJdQDdC6+QP8unEjm9fY9mUQTJxa877sCGFE=
+	t=1741212099; cv=none; b=YlXhFHSIOWB80ngrxx2Cdq/KRIJLTTFp8y8X9TqV0NWfXJI+zsDve5r8VIVeSbD88xQLp9bsItoNOY8Dzk77u5vHV0xeFRHKWhrecFcceoZElwfXOtnudAoiq4S+wFL8PFDwCa5Xq+tXo2cktmJY5nVQqV0NuqD4ISSyTqjdWRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741211857; c=relaxed/simple;
-	bh=pXA55zWb3OLx17xkUOLHzdtk1lZRc2oejxk9utsYbcI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HPf+szcXlj+PkDx8fx1wMyo+UqkHk6JCtSwr7O2fv0P1pNNSLnPZ8mRDUBugfx5sekORocg7GENsF27/OHUAK8NYX444VZzq5IHQKRyfLX32V6cfTh/lUFqntTYgrqrgCOYOvB4zqFLdm6JDC1x6JivnhHW55KJMcdANvjH8WQY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-22113560c57so137423925ad.2;
-        Wed, 05 Mar 2025 13:57:35 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741211854; x=1741816654;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=G5oLj+118MekjPiNQhRObsqao3JOH+wuRmhMOoWyOZI=;
-        b=lSA8E3FkoOTtRoNF39xTPLwpfw5dljYujIsdGtqLChKKl1a0pC1OpnahfFleIkLxtH
-         nfqKe2CHgnnGTID7LdWS7YSVpTY+QE8s4f7IHqc35A6bW2f19Y5DgmSLYiLLONLlJ81E
-         9geTuhREoIiOMvTwGcBeGiRw+7IN5C8VUVT0KzvQ6MfBMb/yg0W1kd3DoqaWqtyDksf8
-         PwKRkkCXlEe9cugn3abFkHI7ev5gDJAl00Vub7JgQBhCx7jA+lKGh1Lr6BWhP3ylGWTM
-         mZOtAtEb3EaEx1iHZENT/nuYrbFZuc3jzq19VIO+Ho/BVemkZTtf+ZhEyiKKHteLaOmc
-         OJZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV+MvpFMj59JwBOZyHyV1NHBbUi4HaScU+c0P8pBPT5xFkAYsrhXKo4RZxMCAbQJC0rWPzCveg+VcikflgVqgQd0HY=@vger.kernel.org, AJvYcCVbZABflsbLXbvzMbCphfnxasfjQ6bw9HoxRTpmYC6kywAQ/SMS3cxQQoJudvgE4xEwF35y1Yr57XmptjJF6POPZw==@vger.kernel.org, AJvYcCWjOLSRvfQPX6S1OVVXJbG66WvqTi4hjO1oUOd/1Nuzz2Ea9Z4kUG6+xCDoJ3b1h9xb1pz54uUcvMJC@vger.kernel.org, AJvYcCXPJY7YFyFhQ0ZxAY82ipll/qgrYdO/y9o7FMLqv5OY27oUCveJ/BurhhycXGspRCcb7cIZFgkVQgbAWvU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YygUezAjq7czkwR2Y0OD6+8HkTr+zL79MD9Dkr0L5dqwHHfjHMf
-	KqsWlqztjXi5z/Guig6VhQ8IONk0ox7SY/yQD4/hFQ9GN47aTJvk
-X-Gm-Gg: ASbGncuLRtlSkjybb30jQXWK2bHsM5jgohT+oW5OulD68lIR7hsA3B6BAEBJS1t+9Wr
-	OBbbuk7Q1QxOkGc9BAoOiNh7gXB4yGAbqFDVqD+ofaJJJ2FFy8YjJkb/+azZD2sqb9a+hJ+Tw+1
-	eowfgUyrK2QA/xbtFJkGGd9pPRKdFIOhhBrOtawXyVMPdTVXCcXFXbWZsRIfVMby/evqRt47ygy
-	iD3ir6QZYAex9H5ZYYVucjSsDudWGYx61BLjcahnrT4bZEc7oUD2lXLM4w2J7ANL0ogDSTpR5jm
-	9PWLUmtY76SRT49727Q2h0UYmmKtEwsGi7OtQWO9yfmPMBWfSANxq2WXtAd3dt5uVx40E8kmpSc
-	BS9A=
-X-Google-Smtp-Source: AGHT+IGuIOJavdPgCJ9sCafNt1cSRA420lYDVSVad8g7o0o+KgD598cgIajBU5IrPyUL8MNnaUygNQ==
-X-Received: by 2002:a05:6a21:1f81:b0:1ee:d6ff:5abd with SMTP id adf61e73a8af0-1f34947e736mr9366143637.14.1741211854471;
-        Wed, 05 Mar 2025 13:57:34 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id 41be03b00d2f7-aee7dec415asm12522672a12.54.2025.03.05.13.57.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 13:57:33 -0800 (PST)
-Date: Thu, 6 Mar 2025 06:57:31 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Cc: Bjorn Helgaas <helgaas@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Fan Ni <nifan.cxl@gmail.com>, Shradha Todi <shradha.t@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@huawei.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
-Message-ID: <20250305215731.GL847772@rocinante>
-References: <20250304171154.njoygsvfd567pb66@thinkpad>
- <20250305173826.GA303920@bhelgaas>
- <20250305182833.cgrwbrcwzjscxmku@thinkpad>
- <20250305190955.GK847772@rocinante>
+	s=arc-20240116; t=1741212099; c=relaxed/simple;
+	bh=/408JW3/K3EFm7N0Q/95CTFcpD5T/HxnHzWL4JoSqpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ayQ2xYDuflyGqCnnsStRUcnti7WO4a+dlraFZjrnsSh/elxVoggjEts+Dn7/vuh4137Duzs/Wm5/rLmywBmhXgD1oPrBqYHdkYUVb7eaBMRZE8gdbhoFPXQs6SqicqNT+N/boA/Gy9EytdZMUFk2s97+c+ThTF1FAzrib7IEhkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=CgcToDdR; arc=none smtp.client-ip=109.230.236.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
+	t=1741212096; bh=/408JW3/K3EFm7N0Q/95CTFcpD5T/HxnHzWL4JoSqpo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=CgcToDdRavNi2y+nVVolQqjv0K18KtigroOvSW8w2VgTzlij4wiX58JSHj3t7z/Ar
+	 RopwYQJKUDS5RAVyLny+ec25mPtqfzEKCfzc2owr3/kSJoi9Sb7mP7AOXV7H+I4TPg
+	 AQ/mDqumjtkfbRUqQ+56L/08e9XqMF/t9rdx/JJo=
+Received: from [IPV6:2001:8e0:207e:3500:4ab6:48fe:df57:b084] (2001-8e0-207e-3500-4ab6-48fe-df57-b084.ewm.ftth.ip6.as8758.net [IPv6:2001:8e0:207e:3500:4ab6:48fe:df57:b084])
+	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 4106C2052A89;
+	Wed,  5 Mar 2025 23:01:36 +0100 (CET)
+Message-ID: <5141441e-040f-4ba3-8567-91110fa91df0@ralfj.de>
+Date: Wed, 5 Mar 2025 23:01:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305190955.GK847772@rocinante>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Allow data races on some read/write operations
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Boqun Feng <boqun.feng@gmail.com>, comex <comexk@gmail.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Daniel Almeida <daniel.almeida@collabora.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
+ robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ airlied@redhat.com, iommu@lists.linux.dev, lkmm@lists.linux.dev
+References: <87bjuil15w.fsf@kernel.org>
+ <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
+ <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+ <87ikoqjg1n.fsf@kernel.org>
+ <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
+ <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
+ <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
+ <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
+ <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
+ <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
+ <9wOjabjsxQUrlTOfcLXOYjYxTroyzIPZCy1xeZsv7IctEqEe-iUaGCL4xKebv01sARjrMfYNkPx4sJLtKLmPXA==@protonmail.internalid>
+ <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de> <87pliv726u.fsf@kernel.org>
+Content-Language: en-US, de-DE
+From: Ralf Jung <post@ralfj.de>
+In-Reply-To: <87pliv726u.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> > > > Even though debugfs_init() failure is not supposed to fail the probe(),
-> > > > dwc_pcie_rasdes_debugfs_init() has a devm_kzalloc() and propagating that
-> > > > failure would be canolically correct IMO.
-> > > 
-> > > I'm not sure about this.  What's the requirement to propagate
-> > > devm_kzalloc() failures?  I think devres will free any allocs that
-> > > were successful regardless.
-> > > 
-> > > IIUC, we resolved the Gray Hawk Single issue by changing
-> > > dwc_pcie_rasdes_debugfs_init() to return success without doing
-> > > anything when there's no RAS DES Capability.
-> > > 
-> > > But dwc_pcie_debugfs_init() can still return failure, and that still
-> > > causes dw_pcie_ep_init_registers() to fail, which breaks the "don't
-> > > propagate debugfs issues upstream" rule:
-> > > 
-> > >   int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
-> > >   {
-> > >           ...
-> > >           ret = dwc_pcie_debugfs_init(pci);
-> > >           if (ret)
-> > >                   goto err_remove_edma;
-> > > 
-> > >           return 0;
-> > > 
-> > >   err_remove_edma:
-> > >           dw_pcie_edma_remove(pci);
-> > > 
-> > >           return ret;
-> > >   }
-> > > 
-> > > We can say that kzalloc() failure should "never" happen, and therefore
-> > > it's OK to fail the driver probe if it happens, but that doesn't seem
-> > > like a strong argument for breaking the "don't propagate debugfs
-> > > issues" rule.  And someday there may be other kinds of failures from
-> > > dwc_pcie_debugfs_init().
-> > > 
-> > 
-> > Fine with me. I was not too sure about propagating failure either.
-> 
-> What if we do this?
-> 
-> diff --git i/drivers/pci/controller/dwc/pcie-designware-debugfs.c w/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> index 586a9d107434..fddf71f014c4 100644
-> --- i/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> +++ w/drivers/pci/controller/dwc/pcie-designware-debugfs.c
-> @@ -162,7 +162,7 @@ void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
->  	debugfs_remove_recursive(pci->debugfs->debug_dir);
->  }
-> 
-> -int dwc_pcie_debugfs_init(struct dw_pcie *pci)
-> +void dwc_pcie_debugfs_init(struct dw_pcie *pci)
->  {
->  	char dirname[DWC_DEBUGFS_BUF_MAX];
->  	struct device *dev = pci->dev;
-> @@ -174,17 +174,15 @@ int dwc_pcie_debugfs_init(struct dw_pcie *pci)
->  	snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
->  	dir = debugfs_create_dir(dirname, NULL);
->  	debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
-> -	if (!debugfs)
-> -		return -ENOMEM;
-> +	if (!debugfs) {
-> +		dev_err(dev, "failed to allocate memory for debugfs\n");
-> +		return;
-> +	}
-> 
->  	debugfs->debug_dir = dir;
->  	pci->debugfs = debugfs;
->  	err = dwc_pcie_rasdes_debugfs_init(pci, dir);
-> -	if (err) {
-> -		dev_err(dev, "failed to initialize RAS DES debugfs, err=%d\n",
-> -			err);
-> -		return err;
-> -	}
-> -
-> -	return 0;
-> +	if (err)
-> +		dev_warn(dev, "failed to initialize RAS DES debugfs, err=%d",
-> +			 err);
->  }
-> diff --git i/drivers/pci/controller/dwc/pcie-designware-ep.c w/drivers/pci/controller/dwc/pcie-designware-ep.c
-> index c6e76a07c2c9..11ff292ca87d 100644
-> --- i/drivers/pci/controller/dwc/pcie-designware-ep.c
-> +++ w/drivers/pci/controller/dwc/pcie-designware-ep.c
-> @@ -838,9 +838,7 @@ int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
-> 
->  	dw_pcie_ep_init_non_sticky_registers(pci);
-> 
-> -	ret = dwc_pcie_debugfs_init(pci);
-> -	if (ret)
-> -		goto err_remove_edma;
-> +	dwc_pcie_debugfs_init(pci);
-> 
->  	return 0;
-> 
-> diff --git i/drivers/pci/controller/dwc/pcie-designware-host.c w/drivers/pci/controller/dwc/pcie-designware-host.c
-> index 2081e8c72d12..6501fb062c70 100644
-> --- i/drivers/pci/controller/dwc/pcie-designware-host.c
-> +++ w/drivers/pci/controller/dwc/pcie-designware-host.c
-> @@ -548,9 +548,7 @@ int dw_pcie_host_init(struct dw_pcie_rp *pp)
->  	if (pp->ops->post_init)
->  		pp->ops->post_init(pp);
-> 
-> -	ret = dwc_pcie_debugfs_init(pci);
-> -	if (ret)
-> -		goto err_stop_link;
-> +	dwc_pcie_debugfs_init(pci);
-> 
->  	return 0;
-> 
-> diff --git i/drivers/pci/controller/dwc/pcie-designware.h w/drivers/pci/controller/dwc/pcie-designware.h
-> index 7f9807d4e5de..dd129718fb41 100644
-> --- i/drivers/pci/controller/dwc/pcie-designware.h
-> +++ w/drivers/pci/controller/dwc/pcie-designware.h
-> @@ -815,12 +815,11 @@ dw_pcie_ep_get_func_from_ep(struct dw_pcie_ep *ep, u8 func_no)
->  #endif
-> 
->  #ifdef CONFIG_PCIE_DW_DEBUGFS
-> -int dwc_pcie_debugfs_init(struct dw_pcie *pci);
-> +void dwc_pcie_debugfs_init(struct dw_pcie *pci);
->  void dwc_pcie_debugfs_deinit(struct dw_pcie *pci);
->  #else
-> -static inline int dwc_pcie_debugfs_init(struct dw_pcie *pci)
-> +static inline void dwc_pcie_debugfs_init(struct dw_pcie *pci)
->  {
-> -	return 0;
->  }
->  static inline void dwc_pcie_debugfs_deinit(struct dw_pcie *pci)
->  {
-> 
-> I think this would be fine, especially given the rules around debugfs and
-> a quick look around Git history to see what the prefernce would be typically.
+Hi,
 
-Changed dev_warn() to dev_err() per Bjorn's feedback off mailing list,
-and squashed against the current code on the branch.
+On 05.03.25 19:38, Andreas Hindborg wrote:
+> "Ralf Jung" <post@ralfj.de> writes:
+> 
+>> Hi,
+>>
+>> On 05.03.25 04:24, Boqun Feng wrote:
+>>> On Tue, Mar 04, 2025 at 12:18:28PM -0800, comex wrote:
+>>>>
+>>>>> On Mar 4, 2025, at 11:03 AM, Ralf Jung <post@ralfj.de> wrote:
+>>>>>
+>>>>> Those already exist in Rust, albeit only unstably:
+>>>>> <https://doc.rust-lang.org/nightly/std/intrinsics/fn.volatile_copy_memory.html>.
+>>>>> However, I am not sure how you'd even generate such a call in C? The
+>>>>> standard memcpy function is not doing volatile accesses, to my
+>>>>> knowledge.
+>>>>
+>>>> The actual memcpy symbol that exists at runtime is written in
+>>>> assembly, and should be valid to treat as performing volatile
+>>>> accesses.
+>>
+>> memcpy is often written in C... and AFAIK compilers understand what that
+>> function does and will, for instance, happily eliminate the call if they can
+>> prove that the destination memory is not being read from again. So, it doesn't
+>> behave like a volatile access at all.
+>>
+>>>> But both GCC and Clang special-case the memcpy function.  For example,
+>>>> if you call memcpy with a small constant as the size, the optimizer
+>>>> will transform the call into one or more regular loads/stores, which
+>>>> can then be optimized mostly like any other loads/stores (except for
+>>>> opting out of alignment and type-based aliasing assumptions).  Even if
+>>>> the call isn’t transformed, the optimizer will still make assumptions.
+>>>> LLVM will automatically mark memcpy `nosync`, which makes it undefined
+>>>> behavior if the function “communicate[s] (synchronize[s]) with another
+>>>> thread”, including through “volatile accesses”. [1]
+>>
+>> The question is more,  what do clang and GCC document / guarantee in a stable
+>> way regarding memcpy? I have not seen any indication so far that a memcpy call
+>> would ever be considered volatile, so we have to treat it like a non-volatile
+>> non-atomic operation.
+>>
+>>>> However, these optimizations should rarely trigger misbehavior in
+>>>> practice, so I wouldn’t be surprised if Linux had some code that
+>>>> expected memcpy to act volatile…
+>>>>
+>>>
+>>> Also in this particular case we are discussing [1], it's a memcpy (from
+>>> or to) a DMA buffer, which means the device can also read or write the
+>>> memory, therefore the content of the memory may be altered outside the
+>>> program (the kernel), so we cannot use copy_nonoverlapping() I believe.
+>>>
+>>> [1]: https://lore.kernel.org/rust-for-linux/87bjuil15w.fsf@kernel.org/
+>>
+>> Is there actually a potential for races (with reads by hardware, not other
+>> threads) on the memcpy'd memory?
+> 
+> There is another use case for this: copying data to/from a page that is
+> mapped into user space. In this case, a user space process can
+> potentially modify the data in the mapped page while we are
+> reading/writing that data. This would be a misbehaved user space
+> process, but it should not be able to cause UB in the kernel anyway.
 
-Thank you!
+Yeah that sounds like *the* prototypical case of sharing memory with an 
+untrusted third party.
 
-	Krzysztof
+> 
+> The C kernel just calls memcpy directly for this use case.
+> 
+> For this use case, we do not interpret or make control flow decisions
+> based on the data we read/write. And _if_ user space decides to do
+> concurrent writes to the page, we don't care if the data becomes
+> garbage. We just need the UB to be confined to the data moved from that
+> page, and not leak into the rest of the kernel.
+
+There is no such thing as "confined UB". Well, there is "poison data", which can 
+act a bit like that, but sadly the C standard is extremely ambiguous on that 
+subject and has been for decades despite repeated requests for clarifications, 
+so it is entirely unclear whether and how "poison data" could exist in C. clang, 
+for once, has decided that "poison data" is UB in most situations (including 
+just copying it to / returning it from another function), and this is consistent 
+with some of the messaging of the standards committee. I don't know enough about 
+the internals of gcc to comment on what they do.
+
+Personally, I think that's a mistake; there needs to be some clear way to deal 
+with uninitialized memory (which is the typical example of "poison data").
+
+In Rust we have a fairly clear idea of what our rules should be here, and you 
+can have "poison data" inside the `MaybeUninit` type. However, neither Rust nor 
+C have a way to do reads where data races cause "poison data" rather than UB. 
+See my other email I just sent for the rest of this line of discussion.
+(I'm not used to the sprawling tree of a discussion that is this mailing list, 
+so not sure how to best deal with replies that want to "merge" things said in 
+different emails.)
+
+Kind regards,
+Ralf
+
 
