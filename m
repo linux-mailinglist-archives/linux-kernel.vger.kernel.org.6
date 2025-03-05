@@ -1,158 +1,177 @@
-Return-Path: <linux-kernel+bounces-546030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35483A4F55D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:27:01 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E52BA4F561
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:27:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FC803AAAF1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:26:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D7C3A636D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:27:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8D015D5C4;
-	Wed,  5 Mar 2025 03:26:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28B3217B505;
+	Wed,  5 Mar 2025 03:27:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="PrFXm5Tl"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="byv92Paf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6B2D8828
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 03:26:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC5615ADB4;
+	Wed,  5 Mar 2025 03:27:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741145211; cv=none; b=kau8yTHt/Y1OHnMT+Y6qmQa99CEoEg565cwgaebxK2OUidFDh/ZZfpihMO4gD8eqnrIyGkhZe+2WD9cYiLjyGKULx3OJKms8Yx0gBBDu8JoBG+YfyPtJysS6OQzUmCMMdYLJlqKcKBaRCffrFa+Rl8y0kDjGZDeHrqnzeL1/Kms=
+	t=1741145241; cv=none; b=dzrGtJID98UoetlwAXRQmXmNpr0od+7QX8yoN+mUPNmkfGeqiqVeBQQG/Jj8z9FQVm081Ik8aFSLreMSNjFO6lL5EGinw/8XXHRvvAWqoRbmDvz4NKvZhrm0UxabVUX9/8jTOcGsy7/uwej4VyhDxN662UOm0UsrsTbA+4/TgTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741145211; c=relaxed/simple;
-	bh=bbEei7+FrCui96t1/FVtgiNjItcOM479XXEbS4UhfoY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mEY0a1n3e+RKNyfMqUpOgXJP6hU7AE2ewJk6G/gFA3Dg2nUPOZhkHfzYF+I0+NItQER+JUHr3fqT6j85T7xjgVlQ5eyfUoTOMN7s1oolIDhRqGYc1VwVBlJlB6piFybIdxLrgxHW5wFb/6cpes1yn2DCA1NjFCKiWmEyNzmKsIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=PrFXm5Tl; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2239aa5da08so55333245ad.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 19:26:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1741145208; x=1741750008; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yKFINBa+Q1e4WG77Sg/agAnuGFQablMbFUvpvYj4kDs=;
-        b=PrFXm5TlRdgousJnXbLddtcTVkkffs8Grnn4rnARJFtlHBcnj2wXruKqgS1EtPMPgx
-         IVJVaq48ut4KR9njEfkHIR+k9cK89hmf13k82HqYzXlRpXHHF45xrMlBQdM6MTOnVr6M
-         8s2BDZoo8ZNccyLtThiSIVM3FZUL8M4mqKsQAw9MQbSlbIxzsyHgtFFbsMvVFNc8oPtD
-         28PQDnbTfYMup1i95Z3SgGU4osJSfMKQ+HJILwhhFFPFTr3t4JLPSrFzzcfyyEoS6C8t
-         dGJ1Baq5XM8nraqkOQ3sL57NFiM4sT227y4b2GY+/ekUrxkoQbASxAgJi3C4FD5cpZtz
-         Ipdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741145208; x=1741750008;
-        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=yKFINBa+Q1e4WG77Sg/agAnuGFQablMbFUvpvYj4kDs=;
-        b=Psofuj0Nl+F7yiuKdLpG3tBG7ze95KkES5AerO15jKMsa4WtL3/9zq3i8oqq0g+hAq
-         7i+lHtQwJwo+Co8esjTGh4puug3Ojc5e84lfF/0fSA/tq0dmqLzzx4di7QXgO2/KvFDA
-         pwHGelapxVuwvViDyYUKZFQsYeWfC9FY3R2EymoeNLsfHWGh6JDiMvMB+ALsLTcutRUu
-         MQ+0mgANtWOB8rEu16s/3+5Mfue8miDQOBIXdWHK1fmbISDUM5d6LyFAlEZ9XLhNYimN
-         RrmJVCb74VavtbCFjwpVZmPdQLwj0bENe2pyk+LZSu1/qs8o8zMu2i3bGHq8fCXTF5EG
-         syIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXoK1tGYZ7sH5Ij3ghaeBp8bB/WvbRwBHhmZI32gx526cA49tE0se79207jTjvFn8eW8Owt8w8fG9Y+FYo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPZwlhPaBkoraeASG2NFJiSTrNdYjFsFFa6lELkVJ7lRwc6NmB
-	jxTx+ztO15GS/f9Haq6+OHz3kE/W4MWN/PmBiNiHPtROpxpc++XxUP5WvcSDf+8=
-X-Gm-Gg: ASbGnct88oR9rkkcq+XkVrc+/qnzKjny3/6qUWGSP1IR2NRzweEWsK4PosczG6PPvwI
-	cNIWKDoNN77YRnVfR7cEUJizp+W0yzFX7ObtEnK5SaVGcnsOBHt4a58QthRZ6hq1XKZ9eGgKp7L
-	M7W8uxkqztbQLJNNeNTODamkpzvDH77J3jXxZMF261m6gBy9ueXDCt4LHt250fPt7rrnx7ZB5FJ
-	jbj50tGsLSBMkiW4D9jRU9uG/WbiErVTKABnYxTS40Ct2mhTzESDepu4PdzpqznXTnv57o372Gx
-	TZ62OSxL11jWMRHe+fV2KlcTKslAescr7Epm2hiRWZTk1njoX6bqg5/sxUqarlf4PcuWDQ==
-X-Google-Smtp-Source: AGHT+IGBGORdCLvFd42QG25wNcfjd3DkQHwAlOsYf+nq4bbOhvYPNGfhM8vZksdKWT1yBD7TzeaJwA==
-X-Received: by 2002:a05:6a20:244c:b0:1f1:235:a358 with SMTP id adf61e73a8af0-1f349449723mr2570710637.6.1741145207973;
-        Tue, 04 Mar 2025 19:26:47 -0800 (PST)
-Received: from [10.68.122.90] ([203.208.167.148])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003e28fsm11741707b3a.127.2025.03.04.19.26.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 19:26:47 -0800 (PST)
-Message-ID: <a2b3609c-9907-4ee6-a0df-6b4c84100d33@bytedance.com>
-Date: Wed, 5 Mar 2025 11:26:43 +0800
+	s=arc-20240116; t=1741145241; c=relaxed/simple;
+	bh=WBgSF4UBZQyZjZW3u3Cq7JSWapQYwqNCP5nk3gjjiYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Bs/r9IgThnzewbUquimxUSc9+qz/3EDe0bHOvYEBT8DN6AdSc8QrakePpHI+qF2huM0k4pXO8mU4pN6ZoYfgeXCBZ/3lD7ZP537rLuTtSdIUKELtgSM4b1zFCNrxplflDKemCl6uD1aDv81OZwP7HN3OfA6WEdbyzc+Blu96GEI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=byv92Paf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1E3CC4CEEA;
+	Wed,  5 Mar 2025 03:27:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741145240;
+	bh=WBgSF4UBZQyZjZW3u3Cq7JSWapQYwqNCP5nk3gjjiYw=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=byv92PafIfFYDcTnfanRVxyhE5a2y/G8/OsJmXy5x3ZC86p/RuRN7lfEMeT2doJ+y
+	 boLrZI8D+atx0vFCKjbsj1kXBl0wdkTWijKYzGszaH/OTIRSAnQJ/Ctc3Vl/2KA9Zq
+	 1reiEsh9xWmS4gqNU81uyllj+xsHdpBkwtNWn683Si5TT4JwpKYo8atNiB0kd5ig47
+	 PwU4DUPFi4ISnYU1WrYKBeZY7le/YguWnX8RxR9yvLcFKtFbRz1YuyZKLjUIsb3srn
+	 A3ZVPUuZvai4wUJ9T8liaDCIXf/V01WX7CHoQYDrRsThctYlTj5sXD/KhyZXZ2iRXz
+	 AGTwOJgboRF+w==
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-855fc51bdfcso14386439f.0;
+        Tue, 04 Mar 2025 19:27:20 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCUjy6Ovqd4YyDY5u6w5Qn7GlMV5HfxAa34FED1WfUzJXh46KxJjBHdXkvOEz2igxIUbr6BbFkLisw==@vger.kernel.org, AJvYcCV6KlpVHkvuQtKUtxeNCtH7S1ze5ZDFs7Mf9k3A9S9JfPM00GKcITwSie7ntr+LgYbjh+dGbjwk79lP2Fr73aPfXrNLET8k@vger.kernel.org, AJvYcCVPNKvSGlSRqyGhKQeTX0MOK/Do1nk2qtB2WR0R7XxoOSBh4PbZm21Pn+kACnyB8J7VTrLdsAeHZMs4iR5x@vger.kernel.org, AJvYcCVbKo54AbMOypnEHMMydPb7Cn4rhwV/nt9vLT8U8YyvlXJpG6LiylFRJM19jiaNdnPk5oY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNxfvj37yNBnAkdk/Fw8XwgbULxkpRUxht+4OL63LcoDP5bRij
+	BAHLnOsEnlcf29BuD8VKifPgXDMaIyI5fXVm4zi2rYFUSwrQj8NWDQM8kLVQdFv31rAl08pjQX6
+	o6hFjcqJ50mOQCYNUD64VEhdAaz8=
+X-Google-Smtp-Source: AGHT+IHn6wMp+M46MuU+WD/XHhz/bc9tkmv0qmpjdIsOMxu6p4rRCfKMk+gSv53uXz9LW9XURyM5j+m53mcZk7+IsUY=
+X-Received: by 2002:a05:6e02:eca:b0:3d4:2306:fbb6 with SMTP id
+ e9e14a558f8ab-3d42306fde0mr43856365ab.10.1741145240129; Tue, 04 Mar 2025
+ 19:27:20 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/shrinker_debug: Fix possible memory leak in
- shrinker_debugfs_rename function.
-To: Muchun Song <muchun.song@linux.dev>, Liu Ye <liuye@kylinos.cn>
-Cc: akpm@linux-foundation.org, david@fromorbit.com, roman.gushchin@linux.dev,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org
-References: <20250305020123.605496-1-liuye@kylinos.cn>
- <99A7645C-B8FB-4F28-B4B8-D5372F4C001E@linux.dev>
-From: Qi Zheng <zhengqi.arch@bytedance.com>
-In-Reply-To: <99A7645C-B8FB-4F28-B4B8-D5372F4C001E@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
+ <20250304203123.3935371-3-bboscaccy@linux.microsoft.com> <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
+ <87a5a0jotf.fsf@microsoft.com>
+In-Reply-To: <87a5a0jotf.fsf@microsoft.com>
+From: Song Liu <song@kernel.org>
+Date: Tue, 4 Mar 2025 19:27:09 -0800
+X-Gmail-Original-Message-ID: <CAPhsuW6+vrRG57=7sxTjv0J1njJ-H0usx18xx_sWA+U2oZBtDA@mail.gmail.com>
+X-Gm-Features: AQ5f1JpXurhnuKJL8LDxjijcgu3abQTLRKE5g0E4JhCketpuBCOzyM_KnN0EAlI
+Message-ID: <CAPhsuW6+vrRG57=7sxTjv0J1njJ-H0usx18xx_sWA+U2oZBtDA@mail.gmail.com>
+Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
+ LSM/bpf test programs
+To: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
+Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, John Fastabend <john.fastabend@gmail.com>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Yonghong Song <yonghong.song@linux.dev>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>, 
+	Ondrej Mosnacek <omosnace@redhat.com>, linux-security-module@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, bpf@vger.kernel.org, selinux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Tue, Mar 4, 2025 at 4:36=E2=80=AFPM Blaise Boscaccy
+<bboscaccy@linux.microsoft.com> wrote:
+>
+> Song Liu <song@kernel.org> writes:
+>
+> > On Tue, Mar 4, 2025 at 12:31=E2=80=AFPM Blaise Boscaccy
+> > <bboscaccy@linux.microsoft.com> wrote:
+> >>
+> >> The security_bpf LSM hook now contains a boolean parameter specifying
+> >> whether an invocation of the bpf syscall originated from within the
+> >> kernel. Here, we update the function signature of relevant test
+> >> programs to include that new parameter.
+> >>
+> >> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
+> > ^^^ The email address is broken.
+> >
+>
+> Whoops, appologies, will get that fixed.
+>
+> >> ---
+> >>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
+> >>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++--
+> >>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++--=
+-
+> >>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
+> >>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
+> >>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
+> >>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
+> >>  7 files changed, 11 insertions(+), 10 deletions(-)
+> >
+> > It appears you missed a few of these?
+> >
+>
+> Some of these don't require any changes. I ran into this as well while do=
+ing a
+> search.
+>
+> These are all accounted for in the patch.
+> > tools/testing/selftests/bpf/progs/rcu_read_lock.c:SEC("?lsm.s/bpf")
+> > tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm/bpf=
+")
+> > tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm.s/b=
+pf")
+> > tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s=
+/bpf")
+> > tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s=
+/bpf")
+> > tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("lsm.s/=
+bpf")
+>
+> security_bpf_map wasn't altered, it can't be called from the kernel. No
+> changes needed.
+> > tools/testing/selftests/bpf/progs/test_libbpf_get_fd_by_id_opts.c:SEC("=
+lsm/bpf_map")
+>
+> These are also all accounted for in the patch.
+> > tools/testing/selftests/bpf/progs/test_lookup_key.c:SEC("lsm.s/bpf")
+> > tools/testing/selftests/bpf/progs/test_ptr_untrusted.c:SEC("lsm.s/bpf")
+> > tools/testing/selftests/bpf/progs/test_task_under_cgroup.c:SEC("lsm.s/b=
+pf")
+> > tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c:SEC("lsm.s/bp=
+f")
+>
+> bpf_token_cmd and bpf_token_capabable aren't callable from the kernel,
+> no changes to that hook either currently.
+>
+> > tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_capabl=
+e")
+> > tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_cmd")
+>
+>
+> This program doesn't take any parameters currently.
+> > tools/testing/selftests/bpf/progs/verifier_global_subprogs.c:SEC("?lsm/=
+bpf")
+>
+> These are all naked calls that don't take any explicit parameters.
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
+> > tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bp=
+f")
 
+Thanks for the explanation. I think we can keep this part as-is.
 
-On 3/5/25 11:17 AM, Muchun Song wrote:
-> 
-> 
->> On Mar 5, 2025, at 10:01, Liu Ye <liuye@kylinos.cn> wrote:
->>
->> After calling debugfs_change_name function, the return value should be
->> checked and the old name restored. If debugfs_change_name fails, the new
->> name memory should be freed.
-> 
-> Seems it is not a big problem, no memory leak at least. The effect is that
-> the shrinker->name is not consistent with the name displayed in debugfs.
-> Right? But the improvement LGTM. So:
-
-Right, so the subject needs to be changed.
-
-Maybe:
-
-mm: shrinker: fix name consistency issue in shrinker_debugfs_rename()
-
-?
-
-BTW, it seems that the callers of shrinker_debugfs_rename() did not
-process the return value of the function?
-
-> 
-> Reviewed-by: Muchun Song <muchun.song@linux.dev>
-> 
-> Thanks.
-> 
->>
->> Signed-off-by: Liu Ye <liuye@kylinos.cn>
->> ---
->> mm/shrinker_debug.c | 8 ++++++--
->> 1 file changed, 6 insertions(+), 2 deletions(-)
->>
->> diff --git a/mm/shrinker_debug.c b/mm/shrinker_debug.c
->> index 794bd433cce0..20eaee3e97f7 100644
->> --- a/mm/shrinker_debug.c
->> +++ b/mm/shrinker_debug.c
->> @@ -214,10 +214,14 @@ int shrinker_debugfs_rename(struct shrinker *shrinker, const char *fmt, ...)
->> ret = debugfs_change_name(shrinker->debugfs_entry, "%s-%d",
->> shrinker->name, shrinker->debugfs_id);
->>
->> + 	if (ret) {
->> + 		shrinker->name = old;
->> + 		kfree_const(new);
->> + 	} else {
->> + 		kfree_const(old);
->> + 	}
->> 	mutex_unlock(&shrinker_mutex);
->>
->> - 	kfree_const(old);
->> -
->> 	return ret;
->> }
->> EXPORT_SYMBOL(shrinker_debugfs_rename);
->> -- 
->> 2.25.1
->>
-> 
-
+Song
 
