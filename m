@@ -1,139 +1,130 @@
-Return-Path: <linux-kernel+bounces-547868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10471A50E87
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:23:53 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8322A50E8A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:24:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46DE3ABC89
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:23:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AB16D1891DE0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0829266B52;
-	Wed,  5 Mar 2025 22:23:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DCF9266B4C;
+	Wed,  5 Mar 2025 22:23:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r1bZiT7N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Los+nP0g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 038501FF61B;
-	Wed,  5 Mar 2025 22:23:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDE625A338;
+	Wed,  5 Mar 2025 22:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741213416; cv=none; b=MAugsdzuRWghEz48wO1u/mfEVqjvu6bmNp1534ABUwtjKZy2kPwjEMZgivtdPLFjHKh5MoCtH7qOsLcMFoAkzv60+2GKdy7ECOlbXfc/XkAMbZmDIxXkY5C8G7oQXibjBtL+IaNeSBv6hz5O/u54Se9fH1k6g0iOeGLhe6P0EqQ=
+	t=1741213438; cv=none; b=FvWHJSASLgjL5Zm5liQnqaZfekptfKep5vx0blq5c9DOWPkxMnZ7tZ3MxuBvSiEASwexYeUZGbbVLNqjJu4FVxmHNWGKB6FRBOkPSv1sOHWmfpX5eW2aRHngJav2/soeIUCNi720aWkIFT37ytOly9tGn9ZEM8vaee3ZLxR03yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741213416; c=relaxed/simple;
-	bh=KBHpbC5osndmf5oDhHBlgu8LureeUZlnUDS/VBH0eSk=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=VHQuHMNnlEWsFxKjajzGUpLdBTAalOPN3YM4agYKjyYAnbcpFl3JI+PagOUJ3vC5oWaNMrTD2nWixaD6YlwqjK6Nmu+8PvpDXtRQkd5fyKHovcCZKhJ4xnG+Mp4MDAltZZrQkkaBev47ItpHrDuNgy1UWGVNP0E0SjSdflS8JjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r1bZiT7N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E2B6C4CEE0;
-	Wed,  5 Mar 2025 22:23:35 +0000 (UTC)
+	s=arc-20240116; t=1741213438; c=relaxed/simple;
+	bh=UyiIL9B4tM3RCfI9R/ZLxpaa11lZTPqHt5IKJfAcnXc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b0+N4+Qve/L/ALJaDokjHJD/fdUWygLH0mZAvyFIvijbRrL/QyBrBdxm8svy120d/bI4eEl4dDv/x04UAUC9uAxIOD0joxUZ+PGblZQE0l0UMq1F03ZbmF+Ya0N88dD9EK8Y9PF6zj2TOAZhCKoiUsVPCRDGSAm3M+7o5RZRFNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Los+nP0g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BEBF8C4CED1;
+	Wed,  5 Mar 2025 22:23:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741213415;
-	bh=KBHpbC5osndmf5oDhHBlgu8LureeUZlnUDS/VBH0eSk=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=r1bZiT7NwYXoQhaCMEjbK91+E+DffB5/lm5IXRZH07OBdWXqtAT/BxJ2Od0VUGi1+
-	 +V8ak2pZsbo6pB3WgPW7CqW9OdFqupRAKSnxe42ZJZZYOUZUshM+Pq5b5Hox4xAGTJ
-	 abPigQ3XEnezCY0xXRv5xPm+9k23kl63eY3ObEj9RGuvCrXRG3mXYEu7uP2GPEH0Kf
-	 S4oaP8JUKwV6IcGwRpzMaKyDiEmbIpshEsn5HV1a0Lch6Ll6CGsnLS78SHXwhNFrhm
-	 CSfkgEVIQA39o/Gfwa2ut9h8px+uA0LeTr5YtRHO64jTYXHy/XUwZ701ZuORvoag6y
-	 ZnWPQa05voAfA==
-Date: Wed, 05 Mar 2025 16:23:34 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1741213437;
+	bh=UyiIL9B4tM3RCfI9R/ZLxpaa11lZTPqHt5IKJfAcnXc=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Los+nP0gHv7/zH3wkmrw+GpZkCNU6zP8J6NmxNXnvuOE0pAwhohGptRCCuEaVDQ5j
+	 nxqHJBiId46iCdONHGq+zSuZd/Ri6Vxylefs6Hid2PXCmdc3opNJvvOEdlZ2E7sxrM
+	 oUVgyb4YJKsWN1vfl0HpBXMUVIuqqq3zUyHVDlGKDYQUaHH4hR+w1FVw4IqCfYEKPq
+	 0xkqatStDbiGjEe4H8ygtDEWqePGjFjYhMLux7vAW9yud2tL/mmOJi3J7hg46kZIAT
+	 iElPAvxafzIuKayfz/qNA6jKA2tbwBzx5T1gJx5rqtRd63rcAJOlrHGp2XIdWTI2mx
+	 QsO+wLkRzA2ow==
+From: SeongJae Park <sj@kernel.org>
+To: SeongJae Park <sj@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 8/8] Docs/admin-guide/mm/damon/usage: update for {core,ops}_filters directories
+Date: Wed,  5 Mar 2025 14:23:55 -0800
+Message-Id: <20250305222355.58522-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250220194646.37726-9-sj@kernel.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- dinguyen@kernel.org, conor+dt@kernel.org, krzk+dt@kernel.org
-To: Matthew Gerlach <matthew.gerlach@altera.com>
-In-Reply-To: <20250305194951.7226-1-matthew.gerlach@altera.com>
-References: <20250305194951.7226-1-matthew.gerlach@altera.com>
-Message-Id: <174121292996.2932278.13028328347189315075.robh@kernel.org>
-Subject: Re: [PATCH 0/2] Add bindings and DTS for the Agilex7 M-Series
- SoCDK
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On Thu, 20 Feb 2025 11:46:46 -0800 SeongJae Park <sj@kernel.org> wrote:
 
-On Wed, 05 Mar 2025 11:49:49 -0800, Matthew Gerlach wrote:
-> This patch set adds device tree bindings and a DTS for the Intel Agilex7
-> M-Series SoC Development Kit:
-> https://www.intel.com/content/www/us/en/products/details/fpga/development-kits/agilex/agm039.html
+> Document {core,ops}_filters directories on usage document.
 > 
-> Patch 1:
->   Define the device tree binding for the Agilex7 M-Series SoCDK.
+> Signed-off-by: SeongJae Park <sj@kernel.org>
+> ---
+>  Documentation/admin-guide/mm/damon/usage.rst | 31 ++++++++++++++------
+>  1 file changed, 22 insertions(+), 9 deletions(-)
 > 
-> Patch 2:
->   Add the DTS for the Agilex7 M-Series SoCDK.
-> 
-> Matthew Gerlach (2):
->   dt-bindings: intel: document Agilex7 M-Series SoCDK
->   arm64: dts: socfpga: add Agilex7 M-Series SoCDK
-> 
->  .../bindings/arm/intel,socfpga.yaml           |   5 +
->  arch/arm64/boot/dts/intel/Makefile            |   1 +
->  .../boot/dts/intel/socfpga_agilex7m_socdk.dts | 108 ++++++++++++++++++
->  3 files changed, 114 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dts
-> 
-> --
-> 2.35.3
-> 
-> 
-> 
+> diff --git a/Documentation/admin-guide/mm/damon/usage.rst b/Documentation/admin-guide/mm/damon/usage.rst
+> index dc37bba96273..4b25c25d4f4f 100644
+> --- a/Documentation/admin-guide/mm/damon/usage.rst
+> +++ b/Documentation/admin-guide/mm/damon/usage.rst
+> @@ -82,7 +82,7 @@ comma (",").
+>      │ │ │ │ │ │ │ │ :ref:`goals <sysfs_schemes_quota_goals>`/nr_goals
+>      │ │ │ │ │ │ │ │ │ 0/target_metric,target_value,current_value
+>      │ │ │ │ │ │ │ :ref:`watermarks <sysfs_watermarks>`/metric,interval_us,high,mid,low
+> -    │ │ │ │ │ │ │ :ref:`filters <sysfs_filters>`/nr_filters
+> +    │ │ │ │ │ │ │ :ref:`{core_,ops_,}filters <sysfs_filters>`/nr_filters
+>      │ │ │ │ │ │ │ │ 0/type,matching,allow,memcg_path,addr_start,addr_end,target_idx,min,max
+>      │ │ │ │ │ │ │ :ref:`stats <sysfs_schemes_stats>`/nr_tried,sz_tried,nr_applied,sz_applied,sz_ops_filter_passed,qt_exceeds
+>      │ │ │ │ │ │ │ :ref:`tried_regions <sysfs_schemes_tried_regions>`/total_bytes
+> @@ -282,9 +282,10 @@ to ``N-1``.  Each directory represents each DAMON-based operation scheme.
+>  schemes/<N>/
+>  ------------
+>  
+> -In each scheme directory, five directories (``access_pattern``, ``quotas``,
+> -``watermarks``, ``filters``, ``stats``, and ``tried_regions``) and three files
+> -(``action``, ``target_nid`` and ``apply_interval``) exist.
+> +In each scheme directory, seven directories (``access_pattern``, ``quotas``,
+> +``watermarks``, ``core_filters``, ``ops_filters``, ``filters``, ``stats``, and
+> +``tried_regions``) and three files (``action``, ``target_nid`` and
+> +``apply_interval``) exist.
+>  
+>  The ``action`` file is for setting and getting the scheme's :ref:`action
+>  <damon_design_damos_action>`.  The keywords that can be written to and read
+> @@ -395,13 +396,24 @@ The ``interval`` should written in microseconds unit.
+>  
+>  .. _sysfs_filters:
+>  
+> -schemes/<N>/filters/
+> ---------------------
+> +schemes/<N>/{core_,ops_,}filters/
+> +-------------------------------
+
+Just found this causes below document build warning and error during 'make
+htmldocs':
+
+    Documentation/admin-guide/mm/damon/usage.rst:425: WARNING: Title underline too short.
+    Documentation/admin-guide/mm/damon/usage.rst:425: ERROR: Unknown target name: "core".
+
+I will fix this in the next spin as below.
+
+    -schemes/<N>/{core_,ops_,}filters/
+    --------------------------------
+    +schemes/<N>/{core\_,ops\_,}filters/
+    +-----------------------------------
 
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
+Thanks,
+SJ
 
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y for arch/arm64/boot/dts/intel/' for 20250305194951.7226-1-matthew.gerlach@altera.com:
-
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /firmware/svc: failed to match any schema with compatible: ['intel,agilex-svc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /firmware/svc/fpga-mgr: failed to match any schema with compatible: ['intel,agilex-soc-fpga-mgr']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: cb-intosc-hs-div2-clk: 'clock-frequency' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: cb-intosc-ls-clk: 'clock-frequency' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: f2s-free-clk: 'clock-frequency' is a required property
-	from schema $id: http://devicetree.org/schemas/clock/fixed-clock.yaml#
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/ethernet@ff800000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/ethernet@ff800000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/ethernet@ff802000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/ethernet@ff802000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/ethernet@ff804000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/ethernet@ff804000: failed to match any schema with compatible: ['altr,socfpga-stmmac-a10-s10', 'snps,dwmac-3.74a', 'snps,dwmac']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr: failed to match any schema with compatible: ['altr,socfpga-s10-ecc-manager', 'altr,socfpga-a10-ecc-manager']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr: failed to match any schema with compatible: ['altr,socfpga-s10-ecc-manager', 'altr,socfpga-a10-ecc-manager']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/sdramedac: failed to match any schema with compatible: ['altr,sdram-edac-s10']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/ocram-ecc@ff8cc000: failed to match any schema with compatible: ['altr,socfpga-s10-ocram-ecc', 'altr,socfpga-a10-ocram-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/ocram-ecc@ff8cc000: failed to match any schema with compatible: ['altr,socfpga-s10-ocram-ecc', 'altr,socfpga-a10-ocram-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/usb0-ecc@ff8c4000: failed to match any schema with compatible: ['altr,socfpga-s10-usb-ecc', 'altr,socfpga-usb-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/usb0-ecc@ff8c4000: failed to match any schema with compatible: ['altr,socfpga-s10-usb-ecc', 'altr,socfpga-usb-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/emac0-rx-ecc@ff8c0000: failed to match any schema with compatible: ['altr,socfpga-s10-eth-mac-ecc', 'altr,socfpga-eth-mac-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/emac0-rx-ecc@ff8c0000: failed to match any schema with compatible: ['altr,socfpga-s10-eth-mac-ecc', 'altr,socfpga-eth-mac-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/emac0-tx-ecc@ff8c0400: failed to match any schema with compatible: ['altr,socfpga-s10-eth-mac-ecc', 'altr,socfpga-eth-mac-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/emac0-tx-ecc@ff8c0400: failed to match any schema with compatible: ['altr,socfpga-s10-eth-mac-ecc', 'altr,socfpga-eth-mac-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/sdmmca-ecc@ff8c8c00: failed to match any schema with compatible: ['altr,socfpga-s10-sdmmc-ecc', 'altr,socfpga-sdmmc-ecc']
-arch/arm64/boot/dts/intel/socfpga_agilex7m_socdk.dtb: /soc@0/eccmgr/sdmmca-ecc@ff8c8c00: failed to match any schema with compatible: ['altr,socfpga-s10-sdmmc-ecc', 'altr,socfpga-sdmmc-ecc']
-
-
-
-
-
+[...]
 
