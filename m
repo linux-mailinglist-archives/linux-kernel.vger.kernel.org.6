@@ -1,142 +1,176 @@
-Return-Path: <linux-kernel+bounces-546840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51E4DA4FF65
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:02:12 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E06A4FF73
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:04:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AAC43ABFAB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:01:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B65CE7A276E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:03:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DFA248895;
-	Wed,  5 Mar 2025 13:01:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2086724EF7D;
+	Wed,  5 Mar 2025 13:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gffUIweQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TfzWCUPP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B46247DDD
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5CC22E400;
+	Wed,  5 Mar 2025 13:01:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741179663; cv=none; b=nlIPEUtk9i8YMfcq8L5FMTlWpxcH5hmAOEy69a/fnMI7T8SJ5MaiVuypZKyZscySieudJ/VbhO3VOf0l7Jh5yC6Uc2Mb+eoHLFpFdUWvOvhz0e/T+VD6cGNCPcBqmzhqK5vZOCCJq3cMRPcgktmx1EYpaBkeRpiSP55yC8l3I9U=
+	t=1741179693; cv=none; b=o99Stetez5rrMAC+5VU+xix/R0lgmqm6dhDbTeUq4IhWpNqTQOCTNYvNgk9iPLNCmTAAVeAOHlVjSnwzjLW4Ld6ypuprf0TzMoY14zr+TLMxFqR9pHyNzsvgRvWidswlFjUnh44YjqgatzKuu2e30AH2I+zB0vav7s95h1vJM/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741179663; c=relaxed/simple;
-	bh=JScz0TMKAGSf8jK8FVCMAWHGLNQQuW9+1Mg0FeL7qBY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=c09L0tBxNioJ05SHYUvgKSUQ+OBceUBRYcbucj2pEKqjjSKa6zOS3k1nEL9t2M8fPio1Ow8UNlTfZ0GwZCXCaLNfwz2xHW7Wt0W4sgmoUiF0We8U3Wguk3HEvLBA1xHBmm6td8S3SrTB5TzcQHsJKH6Lsyt9I0Gvm3pozBKgYJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gffUIweQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 9E51BC4CEF0;
-	Wed,  5 Mar 2025 13:01:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741179663;
-	bh=JScz0TMKAGSf8jK8FVCMAWHGLNQQuW9+1Mg0FeL7qBY=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=gffUIweQ/Bb7UFBgz8soHCXlOKD1vef2JrAsdFXBFjccwLc3aRzaGsL8Kq81OPLvl
-	 k4G8bHExolEJbm0JI0OGYAXNzIwn9+EHOLRC6DXp8OdkMO7ghexIwx4wNsy2I1m35D
-	 NIzay4CHS3ym9jki1LQPC3mO6D1HgszZL2k7uRwmtAI4Lm7Ssfhav9pNqM1f5PEAa9
-	 KmXZbRXDZwXgogXWt1xaEQ3RXBTWE+qqRtw5b6SyR89dx8CsJjgzX1eK+iZK/0Q5Rd
-	 +mivCbJoJEmXT7RSFqu8KNki/W1bdqsOd96fSu9nDmb5lpFCVESoR8KnJRWUtRA1Q3
-	 walmIj96rqU+g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 970C7C28B22;
-	Wed,  5 Mar 2025 13:01:03 +0000 (UTC)
-From: Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org>
-Date: Wed, 05 Mar 2025 22:00:18 +0900
-Subject: [PATCH v4 6/8] test_bits: add tests for __GENMASK() and
- __GENMASK_ULL()
+	s=arc-20240116; t=1741179693; c=relaxed/simple;
+	bh=T8A6HBID+bnKK/poo4ku3s8z+sc9q3eeNC3dnooWZpk=;
+	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=dvWM8ilKrPKVzwQog4YUlaZDAHG8f6iUZcQfR/705BrbCa7cfjOtVAyU5CBr3MaN+uF+NcqmWVScEVCL7zY9vH5dWlOvqPM03C5fS9JHwtjL3gmuT3N4QfyJkyblHjmuzB/EEVg/dcNF+EY82iC6K605Yfa+Db4hwJgsosOmqto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TfzWCUPP; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741179693; x=1772715693;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=T8A6HBID+bnKK/poo4ku3s8z+sc9q3eeNC3dnooWZpk=;
+  b=TfzWCUPPm2qBqq2OoWT9DEjVrvmWpX62cDTPtgrcYyneP1CN2T8GD+b4
+   yw1Ic0PCC5e0afnJeryPP+j+jCHiT8hf/pbxeRH0pEg6AAYLLm2m6aWoS
+   dMn3Z3aPdRhpN5UpLUm2uS0duxa53EXf2v0JwxiyGtahiRHF3/cBMl2g3
+   Oq1eoUreNaomiZDZeqXtrAdR9EnVaoB5mhAm0r+KECl8/DL2SCS+esHMU
+   a5oa4qBriFqMEzIkXjUYs4Zx8fm1GG3r/W+DLaXb420pvlkKIYpnPmsDI
+   YrV7EK4Ci7311cOlqb2ooI6NQ/nRxyc0L07qWS53aZud5XwdMLDBIkEZR
+   Q==;
+X-CSE-ConnectionGUID: iPni+AaGRbum4yfR1FfOsA==
+X-CSE-MsgGUID: MItdoIeYTTiAawJ5402puw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45794992"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="45794992"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 05:01:31 -0800
+X-CSE-ConnectionGUID: pubTXDQ+Rvyotxh2dqI6TQ==
+X-CSE-MsgGUID: hVICYxHCSZqdtIEeu4mnVQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="123277028"
+Received: from mohdfai2-ilbpg12-1.png.intel.com ([10.88.227.73])
+  by fmviesa005.fm.intel.com with ESMTP; 05 Mar 2025 05:01:23 -0800
+From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+To: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Xiaolei Wang <xiaolei.wang@windriver.com>,
+	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Gal Pressman <gal@nvidia.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Chwee-Lin Choong <chwee.lin.choong@intel.com>,
+	Faizal Rahim <faizal.abdul.rahim@linux.intel.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	bpf@vger.kernel.org
+Subject: [PATCH iwl-next v8 04/11] igc: rename xdp_get_tx_ring() for non-xdp usage
+Date: Wed,  5 Mar 2025 08:00:19 -0500
+Message-Id: <20250305130026.642219-5-faizal.abdul.rahim@linux.intel.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
+References: <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-fixed-type-genmasks-v4-6-1873dcdf6723@wanadoo.fr>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
-In-Reply-To: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
-To: Yury Norov <yury.norov@gmail.com>, 
- Lucas De Marchi <lucas.demarchi@intel.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>, 
- David Laight <David.Laight@ACULAB.COM>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1556;
- i=mailhol.vincent@wanadoo.fr; h=from:subject:message-id;
- bh=lN5M+jT7BPUL1L2f+TXlK22h8uB9+ou65Ns8DPPWhbE=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDOknvNk8vt7wX+gw4+8GP/VW/qczK4IX73JNd6n3WJDFf
- bNUindXRykLgxgXg6yYIsuyck5uhY5C77BDfy1h5rAygQxh4OIUgImkr2dkuGvsEv798t09L8rK
- zhjcdyuW0pz2tEXLtGzSm62zNKJ23GFkmFJ1X2v5s51MPQf6f6l5q2XNlzNkbbqwksl6QumENp7
- VjAA=
-X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
-X-Endpoint-Received: by B4 Relay for mailhol.vincent@wanadoo.fr/default
- with auth_id=291
-X-Original-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Reply-To: mailhol.vincent@wanadoo.fr
+Content-Transfer-Encoding: 8bit
 
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Renamed xdp_get_tx_ring() function to a more generic name for use in
+upcoming frame preemption patches.
 
-The definitions of GENMASK() and GENMASK_ULL() do not depend any more
-on __GENMASK() and __GENMASK_ULL(). Duplicate the existing unit tests
-so that __GENMASK{,ULL}() is still covered.
-
-Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
 ---
- lib/test_bits.c | 18 ++++++++++++++++++
- 1 file changed, 18 insertions(+)
+ drivers/net/ethernet/intel/igc/igc.h      | 2 +-
+ drivers/net/ethernet/intel/igc/igc_main.c | 9 ++++-----
+ 2 files changed, 5 insertions(+), 6 deletions(-)
 
-diff --git a/lib/test_bits.c b/lib/test_bits.c
-index c7b38d91e1f16d42b7ca92e62fbd6c19b37e76a0..dc93ded9fdb201e0d44b3c1cd71e233fd62258a5 100644
---- a/lib/test_bits.c
-+++ b/lib/test_bits.c
-@@ -7,6 +7,22 @@
- #include <linux/bits.h>
+diff --git a/drivers/net/ethernet/intel/igc/igc.h b/drivers/net/ethernet/intel/igc/igc.h
+index b8111ad9a9a8..22ecdac26cf4 100644
+--- a/drivers/net/ethernet/intel/igc/igc.h
++++ b/drivers/net/ethernet/intel/igc/igc.h
+@@ -736,7 +736,7 @@ struct igc_nfc_rule *igc_get_nfc_rule(struct igc_adapter *adapter,
+ 				      u32 location);
+ int igc_add_nfc_rule(struct igc_adapter *adapter, struct igc_nfc_rule *rule);
+ void igc_del_nfc_rule(struct igc_adapter *adapter, struct igc_nfc_rule *rule);
+-
++struct igc_ring *igc_get_tx_ring(struct igc_adapter *adapter, int cpu);
+ void igc_ptp_init(struct igc_adapter *adapter);
+ void igc_ptp_reset(struct igc_adapter *adapter);
+ void igc_ptp_suspend(struct igc_adapter *adapter);
+diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
+index 56a35d58e7a6..db4a36afcec6 100644
+--- a/drivers/net/ethernet/intel/igc/igc_main.c
++++ b/drivers/net/ethernet/intel/igc/igc_main.c
+@@ -2444,8 +2444,7 @@ static int igc_xdp_init_tx_descriptor(struct igc_ring *ring,
+ 	return -ENOMEM;
+ }
  
- 
-+static void __genmask_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 1ul, __GENMASK(0, 0));
-+	KUNIT_EXPECT_EQ(test, 3ul, __GENMASK(1, 0));
-+	KUNIT_EXPECT_EQ(test, 6ul, __GENMASK(2, 1));
-+	KUNIT_EXPECT_EQ(test, 0xFFFFFFFFul, __GENMASK(31, 0));
-+}
-+
-+static void __genmask_ull_test(struct kunit *test)
-+{
-+	KUNIT_EXPECT_EQ(test, 1ull, __GENMASK_ULL(0, 0));
-+	KUNIT_EXPECT_EQ(test, 3ull, __GENMASK_ULL(1, 0));
-+	KUNIT_EXPECT_EQ(test, 0x000000ffffe00000ull, __GENMASK_ULL(39, 21));
-+	KUNIT_EXPECT_EQ(test, 0xffffffffffffffffull, __GENMASK_ULL(63, 0));
-+}
-+
- static void genmask_test(struct kunit *test)
+-static struct igc_ring *igc_xdp_get_tx_ring(struct igc_adapter *adapter,
+-					    int cpu)
++struct igc_ring *igc_get_tx_ring(struct igc_adapter *adapter, int cpu)
  {
- 	KUNIT_EXPECT_EQ(test, 1ul, GENMASK(0, 0));
-@@ -93,6 +109,8 @@ static void genmask_input_check_test(struct kunit *test)
+ 	int index = cpu;
  
+@@ -2469,7 +2468,7 @@ static int igc_xdp_xmit_back(struct igc_adapter *adapter, struct xdp_buff *xdp)
+ 	if (unlikely(!xdpf))
+ 		return -EFAULT;
  
- static struct kunit_case bits_test_cases[] = {
-+	KUNIT_CASE(__genmask_test),
-+	KUNIT_CASE(__genmask_ull_test),
- 	KUNIT_CASE(genmask_test),
- 	KUNIT_CASE(genmask_ull_test),
- 	KUNIT_CASE(genmask_u128_test),
-
+-	ring = igc_xdp_get_tx_ring(adapter, cpu);
++	ring = igc_get_tx_ring(adapter, cpu);
+ 	nq = txring_txq(ring);
+ 
+ 	__netif_tx_lock(nq, cpu);
+@@ -2546,7 +2545,7 @@ static void igc_finalize_xdp(struct igc_adapter *adapter, int status)
+ 	struct igc_ring *ring;
+ 
+ 	if (status & IGC_XDP_TX) {
+-		ring = igc_xdp_get_tx_ring(adapter, cpu);
++		ring = igc_get_tx_ring(adapter, cpu);
+ 		nq = txring_txq(ring);
+ 
+ 		__netif_tx_lock(nq, cpu);
+@@ -6699,7 +6698,7 @@ static int igc_xdp_xmit(struct net_device *dev, int num_frames,
+ 	if (unlikely(flags & ~XDP_XMIT_FLAGS_MASK))
+ 		return -EINVAL;
+ 
+-	ring = igc_xdp_get_tx_ring(adapter, cpu);
++	ring = igc_get_tx_ring(adapter, cpu);
+ 	nq = txring_txq(ring);
+ 
+ 	__netif_tx_lock(nq, cpu);
 -- 
-2.45.3
-
+2.34.1
 
 
