@@ -1,97 +1,89 @@
-Return-Path: <linux-kernel+bounces-547172-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9A19A503C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:48:53 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2DC7EA503CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:50:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24BBF7A4538
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:47:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 716613AE202
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1232A1F9421;
-	Wed,  5 Mar 2025 15:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7953224E014;
+	Wed,  5 Mar 2025 15:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L5QY+apx"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eafJyvhI"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD24024BBE1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:48:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804162054FA
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:50:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741189724; cv=none; b=bfI8yJNO4uwhozWukIN6m98PviwlS5EaU/SOVA7GKE7iy67Yyuvk+8dtRqW1x96ZP1kzD8nUUlD09S1EzyiPxYIlH9ByP/rQ2kyhQAkVCh7FH3yuIedL8qVukpPoykE8Q3Jt75sj+jURCQY/6GvZFSKseuIl9qdVF39cjyQkYm4=
+	t=1741189835; cv=none; b=NV3Ae6PPnTxRgJT6ocmn9dyHppFFSqWM2ZjeNCrvX9PRDNJYBCL1G7zDhqcZ1FRzcgWDVd+6fWrRCX1coz/0Fb+hNAzz1iYgcw+uaPstDVyc9F6s9gDyWsZox7x07MqXxok+QTO+tpNtOToqJLQ53irXOccXfNqNP/3dZLKsanQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741189724; c=relaxed/simple;
-	bh=RiQuT39ZKod4vG03bKElx/YCf/LIBVAgK5U4ZfjxBcQ=;
+	s=arc-20240116; t=1741189835; c=relaxed/simple;
+	bh=KbfYNGaAmTO2nVM2SPkbDPg2fWB59a3naALF8YWvxrQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bOpUGaqyFssDJdIXFd66ZBSUEagy2oMM15Z7AbAiF+3qHG5eXADziAn4ADc8JFjCT7pNmR9yFVn2gblNbJnQBO1tW+oLacoVwBfrShaM5KEjKhCJt/b9Bmdb4gIDi6HdDx6roQtct1RAPNMRqAsi2AMfnoEfdIZiFO4UJY9EgpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L5QY+apx; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e5491eb379so6008410a12.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 07:48:42 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741189721; x=1741794521; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MxiIjUA9OimPTk2Pkq/BKPlzHOLC6slmzK7kgIiusZE=;
-        b=L5QY+apxZI9gO0gn3faW7lCUw49LZ053bxbG898tKeKC961pyamXvfbDlW+eNdYIPl
-         iLyYh/W7GxImWaxRswqM/xjb34zXPTZGMPlmK4t5UrLTYlLUy24x9YYbueE8Vn7loYgt
-         uj2j+Npg06X2qR0oivOaK780vLyZWhkzdOnxOAqjUr4OL3htWqWFUJ7rkwBEnrDSuFdw
-         efv1+KyACVKyk3ywsuimKOO/4SyVRh9vRg96X/mVuZcLuL/JeC7Vzf4HnYlsjJwMRJ2M
-         Wi/tf6Vfl8fQKDbAHeqou2cKidAP4NXEFZlXp0VxEXIZzop7x39m7TxUpXJQO+poHMvn
-         hlug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741189721; x=1741794521;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MxiIjUA9OimPTk2Pkq/BKPlzHOLC6slmzK7kgIiusZE=;
-        b=RnV/86IooOVzu0T9Rg8YY9ywcy8yJ21WzAXCgni7TNL1JC2ujjhxHRT4l17royxhPM
-         b+DSHev7WY+Dx0ukp/3mjbe9iMrwM2g1UcL4IgfQCffS76ej8ZVp5SEbPLygi4cpu6Rh
-         CvlHBiiwQ0DSgs7cDP+s5CdDjP6Yz9bNOZQNxPiBV40mnYV9caBuMMMpR46qR0n6b57k
-         VahN09cswdnzllQD1D9yd0qdXFw8Zcs/6LWkOOg0ugXwMjPRtkpZm9haPUy7x0Qe+6zS
-         orpccrhPW0t72FbA3pub17NawDRSRu2zLEjICofNnoE1SbyNTNwa3ds9bRAFbIV11bpQ
-         OTaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPYsjIqntOBDZaYmTRYI8AeuBhhVyBv4d27V1fZKwY6zoEDALTYLOUMF10G/5oAl3xq/eCiHiixvg4nZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPNV+M7Jr7HCKQubjjnvyhxXSe/xFttO3o6tePYm3Xgiyd6wcP
-	vPLxRghyte1WdddQJ0DFIr3X1+xJoOoHs/mt+jOkEfgRU9TNGemS
-X-Gm-Gg: ASbGncspX6K8WXhTzMXDOVrO+ynhDF3rcZjCQ2ILVXz0DeaADT2yRsXVjUx6eSEo3Zv
-	ZVbk7ItIXa5C0NB3rgKjeBrMGIazceHdtkzuWRFn9OvUzcx3Llr6iY8g6jlekgXWK8oj1QIE74n
-	xHonBQTM+pJsVebYvjPqW4V5rxnUVUq1NnabIedbDMSIPonGuJZvLVn/HHjZeJZoTLe9Yhab7DB
-	W8LDzCuXG5Qw5HdCw6FpHaxZT44SaOM+OdFa/9DoEs0u9jYpMckx6tPxI6JUSDvP54WDMuKDtKF
-	zmBy5Qtr8Gu7b/pXxhVnNtWvDIhccMwh8vrGjVs8pflKbaa6
-X-Google-Smtp-Source: AGHT+IFTpN42W5iVtwDVv9aQ5SZTvzIdHD7UXJOGvGkpahPYVyoEEkyG4ojm5UJN8gosd1EHejJvPQ==
-X-Received: by 2002:a17:906:7315:b0:ac1:dfab:d38e with SMTP id a640c23a62f3a-ac20d8bc960mr378119766b.15.1741189720516;
-        Wed, 05 Mar 2025 07:48:40 -0800 (PST)
-Received: from localhost ([2a02:587:860f:c4f3:54ce:f1b0:3c3b:52dd])
-        by smtp.gmail.com with UTF8SMTPSA id a640c23a62f3a-abf64165f73sm684611466b.152.2025.03.05.07.48.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 07:48:40 -0800 (PST)
-Date: Wed, 5 Mar 2025 17:48:39 +0200
-From: Lilith Gkini <lilithpgkini@gmail.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/HcAU9yD9FKStMC51gWSc7aCbdDTIZ+h9cES8kliWZbcH/oAHPXEJJm0adWzz+enMUG4aC1C1b82Av1wX0+apaMy2nmnrOVpawFArPXfninouLPwIKitOSfiQKVeU05b97eq5zEBpllj4YGHULe1uLpHCMqB1l9X0IcBtB4ZQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eafJyvhI; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741189835; x=1772725835;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=KbfYNGaAmTO2nVM2SPkbDPg2fWB59a3naALF8YWvxrQ=;
+  b=eafJyvhIZXrqQ/qEHUOOw+aCCA+BpDILi4juGLfGKYe+9ckn2GLMOB2v
+   GRVy45Ty9rHbXXr02WYygaLRe/lcJyJMSN3R+udYyLT5/fbKxMLSq+Yxw
+   L7ScIvh0bfStzr5Ns4HPXBHwtDRGUj33BDYngFl+yLvAfHLC5xZ761xIV
+   b7epo68wviAf1SZYV5qkR5rOwX/8bWz2AuPR8/5Pe7C67jRnwDVnXCAJC
+   jIvdOIigfvaFD5nJr2QrjKRQg838lpujhOAetTYVh4syV9ULAFl1uIMYY
+   C+8dXkXBxUG2kmqcgS9eWOujh/XhuJ+x0teSK/WOohCMKYky2yWVO5SLy
+   g==;
+X-CSE-ConnectionGUID: LtpQQ9fzRWuJJ6yyI69dAQ==
+X-CSE-MsgGUID: lNRz5nXsRRuloZqOyIKanA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45815544"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="45815544"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 07:50:27 -0800
+X-CSE-ConnectionGUID: OiKFD55tSaiH3SnDUhnYgA==
+X-CSE-MsgGUID: LJfdD3M5Tt6tJDJH2VcfkQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="141967616"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa002.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 07:50:22 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tpr0k-0000000HSHY-3j1k;
+	Wed, 05 Mar 2025 17:50:18 +0200
+Date: Wed, 5 Mar 2025 17:50:18 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Yury Norov <yury.norov@gmail.com>
+Cc: mailhol.vincent@wanadoo.fr, Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, harry.yoo@oracle.com
-Subject: [PATCH] slub: Adds a way to handle freelist cycle in on_freelist()
-Message-ID: <Z8hyV4sROVDtwRDE@Arch>
-References: <Z8Sc4DEIVs-lDV1J@Arch>
- <b951acd4-5510-4d03-8f1e-accf38d909b6@suse.cz>
- <Z8XbomV9WCabATIM@Arch>
- <8cabcf70-d887-471d-9277-ef29aca1216b@suse.cz>
- <Z8a4r2mnIzTD2cZa@Arch>
- <714d353a-49c8-4cbd-88d6-e24ae8f78aaa@suse.cz>
- <Z8benEHigCNjqqQp@Arch>
- <c736fbe1-f3f4-49a0-b230-41f9da545fad@suse.cz>
- <Z8bvfiyLelfXskNw@Arch>
- <c99235b8-3859-42dc-988b-250b3f042d00@suse.cz>
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jani Nikula <jani.nikula@intel.com>,
+	Anshuman Khandual <anshuman.khandual@arm.com>
+Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
+Message-ID: <Z8hyui13BaeKrWCs@smile.fi.intel.com>
+References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
+ <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
+ <Z8hsRJvpjYoqh9RG@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,83 +92,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c99235b8-3859-42dc-988b-250b3f042d00@suse.cz>
+In-Reply-To: <Z8hsRJvpjYoqh9RG@thinkpad>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The on_freelist() doesn't have a way to handle the edgecase of having a
-full freelist that doesn't end in NULL and instead has another valid
-pointer in the slab as a result of a Use-After-Free or anything similar.
+On Wed, Mar 05, 2025 at 10:22:44AM -0500, Yury Norov wrote:
+> + Anshuman Khandual <anshuman.khandual@arm.com>
+> 
+> Anshuman,
+> 
+> I merged your GENMASK_U128() because you said it's important for your
+> projects, and that it will get used in the kernel soon.
+> 
+> Now it's in the kernel for more than 6 month, but no users were added.
+> Can you clarify if you still need it, and if so why it's not used?
+> 
+> As you see, people add another fixed-types GENMASK() macros, and their
+> implementation differ from GENMASK_U128().
+> 
+> My second concern is that __GENMASK_U128() is declared in uapi, while
+> the general understanding for other fixed-type genmasks is that they
+> are not exported to users. Do you need this macro to be exported to
+> userspace? Can you show how and where it is used there?
 
-This case won't get caught by check_valid_pointer() and it will result in
-nr incrementing to `slab->objects + 1`, corrupting the slab->inuse entry
-later in the code by setting it to -1.
+FWIW, have you browsed via Debian source code browser? If you can't find it
+there, you may remove from uAPI with a little chance of the ABI regression.
 
-The Patch adds an if check to detect that case, notifies us and handles
-the freelist and slab appropriately, as is the standard process in these
-situations.
-
-Furthermore the Patch changes the return type of the function from
-int to bool as per codying style guidelines.
-
-It also moves the `break;` line inside the `if (object) {` to make it more
-obvious that the code breaks the while loop in that branch.
-
-Signed-off-by: Lilith Persefoni Gkini <lilithgkini@proton.me>
----
- mm/slub.c | 16 ++++++++++++----
- 1 file changed, 12 insertions(+), 4 deletions(-)
-
-diff --git a/mm/slub.c b/mm/slub.c
-index 1f50129dcfb3..95e54ffd5330 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1427,7 +1427,7 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
-  * Determine if a certain object in a slab is on the freelist. Must hold the
-  * slab lock to guarantee that the chains are in a consistent state.
-  */
--static int on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
-+static bool on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
- {
- 	int nr = 0;
- 	void *fp;
-@@ -1437,26 +1437,34 @@ static int on_freelist(struct kmem_cache *s, struct slab *slab, void *search)
- 	fp = slab->freelist;
- 	while (fp && nr <= slab->objects) {
- 		if (fp == search)
--			return 1;
-+			return true;
- 		if (!check_valid_pointer(s, slab, fp)) {
- 			if (object) {
- 				object_err(s, slab, object,
- 					"Freechain corrupt");
- 				set_freepointer(s, object, NULL);
-+				break;
- 			} else {
- 				slab_err(s, slab, "Freepointer corrupt");
- 				slab->freelist = NULL;
- 				slab->inuse = slab->objects;
- 				slab_fix(s, "Freelist cleared");
--				return 0;
-+				return false;
- 			}
--			break;
- 		}
- 		object = fp;
- 		fp = get_freepointer(s, object);
- 		nr++;
- 	}
- 
-+	if (nr > slab->objects) {
-+		slab_err(s, slab, "Freelist cycle detected");
-+		slab->freelist = NULL;
-+		slab->inuse = slab->objects;
-+		slab_fix(s, "Freelist cleared");
-+		return false;
-+	}
-+
- 	max_objects = order_objects(slab_order(slab), s->size);
- 	if (max_objects > MAX_OBJS_PER_PAGE)
- 		max_objects = MAX_OBJS_PER_PAGE;
 -- 
-2.48.1
+With Best Regards,
+Andy Shevchenko
+
 
 
