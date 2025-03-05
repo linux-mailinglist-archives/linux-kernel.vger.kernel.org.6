@@ -1,71 +1,56 @@
-Return-Path: <linux-kernel+bounces-547621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9276CA50BA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:40:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DF9CA50BAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:42:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9AA316B277
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:40:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42C81894E4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B719225485B;
-	Wed,  5 Mar 2025 19:40:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7643B253F1C;
+	Wed,  5 Mar 2025 19:41:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="TQGxk0kl"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlvWTlSK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82828254841
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D319C78F3A;
+	Wed,  5 Mar 2025 19:41:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741203614; cv=none; b=HjQqs6DND7kY/L/cwX4ALuTjb9VzrGsYEpYcK62ydvTqYBxtoAwqF42cwNZCrVENleKYHNCtc0lbcLs2O5WkB8g3uprDhzSWA4hbp5I2wupjawq0xwxaIKr/9Lo5Z9ciPWBHE6vZVIE1npCPa17xNjYrjNkTlgNlbcXlMeaieAc=
+	t=1741203718; cv=none; b=K981Y3WFING14KU1cfOYsGUZBqWPmj7xnZwbYX8I2dxM+Oc2nC8yln3HfrhIqCdfvUOdZuj89LqDpORmsrJJwhneJ4QJYIaOLNB8drnxJfB/+TIWeScE3oSePRFOXLRl0qn51K5D2SS4oKg7+mirp0LdMvkOX1ICs8q1S2a67lY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741203614; c=relaxed/simple;
-	bh=K55gsgXXLlIPBE9Ws18BG9TSboZx6nl0CKmoB3Giga8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Iq/TINvdofaHs+7tWVxwi2ZgAD534BZJMxHt3j9Vf3QcgG6nFR4ncmPqXL8q2M7fZ/fYaDox9Qn61G5HUv2n5l+Mrl/y4f7hv+gWRtc0vWofLDXo5DPywspmSH5pcmRgRKfQTsT7YxYXxRWXQlYRsh72qDi/+cMBFHmtF/ouEUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=TQGxk0kl; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Pg7d9ElNjm0fw6qanqXBeOlregC/jYmyaWcL209zJNw=; b=TQGxk0kl+WJze9sn8H0W/qPrK+
-	BEobAk1pDE0fSr304RIG/CToZf/wjYzA9vzDrJf6hB9Xn49RSkIJ0JqI9bll9Am9+C1Qa31eXB2hl
-	QcXzu4hVqjauq/I+oox1HvfX2XP9NxzzgNBTYKWFhd+d0NK2IyzBMPO8IYxEWFQ/CDRMTl7XmXvG4
-	IYVUII+sjoIG+kGkiWQ+wXXNRsWWJk1B93gLKQ2kTcv5rL9vbPtI58GCshMTAjfN4j31jKiwP47N1
-	/1igMEGywLGQz5/nib8c7l5C2mIstdVEANtELiEgK8nUrjyy1bjPoMcilIFXR5zgs4pV0lS48e6sz
-	YI2x14hg==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tpub7-00000000j0Y-0L1H;
-	Wed, 05 Mar 2025 19:40:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8664E30049D; Wed,  5 Mar 2025 20:40:03 +0100 (CET)
-Date: Wed, 5 Mar 2025 20:40:03 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@intel.com>, x86@kernel.org,
-	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
- locking insns
-Message-ID: <20250305194003.GA35526@noisy.programming.kicks-ass.net>
-References: <20250228123825.2729925-1-ubizjak@gmail.com>
- <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
- <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
- <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
- <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
- <20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local>
- <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
- <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
+	s=arc-20240116; t=1741203718; c=relaxed/simple;
+	bh=09KBCtyH3qwfcdlEzXR7ea7uD5dPwadkoEZ6N270w3o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=GjilmFgSMjX+JVcUieJifsZYrtIYJjlNRGebdxFvXF+YibTVP4A7IYMY2CsCSCM+bt7+3xvM7S7UD870u4pulezMxpJ7sri+fcvdiAuHvG80OwTuLNTyHZ32S+pLi12jvk1kHth9njuYOltO4pjTjL/yrD6q7zzj6eN0e9e2HqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlvWTlSK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEB8C4CED1;
+	Wed,  5 Mar 2025 19:41:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741203718;
+	bh=09KBCtyH3qwfcdlEzXR7ea7uD5dPwadkoEZ6N270w3o=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=LlvWTlSKtMBLCbW9eWVCFYRmw1xkWNmLquOTZdbteQJ7HUx0YVK1cMzh+Jmbd5QO2
+	 q9hXWUHKoccY+WTucWtIi0aUlFs17vRPtziTTY5kya7G5jVGvwuXWCenQh1c+Mt/EN
+	 HAL96lHMmmuv69+auFfqEc00iEblXZo1BCNseTvGXaKDB/75Ap5l7oq9GOPzS0S4rW
+	 BbTDNPtzGOLX53OgdVCMo60VeZ61OYwef3p7GgJPhfgwEbP1MTVsp8mqL8wsDWzxRZ
+	 /Ht1p/Q+2W27tYmfP15Ah0fZavshfKjvAwtHlnX9TZnhH0xXPESWynFVzjzTJ1ybTK
+	 t4FLVX4+XH5Yw==
+Date: Wed, 5 Mar 2025 13:41:56 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Alistair Francis <alistair@alistair23.me>
+Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
+	Jonathan.Cameron@huawei.com, lukas@wunner.de,
+	alex.williamson@redhat.com, christian.koenig@amd.com,
+	kch@nvidia.com, gregkh@linuxfoundation.org, logang@deltatee.com,
+	linux-kernel@vger.kernel.org, alistair23@gmail.com,
+	chaitanyak@nvidia.com, rdunlap@infradead.org
+Subject: Re: [PATCH v16 3/4] PCI/DOE: Expose the DOE features via sysfs
+Message-ID: <20250305194156.GA309932@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,32 +59,43 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
+In-Reply-To: <20250227043404.2452562-3-alistair@alistair23.me>
 
-On Wed, Mar 05, 2025 at 07:04:08AM -1000, Linus Torvalds wrote:
-> And honestly, none of that makes sense any more. You can't buy a UP
-> machine any more, and the only UP case would be some silly minimal
-> virtual environment, and if people really care about that minimal
-> case, they should just compile the kernel without SMP support.
-> Becxause UP has gone from being the default to being irrelevant. At
-> least for x86-64.
-> 
-> So I think we should just get rid of LOCK_PREFIX_HERE and the
-> smp_locks section entirely.
-> 
-> Which would probably obviate the need for your patch, since then the
-> compiler wouldn't see it as some big instruction. But your patch isn't
-> wrong, so this is absolutely not a NAK, more of a "we should go
-> further".
-> 
-> Hmm?
+On Thu, Feb 27, 2025 at 02:34:02PM +1000, Alistair Francis wrote:
+> The PCIe 6 specification added support for the Data Object
+> Exchange (DOE).
+> When DOE is supported the DOE Discovery Feature must be implemented per
+> PCIe r6.1 sec 6.30.1.1. The protocol allows a requester to obtain
+> information about the other DOE features supported by the device.
 
-I'm all for removing that.
+> +What:		/sys/bus/pci/devices/.../doe_features
+> +Date:		March 2025
+> +Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
+> +Description:
+> +		This directory contains a list of the supported
+> +		Data Object Exchange (DOE) features. The features are
+> +		the file name. The contents of each file is the raw vendor id and
+> +		data object feature values.
+> +
+> +		The value comes from the device and specifies the vendor and
+> +		data object type supported. The lower (RHS of the colon) is
+> +		the data object type in hex. The upper (LHS of the colon)
+> +		is the vendor ID.
+> +
+> +		As all DOE devices must support the DOE discovery protocol, if
+> +		DOE is supported you will at least see the doe_discovery file, with
+> +		this contents
+> +
+> +		# cat doe_features/doe_discovery
+> +		0001:00
+> +
+> +		If the device supports other protocols you will see other files
+> +		as well. For example is CMA/SPDM and secure CMA/SPDM are supported
+> +		the doe_features directory will look like this
+> +
+> +		# ls doe_features
+> +		0001:01        0001:02        doe_discovery
 
-On that note, a number of architectures have already made the next step
-and that is mandate SMP=y.
-
-The down-side of that it that it would make a definite dent in the
-compile coverage for SMP=n code -- but perhaps we have enough robots to
-get away with that.
+Does this text need to be updated with s/protocol/feature/ as in the
+first patch?
 
