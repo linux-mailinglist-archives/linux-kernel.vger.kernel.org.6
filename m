@@ -1,76 +1,78 @@
-Return-Path: <linux-kernel+bounces-546059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 800DBA4F5D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:54:51 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10BE0A4F5DB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:01:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A14F81693E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F9873AAF65
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:01:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918EA1419A9;
-	Wed,  5 Mar 2025 03:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EADB19ADBA;
+	Wed,  5 Mar 2025 04:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="2FbP/iJt"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2045.outbound.protection.outlook.com [40.107.223.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="JE/tQQ8g"
+Received: from mail-il1-f169.google.com (mail-il1-f169.google.com [209.85.166.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3898E2E3388
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 03:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741146885; cv=fail; b=cb3b8IVNUl14LNUuXvVL9y5Xa2izJIyo1DiSmk/Cn+qFCrYIutKoQvync5nssPXd6XZJMr+QsB/WPETNkJZ+Jgq1PCsKG8H13X5NrZAcSt70pM0UIZZYM0PfhcSh6Iv1eOVolKboalUQH5KmuGJjPtPt6rwZQxMDRaK53JnApuk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741146885; c=relaxed/simple;
-	bh=vYdZAXe3gkj4uoyYi25OV5nQ9HjV4SPN3CCNN6mMOWI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=FgEJmjsi0Go5arrQiQmdpGSihzHPtd3UKSK+57WkCUS68DxeaxcEZbdOLgoYgt89GBNnd9t+AjFZwtgUmwc7nzdnX4kqeXyBHzvM4HwSA0NPBCrnTmlV/e4bQInkwV3iV+YL0We4cmGMuBNiON5FkxJ3kOj/VqwUbKE9O9/tPPY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=2FbP/iJt; arc=fail smtp.client-ip=40.107.223.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=LuM/Q/azXmXVH+3CRNhA2JxNl4rs0apPK5AmAPpqE10ilN2CxV6Swhhp8Xpad3m5P0Tl8f5Z/1qDpgBEKsfSfNl+kdDH44+YVE6lTZYcRDpxI2DrxzwwrjrQq/cVG/jmYuxh5X8UF3z8LV+XM4Gcs3Jk33hGwdVtrm9iel/07GqaS32jb9+2CglC1REhrXUaRUFO6eMMP/f9E9BpFxwetmSBoNVYPkmvBTWjAclTIyOQyKzOnXjzBU9wXaep8HtGiFI/vh2WT4HWIduIjb94Z6SmVx5okZAIYtgp98vforxUXAOpSRLs54lucItJYMYPxwRSR+XRgWsx0+AQFo+Clg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kiV8N8tPXK5EFOrMkDnbrwvzjOzMXrqN1vOxDnlQQfE=;
- b=cwnXYsMNj1yIu6eNjvTC4KYLRd68Q8ovTvrF0+5wfCCOC209Di1CgQUS8CIgVdJpm5PAO+PiWMFsWYWGHQ89E7m/tHqU5dMXC8btNmBD4HaatBe2oy630jiS24CZoJJjoaG7xWZc/SjwQAlFdfB43VTJ2Dr1ziWABzNn9k5hPuQrZMR7GYjKZUgChPd65vKJIcktRjUJ9Y3iIQu0+gk/yHkcLmpXmPSSV8Dw9sm8wi2c68dzzPkZYphaeVeNXRV5KW5FYb3YO744H/1zWZYCocXETaLyzBLt7Xnjx/+X6W4AHkII73hhrRKYgxR2C/VXSLXcbt2xOHEvJ31y1fY6QQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
- (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kiV8N8tPXK5EFOrMkDnbrwvzjOzMXrqN1vOxDnlQQfE=;
- b=2FbP/iJtG06Aa/3LMmGw+pQvxc/DMpI1kj5by1OSppppAZXZbzzFjPxRLfjq0nPKXRIcTxFfElR868whnOuu+M1sbfFs56O8nPLgFS5gIvR9iJPHTcfCHlV5PdJTiJmOqTYQVxuxlY6F6ecVWKv3IXRO/x8MEV5LFEYHSVZp/z0=
-Received: from CH2PR17CA0011.namprd17.prod.outlook.com (2603:10b6:610:53::21)
- by CH3PR12MB9148.namprd12.prod.outlook.com (2603:10b6:610:19d::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.29; Wed, 5 Mar
- 2025 03:54:42 +0000
-Received: from CH1PEPF0000AD81.namprd04.prod.outlook.com
- (2603:10b6:610:53:cafe::a6) by CH2PR17CA0011.outlook.office365.com
- (2603:10b6:610:53::21) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.16 via Frontend Transport; Wed,
- 5 Mar 2025 03:54:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
- smtp.mailfrom=amd.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=amd.com;
-Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
- 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
- client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
-Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CH1PEPF0000AD81.mail.protection.outlook.com (10.167.244.89) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8511.15 via Frontend Transport; Wed, 5 Mar 2025 03:54:42 +0000
-Received: from [10.252.205.52] (10.180.168.240) by SATLEXMB04.amd.com
- (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Tue, 4 Mar
- 2025 21:54:37 -0600
-Message-ID: <6409142e-d535-4ddd-b58d-41ea793f61b4@amd.com>
-Date: Wed, 5 Mar 2025 09:24:34 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE48A19C569
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:01:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.169
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741147274; cv=none; b=f/ZI78MDPCOZorGeCSqBhbI42HSOQXTLlLGLS8kaRo8GrUrzHuJNTG3VkBdUjwbPV7BerwpypttboJq354SbZCLtjLZV3zUeFryNNIl8qU/cAKt5goPzrpyA37yay5DdqytBlthhqXaNoiHG6z3sAmiB747lu2TmntYeC1sNo6E=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741147274; c=relaxed/simple;
+	bh=c7n8loHullD7JXhQoqt6oq4ipwinlvGcRtIih2cRmuc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ou0xlGEEMW4d07Pq8K4mUg+gF/XoKWnBoRJGTnQ/uK9cuOMDZ0a1a26GWC6HWLdhi+2xpKJ8UIqVGyUxuFal3VhBb108cEkeXXYoY74Xl6W+fXPVDc7Y+zQz5c8W71YzW4Sm6E+8y9rp//dSQju2InilpntW2ssvGGpIPdyflrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=JE/tQQ8g; arc=none smtp.client-ip=209.85.166.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f169.google.com with SMTP id e9e14a558f8ab-3d04932a36cso63681965ab.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 20:01:12 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sifive.com; s=google; t=1741147272; x=1741752072; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IAzReoWSx6Ky4BsTRXhDGhpk0Fac7rFxEYq0+DJkXWk=;
+        b=JE/tQQ8gc3jCIThWwVi4CmL4JWvBnCjnZqAvM8koaa4HM2bjJFN2ZTzG2E51M9axRb
+         ey99aAz++qTWCIoRAtNexdqyEbUPemRj91rx1/i5LJ/x+e4E4kx+bH6fU4PDYy6QWlWX
+         LikSn04wes2ly5JJCvUqE9Yb9JFrrkfCxJOTzl7uN9eFFkFWGVOebFYo0ytimGtsvpnQ
+         xEi6OSYg/afhFtLNu21qZsN0ReBhbFmhQ+gRKT2VA4AWc1ZKuwTPraJaxXc72lwBp7DH
+         mJ+NT0tOOhyk8Y2yeiRRlnGfftP5mpPdt5hisVupL/EOO+1aNcoDiPH63tjTAZopissd
+         5F9A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741147272; x=1741752072;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IAzReoWSx6Ky4BsTRXhDGhpk0Fac7rFxEYq0+DJkXWk=;
+        b=CdZ7qaVFf3NRoONJwnlsMLNlYR92UOWu/lxT4KmsN9+kb6MaKJv6z5J17nHVqdGwOS
+         GJINguNLYqAxYrdMXJleL6jRFelRTdkwILaXxDeXMpzeiE8LKjT4FgnJO2qtQMuxteDv
+         JubFzxceEhFEqFhPnAsGm68Y50+K5f1RmGMkHVGaZa8A4uZMbrUlg3Pk/brifT3Icw4y
+         kTDGh4WEw+XnH71mey9GcKRghI2JwtNslW8enMU+tOf+VQ3NbnzC70/B3Xbz4muGn0VP
+         jfIEQP+ZBJ2UBNkDgxEh0vv6QhpXWQXoWeD3HRZbwXvHA8DAt5TCZuPRKvlCCy60bj+/
+         s0CQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXhxkvxH+0cIQnXe8hOfxtm7jTdAwAd1mzzqjuGqrsD8ZfHYL7IluqWHmg5tqebPL6aW34FAGrPMBYIG2Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywr/ibDelBQfv6ff7LNgUoPMt4IrKXGSMjhqvAmebzTiscFJnid
+	bZeCBCqulsJ7kYAnXGI+s5I5q2KUqNFoK9UuRh10FzPvMMfjFXsCd0ju5K/fkNI=
+X-Gm-Gg: ASbGncsttm+xUXlCZDTtHyg2Pf/7+HdFSJm1tqBL6jH7/49/hYbzriKNczh/6pUkCrg
+	66GE3QmFLEUY1WG94tGey4+tvYGqq2V7KtAAKyyJ7zb5SV7SEucWzcelWIc2jUxT4U1ZAWyW9D5
+	jBCKEXEaU+OqA12ocjew6Y2XHnl1gyxBsjvkhH9x/hjVIvc8njpjbPejgmtgDjgcKTMfjoJCJLb
+	Dm6RMcmVzCQwYW8nOE2B8Zi5meIbinMr1lniHd0apfTuqf5ZHLXxTGrPyiCN2hLV2SaI97jg+QR
+	l8u/POeL4/WpQ5EhUtg0LCb7d1YQONBlXwEbUIQ=
+X-Google-Smtp-Source: AGHT+IHu3MJTjF5+qGVR/U5nf98lXZ/G6BYq/rEMfIvyKQ41zfGyelWGxeEJNcGMavArNtzdZ37kIw==
+X-Received: by 2002:a05:6e02:1d03:b0:3d3:e2d9:5a58 with SMTP id e9e14a558f8ab-3d42b97c976mr17539195ab.17.1741147271939;
+        Tue, 04 Mar 2025 20:01:11 -0800 (PST)
+Received: from [100.64.0.1] ([170.85.6.166])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3d3deee5121sm34666245ab.65.2025.03.04.20.01.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 20:01:11 -0800 (PST)
+Message-ID: <eda41d6d-fa08-413b-8f3c-ce044e171615@sifive.com>
+Date: Tue, 4 Mar 2025 22:01:09 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,154 +80,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/fair: Fix potential memory corruption in
- child_cfs_rq_on_list
-To: Zecheng Li <zecheng@google.com>, Ingo Molnar <mingo@redhat.com>, Peter
- Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, Vincent
- Guittot <vincent.guittot@linaro.org>
-CC: Dietmar Eggemann <dietmar.eggemann@arm.com>, Steven Rostedt
-	<rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman
-	<mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>, Josh Don
-	<joshdon@google.com>, <linux-kernel@vger.kernel.org>
-References: <20250304214031.2882646-1-zecheng@google.com>
+Subject: Re: [PATCH RESEND v5 1/2] dt-bindings: i2c: spacemit: add support for
+ K1 SoC
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Troy Mitchell <troymitchell988@gmail.com>,
+ Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-riscv@lists.infradead.org,
+ linux-i2c@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, spacemit@lists.linux.dev,
+ Conor Dooley <conor.dooley@microchip.com>
+References: <20250303-k1-i2c-master-v5-0-21dfc7adfe37@gmail.com>
+ <20250303-k1-i2c-master-v5-1-21dfc7adfe37@gmail.com>
+ <20250303093506-GYA58937@gentoo>
+ <ab10e069-d9e1-4df7-9454-8b0fc910443d@sifive.com>
+ <20250305030540-GYA62563@gentoo>
+From: Samuel Holland <samuel.holland@sifive.com>
 Content-Language: en-US
-From: K Prateek Nayak <kprateek.nayak@amd.com>
-In-Reply-To: <20250304214031.2882646-1-zecheng@google.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <20250305030540-GYA62563@gentoo>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
- (10.181.40.145)
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH1PEPF0000AD81:EE_|CH3PR12MB9148:EE_
-X-MS-Office365-Filtering-Correlation-Id: 62fb8a89-0659-4f04-5caf-08dd5b9975f6
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|376014|7416014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?S1FVWXd2VlBLUStPY0llenNTSk9MTm4rZ0JocTZoVG5hOVBhSGFvQ1I5RjBo?=
- =?utf-8?B?T2dNall5MUYvdnk5VFhVRlBiMEh0NVF6NWtqeVhyd2E4YXRqVnROTmNtNTVa?=
- =?utf-8?B?QUFnNVJOdWxyQ3hWV1NTQkhhVUZ2clJhdk1JSGJJOFY4Zy8yZXYxSEVGUURZ?=
- =?utf-8?B?alo4SmxCNUdPYm5SOG44TEtnTHhzMmtYNTR4WnJ2THpoTU4rUUJOVlZQVldC?=
- =?utf-8?B?Tk1yUFRLSmlnYTV0TGtNQml5UjJERjREZmZvMjZzcWg1N25FL0syaWJKMXFK?=
- =?utf-8?B?YVBnTjd0RjljMHozYXNLYVdWR3pPVndvcTBrd2ZEOSsra25JWWJkMUVmRmMy?=
- =?utf-8?B?aXVTSzVtZ0p4OU9TT0RDdzhBMVNjN2JWNUR1YXp4YXFFZVlHS2VaNWxrMXRV?=
- =?utf-8?B?UTJGNmVRUGJHQ3VkYkh1bmwySEtEMlZwSEM5VUNrZWZEeVFaM1FMVEN3d05p?=
- =?utf-8?B?Mkh1VVFodUgrUUZsQ1lwc0FrQTA1aklHRytoOFgzTG5DeDNPYjFCNnVoMkRT?=
- =?utf-8?B?dWQrQkJaazVOQ1RtMlByZmFCZnFVWmtZc0E1U3BmRUFIWWpoVHVmb3hXeElz?=
- =?utf-8?B?OURZSUg4WE9RV09Wd055SXlTWkIvQnZrSHpqTUkzdlpkTFR3ZXk5WlRPKy9o?=
- =?utf-8?B?NXR6MXJWdHVGVjYrZGMyVkwxclE5U2djSGRuYXFsQnBSYUNtbHVEK0tZUFFJ?=
- =?utf-8?B?T0Q0M0RrbGpmaWd4Yis3RW5ZZjFNS0lGWjlhZEllS3d4d3Ryd0NXZjI5Ynhu?=
- =?utf-8?B?RndnM0p6eitmaGgrVHpDRzF4c3J2ZjQ2ZFkrSnRDcW1uVlVoVVgxWlhabG9T?=
- =?utf-8?B?LzM2Y1hGZlIwS01wWG5ZQzFDN0NUOCtqWUpRS2lxalZXQVFGamZLbGhHTEow?=
- =?utf-8?B?NDBybDBSRC9vTGd4RVk3SW9jMzJCenVFQmlqSVk2Zm9PVXBLZnBFcjFqdTZH?=
- =?utf-8?B?MVZieGFQKy92ZUVtVDQ3czhic1ZrZjIzVFd2a0RYNXZDb1FMZUIyb2lUcnZL?=
- =?utf-8?B?Mm1hcEU1SEtpL01nTTQxeXo5alFUM3o0bXZMT0x1THZSMXQ2RmJwT1AzN2k3?=
- =?utf-8?B?aUQzdldGUW4rUDlsakwxc2VxT3EwYnlJVzUzdGdQWTBTcTFweVlmVFo5MXZL?=
- =?utf-8?B?YVd4Rk9JOHFoQnN5VGJHRWZCZldrMTVYVklqVHUzMExYdEM2aUl2ZU1jS1ll?=
- =?utf-8?B?QWdncnpzei9PV0hFb3NGL1pXUVFuZ0dOQnpZcWFFMTYrKzE2aVZzejFFNjYy?=
- =?utf-8?B?Z2xvM2JSQmR0ZzhOVVdKMVdNSGtpeTlQOVNZUGZHWE5naUhlNGVSZVZLRDRl?=
- =?utf-8?B?bkdUa08vMHNrQW1SR2VVMmpZNzFFK3JSQUk2cHpBK1hXdWZHV1AwN0dnRUcw?=
- =?utf-8?B?REkxUWZCNCsxVUhKZk43bUl6cTAzbEk5MmZPcmtmMmltMHd1dGREZFluSkNw?=
- =?utf-8?B?YTl4TGxkdWEyUmp4UWhMYkQxOGJvdSt0bHZ5M05DQnBkbUlQODVMdCtmcmF4?=
- =?utf-8?B?cUNJQnc4bGpPUW9iSzRCbEVkdXczVXJPaUNnZE8wTDYvaEYzZ0VKbUs4OFB0?=
- =?utf-8?B?RGhxVWs5VzBZV0p6ZzJOZGFscnpDZ0FOWUtEVW5UZzJWZlhjdStpYkhyV3RB?=
- =?utf-8?B?QVo1QVBiQTlDQ1ovdHV1SjdCSm93MmtXcVRIQlBmcXFkUlg1OG1iV2JiTVVt?=
- =?utf-8?B?MHVZMUZLMlkwZUcwWG13RUJPd0pnVnh0cVdzN0tLWUhxemZYWG5TYnYzNFJO?=
- =?utf-8?B?WnNKdTFTOHRySUx5YlBlSXVIMUhWWjVJL0tGNUVrVjViWEJHTjMzTTJ5QU1B?=
- =?utf-8?B?VXF1WG02MmtiN1p2S05ZbkdicEhyZzZZSTAycmZrSmlCY2RDRk9QMXZUUE5Y?=
- =?utf-8?B?Zkg1SmlZWEw5L3p3alJVNEE2WERkS09WM2tpUmMzajd5SjkvVGd2ZENQUTU5?=
- =?utf-8?B?NjBIejNVMEc4ODdvc25SbkVjdVN4MTVxVEpHdkRpMGs4dkUxeURhSzlZZ3Vz?=
- =?utf-8?Q?iZvTE1Daxh8rfNlUs3dCUMLahSMN9Y=3D?=
-X-Forefront-Antispam-Report:
-	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 03:54:42.3057
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 62fb8a89-0659-4f04-5caf-08dd5b9975f6
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CH1PEPF0000AD81.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9148
 
-Hello Li,
-
-On 3/5/2025 3:10 AM, Zecheng Li wrote:
-> child_cfs_rq_on_list attempts to convert a 'prev' pointer to a cfs_rq.
-> This 'prev' pointer can originate from struct rq's leaf_cfs_rq_list,
-> making the conversion invalid and potentially leading to memory
-> corruption. Depending on the relative positions of leaf_cfs_rq_list and
-> the task group (tg) pointer within the struct, this can cause a memory
-> fault or access garbage data.
+On 2025-03-04 9:05 PM, Yixun Lan wrote:
+>>>> +        clocks = <&ccu 176>, <&ccu 90>;
+>>>> +        clock-names = "apb", "twsi";
+>>> 9.1.4.61 TWSI0 CLOCK RESET CONTROL REGISTER(APBC_TWSI0_CLK_RST)
+>>> https://developer.spacemit.com/documentation?token=LCrKwWDasiJuROkVNusc2pWTnEb#part594
+>>> from above docs, there are two clocks 
+>>> bit[1] - FNCLK, TWSI0 Functional Clock Enable/Disable
+>>> bit[0] - APBCLK, TWSI0 APB Bus Clock Enable/Disable
+>>>
+>>> I'd suggest to name it according to the functionality, thus 'func', 'bus'
+>>> clock, not its source.. which would make it more system wide consistent
+>>
+>> Also in that same register is:
+>>
+>> 2	RST	RW	0x1	TWSI0 Reset Generation
+>> This field resets both the APB and functional domain.
+>> - 0: No Reset
+>> - 1: Reset
+>>
+>> Which means you need a 'resets' property in the binding as well.
+>>
+> right, there is reset needed
 > 
-> The issue arises in list_add_leaf_cfs_rq, where both
-> cfs_rq->leaf_cfs_rq_list and rq->leaf_cfs_rq_list are added to the same
-> leaf list. Also, rq->tmp_alone_branch can be set to rq->leaf_cfs_rq_list.
+> I'd suggest to add it as an incremental patch later, when we
+> implement real reset driver, and also complete the calling reset
+> consumer API in i2c driver
 > 
-> This adds a check `if (prev == &rq->leaf_cfs_rq_list)` after the main
-> conditional in child_cfs_rq_on_list. This ensures that the container_of
-> operation will convert a correct cfs_rq struct.
-> 
-> This check is sufficient because only cfs_rqs on the same CPU are added
-> to the list, so verifying the 'prev' pointer against the current rq's list
-> head is enough.
-> 
-> Fixes a potential memory corruption issue that due to current struct
-> layout might not be manifesting as a crash but could lead to unpredictable
-> behavior when the layout changes.
-> 
-> Signed-off-by: Zecheng Li <zecheng@google.com>
-> ---
->   kernel/sched/fair.c | 6 ++++--
->   1 file changed, 4 insertions(+), 2 deletions(-)
-> 
-> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> index 857808da23d8..9dafb374d76d 100644
-> --- a/kernel/sched/fair.c
-> +++ b/kernel/sched/fair.c
-> @@ -4061,15 +4061,17 @@ static inline bool child_cfs_rq_on_list(struct cfs_rq *cfs_rq)
->   {
->   	struct cfs_rq *prev_cfs_rq;
->   	struct list_head *prev;
-> +	struct rq *rq = rq_of(cfs_rq);
->   
->   	if (cfs_rq->on_list) {
->   		prev = cfs_rq->leaf_cfs_rq_list.prev;
->   	} else {
-> -		struct rq *rq = rq_of(cfs_rq);
-> -
->   		prev = rq->tmp_alone_branch;
->   	}
+> but, let me know if this is not the right way to go
 
-A "SCHED_WARN_ON(prev == &rq->leaf_cfs_rq_list)" here is easily tripped
-during early boot on my setup before this fix.
+If you add the resets property later, that's a breaking change to the DT,
+because existing devicetrees will not have that property. So you would have to
+make the reset consumer in the driver optional, even if it's not really
+optional, to work with older DTs. So it is _possible_ to add incrementally, but
+not recommended because it adds "legacy" code that never really goes away.
 
-Only nit. is perhaps that return can go into the else clause above since
-"cfs_rq->on_list" case will guarantee a "leaf_cfs_rq_list" pointer that
-is embedded in a valid cfs_rq struct but I've no strong feelings.
+It's okay to define the binding as requiring the resets property now, even
+before the reset controller driver is merged. You just won't be able to add the
+I2C controller to the DTS until the reset controller binding is merged. But
+since the reset controller is the same IP block as the clock controller, its
+binding should be available soon anyway.
 
-Feel free to add:
-
-Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
-
--- 
-Thanks and Regards,
-Prateek
-
->   
-> +	if (prev == &rq->leaf_cfs_rq_list)
-> +		return false;
-> +
->   	prev_cfs_rq = container_of(prev, struct cfs_rq, leaf_cfs_rq_list);
->   
->   	return (prev_cfs_rq->tg->parent == cfs_rq->tg);
-> 
-> base-commit: 7ab02bd36eb444654183ad6c5b15211ddfa32a8f
-
-
+Regards,
+Samuel
 
 
