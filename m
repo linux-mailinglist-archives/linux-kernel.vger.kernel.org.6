@@ -1,164 +1,197 @@
-Return-Path: <linux-kernel+bounces-546769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45395A4FE89
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:23:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 865E3A4FE90
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:24:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 519627A4B3F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:22:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1E473AAFA5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:24:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE15A245018;
-	Wed,  5 Mar 2025 12:23:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UdYVsiAi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA3E9245014;
+	Wed,  5 Mar 2025 12:24:49 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB1C230BC6;
-	Wed,  5 Mar 2025 12:23:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E50FC242939
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741177386; cv=none; b=B/Ogu2yatUZ9ZxXkQUxx5ZTvLa+umZjkooVumDzK+erXbkv4X032tkZw3tI1vejGBg07riVoluOOJo1XHNXdbovGJitnKmfpxZPrDGfZutUZItKtN0BufB0lsRNUD7qKuWSt44y0+YeXC7TLpQ8yUlHmCjrql2ur7riS+KSNc9E=
+	t=1741177489; cv=none; b=TDcvU+ZG75dEb42vD1KaiYFf5Z7fvvijxxV6w3/4oPi4K9KgZnk/YbRyDFiKHDSAXToBQLzInq5dY09kfY7kT0ZW2a1z836rMKE4tcJagVTs/HOVmvETOsrxaLIWgy9ELWRzy65nsRcL3rARiZX5RMo4LwfCZ9odAaTpKT3BG4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741177386; c=relaxed/simple;
-	bh=s/9I1InuYpZxK//KrKXsxt+XDSwpdDwGwl+90MDRa4o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tZ6b1vdrL4GRIO888db1GiRPL2kiaiB78TbxnblvhBmUNk/N3YD7D3usiFCcJG1hpc4qGENPCOZ0IWX5HHRm5zO/kVNntrfB3Z41Xbx8/Ekf7DsVylVrCp3SQHQvZUMmSmIHctzaqM+Hof8/BEJUCfEpBSM85BsQTgKzAbpbDto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UdYVsiAi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 309B3C4CEE2;
-	Wed,  5 Mar 2025 12:23:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741177385;
-	bh=s/9I1InuYpZxK//KrKXsxt+XDSwpdDwGwl+90MDRa4o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=UdYVsiAiket9rKVXzmxwgRkSNbUbJP0lrRcZQ/Dx4Yu8Gc3+6nK3LI7drWbanrI4d
-	 UD3ho32DWS+UkLIUAURh6+0qq2RGTpwkv6f5dW/dyMDnF50SrXrESJ/5pYx/pA1dzK
-	 i/gOgiHwj5cnOm+309DeSN4od4bhxFUyRTGJ9rXV62Cr/mLbLmVkpNnRyqzpHLGhbU
-	 gk6CgENSvmHtYEX58vV1TEizo3qBbEaPhux9UrleQgQZPQ0X5loVgbuhZSReRkCiFK
-	 ifaR/ezjldHS7FfIl17oaAV94YSeht7BlKPtdiOiiP9nOIQ2QngwJpoR4sBh8rzVQK
-	 ZFzFRGYOvWEUA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Danilo Krummrich" <dakr@kernel.org>,  <linux-kernel@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 16/22] rust: pin-init: add `std` and `alloc` support
- from the user-space version
-In-Reply-To: <20250304225245.2033120-17-benno.lossin@proton.me> (Benno
-	Lossin's message of "Tue, 04 Mar 2025 22:55:32 +0000")
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<qEIYcaF5eMmpiaRI_4rpApjyuiQMjms1LdZhmHXO5l9_HqN32upj8ZVbCnvI3hfDDTJeYT_9N7z3kyvOR-whRg==@protonmail.internalid>
-	<20250304225245.2033120-17-benno.lossin@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 13:22:37 +0100
-Message-ID: <8734frd5v6.fsf@kernel.org>
+	s=arc-20240116; t=1741177489; c=relaxed/simple;
+	bh=bpULnFJHbcm6cClhnUJ0bpMib8w3hmogj9PdLruqLWk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=S39eXxAIEBCgt5ScnfRniL2xxVXBOpdZBnQQPYwi31N0rjicuj5G0j973my+C1a8IJmmwzG3i9jGpXZ421Ts0b5FN4b1IU2NcGj93/SmocHZpfYkuyw7MKkvKTA7gP57zxEuwUpwqSUFhox+XhBd6C0NI2ys19D3ZALaC3mu3ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1tpnn2-00021N-8w; Wed, 05 Mar 2025 13:23:56 +0100
+Message-ID: <f6eccbe2-b0cd-4f9e-99e0-82003a00fe5e@pengutronix.de>
+Date: Wed, 5 Mar 2025 13:23:46 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 0/2] Add stop_on_panic support for watchdog
+To: George Cherian <gcherian@marvell.com>,
+ "linux@roeck-us.net" <linux@roeck-us.net>,
+ "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+ "jwerner@chromium.org" <jwerner@chromium.org>,
+ "evanbenn@chromium.org" <evanbenn@chromium.org>,
+ "kabel@kernel.org" <kabel@kernel.org>, "krzk@kernel.org" <krzk@kernel.org>,
+ "mazziesaccount@gmail.com" <mazziesaccount@gmail.com>,
+ "thomas.richard@bootlin.com" <thomas.richard@bootlin.com>,
+ "lma@chromium.org" <lma@chromium.org>,
+ "bleung@chromium.org" <bleung@chromium.org>,
+ "support.opensource@diasemi.com" <support.opensource@diasemi.com>,
+ "shawnguo@kernel.org" <shawnguo@kernel.org>,
+ "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+ "kernel@pengutronix.de" <kernel@pengutronix.de>,
+ "festevam@gmail.com" <festevam@gmail.com>, "andy@kernel.org"
+ <andy@kernel.org>, "paul@crapouillou.net" <paul@crapouillou.net>,
+ "alexander.usyskin@intel.com" <alexander.usyskin@intel.com>,
+ "andreas.werner@men.de" <andreas.werner@men.de>,
+ "daniel@thingy.jp" <daniel@thingy.jp>,
+ "romain.perier@gmail.com" <romain.perier@gmail.com>,
+ "avifishman70@gmail.com" <avifishman70@gmail.com>,
+ "tmaimon77@gmail.com" <tmaimon77@gmail.com>,
+ "tali.perry1@gmail.com" <tali.perry1@gmail.com>,
+ "venture@google.com" <venture@google.com>,
+ "yuenn@google.com" <yuenn@google.com>,
+ "benjaminfair@google.com" <benjaminfair@google.com>,
+ "maddy@linux.ibm.com" <maddy@linux.ibm.com>,
+ "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+ "npiggin@gmail.com" <npiggin@gmail.com>,
+ "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+ "naveen@kernel.org" <naveen@kernel.org>,
+ "mwalle@kernel.org" <mwalle@kernel.org>,
+ "xingyu.wu@starfivetech.com" <xingyu.wu@starfivetech.com>,
+ "ziv.xu@starfivetech.com" <ziv.xu@starfivetech.com>,
+ "hayashi.kunihiko@socionext.com" <hayashi.kunihiko@socionext.com>,
+ "mhiramat@kernel.org" <mhiramat@kernel.org>
+Cc: "chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
+ "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "patches@opensource.cirrus.com" <patches@opensource.cirrus.com>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20250305101025.2279951-1-george.cherian@marvell.com>
+ <43fb0965-04b7-41dc-ae3f-54676eefdbb5@pengutronix.de>
+ <PH8PR18MB53817EC09B918852B78DF3AAC5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
+ <28d0ea70-db7a-40e7-aac9-86808320f252@pengutronix.de>
+ <PH8PR18MB5381B857859C6413392DD007C5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
+Content-Language: en-US
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <PH8PR18MB5381B857859C6413392DD007C5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Hello George,
 
-> To synchronize the kernel's version of pin-init with the user-space
-> version, introduce support for `std` and `alloc`. While the kernel uses
-> neither, the user-space version has to support both. Thus include the
-> required `#[cfg]`s and additional code.
->
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> ---
->  rust/pin-init/src/__internal.rs |  27 ++++++
->  rust/pin-init/src/alloc.rs      | 158 ++++++++++++++++++++++++++++++++
->  rust/pin-init/src/lib.rs        |  17 ++--
->  3 files changed, 196 insertions(+), 6 deletions(-)
->  create mode 100644 rust/pin-init/src/alloc.rs
->
-> diff --git a/rust/pin-init/src/__internal.rs b/rust/pin-init/src/__internal.rs
-> index 74086365a18a..27d4a8619c04 100644
-> --- a/rust/pin-init/src/__internal.rs
-> +++ b/rust/pin-init/src/__internal.rs
-> @@ -186,6 +186,33 @@ pub fn init<E>(self: Pin<&mut Self>, init: impl PinInit<T, E>) -> Result<Pin<&mu
->      }
->  }
->
-> +#[test]
+On 05.03.25 13:15, George Cherian wrote:
+>> On 05.03.25 12:28, George Cherian wrote:
+>>>> that can't be disabled and would protect against system lock up: 
+>>>> Consider a memory-corruption bug (perhaps externally via DMA), which partially
+>>>> overwrites both main and kdump kernel. With a disabled watchdog, the system
+>>>> may not be able to recover on its own.
+>>>
+>>> Yes, that is the reason why the kernel command-line is optional and by default it is set to zero.
+>>> So that in cases if you have a corrupted kdump kernel then watchdog kicks in.
+>>
+>> The existing option isn't enough for the kdump kernel use case.
+>> If we (i.e. you) are going to do something about it, wouldn't it be
+>> better to have a solution that's applicable to a wider number of
+>> watchdog devices?
+> 
+> I need a slight clarification here. 
+> 1. reset_on_panic takes the number of seconds to be reloaded to watchdog HW, so that it initiates a 
+> watchdog reset after the specified timeout, if kdump kernel fails to boot or hung while booting.
 
-I think the kunit support we have in the pipeline will pick this up?
+Yes.
 
-> +fn stack_init_reuse() {
-> +    use ::std::{borrow::ToOwned, println, string::String};
-> +    use core::pin::pin;
-> +
-> +    #[derive(Debug)]
-> +    struct Foo {
-> +        a: usize,
-> +        b: String,
-> +    }
-> +    let mut slot: Pin<&mut StackInit<Foo>> = pin!(StackInit::uninit());
-> +    let value: Result<Pin<&mut Foo>, core::convert::Infallible> =
-> +        slot.as_mut().init(crate::init!(Foo {
-> +            a: 42,
-> +            b: "Hello".to_owned(),
-> +        }));
-> +    let value = value.unwrap();
-> +    println!("{value:?}");
-> +    let value: Result<Pin<&mut Foo>, core::convert::Infallible> =
-> +        slot.as_mut().init(crate::init!(Foo {
-> +            a: 24,
-> +            b: "world!".to_owned(),
-> +        }));
-> +    let value = value.unwrap();
-> +    println!("{value:?}");
-> +}
-> +
+> 2. in case reset_on_panic = 0 then it behaves like stop_on_panic=1.
+> Is this what you meant?
 
-[...]
+Alternatively, reset_on_panic = 0 could also mean stopping the watchdog as
+you do now. I haven't thought though yet what would make the most sense.
 
-> diff --git a/rust/pin-init/src/lib.rs b/rust/pin-init/src/lib.rs
-> index 55d8953620f0..1fdca35906a0 100644
-> --- a/rust/pin-init/src/lib.rs
-> +++ b/rust/pin-init/src/lib.rs
-> @@ -204,8 +204,8 @@
->  //! [structurally pinned fields]:
->  //!     https://doc.rust-lang.org/std/pin/index.html#pinning-is-structural-for-field
->  //! [stack]: crate::stack_pin_init
-> -//! [`Arc<T>`]: ../kernel/sync/struct.Arc.html
-> -//! [`Box<T>`]: ../kernel/alloc/struct.KBox.html
-> +//! [`Arc<T>`]: https://doc.rust-lang.org/stable/alloc/sync/struct.Arc.html
-> +//! [`Box<T>`]: https://doc.rust-lang.org/stable/alloc/boxed/struct.Box.html
+> I would let Guenter comment on this approach.
 
-Now these will render incorrect in the kernel docs, right?
++1.
 
->  //! [`impl PinInit<Foo>`]: PinInit
->  //! [`impl PinInit<T, E>`]: PinInit
->  //! [`impl Init<T, E>`]: Init
-> @@ -239,6 +239,11 @@
->  #[doc(hidden)]
->  pub mod macros;
->
-> +#[cfg(any(feature = "std", feature = "alloc"))]
-> +mod alloc;
-> +#[cfg(any(feature = "std", feature = "alloc"))]
-> +pub use alloc::InPlaceInit;
+>> If you are serious with the watchdog use, you'll want to use the watchdog to
+>> monitor kernel startup as well. If the bootloader can set a watchdog timeout
+>> just before starting the kernel and it doesn't expire before the kernel watchdog
+>> driver takes over, why can't we do the same just before starting the dumpkernel?
+> 
+> Yes, in an ideal world with ideal HW. But there are HW with issues which cannot have large
+> enough Watchdog time. Such HW would boot from FW to kernel without watchdog enabled.
+> And stop_on_panic does the similar for kdump kernel too.
 
-Do we really need to have this entire file sitting dead in the kernel
-tree? If you are not building the user space version from the kernel
-sources, I don't think we need it here. Even when you want to sync
-between the two repositories, it should be easy to handle an entire file
-being not present on one side.
+Yes, but there is likely more kinds of watchdog devices that can not be disabled,
+so it makes sense to have a solution that is more broadly applicable from the get-go.
+
+Cheers,
+Ahmad
+
+> 
+> -George
+>>
+>> Thanks,
+>> Ahmad
+>>
+>>
+>>>
+>>> Thanks,
+>>> Ahmad
+>>>
+>>>>
+>>>>
+>>> Changelog:
+>>> v1 -> v2
+>>> - Remove the per driver flag setting option
+>>> - Take the parameter via kernel command-line parameter to watchdog_core.
+>>>
+>>> v2 -> v3
+>>> - Remove the helper function watchdog_stop_on_panic() from watchdog.h.
+>>> - There are no users for this. 
+>>>
+>>> v3 -> v4
+>>> - Since the panic notifier is in atomic context, watchdog functions
+>>>   which sleep can't be called. 
+>>> - Add an options flag WDIOF_STOP_MAYSLEEP to indicate whether stop
+>>>   function sleeps.
+>>> - Simplify the stop_on_panic kernel command line parsing.
+>>> - Enable the panic notiffier only if the watchdog stop function doesn't
+>>>   sleep
+>>>
+>>> George Cherian (2):
+>>>   watchdog: Add a new flag WDIOF_STOP_MAYSLEEP
+>>>   drivers: watchdog: Add support for panic notifier callback
+>>
+>> - George
+> 
+> 
 
 
-Best regards,
-Andreas Hindborg
-
-
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
