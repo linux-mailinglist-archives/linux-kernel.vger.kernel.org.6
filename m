@@ -1,191 +1,133 @@
-Return-Path: <linux-kernel+bounces-547061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E79A5027E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:45:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42147A50291
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:48:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337DE3A4105
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:43:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 12E4E1887D07
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:44:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AD3524E4A7;
-	Wed,  5 Mar 2025 14:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF662356A8;
+	Wed,  5 Mar 2025 14:43:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ATZ2mKXs"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VL8phBxE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B918E2356A8;
-	Wed,  5 Mar 2025 14:43:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B72E24EA9D;
+	Wed,  5 Mar 2025 14:43:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185830; cv=none; b=cAHEn3zetcGFVSsKwxezf7M7j0M3E11KvudGtJVKTse6c1+bpUQg/wr/KZfwkJmI+oEg1K9e5mSxSMgaEXnkZaWvEs3Fanw0N7trI3gxGBzHDfp5wpEW6sKCRvrxreMetzvphe2RhLefDdyQ04oXCCNbxdxCUPZDbHBpHpTO470=
+	t=1741185833; cv=none; b=qTQUQSuuBn0ERTbBB0SmUsUojA+CfTFxDdXt9oJe7wu523ENWoi6SLCw+Ca5PlZbtfUHODNpGk6Wie5yWdkaTPFCKeHB5+4EgB/t2EtmeI+RyYrY/62K5Z5PrgoiVVsuvgGd9eIECu9CGClyhVCbBfPB+M1lZ5oe5rLr5x00T98=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185830; c=relaxed/simple;
-	bh=+AqUlKzCTWCV8gJp+rDWglTxdmVYfG/0hrgQCsIkfp8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=n6R/j2Fl5MlO4AumtkSTuMWPL72tgvBj9DE+l85ETSe9ZVcANCT14yaaqXONFVjFv2BhSEz2LWnmhvJzVxCFYqtnlK1dQnVRbhwJlTo/8bzNvjcCGQ3VOskxvMRXpLkMYwyvmjiPdUc1CuyMtNzUXr55Kk6yO0onVXNOeQnrYMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ATZ2mKXs; arc=none smtp.client-ip=209.85.221.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3911748893aso1521345f8f.3;
-        Wed, 05 Mar 2025 06:43:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741185827; x=1741790627; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W+czHJw0+drcfBudBMvI20HD9M6Zg630DEJar/Aqg1E=;
-        b=ATZ2mKXstbBjV2J2Vv2VTF3crdNJREkUeyXxYqkNmmqOwDd1wQV7Ejs/lzQKMWzVQL
-         AdgPSNvyIryryHFfwp0C0II04VfyBCwPhFVg1BVPL9ogmfdXRm0zksqbKzOmSFGOuwGn
-         OP6FLBfi3HKNFNSDxzLvJnTL+O+6jsiJMPlk1ENZxVdpjGiUVIapJ5HOFGzpIcuScCdu
-         +a3Croxy7YnrViM6gxez4RLIufR6/VC8iNPo8UCrutk+hfzOzio7EEE01JXE3ieYJbO4
-         7SL86ead/BuKckxwjaMCBjBH6VLr8LaFI/fRB1Nl2oJSLw4dbuaItCyRSXFkt5RLXNhv
-         VfTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741185827; x=1741790627;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W+czHJw0+drcfBudBMvI20HD9M6Zg630DEJar/Aqg1E=;
-        b=LPM/kI/DphDJ2/L4xvMbfGmc5rTOniTwhvuqExfJrdbjlllfL2c3iV2DfwbS8ZzWIe
-         7bHSFu+u+I/mijgL1v+a6M34jTKXIHGAlKj6p6/8JEJC2LT0UG3c83wx1pGDS+8rCfJv
-         XKjMDqC8M5gs9w1zyHcPp1i1Sn3+TLWZ2z6QJdD2gXw51SVIpCV89l+BdHPLfv80PgkV
-         RfEKd3zT4ZNL2Sa8ldHEDchB/aBqoNMw9nVVsQyU4SmywufUIzyeFr0sh7a9jYqXXLv4
-         C6wRt/5SOKtq+n86xMxf+5sUiqGajo8JU/zkkE3OdeP4koIkLwDFbfcn4qvbblU/kQ+H
-         EIcg==
-X-Forwarded-Encrypted: i=1; AJvYcCUN5gflP5hVEAoklxiY7SYxESiXY9+jRY8NumzIUe3D1zGJp3NqU71sH2rZnMnDzlUfSnRkKEI18KPb@vger.kernel.org, AJvYcCUphpSLa990SwyrzTOd53YhWcJvbuURGH+I7JbQc+7W/0MeV9OaROMU0MuRDGQb8AWMZq2vh8t1H4rAC9sM@vger.kernel.org
-X-Gm-Message-State: AOJu0YxslkVIiM8Zhbw8PPZIHfdJUXmMHIRV+WMP/53qOroqvEQwGjxE
-	v61puetGAWjgKzlsUK2V5EDdM06p+qMXHspYeQoh+9QBCQtKNtRT0swl+ivKSMvMcLUmfrNt4/4
-	oi6D7d5FH3lqdTrYG5dT7GH/K4eo=
-X-Gm-Gg: ASbGncvwbwlMw3+dWX6PydCbu45JFC3SrfbopCTCKJpFy9EFw8fPjIlWkScA7RzePcp
-	8ez69TisZgpmasR4KQiZdOzAgEjMrWPBgRDtpNRfmfbBr10AleliffTN7tCOVhN0coRsVDC2WfU
-	tTGxxej3qhwiyB8QKLI7gbap7n3g0=
-X-Google-Smtp-Source: AGHT+IE0Wg93XW7daRT3+XvEJc5G1E0Ewc2aulgOkHuquQ7ry8l0r3PqMhb4dWbor0wlFwrkNcLUG1zinJ4UztxNR90=
-X-Received: by 2002:a05:6000:18a6:b0:391:13f7:92ad with SMTP id
- ffacd0b85a97d-3911f764115mr2516233f8f.27.1741185826776; Wed, 05 Mar 2025
- 06:43:46 -0800 (PST)
+	s=arc-20240116; t=1741185833; c=relaxed/simple;
+	bh=q0jxvZ22iaWtq6NXJfvioYNnCp9yCTO3f0Gdzs+gwAA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u4NQmQkMiFG6x0LY6309d5GHHmu95+XE50KDjkNXGy2OJbEEssiekahxHmPTM4gEX5dKXNgbGzU0gGiGv/E32mRpYlvXz4Jt1/FAqczZZza82b6WhU8sBJ0bTf+pDF0yhMOdPaSauj0MwWZfZJNGm106FllJ6r/3SxfBuDICOv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VL8phBxE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B1D4C4CEEA;
+	Wed,  5 Mar 2025 14:43:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741185832;
+	bh=q0jxvZ22iaWtq6NXJfvioYNnCp9yCTO3f0Gdzs+gwAA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VL8phBxEFd5Fj6YetuiSBuA7/2QNGmEqIVa74UvUIYW80vX0LG79IILjPHeitzW0G
+	 kKgSxMzYiq0Y0dhIUiFAvFEmNQf5v5zlg8hR5+CAwnF7LKb6VLYrlpDkZ70FBzg+cP
+	 Mm45tEh6W6do3V+ZD485y4tIequsew05viWenFmNBPlgwerdWL+k8H/sRuEwZdSAbc
+	 uhKP8OFJIs49UDkeinedf+FZJIxeoWkxY1nYoStB94ZbJfOA7SycLFJW2K9rrlv3or
+	 OaJC15q8Dv7EEM3le6UMkrtmoYYbMrMgMIaY0WCc6H+v0xY66aS5CuM3eOxDUFycbm
+	 rYfVb1j4UicFQ==
+Date: Wed, 5 Mar 2025 15:43:47 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: Leon Romanovsky <leon@kernel.org>
+Cc: nicolas.bouchinet@clip-os.org, linux-kernel@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org, codalist@coda.cs.cmu.edu, 
+	linux-nfs@vger.kernel.org, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
+	Joel Granados <j.granados@samsung.com>, Clemens Ladisch <clemens@ladisch.de>, 
+	Arnd Bergmann <arnd@arndb.de>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jason Gunthorpe <jgg@ziepe.ca>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	"Martin K. Petersen" <martin.petersen@oracle.com>, Jan Harkes <jaharkes@cs.cmu.edu>, 
+	Chuck Lever <chuck.lever@oracle.com>, Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Bart Van Assche <bvanassche@acm.org>, Zhu Yanjun <yanjun.zhu@linux.dev>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 5/6] sysctl/infiniband: Fixes infiniband sysctl bounds
+Message-ID: <i4x736hwah7vc7mjjooxyeo3t73wzcm365mah3qganrs6x6l2d@khb2a6uggrop>
+References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
+ <20250224095826.16458-6-nicolas.bouchinet@clip-os.org>
+ <20250224134105.GC53094@unreal>
+ <6obp2rythrcvlknqsczvxmhenhvxsosobc4cwx36iinyjjj5mr@b227ysqvp5vh>
+ <20250303185309.GA1955273@unreal>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303122151.91557-1-clamor95@gmail.com> <20250303122151.91557-3-clamor95@gmail.com>
- <3bc7c5a5-8fe7-4c4b-a80e-23522922debb@arm.com> <CAPVz0n0yvw4kyYKSve9sSZEvcZrCYZ6RqCjFSO5OCqtvRZSfJg@mail.gmail.com>
- <f56596fe-92e8-481b-b15b-29b531eaec32@arm.com>
-In-Reply-To: <f56596fe-92e8-481b-b15b-29b531eaec32@arm.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 5 Mar 2025 16:43:34 +0200
-X-Gm-Features: AQ5f1JpUpSPyJFPDEyOWhAfjUiTXaiQV-NWZBlTtwhwrqamQpYjovRQ1ribZIWA
-Message-ID: <CAPVz0n164wQw1HZ4XVPXyg1w=cwC4-xtqBpgmmE5uKXJtATKmg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] thermal: thermal-generic-adc: add temperature
- sensor channel
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	Jonathan Cameron <jic23@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303185309.GA1955273@unreal>
 
-=D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 16:37 Lukas=
-z Luba <lukasz.luba@arm.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
->
->
-> On 3/5/25 10:06, Svyatoslav Ryhel wrote:
-> > =D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 11:52 L=
-ukasz Luba <lukasz.luba@arm.com> =D0=BF=D0=B8=D1=88=D0=B5:
-> >>
-> >>
-> >>
-> >> On 3/3/25 12:21, Svyatoslav Ryhel wrote:
-> >>> To avoid duplicating sensor functionality and conversion tables, this=
- design
-> >>> allows converting an ADC IIO channel's output directly into a tempera=
-ture IIO
-> >>> channel. This is particularly useful for devices where hwmon isn't su=
-itable
-> >>> or where temperature data must be accessible through IIO.
-> >>>
-> >>> One such device is, for example, the MAX17040 fuel gauge.
-> >>>
-> >>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> >>> ---
-> >>>    drivers/thermal/thermal-generic-adc.c | 54 +++++++++++++++++++++++=
-+++-
-> >>>    1 file changed, 53 insertions(+), 1 deletion(-)
-> >>>
-> >>> diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/=
-thermal-generic-adc.c
-> > ...
-> >>>
-> >>> +static const struct iio_chan_spec gadc_thermal_iio_channel[] =3D {
-> >>> +     {
-> >>> +             .type =3D IIO_TEMP,
-> >>> +             .info_mask_separate =3D BIT(IIO_CHAN_INFO_PROCESSED),
-> >>
-> >> I would add the IIO_CHAN_INFO_SCALE and say it's in milli-degrees.
-> >>
-> >
-> > I have hit this issue already with als sensor. This should definitely
-> > be a IIO_CHAN_INFO_PROCESSED since there is no raw temp data we have,
-> > it gets processed into temp data via conversion table. I will add
-> > Jonathan Cameron to list if you don't mind, he might give some good
-> > advice.
->
-> I'm not talking about 'PROCESSED' vs 'RAW'...
-> I'm asking if you can add the 'SCALE' case to handle and report
-> that this device will report 'processed' temp value in milli-degrees
-> of Celsius.
->
+On Mon, Mar 03, 2025 at 08:53:09PM +0200, Leon Romanovsky wrote:
+> On Mon, Mar 03, 2025 at 02:57:29PM +0100, Joel Granados wrote:
+> > On Mon, Feb 24, 2025 at 03:41:05PM +0200, Leon Romanovsky wrote:
+> > > On Mon, Feb 24, 2025 at 10:58:20AM +0100, nicolas.bouchinet@clip-os.org wrote:
+> > > > From: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > > > 
+> > > > Bound infiniband iwcm and ucma sysctl writings between SYSCTL_ZERO
+> > > > and SYSCTL_INT_MAX.
+> > > > 
+> > > > The proc_handler has thus been updated to proc_dointvec_minmax.
+> > > > 
+> > > > Signed-off-by: Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>
+> > > > ---
+> > > >  drivers/infiniband/core/iwcm.c | 4 +++-
+> > > >  drivers/infiniband/core/ucma.c | 4 +++-
+> > > >  2 files changed, 6 insertions(+), 2 deletions(-)
+> > > > 
+> > > 
+> > > Acked-by: Leon Romanovsky <leon@kernel.org>
+> > > 
+> > > How do you want to proceed from here? Should I take to RDMA repository?
+> > > 
+> > > Thanks
+> > It would be great if we push this through RDMA. Here are a few comments:
+> > 1. Having the upper bound be SYSCTL_INT_MAX is not necessary (as it is
+> >    silently capped by proc_dointvec_minmax, but it is good to have as it
+> >    gives understanding on what the spread of the values are.
+> > 
+> > 2. Having the lower bound capped by SYSCTL_ZERO is needed as it will
+> >    prevent ppl trying to assing negative values to the unsigned integers
+> > 
+> > Please let me know if you will push this through RDMA, so I know to
+> > remove it from sysctl.
+> 
+> Applied to RDMA tree.
+> https://web.git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git/commit/?h=wip/leon-for-next&id=f33cd9b3fd03a791296ab37550ffd26213a90c4e
+Perfect. Thx.
 
-Sure, I take this into account.
+@Nicolas: pls take this one out of your next version as it is
+already on its way upstrea.
 
-> >
-> >>> +     }
-> >>> +};
-> >>> +
-> >>> +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
-> >>> +                              struct iio_chan_spec const *chan,
-> >>> +                              int *temp, int *val2, long mask)
-> >>> +{
-> >>> +     struct gadc_thermal_info *gtinfo =3D iio_priv(indio_dev);
-> >>> +     int ret;
-> >>> +
-> >>> +     if (mask !=3D IIO_CHAN_INFO_PROCESSED)
-> >>> +             return -EINVAL;
-> >>
-> >> Therefore, here it would need to handle such case as well, when
-> >> a client is asking about scale.
-> >>
-> >>> +
-> >>> +     ret =3D gadc_thermal_get_temp(gtinfo->tz_dev, temp);
-> >>> +     if (ret < 0)
-> >>> +             return ret;
-> >>> +
-> >>> +     *temp /=3D 1000;
-> >>
-> >> IMO we shouldn't cut the precision if it's provided.
-> >> The user of this would know what to do with the value (when
-> >> the proper information about scale is also available).
-> >>
-> >
-> > The it will not fit existing IIO framework and thermal readings will
-> > be 1000 off. I have had to adjust this since my battery suddenly got
-> > temperature reading of 23200C which obviously was not true. With
-> > adjustment temperature will be in 10th of C (yes, odd, I know but it
-> > is what it is).
->
-> Your battery driver should get and check the 'SCALE' info first, then
-> it will know that the value is in higher resolution than it needs.
-> Therefore, it can divide the value inside its code.
-> Your proposed division here is creating a limitation.
->
-> You shouldn't force all other drivers to ignore and drop the
-> available information about milli-degC (which is done in this patch).
+Best
+> 
+> > 
+> > Best
+> > 
+> > Reviewed-by: Joel Granados <joel.granados@kernel.org>
+> 
+> Thanks
+> 
+> > 
+> > -- 
+> > 
+> > Joel Granados
+
+-- 
+
+Joel Granados
 
