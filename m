@@ -1,209 +1,151 @@
-Return-Path: <linux-kernel+bounces-547761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31AE5A50D37
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:19:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75417A50D3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:23:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A27B3170970
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:19:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3188B16DA26
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:23:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CA7E1FC7F7;
-	Wed,  5 Mar 2025 21:19:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770061FDA62;
+	Wed,  5 Mar 2025 21:23:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pnrxn/5G"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2063.outbound.protection.outlook.com [40.107.243.63])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWp5Mjaw"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5361E4A33
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.63
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741209577; cv=fail; b=uti9L54LLDgqi/Uu3EIrhJ30oOyn2rsYUFZrSUT+34COP0A8cKgE9CBrtRzIuiMls+lFZKMi6iCDXdEFwi/AFyMtmBom3hRs038sb1x7BkvWLG99daqp0IYGNKA9P7aO541HptGlJ1hUF1es+rRxQgTxj+TaAzxCzyCXZyXTsJg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741209577; c=relaxed/simple;
-	bh=X/e89u0GFFA3FqxA4WvfBI2j0VFcioFCcbLbvyvMnk4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b9ISHjV7myxj+3+jeCl8eFrZIhvqNBj8oMDMRKRnqQtBRv7+ciqV9GsIHNr49PQpvv+llwYWnDSwFYVREaGa4JXTFL0n3rh8s4NXB2mKeQYY+OCjCANV/qxgVSCuW0y+Y7Bo6tE/Zl5pUQmCjHaIGfwuoQh1qs1Uqcq2IAUYUnM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pnrxn/5G; arc=fail smtp.client-ip=40.107.243.63
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h6zFzqg9qoD/A/T7NS0vmb1e9Z70M5fAgdBGxGiyFpjpBtY5fEMVnl9KugtbfrCD4rwF8/MXe8/8ZWeIXLXVm4obGZlKgqaimVE2o15Ijad3c3BKRGwZQP8f3RI7vp+lUI3xr580hReOa1XFjUgn1lEJ41w9Vn2mTpXOnTJIqvmtTJHylQHkdV9D/biR+VOp0tHJqKNcUhgqoiVGptuE1BtXcjWI6cijdpQaPEJDcmiPjEq7c2vAYsx1anB9joqALbUYCUfV6r4auxrQsZ1ODJIbfb0cGlHqvQgopRA2KNbo6rsjw8xg7QQis3drTE+Nbm0F9HVRSAmVh0aj0dZ0xg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MTrX+v2ufu21pC5T9+JXX7Mh94AZHwvQ4M8AVKKgv04=;
- b=Cc/uYhuBQ0Om06E+xR9gvq7qmSLu4+2G+mUrHUq4dmRNOYK9zTSNVD3lfx4oli50B597TgY3dQDMfJIltWmA3A5PKNN74onWk9Z1w0zUUz43Za8FZn2P3FfktsBhiJBYBPhN+ybOu0c1tD+qFL8HDWYf1s9hTXnMqo7TRyhdxeUEIYQANZHTkPUmIVPgI0x4VbivjQ9h1FhkNS+mJO1gEpTO6/pTRCH7XhbSR41Xbpxi+54fsyWoQrOS91yNLdns+7g75SClYtM1wF6/j1WPGttl91QYtZ+z+L5i3dDpHI60yDPqzYoN6Zy4Um2CEjTC15Vi40LOlmqIl5o3niOzJA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.233) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=MTrX+v2ufu21pC5T9+JXX7Mh94AZHwvQ4M8AVKKgv04=;
- b=pnrxn/5G87Rm7CQszD0qK+c4SX9Zep/T/sThk4HHZnefr37y/WuRs3DxUcpo+d2nkFA38Uu8TlraVgsoJYb2eH3+fHusWEg2hd8oA7uYZMC+YKFbZK3IB2mCy3/R5w7T9xMNrp8KTs2V6UKeDzsMk51kAqmoeqzB3w+J4k0VGs7YNVbgYGgF5mmUhqQGWUKYflNKOGqSCxJQgyB1F/B/mBMuCWcAmpEZUbj14FwvNAxf+8EXuYqJLXDcamPdr7whC62feRRlNJDZZqnVoFJ+byw8OMCcHJsJOHnfHwYakmuO4KSOmi4RWvukPH5F6NgHfOO7a8A/qJZgIr0ClOEuDA==
-Received: from SJ2PR07CA0023.namprd07.prod.outlook.com (2603:10b6:a03:505::9)
- by DM6PR12MB4202.namprd12.prod.outlook.com (2603:10b6:5:219::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
- 2025 21:19:32 +0000
-Received: from MWH0EPF000989E9.namprd02.prod.outlook.com
- (2603:10b6:a03:505:cafe::c0) by SJ2PR07CA0023.outlook.office365.com
- (2603:10b6:a03:505::9) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8489.29 via Frontend Transport; Wed,
- 5 Mar 2025 21:19:32 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.233)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.233 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.233; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.233) by
- MWH0EPF000989E9.mail.protection.outlook.com (10.167.241.136) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.15 via Frontend Transport; Wed, 5 Mar 2025 21:19:31 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Wed, 5 Mar 2025
- 13:19:19 -0800
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Wed, 5 Mar 2025 13:19:19 -0800
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Wed, 5 Mar 2025 13:19:18 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <jgg@nvidia.com>, <kevin.tian@intel.com>
-CC: <joro@8bytes.org>, <will@kernel.org>, <robin.murphy@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>, <ankita@nvidia.com>
-Subject: [PATCH] iommufd: Set domain->iommufd_hwpt in all hwpt->domain allocators
-Date: Wed, 5 Mar 2025 13:18:00 -0800
-Message-ID: <20250305211800.229465-1-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E384A33;
+	Wed,  5 Mar 2025 21:22:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741209781; cv=none; b=hQ/ERzMFwVd2eXhUC/FMQwJ73C/p76I4UGsNZTX12MsJ+8TnzYyGh2TfqMyZRnHnB00PXe+5p0bDBnmoM29yJp96QjudSyJhvUcf/KSONCIHafKL0JgsBOV0umk+SWGzUJiHffxEVEiNGrcbXojAzzzzzXa0DnbYhSycogJG8fk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741209781; c=relaxed/simple;
+	bh=71PXLAgsUFwMvAk7XFPttIHq5FqJ5Bzimw8zOdx56eg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TLQxV2f4hPVL4c5eOIyZxvBYNgdj+iEkw9bakb8adMRiAlnhYDi3nXzFMLwzvoSYC2Avvi8LG8A/ayCx0vw4M1/svKd/YlHJbJxBoYLCVXKk7jsebiyjsIlT8YHflOFQPymgDUSstDRYh1W0sNH9j6NdP5ZoJ+Rv0QxMYg6nEeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWp5Mjaw; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bc30adad5so25470145e9.1;
+        Wed, 05 Mar 2025 13:22:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741209778; x=1741814578; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/QKdrZ9vRb4sWOyQt+BSoKpXoFWTF3y3wSrzqtJFv0s=;
+        b=VWp5Mjaw/L8MxD10+azWvfmQdmMAZl0jYn7/9KiABbhMtzxmZrg2cayHrxPRKhA3Y/
+         14jz0RlxJO9/OiPjFnDz4kQFtPAReXvmu661MBp04iEpUi+JiYOB2u9aA24kVkPRuAp7
+         OZqdbMQ5HRHQBivs53U9XTf5Tc86m5CL7thHEIdy1H8WMWKoawejccCcJrOsffbgBvCJ
+         vLuxDxRYlKwvqA5c0bjU5JPwH3LV+m+9VcPqPoaWWi4GBmSWdPW0zklrslfxrOGID5DD
+         GJhGv99+rL80cG012JVn+UcfaZXipWmsWeYUit6+7T16n/oetsaAWicTllISGQNF2ke4
+         XbJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741209778; x=1741814578;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/QKdrZ9vRb4sWOyQt+BSoKpXoFWTF3y3wSrzqtJFv0s=;
+        b=kEuEG6cXphEbopw9Yfb479leaeLLaXzg3j6zWX6grkY75iBT+rYnjvEm4LS8DaoIYI
+         9Jqz2RUAw5gAgZRQ29pg8cEkBtf28mDvUEcuy8Xu8SyIoIQSDOls9sJF51phERJfZHXT
+         LZv0R3xoNOMOQ3hWae+N5GAACMNKObb2pmAvM7Uc/DfqidtEeKtVvMLpNhH5cn0+Qqh+
+         R/3iULOH7QQ5rntoZFr9lcPDPuerB9wAarTT9WIJNrnC9U9VyN5a2h1tM8TzYXipzC/a
+         vAkKNyLY/vRXbpAML6Osj2Y51PaPY2AcQuNnDHANHe8pMsYmwvn1h3AFITwrCVnwHXzF
+         2ecQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW7tWK7M8ie2wqSPL6wIXRa5v6H6HFcJ/cGusJ56S4I9UtzB1tIl9HzJM9Q9iuH75Mf0DLAV0sIsdGGjEw=@vger.kernel.org, AJvYcCWi50BZJMLOTD9aaY3k+ZNoxuLB0jIPDU121y0z//y3MjhXMMTobx3lg3eiFsLJZomyW/Gf5AJzEnerRXoU@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+X99bjnch5du6NrOPyhGaEZdBat1r1Z9pFSR6LQm3bX/MpQjn
+	5Bkov338gOEap3CzS7e7SFp9vxyAoZDuks5DvhxYtWEOBRX/ZR7E
+X-Gm-Gg: ASbGncvs/RVEKhjBgeqrABxHq5mwQaQYvFWGRKJrA40+169/mlA5rQzql1//tNypo7E
+	W7YWa8qY/m/4RWdzpmOZwn1NrfYA5eqnXNa7xd2iYjmoWW0bD7/hDCd9KP4UBUDZS3cg9WXul8B
+	tWxu/Eogz3QbW6SJsY1e/96aEXeGNwPZI27KksL2aYNSJmuaDNV2eo01N4NR6MecOp+5Ym/xE+m
+	YRQ1iJ8IPd2OMJ7fGeoK2ETE/2Nq05E8nT9bpXoN8nVZ/CrQ34txXhjayisy6fN/Lu+gD7s/xxZ
+	7vkjKgwYbE40+5+dPSc2v7B/U3V+je9q4vARNYjO64unWxsScs9K0cd0Zwim+a29a2E037Hf7t8
+	lLt4ptoA=
+X-Google-Smtp-Source: AGHT+IHf5G/WjTQU5XVggDdiHajuyOu5oqXpSdTcEFetMzqEdhVou5+ChNTWSOmXWX7SGwY1vuK8Xw==
+X-Received: by 2002:a05:600c:190d:b0:43b:c309:da4c with SMTP id 5b1f17b1804b1-43bd2951c4fmr42734125e9.10.1741209777613;
+        Wed, 05 Mar 2025 13:22:57 -0800 (PST)
+Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bcc136f5dsm38873525e9.1.2025.03.05.13.22.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 13:22:57 -0800 (PST)
+Date: Wed, 5 Mar 2025 21:22:55 +0000
+From: David Laight <david.laight.linux@gmail.com>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Dave Hansen <dave.hansen@intel.com>, Eric Biggers <ebiggers@kernel.org>,
+ x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ard Biesheuvel <ardb@kernel.org>, Ben Greear <greearb@candelatech.com>,
+ Xiao Liang <shaw.leon@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
+ Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
+ <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "Jason A
+ . Donenfeld" <Jason@zx2c4.com>, "Bae, Chang Seok"
+ <chang.seok.bae@intel.com>
+Subject: Re: [RFC PATCH v2] x86/fpu: make kernel-mode FPU reliably usable in
+ softirqs
+Message-ID: <20250305212255.4989a8ab@pumpkin>
+In-Reply-To: <Z8iL1dY3o9OxQgBy@gmail.com>
+References: <20250304204954.3901-1-ebiggers@kernel.org>
+	<Z8gUYamgBr4M5ZaB@gmail.com>
+	<b6a80f6d-8469-429d-b03a-8fa71a33046b@intel.com>
+	<Z8iL1dY3o9OxQgBy@gmail.com>
+X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MWH0EPF000989E9:EE_|DM6PR12MB4202:EE_
-X-MS-Office365-Filtering-Correlation-Id: 16c272dd-2e5b-4503-7946-08dd5c2b6bf1
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|82310400026|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?GfwB/XLeqQ7wZLQxPnpRWbiEJERaEF2I8MkyY4kQwbV9a4NyrxHsFXiQDhKc?=
- =?us-ascii?Q?1kSsXuSx56n7WZb977NQVHEtfEgYERrSwdjYuKkWrU569eg+YU1yLY8nbPJL?=
- =?us-ascii?Q?lE7lCB9mwwQlqXoRCPaesWeBRLObH3qyb/hRaJi9hoHybJLFDV8MN9MyWkKr?=
- =?us-ascii?Q?gkOafHmCLCdibK8jSPI0Mxmcz7aurEby1v4+vgToIYwRh/bTAj8KdD32F4+5?=
- =?us-ascii?Q?EkcA2KZR0UzLqN8dmm41Urs5hz0KsgwrmCRq30me1KEZmkbgYTK3pVXsVNek?=
- =?us-ascii?Q?yYVcNVT0K/lRJPpfW3TcPAqIq48sxX/nQiTVi5l8ZpVFeSXuHIqolyjCHReG?=
- =?us-ascii?Q?VRQ8jDwsUcvn1A9VlO/w5Bu/mq5UuBfDCAm2L7hR5e4qSe6y4AQJeanyf7SC?=
- =?us-ascii?Q?4iQBXKDdWC1C4RwUBJRrXgMA4HtmkU2MAzmQea0akA3Zg0OQm8mut4q9YcNu?=
- =?us-ascii?Q?GqBPp6ueVl+Wj02N3tmvGd7wa+wdfZbTCFykUpx1vkNl9UPzYW/HnrgzyFlT?=
- =?us-ascii?Q?YZh1+2OLh2I0pXYb72bPtcaR41vwKNRQ5Dpr40PGhUU4NKr99cWstsptTViy?=
- =?us-ascii?Q?YF8igrIfUpD7fsFgh3A6N1pL5Nfqg1WQJDbwW2fUolwIyT2AUF5RjtP/IKWg?=
- =?us-ascii?Q?7MbNTHQ1mq0zJ4NsHBKWynsHk6ULOxH1WegfLJKv0IcrYvJBLgJhKb5N9hi4?=
- =?us-ascii?Q?rAO1o4oJRaYpcz3QxvbvowvDj8C2EZrGVLEB6G5/1QRqMgzStYHqhSkhIh+m?=
- =?us-ascii?Q?146ntzz0u06PplJOp+0s2ymYpt8/no5yKjf7MhUotGYgveJFHhD+aqKo+qaA?=
- =?us-ascii?Q?PI1DUv8LHbxELbmfjtzcjVMrh+rqc3cNG+wamsXTjjh7lzU/Wu+H3ywUOKJq?=
- =?us-ascii?Q?iCHEDxBFCaZmopXxeqIgSk9ui640E+vpQB6wZVDfHX1sxasQuqkKoAWkTGUH?=
- =?us-ascii?Q?5rGlV5TA073x7qr+HZolAiOiSRjDMOV9KzNLzN7ZQBRjQbZNs90HgBd5/laW?=
- =?us-ascii?Q?c0jyTRNgBYhGiHwGhm91asjGLgr1rMvk/C8YSvlgqAVAzmFSFRx5dmMYr0se?=
- =?us-ascii?Q?L3XjpFU8YW9DLmJEqP2ES+CP8HIJ+IkMy587z5WfjXpsJtNvApPAJnuOxq4T?=
- =?us-ascii?Q?22xjz1Fb+oWWUrZqNz1m1FR+N5Fi+TP+qvWSwC39N+m75cSjL8qiQ8Cx4O+V?=
- =?us-ascii?Q?6KAA/TUadJJb0J1yEwrVV2L7HTKBytY9ZMY6ZmjlMnuZ4aLQzYKvuRtmLgm8?=
- =?us-ascii?Q?hVrDE996qis5WWldiffcBm7pzLi5Rz3RdO3hnp4lchCvvoennak4WTW15VFD?=
- =?us-ascii?Q?cK+Uji8oKpjUdqJrFJ+biOmJkm+89w7LxbTAXx1E3+M9o1dzXSFHYq3kDXwA?=
- =?us-ascii?Q?x+NTnOMMJohz1MGSMGuoVtf2dh/0sr9yWn4LBlmOVOIZ0c0+9Qb1R+6wDM3E?=
- =?us-ascii?Q?rDkcNLqtoioKhlXt06w7rhN5V8JDQKWNvxSl15nOpTjZDI879DNJHmfc99cY?=
- =?us-ascii?Q?ym5nlxF4HcXBlEg=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.233;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 21:19:31.9877
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 16c272dd-2e5b-4503-7946-08dd5c2b6bf1
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.233];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	MWH0EPF000989E9.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4202
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Setting domain->iommufd_hwpt in iommufd_hwpt_alloc() only covers the HWPT
-allocations from user space, but not for an auto domain. This resulted in
-a NULL pointer access in the auto domain pathway:
- Unable to handle kernel NULL pointer dereference at
- 	virtual address 0000000000000008
- pc : iommufd_sw_msi+0x54/0x2b0
- lr : iommufd_sw_msi+0x40/0x2b0
- Call trace:
-  iommufd_sw_msi+0x54/0x2b0 (P)
-  iommu_dma_prepare_msi+0x64/0xa8
-  its_irq_domain_alloc+0xf0/0x2c0
-  irq_domain_alloc_irqs_parent+0x2c/0xa8
-  msi_domain_alloc+0xa0/0x1a8
+On Wed, 5 Mar 2025 18:37:25 +0100
+Ingo Molnar <mingo@kernel.org> wrote:
 
-Since iommufd_sw_msi() requires to access the domain->iommufd_hwpt, it is
-better to set that explicitly prior to calling iommu_domain_set_sw_msi().
+> * Dave Hansen <dave.hansen@intel.com> wrote:
+> 
+> > On 3/5/25 01:07, Ingo Molnar wrote:>> Alternatives considered:  
+> > >> - Make kernel-mode FPU sections fully preemptible.  This would require
+> > >>   growing task_struct by another struct fpstate which is more than 2K.  
+> > > 
+> > > So that's something that will probably happen once the kernel is built 
+> > > using APX anyway?  
+> > 
+> > I was expecting that building the kernel with APX would be very 
+> > different than a kernel_fpu_begin(). We don't just need *one* more 
+> > save area for APX registers: we need a stack, just like normal GPRs.  
+> 
+> Yes - but my point is: with any APX build we'd probably be saving 
+> FPU(-ish) registers at entry points, into a separate context area. If 
+> that includes FPU registers then we'd not have to do 
+> kernel_fpu_begin()/end().
 
-Fixes: 748706d7ca06 ("iommu: Turn fault_data to iommufd private pointer")
-Reported-by: Ankit Agrawal <ankita@nvidia.com>
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/iommufd/hw_pagetable.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+Since the registers are caller saved (like the SSE onwards ones)
+none of them really need to be saved on syscall entry
+(just zeroed on return).
+They do need saving on interrupt entry.
 
-diff --git a/drivers/iommu/iommufd/hw_pagetable.c b/drivers/iommu/iommufd/hw_pagetable.c
-index 268315b1d8bc..1d4cfe3677dc 100644
---- a/drivers/iommu/iommufd/hw_pagetable.c
-+++ b/drivers/iommu/iommufd/hw_pagetable.c
-@@ -159,6 +159,7 @@ iommufd_hwpt_paging_alloc(struct iommufd_ctx *ictx, struct iommufd_ioas *ioas,
- 			goto out_abort;
- 		}
- 	}
-+	hwpt->domain->iommufd_hwpt = hwpt;
- 	iommu_domain_set_sw_msi(hwpt->domain, iommufd_sw_msi);
- 
- 	/*
-@@ -255,6 +256,7 @@ iommufd_hwpt_nested_alloc(struct iommufd_ctx *ictx,
- 		goto out_abort;
- 	}
- 	hwpt->domain->owner = ops;
-+	hwpt->domain->iommufd_hwpt = hwpt;
- 	iommu_domain_set_sw_msi(hwpt->domain, iommufd_sw_msi);
- 
- 	if (WARN_ON_ONCE(hwpt->domain->type != IOMMU_DOMAIN_NESTED)) {
-@@ -311,6 +313,7 @@ iommufd_viommu_alloc_hwpt_nested(struct iommufd_viommu *viommu, u32 flags,
- 		hwpt->domain = NULL;
- 		goto out_abort;
- 	}
-+	hwpt->domain->iommufd_hwpt = hwpt;
- 	hwpt->domain->owner = viommu->iommu_dev->ops;
- 	iommu_domain_set_sw_msi(hwpt->domain, iommufd_sw_msi);
- 
-@@ -415,7 +418,6 @@ int iommufd_hwpt_alloc(struct iommufd_ucmd *ucmd)
- 		refcount_inc(&fault->obj.users);
- 		iommufd_put_object(ucmd->ictx, &fault->obj);
- 	}
--	hwpt->domain->iommufd_hwpt = hwpt;
- 
- 	cmd->out_hwpt_id = hwpt->obj.id;
- 	rc = iommufd_ucmd_respond(ucmd, sizeof(*cmd));
--- 
-2.43.0
+For some unknown reason the kernel saves the xyzmm ones on syscall entry.
+For normal programs they won't be live - because of the asm syscall
+wrapper is called from C.
+So I think they can only be live if a system call is directly inlined
+into the C function. Just marking them all 'clobbered' would have done.
+But it now all too late to change.
+
+	David
+
+> 
+> In other words, we'd be doing something close to 'growing task_struct 
+> by another struct fpstate', or so - regardless of whether it's in 
+> task_struct or some sort of extended pt_regs. The kernel would also be 
+> close to 'FPU-safe', i.e. there likely wouldn't be a need for 
+> kernel_fpu_begin()/end().
+> 
+> Thanks,
+> 
+> 	Ingo
+> 
 
 
