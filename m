@@ -1,104 +1,132 @@
-Return-Path: <linux-kernel+bounces-547860-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE9A2A50E71
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:20:05 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41AB5A50E74
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:20:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5F63A9170
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:19:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52B6D188F0A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EB81266561;
-	Wed,  5 Mar 2025 22:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0615202C4F;
+	Wed,  5 Mar 2025 22:20:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bKzBhBHP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uvx3hYwq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 046541FF61B;
-	Wed,  5 Mar 2025 22:20:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 066DB2586C3;
+	Wed,  5 Mar 2025 22:20:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741213200; cv=none; b=KShGVrJGhrIPCyFyp6Nq/VS+PrESMMz3yZm4wIBLZeXk9b4+YcyfEQW4UY0BgtwD9Z37dVh5ISOd1oQW/PvdGzp8vG5hscPrHnhD0Rg/s40JyZMLPUq3YLK9LqrES6T8FmUYuwq4f/UqEp9P8VopsNdh6W49scr/xk9op0w9Xkk=
+	t=1741213219; cv=none; b=fGfScRJkqQvWZlwi6CPnsX5u/B3nAQxUPL4DaQSPnqCfXmBHNRfKO2uEffk4ZXbRAUxVzhSzDCXa+Fc0Mo0RSrz4FWt/uX0G1kZGuJsoYXZ9MKcb8cWUGePR3UXFeaG0k6nr6Ulm9XgauGE0oPecIpjXYB8PQCKE6abBzV0XRNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741213200; c=relaxed/simple;
-	bh=odGwjXPuLoI3+Jrcw4b7Ov4gl4KEsYLb21Fg97K0Pb0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Hgjk/vawnh6zdkRoRN/wS098uJVQTDzR1AVy+VF6Ahwmnh8wFdJ40ucYwAk8qutMnxjG+u68qA3KM5HYH6P0rJFpvgFrQjsnAEWBQIATCNw1KmMr5QGlbizDwv09ctgs8fPECM7wcCLUlxPgdZ8ELI3PlhLhtbUNn8dnA2ntNL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bKzBhBHP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D09FEC4CEE7;
-	Wed,  5 Mar 2025 22:19:59 +0000 (UTC)
+	s=arc-20240116; t=1741213219; c=relaxed/simple;
+	bh=9Vd3NTCGG6rS4oIOqn+qZLQzZjw8AOh8blq9HS/31Pk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TNjOMIjC2oQuNWpqSA3gLUKtzWYlUWidxxSWJUr+R2EqipfbQ/h/DSOyURJ0ajmJTgB86ynfuz63Ia9DN6vaoZnv7ut9mdX23LuWgq/PgMLpG3hjBCr1663mh36X9M+hUzqz5bDd/1Ctm3c0HQ4QINFm9265l4l1LVoY5eXLO2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uvx3hYwq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8DE3C4CED1;
+	Wed,  5 Mar 2025 22:20:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741213199;
-	bh=odGwjXPuLoI3+Jrcw4b7Ov4gl4KEsYLb21Fg97K0Pb0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=bKzBhBHPDCKuhVEaReaQ76MMsX2G1SX6D/bEE6l0Z2qcbL9g+m8ImZLln3Z02uP7H
-	 iQqyRHRtaCWtcg0HBo95FpeZ+F3G6yr35SrcUT2ZLRHt8PTRrzIGBdY0WT/wbt/mEd
-	 jvhBbaBx5xc1kZLmU+PCHnsngL1rKm5KkpSGkTrBPbmxqlJVSL024qhcSeG/q+iAIA
-	 2w7669UcigcbOGvIbi2rsSnBItY2MDB8B9uujNF4gZU0YxuylU/2HcJbiURsRxusd6
-	 +fSV2SaFb3BmOwp+qsn3CKmtxNgaC/RrUW61PdmmFVFb5snhFHSafDfFAaE9UMjKo8
-	 8HGukhVwTdq1g==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e4b410e48bso10998539a12.0;
-        Wed, 05 Mar 2025 14:19:59 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCUrbplXnsu5/x5ZbTq3Y1uRsxXA5knNUjBgFsnzsIKhORWRAKviHVWmtgvwUbCuQcBLDxONqfL0CdLBCdBu@vger.kernel.org, AJvYcCWDFnS9QyYd5t6Lyl4jTpWrvtThXmSB+t/7yC48Xle2Gm+WKl1GMbuH0HPbSwIjETUQ7zBvLkKVASpO@vger.kernel.org
-X-Gm-Message-State: AOJu0YybsvL+SH0PCsD3SafoRuD79eZpa7rReBz6wBad5kSjhOK3sgm8
-	kkHoi0odJuYa9U+Ye/5Ese+5MzX8l2aiuJbizR13U/NiaLazgyDyDTrep+XCu/Wov0jt24EJERl
-	L1H9B77lNTPDsA1Bw8kkKJvg53Q==
-X-Google-Smtp-Source: AGHT+IGmcbRnsKh4qmTIrjjZnvbSUllEyKfAIMmiWB3ZMYddCqtDRqGxn1VMbXWC0I5eXo67K8lElFHwxeHn8Rragx0=
-X-Received: by 2002:a05:6402:1ece:b0:5e4:d75a:573e with SMTP id
- 4fb4d7f45d1cf-5e59f4f8e28mr4935569a12.32.1741213198291; Wed, 05 Mar 2025
- 14:19:58 -0800 (PST)
+	s=k20201202; t=1741213218;
+	bh=9Vd3NTCGG6rS4oIOqn+qZLQzZjw8AOh8blq9HS/31Pk=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=uvx3hYwq0hayfCBHEqvi0Iwc3QIe/dEAiwkM80O8sW72vN0IhEDXgLpkQA1L7fXGg
+	 9aVNqPh/AFDO/Agc3YHs58DTMxC5davA3bxAWN7s57A512AedS3rayx97Na1rP3KAq
+	 ex7zDoV7i6cGJbNsuz1HN1dqZe0SnmaWxFyJeaVfmjMhKBRTMgW5KvLpADWtNH4rqL
+	 7yfViBzT13i6mXjwYNwBzOvzBBYofZRllNDaY3+3sz/1ZW8FmvT/yGsLyi6EjMgG6n
+	 QWbRI5hDCbBW8qGlfFjbhs4iIzfG4CYr8atyeGTHMBKMnMqwGxx/Z8TZ6T/fzmc2Js
+	 B0dhiHPqSTIoQ==
+Date: Wed, 5 Mar 2025 16:20:16 -0600
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: hans.zhang@cixtech.com
+Cc: bhelgaas@google.com, cix-kernel-upstream@cixtech.com,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Peter Chen <peter.chen@cixtech.com>, ChunHao Lin <hau@realtek.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>, nic_swsd@realtek.com,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH] PCI: Add PCI quirk to disable L0s ASPM state for RTL8125
+ 2.5GbE Controller
+Message-ID: <20250305222016.GA316198@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305140009.2485859-1-amadeus@jmu.edu.cn>
-In-Reply-To: <20250305140009.2485859-1-amadeus@jmu.edu.cn>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 5 Mar 2025 16:19:46 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJgjD69wtJJfLuvBQ4g+JprxQ9mKGPWGgY1dmziehe-Kw@mail.gmail.com>
-X-Gm-Features: AQ5f1JoAojNhKXJ10NzfyCQO9G1rFeCcWSk_-mw-M74iUoDe9bMGrTl0QURdgE0
-Message-ID: <CAL_JsqJgjD69wtJJfLuvBQ4g+JprxQ9mKGPWGgY1dmziehe-Kw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: syscon: Add rk3528 QoS register compatible
-To: Chukun Pan <amadeus@jmu.edu.cn>
-Cc: Yao Zi <ziyao@disroot.org>, Lee Jones <lee@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305063035.415717-1-hans.zhang@cixtech.com>
 
-On Wed, Mar 5, 2025 at 8:00=E2=80=AFAM Chukun Pan <amadeus@jmu.edu.cn> wrot=
-e:
->
-> Document rk3528 compatible for QoS registers.
->
-> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+[+cc r8169 maintainers, since upstream r8169 claims device 0x8125]
+
+On Wed, Mar 05, 2025 at 02:30:35PM +0800, hans.zhang@cixtech.com wrote:
+> From: Hans Zhang <hans.zhang@cixtech.com>
+> 
+> This patch is intended to disable L0s ASPM link state for RTL8125 2.5GbE
+> Controller due to the fact that it is possible to corrupt TX data when
+> coming back out of L0s on some systems. This quirk uses the ASPM api to
+> prevent the ASPM subsystem from re-enabling the L0s state.
+
+Sounds like this should be a documented erratum.  Realtek folks?  Or
+maybe an erratum on the other end of the link, which looks like a CIX
+Root Port:
+
+  https://admin.pci-ids.ucw.cz/read/PC/1f6c/0001
+
+If it's a CIX Root Port defect, it could affect devices other than
+RTL8125.
+
+> And it causes the following AER errors:
+>   pcieport 0003:30:00.0: AER: Multiple Corrected error received: 0003:31:00.0
+>   pcieport 0003:30:00.0: PCIe Bus Error: severity=Corrected, type=Data Link Layer, (Transmitter ID)
+>   pcieport 0003:30:00.0:   device [1f6c:0001] error status/mask=00001000/0000e000
+>   pcieport 0003:30:00.0:    [12] Timeout
+>   r8125 0003:31:00.0: PCIe Bus Error: severity=Corrected, type=Data Link Layer, (Transmitter ID)
+>   r8125 0003:31:00.0:   device [10ec:8125] error status/mask=00001000/0000e000
+>   r8125 0003:31:00.0:    [12] Timeout
+>   r8125 0003:31:00.0: AER:   Error of this Agent is reported first
+
+Looks like a driver name of "r8125", but I don't see that upstream.
+Is this an out-of-tree driver?
+
+> And the RTL8125 website does not say that it supports L0s. It only supports
+> L1 and L1ss.
+> 
+> RTL8125 website: https://www.realtek.com/Product/Index?id=3962
+
+I don't think it matters what the web site says.  Apparently the
+device advertises L0s support via Link Capabilities.
+
+> Signed-off-by: Hans Zhang <hans.zhang@cixtech.com>
+> Reviewed-by: Peter Chen <peter.chen@cixtech.com>
 > ---
->  Documentation/devicetree/bindings/mfd/syscon.yaml | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/Documentation/devicetree/bindings/mfd/syscon.yaml b/Document=
-ation/devicetree/bindings/mfd/syscon.yaml
-> index 4d67ff26d445..fcfd293b9bf1 100644
-> --- a/Documentation/devicetree/bindings/mfd/syscon.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/syscon.yaml
-> @@ -103,6 +103,7 @@ select:
->            - rockchip,rk3288-qos
->            - rockchip,rk3368-qos
->            - rockchip,rk3399-qos
-> +          - rockchip,rk3528-qos
-
-There's 2 spots you have to add this.
-
->            - rockchip,rk3562-qos
->            - rockchip,rk3568-qos
->            - rockchip,rk3576-qos
-> --
-> 2.25.1
->
+>  drivers/pci/quirks.c | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/drivers/pci/quirks.c b/drivers/pci/quirks.c
+> index 82b21e34c545..5f69bb5ee3ff 100644
+> --- a/drivers/pci/quirks.c
+> +++ b/drivers/pci/quirks.c
+> @@ -2514,6 +2514,12 @@ DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f1, quirk_disable_aspm_l0s);
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x10f4, quirk_disable_aspm_l0s);
+>  DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_INTEL, 0x1508, quirk_disable_aspm_l0s);
+>  
+> +/*
+> + * The RTL8125 may experience data corruption issues when transitioning out
+> + * of L0S. To prevent this we need to disable L0S on the PCIe link.
+> + */
+> +DECLARE_PCI_FIXUP_FINAL(PCI_VENDOR_ID_REALTEK, 0x8125, quirk_disable_aspm_l0s);
+> +
+>  static void quirk_disable_aspm_l0s_l1(struct pci_dev *dev)
+>  {
+>  	pci_info(dev, "Disabling ASPM L0s/L1\n");
+> 
+> base-commit: 99fa936e8e4f117d62f229003c9799686f74cebc
+> -- 
+> 2.47.1
+> 
 
