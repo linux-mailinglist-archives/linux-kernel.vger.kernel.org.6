@@ -1,117 +1,303 @@
-Return-Path: <linux-kernel+bounces-546541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1AEFA4FBEE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:29:56 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 661A2A4FC03
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:31:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390033AAF39
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:29:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4310518936B1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F66E2066CF;
-	Wed,  5 Mar 2025 10:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C52A2080FE;
+	Wed,  5 Mar 2025 10:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Mxx+8ERi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N5kVbrNH"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C568205ACB;
-	Wed,  5 Mar 2025 10:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AB8D207DF1;
+	Wed,  5 Mar 2025 10:30:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170584; cv=none; b=Mhifcx89ZmLtXvpuu0lSwWlkvisZmh02EVWoaf6HyLkudnjnRohhuLs206L3Y9/hxWBt+Uy5hf5F2/ZXf7wz3LpP2yDpOHViU5n1yGy26EjIN4jJjiAJsrXdF3WNb4QKBi7hRgWUlrlyd+tF8rFlRTe5lCNGA4uqyhSpjDSMq/s=
+	t=1741170608; cv=none; b=JzEgtPvz6Mcs7R4lpf7qlr4KPLk7/3mYyy88YWhE3GAKz10XnLiKebWc8tMded9gA2d2NEaOsx7HUF3+2XSwGqyQFSyXpTzF536/dg4mKPYe7bXSygammf8AF1adOPxhd2iXM5mRYmXW4oHXyvhZjBgdL6MxW+6kdHp2ETMDPi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170584; c=relaxed/simple;
-	bh=mnIJ3/kXGOV9yYEgNSUKTE3uzvCSYZEqqarrd3gQHkU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=L8D+WCnpDjUGxKz5C0XuacM7rCd9CMfURjfLMxHMttV2iwCLDHKCNgTOBSnKasdMLBkmsTtEpqy8292Ndcz+ZcwvI44ZCgxV0YuJL/GvNyNoOVig48bLCKGBRv9j4OP6odncQM05nI+aDqU5iTMoO8A9LbkKjRKE9PWyM8hmzBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Mxx+8ERi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B044C4CEE2;
-	Wed,  5 Mar 2025 10:29:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741170583;
-	bh=mnIJ3/kXGOV9yYEgNSUKTE3uzvCSYZEqqarrd3gQHkU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Mxx+8ERiSed0Epvc6XPD9WA5FtBXA94Ca0ZLzUUxy9j6zGjcLH2XTiW6g0Ec8Rfxa
-	 qKqf2Qfn1g3W/Hb8y7D47Qm8izdFR9ejWTShXbBr3dialEnOwOkT+0Fr4ZF1wBV/E3
-	 s4YWWxYW1C1w7VtyzYpKPvCiEV3qn/fPIsUJYe2N5ym9t4RAAFctBSLs51szqDZPrV
-	 OZlM767NyK49PtZ6XE8JeW3PN+f6pooLnkMre7RB1KCLqxL+zlKDmY0sLVhynI6C6T
-	 ssgBlO9lzs058EkUCvZJTPMULdZW/mHygV6B7TOgodiwXbE3srZ+InUpKiIZnf+fse
-	 TjQnynfxx7EkA==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Danilo Krummrich" <dakr@kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 07/22] rust: pin-init: move the default error behavior
- of `try_[pin_]init`
-In-Reply-To: <20250304225245.2033120-8-benno.lossin@proton.me> (Benno Lossin's
-	message of "Tue, 04 Mar 2025 22:54:07 +0000")
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<1iRthWaE9p56aGqyNzaY-vh27mX2Tp1thOYCi8oBj6Qn6m6TxlSh-5-Ic4noCVTjVSXzw6GcviNXRtXbg6aw6A==@protonmail.internalid>
-	<20250304225245.2033120-8-benno.lossin@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 11:29:34 +0100
-Message-ID: <87r03bepo1.fsf@kernel.org>
+	s=arc-20240116; t=1741170608; c=relaxed/simple;
+	bh=B4lHCixB5/kv3w+j2VP5bFx9obnTAvFYkuUSOEerqWQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VPcBmUXM9A51Ilm5hcoPl9VlEx+mI7k+OwLkvvZUiKYxqbfPi8Uj5B2VLED4/Ec0+KVGXDSOFKOZT3LLQjnhQf0FGjwL6k6yCKrLIOey5r+hYh1oOQPFFq0TCo30CHMDSPCk8iuowwmxmay43dfBplzPy/CxgUpDZRZtMz0nWl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N5kVbrNH; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5e535d16180so4792533a12.1;
+        Wed, 05 Mar 2025 02:30:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741170602; x=1741775402; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6sanML2Dhh94iBJereFlvYHp/47BSYsKw+xHcTZ++gc=;
+        b=N5kVbrNHaRAzk6zViVfG5rccWiWSN6ah/WjiDv7wMdnCKrIaWDgy7/Nez+35YR7o+i
+         TbTtPbrShi1BsfoqkBx/HVoaC5O+1Sov1vlMvQbAdKjklVoiHqS5TPh+pbmbbZ/sM7zW
+         BEv6xTXMyeMHgrSbMo0hQG3mw8l3GHz40W8UZ37DmuAvXMsGiiPktQZ886Gqox6VvSmL
+         39wkFwPkTe5oFAbx10eXtwqJ02m/f6J0YZ24l2BOSHmR03qXKOO9FOV/5Ug/LQz/YwSt
+         Q5MJw9mcTKS7t0P8FchYGdnRTHxym1nDfd2wPYspXc3kvgHMgNGw20hl8QJ8eK7NbAr0
+         +w/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741170602; x=1741775402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6sanML2Dhh94iBJereFlvYHp/47BSYsKw+xHcTZ++gc=;
+        b=Mq5vGb845Sbd4G2xgFqUFf0kkHG1OxQi2LR3a1bRK9LFS+Un5f9aRaZeU/fpSEoR3R
+         o+aEQvp+LTn4DvlS7R11b7ZkQnmrr0Z83mdwLyxXnht9BTYNext8dcsz/UJ9Fhd3r0dq
+         zvksP8aZk/DASfuC0YT2dVYv0tOQp05QDms4jYSuAcNA85mlkMKUX8iPvqwOKC2LKbJ9
+         FtLIF2gbN9hvUOmEd3D7Z2KQB++fctYjEepzk4H+93cMHxUElyGlZDnZ5EaZgDkhZlbX
+         DZDKumxgH+ECiw46J6HwPgpbXQMni07/2t50GoPrLdWEI8s51fCJLQOIJAzGp7VwskmZ
+         2mVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU5NFOUlAP8ehLTqhrGJK6VlBhmm/0aSD93nbkHEwrJhWaAyi+GympiN0nIkjxG1bkvxVxUMRvLzZp5X+Ro66w=@vger.kernel.org, AJvYcCUaRo7fVHKYiPRF4yBLqnjwwar9LRrCGcBTd6wdvLM4nIm+X0Cf0zxAKpLt6yHxWni5+WC8+mbtI2Ym1bzX@vger.kernel.org, AJvYcCWYdQ51ob70pE0GP5gB0Xci5ecCRwuUHmdKKrNysq0UbMID3yf66tzuRySwYLJz1EFOfQWzw9VjXLMpN0GNLlje@vger.kernel.org
+X-Gm-Message-State: AOJu0YycCNW1gByZ7UwQBIAMB4gp66ZfOj4ofHgwQkHWNtFCOW9tj1xW
+	lJJ7/5M3RMXZEqxSr0NJPmUJD2Sq7aiLoIA5XSHz06q1xRNpjh83
+X-Gm-Gg: ASbGncscX4U2bbRF2sYgIivAmMUFIrJ2SoPm1yNMTwKK6ytRkj2kCMp9wbpLdWR4R5D
+	6pExJZQPgIbgmZbjdRWPHq0nWZXgxibXIsHNeF1HTMJ7VpBSAjOaqNLUPeJ4KPtDFu+l8m1TTkY
+	riHNCGAQ8HO2x1F1qSigm2GscoB7eqjshLghIlFVQ0M0jHopeYYu2xduPH243FL2Cf23bewkLkJ
+	4G7bNdfFwbGEuLHyPtGRM2sZppINtMkH3tvYmHX2bvJOBprMgBX7LcEmpKyjPCw6Y2KKxb84tps
+	VfJj6/b+jS4/4VICyd4aOUnfMK+QdrDmEzKdBlO5y4ucQ6+WqIBj8hEIlxx0LybkeGvLei+7g9Q
+	mHt4eO2WO/UEv9WvIyW3dTFenIUaOGZGCKo86bXLBC7NO20uly+s9g6cJbBLi9w==
+X-Google-Smtp-Source: AGHT+IEquGmXyo0QZO6D8xBnPc2YdJ5ns+5Q/gwbofncoh7rX6vx5H6gyD7FpADTdefnpFFr3FhJMg==
+X-Received: by 2002:a05:6402:2351:b0:5e4:af36:2315 with SMTP id 4fb4d7f45d1cf-5e59f3d4a3dmr6307326a12.12.1741170601891;
+        Wed, 05 Mar 2025 02:30:01 -0800 (PST)
+Received: from corebook.localdomain (2001-1c00-020d-1300-1b1c-4449-176a-89ea.cable.dynamic.v6.ziggo.nl. [2001:1c00:20d:1300:1b1c:4449:176a:89ea])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1f7161a4esm247154266b.161.2025.03.05.02.30.00
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 02:30:00 -0800 (PST)
+From: Eric Woudstra <ericwouds@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Ivan Vecera <ivecera@redhat.com>,
+	Roopa Prabhu <roopa@nvidia.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Ahmed Zaki <ahmed.zaki@intel.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"Frank Wunderlich" <frank-w@public-files.de>,
+	Daniel Golle <daniel@makrotopia.org>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org,
+	bridge@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	linux-hardening@vger.kernel.org,
+	Kees Cook <kees@kernel.org>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Eric Woudstra <ericwouds@gmail.com>
+Subject: [PATCH v9 nf 00/15] bridge-fastpath and related improvements
+Date: Wed,  5 Mar 2025 11:29:34 +0100
+Message-ID: <20250305102949.16370-1-ericwouds@gmail.com>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+This patchset makes it possible to set up a software fastpath between
+bridged interfaces. One patch adds the flow rule for the hardware
+fastpath. This creates the possibility to have a hardware offloaded
+fastpath between bridged interfaces. More patches are added to solve
+issues found with the existing code.
 
-> Move the ability to just write `try_pin_init!(Foo { a <- a_init })`
-> (note the missing `? Error` at the end) into the kernel crate.
-> Remove this notation from the pin-init crate, since the default when no
-> error is specified is the kernel-internal `Error` type. Instead add two
-> macros in the kernel crate that serve this default and are used instead
-> of the ones from `pin-init`.
->
-> This is done, because the `Error` type that is used as the default is
-> from the kernel crate and it thus prevents making the pin-init crate
-> standalone.
->
-> In order to not cause a build error due to a name overlap, the macros in
-> the pin-init crate are renamed, but this change is reverted in a future
-> commit when it is a standalone crate.
->
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+To set up the fastpath with offloading, add this extra flowtable:
 
-[...]
+table bridge filter {
+        flowtable fb {
+                hook ingress priority filter
+                devices = { lan0, lan1, lan2, lan3, lan4, wlan0, wlan1 }
+                flags offload
+        }
+        chain forward {
+                type filter hook forward priority filter; policy accept;
+		ct state established flow add @fb
+        }
+}
 
-> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> index dde2e0649790..4123d478c351 100644
-> --- a/rust/kernel/prelude.rs
-> +++ b/rust/kernel/prelude.rs
-> @@ -28,7 +28,8 @@
->  pub use super::{dev_alert, dev_crit, dev_dbg, dev_emerg, dev_err, dev_in=
-fo, dev_notice, dev_warn};
->  pub use super::{pr_alert, pr_crit, pr_debug, pr_emerg, pr_err, pr_info, =
-pr_notice, pr_warn};
->
-> -pub use super::{init, pin_init, try_init, try_pin_init};
-> +pub use super::{init, pin_init};
-> +pub use super::{try_init, try_pin_init};
+Creating a separate fastpath for bridges.
 
-Are you trying out a new scheme here - a balance between normalized and
-line-by-line use declarations? =F0=9F=98=86
+         forward fastpath bypass
+ .----------------------------------------.
+/                                          \
+|                        IP - forwarding    |
+|                       /                \  v
+|                      /                  wan ...
+|                     /
+|                     |
+|                     |
+|                   brlan.1
+|                     |
+|    +-------------------------------+
+|    |           vlan 1              |
+|    |                               |
+|    |     brlan (vlan-filtering)    |
+|    +---------------+               |
+|    |  DSA-SWITCH   |               |
+|    |               |    vlan 1     |
+|    |               |      to       |
+|    |   vlan 1      |   untagged    |
+|    +---------------+---------------+
+.         /                   \
+ ------>lan0                 wlan1
+        .  ^                 ^
+        .  |                 |
+        .  \_________________/
+        .  bridge fastpath bypass
+        .
+        ^
+     vlan 1 tagged packets
 
+To have the ability to handle xmit direct with outgoing encaps in the
+bridge fastpass bypass, we need to be able to handle them without going
+through vlan/pppoe devices. So I've applied, amended and squashed wenxu's
+patchset. This patch also makes it possible to egress from vlan-filtering
+brlan to lan0 with vlan tagged packets, if the bridge master port is doing
+the vlan tagging, instead of the vlan-device. Without this patch, this is
+not possible in the bridge-fastpath and also not in the forward-fastpath,
+as seen in the figure above.
 
-Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+There are also some more fixes for filling in the forward path. These
+fixes also apply to for the forward-fastpath. They include handling
+DEV_PATH_MTK_WDMA in nft_dev_path_info(). There are now 2 patches for
+avoiding ingress_vlans bit set for bridged dsa user ports and foreign
+(dsa) ports.
 
+Another patch introduces DEV_PATH_BR_VLAN_KEEP_HW, needed for the
+bridge-fastpath only.
 
-Best regards,
-Andreas Hindborg
+Conntrack bridge only tracks untagged and 802.1q. To make the bridge
+fastpath experience more similar to the forward fastpath experience,
+I've added double vlan, pppoe and pppoe-in-q tagged packets to bridge
+conntrack and to bridge filter chain.
 
+Note: While testing direct transmit in the software forward-fastpath,
+without the capability of setting the offload flag, it is sometimes useful
+to enslave the wan interface to another bridge, brwan. This will make
+sure both directions of the software forward-fastpath use direct transmit,
+which also happens when the offload flag is set.
+
+I have send RFC v2 as I previously only owned a dsa device. I now have
+obtained a switchdev supporting SWITCHDEV_OBJ_ID_PORT_VLAN, and found
+there was more to do to handle the ingress_vlans bit and corresponding
+vlan encap.
+
+I send v4 and above as non-RFC as the previous 2 RFC's did not get any
+comment.
+
+Changes in v9:
+- No changes, resend to netfilter
+
+Changes in v8:
+- Added commit on top: Avoid zero-length arrays in struct pppoe_hdr.
+
+Changes in v7:
+- Inside br_vlan_fill_forward_path_pvid(), replaced usage of
+   br_vlan_group() with br_vlan_group_rcu() and
+   nbp_vlan_group() with nbp_vlan_group_rcu().
+
+Changes in v6:
+- Conntrack double vlan and pppoe patch: Set ph and vhdr after the calls
+   to pskb_may_pull().
+
+Changes in v5:
+- Conntrack double vlan and pppoe patch: Moved pskb_may_pull() up to the
+   first switch statement, to the start of the cases. Removed the second
+   switch statement. Replaced 0xffffffff with U32_MAX.
+- Added patch removing hw_outdev, out.hw_ifindex and out.hw_ifidx members.
+- Fix error path returned from nft_flow_offload_bridge_init().
+- Cosmetics.
+
+Changes in v4:
+- Added !CONFIG_NET_SWITCHDEV version of
+   br_switchdev_port_vlan_no_foreign_add().
+
+Changes in v3:
+- Squashed the two 'port to port' patches to avoid build errors when only
+   one of the two commits is applied.
+
+Changes in v2:
+- Introduce DEV_PATH_BR_VLAN_KEEP_HW for use in the bridge-fastpath only.
+   It is needed for switchdevs supporting SWITCHDEV_OBJ_ID_PORT_VLAN.
+- Different approach for handling BR_VLFLAG_ADDED_BY_SWITCHDEV in
+   br_vlan_fill_forward_path_mode() for foreign devices. Introduce
+   SWITCHDEV_F_NO_FOREIGN, BR_VLFLAG_TAGGING_BY_SWITCHDEV and
+   br_switchdev_port_vlan_no_foreign_add(). The latter function can be
+   used to make sure the vlan was added to a switchdev native device.
+   When that fails, adding the vlan with br_switchdev_port_vlan_add()
+   means it was added to a switchdev foreign device.
+- Clear ingress_vlans bit and corresponding encap for dsa user ports.
+- Add check for ingress_vlans bit to nft_dev_fill_bridge_path().
+- Adapted cover letter description to make clear the patches apply
+   to software fastpath, making hardware-offloaded fastpath possible.
+- Fixed clang error for vlan_hdr * and struct ppp_hdr * by adding block.
+- Updated !CONFIG_BRIDGE_VLAN_FILTERING version of
+   br_vlan_fill_forward_path_pvid().
+- Removed erroneous check netif_is_bridge_master(ctx->dev) from
+   dev_fill_bridge_path().
+- Cosmetic changes.
+
+Eric Woudstra (15):
+  net: pppoe: avoid zero-length arrays in struct pppoe_hdr
+  netfilter: nf_flow_table_offload: Add nf_flow_encap_push() for xmit
+    direct
+  netfilter: flow: remove hw_outdev, out.hw_ifindex and out.hw_ifidx
+  netfilter: bridge: Add conntrack double vlan and pppoe
+  netfilter: nft_chain_filter: Add bridge double vlan and pppoe
+  bridge: Add filling forward path from port to port
+  net: core: dev: Add dev_fill_bridge_path()
+  netfilter :nf_flow_table_offload: Add nf_flow_rule_bridge()
+  netfilter: nf_flow_table_inet: Add nf_flowtable_type flowtable_bridge
+  netfilter: nft_flow_offload: Add NFPROTO_BRIDGE to validate
+  netfilter: nft_flow_offload: Add DEV_PATH_MTK_WDMA to
+    nft_dev_path_info()
+  netfilter: nft_flow_offload: No ingress_vlan forward info for dsa user
+    port
+  bridge: No DEV_PATH_BR_VLAN_UNTAG_HW for dsa foreign
+  bridge: Introduce DEV_PATH_BR_VLAN_KEEP_HW for bridge-fastpath
+  netfilter: nft_flow_offload: Add bridgeflow to nft_flow_offload_eval()
+
+ drivers/net/ppp/pppoe.c                    |   2 +-
+ include/linux/netdevice.h                  |   3 +
+ include/net/netfilter/nf_flow_table.h      |   5 +-
+ include/net/switchdev.h                    |   1 +
+ include/uapi/linux/if_pppox.h              |   4 +
+ net/bridge/br_device.c                     |  23 ++-
+ net/bridge/br_private.h                    |  12 ++
+ net/bridge/br_switchdev.c                  |  15 ++
+ net/bridge/br_vlan.c                       |  29 +++-
+ net/bridge/netfilter/nf_conntrack_bridge.c |  83 ++++++++--
+ net/core/dev.c                             |  66 ++++++--
+ net/netfilter/nf_flow_table_core.c         |   1 -
+ net/netfilter/nf_flow_table_inet.c         |  13 ++
+ net/netfilter/nf_flow_table_ip.c           |  96 +++++++++++-
+ net/netfilter/nf_flow_table_offload.c      |  15 +-
+ net/netfilter/nft_chain_filter.c           |  20 ++-
+ net/netfilter/nft_flow_offload.c           | 168 +++++++++++++++++++--
+ net/switchdev/switchdev.c                  |   2 +-
+ 18 files changed, 497 insertions(+), 61 deletions(-)
+
+-- 
+2.47.1
 
 
