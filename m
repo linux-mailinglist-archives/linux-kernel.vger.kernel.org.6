@@ -1,232 +1,194 @@
-Return-Path: <linux-kernel+bounces-546533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05514A4FBD2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:24:26 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB9C6A4FC3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:37:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 788917A8B65
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:23:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EEA47A25EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:36:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCB8C2063F3;
-	Wed,  5 Mar 2025 10:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l2Zr/gg5"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52E43207E1D;
+	Wed,  5 Mar 2025 10:31:06 +0000 (UTC)
+Received: from mail.3ffe.de (0001.3ffe.de [159.69.201.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4FEF205AB0;
-	Wed,  5 Mar 2025 10:24:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B5DC2E337F;
+	Wed,  5 Mar 2025 10:31:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.201.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170253; cv=none; b=ut+4taCy6I0HbM0RivIDGCCL/XT5riFBvJzSgKMFD7ars4SVxX48SR6FRIUxomjZ3QDR7Qoep1qTCZTZit9dinN8RYYLSf2Pm2Kbpc1kOlmYeF4E2Z1MD+TNYTEMW6UzbDM5LtL6aNv4Rt86Fr/bkE2mHxKOvH2mh4py8zxj6Jo=
+	t=1741170665; cv=none; b=rNgLawWXTCmBrvH6tPNL0dzscUHQsdoN1UMsgzytvn1UQ9adgkRqfHm/zGjhLtb21xfm4wU10v0/YsMBntbPru8byBOueS9pkK1rGB0x9gRtPpDMq1hZ6tO6M0/VQuXWAVg69mcft19fs+hF7N/1lFscwJxLg6eW3pO69KpGqzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170253; c=relaxed/simple;
-	bh=rpJFe0wOfuGvVfafJ6fYA8p3MFl5W10FP6UIBHcWyxc=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=MR981brjQlakpkBFABuNhDi+CwVpxZWXuvwOTMkIdeVxCJRLVVCb46ug+zTs7NGWp9MPitFrCfAhWoMZA2PoK9aTIlXmL8weWsSpLaWR+7k28JMo4cpuFlHlOrrb+14xpiTRSLf+XH49od8OhozCstheZXRi3HUGWVC4doB1Eo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l2Zr/gg5; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-223959039f4so76284315ad.3;
-        Wed, 05 Mar 2025 02:24:11 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741170251; x=1741775051; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vlN/L4AefYvDeS0mxE9WdsKwZ74h8HubhxsXCuRQhvs=;
-        b=l2Zr/gg5arrVkgL6VcaDMS+So4mTGNPMZAL993eMmGP3TWF4rcU9jzdP1uIGMlofy2
-         AXh6IdIng/IWK3/iViIq/MVC9KsX3kWCbnqCtWWCQk9pqlo0mV5sfLwc+ZuEiHu0ZJ0N
-         XWHQWyM5GAgkl4RZ5RN5CHFw9XF70tHAhZg3dVOLDqiBHVuNu5D104NaLsHyhm17CuBM
-         Rm3gRvtoUuJr7enmNbu0hbxxaJC02Vq3ZBYwoPVLlElknvKj77vrlylAqnYPATcoTQ8n
-         /tdGxtSDLQFqpz2VXjjJEL6JsWHpzQiadYvIeJEHhhQWwhdM7cpXGQN0zOisOksFODZd
-         X+3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741170251; x=1741775051;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=vlN/L4AefYvDeS0mxE9WdsKwZ74h8HubhxsXCuRQhvs=;
-        b=si0u5+xhrVGA5KMCGdCqpDGh2UBDEvT1hE27/vUuJ/KoLFEbGdPhLk8M8T3y7ht09i
-         W/czFyFmVj/Nux4w0SqabJqkhPi4g+mKEyuxzFB0SxnKE8oMOFDpIQ52LQ9UY/m7xFVN
-         COHbVeN2R8UqGNhUj7qxKWLOvMtTJKpY0nWAed/BdrrzxpwV/f2YJQ2tksQnL1VRDc2O
-         4ZTOqHcnBVbvDeJJRqt1hTAqkiYrFsXvGlpaX1ncCD/3hVvVYXmo/s7tDmCvVUMBzSOA
-         QXvalFsEz8stMX8ggooE6RoGyFgny/Aw55zlvcCv+k3+2l75D1A+vUjtc5YeFoDWfOgP
-         MaEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVj1H+YO3LuhRm0N9M748qMT23RjxWlV3ctY3JdHNSYXX4EF5Y5rA8U6EhltcFX7qDeUaWWNatp3Eq6AXqZgYc=@vger.kernel.org, AJvYcCVte1Ni0NE2swFVerwAeXAANolUf2g1HiegYFZOdyndap3CA2gHD6je+pTz4DmknKTkeRWMyzTQCjGPLTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLnNvS4t+llMgbvAx1B45dAVChYuGahn5y3sjvbkl0lQclV6dk
-	w5TUGLZ0bC2WAQjeQGg7IIyV96uMjcX+Y4bb6G4RDbsFvBlUiYLx
-X-Gm-Gg: ASbGncs3Zow1/KodQ5Q37oxHpsShXIllzJeuEhHES07YjD7Pu7dRe9h8Y2Pes/ZY2vu
-	RVo/i5xfF7E3mzr0vXBxPtPa6WZOdzrz9RsTh5lS6+DS3iTIhQqdrJoCPDDfxFAqZS7Kq3ngJUt
-	mUiq+VIOnR4fX1Fm8ECqxa4VVoXUHPNC8B8mVbph2ThzI0PNUS+EjQ9PU5gYHP8gsIEOp7lFmQ/
-	VUZ4HDomI3Fe/7LLYVsIKovOt54jwE18QYjUhjTGjbjxdlkWW86pYVRDOPCqofZwOOIKAllM3FT
-	/F2CLBRzvNeM2CndsD2EVIdttW8VMP/+UiNblEq3zEQ/MBNXY9Vrg1qXvGC8P6AnaTPKq/ZWvM9
-	NbqBVVMKpVXu53+oDcxl4gg0gYng=
-X-Google-Smtp-Source: AGHT+IGsFQfHQjvkNE241Y4wnmDmNDBQSHQivxyIM52U3bSLm+KCunMmDVV2E0sVtyiSSMpJSKWLRA==
-X-Received: by 2002:a17:902:d2c1:b0:220:fb23:48df with SMTP id d9443c01a7336-223f1cf320amr40589935ad.36.1741170250886;
-        Wed, 05 Mar 2025 02:24:10 -0800 (PST)
-Received: from localhost (p4204131-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.160.176.131])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223501d4e9fsm110731105ad.28.2025.03.05.02.24.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 02:24:10 -0800 (PST)
-Date: Wed, 05 Mar 2025 19:24:03 +0900 (JST)
-Message-Id: <20250305.192403.996225631653343672.fujita.tomonori@gmail.com>
-To: aliceryhl@google.com
-Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org, x86@kernel.org,
- linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- loongarch@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, peterz@infradead.org,
- hpa@zytor.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
- aou@eecs.berkeley.edu, catalin.marinas@arm.com, will@kernel.org,
- chenhuacai@kernel.org, kernel@xen0n.name, tangyouling@loongson.cn,
- hejinyang@loongson.cn, yangtiezhu@loongson.cn, ojeda@kernel.org,
- alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
- tmgross@umich.edu
-Subject: Re: [PATCH v3 5/5] rust: Add warn_on and warn_on_once
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <Z8gOkeJ8o2pMCwGu@google.com>
-References: <20250213135759.190006-1-fujita.tomonori@gmail.com>
-	<20250213135759.190006-6-fujita.tomonori@gmail.com>
-	<Z8gOkeJ8o2pMCwGu@google.com>
+	s=arc-20240116; t=1741170665; c=relaxed/simple;
+	bh=RcZtDEPIr7npynhNkRSf7ZIYwzevdo5E5GPwmnke3Kg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:From:To:
+	 References:In-Reply-To; b=ljKQPB7IhzJ5wOK9/fUVmNyuOwSt7XY84RaCqrscMRA1eaPiKC2VGLUxGF9ah5XgFFZL4fqEuy/fDH+VbmXMemc0c8NSluM0YRprGcuKFSbGdjw1FFj8ECh7CW2tNx9lvbTZabd60Q0FH4nUMW/G/BdDGz9KCadEDG3AOrsaOwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=walle.cc; arc=none smtp.client-ip=159.69.201.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walle.cc
+Received: from localhost (unknown [IPv6:2a02:810b:4320:1000:4685:ff:fe12:5967])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.3ffe.de (Postfix) with ESMTPSA id CB5C648D;
+	Wed,  5 Mar 2025 11:24:47 +0100 (CET)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Wed, 05 Mar 2025 11:24:47 +0100
+Message-Id: <D889CRJC6W19.2LDQCDVG7BLNG@kernel.org>
+Subject: Re: [PATCH 1/2] mtd: spi-nor: sst: register SFDP region into NVMEM
+ framework to read MAC Address
+Cc: "Varshini Rajendran" <varshini.rajendran@microchip.com>
+From: "Michael Walle" <mwalle@kernel.org>
+To: "Manikandan Muralidharan" <manikandan.m@microchip.com>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+ <claudiu.beznea@tuxon.dev>, <tudor.ambarus@linaro.org>,
+ <pratyush@kernel.org>, <miquel.raynal@bootlin.com>, <richard@nod.at>,
+ <vigneshr@ti.com>, <devicetree@vger.kernel.org>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-mtd@lists.infradead.org>
+X-Mailer: aerc 0.16.0
+References: <20250305100134.1171124-1-manikandan.m@microchip.com>
+In-Reply-To: <20250305100134.1171124-1-manikandan.m@microchip.com>
 
-On Wed, 5 Mar 2025 08:42:57 +0000
-Alice Ryhl <aliceryhl@google.com> wrote:
+On Wed Mar 5, 2025 at 11:01 AM CET, Manikandan Muralidharan wrote:
+> From: Varshini Rajendran <varshini.rajendran@microchip.com>
+>
+> EUI identifier and the MAC Address of the Ethernet Interface is stored
+> after the SFDP table of contents starting at address 0x260 in the
+> QSPI memory.
+> Register the entire SFDP region read by the spi-nor (nor->sfdp) into the
+> NVMEM framework and read the MAC Address when requested using the nvmem
+> properties in the DT by the net drivers.
+>
+> In kernel the Ethernet MAC address relied on U-Boot env variables or
+> generated a random address, which posed challenges for boards without
+> on-board EEPROMs or with multiple Ethernet ports.
+> This change ensures consistent and reliable MAC address retrieval from QS=
+PI,
+> benefiting boards like the sama5d29 curiosity and sam9x75 curiosity.
+>
+> Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
+> [manikandan.m@microchip.com: Integrate the nvmem->read callback framework=
+]
+> Signed-off-by: Manikandan Muralidharan <manikandan.m@microchip.com>
+> ---
+>  drivers/mtd/spi-nor/sst.c | 62 +++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>
+> diff --git a/drivers/mtd/spi-nor/sst.c b/drivers/mtd/spi-nor/sst.c
+> index 175211fe6a5e..a0abf201ad41 100644
+> --- a/drivers/mtd/spi-nor/sst.c
+> +++ b/drivers/mtd/spi-nor/sst.c
+> @@ -5,6 +5,7 @@
+>   */
+> =20
+>  #include <linux/mtd/spi-nor.h>
+> +#include <linux/nvmem-provider.h>
+> =20
+>  #include "core.h"
+> =20
+> @@ -13,6 +14,8 @@
+> =20
+>  #define SST26VF_CR_BPNV		BIT(3)
+> =20
+> +#define SST26VF_SFDP_EUI48	0x30
+> +
+>  static int sst26vf_nor_lock(struct spi_nor *nor, loff_t ofs, u64 len)
+>  {
+>  	return -EOPNOTSUPP;
+> @@ -56,8 +59,67 @@ static int sst26vf_nor_late_init(struct spi_nor *nor)
+>  	return 0;
+>  }
+> =20
+> +/**
+> + * sst26vf_sfdp_mac_addr_read() - check if the EUI-48 MAC Address is pro=
+grammed
+> + * and read the data from the prestored SFDP data
+> + *
+> + * @priv: User context passed to read callbacks.
+> + * @offset: Offset within the NVMEM device.
+> + * @val: pointer where to fill the ethernet address
+> + * @bytes: Length of the NVMEM cell
+> + *
+> + * Return: 0 on success, -EINVAL  otherwise.
+> + */
+> +static int sst26vf_sfdp_mac_addr_read(void *priv, unsigned int off,
+> +				      void *val, size_t bytes)
+> +{
+> +	struct spi_nor *nor =3D priv;
+> +	struct sfdp *sfdp =3D nor->sfdp;
+> +	loff_t offset =3D off;
+> +	size_t sfdp_size;
+> +
+> +	/*
+> +	 * Check if the EUI-48 MAC address is programmed in the next six addres=
+s
+> +	 * locations.
+> +	 * @off is programmed in the DT and stores the start of MAC Address
+> +	 * byte, (off - 1) stores the bit length of the Extended Unique
+> +	 * Identifier
+> +	 */
+> +	if (SST26VF_SFDP_EUI48 !=3D *((u8 *)sfdp->dwords + (offset - 1)))
+> +		return -EINVAL;
 
-> On Thu, Feb 13, 2025 at 10:57:59PM +0900, FUJITA Tomonori wrote:
->> Add warn_on and warn_on_once macros. Wrapping the C's WARN_* and BUG_*
->> macros doesn't work so this uses the assembly code exported by the C
->> side via ARCH_WARN_ASM macro. Like the static branch code, this
->> generates the assembly code for rust at compile time by using the C
->> preprocessor.
->> 
->> file()! macro doesn't work for the Rust inline assembly in the same
->> way as __FILE__ for the C inline assembly. So the code to handle a
->> file name is different from the C assembly code (similar to the
->> arm64/loongarch assembly).
-> 
-> Nit: Should be file!() not file()!.
+What happens if you read at a different offset? You're exposing
+the entire SFDP region. What happens if there is a 0x30 at a
+different location?
 
-Ops, thanks.
+> +
+> +	sfdp_size =3D sfdp->num_dwords * sizeof(*sfdp->dwords);
+> +	memory_read_from_buffer(val, bytes, &offset, sfdp->dwords,
+> +				sfdp_size);
+> +	return 0;
+> +}
+> +
+> +static struct nvmem_config sst26vf_sfdp_nvmem_config =3D {
+> +	.word_size =3D 1,
+> +	.stride =3D 1,
+> +};
+> +
+> +static int sst26vf_nor_post_sfdp(struct spi_nor *nor)
+> +{
+> +	struct nvmem_device *nvmem;
+> +
+> +	sst26vf_sfdp_nvmem_config.dev =3D nor->dev;
+> +	sst26vf_sfdp_nvmem_config.size =3D nor->sfdp->num_dwords * sizeof(*nor-=
+>sfdp->dwords);
+> +	sst26vf_sfdp_nvmem_config.priv =3D nor;
+> +	sst26vf_sfdp_nvmem_config.reg_read =3D sst26vf_sfdp_mac_addr_read;
+> +
+> +	nvmem =3D devm_nvmem_register(nor->dev, &sst26vf_sfdp_nvmem_config);
+> +	if (IS_ERR(nvmem)) {
+> +		dev_err(nor->dev, "failed to register NVMEM device: %ld\n", PTR_ERR(nv=
+mem));
+> +		return PTR_ERR(nvmem);
 
-Actually, the above comment is obsolete. With your solution in the
-previous mail, I can remove the asm code for the file name. I'll
-remove the comment.
+I don't think it makes sense to have this one-off in a particular
+driver. If at all, this should be handled in the core. Sorry, but
+this really looks like an ugly hack.
 
+-michael
 
->> diff --git a/rust/kernel/.gitignore b/rust/kernel/.gitignore
->> index 6ba39a178f30..f1d7f4225332 100644
->> --- a/rust/kernel/.gitignore
->> +++ b/rust/kernel/.gitignore
->> @@ -1,3 +1,5 @@
->>  # SPDX-License-Identifier: GPL-2.0
->>  
->>  /generated_arch_static_branch_asm.rs
->> +/generated_arch_warn_asm.rs
->> +/generated_arch_reachable_asm.rs
->> \ No newline at end of file
-> 
-> There should be a newline.
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static const struct spi_nor_fixups sst26vf_nor_fixups =3D {
+>  	.late_init =3D sst26vf_nor_late_init,
+> +	.post_sfdp =3D sst26vf_nor_post_sfdp,
+>  };
+> =20
+>  static const struct flash_info sst_nor_parts[] =3D {
 
-Ah, I'll fix.
-
->> +++ b/rust/kernel/bug.rs
->> @@ -0,0 +1,100 @@
->> +// SPDX-License-Identifier: GPL-2.0
->> +
->> +// Copyright (C) 2024 FUJITA Tomonori
-> 
-> 2025?
-
-I'll add.
-
->> +#[macro_export]
->> +#[doc(hidden)]
->> +#[cfg(all(CONFIG_BUG, not(CONFIG_UML)))]
->> +macro_rules! warn_flags {
->> +    ($flags:expr) => {
->> +        const FLAGS: u32 = $crate::bindings::BUGFLAG_WARNING | $flags;
->> +        // SAFETY: Just an FFI call.
->> +        #[cfg(CONFIG_DEBUG_BUGVERBOSE)]
->> +        unsafe {
->> +            $crate::asm!(concat!(
->> +                "/* {size} */",
->> +                ".pushsection .rodata.str1.1, \"aMS\",@progbits, 1\n",
->> +                "111:\t .string ", "\"", file!(), "\"\n",
->> +                ".popsection\n",
->> +                include!(concat!(env!("OBJTREE"), "/rust/kernel/generated_arch_warn_asm.rs")),
->> +                include!(concat!(env!("OBJTREE"), "/rust/kernel/generated_arch_reachable_asm.rs")));
->> +            line = const line!(),
->> +            flags = const FLAGS,
->> +            size = const ::core::mem::size_of::<$crate::bindings::bug_entry>(),
->> +            );
->> +        }
->> +        // SAFETY: Just an FFI call.
->> +        #[cfg(not(CONFIG_DEBUG_BUGVERBOSE))]
->> +        unsafe {
->> +            $crate::asm!(
->> +            concat!(
->> +                "/* {size} */",
->> +                include!(concat!(env!("OBJTREE"), "/rust/kernel/generated_arch_warn_asm.rs")),
->> +                include!(concat!(env!("OBJTREE"), "/rust/kernel/generated_arch_reachable_asm.rs")));
->> +            flags = const FLAGS,
->> +            size = const ::core::mem::size_of::<$crate::bindings::bug_entry>(),
->> +            );
->> +        }
-> 
-> I generally prefer to have the cfgs on the macro rather in its
-> expansion. That avoids emitting a lot of code that is not actually used.
-
-You prefer the following?
-
-#[cfg(all(CONFIG_BUG, CONFIG_DEBUG_BUGVERBOSE, not(CONFIG_UML)))]
-macro_rules! warn_flags {
-...
-}
-
-#[cfg(all(CONFIG_BUG, not(CONFIG_DEBUG_BUGVERBOSE), not(CONFIG_UML)))]
-macro_rules! warn_flags {
-...
-}
-
->> +#[doc(hidden)]
->> +#[macro_export]
->> +macro_rules! bugflag_taint {
->> +    ($taint:expr) => {
->> +        $taint << 8
->> +    };
->> +}
-> 
-> This could just be a const fn.
-
-Yeah, would a const fn be preferable?
-
->> +/// Report a warning only once.
->> +#[macro_export]
->> +macro_rules! warn_on_once {
->> +    ($cond:expr) => {
->> +        if $cond {
->> +            $crate::warn_flags!(
->> +                $crate::bindings::BUGFLAG_ONCE
->> +                    | $crate::bugflag_taint!($crate::bindings::TAINT_WARN)
-> 
-> Or maybe a constant?
-> 
-> const WARN_ON_ONCE_FLAGS: u32 = bindings::BUGFLAG_ONCE | (bindings::TAINT_WARN << 8);
-
-Ok, but you prefer "<< 8" than using const fn bugflag_taint()?
-
-> $crate::warn_flags!($crate::bug::WARN_ON_ONCE_FLAGS);
 
