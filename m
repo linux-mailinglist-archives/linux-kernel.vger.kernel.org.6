@@ -1,226 +1,187 @@
-Return-Path: <linux-kernel+bounces-547244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C7AFA504D2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:30:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD8D6A504CA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:29:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 77016189813D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:27:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA05176CAF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A011D257AD4;
-	Wed,  5 Mar 2025 16:23:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f8U7fxvC"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 646BB18DF64;
-	Wed,  5 Mar 2025 16:23:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771771957E4;
+	Wed,  5 Mar 2025 16:25:26 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4648318A6B5;
+	Wed,  5 Mar 2025 16:25:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741191805; cv=none; b=MtShRvu50bMgOXDcKWBVaVDC6oEdJlIvvApoM9i3SCCw8GRJHIx05VxcEx1h7PbEjxQ3+ntUBi+HIV1M0rIpQbviGi+vxl4nEwYsb7w2j+I+URamPmXVU9EK4rkdKIUOvQeBhDuaQrcqWknoUTN5MT+ao8kUHmgMa0F1gXM2P8w=
+	t=1741191926; cv=none; b=lsC5+5Cs9BSqAVf6/DRYw2hIvIdy44Wl6p3ZXuh++HaGFaeTPBG4JOjYp6pn28DoasHCIbJww0OdSrAloMBPmFjMdJm3aCWLEuYaNmA3Fph2cnMyGQ/gVo+RCg5K3ki8BGHDuHywN2FWqWt5/NO4nQQXxL8etTtEn9USCW+3PS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741191805; c=relaxed/simple;
-	bh=ZW51NgkeoNFGH21SSoAtIAD2UcPCUZ7Dkvt+E4gXwis=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IYX79HuzOG5UeG07XbwdGfjo4HbKs5xjuMj6Nc7+MECRGMd7640W8cJcdmfy5Mlm86fg0zAhKoIZETSnFQkZIcjvhdfBTMTcShC/lLO/haZnzA8QBCm4PCRXZZQjhRvQ7caQAJvLMUahS0iPSwiUit+U2VV5hxtwh1N6Ct8uYks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f8U7fxvC; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741191804; x=1772727804;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=ZW51NgkeoNFGH21SSoAtIAD2UcPCUZ7Dkvt+E4gXwis=;
-  b=f8U7fxvC93QbzufSw61uvtdZUzjQQrvIkFDH1KlRGvZjmNJRYO4vMnP/
-   51yOD2LHnzN+yVeyB+XxLdBBY9BZkBHkQFdso3HKZyIn5m6pa8HpmAhk6
-   skqUYNPhyq4TkBVFk/EAbmUJaS/URbhS3VAGsA3rXD4wW7pyTcBc7QNlm
-   2FG/gQ32SdyB6pMqqOm9fv+KopMxeKn4dTj6eNlso8LGLeI6i1MPk7f/D
-   alrrsTTsEeMCsphBH9SX9j7UuzGEhoB+TVyuAB8P9J4gN/+k2TScOhih7
-   IeinDSDSnk1CfsYuSiMWKKV2o0QdClZlmzoea+yOboqClQHb45cqGUL71
-   A==;
-X-CSE-ConnectionGUID: i1fgl1pZQKelYsoCeevOJA==
-X-CSE-MsgGUID: VhoqhELbSQuCEa2Ve7CFIg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42026649"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="42026649"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:23:23 -0800
-X-CSE-ConnectionGUID: EYnFiPUkSaOqE90dufVLMA==
-X-CSE-MsgGUID: jBtuLi88RbSkiBsbKsS9wg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="123833046"
-Received: from newjersey.igk.intel.com ([10.102.20.203])
-  by fmviesa004.fm.intel.com with ESMTP; 05 Mar 2025 08:23:19 -0800
-From: Alexander Lobakin <aleksander.lobakin@intel.com>
-To: intel-wired-lan@lists.osuosl.org
-Cc: Alexander Lobakin <aleksander.lobakin@intel.com>,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	bpf@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 16/16] idpf: add XDP RSS hash hint
-Date: Wed,  5 Mar 2025 17:21:32 +0100
-Message-ID: <20250305162132.1106080-17-aleksander.lobakin@intel.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250305162132.1106080-1-aleksander.lobakin@intel.com>
-References: <20250305162132.1106080-1-aleksander.lobakin@intel.com>
+	s=arc-20240116; t=1741191926; c=relaxed/simple;
+	bh=K+K6DmUC+Wxvngt/uU7W1IItHbJf0lWSGmSE11WgMBc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HKprgePh14EbWjMV2x8CGcz09i90dqUSI+qE2NtBKiQG0oSUDpX2bmOf6uecehUrVaaiupQfbJB9vPkOqJFIXaw6mNxZCiYkhiItsGP1LPcNwXMa6vHzdEX5rMP+AOrQyqqqYZ1fSUwKNVrdkPS/yKC7nVVzax85OtS3TmeBSM0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5D60FEC;
+	Wed,  5 Mar 2025 08:25:36 -0800 (PST)
+Received: from [10.57.67.16] (unknown [10.57.67.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1FB763F5A1;
+	Wed,  5 Mar 2025 08:25:18 -0800 (PST)
+Message-ID: <ea9bb982-cf31-4079-8fea-dc39e91a975b@arm.com>
+Date: Wed, 5 Mar 2025 16:25:17 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 09/45] kvm: arm64: Expose debug HW register numbers for
+ Realm
+To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20250213161426.102987-1-steven.price@arm.com>
+ <20250213161426.102987-10-steven.price@arm.com>
+ <cec600f2-2ddc-4c71-9bab-0a0403132b43@redhat.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <cec600f2-2ddc-4c71-9bab-0a0403132b43@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add &xdp_metadata_ops with a callback to get RSS hash hint from the
-descriptor. Declare the splitq 32-byte descriptor as 4 u64s to parse
-them more efficiently when possible.
+Hi Gavin,
 
-Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
----
- drivers/net/ethernet/intel/idpf/xdp.h | 64 +++++++++++++++++++++++++++
- drivers/net/ethernet/intel/idpf/xdp.c | 28 +++++++++++-
- 2 files changed, 91 insertions(+), 1 deletion(-)
+On 03/03/2025 04:48, Gavin Shan wrote:
+> On 2/14/25 2:13 AM, Steven Price wrote:
+>> From: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>
+>> Expose VM specific Debug HW register numbers.
 
-diff --git a/drivers/net/ethernet/intel/idpf/xdp.h b/drivers/net/ethernet/intel/idpf/xdp.h
-index a2ac1b2f334f..52783a5c8e0f 100644
---- a/drivers/net/ethernet/intel/idpf/xdp.h
-+++ b/drivers/net/ethernet/intel/idpf/xdp.h
-@@ -107,6 +107,70 @@ static inline void idpf_xdp_tx_finalize(void *_xdpq, bool sent, bool flush)
- 	libeth_xdpsq_unlock(&xdpq->xdp_lock);
- }
- 
-+struct idpf_xdp_rx_desc {
-+	aligned_u64		qw0;
-+#define IDPF_XDP_RX_BUFQ	BIT_ULL(47)
-+#define IDPF_XDP_RX_GEN		BIT_ULL(46)
-+#define IDPF_XDP_RX_LEN		GENMASK_ULL(45, 32)
-+#define IDPF_XDP_RX_PT		GENMASK_ULL(25, 16)
-+
-+	aligned_u64		qw1;
-+#define IDPF_XDP_RX_BUF		GENMASK_ULL(47, 32)
-+#define IDPF_XDP_RX_EOP		BIT_ULL(1)
-+
-+	aligned_u64		qw2;
-+#define IDPF_XDP_RX_HASH	GENMASK_ULL(31, 0)
-+
-+	aligned_u64		qw3;
-+} __aligned(4 * sizeof(u64));
-+static_assert(sizeof(struct idpf_xdp_rx_desc) ==
-+	      sizeof(struct virtchnl2_rx_flex_desc_adv_nic_3));
-+
-+#define idpf_xdp_rx_bufq(desc)	!!((desc)->qw0 & IDPF_XDP_RX_BUFQ)
-+#define idpf_xdp_rx_gen(desc)	!!((desc)->qw0 & IDPF_XDP_RX_GEN)
-+#define idpf_xdp_rx_len(desc)	FIELD_GET(IDPF_XDP_RX_LEN, (desc)->qw0)
-+#define idpf_xdp_rx_pt(desc)	FIELD_GET(IDPF_XDP_RX_PT, (desc)->qw0)
-+#define idpf_xdp_rx_buf(desc)	FIELD_GET(IDPF_XDP_RX_BUF, (desc)->qw1)
-+#define idpf_xdp_rx_eop(desc)	!!((desc)->qw1 & IDPF_XDP_RX_EOP)
-+#define idpf_xdp_rx_hash(desc)	FIELD_GET(IDPF_XDP_RX_HASH, (desc)->qw2)
-+
-+static inline void
-+idpf_xdp_get_qw0(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw0 = ((const typeof(desc))rxd)->qw0;
-+#else
-+	desc->qw0 = ((u64)le16_to_cpu(rxd->pktlen_gen_bufq_id) << 32) |
-+		    ((u64)le16_to_cpu(rxd->ptype_err_fflags0) << 16);
-+#endif
-+}
-+
-+static inline void
-+idpf_xdp_get_qw1(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw1 = ((const typeof(desc))rxd)->qw1;
-+#else
-+	desc->qw1 = ((u64)le16_to_cpu(rxd->buf_id) << 32) |
-+		    rxd->status_err0_qw1;
-+#endif
-+}
-+
-+static inline void
-+idpf_xdp_get_qw2(struct idpf_xdp_rx_desc *desc,
-+		 const struct virtchnl2_rx_flex_desc_adv_nic_3 *rxd)
-+{
-+#ifdef __LIBETH_WORD_ACCESS
-+	desc->qw2 = ((const typeof(desc))rxd)->qw2;
-+#else
-+	desc->qw2 = ((u64)rxd->hash3 << 24) |
-+		    ((u64)rxd->ff2_mirrid_hash2.hash2 << 16) |
-+		    le16_to_cpu(rxd->hash1);
-+#endif
-+}
-+
- void idpf_xdp_set_features(const struct idpf_vport *vport);
- 
- int idpf_xdp(struct net_device *dev, struct netdev_bpf *xdp);
-diff --git a/drivers/net/ethernet/intel/idpf/xdp.c b/drivers/net/ethernet/intel/idpf/xdp.c
-index 1834f217a07f..b0b4b785bf8e 100644
---- a/drivers/net/ethernet/intel/idpf/xdp.c
-+++ b/drivers/net/ethernet/intel/idpf/xdp.c
-@@ -386,12 +386,38 @@ int idpf_xdp_xmit(struct net_device *dev, int n, struct xdp_frame **frames,
- 				       idpf_xdp_tx_finalize);
- }
- 
-+static int idpf_xdpmo_rx_hash(const struct xdp_md *ctx, u32 *hash,
-+			      enum xdp_rss_hash_type *rss_type)
-+{
-+	const struct libeth_xdp_buff *xdp = (typeof(xdp))ctx;
-+	const struct idpf_rx_queue *rxq;
-+	struct idpf_xdp_rx_desc desc;
-+	struct libeth_rx_pt pt;
-+
-+	rxq = libeth_xdp_buff_to_rq(xdp, typeof(*rxq), xdp_rxq);
-+
-+	idpf_xdp_get_qw0(&desc, xdp->desc);
-+
-+	pt = rxq->rx_ptype_lkup[idpf_xdp_rx_pt(&desc)];
-+	if (!libeth_rx_pt_has_hash(rxq->xdp_rxq.dev, pt))
-+		return -ENODATA;
-+
-+	idpf_xdp_get_qw2(&desc, xdp->desc);
-+
-+	return libeth_xdpmo_rx_hash(hash, rss_type, idpf_xdp_rx_hash(&desc),
-+				    pt);
-+}
-+
-+static const struct xdp_metadata_ops idpf_xdpmo = {
-+	.xmo_rx_hash		= idpf_xdpmo_rx_hash,
-+};
-+
- void idpf_xdp_set_features(const struct idpf_vport *vport)
- {
- 	if (!idpf_is_queue_model_split(vport->rxq_model))
- 		return;
- 
--	libeth_xdp_set_features_noredir(vport->netdev);
-+	libeth_xdp_set_features_noredir(vport->netdev, &idpf_xdpmo);
- }
- 
- /**
--- 
-2.48.1
+Looking at this now, this patch description is garbage. Probably the
+patch has changed over time - so I suspect it's my fault not Suzuki's.
+We're not exposing anything new here. This is purely about telling the
+VMM that a realm cannot (currently) be debugged. Something like the
+below would be more accurate:
+
+"""
+kvm: arm64: Don't expose debug capabilities for realm guests
+
+RMM v1.0 provides no mechanism for the host to perform debug operations
+on the guest. So don't expose KVM_CAP_SET_GUEST_DEBUG and report 0
+breakpoints and 0 watch points.
+"""
+
+>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>> Signed-off-by: Steven Price <steven.price@arm.com>
+>> ---
+>>   arch/arm64/kvm/arm.c | 24 +++++++++++++++++++++---
+>>   1 file changed, 21 insertions(+), 3 deletions(-)
+>>
+> 
+> Documentation/virt/kvm/api.rst needs to be updated accordingly.
+
+I don't think (with the above clarification) there's anything to update
+in the API documentation. There's nothing new being added, just
+capabilities being hidden where the functionality isn't available.
+
+And eventually we hope to add support for this (in a later RMM spec) - I
+don't yet know exactly what form this will take, but I hope to keep the
+interfaces as close as possible to what we already have so that existing
+tooling can be used.
+
+Thanks,
+Steve
+
+>> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
+>> index b8fa82be251c..df6eb5e9ca96 100644
+>> --- a/arch/arm64/kvm/arm.c
+>> +++ b/arch/arm64/kvm/arm.c
+>> @@ -78,6 +78,22 @@ bool is_kvm_arm_initialised(void)
+>>       return kvm_arm_initialised;
+>>   }
+>>   +static u32 kvm_arm_get_num_brps(struct kvm *kvm)
+>> +{
+>> +    if (!kvm_is_realm(kvm))
+>> +        return get_num_brps();
+>> +    /* Realm guest is not debuggable. */
+>> +    return 0;
+>> +}
+>> +
+>> +static u32 kvm_arm_get_num_wrps(struct kvm *kvm)
+>> +{
+>> +    if (!kvm_is_realm(kvm))
+>> +        return get_num_wrps();
+>> +    /* Realm guest is not debuggable. */
+>> +    return 0;
+>> +}
+>> +
+> 
+> The above two comments "Realm guest is not debuggable." can be dropped
+> since
+> the code is self-explanatory, and those two functions are unnecessary to be
+> kept in that way, for example:
+> 
+>     case KVM_CAP_GUEST_DEBUG_HW_BPS:
+>         return kvm_is_realm(kvm) ? 0 : get_num_brps();
+>     case KVM_CAP_GUEST_DEBUG_HW_WRPS:
+>         return kvm_is_realm(kvm) ? 0 : get_num_wrps();
+> 
+> 
+>>   int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
+>>   {
+>>       return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
+>> @@ -323,7 +339,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm,
+>> long ext)
+>>       case KVM_CAP_ARM_IRQ_LINE_LAYOUT_2:
+>>       case KVM_CAP_ARM_NISV_TO_USER:
+>>       case KVM_CAP_ARM_INJECT_EXT_DABT:
+>> -    case KVM_CAP_SET_GUEST_DEBUG:
+>>       case KVM_CAP_VCPU_ATTRIBUTES:
+>>       case KVM_CAP_PTP_KVM:
+>>       case KVM_CAP_ARM_SYSTEM_SUSPEND:
+>> @@ -331,6 +346,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm,
+>> long ext)
+>>       case KVM_CAP_COUNTER_OFFSET:
+>>           r = 1;
+>>           break;
+>> +    case KVM_CAP_SET_GUEST_DEBUG:
+>> +        r = !kvm_is_realm(kvm);
+>> +        break;
+>>       case KVM_CAP_SET_GUEST_DEBUG2:
+>>           return KVM_GUESTDBG_VALID_MASK;
+>>       case KVM_CAP_ARM_SET_DEVICE_ADDR:
+>> @@ -376,10 +394,10 @@ int kvm_vm_ioctl_check_extension(struct kvm
+>> *kvm, long ext)
+>>           r = cpus_have_final_cap(ARM64_HAS_32BIT_EL1);
+>>           break;
+>>       case KVM_CAP_GUEST_DEBUG_HW_BPS:
+>> -        r = get_num_brps();
+>> +        r = kvm_arm_get_num_brps(kvm);
+>>           break;
+>>       case KVM_CAP_GUEST_DEBUG_HW_WPS:
+>> -        r = get_num_wrps();
+>> +        r = kvm_arm_get_num_wrps(kvm);
+>>           break;
+>>       case KVM_CAP_ARM_PMU_V3:
+>>           r = kvm_arm_support_pmu_v3();
+> 
+> Thanks,
+> Gavin
+> 
 
 
