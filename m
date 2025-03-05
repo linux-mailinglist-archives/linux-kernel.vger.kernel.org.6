@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-546145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11264A4F6E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:13:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 613C5A4F6E5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:13:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F36A5188F6DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A6EB188F827
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:13:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21AB1E5B91;
-	Wed,  5 Mar 2025 06:12:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 399451F150D;
+	Wed,  5 Mar 2025 06:12:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="DPgCSaJ/"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ozyCJOAF"
+Received: from out-174.mta1.migadu.com (out-174.mta1.migadu.com [95.215.58.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89681EB5E2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4511EEA4E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741155125; cv=none; b=Jak38rJ0MogCtseuqRmlVnVgP8dGdBTeI95Qfd6eLbXQFpWmUGdBMCmqKhDmhJVQsGygH6pakpXHxiMpoJnCtyNHBrqnitZsziv0sER+63XcL0kpxtLM7bydV7BUW0y0exsKWIdcownbhrQnTtcR0/8NiR+lsBfAn80gJj14JNI=
+	t=1741155129; cv=none; b=jrSuLC/9KfuiH6zxc93lPubAt6sRhGZr0Sk87aAe58Bz4Vi2p5RWTMkLca9xZJpsNsED29DGF2BqZZx9SgR9DAbnSGxarhGjjXQNbwRcdHwnn06mCWEV5Y0rzFYG45Mi48gIRy4jI/WdHE9WJF2A7niETduF+zcuF+4ECmt/8MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741155125; c=relaxed/simple;
-	bh=rahTlPA4fhyOL+7WCtjNfdiNljfZiTw4NJF1j/mtp6M=;
+	s=arc-20240116; t=1741155129; c=relaxed/simple;
+	bh=1QAFUlkYxX/Tklmd9ajQ/kSRC1rOe18Q6iFJn5NEU1A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nNsQrU71kOHGumggfwiYRSzXq1VNd7i6H1TsA03nR4bNZ1rrcqQv2K9nsTfv1RCzOc/1k3j40YeXhId+TrmlltuNmH99yfLFsS+kkOvPrQH/6jzfA2m5X3xCfu0SZtBPPnrccuhwsOR+K64MT7/3lGOj7h5Pxd1X/Dx6vZxFuzg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=DPgCSaJ/; arc=none smtp.client-ip=95.215.58.180
+	 MIME-Version; b=bzgQlT/mq/zDakG1FYaAtFQg3LiTT93R67PnGM2vv3pu7IunumSMqex+hLmOl41sNw9EL935d68sj0OUhLCa7J0IcuGS1rHVe6DxrAlTZNymzmklbMqGd7uzkzYCBILzM2Ya6bykLXvVuawTOOjOCXE8DVrDMXeKDiaEUfLiA4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ozyCJOAF; arc=none smtp.client-ip=95.215.58.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741155120;
+	t=1741155124;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UhZJAb1vZBDPQY5aPuGxl/Pfa74mD9bb2pPv2uBSEcA=;
-	b=DPgCSaJ/EaFB1ZPc4t8mnBIpN7oy4lyB/ivsJgKQV4J6SBrrL1VJ2bzJKbPWx7oEYaAdAP
-	AvVxq2FW40CADY65HpTsCGZ2pmHpSN7reiPmd3wmk5mJ5NFTrsrdZiXnZAnAugXiQjRho0
-	YuH9Xb3Uy2bVT7lqBMekm5VcHRL+QnE=
+	bh=VdDtOHvnm2EdaYulJZ60u1Fa0OrG84atgPrUT7g6aEw=;
+	b=ozyCJOAFVQ+Nj7hdVEjapmmpRc/yILNSg+asLJmivfnQbe0r7mlmBhAfvkGYGIIsMqKhxY
+	NLWVcMHJVaFpc9N7qkZlz2xZGUOcUpXCLilpMemMKftlWVS8i2Ha5Ny8xG/vdmiX2JfxBT
+	xivQEpxxLKZIZFu9RF4irEUJT/E8fQU=
 From: Yosry Ahmed <yosry.ahmed@linux.dev>
 To: Andrew Morton <akpm@linux-foundation.org>
 Cc: Johannes Weiner <hannes@cmpxchg.org>,
@@ -54,9 +54,9 @@ Cc: Johannes Weiner <hannes@cmpxchg.org>,
 	linux-mm@kvack.org,
 	linux-kernel@vger.kernel.org,
 	Yosry Ahmed <yosry.ahmed@linux.dev>
-Subject: [PATCH mm-unstable 4/5] mm: zsmalloc: Remove object mapping APIs and per-CPU map areas
-Date: Wed,  5 Mar 2025 06:11:32 +0000
-Message-ID: <20250305061134.4105762-5-yosry.ahmed@linux.dev>
+Subject: [PATCH mm-unstable 5/5] mm: zpool: Remove zpool_malloc_support_movable()
+Date: Wed,  5 Mar 2025 06:11:33 +0000
+Message-ID: <20250305061134.4105762-6-yosry.ahmed@linux.dev>
 In-Reply-To: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
 References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
 Precedence: bulk
@@ -68,352 +68,95 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-zs_map_object() and zs_unmap_object() are no longer used, remove them.
-Since these are the only users of per-CPU mapping_areas, remove them and
-the associated CPU hotplug callbacks too.
+zpool_malloc_support_movable() always returns true for zsmalloc, the
+only remaining zpool driver. Remove it and set the gfp flags in
+zswap_compress() accordingly. Opportunistically use GFP_NOWAIT instead
+of __GFP_NOWARN | __GFP_KSWAPD_RECLAIM for conciseness as they are
+equivalent.
 
 Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 ---
- include/linux/cpuhotplug.h |   1 -
- include/linux/zsmalloc.h   |  21 ----
- mm/zsmalloc.c              | 226 +------------------------------------
- 3 files changed, 1 insertion(+), 247 deletions(-)
+ include/linux/zpool.h |  3 ---
+ mm/zpool.c            | 16 ----------------
+ mm/zsmalloc.c         |  1 -
+ mm/zswap.c            |  4 +---
+ 4 files changed, 1 insertion(+), 23 deletions(-)
 
-diff --git a/include/linux/cpuhotplug.h b/include/linux/cpuhotplug.h
-index 6cc5e484547c1..1987400000b41 100644
---- a/include/linux/cpuhotplug.h
-+++ b/include/linux/cpuhotplug.h
-@@ -116,7 +116,6 @@ enum cpuhp_state {
- 	CPUHP_NET_IUCV_PREPARE,
- 	CPUHP_ARM_BL_PREPARE,
- 	CPUHP_TRACE_RB_PREPARE,
--	CPUHP_MM_ZS_PREPARE,
- 	CPUHP_MM_ZSWP_POOL_PREPARE,
- 	CPUHP_KVM_PPC_BOOK3S_PREPARE,
- 	CPUHP_ZCOMP_PREPARE,
-diff --git a/include/linux/zsmalloc.h b/include/linux/zsmalloc.h
-index 7d70983cf3980..c26baf9fb331b 100644
---- a/include/linux/zsmalloc.h
-+++ b/include/linux/zsmalloc.h
-@@ -16,23 +16,6 @@
+diff --git a/include/linux/zpool.h b/include/linux/zpool.h
+index 2c8a9d2654f6f..52f30e526607f 100644
+--- a/include/linux/zpool.h
++++ b/include/linux/zpool.h
+@@ -21,8 +21,6 @@ const char *zpool_get_type(struct zpool *pool);
  
- #include <linux/types.h>
+ void zpool_destroy_pool(struct zpool *pool);
  
--/*
-- * zsmalloc mapping modes
-- *
-- * NOTE: These only make a difference when a mapped object spans pages.
-- */
--enum zs_mapmode {
--	ZS_MM_RW, /* normal read-write mapping */
--	ZS_MM_RO, /* read-only (no copy-out at unmap time) */
--	ZS_MM_WO /* write-only (no copy-in at map time) */
--	/*
--	 * NOTE: ZS_MM_WO should only be used for initializing new
--	 * (uninitialized) allocations.  Partial writes to already
--	 * initialized allocations should use ZS_MM_RW to preserve the
--	 * existing data.
--	 */
--};
+-bool zpool_malloc_support_movable(struct zpool *pool);
 -
- struct zs_pool_stats {
- 	/* How many pages were migrated (freed) */
- 	atomic_long_t pages_compacted;
-@@ -48,10 +31,6 @@ void zs_free(struct zs_pool *pool, unsigned long obj);
+ int zpool_malloc(struct zpool *pool, size_t size, gfp_t gfp,
+ 			unsigned long *handle);
  
- size_t zs_huge_class_size(struct zs_pool *pool);
+@@ -65,7 +63,6 @@ struct zpool_driver {
+ 	void *(*create)(const char *name, gfp_t gfp);
+ 	void (*destroy)(void *pool);
  
--void *zs_map_object(struct zs_pool *pool, unsigned long handle,
--			enum zs_mapmode mm);
--void zs_unmap_object(struct zs_pool *pool, unsigned long handle);
--
- unsigned long zs_get_total_pages(struct zs_pool *pool);
- unsigned long zs_compact(struct zs_pool *pool);
- 
-diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
-index 56d6ed5c675b2..cd1c2a8ffef05 100644
---- a/mm/zsmalloc.c
-+++ b/mm/zsmalloc.c
-@@ -281,13 +281,6 @@ struct zspage {
- 	struct zspage_lock zsl;
- };
- 
--struct mapping_area {
--	local_lock_t lock;
--	char *vm_buf; /* copy buffer for objects that span pages */
--	char *vm_addr; /* address of kmap_local_page()'ed pages */
--	enum zs_mapmode vm_mm; /* mapping mode */
--};
--
- static void zspage_lock_init(struct zspage *zspage)
- {
- 	static struct lock_class_key __key;
-@@ -522,11 +515,6 @@ static struct zpool_driver zs_zpool_driver = {
- MODULE_ALIAS("zpool-zsmalloc");
- #endif /* CONFIG_ZPOOL */
- 
--/* per-cpu VM mapping areas for zspage accesses that cross page boundaries */
--static DEFINE_PER_CPU(struct mapping_area, zs_map_area) = {
--	.lock	= INIT_LOCAL_LOCK(lock),
--};
--
- static inline bool __maybe_unused is_first_zpdesc(struct zpdesc *zpdesc)
- {
- 	return PagePrivate(zpdesc_page(zpdesc));
-@@ -1111,93 +1099,6 @@ static struct zspage *find_get_zspage(struct size_class *class)
- 	return zspage;
+-	bool malloc_support_movable;
+ 	int (*malloc)(void *pool, size_t size, gfp_t gfp,
+ 				unsigned long *handle);
+ 	void (*free)(void *pool, unsigned long handle);
+diff --git a/mm/zpool.c b/mm/zpool.c
+index 4fc665b42f5e9..6d6d889309324 100644
+--- a/mm/zpool.c
++++ b/mm/zpool.c
+@@ -220,22 +220,6 @@ const char *zpool_get_type(struct zpool *zpool)
+ 	return zpool->driver->type;
  }
- 
--static inline int __zs_cpu_up(struct mapping_area *area)
--{
--	/*
--	 * Make sure we don't leak memory if a cpu UP notification
--	 * and zs_init() race and both call zs_cpu_up() on the same cpu
--	 */
--	if (area->vm_buf)
--		return 0;
--	area->vm_buf = kmalloc(ZS_MAX_ALLOC_SIZE, GFP_KERNEL);
--	if (!area->vm_buf)
--		return -ENOMEM;
--	return 0;
--}
--
--static inline void __zs_cpu_down(struct mapping_area *area)
--{
--	kfree(area->vm_buf);
--	area->vm_buf = NULL;
--}
--
--static void *__zs_map_object(struct mapping_area *area,
--			struct zpdesc *zpdescs[2], int off, int size)
--{
--	size_t sizes[2];
--	char *buf = area->vm_buf;
--
--	/* disable page faults to match kmap_local_page() return conditions */
--	pagefault_disable();
--
--	/* no read fastpath */
--	if (area->vm_mm == ZS_MM_WO)
--		goto out;
--
--	sizes[0] = PAGE_SIZE - off;
--	sizes[1] = size - sizes[0];
--
--	/* copy object to per-cpu buffer */
--	memcpy_from_page(buf, zpdesc_page(zpdescs[0]), off, sizes[0]);
--	memcpy_from_page(buf + sizes[0], zpdesc_page(zpdescs[1]), 0, sizes[1]);
--out:
--	return area->vm_buf;
--}
--
--static void __zs_unmap_object(struct mapping_area *area,
--			struct zpdesc *zpdescs[2], int off, int size)
--{
--	size_t sizes[2];
--	char *buf;
--
--	/* no write fastpath */
--	if (area->vm_mm == ZS_MM_RO)
--		goto out;
--
--	buf = area->vm_buf;
--	buf = buf + ZS_HANDLE_SIZE;
--	size -= ZS_HANDLE_SIZE;
--	off += ZS_HANDLE_SIZE;
--
--	sizes[0] = PAGE_SIZE - off;
--	sizes[1] = size - sizes[0];
--
--	/* copy per-cpu buffer to object */
--	memcpy_to_page(zpdesc_page(zpdescs[0]), off, buf, sizes[0]);
--	memcpy_to_page(zpdesc_page(zpdescs[1]), 0, buf + sizes[0], sizes[1]);
--
--out:
--	/* enable page faults to match kunmap_local() return conditions */
--	pagefault_enable();
--}
--
--static int zs_cpu_prepare(unsigned int cpu)
--{
--	struct mapping_area *area;
--
--	area = &per_cpu(zs_map_area, cpu);
--	return __zs_cpu_up(area);
--}
--
--static int zs_cpu_dead(unsigned int cpu)
--{
--	struct mapping_area *area;
--
--	area = &per_cpu(zs_map_area, cpu);
--	__zs_cpu_down(area);
--	return 0;
--}
--
- static bool can_merge(struct size_class *prev, int pages_per_zspage,
- 					int objs_per_zspage)
- {
-@@ -1245,117 +1146,6 @@ unsigned long zs_get_total_pages(struct zs_pool *pool)
- }
- EXPORT_SYMBOL_GPL(zs_get_total_pages);
  
 -/**
-- * zs_map_object - get address of allocated object from handle.
-- * @pool: pool from which the object was allocated
-- * @handle: handle returned from zs_malloc
-- * @mm: mapping mode to use
+- * zpool_malloc_support_movable() - Check if the zpool supports
+- *	allocating movable memory
+- * @zpool:	The zpool to check
 - *
-- * Before using an object allocated from zs_malloc, it must be mapped using
-- * this function. When done with the object, it must be unmapped using
-- * zs_unmap_object.
+- * This returns if the zpool supports allocating movable memory.
 - *
-- * Only one object can be mapped per cpu at a time. There is no protection
-- * against nested mappings.
+- * Implementations must guarantee this to be thread-safe.
 - *
-- * This function returns with preemption and page faults disabled.
+- * Returns: true if the zpool supports allocating movable memory, false if not
 - */
--void *zs_map_object(struct zs_pool *pool, unsigned long handle,
--			enum zs_mapmode mm)
+-bool zpool_malloc_support_movable(struct zpool *zpool)
 -{
--	struct zspage *zspage;
--	struct zpdesc *zpdesc;
--	unsigned long obj, off;
--	unsigned int obj_idx;
--
--	struct size_class *class;
--	struct mapping_area *area;
--	struct zpdesc *zpdescs[2];
--	void *ret;
--
--	/*
--	 * Because we use per-cpu mapping areas shared among the
--	 * pools/users, we can't allow mapping in interrupt context
--	 * because it can corrupt another users mappings.
--	 */
--	BUG_ON(in_interrupt());
--
--	/* It guarantees it can get zspage from handle safely */
--	read_lock(&pool->lock);
--	obj = handle_to_obj(handle);
--	obj_to_location(obj, &zpdesc, &obj_idx);
--	zspage = get_zspage(zpdesc);
--
--	/*
--	 * migration cannot move any zpages in this zspage. Here, class->lock
--	 * is too heavy since callers would take some time until they calls
--	 * zs_unmap_object API so delegate the locking from class to zspage
--	 * which is smaller granularity.
--	 */
--	zspage_read_lock(zspage);
--	read_unlock(&pool->lock);
--
--	class = zspage_class(pool, zspage);
--	off = offset_in_page(class->size * obj_idx);
--
--	local_lock(&zs_map_area.lock);
--	area = this_cpu_ptr(&zs_map_area);
--	area->vm_mm = mm;
--	if (off + class->size <= PAGE_SIZE) {
--		/* this object is contained entirely within a page */
--		area->vm_addr = kmap_local_zpdesc(zpdesc);
--		ret = area->vm_addr + off;
--		goto out;
--	}
--
--	/* this object spans two pages */
--	zpdescs[0] = zpdesc;
--	zpdescs[1] = get_next_zpdesc(zpdesc);
--	BUG_ON(!zpdescs[1]);
--
--	ret = __zs_map_object(area, zpdescs, off, class->size);
--out:
--	if (likely(!ZsHugePage(zspage)))
--		ret += ZS_HANDLE_SIZE;
--
--	return ret;
+-	return zpool->driver->malloc_support_movable;
 -}
--EXPORT_SYMBOL_GPL(zs_map_object);
 -
--void zs_unmap_object(struct zs_pool *pool, unsigned long handle)
--{
--	struct zspage *zspage;
--	struct zpdesc *zpdesc;
--	unsigned long obj, off;
--	unsigned int obj_idx;
--
--	struct size_class *class;
--	struct mapping_area *area;
--
--	obj = handle_to_obj(handle);
--	obj_to_location(obj, &zpdesc, &obj_idx);
--	zspage = get_zspage(zpdesc);
--	class = zspage_class(pool, zspage);
--	off = offset_in_page(class->size * obj_idx);
--
--	area = this_cpu_ptr(&zs_map_area);
--	if (off + class->size <= PAGE_SIZE)
--		kunmap_local(area->vm_addr);
--	else {
--		struct zpdesc *zpdescs[2];
--
--		zpdescs[0] = zpdesc;
--		zpdescs[1] = get_next_zpdesc(zpdesc);
--		BUG_ON(!zpdescs[1]);
--
--		__zs_unmap_object(area, zpdescs, off, class->size);
--	}
--	local_unlock(&zs_map_area.lock);
--
--	zspage_read_unlock(zspage);
--}
--EXPORT_SYMBOL_GPL(zs_unmap_object);
--
- void *zs_obj_read_begin(struct zs_pool *pool, unsigned long handle,
- 			void *local_copy)
- {
-@@ -1975,7 +1765,7 @@ static int zs_page_migrate(struct page *newpage, struct page *page,
- 	 * the class lock protects zpage alloc/free in the zspage.
- 	 */
- 	spin_lock(&class->lock);
--	/* the zspage write_lock protects zpage access via zs_map_object */
-+	/* the zspage write_lock protects zpage access via zs_obj_read/write() */
- 	if (!zspage_write_trylock(zspage)) {
- 		spin_unlock(&class->lock);
- 		write_unlock(&pool->lock);
-@@ -2459,23 +2249,11 @@ EXPORT_SYMBOL_GPL(zs_destroy_pool);
+ /**
+  * zpool_malloc() - Allocate memory
+  * @zpool:	The zpool to allocate from.
+diff --git a/mm/zsmalloc.c b/mm/zsmalloc.c
+index cd1c2a8ffef05..961b270f023c2 100644
+--- a/mm/zsmalloc.c
++++ b/mm/zsmalloc.c
+@@ -503,7 +503,6 @@ static struct zpool_driver zs_zpool_driver = {
+ 	.owner =		  THIS_MODULE,
+ 	.create =		  zs_zpool_create,
+ 	.destroy =		  zs_zpool_destroy,
+-	.malloc_support_movable = true,
+ 	.malloc =		  zs_zpool_malloc,
+ 	.free =			  zs_zpool_free,
+ 	.obj_read_begin =	  zs_zpool_obj_read_begin,
+diff --git a/mm/zswap.c b/mm/zswap.c
+index 4c474b692828d..138b50ba832b8 100644
+--- a/mm/zswap.c
++++ b/mm/zswap.c
+@@ -964,9 +964,7 @@ static bool zswap_compress(struct page *page, struct zswap_entry *entry,
+ 		goto unlock;
  
- static int __init zs_init(void)
- {
--	int ret;
--
--	ret = cpuhp_setup_state(CPUHP_MM_ZS_PREPARE, "mm/zsmalloc:prepare",
--				zs_cpu_prepare, zs_cpu_dead);
--	if (ret)
--		goto out;
--
- #ifdef CONFIG_ZPOOL
- 	zpool_register_driver(&zs_zpool_driver);
- #endif
--
- 	zs_stat_init();
--
- 	return 0;
--
--out:
--	return ret;
- }
- 
- static void __exit zs_exit(void)
-@@ -2483,8 +2261,6 @@ static void __exit zs_exit(void)
- #ifdef CONFIG_ZPOOL
- 	zpool_unregister_driver(&zs_zpool_driver);
- #endif
--	cpuhp_remove_state(CPUHP_MM_ZS_PREPARE);
--
- 	zs_stat_exit();
- }
- 
+ 	zpool = pool->zpool;
+-	gfp = __GFP_NORETRY | __GFP_NOWARN | __GFP_KSWAPD_RECLAIM;
+-	if (zpool_malloc_support_movable(zpool))
+-		gfp |= __GFP_HIGHMEM | __GFP_MOVABLE;
++	gfp = GFP_NOWAIT | __GFP_NORETRY | __GFP_HIGHMEM | __GFP_MOVABLE;
+ 	alloc_ret = zpool_malloc(zpool, dlen, gfp, &handle);
+ 	if (alloc_ret)
+ 		goto unlock;
 -- 
 2.48.1.711.g2feabab25a-goog
 
