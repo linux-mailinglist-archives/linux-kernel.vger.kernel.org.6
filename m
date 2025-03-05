@@ -1,123 +1,173 @@
-Return-Path: <linux-kernel+bounces-547992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17ED7A53E95
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:41:18 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 25FA8A53E9B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:42:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CB121891B25
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:41:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A5A27A2FEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:41:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD42C207A1D;
-	Wed,  5 Mar 2025 23:41:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 147C620767C;
+	Wed,  5 Mar 2025 23:41:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VkgHLaC+"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YjCN5sm0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SeO+07Dw";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="YjCN5sm0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="SeO+07Dw"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09EE9207675;
-	Wed,  5 Mar 2025 23:41:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B492F206F0C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:41:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741218071; cv=none; b=B8PVnTQF6MzZaiMvmaK8nAbCqgt8jB9pUwkiet6QBkMyCchjfw0EvMDW/jSToI9lhD/Gmsm8i/O5dlmb2/s1QyngeCaADGN30Gs7C7EcsOS8dAebqK1Y3MXHt4cTpcbnI6mcpNhN/t/Bjn6ewg+idM4dzQWmD2yq2JGMibJcagI=
+	t=1741218110; cv=none; b=dzGV23ocrqpl3+ZFLaB//z9pbZKiBJl7EuYqqQbtzOtVArqw7roA1oYA8rSqQ8OLzWmUe/nAJh3BGWYmDmmy7DThNycW3PTzqFgERgFL+3ltifRDLU71ekcz/7LP+SHdnPk5qk78xq1DqZ2CP/nJ1gwJNrOCLf21YDL3nQtkElU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741218071; c=relaxed/simple;
-	bh=LD8ZGvL40HLoK65jjCMTAOR0GJiJLVbwO6x1787IsaA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H3Dnja6RJG7rVu2JVLUnUlpJRcgHaFo4hVx9xThDJ84zCANi9U7dIGBtGSWHKjF+TGP/fpezoWMBMDpasJM6jiqVmVVHMxCEaDqozc2QE5opiMNTePk8Obql7B0nd/GmJOdSQgvpoOUa0LZB3iZhOVleKNSwjVdw7q4k2ANmU1w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VkgHLaC+; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741218069; x=1772754069;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=LD8ZGvL40HLoK65jjCMTAOR0GJiJLVbwO6x1787IsaA=;
-  b=VkgHLaC+eJonxu+c6q0GzWnLWgZVKk09WcDSdHzR8b7pPhrqHclk60Kr
-   QV3aTNO2gsqYE5XIKbdRosnt3NXOGdDa1zHlWRiKt7AorXonyWPyX7UZ3
-   EFoAfQvoQL3FChmgwwCGaaiXM/x3OKT0ZrfGQdM+7dJFkCQf0V3KFneKx
-   Tj7kxylvkV1Cch7jQjthbxS4IUtTvAUr/uaCcnhmVqSECW8GQm1HNemMT
-   9UqwwdBtcT/cuxGd82n4ZfwgM4RZ3WjCVSvzpf+v2vlR2aRWQalz6Fc4g
-   zxXFHGaIMl62PIrf/JDcvNtlW7Hdl/wzqZI8Pfb2sohqSaajD/d99zE+4
-   A==;
-X-CSE-ConnectionGUID: 0FQmIRIoQs259Zd9GKSzYQ==
-X-CSE-MsgGUID: AAFMjed3T0KiErqz6WuzWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="52416423"
-X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
-   d="scan'208";a="52416423"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 15:41:08 -0800
-X-CSE-ConnectionGUID: YyV9Ox0tQNmHk/uZ97MIBw==
-X-CSE-MsgGUID: r0kd4sCOQPmImpuxN7RFLw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119757725"
-Received: from dnelso2-mobl.amr.corp.intel.com (HELO [10.125.109.222]) ([10.125.109.222])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 15:41:09 -0800
-Message-ID: <d34016a1-e834-417c-ba2a-028e4e0e9573@intel.com>
-Date: Wed, 5 Mar 2025 16:41:05 -0700
+	s=arc-20240116; t=1741218110; c=relaxed/simple;
+	bh=79A9Xcxf22LN1wRxVN/wCq4MVv4De/k36OytnK/R+PU=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=aygVdK5QXbob8KaoIdybqtphyw2a8wqGccj2t9njJi7rzQcs8AOtv2kgFyebSqnPO7K1PIDvoxe0jH/Jc7k1wnzTooFTNC+jrR9za/z3xXh4QITfH3MIIcTBo/xcE3uEbEMCR/MfV+65Br4sj1V8psgtGdfS7wcwjl6aSAWbPD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YjCN5sm0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SeO+07Dw; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=YjCN5sm0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=SeO+07Dw; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B7C171F385;
+	Wed,  5 Mar 2025 23:41:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741218106; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=evnk/GxliDTjNMMgAFyfCNZGfvqVt47nI9LnubvMvxc=;
+	b=YjCN5sm09/Vik1hnIVgY/KAn9Bl+M9/Qo0xPTOFQNF8Y/8QdKDvee6BGLO7x9pn9iJ9kyi
+	n5vDga3YY2IqVkMq8j71+tXA/lQqxgbYINFt4chYC7lsJ2wAc09oTXOcOZ0cfwMxqE/8JT
+	f5K7ko5CR+elv4J6T28XRXDqa8DqvvY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741218106;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=evnk/GxliDTjNMMgAFyfCNZGfvqVt47nI9LnubvMvxc=;
+	b=SeO+07DwVmMuxGIdJ6uBjWre+ET8YmfEvWdD+64YO1xDmbJOxMvVwYwNFQ+y51t6511CM8
+	Xk9d1WRKq6le82BQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741218106; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=evnk/GxliDTjNMMgAFyfCNZGfvqVt47nI9LnubvMvxc=;
+	b=YjCN5sm09/Vik1hnIVgY/KAn9Bl+M9/Qo0xPTOFQNF8Y/8QdKDvee6BGLO7x9pn9iJ9kyi
+	n5vDga3YY2IqVkMq8j71+tXA/lQqxgbYINFt4chYC7lsJ2wAc09oTXOcOZ0cfwMxqE/8JT
+	f5K7ko5CR+elv4J6T28XRXDqa8DqvvY=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741218106;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=evnk/GxliDTjNMMgAFyfCNZGfvqVt47nI9LnubvMvxc=;
+	b=SeO+07DwVmMuxGIdJ6uBjWre+ET8YmfEvWdD+64YO1xDmbJOxMvVwYwNFQ+y51t6511CM8
+	Xk9d1WRKq6le82BQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E44A013939;
+	Wed,  5 Mar 2025 23:41:32 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id zc4kJSzhyGdbdAAAD6G6ig
+	(envelope-from <neilb@suse.de>); Wed, 05 Mar 2025 23:41:32 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [LSF/MM] CXL Boot to Bash - Section 0: ACPI and Linux Resources
-To: Gregory Price <gourry@gourry.net>
-Cc: lsf-pc@lists.linux-foundation.org, linux-mm@kvack.org,
- linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <Z226PG9t-Ih7fJDL@gourry-fedora-PF4VCD3F>
- <Z8jORKIWC3ZwtzI4@gourry-fedora-PF4VCD3F>
- <04e77063-5676-4435-854c-9488075114c5@intel.com>
- <Z8jfigfHaTVR4bLj@gourry-fedora-PF4VCD3F>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <Z8jfigfHaTVR4bLj@gourry-fedora-PF4VCD3F>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: "NeilBrown" <neilb@suse.de>
+To: "Yunsheng Lin" <linyunsheng@huawei.com>
+Cc: "Qu Wenruo" <wqu@suse.com>, "Yishai Hadas" <yishaih@nvidia.com>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>,
+ "Shameer Kolothum" <shameerali.kolothum.thodi@huawei.com>,
+ "Kevin Tian" <kevin.tian@intel.com>,
+ "Alex Williamson" <alex.williamson@redhat.com>, "Chris Mason" <clm@fb.com>,
+ "Josef Bacik" <josef@toxicpanda.com>, "David Sterba" <dsterba@suse.com>,
+ "Gao Xiang" <xiang@kernel.org>, "Chao Yu" <chao@kernel.org>,
+ "Yue Hu" <zbestahu@gmail.com>, "Jeffle Xu" <jefflexu@linux.alibaba.com>,
+ "Sandeep Dhavale" <dhavale@google.com>, "Carlos Maiolino" <cem@kernel.org>,
+ "Darrick J. Wong" <djwong@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>,
+ "Jesper Dangaard Brouer" <hawk@kernel.org>,
+ "Ilias Apalodimas" <ilias.apalodimas@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, "Eric Dumazet" <edumazet@google.com>,
+ "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ "Simon Horman" <horms@kernel.org>, "Trond Myklebust" <trondmy@kernel.org>,
+ "Anna Schumaker" <anna@kernel.org>, "Chuck Lever" <chuck.lever@oracle.com>,
+ "Jeff Layton" <jlayton@kernel.org>, "Olga Kornievskaia" <okorniev@redhat.com>,
+ "Dai Ngo" <Dai.Ngo@oracle.com>, "Tom Talpey" <tom@talpey.com>,
+ "Luiz Capitulino" <luizcap@redhat.com>,
+ "Mel Gorman" <mgorman@techsingularity.net>,
+ "Dave Chinner" <david@fromorbit.com>, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-kernel@vger.kernel.org,
+ linux-btrfs@vger.kernel.org, linux-erofs@lists.ozlabs.org,
+ linux-xfs@vger.kernel.org, linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-nfs@vger.kernel.org
+Subject: Re: [PATCH v2] mm: alloc_pages_bulk: remove assumption of populating
+ only NULL elements
+In-reply-to: <18c68e7a-88c9-49d1-8ff8-17c63bcc44f4@huawei.com>
+References: <>, <18c68e7a-88c9-49d1-8ff8-17c63bcc44f4@huawei.com>
+Date: Thu, 06 Mar 2025 10:41:24 +1100
+Message-id: <174121808436.33508.1242845473359255682@noble.neil.brown.name>
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[44];
+	MISSING_XM_UA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[suse.com,nvidia.com,ziepe.ca,huawei.com,intel.com,redhat.com,fb.com,toxicpanda.com,kernel.org,gmail.com,linux.alibaba.com,google.com,linux-foundation.org,linaro.org,davemloft.net,oracle.com,talpey.com,techsingularity.net,fromorbit.com,vger.kernel.org,lists.linux.dev,lists.ozlabs.org,kvack.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	R_RATELIMIT(0.00)[from(RLewrxuus8mos16izbn),to_ip_from(RL4q5k5kyydt8nhc3xa4shdp4c)]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-
-
-On 3/5/25 4:34 PM, Gregory Price wrote:
-> On Wed, Mar 05, 2025 at 03:44:13PM -0700, Dave Jiang wrote:
->>
->>
->> On 3/5/25 3:20 PM, Gregory Price wrote:
->>> --------------------
->>> Part 0: ACPI Tables.
->>> --------------------
->>> I considered publishing this section first, or at least under
->>> "Platform", but I've found this information largely useful in
->>> debugging interleave configurations and tiering mechanisms -
->>> which are higher level concepts.
->>
->> Hi Gregory,
->> Thanks for detailing all this information. It has been a really good read.
->>
->> Do you intend to also add CDAT information and device performance data calculation related to that? The SRAT/HMAT info only covers CXL memory that are already setup by the BIOS as system memory. Otherwise it only contains performance data for the Generic Port and not the rest of the path to the endpoint.
->>
+On Wed, 05 Mar 2025, Yunsheng Lin wrote:
 > 
-> Probably CDAT should land in here as well, though in the context of
-> simple volatile memory devices it seemed a bit overkill to include it.
-> 
-> I also don't have a ton of exposure to the GenPort flow of operations,
-> so i didn't want to delay what I do have here.  If you have a
-> recommended addition - I do intend to go through and edit/reformat most
-> of this series after LSF/MM into a friendlier format of documentation.
+> For the existing btrfs and sunrpc case, I am agreed that there
+> might be valid use cases too, we just need to discuss how to
+> meet the requirements of different use cases using simpler, more
+> unified and effective APIs.
 
-I can help write it if there's no great urgency. I'll try to find some time creating a draft and send it your way.
+We don't need "more unified".
 
-DJ
+If there are genuinely two different use cases with clearly different
+needs - even if only slightly different - then it is acceptable to have
+two different interfaces.  Be sure to choose names which emphasise the
+differences.
 
-> 
-> I wanted to avoid dropping a 50 page writeup all at once with hopes of
-> getting feedback on each chunk to correct inaccuracies (see hotplug). So
-> I'm certainly open to adding whatever folks think is missing/important.
-> 
-> ~Gregory
-
+Thanks,
+NeilBrown
 
