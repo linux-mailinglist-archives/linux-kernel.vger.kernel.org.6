@@ -1,153 +1,110 @@
-Return-Path: <linux-kernel+bounces-546887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A2F7A50030
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:18:00 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CD907A50031
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:18:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5E3AA189DF41
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 493F0188952A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7122924888C;
-	Wed,  5 Mar 2025 13:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 296A324A058;
+	Wed,  5 Mar 2025 13:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="Kc/c8pyd"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b="e9S6GSgm"
+Received: from out-15.pe-b.jellyfish.systems (out-15.pe-b.jellyfish.systems [198.54.127.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45D33230BCC;
-	Wed,  5 Mar 2025 13:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA3F24A050;
+	Wed,  5 Mar 2025 13:11:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.54.127.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741180232; cv=none; b=EJAZgap2wukeuZ9KFgD3yYZ3Ir7pXQpOi3Vd5BmUow6m3YX1e6I2v3okd6GrjlE+2UDMeSKeYr2dH5aBjJANplY5s41C6j6raK5UQlM9IyIGlk5UPYNsyVnwBarPWTABygwiO2yqGj0c1z3XfrQcJCB4WMb7UWVdb8IYcY8NyvI=
+	t=1741180285; cv=none; b=kKLdAm00+QzKgY+aPkhOOMGbkOEPGAEg31z4+lSHXVXRJFi28/ctx8HQByRi+JU0p09fuukNd0AQ9iJ+MRxrbiiBzoKEw3gy4dK21Qj1dIeOkQr2OVf46qSr+QY1NbG0OxLBKh3RZFkg4/WGCHifCI7Bdk+FCoKrPnOjdmu+qlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741180232; c=relaxed/simple;
-	bh=MLh2QFr7rGTwa5f2sq8RD9fMY5NELA+8OS3W5Af0sKY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MaqlPqhrVV0RGjFTWJzfoJ4QaoKWJ1ZakEGXLhrdHaHwj/xs9em+dhhClpnVA1s9hhJp6OpW02EcHuCLWUt0LG0TIlqIfwVUjMoV+MOuCJLCg6Hkkvj9iGY6d2I3847/uz4o9ZxzZqRezKnSRJLQIRqrFDfprog5NCajPDnFLxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=Kc/c8pyd; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1741180228; bh=MLh2QFr7rGTwa5f2sq8RD9fMY5NELA+8OS3W5Af0sKY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Kc/c8pydRbdIH1lS8LP9ZwHDA0GcibFlib19ZzRsj7Pa+6munRpDCrtdi+rZ3tA0Q
-	 U4WM6tebrX1VZIh9r6zZCS6I+rYbTG+niEQ6g3VP4E8iIsteKnfcyPa2VBZlw8vDUH
-	 TP6zvPWvZc6s/0vLeBWrbb8kG3cATIMvDrG8lyUY=
-Received: from [IPV6:2001:67c:10ec:5784:8000::12e7] (2001-67c-10ec-5784-8000--12e7.net6.ethz.ch [IPv6:2001:67c:10ec:5784:8000::12e7])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id B57AE2052A89;
-	Wed,  5 Mar 2025 14:10:27 +0100 (CET)
-Message-ID: <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
-Date: Wed, 5 Mar 2025 14:10:22 +0100
+	s=arc-20240116; t=1741180285; c=relaxed/simple;
+	bh=bn2SYnO3gckSd90IJUDXZ+6sjtoSbjkeP7cZhFpzYOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwcUtHCPUCtF564fPDPVHsDIw8aI74gS5oWpPrFs3W5XGQ1beVa1GFZmPXPcJ2b0LjnyL808N8NSTALrQlEE/msohPRZt0MBNMxTXEC9Cf2gojQ44RrGJUN6lWRZK2lXLeu445icWYqPIyrh3AiWGWneBStCor4GcrBRLkJdFYI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org; spf=pass smtp.mailfrom=framepointer.org; dkim=pass (2048-bit key) header.d=framepointer.org header.i=@framepointer.org header.b=e9S6GSgm; arc=none smtp.client-ip=198.54.127.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=framepointer.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=framepointer.org
+Received: from prod-lbout-phx.jellyfish.systems (new-01.privateemail.com [198.54.118.220])
+	by pe-b.jellyfish.systems (Postfix) with ESMTPA id 4Z7CcB6stszDqTW;
+	Wed, 05 Mar 2025 13:11:22 +0000 (UTC)
+Received: from MTA-14.privateemail.com (unknown [10.50.14.30])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(No client certificate requested)
+	by NEW-01.privateemail.com (Postfix) with ESMTPS id 4Z7CcB4sBvz3hhVZ;
+	Wed,  5 Mar 2025 08:11:22 -0500 (EST)
+Received: from mta-14.privateemail.com (localhost [127.0.0.1])
+	by mta-14.privateemail.com (Postfix) with ESMTP id 4Z7CcB4Sszz3hhZ8;
+	Wed,  5 Mar 2025 08:11:22 -0500 (EST)
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=framepointer.org;
+	s=default; t=1741180282;
+	bh=bn2SYnO3gckSd90IJUDXZ+6sjtoSbjkeP7cZhFpzYOA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e9S6GSgm7JoUjS1VL9RQgTn6qPKd0B5YU9b0I5qqVO0seeAAOFsQ8mYd/cm60SlRz
+	 kf5Yt8lZlFgLuRYq2o2mCuwTWiLqxDrT6Iw6FuQb5gTE5HV41ydw/8AQQJ3enz6VrH
+	 wKSYBU26j8HzBvo9TZXilYa+Tp64Tr3jqRQ0m8ah+OPfW5YpBdlPneHVtpyijme6Ca
+	 YnvLX3Q8eWXqD7n0pKAJCXqfWAew+rG+tiO/FWV6KkCHYSz42QONSghZu3ebucAz+O
+	 aUn82ginSE+L5TgUPR8EpfI54b870Co5WZbaA0G6YY1I7EJmYAK7lwEnnbr12alIUY
+	 YRwGqK0PUtRiA==
+Received: from 65YTFL3.secure.tethers.com (unknown [152.44.190.141])
+	by mta-14.privateemail.com (Postfix) with ESMTPA;
+	Wed,  5 Mar 2025 08:11:16 -0500 (EST)
+Date: Wed, 5 Mar 2025 08:11:17 -0500
+From: Sam Winchenbach <sam.winchenbach@framepointer.org>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	antoniu.miclaus@analog.com, lars@metafoo.de,
+	Michael.Hennerich@analog.com
+Subject: Re: [PATCH v2] iio: filter: admv8818: fix range calculation
+Message-ID: <Z8hNdR21h7b7V8Kx@65YTFL3.secure.tethers.com>
+References: <Z7crV0DV1Fq7wE1Z@65YTFL3.secure.tethers.com>
+ <20250304233411.3fac7c69@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Allow data races on some read/write operations
-To: Boqun Feng <boqun.feng@gmail.com>, comex <comexk@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
- robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
- Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com, iommu@lists.linux.dev, lkmm@lists.linux.dev
-References: <87bjuil15w.fsf@kernel.org>
- <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
- <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
- <87ikoqjg1n.fsf@kernel.org>
- <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
- <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
- <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
- <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
- <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
- <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304233411.3fac7c69@jic23-huawei>
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-Hi,
-
-On 05.03.25 04:24, Boqun Feng wrote:
-> On Tue, Mar 04, 2025 at 12:18:28PM -0800, comex wrote:
->>
->>> On Mar 4, 2025, at 11:03 AM, Ralf Jung <post@ralfj.de> wrote:
->>>
->>> Those already exist in Rust, albeit only unstably:
->>> <https://doc.rust-lang.org/nightly/std/intrinsics/fn.volatile_copy_memory.html>.
->>> However, I am not sure how you'd even generate such a call in C? The
->>> standard memcpy function is not doing volatile accesses, to my
->>> knowledge.
->>
->> The actual memcpy symbol that exists at runtime is written in
->> assembly, and should be valid to treat as performing volatile
->> accesses.
-
-memcpy is often written in C... and AFAIK compilers understand what that 
-function does and will, for instance, happily eliminate the call if they can 
-prove that the destination memory is not being read from again. So, it doesn't 
-behave like a volatile access at all.
-
->> But both GCC and Clang special-case the memcpy function.  For example,
->> if you call memcpy with a small constant as the size, the optimizer
->> will transform the call into one or more regular loads/stores, which
->> can then be optimized mostly like any other loads/stores (except for
->> opting out of alignment and type-based aliasing assumptions).  Even if
->> the call isn’t transformed, the optimizer will still make assumptions.
->> LLVM will automatically mark memcpy `nosync`, which makes it undefined
->> behavior if the function “communicate[s] (synchronize[s]) with another
->> thread”, including through “volatile accesses”. [1]
-
-The question is more,  what do clang and GCC document / guarantee in a stable 
-way regarding memcpy? I have not seen any indication so far that a memcpy call 
-would ever be considered volatile, so we have to treat it like a non-volatile 
-non-atomic operation.
-
->> However, these optimizations should rarely trigger misbehavior in
->> practice, so I wouldn’t be surprised if Linux had some code that
->> expected memcpy to act volatile…
->>
+On Tue, Mar 04, 2025 at 11:34:11PM +0000, Jonathan Cameron wrote:
+> On Thu, 20 Feb 2025 08:17:11 -0500
+> Sam Winchenbach <sam.winchenbach@framepointer.org> wrote:
 > 
-> Also in this particular case we are discussing [1], it's a memcpy (from
-> or to) a DMA buffer, which means the device can also read or write the
-> memory, therefore the content of the memory may be altered outside the
-> program (the kernel), so we cannot use copy_nonoverlapping() I believe.
+> > Corrects the upper range of LPF Band 4 from 18.5 GHz to 18.85 GHz per
+> > the ADMV8818 datasheet
+> > 
+> Hi Sam,
 > 
-> [1]: https://lore.kernel.org/rust-for-linux/87bjuil15w.fsf@kernel.org/
+> Just a trivial process thing.  If you are sending updated code
+> and there isn't an obvious reason why when someone looks at the
+> old patch set (e.g. no reviews asking for changes etc) please
+> reply to that.
+> 
+> At times where reviewers (such as me on this occasion) are running
+> way behind they might look at wrong version otherwise.
+> 
+> Jonathan
 
-Is there actually a potential for races (with reads by hardware, not other 
-threads) on the memcpy'd memory? Or is this the pattern where you copy some data 
-somewhere and then set a flag in an MMIO register to indicate that the data is 
-ready and the device can start reading it? In the latter case, the actual data 
-copy does not race with anything, so it can be a regular non-atomic non-volatile 
-memcpy. The flag write *should* be a release write, and release volatile writes 
-do not exist, so that is a problem, but it's a separate problem from volatile 
-memcpy. One can use a release fence followed by a relaxed write instead. 
-Volatile writes do not currently act like relaxed writes, but you need that 
-anyway for WRITE_ONCE to make sense so it seems fine to rely on that here as well.
+Hi Jonathan,
 
-Rust should have atomic volatile accesses, and various ideas have been proposed 
-over the years, but sadly nobody has shown up to try and push this through.
+Just to clarify, if I update the patches in, for example v2, then I should
+reply to the v2 email with the new patch set?
 
-If the memcpy itself can indeed race, you need an atomic volatile memcpy -- 
-which neither C nor Rust have, though there are proposals for atomic memcpy (and 
-arguably, there should be a way to interact with a device using non-volatile 
-atomics... but anyway in the LKMM, atomics are modeled with volatile, so things 
-are even more entangled than usual ;).
+That makes sense... it looks like I can use: "--in-reply-to=<Message-id>" with
+git send-email.
 
-Kind regards,
-Ralf
+Sorry for any confusion this may have caused.
 
+Thanks,
+-Sam
 
