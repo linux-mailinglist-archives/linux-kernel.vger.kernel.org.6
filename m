@@ -1,159 +1,323 @@
-Return-Path: <linux-kernel+bounces-547711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7D3EA50C87
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:30:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03A6DA50C76
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:27:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 181213A8D3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:30:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22D601714EB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:27:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBA0A25CC78;
-	Wed,  5 Mar 2025 20:27:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E97D256C63;
+	Wed,  5 Mar 2025 20:26:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qHLt63Lw"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M/h0/K21"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3D6925CC68
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:27:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B95FD17B50B;
+	Wed,  5 Mar 2025 20:26:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741206454; cv=none; b=PrcUx5/4H/nkt6NcONrpoLgAbJxMzZGkYXU++fnNXPQn7zZ2xnrwBogh0nSIjvQI43tend3UNIWulW28zsPhoBCJb09jnQfFYG2r2ivDtFrpLFd1sJM3tETfKb/JMaAldhbA6BUIGtwB8qJfJpvtDJuQCU965+gnGajukW8di1A=
+	t=1741206405; cv=none; b=jV7U1EUVQm7NAKQ1tIDev7x/+oX/1Z632WvywAF9ltPfKAFSYdXWz8pH6GoiIGE5lroymlmM3TRNxbeUsp4LpZeFP4iGjyXoIv8z06RFwYS/w7QYundoopcO4eWHpGbs0mvsMd1rYIbknOzvMj22cuFvGOKaAXzzlW24DfuJPXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741206454; c=relaxed/simple;
-	bh=OWgwLOrMv67MfxJKRE8m5Kf8eyoz3earbUPxJfEF97k=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hyFa8LboiLJ2VJ0+VZlfdW6V2xdYTmb6TPjiprvNjDNc/IE/J/NY9ALUkixo4+k0mlGiHEnHy/2ZOux8ynVuG1hVLtA69RxoWZaRmOERQaaZPYU+m9UQ6Xn11rv1vZQETfZQCQ/9xmOuqZA0E9dKRV8Sv0fNdPsyQuJJd2b2Is0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qHLt63Lw; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741206450;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eVgORfieP46l47Y1ih2whfkZuPDhyjhKZ7HsIZ/P4wo=;
-	b=qHLt63LwDOhaaKkpSvpjMTafkL8FU+ocgC4c55iKIgyMeGtObQlJP9epa1dm8OCP8d8gOY
-	whBbL0oLMGC55muBrjOTs838M030O5QGwKLmMdrA109Lv7YNDMtUmTsapkEX+evQbRy51K
-	Ee7G8j7EWbhVgIwo7e0hMUdLaqeb9cg=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: kvmarm@lists.linux.dev
-Cc: Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Janne Grunau <j@jannau.net>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH v3 12/14] drivers/perf: apple_m1: Provide helper for mapping PMUv3 events
-Date: Wed,  5 Mar 2025 12:26:39 -0800
-Message-Id: <20250305202641.428114-13-oliver.upton@linux.dev>
-In-Reply-To: <20250305202641.428114-1-oliver.upton@linux.dev>
-References: <20250305202641.428114-1-oliver.upton@linux.dev>
+	s=arc-20240116; t=1741206405; c=relaxed/simple;
+	bh=Y+Si40H9xvWW0NrdR4yM4VReyGwc5L82H6rUoRcB3Vo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=pRIYa/Vdtfjmi3uTBrC1nRXSlXY8Ib+UGddAdv5gcr/DlhODRDdIuxJo93Q4fCG4qULvUHzSUtRKFrvgPvCFEi5tWmSdbKVH4wSsUpFUL0/xnbIAfTCVT8PxYy081rrrE5CfOlyb+Nozi+cCSlL4lAXKa8sVfBQQPksvioP0ljc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M/h0/K21; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 8C52AC4CEE0;
+	Wed,  5 Mar 2025 20:26:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741206405;
+	bh=Y+Si40H9xvWW0NrdR4yM4VReyGwc5L82H6rUoRcB3Vo=;
+	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
+	b=M/h0/K21t75bfCjSagqoaN9u2XSZqYSbEy70L436keqQWryiGVdPYjsjbLXRwGvZf
+	 VC90WXIu3Bm3uso5B93l26rY5zZwFrTO1v921zmpbWeC3l47G2NvVu/xY56PvyS9XU
+	 yNFiMpYz/YG9LSS1ERcA45gmce2bGgiXht4tTqtiRR29YB1j1HRua7wtDuewwmQBsG
+	 lppH3qiqwJRhgRTLZH/yFZlk2z8+Kr1N3TSHWTZq4wiUbOhjoIr7071oe2NUWSaLXc
+	 C3zgx8HyZBveGhx5JV6zYWv/RSdmaq5omFoVmT5xUTOJFFeDsaigob8Cyj03KnMvGU
+	 OAIiabjk7zNOA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 7C6A2C282EC;
+	Wed,  5 Mar 2025 20:26:45 +0000 (UTC)
+From: Sasha Finkelstein via B4 Relay <devnull+fnkl.kernel.gmail.com@kernel.org>
+Date: Wed, 05 Mar 2025 21:26:40 +0100
+Subject: [PATCH 2/3] spmi: add a spmi driver for Apple SoC
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250305-spmi-v1-2-c98f561fa99f@gmail.com>
+References: <20250305-spmi-v1-0-c98f561fa99f@gmail.com>
+In-Reply-To: <20250305-spmi-v1-0-c98f561fa99f@gmail.com>
+To: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Stephen Boyd <sboyd@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+ Sasha Finkelstein <fnkl.kernel@gmail.com>, 
+ Jean-Francois Bortolotti <jeff@borto.fr>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1741206403; l=7051;
+ i=fnkl.kernel@gmail.com; s=20241124; h=from:subject:message-id;
+ bh=rJ1vd9Iyd4gHu+jjWDpOWXoACMXfatLFKEyKY06WpWo=;
+ b=sSgqnZA+YPk4BKHtpSDkTabZcZg+dilCxAqkFglzGcLhilQ5/ZrxlYTTgPef7EKr1Ko7H8G5Y
+ ZQDIr7nhEIaCA0NdE7t0PICYTMqVX0CpiNN0Lj33U4x61h6317TNz6w
+X-Developer-Key: i=fnkl.kernel@gmail.com; a=ed25519;
+ pk=aSkp1PdZ+eF4jpMO6oLvz/YfT5XkBUneWwyhQrOgmsU=
+X-Endpoint-Received: by B4 Relay for fnkl.kernel@gmail.com/20241124 with
+ auth_id=283
+X-Original-From: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Reply-To: fnkl.kernel@gmail.com
 
-Apple M* parts carry some IMP DEF traps for guest accesses to PMUv3
-registers, even though the underlying hardware doesn't implement PMUv3.
-This means it is possible to virtualize PMUv3 for KVM guests.
+From: Jean-Francois Bortolotti <jeff@borto.fr>
 
-Add a helper for mapping common PMUv3 event IDs onto hardware event IDs,
-keeping the implementation-specific crud in the PMU driver rather than
-KVM proper. Populate the pmceid_bitmap based on the supported events so
-KVM can provide synthetic PMCEID* values to the guest.
-
-Tested-by: Janne Grunau <j@jannau.net>
-Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
+Signed-off-by: Jean-Francois Bortolotti <jeff@borto.fr>
+Co-developed-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
+Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
 ---
- drivers/perf/apple_m1_cpu_pmu.c | 35 +++++++++++++++++++++++++++++++++
- 1 file changed, 35 insertions(+)
+ MAINTAINERS                          |   1 +
+ drivers/spmi/Kconfig                 |   8 ++
+ drivers/spmi/Makefile                |   1 +
+ drivers/spmi/spmi-apple-controller.c | 176 +++++++++++++++++++++++++++++++++++
+ 4 files changed, 186 insertions(+)
 
-diff --git a/drivers/perf/apple_m1_cpu_pmu.c b/drivers/perf/apple_m1_cpu_pmu.c
-index d6d4ff6da862..6be703619a97 100644
---- a/drivers/perf/apple_m1_cpu_pmu.c
-+++ b/drivers/perf/apple_m1_cpu_pmu.c
-@@ -12,6 +12,7 @@
+diff --git a/MAINTAINERS b/MAINTAINERS
+index 271ff8110df83c2d4fe7fbbfffc0a72259460bc5..9006695261d29fbc1e15659c2b43d7afeee0b656 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -2254,6 +2254,7 @@ F:	drivers/nvmem/apple-efuses.c
+ F:	drivers/pinctrl/pinctrl-apple-gpio.c
+ F:	drivers/pwm/pwm-apple.c
+ F:	drivers/soc/apple/*
++F:	drivers/spmi/spmi-apple-controller.c
+ F:	drivers/watchdog/apple_wdt.c
+ F:	include/dt-bindings/interrupt-controller/apple-aic.h
+ F:	include/dt-bindings/pinctrl/apple.h
+diff --git a/drivers/spmi/Kconfig b/drivers/spmi/Kconfig
+index 73780204631463631cabcbad5bf83e8dbbee94ce..9005fa91d9f4e541403ccc7bf84e0592402ac41e 100644
+--- a/drivers/spmi/Kconfig
++++ b/drivers/spmi/Kconfig
+@@ -11,6 +11,14 @@ menuconfig SPMI
  
- #include <linux/of.h>
- #include <linux/perf/arm_pmu.h>
-+#include <linux/perf/arm_pmuv3.h>
- #include <linux/platform_device.h>
+ if SPMI
  
- #include <asm/apple_m1_pmu.h>
-@@ -174,6 +175,17 @@ static const unsigned m1_pmu_perf_map[PERF_COUNT_HW_MAX] = {
- 	[PERF_COUNT_HW_BRANCH_MISSES]		= M1_PMU_PERFCTR_BRANCH_MISPRED_NONSPEC,
- };
- 
-+#define M1_PMUV3_EVENT_MAP(pmuv3_event, m1_event)				\
-+	[ARMV8_PMUV3_PERFCTR_##pmuv3_event]	= M1_PMU_PERFCTR_##m1_event
++config SPMI_APPLE
++	tristate "Apple SoC SPMI Controller platform driver"
++	depends on ARCH_APPLE || COMPILE_TEST
++	help
++	  If you say yes to this option, support will be included for the
++	  SPMI controller present on many Apple SoCs, including the
++	  t8103 (M1) and t600x (M1 Pro/Max).
 +
-+static const u16 m1_pmu_pmceid_map[ARMV8_PMUV3_MAX_COMMON_EVENTS] = {
-+	[0 ... ARMV8_PMUV3_MAX_COMMON_EVENTS - 1]	= HW_OP_UNSUPPORTED,
-+	M1_PMUV3_EVENT_MAP(INST_RETIRED,	INST_ALL),
-+	M1_PMUV3_EVENT_MAP(CPU_CYCLES,		CORE_ACTIVE_CYCLE),
-+	M1_PMUV3_EVENT_MAP(BR_RETIRED,		INST_BRANCH),
-+	M1_PMUV3_EVENT_MAP(BR_MIS_PRED_RETIRED,	BRANCH_MISPRED_NONSPEC),
+ config SPMI_HISI3670
+ 	tristate "Hisilicon 3670 SPMI Controller"
+ 	select IRQ_DOMAIN_HIERARCHY
+diff --git a/drivers/spmi/Makefile b/drivers/spmi/Makefile
+index 7f152167bb05b2c24a0f9669f60278152898eebb..38ac635645ba65aa46cb5e8a50072ed9771e229b 100644
+--- a/drivers/spmi/Makefile
++++ b/drivers/spmi/Makefile
+@@ -4,6 +4,7 @@
+ #
+ obj-$(CONFIG_SPMI)	+= spmi.o spmi-devres.o
+ 
++obj-$(CONFIG_SPMI_APPLE)	+= spmi-apple-controller.o
+ obj-$(CONFIG_SPMI_HISI3670)	+= hisi-spmi-controller.o
+ obj-$(CONFIG_SPMI_MSM_PMIC_ARB)	+= spmi-pmic-arb.o
+ obj-$(CONFIG_SPMI_MTK_PMIF)	+= spmi-mtk-pmif.o
+diff --git a/drivers/spmi/spmi-apple-controller.c b/drivers/spmi/spmi-apple-controller.c
+new file mode 100644
+index 0000000000000000000000000000000000000000..194fa5dd7c2c6fc4ecfbee0db7930b0c73b02550
+--- /dev/null
++++ b/drivers/spmi/spmi-apple-controller.c
+@@ -0,0 +1,176 @@
++// SPDX-License-Identifier: GPL-2.0
++/*
++ * Apple SoC SPMI device driver
++ *
++ * Copyright The Asahi Linux Contributors
++ *
++ * Inspired by:
++ *		OpenBSD support Copyright (c) 2021 Mark Kettenis <kettenis@openbsd.org>
++ *		Correllium support Copyright (C) 2021 Corellium LLC
++ *		hisi-spmi-controller.c
++ *		spmi-pmic-ard.c Copyright (c) 2021, The Linux Foundation.
++ */
++
++#include <linux/io.h>
++#include <linux/iopoll.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/of_platform.h>
++#include <linux/platform_device.h>
++#include <linux/spmi.h>
++
++/* SPMI Controller Registers */
++#define SPMI_STATUS_REG 0
++#define SPMI_CMD_REG 0x4
++#define SPMI_RSP_REG 0x8
++
++#define SPMI_RX_FIFO_EMPTY BIT(24)
++
++#define REG_POLL_INTERVAL 10000
++#define REG_POLL_TIMEOUT (REG_POLL_INTERVAL * 5)
++
++struct apple_spmi {
++	void __iomem *regs;
 +};
 +
- /* sysfs definitions */
- static ssize_t m1_pmu_events_sysfs_show(struct device *dev,
- 					struct device_attribute *attr,
-@@ -558,6 +570,26 @@ static int m2_pmu_map_event(struct perf_event *event)
- 	return armpmu_map_event(event, &m1_pmu_perf_map, NULL, M1_PMU_CFG_EVENT);
- }
- 
-+static int m1_pmu_map_pmuv3_event(unsigned int eventsel)
++#define poll_reg(spmi, reg, val, cond) \
++	readl_relaxed_poll_timeout((spmi)->regs + (reg), (val), (cond), \
++				   REG_POLL_INTERVAL, REG_POLL_TIMEOUT)
++
++static inline u32 read_reg(struct apple_spmi *spmi, int offset)
 +{
-+	u16 m1_event = HW_OP_UNSUPPORTED;
-+
-+	if (eventsel < ARMV8_PMUV3_MAX_COMMON_EVENTS)
-+		m1_event = m1_pmu_pmceid_map[eventsel];
-+
-+	return m1_event == HW_OP_UNSUPPORTED ? -EOPNOTSUPP : m1_event;
++	return readl_relaxed(spmi->regs + offset);
 +}
 +
-+static void m1_pmu_init_pmceid(struct arm_pmu *pmu)
++static inline void write_reg(u32 value, struct apple_spmi *spmi, int offset)
 +{
-+	unsigned int event;
++	writel_relaxed(value, spmi->regs + offset);
++}
 +
-+	for (event = 0; event < ARMV8_PMUV3_MAX_COMMON_EVENTS; event++) {
-+		if (m1_pmu_map_pmuv3_event(event) >= 0)
-+			set_bit(event, pmu->pmceid_bitmap);
++static int spmi_read_cmd(struct spmi_controller *ctrl, u8 opc, u8 sid,
++			 u16 saddr, u8 *__buf, size_t bc)
++{
++	struct apple_spmi *spmi = spmi_controller_get_drvdata(ctrl);
++	u32 spmi_cmd = opc | sid << 8 | saddr << 16 | (bc - 1) | (1 << 15);
++	u32 rsp;
++	u32 status;
++	size_t len_to_read = 0;
++	u8 i;
++	int ret;
++
++	write_reg(spmi_cmd, spmi, SPMI_CMD_REG);
++
++	/* Wait for Rx FIFO to have something */
++	ret = poll_reg(spmi, SPMI_STATUS_REG, status, !(status & SPMI_RX_FIFO_EMPTY));
++	if (ret) {
++		dev_err(&ctrl->dev,
++			"%s:Failed to wait for RX FIFO not empty\n", __func__);
++		return ret;
 +	}
++
++	/* Discard SPMI reply status */
++	read_reg(spmi, SPMI_RSP_REG);
++
++	/* Read SPMI data reply */
++	while (len_to_read < bc) {
++		rsp = read_reg(spmi, SPMI_RSP_REG);
++		i = 0;
++		while ((len_to_read < bc) && (i < 4)) {
++			__buf[len_to_read++] = ((0xff << (8 * i)) & rsp) >>
++					       (8 * i);
++			i += 1;
++		}
++	}
++
++	return 0;
 +}
 +
- static void m1_pmu_reset(void *info)
- {
- 	int i;
-@@ -618,6 +650,9 @@ static int m1_pmu_init(struct arm_pmu *cpu_pmu, u32 flags)
- 	cpu_pmu->reset		  = m1_pmu_reset;
- 	cpu_pmu->set_event_filter = m1_pmu_set_event_filter;
- 
-+	cpu_pmu->map_pmuv3_event  = m1_pmu_map_pmuv3_event;
-+	m1_pmu_init_pmceid(cpu_pmu);
++static int spmi_write_cmd(struct spmi_controller *ctrl, u8 opc, u8 sid,
++			  u16 saddr, const u8 *__buf, size_t bc)
++{
++	struct apple_spmi *spmi = spmi_controller_get_drvdata(ctrl);
++	u32 spmi_cmd = opc | sid << 8 | saddr << 16 | (bc - 1) | (1 << 15);
++	u32 status;
++	size_t i = 0, j;
++	int ret;
 +
- 	bitmap_set(cpu_pmu->cntr_mask, 0, M1_PMU_NR_COUNTERS);
- 	cpu_pmu->attr_groups[ARMPMU_ATTR_GROUP_EVENTS] = &m1_pmu_events_attr_group;
- 	cpu_pmu->attr_groups[ARMPMU_ATTR_GROUP_FORMATS] = &m1_pmu_format_attr_group;
++	write_reg(spmi_cmd, spmi, SPMI_CMD_REG);
++
++	while (i < bc) {
++		j = 0;
++		spmi_cmd = 0;
++		while ((j < 4) & (i < bc))
++			spmi_cmd |= __buf[i++] << (j++ * 8);
++
++		write_reg(spmi_cmd, spmi, SPMI_CMD_REG);
++	}
++
++	/* Wait for Rx FIFO to have something */
++	ret = poll_reg(spmi, SPMI_STATUS_REG, status, !(status & SPMI_RX_FIFO_EMPTY));
++	if (ret) {
++		dev_err(&ctrl->dev,
++			"%s:Failed to wait for RX FIFO not empty\n", __func__);
++		return ret;
++	}
++
++	/* Discard */
++	read_reg(spmi, SPMI_RSP_REG);
++
++	return 0;
++}
++
++static int spmi_controller_probe(struct platform_device *pdev)
++{
++	struct apple_spmi *spmi;
++	struct spmi_controller *ctrl;
++	int ret;
++
++	ctrl = devm_spmi_controller_alloc(&pdev->dev, sizeof(*spmi));
++	if (IS_ERR(ctrl)) {
++		dev_err_probe(&pdev->dev, PTR_ERR(ctrl),
++			      "Can't allocate spmi_controller data\n");
++		return -ENOMEM;
++	}
++
++	spmi = spmi_controller_get_drvdata(ctrl);
++
++	spmi->regs = devm_platform_ioremap_resource(pdev, 0);
++	if (IS_ERR(spmi->regs)) {
++		dev_err_probe(&pdev->dev, PTR_ERR(spmi->regs),
++			      "Can't get ioremap regs\n");
++		return PTR_ERR(spmi->regs);
++	}
++
++	ctrl->dev.of_node = of_node_get(pdev->dev.of_node);
++
++	ctrl->read_cmd = spmi_read_cmd;
++	ctrl->write_cmd = spmi_write_cmd;
++
++	ret = devm_spmi_controller_add(&pdev->dev, ctrl);
++	if (ret) {
++		dev_err(&pdev->dev,
++			"spmi_controller_add failed with error %d!\n", ret);
++		return ret;
++	}
++
++	return 0;
++}
++
++static const struct of_device_id spmi_controller_match_table[] = {
++	{ .compatible = "apple,spmi", },
++	{}
++};
++MODULE_DEVICE_TABLE(of, spmi_controller_match_table);
++
++static struct platform_driver spmi_controller_driver = {
++	.probe		= spmi_controller_probe,
++	.driver		= {
++		.name	= "apple-spmi",
++		.of_match_table = spmi_controller_match_table,
++	},
++};
++module_platform_driver(spmi_controller_driver);
++
++MODULE_AUTHOR("Jean-Francois Bortolotti <jeff@borto.fr>");
++MODULE_DESCRIPTION("Apple SoC SPMI driver");
++MODULE_LICENSE("GPL");
+
 -- 
-2.39.5
+2.48.1
+
 
 
