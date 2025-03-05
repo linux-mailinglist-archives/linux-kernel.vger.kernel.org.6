@@ -1,175 +1,199 @@
-Return-Path: <linux-kernel+bounces-547600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA0EBA50B81
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:30:03 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3CB9A50B84
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:30:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F2CE41702A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:30:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19E2C3AC982
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78211253B70;
-	Wed,  5 Mar 2025 19:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2395253B7E;
+	Wed,  5 Mar 2025 19:30:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lhE8fjC0"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2054.outbound.protection.outlook.com [40.107.92.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="K1Hpl/0L"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CAD51B4234
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:29:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.54
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741202995; cv=fail; b=QeheFPYzsF0MxNHWLn8jf5ZRVQbqkFFVg8WmzfVxlbAc9t4AJt5aWlufyaxKR3xRkcWDHMvc8mrGV/kS9wDE5XbezkRlBeelZUu6KtT1xj/moIdIWLc3nRdnkBUmoyBwvnBiiDIkfdawe4eyxfeoIPUTWSviNvXqIhU7M7Ak5Ks=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741202995; c=relaxed/simple;
-	bh=B3cvYi8v82/b1k+8T3awon9M2TxcwyemCI9bEQ9SQw0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iqyopYG5OPWcF1GYgXdWdJYMOGmunk1eIJWnUvl94B30TM/i4effycT4Ch9XMevaRcHve5id8kemWY5Ty06fTsSdt+N/qGKjW1Y5gGmD6XXQeFLDLUzKehtK74l66ktlLgsRNZDVBF3FehoKqbHKCxfXRede4/XWH2lUNBiVieg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lhE8fjC0; arc=fail smtp.client-ip=40.107.92.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=abyGwFz4maN8E4Kq3KeVkiRwIYmrZleKVD+Qvt0f8sSzn2klawWPQwVeHFKVwLeq6k9yg+jIOQIQXf1gCMqMLpmIPAkK7nYnK/4wkFz0gyRtr2u9d+EqG1cS3MY3rbzQEVB/7Yvp1obCWbJQqkUuhdAEWgLqcEtL1xqxrxc5fnRDAnK7GIAbc8cX/wgGxNYyfO0n8IxrMwDeGeAIf0WRx0PvbMRGyzp2/1Q77Qxj+MB3Wtc3wmrcsZd+DTOjc4/grieUetwoKr5xDB/wVcFYYFxz2IkOncVJKpqKan3wC6vk2wZhWjxoPKU0PgOuIMMLP+e90nErxmUf1QFooWu5Ew==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=s9fhe+iq5MNQnYd+Q+WEAREYOMcvtyPkhZmXSGknjpo=;
- b=UtMgtzi4AvXH5q6PMPtP6HtlkeVhXrf6FMDaq71kMn7BoEV9TVvojGl0dBBys3b5AURYz0RvH59/rDkpmyE2+7Aw4AvixToRWbgfxcrpnYj76my+2gzvx3S+7ICDnqDxNvsqwz0NS7223RWDpQ6kJAIL7QnOFONnx+00F8QX73zqYPtOoTgTqMmnQJ9FoRfqeSrDFuQpbID5ksX142vm6gTf1YO87Ts4IXNtGbUSy01qZBYXxDfEPP1ZL61dhJya+ngrJJcQiNgCob269YAdWDHrl/BXOXCWVDGkwdIx8jOL3VHbhwP70ejHb2qnlWZr9SMXKiXFAiYXbNRBxLTTvA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=s9fhe+iq5MNQnYd+Q+WEAREYOMcvtyPkhZmXSGknjpo=;
- b=lhE8fjC0SkFLbq/EPY8sOavULne8MQa64awZzN9bwPjmfGNBxx/g9PcBFUMB5Ob/BP6TPeNSKLJcijVFqQY3Q3c8bWF900tRjNlxQ/4GbZtLCwTbZGP21igWyVEp+z2jGbGkbwxsC0N1kuKrjJes4yxAhxZ2YH7tg9eYRFsjJk8ajMQPPaAjeMA7C0HAUzkF+xg7PvEKM7J+oxJIKpe1u2JPzq+YtxupkuZzLWaHskHxuaz3n+iN2TN3OHXpBI/VLlzmd9eUYhBcFrX0jYFLQqWbhZlB9sU7Y5cBDl6svlY29cbIBtz01jpZCDG2vjI56nk2iV2FPj6knnbCAjNm3Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by MW3PR12MB4442.namprd12.prod.outlook.com (2603:10b6:303:55::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
- 2025 19:29:51 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
- 19:29:51 +0000
-Date: Wed, 5 Mar 2025 15:29:50 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH v1 0/4] iommu/arm-smmu-v3: Allocate vmid per vsmmu
- instead of s2_parent
-Message-ID: <20250305192950.GA354511@nvidia.com>
-References: <cover.1741150594.git.nicolinc@nvidia.com>
- <20250305165452.GY133783@nvidia.com>
- <Z8iWqOBga8Xdunac@Asurada-Nvidia>
- <20250305183151.GE133783@nvidia.com>
- <Z8idOr67A0EG1/PN@Asurada-Nvidia>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8idOr67A0EG1/PN@Asurada-Nvidia>
-X-ClientProxiedBy: BL0PR02CA0070.namprd02.prod.outlook.com
- (2603:10b6:207:3d::47) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52F3E19C55E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:30:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741203035; cv=none; b=D3zMbDW9rD9e9EqEVY2FbDGVyJTtB7LuGS6PpMKZmFnuqiNsC5874RDu20mThUyU/ACoxGmzTja3E6eTaYkXHOjXIbfVepAt+ylRI/k1GoNtQN1tDkGT8uQlA8UrfPjOVfFweo+dWzyi8VhkSGbwR3cGH25Bq/OQMt2nSBRLmsI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741203035; c=relaxed/simple;
+	bh=t6SiDVwaTHvhAlwjcDp2TYwOA5pPtU4A7kw092Af/vg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u4KZZJlOT6/hyJQ6pRZd+Roeg+XvoSQAXSgf0NssKMzhWUBqbIx7kKBkVj9MesH6XdcnyIleDK7bGf/g2vodJ9T1Wq3R0lNddSuLsjRVwqUwO5mVxGswCW0vPFXvypS4R5P0gh4MxNjulpaGEDPum9gwVqWjI92slG6774FcmEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=K1Hpl/0L; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7c3bf231660so347661685a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:30:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1741203032; x=1741807832; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=oId15+YDneGVvUrzPX64hfAInMf60MXmTWB86DACpPE=;
+        b=K1Hpl/0Lf2e0SMJsD78cI6VUZa8YeaVGGCzQxRGADes3BSjSQp5MCTIT7pduSbLp3Z
+         rqPQiRCGHImqUOmJtdm6EbBZOu9getLYxNi7Tax+opRvbAJr3Gneh+LVQZqRREGf20zW
+         4turkQEZZhp/Px7w34mnLx7bNjJaa+5MyqFC2cVPS3kriaOEqHsEDYVNTPRFK2Q6wC3s
+         A6kKge3iwyrZOHtYD+7RTPNxTjw4BP+SspGU+LqGiWeuxEyrJFoYqO+oXe9pHf+MQ7GV
+         Yht1CVgXQHbbrrTwMgiuk6NLPQaQrlZt9O55ePQz0DnuPERl8xrcDL97DeM/vu0OEdA7
+         J8KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741203032; x=1741807832;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=oId15+YDneGVvUrzPX64hfAInMf60MXmTWB86DACpPE=;
+        b=cKu+QKq2y5tolNIWB/4gktjXgQizm3XYKCGAVwnDD+nAyzS0Druh3h0CB0OUthZnJt
+         UdE6VvNX07ngQd/id403sr80manBds9GRGf1uPHe8k4DfQ484biEQMu0DKK2M0vlvS5h
+         QKgCOywfEkDbYfM0IVpuNNBBqXAeKu93FSMmZSe+vxRsyK3Dn7aFTTKIk5uE2H4JYUj8
+         +nHN5eYws4w/EbNAwRsNJ4AA6RrVMgeO87UTo1a6WIBKJlU31SgZFaYK/itfoVneLKO+
+         fgO8U/dfT+pBN7EZeAXLU2RDHJ3yDjCfyORGkU5kNBzA+2nlVyDD51GQ1MbXButnldj6
+         BcYQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWwrLPfVY2w2539c9JWPWf2iyLpPrR0Su1bc9CcFVCobEsFxX8nFH7x9U5l2lMtci45oNviXAhdQHWVHAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaS5He53qb/ajR1SuMizGImWk+vHv0mZI+PoJATserNhVl/5OZ
+	x8hBMF+CCSzt1Oo7n/evpPJc4dvHo5LmLjKjxqU7mlleX6i64mdoTFK5e5fQMQ==
+X-Gm-Gg: ASbGncvBRDGiMga/zg+91gRTyY5aMeFL2mJNFO10/pyWS3I5wnEYjPlkGETvF0QYqK6
+	9BzWfwpHGdxCsBYG/K4isf3moykWM80BdGCdRoUOgVTLBFH/dWcwiGzxEJywgogXZt3Lz2zUyhe
+	EoGpvRuREQYU9Pyq/p8i3GEGqh+Gnx5lOKf+4ab0M1Q0FqwpBLEQ75XUNUvNhbfpZoklD46hyg3
+	jYNF6SFcrp1rvhVFOyCmea+tWbWe/ON5BshaWJ4pggUKIcNpmG4u8yPJRcM5fxNZk1XCECWW8go
+	3LK/xpZX+9J8ua29zRjt2a/aPvIEA/u2bl6HsRhQwEPxhZaqT6+yPQ4EmgH5C+bf7NAkybFvmel
+	V0hWaqKP0NKCGJshU82OeWkZtGEj/c37HBp/eng==
+X-Google-Smtp-Source: AGHT+IEdHIEYyOFA6iBD4IRAvEEK44U33sXsSKu1qSukoScCCId/HavsdZVIN+N6mZ49Avbu1kb/wA==
+X-Received: by 2002:a05:620a:84c4:b0:7c0:a0fd:7b2c with SMTP id af79cd13be357-7c3d8e55666mr759133185a.22.1741203032165;
+        Wed, 05 Mar 2025 11:30:32 -0800 (PST)
+Received: from rowland.harvard.edu (nat-65-112-8-24.harvard-secure.wrls.harvard.edu. [65.112.8.24])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3d30234c7sm214999985a.34.2025.03.05.11.30.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 11:30:31 -0800 (PST)
+Date: Wed, 5 Mar 2025 14:30:28 -0500
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Ralf Jung <post@ralfj.de>, Alice Ryhl <aliceryhl@google.com>,
+	Boqun Feng <boqun.feng@gmail.com>, comex <comexk@gmail.com>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
+	robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Valentin Obst <kernel@valentinobst.de>,
+	linux-kernel@vger.kernel.org, Christoph Hellwig <hch@lst.de>,
+	Marek Szyprowski <m.szyprowski@samsung.com>, airlied@redhat.com,
+	iommu@lists.linux.dev, lkmm@lists.linux.dev
+Subject: Re: Allow data races on some read/write operations
+Message-ID: <471eec19-1abb-43f1-aec0-d0db56f6ca9e@rowland.harvard.edu>
+References: <87mse2hrd8.fsf@kernel.org>
+ <Z8YMTiKS4T9wC4t_@boqun-archlinux>
+ <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
+ <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
+ <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
+ <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
+ <CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
+ <18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
+ <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de>
+ <87eczb71xs.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|MW3PR12MB4442:EE_
-X-MS-Office365-Filtering-Correlation-Id: ac63929f-335a-4c19-6411-08dd5c1c1936
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2gzgAsU3oLF7kjwzXrUO5iNOdiE2SCLdYbM2vZjpTjTSpGO4X5JCMEJUaAEF?=
- =?us-ascii?Q?VErnRqOK5sZ41vKv6jdr3/5Y7keBi/uHDWCHnvDVYwjso4sqBKTgGsqHCfQF?=
- =?us-ascii?Q?RTABY5jFv7xBTZoTutXVk+UOFWMp7/v52NwTzWzTasw8hRiSWrI4L7O/Db9X?=
- =?us-ascii?Q?VEI+XRqyuFXAVyb5Oo8lQ4URHB0yF/u99cUM+dzKy1IzH4CfaWUL7VEfy/IN?=
- =?us-ascii?Q?+/1HXYEkXdN8X2PMfBH8/17bbP9NQfCQws9QcG8pDGHK0+hCbtJ9rXAfryw2?=
- =?us-ascii?Q?Nz8Q5QAXPOLyo8urSIcALdHo3n99BDZXnyRmxsed/BZI14nvuONUoAoHTCo9?=
- =?us-ascii?Q?iS3IjaWbprOFdnQbeL+eHjtUkhvNTdxXcG6NOg8u5LFYri+FIPaP8n3Z58UH?=
- =?us-ascii?Q?J0ahUY/M6+w/qgDajGAYa3IAco/uTZO4YuqIDQtIzQVpn8RNKiBWRzKA1M/c?=
- =?us-ascii?Q?FMVPHB3QK7h2aJiE+3q5ODz4fpW/y9YQXIpwSh7K6wrGPtHKFJs6NZVBJaRg?=
- =?us-ascii?Q?mJjG7ILdCiN6cHoWP3DJA2WOlvaMdZ5umiRTdaHS1GvXtB/sevyOqQT1xobk?=
- =?us-ascii?Q?KrLh/Wre3S+E8MldV5ZLfjbdojfAS0Ta0/JnE4Y2WAruxQvwD6NnW66Eefj2?=
- =?us-ascii?Q?+PTOsytx5U+o3+sX+39zF8fXEzHiJ5C2Slb3FrMxBL67w4PDoywEy9dRYFDd?=
- =?us-ascii?Q?lSgTM6JpRD92jWHLpbY7P0gyc+35Nb8pgBNJ9b4BZUq2hksK6gOnUUKIZZTf?=
- =?us-ascii?Q?7RilgJsNWUn+hAx7ZI4HUJa/8+mQRlupf20xqr8ncXwPqW5cRQ6TfHzcAPDp?=
- =?us-ascii?Q?Zfb45c/0p/Djcsg9aDivKlLyHPaBwbjrSKmKgg4dl90XdoFzPA9/OWRKPveL?=
- =?us-ascii?Q?KwgIYGpTFwKLL3FCwPotoBSN70DgmDyOMLVxhVkz0YtvVaOLIaodf8zQSz6F?=
- =?us-ascii?Q?OdkaTvinTXakoBMjwdwttQMjk2W05NCrXdOxG4eNo78rtTR2/G+bN4R4EsBi?=
- =?us-ascii?Q?n8A/4FH6MfnnfA7YkWMGcUiqFYZMeiucXomksfzfT1hkMM59fm171Iizyidx?=
- =?us-ascii?Q?TjHaR7+0SdKH6BoayjlIbTz9p7JIixma3D8WYKIaz+XEJUt8VcTuNes05JDC?=
- =?us-ascii?Q?/oSwheoy9AwKpAm7AEAT9+wUWASdJT7uv28cKSD0EzoWz71p4d7AMdzycAYn?=
- =?us-ascii?Q?Zfmef5iXQxNzZ5D4KSRYeGKzkKF09+RU0imlGcOz7E07GnO+WdB9R3NgJwJ3?=
- =?us-ascii?Q?+jPmc5UVFANJ7K54jv1uN7kUnXmq/0RZitaCMwB7++yK3HAV3IxZRDvR0sQi?=
- =?us-ascii?Q?b42scWOpUgGKl6C8MeHcp8Jj7/6e+WRqqFHC7hyVgG3ywy7XlmFVp6NFsKHG?=
- =?us-ascii?Q?Xp9mOeokucKcSrQ8lfDVsvst+vrb?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?6ztApsXILw9hc/PMq849MXKz7VNYec+KCJG7vEB9e8YlMvBXFboAC731F+Uf?=
- =?us-ascii?Q?Q89t1T9AWyS+IK7Hdmkz5StmHNXfIKZtjIEUWV9YivfLyF5NC8QtrAn8+uGb?=
- =?us-ascii?Q?sjGiP4Z1tepVjx5Y83aSe8g2L6SoV6YQPlEzAe/zVwXlrIhYzYPpNf7R85rC?=
- =?us-ascii?Q?SFHffo3+3UY+xQ5FCIGs1vjHIOaH5Zre5qE5PYo/isckklQ001LUtpoyB5Jw?=
- =?us-ascii?Q?rAQ2UuSFO7wSPTDPOSK3+1a3BGUQaQ7QzOWD5Pctzb/ojwg9SLIdcJBkDz5d?=
- =?us-ascii?Q?z22VHF2VOTiczDa3xFfOrOF+Y6C7hCqQPanwdIUYfvcl8bcIjtR0hT2t63GW?=
- =?us-ascii?Q?7lahZ2hqiJkMRtz3nFZqS5GuhSAxfnhtN9KdHqEUGqzWRnuT3C1AnXg8jO9Z?=
- =?us-ascii?Q?lTaSmlMtz+PdTRlSyOBDqFlaAkIMDRv9dI4Cw0677Kic3Wqv2J3cuAzKaWg4?=
- =?us-ascii?Q?wgWxmtLKdFU09cbk0JWlhgk1vZbfWfvSAZw6obtycCt96Fz23kSRTbWvq4f5?=
- =?us-ascii?Q?64Dr6ZtGBvZ2d6R+DymMajsId1a1R72sdresBZZOhXMdofY2DyvFSBwIulbB?=
- =?us-ascii?Q?OEeXdjbnGEhDu6nWFt3b+PEmbfUfFC0893e3/HtamcSpziU7On6hbBIa+EhQ?=
- =?us-ascii?Q?n8zxnX67wD+1N0BRHhaYa+7Gqj/wR6h51VaDk3t4SA1NOtF06CrN2ia8ACu2?=
- =?us-ascii?Q?5TVScsVrf5Hq3oEJtJzvWQ2jjbQisKMlCvWnLLkt2dbIeWZwV05Oq0LD2TM+?=
- =?us-ascii?Q?Mh8QklopT4rTWO+imIjM9AdwXPsZVXMTMtXtwIR72w7OFIdz81KcpceXqwkn?=
- =?us-ascii?Q?QcIeNgS3AStAjoCJYDI6E5+2uihWS9EWg1edm/cn4P9HQjJNEYZhJDmA35Hs?=
- =?us-ascii?Q?nMtRhHDHnMFgQ4DMWjQLKqUEab3FBWRHXsijnImmQtIbHBFHN96Q/ioZUmbE?=
- =?us-ascii?Q?ZCpsu9AzZw8XKaR8/8jklCPr5X9O64b7ao16k/EowY+yIxhqIvs2sZgeswPm?=
- =?us-ascii?Q?vrW8Nl/cujep2x4A8EG4PXWuDUN6Yi9qszzlxYhHaaa6MpMxtCLREq5Ripcs?=
- =?us-ascii?Q?ulHCPSAxEhqBkpLQSUAV7wGHuZmYBRhoeqVnSh4cUAFFDwhUS9nwG70fK7Dv?=
- =?us-ascii?Q?VZZ27+i+bU2ewahdOl6ZqDJ/1IzciCFeEM5aWP4CoTcff47au71RfSdktlts?=
- =?us-ascii?Q?U19zGpWwgwNymurVbFNjt8f7xPkhhy8zbSIyakeS7eS0rWWcOeJxehJWpBlw?=
- =?us-ascii?Q?P10HbJok3odKIKOKaoxWsHIATGl/o1R2e15O3ePndJU4V3FMXwUsp2TKQ+zo?=
- =?us-ascii?Q?gdq5UJDX2rxu7boet5jx8+8d1DEeW6b3qrnPM89MWa+b+OqKc1TFOXwXHpbF?=
- =?us-ascii?Q?Itf8j+kcItpfrvKLwIOYxSR/qM7+/59CPWSgRHmlYM0wSrMOdNW3dUvb2Eni?=
- =?us-ascii?Q?k6PU0m5KPh6i8SYHSuSCn7qf1KmI4+EmkUmkV6bDZv/hfAFEY0b7Wlls4oZc?=
- =?us-ascii?Q?7C+0KCtf8SuwLnaQt8WAPrIrhTDPDigl/DvQyBNiVH/6ojg5m3BaRWnRItt6?=
- =?us-ascii?Q?8D4IMkHuW11zhZhpyAo=3D?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: ac63929f-335a-4c19-6411-08dd5c1c1936
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 19:29:51.0017
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: p+YtqNB3Sy/dnp2pdxmEXc50N+lQiSSwRxJYWgnJYESBAHHDrQMpIz0QFPWBtmIV
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4442
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87eczb71xs.fsf@kernel.org>
 
-On Wed, Mar 05, 2025 at 10:51:38AM -0800, Nicolin Chen wrote:
-
-> > I mean a normal S2 domain attaching to multiple devices on multiple
-> > instances.
+On Wed, Mar 05, 2025 at 07:43:59PM +0100, Andreas Hindborg wrote:
+> "Ralf Jung" <post@ralfj.de> writes:
 > 
-> Oh, I haven't thought about a !nest_parent S2 case.
+> > Hi,
+> >
+> > On 05.03.25 14:23, Alice Ryhl wrote:
+> >> On Wed, Mar 5, 2025 at 2:10 PM Ralf Jung <post@ralfj.de> wrote:
+> >>>
+> >>> Hi,
+> >>>
+> >>> On 05.03.25 04:24, Boqun Feng wrote:
+> >>>> On Tue, Mar 04, 2025 at 12:18:28PM -0800, comex wrote:
+> >>>>>
+> >>>>>> On Mar 4, 2025, at 11:03 AM, Ralf Jung <post@ralfj.de> wrote:
+> >>>>> However, these optimizations should rarely trigger misbehavior in
+> >>>>> practice, so I wouldn’t be surprised if Linux had some code that
+> >>>>> expected memcpy to act volatile…
+> >>>>>
+> >>>>
+> >>>> Also in this particular case we are discussing [1], it's a memcpy (from
+> >>>> or to) a DMA buffer, which means the device can also read or write the
+> >>>> memory, therefore the content of the memory may be altered outside the
+> >>>> program (the kernel), so we cannot use copy_nonoverlapping() I believe.
+> >>>>
+> >>>> [1]: https://lore.kernel.org/rust-for-linux/87bjuil15w.fsf@kernel.org/
+> >>>
+> >>> Is there actually a potential for races (with reads by hardware, not other
+> >>> threads) on the memcpy'd memory? Or is this the pattern where you copy some data
+> >>> somewhere and then set a flag in an MMIO register to indicate that the data is
+> >>> ready and the device can start reading it? In the latter case, the actual data
+> >>> copy does not race with anything, so it can be a regular non-atomic non-volatile
+> >>> memcpy. The flag write *should* be a release write, and release volatile writes
+> >>> do not exist, so that is a problem, but it's a separate problem from volatile
+> >>> memcpy. One can use a release fence followed by a relaxed write instead.
+> >>> Volatile writes do not currently act like relaxed writes, but you need that
+> >>> anyway for WRITE_ONCE to make sense so it seems fine to rely on that here as well.
+> >>>
+> >>> Rust should have atomic volatile accesses, and various ideas have been proposed
+> >>> over the years, but sadly nobody has shown up to try and push this through.
+> >>>
+> >>> If the memcpy itself can indeed race, you need an atomic volatile memcpy --
+> >>> which neither C nor Rust have, though there are proposals for atomic memcpy (and
+> >>> arguably, there should be a way to interact with a device using non-volatile
+> >>> atomics... but anyway in the LKMM, atomics are modeled with volatile, so things
+> >>> are even more entangled than usual ;).
+> >>
+> >> For some kinds of hardware, we might not want to trust the hardware.
+> >> I.e., there is no race under normal operation, but the hardware could
+> >> have a bug or be malicious and we might not want that to result in UB.
+> >> This is pretty similar to syscalls that take a pointer into userspace
+> >> memory and read it - userspace shouldn't modify that memory during the
+> >> syscall, but it can and if it does, that should be well-defined.
+> >> (Though in the case of userspace, the copy happens in asm since it
+> >> also needs to deal with virtual memory and so on.)
+> >
+> > Wow you are really doing your best to combine all the hard problems at the same
+> > time. ;)
+> > Sharing memory with untrusted parties is another tricky issue, and even leaving
+> > aside all the theoretical trouble, practically speaking you'll want to
+> > exclusively use atomic accesses to interact with such memory. So doing this
+> > properly requires atomic memcpy. I don't know what that is blocked on, but it is
+> > good to know that it would help the kernel.
 > 
-> A nest_parent case will not allow devices to attach the S2 but
-> always to a proxy nested S1 as we discussed previously. So, I
-> think the implementation could be very different?
+> I am sort of baffled by this, since the C kernel has no such thing and
+> has worked fine for a few years. Is it a property of Rust that causes us
+> to need atomic memcpy, or is what the C kernel is doing potentially dangerous?
 
-It could, and that is what you show here
+I agree; this is a strange discussion.
 
-But also, it could be the same implementation.
+What is it that people want to protect against?  If the issue is 
+undefined behavior caused by a second party modifying the source of a 
+memcpy() while the copy is in progress -- well, there's no way to 
+protect against that.  You just have to make sure either that it cannot 
+happen or else that you can cope with potentially torn values in the 
+copy's destination.
 
-Jason
+Is the issue a matter of informing verifiers or sanitizers that a data 
+race during a memcpy() shouldn't count as undefined behavior?  Surely 
+the way to do this depends on the verifier/sanitizer in question.  As 
+far as I know, there is no version of memcpy() whose arguments are 
+declared to be pointers to atomics.  (And if such a thing did exist, it 
+would be part of C++, not of C.)
+
+Alan Stern
 
