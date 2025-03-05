@@ -1,128 +1,131 @@
-Return-Path: <linux-kernel+bounces-546290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6282A4F8CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:28:28 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9E09A4F8CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:29:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3EFC189259B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:28:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E763A45D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:29:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2278A1F3BB2;
-	Wed,  5 Mar 2025 08:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 325AC1FC0F1;
+	Wed,  5 Mar 2025 08:29:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gKSxjcym"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="C/AInHnP"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE3CD1632E4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:28:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C5A1F09B6
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:29:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741163303; cv=none; b=sPn6vxWvXg1zWAplGmg+yVG4l0FSNWLt5Yd4hr4MYGIRl5u1Gwgq7/nDofqW4eSWAfY0YAgflOIB0PFqrnJqdUs86uUkf8F/k+rBlNMzZRbApotFquAlKTFVFTuPkIaYRDzdHZ01sVLNOgwDmqGyCcz11YImsEg1xSKmKvXmorY=
+	t=1741163380; cv=none; b=oWoQixIlN2/L6dCo+X/yZ944+X5mNqlTh/YJpiupmaWRqZzIEtk3ekVVGNN08PfkxbUa2H5CTbu9gCjdwURb/jrWpcQozmacjRAojp6j/q5WRu64M6O/XVxwzCVXhXzuZ9RHJjukAMSFhcMBeoMwOdVWP5iD7C+Z1D3rRWB5kDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741163303; c=relaxed/simple;
-	bh=MSPn4W9sB23/uj/geVRBjgewqoRQ3KPp93gZGu1MohI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hn0zIwaOY/i95aOgvwXtb9C54a5kSFWrZzG/3RHUBRN0/2wwA7wSJL8G0OEwCklvluCV49h9SJomYs59X8q22azqdApO0EYGnlhx3Xu7jIwnuzsI8gdnpY8mPVweLyuF4UY2JmZIZTBDnO3hPr5LcqMHG/dCSjxzTvWsAJ2nA6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gKSxjcym; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-54973b49353so2146017e87.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:28:21 -0800 (PST)
+	s=arc-20240116; t=1741163380; c=relaxed/simple;
+	bh=BIb8PPjZHUval8yQxPaR2VI3OQirSDX4w545WCXSCig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aNEh3aIMRTTjN8Md70w0zfDv9cRhPD9lOykS8oOxZ96d0fmVNpqH2+7yU6HlDrTsBYRhV6FsN+N+9/pmJJLq1myh3Oh8j9CaCwVOfQxgNjVCKXrfqPD+RWZSIa9dna9Nko4xPfGuEeOuFHRPfsuvUZGM8bztZTO9eImjHz03d/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=C/AInHnP; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-abf5f4e82caso685305966b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:29:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741163300; x=1741768100; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N2Us6lCHNOiYnE3yG6wUt2hVFrJOz646FHY6A1kK29Y=;
-        b=gKSxjcym0YcZwWYXfbe5A2yMiCtqbQEg8ZEYtY2e3Frgyd67ChFIT5MyHsxV6XqUfD
-         Chvi6OfRvQbJ6BR1r6LX568KY99MU/SwlmrrgBfwFxKsze8QRHz4roMpl9C72c1L1nE6
-         iVn76sySzkNHawoi24mHdav3mPl8QBv3ZWSoI5f5q5h/yTDbpHEjWefgRA3pCgTkmF/A
-         eymNcPxlREczkPCjd8IO+krfhrtgNBOAvbQehiVY3otFLRSbGfQFUv4SCAMPZ2aRY2Lm
-         6b8ZZfe9Mr37oIwSeDVq7Z15va4X8f3AZUp7BDm2h8dVc5FCwJvXw9mmH9CiWPl4OSe2
-         0U6Q==
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1741163377; x=1741768177; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=iS635IvOc12Hbl5A1UFbpTyLqQYfDtGYrejudL0pBtc=;
+        b=C/AInHnPu6QEjteXzTU/Y+8cXSDnlwTkiooAJDKunOxZzuyXInimEwnJpecJbpBo3o
+         S0UwivWB0GwvIyxeMHaN7kHTe8v9oWO8YEWbnI+3h9H+r6sM9huilXAF30fpcyuJxNry
+         vQHWkiNk5GpMBotSLwAx8VmIyzmnw31+gj2/wYmyQ9aohqYul/YubmdUtV1YULJ3ueUf
+         FZSqkMhgWVa4aibkSIeJZkFHujC/3ywr1mpvpJ70ptJ9X3Voog5WLOfvXh2hdfwIEPpk
+         cvKKZhVCj0ZGtNxECF8jjfftN1S7xScxZbWrwuJLw1Zf9y0aK/TKDnTgPwJSsBEVb3Ez
+         mWAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741163300; x=1741768100;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N2Us6lCHNOiYnE3yG6wUt2hVFrJOz646FHY6A1kK29Y=;
-        b=AKrZ1OKGE53Z4DIUWU5jhblTJt3hiElZ1mSAFOC0mLu8dVBWAKxyXbVDui14CZyod+
-         R5RjE/hZUGgk30AVt8Yw1Yodw63oITJIAeJAXiT24RgDkwr35ufPrrAxwrAcQ4yKRDMF
-         D+nMVNlyfmM4WeL6sU5esCK3ZBEtWK4h5f0A8OaqMACuMI+ybKSBu49smrbrP5J+vRpv
-         +/RAMnPGsblG4bqnpvMo5JAnRpJJruuiLf1yrJBRtRmZSaP2YjE5F8LGzxryNXzuQmm1
-         IQNqOsZvtUkj1wTxhdDhTA40wi4sXcopLlC3wDEZFyL0ny7rL1fcRzZRh6We2qQ5dk6Y
-         1+yQ==
-X-Gm-Message-State: AOJu0YyOOnPBws6NbR4bcjlfKpB+vgH2AmnYtQGahjspuCBn2zpkco9g
-	//ap90BBCBw9CW7vUQQ7NSA9aaKdGGI8jcEsmkQ50T8HEYQ7/fah
-X-Gm-Gg: ASbGnct/627NoJTxa3s00TgmZKsUhKk9RsGa0WEvLFpRriUfFs0NMYKQhoUqDqMYW56
-	EtMJ4vJt/QMlyDIoP3v6HpbuEfyFcVzJUJp48POOvb+cAoNVX8rvgA0dFtLGyAWbLEXIT/da24W
-	3IVoLW/69BHMKEqcmbYSfzBVth8dYX8Kk9NIbs6PytSHixOhxd6GT2uls+KAjSOpkVv37HXvNgm
-	xcXV+47/bPs7Q/b+IS1SPDxvbivfn2zP43VENV1jBkI/SKSf2r4YwfOLZgYwhsBsDfVXLG2wkUA
-	dFKd2nmNGuUDUXq6sWiBbs9K2TKzYnsYAZi20OmckSJE0g==
-X-Google-Smtp-Source: AGHT+IGzMfHUOho20kCvu9RmiSvKriVr3+0EToSY1cdxlRJeyuHqpO2AnjX6LrlxbrcVlw8O+Ra9qw==
-X-Received: by 2002:a05:6512:2256:b0:545:8a1:5377 with SMTP id 2adb3069b0e04-5497d32f8c6mr707749e87.2.1741163299475;
-        Wed, 05 Mar 2025 00:28:19 -0800 (PST)
-Received: from grain.localdomain ([5.18.255.97])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495831fd43sm1329742e87.109.2025.03.05.00.28.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 00:28:19 -0800 (PST)
-Received: by grain.localdomain (Postfix, from userid 1000)
-	id 562D25A0136; Wed, 05 Mar 2025 11:28:18 +0300 (MSK)
-Date: Wed, 5 Mar 2025 11:28:18 +0300
-From: Cyrill Gorcunov <gorcunov@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Benjamin Segall <bsegall@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Andrey Vagin <avagin@openvz.org>,
-	Pavel Tikhomirov <ptikhomirov@virtuozzo.com>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [patch V2 10/17] posix-timers: Make
- signal_struct::next_posix_timer_id an atomic_t
-Message-ID: <Z8gLIne1nDPa1yp3@grain>
-References: <20250302185753.311903554@linutronix.de>
- <20250302193627.543399558@linutronix.de>
- <Z8YPQn0UpxucZLJP@grain>
- <87sentbyer.ffs@tglx>
- <Z8c-vvnMpPjYRvOn@grain>
- <87mse05yk3.ffs@tglx>
- <Z8d7tm5dQN6dZEvu@grain>
- <87ikoo53xy.ffs@tglx>
+        d=1e100.net; s=20230601; t=1741163377; x=1741768177;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=iS635IvOc12Hbl5A1UFbpTyLqQYfDtGYrejudL0pBtc=;
+        b=G9mnUvOjNuy1HiZg+irS4f32aaOgNy2YxnFTf0+6QVBCfVT9hE6P0AyPYDDt0P0oZ6
+         fLb3jO/msjKsd77bOT1ct7LtA2Sh3xWO8rxT7bKbZf3iMVSARdwd5U2cQ6YkuIK0VFG4
+         lOm/Dz399q1EjZNQ6s4nwIwLlrBirqqxQw0Ru2qwDmUzbddme7uDJhKVTCvNNYHhiPvM
+         NZ35RG11DZnBe4j3CnxHCLPLg6bsiEYnoomuwQoEn1DRlKUGTHmQf7xKzurtSvouu2nT
+         1OBBKKwxTlX5O7m7t2tBg98qpTWd9Mc5bdPPlhGYYHJyHbhneasSRhIqmoVzq/N+EuRq
+         fAfg==
+X-Forwarded-Encrypted: i=1; AJvYcCXJnTRBcBktdS5m0sMytGT670x2bVvO2JL8WJSqpVrGp5ZfhgcgAiSCaVuylK6Cf63oinRkYwzZtluwcJM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxC6Odb9eG2URMkTT/OWpB8lfo/Gd3Bwhw9jUUTwC0rRZZhNSY8
+	NXvtn1btmQ3ZooHmy/mY/fOuAhAN2YNzEsndx/Q9zt28rRZlqjJVNpheLkNnji0=
+X-Gm-Gg: ASbGncu/yVK6Irt5IoepRQ1NSLV0v4/9CZt7zJiSXmdF+VUfP0Pg8Nx5jrresDBhVRI
+	yx+XA5DnYmBLcMGBkz/KpV88tUf5C/af690mI4K8+ChT57GgrwxUG6ASfuAcDF3QLxS+cMwSis8
+	M+NOnXJW+HHl4qilc/h0lmZMUYYn5vv9aRvmBa1cbH+glw5WL+8vM3Bf+5KCZBgW88wOoX07CSr
+	2Zzb+gfTN7VrUpWnnII2vZR+UdtbfyjV3n1j4QMFGY1q75wUqNhK2aYNvBbihOsDBVykvPJelqA
+	4jlgMlj5/R04zgWGg3/Q0dWb6CpMT55lcdB/pmp1rtx5nIJ1gJs315v2+UR+Dd59DoFchp2m92Y
+	e
+X-Google-Smtp-Source: AGHT+IEjj5zOJcj1/OsRfe5VF46uWo7cJGLTZaHw0tlhP7T8cxub/kFHcc4MiHV1iodJ3D5MAmAOeQ==
+X-Received: by 2002:a17:907:9446:b0:ac2:b73:db3d with SMTP id a640c23a62f3a-ac20da4c87fmr226467166b.4.1741163376857;
+        Wed, 05 Mar 2025 00:29:36 -0800 (PST)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abfa393dd6dsm453290666b.96.2025.03.05.00.29.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 00:29:36 -0800 (PST)
+Message-ID: <1975f2a1-9461-400d-8b3f-f40e8b94be80@blackwall.org>
+Date: Wed, 5 Mar 2025 10:29:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87ikoo53xy.ffs@tglx>
-User-Agent: Mutt/2.2.13 (2024-03-09)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 net-next 15/15] netfilter: nft_flow_offload: Add
+ bridgeflow to nft_flow_offload_eval()
+To: Eric Woudstra <ericwouds@gmail.com>,
+ Michal Ostrowski <mostrows@earthlink.net>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Jiri Pirko <jiri@resnulli.us>,
+ Ivan Vecera <ivecera@redhat.com>, Roopa Prabhu <roopa@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Ahmed Zaki <ahmed.zaki@intel.com>,
+ Alexander Lobakin <aleksander.lobakin@intel.com>,
+ Vladimir Oltean <olteanv@gmail.com>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
+ Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
+References: <20250228201533.23836-1-ericwouds@gmail.com>
+ <20250228201533.23836-16-ericwouds@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250228201533.23836-16-ericwouds@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 05, 2025 at 08:31:21AM +0100, Thomas Gleixner wrote:
-...
+On 2/28/25 22:15, Eric Woudstra wrote:
+> Edit nft_flow_offload_eval() to make it possible to handle a flowtable of
+> the nft bridge family.
 > 
-> The traversal does not RMW the timer itself, it unmangles the signal
-> pointer for comparison in posix_timer_hashed(). posix_timer_by_id() does
-> straight comparisons. So both only read.
+> Use nft_flow_offload_bridge_init() to fill the flow tuples. It uses
+> nft_dev_fill_bridge_path() in each direction.
+> 
+> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
+> ---
+>  net/netfilter/nft_flow_offload.c | 142 +++++++++++++++++++++++++++++--
+>  1 file changed, 137 insertions(+), 5 deletions(-)
+> 
 
-No, I mean that we read the value then allocate a temp value with 0 bit
-excluded implicitly, so it is not a straight read, but whatever.
+Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
 
-> Sure, we can mangle timer ID instead of the signal pointer, but the
-> outcome is pretty much the same. The only difference is in
-> posix_timer_hashed(), which must detect a taken timer ID independent of
-> the timers valid state to prevent collisions.
-
-Bah, I managed to miss that we need to lookup for not yet fully initialized
-timers as well, and indeed it makes no much difference which exactly field
-to mangle. Thanks a huge for explanations, Thomas!
-
-	Cyrill
 
