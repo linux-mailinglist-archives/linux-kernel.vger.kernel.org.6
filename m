@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-547709-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547710-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85895A50C85
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:29:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D069DA50C86
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:30:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7BCCC16819A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2164B188313B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D662325B69F;
-	Wed,  5 Mar 2025 20:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A41D11F3FF8;
+	Wed,  5 Mar 2025 20:27:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="CvRjYyN5"
-Received: from out-177.mta1.migadu.com (out-177.mta1.migadu.com [95.215.58.177])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="M2R3OIBO"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C868025BAD0
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7191D25BADD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741206448; cv=none; b=Yeaak0sCzCuw8jlcuLOjiu9L760pamqWAAtgPcNH4eTkv/5z1jyOREKocN25KVD97gGqXaO8UNPE8wRXb/IjnHGU+i1lUAnNgZvYF4RojY8CS4KsEjNsK6Mw61h6HOs6yxPGxPn4nvD0mEjMYdTP28HaqwA/fzLRkbZhBVGv+hU=
+	t=1741206451; cv=none; b=ICNiCNyc7O/fz66YsLG/GGX5QGuMANXGBjI+zz1wrIoK+v2ksNQFT8d1JDsT+i+PhucnBn54GsymAn8jwz1VvCWAqsjjEFKXm4or0W0z6nndHXd2U4xsTgAsdrDRjPr9fWHwV2q+Ge5Cy//zaoKkDe4wExCvS/i149Gi1a8g3HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741206448; c=relaxed/simple;
-	bh=2Zvff9DSxDiWX36E1VtM6LDxSAojrVJGu+d6/O1PddI=;
+	s=arc-20240116; t=1741206451; c=relaxed/simple;
+	bh=v72i9ZH+iPBdgthNaHtc/GiAHWIJJ4cxFYQyr0iAwOM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JdQQm1oR8JH07eNOu3BBGhLu8IA8b275D0E3k/C5uJUSsOElW58sTI50sdpk2U9XIoYsLCE+cySb3bPl1obfxrQO5rrhRdOpHqst0khb3MbEScwk8Bf/ZCd739eBDx6qDoyc7+ipFkppKElya3es5knEg3UrbyNYvKV1MOpKRng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=CvRjYyN5; arc=none smtp.client-ip=95.215.58.177
+	 MIME-Version; b=psFVqEqZvjTYGyv8pMNgfm4VyTvE4hc8an16YVEuJbpPMH/AlfdWye4EA3m87F9aU9EB9ytg1T9xYbyB2ODz9pIif7dQ3CosdUASgmZfUjfDypDLrRcP3l11be4dVqwoIo9VCTMwMgmEpHZuc5Rh3b1wnK3UgWdEQvndFXDWbgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=M2R3OIBO; arc=none smtp.client-ip=95.215.58.189
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
 X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741206445;
+	t=1741206448;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=2bDDTqqIerMygPlFTbXBzR4bAQlHdxowEVy28NROPr0=;
-	b=CvRjYyN52Un6ydpsuq1SFFaX1v1zahr9DggPQ2o4kQKHj7xsiRct/cl1sDD4Js7F6m51gC
-	6HmY7UHb8yHaH5vQm5rJdloqsTjnh5LgD5Y+wszGXySE+fNvqfwlUFIQL9Lw3JyJdpEep/
-	lBy3A9y3J8Mm6t/qt9Ye0ux8/lDZG1o=
+	bh=EfEdFUvQ2EkRiUWOzt1MvFJ8DJkkjSEDwZPsVt74AJw=;
+	b=M2R3OIBO2T2joABxVS4DWe8rw8KKxwY5m9riq5I9pxyXhzZ4kifOy+Qdm2MNmL0VC8c2A3
+	H6cb+zuqg0mL9+SgzWjE6JqFJCvOzxQ/VOs8NGbcESgdLV5aAWuYUERI1xw3mQA9kOxBud
+	jKhdb+/5aZ/YhSuWnluCHt1QF13Iu+8=
 From: Oliver Upton <oliver.upton@linux.dev>
 To: kvmarm@lists.linux.dev
 Cc: Marc Zyngier <maz@kernel.org>,
@@ -57,9 +57,9 @@ Cc: Marc Zyngier <maz@kernel.org>,
 	linux-kernel@vger.kernel.org,
 	Janne Grunau <j@jannau.net>,
 	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH v3 10/14] KVM: arm64: Advertise PMUv3 if IMPDEF traps are present
-Date: Wed,  5 Mar 2025 12:26:37 -0800
-Message-Id: <20250305202641.428114-11-oliver.upton@linux.dev>
+Subject: [PATCH v3 11/14] KVM: arm64: Remap PMUv3 events onto hardware
+Date: Wed,  5 Mar 2025 12:26:38 -0800
+Message-Id: <20250305202641.428114-12-oliver.upton@linux.dev>
 In-Reply-To: <20250305202641.428114-1-oliver.upton@linux.dev>
 References: <20250305202641.428114-1-oliver.upton@linux.dev>
 Precedence: bulk
@@ -71,38 +71,81 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Migadu-Flow: FLOW_OUT
 
-Advertise a baseline PMUv3 implementation when running on hardware with
-IMPDEF traps of the PMUv3 sysregs.
+Map PMUv3 event IDs onto hardware, if the driver exposes such a helper.
+This is expected to be quite rare, and only useful for non-PMUv3 hardware.
 
 Tested-by: Janne Grunau <j@jannau.net>
 Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
 ---
- arch/arm64/kvm/pmu-emul.c | 12 +++++++++++-
- 1 file changed, 11 insertions(+), 1 deletion(-)
+ arch/arm64/kvm/pmu-emul.c    | 25 ++++++++++++++++++++++++-
+ include/linux/perf/arm_pmu.h |  4 ++++
+ 2 files changed, 28 insertions(+), 1 deletion(-)
 
 diff --git a/arch/arm64/kvm/pmu-emul.c b/arch/arm64/kvm/pmu-emul.c
-index 0a2023aabe18..38d9490c17fd 100644
+index 38d9490c17fd..5f4e9be8aa8b 100644
 --- a/arch/arm64/kvm/pmu-emul.c
 +++ b/arch/arm64/kvm/pmu-emul.c
-@@ -1231,7 +1231,17 @@ u8 kvm_arm_pmu_get_pmuver_limit(void)
- 	pmuver = SYS_FIELD_GET(ID_AA64DFR0_EL1, PMUVer,
- 			       read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1));
+@@ -677,6 +677,20 @@ static bool kvm_pmc_counts_at_el2(struct kvm_pmc *pmc)
+ 	return kvm_pmc_read_evtreg(pmc) & ARMV8_PMU_INCLUDE_EL2;
+ }
  
--	/* Treat IMPLEMENTATION DEFINED functionality as unimplemented */
-+	/*
-+	 * Spoof a barebones PMUv3 implementation if the system supports IMPDEF
-+	 * traps of the PMUv3 sysregs
-+	 */
-+	if (cpus_have_final_cap(ARM64_WORKAROUND_PMUV3_IMPDEF_TRAPS))
-+		return ID_AA64DFR0_EL1_PMUVer_IMP;
++static int kvm_map_pmu_event(struct kvm *kvm, unsigned int eventsel)
++{
++	struct arm_pmu *pmu = kvm->arch.arm_pmu;
 +
 +	/*
-+	 * Otherwise, treat IMPLEMENTATION DEFINED functionality as
-+	 * unimplemented
++	 * The CPU PMU likely isn't PMUv3; let the driver provide a mapping
++	 * for the guest's PMUv3 event ID.
 +	 */
- 	if (pmuver == ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
- 		return 0;
++	if (unlikely(pmu->map_pmuv3_event))
++		return pmu->map_pmuv3_event(eventsel);
++
++	return eventsel;
++}
++
+ /**
+  * kvm_pmu_create_perf_event - create a perf event for a counter
+  * @pmc: Counter context
+@@ -687,7 +701,8 @@ static void kvm_pmu_create_perf_event(struct kvm_pmc *pmc)
+ 	struct arm_pmu *arm_pmu = vcpu->kvm->arch.arm_pmu;
+ 	struct perf_event *event;
+ 	struct perf_event_attr attr;
+-	u64 eventsel, evtreg;
++	int eventsel;
++	u64 evtreg;
  
+ 	evtreg = kvm_pmc_read_evtreg(pmc);
+ 
+@@ -713,6 +728,14 @@ static void kvm_pmu_create_perf_event(struct kvm_pmc *pmc)
+ 	    !test_bit(eventsel, vcpu->kvm->arch.pmu_filter))
+ 		return;
+ 
++	/*
++	 * Don't create an event if we're running on hardware that requires
++	 * PMUv3 event translation and we couldn't find a valid mapping.
++	 */
++	eventsel = kvm_map_pmu_event(vcpu->kvm, eventsel);
++	if (eventsel < 0)
++		return;
++
+ 	memset(&attr, 0, sizeof(struct perf_event_attr));
+ 	attr.type = arm_pmu->pmu.type;
+ 	attr.size = sizeof(attr);
+diff --git a/include/linux/perf/arm_pmu.h b/include/linux/perf/arm_pmu.h
+index 4b5b83677e3f..7ce6dea5bfa9 100644
+--- a/include/linux/perf/arm_pmu.h
++++ b/include/linux/perf/arm_pmu.h
+@@ -100,6 +100,10 @@ struct arm_pmu {
+ 	void		(*stop)(struct arm_pmu *);
+ 	void		(*reset)(void *);
+ 	int		(*map_event)(struct perf_event *event);
++	/*
++	 * Called by KVM to map the PMUv3 event space onto non-PMUv3 hardware.
++	 */
++	int		(*map_pmuv3_event)(unsigned int eventsel);
+ 	DECLARE_BITMAP(cntr_mask, ARMPMU_MAX_HWEVENTS);
+ 	bool		secure_access; /* 32-bit ARM only */
+ #define ARMV8_PMUV3_MAX_COMMON_EVENTS		0x40
 -- 
 2.39.5
 
