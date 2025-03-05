@@ -1,78 +1,47 @@
-Return-Path: <linux-kernel+bounces-547579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4542A50B32
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:12:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF27FA50B39
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:13:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23ED3188A8AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:12:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC91C3A6176
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:12:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEEC2252908;
-	Wed,  5 Mar 2025 19:12:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 570E9252912;
+	Wed,  5 Mar 2025 19:12:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A6skyESF"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PAE3Dno6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2F5F16426;
-	Wed,  5 Mar 2025 19:12:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78DB2E339F;
+	Wed,  5 Mar 2025 19:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741201949; cv=none; b=Jvr8NOuhCUwzEWZupTacP9Fvui3QEa81HAY+Ie3GYMF/NxKKdEiGl8c7m/p9nWvB22rxrYcppWIrP7Z9KKz+OcKgc1FiCj5z5HuKdGWKMpLaDITq3Ej5PUFMq+hbypMZI9FnSH+5fPmvOpV7h2+glMUSapI0IdueOO2ub03ZXAg=
+	t=1741201962; cv=none; b=jcFDPxi6I8/CXu9pj1MnVm5zoJmj/Fgc41NYuj4Vjsr4JGQErb3mXO6vyhBy5alT8jL4LARXygZiagdxAVkewA4cIZW2joJPGZ8RNarwZ1lG+6k4WHEcZKzbMLHg1YLtcnCfaSf9gH+AaPgfl2kd/34OQh6s8Zt8GDb3eYf1u24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741201949; c=relaxed/simple;
-	bh=OQIS71VY7d37k6PpXEg25jjEYN9BsKp+QOVUVeBB7os=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GoKnkkYoUDojmVN8vJX6kkX7HtnBQvLtCY0sp4PA2F1ATixaitoylRCyQQllNUFlYcaDlO9D12LujphR5E8uEWTCrS6QlssquqMen37+5cmGGZZhXetO9XX5zTEqGEO1+Tj38k59BesCKEGm4kXLTxjE4JK9B7YOwfQHiic4oKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A6skyESF; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3910f525165so2859811f8f.1;
-        Wed, 05 Mar 2025 11:12:27 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741201946; x=1741806746; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2UAtTDNi9A6LaL+tM+1TUxbX2g8gujKdVZLYK4r9TuM=;
-        b=A6skyESFXR8PPJugQcUEcQ+qY6rbbW6fWETITaQ0eyyshwcezqFkBIQwR1bFhoRxTl
-         m7U2Vg+s0zp8llRDdb5eFRA1OwjYaFe2oa1uxJqCDR5FposIE5l2zHW3evYH9+ncM/rl
-         Siz5Ydr2iFW0ETjTvWN6NR9spxSd1iih8pagKxt+qIjERlfBPf+NDbsXaImRmum/hazj
-         2jRW11Vol6h72QaDOIv57szM7VE89pIgwMAQdmkIsvb0bRTE4uJjqDqj1aB6pIJNZ859
-         bYk5j5Up92UFhRnjS7QBG0hnlwvEzwWGdFLPlqsK/76dc76uO9i5q4JTp34o6GWzB9KJ
-         4vTA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741201946; x=1741806746;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2UAtTDNi9A6LaL+tM+1TUxbX2g8gujKdVZLYK4r9TuM=;
-        b=EGiK9dgEVR/4/lEJR/t8lgG6e1Wkw3G1ZbdDtqyel3w4jkWgvGgebVz4e9ZRRaYBUi
-         D26u86cA4OZnGJ/7B158hWqV1l2IN0o6wGdj6EL2vTZPtW6ApQeh/7RmJcjVVhhZxVf2
-         i0p9c6cG+oPJEKmh7xjl70Fk4MvWCiD7sxta5/6QYk1XF9k+du2dNGEpQ/ud4+Jo3TRR
-         uMbY7mLIjqbHnMUqMgkkOoL0Ztys+HGinCyIcaD55i30Ho8KG/rOT14plSULGj2tHJGs
-         Pr+dQzSYVyoU1MX4xjdcjaWM4ROewFMHiXMoLlkC5RZ7h6FeJYdFp7tbzqRAJGrEq66G
-         1JvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU88r3r6+43GtLVuXItqOk7b2aZK72d4Ly/76Yx1i2QpIwDX63XP3POEi4Awm6q8AVdX7fWBCCpUq+6sjU=@vger.kernel.org, AJvYcCXFWhY7FvfZAFLRQpZPoY542X+P5fdZ2h7K4L/LWzl4iLSv05FttQ/bhkUfe2jWsIx2ZhjfU1SqhPHFGA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUbyjhY8FlePMNYEkKzuZmpYjBUduUvMu8LfTXJuXXnOJ3X/VT
-	2y04YNqmLDWbnQgu9rSO8OjLoGxdXlQdDMhPPyTH7iKInx47wHx5
-X-Gm-Gg: ASbGncvVAe9JacLvy6wAotjMmxjX1JMCcJxLEztUOawN+SydPPLiTZ/PJKOZZqxfBjr
-	qx8wKMHUrQog+dYA7YVxmBHkcbeYiPo2LZhbr+v06bNsGcP4MAZN+tpTSNV5TXuiP5oDBM6Ny+D
-	Mt9jp1kIdJFINvpslTx/QzYvroRYlxLMEfUcq6u/k2RKCcP9PEzX5Pl24/8S8GM918zscXh1EyN
-	BV4Kf5KNq5trYrV7aQdAXj5jXczhodF/lHxwzjzsxxDht1bFPHB/JR79P4KHZ97sEM3IDGXapiU
-	iuG1tWdx42izBqd/CC1iexXG3mEwaTeOYojW4zECbpBhs55VxNQMbunsL3nUvd8QDg==
-X-Google-Smtp-Source: AGHT+IE9Jfcw1QTaD71UiMWcIV4F62fCIiDaj/lP77sDS7GkTItX4uePhMNdB6mev257s1kfrn+nAw==
-X-Received: by 2002:a05:6000:4025:b0:390:f6aa:4e6f with SMTP id ffacd0b85a97d-3911f714de9mr4298289f8f.10.1741201945611;
-        Wed, 05 Mar 2025 11:12:25 -0800 (PST)
-Received: from [172.27.49.130] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844a38sm22061124f8f.75.2025.03.05.11.12.24
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 11:12:25 -0800 (PST)
-Message-ID: <49df4e60-695a-4562-aa27-f946e7acd485@gmail.com>
-Date: Wed, 5 Mar 2025 21:12:22 +0200
+	s=arc-20240116; t=1741201962; c=relaxed/simple;
+	bh=ExIt7DBknleEJKacxfxqxKiuFabsw/hcQ0A1uH54Rvk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iMxLSFUTtyv/MpeBAdLfcP7qoVro89TepWULsZu8FEECDfu0LTI1HiLgY9ylkNunWJKau+VzFPqNGDnvqBe8WEn+gdNqXYGdSrA3zStHN/SgIixwhdZGLoDvJ6CN7bBUx9ekHEBWYfFRKvdMXadN13t+boaUSG6QvdULgF3mlVc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PAE3Dno6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98A14C4CEE0;
+	Wed,  5 Mar 2025 19:12:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741201961;
+	bh=ExIt7DBknleEJKacxfxqxKiuFabsw/hcQ0A1uH54Rvk=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=PAE3Dno6ccaoSw/OC63gkrZi8NDjW0/NBpQ/CohRssgbiI6fZd2MoCN9Sx8iIjnHc
+	 Zn/31swEb0GmEgTM9Ka68gOkC7A1lPWQ/BkqmxUHd0A+/ZXPMGHjx2j6dRpaA5UIqZ
+	 6S/Dii+K24YkOYV+s74JXr6oi7CtJgKaNEbenjJmbzC3Nk6WBGiT42kGeOcdhpFtgW
+	 sBIG2tBPq7umwO3dZit0I0/RM5eLpBhNm6hxhNIA/NW9Rk8GYKv/sWazHL5rpr7mze
+	 yet3BLL7SGI4y/VRkq9nQNqwnkUtpdk/jzB7vKLci/LinwcEa8YddEywYqP8MKA+Qc
+	 LfO9Xgz1LoXuA==
+Message-ID: <cbbb1f9c-8361-43b1-a24b-afc5c91919e8@kernel.org>
+Date: Wed, 5 Mar 2025 20:12:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,56 +49,79 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/mlx5: handle errors in mlx5_chains_create_table()
-To: Wentao Liang <vulab@iscas.ac.cn>, saeedm@nvidia.com, leon@kernel.org,
- tariqt@nvidia.com, andrew+netdev@lunn.ch, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250304080323.2237-1-vulab@iscas.ac.cn>
+Subject: Re: [PATCH v2 2/2] clk: samsung: update PLL locktime for PLL142XX
+ used on FSD platform
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Varada Pavani <v.pavani@samsung.com>, aswani.reddy@samsung.com,
+ pankaj.dubey@samsung.com, s.nawrocki@samsung.com, cw00.choi@samsung.com,
+ alim.akhtar@samsung.com, mturquette@baylibre.com, sboyd@kernel.org,
+ linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: gost.dev@samsung.com, stable@vger.kernel.org
+References: <20250225131918.50925-1-v.pavani@samsung.com>
+ <CGME20250225132507epcas5p455347acbd580b26ee807e467d3a6a05e@epcas5p4.samsung.com>
+ <20250225131918.50925-3-v.pavani@samsung.com>
+ <c5cef589-8091-41ce-94e7-82b56ba4143f@kernel.org>
 Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20250304080323.2237-1-vulab@iscas.ac.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <c5cef589-8091-41ce-94e7-82b56ba4143f@kernel.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-
-
-On 04/03/2025 10:03, Wentao Liang wrote:
-> Add error handling for mlx5_get_fdb_sub_ns() and
-> mlx5_get_flow_namespace() failures in mlx5_chains_create_table().
-> Log error message with  mlx5_core_warn() to prevent silent failures
-
-nit: double spaces before mlx5_core_warn.
-
-> and return immediately to prevent null pointer dereference of ns.
+On 01/03/2025 15:14, Krzysztof Kozlowski wrote:
+> On 25/02/2025 14:19, Varada Pavani wrote:
+>> Currently PLL142XX locktime is 270. As per spec, it should be 150. Hence
+>> update PLL142XX controller locktime to 150.
+>>
+>> Cc: stable@vger.kernel.org
 > 
-> Signed-off-by: Wentao Liang <vulab@iscas.ac.cn>
+> Fixes commit?
 
-Please add Fixes tag and target the patch to net.
+If this is a fix, commit msg should describe the bug. You decided to
+drop the fixes tag, but you kept stable, so this makes no sense.
 
-> ---
->   drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c | 5 +++++
->   1 file changed, 5 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-> index a80ecb672f33..e808531cc6f5 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/lib/fs_chains.c
-> @@ -196,6 +196,11 @@ mlx5_chains_create_table(struct mlx5_fs_chains *chains,
->   		ns = mlx5_get_flow_namespace(chains->dev, chains->ns);
->   	}
->   
-> +	if (!ns) {
-> +		mlx5_core_warn(chains->dev, "Failed to get flow namespace\n");
-> +		return NULL;
-
-Callers expect error, not NULL.
-
-> +	}
-> +
->   	ft_attr.autogroup.num_reserved_entries = 2;
->   	ft_attr.autogroup.max_num_groups = chains->group_num;
->   	ft = mlx5_create_auto_grouped_flow_table(ns, &ft_attr);
-
+Best regards,
+Krzysztof
 
