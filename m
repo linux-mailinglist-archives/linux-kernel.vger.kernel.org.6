@@ -1,177 +1,177 @@
-Return-Path: <linux-kernel+bounces-547286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4AAA5057F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:46:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41EA6A50571
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:45:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F8193B27BB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21492188B08C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 788BA1A2545;
-	Wed,  5 Mar 2025 16:40:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666E1198857;
+	Wed,  5 Mar 2025 16:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UJ//hv/L"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LL8O6rfE"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 867BD1A0BFE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:40:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56E8119884C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192811; cv=none; b=uxWZifGAuEa1jvNATOdd+vbp7crRhpmj3GzkGbtQavR7Ni0xquLxAdZgaqqz5J/tUdbDi/yGwB9mHbgvjqV7ZNPOgFHV/67fi+kWiBaceD8f6+UJ0n9RciBhEck5zJ1HkPsQK58A048ZdRYE4ioL4I4zAPB2MFGR8gqE0er3ky4=
+	t=1741192862; cv=none; b=WUjoTjgUdAZ4+sZv/hajZ8CBy+XJ048gQvbRlsPEf3qTV0Bv4epY4+iBFDXe/aslWuxOObCv4uThz5WC+p8mufxA9uT5+++r3taJiD1RrJYkz38LBU9rfCwzYaVlfNDwsKSK6URos34wIavdQlKxikwTA3ZBdfwyT3MkSoS62Gw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192811; c=relaxed/simple;
-	bh=yMxwl6XD0hI3JMpxLKJHQ3pWBmSpmW3p8zjN38EOoiU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=M8V4+G33Q6RCaZNYIVnC1vZOcvSAQe+QK4fjt+EkX8pZwDTQbahcOcNG3jwYFmqNgSAyQZNMKIEwUVUgKEpKj4DC7qIdNdAcrG0Zz44ba6084dWmOR3mXn/+yTi7wZyEMZeFVMKK6y5dos7yS447puN/2+/wzYl4VhJzFtOueFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UJ//hv/L; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741192810; x=1772728810;
-  h=message-id:date:mime-version:from:subject:to:cc:
-   references:in-reply-to:content-transfer-encoding;
-  bh=yMxwl6XD0hI3JMpxLKJHQ3pWBmSpmW3p8zjN38EOoiU=;
-  b=UJ//hv/LdRtSFWpqf+om7mZuuvXa4dJx2+qFK1kAWgcbLN7UNYMahfKh
-   kHZEvTZcWbcE4bz3V75QNTdDPshYeXvrbINYXiFLqI7lhnK2xb9tenNMW
-   HcZzEhmhUUXZU6K/M9g7bixKqrmbFOl/i/Dc2tkObNlnqJd1H9HrWLhKh
-   j03Ah9RgwyC/NHQsppdbabc//0VgfhqMsmfMvHxql1oS6S0/5iMHr/pKB
-   uqXzhjWgw9+Dd7RbDQNA89FGsYwQMdZiMHagWJNJoKmiv+q4y4eyP6ehx
-   EdvHboo6mfAvA9V/M/8uG5W86cmbDperqe6pG7BnDNhQQlDMPs7mP0ck4
-   g==;
-X-CSE-ConnectionGUID: +TlFcLleTl69da6TgIvDhA==
-X-CSE-MsgGUID: iFZhwl//RmuuLxhwHbTT7g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42363018"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="42363018"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:40:10 -0800
-X-CSE-ConnectionGUID: nDtYZWiwTGutUURCD0mkxg==
-X-CSE-MsgGUID: KE/YVy7ERyaIXXMqHdne7w==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="118458907"
-Received: from kcaccard-desk.amr.corp.intel.com (HELO [10.125.109.196]) ([10.125.109.196])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 08:40:09 -0800
-Message-ID: <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
-Date: Wed, 5 Mar 2025 08:40:29 -0800
+	s=arc-20240116; t=1741192862; c=relaxed/simple;
+	bh=GIZj5nXeV43qZLaLKVSZeSCAfiZ1aV247XMQYfCpLOI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XcQBHGsZeQUhaFOpregvnaC0nsNhU770gXjNjjjV51a/O3UlS4P2mB13D8/RSvFF6WlwuhK8Pw9DhMBCHVbl7wQAUuSiuegrk3Gc1TEis8TokK+kVTwsRegSMwQi47tm+GBNL1c3zB/+czqqw2mVsWDEShj32L1qyC2uzxllVj8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LL8O6rfE; arc=none smtp.client-ip=209.85.208.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5e5b56fc863so815250a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 08:40:59 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741192858; x=1741797658; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=bcj+FL6rUqtMKI8ucbJjAqXrCeckB3SlFcAWKVcfex4=;
+        b=LL8O6rfEcEjX6ljXVha1OzPX06D6aMqGyFtSrUZrduv97mfafIUPu04Q5UnjU/D3lC
+         H477pbltdUtZy7ktlrIQBvURdyBhD5u9jDl0D2O0nCnMvlZ3u82Kx03qXQiMBSCA9387
+         uwjt41CZ5AWmcTlzoURb7J7cxNgEsdz4jIuho=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741192858; x=1741797658;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bcj+FL6rUqtMKI8ucbJjAqXrCeckB3SlFcAWKVcfex4=;
+        b=FebmHdW9VjeaUEvxyvEyiVpMeIf5CAKyU8e5vr8p1Fy7DoatRr+LSyH0NDqkOj49CG
+         73YmfmQCvWuHXm/D7l0iiqBPbrY6HDkXpYo+qAqVW02gW7lJnDTG2dxPBbxBy022hjsa
+         UhvADuebj8qgVn9BYXSXjeebX80qWE9lX7Fd5j9qOIkPi1LqoJk7WmZTlmthkjh2Fw4s
+         r4IU5sjZOOsg9kQkkP54dJzEEpM7jZ+oZNP37Ij0D6bGf5vElXK5rAr4Z/4M4wCz/cbj
+         qatF1aJ+RdSewf1JS+tVIwI11H/8shArF2fuUabRjTgzyJslIL4N/iEs0GffcvGY3bOU
+         GCiA==
+X-Forwarded-Encrypted: i=1; AJvYcCWkMGvtMBWRoqN4Tz9sKjYhzWMyW79S9fzFdOW2MhWWwpPNYn1Tx8ZHIIPslkyjI6gRO++MMQ5E5us2ayI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv+W/KdU23vcyHrBBj1Y+N5Q3HtY8GuFDUarD9cllYmA7hZVKe
+	cpNM02KHM+MwlscXP6Q8Hh+hbBFRcOR/eK5uTGGDAUH0ZtGYvdwu3+1+ZdGMbYZhJ2SteKOWqPw
+	OinLnvQ==
+X-Gm-Gg: ASbGncsRlWyQ2RmL2dFDl0LZg5GIRmhN9Ih46y9tL1qjzeLOmCTQSYO3sjlENpTv8xk
+	4NqOJOFcNqO5t3wFLtNUwJT1KTfERiGjhwpR1SvizEN8oIB3ua4pLvwI5/DLX52WeMrQ/Q52+r1
+	CdlX+FMOCJ/2c5gAfJMPuyGbKXxvoHuAM/6W/EFw0Q56dfziFoo2sIf6yhzRenwxV8VtPEdU9En
+	FUUzy4CqItXzG3QkWIpQznFHxcB6rCHtehBJ1w/4YPWnQZD4fxiL5hpcoTCN1Atx9YNwM9xeZFA
+	XA7UhvKa9bKPEbcd4X1rCQuGZuc8eHwtwlvBzXQzBLos2+TMtYiIGuLk0TJdwWDj1bdOVehcQvr
+	O2LaK0nVWjppuFpKMcXY=
+X-Google-Smtp-Source: AGHT+IHvJAVVwBDJaW0CZjWFJ5geMTQODPradPhOlZWlSIEP56IEzN7SzOTtlcVqc3q/TgmzKBqNnQ==
+X-Received: by 2002:a05:6402:3819:b0:5e5:9a2b:167a with SMTP id 4fb4d7f45d1cf-5e59f3e9216mr3696718a12.17.1741192858045;
+        Wed, 05 Mar 2025 08:40:58 -0800 (PST)
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com. [209.85.218.45])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3fb5927sm9739211a12.53.2025.03.05.08.40.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 08:40:56 -0800 (PST)
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso1294171366b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 08:40:55 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVKdg0Tgx/Q7WfboIXeAs/7r8EDd73oWAvpSxb+TF7ShZeSaDyEGF/e4ARJJ4NWxK/iintrSOHtOJpNMLg=@vger.kernel.org
+X-Received: by 2002:a17:907:7290:b0:abf:615d:58c2 with SMTP id
+ a640c23a62f3a-ac20d92d6c5mr406399766b.34.1741192855487; Wed, 05 Mar 2025
+ 08:40:55 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Dave Hansen <dave.hansen@intel.com>
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-To: Borislav Petkov <bp@alien8.de>, Joerg Roedel <jroedel@suse.de>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-Cc: Ingo Molnar <mingo@kernel.org>, Joerg Roedel <joro@8bytes.org>,
- x86@kernel.org, hpa@zytor.com, Tom Lendacky <thomas.lendacky@amd.com>,
- Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- Larry.Dewey@amd.com
-References: <20250305105234.235553-1-joro@8bytes.org>
- <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
- <Z8g01YhM_FtdB5n6@gmail.com>
- <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
- <Z8g4sU_dsZgY0PuS@gmail.com>
- <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com>
+ <03a1f4af-47e0-459d-b2bf-9f65536fc2ab@amd.com> <CAGudoHHA7uAVUmBWMy4L50DXb4uhi72iU+nHad=Soy17Xvf8yw@mail.gmail.com>
+ <CAGudoHE_M2MUOpqhYXHtGvvWAL4Z7=u36dcs0jh3PxCDwqMf+w@mail.gmail.com>
+ <741fe214-d534-4484-9cf3-122aabe6281e@amd.com> <3jnnhipk2at3f7r23qb7fvznqg6dqw4rfrhajc7h6j2nu7twi2@wc3g5sdlfewt>
+ <CAHk-=whuLzj37umjCN9CEgOrZkOL=bQPFWA36cpb24Mnm3mgBw@mail.gmail.com>
+ <CAGudoHG2PuhHte91BqrnZi0VbhLBfZVsrFYmYDVrmx4gaLUX3A@mail.gmail.com>
+ <CAHk-=whVfFhEq=Hw4boXXqpnKxPz96TguTU5OfnKtCXo0hWgVw@mail.gmail.com>
+ <20250303202735.GD9870@redhat.com> <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
+In-Reply-To: <CAHk-=wiA-7pdaQm2nV0iv-fihyhWX-=KjZwQTHNKoDqid46F0w@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 5 Mar 2025 06:40:38 -1000
+X-Gmail-Original-Message-ID: <CAHk-=wjyHsGLx=rxg6PKYBNkPYAejgo7=CbyL3=HGLZLsAaJFQ@mail.gmail.com>
+X-Gm-Features: AQ5f1Jp0qXBcEd52erShw3zCywhVPd7l8QG-JqnvkqqMzAhLfYEXemeEXbrVY6s
+Message-ID: <CAHk-=wjyHsGLx=rxg6PKYBNkPYAejgo7=CbyL3=HGLZLsAaJFQ@mail.gmail.com>
+Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
+To: Oleg Nesterov <oleg@redhat.com>
+Cc: Mateusz Guzik <mjguzik@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
+	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>, Manfred Spraul <manfred@colorfullife.com>, 
+	Christian Brauner <brauner@kernel.org>, David Howells <dhowells@redhat.com>, 
+	WangYuli <wangyuli@uniontech.com>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	"Shenoy, Gautham Ranjal" <gautham.shenoy@amd.com>, Neeraj.Upadhyay@amd.com, Ananth.narayan@amd.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 3/5/25 07:37, Borislav Petkov wrote:
->> So this question boils down to whether the parsing of the bits happens
->> in kernel- or user-space. Actually there is already parsing in
->> kernel-space to print the status bits into the kernel log:
->>
->> 	SEV: Status: SEV SEV-ES SEV-SNP
->>
->> ... which is great for a quick glance without needing any tools. The
->> user-space tools which already exist have their own parsing of the bits
->> and for them it is much easier to consume the raw value of the
->> SEV_STATUS MSR. See my changes to snpguest:
->>
->> 	https://github.com/virtee/snpguest/pull/88/files
-> Well, I guess we can do both:
-> 
-> cat /sys/...
-> 
-> SEV_STATUS(0xdeadbeef): SEV SEV-ES SEV-SNP
-> 
-> So that people don't have to pick apart the MSR hex value.
-> 
->> Btw, what is the equivalent on the Intel TDX side for these feature
->> bits?
-> There is none, AFAICT. That's why the whole discussion.
+On Mon, 3 Mar 2025 at 10:46, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> ENTIRELY UNTESTED, but it seems to generate ok code. It might even
+> generate better code than what we have now.
 
-TDX's history isn't as exciting as SEV.
+Bah. This patch - which is now committed - was actually completely broken.
 
-TDX guests have CPUID to tell them that they're running that way.
+And the reason that complete breakage didn't show up in testing is
+that I suspect nobody really tested or thought about the 32-bit case.
 
-TDX hosts are much more arcane. You can't _actually_ know that it's a
-TDX host until you actually start making successful SEAMCALLs and the
-TDX module answers them. But we fudge it by just looking at
-MSR_IA32_MKTME_KEYID_PARTITIONING at boot and assuming that anything
-with that MSR will be able to be a TDX host.
+That whole "use 16-bit indexes on 32-bit" is all fine and well, but I
+woke up in the middle of the night and realized that it doesn't
+actually work.
 
-We've just got X86_FEATUREs for hosts and guests:
+Because now "pipe_occupancy()" is getting *entirely* the wrong
+answers. It just does
 
-	#define X86_FEATURE_TDX_HOST_PLATFORM ( 7*32+ 7)
-	#define X86_FEATURE_TDX_GUEST ( 8*32+22)
+        return head - tail;
 
-and that's it.
+but that only worked when the arithmetic was done modulo the size of
+the indexes. And now it isn't.
 
-Folks certainly _want_ something in sysfs to dump the TDX module version
-and so forth, but we've resisted the urge so far.
+So I still haven't *tested* this, but at an absolute minimum, we need
+something like this:
+
+  --- a/include/linux/pipe_fs_i.h
+  +++ b/include/linux/pipe_fs_i.h
+  @@ -192,7 +192,7 @@
+    */
+   static inline unsigned int pipe_occupancy(unsigned int head,
+unsigned int tail)
+   {
+  -       return head - tail;
+  +       return (pipe_index_t)(head - tail);
+   }
+
+   /**
+
+and there might be other cases where the pipe_index_t size might matter.
+
+For example, we should add a check to pipe_resize_ring() that the new
+size is smaller than the index size. Yes, in practice 'pipe_max_size'
+already ends up being that limit (the value is 256 pages), even for
+16-bit indices, but we should do this properly.
+
+And then, *while* looking at this, I also noticed that we had a very
+much related bug in this area that was pre-existing and not related to
+the 16-bit change: pipe_discard_from() is doing the wrong thing for
+overflows even in the old 'unsigned int' type, and the whole
+
+        while (pipe->head > old_head)
+
+is bogus, because 'pipe->head' may have wrapped around, so the whole
+"is it bigger" test doesn't work like that at all.
+
+Of course, in practice it never hits (and would only hit more easily
+with the new 16-bit thing), but it's very very wrong and can result in
+a memory leak.
+
+Are there other cases like this? I don't know. I've been looking
+around a bit, but those were the only ones I found immediately when I
+started thinking about the whole wrap-around issue.
+
+I'd love it if other people tried to think about this too (and maybe
+even test the 32-bit case - gasp!)
+
+                         Linus
 
