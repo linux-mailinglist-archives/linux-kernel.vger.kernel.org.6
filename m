@@ -1,125 +1,166 @@
-Return-Path: <linux-kernel+bounces-547265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B59D9A5052E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:39:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243C4A50556
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:42:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD6016ABCF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:39:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4B563B16EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B93224EF6B;
-	Wed,  5 Mar 2025 16:38:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4Ut2cNz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E6B19ABA3;
-	Wed,  5 Mar 2025 16:38:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C711C5F11;
+	Wed,  5 Mar 2025 16:39:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0633419DF41;
+	Wed,  5 Mar 2025 16:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192687; cv=none; b=jrjMpNHQpXuQXr3+xaG+bt4Wb9m8NKWfMBL7sWmiyE3h6PKk+4MOwxrzPPpx4749fSy31tgJoho/L9JSlRTR7zpbX6nB67mV0hQ+lFkDc5u2q4uXXF4FNSjag9fYOIr4NZR+TjI6z9zlNREm2z9LfQX9AdGy7eLmWeAmADuCXas=
+	t=1741192743; cv=none; b=FcT7rHgCKk0mPZVybyz9Z1ZiyKqMFQ0gVKVq/X9vURMUKkQGHLscS0cB0x048c5nsajjc6UOh2QaN6DKcRh/E9HpPBlqlJ+LeymBN07CpyK7Y2NUuFBh6Jwdk5IbAAjpfIvEE1CG3gUYN0Bi2omQ+bTzjgLM+uQ/6YHeQgzreVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192687; c=relaxed/simple;
-	bh=sL6HKnFMuXDXenCBceEoHD1TmQX+6oJO6AlNMpLGC5I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Slpxc8G5dNQD/rAfOueNKxhqYmfWVAmG4bXOI3So4rKmVBkbmsvNt1Uv/BC8oAHeT6zKrVtaNGgGf2m3xulbdnt+eUK9xintA1CpeCWTFfF0q9KBd5OMwHWiT8hfBQiLY5ew9IT79ME/EXvQKEUH9J9l1IxkFGxNSHXHyKve5dU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4Ut2cNz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD7DC4CED1;
-	Wed,  5 Mar 2025 16:38:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741192687;
-	bh=sL6HKnFMuXDXenCBceEoHD1TmQX+6oJO6AlNMpLGC5I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N4Ut2cNzPxw/19HWcA9q6UtjX96+MvXtTOt/spQ3Kaa+W2/+8jLSKzmKdQfqq784h
-	 iXyfpjwvj2pTl+oH/pXFQUSIATsV9GDQUrPpY1XGGg5K2Ec3lSimClooKk4ynyGvUT
-	 r1PicB+2aVmGYeq5t8RYER35rZsdl0FcxkOhZOQIMiqVhIJjGkFPyBk/REwuohhG/d
-	 euKrDtjZjx1dIMBrkGYX5ZMNE1iPMHZ8ZJuJ6YZr+yGG2ppJvpgHbjVU81Ljc4A8Cq
-	 w+kRXk2NJVka0QLj05JGXMw/DRAN7bWAq46yGtSnJIxDDewUcFooFOLbAD+mTsOL1F
-	 droruHgs3mybQ==
-Date: Wed, 5 Mar 2025 10:38:05 -0600
-From: Rob Herring <robh@kernel.org>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com,
-	neil.armstrong@linaro.org, rfoss@kernel.org,
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
-	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
-	simona@ffwll.ch
-Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
- color encoder
-Message-ID: <20250305163805.GA2071011-robh@kernel.org>
-References: <20250304101530.969920-1-victor.liu@nxp.com>
- <20250304101530.969920-4-victor.liu@nxp.com>
- <20250304152320.GA2630063-robh@kernel.org>
- <1891036.atdPhlSkOF@steina-w>
+	s=arc-20240116; t=1741192743; c=relaxed/simple;
+	bh=s7B+ahRe/ZrUp9puXvR0Xlhm02ueQhd2vnuyBhYBT4w=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=LlHviubIpTMNv/F1FozlrTWm/kbeoBzHvU8cC6OLs4NmzguW8J06qP0LYjNE5HbuOHPD8jdWPSXN1dloPCbqalRLVXvTQOYI9hOFVn+Ie948kfksgr5l5IKZWHbeucE1a3nlNxttKKSb8RWTKJ43FrQ9kMHJ+EUAanc5rVgw5cQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 98BD71713;
+	Wed,  5 Mar 2025 08:39:14 -0800 (PST)
+Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 30E5D3F5A1;
+	Wed,  5 Mar 2025 08:39:00 -0800 (PST)
+From: Sudeep Holla <sudeep.holla@arm.com>
+Date: Wed, 05 Mar 2025 16:38:06 +0000
+Subject: [PATCH v2 02/13] mailbox: pcc: Always clear the platform ack
+ interrupt first
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1891036.atdPhlSkOF@steina-w>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250305-pcc_fixes_updates-v2-2-1b1822bc8746@arm.com>
+References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
+In-Reply-To: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
+To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: Sudeep Holla <sudeep.holla@arm.com>, 
+ Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
+ Adam Young <admiyo@os.amperecomputing.com>, 
+ Robbie King <robbiek@xsightlabs.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=4712; i=sudeep.holla@arm.com;
+ h=from:subject:message-id; bh=s7B+ahRe/ZrUp9puXvR0Xlhm02ueQhd2vnuyBhYBT4w=;
+ b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBnyH4evRpTuF123iDB5y1GdK8xJsTkhVLbO8sOs
+ elKveJw+bCJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ8h+HgAKCRAAQbq8MX7i
+ mMEUD/4v/Fp6tmnX9I4A+awLnmgk/+qqIyGlVhtZXOES/xK+wN8lvCA4no+Ps6QtQS6Fl3TS+x8
+ kUrJ14afbjXnFMxGVc5CtK1YWSc/BX0rmnFcLjMklXW9IrMtvyUp7+C5Hn/utLRYX80jYdZl2Jo
+ Qovsk7zuDAu0VKOCCNj3MSlwgCI1nHL4+VgnedCsE4OXnMozOkcfStmwfNUSVM1zp5HJMvuKGwF
+ spIIL/q4SSvx5dP5zgnMjD/qQXjILNBegkRkPKiF8FGN8Vak8Y85lnizthprAVE5KzKIRwSxY8t
+ ikAxbQ1feq/lEtmWGLPMNx1Gxht00FeuPYTrivtPhmzBWBPk8udmHQ2YPRV+4qmycPYA4I1p/wP
+ jKnwqK12aG1QlOHUu4LyvLZ/GlNZsl9TCHmHMPdPQdRsFcry8vTlRtHyr0xCkD2YB8E/oVXOJFc
+ yXk5/6dvH6zhywCAnH+guEbvD9drm0kgxQkB9IH7Q44s6xLqNFpUqo9q51FXmscpmpHKbWSlaGd
+ J1PEroS5Btmo9VT7Gr2GF7OP2V4CjYshruEDtD4ARw0yunTSpIyPLww6+Qd5lk/HJKhfMJpfzFm
+ fLfyNEwSWkIa4GDpfXnE7gbShsNW7x86fAskXIEelRGZ6sWpEJpYGqFtrYixxr1zR2ZSzM2rZDn
+ RclVZYZZPtvXABg==
+X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
+ fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
 
-On Wed, Mar 05, 2025 at 10:35:26AM +0100, Alexander Stein wrote:
-> Hi,
-> 
-> Am Dienstag, 4. März 2025, 16:23:20 CET schrieb Rob Herring:
-> > On Tue, Mar 04, 2025 at 06:15:28PM +0800, Liu Ying wrote:
-> > > A DPI color encoder, as a simple display bridge, converts input DPI color
-> > > coding to output DPI color coding, like Adafruit Kippah DPI hat[1] which
-> > > converts input 18-bit pixel data to 24-bit pixel data(with 2 low padding
-> > > bits in every color component though). Document the DPI color encoder.
-> > 
-> > Why do we need a node for this? Isn't this just wired how it is wired 
-> > and there's nothing for s/w to see or do? I suppose if you are trying to 
-> > resolve the mode with 24-bit on one end and 18-bit on the other end, you 
-> > need to allow that and not require an exact match. You still might need 
-> > to figure out which pins the 18-bit data comes out on, but you have that 
-> > problem with an 18-bit panel too. IOW, how is this any different if you 
-> > have an 18-bit panel versus 24-bit panel?
-> 
-> Especially panel-simple.c has a fixed configuration for each display, such as:
-> > .bus_format = MEDIA_BUS_FMT_RGB666_1X18
-> 
-> How would you allow or even know it should be addressed as
-> MEDIA_BUS_FMT_RGB888_1X24 instead? I see different ways:
-> 1. Create a new display setting/compatible
-> 2. Add an overwrite property to the displays
-> 3. Use a (transparent) bridge (this series)
-> 
-> Number 1 is IMHO out of question. 
+The PCC mailbox interrupt handler (pcc_mbox_irq()) currently checks
+for command completion flags and any error status before clearing the
+interrupt.
 
-Agreed.
+The below sequence highlights an issue in the handling of PCC mailbox
+interrupts, specifically when dealing with doorbell notifications and
+acknowledgment between the OSPM and the platform where type3 and type4
+channels are sharing the interrupt.
 
-> I personally don't like number 2 as this
-> feels like adding quirks to displays, which they don't have.
+-------------------------------------------------------------------------
+| T |       Platform Firmware         |    OSPM/Linux PCC driver        |
+|---|---------------------------------|---------------------------------|
+| 1 |                                 | Build message in shmem          |
+| 2 |                                 | Ring Type3 chan doorbell        |
+| 3 | Receives the doorbell interrupt |                                 |
+| 4 | Process the message from OSPM   |                                 |
+| 5 | Build response for the message  |                                 |
+| 6 | Ring Platform ACK interrupt on  |                                 |
+|   |  Type3 chan to OSPM             | Received the interrupt          |
+| 7 | Build Notification in Type4 Chan|                                 |
+| 8 |                                 | Start processing interrupt in   |
+|   |                                 |  pcc_mbox_irq() handler         |
+| 9 |                                 | Enter PCC handler for Type4 chan|
+|10 |                                 | Check command complete cleared  |
+|11 |                                 | Read the notification           |
+|12 |                                 | Clear Platform ACK interrupt    |
+|   | No effect from the previous step yet as the Platform ACK          |
+|   |  interrupt has not yet been triggered for this channel            |
+|13 | Ring Platform ACK interrupt on  |                                 |
+|   | Type4 chan to OSPM              |                                 |
+|14 |                                 | Enter PCC handler for Type3 chan|
+|15 |                                 | Command complete is set.        |
+|16 |                                 | Read the response.              |
+|17 |                                 | Clear Platform ACK interrupt    |
+|18 |                                 | Leave PCC handler for Type3     |
+|19 |                                 | Leave pcc_mbox_irq() handler    |
+|20 |                                 | Re-enter pcc_mbox_irq() handler |
+|21 |                                 | Enter PCC handler for Type4 chan|
+|22 |                                 | Leave PCC handler for Type4 chan|
+|23 |                                 | Enter PCC handler for Type3 chan|
+|24 |                                 | Leave PCC handler for Type3 chan|
+|25 |                                 | Leave pcc_mbox_irq() handler    |
+-------------------------------------------------------------------------
 
-This is what I would do except apply it to the controller side. We know 
-the panel side already. This is a board variation, so a property makes 
-sense. I don't think you need any more than knowing what's on each end. 
+The key issue occurs when OSPM tries to acknowledge platform ack
+interrupt for a notification which is ready to be read and processed
+but the interrupt itself is not yet triggered by the platform.
 
-> Number 3 actually describe the hardware connection. The only impact for
-> software is to know which bus format it should use.
+This ineffective acknowledgment leads to an issue later in time where
+the interrupt remains pending as we exit the interrupt handler without
+clearing the platform ack interrupt as there is no pending response or
+notification. The interrupt acknowledgment order is incorrect.
 
-I'm not opposed to this, but only if it provides *something* that option 
-2 does not. I'm not seeing what that is.
+To resolve this issue, the platform acknowledgment interrupt should
+always be cleared before processing the interrupt for any notifications
+or response.
 
-Node or not, either case needs a format property. We already have a 
-variety of bus/pixel format related properties. I've rejected new ones 
-because we need something common here that's flexible enough to handle 
-any situation. That's either something that can describe any bit layout 
-or something enumerating the formats (as MEDIA_BUS_FMT_* does). The 
-former is hard to get right and there's always something else you can't 
-handle. I'm not opposed to just reusing MEDIA_BUS_FMT_ if that works.
+Reported-by: Robbie King <robbiek@xsightlabs.com>
+Reviewed-by: Huisong Li <lihuisong@huawei.com>
+Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+---
+ drivers/mailbox/pcc.c | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
 
-Rob
+diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+index f2e4087281c70eeb5b9b33371596613a371dff4f..4c582fa2b8bf4c9a9368dba8220f567555dba963 100644
+--- a/drivers/mailbox/pcc.c
++++ b/drivers/mailbox/pcc.c
+@@ -313,6 +313,10 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+ 	int ret;
+ 
+ 	pchan = chan->con_priv;
++
++	if (pcc_chan_reg_read_modify_write(&pchan->plat_irq_ack))
++		return IRQ_NONE;
++
+ 	if (pchan->type == ACPI_PCCT_TYPE_EXT_PCC_MASTER_SUBSPACE &&
+ 	    !pchan->chan_in_use)
+ 		return IRQ_NONE;
+@@ -330,9 +334,6 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+ 		return IRQ_NONE;
+ 	}
+ 
+-	if (pcc_chan_reg_read_modify_write(&pchan->plat_irq_ack))
+-		return IRQ_NONE;
+-
+ 	/*
+ 	 * Clear this flag immediately after updating interrupt ack register
+ 	 * to avoid possible race in updatation of the flag from
+
+-- 
+2.34.1
+
 
