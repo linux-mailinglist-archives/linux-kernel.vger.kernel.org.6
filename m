@@ -1,90 +1,70 @@
-Return-Path: <linux-kernel+bounces-547219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DBCFA50462
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:17:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7F0A50466
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:18:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 53CAC16E69C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:17:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D1CE1883E6B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:18:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D543A189B9D;
-	Wed,  5 Mar 2025 16:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 632F515DBA3;
+	Wed,  5 Mar 2025 16:18:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="oK6Ax3Bf"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="orXjR8AV";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qMZAhEYx"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 913B72D05E;
-	Wed,  5 Mar 2025 16:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B22F2E3361
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:18:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741191440; cv=none; b=Z31ylmkQQohV8NRB0swfnR/jvy9wwuaIQnwouhKBm9FNvJDNSoipxTEJnNeJFBL+NZl7U4SmUleI2agWJjA8h3fLagTuQFqsGdDvrwWRsK3k/vJSaS7jXJnKaDLV687r59MyZAv/C4N8m5RLpI78ZeRXiL3O8t2P9pYTgLG9Np8=
+	t=1741191517; cv=none; b=IFyVPMd9oKIOcBhRUyuGHyO6Rh13shU2mNRheTVyJsLg160IXRMlmVkGziNCSIxqUvxqQtP81njMNY3hF3DwHPOdWo6ETNcsq3owogJ4IwTd+WF+h3uBvZEHpCYmaJGwJ2n5spp8ve8IcM5HtPlV9xaf7JIaYdefdlGP9q6ynhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741191440; c=relaxed/simple;
-	bh=CbTXzzl88Ktw/wWR5/ra95x9JfLO3RWPe1jQjpC7yEY=;
+	s=arc-20240116; t=1741191517; c=relaxed/simple;
+	bh=+BPUt8lHDc3+pod8h5vk3760BpjXxiNMN6F5ieHmpI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p+fISIdtGv4MBTMmoQQtSBj359sgaTcg8Uy1vpeKrlAcx3Z9C9478UAw/pwmKZMHTV/oevWo5ivIv1L/4f09YaBmoDeo49BwD/VHrkzA52LscEgWHbUj7H7epfbtM6dFkT3f5jJJJDfwDExsi0QTX1w0L1aLkj8NOmhU4CQIkkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=oK6Ax3Bf; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=3jN1+xJ/BcC8IjBdHqdwVy40EWJGNjtffvW7aUuKF40=; b=oK6Ax3BfZA/yGM1I2bGbwg/+7L
-	7DoHVzMrKWZSVWODvVnu043ZuRCUkEtnyWZpFpC9ACAfR5w0d+m50zvWUl0IxIViVKGMhwqUyBEPl
-	H8zJW/t82dDsAJSQpjC1XAfDGplcCxLlCL3rpV8UALi8s2vKi21L9ifSnbcdAitxEhO8qH2VRTrzL
-	6jfMXB/HmpmJg3yOELu0OyY7CYSE805iw7EHbUiPhQXIukDgKHf3dR7hNRUMB0HFx7Yd1mUBF39+N
-	EmksIGdewmK97ldh89ukpJ4Q9q/3Ajurv5egf3BVUsdALPYckRL5poS1YWW7/fvch9uPYQ3+j2A6D
-	mjFjZYug==;
-Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1tprQT-00000000coL-1dqW;
-	Wed, 05 Mar 2025 16:16:53 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 79D7430031C; Wed,  5 Mar 2025 17:16:52 +0100 (CET)
-Date: Wed, 5 Mar 2025 17:16:52 +0100
-From: Peter Zijlstra <peterz@infradead.org>
-To: Bart Van Assche <bvanassche@acm.org>
-Cc: Marco Elver <elver@google.com>, "David S. Miller" <davem@davemloft.net>,
-	Luc Van Oostenryck <luc.vanoostenryck@gmail.com>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Alexander Potapenko <glider@google.com>,
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Dmitry Vyukov <dvyukov@google.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Ingo Molnar <mingo@kernel.org>, Jann Horn <jannh@google.com>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Joel Fernandes <joel@joelfernandes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>,
-	Kentaro Takeda <takedakn@nttdata.co.jp>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=odcNz5UHQrgnlRIaxvPXqlMoTadjjoHotdd5vFO58PBcz94YaFOk7tTn1SMmehltOiD6ctTiSnKszTzllRYOeVKsmcGKMgJtJcGOBPnG2hAHQYbkC4zLktOYVbHaEwY+66Aclyq89fg68vxG+h3DhNBJF+clnBCvfB8WBY9E79w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=orXjR8AV; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qMZAhEYx; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 5 Mar 2025 17:18:32 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741191514;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nQ69AeXYPTOT/EG4vDrbaZmzkRTmmMycyz4TxqzIVco=;
+	b=orXjR8AVB9FAw6U1sFUzFNVGvKfQGQ037gCU+OkS4kNT+bardxvkqwoGdUzLuP9V2047a8
+	iSdwIIPoHZKT6mieSZ/Oiq9xtFcNr3anuZsodriWwWUVJwThSQhPVKQvCHmN4WFDrfT1uz
+	/t9G6cIGe/2JstIYCNgcKPAdr9h8b+L7ul86T6yxE4NECIRKjinb25qGxhePzoZniL3EY9
+	L5YGM4XRnVsJwNwOhAOGQCcVxswOg2LMBgHo6Yr0DS0fi4XveldfxS9mp30s7Mfpu6cUvB
+	AiLxv5Sz04VMRRU6Ah3ZdMEXogEUIs067KkAxL6oE7kNITw/j1xuLEy+HCg4TA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741191514;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nQ69AeXYPTOT/EG4vDrbaZmzkRTmmMycyz4TxqzIVco=;
+	b=qMZAhEYxxBcHohs1muQ+wBkQRw40Zh+UYpJwMbWK0bAkVO3W/FUpqkqfxYeig9ZeETHYms
+	9aNJ5LIBYGNvCaAQ==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
 	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Waiman Long <longman@redhat.com>, Will Deacon <will@kernel.org>,
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, rcu@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-serial@vger.kernel.org
-Subject: Re: [PATCH v2 00/34] Compiler-Based Capability- and Locking-Analysis
-Message-ID: <20250305161652.GA18280@noisy.programming.kicks-ass.net>
-References: <20250304092417.2873893-1-elver@google.com>
- <20250305112041.GA16878@noisy.programming.kicks-ass.net>
- <76f8c8e1-5f32-4f31-a960-9285a15340e3@acm.org>
+	John Ogness <john.ogness@linutronix.de>,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Cooper <andrew.cooper3@citrix.com>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 30/40] sizes.h: Cover all possible x86 cpu cache sizes
+Message-ID: <Z8h5WGf2BnQs_9Ex@lx-t490>
+References: <20250304085152.51092-1-darwi@linutronix.de>
+ <20250304085152.51092-31-darwi@linutronix.de>
+ <Z8bJb_NKdIh8jQkt@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,89 +73,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <76f8c8e1-5f32-4f31-a960-9285a15340e3@acm.org>
+In-Reply-To: <Z8bJb_NKdIh8jQkt@gmail.com>
 
-On Wed, Mar 05, 2025 at 07:27:32AM -0800, Bart Van Assche wrote:
-> On 3/5/25 3:20 AM, Peter Zijlstra wrote:
-> > diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-> > index 248416ecd01c..d27607d9c2dc 100644
-> > --- a/include/linux/blkdev.h
-> > +++ b/include/linux/blkdev.h
-> > @@ -945,6 +945,7 @@ static inline unsigned int blk_boundary_sectors_left(sector_t offset,
-> >    */
-> >   static inline struct queue_limits
-> >   queue_limits_start_update(struct request_queue *q)
-> > +	__acquires(q->limits_lock)
-> >   {
-> >   	mutex_lock(&q->limits_lock);
-> >   	return q->limits;
-> > @@ -965,6 +966,7 @@ int blk_validate_limits(struct queue_limits *lim);
-> >    * starting update.
-> >    */
-> >   static inline void queue_limits_cancel_update(struct request_queue *q)
-> > +	__releases(q->limits_lock)
-> >   {
-> >   	mutex_unlock(&q->limits_lock);
-> >   }
-> 
-> The above is incomplete. Here is what I came up with myself:
+Hi Ingo,
 
-Oh, I'm sure. I simply fixed whatever was topmost in the compile output
-when trying to build kernel/sched/. After fixing these two, it stopped
-complaining about blkdev.
+On Tue, 04 Mar 2025, Ingo Molnar wrote:
+>
+> * Ahmed S. Darwish <darwi@linutronix.de> wrote:
+>
+> > Add size macros for 24/192/384 Kilobyes and 3/6/12/18/24 Megabytes.
+> >
+> > With that, the x86 subsystem can avoid locally defining its own macros
+> > for CPU cache sizs.
+>
+> Please take some time to read your own changelogs:
+>
+>  s/Kilobyes
+>   /Kilobytes
+>
+>  s/sizs
+>   /sizes
+>
 
-I think it complains about these because they're inline, even though
-they're otherwise unused.
+Sorry about that.
 
-> > diff --git a/include/linux/device.h b/include/linux/device.h
-> > index 80a5b3268986..283fb85d96c8 100644
-> > --- a/include/linux/device.h
-> > +++ b/include/linux/device.h
-> > @@ -1026,21 +1026,25 @@ static inline bool dev_pm_test_driver_flags(struct device *dev, u32 flags)
-> >   }
-> >   static inline void device_lock(struct device *dev)
-> > +	__acquires(dev->mutex)
-> >   {
-> >   	mutex_lock(&dev->mutex);
-> >   }
-> >   static inline int device_lock_interruptible(struct device *dev)
-> > +	__cond_acquires(0, dev->mutex)
-> >   {
-> >   	return mutex_lock_interruptible(&dev->mutex);
-> >   }
-> >   static inline int device_trylock(struct device *dev)
-> > +	__cond_acquires(true, dev->mutex)
-> >   {
-> >   	return mutex_trylock(&dev->mutex);
-> >   }
-> >   static inline void device_unlock(struct device *dev)
-> > +	__releases(dev->mutex)
-> >   {
-> >   	mutex_unlock(&dev->mutex);
-> >   }
-> 
-> I propose to annotate these functions with __no_capability_analysis as a
-> first step. Review of all callers of these functions in the entire
-> kernel tree learned me that annotating these functions results in a
-> significant number of false positives and not to the discovery of any
-> bugs. The false positives are triggered by conditional locking. An
-> example of code that triggers false positive thread-safety warnings:
+I just don't see my own typos, no matter how many times my eyes actually
+passes over the text.  I'll integrate a checker in my workflow.
 
-Yeah, I've ran into this as well. The thing is entirely stupid when it
-sees a branch. This is really unfortunate. But I disagree, I would
-annotate those functions that have conditional locking with
-__no_capability_analysis, or possibly:
-
-#define __confused_by_conditionals __no_capability_analysis
-
-I'm also not quite sure how to annotate things like pte_lockptr().
-
-
-Anyway, this thing has some promise, however it is *really*, as in
-*really* *REALLY* simple. Anything remotely interesting, where you
-actually want the help, it falls over.
-
-But you gotta start somewhere I suppose. I think the thing that is
-important here is how receptive the clang folks are to working on this
--- because it definitely needs work.
+Thanks,
+Ahmed
 
