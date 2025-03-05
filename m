@@ -1,286 +1,381 @@
-Return-Path: <linux-kernel+bounces-547535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BF01A50A8C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:59:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20513A50A77
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:57:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CF533A8289
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:59:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A2B016AA09
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20CFF25A2C1;
-	Wed,  5 Mar 2025 18:56:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DF93253B4F;
+	Wed,  5 Mar 2025 18:55:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GZ+YD+Fa"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VXyFV9Ws"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C6D259CA5;
-	Wed,  5 Mar 2025 18:56:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 303DD255236;
+	Wed,  5 Mar 2025 18:55:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741200984; cv=none; b=EpwG0joWymLPeBC/o1xTDd4pID6O2nPDTh7TsjFJrlmb884e6gpb9/HMuRCKnpJ75VfWMQ5dtQ5jWGqicSjiUHs+csE+mumH+srjF63xA6PCrwKuifzA9DLHu4mtqOBouXxmzK3eem9tgRjFGk4wcmssPNtWjYL3n2yi/58DFjk=
+	t=1741200958; cv=none; b=Pdn0jzbU+K1WOsxN/3+8Dj6xGASy58FFaGUNB1BE+q4NS8n1noIIkoTje/G4oZLR6X6xZTcwq3Iwe7bvD2DnSXwV5T+c9OR1QxofmcPidHBXM/C7o/GKnhIbK1xnELWiMsMYwXOtymdWPnO/Bbr7yLxK2KH69wmlmmE8peKX19Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741200984; c=relaxed/simple;
-	bh=PAEVKlWkPAL86cOIw66b+5MIZt6UxxtsdhkFd90s4lI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MlbEjiMEXpRzz7xricw/axanSMCEqU2wShpRyAPKpHmF6NNowGvrEw0wsF+vhEfjcc7I5ErsTqVEeXs9T27AtSlhYD7bbix2yvM6omxkcEEwhW0YDrR5mwSfGze6jo3vN2NRJ0lpWN5Xk91Yv2HEllOR1fu5yQzIDcBBJqagww0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GZ+YD+Fa; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525ARf1S015892;
-	Wed, 5 Mar 2025 18:56:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Jhi62tLOtfBOYlhQpbSEQwBetgJagR+PBDHpgyTsvcM=; b=GZ+YD+FabD8Dd49a
-	76QKTTEg4Um6JGSkK1D+icaLXz/aocz/KqyZy20B+xSywtCpqkRsh4hz+SgiluWz
-	PBmz+cnmZkIFxWyQ1oGBbX3VFA+wFyoWfXnyIF/6iaIYekXDevlgGBiM6hpBbuUV
-	BnKupzIwipxj0cpSHicIN3kDxGlgaBdc4kiTV1C9SpZijoTAkXkC6Geekk8yosyF
-	J+ooZaiaQO2AaUb93f3tnqyeRfPt9Srbn8Bb1NJflGGclb6rkErIsAClV3b5pdZk
-	RbQMCoeVR/WX1gjWbH/76w7ArMbGAbS1ijLS4Pq9VnVEDRqk/s1WzeoZX/8evaAy
-	w/jpnA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6vpgm3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 18:56:15 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 525IuFZB031637
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 18:56:15 GMT
-Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 5 Mar 2025 10:56:11 -0800
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-To: <ath12k@lists.infradead.org>
-CC: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Balamurugan S
-	<quic_bselvara@quicinc.com>,
-        P Praneesh <quic_ppranees@quicinc.com>,
-        "Raj
- Kumar Bhagat" <quic_rajkbhag@quicinc.com>
-Subject: [PATCH ath-next v9 13/13] wifi: ath12k: enable ath12k AHB support
-Date: Thu, 6 Mar 2025 00:25:01 +0530
-Message-ID: <20250305185501.2400888-14-quic_rajkbhag@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250305185501.2400888-1-quic_rajkbhag@quicinc.com>
-References: <20250305185501.2400888-1-quic_rajkbhag@quicinc.com>
+	s=arc-20240116; t=1741200958; c=relaxed/simple;
+	bh=k/O2Fs5hdDD2ASkJHxJ8jZyCTGpPOxK8D6WOShmYodg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nUfrPR4PJv9IwXzZ/91h7xNBEy8RC3O4an7ma5QTjeWhdxB/U4lxPxPBSWqva6pQxpQvoje2qZrsXjqg8qZWW1TbiI8HV3xLP4N4IBvYMar96FstCxRqNQQXaudImEXmFFYBa08Y8s7Fz3ywcHVh5t3SxZIZEoo7l5SyR/dx23o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VXyFV9Ws; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741200956; x=1772736956;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=k/O2Fs5hdDD2ASkJHxJ8jZyCTGpPOxK8D6WOShmYodg=;
+  b=VXyFV9WsQ1kl6QtgyQ/Lp7gxkKf02TvDB9h/uAQvKg1XGLA5l5YLAZ/o
+   4xodEUOVJbZXgYfm45CYsW0ZeSHPUh685ShJexYLJ+HwIVzYJKZs6vAoR
+   st83DLgzWLJKsrfOLxSiGy8TzPh44XPEacxt9WFSAMZGZZuTegWQw1kAA
+   WgQsADcmptujac5AzBAWrLuJr7CtKTeABdQzZbxexH6JswfpcaLmm13+c
+   lO2OEPYgtDmDzmcJnqBJ26jaNv9eNFnASO/7QziiGuKCaFqENd5gU3Fyr
+   iALqrjALfZM5GrI/KgZJqT3HiDMX0NKEbRXEVK3UK4ooAQAiQ7jvtYhNv
+   A==;
+X-CSE-ConnectionGUID: bJwldS7MSu+TMiVqOxuo8g==
+X-CSE-MsgGUID: MvU17HTpQUWBlN1cdjh2yQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="44988713"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="44988713"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 10:55:56 -0800
+X-CSE-ConnectionGUID: P5FoCfm3QN2nho3zYAGL1Q==
+X-CSE-MsgGUID: TzIhC3hGQ2e6rtfsmmJLzQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="118947364"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO [10.245.244.76]) ([10.245.244.76])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 10:55:50 -0800
+Message-ID: <e78ba805-ce83-4df1-87b5-fa5ac6bb9742@intel.com>
+Date: Wed, 5 Mar 2025 18:55:48 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/5] drm/xe/bo: fix alignment with non-4K kernel page
+ sizes
+To: Matthew Brost <matthew.brost@intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>, jeffbai@aosc.io,
+ =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ =?UTF-8?Q?Jos=C3=A9_Roberto_de_Souza?= <jose.souza@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>,
+ Alan Previn <alan.previn.teres.alexis@intel.com>,
+ Zhanjun Dong <zhanjun.dong@intel.com>, Matt Roper
+ <matthew.d.roper@intel.com>, Mateusz Naklicki <mateusz.naklicki@intel.com>,
+ Mauro Carvalho Chehab <mauro.chehab@linux.intel.com>,
+ =?UTF-8?Q?Zbigniew_Kempczy=C5=84ski?= <zbigniew.kempczynski@intel.com>,
+ intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, Kexy Biscuit <kexybiscuit@aosc.io>,
+ Shang Yatsen <429839446@qq.com>, stable@vger.kernel.org,
+ Haien Liang <27873200@qq.com>, Shirong Liu <lsr1024@qq.com>,
+ Haofeng Wu <s2600cw2@126.com>
+References: <20250226-xe-non-4k-fix-v1-0-80f23b5ee40e@aosc.io>
+ <20250226-xe-non-4k-fix-v1-1-80f23b5ee40e@aosc.io>
+ <wcfp3i6jbsmvpokvbvs5n2yxffhrgu6jyoan3e3m6tb7wbjaq6@tbsit7ignlef>
+ <Z76WIgGvvhlbYl/j@lstrano-desk.jf.intel.com>
+ <af689d4b-204d-495b-a7e8-0f7632b43153@intel.com>
+ <Z78vTt8Ph9opzJmf@lstrano-desk.jf.intel.com>
+ <cc402132-2e82-41d2-8981-f1b9a795c1a1@intel.com>
+ <Z8ibh7DIIexKQGuX@lstrano-desk.jf.intel.com>
+Content-Language: en-GB
+From: Matthew Auld <matthew.auld@intel.com>
+In-Reply-To: <Z8ibh7DIIexKQGuX@lstrano-desk.jf.intel.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 8Kw0-Mtz0OIXDsLrS5TkYd5auTVsCztG
-X-Authority-Analysis: v=2.4 cv=LYfG6ifi c=1 sm=1 tr=0 ts=67c89e4f cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=vXVk93xmC7zsTb_1jtAA:9 a=RVmHIydaz68A:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 8Kw0-Mtz0OIXDsLrS5TkYd5auTVsCztG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_07,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- spamscore=0 clxscore=1015 phishscore=0 adultscore=0 lowpriorityscore=0
- impostorscore=0 bulkscore=0 mlxscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050145
 
-From: Balamurugan S <quic_bselvara@quicinc.com>
+On 05/03/2025 18:44, Matthew Brost wrote:
+> On Wed, Feb 26, 2025 at 06:05:55PM +0000, Matthew Auld wrote:
+>> On 26/02/2025 15:12, Matthew Brost wrote:
+>>> On Wed, Feb 26, 2025 at 10:38:40AM +0000, Matthew Auld wrote:
+>>>> On 26/02/2025 04:18, Matthew Brost wrote:
+>>>>> On Tue, Feb 25, 2025 at 09:13:09PM -0600, Lucas De Marchi wrote:
+>>>>>> On Wed, Feb 26, 2025 at 10:00:18AM +0800, Mingcong Bai via B4 Relay wrote:
+>>>>>>> From: Mingcong Bai <jeffbai@aosc.io>
+>>>>>>>
+>>>>>>> The bo/ttm interfaces with kernel memory mapping from dedicated GPU
+>>>>>>> memory. It is not correct to assume that SZ_4K would suffice for page
+>>>>>>> alignment as there are a few hardware platforms that commonly uses non-4K
+>>>>>>> pages - for instance, currently, Loongson 3A5000/6000 devices (of the
+>>>>>>> LoongArch architecture) commonly uses 16K kernel pages.
+>>>>>>>
+>>>>>>> Per my testing Intel Xe/Arc families of GPUs works on at least
+>>>>>>> Loongson 3A6000 platforms so long as "Above 4G Decoding" and "Resizable
+>>>>>>> BAR" were enabled in the EFI firmware settings. I tested this patch series
+>>>>>>> on my Loongson XA61200 (3A6000) motherboard with an Intel Arc A750 GPU.
+>>>>>>>
+>>>>>>> Without this fix, the kernel will hang at a kernel BUG():
+>>>>>>>
+>>>>>>> [    7.425445] ------------[ cut here ]------------
+>>>>>>> [    7.430032] kernel BUG at drivers/gpu/drm/drm_gem.c:181!
+>>>>>>> [    7.435330] Oops - BUG[#1]:
+>>>>>>> [    7.438099] CPU: 0 UID: 0 PID: 102 Comm: kworker/0:4 Tainted: G            E      6.13.3-aosc-main-00336-g60829239b300-dirty #3
+>>>>>>> [    7.449511] Tainted: [E]=UNSIGNED_MODULE
+>>>>>>> [    7.453402] Hardware name: Loongson Loongson-3A6000-HV-7A2000-1w-V0.1-EVB/Loongson-3A6000-HV-7A2000-1w-EVB-V1.21, BIOS Loongson-UDK2018-V4.0.05756-prestab
+>>>>>>> [    7.467144] Workqueue: events work_for_cpu_fn
+>>>>>>> [    7.471472] pc 9000000001045fa4 ra ffff8000025331dc tp 90000001010c8000 sp 90000001010cb960
+>>>>>>> [    7.479770] a0 900000012a3e8000 a1 900000010028c000 a2 000000000005d000 a3 0000000000000000
+>>>>>>> [    7.488069] a4 0000000000000000 a5 0000000000000000 a6 0000000000000000 a7 0000000000000001
+>>>>>>> [    7.496367] t0 0000000000001000 t1 9000000001045000 t2 0000000000000000 t3 0000000000000000
+>>>>>>> [    7.504665] t4 0000000000000000 t5 0000000000000000 t6 0000000000000000 t7 0000000000000000
+>>>>>>> [    7.504667] t8 0000000000000000 u0 90000000029ea7d8 s9 900000012a3e9360 s0 900000010028c000
+>>>>>>> [    7.504668] s1 ffff800002744000 s2 0000000000000000 s3 0000000000000000 s4 0000000000000001
+>>>>>>> [    7.504669] s5 900000012a3e8000 s6 0000000000000001 s7 0000000000022022 s8 0000000000000000
+>>>>>>> [    7.537855]    ra: ffff8000025331dc ___xe_bo_create_locked+0x158/0x3b0 [xe]
+>>>>>>> [    7.544893]   ERA: 9000000001045fa4 drm_gem_private_object_init+0xcc/0xd0
+>>>>>>> [    7.551639]  CRMD: 000000b0 (PLV0 -IE -DA +PG DACF=CC DACM=CC -WE)
+>>>>>>> [    7.557785]  PRMD: 00000004 (PPLV0 +PIE -PWE)
+>>>>>>> [    7.562111]  EUEN: 00000000 (-FPE -SXE -ASXE -BTE)
+>>>>>>> [    7.566870]  ECFG: 00071c1d (LIE=0,2-4,10-12 VS=7)
+>>>>>>> [    7.571628] ESTAT: 000c0000 [BRK] (IS= ECode=12 EsubCode=0)
+>>>>>>> [    7.577163]  PRID: 0014d000 (Loongson-64bit, Loongson-3A6000-HV)
+>>>>>>> [    7.583128] Modules linked in: xe(E+) drm_gpuvm(E) drm_exec(E) drm_buddy(E) gpu_sched(E) drm_suballoc_helper(E) drm_display_helper(E) loongson(E) r8169(E) cec(E) rc_core(E) realtek(E) i2c_algo_bit(E) tpm_tis_spi(E) led_class(E) hid_generic(E) drm_ttm_helper(E) ttm(E) drm_client_lib(E) drm_kms_helper(E) sunrpc(E) la_ow_syscall(E) i2c_dev(E)
+>>>>>>> [    7.613049] Process kworker/0:4 (pid: 102, threadinfo=00000000bc26ebd1, task=0000000055480707)
+>>>>>>> [    7.621606] Stack : 0000000000000000 3030303a6963702b 000000000005d000 0000000000000000
+>>>>>>> [    7.629563]         0000000000000001 0000000000000000 0000000000000000 8e1bfae42b2f7877
+>>>>>>> [    7.637519]         000000000005d000 900000012a3e8000 900000012a3e9360 0000000000000000
+>>>>>>> [    7.645475]         ffffffffffffffff 0000000000000000 0000000000022022 0000000000000000
+>>>>>>> [    7.653431]         0000000000000001 ffff800002533660 0000000000022022 9000000000234470
+>>>>>>> [    7.661386]         90000001010cba28 0000000000001000 0000000000000000 000000000005c300
+>>>>>>> [    7.669342]         900000012a3e8000 0000000000000000 0000000000000001 900000012a3e8000
+>>>>>>> [    7.677298]         ffffffffffffffff 0000000000022022 900000012a3e9498 ffff800002533a14
+>>>>>>> [    7.685254]         0000000000022022 0000000000000000 900000000209c000 90000000010589e0
+>>>>>>> [    7.693209]         90000001010cbab8 ffff8000027c78c0 fffffffffffff000 900000012a3e8000
+>>>>>>> [    7.701165]         ...
+>>>>>>> [    7.703588] Call Trace:
+>>>>>>> [    7.703590] [<9000000001045fa4>] drm_gem_private_object_init+0xcc/0xd0
+>>>>>>> [    7.712496] [<ffff8000025331d8>] ___xe_bo_create_locked+0x154/0x3b0 [xe]
+>>>>>>> [    7.719268] [<ffff80000253365c>] __xe_bo_create_locked+0x228/0x304 [xe]
+>>>>>>> [    7.725951] [<ffff800002533a10>] xe_bo_create_pin_map_at_aligned+0x70/0x1b0 [xe]
+>>>>>>> [    7.733410] [<ffff800002533c7c>] xe_managed_bo_create_pin_map+0x34/0xcc [xe]
+>>>>>>> [    7.740522] [<ffff800002533d58>] xe_managed_bo_create_from_data+0x44/0xb0 [xe]
+>>>>>>> [    7.747807] [<ffff80000258d19c>] xe_uc_fw_init+0x3ec/0x904 [xe]
+>>>>>>> [    7.753814] [<ffff80000254a478>] xe_guc_init+0x30/0x3dc [xe]
+>>>>>>> [    7.759553] [<ffff80000258bc04>] xe_uc_init+0x20/0xf0 [xe]
+>>>>>>> [    7.765121] [<ffff800002542abc>] xe_gt_init_hwconfig+0x5c/0xd0 [xe]
+>>>>>>> [    7.771461] [<ffff800002537204>] xe_device_probe+0x240/0x588 [xe]
+>>>>>>> [    7.777627] [<ffff800002575448>] xe_pci_probe+0x6c0/0xa6c [xe]
+>>>>>>> [    7.783540] [<9000000000e9828c>] local_pci_probe+0x4c/0xb4
+>>>>>>> [    7.788989] [<90000000002aa578>] work_for_cpu_fn+0x20/0x40
+>>>>>>> [    7.794436] [<90000000002aeb50>] process_one_work+0x1a4/0x458
+>>>>>>> [    7.800143] [<90000000002af5a0>] worker_thread+0x304/0x3fc
+>>>>>>> [    7.805591] [<90000000002bacac>] kthread+0x114/0x138
+>>>>>>> [    7.810520] [<9000000000241f64>] ret_from_kernel_thread+0x8/0xa4
+>>>>>>> [    7.816489]
+>>>>>>> [    7.817961] Code: 4c000020  29c3e2f9  53ff93ff <002a0001> 0015002c  03400000  02ff8063  29c04077  001500f7
+>>>>>>> [    7.827651]
+>>>>>>> [    7.829140] ---[ end trace 0000000000000000 ]---
+>>>>>>>
+>>>>>>> Revise all instances of `SZ_4K' with `PAGE_SIZE' and revise the call to
+>>>>>>> `drm_gem_private_object_init()' in `*___xe_bo_create_locked()' (last call
+>>>>>>> before BUG()) to use `size_t aligned_size' calculated from `PAGE_SIZE' to
+>>>>>>> fix the above error.
+>>>>>>>
+>>>>>>> Cc: <stable@vger.kernel.org>
+>>>>>>> Fixes: 4e03b584143e ("drm/xe/uapi: Reject bo creation of unaligned size")
+>>>>>>> Fixes: dd08ebf6c352 ("drm/xe: Introduce a new DRM driver for Intel GPUs")
+>>>>>>> Tested-by: Mingcong Bai <jeffbai@aosc.io>
+>>>>>>> Tested-by: Haien Liang <27873200@qq.com>
+>>>>>>> Tested-by: Shirong Liu <lsr1024@qq.com>
+>>>>>>> Tested-by: Haofeng Wu <s2600cw2@126.com>
+>>>>>>> Link: https://github.com/FanFansfan/loongson-linux/commit/22c55ab3931c32410a077b3ddb6dca3f28223360
+>>>>>>> Co-developed-by: Shang Yatsen <429839446@qq.com>
+>>>>>>> Signed-off-by: Shang Yatsen <429839446@qq.com>
+>>>>>>> Signed-off-by: Mingcong Bai <jeffbai@aosc.io>
+>>>>>>> ---
+>>>>>>> drivers/gpu/drm/xe/xe_bo.c | 8 ++++----
+>>>>>>> 1 file changed, 4 insertions(+), 4 deletions(-)
+>>>>>>>
+>>>>>>> diff --git a/drivers/gpu/drm/xe/xe_bo.c b/drivers/gpu/drm/xe/xe_bo.c
+>>>>>>> index 3f5391d416d469c636d951dd6f0a2b3b5ae95dab..dd03c581441f352eff51d0eafe1298fca7d9653d 100644
+>>>>>>> --- a/drivers/gpu/drm/xe/xe_bo.c
+>>>>>>> +++ b/drivers/gpu/drm/xe/xe_bo.c
+>>>>>>> @@ -1441,9 +1441,9 @@ struct xe_bo *___xe_bo_create_locked(struct xe_device *xe, struct xe_bo *bo,
+>>>>>>> 		flags |= XE_BO_FLAG_INTERNAL_64K;
+>>>>>>> 		alignment = align >> PAGE_SHIFT;
+>>>>>>> 	} else {
+>>>>>
+>>>>> } else if (type == ttm_bo_type_device) {
+>>>>> 	new code /w PAGE_SIZE
+>>>>> } else {
+>>>>> 	old code /w SZ_4K (or maybe XE_PAGE_SIZE now)?
+>>>>> }
+>>>>>
+>>>>> See below for further explaination.
+>>>>>
+>>>>>>> -		aligned_size = ALIGN(size, SZ_4K);
+>>>>>>> +		aligned_size = ALIGN(size, PAGE_SIZE);
+>>>>>>
+>>>>>> in the very beginning of the driver we were set to use XE_PAGE_SIZE
+>>>>>> for things like this. It seems thing went side ways though.
+>>>>>>
+>>>>>> Thanks for fixing these. XE_PAGE_SIZE is always 4k, but I think we should
+>>>>>> uxe XE_PAGE_SIZE for clarity.  For others in Cc...  any thoughts?
+>>>>>>
+>>>>>
+>>>>> It looks like you have a typo here, Lucas. Could you please clarify?
+>>>>>
+>>>>> However, XE_PAGE_SIZE should always be 4k, as it refers to the GPU page
+>>>>> size, which is fixed.
+>>>>>
+>>>>> I think using PAGE_SIZE makes sense in some cases. See my other
+>>>>> comments.
+>>>>>
+>>>>>>> 		flags &= ~XE_BO_FLAG_INTERNAL_64K;
+>>>>>>> -		alignment = SZ_4K >> PAGE_SHIFT;
+>>>>>>> +		alignment = PAGE_SIZE >> PAGE_SHIFT;
+>>>>>>> 	}
+>>>>>>>
+>>>>>>> 	if (type == ttm_bo_type_device && aligned_size != size)
+>>>>>>> @@ -1457,7 +1457,7 @@ struct xe_bo *___xe_bo_create_locked(struct xe_device *xe, struct xe_bo *bo,
+>>>>>>>
+>>>>>>> 	bo->ccs_cleared = false;
+>>>>>>> 	bo->tile = tile;
+>>>>>>> -	bo->size = size;
+>>>>>>> +	bo->size = aligned_size;
+>>>>>>
+>>>>>> the interface of this function is that the caller needs to pass the
+>>>>>> correct size, it's not really expected the function will adjust it and
+>>>>>> the check is there to gurantee to return the appropriate error. There
+>>>>>
+>>>>> Let me expand further on Lucas's comment. We reject user BOs that are
+>>>>> unaligned here in ___xe_bo_create_locked.
+>>>>>
+>>>>> 1490         if (type == ttm_bo_type_device && aligned_size != size)
+>>>>> 1491                 return ERR_PTR(-EINVAL);
+>>>>>
+>>>>> What we allow are kernel BOs (!= ttm_bo_type_device), which are never
+>>>>> mapped to the CPU or the PPGTT (user GPU mappings), to be a smaller
+>>>>> size. Examples of this include memory for GPU page tables, LRC state,
+>>>>> etc. Memory for GPU page tables is always allocated in 4k blocks, so
+>>>>> changing the allocation to the CPU page size of 16k or 64k would be
+>>>>> wasteful.
+>>>>>
+>>>>> AFAIK, kernel memory is always a VRAM allocation, so we don't have any
+>>>>> CPU page size requirements. If this is not true (I haven't checked), or
+>>>>> perhaps just to future-proof, change the snippet in my first comment to:
+>>>>>
+>>>>> } else if (type == ttm_bo_type_device || flags & XE_BO_FLAG_SYSTEM)) {
+>>>>> 	new code /w PAGE_SIZE
+>>>>> } else {
+>>>>> 	old code /w SZ_4K
+>>>>> }
+>>>>>
+>>>>> Then change BO assignment size too:
+>>>>>
+>>>>> bo->size = flags & XE_BO_FLAG_SYSTEM ? aligned_size : size;
+>>>>>
+>>>>> This should enable kernel VRAM allocations to be smaller than the CPU
+>>>>> page size (I think). Can you try out this suggestion and see if the Xe
+>>>>> boots with non-4k pages?
+>>>>
+>>>> The vram allocator chunk size is PAGE_SIZE so that would also need some
+>>>> attention, I think.
+>>>>
+>>>
+>>> Agree. So I think __xe_ttm_vram_mgr_init should be called with
+>>> s/PAGE_SIZE/SZ_4K?
+>>
+>> Should be fine from allocator pov. But also need to update the upper layers
+>> in the VRAM manager itself, I think.
+>>
+> 
+> Right. A lot of pfn logic is based on PAGE_SIZE/SHIFT and that would
+> likely need to be updated too.
+> 
+>>>
+>>>> But I think we also then need to deal with the assert in: https://elixir.bootlin.com/linux/v6.14-rc4/source/drivers/gpu/drm/drm_gem.c#L181.
+>>>>
+>>>
+>>> Yep. I think that would need to be adjusted as well to be bypassed if we
+>>> are never going to CPU map the BO—specifically, CPU map it to user space
+>>> or if the BO is not in VRAM. For kernel VRAM mapping, this resolves to
+>>> an offset within an existing large PCIe BAR mapping, so allocations
+>>> unaligned to PAGE_SIZE should work.
+>>
+>> Yeah, agree. I thinks it's possible.
+>>
+> 
+> Yes, might be a little more difficult than I originally thought though.
+> 
+>>>
+>>> Maybe export __drm_gem_private_object_init, which skips the BUG_ON, and
+>>> call this in Xe to avoid interfering with other drivers' expectations?
+>>
+>> Some other places I spotted are the VRAM manager, and stuff like
+>> xe_bo_vmap() and then into TTM itself. So it might be quite widespread.
+>>
+> 
+> Ok, so maybe for initial merge we drop this idea and circle back given
+> the complexity as we'd just be wasting memory for things like PTEs?
 
-Currently only PCI devices are supported in Ath12k driver. Refactor
-Ath12k module_init and module_exit to include Ath12k AHB support.
+Yeah, makes sense. Series is a big improvement already as-is.
 
-Add Ath12k AHB support in Kconfig with dependency on Remoteproc
-driver. Ath12k AHB support relies on remoteproc driver for firmware
-download, power up/down etc.
-
-Tested-on: IPQ5332 hw1.0 AHB WLAN.WBE.1.3.1-00130-QCAHKSWPL_SILICONZ-1
-Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.1.1-00210-QCAHKSWPL_SILICONZ-1
-
-Signed-off-by: Balamurugan S <quic_bselvara@quicinc.com>
-Co-developed-by: P Praneesh <quic_ppranees@quicinc.com>
-Signed-off-by: P Praneesh <quic_ppranees@quicinc.com>
-Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
----
- drivers/net/wireless/ath/ath12k/Kconfig  |  6 ++++
- drivers/net/wireless/ath/ath12k/Makefile |  1 +
- drivers/net/wireless/ath/ath12k/ahb.h    | 11 ++++++++
- drivers/net/wireless/ath/ath12k/core.c   | 35 ++++++++++++++++++++++--
- drivers/net/wireless/ath/ath12k/pci.c    | 10 ++-----
- drivers/net/wireless/ath/ath12k/pci.h    |  4 ++-
- 6 files changed, 55 insertions(+), 12 deletions(-)
-
-diff --git a/drivers/net/wireless/ath/ath12k/Kconfig b/drivers/net/wireless/ath/ath12k/Kconfig
-index 52a1bb19e3da..b2bfcaca00b3 100644
---- a/drivers/net/wireless/ath/ath12k/Kconfig
-+++ b/drivers/net/wireless/ath/ath12k/Kconfig
-@@ -15,6 +15,12 @@ config ATH12K
- 
- 	  If you choose to build a module, it'll be called ath12k.
- 
-+config ATH12K_AHB
-+	bool "QTI ath12k AHB support"
-+	depends on ATH12K && REMOTEPROC && QCOM_Q6V5_WCSS_SEC
-+	help
-+	  Enable support for Ath12k AHB bus chipsets, example IPQ5332.
-+
- config ATH12K_DEBUG
- 	bool "ath12k debugging"
- 	depends on ATH12K
-diff --git a/drivers/net/wireless/ath/ath12k/Makefile b/drivers/net/wireless/ath/ath12k/Makefile
-index 60644cb42c76..d95ee525a6cd 100644
---- a/drivers/net/wireless/ath/ath12k/Makefile
-+++ b/drivers/net/wireless/ath/ath12k/Makefile
-@@ -23,6 +23,7 @@ ath12k-y += core.o \
- 	    fw.o \
- 	    p2p.o
- 
-+ath12k-$(CONFIG_ATH12K_AHB) += ahb.o
- ath12k-$(CONFIG_ATH12K_DEBUGFS) += debugfs.o debugfs_htt_stats.o debugfs_sta.o
- ath12k-$(CONFIG_ACPI) += acpi.o
- ath12k-$(CONFIG_ATH12K_TRACING) += trace.o
-diff --git a/drivers/net/wireless/ath/ath12k/ahb.h b/drivers/net/wireless/ath/ath12k/ahb.h
-index f8a5c43075c1..d56244b20a6a 100644
---- a/drivers/net/wireless/ath/ath12k/ahb.h
-+++ b/drivers/net/wireless/ath/ath12k/ahb.h
-@@ -66,4 +66,15 @@ static inline struct ath12k_ahb *ath12k_ab_to_ahb(struct ath12k_base *ab)
- 	return (struct ath12k_ahb *)ab->drv_priv;
- }
- 
-+#ifdef CONFIG_ATH12K_AHB
-+int ath12k_ahb_init(void);
-+void ath12k_ahb_exit(void);
-+#else
-+static inline int ath12k_ahb_init(void)
-+{
-+	return 0;
-+}
-+
-+static inline void ath12k_ahb_exit(void) {};
-+#endif
- #endif
-diff --git a/drivers/net/wireless/ath/ath12k/core.c b/drivers/net/wireless/ath/ath12k/core.c
-index 5bd852f9572b..4117ccd1af20 100644
---- a/drivers/net/wireless/ath/ath12k/core.c
-+++ b/drivers/net/wireless/ath/ath12k/core.c
-@@ -10,15 +10,18 @@
- #include <linux/firmware.h>
- #include <linux/of.h>
- #include <linux/of_graph.h>
-+#include "ahb.h"
- #include "core.h"
- #include "dp_tx.h"
- #include "dp_rx.h"
- #include "debug.h"
--#include "hif.h"
--#include "fw.h"
- #include "debugfs.h"
-+#include "fw.h"
-+#include "hif.h"
-+#include "pci.h"
- #include "wow.h"
- 
-+static int ahb_err, pci_err;
- unsigned int ath12k_debug_mask;
- module_param_named(debug_mask, ath12k_debug_mask, uint, 0644);
- MODULE_PARM_DESC(debug_mask, "Debugging mask");
-@@ -2020,5 +2023,31 @@ struct ath12k_base *ath12k_core_alloc(struct device *dev, size_t priv_size,
- 	return NULL;
- }
- 
--MODULE_DESCRIPTION("Core module for Qualcomm Atheros 802.11be wireless LAN cards.");
-+static int ath12k_init(void)
-+{
-+	ahb_err = ath12k_ahb_init();
-+	if (ahb_err)
-+		pr_warn("Failed to initialize ath12k AHB device: %d\n", ahb_err);
-+
-+	pci_err = ath12k_pci_init();
-+	if (pci_err)
-+		pr_warn("Failed to initialize ath12k PCI device: %d\n", pci_err);
-+
-+	/* If both failed, return one of the failures (arbitrary) */
-+	return ahb_err && pci_err ? ahb_err : 0;
-+}
-+
-+static void ath12k_exit(void)
-+{
-+	if (!pci_err)
-+		ath12k_pci_exit();
-+
-+	if (!ahb_err)
-+		ath12k_ahb_exit();
-+}
-+
-+module_init(ath12k_init);
-+module_exit(ath12k_exit);
-+
-+MODULE_DESCRIPTION("Driver support for Qualcomm Technologies 802.11be WLAN devices");
- MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/net/wireless/ath/ath12k/pci.c b/drivers/net/wireless/ath/ath12k/pci.c
-index b474696ac6d8..e62b172c7f9f 100644
---- a/drivers/net/wireless/ath/ath12k/pci.c
-+++ b/drivers/net/wireless/ath/ath12k/pci.c
-@@ -1831,7 +1831,7 @@ static struct pci_driver ath12k_pci_driver = {
- 	.driver.pm = &ath12k_pci_pm_ops,
- };
- 
--static int ath12k_pci_init(void)
-+int ath12k_pci_init(void)
- {
- 	int ret;
- 
-@@ -1844,14 +1844,8 @@ static int ath12k_pci_init(void)
- 
- 	return 0;
- }
--module_init(ath12k_pci_init);
- 
--static void ath12k_pci_exit(void)
-+void ath12k_pci_exit(void)
- {
- 	pci_unregister_driver(&ath12k_pci_driver);
- }
--
--module_exit(ath12k_pci_exit);
--
--MODULE_DESCRIPTION("Driver support for Qualcomm Technologies PCIe 802.11be WLAN devices");
--MODULE_LICENSE("Dual BSD/GPL");
-diff --git a/drivers/net/wireless/ath/ath12k/pci.h b/drivers/net/wireless/ath/ath12k/pci.h
-index 31584a7ad80e..521fa72333bb 100644
---- a/drivers/net/wireless/ath/ath12k/pci.h
-+++ b/drivers/net/wireless/ath/ath12k/pci.h
-@@ -1,7 +1,7 @@
- /* SPDX-License-Identifier: BSD-3-Clause-Clear */
- /*
-  * Copyright (c) 2019-2021 The Linux Foundation. All rights reserved.
-- * Copyright (c) 2021-2024 Qualcomm Innovation Center, Inc. All rights reserved.
-+ * Copyright (c) 2021-2025 Qualcomm Innovation Center, Inc. All rights reserved.
-  */
- #ifndef ATH12K_PCI_H
- #define ATH12K_PCI_H
-@@ -145,4 +145,6 @@ void ath12k_pci_stop(struct ath12k_base *ab);
- int ath12k_pci_start(struct ath12k_base *ab);
- int ath12k_pci_power_up(struct ath12k_base *ab);
- void ath12k_pci_power_down(struct ath12k_base *ab, bool is_suspend);
-+int ath12k_pci_init(void);
-+void ath12k_pci_exit(void);
- #endif /* ATH12K_PCI_H */
--- 
-2.34.1
+> 
+> Matt
+>   
+>>>
+>>> Matt
+>>>
+>>>>>
+>>>>> Also others in Cc... thoughts / double check my input?
+>>>>>
+>>>>>> are other places that would need some additional fixes leading to this
+>>>>>> function. Example:
+>>>>>>
+>>>>>> xe_gem_create_ioctl()
+>>>>>> {
+>>>>>> 	...
+>>>>>> 	if (XE_IOCTL_DBG(xe, args->size & ~PAGE_MASK))
+>>>>>> 		return -EINVAL;
+>>>>>
+>>>>> This actually looks right, the minimum allocation size for user BOs
+>>>>> should be PAGE_SIZE aligned. The last patch in the series fixes the
+>>>>> query for this.
+>>>>>
+>>>>> Matt
+>>>>>
+>>>>>> 	...
+>>>>>> }
+>>>>>> 	
+>>>>>>
+>>>>>> Lucas De Marchi
+>>>>>>
+>>>>>>> 	bo->flags = flags;
+>>>>>>> 	bo->cpu_caching = cpu_caching;
+>>>>>>> 	bo->ttm.base.funcs = &xe_gem_object_funcs;
+>>>>>>> @@ -1468,7 +1468,7 @@ struct xe_bo *___xe_bo_create_locked(struct xe_device *xe, struct xe_bo *bo,
+>>>>>>> #endif
+>>>>>>> 	INIT_LIST_HEAD(&bo->vram_userfault_link);
+>>>>>>>
+>>>>>>> -	drm_gem_private_object_init(&xe->drm, &bo->ttm.base, size);
+>>>>>>> +	drm_gem_private_object_init(&xe->drm, &bo->ttm.base, aligned_size);
+>>>>>>>
+>>>>>>> 	if (resv) {
+>>>>>>> 		ctx.allow_res_evict = !(flags & XE_BO_FLAG_NO_RESV_EVICT);
+>>>>>>>
+>>>>>>> -- 
+>>>>>>> 2.48.1
+>>>>>>>
+>>>>>>>
+>>>>
+>>
 
 
