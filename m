@@ -1,89 +1,146 @@
-Return-Path: <linux-kernel+bounces-546958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EC3BA5012F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:59:12 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 102ECA50132
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:59:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B0D23ABFBA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:59:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52EEF188EB88
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:59:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981AD24A057;
-	Wed,  5 Mar 2025 13:59:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F191224A06B;
+	Wed,  5 Mar 2025 13:59:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="CYYBkqM7"
-Received: from mail-10630.protonmail.ch (mail-10630.protonmail.ch [79.135.106.30])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OjKuOcl+"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49A3E230BC6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:59:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E49FB230BC6;
+	Wed,  5 Mar 2025 13:59:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741183145; cv=none; b=ZAetsFpfWDwlJ5Wgf5Fog2iOjOhnYEIP7LhMY21MRieR2eHGqMRK0pJz2CE6SbrfBWC8oys5p48umNBuL6zIDa7SVxyTtgWxKdSqg6zEVfSOjlCeOvy92FpGcyRJXz35JLgzrgAVw4TWKjyNuLgtpkGss8v2wgYF5M4eeYj1vZs=
+	t=1741183168; cv=none; b=E0a3R/cpDloo0Sk+f6FPHfPO/hvNIOpu9venjale/vbm6DCaFfKcAMJFqcdfD5EwDIMQVGIlk+adVBYoxL/xKgoiJrlrnprDLy6tEgEvsTHSDzF1tWwKLNsrlFzPlrGlFe9MG2hh0dX2WXcVWDP/DkJih4d07fdb3VID16tNhkU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741183145; c=relaxed/simple;
-	bh=oyXJ/FF9pCzdYnhyE2IfOhy8VspgwA0dC/fOH3+HNfc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ICL1f7GrisI1v++3GSMnDH1QRy8M7bSyko7qsJlv+atXe/XeEPUnx23zfGaNAXDXJW6goeu4NWOcWFLF7Tx/qHB9FsJV72OXGT0bdqV7SJuefd7prUhqJVGo8pj2X26VQoUQZYkYIRGOovcxrkn3SDn2HSRY2IKQWo61SS07D7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=CYYBkqM7; arc=none smtp.client-ip=79.135.106.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741183141; x=1741442341;
-	bh=oyXJ/FF9pCzdYnhyE2IfOhy8VspgwA0dC/fOH3+HNfc=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=CYYBkqM7hDMIoVe7IJIj6hkVhKB5Z9OxNE5HXvD0MEU9sT+ggSsLnHOfBu8m9+2c8
-	 Hq0dC71N5v+lcoEZq5oALSylUopeyA5Bx07OmugyIAygVgbL85WU67vBt5Xljzy+Ov
-	 dSI+XRGkwmwds6OS03Yi0HyhONE0hp5eMDetEjCP0JdmKOrOtAtaQrhMVflxSXg+Lq
-	 1IVlktLmRjorHr4UnTIVASskeqvpHl5JmkDF7hTjL9gHpESQWElXHZmijA9IYsrFtH
-	 OUYk7Lopzku9kymCpR/jjB5AtyBgqeOQm9SVlYEvPuvRxiVngK7hYPv/LgWvhOfhWH
-	 5IkkWRuDti61w==
-Date: Wed, 05 Mar 2025 13:58:55 +0000
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 20/22] rust: pin-init: add miscellaneous files from the user-space version
-Message-ID: <D88DWNRRTPCE.27O3I3FGEXNSB@proton.me>
-In-Reply-To: <CANiq72=RjmVqvpd-n2uF44UNVvkdkvrKqUJDAbZq8MYjNvXkAQ@mail.gmail.com>
-References: <20250304225245.2033120-1-benno.lossin@proton.me> <5Q1xnRAO-CFSBw_RfcJwj_wKB2rd2Qcc2qFiWmrWjueSmkBd3T-BuqlHSyrMrGIu2loBNIJUTRmvwBk2hfoneA==@protonmail.internalid> <20250304225245.2033120-21-benno.lossin@proton.me> <87y0xjaat7.fsf@kernel.org> <CANiq72=RjmVqvpd-n2uF44UNVvkdkvrKqUJDAbZq8MYjNvXkAQ@mail.gmail.com>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: f989164ccd17e1c1224db328b640b3b5f829f318
+	s=arc-20240116; t=1741183168; c=relaxed/simple;
+	bh=5Bahw/UEbQRmZLJ4nhahFmsFs36Yex+SORkHSl0yfsw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSLhLucrBfNyDd4xEwFcfl1Ugtys3GOaUeswf7AiM1p2GTIKvXMqmnwOhChfG9tjsgTkhijygh2lZfO/WOYvUIf0nh3pnW0ygSKx71P0VWoNv+5Xs9v9ahyy1rIoRhOYlJ3MJYYAqJeobUzcMWPhoaEOU5yjPPkDsjo4mLH9xGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OjKuOcl+; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741183167; x=1772719167;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=5Bahw/UEbQRmZLJ4nhahFmsFs36Yex+SORkHSl0yfsw=;
+  b=OjKuOcl+JHIhZ0Y36z/i2qEzOV2ruNrnYSCSry1/48qRiPZVNSfpIHWw
+   KkZor4LYJgsQx59IowHpH1w6Oc8oliaemakV8ThC+CRVICuiOQ5n/hnXO
+   xmXeMwnrotiI2oAzNpSgo7J2/522T6aqgOYPnvdxtnJ/jYyq4s50RTKVP
+   4uphZB/o4hZ7dFkx7I2QnG/OIzeHy761J0T4Mcz+vcpWpgJyFZ1gb+U6F
+   UI1F3IUYbzMaxuUzWG7eJExGejy2qZf1eJNwwvi/lBjLtPAXAwyxIU7Cx
+   dzYfOxvgqhcgRAInxiu18NHdpaPuWy6H6xL6X3vFh3N3HyMEj4gi2ecIy
+   Q==;
+X-CSE-ConnectionGUID: peMnrPvRT7u7FxOY+RRCEw==
+X-CSE-MsgGUID: saaTBf7yRgCYnCJY0A9qig==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42055561"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="42055561"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 05:59:26 -0800
+X-CSE-ConnectionGUID: B92M/0eFRUuxIvNT67XwrQ==
+X-CSE-MsgGUID: xFPHFuS7TCOG/nnpmZz9PA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="119197584"
+Received: from kuha.fi.intel.com ([10.237.72.152])
+  by fmviesa010.fm.intel.com with SMTP; 05 Mar 2025 05:59:23 -0800
+Received: by kuha.fi.intel.com (sSMTP sendmail emulation); Wed, 05 Mar 2025 15:59:21 +0200
+Date: Wed, 5 Mar 2025 15:59:21 +0200
+From: Heikki Krogerus <heikki.krogerus@linux.intel.com>
+To: Andrei Kuchynski <akuchynski@chromium.org>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Jameson Thies <jthies@google.com>, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] usb: typec: ucsi: Fix NULL pointer access
+Message-ID: <Z8hYuaesOQgmnfQ8@kuha.fi.intel.com>
+References: <20250305111739.1489003-1-akuchynski@chromium.org>
+ <20250305111739.1489003-2-akuchynski@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305111739.1489003-2-akuchynski@chromium.org>
 
-On Wed Mar 5, 2025 at 2:37 PM CET, Miguel Ojeda wrote:
-> On Wed, Mar 5, 2025 at 2:08=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
-l.org> wrote:
->>
->> But really, if you are already going to sync changes with automated
->> tools, it should be simple enough to have a list of file that are
->> excluded from user space to kernel syncs.
->
-> As far as I understand, Benno already excludes some files -- so extra
-> files could also be excluded easily.
->
-> Not sure about these though, e.g. they could help someone realize they
-> need to contribute/develop it elsewhere. On the other hand, we could
-> have a custom one in the kernel instead, explaining just that.
+On Wed, Mar 05, 2025 at 11:17:39AM +0000, Andrei Kuchynski wrote:
+> Resources should be released only after all threads that utilize them
+> have been destroyed.
+> This commit ensures that resources are not released prematurely by waiting
+> for the associated workqueue to complete before deallocating them.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: b9aa02ca39a4 ("usb: typec: ucsi: Add polling mechanism for partner tasks like alt mode checking")
+> Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
 
-CONTRIBUTING.md is also referenced by the MAINTAINERS entry in the `P:`
-field. For README.md, I don't mind removing it, as that still keeps the
-rules of which files should be synchronized simple (see the other
-thread). But I agree with Miguel that it is beneficial to keep in order
-to show that it is a vendored library.
+Reviewed-by: Heikki Krogerus <heikki.krogerus@linux.intel.com>
 
----
-Cheers,
-Benno
+> ---
+>  drivers/usb/typec/ucsi/ucsi.c | 13 +++++++------
+>  1 file changed, 7 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/usb/typec/ucsi/ucsi.c b/drivers/usb/typec/ucsi/ucsi.c
+> index fcf499cc9458..43b4f8207bb3 100644
+> --- a/drivers/usb/typec/ucsi/ucsi.c
+> +++ b/drivers/usb/typec/ucsi/ucsi.c
+> @@ -1825,11 +1825,11 @@ static int ucsi_init(struct ucsi *ucsi)
+>  
+>  err_unregister:
+>  	for (con = connector; con->port; con++) {
+> +		if (con->wq)
+> +			destroy_workqueue(con->wq);
+>  		ucsi_unregister_partner(con);
+>  		ucsi_unregister_altmodes(con, UCSI_RECIPIENT_CON);
+>  		ucsi_unregister_port_psy(con);
+> -		if (con->wq)
+> -			destroy_workqueue(con->wq);
+>  
+>  		usb_power_delivery_unregister_capabilities(con->port_sink_caps);
+>  		con->port_sink_caps = NULL;
+> @@ -2013,10 +2013,6 @@ void ucsi_unregister(struct ucsi *ucsi)
+>  
+>  	for (i = 0; i < ucsi->cap.num_connectors; i++) {
+>  		cancel_work_sync(&ucsi->connector[i].work);
+> -		ucsi_unregister_partner(&ucsi->connector[i]);
+> -		ucsi_unregister_altmodes(&ucsi->connector[i],
+> -					 UCSI_RECIPIENT_CON);
+> -		ucsi_unregister_port_psy(&ucsi->connector[i]);
+>  
+>  		if (ucsi->connector[i].wq) {
+>  			struct ucsi_work *uwork;
+> @@ -2032,6 +2028,11 @@ void ucsi_unregister(struct ucsi *ucsi)
+>  			destroy_workqueue(ucsi->connector[i].wq);
+>  		}
+>  
+> +		ucsi_unregister_partner(&ucsi->connector[i]);
+> +		ucsi_unregister_altmodes(&ucsi->connector[i],
+> +					 UCSI_RECIPIENT_CON);
+> +		ucsi_unregister_port_psy(&ucsi->connector[i]);
+> +
+>  		usb_power_delivery_unregister_capabilities(ucsi->connector[i].port_sink_caps);
+>  		ucsi->connector[i].port_sink_caps = NULL;
+>  		usb_power_delivery_unregister_capabilities(ucsi->connector[i].port_source_caps);
+> -- 
+> 2.49.0.rc0.332.g42c0ae87b1-goog
 
+-- 
+heikki
 
