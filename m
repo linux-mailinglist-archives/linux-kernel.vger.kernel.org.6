@@ -1,149 +1,201 @@
-Return-Path: <linux-kernel+bounces-547879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD644A50E9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:29:06 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03F2FA50EA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:31:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3C2C3ABDDC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:28:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBFC6165E7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6B01268C76;
-	Wed,  5 Mar 2025 22:27:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17864266B5B;
+	Wed,  5 Mar 2025 22:30:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A/8GAGHV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PdTshvaK"
+Received: from EUR02-VI1-obe.outbound.protection.outlook.com (mail-vi1eur02on2067.outbound.protection.outlook.com [40.107.241.67])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32259268698;
-	Wed,  5 Mar 2025 22:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741213670; cv=none; b=V78IMzTkG1f4xu/Su8woP8YkQThlt+7h73WQCjtI5ywVE8e510vdkAc23tPudGHN7Uw9V+2+bQpBjsNvtPl8AL2MYG6wGOASgyTpmp2ngHrgQaclrWjkYdn92twk6uOfCl17iHRwVBhjiHCNsTIa/OLB4zYML0II2jidySczZ9U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741213670; c=relaxed/simple;
-	bh=47X+eEoNM4cXPe501kkxrph0V2B2kHrGH6GZrrO40z0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=q4uzysONpOq36TvqMrjiCISqrFRVA1OPtGbTbYOfYW82IY9zoVFoAN7i5VlRdN3V+HvvDi7DNlaHmw93ek3Usap/m/fCGiohsaLS08kgc3OyAHnzuX6rUEGPpBt8aT2vBIxpA2tzqaOMNMA/10tIT/S6lJSfyrnB0rbj+NVq47Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A/8GAGHV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAAA9C4AF09;
-	Wed,  5 Mar 2025 22:27:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741213670;
-	bh=47X+eEoNM4cXPe501kkxrph0V2B2kHrGH6GZrrO40z0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A/8GAGHVWwEyJKU9fX+3btSUYqcbCJkD5n70OIIlgDwm2SUWpPrPDbgxWw2cz96Es
-	 +WQAAgzNt4rpfKnvi2yeWDbQQc4vdZwg4Lr+Vuyi2vdRaSeakhTMsAIsJVw4iGjauD
-	 sRwiK15hqLuulWufZxCON720EA5i0DGS51il9e1f7VKcKWK5nYGkjos/8WRuZLonUg
-	 l2berudzd46p8iz7wleIwOxOdVYSNf2dVbJlSkUSs87VPX9Jj1bHydurGROmUaA5VU
-	 LF8KlS867WeivAEb9gS1mQbal5hzEOwS4i0X9B2bSr2ukZnVtnljz3Wh+iPGoTT9V0
-	 unPes/owhWHpg==
-From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: SeongJae Park <sj@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090212E3375;
+	Wed,  5 Mar 2025 22:30:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.241.67
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741213848; cv=fail; b=mQhbTRn6G7FKWDK98EiFHWs84e8xUMqrhT5drEDx53bq9o5j0hpOHq444KaZRILZY9U8gDfatNdH6mCqyuroiRCzRutehx0rCzsDvKl4OfkXv/vpfgfG/UJSc55q8zgOeF0R47AV/ZrznbgqkdFwHg5KlXec/ZHQXGmni1dTIT4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741213848; c=relaxed/simple;
+	bh=VrMEpwHI3a17AtIkmmOvGAongCcV1fsKJ7OaYMF2fTU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=nb3+vwXaCW+eNTPwvGBNGkKDdTlSjOpvDpnV1qH3T4xlVzOdRh8PPai1IcT4xywDwXH5VD7CL+uI5i0LxQa7VzUTf859lo13jAK/1tLnuVaRl0Tf50Y7RO3WgYw4S3idvfmxUOvOuM9r1PkjvcK9amkk1Yx30IvzcopeJZEJqj4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PdTshvaK; arc=fail smtp.client-ip=40.107.241.67
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=owfs3C3RFMkZyv7Fc/0kwwQV7uiQEUJPe0GtAogQiBpRWtylwx5p9Ka2VHFxXa6H+9Jo0Ps68ReweoDFVVQGRZa6Mr3kTkiZ+l/6Ji8Y45g3DYk6Remd2Xtw4ci/mHypaPSZhoz5806jEYViYBY07lWue/+Lg5tL1iMs0a1qUz1NcNhi2uu73sQ1OmWIsJr9zPE1RZR90xXB959fA5f3lN5GQjUXhVR3GQ9yuGVw4wOPhcsokQwSg8kjSfyA1xvMvLeKDU640B+YRGb01FUYUoTyYrC4Gl8ZcgnCqcBfm0RRDTw0HHFmpPCx8gdbx64xjWaAn+sb0yVPeq3wwF5/rA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p7f8NKm8ADmcOQ5G2oL61+72mQaCQVW3ugjgyMpWZRY=;
+ b=P3Au1EhLPPiX+m6ZeeQhDjXG4r2AInRFWToUXwvc5Vz79QxURrUnooc5lsgQ5KDgO1Ov43JYKqwYiasl49D80yxnvPzBBKkL71qU9zmGvU7KmhrFXUlCbMD/JgWZfqe7QWDzqeG9LG1dFKvRV5vTfqnxJ/qh2Ve0Ra0k7TscWbmPEQHExknXamygwHp8orBk/Zc1H29IlCYSKubkypGUdk6AYqQJdMbWfCTEVrEb0moqsxPHx2JB/sft99yC/WCRm22fuiqZAYBvvy5vVPG/zqKBriNERTaxQ74N+0s/xE7hDO3KJr2mSQvSvLziwfg3xf8C/Bhk9ytU6XozEcNEnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p7f8NKm8ADmcOQ5G2oL61+72mQaCQVW3ugjgyMpWZRY=;
+ b=PdTshvaKxf/FTTCP1GYpYBLxG82O2cRx6CHryUrkNP+XLSO0gbZDnz1+3WdhRqGLXvRCVOvHmDma542GhywutDwAOS2MyPrvH2I9oH7OW92+HNNutdX9aTrw1Byzkma9jSjwa7mV9rQ/ZrkI134rG096ygcLTKH+ucVpUUmhvyXKN9eit8qgOaJOEU5U1QUUjZQxtecaVVPRacQnGT9eoU3b1yUxxSXXJ7RHbtmoksLbcFv1/qZXEqThLrIb4up8wbrjIgj8xRLXwNS9fFr0sALjziiqATlJXXX9c7CHXcTFAD9eWXdI6e5irCB3OZseLb+6Ikx+8ozUNQR02BlD4g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by PA2PR04MB10309.eurprd04.prod.outlook.com (2603:10a6:102:41f::11) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Wed, 5 Mar
+ 2025 22:30:39 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%6]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 22:30:34 +0000
+Date: Thu, 6 Mar 2025 00:30:29 +0200
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Simon Horman <horms@kernel.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Furong Xu <0x1207@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Serge Semin <fancer.lancer@gmail.com>,
+	Xiaolei Wang <xiaolei.wang@windriver.com>,
+	Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+	Kory Maincent <kory.maincent@bootlin.com>,
+	Gal Pressman <gal@nvidia.com>,
+	Jesper Nilsson <jesper.nilsson@axis.com>,
+	Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+	Chwee-Lin Choong <chwee.lin.choong@intel.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org
-Subject: [PATCH 8/8] Docs/admin-guide/mm/damon/usage: update for {core,ops}_filters directories
-Date: Wed,  5 Mar 2025 14:27:33 -0800
-Message-Id: <20250305222733.59089-9-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250305222733.59089-1-sj@kernel.org>
-References: <20250305222733.59089-1-sj@kernel.org>
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+Subject: Re: [PATCH iwl-next v8 01/11] net: stmmac: move frag_size handling
+ out of spin_lock
+Message-ID: <20250305223029.yh3fglyq5isncjni@skbuf>
+References: <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
+ <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
+ <20250305130026.642219-2-faizal.abdul.rahim@linux.intel.com>
+ <20250305130026.642219-2-faizal.abdul.rahim@linux.intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305130026.642219-2-faizal.abdul.rahim@linux.intel.com>
+ <20250305130026.642219-2-faizal.abdul.rahim@linux.intel.com>
+X-ClientProxiedBy: VI1PR0502CA0013.eurprd05.prod.outlook.com
+ (2603:10a6:803:1::26) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA2PR04MB10309:EE_
+X-MS-Office365-Filtering-Correlation-Id: 14303434-503a-4e75-605f-08dd5c355830
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|7416014|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?YRUk/zEjmEWmSoH1K8VQXkEGWucRSkUOSyGKmE0Dlk6hXNwHe7u8vlfD6Dfw?=
+ =?us-ascii?Q?tJOsS8EAqd/U+ox5fNZjkP/D4R7DF++QMPaBO3FCuzN8sZM6IFD41M/DK8VV?=
+ =?us-ascii?Q?IJp6gsa5sGtpN+Acc5Xl1fJW8sfWZEBuAGNIEP6gEDqguVps2JmhvhqJassV?=
+ =?us-ascii?Q?AlbXpzSta6Rkd4nkjw40poGG3qg3w2qYvsVGqKDgXHcQd9IKyo9RwW6jfkPb?=
+ =?us-ascii?Q?knmjXpZeSm18RSFYpr0aoSURdCl9/5WF21atx5g0yQtndD86LdMJ7BGRdCXI?=
+ =?us-ascii?Q?Rk+aiBLHJG59T2ixAZzr0BoHe65HS88ikQ8lku+sTmDckndIKHoSizMXnvI0?=
+ =?us-ascii?Q?aIXYrA2HhcTqhRhMcDlFPCZ5PHdR5HVOr8MCfK5renEBUCg416zwzSR3GHoa?=
+ =?us-ascii?Q?Q7z04pDI/PTZP4/HV5M97Hn6daWGFTw+e4ZPP5zLxXlfKGVWbPdSq7Ah3jqv?=
+ =?us-ascii?Q?VYVeB4+BhFNeLFlhH88KPncjlwcr5WjdRqNMALdb8tTPXTEHNeRxZ4G5G8KI?=
+ =?us-ascii?Q?ZG0hG01l23khDraN5AKHjhCn2B4vlP9cCp31k2JFbI0jIiXXUGPLWiT3tddK?=
+ =?us-ascii?Q?ivH4BX2LwTujSzY5fxrdvb+/PJYETcJ0twWeymjZS2SL65UqgL1qwv6+grC7?=
+ =?us-ascii?Q?4ackTgBWPvfYCfSr3ik65rnlo1xza+tzaw5al0k+y7brsGpDR9FlfzD3l9Jz?=
+ =?us-ascii?Q?FSIrbdHj8F/iqoVNZHRHx6A5BJuMW7FMd+H7ptRL0RFV9Uf+6PbiuX8X38Rh?=
+ =?us-ascii?Q?qZd73mzu8OWE2ghHTSANNrT940btEruA6bNz6qmo6Uxf9lu9OKyek2HMmEPf?=
+ =?us-ascii?Q?M7UtkYcqzM5SnHe7TImnhdCneh//2zH5c6s0EGMqvYQe7WciLXlVz4E+Piri?=
+ =?us-ascii?Q?zoNvN/ahvnLjlFFgSpofrDfG1GVQuaGo8Drd4MsDpzzgD2Orn3UMlxz4kTZq?=
+ =?us-ascii?Q?j+JzhRNbsJURsrRKov89Ll4f3GmwBTIYhqB3ai3/1yy19GQ2cStbjuhKbQ57?=
+ =?us-ascii?Q?ZWrdZ6HfmNKEESqCB/zK3mBLg4ZBat63Uo7C8scPkQrCpuW9li4Gnfm8Baa1?=
+ =?us-ascii?Q?ZozTRTF7TixR4NYW67NXOj9IM4kGSmJdITdycwpn9UZWGrAHI8jL2+9rKmwu?=
+ =?us-ascii?Q?lxkqkQz158aDBI66alJXtND1Qi9fLXZQ7cTfG3VNrONrnE46Z152sr6N0+bk?=
+ =?us-ascii?Q?pif+9+1/AsmAUoswyrgTshROnBkhMmuLqbphdiPlWakMtfqGhdow3GcNQksw?=
+ =?us-ascii?Q?lNudhYfiLTD8wFLM5XLVvQaOVku+R4DYGOwqPvB7SmqMHpiVJyglKqR/wl9F?=
+ =?us-ascii?Q?UMjzTw38Ge3vZusQp6MKtt8ykcLus745enMNZjpDHg3973DC+C4B3Uhtl05B?=
+ =?us-ascii?Q?k5NBOtYSgvBzZQxszt+yr2hTkWKF?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?DvD3bY7hKp6e6Ibk8msCJL6Surs2F0MXVWEd2p1+YSFm/M+PgU5XRrG8qN7Z?=
+ =?us-ascii?Q?HjYJQJUOqeGPYIkVzJr7m24Rtt1DnkjkiquYQOd1rJyDUxbtV+t1HX6KVV5D?=
+ =?us-ascii?Q?o2fhdJOSpZVp2GatoYL4lZ3Ihc495uNbnWG8H5wwucQXd6LD4r9Bixo0wvl5?=
+ =?us-ascii?Q?ZFk7ZhEsGsCXRwlO/TYvI69/VXS2/tTmeSjOQb5PkRJpFSvCUNXowV+6vGSi?=
+ =?us-ascii?Q?2YduLpWCXbKzif0Gf1yFWkZSOevu+E04AT6TNGGUWlfprWGkWarT2NykOcLB?=
+ =?us-ascii?Q?sDUyhAqBKBe4kr7Z4DXwyl/6FoY/ngwYVGWnb3QD+0wDowuSl3SzLm8KOeNL?=
+ =?us-ascii?Q?bqDTuCe976QYKhpyNh8Vg5S/3FjeqjOyhPt8bNzSt6A/h1i8GLypM5CdKTdJ?=
+ =?us-ascii?Q?pUJ5IaBti1jSttTPnUhVhzLXiDCL8Jrf1+MLsyoSrU0lOhHgGY8kLPy3T1Hi?=
+ =?us-ascii?Q?DuEhpIZJ8PvKgy+TeYysxDobW9LxBeFZBGl7QWZl2P+c103woEGegbzr2Ca/?=
+ =?us-ascii?Q?lAJSXCLTyVwx2S/qOJHLoqKAALtVs5XZI9F/sCeMOxYw2gMyOvOdJlnxm9eC?=
+ =?us-ascii?Q?xGnoCFdMXyRvw5B4pWxAu/Ec4w4JsAwMrtOuGGZOt+9xi1KZId23fdAs3mwq?=
+ =?us-ascii?Q?qjNmV+8veFwIgqzUNxaM1WQxRTgeT6iJ7pqKzkuTSAqAx00f34niexs2YZE9?=
+ =?us-ascii?Q?kKmcT4OY1EsC2z3wCNk5pCIz1XUJKfiiJS+AmIG5eGoqRu5MlhRytsvoGYNt?=
+ =?us-ascii?Q?6aFWFqG9HsdoBYPCT6bd2ppwyNhOPTTh46P9VFTITDpR6gx/j8jw1vn3nQDB?=
+ =?us-ascii?Q?zIq+rG3uQyETfYJxun1oBaFLWG/dpoBgY3g+ZYwnRCnHggovtwljzbxkloIY?=
+ =?us-ascii?Q?3GrR+OpDvKK8xkp+2O5uPhmADHDVYBtc8NvVYIQl28YOvPwbQ43/NlyzBthj?=
+ =?us-ascii?Q?cQK0oeNLW/2vpASRjqP75GiDj7ekYT4UuNmIKcWdbZuec73NsoygGaGSIZA5?=
+ =?us-ascii?Q?cHNM7fT7wJBmK7dLpGI7F+HUirZPoRZaYouj+pxyuyHxOjc0zn0hZUyaNFZY?=
+ =?us-ascii?Q?cI9qSMA54bg78MURGBJNAv+8EP81K0h6ZeNcxor9b9J6sc99RqALVUh3RWut?=
+ =?us-ascii?Q?22raBDF6kYJdiZCIFUfDwBXaIU2GsjJYNLXSW4BWiynWONJHLteo7nVP/5QC?=
+ =?us-ascii?Q?TevZvmfaOQ8nbMv5PNhaJRsmEM/nftTUj1e4gG8ES6FdY8nBlCZcweTANfLe?=
+ =?us-ascii?Q?vhlLd3S50XYdvybQd3w+8hPWVt/vfGWyvt0QxzN/QcQzpd9ilGijLcrhC4C6?=
+ =?us-ascii?Q?QxK7ENAelvENV8/0dKDAT4Su8+6COycIoCpE+WG+bE9Wl3aYS10qpuw92roS?=
+ =?us-ascii?Q?FZea8MjBnnq93WnvsR/4kUbtMHgOsGGg55QUBnOsEiAB59MmolS13xjmzo3f?=
+ =?us-ascii?Q?mEomwJMjFAimhShKq6//csf01NMceBPnQ41II577L/RSNVScV/r64BgC3Jwx?=
+ =?us-ascii?Q?TsAxwuvSj+nwcy5cOo/CQoHEV2M/M7cPoqocGYufO4Pk7umquAD/tKCbmfZS?=
+ =?us-ascii?Q?yVCzAAZCWqEvN31gdEBe+9RmBHCfI/OMYmkzx1nwV8PH1vOKzpszIr9euaY+?=
+ =?us-ascii?Q?7g=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 14303434-503a-4e75-605f-08dd5c355830
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 22:30:34.5527
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ci7JeZwoNs9cmJH/SXmCjk4nPXEB/dGVHvs7MwTKEevUJZySUfK+Q11DZrZfN/jl6qMjiRKuTKXAXewB6Wblrw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10309
 
-Document {core,ops}_filters directories on usage document.
+On Wed, Mar 05, 2025 at 08:00:16AM -0500, Faizal Rahim wrote:
+> The upcoming patch will extract verification logic into a new module,
+> MMSV (MAC Merge Software Verification). MMSV will handle most FPE fields,
+> except frag_size. It introduces its own lock (mmsv->lock), replacing
+> fpe_cfg->lock.
+> 
+> Since frag_size handling remains in the driver, the existing rtnl_lock()
+> is sufficient. Move frag_size handling out of spin_lock_irq_save() to keep
+> the upcoming patch a pure refactoring without behavior changes.
+> 
+> Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
+> ---
 
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/admin-guide/mm/damon/usage.rst | 31 ++++++++++++++------
- 1 file changed, 22 insertions(+), 9 deletions(-)
-
-diff --git a/Documentation/admin-guide/mm/damon/usage.rst b/Documentation/admin-guide/mm/damon/usage.rst
-index de549dd18107..ced2013db3df 100644
---- a/Documentation/admin-guide/mm/damon/usage.rst
-+++ b/Documentation/admin-guide/mm/damon/usage.rst
-@@ -83,7 +83,7 @@ comma (",").
-     │ │ │ │ │ │ │ │ :ref:`goals <sysfs_schemes_quota_goals>`/nr_goals
-     │ │ │ │ │ │ │ │ │ 0/target_metric,target_value,current_value
-     │ │ │ │ │ │ │ :ref:`watermarks <sysfs_watermarks>`/metric,interval_us,high,mid,low
--    │ │ │ │ │ │ │ :ref:`filters <sysfs_filters>`/nr_filters
-+    │ │ │ │ │ │ │ :ref:`{core_,ops_,}filters <sysfs_filters>`/nr_filters
-     │ │ │ │ │ │ │ │ 0/type,matching,allow,memcg_path,addr_start,addr_end,target_idx,min,max
-     │ │ │ │ │ │ │ :ref:`stats <sysfs_schemes_stats>`/nr_tried,sz_tried,nr_applied,sz_applied,sz_ops_filter_passed,qt_exceeds
-     │ │ │ │ │ │ │ :ref:`tried_regions <sysfs_schemes_tried_regions>`/total_bytes
-@@ -307,9 +307,10 @@ to ``N-1``.  Each directory represents each DAMON-based operation scheme.
- schemes/<N>/
- ------------
- 
--In each scheme directory, five directories (``access_pattern``, ``quotas``,
--``watermarks``, ``filters``, ``stats``, and ``tried_regions``) and three files
--(``action``, ``target_nid`` and ``apply_interval``) exist.
-+In each scheme directory, seven directories (``access_pattern``, ``quotas``,
-+``watermarks``, ``core_filters``, ``ops_filters``, ``filters``, ``stats``, and
-+``tried_regions``) and three files (``action``, ``target_nid`` and
-+``apply_interval``) exist.
- 
- The ``action`` file is for setting and getting the scheme's :ref:`action
- <damon_design_damos_action>`.  The keywords that can be written to and read
-@@ -420,13 +421,24 @@ The ``interval`` should written in microseconds unit.
- 
- .. _sysfs_filters:
- 
--schemes/<N>/filters/
----------------------
-+schemes/<N>/{core\_,ops\_,}filters/
-+-----------------------------------
- 
--The directory for the :ref:`filters <damon_design_damos_filters>` of the given
-+Directories for :ref:`filters <damon_design_damos_filters>` of the given
- DAMON-based operation scheme.
- 
--In the beginning, this directory has only one file, ``nr_filters``.  Writing a
-+``core_filters`` and ``ops_filters`` directories are for the filters handled by
-+the DAMON core layer and operations set layer, respectively.  ``filters``
-+directory can be used for installing filters regardless of their handled
-+layers.  Filters that requested by ``core_filters`` and ``ops_filters`` will be
-+installed before those of ``filters``.  All three directories have same files.
-+
-+Use of ``filters`` directory can make expecting evaluation orders of given
-+filters with the files under directory bit confusing.  Users are hence
-+recommended to use ``core_filters`` and ``ops_filters`` directories.  The
-+``filters`` directory could be deprecated in future.
-+
-+In the beginning, the directory has only one file, ``nr_filters``.  Writing a
- number (``N``) to the file creates the number of child directories named ``0``
- to ``N-1``.  Each directory represents each filter.  The filters are evaluated
- in the numeric order.
-@@ -435,7 +447,7 @@ Each filter directory contains nine files, namely ``type``, ``matching``,
- ``allow``, ``memcg_path``, ``addr_start``, ``addr_end``, ``min``, ``max``
- and ``target_idx``.  To ``type`` file, you can write the type of the filter.
- Refer to :ref:`the design doc <damon_design_damos_filters>` for available type
--names and their meanings.
-+names, their meaning and on what layer those are handled.
- 
- For ``memcg`` type, you can specify the memory cgroup of the interest by
- writing the path of the memory cgroup from the cgroups mount point to
-@@ -455,6 +467,7 @@ the ``type`` and ``matching`` should be allowed or not.
- For example, below restricts a DAMOS action to be applied to only non-anonymous
- pages of all memory cgroups except ``/having_care_already``.::
- 
-+    # cd ops_filters/0/
-     # echo 2 > nr_filters
-     # # disallow anonymous pages
-     echo anon > 0/type
--- 
-2.39.5
+Reviewed-by: Vladimir Oltean <vladimir.oltean@nxp.com>
 
