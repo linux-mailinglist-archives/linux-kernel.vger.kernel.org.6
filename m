@@ -1,249 +1,263 @@
-Return-Path: <linux-kernel+bounces-546423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B2D4A4FA8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:46:49 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B76CA4FA91
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:47:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E9581892C5C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:46:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CFB397A436F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:46:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D192054E6;
-	Wed,  5 Mar 2025 09:46:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456AD20551E;
+	Wed,  5 Mar 2025 09:46:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="lFn/NDfe";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="o775Z05A"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="jAP8dNVQ"
+Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4919B200121;
-	Wed,  5 Mar 2025 09:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741167998; cv=fail; b=QoW3jCSP1TfdTpA14GueD1KuDIFkDD+d0dQd5hSKLWG8doJq7XC90UBBaeHoyHd0MaYLlEo1jehKDQ3g03TjTUE41SyiIaORBbJyYZHVt8l1DprIm4OFmMZnHl9t3BdL4PUlsmkYqQsJhTKK3Q3MEfujrqNzO+HoFMOrsLI/2kE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741167998; c=relaxed/simple;
-	bh=OucT2r+FzZyV8TZv+G9GuHbneSmJ13WDwS4744v+VUg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=pZn09hc49L+UlHSsf6PW5LskvbOyPIryhvKPk90rYtPbl3fGfo7ndSydQUqFEdvULkxMgomkk33s1IFaYbxhEmtsDbYwgxEMTe3JXZTcOTXCZ5wOL861A0nLk52T2Wifl04lFYFqboa0xa//E9iQbQZPg3mXO+cvwm4Y06H68e8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=lFn/NDfe; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=o775Z05A; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: b5db5b04f9a611efaae1fd9735fae912-20250305
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=OucT2r+FzZyV8TZv+G9GuHbneSmJ13WDwS4744v+VUg=;
-	b=lFn/NDfexMfo2btJVd4iM8opGLSCFZ87oLnCHCri8mX5QS72Ls5vvvDxwrv/Y7meIM5yRMoJeSNyHzEVygHx52GYM+3Yfp2sUtOP/B5kFb2p9CSFd6fW2QJZMP4/e2+QwY9Tt3QSVp5R0lP1I6q/HuP1NtqHFevegSq0jCJopls=;
-X-CID-CACHE: Type:Local,Time:202503051746+08,HitQuantity:1
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.2.1,REQID:76f43251-9561-4728-bff1-eabd6575a672,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:0ef645f,CLOUDID:a325b749-a527-43d8-8af6-bc8b32d9f5e9,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|50,
-	EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OS
-	A:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: b5db5b04f9a611efaae1fd9735fae912-20250305
-Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw01.mediatek.com
-	(envelope-from <jason-jh.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1337277031; Wed, 05 Mar 2025 17:46:28 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC77F1F3D30;
+	Wed,  5 Mar 2025 09:46:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741168007; cv=none; b=DublnFlQfRieOtmwmupFQ9TlU5C+ucUVdfoml62B+d9H1s1ESsW5regxuIoDkFVYxJJ3pyl8oo54wWr+lCWITZh4Wj2JqMXHR/MeSs2/YJlz+MDW+TDpplF89mx3W9KRLNQLNBt4cT+VmbeWaruFZuNsF3wuLMPk+fJypgi6L58=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741168007; c=relaxed/simple;
+	bh=FXfioV8CaRb4Kj7KM42BiGBBy9+db0YNett6CYn56Fs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ezNCdvOBBXyJ8PygjoFhMvTuStiyge3r0brHIIXB5D3UkrrudnWlOK7quYRYMPMbEYcfsfYIgGP1r0mq/EruRAvqQkbgHY6eJ+GZeVf1yvfj6/B13fA1haxgIUebCr4kCcg8CJ8vAbifyezHvxpBk6XyqHnsWvlVJhryVomMU+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=jAP8dNVQ; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5253vexe028541;
+	Wed, 5 Mar 2025 01:46:33 -0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=4XnuYIJ9q/vf3IyjBHXgo0K
+	gvgu4V7P4DYMXtFG23GI=; b=jAP8dNVQ8OE4R4LGlU1l9pue0RxBYMfNf1Svwu7
+	hCLb8aGBJDI+K7DHSqo/xqCFxNHMNDwSlvRvGcUG9NmJub0//rBb5fR+8B15PoRZ
+	YvL3Q0+wwuKoU5+ZpDvceVMbWz8gZreV0L0Wz5xQQKWhffCI4htOhJrCK01YGUYX
+	A/QxtyIkRdMDx1FwKn9qGTjXHnQkHJcbF1JCJHjJicilwhIFeLSrNxLW18fj0SR2
+	pRfyIMFMLAA1ua+VpZtvRhzQrRX5EoDxEEWRevz28zE54qH453RePHaRel8X5y/4
+	F83uhdNopvLNvnIo/tVIoaE5366QwrTp7ohfoE3lEJUXbzg==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 456f5tgk7x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 01:46:32 -0800 (PST)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.28; Wed, 5 Mar 2025 17:46:27 +0800
-Received: from APC01-SG2-obe.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1258.28 via Frontend Transport; Wed, 5 Mar 2025 17:46:26 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X08zlugd0CU7+GWFPuzdoBrx2AGaCRV2x+1oeogbtZp0tuLgW0d/RQJfAoZKATkV1BBhpo44cYgngk8CGKjfrsZxPSNrREE0jqja1/S+Hzj27Gdib5M3no61srTbmksjVhLPcTeAYlP8G6DYWe4g2LxzeayVfycdTbpjWw5wEfHgSFAXw6acHGWghax0Y3Fdk8NDqbwafzK2INBaN5xoUaaJHyYw0oJHAdD6Ay941XaNkjwXlwbvCMw8BvObWT+9UdFeolJRDEsvFXJ3E7QfSMNiv3Zrvb2MuIBaAuiLsg4BUYxpVWxnclgU6pwktX5HxteaXBkQ9JS3eGRRD6jwUw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OucT2r+FzZyV8TZv+G9GuHbneSmJ13WDwS4744v+VUg=;
- b=JoPbKHZJoBIrBz5kd11UzavtZnTWWEUNJM7GbiQewzzIEmcpvSxoDcPIcXOcPw5wwaySXa6eqlBXxWFT6MCaQ+SrqBjgx9Rc7lNAQBCr7qiAqXbAyvWBqjpjxMTbKvq135c2JU8iingPOi3vtoN2htFGQ7MUt+LUdW9MMgzpumR/BfVSbsHtltbRHiW+u/hv7X9/SNJR1yWhfJmP9mk4lNMt5khP/l1i284PTAA3otbOwq454ZNAnCWCyxSzvmYa37k2rAOSgDaNHts6Kfi20i+ri5O1gyCUO8atTy3IfKSfAHFnI6oVjOohWl15I7uhpRJ4GhGOPPC2it9wP7zqSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=OucT2r+FzZyV8TZv+G9GuHbneSmJ13WDwS4744v+VUg=;
- b=o775Z05AdLYOvbEacxnUIA4IU2xD2aZE+cBkRcoafOo2oRREwSpKK9Ybalc3BZQNipmgKfN5cBZnmFnK6p4UEO4KisKLKktIDeWJlBZGpYNn7OtGzMpr2pQozVbGYhxoECkZ/eX1RyxYsapA882kkCB9vbrK+l/caHofIXJfZl4=
-Received: from SEYPR03MB7682.apcprd03.prod.outlook.com (2603:1096:101:149::11)
- by SEZPR03MB7098.apcprd03.prod.outlook.com (2603:1096:101:eb::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
- 2025 09:46:22 +0000
-Received: from SEYPR03MB7682.apcprd03.prod.outlook.com
- ([fe80::c6cc:cbf7:59cf:62b6]) by SEYPR03MB7682.apcprd03.prod.outlook.com
- ([fe80::c6cc:cbf7:59cf:62b6%3]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
- 09:46:22 +0000
-From: =?utf-8?B?SmFzb24tSkggTGluICjmnpfnnb/npaUp?= <Jason-JH.Lin@mediatek.com>
-To: "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, "conor+dt@kernel.org"
-	<conor+dt@kernel.org>, "mchehab@kernel.org" <mchehab@kernel.org>,
-	"chunkuang.hu@kernel.org" <chunkuang.hu@kernel.org>,
-	"jassisinghbrar@gmail.com" <jassisinghbrar@gmail.com>
-CC: "linux-media@vger.kernel.org" <linux-media@vger.kernel.org>,
-	=?utf-8?B?U2lyaXVzIFdhbmcgKOeOi+eak+aYsSk=?= <Sirius.Wang@mediatek.com>,
-	=?utf-8?B?TW91ZHkgSG8gKOS9leWul+WOnyk=?= <Moudy.Ho@mediatek.com>,
-	=?utf-8?B?TmFuY3kgTGluICjmnpfmrKPonqIp?= <Nancy.Lin@mediatek.com>,
-	=?utf-8?B?WGlhbmRvbmcgV2FuZyAo546L5YWI5YasKQ==?=
-	<Xiandong.Wang@mediatek.com>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Project_Global_Chrome_Upstream_Group
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"fshao@chromium.org" <fshao@chromium.org>,
-	=?utf-8?B?U2luZ28gQ2hhbmcgKOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>,
-	=?utf-8?B?WGF2aWVyIENoYW5nICjlvLXnjbvmlocp?= <Xavier.Chang@mediatek.com>,
-	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "treapking@chromium.org"
-	<treapking@chromium.org>
-Subject: Re: [PATCH v4 4/8] soc: mediatek: mtk-cmdq: Add pa_base parsing for
- unsupported subsys ID hardware
-Thread-Topic: [PATCH v4 4/8] soc: mediatek: mtk-cmdq: Add pa_base parsing for
- unsupported subsys ID hardware
-Thread-Index: AQHbgcg8NOxMJmq6REqrLg4+446/ZrNizfqAgAGVXIA=
-Date: Wed, 5 Mar 2025 09:46:22 +0000
-Message-ID: <03c523e66fd56442f49c38456476cf18be59e8fb.camel@mediatek.com>
-References: <20250218054405.2017918-1-jason-jh.lin@mediatek.com>
-	 <20250218054405.2017918-5-jason-jh.lin@mediatek.com>
-	 <581fc075-25d8-4104-a4ee-8c97e1a017e6@collabora.com>
-In-Reply-To: <581fc075-25d8-4104-a4ee-8c97e1a017e6@collabora.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SEYPR03MB7682:EE_|SEZPR03MB7098:EE_
-x-ms-office365-filtering-correlation-id: e660fb51-b3d7-4e19-b21f-08dd5bca965d
-x-ld-processed: a7687ede-7a6b-4ef6-bace-642f677fbe31,ExtAddr
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?OW1sN1RRS0hXY091K2tZQnRTU2VUZ2pOOUNvQjhqRW5WT3orOFVsZzRKYzlL?=
- =?utf-8?B?VmZLVTlvdzYzTE9sRi9YQldJd2s5aHpaWDVkUGR1bmNwelVtaTBiNHQ5SHRY?=
- =?utf-8?B?YXU0anRKMFBjL3NPZzFTY3hlbmRFWEc0TEhpaXVQdVBEcmhGdDRUNWYrZCta?=
- =?utf-8?B?SVZrdTNVenRQcG5tSWt5djlLc2VPR0JDUXUvRVFvSjN3b3RVSG5FVUl5V2pZ?=
- =?utf-8?B?V0lPYmhFMzkvTThBOUdiamdRRXltQTJjaXJlcGdhTmg4M2NvYlFKckJJU1U5?=
- =?utf-8?B?ZWs0Mk51bGhmdC9jbnhIMG5OK1R2cTdOOG81cVQvM0o4allmUnRtbW9tcHF1?=
- =?utf-8?B?QXk5NU9kWGU2K3FXMFRHTStDS3lQRm1WTlk4dXJTOS8zUXExSHpya3FKQ1BY?=
- =?utf-8?B?RzhScUxoYzR4MnUyaU1FN05ndGNvRGJta2E2TXE1WmpBYlY3aHRmS2NJakFw?=
- =?utf-8?B?eEVLTEtYNFBxbG1yV1Frd3ZQa3Nla3JVSlJzcWN5N1hGdEV0ellDS0p4Z0d6?=
- =?utf-8?B?eFdnRmg3VWVXbmpFaEtnSisvdGJTUmI5NlE4cU1ZNk5TbFQ4UGI3VmlBZkNZ?=
- =?utf-8?B?VjJXZjFGci84NE5BYTZMUlJJVkUwWEdwQ01lWW4xbEcxbmdhTlFxdWd2azJP?=
- =?utf-8?B?bVJnb3JBV1dteDJLdDdSNEpSNjlRNWZWdEU5UFdtWE0rNnhLR2wzMWdQMExm?=
- =?utf-8?B?SElicVJQTGJSWlpjVkp2OXJJV0hvTzJJd1p1SHQ5bDNZWVUyRGlYTEN2UzEy?=
- =?utf-8?B?Tmpvd2Rqb1FRVzJjNUhLZHk2ak1vTGp1OHc0QksxdmtuaWZsUlBmT1NLWCtC?=
- =?utf-8?B?N0Q0TDNWWWVQeFl3YU1qajRNYWVKdG5UTlpGMndiNjdJS0Nsd1FtYkg1eGk0?=
- =?utf-8?B?WUVEdmxBQ1JBZjJMWUFyY3hTak9ydkZ1eGtNV09jbmozV1ljTW0vM1JSUWJX?=
- =?utf-8?B?bW1qUDlwVnM4Qk5ndElXTFQzb0lPclR5clNjdjVFb0FWdXRtMHdGL2ZIMkpw?=
- =?utf-8?B?cGErQXhpT2g4OXlXRUMyaXE4a09GdFA1Z3N2elRkV1BjakZJQXV1Qmw4Z29G?=
- =?utf-8?B?M29IMlYzN2tyQWdsdVhiRU9SVVlYNGhIZjhYVTBhUVZYYlg0WG1iTkRTWXV0?=
- =?utf-8?B?RnY1Y1Frb3krUndzOGxRc1VLQlRoaGFhNW1kaVduVXRycHN5TVB4YTl4OXZX?=
- =?utf-8?B?VHlqZzlvMVJnZEhnTjhLdzUzSUdldUY4RnFha2NIRjFHb0cwayt4MElJRFE0?=
- =?utf-8?B?UVFpWVpaNXljQ3RucTZ6b3FYZXo2S0pjMGZXVkMyU1duR2ZoUmxBNFlyTEpV?=
- =?utf-8?B?SzNKb2xjTVNwT0I4cTJWbERtRXhud1d1RTBkUi9WbEtyKy84NUJuUDRpcDN6?=
- =?utf-8?B?YVFiQXNNYk9mNFJZWXdBM2gxNHFVdDFFL3ZnOXlUN1M4aWJCR25Uay85ZEVL?=
- =?utf-8?B?SDdhMnVySTB5U3dOZjd1Zk1Sa2UyVkpQcW9qVHN4L0pvTjRPaGJHTFhoNFU3?=
- =?utf-8?B?K3pvTUdyVHlnUC83TVJRMWI3QlprL1pONUdocS9yTUMrUit3Mk9Qa0l1Z1RG?=
- =?utf-8?B?RFQzSDhxWlhNVGRlUEZoY1pqSDhwWW1OeEZ5SUUwQWNYWjN4MWEzNmpiQW44?=
- =?utf-8?B?TXRPU0kzbXdoTEp4VFJvcFdQTk8zMmFCaE9wWDYzTlAzYVZ5VUFsMktWNDd3?=
- =?utf-8?B?SFRFaEdkV1BXZVdxL3YxejNhYitEWHdMYS9sYkttdGhzZWlMVUhaQmpKOXla?=
- =?utf-8?B?WjZiTnFyMkhVc1FKQkROeEk2ZnZ2VjkxQzRvS2lXRWNkVE1tQlM4Lzg3b2M2?=
- =?utf-8?B?Mjh0SEt4M1RhQWZsVUx3dXlUTXZYVkdNdEhvNjM0NDF1bHc1QUZqaTh4VE5q?=
- =?utf-8?B?TG82UGFYdTdmeXp2M3BXUzNEempwcC9yQW8yZEcyejlOZlhSK3pwbzdpT2Vp?=
- =?utf-8?Q?KG2VErmyGrdNqAYDzByIAYbMoDVPvHbu?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEYPR03MB7682.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?aThHREdpR1Nmc0J1K25WNmRMcVlVQ2hKMHl6OGhla2J4V1BvR3RydkRXc2dv?=
- =?utf-8?B?REtiWjY0VTRPYllram1ONllJWkhkNVpjMzFxOTBXcnA0ZWdzakFsWFFjY3px?=
- =?utf-8?B?OTBYanBIT1ZmS3M3Y2FrOXE0ZWt4TTNMaUtvYThYZXlQYnJNb0ZQcDlVakRy?=
- =?utf-8?B?V2wwdTdZYXVzQ3Rxem1OUUNCTkFNbGVHZGJpUWdRTVNZMXdUMEhDRTNkZHFh?=
- =?utf-8?B?RUxBZmJBV3lyeWRTTnVGSmRaRUFyMzF1cTRma01aOFlSOUN2SVNWM3JINFpL?=
- =?utf-8?B?Z1NmTTZxdlpjQXF0Yis3a3ZISlkwR2N2bVRtK2xPMHd4alZRamNGd0R2bWNO?=
- =?utf-8?B?Yk02cmkwYmtoZVBtQWp0UU9Ia2EzYWpCZFUyN2dNQnc0WUNad3VJV21NdzFZ?=
- =?utf-8?B?Q0FZa1JYMjR0WE1mQkFMZEtxcEc3QzBsU2JrQjhXaHQ5aVFUTHdlYjN0bVAr?=
- =?utf-8?B?b2xpWXpNT2JRajdxcVh0cTBSZ0RJMWF4SkRFWWRIQUFONmRETTZjVFpXby9H?=
- =?utf-8?B?ZlZVcHVPaHQ4YS94dmxzb092NHlhOXZQSDhtSVRkbVcydjhhckJzcEZwejVV?=
- =?utf-8?B?MUpzMjkwT2JiSTIrSFY0SDY4bDZRMFJ3cEg3TVEydWt3aE10R3c4cFZyRldJ?=
- =?utf-8?B?eVgyckpNRWpady8weWFybmptNk5TWEd5TFJXNlJ2b1lVWi8vZnd2MWZNSmVK?=
- =?utf-8?B?cWVqVzJVY2JEYjlIeWxJcXlqRlRJakpwRHBPVXNFL3ZhcXJTM0tvM1BmOFdZ?=
- =?utf-8?B?MjcxZTE3ZFVhaEkwVVg3ekwwcFBXZzVUbGNYOC84clErRldrdWlidVhOMXV1?=
- =?utf-8?B?OXlvMWZnYkdZWFhwZ1BscHRRb3VDQzJyVXdtWmh2WnhHNGVtazlpQW5hVEdU?=
- =?utf-8?B?RXJYQlUrQkZLYStDR2x6dGcxZ3NEUlluOEJ5MzRLQ0ZVMVZpaUZCSVVwRGVM?=
- =?utf-8?B?RlhlZmRSU3RZRHpvSEVyY1pKTFFZYlpDb2hrc3hTNDJJZmhjOGUxQ0trdEdQ?=
- =?utf-8?B?bWkzdStWdG9hbWVtK2RBcEIvWW81bld2TVBUQ1dkb2ZNbXNjNTNHcGNjZldM?=
- =?utf-8?B?Q01naG8wMW5GM1NucVpFLzZoQ1lOZ3IrTWU3MmJhS3JMdFhFWmZyaWQzc3lj?=
- =?utf-8?B?Sml0WTlXWUZmVDlkSmp1SUNiUTBYRGRhTVdWTG5VMERHT1JKODJPTUJtQkd1?=
- =?utf-8?B?cXRJMlpMeklxOTluWXVxQklDVlZHemZuZGVYcXNMRnBCWmRNamw4MGdkZ0hR?=
- =?utf-8?B?Y0RvTStZQUNJcnhnSHdxeW4xdk5vcmpGaFBtK0dwSXhweEdWSlA1V1R2aUc0?=
- =?utf-8?B?R1VCMGlINjdQdVV6blNMZjdWKzkwZWlZV3M1bXFoalpnaXNHd1hjZjFGd2Ni?=
- =?utf-8?B?SldEbVVuWXNmNDlDODFDNGIzWTBCU3BpWEpGYWdOcXNHd2ttZVlRam02Smdt?=
- =?utf-8?B?aDIxZlVwc2V5akxYUGNycUtyM1dncldoWDlzdWhwMHpsRTdJaHQyL1NqYVdO?=
- =?utf-8?B?TDlMbUV5RjNscVg0SHJtZHFGK3dVeENOTHdHYlhXS3k4UHJuYmd5QTJIMHpx?=
- =?utf-8?B?Y211eVdJSTZVS1VPVWlBUG8rZWJGQ3p1dHhBUjRDOGdVV3BibzJiSzFuZjNJ?=
- =?utf-8?B?a1JRWWRyanowLzdtYzZ4MThuQnlrYkIyR3pKWkZuUnRoZ3ltUTE1ZmU3Yk1U?=
- =?utf-8?B?cTJOSzZNeWYreWducEhUSFhRaURhVmFobVhGWE1aNjhWRENIU09PQXRGYnV0?=
- =?utf-8?B?OFk5NzEvNEY2a3d4cUR2eHh1ekE4bm1aeExsQ3QrZytwcFdTOXFFVDlobDMy?=
- =?utf-8?B?VkZ6RjZhSGh4Zjdyc05laEpma3dLWTc0dWgweDV3TlZiN2Z2dXcrcmYvQlpL?=
- =?utf-8?B?NGcrNzdRMHRaTnNhQTNxdjhtcWxUSGFhVTRYNEFsWmVybHJFWlZSWlNFbEJY?=
- =?utf-8?B?NDJpb1FDT3BWc0FtVkl6d2RPSzdad25NZkp1WFkwUjNkWXZjTzhUNlFycWF3?=
- =?utf-8?B?QWFYUzhuU3FNSWdXWHlTVEhVTVRYNEEyRkhNMW83WG9IWmdaZTU3VUh3WFoy?=
- =?utf-8?B?SFU0eGdGOTdCaTl3TE1aUnBzTEE0V1p1U3lkRzhjdHZzbFlNUE9SUjBMVVhh?=
- =?utf-8?B?TVUwZVZneW1PeTBwbmJndGNubGNvcHV0cHBvVktUR21XYjRURWFYM3pmSWFy?=
- =?utf-8?B?SVE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <D92C17E37A07C24A9EBE5E1EEC6BB695@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+ 15.2.1544.4; Wed, 5 Mar 2025 01:46:31 -0800
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 5 Mar 2025 01:46:31 -0800
+Received: from hyd1425.marvell.com (unknown [10.29.37.152])
+	by maili.marvell.com (Postfix) with ESMTP id 2414B3F705C;
+	Wed,  5 Mar 2025 01:46:24 -0800 (PST)
+From: Sai Krishna <saikrishnag@marvell.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+        <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <lcherian@marvell.com>, <jerinj@marvell.com>,
+        <hkelam@marvell.com>, <sbhatta@marvell.com>, <andrew+netdev@lunn.ch>,
+        <bbhushan2@marvell.com>, <nathan@kernel.org>,
+        <ndesaulniers@google.com>, <morbo@google.com>,
+        <justinstitt@google.com>, <llvm@lists.linux.dev>
+CC: Sai Krishna <saikrishnag@marvell.com>, kernel test robot <lkp@intel.com>
+Subject: [net-next PATCH v2] octeontx2-af: fix build warnings flagged by clang, sparse ,kernel test robot
+Date: Wed, 5 Mar 2025 15:16:23 +0530
+Message-ID: <20250305094623.2819994-1-saikrishnag@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SEYPR03MB7682.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e660fb51-b3d7-4e19-b21f-08dd5bca965d
-X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2025 09:46:22.0305
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: cJrwWLBWZYhKNLwINqkrVuGD2dBFf6JKVjmBVhSi7jbWYRePCwLuR5SgplYo4y22z2YloTo7uv31ynTN+8AushIAHDl9yzonBEm06BVLd2c=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR03MB7098
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: 6jqXsFNlzlCDwlEM9sofaMbTmMtiDIKX
+X-Authority-Analysis: v=2.4 cv=JtULrN4C c=1 sm=1 tr=0 ts=67c81d78 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=M5GUcnROAAAA:8 a=mOT8R8ziQExDnPD9evEA:9 a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-ORIG-GUID: 6jqXsFNlzlCDwlEM9sofaMbTmMtiDIKX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_03,2025-03-05_01,2024-11-22_01
 
-T24gVHVlLCAyMDI1LTAzLTA0IGF0IDEwOjM1ICswMTAwLCBBbmdlbG9HaW9hY2NoaW5vIERlbCBS
-ZWdubyB3cm90ZToNCj4gDQo+IEV4dGVybmFsIGVtYWlsIDogUGxlYXNlIGRvIG5vdCBjbGljayBs
-aW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVudGlsDQo+IHlvdSBoYXZlIHZlcmlmaWVkIHRoZSBz
-ZW5kZXIgb3IgdGhlIGNvbnRlbnQuDQo+IA0KPiANCj4gSWwgMTgvMDIvMjUgMDY6NDEsIEphc29u
-LUpIIExpbiBoYSBzY3JpdHRvOg0KPiA+IFdoZW4gR0NFIGV4ZWN1dGVzIGluc3RydWN0aW9ucywg
-dGhlIGNvcnJlc3BvbmRpbmcgaGFyZHdhcmUgcmVnaXN0ZXINCj4gPiBjYW4gYmUgZm91bmQgdGhy
-b3VnaCB0aGUgc3Vic3lzIElELiBGb3IgaGFyZHdhcmUgdGhhdCBkb2VzIG5vdA0KPiA+IHN1cHBv
-cnQNCj4gPiBzdWJzeXMgSUQsIGl0cyBzdWJzeXMgSUQgd2lsbCBiZSBzZXQgdG8gaW52YWxpZCB2
-YWx1ZSBhbmQgaXRzDQo+ID4gcGh5c2ljYWwNCj4gPiBhZGRyZXNzIG5lZWRzIHRvIGJlIHVzZWQg
-dG8gZ2VuZXJhdGUgR0NFIGluc3RydWN0aW9ucy4NCj4gPiANCj4gPiBUaGlzIGNvbW1pdCBhZGRz
-IGEgcGFfYmFzZSBwYXJzaW5nIGZsb3cgdG8gdGhlIGNtZHFfY2xpZW50X3JlZw0KPiA+IHN0cnVj
-dHVyZQ0KPiA+IGZvciB0aGVzZSB1bnN1cHBvcnRlZCBzdWJzeXMgSUQgaGFyZHdhcmUuDQo+ID4g
-DQo+IA0KPiBEb2VzIHRoaXMgd29yayBvbmx5IGZvciB0aGUgTU1JTkZSQSBsb2NhdGVkIEdDRXMs
-IG9yIGRvZXMgdGhpcyB3b3JrDQo+IGFsc28gZm9yDQo+IHRoZSBsZWdhY3kgb25lcyBpbiBNVDgx
-NzMvODMvODgvOTIvOTUgLy8gTVQ2Nzk1LzY4OTMvZXRjPw0KPiANCj4gSW4gb3JkZXIgdG8gYWN0
-dWFsbHkgcmV2aWV3IGFuZCBkZWNpZGUsIEkgZG8gbmVlZCB0byBrbm93IDotKQ0KPiANCg0KWWVz
-LCBpdCdzIGZvciB0aGUgU29DcyB3aXRob3V0IHN1YnN5cyBJRCwgaXQncyBub3QgcmVsYXRlZCB0
-byB0aGUNCk1NSU5GUkEuDQoNClRoaXMgY2FuIGFsc28gd29yayBvbiBNVDgxNzMvODMvOTIvOTUg
-Ly8gTVQ2Nzk1LzY4OTMvZXRjLg0KWW91IGNhbiByZW1vdmUgdGhlIGBtZWRpYXRlayxnY2UtY2xp
-ZW50LXJlZ2AgcHJvcGVydGllcyBpbiB0aGVpciBkdHNpDQphbmQgY2hlcnJ5LXBpY2sgdGhpcyBz
-ZXJpZXMgdG8gdmVyaWZ5IGl0LiA6LSkNCg0KUmVnYXJkcywNCkphc29uLUpIIExpbg0KDQo+IFRo
-YW5rcywNCj4gQW5nZWxvDQo+IA0KPiANCg0K
+This cleanup patch avoids build warnings flagged by clang,
+sparse, kernel test robot.
+
+Warning reported by clang:
+drivers/net/ethernet/marvell/octeontx2/af/rvu.c:2993:47:
+warning: arithmetic between different enumeration types
+('enum rvu_af_int_vec_e' and 'enum rvu_pf_int_vec_e')
+[-Wenum-enum-conversion]
+ 2993 | return (pfvf->msix.max >= RVU_AF_INT_VEC_CNT +
+RVU_PF_INT_VEC_CNT) &&
+
+Reported-by: kernel test robot <lkp@intel.com>
+Closes:
+https://lore.kernel.org/oe-kbuild-all/202410221614.07o9QVjo-lkp@intel.com/
+Signed-off-by: Sai Krishna <saikrishnag@marvell.com>
+---
+ drivers/net/ethernet/marvell/octeontx2/af/common.h |  2 +-
+ drivers/net/ethernet/marvell/octeontx2/af/rvu.c    | 14 ++++++++------
+ .../ethernet/marvell/octeontx2/nic/otx2_common.c   | 10 +++++-----
+ .../net/ethernet/marvell/octeontx2/nic/otx2_pf.c   |  9 ++++-----
+ 4 files changed, 18 insertions(+), 17 deletions(-)
+
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/common.h b/drivers/net/ethernet/marvell/octeontx2/af/common.h
+index 406c59100a35..8a08bebf08c2 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/common.h
++++ b/drivers/net/ethernet/marvell/octeontx2/af/common.h
+@@ -39,7 +39,7 @@ struct qmem {
+ 	void            *base;
+ 	dma_addr_t	iova;
+ 	int		alloc_sz;
+-	u16		entry_sz;
++	u32		entry_sz;
+ 	u8		align;
+ 	u32		qsize;
+ };
+diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+index cd0d7b7774f1..c850ea5d1960 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
++++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu.c
+@@ -591,7 +591,7 @@ static void rvu_check_min_msix_vec(struct rvu *rvu, int nvecs, int pf, int vf)
+ 
+ check_pf:
+ 	if (pf == 0)
+-		min_vecs = RVU_AF_INT_VEC_CNT + RVU_PF_INT_VEC_CNT;
++		min_vecs = (int)RVU_AF_INT_VEC_CNT + (int)RVU_PF_INT_VEC_CNT;
+ 	else
+ 		min_vecs = RVU_PF_INT_VEC_CNT;
+ 
+@@ -819,13 +819,14 @@ static int rvu_fwdata_init(struct rvu *rvu)
+ 		goto fail;
+ 
+ 	BUILD_BUG_ON(offsetof(struct rvu_fwdata, cgx_fw_data) > FWDATA_CGX_LMAC_OFFSET);
+-	rvu->fwdata = ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
++	rvu->fwdata = (__force struct rvu_fwdata *)
++		ioremap_wc(fwdbase, sizeof(struct rvu_fwdata));
+ 	if (!rvu->fwdata)
+ 		goto fail;
+ 	if (!is_rvu_fwdata_valid(rvu)) {
+ 		dev_err(rvu->dev,
+ 			"Mismatch in 'fwdata' struct btw kernel and firmware\n");
+-		iounmap(rvu->fwdata);
++		iounmap((void __iomem *)rvu->fwdata);
+ 		rvu->fwdata = NULL;
+ 		return -EINVAL;
+ 	}
+@@ -838,7 +839,7 @@ static int rvu_fwdata_init(struct rvu *rvu)
+ static void rvu_fwdata_exit(struct rvu *rvu)
+ {
+ 	if (rvu->fwdata)
+-		iounmap(rvu->fwdata);
++		iounmap((void __iomem *)rvu->fwdata);
+ }
+ 
+ static int rvu_setup_nix_hw_resource(struct rvu *rvu, int blkaddr)
+@@ -2384,7 +2385,8 @@ static int rvu_get_mbox_regions(struct rvu *rvu, void **mbox_addr,
+ 				bar4 = rvupf_read64(rvu, RVU_PF_VF_BAR4_ADDR);
+ 				bar4 += region * MBOX_SIZE;
+ 			}
+-			mbox_addr[region] = (void *)ioremap_wc(bar4, MBOX_SIZE);
++			mbox_addr[region] = (__force void *)
++				ioremap_wc(bar4, MBOX_SIZE);
+ 			if (!mbox_addr[region])
+ 				goto error;
+ 		}
+@@ -2407,7 +2409,7 @@ static int rvu_get_mbox_regions(struct rvu *rvu, void **mbox_addr,
+ 					  RVU_AF_PF_BAR4_ADDR);
+ 			bar4 += region * MBOX_SIZE;
+ 		}
+-		mbox_addr[region] = (void *)ioremap_wc(bar4, MBOX_SIZE);
++		mbox_addr[region] = (__force void *)ioremap_wc(bar4, MBOX_SIZE);
+ 		if (!mbox_addr[region])
+ 			goto error;
+ 	}
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+index 2b49bfec7869..e0e592fd02f7 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_common.c
+@@ -29,10 +29,10 @@ static void otx2_nix_rq_op_stats(struct queue_stats *stats,
+ 	u64 incr = (u64)qidx << 32;
+ 	u64 *ptr;
+ 
+-	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_OCTS);
++	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_OCTS);
+ 	stats->bytes = otx2_atomic64_add(incr, ptr);
+ 
+-	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_PKTS);
++	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_RQ_OP_PKTS);
+ 	stats->pkts = otx2_atomic64_add(incr, ptr);
+ }
+ 
+@@ -42,10 +42,10 @@ static void otx2_nix_sq_op_stats(struct queue_stats *stats,
+ 	u64 incr = (u64)qidx << 32;
+ 	u64 *ptr;
+ 
+-	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_OCTS);
++	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_OCTS);
+ 	stats->bytes = otx2_atomic64_add(incr, ptr);
+ 
+-	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_PKTS);
++	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_PKTS);
+ 	stats->pkts = otx2_atomic64_add(incr, ptr);
+ }
+ 
+@@ -853,7 +853,7 @@ void otx2_sqb_flush(struct otx2_nic *pfvf)
+ 	struct otx2_snd_queue *sq;
+ 	u64 incr, *ptr, val;
+ 
+-	ptr = (u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_STATUS);
++	ptr = (__force u64 *)otx2_get_regaddr(pfvf, NIX_LF_SQ_OP_STATUS);
+ 	for (qidx = 0; qidx < otx2_get_total_tx_queues(pfvf); qidx++) {
+ 		sq = &pfvf->qset.sq[qidx];
+ 		if (!sq->sqb_ptrs)
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+index e1dde93e8af8..6c23d64e81f8 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_pf.c
+@@ -595,8 +595,7 @@ static int otx2_pfvf_mbox_init(struct otx2_nic *pf, int numvfs)
+ 		base = pci_resource_start(pf->pdev, PCI_MBOX_BAR_NUM) +
+ 		       MBOX_SIZE;
+ 	else
+-		base = readq((void __iomem *)((u64)pf->reg_base +
+-					      RVU_PF_VF_BAR4_ADDR));
++		base = readq(pf->reg_base + RVU_PF_VF_BAR4_ADDR);
+ 
+ 	hwbase = ioremap_wc(base, MBOX_SIZE * pf->total_vfs);
+ 	if (!hwbase) {
+@@ -645,7 +644,7 @@ static void otx2_pfvf_mbox_destroy(struct otx2_nic *pf)
+ 	}
+ 
+ 	if (mbox->mbox.hwbase)
+-		iounmap(mbox->mbox.hwbase);
++		iounmap((void __iomem *)mbox->mbox.hwbase);
+ 
+ 	otx2_mbox_destroy(&mbox->mbox);
+ }
+@@ -1309,7 +1308,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
+ 
+ 	/* CQ */
+ 	for (qidx = 0; qidx < pf->qset.cq_cnt; qidx++) {
+-		ptr = otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
++		ptr = (__force u64 *)otx2_get_regaddr(pf, NIX_LF_CQ_OP_INT);
+ 		val = otx2_atomic64_add((qidx << 44), ptr);
+ 
+ 		otx2_write64(pf, NIX_LF_CQ_OP_INT, (qidx << 44) |
+@@ -1348,7 +1347,7 @@ static irqreturn_t otx2_q_intr_handler(int irq, void *data)
+ 		 * these are fatal errors.
+ 		 */
+ 
+-		ptr = otx2_get_regaddr(pf, NIX_LF_SQ_OP_INT);
++		ptr = (__force u64 *)otx2_get_regaddr(pf, NIX_LF_SQ_OP_INT);
+ 		val = otx2_atomic64_add((qidx << 44), ptr);
+ 		otx2_write64(pf, NIX_LF_SQ_OP_INT, (qidx << 44) |
+ 			     (val & NIX_SQINT_BITS));
+-- 
+2.25.1
+
 
