@@ -1,259 +1,227 @@
-Return-Path: <linux-kernel+bounces-546076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546073-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 871CEA4F608
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:22:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D508A4F5FF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:15:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A2F7188F42B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:22:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6318616F30A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18341C5F2C;
-	Wed,  5 Mar 2025 04:21:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 593371C54AA;
+	Wed,  5 Mar 2025 04:15:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CDqIJiBT"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGpIFlHy"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7920519258E;
-	Wed,  5 Mar 2025 04:21:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1A8B1AAA1B;
+	Wed,  5 Mar 2025 04:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741148511; cv=none; b=BpKtxzlMGcN/Vn3FSQxHdD04tMr6S/YaCeGuynOyRUnUAXyrkaNSoI6P6mj9wLPJf6xZzPTEZMFUs64pIeQbyYoAojp89V4JlSZ9QAq/ltKtbFrW4CpyzdbkzXjpPFiybXmsiUgs1jynNGNHWGHAxa8D3wlGHE8lbOesu445V/A=
+	t=1741148113; cv=none; b=pcHlapM8V9Ng8x1gtZdOi4lMgWtNLyARieCcoKRbUYHiqom1Fr6plsUW4yRpe9t8MH6UUdMWWMKfthypZh9HKqDyww0RXqA8X8M4APteAmSoo9MXT1GtMa19coe0vtAEbcHVXtNoL4lMZhGnDj3MO1mzXM/CnykX8g/1F5eGBlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741148511; c=relaxed/simple;
-	bh=r39igoZl7dgIk8L4GFCd6S0dc7M/x4ffj5p5QjTfUF4=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=GmWzc66O+Sa8OCCrBZmX7vynV4rGU/qMNaRHpA3uY3d4xRXwq+RMojHBzCnpZVfTTo05cUD2spoeFmM12AjxN8WqWmOZhJDM98uFNMLUwsy/yrSfCUffEDg9PEu/pwZz0zEgTf1RfoJZ3OA3yf6a1nGCj7Qk/swnT/S9oGUAV+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CDqIJiBT; arc=none smtp.client-ip=209.85.214.176
+	s=arc-20240116; t=1741148113; c=relaxed/simple;
+	bh=5qlS68p+eVcO0ZnFu3fubELqy8AAf9h4shXD1wXvqvk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NKv5k793U5tFBh3Isf5PmU8AoZKc8sHb8T7KZo/ygARxmDrmDuo0M7K/ZE0nppAOZ0QcCUMtspn975Q3U8jv37F7Ueq7wEQ5221DLeGOOh/BeAvCbudcYKvK2uFOWrG5R7McsiZ1DO8r5G8BFdzqq4UR3OydzZvzdVxVhYhTjk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGpIFlHy; arc=none smtp.client-ip=209.85.222.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-22328dca22fso95343565ad.1;
-        Tue, 04 Mar 2025 20:21:49 -0800 (PST)
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7c3b63dfebfso314062085a.3;
+        Tue, 04 Mar 2025 20:15:11 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741148509; x=1741753309; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=UAh53tm7x5vjG0oU8skw4hzinBeRfI2F4BZXkPhkiXk=;
-        b=CDqIJiBTVhkGpz/E9qeX8d07Iiw6i0IH54q+deXERLqIkcYWWYlgdjEYJ54YdJbD4g
-         a6dBcJvaSfCMlVPOY1M/9BC0eU9XyttXv9TFkI2/lKVJC4UvLc9dPRn98leDUg2QdQes
-         S6Hpsx+HerpbTNXjDB2i/v8BnfWwCz0QRqVotV/v+Q4seOt2VN5M/Phl/y064400Y4a7
-         NFAD8R1FLfI+F2V+o+aCNZwFvUJZd2ivLxeZv+AfDiIrjOmPJS6spCiuqgCzKbq3hS4B
-         7MZ0zkPCkPdjShoVQjgzY+xPDxR2Q5NlQKHJsNWPxiGly6RFROUlz/dwp5dwMP9wwQrm
-         KYUQ==
+        d=gmail.com; s=20230601; t=1741148110; x=1741752910; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UtIwc0S596LxrxpBlAZNZRsnhpl8xSZUfbjlJSGuJ78=;
+        b=jGpIFlHyCJQ/ePvwl0gZ+nw+fcGK7OWBK3ico8HucL3BkHlFWWyAOVsoLY3ElvHpNk
+         d7WHhuNWET4bn+JFNmWa1nOAocy5hW9TB21tYJJWjgEtX9ZgCvEkfsSdGPY9qxrixCDD
+         rloXZyPXFnxAwjUfY/qcMFjnAD2mlaE7wu3nTxtRscTqcHIiHeZpSHi9U72JQlpJE+8V
+         YmnHIHnlVUeom869ytL/O+D8bfEf17+C787k/AY6H//AmMaR15bbHT8iXYnCG71Y0S1Z
+         YZJXbpTDn3ifKoGy8tqP30FOPeQ4MxwXTW+tx9gFy8D+5u+6GBOlryAn/ybsp1RLswm5
+         KuOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741148509; x=1741753309;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UAh53tm7x5vjG0oU8skw4hzinBeRfI2F4BZXkPhkiXk=;
-        b=hC5AlkpfGRkrO+DPjLnE0H+AB86sNm3LxxDrWVfOaAnq6fO5SlbkFsTEVuv/3y+ztD
-         KUHP/Ty/LDtbGT7Qtp1c3ORxNM+SUpXu0FqihLMuuoy17CyH/wxzRjvVPA9vf/slXmv+
-         5mNpD8v7zuqPXzBBGrPB+Sb6kxPw7EbuSsA6nfl7gBHpoKp5nc79t+JGcJAzUThLrX82
-         18uRS4wfJQBjfggECeT4PW2fS3buq8Bgts/c7/2h7uWM4KRtAc74frEQgRGbbd1SIY+R
-         x0oIM9GZkkoFYK3AmuVY1QJh36qlwyi1tTloJAizw+nKtLNi6IxL5Z4ExxlxjSQEZ0iO
-         dSCA==
-X-Forwarded-Encrypted: i=1; AJvYcCUowd9ltnSVymET3XFCtZ7fdRpuF9S4XE2+IrN2Mr1wIB65l3BbI73r5JNcDd+mfZDxRx61tbmzmgmK@vger.kernel.org, AJvYcCX+gF0Ua3yHb6z6yaXYZkAUTdOoi/yw1IMNDkEdat9iFGkS8YAJdgdJlQ8b1KXQMpjQB5XtvVbg1g21H9nc@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWNivlLNgNAQCD4kMeBlhbMzEFobd3I2K/ypPYANWjkDB9l5S+
-	dKkvCll367l7k1uRdO0seQiFCrSgwMU4mVJfsD8t+/i4EXXI0gTs
-X-Gm-Gg: ASbGncuuOvg1bjqWp7wUmiB/July+q+kuyibaN38nOckViZeSMNJnX0R4xCgb8MCSua
-	cdWNTUdlv3FvSIimSOTW2bMktI+kIu31Hsl1nfdgxwxSanSwe6Set1CTTiOYoeMAb+5EmNZEQe4
-	11n7EuHV+xTAi6Y75XtCWvNcK8PilKiGP2slVmH1KTbKSRkTr5AEJBTDs2omYdTRcvD3yWW1N13
-	MecBTcCHI3UO4IlPBXkmUngFb1L5bLHPPKnAN2hZpbpmd+R39mFa1/2VGjtXdH2eNvgnCkD8jwK
-	BKeD+jV6c/iO4VlYJw5xtFUhgDgUDTc+WIk8bg==
-X-Google-Smtp-Source: AGHT+IGoBkcH/43EbZ0MvtYc8TWxOHbWCha9H3ge0TtLf882lJlPh2lYjS+JuhCtecXTELqXJbjQJA==
-X-Received: by 2002:a05:6a00:244f:b0:736:5c8e:bab8 with SMTP id d2e1a72fcca58-73682b5510amr2833593b3a.3.1741148508594;
-        Tue, 04 Mar 2025 20:21:48 -0800 (PST)
-Received: from dw-tp ([171.76.80.250])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003ebe7sm12244010b3a.134.2025.03.04.20.21.45
+        d=1e100.net; s=20230601; t=1741148110; x=1741752910;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UtIwc0S596LxrxpBlAZNZRsnhpl8xSZUfbjlJSGuJ78=;
+        b=aQEBRORsJJhk9Mp9p2SlqjTJi0nj43xPy0G0Ov9d14C2/QMzwa3nawbbBEGmoYM4SS
+         8JDYRi32Y2TO2EoXrnGnC0K+etL2wLCAwc6pdtijC5QVKhuCyyvjRG+dc7yGYEdaEckU
+         OgcJip//uFkI/9aI4/D/h7MjgUtqcqiAP8foIkeCOj6Zh3PzHlN46JHY3xv8rQ3WdVGU
+         B5q2V8M+Iy9Q3n2o1rOMxcIkhg5UUiTLKrBUadbcyu5fjIgDr9tqyXTeRGG9AwVg/fvF
+         gbloyUjzsIDBCwLBJ0VBM1KIi/M4u0h3SLUlToBhT/jTe07FFHbXAgjA505dMM7NB9kG
+         3fwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUf/EimxGReJCXcf2NfC2g1c2d5MqA7P62rFWrDpw0Mio3SX8Mt2z37I5f+iXg/TOSnaGoTlMiwR6ZeS30=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb8E1+U3K9sBR2nYT+w0oRL+AkvmnoI87eutwam2Y437Uv6c7Q
+	sZTZnWG2wMYb6EhBIy1sFU2dsQmZ+zR8G5lm6INFuVcF6mzggDpP
+X-Gm-Gg: ASbGnctX3VQUN3M/9c8HE9XIGWHPSArApeVK4/5qPPRCFhElq5JiEYsPxVRTnrYZzcv
+	ovh2WK+o1JGd511+76khgtoQHOjSOgDHV7/YjNV2JWXcNmnCtwxPkfwz7gEf4UvEg3QKEGeLjpM
+	YNJ1cYI2XLchxnU2sQc4iuZILNCNU3sOx0mPzQOvlmh/nDwX8YpGkL/zlzChA+Z+mvgqVd5oOU7
+	2YxfYaMcwKmTDI+oBZp12O2sJ7tWd/JVoirCj+z6suy3LQOVs1TbWQ097IEtkVNK8vTVW5icmgL
+	3wE3zYVrb//0zDfpwvGD2oSz+J2HvBf041tVLW0Ga417GiFK/Ur+Qm+ZXjvcyLOC0g==
+X-Google-Smtp-Source: AGHT+IGwoyI1zd6iMavV7DAu5r2HkD4sNpKolWIfTMdjBX1p9J8Tp0jGWgvyvkf8sO9ftOT91HEBlw==
+X-Received: by 2002:a05:620a:6509:b0:7c0:7833:cbb7 with SMTP id af79cd13be357-7c3d8ef2d7fmr264229885a.47.1741148110393;
+        Tue, 04 Mar 2025 20:15:10 -0800 (PST)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:a5b9:4b66:4113:9357])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3bc75fb32sm362136085a.52.2025.03.04.20.15.08
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 20:21:47 -0800 (PST)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: Jan Kara <jack@suse.cz>, Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: Jan Kara <jack@suse.cz>, linux-ext4@vger.kernel.org, Theodore Ts'o <tytso@mit.edu>, linux-kernel@vger.kernel.org, Mahesh Kumar <maheshkumar657g@gmail.com>
-Subject: Re: [PATCH 1/2] ext4: only defer sb update on error if SB_ACTIVE
-In-Reply-To: <mpm3x7uonxoc73lgva72vaiydc76cmr5niapm45ipk6ts5voab@e7zundhoui6i>
-Date: Wed, 05 Mar 2025 09:44:54 +0530
-Message-ID: <87eczc6rlt.fsf@gmail.com>
-References: <cover.1740212945.git.ojaswin@linux.ibm.com> <da8af2e5170f0d94031b812d7d50c6ec1967db1b.1740212945.git.ojaswin@linux.ibm.com> <jnxpphuradrsf73cxfmohfu7wwwckihtulw6ovsitddgt5pqkg@2uoejkr66qnl> <Z8BKdo5IAHJRdMkp@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com> <mpm3x7uonxoc73lgva72vaiydc76cmr5niapm45ipk6ts5voab@e7zundhoui6i>
+        Tue, 04 Mar 2025 20:15:09 -0800 (PST)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
+Subject:
+ Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner if
+ enabled as a console.
+Date: Tue, 04 Mar 2025 23:15:07 -0500
+Message-ID: <4600427.OBFZWjSADL@nerdopolis2>
+In-Reply-To: <7969025.Sb9uPGUboI@nerdopolis2>
+References:
+ <20250304035447.3138221-1-adamsimonelli@gmail.com>
+ <CAHp75VftQASqajiG_z-==CmVMu5Orv_Q8QMj-7W=sxsJPq6bJw@mail.gmail.com>
+ <7969025.Sb9uPGUboI@nerdopolis2>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-Jan Kara <jack@suse.cz> writes:
+On Tuesday, March 4, 2025 9:06:17 PM EST Adam Simonelli wrote:
+> On Tuesday, March 4, 2025 1:51:52 AM EST Andy Shevchenko wrote:
+> > On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
+> > >
+> > > From: Adam Simonelli <adamsimonelli@gmail.com>
+> > >
+> > > If CONFIG_NULL_TTY_DEFAULT_CONSOLE is enabled, and CONFIG_VT is disab=
+led,
+> > > ttynull will become the default primary console device, based on the =
+link
+> > > order.
+> > >
+> > > Many distributions ship with CONFIG_VT enabled. On tested desktop har=
+dware
+> > > if CONFIG_VT is disabled, the default console device falls back to
+> > > /dev/ttyS0 instead of /dev/tty.
+> > >
+> > > This could cause issues in user space, and hardware problems:
+> > >
+> > > 1. The user space issues include the case where  /dev/ttyS0 is
+> > > disconnected, and the TCGETS ioctl, which some user space libraries u=
+se
+> > > as a probe to determine if a file is a tty, is called on /dev/console=
+ and
+> > > fails. Programs that call isatty() on /dev/console and get an incorre=
+ct
+> > > false value may skip expected logging to /dev/console
+> >=20
+> > Missing period at the end.
+> >=20
+> > > 2. The hardware issues include the case if a user has a science instr=
+ument
+> > > or other device connected to the /dev/ttyS0 port, and they were to up=
+grade
+> > > to a kernel that is disabling the CONFIG_VT option, kernel logs will =
+then be
+> > > sent to the device connected to /dev/ttyS0 unless they edit their ker=
+nel
+> > > command line manually.
+> > >
+> > > The new CONFIG_NULL_TTY_CONSOLE option will give users and distributi=
+on
+> > > maintainers an option to avoid this. Disabling CONFIG_VT and enabling
+> > > CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavi=
+or
+> > > is not dependant on hardware configuration by default, and avoid
+> > > unexpected new behavior on devices connected to the /dev/ttyS0 serial
+> > > port.
+> >=20
+> > ...
+> >=20
+> > >  obj-y                          +=3D vt/
+> >=20
+> > + blank line.
+> >=20
+> > > +# If ttynull is configured to be a console by default, ensure that i=
+t is linked
+> > > +# earlier before a real one is selected.
+> > > +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
+> > > +                               +=3D ttynull.o
+> >=20
+> > Here is the question: are you sure that all console drivers that exist
+> > in the kernel happen to be here? Have you grepped the source tree for
+> > checking this?
+> >=20
+> Grepping for console_initcall, the only other places I see outside of
+> drivers/tty/ is=20
+>=20
+and if I, as a wacky test try=20
 
-> On Thu 27-02-25 16:50:22, Ojaswin Mujoo wrote:
->> On Mon, Feb 24, 2025 at 03:52:00PM +0100, Jan Kara wrote:
->> > On Sat 22-02-25 14:10:22, Ojaswin Mujoo wrote:
->> > > Presently we always BUG_ON if trying to start a transaction on a journal
->> > > marked with JBD2_UNMOUNT, since this should never happen. However while
->> > > running stress tests it was observed that in case of some error handling
->> > > paths, it is possible for update_super_work to start a transaction after
->> > > the journal is destroyed eg:
->> > > 
->> > > (umount)
->> > > ext4_kill_sb
->> > >   kill_block_super
->> > >     generic_shutdown_super
->> > >       sync_filesystem /* commits all txns */
->> > >       evict_inodes
->> > >         /* might start a new txn */
->> > >       ext4_put_super
->> > > 	flush_work(&sbi->s_sb_upd_work) /* flush the workqueue */
->> > >         jbd2_journal_destroy
->> > >           journal_kill_thread
->> > >             journal->j_flags |= JBD2_UNMOUNT;
->> > >           jbd2_journal_commit_transaction
->> > >             jbd2_journal_get_descriptor_buffer
->> > >               jbd2_journal_bmap
->> > >                 ext4_journal_bmap
->> > >                   ext4_map_blocks
->> > >                     ...
->> > >                     ext4_inode_error
->> > >                       ext4_handle_error
->> > >                         schedule_work(&sbi->s_sb_upd_work)
->> > > 
->> > >                                                /* work queue kicks in */
->> > >                                                update_super_work
->> > >                                                  jbd2_journal_start
->> > >                                                    start_this_handle
->> > >                                                      BUG_ON(journal->j_flags &
->> > >                                                             JBD2_UNMOUNT)
->> > > 
->> > > Hence, make sure we only defer the update of ext4 sb if the sb is still
->> > > active.  Otherwise, just fallback to an un-journaled commit.
->> > > 
->> > > The important thing to note here is that we must only defer sb update if
->> > > we have not yet flushed the s_sb_update_work queue in umount path else
->> > > this race can be hit (point 1 below). Since we don't have a direct way
->> > > to check for that we use SB_ACTIVE instead. The SB_ACTIVE check is a bit
->> > > subtle so adding some notes below for future reference:
->> > > 
->> > > 1. Ideally we would want to have a something like (flags & JBD2_UNMOUNT
->> > > == 0) however this is not correct since we could end up scheduling work
->> > > after it has been flushed:
->> > > 
->> > >  ext4_put_super
->> > >   flush_work(&sbi->s_sb_upd_work)
->> > > 
->> > >                            **kjournald2**
->> > >                            jbd2_journal_commit_transaction
->> > >                            ...
->> > >                            ext4_inode_error
->> > >                              /* JBD2_UNMOUNT not set */
->> > >                              schedule_work(s_sb_upd_work)
->> > > 
->> > >    jbd2_journal_destroy
->> > >     journal->j_flags |= JBD2_UNMOUNT;
->> > > 
->> > >                                       **workqueue**
->> > >                                       update_super_work
->> > >                                        jbd2_journal_start
->> > >                                         start_this_handle
->> > >                                           BUG_ON(JBD2_UNMOUNT)
->> > > 
->> > > Something like the above doesn't happen with SB_ACTIVE check because we
->> > > are sure that the workqueue would be flushed at a later point if we are
->> > > in the umount path.
->> > > 
->> > > 2. We don't need a similar check in ext4_grp_locked_error since it is
->> > > only called from mballoc and AFAICT it would be always valid to schedule
->> > > work here.
->> > > 
->> > > Fixes: 2d01ddc86606 ("ext4: save error info to sb through journal if available")
->> > > Reported-by: Mahesh Kumar <maheshkumar657g@gmail.com>
->> > > Suggested-by: Ritesh Harjani <ritesh.list@gmail.com>
->> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
->> > 
->> > Good catch! But I think the solution will have to be slightly different.
->> > Basing the check on SB_ACTIVE has the problem that you can have racing
->> > updates of the sb in the still running transaction and in your direct
->> > update leading to inconsistencies after a crash (that was the reason why
->> > we've created the s_sb_upd_work in the first place).
->> > 
->> > I would solve this by implementing something like
->> > ext4_update_sb_destroy_journal() which will set a flag in sbi, flush the
->> > workqueue, and then destroy the journal. And ext4_handle_error() will check
->> > for the sbi flag.
->> > 
->> > 								Honza
->> 
->> Hey Jan,
->> 
->> Thanks for the review. So earlier I did go through different code paths to see
->> if we will have a direct sb write clash with a journalled one it wouldn't but,
->> relooking at it, seems like we might have a scenario as follows:
->> 
->> generic_super_shutdown
->>  sync_filesytems
->>   /* running txns committed. executing ext4_journal_commit_callback */
->>   ext4_maybe_update_superblock
->>    /* schedules work */
->>    schedule_work(&sbi->s_sb_upd_work)
->>                                           update_super_work
->>                                           /* start a txn and add sb to it */
->>  sb->s_flags &= ~SB_ACTIVE;
->>  evict_inode
->>    ext4_evict_inode
->>     ext4_std_error
->>      ext4_handle_error
->>       /* direct commit of sb (Not good!) */
->> 
-
-Ohk. So even after clearing SB_ACTIVE flag, we still have FS operations
-running like ext4_evict_inode which can race with the super block update
-work starting a txn. 
-
-Thanks for catching that scenario.
+diff --git a/arch/x86/kernel/setup.c b/arch/x86/kernel/setup.c
+index 05c5aa951da7..bcd248c44fc8 100644
+=2D-- a/arch/x86/kernel/setup.c
++++ b/arch/x86/kernel/setup.c
+@@ -1159,6 +1159,8 @@ void __init setup_arch(char **cmdline_p)
+=20
+        e820__setup_pci_gap();
+=20
++       add_preferred_console("ttyS", 0, NULL);
++
+ #ifdef CONFIG_VT
+ #if defined(CONFIG_VGA_CONSOLE)
+        if (!efi_enabled(EFI_BOOT) || (efi_mem_type(0xa0000) !=3D EFI_CONVE=
+NTIONAL_MEMORY))
 
 
->> 
->> Now with the 'setting the flag in sbi' approach, I'm not sure if that will be
->> enough to handle this as well. For example, if we add a flag like
->> sbi->s_journal_destroying, then:
->> 
->> ext4_put_super
->>  sbi->s_journal_destroying = true
->>  flush_workqueue()
->>   /* sb is now journalled */
->>  jbd2_journal_destory
->>   jbd2_journal_commit_transaction
->>    /* add tag for sb in descriptor and add buffer to wbufs[] */
->>    /* Later from some other buffer in the txn: */
->>    jbd2_journal_next_log_block
->>     /* hits error in ext4_journal_bmap */
->>     ext4_handle_error
->>       sbi->s_journal_destroying == true
->>       /* update and commit sb directly causing a checksum mismatch b/w entry in descriptor */
->>    jbd2_journal_abort
->>    /* after abort everything in wbufs[] is written to journal */
->> 
->> In the above we will have a checksum mismatch but then maybe its not really
->> an issue. Maybe since we never commit the txn it is understood that the contents
->> can't be trusted and it should be fine to have a mismatch b/w the decriptor tag
->> and the actual super block contents? In which case the sbi flag approach should
->> be fine.
->> 
->> Does my understanding sound correct?
->
-> Yes. Since the transaction does not get committed, its contents will be
-> (and must be) ignored. So although you are correct that the superblock
-> content in the transaction need to match the content we write directly, it
-> does not matter because whatever is in the uncommitted transaction must
-> never be written to the final position on disk.
->
-> 								Honza
+just as a test, and do
+cat /proc/consoles=20
+I see
+ttynull0             --- (EC    )  242:0
+ttyS0                -W- (E  p a)    4:64
+where ttynull0 is at the top of the list
 
-Thanks Jan for the suggestion. I now see what you meant by having an sbi
-flag. Since that is local to ext4, we can set it just before flushing
-the workqueue and we know that there won't be any update super block
-work which can start a txn after flushing is complete. This flag can
-then be used to check in any of the error handling paths to decide on
-whether to schedule a new update work or not for updating sb.
+> arch/mips/fw/arc/arc_con.c
+> arch/mips/sibyte/common/cfe_console.c
+> arch/powerpc/kernel/legacy_serial.c
+> arch/powerpc/kernel/udbg.c
+> arch/powerpc/platforms/powermac/setup.c
+> arch/um/drivers/stderr_console.c
+> arch/xtensa/platforms/iss/console.c
+> drivers/s390/char/con3215.c
+> drivers/s390/char/con3270.c
+> drivers/s390/char/sclp_con.c
+> drivers/s390/char/sclp_vt220.c
+>=20
+> > ...
+> >=20
+> > > +# If ttynull is enabled, but not as a boot console, it is linked and=
+ used later
+> > > +# after the real ones.
+> > > +ifneq ($(CONFIG_NULL_TTY_DEFAULT_CONSOLE),y)
+> >=20
+> > Also can be written as
+> > ifeq ($(...),)
+> > but it might be less explicit. Up to you.
+> >=20
+> > >  obj-$(CONFIG_NULL_TTY)         +=3D ttynull.o
+> > > +endif
+> >=20
+> >=20
+>=20
+>=20
 
-This makes sense. Thanks for the review!
 
--ritesh
+
+
 
