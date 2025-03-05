@@ -1,122 +1,84 @@
-Return-Path: <linux-kernel+bounces-545832-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966F1A4F21C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:08:49 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 961A7A4F224
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B09A188D8AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:08:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 574AA16E852
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBEEC53BE;
-	Wed,  5 Mar 2025 00:08:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609B9EEA8;
+	Wed,  5 Mar 2025 00:09:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O1msvOyL"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G6FdZk39"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E921B623;
-	Wed,  5 Mar 2025 00:08:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1F1AD515;
+	Wed,  5 Mar 2025 00:09:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741133323; cv=none; b=r3h1qPLtDskcWhzUB6KLSOWg3PxVA/ncQsKYe2JDbt1M2MFAz70E110Vv8FL4JKVeCbal2+/zP9dv8/fGOhCrWTeyI1mHXgmfJuC/n3UTJHp0DoiYY2zVMa/besS6cxfVCGEHVwufDAxVeETNjwf/DH9uet5SclBse9qsIwM5r4=
+	t=1741133347; cv=none; b=WfdfYjptmWpbX820/bmRJ7Kj3z8Vn+nDUTyzRlXBUuGxALhTKQs2TtNsIBqxEFc3fLGDpDagehX2KkOg2hlY636O3FDj13K2pDHD7nGPKRRTVYhjqMLX3np+Is05s9YBlWey04YunbbNhPsBaAFOEKvY2Wt/7HfF4VNKnaXFpCo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741133323; c=relaxed/simple;
-	bh=6mwRkJBdUpqCz9j0TicCbXNz6w2fOjJvAz77w6oRb6c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WkvixXKmJFcCVC+YUobuN2DMT+UAvXT4ZjvmENteOiffSDbw73SmtnxgLj2qfSy7Z1BteDKGn+drW6kOCMn9xirn4JCycWiSSiB2dtrSPyFOdGYOzkysUufYnl3cmFXDttGiOVwJd1u7YVz1qkJAAnQY6/0Uu6yWxbWk3RzoVzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O1msvOyL; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2fe98d173daso10006024a91.1;
-        Tue, 04 Mar 2025 16:08:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741133321; x=1741738121; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=k4350roM/gj3VAWFs+liAW7PoBiV6xDBAwhQEaWr7LQ=;
-        b=O1msvOyLCtgT5JagNOkIdR+OV9AU9BXzcP4WK5iA677wkN8a0s7XZv6C+uNyGU5NoX
-         y37QmgDB/0t3KLvZwpW6IFUDNwiFahWNzsEJLHOCV7UYub2XutxkeaLWaMKu0hZJglR7
-         grUl4HSmLhu4A5poYRxQjo7pDmjhbb7bhvSMj86ed2jmVlomFsy3y9E5FIeSZGWTheMW
-         pt6obtDyYaSDwM0xu0DXI9HTN3lhfUrpY3Ko1cC0PGarB0j0kKyxuuXCcQ8EELSwUPHe
-         BjBm04wE2CphUGt5wNkorMu58mifI3AzLwxeCRflDcv7Ys0+UtS0HwrkcZkwul61ymr0
-         9sqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741133321; x=1741738121;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=k4350roM/gj3VAWFs+liAW7PoBiV6xDBAwhQEaWr7LQ=;
-        b=EzW/ipWsns4yzVEWRgnPUrqzG6bypEvYthk8pAY6fVjmg0qWa7FyssKg8YFt4sKH6m
-         2Vwfyyo+YdALQmKyHyVO6LOTNf7g2e52/OyE2FNHkLOQKiC9htLn4xAjaSfthhDweoou
-         wK+A8jzAEGHcjEHht+4GBdxAEi68L4AbKWLtL+wOpoixB7joTvFX/BbVwmkMDWvLvkRm
-         Td+0mUvQg3Y0kD+8kP1tIGVvXbkZEnKJcgYgrwOSSPPJDK/T7JN9Og9FmrReI3x/yWkW
-         GJXvAri3TTMf41nCl6DAxAKrgCYPBHvj2nhK5r9+vaTMwP675VcPEWXrFmkOzP+7qKtz
-         iwqg==
-X-Forwarded-Encrypted: i=1; AJvYcCViZHhmcpHUOgFCBYlZk526WwRbb4f0t0J5awN3RyaSr8mUT38jBEeno9vNbnKldP5jCfE67NRUtANXxQ==@vger.kernel.org, AJvYcCWl7pWpK/xhDOnGjUfwnHf6/OLk7uFnexUvbAg/+VyDuvEYuBmwxLiENoZMyvlDFTIX8AkLuAr42JYMzxCu@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx2M1+YvSm859J+4AB+uVomSHA+tQ4b+gXZcmUVzCqDgASCFFa
-	mWNugUfvAouMwIFpY0e0JT4mZHE42lOiurZWvLAuxGrnYYWKSdD+DXNYu7Ud6Qvnh9JLA8wfnyh
-	EBB/eAbIUIWmAuLN/luOIoJq3CyQ=
-X-Gm-Gg: ASbGncu1Y56Q9+8hnJ3VgBWcO+WfIdEuNIIPOuj6Cv+tjN0nik6GVQ/E8lfHx4TopwW
-	TEhKVZJ9nxuPzO+qzZaQc5xH6GgNV5bPFQlILm2wsBGivwlTngRqn7niW/nMDN4KhytPYqdvOpk
-	nYSIUGe8CeEb23aHrrziYf9onzCsPn
-X-Google-Smtp-Source: AGHT+IG+oOEjE5uoT8UInsApAE1fahwjxok7BWK9G2aQR8MUL7AK+HTnuW4AwWIHbpCYFMEouOhUXNITc61DJv0utts=
-X-Received: by 2002:a17:90b:5743:b0:2fa:157e:c790 with SMTP id
- 98e67ed59e1d1-2ff4975abecmr1867817a91.5.1741133321074; Tue, 04 Mar 2025
- 16:08:41 -0800 (PST)
+	s=arc-20240116; t=1741133347; c=relaxed/simple;
+	bh=A1wa9xVH0h38Q06rD552vhEcw3vJ3zFK0RAmVd0Zcmo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kyFZInrVIKNS5rady7uERbDLuxHEv4fPPXNMcl63epcW4r3vKl6jWCR2LU7INgkF+tluVGy4YCC4CV1LCbNDCdqtfbcv6G2iCVrSnJJ5c8td8ZvxoTw9YCKm9GhpD42ONFTYE+ceqYE6CGruO6XNUXMuObkSCx0X53AHlxc2iHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G6FdZk39; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94150C4CEE5;
+	Wed,  5 Mar 2025 00:09:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741133346;
+	bh=A1wa9xVH0h38Q06rD552vhEcw3vJ3zFK0RAmVd0Zcmo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=G6FdZk39QPkgy26sD3kMTQnMm4+L//KzEvvjwi1iJttsxxXtSTyaov4KW9P1bEeu3
+	 cekFPcZjrkiUmwK9HNEINTzdNEJjWNqY2mxnMYhhG5qcrR4eCAeK6YnaaWLJQRkQQD
+	 VmUkpqmb5yXxmSZ7tlGLoqZF2BD4S29iuF9QkgNKrOSbYffOWdzC0suM1qegrct5aE
+	 j2ZJZefJBVow/8ObheD2oxtA4MMzknLAp87vd5ZV9PsM1CIqW3rjgVif17e7HT7cuu
+	 6qqjK2gLicPu/r+PKZ68IwpnnSoREwYvnZs1kaNRoUblwWnEnDvcsa5EBoIouCCNFX
+	 8PmbgtVyCJiBQ==
+Date: Wed, 5 Mar 2025 02:09:01 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: linux-integrity@vger.kernel.org,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>
+Cc: Dan Carpenter <dan.carpenter@linaro.org>, linux-sgx@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arch/x86: Fix size overflows in sgx_encl_create()
+Message-ID: <Z8eWHVEoYeNHSgO6@kernel.org>
+References: <20250305000602.127665-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250114004159.102555-1-vishnuocv@gmail.com> <n82p6032-740p-0o56-n808-99n5rpn9no23@xreary.bet>
-In-Reply-To: <n82p6032-740p-0o56-n808-99n5rpn9no23@xreary.bet>
-From: Vishnu Sankar <vishnuocv@gmail.com>
-Date: Wed, 5 Mar 2025 09:08:04 +0900
-X-Gm-Features: AQ5f1JpeU7DAYR9Bjapit_Gu5xfIFvZ4wzld0zm8_FSC6gaRjnuGWo9TN2eV72M
-Message-ID: <CABxCQKuxA84swVQ50J7QCwR+raWP=9a73db6uenUnBVxc3O2+g@mail.gmail.com>
-Subject: Re: [PATCH] HID: lenovo: Fix to ensure the data as __le32 instead of u32
-To: Jiri Kosina <jikos@kernel.org>
-Cc: bentiss@kernel.org, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mpearson-lenovo@squebb.ca, 
-	Vishnu Sankar <vsankar@lenovo.com>, kernel test robot <lkp@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305000602.127665-1-jarkko@kernel.org>
 
-Thank you Jiri.
+On Wed, Mar 05, 2025 at 02:06:02AM +0200, Jarkko Sakkinen wrote:
+> The total size calculated for EPC can overflow u64 given the added up page
+> for SECS.  Further, the total size calculated for shmem can overflow even
+> when the EPC size stays within limits of u64, given that it adds the extra
+> space for 128 byte PCMD structures (one for each page).
+> 
+> Address this by pre-evaluating the micro-architectural requirement of
+> SGX: the address space size must be power of two. This is eventually
+> checked up by ECREATE but the pre-check has the additional benefit of
+> making sure that there is some space for additional data.
+> 
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/linux-sgx/c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain/
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
 
-On Wed, Mar 5, 2025 at 5:13=E2=80=AFAM Jiri Kosina <jikos@kernel.org> wrote=
-:
->
-> On Tue, 14 Jan 2025, Vishnu Sankar wrote:
->
-> > Ensure that data is treated as __le32 instead of u32 before
-> > applying le32_to_cpu.
-> > This patch fixes the sparse warning "sparse: cast to restricted __le32"=
-.
-> >
-> > Signed-off-by: Vishnu Sankar <vishnuocv@gmail.com>
-> > Signed-off-by: Vishnu Sankar <vsankar@lenovo.com>
-> > Reported-by: kernel test robot <lkp@intel.com>
-> > Closes: https://lore.kernel.org/oe-kbuild-all/202501101635.qJrwAOwf-lkp=
-@intel.com/
->
-> Sorry for the delay, this fell in between cracks. Now applied.
->
-> --
-> Jiri Kosina
-> SUSE Labs
->
+Cc: stable@vger.kernel.org # v5.11+
+Fixes: 888d24911787 ("x86/sgx: Add SGX_IOC_ENCLAVE_CREATE")
 
-
---=20
-
-Regards,
-
-      Vishnu Sankar
-     +817015150407 (Japan)
+BR, Jarkko
 
