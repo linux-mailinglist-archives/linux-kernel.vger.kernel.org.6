@@ -1,160 +1,196 @@
-Return-Path: <linux-kernel+bounces-546395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A56C7A4FA1B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:31:09 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76789A4FA1C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:31:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4805D3AE646
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:30:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3161891D43
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:31:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC0C4204C1C;
-	Wed,  5 Mar 2025 09:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 198F51FC7CA;
+	Wed,  5 Mar 2025 09:31:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="InR+ALWN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EVcvA3Jw"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A111FC7F3
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F2F1E2847
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741167056; cv=none; b=uqB0oBBZ5FX686cZjzNQw9wtH3WnGjoviW+c45zsTfn8SAiDdRM/4QnHPOrtzx5pxSjHNf/zV4p61pU9IT+YtzTHpOD6GWIkpw/CHOfO1THhZkBHqjGPAIsADUWGhU+V5Eq4iXQ3MGyd4ZaRH7Lft9lF/8ij4bAifol3I0jPzRw=
+	t=1741167078; cv=none; b=duiO/5iwiB8xRmGZkv7sc1yt3LAqNQgOLGscyO7TmINHWGzirrF4loGIqfAIn8bnpjaKsHrC0epS9URhC4ugLD6PVSeFdNb7OVFIxXqVCz9ryidEYbC0UVz0BWU5eKAKfHvJe3YOGXBK5KuThDq0D3Rw826Cr9dz8MYnc5GfRdI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741167056; c=relaxed/simple;
-	bh=xgx4HSZDU7n/xVf5G1afLCQtvXJis/y/WjW4xj7HkDM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LqMX3sobygjqzECwx54LrbXm8VQ49Z/Cftso8XiLrmudew9DFmrCpVvpttuVY6nWN90cIucsMcEXLt4ZKYR3eO0DWOX6AnNJUc/WHlNDic54hYtYlOiP1O+n/q3PDG1AGREkHzM3mvlRpLhirQLe1aBr86nSnYUKA6HqOquvvxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=InR+ALWN; arc=none smtp.client-ip=170.10.133.124
+	s=arc-20240116; t=1741167078; c=relaxed/simple;
+	bh=rPpCgMC17V7JoNq3my1d0NuYKUuz+vVAE9BRDCL9wPg=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=dQycYVQ3ldYvpZ3kzN/I3j4olUf7Hi9W1aFqZhzvuKo1gj6tBwGLYdq7JarEJXzF7xmjeeQw/W5r0DxHCpzwieOkAYdZXKRgp/wqlBQXclC3ZfvNBF+IewQqv/re3tEmUTsu39T6Kc1rAL26hHq2o/agzyuGQ5Qpc+Ljh/GKSho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EVcvA3Jw; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741167053;
+	s=mimecast20190719; t=1741167076;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=8EJTkbR9th9cE9/5Rwb1aADNZHqX2tCQgBbpYJugojw=;
-	b=InR+ALWNyyeDLjrT9QZZ4gjfSgmI0sVGUEkoChrQkfd4mIZ+nL7+xbEwdggsDZJIevoF5d
-	Dd+6jEjtbGDFj3NrLTK1RLl95v7ajRre8XepLXzmqhFfIIH8mVgzFl2odCkiyjfD9zMZ1x
-	ihWQZtcOrBZNClnBT2ayXIGheI+eXtc=
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com
- [209.85.160.199]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=zokY/zW9Qk6aohEYTWS6Q+XwTXqNJ2SeGPIv+W/XMUc=;
+	b=EVcvA3Jw/QcjpDgffHPa3SPEu2xJNpNX2YgqwXr1iTj/1qn2M6BGrIQ7i9CYxJTEb3805m
+	emO2VN/tOHum7nujFjHc2LKA/Q7fe74zwPcagdwzpPaJ2E8WaVSuk0Q1fXfhtpXuhhDbMo
+	LK1qY2v2IzLHzScH/gt6cMi5fa5Bu9I=
+Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com
+ [209.85.218.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-152-Z8tK5Fd3MmyGH7Vjh8P3jw-1; Wed, 05 Mar 2025 04:30:40 -0500
-X-MC-Unique: Z8tK5Fd3MmyGH7Vjh8P3jw-1
-X-Mimecast-MFC-AGG-ID: Z8tK5Fd3MmyGH7Vjh8P3jw_1741167040
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-47508cfc342so23873221cf.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:30:40 -0800 (PST)
+ us-mta-635-QiKk48HFOWi23DAbruNXRA-1; Wed, 05 Mar 2025 04:31:08 -0500
+X-MC-Unique: QiKk48HFOWi23DAbruNXRA-1
+X-Mimecast-MFC-AGG-ID: QiKk48HFOWi23DAbruNXRA_1741167067
+Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-abf6e9bbef5so369504466b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:31:08 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741167040; x=1741771840;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8EJTkbR9th9cE9/5Rwb1aADNZHqX2tCQgBbpYJugojw=;
-        b=YeoSUcWearcNzuAZtsBM9/1C2mijlQE3r7txWxFWQ4WYYxMjPAOI3lkTzYK8UBNiAf
-         6wI3qVRS5wsysIlRIAH6yKa/NspY9EDARxQFNCJq7lDXP1lT6XmyrV5FXuQ/oOsAPOg4
-         joIUZbk0bKBA4iVE0XUfMyZMBxs9hVxHpvQB19eSbqeHshSmPV69pb4h6qCAG4/UxnUZ
-         FYuKqlDmnU8D2TMPmEIAYK1mzoDixK84XBc2boPSEjC69p7vJV29+lE6135vpDXtluB8
-         Aba7XZPZOxfGLWRjHVD1WRvBOlOTGoUDOiFRcSTFWV154SI1BZ3ty7AyPMqFcG7u0KSQ
-         rwuw==
-X-Forwarded-Encrypted: i=1; AJvYcCXd06jfI8l1beMMeEh0germhtvQSFiOH/zmZGqoJhKRPGHC66wB6Ftx+/4AE0IBRm+6rVXvGiE8sXskXdE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLeglAqNogqxSXyVU06hA43fGOHvz63GXW74x6ut/NsVHzhTRN
-	HlBm/XoO7F7fq+kPxOCD45OWkbeIVwgiYk0BuZEOfm8w4loIim7KntUal8Ayyqd4DW9lB784f4x
-	aRvAx+QC115hON/4nxc7BxPUqmtZz9iunCwrOLpmEtue2ldooLjd1KAC8h/B7Tg==
-X-Gm-Gg: ASbGncvCLR0JHJAyyBKtmI1A+jYMRxIGdYtEo/oRvae+NVCdjkS4JdkXfbb1ArUErH2
-	pHFkDxDYTmNWXyrqJEG9tXCRk+8c7eaiz0tsgwXSorJGkp4G/4ntAa6mBT4/26KrR83qZDwVanr
-	AdcU3oHOG/3oZ8fVZBigUWkwyzsOQsGCY7jVh8ZcRq/6rbMnDUV8ivLOR3SzyP79DlZvKWhGweq
-	h4digC8yIj3wD7cr/jdlImWDSPPCCT+42+yttSqsfCTWXl0vuEWyoXrI8Khlk/gbM86vfVo9sO/
-	+SyTPZF0SP/quNWvzo2aS0oQE5JnGNWtyp6dQw1BuPHzoVIcGk7W1b9AXmALOkEJQ/vAoNE5+CN
-	qRDsr
-X-Received: by 2002:a0c:bf50:0:b0:6e8:ed7f:1a79 with SMTP id 6a1803df08f44-6e8ed7f1cc5mr6413576d6.32.1741167040315;
-        Wed, 05 Mar 2025 01:30:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH2KuetL5whCKoVGhof0MgQhHtXZOk/kgPtLg/+HfbSSzrYEBXTfgD8UUbLB7L4/6q+S+EFVg==
-X-Received: by 2002:a0c:bf50:0:b0:6e8:ed7f:1a79 with SMTP id 6a1803df08f44-6e8ed7f1cc5mr6413326d6.32.1741167040054;
-        Wed, 05 Mar 2025 01:30:40 -0800 (PST)
-Received: from jlelli-thinkpadt14gen4.remote.csb (host-89-240-117-139.as13285.net. [89.240.117.139])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976eb173sm77524666d6.118.2025.03.05.01.30.36
+        d=1e100.net; s=20230601; t=1741167067; x=1741771867;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zokY/zW9Qk6aohEYTWS6Q+XwTXqNJ2SeGPIv+W/XMUc=;
+        b=mmjU32G89K9omI4TcBopADIU7OX+7Vs04rynfmBzAxG1d0gRfbGntfaG+rbJG+xta9
+         s3fv7THYs+t9HUqKyuWPthlXEzDq3Mv1+ICbVlrH1ajCZlrcNj6Wv5fQBsY1jHCzLp/C
+         AJeuyUy23TCvI/NCxxzjEy6CJ+AqLPPYHJM8KMwyfGz5O+qfRgXFCgl5Heo3WLuNBXCb
+         VKzlImvBVJsMYdzCkWWojmpUfu8Ry9L9bFzwSK4UoWHZr3rdZbC2krT2Aev/yNDdYVqw
+         U1VY6J/c7o7iGoFcsqKyLdpRxzlzuSB8nVHTuFBusb8gyRQEshLARf1MNwbcKo435YTV
+         MC2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXEO/6eSWDi8mkIBfNM+UvjGChgNDGyz8B5F9CzRkiXoh06AGlBgKMm5zLP2oGV77fg7W+tHevrfTLPr+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwpWypFkR7LR3eKLols0I+YOVUmUeqfvIxOB/aWI/1MPKW9qMRY
+	dNeCiemm10VPzwC8A/s+CGKZo6XWO+usp/obE4TCSyegIzjq1PyEPHZM8XBpbYyy8Ha87lA5BJN
+	5pkB6XWRjLjgsbrjje72+9QJBudwNvYWScCBEhhXNyZbGppWubTdqJMnCjyjF/o5SyvBkvA==
+X-Gm-Gg: ASbGncucr7aeeZzVcBC3U5DgA3PnqfL8AMOGkQSG2uyB1F5r6f/KL1+Z+J3QEoafOJA
+	r76jvQ85Oxpbrw52JQ0dUxSdQ4/ClRxYo+CCLPBu9zfGVkq7pnOdZcKl0Ls5qWsocaioN9jSQ1P
+	NirH935TSRKSRO32503Wt+cKFt9FN01ro6s0yvAQARnNf91F8eomaHq5SxHTHNt+tKeqpWyIib3
+	R4w773Ek6t9Sbcyl3G6JTvRmhRj3lb2/Xo4QpabHxwUEGfKGWUiM6VB/XU424Z0eNlfNBOxKOZU
+	xpGETlYBD4Y=
+X-Received: by 2002:a05:6402:538f:b0:5e0:984c:3cca with SMTP id 4fb4d7f45d1cf-5e59f3f14bemr2193624a12.19.1741167067088;
+        Wed, 05 Mar 2025 01:31:07 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFJgUESasqHtiSK4/yXYk+BtaK4+6WBXnnAzpknzV6CWPdAXX/dygcAjWw4srlCUFmHfcWheQ==
+X-Received: by 2002:a05:6402:538f:b0:5e0:984c:3cca with SMTP id 4fb4d7f45d1cf-5e59f3f14bemr2193597a12.19.1741167066612;
+        Wed, 05 Mar 2025 01:31:06 -0800 (PST)
+Received: from fedora (g3.ign.cz. [91.219.240.17])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c2f408cdsm9315351a12.0.2025.03.05.01.31.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 01:30:38 -0800 (PST)
-Date: Wed, 5 Mar 2025 09:30:33 +0000
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Joel Fernandes <joelagnelf@nvidia.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>, paulmck@kernel.org,
-	rcu@vger.kernel.org
-Subject: Re: [PATCH RFC] sched: Disable DL server if sysctl_sched_rt_runtime
- is -1
-Message-ID: <Z8gZuaAavG42unZb@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250304200116.2210119-1-joelagnelf@nvidia.com>
- <20250304150632.3fde716c@gandalf.local.home>
- <20250304234744.GA2283516@joelnvbox>
+        Wed, 05 Mar 2025 01:31:06 -0800 (PST)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Maxim Levitsky <mlevitsk@redhat.com>, Sean Christopherson
+ <seanjc@google.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Paolo Bonzini
+ <pbonzini@redhat.com>, Peter Xu <peterx@redhat.com>, "Maciej S. Szmigiero"
+ <maciej.szmigiero@oracle.com>
+Subject: Re: QEMU's Hyper-V HV_X64_MSR_EOM is broken with split IRQCHIP
+In-Reply-To: <23cfae5adcdee2c69014d18b2b19be157ef2c20d.camel@redhat.com>
+References: <Z8ZBzEJ7--VWKdWd@google.com> <87ikoposs6.fsf@redhat.com>
+ <Z8cNBTgz3YBDga3c@google.com> <87cyewq2ea.fsf@redhat.com>
+ <23cfae5adcdee2c69014d18b2b19be157ef2c20d.camel@redhat.com>
+Date: Wed, 05 Mar 2025 10:31:05 +0100
+Message-ID: <87a59zq0x2.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304234744.GA2283516@joelnvbox>
+Content-Type: text/plain
 
-Hi Joel,
+Maxim Levitsky <mlevitsk@redhat.com> writes:
 
-On 04/03/25 18:47, Joel Fernandes wrote:
-> On Tue, Mar 04, 2025 at 03:06:32PM -0500, Steven Rostedt wrote:
-> > On Tue,  4 Mar 2025 15:01:16 -0500
-> > Joel Fernandes <joelagnelf@nvidia.com> wrote:
-> > 
-> > > Currently, RCU boost testing in rcutorture is broken because it relies on
-> > > having RT throttling disabled. This means the test will always pass (or
-> > > rarely fail). This occurs because recently, RT throttling was replaced
-> > > by DL server which boosts CFS tasks even when rcutorture tried to
-> > > disable throttling (see rcu_torture_disable_rt_throttle()).
-> > > 
-> > > Therefore this patch prevents DL server from starting when RC torture
-> > > sets the sysctl_sched_rt_runtime to -1.
-> > > 
-> > > With this patch, boosting in TREE09 fails more than 50% of boost attempts
-> > > making the test more useful.
-> > > 
-> > > Also add a check of this to task_non_contending() because otherwise it
-> > > throws a warning (in the case when DL server was already started before
-> > > rcutorture started).
-> > > 
-> > 
-> > Hmm, I wonder if dl_server caused a regression. That is, disabling rt
-> > throttling should allow RT tasks to starve anything it wants. And some RT
-> > applications rely on this.
-> > 
-> > Should this include a Fixes and Cc stable?
-> 
-> Yeah that makes sense to me, I'll include the Fixes tag in the v2.
+> On Tue, 2025-03-04 at 15:46 +0100, Vitaly Kuznetsov wrote:
+>> Sean Christopherson <seanjc@google.com> writes:
+>> 
+>> > On Tue, Mar 04, 2025, Vitaly Kuznetsov wrote:
+>> > > Sean Christopherson <seanjc@google.com> writes:
+>> > > 
+>> > > > FYI, QEMU's Hyper-V emulation of HV_X64_MSR_EOM has been broken since QEMU commit
+>> > > > c82d9d43ed ("KVM: Kick resamplefd for split kernel irqchip"), as nothing in KVM
+>> > > > will forward the EOM notification to userspace.  I have no idea if anything in
+>> > > > QEMU besides hyperv_testdev.c cares.
+>> > > 
+>> > > The only VMBus device in QEMU besides the testdev seems to be Hyper-V
+>> > > ballooning driver, Cc: Maciej to check whether it's a real problem for
+>> > > it or not.
+>> > > 
+>> > > > The bug is reproducible by running the hyperv_connections KVM-Unit-Test with a
+>> > > > split IRQCHIP.
+>> > > 
+>> > > Thanks, I can reproduce the problem too.
+>> > > 
+>> > > > Hacking QEMU and KVM (see KVM commit 654f1f13ea56 ("kvm: Check irqchip mode before
+>> > > > assign irqfd") as below gets the test to pass.  Assuming that's not a palatable
+>> > > > solution, the other options I can think of would be for QEMU to intercept
+>> > > > HV_X64_MSR_EOM when using a split IRQCHIP, or to modify KVM to do KVM_EXIT_HYPERV_SYNIC
+>> > > > on writes to HV_X64_MSR_EOM with a split IRQCHIP.
+>> > > 
+>> > > AFAIR, Hyper-V message interface is a fairly generic communication
+>> > > mechanism which in theory can be used without interrupts at all: the
+>> > > corresponding SINT can be masked and the guest can be polling for
+>> > > messages, proccessing them and then writing to HV_X64_MSR_EOM to trigger
+>> > > delivery on the next queued message. To support this scenario on the
+>> > > backend, we need to receive HV_X64_MSR_EOM writes regardless of whether
+>> > > irqchip is split or not. (In theory, we can get away without this by
+>> > > just checking if pending messages can be delivered upon each vCPU entry
+>> > > but this can take an undefined amount of time in some scenarios so I
+>> > > guess we're better off with notifications).
+>> > 
+>> > Before c82d9d43ed ("KVM: Kick resamplefd for split kernel irqchip"), and without
+>> > a split IRCHIP, QEMU gets notified via eventfd.  On writes to HV_X64_MSR_EOM, KVM
+>> > invokes irq_acked(), i.e. irqfd_resampler_ack(), for all SINT routes.  The eventfd
+>> > signal gets back to sint_ack_handler(), which invokes msg_retry() to re-post the
+>> > message.
+>> > 
+>> > I.e. trapping HV_X64_MSR_EOM on would be a slow path relative to what's there for
+>> > in-kernel IRQCHIP.
+>> 
+>> My understanding is that the only type of message which requires fast
+>> processing is STIMER messages but we don't do stimers in userspace. I
+>> guess it is possible to have a competing 'noisy neighbough' in userspace
+>> draining message slots but then we are slow anyway.
+>> 
+>
+> Hi,
+>
+> AFAIK, HV_X64_MSR_EOM is only one of the ways for the guest to signal that it processed the SYNIC message.
+>
+> Guest can also signal that it finished processing a SYNIC message using HV_X64_MSR_EOI or even by writing to EOI
+> local apic register, and I actually think that the later is what is used by at least recent Windows.
+>
 
-Not entirely sure we want to link the (legacy?) sched_rt_runtime
-interface to DL server, as it has its own new interface at
+Hyper-V SynIC has two distinct concepts: "messages" and "events". While
+events are just flags (like interrupts), messages actually carry
+information and the recipient is responsible for clearing message slot
+(there are only 16 of them per vCPU AFAIR). Strictly speaking,
+HV_X64_MSR_EOM is optional and hypervisor may deliver a new message to
+an empty slot at any time. It may use EOI as a trigger but note that
+not every message delivery results in an interrupt as e.g. SINT can be
+configured in 'polling' mode -- and that's when HV_X64_MSR_EOM comes
+handy.
 
-/sys/kernel/debug/sched/fair_server/cpuX/*
+>
+> Now KVM does intercept EOI and it even "happens" to work with both APICv and AVIC:
+>
+> APICv has EOI 'exiting bitmap' and SYNC interrupts are set there (see vcpu_load_eoi_exitmap).
+>
+> AVIC intercepts EOI write iff the interrupt was level-triggered and SYNIC interrupts happen
+> to be indeed level-triggered:
+>
+> static int synic_set_irq(struct kvm_vcpu_hv_synic *synic, u32 sint)
+> ...
+> 	irq.shorthand = APIC_DEST_SELF;
+> 	irq.dest_mode = APIC_DEST_PHYSICAL;
+> 	irq.delivery_mode = APIC_DM_FIXED;
+> 	irq.vector =
+> vector;
+> 	irq.level = 1;
+> ...
+>
 
-Admittedly thought the latter is a debug interface, which is not ideal.
+Yea, I think the problem here is specific to HV_X64_MSR_EOM.
 
-I was thinking we might want/need to add a kernel cmdline parameter to
-tweak DL server parameters at boot (and possibly disable it), but it is
-indeed less flexible than an interface tweakable at runtime.
-
-If we end up using sched_rt_runtime (and _period) to tweak DL server I
-believe we should make sure changes are consistent with the debug
-interface at least.
-
-Peter, what do you think?
-
-Thanks,
-Juri
+-- 
+Vitaly
 
 
