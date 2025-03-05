@@ -1,198 +1,186 @@
-Return-Path: <linux-kernel+bounces-547303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 256FDA50590
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:48:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 427DAA5058B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:48:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C75A0188B60F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:47:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293CE168948
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:47:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658862512ED;
-	Wed,  5 Mar 2025 16:46:12 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D4061A705C;
+	Wed,  5 Mar 2025 16:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IIdgrFH8"
+Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8732250C02;
-	Wed,  5 Mar 2025 16:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E92D61A5BB0;
+	Wed,  5 Mar 2025 16:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741193171; cv=none; b=CC1g5x8XGbFZPSrJgTidFpG9doma/sEjHNMxeCj5rmY8LaErUXQl3TUlLs7dCAmJC4AKQfIwooj4hVaHrnH+cGIBUu6zNFEZ099LD+y7qDxOrrSZMF3rWOTi9iIaHbMfEu6NJkWEHx5gMmCYy1zGB4NDvFoLproUgLibZZs/jcU=
+	t=1741193189; cv=none; b=i6nxtYlnhmAFCagW5dybiHgnvWksPhVjPbn98mCLYD/WPiJKWDBBYc2Mqp0h6N2Bj3OixdnCYtW8rbHlEc0uKyTE82ltJlkkOAixJAc4sBDB4oqRO5fUHNh/Hm8bc+krM+oZeGTPSVneO2vTBsdcb0YyG6j7EwFPMoYHh75Gbek=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741193171; c=relaxed/simple;
-	bh=Cd5zdLCEQaa9/bZgFAliaUWRZrFJE32R0v2LGL4vKvc=;
-	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=i1V1qGnAi/4mHxXUCsbB6uCDfsj45jbmKrWimYZSYGeqVGbKL8EFdKenn0VV4uRiFJaXItCv8z3F6thGWuHu26wEJnBLBsFIY/wL5unT/yVvZE5reBf86hLtoNRg6b0nifWJAVpmXyRmR6P2GRqZnoIJ4xHhKzm0TtgLrHHjyeo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D4CCC4CEEE;
-	Wed,  5 Mar 2025 16:46:10 +0000 (UTC)
-Received: from rostedt by gandalf with local (Exim 4.98)
-	(envelope-from <rostedt@goodmis.org>)
-	id 1tprsn-0000000D0yR-2bsT;
-	Wed, 05 Mar 2025 11:46:09 -0500
-Message-ID: <20250305164609.469844721@goodmis.org>
-User-Agent: quilt/0.68
-Date: Wed, 05 Mar 2025 11:45:47 -0500
-From: Steven Rostedt <rostedt@goodmis.org>
-To: linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [PATCH v4 8/8] tracing: Update modules to persistent instances when loaded
-References: <20250305164539.379008535@goodmis.org>
+	s=arc-20240116; t=1741193189; c=relaxed/simple;
+	bh=NenO5w4NxdLbkqYFrXeKv2KqYAGzxEEgxcF1Rx//Fbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G/sjVxjvG+vCDJGgJ2JJGfcZQ3XnV7f5d1m9KpFwOCMQiBcOKuNQ2YNrw74M5dv3ZFeUOEq2NBkZkdcAUsfeE7PUBrgMRmZTwk6joflZ5aG+E2G5h8irQsD5V60+Dmh9JYyUFL10A5ngvuuXuwRcS41xOFhKsxeWQOCRDvx/bsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IIdgrFH8; arc=none smtp.client-ip=209.85.219.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6e894b81678so35193306d6.0;
+        Wed, 05 Mar 2025 08:46:27 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741193187; x=1741797987; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=OcvdklEHsV9rwsQUlk2/UUT196cpbtOdI2b0X4kIbaE=;
+        b=IIdgrFH88kqy4og8ThcIqEJBDeKcVOmnwd563QgdcipCH8XZ7KAjs05VKnXk8rmsHW
+         6n2ZONjKJbv1EX2T1iaXpEEnQHiKN3oV5LsPgXfA5KFCNkdq6GCHgA44iyefvDSwmZRq
+         y1ZDjTUpSA3D3UfxmQvXeweeP/i1KztF5/1PwSDoU7GiFtXWupTKpXLpaRXDX9g7JyOX
+         nv9+Mv+DZyWqSNaKOENP8RKo7TMZzvFMmK72RpQ7S4xFRKXJIZUqFnj7Cr9JBwQf9K3J
+         6zV1AiyAGH6PeL6PBNm6qhmZO7f59aE0pAs90wC4mj8cHq0bEpSNQHkp0RSPq+oKvKOR
+         n25g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741193187; x=1741797987;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OcvdklEHsV9rwsQUlk2/UUT196cpbtOdI2b0X4kIbaE=;
+        b=kUWAfBqHftX0f9UG/h/zrsQkjEYhnCWUvXcdS1KYlYXXCecHqxs+E+1CN37e4+HFsZ
+         fkj7kvPubjab7uETZo45ehEpWwlqnqVLrAnsWZxfTiJwbEiFnzthC2XaGuhj+/jI7QbD
+         o5Lugw2d2DZnOwXHTFqfy8ugwy8JHxXneIafrms9CWD9oki/BqT3Fb5bhgHyeoccD1eP
+         tga5seYHMOGXyDNq4wGQhIZlQq58zVVTLRqPcTSde8fKGN9dSjlaW62xvpef5hxssgvc
+         V/zZyuLn/8GPbsj2fD5Z+8ph6ttCpMZXDaci7R9QdWes3lfGwmbGA44Z/hCTKU18zAjJ
+         1TPQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUaFDDtIDJ/jOyuDH0PL4TmVanaQ3p/hy7bYXM5ZAnHsCvFPi02368Y1FrvwdzScxkeLOA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfSTIcoiIpYoHVZalkH9PKuLs1IiIPrc5Jye53oMnWs2N/59H4
+	d7BSUYB+4UvJv7NO2jOq2y2Cj/fW5nsBsLZVNlI3j0UXaibW3+UE
+X-Gm-Gg: ASbGncsosa28YFGvaJn9DqL8IoJH4cfdTBZ1kiS2OMO+3mte6/vUAPRuuOyC7Dd1XGZ
+	b2LRBHBvDb2bb38XLWurYwOhr3zsJVqHdIxTVL7oP+6VA7tnguQp3xmInUipWCV5+AnE7Mh8Viz
+	5NE29Qz2GI5PiLUpLlSLUyzQoEo9fhkbpIjzrWCuMA8LpSi+2NOvARF5qG5KUPp+WVYTJfAsi6C
+	NEXgimJzmpOPOdp8I3KBKPKGM3P8yN3BzP3tJ1pmJnZqzW30qd2eFW3erbnVSxm8/rOeU2XyP83
+	0DdfdlehSSUSuv4hp3W7KauAyLfdvwY2Z9Js1/FSUIvdEZG69nzkeLS4mmC+L1zWZ3b/BlM38wM
+	+oh4YqNpvM52YfcxH4wh7OmzBrnZPfTxaltk=
+X-Google-Smtp-Source: AGHT+IFCVsysGWNjLkZxA+lQfYV2JMq0o9EU0cgnQO+p3xPZvYgsdOwAlDNiT4tsCznAT2ywAT1CGg==
+X-Received: by 2002:ad4:5f0a:0:b0:6e2:43d1:5fd0 with SMTP id 6a1803df08f44-6e8e6d446c9mr62238226d6.31.1741193186683;
+        Wed, 05 Mar 2025 08:46:26 -0800 (PST)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976cc891sm82538216d6.81.2025.03.05.08.46.26
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 08:46:26 -0800 (PST)
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfauth.phl.internal (Postfix) with ESMTP id F38491200068;
+	Wed,  5 Mar 2025 11:46:25 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-01.internal (MEProxy); Wed, 05 Mar 2025 11:46:26 -0500
+X-ME-Sender: <xms:4X_IZzS50ePURHmeKjWZG7ZR3TU6_NpqVd6gI7AagjoXdpI9CoF1Sw>
+    <xme:4X_IZ0yvlohTXfqss1qjlncu3zaEwirUbgvYesPYN0Wnl-RTCmHVcPLkCg49JnOUP
+    n-GOqMd_eQ73spr1Q>
+X-ME-Received: <xmr:4X_IZ41DFwMpZ5pmYMaLJlcZKWj7xzwx08fIKOvGzqhRGXmP8bDHhV4CQw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdehfeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtqhertddt
+    tddvnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
+    hilhdrtghomheqnecuggftrfgrthhtvghrnhepvdefgffgieejleetueettdeiieegledt
+    vedvgedvjeefieevgeethedtveelueffnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
+    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
+    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
+    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopedutddp
+    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepjhhovghlrghgnhgvlhhfsehnvhhiug
+    hirgdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehjihgrnhhgshhhrghnlhgrihesghhmrghilhdrtg
+    homhdprhgtphhtthhopehprghulhhmtghksehkvghrnhgvlhdrohhrghdprhgtphhtthho
+    pehjohhshhesjhhoshhhthhrihhplhgvthhtrdhorhhgpdhrtghpthhtoheprhhoshhtvg
+    guthesghhoohgumhhishdrohhrghdprhgtphhtthhopehmrghthhhivghurdguvghsnhho
+    higvrhhssegvfhhfihgtihhoshdrtghomhdprhgtphhtthhopehnvggvrhgrjhdruhhprg
+    guhhihrgihsegrmhgurdgtohhmpdhrtghpthhtoheprhgtuhesvhhgvghrrdhkvghrnhgv
+    lhdrohhrgh
+X-ME-Proxy: <xmx:4X_IZzDddwiMHJfwwr5Cq9DpkXb73IrcD9-34KrUfTL59QE8atOXdg>
+    <xmx:4X_IZ8gRRhDKQHjOEsQ9ihHZY7pV5QsuT_VYmkWQg5pJFyk8F3wMFw>
+    <xmx:4X_IZ3reFTew1NVsJ4yIkP12mvX1KYST1rjobRydeSMg1iMkkm-0lA>
+    <xmx:4X_IZ3jnRnEsF-I58eiWUWoJF0Ed6l6VQrJFbQvNqkzEaL5_vjDlkA>
+    <xmx:4X_IZ_Qqd2rhxl_2WLbVM5GNYHBnDugQaE44Mx60H3BASJ2JDW8PU5v1>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Mar 2025 11:46:25 -0500 (EST)
+Date: Wed, 5 Mar 2025 08:46:23 -0800
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Joel Fernandes <joelagnelf@nvidia.com>
+Cc: linux-kernel@vger.kernel.org, Lai Jiangshan <jiangshanlai@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>, rcu@vger.kernel.org
+Subject: Re: [PATCH v2 -rcu] srcu: Use rcu_seq_done_exact() for polling API
+Message-ID: <Z8h_3xQWGNjIw7Uh@tardis>
+References: <20250219124309.463702-1-joelagnelf@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250219124309.463702-1-joelagnelf@nvidia.com>
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Wed, Feb 19, 2025 at 07:43:08AM -0500, Joel Fernandes wrote:
+> poll_state_synchronize_srcu() uses rcu_seq_done() unlike
+> poll_state_synchronize_rcu() which uses rcu_seq_done_exact().
+>=20
+> The  rcu_seq_done_exact() makes more sense for polling API, as with
+> this API, there is a higher chance that there is a significant delay
+> between the get_state..() and poll_state..() calls since a cookie
+> can be stored and reused at a later time. During such a delay, if
+> the gp_seq counter progresses more than ULONG_MAX/2 distance, then
+> poll_state..() may return false for a long time unwantedly.
+>=20
+> Fix by using the more accurate rcu_seq_done_exact() API which is
+> exactly what straight RCU's polling does.
+>=20
+> It may make sense, as future work, to add debug code here as well, where
+> we compare a physical timestamp between get_state..() and poll_state()
+> calls and yell if significant time has past but the grace period has
+> still not progressed.
+>=20
+> Reviewed-by: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
 
-When a module is loaded and a persistent buffer is actively tracing, add
-it to the list of modules in the persistent memory.
+Queued for further tests and reviews, thank you all.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace.c        | 27 +++++++++++++++++++++++++
- kernel/trace/trace.h        |  2 ++
- kernel/trace/trace_events.c | 40 ++++++++++++++++++++++++++-----------
- 3 files changed, 57 insertions(+), 12 deletions(-)
+Regards,
+Boqun
 
-diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-index e1f053ffe887..177a7d921ff6 100644
---- a/kernel/trace/trace.c
-+++ b/kernel/trace/trace.c
-@@ -10083,6 +10083,32 @@ static void trace_module_remove_evals(struct module *mod)
- static inline void trace_module_remove_evals(struct module *mod) { }
- #endif /* CONFIG_TRACE_EVAL_MAP_FILE */
- 
-+static bool trace_array_active(struct trace_array *tr)
-+{
-+	if (tr->current_trace != &nop_trace)
-+		return true;
-+
-+	/* 0 is no events, 1 is all disabled */
-+	return trace_events_enabled(tr, NULL) > 1;
-+}
-+
-+static void trace_module_record(struct module *mod)
-+{
-+	struct trace_array *tr;
-+
-+	list_for_each_entry(tr, &ftrace_trace_arrays, list) {
-+		/* Update any persistent trace array that has already been started */
-+		if ((tr->flags & (TRACE_ARRAY_FL_BOOT | TRACE_ARRAY_FL_LAST_BOOT)) ==
-+		    TRACE_ARRAY_FL_BOOT) {
-+			/* Only update if the trace array is active */
-+			if (trace_array_active(tr)) {
-+				guard(mutex)(&scratch_mutex);
-+				save_mod(mod, tr);
-+			}
-+		}
-+	}
-+}
-+
- static int trace_module_notify(struct notifier_block *self,
- 			       unsigned long val, void *data)
- {
-@@ -10091,6 +10117,7 @@ static int trace_module_notify(struct notifier_block *self,
- 	switch (val) {
- 	case MODULE_STATE_COMING:
- 		trace_module_add_evals(mod);
-+		trace_module_record(mod);
- 		break;
- 	case MODULE_STATE_GOING:
- 		trace_module_remove_evals(mod);
-diff --git a/kernel/trace/trace.h b/kernel/trace/trace.h
-index 3a020fb82a34..90493220c362 100644
---- a/kernel/trace/trace.h
-+++ b/kernel/trace/trace.h
-@@ -786,6 +786,8 @@ extern void trace_find_cmdline(int pid, char comm[]);
- extern int trace_find_tgid(int pid);
- extern void trace_event_follow_fork(struct trace_array *tr, bool enable);
- 
-+extern int trace_events_enabled(struct trace_array *tr, const char *system);
-+
- #ifdef CONFIG_DYNAMIC_FTRACE
- extern unsigned long ftrace_update_tot_cnt;
- extern unsigned long ftrace_number_of_pages;
-diff --git a/kernel/trace/trace_events.c b/kernel/trace/trace_events.c
-index 513de9ceb80e..7b3ef1d26167 100644
---- a/kernel/trace/trace_events.c
-+++ b/kernel/trace/trace_events.c
-@@ -1818,28 +1818,28 @@ event_enable_write(struct file *filp, const char __user *ubuf, size_t cnt,
- 	return cnt;
- }
- 
--static ssize_t
--system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
--		   loff_t *ppos)
-+/*
-+ * Returns:
-+ *   0 : no events exist?
-+ *   1 : all events are disabled
-+ *   2 : all events are enabled
-+ *   3 : some events are enabled and some are enabled
-+ */
-+int trace_events_enabled(struct trace_array *tr, const char *system)
- {
--	const char set_to_char[4] = { '?', '0', '1', 'X' };
--	struct trace_subsystem_dir *dir = filp->private_data;
--	struct event_subsystem *system = dir->subsystem;
- 	struct trace_event_call *call;
- 	struct trace_event_file *file;
--	struct trace_array *tr = dir->tr;
--	char buf[2];
- 	int set = 0;
--	int ret;
- 
--	mutex_lock(&event_mutex);
-+	guard(mutex)(&event_mutex);
-+
- 	list_for_each_entry(file, &tr->events, list) {
- 		call = file->event_call;
- 		if ((call->flags & TRACE_EVENT_FL_IGNORE_ENABLE) ||
- 		    !trace_event_name(call) || !call->class || !call->class->reg)
- 			continue;
- 
--		if (system && strcmp(call->class->system, system->name) != 0)
-+		if (system && strcmp(call->class->system, system) != 0)
- 			continue;
- 
- 		/*
-@@ -1855,7 +1855,23 @@ system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
- 		if (set == 3)
- 			break;
- 	}
--	mutex_unlock(&event_mutex);
-+
-+	return set;
-+}
-+
-+static ssize_t
-+system_enable_read(struct file *filp, char __user *ubuf, size_t cnt,
-+		   loff_t *ppos)
-+{
-+	const char set_to_char[4] = { '?', '0', '1', 'X' };
-+	struct trace_subsystem_dir *dir = filp->private_data;
-+	struct event_subsystem *system = dir->subsystem;
-+	struct trace_array *tr = dir->tr;
-+	char buf[2];
-+	int set;
-+	int ret;
-+
-+	set = trace_events_enabled(tr, system ? system->name : NULL);
- 
- 	buf[0] = set_to_char[set];
- 	buf[1] = '\n';
--- 
-2.47.2
-
-
+> ---
+> v1->v2: Resend with Neeraj review tag. Rebased on rcu/dev.
+>=20
+>  kernel/rcu/srcutree.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> index d2a694944553..591371d62e89 100644
+> --- a/kernel/rcu/srcutree.c
+> +++ b/kernel/rcu/srcutree.c
+> @@ -1589,7 +1589,7 @@ EXPORT_SYMBOL_GPL(start_poll_synchronize_srcu);
+>  bool poll_state_synchronize_srcu(struct srcu_struct *ssp, unsigned long =
+cookie)
+>  {
+>  	if (cookie !=3D SRCU_GET_STATE_COMPLETED &&
+> -	    !rcu_seq_done(&ssp->srcu_sup->srcu_gp_seq, cookie))
+> +	    !rcu_seq_done_exact(&ssp->srcu_sup->srcu_gp_seq, cookie))
+>  		return false;
+>  	// Ensure that the end of the SRCU grace period happens before
+>  	// any subsequent code that the caller might execute.
+> --=20
+> 2.34.1
+>=20
+>=20
 
