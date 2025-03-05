@@ -1,142 +1,115 @@
-Return-Path: <linux-kernel+bounces-547342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8143DA50606
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:10:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FADAA5060B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:11:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3F9E3A7D0F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:10:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36243AA370
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:10:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB39250BE4;
-	Wed,  5 Mar 2025 17:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D59A2512F7;
+	Wed,  5 Mar 2025 17:09:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FQoHmrXd"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="L76yi27o"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5671C5F11;
-	Wed,  5 Mar 2025 17:08:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720B21A316B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:09:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194526; cv=none; b=Iwg7Oh4dOVZ/tR/DpzWQpyGdUAG1MqsmhYBruKsAh763uQpv7URLVykgBt4HIlJ7d7HjR+91sYHrwgLRbUKW9UQTifCLNZCL7DT94x3oxDp0M1IYKrFIaw9PL0r3IiNP8ExYUV0fnS9ZBYAC9BxrH+rNR3tLqVhUoNCtaxGyj/k=
+	t=1741194568; cv=none; b=r6rdbe8svlAU1ABZHkpmSgDhCm3wHQJg4iLzZIVD7mo0lru+10XvAJ6UB6qRkBoxyCBhj3p1QpquTL4ieR28hQ9FIp87EDT0uvQLTnp3NaWm8EYjdn/TP3RUIGiI3uVYmlH6OQhnD1u/7uzAkP3YBX/26R8XL73hxDtkdR4FqI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194526; c=relaxed/simple;
-	bh=BvrpRLEjubg+uBgW0PQjlbnPvYou/AIaycZ0Uh7wWfU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=H9/PXjl18wEPUyb88oDucpFcNcPIX/SiC6EInTOgnNc5beVRtI58YH+Itbb72xQTuFmfr2c71UG5ihM5qObVo6KSu8JGszCjSYaucL8/xdpu4ZGQHtn+UVkDGTCxxvz16lejS1HaM26WQCvV6GKaruz9BR93D2UafKzDEts/0S4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FQoHmrXd; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-390f69e71c8so797811f8f.0;
-        Wed, 05 Mar 2025 09:08:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741194522; x=1741799322; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JCmHH2sBXFrU1aD2JeP8UinBUcmUwStB8VTMjRRTo3M=;
-        b=FQoHmrXdqO0w+XXlB//31Jxe+OAGHe+Nzz4tPapIiA7SSAPVBG9JpOVQ3PiiE00KDR
-         8GONP7edeJJ4F5lANFGmQCEjELagKZf/URAISfLvDQ2Hup9DvfSP6kSjSmvnDYPL/ImT
-         D7WfJ0mcaWY/UFZb2l4bNa3PYiIXcF6lnFzMCs5HyIT39GcQUXb8mjqvk5oMFSaSI3ov
-         hWt3CJrOUKFck+oR/rp+CyDsDyrFuGmytxCTHlkm6TZz17Jsb0xQf9SN+TrG0+qPeG81
-         VsY7NSV6VfAM69IZjZqn3HW/72a4E1rHFEg2GKuOFoEssBJ49DTYvnmFuoA127K+MkbM
-         mcLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741194522; x=1741799322;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JCmHH2sBXFrU1aD2JeP8UinBUcmUwStB8VTMjRRTo3M=;
-        b=F5moFPO7gwksMHz0iJT1vmOAprn13lR3oLwu1UyyfH4mjpqhAEfHLHikYgH7DE5REt
-         9FjFFVDfA1p3svNz75ynyU8heZHcAXXEOp3LLqYjoFMOJ1+XT6uA54p+Bw8gwIYpfW5A
-         GnPhDNOL4MAYT4wtmByHjeBsRoXafPCq1I9RNRrb5kOx2JnmmyjFCPOnQN4E3GWgVBOF
-         Il2jmegRO9OdHoMTIEZl6dma1uDhBDbV21ddF0xzMAs5GJzIvl2Fzy4vIM1aiFaebTOR
-         rXNUgLdxfMNjZxsDfB6B16irINGsl/aE3PiLpmWaOScW5Plh79EWRzqzh+KoyAEEbv+q
-         6nJA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0Cpr2M1UQZqpnngdAytqsymIEieChuBHuEcd5p3b+KrPhV9MXME8Y04zoOedkubHb3UuvjmJSPHvSNpO/@vger.kernel.org, AJvYcCWww2VKavtVte2q1TNnu6Neufy8OXHEkoBKSpkGIqlDDsR+pJhR5fAtfFqqS63oNELOX3I=@vger.kernel.org, AJvYcCX+EVoI3lSkg86m8bNKt+Ll7Eu+I+b2AS1XJ4QeXitNd8sNmR5QMiL1Th+neErE1i8zncLsoiQw+c9gXGCGTXaqgrumcYdu@vger.kernel.org, AJvYcCXK6s0FTdDOkuaie5BLyRj/QbFkXo1Gp38etKL33sMB6w/SOsvYrSEyPymy2j/ADbaMFrukLbQ/fQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyesdwu+XeOVHWUqmneKHocYQ154ROTeehwvEZSt11YhMI48yP4
-	+uMaCAYYzR5UTaZzoz6515GfUltniFGP41S1JDP8V677KeqeVSN02I9OueXBTU3nwCnp7pxI0Kv
-	7tSw0P1rZpW0QT9ODnXms6Ve5n6s=
-X-Gm-Gg: ASbGncssJL5J3TMcRbEBvh/H8m7ee0yZ2YvrA2y7z7NofGHezRIQ1/gcH/ipxkqC0o7
-	DKxbvvkpPp/hvE83LwgugUrhCJfKh3nehnlWI/M6+aj+8TGfdAgFQmF0qRYRtx+299/7RoXGO4V
-	pCnSINugguJs5IWgQ/n10bh9NXHZG+2a4CWnFwtQMqmQ==
-X-Google-Smtp-Source: AGHT+IFhLsvM9iNsC7Z9Gk77B7oPmq2594HIGrrnihVI9DffiOarfWHTZWxnq+tOuVUjiytsYWy3FUj5+D18DIphGKg=
-X-Received: by 2002:a05:6000:154c:b0:390:ff84:532b with SMTP id
- ffacd0b85a97d-391296d894dmr55899f8f.7.1741194521507; Wed, 05 Mar 2025
- 09:08:41 -0800 (PST)
+	s=arc-20240116; t=1741194568; c=relaxed/simple;
+	bh=YaS7Vw61tpQIxWBhHvbHuS/DKddYZcONhrC4ZkkXjrE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=mFBhXpJCn7VSjDRI/RSHtLsAdgEpJOmp03m9XFyCscQ1TahC/W9SFBxjSxArDAhqK9WkIig0afKEPdRHxQsSuirY78cw98/7H+oHg19Fuz65gYRkT+vykfyJozjiQQCYMq6cOQZIHtTqo0mXjfSxHhN5Gk7pLGAcSSoN8Mz3j38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=L76yi27o; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741194541; x=1741799341; i=markus.elfring@web.de;
+	bh=YaS7Vw61tpQIxWBhHvbHuS/DKddYZcONhrC4ZkkXjrE=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=L76yi27oBcT7j0UHkfzV8BEww0ObdYF4xYtqm/n/lkFEtavF8Tly6AGTymodmoUE
+	 hs8lqZ0xyZzF4P8HhHD2TS1YjxmIX2DPPr2UA+yKI5Slt6yF1ZVH4q72AXqi9NDRo
+	 CCmH1D1PmU8wTQrv4trt0UFCZVdwQvIT0d6Z+zh77BMnSsKgIGj8Yxtv+1HaaKUfR
+	 khz00VN2JfEyKOSKRtHeO8EFtuIMzfmC6xJI3dOsTJUzoMUVswYSMNe3LsTKs3x4x
+	 o08hZnuz7H4cD984gZexT98aiOdGu6e7bEHiWrcGwrH0u7EOwJdjxZiELAf5GzkbI
+	 ZvRha1ll/N36pae7gQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlLE7-1tOYE43K61-00kWWL; Wed, 05
+ Mar 2025 18:09:01 +0100
+Message-ID: <851bef96-245b-4f5c-8390-ab94dbc04063@web.de>
+Date: Wed, 5 Mar 2025 18:08:57 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
- <20250304203123.3935371-3-bboscaccy@linux.microsoft.com> <CAHC9VhS5Gnj98K4fBCq3hDXjmj1Zt9WWqoOiTrwH85CDSTGEYA@mail.gmail.com>
- <877c54jmjl.fsf@microsoft.com> <CAHC9VhQO_CVeg0sU_prvQ_Z8c9pSB02K3E5s84pngYN1RcxXGQ@mail.gmail.com>
- <CAPhsuW6RrUiXaQe1HBYOvwUx2GFaA-RKx22955A2StsP2erTeA@mail.gmail.com> <CAHC9VhQ1BHXfQSxMMbFtGDb2yVtBvuLD0b34=eSrCAKEtFq=OQ@mail.gmail.com>
-In-Reply-To: <CAHC9VhQ1BHXfQSxMMbFtGDb2yVtBvuLD0b34=eSrCAKEtFq=OQ@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 5 Mar 2025 09:08:30 -0800
-X-Gm-Features: AQ5f1JpbqWJ2U2ge5hW2KG36R4uPAlWjU6dS7IbAVApjbqNIyD5ZAKIyRS1MGwQ
-Message-ID: <CAADnVQJL77xLR+E18re88XwX0kSfkx_5O3=f8YQ1rVdVkf8-hQ@mail.gmail.com>
-Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter to
- LSM/bpf test programs
-To: Paul Moore <paul@paul-moore.com>
-Cc: Song Liu <song@kernel.org>, Blaise Boscaccy <bboscaccy@linux.microsoft.com>, 
-	James Morris <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	John Fastabend <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
-	Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>, 
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Stephen Smalley <stephen.smalley.work@gmail.com>, Ondrej Mosnacek <omosnace@redhat.com>, 
-	LSM List <linux-security-module@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, selinux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+To: Ryosuke Yasuoka <ryasuoka@redhat.com>, dri-devel@lists.freedesktop.org,
+ linux-mm@kvack.org, virtualization@lists.linux.dev,
+ Andrew Morton <akpm@linux-foundation.org>, Chia-I Wu <olvaffe@gmail.com>,
+ Christoph Hellwig <hch@infradead.org>,
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ David Airlie <airlied@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>,
+ Gurchetan Singh <gurchetansingh@chromium.org>,
+ Jocelyn Falempe <jfalempe@redhat.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
+ Thomas Zimmermann <tzimmermann@suse.de>, Uladzislau Rezki <urezki@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>
+References: <20250305152555.318159-2-ryasuoka@redhat.com>
+Subject: Re: [PATCH drm-next 1/2] vmalloc: Add atomic_vmap
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250305152555.318159-2-ryasuoka@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:vEp7fO8OsXvltY+7oiG0U4Qokb3J1idWk083MmpQMlGUeIwHTKL
+ jRh7hs+24rFyD+jl09lH+ncvGeCwbtWg961JToNhl4VKePRb7+aYCgPFENm1vRX8pbHDA4i
+ zxnOW+aDPcsXlw3NruQ/sLB2XxT7g5LpG8UHpGYjNpIoMcPvKStEF6y8FzzgWuO0EICoJKb
+ vXAbMLOSUS+c/O6ilBHGw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:YxuzAM20H38=;gHkRljwq/KV5WGk1op49fkFicqc
+ 9+hDF7PwhqCqW2f4kk5i/KcpduA11TJaBjXWyLI4L3VpqOzUiHb0XPmfXJCVmm7I+3fQmHoP9
+ DDnopOS6pVWYYhLTpJOL9Y/GMavuuRRvCio5xTqQLKw+WzCFxa2r2kgj4ptckTwDu8I5dOokT
+ BjkuEjAB8Stv2pLpATxO64dtcZSQ0LIZdpevZXtonOkZKTdMp3QemYaudoA+dD92uRF7h2Hs1
+ ijSZhc9apGr3TirahGb3XO1jnLgb9HIz3I/L1Q8T82JLKCb94hBs5a34lVWmuG6IC45ajiS/W
+ QXsIn2Qn1IkIDTik6ZpLzMq7wBIrMUeYuhx7GIPbe9nRuLzWGPzgbtw9UcuBXCiyAb7LHYSYo
+ /JsqOTvvJ9uCVvcjBK45KWxXqfz+fg2wa+OM48FfL3bd9O3N37+BgtGONVz87jkoH8ZVDx3P8
+ /EUJo4g4x8buFuGXnIq+dO5lNNRzfgs3l7QZnAt9PjlEPIP5LffA0kj+TqYLhge1Nl6qhyA6V
+ NXHOjPYArqM1zOkmjLmj2GfLwvxhpbrWEBlVFcetLW737LEASU2EBCKKLkTkncL7kCWbCHBeC
+ rf5TQD0sE+J2Faqq4hU0u6XBP4q4Uxaeyo3hLULVzFLHvJQQSU/f+iN2RLowoTxYk5q4V2qBV
+ xt10vUJahfgn3zh3C1ZCxPydJt5vPVOsqEAHOJ2tJ9h8KLgBzvhTnJUYpXDmi5QYfLxDu7eNb
+ 67xd0Qii2mwZxGLJ2QLdAMH/8ep0o28WvNEchYkqgEUFf7Vy18Yxg3b7dkpazHS/+vlJNR1fx
+ C//4EctTNRkqW5SJohwa6tSR6r2yZe+BmPzR1glbxoxiXLVI6emBXs+66x8/XVCFgKqzttxZe
+ dDpP1CV7fKQEF2UNNrzPTjCECsPQImiQNBjW4vmeioM2/Il3M+lC2MiBB7GTRTx2+DaQq/dDZ
+ jhx/N3t9ITztPm2Mbi1diyRRd8iRt+CaSkPbH6AwJUjH/eCVlZwNy/cqT7vgMkOa4Ys5JpIp3
+ A5bFO+O1DKofWhyf7vhJ+QcJ9SbHZqwQ2fiYB8HS5KirYR3kN8hXSelgRQcYDr7nHafgc8dsn
+ D/NOp/0wwL5OnO9FuABzFnHWIZr5UMkRDVJJPL9qDYD8fs1BhL5gI640Lv+PiEk8iczDhgRBM
+ JsHuPXZ5dmII8/gulPYM9EDdJdGOkE8zoPNZljZ4n8PtOJ3P0WYlApOLCFbZzbhCeL66vNxLy
+ bQ2gWuCZfKwyWhCNEtUmUtBY3m9dcwIDB4OBhbxh5q0/C+Njt/cq7dYONtJJFNZqVaOvnZxlL
+ n/Hem3o5coHPuAH0UUSCz+WpXNpOoyCm+WpnzYJYplznBNhMSZDWMoWOINx2w+l+7sevpSShH
+ MoyxcTY+fRffbMemiXvtoU0Ny+AcsrQ0SrYWJjm6E3cA7xr2+qAXLbJn8rmENw87JXrsIOgTc
+ 3hNdO/NPSGU+8NUDlEtV1UdHFCro=
 
-On Wed, Mar 5, 2025 at 8:12=E2=80=AFAM Paul Moore <paul@paul-moore.com> wro=
-te:
->
-> On Tue, Mar 4, 2025 at 10:32=E2=80=AFPM Song Liu <song@kernel.org> wrote:
-> > On Tue, Mar 4, 2025 at 6:14=E2=80=AFPM Paul Moore <paul@paul-moore.com>=
- wrote:
-> > > On Tue, Mar 4, 2025 at 8:26=E2=80=AFPM Blaise Boscaccy
-> > > <bboscaccy@linux.microsoft.com> wrote:
-> > > > Paul Moore <paul@paul-moore.com> writes:
-> > > > > On Tue, Mar 4, 2025 at 3:31=E2=80=AFPM Blaise Boscaccy
-> > > > > <bboscaccy@linux.microsoft.com> wrote:
->
-> ...
->
-> > Do we need this in the LSM tree before the upcoming merge window?
-> > If not, we would prefer to carry it in bpf-next.
->
-> As long as we can send this up to Linus during the upcoming merge
-> window I'll be happy; if you feel strongly and want to take it via the
-> BPF tree, that's fine by me.  I'm currently helping someone draft a
-> patchset to implement the LSM/SELinux access control LSM callbacks for
-> the BPF tokens and I'm also working on a fix for the LSM framework
-> initialization code, both efforts may land in a development tree
-> during the next dev cycle and may cause a merge conflict with Blaise's
-> changes.  Not that a merge conflict is a terrible thing that we can't
-> work around, but if we can avoid it I'd be much happier :)
->
-> Please do make the /is_kernel/kernel/ change I mentioned in patch 1/2,
-> and feel free to keep my ACK from this patchset revision.
+> Some drivers can use vmap in drm_panic, however, vmap is sleepable and
+> takes locks. Since drm_panic will vmap in panic handler, atomic_vmap
+> requests pages with GFP_ATOMIC and maps KVA without locks and sleep.
 
-My preference is to go via bpf-next, since changes are bigger
-on bpf side than on lsm side.
+See also:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc5#n94
 
-Re: selftest.
-
-Why change them at all if 'bool kernel' attribute is unused ?
-Addition of the attr should be backward compatible change,
-so all tests should still pass as-is.
-
-You probably should add a new test where 'kernel' arg is actually
-used for something. That would be patch 2.
+Regards,
+Markus
 
