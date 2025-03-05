@@ -1,122 +1,388 @@
-Return-Path: <linux-kernel+bounces-546798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546799-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EF4BA4FEDA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:40:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46E15A4FEDB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:41:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 31EA716B5F3
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C643A3A5CCA
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:40:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7591424503B;
-	Wed,  5 Mar 2025 12:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA022245039;
+	Wed,  5 Mar 2025 12:40:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WBoWf6K3"
-Received: from mail-ot1-f47.google.com (mail-ot1-f47.google.com [209.85.210.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="x+uglXdv"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D53245014;
-	Wed,  5 Mar 2025 12:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A17B8245032
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:40:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178419; cv=none; b=m0rU7ujIGTGYrecKDgQviTUekIPwhJ36gKol9aS6IVbk7O+fmws/BSgoE5yj5zciSYZryyl2VWS2fCbA0VDJYhOO4b1SBl5L7iycacKq4Zt8gUV+26EGtOK3GJcY00Tvrd2bWLIvAH+vrJ3I+snTnOfDQaMCUpKdeT1MHtvVxuI=
+	t=1741178425; cv=none; b=gpWgbKssJ4IWDQoBo5mRRY0RFT6z4qh67/yzsiodinxyKPsUWWAJ5nX1uGJWHCjHYESFrDWFDU5BgOkK/h/bAT/jbWSJ8AXgsNhvnFfS+yqiJ+4doA4YwDXVFdtB8StQChsEEATmvoGvywp1md6Uok17JiRvHpeAOd4xeSkgwRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178419; c=relaxed/simple;
-	bh=C3BN/HIMtEcUf1uSYuHLYfvHbZIlLdbrO0Cco+IbjlI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yb82wqiN1DE49JtaZYlF6LYU1224tPULF0GNWx03NpHK6R3E1XxqbrhV4I0CdSkjJHFM6nT9W+bYsU/6N5A9MLF4Xa5yMt/+5G/ym8AA8CsCmE0yTu29kZE3CYyPCI5y6yAZ/nuWlPSV2Rhq6emAAjzqGWNZZHioAT6MvHDjRXg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WBoWf6K3; arc=none smtp.client-ip=209.85.210.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f47.google.com with SMTP id 46e09a7af769-727388e8f6cso3619928a34.0;
-        Wed, 05 Mar 2025 04:40:18 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741178417; x=1741783217; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C3BN/HIMtEcUf1uSYuHLYfvHbZIlLdbrO0Cco+IbjlI=;
-        b=WBoWf6K3OC3Z0ouroGN7jRvL5/g5uyiVc4nNNxpu6QYH/wgiJ2FYHQp/9M0DBA8q4P
-         Ev2bXLXMyiK4D4ZaZDdRdd53XPGGK8JFnmR+U2TH3XizzkNP3dCw3GMpVaXQfZD8u8bn
-         ScHvD2S9MnhRoVz8b4sl5Eu8/5/b5Aqg75Fju2RYwtNZpP6tycjzbvk1kbQXTWy7eWUp
-         z3CWPYgRux+MpnjoKzL1yVLdiF0KEbc1AVqzMCCxVTh8JgwT8Az5irsUt7YCXCyuGyYQ
-         AM+q+cbGXf/Eb8lZhSJNOPUyAnXFzt7rXkpepMRv6yrKA+YOVOgGziGJMXm/lWnG7TfN
-         a1HA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741178417; x=1741783217;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C3BN/HIMtEcUf1uSYuHLYfvHbZIlLdbrO0Cco+IbjlI=;
-        b=jli9WdXUTzekB3ASdLPE6xUfDUSNb8JxERmD9xzoVGEwvNEmgD1FMMfGOm2V1+hgSX
-         h05uhIWz5+Pnjx+/4P0sbncFq6MbYxXvBjcKU+lA9lGmNwq4XtaFMPz+/vigHtd9bXCV
-         8aSP3+9PIJ5befaDZ7dDB2PEBxHYTLEXID6L2xnYG7LyQKR4XFdTm7767scipz2V8LAN
-         trM1dnWVu4pBXxebt2UQDp0KQ/tsCVJUa+OSiF4TDPpEsFoRgHQmsVBImGhZinb/Du5q
-         DMamcm1gvTfM356GKW/o3ioNKdoQ3pLHjIaLjjrPGbeS1Yu+jyJnbuBS+EkrenNJ+SwO
-         znXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUdyGNQS9df9BQcBKou2O2ueAmBl6i4OMyIzIuutZHQhAVBYn4FLuvl9foC6TEmY94FQZTmFFFKXgOp7rOU@vger.kernel.org, AJvYcCWGVs2+R7rTuDReFMvScfElvJR9etH7fd/aI3fTK0vIPbRuXbWlU8rMNdf1V2+uM/1ErNpJSI0aGBFtFuuF@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY9Uyl2GEgnkbLLSMsMbEjSR1qKQXaRgsRgd0u93ZLwTtnzuvg
-	Fm5BAwQue2Ch0ysetpJzSVmIiPkMpMfSYJfZ2NSIFJbnyX5THmte+oLaDHMsd6QUej+TIJXvKd6
-	qldlqcqSLLFWS3bek0BUM8n8iCIwMcw==
-X-Gm-Gg: ASbGnctZTTDkXUyG80JkMbqDfQIhk8A6ThB76NXkmrClyupg3Lg8rsRIGOwyJesJ5+6
-	Qb7o3RNV8axxrvWDDLBiU4pRgJciRKYr5BL4PtDCR4OqVrq3wrZBqDRlrhEDu64vS4slb8gNWTv
-	6k/yVJvKlgwCSYkR+dFl0Y8FDJ
-X-Google-Smtp-Source: AGHT+IFIk2TIUkPMZ9N45ATyP7LMT8PmzR4vlDHgUxaaOm3ICo2t9IYM97ZmCR8by013ZrHkHhJsjlYAGpGl3gyWZqk=
-X-Received: by 2002:a05:6830:6d16:b0:727:41b6:e0f with SMTP id
- 46e09a7af769-72a1faf1ff0mr1341886a34.4.1741178417282; Wed, 05 Mar 2025
- 04:40:17 -0800 (PST)
+	s=arc-20240116; t=1741178425; c=relaxed/simple;
+	bh=1EROx++38oiW3cLtJKLBOf0iMT9uBjd3aFi0AgW5vwQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MoRHuYllLioJ6VCyZ4G+PyfE5CbU29Ex98+1/NBvd25VBwBZgyYzLQO8KOQS5CcLuRlSOjC8VbXZ5ZTIGyLeAcrEXwOKiuHb5ZbiVTwoIoyPT+AMeTFWjRW+rnlzdm8aq269AtbH2ie2SAlRrzxsSvlmCmr7mTbV6+uqjOznGB8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=x+uglXdv; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1741178413; h=From:To:Subject:Date:Message-ID:MIME-Version;
+	bh=cVfb0T8HwHzTaiLekCt8v37S7VbF2szx4FWIxEZYak0=;
+	b=x+uglXdvqWGq0+IhDCkaA4nenM6K4kw2zF+vSEbG7OdXOseCy7S58H76xhJv87xbuKVpIs0ctvQPqVudypaYgHS/ZvVrp0aVGZ7r58XZTfqTcQkx6DDw33luZ9Rx0VP+cIOcFERIgCdQJF4bMijiBvQJKmxu3d/afmnUN15KiQk=
+Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WQlT3Jv_1741178409 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Wed, 05 Mar 2025 20:40:13 +0800
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+To: linux-erofs@lists.ozlabs.org
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH] erofs: move {in,out}pages into struct z_erofs_decompress_req
+Date: Wed,  5 Mar 2025 20:40:07 +0800
+Message-ID: <20250305124007.1810731-1-hsiangkao@linux.alibaba.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304183506.498724-1-mjguzik@gmail.com> <20250304183506.498724-2-mjguzik@gmail.com>
- <20250305-gehversuche-ambivalent-c2c39242bb7d@brauner>
-In-Reply-To: <20250305-gehversuche-ambivalent-c2c39242bb7d@brauner>
-From: Mateusz Guzik <mjguzik@gmail.com>
-Date: Wed, 5 Mar 2025 13:40:03 +0100
-X-Gm-Features: AQ5f1Jp-ExXc7u-VJExoEOIhOR1XE3fCAh5_huQJdKulRaRmp4T5gTcxJgIe8hs
-Message-ID: <CAGudoHGXMzD-vpwgmT3_dejsPdG_sLxSRdhT25GeyyrNLxufdg@mail.gmail.com>
-Subject: Re: [PATCH v2 1/4] file: add fput and file_ref_put routines optimized
- for use when closing a fd
-To: Christian Brauner <brauner@kernel.org>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 5, 2025 at 11:47=E2=80=AFAM Christian Brauner <brauner@kernel.o=
-rg> wrote:
->
-> On Tue, Mar 04, 2025 at 07:35:03PM +0100, Mateusz Guzik wrote:
-> > Vast majority of the time closing a file descriptor also operates on th=
-e
-> > last reference, where a regular fput usage will result in 2 atomics.
-> > This can be changed to only suffer 1.
-> >
-> > See commentary above file_ref_put_close() for more information.
-> >
-> > Signed-off-by: Mateusz Guzik <mjguzik@gmail.com>
-> > ---
->
-> I'm not enthused about the patches tbh because we end up with two new
-> primivites and I really dislike so many new primitives with slightly
-> different semantics. But it should at least all be kept private to fs/.
->
+It seems that all compressors need those two values, so just move
+them into the common structure.
 
-Caller-observable behavior is the same, so I don't think this is a big
-deal. The intent was to keep this very much for vfs-internal usage.
-The EXPORT thing was copy-pasto.
+`struct z_erofs_lz4_decompress_ctx` can be dropped too.
 
-Anyhow, everyone interested can still just fput so this does not put
-any burden on other people afaics. The few patched spots are very much
-vfs-internal.
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+---
+ fs/erofs/compress.h             |  2 +-
+ fs/erofs/decompressor.c         | 93 +++++++++++++--------------------
+ fs/erofs/decompressor_deflate.c |  8 +--
+ fs/erofs/decompressor_lzma.c    |  8 +--
+ fs/erofs/decompressor_zstd.c    |  8 +--
+ fs/erofs/zdata.c                |  2 +
+ 6 files changed, 41 insertions(+), 80 deletions(-)
 
-I sent v3 with the feedback addressed.
+diff --git a/fs/erofs/compress.h b/fs/erofs/compress.h
+index 65ff39401020..2704d7a592a5 100644
+--- a/fs/erofs/compress.h
++++ b/fs/erofs/compress.h
+@@ -11,6 +11,7 @@
+ struct z_erofs_decompress_req {
+ 	struct super_block *sb;
+ 	struct page **in, **out;
++	unsigned int inpages, outpages;
+ 	unsigned short pageofs_in, pageofs_out;
+ 	unsigned int inputsize, outputsize;
+ 
+@@ -59,7 +60,6 @@ extern const struct z_erofs_decompressor *z_erofs_decomp[];
+ 
+ struct z_erofs_stream_dctx {
+ 	struct z_erofs_decompress_req *rq;
+-	unsigned int inpages, outpages;	/* # of {en,de}coded pages */
+ 	int no, ni;			/* the current {en,de}coded page # */
+ 
+ 	unsigned int avail_out;		/* remaining bytes in the decoded buffer */
+diff --git a/fs/erofs/decompressor.c b/fs/erofs/decompressor.c
+index 2b123b070a42..50e350b10f89 100644
+--- a/fs/erofs/decompressor.c
++++ b/fs/erofs/decompressor.c
+@@ -9,14 +9,6 @@
+ 
+ #define LZ4_MAX_DISTANCE_PAGES	(DIV_ROUND_UP(LZ4_DISTANCE_MAX, PAGE_SIZE) + 1)
+ 
+-struct z_erofs_lz4_decompress_ctx {
+-	struct z_erofs_decompress_req *rq;
+-	/* # of encoded, decoded pages */
+-	unsigned int inpages, outpages;
+-	/* decoded block total length (used for in-place decompression) */
+-	unsigned int oend;
+-};
+-
+ static int z_erofs_load_lz4_config(struct super_block *sb,
+ 			    struct erofs_super_block *dsb, void *data, int size)
+ {
+@@ -55,10 +47,9 @@ static int z_erofs_load_lz4_config(struct super_block *sb,
+  * Fill all gaps with bounce pages if it's a sparse page list. Also check if
+  * all physical pages are consecutive, which can be seen for moderate CR.
+  */
+-static int z_erofs_lz4_prepare_dstpages(struct z_erofs_lz4_decompress_ctx *ctx,
++static int z_erofs_lz4_prepare_dstpages(struct z_erofs_decompress_req *rq,
+ 					struct page **pagepool)
+ {
+-	struct z_erofs_decompress_req *rq = ctx->rq;
+ 	struct page *availables[LZ4_MAX_DISTANCE_PAGES] = { NULL };
+ 	unsigned long bounced[DIV_ROUND_UP(LZ4_MAX_DISTANCE_PAGES,
+ 					   BITS_PER_LONG)] = { 0 };
+@@ -68,7 +59,7 @@ static int z_erofs_lz4_prepare_dstpages(struct z_erofs_lz4_decompress_ctx *ctx,
+ 	unsigned int i, j, top;
+ 
+ 	top = 0;
+-	for (i = j = 0; i < ctx->outpages; ++i, ++j) {
++	for (i = j = 0; i < rq->outpages; ++i, ++j) {
+ 		struct page *const page = rq->out[i];
+ 		struct page *victim;
+ 
+@@ -114,36 +105,36 @@ static int z_erofs_lz4_prepare_dstpages(struct z_erofs_lz4_decompress_ctx *ctx,
+ 	return kaddr ? 1 : 0;
+ }
+ 
+-static void *z_erofs_lz4_handle_overlap(struct z_erofs_lz4_decompress_ctx *ctx,
++static void *z_erofs_lz4_handle_overlap(struct z_erofs_decompress_req *rq,
+ 			void *inpage, void *out, unsigned int *inputmargin,
+ 			int *maptype, bool may_inplace)
+ {
+-	struct z_erofs_decompress_req *rq = ctx->rq;
+-	unsigned int omargin, total, i;
++	unsigned int oend, omargin, total, i;
+ 	struct page **in;
+ 	void *src, *tmp;
+ 
+ 	if (rq->inplace_io) {
+-		omargin = PAGE_ALIGN(ctx->oend) - ctx->oend;
++		oend = rq->pageofs_out + rq->outputsize;
++		omargin = PAGE_ALIGN(oend) - oend;
+ 		if (rq->partial_decoding || !may_inplace ||
+ 		    omargin < LZ4_DECOMPRESS_INPLACE_MARGIN(rq->inputsize))
+ 			goto docopy;
+ 
+-		for (i = 0; i < ctx->inpages; ++i)
+-			if (rq->out[ctx->outpages - ctx->inpages + i] !=
++		for (i = 0; i < rq->inpages; ++i)
++			if (rq->out[rq->outpages - rq->inpages + i] !=
+ 			    rq->in[i])
+ 				goto docopy;
+ 		kunmap_local(inpage);
+ 		*maptype = 3;
+-		return out + ((ctx->outpages - ctx->inpages) << PAGE_SHIFT);
++		return out + ((rq->outpages - rq->inpages) << PAGE_SHIFT);
+ 	}
+ 
+-	if (ctx->inpages <= 1) {
++	if (rq->inpages <= 1) {
+ 		*maptype = 0;
+ 		return inpage;
+ 	}
+ 	kunmap_local(inpage);
+-	src = erofs_vm_map_ram(rq->in, ctx->inpages);
++	src = erofs_vm_map_ram(rq->in, rq->inpages);
+ 	if (!src)
+ 		return ERR_PTR(-ENOMEM);
+ 	*maptype = 1;
+@@ -152,7 +143,7 @@ static void *z_erofs_lz4_handle_overlap(struct z_erofs_lz4_decompress_ctx *ctx,
+ docopy:
+ 	/* Or copy compressed data which can be overlapped to per-CPU buffer */
+ 	in = rq->in;
+-	src = z_erofs_get_gbuf(ctx->inpages);
++	src = z_erofs_get_gbuf(rq->inpages);
+ 	if (!src) {
+ 		DBG_BUGON(1);
+ 		kunmap_local(inpage);
+@@ -197,10 +188,8 @@ int z_erofs_fixup_insize(struct z_erofs_decompress_req *rq, const char *padbuf,
+ 	return 0;
+ }
+ 
+-static int z_erofs_lz4_decompress_mem(struct z_erofs_lz4_decompress_ctx *ctx,
+-				      u8 *dst)
++static int z_erofs_lz4_decompress_mem(struct z_erofs_decompress_req *rq, u8 *dst)
+ {
+-	struct z_erofs_decompress_req *rq = ctx->rq;
+ 	bool support_0padding = false, may_inplace = false;
+ 	unsigned int inputmargin;
+ 	u8 *out, *headpage, *src;
+@@ -224,7 +213,7 @@ static int z_erofs_lz4_decompress_mem(struct z_erofs_lz4_decompress_ctx *ctx,
+ 	}
+ 
+ 	inputmargin = rq->pageofs_in;
+-	src = z_erofs_lz4_handle_overlap(ctx, headpage, dst, &inputmargin,
++	src = z_erofs_lz4_handle_overlap(rq, headpage, dst, &inputmargin,
+ 					 &maptype, may_inplace);
+ 	if (IS_ERR(src))
+ 		return PTR_ERR(src);
+@@ -251,7 +240,7 @@ static int z_erofs_lz4_decompress_mem(struct z_erofs_lz4_decompress_ctx *ctx,
+ 	if (maptype == 0) {
+ 		kunmap_local(headpage);
+ 	} else if (maptype == 1) {
+-		vm_unmap_ram(src, ctx->inpages);
++		vm_unmap_ram(src, rq->inpages);
+ 	} else if (maptype == 2) {
+ 		z_erofs_put_gbuf(src);
+ 	} else if (maptype != 3) {
+@@ -264,54 +253,42 @@ static int z_erofs_lz4_decompress_mem(struct z_erofs_lz4_decompress_ctx *ctx,
+ static int z_erofs_lz4_decompress(struct z_erofs_decompress_req *rq,
+ 				  struct page **pagepool)
+ {
+-	struct z_erofs_lz4_decompress_ctx ctx;
+ 	unsigned int dst_maptype;
+ 	void *dst;
+ 	int ret;
+ 
+-	ctx.rq = rq;
+-	ctx.oend = rq->pageofs_out + rq->outputsize;
+-	ctx.outpages = PAGE_ALIGN(ctx.oend) >> PAGE_SHIFT;
+-	ctx.inpages = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT;
+-
+ 	/* one optimized fast path only for non bigpcluster cases yet */
+-	if (ctx.inpages == 1 && ctx.outpages == 1 && !rq->inplace_io) {
++	if (rq->inpages == 1 && rq->outpages == 1 && !rq->inplace_io) {
+ 		DBG_BUGON(!*rq->out);
+ 		dst = kmap_local_page(*rq->out);
+ 		dst_maptype = 0;
+-		goto dstmap_out;
+-	}
+-
+-	/* general decoding path which can be used for all cases */
+-	ret = z_erofs_lz4_prepare_dstpages(&ctx, pagepool);
+-	if (ret < 0) {
+-		return ret;
+-	} else if (ret > 0) {
+-		dst = page_address(*rq->out);
+-		dst_maptype = 1;
+ 	} else {
+-		dst = erofs_vm_map_ram(rq->out, ctx.outpages);
+-		if (!dst)
+-			return -ENOMEM;
+-		dst_maptype = 2;
++		/* general decoding path which can be used for all cases */
++		ret = z_erofs_lz4_prepare_dstpages(rq, pagepool);
++		if (ret < 0)
++			return ret;
++		if (ret > 0) {
++			dst = page_address(*rq->out);
++			dst_maptype = 1;
++		} else {
++			dst = erofs_vm_map_ram(rq->out, rq->outpages);
++			if (!dst)
++				return -ENOMEM;
++			dst_maptype = 2;
++		}
+ 	}
+-
+-dstmap_out:
+-	ret = z_erofs_lz4_decompress_mem(&ctx, dst);
++	ret = z_erofs_lz4_decompress_mem(rq, dst);
+ 	if (!dst_maptype)
+ 		kunmap_local(dst);
+ 	else if (dst_maptype == 2)
+-		vm_unmap_ram(dst, ctx.outpages);
++		vm_unmap_ram(dst, rq->outpages);
+ 	return ret;
+ }
+ 
+ static int z_erofs_transform_plain(struct z_erofs_decompress_req *rq,
+ 				   struct page **pagepool)
+ {
+-	const unsigned int nrpages_in =
+-		PAGE_ALIGN(rq->pageofs_in + rq->inputsize) >> PAGE_SHIFT;
+-	const unsigned int nrpages_out =
+-		PAGE_ALIGN(rq->pageofs_out + rq->outputsize) >> PAGE_SHIFT;
++	const unsigned int nrpages_in = rq->inpages, nrpages_out = rq->outpages;
+ 	const unsigned int bs = rq->sb->s_blocksize;
+ 	unsigned int cur = 0, ni = 0, no, pi, po, insz, cnt;
+ 	u8 *kin;
+@@ -373,7 +350,7 @@ int z_erofs_stream_switch_bufs(struct z_erofs_stream_dctx *dctx, void **dst,
+ 	unsigned int j;
+ 
+ 	if (!dctx->avail_out) {
+-		if (++dctx->no >= dctx->outpages || !rq->outputsize) {
++		if (++dctx->no >= rq->outpages || !rq->outputsize) {
+ 			erofs_err(sb, "insufficient space for decompressed data");
+ 			return -EFSCORRUPTED;
+ 		}
+@@ -401,7 +378,7 @@ int z_erofs_stream_switch_bufs(struct z_erofs_stream_dctx *dctx, void **dst,
+ 	}
+ 
+ 	if (dctx->inbuf_pos == dctx->inbuf_sz && rq->inputsize) {
+-		if (++dctx->ni >= dctx->inpages) {
++		if (++dctx->ni >= rq->inpages) {
+ 			erofs_err(sb, "invalid compressed data");
+ 			return -EFSCORRUPTED;
+ 		}
+@@ -434,7 +411,7 @@ int z_erofs_stream_switch_bufs(struct z_erofs_stream_dctx *dctx, void **dst,
+ 		dctx->bounced = true;
+ 	}
+ 
+-	for (j = dctx->ni + 1; j < dctx->inpages; ++j) {
++	for (j = dctx->ni + 1; j < rq->inpages; ++j) {
+ 		if (rq->out[dctx->no] != rq->in[j])
+ 			continue;
+ 		tmppage = erofs_allocpage(pgpl, rq->gfp);
+diff --git a/fs/erofs/decompressor_deflate.c b/fs/erofs/decompressor_deflate.c
+index 5070d2fcc737..c6908a487054 100644
+--- a/fs/erofs/decompressor_deflate.c
++++ b/fs/erofs/decompressor_deflate.c
+@@ -101,13 +101,7 @@ static int z_erofs_deflate_decompress(struct z_erofs_decompress_req *rq,
+ 				      struct page **pgpl)
+ {
+ 	struct super_block *sb = rq->sb;
+-	struct z_erofs_stream_dctx dctx = {
+-		.rq = rq,
+-		.inpages = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT,
+-		.outpages = PAGE_ALIGN(rq->pageofs_out + rq->outputsize)
+-				>> PAGE_SHIFT,
+-		.no = -1, .ni = 0,
+-	};
++	struct z_erofs_stream_dctx dctx = { .rq = rq, .no = -1, .ni = 0 };
+ 	struct z_erofs_deflate *strm;
+ 	int zerr, err;
+ 
+diff --git a/fs/erofs/decompressor_lzma.c b/fs/erofs/decompressor_lzma.c
+index 40666815046f..832cffb83a66 100644
+--- a/fs/erofs/decompressor_lzma.c
++++ b/fs/erofs/decompressor_lzma.c
+@@ -150,13 +150,7 @@ static int z_erofs_lzma_decompress(struct z_erofs_decompress_req *rq,
+ 				   struct page **pgpl)
+ {
+ 	struct super_block *sb = rq->sb;
+-	struct z_erofs_stream_dctx dctx = {
+-		.rq = rq,
+-		.inpages = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT,
+-		.outpages = PAGE_ALIGN(rq->pageofs_out + rq->outputsize)
+-				>> PAGE_SHIFT,
+-		.no = -1, .ni = 0,
+-	};
++	struct z_erofs_stream_dctx dctx = { .rq = rq, .no = -1, .ni = 0 };
+ 	struct xz_buf buf = {};
+ 	struct z_erofs_lzma *strm;
+ 	enum xz_ret xz_err;
+diff --git a/fs/erofs/decompressor_zstd.c b/fs/erofs/decompressor_zstd.c
+index 7e177304967e..b4bfe14229f9 100644
+--- a/fs/erofs/decompressor_zstd.c
++++ b/fs/erofs/decompressor_zstd.c
+@@ -139,13 +139,7 @@ static int z_erofs_zstd_decompress(struct z_erofs_decompress_req *rq,
+ 				   struct page **pgpl)
+ {
+ 	struct super_block *sb = rq->sb;
+-	struct z_erofs_stream_dctx dctx = {
+-		.rq = rq,
+-		.inpages = PAGE_ALIGN(rq->inputsize) >> PAGE_SHIFT,
+-		.outpages = PAGE_ALIGN(rq->pageofs_out + rq->outputsize)
+-				>> PAGE_SHIFT,
+-		.no = -1, .ni = 0,
+-	};
++	struct z_erofs_stream_dctx dctx = { .rq = rq, .no = -1, .ni = 0 };
+ 	zstd_in_buffer in_buf = { NULL, 0, 0 };
+ 	zstd_out_buffer out_buf = { NULL, 0, 0 };
+ 	struct z_erofs_zstd *strm;
+diff --git a/fs/erofs/zdata.c b/fs/erofs/zdata.c
+index ad674eee400a..5e4b65070b86 100644
+--- a/fs/erofs/zdata.c
++++ b/fs/erofs/zdata.c
+@@ -1284,6 +1284,8 @@ static int z_erofs_decompress_pcluster(struct z_erofs_backend *be, int err)
+ 					.sb = be->sb,
+ 					.in = be->compressed_pages,
+ 					.out = be->decompressed_pages,
++					.inpages = pclusterpages,
++					.outpages = be->nr_pages,
+ 					.pageofs_in = pcl->pageofs_in,
+ 					.pageofs_out = pcl->pageofs_out,
+ 					.inputsize = pcl->pclustersize,
+-- 
+2.43.5
 
---=20
-Mateusz Guzik <mjguzik gmail.com>
 
