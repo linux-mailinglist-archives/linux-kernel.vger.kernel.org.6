@@ -1,81 +1,122 @@
-Return-Path: <linux-kernel+bounces-547487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F418A50A14
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:39:35 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DBD2A50A19
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:40:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F7FC3ABE40
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:39:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3573ABCE4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:39:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C83D25333D;
-	Wed,  5 Mar 2025 18:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479BF2528E2;
+	Wed,  5 Mar 2025 18:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YvkVF1Gc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cg4zcSQg"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52D525290F;
-	Wed,  5 Mar 2025 18:39:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACED198822;
+	Wed,  5 Mar 2025 18:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741199952; cv=none; b=inAQwom+2IwJaF/uJmPaaY8yEITG1hZsDJvAtQNxJPH94ml1MLtfGbw6fIsFrcfsquv7x/3njnjQW9/zHTxwT2roQAABYSdeUsLm9cRdCRS0nM1I/kNNCShGYDvzETXvvf7XQvvE2w9h4fUOaarcaHxLISyQpV1rszB8nthI3YE=
+	t=1741199991; cv=none; b=TgIjDxlnkDq84zVWYre5nB32JV1JCoyrvZlqOl80G+UZN524tHEW7MgvDyoQM4eOx+3fSSArJ0gehts+xLWCtyw9VXS5wm1QEda8UWvO/h4xQseNJrnv1RsR61Sjv+YX/OZbVASVm3LLcVkE0RYjcnhgJNiP4Oyt2GEjGGVrKsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741199952; c=relaxed/simple;
-	bh=grH0RhVhc4eOiVhfXSf0JaS0A7IAc62nPyeEwfK6Y14=;
+	s=arc-20240116; t=1741199991; c=relaxed/simple;
+	bh=uVQk+c/QggQHiv+8/A6v7lNI9M/N5W1t0Fiz38TfaPE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mwzfa4fiXdu2kZCdseykZtYvUzAO3VZ+MPmhxOLLRi9QqeNm4Y5YtxzXLLtxgaN//RaLkMdvNPjwk+bVB3gfECKZX/u9UC4le7kfj1amB7rziOBn6UjiUGo3Y1XVGGww8VQyrlVLRgGrD4jIq18fQMgiyZZ0jgNdN2wfqfesBaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YvkVF1Gc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8445C4CEE8;
-	Wed,  5 Mar 2025 18:39:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AoSozuNMpU/bn808lTQJgp54s11fgc9j5uzO735Drft0LNQEZS0ORAEXgopaar4CIlj6gvDDDr5oZ23giVRepKlyCSbwuk+6DYV2pX/xrrfIEdMB5TOker23gFUcEgwuVHQcGbTO/lgpW040LvwH8Yo9hAcwNAyJyYWmue95H3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cg4zcSQg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E624CC4CED1;
+	Wed,  5 Mar 2025 18:39:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741199951;
-	bh=grH0RhVhc4eOiVhfXSf0JaS0A7IAc62nPyeEwfK6Y14=;
+	s=k20201202; t=1741199991;
+	bh=uVQk+c/QggQHiv+8/A6v7lNI9M/N5W1t0Fiz38TfaPE=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YvkVF1Gcn2xVAVy+dRci1AFs7Pm6G4S1szXVBwYXnjhyGT2Juz2KDr8bYgShpw3Ly
-	 agEK3dIgTD0yz7JmGk7a9T6cUmEFNJ5uR8frxcz4wnbUieh69sZWNfH/D4CES2blbO
-	 eT/qXta75KJdQK0DdYYFhnlRYrxufD8YmMvXGY3ve4dmyojglcjX6CMzqaHUB2UV5t
-	 ZV1nuLAIV79V4oxlqQwuhXyYQqG66SDbuCx/frW93wAz3mHqY5PtgC9m7qBXN3/gJT
-	 UuLbnrl0RlV2BwcR86FMxUbnnqNQhk1KVK1SZ6eu+d7RSI1sDWgEElffrS3XFNQJX6
-	 Eb03ecfRs8v7g==
-Date: Wed, 5 Mar 2025 11:39:08 -0700
-From: Keith Busch <kbusch@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Jens Axboe <axboe@kernel.dk>, Christoph Hellwig <hch@lst.de>,
-	Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@suse.de>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH v2] nvme-tcp: fix signedness bug in
- nvme_tcp_init_connection()
-Message-ID: <Z8iaTC4aGPRuZSfI@kbusch-mbp>
-References: <d3661d33-096a-45e3-8304-1123fd031527@stanley.mountain>
+	b=cg4zcSQgXN9/t4en54R8HTqIJc1/5/MWossef0e09IOAaJjTbGlXSHgaK5dBUrC1I
+	 Pla/ZAQpL07S3v62KDzDzk63gu+4OC7xc7o67i31bo8tFI99i47+JkuiaKHIJrwdqP
+	 rRafrpc1NiptV1fZY3JUid7CX2sOWiVdT3fEj60tGrN8lklXD3f17Fi2m4ZVAMs9Fe
+	 cWiVHKRwDLueE9s7Zrbiwaf47bfpUBJ8J8M8hV0o18hsrJDTiCG64QDTwz8vsnGo3S
+	 AXy5+E6LsA7pieEd2nv2xlx28JqiJKaIAbW6CbmfCv8gzp957i4dKyet8VsXEXgTSi
+	 zMs6pnug1p7hQ==
+Date: Wed, 5 Mar 2025 08:39:49 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
+Cc: Waiman Long <llong@redhat.com>, cgroups@vger.kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
+	Johannes Weiner <hannes@cmpxchg.org>
+Subject: Re: [PATCH 1/9] cgroup/cpuset-v1: Add deprecation warnings to
+ sched_load_balance and memory_pressure_enabled
+Message-ID: <Z8iadfcPxgamx9CC@slm.duckdns.org>
+References: <20250304153801.597907-1-mkoutny@suse.com>
+ <20250304153801.597907-2-mkoutny@suse.com>
+ <8b8f0f99-6d42-4c6f-9c43-d0224bdedf9e@redhat.com>
+ <Z8cv2akQ_RY4uKQa@slm.duckdns.org>
+ <n2ygi7m53y5y4dx5tjxhqgzqtgs5sisdi27sk7x2xjngpxenod@7behfsvlzhxi>
+ <123839ed-f607-4374-800a-4411e87ef845@redhat.com>
+ <Z8dAlvRnE28WyOGP@slm.duckdns.org>
+ <5bw7yc6bacojk2i2ikhlmf2skfiix6t3ipchbnvyfttmyh644j@iyquxeuyapd7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <d3661d33-096a-45e3-8304-1123fd031527@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5bw7yc6bacojk2i2ikhlmf2skfiix6t3ipchbnvyfttmyh644j@iyquxeuyapd7>
 
-On Wed, Mar 05, 2025 at 06:52:59PM +0300, Dan Carpenter wrote:
-> The kernel_recvmsg() function returns an int which could be either
-> negative error codes or the number of bytes received.  The problem is
-> that the condition:
+Hello,
+
+On Wed, Mar 05, 2025 at 11:12:21AM +0100, Michal Koutný wrote:
+> On Tue, Mar 04, 2025 at 08:04:06AM -1000, Tejun Heo <tj@kernel.org> wrote:
+> > I'm apprehensive about adding warning messages which may be triggered
+> > consistently without anything end users can do about them.
 > 
->         if (ret < sizeof(*icresp)) {
+> That means you'd distinguish RE (replacement exists) vs DN (dropped as
+> non-ideal) categories?
+
+I don't think I am. I'm just concerned about emitting warn messages on every
+boot without users being able to do anything about them.
+
+> > I think that deprecation messages, unless such deprecation is
+> > immediate and would have direct consequences on how the system can be
+> > used, should be informational.
 > 
-> is type promoted to type unsigned long and negative values are treated
-> as high positive values which is success, when they should be treated as
-> failure.  Handle invalid positive returns separately from negative
-> error codes to avoid this problem.
+> I could subscribe to that if there weren't so many other places to
+> evaluate:
+>   $ git grep -i "pr_warn.*deprec" torvalds/master --  | wc -l
+>   62
+>   $ git grep -i "pr_info.*deprec" torvalds/master --  | wc -l
+>   2
+> 
+> So is the disctinction worth the hassle?
 
-Thanks, applied to nvme-6.14.
+Well, not all deprecations are the same. If users are stuck on cgroup1, they
+can be really stuck - there can be a tall stack of software with
+dependencies that users can't do much about, at least not immediately. We
+will deprecate cgroup1 but this is going to be a long stretched out process
+at the end of which we should be fairly comfortable in stating that there
+aren't major users left which are stuck on cgroup1.
 
-I had v1 applied previously, and it was the top commit in that tree;
-force pushed this version to replace it.
+It's almost certain that that future won't arrive in, say, three years. Five
+years may be too ambitious too but let's say that at that point we are
+relatively sure that most platforms have moved on (but there may still be
+users on older versions of those platforms). Maybe it'd make sense to
+increase the deprecation warning temperature by then to warn and drain
+existing users and maybe after a few years we'd actually be able to drop
+cgroup1 support.
+
+So, I don't want to be emitting warnings on every boot for the good part of
+a decade on every boot for those users. Doing so feels silly and annoying to
+me. Let's inform that it's coming down the pipeline but I personally don't
+want to be warned by something that's close to a decade out.
+
+Thanks.
+
+-- 
+tejun
 
