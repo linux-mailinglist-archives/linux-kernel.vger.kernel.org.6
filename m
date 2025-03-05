@@ -1,96 +1,162 @@
-Return-Path: <linux-kernel+bounces-546205-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F275A4F7B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:14:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13AE6A4F7BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:15:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D6EB7A42CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:13:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43C0716F42B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:15:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E60271EB5D4;
-	Wed,  5 Mar 2025 07:14:34 +0000 (UTC)
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE5391EE7B3;
+	Wed,  5 Mar 2025 07:15:00 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2157433993;
-	Wed,  5 Mar 2025 07:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AD91EA7C3;
+	Wed,  5 Mar 2025 07:14:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741158874; cv=none; b=EIZLVTExBNrvWxV7VYGD4c4LkJzMj8b7NjFIWNF5heS4DXKD8yRWvEoDoG0Iz3Kv6MejEUFa5onPFjJZdtvncNofW0fsdtEjsDyMxBFrYa8GyVjBqfk4EUR73KgD6DWF33LSEHfBYZgRMCnP4wTXhS8MFmkz+XXXixFY3iYNBiU=
+	t=1741158900; cv=none; b=RIV7zzGfwXLqKKDjgYCt1mWxCbUWGTIDD5ThSytD3PRC3NtEn/PdrBx0afKLd2g/BKTgYMShQb0F4Qm7xiEuXfGrvUTIA2SJfk7kOCaOEg41IKJVIle/n3LHpS5B9GPwT7DjLruDEgkRIbAT8vD1Wxwm7c7ZZJVvP7SRWed4f2k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741158874; c=relaxed/simple;
-	bh=SQ6LjtibRZusomOEhTDVhNlZ3tr9i+EtD6bCbW9qTTU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PYVxgDIffxAdougAydyXQY3r5f4laAdraE8TzqQvlFgBEDLyMSeEPVuCnLZ4W96hYaiCijS6iC3mTytfZ9m0BzR7VoS8K0IP4u6rL3KaeMEr7fNK8wb8CfKcRRMOW8bNtgyxog4F5WdyVRjbEIxvTZXehFmcGvsb2us9njCvwA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-223480ea43aso161232335ad.1;
-        Tue, 04 Mar 2025 23:14:32 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741158872; x=1741763672;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QHSxE97Z/19fRfnaBRW98qLuvS9sZYnITb+wBOsP0To=;
-        b=KFDC3jXc0ImnhTXl50dLh33qUO1uDLDf1uwGpkeBRjRdwE8s4Pb6VS9GMemlr3UXk/
-         fE0BnZmAwj7s0KtpNK+/qMV2BcYRY7/Owyfzp4LMcRV6+L1Ec5CxFAwRKScPZZ1btQDF
-         FOAGBZenAd/l4hDiHQ9X/sEs1hoCPbmsD5IGFNnXQjc+tWhBPQTtvd+QoknLA4c6RPpB
-         mKOQdmTg7fU6YIRqUTrf/HZ/ROnR0zNtS8msXzAJxmdXYkmqT/VjiHxkt7kuDsjxg00d
-         t96JaHh7XDfyS0LF/UhwhfEmFcsS+BpBd2l5kYb48WMX1Pb6UEVfR/8nFwiNMIvV6LXx
-         BFgw==
-X-Forwarded-Encrypted: i=1; AJvYcCWIZ510Ye2KUs3F1Hv68n4N5Kc6/6XQj8MNOlcJkXWKmXda5CCqzktSMUejk4Mcdy4S/IbK5nVz2146ZuQ=@vger.kernel.org, AJvYcCWnauXSLRG+2U66zHjjqwGO+OajJQQ1ruOuU6VLDmuCGy3B/tJX81AXuZcjaXNTzWGcD+LSvVuTR3Gq@vger.kernel.org
-X-Gm-Message-State: AOJu0YxULqoGM1HXHTZDHYlqjacsakT7ox26ZpBjOP1Us4bSI8QWrUcz
-	Ik0iSebMJ9MSQAL1B0cHo9SDCWHC8UALSWbaFsgWc50Nx9smGusa
-X-Gm-Gg: ASbGncvw210nhwSjm7zQ7zB6c82Sq1enPner8Q5LF1782I+hxce9zWNzu7rquQJtshT
-	FGmckhNsjPKDQBtwYfYadOJDmXf4JiCRxJJ6pFpk8lbYvZXdToe+ouMaKhU/dD3D7lN8/SZZgfD
-	K0uTnuKBh5bPMU2z085OfPDGGWBp/ZvqmC0uo1YIxTNmZSGzom7B+qXQc4KJj6fqT8ZFSCYwtAk
-	JuopN/BgMNJRZunfUy9qBEKMvfIP0iGyjEdi138fbLXU0Y5F8yul0EcVQm3mIvHzrtlYb/y/xek
-	goUrT2koOTlPNXJPQK4CBBU1YFgH6fKPXs47SC32brGFQyv35yT4CrTDCjtENATssc7ma+Mwg+C
-	HhdQ=
-X-Google-Smtp-Source: AGHT+IFjwJnf4pYdKy9H+Sj318w3civ3R8+DUQqlTLpVZsAp4jFdqVYT+jVun/KKKaDFmZwvXFvu6A==
-X-Received: by 2002:a05:6a00:b81:b0:730:8a5b:6e61 with SMTP id d2e1a72fcca58-73682b4b1dbmr3263549b3a.2.1741158872158;
-        Tue, 04 Mar 2025 23:14:32 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-7363b7d81b3sm7894587b3a.53.2025.03.04.23.14.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 23:14:31 -0800 (PST)
-Date: Wed, 5 Mar 2025 16:14:30 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: phasta@kernel.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bingbu Cao <bingbu.cao@linux.intel.com>
-Subject: Re: [PATCH] PCI: Check BAR index for validity
-Message-ID: <20250305071430.GA847772@rocinante>
-References: <20250304143112.104190-2-phasta@kernel.org>
- <d667d29337c49ebebb82d69b12bd48cad66ce595.camel@mailbox.org>
+	s=arc-20240116; t=1741158900; c=relaxed/simple;
+	bh=OfQ1/h18gvYdGOQWsuGdpj6T21nI2Ua4bbZBb1UiOqs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=c9JLyJd1VN9sz6wzVBhsiWa52gmqB6gE01tK1/HoXi7wfl/+PNGb3VjRnq6w3x8rzZbkZwcQ1ki99ZkI3m3MAEEFiKPoyFyeVFL1Uf2K//BIGewMITNp4WUh5Oh+PNtIf0kfgQCk4h/3Otd1ahkq8586jt+PaB5/ScaFGgg1Vmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4Z73fx6zzDz1R69V;
+	Wed,  5 Mar 2025 15:13:13 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 023361400D3;
+	Wed,  5 Mar 2025 15:14:52 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 5 Mar 2025 15:14:51 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Mar
+ 2025 15:14:51 +0800
+Message-ID: <1e7560ab-2545-843a-e42a-2d37f6b7ef93@huawei.com>
+Date: Wed, 5 Mar 2025 15:14:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d667d29337c49ebebb82d69b12bd48cad66ce595.camel@mailbox.org>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH 10/14] soc: hisilicon: kunpeng_hccs: Simplify PCC shared
+ memory region handling
+To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Jassi Brar <jassisinghbrar@gmail.com>, Adam Young
+	<admiyo@os.amperecomputing.com>
+References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
+ <20250303-pcc_fixes_updates-v1-10-3b44f3d134b1@arm.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20250303-pcc_fixes_updates-v1-10-3b44f3d134b1@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-Hello,
 
-[...]
-> Shall I send a v2 or do you want to rebase, Bjorn?
+在 2025/3/3 18:51, Sudeep Holla 写道:
+> The PCC driver now handles mapping and unmapping of shared memory
+> areas as part of pcc_mbox_{request,free}_channel(). Without these before,
+> this Kunpeng HCCS driver did handling of those mappings like several
+> other PCC mailbox client drivers.
+>
+> There were redundant operations, leading to unnecessary code. Maintaining
+> the consistency across these driver was harder due to scattered handling
+> of shmem.
+>
+> Just use the mapped shmem and remove all redundant operations from this
+> driver.
+>
+> Cc: Huisong Li <lihuisong@huawei.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+With belows to change,
+Reviewed-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>   drivers/soc/hisilicon/kunpeng_hccs.c | 38 ++++++++++++------------------------
+>   drivers/soc/hisilicon/kunpeng_hccs.h |  2 --
+>   2 files changed, 13 insertions(+), 27 deletions(-)
+>
+> diff --git a/drivers/soc/hisilicon/kunpeng_hccs.c b/drivers/soc/hisilicon/kunpeng_hccs.c
+> index 8aa8dec14911cdcdc2a2d11606bf6159144e9489..3b57189cd778f507afaa89bf47f0fa834043c244 100644
+> --- a/drivers/soc/hisilicon/kunpeng_hccs.c
+> +++ b/drivers/soc/hisilicon/kunpeng_hccs.c
+> @@ -167,10 +167,6 @@ static void hccs_pcc_rx_callback(struct mbox_client *cl, void *mssg)
+>   
+>   static void hccs_unregister_pcc_channel(struct hccs_dev *hdev)
+>   {
+> -	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
+> -
+> -	if (cl_info->pcc_comm_addr)
+> -		iounmap(cl_info->pcc_comm_addr);
+>   	pcc_mbox_free_channel(hdev->cl_info.pcc_chan);
+>   }
+>   
+> @@ -179,6 +175,7 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
+>   	struct hccs_mbox_client_info *cl_info = &hdev->cl_info;
+>   	struct mbox_client *cl = &cl_info->client;
+>   	struct pcc_mbox_chan *pcc_chan;
+> +	struct mbox_chan *mbox_chan;
+>   	struct device *dev = hdev->dev;
+>   	int rc;
+>   
+> @@ -196,7 +193,7 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
+>   		goto out;
+>   	}
+>   	cl_info->pcc_chan = pcc_chan;
+> -	cl_info->mbox_chan = pcc_chan->mchan;
+> +	mbox_chan = pcc_chan->mchan;
+>   
+>   	/*
+>   	 * pcc_chan->latency is just a nominal value. In reality the remote
+> @@ -206,34 +203,24 @@ static int hccs_register_pcc_channel(struct hccs_dev *hdev)
+>   	cl_info->deadline_us =
+>   			HCCS_PCC_CMD_WAIT_RETRIES_NUM * pcc_chan->latency;
+>   	if (!hdev->verspec_data->has_txdone_irq &&
+> -	    cl_info->mbox_chan->mbox->txdone_irq) {
+> +	    mbox_chan->mbox->txdone_irq) {
+>   		dev_err(dev, "PCC IRQ in PCCT is enabled.\n");
+>   		rc = -EINVAL;
+>   		goto err_mbx_channel_free;
+>   	} else if (hdev->verspec_data->has_txdone_irq &&
+> -		   !cl_info->mbox_chan->mbox->txdone_irq) {
+> +		   !mbox_chan->mbox->txdone_irq) {
+>   		dev_err(dev, "PCC IRQ in PCCT isn't supported.\n");
+>   		rc = -EINVAL;
+>   		goto err_mbx_channel_free;
+>   	}
+>   
+> -	if (!pcc_chan->shmem_base_addr ||
+> -	    pcc_chan->shmem_size != HCCS_PCC_SHARE_MEM_BYTES) {
+> +	if (pcc_chan->shmem_size != HCCS_PCC_SHARE_MEM_BYTES) {
+>   		dev_err(dev, "The base address or size (%llu) of PCC communication region is invalid.\n",
+>   			pcc_chan->shmem_size);
 
-If the changes are relatively small, then you can send a patch top be
-applied atop the existing branch.  I will squash things as needed.
+Now the check of shared base address is not here. The log about this 
+address no need to be printed.
 
-Otherwise, a v2.
+Can you help me fix it like:
 
-> sry bout that.
+dev_err(dev, "The base size (%llu) of PCC communication region must be %d Byte.\n",
+  			pcc_chan->shmem_size, HCCS_PCC_SHARE_MEM_BYTES
+);
 
-No worries.  Things happen.  We can fix everything. :)
+>   		rc = -EINVAL;
+>   		goto err_mbx_channel_free;
+>   	}
+>   
 
-	Krzysztof
 
