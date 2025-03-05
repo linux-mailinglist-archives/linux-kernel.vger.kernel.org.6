@@ -1,327 +1,339 @@
-Return-Path: <linux-kernel+bounces-546758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C099EA4FE62
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:15:34 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9A37A4FE6D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:16:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B08C3AC9D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:15:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECA7D7A7F7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:15:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A948224291B;
-	Wed,  5 Mar 2025 12:15:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E12E8243364;
+	Wed,  5 Mar 2025 12:16:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="d03ForTP"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b="VniUezU8"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 040FF23C8BB;
-	Wed,  5 Mar 2025 12:15:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741176916; cv=none; b=I4foAmzeU5HvwRN3Z/vhjFzv1GChSwtN6dyi/oJl/XBzJW/FpmFFWr/xc/VoETDd2IFNiyap35QdNQGllj2xzBOrP0h3KYm7m7kL2ERNxGv72Pu1xvsL+mGcAnTGLl2DSfsXhNqraruYlL2Xx5PURzJuBxaD3wxHjgyqvs7LQ9U=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741176916; c=relaxed/simple;
-	bh=V/ld7OvVo2UL7AU2pdyRHRzo28A784GsT7PelHMFnHc=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QFiD/YRiP8ggLoL/nnIQLSjxESpWJ3GD5/gZNdAmbM0xmdCoUCoYcUltIPs/orcTdIHF5N8j0n9mi9X8Adedxj3zn83+mpftULhbk4EJHV1/JYuGQ32SsWFh3XSBNjtywMrEk+3yO6bxbm/KS1Bnhy1Ppj42E+AVasa27vG3Ua0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=d03ForTP; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5253kITe016833;
-	Wed, 5 Mar 2025 12:15:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=Pm6F2n
-	awClcjd4E+QSzQyjWDwBTls/5MGhyorHFhCfo=; b=d03ForTPwglSKS8Naz1zTr
-	Fbp+0SwrqthMxadZGLyZlzdmaAsWsYjrRzPHkVJfaRrGjJ0N9eSJLYRuXL5VjYNQ
-	wSU9LYqqPHtbLmuUTAEpaiMOVrWYSzY/c1/40J7iZgV5MufdllLctaCaG1J6GZNE
-	2uP5yi2LlBbSJUx+hDMp4VIFvfO/F53XvXG5G64Cx3Ov6siUPdiKUdSud1i/xTPz
-	kCq2lLfRATBT4tGlNbbmxHFN8NBAY43rHq1tFDsozH+lO6ISOvU+Gzvlei/E0lKT
-	HLQfHSRb0lcR2qId5ctB2pHaoUN/3A3XoDf4C4AYhfwglTFPlLKWI41lYyDS8PjQ
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 456f08t4c9-1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AAB21D59C;
+	Wed,  5 Mar 2025 12:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=67.231.156.173
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741177001; cv=fail; b=teY45sa38R/Ndhd0Lzi4SAQl+MEc6vaRTHGGrmI2O1WL2FDwyb7v0mz+pY7ydpaJVQPTcaFQX9WutQvBWMkbIuvY3fBFOdd+HGTakirTwVSYtcQj+6kHPl+QZBhM5NwBNB/tCRa1TQh0rlmF3uMHrdAMCUK5umzxfLV0rfn1ACo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741177001; c=relaxed/simple;
+	bh=49+QmkZtLSZ0oKiLEaYNjcmqnadhNmVcnXF5/JLFgBc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=blJcGoE+96e5O4VOQYt+O44dz8nVgmj5ZOsVCPi1YVF0ykUsrrqhJ7Tm0K6LPCu7zbWP7Heuayqtqb+UuSqOuyjI4nsM/CXpvGo0fDDzEJ/NiRRtEKpE0zvoy45tTacZirBWuNXxAKPKqtSvWItXxwkpku83BK4EIpvvShKqyKM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (1024-bit key) header.d=marvell.com header.i=@marvell.com header.b=VniUezU8; arc=fail smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0431383.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525BOvFo030834;
+	Wed, 5 Mar 2025 04:15:33 -0800
+Received: from nam04-bn8-obe.outbound.protection.outlook.com (mail-bn8nam04lp2049.outbound.protection.outlook.com [104.47.74.49])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 456nqeg2k0-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 12:15:07 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 525AVqsW032680;
-	Wed, 5 Mar 2025 12:15:06 GMT
-Received: from smtprelay02.dal12v.mail.ibm.com ([172.16.1.4])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 454cjt2wr1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 12:15:06 +0000
-Received: from smtpav01.wdc07v.mail.ibm.com (smtpav01.wdc07v.mail.ibm.com [10.39.53.228])
-	by smtprelay02.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 525CF5fu31130222
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Mar 2025 12:15:05 GMT
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6DC6E58055;
-	Wed,  5 Mar 2025 12:15:05 +0000 (GMT)
-Received: from smtpav01.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BED835804B;
-	Wed,  5 Mar 2025 12:15:03 +0000 (GMT)
-Received: from [9.152.212.232] (unknown [9.152.212.232])
-	by smtpav01.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Mar 2025 12:15:03 +0000 (GMT)
-Message-ID: <12d78b156c65130c60503b3925b4440d570fa245.camel@linux.ibm.com>
-Subject: Re: [PATCH] virtio: console: Make resizing compliant with virtio
- spec
-From: Niklas Schnelle <schnelle@linux.ibm.com>
-To: Maximilian Immanuel Brandtner <maxbr@linux.ibm.com>,
-        Amit Shah	
- <amit@kernel.org>, linux-kernel@vger.kernel.org,
-        virtualization@lists.linux.dev
-Cc: arnd@arndb.de, gregkh@linuxfoundation.org, brueckner@linux.ibm.com,
-        pasic@linux.ibm.com
-Date: Wed, 05 Mar 2025 13:15:02 +0100
-In-Reply-To: <35286574f42ae6a413eaca14633a11d50cbadb2b.camel@linux.ibm.com>
-References: <20250225092135.1200551-1-maxbr@linux.ibm.com>
-			 <f5ab160dadc2219b9576e50588dce88f22e9bcb1.camel@kernel.org>
-		 <67efe42ea8c10120f13f14838f7a3d883184ecf5.camel@linux.ibm.com>
-	 <35286574f42ae6a413eaca14633a11d50cbadb2b.camel@linux.ibm.com>
-Autocrypt: addr=schnelle@linux.ibm.com; prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	Wed, 05 Mar 2025 04:15:33 -0800 (PST)
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=sDa+krfUIerxxGncc81FcRXHl8h7aaZBHv7996sA6D+vu+xdCsNFzqG+uqqNSnaRccS8nx5EZnlYs5KH8PueOxXl/+tYSOWFH0eJNdQNCKv7UNPwMrZWfjQrEvGPB33OP1UZZxd89Rf5sOnr+UhkDO1VVehkdNXHgp69Z9jwLMIINzaVedUeNVFOC4ZGGCsmEKgCB5i+QxsfIDBq5STmU/pY8hsf9qZnANog6+Kh0Mg6+VkhpYwkUUhDGGaFEL6kXSRPoOV13Ol1z3fatkzWH2WlKoTZknC+NHybok/u3j8QZrBER4+Dl+lNDPa2HEh5wMubTf1qH3tJkkcNZRkZ6g==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=49+QmkZtLSZ0oKiLEaYNjcmqnadhNmVcnXF5/JLFgBc=;
+ b=d6DbMxvpiV2/oG0gTzIZEIoWUSRy7x0t7GGkY7dMXLkFK6uN6HY8gR0UO23EHbMbodvghBPTCVpc51Ux9apjwbtXAvWppNhY3/f3SoiTzNtsW60mA2QB5YNo8FPAZIRYKVZozMNTHp93+kL7eQRJ/kMwm3vhcGIH+0xo67DCv6jNOtpYOalA00TsgS8LoJtyMAHRM4ejll9GodNjtK9l6xFZz/JeRP5eL6Vj5cIWm+JjG5giQugi4sQesQqRfShlXp6R4f3jwEs/HXH2D14An6mDk35ryOIUfgIS645kAQKZy+H71HWTSL1124vqM41noBqz8Kyvgr3MxxIyTjfrzA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=marvell.com; dmarc=pass action=none header.from=marvell.com;
+ dkim=pass header.d=marvell.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=49+QmkZtLSZ0oKiLEaYNjcmqnadhNmVcnXF5/JLFgBc=;
+ b=VniUezU8L62L/2dR2Ycop2eSP9PQ5NBJdLkq7NzuJ5BFxdmCw1AqGg7STd9D5zGalqlnWMpdZl5CmO33vZaUW/5XXqhKxFsy+UgdqzUK6WowjFnKsIGhImwsI0o+XcgLiNJe3u+7eLc3REhfp7ahhGlnYmsBpLlQqHkpjbCv6IM=
+Received: from PH8PR18MB5381.namprd18.prod.outlook.com (2603:10b6:510:254::16)
+ by CH0PR18MB5507.namprd18.prod.outlook.com (2603:10b6:610:191::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Wed, 5 Mar
+ 2025 12:15:29 +0000
+Received: from PH8PR18MB5381.namprd18.prod.outlook.com
+ ([fe80::79aa:7ee4:516e:200a]) by PH8PR18MB5381.namprd18.prod.outlook.com
+ ([fe80::79aa:7ee4:516e:200a%6]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 12:15:29 +0000
+From: George Cherian <gcherian@marvell.com>
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>,
+        "linux@roeck-us.net"
+	<linux@roeck-us.net>,
+        "wim@linux-watchdog.org" <wim@linux-watchdog.org>,
+        "jwerner@chromium.org" <jwerner@chromium.org>,
+        "evanbenn@chromium.org"
+	<evanbenn@chromium.org>,
+        "kabel@kernel.org" <kabel@kernel.org>,
+        "krzk@kernel.org" <krzk@kernel.org>,
+        "mazziesaccount@gmail.com"
+	<mazziesaccount@gmail.com>,
+        "thomas.richard@bootlin.com"
+	<thomas.richard@bootlin.com>,
+        "lma@chromium.org" <lma@chromium.org>,
+        "bleung@chromium.org" <bleung@chromium.org>,
+        "support.opensource@diasemi.com"
+	<support.opensource@diasemi.com>,
+        "shawnguo@kernel.org"
+	<shawnguo@kernel.org>,
+        "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
+        "kernel@pengutronix.de" <kernel@pengutronix.de>,
+        "festevam@gmail.com"
+	<festevam@gmail.com>,
+        "andy@kernel.org" <andy@kernel.org>,
+        "paul@crapouillou.net" <paul@crapouillou.net>,
+        "alexander.usyskin@intel.com"
+	<alexander.usyskin@intel.com>,
+        "andreas.werner@men.de"
+	<andreas.werner@men.de>,
+        "daniel@thingy.jp" <daniel@thingy.jp>,
+        "romain.perier@gmail.com" <romain.perier@gmail.com>,
+        "avifishman70@gmail.com"
+	<avifishman70@gmail.com>,
+        "tmaimon77@gmail.com" <tmaimon77@gmail.com>,
+        "tali.perry1@gmail.com" <tali.perry1@gmail.com>,
+        "venture@google.com"
+	<venture@google.com>,
+        "yuenn@google.com" <yuenn@google.com>,
+        "benjaminfair@google.com" <benjaminfair@google.com>,
+        "maddy@linux.ibm.com"
+	<maddy@linux.ibm.com>,
+        "mpe@ellerman.id.au" <mpe@ellerman.id.au>,
+        "npiggin@gmail.com" <npiggin@gmail.com>,
+        "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>,
+        "naveen@kernel.org" <naveen@kernel.org>,
+        "mwalle@kernel.org" <mwalle@kernel.org>,
+        "xingyu.wu@starfivetech.com"
+	<xingyu.wu@starfivetech.com>,
+        "ziv.xu@starfivetech.com"
+	<ziv.xu@starfivetech.com>,
+        "hayashi.kunihiko@socionext.com"
+	<hayashi.kunihiko@socionext.com>,
+        "mhiramat@kernel.org" <mhiramat@kernel.org>
+CC: "chrome-platform@lists.linux.dev" <chrome-platform@lists.linux.dev>,
+        "linux-watchdog@vger.kernel.org" <linux-watchdog@vger.kernel.org>,
+        "imx@lists.linux.dev" <imx@lists.linux.dev>,
+        "patches@opensource.cirrus.com"
+	<patches@opensource.cirrus.com>,
+        "linux-mips@vger.kernel.org"
+	<linux-mips@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>,
+        "linuxppc-dev@lists.ozlabs.org"
+	<linuxppc-dev@lists.ozlabs.org>,
+        "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>
+Subject: Re: [PATCH v4 0/2] Add stop_on_panic support for watchdog
+Thread-Topic: [PATCH v4 0/2] Add stop_on_panic support for watchdog
+Thread-Index: AQHbjchIB0FTJOHUHku2YJ3rGogN8A==
+Date: Wed, 5 Mar 2025 12:15:28 +0000
+Message-ID:
+ <PH8PR18MB5381B857859C6413392DD007C5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
+References: <20250305101025.2279951-1-george.cherian@marvell.com>
+ <43fb0965-04b7-41dc-ae3f-54676eefdbb5@pengutronix.de>
+ <PH8PR18MB53817EC09B918852B78DF3AAC5CB2@PH8PR18MB5381.namprd18.prod.outlook.com>
+ <28d0ea70-db7a-40e7-aac9-86808320f252@pengutronix.de>
+In-Reply-To: <28d0ea70-db7a-40e7-aac9-86808320f252@pengutronix.de>
+Accept-Language: en-US, en-IN
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PH8PR18MB5381:EE_|CH0PR18MB5507:EE_
+x-ms-office365-filtering-correlation-id: 28e52802-9b42-4cca-44b7-08dd5bdf6b2a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|7416014|376014|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?UHlWNjhVYmNQbWNIUkd2bm5uOGtKdmJxUUdvMEJzaGhmQjJCMHQwb1lESjk3?=
+ =?utf-8?B?ajArN0hxdTdsdkdZNjJIaGZhUjhib0RDdERlbnhxYnVqNHcxeWhFSlRyNlZw?=
+ =?utf-8?B?WTd0Wno2Q2YwSm9CNWVqSlljVjZadE9MQ0MzUmc2UGVEcEVqQXM2TWxJeExL?=
+ =?utf-8?B?R1VkcW96Y2pjMFdBS09YYWI2MDJZNkhYajFJV01lVXpTSkZ6Z1E4VHRMSERQ?=
+ =?utf-8?B?UFZNUEVXK1BOd1Rvam51Y3RrSk1SNmR3VE9ZV0R5bThzNFJEMHd1NkVJaVFL?=
+ =?utf-8?B?Z3ZlcjJlMFRvaGpqRGpwbUVVanFqU0VLOEVBa3VJKzA4ZWdVTWVxWU8yTVBh?=
+ =?utf-8?B?MXdFMkh1cGpEZUdrQVZNdjcvLzluN0RycHhiODZtQ0x0by9yMnFLZWZOY3dy?=
+ =?utf-8?B?Mk9QRVJGN0ZkUi9DTjZUbjNuNDZ2NkkxQnF0NUw5WTVPMDdQTnhWTm5KMTAy?=
+ =?utf-8?B?L3lKOE94ekh0RTBPS2gvaEo4em5xb2NaUHp3N2YzRUtTdG1WY1gzSHE5a0Vl?=
+ =?utf-8?B?ODJGT1o1cjgwYUZrY2I5OG9YUlIrd3ZXbGIweXpCWUVGeXNNaGlzM3VMUlRW?=
+ =?utf-8?B?ajQwTk0wSVZDMnBueFZMZXh2TGZXZVZyVi9xRjNzNGwySU80TFp2UlFyNHdV?=
+ =?utf-8?B?eDArWW5XWlRkUG1kOFN0bDFsOGR2eHdRVXg1RUYxTWdjaEt3VzRTd3NIck1V?=
+ =?utf-8?B?bjN1dzFzTU5EMGh2MjVFKzFxbFRUemNTT2lPcFczaENyeEkyNU5EUDlNU3Nk?=
+ =?utf-8?B?dWZxZ3VLaHRHUjVYbUlLTXhIU3dhS3BweHFxR0p2SWNWVHlERTdFbThZVEZ3?=
+ =?utf-8?B?YTZuOFAxM21sTndIcWpyMDFxSHFVQjI4d2FzQmRmaTNjUUlMSEpMUHl1TWRB?=
+ =?utf-8?B?a09uM1htU0hSRWNXdzMzZzhIN01DZGhYNWZVS0FvRThOa0xQbVdldFNLandl?=
+ =?utf-8?B?cTl4Yysyc0NPRTR1TStsNkc1aU1iblJRRFc5b1ptemQzb3ljZlNLZ3hwbjJt?=
+ =?utf-8?B?dmdoS1JGZjcwRm1hdklUc3lZZVE0cmhZT3p1d2JXVDRjdlBvTEVuNEgrSmw2?=
+ =?utf-8?B?ZGMyOGV3SERMYnRIRzZZU1JkQThMUVpHU2tITERZRlU0Rkhwbzc0cEJoREM5?=
+ =?utf-8?B?ckoyYkoyL2ZzNHNHdGl5RjZBOVJJNEk0K3ByZmlIOTFRMVFlZ2N6dFVMcGV6?=
+ =?utf-8?B?Y1JVYmRqTjg1T29JS3BPc21DK1VpQ1N0akI2S0g5cm00ZmJjNlcrcUpHemFP?=
+ =?utf-8?B?aU0wblBvTi8rbDZCSC83V1RmaTZZUUd5M2dMZm5uQy8wUkZuWjFYSHJ6RC9M?=
+ =?utf-8?B?WjVBaVA3bHU2K28rNDNlcVJ4VnczUHpXNk5NaTRvVE1VdC9oNXlaQWNFZVhp?=
+ =?utf-8?B?c3NscHlOdnVnbVdIVEFqbWxvUkFHTUpjbmdmTzZMRWVxYUFraEFMbFB4NXVp?=
+ =?utf-8?B?N0xTTjUvYnJLTENtbHByMFhlZnozb3hpNlZSQmh1UUMzT2NWM0lxangzTXRs?=
+ =?utf-8?B?bkJ3WlJKNm1MUVJabXlHRHFzdC9KM1hTTUVnMkpyQmdmZFh4c1lqWXR2OEZt?=
+ =?utf-8?B?VE9vczFTNklpRjRnUFBCNVBtcnlmSDErZ2l6TjFrcmtSSXplc2VIQ2xmdE9v?=
+ =?utf-8?B?UkJvZW1Rb3R4TFF1ZGdCRkw4azdHQ00vOFZjWXFXcHpab2U3cEpvcU1FNHFL?=
+ =?utf-8?B?QjQ5RGJUVGlMRytqSElMZzJ2Mmg5REZFQlV6dWpSSXBNOG5VNTJUc3EzWlFY?=
+ =?utf-8?B?K2JaVGF6bElVVDFGWHIwT0grdXQ4MGdlamdEZEdUNE1vR0M2Q24wOWxHUmdz?=
+ =?utf-8?B?dlZUZGwwQjg1YTAxODVHdHNJbWVaRk90S2liM0ZDK1IySHFYeHRlN2laQTZy?=
+ =?utf-8?B?c2NGeWlVdFFyZkNZT0FwU2IzenBCQlo0TEFDajVROWNnQkE9PQ==?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR18MB5381.namprd18.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014)(38070700018)(921020);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?MHk0bnN4UDZNNzRGOVlqeXFXdnpLd3FJVXdkTWtGUFNKMEw2dVU4cko5KzE0?=
+ =?utf-8?B?d2FoZjFWUUYydE5ibVdncU1BdThJaUFTZjB1M2JUOHRZazhMT0hEc1loME1D?=
+ =?utf-8?B?Skk5SDIrTk9MamdQd0haMUtHS091aDg2QzM2aUdEd1JKTUtNUVNTY2gzalBJ?=
+ =?utf-8?B?L24wVGNLVmxpU1dveE51V1dhVGlxY0dUZGxIcSt1bGt2c1ZWMXNLb1loK1Jw?=
+ =?utf-8?B?K2E5QXBFM1hHd1R6UXZNMzhWdzZ0dC82aXpwSkRoalR3aXZ1OFFSd293cFJN?=
+ =?utf-8?B?Vlluc25SVHRpTXpHT1JiTzJldUNqTmlsdmJHckZmVDA1azZjTWUrSTFiT0Jv?=
+ =?utf-8?B?NS80d0tuTnVzY0FveHYrTGUzYjYxUHdQU0U0d1JNSG80dnN3ZVBta3FhKzV5?=
+ =?utf-8?B?QnJYQ3VScEx1dlpmbEhFVkxzb2thN1NqVER0T2QwT2pBbVdNZTZVbDg0Qnp0?=
+ =?utf-8?B?dnNsSHJBRnVZaDIvU1k1ZzhuTWRabE9KTWdNTjFUdWdTM0l2Umc0ZkE2MzJu?=
+ =?utf-8?B?eXRuY25Kbnk5LzV5amhBRTBISjUyU0JLd0RWWUJSZ1k4R1Vrbm9aNTNmVjVK?=
+ =?utf-8?B?Zlkrb25Ea2RWbmxxMUQ5ajY5Y1N2aFpoZm01WXd1citRSzhORFg3b1p1dVA1?=
+ =?utf-8?B?RWxUM2ZNajZBL1JVaTVTalpqeXU1cHVZcDNJMkxoTjBZQU1jcFRjcFN3bTRx?=
+ =?utf-8?B?c3ZJdTZaRE5MMHc5MC9BU2FiTTZpanBNRUgrYUZCZXRiRkZYanZOTFhtZTdU?=
+ =?utf-8?B?b3dsSnp4OHdjamN0NmNxV3c5NzZ5N1ErSVd1dG9RWjhtVFJKQkZ0ZTRmTGZp?=
+ =?utf-8?B?UjlrTkFrbFUyd1ZUdUpRbGR2TXkzVHlPSFVrN3ZCakpyeThWZzNRVHN2cVJp?=
+ =?utf-8?B?VEh6aVY5Qk1LUHVNUjFyUk54QVUxeDM3cHM1NmUxU2g4SlJBaEVPUmcxSTJR?=
+ =?utf-8?B?OGd2aURxMkpjRmxRaHdUVkUzUmw4ZkxtNGpZcWk2SjFYVVp6WFRKZ0ZtMmJn?=
+ =?utf-8?B?dUZsYU9IY0doN0JrcFNqcW1TZS9Wcnp4T0hJcnYzVGVTSFhtT1FsNlVYbStu?=
+ =?utf-8?B?VGJ0ditWLzFLOEgyV3JGQkFscXhoUVFFZGJtckRZdFNWZ1c0M1QwaUlmWU8w?=
+ =?utf-8?B?SVlGcDczUkpSSG5CNXdLT0ZSYUNZbGlOMDVyWkFEaTBYVFFZU3BueDhkdWUy?=
+ =?utf-8?B?VWx6ZXRVSkFMM05SaEVUMUFlMU5ENkgzUHplVkZFeC9UdlVKVXdRV1ZRemVG?=
+ =?utf-8?B?V0xiSEdGRjBJQ2RJS2k2b3hzSDBveVVIRHV0dXVkTVE2WWRaWGhqSy8rK0Zy?=
+ =?utf-8?B?bVJ5Y0h4RC9YMUNPaWdWMHVxdjh6MVlxYUVzcHhkZy9QS2J4RGxCWlQ1OGRj?=
+ =?utf-8?B?VXk5WVlXRUs1eUJoSHNMKzRIQUM0cmtuVzMzYUxlWUNWeWdEbTdSNjZxMVF2?=
+ =?utf-8?B?TFR2TFI0OUNaay83cFk1bzBkNGhjTEpUeUdJSk9UOTJKU0ZIRHZRY1oyaGtY?=
+ =?utf-8?B?VUlweDFWTXhYVkc3RlB4RTEwaTRSV0plYWFNY3N3Rkk4bUdBZkdxd09SendK?=
+ =?utf-8?B?anVBYVZId2ZjbVh3KzRob2VSd2plazRVQ0huTGQvMlFQMWZyZzZQOW1OeExv?=
+ =?utf-8?B?Z2xmMkpNQk5ZM1dXb3hhaXZKOEtQWHpzZ3NnSVRqNU4vS0U3b0txN0s5Qlpi?=
+ =?utf-8?B?U21BNzB6VEdYbitEVmhiYTNRaWxjVk9mb1JJMytOMERIS0FOeTNHQjNvcEk2?=
+ =?utf-8?B?Q1FGbHdQUmtEaU5hZWloODVqcnduekNDVC9uUjZ2Tm1QbmlTSThEUExCbDdJ?=
+ =?utf-8?B?cHNSRVNtZGFZQWJmRW51WEtvZ0VCQUNkTjVVTHZaMGZBWmlFSFlYVXBwbGpV?=
+ =?utf-8?B?ZlZCOTBVZ0xycWJBWGdCd0RyLzk1Vkp2ajhzZ3gxdVJOVUhRUnJWMjdabG5I?=
+ =?utf-8?B?Nm9aMTdLRjU0ZFVvb3NIaXJ6SmhNYUlFM3JYemFCVnE4ZkttaVZFNzA4aXRr?=
+ =?utf-8?B?WVZUZ05zNnEyWnRsMmVCclpsL1RKMmo0NEVsc1IyMlBNTytDUWxuN2pOSGhH?=
+ =?utf-8?B?RFJsZEZzakxWQy8xTWNHYlpRbmx4a3pzSGdVY1lsN2lQTXNhdWR6M3ViNTFh?=
+ =?utf-8?Q?8iiRE4+uBEzYGs1+JGqleXNtI?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: JFHtFI-cMfcJL81L55I2Iycm1LlYIMPn
-X-Proofpoint-GUID: JFHtFI-cMfcJL81L55I2Iycm1LlYIMPn
+X-OriginatorOrg: marvell.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR18MB5381.namprd18.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 28e52802-9b42-4cca-44b7-08dd5bdf6b2a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2025 12:15:29.0106
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 70e1fb47-1155-421d-87fc-2e58f638b6e0
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: /fW9PyKYJ/CurlAPeYjepl0pqiHtwQCO9evMIQ2jPBVO2IQy/4MPJ5SAmkKpkli7VoFvysBDIxDz2hAjb/sd1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR18MB5507
+X-Proofpoint-ORIG-GUID: xcBlEfwT47bHArSHsw0UFToDTZthj9E9
+X-Proofpoint-GUID: xcBlEfwT47bHArSHsw0UFToDTZthj9E9
+X-Authority-Analysis: v=2.4 cv=Wr/RMcfv c=1 sm=1 tr=0 ts=67c84065 cx=c_pps a=VLWBoSTBoww685Dj7+Q0uQ==:117 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=Vs1iUdzkB0EA:10 a=-AAbraWEqlQA:10 a=bGNZPXyTAAAA:8 a=nkFVMVAWg0sdIH7E3NIA:9 a=QEXdDO2ut3YA:10 a=yL4RfsBhuEsimFDS2qtJ:22
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
  definitions=2025-03-05_04,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 adultscore=0
- clxscore=1011 suspectscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503050097
 
-On Wed, 2025-03-05 at 13:13 +0100, Niklas Schnelle wrote:
-> On Wed, 2025-03-05 at 10:53 +0100, Maximilian Immanuel Brandtner wrote:
-> > On Mon, 2025-03-03 at 12:54 +0100, Amit Shah wrote:
-> > > On Tue, 2025-02-25 at 10:21 +0100, Maximilian Immanuel Brandtner
-> > > wrote:
-> > > > According to the virtio spec[0] the virtio console resize struct
-> > > > defines
-> > > > cols before rows. In the kernel implementation it is the other way
-> > > > around
-> > > > resulting in the two properties being switched.
-> > >=20
-> > > Not true, see below.
-> > >=20
-> > > > While QEMU doesn't currently support resizing consoles, TinyEMU
-> > >=20
-> > > QEMU does support console resizing - just that it uses the classical
-> > > way of doing it: via the config space, and not via a control message
-> > > (yet).
-> > >=20
-> > > https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.gi=
-t/tree/drivers/char/virtio_console.c#n1787
-> > >=20
-> > > https://lists.nongnu.org/archive/html/qemu-devel/2010-05/msg00031.htm=
-l
-> >=20
-> > I didn't know about this patch-set, however as of right now QEMU does
-> > not set VIRTIO_CONSOLE_F_SIZE, never uses VIRTIO_CONSOLE_RESIZE, and
-> > resizing is never mentioned in hw/char/virtio-console.c or
-> > hw/char/virtio-serial-bus.c. Suffice to say I don't see any indicating
-> > of resize currently being used under QEMU. Perhaps QEMU supported
-> > resizing at one point, but not anymore. If you disagree please send me
-> > where the resizing logic can currently be found in the QEMU source
-> > code. I at least was unable to find it.
-> >=20
-> > >=20
-> > > > diff --git a/drivers/char/virtio_console.c
-> > > > b/drivers/char/virtio_console.c
-> > > > index 24442485e73e..9668e89873cf 100644
-> > > > --- a/drivers/char/virtio_console.c
-> > > > +++ b/drivers/char/virtio_console.c
-> > > > @@ -1579,8 +1579,8 @@ static void handle_control_message(struct
-> > > > virtio_device *vdev,
-> > > > =C2=A0 break;
-> > > > =C2=A0 case VIRTIO_CONSOLE_RESIZE: {
-> > > > =C2=A0 struct {
-> > > > - __u16 rows;
-> > > > =C2=A0 __u16 cols;
-> > > > + __u16 rows;
-> > > > =C2=A0 } size;
-> > > > =C2=A0
-> > > > =C2=A0 if (!is_console_port(port))
-> > >=20
-> > > This VIRTIO_CONSOLE_RESIZE message is a control message, as opposed
-> > > to
-> > > the config space row/col values that is documented in the spec.
-> > >=20
-> > > Maybe more context will be helpful:
-> > >=20
-> > > Initially, virtio_console was just a way to create one hvc console
-> > > port
-> > > over the virtio transport.=C2=A0 The size of that console port could =
-be
-> > > changed by changing the size parameters in the virtio device's
-> > > configuration space.=C2=A0 Those are the values documented in the spe=
-c.=20
-> > > These are read via virtio_cread(), and do not have a struct
-> > > representation.
-> > >=20
-> > > When the MULTIPORT feature was added to the virtio_console.c driver,
-> > > more than one console port could be associated with the single
-> > > device.
-> > > Eg. we could have hvc0, hvc1, hvc2 all as part of the same device.=
-=20
-> > > With this, the single config space value for row/col could not be
-> > > used
-> > > for the "extra" hvc1/hvc2 devices -- so a new VIRTIO_CONSOLE_RESIZE
-> > > control message was added that conveys each console's dimensions.
-> > >=20
-> > > Your patch is trying to change the control message, and not the
-> > > config
-> > > space.
-> > >=20
-> > > Now - the lack of the 'struct size' definition for the control
-> > > message
-> > > in the spec is unfortunate, but that can be easily added -- and I
-> > > prefer we add it based on this Linux implementation (ie. first rows,
-> > > then cols).
-> > >=20
-> > > But note that all this only affects devices that implement multiport
-> > > support, and have multiple console ports on a single device.=C2=A0 I =
-don't
-> > > recall there are any implementations using such a configuration.
-> > >=20
-> > > ... which all leads me to ask if you've actually seen a
-> > > misconfiguration happen when trying to resize consoles which led to
-> > > this patch.
-> > >=20
-> > >  Amit
-> >=20
-> > I'm working on implementing console resizing for virtio in QEMU and
-> > Libvirt. As SIGWINCH is raised on the virsh frontend the new console
-> > size needs to be transfered to QEMU (in my RFC patch via QOM, which
-> > then causes QEMU to trigger a virtio control msg in the chr_resize
-> > function of the virtio-console chardev). (The patch-set should make its
-> > way unto the QEMU mailing-list soon). The way I implemented it QEMU
-> > sends a resize control message where the control message has the
-> > following format:
-> >=20
-> > ```
-> > struct {
-> >     le32 id;    // port->id
-> >     le16 event; // VIRTIO_CONSOLE_RESIZE
-> >     le16 value; // 0
-> >     le16 cols;  // ws.ws_col
-> >     le16 rows;  // ws.ws_row
-> > }
-> > ```
-> >=20
-> > This strongly seems to me to be in accordance with the spec[0]. It
-> > resulted in the rows and cols being switched after a resize event. I
-> > was able to track the issue down to this part of the kernel. Applying
-> > the patch I sent upstream, fixed the issue.
-> > As of right now I only implemented resize for multiport (because in the
-> > virtio spec I was only able to find references to resizing as a control
-> > message which requires multiport. In your email you claimed that config
-> > space resizing exists as well. I was only able to find references to
-> > resizing as a control message in the spec. I would love to see what
-> > part of the spec you are refering to specifically, as it would allow me
-> > to implement resizing without multiport as well).=20
-> > It seems to me that either the spec or the kernel implementation has to
-> > change. If you prefer changing the spec that would be fine by me as
-> > well, however there seems to be no implementation that uses the linux
-> > ordering and Alpine seems to patch their kernel to use the spec
-> > ordering instead (as described in the initial email)(this was really
-> > Niklas Schnelle's finding so for further questions I would refer to
-> > him).
->=20
-> I don't think this was patched in the (official) alpine kernel. What
-> happened is that I tested TinyEMU[0] with the kernel + initrd from the
-> JSLinux site and that has working console resizing. In the TinyEMU code
-> this is implemented in TinyEMU/virtio.c:virtio_console_resize_event():
->=20
-> void virtio_console_resize_event(VIRTIODevice *s, int width, int height)
-> {
->     /* indicate the console size */
->     put_le16(s->config_space + 0, width);
->     put_le16(s->config_space + 2, height);
->=20
->     virtio_config_change_notify(s);
-> }
->=20
-> On second look this indeed seems to use the config space. It writes
-> first the width then height which matches config_work_handler(). But
-> like Maximilian I could only find the VIRTIO_CONSOLE_RESIZE message
-> mechanism in the spec, also with width (cols) then height (rows) but
-> not matching the kernel struct changed by this patch.
->=20
-
-Forgot to note, the idea that Alpine was patched came because the
-kernel used in TinyEMU has '-dirty' in the local version so we were
-wondering if it was patched for this. But seeing the
-config_work_handler() it's probably just using that.
-
-Thanks,
-Niklas
+SGkgQWhtYWQsDQoNCj5IaSBHZW9yZ2UsDQo+DQo+T24gMDUuMDMuMjUgMTI6MjgsIEdlb3JnZSBD
+aGVyaWFuIHdyb3RlOg0KPiBIaSBBaG1hZCwNCj4+PiBIaSBHZW9yZ2UsDQo+Pj4gT24gMDUuMDMu
+MjUgMTE6MTAsIEdlb3JnZSBDaGVyaWFuIHdyb3RlOg0KPj4+PiBUaGlzIHNlcmllcyBhZGRzIGEg
+bmV3IGtlcm5lbCBjb21tYW5kIGxpbmUgb3B0aW9uIHRvIHdhdGNoZG9nIGNvcmUgdG8NCj4+Pj4g
+c3RvcCB0aGUgd2F0Y2hkb2cgb24gcGFuaWMuIFRoaXMgaXMgdXNldWwgaW4gY2VydGFpbiBzeXN0
+ZW1zIHdoaWNoIHByZXZlbnRzDQo+Pj4+IHN1Y2Nlc3NmdWwgbG9hZGluZyBvZiBrZHVtcCBrZXJu
+ZWwgZHVlIHRvIHdhdGNoZG9nIHJlc2V0Lg0KPj4+Pg0KPj4+PiBTb21lIG9mIHRoZSB3YXRjaGRv
+ZyBkcml2ZXJzIHN0b3AgZnVuY3Rpb24gY291bGQgc2xlZXAuIEZvciBzdWNoDQo+Pj4+IGRyaXZl
+cnMgdGhlIHN0b3Bfb25fcGFuaWMgaXMgbm90IHZhbGlkIGFzIHRoZSBub3RpZmllciBjYWxsYmFj
+ayBoYXBwZW5zDQo+Pj4+IGluIGF0b21pYyBjb250ZXh0LiBJbnRyb2R1Y2UgV0RJT0ZfU1RPUF9N
+QVlTTEVFUCBmbGFnIHRvIHdhdGNoZG9nX2luZm8NCj4+Pj4gb3B0aW9ucyB0byBpbmRpY2F0ZSB3
+aGV0aGVyIHRoZSBzdG9wIGZ1bmN0aW9uIHdvdWxkIHNsZWVwLg0KPj4+DQo+Pj4gRGlkIHlvdSBj
+b25zaWRlciBoYXZpbmcgYSByZXNldF9vbl9wYW5pYyBpbnN0ZWFkLCB3aGljaCBzZXRzIGEgdXNl
+ci1zcGVjaWZpZWQNCj4+PiB0aW1lb3V0IG9uIHBhbmljPyBUaGlzIHdvdWxkIG1ha2UgdGhlIG1l
+Y2hhbmlzbSB1c2VmdWwgYWxzbyBmb3Igd2F0Y2hkb2dzDQo+PiANCj4+IC9wcm9jL3N5cy9rZXJu
+ZWwvcGFuaWMgYWxyZWFkeSBwcm92aWRlcyB0aGF0IHN1cHBvcnQuIFlvdSBtYXkgZWNobyBhIG5v
+bi16ZXJvIHZhbHVlIA0KPj4gYW5kIHRoZSBzeXN0ZW0gdHJpZXMgZm9yIGEgc29mdCByZWJvb3Qg
+YWZ0ZXIgdGhvc2UgbWFueSBzZWNvbmRzLiBCdXQgdGhpcyBkb2Vzbid0IGhhcHBlbiANCj4+IGlu
+IGNhc2Ugb2YgYSBrZHVtcCBrZXJuZWwgbG9hZCBhZnRlciBwYW5pYy4NCj4NCj5UaGUgdGltZW91
+dCBzcGVjaWZpZWQgdG8gdGhlIFdhdGNoZG9nIHJlc2V0X29uX3BhbmljIG9wdGlvbiB3b3VsZCBi
+ZSBwcm9ncmFtbWVkIGludG8NCj50aGUgYWN0aXZlIHdhdGNoZG9ncyBhbmQgbm90IGJlIHVzZWQg
+dG8gdHJpZ2dlciBhIHNvZnR3YXJlLWluZHVjZWQgcmVib290LiANClllcy4NCj4NCj4+PiB0aGF0
+IGNhbid0IGJlIGRpc2FibGVkIGFuZCB3b3VsZCBwcm90ZWN0IGFnYWluc3Qgc3lzdGVtIGxvY2sg
+dXA6IA0KPj4+IENvbnNpZGVyIGEgbWVtb3J5LWNvcnJ1cHRpb24gYnVnIChwZXJoYXBzIGV4dGVy
+bmFsbHkgdmlhIERNQSksIHdoaWNoIHBhcnRpYWxseQ0KPj4+IG92ZXJ3cml0ZXMgYm90aCBtYWlu
+IGFuZCBrZHVtcCBrZXJuZWwuIFdpdGggYSBkaXNhYmxlZCB3YXRjaGRvZywgdGhlIHN5c3RlbQ0K
+Pj4+IG1heSBub3QgYmUgYWJsZSB0byByZWNvdmVyIG9uIGl0cyBvd24uDQo+PiANCj4+IFllcywg
+dGhhdCBpcyB0aGUgcmVhc29uIHdoeSB0aGUga2VybmVsIGNvbW1hbmQtbGluZSBpcyBvcHRpb25h
+bCBhbmQgYnkgZGVmYXVsdCBpdCBpcyBzZXQgdG8gemVyby4NCj4+IFNvIHRoYXQgaW4gY2FzZXMg
+aWYgeW91IGhhdmUgYSBjb3JydXB0ZWQga2R1bXAga2VybmVsIHRoZW4gd2F0Y2hkb2cga2lja3Mg
+aW4uDQo+DQo+VGhlIGV4aXN0aW5nIG9wdGlvbiBpc24ndCBlbm91Z2ggZm9yIHRoZSBrZHVtcCBr
+ZXJuZWwgdXNlIGNhc2UuDQo+SWYgd2UgKGkuZS4geW91KSBhcmUgZ29pbmcgdG8gZG8gc29tZXRo
+aW5nIGFib3V0IGl0LCB3b3VsZG4ndCBpdCBiZQ0KPmJldHRlciB0byBoYXZlIGEgc29sdXRpb24g
+dGhhdCdzIGFwcGxpY2FibGUgdG8gYSB3aWRlciBudW1iZXIgb2YNCj53YXRjaGRvZyBkZXZpY2Vz
+Pw0KDQpJIG5lZWQgYSBzbGlnaHQgY2xhcmlmaWNhdGlvbiBoZXJlLiANCjEuIHJlc2V0X29uX3Bh
+bmljIHRha2VzIHRoZSBudW1iZXIgb2Ygc2Vjb25kcyB0byBiZSByZWxvYWRlZCB0byB3YXRjaGRv
+ZyBIVywgc28gdGhhdCBpdCBpbml0aWF0ZXMgYSANCndhdGNoZG9nIHJlc2V0IGFmdGVyIHRoZSBz
+cGVjaWZpZWQgdGltZW91dCwgaWYga2R1bXAga2VybmVsIGZhaWxzIHRvIGJvb3Qgb3IgaHVuZyB3
+aGlsZSBib290aW5nLg0KMi4gaW4gY2FzZSByZXNldF9vbl9wYW5pYyA9IDAgdGhlbiBpdCBiZWhh
+dmVzIGxpa2Ugc3RvcF9vbl9wYW5pYz0xLg0KSXMgdGhpcyB3aGF0IHlvdSBtZWFudD8NCg0KSSB3
+b3VsZCBsZXQgR3VlbnRlciBjb21tZW50IG9uIHRoaXMgYXBwcm9hY2guDQo+Pj4gSWYgeW91IGRp
+ZCBjb25zaWRlciBpdCwgd2hhdCBtYWRlIHlvdSBkZWNpZGUgYWdhaW5zdCBpdD8NCj4+IHdhdGNo
+ZG9nLnN0b3Bfb25fcGFuaWM9MSBpcyBzcGVjaWZpY2FsbHkgZm9yIHN5c3RlbXMgd2hpY2ggY2Fu
+J3QgYm9vdCBhIGtkdW1wIGtlcm5lbCBkdWUgdG8gdGhlIGZhY3QgDQo+PiB0aGF0IHRoZSBrZHVt
+cCBrZXJuZWwgZ2V0cyBhIHdhdGNoZG9nIHJlc2V0IHdoaWxlIGJvb3RpbmcsIG1heSBiZSBkdWUg
+dG8gYSBzaG9ydGVyIHdhdGNoZG9nIHRpbWUuDQo+PiBGb3IgZWc6IGEgMzItYml0IHdhdGNoZG9n
+IGRvd24gY291bnRlciBydW5uaW5nIGF0IDFHSHouDQo+PiByZXNldF9vbl9wYW5pYyBjYW4gZ3Vh
+cmFudGVlIG9ubHkgdGhlIGxhcmdlc3Qgd2F0Y2hkb2cgdGltZW91dCBzdXBwb3J0ZWQgYnkgSFcs
+IA0KPj4gc2luY2UgdGhlcmUgaXMgbm8gb25lIHRvIHBpbmcgdGhlIHdhdGNoZG9nLg0KDQo+SWYg
+eW91IGFyZSBzZXJpb3VzIHdpdGggdGhlIHdhdGNoZG9nIHVzZSwgeW91J2xsIHdhbnQgdG8gdXNl
+IHRoZSB3YXRjaGRvZyB0bw0KPm1vbml0b3Iga2VybmVsIHN0YXJ0dXAgYXMgd2VsbC4gSWYgdGhl
+IGJvb3Rsb2FkZXIgY2FuIHNldCBhIHdhdGNoZG9nIHRpbWVvdXQNCj5qdXN0IGJlZm9yZSBzdGFy
+dGluZyB0aGUga2VybmVsIGFuZCBpdCBkb2Vzbid0IGV4cGlyZSBiZWZvcmUgdGhlIGtlcm5lbCB3
+YXRjaGRvZw0KPmRyaXZlciB0YWtlcyBvdmVyLCB3aHkgY2FuJ3Qgd2UgZG8gdGhlIHNhbWUganVz
+dCBiZWZvcmUgc3RhcnRpbmcgdGhlIGR1bXBrZXJuZWw/DQoNClllcywgaW4gYW4gaWRlYWwgd29y
+bGQgd2l0aCBpZGVhbCBIVy4gQnV0IHRoZXJlIGFyZSBIVyB3aXRoIGlzc3VlcyB3aGljaCBjYW5u
+b3QgaGF2ZSBsYXJnZQ0KZW5vdWdoIFdhdGNoZG9nIHRpbWUuIFN1Y2ggSFcgd291bGQgYm9vdCBm
+cm9tIEZXIHRvIGtlcm5lbCB3aXRob3V0IHdhdGNoZG9nIGVuYWJsZWQuDQpBbmQgc3RvcF9vbl9w
+YW5pYyBkb2VzIHRoZSBzaW1pbGFyIGZvciBrZHVtcCBrZXJuZWwgdG9vLg0KDQotR2VvcmdlDQo+
+DQo+VGhhbmtzLA0KPkFobWFkDQo+DQo+IA0KPj4NCj4+IFRoYW5rcywNCj4+IEFobWFkDQo+Pg0K
+Pj4+DQo+Pj4NCj4+IENoYW5nZWxvZzoNCj4+IHYxIC0+IHYyDQo+PiAtIFJlbW92ZSB0aGUgcGVy
+IGRyaXZlciBmbGFnIHNldHRpbmcgb3B0aW9uDQo+PiAtIFRha2UgdGhlIHBhcmFtZXRlciB2aWEg
+a2VybmVsIGNvbW1hbmQtbGluZSBwYXJhbWV0ZXIgdG8gd2F0Y2hkb2dfY29yZS4NCj4+DQo+PiB2
+MiAtPiB2Mw0KPj4gLSBSZW1vdmUgdGhlIGhlbHBlciBmdW5jdGlvbiB3YXRjaGRvZ19zdG9wX29u
+X3BhbmljKCkgZnJvbSB3YXRjaGRvZy5oLg0KPj4gLSBUaGVyZSBhcmUgbm8gdXNlcnMgZm9yIHRo
+aXMuIA0KPj4NCj4+IHYzIC0+IHY0DQo+PiAtIFNpbmNlIHRoZSBwYW5pYyBub3RpZmllciBpcyBp
+biBhdG9taWMgY29udGV4dCwgd2F0Y2hkb2cgZnVuY3Rpb25zDQo+PiAgIHdoaWNoIHNsZWVwIGNh
+bid0IGJlIGNhbGxlZC4gDQo+PiAtIEFkZCBhbiBvcHRpb25zIGZsYWcgV0RJT0ZfU1RPUF9NQVlT
+TEVFUCB0byBpbmRpY2F0ZSB3aGV0aGVyIHN0b3ANCj4+ICAgZnVuY3Rpb24gc2xlZXBzLg0KPj4g
+LSBTaW1wbGlmeSB0aGUgc3RvcF9vbl9wYW5pYyBrZXJuZWwgY29tbWFuZCBsaW5lIHBhcnNpbmcu
+DQo+PiAtIEVuYWJsZSB0aGUgcGFuaWMgbm90aWZmaWVyIG9ubHkgaWYgdGhlIHdhdGNoZG9nIHN0
+b3AgZnVuY3Rpb24gZG9lc24ndA0KPj4gICBzbGVlcA0KPj4NCj4+IEdlb3JnZSBDaGVyaWFuICgy
+KToNCj4+ICAgd2F0Y2hkb2c6IEFkZCBhIG5ldyBmbGFnIFdESU9GX1NUT1BfTUFZU0xFRVANCj4+
+ICAgZHJpdmVyczogd2F0Y2hkb2c6IEFkZCBzdXBwb3J0IGZvciBwYW5pYyBub3RpZmllciBjYWxs
+YmFjaw0KPiANCj4gLSBHZW9yZ2UNCg0KDQotLSANClBlbmd1dHJvbml4IGUuSy4gICAgICAgICAg
+ICAgICAgICAgICAgICAgICB8ICAgICAgICAgICAgICAgICAgICAgICAgICAgICB8DQpTdGV1ZXJ3
+YWxkZXIgU3RyLiAyMSAgICAgICAgICAgICAgICAgICAgICAgfCBodHRwczovL3VybGRlZmVuc2Uu
+cHJvb2Zwb2ludC5jb20vdjIvdXJsP3U9aHR0cC0zQV9fd3d3LnBlbmd1dHJvbml4LmRlXyZkPUR3
+SUNhUSZjPW5LaldlYzJiNlIwbU95UGF6N3h0ZlEmcj1ucGdUU2dIclVTTG1YcEJaSktWaGswbEVf
+WE52dFZEbDhaQTJ6QnZCcVB3Jm09RGYzSjNaUmdhN1h4Y2dVZEpPcVlWTUotQUxYNWpDM2VpSUk0
+WWhzQWRDNXBZaHIxeHdjcWJ6aEl5Nk1DRXF3cyZzPXliZ2x3LVdLNFZHRThnSEdOd01yQzFfVmxp
+T3Y3MnBqRExFSW05RkZfZEUmZT0gIHwNCjMxMTM3IEhpbGRlc2hlaW0sIEdlcm1hbnkgICAgICAg
+ICAgICAgICAgICB8IFBob25lOiArNDktNTEyMS0yMDY5MTctMCAgICB8DQpBbXRzZ2VyaWNodCBI
+aWxkZXNoZWltLCBIUkEgMjY4NiAgICAgICAgICAgfCBGYXg6ICAgKzQ5LTUxMjEtMjA2OTE3LTU1
+NTUgfA0K
 
