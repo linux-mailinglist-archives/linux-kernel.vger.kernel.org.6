@@ -1,157 +1,131 @@
-Return-Path: <linux-kernel+bounces-546652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D63A4FD48
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:12:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9714A4FD4D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:12:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3B63188511C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:12:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03E716941C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:12:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74DCF233730;
-	Wed,  5 Mar 2025 11:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D5B922E017;
+	Wed,  5 Mar 2025 11:11:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LqYBMGg6"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="USVcAcsv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IGhzJ6CJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875DC221F04;
-	Wed,  5 Mar 2025 11:11:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EFE920469F;
+	Wed,  5 Mar 2025 11:11:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741173065; cv=none; b=XXrLo2hIbktrwMKZGzjMDtlcuysKqaz45OL4U3gm2eIKWgcTRqK7eH1TQoE/7aKIVeg5uEWaBj7WJo2a4M0FiZgzr3KGaZhdoQ8qo1KOiLcnUHd37Ku+pOugpMbtyknXxhu8omTx0/z8DLmBLUmB6ksXJFzYwyqbXv5ePemApBw=
+	t=1741173107; cv=none; b=Dt/CQBif28GGtuzF08hD/YkJ9Jmq2T4L+T2ii/6kZ8OX/QWXzIGZjoHubjt/27e2qDvEfOjiTB6rz5wr2AeSLcNDg+Kt678IjXTydDkejRsnhedlu6/cfj5UzEGrJYnS3T1agi0Z9Bo4X3FRtXgc5IQyPfvjO/CRHKoHQUC5VpU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741173065; c=relaxed/simple;
-	bh=qTAsdsrJUTUWbKK4ZhG4aLb6W6hfmAB8F+V2U1SJfH4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h0R9IbGxTboKsNC0RDTDN/JXO2yTLOLyX7HBrVBLBCUNNRXN572aZUZLixhWm6yU9RDoChjnHYrj4XVPV8eVJ9BaHQyU+WwrcQ/s8+S3Q+ViyQbw4iguJTRknotz4eY8aG2skv4AcUUT23PAUPBAWwr9ySUOKTa4aqagdBA5x4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LqYBMGg6; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741173064; x=1772709064;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qTAsdsrJUTUWbKK4ZhG4aLb6W6hfmAB8F+V2U1SJfH4=;
-  b=LqYBMGg611hqYLrQkfU60T9M4P5AO//fuJ6JU/g4w2tpXRdk1teEvkX9
-   QZ6/GDhxuHsSPncKnYlmBNKq5PJ7LQuq3p4/etH+0rVXuS0iCXKFP4VwV
-   OKh/3SoXKdU+ydorkrfAUO/8Y8Lf18w7JyP/YJ43nvQqwpbWZ67rY1sQT
-   pQFqDD7oSt5w5RT2gsBDBCK3dgvWV7HB+B68CLsXitSq3bSAMwGsyPgAC
-   wwOtRCjh47NmB5JSb5htrL4VOdI7mACTKBIW9agZ8RjBzq++cyjFSRAKZ
-   MOCdSdjVbwPprbAhHvAnLb9LlA5CKIarfKb6od2jFJqUY2zudbFqTmCxb
-   g==;
-X-CSE-ConnectionGUID: TXArdFR0QgiMkTHflGSoJw==
-X-CSE-MsgGUID: WSa6s9TxT8KqK74+aSdAWw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="59674659"
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="59674659"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 03:11:03 -0800
-X-CSE-ConnectionGUID: MaOciZMWRDqStSP/9MpIeg==
-X-CSE-MsgGUID: ikPbNuTZS7GH8zhz5aqrgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="123691321"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by orviesa004.jf.intel.com with ESMTP; 05 Mar 2025 03:11:00 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpmeL-000KsU-1o;
-	Wed, 05 Mar 2025 11:10:54 +0000
-Date: Wed, 5 Mar 2025 19:10:24 +0800
-From: kernel test robot <lkp@intel.com>
-To: Viken Dadhaniya <quic_vdadhani@quicinc.com>, gregkh@linuxfoundation.org,
-	jirislaby@kernel.org, johan+linaro@kernel.org,
-	dianders@chromium.org, konradybcio@kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-serial@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	quic_msavaliy@quicinc.com, quic_anupkulk@quicinc.com,
-	Viken Dadhaniya <quic_vdadhani@quicinc.com>
-Subject: Re: [PATCH v1] serial: qcom-geni: Remove alias dependency from qcom
- serial driver
-Message-ID: <202503051821.tqFJ961p-lkp@intel.com>
-References: <20250304071423.4033565-1-quic_vdadhani@quicinc.com>
+	s=arc-20240116; t=1741173107; c=relaxed/simple;
+	bh=L5HHsYst9ISHE7nYU/AknLZ60xHajjWuFQEfPoaBcIk=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=M7N6BNhztngpOblN/Ff+wMxhoP6H+YcwtuFNwTKZeo+mVhpcs/lSVEM5Sj/bJZT9T13CzchRUP4LmgwoTsOe+FdSZ8VmCBvsr3pyRWsFwFp3t4QFiIgWmTZeRem808tUALqtv9hEUF10bke9MdUo21VlDf+JEUxoVJDRE3+8Bhk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=USVcAcsv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IGhzJ6CJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Mar 2025 11:11:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741173104;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ya1VBObvCjvw/wt8IPOmIefcMv/CC9W7CsnJSGYxhu8=;
+	b=USVcAcsvdiUpJRgIsgMxvvL4kGINeGtQ3on3KsRLqJT+1ojYqFZA53/xIF8Ke/AfjLGovd
+	WjdhI2GiMDHDxJ2XzZXLWv4HvcizMR5xq4cLznlBQq+MKv+ZZlZp1K9NUdK+0lL2ekojUQ
+	ya1/VcRC4FGO6onMAgfaJ9F5E8KKeSwy/3NagymB0MxDpqWUoJRwtvm1lfDmN0N/x0RefY
+	/+reB2wasf842u7NbIV6jqoV/prVV2a4yiHYxszsGPoVMtL/VOElt9HsEHgJ9Ol4p5Rn3O
+	bjbvvvuQnpjBZdqD9k85jwe5wItubQBusyYKZwUXcpOt0iFyiwTEl77YaU/tEA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741173104;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ya1VBObvCjvw/wt8IPOmIefcMv/CC9W7CsnJSGYxhu8=;
+	b=IGhzJ6CJMKHWTzQcILhs6VGbt3WwypBV1TRc1C5qc1VRYfBHplC6hLOGaFKRm3++cWnWcg
+	jo6TzPdGh2NREsBQ==
+From: "tip-bot2 for Joerg Roedel" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/sev] x86/sev: Make SEV_STATUS available via SYSFS
+Cc: Joerg Roedel <jroedel@suse.de>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250305105234.235553-1-joro@8bytes.org>
+References: <20250305105234.235553-1-joro@8bytes.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304071423.4033565-1-quic_vdadhani@quicinc.com>
+Message-ID: <174117310090.14745.4903355074119364385.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Hi Viken,
+The following commit has been merged into the x86/sev branch of tip:
 
-kernel test robot noticed the following build warnings:
+Commit-ID:     1d307efcf3b75d1d3aa2f8e7e932eae182d5323a
+Gitweb:        https://git.kernel.org/tip/1d307efcf3b75d1d3aa2f8e7e932eae182d5323a
+Author:        Joerg Roedel <jroedel@suse.de>
+AuthorDate:    Wed, 05 Mar 2025 11:52:34 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 05 Mar 2025 12:05:42 +01:00
 
-[auto build test WARNING on tty/tty-testing]
-[also build test WARNING on tty/tty-next tty/tty-linus usb/usb-testing usb/usb-next usb/usb-linus linus/master v6.14-rc5 next-20250304]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+x86/sev: Make SEV_STATUS available via SYSFS
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Viken-Dadhaniya/serial-qcom-geni-Remove-alias-dependency-from-qcom-serial-driver/20250304-152222
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/tty.git tty-testing
-patch link:    https://lore.kernel.org/r/20250304071423.4033565-1-quic_vdadhani%40quicinc.com
-patch subject: [PATCH v1] serial: qcom-geni: Remove alias dependency from qcom serial driver
-config: x86_64-buildonly-randconfig-006-20250305 (https://download.01.org/0day-ci/archive/20250305/202503051821.tqFJ961p-lkp@intel.com/config)
-compiler: clang version 19.1.7 (https://github.com/llvm/llvm-project cd708029e0b2869e80abe31ddb175f7c35361f90)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250305/202503051821.tqFJ961p-lkp@intel.com/reproduce)
+Current user-space tooling which needs access to the SEV_STATUS MSR is
+using the MSR module. The use of this module poses a security risk in
+any trusted execution environment and is generally discouraged.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202503051821.tqFJ961p-lkp@intel.com/
+Instead, provide an file in SYSFS in the already existing
+/sys/devices/system/cpu/sev/ directory to provide the value of the
+SEV_STATUS MSR to user-space.
 
-All warnings (new ones prefixed by >>):
+Signed-off-by: Joerg Roedel <jroedel@suse.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250305105234.235553-1-joro@8bytes.org
+---
+ arch/x86/coco/sev/core.c |  9 +++++++++
+ 1 file changed, 9 insertions(+)
 
->> drivers/tty/serial/qcom_geni_serial.c:267:40: warning: variable 'port' is uninitialized when used here [-Wuninitialized]
-     267 |                         line = idr_alloc(&port_idr, (void *)port, max_alias_num + 1, nr_ports,
-         |                                                             ^~~~
-   drivers/tty/serial/qcom_geni_serial.c:255:36: note: initialize the variable 'port' to silence this warning
-     255 |         struct qcom_geni_serial_port *port;
-         |                                           ^
-         |                                            = NULL
-   1 warning generated.
-
-
-vim +/port +267 drivers/tty/serial/qcom_geni_serial.c
-
-   252	
-   253	static struct qcom_geni_serial_port *get_port_from_line(int line, bool console)
-   254	{
-   255		struct qcom_geni_serial_port *port;
-   256		int nr_ports = console ? GENI_UART_CONS_PORTS : GENI_UART_PORTS;
-   257	
-   258		if (console) {
-   259			if (line < 0 || line >= nr_ports)
-   260				return ERR_PTR(-ENXIO);
-   261	
-   262			port = &qcom_geni_console_port;
-   263		} else {
-   264			int max_alias_num = of_alias_get_highest_id("serial");
-   265	
-   266			if (line < 0 || line >= nr_ports)
- > 267				line = idr_alloc(&port_idr, (void *)port, max_alias_num + 1, nr_ports,
-   268						 GFP_KERNEL);
-   269			else
-   270				line = idr_alloc(&port_idr, (void *)port, line, nr_ports, GFP_KERNEL);
-   271	
-   272			if (line < 0)
-   273				return ERR_PTR(-ENXIO);
-   274	
-   275			port = &qcom_geni_uart_ports[line];
-   276		}
-   277		return port;
-   278	}
-   279	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
+index 82492ef..7b23fb8 100644
+--- a/arch/x86/coco/sev/core.c
++++ b/arch/x86/coco/sev/core.c
+@@ -2678,10 +2678,19 @@ static ssize_t vmpl_show(struct kobject *kobj,
+ 	return sysfs_emit(buf, "%d\n", snp_vmpl);
+ }
+ 
++static ssize_t sev_status_show(struct kobject *kobj,
++			       struct kobj_attribute *attr, char *buf)
++{
++	return sysfs_emit(buf, "%llx\n", sev_status);
++}
++
+ static struct kobj_attribute vmpl_attr = __ATTR_RO(vmpl);
++static struct kobj_attribute sev_status_attr = __ATTR_RO(sev_status);
++
+ 
+ static struct attribute *vmpl_attrs[] = {
+ 	&vmpl_attr.attr,
++	&sev_status_attr.attr,
+ 	NULL
+ };
+ 
 
