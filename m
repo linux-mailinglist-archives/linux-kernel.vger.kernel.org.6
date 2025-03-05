@@ -1,107 +1,138 @@
-Return-Path: <linux-kernel+bounces-546777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A26AA4FEA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:32:30 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0760A4FEAA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:34:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B25C3166D90
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:32:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7529E169FFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88910241107;
-	Wed,  5 Mar 2025 12:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81D1C245035;
+	Wed,  5 Mar 2025 12:34:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="qn6cqf3s"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bLrVVClc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 021B21DC9AA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F073133987;
+	Wed,  5 Mar 2025 12:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741177945; cv=none; b=Qj9VhSoxM58X56JZgPPoXP/W7eRs2I2cerfigNn9Ya3M2aL9IKxhB3nalzUEraqkxT2etWlkrB6lxa3mKEPVtZOn2iIQ8vrgTUrhxXRIOoqeuoLSOu7vMQQOE6I10SMEjda7vUfDEgKbx9NonIZnQQ8HAPlFYos/lghHf+wn3Dg=
+	t=1741178047; cv=none; b=d8Cz9fsUcTCaWtTkQayrOFTbJrzL2MfkNwh+b8hP9XvrPb6RFQapIVgcuvASjjoLryAVmwb6T4XqIXY07EvgMRVT2buNmnmQzPB+lSYQseX4Ue4LJKxj7nfsnCyk9m9OAwR7VxCh7Kv4y4FHsNN+X7H2+KKUyj+6Ksu8VuNhn+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741177945; c=relaxed/simple;
-	bh=dXE3te4kQJY93qBMdosIpzt1ZUS/aM0VyK6cRXSNxrw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JsRbrEF/UQkJ3DF3BMdTvjYLgLxAdnfAOVO3LuCCYw4qiXoWbMR4xbHvcgt7uYY7T3vL8YPpUUUXhC+MZeariN9TSrncy43Rvc5ZvvB7APWEYdyTvOQBT3/5FX1z5yI3BKIAKuBpsEA4n+qPD+oLz3ylO9VptwI6skqILzyu/js=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=qn6cqf3s; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741177940;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=3GecHDOGgegYwrhEKH8zk3nBufY5dLgCupPlLv22dWw=;
-	b=qn6cqf3sA2FKk6XMHEacdujDsO8DkgjUNNT6P13JMtd32+VyTf8QLkGcPeVJztGAau/0wf
-	eQ001OyTTF0UxmOIJrlEijXCi5/L4yiUVcKv65ZY03xTtQBwg01TfV5yPsM7l4sEjbcPVg
-	jEuTnVzuEQyv5X2Lj8QzFJgz4SFT8Cs=
-From: Thorsten Blum <thorsten.blum@linux.dev>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Kees Cook <kees@kernel.org>,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>
-Cc: Thorsten Blum <thorsten.blum@linux.dev>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] perf/x86: Annotate struct bts_buffer with __counted_by()
-Date: Wed,  5 Mar 2025 13:31:34 +0100
-Message-ID: <20250305123134.215577-2-thorsten.blum@linux.dev>
+	s=arc-20240116; t=1741178047; c=relaxed/simple;
+	bh=KXz7qN+UCvg/zXe/kDPAg/cy+msMPeJPVH/lqPdGHTo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fQ55wi2Gm/t4nrSDsS78f2AdvWH+HoXQ5QRsh8xUt5Ly0Ynrrrw3N4xSWDzfdrKU/WbPfh2W1H4aVd8tSgpznRhZ9EN6oaNS6ZicjP7Zi7ivmEcpNjEbU9YyOhDQDwtZlTKbxe4b9BFwYeHhhVS0sIzTeypupJFvH7vBh0p9Pj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bLrVVClc; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741178046; x=1772714046;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=KXz7qN+UCvg/zXe/kDPAg/cy+msMPeJPVH/lqPdGHTo=;
+  b=bLrVVClcoy9z6vn3AvQfNDWHz6TlGLBX5Xi02/RIsj93kC7Cg80ZdtMJ
+   QRCRahzkmZ6E5sPNioVeJZNMh+cNyOeC4YPmmICGwlxXTK30a4xxBFdP0
+   Hvc6N6mnIgtvEKU2Z/IvPCaLkxc+jJhBFNVkfNk23eSG1XzwiagLpFGWe
+   EVCucO21LIypBMlGLFqXy/mS7SpcJGnX1ESYaznf9Lk74j0s0xYdzhpjr
+   cKEEyTMffiqUek0wrRx0bd9oog4yRd/AyxBN1L0g2Ez1pPepPH36EVSwC
+   cq8Q6+QsO2nQlJmeHGebnpTz29eBGBotOPB/2x9eTJLWLnDD/kBjXOwo4
+   w==;
+X-CSE-ConnectionGUID: GP1ghgVVSB6dFWu866pgpw==
+X-CSE-MsgGUID: THJlhIFHRze8D5E+f6Kgvw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="46064865"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="46064865"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 04:34:05 -0800
+X-CSE-ConnectionGUID: N7Xoy4TzQJysW2kMb1XEUQ==
+X-CSE-MsgGUID: eBSnBMUbTKa2RR8mn5mMOA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="118829798"
+Received: from mohdfai2-mobl.gar.corp.intel.com (HELO [10.247.123.55]) ([10.247.123.55])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 04:33:58 -0800
+Message-ID: <4882bd5b-1a64-4ac7-ba51-66143d029e8a@linux.intel.com>
+Date: Wed, 5 Mar 2025 20:33:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH iwl-next v7 5/9] igc: Add support for frame preemption
+ verification
+To: Vladimir Oltean <vladimir.oltean@nxp.com>, ",chwee.lin.choong"@intel.com
+Cc: Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S . Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Simon Horman <horms@kernel.org>, Russell King <linux@armlinux.org.uk>,
+ Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>,
+ Jesper Dangaard Brouer <hawk@kernel.org>,
+ John Fastabend <john.fastabend@gmail.com>, Furong Xu <0x1207@gmail.com>,
+ Russell King <rmk+kernel@armlinux.org.uk>,
+ Serge Semin <fancer.lancer@gmail.com>,
+ Xiaolei Wang <xiaolei.wang@windriver.com>,
+ Suraj Jaiswal <quic_jsuraj@quicinc.com>,
+ Kory Maincent <kory.maincent@bootlin.com>, Gal Pressman <gal@nvidia.com>,
+ Jesper Nilsson <jesper.nilsson@axis.com>,
+ Andrew Halaney <ahalaney@redhat.com>,
+ Choong Yong Liang <yong.liang.choong@linux.intel.com>,
+ Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+ Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+ intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com,
+ linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org
+References: <20250303102658.3580232-1-faizal.abdul.rahim@linux.intel.com>
+ <20250303102658.3580232-6-faizal.abdul.rahim@linux.intel.com>
+ <20250304152644.y7j7eshr4qxhmxq2@skbuf>
+Content-Language: en-US
+From: "Abdul Rahim, Faizal" <faizal.abdul.rahim@linux.intel.com>
+In-Reply-To: <20250304152644.y7j7eshr4qxhmxq2@skbuf>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-Add the __counted_by() compiler attribute to the flexible array member
-buf to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
-CONFIG_FORTIFY_SOURCE.
 
-No functional changes intended.
 
-Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
----
-Changes in v2:
-- struct_size() changes should be a separate patch as suggested by Ingo
-- Link to v1: https://lore.kernel.org/r/20250304183056.78920-2-thorsten.blum@linux.dev/
----
- arch/x86/events/intel/bts.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On 4/3/2025 11:26 pm, Vladimir Oltean wrote:
+> On Mon, Mar 03, 2025 at 05:26:54AM -0500, Faizal Rahim wrote:
+>> +static inline bool igc_fpe_is_verify_or_response(union igc_adv_rx_desc *rx_desc,
+>> +						 unsigned int size)
+>> +{
+>> +	u32 status_error = le32_to_cpu(rx_desc->wb.upper.status_error);
+>> +	int smd;
+>> +
+>> +	smd = FIELD_GET(IGC_RXDADV_STAT_SMD_TYPE_MASK, status_error);
+>> +
+>> +	return (smd == IGC_RXD_STAT_SMD_TYPE_V || smd == IGC_RXD_STAT_SMD_TYPE_R) &&
+>> +		size == SMD_FRAME_SIZE;
+>> +}
+> 
+> The NIC should explicitly not respond to frames which have an SMD-V but
+> are not "verify" mPackets (7 octets of 0x55 + 1 octet SMD-V + 60 octets
+> of 0x00 + mCRC - as per 802.3 definitions). Similarly, it should only
+> treat SMD-R frames which contain 7 octets of 0x55 + 1 octet SMD-R + 60
+> octets of 0x00 + mCRC as "respond" mPackets, and only advance its
+> verification state machine based on those.
+> 
+> Specifically, it doesn't look like you are ensuring the packet payload
+> contains 60 octets of zeroes. Is this something that the hardware
+> already does for you, or is it something that needs further validation
+> and differentiation in software?
 
-diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
-index 8f78b0c900ef..c7be60c0b94f 100644
---- a/arch/x86/events/intel/bts.c
-+++ b/arch/x86/events/intel/bts.c
-@@ -58,7 +58,7 @@ struct bts_buffer {
- 	local_t		head;
- 	unsigned long	end;
- 	void		**data_pages;
--	struct bts_phys	buf[];
-+	struct bts_phys	buf[] __counted_by(nr_bufs);
- };
- 
- static struct pmu bts_pmu;
--- 
-2.48.1
-
+The hardware doesn’t handle this, so the igc driver have to do it manually. 
+I missed this handling, and Chwee Lin also noticed the issue while testing 
+this patch series—it wasn’t rejecting SMD-V and SMD-R with a non-zero 
+payload. I’ll update this patch to include the fix that Chwee Lin 
+implemented and tested. Thanks.
 
