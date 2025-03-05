@@ -1,139 +1,79 @@
-Return-Path: <linux-kernel+bounces-546313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D1AEA4F910
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:44:57 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 890B9A4F90D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:44:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B37A163605
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:44:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B967816310A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:44:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 467821FCF68;
-	Wed,  5 Mar 2025 08:44:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233AD1FCCE8;
+	Wed,  5 Mar 2025 08:44:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TW7KcfUr"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jgj8UTgy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BAD91FC7F3;
-	Wed,  5 Mar 2025 08:44:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E60917B4FF;
+	Wed,  5 Mar 2025 08:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741164289; cv=none; b=hcq5zg+/4TNrFha0mfJnm2MG8xv9dQy+Cz28gyelwRYiiVhA6J9gNsYX5E/Zpbe8ND0xhSpPqMnH0jvYqR2u7BSsR/RpI4doO+xuz6ssuPzxVTAktuzQap0s8P3uB80V7d0OE6OBi5damPaZ44FeZJqwyzrDsErpMkqNnAl9IWw=
+	t=1741164263; cv=none; b=I/fIdL0HdfyM+Xaa4qbGoxT2qZw92lidBjkAWPySCa5nxhyqFQbwGRV9wyLSHoih2RhIaECFazq8yNMjvpo9LTZPnRH86KZchYhm9GezBEq4dTP7pp1aZVxHkUi1kBb7FEQLVaHm+DP9UlUP6hv0m268MRMzLcVF8MI5i0ekxCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741164289; c=relaxed/simple;
-	bh=RS4y4uVxjaKGuaK73r43Jh0t8huEq2LPiqqw/cBwPQI=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=XM/YHZfkLXc34WJB6hH7mmpChXBFrtClz+fvey720szrPYUn5bEftmMfQx9BJOJlPyicEbK2bEv9Z67Uh8E9Ew7b17KQY171prKKJscexaMCeWeBmu7f0PIYsMVdYl8tIw+FRSgXfT3zw2aQrumBzn49Byw/GYxT7Rvf0kGCa/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TW7KcfUr; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2feb867849fso9078011a91.3;
-        Wed, 05 Mar 2025 00:44:48 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741164287; x=1741769087; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nMh/1IYC1/u6DKKOw2ms/3tpOZM3Bu58eEc2wmPyXZA=;
-        b=TW7KcfUrKiBqKYfRHU1UplUFGV8Y4qoUKI1MZDE4tywK4xqmWuZ4yK1XuCSAm1uF5W
-         VJrdjmZRU9hDYBbSCGtjZ4Ppv9M5Qvbi/cXX4+u3DpvPqUnUeuwkpGJNtpeabZgE0nyd
-         C95kdgSr2cWfNSk7xxut6aSXOerQjv/SRkxKPk3xQuhTOzANF6FGXTaj/u4T81ll6t03
-         7ibeyww28bOl9Yp45JsWkVFQ6OpoYUp3Nvdvz7QDt6lDcuABXh/i9tYWIrA1cifA2voi
-         Fdo+wBXi0MPreMEgmjd4bPcP2iSGzOIpxWmUGzou2cscgC2O/u7L0SlSvEIO40e4Y6tV
-         /iQA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741164287; x=1741769087;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nMh/1IYC1/u6DKKOw2ms/3tpOZM3Bu58eEc2wmPyXZA=;
-        b=rhmHuRxaYwj7xXpKo7ZM9zoKHwg4PAlnm+87ct+Or8Z+imU4UcHtXE1MaTno/K4Ues
-         C40VCX8yHuK64a0qJdLFyJl70dN/CqjDRQ/90q4P4mziT+rEXyE+T6stmgqwzPMPMRy5
-         Q6+6rpuQHnLc2NxxtfhMlth82ZnAOUuJEBVn0+WMWUBw0k0KXxem+ETunHBBg6IDFFMa
-         mnz/51DixTsJ6/8XIjWIIegoBiltLpQRD/WeX+JJOw2YyFhUIZi2+o2KV4dikr+hpmbG
-         sk6ybYWUc4Ei7cSPTZdyXV0aZDl5Js03ZnOczWrrVFj/z09AhubYrWQuN9dLJtTyTyaE
-         Ra5A==
-X-Forwarded-Encrypted: i=1; AJvYcCW/7avGOZgDeTzpBPaQksH01kBZoRnIqgP3PHIQylWKrnTMZm5Llvtyjpkko3OMndodRGrlgSPV+tUHLMY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9y1DI1XK+lRtfz4H+Liw6omji6QnirUKfAKrdKGyZzMyWeydj
-	ngPA4kMrTDzH9Oheg3aVR0wYYIAGGPZ9mAghymsfmqlj2Cq2Duce5O3wNnk4
-X-Gm-Gg: ASbGnctzIniodr3IH7MzQoO3DKOdJOx0A91kNXmUFJ8h0A1LbwQQrxnqnzxjJZv72GW
-	HvJ4s0TMwCNTZ1b17ZkVFGeozRWizKcitkbHwyQMQT2tnb3K7r0vr7kdO5ncLMtXQVkLF3dg3Qt
-	n78JbmnVTLnCV8S0g5Tr4T5+mpMpYKomK8sOtIaAevSCdpfMh7RQOgkX6esQP9vfVSZk5G/93Jr
-	+GaWseH5WnvIgUQBqYZrJFqO+6R2hgBJRoKA5SE8ennscH3J9ax2xKtEXX7rpmS2oV4/6T0iA0s
-	vl490oaBudSyktjnOR6Pp06FtZv8GmWdbetpwxx+oSKsi2D3GwvK+VNUNvkI4qp8pDgudslS944
-	8nQ7HLAzvzs+PRHar
-X-Google-Smtp-Source: AGHT+IE1y9oYg9eOq2NejaOXd+474ozq3ci5ZYOukGHKwvLj+l8H31AsVZndFe30B0ZQzkAYYdQImw==
-X-Received: by 2002:a17:90b:5110:b0:2ea:3f34:f18f with SMTP id 98e67ed59e1d1-2ff551531ddmr483870a91.19.1741164287369;
-        Wed, 05 Mar 2025 00:44:47 -0800 (PST)
-Received: from hcdev-d520mt2.. (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7ffe18sm789169a91.31.2025.03.05.00.44.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 00:44:46 -0800 (PST)
-From: Michael Chang <zhang971090220@gmail.com>
-To: kwliu@nuvoton.com,
-	kflin@nuvoton.com,
-	mchehab@kernel.org,
-	zhang971090220@gmail.com
-Cc: linux-media@vger.kernel.org,
-	openbmc@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] media: nuvoton: npcm-video: Fix stuck due to no video signal error
-Date: Wed,  5 Mar 2025 16:44:18 +0800
-Message-Id: <20250305084418.1301030-1-zhang971090220@gmail.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741164263; c=relaxed/simple;
+	bh=6TzU7frCR15MZSTMsM66vCjMQM516P6fELjJfi9FbPA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=mGbjwprv5A6/XL/CJiKdIfpR9RenXMabCW16so8/w4tJ0fwrbG36pKWHtxC6MhLFKwstyipKU5rNK3jIsR/ctGaG45mulU0Ty2YrJ/Ot2C0XIrqeGwzk/atBYPmF1A46AjB/yJlMQQkFNY1lyv06TmAPlyImSb1ft/Z32HVkNDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jgj8UTgy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56DC9C4CEE2;
+	Wed,  5 Mar 2025 08:44:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741164262;
+	bh=6TzU7frCR15MZSTMsM66vCjMQM516P6fELjJfi9FbPA=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=jgj8UTgyV1F105SZ3ef7XxiAAJYUfpHEIpdNqG4QI6xZMLvWtlfPtx75TpN58ASOM
+	 jnHqtYhMW5pIDVc9g/32ewFICBiUke3WS3ivQwVPHzLdJ/VYG0WMKm0DOOJ79L55HL
+	 NFtf5KkjflVRCj/SjJ32ChnUwopWZbXG7s0xD9qfIT/7uahPXycc1AwFIsRKdoI0Tb
+	 2JsZNaIzkfJxbt04DqpICWOTb72QCV2LpZes5EcTpxX2ayeqrkSzxrW10MHmn4Tbsi
+	 MJDsaprl2o4aEVaW/nF0uJ/7I5J+76xZTmv2p4A+wczWtnGoUmlLw6zui8NbRYkf2D
+	 c/BcXsG6ev25g==
+Date: Wed, 5 Mar 2025 09:44:19 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: "Xu, Even" <even.xu@intel.com>
+cc: "bentiss@kernel.org" <bentiss@kernel.org>, 
+    "srinivas.pandruvada@linux.intel.com" <srinivas.pandruvada@linux.intel.com>, 
+    "mpearson-lenovo@squebb.ca" <mpearson-lenovo@squebb.ca>, 
+    "linux-input@vger.kernel.org" <linux-input@vger.kernel.org>, 
+    "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH RESEND v1] HID: Intel-thc-hid: Intel-quickspi: Correct
+ device state after S4
+In-Reply-To: <IA1PR11MB6098DDEBDF3B7A0160CEBBC2F4CB2@IA1PR11MB6098.namprd11.prod.outlook.com>
+Message-ID: <q70795qp-nq3p-r181-15qn-on41n588s770@xreary.bet>
+References: <20250304032255.1131067-1-even.xu@intel.com> <96qpo784-8r1o-sor7-p42q-q06n1p389913@xreary.bet> <IA1PR11MB6098ECF413F5F4E8FD120B4EF4CB2@IA1PR11MB6098.namprd11.prod.outlook.com> <68roqo71-3887-ro16-0qss-52q455sqoo1s@xreary.bet>
+ <IA1PR11MB6098DDEBDF3B7A0160CEBBC2F4CB2@IA1PR11MB6098.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-Fix the issue when start_frame and detect_resolution
-functions are executed at the same time, which may cause driver
-stops capturing due to status of no video signal error.
+On Wed, 5 Mar 2025, Xu, Even wrote:
 
-Signed-off-by: Michael Chang <zhang971090220@gmail.com>
----
- drivers/media/platform/nuvoton/npcm-video.c | 15 +++++++++------
- 1 file changed, 9 insertions(+), 6 deletions(-)
+> I didn't realize v1 patch already got applied, just sent out v2 patch 
+> this morning. If so, could you just pick " [PATCH v2 1/2] HID: 
+> Intel-thc-hid: Intel-quickspi: Correct device state names gramatically" 
+> from v2 patch set for the naming fix? Those two patches have no 
+> confliction/dependence.
 
-diff --git a/drivers/media/platform/nuvoton/npcm-video.c b/drivers/media/platform/nuvoton/npcm-video.c
-index 024cd8ee1709..234fdec04f74 100644
---- a/drivers/media/platform/nuvoton/npcm-video.c
-+++ b/drivers/media/platform/nuvoton/npcm-video.c
-@@ -863,7 +863,6 @@ static void npcm_video_detect_resolution(struct npcm_video *video)
- 	struct regmap *gfxi = video->gfx_regmap;
- 	unsigned int dispst;
- 
--	video->v4l2_input_status = V4L2_IN_ST_NO_SIGNAL;
- 	det->width = npcm_video_hres(video);
- 	det->height = npcm_video_vres(video);
- 
-@@ -892,12 +891,16 @@ static void npcm_video_detect_resolution(struct npcm_video *video)
- 		clear_bit(VIDEO_RES_CHANGING, &video->flags);
- 	}
- 
--	if (det->width && det->height)
-+	if (det->width && det->height) {
- 		video->v4l2_input_status = 0;
--
--	dev_dbg(video->dev, "Got resolution[%dx%d] -> [%dx%d], status %d\n",
--		act->width, act->height, det->width, det->height,
--		video->v4l2_input_status);
-+		dev_dbg(video->dev, "Got resolution[%dx%d] -> [%dx%d], status %d\n",
-+			act->width, act->height, det->width, det->height,
-+			video->v4l2_input_status);
-+	} else {
-+		video->v4l2_input_status = V4L2_IN_ST_NO_SIGNAL;
-+		dev_err(video->dev, "Got invalid resolution[%dx%d]\n", det->width,
-+			det->height);
-+	}
- }
- 
- static int npcm_video_set_resolution(struct npcm_video *video,
+2/2 now in hid.git#for-6.15/intel-thc. Thanks,
+
 -- 
-2.34.1
+Jiri Kosina
+SUSE Labs
 
 
