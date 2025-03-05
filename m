@@ -1,103 +1,75 @@
-Return-Path: <linux-kernel+bounces-545899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71CCAA4F340
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:07:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 96E6BA4F33A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96D3D18900E5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:07:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCC5116E280
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:06:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22A3815252D;
-	Wed,  5 Mar 2025 01:06:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Jb6gkVll"
-Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F36F1553BC;
+	Wed,  5 Mar 2025 01:05:50 +0000 (UTC)
+Received: from secure.elehost.com (secure.elehost.com [185.209.179.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F3C01519A9
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DF413D279;
+	Wed,  5 Mar 2025 01:05:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.209.179.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741136792; cv=none; b=unyOGM1pp5vh/yCUq9G9qxhTxdfSkkXYvevuH9prFxXXFf6s5OS3cA4OAkQpq9gJoTkhwhiG2JwLiA7Zl5Y2RRXzN0pKXFJv++5/a4Gi5XOI7WHyObcq/qzP7cnVaEfyPg5rbLKwciOs1k+ZSzPwrr8zunnHY21cwJde15OpFzI=
+	t=1741136749; cv=none; b=IU5F1z69qURL0gnEve08djQ5fP7460VBO9Z198pjGTV2x1KPhq5X0vE3wGAcufJTPuyRvNh11CA8TJP8jLjp0ZUjIhbKOw3CSaUPh90jTpNkYRXZvth0W/1ij+ORIl1I6IFi7pxAWQTjwyYPLRJ7T6SiyEXGQcXGAczMWzw16uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741136792; c=relaxed/simple;
-	bh=ad67RTxJRt+a+J2/MlXyDezQL0+CpOunjY9DAS/MD1g=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=hZnqPhxTjceHvK3VrabzdJp2NSRzY5QL5yY/pOdnYDVFpP5O2RqdfucociLVCKiOuZ0UNYflr1cVJyHm3DRxBiABdPimlLjEHNCQgZz0A2guj+ct2e68qM5/9Z91uctwQSniPTQgoJYM0/QNRONqyy9nMXOMxDXNfDWbo/NhrLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Jb6gkVll; arc=none smtp.client-ip=209.85.216.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2feb47c6757so10257444a91.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:06:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741136790; x=1741741590; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mzTp4WUyKTQ3OGYFZEy8vdBSSNiKx6aFYbimuEYI7iw=;
-        b=Jb6gkVll5TDJDe6AWL5A2XBmU6HT9U+9FR/nXR0OUPmTSt0A/MNNfH0VFHdaGxggzI
-         DPO+578X+Rvx3rbgj3rp2CHasG8e5fATN25qvylUxAQaFeO1/o4e7qyC537VWU/0g9U2
-         TSFShM7jWMEdmPiHW6unpeRQuc0fcE6WjOCECpHFfFd0uaEV28dQKvLeko2zxlm2tE5H
-         mPo0fQlfZ8usIV9KLKjSx6neXeaZGom975NkVKyp8LDLbT6jmhNzToroR6NTy7ZxLTJ0
-         6GWoKauoWJ4e6sl9Lit+8wOqGtkZmpc75BJNH0rtZcNDxkIAUJI6XbkANNIqvXBWrFrC
-         bjBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741136790; x=1741741590;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mzTp4WUyKTQ3OGYFZEy8vdBSSNiKx6aFYbimuEYI7iw=;
-        b=GU1vKV+u0iNMhqI3JrCiVZ/F3XJ61uy7n6TuCCTt6gCPLAk+W3NEcVcK3Q2znOeC9l
-         eaOgaJ3BDkgV5N5WAoOYDFzESZx1RlmpmTTGSkuohMpvEGII7EGlNjO4pKyC/8I9h5RT
-         YmdAOIqduw5taTmGinl62FTvKw/4Eo7EsjSghnrZs/DuyyAlowEXkK43rerqtCq36tka
-         AQ5Sd9KfjwdGACGzbFLlV5d/OQ9DziW2L/ToZlVT47/gcsxVjgmLxI5cELbvdLkRggmQ
-         HurRUeif5ZquK7/8001UHAA1boS+aTYONRrqCbr2THfee24qyZV38E/10sLLvcsscDaF
-         /ZCA==
-X-Forwarded-Encrypted: i=1; AJvYcCXsTcq4iZDTkbMtsUFxISBZy8uVGukZ6HpKPZRDK7xegj/EXs6HoumsonD/AxcDq0+0fsvUg+R6rhsIcO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzzETcGoMOllQFFD/HORt0Zm4eIy16OEKKMJ4vGRW1hYydoSR4Y
-	zzcLM6DZx5HZIgtIQB8WqrrhDjVA4tLOcmJItF1H4e32I8nMtD4YqXvMFojS/jo5k12xjy7Y6SP
-	kwQ==
-X-Google-Smtp-Source: AGHT+IG26rCgu8YRTOp3oqf/0pV8wSLpyGIf0JH/o2kQe5NfU+8+r2psECf5CRAyS07dNKHZeHLYt7veanA=
-X-Received: from pjh5.prod.google.com ([2002:a17:90b:3f85:b0:2fc:e37d:85dc])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90a:c888:b0:2fe:a77b:d97e
- with SMTP id 98e67ed59e1d1-2ff49728368mr2329074a91.11.1741136790372; Tue, 04
- Mar 2025 17:06:30 -0800 (PST)
-Date: Tue,  4 Mar 2025 17:05:17 -0800
-In-Reply-To: <20250227005353.3216123-1-seanjc@google.com>
+	s=arc-20240116; t=1741136749; c=relaxed/simple;
+	bh=u9X0uTuMD5xXXkNo9+ZowwFWWsSLP1ihHn6blmLs2XI=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=OEq3M47xgylBJRGMSl1vVq5TWeTTtuHfE9I3PLorF6LCWZ9SDAzQrkR6DzGqhnKy2mYY4FKedezXvx7ZSObdP5u5opSFhsavsc1PlFBmigFUlpNgyU9LuCVf3+LTUq70VWiorDF9/auao0TlP6My4z5JtcbmJ1BztQE2hikBFMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexbridge.com; spf=pass smtp.mailfrom=nexbridge.com; arc=none smtp.client-ip=185.209.179.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nexbridge.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nexbridge.com
+X-Virus-Scanned: Debian amavisd-new at secure.elehost.com
+Received: from Mazikeen (pool-99-228-67-183.cpe.net.cable.rogers.com [99.228.67.183])
+	(authenticated bits=0)
+	by secure.elehost.com (8.15.2/8.15.2/Debian-22ubuntu3) with ESMTPSA id 52515a3P572794
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Mar 2025 01:05:36 GMT
+Reply-To: <rsbecker@nexbridge.com>
+From: <rsbecker@nexbridge.com>
+To: "'Junio C Hamano'" <gitster@pobox.com>, <git@vger.kernel.org>
+Cc: "'Linux Kernel'" <linux-kernel@vger.kernel.org>,
+        <git-packagers@googlegroups.com>
+References: <xmqqjz94r8p0.fsf@gitster.g>
+In-Reply-To: <xmqqjz94r8p0.fsf@gitster.g>
+Subject: RE: [ANNOUNCE] Git v2.49.0-rc1
+Date: Tue, 4 Mar 2025 20:05:31 -0500
+Organization: Nexbridge Inc.
+Message-ID: <001e01db8d6a$b4480470$1cd80d50$@nexbridge.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250227005353.3216123-1-seanjc@google.com>
-X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <174110881033.39974.12863767331940037606.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: VMX: Extract checks on entry/exit control pairs to a
- helper macro
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, Xin Li <xin@zytor.com>
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQIhUqYUUR69MpQbjmD+IdO9yTIAhLLYL9Tg
+Content-Language: en-ca
+X-Antivirus: Norton (VPS 250304-10, 3/4/2025), Outbound message
+X-Antivirus-Status: Clean
 
-On Wed, 26 Feb 2025 16:53:53 -0800, Sean Christopherson wrote:
-> Extract the checking of entry/exit pairs to a helper macro so that the
-> code can be reused to process the upcoming "secondary" exit controls (the
-> primary exit controls field is out of bits).  Use a macro instead of a
-> function to support different sized variables (all secondary exit controls
-> will be optional and so the MSR doesn't have the fixed-0/fixed-1 split).
-> Taking the largest size as input is trivial, but handling the modification
-> of KVM's to-be-used controls is much trickier, e.g. would require bitmap
-> games to clear bits from a 32-bit bitmap vs. a 64-bit bitmap.
-> 
-> [...]
+On March 4, 2025 12:46 PM, Junio C Hamano wrote:
+>A release candidate Git v2.49.0-rc1 is now available for testing at the =
+usual places.
+>It is comprised of 367 non-merge commits since v2.48.0, contributed by =
+68 people,
+>17 of which are new faces [*].
 
-Applied to kvm-x86 vmx, thanks!
+Rc1 looks good with OpenSSL 3.4 on NonStop.
 
-[1/1] KVM: VMX: Extract checks on entry/exit control pairs to a helper macro
-      https://github.com/kvm-x86/linux/commit/0c3566b63de8
+Thanks,
+Randall
 
---
-https://github.com/kvm-x86/linux/tree/next
 
