@@ -1,83 +1,71 @@
-Return-Path: <linux-kernel+bounces-547675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEC2CA50C46
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:12:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 923C2A50CF6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:04:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6CAE165276
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D164F3A8060
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF38D25524D;
-	Wed,  5 Mar 2025 20:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE08257AF0;
+	Wed,  5 Mar 2025 21:04:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HGFmNq+R"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HZgMT3aK"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93CB019D06A;
-	Wed,  5 Mar 2025 20:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47635253357;
+	Wed,  5 Mar 2025 21:04:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741205524; cv=none; b=h/JO84GA8sfY4FS0IK98aCmT4yEvba3BwUhgTb+pqh7/uTjujOAnmYtU9oiiT3gi/Z0LdzOmA6+B+AKQoGRkUH1xQkYUyHt2qo1cKnAAaI4gWaFuj4ENaZ+1Mdb/Klh2nQUv0bsc6V4x7KebnSKGnFCeYvUj6EjvbrgVIFg2CTU=
+	t=1741208655; cv=none; b=Uqtu9CBN1eTXV5SUPVXrJa7zQZKSVnSIifxnTqykV+9K1DmjsG2mw9FeEfDmjApgb6ZCv3KsMaG1d3t3TNcNF1hlr59UNtPcC4gYUMj5ji3P5pDKM2LFc9x1wouEog5SqfKQATgyVgNFp3rggDaYwlkCEmK2dTFqraqPAb+9p74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741205524; c=relaxed/simple;
-	bh=xxlaja1M5ZzvELQDVXtt0CFRedwIrI6HNEgqbSGwixk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fSA7e9J+aKFTdbJGt9nFk4HqBD0qzekSEWJaIPN6ybB2J4wGt2yJbwGtRkXnEwRk/+xc59iLjmNGRd9/JPNT+1Yequ6d/ayqlL/5pG4cEu9ERa407M+HaCJR49Bxp2oRyBzomob1KywgLTEZb0W0dloIR8o7nMhbnp5X96HauEM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HGFmNq+R; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43bcf9612f4so15226135e9.3;
-        Wed, 05 Mar 2025 12:12:02 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741205521; x=1741810321; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=brW+pYPJwmA8bUp4jZVsRkg/nzzvoeD/T7yxjePWcwo=;
-        b=HGFmNq+Ra+YAldY+WqJSnpLrdrkNkAcT91Tf5PxPU0yC1YtvHNMZskaXcerPGwn2+o
-         VqiGZ0bwmbjEk3Z2RB/lhMdvdsVRyirADI8w+9DQnaUuGMarnSCBJ77Um7Y/5RRojjZT
-         C4Kb9tC2lC5mehJEo9NfToiI+sp8S8/XWmj+I2hcM7EJeSlrGKb5eFsBOgwMZn9McRpT
-         EIWHU6SKEmNEQUmffE7HcMhUV5bwxcP7ACvW+C5LtNvl5faasJrhrfDDeGId5DnjUbbn
-         s625HhSihb1wiNQulFSYebszr3hEGC18p0AXrM3P8wCPLo/TdLzFiX6QHXqNXeK8OLcl
-         MqlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741205521; x=1741810321;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=brW+pYPJwmA8bUp4jZVsRkg/nzzvoeD/T7yxjePWcwo=;
-        b=jhCZKMbrSjznaEHZQWf/AtqhEumTM4CpoYUK+uyLlniC9phyjHsvxc09ZEH2mweoyk
-         m1On3331F5MkDHi3Ix3CAFRM5Hwtct5WQTapw15p9EoW6PiDiPw7SLuF7ag0BzUNWcMQ
-         Dmqt+ke6g36lsBBZ2eIcPFEKBciLS6+nfxITnw3A0FeBUzQO3+33tEnD3tSDJISrTvIQ
-         lf/b+6TFPV/AZ8g161ogFs3LAfXEYGfEnDkTrX6w99bRqGI6NlYbtgqCidGhsMjINrTq
-         SFT1dMOOaTvJAbWXy/JF16/3ZMWjooy4lo8YZeKzy1pcrhcgQ8D0wu2vI/l/8DcFxABG
-         jSqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVpcY3/cUWDicVviuLiZJoiNMcEtTijqF3W6TLZPZRfZIcl21nF6OJiANKvNbk2orhoY+8IwGtsKg0NsCE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxaeMvImzoL4oKiwUXwhcr62vZ1n16s++AAJv5+R6XAPfp4YLHv
-	H93CIybUqzmOtTO8bJh0dnbMw+PV0a93o82ZaXO8LKwJcSHVyRqakOKG2MDt
-X-Gm-Gg: ASbGncvn19QsQUggWTjjjs4+KSiXUlcCjui0seb2GmkbxH1I2ll6L3QtshEPIAU9U0c
-	A8XBU8X0sp7iDTWL11xB/1JRRU1jw0E65GJ/cb8tlDFDWyNzkiUDd6Y+fojlIYu1GsgNmnjzgmP
-	z1WtfgJEEvzhPlLqlXhpCq5Pnn/XklzOdZFdzD5+xSpaR4YKm5jY3A45jycXPkcgJyR6v+MxXn6
-	oh6SpNnVLsCJn0JRIvTCM90S4m6vFSk/duzfY08NV5/Ej5jBGVZPwnIiAvLsOmugHK9T7IMJ03d
-	VYH8FU9NuX2M1Wpe8J3tJtcPI6xA54znDvlyZi60O01pGxA=
-X-Google-Smtp-Source: AGHT+IHHSlhkTQg0bA8WTfh3FL+5l2gFszvj8/9uJnqxNv7fFJD7FqP9JeC/cix2kc24r83fx6bhTQ==
-X-Received: by 2002:a05:600c:4f51:b0:439:92ca:f01b with SMTP id 5b1f17b1804b1-43bd29bb5f2mr31670395e9.13.1741205520566;
-        Wed, 05 Mar 2025 12:12:00 -0800 (PST)
-Received: from localhost ([2a00:a041:e509:7500:3a4a:9c50:c5b2:c109])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-43bd42e402bsm27052915e9.25.2025.03.05.12.11.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 12:11:59 -0800 (PST)
-From: Or Avni <oravni8899@gmail.com>
-To: rafael.j.wysocki@intel.com
-Cc: linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Or Avni <oravni8899@gmail.com>
-Subject: [PATCH] Staging: pnp: interface: fixed a pointer coding style issue
-Date: Thu,  6 Mar 2025 00:11:55 +0200
-Message-ID: <20250305221155.35981-1-oravni8899@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741208655; c=relaxed/simple;
+	bh=BgTRncNgU7ZijFN6Z1yBs4krCRMbvuUJ25+xTTrMsN8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hfUa3aVcIboSU9k26LiYdiqoL6VVxDU9QFEu9fsvdqOYLQubaJhGHLvvzpFDFMWoCS4c2l7Ch5RClp9QeK7g6YUzgNZl2LVkdOr4OXAgj+Rfk2pQwGXP+zpbgk+oslPZuOsP88d3z1hjxhpCFmWWwwVmzRfNVed+8pXEB5hjs98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HZgMT3aK; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 525L3qpV4072765
+	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Mar 2025 15:03:52 -0600
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1741208632;
+	bh=CyMz+mWJADLjyDONWkGPLNYK+BDuXD8MYvfYz7ML8tY=;
+	h=From:To:CC:Subject:Date;
+	b=HZgMT3aKax/6mx3DSdO1kORg6rKDFljXDf0StEBRC9850RuaZnDvoRRNmjJTAfmq1
+	 V1hCYuBNWblUT0F0c485erkmZv5jeaS1lzaV9UBc4wOs7ltISLxJ3s+Sda6QlO7jgp
+	 I+Hfhr3JC4OUn/xFLd6jE9KxDuzjDmSwSs9wuPNY=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 525L3q4B034777
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 5 Mar 2025 15:03:52 -0600
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
+ Mar 2025 15:03:51 -0600
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 5 Mar 2025 15:03:52 -0600
+Received: from DMZ007XYY.dhcp.ti.com (dmz007xyy.dhcp.ti.com [128.247.29.251])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 525L3peA125160;
+	Wed, 5 Mar 2025 15:03:51 -0600
+From: Shree Ramamoorthy <s-ramamoorthy@ti.com>
+To: <lgirdwood@gmail.com>, <broonie@kernel.org>, <robh@kernel.org>,
+        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <aaro.koskinen@iki.fi>,
+        <andreas@kemnade.info>, <khilman@baylibre.com>, <rogerq@kernel.org>,
+        <tony@atomide.com>, <lee@kernel.org>, <linux-omap@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+CC: <m-leonard@ti.com>, <praneeth@ti.com>
+Subject: [PATCH v6 0/9] Add TI TPS65214 & TPS65215 MFD & Regulator Support
+Date: Wed, 5 Mar 2025 15:03:42 -0600
+Message-ID: <20250305210351.249811-1-s-ramamoorthy@ti.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,28 +73,76 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Fixed a pointer's declaration coding style issue.
+TPS65214 and TPS65215 are Power Management Integrated Circuits (PMICs) that
+have significant register map overlap with TPS65219 and each other. The 
+series introduces the 2 new PMICs and restructures the existing driver to 
+support multiple devices.
 
-Signed-off-by: Or Avni <oravni8899@gmail.com>
+- TPS65214, TPS65215, and TPS65219 each have 3 Buck regulators
+- TPS65214 has 2 LDOS and 1 GPO, whereas TPS65219 has 4 LDOs and 2 GPOs.
+- TPS65214's LDO1 maps to TPS65219's LDO3.
+- A key difference between TPS65215 & TPS65214 are the LDO current and
+  voltage output ranges and the configurable options available.
+- TPS65215 has 2 LDOs, whereas TPS65219 has 4 LDOs.
+- TPS65215's LDO2 maps to TPS65219's LDO3.
+- TPS65215 has 1 GPO, whereas TPS65219 has 2 GPOs.
+
+TPS65214 TRM: https://www.ti.com/lit/pdf/slvud30
+TPS65215 TRM: https://www.ti.com/lit/pdf/slvucw5/
+
+AM62L + TPS65214 Test Logs:
+https://gist.github.com/ramamoorthyhs/0793f7813332d94423ca1baee02f62c9
+AM62L + TPS65215 Test Logs:
+https://gist.github.com/ramamoorthyhs/7560eca6110fafc77b51894fa2c0fd22
+
 ---
- drivers/pnp/interface.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Change Log:
+v5 -> v6:
+- Combine MFD & regulator series to help with dependencies when 
+  maintainers take this series
+v4 -> v5:
+- TPS65214 dt-binding patch: Remove duplicated "then:", combine "if:" 
+  statements with enum.
+v3 -> v4:
+- Update commit header to be "mfd: tps65219" since the driver name has not 
+  been changed from TPS65219.
+- Added dt-bindings patches to mfd series.
+- Combined TPS65214 & TPS65215 dt-binding and mfd patches into 1 series, 
+  since the series' share a dependency & these patches add more device support
+- Elimate the need for TPS65214 gpio patches by registering TPS65214 as 
+  "tps65215-gpio" from the MFD driver, since both have the same GPIO module
+- "Remove regmap_read" patch: Drop chip_id variable
+- move enum pmic_id struct from "remove regmap_read" patch to "Add support 
+  for TPS65215" patch.
+v2 -> v3:
+- Remove duplicated of_device_id table entries
+- Re-order mfd patches to clean up diff displayed
+v1 -> v2:
+- have any PMIC lists be in alpha-numeric order: TPS65215, then TPS65219
+- Add driver prefix to chip_data struct
+---
+Shree Ramamoorthy (9):
+  regulator: dt-bindings: Add TI TPS65215 PMIC bindings
+  regulator: dt-bindings: Add TI TPS65214 PMIC bindings
+  mfd: tps65219: Remove regmap_read check
+  mfd: tps65219: Add support for TI TPS65215 PMIC
+  mfd: tps65219: Add support for TI TPS65214 PMIC
+  regulator: tps65219: Update struct names
+  regulator: tps65219: Add support for TPS65215 regulator resources
+  regulator: tps65219: Add support for TPS65215 Regulator IRQs
+  regulator: tps65219: Add TI TPS65214 Regulator Support
 
-diff --git a/drivers/pnp/interface.c b/drivers/pnp/interface.c
-index 44efcdb87e6f..5148c431ac0c 100644
---- a/drivers/pnp/interface.c
-+++ b/drivers/pnp/interface.c
-@@ -186,7 +186,7 @@ static void pnp_print_mem(pnp_info_buffer_t * buffer, char *space,
- 	pnp_printf(buffer, ", %s\n", s);
- }
- 
--static void pnp_print_option(pnp_info_buffer_t * buffer, char *space,
-+static void pnp_print_option(pnp_info_buffer_t *buffer, char *space,
- 			     struct pnp_option *option)
- {
- 	switch (option->type) {
+ .../bindings/regulator/ti,tps65219.yaml       |  27 +-
+ drivers/mfd/tps65219.c                        | 279 +++++++++++++++++-
+ drivers/regulator/Kconfig                     |  12 +-
+ drivers/regulator/tps65219-regulator.c        | 242 ++++++++++++---
+ include/linux/mfd/tps65219.h                  | 136 ++++++++-
+ 5 files changed, 619 insertions(+), 77 deletions(-)
+
 -- 
-2.48.1
+2.43.0
 
 
