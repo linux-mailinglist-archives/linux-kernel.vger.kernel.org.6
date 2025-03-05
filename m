@@ -1,118 +1,96 @@
-Return-Path: <linux-kernel+bounces-547929-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0C474A53DE5
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:04:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 961EBA53DE8
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:04:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7535E18905A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:04:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC4E918914D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAF6420ADD5;
-	Wed,  5 Mar 2025 23:02:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D210C20AF64;
+	Wed,  5 Mar 2025 23:02:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MGQFbKaH"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="M6HeptYf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB7420A5D3;
-	Wed,  5 Mar 2025 23:02:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A9720A5DC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:02:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741215743; cv=none; b=fCz9CdQjdYD/3l/I5tVu9Qzn2D8e3SnlK3sBCqIykXQ6wl2ks/qt8+ARstV0kL9w7iEGGmquijxkJttLnNNvunMrelobIZOI6Vfc6RG7ZGS9XVj9WAamTRJpnxAi6B7hQzAh4SqcmM+9HG56PVUA03Ikahm+zZro6mcLE55qxks=
+	t=1741215744; cv=none; b=pRpc3iAYdFM0RToliQMvE/Q8PU+jZws31iI9l5lDK/NrC6oYwOnXWEBZ/rAi7RsdVtkye1ngWWTmqLq/zNreFoZQ4MjND2+SPtlBDNdOBvriZMNqhh7X6wN6xOTfbXbp99NxvWm3uz9GPDAw4DyGN3/SiBQi89ril+VS/PbiOmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741215743; c=relaxed/simple;
-	bh=CrS8Z2lH5l661WpjSYOQYpm59vMadX9D3uzoIiDzEQ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EaA4nCocdKMgm9y+zTPgmn7KszCXeICFJ7oNWttq14jxtkyxAMyGUj/jFE3Q3nj62sFqXmlMr6KDlgm52VH6t3F7f3bqriE3PKPgEUBek2IVYvILFYnV3NlaDyusxl6j2a9w+ddScMOsP/pn/8/vAsRd9xqa2GToOW2M7/kHFD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MGQFbKaH; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2ff5544af03so23084a91.1;
-        Wed, 05 Mar 2025 15:02:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741215740; x=1741820540; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DU0JYgz8loA5MWXHcsC5YAnENw3ohHfJ8gchwQ4NDqk=;
-        b=MGQFbKaHKVnMQ+iTFVWlPy+IhJBiFAyklnxyzzT0LL0aI0pPizaqvtn0jV0bq0Qp2j
-         QQYdIMbK+5NjeYZrg67wW4Y5uEjaOBowzCJc3+4/9TcL8t1nqQ9N6oSnixRfcBTLei5n
-         SMftv4cOxGtNCuTJTjryQh8HFg/nwoWk9JwS6gSMpoYEXYdeLSyUYS15+U8ZAvy95ECa
-         oiPeM11zXP8Ur+htp0wiG/hYUAopqoR0jGXErm8vQzWUaWpF+Htcek6UB6iHwm4Nn45B
-         1CXEEgxqgEI26439hDlVOZGP7pxDMhvDcBcyuSkNqxSRFjY8yqb/AaYx23MJKPOtofwH
-         meXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741215740; x=1741820540;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DU0JYgz8loA5MWXHcsC5YAnENw3ohHfJ8gchwQ4NDqk=;
-        b=YIg42L/zi2mvYBRkiDflv3dHvdFBD9Y5vX3/I2KwO71KADBxdvLLbUBj4gjJro9T2S
-         Wr9cmTN6KKAoV2Mko/BgXiV2/hbGB8tjAAmONmQ/nYf9gitUkdJbL/yOxGTEUrc9b2Fl
-         vBQasu/MmhfkTyBmINaJCUgmbS8fuFQCIe8Bcwwbw9hlyC6TzP6ug5JQj+pSVz9+WZZd
-         YhQYMtgE52zCpEv7UBPFeow2trp8uswh5EGqA5htQx5wgyL2l4vMLY0vApCS6tle4uec
-         Cms3UWGx9vTAHbpCLe0dVVtbnl/wJr2z3F1jzioozVsth7rIAfu+lkl/xQCw/c0TgSzN
-         lTBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUl2lCp8Pe/qDakHbWTsj23EucF4BxOGV91lS4NmDsNupd33VFZLhGIuI9/gwjVsTIiMXuoQVG4P1JvhKE=@vger.kernel.org, AJvYcCWRB1PWwU9GQX2SX6NlY4N6uvr3ilL0aYdVevK1FkFT/SudR7FipR/dmjKfMMJl6IzgwNt1kxsDsIRpQt1MD4w=@vger.kernel.org, AJvYcCXosqGfV5Fim60CmAKQKLobys03foAW1J3GxQ1qptZRqTfAbGa9PxP7cxPK557MFgQPrRGZnOQqJ0nJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPUTUbiNTkUQakLoeJC5XQYW+RgsDjbqY2BYJ6Q3pnrzCkP86N
-	8m4Tpp9EpWSmTDlcjZYmz8+Y+MlvRdNQcCgpu+EG8VfSUxjA+frwOx87mdXOL0FfFgyb0k5pf3R
-	w/s7pPbNdoGa9x1iMc3N1g+0Id4o=
-X-Gm-Gg: ASbGncuoSOd8WucLxixcwFa0YfSRFCe4j5n/Z4Pme0WwFQCL6EQQjNcQhmEiVR+lMOs
-	/6SHL3olse6F6lyP1pAdYcru5Ww64dsc9hgF1PuZUlRrQwd1hyOzkfCpKDOLPadXqNczMhzX4ez
-	Kybol7jjoCwhIktGGe4BvFTFucpA==
-X-Google-Smtp-Source: AGHT+IFVBDqZbEwRQ9Ywp34UPpcuUXspouep8Y78Gvm7RN1qbm3xmglctYZE8Nva4ApJBxvQskOIEVu0LMqHKJWkOXI=
-X-Received: by 2002:a17:90b:4b4e:b0:2fc:25b3:6a91 with SMTP id
- 98e67ed59e1d1-2ff497c18e3mr3223253a91.5.1741215739863; Wed, 05 Mar 2025
- 15:02:19 -0800 (PST)
+	s=arc-20240116; t=1741215744; c=relaxed/simple;
+	bh=RT34XeNjBWgzD0ZN8J6EvR3tl5kGle9qJ4bsjQ3pd50=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=daYQfZM3QWrc4LbJaiHKnVuRC1fQX0kyE1r2wwRAzmTxSkc/oLx+w8vKclORn3S+dOd33IppvRCCUNL027B+fbS7O5KAQ/dXUUGtDTCQKXGBmNt53UEuzl4eyg1Wz9J6vUTAKJfNJQ0FOYedhNalW+Cy9cA/UYixlEKX/b6sUSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=M6HeptYf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 618B0C4CED1;
+	Wed,  5 Mar 2025 23:02:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741215743;
+	bh=RT34XeNjBWgzD0ZN8J6EvR3tl5kGle9qJ4bsjQ3pd50=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=M6HeptYfM5LX312DQ+XiDr5qTJirK8w57ErL1+7DiDSwXjh3TAmLmjiCNdY4KFGqI
+	 zTsVfn+MC5I3CBVRT5ciopZFt6DFsw6fEpAiFkhQTpQNWtSqf14tMZgRBEHvzPs7qz
+	 S8Dpqlj+WU9n3jAQOpw5vBEsbKHo/z+Q2li/KKDG3VHWy67I8QiUVlIgM1+UvB92Xa
+	 fqNk7anhzsLVRatfX6X1ERumDS+/Ih8gG5zvIvCRf98oj1qRXEJIixz6ygKIdSqOYS
+	 Gi1nsbh3jHmkq4ftxg/wQ6h4WYjfk4X2HlfqIPi9xjqL7EvmASYwhjqw2JMeut0IHd
+	 m4V69v7GO8Z5Q==
+From: SeongJae Park <sj@kernel.org>
+To: Nadav Amit <nadav.amit@gmail.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Liam R. Howlett" <howlett@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	kernel-team@meta.com,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>
+Subject: Re: [RFC PATCH 00/16] mm/madvise: batch tlb flushes for MADV_DONTNEED and MADV_FREE
+Date: Wed,  5 Mar 2025 15:02:21 -0800
+Message-Id: <20250305230221.60260-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <7BC81F7C-191F-451D-8FE5-5BB268F6B0A1@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250213-aligned-alloc-v7-1-d2a2d0be164b@gmail.com>
-In-Reply-To: <20250213-aligned-alloc-v7-1-d2a2d0be164b@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 6 Mar 2025 00:02:05 +0100
-X-Gm-Features: AQ5f1JrS4W1LclZjnsUx9LBTl9i9YRM8HAgFLPtAtQHt9lipfjoQYxpBRnKjLf8
-Message-ID: <CANiq72=FhaZrgMTBSTXOQvg8jrAR+pbdUjt2gL2npjBh8881jw@mail.gmail.com>
-Subject: Re: [PATCH v7] rust: alloc: satisfy POSIX alignment requirement
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, DJ Delorie <dj@redhat.com>, 
-	Eric Blake <eblake@redhat.com>, Paul Eggert <eggert@cs.ucla.edu>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-man@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Feb 13, 2025 at 12:34=E2=80=AFPM Tamir Duberstein <tamird@gmail.com=
-> wrote:
->
-> ISO C's `aligned_alloc` is partially implementation-defined; on some
-> systems it inherits stricter requirements from POSIX's `posix_memalign`.
->
-> This causes the call added in commit dd09538fb409 ("rust: alloc:
-> implement `Cmalloc` in module allocator_test") to fail on macOS because
-> it doesn't meet the requirements of `posix_memalign`.
->
-> Adjust the call to meet the POSIX requirement and add a comment. This
-> fixes failures in `make rusttest` on macOS.
->
-> Acked-by: Danilo Krummrich <dakr@kernel.org>
-> Fixes: dd09538fb409 ("rust: alloc: implement `Cmalloc` in module allocato=
-r_test")
-> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+On Wed, 5 Mar 2025 22:36:45 +0200 Nadav Amit <nadav.amit@gmail.com> wrote:
 
-Applied to `rust-fixes` -- thanks everyone!
+> 
+> > On 5 Mar 2025, at 20:15, SeongJae Park <sj@kernel.org> wrote:
+> > 
+> > For MADV_DONTNEED[_LOCKED] or MADV_FREE madvise requests, tlb flushes
+> > can happen for each vma of the given address ranges.  Because such tlb
+> > flushes are for address ranges of same process, doing those in a batch
+> > is more efficient while still being safe.  Modify madvise() and
+> > process_madvise() entry level code path to do such batched tlb flushes,
+> > while the internal unmap logics do only gathering of the tlb entries to
+> > flush.
+> 
+> I made some related (similar?) patches in the past. You can see if you
+> find something useful in the discussion there. I think your version avoids
+> some of the “mistakes” I made.
 
-    [ Added Cc: stable. - Miguel ]
+Thank you for sharing this!  I sure I can learn and use many things from this
+work and previous discussions.
 
-Cheers,
-Miguel
+> 
+> [1] https://lore.kernel.org/all/20210926161259.238054-1-namit@vmware.com/T/#m23ccd29bad04a963c4d8c64ec3581f7c301c7806
+
+
+Thanks,
+SJ
 
