@@ -1,173 +1,99 @@
-Return-Path: <linux-kernel+bounces-545930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C1CA4F3E1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAF2A4F3EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:36:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B613618909F1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:35:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880D918908BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:36:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0991E151998;
-	Wed,  5 Mar 2025 01:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mpNBfjRJ"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE185148855;
+	Wed,  5 Mar 2025 01:36:40 +0000 (UTC)
+Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9461428E7;
-	Wed,  5 Mar 2025 01:35:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AB113C3CD;
+	Wed,  5 Mar 2025 01:36:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741138528; cv=none; b=iYYKOj4F41jFMA9PFn50MXs41FLM45CwnwY2NmxijBiYaO8jvPQpGVQVucdaV0FQNnr+Ly5cV4ijtiMO60sEXs7+AG0RZsu+7Ld8ulwNtPsCZ+cianNJXQDnYaG6m8Xa0g/HQvi9HNySEAttIRcSssHx+/zreb9aJtjdtQ7aZOo=
+	t=1741138600; cv=none; b=PyURKWeaLNRuXoIJNUgjkoNnwEWZKf78YIIXv2zIAPrAtOwdggVvKvp/Xo3PbeGbjGDyIQo72v5mNvvFg5PAQmO5eAeSzPqvy/bkNT1tUAcamKKwhfnr4DfaVvWKNJI10x+bhfNc47y2OEhvCvK9ug2x352yu57Zs9VwvcwTyiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741138528; c=relaxed/simple;
-	bh=1mxRshSolbkoaIKsAkJCRRgE3etEr8qaYvLAZNdMO/8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=PVmyLFAt15jtW/oenmkmgUgU+x29dE79V+o2qDAuxQgBPKOln9NnBNL/6umV7CUPjvccsFdjH+nPL8U2kLUTxqW8rlH3cKKPRsRyAkwkqs8MUmQ4LqGiZA2V0FpQIde0NR+nsGhjrqvRwsgv4Nd8FhW0P6Ga/XeSwiy5HqXJOzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mpNBfjRJ; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524NADJ9025365;
-	Wed, 5 Mar 2025 01:35:04 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	nLs+5SLZJ4qjajbg8dAv5Pp89mRUdsV9Rqw/s+IwB34=; b=mpNBfjRJri4AhMhC
-	CMDTZzya5nC8OwRGnHt8JCnDV3zYqX67KpoeVRLDh29Kj9zjBPJAWaA+1aUA1EfZ
-	hXhDY6j80xJDYxEqHWlDYbt0CbVh41rdednZ22U4pqPfXXscQsYiDPLMnvCiRH7U
-	rVPzPpu2czdSgihoqVOpJ6euUOuPhik7fG0lGjaP9jMrxQkQsftty3a7+L+4+mJ4
-	+7/esdeAA7M3EaeuEyttv8bwUn4/Y/8mMb5jURgWJ5p1pxl4o+YpkW4BRF+dPfr2
-	3WbP2vxHtlcsk49s1RqhuV1giYkgBFWquMnw0y8gSJhwapQOvu9iknyR1jlmVHea
-	Lru1RQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p933q6f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 01:35:03 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5251Z3fZ020582
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 01:35:03 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
- 17:34:58 -0800
-Message-ID: <bb2f4a5d-1a93-4637-908d-316516213061@quicinc.com>
-Date: Wed, 5 Mar 2025 09:34:56 +0800
+	s=arc-20240116; t=1741138600; c=relaxed/simple;
+	bh=tBvn2gr41JoUC1eHNgNoquOj4ynuJM6YbmSVAF9TBF8=;
+	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=UHFa44gpxzwExisY1qYY1mgj14oVAV02PEdTPwNwitEHxzLkE4yyw7dGn1KVw9g9UPir2v0aTJKgbPeXMP21fXSctsxBMED7Z9Df93s4c7sIcG+qJfuyN9IWnuf6kCcHY8VjwvLJpdzF+CD8b93RVhyRMErVQOehnasBe1jEWt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Z6w4l3hv8z1cyTM;
+	Wed,  5 Mar 2025 09:31:35 +0800 (CST)
+Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
+	by mail.maildlp.com (Postfix) with ESMTPS id 39A9614022D;
+	Wed,  5 Mar 2025 09:36:29 +0800 (CST)
+Received: from [10.67.120.126] (10.67.120.126) by
+ dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 5 Mar 2025 09:36:28 +0800
+Subject: Re: [PATCH] scsi: hisi: remove incorrect ACPI_PTR annotations
+To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@baylibre.com>
+References: <20250225163637.4169300-1-arnd@kernel.org>
+ <49419ea6-5535-3612-c1c4-5ac58f2bc012@huawei.com>
+ <h7oh3uhuvmulmqkxi5x73bnkmgkodjxemabiqwkrqu3jmbxu2e@p2pmhpxh6nxl>
+CC: Arnd Bergmann <arnd@kernel.org>, "James E.J. Bottomley"
+	<James.Bottomley@hansenpartnership.com>, "Martin K. Petersen"
+	<martin.petersen@oracle.com>, Arnd Bergmann <arnd@arndb.de>, Damien Le Moal
+	<dlemoal@kernel.org>, John Garry <john.g.garry@oracle.com>, Bart Van Assche
+	<bvanassche@acm.org>, Jason Yan <yanaijie@huawei.com>, Igor Pylypiv
+	<ipylypiv@google.com>, <linux-scsi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <liyihang9@huawei.com>
+From: Yihang Li <liyihang9@huawei.com>
+Message-ID: <c75288a5-9e3c-e4c7-4717-9c04348dc7d4@huawei.com>
+Date: Wed, 5 Mar 2025 09:36:25 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
+ Thunderbird/45.7.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 04/10] Coresight: Introduce a new struct
- coresight_path
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
- <20250303032931.2500935-5-quic_jiegan@quicinc.com>
- <4e0959e7-cb66-41f1-b686-a274b6cbfd2e@arm.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <4e0959e7-cb66-41f1-b686-a274b6cbfd2e@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+In-Reply-To: <h7oh3uhuvmulmqkxi5x73bnkmgkodjxemabiqwkrqu3jmbxu2e@p2pmhpxh6nxl>
+Content-Type: text/plain; charset="windows-1252"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=Me2Wu4/f c=1 sm=1 tr=0 ts=67c7aa48 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=BNzsuDOjKBzrTUwNBxAA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: O5Xb635ZTtY1EM7RJ_0yyvJwNWqU69Zj
-X-Proofpoint-ORIG-GUID: O5Xb635ZTtY1EM7RJ_0yyvJwNWqU69Zj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_01,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0 spamscore=0
- adultscore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
- impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050010
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpemf100013.china.huawei.com (7.185.36.179)
 
 
 
-On 3/5/2025 12:10 AM, Suzuki K Poulose wrote:
-> On 03/03/2025 03:29, Jie Gan wrote:
->> Introduce a new strcuture, 'struct coresight_path', to store the data 
->> that
->> utilized by the devices in the path. The coresight_path will be built/ 
->> released
->> by coresight_build_path/coresight_release_path functions.
+On 2025/3/4 13:12, Uwe Kleine-K�nig wrote:
+> Hello,
+> 
+> On Wed, Feb 26, 2025 at 11:23:18AM +0800, Yihang Li wrote:
+>> On 2025/2/26 0:36, Arnd Bergmann wrote:
+>>> From: Arnd Bergmann <arnd@arndb.de>
+>>>
+>>> Building with W=1 shows a warning about sas_v2_acpi_match being unused when
+>>> CONFIG_OF is disabled:
+>>>
+>>>     drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:3635:36: error: unused variable 'sas_v2_acpi_match' [-Werror,-Wunused-const-variable]
+>>>
+>>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 >>
->> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-core.c  | 16 +++++-----
->>   .../hwtracing/coresight/coresight-etm-perf.c  | 30 ++++++++++---------
->>   .../hwtracing/coresight/coresight-etm-perf.h  |  2 +-
->>   drivers/hwtracing/coresight/coresight-priv.h  |  6 ++--
->>   drivers/hwtracing/coresight/coresight-sysfs.c | 12 ++++----
->>   include/linux/coresight.h                     | 10 +++++++
->>   6 files changed, 44 insertions(+), 32 deletions(-)
->>
+>> Looks good. So Reviewed-by: Yihang Li <liyihang9@huawei.com>
 > 
-> ...
+> If you put your Reviewed-by tag in a separate line, the tooling that
+> most maintainers use pick it up automatically. Martin applied your patch
+> (currently as commit 7a9c0476d4073e742f474e71feeef4f54add4bc9 in
+> https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git 6.15/scsi-staging
+> ) indeed without your tag.
 > 
->> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
->> index ce9a5e71b261..67cf8bdbe5c0 100644
->> --- a/include/linux/coresight.h
->> +++ b/include/linux/coresight.h
->> @@ -329,6 +329,16 @@ static struct coresight_dev_list (var) = 
->> {                \
->>   #define to_coresight_device(d) container_of(d, struct 
->> coresight_device, dev)
->> +/**
->> + * struct coresight_path - data needed by enable/disable path
->> + * @path:              path from source to sink.
-> 
-> This doesn't match the actual variable below.
 
-Hi Suzuki,
+Ok, thanks for the reminder. I'll pay attention next time.
 
-Very sorry for the mistake. I should spot it in advance. I will take 
-care and enhance the self-checking process in the future.
-
-Jie
-
-> 
->> + * @trace_id:          trace_id of the whole path.
->> + */
->> +struct coresight_path {
->> +    struct list_head    path_list;
->> +    u8            trace_id;
->> +};
->> +
->>   enum cs_mode {
->>       CS_MODE_DISABLED,
->>       CS_MODE_SYSFS,
-> 
-> Suzuki
-
+Thanks
+Yihang
 
