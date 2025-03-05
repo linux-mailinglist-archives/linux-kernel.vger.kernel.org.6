@@ -1,86 +1,109 @@
-Return-Path: <linux-kernel+bounces-546930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97D98A500D1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:43:27 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8DBA500DF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:44:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D2F3A8C04
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:43:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 047347A7A44
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6594A24BBF9;
-	Wed,  5 Mar 2025 13:43:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C98F24CEE9;
+	Wed,  5 Mar 2025 13:43:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VtkbnWZG"
-Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rrfIlOfe"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B8024A068;
-	Wed,  5 Mar 2025 13:43:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0350D24C69D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:43:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741182184; cv=none; b=hpRUNvE35FaZ2XnSn15qssqdhyqgbB9J+odNPe8fP4DaScypU1rKX1m+KKdkfOU6qtKne5DqKQGnK32X/iTOeuh3+qpo4Yv++anSFZLKl6s4KOMoqsk+q6mmTtAZnHr0qW5KkZDNc819FXN0bFB8iGMB4PMmSn5SclPbp0K7M6g=
+	t=1741182202; cv=none; b=ZSqMX9qksgB1KX9vOM7ws4TWImkMa23rOfab8xjwyZAw74YuMC8Arv4F8TqfTLf+hRbdhlZF2iLoeZHD3EDSEWCzSKX8kS24QOUzFgDMPQ2557QiK24DD+1+o3vR1Jjvhc2QRYSnEQaZRCsBGJMEGpGMBjnTvXTWQPleZCrLqxA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741182184; c=relaxed/simple;
-	bh=PCw+fsFCg4iMevxCZ3WDBtFP6dh7QpfE1KSQU7/sx0o=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=nelxqKYUeauHEQ2Hvs45hz49h7fmiBym8/8kQbE0DfF3Rqhzjiq+Ey/Hqt0VQHExoq/HR37WIhCOO+16K1XznGMJTWBfJZu2Kiug1oyfeRcmCkv9PpAkGx47V9LANLjQbn9L0G0jw2t8NwZ0fv7yvslwLCj89y8v9L1wt1aOv3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VtkbnWZG; arc=none smtp.client-ip=185.70.40.134
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=islx75xhinebhcqxkzeybsabfi.protonmail; t=1741182181; x=1741441381;
-	bh=PCw+fsFCg4iMevxCZ3WDBtFP6dh7QpfE1KSQU7/sx0o=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=VtkbnWZGyDqEYMboWBjvPEvvqvtZp+BX7QOyNE0XKXPYbu2MlEZQugMq4JdIPYi1f
-	 21czmgoO9P6i8ASWaWiBx8/K4881UlkCicx8vL0BB8F/5gdm116QZbPlW1yifOeJqK
-	 3csnHyr/qH77xBjw+Rrgug92SN25PN37Pvg3r62Yluq+cza1/eswLTDI1h+vil7cil
-	 glI8lOgbtSWYFld6norsR2aO0bmypklm8icdsxurTtqy+JU9ujczIgVtr+3MpVWfHq
-	 QnQQY536TEo19ee7DwGzo2DI81vqPUYnExRvuPHj2XMy9Jax2HAzsjR7Yhmdt0esqa
-	 VsHC9hv/ia4ow==
-Date: Wed, 05 Mar 2025 13:42:55 +0000
-To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: stable@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] rust: init: fix `Zeroable` implementation for `Option<NonNull<T>>` and `Option<KBox<T>>`
-Message-ID: <D88DKEJ9LHA0.3324DAQAUEI9T@proton.me>
-In-Reply-To: <20250305132836.2145476-1-benno.lossin@proton.me>
-References: <20250305132836.2145476-1-benno.lossin@proton.me>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: b9f1163ef793328134ca0cf594bc4a3f8403279e
+	s=arc-20240116; t=1741182202; c=relaxed/simple;
+	bh=fK5zQ/WZjEbYA+TpmqkINi2b97itDxogVpvAk5QyjG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=WDuIqS61UunbGfT3pPwXpg7GD1DbT5oRVMswdTTnrNm2tH4ZEdXJIrRHpuGdVldlxkr7IiwYtRWxE1SvQsae49vwulRvFiYBVO1iuj7G194HZQXvUWsQbzx/IR0LknbLLLgwECIyssSj1e6gxSU/8pEhuADbwySRVDxriwm3DKk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rrfIlOfe; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=Content-Type:MIME-Version:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:In-Reply-To:References;
+	bh=UGg+ouxLIKsh/+oUO6t9EAmcDlK9cpsHvOVQR2Exv04=; b=rrfIlOfexzXdKv9ihM3XOnhOmf
+	tsEfuZ8KTitTNv3Np4aArbcfX+v3xf3XU6njk3xRxYEIeJacyAfHvn1C25YNCctrQh1/eL247MZrA
+	ewOUNg4VMOEYC/SMWphmv4+VwFzdgp6kIxVksOL0dzImhRvcAEPO7hajkxjr9iqRXxSSRC29ZH+qR
+	F4NN0MsXP3XXt4qeBPol2Ei48g6eeGqIGA0Nk3YuDRCM4M++pw2N6El4MsxJhpVJOfPVK/+AfMgTA
+	n/7X8BN1R3nvrkdOvFYQmEGZGihxxw8DS9ueful28+WV7pashaGe0K7HvHaumOebjgLbeJnfcgz7i
+	bVtNiW7w==;
+Received: from 77-249-17-252.cable.dynamic.v4.ziggo.nl ([77.249.17.252] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpp1o-00000005amO-2fXA;
+	Wed, 05 Mar 2025 13:43:16 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D88F030049D; Wed,  5 Mar 2025 14:43:15 +0100 (CET)
+Date: Wed, 5 Mar 2025 14:43:15 +0100
+From: Peter Zijlstra <peterz@infradead.org>
+To: Kees Cook <keescook@chromium.org>, linux-kernel@vger.kernel.org
+Cc: Borislav Petkov <bp@alien8.de>
+Subject: [RFC][PATCH] overflow: Twiddle with struct_size()
+Message-ID: <20250305134315.GB16878@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Wed Mar 5, 2025 at 2:29 PM CET, Benno Lossin wrote:
-> According to [1], `NonNull<T>` and `#[repr(transparent)]` wrapper types
-> such as our custom `KBox<T>` have the null pointer optimization only if
-> `T: Sized`. Thus remove the `Zeroable` implementation for the unsized
-> case.
->
-> Link: https://doc.rust-lang.org/stable/std/option/index.html#representati=
-on [1]
-> Cc: stable@vger.kernel.org # v6.12+ (a custom patch will be needed for 6.=
-6.y)
-> Fixes: 38cde0bd7b67 ("rust: init: add `Zeroable` trait and `init::zeroed`=
- function")
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+Hi Kees,
 
-Forgot to add this:
+I keep getting hit by the struct_size() brigade, and I keep having
+trouble reading that macro.
 
-Reported-by: Alice Ryhl <aliceryhl@google.com>
+I had a wee poke and ended up with the below, WDYT?
+
+(I also tried to create a __must_be_flex_array(), but utterly failed :/)
 
 ---
-Cheers,
-Benno
-
+diff --git a/include/linux/overflow.h b/include/linux/overflow.h
+index 0c7e3dcfe867..2123d0e238bb 100644
+--- a/include/linux/overflow.h
++++ b/include/linux/overflow.h
+@@ -352,9 +352,10 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+  * Return: number of bytes needed or SIZE_MAX on overflow.
+  */
+ #define flex_array_size(p, member, count)				\
+-	__builtin_choose_expr(__is_constexpr(count),			\
+-		(count) * sizeof(*(p)->member) + __must_be_array((p)->member),	\
+-		size_mul(count, sizeof(*(p)->member) + __must_be_array((p)->member)))
++	(__must_be_array((p)->member) +					\
++	 __builtin_choose_expr(__is_constexpr(count),			\
++			       sizeof(*(p)->member) * (count),		\
++			       size_mul(sizeof(*(p)->member), (count))))
+ 
+ /**
+  * struct_size() - Calculate size of structure with trailing flexible array.
+@@ -367,10 +368,12 @@ static inline size_t __must_check size_sub(size_t minuend, size_t subtrahend)
+  *
+  * Return: number of bytes needed or SIZE_MAX on overflow.
+  */
+-#define struct_size(p, member, count)					\
+-	__builtin_choose_expr(__is_constexpr(count),			\
+-		sizeof(*(p)) + flex_array_size(p, member, count),	\
+-		size_add(sizeof(*(p)), flex_array_size(p, member, count)))
++#define struct_size(p, member, count)					       \
++	(__must_be_array((p)->member) +					       \
++	 __builtin_choose_expr(__is_constexpr(count),			       \
++			       sizeof(*(p)) + (sizeof((p)->member) * (count)), \
++			       size_add(sizeof(*(p)),			       \
++					size_mul(sizeof(*(p)->member), count))))
+ 
+ /**
+  * struct_size_t() - Calculate size of structure with trailing flexible array
 
