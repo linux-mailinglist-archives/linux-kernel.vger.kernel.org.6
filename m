@@ -1,114 +1,107 @@
-Return-Path: <linux-kernel+bounces-547010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33F1EA501BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:22:18 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6F4A501B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:21:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D0E913B0E1D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:21:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB071896722
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:21:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F3372505DD;
-	Wed,  5 Mar 2025 14:19:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AFD824EF9C;
+	Wed,  5 Mar 2025 14:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ceW9uAAo"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sSxM59Hs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7E7724EF7B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ABF24EF7E;
 	Wed,  5 Mar 2025 14:19:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184393; cv=none; b=pU++0bUspAOO0v/xU/Aa+RDjYjHf0XHmpG6+jOziFiO4rphHJ+iiB7Rpsp00UV/qmMqYO5AeMOQ2Ad/Rbu/n3ONzjQNfV2tZCqQx8XgoQnqW4rJelyFy3Em3i20EAHjo3LnGqA1Eo+3FsHWoTGQ9ZMCooRA6cv7CaQOsGmlQT3Y=
+	t=1741184391; cv=none; b=B55jfXNFGWB/MaoUdJeb7d0890E8lpDXSJwmfgmmHSDo0yHqGVQUc8Yd0LxZCDNRBTlC/I0j8BwP6SfDhXYmER8oOPxhLM8XwN5y2IZEODr0Kf5SsJBh+OSrrjOMhzVyf+UtEnplF9idM8kL1OBTJwmHGVKy3taRtStauWIwbTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184393; c=relaxed/simple;
-	bh=udQBNyydv6hqI+IwyVZvKVCN02JGzll5LRN2wPlmOpY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VIXrUv5BCGkceC1gyz70R36q7hvU2S9Rko6dEiRZoxeQN/PiSuCVG2r4+4yWju4AIH1FRG9KefQ0Uuu9FTywqlHKvPA/fIFr+v8HVjObaav9Ltk5IIl7usFQy2PDnz6hwKjeK0Uu1tDBz+wWwzjN+jCXE/I58VlqW74zM8w2hEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ceW9uAAo; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2094744140;
-	Wed,  5 Mar 2025 14:19:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1741184390;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=lqhVF62lXxp4ehI9VcV/C1HiZcbumD+HxLx7oV5CC5s=;
-	b=ceW9uAAo4G9bXVuI4ZERHZyb/kah8I5x/RmDD3jQstKr4v1Uea10lH0vRJ5MnV/mRG1IAC
-	0axyedojTiTmRYXsyZ0w4Q2vj/ayCy1hUYkisREnON9sioxjuF1Fg+MXQ+atkL0HJLYl4N
-	2ru30DHgRuSo5xcNNt7ve938uNjidbytT8b+LIg9gbjOXWEGQ+Iife9M93b+RDHsOHMQvA
-	VQ9iO4gCbJmw6MewUMZzlsoezgJBT4KE+mt2i72DWJFtYuj2ULb0FCxAUTLendA9H7/94R
-	aZ4ekHPX02VtIpZXem78gVpdKMznuHsUK8T0uk7KrtNrtGp6CkKy40rHAUy0CQ==
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: davem@davemloft.net,
-	Andrew Lunn <andrew@lunn.ch>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>
-Cc: Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	thomas.petazzoni@bootlin.com,
-	linux-arm-kernel@lists.infradead.org,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Florian Fainelli <f.fainelli@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Vladimir Oltean <vladimir.oltean@nxp.com>,
-	=?UTF-8?q?K=C3=B6ry=20Maincent?= <kory.maincent@bootlin.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Simon Horman <horms@kernel.org>,
-	Romain Gantois <romain.gantois@bootlin.com>,
-	Piergiorgio Beruto <piergiorgio.beruto@gmail.com>
-Subject: [PATCH net-next 7/7] net: ethtool: pse-pd: Use per-PHY DUMP operations
-Date: Wed,  5 Mar 2025 15:19:37 +0100
-Message-ID: <20250305141938.319282-8-maxime.chevallier@bootlin.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250305141938.319282-1-maxime.chevallier@bootlin.com>
-References: <20250305141938.319282-1-maxime.chevallier@bootlin.com>
+	s=arc-20240116; t=1741184391; c=relaxed/simple;
+	bh=0l441pr90rzEMH5F4wcsMjav/46G6mCwscD7MDFRGIw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=QZ7ZkeQMAmLAkuMq3jIsSpPlLgnD1B3BaoQQ8KVWsJVDXvQhommpE7OH3j1uzQsFcnR9CmqlfnIVuH96C72m8ayDjVCICdrR0UKROb/4yJX6euv9oLgMZjh0Tb+TuWejr/qvGCzXzX3kzxVwzA40jenXoVWDwIhgPAFEjmZr1Vk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sSxM59Hs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C3BBC4CEE2;
+	Wed,  5 Mar 2025 14:19:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741184391;
+	bh=0l441pr90rzEMH5F4wcsMjav/46G6mCwscD7MDFRGIw=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=sSxM59HsTjZXoDy/ACPrO7P7UxlCUR+pKPK6Pzb4dMTS5so36XW9JT1PSqOfAm981
+	 PudC78oLV+67xGWMmmojxoyMqbAspNyCfREioT5xyTze8ljpRXWuVwE7BfkOSWmtFh
+	 lcDugb/O03KG97IgZdJXjroeuQqGyeJGjPama2kROC3JDwvTJeZwOgvZmLs+gf/nFe
+	 JRmSIZjNJ17FA//P8v3fq+d0t56YV4k0e6JGSCIUDsGXLlbdK5j306bdPxwo5U71CF
+	 OnU2kJRS25BS9eMiPwKcTiojX3tzzhQQnpO8CtNcQzNrv0LKReIAHWVv8yWVnTZPYi
+	 3sL7EvOXnywVQ==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com>
+Cc: "Benno Lossin" <benno.lossin@proton.me>,  "Miguel Ojeda"
+ <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Boqun Feng"
+ <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice Ryhl" <aliceryhl@google.com>,  "Trevor
+ Gross" <tmgross@umich.edu>,  "Danilo Krummrich" <dakr@kernel.org>,
+  "Masahiro Yamada" <masahiroy@kernel.org>,  "Nathan Chancellor"
+ <nathan@kernel.org>,  "Nicolas Schier" <nicolas@fjasle.eu>,
+  <linux-kernel@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kbuild@vger.kernel.org>
+Subject: Re: [PATCH 14/22] rust: add pin-init crate build infrastructure
+In-Reply-To: <CANiq72k=KiYhKr9XHU38==Rx0df4rERyOL1abRG_cDo+4NNa0g@mail.gmail.com>
+ (Miguel
+	Ojeda's message of "Wed, 05 Mar 2025 13:50:36 +0100")
+References: <20250304225245.2033120-1-benno.lossin@proton.me>
+	<jpQp16UCJ00pInqOI-QFULU6-FKl2bBtAlmnxtXWLgXPVb7gy6d727nr7THeyks3ERF5Yqu3R6bikD0OK4mqXA==@protonmail.internalid>
+	<20250304225245.2033120-15-benno.lossin@proton.me>
+	<87h647d6xg.fsf@kernel.org>
+	<cdfBMmuIl8Wl-KpI-koNDQJOCGBr9z9dOi5fxQvFbgNWQHHw6JtMizaMMbMniNlE841-9b7TdLuZ9Xh_hFsf7w==@protonmail.internalid>
+	<D88BLHENDH8Y.HQUKEXN1XB7C@proton.me> <87ldtjbqw2.fsf@kernel.org>
+	<okP1iZelIm5t6CfgoFyh0m8LiVEQW3ULUroZHdSQ97ul_BmPr47HBpB3RgHDMtm_2jzF4sTJszuUACsCGBEXcQ==@protonmail.internalid>
+	<CANiq72k=KiYhKr9XHU38==Rx0df4rERyOL1abRG_cDo+4NNa0g@mail.gmail.com>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 05 Mar 2025 15:19:42 +0100
+Message-ID: <878qpja7b5.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdehtdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepveegtdffleffleevueellefgjeefvedvjefhheegfefgffdvfeetgeevudetffdtnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgepvdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmr
- giivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Leverage the per-phy ethnl DUMP helpers in case we have more that one
-PSE PHY on the link.
+"Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
 
-Signed-off-by: Maxime Chevallier <maxime.chevallier@bootlin.com>
----
- net/ethtool/pse-pd.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> On Wed, Mar 5, 2025 at 1:34=E2=80=AFPM Andreas Hindborg <a.hindborg@kerne=
+l.org> wrote:
+>>
+>> I _really_ think that the ability to run the tests should be present in
+>> the kernel repository. But I also do not want to block this series on it,
+>> if it is something that will be easier to achieve with the build system
+>> overhaul that is in the pipeline.
+>
+> No, that is not the plan. Even with the new build system, this is
+> supposed to be developed upstream as far as I understand, so you will
+> need to run them there anyway.
+>
+> Unless there is a reason we could catch more bugs here, that is.
 
-diff --git a/net/ethtool/pse-pd.c b/net/ethtool/pse-pd.c
-index 4f6b99eab2a6..f3d14be8bdd9 100644
---- a/net/ethtool/pse-pd.c
-+++ b/net/ethtool/pse-pd.c
-@@ -314,4 +314,10 @@ const struct ethnl_request_ops ethnl_pse_request_ops = {
- 
- 	.set			= ethnl_set_pse,
- 	/* PSE has no notification */
-+
-+	.dump_start		= ethnl_dump_start_perphy,
-+	.dump_one_dev		= ethnl_dump_one_dev_perphy,
-+	.dump_done		= ethnl_dump_done_perphy,
-+
-+	.allow_pernetdev_dump	= true,
- };
--- 
-2.48.1
+I guess it would be no different than `syn`. But I think it is a shame
+that we move something that people could contribute to via the kernel
+development flow - out of the kernel development flow.
+
+Ultimately I guess this is for the maintainer to decide, and I don't
+have to like the decision.
+
+
+Best regards,
+Andreas Hindborg
+
 
 
