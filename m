@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-547478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77FA6A509F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:27:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62212A509FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:28:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07A0163AEB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:27:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CC81882678
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:28:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE56824CEE3;
-	Wed,  5 Mar 2025 18:27:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D407024C062;
+	Wed,  5 Mar 2025 18:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LKtTTZ7b"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWQbRJaN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D9A1A840E;
-	Wed,  5 Mar 2025 18:27:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0721A840E;
+	Wed,  5 Mar 2025 18:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741199268; cv=none; b=AZHTGvNNKMaRjgSnSMSaHyM7ey8CoSSMmhWCy/APXxoa4UnWbpuAPL4WtXghOoEpxcMj/me0Mb4AxADr/wB21DQSnmL77HsQaLttLCr5p5yA7o8rHqUWCTL2/Tsr6/9oKdDDtv6Cf/q+1rbMlMYuD4gehklgtq3qyB/0YmzY2iQ=
+	t=1741199313; cv=none; b=UnPZgyDZ8NJJ2Nv9fbTyZKDyTHx7UROSxn5urMijp6+Z+0bciRO78plMFkTm8/Zccr9uaH+jG5zHKOSlbnajisKk3Wij3VBIsG4VcoylEJaz77Tifx52vBoPmTuq/v6eVm7uKHYf9q8VdMkmyj1HULjmv8fqrMoi9R8ZAuZiqUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741199268; c=relaxed/simple;
-	bh=0JRn2oL0d/efGPIRUs4rL6RIsM6eUgDNL8o7HUvZE5o=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=I9pn1ySPI59V1T4QOjDQIUeNTiin/uPUjXB9Z40P2vJFKB8bfrDh09s9kCTUZt7JL3aJqICTFEb4NBhP2rRiUINzxMCWauVgkYyvKKaryEDktgtWB1oOxm8fi7mT1KYGTRTYS9xMa7ypnHdBdO0IsbfGjZKvKy8zelHdPOL9YK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LKtTTZ7b; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FEAFC4CED1;
-	Wed,  5 Mar 2025 18:27:47 +0000 (UTC)
+	s=arc-20240116; t=1741199313; c=relaxed/simple;
+	bh=QEyYKf/y4uJB60uwfNfehebuMGGLy43YFw7A8AAnOHQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=tRVlk6s6GZd01TQLEQ6ak0gH6mNcEMIJ+qjLP6AhWDrbzCA0IRijMp6B9ovWrTBH6HNxjuJOudRd64VaLR3zhxxEoQ7CqebZSSLTnTPYyLQrEeeRblvRSvvxQQA519SnwGJbPtwJluTOaXIv098YIN52smCtqZzZW18L9KKOLgY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWQbRJaN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804FAC4CED1;
+	Wed,  5 Mar 2025 18:28:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741199267;
-	bh=0JRn2oL0d/efGPIRUs4rL6RIsM6eUgDNL8o7HUvZE5o=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LKtTTZ7bnfEa99KvTde2cZCQdxHqRZMwGJS+alYW/UzhFH2zTeN6XpqFdPBg3XsPr
-	 vAH+sd9JpZtqJWpagxqPecSEzgRtMsPxwe49leQm50LiW5sA53CTleEOoZFcBV/HQ/
-	 T+ilklfz/VGITY/NbhsMbaVjDy7wZD15Qlx3g/pzhc9VgX8IfObbpO9PqTdRvq6jGP
-	 ruCSavkYDM5CfMsTqTTEyz7CRFERYzs5TygQWDeru73jNHAznR4uoAUQ9PjcnFhLNp
-	 BrX9K1t6Q6NGRJiNmshwLmGT8CuL3MU2ofqr3Ln6vgVhowcAdAo6EN2TdR9apxukYZ
-	 Zc/Jx+cpi0lug==
+	s=k20201202; t=1741199311;
+	bh=QEyYKf/y4uJB60uwfNfehebuMGGLy43YFw7A8AAnOHQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=PWQbRJaNrdxy3IfAiBC9Xod1ZczhfpGqiR1tuW61SBqKO0Qs4HgefJ0CAkKlTYSR4
+	 TDGfDME12O0Fen2Da01GtiisEnB/r79L9CPABaSW6STJwRznzVsYnxVQFlF5MGD8vE
+	 te8Zkysnucmx7idHYyfnUSuhDdrTEyLZ6NyY9OvR3RXwaFFxnAKAMasTZs/Or1KuhN
+	 CMvFozX9RCq59FAaNRlyaZ1flTssMEvyeRok/r+WgMoNvRpxmJUsTcA9gkc5gxFv9j
+	 VI+mbzNg4R4j+TET/7/oZsk2k5MQWw+W1iReQZrkqjw6KQt1fYy3QsNEcWuZHf9x/2
+	 /lrgLQltGUpWQ==
 From: SeongJae Park <sj@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
 Cc: SeongJae Park <sj@kernel.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	damon@lists.linux.dev,
-	kernel-team@meta.com,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	Stephen Rothwell <sfr@canb.auug.org.au>
-Subject: [PATCH mm-unstable] Docs/mm/damon/design: fix a typo on 'intervals auto-tuning' section
-Date: Wed,  5 Mar 2025 10:27:44 -0800
-Message-Id: <20250305182744.56125-1-sj@kernel.org>
+	Andrew Morton <akpm@linux-foundation.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the mm tree
+Date: Wed,  5 Mar 2025 10:28:29 -0800
+Message-Id: <20250305182829.56154-1-sj@kernel.org>
 X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250305203312.6f30e9c2@canb.auug.org.au>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,34 +60,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Commit 8a2e41c7ecfd ("Docs/mm/damon/design: document for intervals
-auto-tuning") on mm-unstable tree made a typo on a cross reference link
-in monitoring intervals auto-tuning section.  It causes document build
-warning.  Fix it.
+Hi Stephen,
 
-Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
-Closes: https://lore.kernel.org/20250305203312.6f30e9c2@canb.auug.org.au
-Fixes: 8a2e41c7ecfd ("Docs/mm/damon/design: document for intervals auto-tuning") # mm-unstable
-Signed-off-by: SeongJae Park <sj@kernel.org>
----
- Documentation/mm/damon/design.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Wed, 5 Mar 2025 20:33:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 
-diff --git a/Documentation/mm/damon/design.rst b/Documentation/mm/damon/design.rst
-index 0cf678d98b1b..aae3a691ee69 100644
---- a/Documentation/mm/damon/design.rst
-+++ b/Documentation/mm/damon/design.rst
-@@ -340,7 +340,7 @@ DAMON-observed access events to the theoretical maximum amount of the events
- (``aggrs``).
- 
- The DAMON-observed access events are calculated in byte granularity based on
--DAMON :ref:`region assumption <damon_design_region_based_sample>`.  For
-+DAMON :ref:`region assumption <damon_design_region_based_sampling>`.  For
- example, if a region of size ``X`` bytes of ``Y`` ``nr_accesses`` is found, it
- means ``X * Y`` access events are observed by DAMON.  Theoretical maximum
- access events for the region is calculated in same way, but replacing ``Y``
+> Hi all,
+> 
+> After merging the mm tree, today's linux-next build (htmldocs) produced
+> this warning:
+> 
+> Documentation/mm/damon/design.rst:342: WARNING: undefined label: 'damon_design_region_based_sample' [ref.ref]
+> 
+> Introduced by commit
+> 
+>   8a2e41c7ecfd ("Docs/mm/damon/design: document for intervals auto-tuning")
 
-base-commit: b6e1916d98e95c70d059da8803c2b3c46151303c
--- 
-2.39.5
+Thank you for this kind report!  Just posted a fix:
+https://lore.kernel.org/20250305182744.56125-1-sj@kernel.org
+
+
+Thanks,
+SJ
+
+> 
+> -- 
+> Cheers,
+> Stephen Rothwell
+> 
 
