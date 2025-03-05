@@ -1,53 +1,47 @@
-Return-Path: <linux-kernel+bounces-547162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2D93A503A4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:41:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DE00A503A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:41:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A757A4A24
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:40:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B2E16C0EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160E52505A2;
-	Wed,  5 Mar 2025 15:41:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F32D24EF93;
+	Wed,  5 Mar 2025 15:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="J0zzfvDz"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NJs3UpBN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A169B24EF93;
-	Wed,  5 Mar 2025 15:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A18082505D9;
+	Wed,  5 Mar 2025 15:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741189287; cv=none; b=Gxqy5Lmv9Loyrf4VVxytwflP7doGPCGnieKXYr2zLoj1QPqYbqBdbDhKx0Z3Gaz7n9+sTDhc2/g5W/Om67khX9vP2BTmMr7JP/Q03IYlpHb4m6a6ciuxV0zNL37Xp0jkbJe95Kigbm85CGACukXcJt+vHrqw4/ihQIUOTLEeTMg=
+	t=1741189291; cv=none; b=Nsg8H4/7766u88Pea2JDtccrgOcNnqvYrSeHKhTmOYUy83l8B38qqstmjz/YktJjDEuLOVGwpeAXCqalk/IAIWbJY1FTfWeEi3jlGfwmHFxDB+j8/+6416UbvkUNntsXiqbPP7wwLGoIZ3xHiQrXtLRnF9n2rhEfCds/+hYm/5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741189287; c=relaxed/simple;
-	bh=QVXzwZI8QWLrdadVm4OsCG7KScMpWF/+/XAQqckZiuk=;
+	s=arc-20240116; t=1741189291; c=relaxed/simple;
+	bh=SnieAOwMqDNTOnx5G1qmbJnw7CsjyegepoQq+LMVw2g=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rSxhOqdd4g7aofCZWyxxY3FqMG1dwjBJmObsMU4+hsa9MCrIzURlLGUwl/iIQzyP/JjHRI01IrDQFF/SJPTMnts+N+SyUkxMcg9TjGjy8wuHOC5P5J7B6P0ytqdxfjjvTS8WFUfr2UE6hpJDbJIKwK4Rx/9cumrx/EOb7ENIr+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=J0zzfvDz; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.116] (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 1CE292FC0048;
-	Wed,  5 Mar 2025 16:41:20 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1741189280;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N6jhBJij2I0NQYatN7vveyLTqhAJA3pvmCwSTqgjABM=;
-	b=J0zzfvDztdNy1xOMu03BiXaC1w6+qiiCbs5TtGhM3Dz6kHkti9xU5L9H79iDPCHCFySqK+
-	yqpzdveeDGd87ytaU1wYNWsSjDX8w1uaa47TSi2CbsMD3CeRsOLziaaOr9UH2SaflckXmn
-	8+VUP8stD8nPpJJnIboGOi6CLdH4ZVM=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <e6f5234c-98ab-4a06-aa1a-59726f395ea4@tuxedocomputers.com>
-Date: Wed, 5 Mar 2025 16:41:19 +0100
+	 In-Reply-To:Content-Type; b=uUronhxZkIVQmAjwgomPv5VKVF7xtc4Y83RUf78kG8erMeGtYz48o8bjswhVIqdw9/GxuAvuQCTSqNicQ2yDOwuSLVErB5GxFTceUqf/kHB3AbDeyIL9pK49IAWxhfAIt5BWxODw+x6uiRz7eDI4GUIizdgrsaj+WcZfc1X/Xn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NJs3UpBN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29DB7C4CED1;
+	Wed,  5 Mar 2025 15:41:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741189291;
+	bh=SnieAOwMqDNTOnx5G1qmbJnw7CsjyegepoQq+LMVw2g=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=NJs3UpBNlJ/NqMw0qVJM8qYhntxeYLpGBxesbLWY2EqerQ6K24oMAjfxRTJUV59BF
+	 yuQmI8w/AkkdNp+bd7iQ4uBMBfewSc1e5S8gzS2RJp5JVYndDq378m6vSswuiHSR6I
+	 2FxCf5zY5Dzkf7rl6JuEmQgqIXAMcPVI4SwUOVDI1HN1SFZv8Jdv1MMjBJg6Z9EfLN
+	 fQaSin3a/37MCOPRgP0mFxNV7p+LbVE3R2gqOUUPJs48Q5zj4dgb8x/nnmO5IsCExg
+	 l3v0AFe74+EAuiHoZJSZOcOj4MEVOyZki26TzMwYPuF88O0HIwcJynTVRVMXO1eX/h
+	 2jMbVmgDU/6bw==
+Message-ID: <52155b03-20f3-4e64-b636-70042db03ffa@kernel.org>
+Date: Wed, 5 Mar 2025 16:41:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,244 +49,98 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] Input: atkbd - Fix TUXEDO NB02 notebook keyboards
- FN-keys
-To: Hans de Goede <hdegoede@redhat.com>, mario.limonciello@amd.com,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>
-Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20250303190442.551961-1-wse@tuxedocomputers.com>
- <20250303190442.551961-2-wse@tuxedocomputers.com>
- <1bee0a62-058b-482a-8eec-d45b8aca1614@redhat.com>
- <d74c348d-474a-4871-8b94-d836e8d054e8@tuxedocomputers.com>
- <1fbdfe7f-0f25-4de0-805c-b712663f7681@redhat.com>
+Subject: Re: [PATCH 2/2] arm64: dts: rockchip: Add rk3528 QoS register node
+To: Chukun Pan <amadeus@jmu.edu.cn>, Yao Zi <ziyao@disroot.org>
+Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
+ Heiko Stuebner <heiko@sntech.de>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20250305140009.2485859-1-amadeus@jmu.edu.cn>
+ <20250305140009.2485859-2-amadeus@jmu.edu.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <1fbdfe7f-0f25-4de0-805c-b712663f7681@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20250305140009.2485859-2-amadeus@jmu.edu.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Hans,
+On 05/03/2025 15:00, Chukun Pan wrote:
+> Copy QoS nodes and add rk3528 compatible from bsp kernel,
 
-Am 05.03.25 um 15:18 schrieb Hans de Goede:
-> Hi Werner,
->
-> On 5-Mar-25 1:07 PM, Werner Sembach wrote:
->> Am 05.03.25 um 12:25 schrieb Hans de Goede:
->>> Hi Werner,
->>>
->>> On 3-Mar-25 8:04 PM, Werner Sembach wrote:
->>>> This small driver does 2 things:
->>>>
->>>> It remaps the touchpad toggle key from Control + Super + Hangaku/Zenkaku to
->>>> F21 to conform with established userspace defaults. Note that the
->>>> Hangaku/Zenkaku scancode used here is usually unused, with real
->>>> Hangaku/Zenkaku keys using the tilde scancode.
->>> So this control + super + scancode 0x76 sending is also seen on
->>> quite a few other laptops and I think we need a generic fix for this.
->>>
->>> I recently noticed that KDE's keyboard-shortcut settings actually has
->>> a  control + super + Hangaku/Zenkaku -> touchpad-toggle key binding
->>> in its default bindings (IIRC). But that cannot work because xkb actually
->>> has no mapping for evdev code 85 / KEY_ZENKAKUHANKAKU if you look in:
->>>
->>> /usr/share/X11/xkb/keycodes/evdev and then look for 93 (*) you will
->>> find no mapping. I think this KDE default binding may be from a long
->>> time ago when this did work. Or maybe KDE uses the FOO part of KEY_FOO
->>> as symbolic when there is no xkb mapping ?
->> It does not work on X11, but it does work on Wayland (there xev also sees the Zenkaku/Hankaku keypress). Don't ask me why.
-> Interesting, so in xev under Wayland you see something like this
-> on release:
->
->      state 0x0, keycode 38 (keysym 0x61, a), same_screen YES,
->
-> With there actually being a keysym of "Zenkaku_Hankaku" there ?
+No, don't copy stuff from BSP kernel. It results in terrible DTS.
 
-No. Sorry I got it a little bit wrong above, I didn't know it exactly anymore 
-and had to retest:
-
-
-With the keyboard shortcut deactivated, xev on wayland shows this:
-
-KeyPress event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 246681, (83,3), root:(1273,701),
-     state 0x0, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
-     XLookupString gives 0 bytes:
-     XmbLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
-KeyPress event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 246682, (83,3), root:(1273,701),
-     state 0x40, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
-     XLookupString gives 0 bytes:
-     XmbLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
-KeyPress event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 246686, (83,3), root:(1273,701),
-     state 0x44, keycode 93 (keysym 0x0, NoSymbol), same_screen YES,
-     XLookupString gives 0 bytes:
-     XmbLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
-KeyRelease event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 246690, (83,3), root:(1273,701),
-     state 0x44, keycode 93 (keysym 0x0, NoSymbol), same_screen YES,
-     XLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
-KeyRelease event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 246696, (83,3), root:(1273,701),
-     state 0x44, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
-     XLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
-KeyRelease event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 246703, (83,3), root:(1273,701),
-     state 0x40, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
-     XLookupString gives 0 bytes:
-     XFilterEvent returns: False
+> these can be used for power-domain.
+> 
+> Signed-off-by: Chukun Pan <amadeus@jmu.edu.cn>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3528.dtsi | 160 +++++++++++++++++++++++
+>  1 file changed, 160 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3528.dtsi b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> index 5b334690356a..794f35654975 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3528.dtsi
+> @@ -122,6 +122,166 @@ gic: interrupt-controller@fed01000 {
+>  			#interrupt-cells = <3>;
+>  		};
+>  
+> +		qos_crypto_a: qos@ff200000 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200000 0x0 0x20>;
+> +		};
+> +
+> +		qos_crypto_p: qos@ff200080 {
+> +			compatible = "rockchip,rk3528-qos", "syscon";
+> +			reg = <0x0 0xff200080 0x0 0x20>;
+> +		};
 
 
-With the shortcut active, xev on wayland shows this (and the shortcut works):
-
-KeyPress event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 365034, (83,3), root:(1273,701),
-     state 0x0, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
-     XLookupString gives 0 bytes:
-     XmbLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
-KeyPress event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 365036, (83,3), root:(1273,701),
-     state 0x40, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
-     XLookupString gives 0 bytes:
-     XmbLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
-KeyRelease event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 365060, (83,3), root:(1273,701),
-     state 0x44, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
-     XLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
-KeyRelease event, serial 39, synthetic NO, window 0x1200001,
-     root 0x4f7, subw 0x0, time 365060, (83,3), root:(1273,701),
-     state 0x40, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
-     XLookupString gives 0 bytes:
-     XFilterEvent returns: False
-
->
-> Because that is not working on Wayland on my laptop with the same
-> issue (after disabling the hwdb mapping) and I don't understand
-> how that could work at all given that /usr/share/X11/xkb/keycodes/evdev
-> has no mapping for EV keycode 85 (93 in that file) ?
->
->> Also: Other DEs don't have this binding.
-> Yes that is an issue, but see below.
->
->>> *) 85 + 8 all codes there are shifted up 8 compared to the KEY_FOO
->>> defines because codes 0-7 are reserved for modifier.
->>>
->>> I hit the same issue years ago on "T-boa Tbook air" laptop and
->>> their I fixed this by mapping Hangaku/Zenkaku -> f21 in
->>> /lib/udev/hwdb.d/60-keyboard.hwdb :
->>>
->>> ###########################################################
->>> # T-bao
->>> ###########################################################
->>>
->>> evdev:atkbd:dmi:bvn*:bvr*:bd*:svnT-bao:pnTbookair:*
->>>    KEYBOARD_KEY_76=f21                                    # Touchpad toggle
->>>
->>> + teaching GNOME to also accept Ctrl + Super + XF86TouchpadToggle
->>> as touchpad-toggle:
->>>
->>> https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/blob/master/data/org.gnome.settings-daemon.plugins.media-keys.gschema.xml.in?ref_type=heads#L577
->> Yeah KDE would need a similar fix and other DEs probably too. I hoped for a generic fix that does not need adjustments in so many projects.
->>
->> My first try was to do it on the XKB level but on Wayland the RedirectKey action is not implemented https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/merge_requests/794#note_2803713 (and probably wont be even in the future https://github.com/xkbcommon/libxkbcommon/issues/18#issuecomment-72728366) so I can't "unpress" control and super.
->>
->> If it is a more general issue, why not fix it on a more general level in the kernel? Maybe a generic filter applyable via a command line quirk and/or a quirk list?
-> The problem is that filtering keys with modifiers like you are doing
-> here just does not work.
->
-> Your filter is seriously messing with the timing of the keypresses
-> which can be a real issue when not actually using the toggle touchpad
-> hotkey.
->
-> Lets say the user is playing a game and has mapped super to
-> one of the fire buttons and is using an in game weapon with
-> some sort of auto-repeat firing.
->
-> And your seqpos variable likely is 0 when super gets pressed,
-> now the keyboard sends 0xe0, 0x5b which your filter filters
-> out, and the user keeps super pressed because they expect
-> the weapon to start firing on auto-repeat. But the super
-> press is never send until super is released or another key
-> is pressed so things don't work.
->
-> Likewise if the DE, an app or accessibility settings want to
-> differentiate between a short and a long super press all
-> presses now become super (pun not intended) short because
-> you insert the press directly in front of the release, losing
-> any timing information about how long the key was pressed.
->
-> This is why using an i8042 filter for filtering key-combinations
-> (and the EC emulates a key-combination here) can never work reliably.
-Ok, thought I had a clean solution, but doesn't seems so xD.
->
-> OTOH desktop environments already allow having Ctrl+Super+something
-> keybindings for DE actions. So we can re-use the tried and trusted
-> modifier handling in the DE to deal with combi part leaving just
-> the issue of mapping PS/2 scancode 0x76 aka evdev code
-> 85 / KEY_ZENKAKUHANKAKU to something usable by the DE.
->
-> ATM both GNOME and KDE already have support for
-> Ctrl+Super+something for touchpad-toggle except that KDE expects
-> a "Zenkaku_Hankaku" keysym where as GNOME expects "XF86TouchpadToggle"
-> arguably the GNOME solution is slightly better because Japanese
-> keyboard layouts already use/send the "Zenkaku_Hankaku" keysym
-> unrelated to touchpad-toggle use. And I don't know what happens
-> when pressing ctrl+super+Zenkaku_Hankaku while using a Japanese
-> layout.
-When I interpret the xkb-config correctly, JIS keyboards use the tilde 
-scancode/keycode for the physical zenkaku/hankaku keys, at least in the default 
-config HZTG (henkaku/zankaku toggle) is aliased to TLDE
->
-> I think maybe we just need to patch atkbd.c at the kernel to
-> map scancode 0x76 -> KEY_TOUCHPAD_TOGGLE since normal PS/2
-> keyboards never generate 0x76, this would lose the mapping to
-> KEY_ZENKAKUHANKAKU but since /usr/share/X11/xkb/keycodes/evdev
-> does not even map KEY_ZENKAKUHANKAKU I don't think loosing that
-> mapping will do a big deal.
-
-At least from kernel side this would be a very small patch, are there any 
-objections to it?
-
-If not I make a patch for it and create a KDE issue.
-
->
-> So I think that going with the evdev mapping + teaching KDE
-> that Ctrl+Super+XF86TouchpadToggle is just XF86TouchpadToggle
-> is the best way forward to solve this once and for all.
->
->>>> It suppresses the reserved scancode produced by pressing the FN-key on its
->>>> own, which fixes a warning spamming the dmesg log otherwise.
->>> Can you not also suppress this by mapping the key to "unknown" in hwdb?
->> Maybe, I didn't try. Was convenient to just do it here since I already had the filter. Will look into it once it is decided what to do with the touchpad toggle issue.
-> Please give using hwdb for this a try.
-
-kk will do later
+Did you just define syscon per few registers? Third case last weeks...
+so no, define what is your device here. 8 registers is not a device usually.
 
 Best regards,
-
-Werner
-
->
-> Regards,
->
-> Hans
->
->
+Krzysztof
 
