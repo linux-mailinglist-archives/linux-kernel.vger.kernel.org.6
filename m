@@ -1,157 +1,108 @@
-Return-Path: <linux-kernel+bounces-547584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A56A50B4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:16:20 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 99BB1A50B50
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:18:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CAEE188E098
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF836188DEEC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F90253352;
-	Wed,  5 Mar 2025 19:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1152528E4;
+	Wed,  5 Mar 2025 19:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kQ9Q1udn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Rs4Ibrpc"
+Received: from mout.web.de (mout.web.de [212.227.17.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5905324CEE3;
-	Wed,  5 Mar 2025 19:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815791624F1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741202171; cv=none; b=c5HtRBr7rC8Dn6owXdNybh+ikp4w/xOXKbFDgN9hqHJgCzs59IrTJVM3623ozsnGyKaRk/7jfzPdy3xYdvb4eZsYZ5ue4zxpN9Ijs/UCIghULLabkXEXHwShT5JQdR+0VYnipxiPiiaEyv1nDAEq8VV67Em+K38Vy7Eyiq/IqCc=
+	t=1741202306; cv=none; b=o231+VQVAiij/tc9AgtNTqNiKmuzgmlEcXlBlhhEG0kwkhzdB2VLTApjB0lcqUHSCSqvAyUW+McQz3hGQPI+jXCHdlo06OXqCcoKriXku0PUBs3kgjiJAuKXfPH1oZqtcNdDRf+D0ehizpPbNu0polE4d/nRFeDQvADxcUT2wwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741202171; c=relaxed/simple;
-	bh=fubuqMlM2Oo+8Icg3TWKdYQa/lCj0hx58ocM+KyVbgk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GAILJq7RyW0w1OniMfdNwdAWRki3yDzrCdf8aBhBUXp+gNva3Qj8WWx7WSP131HAvRoAUplEBR+JmYUQeQ6X+P2lZeEnLVdV1vpOE96CIywOoXF4RYyM0rNKuDKkW1sFBxWExeUKeFvks3w/Q3S/gEelIOiIt9fh77a/a/gKu4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kQ9Q1udn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72E83C4CED1;
-	Wed,  5 Mar 2025 19:16:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741202170;
-	bh=fubuqMlM2Oo+8Icg3TWKdYQa/lCj0hx58ocM+KyVbgk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=kQ9Q1udnJ68GCD1jFiiTzPgeSSS5VMfZveMn/1zpJQBDvv5yc70hyqvAsnij9q52k
-	 KOxrgKUB3LNd7KdtwOtwvRJ+EhMWg5K+9h1zKPnkUlQ3siibjMWiiMPuESXNt4CimP
-	 s+14lE1XgnOq06UG1O7u4a80DMc5NQFGLrW68tV+HAnA1erm7Pbh56IeslO7sUiaPU
-	 Btsjp5hQ9N4nBR2LcqHZk3jQ5KoTaeQJdDoejoRJVjWQW8o8r1mqTZ9OU0jJCZAD1v
-	 ZkW1F8mlax5weiwXLKout3xc0phW0pziQEYKzlXaZwJS4zOq758M9tWm/tprfN6MWO
-	 bvcPzpYqGSECA==
-Date: Wed, 5 Mar 2025 11:16:08 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Laight <david.laight.linux@gmail.com>
-Cc: linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Justin Stitt <justinstitt@google.com>, linux-crypto@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/crc32: optimize tail handling for crc32c short inputs
-Message-ID: <20250305191608.GA19889@sol.localdomain>
-References: <20250304213216.108925-1-ebiggers@kernel.org>
- <20250305142653.751d9840@pumpkin>
+	s=arc-20240116; t=1741202306; c=relaxed/simple;
+	bh=9g2rbhyMoiE2C/oREhNhMWIX1M91P2cPIHXySR0gWtA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=elbVPN29UVVlm9/D56S59A0EAoA+nUOp68YLAlHiHzdyt6bflsNmu3pZMEZtguo9wRi7W5+pIz3KolVkA712NedtQ/BVIQmBSQsepiq/TLlN5UQdt59V8///0c0eI7AO9Rw75PRSGNI3j5oGQLkMVyYc8J7wJo+Wic1UUmoXWp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Rs4Ibrpc; arc=none smtp.client-ip=212.227.17.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741202300; x=1741807100; i=markus.elfring@web.de;
+	bh=9g2rbhyMoiE2C/oREhNhMWIX1M91P2cPIHXySR0gWtA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Rs4IbrpccT00VYlI74v/Y2weSxQOHQ4BKtgCQmkaqfwO6E+w+Bmhvep9yB5JooiE
+	 q0qhJuUHn1UP+PpKwMeSWIKuL6i9xjbs2r8vLpBitS8iKGwxQOztAf8eRU1BYhxW0
+	 VOs/PsnyV+j2CQoTT7S5rtYxIViktTM6r2RiSzi4EFwTh9aubGmIKkOSwtrLt0w9X
+	 6FNNheZcCPf6rpVWbfMtNN30Gm4MDZY6DRz2yMpFUk9a20V4Ey6QXGG+Q4xM1FgoN
+	 gQSDNoM7Rn/d+2n8G/17fXR1wofLkxk7HK80VoOw2lB4PUEsQbDR4jXQ/epIi/jRg
+	 Q6KQ/Tj3A8qDiQG9NQ==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQPZj-1td4CT1FXV-00XOXS; Wed, 05
+ Mar 2025 20:18:20 +0100
+Message-ID: <84969aba-67ba-4990-9065-6b55ce26ff92@web.de>
+Date: Wed, 5 Mar 2025 20:18:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305142653.751d9840@pumpkin>
+User-Agent: Mozilla Thunderbird
+To: Andrey Tsygunka <aitsygunka@yandex.ru>, lvc-project@linuxtesting.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <20250305145045.1293159-1-aitsygunka@yandex.ru>
+Subject: Re: [PATCH] misc: sram: Fix NULL pointer dereference in sram_probe()
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250305145045.1293159-1-aitsygunka@yandex.ru>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oDVhHfY+x++ExZt9dmrKdtd5Wc4OE6HX2lOQVtWg6AXhEBeiUv+
+ t3sBNxfwbK/3/boKIxqoeGHFon5qvyuHexSQFr5hHQzBP3ccqCTkMw9SRgfHqgsKywOKRVM
+ Z2l3aMcU5gWuWgAxknQJQ6fWTc5p603tACB4UnoDqFpCvEbhD90AJKbZupVdvT7EjjGRDxW
+ XzPq+3JVMUU8NMQ4x8ukQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:/2sM9lf64LY=;/XKh3FG1TJZlkok0eJq8DzUS6YY
+ mg/pViGjNEwgzJ2GPGkkygzlzGKYJ8FhxjD81gUoX6kJTDe4DhCjIellP8wMEp6CsiRhxBHsm
+ 0+UqsofiBAIfir6e3Mpwh4XoEJtFLK+zLLTId4qDkqgAVRWq47MuAaMZ7/hbdvyggP1tTzpBk
+ lMXrfVYpFYNGj9Cq4fzRYlO8ZDsV9NecMt+qDEIy+I3CqSrdpMj0j6GYFc0gho2lQ6q066ScN
+ dG5rvjRF+57RPHJABg9e/oKMhNio1URk/ZFvez6t0RwXiKj6kniqV61KVgqbqDJYkp0cJbT+r
+ pqnRIpfHtg2t726DWOtHzQXEx58nqLB2SuNmQiY8EKCH1XDUZWqT6xg2FNM+miAmtFp7qQ/bU
+ zGHohOUivhlLWH4GvHzjY3W9+kUddbaYWK9Jm8580o8DMMN8ga/oz12CbkrMARi4wKwH/+7IA
+ jyA1F3CG//WUQOwYntvqCPWzaP0xn4nYro2CiOV5Mi8Gb5eRPM1p4o+dY5/vCRtk8zWSztIxw
+ AHf5cQA/oncF35psTqAqBZd5F3K3kBXwiEkCRGfqfRz3JJRw2nENCRjYKLboTGy3hMCpJA9bw
+ E8Jn3bRFuUSgkabXVlcQuy52aarQgZSfznmJO0dg6zQpeYdQ3r/Q4IMDVcLhbYsAzojHnNhbi
+ BrgDaQSd36yoApbGZOUqRlBMW+FlojbtsDQ48F55t+iWw7gF6MWHVLs9jxmZTyZO4525ffCbK
+ Bp2BBfv4NNZ1qPEJaifPvyanD6Gweo19F7OCUOzVVLEFnA8enI0o5n4cVMXy7ekIDlTgt7jTI
+ H+x5MVxUEmV3DUQymTCE7VMITgdAlrzOEu3HrkNqZVuUvZoBBAVDKFomJPxkStnWIrHclvnYq
+ vV7D/EDRt92pHUYRjG+XKMreWIv79XdlFgLwItjqaSS9BqwfhP+mBrgwj5GP9LlxiU/0GZP+2
+ DU9ia+mEmHKml/S5D29aNgLF2zSg6pJ+pLpcTzPxjaMSD8mfvVwwRCcBs7qddsDC+I9q4b/Qh
+ wI883hmmSelH35MVOnYoKCbO46bXzcG1Plz7dcxVsjyNso4CS7E1HMpKxPE7t/6wy7Slx1DM9
+ 7aBKSMCT8PQDn26iGWn48CPjAXSPpg4/ePJRkH1h6Tv6hAaRaFCUheIinR+gE3q99W29p50Ve
+ tmv/79JngIJl92H9F/7AgQ94HFiqYIhEVBloH8qBiA87WzjznZVOHGu3v8FoiKeDJ7kygnkJN
+ B3NXVZ99eTLr7FUcqEun8ncTefaNQLw+mfLQgSR4zf2b3eolBLnEqbV2V3WL2QTCSsN0vg0+h
+ r02yU0/3PG5OR/f7prBNNshYbjZCje2sRw70D5Jv06kMxaYPXeh2eBX9fI2W+8QQ8k2xbyRhH
+ mXhRdehM4p7PG/XvqHCtgzn8yerEsjiARnSGEwYDFbYcACNnlBpR39M7ySB7O1QEXbC+1CZo9
+ RgMZ9hg==
 
-On Wed, Mar 05, 2025 at 02:26:53PM +0000, David Laight wrote:
-> On Tue,  4 Mar 2025 13:32:16 -0800
-> Eric Biggers <ebiggers@kernel.org> wrote:
-> 
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
-> > do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
-> > taking advantage of wider CRC instructions.  Note that crc32c-3way.S
-> > already uses this same optimization too.
-> 
-> An alternative is to add extra zero bytes at the start of the buffer.
-> They don't affect the crc and just need the first 8 bytes shifted left.
-> 
-> I think any non-zero 'crc-in' just needs to be xor'ed over the first
-> 4 actual data bytes.
-> (It's over 40 years since I did the maths of CRC.)
-> 
-> You won't notice the misaligned accesses all down the buffer.
-> When I was testing different ipcsum code misaligned buffers
-> cost less than 1 clock per cache line.
-> I think that was even true for the versions that managed 12 bytes
-> per clock (including the one Linus committed).
-> 
-> 	David
+> Added check for res for NULL value.
+=E2=80=A6
 
-Sure, but that only works when len >= sizeof(unsigned long).  Also, the initial
-CRC sometimes has to be divided between two unsigned longs.
+Please improve such a change description another bit.
 
-The following implements this, and you can play around with it a bit if you
-want.  There may be a way to optimize it a bit more.
+See also:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
+e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n94
 
-But I think you'll find it's a bit more complex than you thought.
-
-I think I'd like to stay with the shorter and simpler 4-2-1 step-down.
-
-u32 crc32c_arch(u32 crc, const u8 *p, size_t len)
-{
-	if (!static_branch_likely(&have_crc32))
-		return crc32c_base(crc, p, len);
-
-	if (IS_ENABLED(CONFIG_X86_64) && len >= CRC32C_PCLMUL_BREAKEVEN &&
-	    static_branch_likely(&have_pclmulqdq) && crypto_simd_usable()) {
-		kernel_fpu_begin();
-		crc = crc32c_x86_3way(crc, p, len);
-		kernel_fpu_end();
-		return crc;
-	}
-
-	if (len % sizeof(unsigned long) != 0) {
-		unsigned long msgpoly;
-		u32 orig_crc = crc;
-
-		if (len < sizeof(unsigned long)) {
-			if (sizeof(unsigned long) > 4 && (len & 4)) {
-				asm("crc32l %1, %0"
-				    : "+r" (crc) : ASM_INPUT_RM (*(u32 *)p));
-				p += 4;
-			}
-			if (len & 2) {
-				asm("crc32w %1, %0"
-				    : "+r" (crc) : ASM_INPUT_RM (*(u16 *)p));
-				p += 2;
-			}
-			if (len & 1)
-				asm("crc32b %1, %0"
-				    : "+r" (crc) : ASM_INPUT_RM (*p));
-			return crc;
-		}
-		msgpoly = (get_unaligned((unsigned long *)p) ^ orig_crc) <<
-			  (8 * (-len % sizeof(unsigned long)));
-		p += len % sizeof(unsigned long);
-		crc = 0;
-		asm(CRC32_INST : "+r" (crc) : "r" (msgpoly));
-
-		msgpoly = get_unaligned((unsigned long *)p) ^
-			  (orig_crc >> (8 * (len % sizeof(unsigned long))));
-		p += sizeof(unsigned long);
-		len -= (len % sizeof(unsigned long)) + sizeof(unsigned long);
-		asm(CRC32_INST : "+r" (crc) : "r" (msgpoly));
-	}
-
-	for (len /= sizeof(unsigned long); len != 0;
-	     len--, p += sizeof(unsigned long))
-		asm(CRC32_INST : "+r" (crc) : ASM_INPUT_RM (*(unsigned long *)p));
-
-	return crc;
-}
+Regards,
+Markus
 
