@@ -1,300 +1,167 @@
-Return-Path: <linux-kernel+bounces-545866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 836A9A4F2D0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:37:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5480FA4F2D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:38:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDA993A5D1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:36:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EFAE3AA95C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA19D2D7BF;
-	Wed,  5 Mar 2025 00:36:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093C6210FB;
+	Wed,  5 Mar 2025 00:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="Ht//rTAq"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D7915D1;
-	Wed,  5 Mar 2025 00:36:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sygvpcht"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60D501BC3C;
+	Wed,  5 Mar 2025 00:38:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741135019; cv=none; b=aSTI2t33yzcpF9fJh1zGyn9ajCkVweiyvjrYD60pmVtyTPw5zbuT+C1ccKR0bfCIEEit8CpOIajZzSl8Ovk5CccLXzJ7Ti7hJnxc9I/1DsmnCF0g/gAR0RbEWE4BjPNcFAU+bAte+SY3ZXYatcrobmE7XzclrnGlVGn3yz1Y8xA=
+	t=1741135095; cv=none; b=cwp31A5SUCVB+bcj5+K4Uwixmwz0zAkVey2NXjhlHjt196nAtQ6iELGH7omIEyha1+QCVvJ50FB+N5ww1M2YW9F9ThjOeYD+DpNQjJOyLcv/x0cHA5DWGpTCqhfIUD4NCWp7On42FbAJb9cYhCEf++g3LfIm6BjBhEK3ANWUdxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741135019; c=relaxed/simple;
-	bh=f65gu9zsK0uIrJL8tye93+UyjS25UdHt6GcdjFUHMlg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qhUpA/6uoxZlAW2kVMQCpxoX8goxKqlMPbi1jmrQBUtfbF9C78/Zglz5GIeNvqvygTTNVl/tchjf2CNKPWvaCoyJRCRWBTt0ufSWZMaBS3yGQHHKtBZMVeu3hahhKKqXprkhMdUtyuG7u5VJ3TcU3CUxzlAlsOG9EpXkuhWY8JU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=Ht//rTAq; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from narnia (unknown [167.220.2.28])
-	by linux.microsoft.com (Postfix) with ESMTPSA id A57FD210EAF8;
-	Tue,  4 Mar 2025 16:36:48 -0800 (PST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com A57FD210EAF8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1741135016;
-	bh=0Yrz03GWRaNmKFRQL5d2IFkrSopl38bvM4bf0mF157A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Ht//rTAqlaMLaCJ+Z0QYH09IJ/I0lXzAmJD3S0FAD1KEg2Tp46fVp/JbGuj1bR5L4
-	 8bHmFX3ATYdH8s5kWWrgAFG61VRpjAWxxVCujlYWhsbEFmddH4rcYxjOM1AORf7cf1
-	 HNvt+8YdU8xsellZ7QJ1qFO2ObgTtv/Dql/6u3y4=
-From: Blaise Boscaccy <bboscaccy@linux.microsoft.com>
-To: Song Liu <song@kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
- "Serge E. Hallyn" <serge@hallyn.com>, Alexei Starovoitov <ast@kernel.org>,
- Daniel Borkmann <daniel@iogearbox.net>, John Fastabend
- <john.fastabend@gmail.com>, Andrii Nakryiko <andrii@kernel.org>, Martin
- KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>,
- Yonghong Song <yonghong.song@linux.dev>, KP Singh <kpsingh@kernel.org>,
- Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri
- Olsa <jolsa@kernel.org>, Stephen Smalley <stephen.smalley.work@gmail.com>,
- Ondrej Mosnacek <omosnace@redhat.com>,
- linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
- bpf@vger.kernel.org, selinux@vger.kernel.org
-Subject: Re: [PATCH v4 bpf-next 2/2] selftests/bpf: Add is_kernel parameter
- to LSM/bpf test programs
-In-Reply-To: <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
-References: <20250304203123.3935371-1-bboscaccy@linux.microsoft.com>
- <20250304203123.3935371-3-bboscaccy@linux.microsoft.com>
- <CAPhsuW5HJuRYPucfvDbs25un7_D8JJnt=7zNUJ1utY3O_VMeSw@mail.gmail.com>
-Date: Tue, 04 Mar 2025 16:36:44 -0800
-Message-ID: <87a5a0jotf.fsf@microsoft.com>
+	s=arc-20240116; t=1741135095; c=relaxed/simple;
+	bh=pHEcWCG/8MyiAl1bVQnLutpSDPdKJFxtF27iTUsZguI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Vf/9EI5R0dKT5XXosjQzwn8jhdC72M/UiMgKUQ6iI93hPSZb8ggcp0IVl0xjYw7gM2vug1Sc/cT9D/ATPqzxaCZ/H9QLotRdoM6ah1uYHOxIB5vAt4QSXazGNGCcURRZaYO+AzoH5VBSpzlXnQmx818D9bFhvosabINuXt0lQ1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sygvpcht; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57C9FC4CEE5;
+	Wed,  5 Mar 2025 00:38:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741135094;
+	bh=pHEcWCG/8MyiAl1bVQnLutpSDPdKJFxtF27iTUsZguI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sygvpchtb82JtF/P1QkuJ6+GK6LhxLJB/tpVdL323+X6MyNJ9J4QuxbqqnQJYzEH2
+	 xx8NEewsgfZ9RLnc3Bu2/JUQ17vRSzoAJfL+Y2TM7937WXlCcBW/rcF31Hxy8OOz2j
+	 53jaLPN0JCFm0Az5WrYah0RpFhUbhtx8QGyOvVCnc322K8FjPvbdHj5ytArwgsUxN/
+	 ZMF4JbDIS6PLS6DiDWsk9BhlLSJKJXQV8IwKDi072VoJRRNtkxKKfS8vdcrl6d4RBr
+	 xy/alpB8n6ilcLBfP0rzhmvXyoOtopnpytffeSVANYBZxQ4ib5g8VSyl7x+T2KUQra
+	 A8qeD6PRvWDxA==
+Date: Wed, 5 Mar 2025 00:38:08 +0000
+From: Will Deacon <will@kernel.org>
+To: Sebastian Ene <sebastianene@google.com>
+Cc: catalin.marinas@arm.com, joey.gouly@arm.com, maz@kernel.org,
+	oliver.upton@linux.dev, snehalreddy@google.com,
+	sudeep.holla@arm.com, suzuki.poulose@arm.com, vdonnefort@google.com,
+	yuzenghui@huawei.com, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	kernel-team@android.com
+Subject: Re: [PATCH v2 3/4] KVM: arm64: Map the hypervisor FF-A buffers on
+ ffa init
+Message-ID: <20250305003808.GA31667@willie-the-truck>
+References: <20250227181750.3606372-1-sebastianene@google.com>
+ <20250227181750.3606372-4-sebastianene@google.com>
+ <20250303234259.GA30749@willie-the-truck>
+ <Z8ZPBZF7J-qKdb_i@google.com>
+ <20250304015633.GA30882@willie-the-truck>
+ <Z8c6enoolJe7Zeqk@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8c6enoolJe7Zeqk@google.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-Song Liu <song@kernel.org> writes:
+On Tue, Mar 04, 2025 at 05:38:02PM +0000, Sebastian Ene wrote:
+> On Tue, Mar 04, 2025 at 01:56:35AM +0000, Will Deacon wrote:
+> > On Tue, Mar 04, 2025 at 12:53:25AM +0000, Sebastian Ene wrote:
+> > > On Mon, Mar 03, 2025 at 11:43:03PM +0000, Will Deacon wrote:
+> > > > On Thu, Feb 27, 2025 at 06:17:48PM +0000, Sebastian Ene wrote:
+> > > > > Map the hypervisor's buffers irrespective to the host and return
+> > > > > a linux error code from the FF-A error code on failure. Remove
+> > > > > the unmap ff-a buffers calls from the hypervisor as it will
+> > > > > never be called.
+> > > > > Prevent the host from using FF-A directly with Trustzone
+> > > > > if the hypervisor could not map its own buffers.
+> > > > > 
+> > > > > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > > > > ---
+> > > > >  arch/arm64/kvm/hyp/nvhe/ffa.c | 46 +++++++++++++----------------------
+> > > > >  1 file changed, 17 insertions(+), 29 deletions(-)
+> > > > 
+> > > > [...]
+> > > > 
+> > > > > @@ -861,6 +842,7 @@ int hyp_ffa_init(void *pages)
+> > > > >  {
+> > > > >  	struct arm_smccc_res res;
+> > > > >  	void *tx, *rx;
+> > > > > +	int ret;
+> > > > >  
+> > > > >  	if (kvm_host_psci_config.smccc_version < ARM_SMCCC_VERSION_1_2)
+> > > > >  		return 0;
+> > > > > @@ -911,5 +893,11 @@ int hyp_ffa_init(void *pages)
+> > > > >  		.lock	= __HYP_SPIN_LOCK_UNLOCKED,
+> > > > >  	};
+> > > > >  
+> > > > > +	/* Map our hypervisor buffers into the SPMD */
+> > > > > +	ret = ffa_map_hyp_buffers();
+> > > > > +	if (ret)
+> > > > > +		return ret;
+> > > > 
+> > > > Doesn't calling RXTX_MAP here undo the fix from c9c012625e12 ("KVM:
+> > > > arm64: Trap FFA_VERSION host call in pKVM") where we want to allow for
+> > > > the host to negotiate the version lazily?
+> > > 
+> > > We still have the same behaviour where we don't allow memory
+> > > sharing to happen until the version is negotiated but this
+> > > separates the hypervisor buffer mapping part from the host.
+> > 
+> > Sadly, the spec doesn't restrict this to the memory sharing calls:
+> > 
+> >   | [...] negotiation of the version must happen before an invocation of
+> >   | any other FF-A ABI
+> > 
+> 
+> We do that, as the hypervisor negotiates its own version in
+> hyp_ffa_init.
 
-> On Tue, Mar 4, 2025 at 12:31=E2=80=AFPM Blaise Boscaccy
-> <bboscaccy@linux.microsoft.com> wrote:
->>
->> The security_bpf LSM hook now contains a boolean parameter specifying
->> whether an invocation of the bpf syscall originated from within the
->> kernel. Here, we update the function signature of relevant test
->> programs to include that new parameter.
->>
->> Signed-off-by: Blaise Boscaccy bboscaccy@linux.microsoft.com
-> ^^^ The email address is broken.
->
+hyp_ffa_init() only issues FFA_VERSION afaict, which is the one call
+that you're allowed to make during negotiation. So the existing code is
+fine.
 
-Whoops, appologies, will get that fixed.=20
+> I think the host shouldn't be allowed to overwrite the
+> hyp_ffa_version obtained from _init, this feels wrong as you
+> can have a driver that forcefully downgrades the hypervisor to an old
+> version.
 
->> ---
->>  tools/testing/selftests/bpf/progs/rcu_read_lock.c           | 3 ++-
->>  tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c  | 4 ++--
->>  tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c | 6 +++---
->>  tools/testing/selftests/bpf/progs/test_lookup_key.c         | 2 +-
->>  tools/testing/selftests/bpf/progs/test_ptr_untrusted.c      | 2 +-
->>  tools/testing/selftests/bpf/progs/test_task_under_cgroup.c  | 2 +-
->>  tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c   | 2 +-
->>  7 files changed, 11 insertions(+), 10 deletions(-)
->
-> It appears you missed a few of these?
->
+I think that's also fine. The FFA code in the hypervisor exists solely
+to proxy requests from the host; it's not used for anything else and so,
+from the host's persective, FFA should behave identically to the case in
+which the proxy is not present (e.g. if we were just using VHE). That
+means that we're doing the right thing by deferring to the host for
+version negotation.
 
-Some of these don't require any changes. I ran into this as well while doin=
-g a
-search.=20
+Are you saying there's a bug in the current code if the host negotiates
+the downgrade?
 
-These are all accounted for in the patch.=20
-> tools/testing/selftests/bpf/progs/rcu_read_lock.c:SEC("?lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm/bpf")
-> tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c:SEC("lsm.s/bpf=
-")
-> tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s/b=
-pf")
-> tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("?lsm.s/b=
-pf")
-> tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c:SEC("lsm.s/bp=
-f")
+> We need to do three things, Sudeep & Will please correct me if I am
+> wrong, but this is how I see it:
+> 
+> - the hypervisor should act as a separate entity (it has a different ID and
+> in the current implementation we don't do a distinction between host/hyp) and
+> it should be able to lock its own version from init.
 
-security_bpf_map wasn't altered, it can't be called from the kernel. No
-changes needed.
-> tools/testing/selftests/bpf/progs/test_libbpf_get_fd_by_id_opts.c:SEC("ls=
-m/bpf_map")
+I strongly disagree with that. The hypervisor isn't using FFA for
+anything other than proxying the host and so we don't need to negotiate
+a separate version.
 
-These are also all accounted for in the patch.=20
-> tools/testing/selftests/bpf/progs/test_lookup_key.c:SEC("lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/test_ptr_untrusted.c:SEC("lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/test_task_under_cgroup.c:SEC("lsm.s/bpf=
-")
-> tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c:SEC("lsm.s/bpf")
+What would we gain by doing this? Is there a bug with what we're doing
+at the moment?
 
-bpf_token_cmd and bpf_token_capabable aren't callable from the kernel,
-no changes to that hook either currently.
+> - keep a separate version negotiated for the host
+> - trap FFA_ID_GET from the host and return ID=1 because
+>   currently we forward the call to the TZ and it returns the same ID
+>   as the (hypervisor == 0).
 
-> tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_capable")
-> tools/testing/selftests/bpf/progs/token_lsm.c:SEC("lsm/bpf_token_cmd")
+Why is this beneficial? It just looks like complexity at EL2 for no gain
+to me, but maybe I'm missing something.
 
-
-This program doesn't take any parameters currently.
-> tools/testing/selftests/bpf/progs/verifier_global_subprogs.c:SEC("?lsm/bp=
-f")
-
-These are all naked calls that don't take any explicit parameters.
-> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
-> tools/testing/selftests/bpf/progs/verifier_ref_tracking.c:SEC("lsm.s/bpf")
->
-
--blaise
-
->>
->> diff --git a/tools/testing/selftests/bpf/progs/rcu_read_lock.c b/tools/t=
-esting/selftests/bpf/progs/rcu_read_lock.c
->> index ab3a532b7dd6d..f85d0e282f2ae 100644
->> --- a/tools/testing/selftests/bpf/progs/rcu_read_lock.c
->> +++ b/tools/testing/selftests/bpf/progs/rcu_read_lock.c
->> @@ -242,7 +242,8 @@ int inproper_sleepable_helper(void *ctx)
->>  }
->>
->>  SEC("?lsm.s/bpf")
->> -int BPF_PROG(inproper_sleepable_kfunc, int cmd, union bpf_attr *attr, u=
-nsigned int size)
->> +int BPF_PROG(inproper_sleepable_kfunc, int cmd, union bpf_attr *attr, u=
-nsigned int size,
->> +            bool is_kernel)
->>  {
->>         struct bpf_key *bkey;
->>
->> diff --git a/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c =
-b/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
->> index 44628865fe1d4..0e741262138f2 100644
->> --- a/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
->> +++ b/tools/testing/selftests/bpf/progs/test_cgroup1_hierarchy.c
->> @@ -51,13 +51,13 @@ static int bpf_link_create_verify(int cmd)
->>  }
->>
->>  SEC("lsm/bpf")
->> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
->> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size,=
- bool is_kernel)
->>  {
->>         return bpf_link_create_verify(cmd);
->>  }
->>
->>  SEC("lsm.s/bpf")
->> -int BPF_PROG(lsm_s_run, int cmd, union bpf_attr *attr, unsigned int siz=
-e)
->> +int BPF_PROG(lsm_s_run, int cmd, union bpf_attr *attr, unsigned int siz=
-e, bool is_kernel)
->>  {
->>         return bpf_link_create_verify(cmd);
->>  }
->> diff --git a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c=
- b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
->> index cd4d752bd089c..ce36a55ba5b8b 100644
->> --- a/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
->> +++ b/tools/testing/selftests/bpf/progs/test_kfunc_dynptr_param.c
->> @@ -36,7 +36,7 @@ char _license[] SEC("license") =3D "GPL";
->>
->>  SEC("?lsm.s/bpf")
->>  __failure __msg("cannot pass in dynptr at an offset=3D-8")
->> -int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr, unsigned =
-int size)
->> +int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr *attr, unsigned =
-int size, bool is_kernel)
->>  {
->>         unsigned long val;
->>
->> @@ -46,7 +46,7 @@ int BPF_PROG(not_valid_dynptr, int cmd, union bpf_attr=
- *attr, unsigned int size)
->>
->>  SEC("?lsm.s/bpf")
->>  __failure __msg("arg#0 expected pointer to stack or const struct bpf_dy=
-nptr")
->> -int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr, unsigned =
-int size)
->> +int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr *attr, unsigned =
-int size, bool is_kernel)
->>  {
->>         unsigned long val =3D 0;
->>
->> @@ -55,7 +55,7 @@ int BPF_PROG(not_ptr_to_stack, int cmd, union bpf_attr=
- *attr, unsigned int size)
->>  }
->>
->>  SEC("lsm.s/bpf")
->> -int BPF_PROG(dynptr_data_null, int cmd, union bpf_attr *attr, unsigned =
-int size)
->> +int BPF_PROG(dynptr_data_null, int cmd, union bpf_attr *attr, unsigned =
-int size, bool is_kernel)
->>  {
->>         struct bpf_key *trusted_keyring;
->>         struct bpf_dynptr ptr;
->> diff --git a/tools/testing/selftests/bpf/progs/test_lookup_key.c b/tools=
-/testing/selftests/bpf/progs/test_lookup_key.c
->> index c73776990ae30..c46077e01a4ca 100644
->> --- a/tools/testing/selftests/bpf/progs/test_lookup_key.c
->> +++ b/tools/testing/selftests/bpf/progs/test_lookup_key.c
->> @@ -23,7 +23,7 @@ extern struct bpf_key *bpf_lookup_system_key(__u64 id)=
- __ksym;
->>  extern void bpf_key_put(struct bpf_key *key) __ksym;
->>
->>  SEC("lsm.s/bpf")
->> -int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
->> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, boo=
-l is_kernel)
->>  {
->>         struct bpf_key *bkey;
->>         __u32 pid;
->> diff --git a/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c b/to=
-ols/testing/selftests/bpf/progs/test_ptr_untrusted.c
->> index 2fdc44e766248..21fce1108a21d 100644
->> --- a/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c
->> +++ b/tools/testing/selftests/bpf/progs/test_ptr_untrusted.c
->> @@ -7,7 +7,7 @@
->>  char tp_name[128];
->>
->>  SEC("lsm.s/bpf")
->> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
->> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size,=
- bool is_kernel)
->>  {
->>         switch (cmd) {
->>         case BPF_RAW_TRACEPOINT_OPEN:
->> diff --git a/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c =
-b/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
->> index 7e750309ce274..18ad24a851c6c 100644
->> --- a/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
->> +++ b/tools/testing/selftests/bpf/progs/test_task_under_cgroup.c
->> @@ -49,7 +49,7 @@ int BPF_PROG(tp_btf_run, struct task_struct *task, u64=
- clone_flags)
->>  }
->>
->>  SEC("lsm.s/bpf")
->> -int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size)
->> +int BPF_PROG(lsm_run, int cmd, union bpf_attr *attr, unsigned int size,=
- bool is_kernel)
->>  {
->>         struct cgroup *cgrp =3D NULL;
->>         struct task_struct *task;
->> diff --git a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c b=
-/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
->> index 12034a73ee2d2..135665f011c7e 100644
->> --- a/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
->> +++ b/tools/testing/selftests/bpf/progs/test_verify_pkcs7_sig.c
->> @@ -37,7 +37,7 @@ struct {
->>  char _license[] SEC("license") =3D "GPL";
->>
->>  SEC("lsm.s/bpf")
->> -int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size)
->> +int BPF_PROG(bpf, int cmd, union bpf_attr *attr, unsigned int size, boo=
-l is_kernel)
->>  {
->>         struct bpf_dynptr data_ptr, sig_ptr;
->>         struct data *data_val;
->> --
->> 2.48.1
->>
+Will
 
