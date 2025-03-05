@@ -1,126 +1,169 @@
-Return-Path: <linux-kernel+bounces-546732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B02EA4FE20
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:00:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 306F1A4FE22
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:01:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 128E47A50C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:59:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 939AD7A2C94
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 060F5242922;
-	Wed,  5 Mar 2025 12:00:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29A823370F;
+	Wed,  5 Mar 2025 12:01:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KZVBeWDB"
-Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GoUE60Qu"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2432241103;
-	Wed,  5 Mar 2025 12:00:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C0EF205AA2
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:01:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741176017; cv=none; b=Cs70Gn9c52r9tLfdw6L1pHOiRuETPOrGIlsSZAMO81F1BsuNwL9Hyx2US8Cyv67mn0Wl1lEBcD6gQhtx4XpKAhQ/FBJ36AxoaOdd++KTe1q9hCENjzFq8pdyEXqhH1Kt6cGbXME8a7wy6QqgUy55NEp6j/wKwPtm5A1LQ6kiIsQ=
+	t=1741176109; cv=none; b=g/p5A0UCjoxUqaQUpLyB77CpKWnpSJB1djRu7U8P2173hKAOjw7AYzTnhbjISvIvOsMB/T3WWugHYxJ7WnmCQnXBMr2i0mn2uBwIT9O9M6uG0Cd9ZUAy5rBAE/epkiTbi8hiX1diLpqCuKnAbvqlUR5OknBG9CY69nsD/zkr4gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741176017; c=relaxed/simple;
-	bh=2PsUnYxaTfPTsr8aJgtMRdMHhmGNBbPSofiwU8vfTZY=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LSJKR8RWi9St14gUvrik2ECFP2Lf2Q+9hLUu6Ky5qoy6h4SbrjV5lz05qlL/THBb/X4aqZ6E2apvt0y/cs3+OMjV5kL5URVavZRl25wpPl2TzkVu5a9fRr9pvU7qZms9vjqGCh5PiJMK+QijWfbizBWzr5NpuoeeK8QMXZvHzMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KZVBeWDB; arc=none smtp.client-ip=185.70.43.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1741176013; x=1741435213;
-	bh=IAGpGwzyWY0pJQIfsptuh5AGHP3a7e2gT1msaPBJI6E=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
-	b=KZVBeWDBjcqnERPqwQ8lxc/vMSB0HkpVyxEpJ84LMy4HkVxL9jbhgvgiOIqrzlUeM
-	 +Mcex2yLtAoqlz0jUArUhsfGN7BAO/UsRyJbtMOOR9kC0Y07DdJynCZdHnjTuvn3Yt
-	 e4L7NIAS0oN6kpltJ7VoxzntRJ1eQuXhvdCucpO9c18ZEv/StFVzpaAliR1+KIrWqR
-	 VFsP1deQne7+XAkfc1Tea0QOI/t8HyL8yxPsDuF8YBOtaqFJIOnt0BgD2BQPXG1sFS
-	 QaetkFuaxEZzzmpjdoperYg8l+RRWW6qVhpv+cLT2piJ+TSr22W5RWcpaQ2QV71UEH
-	 TkAi5tJAYT2vA==
-Date: Wed, 05 Mar 2025 12:00:06 +0000
-To: Andreas Hindborg <a.hindborg@kernel.org>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/22] rust: pin-init: remove kernel-crate dependency
-Message-ID: <D88BDOC74W1T.IMRXO8BE868S@proton.me>
-In-Reply-To: <87senrd7eq.fsf@kernel.org>
-References: <20250304225245.2033120-1-benno.lossin@proton.me> <3-KVPpYsvS6jLhJOL7kCLrypBUWO1rtUDTDUTfy8T_iGZObM3CP6YUK_QLHmL_QTivMtd3jfnRbZOGpClk37cQ==@protonmail.internalid> <20250304225245.2033120-13-benno.lossin@proton.me> <87senrd7eq.fsf@kernel.org>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: 79590ef435f6f3fbea9ac9507572f67bd08ba1b7
+	s=arc-20240116; t=1741176109; c=relaxed/simple;
+	bh=N5xuZkhTIdUqJxHvjuChPfUtp5Qc1sdPzxMmrBiezBo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bNEjHrEhM/7OzujwJk0ndoupLQFrrlF/xTM1nZPKNJ7YrbQJIBDqUmxwZtA6WSozpG959w7kOxOBZM4JhOS08a5Hu0nKTRFJo/yOpDF2wJ9/1NfYONRY7NEUuUiL8trqA+l8NOByH+MIkx0ljIYR2bsDZvKve8AX1EKMYvmoE+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GoUE60Qu; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-ac0cc83e9adso152079666b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 04:01:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741176106; x=1741780906; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hfmFkbc+JSsWE/PQNqOgO/asaC1Fe2OXP3J2ULbe0o4=;
+        b=GoUE60QuGGvuRim+J4IPl1s+aWBYvwQPcZXl1FqKMEJlahBnTeaq9LT7YZGEk9kdBK
+         yI+gaezGMAMGk8bwZ9+zeukPZjINiHoCwEOqUcUoWBgXQ6unb1Q74P57udvuBeAi6ZbI
+         DiL3AwF+ukfmKHfU5uyWdZ4BxntcR8o9PiWYEo6DiZYIe/uVQlGglVmlG4R95QvMSViY
+         DMFdEJC8LgiG4R1RupuyPVmldhwbb7JPMrc6RTZXif1F9zl13RKDB4h5Y3la8zVwg/+k
+         hkhvprqHUP7Sa/1alY0AXBY0U3fG4DH/BpKU7zmyg+LZ5ZAgeVy/EgDf7aai9Mmfmdke
+         d0Yg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741176106; x=1741780906;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hfmFkbc+JSsWE/PQNqOgO/asaC1Fe2OXP3J2ULbe0o4=;
+        b=weZv4oPm2g8vwncihPCDVvLE14zxx5cLojlhu3hxKR0I260txbFeCpp+lguEYGJfRQ
+         hS9vUF5Eh2ULocbE3oqg8HzV+qAEBwgyk7TFChgb71v29qc5F7mLrp3hLrTSB2196+Ct
+         HA3TagIMmMwsFMGca6fniiZ1in8d7n/1tjA40pLMGGefA30/1Q4fMWeRcHRfKxrWw5Rf
+         RhIUSGAXAI3QFOgaOka3WZUuHc35My0F6bvV6mmxqpA9j2qjxbJ/LALXdm8ZlrdtjDdD
+         7QiaKmVieWe27zen8nyystySX0+uJYCoCAeXDlrPL7SSgkGCCyeBfDuwz78UHwNugEHe
+         6bYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUHJ5NTEKd59+JGeKKLhes6cuUYQvSDGjfKn8Wnmo05AW6tzHka9bBRLNgD2LpeEhLOh/+MdW4BHFNH6bQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyjlEz8pT8R7rnd67IXI0kPbxflIzVKWOoMavVx84VF6Dmllpv
+	wPNgqahPCghgFc+7mkkzrBYy5cirztbzSRH7X/CZukZrqDhtefftvNUqghMRrZZiKR03olxmxy7
+	y9OH1FhminCzUb2gU8K5y3q6t+Ls=
+X-Gm-Gg: ASbGncu7gTazFbP12y0PM3pyZmXI+2gWVf7eh2CjO1lhGAGrjBCNhdlP7HDAGiGh72E
+	efJXWMPB4Oa/SL2hNl4Tjvp0J+1YawyUG4m1JPU0C+biulRFxoYkJGgNZKwHHXiXH3ekP53N9+6
+	Bvu2zNrROpSYipoB8iousSSXVq
+X-Google-Smtp-Source: AGHT+IGq2YT8yUStV2o0B751wn9zVquqD8Job6QdGTJ13GQ95PRoTeKTzjFlOaP2jqj7/lBugEpAR/Tj37Of+wJCrbQ=
+X-Received: by 2002:a17:907:1c8e:b0:abf:6a8d:76b8 with SMTP id
+ a640c23a62f3a-ac1f0ef6981mr739837766b.11.1741176104289; Wed, 05 Mar 2025
+ 04:01:44 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20250123190747.745588-1-brgerst@gmail.com> <20250123190747.745588-5-brgerst@gmail.com>
+ <tns2rrzk7vs3linnjevr24qyg4sm6hakndsgqvqsowqwwlrdcj@zus5wu6u3ju3>
+ <56A91DC4-1A8C-4134-976E-BBCBF9BC784F@zytor.com> <CAGudoHEQbBEbjXKfPR6+ktxj5GzBpQ+CjMXi+G7wqR-UQmW9Fw@mail.gmail.com>
+ <CAFULd4ZJ=Ysz+JxSUA_n_qst9AWYGvK9OvEjZCm8vQ3wQ7qfGw@mail.gmail.com>
+In-Reply-To: <CAFULd4ZJ=Ysz+JxSUA_n_qst9AWYGvK9OvEjZCm8vQ3wQ7qfGw@mail.gmail.com>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 5 Mar 2025 13:01:30 +0100
+X-Gm-Features: AQ5f1JpBpPgLE5G6KPRfqD3XCiDWFB9yrHft_zMBtt8HcAjuErP-_1DM62iTckM
+Message-ID: <CAGudoHG3pogGkTG5M+jMevn16hYLsy5zdbM0y5gBP0XMOK1vNw@mail.gmail.com>
+Subject: Re: [PATCH v6 04/15] x86/pvh: Use fixed_percpu_data for early boot GSBASE
+To: Uros Bizjak <ubizjak@gmail.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, Brian Gerst <brgerst@gmail.com>, linux-kernel@vger.kernel.org, 
+	x86@kernel.org, Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	Borislav Petkov <bp@alien8.de>, Ard Biesheuvel <ardb@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed Mar 5, 2025 at 12:49 PM CET, Andreas Hindborg wrote:
-> "Benno Lossin" <benno.lossin@proton.me> writes:
+On Wed, Mar 5, 2025 at 8:16=E2=80=AFAM Uros Bizjak <ubizjak@gmail.com> wrot=
+e:
 >
->> In order to make pin-init a standalone crate, remove dependencies on
->> kernel-specific code such as `ScopeGuard` and `KBox`.
->>
->> `ScopeGuard` is only used in the `[pin_]init_array_from_fn` functions
->> and can easily be replaced by a primitive construct.
->>
->> `KBox` is only used for type variance of unsized types and can also
->> easily be replaced.
->>
->> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> On Wed, Mar 5, 2025 at 12:49=E2=80=AFAM Mateusz Guzik <mjguzik@gmail.com>=
+ wrote:
+> >
+> > On Wed, Mar 5, 2025 at 12:45=E2=80=AFAM H. Peter Anvin <hpa@zytor.com> =
+wrote:
+> > >
+> > > On March 4, 2025 2:26:20 PM PST, Mateusz Guzik <mjguzik@gmail.com> wr=
+ote:
+> > > >On Thu, Jan 23, 2025 at 02:07:36PM -0500, Brian Gerst wrote:
+> > > >> Instead of having a private area for the stack canary, use
+> > > >> fixed_percpu_data for GSBASE like the native kernel.
+> > > >>
+> > > >> Signed-off-by: Brian Gerst <brgerst@gmail.com>
+> > > >> Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
+> > > >> ---
+> > > >>  arch/x86/platform/pvh/head.S | 15 +++++++++------
+> > > >>  1 file changed, 9 insertions(+), 6 deletions(-)
+> > > >>
+> > > >> diff --git a/arch/x86/platform/pvh/head.S b/arch/x86/platform/pvh/=
+head.S
+> > > >> index 4733a5f467b8..fa0072e0ca43 100644
+> > > >> --- a/arch/x86/platform/pvh/head.S
+> > > >> +++ b/arch/x86/platform/pvh/head.S
+> > > >> @@ -173,10 +173,15 @@ SYM_CODE_START(pvh_start_xen)
+> > > >>  1:
+> > > >>      UNWIND_HINT_END_OF_STACK
+> > > >>
+> > > >> -    /* Set base address in stack canary descriptor. */
+> > > >> -    mov $MSR_GS_BASE,%ecx
+> > > >> -    leal canary(%rip), %eax
+> > > >> -    xor %edx, %edx
+> > > >> +    /*
+> > > >> +     * Set up GSBASE.
+> > > >> +     * Note that, on SMP, the boot cpu uses init data section unt=
+il
+> > > >> +     * the per cpu areas are set up.
+> > > >> +     */
+> > > >> +    movl $MSR_GS_BASE,%ecx
+> > > >> +    leaq INIT_PER_CPU_VAR(fixed_percpu_data)(%rip), %rdx
+> > > >> +    movq %edx, %eax
+> > > >
+> > > >       movl
+> > > >
+> > > >I'm bisecting perf breakage and landing on this commit breaks the bu=
+ild.
+> > >
+> > > Breaks the build how?
+> >
+> >   AS      arch/x86/platform/pvh/head.o
+> > arch/x86/platform/pvh/head.S: Assembler messages:
+> > arch/x86/platform/pvh/head.S:183: Error: incorrect register `%eax'
+> > used with `q' suffix
+> >
+> > Per the above, I presume it was meant to be a movl.
 >
-> Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
+> Please note that this part is further changed in [PATCH 8/15] [1], so
+> the breakage is temporary.
 >
->> ---
->>  rust/pin-init/src/__internal.rs |  2 +-
->>  rust/pin-init/src/lib.rs        | 41 +++++++++++----------------------
->>  2 files changed, 15 insertions(+), 28 deletions(-)
->>
->> diff --git a/rust/pin-init/src/__internal.rs b/rust/pin-init/src/__inter=
-nal.rs
->> index 0db800819681..74086365a18a 100644
->> --- a/rust/pin-init/src/__internal.rs
->> +++ b/rust/pin-init/src/__internal.rs
->> @@ -105,7 +105,7 @@ fn make_closure<F, O, E>(self, f: F) -> F
->>      }
->>  }
->>
->> -pub struct AllData<T: ?Sized>(PhantomData<fn(KBox<T>) -> KBox<T>>);
->> +pub struct AllData<T: ?Sized>(Invariant<T>);
+> [1] https://lore.kernel.org/lkml/20250123190747.745588-9-brgerst@gmail.co=
+m/
 >
-> Off topic, trying to learn something: You define `Invariant<T>` like so:
->
->   pub(super) type Invariant<T> =3D PhantomData<fn(*mut T) -> *mut T>;
->
-> Consulting the variance table at [1], could you define it as
->
->   pub(super) type Invariant<T> =3D PhantomData<*mut T>;
->
-> or is there another reason for using `fn`?
 
-Yes! There is another reason: `Send` and `Sync`, my `Invariant` type
-will always be `Send` and `Sync`, but `PhantomData<*mut T>` is always
-`!Send` and `!Sync`.
-One could argue that an `Invariant<T>` type should impl `Send`/`Sync`
-if and only if `T` does, but for my usage it doesn't matter. If you do
-need to use that, you could use `PhantomData<(fn(*mut T) -> *mut T, T)>`
+Top of the tree does build, so I assumed this did get addressed in
+later patches.
 
----
-Cheers,
-Benno
+I am saying I ran into this build breakage while bisecting. Other
+people may be in the same spot.
 
->
->
-> Best regards,
-> Andreas Hindborg
->
->
-> [1] https://doc.rust-lang.org/nomicon/subtyping.html#variance
+It should pose no difficulty to s/movq/movl/ in the branch and be done with=
+ it.
 
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
