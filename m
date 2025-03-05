@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-545959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E50AA4F489
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:17:38 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 738D7A4F48C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:17:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 771A23AACBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:17:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93CB616FAB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:17:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE491624CB;
-	Wed,  5 Mar 2025 02:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E74617C7C4;
+	Wed,  5 Mar 2025 02:17:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="PiHN9kP5"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="AfJDiRoO"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1E43152E12
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 02:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0663C15DBA3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 02:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741141044; cv=none; b=pw5G4lGVEiZmJZKa2zUJ7fuzkuj6q2oTj3R/N7zGsR/YUF7Eb5qsxCcjEK8TpaIz9QpbLLkScQm/py7KkWQsA/cd6OsU/GEeGBrVXtHRGfBXjM6FaVPH+jmLZf+FCeXtzXps9K8KRcLwqaRwRcVZaL23GsQfUhERd89Rm5GDHVg=
+	t=1741141046; cv=none; b=psXpwPIly+OIFzLZcQ4XR4KNuFcsBiFFZysMlYYQ15BEqtXgef/lmXst6tkudlRtK5v+y04rKNCJsWrb1UXP16vypjJ+b3XydmTy0ci7lQrEOUAxm2LCj5611uGiotqyCqiC2quLNW+NAp9pcHWOEzW3HXY8WeSah6RfgeS0FQg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741141044; c=relaxed/simple;
-	bh=Lwirzx82Cwj4cIROcGyzk0QJ025NE1gG42EW69viQ5o=;
+	s=arc-20240116; t=1741141046; c=relaxed/simple;
+	bh=WkYih5t6WQKzC8SRX+eOO5zI9Mi24DV+jfAcAFV75MQ=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kNT8JR5uWhfL59i8vdsk5sM1pFn/8OlltanmySy9g9GU4IBuDaai9cdXQINANxFADaPzyqkDPrP1y3UO2MYsc3IZhWumrJibh7nF12c20lNUzzj+6JVdVtgdN0+m9MaQe0S9wmW5fBON+NAS2fJBG3EU+k/PAzB0odbw/uzZW6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=PiHN9kP5; arc=none smtp.client-ip=209.85.218.48
+	 MIME-Version; b=ocjlRTbrr8lIToe4927g/ijAEhxN5YmkKjngB2NLbafZkxjICkZnEELPUhMSPE2P7QNHq228IxhivUN9tLajO34gtRpNm+z6w5fofvckv4VzHjSSuuCby8ytnS8PShZyoYsYpyFmTGkmZ001oXxQJzp6uDALbWfWGzsZyQx5uLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=AfJDiRoO; arc=none smtp.client-ip=209.85.218.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-ac08167634bso46058366b.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 18:17:22 -0800 (PST)
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-abf709dd679so54834766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 18:17:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741141041; x=1741745841; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1741141043; x=1741745843; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6rvSTlkpvpW7p+80Sjr3aDnt6o0B0yeaCG4YXkElwWc=;
-        b=PiHN9kP5LAPdvY8W/S2XGXdoZ0jJmrTepauuM/T9EbcQz5csksWhfLMk4NjXwc0BsF
-         sOtpQ3Rzi3Z5P+88EVT5PXbpUJM9a5B094Kim1ixzaKZjtAPqPtLdqc0gcKE4gPyuss3
-         BUDQpeGcXSkLBn92q0+IzfP+MOyyAb5Uh8qPk=
+        bh=Jha9BeMcP/SA8VECG4X9DDtpBo8dKz3YZuDo79u+NoA=;
+        b=AfJDiRoOsd3ep55dVYZoCJpcULd7b4yLl7/lmXiIdGZFezcWwYH+EuMQxMP1OJvloP
+         SpzCZYx7DyKiBz2C1qZlTDfC6WWGwPRVQIjkuHJhVy+NaXYj9PxisenjXbpS1VXLCyMZ
+         IDReA9pOqG5uYwXtwULDgrhb4hwTm6hMV0C+o=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741141041; x=1741745841;
+        d=1e100.net; s=20230601; t=1741141043; x=1741745843;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6rvSTlkpvpW7p+80Sjr3aDnt6o0B0yeaCG4YXkElwWc=;
-        b=PEhhAaxsKOtpDhr43VE84Q26xtc5qmNPKvpmSWmD0POvM8Fh7tkAFgenGbgoi0y/7u
-         MfVUkLqLN90udn2oXiBjdQqsh33SfEujcqxmGrEHPw0KUUnhHEWr1dIcr1U0u0EcqV2M
-         RJrm+WiDQf/wxhinKDmZhxtUrv+W1na6R2YY8Dlh0vxeru81XdECMj3NSYZZIuKtalob
-         MmZUI5yzewQlheHpFe6EMONawkbuhv6eE+2vO/vwj+3JwNPv/WuhNx3e2YkfGrQe2zQh
-         18ZAu7xixAMxKlgN1mbU94AvrBemZzQU6Xt5U/1aTwyT5VHW47qArK1Gs8c/2jfJ+W24
-         mwvg==
-X-Gm-Message-State: AOJu0Yzms7e8SZe7d/Cb261JWmLllR1pFPXX2XWLbdHbBWnQbruwGyJj
-	3poK4ehVxn41j1b7CX8oNBgOq2yzBGSuzVRluMqwAvwq0sDFT5a6EepmcTOofQ==
-X-Gm-Gg: ASbGncvlxtaMTV/9k9kb3RtHMWGQqbYqrEHFHw4GgbvR2RrKVXjgXj7E7AL7jpPUflv
-	KUDuHzcg0IelsuRQ1pRzZW9vgWVyCe5vCFt0bB05/n6HKH1maNTQ+rLf7F/GyhvMf96OXd6+D6z
-	Gb878+wvgcId1yQ6YMI0uyjiSXp4I5FjmGv/ts0P3P5wKVLr0SefgF9Mi53APhD1W/F4fkGLHTi
-	S0G6d4nE72d8iXYI8EPmNOAO8faslq3ZWcAOcl6yoJpcKKFY2v5LUV6GdOTlv7INV/WU/9w6Dkj
-	xDbw+YEfQfC77/7n+rvBtSNIAlRUlpx7/4gkEZXeOv+qWcYLVabKEHKKyu2igfZCqAFNacod8kB
-	v
-X-Google-Smtp-Source: AGHT+IG4LOJECTRz17K9A3USe11OyP2C9IBySPUjmXUBtjR0nV5q11MemrUEwg48VpC14wTFHsEuNQ==
-X-Received: by 2002:a05:6402:34d1:b0:5de:ce71:badf with SMTP id 4fb4d7f45d1cf-5e59f45048dmr459772a12.6.1741141040807;
-        Tue, 04 Mar 2025 18:17:20 -0800 (PST)
+        bh=Jha9BeMcP/SA8VECG4X9DDtpBo8dKz3YZuDo79u+NoA=;
+        b=EPh/3p+S3+hav5IbwJZdrgmNUP1L4UUoPzMkEXcMHDcMkRWg7ZDONpevPJg8QI7O5x
+         UhiA9z/MHKnZjTCuv7jnekA0xiCPF/MPAn/lZ2DtCMlhTFJ1sW4RxN5/RYJgmy12JR1t
+         +7cpkkG7DCLXH/zpTAmqaN7m5kufU7iqRuYb6tDk8UordMe1yef1DPBEnG9D57HNGKZt
+         +DIePHGL5QSXXrShsc1lF46U0bBkrSDL37zcsC7dmQR7HuYMqPUVeoVWBZwXXPd5sRU/
+         pm8R6h4alqlLSbJYZDWS/K5b3l8hjnHW0UwYJrrAQbkcZaRY7aJl0fPS4BFogKoZ2Urs
+         2KhQ==
+X-Gm-Message-State: AOJu0YyVtCja4NIIHIAO4ZKONqEONA3aZ4yLB4fJkQmpdV6uHt0jXDuG
+	FLcJd+R7VspKaTznzCJosgY4ZbgBH6dTAoMdZWmFvFxTOWI30LtHiEkIYWsbeA==
+X-Gm-Gg: ASbGncuake/jhzA7lwcTgfeBPdlrsf8iWjU2UQoUlyRlZ01C+GA3HiyP7HAMCub+CIw
+	7/n5ZADFtkATBxKGdhxx3JvksTB1aJbBIG7cZDbIeEJZMpTgrORqWQiTxoLddk4Fg+R+LtOoeg9
+	aw8FqufiZYrgyoUB/rdDejvl+7sovlZlmtn194RQvdaH13PoQG++ZxNRkNpwaFrOffWCXpsu1xg
+	o6zYWoKETVSaS4Bq/SWdoSrbhHT2cZ3NgoiEnjSufLV+ARSExQpkg5kaal4dm1hcRAfGHQ+mHxi
+	EdF9DFFWDTfSAWsqsWSeUxgo3Q27VAvkNblJPCEKwDaTHeTfStT4sk+6lUfX8gvpZElbMz6DiRt
+	N
+X-Google-Smtp-Source: AGHT+IHAY/NTcScvmVs2xXOeM1Ij1O2NDVu041npSdSjcuYalt0YFoSHHFOL4tb05WaRr9KzRw08ZQ==
+X-Received: by 2002:a05:6402:35d2:b0:5e0:36fa:ac1e with SMTP id 4fb4d7f45d1cf-5e59f4717ebmr416274a12.6.1741141043123;
+        Tue, 04 Mar 2025 18:17:23 -0800 (PST)
 Received: from cfish.c.googlers.com.com (40.162.204.35.bc.googleusercontent.com. [35.204.162.40])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c43a55besm8891211a12.72.2025.03.04.18.17.19
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c43a55besm8891211a12.72.2025.03.04.18.17.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 18:17:20 -0800 (PST)
+        Tue, 04 Mar 2025 18:17:21 -0800 (PST)
 From: jeffxu@chromium.org
 To: akpm@linux-foundation.org,
 	keescook@chromium.org,
@@ -118,10 +118,11 @@ Cc: linux-kernel@vger.kernel.org,
 	aleksandr.mikhalitsyn@canonical.com,
 	mike.rapoport@gmail.com,
 	Jeff Xu <jeffxu@chromium.org>,
-	Kees Cook <kees@kernel.org>
-Subject: [PATCH v9 1/7] mseal sysmap: kernel config and header change
-Date: Wed,  5 Mar 2025 02:17:05 +0000
-Message-ID: <20250305021711.3867874-2-jeffxu@google.com>
+	Kees Cook <kees@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>
+Subject: [PATCH v9 2/7] selftests: x86: test_mremap_vdso: skip if vdso is msealed
+Date: Wed,  5 Mar 2025 02:17:06 +0000
+Message-ID: <20250305021711.3867874-3-jeffxu@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
 In-Reply-To: <20250305021711.3867874-1-jeffxu@google.com>
 References: <20250305021711.3867874-1-jeffxu@google.com>
@@ -135,103 +136,85 @@ Content-Transfer-Encoding: 8bit
 
 From: Jeff Xu <jeffxu@chromium.org>
 
-Provide infrastructure to mseal system mappings. Establish
-two kernel configs (CONFIG_MSEAL_SYSTEM_MAPPINGS,
-ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS) and VM_SEALED_SYSMAP
-macro for future patches.
+Add code to detect if the vdso is memory sealed, skip the test
+if it is.
 
 Signed-off-by: Jeff Xu <jeffxu@chromium.org>
 Reviewed-by: Kees Cook <kees@kernel.org>
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
 ---
- include/linux/mm.h | 10 ++++++++++
- init/Kconfig       | 22 ++++++++++++++++++++++
- security/Kconfig   | 21 +++++++++++++++++++++
- 3 files changed, 53 insertions(+)
+ .../testing/selftests/x86/test_mremap_vdso.c  | 43 +++++++++++++++++++
+ 1 file changed, 43 insertions(+)
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 7b1068ddcbb7..8b800941678d 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4155,4 +4155,14 @@ int arch_get_shadow_stack_status(struct task_struct *t, unsigned long __user *st
- int arch_set_shadow_stack_status(struct task_struct *t, unsigned long status);
- int arch_lock_shadow_stack_status(struct task_struct *t, unsigned long status);
+diff --git a/tools/testing/selftests/x86/test_mremap_vdso.c b/tools/testing/selftests/x86/test_mremap_vdso.c
+index d53959e03593..94bee6e0c813 100644
+--- a/tools/testing/selftests/x86/test_mremap_vdso.c
++++ b/tools/testing/selftests/x86/test_mremap_vdso.c
+@@ -14,6 +14,7 @@
+ #include <errno.h>
+ #include <unistd.h>
+ #include <string.h>
++#include <stdbool.h>
  
-+
-+/*
-+ * mseal of userspace process's system mappings.
-+ */
-+#ifdef CONFIG_MSEAL_SYSTEM_MAPPINGS
-+#define VM_SEALED_SYSMAP	VM_SEALED
-+#else
-+#define VM_SEALED_SYSMAP	VM_NONE
-+#endif
-+
- #endif /* _LINUX_MM_H */
-diff --git a/init/Kconfig b/init/Kconfig
-index d0d021b3fa3b..7f67d8942a09 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -1882,6 +1882,28 @@ config ARCH_HAS_MEMBARRIER_CALLBACKS
- config ARCH_HAS_MEMBARRIER_SYNC_CORE
- 	bool
+ #include <sys/mman.h>
+ #include <sys/auxv.h>
+@@ -55,13 +56,55 @@ static int try_to_remap(void *vdso_addr, unsigned long size)
  
-+config ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
-+	bool
-+	help
-+	  Control MSEAL_SYSTEM_MAPPINGS access based on architecture.
-+
-+	  A 64-bit kernel is required for the memory sealing feature.
-+	  No specific hardware features from the CPU are needed.
-+
-+	  To enable this feature, the architecture needs to update their
-+	  special mappings calls to include the sealing flag and confirm
-+	  that it doesn't unmap/remap system mappings during the life
-+	  time of the process. The existence of this flag for an architecture
-+	  implies that it does not require the remapping of the system
-+	  mappings during process lifetime, so sealing these mappings is safe
-+	  from a kernel perspective.
-+
-+	  After the architecture enables this, a distribution can set
-+	  CONFIG_MSEAL_SYSTEM_MAPPING to manage access to the feature.
-+
-+	  For complete descriptions of memory sealing, please see
-+	  Documentation/userspace-api/mseal.rst
-+
- config HAVE_PERF_EVENTS
- 	bool
- 	help
-diff --git a/security/Kconfig b/security/Kconfig
-index f10dbf15c294..a914a02df27e 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -51,6 +51,27 @@ config PROC_MEM_NO_FORCE
+ }
  
- endchoice
++#define VDSO_NAME "[vdso]"
++#define VMFLAGS "VmFlags:"
++#define MSEAL_FLAGS "sl"
++#define MAX_LINE_LEN 512
++
++bool vdso_sealed(FILE *maps)
++{
++	char line[MAX_LINE_LEN];
++	bool has_vdso = false;
++
++	while (fgets(line, sizeof(line), maps)) {
++		if (strstr(line, VDSO_NAME))
++			has_vdso = true;
++
++		if (has_vdso && !strncmp(line, VMFLAGS, strlen(VMFLAGS))) {
++			if (strstr(line, MSEAL_FLAGS))
++				return true;
++
++			return false;
++		}
++	}
++
++	return false;
++}
++
+ int main(int argc, char **argv, char **envp)
+ {
+ 	pid_t child;
++	FILE *maps;
  
-+config MSEAL_SYSTEM_MAPPINGS
-+	bool "mseal system mappings"
-+	depends on 64BIT
-+	depends on ARCH_SUPPORTS_MSEAL_SYSTEM_MAPPINGS
-+	depends on !CHECKPOINT_RESTORE
-+	help
-+	  Apply mseal on system mappings.
-+	  The system mappings includes vdso, vvar, vvar_vclock,
-+	  vectors (arm compat-mode), sigpage (arm compat-mode), uprobes.
+ 	ksft_print_header();
+ 	ksft_set_plan(1);
+ 
++	maps = fopen("/proc/self/smaps", "r");
++	if (!maps) {
++		ksft_test_result_skip(
++			"Could not open /proc/self/smaps, errno=%d\n",
++			 errno);
 +
-+	  A 64-bit kernel is required for the memory sealing feature.
-+	  No specific hardware features from the CPU are needed.
++		return 0;
++	}
 +
-+	  WARNING: This feature breaks programs which rely on relocating
-+	  or unmapping system mappings. Known broken software at the time
-+	  of writing includes CHECKPOINT_RESTORE, UML, gVisor, rr. Therefore
-+	  this config can't be enabled universally.
++	if (vdso_sealed(maps)) {
++		ksft_test_result_skip("vdso is sealed\n");
++		return 0;
++	}
 +
-+	  For complete descriptions of memory sealing, please see
-+	  Documentation/userspace-api/mseal.rst
++	fclose(maps);
 +
- config SECURITY
- 	bool "Enable different security models"
- 	depends on SYSFS
+ 	child = fork();
+ 	if (child == -1)
+ 		ksft_exit_fail_msg("failed to fork (%d): %m\n", errno);
 -- 
 2.48.1.711.g2feabab25a-goog
 
