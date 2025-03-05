@@ -1,208 +1,115 @@
-Return-Path: <linux-kernel+bounces-545925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40E3BA4F3C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:32:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3FCA4F3D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:33:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 532AA188F4A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13F6A3A617B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:33:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7513214658D;
-	Wed,  5 Mar 2025 01:32:22 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839CA1459F6;
+	Wed,  5 Mar 2025 01:33:23 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBC031E871;
-	Wed,  5 Mar 2025 01:32:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C68D61426C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741138342; cv=none; b=OromxGbyigm7mhhzN2Pvya5uOqSSw39jvrYNMUhRKAVOk82/hah0eqzdzAeX34R4d7h3/K8D287e9kpkEBCgGuQvY5eCuNyrFNLXl7QkR5fvlnT9T47egBkjKcjhSkNV9GY6ss3cUqt9uygmzqMvzwHskj29I/VLTzqkJAk8R74=
+	t=1741138403; cv=none; b=rfsN4VDzrcRzV8BrbivzVPWjZtM5EP/pP986NdTe/UehBUqjQ0Lqj1IELKY2+tZ7sQHlxyhHwdHaZnDqRnCVcSdSP/S2jhPHwOa3z8doJ8Tlb7I2n3CZpuaeYASNqozrdu7IH8HotjCZ4hJW0L6EHTMV7ElEykraG8eHSmAc50M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741138342; c=relaxed/simple;
-	bh=7zGBp5nobDpT7BzWB3JCkToVWeitQxdtp4rU1mt4mRY=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=I4kDkMbOu/0dM9035mM+gUiJ+n0L6Yjk4YU3KSvaGSePmSpUxM4ld0A/NrDIBG/RaWfbSTLNNE/icao87zab8NjUaFNFfhNu/bfaD/ugzjqjWxl9wOQ9dhEg3QhDh28v0sLJUB3t5CPacNyC1Cnh3IMgSvtA34yD/BKKSlnSscI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4Z6w552CLrz4f3kpQ;
-	Wed,  5 Mar 2025 09:31:53 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 667021A058E;
-	Wed,  5 Mar 2025 09:32:15 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP3 (Coremail) with SMTP id _Ch0CgCH2sScqcdnMjv+FQ--.25772S3;
-	Wed, 05 Mar 2025 09:32:13 +0800 (CST)
-Subject: Re: [PATCH v3] md: fix mddev uaf while iterating all_mddevs list
-To: Yu Kuai <yukuai1@huaweicloud.com>, song@kernel.org, hare@suse.de,
- axboe@kernel.dk, logang@deltatee.com
-Cc: linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, hch@lst.de,
- guillaume@morinfr.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250220124348.845222-1-yukuai1@huaweicloud.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <f6628f78-a084-d3af-430c-d1765f88779e@huaweicloud.com>
-Date: Wed, 5 Mar 2025 09:32:12 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.8.0
+	s=arc-20240116; t=1741138403; c=relaxed/simple;
+	bh=a2YxTZNCtN9SLn5Dl8H2Ghi94RIBMXtd0poWhdlap8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qaKNh9ytYQi+SPl1vbUeciSQcYVSe/Vky3ioo8jkfRc2trOrim0a5Y+fVjMDb+MpjPvbfKRBQQnl+74uXVz8CHOFCdAgtbfgPIyVB/6Khbhva/dthWSWXlaE30DgxjdQLiO+ExixYiqlIRqIPPjTZbK4voBlIg9KWsFP7/CC9MU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: cbf05f4cf96111efa216b1d71e6e1362-20250305
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:29ed36d9-0967-429d-b844-b4bf550975e6,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6493067,CLOUDID:c5fa19545ebb2597eaf527003577d700,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102,TC:nil,Content:0|52,EDM:
+	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
+	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 1,FCT|NGT
+X-CID-BAS: 1,FCT|NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: cbf05f4cf96111efa216b1d71e6e1362-20250305
+Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
+	(envelope-from <liuye@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 131484311; Wed, 05 Mar 2025 09:33:10 +0800
+Received: from node2.com.cn (localhost [127.0.0.1])
+	by node2.com.cn (NSMail) with SMTP id 8D39CB803947;
+	Wed,  5 Mar 2025 09:33:09 +0800 (CST)
+X-ns-mid: postfix-67C7A9D5-483792230
+Received: from [172.30.70.73] (unknown [172.30.70.73])
+	by node2.com.cn (NSMail) with ESMTPA id 5BAD0B803CA3;
+	Wed,  5 Mar 2025 01:33:07 +0000 (UTC)
+Message-ID: <c3c638fb-e61f-47c1-860c-0cc024961fe4@kylinos.cn>
+Date: Wed, 5 Mar 2025 09:33:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250220124348.845222-1-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_Ch0CgCH2sScqcdnMjv+FQ--.25772S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxAr1UXryDCr4rur47JFyDAwb_yoWrXFWDpF
-	WYqFWfGr48Xr93XF4DGa1kuFy5uw18Kr4DKry7Ka1rCr1UGwnxWw1Sgr15Xa4j9ayfWrn8
-	Ka17Jr98Zr47WwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26ryj6F1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUpwZcUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] Optimize __vmalloc_node_range_noprof function.
+To: Dev Jain <dev.jain@arm.com>, Uladzislau Rezki <urezki@gmail.com>
+Cc: akpm@linux-foundation.org, hch@infradead.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250303094410.437985-1-liuye@kylinos.cn>
+ <Z8XUP10G3cTJlbuw@pc636> <921fb496-ae14-4b6d-86a5-a18c492872f9@arm.com>
+Content-Language: en-US
+From: liuye <liuye@kylinos.cn>
+In-Reply-To: <921fb496-ae14-4b6d-86a5-a18c492872f9@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-ÔÚ 2025/02/20 20:43, Yu Kuai Ð´µÀ:
-> From: Yu Kuai <yukuai3@huawei.com>
-> 
-> While iterating all_mddevs list from md_notify_reboot() and md_exit(),
-> list_for_each_entry_safe is used, and this can race with deletint the
-> next mddev, causing UAF:
-> 
-> t1:
-> spin_lock
-> //list_for_each_entry_safe(mddev, n, ...)
->   mddev_get(mddev1)
->   // assume mddev2 is the next entry
->   spin_unlock
->              t2:
->              //remove mddev2
->              ...
->              mddev_free
->              spin_lock
->              list_del
->              spin_unlock
->              kfree(mddev2)
->   mddev_put(mddev1)
->   spin_lock
->   //continue dereference mddev2->all_mddevs
-> 
-> The old helper for_each_mddev() actually grab the reference of mddev2
-> while holding the lock, to prevent from being freed. This problem can be
-> fixed the same way, however, the code will be complex.
-> 
-> Hence switch to use list_for_each_entry, in this case mddev_put() can free
-> the mddev1 and it's not safe as well. Refer to md_seq_show(), also factor
-> out a helper mddev_put_locked() to fix this problem.
-> 
-> Cc: Christoph Hellwig <hch@lst.de>
-> Fixes: f26514342255 ("md: stop using for_each_mddev in md_notify_reboot")
-> Fixes: 16648bac862f ("md: stop using for_each_mddev in md_exit")
-> Reported-by: Guillaume Morin <guillaume@morinfr.org>
-> Closes: https://lore.kernel.org/all/Z7Y0SURoA8xwg7vn@bender.morinfr.org/
-> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-> ---
->   drivers/md/md.c | 22 +++++++++++++---------
->   1 file changed, 13 insertions(+), 9 deletions(-)
-> 
-Applied to md-6.15
-Thanks
 
-> diff --git a/drivers/md/md.c b/drivers/md/md.c
-> index 827646b3eb59..f501bc5f68f1 100644
-> --- a/drivers/md/md.c
-> +++ b/drivers/md/md.c
-> @@ -629,6 +629,12 @@ static void __mddev_put(struct mddev *mddev)
->   	queue_work(md_misc_wq, &mddev->del_work);
->   }
->   
-> +static void mddev_put_locked(struct mddev *mddev)
-> +{
-> +	if (atomic_dec_and_test(&mddev->active))
-> +		__mddev_put(mddev);
-> +}
-> +
->   void mddev_put(struct mddev *mddev)
->   {
->   	if (!atomic_dec_and_lock(&mddev->active, &all_mddevs_lock))
-> @@ -8461,9 +8467,7 @@ static int md_seq_show(struct seq_file *seq, void *v)
->   	if (mddev == list_last_entry(&all_mddevs, struct mddev, all_mddevs))
->   		status_unused(seq);
->   
-> -	if (atomic_dec_and_test(&mddev->active))
-> -		__mddev_put(mddev);
-> -
-> +	mddev_put_locked(mddev);
->   	return 0;
->   }
->   
-> @@ -9895,11 +9899,11 @@ EXPORT_SYMBOL_GPL(rdev_clear_badblocks);
->   static int md_notify_reboot(struct notifier_block *this,
->   			    unsigned long code, void *x)
->   {
-> -	struct mddev *mddev, *n;
-> +	struct mddev *mddev;
->   	int need_delay = 0;
->   
->   	spin_lock(&all_mddevs_lock);
-> -	list_for_each_entry_safe(mddev, n, &all_mddevs, all_mddevs) {
-> +	list_for_each_entry(mddev, &all_mddevs, all_mddevs) {
->   		if (!mddev_get(mddev))
->   			continue;
->   		spin_unlock(&all_mddevs_lock);
-> @@ -9911,8 +9915,8 @@ static int md_notify_reboot(struct notifier_block *this,
->   			mddev_unlock(mddev);
->   		}
->   		need_delay = 1;
-> -		mddev_put(mddev);
->   		spin_lock(&all_mddevs_lock);
-> +		mddev_put_locked(mddev);
->   	}
->   	spin_unlock(&all_mddevs_lock);
->   
-> @@ -10245,7 +10249,7 @@ void md_autostart_arrays(int part)
->   
->   static __exit void md_exit(void)
->   {
-> -	struct mddev *mddev, *n;
-> +	struct mddev *mddev;
->   	int delay = 1;
->   
->   	unregister_blkdev(MD_MAJOR,"md");
-> @@ -10266,7 +10270,7 @@ static __exit void md_exit(void)
->   	remove_proc_entry("mdstat", NULL);
->   
->   	spin_lock(&all_mddevs_lock);
-> -	list_for_each_entry_safe(mddev, n, &all_mddevs, all_mddevs) {
-> +	list_for_each_entry(mddev, &all_mddevs, all_mddevs) {
->   		if (!mddev_get(mddev))
->   			continue;
->   		spin_unlock(&all_mddevs_lock);
-> @@ -10278,8 +10282,8 @@ static __exit void md_exit(void)
->   		 * the mddev for destruction by a workqueue, and the
->   		 * destroy_workqueue() below will wait for that to complete.
->   		 */
-> -		mddev_put(mddev);
->   		spin_lock(&all_mddevs_lock);
-> +		mddev_put_locked(mddev);
->   	}
->   	spin_unlock(&all_mddevs_lock);
->   
-> 
+=E5=9C=A8 2025/3/4 13:58, Dev Jain =E5=86=99=E9=81=93:
+>
+>
+> On 03/03/25 9:39 pm, Uladzislau Rezki wrote:
+>> On Mon, Mar 03, 2025 at 05:44:06PM +0800, Liu Ye wrote:
+>>> The use of variables real_size and real_align in function
+>>> __vmalloc_node_range_noprof is unreadable. Optimize it in four patche=
+s.
+>>>
+>>> Liu Ye (4):
+>>> =C2=A0=C2=A0 mm/vmalloc: Remove unnecessary size ALIGN in
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 __vmalloc_node_range_noprof
+>>> =C2=A0=C2=A0 mm/vmalloc: Size should be used instead of real_size in
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 __vmalloc_node_range_noprof
+>>> =C2=A0=C2=A0 mm/vmalloc: Remove the real_size variable to simplify th=
+e code in
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 __vmalloc_node_range_noprof
+>>> =C2=A0=C2=A0 mm/vmalloc: Rename the variable real_align to original_a=
+lign to
+>>> =C2=A0=C2=A0=C2=A0=C2=A0 prevent misunderstanding
+>>>
+>>> =C2=A0 mm/vmalloc.c | 20 ++++++++------------
+>>> =C2=A0 1 file changed, 8 insertions(+), 12 deletions(-)
+>>>
+>>> --=C2=A0
+>> Let me double check it. Quick question, this series does not
+>> introduce any functional change?
+>
+> Yeah, the cover letter subject is misleading. IMHO it should be more li=
+ke "Refactor" instead of "Optimize".
 
+Yes, refactoring is more accurate, regarding real_size and real_align.
+
+>>
+>> --=20
+>> Uladzislau Rezki
+>>
+>
 
