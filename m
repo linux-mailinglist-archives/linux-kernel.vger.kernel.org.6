@@ -1,59 +1,91 @@
-Return-Path: <linux-kernel+bounces-546179-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546180-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0A4CA4F761
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:45:40 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2DFA4F765
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:45:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1D47016D792
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:45:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D04C03ABC39
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 343DA1DA628;
-	Wed,  5 Mar 2025 06:45:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0771EA7F7;
+	Wed,  5 Mar 2025 06:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Wf9PaZn1"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dzs0A9Ba"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 658A0156F44
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:45:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A141156F44;
+	Wed,  5 Mar 2025 06:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741157135; cv=none; b=bIy6FeV9fAjBkNU9G+o4Upql0y3QO0t68aP8wsYFUtjwznlEf2+dZr0G6tTKdkT+Y98u/MbF+aeGt4N02GY3MgqbAL+FsvpsQazrHnuyuRzkdQ3OMXdwUWmuVpWBRJoIQX7H7a1AjTjDw3a5datLzeJvV1zbcBfGEa87WTAhHsc=
+	t=1741157141; cv=none; b=ZxWHX+tWTocpAoYA0WT/sVtiwNJIjq9f8bqCKz8bDF+whFq3jWr85+JP4GfFh2DAMmO0WGppLHTV5Ak367qW/7hIgg7JsKOZMtxfvIHyzw/oBUsvjXnxh6P8kf0rJ8teo5oNiRNfJKKmmncgzGfxzZyziSmD3X452qmttQE4U/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741157135; c=relaxed/simple;
-	bh=1O99U5nRWIuBAzW+EccIHzGDSDZySRUCBYSsmWHrZoQ=;
+	s=arc-20240116; t=1741157141; c=relaxed/simple;
+	bh=auSqLtZpa8wrO19Iq/uk2LvKfjGhoCGt5+ZC/eDQM2I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JT4bUZuBFTBCKCv0t0WJYIYa8Ma9ORb9IFIvKstEJy9tnMS3PRKSa20pDBMhK7JKsaIj+jlcQ3tg0MvpnYSPd8xhbdc2bNI1+lsqXNzXNTFHkrSa/Xe1MY5dg63QPv4Kx61PLoHAE9vIHDgDFOD5Cu3rCu9Oo/SLHBbL6bp1Gkc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Wf9PaZn1; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 5 Mar 2025 06:45:14 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741157121;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qS9UAv2i+fAHlT+2Q9Dnnlq3IrBK4nCeCJYvJbiG8Ow=;
-	b=Wf9PaZn1OnZLxpIZbUPs+klnOtfRlJdhcNPTNu2uBWRJh9wGZEBrwJITmSbbKrosX2DcGq
-	JWMal9Y6il+7Lu9N/zpchFMkmy1LqrPjjGbPwjE/0uaAncXOFgyA2cWFP1G4pMK7fTND9A
-	jAh1zIO9J9k6mBYDFQbr7DLZAhFkROE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yosry Ahmed <yosry.ahmed@linux.dev>
-To: Maxim Levitsky <mlevitsk@redhat.com>
-Cc: Sean Christopherson <seanjc@google.com>,
-	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC PATCH 13/13] KVM: nSVM: Stop bombing the TLB on nested
- transitions
-Message-ID: <Z8fy-saRNCC031jw@google.com>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
- <20250205182402.2147495-14-yosry.ahmed@linux.dev>
- <da0b13813b11e5b13f01dced9a629ac07fad27cd.camel@redhat.com>
- <Z8YrdcWd1PD76adM@google.com>
- <36d8ffbda9e69c5245ded717e7491f6fcd5ca72e.camel@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=X349bkzZvzB/D7d8Jj9r7yN6ZyqLZu0t6SUQzKntCwQZifmhmo/MV2JvMlt0MA94d6+exWFoTYBvwMBIqp0FPitKQnCNEjOcQwS+YL5KKWYPCh6IQHzJls29Boe782caEsMFwY7wUxT/QEX9zWoIKMOicgASkMtlqxsen0mxF+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dzs0A9Ba; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2febaaf175fso8289423a91.3;
+        Tue, 04 Mar 2025 22:45:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741157139; x=1741761939; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G8mCPsB48bmF8aTewO/RfZWrdCX2gTYrS/X2ZpOkCts=;
+        b=Dzs0A9BaM/H/Dlx0NvS1W1KfmzP1y4Nb5Konm1JNHkrwIOESGOwk0XTlBQT5MUhRO/
+         mXmAyyV0BYbnnlYNg9irP2Zt075nqo3n8tAP6/RdhBNRPKDd6Z7N+Hhygo5vISn8EhIl
+         uLo4egJN4RgWhGcmsXAzE7PMsHf+RDumR4UstzaSTTHzAlZHtq4dAz0+tycM2DT1J/U0
+         yH32d6cr3MFUxfSCFFVQ1fhmkFGkbr3X5uL8SoSKK8cqXYlK4WNR4gPfJ0bdoQkfGtoR
+         shaiMwgIBRJXU5f4GtK5BroW9haNBpVTUvNfYqGEDEz+Q8Tw1D18gpYrbG46OXZLZd3p
+         9lAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741157139; x=1741761939;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G8mCPsB48bmF8aTewO/RfZWrdCX2gTYrS/X2ZpOkCts=;
+        b=gsA9+SeW+NAVGjXVy6GHRHYeo4GB4+gEPNSKRehn/beJZ1Ak9NRsqYQuOfXtsgeVzC
+         nLd1x9+3Uezr9DPW0PHdWFNFcJ0p+/h9Tagejyl/B9LKMIarKPPMfMzZMb47fJ8LNJ6Q
+         lHumXGJtjYWihRt8bHeWdorBFn7Ek9Jvuf7fbNCsplx4xEH2OLpo9w4PeVZPwo428d3j
+         kvfDGvyad08ToQc7HD3uhHpH60wCE4Ob9u6VQun7eUqECHeNDK2ddKYJXn/g8P3+YQ5b
+         k7FFo3G1KldonP4eIfJrgOlDy51GbWr/YC88BUEguMsmK0r3hvNK1bddT0gRD1Ws4Qt5
+         NtJw==
+X-Forwarded-Encrypted: i=1; AJvYcCVAxS1gWT5XPDnAF+ikxFsYnrAVVUEVoqykgBkzbOMF7wQH/cPVY4huAQRJgU/I391XShDzQTh1BE+T@vger.kernel.org, AJvYcCW12+5KB9FBN756hDyzRF73ShrdEL0MBRUqTFomVSBEePp6s6xisfnJ/uSWaettEkgmwn2V9txVBrRk31k=@vger.kernel.org, AJvYcCW2SOU9KGTBEqm00jatC2/3bINK2VJA1w8c8gAsfutkBbAJO12DMnBdKmOey4z/RB9riC4pP2lmTjXBRUo+3w==@vger.kernel.org, AJvYcCWYLhZBhjaRhQoqTt3wUpYu3/1sjyvq3EwWHNAkLF/JfZqL1CUr86rwVJtLZfVijpLLt9RJPKGh4Of1KM0Z@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxp6GU0nWCT8pDVa23tGAJCC2FxXHL4g7HfZ1XokVEirlYXYqpT
+	scJ577m4Kg2l0n/X+cCw9yAYcHiTGL52xSSTrx/dZ2JjgJ/5XKxNbVRkVw==
+X-Gm-Gg: ASbGncslMjX2Uq91r2KHPOzoYXzSAvQ07GqautoyKxWdF18jgh3r1X3iA3G8VBNJDUp
+	6qzNZs8e3C28KsQTkcwPSdUuJpUa4bMNGgb3dU4tZexrNPFFJE/JgozUzkryvZSv9VDBqoqJ0Sk
+	+GuTFCPsc2kElcwYBS/KfUmIRZdM5rb07ouhLYbTOfr84lDCpyhoA+zpGnukRwA0TGZPFrAlq11
+	rPwCCObB/CaCy0HzejSJdJqjm3uVqpVFZyfye9gVqUeNTy/SX8E1zaIUi626V/dLzbVSVBLvvWs
+	UYqBig6fb4dWZEoEFvzdYdmhbOFjDpt2vytx/5WdlA3wsg==
+X-Google-Smtp-Source: AGHT+IGVH2wtIlAGIOQtGVzGD0CuvkOPmb/y/Y1xOui07mAMEjGJ65jR706zmjbyQkUklwU66ojQhA==
+X-Received: by 2002:a17:90b:2d8f:b0:2ee:c2df:5d30 with SMTP id 98e67ed59e1d1-2ff49841e81mr3287562a91.26.1741157139110;
+        Tue, 04 Mar 2025 22:45:39 -0800 (PST)
+Received: from google.com ([2620:15c:9d:2:438c:d5a2:41a6:66d1])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7bda78sm626452a91.48.2025.03.04.22.45.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 22:45:38 -0800 (PST)
+Date: Tue, 4 Mar 2025 22:45:35 -0800
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: foss@joelselvaraj.com
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-input@vger.kernel.org,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: Re: [PATCH v4 1/4] dt-bindings: input: touchscreen: edt-ft5x06: use
+ unevaluatedProperties
+Message-ID: <Z8fzD-aF-hN0PeyD@google.com>
+References: <20250303-pocof1-touchscreen-support-v4-0-cdc3bebc3942@joelselvaraj.com>
+ <20250303-pocof1-touchscreen-support-v4-1-cdc3bebc3942@joelselvaraj.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,150 +94,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <36d8ffbda9e69c5245ded717e7491f6fcd5ca72e.camel@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250303-pocof1-touchscreen-support-v4-1-cdc3bebc3942@joelselvaraj.com>
 
-On Tue, Mar 04, 2025 at 10:14:40PM -0500, Maxim Levitsky wrote:
-> On Mon, 2025-03-03 at 22:21 +0000, Yosry Ahmed wrote:
-> > On Fri, Feb 28, 2025 at 09:21:54PM -0500, Maxim Levitsky wrote:
-> > > On Wed, 2025-02-05 at 18:24 +0000, Yosry Ahmed wrote:
-> > > > Now that nested TLB flushes are properly tracked with a well-maintained
-> > > > separate ASID for L2 and proper handling of L1's TLB flush requests,
-> > > > drop the unconditional flushes and syncs on nested transitions.
-> > > > 
-> > > > On a Milan machine, an L1 and L2 guests were booted, both with a single
-> > > > vCPU, and pinned to a single physical CPU to maximize TLB collisions. In
-> > > > this setup, the cpuid_rate microbenchmark [1] showed the following
-> > > > changes with this patch:
-> > > > 
-> > > > +--------+--------+-------------------+----------------------+
-> > > > > L0     | L1     | cpuid_rate (base) | cpuid_rate (patched) |
-> > > > +========+========+===================+======================+
-> > > > > NPT    | NPT    | 256621            | 301113 (+17.3%)      |
-> > > > > NPT    | Shadow | 180017            | 203347 (+12.96%)     |
-> > > > > Shadow | Shadow | 177006            | 189150 (+6.86%)      |
-> > > > +--------+--------+-------------------+----------------------+
-> > > > 
-> > > > [1]https://lore.kernel.org/kvm/20231109180646.2963718-1-khorenko@virtuozzo.com/
-> > > > 
-> > > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > > > ---
-> > > >  arch/x86/kvm/svm/nested.c | 7 -------
-> > > >  1 file changed, 7 deletions(-)
-> > > > 
-> > > > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> > > > index 8e40ff21f7353..45a187d4c23d1 100644
-> > > > --- a/arch/x86/kvm/svm/nested.c
-> > > > +++ b/arch/x86/kvm/svm/nested.c
-> > > > @@ -512,9 +512,6 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
-> > > >  		svm->nested.last_asid = svm->nested.ctl.asid;
-> > > >  		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-> > > >  	}
-> > > > -	/* TODO: optimize unconditional TLB flush/MMU sync */
-> > > > -	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
-> > > > -	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
-> > > >  }
-> > > >  
-> > > >  static void nested_svm_exit_tlb_flush(struct kvm_vcpu *vcpu)
-> > > > @@ -530,10 +527,6 @@ static void nested_svm_exit_tlb_flush(struct kvm_vcpu *vcpu)
-> > > >  	 */
-> > > >  	if (svm->nested.ctl.tlb_ctl == TLB_CONTROL_FLUSH_ALL_ASID)
-> > > >  		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-> > > > -
-> > > > -	/* TODO: optimize unconditional TLB flush/MMU sync */
-> > > > -	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
-> > > > -	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
-> > > >  }
-> > > >  
-> > > >  /*
-> > > 
-> > > Assuming that all previous patches are correct this one should work as well.
-> > > 
-> > > However only a very heavy stress testing, including hyperv, windows guests
-> > > of various types, etc can give me confidence that there is no some ugly bug lurking
-> > > somewhere.
-> > 
-> > I tried booting an L2 and running some workloads like netperf in there.
-> > I also tried booting an L3.
-> > 
-> > I am planning to try and run some testing with a windows L2 guest. I am
-> > assuming this exercises the hyper-V emulation in L1, which could be
-> > interesting.
-> > 
-> > I am not sure if I will be able to test more scenarios though,
-> > especially Windows as an L1 (and something else as an L2).
-> > 
-> > Let me know if you have something specific in mind.
+On Mon, Mar 03, 2025 at 04:36:55PM -0600, Joel Selvaraj via B4 Relay wrote:
+> From: Joel Selvaraj <foss@joelselvaraj.com>
 > 
+> In Xiaomi Poco F1 (qcom/sdm845-xiaomi-beryllium-ebbg.dts), the FocalTech
+> FT8719 touchscreen is integrally connected to the display panel
+> (EBBG FT8719) and thus should be power sequenced together with display
+> panel using the panel property. Since the edt-ft5x06 touchscreen binding
+> uses almost all the properties present in touchscreen.yaml, let's remove
+> additionalProperties: false and use unevaluatedProperties to include all
+> the properties, including the needed panel property.
 > 
-> KVM can run itself 'under' HyperV (although in this case when it runs a guest
-> the guest will be L3 overall, so not really something supported but still something that might
-> reveal bugs).
-> In this case KVM/L1 can take advantage of L0's TLB flush interface.
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+> Signed-off-by: Joel Selvaraj <foss@joelselvaraj.com>
 
-I don't think I will be able to test on Hyper-V.
+I believe this is better be merged through the arch tree together with
+the dts changes.
 
-> 
-> Stress testing L3s also can be nice, although in this case from L0 POV, it doesn't see L3 at all.
-> Instead it sees that L1 runs two different L2s back to back, so the current code will
-> likely flush everything all the time.
+Acked-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
 
-I did run an L3 in an attempt to shake out any bugs.
+Thanks.
 
-> 
-> 
-> The direct TLB flush that hyperv does, especially from L2 to L0 should also be tested,
-> it's a relatively new feature, so we need to check that L2 actually uses it.
-
-Is this when KVM is emulating Hyper-V for nested guests, or when KVM is
-running on top of Hyper-V? If the latter, as I said earlier I am not
-sure if I will be able to test that.
-
-> 
-> KVM also has its own way of TLB flushing paravirtualization, which can in theory interfere with this.
-> 
-> 
-> It's also nice to run a hyperv enabled Windows as KVM guest, and run a guest in it (can be Windows or Linux or anything else)
-> Such guest will run two L2 VMs, Windows itself and the VM you run inside.
-
-Yeah that's something I intend on doing. Sean mentioned that recent
-Windows versions run the OS in L1 on top of the hypervisor in L0, so I
-think if I run a Windows VM I automatically get both L1 and L2. So just
-running a Windows VM should exercise the TLB flushes. I will also try to
-run WSL to have multiple L2 VMs. I believe that's what you are talking
-about here.
-
-> 
-> 
-> You can also try other L1s, like VirtualBox, VMware, running in Windows or Linux L1,
-> and themselves can run a windows or Linux L2. 
-> 
-> You can also test other OSes like BSD* and such as L1, they might have a different TLB access pattern and
-> might reveal something, who knows. These can also run L2s using their own hypervisors.
-> 
-> Running a very old (say Windows XP, or some very old Linux) as L2 might also reveal something.
-
-Honestly, I don't think I have the time or resources to test other
-operating systems or L1s tbh. Currently my plan is to try and exercise
-more scenarios in a Linux L2 guest, and run a Windows guest as I
-mentioned earlier.
-
-> 
-> (But don't try to run win95/98 - this OS is known to not flush TLB properly (it doesn't use INVLPG when it should),
-> so it doesn't work well on AMD at all because of this).
-
-Good to know :)
-
-> 
-> Finally, it might be worth it to develop a TLB stress test if one doesn't exist yet.
-
-I also thought about this, but I think it would be very tricky to cover
-all the cases, and we'd need the test to create an L1 that is
-sophisticated enough to exercise different TLB flushing scenarios. I
-think running an actual OS as L1 is probably exercising the TLB code
-more that any test.
-
-That being said, Sean did mention the 'access' tests in KUT, and I plan
-to check how relevant they are and if they can easily extended to add
-some coverage for this.
+-- 
+Dmitry
 
