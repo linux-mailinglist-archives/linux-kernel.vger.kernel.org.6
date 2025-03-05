@@ -1,150 +1,145 @@
-Return-Path: <linux-kernel+bounces-546706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70475A4FDDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:40:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC3CA4FDC5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:37:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9255C7A3C0A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:39:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 263671721D7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70E36233702;
-	Wed,  5 Mar 2025 11:40:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56EA6241663;
+	Wed,  5 Mar 2025 11:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="K8FdW9LQ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N+wTceM/"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47DD41F416D;
-	Wed,  5 Mar 2025 11:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01B83241C87;
+	Wed,  5 Mar 2025 11:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741174804; cv=none; b=laBcePFDTFOyPjIXLuOzC8YyYhaLr9G7sl2cafZ7NylRJbAJsKoClI82ahqdEdhKyuIr/vp3eKTlZs2+FuPN8k5Fl6/ewqPPrNzj69N/rFiJredtTy+SuV4E4a9c7GGixBLdaI+A+GEqz5j6ZX6xbLu5g14TMv4+qh0WDW9RWuU=
+	t=1741174541; cv=none; b=n+eKdqmiZSce7CVOYtgtGCvjZr1D7J/EH3feF/kYjO926+zU/eKSuzekigDUgiAGSPKCI3n/mutxLIYEFBIIOUxRzHuD50Y5LH2lbXW5HqSiZBZ+5MyF75SuEElMxybTz7jYYdE1l/9FgSHTbbXfBdCkGg/WBkYtqlen3fQa19E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741174804; c=relaxed/simple;
-	bh=3du4Vh0sMLXdjfQ6YEWUdnO0O4zpGTmTPbz3ghs/piI=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eSAT7/Dcig3yybQqYjtxW1xjk5s2KM92157rDJXcdHTsdDk8/CjR/1fKV/v2qwGo8N5b32N3fShyVTdXwxItYwYSiQpJXcyGp07Zx5QRzTv5y6qTqzN63lbQUiA6APavxQYvtiZpS4nod94gVZ/CVqxaiKdflFangFir/mlPFeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=K8FdW9LQ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525BUeBD018854;
-	Wed, 5 Mar 2025 11:34:36 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=OEHbrE
-	wynpPoc/PQYISTWGJJizTmVH8mOpEoVx0LCqA=; b=K8FdW9LQ442qJW1CW823GB
-	PSOP9e7mXMs9QQG9u0vY7suMNgvUeZP0ae+2oWLzSHj4Y6r7RgBruhl3B6piqY6u
-	hLtzIPs4I2sy7SSmjmvp9sMG32CShVibq/04dHGhh8eXxsR2BK3onyzPlzqbRcxS
-	l2in6zKu22i2JQE5KNelkaaozpWkt+aD3dM5leROSrwiANHUgV1xqyWckcA2LR3U
-	we/+8K+OeuphwOcU6j9ylXj6lnr7C7Hd5v2DoD81TE+IgzCC5g0XL2CthQap0vEH
-	yvycPjUdAB2t9yPvv56Hp/vzTNOz2pol2OLX5E+G81GAsbtUE8zWukWENT75EQHw
-	==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpn6b9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 11:34:36 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 525AmSWv008929;
-	Wed, 5 Mar 2025 11:34:34 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454cxyjnxp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 11:34:34 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 525BYYiO24511044
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Mar 2025 11:34:34 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3DC9B5803F;
-	Wed,  5 Mar 2025 11:34:34 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 263B758063;
-	Wed,  5 Mar 2025 11:34:33 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.124.31])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Mar 2025 11:34:33 +0000 (GMT)
-Message-ID: <d9c6cd2a5e27df0fbc5ccb5f2945c33b2dbe34ae.camel@linux.ibm.com>
-Subject: Re: [PATCH v9 1/7] ima: copy only complete measurement records
- across kexec
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Wed, 05 Mar 2025 06:34:32 -0500
-In-Reply-To: <3aadae5d35af3f984b9e8bc548d73bb878d666bd.camel@linux.ibm.com>
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
-	 <20250304190351.96975-2-chenste@linux.microsoft.com>
-	 <3aadae5d35af3f984b9e8bc548d73bb878d666bd.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1741174541; c=relaxed/simple;
+	bh=qwopS4a6AUpBAWY4wViPaDXCC4bhryjADZfuqpcpo3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FzkJjzVZLxeBm5JwoYUJkeWmKMJzZxkaTfPJRUAoN2uPIP1Fy/0RvHgCPd2/OiJElvhTV8H8GgQC82gTyZU8u0mopNvC1D//28A8IzauseXdOJy5NV5sKaRfqUSb7jaFbIVD5zvopsrSOE8c91YGcoHupft9JVZu9VWCGgpiBKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N+wTceM/; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-549490e290dso5277827e87.2;
+        Wed, 05 Mar 2025 03:35:39 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741174538; x=1741779338; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kQjCJAWWqkAUcjYYgR8Ex2nz8hO/x4lAohvkos16b8E=;
+        b=N+wTceM/Tn8f1/ad1ztR/u23KAnIkNLn+6FIX3mU8qvJpTVxHhUn/dxTnW6ZWfQCJH
+         eNsAGyDNaGAvwSxmZeJoYCZ2PkU2cpSV6jUvBQDz6KJnjJceOCxSmaJLv9pJGnLXzCeu
+         R6c1iEFRpzL8OAP1bmOzER0v4bNrBO7ZtdBtS/iMSurO5XSdtVrRZvqjz76fmj+zMO6E
+         cM/Q5RHOXVO8StKaQWDys72mst7UKLRpj9eJV4O804IFXo6EDTTY/Iqhdorq8eTxrqPg
+         x744Z72r438YX3XjnvAgfrPMdgazDWsidfwFMDOJDOImcb6Q9qx+mwsTYDmkTK9VjK9H
+         tHqA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741174538; x=1741779338;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kQjCJAWWqkAUcjYYgR8Ex2nz8hO/x4lAohvkos16b8E=;
+        b=kN8Z0wEOeyVctY9eJDdvgOxMjxDpJi4CZvoYh96x7/C3BNB6j19eNfrsqPLwSA4ksB
+         d+P7vvS3ZmdAzGiTWC2llaC+KqKReCfVnNnWlLuzkpdUPnwqu7NbKER6lNBeAJzBBNzF
+         RTvOuBS/yskMM6oTChJCo4+2UbG3bFJ39lkoJFbibrMLlsryXoB1Y8XwWIzLoroJFZ31
+         YLtKLgrKziEhdDDo6Zy/OMssf8KScTb2Tl9sY9b5Mlcg6LGaJN57IAu2TnkwEURUcR/G
+         vA1qUv8HJhkeDuXmBHcQEC0oTfFisC43KSKIxKqgbAc5MY23BJyQB0G99WZQPeo+gjv8
+         g9dA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUQKQ0JVXgnmuH9clGlgsANiKINEViZ5idDrFtNrueinnMYsgCjkz0YIgmsdazVlgYxTzkLZ5KDKKOgoS6DnSE@vger.kernel.org, AJvYcCV9Hk0JJW4w+ZOs8he161c4d0YI8KloTnIUc9H8HcKAdXOVEd9g/Zany6cgWrQnxVJ3tKHucLXa/8/OnRA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywi282VFwX37kS4Fz7ZvFbXGJXP1z3sYVFKA0q1LKL9XGjecPNU
+	ZoZoXHuxVP42m5DKLR9YOX2f59xd8zzia9SmL9k/wvIszebafVqEqZg4RHxjJJrEa753EQQTd5q
+	0syoRKNHp9WFL0iajZGWlK2GC6OE=
+X-Gm-Gg: ASbGncsPU8gwSdr8lBvZodR+QXCWEeUj7T6uDA2IQniZIO0h2WlqAVGXLOe4EuCdAH0
+	t6TbGdLfEa8AQurdldQfzDO7C06fZSJd0nfU+Svk8yM33gTEzO75yAcpHtEQKU1ex4zI890VnTm
+	Ko8HBQ7AxhLj++RBfibzsoHO5jSpk9tc9wdigr7NKhLzifSiTfqrc/DnM+Az6b
+X-Google-Smtp-Source: AGHT+IE7ybsJw30eQldLIuRlyYc2TNW0oVcckLG0r77gXOjbSuKh4AD0gnef3xGyEl0eu2j8/V0f1EfU/WZtdIdLaec=
+X-Received: by 2002:a2e:be91:0:b0:30b:badf:75ee with SMTP id
+ 38308e7fff4ca-30bd7a1e168mr8894531fa.7.1741174537682; Wed, 05 Mar 2025
+ 03:35:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bZRj979JBHaiqKCOApV6k42MuXH5lncF
-X-Proofpoint-GUID: bZRj979JBHaiqKCOApV6k42MuXH5lncF
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_04,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050093
+References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
+ <20250214-scanf-kunit-convert-v8-1-5ea50f95f83c@gmail.com> <Z8gfsd5V9wrPKkiA@pathway.suse.cz>
+In-Reply-To: <Z8gfsd5V9wrPKkiA@pathway.suse.cz>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 5 Mar 2025 06:35:01 -0500
+X-Gm-Features: AQ5f1JprwBuCn92D2t-WJR_RsVK9zF9GVQwqc4riLjDfAJlrnyUXehNeN7Dw2go
+Message-ID: <CAJ-ks9kXetd0wfy44T0g2r6Jx5eKSXr6N8Zk8wpAWj=5SKwHog@mail.gmail.com>
+Subject: Re: [PATCH v8 1/4] scanf: implicate test line in failure messages
+To: Petr Mladek <pmladek@suse.com>
+Cc: David Gow <davidgow@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>, Sergey Senozhatsky <senozhatsky@chromium.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <shuah@kernel.org>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-03-04 at 21:08 -0500, Mimi Zohar wrote:
-> On Tue, 2025-03-04 at 11:03 -0800, steven chen wrote:
-> >=20
-> >  - Compared the memory size allocated with memory size of the entire=
-=20
-> >    measurement record. Copy only complete measurement records if there=
-=20
-> >    is enough memory. If there is not enough memory, it will not copy
-> >    any IMA measurement records, and this situation will result in a=20
-> >    failure of remote attestation.
->=20
-> In discussions with Tushar, I was very clear that as many measurement rec=
-ords as
-> possible should be carried over to the kexec'ed kernel.  The main change =
-between
-> v8 and v9 was to make sure the last record copied was a complete record.
+On Wed, Mar 5, 2025 at 4:56=E2=80=AFAM Petr Mladek <pmladek@suse.com> wrote=
+:
+>
+> On Fri 2025-02-14 11:19:58, Tamir Duberstein wrote:
+> > This improves the failure output by pointing to the failing line at the
+> > top level of the test.
+> >
+> > Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+> > ---
+> >  lib/test_scanf.c | 66 ++++++++++++++++++++++++++++--------------------=
+--------
+> >  1 file changed, 33 insertions(+), 33 deletions(-)
+> >
+> > diff --git a/lib/test_scanf.c b/lib/test_scanf.c
+> > index 44f8508c9d88..d1664e0d0138 100644
+> > --- a/lib/test_scanf.c
+> > +++ b/lib/test_scanf.c
+> > @@ -24,12 +24,12 @@ static char *test_buffer __initdata;
+> >  static char *fmt_buffer __initdata;
+> >  static struct rnd_state rnd_state __initdata;
+> >
+> > -typedef int (*check_fn)(const void *check_data, const char *string,
+> > -                     const char *fmt, int n_args, va_list ap);
+> > +typedef int (*check_fn)(const char *file, const int line, const void *=
+check_data,
+> > +                     const char *string, const char *fmt, int n_args, =
+va_list ap);
+> >
+> > -static void __scanf(4, 6) __init
+> > -_test(check_fn fn, const void *check_data, const char *string, const c=
+har *fmt,
+> > -     int n_args, ...)
+> > +static void __scanf(6, 0) __init
+>
+> This should be:
+>
+> static void __scanf(6, 8) __init
+>
+> The zero (0) is used when the parameters are passed via the va_list.
+> The value must be the position of the first parameter when they are passe=
+d
+> via the variable list of parameters, aka (...).
+>
+> Otherwise, it triggers the warnings reported by the lkp@intel.com
+> kernel test robot, see
+> https://lore.kernel.org/r/202502160245.KUrryBJR-lkp@intel.com
+>
+> Best Regards,
+> Petr
 
-Steven, let me clarify=C2=A0my comment on v8.  The patch description said,
-
-"Separate allocating the buffer and copying the measurement records into
-separate functions in order to allocate the buffer at kexec 'load' and copy=
- the
-measurements at kexec 'execute'."
-
-The intention is fine, but it also did other things:
-- only copied a full last measurement
-- if there wasn't enough room, it didn't copy any measurement records.
-
-Copying a full last measurement should be a separate, new patch to simplify
-review.  I'm asking you to separate that change from the rest of the patch,=
- so
-that it can be back ported independently of the rest of the patch set.
-
-When splitting the function "that allocates the buffer and copies the
-measurement records into separate functions", please make sure it still cop=
-ies
-as many measurement records as possible.
-
-thanks,
-
-Mimi
+Thanks for explaining!
 
