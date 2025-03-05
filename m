@@ -1,104 +1,133 @@
-Return-Path: <linux-kernel+bounces-546582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3351A4FC6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:42:20 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD81A4FC75
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:44:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D484216E27C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:42:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89AA61892E79
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:42:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22F120AF62;
-	Wed,  5 Mar 2025 10:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AC0320A5F1;
+	Wed,  5 Mar 2025 10:42:22 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2004A20A5E1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:42:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C35320A5EE;
+	Wed,  5 Mar 2025 10:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741171332; cv=none; b=CYcDqa5K3hJxvMVIMwKgKA20AqheGRwouRbG5X7aGcATsNGOxBguzq6wDRjGiLWvUcmYDcEGYsBDPOLYR9CQJqhLfOvAH62oilX9TKUdFCGKaEjo0qCETktwBcRsI9D/d+q0TYRvFlbkX66s1d6PrhKQDFChpLJ958xicX+5PNQ=
+	t=1741171342; cv=none; b=Ao6RPhjxbroPhdFM5WzqEWT79bFJpBRDZwpH2KV8ryYhEZtLy7tMag662W5D2SBM+AHvcgoB3MJKXtqG2KCYv4kSgWzhe6+A0VtbnHziplmxRDRiFlKpkDhJzKAszcEFk6dD6X+xVNPGQXoMxhDFoyukkvqwXwbObg9XeB1R5Ro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741171332; c=relaxed/simple;
-	bh=LC09iL9EIJHc7UAL3QpRqVjnE3GH6pE52HwgU0aO+HI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q8GksbDK2Gz0Mtczm0XS+DrPDPWBs1FdrHBCEB2pWjxQrjNS9G0SQKioL10ZEMVK15KbsTLK0Mi5GmuyS7vQxacsIiHBeDWY/YsOG2neWTuFY21DwKvFEUgBjnbuDX0+F3DDklDeNZWwu4miHsqAagAOAG7ioP4wiH3GheZFeK4=
+	s=arc-20240116; t=1741171342; c=relaxed/simple;
+	bh=85MBWr98xcaQYJQdEGDq8tJQlKr8b+CeRh2/oRwLikk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ESW7H/XpRKfA36lt1rea3WF6SWphRb8pqMy89H/MXeNm6rGYE3jZKkW7dBxxIxuj2+0neq29VAv6rmC14c3BavPTQE76IcGuakqRb96pmvss/56V3JW2W6RDYdqZ8Seh8/ArQ9TYzKiprO6NGo4C7PVMjsdoENa9EoOevgBKiG8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C1E57FEC;
-	Wed,  5 Mar 2025 02:42:23 -0800 (PST)
-Received: from [10.57.67.16] (unknown [10.57.67.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 215303F673;
-	Wed,  5 Mar 2025 02:42:07 -0800 (PST)
-Message-ID: <a5ba7aed-a7ab-4471-8c46-42baf056b8c0@arm.com>
-Date: Wed, 5 Mar 2025 10:42:05 +0000
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 138CDFEC;
+	Wed,  5 Mar 2025 02:42:33 -0800 (PST)
+Received: from bogus (unknown [10.57.37.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E4C3F3F673;
+	Wed,  5 Mar 2025 02:42:18 -0800 (PST)
+Date: Wed, 5 Mar 2025 10:42:15 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: "lihuisong (C)" <lihuisong@huawei.com>
+Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jassi Brar <jassisinghbrar@gmail.com>,
+	Adam Young <admiyo@os.amperecomputing.com>
+Subject: Re: [PATCH 06/14] mailbox: pcc: Refactor error handling in irq
+ handler into separate function
+Message-ID: <20250305104215.zjvpoiniqxhld5u4@bogus>
+References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
+ <20250303-pcc_fixes_updates-v1-6-3b44f3d134b1@arm.com>
+ <91106bf6-9777-bde6-55f5-8fb7e7afd8ba@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/panthor: Update CS_STATUS_ defines to correct
- values
-To: Ashley Smith <ashley.smith@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Heiko Stuebner <heiko@sntech.de>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250303180444.3768993-1-ashley.smith@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250303180444.3768993-1-ashley.smith@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <91106bf6-9777-bde6-55f5-8fb7e7afd8ba@huawei.com>
 
-On 03/03/2025 18:04, Ashley Smith wrote:
-> Values for SC_STATUS_BLOCKED_REASON_ are documented in the G610 "Odin"
-> GPU specification (CS_STATUS_BLOCKED_REASON register).
+On Wed, Mar 05, 2025 at 02:09:03PM +0800, lihuisong (C) wrote:
 > 
-> This change updates the defines to the correct values.
+> 在 2025/3/3 18:51, Sudeep Holla 写道:
+> > The existing error handling logic in pcc_mbox_irq() is intermixed with the
+> > main flow of the function. The command complete check and the complete
+> > complete update/acknowledgment are nicely factored into separate functions.
+> > 
+> > Moves error detection and clearing logic into a separate function called:
+> > pcc_mbox_error_check_and_clear() by extracting error-handling logic from
+> > pcc_mbox_irq().
+> > 
+> > This ensures error checking and clearing are handled separately and it
+> > improves maintainability by keeping the IRQ handler focused on processing
+> > events.
+> > 
+> > Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+> > ---
+> >   drivers/mailbox/pcc.c | 30 ++++++++++++++++++++----------
+> >   1 file changed, 20 insertions(+), 10 deletions(-)
+> > 
+> > diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> > index a0fdafc3ef71d20c73ff58ef065201e6dc911396..e693675ce1fbd8d01d0640b3053a5c1882bdbce7 100644
+> > --- a/drivers/mailbox/pcc.c
+> > +++ b/drivers/mailbox/pcc.c
+> > @@ -269,6 +269,25 @@ static bool pcc_mbox_cmd_complete_check(struct pcc_chan_info *pchan)
+> >   	return !!val;
+> >   }
+> > +static int pcc_mbox_error_check_and_clear(struct pcc_chan_info *pchan)
+> > +{
+> > +	u64 val;
+> > +	int ret;
+> > +
+> > +	ret = pcc_chan_reg_read(&pchan->error, &val);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	val &= pchan->error.status_mask;
+> > +	if (val) {
+> > +		val &= ~pchan->error.status_mask;
+> > +		pcc_chan_reg_write(&pchan->error, val);
+> > +		return -EIO;
+> > +	}
+> > +
+> > +	return 0;
+> > +}
+> > +
+> >   static void check_and_ack(struct pcc_chan_info *pchan, struct mbox_chan *chan)
+> >   {
+> >   	struct acpi_pcct_ext_pcc_shared_memory pcc_hdr;
+> > @@ -309,8 +328,6 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+> >   {
+> >   	struct pcc_chan_info *pchan;
+> >   	struct mbox_chan *chan = p;
+> > -	u64 val;
+> > -	int ret;
+> >   	pchan = chan->con_priv;
+> > @@ -324,15 +341,8 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+> >   	if (!pcc_mbox_cmd_complete_check(pchan))
+> >   		return IRQ_NONE;
+> > -	ret = pcc_chan_reg_read(&pchan->error, &val);
+> > -	if (ret)
+> > +	if (!pcc_mbox_error_check_and_clear(pchan))
+> >   		return IRQ_NONE;
 > 
-> Fixes: 2718d91816ee ("drm/panthor: Add the FW logical block")
-> Signed-off-by: Ashley Smith <ashley.smith@collabora.com>
-
-Reviewed-by: Steven Price <steven.price@arm.com>
-
-I'll push this to drm-misc-next.
-
-Steve
-
-> ---
-> Changes in v2:
->   - Rename _RES to _RESOURCE
-> ---
->  drivers/gpu/drm/panthor/panthor_fw.h | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
+> Here should be like below code, right? 0 on success.
 > 
-> diff --git a/drivers/gpu/drm/panthor/panthor_fw.h b/drivers/gpu/drm/panthor/panthor_fw.h
-> index 22448abde992..6598d96c6d2a 100644
-> --- a/drivers/gpu/drm/panthor/panthor_fw.h
-> +++ b/drivers/gpu/drm/panthor/panthor_fw.h
-> @@ -102,9 +102,9 @@ struct panthor_fw_cs_output_iface {
->  #define CS_STATUS_BLOCKED_REASON_SB_WAIT	1
->  #define CS_STATUS_BLOCKED_REASON_PROGRESS_WAIT	2
->  #define CS_STATUS_BLOCKED_REASON_SYNC_WAIT	3
-> -#define CS_STATUS_BLOCKED_REASON_DEFERRED	5
-> -#define CS_STATUS_BLOCKED_REASON_RES		6
-> -#define CS_STATUS_BLOCKED_REASON_FLUSH		7
-> +#define CS_STATUS_BLOCKED_REASON_DEFERRED	4
-> +#define CS_STATUS_BLOCKED_REASON_RESOURCE	5
-> +#define CS_STATUS_BLOCKED_REASON_FLUSH		6
->  #define CS_STATUS_BLOCKED_REASON_MASK		GENMASK(3, 0)
->  	u32 status_blocked_reason;
->  	u32 status_wait_sync_value_hi;
-> 
-> base-commit: 16e57a72780931c3c70dbc928aeee4a0518075de
+> if (pcc_mbox_error_check_and_clear(pchan))
+>  		return IRQ_NONE;
 
+Spot on, nice catch. Copied it from pcc_mbox_cmd_complete_check(), will fix
+it.
+
+-- 
+Regards,
+Sudeep
 
