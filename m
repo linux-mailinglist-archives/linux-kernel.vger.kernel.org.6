@@ -1,222 +1,156 @@
-Return-Path: <linux-kernel+bounces-546130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 479B1A4F6B7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:54:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97C86A4F70D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:23:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 90DE516F30F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:54:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92F80188D6B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:23:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DDD19C55E;
-	Wed,  5 Mar 2025 05:54:28 +0000 (UTC)
-Received: from mail-il1-f207.google.com (mail-il1-f207.google.com [209.85.166.207])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5C61E9917;
+	Wed,  5 Mar 2025 06:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="W0PBd+yi"
+Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CD24191F75
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 05:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.207
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 123CB1DE8A5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741154068; cv=none; b=eo8tEZi811Bel+SE96ljajFyZ6N6HwGa/kaSTIAPYsUb+rkGsWzsrtQMjWfyVEV0pqIYSGtPEKqFN2LAa9TsGfALDZSiZTGnNzIt34xx9mXgmbaaIQxi+vA2ypBPLojB8/4tyVLpAM+ewmsJZBXAMtccAqwa5NjnW4rSNw3l2+4=
+	t=1741155770; cv=none; b=Otf8WVwdsGEhaCsQeo+76fW5D3MzWAZu2GdAspPLdIJ+B42WkeaYfIfQHBZKky37K15o8Uhwd5ub8W5GMcaR+DN2U5uqNiMDlDWguH6AshNPU0lrxJjYdEPtaEyKq7qfSBtC4SMFmHEUxfWjoueljVQl8820cbKtkE02uMLEL7A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741154068; c=relaxed/simple;
-	bh=LaAntkE8kADInbFez1tYr4UgDOC9fiPwbJFcVkbTmVk=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=cYRkbcEeDCCeLIoSkDjCOulaDDLx5Qxp7rYCfIkQGYH+EHKFSkRXMAvMVIVS+xfx7k+A4qY2HOJOQgiQueSf7xTRNPy9ogDlZPw9wTtWOO4/amoXxZkZcoa027JsYpCB/j0l1iynzA17gZFA5f1z0XbiFAKaz9XJ6oRhy5DDdBc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.207
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f207.google.com with SMTP id e9e14a558f8ab-3d3dd7f01cbso122073365ab.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 21:54:26 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741154065; x=1741758865;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=JTa6ANGjulTOYXkBQuLvCQ5G8ZTr11Jh5hb4hDDIvvw=;
-        b=pd2jM6Xiup8GB1VfFtk5DCV+VI1+9+0OanQjfVFnMcvHPEm9U5U9It/SKbj1W62L5W
-         23sNNfQKJluYgu2PLafHo4nGr9GcYt+lQnGc2QJVhdg6PHHfy2NEJ+YouUGBsIxdSCP0
-         AOpGJoOETWgLBbBO6RrtBKtBtEznY8HuW7nrsZCEo0ZaFxx3/d2AWlGrOmPds3lV9wU6
-         StCCYA0170ZKGytPOpeXuHBJttvRb42JAf/YOKlwdo2opkoqtdRnTGbt0iWWgcdyyU3v
-         nGXdkuDcYqyH0AC97FZIfj7NawOXblF/6oofj4ipkB1+LzS6hSiIpYTb3syZS4C1S4Fs
-         HyEA==
-X-Forwarded-Encrypted: i=1; AJvYcCWpf+lQ0giA6YBlTSFcILyJudKLjyz1Srlg0tgTyhq0Ga5AIZthoWKQ/E0ueiTKxcoOMsT+U0rF0C8MLLg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWRwr4vyF8xOY9Oh2PBqkiRyp6VIzvE24QKR+ACgQzbEktJ1dA
-	E1yKIATaWRPUXJBzCTjB06WENTBfEeTrx4NKT1qh8SqQ8KfGtHAZn6EteO/QZUfwzWRhbEBPc6n
-	M3UgKXmDoAr55fRRMBs/8klVLue1PwKD3rkVzjZj6N0wygTu997oxnG0=
-X-Google-Smtp-Source: AGHT+IHsTwIzki3hN8M1gz3aj4zL7mqjiNOOW2ftwWjjXxaIYdDjaMmDaEeJdvdAudBjJ9/Lwp7LcIF3wZlkzjCobtZMqm6aOlJi
+	s=arc-20240116; t=1741155770; c=relaxed/simple;
+	bh=Hp/3hLQszbQpC4Dkavwf3pq6VtFVA0LTPkBh/vhoZIw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:References; b=R9N8ZiJl/k6Bc+3on4PlkNrFZxF/me8FgAY7nAuYavYJwN9zvZfVLaRnizILUnXjo35QdhGaySvl5Pk1h8sI2RCJ+JxJhkoLA5i0UzXMMfl0+ieVYIA/C2bRKLO87s/r9FFrYBpuV/sVTf5MxRU0BCxwre8ErByLc7d7Zv+yY9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=W0PBd+yi; arc=none smtp.client-ip=203.254.224.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p1.samsung.com (unknown [182.195.41.39])
+	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20250305062246epoutp020f51c451d1b4b1bd4663243e8849b24c~p0-HFEoLL0208202082epoutp02z
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:22:46 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20250305062246epoutp020f51c451d1b4b1bd4663243e8849b24c~p0-HFEoLL0208202082epoutp02z
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741155766;
+	bh=skXfz601zwxGnlS1FM693PJw5hGibXY8CTNZiA2Lo4I=;
+	h=From:To:Cc:Subject:Date:References:From;
+	b=W0PBd+yi6The5YrQkeDh0UCvBO0stflph3otVBGx4s98U0wiT6Eq62pXemkHABil9
+	 Hb1KguJQCCUOj6jnLSzdWl+MLDNx+RE+vqKQZH0FGqLU/7ODqc9etxf3wqJ5dngZVM
+	 aYHy9pQIACdPhhFZ5S9ijR7fRf5Q8dN4iKd7vSds=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTP id
+	20250305062245epcas5p23067eadd0e690fbee68023f2774468ac~p0-GUv7ny1813318133epcas5p2X;
+	Wed,  5 Mar 2025 06:22:45 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.181]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4Z72Xg2Z94z4x9Q0; Wed,  5 Mar
+	2025 06:22:43 +0000 (GMT)
+Received: from epcas5p2.samsung.com ( [182.195.41.40]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	32.02.19933.3BDE7C76; Wed,  5 Mar 2025 15:22:43 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250305060259epcas5p20c02f4c4b4ff84b0f790b4ea446056e6~p0t1X1d2e1988819888epcas5p2W;
+	Wed,  5 Mar 2025 06:02:59 +0000 (GMT)
+Received: from epsmgmcp1.samsung.com (unknown [182.195.42.82]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250305060259epsmtrp11bd6866051780894bf24883dc4b2621b~p0t1W9LDS0144901449epsmtrp1K;
+	Wed,  5 Mar 2025 06:02:59 +0000 (GMT)
+X-AuditID: b6c32a4a-b87c770000004ddd-7f-67c7edb3dabb
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmcp1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	5E.5E.33707.219E7C76; Wed,  5 Mar 2025 15:02:58 +0900 (KST)
+Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
+	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250305060256epsmtip2ebb003603dcf4055c8070785ac5dc092~p0tzO5xUE2406324063epsmtip2J;
+	Wed,  5 Mar 2025 06:02:56 +0000 (GMT)
+From: Inbaraj E <inbaraj.e@samsung.com>
+To: linux-media@vger.kernel.org, imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Cc: pankaj.dubey@samsung.com, rmfrfs@gmail.com,
+	laurent.pinchart@ideasonboard.com, martink@posteo.de, kernel@puri.sm,
+	mchehab@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com, gost.dev@samsung.com, Inbaraj E
+	<inbaraj.e@samsung.com>
+Subject: [PATCH] media: imx-mipi-csis: Fix v4l2 mbus frame descriptor type
+Date: Wed,  5 Mar 2025 11:26:55 +0530
+Message-Id: <20250305055655.6622-1-inbaraj.e@samsung.com>
+X-Mailer: git-send-email 2.17.1
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFprCJsWRmVeSWpSXmKPExsWy7bCmhu7mt8fTDZ5/5rV4eNXf4uaBnUwW
+	M++1slnc/TOJzWLV1J0sFvPbZrBYdE5cwm6x6fE1VovLu+awWfRs2MpqcW3FRFaLZZv+MFks
+	2vqF3aJxwXsWi7/bN7FYvNgi7iDgsXPWXXaP2R0zWT02repk89i8pN7jxeaZjB79fw08fh0W
+	9Xi04xajR9+WVYwenzfJBXBFZdtkpCampBYppOYl56dk5qXbKnkHxzvHm5oZGOoaWlqYKynk
+	Jeam2iq5+AToumXmAP2hpFCWmFMKFApILC5W0rezKcovLUlVyMgvLrFVSi1IySkwKdArTswt
+	Ls1L18tLLbEyNDAwMgUqTMjOWL/3AlvBRI6KLZt+sjUwNrF3MXJySAiYSPTPWsHYxcjFISSw
+	m1Hi/JWXzBDOJ0aJv382M8I511YeZ4RpWf/oCTOILSSwk1HiyW89iKIvjBLPV31iAkmwCahL
+	bOj+ztbFyMEhIlAl0btSBaSGWWAhk8TrawfYQGqEBbwk+g72gt3BIqAqsXTuUbBeXgFLib4l
+	S1kglslLrN5wAOwkCYFODom767awQSRcJD7feM0KYQtLvDq+BeohKYmX/W1Qto/E/jm/oK7O
+	kDi2fTlUvb3EgStzWECOYxbQlFi/Sx8iLCsx9dQ6sBuYBfgken8/YYKI80rsmAdjK0vMPHIf
+	6gRJiZ2Xd0Ld6SFxf/cGJkigxEqs+/eZeQKj7CyEDQsYGVcxSqYWFOempxabFhjlpZbDIyo5
+	P3cTIzh5anntYHz44IPeIUYmDsZDjBIczEoivK9PHU8X4k1JrKxKLcqPLyrNSS0+xGgKDLOJ
+	zFKiyfnA9J1XEm9oYmlgYmZmZmJpbGaoJM7bvLMlXUggPbEkNTs1tSC1CKaPiYNTqoFp/yeX
+	fW/95x6umugfIr46pDaQgSfQc7mK8bKmrgkWfKcDUhmPbDYykCq/bf35yOpkux/3rzbuP2y4
+	4mlMzbxfWveTbBhzt9W9Xlky/+7VJWwVbtxPuAv8LO0cFgeeaGc5Z/ei4diF2jkmDD+S5s0p
+	qji1j+eO1epDhW2MCZOVV+mZrDDLMFt/Oy/T/ZwYd7C0Wo9FkralP7cu5+6Nzrf3i+gmzin1
+	frfk4zOe5Que71S7z3YjykP7vUBP1KQ7+fuzVx0y2+pw4EqFU2ueVFHYpufPV7Y9LvCu7ZBt
+	qnOPlvpX9LzSNZNpLkv+L59ZK718+F8YxwYdt5v3b61E+slpU/w7+45f/jnvcPY9sU9KLMUZ
+	iYZazEXFiQCh3jAxJwQAAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrLLMWRmVeSWpSXmKPExsWy7bCSvK7Qy+PpBhd+W1o8vOpvcfPATiaL
+	mfda2Szu/pnEZrFq6k4Wi/ltM1gsOicuYbfY9Pgaq8XlXXPYLHo2bGW1uLZiIqvFsk1/mCwW
+	bf3CbtG44D2Lxd/tm1gsXmwRdxDw2DnrLrvH7I6ZrB6bVnWyeWxeUu/xYvNMRo/+vwYevw6L
+	ejzacYvRo2/LKkaPz5vkAriiuGxSUnMyy1KL9O0SuDLW773AVjCRo2LLpp9sDYxN7F2MnBwS
+	AiYS6x89Ye5i5OIQEtjOKNG5eAcTREJSYvbv6VBFwhIr/z1nhyj6xChxafV9RpAEm4C6xIbu
+	72wgtohAncT8B3NZQIqYBdYzSXx9DzKWk0NYwEui72Av2CQWAVWJpXOPgm3gFbCU6FuylAVi
+	g7zE6g0HmCcw8ixgZFjFKJpaUJybnptcYKhXnJhbXJqXrpecn7uJERzCWkE7GJet/6t3iJGJ
+	g/EQowQHs5II7+tTx9OFeFMSK6tSi/Lji0pzUosPMUpzsCiJ8yrndKYICaQnlqRmp6YWpBbB
+	ZJk4OKUamOb9rnWOEN4a8zeXsW5n+o31ilpGq33b7367nKhgk9O6iP/zvZueN/Z/rGv7eHJd
+	fUxGlBdvT1HH1qbXhfca779alqk96dVJ19p/G6Otn+e0t8pMdRZb5Lv6Wlc8p9JvnuVhn4w/
+	sc9WXPXk+a2++Q6G++YdqXa49sZCv9yV1z+s+LF6d/5CrdVqvE+MUy9EypzROOL670hSAGva
+	3dw9BT1P/wjrzNo1N1EgPzs1e8u8Yt9tTN0n9XULC9PO5OdM26HQP8XxcNHr7Q9uWc9xZlar
+	rLnwZX7cwm+VrN2sghNjNmZwGS21OrdBN+dsZyfX5/05a1Yoz816pe+j4Fd1920Vb3pj8fVT
+	dXrxf/NalViKMxINtZiLihMBPJ9jr9ACAAA=
+X-CMS-MailID: 20250305060259epcas5p20c02f4c4b4ff84b0f790b4ea446056e6
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250305060259epcas5p20c02f4c4b4ff84b0f790b4ea446056e6
+References: <CGME20250305060259epcas5p20c02f4c4b4ff84b0f790b4ea446056e6@epcas5p2.samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2196:b0:3d3:f6ee:cc4c with SMTP id
- e9e14a558f8ab-3d42b75000cmr24850835ab.0.1741154065560; Tue, 04 Mar 2025
- 21:54:25 -0800 (PST)
-Date: Tue, 04 Mar 2025 21:54:25 -0800
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67c7e711.050a0220.15b4b9.001f.GAE@google.com>
-Subject: [syzbot] [bpf?] [bcachefs?] BUG: unable to handle kernel paging
- request in handle_softirqs
-From: syzbot <syzbot+c32100a0bb8cae0c3dde@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kent.overstreet@linux.dev, 
-	kpsingh@kernel.org, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+For MIPI CSI2 v4l2 mbus frame descriptor type should be set to
+V4L2_MBUS_FRAME_DESC_TYPE_CSI2. Now frame descriptor type is set to
+V4L2_MBUS_FRAME_DESC_TYPE_PARALLEL. So changing the frame descriptor
+type to V4L2_MBUS_FRAME_DESC_TYPE_CSI2.
 
-syzbot found the following issue on:
-
-HEAD commit:    276f98efb64a Merge tag 'block-6.14-20250228' of git://git...
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=16614864580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=5b4c41bdaeea1964
-dashboard link: https://syzkaller.appspot.com/bug?extid=c32100a0bb8cae0c3dde
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11614864580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-276f98ef.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/5a036150d62e/vmlinux-276f98ef.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/f0b6c8e5972f/bzImage-276f98ef.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/65413c368879/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c32100a0bb8cae0c3dde@syzkaller.appspotmail.com
-
-kernel tried to execute NX-protected page - exploit attempt? (uid: 0)
-BUG: unable to handle page fault for address: ffff8880316c0000
-#PF: supervisor instruction fetch in kernel mode
-#PF: error_code(0x0011) - permissions violation
-PGD 1ac01067 P4D 1ac01067 PUD 1ac02067 PMD 1c3d0063 PTE 80000000316c0163
-Oops: Oops: 0011 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 7082 Comm: syz.2.568 Not tainted 6.14.0-rc4-syzkaller-00212-g276f98efb64a #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:0xffff8880316c0000
-Code: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 <00> 20 6e 31 80 88 ff ff 00 40 eb 30 80 88 ff ff 08 00 00 00 0c 00
-RSP: 0018:ffffc90000007bd8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: 1ffff1100840de14 RCX: ffff888000a5af28
-RDX: dffffc0000000000 RSI: ffffffff8c2ab700 RDI: ffff88804206f098
-RBP: ffffc90000007e10 R08: ffffffff9454985f R09: 1ffffffff28a930b
-R10: dffffc0000000000 R11: ffff8880316c0000 R12: ffffffff81a8d7d7
-R13: ffff88804206f0a0 R14: ffff8880316c0000 R15: ffff88804206f098
-FS:  00007ff346e2f6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff8880316c0000 CR3: 0000000042300000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <IRQ>
- handle_softirqs+0x2d4/0x9b0 kernel/softirq.c:561
- __do_softirq kernel/softirq.c:595 [inline]
- invoke_softirq kernel/softirq.c:435 [inline]
- __irq_exit_rcu+0xf7/0x220 kernel/softirq.c:662
- irq_exit_rcu+0x9/0x30 kernel/softirq.c:678
- instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1049 [inline]
- sysvec_apic_timer_interrupt+0xa6/0xc0 arch/x86/kernel/apic/apic.c:1049
- </IRQ>
- <TASK>
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:lock_acquire+0x264/0x550 kernel/locking/lockdep.c:5855
-Code: 2b 00 74 08 4c 89 f7 e8 3a 45 8c 00 f6 44 24 61 02 0f 85 85 01 00 00 41 f7 c7 00 02 00 00 74 01 fb 48 c7 44 24 40 0e 36 e0 45 <4b> c7 44 25 00 00 00 00 00 43 c7 44 25 09 00 00 00 00 43 c7 44 25
-RSP: 0018:ffffc9000260f040 EFLAGS: 00000206
-RAX: 0000000000000001 RBX: 1ffff920004c1e14 RCX: ffff888000a5af28
-RDX: dffffc0000000000 RSI: ffffffff8c2ab700 RDI: ffffffff8c80f060
-RBP: ffffc9000260f190 R08: ffffffff94549847 R09: 1ffffffff28a9308
-R10: dffffc0000000000 R11: fffffbfff28a9309 R12: 1ffff920004c1e10
-R13: dffffc0000000000 R14: ffffc9000260f0a0 R15: 0000000000000246
- rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
- rcu_read_lock include/linux/rcupdate.h:849 [inline]
- is_bpf_text_address+0x46/0x2a0 kernel/bpf/core.c:772
- kernel_text_address+0xa7/0xe0 kernel/extable.c:125
- __kernel_text_address+0xd/0x40 kernel/extable.c:79
- unwind_get_return_address+0x4d/0x90 arch/x86/kernel/unwind_orc.c:369
- arch_stack_walk+0xfd/0x150 arch/x86/kernel/stacktrace.c:26
- stack_trace_save+0x118/0x1d0 kernel/stacktrace.c:122
- save_stack+0xfb/0x1f0 mm/page_owner.c:156
- __reset_page_owner+0x76/0x430 mm/page_owner.c:297
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1127 [inline]
- free_unref_folios+0xe40/0x18b0 mm/page_alloc.c:2707
- folios_put_refs+0x76c/0x860 mm/swap.c:994
- folio_batch_release include/linux/pagevec.h:101 [inline]
- shmem_undo_range+0x593/0x1820 mm/shmem.c:1112
- shmem_truncate_range mm/shmem.c:1224 [inline]
- shmem_evict_inode+0x29b/0xa80 mm/shmem.c:1352
- evict+0x4e8/0x9a0 fs/inode.c:796
- __dentry_kill+0x20d/0x630 fs/dcache.c:643
- dput+0x19f/0x2b0 fs/dcache.c:885
- __fput+0x60b/0x9f0 fs/file_table.c:472
- __do_sys_close fs/open.c:1580 [inline]
- __se_sys_close fs/open.c:1565 [inline]
- __x64_sys_close+0x7f/0x110 fs/open.c:1565
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7ff345f8bdca
-Code: 48 3d 00 f0 ff ff 77 48 c3 0f 1f 80 00 00 00 00 48 83 ec 18 89 7c 24 0c e8 43 91 02 00 8b 7c 24 0c 89 c2 b8 03 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 36 89 d7 89 44 24 0c e8 a3 91 02 00 8b 44 24
-RSP: 002b:00007ff346e2ee00 EFLAGS: 00000293 ORIG_RAX: 0000000000000003
-RAX: ffffffffffffffda RBX: 00000000ffffffff RCX: 00007ff345f8bdca
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000003
-RBP: 0000000000000002 R08: 0000000000000000 R09: 000000000000590c
-R10: 0000000000000000 R11: 0000000000000293 R12: 0000000000000003
-R13: 00007ff346e2eef0 R14: 00007ff346e2eeb0 R15: 00007ff33cc00000
- </TASK>
-Modules linked in:
-CR2: ffff8880316c0000
----[ end trace 0000000000000000 ]---
-RIP: 0010:0xffff8880316c0000
-Code: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 <00> 20 6e 31 80 88 ff ff 00 40 eb 30 80 88 ff ff 08 00 00 00 0c 00
-RSP: 0018:ffffc90000007bd8 EFLAGS: 00010246
-RAX: dffffc0000000000 RBX: 1ffff1100840de14 RCX: ffff888000a5af28
-RDX: dffffc0000000000 RSI: ffffffff8c2ab700 RDI: ffff88804206f098
-RBP: ffffc90000007e10 R08: ffffffff9454985f R09: 1ffffffff28a930b
-R10: dffffc0000000000 R11: ffff8880316c0000 R12: ffffffff81a8d7d7
-R13: ffff88804206f0a0 R14: ffff8880316c0000 R15: ffff88804206f098
-FS:  00007ff346e2f6c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: ffff8880316c0000 CR3: 0000000042300000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-  28:	00 00                	add    %al,(%rax)
-* 2a:	00 20                	add    %ah,(%rax) <-- trapping instruction
-  2c:	6e                   	outsb  %ds:(%rsi),(%dx)
-  2d:	31 80 88 ff ff 00    	xor    %eax,0xffff88(%rax)
-  33:	40 eb 30             	rex jmp 0x66
-  36:	80 88 ff ff 08 00 00 	orb    $0x0,0x8ffff(%rax)
-  3d:	00 0c 00             	add    %cl,(%rax,%rax,1)
-
-
+Fixes: d200de90de2a0 ("media: imx: imx-mipi-csis: Implement the .get_frame_desc() operation")
+Signed-off-by: Inbaraj E <inbaraj.e@samsung.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/media/platform/nxp/imx-mipi-csis.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/media/platform/nxp/imx-mipi-csis.c b/drivers/media/platform/nxp/imx-mipi-csis.c
+index 29523bb84d95..bb6550bed230 100644
+--- a/drivers/media/platform/nxp/imx-mipi-csis.c
++++ b/drivers/media/platform/nxp/imx-mipi-csis.c
+@@ -1137,7 +1137,7 @@ static int mipi_csis_get_frame_desc(struct v4l2_subdev *sd, unsigned int pad,
+ 	if (!csis_fmt)
+ 		return -EPIPE;
+ 
+-	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_PARALLEL;
++	fd->type = V4L2_MBUS_FRAME_DESC_TYPE_CSI2;
+ 	fd->num_entries = 1;
+ 
+ 	entry->flags = 0;
+-- 
+2.17.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
