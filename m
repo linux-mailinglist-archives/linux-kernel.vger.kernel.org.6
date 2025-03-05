@@ -1,282 +1,378 @@
-Return-Path: <linux-kernel+bounces-545886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E48A4F323
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:59:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2C1DA4F321
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:58:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A13977A66F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:56:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D5ED67A0817
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF4FD1465AD;
-	Wed,  5 Mar 2025 00:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDA2C13C3F6;
+	Wed,  5 Mar 2025 00:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ll00dzQY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CKYN5io0"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C82A14D28C;
-	Wed,  5 Mar 2025 00:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741136184; cv=fail; b=T2lQEWLpagnGe3/d0062B+KKk4/aMv4dsR/thzb4ajVMtZjSn+Ifw7MFOkkEycAJiB0pLdGiuzMaCwH2c9Xc1hyp4aFj2NX9WRL1iHEJVxnQ0ntQgduz3uKpp/oL1eK21Rqj+KOmTwNfeljkjqIPu68hG6KAWLC1bc5mztz6usw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741136184; c=relaxed/simple;
-	bh=J/91DmrTJCnflzDLeJx5vFQW0Y+1XBqtrMdEsIQnOMw=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=DLJpwWXa7b7LuBRe8Z/G5wZ7BmzPNRLb6O4jx08EMOKI4YtBO7+S49j+tw5kpBlb7Kahyrrv9N2eau/SGjz8YoK3t3ZetgA23KbGDbiJ31cMhXWaQgVNz/fgAmQwi0ExcJax2AnPyBz5vGhh4isgTG1C+TfVngvBN5A9H3Z6vOQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ll00dzQY; arc=fail smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741136183; x=1772672183;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=J/91DmrTJCnflzDLeJx5vFQW0Y+1XBqtrMdEsIQnOMw=;
-  b=Ll00dzQYZq6Pg3ifKPVTJe2+gJ4Y+HYX5T8KVwNzr7FAFNKaBxDRROPa
-   WYsj+0GDKsu5qYauOivaFIz8JFcnJrDF0tBerzbUENErQy0aoFL9yLmVA
-   UoXd5FRJUI6Yca42Nc6nZ9Pi871DxFp5FX3L9R3phDifK/g5OTCpFe7YS
-   Ak/q/lWspNOHeu5CykE4y4Qcri86bW3Bb87NVCWO5zJH1DwyUfDPSpdjf
-   pHKijaHtZ+TGzkrVCicrgv42EVymcIq6qqPpzJ82OB3J4qgzhERDpp8Xd
-   qF5yq2/S4PvFRYBIcngiBG1zXk0pvzBa9UUaoo5t9QiDvbfYNxY/Y690N
-   w==;
-X-CSE-ConnectionGUID: SvfRv0uSTwmiv3hLmGyD5w==
-X-CSE-MsgGUID: BzeFtCEbTkeIyFsQbfXGSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53070895"
-X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
-   d="scan'208";a="53070895"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 16:56:22 -0800
-X-CSE-ConnectionGUID: 5pNhLcgfSuOGAzippDTLJA==
-X-CSE-MsgGUID: 8RYQPhVVQPW4NLN8WW6uAQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
-   d="scan'208";a="123468802"
-Received: from orsmsx603.amr.corp.intel.com ([10.22.229.16])
-  by orviesa003.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 04 Mar 2025 16:56:22 -0800
-Received: from orsmsx603.amr.corp.intel.com (10.22.229.16) by
- ORSMSX603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44; Tue, 4 Mar 2025 16:56:20 -0800
-Received: from orsedg603.ED.cps.intel.com (10.7.248.4) by
- orsmsx603.amr.corp.intel.com (10.22.229.16) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.44 via Frontend Transport; Tue, 4 Mar 2025 16:56:20 -0800
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.173)
- by edgegateway.intel.com (134.134.137.100) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.44; Tue, 4 Mar 2025 16:56:18 -0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vbbtaqdsp7QqsDlkHQzKgEWz4zWsPzyxGlTLWiQKFUcx/3ofty3D0tz1RB5wfWF4HpsqtBzLl/7b1JtpyrVTczQwRxzgivAmDDE4cgQOYvhprfs6puUpHuMJ3t/Fd8ha1P42wO2dL1F8VGbcqN9i/xP7aIl1Z6jnom5I8L8Q45yykZX0HO8iocS9BoXjs5RFAAwNQxPS6XfJWJv6O0e3fVFReE4wdn7SqS74pQCth2MJT0lW8M1+u2AQ/5GfnrGduGzhwnKErcCE4zbv9EZTQdrRJgXmO6hDlDTGVi1mLNA2TDVkC96Oy3PAbyozdFoVizhoLKTRaVaWP1OM8MFn0A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=/gljKPQBGVrb2U5G+WQWOQy5KH27U4htGj1ycaAWXAE=;
- b=BgjbDcX2zzhdf1tGM5k+WR1L7snL82jEOVJ+L7zL6nsFnKMCdB/YIxP5hMlihDK+THpK8mVSXpWxv9SWlst/CgDgZ/NYmJTc14AMTHGL8YMWePY/7PBr1jTw8jtgE9/REgDeV20hM3wtDqHDxui/beRbRHG9hcQCgyego8HyX0+sJXMkpm3Zksk1eyMi1tCMiCifGUSiWg8aU6WjzCeLhh3AahMZA+YuiqFo00VoUc2N5jkr2tHN+hMwzEOd21N5JcHJxQ49aaZ1I4sEZRQqtIdC5T75vqgWPsIzM1Pjep8yJN2d+fv6dp5ybQ0zTT4OVMppx92fGLV6GE7n8xyMFw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
- by LV3PR11MB8601.namprd11.prod.outlook.com (2603:10b6:408:1b8::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Wed, 5 Mar
- 2025 00:55:58 +0000
-Received: from SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
- ([fe80::cf7d:9363:38f4:8c57%5]) with mapi id 15.20.8511.015; Wed, 5 Mar 2025
- 00:55:58 +0000
-Date: Tue, 4 Mar 2025 18:56:04 -0600
-From: Ira Weiny <ira.weiny@intel.com>
-To: Ira Weiny <ira.weiny@intel.com>, Smita Koralahalli
-	<Smita.KoralahalliChannabasappa@amd.com>, <linux-efi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-cxl@vger.kernel.org>, "Alejandro
- Lucero Palau" <alucerop@amd.com>
-CC: Ard Biesheuvel <ardb@kernel.org>, Alison Schofield
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>, "Ira
- Weiny" <ira.weiny@intel.com>, Dan Williams <dan.j.williams@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>, Yazen Ghannam
-	<yazen.ghannam@amd.com>, Terry Bowman <terry.bowman@amd.com>, "Smita
- Koralahalli" <Smita.KoralahalliChannabasappa@amd.com>
-Subject: Re: [PATCH v7 1/2] acpi/ghes, cxl/pci: Process CXL CPER Protocol
- Errors
-Message-ID: <67c7a124e2790_364d129453@iweiny-mobl.notmuch>
-References: <20250226221157.149406-1-Smita.KoralahalliChannabasappa@amd.com>
- <20250226221157.149406-2-Smita.KoralahalliChannabasappa@amd.com>
- <67c73bff37ef7_f1e0294a@iweiny-mobl.notmuch>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <67c73bff37ef7_f1e0294a@iweiny-mobl.notmuch>
-X-ClientProxiedBy: MW4PR03CA0009.namprd03.prod.outlook.com
- (2603:10b6:303:8f::14) To SA1PR11MB6733.namprd11.prod.outlook.com
- (2603:10b6:806:25c::17)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEF814012;
+	Wed,  5 Mar 2025 00:56:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741136164; cv=none; b=nlDWCcoN43/A2YMbVL/IiL5aTFT0G49tvHOXyOYWn+ervnmCXJbQNJTLTnw8j7VuNbSDGy0jlnGNcRvviNTmlhPKUJ9Z3p8fkcxFmqaI/ndylVLeXpmAaSMi5TecNyeeH9icDFlkpanmMikjLbeZH5CY9zZupCSd5TG465vJCCo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741136164; c=relaxed/simple;
+	bh=JTn6GzPNPqqm9bsg0T92D8cwuGo3C+SZjKiKXwoacIs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=QroqxgDjscmlgVEEOyIjETAX8FlCvBuXx1nFfk9nJVfftwWi6L4WBv9YZMG0sJTth0s5amv7HJOkWr5HK+PdAeRnOM/U5l9953TKO0W9Eo9jTtpXcmvYTaBWpHa1vaaALCLtd422wnF1juCG1QS6ea4Kqg4yV30YCACXvIH6uXQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CKYN5io0; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-abbd96bef64so978055966b.3;
+        Tue, 04 Mar 2025 16:56:02 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741136161; x=1741740961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OY2x4gnjLqoTDFi3EfoqcVKZo6xoBR0yZoxan8KFIxg=;
+        b=CKYN5io0cU3o5PlySXrjYMsTEEdpyuHK+Cr7vWRtR0OyS+t9mClosEaAtGaXzUnkdY
+         +EvN6+Cj4Ew2Dlr/170sMtE/yKRkxBNqDhhknWtzH0NKaYt+BvsvjTu+OOWNzKIp1m9q
+         LCHYbSPcqlt1ol5JqS1k0erPGWihPIIQSvPvc3hGxlkvdekEF4eBM9jUiyXmDQ6iQmxo
+         QyEPCDhDB1Mw7qHv6IGs6tFeSMyvQAO0aYA/4SkPe7h901gawQFs1TmmrkOzft20+j1B
+         vQDylHm/Z5Y42VLTtBI1bD0WFRR4OSya0C4oY4JH3VkImsvNwijWwPaXSqI6P6yzjZ2B
+         CuXw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741136161; x=1741740961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=OY2x4gnjLqoTDFi3EfoqcVKZo6xoBR0yZoxan8KFIxg=;
+        b=qpLXlG3tTyW0J0hUnsO1G8t5U/Vb+u5mZ3haSAcXhwCXhFqyzzCsBMTvHdPZhrVClG
+         qG/e+/EN3w6tpNJ+Swyya6ViD9YScZ/I2a3o447Z0Brx2MCC8kCRPF3Z4yLOx1aQmXmM
+         KrcetHnXoYv07eekQJAzXv/MLITa5r/jqHi6Lg0znDknycNWlkx+gM8ioYZnJU4ylI2G
+         ygb+GSiIdAhuBVHZlzgeKZMcx7LVJbpQ3wyD0nLXktbrSKi6l9e+yvQl4x+iiQW+fsQZ
+         Pb2z/auolh20359jI5UI8z+qCALt4gM6vpKEuOd5KXvvjBtBYBg044BjTphiiaSdT4JB
+         NrYA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVRgUvqq1evxcN78fNhimamStWhp2YMkOJv6oLq948MjC/EPNQIvPptqE9CIQ/k/z0HoFBFhTOiQLu@vger.kernel.org, AJvYcCWmdoEVgwCPSWJ8lOSQhQ65rmDNXiLC+izWpUb9BZoGgMJ9liBWlI/3v7mRADkJmQ2RUyb//+eEHAHo8rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzd/WXrlNWr54uYsi7M9scc1ckLQVQSl5uRfjIH5vmm419uiwZn
+	D+Mcv39aer1N9jaYjBw1YpXHeLqd2ncpzCjlkWa2ol0v/oae+j+9VruNDxcIm11HvsEoPa2T/nu
+	H3LnzoQaruKuFv9coNtvi6l4NNV4=
+X-Gm-Gg: ASbGnctOOKfra5Y9mjmyDyWpYMToffwQrGonrDFP6Qs6cv+/G2dywa3WLtNcUT7l9zU
+	qE8rAB9aGbCgfc4LHPeetL2fgE0jCpO48gobeAN7DErLjSRiUAvLqbEfEk7SL1IdVDgNDDLpG2U
+	isF/REvhBV8sS7jrR2qkHuFlKKxw==
+X-Google-Smtp-Source: AGHT+IGQzRduDfZFmBJyaj4Z7SOysnLQsRrUO5HDaJ018JPlEHCqsqp7XujrtSitg9FNgWCQt4ly41NTZdNISfR/iPo=
+X-Received: by 2002:a17:907:1c1e:b0:abf:215b:4ac6 with SMTP id
+ a640c23a62f3a-ac20db689e7mr123775866b.53.1741136160531; Tue, 04 Mar 2025
+ 16:56:00 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|LV3PR11MB8601:EE_
-X-MS-Office365-Filtering-Correlation-Id: 9276993c-fd31-44f0-697b-08dd5b807de4
-X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?pag2da3z4sznJ43MVoTtVZr2J8L+iM7KnlmqYtlgqMNn13KYoRgFfuf8cjj6?=
- =?us-ascii?Q?LJm/I34p3hB2nMLSBsI2li9qmYwAZ0hoDrhZznEtdCcio7uCFZGEa/qfM72I?=
- =?us-ascii?Q?efWC7yvO8KL+gkFwl0RXosr4jDF5WNiBm1q+8Je/q4Vd6eDPx3dM9YJ7/C04?=
- =?us-ascii?Q?PgAii0UHN6OQtpJU8PTvqOOQzi5gLa8mfFmcPkjy/rszoQjbKr0huCA8nZRv?=
- =?us-ascii?Q?Y6AXOmYFm85keH/SQJWnddCBCVJxqUReX9tqyKc8Jcfz1aUPJonKceK/+W5m?=
- =?us-ascii?Q?DOwkm5IynBx6eH/Z3ekwbSwtA8EN4th7EfkT0PcZizFQ4CslOwlw/+IWJyCg?=
- =?us-ascii?Q?TK8LiUgugHtRN0gl/Ka5PPtQilbdCVpUbSgYcu+7lR1/FURPUZY9hzE5cEym?=
- =?us-ascii?Q?agtOaYXUUW8d8tVxt/92hHCAH7p1rU+QFn6vNyfGfQjXcesdE1vGE8hHaOxG?=
- =?us-ascii?Q?cvAm/sH23F2VVC0y+GQ/qjA3pAyVnbb8LWD0sVUCSjyfyEetKTnPEe+LPPDv?=
- =?us-ascii?Q?8Dq+fuCuyOKw2KAFWH83rgtgYgZLOJUUjFfY1DzfR7J0maOqLOj/Bv7Lw5f3?=
- =?us-ascii?Q?/5MsIkmuowUuJtrQKiX1bt+Pv42dNypRXpUxfwLj8fdYIYKGzJjq5lYYEqmJ?=
- =?us-ascii?Q?gjBDvkL5iW7Xecqa0VdQXYQt4K4JWqkb3wc7WQd5BP5qRAYntz8Y8Cio7Hb/?=
- =?us-ascii?Q?TwrsraxJg+QVsPAJG36PP/7AjdRxtiirLSvfqZXpi880laU/5Mrar9/7Xf9R?=
- =?us-ascii?Q?oHBiEcgyxdVQ7tvvq0BXpULxfdzVAPitfMAD9ql35LQlf6nYk+kVDE4G38dT?=
- =?us-ascii?Q?SujOox5bFTIKTV2VVvmQfM05RAWNgEyD4ucNT/cLgCYguRqYkhR74VcBNddn?=
- =?us-ascii?Q?fNQnRs05N4sfLetUTuF4JYUoTWd2NuKaI1se9ADSvkNUSLZ2OnFHT7reC/BS?=
- =?us-ascii?Q?RaEvkU4K1kwXI1/34i8y6vnFM9jnGoX6c+jhKpt/AgX/64ZymNEM4IQW0sQi?=
- =?us-ascii?Q?DCj/nu0rcYNPVG7cerqkFp4vtNRqzLKsTs/onosc9RrBCGYrvaCRX9pohTKI?=
- =?us-ascii?Q?Qr1einWLa4vLB2TPZnb8lR5V+3GHN1sZhy74hrQhMJeTvLsHtgHCaxgntRd8?=
- =?us-ascii?Q?kL4svW4cR7k4qlvRH7wYE0eI7HFikfTPLbrkf8DFi4KR8f9E8Eu2SO3mM3LP?=
- =?us-ascii?Q?QpgdRP9X3hZfMw8vHifnC45JOytDa3tl8t1QHzE/vU0u8GFD646YmkT70UGV?=
- =?us-ascii?Q?LJSJ+3OMq9M6Dph7a/9kd/RkcrXOZZs07F5AY/LJ95ioaif34379JyQvcAy9?=
- =?us-ascii?Q?C0pXaNEKZhfZ08qv1dPVSOV0YqPHIXma+PM2aonkSJkD/90KwbfEr4+XwF5O?=
- =?us-ascii?Q?NnVak258+KaBcDzmQ1IUImsvCnYj?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?C08TKPBJyfrG4+TLQxn35A4eBeXznV3Mqd/wwHfBoYtFwLMObIxgOc5xlMlF?=
- =?us-ascii?Q?Drvb36pg2LaaAMYU12fhzvuYwBA222ZoIwN2VthT07dnck5+3jQMexYoj5IS?=
- =?us-ascii?Q?+mkPa3QUvypp+wsHfuPmCzqMkmGfHv/yMm2ydeDLp3+SA6Z52NCvWgDtzMDs?=
- =?us-ascii?Q?c6ho6xbO2FhnYPr0LujUXBJjsX5tzFlggbwarvxhTkT2DWrZlNJR10OSDeiz?=
- =?us-ascii?Q?hG/1Owk0d4KaymTGKVB4NmYOJdgl/CrHPrfbNAmfplYdbL/FUtXpBWyfBSKv?=
- =?us-ascii?Q?BsPoSmniOx0qqD7jR/2XFupjvjVPdm7hGm1xmQHA/0iMBgpNL81OP0NWolj4?=
- =?us-ascii?Q?xhyVSjg/3WpZbKZzTVEn7JUSFPSnMgZgK1rG7us3mp0iBnyzuaCC3tme6JAv?=
- =?us-ascii?Q?Empn7s32R8Jg1nwPFgfktEMuOtdUMm3F5TPckyEQYq+9+HvjoxLL5jc/Nqvf?=
- =?us-ascii?Q?SRusOfdXAE0j0nhIn1f9SBx+xWlDAqX+mRjB2kuc3ygg4m/ZVGhBD5JEpTxe?=
- =?us-ascii?Q?nHq3m8u2gknzRy0tKxPnvltVFY3d8rgPNmcqnR9Kso4lD1dCOv5VKdXComtv?=
- =?us-ascii?Q?cYWFsY2AJxQkFCLKXOWSYvfEg8s6+h1iLDlDdfhd7Wv3WErxT18wXFwejVsM?=
- =?us-ascii?Q?aoW8r++KX99oTQcs40cya+zfGO2sjMksxMYnuKvBS8M3A9qaRzEXMLaTyC24?=
- =?us-ascii?Q?MryNL4esFmmxWIvEuEiJ0E1zDWxmXM1xiHA4U05Edwt0V54IjPPFfdo5Bhs5?=
- =?us-ascii?Q?NoK1VezC86tMB68DEKvrBmjJH2JZQEJudb++E0bgLjcXxDXVEMlPQzudg7An?=
- =?us-ascii?Q?PijGv7+GCLDOqkIN+HDzTPHwYtR3eGH4KR1B8jyHD2R++xOOU+E+YLntcBRz?=
- =?us-ascii?Q?1ddCqtsiCru0rBR7FCOoCcblB1diK3DEZV1fg3SJZc6SMB2MW/nCzor/0KJM?=
- =?us-ascii?Q?wXFvgX+XCuoEG912z/sngFr3OQHCoYCzLzKiEIZVn0VY1hF5XfjbeEIK+rnk?=
- =?us-ascii?Q?Y6RKaFsVDLqq2BEegY1gwNzB9pHUDheZ7hGdxzN/FoNlgDpIMgqxd3hm5Gsm?=
- =?us-ascii?Q?TGPaJulyq7SVvtwLy7V4o/qiG1AwNa+px+s1xjZRgM1OQIeT8yQ3mzz/VEff?=
- =?us-ascii?Q?0DtuxaOBBtpn8fqsiRpjDPSr7T/7JBLSrylWz5ABbH1TVeJXswkmvtUDff5r?=
- =?us-ascii?Q?kJBfRWbFZ6XRBDRMomUGNZP9mPD+ggUCsBh+KCmVfGIedP9k7Pxf6mKvhBdW?=
- =?us-ascii?Q?fKpqCdQ46XPdYowMNHeFG78RI0jNV/3I2bBGsWQ5Ox0ny/4cxt2Q3rBlqzb1?=
- =?us-ascii?Q?QfriTThHxmyFMXJEk5RABBRkI48Rqm1euMzuaTcZGX0f4wElg1om3jPTD24X?=
- =?us-ascii?Q?bJM/8X8fzdlP6Uuf0kCikIlpjRTe8VzKzDlf3ToNvr99NJu2X3mgsKcebDMU?=
- =?us-ascii?Q?cM2GXVcsOq0e06/qW1vQTe3ltgYvQV7hrKUf2kBjAF8EzeUU+BYPWTMzHUXj?=
- =?us-ascii?Q?bRg9AlCTf4aOv/XxWonO/8h3Wad8NjqiZAe2UoWtpEsfVWisQBtb+zgmTvyN?=
- =?us-ascii?Q?Dd1SU0cyp2Zzc5q/pb4bIOkVsHd+UkYogWuDinEc?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9276993c-fd31-44f0-697b-08dd5b807de4
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 00:55:58.5089
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 6cu2n2UGfibxjS+BNURK4vodnLW70LPno5BbxfyKRTpHXCGmX2spgS4VFqVQVKZuQCyP60IJqmIss1sUoIEJOg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV3PR11MB8601
-X-OriginatorOrg: intel.com
+References: <20241018105333.4569-1-victorshihgli@gmail.com>
+ <20241018105333.4569-16-victorshihgli@gmail.com> <20250219213224.GA57799@robin.jannau.net>
+In-Reply-To: <20250219213224.GA57799@robin.jannau.net>
+From: Ben Chuang <benchuanggli@gmail.com>
+Date: Wed, 5 Mar 2025 08:56:09 +0800
+X-Gm-Features: AQ5f1JoWYl7jq37wqR0tO3MuppCzy7Hw8hyzC8DbxRyc-DB-AjUUnpPyAGyQrAY
+Message-ID: <CACT4zj9Xgah3Gp-=Ujp-z7hRCmHt_aGnLEchurN00M1LtbjSzQ@mail.gmail.com>
+Subject: Re: [PATCH V23 15/16] mmc: sdhci-pci-gli: enable UHS-II mode for GL9755
+To: Janne Grunau <j@jannau.net>
+Cc: Victor Shih <victorshihgli@gmail.com>, ulf.hansson@linaro.org, 
+	adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lucas.Lai@genesyslogic.com.tw, 
+	HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
+	Ben Chuang <ben.chuang@genesyslogic.com.tw>, 
+	AKASHI Takahiro <takahiro.akashi@linaro.org>, Victor Shih <victor.shih@genesyslogic.com.tw>, 
+	asahi@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Ira Weiny wrote:
-> Smita Koralahalli wrote:
-> > When PCIe AER is in FW-First, OS should process CXL Protocol errors from
-> > CPER records. Introduce support for handling and logging CXL Protocol
-> > errors.
-> > 
-> > The defined trace events cxl_aer_uncorrectable_error and
-> > cxl_aer_correctable_error trace native CXL AER endpoint errors. Reuse them
-> > to trace FW-First Protocol errors.
-> > 
-> > Since the CXL code is required to be called from process context and
-> > GHES is in interrupt context, use workqueues for processing.
-> > 
-> > Similar to CXL CPER event handling, use kfifo to handle errors as it
-> > simplifies queue processing by providing lock free fifo operations.
-> > 
-> > Add the ability for the CXL sub-system to register a workqueue to
-> > process CXL CPER protocol errors.
-> > 
-> > Signed-off-by: Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>
+Hi Janne,
+
+On Thu, Feb 20, 2025 at 5:32=E2=80=AFAM Janne Grunau <j@jannau.net> wrote:
+>
+> Hej,
+>
+> On Fri, Oct 18, 2024 at 06:53:32PM +0800, Victor Shih wrote:
+> > From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> >
+> > Changes are:
+> >  * Disable GL9755 overcurrent interrupt when power on/off on UHS-II.
+> >  * Enable the internal clock when do reset on UHS-II mode.
+> >  * Increase timeout value before detecting UHS-II interface.
+> >  * Add vendor settings fro UHS-II mode.
+> >  * Remove sdhci_gli_enable_internal_clock functon unused clk_ctrl varia=
+ble.
+> >  * Make a function sdhci_gli_wait_software_reset_done() for gl9755 rese=
+t.
+> >  * Remove unnecessary code from sdhci_gl9755_reset().
+> >
+> > Signed-off-by: Ben Chuang <ben.chuang@genesyslogic.com.tw>
+> > Signed-off-by: AKASHI Takahiro <takahiro.akashi@linaro.org>
+> > Signed-off-by: Victor Shih <victor.shih@genesyslogic.com.tw>
+> > Signed-off-by: Lucas Lai <lucas.lai@genesyslogic.com.tw>
 > > ---
-> > Comments: There is a potential failure case, and I am seeking feedback.
-> > 
-> > If a CXL Protocol Error occurs during boot: Both acpi_ghes_init() and
-> > cxl_core_init() are subsys_initcall. GHES might detect the error and
-> > trigger cxl_cper_post_prot_err() even before CXL device is completely
-> > enumerated. (i.e pdev might return NULL OR pdev might succeed and cxlds
-> > might be NULL as cxl_pci driver is not loaded.)
-> > 
-> 
-> I don't think this is something we should be overly concerned about.
-> If protocol errors are occurring that early then they are very likely to
-> be bad hardware which is going to happen once the subsystems are brought
-> up and start working with the devices.  So new errors will alert the user.
-> 
-> > Usage of delayed_workqueue(): Would delaying the handling/logging of
-> > errors, particularly uncorrectable errors, be acceptable?
-> > Any alternative suggestions for addressing this issue would be greatly
-> > appreciated.
-> > 
-> > Tony questioned choosing value 8 for FIFO_DEPTH in v6. That was just a
-> > random value that I picked. I would appreciate any suggestions in
-> > considering the appropriate value for number of entries.
-> 
-> FWIW I think this is fine until someone sees a reason to increase it.
-> 
-> [snip]
-> 
-> > +
-> > +static void cxl_cper_trace_corr_prot_err(struct pci_dev *pdev,
-> > +				  struct cxl_ras_capability_regs ras_cap)
-> > +{
-> > +	u32 status = ras_cap.cor_status & ~ras_cap.cor_mask;
-> > +	struct cxl_dev_state *cxlds;
-> > +
-> > +	cxlds = pci_get_drvdata(pdev);
-> > +	if (!cxlds)
-> > +		return;
-> > +
-> > +	trace_cxl_aer_correctable_error(cxlds->cxlmd, status);
-> 
-> I dug into this just a bit wondering if passing cxl_memdev is the best way
-> for this tracepoint to work given the type 2 work...
-> 
-> 	+ Alejandro
-> 
-> For now I think this patch is fine.  So.
-> 
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+> >
+> >  drivers/mmc/host/sdhci-pci-gli.c | 235 ++++++++++++++++++++++++++++++-
+> >  1 file changed, 234 insertions(+), 1 deletion(-)
+>
+> This change results in error messages / timeout about UHS2 followed by
+> register dumps with the GL9755 integrated in Apple silicon Macbook Pros
+> and Mac Studio systems. Non UHS-II function of controller does not seem
+> to be affected. Apple advertises the the SDXC slot as UHS-II capable.
+>
+> The only quirk we've experienced with gl9755 on this platform is that 8
+> and 16 bit MMIO reads do not work. Workaround added in commit
+> c064bb5c78c1b ("mmc: sdhci-pci-gli: GL975[50]: Issue 8/16-bit MMIO reads
+> as 32-bit reads.").
+>
+> If you have ideas or patches to try I'm happy to do that. If not we can
+> look into what MacOS does.
+>
+> See kernel log and lspci output below
+>
+> Thanks,
+> Janne
+>
+> [   38.130033] kernel: sdhci: Secure Digital Host Controller Interface dr=
+iver
+> [   38.130141] kernel: sdhci: Copyright(c) Pierre Ossman
+> [   38.133352] kernel: sdhci-pci 0000:02:00.0: Adding to iommu group 13
+> [   38.160551] kernel: sdhci-pci 0000:02:00.0: SDHCI controller found [17=
+a0:9755] (rev 1)
+> [   38.160655] kernel: sdhci-pci 0000:02:00.0: enabling device (0000 -> 0=
+002)
+> [   38.160750] kernel: mmc0: SDHCI controller on PCI [0000:02:00.0] using=
+ ADMA 64-bit
+> [   38.274617] kernel: mmc0: not detect UHS2 interface in 100ms.
+> [   38.274717] kernel: mmc0: sdhci: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =
+SDHCI REGISTER DUMP =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [   38.274782] kernel: mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x0=
+0000005
+> [   38.277391] kernel: mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x0=
+0000000
+> [   38.277475] kernel: mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x0=
+0000000
+> [   38.280125] kernel: mmc0: sdhci: Present:   0x20070000 | Host ctl: 0x0=
+0000000
+> [   38.280206] kernel: mmc0: sdhci: Power:     0x000000bf | Blk gap:  0x0=
+0000000
+> [   38.284511] kernel: mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0=
+000032f
+> [   38.284592] kernel: mmc0: sdhci: Timeout:   0x00000007 | Int stat: 0x0=
+0000000
+> [   38.284636] kernel: mmc0: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x0=
+0ff0083
+> [   38.287200] kernel: mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x0=
+0000000
+> [   38.287281] kernel: mmc0: sdhci: Caps:      0x396a3281 | Caps_1:   0x1=
+803057f
+> [   38.291212] kernel: mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x0=
+00000c8
+> [   38.291292] kernel: mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x0=
+0000000
+> [   38.291335] kernel: mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x0=
+0000000
+> [   38.293513] kernel: mmc0: sdhci: Host ctl2: 0x00009107
+> [   38.293604] kernel: mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0=
+000000000000000
+> [   38.297842] kernel: mmc0: sdhci_uhs2: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D UHS2 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> [   38.297923] kernel: mmc0: sdhci_uhs2: Blk Size:  0x00000000 | Blk Cnt:=
+  0x00000000
+> [   38.297968] kernel: mmc0: sdhci_uhs2: Cmd:       0x00000000 | Trn mode=
+: 0x00000000
+> [   38.300773] kernel: mmc0: sdhci_uhs2: Int Stat:  0x00000000 | Dev Sel =
+: 0x00000000
+> [   38.300853] kernel: mmc0: sdhci_uhs2: Dev Int Code:  0x00000000
+> [   38.304739] kernel: mmc0: sdhci_uhs2: Reset:     0x00000000 | Timer:  =
+  0x000000a7
+> [   38.304811] kernel: mmc0: sdhci_uhs2: ErrInt:    0x00000000 | ErrIntEn=
+: 0x00030000
+> [   38.304856] kernel: mmc0: sdhci_uhs2: ErrSigEn:  0x00030000
+> [   38.307110] kernel: mmc0: sdhci: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> [   38.307201] kernel: mmc0: cannot detect UHS2 interface.
+> [   38.310110] kernel: mmc0: failed to initial phy for UHS-II!
+> [   38.424645] kernel: mmc0: not detect UHS2 interface in 100ms.
+> [   38.424731] kernel: mmc0: sdhci: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =
+SDHCI REGISTER DUMP =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> [   38.424758] kernel: mmc0: sdhci: Sys addr:  0x00000000 | Version:  0x0=
+0000005
+> [   38.424782] kernel: mmc0: sdhci: Blk size:  0x00000000 | Blk cnt:  0x0=
+0000000
+> [   38.424840] kernel: mmc0: sdhci: Argument:  0x00000000 | Trn mode: 0x0=
+0000000
+> [   38.427603] kernel: mmc0: sdhci: Present:   0x20070000 | Host ctl: 0x0=
+0000000
+> [   38.427659] kernel: mmc0: sdhci: Power:     0x000000bf | Blk gap:  0x0=
+0000000
+> [   38.430579] kernel: mmc0: sdhci: Wake-up:   0x00000000 | Clock:    0x0=
+000032f
+> [   38.430626] kernel: mmc0: sdhci: Timeout:   0x00000007 | Int stat: 0x0=
+0000000
+> [   38.433504] kernel: mmc0: sdhci: Int enab:  0x00ff0083 | Sig enab: 0x0=
+0ff0083
+> [   38.433550] kernel: mmc0: sdhci: ACmd stat: 0x00000000 | Slot int: 0x0=
+0000000
+> [   38.437596] kernel: mmc0: sdhci: Caps:      0x396a3281 | Caps_1:   0x1=
+803057f
+> [   38.437641] kernel: mmc0: sdhci: Cmd:       0x00000000 | Max curr: 0x0=
+00000c8
+> [   38.437677] kernel: mmc0: sdhci: Resp[0]:   0x00000000 | Resp[1]:  0x0=
+0000000
+> [   38.440318] kernel: mmc0: sdhci: Resp[2]:   0x00000000 | Resp[3]:  0x0=
+0000000
+> [   38.440345] kernel: mmc0: sdhci: Host ctl2: 0x00009107
+> [   38.444119] kernel: mmc0: sdhci: ADMA Err:  0x00000000 | ADMA Ptr: 0x0=
+000000000000000
+> [   38.444161] kernel: mmc0: sdhci_uhs2: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D UHS2 =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D
+> [   38.444184] kernel: mmc0: sdhci_uhs2: Blk Size:  0x00000000 | Blk Cnt:=
+  0x00000000
+> [   38.446918] kernel: mmc0: sdhci_uhs2: Cmd:       0x00000000 | Trn mode=
+: 0x00000000
+> [   38.446958] kernel: mmc0: sdhci_uhs2: Int Stat:  0x00000000 | Dev Sel =
+: 0x00000000
+> [   38.450833] kernel: mmc0: sdhci_uhs2: Dev Int Code:  0x00000000
+> [   38.450874] kernel: mmc0: sdhci_uhs2: Reset:     0x00000000 | Timer:  =
+  0x000000a7
+> [   38.450907] kernel: mmc0: sdhci_uhs2: ErrInt:    0x00000000 | ErrIntEn=
+: 0x00030000
+> [   38.454625] kernel: mmc0: sdhci_uhs2: ErrSigEn:  0x00030000
+> [   38.454665] kernel: mmc0: sdhci: =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D
+> [   38.454699] kernel: mmc0: cannot detect UHS2 interface.
+> [   38.456705] kernel: mmc0: failed to initial phy for UHS-II!
+>
 
-Unfortunately I missed the fact that this breaks the test build.  ras.o
-needs to be in the test build files as well.
+On which UHS-II card does this message appear? Please share the card
+information.
+If it is a UHS-I card, this message is normal.
 
-Ira
+Best regards,
+Ben Chuang
 
-diff --git a/tools/testing/cxl/Kbuild b/tools/testing/cxl/Kbuild
-index ef10a896a384..4efcc0606bd6 100644
---- a/tools/testing/cxl/Kbuild
-+++ b/tools/testing/cxl/Kbuild
-@@ -62,6 +62,7 @@ cxl_core-y += $(CXL_CORE_SRC)/hdm.o
- cxl_core-y += $(CXL_CORE_SRC)/pmu.o
- cxl_core-y += $(CXL_CORE_SRC)/cdat.o
- cxl_core-y += $(CXL_CORE_SRC)/acpi.o
-+cxl_core-y += $(CXL_CORE_SRC)/ras.o
- cxl_core-$(CONFIG_TRACING) += $(CXL_CORE_SRC)/trace.o
- cxl_core-$(CONFIG_CXL_REGION) += $(CXL_CORE_SRC)/region.o
- cxl_core-$(CONFIG_CXL_FEATURES) += $(CXL_CORE_SRC)/features.o
+>
+> `lspci -vvvnn -d 17a0:9755` output:
+> 02:00.0 SD Host controller [0805]: Genesys Logic, Inc GL9755 SD Host Cont=
+roller [17a0:9755] (rev 01) (prog-if 01)
+>         Subsystem: Genesys Logic, Inc GL9755 SD Host Controller [17a0:975=
+5]
+>         Device tree node: /sys/firmware/devicetree/base/soc@200000000/pci=
+e@590000000/pci@1,0/mmc@0,0
+>         Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParEr=
+r- Stepping- SERR- FastB2B- DisINTx+
+>         Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=3Dfast >TAbort- =
+<TAbort- <MAbort- >SERR- <PERR- INTx-
+>         Latency: 0
+>         Interrupt: pin A routed to IRQ 168
+>         IOMMU group: 13
+>         Region 0: Memory at 5c1e00000 (32-bit, non-prefetchable) [size=3D=
+4K]
+>         Capabilities: [80] Express (v2) Endpoint, IntMsgNum 0
+>                 DevCap: MaxPayload 256 bytes, PhantFunc 0, Latency L0s <4=
+us, L1 unlimited
+>                         ExtTag+ AttnBtn- AttnInd- PwrInd- RBE+ FLReset- S=
+lotPowerLimit 0W TEE-IO-
+>                 DevCtl: CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
+>                         RlxdOrd+ ExtTag+ PhantFunc- AuxPwr- NoSnoop+
+>                         MaxPayload 128 bytes, MaxReadReq 512 bytes
+>                 DevSta: CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr+=
+ TransPend-
+>                 LnkCap: Port #85, Speed 5GT/s, Width x1, ASPM L0s L1, Exi=
+t Latency L0s <4us, L1 unlimited
+>                         ClockPM+ Surprise- LLActRep- BwNot- ASPMOptComp+
+>                 LnkCtl: ASPM Disabled; RCB 64 bytes, LnkDisable- CommClk+
+>                         ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
+>                 LnkSta: Speed 5GT/s, Width x1
+>                         TrErr- Train- SlotClk+ DLActive- BWMgmt- ABWMgmt-
+>                 DevCap2: Completion Timeout: Range ABCD, TimeoutDis+ NROP=
+rPrP- LTR+
+>                          10BitTagComp- 10BitTagReq- OBFF Via message/WAKE=
+#, ExtFmt- EETLPPrefix-
+>                          EmergencyPowerReduction Not Supported, Emergency=
+PowerReductionInit-
+>                          FRS- TPHComp- ExtTPHComp-
+>                          AtomicOpsCap: 32bit- 64bit- 128bitCAS-
+>                 DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis-
+>                          AtomicOpsCtl: ReqEn-
+>                          IDOReq- IDOCompl- LTR+ EmergencyPowerReductionRe=
+q-
+>                          10BitTagReq- OBFF Disabled, EETLPPrefixBlk-
+>                 LnkCap2: Supported Link Speeds: 2.5-5GT/s, Crosslink- Ret=
+imer- 2Retimers- DRS-
+>                 LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- Speed=
+Dis-
+>                          Transmit Margin: Normal Operating Range, EnterMo=
+difiedCompliance- ComplianceSOS-
+>                          Compliance Preset/De-emphasis: -6dB de-emphasis,=
+ 0dB preshoot
+>                 LnkSta2: Current De-emphasis Level: -6dB, EqualizationCom=
+plete- EqualizationPhase1-
+>                          EqualizationPhase2- EqualizationPhase3- LinkEqua=
+lizationRequest-
+>                          Retimer- 2Retimers- CrosslinkRes: unsupported
+>         Capabilities: [e0] MSI: Enable+ Count=3D1/1 Maskable- 64bit+
+>                 Address: 00000000fffff000  Data: 0018
+>         Capabilities: [f8] Power Management version 3
+>                 Flags: PMEClk- DSI- D1+ D2+ AuxCurrent=3D375mA PME(D0-,D1=
++,D2+,D3hot+,D3cold+)
+>                 Status: D0 NoSoftRst+ PME-Enable- DSel=3D0 DScale=3D0 PME=
++
+>         Capabilities: [100 v1] Vendor Specific Information: ID=3D17a0 Rev=
+=3D1 Len=3D008 <?>
+>         Capabilities: [108 v1] Latency Tolerance Reporting
+>                 Max snoop latency: 0ns
+>                 Max no snoop latency: 0ns
+>         Capabilities: [110 v1] L1 PM Substates
+>                 L1SubCap: PCI-PM_L1.2+ PCI-PM_L1.1+ ASPM_L1.2+ ASPM_L1.1+=
+ L1_PM_Substates+
+>                           PortCommonModeRestoreTime=3D255us PortTPowerOnT=
+ime=3D3100us
+>                 L1SubCtl1: PCI-PM_L1.2- PCI-PM_L1.1- ASPM_L1.2- ASPM_L1.1=
+-
+>                            T_CommonMode=3D0us LTR1.2_Threshold=3D3375104n=
+s
+>                 L1SubCtl2: T_PwrOn=3D3100us
+>         Capabilities: [200 v1] Advanced Error Reporting
+>                 UESta:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt=
+- RxOF- MalfTLP-
+>                         ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP=
+- AtomicOpBlocked- TLPBlockedErr-
+>                         PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisID=
+ETLP- PCRC_CHECK- TLPXlatBlocked-
+>                 UEMsk:  DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt=
+- RxOF- MalfTLP-
+>                         ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP=
+- AtomicOpBlocked- TLPBlockedErr-
+>                         PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisID=
+ETLP- PCRC_CHECK- TLPXlatBlocked-
+>                 UESvrt: DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt=
+- RxOF+ MalfTLP+
+>                         ECRC- UnsupReq- ACSViol- UncorrIntErr- BlockedTLP=
+- AtomicOpBlocked- TLPBlockedErr-
+>                         PoisonTLPBlocked- DMWrReqBlocked- IDECheck- MisID=
+ETLP- PCRC_CHECK- TLPXlatBlocked-
+>                 CESta:  RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNon=
+FatalErr- CorrIntErr- HeaderOF-
+>                 CEMsk:  RxErr- BadTLP- BadDLLP- Rollover- Timeout+ AdvNon=
+FatalErr+ CorrIntErr- HeaderOF-
+>                 AERCap: First Error Pointer: 00, ECRCGenCap+ ECRCGenEn- E=
+CRCChkCap+ ECRCChkEn-
+>                         MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCa=
+p-
+>                 HeaderLog: 00000000 00000000 00000000 00000000
+>         Kernel driver in use: sdhci-pci
+>         Kernel modules: sdhci_pci
+>
 
