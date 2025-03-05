@@ -1,162 +1,170 @@
-Return-Path: <linux-kernel+bounces-547817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E29BCA50DE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:44:00 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E874EA50DF3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32B807A6033
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:42:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB29164CDF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E43F825D1FF;
-	Wed,  5 Mar 2025 21:43:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F6F25D52B;
+	Wed,  5 Mar 2025 21:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="axxSTK6e"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KFB8sQpD"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7105525C71D;
-	Wed,  5 Mar 2025 21:43:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1306525CC6B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741211028; cv=none; b=Bs4/YUo2SHxGP4Tct4yThFIK0+s1+eQd4Ev7y5TURlki600rBW0BoZ6MhWj38/EvMA5Kd3GMVN+lqeJy+io3k79NsehAW1PlONcepNr5P9LlthbrRrJihG9BrAZUOzUml+bga31L9R1Ma/VYja3GswdC/5agjAfSIibBnM6TwbQ=
+	t=1741211047; cv=none; b=jWjE7VhF07wzHkWVWZRMYpebiSFxK3Srf1ExY9Y48hOB3vV7FH0k23WMsaH2aAN7pp5z8xoEMxYG3CvcTknHMOBdOjV2/UeE8Dn2nvfCt4aTb82noIUW91g5DyLbY3P0wxNEPzASe0+j1u4XAcABq9aZWhJYJpIj6Po1qNN589k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741211028; c=relaxed/simple;
-	bh=Kiw7vrhGC9Tr20MBqv3aGeVldfht4lH/YDUtMVAiVnQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=HhELV8ojoBlh7c1FisvEPfWG9cDnjGIbCjtFbh9WF15p0Kp8YQEg1g4om2s89cZeAEJ0HvBpaEBzwSCGDoCeBpvn1LH9dFQfVBQdGSw6+tJq8gcsuWMUfwoGbFTN6l043S5ssXrDHwx+8Lwylg0+Jvgx1tJ8PZ7W9UZ+r19aeoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=axxSTK6e; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 525Lhcoo3520081
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Wed, 5 Mar 2025 15:43:38 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741211019;
-	bh=5gKsqhkj3z4aOY8JR1GfRGtUkvMlV0bDAct/H2T8opg=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=axxSTK6ey9ptT04JWhEn+Rz2RMp8JtYQZeIgOxT1wgDIilACd55C9ZNn8VyrVENq5
-	 9IIBnJHB1lQrJfh3dKGFrK0tdWkrjwiiQmnD8XaFBlZye5FFhKZjb4PCkYLdxPOIv1
-	 NdeLkqdaTwJPbYsJTjnOZ2PiQVxhXTXmj+EETXSA=
-Received: from DFLE103.ent.ti.com (dfle103.ent.ti.com [10.64.6.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 525Lhcnr004323;
-	Wed, 5 Mar 2025 15:43:38 -0600
-Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
- Mar 2025 15:43:38 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 5 Mar 2025 15:43:38 -0600
-Received: from [10.249.135.49] ([10.249.135.49])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 525LhXF5093926;
-	Wed, 5 Mar 2025 15:43:34 -0600
-Message-ID: <11982b12-a359-467a-a6fc-e39adccca413@ti.com>
-Date: Thu, 6 Mar 2025 03:13:33 +0530
+	s=arc-20240116; t=1741211047; c=relaxed/simple;
+	bh=k2uk7mWRxQ/F2xpJkIMGDONFAxPuJRwjbtFcXicz32s=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GijE7EbkEkS0dlj4Pw2czfqpbrpDsAvUQUl9IEw/UDtvtdinMGiNeoUY7UvWUItQnVfcQVXnMO4EUJTd61rxlYbL2N4a0k9Mfzek6+UbQpQ8q5tfllzeMdsgF3DKLXFs8uSB1vJwFvue26dRe6uLUOqvR5ckOlzHgEHLFzKrLf4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KFB8sQpD; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ba8bbeae2so7263665e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 13:44:05 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741211044; x=1741815844; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dx/4ooZvaFT+M8KdTIK1XiMnsARRScY2O0ollC2/tl4=;
+        b=KFB8sQpD5RbIicQUOEzeF0L2nWkuUCSJQhD1+rv4dje2qacy1+gWc952bcaluQObmV
+         x0kQzNqHaqG/dO/nMz8uq1Rf83w5iPo3O2GneCntT68X4USNnbcIKHT1y3w7kbLdPeZ+
+         V0Nz84t536ljD5gSU8RQZRkmPvgjUXsRBRFe9HNoJr1gZd5qhczcKYNC+HZknFNNCKVb
+         4yJN0mv7QTNr7JzUmp2NhubT4Vk7ebbFnbSunuJI5/6lZLAe45PoPhbqmvCQAy0WATFy
+         8brB0yRpxM31545cuZYWcPDH615yY/QmDFQfUL/Nfhn6FYnFKh9OZX886BngOfFGaGNk
+         XiOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741211044; x=1741815844;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dx/4ooZvaFT+M8KdTIK1XiMnsARRScY2O0ollC2/tl4=;
+        b=BKEm07kxebb6qKIZiXtKlBHIHdqTKPXppzVJeETNpeQwqtH2K1ZzqnAbFRdZ3fh+Gs
+         W+JaoWuX0mv8f/uddKE2NyZV6Zt7WWLEcEcsbn+HbN8SGHqcqliO+GhelVStK0W8Lvuc
+         eKELDHrALw6SHfh0Ap+iXDtyWsiJYGeuOHTAWyHe0LVucgczFDbRyaGbzflfSXb1J6bG
+         oPuWmIN8x5sQTJoTJzmh2pN0M/HjoExz3+zOIWlfWFGEmIa+dY5d6uEZIU2KfJB4W+ZM
+         0ZRbqv0pX2DBhXSwiMf0j/Znqm+MmPxkMQz3NMhQw4kXWI/hWboi7yG7BnJfMCrm5eCw
+         yHjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXg3ul6+3HpkNaRtitUoy3pEdOid1RiegssP8RnFPsyqKBveRacE/iCWDOVm8oE5xFSZhSmf5EvHnqyBX0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLcEQ5yJ6BAfvTvJKC+fzC9Mzit05RuYxgBlGcG/Kr3pIkotUT
+	Ijre3prCn/j8WM6bL9/C9tH9vjdC20Z+Aq8OOrhpqPUJWjkam2mNK8fBUlgyahA=
+X-Gm-Gg: ASbGncuFu1V7MMqSHO/xjZ9M+LsFsmXBCZr6esxiRiMRV1EcJ9sq1rGegl2cUPASQXb
+	rM1v8ocV3H2Qe2kT+Pbnov0XLICFD9AhEEthU4hoJvJYq76nxiJNgj/ZyAnu3GXxM/5/pecyLoU
+	70SB5LKkLjGAUk6O0XmFADqjR4hTyjswG+M37+8eUt3kxZWXuidcN4Y1kWhZMrnyvSFPjDJJ3RM
+	+fH8mUyFAatjte9dDj19/02lDcKQBedsHV5J2lr50V82YNoMFFC2O3tw/LrGZRVbV7SyxW4hqWT
+	NDPmz41ilpy5+ckb9sM32LDwE4oR+3Np9td/YqTY7qnlfJrAMY3IN6lrBrsB
+X-Google-Smtp-Source: AGHT+IHgrPk9LjMSTCWkz+mX87OREQ24VNtJT8cUEPQ3oCYGUFwwbcrSWBYFeLv2csIBnT9oc+2Bmg==
+X-Received: by 2002:a05:600c:3b17:b0:439:94f8:fc7b with SMTP id 5b1f17b1804b1-43bd289418amr16472395e9.0.1741211044238;
+        Wed, 05 Mar 2025 13:44:04 -0800 (PST)
+Received: from [127.0.1.1] ([178.197.206.225])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796517sm21954802f8f.5.2025.03.05.13.44.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 13:44:02 -0800 (PST)
+From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Subject: [PATCH RFC/RFT 00/12] clk: samsung: Use platform_driver_probe() to
+ avoid __refdata
+Date: Wed, 05 Mar 2025 22:43:35 +0100
+Message-Id: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/2] devicetree: bindings: mux: reg-mux: Update
- bindings for reg-mux for new property
-To: Rob Herring <robh@kernel.org>
-CC: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Peter Rosin <peda@axentia.se>, <s-vadapalli@ti.com>,
-        <danishanwar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Nishanth
- Menon <nm@ti.com>
-References: <20250304102306.2977836-1-c-vankar@ti.com>
- <20250304102306.2977836-2-c-vankar@ti.com>
- <20250304153959.GA2654372-robh@kernel.org>
- <66283781-69d6-4d0a-ada4-3a6bf4744a37@ti.com>
- <CAL_Jsq++DUv5_LHg7sPNXDJZ84JtS94Rwr-WAb9hDWp6rJqZLQ@mail.gmail.com>
-Content-Language: en-US
-From: "Vankar, Chintan" <c-vankar@ti.com>
-In-Reply-To: <CAL_Jsq++DUv5_LHg7sPNXDJZ84JtS94Rwr-WAb9hDWp6rJqZLQ@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAIfFyGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDYwNT3eScbN3ixNzi0rx03aLUNN3MvMwS3ZTEkkRdsySj5BQjEyMTA8s
+ 0JaD+AqB0ZgXY7GilIDdn/SC3EKXY2loAauT3JnQAAAA=
+X-Change-ID: 20250305-clk-samsung-ref-init-data-6b2cd242409f
+To: Krzysztof Kozlowski <krzk@kernel.org>, 
+ Sylwester Nawrocki <s.nawrocki@samsung.com>, 
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>, 
+ Peter Griffin <peter.griffin@linaro.org>, 
+ =?utf-8?q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>, 
+ Tudor Ambarus <tudor.ambarus@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2492;
+ i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
+ bh=k2uk7mWRxQ/F2xpJkIMGDONFAxPuJRwjbtFcXicz32s=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnyMWW+Fg63DDLT5RU0aIcpUZH7IqA1fov1XeLz
+ +W3BI3/CAuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ8jFlgAKCRDBN2bmhouD
+ 15JiD/9nXCHXFQUw697F9/fNVIrPcbtmW5NHXZFybOF4f2dai/whUloBo4qQReli/BYWu3nCW7X
+ rpBoYsgwNFjhePzvOR1spoSH5lZFLjpsd5v3kzU2iK1UwSRQJ5kY9yb9zt7nS73XjVVl7QUMrgy
+ 6X7hTB+6H6Rbl5AM97J49zzn6VF9i7E+DjDk2MecDc3BVeV+oQICWwdGPR76byLR7ElchPtm4HP
+ cRiGElNBl+kov5YgrVHo3zB0cypidtk+kc8Myayjt1ae+iMqkBcpQslPyI459B7zctZF+GTtRBW
+ e8D4wiDCB6Oxw/4E/WgMzLzVfTYf2Ha7wPLB2OkbVw15JrxDjrImnQD5ZPLTGI5clZq73IDilhT
+ 77E/+r6D7xhgfQuG6m4/oFQwxP/If3XSGO3th+jecGiMfOcb0ykFi2FeoSFU4gPLrXTQmGvKXQP
+ gBLPzgEx3O+G1aXks1/uR01nM6YG/fmD/VBHNXmb/aQo0w0YA1L7Psyd5ROWmzJRd22WT3Jdkoz
+ IW+fiwz22v9mbsrPAvrX5Kbpd5knN14KOGJZdsgYZXh8SeVGbqpEhaVRl6gfdRwoRCL9o5Kx9ni
+ KUc+YqMmu4PFtWAHdaN0FIjNdmzgRf23DUFuAVd09qgz79Fyk5+Rmo9y7dsHehd7qmhCTsit58p
+ kCPSQM+VzxaGNFg==
+X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
+ fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
 
-Hello Rob,
+RFT/RFC because testing needed. I tried to do the same on exynos5-subcmu
+and it caused weird oopses which even KASAN did not narrow. Probably
+because of multiple exynos5-subcmu devices?
 
-On 3/5/2025 2:10 AM, Rob Herring wrote:
-> On Tue, Mar 4, 2025 at 1:03 PM Vankar, Chintan <c-vankar@ti.com> wrote:
->>
->> Hello Rob,
->>
->> On 3/4/2025 9:09 PM, Rob Herring wrote:
->>> On Tue, Mar 04, 2025 at 03:53:05PM +0530, Chintan Vankar wrote:
->>>> DT-binding of reg-mux is defined in such a way that one need to provide
->>>> register offset and mask in a "mux-reg-masks" property and corresponding
->>>> register value in "idle-states" property. This constraint forces to define
->>>> these values in such a way that "mux-reg-masks" and "idle-states" must be
->>>> in sync with each other. This implementation would be more complex if
->>>> specific register or set of registers need to be configured which has
->>>> large memory space. Introduce a new property "mux-reg-masks-state" which
->>>> allow to specify offset, mask and value as a tuple in a single property.
->>>
->>> Maybe in hindsight that would have been better, but having 2 ways to
->>> specify the same thing that we have to maintain forever is not an
->>> improvement.
->>>
->>> No one is making you use this binding. If you have a large number of
->>> muxes, then maybe you should use a specific binding.
->>>
->>
->> Thank you for reviewing the patch. The reason behind choosing mux
->> subsystem is working and implementation of mmio driver. As we can see
->> that implementing this new property in mux-controller is almost
->> identical to mmio driver, and it would make it easier to define and
->> extend mux-controller's functionality. If we introduce the new driver
->> than that would be most likely a clone of mmio driver.
-> 
-> I'm talking about the binding, not the driver. They are independent.
-> Generic drivers are great. I love them. Generic bindings, not so much.
-> 
->> Let me know if implementation would be accepted by adding a new
->> compatible for it.
-> 
-> Adding a new compatible to the mmio driver? Certainly. That happens
-> all the time.
-> 
-> I also didn't say don't use this binding as-is. That's fine too.
-> 
+Switch registering platform driver to platform_driver_probe(), so the
+'struct platform_driver' can be properly discarded after init and there
+won't be need of __refdata to silence DEBUG_SECTION_MISMATCH.
 
-Can you please review the following binding:
+The change requires using subsys_initcall instead of core_initcall,
+because no device drivers would bound in the latter, as required by
+platform_driver_probe().
 
-oneOf:
-   - required: [ mux-reg-masks ]
-   - required: [ mux-reg-masks-state ]
+Best regards,
+Krzysztof
 
-allOf:
-   - if:
-       required:
-         - mux-reg-masks-state
-     then:
-       properties:
-         idle-states: false
+---
+Krzysztof Kozlowski (12):
+      clk: samsung: exynos2200: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynos4412-isp: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynos5433: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynos7870: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynos7885: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynos850: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynos8895: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynos990: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynosautov9: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: exynosautov920: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: fsd: Use platform_driver_probe() to avoid __refdata
+      clk: samsung: gs101: Use platform_driver_probe() to avoid __refdata
 
-required:
-   - compatible
-   - '#mux-control-cells'
+ drivers/clk/samsung/clk-exynos2200.c     | 7 +++----
+ drivers/clk/samsung/clk-exynos4412-isp.c | 7 +++----
+ drivers/clk/samsung/clk-exynos5433.c     | 7 +++----
+ drivers/clk/samsung/clk-exynos7870.c     | 7 +++----
+ drivers/clk/samsung/clk-exynos7885.c     | 7 +++----
+ drivers/clk/samsung/clk-exynos850.c      | 7 +++----
+ drivers/clk/samsung/clk-exynos8895.c     | 7 +++----
+ drivers/clk/samsung/clk-exynos990.c      | 7 +++----
+ drivers/clk/samsung/clk-exynosautov9.c   | 5 ++---
+ drivers/clk/samsung/clk-exynosautov920.c | 7 +++----
+ drivers/clk/samsung/clk-fsd.c            | 7 +++----
+ drivers/clk/samsung/clk-gs101.c          | 7 +++----
+ 12 files changed, 35 insertions(+), 47 deletions(-)
+---
+base-commit: 7ec162622e66a4ff886f8f28712ea1b13069e1aa
+change-id: 20250305-clk-samsung-ref-init-data-6b2cd242409f
 
-I think it won't disturb the current bindings and keep backward
-compatibility with existing implementation.
+Best regards,
+-- 
+Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-
-Regards,
-Chintan.
-
-
-> Rob
 
