@@ -1,86 +1,188 @@
-Return-Path: <linux-kernel+bounces-546201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97AE3A4F7A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:06:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5754FA4F7AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:08:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C491416F081
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:06:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124A13AC2D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA9711EEA33;
-	Wed,  5 Mar 2025 07:06:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D3A01EA7F5;
+	Wed,  5 Mar 2025 07:08:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vovlgwec"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Uke+EYg7"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E30E1E5B98;
-	Wed,  5 Mar 2025 07:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD9FD19CC2E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:08:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741158379; cv=none; b=AqlI0R/cfZAdXg3Hx/Vnixxzs6/jcljZuK+4EPl04en7j1C7HhpoUFT0/vRml6FKrz06QNnODxoZH3Jx3Uv+Rb7i5QA6go8YYBZU6GkuuMWf6xiE8l/id/u78ZfnO/pgq6CKDUMt2LKU8zTPpK7JfX+qMLU8+zc9yeRMtX0xv2M=
+	t=1741158529; cv=none; b=sA4pMWgMJwV9/gq8ha3BLtwsdAMb30rgafbo1tbfYy/reBYTW38uTTmXeSYs7Lp9AE3XKL6CkpMOXFUhKj99Ga/DVmsTG+ToA4sdGsrtl6bm3OIGsMuK1hTDrofJuq+FCGqQnsVcbM5w4CvuaOcUHo4dXYGRa3wjQEIwkA0mKlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741158379; c=relaxed/simple;
-	bh=qQn6Jnf+mcSHegDRQ65RUohedFJKfjbw3usr7d1maOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VREG+ay5Ad+p1aVFxJuIQrCvan+BtRnMN2CuUyKvWrrDGZP+WHjOqBJgIInCOeobn8Glh83f318fyZEhcXAREIrCJgwTeybbZISHvgw6uhGp6podV4d3YPXp0Az567a1nQo9vRmztNrNlbgC0TjcGd+paBIoy27XUjc9DQjwphk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vovlgwec; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA30DC4CEE2;
-	Wed,  5 Mar 2025 07:06:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741158378;
-	bh=qQn6Jnf+mcSHegDRQ65RUohedFJKfjbw3usr7d1maOY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Vovlgwec7HLGQkRfcCMfgTrD7i5n47NNZIHh5z5GoLIBRXgkPNYcluXsdQULe8cq3
-	 RbFJ+qFDJN4/Tn71ecGqRI1clebUn7dRt87NkMD8snI/EzleaLbYU0ysYBp8CoFNFz
-	 YHrZe7AMbMIKvqmpNIypMCgxf1t1fC+1dfUI7oP5vlnH5br5uW9CMZlAECta+JlIds
-	 yu5tEBBT8PS+E7aUMG54ohLfuy461ZeqK5o2nDxli79YY8A9aLAvxDOZ9ibY9inaTa
-	 v8NY8OSr5SZT7H4ZJrdSquWLaycyAZrts05zqa1I0Plxs5PUiFBRAEBoq5Wrpa2IXX
-	 jaXf7EweyFzgA==
-Date: Wed, 5 Mar 2025 08:06:15 +0100
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Sen Chu <sen.chu@mediatek.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Macpaul Lin <macpaul.lin@mediatek.com>, 
-	Lee Jones <lee@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, kernel@collabora.com, 
-	linux-sound@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH v3 02/20] dt-bindings: mfd: mediatek: mt6397: Add accdet
- subnode
-Message-ID: <20250305-dancing-amethyst-tortoise-d98036@krzk-bin>
-References: <20250304-mt6359-accdet-dts-v3-0-5b0eafc29f5b@collabora.com>
- <20250304-mt6359-accdet-dts-v3-2-5b0eafc29f5b@collabora.com>
+	s=arc-20240116; t=1741158529; c=relaxed/simple;
+	bh=hNy+VmiwB1/ze3G+2KPUuxwNTSDwkKTQDOqTcuoy5BM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VY3q5ozdwwPbRbcPLDSH3IW0BW7ylp+oPC4G+YubDKfKDTErF1spGD2LVNXgU/bm6OgJ+uEJWMJIAib2oVEdrRHgT1CTHEXZgJeL2R5H16XMUqlHAuz5El7QW9zT8HETFzu5I/Sztj9HYjAaN7VLWZo//naAjhWwQSKJRmlVGmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Uke+EYg7; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-abf518748cbso720644466b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:08:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1741158526; x=1741763326; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0+yijvXm5ZDn7LDTm1xM049gYEoLE/xp0pe1BT45gf0=;
+        b=Uke+EYg7UTHvj1q7ivclMXnv6NddyYJEjLmojvLsU1FiX+8CNadjwFMCWIvZk1myGO
+         D2C9QXZhx+5Xtmg1l8JW8j5APwp3V140VikHTwxbZfLCnCDIW0LJyaJzFD4F5bqz0xX6
+         8Jb2cafk5/wNi3CW1gGG0Oawj7xGZnvgfLt+BCwizYevpfpwB6O+kkLJWKJeI+F1lgTO
+         8jA1N6SDiTbnrqm0s/oVrNEAe8S4H3Q/CUBqBHVuwHihlroxJ8rInxLNBpr/4p4+CGLX
+         V1YFv9f4BVjoNriMLuA/F4NllTzOV106PEycbMNuWSwOySQOsoDxigXj9aQKdHOgAGZj
+         RR+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741158526; x=1741763326;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0+yijvXm5ZDn7LDTm1xM049gYEoLE/xp0pe1BT45gf0=;
+        b=Y6d25/epOx2aMjsKOS7m6Skcb/6v8I2s/mOyaJ6adh7lwAf6N/OsTxb3LrE1vkiF+v
+         nVi2+R/SthnnXqx0ZAWs29NZeDwbxvVNOqEJYB0bZU21OGN/x54gEymZoScpbPsRQDxM
+         968TjODVZ8XNfCgLrr0tLOLPFVjLIq43Qi5GTD36Ugb/I7GQ66v5sKQNlQEIIpKB/LKt
+         X8obfsaXGR1YcAtAHT/mmEgkg1SGUy6O9ygnONqMRQZzfTUtt/MeiI2lcB+pDMpBpQO+
+         2eehuWU8blkVj/UPsHdWoBq6vf51lvSPQnIA4OPEp7XyjMHBN/xrIqZR6KjnXp8q39j6
+         ZqXA==
+X-Forwarded-Encrypted: i=1; AJvYcCW0+LTixw2TYZDiCXmwP1r+Rwxks0sOjwQvpGvSyR1vc4aDaLybzYx5KhnnciD2EVnJ+sDxWUSW3KxOr7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGp8S+niDuFbMutmglIC2YiLI0mvd2ef0tSPTSK6s0Ix+3KcLS
+	KmHWejUbo1tuKWpn1NSbrsnjttjioGFWeUlUXnTYxZF1PmSbudmNvDdvg1KHN3M1xtkZVucNTjX
+	LIm6uPQgRJJPLelKguAgVbk4wlA0oVFQ0g1CfzQ==
+X-Gm-Gg: ASbGncsB8pM+KqOaIiszj3/M0icNCvj/bRWeOmDsi1VoMfrkE6oOB6Ppr8L95jpK2O/
+	lD55Bou2HvB5mrViWQ2vY+SEBZ8BPd0SOAt3Xf0JoCgkRJMMeqetuhBpsFxtuzEKdDUi8RzxwHa
+	952+ir9WEbPfFsDgNVSKlyDN4D
+X-Google-Smtp-Source: AGHT+IF7SpFKB1skYwYO2rns8DxIMQmy4/IIYr9g6yuUeA/6XyFLxnh4ne8RYqJRqrwC83FjXGniDGMs0w16f3tcAwk=
+X-Received: by 2002:a17:907:3dab:b0:ab3:2b85:5d5 with SMTP id
+ a640c23a62f3a-ac20dafe7b2mr188424866b.49.1741158526027; Tue, 04 Mar 2025
+ 23:08:46 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20250304171403.571335-1-neelx@suse.com> <bc3446ce-347f-41da-9255-233e2e08f91c@gmx.com>
+ <20250305070200.GY5777@suse.cz>
+In-Reply-To: <20250305070200.GY5777@suse.cz>
+From: Daniel Vacek <neelx@suse.com>
+Date: Wed, 5 Mar 2025 08:08:35 +0100
+X-Gm-Features: AQ5f1JrCnQgQHbTadgVgDNejV3N9VOm52FS-vlWnlLzI0sBxQUx73ezl7M-SBSc
+Message-ID: <CAPjX3FfYmbdPLYTS5N5WUimqh=Dz41nVXbwm47iRW=Q3E7Wnhg@mail.gmail.com>
+Subject: Re: [PATCH] btrfs/defrag: implement compression levels
+To: dsterba@suse.cz
+Cc: Qu Wenruo <quwenruo.btrfs@gmx.com>, Chris Mason <clm@fb.com>, 
+	Josef Bacik <josef@toxicpanda.com>, David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250304-mt6359-accdet-dts-v3-2-5b0eafc29f5b@collabora.com>
 
-On Tue, Mar 04, 2025 at 12:15:43PM -0300, N=C3=ADcolas F. R. A. Prado wrote:
-> Describe the accdet as a possible subnode of the MT6359 PMIC.
->=20
-> Signed-off-by: N=C3=ADcolas F. R. A. Prado <nfraprado@collabora.com>
-> ---
->  Documentation/devicetree/bindings/mfd/mediatek,mt6397.yaml | 6 ++++++
->  1 file changed, 6 insertions(+)
->=20
+On Wed, 5 Mar 2025 at 08:02, David Sterba <dsterba@suse.cz> wrote:
+>
+> On Wed, Mar 05, 2025 at 08:01:24AM +1030, Qu Wenruo wrote:
+> > The feature itself looks good to me.
+> >
+> > Although not sure if a blank commit message is fine for this case.
+> >
+> > =E5=9C=A8 2025/3/5 03:44, Daniel Vacek =E5=86=99=E9=81=93:
+> > > Signed-off-by: Daniel Vacek <neelx@suse.com>
+> > > ---
+> > >   fs/btrfs/btrfs_inode.h     |  2 ++
+> > >   fs/btrfs/defrag.c          | 22 +++++++++++++++++-----
+> > >   fs/btrfs/fs.h              |  2 +-
+> > >   fs/btrfs/inode.c           | 10 +++++++---
+> > >   include/uapi/linux/btrfs.h | 10 +++++++++-
+> > >   5 files changed, 36 insertions(+), 10 deletions(-)
+> > >
+> > > diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+> > > index aa1f55cd81b79..5ee9da0054a74 100644
+> > > --- a/fs/btrfs/btrfs_inode.h
+> > > +++ b/fs/btrfs/btrfs_inode.h
+> > > @@ -145,6 +145,7 @@ struct btrfs_inode {
+> > >      * different from prop_compress and takes precedence if set.
+> > >      */
+> > >     u8 defrag_compress;
+> > > +   s8 defrag_compress_level;
+> > >
+> > >     /*
+> > >      * Lock for counters and all fields used to determine if the inod=
+e is in
+> > > diff --git a/fs/btrfs/defrag.c b/fs/btrfs/defrag.c
+> > > index 968dae9539482..03a0287a78ea0 100644
+> > > --- a/fs/btrfs/defrag.c
+> > > +++ b/fs/btrfs/defrag.c
+> > > @@ -1363,6 +1363,7 @@ int btrfs_defrag_file(struct inode *inode, stru=
+ct file_ra_state *ra,
+> > >     u64 last_byte;
+> > >     bool do_compress =3D (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS)=
+;
+> > >     int compress_type =3D BTRFS_COMPRESS_ZLIB;
+> > > +   int compress_level =3D 0;
+> > >     int ret =3D 0;
+> > >     u32 extent_thresh =3D range->extent_thresh;
+> > >     pgoff_t start_index;
+> > > @@ -1376,10 +1377,19 @@ int btrfs_defrag_file(struct inode *inode, st=
+ruct file_ra_state *ra,
+> > >             return -EINVAL;
+> > >
+> > >     if (do_compress) {
+> > > -           if (range->compress_type >=3D BTRFS_NR_COMPRESS_TYPES)
+> > > -                   return -EINVAL;
+> > > -           if (range->compress_type)
+> > > -                   compress_type =3D range->compress_type;
+> > > +           if (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL) {
+> > > +                   if (range->compress.type >=3D BTRFS_NR_COMPRESS_T=
+YPES)
+> > > +                           return -EINVAL;
+> > > +                   if (range->compress.type) {
+> > > +                           compress_type =3D range->compress.type;
+> > > +                           compress_level=3D range->compress.level;
+> > > +                   }
+> >
+> > I am not familiar with the compress level, but
+> > btrfs_compress_set_level() does extra clamping, maybe we also want to d=
+o
+> > that too?
+>
+> Yes the level needs to be validated here as well.
 
-Neither this nor cover letter explains dependencies between patches.
-Good luck in making maintainers guessing this.
+The level is passed to btrfs_compress_folios() in
+compress_file_range() and the first thing it does is precisely
+btrfs_compress_set_level(). So I thought it's not needed to be done
+twice.
 
-Best regards,
-Krzysztof
-
+> > > @@ -643,7 +645,13 @@ struct btrfs_ioctl_defrag_range_args {
+> > >      * for this defrag operation.  If unspecified, zlib will
+> > >      * be used
+> > >      */
+> > > -   __u32 compress_type;
+> > > +   union {
+> > > +           __u32 compress_type;
+> > > +           struct {
+> > > +                   __u8 type;
+> > > +                   __s8 level;
+> > > +           } compress;
+> > > +   };
+> > >
+> > >     /* spare for later */
+> > >     __u32 unused[4];
+> >
+> > We have enough space left here, although u32 is overkilled for
+> > compress_type, using the unused space for a new s8/s16/s32 member shoul=
+d
+> > be fine.
+>
+> I suggested to do it like that, u32 is wasting space and the union trick
+> reusing existing space was already done e.g. in the balance filters.
 
