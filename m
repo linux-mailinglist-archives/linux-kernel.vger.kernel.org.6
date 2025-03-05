@@ -1,136 +1,105 @@
-Return-Path: <linux-kernel+bounces-545856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C790FA4F2AB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:26:23 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53851A4F2AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:26:41 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A490188E4F2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73913167E7E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E19D1CD3F;
-	Wed,  5 Mar 2025 00:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CF62629F;
+	Wed,  5 Mar 2025 00:26:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WTFtSMvZ"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="awvP7fr8"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 202272F3B;
-	Wed,  5 Mar 2025 00:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E3317548;
+	Wed,  5 Mar 2025 00:26:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741134374; cv=none; b=c6ToLmh05+5Yjd3aIa2+YSbHFLDVdfw1M8/lCcfhgbc734yuaeRtvp94WQXPRmeh3eAIxmdFOoxyvuYQ7K/F6fQI6s0ZTNdYD3qNx/QkErU/ReYenJPcjO4yEc6gmEEAlki6iEg94F/pc+IGet4+Q3F/xVB7l9KZlOzwQBTs8fs=
+	t=1741134393; cv=none; b=s1aqqE4zbwGdAq7X2aIqt9QXOE3RhLXOdTX9mXCOdWnnjKf4s+lmgtg9Tdtr8IDd3GYsJWy7VFPtS6PZ4salypr4XsBriq1KcREwU+kV1qe3Olnx6400GZd1mSMADS2ofR8UGdfsEv7vNSmtP3GKmHzRChn4fx4QQDomFMJH7fY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741134374; c=relaxed/simple;
-	bh=vjLN6lSpvjD572hY3rbpmZUskqG6jnfLQj70Gis6Yjo=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Tq2d61XDuyzN3vov7b1DRahlZ6gEzWI7cLCynyaf1VpO4hJfLcibaxmJMrswuuUcnHNaxMIW1o2seYUGAezVcr+v/VCew3YTD42ZIC11dVGxkOjt4SohsrfCnh+1VkC1zNLd5DYBqH5tZ+qZxonSB0aLx4kLiA5x7hzsIRkUxi8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WTFtSMvZ; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524MNwjf006540;
-	Wed, 5 Mar 2025 00:25:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=JMr1RX
-	SHWb9SLxqttG3/doTU1Tcw87vQ3XBWvafJeJs=; b=WTFtSMvZJPV9SfVFxjwAsr
-	ApvAs8ohjNK9UhWsVqhFa6rL6Hx4VYeadnlhXJ5xzXMkjV+WVnzIOdorcdVJ9iDN
-	ogJjh2tKlpCo3i9fJePOnGzJeUqI08/cG9p7y4VuiXBaGAwQeworzm3wAs3HJ8jW
-	gKyDyTQqty+rWcK9FkXIBZuTLbqmR/ZEathb8Co9mTZNsv6P0ek7QBI5cM2oqTGc
-	b+BAFYnJmNum5fMlGN0yeBaQcRuMqyCXWOo1Lt8kszup47f+b6GRQGCYQNzsObk1
-	ky1P1wG9DTNBsewi5zsxZqOc3a5S+8EwKjqG3p8EEDbIeJnhbuj29nV27rFZBy6Q
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4561j332xb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 00:25:49 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524MuB6f020853;
-	Wed, 5 Mar 2025 00:25:47 GMT
-Received: from smtprelay07.dal12v.mail.ibm.com ([172.16.1.9])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454djng5au-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 00:25:47 +0000
-Received: from smtpav04.wdc07v.mail.ibm.com (smtpav04.wdc07v.mail.ibm.com [10.39.53.231])
-	by smtprelay07.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5250PkOR26215044
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Mar 2025 00:25:47 GMT
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A6D2A58052;
-	Wed,  5 Mar 2025 00:25:46 +0000 (GMT)
-Received: from smtpav04.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A47E158045;
-	Wed,  5 Mar 2025 00:25:44 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.109.229])
-	by smtpav04.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Mar 2025 00:25:44 +0000 (GMT)
-Message-ID: <330dbd19bf0c0fbf34908d4629cbcc548eb9c254.camel@linux.ibm.com>
-Subject: Re: [PATCH v9 7/7] ima: measure kexec load and exec events as
- critical data
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
-        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
-        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
-        code@tyhicks.com, bauermann@kolabnow.com,
-        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
-        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
-        vgoyal@redhat.com, dyoung@redhat.com
-Date: Tue, 04 Mar 2025 19:25:44 -0500
-In-Reply-To: <20250304190351.96975-8-chenste@linux.microsoft.com>
-References: <20250304190351.96975-1-chenste@linux.microsoft.com>
-	 <20250304190351.96975-8-chenste@linux.microsoft.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
+	s=arc-20240116; t=1741134393; c=relaxed/simple;
+	bh=eX8pDDXLntPgbvz5jz4y2gDu9qBJgtjaZyWUOUUwn4o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LjFVXaQJSsVMOr8GEAq9ZRwmFzpuAz9fVSNowRfKtC1lFRJSnoRqErsoBf/Mnc493E24m1/H72KRxxsvsdjbMXm4z0OMFOGb50zzElOoUUalwjUxblpYS672BWyw8h+r7UnwWpLxufJg9cbKKSfAr6vzDwk2M2ac0O8wxl03ipU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=awvP7fr8; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741134386;
+	bh=8UATZmOJQXiF6YcKV6u4m3dUJZra17NIVWNPrQkYtRw=;
+	h=Date:From:To:Cc:Subject:From;
+	b=awvP7fr88rZzltyrssZH5xW+z/BU7nIGkTXzawinIVqZFLvPAUoLrKD+cKibCzw2O
+	 TAgBLHsfGo/1ODAh24MRadfRrYKDVmPmELM/bhudAdKMQm0O5+1LPS7y4oo2bSrRyc
+	 VhiQZ1wm8QIWCtVJjoncFGCCIUHFGra6+B+2MfZ8z6r8RRPXGtmTE+XQBaj+Nsw5JE
+	 6DGKrXcsVbCr5+a9sfg3wW1Cx300pt5u8HeeIirtvWP2TVxwWTwC0PBmizghngpREj
+	 omgR6lj3aFb4bVUEziObQXD2yIkoq4Oep6xcLBAl+0MVcjhzzSz/BmK75fuI7123LG
+	 29hoIm2EHt0yg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z6tdY3Bvbz4whq;
+	Wed,  5 Mar 2025 11:26:25 +1100 (AEDT)
+Date: Wed, 5 Mar 2025 11:26:24 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Andy Gross <agross@kernel.org>, Mike Turquette
+ <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the qcom tree
+Message-ID: <20250305112624.0806472d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: uFqdO4lGR1CyUhH6pWvosWqXRv6Ii_6B
-X-Proofpoint-ORIG-GUID: uFqdO4lGR1CyUhH6pWvosWqXRv6Ii_6B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- impostorscore=0 spamscore=0 mlxlogscore=999 phishscore=0 clxscore=1015
- priorityscore=1501 adultscore=0 mlxscore=0 bulkscore=0 malwarescore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503040192
+Content-Type: multipart/signed; boundary="Sig_/PgKxN4OkTXT2C1Vc4Qf_Ohw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Steven,
+--Sig_/PgKxN4OkTXT2C1Vc4Qf_Ohw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 2025-03-04 at 11:03 -0800, steven chen wrote:
-> +void ima_measure_kexec_event(const char *event_name)
-> +{
-> +	char ima_kexec_event[IMA_KEXEC_EVENT_LEN];
-> +	size_t buf_size =3D 0;
-> +	long len;
-> +
-> +	buf_size =3D ima_get_binary_runtime_size();
-> +	len =3D atomic_long_read(&ima_htable.len);
-> +
-> +	int n =3D scnprintf(ima_kexec_event, IMA_KEXEC_EVENT_LEN,
-> +					"kexec_segment_size=3D%lu;ima_binary_runtime_size=3D%lu;"
-> +					"ima_runtime_measurements_count=3D%ld;",
-> +					kexec_segment_size, buf_size, len);
+Hi all,
 
-Variables should not be defined inline, but at the beginning of the functio=
-n.
-After doing that, scripts/checkpatch.pl complains about the formatting.
+The following commit is also in the clk-fixes tree as a different commit
+(but the same patch):
 
-Mimi
+  787289a1d13d ("clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARE=
+NT on byte intf parent")
 
-> +
-> +	ima_measure_critical_data("ima_kexec", event_name, ima_kexec_event, n, =
-false, NULL, 0);
-> +}
-> +
+This is commit
+
+  b8501febdc51 ("clk: qcom: dispcc-sm8750: Drop incorrect CLK_SET_RATE_PARE=
+NT on byte intf parent")
+
+in the clk-fixes tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/PgKxN4OkTXT2C1Vc4Qf_Ohw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfHmjAACgkQAVBC80lX
+0GwFeQgAgTQssEjgjJxRtgllfb0q0DNU98zAI8qMAxjXoBu2aqTbuNW9oYkAKh16
+AfvivDFPJYQZ4SZYEP7uslsJz50glkWxcgiGQbLLSctjbimkbmui0pJf5DmfnaEG
+I3vWq/KEYpgdQ6h96okSfh6e2B1oZ6guWd3PKP3w3dt/TCN8G3aYi2eyF+1OXOCX
+EHjr3SWXfUfnR6nMTmoh46EgRRSItsi3fn26GcDq7W5/yQndZq8qkNLUKRF8LzCe
+gfWFasnJeX5GkJYoVFqyJjZfr9LKWkKuWomp5ujG0krp+cHRRwzXZKMB5WyhtCW/
+fXeQdvec/chr5eEq3+9TC4ykoF1jig==
+=56SK
+-----END PGP SIGNATURE-----
+
+--Sig_/PgKxN4OkTXT2C1Vc4Qf_Ohw--
 
