@@ -1,187 +1,195 @@
-Return-Path: <linux-kernel+bounces-547245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD8D6A504CA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:29:39 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A36EA504D0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:30:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DAA05176CAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D3F53AA9CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:28:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771771957E4;
-	Wed,  5 Mar 2025 16:25:26 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4648318A6B5;
-	Wed,  5 Mar 2025 16:25:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD1C52512F8;
+	Wed,  5 Mar 2025 16:27:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dypaf9OB"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 587642512C1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:27:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741191926; cv=none; b=lsC5+5Cs9BSqAVf6/DRYw2hIvIdy44Wl6p3ZXuh++HaGFaeTPBG4JOjYp6pn28DoasHCIbJww0OdSrAloMBPmFjMdJm3aCWLEuYaNmA3Fph2cnMyGQ/gVo+RCg5K3ki8BGHDuHywN2FWqWt5/NO4nQQXxL8etTtEn9USCW+3PS8=
+	t=1741192022; cv=none; b=By9HUWYNdzttYuyBp6ExbuyG8FObqBbx3PSGxvspRs7IyjOI2cZ6GkxGj2qILlsflBjmRzCfA6c6jX2HpKT+iyh+ECSetLnJGztGNQYGyKPDEeydvMLY4MNLXRQySZhtObsaCgJjh76N2V8UIxeADkavvIoZi3ylAFMXTdswWqE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741191926; c=relaxed/simple;
-	bh=K+K6DmUC+Wxvngt/uU7W1IItHbJf0lWSGmSE11WgMBc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HKprgePh14EbWjMV2x8CGcz09i90dqUSI+qE2NtBKiQG0oSUDpX2bmOf6uecehUrVaaiupQfbJB9vPkOqJFIXaw6mNxZCiYkhiItsGP1LPcNwXMa6vHzdEX5rMP+AOrQyqqqYZ1fSUwKNVrdkPS/yKC7nVVzax85OtS3TmeBSM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D5D60FEC;
-	Wed,  5 Mar 2025 08:25:36 -0800 (PST)
-Received: from [10.57.67.16] (unknown [10.57.67.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1FB763F5A1;
-	Wed,  5 Mar 2025 08:25:18 -0800 (PST)
-Message-ID: <ea9bb982-cf31-4079-8fea-dc39e91a975b@arm.com>
-Date: Wed, 5 Mar 2025 16:25:17 +0000
+	s=arc-20240116; t=1741192022; c=relaxed/simple;
+	bh=NufEolRxNPU40ht+CZp74NctFQAb3wfmh8Gc5PxIQeE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kUrRi+/XFS24MpVOvVcJMeURje6maehBAqZSpD/HcRWSJljOZy1kOMHnkLfUPkEn6b3BfGtaxqKAi6z9p9V3PWi70Qs4Q9AKNPqmLpXlw+Jg/p4I7esI28qmPdZocZgCOd3aD9zuRCmWB0P1p519olycy4xT1Lxl0kO2k1d8MMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dypaf9OB; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-aaf900cc7fbso1290753966b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 08:27:00 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741192018; x=1741796818; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IB1gjJRKzsGUjoFlHcs0x65GD8vsyFDAaTOj7W/RGZ0=;
+        b=Dypaf9OB1Cq9jcpqxoq5+vyMBp4yhQTlq+fNEXaXZ096E/S1Zjv7rXcnWLm/mZ5haU
+         yZvUpqarSfLspivXv+YPutOM2+tIIflS/jSKEfjAeQ/lJKKsh5aUjS9EHTAvhmm93DTa
+         5tR7lXk9W2LLqXmH716HdAqCuoL9nmaM7Tn0TrYeDAIOAWSQoxCP7ZuV/wcALlp5h7lA
+         0G22Aq14n1rKeSrkbhGEjAkj+oybZTS2b8EMjFUVF3gUJa/a24GGuTncqCAmnZvJLrIi
+         zQDecEZbhtjr0A8527GaFSvwKWsVpwf1EIQOVyEWGnazXQbdrcmcRohm7a5uLLTN7rWa
+         2+gQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741192018; x=1741796818;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IB1gjJRKzsGUjoFlHcs0x65GD8vsyFDAaTOj7W/RGZ0=;
+        b=dvWK6LVvqOFCFsQjK2Oe1yv1b27bVkcTgO1IiyFVecT+VKSXbJAB38vanqBe2Nj5po
+         yA3OOD3ypMxfSRwEABOw4i1sKv1XHrEzCKH4JczYeh84P+mepRPTNxe8ObE5z72p2Guk
+         a0HetW6CwXyjC2rlovarghIwIeoZVn+Bx8CcQTTNmeRe7g8ssYClmyxDyZ08b+LT7z5x
+         HPOUTi11osB0MI4x9t4TTcGK1FK68lHLdLCLgn6uYDRwvczWHXmvJbTknlaqpgqzO+bJ
+         Cz2mD0y4DLIEcXdU6xcGjG0RYE9VqlieE313lLxJQQR/yLi62PLQ+Fl6RXWywn+V1a1j
+         sOJA==
+X-Forwarded-Encrypted: i=1; AJvYcCV11p7HoCCAbVseAKDZ+xeIA3GGVKw23Ph6HUuj4IvVPTwo5ylJ8ZCjML3q9JgzdvOvHYhAvWKf12JgGko=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWA4KVd8HfF8g7JrlT/Fo94O/WAbs2/8NCzXvdQ+OlN06eNp74
+	sDvL0eglzVbHxQk34+WZBmQRjjguWxdDfbyp24ttTAzueu3aYxY5
+X-Gm-Gg: ASbGncsvqCvZkdImDbi9Toh9xRksc9/1oJNKkjR3f50sbtbNZRq7WALfmPsIfoP/u2f
+	/cIlOpRxgxfpcqo91k1tAOeydY5OO5s9MK+zYBL6Hx13yMAOscKjVfqMtIgH9+E+UBvT4ZKvnoe
+	uVD99t6qbVs3X5Raj2red5tcoRzSDYjMSuosveMNLOywJrTZPZJqG7V4s+qtFAEK63jgdoSKg/Z
+	quA5UZsot6gtzLZFE/EIE5QEDxfN2DSgzaDEy8LMcewuAP3FNBOp3G3LbA0TPuCwdUhmMOM7Qaw
+	nhviYjgJKvu08NQx1RSPUKe3W3/mHASknU+Rh2MkNVzstA50h1E6/g==
+X-Google-Smtp-Source: AGHT+IFwGVTvFx5WFAKAaoE6f1+EmkdqxbwAa5lkpI8zjwVRBoWJlwXMvIrXWlkoT34bi8OCXCjt5Q==
+X-Received: by 2002:a17:906:7314:b0:ac1:17fe:c773 with SMTP id a640c23a62f3a-ac20da86f0cmr447062466b.41.1741192018293;
+        Wed, 05 Mar 2025 08:26:58 -0800 (PST)
+Received: from localhost.localdomain ([46.248.82.114])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1fa431529sm281412066b.148.2025.03.05.08.26.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 08:26:57 -0800 (PST)
+From: Uros Bizjak <ubizjak@gmail.com>
+To: x86@kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Uros Bizjak <ubizjak@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@kernel.org>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	"H. Peter Anvin" <hpa@zytor.com>
+Subject: [PATCH] x86/kexec: Merge x86_32 and x86_64 code using macros from asm.h
+Date: Wed,  5 Mar 2025 17:26:37 +0100
+Message-ID: <20250305162649.130270-1-ubizjak@gmail.com>
+X-Mailer: git-send-email 2.42.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 09/45] kvm: arm64: Expose debug HW register numbers for
- Realm
-To: Gavin Shan <gshan@redhat.com>, kvm@vger.kernel.org, kvmarm@lists.linux.dev
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250213161426.102987-1-steven.price@arm.com>
- <20250213161426.102987-10-steven.price@arm.com>
- <cec600f2-2ddc-4c71-9bab-0a0403132b43@redhat.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <cec600f2-2ddc-4c71-9bab-0a0403132b43@redhat.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Hi Gavin,
+Merge common x86_32 and x86_64 code in crash_setup_regs()
+using macros from asm/asm.h.
 
-On 03/03/2025 04:48, Gavin Shan wrote:
-> On 2/14/25 2:13 AM, Steven Price wrote:
->> From: Suzuki K Poulose <suzuki.poulose@arm.com>
->>
->> Expose VM specific Debug HW register numbers.
+The compiled object files before and after the patch are unchanged.
 
-Looking at this now, this patch description is garbage. Probably the
-patch has changed over time - so I suspect it's my fault not Suzuki's.
-We're not exposing anything new here. This is purely about telling the
-VMM that a realm cannot (currently) be debugged. Something like the
-below would be more accurate:
+Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Ingo Molnar <mingo@kernel.org>
+Cc: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@linux.intel.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+---
+ arch/x86/include/asm/asm.h   |  2 ++
+ arch/x86/include/asm/kexec.h | 44 +++++++++++++++---------------------
+ 2 files changed, 20 insertions(+), 26 deletions(-)
 
-"""
-kvm: arm64: Don't expose debug capabilities for realm guests
-
-RMM v1.0 provides no mechanism for the host to perform debug operations
-on the guest. So don't expose KVM_CAP_SET_GUEST_DEBUG and report 0
-breakpoints and 0 watch points.
-"""
-
->> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
->> Signed-off-by: Steven Price <steven.price@arm.com>
->> ---
->>   arch/arm64/kvm/arm.c | 24 +++++++++++++++++++++---
->>   1 file changed, 21 insertions(+), 3 deletions(-)
->>
-> 
-> Documentation/virt/kvm/api.rst needs to be updated accordingly.
-
-I don't think (with the above clarification) there's anything to update
-in the API documentation. There's nothing new being added, just
-capabilities being hidden where the functionality isn't available.
-
-And eventually we hope to add support for this (in a later RMM spec) - I
-don't yet know exactly what form this will take, but I hope to keep the
-interfaces as close as possible to what we already have so that existing
-tooling can be used.
-
-Thanks,
-Steve
-
->> diff --git a/arch/arm64/kvm/arm.c b/arch/arm64/kvm/arm.c
->> index b8fa82be251c..df6eb5e9ca96 100644
->> --- a/arch/arm64/kvm/arm.c
->> +++ b/arch/arm64/kvm/arm.c
->> @@ -78,6 +78,22 @@ bool is_kvm_arm_initialised(void)
->>       return kvm_arm_initialised;
->>   }
->>   +static u32 kvm_arm_get_num_brps(struct kvm *kvm)
->> +{
->> +    if (!kvm_is_realm(kvm))
->> +        return get_num_brps();
->> +    /* Realm guest is not debuggable. */
->> +    return 0;
->> +}
->> +
->> +static u32 kvm_arm_get_num_wrps(struct kvm *kvm)
->> +{
->> +    if (!kvm_is_realm(kvm))
->> +        return get_num_wrps();
->> +    /* Realm guest is not debuggable. */
->> +    return 0;
->> +}
->> +
-> 
-> The above two comments "Realm guest is not debuggable." can be dropped
-> since
-> the code is self-explanatory, and those two functions are unnecessary to be
-> kept in that way, for example:
-> 
->     case KVM_CAP_GUEST_DEBUG_HW_BPS:
->         return kvm_is_realm(kvm) ? 0 : get_num_brps();
->     case KVM_CAP_GUEST_DEBUG_HW_WRPS:
->         return kvm_is_realm(kvm) ? 0 : get_num_wrps();
-> 
-> 
->>   int kvm_arch_vcpu_should_kick(struct kvm_vcpu *vcpu)
->>   {
->>       return kvm_vcpu_exiting_guest_mode(vcpu) == IN_GUEST_MODE;
->> @@ -323,7 +339,6 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm,
->> long ext)
->>       case KVM_CAP_ARM_IRQ_LINE_LAYOUT_2:
->>       case KVM_CAP_ARM_NISV_TO_USER:
->>       case KVM_CAP_ARM_INJECT_EXT_DABT:
->> -    case KVM_CAP_SET_GUEST_DEBUG:
->>       case KVM_CAP_VCPU_ATTRIBUTES:
->>       case KVM_CAP_PTP_KVM:
->>       case KVM_CAP_ARM_SYSTEM_SUSPEND:
->> @@ -331,6 +346,9 @@ int kvm_vm_ioctl_check_extension(struct kvm *kvm,
->> long ext)
->>       case KVM_CAP_COUNTER_OFFSET:
->>           r = 1;
->>           break;
->> +    case KVM_CAP_SET_GUEST_DEBUG:
->> +        r = !kvm_is_realm(kvm);
->> +        break;
->>       case KVM_CAP_SET_GUEST_DEBUG2:
->>           return KVM_GUESTDBG_VALID_MASK;
->>       case KVM_CAP_ARM_SET_DEVICE_ADDR:
->> @@ -376,10 +394,10 @@ int kvm_vm_ioctl_check_extension(struct kvm
->> *kvm, long ext)
->>           r = cpus_have_final_cap(ARM64_HAS_32BIT_EL1);
->>           break;
->>       case KVM_CAP_GUEST_DEBUG_HW_BPS:
->> -        r = get_num_brps();
->> +        r = kvm_arm_get_num_brps(kvm);
->>           break;
->>       case KVM_CAP_GUEST_DEBUG_HW_WPS:
->> -        r = get_num_wrps();
->> +        r = kvm_arm_get_num_wrps(kvm);
->>           break;
->>       case KVM_CAP_ARM_PMU_V3:
->>           r = kvm_arm_support_pmu_v3();
-> 
-> Thanks,
-> Gavin
-> 
+diff --git a/arch/x86/include/asm/asm.h b/arch/x86/include/asm/asm.h
+index 975ae7a9397e..2bccc063d30b 100644
+--- a/arch/x86/include/asm/asm.h
++++ b/arch/x86/include/asm/asm.h
+@@ -41,6 +41,8 @@
+ #define _ASM_SUB	__ASM_SIZE(sub)
+ #define _ASM_XADD	__ASM_SIZE(xadd)
+ #define _ASM_MUL	__ASM_SIZE(mul)
++#define _ASM_PUSHF	__ASM_SIZE(pushf)
++#define _ASM_POP	__ASM_SIZE(pop)
+ 
+ #define _ASM_AX		__ASM_REG(ax)
+ #define _ASM_BX		__ASM_REG(bx)
+diff --git a/arch/x86/include/asm/kexec.h b/arch/x86/include/asm/kexec.h
+index 8ad187462b68..56040ae6bda0 100644
+--- a/arch/x86/include/asm/kexec.h
++++ b/arch/x86/include/asm/kexec.h
+@@ -18,6 +18,7 @@
+ #include <linux/string.h>
+ #include <linux/kernel.h>
+ 
++#include <asm/asm.h>
+ #include <asm/page.h>
+ #include <asm/ptrace.h>
+ 
+@@ -71,29 +72,15 @@ static inline void crash_setup_regs(struct pt_regs *newregs,
+ 	if (oldregs) {
+ 		memcpy(newregs, oldregs, sizeof(*newregs));
+ 	} else {
+-#ifdef CONFIG_X86_32
+-		asm volatile("movl %%ebx,%0" : "=m"(newregs->bx));
+-		asm volatile("movl %%ecx,%0" : "=m"(newregs->cx));
+-		asm volatile("movl %%edx,%0" : "=m"(newregs->dx));
+-		asm volatile("movl %%esi,%0" : "=m"(newregs->si));
+-		asm volatile("movl %%edi,%0" : "=m"(newregs->di));
+-		asm volatile("movl %%ebp,%0" : "=m"(newregs->bp));
+-		asm volatile("movl %%eax,%0" : "=m"(newregs->ax));
+-		asm volatile("movl %%esp,%0" : "=m"(newregs->sp));
+-		asm volatile("movl %%ss, %%eax;" :"=a"(newregs->ss));
+-		asm volatile("movl %%cs, %%eax;" :"=a"(newregs->cs));
+-		asm volatile("movl %%ds, %%eax;" :"=a"(newregs->ds));
+-		asm volatile("movl %%es, %%eax;" :"=a"(newregs->es));
+-		asm volatile("pushfl; popl %0" :"=m"(newregs->flags));
+-#else
+-		asm volatile("movq %%rbx,%0" : "=m"(newregs->bx));
+-		asm volatile("movq %%rcx,%0" : "=m"(newregs->cx));
+-		asm volatile("movq %%rdx,%0" : "=m"(newregs->dx));
+-		asm volatile("movq %%rsi,%0" : "=m"(newregs->si));
+-		asm volatile("movq %%rdi,%0" : "=m"(newregs->di));
+-		asm volatile("movq %%rbp,%0" : "=m"(newregs->bp));
+-		asm volatile("movq %%rax,%0" : "=m"(newregs->ax));
+-		asm volatile("movq %%rsp,%0" : "=m"(newregs->sp));
++		asm volatile(_ASM_MOV " %%" _ASM_BX ",%0" : "=m"(newregs->bx));
++		asm volatile(_ASM_MOV " %%" _ASM_CX ",%0" : "=m"(newregs->cx));
++		asm volatile(_ASM_MOV " %%" _ASM_DX ",%0" : "=m"(newregs->dx));
++		asm volatile(_ASM_MOV " %%" _ASM_SI ",%0" : "=m"(newregs->si));
++		asm volatile(_ASM_MOV " %%" _ASM_DI ",%0" : "=m"(newregs->di));
++		asm volatile(_ASM_MOV " %%" _ASM_BP ",%0" : "=m"(newregs->bp));
++		asm volatile(_ASM_MOV " %%" _ASM_AX ",%0" : "=m"(newregs->ax));
++		asm volatile(_ASM_MOV " %%" _ASM_SP ",%0" : "=m"(newregs->sp));
++#ifdef CONFIG_X86_64
+ 		asm volatile("movq %%r8,%0" : "=m"(newregs->r8));
+ 		asm volatile("movq %%r9,%0" : "=m"(newregs->r9));
+ 		asm volatile("movq %%r10,%0" : "=m"(newregs->r10));
+@@ -102,10 +89,15 @@ static inline void crash_setup_regs(struct pt_regs *newregs,
+ 		asm volatile("movq %%r13,%0" : "=m"(newregs->r13));
+ 		asm volatile("movq %%r14,%0" : "=m"(newregs->r14));
+ 		asm volatile("movq %%r15,%0" : "=m"(newregs->r15));
+-		asm volatile("movl %%ss, %%eax;" :"=a"(newregs->ss));
+-		asm volatile("movl %%cs, %%eax;" :"=a"(newregs->cs));
+-		asm volatile("pushfq; popq %0" :"=m"(newregs->flags));
+ #endif
++		asm volatile("movl %%ss,%k0" :"=a"(newregs->ss));
++		asm volatile("movl %%cs,%k0" :"=a"(newregs->cs));
++#ifdef CONFIG_X86_32
++		asm volatile("movl %%ds,%k0" :"=a"(newregs->ds));
++		asm volatile("movl %%es,%k0" :"=a"(newregs->es));
++#endif
++		asm volatile(_ASM_PUSHF "\n\t"
++			     _ASM_POP " %0" : "=m"(newregs->flags));
+ 		newregs->ip = _THIS_IP_;
+ 	}
+ }
+-- 
+2.42.0
 
 
