@@ -1,49 +1,88 @@
-Return-Path: <linux-kernel+bounces-547137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB43A50353
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:20:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A284A50358
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:22:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D62227A6F90
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:19:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45D201888C43
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9A924EF74;
-	Wed,  5 Mar 2025 15:20:19 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E2524E005
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5374824EA9A;
+	Wed,  5 Mar 2025 15:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Uz6QuXb1"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F08920B21D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:22:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741188018; cv=none; b=ZWek0ZJpdfI9SYi1oIbfVkC2QrvX3pQWkRmibghBvJ/LjO+f1LddAt0yOXs+7ZJS1zL3YQMgpmB8ebTyO4gKrfAzQmoW1k5OKLZws3xJoWisKK8TqOiHAU8aCYounMf3A1FSQjN4gcUBNfLvAOmCmTM+s7fOnPgas49rxrGrT3Q=
+	t=1741188167; cv=none; b=BK3J67164pl67Br8sBS1HI6YNqay7lf9Yd9/f2+x+E4WlVsk4mLV/aOdT/59dtohbn/L1CA/pCt1sG7HlfBB6EL/4yJBsQFsriViEQVFmaS1CE1MPgMs0neLJ14JkGit0kDoxCkD6tLojc9OrIhsj57tamoiIeAa+NyvB2VFL6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741188018; c=relaxed/simple;
-	bh=fkE57f6jwWdplqc4O/wQERskiE21bEGUDUnWXab1FEw=;
+	s=arc-20240116; t=1741188167; c=relaxed/simple;
+	bh=VWigdSJtvf2WxMxfGPfKwCzDKILPSKtbmZRomoBqut8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oC6p4ibfV5rrb3ZKIT00AinN1D1bRMZ64Sj1MylWO1BZ5x3RsX1gvr18g//ydXxmum7Jjqzd5jUvnxIjgGk6kRJDEMDeozhE0evFFQZ02VOC9gDxQSqsqrXW5MLcTJjv/77BHVrZD3ZIi8d1fflSrzUcK+cd26ZbWFgdi8QDhKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 39BFFFEC;
-	Wed,  5 Mar 2025 07:20:28 -0800 (PST)
-Received: from localhost (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 852853F673;
-	Wed,  5 Mar 2025 07:20:14 -0800 (PST)
-Date: Wed, 5 Mar 2025 15:20:09 +0000
-From: Leo Yan <leo.yan@arm.com>
-To: James Clark <james.clark@linaro.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=XxwEaWQSJRIkKihCJcZzX/3nz2y8MOZRWGcSg5x1DbneCT5pRv3ys8IRy5sLyKIW8hOV9NFYPNqX4V9vPesbI4NrNcjmhdNnD6yjtOHTxhD5GiNboStMKjmYr/G8P3NVXYndEIn78yuwiTEaznDJmoENZ2rjaHMgPkn5Ux+Bbms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Uz6QuXb1; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741188159;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=VWigdSJtvf2WxMxfGPfKwCzDKILPSKtbmZRomoBqut8=;
+	b=Uz6QuXb1/EXPWgnFDEEncDDqcJR7miboRi/oKTd+Hqao5S8jRtkpQb63ql2LQ1OTJlm3I0
+	WwGiP/GuI88zm7u9SrnanxnEhDJM4Pv8TfkPhz2BDb1mDjkuAKI53NWTOFvZKOhih6XKuK
+	LamQxianjDT/z3iNfhNIV9rXHNJrxWI=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-696-23qFcZJ4NrSH5Me2lVeGFg-1; Wed,
+ 05 Mar 2025 10:21:55 -0500
+X-MC-Unique: 23qFcZJ4NrSH5Me2lVeGFg-1
+X-Mimecast-MFC-AGG-ID: 23qFcZJ4NrSH5Me2lVeGFg_1741188097
+Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C55451801A07;
+	Wed,  5 Mar 2025 15:21:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.34.66])
+	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B2E781800266;
+	Wed,  5 Mar 2025 15:21:27 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Wed,  5 Mar 2025 16:21:05 +0100 (CET)
+Date: Wed, 5 Mar 2025 16:20:55 +0100
+From: Oleg Nesterov <oleg@redhat.com>
+To: David Hildenbrand <david@redhat.com>,
+	Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthew Wilcox <willy@infradead.org>,
+	Russell King <linux@armlinux.org.uk>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
 	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	linux-kernel@vger.kernel.org, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] coresight: Add a KUnit test for
- coresight_find_default_sink()
-Message-ID: <20250305152009.GH13418@e132581.arm.com>
-References: <20250305-james-cs-kunit-test-v2-1-83ba682b976c@linaro.org>
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	Tong Tiangen <tongtiangen@huawei.com>
+Subject: Re: [PATCH -next v1 0/3] kernel/events/uprobes:
+ uprobe_write_opcode() rewrite
+Message-ID: <20250305152055.GB28112@redhat.com>
+References: <20250304154846.1937958-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,165 +91,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305-james-cs-kunit-test-v2-1-83ba682b976c@linaro.org>
+In-Reply-To: <20250304154846.1937958-1-david@redhat.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
 
-On Wed, Mar 05, 2025 at 03:07:19PM +0000, James Clark wrote:
-> Add a test to confirm that default sink selection skips over an ETF
-> and returns an ETR even if it's further away.
-> 
-> This also makes it easier to add new unit tests in the future.
-> 
-> Signed-off-by: James Clark <james.clark@linaro.org>
+On 03/04, David Hildenbrand wrote:
+>
+> Currently, uprobe_write_opcode() implements COW-breaking manually, which is
+> really far from ideal.
 
-LGTM:
+To say at least ;)
 
-Reviewed-by: Leo Yan <leo.yan@arm.com>
+David, thanks for doing this. I'll try to read 3/3 tomorrow, but I don't
+think I can really help. Let me repeat, this code was written many years
+ago, I forgot everything, and today my understanding of mm/ is very poor.
+But I'll try anyway.
 
-> ---
-> Changes in v2:
-> - Let devm free everything rather than doing individual kfrees:
->   "Like with managed drivers, KUnit-managed fake devices are
->   automatically cleaned up when the test finishes, but can be manually
->   cleaned up early with kunit_device_unregister()."
-> - Link to v1: https://lore.kernel.org/r/20250225164639.522741-1-james.clark@linaro.org
-> ---
->  drivers/hwtracing/coresight/Kconfig                |  9 +++
->  drivers/hwtracing/coresight/Makefile               |  3 +-
->  drivers/hwtracing/coresight/coresight-core.c       |  1 +
->  .../hwtracing/coresight/coresight-kunit-tests.c    | 77 ++++++++++++++++++++++
->  4 files changed, 88 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/Kconfig b/drivers/hwtracing/coresight/Kconfig
-> index ecd7086a5b83..f064e3d172b3 100644
-> --- a/drivers/hwtracing/coresight/Kconfig
-> +++ b/drivers/hwtracing/coresight/Kconfig
-> @@ -259,4 +259,13 @@ config CORESIGHT_DUMMY
->  
->  	  To compile this driver as a module, choose M here: the module will be
->  	  called coresight-dummy.
-> +
-> +config CORESIGHT_KUNIT_TESTS
-> +	  tristate "Enable Coresight unit tests"
-> +	  depends on KUNIT
-> +	  default KUNIT_ALL_TESTS
-> +	  help
-> +	    Enable Coresight unit tests. Only useful for development and not
-> +	    intended for production.
-> +
->  endif
-> diff --git a/drivers/hwtracing/coresight/Makefile b/drivers/hwtracing/coresight/Makefile
-> index 8e62c3150aeb..96f0dfedb1bf 100644
-> --- a/drivers/hwtracing/coresight/Makefile
-> +++ b/drivers/hwtracing/coresight/Makefile
-> @@ -51,5 +51,4 @@ coresight-cti-y := coresight-cti-core.o	coresight-cti-platform.o \
->  		   coresight-cti-sysfs.o
->  obj-$(CONFIG_ULTRASOC_SMB) += ultrasoc-smb.o
->  obj-$(CONFIG_CORESIGHT_DUMMY) += coresight-dummy.o
-> -obj-$(CONFIG_CORESIGHT_CTCU) += coresight-ctcu.o
-> -coresight-ctcu-y := coresight-ctcu-core.o
-> +obj-$(CONFIG_CORESIGHT_KUNIT_TESTS) += coresight-kunit-tests.o
-> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/hwtracing/coresight/coresight-core.c
-> index bd0a7edd38c9..b101aa133ceb 100644
-> --- a/drivers/hwtracing/coresight/coresight-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-core.c
-> @@ -959,6 +959,7 @@ coresight_find_default_sink(struct coresight_device *csdev)
->  	}
->  	return csdev->def_sink;
->  }
-> +EXPORT_SYMBOL_GPL(coresight_find_default_sink);
->  
->  static int coresight_remove_sink_ref(struct device *dev, void *data)
->  {
-> diff --git a/drivers/hwtracing/coresight/coresight-kunit-tests.c b/drivers/hwtracing/coresight/coresight-kunit-tests.c
-> new file mode 100644
-> index 000000000000..a136af05eaf4
-> --- /dev/null
-> +++ b/drivers/hwtracing/coresight/coresight-kunit-tests.c
-> @@ -0,0 +1,77 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#include <kunit/test.h>
-> +#include <kunit/device.h>
-> +#include <linux/coresight.h>
-> +
-> +#include "coresight-priv.h"
-> +
-> +static struct coresight_device *coresight_test_device(struct device *dev)
-> +{
-> +	struct coresight_device *csdev = devm_kcalloc(dev, 1,
-> +						     sizeof(struct coresight_device),
-> +						     GFP_KERNEL);
-> +	csdev->pdata = devm_kcalloc(dev, 1,
-> +				   sizeof(struct coresight_platform_data),
-> +				   GFP_KERNEL);
-> +	return csdev;
-> +}
-> +
-> +static int coresight_test_cpuid(struct coresight_device *csdev)
-> +{
-> +	return 0;
-> +}
-> +
-> +static void test_default_sink(struct kunit *test)
-> +{
-> +	/*
-> +	 * ETM -> ETF -> ETR -> CATU
-> +	 *                ^
-> +	 *                | default
-> +	 */
-> +	struct device *dev = kunit_device_register(test, "coresight_kunit");
-> +	struct coresight_device *etm = coresight_test_device(dev),
-> +				*etf = coresight_test_device(dev),
-> +				*etr = coresight_test_device(dev),
-> +				*catu = coresight_test_device(dev);
-> +	struct coresight_connection conn = {};
-> +	struct coresight_ops_source src_ops = {.cpu_id = coresight_test_cpuid };
-> +	struct coresight_ops etm_cs_ops = { .source_ops	= &src_ops };
-> +
-> +	etm->type = CORESIGHT_DEV_TYPE_SOURCE;
-> +	etm->ops = &etm_cs_ops;
-> +	etf->type = CORESIGHT_DEV_TYPE_LINKSINK;
-> +	etf->subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_BUFFER;
-> +	etr->type = CORESIGHT_DEV_TYPE_SINK;
-> +	etr->subtype.sink_subtype = CORESIGHT_DEV_SUBTYPE_SINK_SYSMEM;
-> +	catu->type = CORESIGHT_DEV_TYPE_HELPER;
-> +
-> +	conn.src_dev = etm;
-> +	conn.dest_dev = etf;
-> +	coresight_add_out_conn(dev, etm->pdata, &conn);
-> +
-> +	conn.src_dev = etf;
-> +	conn.dest_dev = etr;
-> +	coresight_add_out_conn(dev, etf->pdata, &conn);
-> +
-> +	conn.src_dev = etr;
-> +	conn.dest_dev = catu;
-> +	coresight_add_out_conn(dev, etr->pdata, &conn);
-> +
-> +	KUNIT_ASSERT_PTR_EQ(test, coresight_find_default_sink(etm), etr);
-> +}
-> +
-> +static struct kunit_case coresight_testcases[] = {
-> +	KUNIT_CASE(test_default_sink),
-> +	{}
-> +};
-> +
-> +static struct kunit_suite coresight_test_suite = {
-> +	.name = "coresight_test_suite",
-> +	.test_cases = coresight_testcases,
-> +};
-> +
-> +kunit_test_suites(&coresight_test_suite);
-> +MODULE_LICENSE("GPL");
-> +MODULE_AUTHOR("James Clark <james.clark@linaro.org>");
-> +MODULE_DESCRIPTION("Arm CoreSight KUnit tests");
-> 
-> ---
-> base-commit: eeafe6a8790ea125252ca2e23c1a2469eaff1d9a
-> change-id: 20250305-james-cs-kunit-test-3af1df2401e6
-> 
-> Best regards,
-> -- 
-> James Clark <james.clark@linaro.org>
-> 
+> Are there any uprobe tests / benchmarks that are worth running?
+
+All I know about uprobe tests is that bpf people run a lot of tests which
+use uprobes.
+
+Andrii, Jiri, what you advise?
+
+Oleg.
+
 
