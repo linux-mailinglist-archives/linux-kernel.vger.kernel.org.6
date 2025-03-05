@@ -1,159 +1,125 @@
-Return-Path: <linux-kernel+bounces-547272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCA6A50543
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:41:09 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B59D9A5052E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:39:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03EC169CAF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:40:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFD6016ABCF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:39:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BF051A7253;
-	Wed,  5 Mar 2025 16:39:02 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 984DA191F66;
-	Wed,  5 Mar 2025 16:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B93224EF6B;
+	Wed,  5 Mar 2025 16:38:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N4Ut2cNz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3E6B19ABA3;
+	Wed,  5 Mar 2025 16:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192742; cv=none; b=JTG+tEY4KIF7TXz1vz2HZitkEWgxWvX14uMz2g383GpBwDo4zjyS/7X7tj7YF0I7BiLnmlw1nevVM9l8o/sbq0KVfWTvSi4c1qKzMZkVgrXdrMXBzro+oG2FM5a9iq0GxngSi/SaciasvsmamK7di1ti2AoRxPU3LZGD3kswq/s=
+	t=1741192687; cv=none; b=jrjMpNHQpXuQXr3+xaG+bt4Wb9m8NKWfMBL7sWmiyE3h6PKk+4MOwxrzPPpx4749fSy31tgJoho/L9JSlRTR7zpbX6nB67mV0hQ+lFkDc5u2q4uXXF4FNSjag9fYOIr4NZR+TjI6z9zlNREm2z9LfQX9AdGy7eLmWeAmADuCXas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192742; c=relaxed/simple;
-	bh=g9voXRH9b5scUtRJQUT9IkYk1Q1woAlbAN5ZVwPOsw0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Fg7iJndJEgQnpmhqRKt/aHrF6ZppVUHH92u8a9FuvrsdAOswGhSyEEeZvgH/SkIEuEHTxH+MxP37Us0OBD9vBYFbZyBrzuQZ/+2BtRwWdoPGwHwC0JElQTPFs4u3rC02cer+8Nczvl1c6E3n5U2Uam3QooBQnNdT7IeDnTQgGFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 266831007;
-	Wed,  5 Mar 2025 08:39:13 -0800 (PST)
-Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B2C653F5A1;
-	Wed,  5 Mar 2025 08:38:58 -0800 (PST)
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Wed, 05 Mar 2025 16:38:05 +0000
-Subject: [PATCH v2 01/13] mailbox: pcc: Fix the possible race in updation
- of chan_in_use flag
+	s=arc-20240116; t=1741192687; c=relaxed/simple;
+	bh=sL6HKnFMuXDXenCBceEoHD1TmQX+6oJO6AlNMpLGC5I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Slpxc8G5dNQD/rAfOueNKxhqYmfWVAmG4bXOI3So4rKmVBkbmsvNt1Uv/BC8oAHeT6zKrVtaNGgGf2m3xulbdnt+eUK9xintA1CpeCWTFfF0q9KBd5OMwHWiT8hfBQiLY5ew9IT79ME/EXvQKEUH9J9l1IxkFGxNSHXHyKve5dU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N4Ut2cNz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DD7DC4CED1;
+	Wed,  5 Mar 2025 16:38:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741192687;
+	bh=sL6HKnFMuXDXenCBceEoHD1TmQX+6oJO6AlNMpLGC5I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N4Ut2cNzPxw/19HWcA9q6UtjX96+MvXtTOt/spQ3Kaa+W2/+8jLSKzmKdQfqq784h
+	 iXyfpjwvj2pTl+oH/pXFQUSIATsV9GDQUrPpY1XGGg5K2Ec3lSimClooKk4ynyGvUT
+	 r1PicB+2aVmGYeq5t8RYER35rZsdl0FcxkOhZOQIMiqVhIJjGkFPyBk/REwuohhG/d
+	 euKrDtjZjx1dIMBrkGYX5ZMNE1iPMHZ8ZJuJ6YZr+yGG2ppJvpgHbjVU81Ljc4A8Cq
+	 w+kRXk2NJVka0QLj05JGXMw/DRAN7bWAq46yGtSnJIxDDewUcFooFOLbAD+mTsOL1F
+	 droruHgs3mybQ==
+Date: Wed, 5 Mar 2025 10:38:05 -0600
+From: Rob Herring <robh@kernel.org>
+To: Alexander Stein <alexander.stein@ew.tq-group.com>
+Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com,
+	neil.armstrong@linaro.org, rfoss@kernel.org,
+	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+	jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com,
+	simona@ffwll.ch
+Subject: Re: [PATCH 3/5] dt-bindings: display: simple-bridge: Document DPI
+ color encoder
+Message-ID: <20250305163805.GA2071011-robh@kernel.org>
+References: <20250304101530.969920-1-victor.liu@nxp.com>
+ <20250304101530.969920-4-victor.liu@nxp.com>
+ <20250304152320.GA2630063-robh@kernel.org>
+ <1891036.atdPhlSkOF@steina-w>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-pcc_fixes_updates-v2-1-1b1822bc8746@arm.com>
-References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
-In-Reply-To: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
-To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, 
- Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
- Adam Young <admiyo@os.amperecomputing.com>, 
- Robbie King <robbiek@xsightlabs.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3054; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=V6iDNkf7FB8p7g5HOzBVjRnuDYthQbqnBHp6HSZoQ4M=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBnyH4eFfRXbdJVo7fM20REaros5LzuuqUZWFuvu
- uS87yr5R6OJAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ8h+HgAKCRAAQbq8MX7i
- mOQlEAC4nSoZMV7mnkebG2/TGHeV/HEO2YzCQrnCqwREIy9tOmVfsIEB35W6nF/44S8O0XvrkqU
- QYaXpjsbm2gDJAHsSFsVc/+FCCweCrjZXOAtK4Sd/G8kp1dAcxYXbzXDu9A4bmX7Buh8Rkzegu1
- DWsE1/S7Wqct7EW0/ZAsZlzwZm26+IVThJYUb3crunt/5JYiKWGOg4k/EoKHzRWTtv7KMMATaY5
- mGHkjictRTm+IZmUWc6Hqs9gL3fVXvdktNKIO1EwOs8Ek6SKy3PIEBxTlnM6sopyYlcvKq+x0LT
- +X1iZQKR0zCNJNlwH1g+yy/IGaos971c2yy4+Ah8Zb9EhUHHzVbhJSIMckjGe2GkTUGbMwgCKVg
- 4R1Ytq8Sv1yz28RAJFQ93RGNo0F+YOwxb31+75FTfoGxqsNv75xNNawvXsVgtZQy3dg0Bqk1LWD
- Es3Ni6QkRPtXvZ7Wg1PfU4BGkzg65txP6MnfMGzMVxMkLvSmOj4zRVywHyvQmJtJ3jgLwhPM2Af
- 4y0Y64VUmdi2Wm+OKts7G6qEu/Ds1xlW/KUxsc1Rked2puMJxRYtgBePFvTWdfqxqEQRXorJ/XE
- VxEYy+XjiZzN/qlA6pBW3fj7jNXrBhZvp+g8xw3C/wmdXd2XtufD/alex0Aq1TK/lIsxZgElOXs
- AdUXeFmWVUBic5Q==
-X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
- fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1891036.atdPhlSkOF@steina-w>
 
-From: Huisong Li <lihuisong@huawei.com>
+On Wed, Mar 05, 2025 at 10:35:26AM +0100, Alexander Stein wrote:
+> Hi,
+> 
+> Am Dienstag, 4. März 2025, 16:23:20 CET schrieb Rob Herring:
+> > On Tue, Mar 04, 2025 at 06:15:28PM +0800, Liu Ying wrote:
+> > > A DPI color encoder, as a simple display bridge, converts input DPI color
+> > > coding to output DPI color coding, like Adafruit Kippah DPI hat[1] which
+> > > converts input 18-bit pixel data to 24-bit pixel data(with 2 low padding
+> > > bits in every color component though). Document the DPI color encoder.
+> > 
+> > Why do we need a node for this? Isn't this just wired how it is wired 
+> > and there's nothing for s/w to see or do? I suppose if you are trying to 
+> > resolve the mode with 24-bit on one end and 18-bit on the other end, you 
+> > need to allow that and not require an exact match. You still might need 
+> > to figure out which pins the 18-bit data comes out on, but you have that 
+> > problem with an 18-bit panel too. IOW, how is this any different if you 
+> > have an 18-bit panel versus 24-bit panel?
+> 
+> Especially panel-simple.c has a fixed configuration for each display, such as:
+> > .bus_format = MEDIA_BUS_FMT_RGB666_1X18
+> 
+> How would you allow or even know it should be addressed as
+> MEDIA_BUS_FMT_RGB888_1X24 instead? I see different ways:
+> 1. Create a new display setting/compatible
+> 2. Add an overwrite property to the displays
+> 3. Use a (transparent) bridge (this series)
+> 
+> Number 1 is IMHO out of question. 
 
-The function mbox_chan_received_data() calls the Rx callback of the
-mailbox client driver. The callback might set chan_in_use flag from
-pcc_send_data(). This flag's status determines whether the PCC channel
-is in use.
+Agreed.
 
-However, there is a potential race condition where chan_in_use is
-updated incorrectly due to concurrency between the interrupt handler
-(pcc_mbox_irq()) and the command sender(pcc_send_data()).
+> I personally don't like number 2 as this
+> feels like adding quirks to displays, which they don't have.
 
-The 'chan_in_use' flag of a channel is set to true after sending a
-command. And the flag of the new command may be cleared erroneous by
-the interrupt handler afer mbox_chan_received_data() returns,
+This is what I would do except apply it to the controller side. We know 
+the panel side already. This is a board variation, so a property makes 
+sense. I don't think you need any more than knowing what's on each end. 
 
-As a result, the interrupt being level triggered can't be cleared in
-pcc_mbox_irq() and it will be disabled after the number of handled times
-exceeds the specified value. The error log is as follows:
+> Number 3 actually describe the hardware connection. The only impact for
+> software is to know which bus format it should use.
 
-  |  kunpeng_hccs HISI04B2:00: PCC command executed timeout!
-  |  kunpeng_hccs HISI04B2:00: get port link status info failed, ret = -110
-  |  irq 13: nobody cared (try booting with the "irqpoll" option)
-  |  Call trace:
-  |   dump_backtrace+0x0/0x210
-  |   show_stack+0x1c/0x2c
-  |   dump_stack+0xec/0x130
-  |   __report_bad_irq+0x50/0x190
-  |   note_interrupt+0x1e4/0x260
-  |   handle_irq_event+0x144/0x17c
-  |   handle_fasteoi_irq+0xd0/0x240
-  |   __handle_domain_irq+0x80/0xf0
-  |   gic_handle_irq+0x74/0x2d0
-  |   el1_irq+0xbc/0x140
-  |   mnt_clone_write+0x0/0x70
-  |   file_update_time+0xcc/0x160
-  |   fault_dirty_shared_page+0xe8/0x150
-  |   do_shared_fault+0x80/0x1d0
-  |   do_fault+0x118/0x1a4
-  |   handle_pte_fault+0x154/0x230
-  |   __handle_mm_fault+0x1ac/0x390
-  |   handle_mm_fault+0xf0/0x250
-  |   do_page_fault+0x184/0x454
-  |   do_translation_fault+0xac/0xd4
-  |   do_mem_abort+0x44/0xb4
-  |   el0_da+0x40/0x74
-  |   el0_sync_handler+0x60/0xb4
-  |   el0_sync+0x168/0x180
-  |  handlers:
-  |   pcc_mbox_irq
-  |  Disabling IRQ #13
+I'm not opposed to this, but only if it provides *something* that option 
+2 does not. I'm not seeing what that is.
 
-To solve this issue, pcc_mbox_irq() must clear 'chan_in_use' flag before
-the call to mbox_chan_received_data().
+Node or not, either case needs a format property. We already have a 
+variety of bus/pixel format related properties. I've rejected new ones 
+because we need something common here that's flexible enough to handle 
+any situation. That's either something that can describe any bit layout 
+or something enumerating the formats (as MEDIA_BUS_FMT_* does). The 
+former is hard to get right and there's always something else you can't 
+handle. I'm not opposed to just reusing MEDIA_BUS_FMT_ if that works.
 
-Signed-off-by: Huisong Li <lihuisong@huawei.com>
-(sudeep.holla: Minor updates to the subject and commit message)
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
----
- drivers/mailbox/pcc.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
-index 82102a4c5d68839170238540a6fed61afa5185a0..f2e4087281c70eeb5b9b33371596613a371dff4f 100644
---- a/drivers/mailbox/pcc.c
-+++ b/drivers/mailbox/pcc.c
-@@ -333,10 +333,15 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
- 	if (pcc_chan_reg_read_modify_write(&pchan->plat_irq_ack))
- 		return IRQ_NONE;
- 
-+	/*
-+	 * Clear this flag immediately after updating interrupt ack register
-+	 * to avoid possible race in updatation of the flag from
-+	 * pcc_send_data() that could execute from mbox_chan_received_data()
-+	 */
-+	pchan->chan_in_use = false;
- 	mbox_chan_received_data(chan, NULL);
- 
- 	check_and_ack(pchan, chan);
--	pchan->chan_in_use = false;
- 
- 	return IRQ_HANDLED;
- }
-
--- 
-2.34.1
-
+Rob
 
