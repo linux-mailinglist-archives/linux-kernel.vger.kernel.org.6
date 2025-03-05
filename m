@@ -1,152 +1,149 @@
-Return-Path: <linux-kernel+bounces-546951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546947-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B58A50118
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:50:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD860A5010E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:48:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE1A41894DC3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:50:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 193C6172D6A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8D241D540;
-	Wed,  5 Mar 2025 13:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D51C3248898;
+	Wed,  5 Mar 2025 13:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Y7JdlIeC"
-Received: from out203-205-221-235.mail.qq.com (out203-205-221-235.mail.qq.com [203.205.221.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dBbA/7rn"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5320413F434
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:50:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E011BC2ED
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:46:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741182632; cv=none; b=iy6ENUyXxMZR5MSwjghxeuJ8nHByLJtwvs7Jgh9Txq/12F45jWrqrwwGBYumGJWHA2HpdCUAKGD1WFAMF29RkS3EZ6hQU91B6WvLxrP6y8XDzI1pGKD8v1qn9JIZKJ8rLoHRxZM3W+G7+GFY7K0YXAZv7eSjIjMRtsxb//aH2X0=
+	t=1741182365; cv=none; b=rzTO+AnKQ4wDnIiRqKSpLAFNVbHkSX4XseKFBBG45m6JbEeZgbGUAMEENtb/mq7hUddbLtaS37nZt3vP8QA0BP284KWK6ix0JNQJKp8BO+AkiMs/eOBvTl3ixfsN8h2PahSa4iUxasnQUrs3qH09FRCQLLRg7EWrRB0ofuZoWZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741182632; c=relaxed/simple;
-	bh=Z78A2Ut63ccQctrfEqo/o8QkPvu7dQSsf3z6DlR2STY=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=nFv7Ah0+tVq42OlcBnCt91pFUiqTSLABmfUrAv/VKVEq6Gw1Zd/9Nm3x6wkTSb3Ts+pPlAVfI+HCdDGudDrshyiJxokSIyIOXFNvS5xGg7SVZ3oIJRJA8cjOqDLAeoM+FzePmpfFP+88NNk14KQPhjSLIXZGBiz/7YupmJlultE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Y7JdlIeC; arc=none smtp.client-ip=203.205.221.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1741182324; bh=ccq0Av38nSs+iwKBCGzoZ5cXsA3RMZ/QqLCdQ+42KWw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=Y7JdlIeCw9NsMpDrzQaNSv2o+aWcJbRWY6IdEhPdkGQbxfg+8tHAyS8NaqaQisLY5
-	 dDY035BHoK0YbvgQFvhB7Pkiv1Q+ZEvtV+QqkN36nqlAmXIVKFANu/RURbmyRmcFOn
-	 kbl1UVYRHshELROpl2IH+w6Dm2cHa6z+GNxqP3pY=
-Received: from pek-lxu-l1.wrs.com ([114.244.57.157])
-	by newxmesmtplogicsvrszgpua8-1.qq.com (NewEsmtp) with SMTP
-	id B569CC67; Wed, 05 Mar 2025 21:45:22 +0800
-X-QQ-mid: xmsmtpt1741182322t02ur8g1f
-Message-ID: <tencent_CF336E8362896EE3B7C45CB77E976686D505@qq.com>
-X-QQ-XMAILINFO: N0jQ/i/W/QNTLe2SDmV1OE5LlP0DhzLTKi9/e+zAlGUTrLnS6rILSmuVnzmmuR
-	 oYmfUwKfBrJr7JrwmHLZBJi1AG5QXXpflS2Xy535RpkED5gYHTPA9odGjMmJU9Jrr71oAFTZjExh
-	 jOJdK+h4w4uWX+IehDVKHkT70klEPW8GvRPdisvjpc+ViOQWyJbjukPyOwaAdLbirHutYeIOnkhG
-	 oMHpuLnlTBr7fwfW+IDlU4J3q1VIuFrVYEcgbFV0Kdgl/I69MagQklb5MALOTyY6TtiEBVXLSJoB
-	 hjtsOB7gj8s1Hpg6heS8f7yqfBxCMzMq3n4yPtsQayyeuP5Wp7SqdXGH96Ridj4TgfwvXP5E18vI
-	 ivvlZyYIX5LKIn6fA7yETXoigwOgsOeusV7J2ycqVWVOdXLu1xyBg8DrMwRbOBAmmSO7mQ1RpBjl
-	 VfxB57W7UWqGerB8wkcSZCWHuK77Zw+3W0YoUdt5hmhQyJf7nqeeF1TJPeLCzErso0HhB6yb9iIe
-	 txsZPbM24TrgLOORChJIkzgfJWQXTFs2gVhOFUxMhfP+i87/QUyg94VdfNSN7GJol3tnZ9JjHIIL
-	 vhc6DVQ6i4eXO2nc67C+i1xWQ5pu0T8xukN+txlCbTVODVvozjclc5VjAjLaugBVfStAD0OsQNQX
-	 6fvWfWLhsNtWcRpitnsum9whl5FZ0fINN0r2K2RCX4+x+FXe/Oqlgzom8YzY8xzbfcIaMWy3XAzp
-	 v9gZ3dQPjbTcPX90W4/gBdrF7MKOyCI9Qi88XzD+L2ECmr9DP8J+TdsSkAKuvuNcTgmpRPT6W7e9
-	 ykPxsDixjIots6fATOlYAPXhKXi2uIkl02dfWJDqFHTD9XdxdzSrRgPwChVIYPsqJnsaNHylWkms
-	 JtgMJlnvVIz28SfdW8bi1msR0G/sBqOzup1wqHu1asI/SA5CuD3+k=
-X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
-From: Edward Adam Davis <eadavis@qq.com>
-To: syzbot+8f9f411152c9539f4e59@syzkaller.appspotmail.com
-Cc: linux-kernel@vger.kernel.org,
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [xfs?] [mm?] WARNING: bad unlock balance in __mm_populate
-Date: Wed,  5 Mar 2025 21:45:23 +0800
-X-OQ-MSGID: <20250305134522.1522377-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <67c49230.050a0220.55417.04d5.GAE@google.com>
-References: <67c49230.050a0220.55417.04d5.GAE@google.com>
+	s=arc-20240116; t=1741182365; c=relaxed/simple;
+	bh=AtZlKIX5S9UAP4j0Axku2V8szde/1juxC0noCroYU6U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hbue0Qx/4Jx5bLikZjNRnHiKWn2Pvf0oRnBMHq67YQoJw6xfZvA/Nx8J6OXHeNeeLu3cOgb9uKwIT55osx2OA5y2BSwjsATfieG7m0fNoYT4kaMpKB2gRkR1w2IhgOhju70PfRPoPhK7w0bnsbGkenNFOpnQ571j+L73b6MK3ZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dBbA/7rn; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-223cc017ef5so49658365ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 05:46:03 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741182363; x=1741787163; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/px/S3IqWhEUcWqSxL2Jl4SMrtR12fYNolH67/5Znm8=;
+        b=dBbA/7rnmqc+4z6waZ0wPDxR/+lDrJnFINxbgptiq9YZJ8APFTVNJ7VSUuDnpu8acC
+         2QiuszrLf1JvGkr+v4wnmuX+R1HCe9fDYGNQqI9JHOguk1N8FIA/Msvt+qHULDyeqGvl
+         m8JvKdR81XfVbBMlEIWB2zOj8MagIFGr2VegTPc7Nc8Dqx8U7woTOqFCht39IuVZibce
+         4gYqGhXUPV1n1GGiYUQRKE6iZsJFgQk4WsU8TLX9YdCf3nweHsQZclPUXN5vP9cMyvct
+         0DGmHmD9j2MJ192L9asa6YLzBijVjRJv3/IyB7yUvvqbI4FUP9IW/LSkDtnus6IE7BKc
+         WTuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741182363; x=1741787163;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/px/S3IqWhEUcWqSxL2Jl4SMrtR12fYNolH67/5Znm8=;
+        b=keONvRwC3NKUD3IyV8RIk/HafjtCUQmaDJWAI64Drl/44CpxmNGKgGOwXCfD8aBxWX
+         +EBlqvSXBg/LOI64mF+6eH/DRdahkjjRADo9Hspq6hF2Q3T+ctrOhRbctOtLIdHXN1DP
+         /QOagIdJ6jJq3I6EB+UYJKoHVE3wo1qeeuq1GoO8oU2iMdHNjiLvpRLIIDvNDYvkYboN
+         GCNYoAZU4ZuDo7xnoqLbaPKvR7B/Mz9pzwP0C3YZ14U4unjdAbM3wcDJxrS1OkfP0DPA
+         OGm09USd8wPEC+IhyUueHpqqT3iWs6mHfmak4FZxLZDvSKljzKsIf8YYQ4/wtpTbAtqx
+         ZjAw==
+X-Forwarded-Encrypted: i=1; AJvYcCUU5wu1ttHgd8qsnTT7UmFgbiwO1GvEbGCN0znWQ7mbD4zB1IkDIQPSafj5GDBON52Qp24wZsDi9XJ/Jts=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yya2SrthyZemNi2wT8cMqGufbgmc68IGjsLSRE0KC5NZ8/28CZe
+	GZmoVI1Br7Aoc0o0rOUo41GvR+Lel7XBKSDex1C80/KQzevCwMX1
+X-Gm-Gg: ASbGnctvv7yEmap4pHgMyrPwVtivo47RkSEpGE4jrHG+H5Tc2OByY8KKSyB0AnvKyHu
+	ODruLJ3Xe57Uxajy4C3+K+1LRSDquPYJ15Y7xghpf0+q2frhhqovJj7NCq5y2tQylasbdcL2/ou
+	NchauCpS7wF4vg2pONizYdt8ExKapoJbwgZrNC/tLFOgMgZAp1ECsj7iMNal5VRGdzcW9yhkIz8
+	M/EzP/gNmg5dgVCFzxKDw78hqfPBvGt2nJEPO24u41QV7xZuRXacGQrYIetgUCChfKn/cVA986R
+	p00q5QOdSh90mU1CzZjGuSYNbfx3OJw26kU8nWp8SZJV
+X-Google-Smtp-Source: AGHT+IGYSUjtH3sedYuRr0u5NHMtfZcmcEghWFQ4LPcIqufsg11z0toJ1auh2reLKGU+Shpwkqnd/w==
+X-Received: by 2002:a05:6a20:6a0a:b0:1ee:ad21:e692 with SMTP id adf61e73a8af0-1f34951be84mr7283636637.32.1741182362949;
+        Wed, 05 Mar 2025 05:46:02 -0800 (PST)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-af021fb1581sm9620914a12.36.2025.03.05.05.46.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 05:46:01 -0800 (PST)
+Received: by archie.me (Postfix, from userid 1000)
+	id 0546E451AB7A; Wed, 05 Mar 2025 20:45:57 +0700 (WIB)
+Date: Wed, 5 Mar 2025 20:45:57 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Philipp Stanner <phasta@kernel.org>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Christian =?utf-8?B?S8O2bmln?= <ckoenig.leichtzumerken@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Sumit Semwal <sumit.semwal@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 1/3] drm/sched: Adjust outdated docu for run_job()
+Message-ID: <Z8hVlc0AgQkNqSGL@archie.me>
+References: <20250305130551.136682-2-phasta@kernel.org>
+ <20250305130551.136682-3-phasta@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="BAmTh8OS1ScbKhPJ"
+Content-Disposition: inline
+In-Reply-To: <20250305130551.136682-3-phasta@kernel.org>
 
-#syz test
 
-diff --git a/mm/gup.c b/mm/gup.c
-index 3883b307780e..c32c0854dd4f 100644
---- a/mm/gup.c
-+++ b/mm/gup.c
-@@ -1194,6 +1194,7 @@ static int faultin_page(struct vm_area_struct *vma,
- 	}
- 
- 	ret = handle_mm_fault(vma, address, fault_flags, NULL);
-+	printk("1mm: %p, map held lock: %d, vma: %p, %s\n", vma->vm_mm, lockdep_is_held(&vma->vm_mm->mmap_lock), vma, __func__);
- 
- 	if (ret & VM_FAULT_COMPLETED) {
- 		/*
-@@ -1216,8 +1217,11 @@ static int faultin_page(struct vm_area_struct *vma,
- 	if (ret & VM_FAULT_ERROR) {
- 		int err = vm_fault_to_errno(ret, flags);
- 
--		if (err)
-+		printk("mm: %p, map held lock: %d, vma: %p, err: %d, %s\n", vma->vm_mm, lockdep_is_held(&vma->vm_mm->mmap_lock), vma, err, __func__);
-+		if (err) {
-+			*locked = err != -EFAULT;
- 			return err;
-+		}
- 		BUG();
- 	}
- 
-@@ -1487,6 +1491,7 @@ static long __get_user_pages(struct mm_struct *mm,
- 		cond_resched();
- 
- 		page = follow_page_mask(vma, start, gup_flags, &ctx);
-+		printk("<after resched and follow page mask> mm: %p, map lock held: %d, %s\n", mm, lockdep_is_held(&mm->mmap_lock), __func__);
- 		if (!page || PTR_ERR(page) == -EMLINK) {
- 			ret = faultin_page(vma, start, gup_flags,
- 					   PTR_ERR(page) == -EMLINK, locked);
-@@ -1500,6 +1505,7 @@ static long __get_user_pages(struct mm_struct *mm,
- 			case -EFAULT:
- 			case -ENOMEM:
- 			case -EHWPOISON:
-+				printk("mm2: %p, map held lock: %d, vma: %p, ret: %d, %s\n", mm, lockdep_is_held(&mm->mmap_lock), vma, ret, __func__);
- 				goto out;
- 			}
- 			BUG();
-@@ -2029,7 +2035,12 @@ int __mm_populate(unsigned long start, unsigned long len, int ignore_errors)
- 		 * double checks the vma flags, so that it won't mlock pages
- 		 * if the vma was already munlocked.
- 		 */
-+		printk("1mm: %p, vma: %p, mmap lock held: %d, locked: %d, vma is acc: %d, %s\n",
-+			mm, vma, lockdep_is_held(&mm->mmap_lock), locked, vma_is_accessible(vma), __func__);
- 		ret = populate_vma_page_range(vma, nstart, nend, &locked);
-+		printk("mm: %p, vma: %p, mmap lock held: %d, locked: %d, ret: %ld, mm addr is valid: %d, %s\n",
-+			mm, vma, lockdep_is_held(&mm->mmap_lock), locked, ret, virt_addr_valid((void*)mm), __func__);
-+
- 		if (ret < 0) {
- 			if (ignore_errors) {
- 				ret = 0;
-diff --git a/mm/memory.c b/mm/memory.c
-index b4d3d4893267..43e35a0c2841 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -6206,10 +6206,14 @@ vm_fault_t handle_mm_fault(struct vm_area_struct *vma, unsigned long address,
- 
- 	lru_gen_enter_fault(vma);
- 
-+	printk("mm: %p, map held lock: %d, vma: %p, is vm hugetlb page: %d, %s\n",
-+		vma->vm_mm, lockdep_is_held(&vma->vm_mm->mmap_lock), vma, is_vm_hugetlb_page(vma), __func__);
- 	if (unlikely(is_vm_hugetlb_page(vma)))
- 		ret = hugetlb_fault(vma->vm_mm, vma, address, flags);
- 	else
- 		ret = __handle_mm_fault(vma, address, flags);
-+	printk("2mm: %p, map held lock: %d, vma: %p, is vm hugetlb page: %d, %s\n",
-+		vma->vm_mm, lockdep_is_held(&vma->vm_mm->mmap_lock), vma, is_vm_hugetlb_page(vma), __func__);
- 
- 	/*
- 	 * Warning: It is no longer safe to dereference vma-> after this point,
+--BAmTh8OS1ScbKhPJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Mar 05, 2025 at 02:05:50PM +0100, Philipp Stanner wrote:
+>  	/**
+> -         * @run_job: Called to execute the job once all of the dependenc=
+ies
+> -         * have been resolved.  This may be called multiple times, if
+> -	 * timedout_job() has happened and drm_sched_job_recovery()
+> -	 * decides to try it again.
+> +	 * @run_job: Called to execute the job once all of the dependencies
+> +	 * have been resolved.
+> +	 *
+> +	 * @sched_job: the job to run
+> +	 *
+> +	 * The deprecated drm_sched_resubmit_jobs() (called by &struct
+> +	 * drm_sched_backend_ops.timedout_job) can invoke this again with the
+> +	 * same parameters. Using this is discouraged because it violates
+> +	 * dma_fence rules, notably dma_fence_init() has to be called on
+> +	 * already initialized fences for a second time. Moreover, this is
+> +	 * dangerous because attempts to allocate memory might deadlock with
+> +	 * memory management code waiting for the reset to complete.
+> +	 *
+> +	 * TODO: Document what drivers should do / use instead.
+
+No replacement? Or bespoke/roll-your-own functionality as a must?
+
+Confused...
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--BAmTh8OS1ScbKhPJ
+Content-Type: application/pgp-signature; name=signature.asc
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZ8hViwAKCRD2uYlJVVFO
+o/7CAP9JYkL53h8JRbqf79JQDnecBuTAl51o0C19e9U8AzZdGQD+O21VSfvdkdU4
+9Ai00GB7ztnSU4Rg80+OXXOZhFux2Qo=
+=F7NO
+-----END PGP SIGNATURE-----
+
+--BAmTh8OS1ScbKhPJ--
 
