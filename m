@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-546568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62F81A4FC48
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:37:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1EC3EA4FC5D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92DD6171968
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:37:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9659718948EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:38:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97AE20897B;
-	Wed,  5 Mar 2025 10:31:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC4A207A0C;
+	Wed,  5 Mar 2025 10:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="0j+YpGz/"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jSYiRK2p";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jSYiRK2p"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70F8B20767F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CF42066F3
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:32:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170718; cv=none; b=YVr3nc1Af3u5tEhT7zAIsYG/D4Ea7zIMO+9GfXbIsAoPvE8LOSdm+q/mkcqTqQeV3hGNyNCXCAhkM4Z4Y/dX27Xitw2LK+uG0AtfqU8YLmrmEnoiqbgkcS9jjqEzwanOIWOsrhXmnN7O/amoJGovZcLLLdyl62LcOE71EJUfDmE=
+	t=1741170780; cv=none; b=j0GgknGNobFp5xbSUX3s+E+eiyubX8mhXl12Tc4BternHqiHwJG3RksLbWOzeKMvE/CstiksbAiVAoeUk8o9LQhW8p0LjzLbP+8Wn98z8/LeCXvmAhFYtB3flV6nnDGdG0HZo6y99rw4guUA9ReSjkQUjCIn/EvcyCGmhL0sa7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170718; c=relaxed/simple;
-	bh=0v6Zt/MABbD0gYMSTn3p9nKFECTkaY5R5P9eYaq23RQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=R9Kw/d9kTSNmMMaIu6LFCQEOsaa53/OcaNCuKG9ZpSaWhE3a1efpN33oU9rvu6SFqOWlmy1DbhHYzIJGO+xson8uwzf2noevj5A68fwEcAoHxIR7Jr0rC4TQJInHagLGHH76reb3yuStJLHjsVRuvhBHfWL2oxAbywEwHd6pUMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=0j+YpGz/; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43bcc04d4fcso10973415e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 02:31:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741170715; x=1741775515; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=63++Ar5Not6v1z5SwzlcGxcT0577JgrxXolq6jAwmVk=;
-        b=0j+YpGz/i8XYP9/bK0FoG19yqJqExhc60Wu+WtF90Bo4edM50LoIWjuaT4/19PCYWw
-         9EY2Bhdb8y58jz5uEYuw1XrytNp4VraHsOgsdWnOLYgPhZdekqHUC5Yt6kEiKiuoh1BB
-         sWX+BaHoaR6w2DCb2QY8lyKZ0LqehaaXnSiF7fKdQUl0Wmtv/ErP7E6Z0DacGNo5ERM+
-         miyU95+pqnowa6uqeXH2Fq3Y0WfzYg6Rk6xxArepNaT41JFPZBxX3997Tlvyh2hERUSu
-         LZqvkjghUxh09p3WQ01mGzTycHTyFBkYo3vt6Eo6QhYK1RdQ4UBQmrnqixDg1kacdYhc
-         mnLQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741170715; x=1741775515;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=63++Ar5Not6v1z5SwzlcGxcT0577JgrxXolq6jAwmVk=;
-        b=o1ifF0q1g+6K9oQyMRpTxPJJ0Hd8509sBxrU/2xKE2i0SnPWJHMGgK8yMs02Xz0gd4
-         Dtogt6tEuwL3z35EYJSyLaIthVN1lnCfoDznI5YsgKYGZvgAlYGJLSlsovvFnNeoIXsz
-         v+PBdzjJEKoQ6+K5LpUdiySUsul47lHTcvBQRYz8LxdHkzSjfrQxLfZ+EUj8yVuXSFFV
-         auOrS1paO9AN4PkUx9itjRNasvluIrLUWBSXtGDb942bXkQBMyu8pe4n5ScrZwnpWJsT
-         lKJxlaRkVIVoKINSNJymLR8kTHAzLSeDVToS7avCZY40XcCngkJ59bfuNHs8F0CszK5Q
-         8DGA==
-X-Forwarded-Encrypted: i=1; AJvYcCX1UR/xSy9N1Xl+4GzLDg73KfnNuQAyQhocO97GTzzv5zyzorf0NnAcMFuHRwHiiXUvbKldnamAWAUaTuM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZonhk2lLsxbmMnwKHEP9sU9fyz5RSHmWO8bINKadeKAxc2L78
-	97v0ndsm2kuWd6mZrB2Z9XkuhwXlunq0spYUjtHiLkoDsr92mC+2xFRDI+VtKTc=
-X-Gm-Gg: ASbGnctI8ghplQyQ4/EyvtH+2Lq3jrptci+gK6P2jTIB7fi4rkcFmrNoFVPZL9SoBl5
-	qmpIDE1ZdlWgaTnYXWnv3MDc9a4sR4c5a3lyeurFrCJeqiiH7bCPw4qMKzt4++M8ygLXUz1XjVH
-	r4fIkOywXAM2Ovm86dCVDW8W9We5J7/GOW7G2ptN48OVRSbmFhMmHqbSWt3aQf98yWH7pgDMgsE
-	ucDcMnCDDFv+BOKKrE2rb6K+4RZTyBOEL0qQPV4l7UmPxxCnHHnMwxwxBKbdoZAPbex0C5cOdvE
-	ic7xO+nk3uzUDWvM98PeWkCiHKS+8mQPz0s/bgSJyqDw
-X-Google-Smtp-Source: AGHT+IGdpofHBUYsSVKjftpHMXJCFI4qS6aBIfMRcLTGvpoDFRyhuHi7RyiMHkO579i4wWEd59VXnA==
-X-Received: by 2002:a05:600c:1c95:b0:439:9b3f:2de1 with SMTP id 5b1f17b1804b1-43bd29ad100mr19311215e9.15.1741170714658;
-        Wed, 05 Mar 2025 02:31:54 -0800 (PST)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:e514:53b3:5af8:e408])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4352eccsm13152975e9.27.2025.03.05.02.31.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 02:31:54 -0800 (PST)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Henrique de Moraes Holschuh <hmh@hmh.eng.br>,
-	Hans de Goede <hdegoede@redhat.com>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Cc: ibm-acpi-devel@lists.sourceforge.net,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] platform/x86: thinkpad_acpi: check the return value of devm_mutex_init()
-Date: Wed,  5 Mar 2025 11:31:46 +0100
-Message-ID: <20250305103146.53221-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1741170780; c=relaxed/simple;
+	bh=OcBfiFtEmuwPQex58NJW4jRnkP45vg2KP4vgvR1qYRM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=OtOanyAHz6QeQRJtZRmVrlWFZD0IstKDUGoBFGZnhmoYlwONFNZdzs7xsJb+G5EuejcJU1c56bjxnvQQ0PkXufK8/JZvOBaCRTPGLA3GoIhXlW0pVEQNrr0ihD+xQmjylWHbYxiCMXzrlmEm4sdlPHHElVGYeDXCtGW+SY4kDWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jSYiRK2p; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jSYiRK2p; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B689621170;
+	Wed,  5 Mar 2025 10:32:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741170776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HMjPiq/fOLYpxw8Rc5BlOAt66Zz15s8Qdw1LiisGZns=;
+	b=jSYiRK2px6oh+HiyfgPsPIJOEvfoyo1RReryIoE+ej9tNvfWQsazBF0i1EDzW9jYCNsvpw
+	X8dtQkeiZd1pqBokQCAfCvRiCwMHmiA4eTWasJZTGIJ8zvg2AW6aheU6rM6vFGvNaUXJqi
+	0k8vEL+sbZFDY4qpRH8dLqth2HuKwS0=
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741170776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HMjPiq/fOLYpxw8Rc5BlOAt66Zz15s8Qdw1LiisGZns=;
+	b=jSYiRK2px6oh+HiyfgPsPIJOEvfoyo1RReryIoE+ej9tNvfWQsazBF0i1EDzW9jYCNsvpw
+	X8dtQkeiZd1pqBokQCAfCvRiCwMHmiA4eTWasJZTGIJ8zvg2AW6aheU6rM6vFGvNaUXJqi
+	0k8vEL+sbZFDY4qpRH8dLqth2HuKwS0=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A60B13939;
+	Wed,  5 Mar 2025 10:32:56 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id l9AWJVgoyGdtAgAAD6G6ig
+	(envelope-from <neelx@suse.com>); Wed, 05 Mar 2025 10:32:56 +0000
+From: Daniel Vacek <neelx@suse.com>
+To: Chris Mason <clm@fb.com>,
+	Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>,
+	Nick Terrell <terrelln@fb.com>
+Cc: Daniel Vacek <neelx@suse.com>,
+	Qu Wenruo <wqu@suse.com>,
+	linux-btrfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2] btrfs/defrag: implement compression levels
+Date: Wed,  5 Mar 2025 11:32:34 +0100
+Message-ID: <20250305103235.719210-1-neelx@suse.com>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250304171403.571335-1-neelx@suse.com>
+References: <20250304171403.571335-1-neelx@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,33 +89,208 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-6.80 / 50.00];
+	REPLY(-4.00)[];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.993];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Score: -6.80
+X-Spam-Flag: NO
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+The zstd and zlib compression types support setting compression levels.
+Enhance the defrag interface to specify the levels as well.
 
-devm_mutex_init() can fail so check its return value.
-
-Fixes: 38b9ab80db31 ("platform/x86: thinkpad_acpi: Move subdriver initialization to tpacpi_pdriver's probe.")
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Signed-off-by: Daniel Vacek <neelx@suse.com>
+Reviewed-by: Qu Wenruo <wqu@suse.com>
 ---
- drivers/platform/x86/thinkpad_acpi.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+v2: Fixed the commit message and added an explicit level range check.
 
-diff --git a/drivers/platform/x86/thinkpad_acpi.c b/drivers/platform/x86/thinkpad_acpi.c
-index 6128ad820ea0..d8df1405edfa 100644
---- a/drivers/platform/x86/thinkpad_acpi.c
-+++ b/drivers/platform/x86/thinkpad_acpi.c
-@@ -11849,7 +11849,9 @@ static int __init tpacpi_pdriver_probe(struct platform_device *pdev)
+ fs/btrfs/btrfs_inode.h     |  1 +
+ fs/btrfs/compression.c     |  2 +-
+ fs/btrfs/compression.h     |  1 +
+ fs/btrfs/defrag.c          | 24 +++++++++++++++++++-----
+ fs/btrfs/fs.h              |  2 +-
+ fs/btrfs/inode.c           |  9 ++++++---
+ include/uapi/linux/btrfs.h | 10 +++++++++-
+ 7 files changed, 38 insertions(+), 11 deletions(-)
+
+diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
+index aa1f55cd81b79..238e4a08a52ae 100644
+--- a/fs/btrfs/btrfs_inode.h
++++ b/fs/btrfs/btrfs_inode.h
+@@ -145,6 +145,7 @@ struct btrfs_inode {
+ 	 * different from prop_compress and takes precedence if set.
+ 	 */
+ 	u8 defrag_compress;
++	s8 defrag_compress_level;
+ 
+ 	/*
+ 	 * Lock for counters and all fields used to determine if the inode is in
+diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
+index 6d073e69af4e3..7106d19ee7bac 100644
+--- a/fs/btrfs/compression.c
++++ b/fs/btrfs/compression.c
+@@ -968,7 +968,7 @@ static void put_workspace(int type, struct list_head *ws)
+  * Adjust @level according to the limits of the compression algorithm or
+  * fallback to default
+  */
+-static int btrfs_compress_set_level(unsigned int type, int level)
++int btrfs_compress_set_level(unsigned int type, int level)
  {
- 	int ret;
+ 	const struct btrfs_compress_op *ops = btrfs_compress_op[type];
  
--	devm_mutex_init(&pdev->dev, &tpacpi_inputdev_send_mutex);
-+	ret = devm_mutex_init(&pdev->dev, &tpacpi_inputdev_send_mutex);
-+	if (ret)
-+		return ret;
+diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
+index 933178f03d8f8..125509605f847 100644
+--- a/fs/btrfs/compression.h
++++ b/fs/btrfs/compression.h
+@@ -83,6 +83,7 @@ static inline u32 btrfs_calc_input_length(u64 range_end, u64 cur)
+ int __init btrfs_init_compress(void);
+ void __cold btrfs_exit_compress(void);
  
- 	tpacpi_inputdev = devm_input_allocate_device(&pdev->dev);
- 	if (!tpacpi_inputdev)
++int btrfs_compress_set_level(unsigned int type, int level);
+ int btrfs_compress_folios(unsigned int type, int level, struct address_space *mapping,
+ 			  u64 start, struct folio **folios, unsigned long *out_folios,
+ 			 unsigned long *total_in, unsigned long *total_out);
+diff --git a/fs/btrfs/defrag.c b/fs/btrfs/defrag.c
+index 968dae9539482..3e9e2345a5683 100644
+--- a/fs/btrfs/defrag.c
++++ b/fs/btrfs/defrag.c
+@@ -1363,6 +1363,7 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
+ 	u64 last_byte;
+ 	bool do_compress = (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS);
+ 	int compress_type = BTRFS_COMPRESS_ZLIB;
++	int compress_level = 0;
+ 	int ret = 0;
+ 	u32 extent_thresh = range->extent_thresh;
+ 	pgoff_t start_index;
+@@ -1376,10 +1377,21 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
+ 		return -EINVAL;
+ 
+ 	if (do_compress) {
+-		if (range->compress_type >= BTRFS_NR_COMPRESS_TYPES)
+-			return -EINVAL;
+-		if (range->compress_type)
+-			compress_type = range->compress_type;
++		if (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL) {
++			if (range->compress.type >= BTRFS_NR_COMPRESS_TYPES)
++				return -EINVAL;
++			if (range->compress.type) {
++				compress_type = range->compress.type;
++				compress_level= range->compress.level;
++				compress_level= btrfs_compress_set_level(compress_type,
++									 compress_level);
++			}
++		} else {
++			if (range->compress_type >= BTRFS_NR_COMPRESS_TYPES)
++				return -EINVAL;
++			if (range->compress_type)
++				compress_type = range->compress_type;
++		}
+ 	}
+ 
+ 	if (extent_thresh == 0)
+@@ -1430,8 +1442,10 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
+ 			btrfs_inode_unlock(BTRFS_I(inode), 0);
+ 			break;
+ 		}
+-		if (do_compress)
++		if (do_compress) {
+ 			BTRFS_I(inode)->defrag_compress = compress_type;
++			BTRFS_I(inode)->defrag_compress_level = compress_level;
++		}
+ 		ret = defrag_one_cluster(BTRFS_I(inode), ra, cur,
+ 				cluster_end + 1 - cur, extent_thresh,
+ 				newer_than, do_compress, &sectors_defragged,
+diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
+index be6d5a24bd4e6..2dae7ffd37133 100644
+--- a/fs/btrfs/fs.h
++++ b/fs/btrfs/fs.h
+@@ -485,7 +485,7 @@ struct btrfs_fs_info {
+ 	u64 last_trans_log_full_commit;
+ 	unsigned long long mount_opt;
+ 
+-	unsigned long compress_type:4;
++	int compress_type;
+ 	int compress_level;
+ 	u32 commit_interval;
+ 	/*
+diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
+index fa04b027d53ac..d26c005bf091a 100644
+--- a/fs/btrfs/inode.c
++++ b/fs/btrfs/inode.c
+@@ -925,6 +925,7 @@ static void compress_file_range(struct btrfs_work *work)
+ 	unsigned int poff;
+ 	int i;
+ 	int compress_type = fs_info->compress_type;
++	int compress_level= fs_info->compress_level;
+ 
+ 	inode_should_defrag(inode, start, end, end - start + 1, SZ_16K);
+ 
+@@ -1007,13 +1008,15 @@ static void compress_file_range(struct btrfs_work *work)
+ 		goto cleanup_and_bail_uncompressed;
+ 	}
+ 
+-	if (inode->defrag_compress)
++	if (inode->defrag_compress) {
+ 		compress_type = inode->defrag_compress;
+-	else if (inode->prop_compress)
++		compress_level= inode->defrag_compress_level;
++	} else if (inode->prop_compress) {
+ 		compress_type = inode->prop_compress;
++	}
+ 
+ 	/* Compression level is applied here. */
+-	ret = btrfs_compress_folios(compress_type, fs_info->compress_level,
++	ret = btrfs_compress_folios(compress_type, compress_level,
+ 				    mapping, start, folios, &nr_folios, &total_in,
+ 				    &total_compressed);
+ 	if (ret)
+diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
+index d3b222d7af240..3540d33d6f50c 100644
+--- a/include/uapi/linux/btrfs.h
++++ b/include/uapi/linux/btrfs.h
+@@ -615,7 +615,9 @@ struct btrfs_ioctl_clone_range_args {
+  */
+ #define BTRFS_DEFRAG_RANGE_COMPRESS 1
+ #define BTRFS_DEFRAG_RANGE_START_IO 2
++#define BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL 4
+ #define BTRFS_DEFRAG_RANGE_FLAGS_SUPP	(BTRFS_DEFRAG_RANGE_COMPRESS |		\
++					 BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL |	\
+ 					 BTRFS_DEFRAG_RANGE_START_IO)
+ 
+ struct btrfs_ioctl_defrag_range_args {
+@@ -643,7 +645,13 @@ struct btrfs_ioctl_defrag_range_args {
+ 	 * for this defrag operation.  If unspecified, zlib will
+ 	 * be used
+ 	 */
+-	__u32 compress_type;
++	union {
++		__u32 compress_type;
++		struct {
++			__u8 type;
++			__s8 level;
++		} compress;
++	};
+ 
+ 	/* spare for later */
+ 	__u32 unused[4];
 -- 
-2.45.2
+2.47.2
 
 
