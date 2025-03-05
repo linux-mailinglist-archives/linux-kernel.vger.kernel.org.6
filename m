@@ -1,118 +1,152 @@
-Return-Path: <linux-kernel+bounces-546783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32129A4FEB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:35:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2379FA4FEB7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:35:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DD5A3AF8A0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:35:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 773C13AF51B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:35:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6942D2459E7;
-	Wed,  5 Mar 2025 12:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C92F245024;
+	Wed,  5 Mar 2025 12:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mot1R8g0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VNlb4ckK"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2F7320551D;
-	Wed,  5 Mar 2025 12:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC7CF241697
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178069; cv=none; b=jKKMIcjV70lFZaLqKPjrt5Uz0KV+q9sCAgZxWdXJDhFDwG0KUZDNDurd8ftMrhJp0JGYi4gg/rJQgqNJBKkIbDJ18nGse8hsHPLZ5POjB7qfkYFWJLrAXlzixiI7DAM8gvgqjEUttYvgzhKrt3DbShT2d43019qnDqts2tQLLWI=
+	t=1741178102; cv=none; b=t83zo1arPTIWS/BkDzNAcn3wSLA/rymbCLQjfetOrN+oMxFZxJCEhuM+I23SvCR2NipyMnJoBIuKMnq8K+yZe8tFCQbrAWDDLauBwQnVzYIi1ayRYm/HNyywQQcoAKUKQ2lDhYIOL6hCwMkZ0Rbc7Kp0OCAZmMPnq3IrYS3qJSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178069; c=relaxed/simple;
-	bh=cOl0I3/cH0eRw0BhDrssA5OJL4SDNbydbLyFqtxZWgA=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=pQ9cFBG5zSxjQcbMo0XljphzUhIDtVg93NwVuViWo8k+1M+yqBx3KLL7ipvNQ7vyKSaSf0tC+/fgbX1pfiO2/V7gMdFgLbnuV+PtvcNrW98S0QZ8XlWLWbIno65Tig76h/R51ymY3gclfub6yj8NCiBKkAqbVb1iIMV0emYQn/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mot1R8g0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 191E2C4CEE2;
-	Wed,  5 Mar 2025 12:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741178069;
-	bh=cOl0I3/cH0eRw0BhDrssA5OJL4SDNbydbLyFqtxZWgA=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=mot1R8g0Bq6HJHmLbShpe0RIfR7Oq6SFDLlA1K5ZsnCqe7w7gZhwJJgjFaucGGqo6
-	 RI+s7zzzmGQJBSCLytJmqFBDtY6I/H0Nn+G01GcLNyuUb9m54opc2Z5XcEaGn8QfdE
-	 0tXaPadHffc6pTRkmtX1aVKJkoodcPU+krgK5PDT+90A8dDB51h6+iCoXp7I9DppN7
-	 1sDzCE2dcf43i3axrQVvq86FSHfdaH02p/vwQGzglACHaqtNnisi57HQNFL2Gi6DIF
-	 KGq7Qa91S3hT5/04dgmI4AG1qw/zqu+K6wh9NmA83CEw1w3c1QrqzVPA0JjzDnvIKe
-	 7MVwx7ZxQ3CSQ==
-Date: Wed, 05 Mar 2025 06:34:27 -0600
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1741178102; c=relaxed/simple;
+	bh=MzbvmMQv5RSDzTCeWNjXU61fajli7jqj0GtNNyX9JU4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lRh0wrytKZcu9V6PS5pzms67XY7E+tMzT0d2traxypRb1hz021NmK/KCFxR8eJifY2vAICveChMT5VjgPqsqdAsm/65Xp88AIYdcbmHro6zI986T2Damtfirld2ymr/ullE3wcH0dPP34yNclq65dH3hII25B+YmFg4xWKpUyng=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VNlb4ckK; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741178099;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MzbvmMQv5RSDzTCeWNjXU61fajli7jqj0GtNNyX9JU4=;
+	b=VNlb4ckKudzF1+uAZB40pCLqqp4II5ykzd9MLToKTZo/gY+5FHx66NSjDmLHuVP3mxftJ2
+	M5NbjyhAJYUe3dsxkPm+yHX8m96nBI56sVykO22BpQyL20JQ2ai0oTjOb8JSPQAwf0p7CC
+	mAwVPBhVaPiKeijFwc/jfiTxYPZaaWw=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-624-xlmakPnaNU6bDrYA9_t0ZA-1; Wed, 05 Mar 2025 07:34:48 -0500
+X-MC-Unique: xlmakPnaNU6bDrYA9_t0ZA-1
+X-Mimecast-MFC-AGG-ID: xlmakPnaNU6bDrYA9_t0ZA_1741178087
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-390f000e962so2209943f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 04:34:48 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741178087; x=1741782887;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MzbvmMQv5RSDzTCeWNjXU61fajli7jqj0GtNNyX9JU4=;
+        b=JhEzS/EXCq5rfo/Pki332NUZFQ4xP3bVzC8f5E4aBzcDQzgPes/w/KIUY3+vfYN94A
+         zGnfFk/4/HTgaJCHdHwV+jX2WiE7AXe2Zp61/frBpYxT11AjKmGbGijaCzSBxadMK2v5
+         x0sNh3tTnZAi4MLUQdjPm5zFJtlqH10nZ6q4PujdhDbZ/SR7XW5Cam5YhDcUfNyAMdw9
+         ng3e9nQpRLt5MPVOoHjv+m2JN06FN1wyBtXjiefrLRpgDphMXgNYUp4zvju5RbnDCRZ2
+         eKdVcSMgI2/GqY3nzgKg6baErvqKaHBxeQ7kZuW2Cp5E9zpKJzBSaQBwHf3Z1x8MmP4Z
+         1BxQ==
+X-Gm-Message-State: AOJu0YxBbryorWZemN/v1bsu0RCB0rTLRTOwpekHiSqDvE0Isyur2YmT
+	Ec0K8PYyTUGVRuLR32EQbMxglkYCbiuCwAsdnpnkfZCW22rHydC2V61J6Q7LjMNzsgz8TODAZ7S
+	obgjcNoUmxYN6qcU6y8F+VxO9Y+arSDSWH2tx1TP8cwAAWb/hnHof8oa4COPmiQ==
+X-Gm-Gg: ASbGncvds90xrynBMieIIiOBgE2ifsVUhdRM0mXfE/OOXh1oC3mlRl99x497b5rSp3W
+	LNeHs9puV803I2DtXJE+9PC3O3fgOCfx2Dc7ojKPPAFU1YL7d31T5Fg0x296hdWbHRQOT26iiDI
+	a2yY0K3ysnizYsYyJy4jkQur9kJ9YJzFBxheJadoASZzKXnTOMvFjQzDMfb9B7CF5voUaWh4onS
+	xtgSS6pZLcZcj4MPmIwpJe7utz8YonK98yDNB809URFxZP+ViE32fnGGHlxlHB/KhuekjmP1uFr
+	aCk1rUU+pwIKMAAhQjPqcTT1EAMraobuMYpTz9j7UQ==
+X-Received: by 2002:a5d:47c4:0:b0:391:ffc:2413 with SMTP id ffacd0b85a97d-3911f7c3b07mr2400868f8f.40.1741178087575;
+        Wed, 05 Mar 2025 04:34:47 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHqQWQA/n57DVltTxNtmrZ/6HkQkivRxHCLahBCPf9F/HOe2cN3ukO92Xnzt4J+DpQyRuP7Yg==
+X-Received: by 2002:a5d:47c4:0:b0:391:ffc:2413 with SMTP id ffacd0b85a97d-3911f7c3b07mr2400844f8f.40.1741178087199;
+        Wed, 05 Mar 2025 04:34:47 -0800 (PST)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e485e61csm21201667f8f.98.2025.03.05.04.34.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 04:34:46 -0800 (PST)
+Message-ID: <1115798d35feb54f0cc714dec3bd7fc5a671adc8.camel@redhat.com>
+Subject: Re: [PATCH v4 02/11] rv: Add license identifiers to monitor files
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: linux-kernel@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, Ingo Molnar <mingo@redhat.com>, Peter
+ Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>
+Date: Wed, 05 Mar 2025 13:34:44 +0100
+In-Reply-To: <20250304121828.34006e00@gandalf.local.home>
+References: <20250218123121.253551-1-gmonaco@redhat.com>
+		<20250218123121.253551-3-gmonaco@redhat.com>
+	 <20250304121828.34006e00@gandalf.local.home>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- "David S. Miller" <davem@davemloft.net>, 
- Woojung Huh <woojung.huh@microchip.com>, Eric Dumazet <edumazet@google.com>, 
- Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>, 
- devicetree@vger.kernel.org, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
- Conor Dooley <conor+dt@kernel.org>, kernel@pengutronix.de, 
- netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>, 
- Maxime Coquelin <mcoquelin.stm32@gmail.com>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-In-Reply-To: <20250305102103.1194277-2-o.rempel@pengutronix.de>
-References: <20250305102103.1194277-1-o.rempel@pengutronix.de>
- <20250305102103.1194277-2-o.rempel@pengutronix.de>
-Message-Id: <174117806721.1245382.8322491579922154490.robh@kernel.org>
-Subject: Re: [PATCH v4 1/4] dt-bindings: sound: convert ICS-43432 binding
- to YAML
 
+On Tue, 2025-03-04 at 12:18 -0500, Steven Rostedt wrote:
+> On Tue, 18 Feb 2025 13:31:07 +0100
+> Gabriele Monaco <gmonaco@redhat.com> wrote:
+>=20
+> > Some monitor files like the main header and the Kconfig are missing
+> > the
+> > license identifier.
+> >=20
+> > Add it to those and make sure the automatic generation script
+> > includes
+> > the line in newly created monitors.
+> >=20
+> > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> > ---
+> > =C2=A0kernel/trace/rv/monitors/wip/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 ++
+> > =C2=A0kernel/trace/rv/monitors/wip/wip.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> > =C2=A0kernel/trace/rv/monitors/wwnr/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 2 ++
+> > =C2=A0kernel/trace/rv/monitors/wwnr/wwnr.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> > =C2=A0tools/verification/dot2/dot2k.py=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
+> > =C2=A0tools/verification/dot2/dot2k_templates/Kconfig | 2 ++
+> > =C2=A06 files changed, 9 insertions(+)
+>=20
+> While I'm waiting for Peter's answer on the scheduler tracepoints,
+> I'll
+> take these first two patches now, as they are agnostic to the rest of
+> the
+> changes.
+>=20
+> -- Steve
+>=20
 
-On Wed, 05 Mar 2025 11:21:00 +0100, Oleksij Rempel wrote:
-> Convert the ICS-43432 MEMS microphone device tree binding from text format
-> to YAML.
-> 
-> Signed-off-by: Oleksij Rempel <o.rempel@pengutronix.de>
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> changes v4:
-> - add Reviewed-by: Rob...
-> changes v3:
-> - add maintainer
-> - remove '|' after 'description:'
-> changes v2:
-> - use "enum" instead "oneOf + const"
-> ---
->  .../devicetree/bindings/sound/ics43432.txt    | 19 -------
->  .../bindings/sound/invensense,ics43432.yaml   | 51 +++++++++++++++++++
->  2 files changed, 51 insertions(+), 19 deletions(-)
->  delete mode 100644 Documentation/devicetree/bindings/sound/ics43432.txt
->  create mode 100644 Documentation/devicetree/bindings/sound/invensense,ics43432.yaml
-> 
+Great, thank you!
 
-My bot found errors running 'make dt_binding_check' on your patch:
+I just found a problem in 3/11: current_restore_rtlock_saved_state
+doesn't pass the correct state to the new tracepoint.
+I'm going to send a V5 and will leave the first 2 patches out.
 
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/sound/invensense,ics43432.yaml: maintainers:0: 'N/A' does not match '@'
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250305102103.1194277-2-o.rempel@pengutronix.de
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Gabriele
 
 
