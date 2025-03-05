@@ -1,149 +1,231 @@
-Return-Path: <linux-kernel+bounces-547885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AAF6A50EAC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:38:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D336A50EB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:38:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 41B7A3ACFEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:38:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77A0117032B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DFDD2054F5;
-	Wed,  5 Mar 2025 22:38:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E77266B63;
+	Wed,  5 Mar 2025 22:38:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IZLCSiax"
-Received: from mail-oo1-f50.google.com (mail-oo1-f50.google.com [209.85.161.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kA/clk9W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBD14A33
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 22:38:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E35B265618;
+	Wed,  5 Mar 2025 22:38:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741214300; cv=none; b=kxYIeKDBBEB7iaAjmnZaHEMVC2TFVDIQ+rIQl26ZwzZWHBYqVdC9hB3RItN9TufVb11bAV/Z36ks8eRDnECh/ZQcIEDtFzcS4iFVjY4UqCEgo+Nxl1p0EEm37Ne4uCr3R8EdlGwKKSazkgfrim4lcGRCssL2Ks0CU27RurRNl3o=
+	t=1741214304; cv=none; b=e1DHxLXn/+TD/zM2ntyjWsqy3AvGq4Xzgmqn3XtV5qLRdTlbq5iktGLshqh96vrukmKYzGVNQRzRldOJkY0G3AFNcrbWRo85ApnHNoiccD28Q6pZk+NwL9DGwuiQ1WtFf89g0lLHjPj6pFNizv9YantVg+z2khBrQW6C6eR+w/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741214300; c=relaxed/simple;
-	bh=Xi/hSMI0QlULt9i08ZHRCTXE1xApf25x+b0AZdKIryA=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YDM7Zudd6XLF7oX1hE6hezd43mHBMHnbXEK6EkHAyd1F4Fs39A5VyKOtf5eVeOn/pmkVY/XteVH23001G+uswLhKBEvfqG7a+TRg0CVzh5aZrrjoI8Zq+WTk2OdurInlsa6Dy0elJlxOzZ9UKqU4o8wbSH209H2DoZHFcCQHZW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IZLCSiax; arc=none smtp.client-ip=209.85.161.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-oo1-f50.google.com with SMTP id 006d021491bc7-5fe944b3fa0so19289eaf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 14:38:19 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741214298; x=1741819098; darn=vger.kernel.org;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SjOvi6sl2VIvgnDBWTKhh6QRUEoSop9v3GepSmadXxw=;
-        b=IZLCSiaxEAo9mn5L3qKMO22EpA+YU5e11IiSbKKTth/gYs3IG/INbjyykI3gEF2mXv
-         9jGe4dPLWZyAh9zYXu6iHHVag3/XJi+vZHZ/Z1wqvGjJNqtYUcTXXE6B5XeE4BAH8+E4
-         2ZbnYqeLM93rxOtkzOeTAjOg3EQiMLcfr0uYUTrs0851i8KRYA9bl6wjaibwwHGrblsJ
-         Z/plc/7esnAPtQIdt5tlPH6W83tBwowqerDL9JGTTa76Zpplwpzul4mrVuJo30troHKa
-         fLOY+Vjy27UorDnQJDJvP0Zmv5Vsw9KnEihyl3yBJdsXq8I9V7idfk8J0LDbFOuXEKeq
-         MPmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741214298; x=1741819098;
-        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SjOvi6sl2VIvgnDBWTKhh6QRUEoSop9v3GepSmadXxw=;
-        b=EjEp1KsA73KkhOX4r5bCaUGQyfOunohvWzKTi2PsOuFNjMOyI0egzxx8a6P9pExGVc
-         o9qsYpVC3gQyHZa+zwOtSUNsqfu0m4SVmcKuWtdvwy53aN4NepwO6UEJT/tuOFayltK8
-         e8DbXemvtKCAWwO/gG9eELZ3yfDxaST4+lz7EtZGGi/Tts0V46JlR23RWBpsT2nueijO
-         ahKYlyZMBwd3sL0k27PD+TJ2kYocAtLEJAkQiOoPmtw6tbObI7GFJJqixqd7Gx42X6xy
-         6XYOqYgNuE7Lst/UurmLkNTMFn6w0YseJVNYXGr64tYmRVH6c3u7XGi4FMEmbR2Yz4ej
-         7ESA==
-X-Forwarded-Encrypted: i=1; AJvYcCXaq4GWGLQEDqwz1K4/Y1pQraTKCKSmTI62X30DoW0B5H6/I78Bfcn7mV5M2WuNalPuacXWkjdMoP5JTwE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjot36XCD6cUEvySKJP53+pbITDHzhEb2a/WsYxasZglxc5q18
-	hKnWTz29zW0rAq7HANniIO0CyNOlwxhb+/wOe4hSwvvLl8jE5zUNVtlC7yekCg==
-X-Gm-Gg: ASbGncuSRVGeaaapAbAVVOwtZE0Z58KaWhOHaU8PdSYHgREpBJa/OT6dnVCf9+DZntk
-	q7PAcAdZHWEvIa7tmRjdEG4LCtXb7OhxgLhoY78JnDeO+BN8u6D4Box9jaKNX6K3besqjznGN6s
-	Un3t92zE1u3ikbBynCMGWvtiFfeGi++/uCf+rbSyqDlhr4Ihdy1cIhRCcxGD3vIVXo8LbCwg0IZ
-	OWqTxNThUbFwM7gaZ337iqqcqNZk/pi2DH75AN4YMVihXpmbRxUBd03ZobmpgJ20J4dvccRAgNF
-	l/bx/vsLWQfadnUyjSbHa8+YqG5T15GKukbIlIW4SITBqVVtDB84NOGABqSqxL30jFijDSkiny+
-	MdDnRIxl+rmqcGD8xKVEY9/oG4Q5G
-X-Google-Smtp-Source: AGHT+IENCRda4YblETp7vN9oJvjvecYwsrpti/odR7sPkl62SCbV9fZvgs2gw1PyJJPEAr1GtS158Q==
-X-Received: by 2002:a05:6820:a01:b0:5fa:6805:645b with SMTP id 006d021491bc7-600336499dbmr2496467eaf.6.1741214298269;
-        Wed, 05 Mar 2025 14:38:18 -0800 (PST)
-Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-600410a0db9sm3504eaf.26.2025.03.05.14.38.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 14:38:15 -0800 (PST)
-Date: Wed, 5 Mar 2025 14:38:12 -0800 (PST)
-From: Hugh Dickins <hughd@google.com>
-To: Zi Yan <ziy@nvidia.com>
-cc: Hugh Dickins <hughd@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-    linux-mm@kvack.org, 
-    "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>, 
-    "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-    Ryan Roberts <ryan.roberts@arm.com>, David Hildenbrand <david@redhat.com>, 
-    Yang Shi <yang@os.amperecomputing.com>, Miaohe Lin <linmiaohe@huawei.com>, 
-    Kefeng Wang <wangkefeng.wang@huawei.com>, Yu Zhao <yuzhao@google.com>, 
-    John Hubbard <jhubbard@nvidia.com>, 
-    Baolin Wang <baolin.wang@linux.alibaba.com>, 
-    linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
-    Kairui Song <kasong@tencent.com>, Liu Shixin <liushixin2@huawei.com>
-Subject: Re: [PATCH v9 2/8] mm/huge_memory: add two new (not yet used)
- functions for folio_split()
-In-Reply-To: <2D7DFB2E-DB80-4F6C-A580-DEBC70318364@nvidia.com>
-Message-ID: <176731de-6a3b-270b-6b5d-dfce124c8789@google.com>
-References: <20250226210032.2044041-1-ziy@nvidia.com> <20250226210032.2044041-3-ziy@nvidia.com> <2fae27fe-6e2e-3587-4b68-072118d80cf8@google.com> <408B0C17-E144-4729-9461-80E8B5D1360C@nvidia.com> <0582f898-bd35-15cc-6b4d-0a3ad9c2a1a4@google.com>
- <2D7DFB2E-DB80-4F6C-A580-DEBC70318364@nvidia.com>
+	s=arc-20240116; t=1741214304; c=relaxed/simple;
+	bh=Roi/euyc99FChG5PRFvFXT8ZwL1l4H4tpWXXNhTNGBc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NkHBZb8B7K2XmVASG9ELwkk+Pu0U9Q+Donfs42oDI0CkdT5t24ezoEohksepFhzZ8Zb6O1p9vEA3lxK3sBblYLNT3xTJ+zuMGucxy58fc1adY8z37JVpxfswo5OQy89/iI6D729d5ANCMTGqdwAy9Po2yuij7DShCqBSk0O69Lc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kA/clk9W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02C96C4CED1;
+	Wed,  5 Mar 2025 22:38:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741214303;
+	bh=Roi/euyc99FChG5PRFvFXT8ZwL1l4H4tpWXXNhTNGBc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kA/clk9WPgtegyDu4qZG4uoAQHpEzBCX0vDP6Fl7+UDdfG9p5puozCMDQ5kFyAGKF
+	 NtBCKZIAj/YGDocvp28Xbb8pKpXLMEY1frV6Lz66+WTAzlRm29i5nA6wa2xx76O8gJ
+	 PoE+OjQ43lFAvcLD5HisHMw3hvdStEtfZaoXsrnk985rif07HdB1hN6Ij6zxWBYxdW
+	 LS4tMczCjF4l9B0nMjmNyxjzHXaHKg5iBFxOjsJdLYSepgdgeicUiTZc1PK/d5gois
+	 OfWP6zx6sflntD4RTvwSTJy/IxZiui90MLcw575hCHfP0bCzvBkwOXwzVJitup0w9T
+	 7ixe53hqaEpsw==
+Date: Wed, 5 Mar 2025 23:38:15 +0100
+From: Danilo Krummrich <dakr@kernel.org>
+To: Benno Lossin <benno.lossin@proton.me>
+Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
+	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
+	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
+	aliceryhl@google.com, tmgross@umich.edu, gregkh@linuxfoundation.org,
+	mcgrof@kernel.org, russ.weight@linux.dev,
+	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
+	rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH v5 2/5] rust: firmware: introduce
+ `firmware::ModInfoBuilder`
+Message-ID: <Z8jSV5CpZDcXrviY@pollux>
+References: <20250304173555.2496-1-dakr@kernel.org>
+ <20250304173555.2496-3-dakr@kernel.org>
+ <D88OSC9XJXZL.C5HXWFYCG9U6@proton.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="-1463770367-323578906-1741214295=:4219"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <D88OSC9XJXZL.C5HXWFYCG9U6@proton.me>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
-
----1463770367-323578906-1741214295=:4219
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
-
-On Wed, 5 Mar 2025, Zi Yan wrote:
-> On 5 Mar 2025, at 16:03, Hugh Dickins wrote:
+On Wed, Mar 05, 2025 at 10:30:31PM +0000, Benno Lossin wrote:
+> On Tue Mar 4, 2025 at 6:34 PM CET, Danilo Krummrich wrote:
+> > The `firmware` field of the `module!` only accepts literal strings,
+> > which is due to the fact that it is implemented as a proc macro.
 > >
-> > Beyond checking that, I didn't have time yesterday to investigate
-> > further, but I'll try again today (still using last weekend's mm.git).
->=20
-> I am trying to replicate your runs locally. Can you clarify your steps
-> of =E2=80=9Ckernel builds on huge tmpfs while swapping to SSD=E2=80=9D? D=
-o you impose
-> a memory limit so that anonymous memory is swapped to SSD or make tmpfs
-> swap to SSD?
+> > Some drivers require a lot of firmware files (such as nova-core) and
+> > hence benefit from more flexibility composing firmware path strings.
+> >
+> > The `firmware::ModInfoBuilder` is a helper component to flexibly compose
+> > firmware path strings for the .modinfo section in const context.
+> >
+> > It is meant to be used in combination with `kernel::module_firmware!`,
+> > which is introduced in a subsequent patch.
+> >
+> > Co-developed-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > ---
+> >  rust/kernel/firmware.rs | 98 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 98 insertions(+)
+> >
+> > diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
+> > index c5162fdc95ff..6e6972d94597 100644
+> > --- a/rust/kernel/firmware.rs
+> > +++ b/rust/kernel/firmware.rs
+> > @@ -115,3 +115,101 @@ unsafe impl Send for Firmware {}
+> >  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
+> >  // be used from any thread.
+> >  unsafe impl Sync for Firmware {}
+> > +
+> > +/// Builder for firmware module info.
+> > +///
+> > +/// [`ModInfoBuilder`] is a helper component to flexibly compose firmware paths strings for the
+> > +/// .modinfo section in const context.
+> > +///
+> > +/// It is meant to be used in combination with [`kernel::module_firmware!`].
+> > +///
+> > +/// For more details and an example, see [`kernel::module_firmware!`].
+> > +pub struct ModInfoBuilder<const N: usize> {
+> > +    buf: [u8; N],
+> > +    n: usize,
+> > +    module_name: &'static CStr,
+> > +}
+> > +
+> > +impl<const N: usize> ModInfoBuilder<N> {
+> > +    /// Create an empty builder instance.
+> > +    pub const fn new(module_name: &'static CStr) -> Self {
+> > +        Self {
+> > +            buf: [0; N],
+> > +            n: 0,
+> > +            module_name,
+> > +        }
+> > +    }
+> > +
+> > +    const fn push_internal(mut self, bytes: &[u8]) -> Self {
+> > +        let mut j = 0;
+> > +
+> > +        if N == 0 {
+> > +            self.n += bytes.len();
+> > +            return self;
+> > +        }
+> > +
+> > +        while j < bytes.len() {
+> > +            if self.n < N {
+> > +                self.buf[self.n] = bytes[j];
+> > +            }
+> > +            self.n += 1;
+> > +            j += 1;
+> > +        }
+> > +        self
+> > +    }
+> > +
+> > +    /// Push an additional path component.
+> > +    ///
+> > +    /// After a new [`ModInfoBuilder`] instance has been created, [`ModInfoBuilder::prepare`] must
+> > +    /// be called before adding path components.
+> > +    pub const fn push(self, s: &str) -> Self {
+> > +        if N != 0 && self.n == 0 {
+> > +            crate::build_error!("Must call prepare() before push().");
+> 
+> This will only prevent the first `prepare` call being missed, right?
 
-Yeah, my heart sank a bit when I saw Andrew (with good intention) asking
-you to repeat my testing.
+Correct, unfortunately there's no way to detect subsequent ones.
 
-We could spend weeks going back and forth on that, and neither of us has
-weeks to spare.
+> 
+> > +        }
+> > +
+> > +        self.push_internal(s.as_bytes())
+> > +    }
+> > +
+> > +    const fn prepare_module_name(self) -> Self {
+> > +        let mut this = self;
+> > +        let module_name = this.module_name;
+> > +
+> > +        if !this.module_name.is_empty() {
+> > +            this = this.push_internal(module_name.as_bytes_with_nul());
+> > +
+> > +            if N != 0 {
+> > +                // Re-use the space taken by the NULL terminator and swap it with the '.' separator.
+> > +                this.buf[this.n - 1] = b'.';
+> > +            }
+> > +        }
+> > +
+> > +        this.push_internal(b"firmware=")
+> > +    }
+> > +
+> > +    /// Prepare for the next module info entry.
+> > +    ///
+> > +    /// Must be called before [`ModInfoBuilder::push`] can be called.
+> 
+> If you always have to call this before `push`, why not inline it there?
 
-"To fulfil contractual obligations" I'll mail you the tarfile I send
-out each time I'm asked for this; but I haven't updated that tarfile
-in four years, whereas I'm frequently tweaking things to match what's
-needed (most recently and relevantly, I guess enabling 64kB hugepages
-for anon and shmem in addition to the PMD-sized).
+You can push() multiple times to compose the firmware path string (which is the
+whole purpose :).
 
-Please don't waste much of your time over trying to replicate what
-I'm doing: just give the scripts a glance, as a source for "oh,
-I could exercise something like that in my testing too" ideas.
+Example from nova-core:
 
-Yes, I limit physical memory by booting with mem=3D1G, and also apply
-lower memcg v1 limits.
-
-I made a point of saying "SSD" there because I'm not testing zram or
-zswap at all, whereas many others are testing those rather than disk.
-
-swapoff, and ext4 on loop0 on tmpfs, feature in what I exercise, but are
-NOT relevant to the corruption I'm seeing here - that can occur before
-any swapoff, and it's always on the kernel build in tmpfs: the parallel
-build in ext4 on loop0 on tmpfs completes successfully.
-
-Hugh
----1463770367-323578906-1741214295=:4219--
+	pub(crate) struct ModInfoBuilder<const N: usize>(firmware::ModInfoBuilder<N>);
+	
+	impl<const N: usize> ModInfoBuilder<N> {
+	    const fn make_entry_file(self, chipset: &str, fw: &str) -> Self {
+	        let version = "535.113.01";
+	
+	        ModInfoBuilder(
+	            self.0
+	                .prepare()
+	                .push("nvidia/")
+	                .push(chipset)
+	                .push("/gsp/")
+	                .push(fw)
+	                .push("-")
+	                .push(version)
+	                .push(".bin"),
+	        )
+	    }
+	
+	    const fn make_entry_chipset(self, chipset: &str) -> Self {
+	        self.make_entry_file(chipset, "booter_load")
+	            .make_entry_file(chipset, "booter_unload")
+	            .make_entry_file(chipset, "bootloader")
+	            .make_entry_file(chipset, "gsp")
+	    }
+	
+	    pub(crate) const fn create(
+	        module_name: &'static kernel::str::CStr,
+	    ) -> firmware::ModInfoBuilder<N> {
+	        let mut this = Self(firmware::ModInfoBuilder::new(module_name));
+	        let mut i = 0;
+	
+	        while i < gpu::Chipset::NAMES.len() {
+	            this = this.make_entry_chipset(gpu::Chipset::NAMES[i]);
+	            i += 1;
+	        }
+	
+	        this.0
+	    }
+	}
 
