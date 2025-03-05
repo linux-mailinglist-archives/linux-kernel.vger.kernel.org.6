@@ -1,213 +1,295 @@
-Return-Path: <linux-kernel+bounces-546982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66131A50171
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:08:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A08DA5016E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:08:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5643016CCBB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:08:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CF65B16D797
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:08:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35BEA24BC1C;
-	Wed,  5 Mar 2025 14:07:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AEB924BBF5;
+	Wed,  5 Mar 2025 14:07:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M/cxe7Ab"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="AAmq0Dq+"
+Received: from outbound.mail.protection.outlook.com (mail-canadacentralazon11022080.outbound.protection.outlook.com [40.107.193.80])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6168224BC07
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741183628; cv=none; b=sOBlv9j7n7EPooa+wNIk0xO0MAYxSXaEVqDFb3S+InWZ3IDd7EksYv//IHM19HPqrqUTNdL94wTHLzWqjBGEkBl/ef+7BLqtb1R3wKcSEYHYj0u/1HEXuyknF9u50s+5C2UtM3urakRPtckdtD4G//fL7qo4V639dfTDuSWYx/o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741183628; c=relaxed/simple;
-	bh=FjaeIhTNdKMmPpFK6XfmpXumPWRdtaSKMyBsnUumCQ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=t9cXFS3kycZ3uMxMRBb3BKMigCh/aTGL7XdDi2/pxzT9ZcgrLAVgpCs4buDGhVXY8s0L3Ookqcp77BlgiOOQ+PwU5iSKlfZeC//QbMs+d64dEzm2V11Tw5g4nrgUlDCrtz9xjXUgDvKQ8/WC7j4Clu9Ok2Hs6q+wmEn9MWtBqtE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M/cxe7Ab; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-22342c56242so166685ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:07:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741183626; x=1741788426; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=4/6W12xTgoKBwdDU6FZ6FI7BGZR4+Y6EvyzLeszV9vQ=;
-        b=M/cxe7Abfvuxa5WmLdQBJfnTvOeORUUVcZ2C4sd2C2yOaGXcKY0SDUtidBk+cS9Csv
-         9wgCusQSM50SNSR8VMrj4MSA4zSNezuA0LHtCmckXfiSG8BLAIkpdyInMnMPxlf/RJf4
-         Q2anBZqEtmMHmZSHWPM9oK9hakmKy9EcMut/GBNihlOswyckO0EsV8KqwY/VPN1SOLp6
-         SfhKNvxZ5zFVQBox5DPa0ht6JT5LOCIV5pKpzvSiw4Gycp3priOiw41W2HMcSW50+6fl
-         ChO0Vb0DICWT29FMdFUi2ppDNsLcp+84ehWgPufGFqIJWDNgc8uCeBh4/F7D0gcOjh7p
-         9o2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741183626; x=1741788426;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4/6W12xTgoKBwdDU6FZ6FI7BGZR4+Y6EvyzLeszV9vQ=;
-        b=S34qXEjttk1udwzrq/TExDHc1XCJSlLfunC2YxGGemdeRv4JMGL1R1PGLF06Rce1dE
-         fb0D+PJExWg0QgWcijgDLbi0q8hyUYx5E2ZcbFSLgayx681aGKQRCsjGsifbwpTRw0LP
-         NvfhcSqLilpaWtZkF4pv1yN6ucVMkTvWsBHR3o4eSvJ57QLMdnYMicfnte9n1pHEeF0r
-         A/bqfZXNNeg+EBFYCXLa9i02nomcZaYMbKaNkTqWPd50RwDviVPB48ids6AXcHxUL9i6
-         ImlZg0M1r3gVFBCsgM67mj1rryhAjNTWoRlbyYR+5aWDmSV9QGGO/uXkICHwOjuRAZM4
-         XNWw==
-X-Forwarded-Encrypted: i=1; AJvYcCVoqQDeJWLjqyHVl1l38OWFPoZAl06YYX9dMF9/7tycNenu7pQlYkqrIysYq14J6MUlqwaG7ojnU68w9EQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwWljeQ3Kl+rn62+3X+Jx1sFf2jEyNMEtM95v8/MpyDwdU/ZpO
-	AQGkfQp6DzAdbqXLtnDckDAHpU3dzB6yAGSxcW1b4RkT8U4wwIPm9uYYmgbA5UuHeNgBbsKBAI4
-	+CptyodoBsJeRM2wB1nhhQKS9DKoTzCRXoIfX
-X-Gm-Gg: ASbGnctSotIFVmvVpgGvIiR7DE6kFKvJfRP48OHo66WMCFWt4gSYXQCrX86RkYs80zR
-	ug5Bvs57vm2S5i29Jn0MHmiEzGZ0Zz5mnhEd9+ChnFbnN9ClS2Drr8UvFtzpijZ1vf8Xbw6tBaM
-	txIt2bdiLmBvpj8EObaD8NqGNpjmU=
-X-Google-Smtp-Source: AGHT+IEKSHHYr8188K9ntmJciY47CcWvf6ZohiVQ/T+y3MDsXI32//5qi0ZmXcjGDzT7A1Fuf5ToO2bW8eZG8xGReGI=
-X-Received: by 2002:a17:902:f809:b0:21f:40e8:6398 with SMTP id
- d9443c01a7336-223f2700461mr2875315ad.26.1741183625420; Wed, 05 Mar 2025
- 06:07:05 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C538924A076
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.193.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741183624; cv=fail; b=cA1MOHeVmxvZV+1lUYUsTcpQ4H9pInEgVYYryFszlDRLPyyUW3klDLDLvYtUxBY6XvN2ymhP6BAzUoRRlOIUINeEFI+5LOrb0SUh4dSsO5rQshiGVkFcWQkyx+Myc1IhWVHQJcdxUYV1qDqZHaa9EErXUvjGJS2Po3ivX3/VoM0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741183624; c=relaxed/simple;
+	bh=KTOnGZkVc9p7Yuyyl0rwhJIlVrMch/pbQWcfc10pwzM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=bGfeE+VmfjTBdfmquvMbS7cyooqeNxFyfxGYyccduZwAr5T3dBpzb/fA2fyg3+noUgN7L8Q2Yr/ILJwUpemmE16Dh33psw/Y9JpfLPdFBm8mwK/y8gVvULqVK6hydTWdHtr5Ez+jjaExWCETEm1k1LbF2ZodJc4g414gllB3sWU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=AAmq0Dq+; arc=fail smtp.client-ip=40.107.193.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=xBqwnZHMIgbjpc27vOlCJi0AdDzC7NmtjyLAZT48ya7ZSsp6decwREOW0922K/wfrJaYxkrByzjbZcMuhxxHMNQGxSCBAOjh04Sj5UaMp3zXuiZwpvqMCLafCZDVsicr0QcGX+DE6IsvGEJv7RA2eigvvbbmMkFxllShIWyrCrzxHysj6X/zmHSRhzMXSLwrqyNMz8lwujLHyjX4ZexzQa1NAeAw2tFV8j3qXmPQLt+RHG0FnbV614HSlc+CR2xn9ze0riIXcxdNyDeo3zlOGdbgrC/65d7KpAGPmEqHect84FKfsLNcYJOS60mtTLuEmeFbk4X9mDzGxVU6moF/Cw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z+oi9cbjovUWuVVe+gxqc3etcQu/R13F6nSnpKqJYGM=;
+ b=w2190VXoYB9ipsguej3ZTPavA6OQ1ZpZHwMVHgcujaW6CfWSTQLVIIar9p+oYLtJ7cAYiEEntaOjnsjTcYjqzIE72iA2sp/sdxnWpswmPCV6thGZXymKgloaNzr0qri3bTH0zbWEtimLM+7RweQS3NesesYG1lNzShQw9y3KWhCXlUhwDgHDvfuiGtOhb+1UO8V8AQANus1wIaQZejyGOsqcH2MpUdDU9/qTkAKdwzzBwLgfUTIiPt807f4jJ+gpup3gRcE1e1j5NF5KqD8iO8xXmb9vLJJRrhNLjqMjPHtu3XxmBuDyZjY4D+UhLtN7rmwXCHxKUdFCsSqKcDa70w==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=efficios.com; dmarc=pass action=none header.from=efficios.com;
+ dkim=pass header.d=efficios.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=efficios.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z+oi9cbjovUWuVVe+gxqc3etcQu/R13F6nSnpKqJYGM=;
+ b=AAmq0Dq+qK/+kWEWZAjBpiJNIXI3JcFOS7dF+GSOiRslbFYaizkfjm+QkaZ3tMIbtiKflXhAGe7ir6tQwsF/nvtzritcxH43bZx9AvIo7RcIdHSCyzatOx01eTceLGW/UyiA3k2k67UnoWFHJakZO2+i1qsNANiEyADXshwacp/vu7ZikjsdTLQZtKN9MdwidgZo589/SAEMeMCjHx80ByYJnIHPLpFa/swx+dQkZ+dr1FZuD+Hasfzs5P5PGlFOlUvIZbjVn+lYBpX5DFOi/CW0FqEl3MzVkVfeYbex2wTY35jHKMLnu6UBgdWMUKIL3ysfo3AA2hT4IdDpSky1rQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=efficios.com;
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:be::5)
+ by YQXPR01MB6107.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:28::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.19; Wed, 5 Mar
+ 2025 14:06:58 +0000
+Received: from YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4]) by YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::50f1:2e3f:a5dd:5b4%4]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 14:06:57 +0000
+Message-ID: <08506527-5d0b-44c7-9d09-a4d53b2fda2d@efficios.com>
+Date: Wed, 5 Mar 2025 09:06:56 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 0/2] SKSM: Synchronous Kernel Samepage Merging
+To: David Hildenbrand <david@redhat.com>, Peter Xu <peterx@redhat.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>, Olivier Dion <odion@efficios.com>,
+ linux-mm@kvack.org
+References: <20250228023043.83726-1-mathieu.desnoyers@efficios.com>
+ <CAHk-=wgedRzDqOLhbOnvziVHZm9jtGOrT4GJEqA9etJDwTQ5Mg@mail.gmail.com>
+ <8524caa9-e1f6-4411-b86b-d9457ddb8007@efficios.com>
+ <CAHk-=wi5-+P49c3NPeZB_qrNyOtAJS3YadHB0q7J3eZ3UUwrjw@mail.gmail.com>
+ <cc1dec8c-8323-4c67-913f-5d8fb55ce715@efficios.com>
+ <Z8HlL4FopVjeveaJ@x1.local>
+ <60f148db-7586-4154-a909-d433bad39794@efficios.com>
+ <Z8I5iU6y_nVmCZk6@x1.local>
+ <72810548-b917-49b7-b7ef-043c6b395d31@efficios.com>
+ <8cae1e56-239f-4f67-a18c-b4f4d09f40d0@redhat.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <8cae1e56-239f-4f67-a18c-b4f4d09f40d0@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: YQBPR0101CA0202.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:67::24) To YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:be::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305083735.393333-1-irogers@google.com> <20250305083735.393333-2-irogers@google.com>
- <e2ea3776-12d2-41c2-9b7b-836c7c249c45@linaro.org>
-In-Reply-To: <e2ea3776-12d2-41c2-9b7b-836c7c249c45@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 5 Mar 2025 06:06:54 -0800
-X-Gm-Features: AQ5f1JoxD1jbTg08KjqHao7OjOP92CCi6YqUvtq1vHnaNmgjvf06g2yd9I0-Rfg
-Message-ID: <CAP-5=fW0LESRaZkGv-UCZGU_ttYi6kdF=dxJZP8KmVTiTwBM+Q@mail.gmail.com>
-Subject: Re: [PATCH v1 2/2] perf parse-events: Corrections to topdown sorting
-To: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Dominique Martinet <asmadeus@codewreck.org>, Andi Kleen <ak@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Falcon <thomas.falcon@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YT2PR01MB9175:EE_|YQXPR01MB6107:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8fd424e8-5f3a-4e7f-313a-08dd5beefdf3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?Q2lIZ2EwdXdSaXRtVXhKWHpLc2lNLzlqTEQ0SzkzM2tKUFdYcldTUno3S2RN?=
+ =?utf-8?B?VGpMVTVYNkZFbTRBSFUyNDMyTEtHbG9Xc09GWWlIcEZ1LytaWndnNTJMRmQr?=
+ =?utf-8?B?ajdCUlZobWRvaTUzWHIweVR6cGx4RFUvVU9ML3JjQTdacnJocFhxYjZTNUlT?=
+ =?utf-8?B?K1ZoSnVTb2puVzZYeEpkeFFqL1djNXcvQmlYWkdUUWdTL2xqaUxYVFpBR3Ny?=
+ =?utf-8?B?eUNzc2NwRG5oaEowR09ESWRkSFJQejNJYWNwNFgzRGF6bUxmTGpYak9sa0pQ?=
+ =?utf-8?B?RUZuV3Q3TEJwSHpjaXUzVHRxNWtVL25KdEJFdlczcDFSS1Y5bjdtOWFwaDhR?=
+ =?utf-8?B?a1VrUnA3TUw4WEVzNEdYRTdyWmpLZnphRlRONUM5MTl5cUptc1JDM1ozRG53?=
+ =?utf-8?B?U0FzdTZoQmRGcDE5eDNqMnJKUmNhdVpPZVVQeSs3NWxvOWJVdFNlRlBQTE03?=
+ =?utf-8?B?U3NoTWNKQjhGKzU0WFpoYXljZ0U5eENkT0xDMmJTdi9DWFhpdWFIbm01Nk95?=
+ =?utf-8?B?ZW1NTnBlaEx6N1dXUC9UU1pZb3N6V3hyZDdEWFlZSm1HWVB5Z0h2aExlZW1R?=
+ =?utf-8?B?aDVwYVQ1azArTE1URHVWc3FTcTI0VEJhbnE0cEFaTjljazVNaCs0ZjVNa3NF?=
+ =?utf-8?B?M2x2VjR4NkR3WjRvbS82TGR0bXUwalV1ZFhFd1BMRWJFK0NaMTJlSXhWbzJK?=
+ =?utf-8?B?T3FpRitpRTJ4V2pWdlAxQWRBYkE4UmxaSzVyR3RYWlhWcG9pWHlDL2dmem9G?=
+ =?utf-8?B?S1RxNDQ3SWR4KytSa0I0MHJjQzMydUk3ZmtPTlM3cm9kYTl1ZExUQ1pqRkEz?=
+ =?utf-8?B?d0lJems3MFFQeC9VYSt4SW5qTmY0cThNT0s1QkxrZndZRG5BVzJFc1JoV3ZZ?=
+ =?utf-8?B?ZFMwakxwQmtkSTc3aEpTZDFmVy8rYmFkYVZua2EzMnd3WW1MSnluNVBRQTkr?=
+ =?utf-8?B?ak50T0RiYmhWcGIzbDZCUC9BVi9qMDRwY08rUDc1aVFUeGp5bkNrOGlQNTdG?=
+ =?utf-8?B?WlNQR0M4ZGdIN1JMNXlOalcwV2tRY0FQOE5yLzZCVERucUtvZk9YOStRYkJp?=
+ =?utf-8?B?TXF0R2g0TFFrWWQySFJIcXNlcnlWc0hOL3d5cGJwVktZbDJTUW1DV2t5TFF3?=
+ =?utf-8?B?Y3pLMDNxZFhGRlMwK1hZanFaemsrcGlGRzB0WjZLT2tqWTg2Q3Y3OEJkcnlH?=
+ =?utf-8?B?cU16MCtEMzJmTGxlcVZ6U3NabURIRG9TT3hrQ1Z6c1pqRExmODJDZ08yMjd4?=
+ =?utf-8?B?TXB3RlMrVGNlcVI1NnFSendJVXpxdlRiWW5QY1BPK2xGMnlsN09CcUw3TFh0?=
+ =?utf-8?B?cWlvSjFDckdzOTd1WmZFMFllOWVuRm9DUm9DSnA3dkR1UnZ0azRqa0dzbFFo?=
+ =?utf-8?B?R1haSWwwNnI4U043M0d4dEdaV3BQK3ZBWUxiTlFCa2VvcmpXNnNhanNZaUVa?=
+ =?utf-8?B?QytuSGdoeDM3OGdNUWU5M2lwUVJla1FVb1FrVlErRUozTEV4ZEYxcmdNbDQw?=
+ =?utf-8?B?Zlh2ZnRQUkg4Q2wwY2k2aU9uZnIrbGV3MUVMeHhGeHMyckJjc2ZvS0dJV3Z1?=
+ =?utf-8?B?UUI3WHBBMkM4anNhUUlkOEZlSlZ6Y3VVUzNZcW1zQUxrK2pCL2JsNGJTamc3?=
+ =?utf-8?B?WXlNbDhZdGlMSzNIRmtkdXJCRUkwMDR6cWhreDE1dmhLSmZkSnErYWdMdmJ0?=
+ =?utf-8?B?ZndLZEkyWGxRdzVJRHRCSzJuYkptSWIyNHFTNzYyRGxNSmducCs3OUxJZjNo?=
+ =?utf-8?Q?uAXQwN7UaeZBNjP66D50FukXsesIRdoWDizapF4?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?dDhpY0IxWkpKQ29BdWludVE0Lzl3N2ZlUElVNENYZEIvdlMwMlBmdkhHSjB0?=
+ =?utf-8?B?dlp6WVV5ZnBydFI5aHljVWdrNEZxdlA0OXVZdUJxQTZtdWdoQTVueWk5cUVI?=
+ =?utf-8?B?TFBnREpKdk9CSG5BbTN0T1JRY3EvSm5oNm16c1dCdkJLbmxHaWpvNC9LY29o?=
+ =?utf-8?B?Ny9YY1Z2a3dzR0UyWkpuLzZENmwvVENwQ29yS1lWNGdYeFEzQ0Vwcmg0bUpW?=
+ =?utf-8?B?N1RhR2djZ1RRMzFGV1J3ZFgyNTVyVEJLU3ZOdER2YmQ1aFQ3UURXeWdKRXVP?=
+ =?utf-8?B?RkhnMXRLd1FhS0puNUlqbWFqdUl4K3E0OUhmOHNXWERZQWthbUF4aVkxcmk1?=
+ =?utf-8?B?dFpiZUVYU3ZHSjRSZEY1dERUVVRVK292RDdhdjhRTUthaG8xL09CV25WRmR3?=
+ =?utf-8?B?ZjFQT3ByS0x2VnBJNk90S2U2MmFickZmTktIbW45elBaajh4aTVkbUtaWTFP?=
+ =?utf-8?B?UmZiQ2pjYmQ1OVgraXBvS0hsc1FXSFB1TGVZU2t1QnBjTVBPZzBTbVBBbnFx?=
+ =?utf-8?B?dmZwb0IwT3FmQnNUYXg3SHFIMXRhUzVBazNjK0pqV28vZW00YXJSc2Rxa2Nh?=
+ =?utf-8?B?NGhJS0t1OGZTUFNNaFVacVVhMVZ2SE1ObVY1S3l3bm1KVURNdnJWUUwwRXBR?=
+ =?utf-8?B?VGNwUGVVRzVhSE56S3EweGtYQlhabndibENDNnIrcmdXYSt5YjBnenJ3eTZT?=
+ =?utf-8?B?Wm5MSDZBSWJLVm5VczBBRlEzcHdadUNwMklvcHJzc0ZobDhGRVowbThGNmZz?=
+ =?utf-8?B?ZnZhTU4vbFBLajdoeUZsVnlySkMxL1lWZExwVHplT1hGWVpKRm1STk5NMzNV?=
+ =?utf-8?B?TDR3RTB3S1o5bWxhZ1Q0RmJZdDMvK1JVdDZQKy81NFVCeW1XK3UrdGxFVVZU?=
+ =?utf-8?B?cWg5OVV5NVY0ODhOeDlYYitkMXJ6dExsS3p2VVJ5NytvbVZFMVI5Y0lBSmdu?=
+ =?utf-8?B?cVlKdXJkOTdZYVBLczU1VkhHSytBZmZ2Sk9FS3RDd01LNmJuQUo2R2cvUDQr?=
+ =?utf-8?B?NGRISFJUOXpBSG5mNUFyekRydml2cHZLS0RwUFdOdk53N0cvNUxXWlBaQ296?=
+ =?utf-8?B?ZnpDUmJJcElpb014eFVUdHJEWkhqVWRTeE16MDNIUEY3U09qQlV2Nkd1MnlX?=
+ =?utf-8?B?dm1HWS9IRlhpSVExWEJwMzBoQW1XRjBmcnZQVlBkSHVheHBYVnNzNlFZeVgy?=
+ =?utf-8?B?MkVJZzJ0d01KckNremZ6MUtBMkpxZXd2NlAzRmpDTnQ4SUNLYy9FblQ4c2Zv?=
+ =?utf-8?B?ZDhjUUprUHdkeHJIQ210NXlHekd4V0tCQTR0NjlSRkx6bEdYZHJISUhkK0RK?=
+ =?utf-8?B?M09May82L2lSb2N4VUhDWXdGeFFFOU9WYnJYT2dkSDBNRDFJUGVrZUNON0tq?=
+ =?utf-8?B?akN4cVpuWXBrNEtOeTFjbTB5a0tRNDhyb2tpVlZSNWxCWmloN1R4NjU2T0ds?=
+ =?utf-8?B?dUtGOFBMS0E5MlZtQVNlaGxBZHV4VWtmRU91YU5MMjUyRENZSnZ2OEJ3MG1V?=
+ =?utf-8?B?MFlYbVppeWtTNVR6VVlITXNRS0FGOFNPVUc1ek80Ty9LcVFMMXkxbTVYZFR3?=
+ =?utf-8?B?U0Qvb1oyRkM5Z1pnS0ZPdTgvOFNMaTdVRUx6bHlCUmRHTTlYZVlvd2dOeEs2?=
+ =?utf-8?B?RTBoekVRblZOSi9sdTBlNFVWcGFnTnNyNTh0VE1pU3ZmcnR3N2MwWjVjdVRn?=
+ =?utf-8?B?NlppZDU3RGw1NmxQK2VkRGJhQ0tYa0pWQzgzTnZBSFVqQm40QXl3TmcwR3pU?=
+ =?utf-8?B?L01ZWERDQUoxRnBMb0FJU1lZWUZoMkVzYmlBNGltVCt4dk5lMWt1bUJVb3p1?=
+ =?utf-8?B?OWtjbG80STA5SUo2bmYwMFJDU2l5VGhwbkVEeW1GUk83RkdJTFV1REtrYTFJ?=
+ =?utf-8?B?aEdPdlFrdk1oVStqdk5JNVVVN0ZNQXlwWlRRaE8zVnp1RnpZSnN2d3RibGtV?=
+ =?utf-8?B?U09EZTczLzdpR0d2MmJMNGE5b25zTVdaOUtuTC9aSjZJZDNLMTVYeGVHa0NX?=
+ =?utf-8?B?b3NWc3h4WktHV2IrY040akJzRTFnUm5yTktIbXdIa05RUitVcDNodGxpbTZZ?=
+ =?utf-8?B?U0E1TkkrWFRSWmxKaWVNQTRIazZRQmd3SUR6T2V3YWliN1dyQWQ4Sk56QzVh?=
+ =?utf-8?B?UkRYY2lBUThDQVNJVDdOUVVoZTJaenFqZnYvckEzWkhLdE9kN0UrRUdKMW1q?=
+ =?utf-8?Q?nIWZ5+S0UHz1CeL81KjDit4=3D?=
+X-OriginatorOrg: efficios.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8fd424e8-5f3a-4e7f-313a-08dd5beefdf3
+X-MS-Exchange-CrossTenant-AuthSource: YT2PR01MB9175.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 14:06:57.8967
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4f278736-4ab6-415c-957e-1f55336bd31e
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: vk+5rFFRjn5TcIGtnx2h4xVHR5H9/5HJu6CUh/dSwKCJ1T82IHbsK9tMVArQmFLFJ1IiIFK8ajqSztL9PlJlV5n9K6+G+p2qcKwWPz+42Js=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YQXPR01MB6107
 
-On Wed, Mar 5, 2025 at 5:44=E2=80=AFAM James Clark <james.clark@linaro.org>=
- wrote:
->
->
->
-> On 05/03/2025 8:37 am, Ian Rogers wrote:
-> > In the case of '{instructions,slots},faults,topdown-retiring' the
-> > first event that must be grouped, slots, is ignored causing the
-> > topdown-retiring event not to be adjacent to the group it needs to be
-> > inserted into. Don't ignore the group members when computing the
-> > force_grouped_index.
-> >
-> > Make the force_grouped_index be for the leader of the group it is
-> > within and always use it first rather than a group leader index so
-> > that topdown events may be sorted from one group into another.
-> >
-> > Reported-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> > Closes: https://lore.kernel.org/lkml/20250224083306.71813-2-dapeng1.mi@=
-linux.intel.com/
-> > Signed-off-by: Ian Rogers <irogers@google.com>
->
-> Testing on Arm seems ok, but presumably this doesn't change anything
-> there because arch_evsel__must_be_in_group() is always false.
->
-> On x86 I ran into the topdown metrics not opening on cpu_core at all, so
-> I'm not sure if I'm able to test that the original issue is fixed on my
-> machine. From looking at the link the issue is that the ungrouped
-> topdown event is "<not supported>", but I always see that regardless of
-> grouping despite perf list saying it exists:
->
->   $ perf list --unit cpu_core | grep -i topdown
->    topdown-bad-spec OR cpu_core/topdown-bad-spec/     [Kernel PMU event]
->    topdown-be-bound OR cpu_core/topdown-be-bound/     [Kernel PMU event]
->    topdown-br-mispredict OR cpu_core/topdown-br-mispredict/[Kernel PMU
-> event]
->    topdown-fe-bound OR cpu_core/topdown-fe-bound/     [Kernel PMU event]
->    topdown-fetch-lat OR cpu_core/topdown-fetch-lat/   [Kernel PMU event]
->    topdown-heavy-ops OR cpu_core/topdown-heavy-ops/   [Kernel PMU event]
->    topdown-mem-bound OR cpu_core/topdown-mem-bound/   [Kernel PMU event]
->    topdown-retiring OR cpu_core/topdown-retiring/     [Kernel PMU event]
->    topdown.backend_bound_slots
->    topdown.bad_spec_slots
->    topdown.br_mispredict_slots
->    topdown.memory_bound_slots
->         [TOPDOWN.MEMORY_BOUND_SLOTS. Unit: cpu_core]
->
->
->   $ sudo perf stat -e topdown-retiring -- true
->   Performance counter stats for 'true':
->       <not counted>   cpu_atom/topdown-retiring/           (0.00%)
->     <not supported>   cpu_core/topdown-retiring/
->
->
->   $ sudo perf stat -e topdown-retiring -vvv -- true
-> Control descriptor is not initialized
-> Opening: topdown-retiring
-> ------------------------------------------------------------
-> perf_event_attr:
->    type                             10 (cpu_atom)
->    size                             136
->    config                           0xc2 (topdown-retiring)
->    sample_type                      IDENTIFIER
->    read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->    disabled                         1
->    inherit                          1
->    enable_on_exec                   1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 151404  cpu -1  group_fd -1  flags 0x8 =3D 3
-> Opening: topdown-retiring
-> ------------------------------------------------------------
-> perf_event_attr:
->    type                             4 (cpu_core)
->    size                             136
->    config                           0x8000 (topdown-retiring)
->    sample_type                      IDENTIFIER
->    read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->    disabled                         1
->    inherit                          1
->    enable_on_exec                   1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 151404  cpu -1  group_fd -1  flags 0x8
-> sys_perf_event_open failed, error -22
-> switching off exclude_guest for PMU cpu_core
-> Using PERF_SAMPLE_READ / :S modifier is not compatible with inherit,
-> falling back to no-inherit.
-> Warning:
-> topdown-retiring event is not supported by the kernel.
+On 2025-03-03 15:49, David Hildenbrand wrote:
+> On 03.03.25 21:01, Mathieu Desnoyers wrote:
+>> On 2025-02-28 17:32, Peter Xu wrote:
+>>> On Fri, Feb 28, 2025 at 12:53:02PM -0500, Mathieu Desnoyers wrote:
+>>>> On 2025-02-28 11:32, Peter Xu wrote:
+>>>>> On Fri, Feb 28, 2025 at 09:59:00AM -0500, Mathieu Desnoyers wrote:
+>>>>>> For the VM use-case, I wonder if we could just add a userfaultfd
+>>>>>> "COW" event that would notify userspace when a COW happens ?
+>>>>>
+>>>>> I don't know what's the best for KSM and how well this will work, 
+>>>>> but we
+>>>>> have such event for years..  See UFFDIO_REGISTER_MODE_WP:
+>>>>>
+>>>>> https://man7.org/linux/man-pages/man2/userfaultfd.2.html
+>>>>
+>>>> userfaultfd UFFDIO_REGISTER only seems to work if I pass an address
+>>>> resulting from a mmap mapping, but returns EINVAL if I pass a
+>>>> page-aligned address which sits within a private file mapping
+>>>> (e.g. executable data).
+>>>
+>>> Yes, so far sync traps only supports RAM-based file systems, or 
+>>> anonymous.
+>>> Generic private file mappings (that stores executables and libraries) 
+>>> are
+>>> not yet supported.
+>>>
+>>>>
+>>>> Also, I notice that do_wp_page() only calls handle_userfault
+>>>> VM_UFFD_WP when vm_fault flags does not have FAULT_FLAG_UNSHARE
+>>>> set.
+>>>
+>>> AFAICT that's expected, unshare should only be set on reads, never 
+>>> writes.
+>>> So uffd-wp shouldn't trap any of those.
+>>>
+>>>>
+>>>> AFAIU, as it stands now userfaultfd would not help tracking COW faults
+>>>> caused by stores to private file mappings. Am I missing something ?
+>>>
+>>> I think you're right.  So we have UFFD_FEATURE_WP_ASYNC that should 
+>>> work on
+>>> most mappings.  That one is async, though, so more like soft-dirty.  It
+>>> might be doable to try making it sync too without a lot of changes 
+>>> based on
+>>> how async tracking works.
+>>
+>> I'm looking more closely at admin-guide/mm/pagemap.rst and it appears to
+>> be a good fit. Here is what I have in mind to replace the ksmd scanning
+>> thread for the VM use-case by a purely user-space driven scanning:
+>>
+>> Within qemu or similar user-space process:
+>>
+>> 1) Track guest memory with the userfaultfd UFFD_FEATURE_WP_ASYNC 
+>> feature and
+>>      UFFDIO_REGISTER_MODE_WP mode.
+>>
+>> 2) Protect user-space memory with the PAGEMAP_SCAN ioctl 
+>> PM_SCAN_WP_MATCHING flag
+>>      to detect memory which stays invariant for a long time.
+>>
+>> 3) Use the PAGEMAP_SCAN ioctl with PAGE_IS_WRITTEN to detect which 
+>> pages are written to.
+>>      Keep track of memory which is frequently modified, so it can be 
+>> left alone and
+>>      not write-protected nor merged anymore.
+>>
+>> 4) Whenever pages stay invariant for a given lapse of time, merge them 
+>> with the new
+>>      madvise(2) KSM_MERGE behavior.
+>>
+>> Let me know if that makes sense.
+> 
+> Note that one of the strengths of ksm in the kernel right now is that we 
+> write-protect + try-deduplicate only when we are fairly sure that we can 
+> deduplicate (unstable tree), and that the interaction with THPs / large 
+> folios is fairly well thought-through.
+> 
+> Also note that, just because data hasn't been written in some time 
+> interval, doesn't mean that it should be deduplicated and result in CoW 
+> on next write access.
 
-Yep, unfortunately there is a requirement that a topdown event like
-topdown-retiring is always programmed with slots on performance cores.
-The slots event must be the group leader. You can see in metrics the
-slots event as "+ 0 * slots":
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/pmu-events/arch/x86/alderlake/adl-metrics.json?h=3Dperf-t=
-ools-next#n754
-```
-        "MetricExpr": "topdown\\-be\\-bound / (topdown\\-fe\\-bound +
-topdown\\-bad\\-spec + topdown\\-retiring + topdown\\-be\\-bound) + 0
-* slots",
-```
-and making it the group leader is done by the sorting:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.gi=
-t/tree/tools/perf/arch/x86/util/evlist.c?h=3Dperf-tools-next#n67
+Right. This tracking of address range access pattern would have to be
+implemented in user-space.
 
-We could probably add something to
-parse_events__sort_events_and_fix_groups to inject the slots event,
-but this hasn't been done yet.
+> One probably would have to mimic what the KSM implementation in the 
+> kernel does, and built something like the unstable tree, to find 
+> candidates where we can actually deduplciate. Then, have a way to not- 
+> deduplicate if the content changed.
 
-My main concern with this change is there is some sensitivity to the
-event ordering when parsing them in scripts. There's some context in:
-https://lore.kernel.org/all/20230719001836.198363-1-irogers@google.com/
-This change makes the topdown events appear first in the group always,
-but as you say you only see that if you use those events, otherwise
-things are unchanged.
+With madvise MADV_MERGE, there is no need to "unmerge". The merge
+write-protects the page and merges its content at the time of the
+MADV_MERGE with exact duplicates, and keeps that write protected page in
+a global hash table indexed by checksum.
 
-Thanks for testing!
-Ian
+However, unlike KSM, it won't track that range on an ongoing basis.
+
+"Unmerging" the page is done naturally by writing to the merged address
+range. Because it is write-protected, this will trigger COW, and will 
+therefore provide a new anonymous page to the process, thus "unmerging"
+that page.
+
+It's really just up to userspace to track COW faults and figure out
+that it really should not try to merge that range anymore, based on the
+the access pattern monitored through write-protection faults.
+
+Thanks,
+
+Mathieu
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
