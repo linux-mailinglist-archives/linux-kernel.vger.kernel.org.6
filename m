@@ -1,177 +1,104 @@
-Return-Path: <linux-kernel+bounces-547882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB997A50EA4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:31:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1F7AA50EA6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:31:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7A19165C44
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:31:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96F4E3AB49D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FFA266F0F;
-	Wed,  5 Mar 2025 22:30:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58937205E2E;
+	Wed,  5 Mar 2025 22:31:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ayMv7PO4"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lSpYkrHH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB29266F03;
-	Wed,  5 Mar 2025 22:30:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A43FF2063C3;
+	Wed,  5 Mar 2025 22:31:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741213854; cv=none; b=Pg8Cttvb5TaiEwEgwbqYGuT3YV7JwkR0XdE1aoe2uYvqCvydxZhNdiZ+CMeIV438Hlry0d+gxXmqqRjGlaPPofGeSlhUQB0lRo7J2SPEhNlC8+6BTM2IJ97KojIXO2b7qC6y+4wPTVYMb1+J598TLVQraIlyrPaSrws9r55vHVg=
+	t=1741213867; cv=none; b=E1KMzLmbYaHikqs+SBwU9Zsqfj+JJD3UgdoCpc/n7ZXI5C3ak5A6E4RuluIkeJuOctmRR8w0lFHXzv38T5CsNcakKTvQDg6nuxDdUwFxJbECaB7D07GKspv0f7s3UOGTxjcnRBUR119vbNt+MFmlV0Y10kz3IWqodukyr61e2Vw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741213854; c=relaxed/simple;
-	bh=jIbhpdAu56/1q1bMu6qwe0wIwmWzbhWIw8DRF5eEJto=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ML0GYsdtpDlb6wnJA4ntb+EmJIAigl1GiOBCUxLq2uBwg52kCgOudWok2PEcTc1skdvM+7FgLRenvJO5rxLeQO1F98jL0itIgDu7TROTTI9wDRZHC3WxCl0O6b5zL82RNsMYniNZ5d1431AU/kBVMhUE2rd3JVmqV4YtQMdve3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ayMv7PO4; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 525MUjxj3981899
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Mar 2025 16:30:45 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741213845;
-	bh=4kewPcEMUmFbsbrupfxd01igsHD0J5ywgLnA98niNvw=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=ayMv7PO4YzQUptJId8unXR0ZzDqG3IhsOz0eokbedD4ho/0uPtwo/iH6R64lWK6AT
-	 XSR58tqfRDIO7Nvbc0I2/JAw2oLr8QMeTITV1jyeUU6Zn1hQ6dFw8GDMWmqdPAUhq1
-	 KtbdK0ES+DmbzrTXvLNJuRKDN+xUoEdsq+QL9S38=
-Received: from DLEE104.ent.ti.com (dlee104.ent.ti.com [157.170.170.34])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 525MUjHw085149
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 5 Mar 2025 16:30:45 -0600
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE104.ent.ti.com
- (157.170.170.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
- Mar 2025 16:30:44 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 5 Mar 2025 16:30:44 -0600
-Received: from [10.250.148.85] ([10.250.148.85])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 525MUc9c086007;
-	Wed, 5 Mar 2025 16:30:40 -0600
-Message-ID: <b6fdfe6e-dbd3-4dc8-acf2-f2983f150df1@ti.com>
-Date: Thu, 6 Mar 2025 04:00:37 +0530
+	s=arc-20240116; t=1741213867; c=relaxed/simple;
+	bh=0y4rag77MhBPPG5egWFqmgEkirX8At2HrfL9mK2pLU4=;
+	h=Message-ID:Content-Type:MIME-Version:In-Reply-To:References:
+	 Subject:From:Cc:To:Date; b=azS+EEyl6ZgrONkCfN/sTn5cNWQFGIAD6yHJiqa5U2FdEzGhJRo3HqArbgv+/OlBCia7TjSK9PemuapOlEFh2Yl8VY0OVa6R6zwOOQPDjh+yyDnyIwEgzJfFQ2tNQi8JZxzL9AQYYMpYjmZO/rpBROIP9NBFisFwfnQEatl7WBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lSpYkrHH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2AE2C4CED1;
+	Wed,  5 Mar 2025 22:31:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741213865;
+	bh=0y4rag77MhBPPG5egWFqmgEkirX8At2HrfL9mK2pLU4=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=lSpYkrHH67Ptj9ZkpMCk5BupP/OUMptrSubo2jtC0mYAi5t0UNd2BPv0CDolwoiQN
+	 su9/Cp5xuY67Z9SKhe95XTZDbQUuhB3jh+A9+NMnuf+hQdDWZBJ0kbLdhAOiJ/twjj
+	 EcBlyerbkMh27ZvARjXkXjMU3wg2svnkBdsd3rwxEGq6ujcw1JVdetUIsHwyJuE4fc
+	 J6rGquKd6JHFrxR2mq2qI1ju+tu+Dh3zo2XB1o1fyMVwbeMkbjaE/dJiYYxBcLbaBf
+	 Ao9SdkfrPRsnZXqcKG9jvGPIkAjJuDDB8Odu9EIjwtQxY72NFeHN5zjvO51xsfACm1
+	 y600M2sXvwTyw==
+Message-ID: <2c17361891c4eb7edd947e5384cc9741.sboyd@kernel.org>
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v2 1/2] devicetree: bindings: mux: reg-mux: Update
- bindings for reg-mux for new property
-To: Rob Herring <robh@kernel.org>
-CC: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Peter Rosin <peda@axentia.se>, <s-vadapalli@ti.com>,
-        <danishanwar@ti.com>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Nishanth
- Menon <nm@ti.com>
-References: <20250304102306.2977836-1-c-vankar@ti.com>
- <20250304102306.2977836-2-c-vankar@ti.com>
- <20250304153959.GA2654372-robh@kernel.org>
- <66283781-69d6-4d0a-ada4-3a6bf4744a37@ti.com>
- <CAL_Jsq++DUv5_LHg7sPNXDJZ84JtS94Rwr-WAb9hDWp6rJqZLQ@mail.gmail.com>
- <11982b12-a359-467a-a6fc-e39adccca413@ti.com>
- <CAL_JsqLb5hrYD_-dqW5ELtbXohd8a1UL7nOuP2a9ZhE+3+f=eA@mail.gmail.com>
-Content-Language: en-US
-From: "Vankar, Chintan" <c-vankar@ti.com>
-In-Reply-To: <CAL_JsqLb5hrYD_-dqW5ELtbXohd8a1UL7nOuP2a9ZhE+3+f=eA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250305114659.k5pptszvmusblynm@vireshk-i7>
+References: <cover.1740995194.git.viresh.kumar@linaro.org> <023e3061cc164087b9079a9f6cb7e9fbf286794e.1740995194.git.viresh.kumar@linaro.org> <CANiq72kdWzFOZ39EoFNxEAbk4KYgzLi1OAEc1zn8BM07VpXy3g@mail.gmail.com> <20250304085351.inrvjgixvxla4yn3@vireshk-i7> <CANiq72=sU1sHvamC5REFPEC1aOVdZw9EKdxOgkUYESTR2yh3iQ@mail.gmail.com> <20250305114659.k5pptszvmusblynm@vireshk-i7>
+Subject: Re: [PATCH V3 2/2] rust: Add initial clk abstractions
+From: Stephen Boyd <sboyd@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Russell King <linux@armlinux.org.uk>, linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Daniel Almeida <daniel.almeida@collabora.com>
+To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Viresh Kumar <viresh.kumar@linaro.org>
+Date: Wed, 05 Mar 2025 14:31:02 -0800
+User-Agent: alot/0.12.dev1+gaa8c22fdeedb
 
-Hello Rob,
+Quoting Viresh Kumar (2025-03-05 03:46:59)
+> On 04-03-25, 10:37, Miguel Ojeda wrote:
+> > On Tue, Mar 4, 2025 at 9:53=E2=80=AFAM Viresh Kumar <viresh.kumar@linar=
+o.org> wrote:
+> > > +///     clk.disable_unprepare();
+> >=20
+> > Looking at the example, a question that one may have is: should we
+> > have something like a scope guard or a closure-passing API for this,
+> > or does it not make sense in general?
+>=20
+> Something like this (untested) ?
+>=20
+> +/// Runs a cleanup function/closure when dropped.
+> +///
+> +/// The [`ClkGuard::dismiss`] function prevents the cleanup function fro=
+m running.
+> +///
+> +pub type ClkGuard<'a> =3D ScopeGuard<&'a Clk, fn(&Clk)>;
+> +
+>  /// A reference-counted clock.
+>  ///
+>  /// This represents the Rust abstraction for the C [`struct clk`].
+> @@ -139,10 +146,12 @@ pub fn as_raw(&self) -> *mut bindings::clk {
+>      ///
+>      /// [`clk_enable`]: https://docs.kernel.org/core-api/kernel-api.html=
+#c.clk_enable
+>      #[inline]
+> -    pub fn enable(&self) -> Result {
+> +    pub fn enable(&self) -> Result<ClkGuard<'_>> {
+>          // SAFETY: By the type invariants, it is safe to call clk APIs o=
+f the C code for a clock
+>          // pointer earlier returned by [`clk_get`].
+> -        to_result(unsafe { bindings::clk_enable(self.as_raw()) })
+> +        to_result(unsafe { bindings::clk_enable(self.as_raw()) })?;
+> +
+> +        Ok(ClkGuard::new_with_data(self, Clk::disable))
 
-On 3/6/2025 3:44 AM, Rob Herring wrote:
-> On Wed, Mar 5, 2025 at 3:43 PM Vankar, Chintan <c-vankar@ti.com> wrote:
->>
->> Hello Rob,
->>
->> On 3/5/2025 2:10 AM, Rob Herring wrote:
->>> On Tue, Mar 4, 2025 at 1:03 PM Vankar, Chintan <c-vankar@ti.com> wrote:
->>>>
->>>> Hello Rob,
->>>>
->>>> On 3/4/2025 9:09 PM, Rob Herring wrote:
->>>>> On Tue, Mar 04, 2025 at 03:53:05PM +0530, Chintan Vankar wrote:
->>>>>> DT-binding of reg-mux is defined in such a way that one need to provide
->>>>>> register offset and mask in a "mux-reg-masks" property and corresponding
->>>>>> register value in "idle-states" property. This constraint forces to define
->>>>>> these values in such a way that "mux-reg-masks" and "idle-states" must be
->>>>>> in sync with each other. This implementation would be more complex if
->>>>>> specific register or set of registers need to be configured which has
->>>>>> large memory space. Introduce a new property "mux-reg-masks-state" which
->>>>>> allow to specify offset, mask and value as a tuple in a single property.
->>>>>
->>>>> Maybe in hindsight that would have been better, but having 2 ways to
->>>>> specify the same thing that we have to maintain forever is not an
->>>>> improvement.
->>>>>
->>>>> No one is making you use this binding. If you have a large number of
->>>>> muxes, then maybe you should use a specific binding.
->>>>>
->>>>
->>>> Thank you for reviewing the patch. The reason behind choosing mux
->>>> subsystem is working and implementation of mmio driver. As we can see
->>>> that implementing this new property in mux-controller is almost
->>>> identical to mmio driver, and it would make it easier to define and
->>>> extend mux-controller's functionality. If we introduce the new driver
->>>> than that would be most likely a clone of mmio driver.
->>>
->>> I'm talking about the binding, not the driver. They are independent.
->>> Generic drivers are great. I love them. Generic bindings, not so much.
->>>
->>>> Let me know if implementation would be accepted by adding a new
->>>> compatible for it.
->>>
->>> Adding a new compatible to the mmio driver? Certainly. That happens
->>> all the time.
->>>
->>> I also didn't say don't use this binding as-is. That's fine too.
->>>
->>
->> Can you please review the following binding:
->>
->> oneOf:
->>     - required: [ mux-reg-masks ]
->>     - required: [ mux-reg-masks-state ]
->>
->> allOf:
->>     - if:
->>         required:
->>           - mux-reg-masks-state
->>       then:
->>         properties:
->>           idle-states: false
->>
->> required:
->>     - compatible
->>     - '#mux-control-cells'
->>
->> I think it won't disturb the current bindings and keep backward
->> compatibility with existing implementation.
-> 
-> Wasn't that the case before? There's nothing really different here.
-> 
-
-No, the binding before was not considering "mux-reg-masks" as required
-property which was breaking actual dt-binding. In this binding, one of
-the properties from "mux-reg-masks" or "mux-reg-masks-state" is required
-which keeps the binding as it is unless someone wants to use
-"mux-reg-masks-state".
-
-Regards,
-Chintan.
-
-> Rob
+Does this mean that a clk consumer has to keep the Result returned from
+enable() in scope until they want to disable the clk? I don't see how
+that makes sense, because most of the time a consumer will enable a clk
+during probe and leave it enabled until system suspend or runtime PM
+suspend time. At that point, they would disable the clk explicitly with
+disable(), but now they would need to drop a reference to do that?
 
