@@ -1,296 +1,117 @@
-Return-Path: <linux-kernel+bounces-546569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EC3EA4FC5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:40:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DC40A4FC5B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:39:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9659718948EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A5FA3AEF6E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BC4A207A0C;
-	Wed,  5 Mar 2025 10:33:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jSYiRK2p";
-	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="jSYiRK2p"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE79B20AF62;
+	Wed,  5 Mar 2025 10:33:58 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91CF42066F3
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:32:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F3BB207A0E;
+	Wed,  5 Mar 2025 10:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170780; cv=none; b=j0GgknGNobFp5xbSUX3s+E+eiyubX8mhXl12Tc4BternHqiHwJG3RksLbWOzeKMvE/CstiksbAiVAoeUk8o9LQhW8p0LjzLbP+8Wn98z8/LeCXvmAhFYtB3flV6nnDGdG0HZo6y99rw4guUA9ReSjkQUjCIn/EvcyCGmhL0sa7Q=
+	t=1741170838; cv=none; b=pm2fdg0S7NBLe5bachI8ctXwF3fNAjGGYGx1pcuGe05PE+dmn+YWNoRMV9/MAutNLxnTBAneaXhKP7pfvqtD5r1AlbBSRtXUMJKxRO/GDG8LUVeTYKagEXtqzgiJn1uxq7mwNGBNLqULmPz6icny30bGIvR+2ciHb3s/N7RX2ME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170780; c=relaxed/simple;
-	bh=OcBfiFtEmuwPQex58NJW4jRnkP45vg2KP4vgvR1qYRM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OtOanyAHz6QeQRJtZRmVrlWFZD0IstKDUGoBFGZnhmoYlwONFNZdzs7xsJb+G5EuejcJU1c56bjxnvQQ0PkXufK8/JZvOBaCRTPGLA3GoIhXlW0pVEQNrr0ihD+xQmjylWHbYxiCMXzrlmEm4sdlPHHElVGYeDXCtGW+SY4kDWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jSYiRK2p; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=jSYiRK2p; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id B689621170;
-	Wed,  5 Mar 2025 10:32:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1741170776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HMjPiq/fOLYpxw8Rc5BlOAt66Zz15s8Qdw1LiisGZns=;
-	b=jSYiRK2px6oh+HiyfgPsPIJOEvfoyo1RReryIoE+ej9tNvfWQsazBF0i1EDzW9jYCNsvpw
-	X8dtQkeiZd1pqBokQCAfCvRiCwMHmiA4eTWasJZTGIJ8zvg2AW6aheU6rM6vFGvNaUXJqi
-	0k8vEL+sbZFDY4qpRH8dLqth2HuKwS0=
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
-	t=1741170776; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=HMjPiq/fOLYpxw8Rc5BlOAt66Zz15s8Qdw1LiisGZns=;
-	b=jSYiRK2px6oh+HiyfgPsPIJOEvfoyo1RReryIoE+ej9tNvfWQsazBF0i1EDzW9jYCNsvpw
-	X8dtQkeiZd1pqBokQCAfCvRiCwMHmiA4eTWasJZTGIJ8zvg2AW6aheU6rM6vFGvNaUXJqi
-	0k8vEL+sbZFDY4qpRH8dLqth2HuKwS0=
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 9A60B13939;
-	Wed,  5 Mar 2025 10:32:56 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id l9AWJVgoyGdtAgAAD6G6ig
-	(envelope-from <neelx@suse.com>); Wed, 05 Mar 2025 10:32:56 +0000
-From: Daniel Vacek <neelx@suse.com>
-To: Chris Mason <clm@fb.com>,
-	Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>,
-	Nick Terrell <terrelln@fb.com>
-Cc: Daniel Vacek <neelx@suse.com>,
-	Qu Wenruo <wqu@suse.com>,
-	linux-btrfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] btrfs/defrag: implement compression levels
-Date: Wed,  5 Mar 2025 11:32:34 +0100
-Message-ID: <20250305103235.719210-1-neelx@suse.com>
-X-Mailer: git-send-email 2.47.2
-In-Reply-To: <20250304171403.571335-1-neelx@suse.com>
-References: <20250304171403.571335-1-neelx@suse.com>
+	s=arc-20240116; t=1741170838; c=relaxed/simple;
+	bh=/kfliGAoBPvG2knwQZdrlMxpuZZfEtlJZ3KKuBQ/FTY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=plDC9sMDOCHCjbPXb7pXVBxnwonkWmKNNqQf2aV386GgzmjUpWILRupi+EzjZ2owNdMpwKWbWX2KhyfEgtBTJBeLV60k88jbvwd1XkeXmvJi2PgzvtWXiWLHWM63lOHCoY5uuXQakwro1zzSWVEQMHZ5X6H7f3H087BdamQk7pM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: t4huneS6T/yGNZN0mL9lRQ==
+X-CSE-MsgGUID: pYN75pXjStKsuePUmcp1lA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="44936599"
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="44936599"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:33:56 -0800
+X-CSE-ConnectionGUID: Pmo02+QiRyuCyBTsLyBQKA==
+X-CSE-MsgGUID: +3/qaz49Qz6WtsiJJYV/Ng==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="123579370"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:33:46 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1tpm4L-0000000HNsf-1gjT;
+	Wed, 05 Mar 2025 12:33:41 +0200
+Date: Wed, 5 Mar 2025 12:33:41 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: George Cherian <george.cherian@marvell.com>
+Cc: linux@roeck-us.net, wim@linux-watchdog.org, jwerner@chromium.org,
+	evanbenn@chromium.org, kabel@kernel.org, krzk@kernel.org,
+	mazziesaccount@gmail.com, thomas.richard@bootlin.com,
+	lma@chromium.org, bleung@chromium.org,
+	support.opensource@diasemi.com, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	paul@crapouillou.net, alexander.usyskin@intel.com,
+	andreas.werner@men.de, daniel@thingy.jp, romain.perier@gmail.com,
+	avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, naveen@kernel.org, mwalle@kernel.org,
+	xingyu.wu@starfivetech.com, ziv.xu@starfivetech.com,
+	hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	chrome-platform@lists.linux.dev, imx@lists.linux.dev,
+	linux-mips@vger.kernel.org, openbmc@lists.ozlabs.org,
+	linuxppc-dev@lists.ozlabs.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH v4 2/2] drivers: watchdog: Add support for panic notifier
+ callback
+Message-ID: <Z8gohVIQqlA6QquZ@smile.fi.intel.com>
+References: <20250305101025.2279951-1-george.cherian@marvell.com>
+ <20250305101025.2279951-3-george.cherian@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-6.80 / 50.00];
-	REPLY(-4.00)[];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.993];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	DKIM_SIGNED(0.00)[suse.com:s=susede1];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Score: -6.80
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305101025.2279951-3-george.cherian@marvell.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The zstd and zlib compression types support setting compression levels.
-Enhance the defrag interface to specify the levels as well.
+On Wed, Mar 05, 2025 at 10:10:25AM +0000, George Cherian wrote:
+> Watchdog is not turned off in kernel panic situation.
+> In certain systems this might prevent the successful loading
+> of kdump kernel. The kdump kernel might hit a watchdog reset
+> while it is booting.
+> 
+> To avoid such scenarios add a panic notifier call back function
+> which can stop the watchdog. This provision can be enabled by
+> passing watchdog.stop_on_panic=1 via kernel command-line parameter.
 
-Signed-off-by: Daniel Vacek <neelx@suse.com>
-Reviewed-by: Qu Wenruo <wqu@suse.com>
----
-v2: Fixed the commit message and added an explicit level range check.
+...
 
- fs/btrfs/btrfs_inode.h     |  1 +
- fs/btrfs/compression.c     |  2 +-
- fs/btrfs/compression.h     |  1 +
- fs/btrfs/defrag.c          | 24 +++++++++++++++++++-----
- fs/btrfs/fs.h              |  2 +-
- fs/btrfs/inode.c           |  9 ++++++---
- include/uapi/linux/btrfs.h | 10 +++++++++-
- 7 files changed, 38 insertions(+), 11 deletions(-)
+First of all, do we really need a new module parameter for that? Why can't it
+be done automatically if kdump is expected?
 
-diff --git a/fs/btrfs/btrfs_inode.h b/fs/btrfs/btrfs_inode.h
-index aa1f55cd81b79..238e4a08a52ae 100644
---- a/fs/btrfs/btrfs_inode.h
-+++ b/fs/btrfs/btrfs_inode.h
-@@ -145,6 +145,7 @@ struct btrfs_inode {
- 	 * different from prop_compress and takes precedence if set.
- 	 */
- 	u8 defrag_compress;
-+	s8 defrag_compress_level;
- 
- 	/*
- 	 * Lock for counters and all fields used to determine if the inode is in
-diff --git a/fs/btrfs/compression.c b/fs/btrfs/compression.c
-index 6d073e69af4e3..7106d19ee7bac 100644
---- a/fs/btrfs/compression.c
-+++ b/fs/btrfs/compression.c
-@@ -968,7 +968,7 @@ static void put_workspace(int type, struct list_head *ws)
-  * Adjust @level according to the limits of the compression algorithm or
-  * fallback to default
-  */
--static int btrfs_compress_set_level(unsigned int type, int level)
-+int btrfs_compress_set_level(unsigned int type, int level)
- {
- 	const struct btrfs_compress_op *ops = btrfs_compress_op[type];
- 
-diff --git a/fs/btrfs/compression.h b/fs/btrfs/compression.h
-index 933178f03d8f8..125509605f847 100644
---- a/fs/btrfs/compression.h
-+++ b/fs/btrfs/compression.h
-@@ -83,6 +83,7 @@ static inline u32 btrfs_calc_input_length(u64 range_end, u64 cur)
- int __init btrfs_init_compress(void);
- void __cold btrfs_exit_compress(void);
- 
-+int btrfs_compress_set_level(unsigned int type, int level);
- int btrfs_compress_folios(unsigned int type, int level, struct address_space *mapping,
- 			  u64 start, struct folio **folios, unsigned long *out_folios,
- 			 unsigned long *total_in, unsigned long *total_out);
-diff --git a/fs/btrfs/defrag.c b/fs/btrfs/defrag.c
-index 968dae9539482..3e9e2345a5683 100644
---- a/fs/btrfs/defrag.c
-+++ b/fs/btrfs/defrag.c
-@@ -1363,6 +1363,7 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
- 	u64 last_byte;
- 	bool do_compress = (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS);
- 	int compress_type = BTRFS_COMPRESS_ZLIB;
-+	int compress_level = 0;
- 	int ret = 0;
- 	u32 extent_thresh = range->extent_thresh;
- 	pgoff_t start_index;
-@@ -1376,10 +1377,21 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
- 		return -EINVAL;
- 
- 	if (do_compress) {
--		if (range->compress_type >= BTRFS_NR_COMPRESS_TYPES)
--			return -EINVAL;
--		if (range->compress_type)
--			compress_type = range->compress_type;
-+		if (range->flags & BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL) {
-+			if (range->compress.type >= BTRFS_NR_COMPRESS_TYPES)
-+				return -EINVAL;
-+			if (range->compress.type) {
-+				compress_type = range->compress.type;
-+				compress_level= range->compress.level;
-+				compress_level= btrfs_compress_set_level(compress_type,
-+									 compress_level);
-+			}
-+		} else {
-+			if (range->compress_type >= BTRFS_NR_COMPRESS_TYPES)
-+				return -EINVAL;
-+			if (range->compress_type)
-+				compress_type = range->compress_type;
-+		}
- 	}
- 
- 	if (extent_thresh == 0)
-@@ -1430,8 +1442,10 @@ int btrfs_defrag_file(struct inode *inode, struct file_ra_state *ra,
- 			btrfs_inode_unlock(BTRFS_I(inode), 0);
- 			break;
- 		}
--		if (do_compress)
-+		if (do_compress) {
- 			BTRFS_I(inode)->defrag_compress = compress_type;
-+			BTRFS_I(inode)->defrag_compress_level = compress_level;
-+		}
- 		ret = defrag_one_cluster(BTRFS_I(inode), ra, cur,
- 				cluster_end + 1 - cur, extent_thresh,
- 				newer_than, do_compress, &sectors_defragged,
-diff --git a/fs/btrfs/fs.h b/fs/btrfs/fs.h
-index be6d5a24bd4e6..2dae7ffd37133 100644
---- a/fs/btrfs/fs.h
-+++ b/fs/btrfs/fs.h
-@@ -485,7 +485,7 @@ struct btrfs_fs_info {
- 	u64 last_trans_log_full_commit;
- 	unsigned long long mount_opt;
- 
--	unsigned long compress_type:4;
-+	int compress_type;
- 	int compress_level;
- 	u32 commit_interval;
- 	/*
-diff --git a/fs/btrfs/inode.c b/fs/btrfs/inode.c
-index fa04b027d53ac..d26c005bf091a 100644
---- a/fs/btrfs/inode.c
-+++ b/fs/btrfs/inode.c
-@@ -925,6 +925,7 @@ static void compress_file_range(struct btrfs_work *work)
- 	unsigned int poff;
- 	int i;
- 	int compress_type = fs_info->compress_type;
-+	int compress_level= fs_info->compress_level;
- 
- 	inode_should_defrag(inode, start, end, end - start + 1, SZ_16K);
- 
-@@ -1007,13 +1008,15 @@ static void compress_file_range(struct btrfs_work *work)
- 		goto cleanup_and_bail_uncompressed;
- 	}
- 
--	if (inode->defrag_compress)
-+	if (inode->defrag_compress) {
- 		compress_type = inode->defrag_compress;
--	else if (inode->prop_compress)
-+		compress_level= inode->defrag_compress_level;
-+	} else if (inode->prop_compress) {
- 		compress_type = inode->prop_compress;
-+	}
- 
- 	/* Compression level is applied here. */
--	ret = btrfs_compress_folios(compress_type, fs_info->compress_level,
-+	ret = btrfs_compress_folios(compress_type, compress_level,
- 				    mapping, start, folios, &nr_folios, &total_in,
- 				    &total_compressed);
- 	if (ret)
-diff --git a/include/uapi/linux/btrfs.h b/include/uapi/linux/btrfs.h
-index d3b222d7af240..3540d33d6f50c 100644
---- a/include/uapi/linux/btrfs.h
-+++ b/include/uapi/linux/btrfs.h
-@@ -615,7 +615,9 @@ struct btrfs_ioctl_clone_range_args {
-  */
- #define BTRFS_DEFRAG_RANGE_COMPRESS 1
- #define BTRFS_DEFRAG_RANGE_START_IO 2
-+#define BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL 4
- #define BTRFS_DEFRAG_RANGE_FLAGS_SUPP	(BTRFS_DEFRAG_RANGE_COMPRESS |		\
-+					 BTRFS_DEFRAG_RANGE_COMPRESS_LEVEL |	\
- 					 BTRFS_DEFRAG_RANGE_START_IO)
- 
- struct btrfs_ioctl_defrag_range_args {
-@@ -643,7 +645,13 @@ struct btrfs_ioctl_defrag_range_args {
- 	 * for this defrag operation.  If unspecified, zlib will
- 	 * be used
- 	 */
--	__u32 compress_type;
-+	union {
-+		__u32 compress_type;
-+		struct {
-+			__u8 type;
-+			__s8 level;
-+		} compress;
-+	};
- 
- 	/* spare for later */
- 	__u32 unused[4];
+> +static bool stop_on_panic;
+> +module_param(stop_on_panic, bool, 0444);
+> +MODULE_PARM_DESC(stop_on_panic, "Stop watchdogs on panic (0=keep watching, 1=stop)");
+
++ blank line.
+
+Also I do not see the documentation update. Where is it lost?
+
+>  /*
+
 -- 
-2.47.2
+With Best Regards,
+Andy Shevchenko
+
 
 
