@@ -1,114 +1,229 @@
-Return-Path: <linux-kernel+bounces-546823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A036A4FF19
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:56:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 61057A4FF29
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:58:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A246C170369
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:56:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0D5C17098F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4128524503A;
-	Wed,  5 Mar 2025 12:56:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13439248888;
+	Wed,  5 Mar 2025 12:57:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="TlsTQG1+"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBrBCpG/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 315E22441A3;
-	Wed,  5 Mar 2025 12:56:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01C3A2459C5;
+	Wed,  5 Mar 2025 12:57:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741179390; cv=none; b=Vuf8k6J7GygU+Xx45KgzL3toY6d6Rnk5sFsxWzfPqTPTmbM7CV4G+DhyxGZ9wwq84eI0vOFgjRhoXc3mz/Kq7X+CNBZzOdqcrUf9uUmjut9Tb57gcSL8N+4AQO3XemBHOO6Zrtkc1dIqEwnY4qS86g2hzBq7hbpowgp+B8wH8AQ=
+	t=1741179453; cv=none; b=gjXhSW/TnztPUbl00DpLScGp9G/wLKtt9VeET7902XDisz/suBccnF4kVk51SGzHyxKdY2xKddmbREtGBj3/iTokikvdIjywfbdhkFUpH5KqvlO21HpQSlw7M/1XhGu5qLw8CwGLIwYI6Z/6/ReLwEWSKuVkOvxO2dVLDvdPmro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741179390; c=relaxed/simple;
-	bh=stO30UINr/S9gQ16bMvr3QhTLQeKnh2AdaLOeIE1diY=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=kZmEj7UA1r7Jq4gx0qttMokYNw4sBnNUkgLYqsiKwSrNffNdn5XG77LwIJ0Plz4JbuKjPqappJseV9VhsLF1+76mv12hi7qlRyW2yf1Iji62GnTQNzlySRnKE6wbIQQI9BhYpt7Jx6qppvCAk1akwQAUtQu+dO8kJPay9jqHKQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=TlsTQG1+; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=WMkvl/IfsPF/ua4f4IZM2b3fgvXuqFq8/FIpoBLz03A=;
-	t=1741179389; x=1742388989; b=TlsTQG1+VkttdHsp9iDu4PBvskR/RMNGOY1xNnzvQGkODCl
-	oFUgBEtK10pCeamV2gkKCoXkTfDlWtaZnHvTnMwYzJe/v4ewLbGsSJoAlA/q3VxC72J9ZQwABG0eN
-	9QUxvFh0Dnpv32W3p056nD8JMY6vjGycXMRc/C8i9i7jhLuAIVDI2qkN9QZp3823xV+54DjGBYxha
-	Z04eM8hj/6PWiZQTudhUgvvzgPyA5kdgPMxZ8IbztuvBSu5CW23JHZye27Eunl8j00UihVbpPWHxr
-	J99kPutwKeYGy/ENq5y7qjJHeBHXelUSPYsmBGPGMO/+hN/wQOHwva4XeSpfkDJw==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tpoIO-00000001kWp-0uLh;
-	Wed, 05 Mar 2025 13:56:20 +0100
-Message-ID: <db6e127f5f7cfaf76bbf4438ae8962993f4aba03.camel@sipsolutions.net>
-Subject: Re: [regression] Significant WiFi Speed Reduction with Kernel
- Versions > 6.8.12 on Intel Wi-Fi 6 AX203
-From: Johannes Berg <johannes@sipsolutions.net>
-To: Bjorn Helgaas <helgaas@kernel.org>, Miri Korenblit
-	 <miriam.rachel.korenblit@intel.com>, emmanuel.grumbach@intel.com
-Cc: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>, LKML
-	 <linux-kernel@vger.kernel.org>
-Date: Wed, 05 Mar 2025 13:56:19 +0100
-In-Reply-To: <20250303222700.GA202089@bhelgaas>
-References: <20250303222700.GA202089@bhelgaas>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1741179453; c=relaxed/simple;
+	bh=Ljvfdb0OsdRdRE+6YawQZ3FbQxKnmX+JvjYq/i/gwvI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uzb4zPINriQgb9mMWQ17hV4sL60Qbdm7DhPZbGT2THuVkwEz1CoxdeIyv1Bj7tzWq69WXvi0FgXtBCWTh3380ePDfZ8mBe/1qsJqvowWFakZhw7QQS3aRLrElQ9ETc/LWb2K5h8s+m3ivBCJ6e2Ju8KI5DUoSPhYKeJXmAEVNs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gBrBCpG/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B18B9C4CEE7;
+	Wed,  5 Mar 2025 12:57:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741179452;
+	bh=Ljvfdb0OsdRdRE+6YawQZ3FbQxKnmX+JvjYq/i/gwvI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=gBrBCpG/iSg6fOVDefcq0ifue0Bnw+h3Bhgt2Daiyb48AVpjDDsYF9oEb0ZBh4RbP
+	 bJ+mglNsFOI37wx0ghPu9VUMD5x5ZL7xMOaf9BH9wLpKNBhBM5saCHdryYnPgMeTrZ
+	 R7+0x+qehwQgjXZIJOGJVwgDfyhgaNTJIgApXhDzV59XX8mH/gXLZhWyBXQg7epcEu
+	 WcOHGPi/P4n09VESMF80rVi/8CeLBNirh45pXAu6vMpKi3dwaaHFlz+LRn7FpfRnoF
+	 eu547QqsPzxQFljudQ8OwPAmxBN7Fadfmg7NEhiqQcu3B0lKiVVmXtCP15QHA/WYY5
+	 IvvDYXFyIfJLA==
+Date: Wed, 5 Mar 2025 13:57:26 +0100
+From: Carlos Maiolino <cem@kernel.org>
+To: brauner@kernel.org
+Cc: brauner@kernel.org, djwong@kernel.org, linux-xfs@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, ojaswin@linux.ibm.com, 
+	ritesh.list@gmail.com, martin.petersen@oracle.com, tytso@mit.edu, 
+	linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v4 02/12] iomap: Rename IOMAP_ATOMIC -> IOMAP_ATOMIC_HW
+Message-ID: <mefv3axgsk567xwwwuoonvo7bncvdgu547ycvin5zjlztslotm@qu4fxqi3fave>
+References: <20250303171120.2837067-1-john.g.garry@oracle.com>
+ <UQF0E8blbU4wMo9RdB7-nRkNAIJHtPkzDsTrQEOkNRLjG2CGbKe97G8XenXN1DSkhoWhipJrN956Enqgk9Ewkg==@protonmail.internalid>
+ <20250303171120.2837067-3-john.g.garry@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250303171120.2837067-3-john.g.garry@oracle.com>
 
-[removing folks no longer involved]
+Hi Christian,
+On Mon, Mar 03, 2025 at 05:11:10PM +0000, John Garry wrote:
+> In future xfs will support a SW-based atomic write, so rename
+> IOMAP_ATOMIC -> IOMAP_ATOMIC_HW to be clear which mode is being used.
+> 
+> Also relocate setting of IOMAP_ATOMIC_HW to the write path in
+> __iomap_dio_rw(), to be clear that this flag is only relevant to writes.
+> 
+> Reviewed-by: "Darrick J. Wong" <djwong@kernel.org>
+> Signed-off-by: John Garry <john.g.garry@oracle.com>
 
-Hi,
+I pushed the patches in this series into this branch:
+git://git.kernel.org/pub/scm/fs/xfs/xfs-linux.git xfs-6.15-atomicwrites
 
-So ... it's complicated, but I think it's a bug.
+Do you plan to send the iomap patches in this series yourself or is it ok with
+you if they go through xfs tree?
 
-> 4886460c4d15 ("iwlwifi: Fix IWL_SUBDEVICE_NO_160 macro to use the
-> correct bit.") updated IWL_SUBDEVICE_NO_160() to identify devices that
-> should not support 160MHz:
->=20
->   -#define IWL_SUBDEVICE_NO_160(subdevice)        ((u16)((subdevice) & 0x=
-0100) >> 9)
->   +#define IWL_SUBDEVICE_NO_160(subdevice)        ((u16)((subdevice) & 0x=
-0200) >> 9)
+Cheers,
+Carlos
 
-I'm not even entirely sure this logic is correct; however, it doesn't
-really matter.
-
-> The submitter's device has Subdevice ID 0x1652.  Prior to
-> 4886460c4d15, that did not match IWL_SUBDEVICE_NO_160(), but
-> afterwards it does:
->=20
->   0000:00:14.3 Network controller [0280]: Intel Corporation Alder Lake-P =
-PCH CNVi WiFi [8086:51f0] (rev 01)
->     Subsystem: Rivet Networks Dual Band Wi-Fi 6(802.11ax) Killer AX1650i =
-160MHz 2x2 [Cyclone Peak] [1a56:1652]
-
-According to our internal information (SKUMAP-362, for the Intel folks
-who know what that means), this name is correct, it should be 160 Mhz.
-
-> But apparently it wasn't until 84ec2d2e960f ("wifi: iwlwifi: disable
-> 160 MHz based on subsystem device ID"), that 160MHz support actually
-> got disabled for devices that match IWL_SUBDEVICE_NO_160():
-
-I've also found information elsewhere (WREQ-269994) that the whole
-IWL_SUBDEVICE_NO_160 (now actually a bit different to take no-320 into
-account on newer hardware) is *not* applicable to "Killer" branded
-devices at all.
-
-So I think it's a bug, but I'm not sure right now *how* we can fix it.
-It looks like our matching must skip the bandwidth restriction thing for
-Killer devices.
-
-johannes
+> ---
+>  Documentation/filesystems/iomap/operations.rst |  4 ++--
+>  fs/ext4/inode.c                                |  2 +-
+>  fs/iomap/direct-io.c                           | 18 +++++++++---------
+>  fs/iomap/trace.h                               |  2 +-
+>  include/linux/iomap.h                          |  2 +-
+>  5 files changed, 14 insertions(+), 14 deletions(-)
+> 
+> diff --git a/Documentation/filesystems/iomap/operations.rst b/Documentation/filesystems/iomap/operations.rst
+> index d1535109587a..0b9d7be23bce 100644
+> --- a/Documentation/filesystems/iomap/operations.rst
+> +++ b/Documentation/filesystems/iomap/operations.rst
+> @@ -514,8 +514,8 @@ IOMAP_WRITE`` with any combination of the following enhancements:
+>     if the mapping is unwritten and the filesystem cannot handle zeroing
+>     the unaligned regions without exposing stale contents.
+> 
+> - * ``IOMAP_ATOMIC``: This write is being issued with torn-write
+> -   protection.
+> + * ``IOMAP_ATOMIC_HW``: This write is being issued with torn-write
+> +   protection based on HW-offload support.
+>     Only a single bio can be created for the write, and the write must
+>     not be split into multiple I/O requests, i.e. flag REQ_ATOMIC must be
+>     set.
+> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+> index 7c54ae5fcbd4..ba2f1e3db7c7 100644
+> --- a/fs/ext4/inode.c
+> +++ b/fs/ext4/inode.c
+> @@ -3467,7 +3467,7 @@ static inline bool ext4_want_directio_fallback(unsigned flags, ssize_t written)
+>  		return false;
+> 
+>  	/* atomic writes are all-or-nothing */
+> -	if (flags & IOMAP_ATOMIC)
+> +	if (flags & IOMAP_ATOMIC_HW)
+>  		return false;
+> 
+>  	/* can only try again if we wrote nothing */
+> diff --git a/fs/iomap/direct-io.c b/fs/iomap/direct-io.c
+> index e1e32e2bb0bf..c696ce980796 100644
+> --- a/fs/iomap/direct-io.c
+> +++ b/fs/iomap/direct-io.c
+> @@ -317,7 +317,7 @@ static int iomap_dio_zero(const struct iomap_iter *iter, struct iomap_dio *dio,
+>   * clearing the WRITE_THROUGH flag in the dio request.
+>   */
+>  static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+> -		const struct iomap *iomap, bool use_fua, bool atomic)
+> +		const struct iomap *iomap, bool use_fua, bool atomic_hw)
+>  {
+>  	blk_opf_t opflags = REQ_SYNC | REQ_IDLE;
+> 
+> @@ -329,7 +329,7 @@ static inline blk_opf_t iomap_dio_bio_opflags(struct iomap_dio *dio,
+>  		opflags |= REQ_FUA;
+>  	else
+>  		dio->flags &= ~IOMAP_DIO_WRITE_THROUGH;
+> -	if (atomic)
+> +	if (atomic_hw)
+>  		opflags |= REQ_ATOMIC;
+> 
+>  	return opflags;
+> @@ -340,8 +340,8 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	const struct iomap *iomap = &iter->iomap;
+>  	struct inode *inode = iter->inode;
+>  	unsigned int fs_block_size = i_blocksize(inode), pad;
+> +	bool atomic_hw = iter->flags & IOMAP_ATOMIC_HW;
+>  	const loff_t length = iomap_length(iter);
+> -	bool atomic = iter->flags & IOMAP_ATOMIC;
+>  	loff_t pos = iter->pos;
+>  	blk_opf_t bio_opf;
+>  	struct bio *bio;
+> @@ -351,7 +351,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  	u64 copied = 0;
+>  	size_t orig_count;
+> 
+> -	if (atomic && length != fs_block_size)
+> +	if (atomic_hw && length != fs_block_size)
+>  		return -EINVAL;
+> 
+>  	if ((pos | length) & (bdev_logical_block_size(iomap->bdev) - 1) ||
+> @@ -428,7 +428,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  			goto out;
+>  	}
+> 
+> -	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic);
+> +	bio_opf = iomap_dio_bio_opflags(dio, iomap, use_fua, atomic_hw);
+> 
+>  	nr_pages = bio_iov_vecs_to_alloc(dio->submit.iter, BIO_MAX_VECS);
+>  	do {
+> @@ -461,7 +461,7 @@ static int iomap_dio_bio_iter(struct iomap_iter *iter, struct iomap_dio *dio)
+>  		}
+> 
+>  		n = bio->bi_iter.bi_size;
+> -		if (WARN_ON_ONCE(atomic && n != length)) {
+> +		if (WARN_ON_ONCE(atomic_hw && n != length)) {
+>  			/*
+>  			 * This bio should have covered the complete length,
+>  			 * which it doesn't, so error. We may need to zero out
+> @@ -652,9 +652,6 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  	if (iocb->ki_flags & IOCB_NOWAIT)
+>  		iomi.flags |= IOMAP_NOWAIT;
+> 
+> -	if (iocb->ki_flags & IOCB_ATOMIC)
+> -		iomi.flags |= IOMAP_ATOMIC;
+> -
+>  	if (iov_iter_rw(iter) == READ) {
+>  		/* reads can always complete inline */
+>  		dio->flags |= IOMAP_DIO_INLINE_COMP;
+> @@ -689,6 +686,9 @@ __iomap_dio_rw(struct kiocb *iocb, struct iov_iter *iter,
+>  			iomi.flags |= IOMAP_OVERWRITE_ONLY;
+>  		}
+> 
+> +		if (iocb->ki_flags & IOCB_ATOMIC)
+> +			iomi.flags |= IOMAP_ATOMIC_HW;
+> +
+>  		/* for data sync or sync, we need sync completion processing */
+>  		if (iocb_is_dsync(iocb)) {
+>  			dio->flags |= IOMAP_DIO_NEED_SYNC;
+> diff --git a/fs/iomap/trace.h b/fs/iomap/trace.h
+> index 9eab2c8ac3c5..69af89044ebd 100644
+> --- a/fs/iomap/trace.h
+> +++ b/fs/iomap/trace.h
+> @@ -99,7 +99,7 @@ DEFINE_RANGE_EVENT(iomap_dio_rw_queued);
+>  	{ IOMAP_FAULT,		"FAULT" }, \
+>  	{ IOMAP_DIRECT,		"DIRECT" }, \
+>  	{ IOMAP_NOWAIT,		"NOWAIT" }, \
+> -	{ IOMAP_ATOMIC,		"ATOMIC" }
+> +	{ IOMAP_ATOMIC_HW,	"ATOMIC_HW" }
+> 
+>  #define IOMAP_F_FLAGS_STRINGS \
+>  	{ IOMAP_F_NEW,		"NEW" }, \
+> diff --git a/include/linux/iomap.h b/include/linux/iomap.h
+> index ea29388b2fba..87cd7079aaf3 100644
+> --- a/include/linux/iomap.h
+> +++ b/include/linux/iomap.h
+> @@ -189,7 +189,7 @@ struct iomap_folio_ops {
+>  #else
+>  #define IOMAP_DAX		0
+>  #endif /* CONFIG_FS_DAX */
+> -#define IOMAP_ATOMIC		(1 << 9)
+> +#define IOMAP_ATOMIC_HW		(1 << 9)
+>  #define IOMAP_DONTCACHE		(1 << 10)
+> 
+>  struct iomap_ops {
+> --
+> 2.31.1
+> 
 
