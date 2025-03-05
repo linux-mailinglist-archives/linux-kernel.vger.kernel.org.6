@@ -1,193 +1,120 @@
-Return-Path: <linux-kernel+bounces-546739-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546740-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80AA4A4FE30
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:05:35 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623C9A4FE31
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:05:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7220C7A4922
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:04:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0596B189326B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:05:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C040C242926;
-	Wed,  5 Mar 2025 12:05:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20BA241103;
+	Wed,  5 Mar 2025 12:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="moy9F6D/"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="KfAZBhIk"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56DFA242922
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B4123370F
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741176302; cv=none; b=WvGef7GmOpDYofp4EOD9g1NEdAdVYCVxnErK9Q8g4YnS1EsqinoFakID3pX3YvQpR+SX61Y1X1/Gsq6eeX3IIvgD3i3vUr9sE1fJieTAv6Dpbyrebo6oWxaohIGckZ1plt3M6ijphOy842mHxtcgRuFQBPm9YCyusPzyW64HlbQ=
+	t=1741176339; cv=none; b=AplU9t6PZqD9z/6Euw7Ozov5fdWwVsaZumDUgi51y3lgTpUOPqdLJ39Uvr6CCd7fdCu+rKurua/5TnvBaTUBVzGEq9XOVnX9X9OVdoWxtCQApfeHzGSmirFCDM25zYpS+ISXRLE3hmNysDvGW+mv1EsgZnHqT6DLvIoFmtl8Hlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741176302; c=relaxed/simple;
-	bh=2MhdyXtlbvFMdiejsnIiHQAdBz+N3rywPPn6x0c4mgE=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=byOvc/IeAQ+7RUcuS/ClIUgE1j3Nn7j4HbImQyu4rbGm2ig1sygYpxXD9hSwCv5bgmwApxT8Mp+mv67HlEYqZ7SCo1Quub+GP9CSUHFiB/m4H8OJvuXWGjMC7La9pBUZCZ2YjRQr0YX0l4oHjIL4e7mMqWzTnhDPlTGdpW0H4q0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=moy9F6D/; arc=none smtp.client-ip=192.198.163.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741176300; x=1772712300;
-  h=date:from:to:cc:subject:message-id;
-  bh=2MhdyXtlbvFMdiejsnIiHQAdBz+N3rywPPn6x0c4mgE=;
-  b=moy9F6D/QouzEQ6CtgwOM1bWhv1cPxdGeMsNWzIBIqQNhVrNmYHmBbDF
-   0qg6HRQCRT/SS6JjrTU+1592xHZe32Kml2Oh/dLzpI2NZ5IovyY8q2kUf
-   kWA1HWunsCHzaP+5lVt/dvUCap6hL/D6DVCeJS1aWTZQblXyTpL7gWkQU
-   k9K8Uqby8iZkpd0t+vcCj8/yJIWO0t5o2AvYsWNk/yf/GIphRZ9kpc3Ay
-   B7apB0uDSr21gyeK+IsVWZdj/a3sNMeCayltHFQQqOgevXvZZC1JuqO/N
-   7sux55KZjH0E2tUzILfhp6lONOdYWqCcY60+OqyDjN+a3tn8fzShvSeyk
-   w==;
-X-CSE-ConnectionGUID: PVclwcAqSu+5NaI6M0Ew1w==
-X-CSE-MsgGUID: aFcaC2NkSjahusv3uRAbtw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="52772405"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="52772405"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 04:05:00 -0800
-X-CSE-ConnectionGUID: 2ab8E7t/R+WXc+EpgpArtA==
-X-CSE-MsgGUID: goZjq3gKTT+B+5dKbgTueg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="119348038"
-Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
-  by fmviesa009.fm.intel.com with ESMTP; 05 Mar 2025 04:04:58 -0800
-Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1tpnUc-000Kve-2p;
-	Wed, 05 Mar 2025 12:04:55 +0000
-Date: Wed, 05 Mar 2025 20:04:13 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/cpu] BUILD SUCCESS
- 4f2a0b765c9731d2fa94e209ee9ae0e96b280f17
-Message-ID: <202503052007.nAxyBNA8-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1741176339; c=relaxed/simple;
+	bh=9pybT0/UMgEz4/wJUXE2cHJv2mhc5VAlGwBfHsQcdhA=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZtfbrlnpOlT/8EcUQHrSm+nqraIlV/vC2L1x0pOoB6DNhfgofIpyS537Y7oOgNrPucBilax5neZ4JnUW2TZqH7dpVRkFZ0JfN4kGb3n1bQzYHCxjEre7+W8OBu5qi89L+Uxh7FSGAwv1nkw9oE29hu6XOgTICn/BtXOFVk4Qozk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=KfAZBhIk; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741176334; x=1741435534;
+	bh=l3OwM3zQ666uofylTyexnRNIzrNX4/a4VSd9lnoA0s4=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=KfAZBhIkHAdtsWMP4u7MfD5ESw+1VGRWCiNJjszAptWoHh8wPMmYvHqP8Ig5zrSN3
+	 CJHjJKhkXwKq9lJMwNPZpIHbW4JUWlTI+uhKgZd8tlzc39RgxoQW/GlKPDhfi6Eoxf
+	 ye8+Z0p0/QaLHdHV7Y3hOstP4kiWnxXM7iw4UwsDAPOmOHNcCVKqLQdnlHp0fPfS1p
+	 ofVBPu76wNk4AP05mWRqdTcZkfu9wBCIziySv3nKTMTyExOTPaV5NTKY4roD7y3TWs
+	 I92GHvuAR8t98pLi3OXdws6l4CVrWNJa722REOaOh41kgX8g+TuT8VFqjK7AWkoDMZ
+	 TntoKgtHUXOYw==
+Date: Wed, 05 Mar 2025 12:05:28 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 09/22] rust: pin-init: move impl `Zeroable` for `Opaque` and `Option<KBox<T>>` into the kernel crate
+Message-ID: <D88BHSCKZ8MO.10J627BIF6I97@proton.me>
+In-Reply-To: <87a59zen0l.fsf@kernel.org>
+References: <20250304225245.2033120-1-benno.lossin@proton.me> <msi970CObD4bpxAIjK__fZnRG2q-BXd4FHuA1U1NR80D_dTqSXuQ-0-4R1TS7-7CglN6StcS3Os-IumgWcVLqw==@protonmail.internalid> <20250304225245.2033120-10-benno.lossin@proton.me> <87a59zen0l.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 56d0fd40d987fa40038aa6364ee7ae75ae9f27d9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/cpu
-branch HEAD: 4f2a0b765c9731d2fa94e209ee9ae0e96b280f17  <linux/sizes.h>: Cover all possible x86 CPU cache sizes
+On Wed Mar 5, 2025 at 12:26 PM CET, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
+>
+>> In order to make pin-init a standalone crate, move kernel-specific code
+>> directly into the kernel crate. Since `Opaque<T>` and `KBox<T>` are part
+>> of the kernel, move their `Zeroable` implementation into the kernel
+>> crate.
+>>
+>> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+>> ---
+>>  rust/kernel/alloc/kbox.rs | 8 +++++++-
+>>  rust/kernel/types.rs      | 5 ++++-
+>>  rust/pin-init/src/lib.rs  | 8 +-------
+>>  3 files changed, 12 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/rust/kernel/alloc/kbox.rs b/rust/kernel/alloc/kbox.rs
+>> index 39a3ea7542da..9861433559dc 100644
+>> --- a/rust/kernel/alloc/kbox.rs
+>> +++ b/rust/kernel/alloc/kbox.rs
+>> @@ -15,7 +15,7 @@
+>>  use core::ptr::NonNull;
+>>  use core::result::Result;
+>>
+>> -use crate::init::{InPlaceWrite, Init, PinInit};
+>> +use crate::init::{InPlaceWrite, Init, PinInit, Zeroable};
+>>  use crate::init_ext::InPlaceInit;
+>>  use crate::types::ForeignOwnable;
+>>
+>> @@ -100,6 +100,12 @@
+>>  /// ```
+>>  pub type KVBox<T> =3D Box<T, super::allocator::KVmalloc>;
+>>
+>> +// SAFETY: All zeros is equivalent to `None` (option layout optimizatio=
+n guarantee).
+>> +//
+>> +// In this case we are allowed to use `T: ?Sized`, since all zeros is t=
+he `None` variant and there
+>> +// is no problem with a VTABLE pointer being null.
+>> +unsafe impl<T: ?Sized, A: Allocator> Zeroable for Option<Box<T, A>> {}
+>
+> Could you elaborate the statement related to vtable pointers? How does
+> that come into play for `Option<Box<_>>`? Is it for fat pointers to
+> trait objects?
 
-elapsed time: 1472m
+Yes it is for fat pointers, if you have a `x: *mut dyn Trait`, then you
+aren't allowed to write all zeroes to `x`, because the VTABLE pointer
+(that is part of the fat pointer) is not allowed to be null.
 
-configs tested: 101
-configs skipped: 1
+Now for `Option<Box<_>>`, this doesn't matter, as there if the normal
+pointer part of the fat pointer is all zeroes, then the VTABLE pointer
+part is considered padding bytes, as it's the `None` variant.
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+---
+Cheers,
+Benno
 
-tested configs:
-alpha                             allnoconfig    gcc-14.2.0
-alpha                            allyesconfig    gcc-14.2.0
-arc                              allmodconfig    gcc-13.2.0
-arc                               allnoconfig    gcc-13.2.0
-arc                              allyesconfig    gcc-13.2.0
-arc                   randconfig-001-20250304    gcc-13.2.0
-arc                   randconfig-002-20250304    gcc-13.2.0
-arm                              allmodconfig    gcc-14.2.0
-arm                               allnoconfig    clang-17
-arm                              allyesconfig    gcc-14.2.0
-arm                   randconfig-001-20250304    clang-21
-arm                   randconfig-002-20250304    gcc-14.2.0
-arm                   randconfig-003-20250304    clang-21
-arm                   randconfig-004-20250304    gcc-14.2.0
-arm64                            allmodconfig    clang-18
-arm64                             allnoconfig    gcc-14.2.0
-arm64                 randconfig-001-20250304    clang-21
-arm64                 randconfig-002-20250304    gcc-14.2.0
-arm64                 randconfig-003-20250304    gcc-14.2.0
-arm64                 randconfig-004-20250304    gcc-14.2.0
-csky                              allnoconfig    gcc-14.2.0
-csky                  randconfig-001-20250304    gcc-14.2.0
-csky                  randconfig-002-20250304    gcc-14.2.0
-hexagon                          allmodconfig    clang-21
-hexagon                           allnoconfig    clang-21
-hexagon                          allyesconfig    clang-18
-hexagon               randconfig-001-20250304    clang-21
-hexagon               randconfig-002-20250304    clang-21
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250304    clang-19
-i386        buildonly-randconfig-002-20250304    clang-19
-i386        buildonly-randconfig-003-20250304    gcc-12
-i386        buildonly-randconfig-004-20250304    gcc-11
-i386        buildonly-randconfig-005-20250304    gcc-11
-i386        buildonly-randconfig-006-20250304    gcc-12
-i386                                defconfig    clang-19
-loongarch                         allnoconfig    gcc-14.2.0
-loongarch             randconfig-001-20250304    gcc-14.2.0
-loongarch             randconfig-002-20250304    gcc-14.2.0
-m68k                              allnoconfig    gcc-14.2.0
-microblaze                        allnoconfig    gcc-14.2.0
-mips                              allnoconfig    gcc-14.2.0
-nios2                             allnoconfig    gcc-14.2.0
-nios2                 randconfig-001-20250304    gcc-14.2.0
-nios2                 randconfig-002-20250304    gcc-14.2.0
-openrisc                          allnoconfig    gcc-14.2.0
-openrisc                         allyesconfig    gcc-14.2.0
-parisc                           allmodconfig    gcc-14.2.0
-parisc                            allnoconfig    gcc-14.2.0
-parisc                           allyesconfig    gcc-14.2.0
-parisc                randconfig-001-20250304    gcc-14.2.0
-parisc                randconfig-002-20250304    gcc-14.2.0
-powerpc                          allmodconfig    gcc-14.2.0
-powerpc                           allnoconfig    gcc-14.2.0
-powerpc                          allyesconfig    clang-16
-powerpc               randconfig-001-20250304    gcc-14.2.0
-powerpc               randconfig-002-20250304    gcc-14.2.0
-powerpc               randconfig-003-20250304    clang-21
-powerpc64             randconfig-001-20250304    gcc-14.2.0
-powerpc64             randconfig-002-20250304    gcc-14.2.0
-powerpc64             randconfig-003-20250304    clang-21
-riscv                            allmodconfig    clang-21
-riscv                             allnoconfig    gcc-14.2.0
-riscv                            allyesconfig    clang-21
-riscv                 randconfig-001-20250305    clang-19
-riscv                 randconfig-002-20250305    gcc-14.2.0
-s390                             allmodconfig    clang-19
-s390                              allnoconfig    clang-15
-s390                             allyesconfig    gcc-14.2.0
-s390                  randconfig-001-20250305    gcc-14.2.0
-s390                  randconfig-002-20250305    gcc-14.2.0
-sh                               allmodconfig    gcc-14.2.0
-sh                                allnoconfig    gcc-14.2.0
-sh                               allyesconfig    gcc-14.2.0
-sh                    randconfig-001-20250305    gcc-14.2.0
-sh                    randconfig-002-20250305    gcc-14.2.0
-sparc                            allmodconfig    gcc-14.2.0
-sparc                             allnoconfig    gcc-14.2.0
-sparc                 randconfig-001-20250305    gcc-14.2.0
-sparc                 randconfig-002-20250305    gcc-14.2.0
-sparc64               randconfig-001-20250305    gcc-14.2.0
-sparc64               randconfig-002-20250305    gcc-14.2.0
-um                               allmodconfig    clang-21
-um                                allnoconfig    clang-18
-um                               allyesconfig    gcc-12
-um                    randconfig-001-20250305    clang-19
-um                    randconfig-002-20250305    gcc-12
-x86_64                            allnoconfig    clang-19
-x86_64                           allyesconfig    clang-19
-x86_64      buildonly-randconfig-001-20250304    clang-19
-x86_64      buildonly-randconfig-002-20250304    gcc-12
-x86_64      buildonly-randconfig-003-20250304    gcc-12
-x86_64      buildonly-randconfig-004-20250304    gcc-12
-x86_64      buildonly-randconfig-005-20250304    gcc-12
-x86_64      buildonly-randconfig-006-20250304    gcc-12
-x86_64                              defconfig    gcc-11
-xtensa                            allnoconfig    gcc-14.2.0
-xtensa                randconfig-001-20250305    gcc-14.2.0
-xtensa                randconfig-002-20250305    gcc-14.2.0
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
