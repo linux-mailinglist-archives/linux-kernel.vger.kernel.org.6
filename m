@@ -1,111 +1,181 @@
-Return-Path: <linux-kernel+bounces-547396-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547397-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52993A5068C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:39:37 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D197AA50690
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:40:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC3C77A8727
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:38:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05C091889DB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:40:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98F52512E1;
-	Wed,  5 Mar 2025 17:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37426253357;
+	Wed,  5 Mar 2025 17:39:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="B9Ndt8Jr"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cru5nLgz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEBA719F121;
-	Wed,  5 Mar 2025 17:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4A524C07D;
+	Wed,  5 Mar 2025 17:39:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741196360; cv=none; b=eJPfrlTpM2+yzigLMGbCImxHaaW4lsGl1mjZpxkFWf1p5aTwWbjwW7JOf+aE0NTOHya0C55V0Cy6JM+wBN7qezrRzqmWjv55a2szJ0CFIGAWn7fojkf88b5jsqNuxOEuuP0tAxDLNQvdv2M9oc96/RCq9O3zfYfkoES4VXzimV4=
+	t=1741196367; cv=none; b=ZbY/+oX3hREoNUKDiolaLXTrWZO2/qGNA2YDrN2xPyQuh6UEH1xdYXs00IYXBBh22GLIdDr6PYJGExIDMdewdvbzT07BxUX65mI/QLG88pEHwwty9kIe1rbU8bTATPBfpDNql8GT8WnqLKiR8FKFxhpG5tBEpaiW6SQ99zM6Z0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741196360; c=relaxed/simple;
-	bh=x06wZ4JzzQdXv+skj8Mdw6FwOmNgc2Hi3vw3FdY5VlQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=cUjYeYz6Kdgu/cnb9vXnUoRKgmwapztWJZnhqUYBX8HOJBrP9jkz8YQc15ioQIFlI2dI9Oi1flohb5TjBlmxR6rCBl6Y/y1PWWOGfQKpxHj26zVSWhcyEL7LkRCoRLC8vedV/ATjQsuZfdqPT5gRHDsJ251R4tJ9BTlwqnOXOL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=B9Ndt8Jr; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1741196359; x=1772732359;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=x06wZ4JzzQdXv+skj8Mdw6FwOmNgc2Hi3vw3FdY5VlQ=;
-  b=B9Ndt8Jrt9F/t8dghQ6FZpkCMmqN/FiEBeF0FdVjFXeHwEbEz8ydJ3fq
-   FnZxphr38Ahrg+4Y9zqmbQh/9U0ap0SKylnOCIjCe55jMFRlMko+BOr1v
-   HJAp+UqAxZk0O4q76GoLk9OENWkdMNN6OtTmd1im63XKSR9RcGk6Jctxa
-   YwlVQ0ChitFOGAlA/0CEJ1PbPSRC+LltMmSzzG7CbLeHBkHXZLjG0lK7L
-   asfklyrlgj9MV9a7rRlXdZxvpeG0wb3HIJcNaGbftxEc/j//RESrTqfE0
-   Cfz6W4Ud7dElYaVkMaZaIz/o9z/PA8ma2Gq0dTl/ylDXR/bpXGqD1YYgR
-   g==;
-X-CSE-ConnectionGUID: aDhkZa15Rdq5O/AlBZMFPg==
-X-CSE-MsgGUID: Xn9qTDuOTZypoTdWoRNdMg==
-X-IronPort-AV: E=Sophos;i="6.14,223,1736838000"; 
-   d="scan'208";a="269856430"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 05 Mar 2025 10:39:16 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Wed, 5 Mar 2025 10:39:07 -0700
-Received: from [10.10.179.162] (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Wed, 5 Mar 2025 10:39:07 -0700
-Message-ID: <ebb161f2-632b-4d10-8c5c-4187a06a06c8@microchip.com>
-Date: Wed, 5 Mar 2025 10:39:06 -0700
+	s=arc-20240116; t=1741196367; c=relaxed/simple;
+	bh=iaeOPT3vWx4E9oqHe4PhquvgcNeLALdwpOkdZJgJZIA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YfyVHZFHJ8abhHw07fj/UT3fJwJEOVSngcsEclBLOHHsaXcomKKmjbr0At4ee4IkLxSqneh3V1K8IzfHSIxsjWJlnC663LVnX5F5hYR4R2L8UkIfCGkl5GvltwpgPUMZdi8DGDY2Ayb/XMw9hwcixB4EVEduWmq4nSAwcjZ5QcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cru5nLgz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2778C4CEE0;
+	Wed,  5 Mar 2025 17:39:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741196367;
+	bh=iaeOPT3vWx4E9oqHe4PhquvgcNeLALdwpOkdZJgJZIA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cru5nLgzCC41CtNsmq/VbBtRtMqeCAwKBACMCgiJCwoClPE+Hc9+6s0kbh7R3682V
+	 0fAOSB0eBQkuI394JE293mpcC103S2AxueaMdcUSRvQDpl/snTsdBGfq0amlh/b2fe
+	 IjpL3BBJqjcDe7Lp6kmkD94YLGeXKtxvBP+zBsmwl3xzejcKGFyAiLuypNKcXtY6ib
+	 EozP3+79T4BYxdN2Zzy+DO2OSEm2kBbUABJdjriGcKLRgCdf26Y4kRxee4tu6t4zyo
+	 QSOfrfOJAkK7zzX2Vh6ssHgOBgWavTciyM3FxYvUcibTNbPWjl1QyuvKT+5UDdmuYr
+	 JUiCCzW+wPtYQ==
+Date: Wed, 5 Mar 2025 17:39:25 +0000
+From: Eric Biggers <ebiggers@kernel.org>
+To: Ingo Molnar <mingo@kernel.org>
+Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Ben Greear <greearb@candelatech.com>,
+	Xiao Liang <shaw.leon@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [RFC PATCH v2] x86/fpu: make kernel-mode FPU reliably usable in
+ softirqs
+Message-ID: <20250305173925.GA4014401@google.com>
+References: <20250304204954.3901-1-ebiggers@kernel.org>
+ <Z8gUYamgBr4M5ZaB@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 00/21] Enable Power Modes Support for SAMA7D65 SoC
-To: Claudiu Beznea <claudiu.beznea@tuxon.dev>, <lee@kernel.org>,
-	<robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-	<sre@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <p.zabel@pengutronix.de>
-CC: <linux@armlinux.org.uk>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-rtc@vger.kernel.org>
-References: <cover.1740671156.git.Ryan.Wanner@microchip.com>
- <2a18e305-090c-41fe-9b27-97ebe93fd4e4@tuxon.dev>
-From: Ryan Wanner <ryan.wanner@microchip.com>
-Content-Language: en-US
-In-Reply-To: <2a18e305-090c-41fe-9b27-97ebe93fd4e4@tuxon.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8gUYamgBr4M5ZaB@gmail.com>
 
-On 3/3/25 01:40, Claudiu Beznea wrote:
-> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
+On Wed, Mar 05, 2025 at 10:07:45AM +0100, Ingo Molnar wrote:
 > 
-> On 27.02.2025 17:51, Ryan.Wanner@microchip.com wrote:
->> Ryan Wanner (20):
->>   ARM: at91: Add PM support to sama7d65
->>   ARM: at91: pm: add DT compatible support for sama7d65
->>   ARM: at91: PM: Add Backup mode for SAMA7D65
->>   ARM: at91: pm: Enable ULP0/ULP1 for SAMA7D65
+> * Eric Biggers <ebiggers@kernel.org> wrote:
 > 
-> Applied to at91-soc with some adjustments, please check!
-Checked! This is correct.
+> > From: Eric Biggers <ebiggers@google.com>
+> > 
+> > Currently kernel-mode FPU is not always usable in softirq context on
+> > x86, since softirqs can nest inside a kernel-mode FPU section in task
+> > context, and nested use of kernel-mode FPU is not supported.
+> > 
+> > Therefore, x86 SIMD-optimized code that can be called in softirq context
+> > has to sometimes fall back to non-SIMD code.  There are two options for
+> > the fallback, both of which are pretty terrible:
+> > 
+> >   (a) Use a scalar fallback.  This can be 10-100x slower than vectorized
+> >       code because it cannot use specialized instructions like AES, SHA,
+> >       or carryless multiplication.
+> > 
+> >   (b) Execute the request asynchronously using a kworker.  In other
+> >       words, use the "crypto SIMD helper" in crypto/simd.c.
+> > 
+> > Currently most of the x86 en/decryption code (skcipher and aead
+> > algorithms) uses option (b), since this avoids the slow scalar fallback
+> > and it is easier to wire up.  But option (b) is still really bad for its
+> > own reasons:
+> > 
+> >   - Punting the request to a kworker is bad for performance too.
+> >
+> >   - It forces the algorithm to be marked as asynchronous
+> >     (CRYPTO_ALG_ASYNC), preventing it from being used by crypto API
+> >     users who request a synchronous algorithm.  That's another huge
+> >     performance problem, which is especially unfortunate for users who
+> >     don't even do en/decryption in softirq context.
+> > 
+> >   - It makes all en/decryption operations take a detour through
+> >     crypto/simd.c.  That involves additional checks and an additional
+> >     indirect call, which slow down en/decryption for *everyone*.
+> > 
+> > Fortunately, the skcipher and aead APIs are only usable in task and 
+> > softirq context in the first place.  Thus, if kernel-mode FPU were to 
+> > be reliably usable in softirq context, no fallback would be needed. 
+> > Indeed, other architectures such as arm, arm64, and riscv have 
+> > already done this.
+> > 
+> > Therefore, this patch updates x86 accordingly to reliably support
+> > kernel-mode FPU in softirqs.
+> > 
+> > This is done by just disabling softirq processing in kernel-mode FPU
+> > sections (when hardirqs are not already disabled), as that prevents the
+> > nesting that was problematic.
+> > 
+> > This will delay some softirqs slightly, but only ones that would have
+> > otherwise been nested inside a task context kernel-mode FPU section.
+> > Any such softirqs would have taken the slow fallback path before if they
+> > tried to do any en/decryption.  Now these softirqs will just run at the
+> > end of the task context kernel-mode FPU section (since local_bh_enable()
+> > runs pending softirqs) and will no longer take the slow fallback path.
+> > 
+> > Alternatives considered:
+> > 
+> > - Make kernel-mode FPU sections fully preemptible.  This would require
+> >   growing task_struct by another struct fpstate which is more than 2K.
 > 
->>   ARM: dts: microchip: sama7d65: Add Reset Controller to sama7d65 SoC
->>   ARM: dts: microchip: sama7d65: Add Shutdown controller support
->>   ARM: dts: microchip: sama7d65: Add RTC support for sama7d65
->>   ARM: dts: microchip: sama7d65: Add SFRBU support to sama7d65
->>   ARM: dts: microchip: sama7d65: Enable shutdown controller
-> 
-> Applied to at91-dt with some adjustments, please check!
-Same here
+> So that's something that will probably happen once the kernel is built 
+> using APX anyway?
 
-Thank you!
-> 
-> Thank you!
+The APX state is just 16 GPRs, for 128 bytes total.  That's about 5% of the size
+of the fpstate (assuming AVX512 is supported).  As Dave mentioned, for in-kernel
+use of APX it probably will make more sense to treat the new GPRs like the
+existing ones, instead of using XSTATE and integrating it with kernel-mode FPU.
+I.e., they will be saved/restored using plain moves to/from a dedicated buffer.
 
+> 
+> > - Make softirqs save/restore the kernel-mode FPU state to a per-CPU
+> >   struct fpstate when nested use is detected.  Somewhat interesting, but
+> >   seems unnecessary when a simpler solution exists.
+> 
+> So:
+> 
+> >  void kernel_fpu_begin_mask(unsigned int kfpu_mask)
+> >  {
+> > -	preempt_disable();
+> > +	if (!irqs_disabled())
+> > +		fpregs_lock();
+> 
+> > +	if (!irqs_disabled())
+> > +		fpregs_unlock();
+> 
+> So why is the irqs_disabled() check needed here? (On x86 it can be a 
+> bit expensive at times, because the IRQ flag has to be loaded, 
+> including all flags, so basically it's a soft synchronization point of 
+> a sort.)
+> 
+> Ie. why cannot we simply do a local_bh_disable()/enable() pair (on 
+> !RT), ie. fpregs_lock()/fpregs_unlock()?
+> 
+> local_bh_disable() is very similar in cost to preempt_disable(), both 
+> are increasing the preempt_count.
+
+It's to keep kernel_fpu_begin()/end() working when hardirqs are disabled, since
+local_bh_disable()/enable() require that hardirqs be enabled.  See the changelog
+and https://lore.kernel.org/r/20250228035924.GC5588@sol.localdomain/.  There are
+other directions we could go, but this seems to be the simplest solution.  If we
+forbid kernel_fpu_begin() with hardirqs disabled (as PS1 did), then a call to
+irqs_disabled() is still needed in irq_fpu_usable().  To avoid irqs_disabled()
+entirely, we'd need to avoid disabling softirqs, which would mean supporting
+nested kernel-mode FPU in softirqs.  I can sent out a patch that does that using
+a per-CPU buffer, if you'd like to see that.  I wasn't super happy with the
+extra edge cases and memory usage, but we could go in that direction.
+
+- Eric
 
