@@ -1,103 +1,83 @@
-Return-Path: <linux-kernel+bounces-546229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0171A4F813
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:41:22 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id C39C5A4F81C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:41:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 29D07188A7BD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:41:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38BF0188A7CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:41:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118E71F419E;
-	Wed,  5 Mar 2025 07:41:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B061F4720;
+	Wed,  5 Mar 2025 07:41:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b="gktz8Uhk"
-Received: from sipsolutions.net (s3.sipsolutions.net [168.119.38.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PeInuU8E"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6208B1DE4EC;
-	Wed,  5 Mar 2025 07:41:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.38.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C351EEA33;
+	Wed,  5 Mar 2025 07:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741160472; cv=none; b=OBnIlFP72oJz/0zURh5NNAXSSW9P8OUNypYN2EWJoY1qH4dk9Sz6hB8i+rPqrSPr+OYUcdwvOh88RFAIDDgOjjApI19S2lsTFz6I82BJa83e7DYwYQBv6NkqwRNXkBIPyUD9eDT9P1S5FZ4bUW9umS9ixp+HlEYLIpin1cBokYQ=
+	t=1741160489; cv=none; b=lWwPmUMa2/Ea5oUrhAI98vYrBvhOC/ngK/jJoSO3TVykXX1brNLYAzpi46XoBLY8Qs28NtaKljn14M0Yr3qJsc02KtbZBXYcgNJSOUZCjycbUHyKh63v/ly/cecpr1HolAVhZruKJ64q10JTpLWFypiLNWGZ4diKyEhBBoh/YeI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741160472; c=relaxed/simple;
-	bh=LtWIFnniiqHthw+orxCSjnxOicCCXctZRD9e2kWFt+E=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VqW6hzpGUTwbUcDvwq5KO9vcc9Kc0B1tSisJDfRwx8gDITkk4X/xqwmc3a4WBN1bd7CYDl7dkFzxlId9pQJ3m/oz3WQ2AJPX18BUhqVLfieb0SJFAtMWfRn3ntXlydHvJjhuktJGzalJ9bOgK95bAA+S0oFLSZCzHN6ZLhXEvOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net; spf=pass smtp.mailfrom=sipsolutions.net; dkim=pass (2048-bit key) header.d=sipsolutions.net header.i=@sipsolutions.net header.b=gktz8Uhk; arc=none smtp.client-ip=168.119.38.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sipsolutions.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sipsolutions.net
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=sipsolutions.net; s=mail; h=MIME-Version:Content-Transfer-Encoding:
-	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:Resent-To:
-	Resent-Cc:Resent-Message-ID; bh=pL0ILPUfiLo8D7078PGmpAnb8Y1iCaIIVKVFNqbbuys=;
-	t=1741160466; x=1742370066; b=gktz8UhkOKZ+gaeM6Vc+P6pysmrdHQIjpuBomsTO/IZKqvy
-	FbHB8J/SQ40UcdLVDfF0x1hV8DD+3QlMfSeeYppZe3UdeaJPxh3pUHxZ5fOLaN8kntYtI3ozqqtiW
-	RP0lrjYALKAT6U1vHrSKFxqXUQHEhY5brdqMzghiy2enjWPytlHkBc5dqdYRylx0bDUQw8IA7QbdM
-	8g2wglkE2CoGzsEJFnkgDVynE6QWcW5934DoQvKJmwz6jLs88Lc/x2yzCvx2xqn6TTsxvyf1lTK6p
-	NcSaKEQuTWhOcxh45AEkUsq9Y9g+8vofMEMA0+je0EPCyWq6t7ZflnZ5GpH5a8KQ==;
-Received: by sipsolutions.net with esmtpsa (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.98)
-	(envelope-from <johannes@sipsolutions.net>)
-	id 1tpjN5-00000001bf5-3dpq;
-	Wed, 05 Mar 2025 08:40:52 +0100
-Message-ID: <98e39be3351190ec71ffb067c062c82883ebef24.camel@sipsolutions.net>
-Subject: Re: [PATCH v2 0/5] wfx: add support for WoWLAN on Silabs WF200
-From: Johannes Berg <johannes@sipsolutions.net>
-To: =?ISO-8859-1?Q?J=E9r=F4me?= Pouiller <jerome.pouiller@silabs.com>, 
-	linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Kalle Valo <kvalo@kernel.org>, 
-	linux-devel@silabs.com
-Date: Wed, 05 Mar 2025 08:40:51 +0100
-In-Reply-To: <2018315.usQuhbGJ8B@nb0018864>
-References: <20250302144731.117409-1-jerome.pouiller@silabs.com>
-	 <f808c48596ae1929c62704c226fb109cc03bbd2a.camel@sipsolutions.net>
-	 <2018315.usQuhbGJ8B@nb0018864>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1741160489; c=relaxed/simple;
+	bh=UuyCdAeL82f1TOp2yggcFOeln/rSj3JTG5r77qmxK/M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hjF6Cc2kqP5C0AlSAJtGC6sLPwzQEBnG5sV2mqtlFv6z4F7XCQh7DIFC5JPduHzrj5+Km6PAKaklecpFYqA7UKDdwV/toNTXHoQECiXlcGX3JwMjfWtZE7j5jHE9HDh9dMok/wFX7GBArW/GcYjDqyjO6WWN7EKYbmUADGpIPQ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PeInuU8E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 996FFC4CEE2;
+	Wed,  5 Mar 2025 07:41:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741160488;
+	bh=UuyCdAeL82f1TOp2yggcFOeln/rSj3JTG5r77qmxK/M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PeInuU8ERkePr17howrYPFxignmA/MsTwZ4u8d9jO1tVpwezDDFSoQZpIOA/TgDgk
+	 P+9yMOtNFsBwaqdPYdHA40mfnQnjnKTyeWyIS9bj+prPV2FNUkzV+3mT0bVEk64rHK
+	 uaRo8YUBglpG2OgVqzUvRI4Hvto8dpVi9qZMs643jj2Nea56dwhBh+F4kq+fo4u/k1
+	 ZAiyYYuwHNk2nw5hZUxIFDWNSP2HrjIfLGzmqt5o/mNBJF8U/QGTbO40M8/MiBVcJU
+	 +beHC6obrfIQlYHfbIM+dKzKR0SMiyXWM9kD6o+V9muHhkLOHPjZlYMbXABIi2aHcJ
+	 1nwB7/ID7D3LQ==
+Date: Wed, 5 Mar 2025 08:41:24 +0100
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 10/15] dt-bindings: arm: sunxi: Add new board names
+ for A523 generation
+Message-ID: <20250305-gigantic-dinosaur-of-perspective-c3acad@krzk-bin>
+References: <20250304222309.29385-1-andre.przywara@arm.com>
+ <20250304222309.29385-11-andre.przywara@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-malware-bazaar: not-scanned
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250304222309.29385-11-andre.przywara@arm.com>
 
-On Tue, 2025-03-04 at 16:22 +0100, J=C3=A9r=C3=B4me Pouiller wrote:
->=20
-> Patchwork also reports two warnings that I am going to ignore:
->=20
->   - "Target tree name not specified in the subject", I assume it
->     is "wireless-next", but in the doubt I prefer to refrain.
+On Tue, Mar 04, 2025 at 10:23:04PM +0000, Andre Przywara wrote:
+> The new Allwinner A523 SoC family comes in different packages, though
+> they all share the same die, and so the devicetree bindings.
+> 
+> Add three board names that use a version from this SoC family:
+> - The Avaota A1: an Open Source hardware router board.
+> - The Radxa Cubie A5E: a typical development board
+> - The X96QPro+: a TV box
+> 
+> Add their compatible name to the list.
+> 
+> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
 
-It should be wireless-next for anything that isn't fixes for the current
-cycle, and please do add it - without it the checker won't always be
-able to pick up the patches to test them:
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-https://lore.kernel.org/linux-wireless/ec3a3d891acfe5ed8763271a1df4151d75da=
-f25f.camel@sipsolutions.net/
+Best regards,
+Krzysztof
 
->   - Lines are larger then 80 columns. Checkpatch.pl now accepts up
->     to 100 columns. I am not aware any local exception in net/, right?
-
-It looks like that's not documented
-(https://docs.kernel.org/process/maintainer-netdev.html), but I had a
-conversation with Jakub about this in the past and he prefers to have
-the checks still at 80 because people were, in his telling, abusing it
-in a way and making really long lines for no good reason.
-
-I'm not going to be super strict about it, but I'd encourage everyone
-who sees that warning to see if they can do better.
-
-In this particular case, it's just a comment, so could trivially be
-wrapped, but I'm not going to complain about 85 columns. If someone's
-going to 100 columns with (text) comments though then I think that'd
-raise some eyebrows. Narrower text is easier to read anyway.
-
-johannes
 
