@@ -1,119 +1,108 @@
-Return-Path: <linux-kernel+bounces-546742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C899EA4FE39
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:06:35 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E7EAA4FE3A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:07:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9086B3AEB38
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B20EA3AC4B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:06:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6D624291D;
-	Wed,  5 Mar 2025 12:06:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38AC2242921;
+	Wed,  5 Mar 2025 12:07:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="PLerP03o"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Q9OU43aQ"
+Received: from mail-10629.protonmail.ch (mail-10629.protonmail.ch [79.135.106.29])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB76A221F25;
-	Wed,  5 Mar 2025 12:06:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FBD81FDA73;
+	Wed,  5 Mar 2025 12:06:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.135.106.29
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741176383; cv=none; b=JSw/7g1uBOUbbAsOXCeA+ii9PUnpa/89mhLL4oBWJiMdw6fpuSFmYOvCXEoY/uh2MFuXhtCNjlheIZRsj0S6tcLMp+WId0xT4OK0yzBWwR1SGSgbuxKvnH/79lTl+FchU3C24PVw8DQiqYWcy6xxduMENwtJ+4btGmoy8E+1pbM=
+	t=1741176421; cv=none; b=FXVUYwwtqMJKeucWHim5a/d0Lqu7OIFJOqyjxI0AffRjJl2CxEcc+VoVG0KIYJrcK1+KwRZysJNvAb6Ok9IINIAw6CCRM7I8U51sg4s+l4y+GBXmAi9dB0ojr+rfk5dqqqtOl4pEltUW87YWk/gKp7O5ZILcz5vlojdKg4pH2Pc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741176383; c=relaxed/simple;
-	bh=kq3NQERkvZbq7ob8h+qD3Nv/BfUilziEi+favHqPlD8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sIIVIk3SVhRKQLiAzmqg+Lz4rrRF51F+kUz/VqF1WCil2hLaOtB3vmrok5TUqtLnQY0d2z5h5wKnKDBL5YiV52HXzJmf0kWf+k5wAf9qgixGGVgN3gouNSFPrgnIl2jbqfQRk8WdKlHBPDPt77Ua5PlNTs1/1Ykfex+7c2cgwGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=PLerP03o; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741176376; h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type;
-	bh=TxAozyocArmyukQfRT8jyP8q7tVZxorcO31U7ngbLRg=;
-	b=PLerP03obm7Rx0WzY285Y6ToYNtZ/YNjGLpiFRt4WFfhl5OtSGmf+fncsaAo3CnSDNNcGXdNiw4evQvUAp5HXB6KzN3jp0mGGPfKMMH3TQDFYXyvyPxEX3EFUDsSrx6Znnffu1eaVtHc0OtgByP61untPBg4dBrhTkI22jzyiF8=
-Received: from localhost(mailfrom:alibuda@linux.alibaba.com fp:SMTPD_---0WQlTfPQ_1741176375 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 05 Mar 2025 20:06:15 +0800
-Date: Wed, 5 Mar 2025 20:06:15 +0800
-From: "D. Wythe" <alibuda@linux.alibaba.com    >
-To: ffhgfv <744439878@qq.com>
-Cc: wenjia <wenjia@linux.ibm.com>, jaka <jaka@linux.ibm.com>,
-	alibuda <alibuda@linux.alibaba.com>,
-	tonylu <tonylu@linux.alibaba.com>, guwen <guwen@linux.alibaba.com>,
-	davem <davem@davemloft.net>, edumazet <edumazet@google.com>,
-	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>,
-	horms <horms@kernel.org>, linux-rdma <linux-rdma@vger.kernel.org>,
-	linux-s390 <linux-s390@vger.kernel.org>,
-	netdev <netdev@vger.kernel.org>,
-	linux-kernel <linux-kernel@vger.kernel.org>
-Subject: Re: kernel bug found and suggestions for fixing it
-Message-ID: <20250305120615.GA99596@j66a10360.sqa.eu95>
-References: <tencent_CE572E29B79ABD1AB33F1980363ADE182606@qq.com>
+	s=arc-20240116; t=1741176421; c=relaxed/simple;
+	bh=bSSVXwluCJzguHo/ODK8V5qH3HyhdDDfiyzxgjtisfs=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=QQDd3SIedYuRI7yVyTZUsLgx0ZDvUuxLem3gRgHBajYNfOnzh9qgAx5jbFLfzV64lg3UIq5IVm4IDMLFioUTuVDEK4b7xaCmB47H3nl8WnZ3VEN9F9rmNAImjdeDsfgZQxGfYb98jNV/LqPVfGyX9vGAwaHWN4zTS1I2yJ76rCA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Q9OU43aQ; arc=none smtp.client-ip=79.135.106.29
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1741176417; x=1741435617;
+	bh=B6e2JFsls5JpJUoGWT/EGmKlFKjBtGKPMSMZZtwVs/I=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=Q9OU43aQfn9Sha8In3cltjmrlWGb9CI/IELU+VX/1U0b7CNxg+QJoVBSeXclcYJ4M
+	 bmJ/A2lCl6+4YnHQtfDPkQv8XtyYzNAgEeV+2cCqhPS1pUAlGS8GNsqTaxzczMFozn
+	 iOvlA9C5Mb4pwYNYB1rO2jHJ7OryyzLiUEstgurZQyX/Sx+mCrY81NLy/xBloN1ZCZ
+	 s22Sunnuvc0/21GusgkBzJosA8ppqEFyXCcJ+CkwKRl4WmxU0J71JTFPnT3oIz+mmL
+	 wOAb8keHkEpIhEE0Bn4xCCPubmU9qghojIe1uvSo4j7zqlwnnJyCNK4T7YjQjOyC4l
+	 w+/YcaEDAYuaQ==
+Date: Wed, 05 Mar 2025 12:06:52 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 08/22] rust: pin-init: move `InPlaceInit` and impls of `InPlaceWrite` into the kernel crate
+Message-ID: <D88BIUUNXQK5.3BFLFUBWAS0H2@proton.me>
+In-Reply-To: <87frjrene8.fsf@kernel.org>
+References: <20250304225245.2033120-1-benno.lossin@proton.me> <iamkKusKoPQ37SKTEy2SbZjH0szdD4f3Zss6AcRF5jAkltpuR9blYqQ3Qc0Vd_gJBwPbefblnClu4okTA-TLLg==@protonmail.internalid> <20250304225245.2033120-9-benno.lossin@proton.me> <87frjrene8.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: 3ae8d68ada7eefc83a34344572586b955187c88e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <tencent_CE572E29B79ABD1AB33F1980363ADE182606@qq.com>
-User-Agent: Mutt/1.5.21 (2010-09-15)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Mar 04, 2025 at 02:31:37AM -0500, ffhgfv wrote:
-> Hello, I found a bug titled "KASAN: null-ptr-deref Read in smc_tcp_syn_recv_sock" with modified syzkaller in the lasted upstream related to bcachefs file system.
-> If you fix this issue, please add the following tag to the commit:  Reported-by: Jianzhou Zhao <xnxc22xnxc22@qq.com>,    xingwei lee <xrivendell7@gmail.com>, Zhizhuo Tang <strforexctzzchange@foxmail.com>
-> 
-> ------------[ cut here ]------------
-> TITLE: KASAN: null-ptr-deref Read in smc_tcp_syn_recv_sock
-> ==================================================================
-> BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-> BUG: KASAN: null-ptr-deref in atomic_read include/linux/atomic/atomic-instrumented.h:32 [inline]
-> BUG: KASAN: null-ptr-deref in smc_tcp_syn_recv_sock+0xa7/0x4c0 net/smc/af_smc.c:131
-> Read of size 4 at addr 0000000000000a04 by task syz.7.21/12319
-> 
-> CPU: 1 UID: 0 PID: 12319 Comm: syz.7.21 Not tainted 6.14.0-rc5-dirty #2
-> diff --git a/net/smc/af_smc.c b/net/smc/af_smc.c
-> --- a/net/smc/af_smc.c
-> +++ b/net/smc/af_smc.c
-> @@ -128,6 +128,8 @@
->  	struct sock *child;
->  
->  	smc = smc_clcsock_user_data(sk);
-> +	if (!smc)
-> +		goto drop;  // Ensure that the smc pointer is valid before accessing its members
+On Wed Mar 5, 2025 at 12:18 PM CET, Andreas Hindborg wrote:
+> "Benno Lossin" <benno.lossin@proton.me> writes:
+>
+>> In order to make pin-init a standalone crate, move kernel-specific code
+>> directly into the kernel crate. This includes the `InPlaceInit<T>`
+>> trait, its implementations and the implementations of `InPlaceWrite` for
+>> `Arc` and `UniqueArc`. All of these use the kernel's error type which
+>> will become unavailable in pin-init.
+>>
+>> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+>> ---
+>>  rust/kernel/alloc/kbox.rs |   3 +-
+>>  rust/kernel/init.rs       |  55 +++++++++++++++++
+>>  rust/kernel/prelude.rs    |   3 +-
+>>  rust/kernel/sync/arc.rs   |  65 +++++++++++++++++++-
+>>  rust/pin-init/src/lib.rs  | 125 ++------------------------------------
+>>  5 files changed, 127 insertions(+), 124 deletions(-)
+>>
+>
+> [...]
+>
+>> --- a/rust/pin-init/src/lib.rs
+>> +++ b/rust/pin-init/src/lib.rs
+>> @@ -10,7 +10,7 @@
+>>  //! To initialize a `struct` with an in-place constructor you will need=
+ two things:
+>>  //! - an in-place constructor,
+>>  //! - a memory location that can hold your `struct` (this can be the [s=
+tack], an [`Arc<T>`],
+>> -//!   [`UniqueArc<T>`], [`KBox<T>`] or any other smart pointer that imp=
+lements [`InPlaceInit`]).
+>> +//!   [`KBox<T>`] or any other smart pointer that supports this library=
+).
+>
+> Would you not want to remove references to `KBox` here as well? Even
+> though you don't have to move the impl, I don't imagine `KBox` exist in
+> user space?
 
-Hi ffhgfv,
+Yes, this is done in "rust: pin-init: fix documentation links".
 
-Thanks for your report and solution.
+---
+Cheers,
+Benno
 
-The bigger issue here is that smc_clcsock_user_data currently requires
-lock protection, which means we need to acquire the sk_callback_lock here.
-But the sk in this context is const, which violates the expected interface.
-
-In fact, we have been planning to replace sk_callback_lock with RCU, which should
-provide a better solution to this issue. However, there is still a
-significant backlog of tasks related to SMC, and we haven't had the
-bandwidth to address this yet. 
-
-Anyway, we sincerely appreciate your report, and we will fix
-this issue in the future.
-
-Best wishes,
-D. Wythe
-
->  
->  	if (READ_ONCE(sk-&gt;sk_ack_backlog) + atomic_read(&amp;smc-&gt;queued_smc_hs) &gt;
->  	    sk-&gt;sk_max_ack_backlog)
-> 
-> =========================================================================
-> I hope it helps.
-> Best regards
-> Jianzhou Zhao
-> xingwei lee
-> Zhizhuo Tang</strforexctzzchange@foxmail.com></xrivendell7@gmail.com></xnxc22xnxc22@qq.com>
 
