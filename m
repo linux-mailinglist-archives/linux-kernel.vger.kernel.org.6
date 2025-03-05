@@ -1,87 +1,87 @@
-Return-Path: <linux-kernel+bounces-547640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A66BEA50BE2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:48:11 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3939A50BE7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:49:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 057DE7A36A9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:47:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E35E7A5DB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BF42254AEC;
-	Wed,  5 Mar 2025 19:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AD59253F24;
+	Wed,  5 Mar 2025 19:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aWpAMt79"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KBDmC7Ud"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB464252905
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65D7024C062
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741204081; cv=none; b=fWU+jXzy3RUYmuTL9Z1giTUTvnO0alLWRZ6TXjRFv/Yr2i2U5UTplTdoumO2aCxdT9sJJlyCc9eRkFLodbQIJWtiEs7AAz2cXmBd5VVUZlvbW+XmnMnoCnehYBK5NL/Q/rHF8kZD+TMhUcgiLALwkek6xHbiwQeeB/MyXusivQQ=
+	t=1741204170; cv=none; b=C+LPWk7X8cIdHIll1S3OrcAWOeSvqMmTwow7xlEuaz5fUcUhLBP3pKDnd0qRvKoGGj6yJfR6gDT9p044fggbH2sgwLW2A6HIKVU63fLwHO/zWVX+k57RHgHH3KhQySIJ1QuVUZlc8P8buHJOUOvoyUiFt3hScXcr0iBsvSEoiG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741204081; c=relaxed/simple;
-	bh=ed8V+8VoqbYkOfA9sgscCYNEqRJYIs3LL9AnbgoNAO8=;
+	s=arc-20240116; t=1741204170; c=relaxed/simple;
+	bh=Hk1Ju+6+lnMPErwaMCbnFHDb0WcrpE4WwWYUxrm7PCc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tD9c199EK07SE7JMpwlkBSoZZ+O2X8e/b2dVt0K78Ke3CIhLwjlkhn7RvJ6Zta8Q9G+s3LVesvc44ehoKIuPpRdr+qID+/XsPo3RUkob/ZbeQvTI1am4+OseDKDxAk2R5b5C3XNVjuZk9Nv+K2juF4NPI2XhMKkftt+zY5YQIPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aWpAMt79; arc=none smtp.client-ip=170.10.133.124
+	 In-Reply-To:Content-Type; b=tCXVb8L9odYbHKzz20p0rOCl5HFexkiGyTpwOdLjbuFR2Vm7S4h9tsahB8/u1YoRMKprFEcUdi03PQc2C8Z6TAzN6c6H1aXXtQIKKrlJZSdPjRsF3xlgt/KPXxwmCr0X1PT4K7x4RZM3ugVS5FtidQRtumjrOaofIMvhDBgB6aQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KBDmC7Ud; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741204077;
+	s=mimecast20190719; t=1741204168;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=eGWydqnoXIhCLQqdot4fyHdmsRNksb4I77lqc7a9rY0=;
-	b=aWpAMt79QwcI9lJ0/9umS0vWKp/aZEm84/ZnYXg0PYyE3wf2HxhCHXtzjihjcQNLZIh623
-	iORu8MbPkQe2EPnMj2g/Ey4EhzLa9M1c9VVqOXxd6tCbN5bmTq0LXM/th0ycKbS39s8HIX
-	tlgK+0aRkIuDAu5eAZGWFN/cIL96D5s=
+	bh=03yN7yH51hsHUzMn2+esz4Pv4dir90wQl0oFMfmdQtc=;
+	b=KBDmC7Udrl7hAh915R3SicnfsNNNdw6auls9miXJ6vio4w1JV6GXlKdg4MU2ugzUUfjNIc
+	7PsWGvNnKxpirjtLiG4ozfJ8lyMSFkmgbvG6aNDENChdVAP7suC0OlDKxu5Q9+EoBA9pOv
+	sM8aj5fzzFGQoaNy6JMSsIR1eey1Oz0=
 Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
  [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-428-gBq9hXJfOiyD2LR2kpsGew-1; Wed, 05 Mar 2025 14:47:56 -0500
-X-MC-Unique: gBq9hXJfOiyD2LR2kpsGew-1
-X-Mimecast-MFC-AGG-ID: gBq9hXJfOiyD2LR2kpsGew_1741204075
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43bd0586a73so12601875e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:47:56 -0800 (PST)
+ us-mta-647-yBEH8jxONg6xyod59flq8A-1; Wed, 05 Mar 2025 14:49:22 -0500
+X-MC-Unique: yBEH8jxONg6xyod59flq8A-1
+X-Mimecast-MFC-AGG-ID: yBEH8jxONg6xyod59flq8A_1741204156
+Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-43bcd9a46feso10123405e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:49:16 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741204075; x=1741808875;
+        d=1e100.net; s=20230601; t=1741204156; x=1741808956;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=eGWydqnoXIhCLQqdot4fyHdmsRNksb4I77lqc7a9rY0=;
-        b=gtRgG5a6/07WZywlhVK3fVZ7kAS/p55dGXOZYOA/O3uZpeCNm3pFfwKxuXmQZ3cV6B
-         WL3tUMDhHfkCNAM/iIWwrZ2kYcZSqM9EFLPIih3G5muv5SzZOn8EhE8LAkoM8g1mYHU+
-         Wmjlx6QvoEn6Myw/ijC2DOu+nMS8i4nFbGNVL1HlXCvdwN8EXJU6R0PzPvNBJwp4Qgg1
-         /rHEgSDdWKmH+SX0NoQqdyFP7sll1GXv4wszUgC5gmC4Sg3f17haI+Zw+1OfgcegAffV
-         3u8H/m6jXzE6ikaCE/WoRMWe3TLD0IZjmSMbNSNk1CHuwVxS9aOQV7elH6KH7a/Hh1GI
-         1otQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVZOCcUCKO0lczqQp/l/iwPAR91LQjYLNB90dnNWdIpt7qZOUmEOyRwMWrwGwDZiPdIfWDNYagfa/9jBSE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/z3fRvliy0caumFBZsKwvOc8h4m6M+g9bbZo6mjReC6I+/B2B
-	mi1pNK7PCvNLGZyrPAjKDdRjgVJMNtMYAUAM9AIbvogJuz0pJ/KmJzi6MT93zgepqh1erLuHaee
-	UCA8oLdN9CU4Yb4/t7cYA47fgUcN+VRTa12te5SC7208C5zaT4nZ7O7AhhLMILsKHD4uWHGs9
-X-Gm-Gg: ASbGnct+PWsZf5bIv2acyybYYeBiBz2u0w0I4JlI0CI6a08/70NCUqkUtrUvPOR+YMu
-	9Hi403BwF7lOrjoWq1f72GG9QsBLP9tC5CJVZ5qxEeg0GFMc1cjoJ76eoI4zYJHwgk4zrKewS7Q
-	iRrCROSwACmXhUQloYBap12tVJPx7MlV65MnKLf1VYtccGCjViQs1NMyvkfwBhxfVkhoRadsU+F
-	e+o6WiRlj2tsWVoLCXBm4a2xctjV5HmTLoYI9YiCek1XpGE5OGgeita4CV2Sjx9QxKFz6GOiTHT
-	OwpFtYNm0PBWCCrsAs1tOA/oOEfBIgMH1o0wUi3ig0ggawCeKjVq76M1gsbrSgnzf3hAbLalhXj
-	dpq+gWe81R5vw6z/K09kfN+PfRHZw3+MCDKPGeJuG2LQ=
-X-Received: by 2002:a7b:ca48:0:b0:43b:d6ec:3d57 with SMTP id 5b1f17b1804b1-43bd6ec3de3mr31096935e9.15.1741204075052;
-        Wed, 05 Mar 2025 11:47:55 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IE0XZGZCIlmOlRS0LbFcH+/JVJl+ID+X2yGng1e5xV1yy07EP7WWTcYimXXucuhZJRVuD//ew==
-X-Received: by 2002:a7b:ca48:0:b0:43b:d6ec:3d57 with SMTP id 5b1f17b1804b1-43bd6ec3de3mr31096645e9.15.1741204074608;
-        Wed, 05 Mar 2025 11:47:54 -0800 (PST)
+        bh=03yN7yH51hsHUzMn2+esz4Pv4dir90wQl0oFMfmdQtc=;
+        b=H+K0B8wS20GWuHkLuu5QOG95+VZh5RbpBxoGxefiFIxoiQWQy6cr5TMy84QOZAjshi
+         bQseTpHHIYiXnf53RoZGAw4xSDDh3HouT4so/230upe9+xPgD7fR7MsfW5ZbbeC/U5Qe
+         /QxMAqfrn3WDD9O539hO+vO/AobdXJL6EavCNHMr6D+QVj8yKi5lM12hPObUi87AwXCU
+         YTHrrMHmT7E3QoScs2SLxuqg8HuKuzcYdp3t8Uxpx5MR+BqfbXPyjVuDVGwv+ZlpaUGX
+         NB134Bs7V2V/pwk0ytgNa88qUXafbwnProR0TK0J5wKXIB7yKznSV6wsWvki0C2592q7
+         HMqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUbUh9XWCxLqKfpIuRTnf1LTea4/Z8A6BLhoYSVLPFqK90TgOEHhWbMXqLa4UPTLkIM4uzUtVenbYelk1g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwNLv0twqD+mLm51cG+8+r/uUfzSadU41n6MVrDdpY4qvciqAjQ
+	GkljHuiqdJjErQl5ALRcQKBv705wFw65yEGfHFHuWMaJVcPElfIw5gewhvkE+sSVrgDUbz7lsk0
+	9INVVxgzkZPoTg+MQdZj66aKtRN/LCLHIKZFVWVjjQluzvzpVA1xWMeH+nkhVjg==
+X-Gm-Gg: ASbGnctG19l+yq4u/ywZ+XN0oXqvALyZ5jUhBCNlp2225ajLjhSHEHHeaffO7Dp6AB4
+	GCPEZwuPQmxmty+25HNp2SrkOLl9XKADIhnzk4Yawf1urlX+9yJt6qW23xN9CFo5HsZT/77XNOz
+	tnUwCFcZJIwZdRdm36PyOwWypUSkHO3d2RbcVQ7KyaGJ75X0X9kNktBfKrP1IcRaMlwpShhlAgT
+	Nf4MeMSjva21E0dHmCGA5/pq4OBZBTomwMpagm7YTDKzWIQXCgGWUXLevlRqeYMFXCmn8afzoRD
+	mqzo/KS9d6c/q/i67yswHfQzVa9OYtPjrSdn8aMboiRMChZ3AyArx4NnbR2Cuk1oIZOq9bkm50R
+	8lvbuOYqm+qHJVgyedtUkHz314L8liG7HyxpYR2DWx7g=
+X-Received: by 2002:a05:600c:35d4:b0:439:9f42:c137 with SMTP id 5b1f17b1804b1-43bd298f9fbmr41869685e9.11.1741204155842;
+        Wed, 05 Mar 2025 11:49:15 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IHaclzLgfCSRWemIkkhnUP4/0u1OqlT3G4gkm4XEO0QvHJdU5h97AT9npPILhWPM591bWsdJQ==
+X-Received: by 2002:a05:600c:35d4:b0:439:9f42:c137 with SMTP id 5b1f17b1804b1-43bd298f9fbmr41869485e9.11.1741204155413;
+        Wed, 05 Mar 2025 11:49:15 -0800 (PST)
 Received: from ?IPV6:2003:cb:c739:5b00:84f2:50f3:bdc8:d500? (p200300cbc7395b0084f250f3bdc8d500.dip0.t-ipconnect.de. [2003:cb:c739:5b00:84f2:50f3:bdc8:d500])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426d34csm27332645e9.5.2025.03.05.11.47.52
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd91338cesm14038955e9.7.2025.03.05.11.49.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 11:47:54 -0800 (PST)
-Message-ID: <62f93f79-a8d4-44a5-b276-3ac5af4ab25c@redhat.com>
-Date: Wed, 5 Mar 2025 20:47:51 +0100
+        Wed, 05 Mar 2025 11:49:15 -0800 (PST)
+Message-ID: <7e151e6b-3f81-4e37-b314-c6e9f19c1b82@redhat.com>
+Date: Wed, 5 Mar 2025 20:49:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,26 +89,19 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next v1 0/3] kernel/events/uprobes: uprobe_write_opcode()
- rewrite
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Oleg Nesterov <oleg@redhat.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-arm-kernel@lists.infradead.org, linux-trace-kernel@vger.kernel.org,
- linux-perf-users@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>,
- Matthew Wilcox <willy@infradead.org>, Russell King <linux@armlinux.org.uk>,
- Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- Tong Tiangen <tongtiangen@huawei.com>
-References: <20250304154846.1937958-1-david@redhat.com>
- <20250305152055.GB28112@redhat.com>
- <CAEf4BzbyFy0eQHLac3zR8GiGDOUqYoTGAWDbFaeou903OGOTpg@mail.gmail.com>
+Subject: Re: [RFC PATCH 00/16] mm/madvise: batch tlb flushes for MADV_DONTNEED
+ and MADV_FREE
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Matthew Wilcox <willy@infradead.org>, SeongJae Park <sj@kernel.org>,
+ "Liam R. Howlett" <howlett@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>, kernel-team@meta.com,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org
+References: <20250305181611.54484-1-sj@kernel.org>
+ <Z8ieZVFEa6vAouvu@casper.infradead.org>
+ <46960f37-0d12-4cfd-a214-1ddae2495665@redhat.com>
+ <snby4wevysj2hr6rmqcwezcujhwmjgtby6ogkrc4wmqnzcqcsv@tu23rsyltc2m>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -156,64 +149,45 @@ Autocrypt: addr=david@redhat.com; keydata=
  jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
  WNyWQQ==
 Organization: Red Hat
-In-Reply-To: <CAEf4BzbyFy0eQHLac3zR8GiGDOUqYoTGAWDbFaeou903OGOTpg@mail.gmail.com>
+In-Reply-To: <snby4wevysj2hr6rmqcwezcujhwmjgtby6ogkrc4wmqnzcqcsv@tu23rsyltc2m>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 05.03.25 20:43, Andrii Nakryiko wrote:
-> On Wed, Mar 5, 2025 at 7:22 AM Oleg Nesterov <oleg@redhat.com> wrote:
->>
->> On 03/04, David Hildenbrand wrote:
+On 05.03.25 20:46, Shakeel Butt wrote:
+> On Wed, Mar 05, 2025 at 08:19:41PM +0100, David Hildenbrand wrote:
+>> On 05.03.25 19:56, Matthew Wilcox wrote:
+>>> On Wed, Mar 05, 2025 at 10:15:55AM -0800, SeongJae Park wrote:
+>>>> For MADV_DONTNEED[_LOCKED] or MADV_FREE madvise requests, tlb flushes
+>>>> can happen for each vma of the given address ranges.  Because such tlb
+>>>> flushes are for address ranges of same process, doing those in a batch
+>>>> is more efficient while still being safe.  Modify madvise() and
+>>>> process_madvise() entry level code path to do such batched tlb flushes,
+>>>> while the internal unmap logics do only gathering of the tlb entries to
+>>>> flush.
 >>>
->>> Currently, uprobe_write_opcode() implements COW-breaking manually, which is
->>> really far from ideal.
+>>> Do real applications actually do madvise requests that span multiple
+>>> VMAs?  It just seems weird to me.  Like, each vma comes from a separate
+>>> call to mmap [1], so why would it make sense for an application to
+>>> call madvise() across a VMA boundary?
 >>
->> To say at least ;)
->>
->> David, thanks for doing this. I'll try to read 3/3 tomorrow, but I don't
->> think I can really help. Let me repeat, this code was written many years
->> ago, I forgot everything, and today my understanding of mm/ is very poor.
->> But I'll try anyway.
->>
->>> Are there any uprobe tests / benchmarks that are worth running?
->>
->> All I know about uprobe tests is that bpf people run a lot of tests which
->> use uprobes.
->>
->> Andrii, Jiri, what you advise?
->>
+>> I had the same question. If this happens in an app, I would assume that a
+>> single MADV_DONTNEED call would usually not span multiples VMAs, and if it
+>> does, not that many (and that often) that we would really care about it.
 > 
-> We do have a bunch of tests within BPF selftests:
+> IMHO madvise() is just an add-on and the real motivation behind this
+> series is your next point.
 > 
-> cd tools/testing/selftest/bpf && make -j$(nproc) && sudo ./test_progs -t uprobe
+>>
+>> OTOH, optimizing tlb flushing when using a vectored MADV_DONTNEED version
+>> would make more sense to me. I don't recall if process_madvise() allows for
+>> that already, and if it does, is this series primarily tackling optimizing
+>> that?
+> 
+> Yes process_madvise() allows that and that is what SJ has benchmarked
+> and reported in the cover letter. In addition, we are adding
+> process_madvise() support in jemalloc which will land soon.
 
-I stumbled over them, but was so far not successful in building them in 
-my test VM (did not try too hard, though). Will try harder now that I 
-know that it actually tests uprobe properly :)
-
-> 
-> I also built an uprobe-stress tool to validate uprobe optimizations I
-> was doing, this one is the most stand-alone thing to use for testing,
-> please consider checking that. You can find it at [0], and see also
-> [1] and [2] where  I was helping Peter to build it from sources, so
-> that might be useful for you as well, if you run into problems with
-> building. Running something like `sudo ./uprobe-stress -a10 -t5 -m5
-> -f3` would hammer on this quite a bit.
-
-Thanks, I'll play with that as well.
-
-> 
-> I'm just about to leave on a short vacation, so won't have time to go
-> over patches, but I plan to look at them when I'm back next week.
-> 
->    [0] https://github.com/libbpf/libbpf-bootstrap/tree/uprobe-stress
->    [1] https://lore.kernel.org/linux-trace-kernel/CAEf4BzZ+ygwfk8FKn5AS_Ny=igvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com/
->    [2] https://lore.kernel.org/linux-trace-kernel/CAEf4BzZqKCR-EQz6LTi-YvFY4RnYb_NnQXtwgZCv6aUo7gjkHg@mail.gmail.com
-> 
->> Oleg.
->>
-> 
-
+Makes a lot of sense to me!
 
 -- 
 Cheers,
