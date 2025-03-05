@@ -1,124 +1,166 @@
-Return-Path: <linux-kernel+bounces-547027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547029-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E779A501EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:28:42 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B917A501F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:29:17 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 054143B28AE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:26:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 670403B33BE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:27:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36F2024BD1A;
-	Wed,  5 Mar 2025 14:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jDfRs4YW"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14FE724A077;
-	Wed,  5 Mar 2025 14:26:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 044DA24C076;
+	Wed,  5 Mar 2025 14:27:14 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B728B24C090
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184818; cv=none; b=uCN7JUg8Z/0kvO/2zizBqtA+fHVD9HVEFUZDuinlVVeHkADsTmoAGRi0Wxs3BwyxLsfCs3hxCoLxhRah5zmeljS9zU18Fhr1t3RTYsM7sXI94XRA2xzqXy922Yxx0RHrjxFrtl09eJS+mcpc3Z1/wOHhGYEG0/Kk8vm5IC9bCa8=
+	t=1741184833; cv=none; b=WvxUWoZ5VaQUEOk71u4EMKuxEExcSIcGAJQmW05qXfyI2TIe9ShcMvvyN3P1GOww/ohRlCESWdtYwwANeL8hjXZ1vJ7dtO7gOQIU12M2Z6cyfcYTGHkrTrKkb/a+r2Thn0BtdlWQ8vvSgVZhHuY1PTFQEtyNYTMpKByCslKgScw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184818; c=relaxed/simple;
-	bh=eUK2lpiP1FoSgc9h1gORMk92bbuPc9yvLgGu1Z6Qwhk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=awyAYf9eC5X0ofKwZOfpw2stFOKmLglGE0XteYt/vHuYr4Y8rafvHeNMKaoxKMU6sBNWZkk1Ku8q0kcO4muOZObn3igeNmvXGiIlP6FvYMlLzttCddwtJwOQNs0NqAEExaLXAcl5YVRa2jIVgXuVwUutYJlE/8xEt4j/UGsWPqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jDfRs4YW; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bc0b8520cso22445615e9.1;
-        Wed, 05 Mar 2025 06:26:56 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741184815; x=1741789615; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5w41DRiJ/9J1ZtMFKS35HZz81JTi9tqzjEpSgeekIgk=;
-        b=jDfRs4YWY9ZTDNq0IjY8oATG3naABg7HWzf/ZLoyifBgDNsRmW2/GBhqaOAOc+0ByG
-         V7O6XIWaNbH+M/5mzQ1aZC+Ui7crxaH3J3WepzjCKN3atJWrIVGXDwMqbnT/Knvtq3GI
-         fEkC2+bobNkcH5SkOJ2MHHxGiL/usyx+6MIrf2uplgBpI98VPYl7SYQNaz56RoskZC0W
-         QHtIX8TnHM6qxCU7sARlMbtsmIse/4QdFa40nr0Sn2FLPGeRyvoMGxdAoyWtqy/dy5xR
-         dq6Szkqjb8DOW/Psl4ArOMNuZyMoixvAO1XJXoUPfmo9Ldo520K+Lkc1vyE6o18/UsSY
-         Oj7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741184815; x=1741789615;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5w41DRiJ/9J1ZtMFKS35HZz81JTi9tqzjEpSgeekIgk=;
-        b=iEEndm8YSaicMgEoxox4y+h+QH+d9yR4g2C2XtYj3heX9x7CHez0JozHp8YxnjziJo
-         Rvy+1BgbhiMkA3lRkDVMOJoQnpLC+HTIsgeIXYizRKvdgPdSHejVH2gwpShYI7FEUIFv
-         z0e/XX3TzPd+En71uDBtXcMTONA8bfU2p6FcbNR58UGHNQC01gcGAUETfm3WZyVM4q6F
-         AqEz5h4V9vhQodxuPvFhJfWf3jMJ4rE1ewsoC2OVMci+T/soqlW84S8sPKivjI0rmHoq
-         2tsESewF5JuX/OyvIIQAFrKhD7sXE4lacosqa4dX3xGsGMMeK6+e8rzVhHKWxl6bWoVd
-         c+iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUyeC3sWqbVjjMIb8Yan2H9Esyhp094n9TuaL1NvJuk2tbGIcmPRJkJvjQEiwzY2Bb2xVGbcwie8kJkFUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxmmnPR7daN49yTiTRD+4pW9z8T0uXbn6H4aS8OYQ3KVZGtvrl
-	Knekn0UY3RmdGMN8j/8Rkxv83ZxTXE+Phk9J6Zf4LRCYWty64toT6rHwFg==
-X-Gm-Gg: ASbGncuWNB33+zmaQDxKlrPyNNgyFOOgXxQR0uBBeMDPTSIqf6qW20e/sJfS2boadvP
-	d0YBlwiP3inobZcPGwyXroQKjx5egvc1us9U9rRwahGwF5x2Wq/IOehJqGs1jIcfS2Ju68evb6v
-	Y+9N+R9l8wl7EI4c/iEjYzikUKgyhf2uvUdNnaumwz/b0jpxuhRKimrk1XS3/xM9xEqF7izLapT
-	Y2UliPT0jSeD4Oa3wra5bCnCWDPucHZ4NrsiwS+HO0dCTXEBIsaKcUyzEAyG0cOJfbZBo1zdO0+
-	itFNVnUMIqpPLO6pniEKTyOwej6BJl7x70Wel17C45i26FoQUorK7QiPFXG4E6fN/zaUVLzAezo
-	5grRSL0c=
-X-Google-Smtp-Source: AGHT+IF0B41RHaO5k5y1Clubg7F9JL3YEVmmZXW9Ppx3hJLmnuQaUQzgcDjx+6PEq+4SMBuJY10G4w==
-X-Received: by 2002:a05:6000:4007:b0:390:f45e:c84a with SMTP id ffacd0b85a97d-3911f7cb10fmr3522154f8f.48.1741184814990;
-        Wed, 05 Mar 2025 06:26:54 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4848252sm21356612f8f.69.2025.03.05.06.26.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:26:54 -0800 (PST)
-Date: Wed, 5 Mar 2025 14:26:53 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel
- <ardb@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Justin Stitt <justinstitt@google.com>,
- linux-crypto@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/crc32: optimize tail handling for crc32c short
- inputs
-Message-ID: <20250305142653.751d9840@pumpkin>
-In-Reply-To: <20250304213216.108925-1-ebiggers@kernel.org>
-References: <20250304213216.108925-1-ebiggers@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741184833; c=relaxed/simple;
+	bh=qsV1jF6K5hiE7+KrHJQTWePl6f9rItAJ9q6KZSRbczs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=N+MTCMhNr6JLiSAeo8MMFDQATY8FX22flFed2GBG+yT0vWBsp4SzOl5gpC+6Ss5/2LhjbMCibZ7MDZbEGzsUmQol1LCFPZi7gqbbCumZhgx9JWYh9lnxZtl5oMaCvL8O4CJ1hUj0eEj1nqkppx2A5+lf+17miB0qKIPA9Onh954=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 359251007;
+	Wed,  5 Mar 2025 06:27:23 -0800 (PST)
+Received: from [10.57.67.16] (unknown [10.57.67.16])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BC11A3F673;
+	Wed,  5 Mar 2025 06:27:07 -0800 (PST)
+Message-ID: <bfd3f7eb-1ff3-4417-86ad-3cede437f8b3@arm.com>
+Date: Wed, 5 Mar 2025 14:27:06 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 1/2] drm/panthor: Replace sleep locks with spinlocks in
+ fdinfo path
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Liviu Dudau <liviu.dudau@arm.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20250303190923.1639985-1-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20250303190923.1639985-1-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Tue,  4 Mar 2025 13:32:16 -0800
-Eric Biggers <ebiggers@kernel.org> wrote:
-
-> From: Eric Biggers <ebiggers@google.com>
+On 03/03/2025 19:08, Adrián Larumbe wrote:
+> Commit 0590c94c3596 ("drm/panthor: Fix race condition when gathering fdinfo
+> group samples") introduced an xarray lock to deal with potential
+> use-after-free errors when accessing groups fdinfo figures. However, this
+> toggles the kernel's atomic context status, so the next nested mutex lock
+> will raise a warning when the kernel is compiled with mutex debug options:
 > 
-> For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
-> do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
-> taking advantage of wider CRC instructions.  Note that crc32c-3way.S
-> already uses this same optimization too.
+> CONFIG_DEBUG_RT_MUTEXES=y
+> CONFIG_DEBUG_MUTEXES=y
+> 
+> Replace Panthor's group fdinfo data mutex with a guarded spinlock.
+> 
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
+> Fixes: 0590c94c3596 ("drm/panthor: Fix race condition when gathering fdinfo group samples")
+> Reviewed-by: Liviu Dudau <liviu.dudau@arm.com>
+> Reviewed-by: Boris Brezillon <boris.brezillon@collabora.com>
+> Reviewed-by: Steven Price <steven.price@arm.com>
 
-An alternative is to add extra zero bytes at the start of the buffer.
-They don't affect the crc and just need the first 8 bytes shifted left.
+Pushed to drm-misc-next.
 
-I think any non-zero 'crc-in' just needs to be xor'ed over the first
-4 actual data bytes.
-(It's over 40 years since I did the maths of CRC.)
+Note I fixed up the "Fixes" line in patch 2 to refer to the upstream
+commit (434e5ca5b5d7)
 
-You won't notice the misaligned accesses all down the buffer.
-When I was testing different ipcsum code misaligned buffers
-cost less than 1 clock per cache line.
-I think that was even true for the versions that managed 12 bytes
-per clock (including the one Linus committed).
+> ---
+>  drivers/gpu/drm/panthor/panthor_sched.c | 26 ++++++++++++-------------
+>  1 file changed, 12 insertions(+), 14 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panthor/panthor_sched.c b/drivers/gpu/drm/panthor/panthor_sched.c
+> index 1a276db095ff..4d31d1967716 100644
+> --- a/drivers/gpu/drm/panthor/panthor_sched.c
+> +++ b/drivers/gpu/drm/panthor/panthor_sched.c
+> @@ -9,6 +9,7 @@
+>  #include <drm/panthor_drm.h>
+>  
+>  #include <linux/build_bug.h>
+> +#include <linux/cleanup.h>
+>  #include <linux/clk.h>
+>  #include <linux/delay.h>
+>  #include <linux/dma-mapping.h>
+> @@ -631,10 +632,10 @@ struct panthor_group {
+>  		struct panthor_gpu_usage data;
+>  
+>  		/**
+> -		 * @lock: Mutex to govern concurrent access from drm file's fdinfo callback
+> -		 * and job post-completion processing function
+> +		 * @fdinfo.lock: Spinlock to govern concurrent access from drm file's fdinfo
+> +		 * callback and job post-completion processing function
+>  		 */
+> -		struct mutex lock;
+> +		spinlock_t lock;
+>  
+>  		/** @fdinfo.kbo_sizes: Aggregate size of private kernel BO's held by the group. */
+>  		size_t kbo_sizes;
+> @@ -910,8 +911,6 @@ static void group_release_work(struct work_struct *work)
+>  						   release_work);
+>  	u32 i;
+>  
+> -	mutex_destroy(&group->fdinfo.lock);
+> -
+>  	for (i = 0; i < group->queue_count; i++)
+>  		group_free_queue(group, group->queues[i]);
+>  
+> @@ -2861,12 +2860,12 @@ static void update_fdinfo_stats(struct panthor_job *job)
+>  	struct panthor_job_profiling_data *slots = queue->profiling.slots->kmap;
+>  	struct panthor_job_profiling_data *data = &slots[job->profiling.slot];
+>  
+> -	mutex_lock(&group->fdinfo.lock);
+> -	if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_CYCLES)
+> -		fdinfo->cycles += data->cycles.after - data->cycles.before;
+> -	if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP)
+> -		fdinfo->time += data->time.after - data->time.before;
+> -	mutex_unlock(&group->fdinfo.lock);
+> +	scoped_guard(spinlock, &group->fdinfo.lock) {
+> +		if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_CYCLES)
+> +			fdinfo->cycles += data->cycles.after - data->cycles.before;
+> +		if (job->profiling.mask & PANTHOR_DEVICE_PROFILING_TIMESTAMP)
+> +			fdinfo->time += data->time.after - data->time.before;
+> +	}
+>  }
+>  
+>  void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile)
+> @@ -2880,12 +2879,11 @@ void panthor_fdinfo_gather_group_samples(struct panthor_file *pfile)
+>  
+>  	xa_lock(&gpool->xa);
+>  	xa_for_each(&gpool->xa, i, group) {
+> -		mutex_lock(&group->fdinfo.lock);
+> +		guard(spinlock)(&group->fdinfo.lock);
+>  		pfile->stats.cycles += group->fdinfo.data.cycles;
+>  		pfile->stats.time += group->fdinfo.data.time;
+>  		group->fdinfo.data.cycles = 0;
+>  		group->fdinfo.data.time = 0;
+> -		mutex_unlock(&group->fdinfo.lock);
+>  	}
+>  	xa_unlock(&gpool->xa);
+>  }
+> @@ -3537,7 +3535,7 @@ int panthor_group_create(struct panthor_file *pfile,
+>  	mutex_unlock(&sched->reset.lock);
+>  
+>  	add_group_kbo_sizes(group->ptdev, group);
+> -	mutex_init(&group->fdinfo.lock);
+> +	spin_lock_init(&group->fdinfo.lock);
+>  
+>  	return gid;
+>  
 
-	David
 
