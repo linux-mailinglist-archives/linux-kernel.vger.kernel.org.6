@@ -1,102 +1,118 @@
-Return-Path: <linux-kernel+bounces-547380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B68BDA50667
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:33:08 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94ADFA506BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:48:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 110361889CDA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:33:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 125E47A62FC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:47:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A1DE19E997;
-	Wed,  5 Mar 2025 17:33:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A141E250BE9;
+	Wed,  5 Mar 2025 17:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IDgNfQ5J"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Zf3QIoQi"
+Received: from mslow3.mail.gandi.net (mslow3.mail.gandi.net [217.70.178.249])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B5A4A95C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:33:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0835F14884C;
+	Wed,  5 Mar 2025 17:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741195981; cv=none; b=kbylCMWjlzVH4nQqnhr5Ak6sV8p6Ecen/bn67CTEoOyMDNuBXQv8E8/xxmP0zKPeCNATY0qldlmQG7j7jMyjxAWddgiW9IOriQtPPkgfO89EINzG+ucKDh4AdmwIm59JYvLSU9tIIJh/kFQz8UN+zCNhL66o8qUo0Se6uyvEMo8=
+	t=1741196889; cv=none; b=MCZ96lIGAz5ybCqRxP0ZzrEHwpxtnPKmKY8CAxPepZpEGXmTrQUBsdRb0jzvzbWz2wT7gwhQuScgg+RK+ox1sX4Fvfqbggh4/V6cEBmYzgMUApcVXHTdd1c2mE8/xfJOP0F0leGkmkkRLiPE8y16K115FH/+t8TIaXpIHcQPzXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741195981; c=relaxed/simple;
-	bh=rTOzIrOuzFLbtmFxa6518U0vGpYlXYwbcGJ0txa6GSg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZkBtm5zNoZnncQsFmpK84/CYFK5o7VGHEHqtGGPFocgn1NbnbgIHas49jmNw6Fq3jOy8bcSLSIVn9iMCh+WPgUI0pNfv27FXOHqKOs+xcA+yfwTTPRan3mCQReQ7PmSSZkQ7/PeTxoIIzQsD7dXGeWv5tC87an6QWJK0bXMjhDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IDgNfQ5J; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6dd420f82e2so95273286d6.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:33:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741195979; x=1741800779; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rTOzIrOuzFLbtmFxa6518U0vGpYlXYwbcGJ0txa6GSg=;
-        b=IDgNfQ5J6rcvs9b+8dSbWjVzajSAmgycT84cCy47lVqyV3KDnxu1BbFhfQ7XpeQvYz
-         QP89VgG+Cd5BbT7NoNqMpUZ4tZgHFm49w27DlH6rtIgwwDP5K2MkF/7ri8+ZGmKyJX+g
-         p/6fyLq6kg5TV5yPge/SSzN6hYwI+zqeOAqQJ8en8eJReCk4EVzB1ZbCOCcEGiib4g5V
-         Jje0WhHw+tdiy0LHwWlyjdPrsL+JsBZDRoCJRbUl1/pdPV+pcJmY/Q/UU1Z0/zXQO3wD
-         z2dtNVYBpUxxNSWzrSWxP9AfezLgKghe6HrpfolXLArAdx4DMwvDN9pTDU9Mfyn5cFD4
-         u0uA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741195979; x=1741800779;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rTOzIrOuzFLbtmFxa6518U0vGpYlXYwbcGJ0txa6GSg=;
-        b=ERwmya4GCJCxqFcZKa+5lLNhHXP3DgonnJ3W6/uruKep1e1RiQN/fUld3ODhtItNd1
-         0+eqHuRkQ3TC6Z3xNu0eoOwsq2QkGzKKV2Nrh3Q3NDZBkW1sCZMPfYiiruzG0BZbJAj3
-         VZtES2SrNd5Ed45JwAVsjzEMzyNEtr4tGcWAnBF9it/v46n6iESqh8FsnslG7RZr//HQ
-         g1BNc5DSXgNIFddQmEMmJJc5NVwveJe60Wb9fyNsY7SkXKbPs4IFSuxgI1pZG6ZGlSYS
-         ilt7h8vjimBy0Dh62FyhC9YsE6Wtz0L/SV4oWswXf0+MrYe2M6+V3Z3QBbyOb+MGD7fr
-         QWUw==
-X-Forwarded-Encrypted: i=1; AJvYcCUzy+DgVL03n7oaUOGLkCMXqu+7u29mg6V1LA3CQ32G8kpROt58crdpeiToEs3N2evlDsJiQDbbYbMYeoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztDYqno5QcLdKew6moCmXTPSNfbOVCdwleXn9NU+s6xDCE2bH0
-	zDMfALKvyl6BeRaaV+LXcNFo/KY8iy3N5XRptW2zg9v4chDIL/vyobr4ndV1nYKec10CxvFtH1M
-	9j1rP2KcjAA8AxMzZCkHgNYivgjc=
-X-Gm-Gg: ASbGncu7jXfXAZt+ez1q6OAv4cSjVA2TcZhMB10Mmofsp+WtxwxURZLjYTfxA89IJsM
-	al8RRh4GFN9C5u1LPy+0/Ws71olk20A9zmPF4NdF0qvkhewYdQ6nouRpzwskde8HRGv0JQsr+wd
-	careEjbWvi6RMMB5/MCTdcmK5CVxyFejNMbKokw9t//vSAWo4iOd31C11gGQ==
-X-Google-Smtp-Source: AGHT+IEQFgZEf1pCMcfuzmsyEd8/uQHb1QmGvBrQaaa+6qwA+i1JFyA+YD9EFiEC8zKqqttjzfqD1tH1kXtD2ljWVao=
-X-Received: by 2002:ad4:5bea:0:b0:6d8:8466:d205 with SMTP id
- 6a1803df08f44-6e8e6cc3668mr47776586d6.6.1741195979089; Wed, 05 Mar 2025
- 09:32:59 -0800 (PST)
+	s=arc-20240116; t=1741196889; c=relaxed/simple;
+	bh=hugcNLK7G+QyyTiNYXE/xDFTWLzXxYW9o4rB5vGvSBY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l2VHARkU9cN7kBt2q5aJR5hXxQhuOZrcqRNAdZ8kIRJq2IsiBhz9PzCoRv0YgYeWdVYY+Xj4RaKzoZqeGQdlI7xrxz4yFK5LrTwWOMs9j+oEPPTvgYPtDHcihZeQdovTnerLw9J7z/5h77e0TLyI/husPqoHCyREcQ7n7EqZTE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Zf3QIoQi; arc=none smtp.client-ip=217.70.178.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [IPv6:2001:4b98:dc4:8::229])
+	by mslow3.mail.gandi.net (Postfix) with ESMTP id 8FA37581112;
+	Wed,  5 Mar 2025 17:34:05 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 5A6DF4328F;
+	Wed,  5 Mar 2025 17:34:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741196043;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=vkPL5cH1HFXSJ/uIqPW2ORRCbhxLLXcEM9s5D6RXhYM=;
+	b=Zf3QIoQi22T0aYkuRUJpTDLQS0JmHx+6xyKS6WPbQaJCkchctHMOcBFhMnh/8sOfHhZzx5
+	rU5dpUUrQfiH/AmDpzuFm3yyUtVCc9hce1V1dXkLMJd3n3Zc+Xpr2CRD8chQoq3YK+GVZm
+	F7YapjXv6vaIIPwmqWPUB4ys2Y88FLico5STPjEFDZB5yLtm/VdIRVPYgYRri41LFpEnX/
+	yS58u+04aX4PX4iXhexFzIPJ0H9JTCPEfFIHg6r2h1hz+ZEGjp5HU4iwfWWa8fcw//xhgM
+	4enav7UpmWhKuhsJNGhbSnrQt8kNzDAwcfds4rOlVm0MhADgJ8CtSxxojckoyg==
+From: Kory Maincent <kory.maincent@bootlin.com>
+Subject: [PATCH ethtool-next 0/3] Add support for hardware timestamp
+ provider
+Date: Wed, 05 Mar 2025 18:33:36 +0100
+Message-Id: <20250305-feature_ptp-v1-0-f36f64f69aaa@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305061134.4105762-1-yosry.ahmed@linux.dev> <20250305061134.4105762-2-yosry.ahmed@linux.dev>
-In-Reply-To: <20250305061134.4105762-2-yosry.ahmed@linux.dev>
-From: Nhat Pham <nphamcs@gmail.com>
-Date: Wed, 5 Mar 2025 09:32:47 -0800
-X-Gm-Features: AQ5f1JpyAzgKPLF4HzOFwfSyMdNt2ETwoRAsuormuD3-slmnxAZZcZaeL1VW3Xc
-Message-ID: <CAKEwX=O4GAE3Rj389cTOGdaGxjhqz0y4icC=WjWv-vqvDDCw_Q@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable 1/5] mm: zpool: Add interfaces for object
- read/write APIs
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Minchan Kim <minchan@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-B4-Tracking: v=1; b=H4sIAPCKyGcC/x3MQQqDMBBG4avIrA2YYCj2KiIS7R8dKElIpkUQ7
+ 25w+S3eO6kgMwq9m5My/lw4hgrdNrTuLmxQ/Kkm05lem84qDye/jDlJUtZrjfXl7DJYqkXK8Hw
+ 8t5Egu8T4VQGH0HRdN8QPVsRrAAAA
+X-Change-ID: 20241205-feature_ptp-5f11ec7a5b95
+To: Michal Kubecek <mkubecek@suse.cz>, Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Andrew Lunn <andrew@lunn.ch>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jason Xing <kernelxing@tencent.com>, Russell King <linux@armlinux.org.uk>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Maxime Chevallier <maxime.chevallier@bootlin.com>, 
+ Kory Maincent <kory.maincent@bootlin.com>
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdehgeegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthekredtredtjeenucfhrhhomhepmfhorhihucforghinhgtvghnthcuoehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpedugefgudfftefhtdeghedtieeiueevleeludeiieetjeekteehleehfeetuefggeenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduvdejrddtrddurddungdpmhgrihhlfhhrohhmpehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedufedprhgtphhtthhopeifihhllhgvmhguvggsrhhuihhjnhdrkhgvrhhnvghlsehgmhgrihhlrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvghrnhgvlhigihhnghesthgvnhgtvghnthdrtghomhdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugidrohhrghdruhhkpdhrtghpthhtohepk
+ hhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhopehmkhhusggvtggvkhesshhushgvrdgtiidprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhm
+X-GND-Sasl: kory.maincent@bootlin.com
 
-On Tue, Mar 4, 2025 at 10:11=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev>=
- wrote:
->
-> Zsmalloc introduce new APIs to read/write objects besides mapping them.
-> Add the necessary zpool interfaces.
->
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+Add support for reading tsinfo of a specific hardware timetstamp provider.
+Enable selecting the hwtstamp provider within the network topology of a
+network interface.
 
-Acked-by: Nhat Pham <nphamcs@gmail.com>
+Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+---
+Kory Maincent (3):
+      update UAPI header copies
+      tsinfo: Add support for hwtstamp provider
+      netlink: Add support for tsconfig command
+
+ Makefile.am                            |   1 +
+ ethtool.8.in                           |  41 +-
+ ethtool.c                              |  14 +-
+ netlink/extapi.h                       |   4 +
+ netlink/ts.h                           |  22 +
+ netlink/tsconfig.c                     | 153 ++++++
+ netlink/tsinfo.c                       | 110 +++-
+ uapi/linux/ethtool.h                   |  31 ++
+ uapi/linux/ethtool_netlink.h           | 899 +--------------------------------
+ uapi/linux/ethtool_netlink_generated.h | 821 ++++++++++++++++++++++++++++++
+ uapi/linux/if_link.h                   |  26 +
+ uapi/linux/net_tstamp.h                |  11 +
+ uapi/linux/rtnetlink.h                 |  22 +-
+ uapi/linux/stddef.h                    |  13 +-
+ uapi/linux/types.h                     |   1 +
+ 15 files changed, 1262 insertions(+), 907 deletions(-)
+---
+base-commit: c62310eb2999e40545d0aa6f3a7489864b633607
+change-id: 20241205-feature_ptp-5f11ec7a5b95
+
+Best regards,
+-- 
+Köry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
+
 
