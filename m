@@ -1,177 +1,132 @@
-Return-Path: <linux-kernel+bounces-547493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01819A50A27
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:44:21 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05C9BA50A29
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:44:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21C0618873CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:44:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E3BA1717D4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA202517BA;
-	Wed,  5 Mar 2025 18:44:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFE6252908;
+	Wed,  5 Mar 2025 18:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZY+F5o7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AZ6Ndsgx"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43E1A19C542;
-	Wed,  5 Mar 2025 18:44:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF1B2505C4;
+	Wed,  5 Mar 2025 18:44:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741200251; cv=none; b=u+BaiVfyVSn48B8CYEA3Fz7xz6sy9QgQhp3VvosB2XfvfPN1UW6bYT6YjU5Yk5BMKCQFwhi+VTU6oGhl/8p2RCsPoYPxNLT5K33HG5p6Cvp/s1lH1W7aLBqF8LEDSB9cy+Ks26AMU7Y8rkseE/g3g8IfZMMh9y05fzWAi3enuso=
+	t=1741200269; cv=none; b=Tiw2L271ipA640PUBfOT5DMFOlMJgVgbaDhoxctX709UD7C6Q2ucJfTylSjgne7G6ZQ4BqY5ONoEOdofz47IvUtJQaoV/dP48hGkwD4ndYsduBYJKMkuZZx3b0BCVdJaR5qLrlCNR3Zim2zKhqz/UK/giBJS2G94xQ9WXbwhdlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741200251; c=relaxed/simple;
-	bh=rz2u+yhpHdNdyfyhdEIB4K+V3QkZKS2rxaRVdy6U+Wk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Tr2FM/ix506m/li/w8dTO1BfGV4KiORYtBMeufK2s4Sz6RK0lFdgRr6wC2S8/egsq5otmit4DVbAUmTIggMgeFtunHLW4HDxhrtKkHIsmZ+TE2o4y4TwjbBo+ghPqsryNU8/wDf/Y+IP9T0R878FpFrbMl3+lV16xtMWZku/MjQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZY+F5o7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2388C4CEE8;
-	Wed,  5 Mar 2025 18:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741200250;
-	bh=rz2u+yhpHdNdyfyhdEIB4K+V3QkZKS2rxaRVdy6U+Wk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=aZY+F5o7E/PF3JWX0chEfU+AGJe6SukhXGHKUrn+yAXchuGNjIe7ET12TvPHioi8B
-	 /prVxEBWez6yYNfABwn68DiLrBzxvDepqNTxk+ZQTmT2kZArhHxAqkA1xsWbEeNDCQ
-	 JiFkuU/relcHkka1XgtP/53btrQbIIBzWrArUO4YQ3BZt8J5+gX7xnKS0K+xEC+1uf
-	 AMkLtGvjzvfnrQwW+s+1uhDmvnrrwqFmLSrf/pmzOgam1PuHWPo7IkI4JGc7Hlb0mr
-	 lqaP1lh+EBRoxMDxd9Wpeahhp+ydNH0J6+ignuupBPLMw6R3rB1kCJL2HdoorQxCc4
-	 mn8AXwyrjFXjg==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Ralf Jung" <post@ralfj.de>
-Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Boqun Feng"
- <boqun.feng@gmail.com>,  "comex" <comexk@gmail.com>,  "Daniel Almeida"
- <daniel.almeida@collabora.com>,  "Benno Lossin" <benno.lossin@proton.me>,
-  "Abdiel Janulgue" <abdiel.janulgue@gmail.com>,  <dakr@kernel.org>,
-  <robin.murphy@arm.com>,  <rust-for-linux@vger.kernel.org>,  "Miguel
- Ojeda" <ojeda@kernel.org>,  "Alex Gaynor" <alex.gaynor@gmail.com>,  "Gary
- Guo" <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,
-  "Trevor Gross" <tmgross@umich.edu>,  "Valentin Obst"
- <kernel@valentinobst.de>,  <linux-kernel@vger.kernel.org>,  "Christoph
- Hellwig" <hch@lst.de>,  "Marek Szyprowski" <m.szyprowski@samsung.com>,
-  <airlied@redhat.com>,  <iommu@lists.linux.dev>,  <lkmm@lists.linux.dev>
-Subject: Re: Allow data races on some read/write operations
-In-Reply-To: <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de> (Ralf Jung's
-	message of "Wed, 05 Mar 2025 14:27:42 +0100")
-References: <87bjuil15w.fsf@kernel.org>
-	<t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
-	<CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
-	<87ikoqjg1n.fsf@kernel.org>
-	<KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
-	<CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
-	<87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
-	<ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
-	<88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
-	<hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
-	<25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
-	<CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
-	<18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
-	<3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 19:43:59 +0100
-Message-ID: <87eczb71xs.fsf@kernel.org>
+	s=arc-20240116; t=1741200269; c=relaxed/simple;
+	bh=EXarJHStblqL/B0ERPnOKpsTIvdSkL3FI41o71M7wO4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=W5lby6uWDPmJ9qLoj/ehdGh4vZsITcs/3zzdTjygmjlv2gHT9fXZTqXOKt32ZL86dQ2N3xcn/gnaOIyJdPORj4HlTSU1rQFh766HLQyOKmgTRq44MiX6B+C4gJnLRYvMEn8g2hSdB/x0vB2JzPE1Ig8sVx4H3S4wzYGh4wgggAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AZ6Ndsgx; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525AwF4I014538;
+	Wed, 5 Mar 2025 18:44:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BA/2qFxYmbwcqPma/aszST1uYFQi7XJIrgTUYSCXqn0=; b=AZ6NdsgxLz10/jIE
+	hmq/quYFORPRJoVJxfQUgvr/HgfOamr0gR/0yYrFTU4xS5F7KzSysc4+vL5La2lz
+	26HTtbq2bGiyAFrm2DxbktYdPHebocAeJHjs0Jr2ZoFujxFXhGH+YxtWrWK2UAsW
+	FHuOpj5hDb4uZ8iVWNcYINaGUAJIEJPsR6lg4Q/kVeXz8j2JYXUKe6i4l82gaDzE
+	wv3jpLEggcVZMmHfRqVTvMmKNJk5erWh1Pv4flGKCDKlM5VVKyRQ2f7ubKI7JLfX
+	fCT1BWHw1HS5ykQJn6BLv5XXQY9xeIFpjis05NIjX5/W0o1a6RKO4XpcQhyRQBWM
+	DDC4Wg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6vpfpx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 18:44:18 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 525IiHNt022904
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Mar 2025 18:44:17 GMT
+Received: from [10.216.44.194] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Mar 2025
+ 10:44:13 -0800
+Message-ID: <0b0d9e1e-b968-4ffa-8f61-4ac2c02de3c3@quicinc.com>
+Date: Thu, 6 Mar 2025 00:14:09 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8 08/13] wifi: ath12k: add AHB driver support for IPQ5332
+To: <ath12k@lists.infradead.org>
+CC: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Balamurugan S
+	<quic_bselvara@quicinc.com>,
+        P Praneesh <quic_ppranees@quicinc.com>
+References: <20250228184214.337119-1-quic_rajkbhag@quicinc.com>
+ <20250228184214.337119-9-quic_rajkbhag@quicinc.com>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <20250228184214.337119-9-quic_rajkbhag@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: UwTuhe1qE4EUXdEibtT6ykrnurHBTNzB
+X-Authority-Analysis: v=2.4 cv=LYfG6ifi c=1 sm=1 tr=0 ts=67c89b82 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=8wJXLLSO5PcA3Y4IdE0A:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: UwTuhe1qE4EUXdEibtT6ykrnurHBTNzB
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_07,2025-03-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ spamscore=0 clxscore=1015 phishscore=0 adultscore=0 lowpriorityscore=0
+ impostorscore=0 bulkscore=0 mlxscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503050144
 
-"Ralf Jung" <post@ralfj.de> writes:
+On 3/1/2025 12:12 AM, Raj Kumar Bhagat wrote:
+> +static int ath12k_ahb_probe(struct platform_device *pdev)
+> +{
+> +	struct ath12k_base *ab;
+> +	const struct ath12k_hif_ops *hif_ops;
+> +	enum ath12k_hw_rev hw_rev;
+> +	u32 addr;
+> +	int ret;
+> +
+> +	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
+> +	if (ret) {
+> +		dev_err(&pdev->dev, "Failed to set 32-bit coherent dma\n");
+> +		return ret;
+> +	}
+> +
+> +	ab = ath12k_core_alloc(&pdev->dev, sizeof(struct ath12k_ahb),
+> +			       ATH12K_BUS_AHB);
+> +	if (!ab)
+> +		return -ENOMEM;
+> +
+> +	hw_rev = (enum ath12k_hw_rev)of_device_get_match_data(&pdev->dev);
+> +	switch (hw_rev) {
+> +	case ATH12K_HW_IPQ5332_HW10:
+> +		hif_ops = &ath12k_ahb_hif_ops_ipq5332;
+> +		break;
+> +	default:
+> +		return -EOPNOTSUPP;
+> +	}
 
-> Hi,
->
-> On 05.03.25 14:23, Alice Ryhl wrote:
->> On Wed, Mar 5, 2025 at 2:10=E2=80=AFPM Ralf Jung <post@ralfj.de> wrote:
->>>
->>> Hi,
->>>
->>> On 05.03.25 04:24, Boqun Feng wrote:
->>>> On Tue, Mar 04, 2025 at 12:18:28PM -0800, comex wrote:
->>>>>
->>>>>> On Mar 4, 2025, at 11:03=E2=80=AFAM, Ralf Jung <post@ralfj.de> wrote:
->>>>> However, these optimizations should rarely trigger misbehavior in
->>>>> practice, so I wouldn=E2=80=99t be surprised if Linux had some code t=
-hat
->>>>> expected memcpy to act volatile=E2=80=A6
->>>>>
->>>>
->>>> Also in this particular case we are discussing [1], it's a memcpy (from
->>>> or to) a DMA buffer, which means the device can also read or write the
->>>> memory, therefore the content of the memory may be altered outside the
->>>> program (the kernel), so we cannot use copy_nonoverlapping() I believe.
->>>>
->>>> [1]: https://lore.kernel.org/rust-for-linux/87bjuil15w.fsf@kernel.org/
->>>
->>> Is there actually a potential for races (with reads by hardware, not ot=
-her
->>> threads) on the memcpy'd memory? Or is this the pattern where you copy =
-some data
->>> somewhere and then set a flag in an MMIO register to indicate that the =
-data is
->>> ready and the device can start reading it? In the latter case, the actu=
-al data
->>> copy does not race with anything, so it can be a regular non-atomic non=
--volatile
->>> memcpy. The flag write *should* be a release write, and release volatil=
-e writes
->>> do not exist, so that is a problem, but it's a separate problem from vo=
-latile
->>> memcpy. One can use a release fence followed by a relaxed write instead.
->>> Volatile writes do not currently act like relaxed writes, but you need =
-that
->>> anyway for WRITE_ONCE to make sense so it seems fine to rely on that he=
-re as well.
->>>
->>> Rust should have atomic volatile accesses, and various ideas have been =
-proposed
->>> over the years, but sadly nobody has shown up to try and push this thro=
-ugh.
->>>
->>> If the memcpy itself can indeed race, you need an atomic volatile memcp=
-y --
->>> which neither C nor Rust have, though there are proposals for atomic me=
-mcpy (and
->>> arguably, there should be a way to interact with a device using non-vol=
-atile
->>> atomics... but anyway in the LKMM, atomics are modeled with volatile, s=
-o things
->>> are even more entangled than usual ;).
->>
->> For some kinds of hardware, we might not want to trust the hardware.
->> I.e., there is no race under normal operation, but the hardware could
->> have a bug or be malicious and we might not want that to result in UB.
->> This is pretty similar to syscalls that take a pointer into userspace
->> memory and read it - userspace shouldn't modify that memory during the
->> syscall, but it can and if it does, that should be well-defined.
->> (Though in the case of userspace, the copy happens in asm since it
->> also needs to deal with virtual memory and so on.)
->
-> Wow you are really doing your best to combine all the hard problems at th=
-e same
-> time. ;)
-> Sharing memory with untrusted parties is another tricky issue, and even l=
-eaving
-> aside all the theoretical trouble, practically speaking you'll want to
-> exclusively use atomic accesses to interact with such memory. So doing th=
-is
-> properly requires atomic memcpy. I don't know what that is blocked on, bu=
-t it is
-> good to know that it would help the kernel.
-
-I am sort of baffled by this, since the C kernel has no such thing and
-has worked fine for a few years. Is it a property of Rust that causes us
-to need atomic memcpy, or is what the C kernel is doing potentially dangero=
-us?
-
-
-Best regards,
-Andreas Hindborg
-
+The ab should be freed before returning.
+Will fix this memory leak in next version (v9).
 
