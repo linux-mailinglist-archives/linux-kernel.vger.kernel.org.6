@@ -1,121 +1,92 @@
-Return-Path: <linux-kernel+bounces-547209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA39BA50432
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:10:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2DBA50437
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B9C53A71DF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:10:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C42174B0D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:10:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94068250BE7;
-	Wed,  5 Mar 2025 16:10:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="N4mfkdbA"
-Received: from out.smtpout.orange.fr (out-13.smtpout.orange.fr [193.252.22.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0962E2512D4;
+	Wed,  5 Mar 2025 16:10:12 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A93024A06B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:10:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A57E24FC1A;
+	Wed,  5 Mar 2025 16:10:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741191004; cv=none; b=Wh86NZzDyYYeJvitLGv5QeetyXwoO0wiNbE5/4q0gNAJKrY/uTXnoRYomH8ewDMYY2Y7mNKRnYhB2308czywKc7hadNBX1mdqQSedQixlaO+j5Bu2YRNaQumc0Geh1kSzhdNhb+1jsurMnT15nteVQBAYjxWBupXeRP0bPRs/D4=
+	t=1741191011; cv=none; b=S6zpv8idVzaLEEkSgxV3jK8K+V54+XgqMfdXVGkf/1Dzif8GKSa8UmHlBItEODO+cfHCrIiuXaurR5XAlW+l8cRBkMqtZ/FF04fmuTedei+y1BI+gIqfyJg8N4U5KJKpo76rkWW25gQjLXscaN6t/YcIWvOItrt09kXmzho85XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741191004; c=relaxed/simple;
-	bh=/XdLhst/UlGkGuvJVNVFYn2gImvo8zDlbOMaI1uafMU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=cZ49dc/xcOOnwtyaOdUcj17he6XHptPuTWjz4d46BiV76+XmDPVe5PAvQgpQAqrt3tu2K+Bw1p9/fzKCxLzm9YyL/CQ12SJZxmJJTnQDlvEPnw18Wt+6yl7igNesAIxy6t0VbDsP1F2PEHrjRTw5jX8VdB3KOdsZnYkFEzpYdDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=N4mfkdbA; arc=none smtp.client-ip=193.252.22.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id prJbtTSCG63luprJgtW8On; Wed, 05 Mar 2025 17:09:58 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741190998;
-	bh=LTODso3brupSi75LN9uPUwVb2HT7RIhBdq3edv94tdo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=N4mfkdbAtJy+mCNmLhDTAuUHv+MDNbHXuyqOBrVje9lFDIziAi9MrRApsAtV+dvKD
-	 ZKQY4dH0JyH/yPrz2GTdgZFNdzIkC3bgguZofcw8lmWrt92kS0L2vSMh4g3MIK60na
-	 FTuFiFzl05NTipThGQFMte6V8ABRFrNafM73qfF8vpQr/F7oObAcUDxGfubyiEoZdF
-	 He7IkhSmMVC19kKy5Ztg8xbxG3HmUjgkt1JQZbeGwujPNXmmHN0ozBf0G3brSfN4Eb
-	 0PGT6grJ5i+RZufkP7B64mLothI4/wo5IzomQkAWUq+pOfoExhgb/RH6n9EhLQu3Yr
-	 cxM4Y9+7caunw==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 05 Mar 2025 17:09:58 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <a4195c42-7912-40c6-8b46-a718843c4a1d@wanadoo.fr>
-Date: Thu, 6 Mar 2025 01:09:46 +0900
+	s=arc-20240116; t=1741191011; c=relaxed/simple;
+	bh=tQxIso6zdyCPRW3ea4lNOub/x+vWYMWUlcYeaXspf/g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aLqYj2HgEw/U94wPt9Od1gNoLf0rEHlaBJmjcxwgnEoLQ2TcKvOW1ZE24hWHk8SSkluplfj+rg9daINx5Y7dH7dFbZyU8mtzHkKpSFIfYrzq0961Ln/LoMYwMdbuz9TPhc3wH5On0nRfruAO5CEI+7dAGmbE1PilHNnuKvtMovI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2234bec7192so129731115ad.2;
+        Wed, 05 Mar 2025 08:10:09 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741191009; x=1741795809;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rmm65+uA+Kw6OHf7ipiynKZVxICJEHzaO0o95amWfmM=;
+        b=nqaq/hQ5jbkva+iKterslzZiUJWOUjgEx64UU2IdLqD22FNxQ0EK1Y4PYb755l4FFN
+         Z39u72l09Kii6QjShOQcNaDFQe/m5T78abnKkkzPrHrr0HlZ9zwsswzw0njL53Mq+FSa
+         3nn0OFfZ2C3bcS2h0AGYo2By6MEoI86LB7v33N+uMvAONol809CdR+8OmjpV2RdrgG5m
+         z+OQ+jxb5EHXqfOEG1lsughLpFl05I3dw+cw5dv2NR53Gr177XXprDGPkeHmWsTEc4+w
+         Q5bBXovkouaV3Y0inLak431n+jMpKaVsNnt8KQf+i6ltx4VbsnV+kwioaZimyW7/woOX
+         pyRg==
+X-Forwarded-Encrypted: i=1; AJvYcCUqV6MWfqnVLVGKlMCbZ5N9MH8hiwDrpYL/beY2DK45mKfQj825B9urD4bYQg9b9AZhOCEkFU5yAfO5vUFJRP8=@vger.kernel.org, AJvYcCWSIGljxjL6Q4RpSnw7JHmoLF5ds/sao1bRxp3Qk5nz3tUZSPjYZ5JoIn54heV5rojBDaqq3dsCF4xc@vger.kernel.org, AJvYcCXpcJ95hLp7uRHXAcm/qW2wK6WVqiIfKBZ+O7NA1Qppe0K9kHfpsuhl5SLff4M6xeYN3x8rUP/6FaaLMiCa@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+8on9RhDHU95A77NCTgmFMfJurvCiJ9CR2FxoaZyHG9ksvzOH
+	qe4veoD9g8G+JV97zwNoxV2e4AMSuQcCjAviIkJ7vXiU1dUk3eG6
+X-Gm-Gg: ASbGncvlpw2oYhyrH7ddnIX6pcPMPWd1Tp0Ijv789KQ10chxsZvPEAgT4Sw/QiovXJ5
+	4cuVOto1nfDPAHf8x128LqVXNyFhpW9LfPWEbdwEb+BaGOB0u2IFqx+HyhMhYcOELncTYwnrH4T
+	8qhInUvaF17Tk660KiWmqDFw9S6j0N3GWGbLebHO6cqp1cmSRYTEQgO3QNtJ0HO7TdDoKZ6D/jY
+	Lnjq6ISOf3E2DGOzH0FSE9UtGBUlYUjLFBsV0aiRnRvhmdYInTiIw2pzmh5STixOMEo84Vd1K0Y
+	6N5q17ywWPblHUlVt66QwKs7yHj9UnVc3a5pkeJQF5896k8g8Bj3EqVMsFQG7a+/02OMEr30dk1
+	pcvE=
+X-Google-Smtp-Source: AGHT+IHYzu2Hg17Iv+FAPzzj+vp4OtCZufp8iYDa3P2grWwais5vrBs1hTqGVRTHFIBVqoc2TiyA+g==
+X-Received: by 2002:a17:903:19c7:b0:223:3b76:4e07 with SMTP id d9443c01a7336-223f1c66784mr69929345ad.4.1741191009308;
+        Wed, 05 Mar 2025 08:10:09 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-223501d2901sm114816735ad.30.2025.03.05.08.10.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 08:10:08 -0800 (PST)
+Date: Thu, 6 Mar 2025 01:10:07 +0900
+From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Jingoo Han <jingoohan1@gmail.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Vidya Sagar <vidyas@nvidia.com>, Frank Li <Frank.Li@nxp.com>,
+	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] PCI: dwc: ep: Return -ENOMEM for allocation failures
+Message-ID: <20250305161007.GI847772@rocinante>
+References: <36dcb6fc-f292-4dd5-bd45-a8c6f9dc3df7@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/8] bits: fix typo 'unsigned __init128' -> 'unsigned
- __int128'
-To: Yury Norov <yury.norov@gmail.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-1-1873dcdf6723@wanadoo.fr>
- <Z8hf_MNL3MeoXW5O@thinkpad> <Z8hhXHporoJ6Y39X@smile.fi.intel.com>
- <Z8hh6BZgD3lmyBKp@thinkpad>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z8hh6BZgD3lmyBKp@thinkpad>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <36dcb6fc-f292-4dd5-bd45-a8c6f9dc3df7@stanley.mountain>
 
-On 05/03/2025 at 23:38, Yury Norov wrote:
-> On Wed, Mar 05, 2025 at 04:36:12PM +0200, Andy Shevchenko wrote:
->> On Wed, Mar 05, 2025 at 09:30:20AM -0500, Yury Norov wrote:
->>> On Wed, Mar 05, 2025 at 10:00:13PM +0900, Vincent Mailhol via B4 Relay wrote:
->>>> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
->>>>
->>>> "int" was misspelled as "init" in GENMASK_U128() comments. Fix the typo.
->>>
->>> Thanks for respinning the series. I'll take this fix in bitmap-for-next, so
->>> if you need v2, you'll not have to bear this thing too.
->>
->> Before doing that, please read my comment first.
-> 
-> Already did. Yes, you're right.
-> 
-> Vincent, can you send the fix separately, so I'll move it in the
-> upcoming merge window?
+Hello,
 
-Here it is:
-https://lore.kernel.org/all/20250305-fix_init128_typo-v1-1-cbe5b8e54e7d@wanadoo.fr/
+> If the bitmap allocations fail then dw_pcie_ep_init_registers() currently
+> returns success.  Return -ENOMEM instead.
 
-As requested, I will exclude this from the v5.
+Applied to controller/dwc, thank you!
 
-
-Yours sincerely,
-Vincent Mailhol
-
+	Krzysztof
 
