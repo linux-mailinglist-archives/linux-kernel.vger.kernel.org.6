@@ -1,88 +1,127 @@
-Return-Path: <linux-kernel+bounces-546937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12065A500EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:45:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7412A500F5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:46:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48DC9188B5F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:45:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 418631884AA2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:45:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CF1D24C065;
-	Wed,  5 Mar 2025 13:43:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADB0E24A06B;
+	Wed,  5 Mar 2025 13:43:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b="LDmPYd2o"
-Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SXTNaxtH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDDB24A068
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193E824EF7E
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741182223; cv=none; b=GqZPdTwhNSlLnlAMnnrUvpuLtj2SLk3iEwWh7Ts4Un88leqAJZ0eHoxQFZOJLRqtlOPxImiLKSzGi6Bx36AynarcNOf2pRKO9/b6846ThchdYuw9iTxGO54hmFFkQCl5sk3CPdvkSucz1vcDUxKc7a33kr97plozNaQc6hTX+tc=
+	t=1741182230; cv=none; b=iXryfwMyEXw/cWWUmu6Jk5bQbUGyss3TfIh0i32d5EqkM4D9k8gtZG0cSlRxaTH9x8rBrgye++0XIeBSsF//ihH+OOpZCz1jm5HVYfR4mCcu7M1dgnd3S2G4nIbTTvZQjdY1mHe4DGFkEGxsTHbD4fPlSeTX0/7c6nfuDhMV9cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741182223; c=relaxed/simple;
-	bh=tFeLYQTId/SvT8ZMflCA2uIgO3LKdT/H7M+FsOvO4sE=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=qbSFAJGlURknlAIQX0cyC2OCPUWq2/wkkmoyjJqhpV7UPI1TolosW+vOVQiwoOmU2SChUPVlbpGLUGhGq6SKtHG5REn/UyNa1IJ3zYPriuKrnOxJJNy1KcRIEUoTQ0sDf27XP0muYiiUATo79TXqQokfWcW5QaKLfXpRO4Q+XAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io; spf=pass smtp.mailfrom=rosenzweig.io; dkim=pass (2048-bit key) header.d=rosenzweig.io header.i=@rosenzweig.io header.b=LDmPYd2o; arc=none smtp.client-ip=95.215.58.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=rosenzweig.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rosenzweig.io
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rosenzweig.io;
-	s=key1; t=1741182217;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vo2hm+yMszxw3H9IReAl6SWR01jDv9fDEr6AUb0zh0U=;
-	b=LDmPYd2osyiwOtg15j1DhkvRsDox4S/7CWQcaQHJwA3oEc6JJUovfPV/14oJeBHS+QyeZX
-	f38N7q/ngNHs7ROVDw/Y01T9VIX69i2GXD0+VJ+U9AUTCXQjc2NVr6CzioyKDytl2cWST6
-	eCbK/4AOWjNPMl4osjXe1Y3cO/67NGudq5CTPMkggcoVgFAv/r4iNAdtuYUFGq8NZ6tdzn
-	W4dqHDr6TdOJPzAUAkvEFxKLz5VW9Kw4v864lc1ZWVDx31e/73SnimmCSxfs/yaxHPbJ+i
-	Gl5R/rx//ZM8CD5USk4LLF8+8GQhZTESdJRqKfit6nGzoU+dGqNKsgfLqRl00w==
-From: Alyssa Rosenzweig <alyssa@rosenzweig.io>
-To: fnkl.kernel@gmail.com, Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-Cc: j@jannau.net, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, 
- dri-devel@lists.freedesktop.org, asahi@lists.linux.dev, 
- linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-In-Reply-To: <20250305020546.96564-1-jiapeng.chong@linux.alibaba.com>
-References: <20250305020546.96564-1-jiapeng.chong@linux.alibaba.com>
-Subject: Re: [PATCH -next] drm: adp: Remove unnecessary print function
- dev_err()
-Message-Id: <174118221552.156796.17819891844477649355.b4-ty@rosenzweig.io>
-Date: Wed, 05 Mar 2025 08:43:35 -0500
+	s=arc-20240116; t=1741182230; c=relaxed/simple;
+	bh=OsJvtG0FJl/+ppRTU+sMDaH2l9ngtdnUkrowqv116QY=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=iOTXHgkVyeJmvw2+ewEAICu1DJyTe/BdKsz1rDWC+uaSY8Aa2RAOzImWNadmfdsI++as0/rG07YsqKzqftNpTMTk21PO41LMuFhG//alahV5sHn4Y8m57hLWO8FGBit3khq3zbzr6JNnq+pznd9Qn3/e3humwyK18BlmiznXVsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SXTNaxtH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BB03C4CEE2;
+	Wed,  5 Mar 2025 13:43:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741182229;
+	bh=OsJvtG0FJl/+ppRTU+sMDaH2l9ngtdnUkrowqv116QY=;
+	h=Date:From:To:cc:Subject:From;
+	b=SXTNaxtHRDKql3fnx/R8wmaheB3QAnvstIJJ1U/1ByWakTvNY0MhttNUwuORzifR0
+	 ZSkzhaF11MWNGRO0wvDYznHdsW2kArnnRUbj7YOgN275B4zjJFC3CTBLIOWXceevNv
+	 ywFoR+Un86d1YhuWkASAn+O/877KWQg557H9XCepsyRuYesxTRrIO7Edf6QFjg+7yO
+	 Lwu9LRJ5Gf2mkzHDGplNUS0gKOAZsWUM97fEkf1qXTTXYYJI/wFPwHVP4fX1fXCkxW
+	 lAeO0beiPKu8ILW7qwAWjetBJu2zvpidEc+ZnnsT/ZV/ZMPncEReT9/zswA2TkOzgh
+	 PZtJtwE185bMw==
+Date: Wed, 5 Mar 2025 14:43:46 +0100 (CET)
+From: Jiri Kosina <jikos@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+cc: linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
+Subject: [GIT PULL] HID fixes for 6.14
+Message-ID: <0o3np45o-r9p7-s59s-0oss-opn264op2ron@xreary.bet>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
 
+Linus,
 
-On Wed, 05 Mar 2025 10:05:46 +0800, Jiapeng Chong wrote:
-> The print function dev_err() is redundant because platform_get_irq_byname()
-> already prints an error.
-> 
-> ./drivers/gpu/drm/adp/adp_drv.c:470:2-9: line 470 is redundant because platform_get_irq() already prints an error.
-> ./drivers/gpu/drm/adp/adp_drv.c:476:2-9: line 476 is redundant because platform_get_irq() already prints an error.
-> 
-> 
-> [...]
+please pull from
 
-Applied, thanks!
+  git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025030501
 
-[1/1] drm: adp: Remove unnecessary print function dev_err()
-      commit: e4c0fd3f965533cd2b38200ca73625afd602d39b
+to receive HID subsystem fixes that should land in 6.14 final.
 
-Best regards,
+=====
+- power management fix in intel-thc-hid (Even Xu)
+- nintendo gencon mapping fix (Ryan McClelland)
+- fix for UAF on device diconnect path in hid-steam (Vicki Pfau)
+- two fixes for UAF on device disconnect path in intel-ish-hid (Zhang 
+  Lixu)
+- fix for potential NULL dereference in hid-appleir (Daniil Dulov)
+- few other small cosmetic fixes (e.g. typos)
+=====
+
+Thanks.
+
+----------------------------------------------------------------
+Alex Henrie (1):
+      HID: apple: disable Fn key handling on the Omoton KB066
+
+Colin Ian King (2):
+      HID: debug: Fix spelling mistake "Messanger" -> "Messenger"
+      HID: intel-thc-hid: Fix spelling mistake "intput" -> "input"
+
+Daniil Dulov (1):
+      HID: appleir: Fix potential NULL dereference at raw event handle
+
+Even Xu (1):
+      HID: Intel-thc-hid: Intel-quickspi: Correct device state after S4
+
+Ryan McClelland (1):
+      HID: nintendo: fix gencon button events map
+
+Stuart Hayhurst (1):
+      HID: corsair-void: Update power supply values with a unified work handler
+
+Vicki Pfau (1):
+      HID: hid-steam: Fix use-after-free when detaching device
+
+Wentao Guan (1):
+      HID: i2c-hid: improve i2c_hid_get_report error message
+
+Yu-Chun Lin (1):
+      HID: google: fix unused variable warning under !CONFIG_ACPI
+
+Zhang Lixu (2):
+      HID: intel-ish-hid: Fix use-after-free issue in hid_ishtp_cl_remove()
+      HID: intel-ish-hid: Fix use-after-free issue in ishtp_hid_remove()
+
+ drivers/hid/hid-apple.c                            | 11 +--
+ drivers/hid/hid-appleir.c                          |  2 +-
+ drivers/hid/hid-corsair-void.c                     | 83 +++++++++++-----------
+ drivers/hid/hid-debug.c                            |  2 +-
+ drivers/hid/hid-google-hammer.c                    |  2 +
+ drivers/hid/hid-nintendo.c                         | 14 ++--
+ drivers/hid/hid-steam.c                            |  2 +-
+ drivers/hid/i2c-hid/i2c-hid-core.c                 |  2 +-
+ drivers/hid/intel-ish-hid/ishtp-hid-client.c       |  2 +-
+ drivers/hid/intel-ish-hid/ishtp-hid.c              |  4 +-
+ .../intel-thc-hid/intel-quickspi/pci-quickspi.c    |  2 +
+ .../intel-quickspi/quickspi-protocol.c             |  2 +-
+ 12 files changed, 70 insertions(+), 58 deletions(-)
+
 -- 
-Alyssa Rosenzweig <alyssa@rosenzweig.io>
+Jiri Kosina
+SUSE Labs
 
 
