@@ -1,167 +1,259 @@
-Return-Path: <linux-kernel+bounces-546188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D636EA4F779
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:50:13 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6759A4F77C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:50:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E2B51890574
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:50:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C3A97A3916
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30C751E5B94;
-	Wed,  5 Mar 2025 06:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2188F1E5B77;
+	Wed,  5 Mar 2025 06:50:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="StbLSnVR"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xQ6LRuGL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dO/tRhij";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="xQ6LRuGL";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="dO/tRhij"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD88D19CC2E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:50:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 643731E5B94
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:50:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741157408; cv=none; b=Y2WxjS4dNFdGo8yyKWDtO8E68NCaATGWGa/xhvjqeA77bN7Yy3wZSjdiNMtCIPy2vXKguvAGe8sgivxunhqw83ChLId1kmzlCJAn/pN9abz+l81fCKQgmGMbv7e4BnXW6Nwt7hhpOyZoBGPRsUvjnuMn0o8btB+qjYNX7O5NMQw=
+	t=1741157435; cv=none; b=pT4U7R4XApB8SP0h59T1P2zMsTPFIi3vDW40jXJP0I17B+yqqbPfpqwWHtgen0XU+FJ+3YOHoCaOv9s3+rQO3qJks9ggVHaAluWsTmuieolzuS3bau+O5F9zB5bLvD54VxP7FKw49V60kCF2nXtKVO6FxT/ITT97kW7t6Ti/pOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741157408; c=relaxed/simple;
-	bh=4UV7QZVZwFPv3Fm0jyRU+cvccfeEyZxyE0mnjA1Ckd0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PhdPvMTmEnFonOHvgLvXWK4DsXxKiidDu4gi1VQvp+AfcBDR4jcToB2K/qY4/qtLD7PETZ5UXRp+hauraI/ck5tHk+wGChzJo9Flbm00Z74UVxlT7zedKM6a5I9SZXKGndeUOESTd81qc6bGukrMI6h1BWpYBhBkc8yeH9xGTK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=StbLSnVR; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 5 Mar 2025 07:49:50 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741157393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3yJ3HXbtbrwSp8wZ1o1sZDbX+tC39VktPX7S71ja4Eg=;
-	b=StbLSnVRJ3zF7qjkkCDFDCs0Dt014q72/lHKewofR/nN+BdhTxHeK3kf+SaLM1FnSxY027
-	CrX5Mga8NaLEUN98R8LSCd9yodK7hibID2pjv8LK+sdT0Ir/rkmL0+on0uIK6Z749WedDN
-	M71URIUZJezWcUq0mLScW+OjeODLf1Y=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/3] Add flash/strobe support for ov9282
-Message-ID: <2jaan6jm5abml3pve5hdesc5pj6kzbw4qaa5xofpwphxvp37rx@hyqq5ccn3n2h>
-References: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
- <CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com>
+	s=arc-20240116; t=1741157435; c=relaxed/simple;
+	bh=2ZRfVP1/5pNF+Is9mmU8Ks777wCzXWClrWQqvJMl2nQ=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=G2IDHV03lQ+qPMgOZhIfn5w4Gl5VRMetDfxU96DgeDMO+z5euMfgR/1PK3oHQ4UWKE83w9J8lDo2i1HPYdrPvkMN00mPqmLl3SsDM5/LNCZGzXN9zjmUdUjY2TR1DAmEGXCRUr8F+np98l5xW3bR9VOUE/xvIpJ3cgaeq3gjlfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xQ6LRuGL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dO/tRhij; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=xQ6LRuGL; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=dO/tRhij; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 171001F38A;
+	Wed,  5 Mar 2025 06:50:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741157431; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nV9qaf3NFxje2X4qJSoqYCRF5SUEn38UF+EhAhqn2Dc=;
+	b=xQ6LRuGLxPqfEVXRu9qTFMG4Yb3pqvXN6f0wJH+aOGooexXQoB16AXaIFnfRaUaJIwyyLD
+	qPeBVggXZCI/7u5VmJhBkg+eijNQJ3oHEQtohipPt6DF6pxlI5q9Sq3IvL19Oziq3/uxm7
+	cjxfqFexkix9IyHlAxGFZSODc/j73n8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741157431;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nV9qaf3NFxje2X4qJSoqYCRF5SUEn38UF+EhAhqn2Dc=;
+	b=dO/tRhij2jJqqRiQlqihdrxnZxcZbT/lw/5Ls3Qj5Z6IB6TGNUTiYxHZbyy3wRWADJNDGe
+	lm6Uagwnjl79VYBg==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741157431; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nV9qaf3NFxje2X4qJSoqYCRF5SUEn38UF+EhAhqn2Dc=;
+	b=xQ6LRuGLxPqfEVXRu9qTFMG4Yb3pqvXN6f0wJH+aOGooexXQoB16AXaIFnfRaUaJIwyyLD
+	qPeBVggXZCI/7u5VmJhBkg+eijNQJ3oHEQtohipPt6DF6pxlI5q9Sq3IvL19Oziq3/uxm7
+	cjxfqFexkix9IyHlAxGFZSODc/j73n8=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741157431;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nV9qaf3NFxje2X4qJSoqYCRF5SUEn38UF+EhAhqn2Dc=;
+	b=dO/tRhij2jJqqRiQlqihdrxnZxcZbT/lw/5Ls3Qj5Z6IB6TGNUTiYxHZbyy3wRWADJNDGe
+	lm6Uagwnjl79VYBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id BDC2613939;
+	Wed,  5 Mar 2025 06:50:30 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id TIqdLDb0x2dRPQAAD6G6ig
+	(envelope-from <tzimmermann@suse.de>); Wed, 05 Mar 2025 06:50:30 +0000
+Message-ID: <37397082-833f-4e3b-8dda-76a51d2369e6@suse.de>
+Date: Wed, 5 Mar 2025 07:50:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPY8ntB8i4OyUWAL8k899yUd5QsRifJXiOfWXKceGQ7TNZ4OUw@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/i915: implement vmap/vunmap GEM object functions
+From: Thomas Zimmermann <tzimmermann@suse.de>
+To: =?UTF-8?Q?Asbj=C3=B8rn_Sloth_T=C3=B8nnesen?= <asbjorn@asbjorn.st>,
+ intel-gfx@lists.freedesktop.org
+Cc: Jani Nikula <jani.nikula@linux.intel.com>,
+ Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+ Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
+ <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
+ Daniel Vetter <daniel@ffwll.ch>, =?UTF-8?Q?Jouni_H=C3=B6gander?=
+ <jouni.hogander@intel.com>, Zhao Liu <zhao1.liu@intel.com>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20240629182513.78026-1-asbjorn@asbjorn.st>
+ <5674b73c-3bf3-4ec5-a1a7-44c9ce62ef68@suse.de>
+Content-Language: en-US
+Autocrypt: addr=tzimmermann@suse.de; keydata=
+ xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
+ XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
+ BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
+ hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
+ 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
+ AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
+ AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
+ AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
+ lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
+ U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
+ vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
+ 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
+ j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
+ T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
+ 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
+ GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
+ hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
+ EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
+ C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
+ yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
+ SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
+ Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
+ 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
+In-Reply-To: <5674b73c-3bf3-4ec5-a1a7-44c9ce62ef68@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[linux.intel.com,intel.com,ursulin.net,gmail.com,ffwll.ch,lists.freedesktop.org,vger.kernel.org];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_DN_SOME(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Tue, Mar 04, 2025 at 05:46:34PM +0000, Dave Stevenson wrote:
-> Hi Richard
-> 
-> Thanks for the series.
 
-Hi Dave,
 
-thanks for your quick and detailled review!
+Am 02.07.24 um 09:17 schrieb Thomas Zimmermann:
+> Hi
+>
+> Am 29.06.24 um 20:25 schrieb Asbjørn Sloth Tønnesen:
+>> Implement i915_gem_vmap_object() and i915_gem_vunmap_object(),
+>> based on i915_gem_dmabuf_vmap() and i915_gem_dmabuf_vunmap().
+>>
+>> This enables a drm_client to use drm_client_buffer_vmap() and
+>> drm_client_buffer_vunmap() on hardware using the i915 driver.
+>>
+>> Tested with a currently out of tree pixelflut drm_client[1] on:
+>> - Lenovo ThinkCentre M720q (CoffeeLake-S GT2 / Intel UHD Graphics 630)
+>> - Dell Wyse N06D - 3030 LT (ValleyView on Intel Celeron N2807 SOC)
+>>
+>> [1] XDP->DRM pixelflut: https://labitat.dk/wiki/Pixelflut-XDR
+>>
+>> Signed-off-by: Asbjørn Sloth Tønnesen <asbjorn@asbjorn.st>
+>
+> I didn't do a review, but
+>
+> Ack-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-> 
-> On Mon, 3 Mar 2025 at 22:59, Richard Leitner <richard.leitner@linux.dev> wrote:
-> >
-> > This series adds basic flash/strobe support for ov9282 sensors using
-> > their "hardware strobe output".
-> >
-> > Apart from en-/disabling the flash/strobe output, setting a timeout
-> > (duration of activated strobe per frame) is implemented. The calculation
-> > of this timeout is only interpolated from various measurements, as no
-> > documentation was found.
-> 
-> The bigger picture question is whether using these flash controls is
-> appropriate for controlling the strobe output on a sensor. That's a
-> question for others (mainly Sakari and Laurent).
+Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
 
-Thanks. So I'm looking forward to their response :-)
+>
+>
+> as it would possible allow to share more code with the fbdev helpers.
+>
+> Best regards
+> Thomas
+>
+>> ---
+>> This patch applies on top of drm-intel/drm-intel-next (32a120f52a4c)
+>>
+>>   drivers/gpu/drm/i915/gem/i915_gem_object.c | 26 ++++++++++++++++++++++
+>>   1 file changed, 26 insertions(+)
+>>
+>> diff --git a/drivers/gpu/drm/i915/gem/i915_gem_object.c 
+>> b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+>> index 58e6c680fe0d..356530b599ce 100644
+>> --- a/drivers/gpu/drm/i915/gem/i915_gem_object.c
+>> +++ b/drivers/gpu/drm/i915/gem/i915_gem_object.c
+>> @@ -873,6 +873,30 @@ bool i915_gem_object_needs_ccs_pages(struct 
+>> drm_i915_gem_object *obj)
+>>       return lmem_placement;
+>>   }
+>>   +static int i915_gem_vmap_object(struct drm_gem_object *gem_obj,
+>> +                struct iosys_map *map)
+>> +{
+>> +    struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
+>> +    void *vaddr;
+>> +
+>> +    vaddr = i915_gem_object_pin_map(obj, I915_MAP_WB);
+>> +    if (IS_ERR(vaddr))
+>> +        return PTR_ERR(vaddr);
+>> +
+>> +    iosys_map_set_vaddr(map, vaddr);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +static void i915_gem_vunmap_object(struct drm_gem_object *gem_obj,
+>> +                   struct iosys_map *map)
+>> +{
+>> +    struct drm_i915_gem_object *obj = to_intel_bo(gem_obj);
+>> +
+>> +    i915_gem_object_flush_map(obj);
+>> +    i915_gem_object_unpin_map(obj);
+>> +}
+>> +
+>>   void i915_gem_init__objects(struct drm_i915_private *i915)
+>>   {
+>>       INIT_WORK(&i915->mm.free_work, __i915_gem_free_work);
+>> @@ -896,6 +920,8 @@ static const struct drm_gem_object_funcs 
+>> i915_gem_object_funcs = {
+>>       .free = i915_gem_free_object,
+>>       .close = i915_gem_close_object,
+>>       .export = i915_gem_prime_export,
+>> +    .vmap = i915_gem_vmap_object,
+>> +    .vunmap = i915_gem_vunmap_object,
+>>   };
+>>     /**
+>
 
-> V4L2_CID_FLASH_TIMEOUT feels wrong for setting the duration of the strobe pulse.
-> Whilst the description in the docs [1] is a little brief, you then
-> have the description of V4L2_FLASH_FAULT_TIMEOUT for
-> V4L2_CID_FLASH_FAULT
-> "The flash strobe was still on when the timeout set by the user ---
-> V4L2_CID_FLASH_TIMEOUT control --- has expired. Not all flash
-> controllers may set this in all such conditions."
-> which implies it is the hardware watchdog timeout to ensure the flash
-> LEDs don't burn out, not configuring the duration of the flash pulse.
-> Then again adp1653 adopts it as the flash duration.
+-- 
+--
+Thomas Zimmermann
+Graphics Driver Developer
+SUSE Software Solutions Germany GmbH
+Frankenstrasse 146, 90461 Nuernberg, Germany
+GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
+HRB 36809 (AG Nuernberg)
 
-I also thought of (and in fact did) implementing this using sensor
-specific used CIDs, but then decided to go for FLASH_TIMEOUT.
-
-If you think it's a better way to introduce either a completely new
-"common control" or use another one I'm perfectly fine with that and
-will try that for a v2.
-
-> 
-> Is there an expectation that V4L2_CID_FLASH_STROBE_SOURCE should also
-> be implemented, even if it is fixed to
-> V4L2_FLASH_STROBE_SOURCE_EXTERNAL?
-
-I've already done this in my local tree, but was not sure if it "fits"
-in this series...
-
-So I guess I should include it in v2?
-
-> 
-> The one saving grace with this sensor is that it has a global shutter,
-> so the strobe does correspond to the exposure period. With rolling
-> shutter sensors, the flash duration is typically two frames to cover
-> the exposure duration of all lines as the shutter rolls down.
-
-Totally agree. Without global shutter configuring the flash duration
-would not make that much sense.
-
-Just to have mentioned it: I tested this quite heavily using an ov9281,
-ran analysis on the resulting images and did lots of scope measurements
-to make sure it really works as described.
-
-regards;rl
-
-> 
->   Dave
-> 
-> [1] https://www.kernel.org/doc/html/latest/userspace-api/media/v4l/ext-ctrls-flash.html
-> 
-> > Further flash/strobe-related controls as well as a migration to v4l2-cci
-> > helpers will likely be implemented in future series.
-> >
-> > All register addresses/values are based on the OV9281 datasheet v1.53
-> > (january 2019). This series was tested using an ov9281 VisionComponents
-> > camera module.
-> >
-> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > ---
-> > Richard Leitner (3):
-> >       media: i2c: ov9282: add output enable register definitions
-> >       media: i2c: ov9282: add led_mode v4l2 control
-> >       media: i2c: ov9282: add strobe_timeout v4l2 control
-> >
-> >  drivers/media/i2c/ov9282.c | 89 ++++++++++++++++++++++++++++++++++++++++++++--
-> >  1 file changed, 86 insertions(+), 3 deletions(-)
-> > ---
-> > base-commit: f41427b3bdee7d9845b13a80c0d03882212f4b20
-> > change-id: 20250303-ov9282-flash-strobe-ac6bd00c9de6
-> > prerequisite-change-id: 20250225-b4-ov9282-gain-ef1cdaba5bfd:v1
-> > prerequisite-patch-id: 86f2582378ff7095ab65ce4bb25a143eb639e840
-> > prerequisite-patch-id: b06eb6ec697aaf0b3155b4b2370f171d0d304ae2
-> > prerequisite-patch-id: b123047d71bfb9b93f743bbdd6893d5a98495801
-> >
-> > Best regards,
-> > --
-> > Richard Leitner <richard.leitner@linux.dev>
-> >
-> >
 
