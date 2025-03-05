@@ -1,130 +1,126 @@
-Return-Path: <linux-kernel+bounces-546800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69E51A4FEDE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:41:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6633A4FEE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:42:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3121895431
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:40:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B4E73A7C5F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:42:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFD71247DDD;
-	Wed,  5 Mar 2025 12:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D789245031;
+	Wed,  5 Mar 2025 12:42:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ccuTXNw8"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I2P9I5Bk"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 533EB246326;
-	Wed,  5 Mar 2025 12:40:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD2F1205AB0;
+	Wed,  5 Mar 2025 12:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178432; cv=none; b=Gq7qjKGFjomy2kUHuyuIzv6mRD3dQwMmIWBjGJMAcOJ/xa+2PuV/y5E3VutD3i8ALg7ibWly85d0aJxd1UJhXtSaLRJQKlOO6W3RDxhPawVjSgDWITitV7UMQ+dh96a4cPwsNek/MIFFx+yxIMwRlmF+8/UK+gXrWj5mmp+IFgE=
+	t=1741178555; cv=none; b=E5zS58wOU5nMqbdiZQpT6oQMBQf86igEmvKLPPzAH6qlA6jIbq6WxQ+oDgAVV6WMy3PDRgg1C+Ndvj46t79JpN/V++/E1K7kDBIu6uxCJj509TSNcg+ef3mvmlzsOMaKcWLvCCr7fdyuqABNNQkqRbTQ8ewFYWi4x3mfHQ/8I+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178432; c=relaxed/simple;
-	bh=oeAyzhOZkb7LEMowcz56bvOxX8oCCi6/DhM8XJDiiKk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Abp6BIt7Rv+AL1shUJfwuAbMkAbz1Z5MarlXc+hF//8jZo9PIEgUrossQX6CdS3fR+Fe7/QBSG3LTuECFhpeSIuMbGDY1X5HoPKK1wmJmBdcMyc55qolLsRvDb4plZOPj6ojx2WzwrbhsfIXzwoYxPYdSi35o7SK4LEFYSyJHQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ccuTXNw8; arc=none smtp.client-ip=209.85.221.45
+	s=arc-20240116; t=1741178555; c=relaxed/simple;
+	bh=DRGtcUD1Vbpa16JP3K2UzI5c9GSYi1XK9xSUmDdu/xk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TatZt/9vkEG/I7UIbNJOm+A7RimV/2GDY1GADhD4Cp8s5E3TWWevNcqYIx5iWnryFfiIpzcsaSBFWQgBgcaJjE4QlNq8VSaO5J4TXazRSKFfSR16AMVgxXFKKuuw8OMWHCdhWkU/pMBVwRYiWuMBRIP+vBndNpMrt5opOWzdY3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I2P9I5Bk; arc=none smtp.client-ip=209.85.161.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-390f5556579so2953684f8f.1;
-        Wed, 05 Mar 2025 04:40:29 -0800 (PST)
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-6003b679812so40880eaf.3;
+        Wed, 05 Mar 2025 04:42:33 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741178428; x=1741783228; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1qv7vNwjiLrzxqQ13AbY2Y9wvDjj6iJYqXWPt/syp30=;
-        b=ccuTXNw8o2IB78qiLHB+ffTLn/eKFtj79EV2MBb/QfDKL009NKz4LA3TvsiTqx70fR
-         7H2SuAn1C6RsP7iDin6zf0XoxrYriAqpEw8p+3ruf8LRLbRwxgcwnb63i3DmNQSDi4Ht
-         h29jrJGiqybPAQlKrcoo5JGbOerkklTFSs7tQkgDheBjSzIQT2bZ9fWqbvmO8Lt+zqNz
-         MO5Qydr9YmG1Yn7GoM0zl0ioxvKFKpox44fnxonDreEYPNUGk2VFu0vhR97WOb7WQikH
-         pnQVi/f+Qa73YFb/7Hp+FWizlncLzbut392ABdwu8YkfgXOP/bERKOoxWuxv8L+F9hV3
-         +JYg==
+        d=gmail.com; s=20230601; t=1741178553; x=1741783353; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DRGtcUD1Vbpa16JP3K2UzI5c9GSYi1XK9xSUmDdu/xk=;
+        b=I2P9I5BkupfAk+4q3fk5x/PDslC+3DhVXzvO0JbOm0fRi5Jo+Fgnn91BnSSBlzMMtZ
+         2Z/WeLmQCQD9Ab9l06whe16TB7g1icmIBAob+uawtcQ6QkMYkQYTh8gVDaA+de3//2d+
+         +fQhUFI50BEAg16UWdqb66U7XNtydB9gIE0Tu7k3vk+x4Oqh9XgSncD+/UYs5oD4uqCd
+         P6uac5byM2X1eEUKDyKaguGEoolLMwOGq68KWvvNeJM6d6Ybx8vuJ0eq7xGuXHw3dBSY
+         E88jXCbNb5PJElmg1BaKll2SR0Yhq/3Jr/C5p53Z6ABMQUJgb+0e5Xl4lbBD77PhV8Bd
+         a/6Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741178428; x=1741783228;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1qv7vNwjiLrzxqQ13AbY2Y9wvDjj6iJYqXWPt/syp30=;
-        b=u7pqcvftH/xZUC26MJENOO2pDCKQudqA7IMehZUdfO/bAqagCmb2bk+FC24xS/gOqQ
-         utquSlLaXq5WpZ20CgT9ux5PJ0I5sRQAcoEXZHltUMOHk+dq4IO4ob5eIikB+7CYeh9V
-         1FxLM9vjABwK/r+5cJI4BCjM2YtXrzzEvDCTU+s8sGyTXsdtGXvTTeecF16SpBWCAP3A
-         K+xHfGDMU6oPBbZNotM2CSb7osnVVT2ZOKFPzstvUUx7eZ0NdnaeFiBWyPb8hBumeRGB
-         KDwlWUXHG8/2aYembZJInGFGkD2Tf9KtSNGCqdAHDE4dOhnj16bDQhktck9otxB7EZrz
-         ez3w==
-X-Forwarded-Encrypted: i=1; AJvYcCV9WZ/mUKGRY243roWWG3wreJk23TW9ORB6ZyO81ZQCFxEgcgTedrk9QKOGcvRTpvbQzvBHJf0N@vger.kernel.org, AJvYcCVYQwaGZDv/sn7NnUWPm3tH4nVZ7Ebv4+Bpu4drd62CF+37q3f3Ts6bU8+XwTy1u0OgRXixrJrE0w3gyD8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6LG5V01FoEjdkExSpacShv9pL5qHDbYeCw78K/fWxS0uri1Q9
-	XSlq02vzjQLhWQzhx04+PTL/Y96BbLDty9GNtpuS2XfnXcPctI7EimnbFA==
-X-Gm-Gg: ASbGncuQAbXCPq8dSSOTnZSrRLJccXJ0WoZszUGtnMauVEoBxeksrdY+uFw+Jt0ntdU
-	4zmfL7yyW2sB8mwtiRHECy96f9p0oqnkKKY/1LoDz9UbpwV/mD+O+YBmo/jXrBaBulo5tQAM1kI
-	kIbSdyTvGWzp0yioJGbqgAsJl7IF1wfaw7L8TBZMQJwWim60RJNiedsk06ju6JDdIttVPM6N8AY
-	N+hWcgZXRYFp59m1VvS4hhO19FIgo6hfDbfKjFPT2H7319SLwbAYDD/UEs7g7QM8M7dy0bJpVFw
-	djpFVk5nSRcNNHtKer0Sn3vZb4GgfPgewUbHzxHd0p6oJQ==
-X-Google-Smtp-Source: AGHT+IHUUVHZp3vO4Q9MO882vZfI2u8tktJ9u/LsJlvZzzHu94nWDHiy8WED3wb5qVHrYlJa8wuNlw==
-X-Received: by 2002:a05:6000:2b0b:b0:390:df7f:c20a with SMTP id ffacd0b85a97d-3911f772ae4mr1498716f8f.33.1741178428208;
-        Wed, 05 Mar 2025 04:40:28 -0800 (PST)
-Received: from qasdev.Home ([2a02:c7c:6696:8300:dd18:aac7:25a4:9d82])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bcbcc53d3sm35391675e9.0.2025.03.05.04.40.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 04:40:27 -0800 (PST)
-From: Qasim Ijaz <qasdev00@gmail.com>
-To: adilger.kernel@dilger.ca,
-	tytso@mit.edu
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH] ext4: Fix potential NULL pointer dereferences in test_mb_mark_used() and test_mb_free_blocks()
-Date: Wed,  5 Mar 2025 12:40:12 +0000
-Message-Id: <20250305124012.28500-1-qasdev00@gmail.com>
-X-Mailer: git-send-email 2.39.5
+        d=1e100.net; s=20230601; t=1741178553; x=1741783353;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DRGtcUD1Vbpa16JP3K2UzI5c9GSYi1XK9xSUmDdu/xk=;
+        b=m7zpmjPxMGEUYnMWAUwyhZHvVP83gFWkEI8S+pwMVawmpagBG6QMitfdzREEY5RNjK
+         XmbsrHwXLStv+BTcMwreOgx3AGJY3c/wLw8U826v11UScN/dxrdVzsi2SYQ4NeKkoiXg
+         YtuXOJtORMaLUnS186yiRMA4nesoRMqdKp2621dyebNU0Ags5YH+8hP8RZdCLTfzgVAn
+         0VFLr5fIrTl0YcXSS7wi7pzqBUN+wZBiCRWoLj2xiN9tfJAO6LuqzTTD4AjDkCV/AboM
+         lUgBJTRWj0uswhOQcKtW47VYTYGR2XMeaNpQTQvCuhy9wB8iCO1I7iQUfXUwNyfkF7M1
+         yR+g==
+X-Forwarded-Encrypted: i=1; AJvYcCU/KtTOzcLkY4iYo4JxOdT1qMbN1irOxFgVknOmlsGHufmSGSyDgN9oi9Ze2thwKu2Kb8uLjt7rWc0YNhNT@vger.kernel.org, AJvYcCVgAzxnS1fK5N2t2rdgR7d/NMDeCAT1sqe0ahqoRr2fMliOh61fr7AT6u+TYEorQhVcjZ9wrUwsiDlBV++m@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHWLKiX3mv8E3yVURrQqIQOgG0ABbVrWhqPW8HxwIvl8oHuEHx
+	yB/UD3I1EoojCHVduxXR4xmkrraHAbJ91u8QMjcpqBR9jOUNno/eSVTkF3bVwg95xkAx8aM43NC
+	rpj8L5I18il2A/pXEJp6132opdwc=
+X-Gm-Gg: ASbGnctY47ygbUvZVaRY7HPRsUQVkVlbDLMlfqjmwh6ydBJ8Ev7KkMSlXXj7j/C/Q04
+	1lZPyJHUE3Jc56s5KpqFlV29IQ6xzxnPR5X67M4GtI3VBWDigevgzDTbxM73+uFxuljLhLhLF0a
+	Gc1QnBvcIGP5qzhU7Cu7ahURi2
+X-Google-Smtp-Source: AGHT+IH8lsrvrDzJqM8aKTieKvcsW2tjj+X12MGd0Mu9B+u7+BJpXj5gYOm5oxOXNtz1vB0FMjVdey/z5l6+DQPZSw0=
+X-Received: by 2002:a05:6870:9111:b0:2b7:7abf:df6b with SMTP id
+ 586e51a60fabf-2c21cdb2988mr1638765fac.26.1741178552643; Wed, 05 Mar 2025
+ 04:42:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250304183506.498724-1-mjguzik@gmail.com> <20250305-sofern-visite-70a6134399cb@brauner>
+In-Reply-To: <20250305-sofern-visite-70a6134399cb@brauner>
+From: Mateusz Guzik <mjguzik@gmail.com>
+Date: Wed, 5 Mar 2025 13:42:16 +0100
+X-Gm-Features: AQ5f1JqUDRpjSlGsw8z1UTF2NdDIUgAPkfZ2OhchQYB9wAP2J7YgZJTvrMvNtyo
+Message-ID: <CAGudoHFQioKFuxXesPbfHbjdWpqTs-_J2Ss0dVrr218ih0XPtQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v v2 0/4] avoid the extra atomic on a ref when closing
+ a fd
+To: Christian Brauner <brauner@kernel.org>
+Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-test_mb_mark_used() and test_mb_free_blocks() call kunit_kzalloc() to 
-allocate memory, however both fail to ensure that the allocations 
-succeeded. If kunit_kzalloc() returns NULL, then dereferencing the 
-corresponding pointer without checking for NULL will lead to 
-a NULL pointer dereference.
+On Wed, Mar 5, 2025 at 11:38=E2=80=AFAM Christian Brauner <brauner@kernel.o=
+rg> wrote:
+>
+> On Tue, Mar 04, 2025 at 07:35:02PM +0100, Mateusz Guzik wrote:
+> > The stock kernel transitioning the file to no refs held penalizes the
+> > caller with an extra atomic to block any increments.
+> >
+> > For cases where the file is highly likely to be going away this is
+> > easily avoidable.
+> >
+> > In the open+close case the win is very modest because of the following
+> > problems:
+> > - kmem and memcg having terrible performance
+>
+> I thought that was going to be addressed by Vlastimil, i.e., the mm guys
+> to provide a new memcg api.
 
-To fix this call KUNIT_ASSERT_NOT_ERR_OR_NULL() to ensure 
-the allocation succeeded.
+afaics this is for kmem only, no memcg support.
 
-Signed-off-by: Qasim Ijaz <qasdev00@gmail.com>
-Fixes: ac96b56a2fbd ("ext4: Add unit test for mb_mark_used")
-Fixes: b7098e1fa7bc ("ext4: Add unit test for mb_free_blocks")
-Cc: stable@vger.kernel.org
----
- fs/ext4/mballoc-test.c | 2 ++
- 1 file changed, 2 insertions(+)
+There is an old patch which sped up memcg, but got reverted and it is
+on the table to bring it back, but Vlastimil is dragging his foot.
 
-diff --git a/fs/ext4/mballoc-test.c b/fs/ext4/mballoc-test.c
-index bb2a223b207c..d634c12f1984 100644
---- a/fs/ext4/mballoc-test.c
-+++ b/fs/ext4/mballoc-test.c
-@@ -796,6 +796,7 @@ static void test_mb_mark_used(struct kunit *test)
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buddy);
- 	grp = kunit_kzalloc(test, offsetof(struct ext4_group_info,
- 				bb_counters[MB_NUM_ORDERS(sb)]), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, grp);
- 
- 	ret = ext4_mb_load_buddy(sb, TEST_GOAL_GROUP, &e4b);
- 	KUNIT_ASSERT_EQ(test, ret, 0);
-@@ -860,6 +861,7 @@ static void test_mb_free_blocks(struct kunit *test)
- 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, buddy);
- 	grp = kunit_kzalloc(test, offsetof(struct ext4_group_info,
- 				bb_counters[MB_NUM_ORDERS(sb)]), GFP_KERNEL);
-+	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, grp);
- 
- 	ret = ext4_mb_load_buddy(sb, TEST_GOAL_GROUP, &e4b);
- 	KUNIT_ASSERT_EQ(test, ret, 0);
--- 
-2.39.5
+> > vast majority of last fputs are from remove_vma. I think that code want=
+s
+> > to be patched to batch them (as in something like fput_many should be
+> > added -- something for later).
+>
+> We used to have that for io_uring and got rid of it. The less fput()
+> primitives the better tbh. But let's see.
+>
 
+I would say a _many (or whatever) variant is pretty idiomatic, but I'm
+not going to insist. This is a side remark to the patchset.
+
+--=20
+Mateusz Guzik <mjguzik gmail.com>
 
