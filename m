@@ -1,293 +1,108 @@
-Return-Path: <linux-kernel+bounces-546560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC3DA4FC35
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:36:05 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F3DBA4FC39
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:36:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 800F33AF510
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:35:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE0E27A2DBF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:35:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277AB207A31;
-	Wed,  5 Mar 2025 10:30:25 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A091521147B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6291207649;
+	Wed,  5 Mar 2025 10:30:38 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAE7B2066EE;
+	Wed,  5 Mar 2025 10:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170624; cv=none; b=IEnUzS1fKe3Sx4cSy8hIfxwdAi/wTj9k9Yp5jMIW/hHAFsqXVg6A3jpYw6Ms/PsEktcDyRZYyksDMV1Ukl1f6Kp57jmL5o9xokG/Ay9M3fVrO09TjrVRM/gw+SU7YuyHxdZ0ai54mb4p3gd7DoIDCOjBIdyz7LtKVYvP8g1dazg=
+	t=1741170638; cv=none; b=WoRTl7KiLcOOUm5H3IKsMr8VhaJgBcJBFzhNKHNAOb8qstej79B0dz0M1sOBECTbe4tzSE3iumS1v5j54RX91N1KrSPr7DiCKFVQk8oB8W4/3byuZS2HBhXKxjScte/oPFxfX8m1A3Qqgl20KT4IAwLr2zZoi6P0v60gwiXhGng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170624; c=relaxed/simple;
-	bh=PAvmWz1PFQmaSlup+6X0UngFEKHUKJvNzD6IL6zjxG8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mtZnneeMVYTzyuYXCh0Wq+XfWfFiVJujX2K2lN6+ASTQI2zpBmJDeeVgdBFUcEDgkLmmp5xIx9MCqIRBZsGec0SGn5kPz50edzPzYKghapoBuPYor7Bm9E7rlE+PzeaG7piemwXI4seVx8PBJ9khuuZI8laBqiLySUMehZ97BZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 395F9FEC;
-	Wed,  5 Mar 2025 02:30:34 -0800 (PST)
-Received: from [10.57.67.16] (unknown [10.57.67.16])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B565D3F673;
-	Wed,  5 Mar 2025 02:30:18 -0800 (PST)
-Message-ID: <6506d660-cbb6-42b6-893e-25ded19c5f11@arm.com>
-Date: Wed, 5 Mar 2025 10:30:17 +0000
+	s=arc-20240116; t=1741170638; c=relaxed/simple;
+	bh=H3pe/p2yHg6JN3GTrX0Rfqp5BVs5ufrKO6v+86OK34g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=eYvrKByFJNjoXoX/XhVO0hSoz11r848XRKw9vJCzYlysR2aFScqm0Rxrd+2FcPwnJCn827rATNRuJVvbTwnJybktt6FOPH9zzOqrlTKOVr/4w97r7xbuolTitl3dhLCfxbnMsdeft1Y0u3bX2vsqcgK3NHl9SfJRPWs82mzwY0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: 022NGo0+RKyvi9k787RnTQ==
+X-CSE-MsgGUID: jM+6tcl0Qwqm5wNSSiJHeA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="64567008"
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="64567008"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:30:36 -0800
+X-CSE-ConnectionGUID: WDkYJmSHT0OrYH3RzlgbQw==
+X-CSE-MsgGUID: ttOP2cH/SDKXIxbe3IsO4w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="122783306"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:30:26 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1tpm18-0000000HNpF-00A7;
+	Wed, 05 Mar 2025 12:30:22 +0200
+Date: Wed, 5 Mar 2025 12:30:21 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: George Cherian <george.cherian@marvell.com>
+Cc: linux@roeck-us.net, wim@linux-watchdog.org, jwerner@chromium.org,
+	evanbenn@chromium.org, kabel@kernel.org, krzk@kernel.org,
+	mazziesaccount@gmail.com, thomas.richard@bootlin.com,
+	lma@chromium.org, bleung@chromium.org,
+	support.opensource@diasemi.com, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	paul@crapouillou.net, alexander.usyskin@intel.com,
+	andreas.werner@men.de, daniel@thingy.jp, romain.perier@gmail.com,
+	avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, naveen@kernel.org, mwalle@kernel.org,
+	xingyu.wu@starfivetech.com, ziv.xu@starfivetech.com,
+	hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	chrome-platform@lists.linux.dev, imx@lists.linux.dev,
+	linux-mips@vger.kernel.org, openbmc@lists.ozlabs.org,
+	linuxppc-dev@lists.ozlabs.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH v4 1/2] watchdog: Add a new flag WDIOF_STOP_MAYSLEEP
+Message-ID: <Z8gnvXQ9OMXoq9Fz@smile.fi.intel.com>
+References: <20250305101025.2279951-1-george.cherian@marvell.com>
+ <20250305101025.2279951-2-george.cherian@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] drm/panthor: Avoid sleep locking in the internal
- BO size path
-To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
- Boris Brezillon <boris.brezillon@collabora.com>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Mihail Atanassov <mihail.atanassov@arm.com>
-Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20250303190923.1639985-1-adrian.larumbe@collabora.com>
- <20250303190923.1639985-2-adrian.larumbe@collabora.com>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <20250303190923.1639985-2-adrian.larumbe@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305101025.2279951-2-george.cherian@marvell.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 03/03/2025 19:08, Adrián Larumbe wrote:
-> Commit 434e5ca5b5d7 ("drm/panthor: Expose size of driver internal BO's over
-> fdinfo") locks the VMS xarray, to avoid UAF errors when the same VM is
-> being concurrently destroyed by another thread. However, that puts the
-> current thread in atomic context, which means taking the VMS' heap locks
-> will trigger a warning as the thread is no longer allowed to sleep.
-> 
-> Because in this case replacing the heap mutex with a spinlock isn't
-> feasible, the fdinfo handler no longer traverses the list of heaps for
-> every single VM associated with an open DRM file. Instead, when a new heap
-> chunk is allocated, its size is accumulated into a pool-wide tally, which
-> also makes the atomic context code path somewhat faster.
-> 
-> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
-> Fixes: 3e2c8c718567 ("drm/panthor: Expose size of driver internal BO's over fdinfo")
+On Wed, Mar 05, 2025 at 10:10:24AM +0000, George Cherian wrote:
+> A new option flag is added to watchdog_info. This helps the watchdog
+> core to check whether stop functions would sleep or not.
+> The option flags of individual drivers are also updated accordingly.
 
-Reviewed-by: Steven Price <steven.price@arm.com>
+...
 
-> ---
->  drivers/gpu/drm/panthor/panthor_heap.c | 62 +++++++++++++-------------
->  drivers/gpu/drm/panthor/panthor_mmu.c  |  8 +---
->  2 files changed, 31 insertions(+), 39 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/panthor/panthor_heap.c b/drivers/gpu/drm/panthor/panthor_heap.c
-> index db0285ce5812..3bdf61c14264 100644
-> --- a/drivers/gpu/drm/panthor/panthor_heap.c
-> +++ b/drivers/gpu/drm/panthor/panthor_heap.c
-> @@ -97,6 +97,9 @@ struct panthor_heap_pool {
->  
->  	/** @gpu_contexts: Buffer object containing the GPU heap contexts. */
->  	struct panthor_kernel_bo *gpu_contexts;
-> +
-> +	/** @size: Size of all chunks across all heaps in the pool. */
-> +	atomic_t size;
->  };
->  
->  static int panthor_heap_ctx_stride(struct panthor_device *ptdev)
-> @@ -118,7 +121,7 @@ static void *panthor_get_heap_ctx(struct panthor_heap_pool *pool, int id)
->  	       panthor_get_heap_ctx_offset(pool, id);
->  }
->  
-> -static void panthor_free_heap_chunk(struct panthor_vm *vm,
-> +static void panthor_free_heap_chunk(struct panthor_heap_pool *pool,
->  				    struct panthor_heap *heap,
->  				    struct panthor_heap_chunk *chunk)
->  {
-> @@ -127,12 +130,13 @@ static void panthor_free_heap_chunk(struct panthor_vm *vm,
->  	heap->chunk_count--;
->  	mutex_unlock(&heap->lock);
->  
-> +	atomic_sub(heap->chunk_size, &pool->size);
-> +
->  	panthor_kernel_bo_destroy(chunk->bo);
->  	kfree(chunk);
->  }
->  
-> -static int panthor_alloc_heap_chunk(struct panthor_device *ptdev,
-> -				    struct panthor_vm *vm,
-> +static int panthor_alloc_heap_chunk(struct panthor_heap_pool *pool,
->  				    struct panthor_heap *heap,
->  				    bool initial_chunk)
->  {
-> @@ -144,7 +148,7 @@ static int panthor_alloc_heap_chunk(struct panthor_device *ptdev,
->  	if (!chunk)
->  		return -ENOMEM;
->  
-> -	chunk->bo = panthor_kernel_bo_create(ptdev, vm, heap->chunk_size,
-> +	chunk->bo = panthor_kernel_bo_create(pool->ptdev, pool->vm, heap->chunk_size,
->  					     DRM_PANTHOR_BO_NO_MMAP,
->  					     DRM_PANTHOR_VM_BIND_OP_MAP_NOEXEC,
->  					     PANTHOR_VM_KERNEL_AUTO_VA);
-> @@ -180,6 +184,8 @@ static int panthor_alloc_heap_chunk(struct panthor_device *ptdev,
->  	heap->chunk_count++;
->  	mutex_unlock(&heap->lock);
->  
-> +	atomic_add(heap->chunk_size, &pool->size);
-> +
->  	return 0;
->  
->  err_destroy_bo:
-> @@ -191,17 +197,16 @@ static int panthor_alloc_heap_chunk(struct panthor_device *ptdev,
->  	return ret;
->  }
->  
-> -static void panthor_free_heap_chunks(struct panthor_vm *vm,
-> +static void panthor_free_heap_chunks(struct panthor_heap_pool *pool,
->  				     struct panthor_heap *heap)
->  {
->  	struct panthor_heap_chunk *chunk, *tmp;
->  
->  	list_for_each_entry_safe(chunk, tmp, &heap->chunks, node)
-> -		panthor_free_heap_chunk(vm, heap, chunk);
-> +		panthor_free_heap_chunk(pool, heap, chunk);
->  }
->  
-> -static int panthor_alloc_heap_chunks(struct panthor_device *ptdev,
-> -				     struct panthor_vm *vm,
-> +static int panthor_alloc_heap_chunks(struct panthor_heap_pool *pool,
->  				     struct panthor_heap *heap,
->  				     u32 chunk_count)
->  {
-> @@ -209,7 +214,7 @@ static int panthor_alloc_heap_chunks(struct panthor_device *ptdev,
->  	u32 i;
->  
->  	for (i = 0; i < chunk_count; i++) {
-> -		ret = panthor_alloc_heap_chunk(ptdev, vm, heap, true);
-> +		ret = panthor_alloc_heap_chunk(pool, heap, true);
->  		if (ret)
->  			return ret;
->  	}
-> @@ -226,7 +231,7 @@ panthor_heap_destroy_locked(struct panthor_heap_pool *pool, u32 handle)
->  	if (!heap)
->  		return -EINVAL;
->  
-> -	panthor_free_heap_chunks(pool->vm, heap);
-> +	panthor_free_heap_chunks(pool, heap);
->  	mutex_destroy(&heap->lock);
->  	kfree(heap);
->  	return 0;
-> @@ -308,8 +313,7 @@ int panthor_heap_create(struct panthor_heap_pool *pool,
->  	heap->max_chunks = max_chunks;
->  	heap->target_in_flight = target_in_flight;
->  
-> -	ret = panthor_alloc_heap_chunks(pool->ptdev, vm, heap,
-> -					initial_chunk_count);
-> +	ret = panthor_alloc_heap_chunks(pool, heap, initial_chunk_count);
->  	if (ret)
->  		goto err_free_heap;
->  
-> @@ -342,7 +346,7 @@ int panthor_heap_create(struct panthor_heap_pool *pool,
->  	return id;
->  
->  err_free_heap:
-> -	panthor_free_heap_chunks(pool->vm, heap);
-> +	panthor_free_heap_chunks(pool, heap);
->  	mutex_destroy(&heap->lock);
->  	kfree(heap);
->  
-> @@ -389,6 +393,7 @@ int panthor_heap_return_chunk(struct panthor_heap_pool *pool,
->  			removed = chunk;
->  			list_del(&chunk->node);
->  			heap->chunk_count--;
-> +			atomic_sub(heap->chunk_size, &pool->size);
->  			break;
->  		}
->  	}
-> @@ -466,7 +471,7 @@ int panthor_heap_grow(struct panthor_heap_pool *pool,
->  	 * further jobs in this queue fail immediately instead of having to
->  	 * wait for the job timeout.
->  	 */
-> -	ret = panthor_alloc_heap_chunk(pool->ptdev, pool->vm, heap, false);
-> +	ret = panthor_alloc_heap_chunk(pool, heap, false);
->  	if (ret)
->  		goto out_unlock;
->  
-> @@ -560,6 +565,8 @@ panthor_heap_pool_create(struct panthor_device *ptdev, struct panthor_vm *vm)
->  	if (ret)
->  		goto err_destroy_pool;
->  
-> +	atomic_add(pool->gpu_contexts->obj->size, &pool->size);
-> +
->  	return pool;
->  
->  err_destroy_pool:
-> @@ -594,8 +601,10 @@ void panthor_heap_pool_destroy(struct panthor_heap_pool *pool)
->  	xa_for_each(&pool->xa, i, heap)
->  		drm_WARN_ON(&pool->ptdev->base, panthor_heap_destroy_locked(pool, i));
->  
-> -	if (!IS_ERR_OR_NULL(pool->gpu_contexts))
-> +	if (!IS_ERR_OR_NULL(pool->gpu_contexts)) {
-> +		atomic_sub(pool->gpu_contexts->obj->size, &pool->size);
->  		panthor_kernel_bo_destroy(pool->gpu_contexts);
-> +	}
->  
->  	/* Reflects the fact the pool has been destroyed. */
->  	pool->vm = NULL;
-> @@ -605,27 +614,16 @@ void panthor_heap_pool_destroy(struct panthor_heap_pool *pool)
->  }
->  
->  /**
-> - * panthor_heap_pool_size() - Calculate size of all chunks across all heaps in a pool
-> - * @pool: Pool whose total chunk size to calculate.
-> + * panthor_heap_pool_size() - Get a heap pool's total size
-> + * @pool: Pool whose total chunks size to return
->   *
-> - * This function adds the size of all heap chunks across all heaps in the
-> - * argument pool. It also adds the size of the gpu contexts kernel bo.
-> - * It is meant to be used by fdinfo for displaying the size of internal
-> - * driver BO's that aren't exposed to userspace through a GEM handle.
-> + * Returns the aggregated size of all chunks for all heaps in the pool
->   *
->   */
->  size_t panthor_heap_pool_size(struct panthor_heap_pool *pool)
->  {
-> -	struct panthor_heap *heap;
-> -	unsigned long i;
-> -	size_t size = 0;
-> -
-> -	down_read(&pool->lock);
-> -	xa_for_each(&pool->xa, i, heap)
-> -		size += heap->chunk_size * heap->chunk_count;
-> -	up_read(&pool->lock);
-> -
-> -	size += pool->gpu_contexts->obj->size;
-> +	if (!pool)
-> +		return 0;
->  
-> -	return size;
-> +	return atomic_read(&pool->size);
->  }
-> diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-> index 8c6fc587ddc3..12a02e28f50f 100644
-> --- a/drivers/gpu/drm/panthor/panthor_mmu.c
-> +++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-> @@ -1963,13 +1963,7 @@ void panthor_vm_heaps_sizes(struct panthor_file *pfile, struct drm_memory_stats
->  
->  	xa_lock(&pfile->vms->xa);
->  	xa_for_each(&pfile->vms->xa, i, vm) {
-> -		size_t size = 0;
-> -
-> -		mutex_lock(&vm->heaps.lock);
-> -		if (vm->heaps.pool)
-> -			size = panthor_heap_pool_size(vm->heaps.pool);
-> -		mutex_unlock(&vm->heaps.lock);
-> -
-> +		size_t size = panthor_heap_pool_size(vm->heaps.pool);
->  		stats->resident += size;
->  		if (vm->as.id >= 0)
->  			stats->active += size;
+>  	.options =	WDIOF_SETTIMEOUT |
+>  			WDIOF_MAGICCLOSE |
+> -			WDIOF_KEEPALIVEPING,
+> +			WDIOF_KEEPALIVEPING |
+> +			WDIOF_STOP_MAYSLEEP,
+
+You may heavily reduce this change if you squeeze the new option just before
+the last one. Currently it's a lot of unneeded churn that makes review a bit
+harder (each needs to be carefully checked for the correctness).
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
