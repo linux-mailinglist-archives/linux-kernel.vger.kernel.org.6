@@ -1,89 +1,101 @@
-Return-Path: <linux-kernel+bounces-547049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C42AA50260
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:46 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A86FEA50264
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:42:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 24A51162954
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:38:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 540CC165356
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:38:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA15521480C;
-	Wed,  5 Mar 2025 14:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58DC0241132;
+	Wed,  5 Mar 2025 14:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MkyQhRRb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cs.cmu.edu header.i=@cs.cmu.edu header.b="QNyf5eB2"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 997A714A09A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:37:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8BA624BC1D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:38:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185480; cv=none; b=R39XzfUeg7pRAKcDg0nwymqCUHqaMW1Yjb+kXpZ5lsTiBo1hJJ1ptNJoXa44TY06zbux+cFJyZfGweHQuLquNBjyiZbEJuhSgHdHhJWKZwsMSONUDcrWedfhJN+0t05hbmdssgEFJLT4cYTprWYfBmSDRl3HkKYu4LGy9vmaPus=
+	t=1741185507; cv=none; b=bDe+SRyMtjTDHG22MWS3BbXNeIIB9GA/t9xefMaaqJEHOnlL2mefL1JDPaJC+d22om2FuomoacxIqeocbNFWJotFNhrcp58QXLv7NnzrmJP/q2lE18JLI2bsEXifWQrFdOa5ZnZot40VfzD7j/OhF0ZTsH9RHNoGIQl7HJ8xvY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185480; c=relaxed/simple;
-	bh=CSy21FFYCfkrs1Vebz77But+YBdPWb0R0yTM3O4u1EQ=;
+	s=arc-20240116; t=1741185507; c=relaxed/simple;
+	bh=BqeLWYpmzx08akl6bVj7sB5B/GwdFFEes1rYrt+d1vU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nN1SU1HGZw8vL1ZNU++ceMV5bnCjdMFSKG+E6LEYGzgJJl93ePNLIIwiVZHIS6gthKe69Cui5JXiKu06aIJbADwEe6haLT8dm7DmxhB7YCRlGg54k0C8p+nTRjZ1ZA83Q4JAUNOKAtCukQp9n4vHijd2AXsC4PgZkg/ewwHUtdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MkyQhRRb; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741185479; x=1772721479;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CSy21FFYCfkrs1Vebz77But+YBdPWb0R0yTM3O4u1EQ=;
-  b=MkyQhRRbGYeqsqbCAlcP6CCPDuIsAwMq1+2oSTocrslkoWuBuOw7hSOu
-   3jIovb/vMpcOAPuZ8DR4ZEX28XH9Y29jOsh+dJ7hgIQQE0qHGeju6s76W
-   at8E5olK4YRqMiS5+QzGySLu+S3ABARGekVhV6D9NsvJ4/Zy2kZ5UplK2
-   eJGth1pRaVIvkNRq3CplQ0wrKZp/MQTnhsbM7ilYYx4HT/dNhJ+bHVnYf
-   nfcU4KnIxLFcpEIwyS/tfa4pD4xPjNeNXmbpOK0Ar7Qp1rowbz2g6sfJZ
-   Lq1B/VkYmeRAAeDB2cDb5hFnOaMGCqVssWb8ibYiQGLVHp3i3dN5o2Tqh
-   g==;
-X-CSE-ConnectionGUID: 4zYksdVrQra0k+2vs+xOHQ==
-X-CSE-MsgGUID: RnR1kQ1TTgmJJg43fr6vFw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42350773"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="42350773"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:37:58 -0800
-X-CSE-ConnectionGUID: yba5WHXCRs6NCv7yprlgGg==
-X-CSE-MsgGUID: /XxRzxeSShWGF56o44N/DA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="118526770"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:37:54 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tppsc-0000000HRDU-3UrN;
-	Wed, 05 Mar 2025 16:37:50 +0200
-Date: Wed, 5 Mar 2025 16:37:50 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: mailhol.vincent@wanadoo.fr
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=ujW8LvtbyOMqE9FgHK/oj6UkLH/nP5JAkBKg9kSJokJ/akcgAlGp2JvrBl32Jzjz32bXZphk6wZAaCX+k/XICbb+YQX07/7Rtz+CrQgMVlt6F6xAV+ek+mQFqiUmNmQXu1Y+m5JfR3YkgHzayhIIKpPfFPMXMWaNpHxBX1Iag1Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.cmu.edu; spf=fail smtp.mailfrom=andrew.cmu.edu; dkim=pass (2048-bit key) header.d=cs.cmu.edu header.i=@cs.cmu.edu header.b=QNyf5eB2; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cs.cmu.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=andrew.cmu.edu
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-474fba180cfso19037281cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:38:24 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cs.cmu.edu; s=google-2021; t=1741185503; x=1741790303; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ka/zF6Ds/g/dxAZATcvUkbSWy5jstJ9gLeo9m4izlug=;
+        b=QNyf5eB2mqnQQeMpgkW87arbJgUtBEc7JWfQd6ZrCE1OKOEnIsCxlYQe5kgl7a5ilu
+         XDmJ1mTraa+K0plwSwHUIuj+aLWBotfgSiLcMfT1OtNIg+vZRxN19amUAsXCKZRj2Hbv
+         g7uFMr7UrUrnuOmVC2qTouuHc5PYMNisNyIBFXI/DgNRK6LJ7kfjug1uFy0krYnG7kuG
+         ElsX6MGo+aRMMuKUThCRIu1ur6FZpJp0Sa6yAtb+TQuxGY2zLW24kEYIdZQzwX7ITKYk
+         2rYOV0Ftx4EoLDzgaMDJ13w55D6mv4CVdZQva18GNi/F52M46Ia95g9QrCEoQmxiR82B
+         Bqiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741185503; x=1741790303;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Ka/zF6Ds/g/dxAZATcvUkbSWy5jstJ9gLeo9m4izlug=;
+        b=d3r4SRQKIzEEAJDdPGJeyaLs+tO5M5rn3dSrKGH8lPpAsIFBb5Y1w4K+wrLOMYw0Rt
+         mmHzwbHp7iBQYfiZtaGo5M3+5fab7dHtsZeJ/jbYNFdB+xIFiY6pXGJDHpGp72u+0jAm
+         5kMpXMHUpt8Hxf6uvuYvcrlUW2WeD1vJ8dtw5/weydeNF0RzzAHbp8zYotFdQAV2BT0W
+         4wMeQJUmrcYVeQRv81YcxHlIw5U6/927dWZjQbrEzKnhLrLsGHnqyVUmeLS/H/W7ScmY
+         vUPpgWVSTfC23GUU3mVlfaf9oK7qoMuD54PgX8R950P6uHu4GKdnlMZ0k33t5IT94UJr
+         139A==
+X-Forwarded-Encrypted: i=1; AJvYcCVzdSj+7VH4oDdtdIbNRHbCHCZ3jkuDq5l2koWRweym38yFkuV3nSBayc0wYT0JZx9LQEyDdkbaP/OGpIM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx4b2sICfVGpa15eD5OPky8wJDGk9c3A0XdCrBQ8RSs2qgKxWV8
+	YRiGOWy8UZ4PsJKFQc+C1et+Ml5KceELe56RAVEw1kjGuSUdN7+hUGManMUTeQ==
+X-Gm-Gg: ASbGncvBsH3oFOAkXOLkL+c0MdkTq2O5HUO49hTiNg3nYtJmkRnBB3THfoJlaTZ8shf
+	KpKNE43WiNDevhf7tQLtMArafLNW0+PmdziVhJbHKKayhv9oNO+LZJG4efiofBm9lrS3yXaPLMM
+	t9ti8b5bcK92oZ93XqbBpyXjGG7Gz66Ul1bXvXpBtJEfTf85+MrsmXbCBvM2zCI8NJD1IMnloGM
+	bP1cN68mkl6MiV68qH1HpGLOjl1dZj6O61OZoYS9sm6OXvPzj+ouq6AE6N0yaW+gTYmIbzX2wAC
+	o6RnS9Cc8+GJAgK4ruQwi+PYQaIrgrd5N6XwKatc24VWTpDBC/KJK/Uye6tHLyYoGYhSDvzW0JV
+	PR7YQin4AQy4Y7XzJ+ZjNwQI0dA==
+X-Google-Smtp-Source: AGHT+IHgmaMykJuMYvv7QD/ziX2omMhk+AntnG0Px6ZBZpdvG36UzbAoKiAqQ2mp1n2eBu3/c1Y5Xw==
+X-Received: by 2002:a05:6214:2241:b0:6e6:602f:ef68 with SMTP id 6a1803df08f44-6e8e6d1065cmr44842656d6.10.1741185503461;
+        Wed, 05 Mar 2025 06:38:23 -0800 (PST)
+Received: from localhost.localhost (pool-74-98-231-160.pitbpa.fios.verizon.net. [74.98.231.160])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976346fcsm79902296d6.14.2025.03.05.06.38.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 06:38:23 -0800 (PST)
+Date: Wed, 5 Mar 2025 14:38:14 +0000
+From: Kaiyang Zhao <kaiyang2@cs.cmu.edu>
+To: Chen Yu <yu.c.chen@intel.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v4 5/8] drm/i915: Convert REG_GENMASK* to fixed-width
- GENMASK_*
-Message-ID: <Z8hhvovVmX-xLStQ@smile.fi.intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-5-1873dcdf6723@wanadoo.fr>
+	Rik van Riel <riel@redhat.com>, Mel Gorman <mgorman@suse.de>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Shakeel Butt <shakeel.butt@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Huang, Ying" <ying.huang@linux.alibaba.com>,
+	Tim Chen <tim.c.chen@intel.com>, Aubrey Li <aubrey.li@intel.com>,
+	Michael Wang <yun.wang@linux.alibaba.com>,
+	David Rientjes <rientjes@google.com>,
+	Raghavendra K T <raghavendra.kt@amd.com>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/3] sched/numa: Introduce per cgroup numa balance
+ control
+Message-ID: <Z8hh1urLnpmMxHqW@localhost.localhost>
+References: <cover.1740483690.git.yu.c.chen@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,27 +104,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305-fixed-type-genmasks-v4-5-1873dcdf6723@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <cover.1740483690.git.yu.c.chen@intel.com>
 
-On Wed, Mar 05, 2025 at 10:00:17PM +0900, Vincent Mailhol via B4 Relay wrote:
-> From: Lucas De Marchi <lucas.demarchi@intel.com>
+On Tue, Feb 25, 2025 at 09:59:33PM +0800, Chen Yu wrote:
+> This per-cgroup NUMA balancing control was once proposed in
+> 2019 by Yun Wang[1]. Then, in 2024, Kaiyang Zhao mentioned
+> that he was working with Meta on per-cgroup NUMA control[2]
+> during a discussion with David Rientjes.
 > 
-> Now that include/linux/bits.h implements fixed-width GENMASK_*, use them
+> I could not find further discussion regarding per-cgroup NUMA
+> balancing from that point on. This set of RFC patches is a
+> rough and compile-passed version, and may have unhandled cases
+> (for example, THP). It has not been thoroughly tested and is
+> intended to initiate or resume the discussion on the topic of
+> per-cgroup NUMA load balancing.
 
-GENMASK_*()
+Hello Chen,
 
-and in the Subject
+It's nice to see people interested in this. I posted a set of RFC patches
+later[1] that focuses on the fairness issue in memory tiering. It mostly
+concerns the demotion side of things, and the promotion / NUMA balancing
+side of things was left out of the patch set.
 
-REG_GENMASK*()
+I don't work for Meta now, but my understanding is that they'll attempt
+to push through a solution for per-cgroup control of memory tiering that
+is in the same vein as my RFC patches, and it may include controls for
+per-group NUMA balancing in the context of tiered memory.
 
-> to implement the i915/xe specific macros. Converting each driver to use
-> the generic macros are left for later, when/if other driver-specific
-> macros are also generalized.
+Best,
+Kaiyang
 
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+[1] https://lore.kernel.org/linux-mm/20240920221202.1734227-1-kaiyang2@cs.cmu.edu/
 
