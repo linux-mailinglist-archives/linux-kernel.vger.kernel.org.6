@@ -1,170 +1,156 @@
-Return-Path: <linux-kernel+bounces-546487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D939A4FB35
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:07:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2870FA4FB32
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:07:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 46F3A7A26BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:06:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A409165C48
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:07:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0895E2066EB;
-	Wed,  5 Mar 2025 10:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 910AB205E34;
+	Wed,  5 Mar 2025 10:06:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IKLw6V8S"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="hJpocj7v";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="u/NHKT/Z"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F54C2063EC;
-	Wed,  5 Mar 2025 10:06:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4148F1F3D30;
+	Wed,  5 Mar 2025 10:06:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741169217; cv=none; b=SPRFkzGn/Gio96T7WOawAL24Yzg5p8LClXeaq9XhtrZ5n2uSSx41QiwKnAog7V1ysnqrfTmj6l3nRA7p/6LbZCsVcwcRDe452M9ZoVeLp60nM8KTrtifztJv7K6tN9J4MczMpQNQCH5zJ5OP5CUq0yXKYaNdag+ThoTCuvovGLo=
+	t=1741169213; cv=none; b=b+Z46M0y7ABTWQfbCXYgepex/lMonMvCwGse1QPmDHUqNzqsj/eESJbosZGVo3Y2qYGLNhdLki5SqXN/NEqS3jt3SVsXQPqSsKGhjhMLs+SfJHLcxSZyimdqiZOUfBOgMOqJVzSDMx1FUqL0h3o3zzOv5mzobCBB830n6BIgGnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741169217; c=relaxed/simple;
-	bh=7mW84T2xkd5hZo8Si0Lg8PdibLPx+CpJNVnvqcfgn1E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AMn5Qp7gk8MlQidzj5d/iNxTrc9sDjZW6FD9/vsjofr+PIvJUS3AeMFl2X+3uelEfsomIu5wU+NrxLeowO6ebZNkC8AfSM5WuwQXpHjw/0iBlabZKU8fuiv7oGmiOeZQORYIPJhCcP2gmKt07fsVfOlQF8ojGsNwKwscB08Kje8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IKLw6V8S; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so44795115e9.0;
-        Wed, 05 Mar 2025 02:06:55 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741169214; x=1741774014; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/XiUyM1cjoAZ3Fq3HTmJQRtIFmpmpxkpsux4nn4QUS0=;
-        b=IKLw6V8SpSHX9x+UZJqNX6UBMZSz4zoMIF8jErqfiN3ELNOwbtflii/PZP1XNFk34K
-         pHaCLAWSjszrDGOfwcvgqvy1XJIlrt9vzBF6tvymZr7LfRA5sXnCbpWmlRQPBmX0U+Ra
-         8i8PCdhFdZu4YVV1L1QZTQW2QrBKMF2DYKfEAK4uFJUArA61FZmc7ERE3av3uA+nDB/+
-         X1pdcrnZVy3zVZ5MQEuJ065d7aQ/CuO/IjgdwuhfuAoF07klrje5ImELjayl9nv8HDWK
-         TuvURPI0Xyb44JfdrPjlWJajRuNLnQAvwnWNOoin2BYVa1lP4u9fhKLVCdvBrHEhLiZd
-         QBhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741169214; x=1741774014;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/XiUyM1cjoAZ3Fq3HTmJQRtIFmpmpxkpsux4nn4QUS0=;
-        b=GKeWdP09cZE1GlvjNAUFAtrnUyvH0K0EP3uw2aqGeb8HaHGM4G4rNhCklAUVgsj9lO
-         dVpmhg0v6FtJUBGp964uXSjh8qarKS+XawGuxw6/zWsdITUvn4l18dwQUKSkNc7o2saF
-         pf7aX1IHkUrYRgGnx045If/ke4lPlPazJoPr7q82Z/DBZFwn3ghF1/u2kV2BlUCFHDLd
-         /a7hov4gexX3gu/Sj+RwH1I+SQStqFV7qBViVgfOZwj4s/3TJK9krEa8AvQKDzdTyIkv
-         VXx0i0tlH0vwVswM177SK3QL6cVV9Kqvqjj2iaVEJ6su+ukbNqDN6Q9T7C/ThSZKhxKL
-         GmyA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBnjSOuhLCv2FrE/dDRyA0SSILztIypJbOzG0KdppxvH3k5QHWWTbXXsr6p6YoFGob3bxm6j0WzgKH@vger.kernel.org, AJvYcCWjPt2CnbjkH2Eih/V2TWI0ax0oO5Ctsue3AOUAamkbv8LNjn971ET8N2ba8f4ubcl4/3CfmfqfuZaQW1NR@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQ06/E2vSIsRO4WjdGQmqSeDF7aSr9etMXfv6drXON7nyc9B+L
-	s+M8eKQOUdcPI9QFsfJ+BjkKyumtqxUdqcCLaXJIRWvttmgQH0/ngXj5er+owCLelWjubLyX1Bt
-	rGlusj3P+m3wcGijqptAN8ffn/zxi6g==
-X-Gm-Gg: ASbGncuK0YbCYyw/VVK/iqOuaOspN0jUkx9jo8kWcxK8H6lsksgnSk4P+RF6iMTcASf
-	tJdCXbErz4G7QvdMKTFzr29Aex14R0PiwgJVOnPd+oB34AwEX3e3oJQgBR9K+ros7dXbWKHUzUP
-	37CQmDG5vkZQae1O/HvW4a6ca7yek=
-X-Google-Smtp-Source: AGHT+IGQH+0028oYkS9R42msg5Mdw52+1P4tasiG7/x6wWOSR515axfyVGE8a2y8KNU5JqOHDqSEEeXQ/KKwV9F6k1o=
-X-Received: by 2002:a05:6000:1562:b0:38d:e6f4:5a88 with SMTP id
- ffacd0b85a97d-3911f749c86mr1771121f8f.12.1741169213604; Wed, 05 Mar 2025
- 02:06:53 -0800 (PST)
+	s=arc-20240116; t=1741169213; c=relaxed/simple;
+	bh=POFkgzO8rm1oQNp6ytUtiiNRXbGm7AOdYqXhxPgh4sc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R8olgLNdYNl3XCAPUdKGnx0EiDEIPYB9vMsqnrNQPQi4m937oyZFQ7Ft9bl2xI6Vo9VVUH6bYMpJ4BXOaBcdhqFgo+32glCdx2HGKwi3qWcCGFXHqm5PMq0qrByPiuJ9Tl6JcwMYpeCs28qxndG+K6vNlx4kGhOcdlq4Ksfn8Rg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=hJpocj7v; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=u/NHKT/Z; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id C036025401EA;
+	Wed,  5 Mar 2025 05:06:48 -0500 (EST)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Wed, 05 Mar 2025 05:06:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1741169208; x=
+	1741255608; bh=OV22lrFV3DQBTGcw06CXISDEH3SxqJT8NlQedF2+oH8=; b=h
+	Jpocj7vtNqNLdr/VV90HwI4omf9lvjbPmLOfpwnKOH6B7DiFJld7FF9oKKoHZTbN
+	l+ELUcNjW7/sa3MguXc5X2c6axxaNzrMAzSF5o9uP5haAgGogOvVHA8M9CLxcWoH
+	xIQSt0GkHsqaxorzOMT9UF3cIN2by8apiQd4df5JzJALX35BqlHw5CTDROBuHwrA
+	l3JW8pngLevn7peJbN/2cob+O4Jdfk8PQNzaH4550AvAiE0K6+P+cq/czxcgXeno
+	oFYBW4OXOln3ARE6Aw6zctlNOchroRZPJ9L/gq+LJzORNuq0PqbNg8FabrQhipxR
+	+0UBXkK3JQbq3/CjHT92w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741169208; x=1741255608; bh=OV22lrFV3DQBTGcw06CXISDEH3SxqJT8NlQ
+	edF2+oH8=; b=u/NHKT/ZQpVgl5aBzzP59XVl/aCDb4nvJ2ZY5LWWM5PurauNq6/
+	W8Q91FenyD/jdrEEVIlO59jQG5OzxQ6fBt4kBfX9rYkggrEAFPcHs6cZrcd/R+Vy
+	wynEPhKFHqHtBn3e5cZwXvs68QC+l3K8BpacUCE3Y+JjsHK9rkAxZg3VaEwxyVoe
+	YJBBrdCgLrxBsg+IrdufdIPyE+UCZrmi9dYzrvSL8yd0Ud2sbxoSPVNv+5JoZQlv
+	cb1p/prCwrzwJAXESNJTtvT0g5Q6je/eBK4bPq0rHhQe9hu3SuqUUeYhYDLaUtIH
+	2/Dl/Q8rqBhG1/aqMI8lfltciwE3+kXzfaA==
+X-ME-Sender: <xms:NyLIZ-MYNr-jPlNECyHoRQo8x3eET31MTCVcp3Rnoky1eaWR5NZ7fg>
+    <xme:NyLIZ8-mnhcmeDFjLUUAi0Z4pIECapTlB-TrXy8ob69K4qxPPDl-UGtB3mJyJ7yaG
+    -Gp1zhI4uwsqUFZXII>
+X-ME-Received: <xmr:NyLIZ1RYn9jL2cyfIOWhBijdan2Z6qfoQXWZTpuZaopB8o5cedW7mJ1cuUDS>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdegheefucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
+    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
+    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
+    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
+    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
+    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
+    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
+    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
+X-ME-Proxy: <xmx:OCLIZ-t_h-9lFtez33rBhZBpt-3v6dALYDF2d7_Mm2mxSQStfF_VIQ>
+    <xmx:OCLIZ2ddhqzYJbEY-MnrzkuBFVDrL0gqPjro7dOdCFxIkUAsNiWHZA>
+    <xmx:OCLIZy3r-hp_mMMb_0tAGapuBE-PDYZpWp3zLlhaRBsXQZ26wqAPDQ>
+    <xmx:OCLIZ68hOjID9-T7dJuLvtMLrY3Q_NZdNAHaBMdpLPtlsggfh8RPMQ>
+    <xmx:OCLIZ98PVQUB5BNVcHQeXGESQtEWdNuRxrhAlZyFDCv3qG5U9wEl9KON>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Mar 2025 05:06:47 -0500 (EST)
+Date: Wed, 5 Mar 2025 11:06:45 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH v21 09/24] ovpn: implement packet processing
+Message-ID: <Z8giNYKBWzQEtZJu@hog>
+References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
+ <20250304-b4-ovpn-tmp-v21-9-d3cbb74bb581@openvpn.net>
+ <Z8dOOy9tSpJ1UCiR@hog>
+ <8abd4290-cef5-4ea3-bdfc-b872c16efb8a@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250303122151.91557-1-clamor95@gmail.com> <20250303122151.91557-3-clamor95@gmail.com>
- <3bc7c5a5-8fe7-4c4b-a80e-23522922debb@arm.com>
-In-Reply-To: <3bc7c5a5-8fe7-4c4b-a80e-23522922debb@arm.com>
-From: Svyatoslav Ryhel <clamor95@gmail.com>
-Date: Wed, 5 Mar 2025 12:06:42 +0200
-X-Gm-Features: AQ5f1JqU5aUOk5hQVwJSEFLdBo0lSQrvsWdK1fX1d4Z1ojd4eLF6lCxxEmO0RYc
-Message-ID: <CAPVz0n0yvw4kyYKSve9sSZEvcZrCYZ6RqCjFSO5OCqtvRZSfJg@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] thermal: thermal-generic-adc: add temperature
- sensor channel
-To: Lukasz Luba <lukasz.luba@arm.com>, Jonathan Cameron <jic23@kernel.org>
-Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
-	Laxman Dewangan <ldewangan@nvidia.com>, Conor Dooley <conor+dt@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <8abd4290-cef5-4ea3-bdfc-b872c16efb8a@openvpn.net>
 
-=D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 11:52 Lukas=
-z Luba <lukasz.luba@arm.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
->
->
-> On 3/3/25 12:21, Svyatoslav Ryhel wrote:
-> > To avoid duplicating sensor functionality and conversion tables, this d=
-esign
-> > allows converting an ADC IIO channel's output directly into a temperatu=
-re IIO
-> > channel. This is particularly useful for devices where hwmon isn't suit=
-able
-> > or where temperature data must be accessible through IIO.
-> >
-> > One such device is, for example, the MAX17040 fuel gauge.
-> >
-> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > ---
-> >   drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++=
--
-> >   1 file changed, 53 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/th=
-ermal-generic-adc.c
-...
-> >
-> > +static const struct iio_chan_spec gadc_thermal_iio_channel[] =3D {
-> > +     {
-> > +             .type =3D IIO_TEMP,
-> > +             .info_mask_separate =3D BIT(IIO_CHAN_INFO_PROCESSED),
->
-> I would add the IIO_CHAN_INFO_SCALE and say it's in milli-degrees.
->
+2025-03-05, 00:35:09 +0100, Antonio Quartulli wrote:
+> On 04/03/2025 20:02, Sabrina Dubroca wrote:
+> > 2025-03-04, 01:33:39 +0100, Antonio Quartulli wrote:
+> > [...]
+> > > +static inline struct ovpn_crypto_key_slot *
+> > > +ovpn_crypto_key_id_to_slot(const struct ovpn_crypto_state *cs, u8 key_id)
+> > > +{
+> > > +	struct ovpn_crypto_key_slot *ks;
+> > > +	u8 idx;
+> > > +
+> > > +	if (unlikely(!cs))
+> > > +		return NULL;
+> > > +
+> > > +	rcu_read_lock();
+> > > +	idx = cs->primary_idx;
+> > 
+> > I'd go with slots[0] and slots[1], since it doesn't really matter
+> > whether we check the primary or secondary first. It would avoid a
+> > possible reload of cs->primary_idx (which might be updated
+> > concurrently by a key swap and cause us to look into the same slot
+> > twice) -- a READ_ONCE would also prevent that.
+> 
+> Reason for looking into primary first is that we will most likely need the
+> primary key to decrypt the incoming traffic.
+> 
+> Secondary is used only during a small (if at all) time window where we moved
+> to a new key, but our peer was still sending traffic encrypted with the old
+> (secondary) key.
+> 
+> Therefore optimizing for primary-first may make a non-negligible difference
+> under heavy load.
+> 
+> Code doesn't get more complex due to this logic, therefore I'd keep this
+> version (with READ_ONCE(cs->primary_idx)), unless there is a strong argument
+> against it.
 
-I have hit this issue already with als sensor. This should definitely
-be a IIO_CHAN_INFO_PROCESSED since there is no raw temp data we have,
-it gets processed into temp data via conversion table. I will add
-Jonathan Cameron to list if you don't mind, he might give some good
-advice.
+Ok, sounds reasonable.
 
-> > +     }
-> > +};
-> > +
-> > +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
-> > +                              struct iio_chan_spec const *chan,
-> > +                              int *temp, int *val2, long mask)
-> > +{
-> > +     struct gadc_thermal_info *gtinfo =3D iio_priv(indio_dev);
-> > +     int ret;
-> > +
-> > +     if (mask !=3D IIO_CHAN_INFO_PROCESSED)
-> > +             return -EINVAL;
->
-> Therefore, here it would need to handle such case as well, when
-> a client is asking about scale.
->
-> > +
-> > +     ret =3D gadc_thermal_get_temp(gtinfo->tz_dev, temp);
-> > +     if (ret < 0)
-> > +             return ret;
-> > +
-> > +     *temp /=3D 1000;
->
-> IMO we shouldn't cut the precision if it's provided.
-> The user of this would know what to do with the value (when
-> the proper information about scale is also available).
->
-
-The it will not fit existing IIO framework and thermal readings will
-be 1000 off. I have had to adjust this since my battery suddenly got
-temperature reading of 23200C which obviously was not true. With
-adjustment temperature will be in 10th of C (yes, odd, I know but it
-is what it is).
-
-> > +
-> > +     return IIO_VAL_INT;
+-- 
+Sabrina
 
