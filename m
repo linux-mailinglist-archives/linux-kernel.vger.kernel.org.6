@@ -1,135 +1,177 @@
-Return-Path: <linux-kernel+bounces-547326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BD71A505E7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:03:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 07D23A505E4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:03:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3BB73AC612
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:02:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E522A1704B9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159E71A7253;
-	Wed,  5 Mar 2025 17:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3AE51A316B;
+	Wed,  5 Mar 2025 17:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YGv32Ptk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GQoWGHo/"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FF013E40F;
-	Wed,  5 Mar 2025 17:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11B8151992;
+	Wed,  5 Mar 2025 17:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194149; cv=none; b=OnSUm226B5Tz4mmqPae78kLViL9fQtv6+apm9JF87H0s1Y7ua/qZrgx/7b77gssqUfPJLGOnZFj59JGSGT1+tJ+AzBuvgLrQ7+Bukjugs2bTp3Y7n87Kulg8lrTb6WJ9QfjAnaAKIJU+YTZvsKQbdNlpT2aVPus+fPkWTvT0LzY=
+	t=1741194185; cv=none; b=nU1AGw5ojbk/2l8R4gjxlEoRBBjqrhrVlIKxymsVRUDOnMi6HQweTfhbtdLPuSaPZhiC4o1jUAp819eXzNkpkpmwxqIUfk5X9/gQqJgE4cY4pMq1ZG9h/xB3dG870HquhpdCefsNFbV2c2Mz02xKPpMLCNeCmj+H1vtfwRMhRZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194149; c=relaxed/simple;
-	bh=GRy1WbTNuxUAPrFOSZ3eMza5+pjAFHcCZGMDO9Bw9vQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OUuRkOGQZH26dm4Y9FBGb/afLUobEWi5nraJQ+1axuB5vJHdauM7+lS05RQUaFZNIIv1bfqurjeztzD386oku7n/ZDjvVCxd4cWq0H8y0qNnqVa3fZ1I32jQCFsPpm9/SY6zc9kAh0LH88HenH5AE/l2P8HoxvtgA19pvyE3m2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YGv32Ptk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C4E1EC4CEEA;
-	Wed,  5 Mar 2025 17:02:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741194148;
-	bh=GRy1WbTNuxUAPrFOSZ3eMza5+pjAFHcCZGMDO9Bw9vQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=YGv32PtkJgm3ELN9DsvogEvf25HQQdh19VAtxk9MeKcEX07HdRv1VUwjvDAwOacAt
-	 XIBGgVsYzxCbcIK0NhgcTHmg7K6O54DnMjucpil/6OIq7+xQBDcoIF2HeAnyKCjDXJ
-	 ySp5r3cYfqNtF/Usd2mNYcbn980NQlqoO9mYJiKFww0rhoAdgEEp0kktOMb5tJxSl4
-	 PTcjcO60lL9HC2S6iXHVpY9Y1AiHB3EXXIS5R5jxRzPDqKBWkmns8XhfsJtwGictb+
-	 7ebKt6bQmAWBQt7BOz8oyuO27LRg1Xx8aMotoH7XtVvWhfep83HwR5kCeCaBDbnc9p
-	 MwUDiITjc15Hw==
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5e0b70fb1daso12377928a12.1;
-        Wed, 05 Mar 2025 09:02:28 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVWdhDiCdMCKZ5oUp5gwbsYHD58p9vT2iAG8DvnSuu16ju+V0Kpy67cSpZrNTrM7TTtSDkSLh1uB72D@vger.kernel.org, AJvYcCVs7xtTcKtymWmgVUg5LTQe9CXXA4ZckWh6+sY0TvlZsEADWZr378n5MceD2FYcUJeWRC2VuvIKHo3XT29s@vger.kernel.org
-X-Gm-Message-State: AOJu0YzcsDiwqXPj0kN0mK0w3ghWzsf6mvGIOXITWoLi8G8+RA8RjhYs
-	QQQs4f/QeyzYWgrzy+6GsIri7MAPZRNHFRwtciRYdtr2JaF1Il4CHOQdopFLfwr+HYixWt0eON/
-	vNmkwSrRwf1JS+XhO/tvPzbi98Q==
-X-Google-Smtp-Source: AGHT+IGgLAXSRBzU5AFRd6PnX3IZuDCdN73sQ42dh8wgaaV3t/YCusLdNXk4zX5F2wbX8qIW+4J5KdoX4FTJoiz98Cw=
-X-Received: by 2002:a17:906:6a02:b0:abf:40a2:40c5 with SMTP id
- a640c23a62f3a-ac20d92d651mr402225066b.27.1741194147152; Wed, 05 Mar 2025
- 09:02:27 -0800 (PST)
+	s=arc-20240116; t=1741194185; c=relaxed/simple;
+	bh=OcJoKzORqXVnDNepmErBN3tw8ndKhUmT6pwHugKrtRw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=mKXh5xD96t8enb+pmJq9GDvjnVI1kkyRLMELFxAdNT3doce6uuy9yI2XsKtdCg1e952YoPyheLVrsRW9vyTa3/qXC2vo2mJu0M1sgF/zgv+NWaR0tkF3epOTWYVSk00d18wXCnWb7Hs61i3ayvp1njRhseA/OcOmUdXfGUD0sVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GQoWGHo/; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A0845443F3;
+	Wed,  5 Mar 2025 17:02:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1741194175;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=TPyWHc+8KiHi21EkIlCnv3oAaCqNgg8vVnv8v5oHtoM=;
+	b=GQoWGHo/UcXuWM5+M2p+ufkz2NxvtTKkX7cXWb9rICvOTm1tE0DFBFqym0cuD3G6YbSQ16
+	iCwOa+FsBbPlIBYpNlJJzXTucmSoJxeBLxn97OiC/9rZfVoeBdhfkVVnQfTOby5xGMNLuS
+	Gc0tU0Hqrz4xXQa0Yxqkdy91z6FBY5s60ckVmysNr+UxZqCfEVBYPyY5tCxc40eTRGGsI2
+	puejnC5ToaRwTYbRqIwhvaVB0XQOD7aEhLMcxmixXcnur2OtwlgyyQ5bYynaYkmR7ow908
+	bYwafXGx20/WcvxkXmrXEekb0CPkjgcQq9BnfSow+NJLiR8gb1SnFbCLZTA4qw==
+Date: Wed, 5 Mar 2025 18:02:52 +0100
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: davem@davemloft.net, Andrew Lunn <andrew@lunn.ch>, Jakub Kicinski
+ <kuba@kernel.org>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+ <pabeni@redhat.com>, Heiner Kallweit <hkallweit1@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>,
+ Russell King <linux@armlinux.org.uk>, Vladimir Oltean
+ <vladimir.oltean@nxp.com>, =?UTF-8?B?S8O2cnk=?= Maincent
+ <kory.maincent@bootlin.com>, Oleksij Rempel <o.rempel@pengutronix.de>,
+ Simon Horman <horms@kernel.org>, Romain Gantois
+ <romain.gantois@bootlin.com>, Piergiorgio Beruto
+ <piergiorgio.beruto@gmail.com>, Stanislav Fomichev <sdf@fomichev.me>
+Subject: Re: [PATCH net-next 0/7] net: ethtool: Introduce ethnl dump helpers
+Message-ID: <20250305180252.5a0ceb86@fedora.home>
+In-Reply-To: <20250305141938.319282-1-maxime.chevallier@bootlin.com>
+References: <20250305141938.319282-1-maxime.chevallier@bootlin.com>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304-bcm59054-v6-0-ae8302358443@gmail.com>
- <20250304-bcm59054-v6-2-ae8302358443@gmail.com> <20250304141933.GA2543583-robh@kernel.org>
- <51cefa7f-df05-49d4-9006-59ed216915a4@gmail.com>
-In-Reply-To: <51cefa7f-df05-49d4-9006-59ed216915a4@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 5 Mar 2025 11:02:15 -0600
-X-Gmail-Original-Message-ID: <CAL_Jsq+Qsu-6Z72uXYKwc62idq2K169S1t0nUrrgNOyezgfYsA@mail.gmail.com>
-X-Gm-Features: AQ5f1JoahPq2cFHn8OS3F1s4Px9gSAx0Gtyla8PqP28TC3Lr84PnEf8as25lYMw
-Message-ID: <CAL_Jsq+Qsu-6Z72uXYKwc62idq2K169S1t0nUrrgNOyezgfYsA@mail.gmail.com>
-Subject: Re: [PATCH v6 02/10] dt-bindings: mfd: brcm,bcm59056: Add compatible
- for BCM59054
-To: Artur Weber <aweber.kernel@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, 
-	Mark Brown <broonie@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
-	Stanislav Jakubek <stano.jakubek@gmail.com>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	~postmarketos/upstreaming@lists.sr.ht
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdehfeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepteefgeehvdeitdeihfeuvdejkeevkeekieefkedvjefhudfhheeiveeuveefhefhnecuffhomhgrihhnpehgihhthhhusgdrtghomhdpkhgvrhhnvghlrdhorhhgnecukfhppedvrgdtudemtggsudelmeekugegtgemlehftddtmegstgdvudemkeekleelmeehgedttgemvgehlegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugegtmeelfhdttdemsggtvddumeekkeelleemheegtdgtmegvheelvgdphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvddupdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtp
+ hhtthhopehkuhgsrgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehprggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohephhhkrghllhifvghithdusehgmhgrihhlrdgtohhmpdhrtghpthhtohepnhgvthguvghvsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Wed, Mar 5, 2025 at 10:52=E2=80=AFAM Artur Weber <aweber.kernel@gmail.co=
-m> wrote:
->
-> On 4.03.2025 15:19, Rob Herring wrote:
-> > On Tue, Mar 04, 2025 at 07:20:33AM +0100, Artur Weber wrote:
-> >> The BCM59054 MFD is fairly similar to the BCM59056, and will use
-> >> the same driver. Add compatible and specify the allowed regulator
-> >> nodes.
-> >>
-> >> Signed-off-by: Artur Weber <aweber.kernel@gmail.com>
-> >> ...
-> > And drop the allOf below.
-> >
-> >>
-> >>   required:
-> >>     - compatible
-> >> @@ -30,6 +31,27 @@ required:
-> >>
-> >>   additionalProperties: false
-> >>
-> >> +allOf:
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          contains:
-> >> +            const: brcm,bcm59054
-> >> +    then:
-> >> +      properties:
-> >> +        regulators:
-> >> +          $ref: /schemas/regulator/brcm,bcm59054.yaml#
-> >> +
-> >> +  - if:
-> >> +      properties:
-> >> +        compatible:
-> >> +          contains:
-> >> +            const: brcm,bcm59056
-> >> +    then:
-> >> +      properties:
-> >> +        regulators:
-> >> +          $ref: /schemas/regulator/brcm,bcm59056.yaml#
-> >> +
-> >>   examples:
-> >>     - |
-> >>       #include <dt-bindings/interrupt-controller/arm-gic.h>
->
-> "Drop the allOf" as in, drop just the "allOf" line or the entire block
-> with "if" statements? If it's the latter - wouldn't that break the
-> bindings for the "regulators" subnode?
+On Wed,  5 Mar 2025 15:19:30 +0100
+Maxime Chevallier <maxime.chevallier@bootlin.com> wrote:
 
-Uh, I misread this thinking the regulators node had a compatible... Never m=
-ind.
+> Hi everyone,
+> 
+> This series adds some scaffolding into ethnl to ease the support of
+> DUMP operations.
+> 
+> As of today when using ethnl's default ops, the DUMP requests will
+> simply perform a GET for each netdev.
+> 
+> That hits limitations for commands that may return multiple messages for
+> a single netdev, such as :
+> 
+>  - RSS (listing contexts)
+>  - All PHY-specific commands (PLCA, PSE-PD, phy)
+>  - tsinfo (one item for the netdev +  one per phy)
+> 
+>  Commands that need a non-default DUMP support have to re-implement
+>  ->dumpit() themselves, which prevents using most of ethnl's internal  
+>  circuitry.
+> 
+> This series therefore introduces a better support for dump operations in
+> ethnl.
+> 
+> The patches 1 and 2 introduce the support for filtered DUMPs, where an
+> ifindex/ifname can be passed in the request header for the DUMP
+> operation. This is for when we want to dump everything a netdev
+> supports, but without doing so for every single netdev. ethtool's
+> "--show-phys ethX" option for example performs a filtered dump.
+> 
+> Patch 3 introduces 3 new ethnl ops : 
+>  ->dump_start() to initialize a dump context
+>  ->dump_one_dev(), that can be implemented per-command to dump  
+>  everything on a given netdev
+>  ->dump_done() to release the context  
+> 
+> The default behaviour for dumps remains the same, calling the whole
+> ->doit() path for each netdev.  
+> 
+> Patch 4 introduces a set of ->dump_start(), ->dump_one_dev() and
+> ->dump_done() callback implementations that can simply be plugged into  
+> the existing commands that list objects per-phy, making the 
+> phy-targeting command behaviour more coherent.
+> 
+> Patch 5 uses that new set of helpers to rewrite the phy.c support, which
+> now uses the regulat ethnl_ops instead of fully custom genl ops. This
+> one is the hardest to review, sorry about that, I couldn't really manage
+> to incrementally rework that file :(
+> 
+> Patches 6 and 7 are where the new dump infra shines, adding per-netdev
+> per-phy dump support for PLCA and PSE-PD.
+> 
+> We could also consider converting tsinfo/tsconfig, rss and tunnels to
+> these new ->dump_***() operations as well, but that's out of this
+> series' scope.
+> 
+> I've tested that series with some netdevsim PHY patches that I plan to
+> submit (they can be found here [1]), with the refcount tracker
+> for net/netns enabled to make sure the lock usage is somewhat coherent.
+> 
+> Thanks,
+> 
+> Maxime
+> 
+> [1]: https://github.com/minimaxwell/linux/tree/mc/netdevsim-phy
+> 
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+This series will very likely conflict with Stanislav's netdev lock
+work [2], I'll of course be happy to rebase should it get merged :)
+
+Thanks,
+
+Maxime
+
+[2]: https://lore.kernel.org/netdev/20250305163732.2766420-1-sdf@fomichev.me/T/#t
+
+> 
+> Maxime Chevallier (7):
+>   net: ethtool: netlink: Allow per-netdevice DUMP operations
+>   net: ethtool: netlink: Rename ethnl_default_dump_one
+>   net: ethtool: netlink: Introduce command-specific dump_one_dev
+>   net: ethtool: netlink: Introduce per-phy DUMP helpers
+>   net: ethtool: phy: Convert the PHY_GET command to generic phy dump
+>   net: ethtool: plca: Use per-PHY DUMP operations
+>   net: ethtool: pse-pd: Use per-PHY DUMP operations
+> 
+>  net/ethtool/netlink.c | 161 ++++++++++++++------
+>  net/ethtool/netlink.h |  46 +++++-
+>  net/ethtool/phy.c     | 335 ++++++++++++------------------------------
+>  net/ethtool/plca.c    |  12 ++
+>  net/ethtool/pse-pd.c  |   6 +
+>  5 files changed, 277 insertions(+), 283 deletions(-)
+> 
+
 
