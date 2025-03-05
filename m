@@ -1,79 +1,71 @@
-Return-Path: <linux-kernel+bounces-546279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9F2FA4F8AC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:22:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06418A4F8B3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:24:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6CE91704AA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:22:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CDE418923B2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:24:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C501B1F866B;
-	Wed,  5 Mar 2025 08:22:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D50031F7089;
+	Wed,  5 Mar 2025 08:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="oy4gfSHP"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Nyhwhmn5"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98FFE1D8DEE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:22:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AF811F560B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741162961; cv=none; b=MkKGOjphmRVtPfKz/3b8Tp4oumlp8GcevX02Scic6rABgrVywrzJSsNXQhxQ7uLX49NkG5Oiv3A1DyuMKE3rQv/hHWmVJt55R21hMHJ+Y9QkFyWhFbApWbhJZZhh6KUbInQenuStI/w+jOdtW2VBGjmzGSSsfl2cmRJUEr1iyhY=
+	t=1741163043; cv=none; b=GBdNxtCL5PFrQy6oNz9uVWZElCWtXYtXm8yUb5DAV5ilvZmi47Rn2RaUMLC4LSPlAkp85kKD07J48cc62tGxdK3w9gqrejTUgLCPeSGHJenSbMntY28ECKRfWi3VTn1s84kzQwOaEi77AVsn4pgWVTnv4VxQ1NUgudIexezqP8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741162961; c=relaxed/simple;
-	bh=nefCuvZh9BBXP1HgTB2e4dXo3Ejs7pSEpE8D1o/5fHU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f5EnhIjNi4I4dKAMrNicmg8sUoFmO0b/TXp4YR0NJZoxT6UO00/3UyyR6Qr5/UuY32caNjY0t/1cdqzBtG0rujZycpHsGCcNzGpSTGu7WX8Wgap2QVHju5aiPYwu4CX8lhJg7b/JsGMLz7IC3M2DoN/VPWAiRSbRTbUMovSF/zI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=oy4gfSHP; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5e5491eb37dso5416919a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:22:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1741162958; x=1741767758; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=1brnVJAGUyBrrxRVaMvTP6y55O5yEMp4c+P5cyU9eYc=;
-        b=oy4gfSHPVrs6EKnJ6VdugQ/D6WJbu7Hvhkz/xOUGN0u8aq8yhPGUChia/pc0qJmEkE
-         lmzGcuI4p7AnUFYt0/ugjJj3EIqjrRyNDPk0ecPp/iKW+w8ddqSv18fJGyDLuujNpOXE
-         ICZuDdFncPvzWlUXFd/i1+TbRPF3pjx7zNi6mqkGLT7+3RZwwJGOR2DgLKi2lN2p0muU
-         3s7XfKBdYXh/q0I2kdIa3Q0qf90okSt3yO7qpkKiXB749GKIuKXUOtJnXfWMvPoa4hQI
-         7jnDk4CwU1HRimIFfxegfIdqvSPiVGoV+QGM27bpUIhklGcphgQgq2IbMwPLCTYNG3M3
-         ig9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741162958; x=1741767758;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1brnVJAGUyBrrxRVaMvTP6y55O5yEMp4c+P5cyU9eYc=;
-        b=caR3UkPio7O0YWtG2GvLcZ/V1Quo48MGCmpkH+5RmBhSHcIGOSX3EsspotTnnLEO57
-         rlVLmdo186AcmQldlUZY9aBKGFvoCT/0XJ8l7u256FcYWBwY3EXvEFZuOexxCVp84ojp
-         jQy0QH+j6u+pPbJjXZdd+ELSIuLxNvIHjWC57VNQ0tnAv5TLUzhXtyD3NhGlkB12kVzn
-         Hzv+07nQ3WOzCA3fyyyObEb0JBiH6Mujp2uLo9FTC5yLpYdsZ5prjYYZAJ9W4lJzMKch
-         J/frcn/wSUtfvElIVvhw2Ve63VnHao3SCcg42DbYCgMXar2fFyZLcLU6o4niTUBKZBA8
-         r9cQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXL+2RMyQozapDwj4OL9xywPrCyuU8Y0BAvDbtTfYVRQagfrI/JuVdrjrR6yok0GUZOeAUVWLWzLJF9LIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGbvZQ/acsmqNlN1A2glRz3oB4PQ+w/+c/evk0LJuE9nTebtaO
-	5uSlhkMkyOEkjOL3qUTJ0c4X/dj73ujlyoOVhGYK8jcW12HtA9zmiMc6QkjPyNU=
-X-Gm-Gg: ASbGncu87od2f5jIvaHRWEasbkCr+kHcTrqwGTztJ/fL/PiwtcEGl9XMzK/GdTSw6lO
-	Gv7yYGRBajvgkCZvB2KPPit/afzwoQRx1lyY/6jhqJlAc7Zm6ulizcfSqCygLcvkNcG8h2UBVdO
-	3NcScTUUhVkPgJo7weWRb1PQ/dV9D/9CyNY/ZWp/Cdo1Qx15qzayK5HtZ3i7ft29SYlnjLHCS+T
-	oypYutpnTvnfp4anI35+lAW8NDvedjGDPDu8q+H2SfiIz00fLLhII7ETi7ayb9SZC6udlMMcBmo
-	v+Ysdfy3vxSo0cIodU+oXSYLpgiqeq8UlP/0ljJpHGC1kq0xcWLfDRP97GoEr2jwsYDVhNoSalo
-	L
-X-Google-Smtp-Source: AGHT+IHSB1wDKnA9pHV1GSviWm2eGdZkD28ziFa7v6M0Rd/G5QVSKS+XqVwTfVjxopyszVvymfpwQA==
-X-Received: by 2002:a05:6402:40cf:b0:5de:dfd0:9d22 with SMTP id 4fb4d7f45d1cf-5e59f470c8dmr2220203a12.22.1741162957444;
-        Wed, 05 Mar 2025 00:22:37 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e4c3b6dbbbsm9395036a12.22.2025.03.05.00.22.35
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 00:22:36 -0800 (PST)
-Message-ID: <350a057e-39ae-4e8d-a4ec-12b2f78f51cb@blackwall.org>
-Date: Wed, 5 Mar 2025 10:22:35 +0200
+	s=arc-20240116; t=1741163043; c=relaxed/simple;
+	bh=5oioArqckWK7P85itc8aO9C5fWyeb++QRtIHYUaaxAA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Qznj2IK8XSso5OnEhqjspLIlPlED6RXoBNf72Wl/deQBkephr2LPgt7XCjn3B0c7DiBfFr3KLN1DhQo1ZDQAfdHPb2k5gvjYF2S9HlV9bQZ3GSF+FGWPVxlPUSw0AzvzpaO76mKxx5wSqExCkyacBozj6UCXMgQ01gAwRFPLEAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Nyhwhmn5; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p2.samsung.com (unknown [182.198.249.207])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250305082357euoutp0217be9fda77dc9b11693b59b1a730b82f~p2o61_HN91049010490euoutp02n
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:23:57 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250305082357euoutp0217be9fda77dc9b11693b59b1a730b82f~p2o61_HN91049010490euoutp02n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741163037;
+	bh=PGt1CSGjFMabgTf1srY6MXwWrrLW0AjKIgfy5jsvIPg=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Nyhwhmn5VD91sXGi5UMQjRA4Ske6yzrWzPKD12OL275S7L62PmNaWKyR0quNGvRxl
+	 yBJ36KO7X9sSOwbFzfEOrdflPFWdpJotgv1swt/ZiOot3biyE0NVa5qEuDVjhj16Ll
+	 t3leF0vpOmUaXFcswMPAhiF8AZ+llEW9cJXV8YBY=
+Received: from eusmges1new.samsung.com (unknown [203.254.199.242]) by
+	eucas1p1.samsung.com (KnoxPortal) with ESMTP id
+	20250305082357eucas1p174954be8e28b7c00ffd1668d010ff52e~p2o6hZ4E21049710497eucas1p18;
+	Wed,  5 Mar 2025 08:23:57 +0000 (GMT)
+Received: from eucas1p1.samsung.com ( [182.198.249.206]) by
+	eusmges1new.samsung.com (EUCPMTA) with SMTP id 65.64.20821.C1A08C76; Wed,  5
+	Mar 2025 08:23:57 +0000 (GMT)
+Received: from eusmtrp1.samsung.com (unknown [182.198.249.138]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250305082356eucas1p2d936fbea7bdd26ab959db4b218062adb~p2o6KxHWu1585915859eucas1p2w;
+	Wed,  5 Mar 2025 08:23:56 +0000 (GMT)
+Received: from eusmgms1.samsung.com (unknown [182.198.249.179]) by
+	eusmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250305082356eusmtrp153d1eba5e52d6132a1e3c51fa69fd828~p2o6J-EcS0898508985eusmtrp1z;
+	Wed,  5 Mar 2025 08:23:56 +0000 (GMT)
+X-AuditID: cbfec7f2-b09c370000005155-40-67c80a1c7667
+Received: from eusmtip1.samsung.com ( [203.254.199.221]) by
+	eusmgms1.samsung.com (EUCPMTA) with SMTP id 91.64.19920.C1A08C76; Wed,  5
+	Mar 2025 08:23:56 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
+	20250305082356eusmtip12d7cf33847491aed6d0a0fb5155f381a~p2o5mcXqn3232132321eusmtip1I;
+	Wed,  5 Mar 2025 08:23:56 +0000 (GMT)
+Message-ID: <4205b786-fb65-468c-a3d8-bce807dd829a@samsung.com>
+Date: Wed, 5 Mar 2025 09:23:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,81 +73,111 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 net-next 11/15] netfilter: nft_flow_offload: Add
- DEV_PATH_MTK_WDMA to nft_dev_path_info()
-To: Eric Woudstra <ericwouds@gmail.com>,
- Michal Ostrowski <mostrows@earthlink.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Jiri Pirko <jiri@resnulli.us>,
- Ivan Vecera <ivecera@redhat.com>, Roopa Prabhu <roopa@nvidia.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Ahmed Zaki <ahmed.zaki@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Vladimir Oltean <olteanv@gmail.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-References: <20250228201533.23836-1-ericwouds@gmail.com>
- <20250228201533.23836-12-ericwouds@gmail.com>
+Subject: Re: [PATCH v1 0/2] TH1520 SoC: Add Reset Controller Support
+To: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, drew@pdp7.com,
+	guoren@kernel.org, wefu@redhat.com, p.zabel@pengutronix.de,
+	m.szyprowski@samsung.com
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
 Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20250228201533.23836-12-ericwouds@gmail.com>
-Content-Type: text/plain; charset=UTF-8
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <20250303152511.494405-1-m.wilczynski@samsung.com>
 Content-Transfer-Encoding: 7bit
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFlrPKsWRmVeSWpSXmKPExsWy7djPc7qyXCfSDd7OY7RYs/cck8X8I+dY
+	Le5d2sJk8WJvI4vFy1n32Cwu75rDZrH2yF12i7v3TrBY/N+zg92iZf8UFgcuj02rOtk8WtYe
+	Y/Lo/2vg8X7fVTaPvi2rGD0+b5ILYIvisklJzcksSy3St0vgyjj9+QZrwUTBimOXlrE1MM7m
+	7WLk5JAQMJHY93IFYxcjF4eQwApGifuH1kI5Xxglzjy6yALhfGaUeHByDVMXIwdYy6R7iRDx
+	5YwSG6dfYIZw3jJKdM1ZxwYyl1fATuLh1/1MIDaLgIrE5L0tjBBxQYmTM5+wgNiiAvIS92/N
+	YAexhQVcJKZMPQC2WkRgKdAdnb+YQRLMAjYSN9ZeZoSwxSVuPZkPNpRNwEjiwfL5rCA2p4C9
+	xNZn/9kgauQltr+dA3aRhMAPDomrP7axQJztIrH2VjDE08ISr45vYYewZSROT+5hgbDzJR5s
+	/cQMYddI7Ow5DmVbS9w594sNZAyzgKbE+l36EGFHiXP3fjNCTOeTuPFWEOICPolJ26YzQ4R5
+	JTrahCCq1SSm9vTCLT23YhvTBEalWUiBMgvJj7OQ/DILYe8CRpZVjOKppcW56anFhnmp5XrF
+	ibnFpXnpesn5uZsYgWnq9L/jn3Ywzn31Ue8QIxMH4yFGCQ5mJRHe16eOpwvxpiRWVqUW5ccX
+	leakFh9ilOZgURLnXbS/NV1IID2xJDU7NbUgtQgmy8TBKdXA5HTS789N999CN6MaZovLG76I
+	5cp52jVfW+nhsexnJyRuFz+9L2/PZzV7j1yVTpqtgsW2Wwxpu1km1Dn8m3i1eVdCq3Ts1aLO
+	g8LHKr3zMt/pf5jBq5R1snWucLhqZLjqpea4rvwfP7YwfnKrORzZr+7cru0hFdi38rfhaa5z
+	NZErjM4FBoQGN+4qiH4sffbe5wkF6VMlFJd/YjMRdTsQWMT8y7vNKt7+WuP/C+k9fQeWtVQL
+	pW4+6K26smyX2M45D5PCa7Zm+EZdX71s6pGnU2zfnTH1d05tnB53RkZls/hZYQ0+8+q02I6Q
+	L7/frtm+THq5sfHD2uVxUpHS+qI2YV+jLx+teiCh9FV+VrQSS3FGoqEWc1FxIgDQ40YtwgMA
+	AA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFjrEIsWRmVeSWpSXmKPExsVy+t/xu7oyXCfSDbbPVbNYs/cck8X8I+dY
+	Le5d2sJk8WJvI4vFy1n32Cwu75rDZrH2yF12i7v3TrBY/N+zg92iZf8UFgcuj02rOtk8WtYe
+	Y/Lo/2vg8X7fVTaPvi2rGD0+b5ILYIvSsynKLy1JVcjILy6xVYo2tDDSM7S00DMysdQzNDaP
+	tTIyVdK3s0lJzcksSy3St0vQyzj9+QZrwUTBimOXlrE1MM7m7WLk4JAQMJGYdC+xi5GLQ0hg
+	KaPE0ZVrmLsYOYHiMhLXul+yQNjCEn+udbFBFL1mlGj9c5wRJMErYCfx8Ot+JhCbRUBFYvLe
+	Fqi4oMTJmU/AmkUF5CXu35rBDmILC7hITJl6gBFkkAjItnsfprGCJJgFbCRurL3MCLFhEqNE
+	c+dSRoiEuMStJ/PBNrAJGEk8WD4frIFTwF5i67P/bCAvMAuoS6yfJwRRLi+x/e0c5gmMQrOQ
+	3DELyaRZCB2zkHQsYGRZxSiSWlqcm55bbKhXnJhbXJqXrpecn7uJERiZ24793LyDcd6rj3qH
+	GJk4GA8xSnAwK4nwvj51PF2INyWxsiq1KD++qDQntfgQoykwLCYyS4km5wNTQ15JvKGZgamh
+	iZmlgamlmbGSOK/b5fNpQgLpiSWp2ampBalFMH1MHJxSDUytIvMS5aQrH92J/sLKd6XwdnDV
+	ro+nt0Tk27uml3y/4Dz7sAVT42pePYePq257m9t6zDiz8YdlhTrXyxkWXp9e5BXFHRKx+ME1
+	9e5ShbAJ/kwd0Xfv8mqYnklan+5+WuaIz5+uK9qXAq06L09Lzd982OLlz27PjJf/y9u3eyXz
+	Ncx4ZM/F581azhZnK/n28vlnn6849D15y8zMs/rrlcg7C8zbJp0L/v3wEE+abXd9/AFPYzXR
+	yix+Sfln+2+LNAjOXO+n1tjjck2kfMbSq1y7Vybllf5d6Lq0Y1rJJk62/ANiDTNOXHb+xlf0
+	zsdI29BCUfntwZ2Bytbq+zd766ZvrljWdua4vSBPAMveEiWW4oxEQy3mouJEAH1Gj61VAwAA
+X-CMS-MailID: 20250305082356eucas1p2d936fbea7bdd26ab959db4b218062adb
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250303152520eucas1p250f2e6d8eaf1172d8813b04ceb88679c
+X-EPHeader: CA
+CMS-TYPE: 201P
+X-CMS-RootMailID: 20250303152520eucas1p250f2e6d8eaf1172d8813b04ceb88679c
+References: <CGME20250303152520eucas1p250f2e6d8eaf1172d8813b04ceb88679c@eucas1p2.samsung.com>
+	<20250303152511.494405-1-m.wilczynski@samsung.com>
 
-On 2/28/25 22:15, Eric Woudstra wrote:
-> In case of using mediatek wireless, in nft_dev_fill_forward_path(), the
-> forward path is filled, ending with mediatek wlan1.
-> 
-> Because DEV_PATH_MTK_WDMA is unknown inside nft_dev_path_info() it returns
-> with info.indev = NULL. Then nft_dev_forward_path() returns without
-> setting the direct transmit parameters.
-> 
-> This results in a neighbor transmit, and direct transmit not possible.
-> But we want to use it for flow between bridged interfaces.
-> 
-> So this patch adds DEV_PATH_MTK_WDMA to nft_dev_path_info() and makes
-> direct transmission possible.
-> 
-> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
-> ---
->  net/netfilter/nft_flow_offload.c | 5 +++++
->  1 file changed, 5 insertions(+)
-> 
-> diff --git a/net/netfilter/nft_flow_offload.c b/net/netfilter/nft_flow_offload.c
-> index 323c531c7046..b9e6d9e6df66 100644
-> --- a/net/netfilter/nft_flow_offload.c
-> +++ b/net/netfilter/nft_flow_offload.c
-> @@ -105,6 +105,7 @@ static void nft_dev_path_info(const struct net_device_path_stack *stack,
->  		switch (path->type) {
->  		case DEV_PATH_ETHERNET:
->  		case DEV_PATH_DSA:
-> +		case DEV_PATH_MTK_WDMA:
->  		case DEV_PATH_VLAN:
->  		case DEV_PATH_PPPOE:
->  			info->indev = path->dev;
-> @@ -117,6 +118,10 @@ static void nft_dev_path_info(const struct net_device_path_stack *stack,
->  				i = stack->num_paths;
->  				break;
->  			}
-> +			if (path->type == DEV_PATH_MTK_WDMA) {
-> +				i = stack->num_paths;
-> +				break;
-> +			}
->  
->  			/* DEV_PATH_VLAN and DEV_PATH_PPPOE */
->  			if (info->num_encaps >= NF_FLOW_TABLE_ENCAP_MAX) {
 
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
 
+On 3/3/25 16:25, Michal Wilczynski wrote:
+> This patch series adds reset controller support for the T-Head TH1520 SoC,
+> which is used in boards like the LicheePi 4A. While part of a broader effort to
+> enable the Imagination BXM-4-64 GPU upstream, these patches focus on providing
+> a dedicated reset controller driver and the corresponding Device Tree
+> nodes/bindings.
+> 
+> Bigger series cover letter:
+> https://lore.kernel.org/all/20250219140239.1378758-1-m.wilczynski@samsung.com/
+
+
+This series should be versioned as v6, to maintain continuity with the
+bigger patchset it is a subseries of. Please find below a changelog for
+the reset sub-series:
+
+v6:
+ - split the reset part into sub-series, add the Reviewed-by from
+   Philipp
+
+v5:
+ - Moved the reset de-assertion from the reset driver to the clock driver. The
+   reset is now only de-asserted once the sys and core clocks have been enabled
+ - Added and exported the GPU_CLKGEN reset, allowing the clock driver to reset
+   the GPU clock circuit
+
+v4:
+ - reverted reset-cells configuration to single cell as in v2
+ - maintained reset definitions in device tree bindings while deferring
+   implementation of watchdog timer (WDT) reset functionality
+
+v3:
+ - refactored reset driver to use zero cells
+
+v2:
+ - developed a reset controller driver for the TH1520 to manage reset
+   sequences
+ - added new dt-bindings for reset
+
+> 
+> Michal Wilczynski (2):
+>   dt-bindings: reset: Add T-HEAD TH1520 SoC Reset Controller
+>   reset: thead: Add TH1520 reset controller driver
+> 
+>  .../bindings/reset/thead,th1520-reset.yaml    |  44 ++++++
+>  MAINTAINERS                                   |   3 +
+>  drivers/reset/Kconfig                         |  10 ++
+>  drivers/reset/Makefile                        |   1 +
+>  drivers/reset/reset-th1520.c                  | 135 ++++++++++++++++++
+>  .../dt-bindings/reset/thead,th1520-reset.h    |  16 +++
+>  6 files changed, 209 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/reset/thead,th1520-reset.yaml
+>  create mode 100644 drivers/reset/reset-th1520.c
+>  create mode 100644 include/dt-bindings/reset/thead,th1520-reset.h
+> 
 
