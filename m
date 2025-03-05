@@ -1,108 +1,132 @@
-Return-Path: <linux-kernel+bounces-547585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99BB1A50B50
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:18:31 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E2C9A50B56
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:19:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF836188DEEC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5518166F3C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:19:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF1152528E4;
-	Wed,  5 Mar 2025 19:18:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D3B25333A;
+	Wed,  5 Mar 2025 19:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Rs4Ibrpc"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fRWFveZ6"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815791624F1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:18:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57A261F9421;
+	Wed,  5 Mar 2025 19:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741202306; cv=none; b=o231+VQVAiij/tc9AgtNTqNiKmuzgmlEcXlBlhhEG0kwkhzdB2VLTApjB0lcqUHSCSqvAyUW+McQz3hGQPI+jXCHdlo06OXqCcoKriXku0PUBs3kgjiJAuKXfPH1oZqtcNdDRf+D0ehizpPbNu0polE4d/nRFeDQvADxcUT2wwc=
+	t=1741202358; cv=none; b=edPuMuGTl5ZxGUnqLfToGBC2welpichOqRofRd64pHnHV7ql1CtUwGJnASJwuRQ60C3IkVGYKCm+RYZAwo4xpChtXfz3lZLR7uSRRJARblzpOyXpANx8bKtzIGf1WrBnTxi3fRfvpR+TTyzZHft4ksg9TO7CvETghCqZA55vy8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741202306; c=relaxed/simple;
-	bh=9g2rbhyMoiE2C/oREhNhMWIX1M91P2cPIHXySR0gWtA=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=elbVPN29UVVlm9/D56S59A0EAoA+nUOp68YLAlHiHzdyt6bflsNmu3pZMEZtguo9wRi7W5+pIz3KolVkA712NedtQ/BVIQmBSQsepiq/TLlN5UQdt59V8///0c0eI7AO9Rw75PRSGNI3j5oGQLkMVyYc8J7wJo+Wic1UUmoXWp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Rs4Ibrpc; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741202300; x=1741807100; i=markus.elfring@web.de;
-	bh=9g2rbhyMoiE2C/oREhNhMWIX1M91P2cPIHXySR0gWtA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=Rs4IbrpccT00VYlI74v/Y2weSxQOHQ4BKtgCQmkaqfwO6E+w+Bmhvep9yB5JooiE
-	 q0qhJuUHn1UP+PpKwMeSWIKuL6i9xjbs2r8vLpBitS8iKGwxQOztAf8eRU1BYhxW0
-	 VOs/PsnyV+j2CQoTT7S5rtYxIViktTM6r2RiSzi4EFwTh9aubGmIKkOSwtrLt0w9X
-	 6FNNheZcCPf6rpVWbfMtNN30Gm4MDZY6DRz2yMpFUk9a20V4Ey6QXGG+Q4xM1FgoN
-	 gQSDNoM7Rn/d+2n8G/17fXR1wofLkxk7HK80VoOw2lB4PUEsQbDR4jXQ/epIi/jRg
-	 Q6KQ/Tj3A8qDiQG9NQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MQPZj-1td4CT1FXV-00XOXS; Wed, 05
- Mar 2025 20:18:20 +0100
-Message-ID: <84969aba-67ba-4990-9065-6b55ce26ff92@web.de>
-Date: Wed, 5 Mar 2025 20:18:14 +0100
+	s=arc-20240116; t=1741202358; c=relaxed/simple;
+	bh=qh3H0f1tockEN0SXx0qziDHNUYVqtaHpeJWvQ+FB0r4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DnxvrnnlnyPqny090K6+yN7rbD1nGprxDPrvQoqykC+Rep3iqrg6qVFiczkR5+rdnCznhynxOuDphuP504QoEfQ/mXyQcEHRxcKe8OkUSaOCURo9fKgSOzpczWpTQnzTdaBeQmRGRnHokrNqQUipR58FlT1wTh8wnFqqUuxJRsc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fRWFveZ6; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-ab744d5e567so213084766b.1;
+        Wed, 05 Mar 2025 11:19:16 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741202355; x=1741807155; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=w2KNP9IGq8tGz6XYyH9w/L+2vHmsbJyLAKltw3DCNUo=;
+        b=fRWFveZ6mGFt2v9BsZ0jjckPjQaYX+tpQ9Aisfe95rVtdzo80VT/k6JAOpulyDExqi
+         mQgXS/B84f5W0uanEHfkqMGQGRde1o3MgelnBkP4XqCCR3d9u05Myf13wBXiBink9+sJ
+         E3XWgOCHAgkNz6qHeyaZUV+qzPwBHynrqPQ/eA9kPp94y1iLkHb3QZNECl3tUieBcypk
+         K2y2/FVlQaRhnfLFVuZZZh80D2wYwcL/I/jqUczLw5tUvESJQgNbbcn90TdDFLUiJeQt
+         saiGFD9rTV9tyG0+3UoXAZTQaqOCYvezKl+LC1gkT4wMH8l515Mojfl8rmy7Rscq3JrO
+         xt5w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741202355; x=1741807155;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=w2KNP9IGq8tGz6XYyH9w/L+2vHmsbJyLAKltw3DCNUo=;
+        b=DRzYr2GdO7SsE7KQf0AJbuJDuFMUzhSjcdXILyJR62HlELka5nJsLRbqu9j3DsmuOP
+         1wq5w3eI8hRp+wPyQOvpQbM1iedqJtPgKGsLnjDlYvDGvr145hJRPSir3Es/cbnOUWG/
+         +BYUphWxZ1sKuV/HOvxLep26ighQ4Ib9iYBjVzmPBKa57pgaKP3mkDnaJ7XRMgi5vg1/
+         5xq6PQy4L59xNQk2vqvYN7V1TxltBgbkkiu+UNOpRAQwgq9zZFU+dZ+/ixbuR/0nP2v3
+         yzaE1+Ov9FxIf5IMCGxwKI+XLgIAek24cOAhtu7e0t2MDkHx2E8aq4YvxhhmiwjV1mua
+         qkZA==
+X-Forwarded-Encrypted: i=1; AJvYcCUyRhgo+X8D/1kw2Bz97a013dLZqaHCxGun/SqViLwkjaU3oEIaaQROlT6UWZ4WERUtE7x08YD8+7ojl64=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/wZn8Y3XBxm04+1r2Hv/WYc4LztJV6QjdLeMBitoU++U3Kmfi
+	9jc2psjuuTAa3H821b5Yj9lDfuPP0v1iGywM3qujtBkCQ+c6Muv58GydVj/ItnBQdg13T5XE0fJ
+	pkxIFhITO2e7QV1jIgLsSSLRkHQw=
+X-Gm-Gg: ASbGncue0L29uuMnuQeVV3N1mLAd9Wy9ZNbPyiYMp91TtO/bziDCKfpBDjIyVI0/SwR
+	52eZMLok01aanjGRB9LEjsG8vgmhA3P2Kg0VNaYUzvQshoRWFe4DNM+9yddfGf8JtXBsZV0edos
+	KtcgQznEISeDv6RUaUF2qjkL5yKm39
+X-Google-Smtp-Source: AGHT+IE/CAbAzjr6Sc1ZN5KHuLoUNYCntXegehi11W3KX5IVixqLnqnwpNG4XVa+4Inwd+AAcOo/eRuPu7IM17s/a4c=
+X-Received: by 2002:a17:907:7243:b0:abf:27ac:2cf8 with SMTP id
+ a640c23a62f3a-ac22ccf805bmr47285366b.21.1741202355196; Wed, 05 Mar 2025
+ 11:19:15 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Andrey Tsygunka <aitsygunka@yandex.ru>, lvc-project@linuxtesting.org
-Cc: LKML <linux-kernel@vger.kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-References: <20250305145045.1293159-1-aitsygunka@yandex.ru>
-Subject: Re: [PATCH] misc: sram: Fix NULL pointer dereference in sram_probe()
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250305145045.1293159-1-aitsygunka@yandex.ru>
-Content-Type: text/plain; charset=UTF-8
+References: <20250305042930.3453265-1-adamsimonelli@gmail.com> <20250305042930.3453265-3-adamsimonelli@gmail.com>
+In-Reply-To: <20250305042930.3453265-3-adamsimonelli@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Wed, 5 Mar 2025 21:18:39 +0200
+X-Gm-Features: AQ5f1Jp2f_iav-b7aRWmDxgqn7KviavkBuka-5o2Z7EzPAzBUwyh-fHhs6JaxQI
+Message-ID: <CAHp75Veuo9L8Y7=9XKCeFHzhtNK9x4pQ19kcMoAkL-0mFPq1Hg@mail.gmail.com>
+Subject: Re: [PATCH v7 2/3] ttynull: Add an option to allow ttynull to be used
+ as a console device
+To: adamsimonelli@gmail.com
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:oDVhHfY+x++ExZt9dmrKdtd5Wc4OE6HX2lOQVtWg6AXhEBeiUv+
- t3sBNxfwbK/3/boKIxqoeGHFon5qvyuHexSQFr5hHQzBP3ccqCTkMw9SRgfHqgsKywOKRVM
- Z2l3aMcU5gWuWgAxknQJQ6fWTc5p603tACB4UnoDqFpCvEbhD90AJKbZupVdvT7EjjGRDxW
- XzPq+3JVMUU8NMQ4x8ukQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:/2sM9lf64LY=;/XKh3FG1TJZlkok0eJq8DzUS6YY
- mg/pViGjNEwgzJ2GPGkkygzlzGKYJ8FhxjD81gUoX6kJTDe4DhCjIellP8wMEp6CsiRhxBHsm
- 0+UqsofiBAIfir6e3Mpwh4XoEJtFLK+zLLTId4qDkqgAVRWq47MuAaMZ7/hbdvyggP1tTzpBk
- lMXrfVYpFYNGj9Cq4fzRYlO8ZDsV9NecMt+qDEIy+I3CqSrdpMj0j6GYFc0gho2lQ6q066ScN
- dG5rvjRF+57RPHJABg9e/oKMhNio1URk/ZFvez6t0RwXiKj6kniqV61KVgqbqDJYkp0cJbT+r
- pqnRIpfHtg2t726DWOtHzQXEx58nqLB2SuNmQiY8EKCH1XDUZWqT6xg2FNM+miAmtFp7qQ/bU
- zGHohOUivhlLWH4GvHzjY3W9+kUddbaYWK9Jm8580o8DMMN8ga/oz12CbkrMARi4wKwH/+7IA
- jyA1F3CG//WUQOwYntvqCPWzaP0xn4nYro2CiOV5Mi8Gb5eRPM1p4o+dY5/vCRtk8zWSztIxw
- AHf5cQA/oncF35psTqAqBZd5F3K3kBXwiEkCRGfqfRz3JJRw2nENCRjYKLboTGy3hMCpJA9bw
- E8Jn3bRFuUSgkabXVlcQuy52aarQgZSfznmJO0dg6zQpeYdQ3r/Q4IMDVcLhbYsAzojHnNhbi
- BrgDaQSd36yoApbGZOUqRlBMW+FlojbtsDQ48F55t+iWw7gF6MWHVLs9jxmZTyZO4525ffCbK
- Bp2BBfv4NNZ1qPEJaifPvyanD6Gweo19F7OCUOzVVLEFnA8enI0o5n4cVMXy7ekIDlTgt7jTI
- H+x5MVxUEmV3DUQymTCE7VMITgdAlrzOEu3HrkNqZVuUvZoBBAVDKFomJPxkStnWIrHclvnYq
- vV7D/EDRt92pHUYRjG+XKMreWIv79XdlFgLwItjqaSS9BqwfhP+mBrgwj5GP9LlxiU/0GZP+2
- DU9ia+mEmHKml/S5D29aNgLF2zSg6pJ+pLpcTzPxjaMSD8mfvVwwRCcBs7qddsDC+I9q4b/Qh
- wI883hmmSelH35MVOnYoKCbO46bXzcG1Plz7dcxVsjyNso4CS7E1HMpKxPE7t/6wy7Slx1DM9
- 7aBKSMCT8PQDn26iGWn48CPjAXSPpg4/ePJRkH1h6Tv6hAaRaFCUheIinR+gE3q99W29p50Ve
- tmv/79JngIJl92H9F/7AgQ94HFiqYIhEVBloH8qBiA87WzjznZVOHGu3v8FoiKeDJ7kygnkJN
- B3NXVZ99eTLr7FUcqEun8ncTefaNQLw+mfLQgSR4zf2b3eolBLnEqbV2V3WL2QTCSsN0vg0+h
- r02yU0/3PG5OR/f7prBNNshYbjZCje2sRw70D5Jv06kMxaYPXeh2eBX9fI2W+8QQ8k2xbyRhH
- mXhRdehM4p7PG/XvqHCtgzn8yerEsjiARnSGEwYDFbYcACNnlBpR39M7ySB7O1QEXbC+1CZo9
- RgMZ9hg==
 
-> Added check for res for NULL value.
-=E2=80=A6
+On Wed, Mar 5, 2025 at 6:30=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
+>
+> From: Adam Simonelli <adamsimonelli@gmail.com>
+>
+> The new config option, CONFIG_NULL_TTY_DEFAULT_ CONSOLE will allow
+> ttynull to be initialized by console_initcall() and selected as a
+> possible console device.
 
-Please improve such a change description another bit.
+...
 
-See also:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tre=
-e/Documentation/process/submitting-patches.rst?h=3Dv6.14-rc5#n94
+>           In order to use this driver, you should redirect the console to=
+ this
+> -         TTY, or boot the kernel with console=3Dttynull.
+> +         TTY, boot the kernel with console=3Dttynull, or enable
+> +         CONFIG_NULL_TTY_DEFAULT_CONSOLE.
 
-Regards,
-Markus
+I haven't checked what it looks like in menuconfig / nconfig / etc,
+but I think that CONFIG_ is redundant here.
+
+> +         If unsure, say N.
+> +
+> +config NULL_TTY_DEFAULT_CONSOLE
+> +       bool "Support for console on ttynull"
+> +       depends on NULL_TTY=3Dy && !VT_CONSOLE
+> +       help
+> +         Say Y here if you want the NULL TTY to be used as a /dev/consol=
+e
+> +         device.
+> +
+> +         This is similar to CONFIG_VT_CONSOLE, but without the dependenc=
+y on
+> +         CONFIG_VT. It uses the ttynull driver as the system console.
+
+Btw, do those `make nconfig` and friends render the options?
+
+>           If unsure, say N.
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
