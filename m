@@ -1,90 +1,126 @@
-Return-Path: <linux-kernel+bounces-547870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 300B7A50E8E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:25:43 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AA38A50E92
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:27:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 157511891261
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:25:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75A89168012
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:27:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CBBF266B42;
-	Wed,  5 Mar 2025 22:25:35 +0000 (UTC)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A4CD26659A;
+	Wed,  5 Mar 2025 22:27:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXk7GY8f"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F53225A338;
-	Wed,  5 Mar 2025 22:25:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D48EE1DA53;
+	Wed,  5 Mar 2025 22:27:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741213535; cv=none; b=p3ziV2YT/fNu4q9Fo7yjfnDdf55z9u8/xW1XkncDv9i8CatvyZ8CN137uF8a5rhtNOlgAE1JhktEyvCHTKudHciwIMuuBdaSlDZjMvMEc0RveCVSOv4YpIJ8vc6FWFdXK7JZwPh9utt3Ui3vnGjWQvrnj2OjLwNDdBNOngsilfs=
+	t=1741213658; cv=none; b=OXa10P+TwaD2JOnf6SKycusjWrA8zu1WvxvTI5x+qwcrx5i+KHC0AC1or6vDVf/JkaYRzqsENfNJIcM2+ajNCrBTQ3IrnkQryEKNR3QpHdqpZlfMRjqMbr2tXA7gS+3ki4tfmyRV9TAF2Cjr+yzfhYVQWwoYvDgaMqefAef8Gcg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741213535; c=relaxed/simple;
-	bh=6VfPRCXY3JratcLwTZFKOWWpWV+HzQxt4hfgb6sELC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Id8Z04YltXMgFVDvMgd82XTqtou2567dRbixq8xJ3PAjT/O29yvvnFglsu0PYkdzouozfrMCAlEACr5rxvwH8OzuZ0hadyTModPHEmvGtFNfV5AgvEYCi3COaxWtH9OXXj5PsNe7sQHfjIKbbd+Nwlc/UWYCq5AReYqqQ28GQDY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22403cbb47fso16506685ad.0;
-        Wed, 05 Mar 2025 14:25:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741213533; x=1741818333;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=wxKgW2a8rEuZQeYt6Dm1ggMAWy0PXmzN5s3VXqV3WZ0=;
-        b=BRIUCrCZmRw8Dcu/3gjpJzPrH6xfHDJoG2MFaoDBLR+5OhlUj0sSiZLbUN+sLdTWnC
-         NKFF46ekAoL/Jv7xneMM4DwX5TQlYIjXRy9vcn7EVa9YR7rVeM7UksBSa1QFsH+hb9vI
-         qqGfUUg6ueWDUIUaWDeqMbZUuq0E0NKgBAmplgoJWTOh0tnnqAgNeJb7LpjzSHsRRYKv
-         /b+G6C7lNsDtPzEl082NFfb04hnUKAPqVG4WYi4V8Y61CKuvisOd7xm7t8mdRTEL9tZX
-         deOTmaPaZK7ejpuwQN3iVycZTVaG9Nb2BwHeG4KlJD1RqxrE00sOMQfADSQPmUTAtb/B
-         MiZw==
-X-Forwarded-Encrypted: i=1; AJvYcCUN6Ew344IjuNBU38xt1MZcK7/D8a1vZu8MDnb0KCOA2fESBi7+XH5ALRGnnyJNh6J7Qv+wnYjDkdUcNv/S@vger.kernel.org, AJvYcCUZbpiKCoFdSeQ0DoqOMzMsWaNJxDupHAJyhytHTVO0YicB/MpmbO4rCBAlPcJjFClfQ2tVIy3u2wE0@vger.kernel.org, AJvYcCVju2U0Ay6Tqp3WXF634BtSU0/5cYDGb6A9hiZirgTI8i460AxBpT+kTGQJxAOGPf1Lw17HV2mp65uB@vger.kernel.org
-X-Gm-Message-State: AOJu0YwptFw2H1J126vD32mVctEa3Ktbk6A80dFRzzE2+4wXYxe4WW8m
-	1EiaZzrPdgugYzaEpOJE1VKc7sm1cZS/wuU+X+ZY2C+mF/CVjiHR
-X-Gm-Gg: ASbGncsPcq38ljm5fdfiz3BqP9t6KRJzvmo7O7gz3MrBoZbItHWRaSfsETejn/GrpNh
-	eqxs2GAynLmoB78qbOjHPRUxOQwdGB/cb9nDa3DAlMXKt3fXJKq77rvUYuC8BUO+1+EUEbOeBu5
-	W9FGqZrZfNY9M2VUZFBkIMiuZwGuYAhK9pgFLXo66bP9bn/mpBmE950tMOLrpzC3ruB84HJxeUV
-	h5kLUvjWfqCqU69/aQrGN+q/ReAdaKCAwQTPZu7y6vFtdyLXCxoDYAAxmPQNLi7KTKs5Z3jFkcn
-	xaoG9n1oapOQQbZxoscA4yfaTAtbIQrGOMeFbWOwoEqrtfHWP/hPhaNP/LrpnpAHfZWHREAnEpd
-	VhM4=
-X-Google-Smtp-Source: AGHT+IGIsSe6CocLiCdTHiQm6Ag7dRdDMzQRCJMxpJd0bJlXQYYHDjiQpKwsMWDKpj/taTSEaiJ+Wg==
-X-Received: by 2002:a17:902:da91:b0:21f:8453:7484 with SMTP id d9443c01a7336-223f1c98290mr77284165ad.30.1741213532724;
-        Wed, 05 Mar 2025 14:25:32 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-22380bca104sm82923215ad.79.2025.03.05.14.25.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 14:25:32 -0800 (PST)
-Date: Thu, 6 Mar 2025 07:25:29 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Matthew Gerlach <matthew.gerlach@linux.intel.com>
-Cc: lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
-	robh@kernel.org, bhelgaas@google.com, krzk+dt@kernel.org,
-	conor+dt@kernel.org, joyce.ooi@intel.com, linux-pci@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	matthew.gerlach@altera.com, peter.colberg@altera.com
-Subject: Re: [PATCH v8 0/2] Add PCIe Root Port support for Agilex family of
- chips
-Message-ID: <20250305222529.GM847772@rocinante>
-References: <20250221170452.875419-1-matthew.gerlach@linux.intel.com>
+	s=arc-20240116; t=1741213658; c=relaxed/simple;
+	bh=OCW6zeu41eNyvtNz1UUuqO+JafK0NgyekccSUEYRBr8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=n/YkgJ3VWQM5Vq8hDrYp4Lr/F/ggjR5PhEEu5DtbiWxMmaMG27RCZtlJq/zHt8MeGeLJHmDuPA3Q/uYXUfI8rXqT9Wb1iZVbG4X9+GYbFLTGwStn/OMQILyaou43xZkzPFohppydTSIdssakijlU4jNjKmmCtiNABmrr5opwphE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXk7GY8f; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AECEC4CED1;
+	Wed,  5 Mar 2025 22:27:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741213658;
+	bh=OCW6zeu41eNyvtNz1UUuqO+JafK0NgyekccSUEYRBr8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=dXk7GY8f35AQFsdUOOncj/EtIa0cMnodbiNkrOBAM9O0zf31DmDo6J5ycrrvjkwC4
+	 VtsKu851qkrDfrRzeRVic69d8rEEfXlhoaxm36OtJ+zkSWod4fzT4CgHmXDGfYpI9L
+	 /mHf8NVSm9PlL+z/krOZXDqwXpTJzqsTS6BPtd5j83NuVI4urViYod1WU0FWE5YNk+
+	 IuTcLhaZoKhywILdU1Opa2yCCMQT63rk9kP8TIpHs3vpWKdh71TbdDLcTYUxhCzH3M
+	 D1HRCxpFd3wUnK0dv1hmUkfzOHV9C8x+ePjzbiqF5X7RRtGq7ZCrIE/p/3xlsZ5BLc
+	 lPR/wpI27GQ4Q==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: [PATCH 0/8] mm/damon: add sysfs dirs for managing DAMOS filters based on handling layers
+Date: Wed,  5 Mar 2025 14:27:25 -0800
+Message-Id: <20250305222733.59089-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250221170452.875419-1-matthew.gerlach@linux.intel.com>
+Content-Transfer-Encoding: 8bit
 
-Hello,
+DAMOS filters are categorized into two groups based on their handling
+layers, namely core and operations layers.  The categorization affects
+when each filter is evaluated.  Core layer handled filters are evaluated
+first.  The order meant nothing before, but introduction of allow
+filters changed that.
 
-> This patch set adds PCIe Root Port support for the Agilex family of FPGA chips.
+DAMOS sysfs interface provides single directory for filters, namely
+'filters'.  Users can install any filters in any order there.  DAMON
+will internally categorize those into core and operations layer handled
+ones, and apply the evaluation order rule.  The ordering rule is clearly
+documented.  But the interface could still confuse users since it is
+allowed to install filters on the directory in mixed ways.
 
-Applied to controller/altera, thank you!
+Add two sysfs directories for managing filters by handling layers,
+namely 'core_filters' and 'ops_filters' for filters that handled by core
+and operations layer, respectively.  Those are avoided to be used for
+installing filters that not handled by the assumed layers.
 
-	Krzysztof
+For backward compatibility, keep 'filters' directory with its curernt
+behavior.  Filters installed in the directory will be added to DAMON
+after those of 'core_filters' and 'ops_filters' directories, with the
+automatic categorizations.  Also recommend users to use the new
+directories while noticing 'filters' directory could be deprecated in
+future on the usage documents.
+
+Note that new directories provide all features that were provided with
+'filters', but just in a more clear way.  Deprecating 'filters' in
+future will hence not make an irreversal feature loss.
+
+Changes from RFC
+(https://lore.kernel.org/20250220194646.37726-1-sj@kernel.org)
+- Fix sphinx error on usage doc change
+- Wrodsmith commit messages
+- Rebase on latest mm-unstable
+
+SeongJae Park (8):
+  mm/damon/sysfs-schemes: let damon_sysfs_scheme_set_filters() be used
+    for different named directories
+  mm/damon/sysfs-schemes: implement core_filters and ops_filters
+    directories
+  mm/damon/sysfs-schemes: commit filters in {core,ops}_filters
+    directories
+  mm/damon/core: expose damos_filter_for_ops() to DAMON kernel API
+    callers
+  mm/damon/sysfs-schemes: record filters of which layer should be added
+    to the given filters directory
+  mm/damon/sysfs-schemes: return error when for attempts to install
+    filters on wrong sysfs directory
+  Docs/ABI/damon: document {core,ops}_filters directories
+  Docs/admin-guide/mm/damon/usage: update for {core,ops}_filters
+    directories
+
+ .../ABI/testing/sysfs-kernel-mm-damon         |  16 +++
+ Documentation/admin-guide/mm/damon/usage.rst  |  31 +++--
+ include/linux/damon.h                         |   1 +
+ mm/damon/core.c                               |   9 +-
+ mm/damon/sysfs-schemes.c                      | 119 ++++++++++++++++--
+ 5 files changed, 153 insertions(+), 23 deletions(-)
+
+
+base-commit: d5ce0f2fd108557fb138adccb203441d0d70f1c4
+-- 
+2.39.5
 
