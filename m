@@ -1,126 +1,237 @@
-Return-Path: <linux-kernel+bounces-547520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACF49A50A5D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:54:37 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8CB2A50A68
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:56:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4E83A542F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:54:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E3197A3EE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:54:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC0D25333B;
-	Wed,  5 Mar 2025 18:54:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAF2253333;
+	Wed,  5 Mar 2025 18:55:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DQCh0ecO"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mnaSlqiO"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067741DD9AC;
-	Wed,  5 Mar 2025 18:54:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7BDB1A5BB7;
+	Wed,  5 Mar 2025 18:55:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741200855; cv=none; b=RAhHiPW78BpAw5hzwxG9S3GJcQLfESZxs6FvwhsG2PYcq7NJWXCey54z8OY1PMPDjRAely6MVIs/tWCShsoKrF+Yu09Yo3i1VbHtoM+nE3q/INMHai057DUVXNoXx0PVruYAk0TU3HoMnsxT8M894gTkPPe1lXnZwUvPyDu1bhY=
+	t=1741200937; cv=none; b=tK/Uo0xSCw/0XBJvmhrvSx0j+6GnhIAdWRSwI2KofgRaR+j1EkkgY7f8Ykd7Lo4IiFXkQ4sxdmlK38fhhzail9MF2DSoA6Pb6zcnotbs65WoGIP/HBT3438K4TCn51jQuI2pbho8sOcgjGn9VARL35bA25BgF6GyuGhZtzE2VLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741200855; c=relaxed/simple;
-	bh=1IKgsVfO8AFngCF533cDPpX+Sfrno9eJbAhfD0kB+ps=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ITBP5s8I0x1We7kQDAzWyWXYs/rbvrrlMtm2GDWq7Fq7rvO3FT1ScJaBo8sN4UYT1bFUPjcaQYvhzSlpJg+Y+9IFN26Vrp3c26N4iBtt/MBqG/w3uK/wSJ+mCkRJTa8vxmecRPZ277tX2rU5uMaX/33nYiZ9TF49TezjTvE0Nrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DQCh0ecO; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4394a0c65fcso77829395e9.1;
-        Wed, 05 Mar 2025 10:54:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741200852; x=1741805652; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PTEPlivf57KNf0u9yF+nL78ShRAOQbbl1KlRhOM3FSk=;
-        b=DQCh0ecO+UEqtuGE35iqY8xkOuQc/PtmHIjFDtoEg8ek3wvOY6BMoR980TfMAdApMy
-         A5oiFZPseSH6ndIj7mLkKQQdamXbecxfQ5fXdlpItxAk2+XIPq6Sc9luTpRYrO24yR+L
-         NNfLT//nwM55Z6TV/m5SGw30pc1s8RGQ95auDr6Wp1ukiLHUrX5hCrMjOrmuGf0K78zb
-         YujecUV9Vaox2kwwtTyTMcfeG4nePJ6W8uw8Jjqi7ZNm79IBEoi+VQHI/ZTpG0chyb55
-         e1Ya8OYxztxlVUk84oc32HK/0ZI2R12wSawiRelba2q7Mx0YAGwkocXtBO9jfdxTjxah
-         IBXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741200852; x=1741805652;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PTEPlivf57KNf0u9yF+nL78ShRAOQbbl1KlRhOM3FSk=;
-        b=UwFpb/zGXlccAhjP7TkjKcDvIkLMKG6xhieLgEjEG34VNLAfz2Vo8Kvs65j9GWxeve
-         zdX0gsC94YmfIlL8E9qaT1bTKA3oJ7/4TXZ/0prFaKyw3wFBcFE2ocfUETwwO6vEyO9a
-         Zp8TihNbQCgLHOF704cEdSOvQdN9WbC6T0bzWTgF9xQynWXb7RanDrNa+C+qU24/+3q3
-         9BEQiD5XYVAERxoi338T32J571He3MT552PitpmNXzm09Uos4ZDdsoQ3O2e6QyF1POMG
-         e7tup2Nhow628VpzXbXURVHQ13xbRKVi44qEWQhr/aLP9Ds06H0nFPBNZQEC37tMpDNr
-         jluQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGbNzLNG47Zjj5wVV47Oy6ZIWOErGCM5b4LUKnnhoJzMg8t7mCYLlEVbWm/QG0xy/AxpbMf9B3YTgvqHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQb2ZGtwOv+dNZgDkI8MPj0a+ZCpekubvk6QMOn4/Rz4WqH+en
-	Me0CwbvyopIx4wRePA8NFERyAjBad/2mzYEH5oDG2llMre1sD1Ar
-X-Gm-Gg: ASbGncsy36+q+79MKKK0W+eK8nI2Ml99O0TSquhw4FFwKTOxZ4L7Z1v+2EuDXFtDJGO
-	Mv2WiG4b8NGq1wJ/kEcz90/es1RVilBfD0Z/cLtwp13tbDfIoDPrTHwbSDJ9mlb+rvuI3+20Z4u
-	FfmBFgjDkjS/lWIqixKvuCzOaZf5DxGMfkz5FOE4Fix6tBfq8JuV7JW/iuq2G3ayoSUxBrnEKGq
-	sQk4CuhzbrgQBWPyG2z7RsC7Mc8cNDrwJvjgVIZSjj5XS1eM5zKxa1Jg04VhYbFW9LlkqAnzbSo
-	5lBkJ0uq6SPgcvPsNNPIwSG8IjZInqIS+pkBcIX/o2lNqn6d/funGegfTE76WzrJ2c1IkJ/K0vc
-	oxdyjXYg16gC1it18T17m
-X-Google-Smtp-Source: AGHT+IFq7ByBMzrdcbNey9rPMwFoH0XXCXvSqwidIYHLYAKpglo0B8dEBkmtmZjPTAu9SsK5oJOomg==
-X-Received: by 2002:a05:6000:1f82:b0:390:f75e:f815 with SMTP id ffacd0b85a97d-3911f7543a6mr4658220f8f.23.1741200851871;
-        Wed, 05 Mar 2025 10:54:11 -0800 (PST)
-Received: from jernej-laptop.localnet (86-58-6-171.dynamic.telemach.net. [86.58.6.171])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47965ddsm22312099f8f.18.2025.03.05.10.54.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 10:54:11 -0800 (PST)
-From: Jernej =?UTF-8?B?xaBrcmFiZWM=?= <jernej.skrabec@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>, Andre Przywara <andre.przywara@arm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH v2 15/15] arm64: dts: allwinner: h616: add YuzukiHD Chameleon
- support
-Date: Wed, 05 Mar 2025 19:54:10 +0100
-Message-ID: <2227598.Icojqenx9y@jernej-laptop>
-In-Reply-To: <20250304222309.29385-16-andre.przywara@arm.com>
-References:
- <20250304222309.29385-1-andre.przywara@arm.com>
- <20250304222309.29385-16-andre.przywara@arm.com>
+	s=arc-20240116; t=1741200937; c=relaxed/simple;
+	bh=etCrqOTPVWgsRlTIzIro44bxh04J316uq3yD1SX27Kg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XrfQ4/pIlQdUt1pSFh0dGA2rq6/V7GnAqGoos78YwoOMV09sTIZ9AQXJPDrFHM1uNMwr+Wo0KrJc/1AGbQPqM0yo8WVRMKPnXK/i5z2fxJNf2d++NaBCGSFPnEdS/mpeliqZPznyEKUQBgIeSbAoCAaDmV/UWbs58H4ygoHAFfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mnaSlqiO; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525APb5r008881;
+	Wed, 5 Mar 2025 18:55:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9IyvEM6/6G9eM6U104p737
+	xMSJTdDyrVmrBZ0qReOIc=; b=mnaSlqiOsXIIB4U16SIJammNnFeSQXJIc7K2gj
+	M7+F5LZj8pIvo3fRBhcRWjcojqOcXX6h0+t2uiWCe+JyBcfUUg4QDFrNlVBIVmlz
+	NZBhN9yQrfOaFfTEhYTtZFf8CGMAYrqlzUnEdm3Ue3nL2pcBv0gm7k1PY3NQ0U15
+	xbW8VzJgluOUmz389hC7EPXldKyQszrsFzai4sgAHvc6Fx2ZLTN5NblLSabfHGEW
+	dWhyNqZEl+QC5aA+3v6kGTUvI7ESVy0S/xP8tdMZaX4sXCoDooHrKOS2jA0hJ093
+	xTyPU2eMAEt9CjVUUostOa9y+czKrOtaok3sjspU0D/SM/Tw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6v6e0b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 18:55:25 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 525ItOMk009886
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Mar 2025 18:55:24 GMT
+Received: from hu-rajkbhag-blr.qualcomm.com (10.80.80.8) by
+ nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Wed, 5 Mar 2025 10:55:21 -0800
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+To: <ath12k@lists.infradead.org>
+CC: Johannes Berg <johannes@sipsolutions.net>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        "Raj Kumar
+ Bhagat" <quic_rajkbhag@quicinc.com>
+Subject: [PATCH ath-next v9 00/13] wifi: ath12k: add Ath12k AHB driver support for IPQ5332
+Date: Thu, 6 Mar 2025 00:24:48 +0530
+Message-ID: <20250305185501.2400888-1-quic_rajkbhag@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: LkMfXS094zdW68chdNmUGt-p22_yQpkb
+X-Proofpoint-ORIG-GUID: LkMfXS094zdW68chdNmUGt-p22_yQpkb
+X-Authority-Analysis: v=2.4 cv=fatXy1QF c=1 sm=1 tr=0 ts=67c89e1d cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=cGRcoztS1dbot-ufV6AA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_07,2025-03-05_01,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
+ spamscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
+ lowpriorityscore=0 mlxlogscore=999 mlxscore=0 adultscore=0 suspectscore=0
+ phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
+ adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503050144
 
-Dne torek, 4. marec 2025 ob 23:23:09 Srednjeevropski standardni =C4=8Das je=
- Andre Przywara napisal(a):
-> The Chameleon board is an OpenHardware devboard made by YuzukiTsuru.
-> The form factor resembles the Raspberry Pi Model A boards, though it
-> differs significantly in its features:
->=20
->   - Allwinner H618 SoC (4 * Arm Cortex-A53 cores, 1MB L2 cache, 1.4 GHz)
->   - between 512MiB and 2GiB DDR3 DRAM
->   - up to 128 GiB eMMC flash
->   - AXP313a PMIC
->   - 100 Mbit/s Ethernet pins on a header
->   - XR829 WIFI+Bluetooth chip
->   - 4 * USB 2.0 USB-C ports
->   - microSD card slot
->   - 3.5mm A/V port
->=20
-> Add the devicetree describing the board's peripherals and their
-> connections.
->=20
-> Signed-off-by: Andre Przywara <andre.przywara@arm.com>
+Currently, Ath12k driver only supports WiFi devices that are based on
+PCI bus. New Ath12k device IPQ5332 is based on AHB bus. Hence, add
+Ath12k AHB support for IPQ5332.
 
-Acked-by: Jernej Skrabec <jernej.skrabec@gmail.com>
+IPQ5332 is IEEE802.11be 2 GHz 2x2 Wifi device. To bring-up IPQ5332
+device:
+- Add hardware parameters for IPQ5332.
+- CE register address space in IPQ5332 is separate from WCSS register
+  space. Hence, add logic to remap CE register address.
+- Add support for fixed QMI firmware memory for IPQ5332.
+- Support userPD handling for WCSS secure PIL driver to enable ath12k
+  AHB support.
 
-Best regards,
-Jernej
+NOTE:
+The working upstream DTS changes for this series have been posted as a
+separate series.
+[PATCH v2] arm64: dts: qcom: add wifi node for IPQ5332 based RDP441
 
+v9:
+- Fixed memory leak in ath12k_ahb_probe().
+- Removed tag "Reviewed-by: Vasanthakumar Thiagarajan", in the updated
+  patch [08/13] wifi: ath12k: add AHB driver support for IPQ5332
+
+v8: https://lore.kernel.org/all/20250228184214.337119-1-quic_rajkbhag@quicinc.com/
+- Fixed format specifiers warning reported by kernel test robot in patch
+  [PATCH v6 07/13] wifi: ath12k: add support for fixed QMI firmware memory
+
+v7: https://lore.kernel.org/all/20250227191034.1949954-1-quic_rajkbhag@quicinc.com/
+- DT binding: DT property 'qcom,ath12k-calibration-variant' renamed to
+  'qcom,calibration-variant'.
+
+v6: https://lore.kernel.org/all/20250225064834.2002499-1-quic_rajkbhag@quicinc.com/
+- DT binding: binding doc renamed from qcom,ath12k-ahb.yaml to
+  qcom,ipq5332-wifi.yaml.
+- DT binding: rephrased memory-region description.
+- DT binding: dropped description for memory-region-names.
+- DT binding: updated maintainers in binding doc.
+- The API ath12k_core_get_reserved_mem_by_name() has been simplified and
+  renamed to ath12k_core_get_reserved_mem()
+- Removed unnecessary NULL check in devm_clk_get() error handling.
+- Dropped all ath12k_ahb_clock_* wrappers for single clock.
+- Removed shutdown callback for the ath12k AHB driver.
+- Reference count leak handled for rproc and rproc phandle.
+
+v5: https://lore.kernel.org/all/20250130043508.1885026-1-quic_rajkbhag@quicinc.com/
+- DT binding: Added `memory-region-names` property to address undocumented
+  ABIs.
+- DT binding: Added four complete items to `memory-region`, required by
+  ath12k firmware.
+- All calls to `of_find_node_by_name()` are removed. Introduced helper
+  function `ath12k_core_get_reserved_mem_by_name()` to get the reserved
+  memory by name.
+- Removed unused include headers.
+- Removed error prints for impossible scenarios.
+- Used proper phandle API `of_parse_phandle()` to read `qcom,rproc`.
+- Used `dev_err_probe()` API for logging errors wherever applicable.
+- Changed hardware parameter `needs_m3_fw` to `enum ath12k_m3_fw_loaders`.
+- Changed hardware parameter `bdf_addr` to `bdf_addr_offset` to store the
+  offset for BDF memory from the q6-memory as base.
+
+v4: https://lore.kernel.org/all/20241210074159.2637933-1-quic_rajkbhag@quicinc.com/
+- Missed to include some review list in v3. Hence sending v4 with
+  all review list as per - scripts/get_maintainers.pl
+
+v3: https://lore.kernel.org/all/20241209165644.1680167-1-quic_rajkbhag@quicinc.com/
+- DT binding: clock name changed from gcc_xo_clk to xo.
+- DT binding: Upper constraint added for memory-region property.
+- DT binding: The description for "qcom,rproc" phandle updated to represent
+  the hardware aspect.
+- DT binding: Added property qcom,ath12k-calibration-variant.
+- Squashed patch[2/22] to patch[8/22] of v2 into a single patch.
+- Patch reordering is done.
+- The hardware parameter "m3_fw_support" renamed to "needs_m3_fw".
+- CMEM remap and CMEM register handling are dropped. CMEM registers are
+  accessed within WCSS register space (ab->mem).
+- The devm APIs are used for interrupts handling.
+- Logic updated in ath12k_ahb_map_service_to_pipe().
+- Dependency path series from other subsystem are dropped.
+
+v2: https://lore.kernel.org/all/20241015182637.955753-1-quic_rajkbhag@quicinc.com/
+- "qcom,board_id" property is dropped. This is not the direct dependency
+  for Ath12k AHB support, hence it can be taken up separately.
+- "qcom,bdf-addr" property is dropped in device-tree and moved to ath12k
+  driver.
+- Currently we have only one compatible enum (qcom,ipq5332-wifi), hence
+  conditional if() check for defining the binding is removed.
+- "reserved-memory" node is dropped from example DTS.
+- "status" property is dropped in wifi node of example DTS.
+- Integrated the “Support userPD handling for WCSS secure PIL driver”
+  patch series with the Ath12k AHB bring-up patch.
+- Removed the RFC tag as all dependency patch series are now compilable.
+
+v1: https://lore.kernel.org/all/20240814094323.3927603-1-quic_rajkbhag@quicinc.com/
+
+Balamurugan S (6):
+  wifi: ath12k: fix incorrect CE addresses
+  wifi: ath12k: add ath12k_hw_params for IPQ5332
+  wifi: ath12k: avoid m3 firmware download in AHB device IPQ5332
+  wifi: ath12k: Add hw_params to remap CE register space for IPQ5332
+  wifi: ath12k: add AHB driver support for IPQ5332
+  wifi: ath12k: enable ath12k AHB support
+
+P Praneesh (1):
+  wifi: ath12k: refactor ath12k_hw_regs structure
+
+Raj Kumar Bhagat (2):
+  dt-bindings: net: wireless: describe the ath12k AHB module for IPQ5332
+  wifi: ath12k: add support for fixed QMI firmware memory
+
+Sowmiya Sree Elavalagan (4):
+  wifi: ath12k: Power up root PD
+  wifi: ath12k: Register various userPD interrupts and save SMEM entries
+  wifi: ath12k: Power up userPD
+  wifi: ath12k: Power down userPD
+
+ .../net/wireless/qcom,ipq5332-wifi.yaml       |  315 +++++
+ drivers/net/wireless/ath/ath12k/Kconfig       |    6 +
+ drivers/net/wireless/ath/ath12k/Makefile      |    1 +
+ drivers/net/wireless/ath/ath12k/ahb.c         | 1156 +++++++++++++++++
+ drivers/net/wireless/ath/ath12k/ahb.h         |   80 ++
+ drivers/net/wireless/ath/ath12k/ce.c          |   92 +-
+ drivers/net/wireless/ath/ath12k/ce.h          |   18 +-
+ drivers/net/wireless/ath/ath12k/core.c        |   60 +-
+ drivers/net/wireless/ath/ath12k/core.h        |   14 +-
+ drivers/net/wireless/ath/ath12k/hal.c         |   84 +-
+ drivers/net/wireless/ath/ath12k/hal.h         |   68 +-
+ drivers/net/wireless/ath/ath12k/hw.c          |  479 ++++++-
+ drivers/net/wireless/ath/ath12k/hw.h          |   22 +-
+ drivers/net/wireless/ath/ath12k/pci.c         |   10 +-
+ drivers/net/wireless/ath/ath12k/pci.h         |    4 +-
+ drivers/net/wireless/ath/ath12k/qmi.c         |  210 ++-
+ drivers/net/wireless/ath/ath12k/qmi.h         |    3 +-
+ 17 files changed, 2505 insertions(+), 117 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/wireless/qcom,ipq5332-wifi.yaml
+ create mode 100644 drivers/net/wireless/ath/ath12k/ahb.c
+ create mode 100644 drivers/net/wireless/ath/ath12k/ahb.h
+
+
+base-commit: 3148fc3cf193dbbd2e14eee59468a510a38bf604
+-- 
+2.34.1
 
 
