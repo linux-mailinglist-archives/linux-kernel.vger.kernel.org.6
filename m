@@ -1,99 +1,168 @@
-Return-Path: <linux-kernel+bounces-547671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547672-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17C1AA50C37
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:09:11 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8BAFA50C3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:10:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55F223ACB3E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:08:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0DC91623EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:10:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53A125523E;
-	Wed,  5 Mar 2025 20:09:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6C59255229;
+	Wed,  5 Mar 2025 20:09:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kC8w/wzV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lMog1TNC"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACC619D06A;
-	Wed,  5 Mar 2025 20:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEECA19D06A;
+	Wed,  5 Mar 2025 20:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741205344; cv=none; b=SnZQjAV6qI+Qf/0nLNZh8U2OmHtq1rVTwJQGKcfwOVGsYJPxs1wC6R0Pi8dKfduS5QNtMqNUWIlcqmJrq1ZDgqLNLhyHiWYf9fb66UyjiOj8OkGfeNuibSaj1mT7I9TXCDRfwjrjy79jGQTo8DUWc5NntDDWF/qcHNPnj1Bjc2w=
+	t=1741205397; cv=none; b=LuRg+DvQ/cAqS88BopdwbrcpbQ4abPcvoT1rZtnK/o8yi4vfljgkRSZHDgYKrEo7exP2f/lHCfiaUF2BE2eZGUypeXRNsia3qyARvMzTZVoSnCDtrva5JjG12mRU51T4pwcLP8sT7OW+/tJYXs2K0wWzJk8qa/wXLQ8HQxBwneo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741205344; c=relaxed/simple;
-	bh=3GEXo0R3oi/i957HgbWWMqT94pZhKmcGNV8yUuiPhGY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cvg03almkfb5O82XKYQGCxAK/gMiwg4nCB7gjXlNnTzCmYBiVmnu82k1JHln4sWg+acnWNDQ1XTb9wWgdo8N/y4fIeNxlGm6PVNO08bmLvMv5qlZNV8Te2cH+MiaPVzYG32nrn6wkdr0rTCefslfwvCTeZ1FH07UOm+KZsxbnZQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kC8w/wzV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F5DC4CED1;
-	Wed,  5 Mar 2025 20:09:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741205343;
-	bh=3GEXo0R3oi/i957HgbWWMqT94pZhKmcGNV8yUuiPhGY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kC8w/wzVrOeI+eaIoh+n2wfbPqxzUEDR4IFvOqOpHP7xW1Bbt4+RlNrFiPoRWDSlw
-	 Vp72Y9UKlZHt9R5C7Db3lbRKbFrANwLiXSjnqbWvQZHNiwLzDCaBvs1LyMa+S0QD1m
-	 VSx3283CCG++gn4F4N1Xvj4DhL5D03QUVak3sC7fR2uvonbTagTpkMHnGC+kANYtgU
-	 2iUmPy9wqj5SblPyJMOfsNQpNXALNJ/gIlF6ajNREQUd+RHb/fhdB8aVJ7gi2G5Zgi
-	 0b0fqQ3q4W+ueiB/U663TT2rE8cbOac2X7r0Yufwe8nM54WOSbBdea1SiDtxkZ9wcW
-	 5HDiKvyX2A0PQ==
-Message-ID: <5a284bee-c332-4af2-b7ad-56296e419e18@kernel.org>
-Date: Wed, 5 Mar 2025 13:08:51 -0700
+	s=arc-20240116; t=1741205397; c=relaxed/simple;
+	bh=JKjvBJkaP+bCSF8OB6i2C4q9ia72TjvN1Ur2MmP/E7I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hGxO4ykQWY+mcWkqncP1k6Ot4D+xxECG/FW2A85zohbZX1k6qVhIkOatDWyLxkI1IBJKhMcesaTbpEXP639ed1Uisjkohg53HvYvXD7vrYJXk3A2fvjghkLGG9aL7eklTu1vzpx8e0PpheNNgmlAEuXYBHrhpJZ80LR6sU42ViY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lMog1TNC; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5439a6179a7so1387424e87.1;
+        Wed, 05 Mar 2025 12:09:53 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741205392; x=1741810192; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3NMDP3nY/Cv5QrKrBYxr9nsmy0z9S+GoDya+jfd+rcg=;
+        b=lMog1TNC0MXtn/xZDeSNl/MDcmTE9jpChpQT+PZpIwrzHJDoHcRPTHY25tSPVJjQLo
+         tejs43uCpOQwgTRrQdQfYFzGvgpQY9soUMoByZw8A5sgbN6ZdkQn5JqcxP9UQggPgw6I
+         A84OZGKwANUn4noH2edS8GD6WVEqy8v4gM/zPKByc2Yc65uzT9roLYqyAtkteXf3VXVZ
+         CIb8mYB7DZfiPNkBZN3Rt58kcQyPpV7+DloGk2U1p0s6RtBa1trq5j9d42G9pCfusho4
+         WZqBtwo0NsPjXoIKmE0qnQhaJ3PVap4rAFGSNPZX1AlmBt4RCWA/2HibQf7Xqq5rs4c0
+         v+Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741205392; x=1741810192;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3NMDP3nY/Cv5QrKrBYxr9nsmy0z9S+GoDya+jfd+rcg=;
+        b=Y40N3scx3IgSGrOPvTELNK1m+yAHoJ1TLEnHc+XZaDc5i3b2755r0UX0R/TYSg5inN
+         g/QvZBhtP6OG3M9jFQAKGgldN9Lc519CTZ9fwt8DHStF8el8bfkeqvqjrK+my5PIm2nN
+         TWRZvM4ufpS79ri+jDAPjP2vpTBtLG/Ga2TjmZNHcM8wrB+CxAZPu8gOgdpOxol+XiBC
+         PdyRAmZAh5NSl3Hktg89n8RnVCiF9d2n5/WmqA0D4pxL+3vUqLGq4GD2GOOWmGjwBoaR
+         KnG7eRuxJQq3n2Pn8mYmobuD77nbIbIss1Mp/reG5FehsNShE9U+HHJxJT/LuMHVTRG4
+         ibGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWg0+91Q/0V1+UfI6dDcK0qhD9rJkiZqDppoLoks/JY3SvQxLlQ6QiDkPVUpFOAXjRB2xWSX3djutR53gqG8TpR@vger.kernel.org, AJvYcCXPCw0UTNahWriyMB6HKaHbu2eFFFwbuUP5B8t4QSHjM7VfILbOoaIFOKb6QzBFvO+3/eQzwNvtuRBkZAw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzH3iQYXvM23Kip77djf07LR+GJgrXfM6I2Vgv+dmmt4C+xYPh3
+	ICGm52LsuJkaIS0pPd5DP8PKn2/1X2cnuLoxfJ5bL3pi2etlz9GzMMihiHlJob4+GAushZ2eMqL
+	J2ruS2LuUQH3qlm8I/L9RP4spzFk=
+X-Gm-Gg: ASbGncvwE24vr/MYlAvAWvnfcF5ZClkNGRX3K8XQlf0FsYtk1s0LhhGfbdQC78pJGjI
+	XZepNq5KpqfiAT3/KMBVDYSbrip213uhkUesyyU90LWRxcy62I2N2raH3ExsaiQSp1qaXgeckVI
+	bmf3OfvxhIwxJVVvbY61P6ydyPwE6tHDp05JrvfXdUEA==
+X-Google-Smtp-Source: AGHT+IGY0d68tg4ygvsu8lFMjh8/pn1fTlEYcTFZfa4u6z0f6Q4LE3D+97AKPx5MQua8S1lsIuHOofp4osXlu8EKcFU=
+X-Received: by 2002:a05:6512:1246:b0:549:5a14:96d with SMTP id
+ 2adb3069b0e04-54984c1d477mr229019e87.19.1741205391447; Wed, 05 Mar 2025
+ 12:09:51 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] Documentation/CoC: Spell out the TAB role in enforcement
- decisions
-To: Steven Rostedt <rostedt@goodmis.org>, Jani Nikula <jani.nikula@intel.com>
-Cc: Shuah Khan <shuah@kernel.org>, gregkh@linuxfoundation.org,
- corbet@lwn.net, workflows@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, conduct@kernel.org, tab@lists.linux.dev,
- Miguel Ojeda <ojeda@kernel.org>
-References: <20250304194813.11049-1-shuah@kernel.org>
- <87h647yf8r.fsf@intel.com> <20250305103108.4943e301@gandalf.local.home>
-Content-Language: en-US
-From: Shuah <shuah@kernel.org>
-In-Reply-To: <20250305103108.4943e301@gandalf.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
+ <20250214-scanf-kunit-convert-v8-4-5ea50f95f83c@gmail.com>
+ <Z8hnXIrMV0ct1YR6@pathway.suse.cz> <CAJ-ks9k7G31uBqygXNtfXcwVQXWvkaAWJh1vkFw2_VZ5bAz=Vg@mail.gmail.com>
+ <Z8hz8-Sa6XRC0W5Z@smile.fi.intel.com> <CAJ-ks9kz-fEH1YLiCn3fHR9AtYQLCZS77GKfOObifEL4GLwk8A@mail.gmail.com>
+ <Z8ineT_g9gzcftWe@smile.fi.intel.com>
+In-Reply-To: <Z8ineT_g9gzcftWe@smile.fi.intel.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 5 Mar 2025 15:09:14 -0500
+X-Gm-Features: AQ5f1Jo1wsViVz5Qqbo6kN_0ma0b_fS-xinbRwRnH1wy9-9N740S0sz2OB5HnO4
+Message-ID: <CAJ-ks9md5CMgKZ1==1+rW4nPJ+PBtMXUpqc6BRd=fOB8MXe+nQ@mail.gmail.com>
+Subject: Re: [PATCH v8 4/4] scanf: break kunit into test cases
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Petr Mladek <pmladek@suse.com>, David Gow <davidgow@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 3/5/25 08:31, Steven Rostedt wrote:
-> On Wed, 05 Mar 2025 11:54:28 +0200
-> Jani Nikula <jani.nikula@intel.com> wrote:
-> 
->> 2/3 actually means 7/10 for the TAB.
->>
->> Except two of the CoC committee members currently serve on the TAB, and
->> will not vote. Assuming they will also not count for the total, 2/3
->> means 6/8 = 75%.
->>
->> All of a sudden you actually need 3/4 majority in the TAB to approve any
->> CoC measures.
->>
->> Perhaps consider using a simple majority instead? The numbers become
->> 6/10 and 5/8.
-> 
-> I'm a TAB member but I'm speaking for myself and not on behalf of the TAB.
-> 
-> I rather keep it as is and not move it to a simple majority. If the TAB is
-> going to make a decision that may affect the ability of a developer to get
-> their work done, the issue had better be substantial where it should have no
-> problem getting to 75%. Ideally, it should even be unanimous, but there are
-> cases where a member may be involved, and decides to abstain.
-> 
+On Wed, Mar 5, 2025 at 2:35=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
+>
+> On Wed, Mar 05, 2025 at 10:57:47AM -0500, Tamir Duberstein wrote:
+> > On Wed, Mar 5, 2025 at 10:55=E2=80=AFAM Andy Shevchenko
+> > <andriy.shevchenko@linux.intel.com> wrote:
+> > > On Wed, Mar 05, 2025 at 10:25:51AM -0500, Tamir Duberstein wrote:
+> > > > On Wed, Mar 5, 2025 at 10:01=E2=80=AFAM Petr Mladek <pmladek@suse.c=
+om> wrote:
+> > > > > On Fri 2025-02-14 11:20:01, Tamir Duberstein wrote:
+>
+> ...
+>
+> > > > > >  #include <kunit/test.h>
+> > > > > > -#include <linux/bitops.h>
+> > > > > > -#include <linux/kernel.h>
+> > > > > >  #include <linux/module.h>
+> > > > > > -#include <linux/overflow.h>
+> > > > > > -#include <linux/printk.h>
+> > > > > >  #include <linux/prandom.h>
+> > > > > >  #include <linux/slab.h>
+> > > > > > -#include <linux/string.h>
+> > > > > > +#include <linux/sprintf.h>
+> > > > > >
+> > > > > >  #define BUF_SIZE 1024
+> > > > >
+> > > > > It would make more sense to do this clean up in the 3rd patch
+> > > > > where some code was replaced by the kunit macros.
+> > > > >
+> > > > > Also I am not sure about the choice. It might make sense to remov=
+e
+> > > > > <include/printk.h> because the pr_*() calls were removed.
+> > > > > But what about the others? Did anyone request the clean up, pleas=
+e?
+> > > > >
+> > > > > I do not want to open a bike shadding because different people
+> > > > > have different opinion.
+> > > > >
+> > > > > I would personally prefer to keep the explicit includes when the
+> > > > > related API is still used. It helps to optimize nested includes
+> > > > > in the header files which helps to speedup build. AFAIK, there
+> > > > > are people working in this optimization and they might need
+> > > > > to revert this change.
+> > > >
+> > > > Yeah, I don't feel strongly. I'll just restore all the includes.
+> > >
+> > > It will be blind approach. Please, try to look at them closely and in=
+clude what
+> > > you use (IWYU principle). I don't think anybody uses kernel.h here, f=
+or
+> > > example.
+> >
+> > I think I'm getting conflicting instructions here. IWYU is indeed what
+> > I did: bitops, kernel, overflow, printk are all unused; string is used
+> > only for sprintf, so I made that replacement.
+> >
+> > However Petr said "Did anyone request the clean up, please?" which
+> > implies to me an aversion to unwanted cleanup. So, which is it please?
+>
+> I believe he asks the background of the change. And if it made in a separ=
+ate
+> patch it would be clearer to begin with (e.g., Suggested-by tag).
+>
+> But I don't know how you deducted that it's unwanted. With a separate pat=
+ch
+> we may discuss and see if it's wanted or not. In any case I would like to=
+ see
+> such a patch.
 
-I am in total agreement with Steve on this. The way the document reads now
-with this change allows for oversight when the CoC, the TAB and the community
-is forced to make tough decisions that impact developer's ability to participate
-in the development process.
-
-thanks,
--- Shuah
+Thanks for clarifying. Nobody suggested that cleanup. I will remove
+printk.h in the 3rd patch as Petr suggested and the remaining headers
+in a separate final patch for the next respin.
 
