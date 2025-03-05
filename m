@@ -1,54 +1,47 @@
-Return-Path: <linux-kernel+bounces-547308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB4D2A505A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:51:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA77DA505B8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:54:30 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70DC11886BB2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:49:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EED013AB966
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC0019DFA5;
-	Wed,  5 Mar 2025 16:49:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD6021A5B93;
+	Wed,  5 Mar 2025 16:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="pKFV87ss"
-Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q2blZTR6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE935151992
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:49:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 131CD151992;
+	Wed,  5 Mar 2025 16:49:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741193346; cv=none; b=BytfDC/gTpzaO+5ML7bx5oodF9hcl73QPJZK6PkfPqAPOXLh2lN7rPggl6vkp/QjDd+IiV9iALqxTGf1FGZOUELIF8dz/ltpFodpIL22Kt1UlM2AJGiWOh0GWt9UaORMNGV2oYLw0rhKWDuNa9u/dfyJ4bz5bN/Wi7gVXjO0GkE=
+	t=1741193389; cv=none; b=jsvNxn4nnV8fhm9p19V1aDIMi+Q8j09InhEcUUC/1EhdslOop2gvHvakXLXQtvHh3bI5WISwdA8hs12e28db0Fcosm6Ql6EBJehDK8kSPeItH9iiRSqyU50RpxQjU3WJNODCknZ3EyXRTieUDhf+fmPrM1PnCNwLnsjTbL2cLcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741193346; c=relaxed/simple;
-	bh=OeuPl7Fa/DaEwWl+4paCWJmofPZPofuKXuYUp/y42/c=;
+	s=arc-20240116; t=1741193389; c=relaxed/simple;
+	bh=ezVD29ebK/gLrkeskIDVGIAKaNZstsuD2KgXpnp8K/8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gbCqfB/TgiW8G3VJs6jW8g5kG8P9fGog7QauKN5WvexeT03I6pQ/1r/CpQctATpWiLkrA342NpcfvmNiC7vxmKV8uaoxd0x3U96FNeAGvzyskN7GbOeK5XQ5o1gfsSO/TJZC5zguqbP7/bVJ9skHnWIDjjm40G1hTLL/dReTKQg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=pKFV87ss; arc=none smtp.client-ip=193.252.22.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id prvOtftmoZnsCprvRt3rsg; Wed, 05 Mar 2025 17:49:00 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741193340;
-	bh=j9nGONWhGA45NRZO2uATs6VDnzNoOJxrTpX5zYo0+Ls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=pKFV87ssDxt+FnLPqPthrU5SW9FHI0KdPU7Z0ZAXtY0XuvGmYjaGWfBqyaWx9CI6K
-	 oupDJM/0ab/EpjAKFEfm9MV/hlb2vadf8XEPzJLyA3pgjocfwpiGShl9NhtU3nhNDh
-	 2LLIQNgGNaPDehHXzg9Isto0SwwYoLHOdpbpWJy1owMqWUEvCD7OKT0/NIToEbOTJ1
-	 wyTNIbvgWCrEslgu9DW+DvDmpfzbK0LLnBeHI6zYbCTtfmkCn+ryA1P23BYF6BSft1
-	 /YzdvZUBCSmGB8Ik54M4uUfv6AHCv90m4DkFK63qM0nOJid54khiqchl4XmMsrf6OP
-	 NzPKyvs9XSnZg==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 05 Mar 2025 17:49:00 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <8301ecbc-d035-4257-9b04-c6ef9be4ce32@wanadoo.fr>
-Date: Thu, 6 Mar 2025 01:48:49 +0900
+	 In-Reply-To:Content-Type; b=cVNh4EfX4cg3MZJdPEABI+MxIywh+6Y3Ym1swg3T0pg53vIzXTs3FKa2srjYaYoqufpQdPqGipxKqqXdZ39bV4Omm6ZChoK6bbG2XDWReP/4uOa39M7ePB4MXZKzoKpPRLsGv9J2NMbmnbLm/V0P7KFQB0J/JJbg1Ljb0+DLsDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q2blZTR6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EF86C4CED1;
+	Wed,  5 Mar 2025 16:49:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741193388;
+	bh=ezVD29ebK/gLrkeskIDVGIAKaNZstsuD2KgXpnp8K/8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q2blZTR6y6QKXp4re6ZMBFENgFDVrLsk6PgeqeUHdahCG+YDtLjNiz55C14UyuXPK
+	 MNMGfa55ex5gJlobJq0UwjYjlMLEm9BCOiADXp/P8PsmA6KY4hKv/Dfk5yO/mZ4MtG
+	 cJbn0ger5/+uhPU6AZs9A/GRoqdVMiuC5uBvNY/Wq3NtqFCZ9zgGKnusUcJWpBGiCv
+	 c5omF6nxCp/Zcx0FGtrBrkqXqHBBAT5NfEuG2yysMWV3J6p+XQmqkXzDW1wd+6WPyk
+	 B8XMuBb2upx0AjDm70vIDfuz7JTS0LFziNL8EnGy9KUQmjSuvIO7Ya4s7KG2NLOM7T
+	 qBjt06pP1p7uQ==
+Message-ID: <b28b1778-8996-48a5-901e-807a1b820999@kernel.org>
+Date: Wed, 5 Mar 2025 17:49:39 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,260 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
-To: Yury Norov <yury.norov@gmail.com>
-Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
- <Z8hx9AaUX_GvYq_A@thinkpad>
+Subject: Re: [PATCH v3 0/6] Enable IPQ5018 PCI support
+To: George Moussalem <george.moussalem@outlook.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, linux-phy@lists.infradead.org,
+ andersson@kernel.org, bhelgaas@google.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, dmitry.baryshkov@linaro.org, kishon@kernel.org,
+ konradybcio@kernel.org, krzk+dt@kernel.org, kw@linux.com,
+ lpieralisi@kernel.org, manivannan.sadhasivam@linaro.org,
+ p.zabel@pengutronix.de, quic_nsekar@quicinc.com, robh@kernel.org,
+ robimarko@gmail.com, vkoul@kernel.org
+Cc: quic_srichara@quicinc.com
+References: <20250305134239.2236590-1-george.moussalem@outlook.com>
+ <DS7PR19MB8883B5F3CC99C0F943BEE9DE9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z8hx9AaUX_GvYq_A@thinkpad>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <DS7PR19MB8883B5F3CC99C0F943BEE9DE9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 06/03/2025 at 00:47, Yury Norov wrote:
-> On Wed, Mar 05, 2025 at 10:00:15PM +0900, Vincent Mailhol via B4 Relay wrote:
->> From: Yury Norov <yury.norov@gmail.com>
->>
->> Add __GENMASK_t() which generalizes __GENMASK() to support different
->> types, and implement fixed-types versions of GENMASK() based on it.
->> The fixed-type version allows more strict checks to the min/max values
->> accepted, which is useful for defining registers like implemented by
->> i915 and xe drivers with their REG_GENMASK*() macros.
->>
->> The strict checks rely on shift-count-overflow compiler check to fail
->> the build if a number outside of the range allowed is passed.
->> Example:
->>
->> 	#define FOO_MASK GENMASK_U32(33, 4)
->>
->> will generate a warning like:
->>
->> 	../include/linux/bits.h:41:31: error: left shift count >= width of type [-Werror=shift-count-overflow]
->> 	   41 |          (((t)~0ULL - ((t)(1) << (l)) + 1) & \
->> 	      |                               ^~
->>
->> Signed-off-by: Yury Norov <yury.norov@gmail.com>
->> Signed-off-by: Lucas De Marchi <lucas.demarchi@intel.com>
->> Acked-by: Jani Nikula <jani.nikula@intel.com>
->> Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+On 05/03/2025 14:41, George Moussalem wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+
+Not correct From. Cover letter should be written by you.
+
 > 
-> Co-developed-by?
-
-OK. I will keep you as the main author and credit me as Co-developer.
-
->> ---
->> Changelog:
->>
->>   v3 -> v4:
->>
->>     - The v3 is one year old. Meanwhile people started using
->>       __GENMASK() directly. So instead of generalizing __GENMASK() to
->>       support different types, add a new GENMASK_t().
->>
->>     - replace ~0ULL by ~_ULL(0). Otherwise, __GENMASK_t() would fail
->>       in asm code.
->>
->>     - Make GENMASK_U8() and GENMASK_U16() return an unsigned int. In
->>       v3, due to the integer promotion rules, these were returning a
->>       signed integer. By casting these to unsigned int, at least the
+> This patch series adds the relevant phy and controller
+> DT configurations for enabling PCI gen2 support
+> on IPQ5018. IPQ5018 has two phys and two controllers, 
+> one dual-lane and one single-lane.
 > 
-> This comment will disappear when I'll apply the patch. Can you comment
-> it in the code instead?
-
-Ack. I will add below comment in the code:
-
-  /*
-   * Because of the C integer promotion rules, the U8 and the U16
-   * variants would immediately become signed integers when used in
-   * expressions. Cast them to unsigned int so that, at least, the
-   * signedness is preserved.
-   */
-
-(unless if you prefer to go back to the u8 and u16 casts, c.f. below).
-
->>       signedness is kept.
->> ---
->>  include/linux/bitops.h |  1 -
->>  include/linux/bits.h   | 33 +++++++++++++++++++++++++++++----
->>  2 files changed, 29 insertions(+), 5 deletions(-)
->>
->> diff --git a/include/linux/bitops.h b/include/linux/bitops.h
->> index c1cb53cf2f0f8662ed3e324578f74330e63f935d..9be2d50da09a417966b3d11c84092bb2f4cd0bef 100644
->> --- a/include/linux/bitops.h
->> +++ b/include/linux/bitops.h
->> @@ -8,7 +8,6 @@
->>  
->>  #include <uapi/linux/kernel.h>
->>  
->> -#define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
->>  #define BITS_TO_LONGS(nr)	__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(long))
->>  #define BITS_TO_U64(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u64))
->>  #define BITS_TO_U32(nr)		__KERNEL_DIV_ROUND_UP(nr, BITS_PER_TYPE(u32))
->> diff --git a/include/linux/bits.h b/include/linux/bits.h
->> index 5f68980a1b98d771426872c74d7b5c0f79e5e802..f202e46d2f4b7899c16d975120f3fa3ae41556ae 100644
->> --- a/include/linux/bits.h
->> +++ b/include/linux/bits.h
->> @@ -12,6 +12,7 @@
->>  #define BIT_ULL_MASK(nr)	(ULL(1) << ((nr) % BITS_PER_LONG_LONG))
->>  #define BIT_ULL_WORD(nr)	((nr) / BITS_PER_LONG_LONG)
->>  #define BITS_PER_BYTE		8
->> +#define BITS_PER_TYPE(type)	(sizeof(type) * BITS_PER_BYTE)
->>  
->>  /*
->>   * Create a contiguous bitmask starting at bit position @l and ending at
->> @@ -25,14 +26,38 @@
->>  
->>  #define GENMASK_INPUT_CHECK(h, l) BUILD_BUG_ON_ZERO(const_true((l) > (h)))
->>  
->> -#define GENMASK(h, l) \
->> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK(h, l))
->> -#define GENMASK_ULL(h, l) \
->> -	(GENMASK_INPUT_CHECK(h, l) + __GENMASK_ULL(h, l))
->> +/*
->> + * Generate a mask for the specified type @t. Additional checks are made to
->> + * guarantee the value returned fits in that type, relying on
->> + * shift-count-overflow compiler check to detect incompatible arguments.
->> + * For example, all these create build errors or warnings:
->> + *
->> + * - GENMASK(15, 20): wrong argument order
->> + * - GENMASK(72, 15): doesn't fit unsigned long
->> + * - GENMASK_U32(33, 15): doesn't fit in a u32
->> + */
->> +#define GENMASK_t(t, h, l)				\
+> Last patch series (v2) submitted dates back to August 27, 2024.
+> As I've worked to add IPQ5018 platform support in OpenWrt, I'm
+> continuing the efforts to add Linux kernel support.
 > 
-> Agree with Andy. This should be GENMASK_TYPE, or triple-underscored
-> ___GENMASK() maybe. This _t thing looks misleading.
-
-My preference goes to GENMASK_TYPE().
-
->> +	(GENMASK_INPUT_CHECK(h, l) +			\
->> +	 (((t)~ULL(0) - ((t)1 << (l)) + 1) &		\
->> +	  ((t)~ULL(0) >> (BITS_PER_TYPE(t) - 1 - (h)))))
-> 
-> Can you rebase it on top of -next? In this dev cycle I merge a patch
-> that reverts the __GENMASK() back to:
-
-Oh, I did not realize that. Do you mean a rebase on top of:
-
-  https://github.com/norov/linux/tree/bitmap-for-next
-
-?
-
-I will do so.
-
-> #define __GENMASK(h, l) (((~_UL(0)) << (l)) & (~_UL(0) >> (BITS_PER_LONG - 1 - (h))))
-> 
->> +#define GENMASK(h, l) GENMASK_t(unsigned long,  h, l)
->> +#define GENMASK_ULL(h, l) GENMASK_t(unsigned long long, h, l)
-> 
-> This makes __GENMASK() and __GENMASK_ULL() unused in the kernel, other
-> than in uapi. Or I misunderstand it?
-
-Correct.
-
-> Having, in fact, different implementations of the same macro for kernel
-> and userspace is a source of problems. Can we move GENMASK_TYPE() to uapi,
-> and implement __GENMASK() on top of them? If not, I'd prefer to keep
-> GENMASK and GENMASK_ULL untouched.
-
-This is something which I tried to explain in the cover letter. I am not
-confident to declare GENMASK_TYPE() in the uapi and expose it to the
-userland. If we do so, any future change in the parameters would be a
-user breaking change. __GENMASK_U128() looks already too much to me for
-the uapi, I am not keen to bloat it even more with GENMASK_TYPE().
-
-This plus the fact that if we use GENMASK_TYPE() to generate the asm
-variant, then we can not rely on sizeof() in the definition which makes
-everything over complicated.
-
-I acknowledge that not having a common denominator is not best, but I
-see this as an acceptable tradeoff.
-
-> Can you run bloat-o-meter and ensure there's no unwanted effects on
-> code generation?
-
-Ack, but that will be tomorrow :)
-
->>  /*
->>   * Missing asm support
->>   *
->> + * __GENMASK_U*() depends on BITS_PER_TYPE() which would not work in the asm
-> 
-> And there's no __GENMASK_U*(), right?
-
-Yes, silly typo, sorry. Will fix in v5.
-
->> + * code as BITS_PER_TYPE() relies on sizeof(), something not available in
->> + * asm. Nethertheless, the concept of fixed width integers is a C thing which
->> + * does not apply to assembly code.
->> + */
->> +#define GENMASK_U8(h, l) ((unsigned int)GENMASK_t(u8,  h, l))
->> +#define GENMASK_U16(h, l) ((unsigned int)GENMASK_t(u16, h, l))
-> 
-> Typecast to the type that user provides explicitly?  And maybe do
-> in GENMASK_TYPE()
-
-I have a slight preference for the cast to unsigned int for the reason
-explained above. But that is not a deal breaker. If you believe that the
-u8/u16 casts are better, let me know, I will be happy to change it :)
-
->> +#define GENMASK_U32(h, l) GENMASK_t(u32, h, l)
->> +#define GENMASK_U64(h, l) GENMASK_t(u64, h, l)
-> 
-> OK, this looks good. But GENMASK_U128() becomes a special case now.
-> The 128-bit GENMASK is unsued, but it's exported in uapi. Is there any
-> simple way to end up with a common implementation for all fixed-type
-> GENMASKs?
-
-What bothers me is that the 128 bit types are not something available on
-all architectures, c.f. the CONFIG_ARCH_SUPPORTS_INT128. So, I would
-need a U128() equivalent to the ULL() but which does not break on
-architectures which do not support 128 bits integers.
-
-This is where I am stuck. If someone can guide me on how to write a
-robust U128() macro, then I think the common implementation could be
-feasible.
-
->> +
->> +/*
->>   * __GENMASK_U128() depends on _BIT128() which would not work
->>   * in the asm code, as it shifts an 'unsigned __int128' data
->>   * type instead of direct representation of 128 bit constants
-> 
-> This comment is duplicated by the previous one. Maybe just join them?
-> (Let's wait for a while for updates regarding GENMASK_U128 status before
-> doing it.)
-
-OK. I will wait for this one. I will probably send the v5 before we get
-the answer but I do not this this is an issue if we have two parallel
-streams.
+> v3:
+>   *) Depends on: https://patchwork.kernel.org/project/linux-arm-msm/cover/20250220094251.230936-1-quic_varada@quicinc.com/
 
 
-Yours sincerely,
-Vincent Mailhol
+Wasn't this applied, so why is it still a dependency?
 
+
+
+>   *) Added 8 MSI SPI and 1 global interrupts (Thanks Mani for confirming)
+
+Who did it? This v3 or other v3? Which v3 is this one here?
+
+
+Best regards,
+Krzysztof
 
