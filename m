@@ -1,155 +1,151 @@
-Return-Path: <linux-kernel+bounces-547188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3458BA503FB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:57:39 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B010CA50400
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:58:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9D0F77A3C74
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:56:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3F731886736
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:58:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36CD2505C4;
-	Wed,  5 Mar 2025 15:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C522505D9;
+	Wed,  5 Mar 2025 15:58:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DEzTjKoL"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHQsMgUT"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7495218FC90
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:57:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 233FF230BC6;
+	Wed,  5 Mar 2025 15:58:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741190250; cv=none; b=rknR0j9785UQLseOnfTQUCMiFf1uqK85HIqeTNoQEZYTzwskRgzwuYakLskdcJt/IUsHZNND1Vv9/d5VvGfUDc3n0GWGjQhfqFhUTf8g0sXPHbVFJMqqVaXeGSMdaYT1aQpZiQcSlRK8EPOibt4KoLipri40/7X/JPkO9Z/GQ5w=
+	t=1741190307; cv=none; b=KOF7Rf1pKvzGbJCPaZ2TpLaGrpCrMhVWuSAPc6sea2cuyp2ixteziJK5ZqO1Tq+tFO0u2CdxdrmsZY/x+RCjxokUAdMjiRG+VHt7UwuRjUNvwFD7FRrGrDHAmXiu+k8otrn+uiTJmNe1oJpjiZKJpIcINwDzIgo0BhG507YR138=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741190250; c=relaxed/simple;
-	bh=rm0St075dWDOE0wO9ICObW1pv94kcsYVDUSel8Aq/W8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pF7oseuPNz+e2nTP5AnPGMv5tvNcyQ23kLSIX2cJpZBuQMl4EgfaXnKhitsJzm2vvDcdYmg2kcP+drBlEy8i6P4BxXqob1SomtOKYWObLGVQVn9ewnJm+SL4eqKokTS4BNlip3WrFt7886cnTsvZRaWAg1atlrIgde8wHZjnEO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DEzTjKoL; arc=none smtp.client-ip=209.85.221.54
+	s=arc-20240116; t=1741190307; c=relaxed/simple;
+	bh=+oRhlezTzKi/1jDJ5WTqmL8g/xu4LuaqBsnEOCp/6aA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NJFklu5kQz2KVA6xXu4aAXDgCXgqgQxCiIfqVvnYay3NOpsA44/WPSkKQES7AU+Dpjg42zfCQRXEsYXeUUoKJU+p3vsa3Lj5wIFyZdk7KlJ/Jb3ffA+o96rzt44tWmKqK14ChPYrDAnEbIo3WoavdpyENveyC/rq7LVAys/Z4xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHQsMgUT; arc=none smtp.client-ip=209.85.208.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-38dcac27bcbso703249f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 07:57:28 -0800 (PST)
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-30761be8fcfso75502161fa.0;
+        Wed, 05 Mar 2025 07:58:25 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741190246; x=1741795046; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XI41wk7TJF7vmtgJL7omJXUR4bG71r2Wzk7v83CVjD0=;
-        b=DEzTjKoL9kyI6yvpo9oayVrnEc/SU7GsMsHNtGCXWp6hYBNl4cuuEXTopyeFtdKIez
-         ARbqBLAWQdpLKJ7jhM7EQfI00ZuwHobRKsux66nmVJd/TooZRJ9mJt07rvRrrrMQD9r5
-         yKJYHQ/stOwajgfntidtG8fK1Xl2qyBNj5rykg8dCVyI4yN1VHHxsKPaMEgepmJKmYG1
-         MVruv+IKdEcRr0dukFE96s019pn2BmEJvOx7msBfscok9DHsZ4ov9G2YyvlubsOOlcsr
-         Zr6+SFNbrFQhItuVr9JYNXUn90e6f1h+eRwryQH37lgJWEIoJhOhYqNpJ8Qwfgmqllrr
-         NnZw==
+        d=gmail.com; s=20230601; t=1741190304; x=1741795104; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BnvbQASgvyl2j7FmmReDnrIkouFUMu43G879AWP2P+g=;
+        b=KHQsMgUT+85QsDfatzBpbrloM50X0Yxg2aQtptk6mjVEQ5EZJbXoVawQz1/RgLitLH
+         xpDErfIBby7snXUgx/Lg9D1dLKUMc3oXXgKnd/jlzQ9f+g7/U5RcYT+unYhnRCjKlbcK
+         uZ99EmumYqt63cl3ZBDQxF3z7zzFOXzZn/f3slvTvjxKpV6z5yLoyYkFZutACLHB3Qky
+         DOjNqKFXNIw93FlzcjkGowjn6myh2XPR743SK4P3SL8K0q7cZoQFg7n7/8EibGMX9gHE
+         WgL86aHpBMDcLztmDcuYW3zPDYjZJk0oFQLy7lrw/8aI1p/QyDuoSoyao4TPRlPmu47a
+         ZsZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741190246; x=1741795046;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XI41wk7TJF7vmtgJL7omJXUR4bG71r2Wzk7v83CVjD0=;
-        b=MSv/Ju+3di8qcyVlzxSxRJNfLoT+FDHTd70VAyIASnRCjXDqCdc8WNrR9J38MF0gsT
-         NsDmkGH0bbE027kg7qTVN9sRAbT5F5jA4OcmVYI7+6yIb6fgblFee9H5QmoTIe2LT4Sh
-         zaTEuquMl/Zi0wK+PI10Y8kM+3gnRUh0+tbObUCCIqbGyyvFy9S7w3Ox7eie/osQS/lO
-         RiktC2rVG19/MljgvJh/s9usj7vwd3IPN84N6amfGM6JyxoWCTumdfZRG6AjnDweHMCY
-         EQlfpawrm/yD2eVZ9towXdNV4YUTbXMFLApH/s/BnD0Vg/2kTo1Y42WNvKc17ih5aM3i
-         WD/g==
-X-Forwarded-Encrypted: i=1; AJvYcCWXltZK2XHIkLY/lNqPbPDqT97YREyX0UcsumWqsVjZF+0tImNH4F5IjmMNvit1Hwc6pv8bhPOHiUXZP+8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD53AsrHM3veqaNBvhY3tNsWIeo+oiIGewdEuhNqLiginkSito
-	W4eofBOKxQ1cFl6lz22iPQovWSrivsigEBNVwNnAQKuWa5KC0zZ7
-X-Gm-Gg: ASbGncusvPZBLwzrfr/jQvXKX6GkPWX+HjiuSd1NsY1X0JhkjwbDfvrrzpdP/fdGC9b
-	FXu4CzQEgkJtjVOecAc4MxFOiyZyBogGqhnkOdrP80jZEx5LKj7pXhl99z/O8jvHChfhNTrNsAO
-	1U4Fubew9hD+dwW9p0b1/+CKfxauiOVttzn7Q7U5ogq+psHCekPU/1oNo4sBTDqQhTyJjBFLmix
-	mom9dln4m+fm8EaY/lT/tYQII/1GX3waJi+qw+Y9lpFgJACGduzjPbD2J1UzJBbvYtaXGDBclwC
-	uE3Nu0mJ/KmNTQ8o5qT2Bnen+eB2yau6sJEoPIYugNDrlr6CzJ1LWT5ofMRMjMgzgsy0x/01tA=
-	=
-X-Google-Smtp-Source: AGHT+IG8pXdepBcJ1AR4MauBkYvzdHDIviuaQyGBb5FOBK8tpHOPFUi2Wq2zbnf73b21vVo0+XSzYA==
-X-Received: by 2002:a5d:64cf:0:b0:385:faf5:ebb8 with SMTP id ffacd0b85a97d-3911e9df687mr3609690f8f.7.1741190244836;
-        Wed, 05 Mar 2025 07:57:24 -0800 (PST)
-Received: from [10.254.108.83] (munvpn.amd.com. [165.204.72.6])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a7b88sm21222369f8f.40.2025.03.05.07.57.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 07:57:24 -0800 (PST)
-Message-ID: <f54b78d8-2f10-484f-a1a9-4659aac2b251@gmail.com>
-Date: Wed, 5 Mar 2025 16:57:22 +0100
+        d=1e100.net; s=20230601; t=1741190304; x=1741795104;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BnvbQASgvyl2j7FmmReDnrIkouFUMu43G879AWP2P+g=;
+        b=G+OpBZ+xlqdWebLrA5EkoGO5u3PdgGFLL69WPbQkND/HvCFvU08XGspg+uatkHkOuS
+         IpINwI61Pd3wtysLdenRjbvflGCdRqiFGH6t1YdUJArRjefCjWmUHrHX7DYcR0C4eLKl
+         Q9blBFtP4dt64nRtCJCjNDwNn481ZPzkriEg5CXpsbiuM/QWV5Aq0lvjCcBc0IDyXXUS
+         oPYKudhAIfOjp0s1Sb1EIkouA3YeRZReBF3AxDkpuyosWpPswXS3Zuu3GmkDtzm1dRBT
+         DjOe/snSUd4ZI9uB8rdTw6StdciOtki4H0YkDieRH35P/L8ZDEWJEozapnW9hnn7QITt
+         tHgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVXGT7Yznz1Qn1mbgVhOhRa6bHAODU0jhRSixug7YJk7UrTN3evRcVC8KTFyiw2PptGjU9AmIbg1oZ74wNsaQO0@vger.kernel.org, AJvYcCWN5IxMq8AZz96Ak4YEeieXoul4BNBPp8pXz7LVP94Ueh4mVJSyvpcMNEjn4I6Kf/qT7ViHY72lS2yGwrs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdYCPvQ8MF3okbM5WbW0pRopnjoYr4OdTHYyvjjohr1YltOeZU
+	fBHlQHEsmeRP+wV99QtAXVTvAPiN7siTNQCBXGq7RPg1UYIMRGHMjtxQAnMChuPs/6OhAwWM6HL
+	1f59EGzfMC5To9EZDcnRAcjhDTxU=
+X-Gm-Gg: ASbGncuB/pHlwyASXqY9HTZSSSXgCNcaJNtMQjUusP16yTqPvqnR0KWz/MmaNnNIeO5
+	I+XPnQAt9wgJD1njJmjgzrTiOJqs+sIwht7yAaJlAUUVYy6JFjCAQK7SpnFCh6RjDsb1vmjOOQA
+	JQcE+lneBP5f72NYPgE7PcZk8k8Oozvt9aXGZvFJHExw==
+X-Google-Smtp-Source: AGHT+IGmkv5mLOUsJScMMmqtWQ6zGpiYx67ym/VV12PdXFxW6/3l6A0lcwQFojikJk+UgnlteFZGHZnbBE+jSgDtaoA=
+X-Received: by 2002:a2e:a583:0:b0:30b:d44d:e76d with SMTP id
+ 38308e7fff4ca-30bd7aca44bmr15621771fa.26.1741190303832; Wed, 05 Mar 2025
+ 07:58:23 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] drm/sched: drm_sched_job_cleanup(): correct false doc
-To: Philipp Stanner <phasta@kernel.org>,
- Matthew Brost <matthew.brost@intel.com>, Danilo Krummrich <dakr@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250304141346.102683-2-phasta@kernel.org>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <ckoenig.leichtzumerken@gmail.com>
-In-Reply-To: <20250304141346.102683-2-phasta@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
+ <20250214-scanf-kunit-convert-v8-4-5ea50f95f83c@gmail.com>
+ <Z8hnXIrMV0ct1YR6@pathway.suse.cz> <CAJ-ks9k7G31uBqygXNtfXcwVQXWvkaAWJh1vkFw2_VZ5bAz=Vg@mail.gmail.com>
+ <Z8hz8-Sa6XRC0W5Z@smile.fi.intel.com>
+In-Reply-To: <Z8hz8-Sa6XRC0W5Z@smile.fi.intel.com>
+From: Tamir Duberstein <tamird@gmail.com>
+Date: Wed, 5 Mar 2025 10:57:47 -0500
+X-Gm-Features: AQ5f1JqqN1aImMZd_NPXsUNj4VmLOex6AXk7mvodnkei5XTDi0qnAKX-JBe7Bx8
+Message-ID: <CAJ-ks9kz-fEH1YLiCn3fHR9AtYQLCZS77GKfOObifEL4GLwk8A@mail.gmail.com>
+Subject: Re: [PATCH v8 4/4] scanf: break kunit into test cases
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Petr Mladek <pmladek@suse.com>, David Gow <davidgow@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Shuah Khan <shuah@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Am 04.03.25 um 15:13 schrieb Philipp Stanner:
-> drm_sched_job_cleanup()'s documentation claims that calling
-> drm_sched_job_arm() is a "point of no return", implying that afterwards
-> a job cannot be cancelled anymore.
+On Wed, Mar 5, 2025 at 10:55=E2=80=AFAM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
-> This is not correct, as proven by the function's code itself, which
-> takes a previous call to drm_sched_job_arm() into account. In truth, the
-> decisive factors are whether fences have been shared (e.g., with other
-> processes) and if the job has been submitted to an entity already.
+> On Wed, Mar 05, 2025 at 10:25:51AM -0500, Tamir Duberstein wrote:
+> > On Wed, Mar 5, 2025 at 10:01=E2=80=AFAM Petr Mladek <pmladek@suse.com> =
+wrote:
+> > > On Fri 2025-02-14 11:20:01, Tamir Duberstein wrote:
 >
-> Correct the wrong docstring.
+> ...
 >
-> Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> Reviewed-by: Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+> > > >  #include <kunit/test.h>
+> > > > -#include <linux/bitops.h>
+> > > > -#include <linux/kernel.h>
+> > > >  #include <linux/module.h>
+> > > > -#include <linux/overflow.h>
+> > > > -#include <linux/printk.h>
+> > > >  #include <linux/prandom.h>
+> > > >  #include <linux/slab.h>
+> > > > -#include <linux/string.h>
+> > > > +#include <linux/sprintf.h>
+> > > >
+> > > >  #define BUF_SIZE 1024
+> > >
+> > > It would make more sense to do this clean up in the 3rd patch
+> > > where some code was replaced by the kunit macros.
+> > >
+> > > Also I am not sure about the choice. It might make sense to remove
+> > > <include/printk.h> because the pr_*() calls were removed.
+> > > But what about the others? Did anyone request the clean up, please?
+> > >
+> > > I do not want to open a bike shadding because different people
+> > > have different opinion.
+> > >
+> > > I would personally prefer to keep the explicit includes when the
+> > > related API is still used. It helps to optimize nested includes
+> > > in the header files which helps to speedup build. AFAIK, there
+> > > are people working in this optimization and they might need
+> > > to revert this change.
+> >
+> > Yeah, I don't feel strongly. I'll just restore all the includes.
+>
+> It will be blind approach. Please, try to look at them closely and includ=
+e what
+> you use (IWYU principle). I don't think anybody uses kernel.h here, for
+> example.
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
 
-Reviewed-by: Christian König <christian.koenig@amd.com>
+I think I'm getting conflicting instructions here. IWYU is indeed what
+I did: bitops, kernel, overflow, printk are all unused; string is used
+only for sprintf, so I made that replacement.
 
-> ---
-> Changes in v2:
->   - Also adjust comment about arm inside function's body. (Tvrtko)
-> ---
->  drivers/gpu/drm/scheduler/sched_main.c | 12 +++++++-----
->  1 file changed, 7 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/gpu/drm/scheduler/sched_main.c b/drivers/gpu/drm/scheduler/sched_main.c
-> index c634993f1346..7e71e89cea89 100644
-> --- a/drivers/gpu/drm/scheduler/sched_main.c
-> +++ b/drivers/gpu/drm/scheduler/sched_main.c
-> @@ -1013,11 +1013,13 @@ EXPORT_SYMBOL(drm_sched_job_has_dependency);
->   * Cleans up the resources allocated with drm_sched_job_init().
->   *
->   * Drivers should call this from their error unwind code if @job is aborted
-> - * before drm_sched_job_arm() is called.
-> + * before it was submitted to an entity with drm_sched_entity_push_job().
->   *
-> - * After that point of no return @job is committed to be executed by the
-> - * scheduler, and this function should be called from the
-> - * &drm_sched_backend_ops.free_job callback.
-> + * Since calling drm_sched_job_arm() causes the job's fences to be initialized,
-> + * it is up to the driver to ensure that fences that were exposed to external
-> + * parties get signaled. drm_sched_job_cleanup() does not ensure this.
-> + *
-> + * This function must also be called in &struct drm_sched_backend_ops.free_job
->   */
->  void drm_sched_job_cleanup(struct drm_sched_job *job)
->  {
-> @@ -1028,7 +1030,7 @@ void drm_sched_job_cleanup(struct drm_sched_job *job)
->  		/* drm_sched_job_arm() has been called */
->  		dma_fence_put(&job->s_fence->finished);
->  	} else {
-> -		/* aborted job before committing to run it */
-> +		/* aborted job before arming */
->  		drm_sched_fence_free(job->s_fence);
->  	}
->  
-
+However Petr said "Did anyone request the clean up, please?" which
+implies to me an aversion to unwanted cleanup. So, which is it please?
 
