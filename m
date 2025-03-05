@@ -1,93 +1,162 @@
-Return-Path: <linux-kernel+bounces-546523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 96F87A4FBB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:21:23 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 095CDA4FBCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:23:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D603918873D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:21:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C38A81894874
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04D97205E2B;
-	Wed,  5 Mar 2025 10:21:18 +0000 (UTC)
-Received: from ssh248.corpemail.net (ssh248.corpemail.net [210.51.61.248])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C1B42066F8;
+	Wed,  5 Mar 2025 10:22:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="pJid1FHl"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7882C13AC1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:21:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.61.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7838205E2B;
+	Wed,  5 Mar 2025 10:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170077; cv=none; b=sR5h7U+cGVE8zbluES4uxKewVc2tq7tmIOQrjSorglR49hwKVNd4BcwLKfn6SdKU28qEft9bIefHn5FL8DK2rGV8WU7s7UtUQivZg34w+AE/snFKqNoCgarBhOl8nK9vfzWAHyASdObMjbL3d/nnwP6nfPFWiqDcBk9kf+MrG1Y=
+	t=1741170125; cv=none; b=uLQDS03cgiklxdxmPPfSMQU4nYeajRyL0jdlE94mtPG3+VKxSK7xp0fvleO5ndIu4N+6GfGC60zl295s68tz9vmwnqzdQhsgPABL/zL4zAB3kOQc50vIrEhGbjXKUSOciDjEZ6zyy0HVP3iQGRo1C+d8lyPZS3wW3O2c/R3AycI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170077; c=relaxed/simple;
-	bh=5PEk+JDQsfLzMycFsSiNa9hy6CLK/qnFNELdqsC06r0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=BnpAqgpjONP+HtHgL21Ep1/omSA5dfoT9p49/QUZA+8Y3l/LaXRcsY0KV/+PmKpjHZj/1/K8MK27s+KVaR9nMaJO//q5hRSt0YG9FWDGOLMiHxkoOoU5Q/Sn+uZxJSOGpVCkIbdQOXymFvBDfE0y6lwRi3m59D7Ii+CvmbJeGKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.61.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201610.home.langchao.com
-        by ssh248.corpemail.net ((D)) with ASMTP (SSL) id 202503051821078543;
-        Wed, 05 Mar 2025 18:21:07 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201610.home.langchao.com (10.100.2.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 18:21:09 +0800
-Received: from locahost.localdomain (10.94.12.149) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 18:21:08 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <mripard@kernel.org>, <dave.stevenson@raspberrypi.com>,
-	<mcanal@igalia.com>, <kernel-list@raspberrypi.com>,
-	<maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
-	<airlied@gmail.com>, <simona@ffwll.ch>
-CC: <dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	"Charles Han" <hanchunchao@inspur.com>
-Subject: [PATCH] drm/vc4: plane: fix inconsistent indenting warning
-Date: Wed, 5 Mar 2025 18:21:07 +0800
-Message-ID: <20250305102107.2595-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741170125; c=relaxed/simple;
+	bh=qgf5P/v7yPasakxwS7LQgahj0RyJAU/WZ6WgZMKJKO0=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ekujYAzvwMmnoCzIzoLvDBM8c/k3qERj/hUnj2Rdv2XBIylcaY69N/BGWWSvmC3c2I4fxPHo9MupmAyHiiF8fsobkEFyxXt7UQhdAsAwZ0qJ9CrL9+o9Q2LnzM+ovi2GjCnd3VBqPN7jvZM1yo14YuwNO+mh+b8fMduLw1a9Atw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=pJid1FHl; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=n4fDAkyw/uhxe8G05E84yrw6xnoFmgWvI3tKZtq2rSs=; b=pJid1FHlhmvhTprAPkmVDlJvPu
+	wlwKv9FuKC1W+fwINcrFCnwCZMlBklUf16MB23bCw4dYQnEdsgf2oK86Dq8q7hykrf/j7nWSZ9i1I
+	7lUJRhifm328x9fW03maoX2vFjcUB1GFKXFHMWTlBwIPW8/mO+gCkBYOZi4nDfSQmAyUNj85WSWau
+	GsnxrHVqkW0bxdWiiTlHMwIG9P8zcwpZyyITy6dzyBNjkAXLVAOUlR/RESFl0FAg8nIBLybMHPJHX
+	uI+fOnea8woEelqoHcL/DO8aIyJrQYazfVQ6IHS2wnU1gHr6QMRbhMzInehBh40QDKBP60hyY6Wzo
+	4ash0VHQ==;
+Received: from i53875a38.versanet.de ([83.135.90.56] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1tplsr-0001Y0-7Q; Wed, 05 Mar 2025 11:21:49 +0100
+From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
+To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>,
+ Frank Wang <frank.wang@rock-chips.com>,
+ Shresth Prasad <shresthprasad7@gmail.com>,
+ Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+ Detlev Casanova <detlev.casanova@collabora.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Yao Zi <ziyao@disroot.org>
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
+ linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org,
+ Yao Zi <ziyao@disroot.org>
+Subject:
+ Re: [PATCH 6/8] clk: rockchip: rk3528: Add SD/SDIO tuning clocks in GRF
+ region
+Date: Wed, 05 Mar 2025 11:21:48 +0100
+Message-ID: <2583035.OBFZWjSADL@diego>
+In-Reply-To: <20250301104724.36399-1-ziyao@disroot.org>
+References:
+ <20250301104250.36295-1-ziyao@disroot.org>
+ <20250301104724.36399-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2025305182107940427e00671b9a07b4e530dba967011
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-drivers/gpu/drm/vc4/vc4_plane.c:2083 vc6_plane_mode_set() warn: inconsistent indenting
+Hi,
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/gpu/drm/vc4/vc4_plane.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Am Samstag, 1. M=C3=A4rz 2025, 11:47:24 MEZ schrieb Yao Zi:
+> These clocks locate in VO and VPU GRF, serving for SD/SDIO controller
+> tuning purpose. Add their definitions and register them in driver if
+> corresponding GRF is available.
 
-diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
-index c5e84d3494d2..056d344c5411 100644
---- a/drivers/gpu/drm/vc4/vc4_plane.c
-+++ b/drivers/gpu/drm/vc4/vc4_plane.c
-@@ -2080,7 +2080,7 @@ static int vc6_plane_mode_set(struct drm_plane *plane,
- 			/* HPPF plane 1 */
- 			vc4_dlist_write(vc4_state, kernel);
- 			/* VPPF plane 1 */
--				vc4_dlist_write(vc4_state, kernel);
-+			vc4_dlist_write(vc4_state, kernel);
- 		}
- 	}
- 
--- 
-2.43.0
+(no critique, just an observation :-) )
+
+this puts a completely new meaning on the "general register files"
+as dumping ground ;-) .
+
+Whoever got the idea of making sdmm/sdio tuning controls part
+of GRFs that are supposed display and/or video encoder parts :-D
+
+
+> GRFs are looked up by compatible to simplify devicetree binding.
+>=20
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> ---
+
+>  static int __init clk_rk3528_probe(struct platform_device *pdev)
+>  {
+> +	unsigned long nr_vpu_branches =3D ARRAY_SIZE(rk3528_vpu_clk_branches);
+> +	unsigned long nr_vo_branches =3D ARRAY_SIZE(rk3528_vo_clk_branches);
+> +	unsigned long nr_branches =3D ARRAY_SIZE(rk3528_clk_branches);
+>  	struct rockchip_clk_provider *ctx;
+>  	struct device *dev =3D &pdev->dev;
+>  	struct device_node *np =3D dev->of_node;
+> -	unsigned long nr_branches =3D ARRAY_SIZE(rk3528_clk_branches);
+> -	unsigned long nr_clks;
+> +	struct regmap *vo_grf, *vpu_grf;
+>  	void __iomem *reg_base;
+> -
+> -	nr_clks =3D rockchip_clk_find_max_clk_id(rk3528_clk_branches,
+> -					       nr_branches) + 1;
+> +	unsigned long nr_clks;
+> =20
+>  	reg_base =3D devm_platform_ioremap_resource(pdev, 0);
+>  	if (IS_ERR(reg_base))
+>  		return dev_err_probe(dev, PTR_ERR(reg_base),
+>  				     "could not map cru region");
+> =20
+> +	nr_clks =3D rockchip_clk_find_max_clk_id(rk3528_clk_branches,
+> +					       nr_branches) + 1;
+> +
+> +	vo_grf =3D syscon_regmap_lookup_by_compatible("rockchip,rk3528-vo-grf");
+> +	if (!IS_ERR(vo_grf))
+
+for readability, please make this into something like
+	if (!IS_ERR(vo_grf)) {
+		nr_vo_clks =3D rockchip_clk_find_max_clk_id(rk3528_vo_clk_branches,
+							   nr_vo_branches) + 1;
+		nr_clks =3D max(nr_vo_clks, nr_clks);
+	}
+
+> +	else if (PTR_ERR(vo_grf) !=3D ENODEV)
+> +		return dev_err_probe(dev, PTR_ERR(vo_grf),
+> +				     "failed to look up VO GRF\n");
+> +
+> +	vpu_grf =3D syscon_regmap_lookup_by_compatible("rockchip,rk3528-vpu-grf=
+");
+> +	if (!IS_ERR(vpu_grf))
+> +		nr_clks =3D MAX(rockchip_clk_find_max_clk_id(rk3528_vpu_clk_branches,
+> +							   nr_vpu_branches) + 1,
+> +			      nr_clks);
+
+same here please
+
+> +	else if (PTR_ERR(vpu_grf) !=3D ENODEV)
+> +		return dev_err_probe(dev, PTR_ERR(vpu_grf),
+> +				     "failed to look up VPU GRF\n");
+> +
+>  	ctx =3D rockchip_clk_init(np, reg_base, nr_clks);
+>  	if (IS_ERR(ctx))
+>  		return dev_err_probe(dev, PTR_ERR(ctx),
+
+Thanks
+Heiko
+
 
 
