@@ -1,197 +1,158 @@
-Return-Path: <linux-kernel+bounces-547502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5661BA50A3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:49:09 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1414EA50A35
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:48:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20D267A85E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:48:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55C8E3AC058
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:48:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9811253358;
-	Wed,  5 Mar 2025 18:48:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="E7FB4yXe"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1FD8251798;
+	Wed,  5 Mar 2025 18:48:26 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E042250C0E;
-	Wed,  5 Mar 2025 18:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7951A5BB7;
+	Wed,  5 Mar 2025 18:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741200515; cv=none; b=RC7B2s+KD20jbeo2ArUjxI3WSBzLv/6jyxlre8xYDzuB/S6Yt0NXaMo3MfXgZA3P7TyWFvAwho8tNoJOe8olng+KlPFGVgxZlcMM9hSelXKj2e+R4L0DEP/wjT7Izu1CPuwuc1m9au8+kWlNQbh7oiGZdoE2wHwUBAIByA5ty7I=
+	t=1741200506; cv=none; b=XYsXAUb0PltZEk57k+dEWoziFULGuBO3s+YlONvdKoBFz9xTYucR6XEJeB5lBTwhLwnPsp4Ex/pXqIA835aiwZx4r6bE/uHKrxDBAqA6T4OL1ysJi6Le4BAZlRKk8QzlvZM9qCjziNjJQsFCewm15L1/WtO1YULFAzWRatoAoWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741200515; c=relaxed/simple;
-	bh=S9RmkoypLdEsxV5/SqrzEwtSf4tN5fmn5VG2+bNrMHs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=jPAe7h5kq5/AIDXNYAOe4aMmSa4nNEVNq8ZI5na98kkPaRztzRthJ1G/JDVqz7foq/c6OXNwgnX5xszjEE8THgWGMaNTAAXv0fCMYvhXY4RO0IEUqxVvpVMw3XaXU8nlKTn2Brw0QEj43OyRp1E4ZUeg4npKdnr8ui2Ejlz8k3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=E7FB4yXe; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 525IlQXx3341787
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Wed, 5 Mar 2025 10:47:35 -0800
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 525IlQXx3341787
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025021701; t=1741200456;
-	bh=ZFEBVjKlUUTl/5spCv5uV1kp2wfbEgloCHMGnuYJRxk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=E7FB4yXeX5SWQyeMeelsLOTRrcecTW4XNjAO955SD3CNIUt8Ov60Xo4J+pZcRlM4r
-	 hFXaNLxpUzTtiDzgphzPYiH57bFiYRIbsR5igKcJr13scG8u+WL9YzT56ix7/P2KqG
-	 fyWozZZnlcUOM8+VBGyIlZ0g/RZQWry5wo18mLTyZHbzfIJ4hYBcgB3b2lhfiBGOSf
-	 otEWSe/jrhqn/9ptE64aW0fHPyokp3ccvFj90swmWofgsJum56cM+w2vzeQmXxocqY
-	 9GnwoQ0pI2iCtTza2Dte9zNPRxQCILgwoKKjedyQYdFbp5LQgXxnEPUPaHhdYOP4VH
-	 bzwuQbqQxzhnA==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        will@kernel.org, peterz@infradead.org, yury.norov@gmail.com,
-        akpm@linux-foundation.org, acme@kernel.org, namhyung@kernel.org,
-        brgerst@gmail.com, andrew.cooper3@citrix.com, nik.borisov@suse.com,
-        sraithal@amd.com, philip.li@intel.com
-Subject: [PATCH v7 4/4] x86/cpufeatures: Use AWK to generate {REQUIRED|DISABLED}_MASK_BIT_SET
-Date: Wed,  5 Mar 2025 10:47:24 -0800
-Message-ID: <20250305184725.3341760-5-xin@zytor.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250305184725.3341760-1-xin@zytor.com>
-References: <20250305184725.3341760-1-xin@zytor.com>
+	s=arc-20240116; t=1741200506; c=relaxed/simple;
+	bh=4Jo28D0D/+VynJE9hqj9lJ05PZTxswCglwzTgDRosFk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/vS/XuoqZyZc69IST4s8v7sAraVSrPuM11KTpuXVvUmS+GEhe6hW+SMFj2RMQp/KS/WDPct5VadWHK3jGENBivNAorpTvhE0MTsfDrUutwpvqlLp2sMFdKyYdHpEWRs6WGtXshu5hjaEghcPSgRrBBOThXbaxEc5BtJe23xLh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A70DCC4CED1;
+	Wed,  5 Mar 2025 18:48:22 +0000 (UTC)
+Date: Wed, 5 Mar 2025 18:48:19 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Piotr Jaroszynski <pjaroszynski@nvidia.com>
+Cc: Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org,
+	Robin Murphy <robin.murphy@arm.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Raghavendra Rao Ananta <rananta@google.com>,
+	SeongJae Park <sj@kernel.org>, Jason Gunthorpe <jgg@nvidia.com>,
+	John Hubbard <jhubbard@nvidia.com>,
+	Nicolin Chen <nicolinc@nvidia.com>, iommu@lists.linux.dev,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] [arm64/tlb] Fix mmu notifiers for range-based invalidates
+Message-ID: <Z8iccxCo7tkqvE_p@arm.com>
+References: <20250304085127.2238030-1-pjaroszynski@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304085127.2238030-1-pjaroszynski@nvidia.com>
 
-Generate macros {REQUIRED|DISABLED}_MASK_BIT_SET in the newly added AWK
-script that generates the required and disabled feature mask header.
+On Tue, Mar 04, 2025 at 12:51:27AM -0800, Piotr Jaroszynski wrote:
+> Update the __flush_tlb_range_op macro not to modify its parameters as
+> these are unexepcted semantics. In practice, this fixes the call to
+> mmu_notifier_arch_invalidate_secondary_tlbs() in
+> __flush_tlb_range_nosync() to use the correct range instead of an empty
+> range with start=end. The empty range was (un)lucky as it results in
+> taking the invalidate-all path that doesn't cause correctness issues,
+> but can certainly result in suboptimal perf.
+> 
+> This has been broken since commit 6bbd42e2df8f ("mmu_notifiers: call
+> invalidate_range() when invalidating TLBs") when the call to the
+> notifiers was added to __flush_tlb_range(). It predates the addition of
+> the __flush_tlb_range_op() macro from commit 360839027a6e ("arm64: tlb:
+> Refactor the core flush algorithm of __flush_tlb_range") that made the
+> bug hard to spot.
 
-Suggested-by: Brian Gerst <brgerst@gmail.com>
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-Reviewed-by: Brian Gerst <brgerst@gmail.com>
-Reviewed-by: Nikolay Borisov <nik.borisov@suse.com>
-Reviewed-by: Ingo Molnar <mingo@kernel.org>
----
+That's the problem with macros.
 
-Change in v7:
-* Collect reviewed-bys.
+Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
 
-Changes in v4:
-* Use '1U' instead of '1' in feature mask shifting (Andrew Cooper).
-* Checking NCAPINTS isn't necessary anymore.  It was needed when these
-  macros had to be manually updated, but now if cpufeatures.h changes
-  this header will be regenerated (Brian Gerst).
----
- arch/x86/include/asm/cpufeature.h | 69 -------------------------------
- arch/x86/tools/featuremasks.awk   |  9 +++-
- 2 files changed, 8 insertions(+), 70 deletions(-)
+Will, do you want to take this as a fix? It's only a performance
+regression, though you never know how it breaks the callers of the macro
+at some point.
 
-diff --git a/arch/x86/include/asm/cpufeature.h b/arch/x86/include/asm/cpufeature.h
-index d521759fe40d..7937823ded89 100644
---- a/arch/x86/include/asm/cpufeature.h
-+++ b/arch/x86/include/asm/cpufeature.h
-@@ -51,75 +51,6 @@ extern const char * const x86_bug_flags[NBUGINTS*32];
- #define test_cpu_cap(c, bit)						\
- 	 arch_test_bit(bit, (unsigned long *)((c)->x86_capability))
- 
--/*
-- * There are 32 bits/features in each mask word.  The high bits
-- * (selected with (bit>>5) give us the word number and the low 5
-- * bits give us the bit/feature number inside the word.
-- * (1UL<<((bit)&31) gives us a mask for the feature_bit so we can
-- * see if it is set in the mask word.
-- */
--#define CHECK_BIT_IN_MASK_WORD(maskname, word, bit)	\
--	(((bit)>>5)==(word) && (1UL<<((bit)&31) & maskname##word ))
--
--/*
-- * {REQUIRED,DISABLED}_MASK_CHECK below may seem duplicated with the
-- * following BUILD_BUG_ON_ZERO() check but when NCAPINTS gets changed, all
-- * header macros which use NCAPINTS need to be changed. The duplicated macro
-- * use causes the compiler to issue errors for all headers so that all usage
-- * sites can be corrected.
-- */
--#define REQUIRED_MASK_BIT_SET(feature_bit)		\
--	 ( CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  0, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  1, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  2, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  3, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  4, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  5, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  6, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  7, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  8, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK,  9, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 10, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 11, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 12, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 13, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 14, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 15, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 16, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 17, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 18, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 19, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 20, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(REQUIRED_MASK, 21, feature_bit) ||	\
--	   REQUIRED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
--
--#define DISABLED_MASK_BIT_SET(feature_bit)				\
--	 ( CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  0, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  1, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  2, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  3, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  4, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  5, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  6, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  7, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  8, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK,  9, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 10, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 11, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 12, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 13, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 14, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 15, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 16, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 17, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 18, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 19, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 20, feature_bit) ||	\
--	   CHECK_BIT_IN_MASK_WORD(DISABLED_MASK, 21, feature_bit) ||	\
--	   DISABLED_MASK_CHECK					  ||	\
--	   BUILD_BUG_ON_ZERO(NCAPINTS != 22))
--
- #define cpu_has(c, bit)							\
- 	(__builtin_constant_p(bit) && REQUIRED_MASK_BIT_SET(bit) ? 1 :	\
- 	 test_cpu_cap(c, bit))
-diff --git a/arch/x86/tools/featuremasks.awk b/arch/x86/tools/featuremasks.awk
-index fd3e72147157..2d9201c841cb 100755
---- a/arch/x86/tools/featuremasks.awk
-+++ b/arch/x86/tools/featuremasks.awk
-@@ -74,7 +74,14 @@ END {
- 		for (i = 0; i < ncapints; i++)
- 			printf "#define %s_MASK%d\t0x%08xU\n", s, i, masks[i];
- 
--		printf "#define %s_MASK_CHECK BUILD_BUG_ON_ZERO(NCAPINTS != %d)\n\n", s, ncapints;
-+		printf "\n#define %s_MASK_BIT_SET(x)\t\t\t\\\n", s;
-+		printf "\t((\t\t\t\t\t";
-+		for (i = 0; i < ncapints; i++) {
-+			if (masks[i])
-+				printf "\t\\\n\t\t((x) >> 5) == %2d ? %s_MASK%d :", i, s, i;
-+		}
-+		printf " 0\t\\\n";
-+		printf "\t) & (1U << ((x) & 31)))\n\n";
- 	}
- 
- 	printf "#endif /* _ASM_X86_FEATUREMASKS_H */\n";
+> Fixes: 6bbd42e2df8f ("mmu_notifiers: call invalidate_range() when invalidating TLBs")
+> 
+> Signed-off-by: Piotr Jaroszynski <pjaroszynski@nvidia.com>
+> Cc: Catalin Marinas <catalin.marinas@arm.com>
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Robin Murphy <robin.murphy@arm.com>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Raghavendra Rao Ananta <rananta@google.com>
+> Cc: SeongJae Park <sj@kernel.org>
+> Cc: Jason Gunthorpe <jgg@nvidia.com>
+> Cc: John Hubbard <jhubbard@nvidia.com>
+> Cc: Nicolin Chen <nicolinc@nvidia.com>
+> Cc: linux-arm-kernel@lists.infradead.org
+> Cc: iommu@lists.linux.dev
+> Cc: linux-mm@kvack.org
+> Cc: linux-kernel@vger.kernel.org
+> Cc: stable@vger.kernel.org
+> ---
+>  arch/arm64/include/asm/tlbflush.h | 22 ++++++++++++----------
+>  1 file changed, 12 insertions(+), 10 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/tlbflush.h b/arch/arm64/include/asm/tlbflush.h
+> index bc94e036a26b..8104aee4f9a0 100644
+> --- a/arch/arm64/include/asm/tlbflush.h
+> +++ b/arch/arm64/include/asm/tlbflush.h
+> @@ -396,33 +396,35 @@ static inline void arch_tlbbatch_flush(struct arch_tlbflush_unmap_batch *batch)
+>  #define __flush_tlb_range_op(op, start, pages, stride,			\
+>  				asid, tlb_level, tlbi_user, lpa2)	\
+>  do {									\
+> +	typeof(start) __flush_start = start;				\
+> +	typeof(pages) __flush_pages = pages;				\
+>  	int num = 0;							\
+>  	int scale = 3;							\
+>  	int shift = lpa2 ? 16 : PAGE_SHIFT;				\
+>  	unsigned long addr;						\
+>  									\
+> -	while (pages > 0) {						\
+> +	while (__flush_pages > 0) {					\
+>  		if (!system_supports_tlb_range() ||			\
+> -		    pages == 1 ||					\
+> -		    (lpa2 && start != ALIGN(start, SZ_64K))) {		\
+> -			addr = __TLBI_VADDR(start, asid);		\
+> +		    __flush_pages == 1 ||				\
+> +		    (lpa2 && __flush_start != ALIGN(__flush_start, SZ_64K))) {	\
+> +			addr = __TLBI_VADDR(__flush_start, asid);	\
+>  			__tlbi_level(op, addr, tlb_level);		\
+>  			if (tlbi_user)					\
+>  				__tlbi_user_level(op, addr, tlb_level);	\
+> -			start += stride;				\
+> -			pages -= stride >> PAGE_SHIFT;			\
+> +			__flush_start += stride;			\
+> +			__flush_pages -= stride >> PAGE_SHIFT;		\
+>  			continue;					\
+>  		}							\
+>  									\
+> -		num = __TLBI_RANGE_NUM(pages, scale);			\
+> +		num = __TLBI_RANGE_NUM(__flush_pages, scale);		\
+>  		if (num >= 0) {						\
+> -			addr = __TLBI_VADDR_RANGE(start >> shift, asid, \
+> +			addr = __TLBI_VADDR_RANGE(__flush_start >> shift, asid, \
+>  						scale, num, tlb_level);	\
+>  			__tlbi(r##op, addr);				\
+>  			if (tlbi_user)					\
+>  				__tlbi_user(r##op, addr);		\
+> -			start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
+> -			pages -= __TLBI_RANGE_PAGES(num, scale);	\
+> +			__flush_start += __TLBI_RANGE_PAGES(num, scale) << PAGE_SHIFT; \
+> +			__flush_pages -= __TLBI_RANGE_PAGES(num, scale);\
+>  		}							\
+>  		scale--;						\
+>  	}								\
+> 
+> base-commit: 99fa936e8e4f117d62f229003c9799686f74cebc
+> -- 
+> 2.22.1.7.gac84d6e93c.dirty
+
 -- 
-2.48.1
-
+Catalin
 
