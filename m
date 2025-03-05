@@ -1,90 +1,141 @@
-Return-Path: <linux-kernel+bounces-546091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFFCA4F637
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:56:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE4FA4F639
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:57:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B91D16F669
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:56:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DCDD3A51A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:57:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD3A1C7006;
-	Wed,  5 Mar 2025 04:56:49 +0000 (UTC)
-Received: from smtp134-24.sina.com.cn (smtp134-24.sina.com.cn [180.149.134.24])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FED1C84D9;
+	Wed,  5 Mar 2025 04:57:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BtFMdnVB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C9717B401
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=180.149.134.24
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF80E2AD2D;
+	Wed,  5 Mar 2025 04:57:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741150609; cv=none; b=E2MO3enMuXnXV7WBD00TFm9LeMjV9cd8Tnw2XsLj2Y3re7TjuOcO7IHBWkCYjyYU05/Z/Sb+yscfE8TBjf02ILCf5WE0S7c1TpbguJghypAfFgQNxN4ShsvRQC3rrNNYDNmjfGKMPTCyLQZwMn89Zvn4B1RPxcHTQ+GD3ck2i3E=
+	t=1741150642; cv=none; b=gOZJnGwS4BCp6kG0YWvjKBVZT52gosAhZ4Vna99/m/hEfBN5Dm/pT5u+SvMjoFVlgLWy9wFlqGD2u/RQWaQI9Ct9yXNigS3ztazU4rIM3pUV2pjmJ9tf7A/sf5xz25b1yVWQU/bVNh8ce8Zx7w/QsZpHkl9CC/mAwRsAIlaEqhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741150609; c=relaxed/simple;
-	bh=lx9JQ9iInq+eLSKfXchpe7VsIW5kZCiAzJbLsIeSWLo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VJQjkiiuyCeXsWmdePW9plM6FsEX5R17P1XK3JV0rdgivYDryURdmp3Tb9QfwCdyVsuR/1ibg3vddL5fB8b3UGaRWBtJFNQ4Dc+fp8S8mC2HmOvslnUD4Gq9MuVDdGqTQ3tqf7EAdN9MpfHol9Lk5TYFPh13mJzYG43dow/Q3gE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; arc=none smtp.client-ip=180.149.134.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([113.118.69.118])
-	by sina.com (10.185.250.21) with ESMTP
-	id 67C7D97900006B8A; Wed, 5 Mar 2025 12:56:28 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 8233233408524
-X-SMAIL-UIID: 433835C6842641ECA1204EE37E41343C-20250305-125628-1
-From: Hillf Danton <hdanton@sina.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Mateusz Guzik <mjguzik@gmail.com>,
-	"Sapkal, Swapnil" <swapnil.sapkal@amd.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] pipe_read: don't wake up the writer if the pipe is still full
-Date: Wed,  5 Mar 2025 12:56:16 +0800
-Message-ID: <20250305045617.3038-1-hdanton@sina.com>
-In-Reply-To: <20250304234908.GH5756@redhat.com>
-References: <20250224142329.GA19016@redhat.com> <qsehsgqnti4csvsg2xrrsof4qm4smhdhv6s4v4twspf76bp3jo@2mpz5xtqhmgt> <c63cc8e8-424f-43e2-834f-fc449b24787e@amd.com> <20250227211229.GD25639@redhat.com> <06ae9c0e-ba5c-4f25-a9b9-a34f3290f3fe@amd.com> <20250228143049.GA17761@redhat.com> <20250228163347.GB17761@redhat.com> <20250304050644.2983-1-hdanton@sina.com> <20250304102934.2999-1-hdanton@sina.com> <20250304233501.3019-1-hdanton@sina.com>
+	s=arc-20240116; t=1741150642; c=relaxed/simple;
+	bh=QL7FR8XfXuKE/HaEdkkItoNfp3tRJjrQsT++UDGTAFw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ijpp4ou7Ylq7HusU3dJqllSsGj221xBXwrWikPsW/4xYIg572ns/VL3XYcJkFjOjsOOSLV3SNO7mgSt4yhqUk1evLvx6JbIFRKE9fhgNa9YPXUUDe2ivrC2iR404fsJ3C3LeT2GuvbHgBS+VJLc8qYofURX/bLwGwLhWFxG4BMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BtFMdnVB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D858C4CEE2;
+	Wed,  5 Mar 2025 04:57:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741150641;
+	bh=QL7FR8XfXuKE/HaEdkkItoNfp3tRJjrQsT++UDGTAFw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BtFMdnVBZWuel0MXl4Dxo7sHRQbj4edNcK8Lkrs9hVdYUl/h46m0UCsRrBFuvngGa
+	 5zoL9CHnI+PeJnfEdTwQ3yBUA646+EMFO53+pXtoAM8N2pwtLNKbGMOHv4e5B4Y1pw
+	 AZhT23wUvayMkSbzbxAL1/7MJ3ThxeLBMrpgSvx+ryM+JDjewzU/2vlx0fca9B72TC
+	 IzxAidVxF84CLX9TKhzCISKAF3yWqf8elSbErt8nn4FlS8E5ZMtVV02avjCqxFVFHW
+	 mkaaI0hFXAMHjkWkfhJvFBl2SHJ54ItWpYxYUwsYDTAdYVBF7Mfm/BvJT/fLmQxhaG
+	 9KQFDuQIzkTVw==
+Date: Tue, 4 Mar 2025 20:57:16 -0800
+From: Kees Cook <kees@kernel.org>
+To: Thorsten Blum <thorsten.blum@linux.dev>,
+	Qing Zhao <qing.zhao@oracle.com>, Bill Wendling <morbo@google.com>
+Cc: Peter Rosin <peda@axentia.se>,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+Subject: Re: [RESEND PATCH] mux: Convert mux_control_ops to a flex array
+ member in mux_chip
+Message-ID: <202503041935.AE2093CFFA@keescook>
+References: <20250302230220.245739-3-thorsten.blum@linux.dev>
+ <202503031040.223DEF2781@keescook>
+ <20A47316-D274-45DD-BA15-F66139654D44@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20A47316-D274-45DD-BA15-F66139654D44@linux.dev>
 
-On Wed, 5 Mar 2025 00:49:09 +0100 Oleg Nesterov <oleg@redhat.com>
+On Tue, Mar 04, 2025 at 09:58:21AM +0100, Thorsten Blum wrote:
+> On 3. Mar 2025, at 19:44, Kees Cook wrote:
+> > On Mon, Mar 03, 2025 at 12:02:22AM +0100, Thorsten Blum wrote:
+> >> Convert mux_control_ops to a flexible array member at the end of the
+> >> mux_chip struct and add the __counted_by() compiler attribute to
+> >> improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+> >> CONFIG_FORTIFY_SOURCE.
+> >> 
+> >> Use struct_size() to calculate the number of bytes to allocate for a new
+> >> mux chip and to remove the following Coccinelle/coccicheck warning:
+> >> 
+> >> WARNING: Use struct_size
+> >> 
+> >> Use size_add() to safely add any extra bytes.
+> >> 
+> >> Compile-tested only.
+> > 
+> > I believe this will fail at runtime. Note that sizeof_priv follows the
+> > allocation, so at the very least, you'd need to update:
+> > 
+> > static inline void *mux_chip_priv(struct mux_chip *mux_chip)
+> > {
+> >       return &mux_chip->mux[mux_chip->controllers];
+> > }
+> > 
+> > to not use the mux array itself as a location reference because it will
+> > be seen as out of bounds.
 > 
-> Of course! Again, whatever the woken writer checks in pipe_writable()
-> lockless, another writer can make pipe_full() true again.
+> Getting the address doesn't fail at runtime, does it? For this example
+> it works, but maybe I'm missing some compiler flag?
 > 
-> But why do we care? Why do you think that the change you propose makes
+> https://godbolt.org/z/qTEdqn9WW
 
-Because of the hang reported.
+Uhn. I can't explain that. :( We've seen this calculation get tripped
+in the real world, though:
 
-> more sense than the fix from Prateek or the (already merged) Linus's fix?
-> 
-See the loop in  ___wait_event(),
+https://git.kernel.org/linus/a26a5107bc52
 
-	for (;;) {
-		prepare_to_wait_event();
+But yeah, when I build local test cases, grabbing an integral trips it,
+but taking an address does not, as your godbolt shows. This makes no
+sense to me at all.
 
-		// flip
-		if (condition)
-			break;
+Here's my version, doing a direct comparison of int to *(int *) ...
+https://godbolt.org/z/e1bKGz739
 
-		schedule();
-	}
+#include <stdlib.h>
+#include <stdio.h>
 
-After wakeup, waiter will sleep again if condition flips false on the waker
-side before waiter checks condition, even if condition is atomic, no?
+struct foo {
+    int count;
+    int array[] __attribute__((__counted_by__(count)));
+};
 
+int main(int argc, char *argv[]) {
+    int num_elems = 2 + argc;
+
+    struct foo *p = malloc(sizeof(*p) + num_elems * sizeof(*p->array) + sizeof(int));
+    p->count = num_elems;
+
+    // this correctly trips sanitizer:
+    int val = p->array[num_elems];
+    printf("%d\n", val);
+
+    // this does not?!
+    int *valp = &p->array[num_elems];
+    printf("%p %d\n", valp, *valp);
+
+    return 0;
+}
+
+Qing and Bill, are you able to explain this? If I set p->count = 0, 1, or
+2, this trips. Is this somehow an off-by-one error in both GCC and Clang?
+
+-- 
+Kees Cook
 
