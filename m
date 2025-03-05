@@ -1,92 +1,69 @@
-Return-Path: <linux-kernel+bounces-547063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92164A50294
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:48:28 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CCB3A5029A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:49:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D88C1888D7C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:44:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC911764D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 597A524E008;
-	Wed,  5 Mar 2025 14:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CE424EA8A;
+	Wed,  5 Mar 2025 14:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="IvgeIBDP"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SAGrGH9O"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D3024E4A6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8F8A248885;
+	Wed,  5 Mar 2025 14:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185842; cv=none; b=nDzA0hgjv/eRZItzH7tS2pokl60KMS2de7mhWatynPvd+cXf3WphfV6g0+2IajzFjTv0SSDqh4sSRYa8XgKD4RsVE2REb89cqHe418FzzreQeNjvyrItVHwd2sNdqC1zImPN7P0rsL9iYLefH/rMg3c/YUoRp78W6cQ+XN0spbg=
+	t=1741185901; cv=none; b=izJ+1BERUQ5ZSLjYmQgp7XcklutbPlU7E35wRpO8gqFux8Qa0XMKZTqvXlYicQP4Q8y86VGqPGkiaKOIp1Y38p/4/GNYekKIAhqetjFTPfeK7dcDxhUD7u7c17Y21OYjH6SIfkvahOIVKr1eTY6Dh35f52dG2JmYCSNI5CzY+ZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185842; c=relaxed/simple;
-	bh=pcfZij1MUqUjvE1R8Bj+qorgSs7f5dQOpSppXAufupw=;
+	s=arc-20240116; t=1741185901; c=relaxed/simple;
+	bh=7ASHfawryKHf3PEPpBd0pHmfcg7rVi91rbNSa2ZTzBA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=H9bJvDPm0XSNTJPQ/6QbW6GkfG/cFkirTc3bRFaacgyzfo7t5E8qyszJu3LToGqjHVybQLKR0iHoyPki27MRyRkqh0BvcWXPtQLdc07c/5vqy/as+YpR8/yPvoFpf50YcKBTuqXPuyJQqRxEr/rJR9mnxmE1QYqHxAL0LPZkCLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=IvgeIBDP; arc=none smtp.client-ip=209.85.222.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7be8f281714so797149085a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:43:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741185838; x=1741790638; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=m8f2GDESLoXks5iTtTl11BvauZGdfcVPK6WPs3q/K+I=;
-        b=IvgeIBDP7moMBZ6K96+QgCA5C1i+Yi/q+4BY020ht2+FXz71qeQ7xpvcb5BYN39uV0
-         /bGJni/vYRCDqPR376Y2DLeX1aCxrhXigaBRZUOwTAzo0CumO0XWZ8d7RaEtNrFYk1ky
-         du/glqArqjxfL7pkXAOLeevSoB4iH7G0ldTR5A5a4fDocC57c6bjq+AdV81kNpt41rzQ
-         NKueTfxYGGJjVvwGwR/oAC4J9aFHkBHGn4TIZLmxDKm/skGhHcNB6NyOrjJlgQPI4+XH
-         LGJboRGu27LScHS5ISEWyofYqMPXB19MYl8+U4Qw1Zld2Qjz4u+8hBu20k8VsYUP9cSk
-         F2Pw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741185838; x=1741790638;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=m8f2GDESLoXks5iTtTl11BvauZGdfcVPK6WPs3q/K+I=;
-        b=viDLmZvAjSyGZEclIOKEjtFEjDZNdWfBhV1XnTlZdEO+uTASVaKusqwBF3E3Q1bGoi
-         esp39+kaGYAXfPkgv6QfkW9oPykEtL6zmZGxtDuyBRBatIWg0Ojzr4ziNa1v/bOgLF9t
-         pnUDy4q/hSwAY/NMo5o1Q5ElvEj+9iYdD6QFlWWMZY4XHPVQPm514/QO+t9tRCB6RAKa
-         rNSheko308IM70uNuTBKE4MGt4GqpSxjj9tnbJlFb9+O/O92ZVKeka/gD48B5Pu8vEcb
-         FIKHGgy8z2pggXxzZtyITUo02kwMGCWeiat7i8gQ/JwebnmHXUaqjeh34qbv6UpM8MN2
-         PT8A==
-X-Forwarded-Encrypted: i=1; AJvYcCWGzBj8mqGczKn65/rtQNI1VrExfyo6Ixb/N8IyVaAUOj3DcBJozzwJndWxRS40HI8YC0CnivMZ0T62mkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJufQrDNVf8g2fs9O8dWhKb5vvg5iixyr4IbEoE04VFpsT+tdY
-	HwJqky21p1hy25gLZLutQowTLTbztqYw4FIdEQlsun2Gz5ungiOCDy8SQlWBQaI=
-X-Gm-Gg: ASbGncsAlS6BYLnZWUWZfogFNReE9hquM9Xfn6tJoenbt34F/1oSl4VeJu8i+zOefhQ
-	Im10f8dGUbkLaA4og+efbCnysqGBKWtt44P4uqFrLKkfywsjqsj9aVohZMX2MziWhtCLgkgSKh2
-	YpqgTY8PQ7OaB9qT6KABpooniHrVA4EAm8azXIMeWPV6N4piGPc/g4ldhPNzsemhZirMBPyOEsG
-	PYLELozsPbtnloi5vff0OqROwCUUDrlYBdY1x7IrM/TGuw26kgHW8KMtPwNvFWF5fShTlRnSFxb
-	elHYnHaAsqQ8DlMxTIDOeQU5psu9L9SmKtPNbXV5gIk=
-X-Google-Smtp-Source: AGHT+IFX+ow3byGDTZw9C0w2IUK5a1lbN4mR9fGRC6Dqsc5MHt7AQp9jQ6MNPCZ09WKr58d/5jQqjQ==
-X-Received: by 2002:a05:620a:6006:b0:7c0:b587:9e6 with SMTP id af79cd13be357-7c3d8eb3bf9mr568804385a.43.1741185838581;
-        Wed, 05 Mar 2025 06:43:58 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c378d9e2d5sm885607885a.68.2025.03.05.06.43.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:43:57 -0800 (PST)
-Date: Wed, 5 Mar 2025 09:43:56 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 1/5] mm: zpool: Add interfaces for object
- read/write APIs
-Message-ID: <20250305144356.GA185622@cmpxchg.org>
-References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
- <20250305061134.4105762-2-yosry.ahmed@linux.dev>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VLi9WWh1Nyw9zk0M8Nm8bp6Si8IP/N+8j65fKKrg0oKgJaR6t38SiSah48DRVakVM4oEmkfvSFwZmuOWD1pI8OjmXFxc5Jl78d/t/xV7SQ5nPY0AWtC0OSpyztPczWSE6BHwNTECR2MfocYwL24gFOMHzDiZaFEqYzSzpztvlGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SAGrGH9O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4061C4CED1;
+	Wed,  5 Mar 2025 14:45:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741185901;
+	bh=7ASHfawryKHf3PEPpBd0pHmfcg7rVi91rbNSa2ZTzBA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SAGrGH9ObtVWKX3e7bD2yu25LK/nLOfizTQ/iTNjT19pub2TX11fojTHUclJi0Maw
+	 XiShJOndCK3ebVQNwkDAdBHkuY7oXVOC1kZMOrzpN6QnkFuFEF5U8LomKPSJ5KY/v1
+	 iqu3cPbA4Q+WuUKgCITReQabZcnF/Q6b+BKIkgTXKsceR09scb9ykO+1jItzYskhcl
+	 38XzwEzzpjkcgqJpLPkmGqFWsZrHyBSxzImdXrr9roAFUu+WmW6WK8Z6sBHDP4o9Xn
+	 mST6U9k7/MWqfRPPOw2Pa0sJYTdE5jLJxi7VH+noKRBRKxC1CwWrTy8RRDaz7q301K
+	 j0XVvbAwwtzgQ==
+Date: Wed, 5 Mar 2025 15:44:56 +0100
+From: Joel Granados <joel.granados@kernel.org>
+To: "Martin K. Petersen" <martin.petersen@oracle.com>
+Cc: Nicolas Bouchinet <nicolas.bouchinet@clip-os.org>, 
+	linux-kernel@vger.kernel.org, linux-rdma@vger.kernel.org, linux-scsi@vger.kernel.org, 
+	codalist@coda.cs.cmu.edu, linux-nfs@vger.kernel.org, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Joel Granados <j.granados@samsung.com>, 
+	Clemens Ladisch <clemens@ladisch.de>, Arnd Bergmann <arnd@arndb.de>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jason Gunthorpe <jgg@ziepe.ca>, 
+	Leon Romanovsky <leon@kernel.org>, "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, 
+	Jan Harkes <jaharkes@cs.cmu.edu>, Chuck Lever <chuck.lever@oracle.com>, 
+	Jeff Layton <jlayton@kernel.org>, Neil Brown <neilb@suse.de>, 
+	Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, Tom Talpey <tom@talpey.com>, 
+	Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+	Bart Van Assche <bvanassche@acm.org>, Zhu Yanjun <yanjun.zhu@linux.dev>, 
+	Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>
+Subject: Re: [PATCH v2 4/6] sysctl: Fixes scsi_logging_level bounds
+Message-ID: <oy2jkeisvm7edg7zrohp6iipvnktj5o3sw5hxksoxgorppoj6r@hubn7cifqdxl>
+References: <20250224095826.16458-1-nicolas.bouchinet@clip-os.org>
+ <20250224095826.16458-5-nicolas.bouchinet@clip-os.org>
+ <yq1y0xubz40.fsf@ca-mkp.ca.oracle.com>
+ <0a9869e0-d091-4568-a6e7-8d7d72b296a9@clip-os.org>
+ <rgh2ffvmp2wlyupv6vw5s3qexuipgu6vdr2qsitgnbn6syk6ye@ln74xh26jdwp>
+ <yq134ftv8h4.fsf@ca-mkp.ca.oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,13 +72,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305061134.4105762-2-yosry.ahmed@linux.dev>
+In-Reply-To: <yq134ftv8h4.fsf@ca-mkp.ca.oracle.com>
 
-On Wed, Mar 05, 2025 at 06:11:29AM +0000, Yosry Ahmed wrote:
-> Zsmalloc introduce new APIs to read/write objects besides mapping them.
-> Add the necessary zpool interfaces.
+On Mon, Mar 03, 2025 at 09:24:43PM -0500, Martin K. Petersen wrote:
 > 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Joel,
+> 
+> > 1. Having the upper bound be SYSCTL_INT_MAX is not necessary (as it is
+> >    silently capped by proc_dointvec_minmax, but it is good to have as it
+> >    adds to the understanding on what the range of the values are.
+> >
+> > 2. Having the lower bound capped by SYSCTL_ZERO is needed as it will
+> >    prevent ppl trying to assigning negative values to the unsigned integer
+> >
+> > Let me know if you take this through the scsi subsystem so I know to
+> > drop it from sysctl 
+> 
+> Applied to 6.15/scsi-staging, thanks!
+Thx!!
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+@Nicolas: Please take this out of your next version as it is already
+going upstream.
+
+Best
+
+> 
+> -- 
+> Martin K. Petersen	Oracle Linux Engineering
+
+-- 
+
+Joel Granados
 
