@@ -1,233 +1,86 @@
-Return-Path: <linux-kernel+bounces-546940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFECDA500F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:46:45 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97D98A500D1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:43:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4CE21894AB6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:46:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1D2F3A8C04
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:43:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80F2724A07A;
-	Wed,  5 Mar 2025 13:43:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6594A24BBF9;
+	Wed,  5 Mar 2025 13:43:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="Luf2ycvC"
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10olkn2083.outbound.protection.outlook.com [40.92.40.83])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="VtkbnWZG"
+Received: from mail-40134.protonmail.ch (mail-40134.protonmail.ch [185.70.40.134])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2474B24C081;
-	Wed,  5 Mar 2025 13:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.40.83
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741182235; cv=fail; b=EZRA4M/roDp0uMrpqscxWMOfKuxu0cVFh+D4oELR6tJ/3Ti3SL+YCcVSEoW5AygCaBQefnkgImRt/nKMO9rJmT8hzKdso/nArPOMRHxNMs99IqPiC+7RmRGvTKHiSBz8xTcxxzb15jibuZYG2TpECf9si9Sr6OLy9aKaw5/mgys=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741182235; c=relaxed/simple;
-	bh=hG21iQ+sgU0PE3kWGlTPd3aV00N0xCZ19kwEwihhidg=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Hb3+97vmqFT/fkh/ZIvjeNFwB+XZ48uYSfhVA1hjvHJ86ikoj7g5v5BKL33XTHK0ds4uMtKiwziWR4o13yDI9KRa7Q3fifqGOuAGeEbvnrtEglZ5ByV4w1cfeSVsZbTG0mcQ2a0lFEknyb3KQZBQHZFgHhgilec+OZwQYyS2aHw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=Luf2ycvC; arc=fail smtp.client-ip=40.92.40.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=lwfKIUPrcHxgYulX3bg1bDeWayQiDsYUSauGEKJgKOSQrGUyZ2R3vgdzfTOxnOE/8K5lBBNpyC+2pvzd3SjLmY7Pnv/21HwIkvbsGB927OXsY1KdrRlSxKXgZcgp9RiqavtcmreaZYcprU3D5w7lig4MYgKqjlDaaceIMrwtMyy4RjXbowFbDcLJycmCg+oM5+G9q+OHVtX3wX8fheSgJZRQ1w8+ZSUehsARp4VVyoA9l+I7evhknZ2DfyKopqMh0LROdZ5XaLWuA9a4UApxPGFXwko/3f64kKqkDv3jNgIk5a0+V0ISxu3Z9BAfogiOew6AEL0Iwzxac39lQ2m3wg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zzi17UPH3tzuto4D/PCV1EnL0FPy86wrtEelgv/mZcM=;
- b=nVWKWMp9tZsmXCKPLuFGsRmaauJx3awDhIlxAm7cqGZQIQtI/lDYmGGqZkYJzJDFngZ//lYRveLXGdBxv9Hxcyct6gY45BLXcSDk0jw9r6xPWLW+UIxGuTitVIUL0+Lnu0WT8q135G3lQ8LbPLFDqp3AmHDzfSnBV8MqgTPGkC5ItaS9XdCybf8KxeAcE8L5I4Pf1z4hdCatif429pGSUQ+GxIMzTl2p2r5YeOaWuvuYzNqDkoX74yar7UsKU3kCl2AZHceOgMFJvgzC9XvkkgURoukUoYlRv2er2B5lY0aHoTx2mEtEh2ERe5u9J3qYKTOHABSYczckJLDZ4NIIJw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zzi17UPH3tzuto4D/PCV1EnL0FPy86wrtEelgv/mZcM=;
- b=Luf2ycvClfQE8H91eKHBvbJVzDBV5uk7DB9mFKWFWuF9MMBV+qcwVhPDQB5AtW7o0blhsimRyhZDWS0c1630OjQqh5OiHWYpOkGq5SpbsZ64wfF2jUSW7Q3kH5K/3u7zYhguyo7wkH/DRhjZVwrdzfTiQS0IHpsan3R8Z05FBU0yOAFOZQuZ+WLW9sjhGQ4N0zyyVAsSe3RA6SPkrZkS87TdgCXIVedGYuodKfIaIMDfkoiDAtSQVw/gM/ct+iwUKvSon7FABkOWJstoRIDwwG85uWJcyWF9FHtT1t8sMFW9WXmtjrGR9v6yCaKV9h8VI+T8ExPdCLBUeokBgIQstQ==
-Received: from DS7PR19MB8883.namprd19.prod.outlook.com (2603:10b6:8:253::16)
- by CH2PR19MB8895.namprd19.prod.outlook.com (2603:10b6:610:283::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.27; Wed, 5 Mar
- 2025 13:43:50 +0000
-Received: from DS7PR19MB8883.namprd19.prod.outlook.com
- ([fe80::e0c2:5b31:534:4305]) by DS7PR19MB8883.namprd19.prod.outlook.com
- ([fe80::e0c2:5b31:534:4305%6]) with mapi id 15.20.8489.025; Wed, 5 Mar 2025
- 13:43:50 +0000
-From: George Moussalem <george.moussalem@outlook.com>
-To: linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-phy@lists.infradead.org,
-	andersson@kernel.org,
-	bhelgaas@google.com,
-	conor+dt@kernel.org,
-	devicetree@vger.kernel.org,
-	dmitry.baryshkov@linaro.org,
-	kishon@kernel.org,
-	konradybcio@kernel.org,
-	krzk+dt@kernel.org,
-	kw@linux.com,
-	lpieralisi@kernel.org,
-	manivannan.sadhasivam@linaro.org,
-	p.zabel@pengutronix.de,
-	quic_nsekar@quicinc.com,
-	robh@kernel.org,
-	robimarko@gmail.com,
-	vkoul@kernel.org
-Cc: quic_srichara@quicinc.com,
-	George Moussalem <george.moussalem@outlook.com>
-Subject: [PATCH v3 6/6] arm64: dts: qcom: ipq5018: Enable PCIe
-Date: Wed,  5 Mar 2025 17:41:31 +0400
-Message-ID:
- <DS7PR19MB8883E1552A71914AF1E1B68D9DCB2@DS7PR19MB8883.namprd19.prod.outlook.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250305134239.2236590-1-george.moussalem@outlook.com>
-References: <20250305134239.2236590-1-george.moussalem@outlook.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: DX0P273CA0060.AREP273.PROD.OUTLOOK.COM
- (2603:1086:300:5a::13) To DS7PR19MB8883.namprd19.prod.outlook.com
- (2603:10b6:8:253::16)
-X-Microsoft-Original-Message-ID:
- <20250305134239.2236590-8-george.moussalem@outlook.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32B8024A068;
+	Wed,  5 Mar 2025 13:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.134
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741182184; cv=none; b=hpRUNvE35FaZ2XnSn15qssqdhyqgbB9J+odNPe8fP4DaScypU1rKX1m+KKdkfOU6qtKne5DqKQGnK32X/iTOeuh3+qpo4Yv++anSFZLKl6s4KOMoqsk+q6mmTtAZnHr0qW5KkZDNc819FXN0bFB8iGMB4PMmSn5SclPbp0K7M6g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741182184; c=relaxed/simple;
+	bh=PCw+fsFCg4iMevxCZ3WDBtFP6dh7QpfE1KSQU7/sx0o=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nelxqKYUeauHEQ2Hvs45hz49h7fmiBym8/8kQbE0DfF3Rqhzjiq+Ey/Hqt0VQHExoq/HR37WIhCOO+16K1XznGMJTWBfJZu2Kiug1oyfeRcmCkv9PpAkGx47V9LANLjQbn9L0G0jw2t8NwZ0fv7yvslwLCj89y8v9L1wt1aOv3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=VtkbnWZG; arc=none smtp.client-ip=185.70.40.134
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=islx75xhinebhcqxkzeybsabfi.protonmail; t=1741182181; x=1741441381;
+	bh=PCw+fsFCg4iMevxCZ3WDBtFP6dh7QpfE1KSQU7/sx0o=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=VtkbnWZGyDqEYMboWBjvPEvvqvtZp+BX7QOyNE0XKXPYbu2MlEZQugMq4JdIPYi1f
+	 21czmgoO9P6i8ASWaWiBx8/K4881UlkCicx8vL0BB8F/5gdm116QZbPlW1yifOeJqK
+	 3csnHyr/qH77xBjw+Rrgug92SN25PN37Pvg3r62Yluq+cza1/eswLTDI1h+vil7cil
+	 glI8lOgbtSWYFld6norsR2aO0bmypklm8icdsxurTtqy+JU9ujczIgVtr+3MpVWfHq
+	 QnQQY536TEo19ee7DwGzo2DI81vqPUYnExRvuPHj2XMy9Jax2HAzsjR7Yhmdt0esqa
+	 VsHC9hv/ia4ow==
+Date: Wed, 05 Mar 2025 13:42:55 +0000
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: stable@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] rust: init: fix `Zeroable` implementation for `Option<NonNull<T>>` and `Option<KBox<T>>`
+Message-ID: <D88DKEJ9LHA0.3324DAQAUEI9T@proton.me>
+In-Reply-To: <20250305132836.2145476-1-benno.lossin@proton.me>
+References: <20250305132836.2145476-1-benno.lossin@proton.me>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: b9f1163ef793328134ca0cf594bc4a3f8403279e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR19MB8883:EE_|CH2PR19MB8895:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3032b97e-4719-404f-4b0b-08dd5bebc2d7
-X-Microsoft-Antispam:
-	BCL:0;ARA:14566002|7092599003|8060799006|19110799003|5072599009|461199028|15080799006|440099028|3412199025|1710799026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?VpHMemuOlhL5pyw3anY38Jm6/6TXQYdpca+J/bf24G31p4uQ9mfEld2xqYtH?=
- =?us-ascii?Q?H2UwWbrcjY8jFFcineQNYwZQS1EVPOkhy68g0CYhI9PJLrL+Ovjk7evh4M2/?=
- =?us-ascii?Q?PRyAZ3Xi7i/YweexIOB/qeuCO3QcLAxxM12i7AK/Df7AZ//h5EfgqMF17gs0?=
- =?us-ascii?Q?SbhxBaYLplk7gLqo8vvlmDhom8qpbGDWP6bUMYdLAsV7eDvvK+v+hF/OJ8Ux?=
- =?us-ascii?Q?37aURYHwYRVv6yiL/UDUkk/L2WGqg8J0PTN3HGYmIuMWT05HLI165s0vV9Ah?=
- =?us-ascii?Q?grefwf+2/+iMFJRz9gObcgwk6/ID11Eu7SwfmbKHshiSFHCT8Eb+T5pYS2yF?=
- =?us-ascii?Q?eW+Y71T2G40SZMeF8SiS/ULJWRZPgTJEFDhjl7zDR+RBbkKDKSRi2TmQ+Rtb?=
- =?us-ascii?Q?4pkDZgNWnxFF9IHSt47OZlnnXIaIWU3dqU5O2BCbCz19x4+QE615av0iQXBO?=
- =?us-ascii?Q?PDUtp2px8473X77ZVY73ND7gtYuCfb0N1borjof+89yuUwu4xzPOm+A/Oh5h?=
- =?us-ascii?Q?/217hGO5QrCQ078uVuePySGMn6L4vD9DLzYHhqo7j0o9UQR5gvbuatUXN44M?=
- =?us-ascii?Q?8NuZ5IvRAxXjNubwPd+h3R2THlcFyv0z5ob1OzaVash4FcFjTcJ7+2YT9Pap?=
- =?us-ascii?Q?IY0qeUPEXUvgLEnlY08U6dPczMLSs9HHDJY/lSUP5MV+SfmWDpiXoSEcTKt1?=
- =?us-ascii?Q?ryX3KAJeJd0jspYqJ8y68+KOgKek23JHf8Jn9Fn/Og9Hyto7yB+u0EVWmIQD?=
- =?us-ascii?Q?eLnz++u0ntreeo2Y2G/amOnrj04v5EprBQaCO8iRZslxagYkDBeo5iTp35LH?=
- =?us-ascii?Q?MkUQUkfvlr+L8hP53/0tTkh9NYcl3boBxchA8Bzs8TPXAtSnXyeqZBhOzB2w?=
- =?us-ascii?Q?DsIjeUQPmTaUw3hGrHV7drTGAXejM1uPn7VvzAb36OFF9NBY5W1xqsggQ0Ce?=
- =?us-ascii?Q?1VzevG09+GU3WYHE92+/jCIerUJwMrfi+HMLB+QpPxzfiLXiN/scWlBazYuC?=
- =?us-ascii?Q?MzW6HOslnTP1lolSwSUYyp1ixtW3PqdFK1jjFPWacs/CMBTFWJjGRD0cTel1?=
- =?us-ascii?Q?OjgqONCJj3gwNpfRl27SLnqZrGqLWvyLb1hM8GGnqZzeW4GEltY=3D?=
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RvPTlovkxcV8yMMLZhZdiTdthjGVO1Ku2TP805zcArk4yMUskaFmOsHF0Cf8?=
- =?us-ascii?Q?2cLaAYI56UzLjmW4gzB9F0+9SNg7ONcXnCitIfvniMiY7nirgVbMdZHk4csN?=
- =?us-ascii?Q?iyYAWWrdCFDn7+EZj+tZ6AcA7f87DVek6qA62YCLEOtp1dJfZQPk5HPn+Yks?=
- =?us-ascii?Q?pIQNh0wNT2dOH35s+IsmSIy2v2t3uA6BIA6AP2sr5QSQyqi6rV+KYt5voYG5?=
- =?us-ascii?Q?RzaRVofXT2miQx7qB5hmUgcLabwWwT1EQ+8Rj2V0kmjWkqW5DaYmJcIwLrbg?=
- =?us-ascii?Q?ZTNq0Vsaw1ck41q3OpxRoEZQx8PPmCHp+/KaZ6YP9HWW4VKeb8+SZWHBtosE?=
- =?us-ascii?Q?2gK4wOgKfNwAmioNsJyF42g3RcvfBlHD7wB+JZlWiJ+RvudTI9znXN9si2NQ?=
- =?us-ascii?Q?JLHqzS9fcJJLLZ/DWTliWOxC6SXXPmAxKjtlckPANHC+mrMvaQi844n6I0lv?=
- =?us-ascii?Q?ogvIzP20RP5hItl1bIU6Igp4jKnqpxLrsGQmBXJHjKR9qYXIpTbIF+H4gsDi?=
- =?us-ascii?Q?TNaJWsr9eO5P/4YPSsVZfhLW/qQ2/Vcy+AYScqYVzEI2CjLj3n+fI2Pp18WK?=
- =?us-ascii?Q?YX6WlKXNplSyPUVmY0zfcc1E31W3LN3kSHtRuAufcdvuXksYhyRwPT5bFlJ4?=
- =?us-ascii?Q?a+Aeit4uRQfR6S0v/tDsbdy98jZiPRXV6zXwP1tQkKvIWkWENwLXlaCZzi4R?=
- =?us-ascii?Q?FlaUkR8JSWkvMTs5/tFGYFTolVjyE0syolTE7XVaMFpJmCL7RrcavJ+T6V1+?=
- =?us-ascii?Q?SBYGq19xs8UHq4W0qraYwApRRAnPv5NKj+hS9qYOrF8VO2ENfr4KPPj1j5gp?=
- =?us-ascii?Q?Yf+oqqdwe8iIKdq8OOAtqaNiRylZxXepZiejK7e/oYDtGwyvBTS7+BNO4iZe?=
- =?us-ascii?Q?xCcPdaY1ZQOztP/Y2DzhQpMBBk1fWNu5Jr62QD3DEcBAlGGHiUYdVE4zXHKx?=
- =?us-ascii?Q?JmxFJdQGFRhbQgkXjqb13ghsd0PkY4w1REAkljGzOJGZFq2ZUt981exQMZHT?=
- =?us-ascii?Q?+jQRr2m5up3yb2Izd4ViBBWOFbiOvrtL6E1Fog6uzap5wrvCpobdkO5iMXwM?=
- =?us-ascii?Q?lITmJb3Mi0c6UINtZjJLb/Kz/90FkTvoQ/39Hiw87iR08e2HyZG0rXvHQntQ?=
- =?us-ascii?Q?d3m+uKPyO76zfiSq5ApR2pkZ64wc/hQT/cYya3g6vmX5k3FbDyKO66NwRlfI?=
- =?us-ascii?Q?lDY42R6NVejV+j5lqQmZaVqloM+g75b157n/TA8Fn2v3Gpw1oKKdg3OH8cNB?=
- =?us-ascii?Q?n1UZf1ajySg0sZCzyN6d?=
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3032b97e-4719-404f-4b0b-08dd5bebc2d7
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR19MB8883.namprd19.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 13:43:50.7880
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
-	00000000-0000-0000-0000-000000000000
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR19MB8895
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On Wed Mar 5, 2025 at 2:29 PM CET, Benno Lossin wrote:
+> According to [1], `NonNull<T>` and `#[repr(transparent)]` wrapper types
+> such as our custom `KBox<T>` have the null pointer optimization only if
+> `T: Sized`. Thus remove the `Zeroable` implementation for the unsized
+> case.
+>
+> Link: https://doc.rust-lang.org/stable/std/option/index.html#representati=
+on [1]
+> Cc: stable@vger.kernel.org # v6.12+ (a custom patch will be needed for 6.=
+6.y)
+> Fixes: 38cde0bd7b67 ("rust: init: add `Zeroable` trait and `init::zeroed`=
+ function")
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 
-From: Nitheesh Sekar <quic_nsekar@quicinc.com>
+Forgot to add this:
 
-Enable the PCIe controller and PHY nodes for RDP 432-c2.
+Reported-by: Alice Ryhl <aliceryhl@google.com>
 
-Signed-off-by: Nitheesh Sekar <quic_nsekar@quicinc.com>
-Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Signed-off-by: George Moussalem <george.moussalem@outlook.com>
 ---
- .../arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts | 38 +++++++++++++++++++
- 1 file changed, 38 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-index 8460b538eb6a..d49ff8e8f758 100644
---- a/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-+++ b/arch/arm64/boot/dts/qcom/ipq5018-rdp432-c2.dts
-@@ -28,6 +28,20 @@ &blsp1_uart1 {
- 	status = "okay";
- };
- 
-+&pcie0 {
-+	pinctrl-0 = <&pcie0_default>;
-+	pinctrl-names = "default";
-+	
-+	perst-gpios = <&tlmm 15 GPIO_ACTIVE_LOW>;
-+	wake-gpios = <&tlmm 16 GPIO_ACTIVE_LOW>;
-+
-+	status = "okay";
-+};
-+
-+&pcie0_phy {
-+	status = "okay";
-+};
-+
- &sdhc_1 {
- 	pinctrl-0 = <&sdc_default_state>;
- 	pinctrl-names = "default";
-@@ -43,6 +57,30 @@ &sleep_clk {
- };
- 
- &tlmm {
-+	pcie0_default: pcie0-default-state {
-+		clkreq-n-pins {
-+			pins = "gpio14";
-+			function = "pcie0_clk";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+
-+		perst-n-pins {
-+			pins = "gpio15";
-+			function = "gpio";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+			output-low;
-+		};
-+
-+		wake-n-pins {
-+			pins = "gpio16";
-+			function = "pcie0_wake";
-+			drive-strength = <8>;
-+			bias-pull-up;
-+		};
-+	};
-+
- 	sdc_default_state: sdc-default-state {
- 		clk-pins {
- 			pins = "gpio9";
--- 
-2.48.1
+Cheers,
+Benno
 
 
