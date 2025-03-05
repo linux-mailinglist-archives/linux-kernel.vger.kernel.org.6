@@ -1,177 +1,163 @@
-Return-Path: <linux-kernel+bounces-546100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C9CCAA4F653
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:12:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7305BA4F654
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:13:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 629683AB2DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:12:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7C733AAF73
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83AC1C862D;
-	Wed,  5 Mar 2025 05:12:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6CF41C8629;
+	Wed,  5 Mar 2025 05:13:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FXAZ4aGN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gwVVZGY9"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832281537AC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 05:12:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1B6B2AD2D;
+	Wed,  5 Mar 2025 05:13:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741151540; cv=none; b=HgJSS9ccpRQzodhHd/XC5AdpKNNjeWKXd3+pxBLQ1GNeDUMIUVcQ3LBqded2YKdgq47ks6K9NqJckES/2LksXPfbDfDXPeVSzLPIN1kWh8KjJB6alSEN1emBrwElKEJEev8/v0MncPWyDwJWiX+4ZkmQqVwziOMXhLe20I7IRVQ=
+	t=1741151597; cv=none; b=MzbF7LbDaQnsCU31d/4r3cZg331w+r7C8tWGQpF34/VbpP5GQMfvtD4YqzkkVrx1Gke8Nnr7YZmcKnytFCJO5xrwosqjHQw61idbndOKR7M3kGWRUFPqcvBtG7LgTG2Z+R2sYid9EQJYiYDg1Zvlp0DiLS45dcuTam32HmiW/Fc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741151540; c=relaxed/simple;
-	bh=CfwmeBhi7xvo6WZWBaowlCH0XYczkdoGhtIg86fxDKU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=ZEZ9JY5Ueau/9W/PglDUpTE9PCK3ONQ1JzgpZldfWdssGpT30ZEkOw4ZUSf+3rcyVoLSSmtXTPE+KfnODH5NgSZ9RYUiq7r5XRpCEKXzDjSRE3XRO5wzYSXfby29HZzKYG0rPJIkm12SRCwxFAnhR3EIUbJoOUUFoS215gEwDns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FXAZ4aGN; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741151536;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=eKER1pFGFjikEAnNCNXBpJMTxeI/ofA+XLS16uxxVuw=;
-	b=FXAZ4aGNX/jBI7dQfY/bzo+UgfNMMXUuqOmKMrY7ExrSjGlug2vPuWkJMgsMo4247sQGas
-	5tw6Ytk1H1sluvlQQcoJOk7wOenGn43kShnVJZYf5LKVkHcrggINgG4PtkB7Qmp9kNZAbX
-	RMd96nJRi3sAoR0l3qzzu8wwaFm/KFU=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-74-eYkyhM57M1O1bRpCR0zOLw-1; Wed, 05 Mar 2025 00:12:10 -0500
-X-MC-Unique: eYkyhM57M1O1bRpCR0zOLw-1
-X-Mimecast-MFC-AGG-ID: eYkyhM57M1O1bRpCR0zOLw_1741151529
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2fe9527c041so12582078a91.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 21:12:10 -0800 (PST)
+	s=arc-20240116; t=1741151597; c=relaxed/simple;
+	bh=q0BhGC6HUxOE4XplZuS/4jndjnSHZQ5oqFPeN6Mlcss=;
+	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=TwlVl/yygZ/WKYwcw90ouTkgNOolsigrynEaTSCcmIQvoaUFGPH8ourwYsevzZdNM2I9MSmSfMgMTfeMaHCaBVRW11dsJiFH7ukW2j/ZSseS3f8hEBWYBgLfe1wxcWPTtrL3by/4QovaV9Uo3HjdmD6Am0ph0Ut88kmdz6cda1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gwVVZGY9; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2f44353649aso10219462a91.0;
+        Tue, 04 Mar 2025 21:13:15 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741151595; x=1741756395; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iI2i5cV2QPSlpE280H3wgvcz67NO3pUTtRCcIr6Aq80=;
+        b=gwVVZGY9uyqNpxaOZlvBhysMQezcwYJtmlwWRsSQwpiYbUieCd55RL2tUqOOgQ4AuG
+         moxtV1KdMcczMyWzgmBcWWkoVgg4HuYaojbBf6aQ4rZ6K4B5QkMQ0uinpqWUj3qb9Fho
+         uuRFb4a8AgBri/1RytcJc4/6lVXHysWaZTofqmCVFdVkIG29MKZ0ThwhpI9oMgNpgsEY
+         wWYc+5kOnNw8nOrQxLlFBSdSKiDGICzw8c2odUfGZ1pMgj50w0emjT/hb4g7mO9yQPaN
+         TGASenKHi2kAxNJJQAVwrHIybbcg9IsR7W7vxrWL1G3Bx6H0laEZFdHm0EkWRzyhLqK1
+         MkyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741151529; x=1741756329;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=eKER1pFGFjikEAnNCNXBpJMTxeI/ofA+XLS16uxxVuw=;
-        b=PQEkWytdetTvpxXP+XAHc/y5rf7cPv8F99Wd81O8XoiiXtJwr4xzDc+jrvVDNjYJGf
-         RsfBtQiQnT0OVX75SHnpbqtcNxaVLLSKXirFoS9vfQW6yQ+MrjZX72evZSJhm8+hBokU
-         JcoUJGuGzYuJyINVfymBP8gBfnD0wXxQoG3ytUL2R1enGvipkHR/LX2oo4tIkp5U01XJ
-         tP+/3gJ8PQQGZSZBcpK9alKPpGET5pKTaMsX6GzE3m/Kl9TqDZJY5OGgF17RO/gDV52Q
-         ijc5r4VrYnYMrhlkZERr77R9oQcjNjiAdeyHL8TbqY84KX7iMXHv2J4vTOAnFf8cZHN1
-         3+uw==
-X-Forwarded-Encrypted: i=1; AJvYcCW5vVo4MeM+vav1uNKsJN3khcqLjckD7XKumwg2uRy+x6+nJ7VvIUq4ZbIlM/b+cxyiIte14fMYyQE98W8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+318ja5L4LT8uRSbZLrU/xH/V4iNO/GdxAJjMi6oCDVNlpCqj
-	aX4iPv9J6kiHJhm9nsBZP8eYJgJOObejy365gWc9sIHDUiqIiGWWYiW64GMdIxyLbcdVcTCQ6s/
-	RQZhMFFQeaRNZ80tjwX5H6t6i6uECLO+MMMxghGsC9+6T8Lh7YzInznYTOZWTGCpHSHsGb1nEq2
-	3jwiYySthoGeDsWkMNyXDqdEoxAH0PiDP8a+Jt
-X-Gm-Gg: ASbGnctGFoKAr685woyW8gO2bUNSQu1qJH3bzf7kY7v+y3T0ZIP03npr7Qi0aoDnpyP
-	3UtvAvnqJ/vJfsgW6/vf9HdYj0Y5JDdxlZWZOM5iJLZM9XijixgslQGojZNf1PFrHOKyX+6tvdA
-	==
-X-Received: by 2002:a17:90b:4a42:b0:2fe:b5d1:dbf4 with SMTP id 98e67ed59e1d1-2ff497c37e0mr3665279a91.33.1741151529247;
-        Tue, 04 Mar 2025 21:12:09 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGwoTZpCDXZkQN3+w+8fH27hU4eingYXDiIkwh+yrUc9B+d0J180VQppV6nfoxu0TePQBVI+utB2XeDswtDOWc=
-X-Received: by 2002:a17:90b:4a42:b0:2fe:b5d1:dbf4 with SMTP id
- 98e67ed59e1d1-2ff497c37e0mr3665239a91.33.1741151528845; Tue, 04 Mar 2025
- 21:12:08 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741151595; x=1741756395;
+        h=content-transfer-encoding:mime-version:references:in-reply-to:from
+         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=iI2i5cV2QPSlpE280H3wgvcz67NO3pUTtRCcIr6Aq80=;
+        b=q7NRJ6OQCCP7m5larQbiOMLopZt6AX9YCMmXlqd/3kHJqn4rAli2cBVOyZ3q+/yqSN
+         JE0sX69FJZAKN3902Oz2o7AmEzp3stpkO072thB8LFZlEIGE1PwS8VufBOEEcfypvo8R
+         JhkV6Of1jIBskMGjiG1V6EcYT/N2RbeB2qtaPgCsX/uEMMoVE5v3N8J1mSpiEg7rwqAp
+         0PWYpP3ZyjigqiiA2qE9kBFQlthFrk7bMt1PhcptL4vBm5ApheK62HLOWesNhTZnl3w0
+         cZquTa8VaepPdPFTDw54rx7zZKPexJCRR4sG/RVucRPuIhqgyCUU01uR7+4uWtrO3pvE
+         7iYA==
+X-Forwarded-Encrypted: i=1; AJvYcCWie1eTe2Ppv88KxsBmJGT8mW2LKMS+Op49tKNdfIaM3teU9JI+WLk5G7W+bLndauehWjmiFHmgFT+ob2gQ8Ak=@vger.kernel.org, AJvYcCXkk0tCvm/EN8W4WnPd2fVcFfJf67bOG3Pr1nIeYgRlXdb0f11YHfdWfYmch2p1S0Os5FPHF84wP1tE9pE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyWR5k0R7GlVaoRWSdW8x3defuADC9FktKp0zQsR1cWg4aGZzEI
+	QOYosPISrc+jnVSbEVBZAwl2Bh3n56ouEsL3mQ/mGeFfjC1bhyam
+X-Gm-Gg: ASbGnctO7x0BwoJdCetw2TNAHxDelPge7ZeDAfOCFXMCa7JAsG8hyNDnje+ib/ecpVW
+	1meH08PZy+8HREhk5ptVql86gFzFyo/VOBaSQeLbpsQXhPC89rETGB3arNaqIs1WKnJP9TIQWIK
+	nck7x+Ipieu/sZ0UgsUbTiF0PTxNEy6gLHFoyVLJ1L+7H4D1SWRHbCQsZ+s0N5/VlXDTyigjydF
+	C7d4uyxj3vQWcutRgX4w/2mrOY4qvt4DIPGspEVxj8wSs6QYrZvK3Luq015OD+Bayfd16fYsIXT
+	npMd8sIzS2M1XKuSbV2Owar5JuDbS1OwEJIPgJhvhkQIbd3neXcPChtqOPKmD7p6oSTz4yycmhr
+	YXkvG9y78sy3GUy5TpZXBEKyPjdc=
+X-Google-Smtp-Source: AGHT+IFMSQhAQ13isO5dfJNAPGUjk16diS7qR+TcB+buuYoTv6JifWXgE+o5nAJ3u7mlLeqgq39i1g==
+X-Received: by 2002:a17:90b:5688:b0:2ee:bc7b:9237 with SMTP id 98e67ed59e1d1-2ff4979cee1mr3291553a91.27.1741151594826;
+        Tue, 04 Mar 2025 21:13:14 -0800 (PST)
+Received: from localhost (p4204131-ipxg22701hodogaya.kanagawa.ocn.ne.jp. [153.160.176.131])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e78a991sm380662a91.24.2025.03.04.21.13.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 21:13:14 -0800 (PST)
+Date: Wed, 05 Mar 2025 14:13:07 +0900 (JST)
+Message-Id: <20250305.141307.586794213367343251.fujita.tomonori@gmail.com>
+To: aliceryhl@google.com
+Cc: fujita.tomonori@gmail.com, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org, x86@kernel.org,
+ linux-riscv@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ loongarch@lists.linux.dev, tglx@linutronix.de, mingo@redhat.com,
+ bp@alien8.de, dave.hansen@linux.intel.com, peterz@infradead.org,
+ hpa@zytor.com, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, catalin.marinas@arm.com, will@kernel.org,
+ chenhuacai@kernel.org, kernel@xen0n.name, tangyouling@loongson.cn,
+ hejinyang@loongson.cn, yangtiezhu@loongson.cn, ojeda@kernel.org,
+ alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+ bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@kernel.org,
+ tmgross@umich.edu
+Subject: Re: [PATCH v3 5/5] rust: Add warn_on and warn_on_once
+From: FUJITA Tomonori <fujita.tomonori@gmail.com>
+In-Reply-To: <CAH5fLgjX9hh+QRrKggOKr+6p+UwqHSavzu4UXy9iGNL2wSJXtg@mail.gmail.com>
+References: <20250213135759.190006-1-fujita.tomonori@gmail.com>
+	<20250213135759.190006-6-fujita.tomonori@gmail.com>
+	<CAH5fLgjX9hh+QRrKggOKr+6p+UwqHSavzu4UXy9iGNL2wSJXtg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250227185017.206785-1-jdamato@fastly.com> <20250227185017.206785-4-jdamato@fastly.com>
- <20250228182759.74de5bec@kernel.org> <Z8Xc0muOV8jtHBkX@LQ3V64L9R2>
- <Z8XgGrToAD7Bak-I@LQ3V64L9R2> <Z8X15hxz8t-vXpPU@LQ3V64L9R2>
- <20250303160355.5f8d82d8@kernel.org> <Z8cXh43GJq2lolxE@LQ3V64L9R2>
-In-Reply-To: <Z8cXh43GJq2lolxE@LQ3V64L9R2>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 5 Mar 2025 13:11:55 +0800
-X-Gm-Features: AQ5f1JoNaFI6XmMuO_pCqrh6RtY2sOjnpKaruYcRus0Q59xqFrHV28gVCLfLvsc
-Message-ID: <CACGkMEug5+zjTjEiaUtvU6XtTe+tc7MEBaQSFbXG5YP_7tcPiQ@mail.gmail.com>
-Subject: Re: [PATCH net-next v5 3/4] virtio-net: Map NAPIs to queues
-To: Joe Damato <jdamato@fastly.com>, Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org, 
-	mkarsten@uwaterloo.ca, gerhard@engleder-embedded.com, jasowang@redhat.com, 
-	xuanzhuo@linux.alibaba.com, mst@redhat.com, leiyang@redhat.com, 
-	=?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-	"open list:VIRTIO CORE AND NET DRIVERS" <virtualization@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+Content-Type: Text/Plain; charset=us-ascii
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 4, 2025 at 11:09=E2=80=AFPM Joe Damato <jdamato@fastly.com> wro=
-te:
->
-> On Mon, Mar 03, 2025 at 04:03:55PM -0800, Jakub Kicinski wrote:
-> > On Mon, 3 Mar 2025 13:33:10 -0500 Joe Damato wrote:
-> > > > > @@ -2880,6 +2880,13 @@ static void refill_work(struct work_struct=
- *work)
-> > > > >         bool still_empty;
-> > > > >         int i;
-> > > > >
-> > > > > +       spin_lock(&vi->refill_lock);
-> > > > > +       if (!vi->refill_enabled) {
-> > > > > +               spin_unlock(&vi->refill_lock);
-> > > > > +               return;
-> > > > > +       }
-> > > > > +       spin_unlock(&vi->refill_lock);
-> > > > > +
-> > > > >         for (i =3D 0; i < vi->curr_queue_pairs; i++) {
-> > > > >                 struct receive_queue *rq =3D &vi->rq[i];
-> > > > >
-> > > >
-> > > > Err, I suppose this also doesn't work because:
-> > > >
-> > > > CPU0                       CPU1
-> > > > rtnl_lock                  (before CPU0 calls disable_delayed_refil=
-l)
-> > > >   virtnet_close            refill_work
-> > > >                              rtnl_lock()
-> > > >   cancel_sync <=3D deadlock
-> > > >
-> > > > Need to give this a bit more thought.
-> > >
-> > > How about we don't use the API at all from refill_work?
-> > >
-> > > Patch 4 adds consistent NAPI config state and refill_work isn't a
-> > > queue resize maybe we don't need to call the netif_queue_set_napi at
-> > > all since the NAPI IDs are persisted in the NAPI config state and
-> > > refill_work shouldn't change that?
-> > >
-> > > In which case, we could go back to what refill_work was doing
-> > > before and avoid the problem entirely.
-> > >
-> > > What do you think ?
-> >
-> > Should work, I think. Tho, I suspect someone will want to add queue API
-> > support to virtio sooner or later, and they will run into the same
-> > problem with the netdev instance lock, as all of ndo_close() will then
-> > be covered with netdev->lock.
-> >
-> > More thorough and idiomatic way to solve the problem would be to cancel
-> > the work non-sync in ndo_close, add cancel with _sync after netdev is
-> > unregistered (in virtnet_remove()) when the lock is no longer held, the=
-n
-> > wrap the entire work with a relevant lock and check if netif_running()
-> > to return early in case of a race.
->
-> Thanks for the guidance. I am happy to make an attempt at
-> implementing this in a future, separate series that follows this
-> one (probably after netdev conf in a few weeks :).
->
-> > Middle ground would be to do what you suggested above and just leave
-> > a well worded comment somewhere that will show up in diffs adding queue
-> > API support?
->
-> Jason, Michael, et. al.:  what do you think ? I don't want to spin
-> up a v6 if you are opposed to proceeding this way. Please let me
-> know.
->
+On Mon, 3 Mar 2025 14:33:39 +0100
+Alice Ryhl <aliceryhl@google.com> wrote:
 
-Maybe, but need to make sure there's no use-after-free (etc.
-virtnet_close() has several callers).
+>> +#[macro_export]
+>> +#[doc(hidden)]
+>> +#[cfg(all(CONFIG_BUG, not(CONFIG_UML)))]
+>> +macro_rules! warn_flags {
+>> +    ($flags:expr) => {
+>> +        const FLAGS: u32 = $crate::bindings::BUGFLAG_WARNING | $flags;
+>> +        // SAFETY: Just an FFI call.
+>> +        #[cfg(CONFIG_DEBUG_BUGVERBOSE)]
+>> +        unsafe {
+>> +            $crate::asm!(concat!(
+>> +                "/* {size} */",
+>> +                ".pushsection .rodata.str1.1, \"aMS\",@progbits, 1\n",
+>> +                "111:\t .string ", "\"", file!(), "\"\n",
+>> +                ".popsection\n",
+> 
+> It looks like you're doing this so that you can reference the filename
+> with "111b", but could you do this instead:
+> 
+> const _FILE: &[u8] = file!().as_bytes();
+> // Plus one for nul-terminator.
+> static FILE: [u8; 1 + _FILE.len()] = {
+>     let mut bytes = [0; 1 + _FILE.len()];
+>     let mut i = 0;
+>     while i < _FILE.len() {
+>         bytes[i] = _FILE[i];
+>         i += 1;
+>     }
+>     bytes
+> };
 
-Thanks
+Neat! I will use this in the next version.
 
+> and then use
+> 
+> asm!(
+>     concat!(
+>         "/* {size} */",
+>         include!(concat!(env!("OBJTREE"),
+> "/rust/kernel/generated_arch_warn_asm.rs")),
+>         include!(concat!(env!("OBJTREE"),
+> "/rust/kernel/generated_arch_reachable_asm.rs")));
+>     file = sym FILE,
+>     line = const line!(),
+>     ...
+> );
+> 
+> with
+> ::kernel::concat_literals!(ARCH_WARN_ASM("{file}", "{line}",
+> "{flags}", "{size}")),
+> 
+> That would be a lot simpler to understand than what you are doing.
+
+Indeed.
+
+Thanks a lot!
 
