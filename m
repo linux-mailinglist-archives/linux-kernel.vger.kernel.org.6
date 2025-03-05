@@ -1,144 +1,164 @@
-Return-Path: <linux-kernel+bounces-546164-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546165-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FA9DA4F725
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:32:53 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0406FA4F72C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:34:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7D167188BDFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:33:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3324516D19B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C766E1DC9AA;
-	Wed,  5 Mar 2025 06:32:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF321DDC14;
+	Wed,  5 Mar 2025 06:34:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HJdg0bKf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="jFgBxBAT"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF54C1C8623;
-	Wed,  5 Mar 2025 06:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47F771D6187
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741156365; cv=none; b=m18RTqSAiGKx/s4weyk/kfUBhb69YorE2WkzIC95FRnpoxo4ew9Vp54ZKJU4sIPWuqdkzqCzlgihGTSKwZpzslAzXZfnhfBaziHDNt3KToRMBfkiB3znA2h2mtg0ukueyRL5yBSDpK5vWz1EkR3zEOoOVdgrupXnkh9BmdappX4=
+	t=1741156464; cv=none; b=JFndt+R0XOvPMBybi7UM9RjVAw/ZisrXgsKZaB4L6FBkQ7xqbYUseGlZkS91evnrhbq9dKR+BrW57+79PrC2GFy/GEh8MDTRNRYM/vcx80aN9TwBAgjYABXpqMe+Zv3prOi+cDBpygUJetpOQjl157hTWlcR1GPJdZnjXN1x9e0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741156365; c=relaxed/simple;
-	bh=cvzoZmF/vBEUTMkxhVqY1m27118/Iwth+47/mXm8xgY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uXoRPqBfS+UxhPR3D9DSFHwk0rOOqres+uxrMGBk56LlVUezEx0entj2S2FDPaVw7X4NNTIa/boW0UM8rFvFWKcIXVaWk0AG8dqa9fBr6pDTVoAQs6RIKp4PoNTbdaz+YWF4R9G1kA7IKs/Q8X3xnCdXv/00V2+Tp1eVF9J+pW0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HJdg0bKf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524NA2ow013456;
-	Wed, 5 Mar 2025 06:32:06 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=vR5VynfP4MVglQhLx/xAmD1y
-	EZynwRM3f/t52ykQK4Q=; b=HJdg0bKfDTybGFJpxIX6r+WogBtZej/grWeD35eH
-	dviuxMM/9vRp2Q1VYo3EZoSLXWOhX2EknEcWzvOMhNfpa/unahbuVbYbEOgk6y5k
-	S4THXrjrfgYcJIXOUeUbR/q4mWJ3A1sd4FqUtalRvinnxc5qHZ9Hs2QJpy8DFkLQ
-	U5xwAiEc+T5dWNKwm6Enkg1b1x0Fxl9trwtiSSmdXG7D3RlVtUvNoB83PndBYN43
-	7yrndd00vahDSd+niYOcPhpKzaPlymb3z6OSWYpNRXwey/29bhGHsIMHRL+jPGjU
-	hYgV8IB7bKFp6dpLfla8SLo5xnJGt344bYzMKlc0Wt7FlQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6wmabu-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 06:32:05 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5256W4sK023404
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 06:32:04 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 4 Mar 2025 22:32:01 -0800
-Date: Wed, 5 Mar 2025 14:31:57 +0800
-From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
-To: Jacky Bai <ping.bai@nxp.com>, <lpieralisi@kernel.org>,
-        <sudeep.holla@arm.com>, <rafael@kernel.org>,
-        <daniel.lezcano@linaro.org>, <james.morse@arm.com>, <d-gole@ti.com>
-CC: <linux-pm@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>, <imx@lists.linux.dev>,
-        <khilman@baylibre.com>, <quic_tingweiz@quicinc.com>,
-        <quic_yuanjiey@quicinc.com>
-Subject: Re: [PATCH v2] cpuidle: psci: Init cpuidle only for present CPUs
-Message-ID: <Z8fv3X0Pivh8zbMg@cse-cd02-lnx.ap.qualcomm.com>
-References: <20241120103749.1450017-1-ping.bai@nxp.com>
+	s=arc-20240116; t=1741156464; c=relaxed/simple;
+	bh=gUcz5o6Xl3YF+cMmSziTYIl62yrmSgkxKXcYWPUjnKI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aWQtomOawADm0oMuknK2/MnDbwSYTd3370m6bjiiOZtULEAI7b3e0uPxVQpl4a6qL6Y9HPif3TKFQ7g4dNjh1/LoBLyjh/BX/t6L2/C81IJgN8yLdI9hYGs2SQCG4157NnZmrUHU7L3xocDlf5N7yclXvEspsVaeyeId5tYbUlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=jFgBxBAT; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 5 Mar 2025 06:34:15 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741156460;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=G9TYM+zw4VtWnAhmw1afqUYX/q9dbL9GufqEtL6o0jo=;
+	b=jFgBxBATyUdIImrdzrARPOh5gy15YNF77E8spfsRRMjbWp6uXvM0URKDRlztlAxOMhj/cs
+	W045MeEhhtTmNy3Q+jUw3BsVjZV9196JWERW+ZPh9raJPIM8YFnBmPOqD3zRcQqE6svWD1
+	o6+lnkmjK0lUtb6HZUEs/4YqUvm0Rbg=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yosry Ahmed <yosry.ahmed@linux.dev>
+To: Maxim Levitsky <mlevitsk@redhat.com>
+Cc: Sean Christopherson <seanjc@google.com>,
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 11/13] KVM: nSVM: Do not reset TLB_CONTROL in VMCB02
+ on nested entry
+Message-ID: <Z8fwZ-94duaK4c2p@google.com>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+ <20250205182402.2147495-12-yosry.ahmed@linux.dev>
+ <a70458e20e98da9cd6dd1d272cc16b71bfdd4842.camel@redhat.com>
+ <Z8YpxLONlmy91Eot@google.com>
+ <6345e31c7973a2ec32b11ed54cede142a901044e.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241120103749.1450017-1-ping.bai@nxp.com>
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=EZcyQOmC c=1 sm=1 tr=0 ts=67c7efe6 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=kj9zAlcOel0A:10 a=Vs1iUdzkB0EA:10 a=8AirrxEcAAAA:8 a=sozttTNsAAAA:8 a=COk6AnOGAAAA:8
- a=AUesVnU23U_Rn2rDAs0A:9 a=CjuIK1q_8ugA:10 a=ST-jHhOKWsTCqRlWije3:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 6VvIHP9KaiVo-V4QU2O9xtOWpq3H0psq
-X-Proofpoint-ORIG-GUID: 6VvIHP9KaiVo-V4QU2O9xtOWpq3H0psq
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_03,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 mlxlogscore=939 suspectscore=0 bulkscore=0
- clxscore=1011 priorityscore=1501 spamscore=0 impostorscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050050
+In-Reply-To: <6345e31c7973a2ec32b11ed54cede142a901044e.camel@redhat.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Nov 20, 2024 at 06:37:49PM +0800, Jacky Bai wrote:
-> With 'nosmp' or 'maxcpus=0' boot command line parameters,
-> the 'cpu_present_mask' may not be the same as 'cpu_possible_mask'.
+On Tue, Mar 04, 2025 at 10:01:25PM -0500, Maxim Levitsky wrote:
+> On Mon, 2025-03-03 at 22:14 +0000, Yosry Ahmed wrote:
+> > On Fri, Feb 28, 2025 at 09:17:52PM -0500, Maxim Levitsky wrote:
+> > > On Wed, 2025-02-05 at 18:24 +0000, Yosry Ahmed wrote:
+> > > > TLB_CONTROL is reset to TLB_CONTROL_DO_NOTHING on nested transitions to
+> > > > L2. This is unnecessary because it should always be
+> > > > TLB_CONTROL_DO_NOTHING at this point.
+> > > > 
+> > > > The flow for setting TLB_CONTROL is as follows:
+> > > > 1. In vcpu_enter_guest(), servicing a TLB flush request may set it to
+> > > > TLB_CONTROL_FLUSH_ASID in svm_flush_tlb_asid().
+> > > > 2. In svm_vcpu_run() -> pre_svm_run(), it may get upgraded to
+> > > > TLB_CONTROL_FLUSH_ALL_ASID when assigning a new ASID.
+> > > > 3. In svm_cpu_run(), it gets reset to TLB_CONTROL_DO_NOTHING after the
+> > > > guest is run.
+> > > > 
+> > > > Hence, TLB_CONTROL is reset after each run and there is no need to do it
+> > > > again on every nested transition to L2.
+> > > > 
+> > > > There is a TODO in nested_svm_transition_tlb_flush() about this reset
+> > > > crushing pending TLB flushes. Remove it, as the reset is not really
+> > > > crushing anything as explained above.
+> > > 
+> > > I am not sure that we don't crush a pending tlb request: 
+> > > 
+> > > svm_flush_tlb_asid can also be called by KVM_REQ_TLB_FLUSH
+> > > and set the flush request in both vmcbs, thus later the nested_svm_exit_tlb_flush
+> > > can crush this request.
+> > 
+> > How so?
+> > 
+> > nested_svm_exit_tlb_flush() makes a KVM_REQ_TLB_FLUSH_GUEST request.
+> > svm_flush_tlb_asid() is called when servicing KVM_REQ_TLB_* requests.
 > 
-> In current psci cpuidle driver init, for_each_possible_cpu()
-> is used to init the cpuidle for each possible CPU. but in
-> drivers/base/cpu.c ->cpu_dev_register_generic(),
-> for_each_present_cpu() is used to register cpu device for
-> present CPUs.
+> I am probably missing something but:
 > 
-> When boot system with 'nosmp' or 'maxcpus=0', the cpuidle driver
-> init failed due to no valid CPU device sysfs node for non-boot CPUs.
+> Suppose KVM_REQ_TLB_FLUSH is raised and then processed while ordinary L1 entry is happening,
+> but nested state is allocated.
 > 
-> [ 0.182993] Failed to register cpuidle device for cpu1
+> (KVM_REQ_TLB_FLUSH can be raised anytime MMU wants a 'big hammer flush everything')
 > 
-> Use for_each_present_cpu() to register cpuidle only for present
-> CPUs.
+> In this case svm_flush_tlb_all will call svm_flush_tlb_asid on both vmcbs (see patch 8),
+> and that will set TLB_CONTROL_FLUSH_ASID in both vmcbs.
+> In particular it will be set in vmcb02.
 > 
-> Fixes: b0c69e1214bc ("drivers: base: Use present CPUs in GENERIC_CPU_DEVICES")
-> Signed-off-by: Jacky Bai <ping.bai@nxp.com>
-> Reviewed-by: Dhruva Gole <d-gole@ti.com>
-> ---
->  drivers/cpuidle/cpuidle-psci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Later, maybe even hours later in theory, L1 issues VMRUN, we reach nested_vmcb02_prepare_control,
+> and crush the value (TLB_CONTROL_FLUSH_ASID) set in vmcb02.
 > 
-> diff --git a/drivers/cpuidle/cpuidle-psci.c b/drivers/cpuidle/cpuidle-psci.c
-> index 2562dc001fc1..00117e9b33e8 100644
-> --- a/drivers/cpuidle/cpuidle-psci.c
-> +++ b/drivers/cpuidle/cpuidle-psci.c
-> @@ -410,7 +410,7 @@ static int psci_cpuidle_probe(struct platform_device *pdev)
->  	struct cpuidle_driver *drv;
->  	struct cpuidle_device *dev;
->  
-> -	for_each_possible_cpu(cpu) {
-> +	for_each_present_cpu(cpu) {
->  		ret = psci_idle_init_cpu(&pdev->dev, cpu);
->  		if (ret)
->  			goto out_fail;
-> -- 
-> 2.34.1
-> 
+> I think that this is what the removed comment referred to.
 
-Tested-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+When KVM_REQ_TLB_FLUSH is raised, we do not call svm_flush_tlb_all()
+immediately. We only call svm_flush_tlb_all() when the request is
+serviced in vcpu_enter_guest():
 
-I meet the same problem, and I test your patch, it is good to me.
+	/*
+	 * Note, the order matters here, as flushing "all" TLB entries
+	 * also flushes the "current" TLB entries, i.e. servicing the
+	 * flush "all" will clear any request to flush "current".
+	 */
+	if (kvm_check_request(KVM_REQ_TLB_FLUSH, vcpu))
+		kvm_vcpu_flush_tlb_all(vcpu);
 
-Thanks,
-Yuanjie
+	kvm_service_local_tlb_flush_requests(vcpu);
+
+IIUC, vcpu_enter_guest() will be called for L2 after
+nested_vmcb02_prepare_control() is called. My understanding is that the
+sequence of events is as follows:
+- L1 executes VMRUN, which is trapped and emulated by L0.
+
+- KVM executes handles the VM-exit in L0 by calling
+  vmrun_interception() to setup VMCB02 in prepartion for running L2.
+  This will call nested_svm_vmrun() -> enter_svm_guest_mode() ->
+  nested_vmcb02_prepare_control() (setting tlb_ctl to
+  TLB_CONTROL_DO_NOTHING).
+
+- Execution will pick up after the VMRUN instruction in L0, eventually
+  getting to the loop in vcpu_run(), and calling vcpu_enter_guest()
+  for L2. At this point any pending TLB flush requests (e.g.
+  KVM_REQ_TLB_FLUSH) will be handled, and svm_flush_tlb_*() functions
+  may be called to set tlb_ctl to a non-zero value (e.g.
+  TLB_CONTROL_FLUSH_ASID).
+
+- A little bit later in svm_vcpu_run() -> pre_svm_run(), tlb_ctl may be
+  upgraded to TLB_CONTROL_FLUSH_ALL_ASID if a new ASID is allocated.
+ 
+- After the guest is run, svm_cpu_run() resets tlb_ctl to TLB_CONTROL_DO_NOTHING.
+
+So nested_vmcb02_prepare_control() setting tlb_ctl to
+TLB_CONTROL_DO_NOTHING should have no effect because tlb_ctl is set
+after that anyway before L2 is run, and reset back to
+TLB_CONTROL_DO_NOTHING after L2 is run.
+
+I tried to clarify this in the commit log, but I don't think it is clear
+enough. I will try to add more details in the next version.
+
+Please correct me if I am wrong.
 
