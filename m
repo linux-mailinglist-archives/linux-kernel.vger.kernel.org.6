@@ -1,188 +1,113 @@
-Return-Path: <linux-kernel+bounces-547838-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6C6A50E30
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:53:56 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 704C3A50E36
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:56:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FCB0188B61E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:54:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A72273A94C3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:56:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C837326156D;
-	Wed,  5 Mar 2025 21:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B44EA265614;
+	Wed,  5 Mar 2025 21:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="fiXptAc6"
-Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="TjmNZFGh"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37227265612;
-	Wed,  5 Mar 2025 21:53:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F282256C63;
+	Wed,  5 Mar 2025 21:56:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741211626; cv=none; b=aQ6XuHGGW4kLA+QSFfVJDymjsKGPnjVXxfqLpuGHoE9TkDul85t8Nq4irUY0yNfUgM2rlhUmInWbKVgQGpZfgJNmokSZWUjUgY5qAZmLNggeKiBFVZThm84svhNZsJYIRUha55pIh6ArDKnwWgoa/Ryn/dMKrOo6fAZ7mcPAeTo=
+	t=1741211776; cv=none; b=cKzRaw0+baSdGMu5IpjoeqZaSN7tY4UK5UDu8LyojCHk2TeM87CxT4AqQ2CQsBb3jWsr9wgQrGff4QeO52abN4y3S0uvfeYz2amWsJXj7Kzp9eNThQpG1dw2IZl+hrh9bVZSeD19MS8ocBqAZNHEZSw5s4SVL8HoDlCFqY7VK6c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741211626; c=relaxed/simple;
-	bh=/pqmON2x4dgPuMnH4JNqr66pKMipGIbQoJvgNwduQVY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hrFJ3wSkHZDDIkcpBOyhoYIklcIsjTuVbDAJXqLdr8PBXE4Zj8vLFD6K0799prft5JgXWp118TWXXlmtazFvTneRdCXgIPKllsXVgodorw4+Fk5NW+tPzDCDdrJP9YVglu0mykZyTO1CdVUShcHphz414MazdcjuOQdmJ7F0ges=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=fiXptAc6; arc=none smtp.client-ip=109.230.236.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
-	t=1741211622; bh=/pqmON2x4dgPuMnH4JNqr66pKMipGIbQoJvgNwduQVY=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fiXptAc6sCk3g9ac540C+D1JtpsAdQDNpVgo9ssKkmjHi0hl5FylmmyZBg6uyj/pL
-	 wwcXFstOir9m7W4mg0aeVmLJIVk+D85jkyukol11S+wR/Aa8w7OjDwB/xswH/Oa/z0
-	 A0teFhZQF8Z2u3bnLqh5pn6EKJT6jPKCAkEVAkys=
-Received: from [IPV6:2001:8e0:207e:3500:4ab6:48fe:df57:b084] (2001-8e0-207e-3500-4ab6-48fe-df57-b084.ewm.ftth.ip6.as8758.net [IPv6:2001:8e0:207e:3500:4ab6:48fe:df57:b084])
-	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 0D5922052A87;
-	Wed,  5 Mar 2025 22:53:42 +0100 (CET)
-Message-ID: <580cfb1a-3619-410f-8b03-61ee984c1b1f@ralfj.de>
-Date: Wed, 5 Mar 2025 22:53:39 +0100
+	s=arc-20240116; t=1741211776; c=relaxed/simple;
+	bh=a24G2GQTmbedCjRrq2xzRNIeT29utGGOPqKuDP07n4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZhPcHgUB4quaCx2UvJKgghFPmgH9bXZ2MQN/uFRZLis3bzd888TTbsLgRGlPP7cqCrE+c9XKd7m8mGCFfNXwaOs/+Em/3wvvmPAqo5UWT66HxjXIJbv3Cx5cjfq92gdtCoa5UTmWUoN8vMwU7ZZdACIwlTbhznWsI/kLinvyXII=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=TjmNZFGh; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 5519E10382C18;
+	Wed,  5 Mar 2025 22:56:05 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1741211770; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=fpIpMR1mMV4sUOTWVCWFQ2VcPSUOQ5igCmsV8RlXIA4=;
+	b=TjmNZFGhW5phz3eqlfKAHhn3GcNytlwuQ7RRpBf/NMCrJtlNieUVdHqNPMK5z4ys2CjTQT
+	AW6X0f5XaF0DawCCxT3xJefpIkgmtrHSGIqTcsPP90y62enq9lKEuNAYCW7uBiC0ye1tHs
+	tuXqaC5iKCY1yPPpyRvmZLpbzaooss8kXWrZCXFmwHeWx+pNzLPQsdaCIxV549cD9CTYuK
+	XOnYXudPoUPaGI0ladoz3tAKsoHfP/Vepdxufq+pR7Geu8fjesUJjbavBkcb7tjcUHvLv9
+	mhJhakG1Dt2++b7fn1F4h/PbY6PQbLbhpIFAW30Cjpw0Gup8/N2/kdOZX0+LJQ==
+Date: Wed, 5 Mar 2025 22:56:03 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/142] 6.6.81-rc1 review
+Message-ID: <Z8jIc+33EHHcHSw+@duo.ucw.cz>
+References: <20250305174500.327985489@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Allow data races on some read/write operations
-To: Andreas Hindborg <a.hindborg@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
- comex <comexk@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
- robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
- Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
- Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
- airlied@redhat.com, iommu@lists.linux.dev, lkmm@lists.linux.dev
-References: <87bjuil15w.fsf@kernel.org> <87ikoqjg1n.fsf@kernel.org>
- <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
- <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
- <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
- <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
- <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
- <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
- <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
- <CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
- <18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
- <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de> <87eczb71xs.fsf@kernel.org>
- <M_YejDCAOZ7AX0l8ZZ7Z5EesJicUgsjYJUTm0SzLkhYTAYyXRJFTr4QYZMagG4KX6YdHoT-IPhf8ygjircrs0A==@protonmail.internalid>
- <915eacce-cfd8-4bed-a407-32513e43978f@ralfj.de> <87tt875fu8.fsf@kernel.org>
-Content-Language: en-US, de-DE
-From: Ralf Jung <post@ralfj.de>
-In-Reply-To: <87tt875fu8.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-
-Hi all,
-
-On 05.03.25 22:26, Andreas Hindborg wrote:
-> "Ralf Jung" <post@ralfj.de> writes:
-> 
->> Hi all,
->>
->>>>> For some kinds of hardware, we might not want to trust the hardware.
->>>>> I.e., there is no race under normal operation, but the hardware could
->>>>> have a bug or be malicious and we might not want that to result in UB.
->>>>> This is pretty similar to syscalls that take a pointer into userspace
->>>>> memory and read it - userspace shouldn't modify that memory during the
->>>>> syscall, but it can and if it does, that should be well-defined.
->>>>> (Though in the case of userspace, the copy happens in asm since it
->>>>> also needs to deal with virtual memory and so on.)
->>>>
->>>> Wow you are really doing your best to combine all the hard problems at the same
->>>> time. ;)
->>>> Sharing memory with untrusted parties is another tricky issue, and even leaving
->>>> aside all the theoretical trouble, practically speaking you'll want to
->>>> exclusively use atomic accesses to interact with such memory. So doing this
->>>> properly requires atomic memcpy. I don't know what that is blocked on, but it is
->>>> good to know that it would help the kernel.
->>>
->>> I am sort of baffled by this, since the C kernel has no such thing and
->>> has worked fine for a few years. Is it a property of Rust that causes us
->>> to need atomic memcpy, or is what the C kernel is doing potentially dangerous?
->>
->> It's the same in C: a memcpy is a non-atomic access. If something else
->> concurrently mutates the memory you are copying from, or something else
->> concurrently reads/writes the memory you are copying two, that is UB.
->> This is not specific to memcpy; it's the same for regular pointer loads/stores.
->> That's why you need READ_ONCE and WRITE_ONCE to specifically indicate to the
->> compiler that these are special accesses that need to be treated differently.
->> Something similar is needed for memcpy.
-> 
-> I'm not a compiler engineer, so I might be wrong about this, but. If I
-> do a C `memcpy` from place A to place B where A is experiencing racy
-> writes, if I don't interpret the data at place B after the copy
-> operation, the rest of my C program is fine and will work as expected.
-
-The program has UB in that case. A program that has UB may work as expected 
-today, but that changes nothing about it having UB.
-The C standard is abundantly clear here:
-"The execution of a program contains a data race if it contains two conflicting 
-actions in different threads, at least one of which is not atomic, and neither 
-happens before the other. Any such data race results in undefined behavior."
-(C23, §5.1.2.4)
-
-You are describing a hypothetical language that treats data races in a different 
-way. Is such a language *possible*? Definitely. For the specific case you 
-describe here, one "just" has to declare read-write races to be not UB, but to 
-return "poison data" on the read side (poison data is a bit like uninitialized 
-memory or padding), which the memcpy would then store on the target side. Any 
-future interpretation of the target memory would be UB ("poison data" is not the 
-same as "random data"). Such a model has actually been studied [1], though no a 
-lot, and not as a proposal for a semantics of a user-facing language. (Rather, 
-that was a proposal for an internal compiler IR.) The extra complications 
-incurred by this choice are significant -- there is no free lunch here.
-
-[1]: https://sf.snu.ac.kr/publications/promising-ir-full.pdf
-
-However, C is not that language, and neither is Rust. Defining a concurrency 
-memory model is extremely non-trivial (there's literally hundreds of papers 
-proposing various different models, and there are still some unsolved problems). 
-The route the C++ model took was to strictly rule out all data races, and since 
-they were the first to actually undertake the effort of defining a model at this 
-level of rigor (for a language not willing to pay the cost that would be 
-incurred by the Java concurrency memory model), that has been the standard ever 
-since. There's a lot of subtle trade-offs here, and I am far from an expert on 
-the exact consequences each different choice would have. I just want to caution 
-against the obvious reaction of "why don't they just". :)
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="8jf0unX4r4KrASvT"
+Content-Disposition: inline
+In-Reply-To: <20250305174500.327985489@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
 
 
-> I
-> may even later copy the data at place B to place C where C might have
-> concurrent reads and/or writes, and the kernel will not experience UB
-> because of this. The data may be garbage, but that is fine. I am not
-> interpreting the data, or making control flow decisions based on it. I
-> am just moving the data.
-> 
-> My understand is: In Rust, this program would be illegal and might
-> experience UB in unpredictable ways, not limited to just the data that
-> is being moved.
+--8jf0unX4r4KrASvT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-That is correct. C and Rust behave the same here.
+Hi!
 
-> One option I have explored is just calling C memcpy directly, but
-> because of LTO, that is no different than doing the operation in Rust.
-> 
-> I don't think I need atomic memcpy, I just need my program not to
-> explode if I move some data to or from a place that is experiencing
-> concurrent writes without synchronization. Not in general, but for some
-> special cases where I promise not to look at the data outside of moving
-> it.
+> This is the start of the stable review cycle for the 6.6.81 release.
+> There are 142 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
 
-I'm afraid I do not know of a language, other than assembly, that can provide this.
+CIP testing did not find any problems here:
 
-Atomic memcpy, however, should be able to cover your use-case, so it seems like 
-a reasonable solution to me? Marking things as atomic is literally how you tell 
-the compiler "don't blow up if there are concurrent accesses".
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
 
-Kind regards,
-Ralf
+6.12 and 6.13 pass our testing, too:
 
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.13.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--8jf0unX4r4KrASvT
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ8jIcwAKCRAw5/Bqldv6
+8ltqAJwJQgOM0lXi8sRYkEhvOQxLmbDBwwCgm75XWL3UVdjntvjt/toWFZlMfsM=
+=2sob
+-----END PGP SIGNATURE-----
+
+--8jf0unX4r4KrASvT--
 
