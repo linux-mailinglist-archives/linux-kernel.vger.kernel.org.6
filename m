@@ -1,134 +1,178 @@
-Return-Path: <linux-kernel+bounces-547083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547084-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D108A502E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:57:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78733A502D2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:55:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F347188B956
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFA633B3150
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6D324EAAF;
-	Wed,  5 Mar 2025 14:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823E22505C4;
+	Wed,  5 Mar 2025 14:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QSAfo7+7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PP8S7GEL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4220248863
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:49:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C918524EF73;
+	Wed,  5 Mar 2025 14:49:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741186186; cv=none; b=k/6yTNdr+K8RIvPZRtzhRlH7JMyfLLVdXYEpzvJtPwMmzYffAOl57PQwzfhmCFWkNvnmfd8O4gTY2nQYT7nRWhufKO848+2u/gnuoJnZmid9mZ6kI71pxgN9aboGjhp088DMC6BuZ6JwtBub8GWUfWktsK5rVuTb5rMjGS32JKI=
+	t=1741186195; cv=none; b=GloswDzW04v1TV8NNAbL+8Oct0OOCx8IqbBNR0yj2m4i8RHhQ8VTN9dAH+CM5bmxuj98xAvf+eF7esSQ1Knlo8EeIdyQID+R7svQ7ZJWwHDbbcgvG8wMeOjUT+Q7cEVRTqcqwqKcuH6PPxbyWB/THeEB+Kn/cdBSdTsMWbEMyfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741186186; c=relaxed/simple;
-	bh=x29h9M6n8nq7NdPnqRKffAT+4udR1rBlR+7/BBJPG6U=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VCgAnPdgbHSBw9NA3BrEZjKVld4/oepNYMz5PlY0WU++kN4huWDubY5JaD943WIQTTHVAIlJHbNaaNAbJ4BDrC2OqGVW02iYVzkuiUY7RTseaGzbKeas8X35e6gUrZftFKe8mvzp8YKiM3Be2lzyP7zjKO0CmZ6yQ+91W8vdRFk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QSAfo7+7; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741186183;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=YM84sfhKyVCM1WHnPi0ugQYCezGBxRCWusGn++RPss0=;
-	b=QSAfo7+7LuRPUhfqQNWhMzhC63e5ic6X16RP/kLgOABKXcLnpapr4qkOETKZSkwgiEmxaO
-	HqWxRrMjrZSOfzEAoJghQhFaA9VjcBj2GMWsKIyuig+YGv24lognoBTf+Ue908uWBOcisD
-	w3RhOyE1o1mCLrcJ6VqzFhjm1KKaUb4=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-202-Gf8JmoSDPnGuSs9gs2cxZw-1; Wed, 05 Mar 2025 09:49:42 -0500
-X-MC-Unique: Gf8JmoSDPnGuSs9gs2cxZw-1
-X-Mimecast-MFC-AGG-ID: Gf8JmoSDPnGuSs9gs2cxZw_1741186181
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-39101511442so495389f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:49:42 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741186180; x=1741790980;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YM84sfhKyVCM1WHnPi0ugQYCezGBxRCWusGn++RPss0=;
-        b=vyblB+AZnkFumkkY4DRlZ/Ab8ptM4GqPwmOl/CaGg9Qx9eFSgCI/MB1J7e4LUzKng6
-         w0c34TRUPWYU9CISZbXj0ErQ8Gorm89QlEYuF0p9yTbDMFV92UTWZWifBkTRJQPlIiB6
-         UqrBNHa/7H7bO48Kmzrmk14rDgwNPk8LBfP/DtOo1Sbr4tOdviW52K/hjeAZQBuftI5x
-         SxAstRUx7redjtFkzkOUQfIdydzrWSbDoF0MnOSKaRyZ7qa7lPHNcyxWiP9CTVm6wNhv
-         bKg4PKqvgaz0d5EIZQwETNcNFk/rw8EcqRZZ6tIK0Hin1OdpNe89Y7GHYZALDVx14K7g
-         b6+A==
-X-Gm-Message-State: AOJu0Yweex2h61zuP6clvwiHyoIjvT55Si9nEMb5MweFATAPe66JhUch
-	Imq5qAqLnOEE1I5RX0b0l2+PM+JK0ItnPvOhHQ9IRDBn7BrnRVGu/JSEh9hz82gwhZXMpQYwXYb
-	U08wQl4Sss91ylh0f4/irMS+IDKZgOFW71RpLI+AzvBj4CR0EDpKBJIjzHVbBta6pC6/r5ZowFg
-	1tkWVM7hQ8tcXbP0fzqMW4vwHnMpN+rQ+iYEmWXzRcCm0vdbGMkfA=
-X-Gm-Gg: ASbGncu3l9cKGYg2BqxmUohWPaqKgpiHd4M1ysE9gBu+OKDq/guZjab2A9wytXuZOno
-	9IcatVRrw0mPCu5joZqYqXo5CSEZLhvqbA56KrqPlPQWisDA5KF8iBZ8kf9j/QLYfKU6oZwZ+MG
-	1+gaBv+IommyeNswzrfZE/de8E1Sb45dpKHxtifA+1pHqFQakLmrnD7cDdE7gtMJrDXM9NrQqJ0
-	BILdIh7wXB4NHnV/5H2Uot7hUAktjepQvFlgD63GMNHutafbVUN4fTFxo5NBByJXee56eCCGs/J
-	ZcQd/fUYNmyCcfhcR7kRI0FdBg9LtUJM5jv9ceohRskpP8A=
-X-Received: by 2002:adf:e183:0:b0:391:22e2:ccd2 with SMTP id ffacd0b85a97d-39122e2d080mr1812877f8f.3.1741186180434;
-        Wed, 05 Mar 2025 06:49:40 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IHpZB4BYpB9A76P4a45l7m/RU6UnuwhTcw/rRDIfT7W5uDFJhJmK1bfyR7MVaBtIvxiEQk6Ng==
-X-Received: by 2002:adf:e183:0:b0:391:22e2:ccd2 with SMTP id ffacd0b85a97d-39122e2d080mr1812850f8f.3.1741186180022;
-        Wed, 05 Mar 2025 06:49:40 -0800 (PST)
-Received: from [192.168.224.123] (nat-pool-mxp-t.redhat.com. [149.6.153.186])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e479609asm20954791f8f.2.2025.03.05.06.49.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:49:39 -0800 (PST)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: stable@vger.kernel.org
-Subject: [PATCH 6.12] KVM: e500: always restore irqs
-Date: Wed,  5 Mar 2025 15:49:38 +0100
-Message-ID: <20250305144938.212918-1-pbonzini@redhat.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741186195; c=relaxed/simple;
+	bh=uprYqIBFZkBTQA4MDLv6IUCke0X86W7jnI/kyA/QQq4=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=InOOBLzJP7TmobZcbcJCwXkOHKpAULf8AN8K+DG8b8Xb1hu4vcwKF1KRX+1QJfP9ey/Ts2TQqx25wqV6AEda0X9/Vo+pZQqMUNgJtJnW1ukcYmc0XcrLlb16FnLm5LZHqdNYr7z+PYM1XJaIf0Z2qpsbo/ruiege9diwUn7rXnc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PP8S7GEL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E27C4CED1;
+	Wed,  5 Mar 2025 14:49:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741186195;
+	bh=uprYqIBFZkBTQA4MDLv6IUCke0X86W7jnI/kyA/QQq4=;
+	h=From:Date:Subject:To:Cc:From;
+	b=PP8S7GEL+sWutD2+qwcL57B92tuYJKs8M8fbJRcT9RbcjaGyAscilI3J5+imamk3q
+	 HdBNVQAigJXFaoL9wJfOCBtV/AQZVM7lST8xU2TpJY2MgHJiht6rGt8XESHmFf1zqN
+	 FMQ6twF8LYAMthakeLkUca/JRABiwq5bR4f2LqrH/XZT91vTOOod5juumcyRViwGm3
+	 DW3IQ1XaLPViJ6tu1PJx2jmAoWnT5Ke3ag8Im/6EFoCb7tFzJg+u99TwoHgiBfh654
+	 XVHD9HytOrjy8gEwYQbi31/RBwi3ydSY7olLKg7ha1Lx50S/+ACkb0CAR57VG0P9GS
+	 8jwQUxwdNEApg==
+From: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Date: Wed, 05 Mar 2025 15:49:48 +0100
+Subject: [PATCH net-next] tcp: clamp window like before the cleanup
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250305-net-next-fix-tcp-win-clamp-v1-1-12afb705d34e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAItkyGcC/zWMQQqAMAwEvyI5G6haEf2KeJCaakBraYsK4t8Ng
+ oc9DOzMDZECU4QuuyHQwZF3J1DkGZhldDMhT8JQqrJWlarRUZJdCS1fmIzHkx2addw8tlYbXTT
+ Waj2BBHwgOX3xHn4Phud5AXOqAct2AAAA
+X-Change-ID: 20250305-net-next-fix-tcp-win-clamp-9f4c417ff44d
+To: mptcp@lists.linux.dev, Eric Dumazet <edumazet@google.com>, 
+ Neal Cardwell <ncardwell@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>, 
+ "David S. Miller" <davem@davemloft.net>, David Ahern <dsahern@kernel.org>, 
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+ Simon Horman <horms@kernel.org>, Jason Xing <kerneljasonxing@gmail.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3419; i=matttbe@kernel.org;
+ h=from:subject:message-id; bh=uprYqIBFZkBTQA4MDLv6IUCke0X86W7jnI/kyA/QQq4=;
+ b=owEBbQKS/ZANAwAIAfa3gk9CaaBzAcsmYgBnyGSQ2czRWw21Bby0VPsl7CV39+coBDNXQAU4F
+ 8YXn2O3+tiJAjMEAAEIAB0WIQToy4X3aHcFem4n93r2t4JPQmmgcwUCZ8hkkAAKCRD2t4JPQmmg
+ czduD/9rBDlhzSuHcd+Li2XFakkkyLs+9dzHnmHu4iBhbwdGrmeqIICEyfKhmJTtUdc0UwcriIC
+ 9XcAST6OQJZxsxuA0NRMeIyRKtYGfmPK8vC5gNpuHJTN7OK1Pnf6oGC3ZPHcBIvVWC9ohF4ZK9d
+ gTMRwoCsP5dnnMZh5C2YxbsD2e0g0TDiQWotZidO1SfRCyuK1HAMiorAnbOaChncsTY/xneV6Dr
+ cv05C8g/A16N+S18xG2mH50xmkzMlX8XKTUBSvMmpwk521oHZxtNzmUVMJ8YhsnENoxEP1lnfQH
+ Wy5v5m647MhkDKjZ8rGRAxY681nQKInN/mr0HCAKX1otI4GDQGKTxGZjkWxCatc9aE/Mvr8ONKU
+ w3FkLugaEpZ/Eez2wbq79xtJe70qoKCkVkP6YLtVvxXLqjVXteJcqcpdS0zQ1UfPgrqgoywhlEn
+ 92AI5yNdACaNuIiS4gIXprBfexrGA1hzhTUx3t2KKR5d7IF/JdCjUEW06Am1BjTXaWoCQLFyT9r
+ l2g9DiMgvFVoe2TSPwjZMAWRXjQhStTuyHKUoHmt9NXKlirbnJZ2Ebc96G8mmR+zWwSe0nurI7c
+ ugDxqQ3peAigt/BASAoi5zBjNRKTHDGU8GAEphXxH0PJME+GeXTjw50aaYJgy80QK5RxrkRXRaK
+ GSjEhfv62eQka8Q==
+X-Developer-Key: i=matttbe@kernel.org; a=openpgp;
+ fpr=E8CB85F76877057A6E27F77AF6B7824F4269A073
 
-[ Upstream commit 87ecfdbc699cc95fac73291b52650283ddcf929d ]
+A recent cleanup changed the behaviour of tcp_set_window_clamp(). This
+looks unintentional, and affects MPTCP selftests, e.g. some tests
+re-establishing a connection after a disconnect are now unstable.
 
-If find_linux_pte fails, IRQs will not be restored.  This is unlikely
-to happen in practice since it would have been reported as hanging
-hosts, but it should of course be fixed anyway.
+Before the cleanup, this operation was done:
 
-Cc: stable@vger.kernel.org
-Reported-by: Sean Christopherson <seanjc@google.com>
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
+  new_rcv_ssthresh = min(tp->rcv_wnd, new_window_clamp);
+  tp->rcv_ssthresh = max(new_rcv_ssthresh, tp->rcv_ssthresh);
+
+The cleanup used the 'clamp' macro which takes 3 arguments -- value,
+lowest, and highest -- and returns a value between the lowest and the
+highest allowable values. This then assumes ...
+
+  lowest (rcv_ssthresh) <= highest (rcv_wnd)
+
+... which doesn't seem to be always the case here according to the MPTCP
+selftests, even when running them without MPTCP, but only TCP.
+
+For example, when we have ...
+
+  rcv_wnd < rcv_ssthresh < new_rcv_ssthresh
+
+... before the cleanup, the rcv_ssthresh was not changed, while after
+the cleanup, it is lowered down to rcv_wnd (highest).
+
+During a simple test with TCP, here are the values I observed:
+
+  new_window_clamp (val)  rcv_ssthresh (lo)  rcv_wnd (hi)
+      117760   (out)         65495         <  65536
+      128512   (out)         109595        >  80256  => lo > hi
+      1184975  (out)         328987        <  329088
+
+      113664   (out)         65483         <  65536
+      117760   (out)         110968        <  110976
+      129024   (out)         116527        >  109696 => lo > hi
+
+Here, we can see that it is not that rare to have rcv_ssthresh (lo)
+higher than rcv_wnd (hi), so having a different behaviour when the
+clamp() macro is used, even without MPTCP.
+
+Note: new_window_clamp is always out of range (rcv_ssthresh < rcv_wnd)
+here, which seems to be generally the case in my tests with small
+connections.
+
+I then suggests reverting this part, not to change the behaviour.
+
+Fixes: 863a952eb79a ("tcp: tcp_set_window_clamp() cleanup")
+Closes: https://github.com/multipath-tcp/mptcp_net-next/issues/551
+Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 ---
- arch/powerpc/kvm/e500_mmu_host.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Notes: the 'Fixes' commit is only in net-next
+---
+ net/ipv4/tcp.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-diff --git a/arch/powerpc/kvm/e500_mmu_host.c b/arch/powerpc/kvm/e500_mmu_host.c
-index c664fdec75b1..3708fa48bee9 100644
---- a/arch/powerpc/kvm/e500_mmu_host.c
-+++ b/arch/powerpc/kvm/e500_mmu_host.c
-@@ -481,7 +481,6 @@ static inline int kvmppc_e500_shadow_map(struct kvmppc_vcpu_e500 *vcpu_e500,
- 		if (pte_present(pte)) {
- 			wimg = (pte_val(pte) >> PTE_WIMGE_SHIFT) &
- 				MAS2_WIMGE_MASK;
--			local_irq_restore(flags);
- 		} else {
- 			local_irq_restore(flags);
- 			pr_err_ratelimited("%s: pte not present: gfn %lx,pfn %lx\n",
-@@ -490,8 +489,9 @@ static inline int kvmppc_e500_shadow_map(struct kvmppc_vcpu_e500 *vcpu_e500,
- 			goto out;
- 		}
- 	}
-+	local_irq_restore(flags);
-+
- 	kvmppc_e500_ref_setup(ref, gtlbe, pfn, wimg);
--
- 	kvmppc_e500_setup_stlbe(&vcpu_e500->vcpu, gtlbe, tsize,
- 				ref, gvaddr, stlbe);
+diff --git a/net/ipv4/tcp.c b/net/ipv4/tcp.c
+index eb5a60c7a9ccdd23fb78a74d614c18c4f7e281c9..46951e74930844af952dfbc57a107b504d4e296b 100644
+--- a/net/ipv4/tcp.c
++++ b/net/ipv4/tcp.c
+@@ -3693,7 +3693,7 @@ EXPORT_SYMBOL(tcp_sock_set_keepcnt);
  
+ int tcp_set_window_clamp(struct sock *sk, int val)
+ {
+-	u32 old_window_clamp, new_window_clamp;
++	u32 old_window_clamp, new_window_clamp, new_rcv_ssthresh;
+ 	struct tcp_sock *tp = tcp_sk(sk);
+ 
+ 	if (!val) {
+@@ -3714,12 +3714,12 @@ int tcp_set_window_clamp(struct sock *sk, int val)
+ 	/* Need to apply the reserved mem provisioning only
+ 	 * when shrinking the window clamp.
+ 	 */
+-	if (new_window_clamp < old_window_clamp)
++	if (new_window_clamp < old_window_clamp) {
+ 		__tcp_adjust_rcv_ssthresh(sk, new_window_clamp);
+-	else
+-		tp->rcv_ssthresh = clamp(new_window_clamp,
+-					 tp->rcv_ssthresh,
+-					 tp->rcv_wnd);
++	} else {
++		new_rcv_ssthresh = min(tp->rcv_wnd, new_window_clamp);
++		tp->rcv_ssthresh = max(new_rcv_ssthresh, tp->rcv_ssthresh);
++	}
+ 	return 0;
+ }
+ 
+
+---
+base-commit: c62e6f056ea308d6382450c1cb32e41727375885
+change-id: 20250305-net-next-fix-tcp-win-clamp-9f4c417ff44d
+
+Best regards,
 -- 
-2.48.1
+Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
 
