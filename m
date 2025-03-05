@@ -1,41 +1,49 @@
-Return-Path: <linux-kernel+bounces-547284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBC5DA50569
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:43:32 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8804A50581
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:47:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D53A175606
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:42:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5F063B2AD0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A6502561D0;
-	Wed,  5 Mar 2025 16:39:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CF4024FBFF;
-	Wed,  5 Mar 2025 16:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A2831A0BFE;
+	Wed,  5 Mar 2025 16:40:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b="veW3wVRx"
+Received: from out-189.mta0.migadu.com (out-189.mta0.migadu.com [91.218.175.189])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03E92512EF
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192760; cv=none; b=Ru1ngJe7pSIKeD66TAuYnhq2TX2emBxlUPjlflFBVfiF0FQHY805C7WAkIsmHRCUZojN7/V/rkBBV3Sf7PqEwcUbg4w5kL0sjD73bJJco582jN8vyKOuEOw628UmHc+9FGvobzYmgW9S2IPvJgufJh6Dbwyltt9s+UC8FRDvShg=
+	t=1741192817; cv=none; b=CrlLLyOl1xjdDKa8qJuUfpEHTpWJLaK5ctbnDAXtb/F01LYlBnF7XWKovnMD2tZQgguTzpYI0th8q8yDybO7NHoZ3mZBX5HMbwzmxHmmXYtUxtL9K0vTyn1EIxTZGhOI2Sy5DzuAysOXDU/z0CDwjd8NzuccPsEb/mo7cBQOmcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192760; c=relaxed/simple;
-	bh=aXg6RgwqMQoYUSR7L+4RvyibSNxPKGi4o12ZLke9smI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=U5ZSm/M5zjd486O1rAcrLvuaydVEgKJB4EdDnm5A6K1216B15s39nQpLZC0QCtLUwnaMKXIxqZmRci0C/LShTGCN6e4M3DX9UTdLcXr6G7alXc/WwoY8bcxPjX/uROvGTkvR3uExqJ7a4+jyXqJFd8zdk3TLSW8q/WcTKhsr6QA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C2C351FC7;
-	Wed,  5 Mar 2025 08:39:31 -0800 (PST)
-Received: from e133711.arm.com (e133711.arm.com [10.1.196.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 378763F5A1;
-	Wed,  5 Mar 2025 08:39:17 -0800 (PST)
-From: Sudeep Holla <sudeep.holla@arm.com>
-Date: Wed, 05 Mar 2025 16:38:17 +0000
-Subject: [PATCH v2 13/13] ACPI: CPPC: Simplify PCC shared memory region
- handling
+	s=arc-20240116; t=1741192817; c=relaxed/simple;
+	bh=IQV0Yy/1k1IBFJFocoUYByRRAozlm7jKeZVmuUQRG8s=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=tayi1OnLZ5aLASNhdW/LjyM3O2zrRrl5m14Vv/jATBygFedBBCkgfgc8TI52g88/+IUfcklI10j8iBcPpAWRXIRovMf2G/B4vqAep2edPGq5WfvsCgFZejp1EgZcsBLKMV24djMw7txe0TO8oGWiOe5/N6BDiBbgBcqoD6vNE34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com; spf=pass smtp.mailfrom=iencinas.com; dkim=pass (2048-bit key) header.d=iencinas.com header.i=@iencinas.com header.b=veW3wVRx; arc=none smtp.client-ip=91.218.175.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=iencinas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iencinas.com
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=iencinas.com;
+	s=key1; t=1741192812;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=jdlcaeLgpRGJb4WYxQLcnWtC/c9dZ1uqwhfx8n90Igk=;
+	b=veW3wVRx/5NFTXbzOGBD5dHeuKAc9xZrmmidqKHhtwZ8eqxAQZizfNIZflx2AxELm4Sy55
+	tPvi19YwvxMctpqHZUZ+vbo95LC1Owaj0S/nyM0bY5QNucCJAL+V1KgUjssvd0UejzXTrA
+	gCvbJEf+CtzD/4lxRc5Kw6PPtYO4m0itXLcmCVMs1zKY61hKQJwScPCtBdgdK+CnD3DPLm
+	8GKFQ7v+V9/E8UNMT4wXtZKbnIjpai0+b5MQJdW2SJwqyqKTUjRYP4Rb+KRTphNMQYh7lT
+	Ko/AK9ZQXPe3ugMsSRT5sKB2/EwnPeoz7vbPh3Z1HAInmM2osu2rAOl+lkSm/A==
+From: Ignacio Encinas <ignacio@iencinas.com>
+Date: Wed, 05 Mar 2025 17:39:28 +0100
+Subject: [PATCH] selftests: riscv: fix v_exec_initval_nolibc.c
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -44,109 +52,70 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-pcc_fixes_updates-v2-13-1b1822bc8746@arm.com>
-References: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
-In-Reply-To: <20250305-pcc_fixes_updates-v2-0-1b1822bc8746@arm.com>
-To: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Sudeep Holla <sudeep.holla@arm.com>, 
- Jassi Brar <jassisinghbrar@gmail.com>, Huisong Li <lihuisong@huawei.com>, 
- Adam Young <admiyo@os.amperecomputing.com>, 
- Robbie King <robbiek@xsightlabs.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2920; i=sudeep.holla@arm.com;
- h=from:subject:message-id; bh=aXg6RgwqMQoYUSR7L+4RvyibSNxPKGi4o12ZLke9smI=;
- b=owEBbQKS/ZANAwAIAQBBurwxfuKYAcsmYgBnyH4gPx1dHylhzc+hzQAl1gZ4CiNIGIFYDC34D
- XwznlJ9Li2JAjMEAAEIAB0WIQS6ceUSBvMeskPdk+EAQbq8MX7imAUCZ8h+IAAKCRAAQbq8MX7i
- mG8TD/9zfSb/B6KYlL7LRhNtJq+s3Ce5HgOBWOAO2dtKICkKodsRhwn35yzxng0UKCRVDVaJWI1
- aWPKGpieOyK7UbsKeU0KtSDvLFEFRfFABybfp//g1pp8OA0Fx9Eju/BPGPSoq00auoKqQABU4P3
- ejWFhD6+w1xzFIevXftMUWJFWx8aa4ow0+UkTm3Wrk4Ic0L+JQjQnmyPzn8dk9RUB+RXDifUNYd
- WTtQ9i9jq6dCm2sSjRduHqMsQvk0oWYc9nbXU5kVDew5PAVkhMidupu+FpYUOYMJ5NfNPozkN1+
- nS8NLnBmy7qDH3b2wk2THWLttThfHDIRyXeAkWXc4rFp1mVIQAGvjU3uXH4Ix1Bw9/yco+Ao/bW
- lh/8jTKdqygp5SLmBMdNS3dwaIWhPjR8TBjKmprkPhfbcGzlX/dogjmd/CLhPjwbQ2K4ufJdVUO
- C/zyelFN2yUOv8l+B6iYFcJhF/mVfo7QDggxIt8jXVRm+eAEmvGMsjOoAXoaswf4uUSImFe76fk
- NLiK41ensv0XCR60TbaAQ8lMzcWdGv/DH7hdaFKttC1a/bZhApiCAGPFVZqwv8TT6ESbB4jByGn
- y7HxEdLak5Tr7zDirfUHIUoQMBZw00LccyvQAbndViIyBvSmwR1GEBsQXamK0+5tg2yYY/Y6EC9
- 1QKE0hcrxDwFzQA==
-X-Developer-Key: i=sudeep.holla@arm.com; a=openpgp;
- fpr=7360A21742ADF5A11767C1C139CFD4755FE2D5B4
+Message-Id: <20250305-fix-v_exec_initval_nolibc-v1-1-b87b60e43002@iencinas.com>
+X-B4-Tracking: v=1; b=H4sIAD9+yGcC/x2MWwqAIBAArxL7nWDa+yoRYrrVQlhoSBDePelzY
+ GZeCOgJA4zFCx4jBTpdhqoswOzabcjIZgbBRcMlr9hKD4sKHzSKHN1RH8qdBy2G1UNvh641shM
+ Wcn95zPL/nuaUPqBdQ0lrAAAA
+X-Change-ID: 20250301-fix-v_exec_initval_nolibc-498d976c372d
+To: linux-kernel-mentees@lists.linux.dev, skhan@linuxfoundation.org, 
+ Paul Walmsley <paul.walmsley@sifive.com>, 
+ Palmer Dabbelt <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, 
+ Charlie Jenkins <charlie@rivosinc.com>
+Cc: linux-kselftest@vger.kernel.org, linux-riscv@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Ignacio Encinas <ignacio@iencinas.com>
+X-Migadu-Flow: FLOW_OUT
 
-The PCC driver now handles mapping and unmapping of shared memory
-areas as part of pcc_mbox_{request,free}_channel(). Without these before,
-this ACPI CPPC driver did handling of those mappings like several
-other PCC mailbox client drivers.
+Vector registers are zero initialized by the kernel. Stop accepting
+"all ones" as a clean value.
 
-There were redundant operations, leading to unnecessary code. Maintaining
-the consistency across these driver was harder due to scattered handling
-of shmem.
+Note that this was not working as expected given that
+	value == 0xff
+can be assumed to be always false by the compiler as value's range is
+[-128, 127]. Both GCC (-Wtype-limits) and clang
+(-Wtautological-constant-out-of-range-compare) warn about this.
 
-Just use the mapped shmem and remove all redundant operations from this
-driver.
-
-Cc: Rafael J. Wysocki <rafael@kernel.org>
-Acked-by: Rafael J. Wysocki <rafael@kernel.org>
-Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Signed-off-by: Ignacio Encinas <ignacio@iencinas.com>
 ---
- drivers/acpi/cppc_acpi.c | 16 +++-------------
- 1 file changed, 3 insertions(+), 13 deletions(-)
+I tried looking why "all ones" was previously deemed a "clean" value but
+couldn't find any information. It looks like the kernel always 
+zero-initializes the vector registers.
 
-diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-index f193e713825ac24203ece5f94d6cf99dd4724ce4..d972157a79b6ade2f3738c90128e8692141b3ee5 100644
---- a/drivers/acpi/cppc_acpi.c
-+++ b/drivers/acpi/cppc_acpi.c
-@@ -47,7 +47,6 @@
- 
- struct cppc_pcc_data {
- 	struct pcc_mbox_chan *pcc_channel;
--	void __iomem *pcc_comm_addr;
- 	bool pcc_channel_acquired;
- 	unsigned int deadline_us;
- 	unsigned int pcc_mpar, pcc_mrtt, pcc_nominal;
-@@ -95,7 +94,7 @@ static DEFINE_PER_CPU(int, cpu_pcc_subspace_idx);
- static DEFINE_PER_CPU(struct cpc_desc *, cpc_desc_ptr);
- 
- /* pcc mapped address + header size + offset within PCC subspace */
--#define GET_PCC_VADDR(offs, pcc_ss_id) (pcc_data[pcc_ss_id]->pcc_comm_addr + \
-+#define GET_PCC_VADDR(offs, pcc_ss_id) (pcc_data[pcc_ss_id]->pcc_channel->shmem + \
- 						0x8 + (offs))
- 
- /* Check if a CPC register is in PCC */
-@@ -223,7 +222,7 @@ static int check_pcc_chan(int pcc_ss_id, bool chk_err_bit)
- 	int ret, status;
- 	struct cppc_pcc_data *pcc_ss_data = pcc_data[pcc_ss_id];
- 	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
--		pcc_ss_data->pcc_comm_addr;
-+					pcc_ss_data->pcc_channel->shmem;
- 
- 	if (!pcc_ss_data->platform_owns_pcc)
- 		return 0;
-@@ -258,7 +257,7 @@ static int send_pcc_cmd(int pcc_ss_id, u16 cmd)
- 	int ret = -EIO, i;
- 	struct cppc_pcc_data *pcc_ss_data = pcc_data[pcc_ss_id];
- 	struct acpi_pcct_shared_memory __iomem *generic_comm_base =
--		pcc_ss_data->pcc_comm_addr;
-+					pcc_ss_data->pcc_channel->shmem;
- 	unsigned int time_delta;
- 
- 	/*
-@@ -571,15 +570,6 @@ static int register_pcc_channel(int pcc_ss_idx)
- 		pcc_data[pcc_ss_idx]->pcc_mpar = pcc_chan->max_access_rate;
- 		pcc_data[pcc_ss_idx]->pcc_nominal = pcc_chan->latency;
- 
--		pcc_data[pcc_ss_idx]->pcc_comm_addr =
--			acpi_os_ioremap(pcc_chan->shmem_base_addr,
--					pcc_chan->shmem_size);
--		if (!pcc_data[pcc_ss_idx]->pcc_comm_addr) {
--			pr_err("Failed to ioremap PCC comm region mem for %d\n",
--			       pcc_ss_idx);
--			return -ENOMEM;
--		}
--
- 		/* Set flag so that we don't come here for each CPU. */
- 		pcc_data[pcc_ss_idx]->pcc_channel_acquired = true;
- 	}
+If "all ones" is still acceptable for any reason, my intention is to 
+spin a v2 changing the types of `value` and `prev_value` to unsigned 
+char.
+---
+ tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
+diff --git a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
+index 35c0812e32de0c82a54f84bd52c4272507121e35..b712c4d258a6cb045aa96de4a75299714866f5e6 100644
+--- a/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
++++ b/tools/testing/selftests/riscv/vector/v_exec_initval_nolibc.c
+@@ -6,7 +6,7 @@
+  * the values. To further ensure consistency, this file is compiled without
+  * libc and without auto-vectorization.
+  *
+- * To be "clean" all values must be either all ones or all zeroes.
++ * To be "clean" all values must be all zeroes.
+  */
+ 
+ #define __stringify_1(x...)	#x
+@@ -46,7 +46,7 @@ int main(int argc, char **argv)
+ 			: "=r" (value));					\
+ 		if (first) {							\
+ 			first = 0;						\
+-		} else if (value != prev_value || !(value == 0x00 || value == 0xff)) { \
++		} else if (value != prev_value || value != 0x00) {              \
+ 			printf("Register " __stringify(register)		\
+ 				" values not clean! value: %u\n", value);	\
+ 			exit(-1);						\
+
+---
+base-commit: 03d38806a902b36bf364cae8de6f1183c0a35a67
+change-id: 20250301-fix-v_exec_initval_nolibc-498d976c372d
+
+Best regards,
 -- 
-2.34.1
+Ignacio Encinas <ignacio@iencinas.com>
 
 
