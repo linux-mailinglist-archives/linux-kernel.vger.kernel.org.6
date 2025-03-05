@@ -1,225 +1,142 @@
-Return-Path: <linux-kernel+bounces-545859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8925FA4F2B5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:28:24 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30211A4F2BB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:29:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 617BC169150
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:28:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 806703AA030
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D383FBA7;
-	Wed,  5 Mar 2025 00:28:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC69E288DA;
+	Wed,  5 Mar 2025 00:29:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RqzuRCDb"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TPwVJp3g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C149B17BA1;
-	Wed,  5 Mar 2025 00:27:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17AA617548;
+	Wed,  5 Mar 2025 00:29:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741134479; cv=none; b=W/veTYJf5JarCNfnzDzqDTSv5VqkPZfHEbUvIv0jtmRitnQA+TBQ2Job+Lr12rc/hgYsxF291hSV0bBPzkmWr7wLFXVOB4U/2sYgSByC0aJuMO9FYnOL0DvjWCxH/SJoFElsF6MLSoKOsYdpKuDzBgIif0EOLIsivi/Jz9oV3Nk=
+	t=1741134558; cv=none; b=MnB5Jm4fpOkZjB4nFMALUKC5Bq9QHRCmva37dFHMfxaM5Q0/lfWEsbFyWKW4rKzYlL3berhBmnntcVbyR2ABQnnVQSMVgDgeqCeG3hPqyia/EZdNTWGcQIZhmAeiL3zHkMxCRzKbHL2xeHDAF/TXOtRfPVSM+4hkWzr8BT0e7U0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741134479; c=relaxed/simple;
-	bh=x/VIknukD9fSBBRaVll1/APH4ZffDIGAts7O+IzGyi8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qJj7yTMazOMpFmEd71Sb8U1JDtGrTsmqA46qkknq5krM1bc7D14o/Y0lU8o3++9tBcNcot9CUDsAado+i+T26WT1gFGTFUTakvgFZUHDHeQo6WdtLJGdRkXyOiK7/6ucfh0ec6tCE967DFUPtkfir6tAjVcqKGUpZVmNK/8W3hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RqzuRCDb; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524NA9gS005776;
-	Wed, 5 Mar 2025 00:27:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=Gde7r6M8hsg4DO9rU31kG6
-	3LkAxdcHyxutXtMX3cnuc=; b=RqzuRCDb5qWR39nOKwhRgQbD/5BHXNqo8eY3Pu
-	bAi1RGZoL2AucbOdLq3KQOzGiPFL2pn2bSs/CfQyhs4mxLNu5C5sBekrMf0q+9qI
-	XoGZFmPRHHhy8No8IZ3HOZ3awiSY0mdjF/jiGnDbRBDCXmLVSV+ciLW5PwXlPefX
-	cGUu+9oi16T23bV42A39Kg3YEIEZy7WRktV4Q/V62uXcxWr9tWf4JMU+C5YaOpa9
-	nazHEnHxFWA4M/g80u3HU7mI9f8YHOdXOqZLaK0xf/KEwtOTBQlYGeTWx494FwLw
-	B0XCenOK8Qvh/Eg5p7A8VVO/ErrNKlLFw1wXchF978oo9W6A==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6v3hrr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 00:27:52 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5250RpJg003536
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 00:27:51 GMT
-Received: from hu-molvera-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Tue, 4 Mar 2025 16:27:51 -0800
-From: Melody Olvera <quic_molvera@quicinc.com>
-Date: Tue, 4 Mar 2025 16:27:45 -0800
-Subject: [PATCH v2] arm64: dts: qcom: sm8750: Add BWMONs
+	s=arc-20240116; t=1741134558; c=relaxed/simple;
+	bh=v4LFSDcbSZvz0tDH0vbM1o3jV3dG7EspXAJxw8uUJk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WpaPTFU+SV6Jr9LAdZjxEW0JkA+DsOOlgE3V2sC27Cx7tTrwA0Z6wiNdE6hZIMgo345aKHYZDOvqN5otA/OI779SqTMX+NkMtZf3eSVgR5x9bwFGhroeOq5wQv2LH3XByJ8aYTFYbFqnBNFNbX8odTOlwVwdp9H9kvZT2U53hO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TPwVJp3g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18355C4CEE5;
+	Wed,  5 Mar 2025 00:29:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741134557;
+	bh=v4LFSDcbSZvz0tDH0vbM1o3jV3dG7EspXAJxw8uUJk0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=TPwVJp3gVOxr5vkeZvGhr+JufYiRWINOpBadU50KWF9Cb0DE1wDsXvRj3BV3ReSwq
+	 SD8gMy8hB/fvCjRq3rOA1+Dneetww9tJQDik2OxWFE9D5fWTPCU9vcWHz01MkAx4s0
+	 89RmGTtmHEfLoEnuy//texnkqd3I6gg5zh8epMmC85dxxT8vd94GjPAv1hLrycAE1N
+	 IqS710KEJi3BJqkaWGBgWC0uKhv7W/cJgaCtxvf+zvSh3yPYZwgZ7fw8MspFExGVzO
+	 07MoSlxTfPFwcqC3fvkKnXTCCbtqkwReZDOfEL6wDEQTocPWw0dqevsJ2TW/NTEyLV
+	 kXPnWtVFyNCZg==
+Date: Wed, 5 Mar 2025 02:29:13 +0200
+From: Jarkko Sakkinen <jarkko@kernel.org>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+	Mimi Zohar <zohar@linux.ibm.com>,
+	David Howells <dhowells@redhat.com>,
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+	David Woodhouse <dwmw2@infradead.org>,
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
+	"Serge E. Hallyn" <serge@hallyn.com>,
+	Roberto Sassu <roberto.sassu@huawei.com>,
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+	Stefan Berger <stefanb@linux.ibm.com>,
+	"ebiggers@kernel.org" <ebiggers@kernel.org>,
+	Randy Dunlap <rdunlap@infradead.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+Message-ID: <Z8ea2TRPS6uMgXxG@kernel.org>
+References: <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+ <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
+ <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+ <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+ <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+ <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
+ <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com>
+ <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
+ <Z8d9ulOirAeHmFJV@kernel.org>
+ <CAHC9VhQC_bqZAFiABMUhTO6jTUFgHB8vjpb6-Eo7SA-2-5xfuQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250304-sm8750_bwmon_master-v2-1-ead16909397d@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAICax2cC/22NwQ7CIBAFf6XZs5gFbIqe/A/TNJRSuwdAoVZNw
- 7+LjUePM8mbt0KykWyCU7VCtAslCr6A2FVgJu2vltFQGASKGjk2LDnV1Nj1Txd853SabWRmOPT
- KclRojlCWt2hHem3VS1t4ojSH+N5OFv61vx6Xf3sLZ8hGVGLQUkuJ6nx/kCFv9iY4aHPOHyURY
- Vm4AAAA
-X-Change-ID: 20250107-sm8750_bwmon_master-cd4b8e1080c9
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Georgi Djakov
-	<djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Satya
- Durga Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-pm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Shivnandan
- Kumar" <quic_kshivnan@quicinc.com>,
-        Melody Olvera <quic_molvera@quicinc.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741134471; l=2648;
- i=quic_molvera@quicinc.com; s=20241204; h=from:subject:message-id;
- bh=dJ5zGKO9cyYdi4F8ivmircOfcGRI6MbvOTw8Xwp2vDM=;
- b=rQCEUfWVssQQ7SxGV33uwdgRTtWOwX5sh0jmy+hLeiXan3zgJPAerR5Q56UfCez4xHgFzMyWF
- qkueOOuHuhLBoyPoOC4L1blr7i3jZ85fhkz+AfDv/LfeCkiVyeoZUHC
-X-Developer-Key: i=quic_molvera@quicinc.com; a=ed25519;
- pk=1DGLp3zVYsHAWipMaNZZTHR321e8xK52C9vuAoeca5c=
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hxilbSsKKeniz5BbKWZRM5mqJZsG4YJc
-X-Proofpoint-ORIG-GUID: hxilbSsKKeniz5BbKWZRM5mqJZsG4YJc
-X-Authority-Analysis: v=2.4 cv=fatXy1QF c=1 sm=1 tr=0 ts=67c79a89 cx=c_pps a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=3H110R4YSZwA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8 a=7yo25iZzBaeJ0hjbOj0A:9
- a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-04_09,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 bulkscore=0
- spamscore=0 priorityscore=1501 malwarescore=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=813 mlxscore=0 adultscore=0 suspectscore=0
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050002
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHC9VhQC_bqZAFiABMUhTO6jTUFgHB8vjpb6-Eo7SA-2-5xfuQ@mail.gmail.com>
 
-From: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+On Tue, Mar 04, 2025 at 07:25:13PM -0500, Paul Moore wrote:
+> On Tue, Mar 4, 2025 at 5:25 PM Jarkko Sakkinen <jarkko@kernel.org> wrote:
+> > On Mon, Mar 03, 2025 at 05:40:54PM -0500, Paul Moore wrote:
+> > > On Fri, Feb 28, 2025 at 12:52 PM Eric Snowberg <eric.snowberg@oracle.com> wrote:
+> > > > > On Feb 28, 2025, at 9:14 AM, Paul Moore <paul@paul-moore.com> wrote:
+> > > > > On Fri, Feb 28, 2025 at 9:09 AM Mimi Zohar <zohar@linux.ibm.com> wrote:
+> > > > >> On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
+> > > > >>>
+> > > > >>> I'd still also like to see some discussion about moving towards the
+> > > > >>> addition of keyrings oriented towards usage instead of limiting
+> > > > >>> ourselves to keyrings that are oriented on the source of the keys.
+> > > > >>> Perhaps I'm missing some important detail which makes this
+> > > > >>> impractical, but it seems like an obvious improvement to me and would
+> > > > >>> go a long way towards solving some of the problems that we typically
+> > > > >>> see with kernel keys.
+> > > >
+> > > > The intent is not to limit ourselves to the source of the key.  The main
+> > > > point of Clavis is to allow the end-user to determine what kernel keys
+> > > > they want to trust and for what purpose, irrespective of the originating
+> > > > source (.builtin_trusted, .secondary, .machine, or .platform). If we could
+> > > > go back in time, individual keyrings could be created that are oriented
+> > > > toward usage.   The idea for introducing Clavis is to bridge what we
+> > > > have today with kernel keys and allow them to be usage based.
+> > >
+> > > While it is unlikely that the current well known keyrings could be
+> > > removed, I see no reason why new usage oriented keyrings could not be
+> > > introduced.  We've seen far more significant shifts in the kernel over
+> > > the years.
+> >
+> > Could we implement such change in a way that these new imaginary
+> > (at this point) usage oriented keyrings would be used to create
+> > the "legacy" keyrings?
+> 
+> I think it would be easier for them to coexist so that one could have
+> an easier migration.  It's possible that even once everything was
+> migrated to the new usage oriented keyrings it would still make sense
+> to keep the existing keyrings in place and always link keys from there
+> to the newer usage keyrings.
 
-Add the CPU BWMONs for SM8750 SoCs.
+OK, so here I agree and disagree:
 
-Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
-Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
----
-Changes in v2:
-- Change destination interconnect to tag active only from tag always
-- Link to v1: https://lore.kernel.org/r/20250113-sm8750_bwmon_master-v1-0-f082da3a3308@quicinc.com
----
- arch/arm64/boot/dts/qcom/sm8750.dtsi | 74 ++++++++++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+1. It probably does not port everything.
+2. Still, we need to be sure that "can be done" condition is satisfied
+   for the sake of robustness.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-index 3bbd7d18598ee0a3a0d5130c03a3166e1fc14d82..3f2b949524708eec8247fd453b8ea9e2dea32285 100644
---- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
-@@ -2802,6 +2802,80 @@ rpmhpd_opp_super_turbo_no_cpr: opp-480 {
- 			};
- 		};
- 
-+		/* cluster0 */
-+		pmu@240b3400 {
-+			compatible = "qcom,sm8750-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0x0 0x240b3400 0x0 0x600>;
-+
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ACTIVE_ONLY>;
-+
-+			operating-points-v2 = <&cpu_bwmon_opp_table>;
-+
-+			cpu_bwmon_opp_table: opp-table {
-+				compatible = "operating-points-v2";
-+
-+				opp-0 {
-+					opp-peak-kBps = <800000>;
-+				};
-+
-+				opp-1 {
-+					opp-peak-kBps = <2188000>;
-+				};
-+
-+				opp-2 {
-+					opp-peak-kBps = <5414400>;
-+				};
-+
-+				opp-3 {
-+					opp-peak-kBps = <6220800>;
-+				};
-+
-+				opp-4 {
-+					opp-peak-kBps = <6835200>;
-+				};
-+
-+				opp-5 {
-+					opp-peak-kBps = <8371200>;
-+				};
-+
-+				opp-6 {
-+					opp-peak-kBps = <10944000>;
-+				};
-+
-+				opp-7 {
-+					opp-peak-kBps = <12748800>;
-+				};
-+
-+				opp-8 {
-+					opp-peak-kBps = <14745600>;
-+				};
-+
-+				opp-9 {
-+					opp-peak-kBps = <16896000>;
-+				};
-+
-+				opp-10 {
-+					opp-peak-kBps = <19046400>;
-+				};
-+			};
-+		};
-+
-+		/* cluster1 */
-+		pmu@240b7400 {
-+			compatible = "qcom,sm8750-cpu-bwmon", "qcom,sdm845-bwmon";
-+			reg = <0x0 0x240b7400 0x0 0x600>;
-+
-+			interrupts = <GIC_SPI 581 IRQ_TYPE_LEVEL_HIGH>;
-+
-+			interconnects = <&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ACTIVE_ONLY
-+					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>;
-+
-+			operating-points-v2 = <&cpu_bwmon_opp_table>;
-+		};
-+
- 		timer@16800000 {
- 			compatible = "arm,armv7-timer-mem";
- 			reg = <0x0 0x16800000 0x0 0x1000>;
 
----
-base-commit: 20d5c66e1810e6e8805ec0d01373afb2dba9f51a
-change-id: 20250107-sm8750_bwmon_master-cd4b8e1080c9
+> 
+> -- 
+> paul-moore.com
+> 
 
-Best regards,
--- 
-Melody Olvera <quic_molvera@quicinc.com>
-
+BR, Jarkko
 
