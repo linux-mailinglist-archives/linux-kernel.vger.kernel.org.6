@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-547612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547615-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71FCFA50B97
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:37:00 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 629F3A50B9C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:38:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A9223AF7CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:36:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6575E3A6564
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8FE0252900;
-	Wed,  5 Mar 2025 19:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1B10253F24;
+	Wed,  5 Mar 2025 19:37:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gX5xc6TG"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jImYgd9P"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0646C78F3A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0526A1A23B1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:37:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741203413; cv=none; b=g1bm2A5m9dKdHZxjDRa3e8ZJT9ukcOxfmxDD3JDe2K7ADCCFuM5Q0vOTYbQXv/jOsNYCISb0uU/99ZRDuo6uJGz/jS4z98nn5lrcZg9krmEeTdQFYECKefNF0etbo5BE5NTDYDqqGN/wkUazp11orRKnvq2Cs3qxSm49tco09AU=
+	t=1741203446; cv=none; b=FD3H5/LRF11tPpE/Y2qnv8guj0f779fNEKlNkcBD2xaI8Gk1pxbBldGm+8vPCgZQ1aQOprG9li9MC48NXNa79UzeJ8bowkAW5nxQeezoRbss64HyZgR2nuGvyuUSj3HU2UMfRHCM2Ca9ILqNEonf+EWec0Lz53yEwi3OXbuqrT0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741203413; c=relaxed/simple;
-	bh=f+EcBHq0gIuPChKTRpZ/xjUmV0aa5c76pyhQGIXjb54=;
+	s=arc-20240116; t=1741203446; c=relaxed/simple;
+	bh=NiSAOPAgkdb/WErvFuPt8dYjPkHrz80Z5l1d8QBlXxY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=imRk5oVJdHB/ntuqX+g6YkNH7wyHDIbMDxJCa6h0Uu9G9HUDGwQeDJieDmWa1ItklO9wMPROPhrIorVRZmYbnUtQ03XP2DQkys0k50qayIBcC6xHbSgKzWBTD288r3YVFFeALeF/MWBmuuSii2LH4pplsEmIPo+WjVP4qwRLvOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gX5xc6TG; arc=none smtp.client-ip=209.85.216.53
+	 MIME-Version; b=dogNK0v5sEwZ21RJZO/D1v+DV1Ek1yPoWItQgIRGUrmMIDCqLQYN8HIzf5ZVrG1g4f/5AnPyWOFDz+X2zIRWh4JGFefX9/o1bgNqpsjj01ozv+ASl4tQM0NI7/7shisNgLZ0AhXLBANBvVR6ofoaLHtriB+PwcRnFRujHVxJNV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jImYgd9P; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2fe82430bb4so1882168a91.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:36:51 -0800 (PST)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-22400301e40so1881775ad.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:37:24 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741203411; x=1741808211; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741203444; x=1741808244; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sk/Vps+XrXsj0EE9YsBttNsi6jhkGXsUnHgeSBsXBQE=;
-        b=gX5xc6TGRvMFclW3JZ57E1R8cc86YMI6wAQ3vT6pcwYlVeSStdC07s2cZ5GyNZLHBL
-         654BjVhAYib0L1Cp/nvK4/CCZNakwknhgJ6emQyyx1s/uneySuyovr3LhAade8OTu0Uf
-         zqaeIpC9qkG/pJTVMrh1MrqiEL9SDmguOPG5pgMduMxo9JJZExK7PY1JLOMuOTYW3U4F
-         kgIEvsddYJtDfLmtm8cu3fw1Haj/ntwP8H4F8uzu3p3GH6ugMzVZikNSXQA4CV4OQM8v
-         tLardeaNBg/S94A59dlkAjmXPeCeNP21b5T40ZZFFQAbK7xR68k5KJmKvtf6VYBEuxAi
-         cmOQ==
+        bh=3HZfT3BJ97SDi73Ze6YNCLhdfpk5R2Zm48aUE8tr5nI=;
+        b=jImYgd9PGpn8uTDmZiA+x6xDKd+XFV+7AeY9BKFETZPtYBVU3QwkXORp1S9lQBj+vo
+         NQv9zIqWuPxs9Ip2lwSxLnnWK3ldfBny+mVfGVjw5tumUYjtPbAMnWwq9dKTMr5ZkxCd
+         V8pZZpAGw/IWeDBZ7xL8DjlMIw3S0isG+PfTRFMw6kwK0IJFhTiwj0ghu5GV2CBMxDyU
+         Ohgdk16auEYdwoW62Wmf7XHfLWUQD7Q8E5KBKUjlUex3gv4/UoHaxHhCrNN4f4uaYrxi
+         WFZ7J71Hla8xnNas+DmhfEhDgwpj+uf0NTRj1gHIQVuYSsT8SRDFpR7/2uHNOmDlyetU
+         2hfw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741203411; x=1741808211;
+        d=1e100.net; s=20230601; t=1741203444; x=1741808244;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Sk/Vps+XrXsj0EE9YsBttNsi6jhkGXsUnHgeSBsXBQE=;
-        b=iC+hjjykmg8pdHCpRYTn+s47VbOKNV4R0bADhienriAF0C07IJ098+Agui2FFEOuEf
-         B8++ckYwOEUgGEHeIJmieF/6OrDPsq2fLw+RVL9pJiX7pXKyb4Rqo4MVffFs+fbX/+0F
-         vhltMFsn/2vNCfEHXcLdDKnCaVO+5BzQ9CMXucrZPB5hWJ0PoqXPFP6+I5aYllmwWhSG
-         U9oz26LeWS9Dz9YAtRd+hZzOjqYmNQ09hMFVeUMlPX8FcTrd/JCVUNgZMkUarx9liX6N
-         zf6h6gPz4C1JW86jTLRN2/M9qo+kNyBYNNr/mL5ZsELe9Vty6qYt5bH/gZK7KRiEJawM
-         ZL5A==
-X-Forwarded-Encrypted: i=1; AJvYcCX66lMwOEjayMMxRU3TiK9owXbN7MaZ3LPxsnKyzBQmG7iNpzbPHbHLDHagZkD3rQ8VEyDsnngbdOb+oIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTHNROrieT2FLwfjOPntJu6IYw1VnPoYy+3UsfcKbXcELZx62d
-	q88MIAJzAPeVA+pNwEfekQBCadoN+/eIYYAmW0tFthbNMR8vfOIP
-X-Gm-Gg: ASbGncuUG4IYlNfVLjpvIU2FwYoz7nswsS7dVkgWeVHEu2pNwoNUkIh/jQ0wDh/o+ol
-	nytUcepnxVKQenOJogD11rYT2CrbNiBXenJdoa3Q/9+OvbebubnWZjJmZDZGFdnyJmm10qqNUm2
-	Ri63RzCK2iiwGY2zVLWRPwSvRJnN0KgOrHvQ4af6xCwlLN+9tzeQsHLFWrxvmWw2nLigRPJLb10
-	KC/gQ/1afBcwtLTe56XeycQPo/I3pcWx61xtBHUaPfwIKJ9m5a62UT6UGnBATY2Pa5uFj0chF8b
-	UPZ+QZ0EPlShI1FNUYB9ZRvIw4pILSkjC+WtX+6coZ8gRM4oCAFHH7vpBvoV
-X-Google-Smtp-Source: AGHT+IFQ9HwEoVTVlmufm04/RgIQIMt5CoKXcTADkaczq5WVDkpG/N4C0fD8ORB3wOOwpnFJIdaf5w==
-X-Received: by 2002:a17:90b:5344:b0:2ff:4be6:c5bd with SMTP id 98e67ed59e1d1-2ff4be6c6ecmr2272508a91.8.1741203411157;
-        Wed, 05 Mar 2025 11:36:51 -0800 (PST)
+        bh=3HZfT3BJ97SDi73Ze6YNCLhdfpk5R2Zm48aUE8tr5nI=;
+        b=dmj5OhSBLAIAqUM3pe2urX/EGWw/mt8Fw2nPMmXp9sXF3wwyMT+/ob6T24c3iNfA9y
+         cPjzDzUQlkmo4yQscUInCL+jEzupmIkqJcYOmFlLh2+VPCFc5VqlML+yOQE5TVGIb/o6
+         NnW/BKuTDIxJw5o4Zje4LYLMp60fYHaE4rgnCPMmM33m7pcG/NdjXJcT+lBLSWf1JIaS
+         RVPOUJH9TCiNLYV/66P1CjbBtx/7Nou9tujFWDYO6oaGYqRFN4xgfQgbV/1agg/6j/Xw
+         SLhg39hLyYhppk61bjlYe3HqP2VlnjwSjSH73/49sB837Jox8KKi3a9U5kx2iqFCGhle
+         vMZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXxbiI/4jJr1X43X0AWtQwejiOJCfoYz1/25J1nP8wnS4S0sfd63lhA+d+ywhUtOhjh9IyoP8HRfg30tC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFdZwcNKq9yhpVwK9hwKIXXuUH782MvI/q9K+14qQo4ujzMIdv
+	njBNK2cqJvpHbTMOB+f+TWRN5yJwWWd60L6ncVAg4t/pMAN/7ZKtfyOsFg==
+X-Gm-Gg: ASbGncsl/YBU8shCq0QOOMglcj/Jj3WNzyCtcLcaBPxO3RKJs/1zTJB5XRmmCuWuVA9
+	8DEBMQpvKbQcpmZGHI/8XWqDi48jrKLAUALRMMdZFFKINPsjpYsNvoRPC6auSS9kd3HU0RqS+rR
+	UHjS8hQjNpvicyObfM/IblgPMNoqicIkdQxhOJpVew38gFF4JvGUt6e1MhHsmox3q+2JU2qtCB0
+	h1QDOOqtLtllSXEFbgpvdtHDtVOqc+PsrXzh2dTLv5IXJI922FgClMaocoYwpj5vJerRi1/KZ3k
+	XR69UuAA+nUjVrqH5HVr/D4iV1WdVManwKazNX6cP3O0nJgsCBzVV9kPfAJI
+X-Google-Smtp-Source: AGHT+IHsMPQdEsN+BrWmog6Gj2bXAKJEAfY6RuvXg31gY6PlWFrf/eyHD0qoGNGZW7v0mj/fHoDj7A==
+X-Received: by 2002:a17:902:e881:b0:21f:1365:8bcf with SMTP id d9443c01a7336-223f1d33ae6mr27861905ad.10.1741203444288;
+        Wed, 05 Mar 2025 11:37:24 -0800 (PST)
 Received: from localhost.lp.veng.com.ar ([200.10.125.114])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7a2bbesm1898148a91.37.2025.03.05.11.36.48
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7a2bbesm1898148a91.37.2025.03.05.11.37.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 11:36:50 -0800 (PST)
+        Wed, 05 Mar 2025 11:37:23 -0800 (PST)
 From: Gaston Gonzalez <gascoar@gmail.com>
 To: linux-staging@lists.linux.dev
 Cc: dpenkler@gmail.com,
@@ -81,9 +81,9 @@ Cc: dpenkler@gmail.com,
 	jiapeng.chong@linux.alibaba.com,
 	linux-kernel@vger.kernel.org,
 	Gaston Gonzalez <gascoar@gmail.com>
-Subject: [PATCH v2 1/4] staging: gpib: fix kernel-doc section for write_loop() function
-Date: Wed,  5 Mar 2025 16:32:16 -0300
-Message-ID: <20250305193614.39604-3-gascoar@gmail.com>
+Subject: [PATCH v2 2/4] staging: gpib: fix kernel-doc section for function usb_gpib_interface_clear()
+Date: Wed,  5 Mar 2025 16:32:18 -0300
+Message-ID: <20250305193614.39604-5-gascoar@gmail.com>
 X-Mailer: git-send-email 2.49.0.rc0
 In-Reply-To: <20250305193614.39604-1-gascoar@gmail.com>
 References: <20250305193614.39604-1-gascoar@gmail.com>
@@ -95,13 +95,13 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a colon character in the kernel-doc section of write_loop() in order
-'leng' to be picked as argument by the kernel-doc compiler.
+Add '@' character in kernel-doc comment in order 'assert' to be picked as
+argument by the kernel-doc compiler.
 
 This change fix the following warning:
 
-warning: Function parameter or struct member 'leng' not described in
-'send_command'
+warning: Function parameter or struct member 'assert' not described in
+'usb_gpib_interface_clear'
 
 Signed-off-by: Gaston Gonzalez <gascoar@gmail.com>
 ---
@@ -111,18 +111,18 @@ v1 -> v2: no changes in this patch.
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-index 50faa0c17617..eeabbdb39057 100644
+index eeabbdb39057..090857824d07 100644
 --- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
 +++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-@@ -232,7 +232,7 @@ static int write_loop(void *dev, char *msg, int leng)
+@@ -621,7 +621,7 @@ static int usb_gpib_go_to_standby(gpib_board_t *board)
+  * usb_gpib_interface_clear() - Assert or de-assert IFC
   *
-  * @board:    the gpib_board_struct data area for this gpib interface
-  * @msg:      the byte sequence.
-- * @leng      the byte sequence length; can be given as zero and is
-+ * @leng:     the byte sequence length; can be given as zero and is
-  *	      computed automatically, but if 'msg' contains a zero byte,
-  *	      it has to be given explicitly.
-  */
+  * @board:    the gpib_board data area for this gpib interface
+- * assert:    1: assert IFC;  0: de-assert IFC
++ * @assert:   1: assert IFC;  0: de-assert IFC
+  *
+  *    Currently on the assert request we issue the lpvo IBZ
+  *    command that cycles IFC low for 100 usec, then we ignore
 -- 
 2.49.0.rc0
 
