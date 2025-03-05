@@ -1,205 +1,261 @@
-Return-Path: <linux-kernel+bounces-546167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DEEB8A4F731
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:37:07 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 384DBA4F733
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:37:23 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D2FA16D141
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:37:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46107188DE2B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1FC1DC9AA;
-	Wed,  5 Mar 2025 06:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q929eVfK"
-Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755811E5B73;
+	Wed,  5 Mar 2025 06:37:07 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259761DB924
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:36:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D89C81DE8A5;
+	Wed,  5 Mar 2025 06:37:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741156622; cv=none; b=N8icxluB2tcS5G0G0kqFxKMYSYbmEJsIufngD9BMIiFcO4kOGnstR7SQjfC67IV5IS5n0VnDT+z6YaVpOB7E6QEXLIzHbxDA0oVWjK2UQxYD+2NCTUIWEYWruzL0N1pU/qR0UtDysvit0HTctmKrRtU0j2RGQr1DlYsl/AwvMHc=
+	t=1741156627; cv=none; b=MaMSEg2PHoqhRgzfkkGpmJgxTEaZNHuewsiyDxpfzoZoVq49IhjotXqPqI18sLAGXx+uDEZxHibH2YUXJc9g2Q/H1ys7bftGdN9c/ufU3CyJDw1QwwUaLbiyXaM0149NVDS0vOLxLUN8LxCbrHwMksoPKQTR2tgxgaCEQpmEjhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741156622; c=relaxed/simple;
-	bh=MQ1pDAsTrlBIav0BzasItVZpwgRo6TiIAF5eYti3qoY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sGujN5qtXYVyiXwJVLUfT4wILUr11jldfSc7IAjJpXkMCjX2OBxavOMhYNUlBnUEoNVfFVZ0K7NzrsRbGLtqqexOdbRtjqXHS0k0tKMw9Xa5KJUk7mXsFgD9V8V38sgWQ8S0rfBoSnmGXwER19HPr60KTucuWEDPoUUsYDMYjgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q929eVfK; arc=none smtp.client-ip=95.215.58.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 5 Mar 2025 07:36:54 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741156618;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Twd6E1UAZBW/twPC+wFFwXwoo7sgq3iDutu+tgt2akA=;
-	b=q929eVfKDjfouYEoFUCZveBhmmGsXHnh1PqKb1kbZo2Dza+Zc7KWxiITnp5eGnzw8upk6R
-	IGdxzF+jmSHGynmyBwoIDqmNznytx3QX+fiOiagaVrd6bvIkl3vdTpe/uYtgjUNCiYDaOz
-	v2nW54CkMO/cTyqj2mHlLH9BUtlDDmQ=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: i2c: ov9282: add strobe_timeout v4l2 control
-Message-ID: <k2r3ro5dx6nneawdt7afonah46yyhztrfcy3i74ftbvfqknegb@efoixtkzkin6>
-References: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
- <20250303-ov9282-flash-strobe-v1-3-0fd57a1564ba@linux.dev>
- <CAPY8ntBBiuQtKErZ1+zDD5HBwjPRdBryduuB3XnhCZAdPC88GA@mail.gmail.com>
- <CAPY8ntCiaTMdM_FRo3k9mYrzVnAuJYXrZU70Hf5=fLxButCOmg@mail.gmail.com>
+	s=arc-20240116; t=1741156627; c=relaxed/simple;
+	bh=JkVUBrWE/Pwx8kxyzAcLzgCYN4tFTy1Y16PJyFVSCkY=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=a7wQXX3mxaYf1XGXYh9puVCr80okCuAdr0IixSMVQZ1pQZdR/5GrZAuOk6yag7RDtiN87esS4FcjL0fpFXcFx98O9GflD3RoLYoPXcT8HXn+47xrS6Ae/tqz+n+0Ypf0WEySfWwEKyj3dbvCJgf4KjJFA5J2Era632ne7/Fb1Vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4Z72rh4WYwz4f3lfr;
+	Wed,  5 Mar 2025 14:36:36 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 345311A0DE4;
+	Wed,  5 Mar 2025 14:37:00 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgCH618K8cdnN5RfFg--.57392S3;
+	Wed, 05 Mar 2025 14:37:00 +0800 (CST)
+Subject: Re: [PATCH v3 3/3] md/raid5: check for overlapping bad blocks before
+ starting reshape
+To: Doug V Johnson <dougvj@dougvj.net>
+Cc: Doug Johnson <dougvj@gmail.com>, Song Liu <song@kernel.org>,
+ "open list:SOFTWARE RAID (Multiple Disks) SUPPORT"
+ <linux-raid@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <9d878dea7b1afa2472f8f583fd116e31@dougvj.net>
+ <20250224090209.2077-1-dougvj@dougvj.net>
+ <20250224090209.2077-3-dougvj@dougvj.net>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <a9119707-4fa1-58cb-377c-63df67f88957@huaweicloud.com>
+Date: Wed, 5 Mar 2025 14:36:58 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
+In-Reply-To: <20250224090209.2077-3-dougvj@dougvj.net>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPY8ntCiaTMdM_FRo3k9mYrzVnAuJYXrZU70Hf5=fLxButCOmg@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+X-CM-TRANSID:gCh0CgCH618K8cdnN5RfFg--.57392S3
+X-Coremail-Antispam: 1UD129KBjvJXoW3Wr13ur15Jr4rCryrWF1Utrb_yoW7Wrykp3
+	yDJ3ZIqrWjgr1fXa43Z3yj9r1Fk3s7GrWUJ3y7Ga4UuFWfK34fGFs3WryUXFyxGry3Xr10
+	qay3CrZF9F97Ka7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
+	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUwx
+	hLUUUUU
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Dave,
+Hi,
 
-On Tue, Mar 04, 2025 at 05:30:13PM +0000, Dave Stevenson wrote:
-> On Tue, 4 Mar 2025 at 10:28, Dave Stevenson
-> <dave.stevenson@raspberrypi.com> wrote:
-> >
-> > Hi Richard
-> >
-> > On Mon, 3 Mar 2025 at 22:59, Richard Leitner <richard.leitner@linux.dev> wrote:
-> > >
-> > > Add V4L2_CID_FLASH_TIMEOUT support using the "strobe_frame_span"
-> > > feature of the sensor. This is implemented by transforming the given µs
-> > > value by an interpolated formula to a "span step width" value and
-> > > writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
-> > > PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
-> > >
-> > > The maximum control value is set to the period of the current framerate.
-> > > This must be changed to a dynamic range as soon as this driver
-> > > implements the set_frame_interval() pad operation.
+ÔÚ 2025/02/24 17:02, Doug V Johnson Ð´µÀ:
+> In addition to halting a reshape in progress when we encounter bad
+> blocks, we want to make sure that we do not even attempt a reshape if we
+> know before hand that there are too many overlapping bad blocks and we
+> would have to stall the reshape.
 > 
-> Rereading the patch as I'm looking at the whole series.
+> To do this, we add a new internal function array_has_badblock() which
+> first checks to see if there are enough drives with bad blocks for the
+> condition to occur and if there are proceeds to do a simple O(n^2) check
+> for overlapping bad blocks. If more overlaps are found than can be
+> corrected for, we return 1 for the presence of bad blocks, otherwise 0
 > 
-> set_frame_interval() will never be implemented as it is the wrong API
-> for raw sensors.
-> See https://www.kernel.org/doc/html/latest/userspace-api/media/drivers/camera-sensor.html#raw-camera-sensors
-> This driver already implements PIXEL_RATE, HBLANK, and VBLANK for
-> frame interval configuration.
-
-Thanks Dave for bringing this up and sorry for not having known that
-before posting this series. It's my first work on camera sensors/v4l2
-and altough I have read a ton of docs I somehow missed this one.
-
-So regarding this patch: Should the maximum flash duration be calculated
-from the frame interval (as described in the docs)?
-Or is a "pretty high" constant maximum value preferred?
-
-regards;rl
-
+> This function is invoked in raid5_start_reshape() and if there are bad
+> blocks present, returns -EIO which is reported to userspace.
 > 
-> > >
-> > > All register values are based on the OV9281 datasheet v1.53 (jan 2019)
-> > > and tested using an ov9281 VisionComponents module.
-> > >
-> > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > > ---
-> > >  drivers/media/i2c/ov9282.c | 31 +++++++++++++++++++++++++++++++
-> > >  1 file changed, 31 insertions(+)
-> > >
-> > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > > index c98ba466e9aea29baff0b13578d760bf69c958c5..f7dfe8987e524b73af7e16e12567e96627b4f89a 100644
-> > > --- a/drivers/media/i2c/ov9282.c
-> > > +++ b/drivers/media/i2c/ov9282.c
-> > > @@ -97,6 +97,10 @@
-> > >  #define OV9282_REG_MIPI_CTRL00 0x4800
-> > >  #define OV9282_GATED_CLOCK     BIT(5)
-> > >
-> > > +/* Flash/Strobe control registers */
-> > > +#define OV9282_REG_FLASH_DURATION      0x3925
-> > > +#define OV9282_FLASH_DURATION_DEFAULT  0x0000001A
-> > > +
-> > >  /* Input clock rate */
-> > >  #define OV9282_INCLK_RATE      24000000
-> > >
-> > > @@ -193,6 +197,7 @@ struct ov9282_mode {
-> > >   * @again_ctrl: Pointer to analog gain control
-> > >   * @pixel_rate: Pointer to pixel rate control
-> > >   * @flash_led_mode: Pointer to flash led mode control
-> > > + * @flash_timeout: Pointer to flash timeout control
-> > >   * @vblank: Vertical blanking in lines
-> > >   * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
-> > >   * @cur_mode: Pointer to current selected sensor mode
-> > > @@ -216,6 +221,7 @@ struct ov9282 {
-> > >         };
-> > >         struct v4l2_ctrl *pixel_rate;
-> > >         struct v4l2_ctrl *flash_led_mode;
-> > > +       struct v4l2_ctrl *flash_timeout;
-> >
-> > You only access this in ov9282_set_ctrl where you already have the
-> > struct v4l2_ctrl, so there is no need to store this in the main device
-> > state.
-> >
-> >   Dave
-> >
-> > >         u32 vblank;
-> > >         bool noncontinuous_clock;
-> > >         const struct ov9282_mode *cur_mode;
-> > > @@ -689,6 +695,24 @@ static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
-> > >                                 current_val);
-> > >  }
-> > >
-> > > +static int ov9282_set_ctrl_flash_timeout(struct ov9282 *ov9282, int value)
-> > > +{
-> > > +       /* Calculate "strobe_frame_span" increments from a given value (µs).
-> > > +        * This is quite tricky as "The step width of shift and span is
-> > > +        * programmable under system clock domain.", but it's not documented
-> > > +        * how to program this step width (at least in the datasheet available
-> > > +        * to the author at time of writing).
-> > > +        * The formula below is interpolated from different modes/framerates
-> > > +        * and should work quite well for most settings.
-> > > +        */
-> > > +       u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-> > > +
-> > > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
-> > > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-> > > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
-> > > +       return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
-> > > +}
-> > > +
-> > >  /**
-> > >   * ov9282_set_ctrl() - Set subdevice control
-> > >   * @ctrl: pointer to v4l2_ctrl structure
-> > > @@ -758,6 +782,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> > >         case V4L2_CID_FLASH_LED_MODE:
-> > >                 ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
-> > >                 break;
-> > > +       case V4L2_CID_FLASH_TIMEOUT:
-> > > +               ret = ov9282_set_ctrl_flash_timeout(ov9282, ctrl->val);
-> > > +               break;
-> > >         default:
-> > >                 dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> > >                 ret = -EINVAL;
-> > > @@ -1420,6 +1447,10 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> > >                                                         (1 << V4L2_FLASH_LED_MODE_TORCH),
-> > >                                                         V4L2_FLASH_LED_MODE_NONE);
-> > >
-> > > +       ov9282->flash_timeout = v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
-> > > +                                                 V4L2_CID_FLASH_TIMEOUT,
-> > > +                                                 0, 13900, 1, 8);
-> > > +
-> > >         ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> > >         if (!ret) {
-> > >                 /* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> > >
-> > > --
-> > > 2.47.2
-> > >
-> > >
+> It's possible for bad blocks to be discovered or put in the metadata
+> after a reshape has started, so we want to leave in place the
+> functionality to detect and halt a reshape.
+> 
+> Signed-off-by: Doug V Johnson <dougvj@dougvj.net>
+> ---
+>   drivers/md/raid5.c | 94 ++++++++++++++++++++++++++++++++++++++++++++++
+>   1 file changed, 94 insertions(+)
+> 
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index 8b23109d6f37..4b907a674dd1 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -8451,6 +8451,94 @@ static int check_reshape(struct mddev *mddev)
+>   				     + mddev->delta_disks));
+>   }
+>   
+> +static int array_has_badblock(struct r5conf *conf)
+> +{
+> +	/* Searches for overlapping bad blocks on devices that would result
+> +	 * in an unreadable condition
+> +	 */
+> +	int i, j;
+> +	/* First see if we even have bad blocks on enough drives to have a
+> +	 * bad read condition
+> +	 */
+> +	int num_badblock_devs = 0;
+> +
+> +	for (i = 0; i < conf->raid_disks; i++) {
+> +		if (rdev_has_badblock(conf->disks[i].rdev,
+> +				      0, conf->disks[i].rdev->sectors))
+		if (rdev->badblocks.count)
+
+> +			num_badblock_devs++;
+> +	}
+> +	if (num_badblock_devs <= conf->max_degraded) {
+> +		/* There are not enough devices with bad blocks to pose any
+> +		 * read problem
+> +		 */
+> +		return 0;
+> +	}
+> +	pr_debug("%s: running overlapping bad block check",
+> +		 mdname(conf->mddev));
+> +	/* Do a more sophisticated check for overlapping regions */
+> +	for (i = 0; i < conf->raid_disks; i++) {
+> +		sector_t first_bad;
+> +		int bad_sectors;
+> +		sector_t next_check_s = 0;
+> +		int next_check_sectors = conf->disks[i].rdev->sectors;
+> +
+> +		pr_debug("%s: badblock check: %i (s: %lu, sec: %i)",
+> +			 mdname(conf->mddev), i,
+> +			 (unsigned long)next_check_s, next_check_sectors);
+> +		while (is_badblock(conf->disks[i].rdev,
+> +				   next_check_s, next_check_sectors,
+> +				   &first_bad,
+> +				   &bad_sectors) != 0) {
+> +			/* Align bad blocks to the size of our stripe */
+> +			sector_t aligned_first_bad = first_bad &
+> +				~((sector_t)RAID5_STRIPE_SECTORS(conf) - 1);
+> +			int aligned_bad_sectors =
+> +				max_t(int, RAID5_STRIPE_SECTORS(conf),
+> +				      bad_sectors);
+> +			int this_num_bad = 1;
+For example, if first_bad is 0, bad_sectors is 512 in rdev0
+
+> +
+> +			pr_debug("%s: found blocks %i %lu -> %i",
+> +				 mdname(conf->mddev), i,
+> +				 (unsigned long)aligned_first_bad,
+> +				 aligned_bad_sectors);
+> +			for (j = 0; j < conf->raid_disks; j++) {
+> +				sector_t this_first_bad;
+> +				int this_bad_sectors;
+> +
+> +				if (j == i)
+> +					continue;
+> +				if (is_badblock(conf->disks[j].rdev,
+> +						aligned_first_bad,
+> +						aligned_bad_sectors,
+> +						&this_first_bad,
+> +						&this_bad_sectors)) {
+And rdev1 has badblocks 0+256, rdev2 has badblocks 256+256.
+
+If this array is a raid6 with max_degraded=2, then it's fine.
+
+Perhaps a pseudocode loop like following?
+
+  sector_t offset = 0;
+  while (offset < dev_sectors) {
+          len = dev_sectors - offset;
+          bad_disks = 0;
+          for (i = 0; i < conf->raid_disks; ++i) {
+                  if (is_badblock(rdev, offset, len, &first_bad, 
+&bad_sectors)) {
+                          if (first_bad <= offset) {
+                                  len = min(len, first_bad + bad_sectors 
+  offset);
+                                  bad_disks++;
+                          } else {
+                                  len = min(len, first_bad - offset);
+                          }
+                  }
+          }
+
+          if (bad_disks > max_degraded)
+                  return false;
+
+          offset += len;
+  }
+
+  return true;
+
+Thanks,
+Kuai
+
+> +					this_num_bad++;
+> +					pr_debug("md/raid:%s: bad block overlap dev %i: %lu %i",
+> +						 mdname(conf->mddev), j,
+> +						 (unsigned long)this_first_bad,
+> +						 this_bad_sectors);
+> +				}
+> +			}
+> +			if (this_num_bad > conf->max_degraded) {
+> +				pr_debug("md/raid:%s: %i drives with unreadable sector(s) around %lu %i due to bad block list",
+> +					 mdname(conf->mddev),
+> +					 this_num_bad,
+> +					 (unsigned long)first_bad,
+> +					 bad_sectors);
+> +				return 1;
+> +			}
+> +			next_check_s = first_bad + bad_sectors;
+> +			next_check_sectors =
+> +				next_check_sectors - (first_bad + bad_sectors);
+> +			pr_debug("%s: badblock check: %i (s: %lu, sec: %i)",
+> +				 mdname(conf->mddev), i,
+> +				 (unsigned long)next_check_s,
+> +				 next_check_sectors);
+> +		}
+> +	}
+> +	return 0;
+> +}
+> +
+>   static int raid5_start_reshape(struct mddev *mddev)
+>   {
+>   	struct r5conf *conf = mddev->private;
+> @@ -8498,6 +8586,12 @@ static int raid5_start_reshape(struct mddev *mddev)
+>   		return -EINVAL;
+>   	}
+>   
+> +	if (array_has_badblock(conf)) {
+> +		pr_warn("md/raid:%s: reshape not possible due to bad block list",
+> +			mdname(mddev));
+> +		return -EIO;
+> +	}
+> +
+>   	atomic_set(&conf->reshape_stripes, 0);
+>   	spin_lock_irq(&conf->device_lock);
+>   	write_seqcount_begin(&conf->gen_lock);
+> 
+
 
