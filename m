@@ -1,187 +1,152 @@
-Return-Path: <linux-kernel+bounces-546584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3AEA4FC76
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:44:33 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 019E9A4FC74
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:44:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 54BE51893160
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E3B33A7AEE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:42:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1E820B1F2;
-	Wed,  5 Mar 2025 10:42:53 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37FA920AF6D;
+	Wed,  5 Mar 2025 10:42:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=timsurber.de header.i=@timsurber.de header.b="WF+FIobE"
+Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE5E20B1E4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351D320A5EE;
+	Wed,  5 Mar 2025 10:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741171373; cv=none; b=gm1is1vXy3HM7gqu3uNIsCNOzq3dJllRGMWioCYtVba9omddazpHqecjuHk/lKUp36jFAN2ZbpMr7Doc6taOO0ezNzblXVLeDjCSnhrJnPt7XClEv5g77IlOVhly8mPBXUTrs7WCX/PZdH4Xnlo60yORTD4HyzSi+nTSpo9pIQQ=
+	t=1741171332; cv=none; b=h34AXAa/5R1hsOpOhp2Gza5grNn1x3/+JpHvMF6gLih9Fh4JEu/WNcyP85d2Qs5LAkSCscdPWsxnQhTHXaTYrkxz7yXsWGz5o5b1qacc+1BxsA3ypADtpNkw85B7cscoWmMLTHVlfgaIB+QztOMsnDpy70VYAiIMgIq5QEgsgEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741171373; c=relaxed/simple;
-	bh=q+P1kxlxk9nhHGxz1YAHbBytE232Dzrq0K9V62hixoA=;
+	s=arc-20240116; t=1741171332; c=relaxed/simple;
+	bh=eHLZnWrhATcm5AHiNd1STWhEnwQ9NvDjfqNPJZbDW4A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VDFVryQo2TByiIR2k62wJfU+I1eGNvfN2aba1ytw7nAfleycdh8SNVlyyDkEzzhNjdFisnNqEljsWEkyco1PUOJ+cJTxEKTdxZzhPA24dbE7EdrijnvpvIvD9ugEO37bgdTaeRSMkcnawAEjRFt0maReHiUZBTxG50aSwdRxm2A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[127.0.0.1])
-	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
-	(envelope-from <a.fatoum@pengutronix.de>)
-	id 1tpmCM-00054k-Ob; Wed, 05 Mar 2025 11:41:58 +0100
-Message-ID: <43fb0965-04b7-41dc-ae3f-54676eefdbb5@pengutronix.de>
-Date: Wed, 5 Mar 2025 11:41:49 +0100
+	 In-Reply-To:Content-Type; b=MVshCY+Wsc/VzvR5zFY2e3/wOh9jeDlyrDmwCL/TO5VYl4cw9kW5gGcmzjPPAf9oNc6mzJttRDCnLI8m/5ezD4K7KhwToejLI1SxS3ed97E7YFG6INdqAZocLgJuEC67VHvgzxAusItfASXcL1QCAvSPP/1EKFiUvWaXbTAOJNE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timsurber.de; spf=pass smtp.mailfrom=timsurber.de; dkim=pass (2048-bit key) header.d=timsurber.de header.i=@timsurber.de header.b=WF+FIobE; arc=none smtp.client-ip=80.241.56.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=timsurber.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=timsurber.de
+Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4Z78Hv66V4z9sDC;
+	Wed,  5 Mar 2025 11:42:03 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=timsurber.de;
+	s=MBO0001; t=1741171323;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=9rOeGZ2uHJYNH5SGu5DmNFvlkAimADfypO0YBEqe3ok=;
+	b=WF+FIobEkjFi0U0Qq/qweJfo/S7s8oCqnDdTMXUXXIHcQYlXjvIK3EpvkFPDQe3UPFoWk0
+	ar+7B0eKWDZD7c4HBdB+kD2oyhlaZrqzQ129PQeenYzYu9Q5oNP0QE4yEyECA4ezBqYHnK
+	3271dthcCvMN6wSO85m5/7/zEgxrAzWLjCfKjX35bV8Cpf0W3h11w4KosUeKq9wD4FaPEu
+	3ShsoXrEGSprr2p9xboIz2RVYm0SRqip4p0FetKD/ahvhF/gmkUfARxWMiVhVBjXiY4Hqa
+	FT3W1tMOMwDYCl7G9A4q0jmmAYpnT9wq5/3ihfTe6R4+bVeb4pLfaDVB3dpt+w==
+Message-ID: <e0e144be-5cf9-4a79-a602-2ab2b7cd9aa1@timsurber.de>
+Date: Wed, 5 Mar 2025 11:41:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 0/2] Add stop_on_panic support for watchdog
-To: George Cherian <george.cherian@marvell.com>, linux@roeck-us.net,
- wim@linux-watchdog.org, jwerner@chromium.org, evanbenn@chromium.org,
- kabel@kernel.org, krzk@kernel.org, mazziesaccount@gmail.com,
- thomas.richard@bootlin.com, lma@chromium.org, bleung@chromium.org,
- support.opensource@diasemi.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
- kernel@pengutronix.de, festevam@gmail.com, andy@kernel.org,
- paul@crapouillou.net, alexander.usyskin@intel.com, andreas.werner@men.de,
- daniel@thingy.jp, romain.perier@gmail.com, avifishman70@gmail.com,
- tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com,
- yuenn@google.com, benjaminfair@google.com, maddy@linux.ibm.com,
- mpe@ellerman.id.au, npiggin@gmail.com, christophe.leroy@csgroup.eu,
- naveen@kernel.org, mwalle@kernel.org, xingyu.wu@starfivetech.com,
- ziv.xu@starfivetech.com, hayashi.kunihiko@socionext.com, mhiramat@kernel.org
-Cc: chrome-platform@lists.linux.dev, linux-watchdog@vger.kernel.org,
- imx@lists.linux.dev, patches@opensource.cirrus.com,
- openbmc@lists.ozlabs.org, linux-mips@vger.kernel.org,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250305101025.2279951-1-george.cherian@marvell.com>
+Subject: Re: [PATCH v13 0/6] Add Synopsys DesignWare HDMI RX Controller
+To: Dmitry Osipenko <dmitry.osipenko@collabora.com>,
+ Hans Verkuil <hverkuil@xs4all.nl>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Diederik de Haas <didi.debian@cknow.org>
+References: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
+ <78ff36f6-01a7-4df4-b653-c4509fb93af4@timsurber.de>
+ <1039aca7-89b9-44ef-9775-e7852e956362@timsurber.de>
+ <9b4b1e65-127d-422b-a359-a1d8e25652f9@xs4all.nl>
+ <88054acf-3051-414c-aef7-4c0f085d5182@collabora.com>
+ <47e022f4-1c1b-43c4-8f6c-bc1ff23ad39f@collabora.com>
 Content-Language: en-US
-From: Ahmad Fatoum <a.fatoum@pengutronix.de>
-In-Reply-To: <20250305101025.2279951-1-george.cherian@marvell.com>
-Content-Type: text/plain; charset=UTF-8
+From: Tim Surber <me@timsurber.de>
+In-Reply-To: <47e022f4-1c1b-43c4-8f6c-bc1ff23ad39f@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+X-Rspamd-Queue-Id: 4Z78Hv66V4z9sDC
 
-Hi George,
+Hi,
 
-On 05.03.25 11:10, George Cherian wrote:
-> This series adds a new kernel command line option to watchdog core to
-> stop the watchdog on panic. This is useul in certain systems which prevents
-> successful loading of kdump kernel due to watchdog reset.
-> 
-> Some of the watchdog drivers stop function could sleep. For such
-> drivers the stop_on_panic is not valid as the notifier callback happens
-> in atomic context. Introduce WDIOF_STOP_MAYSLEEP flag to watchdog_info
-> options to indicate whether the stop function would sleep.
+so the 4:4:4 issue was just a gstreamer bug and it worked when I applied 
+an experimental fix [1].
 
-Did you consider having a reset_on_panic instead, which sets a user-specified
-timeout on panic? This would make the mechanism useful also for watchdogs
-that can't be disabled and would protect against system lock up:
-Consider a memory-corruption bug (perhaps externally via DMA), which partially
-overwrites both main and kdump kernel. With a disabled watchdog, the system
-may not be able to recover on its own.
+So everything works for me using the default EDID now.
 
-If you did consider it, what made you decide against it?
+Tested-by: Tim Surber <me@timsurber.de>
 
-Thanks,
-Ahmad
+[1]: 
+https://gitlab.freedesktop.org/gstreamer/gstreamer/-/merge_requests/8534
 
+On 3/5/25 10:09, Dmitry Osipenko wrote:
+> On 3/5/25 12:03, Dmitry Osipenko wrote:
+>> On 3/5/25 11:10, Hans Verkuil wrote:
+>>> On 05/03/2025 01:59, Tim Surber wrote:
+>>>> Hi Dmitry,
+>>>>
+>>>> I did some more testing. That the Apple TV did not work was a bit
+>>>> misleading.
+>>>>
+>>>> It was just, that the Apple TV defaulted to 4:4:4 Chroma which does not
+>>>> work at all for me. (The same happens using the vendor driver).
+>>>>
+>>>> When I changed the EDID to match the vendor driver the HDMI handshake
+>>>> happened with 4:2:0 chroma, where I could verify even 4k60fps using your
+>>>> driver, nice!
+>>>>
+>>>> So the remaining problems I see are:
+>>>> - 4:4:4 chroma not working in any resolution
+>>>> - 4:2:2 and RGB not working in 4k60fps (is this a hardware limitation?)
+>>>>
+>>>> A possible workaround could be to disable these non supported formats in
+>>>> the default EDID.
+>>> I would like to merge this driver this week, since otherwise it will likely
+>>> slip to v6.16. So if there is a working EDID, perhaps it can be used for now,
+>>> and later on it can be patched if there is a better EDID.
+>>>
+>>> Would this EDID work? Tim, can you try this?
+>>>
+>>> v4l2-ctl --set-edid type=hdmi-4k-600mhz,ycbcr444,ycbcr422
+>>>
+>>> Alternatively, if there is indeed a HW limitation that prevents 4kp60 to work,
+>>> try this:
+>>>
+>>> v4l2-ctl --set-edid type=hdmi-4k-300mhz,ycbcr444,ycbcr422
+>>>
+>>> Whichever of the two works is what we can use as default EDID.
+>>
+>> Disabling 444 and 422 is an option. Though, they work on my setup at
+>> 4k@60p.
+>>
+>> In general, it often a challenge to get 4k@60p properly with any of
+>> these small board devices. 4k@60p works only using a short HDMI cable
+>> for me. Also, not everyone aware that the micro HDMI adapter needs to be
+>> compliant with HDMI 2.0 for 4k@60, that's why 300MHz is the default.
+>>
+>> Will be nice to have the good EDID enabled by default in the defconfig.
+>> Dealing with problems like that will be a headache for majority of
+>> people, IMO.
 > 
-> 
-> Changelog:
-> v1 -> v2
-> - Remove the per driver flag setting option
-> - Take the parameter via kernel command-line parameter to watchdog_core.
-> 
-> v2 -> v3
-> - Remove the helper function watchdog_stop_on_panic() from watchdog.h.
-> - There are no users for this. 
-> 
-> v3 -> v4
-> - Since the panic notifier is in atomic context, watchdog functions
->   which sleep can't be called. 
-> - Add an options flag WDIOF_STOP_MAYSLEEP to indicate whether stop
->   function sleeps.
-> - Simplify the stop_on_panic kernel command line parsing.
-> - Enable the panic notiffier only if the watchdog stop function doesn't
->   sleep
-> 
-> George Cherian (2):
->   watchdog: Add a new flag WDIOF_STOP_MAYSLEEP
->   drivers: watchdog: Add support for panic notifier callback
-> 
->  drivers/watchdog/advantech_ec_wdt.c |  3 ++-
->  drivers/watchdog/arm_smc_wdt.c      |  3 ++-
->  drivers/watchdog/armada_37xx_wdt.c  |  2 +-
->  drivers/watchdog/asm9260_wdt.c      |  2 +-
->  drivers/watchdog/bcm47xx_wdt.c      |  3 ++-
->  drivers/watchdog/bd9576_wdt.c       |  2 +-
->  drivers/watchdog/bd96801_wdt.c      |  2 +-
->  drivers/watchdog/cgbc_wdt.c         |  2 +-
->  drivers/watchdog/cros_ec_wdt.c      |  5 ++++-
->  drivers/watchdog/da9052_wdt.c       |  3 ++-
->  drivers/watchdog/da9055_wdt.c       |  4 +++-
->  drivers/watchdog/da9062_wdt.c       |  4 +++-
->  drivers/watchdog/da9063_wdt.c       |  4 +++-
->  drivers/watchdog/db8500_wdt.c       |  5 ++++-
->  drivers/watchdog/dw_wdt.c           |  5 +++--
->  drivers/watchdog/f71808e_wdt.c      |  3 ++-
->  drivers/watchdog/gpio_wdt.c         |  2 +-
->  drivers/watchdog/i6300esb.c         |  5 ++++-
->  drivers/watchdog/imx_sc_wdt.c       |  2 +-
->  drivers/watchdog/intel-mid_wdt.c    |  5 ++++-
->  drivers/watchdog/it87_wdt.c         |  5 ++++-
->  drivers/watchdog/jz4740_wdt.c       |  5 ++++-
->  drivers/watchdog/kempld_wdt.c       |  3 ++-
->  drivers/watchdog/lenovo_se10_wdt.c  |  5 ++++-
->  drivers/watchdog/max77620_wdt.c     |  5 ++++-
->  drivers/watchdog/mei_wdt.c          |  3 ++-
->  drivers/watchdog/menf21bmc_wdt.c    |  4 +++-
->  drivers/watchdog/mlx_wdt.c          |  2 +-
->  drivers/watchdog/msc313e_wdt.c      |  5 ++++-
->  drivers/watchdog/npcm_wdt.c         |  3 ++-
->  drivers/watchdog/omap_wdt.c         |  5 ++++-
->  drivers/watchdog/pm8916_wdt.c       |  5 +++--
->  drivers/watchdog/pseries-wdt.c      |  2 +-
->  drivers/watchdog/rave-sp-wdt.c      |  5 ++++-
->  drivers/watchdog/renesas_wdt.c      |  7 ++++--
->  drivers/watchdog/retu_wdt.c         |  5 ++++-
->  drivers/watchdog/rn5t618_wdt.c      |  6 +++--
->  drivers/watchdog/rzg2l_wdt.c        |  5 ++++-
->  drivers/watchdog/rzv2h_wdt.c        |  5 ++++-
->  drivers/watchdog/shwdt.c            |  6 +++--
->  drivers/watchdog/sl28cpld_wdt.c     |  5 ++++-
->  drivers/watchdog/softdog.c          |  5 ++++-
->  drivers/watchdog/sp805_wdt.c        |  5 ++++-
->  drivers/watchdog/starfive-wdt.c     |  3 ++-
->  drivers/watchdog/stpmic1_wdt.c      |  5 ++++-
->  drivers/watchdog/ts4800_wdt.c       |  5 ++++-
->  drivers/watchdog/twl4030_wdt.c      |  5 ++++-
->  drivers/watchdog/uniphier_wdt.c     |  3 ++-
->  drivers/watchdog/w83627hf_wdt.c     |  5 ++++-
->  drivers/watchdog/watchdog_core.c    | 35 +++++++++++++++++++++++++++++
->  drivers/watchdog/wm831x_wdt.c       |  5 ++++-
->  drivers/watchdog/wm8350_wdt.c       |  5 ++++-
->  drivers/watchdog/xen_wdt.c          |  5 ++++-
->  drivers/watchdog/ziirave_wdt.c      |  5 ++++-
->  include/linux/watchdog.h            |  2 ++
->  include/uapi/linux/watchdog.h       |  1 +
->  56 files changed, 198 insertions(+), 58 deletions(-)
+> BTW, I don't see it as a blocker. Driver works in general, new issues
+> can be resolved with additional patches.
 > 
 
-
--- 
-Pengutronix e.K.                           |                             |
-Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
-31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
-Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
