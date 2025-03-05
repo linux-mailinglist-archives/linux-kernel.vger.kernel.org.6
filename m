@@ -1,85 +1,93 @@
-Return-Path: <linux-kernel+bounces-545983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3ABD9A4F4D3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:40:52 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD56A4F4CD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:40:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 039663AA898
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:40:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21579188F93E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C501D1779AE;
-	Wed,  5 Mar 2025 02:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFF3D1624FC;
+	Wed,  5 Mar 2025 02:40:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lhkTQQI9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KhfcHWHx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A9A28E0F;
-	Wed,  5 Mar 2025 02:40:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3068C17588;
+	Wed,  5 Mar 2025 02:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741142423; cv=none; b=DyIM64TZ6tPhvhlpdYLk1HKoQZ2rivXHSoVtDP9ZScBOHgXxOun0RBt/GI3T9dhLm0b/wlCcvCcTK3Vfq5+/CGCwDkPyH/+y6AZ2UP+oVWsGQCHrG6Bm3ejyILoQJuCFekkaBaiPNgCbr+Pl6DluRH15QjP+eGyiZVjay/W1a/I=
+	t=1741142401; cv=none; b=FgGhK4NK6/XDwuW8vY6W8VlWLMkeejhImaD7Km6YB3nQoXhwcFmlvynCRIsAN35uWwHRNHZX1NrkIchzpg8NvioaqfiRw/SH75B3v4+IRGDBCyI0rPc3wYtDMuhYxPUgta7nR1dfq8kF1y5U3oPfXDYMFpDreDkkekXtHzrAb1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741142423; c=relaxed/simple;
-	bh=8+OFgPo6b9+9XBbw+hWdHGjxyyYbUhWhivUtycenzYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=p7WGPLQ8oHc1pK49FQkjbYb9tXhWo6c79gzBxRBvUcIheSMk44/DubsfKI/4JoaxRviPgpwit3F9eus361B9dTvJwp7rRm+W1I7bwfqyHSm7fRiOilFJcfgprSB8Km7qZpFzDllF7vP3/xQ/CB1I3fzT0wJyLwsIOBHTl1pbCZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lhkTQQI9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35D47C4CEE5;
-	Wed,  5 Mar 2025 02:40:22 +0000 (UTC)
+	s=arc-20240116; t=1741142401; c=relaxed/simple;
+	bh=x/otOXX3/PTZDGX1QqbpHudKWYHSUBeNnYt2ewCOZTE=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=RTSy0cf+9Q9Efh9Nvre8WM6p4F2fDVvhd/iOeil6/TrtqGtDgM805oUjHRLSq2jTaexFDQd40RqUwnnsUcp8cT9fE1LxFrtL94v0spu5Zw8IwQS0vujkd9fQzyhyigd8kuKd5SNxsG4KQTVuHJnIr+A48nCazX6FTo2sGX42E+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KhfcHWHx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B479C4CEE5;
+	Wed,  5 Mar 2025 02:40:00 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741142422;
-	bh=8+OFgPo6b9+9XBbw+hWdHGjxyyYbUhWhivUtycenzYw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=lhkTQQI9ODCRNJfQgTWoHfxNqzQUcCKh7yXkkD+KnAe/jpWRRpWGHlz8AZIbmQH6s
-	 L+w/BwR/QDKer4xZliHwtjiJM+vBDRCuFXb8Wn2AwDrvKwncT1h5e3N5djv6MQjEp0
-	 0bzAf5hfptsuqXiLGcGQfWi+srCrpJ4F1EJdAqoaF6eSpU8ayXnGkKd7MuiMuhXYHz
-	 zLlPvVVUKoGiR1mqQjOo9bOmmWVcGV4rT+j3WBVIa92AcY/jR+V5iGywiISyi3iB0t
-	 9Jjh1s+pTWsA7ApHMdmL7isYOa7tyS/U8zK9yNUu5hBYkU1zWcdp4oq93QaIqpqgoC
-	 +JKeDuvMiPtzA==
-Date: Tue, 4 Mar 2025 18:40:20 -0800
-From: Eric Biggers <ebiggers@kernel.org>
-To: Peter Griffin <peter.griffin@linaro.org>
-Cc: alim.akhtar@samsung.com, James.Bottomley@hansenpartnership.com,
-	martin.petersen@oracle.com, krzk@kernel.org,
-	linux-scsi@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	willmcvicker@google.com, tudor.ambarus@linaro.org,
-	andre.draszik@linaro.org, bvanassche@acm.org,
-	kernel-team@android.com
-Subject: Re: [PATCH 4/6] scsi: ufs: exynos: Enable PRDT pre-fetching with
- UFSHCD_CAP_CRYPTO
-Message-ID: <20250305024020.GC20133@sol.localdomain>
-References: <20250226220414.343659-1-peter.griffin@linaro.org>
- <20250226220414.343659-5-peter.griffin@linaro.org>
+	s=k20201202; t=1741142400;
+	bh=x/otOXX3/PTZDGX1QqbpHudKWYHSUBeNnYt2ewCOZTE=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=KhfcHWHx1u09Ekjf2FAaWZoc3MfL2FZWpJb+svW5R/DXh9kCOcT1E5BELzOWt0vIU
+	 OW8vzXglnuEu2SK1mptA5cAICEYvkL4J+5VT79GYe2RzG9MB+3M2Q/lVM/U6A2Xarb
+	 3rtGAQUpCEqpACyQA/msE98QIcJk/RYYvXQvjMJd1TrxNWRXcZveP+uSmRblZUJOLK
+	 6pyU2A8R2GbDwr3k19m1CGAiCucwb+Aa/wScB+IFdoUrUeJbNCCVC4CqLGKLrsv6HI
+	 /RmtLmLKMYLkQXAqKhghpIPUpw2EoUDwSjS1AbxSDCG6jb/lQXjI+WgtoqHaZG4UnO
+	 oYSD46YuVV74A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE03A380CFEB;
+	Wed,  5 Mar 2025 02:40:34 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250226220414.343659-5-peter.griffin@linaro.org>
+Content-Transfer-Encoding: 8bit
+Subject: Re: [PATCH net-next] net: Prevent use after free in
+ netif_napi_set_irq_locked()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <174114243351.377491.13624948013005852967.git-patchwork-notify@kernel.org>
+Date: Wed, 05 Mar 2025 02:40:33 +0000
+References: <5a9c53a4-5487-4b8c-9ffa-d8e5343aaaaf@stanley.mountain>
+In-Reply-To: <5a9c53a4-5487-4b8c-9ffa-d8e5343aaaaf@stanley.mountain>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: ahmed.zaki@intel.com, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, horms@kernel.org, kuniyu@amazon.com,
+ bigeasy@linutronix.de, aleksander.lobakin@intel.com, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
 
-On Wed, Feb 26, 2025 at 10:04:12PM +0000, Peter Griffin wrote:
-> PRDT_PREFETCH_ENABLE[31] bit should be set when desctype field of
-> fmpsecurity0 register is type2 (double file encryption) or type3
-> (file and disk excryption). Setting this bit enables PRDT
-> pre-fetching on both TXPRDT and RXPRDT.
+Hello:
+
+This patch was applied to netdev/net-next.git (main)
+by Jakub Kicinski <kuba@kernel.org>:
+
+On Mon, 3 Mar 2025 15:02:12 +0300 you wrote:
+> The cpu_rmap_put() will call kfree() when the last reference is dropped
+> so it could result in a use after free when we dereference the same
+> pointer the next line.  Move the cpu_rmap_put() after the dereference.
 > 
-> Signed-off-by: Peter Griffin <peter.griffin@linaro.org>
+> Fixes: bd7c00605ee0 ("net: move aRFS rmap management and CPU affinity to core")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> [...]
 
-I assume you mean that desctype 3 provides "support for file and disk
-encryption"?  The driver does use desctype 3, but it only uses the "file
-encryption".  So this confused me a bit.  (BTW, in FMP terminology, "file
-encryption" seems to mean "use the key provided in the I/O request", and "disk
-encryption" seems to mean "use some key the firmware provided somehow".  They
-can be cascaded, and the intended use cases are clearly file and disk encryption
-respectively, but they don't necessarily have to be used that way.)
+Here is the summary with links:
+  - [net-next] net: Prevent use after free in netif_napi_set_irq_locked()
+    https://git.kernel.org/netdev/net-next/c/f252f23ab657
 
-- Eric
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
+
 
