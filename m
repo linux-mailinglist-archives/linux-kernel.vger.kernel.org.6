@@ -1,119 +1,230 @@
-Return-Path: <linux-kernel+bounces-545966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D259FA4F499
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:19:49 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20902A4F49F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:21:03 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0987616F6DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:19:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1CE4F1884621
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1DB156C5E;
-	Wed,  5 Mar 2025 02:19:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8656715B122;
+	Wed,  5 Mar 2025 02:20:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLgcHO0p"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DxLpUloY"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B3F3B2A0;
-	Wed,  5 Mar 2025 02:19:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A90FBA33;
+	Wed,  5 Mar 2025 02:20:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741141182; cv=none; b=qGWGs+NBlIVU7XbHC3WgK3njkREBfePlWjBlyWHEigEIxD5bSqZAnCpwp2CgquT4BW8IN1lYQv6BB8UnqPvnva/JVdt+C8GBtVBtOYIxqz1AQFdv10eWHtSD7qBpWbpiNUm4ZCYZMSRuRYMpnxFHEVNv6dgb7QA5nAibMOepWwM=
+	t=1741141251; cv=none; b=JXAPYrrFQlgvp7kQ96JtuLR0jooYpQXtheQww0kXjlZg6kI42U6O6RlMtYiuh0UsqNgVTpW5uzbfTBAKal8FF1atIoKu3h2TaAUOYv44npot869CyJ+BXgwJIvkEMgO+rqTT2O8b9pQEDwTQIx8cT2devaYbdhoLu1GZomJm7go=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741141182; c=relaxed/simple;
-	bh=ibK40PcEpmzUvqnYdKsqui/jkg9lXZGNK2hBdoX8hb4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PtHzp5FVNoU6kh5WgbIs7tuuYqhCiQw4sn1TQs7/otL0qBSBzUzBZXkHu9OrVDdj3q6VaIcNIS2DWHvkaM88dxPzvCYjsaN7qh9WZ6aGjleo76vhWiUbW8XDpAy8jfJ5YN3E+lBymiFEQdnscQou2AhL47ZhkXy/rO06yJdIImM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLgcHO0p; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43bd45e4d91so335845e9.1;
-        Tue, 04 Mar 2025 18:19:40 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741141179; x=1741745979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SKNB1E4cQrYl4R1CMichtnXi9wxxGJnigveKHD0cBTM=;
-        b=kLgcHO0pYRhBK9Baj8oO7Sp6FJC0/rcFQ+obwzK5DK9iqvIDfiT1kCf2lretDZ+d8G
-         BGb/CwvpqrNkUprGa7aDbdI3Ht2eMkubo2nK7LgSolIBHGnV2xyTXSqwwWt0LK8pp0MC
-         oMCnTYP9/aWRP6vpOwZHRUxXzpqGvLXd3qnb18ydGv6i/2Nc10w8awIMLPl1kTccXhrE
-         d6ExPzookktI6rpTXaEB8/pOMKHb3e78xtuAyQzmRyyDMfh6Ts5AtMHsrt+jAOSkDuKr
-         c1/yX2eLnV7cSuTtVfo26QAtSat4+/ul4ccMUCaexgiowItcBc1fte33g+oK6Df9X3Bb
-         3jDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741141179; x=1741745979;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SKNB1E4cQrYl4R1CMichtnXi9wxxGJnigveKHD0cBTM=;
-        b=FRv1mQaQ6+Qh+O24eZ6zFwlbq5b8ZQ+O0uv7iLyWJn31z+AzoVOBoRlv3wRTXYgOXI
-         u3JrbJODuvI/ADI9fxiVg89UQjUJ3JwiTYyqLtnJcAjWS3gr3948+5NvyiCgv+9kdoXS
-         g/Jb/XelbKYlnaAv1uHZzvSaBD4BogzJhHU3Bz4+/L7OU92UWqUnHJe9U6AmlQeQNa3I
-         3GGgLiW8vNhXg7WtRoPBlqdJMHL5UpMeQ+q+t2SQT4RxM1tQlru0Bz4E3Jpr8jkdPq25
-         z3ZsB1KZ763Kgn4DLRL1uQCGjfcaHhb7TrO8UMqp608u1Dqpikhtwft/U4j77LeR4XGu
-         cMDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWKS1SsvsCKD01ySuiB6Up83oXrWI1p/lBm6JK9PDfVRgZhVXf+TTcGMmnYsbrVyZnfhmMPH/0UmI2WFLEO@vger.kernel.org, AJvYcCXo+jd2VSdI/hFjNQUznIAqzJss/tq5zJ+Q3yFmXcRCv3l0Q3slbwVKdVDRhzjIqugHis9Qj8500BOrRQcs@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzzj3yfi8Rnk7BMLTEDY0CJZ7PnrJQzEjDgHZ+I79O9kpPsFwYZ
-	aRCtYFSyFnl/9t0cBhgZ7pAMbsYkxWEsXStaPNrL4l/rRXM7nje/
-X-Gm-Gg: ASbGncuPKU1HdHHYtZCEa7FealoOzh8tTGYoyQGWPIptE13DHicSL3KT3FmaUwyyNcj
-	rfY5BEhW/64Db3F9Sy2PsgT3uD9bfoIFK+4BaqkL2UmDrZHVCu6WtNqn2Id1ZoRMVKwIY4plPV7
-	1Y7LKw+G3WjfJRY6EVh1vFFBNguVPhWIhzwEiEcVjqyCs8myVqHlCBWuZu71XOlYy7Z2u5xteCC
-	OzzocgsVtiWqwK7/2+/1NzqjM8FrizWtRGtKJZrRaNm1eiX4/orSFq4EmSeGvsXqk8FzKY5nGfP
-	mOl9ShZVWtMce2ujna7Ud60uBJ7mf2W3f9bzPc0vXfeFHcAL01yL6PDsAXR16AY9MeCEzhnHPhB
-	hCCj9e1E=
-X-Google-Smtp-Source: AGHT+IFXKjCab26OVx0Vm+3kBHlh/OY7oJY7zyZ04P1TMtOomnH59wZNzFQgfGRggh/lQtyQSI8TfA==
-X-Received: by 2002:a05:600c:468f:b0:439:4b23:9e8e with SMTP id 5b1f17b1804b1-43bd208782fmr9886755e9.3.1741141178530;
-        Tue, 04 Mar 2025 18:19:38 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7a73sm19805051f8f.50.2025.03.04.18.19.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 18:19:38 -0800 (PST)
-Date: Wed, 5 Mar 2025 02:19:36 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Mateusz Guzik <mjguzik@gmail.com>
-Cc: brauner@kernel.org, viro@zeniv.linux.org.uk, jack@suse.cz,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [RFC PATCH v v2 0/4] avoid the extra atomic on a ref when
- closing a fd
-Message-ID: <20250305021936.71e837ea@pumpkin>
-In-Reply-To: <20250304183506.498724-1-mjguzik@gmail.com>
-References: <20250304183506.498724-1-mjguzik@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741141251; c=relaxed/simple;
+	bh=DEwvgwSbkSKjwlGb8RKq+vjVIuLkEnP0M6uNU6COGgo=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FUXAgoAebzA+Wn/ZLOFSW6Uji6DqzXmo6HESYgVQltbEn7oLNlibb7YGTqa78dSAw/p7JURRafe+f1eN3DPB7Q3TBOsB3R5R2PlH8I4yPz/LnjHJgX0QR/173vL0zjSrer8rV38U+GiDVHTTwrQV9i4clhxzbJ+npK66OZnyAjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DxLpUloY; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524F3wKJ021557;
+	Wed, 5 Mar 2025 02:20:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=UEHyv1
+	UMd8svf8497SlYa3GAV3U/iyxZlBpB+YXJRv4=; b=DxLpUloY82YtPCtmYjoa6X
+	cykY/W6/bYfi5NK/BN1DdhK7c0ommRHOaA7bfPJVhlzPBJSrvkvlSnJoQBPDdS10
+	6SX3JngCdHBTMmAcL/7pmzZhmUhjauMu4B032CDyVv2NNmYwzfVYhhY8eoxrsNKg
+	Tw6U2+RKlqjx9m7c21D3KpqSgJzefeKbeeSPBsN7zPax93dptrLQhWEjKXNhbSAA
+	cZeJvCB2R8caAdYPFhOAXhpWnbS7Ivf+nRUMY2DDUMaoW87km7foh7yi8MpCJNOQ
+	GbjYAkMOLT198SCnLu7sm7IzjTumtHYWoRAfVAcGl4qUOGHxwLQ++5tBdK6IqDJQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455sw7nsk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 02:20:20 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 5252DXvR003512;
+	Wed, 5 Mar 2025 02:20:19 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 455sw7nsk6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 02:20:19 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5251gVHj000362;
+	Wed, 5 Mar 2025 02:20:18 GMT
+Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 454cjt0ruf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 02:20:18 +0000
+Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
+	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5252KIW425035504
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Mar 2025 02:20:18 GMT
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E9D3158055;
+	Wed,  5 Mar 2025 02:20:17 +0000 (GMT)
+Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C77F958054;
+	Wed,  5 Mar 2025 02:20:15 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.117.76])
+	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Mar 2025 02:20:15 +0000 (GMT)
+Message-ID: <b464675506fa8d7ccef737d3bcddd0ec26b9b2c3.camel@linux.ibm.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: Paul Moore <paul@paul-moore.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+        David Howells
+ <dhowells@redhat.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        "open
+ list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
+        David
+ Woodhouse <dwmw2@infradead.org>,
+        "herbert@gondor.apana.org.au"
+ <herbert@gondor.apana.org.au>,
+        "davem@davemloft.net" <davem@davemloft.net>,
+        Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>,
+        "Serge
+ E. Hallyn" <serge@hallyn.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        =?ISO-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
+        "casey@schaufler-ca.com" <casey@schaufler-ca.com>,
+        Stefan Berger
+ <stefanb@linux.ibm.com>,
+        "ebiggers@kernel.org" <ebiggers@kernel.org>,
+        Randy
+ Dunlap <rdunlap@infradead.org>,
+        open list <linux-kernel@vger.kernel.org>,
+        "keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
+        "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+        "linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
+        "linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Date: Tue, 04 Mar 2025 21:20:15 -0500
+In-Reply-To: <CAHC9VhRrko_CdZJg81=s-ShGfusaJqhvrX8+R6STPbMhpnEwCQ@mail.gmail.com>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+	 <c490397315c2704e9ef65c8ad3fefedb239f1997.camel@linux.ibm.com>
+	 <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
+	 <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+	 <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+	 <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com>
+	 <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+	 <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+	 <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+	 <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
+	 <e0e7c0971d42e45c7b4641bd58cb7ea20b36e2e1.camel@linux.ibm.com>
+	 <CAHC9VhSzc6N0oBesT8V21xuwB11T7e6V9r0UmiqHXvCg5erkVA@mail.gmail.com>
+	 <a1d6ce786256bbade459f98e0b4074e449048fee.camel@linux.ibm.com>
+	 <CAHC9VhT27Ge6woKbBExu2nT_cQE79rG+rrgp3nDYjvjcztVQXg@mail.gmail.com>
+	 <049a04b2e07e9e984ada32277cbbde42bdf7bb1b.camel@linux.ibm.com>
+	 <CAHC9VhRrko_CdZJg81=s-ShGfusaJqhvrX8+R6STPbMhpnEwCQ@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Q-zdvcvbBeLNCLsw1PdLVf31hw2jci3l
+X-Proofpoint-GUID: QXPI0DVpMOZnc9RxeOZRYHa2sGYwbbH5
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_01,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ phishscore=0 mlxlogscore=838 mlxscore=0 adultscore=0 bulkscore=0
+ malwarescore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 spamscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503050013
 
-On Tue,  4 Mar 2025 19:35:02 +0100
-Mateusz Guzik <mjguzik@gmail.com> wrote:
+On Tue, 2025-03-04 at 21:09 -0500, Paul Moore wrote:
+> On Tue, Mar 4, 2025 at 8:50=E2=80=AFPM Mimi Zohar <zohar@linux.ibm.com> w=
+rote:
+> > On Tue, 2025-03-04 at 19:19 -0500, Paul Moore wrote:
+> > > On Tue, Mar 4, 2025 at 7:54=E2=80=AFAM Mimi Zohar <zohar@linux.ibm.co=
+m> wrote:
+> > > > On Mon, 2025-03-03 at 17:38 -0500, Paul Moore wrote:
+> > > > > On Fri, Feb 28, 2025 at 12:19=E2=80=AFPM Mimi Zohar <zohar@linux.=
+ibm.com> wrote:
+> > > > > > On Fri, 2025-02-28 at 11:14 -0500, Paul Moore wrote:
+> > > > > > > On Fri, Feb 28, 2025 at 9:09=E2=80=AFAM Mimi Zohar <zohar@lin=
+ux.ibm.com> wrote:
+> > > > > > > > On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
+> > > > >=20
+> > > > > ...
+> > > > >=20
+> > > > > > Ok, let's go through different scenarios to see if it would sca=
+le.
+> > > > > >=20
+> > > > > > Scenario 1: Mostly distro signed userspace applications, minimu=
+m number of
+> > > > > > developer, customer, 3rd party applications.
+> > > > > >=20
+> > > > > > Scenario 2: Multiple developer, customer, 3rd party application=
+s, signed by the
+> > > > > > same party.
+> > > > > >=20
+> > > > > > Scenario 3: extreme case - every application signed by differen=
+t party.
+> > > > > >=20
+> > > > > > With the minimum case, there would probably be a default key or=
+ sets of
+> > > > > > permissible keys.  In the extreme case, the number of keyrings =
+would be
+> > > > > > equivalent to the number of application/software packages.
+> > > > >=20
+> > > > > Perhaps we're not understanding each other, but my understanding =
+of
+> > > > > the above three scenarios is that they are all examples of signed
+> > > > > applications where something (likely something in the kernel like=
+ IMA)
+> > > > > verifies the signature on the application.  While there are going=
+ to
+> > > > > be differing numbers of keys in each of the three scenarios, I be=
+lieve
+> > > > > they would all be on/linked-to the same usage oriented keyring as=
+ they
+> > > > > all share the same usage: application signatures.
+> > > >=20
+> > > > Yes they're all verifying file signatures, but the software package=
+s are from
+> > > > different sources (e.g. distro, chrome), signed by different keys.
+> > >=20
+> > > Yep.
+> > >=20
+> > > > Only a
+> > > > particular key should be used to verify the file signatures for a p=
+articular
+> > > > application.
+> > >=20
+> > > That's definitely one access control policy, but I can also envision =
+a
+> > > scenario where I have just one keyring for application signatures wit=
+h
+> > > multiple keys from multiple vendors.
+> >=20
+> > Having a single keyring with keys from multiple software vendors is the=
+ status
+> > quo.
+>=20
+> A single keyring with keys from multiple vendors does happen today
+> yes, but there is no separation based on how those keys are used, e.g.
+> separate application signature and kernel module signature keyrings.
 
-> The stock kernel transitioning the file to no refs held penalizes the
-> caller with an extra atomic to block any increments.
-> 
-> For cases where the file is highly likely to be going away this is
-> easily avoidable.
+As soon as you add multiple vendors keys on the kernel module signature key=
+ring,
+you'll need finer grained access control.
 
-Have you looked at the problem caused by epoll() ?
-The epoll code has a 'hidden' extra reference to the fd.
-This doesn't usualy matter, but some of the driver callbacks add and
-remove an extra reference - which doesn't work well if fput() has
-just decremented it to zero.
+Mimi
 
-The fput code might need to do a 'decrement not one' so that the
-epoll tidyup can be done while the refcount is still one.
 
-That would save the extra atomic pair that (IIRC) got added into
-the epoll callback code.
 
-Thoughts?
-
-	David
 
