@@ -1,56 +1,63 @@
-Return-Path: <linux-kernel+bounces-546676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2133CA4FD92
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:26:27 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEC1A4FD95
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:26:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C65707A8E6E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:25:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C53A16C7F8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:26:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD369233702;
-	Wed,  5 Mar 2025 11:26:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F42B233D98;
+	Wed,  5 Mar 2025 11:26:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OD7K+lLP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pGoccU1V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C805226D05
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D91DE21421B;
+	Wed,  5 Mar 2025 11:26:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741173979; cv=none; b=EsODphPu2ML/L8mV3oXclJMHn/wGbV+LYWMrj0xPgSmqFuk0rnbBfQhXuZtY2JjdvUxLdka9szEWc2vC7/Pgdyn0RnoMxCw2Mk0K6MZeB6E062hDdVuy+bCKUJ5oTjycTTu7thtiACux+UGHpusgbQjpZDUMnggyGm3EWwiIQBo=
+	t=1741173995; cv=none; b=bWFNv37LHnk2ASSBJvJmXtjLir/bzBSSJAZyMSejQZKq3dz0j7TcDng2snx2h4tMP9nFGgAeYDCQKxtTzLyDyWL1QRo9IPdzL/zSvnrR42veNIiwgxaabmKgCJxA1Z5fr+tHEhJNCYXSsvJCO2wOj6zbSpeF9yQ52zS1z0FgMDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741173979; c=relaxed/simple;
-	bh=kLkLGgZXjECujqtI7XiVDr+CXG2v/hLywPI1/ND5u4Q=;
+	s=arc-20240116; t=1741173995; c=relaxed/simple;
+	bh=N2D7fb7XnQKLDnYzb9yCDaUeFSMSXdmS3deL4PhIENI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fmUms9iG8bOGTrjweo0OdBG5okND69LGWR1BOoMXHYKSbrTt52CB9AfGV0A0l7Gfg0vtbcz1uUzG4PubHj6GWA1laaF+H9eDmpBN18tYJjGm0quSfQhSgbTvqnbFhOc4S2INysHlz/k6FhTLaS76LJGhNsTpLKoQ0AwWo+SIsoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OD7K+lLP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 47AD3C4CEE2;
-	Wed,  5 Mar 2025 11:26:15 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TN5IlecRtH/2EbhCD5HfuQABPXVNUGwQZfyjYdexnQTHg+RkZwwwUwpDCToyU7Ap/t9GvHztv7RXdZ4b/8oe0A+fryrt2vUFhbfde8fwOiizKAVxzj9ENAYVqkXSGdje/L5bgUIgiZZehzP9fpLme5Ok74xlrCUet9eAjLxGcaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pGoccU1V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E288C4CEE2;
+	Wed,  5 Mar 2025 11:26:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741173977;
-	bh=kLkLGgZXjECujqtI7XiVDr+CXG2v/hLywPI1/ND5u4Q=;
+	s=k20201202; t=1741173994;
+	bh=N2D7fb7XnQKLDnYzb9yCDaUeFSMSXdmS3deL4PhIENI=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OD7K+lLP9CBJWJufvqy709yusFGDAGO82O5AP+SfmVAoqDIAdrH59Q3vp86FBVCXQ
-	 I+GVyMVMjnLcvHAqc8evhc2IZq7wTdfnHQQHY/k9+EV/tCiqbIfdbmW+VKY1VvQTnR
-	 BI337I8j41P6WvF1RftUcfOybbIwEMaeJ68Q1d7EEsDC738x/hjovl4BivGB+S2chs
-	 j2AjbGD8FRy87oy8PKu3vIn5fspdQYh4YxbH9UrAL9ZlnRbHo8vv3Ux+lAmk2NL3A0
-	 34+Sr3LsQBEOUj43V0+p5V4yR+UFyds0RSBwFEAv6hWiQ9RKpBraKrAg1BCSMvQflk
-	 hzvG0dkaNdgpA==
-Date: Wed, 5 Mar 2025 12:26:13 +0100
-From: Ingo Molnar <mingo@kernel.org>
-To: Borislav Petkov <bp@alien8.de>
-Cc: Joerg Roedel <joro@8bytes.org>, x86@kernel.org, hpa@zytor.com,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
-	Larry.Dewey@amd.com, Joerg Roedel <jroedel@suse.de>
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <Z8g01YhM_FtdB5n6@gmail.com>
-References: <20250305105234.235553-1-joro@8bytes.org>
- <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
+	b=pGoccU1VQiZFN3hoWaH7wqy6OBANcCJ9AVT5ejpgyfRG45UYx0sLM7aQQuaLKgNFD
+	 g2T6TRUequOiCfz1Jf7M4yPuRBhMOQ1xFCoKk6XvsxSp86Cc7Y1eavfSU9IUiVJrrf
+	 r9/QsvISEwwSyFsPBPOT/hKLIsVFiyEC8kp21o32WI2VPZddh2TNmq31chQGdmxmJj
+	 /J5hal4bhZWYm2s+k7PY15togb4AfnJCDXil0yqfuP5EKU8RaA/FfgGvpSZxZZPr0z
+	 ZdGgAawHnDWxgzrpcQSTUuiOhLd73/djk0/M+Mivfq3/5cZG+TkcSMehTKxM5gMsq6
+	 lXsC9rCoAFSiA==
+Date: Wed, 5 Mar 2025 12:26:28 +0100
+From: Niklas Cassel <cassel@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: Jesper Nilsson <jesper.nilsson@axis.com>,
+	Lars Persson <lars.persson@axis.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@axis.com,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org
+Subject: Re: [PATCH RFC NOT TESTED 0/2] PCI: artpec6: Try to clean up
+ artpec6_pcie_cpu_addr_fixup()
+Message-ID: <Z8g05CdN4BmlfxHR@ryzen>
+References: <20250304-axis-v1-0-ed475ab3a3ed@nxp.com>
+ <Z8gxdWaU1N71pyj-@ryzen>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,41 +66,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
+In-Reply-To: <Z8gxdWaU1N71pyj-@ryzen>
 
-
-* Borislav Petkov <bp@alien8.de> wrote:
-
-> On Wed, Mar 05, 2025 at 11:52:34AM +0100, Joerg Roedel wrote:
-> > From: Joerg Roedel <jroedel@suse.de>
+On Wed, Mar 05, 2025 at 12:18:56PM +0100, Niklas Cassel wrote:
+> Hello Frank, all,
+> 
+> On Tue, Mar 04, 2025 at 12:49:34PM -0500, Frank Li wrote:
+> > This patches basic on
+> > https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
 > > 
-> > Current user-space tooling which needs access to the SEV_STATUS MSR is
-> > using the MSR module. The use of this module poses a security risk in
-> > any trusted execution environment and is generally discouraged.
+> > I have not hardware to test and there are not axis,artpec7-pcie in kernel
+> > tree.
+> 
+> If you do a simple:
+> $ git grep artpec7
+> 
+> You will see that there are just two drivers that support this SoC:
+> drivers/pci/controller/dwc/pcie-artpec6.c
+> drivers/crypto/axis/artpec6_crypto.c
+> and their matching DT bindings:
+> Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
+> Documentation/devicetree/bindings/crypto/artpec6-crypto.txt
+> 
+> I think that at some point in the there was an intent to upstream support
+> for the ARTPEC-7 SoC, but now many years later, that hasn't happened,
+> as there is not even a artpec7 dtsi.
+> 
+> I think the nicest thing to the community is to drop artpec7 support from
+> these two drivers, and deprecate the artpec7 compatibles in the DT bindings,
+> as it is obviously making your life harder when trying to do improvements.
+> 
+> 
 > > 
-> > Instead, provide an file in SYSFS in the already existing
-> > /sys/devices/system/cpu/sev/ directory to provide the value of the
-> > SEV_STATUS MSR to user-space.
+> > Look for driver owner, who help test this and start move forward to remove
+> > cpu_addr_fixup() work.
 > 
-> Right, to continue this discussion on the ML, like we said yesterday, I think
-> that dumping a raw MSR value is not really user-friendly.
+> While I'm the original author of this PCIe driver, I do no longer have
+> access to the hardware and documentation, so I cannot test.
 > 
-> We could stick a
+> For anyone interested in the cleanup Frank is doing, see:
+> https://lore.kernel.org/linux-pci/Z8d96Qbggv117LlO@lizhi-Precision-Tower-5810/T/#m0ff14edaf871293ba16acd85e7942adacb603c6c
 > 
-> Coco:
+> Looking at your cover-letter for the series above,
+> creating a simple-bus with:
+> ranges = <0x0 0xc0000000 0x20000000>
 > 
-> line in /proc/cpuinfo and simply dump SEV_STATUS there and TDX can put the
-> respective TDX-specific feature flags of what is enabled there and then we
-> have a good tested and well-known interface to communicate such things to
-> userspace through.
+> and handling that in PCIe DWC common code does look nicer compared to
+> having a .cpu_addr_fixup() callback in each PCIe DWC glue driver.
 > 
-> I'd say...
+> Hopefully someone with access to the hardware can test your series +
+> this RFC.
 
-It's *far* better to expose this via a targeted sysfs entry than 
-polluting /proc/cpuinfo with it that everyone and their dog is parsing 
-all the time ...
+Oh, and you should probably send a similar RFC for:
+drivers/pci/controller/dwc/pci-dra7xx.c
+drivers/pci/controller/dwc/pcie-intel-gw.c
+drivers/pci/controller/dwc/pcie-visconti.c
 
-Thanks,
+which all make use of the .cpu_addr_fixup() callback.
+(IIRC dra7xx was the first driver that introduced this callback.)
 
-	Ingo
+
+Kind regards,
+Niklas
 
