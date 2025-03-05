@@ -1,178 +1,137 @@
-Return-Path: <linux-kernel+bounces-546346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE66A4F97A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:04:59 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E49DA4F981
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 329971892BFA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:05:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C9671892CF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:05:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E67202F9A;
-	Wed,  5 Mar 2025 09:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1231200100;
+	Wed,  5 Mar 2025 09:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Dic1urce"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wrab8fv8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ceHpbqXJ"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1917202969
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF521FC7EE;
+	Wed,  5 Mar 2025 09:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741165477; cv=none; b=bWrcRDg8b5knUgkEkDVLg4VXJy5X0BqQCWcAF7d3OKI9aMYH/2buqGqcA5YtOoczd4R50GNr+SLLX2XiIhg+b25CpKUXDLbcB+cqJc9j7bKGKoSlUkc0iSuywOYgpPoTn88BOvENGzs7LvMTUYqQY98y9s8xL0wllVFC6JZzIUE=
+	t=1741165545; cv=none; b=MrNjizHIDTkrAiC7CWV64mEswJ2AoJDB0eBrVWcuWOoUzSf4l+SSy3K8xwCAHpwcRmuwfl1peIR/FmBqdI1K+GmFXuZYsSebRGV8DUQSdHM3e3I8xchYpiPWQ0DOH8WWAsP+kIM/qB2vYW4BlxOQMNn+XEJ5GywKoD2XXsyWNlA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741165477; c=relaxed/simple;
-	bh=AE3jTHl3RCqDhjjVKJXOh6ubweX3rBsEb/KueUuwrTY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mm2LL90aFozrwMjjrRIpoofGHvBquaeNT/oI8JBF15CkxK2091G/EET7AF5IdYsjIvMosdw0d5/ygeuqPQ5J9pdg2mrPmpgagvcGVa/FW+quXGHcwWI4EJ9kfPWcCEjcHVTM5qQZ90vDFG3oRPnQUtPZRSPtikQ+uQtu/++8+ak=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Dic1urce; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741165474;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1741165545; c=relaxed/simple;
+	bh=eXrGlKvyBxB5Yi9UQBmkNPI0Y6dMFyz6zVG+qsJ5PdM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PA7AkotdPY0cfw+mxcPj+69vwZYgighg6yOuuiYk/D1eaR1jJ1SGts6WIRxIoM335/IToc0LY5c8/xkHV7PjVfhJKr7V+/vZpX6nTwKXnpqGdE3PfiLuXu+aV3pdiDYhX4kDm82YP2nUS+0ZbK6nOwrncaAkXQXxAPaNT/L2Uzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wrab8fv8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ceHpbqXJ; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Mar 2025 09:05:40 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741165541;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=BEth4fIZlz8Imlyl+6R1z/6iq4I7j5kDgxxdnJQebak=;
-	b=Dic1urceS9GM8RrHyx52NN/KxL7sKlLFSK30ngikwYL2K39IRSfClyt/JfOSB/S6Q9RoNh
-	fSQERM2togte13f/8R9o1hm/jqa5eqtxhSNJjOmVyaImf+I02Do/bH33eYqf8UdnACw0rm
-	0wbqnC0DqJ21hjY4SyYFx459uWQWOtA=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-3--3iDGRRMMbu0xw4CDZJQtg-1; Wed, 05 Mar 2025 04:04:33 -0500
-X-MC-Unique: -3iDGRRMMbu0xw4CDZJQtg-1
-X-Mimecast-MFC-AGG-ID: -3iDGRRMMbu0xw4CDZJQtg_1741165472
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ac21ef37e38so12981866b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:04:33 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741165472; x=1741770272;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BEth4fIZlz8Imlyl+6R1z/6iq4I7j5kDgxxdnJQebak=;
-        b=S2QUeXggvUu5W1a7tgKoTED01PkegFr4+FN0u5JS6JlSZe1Xk8Wy6w1Ta9VDVtX/J0
-         hixiTWlO8JgjjIfeqHRyF243efG5zfkLosT+hec3E/GnAlo+pK/oZqN/fH4F+iv8vx+N
-         y5/lnsg2GpVX6SjXL/L2T1B+2UUUU2mURS8KoaUFedhVvq+2514E9ZP+C2zJJVgOyvSe
-         SZHVwpCiWNvZjysu66xShbLmpX/mU3pOMXUoL6BJtsLRxd9VL7U+zllRoY2VJFkcIm7J
-         9608nqoaXPtQv7gcJ9GKOEITR0R/1LdbyKHJbe7mgs0qHGgjRJXyAzkkjOkEMMpiLzIm
-         fpXw==
-X-Forwarded-Encrypted: i=1; AJvYcCXLXH8RpdEV6cfRw/wHmr2UtD3XlSZBms8a5UMyxbAhgJ7BZPdFuGdJ9Gk5+0Z6cvYZFcyNNW0D51pfkb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwNVHg5PcSeoXd0uL1BwLtVy1GgkcOf9ZDR+zK5bHiSZH2uei2g
-	Ls9QucugW0gBvBEh7OpGSxP6gEk5xWBS07VNFlmo8kgYvvTiijRL2dbFVbIZyaxWvbwyKXvsV20
-	ttxJCqgoTh1iq/brAD3e7weYRKc4V329p0ObarGaYiakzh3D4sA4/sg3Ye4Ud4g==
-X-Gm-Gg: ASbGnctLKWF7RxtPcCBx5ndCjdstS/P0SqD0OEtgpfUCGIU53dhLx8ddwxuMom6Ssib
-	wU2ohlkJR4i4rgFHYCzNiUX7T2E7EDFFNTaJeQ4nYOZ6nC/U1HkeLyLiB5CSR7kREKpxt02SPfB
-	A4f1jhgvVEX+S+UbWOzNl/Xeqs4na+VXlhg5me8nVy/sF9GBXu/5nH8yfxBsVrKhoe2NCXDe8He
-	wd2OiBzjVV1gfvZ2Y8Wi6WaYSm2jVwfOA0rb3Av+wFw+ITx25EmK/gfClCg2k6kFV4Tz4UAzlrC
-	LLhLNdKuxaLcdYeSfOp8cKr/GsV+yPLl3KTLmGPa2nj7uf4LmKfN6z5cz5057knn
-X-Received: by 2002:a17:906:794e:b0:abf:7a26:c47b with SMTP id a640c23a62f3a-ac20e152a8dmr216331766b.39.1741165472170;
-        Wed, 05 Mar 2025 01:04:32 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGscyqZ5x+Y/FizJPiAUuTdN5MEIafB1TLPqWDWprgT1XpnNzoBuyuavmFNtXAojOn0ZOWyxA==
-X-Received: by 2002:a17:906:794e:b0:abf:7a26:c47b with SMTP id a640c23a62f3a-ac20e152a8dmr216326966b.39.1741165471489;
-        Wed, 05 Mar 2025 01:04:31 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf71a0e0b6sm533326666b.7.2025.03.05.01.04.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 01:04:30 -0800 (PST)
-Date: Wed, 5 Mar 2025 10:04:25 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
-	Claudio Carvalho <cclaudio@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org, 
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev, 
-	Dionna Glaze <dionnaglaze@google.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
-Message-ID: <jkr5z4thb55gs2jcmtcfipgg6p7z6ikhr6etd6l3nqpf723hf7@3fns3z5cjqk4>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-4-sgarzare@redhat.com>
- <Z8Jmps6AF_geaHUw@kernel.org>
- <3p5erujbhxw7ozdnfpmresv3dqdh2xszolv6mh4khkagoy3wit@ow5qht4keh4h>
- <0e156883acf95d31b9358831550d6d675e3ce4ff.camel@kernel.org>
- <Z8dg46Mj81Q9Z0WV@kernel.org>
+	bh=RrEB+oxxeOEbmk9wRgE7Nost4IAnxx1d16HIx+43vJc=;
+	b=Wrab8fv8wft+6k62BPNshZl0odzU+pB7IGCdEMenpNZ1th0vXxz/7n+uexOFcULqEQkrdr
+	WgWHdtFipw0rK7ZfvYnV54dYPxpzuziSyoOXCsdREyspEJdXL80Y4K5+yrcaCGpMev1CWn
+	HMvQTp1Kbky5PN51SFZ1lgp8jsj1mcAUaNyHMepHeFi09t298aDB5LT9DGu5SET6N3zGUY
+	J+nV9suNBJXAiibPbnnJo9DN/35MQkCWNxDnqFpGGwcTUlZL1h6ja6WKdNiZmf895TPpPa
+	tVlVWR4nhsLzA16JlI7OK6iOfEIa11KSx6a2bfs7ftwX7yZz8IwaaAYqWx2fsQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741165541;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RrEB+oxxeOEbmk9wRgE7Nost4IAnxx1d16HIx+43vJc=;
+	b=ceHpbqXJiVuMsax4ztia6pPrRFxXtlSEQBCv+sGEfovHOx/vEIA69cy+P4hx3Urm0AKnqg
+	IdC6+q6hXDzePiCQ==
+From: "tip-bot2 for Jarkko Sakkinen" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/sgx: Fix size overflows in sgx_encl_create()
+Cc: Dan Carpenter <dan.carpenter@linaro.org>,
+ Jarkko Sakkinen <jarkko@kernel.org>, Ingo Molnar <mingo@kernel.org>,
+ Dave Hansen <dave.hansen@intel.com>, Peter Zijlstra <peterz@infradead.org>,
+ "H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250305050006.43896-1-jarkko@kernel.org>
+References: <20250305050006.43896-1-jarkko@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <Z8dg46Mj81Q9Z0WV@kernel.org>
+Message-ID: <174116554044.14745.885486771542250636.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 10:21:55PM +0200, Jarkko Sakkinen wrote:
->On Tue, Mar 04, 2025 at 06:56:02PM +0200, Jarkko Sakkinen wrote:
->> On Mon, 2025-03-03 at 17:21 +0100, Stefano Garzarella wrote:
->> > On Sat, Mar 01, 2025 at 03:45:10AM +0200, Jarkko Sakkinen wrote:
->> > > On Fri, Feb 28, 2025 at 06:07:17PM +0100, Stefano Garzarella wrote:
->> > > > +	int (*send_recv)(struct tpm_chip *chip, u8 *buf, size_t
->> > > > buf_len,
->> > > > +			 size_t to_send);
->> > >
->> > > Please describe the meaning and purpose of to_send.
->> >
->> > Sure, I'll add in the commit description.
->>
->> It's always a command, right? So better be more concerete than
->> "to_send", e.g. "cmd_len".
+The following commit has been merged into the x86/urgent branch of tip:
 
-Right!
+Commit-ID:     0d3e0dfd68fb9e6b0ec865be9f3377cc3ff55733
+Gitweb:        https://git.kernel.org/tip/0d3e0dfd68fb9e6b0ec865be9f3377cc3ff55733
+Author:        Jarkko Sakkinen <jarkko@kernel.org>
+AuthorDate:    Wed, 05 Mar 2025 07:00:05 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 05 Mar 2025 09:51:41 +01:00
 
->>
->> I'd do instead:
->>
->> if (!chip->send)
->> 	goto out_recv;
->>
->> And change recv into:
->>
->> int (*recv)(struct tpm_chip *chip, u8 *buf, size_t buf_len,
->> 	    cmd_len);
->
->I think I went here over the top, and *if* we need a new callback
->putting send_recv would be fine. Only thing I'd take from this is to
->rename to_len as cmd_len.
+x86/sgx: Fix size overflows in sgx_encl_create()
 
-Got it.
+The total size calculated for EPC can overflow u64 given the added up page
+for SECS.  Further, the total size calculated for shmem can overflow even
+when the EPC size stays within limits of u64, given that it adds the extra
+space for 128 byte PCMD structures (one for each page).
 
->
->However, I don't think there are strong enough reasons to add complexity
->to the callback interface with the basis of this single driver. You
->should deal with this internally inside the driver instead.
->
->So do something along the lines of, e.g.:
->
->1. Create dummy send() copying the command to internal
->   buffer.
->2. Create ->status() returning zero, and set req_complete_mask and
->   req_complete_val to zero.
->3. Performan transaction in recv().
->
->How you split send_recv() between send() and recv() is up to you. This
->was merely showing that we don't need send_recv() desperately.
+Address this by pre-evaluating the micro-architectural requirement of
+SGX: the address space size must be power of two. This is eventually
+checked up by ECREATE but the pre-check has the additional benefit of
+making sure that there is some space for additional data.
 
-We did something similar in v1 [1], but instead of your point 2, we just 
-set `chip->flags |= TPM_CHIP_FLAG_IRQ;` in the probe() after we 
-allocated the chip.
+Fixes: 888d24911787 ("x86/sgx: Add SGX_IOC_ENCLAVE_CREATE")
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Acked-by: Dave Hansen <dave.hansen@intel.com>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Cc: "H. Peter Anvin" <hpa@zytor.com>
+Link: https://lore.kernel.org/r/20250305050006.43896-1-jarkko@kernel.org
 
-Jason suggested the send_recv() ops [2], which I liked, but if you 
-prefer to avoid that, I can restore what we did in v1 and replace the 
-TPM_CHIP_FLAG_IRQ hack with your point 2 (or use TPM_CHIP_FLAG_IRQ if 
-you think it is fine).
+Closes: https://lore.kernel.org/linux-sgx/c87e01a0-e7dd-4749-a348-0980d3444f04@stanley.mountain/
+---
+ arch/x86/kernel/cpu/sgx/ioctl.c | 7 +++++++
+ 1 file changed, 7 insertions(+)
 
-@Jarkko, @Jason, I don't have a strong preference about it, so your 
-choice :-)
-
-Thanks,
-Stefano
-
-[1] https://lore.kernel.org/linux-integrity/20241210143423.101774-2-sgarzare@redhat.com/
-[2] https://lore.kernel.org/linux-integrity/CAGxU2F51EoqDqi6By6eBa7qT+VT006DJ9+V-PANQ6GQrwVWt_Q@mail.gmail.com/
-
+diff --git a/arch/x86/kernel/cpu/sgx/ioctl.c b/arch/x86/kernel/cpu/sgx/ioctl.c
+index b65ab21..776a201 100644
+--- a/arch/x86/kernel/cpu/sgx/ioctl.c
++++ b/arch/x86/kernel/cpu/sgx/ioctl.c
+@@ -64,6 +64,13 @@ static int sgx_encl_create(struct sgx_encl *encl, struct sgx_secs *secs)
+ 	struct file *backing;
+ 	long ret;
+ 
++	/*
++	 * ECREATE would detect this too, but checking here also ensures
++	 * that the 'encl_size' calculations below can never overflow.
++	 */
++	if (!is_power_of_2(secs->size))
++		return -EINVAL;
++
+ 	va_page = sgx_encl_grow(encl, true);
+ 	if (IS_ERR(va_page))
+ 		return PTR_ERR(va_page);
 
