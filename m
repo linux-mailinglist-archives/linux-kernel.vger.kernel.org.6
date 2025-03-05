@@ -1,182 +1,123 @@
-Return-Path: <linux-kernel+bounces-547846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1650AA50E4F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:03:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16B37A50E50
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:05:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4EBBD16B39C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:03:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48DA73A1840
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:05:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2AD42661B8;
-	Wed,  5 Mar 2025 22:03:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0402661B4;
+	Wed,  5 Mar 2025 22:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E3uZLot+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Yl/sheQb"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA1C26562D;
-	Wed,  5 Mar 2025 22:03:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B8BB2E3373;
+	Wed,  5 Mar 2025 22:05:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741212214; cv=none; b=svPhvqocTJeYRhxIyaTTQqRKugv0s+WT/TThFpqBr5OiF/TqSRNwBzPvkfZMddKwtevgK0eU98rsuV7IWs0fRdAYDGkm10k7jtpe+xkK/FJNtD9optDgo55WItYG6zwcBDirlfJBEqzLr23MbmfOMm4+5MXrjubKjbVCAOEuWHk=
+	t=1741212330; cv=none; b=m/M6dDhiORfs0NL5wRKwh+Aj/Cygb7VvQ/gy0myDfqPmhg6XvubJBYSSwiZDTqYVmDWakkmGLFSVKvHAdotB+WM4JvNVHWp91bsQ/clITVjoZ31cJUxPHwD1MI6LduzKl4n97EEh953IhF4vTRpuAfei5CbjENwustkoPTmzWTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741212214; c=relaxed/simple;
-	bh=AuZX0k4J+y7Fl597Q3qYcQ62dP5uV+mEmKMcR183I8A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ebeDREuV8Cvk7S/tQ2MEYoGP3mFMcEt/i3uocHDeXr89orRF5uFJX9OAIZPaROeSpkegUKokXbAfUW16dlx2plZpj18pD9vBk88erylzPE3xs0lT1lEBlQXWcikCdPlOxIBOCytPpyVXDyHH8/ZOMnqVeHYTfTud1oOqrRRgvUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E3uZLot+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9695C4CEEC;
-	Wed,  5 Mar 2025 22:03:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741212213;
-	bh=AuZX0k4J+y7Fl597Q3qYcQ62dP5uV+mEmKMcR183I8A=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=E3uZLot++NoX1QuGeuB1ywM0iMCW9BY/dUHozSIe6YeMEaBBo+FNkou2slG2sTT16
-	 XtrSbn+LHOsUMWCEzOHVMk/oCWHRZO24VGEOekKZ/IO4Qj3b5fcToUZlUNQuZ63kRf
-	 MyUm91vjFKVTt7r+PVskaiE3V1lw/mj3eKe8/E24pUVs6adZU1yFry+LBff+QEL//E
-	 mtszwk2/AhusFbB8SaPR0qD1gCmH4Ihz6V7odZyhSCI4M3fboFZzGezcE8bdAkFXN2
-	 Bkp8vKGFq+015ojJivNycoBbiys1th1vAPplXsmmpiCYTDy94q1ggXBpHyaq9lNKGD
-	 bYdv1twsOaJnw==
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e4bed34bccso10437405a12.3;
-        Wed, 05 Mar 2025 14:03:33 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCVbcWszQupkoHppjjCeTcOcVw+TgmFT0U2CEBe8gVKzOdMfjOOhLdg8mkmBUEnBoOW1YGb70MjeLZAw@vger.kernel.org, AJvYcCXCJvCJYnVt4yfqOBlF+oxM2qiGCNq5VtZTb/KkRdVa2PBYb4gfYCTPw+7b15hN3whWT5C6c8Hy0MLYgPTv@vger.kernel.org
-X-Gm-Message-State: AOJu0YxnbXJRSbxzGMvacnk8ulPJuq27OGmtT3NaZeDxtUqpizJE29Kr
-	rNUSr07G9MECM5+At+Ot1Pz2MtsfaibEuICsoqL3Tf18TVYk2a56lkCElsMbYofptvv9xravjXH
-	9aR30BHKzZqS/1H4HrjuwIA0HTw==
-X-Google-Smtp-Source: AGHT+IEgVRtlsezpX5b++OEHsLeJ5YfSiDLhg2WTfyj9apRylNyWIq49BTWXdchR23XeZP/6kY22w/WIpF8duYPGXC8=
-X-Received: by 2002:a05:6402:278c:b0:5e4:cbee:234c with SMTP id
- 4fb4d7f45d1cf-5e59f37da3amr3722807a12.10.1741212212066; Wed, 05 Mar 2025
- 14:03:32 -0800 (PST)
+	s=arc-20240116; t=1741212330; c=relaxed/simple;
+	bh=nk43jRPG4HxwxrAkYuKCP1/1fzhaDbT3IZUJjsXXCcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K6oG3RmbszLWUPL0kYE29RmSDJ14KBB6N07xQyN4yO5De1QPBqJREBTECoSNuoK6OuHGkXYWfRMDTIaU+PfibyLSaqRQKSItLG5FoGGXNvfter1m5T3O1UUh4GnJpb6tX5m6+xQcmQaf//mnY2uYcFQHnqSbjt243vKLWGFI2Ik=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Yl/sheQb; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id C4C4F40E01AD;
+	Wed,  5 Mar 2025 22:05:24 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id eUD_dT-Va6G2; Wed,  5 Mar 2025 22:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1741212320; bh=L2EtB9RnMQVBdYp1blmWqfC0w4I+Gww5BLhuAn1P51w=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Yl/sheQb2ZeX2YdAUJvfmKzpa1KyJxSAB+UCLdCBl9zcdg2IABVpiFAuZSYnXqNsc
+	 sIbzg9loTXOwJa5zztnq9QljHkHCgtIciIZu1kVNLX5hfezZCX1Es2S+p12kHeq2rh
+	 2lgNWk9Jwan2Dy4xpfTDjUxvnuGbNgE8HCSzI2XdnD0YhgcEBIOj8wny7b4Cxntu7/
+	 Xvy2Y5PmKn36Ldkn00QBpj2SPGBk7MCV9rZuXdX0Vsc90n34xNcXH171w7mukTtz/D
+	 hUp+R7Bkq4ul6E/+VhsVqasaGt9sBCXDiKnk10B2+obdts3YmGtFwqiEMiqZdq/OcN
+	 Rk1+wEFGvmqtT+YLNishhoW14xWqH0e2eZ/N2MHFatrG5hAcabvFqLbtd3mnWcCENF
+	 /mMcRxpATcebetlz7+lO8pkz+uSdJ3iVnzBoo9CfdzLLCYq7NDPW7h8O5exYegnu7o
+	 C9lqm3VuRgLFFCauWTePnCePjVsVhCWQntQNuyafUwYICV474eLiX627YX6rextdJf
+	 PvOt9Ka8/JljIvSNNt91RiH+CYZIalAuqqCBF9aX5R7ZPE34jglVPmGILPkFn+WLQz
+	 hfWVlTrFGCxh+TgqJVvNsOYpP/sQKDPJfw6nT8GWIaHQoxo+8a2ZbcviC/EJjYYkhf
+	 6+WerqCLRG6ZE/IudCQfUm2M=
+Received: from zn.tnic (pd95303ce.dip0.t-ipconnect.de [217.83.3.206])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id B7F9740E01A5;
+	Wed,  5 Mar 2025 22:05:01 +0000 (UTC)
+Date: Wed, 5 Mar 2025 23:04:55 +0100
+From: Borislav Petkov <bp@alien8.de>
+To: Xin Li <xin@zytor.com>
+Cc: "H. Peter Anvin" <hpa@zytor.com>, "Aithal, Srikanth" <sraithal@amd.com>,
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	x86@kernel.org, will@kernel.org, peterz@infradead.org,
+	yury.norov@gmail.com, akpm@linux-foundation.org, acme@kernel.org,
+	namhyung@kernel.org, brgerst@gmail.com, andrew.cooper3@citrix.com,
+	nik.borisov@suse.com
+Subject: Re: [PATCH v6 3/5] x86/cpufeatures: Generate a feature mask header
+ based on build config
+Message-ID: <20250305220455.GOZ8jKh4bGqplm2UhF@fat_crate.local>
+References: <20250228082338.73859-1-xin@zytor.com>
+ <20250228082338.73859-4-xin@zytor.com>
+ <7c3b4623-45ea-4340-ac47-334071c1d15f@amd.com>
+ <D03DAFD2-5EC9-4D16-BA66-FDA4B51F45DD@zytor.com>
+ <20250303132505.GEZ8WtsXqFpuMOpDjT@fat_crate.local>
+ <8e4e1723-321a-4e8e-bbac-e2e5d8b08bfc@zytor.com>
+ <20250304102910.GAZ8bV9hXqVb5tA9rs@fat_crate.local>
+ <81677e85-ff7f-4986-8e0a-6bf54a63ba49@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305-spmi-v1-0-c98f561fa99f@gmail.com> <20250305-spmi-v1-1-c98f561fa99f@gmail.com>
-In-Reply-To: <20250305-spmi-v1-1-c98f561fa99f@gmail.com>
-From: Rob Herring <robh@kernel.org>
-Date: Wed, 5 Mar 2025 16:03:20 -0600
-X-Gmail-Original-Message-ID: <CAL_JsqJU0AqQcVNTJqrHTAu7wDP4bbLC8vPHP-XvdojuS8nDiQ@mail.gmail.com>
-X-Gm-Features: AQ5f1JrZJb27R_ZaDMQImLR-ewtli_PZor_H4oY5_eu3nzcS9Zd_Cj-X6G4QAXw
-Message-ID: <CAL_JsqJU0AqQcVNTJqrHTAu7wDP4bbLC8vPHP-XvdojuS8nDiQ@mail.gmail.com>
-Subject: Re: [PATCH 1/3] dt-bindings: spmi: Add Apple SPMI controller
-To: fnkl.kernel@gmail.com
-Cc: Sven Peter <sven@svenpeter.dev>, Janne Grunau <j@jannau.net>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Stephen Boyd <sboyd@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <81677e85-ff7f-4986-8e0a-6bf54a63ba49@zytor.com>
 
-On Wed, Mar 5, 2025 at 2:26=E2=80=AFPM Sasha Finkelstein via B4 Relay
-<devnull+fnkl.kernel.gmail.com@kernel.org> wrote:
->
-> From: Sasha Finkelstein <fnkl.kernel@gmail.com>
->
-> Add bindings for the SPMI controller present on most Apple SoCs
->
-> Signed-off-by: Sasha Finkelstein <fnkl.kernel@gmail.com>
-> ---
->  .../devicetree/bindings/spmi/apple,spmi.yaml       | 56 ++++++++++++++++=
-++++++
->  MAINTAINERS                                        |  1 +
->  2 files changed, 57 insertions(+)
->
-> diff --git a/Documentation/devicetree/bindings/spmi/apple,spmi.yaml b/Doc=
-umentation/devicetree/bindings/spmi/apple,spmi.yaml
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..6404af8adec52f4631200c489=
-56f4c1695e88a39
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/spmi/apple,spmi.yaml
-> @@ -0,0 +1,56 @@
-> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/spmi/apple,spmi.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Apple SPMI controller
-> +
-> +maintainers:
-> +  - Sasha Finkelstein <fnkl.kernel@gmail.com>
-> +
-> +description: A SPMI controller present on most Apple SoCs
-> +
-> +allOf:
-> +  - $ref: spmi.yaml#
-> +
-> +properties:
-> +  compatible:
-> +    items:
-> +      - enum:
-> +          - apple,t8103-spmi
-> +          - apple,t6000-spmi
-> +          - apple,t8112-spmi
-> +      - const: apple,spmi
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +patternProperties:
-> +  "pmu@[0-9a-f]$":
+On Tue, Mar 04, 2025 at 11:30:43PM -0800, Xin Li wrote:
+> > Why do you even need featuremasks_hdr as a prereq?
+> 
+> I'm not sure I'm calling it a prereq; 
 
-Typically 'pmic' is the name used here. However, you should just drop
-this because spmi.yaml already defines child node structure.
+That's what this is called:
 
-With that,
+https://www.gnu.org/software/make/manual/html_node/Rule-Introduction.html
 
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+A prerequisite to a target, latter being "archheaders" in this case.
 
-> +    type: object
-> +
-> +    description:
-> +      PMIC properties, which are specific to the used SPMI PMIC device(s=
-).
-> +
-> +unevaluatedProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/spmi/spmi.h>
-> +
-> +    spmi@920a1300 {
-> +        compatible =3D "apple,t6000-spmi", "apple,spmi";
-> +        reg =3D <0x920a1300 0x100>;
-> +        #address-cells =3D <2>;
-> +        #size-cells =3D <0>;
-> +
-> +        pmu@f {
-> +            reg =3D <0xf SPMI_USID>;
-> +            /* PMIC-specific properties */
-> +        };
-> +    };
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8e0736dc2ee0e33544fa373a4978b7dae18c040c..271ff8110df83c2d4fe7fbbff=
-fc0a72259460bc5 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -2236,6 +2236,7 @@ F:        Documentation/devicetree/bindings/pci/app=
-le,pcie.yaml
->  F:     Documentation/devicetree/bindings/pinctrl/apple,pinctrl.yaml
->  F:     Documentation/devicetree/bindings/power/apple*
->  F:     Documentation/devicetree/bindings/pwm/apple,s5l-fpwm.yaml
-> +F:     Documentation/devicetree/bindings/spmi/apple,spmi.yaml
->  F:     Documentation/devicetree/bindings/watchdog/apple,wdt.yaml
->  F:     arch/arm64/boot/dts/apple/
->  F:     drivers/bluetooth/hci_bcm4377.c
->
-> --
-> 2.48.1
->
->
+> Sorry for the build noise.  Ofc they should be zapped.
+> 
+> BTW, I'm asking if this build check could be added to Intel-LKP.
+
+Good idea.
+
+> However it needs to change Makefile in the root directory, which is not
+> maintained in tip, so I will send a separate patch to KERNEL BUILD
+> maintainers and list.  Make sense?
+
+Ditto.
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
