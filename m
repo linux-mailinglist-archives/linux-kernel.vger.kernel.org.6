@@ -1,109 +1,167 @@
-Return-Path: <linux-kernel+bounces-546039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3198A4F571
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:34:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584E3A4F576
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:35:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8BC3AB036
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:34:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8716B16F996
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F1B18CBE8;
-	Wed,  5 Mar 2025 03:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE1615D5C4;
+	Wed,  5 Mar 2025 03:35:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KZn+OFyJ"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="SoSyO24H"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37B0115D5C4;
-	Wed,  5 Mar 2025 03:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 448542E336F;
+	Wed,  5 Mar 2025 03:35:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741145660; cv=none; b=eZ4RwPyVC4Y66hEiYMFfEWz/GwfAbFaa05tL39NvTXTXQNdxwZcOFF2hhld3allH4K0OGq8m2tDtlWmex/ur4lKaH2gnd8GQB/BstzDEY8P9IDnlR2INc4Dhxyw1T4ZG3mASEXLh1bEnV2eETI20y0Vmf+v7q1RVRs/IuIjA2iU=
+	t=1741145747; cv=none; b=hJIx5h7CLweHOFFO/8RFOBJhc9DJxZdCrtdZ7La/jdG/LfgzIVisV2jSRTtYidhC6pP47Gw88JSHBoAIXts7y3xhGHedM8L0KHORTiSBz7Fp5raK+P6gXHrZDW6B0JjY/uONevd2umbP0ockqlEfhKRYsevQRk5C0JQGkChgR3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741145660; c=relaxed/simple;
-	bh=v9xdEXzdevwEwRpz0Pd8yR6OBiqo1aPlHapSV5BX8xw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=hZ92cm4Kn8zIYucgqjcnGPN7TFooiLHSUxn4Og5pZGIna/0tiOM9xtUjzIs3R3HRmr9xsXsvjsWttAJRCu9dRp5UrwyUT3SNEp513CDfrHxsZcr5ILwOW2LCYUASQl12tb8V8mhVW573ALvUXIxh/PyAEiz4LnXikw/n0DZHHPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KZn+OFyJ; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741145659; x=1772681659;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=v9xdEXzdevwEwRpz0Pd8yR6OBiqo1aPlHapSV5BX8xw=;
-  b=KZn+OFyJ+SrxseDYl4u6dow3STtu8KCURSnvf63nRroYntuXkXGya5tN
-   VYQFRUw1HHiPo2uAlfYOzSygOTlFSv1L5NC+VQNVTPRXBwZql4a+ni987
-   tE/yI23+qvxyOxEYCPw7xww8e6xT/PUw2LqVt7NuIBAOyL8ZJ91Wa1wkW
-   eJCpBXwCClEdl2iKlXMmf+2wwKCBc9GEolrBN4W42zw/1YswnYxLGCs7i
-   1BcFXsj5v4vP/5vxkTkPiuMozeWkPxaAKtMwpD7cVq9MSCUyOSRfLNZ+j
-   BoFZr378qNmPm1MtgkswMDu2Ig3PiULRu2kG8V53eed+tIWEfRkGqrbsn
-   A==;
-X-CSE-ConnectionGUID: rJuWUfBdStCQzvPH4eKafg==
-X-CSE-MsgGUID: WJzRqF6BRcupwmbIPFO3pw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45864380"
-X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
-   d="scan'208";a="45864380"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Mar 2025 19:34:19 -0800
-X-CSE-ConnectionGUID: Rwe9SuZ2TIy2dkwY1xTiww==
-X-CSE-MsgGUID: Jlcrxd5jTlqQdCNS3Tu6Ww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,221,1736841600"; 
-   d="scan'208";a="118284027"
-Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
-  by orviesa009.jf.intel.com with ESMTP; 04 Mar 2025 19:34:17 -0800
-From: Even Xu <even.xu@intel.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org
-Cc: srinivas.pandruvada@linux.intel.com,
-	mpearson-lenovo@squebb.ca,
-	linux-input@vger.kernel.org,
+	s=arc-20240116; t=1741145747; c=relaxed/simple;
+	bh=YhpqESCa7X4qwClnGLmcs2LQkm+0kkpH8+h/yk2a08Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EubB7cMDiq6hdieULOpTo/U1+F0yLoES8Y1vigxXzHonDI0QkiiAq9vld0yBZfhZ+N5ivpbkYYaX+qH1p+G6MgkLfezS/a9IDchn2OzbXS9PUbMb40j+gE16D5PlFE3W5sknfy9dHAZdwLmu4MBg6OqWVvZuDBA6+eQ1XMv9pD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=SoSyO24H; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1741145727;
+	bh=HFXDpVRoV7fVpwf1jPiqDZoScxJygDs+OZNWRACrGd4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version;
+	b=SoSyO24HkHnX2kcaIVW0m4YkGfcfiqunnNxAHWg0uR5WGRdQIrP3hI9EaZq0W6wsx
+	 AI5fdyZv8XMC65C72oqtDjYNmdbesLmh4THSvSRiMHUhNImHrqeMQ70ItAZFZQrHus
+	 tBVnF5XNuElzVhmiOH+Iz/nYxGv3rau7pjrxhY6k=
+X-QQ-mid: bizesmtpip2t1741145681t6cfh9f
+X-QQ-Originating-IP: EbXEJ32OK2QiKly+s5QYaHysf8TpMgxAm8Yl+7ozglI=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Wed, 05 Mar 2025 11:34:39 +0800 (CST)
+X-QQ-SSF: 0002000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 8366188937216395239
+From: WangYuli <wangyuli@uniontech.com>
+To: macro@orcam.me.uk,
+	tsbogend@alpha.franken.de
+Cc: linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Even Xu <even.xu@intel.com>
-Subject: [PATCH v2 2/2] HID: Intel-thc-hid: Intel-quickspi: Change device state correctly after S4
-Date: Wed,  5 Mar 2025 11:33:31 +0800
-Message-Id: <20250305033331.2544941-3-even.xu@intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20250305033331.2544941-1-even.xu@intel.com>
-References: <20250305033331.2544941-1-even.xu@intel.com>
+	zhanjun@uniontech.com,
+	niecheng1@uniontech.com,
+	guanwentao@uniontech.com,
+	chenlinxuan@uniontech.com,
+	WangYuli <wangyuli@uniontech.com>
+Subject: [PATCH v2] MIPS: dec: Remove dec_irq_dispatch()
+Date: Wed,  5 Mar 2025 11:34:36 +0800
+Message-ID: <303EFD6BFBDAC7C8+20250305033436.31214-1-wangyuli@uniontech.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: MauZFeUCNtAMjs4gQDc9KQ/B4cEYkJBUcLhRhOhmA0XYp6leWuxfWiH/
+	tA7iclm/teD7yL9MBgjnpEcN+i60K3Ly/HAjA16r7mynotH+9vhS2s3myHFxO3hypTHi7Yn
+	9G7xNHcEdtXuKF+bPEvVgW1EZVQxJwUHi4Zacj2zmwhQhmw16V8LvtmuNlsk0H6fw/C2Rkj
+	Y6hDRwQqBh9RpaTXp7peChBP4aafJYTvlRsWTRwxmrVkMmkHSAnhDv3Dr/6IptkFOGZt2vu
+	iTfiLGHQC0XBhPnRUdpzXjDtf6QpmETM38NKCSdWnbOBcgI4BvtTiFGkUFDRoW0UTM6sO/a
+	0vSYVlHHJvVyayeyzje1csLhe9sCanGkIbWeKOCTCLHNJ+g1ArCmZBCK2iPF3OhtaNFAYqn
+	g5VY7BjxsxQbdEyuN0Qy7mXb5H3fhJuNOZlXJ01G5jhB2APFKzYKMdcLRRY+7k8IGvYtRtg
+	VN34boPsCB7hxIFRPHS2CE+16idwjw/EFHIh3HzOm4wMbaFMqKl838QdYYVHx64UW1JfnVN
+	dyh0uKPRQU+9RIL5QD7KMqMmg7OanpUixtz5whF1zZG83a/ZbSsMgUIMjJCrx1JpY//Dtvx
+	yt9979Rzvf6ilzmDE/c0jiLWVfCcQmxVYuP4oNRMU929fovKgjk4OilJ7cDq2iAQeGBemK2
+	1z9WfoLViux1SR2mbwFiXHwZSyI3B0V758lc/o2aC0FmE6W9GOUleHeypWSAy/PfAjA9OZE
+	bcKLtH8srce+6e+RDFsNV8iNwXAkn+K9Tft0MB5Vy5m4uK0VsQAIOUwOBJD/2eq7rlTR5N6
+	83fBPNeWlIEEjULSl1hnXyCNNf5g55OWDC5fD/psLf+mdMDMxvg/f7NsZpQxP0LUnNQXgv6
+	2Kray41Y7Gx3xi5XTHRy0YBWJO1x139H9eXNJPqv+uI97Wbd9yDLJnvPWRCq7Mm56sz4MJX
+	YkcqyfuXweA0KkPM8HaKla9BkJx27PEBd8GtOoeBMgf0PAXIX9uzf6uatW7WVNg9C9o7wpm
+	uqveQtCXBgIYsADku/
+X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
+X-QQ-RECHKSPAM: 0
 
-During S4 retore flow, quickspi device was reset by driver and state
-was changed to QUICKSPI_RESET. It is needed to be change to
-QUICKSPI_ENABLED state after S4 re-initialization finished, otherwise,
-device will run in wrong state and HID input data will be dropped.
+Commit 187933f23679 ("[MIPS] do_IRQ cleanup") introduced dec_irq_dispatch()
+function. But Subsequent to commit 8f99a1626535 ("MIPS: Tracing: Add
+IRQENTRY_EXIT section for MIPS"), the dec_irq_dispatch() function is
+rendered superfluous. Remove it to eradicate compilation warnings.
 
-Signed-off-by: Even Xu <even.xu@intel.com>
-Fixes: 6912aaf3fd24 ("HID: intel-thc-hid: intel-quickspi: Add PM implementation")
+[ Quoting Maciej W. Rozycki: ]
+
+    It always has been, since its inception, see commit 187933f23679
+  ("[MIPS] do_IRQ cleanup").
+
+    Up to commit 8f99a16265353 ("MIPS: Tracing: Add IRQENTRY_EXIT section
+  for MIPS") `do_IRQ' used to be a macro, that's why.  At the time `do_IRQ'
+  was converted to a macro `dec_irq_dispatch' was created and previously
+  this place used to call `do_IRQ' too.
+
+    This cleanup should have been made along with commit 8f99a16265353, so
+  it's pretty old a technical debt being sorted here.
+
+[ Fix follow error with gcc-14 when -Werror: ]
+
+arch/mips/dec/setup.c:780:25: error: no previous prototype for ‘dec_irq_dispatch’ [-Werror=missing-prototypes]
+  780 | asmlinkage unsigned int dec_irq_dispatch(unsigned int irq)
+      |                         ^~~~~~~~~~~~~~~~
+cc1: all warnings being treated as errors
+make[7]: *** [scripts/Makefile.build:207: arch/mips/dec/setup.o] Error 1
+make[6]: *** [scripts/Makefile.build:465: arch/mips/dec] Error 2
+make[5]: *** [scripts/Makefile.build:465: arch/mips] Error 2
+make[5]: *** Waiting for unfinished jobs....
+make[4]: *** [Makefile:1992: .] Error 2
+make[3]: *** [debian/rules:74: build-arch] Error 2
+dpkg-buildpackage: error: make -f debian/rules binary subprocess returned exit status 2
+make[2]: *** [scripts/Makefile.package:126: bindeb-pkg] Error 2
+make[1]: *** [/mnt/83364c87-f5ee-4ae8-b862-930f1bd74feb/Projects/CommitUpstream/LinuxKernel/Temp/linux/Makefile:1625: bindeb-pkg] Error 2
+make: *** [Makefile:251: __sub-make] Error 2
+
+Link: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=187933f23679c413706030aefad9e85e79164c44
+Link: https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=8f99a162653531ef25a3dd0f92bfb6332cd2b295
+Link: https://lore.kernel.org/all/alpine.DEB.2.21.2502220019210.65342@angie.orcam.me.uk/
+Signed-off-by: WangYuli <wangyuli@uniontech.com>
 ---
- drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changelog:
+ *v1->v2: More detailed commit message.
+---
+ arch/mips/dec/int-handler.S | 2 +-
+ arch/mips/dec/setup.c       | 6 ------
+ 2 files changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-index 59d0b71e6e4f..9170af9be777 100644
---- a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-+++ b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-@@ -909,6 +909,8 @@ static int quickspi_restore(struct device *device)
+diff --git a/arch/mips/dec/int-handler.S b/arch/mips/dec/int-handler.S
+index 011d1d678840..a0b439c90488 100644
+--- a/arch/mips/dec/int-handler.S
++++ b/arch/mips/dec/int-handler.S
+@@ -277,7 +277,7 @@
+ 		 srlv	t3,t1,t2
  
- 	thc_change_ltr_mode(qsdev->thc_hw, THC_LTR_MODE_ACTIVE);
+ handle_it:
+-		j	dec_irq_dispatch
++		j	do_IRQ
+ 		 nop
  
-+	qsdev->state = QUICKSPI_ENABLED;
-+
- 	return 0;
+ #if defined(CONFIG_32BIT) && defined(CONFIG_MIPS_FP_SUPPORT)
+diff --git a/arch/mips/dec/setup.c b/arch/mips/dec/setup.c
+index 6b100c7d0633..affae92f1918 100644
+--- a/arch/mips/dec/setup.c
++++ b/arch/mips/dec/setup.c
+@@ -771,9 +771,3 @@ void __init arch_init_irq(void)
+ 			pr_err("Failed to register halt interrupt\n");
+ 	}
  }
- 
+-
+-asmlinkage unsigned int dec_irq_dispatch(unsigned int irq)
+-{
+-	do_IRQ(irq);
+-	return 0;
+-}
 -- 
-2.40.1
+2.47.2
 
 
