@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-546848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E4F2A4FF78
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:05:15 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8FDA4FF7F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:06:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88F1A1746A7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:03:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47852175E1D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:04:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5408524EF61;
-	Wed,  5 Mar 2025 13:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EED5324A05B;
+	Wed,  5 Mar 2025 13:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mMlSoufq"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="D99raxHm"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D7F7248883;
-	Wed,  5 Mar 2025 13:01:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0394F24A04F;
+	Wed,  5 Mar 2025 13:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741179684; cv=none; b=Dsy4yp/Vh8v6TGYuG+RDayXw37b4yPAoUnddzjIzpw0f21CKHSHgWyOlVjvmZ7Cds+jM9KZY7ltjpPNIUSq8rZODFUp4Hf9X12fVyzcGDpXmzfLR8z69B7KppOqOkQxNZIcX7iJ2LFX5SJCAYhbVFOI3mOj+sGmSVBZYiM0nyi4=
+	t=1741179699; cv=none; b=MihaBhfpQmcDEDeb8it2RyDCP6Rf1WWjzl2ezR1M61aAf7wCaC6O2Ue3NsvXlttm9JdBbqaOSY7IBYNvBU2KkXjhTJ3/fgsaEHtMa77cciwRBGVd4Ke6DQ2KvV4jTCH8sA25l6mWjjv3BuB9ClXwYoMs9jNaQeDQXi4bJXAg9DI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741179684; c=relaxed/simple;
-	bh=Y//C+KyY9JDiVXwSEk627cRg7D/ALr5oNlQGwg/5vVQ=;
+	s=arc-20240116; t=1741179699; c=relaxed/simple;
+	bh=0OdUdx+lahN2+LUJ2jOFDFj83SCLzyn+8zKWv0oeisM=;
 	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=rt1z3Z6fjzUISDruRh5fur/RTx2eR4/4EfWC3HTIHvABSUeGM3N0kkUewmASs83l7Egg5c7/RQKE8qULzfaLtM8J0wtR0Y2bV2gqriAKvng/Vb8o70Hg872us+exz1ODIlnsWbcgJLNWN0d1i0hFlDkRciM0ZuOAOrd4/WLg61k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mMlSoufq; arc=none smtp.client-ip=198.175.65.15
+	 MIME-Version; b=IdtCsIyyoIRDyfj7TuL4PJPFyKRR3j0WB+qz47wd9yUB20lRD9WO/e/kRRo/E5Wc6A7hvlokGZdj+Z83kny1Zx0emwnIvDEkvmdquCL58rtQuWaTP9XxnXAKNNfB2Ngzs6x1Clcpe4cDdlzVevySirwdc5DAGod68SIw+M1DlQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=D99raxHm; arc=none smtp.client-ip=198.175.65.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741179684; x=1772715684;
+  t=1741179699; x=1772715699;
   h=from:to:subject:date:message-id:in-reply-to:references:
    mime-version:content-transfer-encoding;
-  bh=Y//C+KyY9JDiVXwSEk627cRg7D/ALr5oNlQGwg/5vVQ=;
-  b=mMlSoufqJwien0MgFABi0tFra/oc7ajKnIZh0NXzhrZj1fdiDQmtiKeI
-   D5Jp0oZLHwIIIigeNyPRXS61k/tP6MszGd+TksQjDrzAKbuqaJ0iSOs7j
-   PQwtiKgn7MLkxyjn3t0mbYf7JkaeXTBK131OBc4RYdYzn+fzqxN3Z75NF
-   NEKQuffz9RsNXQD4vYKKjbzTZ/IB9iBe+ObunfebgOYI2wDVYr7irSkRA
-   3JSNKiqbYW6cB90TxDl4DI+qYXwF1uOivw2u1SM4H6CQAsHGfob1xco1I
-   tOfTHwJ3+xuPiA32IeqYjIuSn/xhnGuctCpfGU3y4iV8S1j4JvriB52Nh
-   Q==;
-X-CSE-ConnectionGUID: 79dLLd93TzWcFRejszyMOQ==
-X-CSE-MsgGUID: MH52ft6ISn+aqySE2E0Wtg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45794963"
+  bh=0OdUdx+lahN2+LUJ2jOFDFj83SCLzyn+8zKWv0oeisM=;
+  b=D99raxHmbywi1E4bYPEFguGPtILEttRRdit8gBeYY5Cy3CKaAeGqmtd7
+   zBn8aX2fhuhWHQE+MU3X8vq6BWA7yd5FAnMqpwn+vveftKE43oculHApe
+   nbmebCytZGpXoXVjHZQUzqEcWZK6h8pPa9lIKxEeMXYaYCWAdZe1Rf+Ao
+   u695MXGSG8R+yRwbHEzDIk/vglrsdF9lLSU/LW6pmKaQ4v0rphsCJ7zD/
+   KS0Z9B4ci6ZxDAtDhE0obsZXGlcN7eWKTxfYqfsnnppzkEnxkWbOO156W
+   KgEg8/AKNUKC3gxTGgOKyMUX8vWEgXJi4okkpNeoGRFxkIvYxcdgunlxt
+   w==;
+X-CSE-ConnectionGUID: qPBWvkd1QoeQFVTEeHtbsw==
+X-CSE-MsgGUID: aLlC39ltQfmGYL3UedZ57A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45795019"
 X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="45794963"
+   d="scan'208";a="45795019"
 Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 05:01:23 -0800
-X-CSE-ConnectionGUID: 9mXuV+xOTeqFLxVCFnBCTA==
-X-CSE-MsgGUID: yj4NzQiUSh+rtly7s9bQ+w==
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 05:01:38 -0800
+X-CSE-ConnectionGUID: 0uMt2p1XRaOoAu7PqxK9yg==
+X-CSE-MsgGUID: GiQZI9deSpiHVFQFohpiqA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="123277001"
+   d="scan'208";a="123277045"
 Received: from mohdfai2-ilbpg12-1.png.intel.com ([10.88.227.73])
-  by fmviesa005.fm.intel.com with ESMTP; 05 Mar 2025 05:01:16 -0800
+  by fmviesa005.fm.intel.com with ESMTP; 05 Mar 2025 05:01:30 -0800
 From: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
 To: Tony Nguyen <anthony.l.nguyen@intel.com>,
 	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
@@ -93,9 +93,9 @@ To: Tony Nguyen <anthony.l.nguyen@intel.com>,
 	linux-stm32@st-md-mailman.stormreply.com,
 	linux-arm-kernel@lists.infradead.org,
 	bpf@vger.kernel.org
-Subject: [PATCH iwl-next v8 03/11] net: ethtool: mm: reset verification status when link is down
-Date: Wed,  5 Mar 2025 08:00:18 -0500
-Message-Id: <20250305130026.642219-4-faizal.abdul.rahim@linux.intel.com>
+Subject: [PATCH iwl-next v8 05/11] igc: optimize the TX packet buffer utilization
+Date: Wed,  5 Mar 2025 08:00:20 -0500
+Message-Id: <20250305130026.642219-6-faizal.abdul.rahim@linux.intel.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
 References: <20250305130026.642219-1-faizal.abdul.rahim@linux.intel.com>
@@ -107,33 +107,30 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-When the link partner goes down, "ethtool --show-mm" still displays
-"Verification status: SUCCEEDED," reflecting a previous state that is
-no longer valid.
+Packet buffers (RX + TX) total 64KB. Neither RX or TX buffers can be
+larger than 34KB. So divide the buffer equally, 32KB for each.
 
-Reset the verification status to ensure it reflects the current state.
-
+Co-developed-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
 Signed-off-by: Faizal Rahim <faizal.abdul.rahim@linux.intel.com>
 ---
- net/ethtool/mm.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/net/ethernet/intel/igc/igc_defines.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-diff --git a/net/ethtool/mm.c b/net/ethtool/mm.c
-index aa43df2ecac0..ad9b40034003 100644
---- a/net/ethtool/mm.c
-+++ b/net/ethtool/mm.c
-@@ -415,8 +415,9 @@ void ethtool_mmsv_link_state_handle(struct ethtool_mmsv *mmsv, bool up)
- 		/* New link => maybe new partner => new verification process */
- 		ethtool_mmsv_apply(mmsv);
- 	} else {
--		mmsv->status = ETHTOOL_MM_VERIFY_STATUS_INITIAL;
--		mmsv->verify_retries = ETHTOOL_MM_MAX_VERIFY_RETRIES;
-+		/* Reset the reported verification state while the link is down */
-+		if (mmsv->verify_enabled)
-+			mmsv->status = ETHTOOL_MM_VERIFY_STATUS_INITIAL;
+diff --git a/drivers/net/ethernet/intel/igc/igc_defines.h b/drivers/net/ethernet/intel/igc/igc_defines.h
+index 8e449904aa7d..516ef70c98e9 100644
+--- a/drivers/net/ethernet/intel/igc/igc_defines.h
++++ b/drivers/net/ethernet/intel/igc/igc_defines.h
+@@ -400,7 +400,8 @@
+ #define I225_TXPBSIZE_DEFAULT	0x04000014 /* TXPBSIZE default */
+ #define IGC_RXPBS_CFG_TS_EN	0x80000000 /* Timestamp in Rx buffer */
  
- 		/* No link or pMAC not enabled */
- 		ethtool_mmsv_configure_pmac(mmsv, false);
+-#define IGC_TXPBSIZE_TSN	0x04145145 /* 5k bytes buffer for each queue */
++ /* 7KB bytes buffer for each tx queue (total 4 queues) + 4KB for BMC*/
++#define IGC_TXPBSIZE_TSN	0x041c71c7
+ 
+ #define IGC_DTXMXPKTSZ_TSN	0x19 /* 1600 bytes of max TX DMA packet size */
+ #define IGC_DTXMXPKTSZ_DEFAULT	0x98 /* 9728-byte Jumbo frames */
 -- 
 2.34.1
 
