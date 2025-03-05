@@ -1,116 +1,84 @@
-Return-Path: <linux-kernel+bounces-547069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F8CFA5027F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:45:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38011A502A3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:50:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 153E17A43D6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:44:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AACBE3B3C7D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:45:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1866224A067;
-	Wed,  5 Mar 2025 14:45:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0764224E4A7;
+	Wed,  5 Mar 2025 14:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="blp8zjFj"
-Received: from mail-il1-f171.google.com (mail-il1-f171.google.com [209.85.166.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KQ3ePrW2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5223A241132
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:45:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCFD204C35;
+	Wed,  5 Mar 2025 14:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185930; cv=none; b=FY8ErbAFg8jJqKHCZJLA161Djr2ataYESmJ0DJhxaepwA9qDHCwf6DgK730ehnqfzMupavKZHgam4iv9U/4Ge1IuIGJryqi68oE2FBE93YpMH40w85av2q/lvNvIiepJWsTW9uCrC6DEhhOD7hsXl3PLrs21Cu2U2XZFyPsoBYA=
+	t=1741185957; cv=none; b=pZeYJVSS7xu6Vt2dtvu9vOLrDmYrwKqmEMjmRJck7DGnFQzFOK+jjP6tcgPWGjLqZJR5Ur1c6qrRCcJclvX1oozhYRflVK/TRGqk9TPuBuog0d0Xm3VRzVzuSEdqBgxCvUUX0zOyHtpnK79hSFoQuoeew0eglQkIhO6qCtw/57w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185930; c=relaxed/simple;
-	bh=gyWV7YvGW+ooACaK5nWmdJ0YTuhR9JJJPh/VOE/DVDs=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=sgJMhRrlwBDz53qKCubsuYGOPBqYu/F09MfdfXlDGnbTRyPsrX0ru4kwzBmP+krMMG58QC2n1wDwpWji3lSkexZrH75hC8ktPBdnSDezMpQF3wOINpR5U3SvohXWUWyMUylUw5xapq0VOQD9KEtBYigjjC3Ok+Rf9TwdMQvvpsw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=blp8zjFj; arc=none smtp.client-ip=209.85.166.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f171.google.com with SMTP id e9e14a558f8ab-3d04932a36cso68073255ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:45:28 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1741185927; x=1741790727; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z8hx3WPr3Ij6YvWamKNFqC9J9nfj7Y917rEHjG4+YRU=;
-        b=blp8zjFjNcAsZTxQg/2ppO56M/QxGyb7M9sGo1v0i0bFh9ticeaZrogKjcIAbjz6ba
-         giVAmpqHCae17+m33HEbEQfyMu3XDBmLLChj52BxzwwPYRr/csR9cy/GAWVl33cJDKAQ
-         lUnfesGk6Jend1cGrblk3Zvrk0kttZFCo9IJqEVaFv35+zqwxFSG6Dgc0HL5mMKkFCqM
-         WYbukYblVI4QVUIjn1s6yBjfyuH8KgD24SovRg721sXl9uVIMHxdw8fspC1OHY7YDTIr
-         ekQdexUa38jz70DDyzJKwNNcETnfMJhPz1hGkZTQp2VKE8yNx1pcCTrYoKuNQ9uOO9br
-         ROMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741185927; x=1741790727;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z8hx3WPr3Ij6YvWamKNFqC9J9nfj7Y917rEHjG4+YRU=;
-        b=KmpgWLMxXDKay6pse3ZREzBUFRxa9PYz4IpuopWaiq75CpKD1IGKQY82Ic8NGp1szx
-         bLgkfT5bzD1BO6KTIwmRnPGTHCqoKlI+g2/kOshRb4ikZrZc9LV+UFIOKGVzSAmCBM73
-         9ltULFDQYGA/GyJ5GjtCD1uIWQl5OyZUuCDs43JadRVIbNG82vKgKUmPNniksXpFszlK
-         SVocoCPRk0hJR8v/Y8wuZcyfjNG78i6bk4vzJ/Is+oPCaVd3nOtTtF9oEU4Y1jHinZ2D
-         jtPb3+gT/3kuRlVP1vyeyYbqFqCgqSYcSEB9eLG3ZFhmFCGOiQ/gA6M2seo3Yoq8zzFh
-         6qSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXaaF8qLrT/Ytv/ulSlblHDjr+b6IFYOI9v4tYEwsAzHz09BGAkVVSUqYR50mVhlXSWXl2gntFxMMX4l78=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yybl3QYRMPYnpo0twMpL2s6TQs1UKjmpHjHthFmWayVz3t6iw/N
-	V2tFH9eEYYLrezvZ6TzdTlIWnX7DeHP1N0tow+ptzp5bOSngacGJ1VhPCTkH/9YJUuvslAi/RkO
-	q
-X-Gm-Gg: ASbGncufd307XLtCUcJPbeuQ4ObNFZTg+bVelvZvohxUx0oCHdTlXZ+a/1zXoug+sjt
-	T5f0FuRDsCLhFE3HHa8V2oju+M5d8iJMkQrpVBW+1dhWBDFVeI+7TDmwGgAIs3hmyhuKsxeXnnE
-	ihcCBd6wPh3a/KUeOGRZQfZGgPP3amoZitNgGx4Y68ZPi7NV5qWKYJ0z6R/kx01R31odXyIqwIw
-	OlJtr4/rG3EyFz3vWoYQxo3GBSg0mKvrFdhzbzE0zvLnATVIlqbnB5yx9YoIxpuZ2cMmBOYE6ca
-	Lq2CawsBwoFkiFkFNIzFZB0k5Gy/UtroyQ4=
-X-Google-Smtp-Source: AGHT+IEWXGGY/waAyVY7J+OzEL0duzUGaUsJRJKqUSxfQmBXQI5guIsFf1ubFIkjLSp2+56bEpx3lQ==
-X-Received: by 2002:a05:6e02:b27:b0:3d4:2409:ce6 with SMTP id e9e14a558f8ab-3d42b881a52mr44547825ab.5.1741185927104;
-        Wed, 05 Mar 2025 06:45:27 -0800 (PST)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4f061c07b73sm3585381173.23.2025.03.05.06.45.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:45:25 -0800 (PST)
-From: Jens Axboe <axboe@kernel.dk>
-To: Pavel Begunkov <asml.silence@gmail.com>, 
- Caleb Sander Mateos <csander@purestorage.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250304194814.2346705-1-csander@purestorage.com>
-References: <20250304194814.2346705-1-csander@purestorage.com>
-Subject: Re: [PATCH] io_uring: introduce io_cache_free() helper
-Message-Id: <174118592580.8596.405686502009114886.b4-ty@kernel.dk>
-Date: Wed, 05 Mar 2025 07:45:25 -0700
+	s=arc-20240116; t=1741185957; c=relaxed/simple;
+	bh=9XvWDEUMq04erEjB0dy5I+sM2+nP0CgSu78Orb4kT3U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TK6yFtz1uvp/fPxO7OVjj3dcm4nubm/eOJqc/ztjpLJJtyxrGekbPDVGut+1rbhmXm1XD+rsruvV/YY2Evi4IIIAKMrrEKXMVUcRsYXwDwX+whzJyM44jKj4YE1y6HhPTGjYTrui9nMclMqa24db8UBVA8VmCeXvMS/7FfWj4kM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KQ3ePrW2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DBCFC4CED1;
+	Wed,  5 Mar 2025 14:45:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741185956;
+	bh=9XvWDEUMq04erEjB0dy5I+sM2+nP0CgSu78Orb4kT3U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=KQ3ePrW2UjFrYDF+Nbz2H3HSxpA0DCwhiDatnIrcXGue6ZTEjg8Vwvs5VqZicRTeH
+	 9ySwgtQtV7csxOgt1PE4Vk+kSPHcbEwk9oJ+gV5z2je1h2Mem4X1AZuFL1OCeiQ6fh
+	 3qfTCjdDetgm65gqGNTFcAmgHlblBKRaPoGulb523SAIdHE7sDu1jO90F4tyVHkIZo
+	 EzAOmhx75/VVf/CpEjZAGmnixgzgDrMc1u8RRQ/O5n6v0hFDHTkq36ZuLCU3GE1icB
+	 4UwZIg566Y6ErRW1xz3uoW8P/KuVJCSNmRrTOrMrBSgUVAa8hcR0LoJQzpVpZHLzB2
+	 ox9WyH5+ctLXw==
+Date: Wed, 5 Mar 2025 14:45:39 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Cc: <lee@kernel.org>, <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+ <catalin.marinas@arm.com>, <will@kernel.org>, <devicetree@vger.kernel.org>,
+ <wbg@kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+ <olivier.moysan@foss.st.com>
+Subject: Re: [PATCH v3 3/8] iio: trigger: stm32-lptimer: add support for
+ stm32mp25
+Message-ID: <20250305144539.54a75689@jic23-huawei>
+In-Reply-To: <20250305094935.595667-4-fabrice.gasnier@foss.st.com>
+References: <20250305094935.595667-1-fabrice.gasnier@foss.st.com>
+	<20250305094935.595667-4-fabrice.gasnier@foss.st.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-94c79
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, 5 Mar 2025 10:49:30 +0100
+Fabrice Gasnier <fabrice.gasnier@foss.st.com> wrote:
 
-On Tue, 04 Mar 2025 12:48:12 -0700, Caleb Sander Mateos wrote:
-> Add a helper function io_cache_free() that returns an allocation to a
-> io_alloc_cache, falling back on kfree() if the io_alloc_cache is full.
-> This is the inverse of io_cache_alloc(), which takes an allocation from
-> an io_alloc_cache and falls back on kmalloc() if the cache is empty.
-> 
-> Convert 4 callers to use the helper.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] io_uring: introduce io_cache_free() helper
-      commit: 0d83b8a9f180436a84fbdeb575696b0c3ae0ac0c
-
-Best regards,
--- 
-Jens Axboe
-
-
+> From: Olivier Moysan <olivier.moysan@foss.st.com>
+>=20
+> Add support for STM32MP25 SoC. Use newly introduced compatible to handle
+> this new HW variant. Add new trigger definitions that can be used by the
+> stm32 analog-to-digital converter. Use compatible data to identify them.
+>=20
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Hi. Oops I replied to v1 without looking for other versions.
+=46rom a quick glance feedback still applies here.
 
 
