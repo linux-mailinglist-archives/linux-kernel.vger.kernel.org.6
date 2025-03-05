@@ -1,79 +1,80 @@
-Return-Path: <linux-kernel+bounces-547818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E874EA50DF3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:44:45 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1476EA50DF0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:44:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFB29164CDF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:44:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 85ABB7A8041
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:43:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95F6F25D52B;
-	Wed,  5 Mar 2025 21:44:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AE4425CC6B;
+	Wed,  5 Mar 2025 21:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KFB8sQpD"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CbWnQXWA"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1306525CC6B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:44:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9655525D54B
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:44:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741211047; cv=none; b=jWjE7VhF07wzHkWVWZRMYpebiSFxK3Srf1ExY9Y48hOB3vV7FH0k23WMsaH2aAN7pp5z8xoEMxYG3CvcTknHMOBdOjV2/UeE8Dn2nvfCt4aTb82noIUW91g5DyLbY3P0wxNEPzASe0+j1u4XAcABq9aZWhJYJpIj6Po1qNN589k=
+	t=1741211051; cv=none; b=lG0Wb64W3MmIrFlQvQhe4NrdinMdStercjkNSz3fjSYVaGUrUjZV624cNlp1z4IKBkfwSFLEMWCSKhufga0Qyi1+0/DDXqWwTHykZa1oYix0qajlpUXVz5ZLQGv8QHfF2NqjwCVLhMhqjPpgdB8uvIsHaiKQbcdYGz2O1aIEFzc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741211047; c=relaxed/simple;
-	bh=k2uk7mWRxQ/F2xpJkIMGDONFAxPuJRwjbtFcXicz32s=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=GijE7EbkEkS0dlj4Pw2czfqpbrpDsAvUQUl9IEw/UDtvtdinMGiNeoUY7UvWUItQnVfcQVXnMO4EUJTd61rxlYbL2N4a0k9Mfzek6+UbQpQ8q5tfllzeMdsgF3DKLXFs8uSB1vJwFvue26dRe6uLUOqvR5ckOlzHgEHLFzKrLf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KFB8sQpD; arc=none smtp.client-ip=209.85.128.54
+	s=arc-20240116; t=1741211051; c=relaxed/simple;
+	bh=oB/IkA/mk9KK64k1ad5Y2mXXIVYOv562vIrDzNjE5zQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=E1ZdWpWLRwkQ4lYXoYsiNH51lB4oZBPoH8UzZ6HeVTpPbrQw91qL6ouYI5MxMcuV/RVSVOuyJcsHiqiHS49k8nqHHxml1d5IhGf+uDcT1d9Rvu2azZEJxhlrve7j8HpOG0KVpITb6+VbgKy8RXQKhBfClqn+54ahjF720Ob/Zvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CbWnQXWA; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43ba8bbeae2so7263665e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 13:44:05 -0800 (PST)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43bdc0be468so179355e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 13:44:08 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741211044; x=1741815844; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=dx/4ooZvaFT+M8KdTIK1XiMnsARRScY2O0ollC2/tl4=;
-        b=KFB8sQpD5RbIicQUOEzeF0L2nWkuUCSJQhD1+rv4dje2qacy1+gWc952bcaluQObmV
-         x0kQzNqHaqG/dO/nMz8uq1Rf83w5iPo3O2GneCntT68X4USNnbcIKHT1y3w7kbLdPeZ+
-         V0Nz84t536ljD5gSU8RQZRkmPvgjUXsRBRFe9HNoJr1gZd5qhczcKYNC+HZknFNNCKVb
-         4yJN0mv7QTNr7JzUmp2NhubT4Vk7ebbFnbSunuJI5/6lZLAe45PoPhbqmvCQAy0WATFy
-         8brB0yRpxM31545cuZYWcPDH615yY/QmDFQfUL/Nfhn6FYnFKh9OZX886BngOfFGaGNk
-         XiOQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741211044; x=1741815844;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=linaro.org; s=google; t=1741211047; x=1741815847; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=dx/4ooZvaFT+M8KdTIK1XiMnsARRScY2O0ollC2/tl4=;
-        b=BKEm07kxebb6qKIZiXtKlBHIHdqTKPXppzVJeETNpeQwqtH2K1ZzqnAbFRdZ3fh+Gs
-         W+JaoWuX0mv8f/uddKE2NyZV6Zt7WWLEcEcsbn+HbN8SGHqcqliO+GhelVStK0W8Lvuc
-         eKELDHrALw6SHfh0Ap+iXDtyWsiJYGeuOHTAWyHe0LVucgczFDbRyaGbzflfSXb1J6bG
-         oPuWmIN8x5sQTJoTJzmh2pN0M/HjoExz3+zOIWlfWFGEmIa+dY5d6uEZIU2KfJB4W+ZM
-         0ZRbqv0pX2DBhXSwiMf0j/Znqm+MmPxkMQz3NMhQw4kXWI/hWboi7yG7BnJfMCrm5eCw
-         yHjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXg3ul6+3HpkNaRtitUoy3pEdOid1RiegssP8RnFPsyqKBveRacE/iCWDOVm8oE5xFSZhSmf5EvHnqyBX0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLcEQ5yJ6BAfvTvJKC+fzC9Mzit05RuYxgBlGcG/Kr3pIkotUT
-	Ijre3prCn/j8WM6bL9/C9tH9vjdC20Z+Aq8OOrhpqPUJWjkam2mNK8fBUlgyahA=
-X-Gm-Gg: ASbGncuFu1V7MMqSHO/xjZ9M+LsFsmXBCZr6esxiRiMRV1EcJ9sq1rGegl2cUPASQXb
-	rM1v8ocV3H2Qe2kT+Pbnov0XLICFD9AhEEthU4hoJvJYq76nxiJNgj/ZyAnu3GXxM/5/pecyLoU
-	70SB5LKkLjGAUk6O0XmFADqjR4hTyjswG+M37+8eUt3kxZWXuidcN4Y1kWhZMrnyvSFPjDJJ3RM
-	+fH8mUyFAatjte9dDj19/02lDcKQBedsHV5J2lr50V82YNoMFFC2O3tw/LrGZRVbV7SyxW4hqWT
-	NDPmz41ilpy5+ckb9sM32LDwE4oR+3Np9td/YqTY7qnlfJrAMY3IN6lrBrsB
-X-Google-Smtp-Source: AGHT+IHgrPk9LjMSTCWkz+mX87OREQ24VNtJT8cUEPQ3oCYGUFwwbcrSWBYFeLv2csIBnT9oc+2Bmg==
-X-Received: by 2002:a05:600c:3b17:b0:439:94f8:fc7b with SMTP id 5b1f17b1804b1-43bd289418amr16472395e9.0.1741211044238;
-        Wed, 05 Mar 2025 13:44:04 -0800 (PST)
+        bh=dhZ85enSzH8aR2rg2+4xDl0htzylKPW7K0xk6ZPvNY8=;
+        b=CbWnQXWAem0BdaNdTv410BhUaSJmXUJdtvPcSoIdeMHJBA8RhqUiax/RVDAuw8EU2u
+         P9aAiABK8k4zf/bgsgbfjBDeaUKflSsx0uUVWUzh9Rvq4G00hCTRsQoMTbTuIBis4sYc
+         HAHfc+lU5mvQmL5CylflkjUIh9EeqHdHhfm+Mjc0VK6dYje60HncuIBIcxPygStXvfle
+         AZSTMwF4HA3mMqNioIgtCuY9kHToW++scb4RaXRjKR4IKwA4nwewEzET7CSITE5pwHLE
+         R7pbn9/iSbaa4aYfv5Ui1zrlbrvSPOkUQZENr91M58/fzhMWWnUDa9L7s1V54hMhU5m7
+         fuEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741211047; x=1741815847;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dhZ85enSzH8aR2rg2+4xDl0htzylKPW7K0xk6ZPvNY8=;
+        b=WGMTG4OM42f2REhs6FWp1WJfbXrCk7ehK5OyUh+0cmWD6tWWQQyPKt36ha/5HwQEFe
+         F0i6TQ2Ez8a21YYiXEcT/VLHj7bGeILyZWNPiXBeqEYrbio0Zt06adQAyMa5kO5qzX2f
+         aQQAhNP5lJLbo9I2yoLuv4JW8PIUweB24FdZEfHkKPu7r4RYADDYqSWBImxZipvjpOG9
+         ThCt6smUOS0jKfbFL7yia7JwkHc0pni4DIOu/h5QdB5t33Rh1SWJGiwH1lesqWkOYSSl
+         A7Fs/JjxgxoaM7/K3b6KyZXqznvlqye6iQzSN/+xpYAJAFhGLtrHkoVm1t9v9j9kCPER
+         F6Mw==
+X-Forwarded-Encrypted: i=1; AJvYcCULlBegRs2wUt2mjDKIV/uMMiXaRVhpZJfRTZwR1Pit0e1twsCG5etvGVo3iH2WT48EBBCPSBOpRWyulyM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnBmC4w8y029wPuGqamO2/1M2iHl1ZuIeJO/vhDz2cb163VHA1
+	wdmV+pk1w9Har9qpLdIs2jnLbck1DVTdlgI+wzdRjRWrbckejC+Bm6CyYPGGlNg=
+X-Gm-Gg: ASbGncsXgZidu+vUZG8XPn1joD+Fp8gcvEkD2/CF4s5pVBdqLnuFLAIZJMSIVa6fD1Q
+	ds3MC7aYrXuYmP4ZeuR8yNa36OduQernWknw3mGBF13dOBfyinjcm92nmkeX/R/aE3NgM3u5yhZ
+	XPuBeMLperwRJ0SLDXAjhX9j2ADLXSmG3RRWBo8Thd7N8tXNR1HiOUEZLfHIosf5axu0uj8s/C6
+	f4tHXF/Up2CRy3otF/P5Xch05+udcq1ShlHqlt4qQz2EqX1bhN40ie2oIThgc9tnH/7GY9jbbGn
+	R7ZUGDzY9h4tiJ+lpa3LrX3Bv8LrODnU7WjmQKzEbtRH1DEEg1o4E15JGXja
+X-Google-Smtp-Source: AGHT+IEU3ZT22UFxaoWjU59awt7+7+j30wAzpVUzR3m9HwAf44iR6k5R6f89TuK7z56Epr48VHs04g==
+X-Received: by 2002:a05:600c:19c7:b0:439:9a40:aa27 with SMTP id 5b1f17b1804b1-43bd29d2c0dmr16131735e9.5.1741211046721;
+        Wed, 05 Mar 2025 13:44:06 -0800 (PST)
 Received: from [127.0.1.1] ([178.197.206.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796517sm21954802f8f.5.2025.03.05.13.44.01
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4796517sm21954802f8f.5.2025.03.05.13.44.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 13:44:02 -0800 (PST)
+        Wed, 05 Mar 2025 13:44:05 -0800 (PST)
 From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH RFC/RFT 00/12] clk: samsung: Use platform_driver_probe() to
- avoid __refdata
-Date: Wed, 05 Mar 2025 22:43:35 +0100
-Message-Id: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
+Date: Wed, 05 Mar 2025 22:43:36 +0100
+Subject: [PATCH RFC/RFT 01/12] clk: samsung: exynos2200: Use
+ platform_driver_probe() to avoid __refdata
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,10 +83,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAIfFyGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDYwNT3eScbN3ixNzi0rx03aLUNN3MvMwS3ZTEkkRdsySj5BQjEyMTA8s
- 0JaD+AqB0ZgXY7GilIDdn/SC3EKXY2loAauT3JnQAAAA=
-X-Change-ID: 20250305-clk-samsung-ref-init-data-6b2cd242409f
+Message-Id: <20250305-clk-samsung-ref-init-data-v1-1-a4e03a019306@linaro.org>
+References: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
+In-Reply-To: <20250305-clk-samsung-ref-init-data-v1-0-a4e03a019306@linaro.org>
 To: Krzysztof Kozlowski <krzk@kernel.org>, 
  Sylwester Nawrocki <s.nawrocki@samsung.com>, 
  Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, 
@@ -98,27 +98,23 @@ Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
  Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2492;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1754;
  i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=k2uk7mWRxQ/F2xpJkIMGDONFAxPuJRwjbtFcXicz32s=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnyMWW+Fg63DDLT5RU0aIcpUZH7IqA1fov1XeLz
- +W3BI3/CAuJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ8jFlgAKCRDBN2bmhouD
- 15JiD/9nXCHXFQUw697F9/fNVIrPcbtmW5NHXZFybOF4f2dai/whUloBo4qQReli/BYWu3nCW7X
- rpBoYsgwNFjhePzvOR1spoSH5lZFLjpsd5v3kzU2iK1UwSRQJ5kY9yb9zt7nS73XjVVl7QUMrgy
- 6X7hTB+6H6Rbl5AM97J49zzn6VF9i7E+DjDk2MecDc3BVeV+oQICWwdGPR76byLR7ElchPtm4HP
- cRiGElNBl+kov5YgrVHo3zB0cypidtk+kc8Myayjt1ae+iMqkBcpQslPyI459B7zctZF+GTtRBW
- e8D4wiDCB6Oxw/4E/WgMzLzVfTYf2Ha7wPLB2OkbVw15JrxDjrImnQD5ZPLTGI5clZq73IDilhT
- 77E/+r6D7xhgfQuG6m4/oFQwxP/If3XSGO3th+jecGiMfOcb0ykFi2FeoSFU4gPLrXTQmGvKXQP
- gBLPzgEx3O+G1aXks1/uR01nM6YG/fmD/VBHNXmb/aQo0w0YA1L7Psyd5ROWmzJRd22WT3Jdkoz
- IW+fiwz22v9mbsrPAvrX5Kbpd5knN14KOGJZdsgYZXh8SeVGbqpEhaVRl6gfdRwoRCL9o5Kx9ni
- KUc+YqMmu4PFtWAHdaN0FIjNdmzgRf23DUFuAVd09qgz79Fyk5+Rmo9y7dsHehd7qmhCTsit58p
- kCPSQM+VzxaGNFg==
+ bh=oB/IkA/mk9KK64k1ad5Y2mXXIVYOv562vIrDzNjE5zQ=;
+ b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnyMWXDLQrb7Ypdhqnxaj43wd4/VBbmvk+jRJA/
+ ++Pc53UcvaJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZ8jFlwAKCRDBN2bmhouD
+ 14aCD/4k8JYBbnUBAF7FXSWvGemd8WkT6Ut97YBTep96oJfYE3VXHAg+MrwsEe8vOeOGp4huRj6
+ /4oiNRNPjGM5xerGSljVc/Jzd7yYOglKaqblHfFi79APLb7A8soHNlAorlBLswm3BAvfKgiybhD
+ 1F99hwzkv3m6l69at7qbR/IMv2po47d+CWknmsmOT7/EAlU0m3oY4vG99OqFwtfwvvEMYO2/Jld
+ gb00Dg8JDRrSL8VitynwAqP4iWf7OE9/K/mz1S47O/dbMYm6yyXtkQ/PQiBq2ri+0p34VIGfulM
+ YaK/bCLTXhirKzc9BE7CHm/FlxZDUUQBRlN82eTs7K7OwrXfsBuWiaHZ/5QtG8bUVWuPhL0C0fG
+ SdwF86ojfUiQj4kbo6TpGfzcyoA9Tuv5i4TcBPDGtm4jojIzMdj97WT9Z7UwCS0FuRD1rmmyM16
+ BwIPA3oMEMG5/HuRptqVdCvIH9b+LPqUfBqcQxpY4RapXVQZbYAdSRGQfswnTA68vudJ/FTeNt6
+ whf1m7nfwBY25Rej3RSli7TV/29k4rnxwMkTxweqVtaXfVZt5cYXl77qbu8b3Ealo8/sovSUUHA
+ WDpGxXVtuBXygCEy6jhUKeEW6fTQTJtcy9tzY4vFND8eShBHorsGbmcCM04LLp/nlUiL5YtcMgw
+ F3bzjzeRvs07DVQ==
 X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
  fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
-
-RFT/RFC because testing needed. I tried to do the same on exynos5-subcmu
-and it caused weird oopses which even KASAN did not narrow. Probably
-because of multiple exynos5-subcmu devices?
 
 Switch registering platform driver to platform_driver_probe(), so the
 'struct platform_driver' can be properly discarded after init and there
@@ -128,43 +124,46 @@ The change requires using subsys_initcall instead of core_initcall,
 because no device drivers would bound in the latter, as required by
 platform_driver_probe().
 
-Best regards,
-Krzysztof
+Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
 ---
-Krzysztof Kozlowski (12):
-      clk: samsung: exynos2200: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynos4412-isp: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynos5433: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynos7870: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynos7885: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynos850: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynos8895: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynos990: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynosautov9: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: exynosautov920: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: fsd: Use platform_driver_probe() to avoid __refdata
-      clk: samsung: gs101: Use platform_driver_probe() to avoid __refdata
 
- drivers/clk/samsung/clk-exynos2200.c     | 7 +++----
- drivers/clk/samsung/clk-exynos4412-isp.c | 7 +++----
- drivers/clk/samsung/clk-exynos5433.c     | 7 +++----
- drivers/clk/samsung/clk-exynos7870.c     | 7 +++----
- drivers/clk/samsung/clk-exynos7885.c     | 7 +++----
- drivers/clk/samsung/clk-exynos850.c      | 7 +++----
- drivers/clk/samsung/clk-exynos8895.c     | 7 +++----
- drivers/clk/samsung/clk-exynos990.c      | 7 +++----
- drivers/clk/samsung/clk-exynosautov9.c   | 5 ++---
- drivers/clk/samsung/clk-exynosautov920.c | 7 +++----
- drivers/clk/samsung/clk-fsd.c            | 7 +++----
- drivers/clk/samsung/clk-gs101.c          | 7 +++----
- 12 files changed, 35 insertions(+), 47 deletions(-)
+Testing needed.
+
+My initial tests on Exynos5422 lead to weird, unrelated oopses, probably
+because of multiple exynos5-subcmu devices. Not sure if applicable here,
+but change of initcal might have actual impact.
 ---
-base-commit: 7ec162622e66a4ff886f8f28712ea1b13069e1aa
-change-id: 20250305-clk-samsung-ref-init-data-6b2cd242409f
+ drivers/clk/samsung/clk-exynos2200.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
 
-Best regards,
+diff --git a/drivers/clk/samsung/clk-exynos2200.c b/drivers/clk/samsung/clk-exynos2200.c
+index 151bdb35a46c42d0b50f48d47974065a892bbb5f..f1251d4f01781fd503f24189cc53b23e627ab5e1 100644
+--- a/drivers/clk/samsung/clk-exynos2200.c
++++ b/drivers/clk/samsung/clk-exynos2200.c
+@@ -3912,17 +3912,16 @@ static const struct of_device_id exynos2200_cmu_of_match[] = {
+ 	}, { }
+ };
+ 
+-static struct platform_driver exynos2200_cmu_driver __refdata = {
++static struct platform_driver exynos2200_cmu_driver __initdata = {
+ 	.driver = {
+ 		.name = "exynos2200-cmu",
+ 		.of_match_table = exynos2200_cmu_of_match,
+ 		.suppress_bind_attrs = true,
+ 	},
+-	.probe = exynos2200_cmu_probe,
+ };
+ 
+ static int __init exynos2200_cmu_init(void)
+ {
+-	return platform_driver_register(&exynos2200_cmu_driver);
++	return platform_driver_probe(&exynos2200_cmu_driver, exynos2200_cmu_probe);
+ }
+-core_initcall(exynos2200_cmu_init);
++subsys_initcall(exynos2200_cmu_init);
+
 -- 
-Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+2.43.0
 
 
