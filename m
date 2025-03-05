@@ -1,93 +1,98 @@
-Return-Path: <linux-kernel+bounces-547429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD481A507BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:00:10 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1466A507F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:02:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44E1C1891667
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A868E3A6DBD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:02:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065C82517AF;
-	Wed,  5 Mar 2025 18:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30DE5250BFC;
+	Wed,  5 Mar 2025 18:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BIGufrcs"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Xxgr9JR3"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D1D6250C1C;
-	Wed,  5 Mar 2025 18:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E53314B075;
+	Wed,  5 Mar 2025 18:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741197601; cv=none; b=uG6nDswIF+/gmTmTClWCLP6Aeq01eiiU+8a/89Ibygk6hrHF35yB2jrFsqPILbUhLB5M3j2t+kDUJw2aF+ZbzppRFL1lfnLPjKb4WfChq7vlZ6buOjPvj9UAf0f1aSn6GlkGm/D32R5+zEfSjTwF/R7RiPr2H8UdtQ73zzRpV8g=
+	t=1741197725; cv=none; b=ebHmx80TVjuaXEyr+5oFww3/TdKBdGES/rGlJJKTuVSMOAcBRrMveKlXgli7ejBaYXrwUkn2ucanpHkJKNWVequrZ48C9qAb3PYH1cPDfuC00cxOhBGv9y/TZvxYF4ShJGNXCtCGzt1bGdRsEmQXyXx1769Ge6qtIobzwLCm+Hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741197601; c=relaxed/simple;
-	bh=RZp4U+jYLynv07h7676ER25Ev/Yq9pXQYjKGxCn7CVs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=cDAArSdvlYEc+iQ3Q7RLoOXf36DZfZ2YayXrcWKQkaxtAacR1CGLKC0MVV14P+SuVyYn37SUmElfaM5Mv3Zpd8js18CO67AEhZ92YtFKnCV3jkAmiFGMM8DbG14gy13/iMBtu/DmPzxLGpnSVdz9mHOw3QmDU+TF7ALsrHssyPs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BIGufrcs; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A03BC4CED1;
-	Wed,  5 Mar 2025 18:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741197601;
-	bh=RZp4U+jYLynv07h7676ER25Ev/Yq9pXQYjKGxCn7CVs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=BIGufrcs//TMH4PTu3EkXj3cMUNNZsutpQiIVzX2HwCAHnm5gfV2FyIw4S5TpMnB3
-	 88QEWwb1L/m1RZHXKSRYEZxkVfi8ZIaQnXg6DEQFKYbuZJYaml9HdWRFAbzL5NKNk/
-	 eWxWLc05E9TMNcrqK6P6QjIhdb6cXMuj65M6zv45wfnpEYzEQieplL+2WBVgjmijyy
-	 DRtcUsM1Ccm9bpLOu4wLJf+lXCPB3nxmbVTnF1twI2joVABXft2We0xgOWtsB+jmfh
-	 n3lUrKHcEg1dk0/eXqVkO7BgNEXnBXX8/LqJ/PGh3DHS0PNsAE6huXZb2OMWB0keLH
-	 +h8TX8rnhM0QA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 70EE7380CEDD;
-	Wed,  5 Mar 2025 18:00:35 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1741197725; c=relaxed/simple;
+	bh=H8X/rbddfoXk+B+Ss5wXZbqRMEFAeXjuauUmhgb2EUw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f/ybL6wSkLDQCPZir1kmffcxXS1tK28fDa2fRkc1GmSebR1O7/y7bkFK6y0RkPAWL3pjoV+yzjdayxU0mvIeW9trRHRqqW7g2Tt0rOUpg9APzYL+TyOuilyN9HqMsWqCaf0kw6LkwLTciCSOM6v+PCGFzJQtRsVMiql0Wen7E74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Xxgr9JR3; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=talyWretgQjIWUP+Ebdm16KqFAKvyAHhwVwnzdoNc4Q=; b=Xxgr9JR3sAQSIEBgp+OuOx5sGW
+	JJvnu6sq7cByIBbMhkRj3SVUnGmxaXy896PzUEWRJYyeVDYx6N/ht8Lmnd4US0unk7hwUxYDEiDlE
+	UDA6vVOFVbIurF7PGOwMyLAE8sSADRYHhGSmaoS1S2E+0KkE4S4hS9Xg6ND7ykTXEHdE=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tpt3y-002YQA-Mp; Wed, 05 Mar 2025 19:01:46 +0100
+Date: Wed, 5 Mar 2025 19:01:46 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Joseph Huang <joseph.huang.2024@gmail.com>
+Cc: Joseph Huang <Joseph.Huang@garmin.com>, netdev@vger.kernel.org,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: mv88e6xxx: Verify after ATU Load ops
+Message-ID: <d3175821-1d1a-4ca3-b9ba-5e33eac08da2@lunn.ch>
+References: <20250304235352.3259613-1-Joseph.Huang@garmin.com>
+ <2ea7cde2-2aa1-4ef4-a3ea-9991c1928d68@lunn.ch>
+ <669d9f33-e861-482a-8fd1-849fc3d22cd2@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH] bpf, docs: Fix broken link to renamed bpf_iter_task_vmas.c
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <174119763411.970160.4101069434619256136.git-patchwork-notify@kernel.org>
-Date: Wed, 05 Mar 2025 18:00:34 +0000
-References: <20250304204520.201115-1-tjmercier@google.com>
-In-Reply-To: <20250304204520.201115-1-tjmercier@google.com>
-To: T.J. Mercier <tjmercier@google.com>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
- sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, corbet@lwn.net,
- davemarchevsky@fb.com, bpf@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <669d9f33-e861-482a-8fd1-849fc3d22cd2@gmail.com>
 
-Hello:
-
-This patch was applied to bpf/bpf-next.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Tue,  4 Mar 2025 20:45:19 +0000 you wrote:
-> This file was renamed from bpf_iter_task_vma.c.
+On Wed, Mar 05, 2025 at 12:44:54PM -0500, Joseph Huang wrote:
+> On 3/5/2025 10:14 AM, Andrew Lunn wrote:
+> > On Tue, Mar 04, 2025 at 06:53:51PM -0500, Joseph Huang wrote:
+> > > ATU Load operations could fail silently if there's not enough space
+> > > on the device to hold the new entry.
+> > > 
+> > > Do a Read-After-Write verification after each fdb/mdb add operation
+> > > to make sure that the operation was really successful, and return
+> > > -ENOSPC otherwise.
+> > 
+> > Please could you add a description of what the user sees when the ATU
+> > is full. What makes this a bug which needs fixing? I would of thought
+> > at least for unicast addresses, the switch has no entry for the
+> > destination, so sends the packet to the CPU. The CPU will then
+> > software bridge it out the correct port. Reporting ENOSPC will not
+> > change that.
 > 
-> Fixes: 45b38941c81f ("selftests/bpf: Rename bpf_iter_task_vma.c to bpf_iter_task_vmas.c")
-> Signed-off-by: T.J. Mercier <tjmercier@google.com>
-> ---
->  Documentation/bpf/bpf_iterators.rst | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> Hi Andrew,
+> 
+> What the user will see when the ATU table is full depends on the unknown
+> flood setting. If a user has unknown multicast flood disabled, what the user
+> will see is that multicast packets are dropped when the ATU table is full.
+> In other words, IGMP snooping is broken when the ATU Load operation fails
+> silently.
 
-Here is the summary with links:
-  - bpf, docs: Fix broken link to renamed bpf_iter_task_vmas.c
-    https://git.kernel.org/bpf/bpf-next/c/7781fd0ddeb4
+Please add this to the commit message. This describes the real problem
+being fixed, which is what somebody reading the commit message wants
+to know.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+   Andrew
 
