@@ -1,383 +1,308 @@
-Return-Path: <linux-kernel+bounces-546796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC18FA4FED4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:40:10 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B6E1A4FED8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:40:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97C3416EA75
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:39:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F2AF189555A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:40:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7A324886F;
-	Wed,  5 Mar 2025 12:39:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 478FD245034;
+	Wed,  5 Mar 2025 12:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="m3JSQ+Lp"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="BxAqMfHg"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2069.outbound.protection.outlook.com [40.107.21.69])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6622459E0;
-	Wed,  5 Mar 2025 12:39:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178373; cv=none; b=tU71jywOOC0m88QCwe84sY/pRlNKQUeC5zYEweW9sGTGYd1xq+7NLxJM1ZI9Xb1kEnTrKlFsVNqrnJBT8lOVc6SR41eFfhqlS1UP+obYGcIe8neXZHRbaR/kZllHZiuB6yznGj/14bBSlAGCQP8C0Nze8jLyQZSOAzpuvkSUz78=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178373; c=relaxed/simple;
-	bh=6Hpthnt97xW3thf8b4moKs7+DxziCoPXbfbmllxFrTY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VSB0E7U2u2RVPdt61YV1skmu2EYO1YFxaOJaD1hpGxLbiHINjw5IQunT+su3Y9HofoZkJfPejN94x+lbGSVU0+rNKZwtDRUKmK010+F53GTapw5ZX12L2ucjLE8mfQHRM8RiE74vDhRinNr905MTtjWTHSk5Pdr2vyq4R96GUyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=m3JSQ+Lp; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so25282015e9.2;
-        Wed, 05 Mar 2025 04:39:30 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741178369; x=1741783169; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H8vlw32DvAtNWgxBRWlDbcwc6lmjNIf3Cq/JQY18DRc=;
-        b=m3JSQ+Lp9Lf7cVsXBW8KneqQybe7RmUl1On8i/nh/VGN94Vs2ejEpIwK4VdtMexA3e
-         FMKkjI9v1DWIOOX2l5U33eEzqqTv1ZQVtOHyWco7CvX3FGFhGXAGkhJkPsDOPXfphhtw
-         XXNSgCOX+EJ8+PlaGwbasgtE4U04tdDpUv4/dx48jPbRHkSC3tY8e6Gg/Uh2OJG9Py5e
-         uBSeRsknlh1IsA0tDcim2dhZghAbLRcmLfk58nMD3IxTRQkbngVWt7ChdiD57x8Kfuo6
-         XqNG9tLl/ZNkd3m3hc2B63hR36RBDqnuuOoewK6Om9oAjIwKlzg8t2iB2+bSdynai1+P
-         uFow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741178369; x=1741783169;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H8vlw32DvAtNWgxBRWlDbcwc6lmjNIf3Cq/JQY18DRc=;
-        b=JVlRN1s4LbmCF0kRbBgduoG0jh78tJypDVMZBUL86nBt+2Z/b/ecxEC0AwtaDbEynC
-         iar3YIARHK4NZOnwQ3P0N3GuU2EXHflyzt6J/qpe1BfIwm9iUFWD6BpPQFJEPRH/jUYe
-         GdZ7RT2wnHqvrVh50rfO5OqZCN806CscnU4NoH1wVg98DG12PKtnko6sWyibV7L958Sy
-         rXb6ZXZOFpbvfHZZXW8JyYI/BjcaqMEp/rUX3tlnXMtjMX0Pm2JEZdGHNc/GCzpBB9Uo
-         2FkDbADmAZfCUYnMvauZ2acm6riJuitjW7Gbnljf9pH568q+aHvrBepINAKj+1XCAyhp
-         IdhQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW9KNc/QWtNw1fQL0SY5u6DgFSIRsdOuHTq14Bh59u2r8VMvhp2viLTHE2CEtfz0oc5F0QY6WlZZ78UnFk=@vger.kernel.org, AJvYcCWjxApT0tZgHtjlEjp1n7LcGXkbkU2AYnWQj7ReAhHnR89C7LM2AIr9oG9qhbiFhXggLzhahD+gVjdQV8IjQcpBSuI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyzxXHcL/cs5k/lvemu9CK97oRvaBsNqPmL2NZGNGwYqbGh14zu
-	RBW0wvtsGWDoaPBgKCQfr4HtEjsHi0V2fsv5mrk3vHENKuxMF4ds
-X-Gm-Gg: ASbGnctQJFdiADZXA2LkY8BTvKCDY3OZqwhlhJhXZaT0uZcJByeKmjmuiiKiS5l4zb9
-	HcfRpsaC906OnuyciI8Pe6Lzo9TNbGxKJa+JaRz77ThzSTOycnnkHPmAYPZLDpljRQld1aJJ+Im
-	/IWahOHqJEK/s29wPN7SGXt84Z69N0VgY8JBbqWHGYoJC2gD5CVe4tl/RCrRHuNF5Zjj1UHQwH7
-	EZ7JhYnFi5QVZ0hoL5QY8jKFMKrb4PzPpneT7aFbhutYh2szWqLDn8DJPa2cUlbFMgnc05CS06f
-	qkJqId2KXqwP3BzfktBm9oDHGaXIZ2NX6hmLEbZOA5gtNn3Quhn+7U8mTTzukWJlKZWhfOw=
-X-Google-Smtp-Source: AGHT+IHZR7ob/jujrmswE0cAQJxf7IbgGSFq65obOJ+avq/wEO0vXFB9U/oe4/s6WYfLXyLxKo4eLQ==
-X-Received: by 2002:a05:600c:1d0b:b0:43b:c0fa:f9eb with SMTP id 5b1f17b1804b1-43bd29a12e7mr21232735e9.17.1741178368906;
-        Wed, 05 Mar 2025 04:39:28 -0800 (PST)
-Received: from prasmi.Home ([2a06:5906:61b:2d00:8fc2:ef5:605a:34d])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426d32dsm16851495e9.7.2025.03.05.04.39.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 04:39:28 -0800 (PST)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2B91245014;
+	Wed,  5 Mar 2025 12:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741178408; cv=fail; b=Gzu0OkOiSHIj/8GNl8SgKHaDwgYoQ1FwtIszS5flx4m1Hn4648CluVY2LvWHZZteUYlqMfeIotkBeuYHNs7+7q0gRrg3R6mmKLhS2me3YSr4Hpi16CVHQIDtRJsVV2gri3yBmJGo5skRKIkIhupKo3tw1fKob/wMMlEK1zKRzW4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741178408; c=relaxed/simple;
+	bh=Il1Oyw0GUJ673pa7xy/5OMx4t17MsQhzKQ9qKUjckC0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=bnvnO35fx9zqVqMUEO9i3ra16SrH0IB9w6sOwPjlf9G5tI2WkJwKAdeKUbldrf99baE4+PBkfmjH02ZyM5YLBVrQJPd4Q1oHIENBiYURx3m17P4nYirTWLaqKRkF0pxxPdPmmMYYdEcW7UnLupX6ryio1eXpLhoO/za7sMHhcNQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=BxAqMfHg; arc=fail smtp.client-ip=40.107.21.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=vUWtMbLqQlRqgCIxMo17Z0eA6t++QaFp++sFI4HpoFJ8Dr/XyXXiqRR6z280aobcc59NmeH6WX4MMUK3QKVPus5gzr4EMjcKD/G3dmK5qLIT+Zkqtvs/5qOhXYkV29IvgMsuKqY4ZOhlBZghiKvym4AUs/MGLaz3ZjkT9QTsORSl4V48wPD053d5ewcrXGcZKvy/Z9Q6JiEQj2Q6xOmCDPjlcnxuusBDVZ4k+p1rnxxwOS0XPU2caNjkKORT/SWp9e9tM0mlkzvborzN7g3eCrkgxTg9H9ilt3pOOI6zSAFfxNEKmK+Hpw2VuGZW33ZoY5Ewwdvmm3hLNA99cFrgDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b8VAjib+6A103TMmVmC8d30dlP5ysyD2y/eNhRaWlg4=;
+ b=sp5uNcYwL9m17T5zBPL9H49LWEtNYzFDQRTnbRza5ADWu0Gzc6pBRSdn41KBAeF+s0hhATaCS9TzUK2SNStyRaaDKlF6Ve92YSfjb6tWTu3t6atX21DdkjqL8QYsuVKWx92GG73fWzMwftJXqPXXNnqnt1dcF6mXn7AnEkeMWjCJtTp12zg1P+V5+5izZh1OfGxOscsEjwdvHtcIKV37VYN/+J+syRzuSVd9hKcjNVrn1x85JB9DsBKsiUVpFdcQgb3VMiyJHXA3WTXyP0B+HgkaocyMm8iqYfoZ7z1gZW8D1t4zt/ff56BKJUNKHFot+JvviQmY/4/nSne0hoZkoQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b8VAjib+6A103TMmVmC8d30dlP5ysyD2y/eNhRaWlg4=;
+ b=BxAqMfHgfh+cxtWQWuzIqBzVF0GtgdONB1eE34XbplLuIQsIaD6xlR3dW26YlknzZWATDk5wmSBPKozE9+Qr1DvwSzqbvJu0px9U8Qlf1esYyh1m9psaeXvLXpBG+paUOwPcBPBNR0YIfkLtHpqOpzXNtN+5VztJ7z2lYBXDUN5ZE77+jbGGM9HJV2a2MNRGMStqQJX51Wlb2jY/3SMg5R+ssA2wT4hOWVsKM/QrnlXqftZrmT90acp5WcSz4Q4LTFActvitGTCnj3tjZzrrMYC2g7KvglT8PjHpRF4QjzTEkcyL+UjZTUT/d6VyDC/NrBkGC42ukI+4zU0jiHCy5Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com (2603:10a6:10:2e1::21)
+ by PA2PR04MB10513.eurprd04.prod.outlook.com (2603:10a6:102:416::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.25; Wed, 5 Mar
+ 2025 12:39:59 +0000
+Received: from DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::88b8:8584:24dc:e2a1]) by DU2PR04MB8774.eurprd04.prod.outlook.com
+ ([fe80::88b8:8584:24dc:e2a1%7]) with mapi id 15.20.8489.025; Wed, 5 Mar 2025
+ 12:39:59 +0000
+From: "Iuliana Prodan (OSS)" <iuliana.prodan@oss.nxp.com>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	"S.J. Wang" <shengjiu.wang@nxp.com>,
+	Fabio Estevam <festevam@gmail.com>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Mpuaudiosw <Mpuaudiosw@nxp.com>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>
+Cc: imx@lists.linux.dev,
+	linux-remoteproc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v2 2/2] reset: Add USB2PHY control driver for Renesas RZ/V2H(P)
-Date: Wed,  5 Mar 2025 12:39:14 +0000
-Message-ID: <20250305123915.341589-3-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [PATCH] remoteproc: imx_dsp_rproc: conditionally wait for FW_READY
+Date: Wed,  5 Mar 2025 14:39:23 +0200
+Message-Id: <20250305123923.514386-1-iuliana.prodan@oss.nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: AM0PR02CA0124.eurprd02.prod.outlook.com
+ (2603:10a6:20b:28c::21) To DU2PR04MB8774.eurprd04.prod.outlook.com
+ (2603:10a6:10:2e1::21)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU2PR04MB8774:EE_|PA2PR04MB10513:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1a3fda0e-4ab0-4be7-9a66-08dd5be2d798
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|366016|376014|52116014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?f1nbFPs1i3xsqr/eAMgaMfugyGQc/x1Fy+NFO9V5w25v3LVqohy6acX4hEBa?=
+ =?us-ascii?Q?w4ytecpPIzF8pAZvK+9paV4BSeRqKX5DZ04MeEA3Xvv7zTldXh32RFVe6xto?=
+ =?us-ascii?Q?8DVMGwodvqfz3rj30Pekx9myKDXQUBGpshp6c5nAfag7P5VxM4+yq1BSe8wi?=
+ =?us-ascii?Q?WMsyrVszKVPdsW0HMrcOe/Lfki61exkN8dUabINNw6cGBldWsAMgmEvmsEYH?=
+ =?us-ascii?Q?lLfceWYtTE1ZUOxGNg9GwcXUJ+IwA7Zg/Jn2UofT4ToDYuclPL3OS8aUgNW8?=
+ =?us-ascii?Q?RlKO3463uhvasVBORtGikb1ezTcTr9GBVl4+mtitICAcKgS0gpkkLwLn4Zon?=
+ =?us-ascii?Q?rcMMJbLWs3XJrkqAQy12baCd3bG9KJr0/MdRnmeJCi34LglQq2NTQjhnrXTK?=
+ =?us-ascii?Q?VxHZjSqbx6HEfcU2igQhk0XNGm8uV5bDywbp1CEbJg0EWefRsoxrxjd2Uq6Q?=
+ =?us-ascii?Q?yozdpP3rZEsrKyP9vceC26MZ4izHmEK9nosqrNXQPvk1/3ThzOxsW5ouD862?=
+ =?us-ascii?Q?wi9YXyXvlmGC/XJy6jpxgsWiYbXTe7o1mBpm85huKLDLs1C2/gqCl8B2UGkv?=
+ =?us-ascii?Q?4Kkxt0OxHndsWRrSPHf7iXWJji61GghTgWsE52eV24BwpUvtC2X1DlrM2RVZ?=
+ =?us-ascii?Q?6zGQUDiMXmeoWl3RXwjSyYYSuqN33/iX6z55RpKvXaH+p2EQnFUUlr5GzG95?=
+ =?us-ascii?Q?ulkGnkjVjbLAwn9UTH163976KKcbHC/umcLNQxhHAfFWlci0QHK8RibHRKKj?=
+ =?us-ascii?Q?FLSoGsiRkKyM+Tr6PV6hv3Pp/ZJ9ZhtLCMcAoB8e2OV6k9aKliYLxhgdFO0o?=
+ =?us-ascii?Q?IW3yXfcpPAcKNGxEiEm/qyiEkAREOK471VS/6udminRTqCs5IyqDph6sOC2A?=
+ =?us-ascii?Q?JCRYazQKAXzyb07cE31ByuYfsAa302i+vEs2LrMx/yPZFGX4s3wZXImRhsvS?=
+ =?us-ascii?Q?pvpcrigI1q06msICIrNkk0cvtF/gQkthCzZmR/qqEmgMlLBVRRcLwQgQiVw0?=
+ =?us-ascii?Q?z9vVq3wZfR9eFjh9X/f7AbJ9BPkLTNuqn8lFYltopm82V3jGlPJnP7w+rz+G?=
+ =?us-ascii?Q?JA22g+EcVmZ+gcIioCe+yUQh3ZpikRohBWq5iwan1XL+6ANgao4bEbsfUTB6?=
+ =?us-ascii?Q?EtrB0rBZcP9oNponwPRXDmys0bhgfTQN3af1MiZ1O07x2z1ogEGdDk46aU+v?=
+ =?us-ascii?Q?jd3M8oDO1QshkMLRZKpSLqGWh8mo/qGqflglzmDRJDQK0ZhRwgi4ufSvwJXM?=
+ =?us-ascii?Q?NdBRpltFVXBtA7uWkUlxsUEPJyNYyQPxgX353rMWlm9DiKiefRrIbJINZ5Bm?=
+ =?us-ascii?Q?yPqYT7xj1hIYeOMsI+bJfh+iuUmzzOhCAMZ6n3wIRCJ2Ch8mQx7Lj8Sc/qo5?=
+ =?us-ascii?Q?KrqpUh/yaKjc8MKUPZwynVfOhLvLHhyY7eIeLIdhTVkHaP452lw34HPFt5Zz?=
+ =?us-ascii?Q?H0DkTIGXouFcci20v7dYKyWbJJ/wJkmA?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU2PR04MB8774.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(52116014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?PGGreCGLxoWhua3fwhKpAZUzfBwrRXwA9ST7JhsbY/ZC1+ueiJCTk6acT6Ph?=
+ =?us-ascii?Q?k8+B49l1x2JK1uooze7G6YcBisptbUjasKJnjVRlSxLG8Zlq99+bmR150eFR?=
+ =?us-ascii?Q?ooIykpSZp0Oej5bCHKmPocklS7sbXkl8N1nVPbrTjzJFwly52TS0Z2JwbL3P?=
+ =?us-ascii?Q?YwvU6pdAOjd6aLkfW8aY357XeiPZmZnhC7pTBFa94VoFZB++PSPdAikDES0B?=
+ =?us-ascii?Q?DClUJOzmXRBCL2lS1HKwv04Zh3v4AXOkxzC7qpCScZi9AiLFN0E0FIB+Hg2d?=
+ =?us-ascii?Q?FN4/+26Tq3/X9GgAolqo1NOo56pHvt+Ajy9BYDGOab6R9K1gSHtcHA2XwZLM?=
+ =?us-ascii?Q?wQnGMNn8OyR5x9RW0A/FqSyqhrx1Nc0IQzo5VHhHUaUf5GroOqqh54c4Fbgu?=
+ =?us-ascii?Q?uAukbiTChjlzDygLbNsr8Tt5mSCdW81wm/Zo/VkF6/AfBXcVhHZbVAGYbMMQ?=
+ =?us-ascii?Q?Izgu3wombUAQsHSibnk0wffeAf5E+BuNtOemVhFjw4wTmxPwu4OilVcJmQ4v?=
+ =?us-ascii?Q?w6iTX55Uu7iHJLFnTxcTpGxS5q1U3xmwbuc6elFXy27A/q/HkmDSdZecCGrK?=
+ =?us-ascii?Q?fWosx+3HodW/pK8onuzdPWFvIRG4FxNbTDDzC8pL3QvXtiUYQD/dSxJFckV3?=
+ =?us-ascii?Q?eYt4oSI+WPY+5m2DVvs+gGzVDjtjOTNo5gDfvN8YUiNzYlrXPlyreJC/neWV?=
+ =?us-ascii?Q?5J/+opwMpOv3fuarQzSrlC2n8cguaN8WAL4Y8GC0adm3LjkI3NLwNrIISoYw?=
+ =?us-ascii?Q?a7JKplZHX41jNV07bZqQssWS2D7v4QtZDqqq9He80yvdIiTd2Vdg6pBgyLwC?=
+ =?us-ascii?Q?MpTDpvTUSc5aNQeYyEWYeNHL9XPDSwcAuJAJZ2TjOeX42GRP+82VZAHD6QVD?=
+ =?us-ascii?Q?BgXfxB0sW+U9tb6XWCO5J9tNv1sH89OpN0lRZyftCuOcqbNUVRKeMuEDsljV?=
+ =?us-ascii?Q?rRM6tIYJFUZYPZa08AOg0cwa8dpo2gg/V5owQ0PvsZwhbSlai+FekyV95CYE?=
+ =?us-ascii?Q?aZkagG+8/UNq6PBlg2B3uAa2hpBMRVu810dwPoV4mbOuhm2R1+cFsmGlpRwf?=
+ =?us-ascii?Q?MEJjjuylYfNwXsjSUSOFXq7rBQctolD4W//7jBx7kGc0lkVtNdPEf0UTVBLj?=
+ =?us-ascii?Q?YKaROWK4poOO04fQ7b0XDPVCZ9RwZ03FN6Q9sMZ319Hz9hz/C3RVrzBop04S?=
+ =?us-ascii?Q?xoFroMR/GzpWIcphANU8BWyE9jFO0NMyws+jmgl6yWXTUWB6gumjT9oiaTAv?=
+ =?us-ascii?Q?PWTV7/g9ulHeBijE5qw30HYYQ1076BLvwn4VaHDlIKlzeBMtp2lqywMyyCzW?=
+ =?us-ascii?Q?ddcA8TKvwYr6WJ2/PvWhhHPY5GCpbBUOJVaIZgmFqm+p5BiGbYJJE1qn+Trg?=
+ =?us-ascii?Q?mcFkO397lMZHsjjyiIGQskpq1hii5j27/CAR10YZx54Hhfvy5RP8BE4a5rxs?=
+ =?us-ascii?Q?xkPXhNg9y+7IuyiL4cYzr47h41Ig9s+tEQLrMQe15l6KB3PdbgiKuIgZM2Ei?=
+ =?us-ascii?Q?BUdS6j18Sr71hQQklcascYI6OEvzn/zY1hH88nrCHG5h6oc1/qC3Z2BW7Y1F?=
+ =?us-ascii?Q?ibfYCs65hFAJqdVrakh3QrIrnrS2hSwqCBtDslQ2R26RUO3ne7EGntaTOaFm?=
+ =?us-ascii?Q?Kw=3D=3D?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1a3fda0e-4ab0-4be7-9a66-08dd5be2d798
+X-MS-Exchange-CrossTenant-AuthSource: DU2PR04MB8774.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 12:39:59.8024
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tXO0zEEhGGgf+Q2NqSOrTDmyCxMz1SNtOs3QuUPG4Niyg/jFOOwDgmrYAOnG5EayZdAMIOQrnBnK+SuZygsd2A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA2PR04MB10513
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Iuliana Prodan <iuliana.prodan@nxp.com>
 
-Add support for the USB2PHY control driver on the Renesas RZ/V2H(P) SoC.
-Make the driver handle reset and power-down operations for the USB2PHY.
+Some DSP firmware requires a FW_READY signal before proceeding,
+while others do not.
+Introduce imx_dsp_rproc_wait_fw_ready() to check the resource table
+and determine if waiting is needed.
 
-Pass OF data to support future SoCs with similar USB2PHY hardware but
-different register configurations. Define device-specific initialization
-values and control register settings in OF data to ensure flexibility
-for upcoming SoCs.
+Use the WAIT_FW_READY flag (bit 1) to distinguish cases where
+waiting is required, as bit 0 is reserved for VIRTIO_RPMSG_F_NS
+in OpenAMP and mentioned in rpmsg documentation (not used in Linux,
+so far).
+This flag is set by the remote processor in the dfeatures member of
+struct fw_rsc_vdev, indicating supported virtio device features.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Update imx_dsp_rproc_start() to handle this condition accordingly.
+
+Signed-off-by: Iuliana Prodan <iuliana.prodan@nxp.com>
 ---
- drivers/reset/Kconfig                    |   7 +
- drivers/reset/Makefile                   |   1 +
- drivers/reset/reset-rzv2h-usb2phy-ctrl.c | 223 +++++++++++++++++++++++
- 3 files changed, 231 insertions(+)
- create mode 100644 drivers/reset/reset-rzv2h-usb2phy-ctrl.c
+ drivers/remoteproc/imx_dsp_rproc.c | 84 +++++++++++++++++++++++++++---
+ 1 file changed, 77 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/reset/Kconfig b/drivers/reset/Kconfig
-index 5b3abb6db248..bac08dae8905 100644
---- a/drivers/reset/Kconfig
-+++ b/drivers/reset/Kconfig
-@@ -218,6 +218,13 @@ config RESET_RZG2L_USBPHY_CTRL
- 	  Support for USBPHY Control found on RZ/G2L family. It mainly
- 	  controls reset and power down of the USB/PHY.
+diff --git a/drivers/remoteproc/imx_dsp_rproc.c b/drivers/remoteproc/imx_dsp_rproc.c
+index b9bb15970966..8eefaee28061 100644
+--- a/drivers/remoteproc/imx_dsp_rproc.c
++++ b/drivers/remoteproc/imx_dsp_rproc.c
+@@ -1,5 +1,5 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+-/* Copyright 2021 NXP */
++/* Copyright 2021, 2025 NXP */
  
-+config RESET_RZV2H_USB2PHY_CTRL
-+	tristate "Renesas RZ/V2H(P) (and similar SoCs) USB2PHY control driver"
-+	depends on ARCH_RENESAS || COMPILE_TEST
-+	help
-+	  Support for USB2PHY Control found on the RZ/V2H(P) SoC (and similar SoCs).
-+	  It mainly controls reset and power down of the USB2 PHY.
-+
- config RESET_SCMI
- 	tristate "Reset driver controlled via ARM SCMI interface"
- 	depends on ARM_SCMI_PROTOCOL || COMPILE_TEST
-diff --git a/drivers/reset/Makefile b/drivers/reset/Makefile
-index 677c4d1e2632..3cb3df018cf8 100644
---- a/drivers/reset/Makefile
-+++ b/drivers/reset/Makefile
-@@ -30,6 +30,7 @@ obj-$(CONFIG_RESET_QCOM_AOSS) += reset-qcom-aoss.o
- obj-$(CONFIG_RESET_QCOM_PDC) += reset-qcom-pdc.o
- obj-$(CONFIG_RESET_RASPBERRYPI) += reset-raspberrypi.o
- obj-$(CONFIG_RESET_RZG2L_USBPHY_CTRL) += reset-rzg2l-usbphy-ctrl.o
-+obj-$(CONFIG_RESET_RZV2H_USB2PHY_CTRL) += reset-rzv2h-usb2phy-ctrl.o
- obj-$(CONFIG_RESET_SCMI) += reset-scmi.o
- obj-$(CONFIG_RESET_SIMPLE) += reset-simple.o
- obj-$(CONFIG_RESET_SOCFPGA) += reset-socfpga.o
-diff --git a/drivers/reset/reset-rzv2h-usb2phy-ctrl.c b/drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-new file mode 100644
-index 000000000000..a6daeaf37e1c
---- /dev/null
-+++ b/drivers/reset/reset-rzv2h-usb2phy-ctrl.c
-@@ -0,0 +1,223 @@
-+// SPDX-License-Identifier: GPL-2.0
+ #include <dt-bindings/firmware/imx/rsrc.h>
+ #include <linux/arm-smccc.h>
+@@ -38,6 +38,15 @@ MODULE_PARM_DESC(no_mailboxes,
+ #define REMOTE_IS_READY				BIT(0)
+ #define REMOTE_READY_WAIT_MAX_RETRIES		500
+ 
 +/*
-+ * Renesas RZ/V2H(P) USB2PHY control driver
++ * This flag is set by the remote processor in the dfeatures member of
++ * struct fw_rsc_vdev, indicating supported virtio device features
 + *
-+ * Copyright (C) 2025 Renesas Electronics Corporation
++ * Use bit 1 since bit 0 is used for VIRTIO_RPMSG_F_NS
++ * in OpenAMP and mentioned in kernel's rpmsg documentation
 + */
++#define WAIT_FW_READY				BIT(1)
 +
-+#include <linux/cleanup.h>
-+#include <linux/delay.h>
-+#include <linux/io.h>
-+#include <linux/module.h>
-+#include <linux/of.h>
-+#include <linux/platform_device.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/reset.h>
-+#include <linux/reset-controller.h>
-+
-+struct rzv2h_usb2phy_regval {
-+	u16 reg;
-+	u16 val;
-+};
-+
-+struct rzv2h_usb2phy_data {
-+	const struct rzv2h_usb2phy_regval *init_vals;
-+	unsigned int init_val_count;
-+
-+	u16 ctrl_reg;
-+	u16 ctrl_assert_val;
-+	u16 ctrl_deassert_val;
-+	u16 ctrl_status_bits;
-+	u16 ctrl_release_val;
-+
-+	u16 ctrl2_reg;
-+	u16 ctrl2_acquire_val;
-+	u16 ctrl2_release_val;
-+};
-+
-+struct rzv2h_usb2phy_ctrl_priv {
-+	const struct rzv2h_usb2phy_data *data;
-+	void __iomem *base;
-+	struct device *dev;
-+	struct reset_controller_dev rcdev;
-+	spinlock_t lock;
-+};
-+
-+#define rcdev_to_priv(x) container_of(x, struct rzv2h_usb2phy_ctrl_priv, rcdev)
-+
-+static int rzv2h_usbphy_ctrl_assert(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
+ /* att flags */
+ /* DSP own area */
+ #define ATT_OWN					BIT(31)
+@@ -300,13 +309,74 @@ static int imx_dsp_rproc_ready(struct rproc *rproc)
+ 	return -ETIMEDOUT;
+ }
+ 
++/*
++ * Determines whether we should wait for a FW_READY reply
++ * from the remote processor.
++ *
++ * This function inspects the resource table associated with the remote
++ * processor to check if the firmware has indicated that waiting
++ * for a FW_READY signal is necessary.
++ * By default, wait for FW_READY unless an RSC_VDEV explicitly
++ * indicates otherwise.
++ *
++ * Return:
++ *   - true: If we should wait for FW READY
++ *   - false: If FW_READY wait is not required
++ */
++static bool imx_dsp_rproc_wait_fw_ready(struct rproc *rproc)
 +{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	const struct rzv2h_usb2phy_data *data = priv->data;
-+	struct device *dev = priv->dev;
-+	int ret;
++	struct device *dev = &rproc->dev;
++	struct fw_rsc_hdr *hdr;
++	struct fw_rsc_vdev *rsc;
++	int i, offset, avail;
 +
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+	scoped_guard(spinlock, &priv->lock) {
-+		writel(data->ctrl2_acquire_val, priv->base + data->ctrl2_reg);
-+		writel(data->ctrl_assert_val, priv->base + data->ctrl_reg);
-+	}
++	/*
++	 * If there is no resource table, wait for FW_READY
++	 * unless no_mailboxes module param is used
++	 */
++	if (!rproc->table_ptr)
++		return true;
 +
-+	/* The reset line needs to be asserted for more than 10 microseconds. */
-+	udelay(11);
-+	pm_runtime_put(dev);
++	/* Iterate over each resource entry in the resource table */
++	for (i = 0; i < rproc->table_ptr->num; i++) {
++		offset = rproc->table_ptr->offset[i];
++		hdr = (void *)rproc->table_ptr + offset;
++		avail = rproc->table_sz - offset - sizeof(*hdr);
 +
-+	return 0;
-+}
++		/* Ensure the resource table is not truncated */
++		if (avail < 0) {
++			dev_err(dev, "Resource table is truncated\n");
++			return true;
++		}
 +
-+static int rzv2h_usbphy_ctrl_deassert(struct reset_controller_dev *rcdev,
-+				      unsigned long id)
-+{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	const struct rzv2h_usb2phy_data *data = priv->data;
-+	struct device *dev = priv->dev;
-+	int ret;
++		/* Check if the resource type is a virtio device */
++		if (hdr->type == RSC_VDEV) {
++			rsc = (struct fw_rsc_vdev *)((void *)hdr + sizeof(*hdr));
 +
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
++			/* vdev does not require waiting for FW_READY */
++			return !!(rsc->dfeatures & WAIT_FW_READY);
++		}
 +	}
 +
-+	scoped_guard(spinlock, &priv->lock) {
-+		writel(data->ctrl_deassert_val, priv->base + data->ctrl_reg);
-+		writel(data->ctrl2_release_val, priv->base + data->ctrl2_reg);
-+		writel(data->ctrl_release_val, priv->base + data->ctrl_reg);
-+	}
-+
-+	pm_runtime_put(dev);
-+
-+	return 0;
++	/*
++	 * By default, wait for the FW_READY
++	 * unless a vdev entry disables it
++	 */
++	return true;
 +}
 +
-+static int rzv2h_usbphy_ctrl_status(struct reset_controller_dev *rcdev,
-+				    unsigned long id)
-+{
-+	struct rzv2h_usb2phy_ctrl_priv *priv = rcdev_to_priv(rcdev);
-+	struct device *dev = priv->dev;
-+	int ret;
-+	u32 reg;
-+
-+	ret = pm_runtime_resume_and_get(dev);
-+	if (ret) {
-+		dev_err(dev, "pm_runtime_resume_and_get failed\n");
-+		return ret;
-+	}
-+
-+	scoped_guard(spinlock, &priv->lock)
-+		reg = readl(priv->base + priv->data->ctrl_reg);
-+
-+	pm_runtime_put(dev);
-+
-+	return (reg & priv->data->ctrl_status_bits) == priv->data->ctrl_status_bits;
-+}
-+
-+static const struct reset_control_ops rzv2h_usbphy_ctrl_reset_ops = {
-+	.assert = rzv2h_usbphy_ctrl_assert,
-+	.deassert = rzv2h_usbphy_ctrl_deassert,
-+	.status = rzv2h_usbphy_ctrl_status,
-+};
-+
-+static int rzv2h_reset_of_xlate(struct reset_controller_dev *rcdev,
-+				const struct of_phandle_args *reset_spec)
-+{
-+	/* No special handling needed, we have only one reset line per device */
-+	return 0;
-+}
-+
-+static int rzv2h_usb2phy_ctrl_probe(struct platform_device *pdev)
-+{
-+	const struct rzv2h_usb2phy_data *data;
-+	struct rzv2h_usb2phy_ctrl_priv *priv;
-+	struct device *dev = &pdev->dev;
-+	struct reset_control *rstc;
-+	int error;
-+
-+	priv = devm_kzalloc(dev, sizeof(*priv), GFP_KERNEL);
-+	if (!priv)
-+		return -ENOMEM;
-+
-+	data = of_device_get_match_data(dev);
-+	if (!data)
-+		return dev_err_probe(dev, -ENODEV,
-+				     "failed to match device\n");
-+
-+	priv->data = data;
-+	priv->dev = dev;
-+	priv->base = devm_platform_ioremap_resource(pdev, 0);
-+	if (IS_ERR(priv->base))
-+		return PTR_ERR(priv->base);
-+
-+	rstc = devm_reset_control_get_shared_deasserted(dev, NULL);
-+	if (IS_ERR(rstc))
-+		return dev_err_probe(dev, PTR_ERR(rstc),
-+				     "failed to get deasserted reset\n");
-+
-+	spin_lock_init(&priv->lock);
-+	dev_set_drvdata(dev, priv);
-+
-+	error = devm_pm_runtime_enable(dev);
-+	if (error)
-+		return dev_err_probe(dev, error, "Failed to enable pm_runtime\n");
-+
-+	error = pm_runtime_resume_and_get(dev);
-+	if (error)
-+		return dev_err_probe(dev, error, "pm_runtime_resume_and_get failed\n");
-+
-+	for (unsigned int i = 0; i < data->init_val_count; i++)
-+		writel(data->init_vals[i].val, priv->base + data->init_vals[i].reg);
-+
-+	pm_runtime_put(dev);
-+
-+	priv->rcdev.ops = &rzv2h_usbphy_ctrl_reset_ops;
-+	priv->rcdev.of_reset_n_cells = 0;
-+	priv->rcdev.nr_resets = 1;
-+	priv->rcdev.of_xlate = rzv2h_reset_of_xlate;
-+	priv->rcdev.of_node = dev->of_node;
-+	priv->rcdev.dev = dev;
-+
-+	return devm_reset_controller_register(dev, &priv->rcdev);
-+}
-+
-+static const struct rzv2h_usb2phy_regval rzv2h_init_vals[] = {
-+	{ .reg = 0xc10, .val = 0x67c },
-+	{ .reg = 0xc14, .val = 0x1f },
-+	{ .reg = 0x600, .val = 0x909 },
-+};
-+
-+static const struct rzv2h_usb2phy_data rzv2h_of_data = {
-+	.init_vals = rzv2h_init_vals,
-+	.init_val_count = ARRAY_SIZE(rzv2h_init_vals),
-+	.ctrl_reg = 0,
-+	.ctrl_assert_val = 0x206,
-+	.ctrl_status_bits = BIT(2),
-+	.ctrl_deassert_val = 0x200,
-+	.ctrl_release_val = 0x0,
-+	.ctrl2_reg = 0xb04,
-+	.ctrl2_acquire_val = 0x303,
-+	.ctrl2_release_val = 0x3,
-+};
-+
-+static const struct of_device_id rzv2h_usb2phy_ctrl_match_table[] = {
-+	{ .compatible = "renesas,r9a09g057-usb2phy-ctrl", .data = &rzv2h_of_data },
-+	{ /* Sentinel */ }
-+};
-+MODULE_DEVICE_TABLE(of, rzv2h_usb2phy_ctrl_match_table);
-+
-+static struct platform_driver rzv2h_usb2phy_ctrl_driver = {
-+	.driver = {
-+		.name		= "rzv2h_usb2phy_ctrl",
-+		.of_match_table	= rzv2h_usb2phy_ctrl_match_table,
-+	},
-+	.probe = rzv2h_usb2phy_ctrl_probe,
-+};
-+module_platform_driver(rzv2h_usb2phy_ctrl_driver);
-+
-+MODULE_LICENSE("GPL");
-+MODULE_AUTHOR("Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>");
-+MODULE_DESCRIPTION("Renesas RZ/V2H(P) USB2PHY Control");
+ /*
+  * Start function for rproc_ops
+  *
+- * There is a handshake for start procedure: when DSP starts, it
+- * will send a doorbell message to this driver, then the
+- * REMOTE_IS_READY flags is set, then driver will kick
+- * a message to DSP.
++ * The start procedure involves a handshake: when the DSP starts, it
++ * sends a doorbell message to this driver, which sets the
++ * REMOTE_IS_READY flag. The driver then sends a message to the DSP.
++ *
++ * Before proceeding, the driver checks if it needs to wait for a
++ * firmware ready reply using imx_dsp_rproc_wait_fw_ready().
++ * If waiting is required, it calls imx_dsp_rproc_ready() to complete
++ * the initialization.
++ * If waiting is not required, the start function returns.
+  */
+ static int imx_dsp_rproc_start(struct rproc *rproc)
+ {
+@@ -335,8 +405,8 @@ static int imx_dsp_rproc_start(struct rproc *rproc)
+ 
+ 	if (ret)
+ 		dev_err(dev, "Failed to enable remote core!\n");
+-	else
+-		ret = imx_dsp_rproc_ready(rproc);
++	else if (imx_dsp_rproc_wait_fw_ready(rproc))
++		return imx_dsp_rproc_ready(rproc);
+ 
+ 	return ret;
+ }
 -- 
-2.43.0
+2.25.1
 
 
