@@ -1,118 +1,112 @@
-Return-Path: <linux-kernel+bounces-545837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0863BA4F248
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:18:13 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECFC6A4F24A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:18:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 710CF3AB7C2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:17:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E84273AB9CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D62A22B9B4;
-	Wed,  5 Mar 2025 00:17:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CFAE481DD;
+	Wed,  5 Mar 2025 00:17:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OmMNEeWp"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qiy9Zl6y"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AE22629F;
-	Wed,  5 Mar 2025 00:17:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B391C288DA;
+	Wed,  5 Mar 2025 00:17:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741133871; cv=none; b=feYbZ79R5qaJohx3YKQR2Geg/HDIyoVTPuYwm3PB6EyGz/ErqDjrumOPz3UhNss+dnpCNjrOD/QWAVl/qptIvSvFBo21JSqdc2vG1h2n4fE1T2FzPs81O1eEy0Z+bml6Q/pu6O3g6o0n7onO09XELMdibzS9aHRGlk7yeRn2mNU=
+	t=1741133871; cv=none; b=nWpEkgWyHGDzEN3mavyv3mQQciUjkimd3WWqYKmVoeS5CJxV4A0gareEgaVapwPauvmrD3mk0WG06bxNgmX7U8BasspzCJ7RrkUkOwwdhHhm4ketbFJl4VGkRDIokXd8IAjvJiK+/lCAsvN2lR8tfrmGnrgXQHutWEjKR0ASchM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1741133871; c=relaxed/simple;
-	bh=GCwnNMHtzCFU1wUrFNnbzOpDwp4f92WgfqmKFjh0qtk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SW6zLy1WjTMmhBQSyyJ2YD1bLNe03/RLJQz0wVKeay0yBBFwR1i8PfklrKBOHXLqNlXEuLxNnuYEUbtrCXpuTHBCB7AEBu/NWGuuy6NsGwN8O/ZJY6JLm6DJSkX8G1HqJtMa+y7rRJi9JhOxreIXO2Zlk91VItg507HGOfukZAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OmMNEeWp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21EFEC4CEEB;
+	bh=0yno/DE+/JPPbpjlTDp+6AS6Y5WufQLFUtooXTkZzOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=hcMEaSGBb0En8C0lPS38caGpxDPLEg7yZOSOgV6vMyADODspEw6gKYWNVXy2ICL8HZ1562v8svTXGifliNah8SE+MJrK0m/2mQFJwDX5+RYMgas9FCIVYxzFPFxxeKpnmoY3xqLHd8s7fx75so4Dkmc+aC2Hr0kBoe2hXJBVZrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qiy9Zl6y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E4BDC4CEE5;
 	Wed,  5 Mar 2025 00:17:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741133870;
-	bh=GCwnNMHtzCFU1wUrFNnbzOpDwp4f92WgfqmKFjh0qtk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OmMNEeWpwMxhWo9WisWFmyn4hZhObP21OQGDrxdaUvrlJBNNogBAufsQ8C7X8XiRj
-	 QVqWONyKwKUyte/CdwBTR61br5MkgvUynOA0N+zAtSFXt1r0x0vHLS08Zp1nywmNp8
-	 bPbCrjc4YmZ9VX4dd+34qzuFK5uDrZ8qaJvgYvIApyDJVu34mHD4c9M1ynJumVOuu5
-	 IBsk3Pcdhm5B0o3EPCpSbHoUtnVk1teJ9NthRLwPgOprOBbzYjvimoxRUx3QqtB1ef
-	 sEevljJhuvemDMi9TrgWwDYc6p4ikBsFeCZBFyp5DvXObHKz2W6JY5UeMHjq+dr5oo
-	 UpmuAnxG/z84w==
-Date: Wed, 5 Mar 2025 02:17:45 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 22/22] MAINTAINERS: add entry for the `pin-init` crate
-Message-ID: <Z8eYKXCl0co-GLaf@kernel.org>
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
- <20250304225245.2033120-23-benno.lossin@proton.me>
+	s=k20201202; t=1741133871;
+	bh=0yno/DE+/JPPbpjlTDp+6AS6Y5WufQLFUtooXTkZzOg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Qiy9Zl6yv/aKjE9r7FltyhR99JNSR3mZEy7tHtEeAZwJx9e8I+OyYUOIVNR/AvgN4
+	 8y/TJexVAPwro/TnXD3bQGzwmuDowlMMQPnXQozziTqqfk4ft5fYlNG2Ew0+QbtsnO
+	 eIyPdgpKMmQ/18DHZ7SRDJQb5iNtOpCEkY2L7uSer+P0ci0NrVCxLl100RUgrg3zvo
+	 nx1DwfGtnJq5RIvZj/2QasoTO5Pwq+9XrYxDI9iJO7LOaPsIW5g2kdovUQlNW0r6l7
+	 j9E0YzHkyykZLrOevBWIxL8cVwlHZEmcr6184buXgx5OLsUD/wTj9miuN8+PRGiuqt
+	 lYFzVKL3eR5nQ==
+Date: Tue, 4 Mar 2025 16:17:48 -0800
+From: Jakub Kicinski <kuba@kernel.org>
+To: Mina Almasry <almasrymina@google.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, Donald
+ Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon
+ Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, Jeroen de Borst <jeroendb@google.com>, Harshitha
+ Ramamurthy <hramamurthy@google.com>, Kuniyuki Iwashima <kuniyu@amazon.com>,
+ Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>,
+ Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin"
+ <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Eugenio =?UTF-8?B?UMOpcmV6?=
+ <eperezma@redhat.com>, Stefan Hajnoczi <stefanha@redhat.com>, Stefano
+ Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>,
+ sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, Jamal Hadi Salim
+ <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, Pedro Tammela
+ <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Subject: Re: [PATCH net-next v6 7/8] net: check for driver support in netmem
+ TX
+Message-ID: <20250304161748.42b71228@kernel.org>
+In-Reply-To: <CAHS8izOJfSCM+qZ=npPOK3kwuA1pyGHrPo73brRq2VXg8G450g@mail.gmail.com>
+References: <20250227041209.2031104-1-almasrymina@google.com>
+	<20250227041209.2031104-8-almasrymina@google.com>
+	<20250228164301.07af6753@kernel.org>
+	<CAHS8izO-N4maVtjhgH7CFv5D-QEtjQaYKSrHUrth=aJje4NZgg@mail.gmail.com>
+	<20250303162901.7fa57cd0@kernel.org>
+	<CAHS8izOJfSCM+qZ=npPOK3kwuA1pyGHrPo73brRq2VXg8G450g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304225245.2033120-23-benno.lossin@proton.me>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 10:56:27PM +0000, Benno Lossin wrote:
-> Add maintainers entry for the `pin-init` crate.
+On Mon, 3 Mar 2025 19:53:44 -0800 Mina Almasry wrote:
+> > Upper devices and BPF access is covered I think, by the skbuff checks.
+> > But I think we missed adding a check in validate_xmit_skb() to protect
+> > the xmit paths of HW|virt drivers. You can try to add a TC rule which
+> > forwards all traffic from your devmem flow back out to the device and
+> > see if it crashes on net-next ?  
 > 
-> This crate is already being maintained by me, but until now there
-> existed two different versions: the version inside of the kernel tree
-> and a user-space version at [1]. The previous patches synchronized these
-> two versions to reduce the maintenance burden. In order to keep them
-> synchronized from now on, separate the maintenance from other Rust code.
+> No crash, but by adding debug logs I'm detecting that we're passing
+> unreadable netmem dma-addresses to the dma_unmap_*() APIs, which is
+> known to be unsafe. I just can't reproduce an issue because my
+> platform has the IOMMU disabled.
 > 
-> Link: https://github.com/Rust-for-Linux/pin-init [1]
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> ---
->  MAINTAINERS | 13 +++++++++++++
->  1 file changed, 13 insertions(+)
+> I guess I do need to send the hunk from validate_xmit_skb() as a fix
+> to net and CC stable.
 > 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 8e0736dc2ee0..ced7fac4dbbe 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20735,6 +20735,19 @@ S:	Maintained
->  F:	rust/kernel/alloc.rs
->  F:	rust/kernel/alloc/
->  
-> +RUST [PIN-INIT]
+> Another thing I'm worried about is ip_forward() inserting an
+> unreadable skb into the tx path somewhere higher up the stack which
+> calls more code that isn't expecting unreadable skbs? Specifically
+> worried about skb_frag_ref/unref. Does this sound like a concern as
+> well? Or is it a similar code path to tc?
 
-In some subsystems the order is exactly the opposite. E.g.,
+I'd say similar to tc. We can protect drivers with a check in
+validate_xmit_skb(). The second API surface we need to filter on
+is skb / skb_frag helpers. The third is socket API / opt-in for
+in-kernel socket readers.
 
-ASIX PHY DRIVER [RUST]
-
-> +M:	Benno Lossin <benno.lossin@proton.me>
-> +L:	rust-for-linux@vger.kernel.org
-> +S:	Maintained
-> +W:	https://rust-for-linux.com/pin-init
-> +B:	https://github.com/Rust-for-Linux/pin-init/issues
-> +C:	zulip://rust-for-linux.zulipchat.com
-> +P:	rust/pin-init/CONTRIBUTING.md
-> +T:	git https://github.com/Rust-for-Linux/linux.git pin-init-next
-> +F:	rust/kernel/init.rs
-> +F:	rust/pin-init/
-> +K:	\bpin-init\b|pin_init\b|PinInit
-> +
->  RXRPC SOCKETS (AF_RXRPC)
->  M:	David Howells <dhowells@redhat.com>
->  M:	Marc Dionne <marc.dionne@auristor.com>
-> -- 
-> 2.47.2
-> 
-> 
-> 
-
-BR, Jarkko
+Driver and socket should be "easy" to cover with an explicit
+opt in. You already covered skb APIs but it's less centralized
+and there may be some abuses we are not aware of. Which is why
+patch 1 worries me a little.
 
