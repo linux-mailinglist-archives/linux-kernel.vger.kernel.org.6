@@ -1,123 +1,163 @@
-Return-Path: <linux-kernel+bounces-545854-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545855-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 826DDA4F2A2
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:24:47 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 043F9A4F2A8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:25:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68F62188E6FF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:24:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2377A167592
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F52517C61;
-	Wed,  5 Mar 2025 00:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 008A027456;
+	Wed,  5 Mar 2025 00:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="I24VjWZc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="JUqcU8zb"
+Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C5E528DB3;
-	Wed,  5 Mar 2025 00:24:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C61ED17579
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 00:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741134279; cv=none; b=pOayuex/IhrmCyt90f713YCx/7qC22KikNyQFU7wEPFFDC2oFFCd2ssAOqllKFCCm39k9xfB1yEL5nlz85FkpebslmjWdoHDcl8bdQjxzSekabFH52RLkcAxZtSj1BG4FTQQhmLiHm5kqlHqkeL2G3x2Zm/adu0NKtjFEzyoobE=
+	t=1741134327; cv=none; b=Tk4jIdvuT10soghHwm2oWLYXSvtn0c7+EQE3nY7gMpTLFvpny/kgYw+I4/KRbK1y8PRh3pwF3is21j0mNgiaaJSzVm8xKur+j7wkz/+7dO4iR2xO+gOxinbK9QWO1+kKNLNkfhSCZOXgvx6ltucZCQLySgnMDlyyidRAj7CTJDU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741134279; c=relaxed/simple;
-	bh=y7MUgOurul1EqCfOPhyeQVHxMvZ/06Rrgth75p612z4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=esTqZUg9un8sZHI2gnj/7aQUuuLXqEDFywDHNzL+l7qh+3fT5h0WpgVkOkCzSIzGCA1HPWtF+z1moOSbBQ3MLz/JhbY2cpIzBiGARjz3TFwOrJLSIBciod4Q55B1hw8+tkuxwI2IA0mz+4QUwMRB8eUBG8PUud88Ekpsf8xYids=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=I24VjWZc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E0B7C4CEE5;
-	Wed,  5 Mar 2025 00:24:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741134279;
-	bh=y7MUgOurul1EqCfOPhyeQVHxMvZ/06Rrgth75p612z4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I24VjWZcx9Ymy+7xo+8CCH9TX+64bhNNNvNx2o7T1lA/eOFylvVerKppIGqIgh1CM
-	 xWVQ9cYsdW2TFSWCBd9dkxuTZ80jX01sUZ+gYa72T3x6fGDCCgO/tZghcrhqhzRg9s
-	 4FYw0WJOcZGfWFzDOH2I+W+ohZ61bo1X0Zm7t8NUhkg3vopQ3wY6XmnzUSlsGvJnb2
-	 IdlKhbZozjSpte/QIdfm5P2wgkS+S0vaVdC4/dcVvcFBjAN6+jwRz6HChWLuViGkji
-	 /3e8whUPFok+qqAFmLYldOD5MWFMM9BKujS+QRTGfx+3RcDM/3TfHYC82SYyWTu2GI
-	 i6ryNq/MPaOjA==
-Date: Tue, 4 Mar 2025 16:24:37 -0800
-From: Jakub Kicinski <kuba@kernel.org>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Meghana Malladi <m-malladi@ti.com>, Diogo Ivo <diogo.ivo@siemens.com>,
- Paolo Abeni <pabeni@redhat.com>, Eric Dumazet <edumazet@google.com>, "David
- S. Miller" <davem@davemloft.net>, Andrew Lunn <andrew+netdev@lunn.ch>,
- <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
- <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>, Vignesh Raghavendra
- <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH net-next] net: ti: icssg-prueth: Add ICSSG FW Stats
-Message-ID: <20250304162437.0160f687@kernel.org>
-In-Reply-To: <33c38844-4fbe-469c-bb5f-06bdb7721114@ti.com>
-References: <20250227093712.2130561-1-danishanwar@ti.com>
-	<20250303172543.249a4fc2@kernel.org>
-	<33c38844-4fbe-469c-bb5f-06bdb7721114@ti.com>
+	s=arc-20240116; t=1741134327; c=relaxed/simple;
+	bh=bTT/iAzEA9G4Yn3WUTZD9W7f5Sy0fcceFNnEE0+/Low=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VjJNUn/CDFPaUi0p4AuVhN1qhyBFbJU8GSN9s08/7ZiJV+avGa8TxHCYThT+J2fY88tXZpscc/72tJCfb4M9ExJkXoBdxSgTIFR7iWgI8nikYzrSEDMmXCJykECKlkkWVAltrfWues963fggqP1+jF4x/8hfIHxvS3S/lWYKvGg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=JUqcU8zb; arc=none smtp.client-ip=209.85.219.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e6090e9a001so299124276.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 16:25:25 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1741134325; x=1741739125; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uP1sniriid7A1+BAl3nr1n1m5HEYZjwBGPO77MLhGoU=;
+        b=JUqcU8zbaxw62Eg6gRJ+NDv7Jar1Vr0BVSvFSbJ7XmnyfxtZV5ULAH6fVA3nR+k2mu
+         UGZmsoUmmmYyGrTmB8n6XEY/BhzqHoI+dKAemmB4tYYgCGoG7qBdsA/U9UwUk6+dQgU8
+         jEx0Fsd2kWm3+wGAxm++eCe7CbNxdQ7XMiEtZIFgyqwXZZqZ3O9yxh8FKtnSNkec6P6c
+         b0Q3s1r2D8K7pRJhizioWUbYzh7WEuaPn4WMU1BmHzoUk2TOMnhrXb5YQ16xn2XVyIPv
+         1YQDcRuCqIPX2TQ5M1cNU09Zk+zto5xoV1gcDYVXMRGo24LZad821nfeGThvwo/Z5/sH
+         hYfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741134325; x=1741739125;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uP1sniriid7A1+BAl3nr1n1m5HEYZjwBGPO77MLhGoU=;
+        b=vk6tGrI1JOssL78GRCPQfbmOGpNjcMfDwJi8s5+HpD/4znpdEP3YR+n5VnCsla3rkD
+         y2ahS2fBWTE5frOpnPhhhl3c3fmQgRlYKlk3QUj+/vXhAQYdQtnHUIYErjfGEvVjW0T4
+         6Es9C21bY2qBmXXLJF+CV8CFsYR+48JN5trWH7UaVDhA6U9bE7vewUJZvO/QVP2CbVB6
+         EnRk6SbSyLJWMn/PcaZCrItbUUfVr8Ld6g29mSRLMX5HC/d9JopPEXWAa2dNOt1nRYZE
+         1kla3As9GINreQsUgtNkQxpNhrxjqmC+tIadkbgFDRUkjDM2YZTue4GMRfAF8b7Njz7q
+         3PzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVCwIvbG/aNWAr1zgyX+Z8fQS4HLcSWGvxBFLCfNNHCmrWCZmHF1SVg45dHT2t9XnqyXeFi0UdTVzUCW+A=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3cRRDzVohHwzC4Vf2FpaAVgCdPgerLV/nw1+epw28U+Mo3Thf
+	fhvPKOISZXgguz6Zn/+YK7xTgZ6Ne8zeIbesAHNozYU7XhbCG4CVsXWeTAET1egklgokQ0kxlv+
+	PRXYXAcQtAvrgb68CajHc5jy6j2qiuwfig9OQ
+X-Gm-Gg: ASbGncvcR2652hatOHOnwhkihRDmXcXedUpmfPQ29KlkP/TvZUx1c0YuJTSVTjUQ4N7
+	f8VuhgYneaxA6pp9KihSN5YxNRewxI+INBTPRRCJSAyZV/iBsD62c6lNveQ2b3ly9G6WzgfFIp0
+	yM02e4J7I+PK7O/1uU9kJJfvL5ng==
+X-Google-Smtp-Source: AGHT+IErI7OVB3GKpa1+20vqszLs2+aJASJZ8+v+9BPQxGrDB866hl27/av1JxG+UdClM0JLtHNtSQgdyWrmYfPGOx8=
+X-Received: by 2002:a05:6902:2584:b0:e5d:f98f:6f33 with SMTP id
+ 3f1490d57ef6-e610c33f3damr7144244276.10.1741134324795; Tue, 04 Mar 2025
+ 16:25:24 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <72F52F71-C7F3-402D-8441-3D636A093FE8@oracle.com>
+ <CAHC9VhRHEw5c+drC=aX4xTqWoQJJZ+qkJ7aHUT5dcu+Q5f7BqA@mail.gmail.com>
+ <CAHC9VhSJpnaAK1efgs1Uk0Tr3CaDNR1LiDU-t_yDKDQG6J-74Q@mail.gmail.com>
+ <E20C617B-EA01-4E69-B5E2-31E9AAD6F7A2@oracle.com> <506e8e58e5236a4525b18d84bafa9aae80b24452.camel@linux.ibm.com>
+ <CAHC9VhTsZntLdGBV7=4suauS+rzSQv1O4UAoGcy2vEB02wRkoA@mail.gmail.com>
+ <c580811716f550ed5d6777db5e143afe4ad06edc.camel@linux.ibm.com>
+ <CAHC9VhTz6U5rRdbJBWq0_U4BSKTsiGCsaX=LTgisNNoZXZokOA@mail.gmail.com>
+ <FD501FB8-72D2-4B10-A03A-F52FC5B67646@oracle.com> <CAHC9VhR961uTFueovLXXaOf-3ZAnvQCWOTfw-wCRuAKOKPAOKw@mail.gmail.com>
+ <Z8d9ulOirAeHmFJV@kernel.org>
+In-Reply-To: <Z8d9ulOirAeHmFJV@kernel.org>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 4 Mar 2025 19:25:13 -0500
+X-Gm-Features: AQ5f1JoS9cGXy6wY5h42Ewu7LkXmKHYAIabAt3pdhKnhffyArcWMPbTInPMv6EE
+Message-ID: <CAHC9VhQC_bqZAFiABMUhTO6jTUFgHB8vjpb6-Eo7SA-2-5xfuQ@mail.gmail.com>
+Subject: Re: [RFC PATCH v3 00/13] Clavis LSM
+To: Jarkko Sakkinen <jarkko@kernel.org>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	David Howells <dhowells@redhat.com>, 
+	"open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>, 
+	David Woodhouse <dwmw2@infradead.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	Ard Biesheuvel <ardb@kernel.org>, James Morris <jmorris@namei.org>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, Roberto Sassu <roberto.sassu@huawei.com>, 
+	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>, =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"casey@schaufler-ca.com" <casey@schaufler-ca.com>, Stefan Berger <stefanb@linux.ibm.com>, 
+	"ebiggers@kernel.org" <ebiggers@kernel.org>, Randy Dunlap <rdunlap@infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>, 
+	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 4 Mar 2025 13:46:39 +0530 MD Danish Anwar wrote:
-> On 04/03/25 6:55 am, Jakub Kicinski wrote:
-> > On Thu, 27 Feb 2025 15:07:12 +0530 MD Danish Anwar wrote:  
-> >> +	ICSSG_PA_STATS(FW_PREEMPT_BAD_FRAG),
-> >> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_ERR),
-> >> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_TX),
-> >> +	ICSSG_PA_STATS(FW_PREEMPT_ASSEMBLY_OK),
-> >> +	ICSSG_PA_STATS(FW_PREEMPT_FRAG_CNT_RX),  
-> > 
-> > I presume frame preemption is implemented in silicon? If yes -
-> > what makes these "FW statistics"? Does the FW collect them from   
-> 
-> The statistics are maintained / updated by firmware and thus the name.
-> 
-> Preemption is implemented partially in both the hardware and firmware.
-> The STATE MACHINE for preemption is in the firmware. The decision to
-> when to PREEMEPT / ASSEMBLE a packet is made in firmware.
-> 
-> These preemption statistics are updated by the firmware based on the
-> action performed by the firmware. Driver can read these to know the
-> statistics of preemption. These stats will be able used by
-> ethtool_mm_stats once the support for Preemption is added in the driver.
+On Tue, Mar 4, 2025 at 5:25=E2=80=AFPM Jarkko Sakkinen <jarkko@kernel.org> =
+wrote:
+> On Mon, Mar 03, 2025 at 05:40:54PM -0500, Paul Moore wrote:
+> > On Fri, Feb 28, 2025 at 12:52=E2=80=AFPM Eric Snowberg <eric.snowberg@o=
+racle.com> wrote:
+> > > > On Feb 28, 2025, at 9:14=E2=80=AFAM, Paul Moore <paul@paul-moore.co=
+m> wrote:
+> > > > On Fri, Feb 28, 2025 at 9:09=E2=80=AFAM Mimi Zohar <zohar@linux.ibm=
+.com> wrote:
+> > > >> On Thu, 2025-02-27 at 17:22 -0500, Paul Moore wrote:
+> > > >>>
+> > > >>> I'd still also like to see some discussion about moving towards t=
+he
+> > > >>> addition of keyrings oriented towards usage instead of limiting
+> > > >>> ourselves to keyrings that are oriented on the source of the keys=
+.
+> > > >>> Perhaps I'm missing some important detail which makes this
+> > > >>> impractical, but it seems like an obvious improvement to me and w=
+ould
+> > > >>> go a long way towards solving some of the problems that we typica=
+lly
+> > > >>> see with kernel keys.
+> > >
+> > > The intent is not to limit ourselves to the source of the key.  The m=
+ain
+> > > point of Clavis is to allow the end-user to determine what kernel key=
+s
+> > > they want to trust and for what purpose, irrespective of the originat=
+ing
+> > > source (.builtin_trusted, .secondary, .machine, or .platform). If we =
+could
+> > > go back in time, individual keyrings could be created that are orient=
+ed
+> > > toward usage.   The idea for introducing Clavis is to bridge what we
+> > > have today with kernel keys and allow them to be usage based.
+> >
+> > While it is unlikely that the current well known keyrings could be
+> > removed, I see no reason why new usage oriented keyrings could not be
+> > introduced.  We've seen far more significant shifts in the kernel over
+> > the years.
+>
+> Could we implement such change in a way that these new imaginary
+> (at this point) usage oriented keyrings would be used to create
+> the "legacy" keyrings?
 
-That was going to be my next question. If the statistic is suitable 
-for a standard interface it should not be reported via ethtool -S.
+I think it would be easier for them to coexist so that one could have
+an easier migration.  It's possible that even once everything was
+migrated to the new usage oriented keyrings it would still make sense
+to keep the existing keyrings in place and always link keys from there
+to the newer usage keyrings.
 
-Please leave the stats for unimplemented features out.
-
-> >> +/* Incremented if a packet is dropped at PRU because of a rule violation */
-> >> +#define FW_DROPPED_PKT		0x00F8  
-> > 
-> > Instead of adding comments here please add a file under
-> > Documentation/networking/device_drivers/ with the explanations.
-> > That's far more likely to be discovered by users, no?  
-> 
-> Sure I will drop these MACRO comments and create a .rst file in
-> Documentation/networking/device_drivers/
-> 
-> One question though, should I create a table for the stats and it's
-> description or should I create a section for each stats?
-> 
-> Something like this,
-> 
-> FW_RTU_PKT_DROP
-> ---------------
-
-Let's document the user-visible names! The strings from ethtool -S
-
-> Diagnostic error counter which increments when RTU drops a locally
-> injected packet due to port being disabled or rule violation.
-> 
-> Please let me know what do you think.
-
-Taking inspiration from:
-  Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-should be a safe choice, I hope.
+--=20
+paul-moore.com
 
