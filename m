@@ -1,68 +1,77 @@
-Return-Path: <linux-kernel+bounces-547420-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F28FA506FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:52:46 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030C9A50717
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:54:18 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821D9173909
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:52:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84C373A7BCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:53:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 988B42528F6;
-	Wed,  5 Mar 2025 17:52:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F33CC25290B;
+	Wed,  5 Mar 2025 17:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tLjGYBKb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgLq2Qph"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02E2250C1D;
-	Wed,  5 Mar 2025 17:52:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53EFB2505A7;
+	Wed,  5 Mar 2025 17:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741197131; cv=none; b=NpCjVVyeUYnUDYkmERiSlUXfb+liuwQ6KG667tWMNWAkqF+FNgMEmNazKNfXoq7G27ZZ1UuEQDXGKE5z+5T4OD+SI8gFo/bsf8Qy77z6DLnSq8bM5zOAwN26EdMPhGT1sjPsrq4Vg0ADKBeApRWRw5lOiKcz6aAKY0jpQHJCOBI=
+	t=1741197179; cv=none; b=hn13MaTxbNcuzBWtc8bB4Fk50gNBDKl921/YeQgxJFefhPWEVlnrobpnKMEqkjU54Qs+Mk6+6dtuyl+YbEZDOUblX1DOJct8KSluLg7nsfOLj1uJhbFhaJDo/t5oqkg0eR9+XJIDrAYe4GjnKopVeRstYDQK4QutDXT2CNNQ3HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741197131; c=relaxed/simple;
-	bh=+fO6QHFZK3v34T0UbQQG+Rs4wUa/4vaaUqJFHDD+cJA=;
+	s=arc-20240116; t=1741197179; c=relaxed/simple;
+	bh=hE0MFGTk7bcOjMBBN//SQY7SQOQlJ98ye1JVJhEBqyU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UM1XHSDxgcH+fmdWiSp7gbMvWK2e5lnyDfD4DEuOwC83YBroPveYDiBFQ8Pb+JnjKzDzpZCx4l+A0EQzFBFYAvsF6AD1NhsRX6L/f8Zqz9dLwV9/kbUCrbpbG+Mv1ZmwRRwlAXP5pHOB3RQqaz3Rlo8chqck2fa49zD2PRgHPfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tLjGYBKb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60757C4CEEA;
-	Wed,  5 Mar 2025 17:52:06 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=pkeSXsEqbWTSapINhtHAGJH1cT2WfsxyR6MOfGIM9QVcnyAPL1V7KJyUq85uu3csGoyLmbiWiklC/rkenzUUtJQIVTOsiw6iUfj2wpnrGpKVLNMXGq+eUUQpweCubMvyeen0WD6MuokEQ0L2EQncBxvPFAow9TgZbKN8yO7rvOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgLq2Qph; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9F10DC4CEE2;
+	Wed,  5 Mar 2025 17:52:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741197130;
-	bh=+fO6QHFZK3v34T0UbQQG+Rs4wUa/4vaaUqJFHDD+cJA=;
+	s=k20201202; t=1741197179;
+	bh=hE0MFGTk7bcOjMBBN//SQY7SQOQlJ98ye1JVJhEBqyU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tLjGYBKb2Crad0G/NITWxBaBxqZgqDl+WHtPV/INm9ZGzYEuYRxMovqxsAw8g9F7n
-	 6GKC/zA3gIBNEe3IQbEIX2voyimvey/XiDv9YyHcfniDhPi/FtDpb3ckaaSo42teoO
-	 gYN6zX8dZV+z9eCW50WR45oIzlMXO5CT+FQBwNCYKERCp694nN62/2glkpvvAMxuaj
-	 RGGx3yukJw17Ry7zuiXdoE721k8i4Uc812+jnw16YiKYjQ6U1haNvUewQLZMYfHrBd
-	 MCWnPFT80c+anlS38oocNHqYco2JryFGb/mlHMl+dQktVXF12U7BUndPiZiRE20Eii
-	 HUn/+p3uqdIEw==
-Date: Wed, 5 Mar 2025 17:52:04 +0000
-From: Simon Horman <horms@kernel.org>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>
-Cc: Jonathan Corbet <corbet@lwn.net>,
-	Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
-	Jason Wang <jasowang@redhat.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	Shuah Khan <shuah@kernel.org>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	kvm@vger.kernel.org, virtualization@lists.linux-foundation.org,
-	linux-kselftest@vger.kernel.org,
-	Yuri Benditovich <yuri.benditovich@daynix.com>,
-	Andrew Melnychenko <andrew@daynix.com>,
-	Stephen Hemminger <stephen@networkplumber.org>,
-	gur.stavi@huawei.com, Lei Yang <leiyang@redhat.com>
-Subject: Re: [PATCH net-next v7 3/6] tun: Introduce virtio-net hash feature
-Message-ID: <20250305175204.GP3666230@kernel.org>
-References: <20250228-rss-v7-0-844205cbbdd6@daynix.com>
- <20250228-rss-v7-3-844205cbbdd6@daynix.com>
+	b=YgLq2Qph/XKnO0vPpE1w+YDPzp+TATFzB/KsCjnTv8bJ7JXTedWgOJQm8tzJLxZgZ
+	 RzNeV1nI8Xc2+E/Er4K/hySns3z7+C89eKgfHDUr6QtPU0P5y01Ba1RBAst0pm+6qU
+	 mFLXKWzxQEy+Po+4p5IUUfdcPnLlJzrVxqdys88Y/3XRAXIVMDX1fqHm7z0wq3oLAc
+	 ji7wVU7OS1ax1G4HnyeM+cI3XG7HBzv9GYCm3VeVF9Nm+ebYUvekUKf7JnvtVEU2qa
+	 DZIqOuEuwea+hBvlg7PkrLq3C9fyIilBiwD1tjINhk+UTQelj1WFnTKgjWxTm/3790
+	 lFk35gC77gIuA==
+Date: Wed, 5 Mar 2025 14:52:56 -0300
+From: Arnaldo Carvalho de Melo <acme@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>, Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>, Leo Yan <leo.yan@linux.dev>,
+	guoren <guoren@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Charlie Jenkins <charlie@rivosinc.com>,
+	Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
+	Howard Chu <howardchu95@gmail.com>, linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	"linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+	linux-riscv@lists.infradead.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 01/11] perf dso: Move libunwind dso_data variables
+ into ifdef
+Message-ID: <Z8iPeEbldTUqotsQ@x1>
+References: <20250304050305.901167-1-irogers@google.com>
+ <20250304050305.901167-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,58 +80,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250228-rss-v7-3-844205cbbdd6@daynix.com>
+In-Reply-To: <20250304050305.901167-2-irogers@google.com>
 
-On Fri, Feb 28, 2025 at 04:58:49PM +0900, Akihiko Odaki wrote:
-> Hash reporting
-> --------------
-> 
-> Allow the guest to reuse the hash value to make receive steering
-> consistent between the host and guest, and to save hash computation.
-> 
-> RSS
+On Mon, Mar 03, 2025 at 09:02:55PM -0800, Ian Rogers wrote:
+> The variables elf_base_addr, debug_frame_offset, eh_frame_hdr_addr and
+> eh_frame_hdr_offset are only accessed in unwind-libunwind-local.c
+> which is conditionally built on having libunwind support. Make the
+> variables conditional on libunwind support too.
+
+Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+ 
+> Signed-off-by: Ian Rogers <irogers@google.com>
 > ---
-
-Odaki-san,
-
-Please reformat the patch description to avoid including "^---$".
-Git will truncate the commit message at that point,
-excluding the text below and your Signed-off-by line.
-
+>  tools/perf/util/dso.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
-> RSS is a receive steering algorithm that can be negotiated to use with
-> virtio_net. Conventionally the hash calculation was done by the VMM.
-> However, computing the hash after the queue was chosen defeats the
-> purpose of RSS.
-> 
-> Another approach is to use eBPF steering program. This approach has
-> another downside: it cannot report the calculated hash due to the
-> restrictive nature of eBPF steering program.
-> 
-> Introduce the code to perform RSS to the kernel in order to overcome
-> thse challenges. An alternative solution is to extend the eBPF steering
-> program so that it will be able to report to the userspace, but I didn't
-> opt for it because extending the current mechanism of eBPF steering
-> program as is because it relies on legacy context rewriting, and
-> introducing kfunc-based eBPF will result in non-UAPI dependency while
-> the other relevant virtualization APIs such as KVM and vhost_net are
-> UAPIs.
-> 
-> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> ---
-
-This one is ok, as the commit message should end here.
-
->  Documentation/networking/tuntap.rst |   7 ++
->  drivers/net/Kconfig                 |   1 +
->  drivers/net/tap.c                   |  62 ++++++++++++-
->  drivers/net/tun.c                   |  89 ++++++++++++++----
->  drivers/net/tun_vnet.h              | 180 +++++++++++++++++++++++++++++++++---
->  include/linux/if_tap.h              |   2 +
->  include/linux/skbuff.h              |   3 +
->  include/uapi/linux/if_tun.h         |  75 +++++++++++++++
->  net/core/skbuff.c                   |   4 +
->  9 files changed, 390 insertions(+), 33 deletions(-)
-
-...
+> diff --git a/tools/perf/util/dso.h b/tools/perf/util/dso.h
+> index bb8e8f444054..dfd763a0bd9d 100644
+> --- a/tools/perf/util/dso.h
+> +++ b/tools/perf/util/dso.h
+> @@ -154,10 +154,12 @@ struct dso_data {
+>  	int		 status;
+>  	u32		 status_seen;
+>  	u64		 file_size;
+> +#ifdef HAVE_LIBUNWIND_SUPPORT
+>  	u64		 elf_base_addr;
+>  	u64		 debug_frame_offset;
+>  	u64		 eh_frame_hdr_addr;
+>  	u64		 eh_frame_hdr_offset;
+> +#endif
+>  };
+>  
+>  struct dso_bpf_prog {
+> -- 
+> 2.48.1.711.g2feabab25a-goog
 
