@@ -1,326 +1,138 @@
-Return-Path: <linux-kernel+bounces-546306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63197A4F8FA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:39:29 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6955A4F903
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:41:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84517166015
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:39:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390F43A49D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:41:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DB91F3BB2;
-	Wed,  5 Mar 2025 08:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 224531FC7F7;
+	Wed,  5 Mar 2025 08:41:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="AkQMG99w"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="FyL38Wzi"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A374B1C6FE1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A548D156F44;
+	Wed,  5 Mar 2025 08:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741163963; cv=none; b=ALMDGCe39lP7CN+v6L8gmb41i2WyR7zZP0ZaKYsZbDCip5gbx+I9KmR+yOr7DGYJqxvgBlyTmg60l52QOrWFIuNUNuhEK25hfJzS1spBNCeZiVjeDR9b724kX+o81hNuedSm+/q1NeMPfdT4GtfLyGo5A2Pnl+ujqpmJFvz+WUU=
+	t=1741164091; cv=none; b=MmF1Cp8g5fjwVtt0/zG76aTwmX5xXCj9x5DrkUuuEQaPmEOn1rGnfrBB6fpScjs+b3jBHy/lMIBps/xddgGv49UKSDMZB1pskqHbMC5wjMC1qXZWOxJ3Gd8vRJ2E/7e4wIYjX+BxK377hywOzQ719FSyOUwlqsJbJbYvn6/RMKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741163963; c=relaxed/simple;
-	bh=T2uzEUAxDb++pE0xa2jPenyN7MzNZe3VrOV1gDygbas=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NAY/4CLNf9HCxjDH4UxxKVOvO6cgMfoUs+JhUXxVNRNJINBMrir4Sf48i5Go57YZbCDVBr40xfl0AR2deuzbGRVFh/0EvffIVdpx94F17ZtIPCK72o0ugFXf+3oUmAIOEV9b9kReKbXgP5Pp6EtpuHXLOE0ZCPaKoOYbPAEIi18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=AkQMG99w; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-223a0da61easo119305ad.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:39:21 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741163961; x=1741768761; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=faXqYYFydBMQa6qJbhlVoXW0EZv6eA+uFvOUudXNaZg=;
-        b=AkQMG99woOtqECtiuraoEMF0Pe7sq5qgUCa025vqu+3gamMt32Uh91DrsB4zKgu1k8
-         VFD86sxYRoPJSjYlHVAZaZ8Iz43nbI4xYRN63MhegVkWTdCH3JSm9197x+i1y6kyN6a1
-         iddM3ppQHZj8jCSAsqrgBGpfuNnfLLtAzrSaOxQ+daHkoNIiaKTrtdE4VOz77XMk7SAG
-         cfxAt863NBQmI/9+6yqes+pM6qEvk09k2lQiQd0tqheKMiVa6Iik3H83AnmBAP7rIwOc
-         9hxSZ1GrOm+YS1mt21v4+x45eH6PjWuKYITnbzkcOzHE6cCu7nQsi8gstn11FKJ6Szna
-         +3+Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741163961; x=1741768761;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=faXqYYFydBMQa6qJbhlVoXW0EZv6eA+uFvOUudXNaZg=;
-        b=C7CqV0yUrWgYW+vrpEgHxwFGd6z6EJIVlHWEsxBozZ1U/rFBThrVdxB2EIM3GzSRee
-         6MOng5H/rD/OuFsHtndMn05jb+cc2dsU/oyWY0xl93WgEQY/d30j3GqzFVG31v1vpEj/
-         F6HYXI+yl+KtlAbN+p0/lrJYwvTkU/RxJuDt9ZxcoIezQH2tC1R9Y3ZLKm7NXOeCpthc
-         LAQwVEGUATgnhGPAQxcF3OpOcRvPWqDsntCHla1pL21/I+WsuZf+6bhSlmZpx3AV2TJG
-         C5i+5BFOiYOC56UfimH6hW2zTg0/d504lSF+mEt6zSs9eZDh15bYCmGqXT4uL42woEcL
-         ns1g==
-X-Forwarded-Encrypted: i=1; AJvYcCXZgdd2KnYT5ocwCmuxKVc2suDOAKYg28K09LQ/57G3dQ05e0tckOaC4TM5ykRbjCwQDAriyRl85Ev1hdc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwlMh4mdVGTJszmigXSxzjYGFb4yqD16U9XlY2GFhHZ6m0UQ8Z4
-	UcfK88dz79/ANXsyDa8ijL1kUayttbXkNudRAnnH2Mvqvo+ZS0sht12ChTE9h1kt2BfDGvawSLO
-	+XwEya6mbMZAuiShodwEu2nxlAszeNVuLhlz7
-X-Gm-Gg: ASbGncvE43KrpSr7CBtZUFEhGrsxNkCd05Whn/7bemYkqq+4q1poBkbaFU2j0Q7O3x+
-	CbQYEJolbZIofNW9RMtB2E9dl0XVtVN+xqxSNsM8N0NXeuXaPVKby7V73U40mASOLIYsGmjFTaz
-	Zgukz+aMl/t9mH2ztxhuhMOqX1618=
-X-Google-Smtp-Source: AGHT+IFTr+mTXGjHME0fA15wPDlvb2+eWputm0PGeq6g9djMSkfkA89JdLu2aJkfgGyTzz8VppJkYb1qjLqZyvheoMY=
-X-Received: by 2002:a17:902:f9cb:b0:223:ff93:322f with SMTP id
- d9443c01a7336-223ff93338cmr43755ad.2.1741163960618; Wed, 05 Mar 2025 00:39:20
- -0800 (PST)
+	s=arc-20240116; t=1741164091; c=relaxed/simple;
+	bh=fCDaLEF1BjQDk6gvMN7vVYiHfOJ4vTdNlSKUXs5nPuw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=udApOJHPJvegNzTgvAADEF8ZOn/9cciwFfOaNvoHblZtifzrEbhzQtunQmqsogFxXgyfg5z1I9PRMvZfMqszQBvPedtWdxZDyWYE1wz0td3Qed/RxFr4Jv6ZoHaj7C4nMn/L0fqSgHS31kdSsVhN/UANlVZRUcCOUgi7U+a5qac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=FyL38Wzi; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1741164058; x=1741768858; i=markus.elfring@web.de;
+	bh=fCDaLEF1BjQDk6gvMN7vVYiHfOJ4vTdNlSKUXs5nPuw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=FyL38WzipPEoGUYCtfkJPKsUeSQADSAFq4nNhTF7P+2Uv+w7VuuXPjKrszxmz47s
+	 7WExlwuD+KFc4CXaP594d5s5VJne7kXDhHMeuLX2EHe9VGUZw2G2ksajtN06jStjv
+	 EtwtxlByz8URebq+vUyWh/+KwwxKi/q2KLizqeaTaUyIpBPYlbZQ+YehxQqursD8M
+	 l9d1L16lFo3KZYNQa/R/EhLGrysPeHvI5xPjdKBVoFIYzXfTR6FqlonKjZ6OzkRFu
+	 jYHuCHO4Igg3qKQ1DqGrOjPAxtgA/53VYO6dfsEOPRTWO+kLPDonnRUzZbZFaBK1u
+	 uIF8ZWy88JP03+C2tg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MqZQY-1tTw9i2MMK-00fxB5; Wed, 05
+ Mar 2025 09:40:58 +0100
+Message-ID: <e665514b-5a62-4afb-b267-7c320e4872af@web.de>
+Date: Wed, 5 Mar 2025 09:40:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224083306.71813-1-dapeng1.mi@linux.intel.com>
- <20250224083306.71813-2-dapeng1.mi@linux.intel.com> <CAP-5=fW4QQk6fFMUyr+KFekA+sfkzsg-vKeCvaQYk0Srwsr4bQ@mail.gmail.com>
-In-Reply-To: <CAP-5=fW4QQk6fFMUyr+KFekA+sfkzsg-vKeCvaQYk0Srwsr4bQ@mail.gmail.com>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 5 Mar 2025 00:39:09 -0800
-X-Gm-Features: AQ5f1Jq6OtsJUORQccnOzWeTiMHp0FZDFT4mNjFBCGT1a294wYhts5MczzJGUBg
-Message-ID: <CAP-5=fWdKNT2sLXeRj7r-WpsE2Xg7ZTOxVKy6D_Cg_NYA0AXGQ@mail.gmail.com>
-Subject: Re: [PATCH 2/2] perf tools/tests: Fix topdown groups test on hybrid platforms
-To: Dapeng Mi <dapeng1.mi@linux.intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dapeng Mi <dapeng1.mi@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: =?UTF-8?Q?Re=3A_=5BRFC=5D_Clarification_for_=E2=80=9Cundefined_beha?=
+ =?UTF-8?B?dmlvdXLigJ0/?=
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ kernel-janitors@vger.kernel.org, freedreno@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, linux-arm-msm@vger.kernel.org
+Cc: Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Archit Taneja <architt@codeaurora.org>, Daniel Vetter <daniel@ffwll.ch>,
+ David Airlie <airlied@gmail.com>, Jeykumar Sankaran <jsanka@codeaurora.org>,
+ Jordan Crouse <jordan@cosmicpenguin.net>,
+ Marijn Suijten <marijn.suijten@somainline.org>,
+ Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+ Simona Vetter <simona@ffwll.ch>, Vinod Koul <vkoul@kernel.org>,
+ cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
+References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
+ <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
+ <13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
+ <54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
+ <k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
+ <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Is8r5OqTz1HEt5DAHK+q9bpWIsAC/ftPgUCj2FJLpX8MmfLUBid
+ fT2UpE/JSWmezrvupm7xHOXC7YUQsVaEZC0V5+3kNBaub/aDJDNC2yqQbgrscneRvnBq5VX
+ VMQxX2+7fAtLBuT/Uboe9GP66LH+LXdN/9wgjWAmtPLeF4ULKk2+AEV7mhfygbzhNi9V9wB
+ tkXDOy8yRt6oKzQuoNYUA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:MuuCeMBVWnM=;BzFg+FxRcOm4BpAgy0enxRtgIHL
+ 4qupdcjxA6scJ3cX8W3kBIpdy/H4k+t7A4eNhegIC5Q6XRp9nWJQBpjEoqrBVWV3aH4tD043x
+ N0gU9isZlYOwtTS2+LyVl4XTSrwTsx9DGUqM8FclDGpDUzwCX2k0jzWg5RyxTvsZnqJKQCe4u
+ JVZTuYJciWMQninqJsMPiUKYGOP00FXKKXKNld2DOhORcvClqkBI2QfRW4VVhKwkZZwITIohN
+ oczZRh0+LBz6HVJb6wvF/gdUDVSC6wA0UQSRVGmRuhEHP3tdilb/NDq38+A7X6ie/ca198CGY
+ oAomEVGBLJox4XYcY4QknL7NBQ3MnFVBu1ZZBLq2A4jzTeym3S87sf+KERld9cMLN71ZaZDRt
+ QqmBh1UbLqQmvai/mDJzSO26qqsemIOf6rxIlEuAJMzIoFjB8NR71+5N0PWrzjpQNE4hSb2uU
+ Ez8c79sMcApnHnfe+9EBwBwq6fPsSd0fnYIUY189mQgmb4nRhFg/c604l9Wg03W1tABL2eimo
+ rHlDCgJtEa2YT7asXccZOr5+Vh+lS719rBY9ATeYjD20CymYIqFDviVhNOmIPcVZrDAk9ycB0
+ fd9+3wj+9egR5Rm8TWep22kj2sqrk8t80TtPvP3SyoHITgIrrQFQDSPgTiiej2xcC6Uvn4ekS
+ G5bib8BotNmdMcUBYyx0+iyiMTq/dYaOtHM5VycArSykz4QiKJLSe2QgSlaZA9ewnudX6ojvN
+ ovWqLR3GQ5/ITBaschxQkJO5zAdWz7Ksv/9OORtm9iN83sgtdPEYyYrJpapIRS75p3/YONcb4
+ YM781c0t19a/FMrXy27nVhTRSItb3lp39Eq8S1Cr1Mc5YWYVK9lVKriOavWh0vfSGv+b5wrtp
+ 4FxP4/kHn3bejmofRFRHDhydYsF++px1Z15ojeihiJbo5tsFqawhNk06ujULAPg7BewFds+bi
+ TKEj4DZrPxdrkO3inYqmFm34uIw4RYfsvC3zUUW+jUsMQxSRSiBzuVp3wVM7Y6YbuPVghbTUw
+ JpzrWYGYycUc2jKFuj4pcACdAeklii9U/6zuww4yAxDqYncKhWcLsNwA9omLPovtZVmKRhCsB
+ PGkL9tts+aYt9K1JYYWIltzHeoLjzIt2cfs2F4KvQEKy4XhAW7oIASNELcIwklQP6MU+5IixI
+ baJTU5mzorsYPb8a1ruASEdY3uOry7NjOUjLoBlgzkH2o8Tc+YG3U2cfn/UMSMdyrQXs+cucJ
+ zUzG5qFlhXJbak8Fh/rJrfct5PDE62PaRceFlW/z8jAYf+nAZye5+yMTAq8kyg26/im3np92p
+ oeQ9Xn6WleJZtWsVOphZEbFXw03x9jODGJXYF7633qYzfD+pOLMxUZrzYKMozCrd6V9zc/DgV
+ IJ7dM6wYNVQXmq7yYsUr8HNhRjW3XZAvSIhs54WzvxvXbY4LTNW9at5SvzPYTfJcM1K2DRVXz
+ SgLwmhV+mstgAnG2q0CJRo1aqMEI=
 
-On Tue, Mar 4, 2025 at 10:07=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
-> On Sun, Feb 23, 2025 at 5:43=E2=80=AFPM Dapeng Mi <dapeng1.mi@linux.intel=
-.com> wrote:
-> >
-> > When running topdown groups test on hybrid platforms like LNL/ARL, we
-> > see the following 2 commands fail.
-> >
-> > perf stat $cputype -e '{instructions,slots},topdown-retiring' true
-> > perf stat $cputype -e '{instructions,slots},{topdown-retiring}' true
-> >
-> > Take the 1st command as an example, 5 events are created on hybrid
-> > platform. They are cpu_atom/instructions/, cpu_core/instructions/,
-> > cpu_core/slots/, cpu_atom/topdown-retiring/ and
-> > cpu_core/topdown-retiring/ events. The former 3 events are in a group
-> > and the latter 2 topdown-retiring events are independent events.
-> >
-> > As the limitation of current implementation, the
-> > cpu_core/topdown-retiring/ event can't be moved into previous group as
-> > long as there are other events before it. That's the reason why we see
-> > the failure.
-> >
-> > Thus add "--cputype core" option to limit only P-core events are tested=
-.
-> >
-> > Signed-off-by: Dapeng Mi <dapeng1.mi@linux.intel.com>
-> > ---
-> >  tools/perf/arch/x86/util/evlist.c | 26 +++++++++++++++++++++++---
-> >  tools/perf/tests/shell/stat.sh    | 20 ++++++++++++++++++--
-> >  2 files changed, 41 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/tools/perf/arch/x86/util/evlist.c b/tools/perf/arch/x86/ut=
-il/evlist.c
-> > index 447a734e591c..0a71ba975871 100644
-> > --- a/tools/perf/arch/x86/util/evlist.c
-> > +++ b/tools/perf/arch/x86/util/evlist.c
-> > @@ -9,7 +9,7 @@ int arch_evlist__cmp(const struct evsel *lhs, const str=
-uct evsel *rhs)
-> >  {
-> >         /*
-> >          * Currently the following topdown events sequence are supporte=
-d to
-> > -        * move and regroup correctly.
-> > +        * move and regroup correctly on non-hybrid platforms.
-> >          *
-> >          * a. all events in a group
-> >          *    perf stat -e "{instructions,topdown-retiring,slots}" -C0 =
-sleep 1
-> > @@ -44,7 +44,7 @@ int arch_evlist__cmp(const struct evsel *lhs, const s=
-truct evsel *rhs)
-> >          * topdown metrics events must be first event after the slots e=
-vent group,
-> >          * otherwise topdown metrics events can't be regrouped correctl=
-y, e.g.
-> >          *
-> > -        * a. perf stat -e "{instructions,slots},cycles,topdown-retirin=
-g" -C0 sleep 1
-> > +        * e. perf stat -e "{instructions,slots},cycles,topdown-retirin=
-g" -C0 sleep 1
-> >          *    WARNING: events were regrouped to match PMUs
-> >          *     Performance counter stats for 'CPU(s) 0':
-> >          *         17,923,134      slots
-> > @@ -56,11 +56,31 @@ int arch_evlist__cmp(const struct evsel *lhs, const=
- struct evsel *rhs)
-> >          * has topdown metrics events must contain only the topdown met=
-rics event,
-> >          * otherwise topdown metrics event can't be regrouped correctly=
- as well, e.g.
-> >          *
-> > -        * a. perf stat -e "{instructions,slots},{topdown-retiring,cycl=
-es}" -C0 sleep 1
-> > +        * f. perf stat -e "{instructions,slots},{topdown-retiring,cycl=
-es}" -C0 sleep 1
-> >          *    WARNING: events were regrouped to match PMUs
-> >          *    Error:
-> >          *    The sys_perf_event_open() syscall returned with 22 (Inval=
-id argument) for
-> >          *    event (topdown-retiring)
-> > +        *
-> > +        * For hybrid platforms, the sequences 'c' and 'd' are not supp=
-orted as well
-> > +        * besides above sequences 'e' and 'f'.
-> > +        *
-> > +        *    perf stat -e "{instructions,slots},topdown-retiring" -C0 =
-sleep 1
-> > +        *    perf stat -e "{instructions,slots},{topdown-retiring}" -C=
-0 sleep 1
-> > +        *
-> > +        * On hybrid platforms each event would create an instance on a=
-ll types of PMU
-> > +        * if the event can be supported by the PMU, i.e., the "topdown=
--retiring" event
-> > +        * would create two instances on hybrid platforms with P-cores =
-and E-cores,
-> > +        * "cpu_core/topdown-retiring/" and "cpu_atom/topdown_retiring"=
-.
-> > +        *
-> > +        * Take the first command as an example, the events list would =
-be converted to
-> > +        * below list in fact.
-> > +        *
-> > +        * "{cpu_atom/instructions/,cpu_core/instructions/,cpu_core/slo=
-ts/},
-> > +        *  cpu_atom/topdown-retiring/,cpu_core/topdown-retiring/"
-> > +        *
-> > +        * This is actually same with event list in case 'e', "cpu_core=
-/topdown-retiring/"
-> > +        * event can't be moved into previous events group.
-> >          */
-> >         if (topdown_sys_has_perf_metrics() &&
-> >             (arch_evsel__must_be_in_group(lhs) || arch_evsel__must_be_i=
-n_group(rhs))) {
-> > diff --git a/tools/perf/tests/shell/stat.sh b/tools/perf/tests/shell/st=
-at.sh
-> > index 68323d636fb7..cdfe27c25528 100755
-> > --- a/tools/perf/tests/shell/stat.sh
-> > +++ b/tools/perf/tests/shell/stat.sh
-> > @@ -5,6 +5,16 @@
-> >  set -e
-> >
-> >  err=3D0
-> > +is_hybrid=3Dfalse
-> > +
-> > +check_hybrid_platform() {
-> > +  pmus=3D$(ls /sys/bus/event_source/devices/*/cpus 2>/dev/null | wc -l=
-)
-> > +  if [ "$pmus" -gt 1 ]
-> > +  then
-> > +    is_hybrid=3Dtrue
-> > +  fi
-> > +}
-> > +
-> >  test_default_stat() {
-> >    echo "Basic stat command test"
-> >    if ! perf stat true 2>&1 | grep -E -q "Performance counter stats for=
- 'true':"
-> > @@ -62,6 +72,11 @@ test_topdown_groups() {
-> >    # Topdown events must be grouped with the slots event first. Test th=
-at
-> >    # parse-events reorders this.
-> >    echo "Topdown event group test"
-> > +  cputype=3D""
-> > +  if $is_hybrid
-> > +  then
-> > +    cputype=3D"--cputype core"
-> > +  fi
-> >    if ! perf stat -e '{slots,topdown-retiring}' true > /dev/null 2>&1
-> >    then
-> >      echo "Topdown event group test [Skipped event parsing failed]"
-> > @@ -85,13 +100,13 @@ test_topdown_groups() {
-> >      err=3D1
-> >      return
-> >    fi
-> > -  if perf stat -e '{instructions,slots},topdown-retiring' true 2>&1 | =
-grep -E -q "<not supported>"
-> > +  if perf stat $cputype -e '{instructions,slots},topdown-retiring' tru=
-e 2>&1 | grep -E -q "<not supported>"
->
-> So I can make this test fail on non-hybrid with:
-> ```
-> $ perf stat -e '{instructions,slots},faults,topdown-retiring' true
-> WARNING: events were regrouped to match PMUs
->
-> Performance counter stats for 'true':
->
->         5,312,770      slots
->         1,078,401      instructions
->                56      faults
->   <not supported>      topdown-retiring
-> ```
-> The issue is that the slots isn't a group leader, so the "force group
-> index" we try to insert must be grouped events into is miscalculated
-> to be topdown-retiring. The following fixes this:
-> ```
-> diff --git a/tools/perf/util/parse-events.c b/tools/perf/util/parse-event=
-s.c
-> index 35e48fe56dfa..68ddc335cde4 100644
-> --- a/tools/perf/util/parse-events.c
-> +++ b/tools/perf/util/parse-events.c
-> @@ -2056,8 +2056,7 @@ static int
-> parse_events__sort_events_and_fix_groups(struct list_head *list)
->                 pos->core.idx =3D idx++;
->
->                 /* Remember an index to sort all forced grouped events
-> together to. */
-> -               if (force_grouped_idx =3D=3D -1 && pos =3D=3D pos_leader =
-&&
-> pos->core.nr_members < 2 &&
-> -                   arch_evsel__must_be_in_group(pos))
-> +               if (force_grouped_idx =3D=3D -1 &&
-> arch_evsel__must_be_in_group(pos))
->                         force_grouped_idx =3D pos->core.idx;
->         }
-> ```
->
-> >    then
-> >      echo "Topdown event group test [Failed topdown metrics event not m=
-ove into slots group]"
-> >      err=3D1
-> >      return
-> >    fi
-> > -  if perf stat -e '{instructions,slots},{topdown-retiring}' true 2>&1 =
-| grep -E -q "<not supported>"
-> > +  if perf stat $cputype -e '{instructions,slots},{topdown-retiring}' t=
-rue 2>&1 | grep -E -q "<not supported>"
->
-> So this is trickier as '{topdown-retiring}' ends up looking as a 2
-> event group. I'll post a proposed fix.
+>>> The address of a data structure member was determined before
+>>> a corresponding null pointer check in the implementation of
+>>> the functions =E2=80=9Cdpu_hw_pp_enable_te=E2=80=9D and =E2=80=9Cdpu_h=
+w_pp_get_vsync_info=E2=80=9D.
+>>>
+>>> Thus avoid the risk for undefined behaviour by removing extra
+>>> initialisations for the variable =E2=80=9Cc=E2=80=9D (also because it =
+was already
+>>> reassigned with the same value behind this pointer check).
+> There is no undefined behavior here.
 
-Patch here:
-https://lore.kernel.org/lkml/20250305083735.393333-2-irogers@google.com/
+Is there a need to improve the wording precision?
 
-Thanks,
-Ian
+There are words which denote a special meaning according to aspects of
+the programming language =E2=80=9CC=E2=80=9D.
+https://en.cppreference.com/w/c/language/behavior
 
->
-> >    then
-> >      echo "Topdown event group test [Failed topdown metrics group not m=
-erge into slots group]"
-> >      err=3D1
-> > @@ -200,6 +215,7 @@ test_hybrid() {
-> >    echo "hybrid test [Success]"
-> >  }
-> >
-> > +check_hybrid_platform
-> >  test_default_stat
-> >  test_stat_record_report
-> >  test_stat_record_script
-> > --
-> > 2.40.1
-> >
+Dereferences of null pointers are treated in special ways.
+The system might be configurable to collaborate also with data accesses
+together with the address =E2=80=9Czero=E2=80=9D.
+Would you like to distinguish supported software functionality any further=
+?
+
+Regards,
+Markus
 
