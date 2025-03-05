@@ -1,331 +1,298 @@
-Return-Path: <linux-kernel+bounces-547161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5361A5039D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:41:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2D93A503A4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:41:39 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB9F9188D7F8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1A757A4A24
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:40:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AA1B2500B1;
-	Wed,  5 Mar 2025 15:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160E52505A2;
+	Wed,  5 Mar 2025 15:41:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b="Qk+UO+6v"
-Received: from smtp15.bhosted.nl (smtp15.bhosted.nl [94.124.121.26])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="J0zzfvDz"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E362500C6
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:40:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=94.124.121.26
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A169B24EF93;
+	Wed,  5 Mar 2025 15:41:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741189258; cv=none; b=ir162gIbmbDZofTIyDw5XB64uakLXPD9PXjZ0RbrC+JOJDY2YBHasvxsmf/Mc/3oTAdDik9k3LNiEp6vIPzVYPqQ3xnBGhlpcxLsh1xJPtBiC7plaC9guMdNCq+sC/jLxqB/Ex0R44A/QrQyTH3EmtIKWEfPZrc5Uj8D+F1P7lk=
+	t=1741189287; cv=none; b=Gxqy5Lmv9Loyrf4VVxytwflP7doGPCGnieKXYr2zLoj1QPqYbqBdbDhKx0Z3Gaz7n9+sTDhc2/g5W/Om67khX9vP2BTmMr7JP/Q03IYlpHb4m6a6ciuxV0zNL37Xp0jkbJe95Kigbm85CGACukXcJt+vHrqw4/ihQIUOTLEeTMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741189258; c=relaxed/simple;
-	bh=S5V4K4G9/5vJWNMjiayM1hFuWoqlo2JQsadqMzM6j4s=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qALWIs+bRdYjpGvDhmWmZssux1o6ZyOJ8P4BsvrMrvr+hlje3ppZqE3MJZRFpne28LZDlng6ZZXhNdzq/4Q+JGG0ZagmcFSaniRTQdDhaJR9C61a//qIfbivcqXetQ3mDNFCdv9ghgFBxuu/nTdQ13FJiAOTUxonP6wPI+q6ItM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl; spf=pass smtp.mailfrom=protonic.nl; dkim=pass (2048-bit key) header.d=protonic.nl header.i=@protonic.nl header.b=Qk+UO+6v; arc=none smtp.client-ip=94.124.121.26
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=protonic.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonic.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=protonic.nl; s=202111;
-	h=content-transfer-encoding:content-type:mime-version:references:in-reply-to:
-	 message-id:subject:cc:to:from:date:from;
-	bh=E+kuQhjj9xzNE6BQn+tsChkhWmfrDEIZBYOWMsZmgiI=;
-	b=Qk+UO+6vvgBlPcvycrq9X9afftKz9msDJkOE4JHf9WXUXPHPlDemBTl6Ow4XjhWWOX8wlJfzCpxib
-	 aOlPD38wDrVUqO9xCaJ2kdtI/nY7hFlIS5xz4peuoSM/nPQFVd0a21QBOXFZC2HDtJH4Ac3i/KzSfX
-	 Oe5rqDbpHNRkglhrSfp9ki803Bxw/F2P3m5Dsob6QFhhTIajO1VhK7z/LdPNGeAsgebx5uYAKlSeJe
-	 uhEqeA3Te23Ec9/ctbFt3XU2h2F2WDzXYWI7GI6IS2qBkpAapzGHuvnNZyjUgadFJG50U8Jpw7xvY7
-	 EN6XLHNM+2dvv0oJCmnKzo6Xg4glinA==
-X-MSG-ID: 34bb63cf-f9d8-11ef-a39e-00505681446f
-Date: Wed, 5 Mar 2025 16:40:45 +0100
-From: David Jander <david@protonic.nl>
-To: Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?= <u.kleine-koenig@baylibre.com>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, Jonathan Corbet
- <corbet@lwn.net>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-doc@vger.kernel.org, Nuno Sa
- <nuno.sa@analog.com>, Jonathan Cameron <jic23@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>
-Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
-Message-ID: <20250305164046.4de5b6ef@erd003.prtnl>
-In-Reply-To: <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
-References: <20250227162823.3585810-1-david@protonic.nl>
-	<20250227162823.3585810-2-david@protonic.nl>
-	<6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
-Organization: Protonic Holland
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741189287; c=relaxed/simple;
+	bh=QVXzwZI8QWLrdadVm4OsCG7KScMpWF/+/XAQqckZiuk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rSxhOqdd4g7aofCZWyxxY3FqMG1dwjBJmObsMU4+hsa9MCrIzURlLGUwl/iIQzyP/JjHRI01IrDQFF/SJPTMnts+N+SyUkxMcg9TjGjy8wuHOC5P5J7B6P0ytqdxfjjvTS8WFUfr2UE6hpJDbJIKwK4Rx/9cumrx/EOb7ENIr+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=J0zzfvDz; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.116] (pd9e59f4f.dip0.t-ipconnect.de [217.229.159.79])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 1CE292FC0048;
+	Wed,  5 Mar 2025 16:41:20 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1741189280;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=N6jhBJij2I0NQYatN7vveyLTqhAJA3pvmCwSTqgjABM=;
+	b=J0zzfvDztdNy1xOMu03BiXaC1w6+qiiCbs5TtGhM3Dz6kHkti9xU5L9H79iDPCHCFySqK+
+	yqpzdveeDGd87ytaU1wYNWsSjDX8w1uaa47TSi2CbsMD3CeRsOLziaaOr9UH2SaflckXmn
+	8+VUP8stD8nPpJJnIboGOi6CLdH4ZVM=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <e6f5234c-98ab-4a06-aa1a-59726f395ea4@tuxedocomputers.com>
+Date: Wed, 5 Mar 2025 16:41:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] Input: atkbd - Fix TUXEDO NB02 notebook keyboards
+ FN-keys
+To: Hans de Goede <hdegoede@redhat.com>, mario.limonciello@amd.com,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Cc: linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
+References: <20250303190442.551961-1-wse@tuxedocomputers.com>
+ <20250303190442.551961-2-wse@tuxedocomputers.com>
+ <1bee0a62-058b-482a-8eec-d45b8aca1614@redhat.com>
+ <d74c348d-474a-4871-8b94-d836e8d054e8@tuxedocomputers.com>
+ <1fbdfe7f-0f25-4de0-805c-b712663f7681@redhat.com>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <1fbdfe7f-0f25-4de0-805c-b712663f7681@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+
+Hi Hans,
+
+Am 05.03.25 um 15:18 schrieb Hans de Goede:
+> Hi Werner,
+>
+> On 5-Mar-25 1:07 PM, Werner Sembach wrote:
+>> Am 05.03.25 um 12:25 schrieb Hans de Goede:
+>>> Hi Werner,
+>>>
+>>> On 3-Mar-25 8:04 PM, Werner Sembach wrote:
+>>>> This small driver does 2 things:
+>>>>
+>>>> It remaps the touchpad toggle key from Control + Super + Hangaku/Zenkaku to
+>>>> F21 to conform with established userspace defaults. Note that the
+>>>> Hangaku/Zenkaku scancode used here is usually unused, with real
+>>>> Hangaku/Zenkaku keys using the tilde scancode.
+>>> So this control + super + scancode 0x76 sending is also seen on
+>>> quite a few other laptops and I think we need a generic fix for this.
+>>>
+>>> I recently noticed that KDE's keyboard-shortcut settings actually has
+>>> a  control + super + Hangaku/Zenkaku -> touchpad-toggle key binding
+>>> in its default bindings (IIRC). But that cannot work because xkb actually
+>>> has no mapping for evdev code 85 / KEY_ZENKAKUHANKAKU if you look in:
+>>>
+>>> /usr/share/X11/xkb/keycodes/evdev and then look for 93 (*) you will
+>>> find no mapping. I think this KDE default binding may be from a long
+>>> time ago when this did work. Or maybe KDE uses the FOO part of KEY_FOO
+>>> as symbolic when there is no xkb mapping ?
+>> It does not work on X11, but it does work on Wayland (there xev also sees the Zenkaku/Hankaku keypress). Don't ask me why.
+> Interesting, so in xev under Wayland you see something like this
+> on release:
+>
+>      state 0x0, keycode 38 (keysym 0x61, a), same_screen YES,
+>
+> With there actually being a keysym of "Zenkaku_Hankaku" there ?
+
+No. Sorry I got it a little bit wrong above, I didn't know it exactly anymore 
+and had to retest:
 
 
-Hi Uwe,
+With the keyboard shortcut deactivated, xev on wayland shows this:
 
-On Fri, 28 Feb 2025 17:44:27 +0100
-Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com> wrote:
+KeyPress event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 246681, (83,3), root:(1273,701),
+     state 0x0, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
+     XLookupString gives 0 bytes:
+     XmbLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-> Hello David,
->=20
-> just a few highlevel review comments inline.
+KeyPress event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 246682, (83,3), root:(1273,701),
+     state 0x40, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
+     XLookupString gives 0 bytes:
+     XmbLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-Thanks...
+KeyPress event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 246686, (83,3), root:(1273,701),
+     state 0x44, keycode 93 (keysym 0x0, NoSymbol), same_screen YES,
+     XLookupString gives 0 bytes:
+     XmbLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-> On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
-> [...]
-> > +static int motion_open(struct inode *inode, struct file *file)
-> > +{
-> > +	int minor =3D iminor(inode);
-> > +	struct motion_device *mdev =3D NULL, *iter;
-> > +	int err;
-> > +
-> > +	mutex_lock(&motion_mtx); =20
->=20
-> If you use guard(), error handling gets a bit easier.
+KeyRelease event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 246690, (83,3), root:(1273,701),
+     state 0x44, keycode 93 (keysym 0x0, NoSymbol), same_screen YES,
+     XLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-This looks interesting. I didn't know about guard(). Thanks. I see the
-benefits, but in some cases it also makes the locked region less clearly
-visible. While I agree that guard() in this particular place is nice,
-I'm hesitant to try and replace all mutex_lock()/_unlock() calls with guard=
-().
-Let me know if my assessment of the intended use of guard() is incorrect.
+KeyRelease event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 246696, (83,3), root:(1273,701),
+     state 0x44, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
+     XLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-> > +	list_for_each_entry(iter, &motion_list, list) {
-> > +		if (iter->minor !=3D minor)
-> > +			continue;
-> > +		mdev =3D iter;
-> > +		break;
-> > +	} =20
->=20
-> This should be easier. If you use a cdev you can just do
-> container_of(inode->i_cdev, ...);
+KeyRelease event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 246703, (83,3), root:(1273,701),
+     state 0x40, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
+     XLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-Hmm... I don't yet really understand what you mean. I will have to study the
-involved code a bit more.
 
-> [...]
-> > +static int motion_release(struct inode *inode, struct file *file)
-> > +{
-> > +	struct motion_device *mdev =3D file->private_data;
-> > +	int i;
-> > +
-> > +	if (mdev->ops.device_release)
-> > +		mdev->ops.device_release(mdev);
-> > +
-> > +	for (i =3D 0; i < mdev->num_gpios; i++) {
-> > +		int irq;
-> > +		struct motion_gpio_input *gpio =3D &mdev->gpios[i];
-> > +
-> > +		if (gpio->function =3D=3D MOT_INP_FUNC_NONE)
-> > +			continue;
-> > +		irq =3D gpiod_to_irq(gpio->gpio);
-> > +		devm_free_irq(mdev->dev, irq, gpio); =20
->=20
-> It seems devm is just overhead here if you release by hand anyhow.
+With the shortcut active, xev on wayland shows this (and the shortcut works):
 
-Ack. This looks indeed unnecessary... I'll try to use non-devres calls here.
+KeyPress event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 365034, (83,3), root:(1273,701),
+     state 0x0, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
+     XLookupString gives 0 bytes:
+     XmbLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-> > [...]
-> > +
-> > +static const struct class motion_class =3D {
-> > +	.name		=3D "motion",
-> > +	.devnode	=3D motion_devnode, =20
->=20
-> IIRC it's recommended to not create new classes, but a bus.
+KeyPress event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 365036, (83,3), root:(1273,701),
+     state 0x40, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
+     XLookupString gives 0 bytes:
+     XmbLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-Interesting. I did some searching, and all I could find was that the chapter
-in driver-api/driver-model about classes magically vanished between versions
-5.12 and 5.13. Does anyone know where I can find some information about thi=
-s?
-Sorry if I'm being blind...
+KeyRelease event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 365060, (83,3), root:(1273,701),
+     state 0x44, keycode 37 (keysym 0xffe3, Control_L), same_screen YES,
+     XLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-> [...]
-> > +int motion_register_device(struct motion_device *mdev)
-> > +{
-> > +	dev_t devt;
-> > +	int err =3D 0;
-> > +	struct iio_motion_trigger_info *trig_info;
-> > +
-> > +	if (!mdev->capabilities.num_channels)
-> > +		mdev->capabilities.num_channels =3D 1;
-> > +	if (mdev->capabilities.features | MOT_FEATURE_PROFILE)
-> > +		mdev->capabilities.max_profiles =3D MOT_MAX_PROFILES;
-> > +	if (!mdev->capabilities.speed_conv_mul)
-> > +		mdev->capabilities.speed_conv_mul =3D 1;
-> > +	if (!mdev->capabilities.speed_conv_div)
-> > +		mdev->capabilities.speed_conv_div =3D 1;
-> > +	if (!mdev->capabilities.accel_conv_mul)
-> > +		mdev->capabilities.accel_conv_mul =3D 1;
-> > +	if (!mdev->capabilities.accel_conv_div)
-> > +		mdev->capabilities.accel_conv_div =3D 1;
-> > +
-> > +	mutex_init(&mdev->mutex);
-> > +	mutex_init(&mdev->read_mutex);
-> > +	INIT_KFIFO(mdev->events);
-> > +	init_waitqueue_head(&mdev->wait);
-> > +
-> > +	err =3D motion_of_parse_gpios(mdev);
-> > +	if (err)
-> > +		return err;
-> > +
-> > +	mdev->minor =3D motion_minor_alloc();
-> > +
-> > +	mdev->iiotrig =3D iio_trigger_alloc(NULL, "mottrig%d", mdev->minor);
-> > +	if (!mdev->iiotrig) {
-> > +		err =3D -ENOMEM;
-> > +		goto error_free_minor;
-> > +	}
-> > +
-> > +	trig_info =3D kzalloc(sizeof(*trig_info), GFP_KERNEL);
-> > +	if (!trig_info) {
-> > +		err =3D -ENOMEM;
-> > +		goto error_free_trigger;
-> > +	}
-> > +
-> > +	iio_trigger_set_drvdata(mdev->iiotrig, trig_info);
-> > +
-> > +	trig_info->minor =3D mdev->minor;
-> > +	err =3D iio_trigger_register(mdev->iiotrig);
-> > +	if (err)
-> > +		goto error_free_trig_info;
-> > +
-> > +	mdev->iiowork =3D IRQ_WORK_INIT_HARD(motion_trigger_work);
-> > +
-> > +	INIT_LIST_HEAD(&mdev->list);
-> > +
-> > +	mutex_lock(&motion_mtx);
-> > +
-> > +	devt =3D MKDEV(motion_major, mdev->minor);
-> > +	mdev->dev =3D device_create_with_groups(&motion_class, mdev->parent,
-> > +				devt, mdev, mdev->groups, "motion%d", mdev->minor); =20
->=20
-> What makes sure that mdev doesn't go away while one of the attributes is
-> accessed?
+KeyRelease event, serial 39, synthetic NO, window 0x1200001,
+     root 0x4f7, subw 0x0, time 365060, (83,3), root:(1273,701),
+     state 0x40, keycode 133 (keysym 0xffeb, Super_L), same_screen YES,
+     XLookupString gives 0 bytes:
+     XFilterEvent returns: False
 
-Good question. I suppose you mean that since mdev is devres-managed and
-device_create_with_groups() apparently isn't aware of that, so there is no
-internal lock somewhere that prevents read() or ioctl() being called while =
-the
-devres code is freeing the memory of mdev?
+>
+> Because that is not working on Wayland on my laptop with the same
+> issue (after disabling the hwdb mapping) and I don't understand
+> how that could work at all given that /usr/share/X11/xkb/keycodes/evdev
+> has no mapping for EV keycode 85 (93 in that file) ?
+>
+>> Also: Other DEs don't have this binding.
+> Yes that is an issue, but see below.
+>
+>>> *) 85 + 8 all codes there are shifted up 8 compared to the KEY_FOO
+>>> defines because codes 0-7 are reserved for modifier.
+>>>
+>>> I hit the same issue years ago on "T-boa Tbook air" laptop and
+>>> their I fixed this by mapping Hangaku/Zenkaku -> f21 in
+>>> /lib/udev/hwdb.d/60-keyboard.hwdb :
+>>>
+>>> ###########################################################
+>>> # T-bao
+>>> ###########################################################
+>>>
+>>> evdev:atkbd:dmi:bvn*:bvr*:bd*:svnT-bao:pnTbookair:*
+>>>    KEYBOARD_KEY_76=f21                                    # Touchpad toggle
+>>>
+>>> + teaching GNOME to also accept Ctrl + Super + XF86TouchpadToggle
+>>> as touchpad-toggle:
+>>>
+>>> https://gitlab.gnome.org/GNOME/gnome-settings-daemon/-/blob/master/data/org.gnome.settings-daemon.plugins.media-keys.gschema.xml.in?ref_type=heads#L577
+>> Yeah KDE would need a similar fix and other DEs probably too. I hoped for a generic fix that does not need adjustments in so many projects.
+>>
+>> My first try was to do it on the XKB level but on Wayland the RedirectKey action is not implemented https://gitlab.freedesktop.org/xkeyboard-config/xkeyboard-config/-/merge_requests/794#note_2803713 (and probably wont be even in the future https://github.com/xkbcommon/libxkbcommon/issues/18#issuecomment-72728366) so I can't "unpress" control and super.
+>>
+>> If it is a more general issue, why not fix it on a more general level in the kernel? Maybe a generic filter applyable via a command line quirk and/or a quirk list?
+> The problem is that filtering keys with modifiers like you are doing
+> here just does not work.
+>
+> Your filter is seriously messing with the timing of the keypresses
+> which can be a real issue when not actually using the toggle touchpad
+> hotkey.
+>
+> Lets say the user is playing a game and has mapped super to
+> one of the fire buttons and is using an in game weapon with
+> some sort of auto-repeat firing.
+>
+> And your seqpos variable likely is 0 when super gets pressed,
+> now the keyboard sends 0xe0, 0x5b which your filter filters
+> out, and the user keeps super pressed because they expect
+> the weapon to start firing on auto-repeat. But the super
+> press is never send until super is released or another key
+> is pressed so things don't work.
+>
+> Likewise if the DE, an app or accessibility settings want to
+> differentiate between a short and a long super press all
+> presses now become super (pun not intended) short because
+> you insert the press directly in front of the release, losing
+> any timing information about how long the key was pressed.
+>
+> This is why using an i8042 filter for filtering key-combinations
+> (and the EC emulates a key-combination here) can never work reliably.
+Ok, thought I had a clean solution, but doesn't seems so xD.
+>
+> OTOH desktop environments already allow having Ctrl+Super+something
+> keybindings for DE actions. So we can re-use the tried and trusted
+> modifier handling in the DE to deal with combi part leaving just
+> the issue of mapping PS/2 scancode 0x76 aka evdev code
+> 85 / KEY_ZENKAKUHANKAKU to something usable by the DE.
+>
+> ATM both GNOME and KDE already have support for
+> Ctrl+Super+something for touchpad-toggle except that KDE expects
+> a "Zenkaku_Hankaku" keysym where as GNOME expects "XF86TouchpadToggle"
+> arguably the GNOME solution is slightly better because Japanese
+> keyboard layouts already use/send the "Zenkaku_Hankaku" keysym
+> unrelated to touchpad-toggle use. And I don't know what happens
+> when pressing ctrl+super+Zenkaku_Hankaku while using a Japanese
+> layout.
+When I interpret the xkb-config correctly, JIS keyboards use the tilde 
+scancode/keycode for the physical zenkaku/hankaku keys, at least in the default 
+config HZTG (henkaku/zankaku toggle) is aliased to TLDE
+>
+> I think maybe we just need to patch atkbd.c at the kernel to
+> map scancode 0x76 -> KEY_TOUCHPAD_TOGGLE since normal PS/2
+> keyboards never generate 0x76, this would lose the mapping to
+> KEY_ZENKAKUHANKAKU but since /usr/share/X11/xkb/keycodes/evdev
+> does not even map KEY_ZENKAKUHANKAKU I don't think loosing that
+> mapping will do a big deal.
 
-I will try to search for some example code to see how something like this is
-handled in other places. I assume I'd need to add a per-mdev lock or use the
-big motion_mtx everywhere... which sounds like a performance penalty that
-should be avoidable. If you know of a good example to learn from, I'd be
-grateful to know.
+At least from kernel side this would be a very small patch, are there any 
+objections to it?
 
-> > +	if (IS_ERR(mdev->dev)) {
-> > +		dev_err(mdev->parent, "Error creating motion device %d\n",
-> > +				mdev->minor);
-> > +		mutex_unlock(&motion_mtx);
-> > +		goto error_free_trig_info;
-> > +	}
-> > +	list_add_tail(&mdev->list, &motion_list);
-> > +	mutex_unlock(&motion_mtx);
-> > +
-> > +	return 0;
-> > +
-> > +error_free_trig_info:
-> > +	kfree(trig_info);
-> > +error_free_trigger:
-> > +	iio_trigger_free(mdev->iiotrig);
-> > +error_free_minor:
-> > +	motion_minor_free(mdev->minor);
-> > +	dev_info(mdev->parent, "Registering motion device err=3D%d\n", err);
-> > +	return err;
-> > +}
-> > +EXPORT_SYMBOL(motion_register_device);
-> > [...]
-> > +struct mot_capabilities {
-> > +	__u32 features;
-> > +	__u8 type;
-> > +	__u8 num_channels;
-> > +	__u8 num_int_triggers;
-> > +	__u8 num_ext_triggers;
-> > +	__u8 max_profiles;
-> > +	__u8 max_vpoints;
-> > +	__u8 max_apoints;
-> > +	__u8 reserved1;
-> > +	__u32 subdiv; /* Position unit sub-divisions, microsteps, etc... */
-> > +	/*
-> > +	 * Coefficients for converting to/from controller time <--> seconds.
-> > +	 * Speed[1/s] =3D Speed[controller_units] * conv_mul / conv_div
-> > +	 * Accel[1/s^2] =3D Accel[controller_units] * conv_mul / conv_div
-> > +	 */
-> > +	__u32 speed_conv_mul;
-> > +	__u32 speed_conv_div;
-> > +	__u32 accel_conv_mul;
-> > +	__u32 accel_conv_div;
-> > +	__u32 reserved2;
-> > +}; =20
->=20
-> https://docs.kernel.org/gpu/imagination/uapi.html (which has some
-> generic bits that apply here, too) has: "The overall struct must be
-> padded to 64-bit alignment." If you drop reserved2 the struct is
-> properly sized (or I counted wrongly).
+If not I make a patch for it and create a KDE issue.
 
-Oh, thanks for pointing that out... I wouldn't have searched for that
-information in that particular place tbh. ;-)
+>
+> So I think that going with the evdev mapping + teaching KDE
+> that Ctrl+Super+XF86TouchpadToggle is just XF86TouchpadToggle
+> is the best way forward to solve this once and for all.
+>
+>>>> It suppresses the reserved scancode produced by pressing the FN-key on its
+>>>> own, which fixes a warning spamming the dmesg log otherwise.
+>>> Can you not also suppress this by mapping the key to "unknown" in hwdb?
+>> Maybe, I didn't try. Was convenient to just do it here since I already had the filter. Will look into it once it is decided what to do with the touchpad toggle issue.
+> Please give using hwdb for this a try.
 
-I am tempted to add another __u32 reserved3 though instead. Better to have
-some leeway if something needs to be added in a backwards-compatible way la=
-ter.
+kk will do later
 
-> > +struct mot_speed_duration {
-> > +	__u32 channel;
-> > +	speed_raw_t speed; =20
->=20
-> What is the unit here?
-
-Speed doesn't have a fixed unit in this case. Or rather, the unit is
-device-dependent. For a motor it could be rotations per second, micro-steps=
- per
-second, etc... while for a linear actuator, it could be micrometers per sec=
-ond.
-
-Why no fixed unit? That's because in practice many devices (controllers) ha=
-ve
-their inherent base-unit, and it would get overly complicated if one needed=
- to
-convert back and forth between that and some universal unit just for the sa=
-ke
-of uniformity, and user-space most certainly expects the same unit as the
-hardware device it was initially designed for. So in this case it is a desi=
-gn
-decision to make user-space deal with unit-conversion if it is necessary to=
- do
-so.
-
-> > +	mot_time_t duration; =20
->=20
-> duration_ns? That makes usage much more ideomatic and there should be no
-> doubts what the unit is.
-
-Yes, mot_time_t is defined as nanoseconds, so I'll add the _ns suffix here.
-
-> > +	pos_raw_t distance; =20
->=20
-> What is the unit here?
-
-Again this unit can have different meanings: micrometers, micro-steps,
-angle-degrees, etc... so what suffix to use?
-
-> > +	__u32 reserved[3]; =20
->=20
-> Again the padding is wrong here.
-
-Will fix. thanks.
-=20
 Best regards,
 
---=20
-David Jander
+Werner
+
+>
+> Regards,
+>
+> Hans
+>
+>
 
