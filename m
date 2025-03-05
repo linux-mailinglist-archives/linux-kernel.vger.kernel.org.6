@@ -1,151 +1,149 @@
-Return-Path: <linux-kernel+bounces-545821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D2D1A4F1E9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:00:01 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED3BA4F1EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:00:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911A4188D002
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:00:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2AEE3A6B35
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E17A27BF6E;
-	Tue,  4 Mar 2025 23:59:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6E7B20C01C;
+	Wed,  5 Mar 2025 00:00:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RtSW+I3C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B2C200B8C;
-	Tue,  4 Mar 2025 23:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b="hA3/+aEQ"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B3F524C09A;
+	Wed,  5 Mar 2025 00:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741132792; cv=none; b=B9b9Xs/x47XWfi7g00q9lEgJEPsqm++btckIZSK4BbpY1eIwCTQZ9Zncf2Pua9dVqF87yn2KjW9YMdqZjVWV838Xh7SM9uLbPusqQy4NdmWneN/cqAHijJmSljQiqTaUWgTKl5uFBa86Uk8t+zWuiC/7PVK8nxeMqnKJ7QZpoWk=
+	t=1741132809; cv=none; b=abMoiwmWNrmEd+PrgPPpK4AU2RAMIHmYZPmoaebKXGJiqQIMsw9Hsqysct1PxX8BK4Ao5UE8mW6YiKBJQKEp577eJLBq0PGjCEdX+MSz50Oq/G53nUsKD1RwpFuHxt5QVRlSumB1jfN/5Q9DqmpUN7eDG0IMtKWCWGmtBpS8st4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741132792; c=relaxed/simple;
-	bh=5vebJ/S6i6XoH7Ih3sw4US3bddCoPmMlMYzqb9x3KTs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sXI5//TXC+OlwCPpXqlkY7VnQufwgKJkgbnex4sEUqQW1UANyQ5F++tcnGnXerMUcACo5Cwm/w2QHhWD1/N6qXnqVP6Ki09ZgrmV/XOoiYsVUrdA2DgJ4YfWca8qzPaaS15s/h1xtS6TSBvYKefyV/iGjgoKJZJGP0E3WiyDugs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RtSW+I3C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 68A67C4CEE5;
-	Tue,  4 Mar 2025 23:59:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741132792;
-	bh=5vebJ/S6i6XoH7Ih3sw4US3bddCoPmMlMYzqb9x3KTs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RtSW+I3Ctq7wSxMG0NAtscyoIiYM4RXmN1i93BhNwxpRwGinmq2nVauLNqKC4T6sB
-	 BYCYcWlG1Uc5rlc9+BNoLByAL10sDbxYSTNUtpW4J5KUiLomE82JcVdg36LiZ6O7xR
-	 yW20OF2brH22gRBVjM6aeFatYrIDeUnAX8KsvLwjS9CIqhp2oBREQ6U0jdxT4XKYTr
-	 8JwpFdahKF4U9a4Q79MPkp+eGBnQs1OIj7VidvfBfY3t6gVl7l/L4VNfi0bDeMtAhC
-	 lGd6m1thv4NWb59F/QVzHJzkZH2FtuWm6wNxQvrYnSeiTuimfcHEeXC00qChG+T6Hx
-	 KQV41tocstFZw==
-Date: Tue, 4 Mar 2025 23:59:29 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Matti Vaittinen
- <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>, Sakari Ailus
- <sakari.ailus@linux.intel.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Danilo Krummrich <dakr@kernel.org>, Lad Prabhakar
- <prabhakar.mahadev-lad.rj@bp.renesas.com>, Chen-Yu Tsai <wens@csie.org>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland
- <samuel@sholland.org>, Hugo Villeneuve <hvilleneuve@dimonoff.com>, Nuno Sa
- <nuno.sa@analog.com>, Javier Carrasco <javier.carrasco.cruz@gmail.com>,
- Guillaume Stols <gstols@baylibre.com>, Olivier Moysan
- <olivier.moysan@foss.st.com>, Dumitru Ceclan <mitrutzceclan@gmail.com>,
- Trevor Gamblin <tgamblin@baylibre.com>, Matteo Martelli
- <matteomartelli3@gmail.com>, Alisa-Dariana Roman <alisadariana@gmail.com>,
- Ramona Alexandra Nechita <ramona.nechita@analog.com>, AngeloGioacchino Del
- Regno <angelogioacchino.delregno@collabora.com>, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-acpi@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev
-Subject: Re: [PATCH v4 03/10] iio: adc: add helpers for parsing ADC nodes
-Message-ID: <20250304235929.1a8f23f8@jic23-huawei>
-In-Reply-To: <eaede287-658d-4c23-b217-5bc8053e64ed@gmail.com>
-References: <cover.1740421248.git.mazziesaccount@gmail.com>
-	<23f5ee3e3bf7179930d66c720d5c4c33cdbe8366.1740421248.git.mazziesaccount@gmail.com>
-	<0de7b0ac-eca5-49ba-b1b3-f249655f3646@baylibre.com>
-	<1b308a10-9622-47f9-b489-bd969fbdfc34@gmail.com>
-	<6f6e6550-5246-476f-9168-5e24151ab165@baylibre.com>
-	<9180ff11-888b-453d-9617-4b3a0fb38d91@gmail.com>
-	<20250302032054.1fb8a011@jic23-huawei>
-	<eaede287-658d-4c23-b217-5bc8053e64ed@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1741132809; c=relaxed/simple;
+	bh=maeTuTRd1RxaKuCtTaK1UNUJtNBfFivEbPZ207OaVYM=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=GMYL8VFvaKjl1t77Ifc6TgjYM2greaU2kWSY2zf0ND18Cs5zh+WFl3lHXNGa49fMP9mU4fH4yJOf7jkIfmHMV7OMFfpInEJ1xxU9x91OZ6SCh0ZuA3J/0koFcClUDzlAvtUS6EAsZ0EVYgUY6BGd9FUl+u7+F9RgJwNaI8ct9mU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linuxonhyperv.com header.i=@linuxonhyperv.com header.b=hA3/+aEQ; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxonhyperv.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1202)
+	id D22CE2112503; Tue,  4 Mar 2025 16:00:06 -0800 (PST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com D22CE2112503
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linuxonhyperv.com;
+	s=default; t=1741132806;
+	bh=YQAURlkfG3zyvMgNUuVAdt7wlORGt/c6p0druqSXPmM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=hA3/+aEQsCaaOvHufY5KTMCArhTJFvIdHfJ7u4joBgsDWBpjZpqLE1O2uVdpDxd6A
+	 MkTAcW6ND7hADwClrgS7UTZ6CZYvVWuEnCpzuFwNSBq93ar4PUzOzBeeFYMcOIwxzy
+	 xamNw2rSq33mKeODFampNIZaBiYIxxOhzz98HhPQ=
+From: longli@linuxonhyperv.com
+To: Jason Gunthorpe <jgg@ziepe.ca>,
+	Leon Romanovsky <leon@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: linux-rdma@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-hyperv@vger.kernel.org,
+	Long Li <longli@microsoft.com>
+Subject: [patch rdma-next v3 1/2] net: mana: Change the function signature of mana_get_primary_netdev_rcu
+Date: Tue,  4 Mar 2025 16:00:01 -0800
+Message-Id: <1741132802-26795-1-git-send-email-longli@linuxonhyperv.com>
+X-Mailer: git-send-email 1.8.3.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Sun, 2 Mar 2025 14:54:16 +0200
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+From: Long Li <longli@microsoft.com>
 
-> On 02/03/2025 05:20, Jonathan Cameron wrote:
-> > On Thu, 27 Feb 2025 09:46:06 +0200
-> > Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> >   
-> >> On 26/02/2025 18:10, David Lechner wrote:  
-> >>> On 2/26/25 12:28 AM, Matti Vaittinen wrote:  
-> 
-> ...
-> 
-> > So today the situation is we have all the options in tree and we aren't
-> > really in a position to drop any of them:  
-> 
-> Sure. I am only really interested whether we want to prefer some 
-> approach for (majority of) new drivers. Furthermore, I believe there 
-> will always be corner cases and oddities which won't fit to the 'de 
-> facto' model. That doesn't mean we shouldn't help those which don't have 
-> such 'oddities' to work with some generic code.
-Absolutely but we also can't apply this to existing drivers that don't
-work quite that way.  So if we want to make more use of it we end up
-providing variants long term.
+Change mana_get_primary_netdev_rcu() to mana_get_primary_netdev(), and
+return the ndev with refcount held. The caller is responsible for dropping
+the refcount by calling dev_put().
 
-> 
-> > Hindsight is a wonderful thing.  I'm not sure on what policy we should have
-> > gone for, but now we are kind of stuck with this slightly messy situation.  
-> 
-> Sorry if my comments came out as criticism. 
+Signed-off-by: Long Li <longli@microsoft.com>
+---
+ drivers/infiniband/hw/mana/device.c           |  7 +++----
+ drivers/net/ethernet/microsoft/mana/mana_en.c | 11 +++++++----
+ include/net/mana/mana.h                       |  2 +-
+ 3 files changed, 11 insertions(+), 9 deletions(-)
 
-No problem - that was just me being wistful about wanting a crystal ball :)
-
-> It was not intention, I just 
-> try to justify the helpers by trying to think what new drivers should 
-> prefer.
-> 
-> > Helper wise if it expands usefulness we may want a bool parameter to say
-> > if we skip the missing or not + make sure a max expected channel is provided
-> > (might already be - I didn't check!)  
-> 
-> This far it only had (optional) maximum channel ID for sanity checking 
-> (useful for callers which use the ID to index an array). The bool 
-> parameter would also require a parameter specifying the number of 
-> expected channels. That'd make 3 parameters which may be used or unused.
-> 
-> I don't think I saw existing code which would have used these 
-> parameters. It might be cleaner to add new APIs when we get such 
-> use-cases. That should simplify the use for current cases.
-That's fair enough.   Ultimately my guess is we'll end up with a complex
-internal function and a bunch of wrappers that elide the majority of
-the parameters.  We can get there once it's needed though!
-
-Jonathan
-
-> 
-> Thank You for the long explanation of current system + the history :) I 
-> appreciate your guidance!
-> 
-> Yours,
-> 	-- Matti
-> 
+diff --git a/drivers/infiniband/hw/mana/device.c b/drivers/infiniband/hw/mana/device.c
+index 3416a85f8738..afe3d8d20b3b 100644
+--- a/drivers/infiniband/hw/mana/device.c
++++ b/drivers/infiniband/hw/mana/device.c
+@@ -84,10 +84,8 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	dev->ib_dev.num_comp_vectors = mdev->gdma_context->max_num_queues;
+ 	dev->ib_dev.dev.parent = mdev->gdma_context->dev;
+ 
+-	rcu_read_lock(); /* required to get primary netdev */
+-	ndev = mana_get_primary_netdev_rcu(mc, 0);
++	ndev = mana_get_primary_netdev(mc, 0);
+ 	if (!ndev) {
+-		rcu_read_unlock();
+ 		ret = -ENODEV;
+ 		ibdev_err(&dev->ib_dev, "Failed to get netdev for IB port 1");
+ 		goto free_ib_device;
+@@ -95,7 +93,8 @@ static int mana_ib_probe(struct auxiliary_device *adev,
+ 	ether_addr_copy(mac_addr, ndev->dev_addr);
+ 	addrconf_addr_eui48((u8 *)&dev->ib_dev.node_guid, ndev->dev_addr);
+ 	ret = ib_device_set_netdev(&dev->ib_dev, ndev, 1);
+-	rcu_read_unlock();
++	/* mana_get_primary_netdev() returns ndev with refcount held */
++	dev_put(ndev);
+ 	if (ret) {
+ 		ibdev_err(&dev->ib_dev, "Failed to set ib netdev, ret %d", ret);
+ 		goto free_ib_device;
+diff --git a/drivers/net/ethernet/microsoft/mana/mana_en.c b/drivers/net/ethernet/microsoft/mana/mana_en.c
+index aa1e47233fe5..cfa664d5a137 100644
+--- a/drivers/net/ethernet/microsoft/mana/mana_en.c
++++ b/drivers/net/ethernet/microsoft/mana/mana_en.c
+@@ -3131,21 +3131,24 @@ void mana_remove(struct gdma_dev *gd, bool suspending)
+ 	kfree(ac);
+ }
+ 
+-struct net_device *mana_get_primary_netdev_rcu(struct mana_context *ac, u32 port_index)
++struct net_device *mana_get_primary_netdev(struct mana_context *ac, u32 port_index)
+ {
+ 	struct net_device *ndev;
+ 
+-	RCU_LOCKDEP_WARN(!rcu_read_lock_held(),
+-			 "Taking primary netdev without holding the RCU read lock");
+ 	if (port_index >= ac->num_ports)
+ 		return NULL;
+ 
++	rcu_read_lock();
++
+ 	/* When mana is used in netvsc, the upper netdevice should be returned. */
+ 	if (ac->ports[port_index]->flags & IFF_SLAVE)
+ 		ndev = netdev_master_upper_dev_get_rcu(ac->ports[port_index]);
+ 	else
+ 		ndev = ac->ports[port_index];
+ 
++	dev_hold(ndev);
++	rcu_read_unlock();
++
+ 	return ndev;
+ }
+-EXPORT_SYMBOL_NS(mana_get_primary_netdev_rcu, "NET_MANA");
++EXPORT_SYMBOL_NS(mana_get_primary_netdev, "NET_MANA");
+diff --git a/include/net/mana/mana.h b/include/net/mana/mana.h
+index 0d00b24eacaf..770359ce7d3b 100644
+--- a/include/net/mana/mana.h
++++ b/include/net/mana/mana.h
+@@ -827,5 +827,5 @@ int mana_cfg_vport(struct mana_port_context *apc, u32 protection_dom_id,
+ 		   u32 doorbell_pg_id);
+ void mana_uncfg_vport(struct mana_port_context *apc);
+ 
+-struct net_device *mana_get_primary_netdev_rcu(struct mana_context *ac, u32 port_index);
++struct net_device *mana_get_primary_netdev(struct mana_context *ac, u32 port_index);
+ #endif /* _MANA_H */
+-- 
+2.34.1
 
 
