@@ -1,156 +1,126 @@
-Return-Path: <linux-kernel+bounces-546620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FF58A4FCE0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:55:44 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81303A4FCFD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B15641885809
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:55:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 354EE1658C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:58:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46632219310;
-	Wed,  5 Mar 2025 10:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBC5231CB9;
+	Wed,  5 Mar 2025 10:57:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eihXWYMQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3Ox8Dgbr";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="eihXWYMQ";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="3Ox8Dgbr"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YPilVwMw"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE544221F1B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9638221F25;
+	Wed,  5 Mar 2025 10:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172122; cv=none; b=qw1ut2BOs3mnGYwIklT+NSXg0pGSssnUGR63T7fAyP+wHz1aXvwQTEcJigxnA/2dseowWQ0VeTkqbtGv2hfSL+INPIqPRQrp/hboaX/jtCAYqsiJVKSQ9yJmgIYPmv3jZRij+2L2oXT5E6I2cd78EGmPz6f9Ku4/2UiumrVrj2E=
+	t=1741172227; cv=none; b=e7kHlLEW2aGQE5lAD66IOwVYMq9Mb9TWci5hlVdZLSuXa8a6nUzJXDD3aQeS9H5g4o9BOEkJZMqm5vpvKRkPdhLwo8mUB9h4nrWUXfAqbpUlhWvTJ3QLZqCZI+Pwvtsh4LTLBhI1U1uzaG8u2qxGMVGCOmL07YIMvUH8MqAKLcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172122; c=relaxed/simple;
-	bh=4Z26Vif/aLrAcH6THndljTALT5UsksrHmQWG/Qss53M=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fa82CP3SbLp5ODvzi8XZNIOuD9dwIchfe/WPuG+Ycut0pGQ9+bJR2LzvR/d4e5lu7PoYSVOqJoUnOO30phJjyDLRKfIyuuj/gvlJIfszmf5bjLEQes2EuSUe2cWT2W5sy9EMMSDv/kAjESb/e59kAFxBcvMUGcZMvRnJbzHek4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eihXWYMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3Ox8Dgbr; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=eihXWYMQ; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=3Ox8Dgbr; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 180DC21197;
-	Wed,  5 Mar 2025 10:55:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741172119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zoSrOB8+uoMpops6QDXFLLwXLeVYc8uZptIC6rmNHGE=;
-	b=eihXWYMQE7yWm8Ckrn+PeKUx/zgLjBvONFy7DGM+U71y7Q0nbj5oXvftb5xMVHPXbR91bQ
-	4R2axuuBf6+zFlTYyidLakugL1I4Nt4QDt7V0DP9p+BoznQl2+j1ltTrFgUVLTjM2U6/FF
-	Qiwd20y7KEQJXnLmH1wV1e4vELCvbm4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741172119;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zoSrOB8+uoMpops6QDXFLLwXLeVYc8uZptIC6rmNHGE=;
-	b=3Ox8DgbrTHEeUZ8eTs8AKIcgxEWlTS6fISSh5oO8vD/e7JWExdYkDSYAEBw9+AtKYDG6st
-	jRfGiSQq21XrlRAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741172119; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zoSrOB8+uoMpops6QDXFLLwXLeVYc8uZptIC6rmNHGE=;
-	b=eihXWYMQE7yWm8Ckrn+PeKUx/zgLjBvONFy7DGM+U71y7Q0nbj5oXvftb5xMVHPXbR91bQ
-	4R2axuuBf6+zFlTYyidLakugL1I4Nt4QDt7V0DP9p+BoznQl2+j1ltTrFgUVLTjM2U6/FF
-	Qiwd20y7KEQJXnLmH1wV1e4vELCvbm4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741172119;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zoSrOB8+uoMpops6QDXFLLwXLeVYc8uZptIC6rmNHGE=;
-	b=3Ox8DgbrTHEeUZ8eTs8AKIcgxEWlTS6fISSh5oO8vD/e7JWExdYkDSYAEBw9+AtKYDG6st
-	jRfGiSQq21XrlRAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 52A4513939;
-	Wed,  5 Mar 2025 10:55:17 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id oS3iApUtyGdjCQAAD6G6ig
-	(envelope-from <ddiss@suse.de>); Wed, 05 Mar 2025 10:55:17 +0000
-Date: Wed, 5 Mar 2025 21:55:06 +1100
-From: David Disseldorp <ddiss@suse.de>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Christian Brauner <brauner@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warnings after merge of the vfs-brauner tree
-Message-ID: <20250305215506.1f34f920.ddiss@suse.de>
-In-Reply-To: <20250305210702.66402528@canb.auug.org.au>
-References: <20250305210702.66402528@canb.auug.org.au>
+	s=arc-20240116; t=1741172227; c=relaxed/simple;
+	bh=BjIOGsCQRES/ExqNCYJJO+XG6bSvGhNddzBXGqV6COw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e1SmHEECo6PnZgdRbQEg8i+iEv4WvhTcqJsgxMFYzbRK/76y+Gy5uZwJoppMN1nrW5lfvwfpOZmkMnN2hZN3NQUHxWEsP8T3dMnpn2KHUaDqZTDYF8Bpw5alJtd4ktvYIPZ/WjMUoWTuklasGDGi6AqboNGQ831u5zwZOlfGH5k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YPilVwMw; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741172226; x=1772708226;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=BjIOGsCQRES/ExqNCYJJO+XG6bSvGhNddzBXGqV6COw=;
+  b=YPilVwMwrtxFyBnzRpKJumvJ/p6SnaZ2cukrZm3FRYBNO38EmOZNM2ZT
+   e8ni7yItXNFvs4RqeIjsx4JG9WGRb+YNitHX7j8mEs/it5Zc9tFFaU0nL
+   1bHdwA2MV3hMzXnUcWyKoJteG6sXNiekz1FP1H7myX7i2xd25PT53yTau
+   C1Ky+bK5V6zlCzWJS8dypK8SXccZ3wXZ7SR9O/3w4rq8gfcQC66OPu0Fj
+   FMiNwnx5lA0da0XfId7ICYv3ZVobCMS6mNhBI3rYQOjBYWwtDTEB44+qu
+   QgwADTIA6hPeBJTQBcEuGwHA1HJ9q5He/AJGWwrQwOG8hy9FIdaHb45Sr
+   Q==;
+X-CSE-ConnectionGUID: 8r1dx8A9RG+YKoNpSjKMWQ==
+X-CSE-MsgGUID: H9rGOT7KRw+pjabX9V8QIA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="45783918"
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="45783918"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:57:04 -0800
+X-CSE-ConnectionGUID: TgDlQLKUS0qbOj309VqQ9g==
+X-CSE-MsgGUID: z2IATWY8TNGmnBaneidGEw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="123245747"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa005.fm.intel.com with ESMTP; 05 Mar 2025 02:56:58 -0800
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 7334521F; Wed, 05 Mar 2025 12:56:57 +0200 (EET)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Miquel Raynal <miquel.raynal@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-wpan@vger.kernel.org,
+	netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-gpio@vger.kernel.org
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Alexander Aring <alex.aring@gmail.com>,
+	Stefan Schmidt <stefan@datenfreihafen.org>
+Subject: [PATCH net-next v4 0/4] ieee802154: ca8210: Sparse fix and GPIOd conversion
+Date: Wed,  5 Mar 2025 12:55:33 +0200
+Message-ID: <20250305105656.2133487-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.47.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[4];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_DN_ALL(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
 
-Hi Stephen,
+The main part is the patch 3 that converts the driver to GPIO descriptor APIs,
+the first one is just an ad-hoc fix WRT sparse complains on the bitwise
+types misuse. The second one is a small cleanup that helps patch 3 to be nicer.
 
-On Wed, 5 Mar 2025 21:07:02 +1100, Stephen Rothwell wrote:
+In v4:
+- split DT patch (Krzysztof)
+- collected tags (Miquel)
 
-> Hi all,
-> 
-> After merging the vfs-brauner tree, today's linux-next build (powerpc
-> allyesconfig) produced these warnings:
-> 
-> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x0 (section: .data) -> initramfs_test_extract (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x30 (section: .data) -> initramfs_test_fname_overrun (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x60 (section: .data) -> initramfs_test_data (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x90 (section: .data) -> initramfs_test_csum (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0xc0 (section: .data) -> initramfs_test_hardlink (section: .init.text)
-> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0xf0 (section: .data) -> initramfs_test_many (section: .init.text)
-> 
-> Introduced by commit
-> 
->   b6736cfccb58 ("initramfs_test: kunit tests for initramfs unpacking")
+In v3:
+- inverted polarity of the reset line in accordance with datasheet (Linus)
+- added quirk for the out-of-tree admittedly wrong DTS implementations
+- collected tags (Linus)
 
-The new warnings are being discussed in a thread at:
-https://lore.kernel.org/linux-kselftest/20250305114701.28c0ee0b.ddiss@suse.de/T/#u
+In v2:
+- split and extended cleanup pieces into patch 2 (Miquel)
+- updated kernel doc for changed members (Miquel)
+- unfolded PTR_ERR_OR_ZERO() to the preferred pattern (Miquel)
+- collected tags (Miquel)
 
-Thanks, David
+Andy Shevchenko (4):
+  ieee802154: ca8210: Use proper setters and getters for bitwise types
+  ieee802154: ca8210: Get platform data via dev_get_platdata()
+  ieee802154: ca8210: Switch to using gpiod API
+  dt-bindings: ieee802154: ca8210: Update polarity of the reset pin
+
+ .../bindings/net/ieee802154/ca8210.txt        |  2 +-
+ drivers/gpio/gpiolib-of.c                     |  9 +++
+ drivers/net/ieee802154/ca8210.c               | 78 ++++++++-----------
+ 3 files changed, 41 insertions(+), 48 deletions(-)
+
+-- 
+2.47.2
+
 
