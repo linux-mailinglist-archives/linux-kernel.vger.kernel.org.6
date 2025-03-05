@@ -1,133 +1,145 @@
-Return-Path: <linux-kernel+bounces-546042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA791A4F57E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:42:16 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8DD9A4F580
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:44:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD7716F483
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:42:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AEB1188F95B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:44:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCB9517557C;
-	Wed,  5 Mar 2025 03:42:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0176117BEC6;
+	Wed,  5 Mar 2025 03:44:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="GQb90o3s"
-Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbGc6VDY"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D93132E3394
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 03:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B9E62E3394;
+	Wed,  5 Mar 2025 03:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741146131; cv=none; b=a2vYIMaJ+Pqu7NUpbjyFQmGFHlSdYRatKbHgCoSjuDgoKoJ/HpWMXEmHLrA33aFgciMmGwK44vkzswOy9iPwddMWBZhuWWDvNGGTIifBfolg12R8nOpH+mT1hoqV4R2KVnkCtCrsxXS/15inNBSv1MZSNDkBVTL1HRaP4MNLCX4=
+	t=1741146279; cv=none; b=C3UsU7VTP6rlSSSKsxNPAla6JJLn7X86Lgwxgx9qFMIHk+mPEnr8+NqHZ67Is/npQ4DL7eXY25OL2Nb0ThOjHTFMsZQVigWzkv4ztH5EICRUS+E/S7bXJXx0nlP13nSnyCTLq1gByqO/nW34LQEDBGreXZa2WHQrN2yVptD3J1w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741146131; c=relaxed/simple;
-	bh=QZ4lWkRttzinBC0AHtaGogoBVkKE6Fr+UE0tadSUJYM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=to1/v50cHSfSlzkMKKfX0VepXd/uOTpKs3Mt5CaDutaDm0DEl4BjK63AhfksqjwlZOz+6+Z216wUllwm4czen0idEhW6szOn5dbwuREFiiMkofCIsMtF3JcfyAxH8mE8YqtOOz6/TKPez6KKXXz25Sm1/XKKBS4lblauGVfzk5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=GQb90o3s; arc=none smtp.client-ip=202.12.124.149
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfout.stl.internal (Postfix) with ESMTP id B3B89114009D;
-	Tue,  4 Mar 2025 22:42:07 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Tue, 04 Mar 2025 22:42:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
-	1741146127; x=1741232527; bh=tz0GmYq+BExKvK4136gHJad7G7TbjBEd2Ek
-	cgzIuImk=; b=GQb90o3sM+84OL/1ng3GSlG5DiG1ydWAH6S5CvP/1I20x30e3jr
-	kF9ikNvI4PjTkAtpXclbZ3uI96SxWXpi3YZG0jYyFIr4Y9uFKsLlMcpUktY/3336
-	IChOv6cszsld3SzsXEzK1XxoXnLGYsc+14BDVXfhCkC26GW1XFzROUkS39G6/nrv
-	z7sMnFSozIcKZ/acH+jQpGv2mGXIYFP3qGZaDxBfPZH4PSLvFBGsJLCOWWK72VMk
-	TI5M5QZSaXDqf95HVVonMD6o5u0oaZPJE5TSfCzsNpN13pk/Nn4jD26D4pQ3QqYa
-	OliRfJUss8kiY+4l2Qr0VLxMOPESvFsOd8w==
-X-ME-Sender: <xms:DsjHZz7YXbuPo4wAWMMnHKDWWAFq_1EW-etKql8a-sYsm03XusoBog>
-    <xme:DsjHZ47iWnwJcdX4tI3B7Exm86Nfmebxsh4NUyy8zQOkGyXCmk2q2BsTnk_351Xy9
-    j1fQOEZMorgTW5TJXA>
-X-ME-Received: <xmr:DsjHZ6dihpBVNb-10CZIyt0oDgBg8pRvje4cYxAW0AY1e3O5LdoxQUuCQ36Y-SGCqRuRP84gtTVhxED_KQRJP4SafVban-jh8Rg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdefjeehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevufgjkfhfgggtsehttdertddttddv
-    necuhfhrohhmpefhihhnnhcuvfhhrghinhcuoehfthhhrghinheslhhinhhugidqmheike
-    hkrdhorhhgqeenucggtffrrghtthgvrhhnpeelueehleehkefgueevtdevteejkefhffek
-    feffffdtgfejveekgeefvdeuheeuleenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehfthhhrghinheslhhinhhugidqmheikehkrdhorhhgpdhn
-    sggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegurghnih
-    gvlhestdigtdhfrdgtohhmpdhrtghpthhtohepjhhjuhhrrghnsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepghgvvghrtheslhhinhhugidqmheikehkrdhorhhgpdhrtghpthhtoh
-    eplhhinhhugidqmheikehksehlihhsthhsrdhlihhnuhigqdhmieekkhdrohhrghdprhgt
-    phhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:DsjHZ0J3sU5gd_NsBXEKd4wKI2TYl78BVuJC0aDppv9Ya2gLdQ6G4Q>
-    <xmx:DsjHZ3LX0FsYY5R5G_SblUR6LDSFsx_NnURLjUsc3FARg_RgMku8zg>
-    <xmx:DsjHZ9zDerMzveL45_U04ycf1a88iSuhMp5sicKidNyedhHCSnW8jQ>
-    <xmx:DsjHZzKeqoAUfOh4ozzGKEcgF2HjdxyWXzQNFT9NbPoPZYm1IwlBkQ>
-    <xmx:D8jHZ0EBa87QptBOZ8o_5cPlCFxRJg0IbufXXU7ZJlYbIrUvS8ChiUBq>
-Feedback-ID: i58a146ae:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Mar 2025 22:42:03 -0500 (EST)
-Date: Wed, 5 Mar 2025 14:42:02 +1100 (AEDT)
-From: Finn Thain <fthain@linux-m68k.org>
-To: Daniel Palmer <daniel@0x0f.com>
-cc: Josh Juran <jjuran@gmail.com>, geert@linux-m68k.org, 
-    linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org
-Subject: Re: Bootloaders, was Re: [RFC PATCH 0/3] m68k goes DT
-In-Reply-To: <CAFr9PXmXsW=RqJsWPCUDvQO+vst-wSj__Fi3nuxCo7ZRAi0wOA@mail.gmail.com>
-Message-ID: <3893637a-0a03-5782-a61d-18fbaf9938d3@linux-m68k.org>
-References: <20250105071433.3943289-1-daniel@0x0f.com> <291d1541-e026-cc50-6a55-42c11c64b6eb@linux-m68k.org> <CAFr9PXm4kTWF27GPMNDb5=W8vZRQia418xOQDF_X1yo0vwn6hA@mail.gmail.com> <4eb796cc-b178-8394-0149-03600f1caaed@linux-m68k.org> <B5B5D58B-D111-431F-9701-44FCBB67D11E@gmail.com>
- <b33b072e-f44a-9450-cbe9-52300ab971a3@linux-m68k.org> <CAFr9PXmXsW=RqJsWPCUDvQO+vst-wSj__Fi3nuxCo7ZRAi0wOA@mail.gmail.com>
+	s=arc-20240116; t=1741146279; c=relaxed/simple;
+	bh=yEfzXlgj/fjBGD7g86podDUNwYc6SHpNLxtVt5MsQUg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AEee8z6TzgVUPHWBeezymLG2AM/z39VzL/kQAX8xtlBYXzUNGbJp55Dsdycvhz8rCXZEfM3W36CpP7sB9VKDqPiW+vqSxz9eQRInYr1uk4vK9Ul4X+Yh3UMhlMstw5G4z5YjZEfk12jtjqbiAsvDArgViTqwld+ANeaOqb4AwBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbGc6VDY; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2233622fdffso119430265ad.2;
+        Tue, 04 Mar 2025 19:44:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741146277; x=1741751077; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=C+mPOlRZ4KjStxcBL3Z6AAydz8YkO5iSHIPj72E4lQE=;
+        b=CbGc6VDYdi93CIqW0M+Xvr88WC7WG8o/Q8zYjLg1AFMFI2nHRaLGOnE+Me49um1evY
+         xTfe0WBKBCnv1YP1v91t1olRLX82RpvNlX3uFGGO4qeSz1srHA96I60IN2MlyHs4SfuI
+         LNW29smyw+vDACOGjxSx7SKeZsGklh94oOAclAuBSnCX+9sGVaU2ecQZsAr1S6kEcB2K
+         FTTp0PC+3cowl0oQW+EPynX66GSBli6QKM2EgzX7IyLXX9JgOcaViJGmE1PonC2SRjxM
+         FjHosDUHUIxTcM5WGOPRljobeGUgKsy3Uik/6bl2iiPZ3n9oyJI9YeFMfah7boirZdVP
+         8mNA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741146277; x=1741751077;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C+mPOlRZ4KjStxcBL3Z6AAydz8YkO5iSHIPj72E4lQE=;
+        b=TWfwfWwE49SkbzRtQpym/fAlw61aqRItLWm46yUlm0MObV9HGEidvqYG7rvkvPXjVX
+         Bdo/EHyCLzQTYppoeqmUa2wi7P8pRy6coKHRZ8JO4cEJM7YKxJC/OCSGtm5X3QklhXq9
+         xj8Ff1Wk/pb8qhDzT6BVFyP2th9umOfHqAHWey/IHK+IFHZHum1vwTs/oCn8+GqCUjNL
+         /50Xa+x0KjKLAppCaeVsaAFjoxpXW3TLlIVfIndqnFsrOKyrkUl5PgBjv8cnk3HNVQBs
+         u9wpT5aVQglOJ3wWLZTC+2U9Z2oCcx6xmKRuHYJZva6r7lurUXWYD0hXfMa9sY3/e+a6
+         p7wg==
+X-Forwarded-Encrypted: i=1; AJvYcCUZksgIJUtR5L+l/C9XMqJBj97oGbTzxAavwrTBoNDqo7byoAlWY3BxBCUpTG2Hv52H1dGQbYeGb1vF@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNPbBkRgyEXZw5CnVMv7Xjp2+8eaIJ2C8GTMEASHGbCXd+30qm
+	mR13+lflG8Crgttf14xK5fVDZe8gB90ZlRovJ0NnYBh/w5vk9f70
+X-Gm-Gg: ASbGncv+j/UacdGrgi2kqW1Cq7jn8rzCIWs5vxp3dia5P4ZbhHcQvIhiZ5SlrWSDVAX
+	KTkfD6GcOBiMqVDXZz4K534+hvA/2u+Cl0QLmkmR3JNTBNBbqY4o5Pt7mh0TmOSSPeGnzW5T0DH
+	bW83G7J4mvrbEnA5/ba3zF5V+EDx4SMFqNFEVBPAKAviDASmvmja8lRxjNYv7p79BzVppwVfcx1
+	JSRe6S0tU1VX26CoURW3NxS817BwnPLBx2ooKEQaKSMzC7iglsRKfccOpaTGArvFR/THtwvdb62
+	A2hoPyeYtld8RfKnOCtieEsOWclHLoEjjnt+g0aeB3dTqbqU4oR9F2c=
+X-Google-Smtp-Source: AGHT+IEl3ybxCxPWvhfjzdCxrRkFkwGL9AXhPPB0O84T8rMHBFkItUCVeOf84SGTH/VV798lvDQFkA==
+X-Received: by 2002:a17:902:c949:b0:223:517a:d2e2 with SMTP id d9443c01a7336-223f1d548b2mr26251405ad.53.1741146277279;
+        Tue, 04 Mar 2025 19:44:37 -0800 (PST)
+Received: from cs20-buildserver.lan ([2403:c300:d305:9d26:2e0:4cff:fe68:863])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c5c37sm102734335ad.133.2025.03.04.19.44.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 19:44:36 -0800 (PST)
+From: Stanley Chu <stanley.chuys@gmail.com>
+X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
+To: frank.li@nxp.com,
+	miquel.raynal@bootlin.com,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-i3c@lists.infradead.org
+Cc: linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	tomer.maimon@nuvoton.com,
+	kwliu@nuvoton.com,
+	yschu@nuvoton.com
+Subject: [PATCH v6 0/5] Add support for Nuvoton npcm845 i3c controller
+Date: Wed,  5 Mar 2025 11:44:09 +0800
+Message-Id: <20250305034414.2246870-1-yschu@nuvoton.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 8bit
 
+This patchset adds support for the Nuvoton npcm845
+Board Management controller (BMC) SoC family.
 
-On Tue, 4 Mar 2025, Daniel Palmer wrote:
+The Nuvoton npcm845 uses the same Silvico IP but an older version.
+This patchset adds fixes for the npcm845 specific hardware issues.
 
-> FWIW I have started to move EMILE over to using meson to build (so
-> it's easier to build on modern systems) and fixing up some of the
-> issues it has with building with recent GCC.
+--
+v6:
+ - Define QUIRK when it is really used in the separate patches.
 
-Thanks for doing that.
+v5:
+ - Add default driver data
+ - Add helper function svc_has_daa_corrupt()
+ - Revise SVC_I3C_QUIRK_FIFO_EMPTY fix and add comments
 
-> I have it working enough to boot HEAD on a LC475 and on QEMUs Q800
-> machine. While the penguin ui is nice EMILE seems to work well enough
-> and it can be used to generate bootable CDs.
+v4:
+ - Fix kernel test robot build warning.
+ - Add SVC_I3C_QUIRK_DAA_CORRUPT fix
 
-That's good news -- I've long wondered whether QEMU's emulated q800 had 
-reached a point where it could run EMILE. That will make development 
-easier.
+v3:
+ - Add more description in dt-binging commit message
+ - Add the svc_i3c_drvdata structure in struct svc_i3c_master
+ - Improve the do_daa
 
-> I have a setup now that can generate a bootable CD with the kernel and a 
-> buildroot based userland that I can drop on the SD card for my bluescsi 
-> and boot into Linux without any macos intervention.
-> 
+v2:
+ - Add a new compatible string in dt-binding doc.
+ - Add driver data for npcm845 to address the quirks.
+ - Modify svc_i3c_master_write to be reused by SVC_I3C_QUIRK_FIFO_EMPTY fix
+ - Fix typo of SVC_I3C_QUIRK_FALSE_SLVSTART fix.
+ - Remove the code changes in svc_i3c_master_do_daa_locked, will add it in
+   another patch series for common improvement.
+---
 
-I guess it's only a matter of time before someone puts EMILE into EEPROM. 
-(Many of these systems have a ROM SIMM slot.)
+Stanley Chu (5):
+  dt-bindings: i3c: silvaco: Add npcm845 compatible string
+  i3c: master: svc: Add support for Nuvoton npcm845 i3c
+  i3c: master: svc: Fix npcm845 FIFO empty issue
+  i3c: master: svc: Fix npcm845 invalid slvstart event
+  i3c: master: svc: Fix npcm845 DAA process corruption
 
-> So basically, for 68k mac I think EMILE is the way to go.
-> 
+ .../bindings/i3c/silvaco,i3c-master.yaml      |   4 +-
+ drivers/i3c/master/svc-i3c-master.c           | 127 ++++++++++++++++--
+ 2 files changed, 120 insertions(+), 11 deletions(-)
 
-And there is a way to go...
+-- 
+2.34.1
 
-Penguin 19 works on every 68k Mac model. That's hard to achieve and 
-running under MacOS helps a lot. EMILE doesn't have that advantage so it 
-isn't expected to enjoy the same level of hardware compatibility without 
-further work.
-
-For systems that have the standard ROM, booting MacOS is an easy first 
-step for system recovery purposes or just experimentation. So I think 
-EMILE needs a MacOS UI which, though it might not boot Linux, could do the 
-bootloader installation and config (a bit like what XPostFacto did for Mac 
-OS X) so the ROM could then boot into EMILE (and Linux).
 
