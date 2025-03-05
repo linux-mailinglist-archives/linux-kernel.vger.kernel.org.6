@@ -1,63 +1,72 @@
-Return-Path: <linux-kernel+bounces-547488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DBD2A50A19
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:40:03 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DAEE8A50A1A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:40:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D3573ABCE4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:39:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E8C516D74C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:40:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 479BF2528E2;
-	Wed,  5 Mar 2025 18:39:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F77F2512E1;
+	Wed,  5 Mar 2025 18:40:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cg4zcSQg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SgMLAOeu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="w6VyKqvs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ACED198822;
-	Wed,  5 Mar 2025 18:39:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A84716DC12
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:40:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741199991; cv=none; b=TgIjDxlnkDq84zVWYre5nB32JV1JCoyrvZlqOl80G+UZN524tHEW7MgvDyoQM4eOx+3fSSArJ0gehts+xLWCtyw9VXS5wm1QEda8UWvO/h4xQseNJrnv1RsR61Sjv+YX/OZbVASVm3LLcVkE0RYjcnhgJNiP4Oyt2GEjGGVrKsg=
+	t=1741200010; cv=none; b=JrAJoK7alZ++WQ/a4b1W56+NKsMygkfNqBmedZB/rHfK39k1rwXYvdLpHoTaYalAXNDkk6tJeqWixcD0JCK8dMZINY297hc25rWd/2/iNow0GJQcA7S0Kev0hg9mlrVvV7bHIQjZSLKTWFc/952lF1QWiKZFA/aaQ9CovtkzKOE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741199991; c=relaxed/simple;
-	bh=uVQk+c/QggQHiv+8/A6v7lNI9M/N5W1t0Fiz38TfaPE=;
+	s=arc-20240116; t=1741200010; c=relaxed/simple;
+	bh=gSMpPA0TIIxQ3blykXeB9xfOuMai0QErK15kUrCXu0E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AoSozuNMpU/bn808lTQJgp54s11fgc9j5uzO735Drft0LNQEZS0ORAEXgopaar4CIlj6gvDDDr5oZ23giVRepKlyCSbwuk+6DYV2pX/xrrfIEdMB5TOker23gFUcEgwuVHQcGbTO/lgpW040LvwH8Yo9hAcwNAyJyYWmue95H3w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cg4zcSQg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E624CC4CED1;
-	Wed,  5 Mar 2025 18:39:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741199991;
-	bh=uVQk+c/QggQHiv+8/A6v7lNI9M/N5W1t0Fiz38TfaPE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cg4zcSQgXN9/t4en54R8HTqIJc1/5/MWossef0e09IOAaJjTbGlXSHgaK5dBUrC1I
-	 Pla/ZAQpL07S3v62KDzDzk63gu+4OC7xc7o67i31bo8tFI99i47+JkuiaKHIJrwdqP
-	 rRafrpc1NiptV1fZY3JUid7CX2sOWiVdT3fEj60tGrN8lklXD3f17Fi2m4ZVAMs9Fe
-	 cWiVHKRwDLueE9s7Zrbiwaf47bfpUBJ8J8M8hV0o18hsrJDTiCG64QDTwz8vsnGo3S
-	 AXy5+E6LsA7pieEd2nv2xlx28JqiJKaIAbW6CbmfCv8gzp957i4dKyet8VsXEXgTSi
-	 zMs6pnug1p7hQ==
-Date: Wed, 5 Mar 2025 08:39:49 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Michal =?iso-8859-1?Q?Koutn=FD?= <mkoutny@suse.com>
-Cc: Waiman Long <llong@redhat.com>, cgroups@vger.kernel.org,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Josef Bacik <josef@toxicpanda.com>, Jens Axboe <axboe@kernel.dk>,
-	Johannes Weiner <hannes@cmpxchg.org>
-Subject: Re: [PATCH 1/9] cgroup/cpuset-v1: Add deprecation warnings to
- sched_load_balance and memory_pressure_enabled
-Message-ID: <Z8iadfcPxgamx9CC@slm.duckdns.org>
-References: <20250304153801.597907-1-mkoutny@suse.com>
- <20250304153801.597907-2-mkoutny@suse.com>
- <8b8f0f99-6d42-4c6f-9c43-d0224bdedf9e@redhat.com>
- <Z8cv2akQ_RY4uKQa@slm.duckdns.org>
- <n2ygi7m53y5y4dx5tjxhqgzqtgs5sisdi27sk7x2xjngpxenod@7behfsvlzhxi>
- <123839ed-f607-4374-800a-4411e87ef845@redhat.com>
- <Z8dAlvRnE28WyOGP@slm.duckdns.org>
- <5bw7yc6bacojk2i2ikhlmf2skfiix6t3ipchbnvyfttmyh644j@iyquxeuyapd7>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EqZ+Q9K1TNHpnv0jmcHbWcS/ltPtSVVmokvws+qtJ+zauRQz/0NjU2n/LHQLa+7/FfvN/gT6ESflNR3IWINRFK2DoYhHCW7D+/OXQNwgvqu5hbUJjD/iYmMiJuq/FHtoxWCP0PoDgKhdMlKEhO2pjOvt4sHfmb0zp3nCrJgTh3Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SgMLAOeu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=w6VyKqvs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 5 Mar 2025 19:40:05 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741200007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dL8pYYKQ8uhBd/hZVxX+rpZGFPEGdQWosVgCP1BGE00=;
+	b=SgMLAOeu03vdaBJJxV3NOv4NZr7eXcBZyZGQC0abRpkOXwjqTkOyZ+LuILoul22gdAlhND
+	8VvkBonzmHjh3uVl32foOhMDtufWJ6cwHVuGALq5tXB21GbG0GX7wK+iXXUspzIpTkNdtX
+	H1HNVZyhvIri5k/4VADhpTWYK1eBsyGw/1SbjmM2sMGGGXfPJp0u8jxFrCLnuvSTWWJOjB
+	hHRFGS7zKfcWO4EAxGVC6se79iJ8mHjupB8sQlk60WUS+qBNB7O02qxpPqKs81fyXF/R1q
+	zDuASsOVpl93CVEUbi7mV53SbcIKBszL1qPHW1i/HBGsxf2h6fu8aBwuQ1lqzw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741200007;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=dL8pYYKQ8uhBd/hZVxX+rpZGFPEGdQWosVgCP1BGE00=;
+	b=w6VyKqvsMCb4+vs3pjRLGMN6w0DE4irVdY0fiYxI77mhhKgaRn3raA6OZJfEy5+plVuh5c
+	qn6yBWjIsmHKkqBw==
+From: "Ahmed S. Darwish" <darwi@linutronix.de>
+To: Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	John Ogness <john.ogness@linutronix.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, x86@kernel.org,
+	x86-cpuid@lists.linux.dev, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 37/40] x86/cacheinfo: Extract out cache self-snoop
+ checks
+Message-ID: <Z8iahUTYuq0gVXmP@lx-t490>
+References: <20250304085152.51092-1-darwi@linutronix.de>
+ <20250304085152.51092-38-darwi@linutronix.de>
+ <01367a6b-8eeb-417e-9a66-e7a64d518319@citrix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,56 +76,75 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5bw7yc6bacojk2i2ikhlmf2skfiix6t3ipchbnvyfttmyh644j@iyquxeuyapd7>
+In-Reply-To: <01367a6b-8eeb-417e-9a66-e7a64d518319@citrix.com>
 
-Hello,
+Hi Andrew,
 
-On Wed, Mar 05, 2025 at 11:12:21AM +0100, Michal Koutný wrote:
-> On Tue, Mar 04, 2025 at 08:04:06AM -1000, Tejun Heo <tj@kernel.org> wrote:
-> > I'm apprehensive about adding warning messages which may be triggered
-> > consistently without anything end users can do about them.
-> 
-> That means you'd distinguish RE (replacement exists) vs DN (dropped as
-> non-ideal) categories?
+On Tue, 04 Mar 2025, Andrew Cooper wrote:
+>
+> On 04/03/2025 8:51 am, Ahmed S. Darwish wrote:
+> > The logic of not doing a cache flush if the CPU declares cache self
+> > snooping support is repeated across the x86/cacheinfo code.  Extract it
+> > into its own function.
+> >
+> > Signed-off-by: Ahmed S. Darwish <darwi@linutronix.de>
+>
+> I know you're just refactoring code, but the SDM has basically reverted
+> this statement about it being safe to skip WBINVD based on SELFSNOOP.
+>
 
-I don't think I am. I'm just concerned about emitting warn messages on every
-boot without users being able to do anything about them.
+Still, thanks a lot for sharing :)
 
-> > I think that deprecation messages, unless such deprecation is
-> > immediate and would have direct consequences on how the system can be
-> > used, should be informational.
-> 
-> I could subscribe to that if there weren't so many other places to
-> evaluate:
->   $ git grep -i "pr_warn.*deprec" torvalds/master --  | wc -l
->   62
->   $ git grep -i "pr_info.*deprec" torvalds/master --  | wc -l
->   2
-> 
-> So is the disctinction worth the hassle?
+> It turns out not to be safe in cases where the underlying physical
+> memory changes from cacheable to unchangeable.  By skipping the WBINVD
+> as part of changing the memory type, you end up with spurious writebacks
+> at a later point when the memory is expected to be UC.  Apparently this
+> is a problem for CLX devices, hence the change in the SDM.
 
-Well, not all deprecations are the same. If users are stuck on cgroup1, they
-can be really stuck - there can be a tall stack of software with
-dependencies that users can't do much about, at least not immediately. We
-will deprecate cgroup1 but this is going to be a long stretched out process
-at the end of which we should be fairly comfortable in stating that there
-aren't major users left which are stuck on cgroup1.
+While writing that refactoring patch, I indeed noticed that there is an
+errata list of CPUs where X86_FEATURE_SELFSNOOP is force disabled, thus
+ensuring WBINVD is never skipped:
 
-It's almost certain that that future won't arrive in, say, three years. Five
-years may be too ambitious too but let's say that at that point we are
-relatively sure that most platforms have moved on (but there may still be
-users on older versions of those platforms). Maybe it'd make sense to
-increase the deprecation warning temperature by then to warn and drain
-existing users and maybe after a few years we'd actually be able to drop
-cgroup1 support.
+    static void check_memory_type_self_snoop_errata(...)
+    {
+     	switch (c->x86_vfm) {
+     	case INTEL_CORE_YONAH:
+     	case INTEL_CORE2_MEROM:
+     	case INTEL_CORE2_MEROM_L:
+     	case INTEL_CORE2_PENRYN:
+     	case INTEL_CORE2_DUNNINGTON:
+     	case INTEL_NEHALEM:
+     	case INTEL_NEHALEM_G:
+     	case INTEL_NEHALEM_EP:
+     	case INTEL_NEHALEM_EX:
+     	case INTEL_WESTMERE:
+     	case INTEL_WESTMERE_EP:
+     	case INTEL_SANDYBRIDGE:
+     		setup_clear_cpu_cap(X86_FEATURE_SELFSNOOP);
+     	}
+    }
 
-So, I don't want to be emitting warnings on every boot for the good part of
-a decade on every boot for those users. Doing so feels silly and annoying to
-me. Let's inform that it's coming down the pipeline but I personally don't
-want to be warned by something that's close to a decade out.
+That's why I added "CPUs without known erratas" in the comments:
 
-Thanks.
+    /*
+     * Cache flushing is the most time-consuming step when programming
+     * the MTRRs.  On many Intel CPUs without known erratas, it can be
+     * skipped if the CPU declares cache self-snooping support.
+     */
+    static void maybe_flush_caches(void)
+    {
+           if (!static_cpu_has(X86_FEATURE_SELFSNOOP))
+                   wbinvd();
+    }
 
--- 
-tejun
+But, interestingly, CLX devices (intel-family.h CASCADELAKE_X /
+SKYLAKE_X) are not part of the kernel's Self Snoop errata list above.
+
+@Thomas, @Ingo, any ideas?
+
+Thanks,
+
+--
+Ahmed S. Darwish
+Linutronix GmbH
 
