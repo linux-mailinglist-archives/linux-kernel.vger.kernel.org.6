@@ -1,226 +1,475 @@
-Return-Path: <linux-kernel+bounces-546807-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EED1BA4FEF5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:46:17 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61207A4FF02
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:50:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 21E381890143
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:46:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B05AC7A4B05
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:49:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4394A2441A3;
-	Wed,  5 Mar 2025 12:46:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A049F245028;
+	Wed,  5 Mar 2025 12:50:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BLQpFvYe"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KtjohfDG"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBE72E3396;
-	Wed,  5 Mar 2025 12:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1495922331E;
+	Wed,  5 Mar 2025 12:50:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178768; cv=none; b=OBi4eEfqGzhpiuPvmdL8BCx89kGMfn4CgRNUbdY5KKsBhnr2QqGkn6XXnMwdXgcjo0NH6S9TKMElOvmukTH1MhMcb/EG8SmPKXu4GApk3vAWt4+n2p8V707vdGRz+yhwUnGFdYQCEnXfC+0kZozz8MW+2W1rUU2mqtAyGi/nPh8=
+	t=1741179039; cv=none; b=UTUpWieXz0FxG3skkSvJBSQZeBw5kQHUf8iloCJRvHtPvtaEOJpnYOCvZZKJS0a5xYClUZta3f2w0hkEq+nJeMeRhgIzZt1BUMxKfzCktdvglpixsf4RxNIEHEBCA7LXO+9tBzINLgj0mMFn/6Be76AWPjzsVt55Suflr+IxlMI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178768; c=relaxed/simple;
-	bh=xx8JpjJPC8xYDKoDVOJwNq5GyjLhOLnf6u0v8a2NSeQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IVyLfY9T8p5ADf+tTevA5xMs39RR9snFdoLdNYjo7lkTFwS6u/N2HT9aCQGWe2yVx4pIbfVd8t46Zhq3RhSJ6nRTJZbPyxvSB+RGnqF2A9ZTyrZeIkXPjOimW33U4RlFP8c7Xa352AwJEdtfzfLs92KaWv85d95ZpLWCsajXlYE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BLQpFvYe; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-2234e4b079cso123431685ad.1;
-        Wed, 05 Mar 2025 04:46:06 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741178766; x=1741783566; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OZhOmEpDhm76SJPq5OYpOzDDF0g2lT4rBhjCoTGHE34=;
-        b=BLQpFvYee5o9JLTUmNAR4oG8A+aopqFUfD77x5yxXRfK871LUZS7hJib92fBxwjfAr
-         Skh6QLDnvGTVJjYkDyVbsuK8nFInafuXfl4/G4QONEpTSgiudCzmC6VCCWgGMTXW2cBL
-         EBTOLjaIkpPfHInQK6YWiLAMoqjwD2Nxkk5MYZTUFyFuWglPvMooiQLjoXciUBXiFUOO
-         YNlyolofzP7APtrQ3/sb8A1Fvtiz66angP/HnChDX1fY9FtsAJsCy3DkygEdomMVezgu
-         Ln2Wn81oFXEffKVHZ7c7cL+pIRwVafjMp7zokB88UKzXMVTQCO1V8p1wuc/25f9YXyTa
-         ZTkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741178766; x=1741783566;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OZhOmEpDhm76SJPq5OYpOzDDF0g2lT4rBhjCoTGHE34=;
-        b=WsLxyChz4rLGXYFzyH7AwPFr0u0MisNFgt4KDYu+D30Qg3Uyjq3BJ0f7vqiDYb8X1F
-         Evwm0JTlA9JxlGYgzw8ivL61rhOLL9BxyJ66h62RePsO5ZDyAbaU3NuMYtgpC+3m+HXP
-         2cPbG6KkwCBDgEhWYJfIqIKMS3e4/y7LmIg9/VlGfuAZNdSr1bXYyUgVgU4zQ6rUD/CI
-         eF3HFBnuSS6sJMJqSbuWFKt7ySIZoZvCYDxwuVyjy+E36MLUwyp1XPhw8D5qNgv9ux1M
-         j5CplclM4k/KWDwMd11MuqGKac5PQsRK+zRP1lF/yrDW5iTqI+bUtM15cgeLbQpy+1Oa
-         O15Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUfoc5kbHjyjbYaHJrRhFe33QKcBCtTvPV8Zr8vtqZkMYNJPAyyvTydD4MMxfUsBcTvdDqSy2QkcfFR@vger.kernel.org, AJvYcCVJqXjJJit4GYdNdjiWI7xsbEgMWT1eECjC9MArtsNGQgndddzNFOuDG4sYl9qr7KMORYZuMHe4rrts+0DM@vger.kernel.org, AJvYcCVatLH5MTz7C956s+722jzazRwP57fB0Y77DmoE0sbS1cRJcsNIr8c2ptBVXZmSMgikbYtUPcSDRlET62M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzl86Sy8NzArbDdj6XTr2hiz8joLOLvRQqrdmpka+Hk15YYL5Xl
-	SM+NARud8dt80KEUzkjHeqccM7jH6J1a9+Kd6njR5pJHDQNfspWTfiZReWG0U5hY/OZARR3LonB
-	9zHl+G7P4/pIO1VdIlKYi/Nee648mAN4s
-X-Gm-Gg: ASbGncuJcRFRCcjByhxwS38zYZEvawt+F1HAHFLOgKAX64qsV3laoHQYXW0DE9jZIu1
-	7RE4i+bFmge7RvNFzNaXCm/B9nf68XKoKkdisy7lu/bqy3GU27q7kFBWNiEd/4MzcK+SwLRXGQR
-	XxBaToQU+1xoUiFjQwep0BxVk=
-X-Google-Smtp-Source: AGHT+IHdwW4hQa2cLPlWYrU5ue4mWciZc0p5rQqeJ2JBGI1XN4w7WGoKToi7KE7C9eD7Ld4Askkac6qqdMHiE8X06ik=
-X-Received: by 2002:a17:902:ebc1:b0:223:f9a4:3fa8 with SMTP id
- d9443c01a7336-223f9a457bemr25544855ad.19.1741178766361; Wed, 05 Mar 2025
- 04:46:06 -0800 (PST)
+	s=arc-20240116; t=1741179039; c=relaxed/simple;
+	bh=ZQU2Y+Y14/DyhMHnu1mXojjEgLsazf214u+C+LanRiM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ZOd4DFSNREmts1K2+mElGJaW9OxZPQyTt5tBATdGzSGC7pNQXOe5UB1b16G2GJLig51734eMCgScpiLkZGYVKeQg+u8soaCauS/wuwDu4IzTPeAPqfgkQbfMFokeD+A24Rnr0R7WtkN61GKpA+nu0Nm54Pi67+UoWbDlW502O/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KtjohfDG; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525Cbhuq027802;
+	Wed, 5 Mar 2025 13:50:29 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	h9j7PBk0K9EtoefJS48n7QgSfHh1wLCHIGHWBS9GvbQ=; b=KtjohfDGHfavfh6t
+	lN47wLyD0wTdV7xhh8D8MMSsQ+eYLnaaqGjovULcFNUHiKaMLuns5guA6vfmK4ZM
+	itLrMQwEUPcNI2bk786JS9MAmGs1nR9r353+ic3gXWJfspLq3WUGmdm+vyXaD15c
+	ldLmRXSbHjVlYrEC4CktbYioAx3UW0gf4Gjg6N+Yatys4epMrURzLd12YkYzz/NS
+	bVRn0+N9t3+/dhFrvzvEPuIhHj/0v7seNE+e9GhX39Jq9myX0C1ka40Iwtu1G3fv
+	YPB4qlijvOSdFv6F6ATTcpcbHVzkkzysLCbND8upgLVOTfMUhDVXLzyWTbNW9mqW
+	iE6vrA==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 454cp8pqkw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 13:50:28 +0100 (CET)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 3743640050;
+	Wed,  5 Mar 2025 13:49:34 +0100 (CET)
+Received: from Webmail-eu.st.com (eqndag1node5.st.com [10.75.129.134])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 94358649C97;
+	Wed,  5 Mar 2025 13:48:30 +0100 (CET)
+Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE5.st.com
+ (10.75.129.134) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 5 Mar
+ 2025 13:48:16 +0100
+Received: from [10.48.86.121] (10.48.86.121) by SAFDAG1NODE1.st.com
+ (10.75.90.17) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 5 Mar
+ 2025 13:48:15 +0100
+Message-ID: <f59a0de5-3db7-4344-ab6f-4907e6024e77@foss.st.com>
+Date: Wed, 5 Mar 2025 13:48:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304162136.1963384-1-florin.leotescu@oss.nxp.com>
- <20250304162136.1963384-2-florin.leotescu@oss.nxp.com> <Z8cp1xoIXT8lgD8T@lizhi-Precision-Tower-5810>
-In-Reply-To: <Z8cp1xoIXT8lgD8T@lizhi-Precision-Tower-5810>
-From: Daniel Baluta <daniel.baluta@gmail.com>
-Date: Wed, 5 Mar 2025 14:47:45 +0200
-X-Gm-Features: AQ5f1Jq_yZI7Qka024KvL_NkiadJQvrOZEyL3YURWLhpyxIxGw7rSu6jJaSDwjY
-Message-ID: <CAEnQRZCT4vfFBApv+C3Wp17Fk0-Rwx36h4eCTTygaXFYFipEGg@mail.gmail.com>
-Subject: Re: [PATCH v3 1/3] dt-bindings: hwmon: Add Microchip emc2305 yaml schema
-To: Frank Li <Frank.li@nxp.com>, Krzysztof Kozlowski <krzk+dt@kernel.org>
-Cc: florin.leotescu@oss.nxp.com, Jean Delvare <jdelvare@suse.com>, 
-	Guenter Roeck <linux@roeck-us.net>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Shych <michaelsh@nvidia.com>, linux-hwmon@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	viorel.suman@nxp.com, carlos.song@nxp.com, 
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, festevam@gmail.com, 
-	Florin Leotescu <florin.leotescu@nxp.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 2/8] remoteproc: Add TEE support
+To: Bjorn Andersson <andersson@kernel.org>
+CC: Mathieu Poirier <mathieu.poirier@linaro.org>,
+        <linux-kernel@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>
+References: <20241128084219.2159197-1-arnaud.pouliquen@foss.st.com>
+ <20241128084219.2159197-3-arnaud.pouliquen@foss.st.com>
+ <6fufphs3ajlc7htj74qus6gifdd4yd64l5yjn2zyjrtdezoe4f@cqbbzg63acv4>
+ <93a0475f-c62f-4eab-b9c2-0306e24041bb@foss.st.com>
+ <zcr3zg3t3iwshyz3e5valrfluk4s4isrqfiz7y3naw53goemtq@ph2ctpemqile>
+ <e2e127a5-a451-486e-9978-7ddc13462da3@foss.st.com>
+ <qxzsz2r7ugiyb7njphmdyupihqmalnmfbbsrtpi7meua37qfqb@bobtx24bwl6r>
+Content-Language: en-US
+From: Arnaud POULIQUEN <arnaud.pouliquen@foss.st.com>
+Organization: STMicroelectronics
+In-Reply-To: <qxzsz2r7ugiyb7njphmdyupihqmalnmfbbsrtpi7meua37qfqb@bobtx24bwl6r>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SAFDAG1NODE1.st.com
+ (10.75.90.17)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_05,2025-03-05_01,2024-11-22_01
 
-Hello Frank, Conor, Krzysztof,
 
-Thanks a lot for your comments and help.
 
-In this initial patchseries we only add minimal OF support and
-introduce a minimal binding.
+On 3/4/25 16:58, Bjorn Andersson wrote:
+> On Wed, Feb 12, 2025 at 02:42:28PM +0100, Arnaud POULIQUEN wrote:
+>> Hello,
+>>
+>> On 2/12/25 04:18, Bjorn Andersson wrote:
+>>> On Tue, Dec 10, 2024 at 09:57:40AM +0100, Arnaud POULIQUEN wrote:
+>>>> Hello Bjorn,
+>>>>
+>>>> On 12/6/24 23:07, Bjorn Andersson wrote:
+>>>>> On Thu, Nov 28, 2024 at 09:42:09AM GMT, Arnaud Pouliquen wrote:
+>>>>>> Add a remoteproc TEE (Trusted Execution Environment) driver
+>>>>>> that will be probed by the TEE bus. If the associated Trusted
+>>>>>> application is supported on secure part this driver offers a client
+>>>>>> interface to load a firmware by the secure part.
+>>>>>
+>>>>> If...else?
+>>>>>
+>>>>>> This firmware could be authenticated by the secure trusted application.
+>>>>>>
+>>>>>
+>>>>> I would like for this to fully describe how this fits with the bus and
+>>>> Are you speaking about the OP-TEE bus?
+>>>>
+>>>> I assume that your attempt is that I provide more details on the live cycle
+>>>> sequence, right?
+>>>>
+>>>
+>>> Right, there's a tee_client_driver and there's a remoteproc driver.
+>>> Let's document clearly how these interact.
+>>>
+>>>>> how it is expected to be used by a specific remoteproc driver.
+>>>>>
+>>>>>> Signed-off-by: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>>>> ---
+>>>>>> Updates vs version v13:
+>>>>>> - define REMOTEPROC_TEE as bool instead of tristate,
+>>>>>> - remove the load of the firmware in rproc_tee_parse_fw as we will ensure
+>>>>>>   that the firmware is loaded using the load_fw() operation.
+>>>>>> ---
+>>>>>>  drivers/remoteproc/Kconfig          |  10 +
+>>>>>>  drivers/remoteproc/Makefile         |   1 +
+>>>>>>  drivers/remoteproc/remoteproc_tee.c | 508 ++++++++++++++++++++++++++++
+>>>>>>  include/linux/remoteproc.h          |   4 +
+>>>>>>  include/linux/remoteproc_tee.h      | 105 ++++++
+>>>>>>  5 files changed, 628 insertions(+)
+>>>>>>  create mode 100644 drivers/remoteproc/remoteproc_tee.c
+>>>>>>  create mode 100644 include/linux/remoteproc_tee.h
+>>>>>>
+>>>>>> diff --git a/drivers/remoteproc/Kconfig b/drivers/remoteproc/Kconfig
+>>>>>> index 955e4e38477e..f6335321d540 100644
+>>>>>> --- a/drivers/remoteproc/Kconfig
+>>>>>> +++ b/drivers/remoteproc/Kconfig
+>>>>>> @@ -23,6 +23,16 @@ config REMOTEPROC_CDEV
+>>>>>>  
+>>>>>>  	  It's safe to say N if you don't want to use this interface.
+>>>>>>  
+>>>>>> +config REMOTEPROC_TEE
+>>>>>> +	bool "Remoteproc support by a TEE application"
+>>>>>> +	depends on OPTEE
+>>>>>> +	help
+>>>>>> +	  Support a remote processor with a TEE application.
+>>>>>
+>>>>> Does the remote processor run TEE applications? (Rethorical question...)
+>>>>>
+>>>>>> 	  The Trusted
+>>>>>> +	  Execution Context is responsible for loading the trusted firmware
+>>>>>> +	  image and managing the remote processor's lifecycle.
+>>>>>> +
+>>>>>> +	  It's safe to say N if you don't want to use remoteproc TEE.
+>>>>>
+>>>>> It's not really about "wanting to use", it's a question whether your
+>>>>> device implements/provides the remoteproc TEE.
+>>>>>
+>>>>>> +
+>>>>>>  config IMX_REMOTEPROC
+>>>>>>  	tristate "i.MX remoteproc support"
+>>>>>>  	depends on ARCH_MXC
+>>>>>> diff --git a/drivers/remoteproc/Makefile b/drivers/remoteproc/Makefile
+>>>>>> index 5ff4e2fee4ab..f77e0abe8349 100644
+>>>>>> --- a/drivers/remoteproc/Makefile
+>>>>>> +++ b/drivers/remoteproc/Makefile
+>>>>>> @@ -11,6 +11,7 @@ remoteproc-y				+= remoteproc_sysfs.o
+>>>>>>  remoteproc-y				+= remoteproc_virtio.o
+>>>>>>  remoteproc-y				+= remoteproc_elf_loader.o
+>>>>>>  obj-$(CONFIG_REMOTEPROC_CDEV)		+= remoteproc_cdev.o
+>>>>>> +obj-$(CONFIG_REMOTEPROC_TEE)		+= remoteproc_tee.o
+>>>>>>  obj-$(CONFIG_IMX_REMOTEPROC)		+= imx_rproc.o
+>>>>>>  obj-$(CONFIG_IMX_DSP_REMOTEPROC)	+= imx_dsp_rproc.o
+>>>>>>  obj-$(CONFIG_INGENIC_VPU_RPROC)		+= ingenic_rproc.o
+>>>>>> diff --git a/drivers/remoteproc/remoteproc_tee.c b/drivers/remoteproc/remoteproc_tee.c
+>>>>>> new file mode 100644
+>>>>>> index 000000000000..3fe3f31068f2
+>>>>>> --- /dev/null
+>>>>>> +++ b/drivers/remoteproc/remoteproc_tee.c
+>>>>>> @@ -0,0 +1,508 @@
+>>>>>> +// SPDX-License-Identifier: GPL-2.0-or-later
+>>>>>> +/*
+>>>>>> + * Copyright (C) STMicroelectronics 2024
+>>>>>> + * Author: Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>
+>>>>>> + */
+>>>>>> +
+>>>>>> +#include <linux/firmware.h>
+>>>>>> +#include <linux/io.h>
+>>>>>> +#include <linux/module.h>
+>>>>>> +#include <linux/remoteproc.h>
+>>>>>> +#include <linux/remoteproc_tee.h>
+>>>>>> +#include <linux/slab.h>
+>>>>>> +#include <linux/tee_drv.h>
+>>>>>> +
+>>>>>> +#define MAX_TEE_PARAM_ARRAY_MEMBER	4
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * Authentication of the firmware and load in the remote processor memory
+>>>>>
+>>>>> Exactly what does this imply? Will the content of @memref be copied into
+>>>>> some other memory?
+>>>>
+>>>> The objective is to authenticate and load in one step. So, yes, the image is
+>>>> loaded into the remoteproc destination memory.
+>>>>
+>>>
+>>> So, some separate device-memory, or some preallocated carveout which is
+>>> only accessible from secure world?
+>>
+>> No sure to understand the difference you do between eparate device-memory and
+>> preallocated carveout.
+>>
+> 
+> The main clarification I was looking for was that in your design you
+> don't use any resources on the Linux side for when your remoteproc
+> instance is running - i.e. no carveouts etc on the Linux side.
+> 
+>> In OP-TEE, we use the same principle as in Linux. OP-TEE uses memory regions
+>> declared in its device tree to list memories usable for the coprocessor (with
+>> associated access rights). On load, it checks that the segments to load  are
+>> included in these memory regions.
+>>
+>> Linux only declares the shared memory-regions in the device tree, for IPC.
+>>
+>>>
+>>> Does the OS need to retain @memref past this point?
+>>
+>> No need,and as the area contains the reult of request_firmware() that can be
+>> corrupted by Linux, OP-TEE considered this as a temporaray unsafe memory. After
+>> the load + authentication step this buffer is no more used.
+>> For detail, OPTEE make a copy of the header and TLV (metadata) in a secure
+>> memory. and load the firmware images in destination memories All these memories
+>>  are not accessible from the Linux.
+>>
+> 
+> No concerns with this, but these semantics should be clearly documented
+> here.
+> 
+>>>
+>>>> On stm32mp1 we can not store the elf file in a temporary secure memory as
+>>>> the memory is encrypted by software (this would take to much time).
+>>>>
+>>>> For your information, in OP-TEE, the application code is split into a generic
+>>>> part and a platform adaptation layer. The generic application is mainly
+>>>> responsible for:
+>>>>
+>>>> - Copying the binary header and metadata into secure memory and authenticating them.
+>>>> - Parsing the ELF images and providing segments to load with associated
+>>>> authenticated hashes to the platform application.
+>>>> In the future, someone can add their own format if needed.
+>>>>
+>>>> But the generic part could be enhance to authenticate and load a non ELF binary.
+>>>> So I'm trying to be generic as possible here.
+>>>>
+>>>
+>>> Generic might be okay, but I'd prefer this to be less vague.
+>>> Also worth noting is the Qualcomm implementation of TZ-backed
+>>> remoteproc, which is already in the tree. 
+>>
+>> Could you point me the code in Linux and your TEE, please?
+>>
+> 
+> One example is drivers/remoteproc/qcom_q6v5_pas.c where this is captured
+> in adsp_start().
+> 
+> qcom_mdt_pas_init() parses out the ELF header and signature information
+> and passes this to the secure world, it then loads the segments of the
+> ELF into the carvouts (qcom_mdt_load_no_init()) and finally it jumps to
+> secure world with qcom_scm_pas_auth_and_reset(), which will lock down
+> Linux's access to the carveouts, then based on previously established
+> data will authenticate the loaded firmware and finally start execution
+> on the remote processor.
+> 
+> The difference in this model though is that we don't need the resource
+> table for rproc_handle_resources() - so this doesn't meet your needs.
+> 
+>>> There the firmware is loaded
+>>> into carveouts, the certificates and hashes are validated. 
+>>
+>> Seems to me that there is also a partial Authentication done during the load step.
+>>
+> 
+> Given that the ELF header and signature information is vetted before the
+> actually copy the segments into carveouts, it's conceivable that the ELF
+> header could be sanity checked...
+> 
+>>> Lastly
+>>> the operation "authenticate and start" is invoked, which does that, and
+>>> locks the OS out of the given memory region - until "shutdown" is
+>>> invoked.
+>>
+>> The differnce between the 2 implementations is the authentication method done in
+>> 2 steps for Qualcomm implementation , in one step for OP-TEE.
+>>
+> 
+> Yes, but it needs to be pointed out that this is because you want the
+> resource table to be authenticated.
+> 
+>> So here if I just remove the term 'authentication' in the command description
+>> does it ok for you?
+>>
+> 
+> No, perhaps I'm misinterpreting you here; but the goal isn't to play
+> word games until it's good enough - the goal is to have a clean design
+> that will cover the various cases, and for that we need to establish
+> what your actual requirements on the host OS side is (typically while
+> considering the "other side" to be a black box).
+> 
+>>>
+>>>>
+>>>>>
+>>>>>> + *
+>>>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>>>
+>>>>> Why not just "remote processor identifier"?
+>>>>>
+>>>>>> + * [in]	 params[1].memref:	buffer containing the image of the buffer
+>>>>>> + */
+>>>>>> +#define TA_RPROC_FW_CMD_LOAD_FW		1
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * Start the remote processor
+>>>>>> + *
+>>>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>>>> + */
+>>>>>> +#define TA_RPROC_FW_CMD_START_FW	2
+>>>>>
+>>>>> Why is there two "FW" in this constant? Why isn't it just
+>>>>> "TA_RPROC_FW_CMD_START"?
+>>>>>
+>>>>> And why is it not TEE_PROC_FW_CMD_START?
+>>>>>
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * Stop the remote processor
+>>>>>> + *
+>>>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>>>> + */
+>>>>>> +#define TA_RPROC_FW_CMD_STOP_FW		3
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * Return the address of the resource table, or 0 if not found
+>>>>>> + * No check is done to verify that the address returned is accessible by
+>>>>>> + * the non secure context. If the resource table is loaded in a protected
+>>>>>> + * memory the access by the non secure context will lead to a data abort.
+>>>>>
+>>>>> These three lines describe a scenario that doesn't make any sense to me.
+>>>>> But if that's the case, you should be able to describe that the API
+>>>>> might give you a inaccessible pointer, by design.
+>>>>
+>>>> On STM32MP, we have a kind of firewall in OP-TEE that sets memory access rights
+>>>> from the device tree. So if the firmware image is not linked according to the
+>>>> firewall configuration, the pointer may not be accessible.
+>>>>
+>>>> I will update the comment as you propose.
+>>>>
+>>>>>
+>>>>>> + *
+>>>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>>>> + * [out]  params[1].value.a:	32bit LSB resource table memory address
+>>>>>> + * [out]  params[1].value.b:	32bit MSB resource table memory address
+>>>>>> + * [out]  params[2].value.a:	32bit LSB resource table memory size
+>>>>>> + * [out]  params[2].value.b:	32bit MSB resource table memory size
+>>>>>> + */
+>>>>>> +#define TA_RPROC_FW_CMD_GET_RSC_TABLE	4
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * Return the address of the core dump
+>>>>>
+>>>>> What does this mean? What will I find at @memref after this call?
+>>>>
+>>>> I do not have a simple answer here as it depends on the OP-TEE strategy.
+>>>> It could be an obscure core dump with possible encryption.
+>>>>
+>>>> I will remove this as it is not yet implemented in OP-TEE.
+>>>>
+>>>
+>>> Okay. But I would prefer that we define the semantics before it's
+>>> implemented...
+>>
+>> that seems fair, I notice that we will have to address this in a separate thread
+>> strating with a series in Linux.
+>>
+>>
+>>>
+>>>> https://elixir.bootlin.com/op-tee/4.4.0/source/ta/remoteproc/src/remoteproc_core.c#L1131
+>>>>
+>>>>>
+>>>>>> + *
+>>>>>> + * [in]  params[0].value.a:	unique 32bit identifier of the remote processor
+>>>>>> + * [out] params[1].memref:	address of the core dump image if exist,
+>>>>>> + *				else return Null
+>>>>>
+>>>>> s/else return Null/or NULL/
+>>>>>
+>>>>>> + */
+>>>>>> +#define TA_RPROC_FW_CMD_GET_COREDUMP	5
+>>>>>> +
+>>>>>> +/*
+>>>>>> + * Release remote processor firmware images and associated resources.
+>>>>>
+>>>>> Exactly what does this mean for the caller?
+>>>>
+>>>> It is platform dependent. It can consist in cleaning the memory, but
+>>>> can be also something else such as firewall configuration.
+>>>> On stm323mp we clean all the memories region reserved for the remote processor.
+>>>>
+>>>
+>>> We can't have an ABI which isn't well defined in intent. Your examples
+>>> would easily fall in the realm of a well defined interface, but this
+>>> ties into the question above - what does is actually mean in terms of
+>>> the memory carveouts and such.
+>>>
+>>
+>> Regarding this comment and the one below, does following description would
+>> respond to your expectations? else do you have a suggestion?
+>>
+>> /*
+>>  * This command should be used in case an error occurs between the loading of
+>>  * the firmware images (TA_RPROC_CMD_LOAD_FW) and the starting of the remote
+>>  * processor (TA_RPROC_CMD_START_FW),
+> 
+> This is valuable information related to TA_RPROC_CMD_LOAD_FW and
+> TA_RPROC_CMD_START_FW, so let's document this there instead.
+> 
+>>  * or after stopping the remote processor
+>>  * (TA_RPROC_CMD_STOP_FW).
+>>  *
+>>  * This command is used to inform the TEE (Trusted Execution Environment) that
+>>  * resources associated with the remote processor can be released. After this
+>>  * command, the firmware is no longer present in the remote processor's memories
+>>  * and must be reloaded (TA_RPROC_FW_CMD_LOAD_FW) to restart the remote
+>>  * processor.
+> 
+> I guess it's fine to define it like this on this level, but in the
+> remoteproc core I'd like us to express the related logic as "release
+> resources allocated durign rproc_parse_fw(). (And I don't think these
+> two interpretations are in conflict).
+> 
+> What's unexpected to me then is that you're not actually reloading your
+> firmware across a recovery/restart?
 
-> How did you pickup the maintainer entry?
+I do it. in rproc_boot_recovery()
+- we call on rproc_stop()
+    rproc_reset_rsc_table_on_stop() copy the resource table in
+    rproc->cached_table
+- we call rproc_load_fw()  added in patch 3/8
+- we call rproc_start() which overwrite the resource table with values in
+  proc->cached_table
+	
 
-We got the author of the first commit for
-See 0d8400c5a2ce ("hwmon: (emc2305) add support for EMC2301/2/3/5 RPM-based=
-")
+The proc->cached_table avoid to release and reallocate all the carveout on recovery.
+This management is one of the points that complexity the sequence in the
+remoteproc_tee case.
 
-> If only one reg You can go through trivial-devices.yaml
 
-This is not a trivial device as we will add some specific properties
-with our next patches
-(e.g polarity etc)
+Thanks,
+Arnaud
 
-> Missing descriptions of the fans, no?
-> missing $ref to fan-controller schema.
-
-Do we need to add this now? As this is only the minimal binding
-support. We want to add that
-in a follow up patch when we go into specifics.
-
-> The emc2301 label here can be dropped, it is not used.
-
-Will fix.
-
-> The nodename should be "fan-controller", not pwm here I guess.
-
-Sure, will fix.
-
-On Tue, Mar 4, 2025 at 6:56=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
->
-> On Tue, Mar 04, 2025 at 06:21:34PM +0200, florin.leotescu@oss.nxp.com wro=
-te:
-> > From: Florin Leotescu <florin.leotescu@nxp.com>
-> >
-> > Introduce yaml schema for Microchip emc2305 pwm fan controller.
-> >
-> > Signed-off-by: Florin Leotescu <florin.leotescu@nxp.com>
-> > ---
-> >  .../bindings/hwmon/microchip,emc2305.yaml     | 43 +++++++++++++++++++
-> >  1 file changed, 43 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/hwmon/microchip,e=
-mc2305.yaml
-> >
-> > diff --git a/Documentation/devicetree/bindings/hwmon/microchip,emc2305.=
-yaml b/Documentation/devicetree/bindings/hwmon/microchip,emc2305.yaml
-> > new file mode 100644
-> > index 000000000000..cac0075a65bb
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/hwmon/microchip,emc2305.yaml
-> > @@ -0,0 +1,43 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/hwmon/microchip,emc2305.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: Microchip EMC2305 SMBus compliant PWM fan controller
-> > +
-> > +maintainers:
-> > +  - Michael Shych <michaelsh@nvidia.com>
->
-> who is it? look like not Microchip and hwmon maintainer.
->
-> > +
-> > +description: |
->
-> Needn't |
->
-> > +  Microchip EMC2301/2/3/5 pwm controller which supports up
-> > +  to five programmable fan control circuits
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - microchip,emc2301
-> > +      - microchip,emc2302
-> > +      - microchip,emc2303
-> > +      - microchip,emc2305
->
-> According to your driver code look like all compatible with microchip,emc=
-2301
->
-> oneOf:
->   - enum:
->       - microchip,emc2301
->   - items:
->       - enum:
->           - microchip,emc2302
->           - microchip,emc2303
->           - microchip,emc2305
->       - const: microchip,emc2301
->
-> So your driver just need one "microchip,emc2301" compatible string.
->
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +
-> > +additionalProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    i2c {
-> > +        #address-cells =3D <1>;
-> > +        #size-cells =3D <0>;
-> > +
-> > +        emc2301: pwm@2f {
-> > +            compatible =3D "microchip,emc2301";
-> > +            reg =3D <0x2f>;
->
-> If only one reg:
-> You can go through trivial-devices.yaml
->
-> Frank
->
-> > +        };
-> > +    };
-> > --
-> > 2.34.1
-> >
->
+> 
+> Regards,
+> Bjorn
 
