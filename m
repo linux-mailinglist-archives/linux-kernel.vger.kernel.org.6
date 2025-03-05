@@ -1,321 +1,117 @@
-Return-Path: <linux-kernel+bounces-547059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35418A50286
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:46:09 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 39173A50297
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:48:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 580CB1896526
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:43:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CA4D1889AB4
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:44:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D938248891;
-	Wed,  5 Mar 2025 14:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9403424E4D9;
+	Wed,  5 Mar 2025 14:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Hs1AY+IA"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="czkRAAG9"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14B3233708
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E1F1EDA2D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185781; cv=none; b=Ud4eKjOHchg8MMPt9j3f/VYoQZZriT5o5Lvs1EwrBfHj4TaMeB6Uoi4gfUEHztmipfEc244BuOWyM8RXCjxmZnTa9O6s08LjMMXGvOR3AePHQ4+qaACChZCIpzC0fq9oLJGBNTCbx4S1AduJych0PvMnB2nVGXsMXfY+HrdwWr4=
+	t=1741185846; cv=none; b=g2pT6jKwTavuuMRcSJGW9VgeYAil6CjFhNsqQKFokys8o8t2gRoFqvbr7X9zP7F92K+8VSySqpK8B70qDeq2Mmvcwe8w5R5IgYvKsBLaO48v42dINm7xq27kkFQaHic9ydZMPah1mn9V//616E+kJ0m7RjoTQ3DIiLAzn5p1O3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185781; c=relaxed/simple;
-	bh=W/cFTtjUPjloF/TEE1KZm3u7DpwmHS8nwZr4v423BxE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=FboQ9PElrKvfEtgIgVZ24gRSn+cnbGnZq+kACUw6VJfUP0S/GSwjhtEAplIBrfU2f8okFdnKE2/6lhA/5eecu9lE9vnBdIWjumLRGPaDxTQJ1rr+xyOsxdxGhqhDWOIMI//m609gBNIwFJ5odGBYXlLZWi2ttplBoC7qGz5Hmoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Hs1AY+IA; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-390f69e71c8so666977f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:42:59 -0800 (PST)
+	s=arc-20240116; t=1741185846; c=relaxed/simple;
+	bh=khTfYbS7TTRK0cngWDGo3k7vxdXzMUP1uxbMhY3ktDM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Gioz6L8iN1orMMY3XdNow9gS2YJgMJqE+kC9dlOM0lT4KDdoH+9BE5KClrgycG6N59CuPxPr20cayZU46OjR+RcONAJD3c4jQ/RI7eYSdO1kJT73kWyTk3t2+oNYuKBz62yKnuS+7gq0QdNj91oh4xuHv3cGVRdojBJerDQe3QE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=czkRAAG9; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4394036c0efso43967965e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:44:04 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741185778; x=1741790578; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FRLdSry5OGKnrSFvS+LP96NBp0+rBD/EpukWTUX58+k=;
-        b=Hs1AY+IA6SS+nB9EnL97q9Hs0RU1ENouP1YrjQ5xi7TCwsM5r3b5bVu1Ubl6k4TIA2
-         sssFz//TjQq/jdgOueUgXLUChM5mIPxyWRLkoCZmQRqwS5Up8KxSXnhhpC32aeQv5mpS
-         GGfXjtcOmnk+1JTFQmcKJTdUhVvSvbjeOspm08BJ3Zm/pXaKnXE+wLxxDEF/Mi9FXFs0
-         dWnxT2Pp/w4FpCwdtDBPyEUCtbLmL28hQWUVXigqZCNQZtKtI+a3cAj2ownIwGLyeylJ
-         aUO8C23Zef8OgXyahWrr8xWXrUPsuIqqq/YSLKRn+43i2VaukQWeSVKH4vyGBhn1IaQg
-         Y5LA==
+        d=gmail.com; s=20230601; t=1741185842; x=1741790642; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cTXHQ//nEUi07Uq1rIglvGA2poPkXrtAOXEjlPFl8vo=;
+        b=czkRAAG9xKXqTKY8d8c1phw5mbrZILIoemBlaxnLFCR2MvrFmA7bftv95XVdFsVQff
+         vrdmNYbEcN0lVP2vSHBiUcs0ai5pf9a4vJmNRUNZLjotuZf+1A0GuEV22MF6yjZrwgb1
+         DBrg0oTd0vRvKwrtrYoqFlqXcDZkeywX9t79ePFdmGblnxrDy3UnIBlacWAkJ295zN5i
+         SCHOUkRW1/LcsXX/PGoQd0Ff+VR8S4Dl3/iPzaUhteJJz4iyKCVZ/8E5Vj2DQ1s0UZdL
+         eEA0mQeoaV+m3g0OlGXsBYH3XCgeVNLwassZ0Kvw6usRk3C6wqq01rKfrI6SIO6O1m0+
+         I7JA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741185778; x=1741790578;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FRLdSry5OGKnrSFvS+LP96NBp0+rBD/EpukWTUX58+k=;
-        b=nxzO/xymZduwGtT+s4OjCU6yQppD1JLpKQovTf6UArExjLdQPghZ1SDSIS8urkk1AO
-         1q7Id9uf0+QoHZyC9wU/fzDl+XIooU5qXNxBb2tN455hhi4rsncIFDUip8k+iXnZuCkB
-         zy61ZaBLB98OgNJd/k3a9ZJixoOKIZ45Py2yu4p9oOXTIUiw3twxx+ADiYH9E7NVGojM
-         FiBLQ3HEuS5UWuRQpjO16JrKyT79tAFZy0mlfCbu2XjcLCYXvVwz+SygA21PUzg7q44b
-         wrkHkzXzqeNbzWyUI12PRJVDp9goA1gRiibYcrMGSdL8lQwAhREiXKPQ1net1zlYSmS5
-         e4rQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrgu50voYpS4+RdVzb9lxaiwKwH5DAwxIsL9Yv9YYQJ5RCjkDwDEe64YuI68L0SPcLYctUF1zED0Y+G0Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbxyOAhbRL1mxd4EV4VqT7KD5kJMtuvuYbn6q6R08Dz/ZGqUBt
-	mS7K43mHFkpSV8qcMiK+5cRRFucTfZ4u8zlOL5aGEKwSpK24cz5lVE60rlYZsWY=
-X-Gm-Gg: ASbGncuWifeMPt63csZ8OtGBkPzzTmF1rlO5FhH8wPYnKDWkVWPUZXHVxLCLN1umpuC
-	ccd9HrLtW/HEx8b+CD2nSpBQfyTq0GsxOyD3GG2TpbHk/nNGZFxRiJbhy3mFRMAibRrCqONixTi
-	tcAC+dSR0rops4b6oaEdrqKUivLbXsPYdd2KZPfu6p9u6MLH+7gt4CvXdKOIcpoAtNT+6wI2fQd
-	MgYa5X3cmJjXDb4fMf9PrXzHTl3y6mZej+DheD8Ec101lCz2+vJ98nF5afG2VBSBJAA1cD8f7iC
-	sPE0X15PcWqI9qCv4q03GihzlAvODq+cyCYZepgOHzv1mPLTmY+0sLtrEgyBxKsWltSuMh8DR+t
-	o4dwheGdxHro34xwiq2qdMg==
-X-Google-Smtp-Source: AGHT+IFiP6nXyFE7qfLHUsJAhYeWZSHp1CwIttpP4iE2kEDTy//u5ccfQX8sVcUhQe610fRL8SqZzw==
-X-Received: by 2002:a5d:64ab:0:b0:391:952:c74a with SMTP id ffacd0b85a97d-391155ffd95mr5535609f8f.8.1741185777755;
-        Wed, 05 Mar 2025 06:42:57 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:d001:4ab2:d11a:658b? ([2a01:e0a:982:cbb0:d001:4ab2:d11a:658b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4795d30sm21510078f8f.10.2025.03.05.06.42.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 06:42:57 -0800 (PST)
-Message-ID: <997d4cf8-5256-4413-8059-569451962a83@linaro.org>
-Date: Wed, 5 Mar 2025 15:42:56 +0100
+        d=1e100.net; s=20230601; t=1741185842; x=1741790642;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cTXHQ//nEUi07Uq1rIglvGA2poPkXrtAOXEjlPFl8vo=;
+        b=EGwFGtLWsNcl/+cDZjXF2p8BXbJzqzaQrH2bEOeamyflQHocK/qjYwzVFm97d+UTwK
+         4OiXvHJcRF0zzFYxFr2RWWHZR9bdh3m1zPJYZtQhZGjY+xk+fbvM1KETWQkSgpR2OO2w
+         EAZkVjAR47N8O58BCiy0HD5Y4ID1emytIMoZnDuyvzgK7Q69kgnFAjtTPfMVYjXiJWK4
+         TJPyu2abrHaidfnb1e3wG9EErd2hd1fDW+UhJBqsZ6mGxmAdq+YPuF1KrOrNg90H25xq
+         Y7cHeDZugdvUxgwGpSXBNZ2J3cMA8eLhjm6Fk5yMqQj7UzqRvH0PbFW6uFMNNLBb+txN
+         NaqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXFjPzsP7OWUK9iKzhLvtQfINIg3OaCoFrGIFbPQni/hakKmm+e+6k2ZU8uDH7Opb4DGyQmBRlf032MasM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTKIBmIeK7XN8nkhgMouPUO1Zqqy4/g6mFj7vGTUhL9pZpL7zm
+	6nEHhVT4bTLDuDV4xdM02PIqK8pnSh67u2B4C7tLof5ParDeornF
+X-Gm-Gg: ASbGncvSJJhcdo1aC+/wiJ50+9Bngt1ea00fFctL4/3GBMSzX4O2Jz0SNRunP43qLMX
+	I8L1rJSNKP7z39pNXzQnN94XCwj+cZEReWyRg21gEut6sVj9k+KgN+RnE7HJiGZ3tMzdk5mmqyn
+	fhdt2UknO2idfuFckgKRrOXi7BJ+g+ZxzUBlF3nPR0gzpk6Gaw8VCGShlV/LAvHFu0Ve24FKaYo
+	XJYrLayaOi5kftJxkBxKAnGb0eGYwgrlOAGe2g3WkeKqVj1D9cpwjprqrLsAPfMvSij8kx4gbLL
+	J7ZiU8kY+vs66sE/vIA7vNs7ifYHv3d4dpoGp1f7XuztswVj
+X-Google-Smtp-Source: AGHT+IFGQUVETDs+aLlL7dxjD2415mCZr3U/Vg5NUkmwRGmaxQKvyXyLdfnVx5+BM6nipcBQc1kDzw==
+X-Received: by 2002:a05:600c:190c:b0:43b:cf29:b577 with SMTP id 5b1f17b1804b1-43bd2891d64mr30345195e9.0.1741185842329;
+        Wed, 05 Mar 2025 06:44:02 -0800 (PST)
+Received: from eichest-laptop.. ([178.197.169.96])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd435cd8csm19314375e9.40.2025.03.05.06.43.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 06:44:02 -0800 (PST)
+From: Stefan Eichenberger <eichest@gmail.com>
+To: vkoul@kernel.org,
+	kishon@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	p.zabel@pengutronix.de,
+	tharvey@gateworks.com,
+	hongxing.zhu@nxp.com,
+	francesco.dolcini@toradex.com
+Cc: linux-phy@lists.infradead.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] phy: freescale: imx8m-pcie: fix and cleanup phy
+Date: Wed,  5 Mar 2025 15:43:14 +0100
+Message-ID: <20250305144355.20364-1-eichest@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH RFC] leds: rgb: leds-qcom-lpg: Compute PWM value based on
- period instead
-To: Abel Vesa <abel.vesa@linaro.org>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?=
- <ukleinek@kernel.org>
-Cc: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>,
- Anjelique Melendez <anjelique.melendez@oss.qualcomm.com>,
- Kamal Wadhwa <quic_kamalw@quicinc.com>,
- Jishnu Prakash <jishnu.prakash@oss.qualcomm.com>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, Johan Hovold <johan@kernel.org>,
- Sebastian Reichel <sre@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- linux-leds@vger.kernel.org, linux-pwm@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250303-leds-qcom-lpg-compute-pwm-value-using-period-v1-1-833e729e3da2@linaro.org>
- <ylnkjxnukss7askv7ip5htrb4tyjzhpw7jim2se6rloleq5h6w@ngk7lbk26hxj>
- <Z8bGHV4PIkY4te6V@linaro.org>
- <5uk75v3cpy2hymdgjyvqdwyda34t2pn7jqyupyvhmqgo3wlxkl@uim4lth7lipa>
- <Z8hgj11p+TY1546x@linaro.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <Z8hgj11p+TY1546x@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 05/03/2025 15:32, Abel Vesa wrote:
-> On 25-03-04 16:38:57, Uwe Kleine-König wrote:
->> On Tue, Mar 04, 2025 at 11:21:33AM +0200, Abel Vesa wrote:
->>> On 25-03-04 07:24:32, Uwe Kleine-König wrote:
->>>> Hello Abel,
->>>>
->>>> On Mon, Mar 03, 2025 at 06:14:36PM +0200, Abel Vesa wrote:
->>>>> Currently, the implementation computes the best matched period based
->>>>> on the requested one, by looping through all possible register
->>>>> configurations. The best matched period is below the requested period.
->>>>
->>>> The best matched period *isn't above* the requested one. An exact match
->>>> is fine.
->>>>
->>>
->>> Yep, that's better. Will re-word.
->>>
->>>>> This means the PWM consumer could request duty cycle values between
->>>>> the best matched period and the requested period, which with the current
->>>>> implementation for computing the PWM value, it will result in values out
->>>>> of range with respect to the selected resolution.
->>>>
->>>> I still don't understand what you mean with resolution here.
->>>
->>> Resolution in this context means the number of bits the PWM value
->>> (register value) is represented in. Currently, the driver supporst two PWM
->>> HW subtypes: normal and Hi-Res. Normal ones recently got support for changing
->>> the resolution between 6 bits or 9 bits. The high resolution ones support
->>> anything between 8 bits and 15 bits.
->>>
->>>>
->>>> I guess you spend some time understanding the workings of the driver and
->>>> you also have an example request that results in a hardware
->>>> configuration you don't like. Please share the latter to a) support your
->>>> case and b) make it easier for your reviewers to judge if your change is
->>>> indeed an improvement.
->>>
->>> Sure, will bring up the 5ms period scenario again.
->>>
->>> When the consumer requests a period of 5ms, the closest the HW can do in
->>> this case is actually 4.26ms. Since the PWM API will continue to ask for
->>> duty cycle values based on the 5ms period, for any duty cycle value
->>> between 4.26ms and 5ms, the resulting PWM value will be above 255, which
->>> has been selected as best resolution for the 4.26ms best matched period.
->>>
->>> For example, when 5ms duty cycle value is requested, it will result in a
->>> PWM value of 300, which overflows the 255 selected resolution.
->>
->> this is the bug you have to fix then. The PWM value (that defines the
->> duty cycle) has to be calculated based on .period = 4.26 ms and capped
->> at 255. So assuming that 0 yields a duty cycle of 0 ms and 255 yields
->> 4.26 ms, a request for .duty_cycle = 4; + .period = 5 should result in an
->> actual .duty_cycle = 239 / 255 * 4.26 ms = 3.992705882352941 ms;
->> + .period = 4.26 ms.
-> 
-> OK then. The patchset that fixes this according to your suggestion is
-> already on the list (re-spun):
-> 
-> https://lore.kernel.org/all/20250305-leds-qcom-lpg-fix-max-pwm-on-hi-res-v4-0-bfe124a53a9f@linaro.org/
-> 
->>
->>>>> So change the way the PWM value is determined as a ratio between the
->>>>> requested period and duty cycle, mapped on the resolution interval.
->>>>
->>>> Is the intention here that (for the picked period) a duty_cycle is
->>>> selected that approximates the requested relative duty_cycle (i.e.
->>>> .duty_cycle / .period)?
->>>
->>> Yes, that exactly what the intention is.
->>>
->>>> If it's that: Nack. This might be the right thing for your use case, but
->>>> it's wrong for others, it complicates the driver because you have spend
->>>> more effort in the calculation and (from my POV even worse) the driver's
->>>> behaviour deviates from the usual one for pwm drivers. I admit there are
->>>> some other lowlevel pwm drivers that are not aligned to the procedure I
->>>> described that should be used to determine the register settings for a
->>>> given request. But I target a common behaviour of all pwm drivers
->>>> because that is the only way the pwm API functions can make a promise to
->>>> its consumers about the resulting behaviour. Reaching this is difficult,
->>>> because some consumers might depend on the "broken" behaviour of a given
->>>> lowlevel driver (and also because analysing a driver to check and fix
->>>> its behaviour is an effort). But "fixing" a driver to deviate from the
->>>> declared right behaviour is wrong and includes all downsides that make
->>>> me hesitate to align the old drivers to the common policy.
->>>
->>> OK, fair enough. But I still don't get what you expect from the provider
->>> that can't give the exact requested period. Do you expect the consumer
->>> to request a period, then provider compute a best matched one, which in
->>> our case is pretty far, and then still give exact duty cycle values ?
->>>
->>> Like: request 5ms period, get 4.26ms instead, then request 4ms duty
->>> cycle and get exact 4ms duty cycle when measured, instead of a
->>> proportional value to the best matched period?
->>
->> Yes.
->>   
->>> If so, then what happens when consumer asks for 5ms duty cycle?
->>> Everything above the 4.26ms will just represent 100% duty cycle.
->>
->> Yes.
-> 
-> I still think this is wrong.
+The imx8m-pcie PHY PLL fails to lock under certain conditions when
+returning from suspend. This is resolved by asserting the PHY reset when
+powering off the PHY during suspend. This ensures that the PHY is
+properly reset when powering on again in resume.
 
-I also think this is very wrong, duty_cycle is a factor of the period,
-so if the HW gives a lower period, the term Pulse Width Modulation implies
-the ratio between the "duty_cycle" and the period is important,
-not the exact duration of the components of the modulation.
+Changes in v2:
+- Remove unnecessary check if perst is not null (Philipp)
 
-So is this a defect of the PWM API ? why would the API insist on
-having an exact duty_cycle and a random period ?
+Stefan Eichenberger (2):
+  phy: freescale: imx8m-pcie: cleanup reset logic
+  phy: freescale: imx8m-pcie: assert phy reset and perst in power off
 
-I mean if you look at the basis of PWM :
-https://en.wikipedia.org/wiki/Pulse-width_modulation
+ drivers/phy/freescale/phy-fsl-imx8m-pcie.c | 23 +++++++++++++---------
+ 1 file changed, 14 insertions(+), 9 deletions(-)
 
-The duty_cycle is expressed as a percentage of the period, because
-this is the key feature of PWM here, can you explain more in detail
-why we can't make an extra effort to keep the duty_cycle/period ratio ?
-
-Neil
-
-> 
-> I do agree with the exact value. I advocated for it on the other
-> thread.
-> 
-> But the fact that the API allows requests with values above what the
-> provider can do is wrong.
-> 
-> In this specific case, we are talking about top 15% that it just
-> thrown away. But it becomes even worse for others.
-> 
->>
->>>> The policy to pick a hardware setting is a compromise between consumer
->>>> needs and what is straight forward to implement for (most) hardware
->>>> drivers. Please stick to that. If you want more flexibility and
->>>> precision in your consumer, please consider converting the pwm driver to
->>>> the waveform API.
->>>
->>> That means the pwm_bl driver will have to switch to waveform API, IIUC.
->>
->> Yes, if the pwm_bl driver cares about that precision it has to switch.
->>
->> While the waveform API isn't expressive enough, just use 4260000 as
->> period in the pwm_bl device, or ignore the missing precision.
->>
->>> That might break other providers for the pwm_bl consumer, wouldn't it?
->>
->> Given that the consumer side of the waveform API only works with drivers
->> that are converted: maybe. You could fall-back to the legacy API.
-> 
-> Based on the provider's best matched period? Hm.
-> 
->>   
->>>>> [...]
->>>>> ---
->>>>> base-commit: 0067a4b21c9ab441bbe6bf3635b3ddd21f6ca7c3
->>>>
->>>> My git repo doesn't know that commit. Given that you said your patch
->>>> bases on that other series, this isn't surprising. Please use a publicly
->>>> available commit as base parameter, otherwise you (and I) don't benefit
->>>> from the armada of build bots because they just silently fail to test in
->>>> this case.
->>>
->>> Well, this is a pretty common practice. When the patch relies on other
->>> patches that haven't been merged yet, but are still on the list, you
->>> can't really base it on a publicly available commit.
->>>
->>> And the fixes patchset that this is based on is needed for this to work.
->>>
->>> So I really don't get how this can be done differently.
->>
->> You can still use --base=$newestpubliccommit and git-format-patch will
->> at least give a chance to the build bots by emitting patch-ids for all
->> the commits between the public base and the start of your patch series.
-> 
-> Got it. I use b4 for most patches nowadays. I'll try to make use of it's
-> --edit-deps and see where that lands.
-> 
->>
->> Best regards
->> Uwe
-> 
-> Thanks,
-> Abel
-> 
+-- 
+2.45.2
 
 
