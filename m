@@ -1,124 +1,134 @@
-Return-Path: <linux-kernel+bounces-547897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547896-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E6E5A50EFC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:46:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4F6CA50EF7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:46:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 24DBC188F8A1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:46:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 151EC188F349
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C1B1FECA7;
-	Wed,  5 Mar 2025 22:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F427205ABE;
+	Wed,  5 Mar 2025 22:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="I2IJ7WoZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l7Vyqi2+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 151D61EEA5D;
-	Wed,  5 Mar 2025 22:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0EAA13AC1
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 22:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741214802; cv=none; b=Y0T3ybK95KIaa7bsrcu1Sso9cC0ZunMZFBFMPyrIAa2or6CkFiYhgjbrDIu7ymFxIfQUq5Vzl0Q6zJj0TLj4GpqzoX2CUappt2axJyqM01lFbx7PyxUi8OrYmp9xZQnzetlSYMS5QTY8eANGUfSwI36Jj7pBb6wApx3R8xIwZVE=
+	t=1741214791; cv=none; b=rxsRxEzjkO0fVWbzxG1SigwLWHpqrm8P8g+Rz3zKzUe9vxefxZ9xzkGQPiGvOMRg9IwwRpZtohvPJATtxfNeWyZyHJ751rZ5t/KlnZX0EmvqsmHyNf5h5qo9B6BmLcZWZ41aVugdugjUIVgccl9Nud80LnOPe+tfVTEwLvHDYUA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741214802; c=relaxed/simple;
-	bh=FR8Niwgnp4v4URbf7Z9s1uh9Y2DpjKMlC7TjJF9NlxQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=IjqCPh5uazWVAgkbB5SIue/ubgPeTW0x4DgmuDB2dpEnF3zML2/ZCjKEaCj4d6vgdTUmO8fSVPtMZgLMK13s/Df5FdvJpOzlmY2YNAMb41Y3qqDanAti7mhaBuePk/4EeMckxeXfSlY5dum4fzzHf04ODK2/hyqnwF00W36yeiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=I2IJ7WoZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525LhohL028207;
-	Wed, 5 Mar 2025 22:46:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/+PSw0qvB/W8fKpy4PMRcWsMSIMOhwf5q/v1ZQL/lrY=; b=I2IJ7WoZF7e9pg5V
-	b3FtX6kFLTOcJ1xoa2qMSzBW4A9k74JxcBTTDf6m1xz8EGPciBe378oKDsjD0puQ
-	q3g5bNfnK1dNvLXq0SWrMWwu0+VLyh2kITF2vD1VTBTI5FFgEwPz9kFIw138h0Hb
-	nxAHsCHG2Sqlr21sdQFjFSALSS4RGXj7Q5JBoYXwtzgPGDrJktK52/4ldKJ5WmaO
-	Z0MzSfLZuLebTY03iKWMqDGMsOptcZ/rQipT+OCxvEcqZrP8wH5MkV5WLfdQkMa4
-	TrS3y0EjF/hsIP3U8GB19J6vTwFJnbg4mkAB3p1MGLOw/Sx6KsJEcZZz8/WNnn96
-	uwsJlg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6vex9e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 22:46:25 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 525MkOfO014259
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 22:46:24 GMT
-Received: from [10.134.71.247] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 5 Mar 2025
- 14:46:23 -0800
-Message-ID: <d0448a8f-8592-4414-9af7-c0ef528c2bb5@quicinc.com>
-Date: Wed, 5 Mar 2025 14:46:23 -0800
+	s=arc-20240116; t=1741214791; c=relaxed/simple;
+	bh=3Tg2RBK2X/sKpN0IUIrDSPGWkJ7RP0iQK0OMYcbbzUo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Dhh0PFf3ly4BUKOZMDmDyw6WOg31g/BKEVtgnd8im7W7gjexE99GAUmE+GMEMUEsv/c7Q2ovw6QzNqQna/5SKlmoX8X0U4iFSI5agJBQfjkh4vy//4lIp7iMK5sNCJ6RlFZXTZieykfT5yXuaZW/WlnbFFRHYml43ao5Q1nbHEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l7Vyqi2+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33409C4CED1;
+	Wed,  5 Mar 2025 22:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741214790;
+	bh=3Tg2RBK2X/sKpN0IUIrDSPGWkJ7RP0iQK0OMYcbbzUo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=l7Vyqi2+sWOFn/mQ+3Z6oWceG1MLz4QQAB+wS2Rys3hiHQd6GUqH7+kK18077Uh/q
+	 4qWbYq1pymPuv5tzt0yqsDQibPMocIc85wIbYd3Z/AQvCGOqh6wxyL52OID2hhi+ZD
+	 WBrQy0yFyVuJtstZNMlR/pYr7ci2gkD/jWgPDWNHMpNJtj3Vt4cilslsYaxwXNKG5q
+	 CPdB4mHlW7j2tHPWba9/qKZg5fEIqOT+ewSNpinX8gGLpmyvN7IZvqrguEGngsMwpp
+	 0NxaWHk2KwXO8EMWIdKFcNofvJdMw/8UMyrB+CI9sbY/El94YbJuoXnYUrQR/mWfDq
+	 05oapb7VpEoEQ==
+From: SeongJae Park <sj@kernel.org>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: SeongJae Park <sj@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	"Liam R. Howlett" <howlett@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [RFC PATCH 00/16] mm/madvise: batch tlb flushes for MADV_DONTNEED and MADV_FREE
+Date: Wed,  5 Mar 2025 14:46:28 -0800
+Message-Id: <20250305224628.60041-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <yhfyhovnztn3m224tdbq4hrth3bulq23ym57rp7prvodaapjdo@any7cn33suh3>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] MAINTAINERS: use kernel.org alias
-To: Dmitry Baryshkov <lumag@kernel.org>, Rob Clark <robdclark@gmail.com>,
-        Marijn Suijten <marijn.suijten@somainline.org>
-CC: <freedreno@lists.freedesktop.org>, <dri-devel@lists.freedesktop.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20250306-update-email-v1-0-9a231571e905@kernel.org>
- <20250306-update-email-v1-1-9a231571e905@kernel.org>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20250306-update-email-v1-1-9a231571e905@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: ZQEz5YSe_4B5utvCiLHvMgIAZPEQS07t
-X-Authority-Analysis: v=2.4 cv=bPnsIO+Z c=1 sm=1 tr=0 ts=67c8d441 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=VwQbUJbxAAAA:8 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=pGLkceISAAAA:8 a=COk6AnOGAAAA:8
- a=KKAkSRfTAAAA:8 a=tVI0ZWmoAAAA:8 a=7segCkSFUhES_0U3-ikA:9 a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22 a=cvBusfyB2V15izCimMoJ:22 a=-BPWgnxRz2uhmvdm1NTO:22
-X-Proofpoint-GUID: ZQEz5YSe_4B5utvCiLHvMgIAZPEQS07t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_09,2025-03-05_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0 suspectscore=0
- impostorscore=0 lowpriorityscore=0 priorityscore=1501 adultscore=0
- spamscore=0 mlxscore=0 clxscore=1011 bulkscore=0 mlxlogscore=880
- phishscore=0 classifier=spam authscore=0 authtc=n/a authcc= route=outbound
- adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050175
+Content-Transfer-Encoding: 8bit
 
+On Wed, 5 Mar 2025 11:57:34 -0800 Shakeel Butt <shakeel.butt@linux.dev> wrote:
 
-
-On 3/5/2025 2:44 PM, Dmitry Baryshkov wrote:
-> My Linaro email will stop working soon. Use @kernel.org email instead.
+> On Wed, Mar 05, 2025 at 07:49:50PM +0000, Lorenzo Stoakes wrote:
+> > On Wed, Mar 05, 2025 at 11:46:31AM -0800, Shakeel Butt wrote:
+> > > On Wed, Mar 05, 2025 at 08:19:41PM +0100, David Hildenbrand wrote:
+> > > > On 05.03.25 19:56, Matthew Wilcox wrote:
+> > > > > On Wed, Mar 05, 2025 at 10:15:55AM -0800, SeongJae Park wrote:
+> > > > > > For MADV_DONTNEED[_LOCKED] or MADV_FREE madvise requests, tlb flushes
+> > > > > > can happen for each vma of the given address ranges.  Because such tlb
+> > > > > > flushes are for address ranges of same process, doing those in a batch
+> > > > > > is more efficient while still being safe.  Modify madvise() and
+> > > > > > process_madvise() entry level code path to do such batched tlb flushes,
+> > > > > > while the internal unmap logics do only gathering of the tlb entries to
+> > > > > > flush.
+> > > > >
+> > > > > Do real applications actually do madvise requests that span multiple
+> > > > > VMAs?  It just seems weird to me.  Like, each vma comes from a separate
+> > > > > call to mmap [1], so why would it make sense for an application to
+> > > > > call madvise() across a VMA boundary?
+> > > >
+> > > > I had the same question. If this happens in an app, I would assume that a
+> > > > single MADV_DONTNEED call would usually not span multiples VMAs, and if it
+> > > > does, not that many (and that often) that we would really care about it.
+> > >
+> > > IMHO madvise() is just an add-on and the real motivation behind this
+> > > series is your next point.
+> > >
+> > > >
+> > > > OTOH, optimizing tlb flushing when using a vectored MADV_DONTNEED version
+> > > > would make more sense to me. I don't recall if process_madvise() allows for
+> > > > that already, and if it does, is this series primarily tackling optimizing
+> > > > that?
+> > >
+> > > Yes process_madvise() allows that and that is what SJ has benchmarked
+> > > and reported in the cover letter. In addition, we are adding
+> > > process_madvise() support in jemalloc which will land soon.
+> > >
+> > 
+> > Feels like me adjusting that to allow for batched usage for guard regions
+> > has opened up unexpected avenues, which is really cool to see :)
+> > 
+> > I presume the usage is intended for PIDFD_SELF usage right?
 > 
-> Signed-off-by: Dmitry Baryshkov <lumag@kernel.org>
-> ---
->   MAINTAINERS | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 29e1a423eee5bcf9df7938aaffe5bd3e2f6a2bbe..b3a67e278a839fa14d1329a249ecf4bbec00c26c 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -7459,7 +7459,7 @@ F:	include/uapi/drm/msm_drm.h
->   DRM DRIVER for Qualcomm display hardware
->   M:	Rob Clark <robdclark@gmail.com>
->   M:	Abhinav Kumar <quic_abhinavk@quicinc.com>
-> -M:	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> +M:	Dmitry Baryshkov <lumag@kernel.org>
->   R:	Sean Paul <sean@poorly.run>
->   R:	Marijn Suijten <marijn.suijten@somainline.org>
->   L:	linux-arm-msm@vger.kernel.org
-> 
+> Yes.
 
-Acked-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Indeed. Thank you for opening up the door, Lorenzo :)
 
+> 
+> > 
+> > At some point we need to look at allowing larger iovec size. This was
+> > something I was planning to look at at some point, but my workload is
+> > really overwhelming + that's low priority for me so happy for you guys to
+> > handle that if you want.
+> > 
+> > Can discuss at lsf if you guys will be there also :)
+> 
+> Yup, we will be there and will be happy to discuss.
+
+Me, too.  Looking forward to the day!
+
+
+Thanks,
+SJ
+
+[...]
 
