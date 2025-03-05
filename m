@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-546563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BF95A4FC3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:36:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51539A4FC54
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:39:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA6637A370E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:35:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62325188CB52
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:37:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7769C207663;
-	Wed,  5 Mar 2025 10:30:54 +0000 (UTC)
-Received: from unicom145.biz-email.net (unicom145.biz-email.net [210.51.26.145])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023DB209F31;
+	Wed,  5 Mar 2025 10:31:40 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A6292E337F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1EF7A2080E8;
+	Wed,  5 Mar 2025 10:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170654; cv=none; b=L84k6ZiWM/NEUKMVbG/7ILFeMeYuDklRtWc/8romXZY3XTQT23BN0A9/BWQoUiaPCZp8bp8DjlqW6t/RxuYtHaegk3Xqmc/R24rAfZc8mg32FrzvypIio/ZOAOou6Q417gG9mpFwWbsOIXts1mrDgPdAeCK1DoocLkWUe10xUnA=
+	t=1741170699; cv=none; b=irBFbMzeaIhy/a6ELmLRp5q93rQCqlXgcdaqflpanA9qVDsLuPh0YlM+kXfAmd9dkyoZsLNah5l0tpjlxe6ycBoEpgcYxpAbxhs8x4CYv+kFYKTkuievexrydFCQ8BG/Orjtdr/fKYCXucBTlrBsJMvGxWcpQXPMO5eA+UU7Jwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170654; c=relaxed/simple;
-	bh=Xnpvn3GB0yvJoLSlTxEHrnTkhA3BtP2tRDX7Q/arrZA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SlvSwbKq5uHanuviSDr0YkXBjHpREJZaafp89Pq1B7QkhBPyuGfAuvFNcJVkPhxCSubmy/Tg/m5YBn1gn0YwxcdZ+DJx4bZN8KoPotqibwue1PbUfZG5f+2d3qlo5wPLJ1ORwipZiHFdDjnwmcHLeP4uR8e4Hthc19TjXtSeSEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from jtjnmail201622.home.langchao.com
-        by unicom145.biz-email.net ((D)) with ASMTP (SSL) id 202503051830462016;
-        Wed, 05 Mar 2025 18:30:46 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- jtjnmail201622.home.langchao.com (10.100.2.22) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 18:30:45 +0800
-Received: from locahost.localdomain (10.94.12.149) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 18:30:44 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <victor.liu@nxp.com>, <andrzej.hajda@intel.com>,
-	<neil.armstrong@linaro.org>, <rfoss@kernel.org>,
-	<Laurent.pinchart@ideasonboard.com>, <jonas@kwiboo.se>,
-	<jernej.skrabec@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-	<mripard@kernel.org>, <tzimmermann@suse.de>, <airlied@gmail.com>,
-	<simona@ffwll.ch>, <shawnguo@kernel.org>, <s.hauer@pengutronix.de>,
-	<kernel@pengutronix.de>, <festevam@gmail.com>
-CC: <dri-devel@lists.freedesktop.org>, <imx@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-	Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] drm/imx: legacy-bridge: fix inconsistent indenting warning
-Date: Wed, 5 Mar 2025 18:30:42 +0800
-Message-ID: <20250305103042.3017-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741170699; c=relaxed/simple;
+	bh=ib/a3ccIkW7difYonKwmA25dXn7x6WuxpzXRb+i5q9A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WQrLQQUxzDxkhcbDUCSdfNOoutQHAzx9++3W5c7Mvv1zg3/mO1tYCN8VGbSfmr2l+UYsLOxdAXNNc5bJzIQuj/VYEdL3ZeLzcndqQDe8uNUtVafIjaF3E6FHxWXYaBzIetiOAqdBfMkcMyUSKlbAJ07SBt+KAd+h4mFmet+gxrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: dGKuLRXwRmG6OxDs1Bgprg==
+X-CSE-MsgGUID: vV9QcqiVS7KiP6lzwS+AUQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53523065"
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="53523065"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:31:38 -0800
+X-CSE-ConnectionGUID: Z/A8xlFITVmp8Z0twxO01Q==
+X-CSE-MsgGUID: nLVWQ8vMT/elxbz01T8mpA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
+   d="scan'208";a="149420928"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 02:31:28 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1tpm27-0000000HNqe-12WE;
+	Wed, 05 Mar 2025 12:31:23 +0200
+Date: Wed, 5 Mar 2025 12:31:22 +0200
+From: Andy Shevchenko <andy@kernel.org>
+To: George Cherian <george.cherian@marvell.com>
+Cc: linux@roeck-us.net, wim@linux-watchdog.org, jwerner@chromium.org,
+	evanbenn@chromium.org, kabel@kernel.org, krzk@kernel.org,
+	mazziesaccount@gmail.com, thomas.richard@bootlin.com,
+	lma@chromium.org, bleung@chromium.org,
+	support.opensource@diasemi.com, shawnguo@kernel.org,
+	s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+	paul@crapouillou.net, alexander.usyskin@intel.com,
+	andreas.werner@men.de, daniel@thingy.jp, romain.perier@gmail.com,
+	avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
+	venture@google.com, yuenn@google.com, benjaminfair@google.com,
+	maddy@linux.ibm.com, mpe@ellerman.id.au, npiggin@gmail.com,
+	christophe.leroy@csgroup.eu, naveen@kernel.org, mwalle@kernel.org,
+	xingyu.wu@starfivetech.com, ziv.xu@starfivetech.com,
+	hayashi.kunihiko@socionext.com, mhiramat@kernel.org,
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	chrome-platform@lists.linux.dev, imx@lists.linux.dev,
+	linux-mips@vger.kernel.org, openbmc@lists.ozlabs.org,
+	linuxppc-dev@lists.ozlabs.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH v4 0/2] Add stop_on_panic support for watchdog
+Message-ID: <Z8gn-jxUH_7FT4b2@smile.fi.intel.com>
+References: <20250305101025.2279951-1-george.cherian@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201615.home.langchao.com (10.100.2.15) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2025305183046060fe9fadcf87c8f56f6a3c52dd092ef
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305101025.2279951-1-george.cherian@marvell.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c:79 devm_imx_drm_legacy_bridge() warn: inconsistent indenting
+On Wed, Mar 05, 2025 at 10:10:23AM +0000, George Cherian wrote:
+> This series adds a new kernel command line option to watchdog core to
+> stop the watchdog on panic. This is useul in certain systems which prevents
+> successful loading of kdump kernel due to watchdog reset.
+> 
+> Some of the watchdog drivers stop function could sleep. For such
+> drivers the stop_on_panic is not valid as the notifier callback happens
+> in atomic context. Introduce WDIOF_STOP_MAYSLEEP flag to watchdog_info
+> options to indicate whether the stop function would sleep.
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Should you only enable this if the kdump is enabled in the kernel configuration?
 
-diff --git a/drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c b/drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c
-index 3ebf0b9866de..55a763045812 100644
---- a/drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c
-+++ b/drivers/gpu/drm/bridge/imx/imx-legacy-bridge.c
-@@ -76,9 +76,9 @@ struct drm_bridge *devm_imx_drm_legacy_bridge(struct device *dev,
- 	imx_bridge->base.ops = DRM_BRIDGE_OP_MODES;
- 	imx_bridge->base.type = type;
- 
--       ret = devm_drm_bridge_add(dev, &imx_bridge->base);
--       if (ret)
--               return ERR_PTR(ret);
-+	ret = devm_drm_bridge_add(dev, &imx_bridge->base);
-+	if (ret)
-+		return ERR_PTR(ret);
- 
- 	return &imx_bridge->base;
- }
 -- 
-2.43.0
+With Best Regards,
+Andy Shevchenko
+
 
 
