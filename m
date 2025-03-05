@@ -1,95 +1,82 @@
-Return-Path: <linux-kernel+bounces-546233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97CA6A4F823
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:42:26 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DCC0A4F82A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:44:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6A1FC188B58B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EBFE16CBB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:44:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 793E91F416F;
-	Wed,  5 Mar 2025 07:42:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF361DED5F;
+	Wed,  5 Mar 2025 07:44:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tzPrXbtm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JiF5hV26";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="tzPrXbtm";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JiF5hV26"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qQBwqW5F"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D62D31EEA5D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:42:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812721DE4EC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:44:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741160522; cv=none; b=PmBos/U6IrLbzofKrVr3coMjWhiHTtMKnQEoAgUx1UJfVOzDx0/YaRsullm1IO4FCVP/an1aL6ZTjFQ1BZX2DnB6EKt5g+82W8648PD9H0PBeID5TJfh+JAqL6UAaLbQIygR6P3eFobpwkiYz6E6gPL69ynJDmlSEXuknABjZlo=
+	t=1741160652; cv=none; b=Jvss8rojeg4XpPUi6iPpNeRzE1jTjMmcFFTKRgBziMJl3b5gLesPut1TWzWdOHD5POw+cEXocTu5FxPUNordLjy75GDntXM/Xs4gQdqfyLYhRMm8jcpU6NAPhL0SKkp8TV+uynmi0r22/CCWRPPUKtZKfLUZhlMqWAOOLjvEzQs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741160522; c=relaxed/simple;
-	bh=valG8SuOJFe4rhSpEP+fdUZtyiQA2qXNgSKlm5SEjl0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CKd4ShF5q41Yj32lCOoRLrHVHHP5jelDudbLzqaOq6NrN08w61z7tbzT3nh7O2TUBjDvrR17exkDmezH8yXuGZ4PwU2vDC8w6EtgX0Kity5xojY8N6enHTAlrbWYooMOfSybavc6IG1qVVYSRaJdLzB/KSSdKqXOsnwQstGSCqo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tzPrXbtm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JiF5hV26; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=tzPrXbtm; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JiF5hV26; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 10D2A1F38A;
-	Wed,  5 Mar 2025 07:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741160518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=adnyt9CWxSwzs4Be7pAFdLIXiVLWF5YXALCHwTY9Njs=;
-	b=tzPrXbtmFvJja+Tsfq8rE8v8ek27TwQgcL9uHVWEE1MQKFnZAn3B42OkAEbLOqQ9dxHGMq
-	uJ+GchJzbojXvVxBd9VLf727HstoPSSFAAoS91XHt7uMx4sr6l+zJRqvhSEh3NsUKSN7ei
-	dvUHCYc+7rY7VEaKcoVHvIMxTcaXZPE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741160518;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=adnyt9CWxSwzs4Be7pAFdLIXiVLWF5YXALCHwTY9Njs=;
-	b=JiF5hV26a+n9IFkcwrxyHLBVwHDMQlsAdYQq8dmJ58Klwmw8whpqY6iYtYm37cLJBbCFV6
-	B7xq7O5x3FUP+8Cg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=tzPrXbtm;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=JiF5hV26
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1741160518; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=adnyt9CWxSwzs4Be7pAFdLIXiVLWF5YXALCHwTY9Njs=;
-	b=tzPrXbtmFvJja+Tsfq8rE8v8ek27TwQgcL9uHVWEE1MQKFnZAn3B42OkAEbLOqQ9dxHGMq
-	uJ+GchJzbojXvVxBd9VLf727HstoPSSFAAoS91XHt7uMx4sr6l+zJRqvhSEh3NsUKSN7ei
-	dvUHCYc+7rY7VEaKcoVHvIMxTcaXZPE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1741160518;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=adnyt9CWxSwzs4Be7pAFdLIXiVLWF5YXALCHwTY9Njs=;
-	b=JiF5hV26a+n9IFkcwrxyHLBVwHDMQlsAdYQq8dmJ58Klwmw8whpqY6iYtYm37cLJBbCFV6
-	B7xq7O5x3FUP+8Cg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C4A501366F;
-	Wed,  5 Mar 2025 07:41:57 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id vIcqLkUAyGdtSwAAD6G6ig
-	(envelope-from <tzimmermann@suse.de>); Wed, 05 Mar 2025 07:41:57 +0000
-Message-ID: <d44d4aba-4abe-4dc8-8b09-1237567ffc41@suse.de>
-Date: Wed, 5 Mar 2025 08:41:57 +0100
+	s=arc-20240116; t=1741160652; c=relaxed/simple;
+	bh=so1vOChmRHXBlFtvjtF17fRyfqlljb1Gqqi3fIjYvmE=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=BeGws6YwJUHcXPijc0zrsqeJVCDSfuIsMjemPpO7F0wpORNXTanhNQWuRFiIm6lKlIobDaYE62DYZej7Wp9jqdmwQKwhic8ob1EEvP1CBVkZDuFP2sLtExFhEOjtceSX+uy7qjgItIzTvOIvpBiT/C27/KbdL6V/CJ4yVT0VB78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qQBwqW5F; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43995b907cfso41399375e9.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:44:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741160648; x=1741765448; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+aVVWfpM/R7114kq8yw+67pir5NUPFWO9h9JRxaS7qo=;
+        b=qQBwqW5FHdq5FgVHJ7n9X8Z17sp5mtrNMv1ze68knpYPQeEnfqvnuSoqsuCsEQ2PoE
+         HgdoOtrtBE47wV2fWkdSgsEIcGHBezYbvXft90kLiLt3MD0U0n8HwlSpoQ0HzLiHBs18
+         T0NrrVJuud3wOhFlHgkfNgh2acLckRpwiWdQ2+hBN1qgTelF14GB9WxNHjJduvnPzdqo
+         mJ05KRx0rQusiiLF8W1n0QDJjX9H3+emVi2uw9KozZPq2FmMPuYQfGEbC0zWvJgcR+/Q
+         7plHFEjOm/rk/eN5gnkJ91lRrxpYvZStk3E3NpA2sU8w1tAhr1O+TNA/cHwP0U4Lxi2E
+         jxPQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741160648; x=1741765448;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=+aVVWfpM/R7114kq8yw+67pir5NUPFWO9h9JRxaS7qo=;
+        b=mhz83kC+fyV43xcDUi5x51iaOh5qzQTiJaVETBsMtxelWXDGQA/klcAKpfr/yoGI4C
+         EJKZaHs0FceVyvpE7+teeQCfhhm1eGcgtP22JbJ9zcCl9ccpw4ZVF5zkHk8qHLA1Gl/w
+         2Dj5Le6fAueBmbTuJ1sHXjlwETryAUNJ4Ru++ihdF7A2wGAf0kQ1eD9Ot5xVcWdL6ChP
+         dHJ6QSWMcHgHGd1voJB9ZtGW6PUCB5ure7dnmJ5Kx/CY1Qobl2R3fNievULM3T2fU+C1
+         JRAQoD3D6I5Q3oW9gIZCPq1bO0+Hkf4IiTcjHq5aASQrvocW3r+CeMZLVhvZ1p7MTkbI
+         VwfA==
+X-Forwarded-Encrypted: i=1; AJvYcCWHkwqrYWiTk7AqthcCvTPdwFDxHWvfaKDNogD72+RMm+wrAdoEurvtz17K5PudLJvua6X10ThtILvi/co=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywyd+9v1HXSMzF2a4J7nfEs1clWRi/t/HErLXlnyn7j+IGDuYU5
+	zyKTiDFPSMe31TCFGBVEweJYI/6qvxw6+Tk0hSdl38J2Exl/Mta9gn/yypN6qfdsvj1H5cRrxuj
+	8
+X-Gm-Gg: ASbGncs57T7xnrzLHMozHF3xzuHvh3LAc8TTDixZsvUOvYbtAFCcxFD9Eq4GNlljgOr
+	Am64RZ9t8l8OQoO7SkQlUyxpLZptZ47phyEvvl4Z6JEBBYE+P9srJ+6aoJE0iJwM3rAHaWxhsz+
+	kQ+v9rEJwcLpAgEz7qrveLWTUQ/VTnml/SgTz+LCTtMR/Pb4m5EjCmxJ2MTTQAJqgCOplIfnJ5u
+	n4d1TrjTuP8vM6vLmRThpt/OkRp+Pcm5DeBU/EL+n9VysfoNavePtYIkPXZ3uxGUdE6joYOOSX2
+	tMB5KSPdQbg07bwg+qIbLg4enX8PNE0g5c2wcDUj0PoMuYKXk1HigQnlsRU9ICjPd2UoJ47xgyv
+	uLwyZGTq14qT1dpPQl1E=
+X-Google-Smtp-Source: AGHT+IEPvMkwnzMHESBZZ3ISL/jIpWI/iMcyXh+NYDVcMmY+PloN4Ai5r0S5PZs9sI+S0GqIqmbenw==
+X-Received: by 2002:a05:600c:4f15:b0:439:8c80:6af2 with SMTP id 5b1f17b1804b1-43bd2ae000emr10350255e9.21.1741160647791;
+        Tue, 04 Mar 2025 23:44:07 -0800 (PST)
+Received: from ?IPV6:2a01:e0a:982:cbb0:80fe:f5c:3d29:e407? ([2a01:e0a:982:cbb0:80fe:f5c:3d29:e407])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426c355sm9274075e9.1.2025.03.04.23.44.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 23:44:07 -0800 (PST)
+Message-ID: <02fb7b29-6af0-40f2-a187-326fd762835a@linaro.org>
+Date: Wed, 5 Mar 2025 08:44:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,139 +84,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm: Select DRM_KMS_HELPER from
- DRM_DEBUG_DP_MST_TOPOLOGY_REFS
-To: j@jannau.net, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Lyude Paul <lyude@redhat.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- stable@vger.kernel.org
-References: <20250304-drm_debug_dp_mst_topo_kconfig-v1-1-e16fd152f258@jannau.net>
-Content-Language: en-US
-From: Thomas Zimmermann <tzimmermann@suse.de>
-Autocrypt: addr=tzimmermann@suse.de; keydata=
- xsBNBFs50uABCADEHPidWt974CaxBVbrIBwqcq/WURinJ3+2WlIrKWspiP83vfZKaXhFYsdg
- XH47fDVbPPj+d6tQrw5lPQCyqjwrCPYnq3WlIBnGPJ4/jreTL6V+qfKRDlGLWFjZcsrPJGE0
- BeB5BbqP5erN1qylK9i3gPoQjXGhpBpQYwRrEyQyjuvk+Ev0K1Jc5tVDeJAuau3TGNgah4Yc
- hdHm3bkPjz9EErV85RwvImQ1dptvx6s7xzwXTgGAsaYZsL8WCwDaTuqFa1d1jjlaxg6+tZsB
- 9GluwvIhSezPgnEmimZDkGnZRRSFiGP8yjqTjjWuf0bSj5rUnTGiyLyRZRNGcXmu6hjlABEB
- AAHNJ1Rob21hcyBaaW1tZXJtYW5uIDx0emltbWVybWFubkBzdXNlLmRlPsLAjgQTAQgAOAIb
- AwULCQgHAgYVCgkICwIEFgIDAQIeAQIXgBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftODH
- AAoJEGgNwR1TC3ojx1wH/0hKGWugiqDgLNXLRD/4TfHBEKmxIrmfu9Z5t7vwUKfwhFL6hqvo
- lXPJJKQpQ2z8+X2vZm/slsLn7J1yjrOsoJhKABDi+3QWWSGkaGwRJAdPVVyJMfJRNNNIKwVb
- U6B1BkX2XDKDGffF4TxlOpSQzdtNI/9gleOoUA8+jy8knnDYzjBNOZqLG2FuTdicBXblz0Mf
- vg41gd9kCwYXDnD91rJU8tzylXv03E75NCaTxTM+FBXPmsAVYQ4GYhhgFt8S2UWMoaaABLDe
- 7l5FdnLdDEcbmd8uLU2CaG4W2cLrUaI4jz2XbkcPQkqTQ3EB67hYkjiEE6Zy3ggOitiQGcqp
- j//OwE0EWznS4AEIAMYmP4M/V+T5RY5at/g7rUdNsLhWv1APYrh9RQefODYHrNRHUE9eosYb
- T6XMryR9hT8XlGOYRwKWwiQBoWSDiTMo/Xi29jUnn4BXfI2px2DTXwc22LKtLAgTRjP+qbU6
- 3Y0xnQN29UGDbYgyyK51DW3H0If2a3JNsheAAK+Xc9baj0LGIc8T9uiEWHBnCH+RdhgATnWW
- GKdDegUR5BkDfDg5O/FISymJBHx2Dyoklv5g4BzkgqTqwmaYzsl8UxZKvbaxq0zbehDda8lv
- hFXodNFMAgTLJlLuDYOGLK2AwbrS3Sp0AEbkpdJBb44qVlGm5bApZouHeJ/+n+7r12+lqdsA
- EQEAAcLAdgQYAQgAIAIbDBYhBHIX+6yM6c9jRKFo5WgNwR1TC3ojBQJftOH6AAoJEGgNwR1T
- C3ojVSkIALpAPkIJPQoURPb1VWjh34l0HlglmYHvZszJWTXYwavHR8+k6Baa6H7ufXNQtThR
- yIxJrQLW6rV5lm7TjhffEhxVCn37+cg0zZ3j7zIsSS0rx/aMwi6VhFJA5hfn3T0TtrijKP4A
- SAQO9xD1Zk9/61JWk8OysuIh7MXkl0fxbRKWE93XeQBhIJHQfnc+YBLprdnxR446Sh8Wn/2D
- Ya8cavuWf2zrB6cZurs048xe0UbSW5AOSo4V9M0jzYI4nZqTmPxYyXbm30Kvmz0rYVRaitYJ
- 4kyYYMhuULvrJDMjZRvaNe52tkKAvMevcGdt38H4KSVXAylqyQOW5zvPc4/sq9c=
-In-Reply-To: <20250304-drm_debug_dp_mst_topo_kconfig-v1-1-e16fd152f258@jannau.net>
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] drm/panel: fix Visionox RM692E5 dependencies
+To: Arnd Bergmann <arnd@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Danila Tikhonov <danila@jiaxyga.com>, Eugene Lepshy <fekz115@gmail.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Jessica Zhang <quic_jesszhan@quicinc.com>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ David Wronek <david@mainlining.org>, Sumit Semwal <sumit.semwal@linaro.org>,
+ dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20250304142907.732196-1-arnd@kernel.org>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250304142907.732196-1-arnd@kernel.org>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 10D2A1F38A
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FREEMAIL_TO(0.00)[jannau.net,linux.intel.com,kernel.org,gmail.com,ffwll.ch,redhat.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.de:email,suse.de:dkim,suse.de:mid];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
 
-
-
-Am 04.03.25 um 20:12 schrieb Janne Grunau via B4 Relay:
-> From: Janne Grunau <j@jannau.net>
->
-> Using "depends on" and "select" for the same Kconfig symbol is known to
-> cause circular dependencies (cmp. "Kconfig recursive dependency
-> limitations" in Documentation/kbuild/kconfig-language.rst.
-> DRM drivers are selecting drm helpers so do the same for
-> DRM_DEBUG_DP_MST_TOPOLOGY_REFS.
-> Fixes following circular dependency reported on x86 for the downstream
-> Asahi Linux tree:
->
-> error: recursive dependency detected!
->    symbol DRM_KMS_HELPER is selected by DRM_GEM_SHMEM_HELPER
->    symbol DRM_GEM_SHMEM_HELPER is selected by RUST_DRM_GEM_SHMEM_HELPER
->    symbol RUST_DRM_GEM_SHMEM_HELPER is selected by DRM_ASAHI
->    symbol DRM_ASAHI depends on RUST
->    symbol RUST depends on CALL_PADDING
->    symbol CALL_PADDING depends on OBJTOOL
->    symbol OBJTOOL is selected by STACK_VALIDATION
->    symbol STACK_VALIDATION depends on UNWINDER_FRAME_POINTER
->    symbol UNWINDER_FRAME_POINTER is part of choice block at arch/x86/Kconfig.debug:224
->    symbol <choice> unknown is visible depending on UNWINDER_GUESS
->    symbol UNWINDER_GUESS prompt is visible depending on STACKDEPOT
->    symbol STACKDEPOT is selected by DRM_DEBUG_DP_MST_TOPOLOGY_REFS
->    symbol DRM_DEBUG_DP_MST_TOPOLOGY_REFS depends on DRM_KMS_HELPER
->
-> Fixes: 12a280c72868 ("drm/dp_mst: Add topology ref history tracking for debugging")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Janne Grunau <j@jannau.net>
-
-Acked-by: Thomas Zimmermann <tzimmermann@suse.de>
-
+On 04/03/2025 15:29, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> The newly added driver uses the DSC helpers, so the corresponding
+> Kconfig option must be enabled:
+> 
+> ERROR: modpost: "drm_dsc_pps_payload_pack" [drivers/gpu/drm/panel/panel-visionox-rm692e5.ko] undefined!
+> 
+> Fixes: 7cb3274341bf ("drm/panel: Add Visionox RM692E5 panel driver")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 > ---
->   drivers/gpu/drm/Kconfig | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/Kconfig b/drivers/gpu/drm/Kconfig
-> index fbef3f471bd0e5101699cf576542f7350bea3982..bd228dc77e99b4356b09de02d9001237eb2423e2 100644
-> --- a/drivers/gpu/drm/Kconfig
-> +++ b/drivers/gpu/drm/Kconfig
-> @@ -188,7 +188,7 @@ config DRM_DEBUG_DP_MST_TOPOLOGY_REFS
->           bool "Enable refcount backtrace history in the DP MST helpers"
->   	depends on STACKTRACE_SUPPORT
->           select STACKDEPOT
-> -        depends on DRM_KMS_HELPER
-> +        select DRM_KMS_HELPER
->           depends on DEBUG_KERNEL
->           depends on EXPERT
->           help
->
-> ---
-> base-commit: 2014c95afecee3e76ca4a56956a936e23283f05b
-> change-id: 20250304-drm_debug_dp_mst_topo_kconfig-a112904ba611
->
-> Best regards,
+>   drivers/gpu/drm/panel/Kconfig | 2 ++
+>   1 file changed, 2 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index 5927806cb4a9..e059b06e0239 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -1020,6 +1020,8 @@ config DRM_PANEL_VISIONOX_RM692E5
+>   	depends on OF
+>   	depends on DRM_MIPI_DSI
+>   	depends on BACKLIGHT_CLASS_DEVICE
+> +	select DRM_DISPLAY_DSC_HELPER
+> +	select DRM_DISPLAY_HELPER
+>   	help
+>   	  Say Y here if you want to enable support for Visionox RM692E5 amoled
+>   	  display panels, such as the one found in the Nothing Phone (1)
 
--- 
---
-Thomas Zimmermann
-Graphics Driver Developer
-SUSE Software Solutions Germany GmbH
-Frankenstrasse 146, 90461 Nuernberg, Germany
-GF: Ivo Totev, Andrew Myers, Andrew McDonald, Boudien Moerman
-HRB 36809 (AG Nuernberg)
-
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
