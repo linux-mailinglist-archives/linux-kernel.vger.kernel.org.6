@@ -1,126 +1,147 @@
-Return-Path: <linux-kernel+bounces-547047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0BE5CA50257
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7922A50261
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:41:47 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D6C01898E14
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:38:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7373B189C418
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:38:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C43C24E4A8;
-	Wed,  5 Mar 2025 14:37:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="s5lGOS8s"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56FD8248863
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:37:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C676F24EA93;
+	Wed,  5 Mar 2025 14:37:31 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52A4248863;
+	Wed,  5 Mar 2025 14:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185443; cv=none; b=opkEr4dh4UVPPbz7d4qRm6yKU+Bn/kWS5uS3z0NwMz6LfK9oVg9eN3TWxWkWXrpubPVXBISSwk07Cuh7jILnFFAD2FTLe4U2DkpQuldeqK1LG1SGUzwfJmrx0Az7Z0lFiOHBHFg/n7zGurm2epUg0cXt/F2iFvecJTA0q+yqpsg=
+	t=1741185451; cv=none; b=BWRp0GhaMbrmnszorY9Ttom/wAPwB8yjXRtENO0n1A6WV7RFE8pKKhdOZhU5MgTbJIqKShGhnXa4fvSRSPvUnIoq0GpAk1abIIw30vAC0S32kRq9MVweIV8Tbai7GT5mm6KXenRQgKLHB97+FHr466Z1mJxecaqUEgK8W7XElkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185443; c=relaxed/simple;
-	bh=/2L73gYxIFC4MZUK06kGXbM8CUdBu7Uz2d/2/j+LcDg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aOm/5OrH+WbY4izY/j9ZrBaV0OIVg5bOntftmvgjclf1MsaR7BNcl/v4EprzJl9uk9Bt7qg2TzL/Y+OuTRtU9xxhs/bcq9TJMEYino8Oxf2WFL7HZo9dI+lueZixP1yHZAztp4brAw9T0qIPvynhek7H60ce61GK9PyHI+lGNOI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=s5lGOS8s; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43bd03ed604so11846585e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:37:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741185439; x=1741790239; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iwOQvwTg5BHs7dRwnkQr+dhmEfDDx/7fnNHWIfQqz+A=;
-        b=s5lGOS8sYOB2KSN94BuUpU0xyWRpPqpVvUD4gGdiZ6sU++6xrfyWk7UqXLOA17avJU
-         790O1SQhni+E0zFjQ6R76xv7bSNw+VyIXsqmsS4r5VPwOKv7zrW0JhvD0tRQ57entRcM
-         BehhHT9VANrAjMlwun2t7mmJPb59k5C6saFTzZfPHZo+ksJO/kduqY+BCeCDQ9RSx2rf
-         RhS/YPE0cvi/snLbgvTDrVtb/gP7Jw7mv6hdPRdQK/QFmntRdjRLINa9dwhlVTwpWncL
-         iK7JBGmh/ddb2eMCvlpFZLnGWWzGxnDlJ5lPu2El/j7u6xqcxEL1k0KPL/n1rPfoV3/7
-         obrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741185439; x=1741790239;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iwOQvwTg5BHs7dRwnkQr+dhmEfDDx/7fnNHWIfQqz+A=;
-        b=mw4GH6Z1CaseOAqQWE0f4puyQghcgmuJvyKsCFxjvLGRVa9m04KsrhohwmPji9LhOZ
-         hKH1Z2ZqOE104gn8v3mS0/7ASCMQnNFrEmN6hrdU4sWVpQ2tVieQwGOflf77Z/0M519S
-         ddE0VosNVF9NxtOqw7whB9CASM7YRd3uI8hBqZmSOErLd5FwTw/zlcvMIXT2cDJHjqwt
-         8FXkI8VvC10PxKKRc/Bd18tAQ4yxWxtp0KE0Y4JE4RIRwTzSRbVRQS39GuphSoQEFVqj
-         rFsDKHYfkXqgrw8gpw5JbweksFlfTxo4ge6xq8H3PfmgqPxSipuPL3wLuIjHD0TxOSQN
-         O7aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCWzUfqJBUj06qvuzR1XZ9AV3EJ0uNsTLKV+W+vnlfSTOKJuOWGQnm1xx14+55fxxUKAgMuPVabkahkfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIL7BKC8Odz0y6Wwji2qjJb/KwHmKAH6l41KC6zsRivU8nwxer
-	jiIdxUFkgL6sJzmbTr9MwBUUORx2j/uflt00HMVn0oINkYGnDqCm6dcpRj7k90W9nbP031xto3Z
-	k
-X-Gm-Gg: ASbGncsSecXK4eu9sU5FdCaChCh5Vk1y7zmUl4GjUcAAJeJqH7HRyzn1Vtg7xJBLryc
-	JoWMJGFHV+saI8SHaYHd8iRQ2Kr4hWXtXQPIvkx2Jxrx/G91aItEAlPQ5IuCzlPgiLhUX8uKoUd
-	p5iQiXC7H3JK/yUu4MAVsD6Rkzdaph+ODwW9YVxmG/tY9/ezkJ1hxOeMdL+64KL4s5VAunnfpRL
-	u+NIi4rSUA7zSYRRaIxIb069cae3ctTTnpaxsJvqBshrSReghvlP8PeptmChqJtvHA+PdGpc0E/
-	I84wVavdZBdqrpXrw6Gfyo6dfgigKQCmMPkf/uDp72ex3xgvBw==
-X-Google-Smtp-Source: AGHT+IEMxeY9Q/Lqs9IN5AO0arzXvUgn/JnK58WwLTaOCw86mTQyFLw5mdcoyDfgg9Sb1o7X+y2SwQ==
-X-Received: by 2002:a05:600c:a40a:b0:43b:da56:4d57 with SMTP id 5b1f17b1804b1-43bda564dd8mr1635005e9.10.1741185439498;
-        Wed, 05 Mar 2025 06:37:19 -0800 (PST)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-390e485df5asm21429993f8f.96.2025.03.05.06.37.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:37:19 -0800 (PST)
-Date: Wed, 5 Mar 2025 17:37:15 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Sagi Grimberg <sagi@grimberg.me>, Hannes Reinecke <hare@suse.de>,
-	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] nvme-tcp: fix signedness bug in
- nvme_tcp_init_connection()
-Message-ID: <739d3443-61c4-4b69-866b-142efde59062@stanley.mountain>
-References: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
- <20250305142554.GA18330@lst.de>
+	s=arc-20240116; t=1741185451; c=relaxed/simple;
+	bh=FCa9GNr5wiSR3agXv7JxEUWV07u9VhwbOu9Cr08Q50Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PuGLrTUyJYvsHPpda6ssH/XInF22L8IsN8eybwaQS5KES+CHJN79Mm6Vdw82BapbSm2DgsszBForVh6EaG/4aSfaOAJn7LVGRFPx/fQx+hqeuM3N0QCvMSpBYXaNwpmxkhG3jfv8Z5gHkJIGAHuJxxyEj7B7NSKnlC1+WnbIffY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 9A2F4FEC;
+	Wed,  5 Mar 2025 06:37:41 -0800 (PST)
+Received: from [10.57.64.200] (unknown [10.57.64.200])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 0698C3F673;
+	Wed,  5 Mar 2025 06:37:25 -0800 (PST)
+Message-ID: <f56596fe-92e8-481b-b15b-29b531eaec32@arm.com>
+Date: Wed, 5 Mar 2025 14:37:23 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305142554.GA18330@lst.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] thermal: thermal-generic-adc: add temperature
+ sensor channel
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ Jonathan Cameron <jic23@kernel.org>, Laxman Dewangan <ldewangan@nvidia.com>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
+ linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20250303122151.91557-1-clamor95@gmail.com>
+ <20250303122151.91557-3-clamor95@gmail.com>
+ <3bc7c5a5-8fe7-4c4b-a80e-23522922debb@arm.com>
+ <CAPVz0n0yvw4kyYKSve9sSZEvcZrCYZ6RqCjFSO5OCqtvRZSfJg@mail.gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAPVz0n0yvw4kyYKSve9sSZEvcZrCYZ6RqCjFSO5OCqtvRZSfJg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 05, 2025 at 03:25:54PM +0100, Christoph Hellwig wrote:
-> On Fri, Feb 28, 2025 at 12:39:41PM +0300, Dan Carpenter wrote:
-> > index 8a9131c95a3d..361b04ec5b5d 100644
-> > --- a/drivers/nvme/host/tcp.c
-> > +++ b/drivers/nvme/host/tcp.c
-> > @@ -1495,7 +1495,7 @@ static int nvme_tcp_init_connection(struct nvme_tcp_queue *queue)
-> >  	msg.msg_flags = MSG_WAITALL;
-> >  	ret = kernel_recvmsg(queue->sock, &msg, &iov, 1,
-> >  			iov.iov_len, msg.msg_flags);
-> > -	if (ret < sizeof(*icresp)) {
-> > +	if (ret < (int)sizeof(*icresp)) {
-> >  		pr_warn("queue %d: failed to receive icresp, error %d\n",
-> >  			nvme_tcp_queue_id(queue), ret);
-> >  		if (ret >= 0)
+
+
+On 3/5/25 10:06, Svyatoslav Ryhel wrote:
+> ср, 5 бер. 2025 р. о 11:52 Lukasz Luba <lukasz.luba@arm.com> пише:
+>>
+>>
+>>
+>> On 3/3/25 12:21, Svyatoslav Ryhel wrote:
+>>> To avoid duplicating sensor functionality and conversion tables, this design
+>>> allows converting an ADC IIO channel's output directly into a temperature IIO
+>>> channel. This is particularly useful for devices where hwmon isn't suitable
+>>> or where temperature data must be accessible through IIO.
+>>>
+>>> One such device is, for example, the MAX17040 fuel gauge.
+>>>
+>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>>> ---
+>>>    drivers/thermal/thermal-generic-adc.c | 54 ++++++++++++++++++++++++++-
+>>>    1 file changed, 53 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/drivers/thermal/thermal-generic-adc.c b/drivers/thermal/thermal-generic-adc.c
+> ...
+>>>
+>>> +static const struct iio_chan_spec gadc_thermal_iio_channel[] = {
+>>> +     {
+>>> +             .type = IIO_TEMP,
+>>> +             .info_mask_separate = BIT(IIO_CHAN_INFO_PROCESSED),
+>>
+>> I would add the IIO_CHAN_INFO_SCALE and say it's in milli-degrees.
+>>
 > 
-> I hate these magic casts.  What about something like:
+> I have hit this issue already with als sensor. This should definitely
+> be a IIO_CHAN_INFO_PROCESSED since there is no raw temp data we have,
+> it gets processed into temp data via conversion table. I will add
+> Jonathan Cameron to list if you don't mind, he might give some good
+> advice.
+
+I'm not talking about 'PROCESSED' vs 'RAW'...
+I'm asking if you can add the 'SCALE' case to handle and report
+that this device will report 'processed' temp value in milli-degrees
+of Celsius.
+
 > 
-> 	if (ret >= 0 && ret < sizeof(*icresp))
-> 		ret = -ECONNRESET;
-> 	if (ret < 0) {
-> 		...
+>>> +     }
+>>> +};
+>>> +
+>>> +static int gadc_thermal_read_raw(struct iio_dev *indio_dev,
+>>> +                              struct iio_chan_spec const *chan,
+>>> +                              int *temp, int *val2, long mask)
+>>> +{
+>>> +     struct gadc_thermal_info *gtinfo = iio_priv(indio_dev);
+>>> +     int ret;
+>>> +
+>>> +     if (mask != IIO_CHAN_INFO_PROCESSED)
+>>> +             return -EINVAL;
+>>
+>> Therefore, here it would need to handle such case as well, when
+>> a client is asking about scale.
+>>
+>>> +
+>>> +     ret = gadc_thermal_get_temp(gtinfo->tz_dev, temp);
+>>> +     if (ret < 0)
+>>> +             return ret;
+>>> +
+>>> +     *temp /= 1000;
+>>
+>> IMO we shouldn't cut the precision if it's provided.
+>> The user of this would know what to do with the value (when
+>> the proper information about scale is also available).
+>>
+> 
+> The it will not fit existing IIO framework and thermal readings will
+> be 1000 off. I have had to adjust this since my battery suddenly got
+> temperature reading of 23200C which obviously was not true. With
+> adjustment temperature will be in 10th of C (yes, odd, I know but it
+> is what it is).
 
-Sure, I can do that.
+Your battery driver should get and check the 'SCALE' info first, then
+it will know that the value is in higher resolution than it needs.
+Therefore, it can divide the value inside its code.
+Your proposed division here is creating a limitation.
 
-I don't love casts either.  I normally have tried to write these as
-"if (ret < 0 || ret < sizeof(*icresp)) {" and people don't love that.
-
-regards,
-dan carpenter
+You shouldn't force all other drivers to ignore and drop the
+available information about milli-degC (which is done in this patch).
 
