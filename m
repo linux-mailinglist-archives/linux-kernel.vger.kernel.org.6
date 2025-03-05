@@ -1,87 +1,199 @@
-Return-Path: <linux-kernel+bounces-546435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546401-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0F2EA4FAA7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:53:13 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F28EA4FA31
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:35:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 64F007A718B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:52:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DF151890FB2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:35:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 118E62054EE;
-	Wed,  5 Mar 2025 09:53:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB48204F79;
+	Wed,  5 Mar 2025 09:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b1H/r7LL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="BG6rsdXK"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C0BF1FDE37;
-	Wed,  5 Mar 2025 09:53:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05C451C84D7;
+	Wed,  5 Mar 2025 09:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741168384; cv=none; b=OPzMEqvAe69hx0TR4ji5eB1wBb2AQQkp0HGZvFSIw0G6n+LrXFFJT+rGeCtNyHeqd5mfhefBOvJ2rK1LZ6py9znzp9Y44Qo2Nkkduic5O4HlZ6UtmXXmlFJkhurvTz7Od2pb2yMChylmtkVoAyihuz9DRN3nFBb5/SVXz85s264=
+	t=1741167332; cv=none; b=K549D+CMEDla0Rjp+MiGlJtra8GCoHJ0WgOpZdKwTvRyemTG6jqf8LbHvsV3czg+hTDyhSNuPP0L65NyJiStN3cjqxSHlrYE+rYoBz8rv2xtmEKFMsMb0k9fCPzDo1A4sa3ZCAxMIWWUr7L2vzkhxjD1jTu9Jhhv8z5Lg6KQGZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741168384; c=relaxed/simple;
-	bh=+elOXc1SBi+STkRDAH/vjJLO0WJhOrFsLCA5uwZhWCg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=rbWHVQe30syuqpptFW3BmslCNi0LVWhDYUet8z68+h5M5GBSgWLT0ui2bXpMTOjgfWNqWwWs8V+G4i+TVC2QZEA+DKde50gACk1uEHTiC89VfH72ZF1zMoekKBQYXvprkv84EMOy4RLiS4KqeEwZw+cq+OkUZYABoqYeVE5HH4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b1H/r7LL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18C38C4CEE2;
-	Wed,  5 Mar 2025 09:53:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741168383;
-	bh=+elOXc1SBi+STkRDAH/vjJLO0WJhOrFsLCA5uwZhWCg=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=b1H/r7LLzW1PoyfsaQG5cse2Mukc79Tn+/RE11BRRORPI/myFnP3gHXcqW0mnCMEX
-	 22siTS2PARd2YP9bMgPIfT+IGTmPXIl5ywFaovmBgBmoyTTcgI5fgJZjIWB8O/lOqQ
-	 SE6P21ow6kV93bUtPd4mWrLzhsbYZ3AeLJvTQsOCqAXo60N7LJenz60PLXrIozamaS
-	 PpO9+o0EaO/sO8XQZ9pomH/bvpZFVZjti2954CB0LjPqa+sbOHgtbVM9Y6u1PVFLpS
-	 /UWs7OxVlVcUDJwOvjALOsT3V7emDYWhwqrDW1grV8nVbaxg4osfw9KOdKqlUB9Ei1
-	 YgfWhvN/l0Q4w==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Danilo Krummrich" <dakr@kernel.org>,  <rust-for-linux@vger.kernel.org>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 04/22] rust: pin-init: move proc-macro documentation
- into pin-init crate
-In-Reply-To: <20250304225245.2033120-5-benno.lossin@proton.me> (Benno Lossin's
-	message of "Tue, 04 Mar 2025 22:53:36 +0000")
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<PvTMOxu_O9hNZCnpZRlYj2yIiGONO7aZxT7F9mqfOwEMfFnE6ucILMz4aGehSJwWOKtsieqIrh__hd1b5T3z8w==@protonmail.internalid>
-	<20250304225245.2033120-5-benno.lossin@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 10:34:20 +0100
-Message-ID: <878qpjg6sj.fsf@kernel.org>
+	s=arc-20240116; t=1741167332; c=relaxed/simple;
+	bh=1ARl/21oSJVUWZJdDQ+pkxIzgUhJO8QxJvskwgilSyY=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=mQHl85zpAzgwtnDnVP9vqN6RCWOcNRxxJAT3OcC3U7eFOnEvC2XpmvxExxrma2Ro+XuV6GRKtjm3cgAE47ZLhAeXprtmsd6tJVyP2UMuKF36c2JWrEhKsiNkUVV4rN2bJJpxr77ECPz8JffyuvSd2tKE2Gro1sw6IpwzYdZ4xr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=BG6rsdXK; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 80FC863F;
+	Wed,  5 Mar 2025 10:33:56 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1741167236;
+	bh=1ARl/21oSJVUWZJdDQ+pkxIzgUhJO8QxJvskwgilSyY=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=BG6rsdXKHnhyplX7mX/9Sv24QSFawcGNJ4mPNsDGkZMYCU+N6UzCoWUGf0Z70FbRQ
+	 p1ezCDDRAh6cOkia1ZpGcPIsj8dn6aenTK49eA5KBUmP0SeMollOADH4/vPEb+xXQe
+	 XpxanIfovA+Gy6TkrVYWMd/auibeir2tZ8vSqhS4=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20250305051442.3716817-5-shravan.chippa@microchip.com>
+References: <20250305051442.3716817-1-shravan.chippa@microchip.com> <20250305051442.3716817-5-shravan.chippa@microchip.com>
+Subject: Re: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p and 480p resolutions
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, conor.dooley@microchip.com, valentina.fernandezalanis@microchip.com, praveen.kumar@microchip.com, shravan.chippa@microchip.com
+To: mchehab@kernel.org, sakari.ailus@linux.intel.com, shravan kumar <shravan.chippa@microchip.com>
+Date: Wed, 05 Mar 2025 09:35:26 +0000
+Message-ID: <174116732611.2914008.9738053002324304147@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Quoting shravan kumar (2025-03-05 05:14:42)
+> From: Shravan Chippa <shravan.chippa@microchip.com>
+>=20
+> Added support for 1280x720@30 and 640x480@30 resolutions
+>=20
+> Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
+> ---
+>  drivers/media/i2c/imx334.c | 66 ++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 66 insertions(+)
+>=20
+> diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx334.c
+> index a7c0bd38c9b8..8cd1eecd0143 100644
+> --- a/drivers/media/i2c/imx334.c
+> +++ b/drivers/media/i2c/imx334.c
+> @@ -314,6 +314,46 @@ static const struct imx334_reg common_mode_regs[] =
+=3D {
+>         {0x3002, 0x00},
+>  };
+> =20
+> +/* Sensor mode registers for 640x480@30fps */
+> +static const struct imx334_reg mode_640x480_regs[] =3D {
+> +       {0x302c, 0x70},
+> +       {0x302d, 0x06},
 
-> Move the documentation of proc-macros from pin-init-internal into
-> pin-init. This is because documentation can only reference types from
-> dependencies and pin-init-internal cannot have pin-init as a dependency,
-> as that would be cyclic.
+These two are a single 16 bit register HTRIMMING_START =3D 1648
 
-`pin_data` et. al. is now re-exported both in `kernel::prelude` and
-`kernel::init`, but I guess that is fine?
+> +       {0x302e, 0x80},
+> +       {0x302f, 0x02},
 
-When you say "can only reference types", do you mean via links in the text?
+These two are a single 16 bit register HNUM =3D 640
+
+> +       {0x3074, 0x48},
+> +       {0x3075, 0x07},
+
+These two are a single 16 bit (well, 12 bit value) AREA3_ST_ADR_1 =3D 1864
+
+> +       {0x308e, 0x49},
+> +       {0x308f, 0x07},
+
+These two are a single 16 bit register AREA3_ST_ADR_2 =3D 1865
+
+> +       {0x3076, 0xe0},
+> +       {0x3077, 0x01},
+
+These two are a single 16 bit register AREA3_WIDTH_1 =3D 480
+
+> +       {0x3090, 0xe0},
+> +       {0x3091, 0x01},
+
+These two are a single 16 bit register AREA3_WIDTH_2 =3D 480
+
+> +       {0x3308, 0xe0},
+> +       {0x3309, 0x01},
+
+These two are a single 16 bit register Y_OUT_SIZE
+
+Don't you think=20
+	{ Y_OUT_SIZE, 480 },
+
+Is so much more readable and easier to comprehend and maintain?
 
 
-Best regards,
-Andreas Hindborg
+> +       {0x30d8, 0x30},
+> +       {0x30d9, 0x0b},
+
+These two are a single 16 bit register UNREAD_ED_ADR =3D 2864
+
+> +};
+
+I'm still sad that we can all know the names of all these registers and
+yet this is writing new tables of hex values.
 
 
+--
+Kieran
+
+
+> +
+> +/* Sensor mode registers for 1280x720@30fps */
+> +static const struct imx334_reg mode_1280x720_regs[] =3D {
+> +       {0x302c, 0x30},
+> +       {0x302d, 0x05},
+> +       {0x302e, 0x00},
+> +       {0x302f, 0x05},
+> +       {0x3074, 0x84},
+> +       {0x3075, 0x03},
+> +       {0x308e, 0x85},
+> +       {0x308f, 0x03},
+> +       {0x3076, 0xd0},
+> +       {0x3077, 0x02},
+> +       {0x3090, 0xd0},
+> +       {0x3091, 0x02},
+> +       {0x3308, 0xd0},
+> +       {0x3309, 0x02},
+> +       {0x30d8, 0x30},
+> +       {0x30d9, 0x0b},
+> +};
+> +
+>  /* Sensor mode registers for 1920x1080@30fps */
+>  static const struct imx334_reg mode_1920x1080_regs[] =3D {
+>         {0x302c, 0xf0},
+> @@ -433,6 +473,32 @@ static const struct imx334_mode supported_modes[] =
+=3D {
+>                         .num_of_regs =3D ARRAY_SIZE(mode_1920x1080_regs),
+>                         .regs =3D mode_1920x1080_regs,
+>                 },
+> +       }, {
+> +               .width =3D 1280,
+> +               .height =3D 720,
+> +               .hblank =3D 2480,
+> +               .vblank =3D 1170,
+> +               .vblank_min =3D 45,
+> +               .vblank_max =3D 132840,
+> +               .pclk =3D 297000000,
+> +               .link_freq_idx =3D 1,
+> +               .reg_list =3D {
+> +                       .num_of_regs =3D ARRAY_SIZE(mode_1280x720_regs),
+> +                       .regs =3D mode_1280x720_regs,
+> +               },
+> +       }, {
+> +               .width =3D 640,
+> +               .height =3D 480,
+> +               .hblank =3D 2480,
+> +               .vblank =3D 1170,
+> +               .vblank_min =3D 45,
+> +               .vblank_max =3D 132840,
+> +               .pclk =3D 297000000,
+> +               .link_freq_idx =3D 1,
+> +               .reg_list =3D {
+> +                       .num_of_regs =3D ARRAY_SIZE(mode_640x480_regs),
+> +                       .regs =3D mode_640x480_regs,
+> +               },
+>         },
+>  };
+> =20
+> --=20
+> 2.34.1
+>
 
