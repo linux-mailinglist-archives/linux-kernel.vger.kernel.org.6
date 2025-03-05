@@ -1,81 +1,78 @@
-Return-Path: <linux-kernel+bounces-547016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D09CA501CB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:24:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA2F8A501D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:26:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30DA9175349
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:23:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 369C73B180C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:24:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1FE5205AB0;
-	Wed,  5 Mar 2025 14:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3E224FBFF;
+	Wed,  5 Mar 2025 14:23:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="beXjxic7"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qhaz8w7H"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D76124BC03
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9423324E4B0
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:23:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184568; cv=none; b=agxUBMcm/fa/tvDVPyD5Gi6+8a5ct/70+nV4w/NB/ZSN1BhgDbkKiPdHbflstGBedVg9NOwxdSn8Tgkn+0FZrt4m8Sum+G6sZC71Hp0GxzCx+EisgkbUVY5YbdxHpwNUHW8e2IqhoUeFMhGeemPDZ18iGLgOymgKDTIj32CopMg=
+	t=1741184591; cv=none; b=OMJbJ2dl8s8iBg+SMrLpXK0Sb1lMCQ7Ni4OoxMPVd7+RcSPo2QRkbt+cfYyxP5ovY9XFWiqwtE8we6GcxG/cYF+rbebK25etiUQXwP6/uetKR8vSRaiT1Gl8tzKkw0gHKiLSpyzdKvN/EZYnOg9bmddULoW1p8mBbxFWmyLPEgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184568; c=relaxed/simple;
-	bh=AALPqvcYdPu/fCVh5D4pZZdU0PPcB5iUhjNbx3HZ620=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=olASiCp1opZJ9R+Crv77BfkLdF7HH3nYxAXtn40N1hInGDdzGRH6s4zNDfFBMHFsvQ+NlqD9s1cOK3ZWqr9k8dwAqiVHei/2i6/Lg0gc9I3uD2Z+chYTDav8Guna6IltlbIsLdQBp2Xg2e6GQeJksQUTMwKEeVfkLMyzL5RT1LA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=beXjxic7; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1741184591; c=relaxed/simple;
+	bh=Y3p4LBE9WXSBmze6nc8QffxaOmv0qMigh53x+CI5U90=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WovbLlqvHMrRfKbqKwG2sDYVemCoc+LHws6GJ264Qgey6wCfGwLw4y96L9ziXAKusNP+eSJLPlANnSjekwhrMHrngkem1XnurxniYyvS1Jb5kXHlwpQwXbw+zg9F4Eny6XkCZYWTId5YriO3OWvl3clRUgGBkSqbKa9D30NmauQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qhaz8w7H; arc=none smtp.client-ip=209.85.128.42
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4394345e4d5so46975415e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:22:45 -0800 (PST)
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-43bbb440520so38873165e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:23:09 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741184564; x=1741789364; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=lSyv7n07CeQN6+Dte2tX+sn3X8BMnYtDKpvbKeDUuO8=;
-        b=beXjxic7ijorklMY2vS9QAfyD0PO88EenyjCpr8siL119joxL/npEIgh8UgQ484xT9
-         12HgcXcIFyGFju4mbhDdT0nPRlkZbqYLrwKBmU+X5gm01n8K49nvIA8n4U2l7C9fFf6m
-         m7V025ox7qIML9YmVHwLlz+cS1nazOYwW92MFyTpautwUp+CSbT+JcT8GZYjTi6ETQXo
-         mNUZZsbPKjb0gEZB4j0w3QYsLysXmcVue/hU3R8ZEp1TFQPhrj6pBVT3II/M/ugtaHHB
-         yhsc4C4wrku5CGusLNaK7oifODyUht2RVaJ55baxunmLeguzAIHFpyNLpxc9A5hUF8fA
-         tAJw==
+        d=linaro.org; s=google; t=1741184588; x=1741789388; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=u/EDlj+KCqtnghUmkpWYPx5sg24VjMYJxMv5mgQVSzE=;
+        b=qhaz8w7HsRDtH+dkmhm9PBNSqGoI97u9DRw49x6aDnMBZf6b0QAOuIIgOR+Q6XvVTi
+         awhGgCajPHYfPhVf1qaOd5OLEU9wGla1S/kjG6hnti/fmUikOA3A6qlw5gjld7LfxfrB
+         NJqp6ozipLtNw9XMI7rUp9Irra8QqUMF2tQCoMLorYg9pKhuViRox33GNQabR4FjQv4+
+         j48eBQk4mdbXxhQzsruci6D7lZatVuIsDePJwGJQavbDd/UkraEaXo93g55+t409O6Bi
+         JltHX8SoKoVLKeEYChK19hjDxa77ZZRM9b+kGS4qLfZcCg37GZCS0C6we8bVVncfK3Fz
+         5R0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741184564; x=1741789364;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=lSyv7n07CeQN6+Dte2tX+sn3X8BMnYtDKpvbKeDUuO8=;
-        b=S4aIF0jp5Q0dEgJYHQvKc5RYTHv7qPAgE0K90yvzizxoAL186gGvCHjsEzNHCc0i/2
-         qTBkKf8yAphcOKhQqAUh4a8yRkGvi2prNJRfUyUUGc94K1fDun14hy7lO2fxHvY8hBll
-         qJ3UTIyRHdd0HBLxZbH4oFh+0zyv2R7useAsakJOj14/vLemjBS6ycBKDeTIOCJjkDve
-         4tF3vsmIenBEq+C7BME6NxxXXSGjEJubXnmU0zjPVkEW1GbdmjdNSQlINbZrjD26Wgmy
-         8DMNlCinOL3kGpkT7bZk0erbHaPNExeEnnK0Ot2fmAgU3Hcapux3DieqcvEDLq2+ae1X
-         LcDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVVSa5+yTWukD08HQrEEdKyEvZsONr6yYtotqlwlPRn/jCCUx2aXrGSZGjP6QJ7PxwOfuyZPtTDnQwK6OY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzfltLxEE1O0s3G/hRzpKHM8uqfxM2XjagaZuohFYq5NEapQG9R
-	+2fkBuRZOSdm6bMD9/8uE1GAlf1K6LGBSjx2hEiaVQ52aCFsi+8xPPWVww0bSl4=
-X-Gm-Gg: ASbGncvLgcyrnj8wDA+/W/6KTj9ybkJRtD9SZx9ik1Mx/iPgHHrXovoyNRBPO/gIqUf
-	awoUXK+t9go01RHZzOzr2R9Uj2CfuIPJk7pThfVMr6JYGAHuO/kE7TO3YMHTBJTi3ZiLqEivVS0
-	i7wubXI05Ukfb0HyPaXbjIpiECRYP/w+NQDqzKEmEYDgQL/SZNZ9hJL7p5Z8fQ4tIx8+KDnZZAa
-	XwdNUDoTFYN91kdUu9Y+X/+uyPRNGBhqIjQLZCPDHrDa8LavNULMb+bVnQlxI5lL2eFRf0SOrRF
-	GcyfOYZ9oUFPIXJpr8j2Q+7faCgnYM8tdLlAeNmACm0w0UWJMe/CY8QWIECt7UWD69bUQwLbzoo
-	/uvhq0a8QQt17RGIZr4UFSA==
-X-Google-Smtp-Source: AGHT+IFB474KXfR5EAvEooEwHvPvIfuEC3OzGNc/14oi/JyC0//Cf/vNiQaW0zY3Obiz1lHAh1K7zg==
-X-Received: by 2002:a05:600c:190a:b0:43b:cbe2:ec0c with SMTP id 5b1f17b1804b1-43bd29c9377mr25131845e9.27.1741184564283;
-        Wed, 05 Mar 2025 06:22:44 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:d001:4ab2:d11a:658b? ([2a01:e0a:982:cbb0:d001:4ab2:d11a:658b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd4292f0bsm18746375e9.15.2025.03.05.06.22.43
+        d=1e100.net; s=20230601; t=1741184588; x=1741789388;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u/EDlj+KCqtnghUmkpWYPx5sg24VjMYJxMv5mgQVSzE=;
+        b=I2MdbN7ue2I5WNuPDZ5TcPGzm/izSePEIVbMhXO36Bm2Fyt2iy3yVs1fzYCCZWJ9tT
+         OcgrqW1cuaA23Lg5UUhh0GQMJEdvD2yMYtO6I2tgEuz0qGtE5Ox8q+fRinnUjayFQ7vN
+         vcw3/ZtnE+PZHKDJuiJyCTMd1cT4Ajc/xXFSPsXIZg9baT/2wkDYLN6/GUF3ESeNbsFO
+         2c+vXAyfG6lR+2Cwf4uMdcsYwhbvgQjVloN1vncbiCCQYR0v7f/G0H6o75PlXEh/DAXm
+         Ur7K2OcOZKZEVJcEb+3Hn2jFVB3jfIgND5p09AdYDj3WoD8Uhwjs+HIsqrRtw93L3PlW
+         DVgA==
+X-Forwarded-Encrypted: i=1; AJvYcCUUjrkkQ05z19Gi8BSbu7qPZTuIg8QlrH8LzFvr3SqMFZbW+Fx4C1sLQ65hUc2AAwa2XmyxTOc1LpUbS6o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHJVrkZqTuxFsAvk/QDM4FLIyMb7s0PhZhv7JviS09Lw6D4nDg
+	VBoj41fR76zbzZdoGVSZdSgusbroq6myG5XEg4xikQBjMjvxdaeqVhA+X5NJvGc=
+X-Gm-Gg: ASbGncu/1cf0Jh27hTvpzpC1YPiW91/GoevEupdIuc9Ql6N+LtPyyac7OOatUHP1HNV
+	4afIkDGUl/wGXio8kx9n9EPGpYFHxUKtOjYHrWzmEZl07iOID0RJpXwRA2ZJnWga/WR9+4UJfFU
+	ViBeYVVBx3QjFnUVNeJeANr8k9ns5ESeD8nvY1FQmahqdUuzYlr1R/Z5+2Uldkrmk7Rh/+qsSYH
+	NAcWFvJV9fNee9HKJdqkyknm/eQMhTE3xiEysEOhFN5ytozCwyVrjNtj52wwAMk5VCt3oNwepfL
+	xLuE+PYTp9oh6FuZypnVX3uhoTQbiUPs/9Pr5lBqtqPklj2oyIzHvg==
+X-Google-Smtp-Source: AGHT+IFhtHEtHPZDbikFBxfqwSObZ6We/RGoyHTAtxKyvh9iiCUNxXuSQTE/D9Gy3GIUTiWcaX07Kg==
+X-Received: by 2002:a5d:5886:0:b0:391:2e7:67ff with SMTP id ffacd0b85a97d-3911f724d55mr2796904f8f.10.1741184587814;
+        Wed, 05 Mar 2025 06:23:07 -0800 (PST)
+Received: from [192.168.0.14] ([79.115.63.206])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7ddesm21390361f8f.57.2025.03.05.06.23.06
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 06:22:43 -0800 (PST)
-Message-ID: <6d88effc-2aed-4f92-89a7-17d48f43ccd3@linaro.org>
-Date: Wed, 5 Mar 2025 15:22:42 +0100
+        Wed, 05 Mar 2025 06:23:07 -0800 (PST)
+Message-ID: <9063abd1-b417-4623-b44d-fcb18f3c71b7@linaro.org>
+Date: Wed, 5 Mar 2025 14:23:04 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,112 +80,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [RFC PATCH 00/12] Add support for HEVC and VP9 codecs in decoder
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>, quic_vgarodia@quicinc.com,
- quic_abhinavk@quicinc.com, mchehab@kernel.org
-Cc: hverkuil@xs4all.nl, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250305104335.3629945-1-quic_dikshita@quicinc.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250305104335.3629945-1-quic_dikshita@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH 1/2] clk: samsung: Add missing mod_devicetable.h header
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Krzysztof Kozlowski <krzk@kernel.org>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Sam Protsenko <semen.protsenko@linaro.org>,
+ Peter Griffin <peter.griffin@linaro.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-samsung-soc@vger.kernel.org, linux-clk@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250304-clk-samsung-headers-cleanup-v1-0-81718e38246e@linaro.org>
+ <20250304-clk-samsung-headers-cleanup-v1-1-81718e38246e@linaro.org>
+Content-Language: en-US
+From: Tudor Ambarus <tudor.ambarus@linaro.org>
+In-Reply-To: <20250304-clk-samsung-headers-cleanup-v1-1-81718e38246e@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi,
 
-On 05/03/2025 11:43, Dikshita Agarwal wrote:
-> Hi all,
-> 
-> This patch series adds initial support for the HEVC(H.265) and VP9
-> codecs in iris decoder. The objective of this work is to extend the
-> decoder's capabilities to handle HEVC and VP9 codec streams,
-> including necessary format handling and buffer management.
-> In addition, the series also includes a set of fixes to address issues
-> identified during testing of these additional codecs.
-> 
-> I'm sharing this series as an RFC because compliance and conformance
-> testing are still in progress.
-> While initial functional tests show positive results, I would
-> appreciate early feedback on the design, implementation, and fixes
-> before moving to a formal submission.
-> 
-> I plan to submit a formal patch series after completing all compliance
-> checks. Meanwhile, any feedback or suggestion to improve this work are
-> very welcome.
-> 
-> Thanks,
-> Dikshita
-> 
-> Dikshita Agarwal (12):
->    media: iris: Add HEVC and VP9 formats for decoder
->    media: iris: Add platform capabilities for HEVC and VP9 decoders
->    media: iris: Set mandatory properties for HEVC and VP9 decoders.
->    media: iris: Add internal buffer calculation for HEVC and VP9 decoders
->    media: iris: Skip destroying internal buffer if not dequeued
->    media: iris: Update CAPTURE format info based on OUTPUT format
->    media: iris: Add handling for corrupt and drop frames
->    media: iris: Avoid updating frame size to firmware during reconfig
->    media: iris: Avoid sending LAST flag multiple times
->    media: iris: Send V4L2_BUF_FLAG_ERROR for buffers with 0 filled length
->    media: iris: Fix handling of eos buffer during drain
->    media: iris: Add handling for no show frames
 
-I should be better to move patches 1, 2 & 3 at the end, after the patches
-adding support for specific hecv & h265 features, and please check that
-none of the patches breaks h264 at any time to keep bisectability.
+On 3/4/25 6:45 PM, Krzysztof Kozlowski wrote:
+>  drivers/clk/samsung/clk-exynos-audss.c   | 1 +
+>  drivers/clk/samsung/clk-exynos-clkout.c  | 1 +
 
-Neil
+drivers/clk/samsung/clk-exynos2200.c can benefit of the inclusion too.
 
-Neil
+>  drivers/clk/samsung/clk-exynos3250.c     | 2 +-
 
-> 
->   .../media/platform/qcom/iris/iris_buffer.c    |  22 +-
->   drivers/media/platform/qcom/iris/iris_ctrls.c |  28 +-
->   .../platform/qcom/iris/iris_hfi_common.h      |   1 +
->   .../qcom/iris/iris_hfi_gen1_command.c         |  38 +-
->   .../qcom/iris/iris_hfi_gen1_defines.h         |   4 +
->   .../qcom/iris/iris_hfi_gen1_response.c        |  11 +
->   .../qcom/iris/iris_hfi_gen2_command.c         | 129 +++++-
->   .../qcom/iris/iris_hfi_gen2_defines.h         |   5 +
->   .../qcom/iris/iris_hfi_gen2_response.c        |  56 ++-
->   .../media/platform/qcom/iris/iris_instance.h  |   6 +
->   .../platform/qcom/iris/iris_platform_common.h |  25 +-
->   .../platform/qcom/iris/iris_platform_sm8250.c |   4 +-
->   .../platform/qcom/iris/iris_platform_sm8550.c | 141 ++++++-
->   drivers/media/platform/qcom/iris/iris_vb2.c   |   3 +-
->   drivers/media/platform/qcom/iris/iris_vdec.c  |  80 +++-
->   drivers/media/platform/qcom/iris/iris_vdec.h  |  11 +
->   drivers/media/platform/qcom/iris/iris_vidc.c  |   3 -
->   .../platform/qcom/iris/iris_vpu_buffer.c      | 397 +++++++++++++++++-
->   .../platform/qcom/iris/iris_vpu_buffer.h      |  46 +-
->   19 files changed, 931 insertions(+), 79 deletions(-)
-> 
+drivers/clk/samsung/clk-exynos4.c too
+
+>  drivers/clk/samsung/clk-exynos4412-isp.c | 1 +
+
+drivers/clk/samsung/clk-exynos5-subcmu.c too
+
+>  drivers/clk/samsung/clk-exynos5250.c     | 1 +
+>  drivers/clk/samsung/clk-exynos5420.c     | 1 +
+>  drivers/clk/samsung/clk-exynos5433.c     | 1 +
+
+drivers/clk/samsung/clk-exynos7870.c too
+
+>  drivers/clk/samsung/clk-exynos7885.c     | 1 +
+>  drivers/clk/samsung/clk-exynos850.c      | 1 +
+>  drivers/clk/samsung/clk-exynos8895.c     | 1 +
+>  drivers/clk/samsung/clk-exynos990.c      | 1 +
+>  drivers/clk/samsung/clk-exynosautov9.c   | 1 +
+>  drivers/clk/samsung/clk-exynosautov920.c | 1 +
+>  drivers/clk/samsung/clk-fsd.c            | 1 +
+>  drivers/clk/samsung/clk-gs101.c          | 1 +
+>  drivers/clk/samsung/clk-s5pv210-audss.c  | 1 +
+
+drivers/clk/samsung/clk.c and drivers/clk/samsung/clk.h too.
+
+With that:
+Reviewed-by: Tudor Ambarus <tudor.ambarus@linaro.org>
+
+>  16 files changed, 16 insertions(+), 1 deletion(-)
+
 
 
