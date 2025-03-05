@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-546429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D51EA4FA9A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:51:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BAEFA4FA9D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:51:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B50017A838E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:50:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AD811892D44
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E3B2054EF;
-	Wed,  5 Mar 2025 09:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O9wpaTGD"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB5912AF19;
-	Wed,  5 Mar 2025 09:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A19BB205AA7;
+	Wed,  5 Mar 2025 09:51:00 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75E962AF19;
+	Wed,  5 Mar 2025 09:50:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741168251; cv=none; b=DkI/2N9LxSFRzGtI0rZnDUl6LqBSUCkC9zU2XjE9Ylo8yerMHFJlQXgEGUfIqkdkEKe+EVDedrr9Lqk/dIwFsh4MnsHSTs7sRO4zQtoI9hHN4AFgDh3BM2cePTq1L/NtriKKfcurH1LN0uWdArF1+vWhy4ly1mtrwtLuMRS6Rqw=
+	t=1741168260; cv=none; b=o6L1QqZDDmT20hxTbpHDdwNkfSb2ZA1FmSNQ6ctjl/pEa6FwqsP9n8dxd+Kdtw4wVsYJMSTaMtrRSRoPTS0IPv+sSqUkIbQrcc7yA8RUAsWaVUWiA5mcBHkmoP5Rfy4FUFK7Ji2ky9CmMCU6xT9rtH8/7D4oZG/gJcr6NQQt4i8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741168251; c=relaxed/simple;
-	bh=hnJRTEp2XkZ9SG0QTXH32cGwhu/TM3DNRhvETCrTwC4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iUo8TmsihWj/5hjP3EXsBYY2okC8yLNqrHg8IXwFloopPLdpC7Fs1cY/CwbutioYo+dVqxgVqb6/c3PxPwcu7seempfPaWplie8vG7XAO5dQGa6laIRXA6qBJ7Mz55ci/CgXpNHCMXSuzrDp9BnYA9Civ0kbRmoNxnb/RvBOpZY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O9wpaTGD; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-5e4d18a2c51so800777a12.0;
-        Wed, 05 Mar 2025 01:50:49 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741168248; x=1741773048; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=sy8FAWYaFbmXAZB/as+Gcpy61NGKNxmQZzWDH9kXc+I=;
-        b=O9wpaTGDsdHCxZTwCQhxgbEKPXrrZG+u1XcTwX7M9dVRF45yine0eBvK+bVuKUiOo/
-         YBukbzFAOKLpyO+2YVqr/JWAnMEr1KjktyRQdE551dz2Ze6uDhv74qPJO2rH/UZ4N1oE
-         u2N9pOPqoHVQrn9pxUD3ciBL2IEcsUlP+AEUrzOgz8V0YvPxvZ0QDTitVlMHk3+FkxFQ
-         YVXl5c05RtuSx7nO/Gd+5E0j3bmYmqqwDRKP3yZaGClmJYJoJq8fk8E5TMT1y6fDzDMr
-         Lm8jLm4tMXwP+hkYY3w6uS77xI6pXCfmdRTRJv9Z/l3kgA+e5lCuLrJLWuD743c1uAOC
-         BeJQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741168248; x=1741773048;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sy8FAWYaFbmXAZB/as+Gcpy61NGKNxmQZzWDH9kXc+I=;
-        b=mf75xuaL3zdqQ1VOmz4Kz9cHdVSuHckWWkRDU25Frub798H9FB1A9/lgjLjfjSQBWu
-         Q90VBTMzMWSCwH1c3QxgUh5GCYU3ihcAT0VrbCjMrA31oODjj7LWJ7ZQ56fXqNdLJJL1
-         TobCiG+xAQNgTOHNfMM7jwY2rrXktRnhEz5zKtWKAl5AFeCV/VG1kbNpH68jDk0zyjNQ
-         6gGQN7g9ILaOmbyQymMosyb2g9qWyjAeuKGwwVPFH/BwZjS9XoitS4Ww8FOlY/m//Fk+
-         23s1Iy9LSvLs+Oe0kh3SarLGhi2fiS1ncUatxx5TFurScM7ckuxl9lxWOiqg+cNq5MQ1
-         qzLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURs+8uwFg4mPXOhUTEUQ184gYpldNq9z7OR/9QW/PrsMYiATPRPB2lFxFOz//JstoBXX8IeolHUHI3jx0=@vger.kernel.org, AJvYcCXWkyjGIroGI9qiydSHLSK7A3NNGKvldqxPBqJIIPiEVzT1QUgHBUlPUPmJq5utxFO5AwIQMUDFLAkmtg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJ9Udl2xu8tPfoM+exU7Vn3w5k7oWV4W2xkrWv+En5ZtdQB//P
-	aIg6UfpRwGlSYUhIIO4aOoeigjFsUoPeUFuo+jE8+weOVVmRxKZ9Jv7LnihJVTSV9ckTio2blq0
-	MqWL+PjDAS8LHTs5LS18N5dWYjVM=
-X-Gm-Gg: ASbGncukZL2k2bZfvhr8t6XSaYWNTg6KSiTQNVM64BywZ+6ExZjCHcinsXFC3PdkRzc
-	hA+WRKzRotcga7OwJrm/uj3YzBSUTcjxa/MdCfpnJ0rVmuXK+DuaiPvLWS+mq3VSn5v5ZbZ00qs
-	cVwpIPPBuwlkXq8CJwcpCJLPtA
-X-Google-Smtp-Source: AGHT+IEQrgiOAdQNy2yBIyuqBwe9bX4LyjvCptdkUAZ9XPg9feuMNZ2nYBo0nMfB64Zz26Cd3qkdO1IcpskzU8aV5iY=
-X-Received: by 2002:a05:6402:28b5:b0:5e0:e845:c825 with SMTP id
- 4fb4d7f45d1cf-5e59f4b6e4cmr709556a12.10.1741168247563; Wed, 05 Mar 2025
- 01:50:47 -0800 (PST)
+	s=arc-20240116; t=1741168260; c=relaxed/simple;
+	bh=im8uaNIgauqwSKJ+QLQ9McFB8wSVj2MzOCQuUY4Y3gU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=cHeqtbzrxruI5exmr5hZiF6/Eb0MnBBlmEm/DVDqzBZiPu8YpMT1w53OTfHkJfpzy1cevhGwC9gR+uTl8dkwBMq3QYtyF5Fwg8XgFyBM9YzhQmUZ+LWewfBkkrx1Ge4SUjzJkIEmqFThvti3Jhq2M5JMTYE/VGP2guJxoW/15xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 332A5FEC;
+	Wed,  5 Mar 2025 01:51:11 -0800 (PST)
+Received: from [10.57.64.200] (unknown [10.57.64.200])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id E87E63F673;
+	Wed,  5 Mar 2025 01:50:55 -0800 (PST)
+Message-ID: <7bc89310-c0db-4940-8cd7-86566ecb5c65@arm.com>
+Date: Wed, 5 Mar 2025 09:50:53 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305081848.4f3023e9@canb.auug.org.au>
-In-Reply-To: <20250305081848.4f3023e9@canb.auug.org.au>
-From: =?UTF-8?Q?Tomasz_Paku=C5=82a?= <tomasz.pakula.oficjalny@gmail.com>
-Date: Wed, 5 Mar 2025 10:50:33 +0100
-X-Gm-Features: AQ5f1JoClPScNT6yozSEtd1Y5XwnYOA7-Pf9FF4yMEPlWpX6E32QLHyeIW0cL0I
-Message-ID: <CAFqprmzZ8ffg974PXLCCJs+Zwu3cCgX+Pzp+FPWVYnOXwCMDFw@mail.gmail.com>
-Subject: Re: linux-next: Signed-off-by missing for commit in the hid tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <benjamin.tissoires@redhat.com>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] power: energy_model: Rework the depends on for
+ CONFIG_ENERGY_MODEL
+To: rafael@kernel.org
+Cc: Xuewen Yan <xuewen.yan94@gmail.com>, Xuewen Yan <xuewen.yan@unisoc.com>,
+ linux-pm@vger.kernel.org, len.brown@intel.com, linux-kernel@vger.kernel.org,
+ ke.wang@unisoc.com, jeson.gao@unisoc.com, di.shen@unisoc.com, pavel@ucw.cz
+References: <20241219091109.10050-1-xuewen.yan@unisoc.com>
+ <a43ebb14-be7f-4f8a-8892-cdb63eec4043@arm.com>
+ <CAB8ipk-qYR4LncOi2ue6Rbdc6CqX67_OydcOp14Yj=afYZPe=Q@mail.gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAB8ipk-qYR4LncOi2ue6Rbdc6CqX67_OydcOp14Yj=afYZPe=Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, 4 Mar 2025 at 22:18, Stephen Rothwell <sfr@canb.auug.org.au> wrote:
->
-> Hi all,
->
-> Commits
->
->   e2fa0bdf08a7 ("HID: pidff: Fix set_device_control()")
->   f98ecedbeca3 ("HID: pidff: Fix 90 degrees direction name North -> East")
->
-> are missing a Signed-off-by from their authors.
+Hi Rafael,
 
-Seems like I forgot to rebase with signoff after cleaning up commit
-messages. Sorry for the mess...
+On 2/13/25 02:18, Xuewen Yan wrote:
+> Hi Rafael,
+> 
+> I noticed that this patch has not been merged yet. Do you have any comments?
+> 
+> BR
+> 
+> On Thu, Dec 19, 2024 at 5:17 PM Lukasz Luba <lukasz.luba@arm.com> wrote:
+>>
+>>
+>>
+>> On 12/19/24 09:11, Xuewen Yan wrote:
+>>> From: Jeson Gao <jeson.gao@unisoc.com>
+>>>
+>>> Now not only CPUs can use energy efficiency models, but GPUs
+>>> can also use. On the other hand, even with only one CPU, we can also
+>>> use energy_model to align control in thermal.
+>>> So remove the dependence of SMP, and add the DEVFREQ.
+>>
+>> That's true, there are 1-CPU platforms supported. Also, GPU can have
+>> the EM alone.
+>>
+>>>
+>>> Signed-off-by: Jeson Gao <jeson.gao@unisoc.com>
+>>> ---
+>>>    kernel/power/Kconfig | 3 +--
+>>>    1 file changed, 1 insertion(+), 2 deletions(-)
+>>>
+>>> diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
+>>> index afce8130d8b9..c532aee09e12 100644
+>>> --- a/kernel/power/Kconfig
+>>> +++ b/kernel/power/Kconfig
+>>> @@ -361,8 +361,7 @@ config CPU_PM
+>>>
+>>>    config ENERGY_MODEL
+>>>        bool "Energy Model for devices with DVFS (CPUs, GPUs, etc)"
+>>> -     depends on SMP
+>>> -     depends on CPU_FREQ
+>>> +     depends on CPU_FREQ || PM_DEVFREQ
+>>>        help
+>>>          Several subsystems (thermal and/or the task scheduler for example)
+>>>          can leverage information about the energy consumed by devices to
+>>
+>> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
 
-What can I do to fix this now? Should I resend them with SOBs?
+Gentle ping. You probably have missed that change for the v6.15 queue
 
-Thanks, Tomasz
+Regards,
+Lukasz
 
