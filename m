@@ -1,283 +1,253 @@
-Return-Path: <linux-kernel+bounces-546946-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B72FA50112
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:48:59 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D144A50104
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:47:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ECEE63A500B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:47:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 32C503AE136
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:46:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7164F2459FD;
-	Wed,  5 Mar 2025 13:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEDD624CED7;
+	Wed,  5 Mar 2025 13:44:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b2N9zCYQ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="hWNtlI5h"
+Received: from DU2PR03CU002.outbound.protection.outlook.com (mail-northeuropeazon11012038.outbound.protection.outlook.com [52.101.66.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86F4F248898;
-	Wed,  5 Mar 2025 13:45:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741182312; cv=none; b=l8zwGfuUrgA3uAbVq2w0JujbC7+b8XIr4+9UqWB40Mdb/Ytm7PmxiTrKtiLMEPm7tfhO/rKGB5UBzS3KCx9Z/JPg8ikB88/s/RNXyADlRIe4phXs7SAbGaN5VwC0fpKFuerRLD6h5bsJwQaJhU2GrqVY2YHMIri5mJzi8EfjpL4=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741182312; c=relaxed/simple;
-	bh=NtUoC0VQyUdE370wsFKvWqUjQFFfXTqScOu1x2M24Uc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Ll5jLvRsZPc6vEZe5l4/HcwjywUrtEMDcsabA/xVGUf0QWHQL6im85w0q+KCPMXKorBAm4no7El+eCF9w8xWiGL29qOk57ldZy7aNnwVaXCuwWwqUx4vHCdHPs1VMoPCwo4HxNMOJXUl4Vi7+/Qjw7gSVInu7eKfxIIKq5lI2kA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b2N9zCYQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80314C4CEEA;
-	Wed,  5 Mar 2025 13:45:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741182311;
-	bh=NtUoC0VQyUdE370wsFKvWqUjQFFfXTqScOu1x2M24Uc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b2N9zCYQiyKajWKuPAN7A9e2NlmNSFw1jku5bIiRlE51oWAQR8XOLEJpKvIemJ9KY
-	 0ngWi+lb83jrmf6KLujUcnf4ZNhzStSBXsp7MpXJDRpTXEzYJwzrq94B8UIEKjDWmv
-	 d5hqUlARJ0qQ2CN3rQoe1SSP34o2XeC1w5Ln5VAMsbExuivTSHTT6mBoqvH5VpT6Wk
-	 J+jqeZwzxADD25eKACQB2spsApEe0QAdzWaAd6+tGzlz3X94/MvZeWDwnt59GAx2aA
-	 Ep3H6mWIzYhMeATj/JYBfmQEicHfEUuIohkSZQ5da0nFREPv/B4VNah4ioTDHb4vZw
-	 kB8oK6lYGsIMA==
-Date: Wed, 5 Mar 2025 13:44:55 +0000
-From: Jonathan Cameron <jic23@kernel.org>
-To: Svyatoslav Ryhel <clamor95@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Lars-Peter Clausen <lars@metafoo.de>, Pavel Machek <pavel@ucw.cz>, Daniel
- Thompson <danielt@kernel.org>, Jingoo Han <jingoohan1@gmail.com>, Helge
- Deller <deller@gmx.de>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5pZw==?=
- <u.kleine-koenig@baylibre.com>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- linux-leds@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-fbdev@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] mfd: lm3533: convert to use OF
-Message-ID: <20250305134455.2843f603@jic23-huawei>
-In-Reply-To: <CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
-References: <20250224114815.146053-1-clamor95@gmail.com>
-	<20250224114815.146053-3-clamor95@gmail.com>
-	<20250228085927.GM824852@google.com>
-	<CAPVz0n0jaR=UM7WbBs3zM-cZzuaPVWBjf4Q7i82hvxtXg2oCzQ@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CED824A07E;
+	Wed,  5 Mar 2025 13:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.38
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741182255; cv=fail; b=hrtC+TUiXZ8ozvOJOfUzIjrnNWHgPhy0/Tp5i/Ks0qSXZq5DMBpBXBaxNgnUBFGf2t+flwJ0/PtAn/jewzCJjUdq0e1CBHxEvjeTk/+qKOLCy6AKNCOSCjfx4cHcPPrQUMG/VqJ+GC+pUeRYJh42uwMV6xuvJUpPwiMviS566y8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741182255; c=relaxed/simple;
+	bh=1/jR9CYISle8eUo4WHf9ycLSTcDJYf+Ly+Gn3OEJzZQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=GDP9BP+eFlEdfKKyDI0+mhZIXgjx9BS0u8/4frsgodi8rh0xiEzs67KEGI9uGlwx6wnAptb85kCr3ttNTSUdN/cNykkYkPBnzF++fPKPhJguMFWMV7TMO2rzVFlczyWsOWpjkpSibow6WdrZoI75Z3IDK/WDqpDx7845RgDabVg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=hWNtlI5h; arc=fail smtp.client-ip=52.101.66.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BFPq4Dkv01yCr7pG2PkQRptu+T2fneNPgO9gdFGz+SjuM5Iiq9Qbs6sxBOgT8acdsB1pkDBm02q57+AeW1SdVK/jsVjG8v+aAqurIsoxekg73UsrnmoJgK5ruvfc3hCvB3ZsXsvE1gfza5Iq64XEdgr/c4kA/gvoSoGOMFfdGt2Q7fk2hYuYX19VBTSgAaYhY2R3CDzQWqvAPcu40tq44lb2ka4VF2kqNrRNzH/vFFJFV+U+FaDWUXoulI5XOjg6oNqVvsKHYbELXkFb6CNvconcaqTR9MW80ZbgRY151tciMrWai2ovNcAH9PFftpuCpIXXbwN92uZArPiiu7/o+Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XirvluISeAskvpLn4Zp9T7aOtGLrRQbthOjlybDRx7k=;
+ b=qW16Ww4Yn6czk5OAmLmWg6y3VK3d4kuYxiPJ6lOElsB09dbiv1l8bYmNDbPBSf2lEataWKUog4BaiuTxMiVT27oXQp3RwOVVZrSQsOCMAHSsZfhnitsbVBiRNzS0z5qirLPWBWVfSa7hj47EHX0O6YrE06CD8W3SfrIOCstbGJ3VYJZgD4ZLnRd7JLyuIwWqbOcTR4g2P6w7B305e/UMSRQBsdHrHj48EfOJC83TxAM1E1fCSe6YrrxdmsnRSDam5yQ3PytWc6Zqg4m0l/PGyJwy0PGi5doa2eBysN25sTTl/PTJL7jR9Sx9DnGnsbrxrghP/iJBxhDlt9pMeRQjeA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XirvluISeAskvpLn4Zp9T7aOtGLrRQbthOjlybDRx7k=;
+ b=hWNtlI5h1Z9YYuKCQZKvQMDmEsSezdQHoQhGM7OWBZRs3zd5wvi11Z51QOPY7kemjPvo39W8g/QUrEjOFlY01ATuwoJZyZLIRIXCl/JKe3k6rnsw/S2VUjc2QOOR8Dv826/CqUlqBlE5inqbgxZYwcfneU4S59N8Ysura++nMhNG6qlfeeIUVvMubf8xADA3y+7tIvLlR65gXHmFFFhymJgSawanv7ZxIRLxm3nBFCWf6tYZEUX1Ye1TWgBtzmAcibSTqjBEhTW2DIZP/5bC3gKt9I+cQKpLj1asCw2NFX0ALL8mupdThqlA8howkQCMIRJDCwY1wTfRO4bNN1Fccw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
+ by GV1PR04MB10965.eurprd04.prod.outlook.com (2603:10a6:150:207::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
+ 2025 13:44:10 +0000
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299%4]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
+ 13:44:09 +0000
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	neeraj.sanjaykale@nxp.com
+Subject: [PATCH v1 1/3] Bluetooth: btnxpuart: Add correct bootloader error codes
+Date: Wed,  5 Mar 2025 19:15:21 +0530
+Message-Id: <20250305134523.40111-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.25.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR01CA0141.apcprd01.prod.exchangelabs.com
+ (2603:1096:4:8f::21) To AS4PR04MB9692.eurprd04.prod.outlook.com
+ (2603:10a6:20b:4fe::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|GV1PR04MB10965:EE_
+X-MS-Office365-Filtering-Correlation-Id: 23ec7988-aba6-46d7-2ef2-08dd5bebce58
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?he9m9j6/iOxIc3w42CkArbhuJZ7p6WOdhB41Sbdy71pfLqs2k1S7AwFYrpRT?=
+ =?us-ascii?Q?h9GEpZ4rP4t5JUkiLWEVZSYxSgtr0+qLYDFBU5nrAeUHWrhuV3Ijb10qLn7k?=
+ =?us-ascii?Q?JqnxrebAnlRtg39DGKSUJnTC2zXFaqiJft51qsPGuPip9huHmgB0M5cf6HWu?=
+ =?us-ascii?Q?wqJAWejnJe1Y2SETFWm+Bvebbu5rIqKw4rrAGvWoZt+ZegsfrKVX+Mf+mSOu?=
+ =?us-ascii?Q?5uJU5fdv3n3BthfyPXoYcsywqjJIgWT9UZMaIOjRsC2eZtyCpeBIPnBQEg2q?=
+ =?us-ascii?Q?cf+UfQnRckBTMheifhsOECds/sp+5j/Pob4bJFg1YgTpwj0W5VmwHoAPWs9H?=
+ =?us-ascii?Q?IzsNWsD5fHxrqHQZrL98QIeOhiGEL/VPJxfZSfmtkfF71zuUz6FQbXtaA0dq?=
+ =?us-ascii?Q?zLXCOxKW/B1pur3fas4WUlC9zQj6HF0NjrJ8QhRm3nsS6PqqgyUqqwrPVhjR?=
+ =?us-ascii?Q?+vrFzinI1e31GrxVygUWN0DIUkOP/x4BK+CWJx7YSB7FRZJZ2pYAw7nUwZvE?=
+ =?us-ascii?Q?+ZG54HmgRGLisR6vm1jMGiMVvZQwujPyIQLRPOovKVQPvqR+X7K7QZciVo04?=
+ =?us-ascii?Q?NTRfl51AuTMmtPSbtpf+QHkjSO/rNEP/WIaoDKXVhZifJzoKw7ukZHLiUxqz?=
+ =?us-ascii?Q?83YqSivct9i+UVc6TGNogR9Qt3u+miVzqQEY+D3lE94lgHNC4uIf9eIbhb3j?=
+ =?us-ascii?Q?YRDDnQ6VJGpxDxem+zhD7FMIrBHDLq8JMQR/eIZmZcLiHhv0SRvGyk3VavXg?=
+ =?us-ascii?Q?vb/g0QDzkAU51x0EjHi389jXQrZ+0onG8bXv1W9Itqlmlnqf/X7a6BgEqSjs?=
+ =?us-ascii?Q?t7zN7yVXmKw86BuNL3xOelqsdm81OFThsLTfP2eKy3HHOTC3Hd8cJh3xdsWG?=
+ =?us-ascii?Q?f4frm251vvZnYt3Eh3uSnaknUd5YHE80wANpb+93hzTwTOOGnBVxt6qCNs3V?=
+ =?us-ascii?Q?IUNUXPWx4dEC+eljKaY2HORkUszwl+cRl2plJJabOpJUxr4wqLNT6b5o4Pd9?=
+ =?us-ascii?Q?PRCALGp06itRuAcDaJ+svqZH90RcGuO0m67Qu7JUxA/ZNJL0PmvPitFIisa7?=
+ =?us-ascii?Q?4vCwBq/Y5bKAutfvpkzd+y877aoAnat49ZrOMxPLealOx7iLanAX0Th74kpW?=
+ =?us-ascii?Q?dOVtDGq5KEhU53db7JgfUpqB0wkyKju038xBhDZZQdZ/BgaPhozZP9D8x3I6?=
+ =?us-ascii?Q?32KsKyHHAzWtDt5suicttudqXEwPPGfCfEHniHg/a/st+eKgJ92szOuJrtvR?=
+ =?us-ascii?Q?sopICqejDAbgZs5XqTJcVxClWBYe7kRe0lJgSEm0Zd/gBoJrhCqLkmxU6yiZ?=
+ =?us-ascii?Q?BLMJ7CKel6d+nOspVQtvvsgCq65t5O9YjLJuqcwlUNhKGKYu59r7kWmdzDVB?=
+ =?us-ascii?Q?wIeDEJzNs75W/SQlbPD7NvSnSC/xMILGHj+83kdFZAyK+P+tvofjLJnjKFt5?=
+ =?us-ascii?Q?AXMznzvhInm48ZfSfJOuineXadjOQAgX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Iqof/E9M21/EZMPW8j1nebLDOnQckRJshx8EjYN/CVAykRQ+KcjbtwFPZShW?=
+ =?us-ascii?Q?NpKjveyirNxAnv6gMgjnxYzLButwdG3reX88xEgJBByufeafWZLtjQDJxhEX?=
+ =?us-ascii?Q?IWYFi9nQlWsWSFneLPhuo0unlAq6jFTSewugO05t9vdz4Q6WejvLhBS+7G1D?=
+ =?us-ascii?Q?Eo3xDIggPjRNuk9pJnlx+DGc6KNvptzghhf+gDbnMVxYsAX0Gzq2zpUZ6LjM?=
+ =?us-ascii?Q?SGCdP71LjhBo4d3aipVynaf0rCVsG0mesYCBbV+MhgD5hoIibU4wAhExPr3w?=
+ =?us-ascii?Q?hEWSQ0cGs1hpcMuiZoxlE1g0U5M0s1Bd0IiYB7K4nGOUwf94noOd9awjVfos?=
+ =?us-ascii?Q?295J0W1RVyoUtOMVZmXJEzRTuldYsqZopFTd5aQMVl6YDF41MVKBBUHDnAtj?=
+ =?us-ascii?Q?qCH24tjykreCgiDobt5Dk6/LlHZJqwJAW2l9q4UKIGjJW6WKvQn3N4P+9lMa?=
+ =?us-ascii?Q?Rm3W9MCZDC3hmBoloXnNdyyvdalfvumazSZq0GWcSQH5egBQsNZePlF4f5zR?=
+ =?us-ascii?Q?09mgUxYWsS/8hhYsxt9wxHemnllu5hogJowBuyhCTGAY4DiGCpLnAw/cuKyy?=
+ =?us-ascii?Q?M60E2/P4eTcianRXE1zD1uZuofR1+jPZd8VHsLv2C4D8jpXkQzlr9yeRuNhh?=
+ =?us-ascii?Q?EhzrP6TA4o3rJExp3QpvnDyBtbZxKCmnsH3EaNd4sV3LFSeiuUEFavmIOpiI?=
+ =?us-ascii?Q?hgxZJzMUJBGpwlhWXpfeCh7bZtQYeMAGpFTm0BSRNfT8bmRdP5VXjYYEHDzy?=
+ =?us-ascii?Q?B8+/4SSE9WJjEegekTN8Sbo2HsbxhJej2pkn3KYW8u3ykzLxGcvkA5DLLJeg?=
+ =?us-ascii?Q?6Dibo/eNNS/chx+/VybVoaghjrY2VrnkQqf3gxAJvvUn6i4KxlRKSa0nU51f?=
+ =?us-ascii?Q?2ZHaz3QafUtk+7lAFR/gVQ5WVFHImktdA5wXDyIW7RkGseiRDSj9KmlDbvfK?=
+ =?us-ascii?Q?EYbGpIbaYVYkmhfMT7Dls6ffVrRmeNFzlpOAxyMJ7AneNDWHBU3m4nKS9RUP?=
+ =?us-ascii?Q?20e5g2wbRG9epcA5oES6+dG6u3W+t8Vj7UQelfGxxPZBzsEgF0EX2K5KHnG3?=
+ =?us-ascii?Q?emyUk6YrOI67G6jq65W8h5+fxTuYH+hYkaXyB8w/UfSkCWWXcjLfROQKW7al?=
+ =?us-ascii?Q?cspVefT5y3vpkYmz/N83AkzczodIu6KyolF3OltYP5z1tJxl81RpLzdTmayu?=
+ =?us-ascii?Q?cF3OTKlD7cEooIe7l2FCgZh4smQdORi9tf4y5k47QorFN5hjaLYnz3BohIj9?=
+ =?us-ascii?Q?hC/U+EQk8D2r4lXD/dLrYafrbNvQYhAvAt4rWIVB9zqBcXt+yaNiIcx/R1T5?=
+ =?us-ascii?Q?opQCdGbwPFMYCn/gc4Mxb16f78R6tppAgwZSDxmMtvNpUIMNkJgtpX44l+KK?=
+ =?us-ascii?Q?fCF04LkquhNe/JwX5Ynm/fOR4UHwmpVwTN4iUfwchNuNbR3elAflO/qu/lyQ?=
+ =?us-ascii?Q?Sc0JqcDO7gS3RKHG1BHbg0uwuLjUn+C7oyLJhxdVF8wVwIEsIUb5xks9skID?=
+ =?us-ascii?Q?OIB8A0OWWJfytPft+yw0lc5aOXYz3NyEegKHAHf80axq6T41q65tSAc2hZpn?=
+ =?us-ascii?Q?l42bCfonBmti6s0jGtqZOO1ZJy/81YFDqx76QtE8mNKC3il2dOQtTI+u62gB?=
+ =?us-ascii?Q?aw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 23ec7988-aba6-46d7-2ef2-08dd5bebce58
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 13:44:09.6425
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 1G2uw0bqiSi0Cze95XkyIZOh9VkWYmwppnWPCjeVjJrKfDVMANkdRcllYqovRyhopzK+vFh0FaQJrd4X7NQPZI5Q5AN0Yofu/uZYXpr6WJ0=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10965
 
-On Fri, 28 Feb 2025 11:30:51 +0200
-Svyatoslav Ryhel <clamor95@gmail.com> wrote:
+This corrects the bootloader error codes for NXP chipsets.
+Since we have a common handling for all error codes, there is no backward
+compatibility issue.
+Added error handling for CRC error code in V3 bootloader signature.
 
-> =D0=BF=D1=82, 28 =D0=BB=D1=8E=D1=82. 2025=E2=80=AF=D1=80. =D0=BE 10:59 Le=
-e Jones <lee@kernel.org> =D0=BF=D0=B8=D1=88=D0=B5:
-> >
-> > On Mon, 24 Feb 2025, Svyatoslav Ryhel wrote:
-> > =20
-> > > Remove platform data and fully relay on OF and device tree
-> > > parsing and binding devices.
-> > >
-> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
-> > > ---
-> > >  drivers/iio/light/lm3533-als.c      |  40 ++++---
-> > >  drivers/leds/leds-lm3533.c          |  46 +++++---
-> > >  drivers/mfd/lm3533-core.c           | 159 ++++++++------------------=
---
-> > >  drivers/video/backlight/lm3533_bl.c |  71 ++++++++++---
-> > >  include/linux/mfd/lm3533.h          |  35 +-----
-> > >  5 files changed, 164 insertions(+), 187 deletions(-)
-> > >
-> > > diff --git a/drivers/iio/light/lm3533-als.c b/drivers/iio/light/lm353=
-3-als.c
-> > > index 99f0b903018c..cb52965e93c6 100644
-> > > --- a/drivers/iio/light/lm3533-als.c
-> > > +++ b/drivers/iio/light/lm3533-als.c
-> > > @@ -16,9 +16,12 @@
-> > >  #include <linux/module.h>
-> > >  #include <linux/mutex.h>
-> > >  #include <linux/mfd/core.h>
-> > > +#include <linux/mod_devicetable.h>
-> > >  #include <linux/platform_device.h>
-> > > +#include <linux/property.h>
-> > >  #include <linux/slab.h>
-> > >  #include <linux/uaccess.h>
-> > > +#include <linux/units.h>
-> > >
-> > >  #include <linux/mfd/lm3533.h>
-> > >
-> > > @@ -56,6 +59,9 @@ struct lm3533_als {
-> > >
-> > >       atomic_t zone;
-> > >       struct mutex thresh_mutex;
-> > > +
-> > > +     unsigned pwm_mode:1;            /* PWM input mode (default anal=
-og) */
-> > > +     u8 r_select;                    /* 1 - 127 (ignored in PWM-mode=
-) */
-> > >  };
-> > >
-> > >
-> > > @@ -753,18 +759,17 @@ static int lm3533_als_set_resistor(struct lm353=
-3_als *als, u8 val)
-> > >       return 0;
-> > >  }
-> > >
-> > > -static int lm3533_als_setup(struct lm3533_als *als,
-> > > -                         const struct lm3533_als_platform_data *pdat=
-a)
-> > > +static int lm3533_als_setup(struct lm3533_als *als)
-> > >  {
-> > >       int ret;
-> > >
-> > > -     ret =3D lm3533_als_set_input_mode(als, pdata->pwm_mode);
-> > > +     ret =3D lm3533_als_set_input_mode(als, als->pwm_mode);
-> > >       if (ret)
-> > >               return ret;
-> > >
-> > >       /* ALS input is always high impedance in PWM-mode. */
-> > > -     if (!pdata->pwm_mode) {
-> > > -             ret =3D lm3533_als_set_resistor(als, pdata->r_select);
-> > > +     if (!als->pwm_mode) {
-> > > +             ret =3D lm3533_als_set_resistor(als, als->r_select); =20
-> >
-> > You're already passing 'als'.
-> >
-> > Just teach lm3533_als_set_resistor that 'r_select' is now contained.
-> > =20
->=20
-> This is not scope of this patchset. I was already accused in too much
-> changes which make it unreadable. This patchset is dedicated to
-> swapping platform data to use of the device tree. NOT improving
-> functions, NOT rewriting arbitrary mechanics. If you feed a need for
-> this change, then propose a followup. I need from this driver only one
-> thing, that it could work with device tree. But it seems that it is
-> better that it just rots in the garbage bin until removed cause no one
-> cared.
+Fixes: 27489364299a ("Bluetooth: btnxpuart: Add handling for boot-signature timeout errors")
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+---
+ drivers/bluetooth/btnxpuart.c | 57 +++++++++++++++++++++--------------
+ 1 file changed, 35 insertions(+), 22 deletions(-)
 
-This is not an unreasonable request as you added r_select to als.
-Perhaps it belongs in a separate follow up patch.  However
-it is worth remembering the motivation here is that you want get
-this code upstream, the maintainers don't have that motivation.
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index 021983686cb3..b8a00bf062e2 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -204,10 +204,11 @@ struct btnxpuart_dev {
+ #define NXP_NAK_V3		0x7b
+ #define NXP_CRC_ERROR_V3	0x7c
+ 
+-/* Bootloader signature error codes */
+-#define NXP_ACK_RX_TIMEOUT	0x0002	/* ACK not received from host */
+-#define NXP_HDR_RX_TIMEOUT	0x0003	/* FW Header chunk not received */
+-#define NXP_DATA_RX_TIMEOUT	0x0004	/* FW Data chunk not received */
++/* Bootloader signature error codes: Refer AN12820 from nxp.com */
++#define NXP_CRC_RX_ERROR	BIT(0)	/* CRC error in previous packet */
++#define NXP_ACK_RX_TIMEOUT	BIT(2)	/* ACK not received from host */
++#define NXP_HDR_RX_TIMEOUT	BIT(3)	/* FW Header chunk not received */
++#define NXP_DATA_RX_TIMEOUT	BIT(4)	/* FW Data chunk not received */
+ 
+ #define HDR_LEN			16
+ 
+@@ -310,6 +311,16 @@ union nxp_v3_rx_timeout_nak_u {
+ 	u8 buf[6];
+ };
+ 
++struct nxp_v3_crc_nak {
++	u8 nak;
++	u8 crc;
++} __packed;
++
++union nxp_v3_crc_nak_u {
++	struct nxp_v3_crc_nak pkt;
++	u8 buf[2];
++};
++
+ static u8 crc8_table[CRC8_TABLE_SIZE];
+ 
+ /* Default configurations */
+@@ -1059,25 +1070,27 @@ static void nxp_handle_fw_download_error(struct hci_dev *hdev, struct v3_data_re
+ 	struct btnxpuart_dev *nxpdev = hci_get_drvdata(hdev);
+ 	__u32 offset = __le32_to_cpu(req->offset);
+ 	__u16 err = __le16_to_cpu(req->error);
+-	union nxp_v3_rx_timeout_nak_u nak_tx_buf;
+-
+-	switch (err) {
+-	case NXP_ACK_RX_TIMEOUT:
+-	case NXP_HDR_RX_TIMEOUT:
+-	case NXP_DATA_RX_TIMEOUT:
+-		nak_tx_buf.pkt.nak = NXP_NAK_V3;
+-		nak_tx_buf.pkt.offset = __cpu_to_le32(offset);
+-		nak_tx_buf.pkt.crc = crc8(crc8_table, nak_tx_buf.buf,
+-				      sizeof(nak_tx_buf) - 1, 0xff);
+-		serdev_device_write_buf(nxpdev->serdev, nak_tx_buf.buf,
+-					sizeof(nak_tx_buf));
+-		break;
+-	default:
+-		bt_dev_dbg(hdev, "Unknown bootloader error code: %d", err);
+-		break;
+-
++	union nxp_v3_rx_timeout_nak_u timeout_nak_buf;
++	union nxp_v3_crc_nak_u crc_nak_buf;
++
++	if (err & NXP_CRC_RX_ERROR) {
++		crc_nak_buf.pkt.nak = NXP_CRC_ERROR_V3;
++		crc_nak_buf.pkt.crc = crc8(crc8_table, crc_nak_buf.buf,
++					   sizeof(crc_nak_buf) - 1, 0xff);
++		serdev_device_write_buf(nxpdev->serdev, crc_nak_buf.buf,
++					sizeof(crc_nak_buf));
++	} else if (err & NXP_ACK_RX_TIMEOUT ||
++		   err & NXP_HDR_RX_TIMEOUT ||
++		   err & NXP_DATA_RX_TIMEOUT) {
++		timeout_nak_buf.pkt.nak = NXP_NAK_V3;
++		timeout_nak_buf.pkt.offset = __cpu_to_le32(offset);
++		timeout_nak_buf.pkt.crc = crc8(crc8_table, timeout_nak_buf.buf,
++					       sizeof(timeout_nak_buf) - 1, 0xff);
++		serdev_device_write_buf(nxpdev->serdev, timeout_nak_buf.buf,
++					sizeof(timeout_nak_buf));
++	} else {
++		bt_dev_err(hdev, "Unknown bootloader error code: %d", err);
+ 	}
+-
+ }
+ 
+ static int nxp_recv_fw_req_v3(struct hci_dev *hdev, struct sk_buff *skb)
+-- 
+2.25.1
 
-Greg KH has given various talks on the different motivations in the
-past. It maybe worth a watch.
-
-
->=20
-> > >               if (ret)
-> > >                       return ret;
-> > >       }
-> > > @@ -828,22 +833,16 @@ static const struct iio_info lm3533_als_info =
-=3D {
-> > >
-> > >  static int lm3533_als_probe(struct platform_device *pdev)
-> > >  {
-> > > -     const struct lm3533_als_platform_data *pdata;
-> > >       struct lm3533 *lm3533;
-> > >       struct lm3533_als *als;
-> > >       struct iio_dev *indio_dev;
-> > > +     u32 val; =20
-> >
-> > Value of what, potatoes?
-> > =20
->=20
-> Oranges.
-
-A well named variable would avoid need for any discussion of
-what it is the value of.
-
->=20
-> > >       int ret;
-> > >
-> > >       lm3533 =3D dev_get_drvdata(pdev->dev.parent);
-> > >       if (!lm3533)
-> > >               return -EINVAL;
-> > >
-> > > -     pdata =3D dev_get_platdata(&pdev->dev);
-> > > -     if (!pdata) {
-> > > -             dev_err(&pdev->dev, "no platform data\n");
-> > > -             return -EINVAL;
-> > > -     }
-> > > -
-> > >       indio_dev =3D devm_iio_device_alloc(&pdev->dev, sizeof(*als));
-> > >       if (!indio_dev)
-> > >               return -ENOMEM;
-> > > @@ -864,13 +863,21 @@ static int lm3533_als_probe(struct platform_dev=
-ice *pdev)
-> > >
-> > >       platform_set_drvdata(pdev, indio_dev);
-> > >
-> > > +     val =3D 200 * KILO; /* 200kOhm */ =20
-> >
-> > Better to #define magic numbers; DEFAULT_{DESCRIPTION}_OHMS
-> > =20
->=20
-> Why? that is not needed.
-If this variable had a more useful name there would be no need for
-the comment either.
-
-	val_resitor_ohms =3D 200 * KILLO;
-
-or similar.
-
->=20
-> > > +     device_property_read_u32(&pdev->dev, "ti,resistor-value-ohm", &=
-val);
-> > > +
-> > > +     /* Convert resitance into R_ALS value with 2v / 10uA * R */ =20
-> >
-> > Because ...
-> > =20
->=20
-> BACAUSE the device DOES NOT understand human readable values, only 0s
-> and 1s, hence mOhms must be converted into value lm3533 chip can
-> understand.
-A comment that gave the motivation would be much more useful than
-repeating the maths.
-
-/* Convert resistance to equivalent register value */
-
->=20
-> > > +     als->r_select =3D DIV_ROUND_UP(2 * MICRO, 10 * val);
-> > > +
-> > > +     als->pwm_mode =3D device_property_read_bool(&pdev->dev, "ti,pwm=
--mode");
-> > > +
-> > >       if (als->irq) {
-> > >               ret =3D lm3533_als_setup_irq(als, indio_dev);
-> > >               if (ret)
-> > >                       return ret;
-> > >       }
-> > >
-> > > -     ret =3D lm3533_als_setup(als, pdata);
-> > > +     ret =3D lm3533_als_setup(als);
-> > >       if (ret)
-> > >               goto err_free_irq;
-> > >
-> > > @@ -907,9 +914,16 @@ static void lm3533_als_remove(struct platform_de=
-vice *pdev)
-> > >               free_irq(als->irq, indio_dev);
-> > >  }
-> > >
-> > > +static const struct of_device_id lm3533_als_match_table[] =3D {
-> > > +     { .compatible =3D "ti,lm3533-als" },
-> > > +     { }
-> > > +};
-> > > +MODULE_DEVICE_TABLE(of, lm3533_als_match_table);
-> > > +
-> > >  static struct platform_driver lm3533_als_driver =3D {
-> > >       .driver =3D {
-> > >               .name   =3D "lm3533-als",
-> > > +             .of_match_table =3D lm3533_als_match_table,
-> > >       },
-> > >       .probe          =3D lm3533_als_probe,
-> > >       .remove         =3D lm3533_als_remove,
-
-Anyhow, I'm short on time so only looking at the IIO related part.
-
-Jonathan
 
