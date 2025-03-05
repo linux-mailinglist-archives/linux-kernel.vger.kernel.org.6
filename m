@@ -1,146 +1,201 @@
-Return-Path: <linux-kernel+bounces-547786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64DDDA50D8F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:35:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 366F4A50DBB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:39:10 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE76D188D9DD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:35:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C2053A74EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:37:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17898201018;
-	Wed,  5 Mar 2025 21:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E49520408A;
+	Wed,  5 Mar 2025 21:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kea5k2fR"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UAv9NrNK"
+Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com [209.85.221.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E34612E336F;
-	Wed,  5 Mar 2025 21:35:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D6E320011E;
+	Wed,  5 Mar 2025 21:35:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741210507; cv=none; b=RxZSe4DLl5PwcJp1omnYmV94ngEoQQgzOOih9koUEcQ8qpQR1NubTS1EQVH2CUCo+6W63v5SttQiHrsalorrplRL79mGWOBz9smK3iMSCwlb+YMGLq7In0CsMjbgXMxoSjQmBNupwjG7THsg5eRHXjcteBtUVLuWzs2FFex7F54=
+	t=1741210544; cv=none; b=WMTbXJOfPkvflFlwVfRzUGN8xNl322B8b9b4GNsV/IoKo2e/Os1i9+kO/bt9m1vwatW8zueWfS2TAoS0iTSEhR0EDefXCgwrbQEFg6eVFZoqPpePUuliHPJA1A5MYVDlrJ3LecEOinYNf4Ao+dY9wh9hq5upizamaCUUXJWx5o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741210507; c=relaxed/simple;
-	bh=ivlUgyT8iqfIHAOYNIubrZCR55JJaAGg4i4Z2tKZMCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UM1FwhYBGKlCibzQZvjcojQ6GL2YnoHlLWUyQ8gHsP2CNtqw5Y6kijbQvs9u9eFOwumobknnvPekx+EF1lG7vo9ho/INX04BeL5tOmkQAA6K6X3WmqS24eyzVHs9657Nh1QZNY/YQyMvhtCIngOdMc5IIGpIrtHl/g+Wjww0FjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kea5k2fR; arc=none smtp.client-ip=209.85.128.49
+	s=arc-20240116; t=1741210544; c=relaxed/simple;
+	bh=LbyAsoOCuX9MkXJF7LarN8OmRMg41TTh2ni2G9R+2XI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l9nPEowWwOS7FAUrfBoQ+ebTtocXlx5Y45J2HVc6EH58ZKPtDWCiu/msMY0cZ4BLNEHPY3IETXEBucs59NQyQXm9Bs5SXJ3LGuQimgY/VQvB2zhW+hnHq+gDcFbnOEHMev0xZC87aVTScaGqtO0FCX26A2ye/4kAvoIgJlIee0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UAv9NrNK; arc=none smtp.client-ip=209.85.221.181
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43bc6a6aaf7so30141255e9.2;
-        Wed, 05 Mar 2025 13:35:05 -0800 (PST)
+Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-523b7d9749eso1264334e0c.2;
+        Wed, 05 Mar 2025 13:35:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741210504; x=1741815304; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741210540; x=1741815340; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=GkfOGAJyjI2lzXCaMBa1FddJd+TtvvII6nxqC6Kgsa0=;
-        b=kea5k2fROZpqaNSKoigXu1TiFA/krkR1lZuoTylooBLISBEjOco8z/E1URrHKqJ2w7
-         7cKFFjqDPrN+YsXgmc2lZ4GlbhlIDQOAvw4h57oZgcvgKgODnA/ruFVrNlyzAGp/NmS2
-         lBUjCwfAE0Vt5Xg+AMeJUoFEDejZUj7/ccRB3H5AiVbXGaRCkBdOVh4WXGIxiC8jXniT
-         BJ6f0HqM3KdwMuwL8RFU+KJy6k2/Q5/xP2PV7lQyAzHD02uVyqm8m1WBSgXty6M3i0Ec
-         8P/UUzBGJBpZbUUf+lqyWqgGyrFGcyGsPQOdQUB8W0H8lyGhAE/9bQAFHLgL6jTMzYlK
-         Hq6w==
+        bh=1+VM6UwBdgJ3iABgZCtb00fc1fZZvevDlMU86jLfwI0=;
+        b=UAv9NrNKxpCLxL/KewH3lLmcRC8DM7QNVhzgYOTEOOTNIg2GnGS4/6zR+cay2uDITi
+         +xgjkex3fUP+FIscJFojS6RrtbVniAbqUKw1PcSzrv5un0zJYYD6ErJRea3LQH4fDaP+
+         D3cUCD3u/mwX8027TQcWNUlR1K8Q0zWe74rojoOt/yD0bkAos1vF26mxrWerJzBY5qC5
+         AZYGCohtV9zjJc3aadgdpoY5TUKygmqJPxtuaUCNfmOjgZhLv1+gOAj4B5wNB9biKhMe
+         kkgfBq2/AHEXcCR7C2t5yRZlrHlf8XbbFk3ekKji+H5NDKT0r1Qd8q/Lpy3His5Vz6rG
+         1y7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741210504; x=1741815304;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1741210540; x=1741815340;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=GkfOGAJyjI2lzXCaMBa1FddJd+TtvvII6nxqC6Kgsa0=;
-        b=ifqy6ZhRGltxIgl+raZ1DCnD0ah/dueCfqlYapEX3y2galtP2jfKDj3fTo00CvV/y6
-         KJqpdh5zzB3vHzQa3iH54dme84IHOw5OYwDR+nFtoLHyqA+rMG81c64ePngHdghcXXJB
-         fyCHQqPgOEMdo+7qlIgMPcS6G+WW5UfvUEKzDEqBDQFQArQQjka70tsK9qIfShnhKVC0
-         1bevYRjeEN8ZYZAcvp2tEcaEL8nBntfgeB9Douv67LYINDc2YY5UbZPYITXfRCxM20n3
-         W/iafVsS7JkAVGPy3zebbA5fQJQrJM7Ng0LtIzBzRmFu+KNb5fZhNJvImZPgfNJh46uA
-         3ImQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQA4UsXFuOioHTsVvsvEVzg9kdjyLQPME/pdAj4TNVk5BiAjXr36ppGSqCJTxC1QKFweFGU+46LgHaZpXW@vger.kernel.org, AJvYcCWYxAFuKU4lpzf/1dUMGjW5tmF0BHq/JSRkLqEmi829PBPpJbx21sNdkzSL72/PfCRJ2z6JdTeOptZbwtaDxQ==@vger.kernel.org, AJvYcCXdA+OYgHlRZ2h+l8uSOOZ82CkKqUSx5V7dhQOH0AXLWqcjddwefrX3UxzhRdYF0C2pEojhWt6yJ6bvo5RUEvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjkoZMXr/AlCYKKLioGKUNCxC5EIS4NzeGtyhMxm1A24ANteZz
-	Ye3eM1kEwBaWhD3jU3nEzkMiQqlSdgLDjDqgfoppbu2FVplWpEAR
-X-Gm-Gg: ASbGncvdOrHtKbCNkswe+A4aub/NvL9ZHAdx1gXaUUFyg0fI7vR5Br85qxq+0DyrTVS
-	aFOBhflfbAWjtP0UWu469Ktj9tje8yyMeel9+DDlQ3L+OVgt/xXLsZeh3ZHkulsANzNU2n/jGRW
-	dgHfYNkZ8mFblyGSumsyRM7n8x5Fn43J3T6AT/XdwjRIzrZv+zrHCLPKy95ZtzYwmE0m5M7+ylV
-	XGYQ7fWGoL2TyVvVn37cqRnsBbhdKoKtCMHe/s4756b06HQbzhcRoZFHVqlDdft9lERmjHHZZmL
-	4XhDSveSC6xUlWaA1ap9SlWQgAtH6LBZn9EBffTsldOiGTeHDG9wUtmLDROEy3U5jGPKqalTkjQ
-	aoIFkEjk=
-X-Google-Smtp-Source: AGHT+IE8jxO6kdtaaWpEp4oWi8exS7NgMp++p3+pS078xL7aEkKJBfV7Vnbc8oFxX1styMXDjNOaDg==
-X-Received: by 2002:a05:600c:190d:b0:43b:cf9c:6ffc with SMTP id 5b1f17b1804b1-43bd298a59emr40252875e9.12.1741210503722;
-        Wed, 05 Mar 2025 13:35:03 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd42e6bcfsm28935975e9.32.2025.03.05.13.35.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 13:35:02 -0800 (PST)
-Date: Wed, 5 Mar 2025 21:35:01 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, kernel-janitors@vger.kernel.org,
- freedreno@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-arm-msm@vger.kernel.org, Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Archit Taneja <architt@codeaurora.org>, Daniel Vetter <daniel@ffwll.ch>,
- David Airlie <airlied@gmail.com>, Jeykumar Sankaran
- <jsanka@codeaurora.org>, Jordan Crouse <jordan@cosmicpenguin.net>, Marijn
- Suijten <marijn.suijten@somainline.org>, Rob Clark <robdclark@gmail.com>,
- Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>, Vinod Koul
- <vkoul@kernel.org>, cocci@inria.fr, LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC] Clarification for =?UTF-8?B?4oCcdW5kZWZpbmVkIGJlaGF2?=
- =?UTF-8?B?aW91cuKAnT8=?=
-Message-ID: <20250305213501.496ea4bf@pumpkin>
-In-Reply-To: <ed9e65a7-6cdf-4d93-83a8-464b47a4bc1d@stanley.mountain>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
-	<1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
-	<13566308-9a80-e4aa-f64e-978c02b1406d@web.de>
-	<54c30a69-71cf-4582-9086-50eb0d39f273@web.de>
-	<k7un3bjavyt4ogscgc7jn7thfobegaguqqiy7gtypmq6vq7zox@l4bsevbsjrud>
-	<29b32b0d-312d-4848-9e26-9e5e76e527a7@stanley.mountain>
-	<e665514b-5a62-4afb-b267-7c320e4872af@web.de>
-	<4c489b64-4c25-43e3-90d3-37f2f335d665@stanley.mountain>
-	<20250305141732.26b91742@pumpkin>
-	<ed9e65a7-6cdf-4d93-83a8-464b47a4bc1d@stanley.mountain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+        bh=1+VM6UwBdgJ3iABgZCtb00fc1fZZvevDlMU86jLfwI0=;
+        b=V7JnoLL95knnprCqOpc8onoZVnVPeK8hptGKIQlcM/It9fqu42Da+hasu5n0fg6JVh
+         RZWwhZuUgKqPfA/QK7Kkt6m8XFqEfdYivEcTaiTQDb92TqieAr1ROJF5wsxrun/WbqOC
+         CfTY6evNZ3Vd6kp7zUtx1qOqY05JM6Co8dlYziYYZ2n90vBjViDTbKXDAMVLJ89sxJhe
+         Fj6OsJZTNI34gun2Cb4mmZLiH4TTO5FKhGU/SYJj5YzLESaB+cL8UBLgYtx5c1ZoIXNK
+         RmRA7LdxFPB3WdfJZuh5kJM6JSSr1qn9tk6eX2zq19XgwFAUO+1aOoll2lK/8tK4lCBv
+         rbbA==
+X-Forwarded-Encrypted: i=1; AJvYcCVLYZ5tjomigY+MyIgFulpwtTuj7w/wKMD5NHvUqsZyOiaEEGZpe60G26qyYZDAfqs7d+XoM6opRxvh@vger.kernel.org, AJvYcCVmf9PGdd7hXnAu81tokQimsfzsZS7tAdmDdBLz4U6cwWx6wCxzshJIq20yCTkL29b+L5zbrDIyQ+XBPkCl@vger.kernel.org, AJvYcCWvl3EfwRCZWW5xWv+jjfaMb/m9Dk7vUUk2mp/1PQ2XTbjZbgJXX7d5yegjsRpGnY8GArUg9PN8lg9OtZIVI2zhQWI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz872TiZjIzZPlCF84QELIuxibkraCRWHOgyy6J9E8pYS1jjOlg
+	jEfpKG/T1Am4mikNwgiUhKT19uQdog+dCgUoOFTtb+lpKrsR6qNwum0DI4L1FrSbMVqL5SodNrv
+	suq9ioOnq8cxur8S5OlNh64c8avQ=
+X-Gm-Gg: ASbGncuZ8tla6NNa1u9oCrNImikeKbioMfHD3Kra1rVvOT1uOa2v5PKA3UAOgD2vvO6
+	xRvHmsiHZCrAqzPNTwjMjzaRWXWflmBzSMabbC+77gFPYKzcKhVn7mLGX/FMa1eGnhyqLtoNJch
+	mRuomAelsUgDahGcsZCFe96qQ335plOJSfBkfyxFIkCXYBWOiD3s1IjCB5
+X-Google-Smtp-Source: AGHT+IHiGLhWN1mDXvC2JfCSqiQWp9pAGM2/KKGL7ptJ7CuBUz7iJSpQGrDSP6wJIP7Hjldsh6PjvWRCL8BaEoYLm7w=
+X-Received: by 2002:a05:6102:b0c:b0:4c1:99bf:5c00 with SMTP id
+ ada2fe7eead31-4c2e29c51dfmr3316009137.25.1741210540183; Wed, 05 Mar 2025
+ 13:35:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20250305123915.341589-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250305123915.341589-2-prabhakar.mahadev-lad.rj@bp.renesas.com> <20250305-cesspool-headlock-4d28a2a1333e@spud>
+In-Reply-To: <20250305-cesspool-headlock-4d28a2a1333e@spud>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Wed, 5 Mar 2025 21:35:13 +0000
+X-Gm-Features: AQ5f1JpKzWredmmHodR_d4f9QSHGKO8I_i_AKgfKK5QUbeUWw6L30hHLZZNUVrQ
+Message-ID: <CA+V-a8uQTL+SHYqVU_J0th4PT6YPF7q6ypzDu33nS_6onWLoOQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/2] dt-bindings: reset: Document RZ/V2H(P) USB2PHY Control
+To: Conor Dooley <conor@kernel.org>
+Cc: Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 5 Mar 2025 17:30:28 +0300
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
+Hi Conor,
 
-> On Wed, Mar 05, 2025 at 02:17:32PM +0000, David Laight wrote:
-...
-> > And the 'fun' starts because NULL isn't required to use the all-zero
-> > bit pattern.
-> > Regardless of the bit-pattern, things like (void *)(1 - 1) are valid
-> > NULL pointers.
-> > 
-> > Of course, while C allows this, I doubt NULL has ever been other than 0.
-> > (It was 0 on a system I used many years ago where the O/S invalid pointer
-> > was ~0.)  
-> 
-> Kernel style guidelines don't even allow if (p == NULL) so we would be
-> screwed.  :P
+Thank you for the review.
 
-Doesn't matter:
-	if (!p) ...
-	if (p == 0) ...
-	if (p == (void *)0) ...
-	if (p == NULL) ...
-	if (p == (void *)(constant integer expression with value 0)) ...
-and the equivalent assignments all behave the same regardless of the
-bit-pattern use for NULL.
-So:
-	union { long l; void *p; } lpu;
-	lpu.p = 0;
-	return lpu.l;
-Returns ABI (implementation) defined constant value.
-I think the only requirement is that it can never be the address
-of a valid variable.
+On Wed, Mar 5, 2025 at 4:26=E2=80=AFPM Conor Dooley <conor@kernel.org> wrot=
+e:
+>
+> On Wed, Mar 05, 2025 at 12:39:13PM +0000, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add device tree binding document for the Renesas RZ/V2H(P) USB2PHY Cont=
+rol
+> > Device. It mainly controls reset and power down of the USB2.0 PHY (for
+> > both host and function).
+> >
+> > Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > ---
+> >  .../reset/renesas,rzv2h-usb2phy-ctrl.yaml     | 56 +++++++++++++++++++
+> >  1 file changed, 56 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/reset/renesas,rzv=
+2h-usb2phy-ctrl.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2=
+phy-ctrl.yaml b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2p=
+hy-ctrl.yaml
+> > new file mode 100644
+> > index 000000000000..ed156a1d3eb3
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/reset/renesas,rzv2h-usb2phy-ctr=
+l.yaml
+> > @@ -0,0 +1,56 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/reset/renesas,rzv2h-usb2phy-ctrl.ya=
+ml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Renesas RZ/V2H(P) USB2PHY Control
+> > +
+> > +maintainers:
+> > +  - Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> > +
+> > +description:
+> > +  The RZ/V2H(P) USB2PHY Control mainly controls reset and power down o=
+f the
+> > +  USB2.0 PHY.
+> > +
+> > +properties:
+> > +  compatible:
+> > +    const: renesas,r9a09g057-usb2phy-ctrl  # RZ/V2H(P)
+> > +
+> > +  reg:
+> > +    maxItems: 1
+> > +
+> > +  clocks:
+> > +    maxItems: 1
+> > +
+> > +  resets:
+> > +    maxItems: 1
+> > +
+> > +  power-domains:
+> > +    maxItems: 1
+> > +
+> > +  '#reset-cells':
+> > +    const: 0
+> > +
+> > +required:
+> > +  - compatible
+> > +  - reg
+> > +  - clocks
+> > +  - resets
+> > +  - power-domains
+> > +  - '#reset-cells'
+> > +
+> > +additionalProperties: false
+> > +
+> > +examples:
+> > +  - |
+> > +    #include <dt-bindings/clock/renesas,r9a09g057-cpg.h>
+> > +
+> > +    usbphy-ctrl@15830000 {
+>
+> How come your nodename isn't "reset-controller"?
+This is to keep consistency with the other similar IP blocks found on
+Renesas SoCs [0].
 
-	David
+[0] https://elixir.bootlin.com/linux/v6.14-rc5/source/Documentation/devicet=
+ree/bindings/reset/renesas,rzg2l-usbphy-ctrl.yaml#L66
+
+> Otherwise,
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+>
+> > +        compatible =3D "renesas,r9a09g057-usb2phy-ctrl";
+> > +        reg =3D <0x15830000 0x10000>;
+> > +        clocks =3D <&cpg CPG_MOD 0xb6>;
+> > +        resets =3D <&cpg 0xaf>;
+> > +        power-domains =3D <&cpg>;
+> > +        #reset-cells =3D <0>;
+> > +    };
+> > --
+> > 2.43.0
+> >
+
+Cheers,
+Prabhakar
 
