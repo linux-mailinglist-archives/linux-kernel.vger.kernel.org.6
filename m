@@ -1,95 +1,101 @@
-Return-Path: <linux-kernel+bounces-547848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F73FA50E56
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:07:54 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57353A50E58
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:09:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7809A16B8C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:07:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D38D188878E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:09:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8AC2661BB;
-	Wed,  5 Mar 2025 22:07:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1602661B5;
+	Wed,  5 Mar 2025 22:09:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Px18xs17"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ENs11+v0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="PlMt7enS";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="r3oZfNE0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="ezrHqrqk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8291926562D;
-	Wed,  5 Mar 2025 22:07:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C6CB25DAE4
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 22:09:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741212465; cv=none; b=EFVOqFCguxZOdvHfV3xClCKULM+YtcMC8C4k+UQWVOlHPWhzrFcbBy78EmZ3kU5acmXikOYWKKeDvTYY2b7f/ponwQGgrHirwGRjDtJ3yVZQHjj+Ul6kr7X0vRqjMyJfjH23ug7E5RoLlOBuL2vvLZ4ehdFeEptQeI7NrfjOkRw=
+	t=1741212558; cv=none; b=ugCeW/CpBUi0zGSE+g5IMGvS69RAyYachBMFMtBXmDEEq7lfNG6p2MBmueaCyKo9mYmjkY0Wxjj6rBAKFW1RyeEHe+u3VfHCVtdrWhiIXuD5tutRtcr6z5w0+z5JPKt1eDY+cGU+wh4+EXJ9zREj7zau+nBZJVxNzWnfg6F6Zo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741212465; c=relaxed/simple;
-	bh=+BXq03mrlLCePqP/pG5Wur4pQiq/lOWh+H61RCV87xY=;
+	s=arc-20240116; t=1741212558; c=relaxed/simple;
+	bh=VnXSzRwqierpLDy2bFK96O5/d041v+o16uqjV4i8DO8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fJth7hb7wPVrlVIgAsqEUCAOB85LdyygNEEASxlNZ2MfqHY6wea8+kLpqnqwFqLJJrVnySAiapUaR41CbBqmhZlt58P9okg/y8aqWYUCPuwKCnKQ/EDM1YLiQOSGUu3WNBJdTQBTSm/dNislu8MKJl8zEc1Vja/FPeSA1ZT8m3k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Px18xs17; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-390dd35c78dso873980f8f.1;
-        Wed, 05 Mar 2025 14:07:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741212462; x=1741817262; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mJ4RXyP2ObVyUAS7GvxgV7NKCHNu99kLZisTNWnNyX8=;
-        b=Px18xs17jFd4JC2IGZ5+Zqj4CYG93QZQ8o7y9kUEzL/R+8YnUpxt3yXkpRHJP0/jms
-         R/5RDfzQFI9Qyh3AZX/tN6E1/nBxqpvUHyKjk1YZFmf1CBb/MNvsbYsCcd8W+V/USL2L
-         m+mMI+ox/ZXqh4JXqgd2VV3cQQdQSER9BZq4PJ5xXNb3n46XvEiYWf9YOx722gOJ3m+g
-         dxhOTUOI8of8bRQ/Gku3BGiP+mRBcLHAdOcZvxGYUnf/T95+qud5dAuSl4IbgKpqTmyR
-         j96BaNjki0usOpO2tXlBIniBotU5lUugMiH2lV9Hz1nHN7LjeE2NFmG5D7RLMgMxb87U
-         ihRw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741212462; x=1741817262;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mJ4RXyP2ObVyUAS7GvxgV7NKCHNu99kLZisTNWnNyX8=;
-        b=p9Lm+4nbTbeEGzlEl3zB66hzfdN3UZBa3G+ewva7eouGLgboULVVRIRmiiNZUeuOsC
-         V6VrHMj2R0rVm4NhKO9c8/twg6ZBm+BlftTWZeOG+aYgw0qqBZUtVbXC3TnEjUQSDFMN
-         OSFYcnQFr6YuRiWJA7qiw3KwI6AKdAfoS4vDFmHnW0BNgxCSw0JPamU+g3cNdjQeFk2N
-         eNEAqk+VByqg3TDMVXq9N9yMxZxdSrS2InxjW6LDjfm48Ef0Yby+IY1goY9JF9MAhsZg
-         9L5xLOg7S8Xe2wG2ryocSlMeEJmWQ8OwYpCe/ROET+fUviGlxI+X/DbcM7J3/N8aWnGD
-         W01g==
-X-Forwarded-Encrypted: i=1; AJvYcCXMpJorFwfVcTCd+JQEZoTw8rY2mkmt/DOGSUHir3hWKRmTumi3ilCGwRlISQHip+98RiOODQXQIGIdteA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUAdPxvasGCoKHfTHwL3NwXAyg0NI/dLNKCO7E/g7TAjftwbnz
-	jVnOp6rlBn47bCLfseB27II/FDqUJ/JTr//c3FmYP/nglIdkOBOf
-X-Gm-Gg: ASbGncu9AedE/FkBWhli1S0+ic/LONK/mThyO6kmIhWlDEmAD1i7TS76Mse/fDoU0+V
-	YRmWYcae0EcHcojSfNNeI25FlUO+V1xUFB6Ux4vatIeZ8CtvfugJeK9FV7qCE0NGRI8LCL/ULSp
-	fanGDbK/nq8Jtes+Sgn2FTYhye8m5j+Bhrv+qyesOAKddTwj3wlBwkiwcdSGFOc9CTYjj2ORajI
-	iZORjEJQT1g38+EKML58jc934U56TjxqBje+SO9tgtROS6/f2nK1GiVaozm7hluI+0YjP+CX92c
-	FGyKslTSFW+1vRvFhlLycQsSG8RNiPaR0l/4KAlKxZYDslCPagzCYZzCnyaEWtXQlrlTVwx8nmT
-	mSwoGa8I=
-X-Google-Smtp-Source: AGHT+IFOaAhKCQu7aLZUn/BnXQ8EJArByokwuaJFV+rvT5UJHaY5/C85XY3GI5k6+jjciy4ajP43tA==
-X-Received: by 2002:a05:6000:4006:b0:391:23e6:f0ac with SMTP id ffacd0b85a97d-391297db9c0mr853400f8f.11.1741212461562;
-        Wed, 05 Mar 2025 14:07:41 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426d34csm30380965e9.5.2025.03.05.14.07.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 14:07:41 -0800 (PST)
-Date: Wed, 5 Mar 2025 22:07:39 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Bill Wendling <morbo@google.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H . Peter Anvin" <hpa@zytor.com>, Ard Biesheuvel
- <ardb@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers
- <nick.desaulniers+lkml@gmail.com>, Justin Stitt <justinstitt@google.com>,
- linux-crypto@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH] x86/crc32: optimize tail handling for crc32c short
- inputs
-Message-ID: <20250305220739.1cb4b61e@pumpkin>
-In-Reply-To: <20250305191608.GA19889@sol.localdomain>
-References: <20250304213216.108925-1-ebiggers@kernel.org>
-	<20250305142653.751d9840@pumpkin>
-	<20250305191608.GA19889@sol.localdomain>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	 MIME-Version:Content-Type; b=YBDlKNHjFJMyOnulBORxMulg5SYKO9TX+26eEcMTAQp7Sh+OE+RvFJVLRX0LINbQqVBrDAwpRutec+RV9nXeLsa0IEyRcZYqsrS4S3gFtHVUA3uYuVS5seTGV1Elj6YQ8jtfJSBJ4ERjSr5Y22dBECs9zZanpoeFWGh31U+695Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ENs11+v0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=PlMt7enS; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=r3oZfNE0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=ezrHqrqk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id E6CEA21193;
+	Wed,  5 Mar 2025 22:09:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741212554; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vGguOrVceLYb1JojAC+GFNc12NCL31dCGSZ0ijtEB+4=;
+	b=ENs11+v0Oz2qPJvCpCKl9z7PdJ57Ot5jcojvnj8DN/bLoNFlNKNyC0kjE67mFmSWuYU6rn
+	fKHPeJeG+Tn7W3LDwFE/uv6uuptU51lQclp1A+KUAAbATCZcsDFSWUYUTx+Vuw0IUJa+GS
+	Ej8OL+QC55LvjFRIJxaJlUxeS64RDnU=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741212554;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vGguOrVceLYb1JojAC+GFNc12NCL31dCGSZ0ijtEB+4=;
+	b=PlMt7enScz2J8YXsudig9Sw52kwGcaADVVYRxL0WjQsL/6TibPbDyOompzq6sd+6PTeC/P
+	RSJIwB8ZXNJT0FAg==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1741212553; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vGguOrVceLYb1JojAC+GFNc12NCL31dCGSZ0ijtEB+4=;
+	b=r3oZfNE0dBrWs1MYsdlziVCuIBiILVvQPhJdQ8gpyB7hTb1DWK0v2XDL8Y5pnNbaN+8FyZ
+	Fh05exXLFbZ4yi/Nvm2pm4YKArnMKFF0yjm8Eq4P1cXMILOrnqdaUjMC41e0QFXKTjhof4
+	80+LCnsVQ1thJmT46NrSxvXXq8eWT1g=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1741212553;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vGguOrVceLYb1JojAC+GFNc12NCL31dCGSZ0ijtEB+4=;
+	b=ezrHqrqkStkrTy10m5+3X4kHOTNfxTMJmVJKEsRqfpOnPZ6In/G+/lcjq1+njrsAe/NwSf
+	F4LOMrgvYjkyCJDg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 310D61366F;
+	Wed,  5 Mar 2025 22:09:11 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id xtD6NYfLyGcoXQAAD6G6ig
+	(envelope-from <ddiss@suse.de>); Wed, 05 Mar 2025 22:09:11 +0000
+Date: Thu, 6 Mar 2025 09:09:06 +1100
+From: David Disseldorp <ddiss@suse.de>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Christian Brauner <brauner@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] initramfs_test: mark testcases as __refdata
+Message-ID: <20250306090906.06efe934.ddiss@suse.de>
+In-Reply-To: <20250305172707.3418080-1-arnd@kernel.org>
+References: <20250305172707.3418080-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,48 +104,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCPT_COUNT_THREE(0.00)[4];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	URIBL_BLOCKED(0.00)[suse.de:mid,arndb.de:email,imap1.dmz-prg2.suse.org:helo];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid]
+X-Spam-Score: -3.30
+X-Spam-Flag: NO
 
-On Wed, 5 Mar 2025 11:16:08 -0800
-Eric Biggers <ebiggers@kernel.org> wrote:
+Hi Arnd, 
 
-> On Wed, Mar 05, 2025 at 02:26:53PM +0000, David Laight wrote:
-> > On Tue,  4 Mar 2025 13:32:16 -0800
-> > Eric Biggers <ebiggers@kernel.org> wrote:
-> >   
-> > > From: Eric Biggers <ebiggers@google.com>
-> > > 
-> > > For handling the 0 <= len < sizeof(unsigned long) bytes left at the end,
-> > > do a 4-2-1 step-down instead of a byte-at-a-time loop.  This allows
-> > > taking advantage of wider CRC instructions.  Note that crc32c-3way.S
-> > > already uses this same optimization too.  
-> > 
-> > An alternative is to add extra zero bytes at the start of the buffer.
-> > They don't affect the crc and just need the first 8 bytes shifted left.
-> > 
-> > I think any non-zero 'crc-in' just needs to be xor'ed over the first
-> > 4 actual data bytes.
-> > (It's over 40 years since I did the maths of CRC.)
-...
-> > 	David  
+Thanks for the patch. A fix for this was already submitted via:
+https://lore.kernel.org/linux-fsdevel/20250305130955.24658-2-ddiss@suse.de/T/#u
+
+On Wed,  5 Mar 2025 18:27:01 +0100, Arnd Bergmann wrote:
+
+> From: Arnd Bergmann <arnd@arndb.de>
 > 
-> Sure, but that only works when len >= sizeof(unsigned long).  Also, the initial
-> CRC sometimes has to be divided between two unsigned longs.
+> The testcase calls an __init function, so it must have a corresponding
+> annotation:
+> 
+> WARNING: modpost: vmlinux: section mismatch in reference: initramfs_test_cases+0x0 (section: .data) -> initramfs_test_extract (section: .init.text)
+> 
+> As with other kunit tests, using __refdata suppresses the warning without
+> annotating the structure itself as __initdata.
+> 
+> Fixes: b6736cfccb58 ("initramfs_test: kunit tests for initramfs unpacking")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  init/initramfs_test.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/init/initramfs_test.c b/init/initramfs_test.c
+> index 6231fe012583..3539891ae081 100644
+> --- a/init/initramfs_test.c
+> +++ b/init/initramfs_test.c
+> @@ -387,7 +387,7 @@ static void __init initramfs_test_many(struct kunit *test)
+>   * The kunit_case/_suite struct cannot be marked as __initdata as this will be
+>   * used in debugfs to retrieve results after test has run.
+>   */
+> -static struct kunit_case initramfs_test_cases[] = {
+> +static struct kunit_case initramfs_test_cases[] __refdata = {
+>  	KUNIT_CASE(initramfs_test_extract),
+>  	KUNIT_CASE(initramfs_test_fname_overrun),
+>  	KUNIT_CASE(initramfs_test_data),
 
-Yes, I was thinking that might make it a bit more tricky.
-I need to find some spare time :-)
-
-I wasn't taught anything about using non-carry multiplies either.
-And I can't remember the relevant 'number field' stuff either.
-But (with no-carry maths) I think you have:
-	crc(n + 1) = (crc(n) + data(n)) * poly
-If data(n+1) and data(n+2) are zero (handled elsewhere) you have:
-	crc(n + 3) = (((crc(n) + data(n)) * poly) * poly) * poly
-I think that because it is a field this is the same as
-	crc(n + 3) = (crc(n) + data(n)) * (poly * poly * poly)
-which is just a different crc polynomial.
-If true your '3-way' cpu doesn't have to use big blocks.
-
-I guess I'm missing something.
-
-	David
 
