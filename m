@@ -1,92 +1,124 @@
-Return-Path: <linux-kernel+bounces-547210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547211-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F2DBA50437
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:02 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08F5A5043E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:11:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 61C42174B0D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:10:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F7A189702F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0962E2512D4;
-	Wed,  5 Mar 2025 16:10:12 +0000 (UTC)
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1383A250C0B;
+	Wed,  5 Mar 2025 16:10:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZivWpuY3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A57E24FC1A;
-	Wed,  5 Mar 2025 16:10:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6461A24A07A;
+	Wed,  5 Mar 2025 16:10:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741191011; cv=none; b=S6zpv8idVzaLEEkSgxV3jK8K+V54+XgqMfdXVGkf/1Dzif8GKSa8UmHlBItEODO+cfHCrIiuXaurR5XAlW+l8cRBkMqtZ/FF04fmuTedei+y1BI+gIqfyJg8N4U5KJKpo76rkWW25gQjLXscaN6t/YcIWvOItrt09kXmzho85XU=
+	t=1741191034; cv=none; b=aKngFtcsjFAAs5d5vhHEUpzzF5VFY44G8DomPg2QtnXhGp4oPh34rWRhXXzVNHCZ/iAf+4fVaFaM3Wi/jlKaoj2dMKmyQGRZJSOZgabsU36iGzJUnVX0Qn510fBmC/kqVA4M4qB+/zsoj7nWlK8+vE+V4NH2+63iEi4xzgojf50=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741191011; c=relaxed/simple;
-	bh=tQxIso6zdyCPRW3ea4lNOub/x+vWYMWUlcYeaXspf/g=;
+	s=arc-20240116; t=1741191034; c=relaxed/simple;
+	bh=NuzZ1W9S6mA+Pg9tyI3RTRMxgpOiMuBenFty3J3Rgy0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aLqYj2HgEw/U94wPt9Od1gNoLf0rEHlaBJmjcxwgnEoLQ2TcKvOW1ZE24hWHk8SSkluplfj+rg9daINx5Y7dH7dFbZyU8mtzHkKpSFIfYrzq0961Ln/LoMYwMdbuz9TPhc3wH5On0nRfruAO5CEI+7dAGmbE1PilHNnuKvtMovI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2234bec7192so129731115ad.2;
-        Wed, 05 Mar 2025 08:10:09 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741191009; x=1741795809;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rmm65+uA+Kw6OHf7ipiynKZVxICJEHzaO0o95amWfmM=;
-        b=nqaq/hQ5jbkva+iKterslzZiUJWOUjgEx64UU2IdLqD22FNxQ0EK1Y4PYb755l4FFN
-         Z39u72l09Kii6QjShOQcNaDFQe/m5T78abnKkkzPrHrr0HlZ9zwsswzw0njL53Mq+FSa
-         3nn0OFfZ2C3bcS2h0AGYo2By6MEoI86LB7v33N+uMvAONol809CdR+8OmjpV2RdrgG5m
-         z+OQ+jxb5EHXqfOEG1lsughLpFl05I3dw+cw5dv2NR53Gr177XXprDGPkeHmWsTEc4+w
-         Q5bBXovkouaV3Y0inLak431n+jMpKaVsNnt8KQf+i6ltx4VbsnV+kwioaZimyW7/woOX
-         pyRg==
-X-Forwarded-Encrypted: i=1; AJvYcCUqV6MWfqnVLVGKlMCbZ5N9MH8hiwDrpYL/beY2DK45mKfQj825B9urD4bYQg9b9AZhOCEkFU5yAfO5vUFJRP8=@vger.kernel.org, AJvYcCWSIGljxjL6Q4RpSnw7JHmoLF5ds/sao1bRxp3Qk5nz3tUZSPjYZ5JoIn54heV5rojBDaqq3dsCF4xc@vger.kernel.org, AJvYcCXpcJ95hLp7uRHXAcm/qW2wK6WVqiIfKBZ+O7NA1Qppe0K9kHfpsuhl5SLff4M6xeYN3x8rUP/6FaaLMiCa@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+8on9RhDHU95A77NCTgmFMfJurvCiJ9CR2FxoaZyHG9ksvzOH
-	qe4veoD9g8G+JV97zwNoxV2e4AMSuQcCjAviIkJ7vXiU1dUk3eG6
-X-Gm-Gg: ASbGncvlpw2oYhyrH7ddnIX6pcPMPWd1Tp0Ijv789KQ10chxsZvPEAgT4Sw/QiovXJ5
-	4cuVOto1nfDPAHf8x128LqVXNyFhpW9LfPWEbdwEb+BaGOB0u2IFqx+HyhMhYcOELncTYwnrH4T
-	8qhInUvaF17Tk660KiWmqDFw9S6j0N3GWGbLebHO6cqp1cmSRYTEQgO3QNtJ0HO7TdDoKZ6D/jY
-	Lnjq6ISOf3E2DGOzH0FSE9UtGBUlYUjLFBsV0aiRnRvhmdYInTiIw2pzmh5STixOMEo84Vd1K0Y
-	6N5q17ywWPblHUlVt66QwKs7yHj9UnVc3a5pkeJQF5896k8g8Bj3EqVMsFQG7a+/02OMEr30dk1
-	pcvE=
-X-Google-Smtp-Source: AGHT+IHYzu2Hg17Iv+FAPzzj+vp4OtCZufp8iYDa3P2grWwais5vrBs1hTqGVRTHFIBVqoc2TiyA+g==
-X-Received: by 2002:a17:903:19c7:b0:223:3b76:4e07 with SMTP id d9443c01a7336-223f1c66784mr69929345ad.4.1741191009308;
-        Wed, 05 Mar 2025 08:10:09 -0800 (PST)
-Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-223501d2901sm114816735ad.30.2025.03.05.08.10.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 08:10:08 -0800 (PST)
-Date: Thu, 6 Mar 2025 01:10:07 +0900
-From: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Jingoo Han <jingoohan1@gmail.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Vidya Sagar <vidyas@nvidia.com>, Frank Li <Frank.Li@nxp.com>,
-	Niklas Cassel <cassel@kernel.org>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] PCI: dwc: ep: Return -ENOMEM for allocation failures
-Message-ID: <20250305161007.GI847772@rocinante>
-References: <36dcb6fc-f292-4dd5-bd45-a8c6f9dc3df7@stanley.mountain>
+	 Content-Type:Content-Disposition:In-Reply-To; b=HGRIMQMsqfzCV/1Ose137SC5chhcwm3DUyAzQAkPnziFsNMaRU6SkilHs7/Fxgnf6aUJdOyxQh+GOHc73ptnQZSnBjnRnEZ8znO2LYeEISNvga0Vh4z08XFlZqLDAENhdaP3Xj73b7liQJn2+qMsKTKBxKNIWoaMGA902oonx4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZivWpuY3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3ADC4CED1;
+	Wed,  5 Mar 2025 16:10:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741191033;
+	bh=NuzZ1W9S6mA+Pg9tyI3RTRMxgpOiMuBenFty3J3Rgy0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ZivWpuY3laRUWhZhuByMXRUc0TlOvrWH6dbQtLBoUUzxX3y1vXxgcu5EcPnk28XS3
+	 T/VeBVjXXeSERqjnC9t9XjOFinEqgQDbwSO1m+6x3ft+ZomOY87LxUHneFm/LcPpst
+	 luumKC2HBXDUKd5MMbWjMj0lBAspP3PMl7N7/YVOT1wDTWihzajfExwmKwJAX+LVNR
+	 OdX24Tvo+BKFl0/u7jAcqrmEtArZMiuZd3l1jc1ewagg9kMwYv2AQz7N1ta6b1t9y4
+	 Nuqv8y4iGKh0bbt+QzcFRG+3NJLVhgmjAP7UxP7MKovwFph+jzVdQNGCqKkEsz0gOd
+	 0nwZVkRU0p5pw==
+Date: Wed, 5 Mar 2025 10:10:32 -0600
+From: Rob Herring <robh@kernel.org>
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: Lukasz Luba <lukasz.luba@arm.com>, linux-pm@vger.kernel.org,
+	devicetree@vger.kernel.org, Laxman Dewangan <ldewangan@nvidia.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH v3 1/2] dt-bindings: thermal: generic-adc: Add optional
+ io-channel-cells property
+Message-ID: <20250305161032.GA2068051-robh@kernel.org>
+References: <20250303122151.91557-1-clamor95@gmail.com>
+ <20250303122151.91557-2-clamor95@gmail.com>
+ <08f305fa-0dbe-4ed9-bec5-cf8b5bbecfdb@arm.com>
+ <CAPVz0n0G+0_f3MONV0Y-tYAb1KOwkUNiY2Pms8CZ6ZGtxRmFFA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <36dcb6fc-f292-4dd5-bd45-a8c6f9dc3df7@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAPVz0n0G+0_f3MONV0Y-tYAb1KOwkUNiY2Pms8CZ6ZGtxRmFFA@mail.gmail.com>
 
-Hello,
+On Wed, Mar 05, 2025 at 12:03:20PM +0200, Svyatoslav Ryhel wrote:
+> ср, 5 бер. 2025 р. о 12:00 Lukasz Luba <lukasz.luba@arm.com> пише:
+> >
+> >
+> >
+> > On 3/3/25 12:21, Svyatoslav Ryhel wrote:
+> > > This implements a mechanism to derive temperature values from an existing ADC IIO
+> > > channel, effectively creating a temperature IIO channel. This approach avoids adding
+> > > a new sensor and its associated conversion table, while providing IIO-based temperature
+> > > data for devices that may not utilize hwmon.
+> > >
+> > > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > > ---
+> > >   .../devicetree/bindings/thermal/generic-adc-thermal.yaml      | 4 ++++
+> > >   1 file changed, 4 insertions(+)
+> > >
+> > > diff --git a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
+> > > index 12e6418dc24d..4bc2cff0593c 100644
+> > > --- a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
+> > > +++ b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
+> > > @@ -30,6 +30,9 @@ properties:
+> > >     io-channel-names:
+> > >       const: sensor-channel
+> > >
+> > > +  '#io-channel-cells':
+> > > +    const: 1
+> > > +
+> > >     temperature-lookup-table:
+> > >       description: |
+> > >         Lookup table to map the relation between ADC value and temperature.
+> > > @@ -60,6 +63,7 @@ examples:
+> > >           #thermal-sensor-cells = <0>;
+> > >           io-channels = <&ads1015 1>;
+> > >           io-channel-names = "sensor-channel";
+> > > +        #io-channel-cells = <1>;
+> > >           temperature-lookup-table = <
+> > >                 (-40000) 2578
+> > >                 (-39000) 2577
+> >
+> > Do we really need this change in the DT?
+> > Won't the code in the thermal driver that registers a new iio device
+> > would just be enough?
+> >
+> > I agree with Rob that it looks odd.
+> 
+> Building tree will complain on missing cells property if you try to
+> bind it. It is not in required category anyway.
 
-> If the bitmap allocations fail then dw_pcie_ep_init_registers() currently
-> returns success.  Return -ENOMEM instead.
+Sorry, I don't follow nor see why you need the property if there are no 
+DT consumers.
 
-Applied to controller/dwc, thank you!
-
-	Krzysztof
+Rob
 
