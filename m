@@ -1,176 +1,126 @@
-Return-Path: <linux-kernel+bounces-546727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAFE2A4FE13
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:56:30 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01A1DA4FE11
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:55:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3A0E1893336
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:56:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309E116DD65
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30052417D8;
-	Wed,  5 Mar 2025 11:56:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="G2uvU2Iu"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0725D1514CC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:56:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E99F8241C89;
+	Wed,  5 Mar 2025 11:55:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C9A3233737;
+	Wed,  5 Mar 2025 11:55:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741175784; cv=none; b=Taz5r9LNpQHm6008wIoBZW3cm7Kxp7mBSdy6N1WfwbKN9PketUHTiCndxz2bKDLUeZpbnHYxSUtgl+jwUT2Hi2OBCz7Nbo3eq18BL09+btwej8rn/5Nk0pvs6ouwm6toJIsYXKKiwoI5ycJR1HJH2E/6Zyg3qGjrko8EWx98p6c=
+	t=1741175742; cv=none; b=gutfI/hBNb185qywMqfKYmigoeQA6Rma0OYz3KP4epwzHieJocLWqfmEgYSXfjAACwf7It1BZvdRUacj4nOHfr0In51EFahUAlZQ7fptWUAhxalIPaR5bR5L31I+FqGa7IzN4aQuGA86AbdkQjtAAseGzamMSTHVkvfH7hat+CM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741175784; c=relaxed/simple;
-	bh=6lKvxJH7ZidTQV0AqU2uRRbgEO2WQjLxqXAZwoXwbAw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=ft0ASuh4D1bliv71OHJBbxJLwFYFHgC+eg45vO80aub/HXCOEi//u1AlgHk/TFgvP5kd1cN4F3OQXvOMGifsxWAMCg5YgZLNkLFRafvq0LiHSrm+4O6/3KvGQBT48RPoTDhLhVUE/xnUp1HwzmN7m7ro0zTNFoRxylBPeoFVog0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=G2uvU2Iu reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=ZBolk1LZXgoT4MAlU82C+Bay0+aggXY4hc9EohCPN9M=; b=G
-	2uvU2IuMkZAsFfnko47wrBISBuIppDnHBIqVxqvrUyf4OJ/P7WZAf0QXPWfM+H/T
-	lS0uk6kbqg8KZBvE+cV5BEGPECZ6fd+KxQa5quaB6KkWDNjZo+Haqng7MNVWq/fQ
-	04ZJI1HgNk9rXDZHpioo2YeUDWxHVZxliMwzUk3Xug=
-Received: from andyshrk$163.com ( [58.22.7.114] ) by
- ajax-webmail-wmsvr-40-118 (Coremail) ; Wed, 5 Mar 2025 19:55:19 +0800 (CST)
-Date: Wed, 5 Mar 2025 19:55:19 +0800 (CST)
-From: "Andy Yan" <andyshrk@163.com>
-To: "Maxime Ripard" <mripard@kernel.org>
-Cc: "Maarten Lankhorst" <maarten.lankhorst@linux.intel.com>,
-	"Thomas Zimmermann" <tzimmermann@suse.de>,
-	"David Airlie" <airlied@gmail.com>,
-	"Simona Vetter" <simona@ffwll.ch>,
-	"Andrzej Hajda" <andrzej.hajda@intel.com>,
-	"Neil Armstrong" <neil.armstrong@linaro.org>,
-	"Robert Foss" <rfoss@kernel.org>,
-	"Laurent Pinchart" <Laurent.pinchart@ideasonboard.com>,
-	"Jonas Karlman" <jonas@kwiboo.se>,
-	"Jernej Skrabec" <jernej.skrabec@gmail.com>,
-	"Douglas Anderson" <dianders@chromium.org>,
-	"Herve Codina" <herve.codina@bootlin.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	"Dmitry Baryshkov" <dmitry.baryshkov@linaro.org>,
-	"Simona Vetter" <simona.vetter@ffwll.ch>
-Subject: Re:[PATCH v5 04/16] drm/atomic: Introduce helper to lookup
- connector by encoder
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
-References: <20250304-bridge-connector-v5-0-aacf461d2157@kernel.org>
- <20250304-bridge-connector-v5-4-aacf461d2157@kernel.org>
-X-NTES-SC: AL_Qu2fA/2cuk8q7yKZbOkfmkcVgOw9UcO5v/Qk3oZXOJF8jDDp2ycwUUJSDXLaweO0FQ+OmgmGXTtC9/R7f4VTVaQN9am3C55vGTWoPemjvbENWw==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1741175742; c=relaxed/simple;
+	bh=n0ErFNxQMLvccEYJKdGex8SoK60liI0SddSQ9NOfhCE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J7GvLS+9XS600G5x5xvMF2r42WhnBhU5+9lnZJ16I3HAH85kX02QWuSLDoCJkrckUPXqeshnr1XmruTN1tTX9eF7Gvp4hK1SMlHE6qHjE0r+4COVtSyKXlAMMzBXktmmS1fc/e8bmxRXet+kQnyaExna+yuPzfiSKGOkxtt35Uk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id AE6E3FEC;
+	Wed,  5 Mar 2025 03:55:53 -0800 (PST)
+Received: from donnerap.manchester.arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9AC353F66E;
+	Wed,  5 Mar 2025 03:55:38 -0800 (PST)
+Date: Wed, 5 Mar 2025 11:55:35 +0000
+From: Andre Przywara <andre.przywara@arm.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej
+ Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>,
+ devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-sunxi@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 06/15] irqchip/sunxi-nmi: Support Allwinner A523 NMI
+ controller
+Message-ID: <20250305115535.619ba087@donnerap.manchester.arm.com>
+In-Reply-To: <87frjr6i1j.ffs@tglx>
+References: <20250304222309.29385-1-andre.przywara@arm.com>
+	<20250304222309.29385-7-andre.przywara@arm.com>
+	<87frjr6i1j.ffs@tglx>
+Organization: ARM
+X-Mailer: Claws Mail 3.18.0 (GTK+ 2.24.32; aarch64-unknown-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <5180089f.a640.19566290538.Coremail.andyshrk@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:digvCgC3f56nO8hnSeZ2AA--.5945W
-X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBkAoHXmfIOAs9HQABs+
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-CgpIaSBNYXhpbWUsCgpBdCAyMDI1LTAzLTA0IDE5OjEwOjQ3LCAiTWF4aW1lIFJpcGFyZCIgPG1y
-aXBhcmRAa2VybmVsLm9yZz4gd3JvdGU6Cj5XaXRoIHRoZSBicmlkZ2VzIHN3aXRjaGluZyBvdmVy
-IHRvIGRybV9icmlkZ2VfY29ubmVjdG9yLCB0aGUgZGlyZWN0Cj5hc3NvY2lhdGlvbiBiZXR3ZWVu
-IGEgYnJpZGdlIGRyaXZlciBhbmQgaXRzIGNvbm5lY3RvciB3YXMgbG9zdC4KPgo+VGhpcyBpcyBt
-aXRpZ2F0ZWQgZm9yIGF0b21pYyBicmlkZ2UgZHJpdmVycyBieSB0aGUgZmFjdCB5b3UgY2FuIGFj
-Y2Vzcwo+dGhlIGVuY29kZXIsIGFuZCB0aGVuIGNhbGwgZHJtX2F0b21pY19nZXRfb2xkX2Nvbm5l
-Y3Rvcl9mb3JfZW5jb2RlcigpIG9yCj5kcm1fYXRvbWljX2dldF9uZXdfY29ubmVjdG9yX2Zvcl9l
-bmNvZGVyKCkgd2l0aCBkcm1fYXRvbWljX3N0YXRlLgo+Cj5UaGlzIHdhcyBhbHNvIG1hZGUgZWFz
-aWVyIGJ5IHByb3ZpZGluZyBkcm1fYXRvbWljX3N0YXRlIGRpcmVjdGx5IHRvIGFsbAo+YXRvbWlj
-IGhvb2tzIGJyaWRnZXMgY2FuIGltcGxlbWVudC4KPgo+SG93ZXZlciwgYnJpZGdlIGRyaXZlcnMg
-ZG9uJ3QgaGF2ZSBhIHdheSB0byBhY2Nlc3MgZHJtX2F0b21pY19zdGF0ZQo+b3V0c2lkZSBvZiB0
-aGUgbW9kZXNldCBwYXRoLCBsaWtlIGZyb20gdGhlIGhvdHBsdWcgaW50ZXJydXB0IHBhdGggb3Ig
-YW55Cj5pbnRlcnJ1cHQgaGFuZGxlci4KPgo+TGV0J3MgaW50cm9kdWNlIGEgZnVuY3Rpb24gdG8g
-cmV0cmlldmUgdGhlIGNvbm5lY3RvciBjdXJyZW50bHkgYXNzaWduZWQKPnRvIGFuIGVuY29kZXIs
-IHdpdGhvdXQgdXNpbmcgZHJtX2F0b21pY19zdGF0ZSwgdG8gbWFrZSB0aGVzZSBkcml2ZXJzJwo+
-bGlmZSBlYXNpZXIuCj4KPlJldmlld2VkLWJ5OiBEbWl0cnkgQmFyeXNoa292IDxkbWl0cnkuYmFy
-eXNoa292QGxpbmFyby5vcmc+Cj5Dby1kZXZlbG9wZWQtYnk6IFNpbW9uYSBWZXR0ZXIgPHNpbW9u
-YS52ZXR0ZXJAZmZ3bGwuY2g+Cj5TaWduZWQtb2ZmLWJ5OiBNYXhpbWUgUmlwYXJkIDxtcmlwYXJk
-QGtlcm5lbC5vcmc+Cj4tLS0KPiBkcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jIHwgNDUgKysr
-KysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysrKysKPiBpbmNsdWRlL2RybS9k
-cm1fYXRvbWljLmggICAgIHwgIDMgKysrCj4gMiBmaWxlcyBjaGFuZ2VkLCA0OCBpbnNlcnRpb25z
-KCspCj4KPmRpZmYgLS1naXQgYS9kcml2ZXJzL2dwdS9kcm0vZHJtX2F0b21pYy5jIGIvZHJpdmVy
-cy9ncHUvZHJtL2RybV9hdG9taWMuYwo+aW5kZXggOWVhMjYxMTc3MGY0M2NlN2NjYmE0MTA0MDZk
-NWYyYzUyOGFhYjAyMi4uYjkyNmIxMzI1OTBlNzhmOGQ0MWQ0OGViNGRhNGJjY2YxNzBlZTIzNiAx
-MDA2NDQKPi0tLSBhL2RyaXZlcnMvZ3B1L2RybS9kcm1fYXRvbWljLmMKPisrKyBiL2RyaXZlcnMv
-Z3B1L2RybS9kcm1fYXRvbWljLmMKPkBAIC05ODUsMTAgKzk4NSw1NSBAQCBkcm1fYXRvbWljX2dl
-dF9uZXdfY29ubmVjdG9yX2Zvcl9lbmNvZGVyKGNvbnN0IHN0cnVjdCBkcm1fYXRvbWljX3N0YXRl
-ICpzdGF0ZSwKPiAKPiAJcmV0dXJuIE5VTEw7Cj4gfQo+IEVYUE9SVF9TWU1CT0woZHJtX2F0b21p
-Y19nZXRfbmV3X2Nvbm5lY3Rvcl9mb3JfZW5jb2Rlcik7Cj4gCj4rLyoqCj4rICogZHJtX2F0b21p
-Y19nZXRfY29ubmVjdG9yX2Zvcl9lbmNvZGVyIC0gR2V0IGNvbm5lY3RvciBjdXJyZW50bHkgYXNz
-aWduZWQgdG8gYW4gZW5jb2Rlcgo+KyAqIEBlbmNvZGVyOiBUaGUgZW5jb2RlciB0byBmaW5kIHRo
-ZSBjb25uZWN0b3Igb2YKPisgKiBAY3R4OiBNb2Rlc2V0IGxvY2tpbmcgY29udGV4dAo+KyAqCj4r
-ICogVGhpcyBmdW5jdGlvbiBmaW5kcyBhbmQgcmV0dXJucyB0aGUgY29ubmVjdG9yIGN1cnJlbnRs
-eSBhc3NpZ25lZCB0bwo+KyAqIGFuIEBlbmNvZGVyLgo+KyAqCj4rICogUmV0dXJuczoKPisgKiBU
-aGUgY29ubmVjdG9yIGNvbm5lY3RlZCB0byBAZW5jb2Rlciwgb3IgYW4gZXJyb3IgcG9pbnRlciBv
-dGhlcndpc2UuCj4rICogV2hlbiB0aGUgZXJyb3IgaXMgRURFQURMSywgYSBkZWFkbG9jayBoYXMg
-YmVlbiBkZXRlY3RlZCBhbmQgdGhlCj4rICogc2VxdWVuY2UgbXVzdCBiZSByZXN0YXJ0ZWQuCj4r
-ICovCj4rc3RydWN0IGRybV9jb25uZWN0b3IgKgo+K2RybV9hdG9taWNfZ2V0X2Nvbm5lY3Rvcl9m
-b3JfZW5jb2Rlcihjb25zdCBzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIsCj4rCQkJCSAgICAg
-c3RydWN0IGRybV9tb2Rlc2V0X2FjcXVpcmVfY3R4ICpjdHgpCj4rewo+KwlzdHJ1Y3QgZHJtX2Nv
-bm5lY3Rvcl9saXN0X2l0ZXIgY29ubl9pdGVyOwo+KwlzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqb3V0
-X2Nvbm5lY3RvciA9IEVSUl9QVFIoLUVJTlZBTCk7Cj4rCXN0cnVjdCBkcm1fY29ubmVjdG9yICpj
-b25uZWN0b3I7Cj4rCXN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBlbmNvZGVyLT5kZXY7Cj4rCWlu
-dCByZXQ7Cj4rCj4rCXJldCA9IGRybV9tb2Rlc2V0X2xvY2soJmRldi0+bW9kZV9jb25maWcuY29u
-bmVjdGlvbl9tdXRleCwgY3R4KTsKPisJaWYgKHJldCkKPisJCXJldHVybiBFUlJfUFRSKHJldCk7
-CgpJdCBzZWVtcyB0aGF0IHRoaXMgd2lsbCBjYXVzZSBhIGRlYWRsb2NrIHdoZW4gY2FsbGVkIGZy
-b20gYSAgaG90cGx1ZyBoYW5kbGluZyBwYXRoLApJIGhhdmUgYSBXSVAgRFAgZGl2ZXJbMF0sICB3
-aGljaCBzdWdnZXN0ZWQgYnkgRG1pdHJ5IHRvIHVzZSB0aGlzIEFQSSBmcm9tIGEgCiZkcm1fYnJp
-ZGdlX2Z1bmNzLmRldGVjdCBjYWxsYmFjayB0byBnZXQgdGhlIGNvbm5lY3RvciwgIGFzIGRldGVj
-dCBpcyBjYWxsZWQgYnkgZHJtX2hlbHBlcl9wcm9iZV9kZXRlY3QsCndoaWNoIHdpbGwgaG9sZCBj
-b25uZWN0aW9uX211dGV4IGZpcnN0LCBzbyB0aGUgZGVha2xvY2sgaGFwcGVuczoKCgpkcm1faGVs
-cGVyX3Byb2JlX2RldGVjdChzdHJ1Y3QgZHJtX2Nvbm5lY3RvciAqY29ubmVjdG9yLAogICAgICAg
-ICAgICAgICAgICAgICAgICBzdHJ1Y3QgZHJtX21vZGVzZXRfYWNxdWlyZV9jdHggKmN0eCwKICAg
-ICAgICAgICAgICAgICAgICAgICAgYm9vbCBmb3JjZSkKewogICAgICAgIGNvbnN0IHN0cnVjdCBk
-cm1fY29ubmVjdG9yX2hlbHBlcl9mdW5jcyAqZnVuY3MgPSBjb25uZWN0b3ItPmhlbHBlcl9wcml2
-YXRlOwogICAgICAgIHN0cnVjdCBkcm1fZGV2aWNlICpkZXYgPSBjb25uZWN0b3ItPmRldjsKICAg
-ICAgICBpbnQgcmV0OwoKICAgICAgICBpZiAoIWN0eCkKICAgICAgICAgICAgICAgIHJldHVybiBk
-cm1faGVscGVyX3Byb2JlX2RldGVjdF9jdHgoY29ubmVjdG9yLCBmb3JjZSk7CgogICAgICAgIHJl
-dCA9IGRybV9tb2Rlc2V0X2xvY2soJmRldi0+bW9kZV9jb25maWcuY29ubmVjdGlvbl9tdXRleCwg
-Y3R4KTsKICAgICAgICBpZiAocmV0KQogICAgICAgICAgICAgICAgcmV0dXJuIHJldDsKCiAgICAg
-ICAgaWYgKGZ1bmNzLT5kZXRlY3RfY3R4KQogICAgICAgICAgICAgICAgcmV0ID0gZnVuY3MtPmRl
-dGVjdF9jdHgoY29ubmVjdG9yLCBjdHgsIGZvcmNlKTsKICAgICAgICBlbHNlIGlmIChjb25uZWN0
-b3ItPmZ1bmNzLT5kZXRlY3QpCiAgICAgICAgICAgICAgICByZXQgPSBjb25uZWN0b3ItPmZ1bmNz
-LT5kZXRlY3QoY29ubmVjdG9yLCBmb3JjZSk7CiAgICAgICAgZWxzZQogICAgICAgICAgICAgICAg
-cmV0ID0gY29ubmVjdG9yX3N0YXR1c19jb25uZWN0ZWQ7CgogICAgICAgIGlmIChyZXQgIT0gY29u
-bmVjdG9yLT5zdGF0dXMpCiAgICAgICAgICAgICAgICBjb25uZWN0b3ItPmVwb2NoX2NvdW50ZXIg
-Kz0gMTsKClNvIEkgd29uZGVyIGNhbiB3ZSBsZXQgZHJtX2JyaWRnZV9mdW5jcy5kZXRlY3QgcGFz
-cyBhIGNvbm5lY3RvciBmb3IgdGhpcyBjYXNlID8KCgoKWzBdaHR0cHM6Ly9sb3JlLmtlcm5lbC5v
-cmcvbGludXgtcm9ja2NoaXAvMDQ3RUVDRkMtN0U1NS00NEVDLTg5NkYtMTNGRTA0MzMzRTREQGdt
-YWlsLmNvbS9ULyNtMjViYzUzYjc5ZjVjYzdiZGRmY2I3YWFlNTY1NmY2OGRmMzk2ZjA5NAo+Kwo+
-Kwlkcm1fY29ubmVjdG9yX2xpc3RfaXRlcl9iZWdpbihkZXYsICZjb25uX2l0ZXIpOwo+Kwlkcm1f
-Zm9yX2VhY2hfY29ubmVjdG9yX2l0ZXIoY29ubmVjdG9yLCAmY29ubl9pdGVyKSB7Cj4rCQlpZiAo
-IWNvbm5lY3Rvci0+c3RhdGUpCj4rCQkJY29udGludWU7Cj4rCj4rCQlpZiAoZW5jb2RlciA9PSBj
-b25uZWN0b3ItPnN0YXRlLT5iZXN0X2VuY29kZXIpIHsKPisJCQlvdXRfY29ubmVjdG9yID0gY29u
-bmVjdG9yOwo+KwkJCWJyZWFrOwo+KwkJfQo+Kwl9Cj4rCWRybV9jb25uZWN0b3JfbGlzdF9pdGVy
-X2VuZCgmY29ubl9pdGVyKTsKPisJZHJtX21vZGVzZXRfdW5sb2NrKCZkZXYtPm1vZGVfY29uZmln
-LmNvbm5lY3Rpb25fbXV0ZXgpOwo+Kwo+KwlyZXR1cm4gb3V0X2Nvbm5lY3RvcjsKPit9Cj4rRVhQ
-T1JUX1NZTUJPTChkcm1fYXRvbWljX2dldF9jb25uZWN0b3JfZm9yX2VuY29kZXIpOwo+Kwo+Kwo+
-IC8qKgo+ICAqIGRybV9hdG9taWNfZ2V0X29sZF9jcnRjX2Zvcl9lbmNvZGVyIC0gR2V0IG9sZCBj
-cnRjIGZvciBhbiBlbmNvZGVyCj4gICogQHN0YXRlOiBBdG9taWMgc3RhdGUKPiAgKiBAZW5jb2Rl
-cjogVGhlIGVuY29kZXIgdG8gZmV0Y2ggdGhlIGNydGMgc3RhdGUgZm9yCj4gICoKPmRpZmYgLS1n
-aXQgYS9pbmNsdWRlL2RybS9kcm1fYXRvbWljLmggYi9pbmNsdWRlL2RybS9kcm1fYXRvbWljLmgK
-PmluZGV4IDRjNjczZjA2OThmZWY2YjYwZjc3ZGI5ODAzNzhkNWU4OGUwZTI1MGUuLjM4NjM2YTU5
-M2M5ZDk4Y2FkZGE4NWNjZDY3MzI2Y2IxNTJmMGRkMjcgMTAwNjQ0Cj4tLS0gYS9pbmNsdWRlL2Ry
-bS9kcm1fYXRvbWljLmgKPisrKyBiL2luY2x1ZGUvZHJtL2RybV9hdG9taWMuaAo+QEAgLTYyMywx
-MCArNjIzLDEzIEBAIHN0cnVjdCBkcm1fY29ubmVjdG9yICoKPiBkcm1fYXRvbWljX2dldF9vbGRf
-Y29ubmVjdG9yX2Zvcl9lbmNvZGVyKGNvbnN0IHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0
-ZSwKPiAJCQkJCSBzdHJ1Y3QgZHJtX2VuY29kZXIgKmVuY29kZXIpOwo+IHN0cnVjdCBkcm1fY29u
-bmVjdG9yICoKPiBkcm1fYXRvbWljX2dldF9uZXdfY29ubmVjdG9yX2Zvcl9lbmNvZGVyKGNvbnN0
-IHN0cnVjdCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSwKPiAJCQkJCSBzdHJ1Y3QgZHJtX2VuY29k
-ZXIgKmVuY29kZXIpOwo+K3N0cnVjdCBkcm1fY29ubmVjdG9yICoKPitkcm1fYXRvbWljX2dldF9j
-b25uZWN0b3JfZm9yX2VuY29kZXIoY29uc3Qgc3RydWN0IGRybV9lbmNvZGVyICplbmNvZGVyLAo+
-KwkJCQkgICAgIHN0cnVjdCBkcm1fbW9kZXNldF9hY3F1aXJlX2N0eCAqY3R4KTsKPiAKPiBzdHJ1
-Y3QgZHJtX2NydGMgKgo+IGRybV9hdG9taWNfZ2V0X29sZF9jcnRjX2Zvcl9lbmNvZGVyKHN0cnVj
-dCBkcm1fYXRvbWljX3N0YXRlICpzdGF0ZSwKPiAJCQkJCSBzdHJ1Y3QgZHJtX2VuY29kZXIgKmVu
-Y29kZXIpOwo+IHN0cnVjdCBkcm1fY3J0YyAqCj4KPi0tIAo+Mi40OC4xCg==
+On Wed, 05 Mar 2025 08:41:28 +0100
+Thomas Gleixner <tglx@linutronix.de> wrote:
+
+Hi Thomas,
+
+thanks for having a look!
+
+> On Tue, Mar 04 2025 at 22:23, Andre Przywara wrote:
+> >  
+> > -struct sunxi_sc_nmi_reg_offs {
+> > +struct sunxi_sc_nmi_data {
+> >  	u32 ctrl;
+> >  	u32 pend;
+> >  	u32 enable;
+> > +	u32 enable_val;  
+> 
+> The data structure name and the corresponding variable/argument name
+> were making the code pretty obvious, but now this is opaque and
+> incomprehensible.
+> 
+> data::ctrl does not even give the slightest hint what this is about. You
+> need to read up in the code to figure out what it means. Something like:
+> 
+> struct sunxi_sc_nmi_data {
+> 	u32	reg_offs_ctrl;
+>   	u32	reg_offs_pend;
+>   	u32	reg_offs_enable;
+> 	u32	enable_val;
+> };
+> 
+> or even better:
+> 
+> struct sunxi_sc_nmi_data {
+> 	struct {
+> 		u32	ctrl;
+>   		u32	pend;
+>   		u32	enable;
+>         } reg_offs;
+> 	u32		enable_val;
+> };
+> 
+> makes it clear and obvious, no?
+
+Sure, will change it, it was just the usual decision between reworking the
+existing code or just adding my small change in. 50% chance of getting that
+right, I guess ;-)
+
+> 
+> > +static const struct sunxi_sc_nmi_data sun55i_a523_data __initconst = {
+> > +	.ctrl	= SUN9I_NMI_CTRL,
+> > +	.pend	= SUN9I_NMI_PENDING,
+> > +	.enable	= SUN9I_NMI_ENABLE,
+> > +	.enable_val = BIT(31),  
+> 
+> https://www.kernel.org/doc/html/latest/process/maintainer-tip.html#struct-declarations-and-initializers
+
+Oops, missed that.
+
+Thanks,
+Andre
+
+> 
+> Thanks,
+> 
+>         tglx
 
