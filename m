@@ -1,157 +1,122 @@
-Return-Path: <linux-kernel+bounces-546639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55AA6A4FD2D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:06:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD8B1A4FD2E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:07:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 478D77A9887
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:05:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AEF671891DF9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20C732309B9;
-	Wed,  5 Mar 2025 11:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBA8230BC6;
+	Wed,  5 Mar 2025 11:06:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NSCj904N"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="FOrDYa7e";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DIlPIwOm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAE9C205515
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D4220C499;
+	Wed,  5 Mar 2025 11:06:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172791; cv=none; b=TiQBXmw4dEKGbmUdOctWydvlJxuZDtzPFGmQ5r1umHmUcAEFPQNkmQue2IVAWOGsO5rUwORicu98YyeLaM21CDkMEFYI++zzhkrb8Q0DGBY6ZpX63Z4YFctf1GLVBVt5OzgSEClwWbnLJs1N73aA5KT4xA6jBL5XJLsGFmQmYIc=
+	t=1741172818; cv=none; b=Xa4wFtfa1npeOhbElFJEp56pMk3ne0C2A0Glqjk5UL6bJwYeaacxXhSbFVK6Quhpgj+C3M9ygvKGD+XRnXt62+10nqUKBS3oDeoPNtGVYIeMyZLY7FEd9zWxYQC0hnN2KYO2oqsyhvwKn9HT1MHUew6DbdgGejsGuCrzF2hlFPY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172791; c=relaxed/simple;
-	bh=u39E6G8oRkObciqtFsR0GjEIkgJwTf2015/hKDgM3xc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=ccrliiTDgk6BzqGTzA4yAMF5xC1laPTuymOxyC+awUp6p0wovKEAsqMdg4h+CHm9G+wNRBJOOEP+gpetataZueAsgVDc3EV6L+fqnzy0pv8PMjHOlgVK1QZ07pl35PLudG6/sh/AH14lVwzPo7U0429AOU/yM6b1leOHPSGMFLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NSCj904N; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-390eb7c1024so3880897f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 03:06:29 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741172788; x=1741777588; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=SaO/Y+RfI4yiu24Wq1QDo3KrxHmio/TAOl7xl82m724=;
-        b=NSCj904NhNUP4VwL8lkj7p+6ZyTQ6Ay3NKCLZVpTinilpVdyJ2qQ8bKXSDg4gGy8pC
-         rpkN/gWKkiPUiy5i/lGIwkolAPwhez2anr59rb0o6+OUKBxUDURhTcaGzTpAQPyshIlu
-         FY4kXs5p4UFSRNnyOV7oPojX7C8SJi5FPN7OEYWWRlh3VreypITPtrW4yZqqjFHxHhfj
-         rQU/BeshVdR7QHg/IQwLE4M19f/vU7KUQwsPtRMmK+HZZ7GQwr1twj+mPVY2ooLRcqeK
-         pSnYAP4ZZ/lvT7Yik5fd9TT49HfXO93Y0ZLHulo6jqlFaafztgSV5+wNNymOwAnKipxV
-         kREQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741172788; x=1741777588;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SaO/Y+RfI4yiu24Wq1QDo3KrxHmio/TAOl7xl82m724=;
-        b=OW4b2PViLtZO7m7OEQzDJYx1s8tJqcMoD+9aon5X9t7lWsm092RXZxsJOUv+bZFfH5
-         45nnxflGCWFA/EwnfHvKWSccDsD6PozVqkIzQdESvhpl/r0RaqxYFhosZ+Xpd/TQIJRJ
-         EG7oTyP48JRKUPBdw1y3PcxHPm0rG97tqKUIMhpxsLkwducOjPMB//abKQkA58/rwIhw
-         mJIeA8YdTJpQ/KL7ptlUOo3lzP06jxPr0afYKWlzZZ010WL5esvr2UMlBuYIF8PRv3Ud
-         BJSg71uJ+k/LdEVbtr6ggsjJmTw72SA43LGsuEw9YGYxRKAXKGGLV113YFgWFbqVO8dO
-         jjgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUDvQnggd1xfZ/NRRU+KWX/dxScR/1+jBUhO7X6KkyELDWIO1bmVzjbFUcm5+fLcpgQ+fc9SPbvLmk/ULI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0O5oxzJl1TbZ/oP1TZ+SK563qPPd28iJy+pT4HiCmB85hKQ8U
-	PPBtQW2K7zxjTiPwOP7/e8MQblm2IRjNgTMlY3/rLgD6hEqT9nWxVz9EI3msaLI=
-X-Gm-Gg: ASbGncvtwPiOntC0uD8sw9W/ixZoxtffvgIWkrtaTgeEJH6vp9FtR+yAoWqUoHIpNDa
-	QKTdcyF2ADnGneK96BBTt0XOWNeGF9RDLUJzQ76ycDvoU5/3pClmYWU9CZmPwM9gAg2+5wiMq4L
-	Jlc2d5mlP1S6qFQwhRPWrdkX6lbPIDXWALVCTBQgQWjSHwbGrHzWuoKCdu6zOvmxGBWARz/zf70
-	v51NDPwnb/dDpFlvGgnys0fXYyZ/YZkhPhO+btqX+o/HvWHRWNncHqFjP5YzeAyS2gR3sA2XPks
-	qlBFj2vTe9qtNu8IG5U9WpevZcK0p292/u+emA5pAIXheZhX92+tqkU=
-X-Google-Smtp-Source: AGHT+IFBD1P3nJKJFdOPJRZsFcAADaetXcgqXPJk2zLoX/rEFe2ePpokUS72IwxetWohR/IMWmu6jg==
-X-Received: by 2002:a5d:6c6f:0:b0:391:2e7:6811 with SMTP id ffacd0b85a97d-3911f7404b0mr1958821f8f.14.1741172787896;
-        Wed, 05 Mar 2025 03:06:27 -0800 (PST)
-Received: from [192.168.1.247] ([209.198.129.225])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4795d30sm20934751f8f.10.2025.03.05.03.06.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 03:06:27 -0800 (PST)
-Message-ID: <4e495505-6b67-41dc-bd62-7aba4f7cf71a@linaro.org>
-Date: Wed, 5 Mar 2025 11:06:26 +0000
+	s=arc-20240116; t=1741172818; c=relaxed/simple;
+	bh=JKE1Po9EYSj06r8hdyzALVX80J+1kWHUeRpZ5TugQow=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jHFTDwagCqFiYsnz+rDmB3fXhiRrg8YPCNN9gTgLR76WaC17NgINe47DZ3uTW3kxx0fKPuFGAHo3bfFSTV/76f9w9W4DsS7dn2hNMzdlzOnpUHGkeCl7xhbYCWCtuhEEYtUgxgMFvnHs2kJg2A3dDlsS53S6ZICiBU6ca+K3Hh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=FOrDYa7e; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DIlPIwOm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 5 Mar 2025 12:06:51 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741172813;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hRDDORjE6c+3nRL9vKLH4Ti8p7Y+SPyMQXlyJKMzRy0=;
+	b=FOrDYa7eQN2jlxC7ytKE6bZhjfO/OBUqgLqGbkrFA5fvTVCt2scQkvIpVo8XEzaGPVUqIW
+	ImijYvC//gJbvhgeN8kvEURLP/h/uOk5Dcp9Gx6cM7bfuRHTzaIB9hTgux+SDY9NeKWtXi
+	sBUHAtMZ1RiufG8mqzdHHmd1wm6G9xn1AiBdj0W5JrgmKjqvcCv92hRxrWBrXm5VLB/15m
+	+1mmCCJyIzlEgIwDdwmP3IlYcfUckjEV4+3yeAcQXWXuFzfA89Rp/HvLYn/ax/sLtQ/jtK
+	QQcZXkoLtUwTX9yl95joOSLvJfl/eEUc2gSpLu330aRnwkyFAIfa3VGdZPGz3g==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741172813;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hRDDORjE6c+3nRL9vKLH4Ti8p7Y+SPyMQXlyJKMzRy0=;
+	b=DIlPIwOmLWYvROvTLasNI3rDu4PycI1v0bprCTpjbEZIK4uMe5rJo/G29nDf/j3Fa05igb
+	QUSO4Nm56ZoZU9DQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Valentin Schneider <vschneid@redhat.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-rt-users@vger.kernel.org, Mark Rutland <mark.rutland@arm.com>,
+	Mike Galbraith <efault@gmx.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Peter Collingbourne <pcc@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
+	Thiago Jung Bauermann <thiago.bauermann@linaro.org>,
+	Mark Brown <broonie@kernel.org>,
+	Kristina Martsenko <kristina.martsenko@arm.com>,
+	Petr Tesarik <ptesarik@suse.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>,
+	Juri Lelli <juri.lelli@redhat.com>, Phil Auld <pauld@redhat.com>,
+	Clark Williams <williams@redhat.com>
+Subject: Re: [PATCH 1/1] arm64: enable PREEMPT_LAZY
+Message-ID: <20250305110651.6dpe0xQU@linutronix.de>
+References: <20250305104925.189198-1-vschneid@redhat.com>
+ <20250305104925.189198-2-vschneid@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] perf tools: Improve handling of hybrid PMUs in
- perf_event_attr__fprintf
-To: Ian Rogers <irogers@google.com>
-References: <20250305083735.393333-1-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>,
- Dominique Martinet <asmadeus@codewreck.org>, Andi Kleen
- <ak@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Thomas Falcon <thomas.falcon@intel.com>
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20250305083735.393333-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250305104925.189198-2-vschneid@redhat.com>
 
-
-
-On 05/03/2025 8:37 am, Ian Rogers wrote:
-> Support the PMU name from the legacy hardware and hw_cache PMU
-> extended types.  Remove some macros and make variables more intention
-> revealing, rather than just being called "value".
+On 2025-03-05 11:49:25 [+0100], Valentin Schneider wrote:
+> From: Mark Rutland <mark.rutland@arm.com>
 > 
-> Before:
-> ```
-> $ perf stat -vv -e instructions true
-> ...
-> ------------------------------------------------------------
-> perf_event_attr:
->    type                             0 (PERF_TYPE_HARDWARE)
->    size                             136
->    config                           0xa00000001
->    sample_type                      IDENTIFIER
->    read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->    disabled                         1
->    inherit                          1
->    enable_on_exec                   1
->    exclude_guest                    1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 181636  cpu -1  group_fd -1  flags 0x8 = 5
-> ------------------------------------------------------------
-> perf_event_attr:
->    type                             0 (PERF_TYPE_HARDWARE)
->    size                             136
->    config                           0x400000001
->    sample_type                      IDENTIFIER
->    read_format                      TOTAL_TIME_ENABLED|TOTAL_TIME_RUNNING
->    disabled                         1
->    inherit                          1
->    enable_on_exec                   1
->    exclude_guest                    1
-> ------------------------------------------------------------
-> sys_perf_event_open: pid 181636  cpu -1  group_fd -1  flags 0x8 = 6
-> ...
-> ```
+> For an architecture to enable CONFIG_ARCH_HAS_RESCHED_LAZY, two things are
+> required:
+> 1) Adding a TIF_NEED_RESCHED_LAZY flag definition
+> 2) Checking for TIF_NEED_RESCHED_LAZY in the appropriate locations
 > 
-> After:
-> ```
-> $ perf stat -vv -e instructions true
-> ...
-> ------------------------------------------------------------
-> perf_event_attr:
->    type                             0 (PERF_TYPE_HARDWARE)
->    size                             136
->    config                           0xa00000001 (cpu_atom/PERF_COUNT_HW_INSTRUCTIONS/)
+> 2) is handled in a generic manner by CONFIG_GENERIC_ENTRY, which isn't
+> (yet) implemented for arm64. However, outside of core scheduler code,
+> TIF_NEED_RESCHED_LAZY only needs to be checked on a kernel exit, meaning:
+> o return/entry to userspace.
+> o return/entry to guest.
+> 
+> The return/entry to a guest is all handled by xfer_to_guest_mode_handle_work()
+> which already does the right thing, so it can be left as-is.
+> 
+> arm64 doesn't use common entry's exit_to_user_mode_prepare(), so update its
+> return to user path to check for TIF_NEED_RESCHED_LAZY and call into
+> schedule() accordingly.
+> 
+> Link: https://lore.kernel.org/linux-rt-users/20241216190451.1c61977c@mordecai.tesarici.cz/
+> Link: https://lore.kernel.org/all/xhsmh4j0fl0p3.mognet@vschneid-thinkpadt14sgen2i.remote.csb/
+> Signed-off-by: Mark Rutland <mark.rutland@arm.com>
+> [testdrive, _TIF_WORK_MASK fixlet and changelog.]
+> Signed-off-by: Mike Galbraith <efault@gmx.de>
+> [Another round of testing; changelog faff]
+> Signed-off-by: Valentin Schneider <vschneid@redhat.com>
 
-Seems like a good idea, I'm always decoding these by eye.
+I somehow assumed it was already merged. For what it is worth, this
+looks like patch Mike posted in
+	https://lore.kernel.org/a198a7dd9076f97b89d8882bb249b3bf303564ef.camel@gmx.de
 
-Reviewed-by: James Clark <james.clark@linaro.org>
+and tested 
 
+Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+
+Sebastian
 
