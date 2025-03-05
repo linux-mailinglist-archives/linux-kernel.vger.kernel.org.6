@@ -1,117 +1,150 @@
-Return-Path: <linux-kernel+bounces-546477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DCAA4FB1F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:04:15 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 593BFA4FB2A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:05:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C6CF1892545
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:04:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2E7683AB270
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:04:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8985A207670;
-	Wed,  5 Mar 2025 10:03:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34330205E14;
+	Wed,  5 Mar 2025 10:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="brlsUdiL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lW/QLoWn"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D921B206F1A;
-	Wed,  5 Mar 2025 10:02:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10C4200115;
+	Wed,  5 Mar 2025 10:03:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741168979; cv=none; b=gEIA2kGbMGsqZz+5PQO7n9yz76OpD4QtolJjxY2mmmLmBX6mUOsbSCm/UOp6he6cn/iePTCaxH0txikHnXpJB5uMJWnIdqE8YG61sG8F7qbJ4nJwzOmuoCQv52GoHuQ6UYlfjxDADFfLmk9YtZNE5wjbAeW/NYh9tY+jQZaAKJY=
+	t=1741169015; cv=none; b=iq0Z5BZGk2WDlS1oMxzYrIkrXrhi3uJLrOFL/aQn1pMj7tfCX/KU2Gyk2qgTbyTVKJyeEANfaK9v72EUHaeWiB/kKakCaEkK5D4eSxrPRjsg8fdGRy02Ob+GmynisBMG+gEJIU37Z45TzKCfJ2U2HDdTquBGn/oCvr0pFztQ040=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741168979; c=relaxed/simple;
-	bh=qXZhNxUy9y5s5LhZ9M7FyoFK7Zgj7Uh6fOjZphxmzps=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=a5ZY4WB/77xK6j0ECrQ0yNAklB0tWp6Tf+MJESleGKMSHdZQTHHYESI+O31SHcieGzukJJJ+QbM9HSA8FWccg1rdVvZt/8cF2f1S4ZXBaXH9JrDpkNxou4+r4R4ZKUAzzIf47bw8l0m/K+ZYw7TGEt8RIHfwh/EhZd5CHg2jPaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=brlsUdiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8EFBCC4CEF4;
-	Wed,  5 Mar 2025 10:02:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741168979;
-	bh=qXZhNxUy9y5s5LhZ9M7FyoFK7Zgj7Uh6fOjZphxmzps=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=brlsUdiLkj6uFQI83Rx64BhEpt0f6LbLZHu2Khg1HZNDlqvbOlplaOk9EGo9JIqd0
-	 N3NSmjFFGLVc4TMuAkpspuXYvT4Oy77VljhYZfrzeqBnfn+Wvu7MKux60T03RVM05X
-	 rzGHFHb3yRkOVFw20ZEOyQ1CYatsruD3gIykCJVOhVpD/LfYg3yMlWsaWo0FXM7dEa
-	 Z1H4ag8OvxMdF37uQ/fJVydWHgaqNXtlkzf+F7deugWRZKuJsRES1wl3hjDI37HhVZ
-	 W9JozKek437U9U9r/aPnENup16RzodnsCf/J3k11vLERu/JMT6ZuzDC3KC6ySX97ul
-	 eWX2KwJ63W+vw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 84127C282DC;
-	Wed,  5 Mar 2025 10:02:59 +0000 (UTC)
-From: Xianwei Zhao via B4 Relay <devnull+xianwei.zhao.amlogic.com@kernel.org>
-Date: Wed, 05 Mar 2025 18:02:59 +0800
-Subject: [PATCH v3 4/4] arm64: dts: Add gpio_intc node for Amlogic A5 SoCs
+	s=arc-20240116; t=1741169015; c=relaxed/simple;
+	bh=aPO9RIxkIdPPlvg9pyNhJAW0yHevN9pV1Ngaf4quIxA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cWoDAPQUaNgKYIsTXibUVjY/tEkDWm6EjXVOdGKLBi8/3lUvZD5jxqxircgdx+9qy5G2qKtbiVftXdPevzNxkuWbYzGBiCQqeffE1S9cEtv01S62Vd4PtWKlKkOhY+OXZuPewOZC8Ifc+hfZg4qW8AgcPFtU53w+dh1Ka9Z+3hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lW/QLoWn; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43996e95114so44594895e9.3;
+        Wed, 05 Mar 2025 02:03:33 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741169012; x=1741773812; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jm2urNCVqHoRd5wzReBKDuMQJhyZ7sqv+hIxAxQv+aQ=;
+        b=lW/QLoWnzZQSlr/F7JYj4JMQ3j9lOu2fHhczkla6Uv/2LvIWv791IvXTBhW+70NpED
+         eH3w7J4hgTOc7C2ggKNzyjldZZMHs7m5E1mI9Q/uo6NWM3A4G3OF8TJyBpavNuGas+KM
+         Gf6+jScheijOb/C4+7Ud3IvdQSro33QhAxKGbeE3otTN5PZTjyG8rpduTpjDCYoAuxAm
+         /ruGr5Hkj/3ee04IrvxIjN77hkSGamoSv+abMUMi/IAQNIPz9dGsnyoIjnCAKNTZA492
+         EfXKPNMN7KYyu5Cbe7XNG9TTYUsxGiFVDVdOLgnpxBYdzy3deQMdsyA13mYEH1ITB+X3
+         MNqQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741169012; x=1741773812;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jm2urNCVqHoRd5wzReBKDuMQJhyZ7sqv+hIxAxQv+aQ=;
+        b=arNQHO6c0i+c8glAm/wb4RNFyrR6PQ5H3JMjTPoJsuoolTzyswXz17SM1UYm1I8KjC
+         8WKa6aKFtYvsKGq/cwdRZBoEi2F0rUt1GO7nt5UJ8UdmHK8m9eu4o7lWOpvrsw5NJDxF
+         J51XJc/0mx3MjFz9owZby6enXmsbbNFTt3Tz5HlnGkRsDQK5yJDbaiv5r5lNJNwHcuxQ
+         W7/Iz96+0Kj/5Kyq3a2P9H92jUUj6thNWVRZ6UpDSvDK0TkKnhVV8dK5oXrWZnJqHdF6
+         GZvcmNef/l/HZZk6KbGDHuLj9A7RDTofdte6Apc4oaRI44IuSlGvb35yYmZ83fwewI0l
+         cflA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcdk/KuA4x3eUAV8DPtacOU0qKauLy6cezjx2PHcdG2m42JtlAAjaL1UlS5A1kUiO9waNFJPdCopWzLL9o@vger.kernel.org, AJvYcCWrcJa1udJ6fKBVQvO+zgamk9XB059VZ4KjykCQvtBEjJeyLT7Orc311TwZIacXbkHRNbV0VgUS4vuI@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWYuw5ymO5PSfnrkUGHKtje6LnfXGPWtt7/4yCna2zV8a3NnWA
+	EDQhWUKsvAumXPuba0oMB8fr1x4wLmRQGYUx82CkO2EtHmQzCTMt+13GptIbIB/RXIZzFEnojeo
+	VRTsxyf8g6hI6BK3CL2jK4qVXi68=
+X-Gm-Gg: ASbGnctC8PnjG0yChpAZlCyTfRjk7OIkvD1PghmbddRlUEQh3lairM4yihjKal9PG4A
+	HWlUxN86iMUzRnFuYWftIPqYsVKiDBAeZOgJBmeQLXHb1/3d2tjFRRfN5FHLcDySimjmvjqhMxd
+	TBksDiVzSnkNdC74gisV/MKY0GeqQ=
+X-Google-Smtp-Source: AGHT+IEyE65DoXnnzoaY6Dd+bifIHkN+aBqHyvN9ORkP7Eg8LfPANJc22dF9nbVoro3kxEoOzWoqCz33vSTiT8uZe5I=
+X-Received: by 2002:a05:6000:1f8c:b0:390:f116:d230 with SMTP id
+ ffacd0b85a97d-3911f74bc14mr2432921f8f.16.1741169011692; Wed, 05 Mar 2025
+ 02:03:31 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-irqchip-gpio-a4-a5-v3-4-1eec70352fea@amlogic.com>
-References: <20250305-irqchip-gpio-a4-a5-v3-0-1eec70352fea@amlogic.com>
-In-Reply-To: <20250305-irqchip-gpio-a4-a5-v3-0-1eec70352fea@amlogic.com>
-To: Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Heiner Kallweit <hkallweit1@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- Xianwei Zhao <xianwei.zhao@amlogic.com>
-X-Mailer: b4 0.12.4
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741168977; l=835;
- i=xianwei.zhao@amlogic.com; s=20231208; h=from:subject:message-id;
- bh=+kt3Jevc/8KR/ZsMbFbD2TjHFreHkm3hzIePStnSOmI=;
- b=Y+ZgkQxFXXebgdt+OHFoNFpS4isEwl4O3fedcvVUiD3qNaUH+8bL7MedEgak2N4TiJEubjOaM
- C97GM5j0LK9CMLgXGM7wtF4JzMGY1AjUd8u1EJ8B87QJqinevRLwS8g
-X-Developer-Key: i=xianwei.zhao@amlogic.com; a=ed25519;
- pk=o4fDH8ZXL6xQg5h17eNzRljf6pwZHWWjqcOSsj3dW24=
-X-Endpoint-Received: by B4 Relay for xianwei.zhao@amlogic.com/20231208 with
- auth_id=107
-X-Original-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-Reply-To: xianwei.zhao@amlogic.com
+References: <20250303122151.91557-1-clamor95@gmail.com> <20250303122151.91557-2-clamor95@gmail.com>
+ <08f305fa-0dbe-4ed9-bec5-cf8b5bbecfdb@arm.com>
+In-Reply-To: <08f305fa-0dbe-4ed9-bec5-cf8b5bbecfdb@arm.com>
+From: Svyatoslav Ryhel <clamor95@gmail.com>
+Date: Wed, 5 Mar 2025 12:03:20 +0200
+X-Gm-Features: AQ5f1JoUlqaP2Ry2sjnxepz1PGhvPG05_H2GZBUkF7PlNMR63DMRDp_U0g1avRQ
+Message-ID: <CAPVz0n0G+0_f3MONV0Y-tYAb1KOwkUNiY2Pms8CZ6ZGtxRmFFA@mail.gmail.com>
+Subject: Re: [PATCH v3 1/2] dt-bindings: thermal: generic-adc: Add optional
+ io-channel-cells property
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	Laxman Dewangan <ldewangan@nvidia.com>, Conor Dooley <conor+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, linux-kernel@vger.kernel.org, 
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Xianwei Zhao <xianwei.zhao@amlogic.com>
-
-Add GPIO interrupt controller device.
-
-Signed-off-by: Xianwei Zhao <xianwei.zhao@amlogic.com>
----
- arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
-
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-index 17a6316de891..32ed1776891b 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-a5.dtsi
-@@ -48,3 +48,15 @@ pwrc: power-controller {
- 		};
- 	};
- };
+=D1=81=D1=80, 5 =D0=B1=D0=B5=D1=80. 2025=E2=80=AF=D1=80. =D0=BE 12:00 Lukas=
+z Luba <lukasz.luba@arm.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+>
+>
+> On 3/3/25 12:21, Svyatoslav Ryhel wrote:
+> > This implements a mechanism to derive temperature values from an existi=
+ng ADC IIO
+> > channel, effectively creating a temperature IIO channel. This approach =
+avoids adding
+> > a new sensor and its associated conversion table, while providing IIO-b=
+ased temperature
+> > data for devices that may not utilize hwmon.
+> >
+> > Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+> > ---
+> >   .../devicetree/bindings/thermal/generic-adc-thermal.yaml      | 4 +++=
 +
-+&apb {
-+	gpio_intc: interrupt-controller@4080 {
-+		compatible = "amlogic,a5-gpio-intc",
-+			     "amlogic,meson-gpio-intc";
-+		reg = <0x0 0x4080 0x0 0x20>;
-+		interrupt-controller;
-+		#interrupt-cells = <2>;
-+		amlogic,channel-interrupts =
-+			<10 11 12 13 14 15 16 17 18 19 20 21>;
-+	};
-+};
+> >   1 file changed, 4 insertions(+)
+> >
+> > diff --git a/Documentation/devicetree/bindings/thermal/generic-adc-ther=
+mal.yaml b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.ya=
+ml
+> > index 12e6418dc24d..4bc2cff0593c 100644
+> > --- a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yam=
+l
+> > +++ b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yam=
+l
+> > @@ -30,6 +30,9 @@ properties:
+> >     io-channel-names:
+> >       const: sensor-channel
+> >
+> > +  '#io-channel-cells':
+> > +    const: 1
+> > +
+> >     temperature-lookup-table:
+> >       description: |
+> >         Lookup table to map the relation between ADC value and temperat=
+ure.
+> > @@ -60,6 +63,7 @@ examples:
+> >           #thermal-sensor-cells =3D <0>;
+> >           io-channels =3D <&ads1015 1>;
+> >           io-channel-names =3D "sensor-channel";
+> > +        #io-channel-cells =3D <1>;
+> >           temperature-lookup-table =3D <
+> >                 (-40000) 2578
+> >                 (-39000) 2577
+>
+> Do we really need this change in the DT?
+> Won't the code in the thermal driver that registers a new iio device
+> would just be enough?
+>
+> I agree with Rob that it looks odd.
 
--- 
-2.37.1
-
-
+Building tree will complain on missing cells property if you try to
+bind it. It is not in required category anyway.
 
