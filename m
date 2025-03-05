@@ -1,146 +1,159 @@
-Return-Path: <linux-kernel+bounces-547402-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547403-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71E6DA5069D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:42:55 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35397A5069F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:43:16 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EFFD73A6EE9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:42:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B018189236B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:43:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6662E250C0A;
-	Wed,  5 Mar 2025 17:42:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB82624EA88;
+	Wed,  5 Mar 2025 17:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UYHqu1Mj"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aCOW695T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51775199920
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DF161FFE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741196532; cv=none; b=CgqU4hNCHY8/0SnjON7uDpOPO3QPIhYcM/U5mPFpluZe6MqELTpyL1ZyPhEFRez/VKPmpYI2aMAi+afahSdvhRaxwnVQvLYHME99Go9rm+AWiqKBIQjmNWMcOxIW6HHAgC84AfhmX+YpFrlW2J7Z7duZrpx7RZ1uM3wp/Em1YH0=
+	t=1741196591; cv=none; b=F68l2gT/bVxeC4+kJ+ddGvXBUYWY2MteDZitdV3MXsSuP4INAbu2LeTln/IzIkV15FxLlRDIK5HDzA4nvPrlKwG7OiuserspwIeOhvs4SrmtwOv0LEd3aVjGvetXdDVf+VRob1M0fvbMYHob0ZGVqXmh+Dx7JiT6DIZ8F7U36vI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741196532; c=relaxed/simple;
-	bh=bb5K4ZkE3s/6VshzIh28PtqgzaQjLWaI4r4D0uczvRY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gGXzcMUs6IC9nsN7OYCelLQMl8feK84t+cAk2y3hgQYJ/XoDiy4EsaKvAeBNKKmmI5C90uwOEoNo71BEw0Viaw+ovpV1er52LrU4vWadkIv2d8pyrYI6UplupZFeH4vtnjWo0o6zAQY26BtuXFPPlgpXJeEuPkhR7NdZiTAdoBo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UYHqu1Mj; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 525BDZ3n016297
-	for <linux-kernel@vger.kernel.org>; Wed, 5 Mar 2025 17:42:09 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	cW4c3i4J3mlPr+rYfyKkb0xfrDke8TBiM4daJ0wdc20=; b=UYHqu1MjjB0gsgFJ
-	n36Q8i7fXiGHeg67CXM52zLzntcgLr98PnNfNWXlAeiTjr4wmdYdn05FVNstDMsV
-	p1YcDfh9k6N98JfSfQUfvYetvl3f7QKuv+4YdMaIf6hS9dOpLyXuDJ6OWEnQB6w8
-	gQ0E+pHLCS5uOvhGJ4K4ppRckb9l4icRPcpTdMSXHHE4ocr0Bm81jMMNqfjnDcDZ
-	S0EQVf3OuBq9VZl5AB04cpTBN/K3bU+7LZoj7+8fbb7b70FEHO1/NZb1QZJKJHOR
-	efW0692mfIDuocz0kQhXqY5CRt15wiSSi6nVNoICrUx11kd2P61bPBmX1nDgt4Mb
-	TGrMoA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6wp3d1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 17:42:08 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-22368a8979cso95844675ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:42:08 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741196527; x=1741801327;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cW4c3i4J3mlPr+rYfyKkb0xfrDke8TBiM4daJ0wdc20=;
-        b=WJR8rlUJZcoV31c81z+iqGxBxqFkTP/Zzs1wbni3GnG/w6VAvvaoPOjuofN1Rl0niX
-         eVLjSyWf/uqvwfT7PtjsonAdtNryyE7FxeSKdeQRdmRn/YixXlPN1GFAXMSQ60e0TCgS
-         6SZF7xFG57Sae8ID0av6JckRoFBas55jK07yeS9PqkvdBfhTcmHsSZcUvfnFj93YclMo
-         4TD0QqdXLB/ETCGqTlWPq+Q6QGo4Hcku0sfVhcl9yQeGXcX/UOZ8FH6wJKMs23+O7k+C
-         aUzQi7ULp8OKP+64SzTM9F6xYfalsgwqr0nTsLND6mxCkcKLYiHThfW8vukZZzGrNJlu
-         6N/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUh5l6lIE4Om5rDPZODIOl+tCqKi9KqA5xHupy02DIBRCCPcfslTH0NJWu+5cj8UptJR081s+AW4Ak9M2E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEmkVsE84NXAxzVmtIuXt14cn8fZhZ0UlNzqX6faJvyUrIxaNa
-	hHZBuXvK3Y46MggBWmVXEjGPIALGViiyjmjzwOGr7FI+wzVJPmjHDvON4ZUYeZWdcRnukPzDBhm
-	Xe7WS5jPUOKY+utag/1S5Hvp72NS11VDlq4lW+PUwGNYnoWYEfG31uEcYplJMZUU=
-X-Gm-Gg: ASbGnctwVQXTdp7L3ITP2HjFD8WWDWCG+MmarKHjo9XD5W78iwTmJZDBl4Nrq27FRmr
-	U0ZKugyeeQJwKjJlOl8HE6KinZ/O/iWxvRq8a6GNSlEEa1cnwRfLfoUrbltgWD0qETqz9BqZI56
-	4Ppt7dnJo/gG6NKh9wwPiBHOpH9ic1ygx3jVSY4IF5xC3nbwEt2wNyoaMXc9pOnCga/bEQWykul
-	dQdgUVPGyFegJBGH6EoHBh0Z15tN0HMjG39O1kxdjIm7NiEv6qzEn3TpHW0bUZPYYbVGwFGZRN/
-	qDVzvIkHGzUlyYg6yRUONKk/Yj6Rnb+h5YK/RdrzpOlpm3H6PGz86nJeQ3U5zYJBaSMRQaE=
-X-Received: by 2002:a05:6a00:2303:b0:730:75b1:7219 with SMTP id d2e1a72fcca58-73682bea834mr6032877b3a.12.1741196527399;
-        Wed, 05 Mar 2025 09:42:07 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IGjmbCYLlh6OKP/aJo2EZp8bB7f5NVOCgf9md+RM9XMbm3yCdHm8vq8WD2+/r+MsZL538v/bw==
-X-Received: by 2002:a05:6a00:2303:b0:730:75b1:7219 with SMTP id d2e1a72fcca58-73682bea834mr6032858b3a.12.1741196527043;
-        Wed, 05 Mar 2025 09:42:07 -0800 (PST)
-Received: from [10.227.110.203] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734aed45c21sm11521080b3a.176.2025.03.05.09.42.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 09:42:06 -0800 (PST)
-Message-ID: <5bd6c864-018b-4401-8c1b-7bad023de75b@oss.qualcomm.com>
-Date: Wed, 5 Mar 2025 09:42:05 -0800
+	s=arc-20240116; t=1741196591; c=relaxed/simple;
+	bh=G+e6+D8oZKd+mzrIJuax07EDHsOLu98NekRGvxRXWHo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Mz7C+Hj20hkxg/CT/Fvrx2nSjy3+MqE9iQ+6d71Q77ph7afEKsCDY5ZXuA/E04+w0/zoZw0iAE2PTuPBeCfq3y9dNGGpBQRS98nmCCBhRSREdAJyR0y1Sx6uuoM3JmDWqBAuAq5O6YGcg9JN9VdgzRP229ONXFa/skyvFR36TNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aCOW695T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7910DC4CED1;
+	Wed,  5 Mar 2025 17:43:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741196590;
+	bh=G+e6+D8oZKd+mzrIJuax07EDHsOLu98NekRGvxRXWHo=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=aCOW695TfHiMlg5GKYUWrGI3E+XoaoMo0oop+pd20iFSduE9GHYn37X3ULri+xLQ1
+	 t7gdO7uDu90S42sMOS+/sehJ3XQ1HORmuOO58TLjM72YIBuBr8ZzR4qnU+0TEEB18x
+	 caTIQFvnA71JkIp5sJ9WnremF2ROvsUF2F8H1JrGzY11FkymNrV7c/pk+Seukw/t+C
+	 0ML60Snwl4ITkmCrWY4sqgxjMF+UBmV8Zvf9+J5wSd7wUezmEP01DNLD/uzyVnG+QB
+	 Jaen4tAJsH2pN+BQixDwxn3Y4knmqpLn6Kk7iv5X8H974va4+6sb1eV7jiluchjGT8
+	 nX3GrOi+6GKIQ==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 0DD1BCE0546; Wed,  5 Mar 2025 09:43:10 -0800 (PST)
+Date: Wed, 5 Mar 2025 09:43:10 -0800
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: jstultz@google.com, tglx@linutronix.de, sboyd@kernel.org,
+	christian@heusel.eu, kernel-team@meta.com
+Subject: [PATCH clocksource] Defer marking clocksources unstable to kthread
+Message-ID: <f6bb6dd3-7183-42db-8e7e-c9103c0bd5ff@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] wifi: ath11k: pcic: make memory access more readable
-To: Ziyang Huang <hzyitc@outlook.com>, Steev Klimaszewski <steev@kali.org>
-Cc: ath11k@lists.infradead.org, jjohnson@kernel.org, johannes@sipsolutions.net,
-        linux-kernel@vger.kernel.org, linux-wireless@vger.kernel.org
-References: <TYZPR01MB55566065525ADA7F71F516D4C9C92@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
- <20250304063328.33762-1-steev@kali.org>
- <TYZPR01MB5556A389846BF8E8A49831CDC9CB2@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
-From: Jeff Johnson <jeff.johnson@oss.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <TYZPR01MB5556A389846BF8E8A49831CDC9CB2@TYZPR01MB5556.apcprd01.prod.exchangelabs.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=EZcyQOmC c=1 sm=1 tr=0 ts=67c88cf0 cx=c_pps a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=JUnQ2HaaVozFeyLivG4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
- a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-GUID: GsbZ2U5nSPIF4H8AHZaEq_8Kry3xaymi
-X-Proofpoint-ORIG-GUID: GsbZ2U5nSPIF4H8AHZaEq_8Kry3xaymi
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_07,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 phishscore=0
- adultscore=0 lowpriorityscore=0 mlxlogscore=999 suspectscore=0 bulkscore=0
- clxscore=1015 priorityscore=1501 spamscore=0 impostorscore=0
- malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050135
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 3/5/2025 6:41 AM, Ziyang Huang wrote:
-> 在 2025/3/4 14:33, Steev Klimaszewski 写道:
->> Hi Ziyang,
->>
->> With this patch applied, on the Thinkpad X13s which has an ath11k, I am seeing
->> the following:
->>
->>   ath11k_pci 0006:01:00.0: chip_id 0x2 chip_family 0xb board_id 0x8c soc_id 0x400c0210
->>   ath11k_pci 0006:01:00.0: fw_version 0x11088c35 fw_build_timestamp 2024-04-17 08:34 fw_build_id WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.41
->>   ath11k_pci 0006:01:00.0: firmware crashed: MHI_CB_EE_RDDM
->>   ath11k_pci 0006:01:00.0: ignore reset dev flags 0xc800
->>   ath11k_pci 0006:01:00.0: failed to receive control response completion, polling..
->>   ath11k_pci 0006:01:00.0: ctl_resp never came in (-110)
->>   ath11k_pci 0006:01:00.0: failed to connect to HTC: -110
->>   ath11k_pci 0006:01:00.0: failed to start core: -110
->>   failed to send QMI message
->>   ath11k_pci 0006:01:00.0: failed to send wlan mode request (mode 4): -5
->>   ath11k_pci 0006:01:00.0: qmi failed to send wlan mode off: -5
->>
->> I'm pretty sure this isn't supposed to happen?
->>
->> --steev
-> 
-> Oh, give me some time to check what happen.
+The clocksource watchdog marks clocksources unstable from within a timer
+handler.  On x86, this marking involves an on_each_cpu_cond_mask(),
+which in turn invokes smp_call_function_many_cond(), which may not be
+invoked from a timer handler.  Doing so results in:
 
-I suggest you not spend time on this unless you can test this on all hardware
-supported by ath11k.
+WARNING: CPU: 3 PID: 0 at kernel/smp.c:815 smp_call_function_many_cond+0x46b/0x4c0
 
-/jeff
+Fix this by deferring the marking to the clocksource watchdog kthread.
+Note that marking unstable is already deferred, so deferring it a bit
+more should be just fine.
+
+Reported-by: Christian Heusel <christian@heusel.eu>
+Closes: https://lore.kernel.org/all/46a200b4-1293-413c-8b73-37f7b50abd1a@heusel.eu/
+Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+Cc: John Stultz <jstultz@google.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Stephen Boyd <sboyd@kernel.org>
+
+---
+ include/linux/clocksource.h |    1 +
+ kernel/time/clocksource.c   |   16 ++++++++++++----
+ 2 files changed, 13 insertions(+), 4 deletions(-)
+
+diff --git a/include/linux/clocksource.h b/include/linux/clocksource.h
+index 65b7c41471c39..a5317a4c07990 100644
+--- a/include/linux/clocksource.h
++++ b/include/linux/clocksource.h
+@@ -149,6 +149,7 @@ struct clocksource {
+ #define CLOCK_SOURCE_SUSPEND_NONSTOP		0x80
+ #define CLOCK_SOURCE_RESELECT			0x100
+ #define CLOCK_SOURCE_VERIFY_PERCPU		0x200
++#define CLOCK_SOURCE_DEFERRED_UNSTABLE		0x400
+ /* simplify initialization of mask field */
+ #define CLOCKSOURCE_MASK(bits) GENMASK_ULL((bits) - 1, 0)
+ 
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index 7304d7cf47f2d..60ace6f64c761 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -201,7 +201,8 @@ static void clocksource_change_rating(struct clocksource *cs, int rating)
+ 
+ static void __clocksource_unstable(struct clocksource *cs)
+ {
+-	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG);
++	cs->flags &= ~(CLOCK_SOURCE_VALID_FOR_HRES | CLOCK_SOURCE_WATCHDOG |
++		       CLOCK_SOURCE_DEFERRED_UNSTABLE);
+ 	cs->flags |= CLOCK_SOURCE_UNSTABLE;
+ 
+ 	/*
+@@ -215,6 +216,11 @@ static void __clocksource_unstable(struct clocksource *cs)
+ 
+ 	if (cs->mark_unstable)
+ 		cs->mark_unstable(cs);
++}
++
++static void __clocksource_deferred_unstable(struct clocksource *cs)
++{
++	cs->flags |= CLOCK_SOURCE_DEFERRED_UNSTABLE;
+ 
+ 	/* kick clocksource_watchdog_kthread() */
+ 	if (finished_booting)
+@@ -236,7 +242,7 @@ void clocksource_mark_unstable(struct clocksource *cs)
+ 	if (!(cs->flags & CLOCK_SOURCE_UNSTABLE)) {
+ 		if (!list_empty(&cs->list) && list_empty(&cs->wd_list))
+ 			list_add(&cs->wd_list, &watchdog_list);
+-		__clocksource_unstable(cs);
++		__clocksource_deferred_unstable(cs);
+ 	}
+ 	spin_unlock_irqrestore(&watchdog_lock, flags);
+ }
+@@ -453,7 +459,7 @@ static void clocksource_watchdog(struct timer_list *unused)
+ 
+ 		if (read_ret == WD_READ_UNSTABLE) {
+ 			/* Clock readout unreliable, so give it up. */
+-			__clocksource_unstable(cs);
++			__clocksource_deferred_unstable(cs);
+ 			continue;
+ 		}
+ 
+@@ -538,7 +544,7 @@ static void clocksource_watchdog(struct timer_list *unused)
+ 				pr_warn("                      '%s' (not '%s') is current clocksource.\n", curr_clocksource->name, cs->name);
+ 			else
+ 				pr_warn("                      No current clocksource.\n");
+-			__clocksource_unstable(cs);
++			__clocksource_deferred_unstable(cs);
+ 			continue;
+ 		}
+ 
+@@ -703,6 +709,8 @@ static int __clocksource_watchdog_kthread(void)
+ 
+ 	spin_lock_irqsave(&watchdog_lock, flags);
+ 	list_for_each_entry_safe(cs, tmp, &watchdog_list, wd_list) {
++		if (cs->flags & CLOCK_SOURCE_DEFERRED_UNSTABLE)
++			__clocksource_unstable(cs);
+ 		if (cs->flags & CLOCK_SOURCE_UNSTABLE) {
+ 			list_del_init(&cs->wd_list);
+ 			clocksource_change_rating(cs, 0);
 
