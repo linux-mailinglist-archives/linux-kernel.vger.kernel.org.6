@@ -1,152 +1,140 @@
-Return-Path: <linux-kernel+bounces-547032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E473A501FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:30:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2D23A501FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:30:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0C5B188C293
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:30:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7E2297A1544
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:29:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78D5024C09A;
-	Wed,  5 Mar 2025 14:29:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA4C2356C2;
-	Wed,  5 Mar 2025 14:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62BA24633D;
+	Wed,  5 Mar 2025 14:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hxQanYtC"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9689120C497
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184993; cv=none; b=JGX+3tOPRbADanyO7pu/wqKYT0pUke8VSkPY9MhvsQSVkJHnTlN26sX0eLZM61/t8NBm1n+Vc210hcsTIVJ9Unto0+biSB/yOGEvZHkoJGhu7iNfZoW4SJ3/QSZPYWxAzK/0nbo/KcAFz3MXVdPAzp6k0pFevyTT11KYxZzwKME=
+	t=1741185018; cv=none; b=b1u1Hh3Y4aRrVyw3GOSOkAUf9b6oKv+4+vwUkv7f8QjNU+tLpbqYz0ZMdo8viYeFNzc5CG96LhyDmYDp1etxHsoZNIALuNqbiNY4VcW2DKnJCC3ympFImvSblruX57qaPYmdS7D+FsuGozzt5pmW5LOioA/RKuaKF5xZdb3mNuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184993; c=relaxed/simple;
-	bh=Es+ipad2jb2E8NWIEfYNqeNCPuatl4xqFgmbg98e+QA=;
+	s=arc-20240116; t=1741185018; c=relaxed/simple;
+	bh=CztryvVz724A/C9Jw9j1kRy7SYjxYHASl8pVk3UD3r4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S4nz09O8VA+jYe/t9dkRmsqayLx30lcEhGxhFZ+EOtaYVEOn3thZzddXocSoWz9Ol/BsaTrUj37/yX5Kvkf55cWn82Q8k1LODj/VACmeObG1WMVcAcLAh12eucYUP2Trji+S7LVh78zQ+YjnjfWY0DIrRbQSjvL2YBGqNS4LLe0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A5A78FEC;
-	Wed,  5 Mar 2025 06:30:03 -0800 (PST)
-Received: from bogus (unknown [10.57.37.20])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 293B93F673;
-	Wed,  5 Mar 2025 06:29:49 -0800 (PST)
-Date: Wed, 5 Mar 2025 14:29:45 +0000
-From: Sudeep Holla <sudeep.holla@arm.com>
-To: "lihuisong (C)" <lihuisong@huawei.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jassi Brar <jassisinghbrar@gmail.com>,
-	Adam Young <admiyo@os.amperecomputing.com>,
-	Robbie King <robbiek@xsightlabs.com>
-Subject: Re: [PATCH 02/14] mailbox: pcc: Always clear the platform ack
- interrupt first
-Message-ID: <20250305142945.kzs4hfljbktkndbe@bogus>
-References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
- <20250303-pcc_fixes_updates-v1-2-3b44f3d134b1@arm.com>
- <397910e0-38eb-553a-2bd2-c338d8c3a49c@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=C4shhQOQbZ9hTkkg+APL6lsGnizcrwnkLn730lbB+ueKhdNw5133WliUuMzQWI027tUnTaHXe6Bi3nX8lUaNHlzAvO7UEZ+lknYk7ijYxIax5tk6sRPK4aN7HYHWMahSNRQzrzIs/fdPArhwLfgHFGGIwSk0Pz/k4o9fjaBNpRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hxQanYtC; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741185016; x=1772721016;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CztryvVz724A/C9Jw9j1kRy7SYjxYHASl8pVk3UD3r4=;
+  b=hxQanYtCABl/BFzi/f9jc5czBEoBLLMYHDwLxN8g7sEXYDZI7H/JFRO4
+   j210lUseii3GR9OX/gs72f3aZHdc4O7CLFFPkIF/blapmdxuy/5lmvuub
+   CQS9HeEbA+vG/GIInodI1745P7ZQNDujX/H/93SfKFh/1MNq9/KgebxdT
+   cLJvIdbOR9Nft5WTj1klK1izf3knsCfoiU2niuqW5ehTTA5UciytR+MA/
+   LHAmo9iIWgvZ73LRetloq1ouPJ6zwiQSDFQrYR06ybA/PPbsZmG52TyZv
+   DgX5Ak2uK597yUK9VqWP9m1lzGLxWuuFeuOsgMkDtbcuGi8fcZB7k5lOp
+   Q==;
+X-CSE-ConnectionGUID: bnD+ydx2T6iwF02z9/OQpA==
+X-CSE-MsgGUID: iCMSrdVfSayiztr8/8JyuA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42277938"
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="42277938"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:30:14 -0800
+X-CSE-ConnectionGUID: NtE6aXaWTTCzCINz83RB0g==
+X-CSE-MsgGUID: RiH//TIOTqm2C+aBtY8FMw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
+   d="scan'208";a="119396347"
+Received: from smile.fi.intel.com ([10.237.72.58])
+  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:30:10 -0800
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1tppl8-0000000HR7Z-2G7H;
+	Wed, 05 Mar 2025 16:30:06 +0200
+Date: Wed, 5 Mar 2025 16:30:06 +0200
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: mailhol.vincent@wanadoo.fr
+Cc: Yury Norov <yury.norov@gmail.com>,
+	Lucas De Marchi <lucas.demarchi@intel.com>,
+	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	Andi Shyti <andi.shyti@linux.intel.com>,
+	David Laight <David.Laight@aculab.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Jani Nikula <jani.nikula@intel.com>
+Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
+Message-ID: <Z8hf7pN84-64LWPv@smile.fi.intel.com>
+References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
+ <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <397910e0-38eb-553a-2bd2-c338d8c3a49c@huawei.com>
+In-Reply-To: <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, Mar 05, 2025 at 11:45:35AM +0800, lihuisong (C) wrote:
+On Wed, Mar 05, 2025 at 10:00:15PM +0900, Vincent Mailhol via B4 Relay wrote:
+> From: Yury Norov <yury.norov@gmail.com>
 > 
-> 在 2025/3/3 18:51, Sudeep Holla 写道:
-> > The PCC mailbox interrupt handler (pcc_mbox_irq()) currently checks
-> > for command completion flags and any error status before clearing the
-> > interrupt.
-> > 
-> > The below sequence highlights an issue in the handling of PCC mailbox
-> > interrupts, specifically when dealing with doorbell notifications and
-> > acknowledgment between the OSPM and the platform where type3 and type4
-> > channels are sharing the interrupt.
-> > 
-> >          Platform Firmware              OSPM/Linux PCC driver
-> > ------------------------------------------------------------------------
-> >                                       build message in shmem
-> >                                       ring type3 channel doorbell
-> > receives the doorbell interrupt
-> >    process the message from OSPM
-> >    build response for the message
-> > ring the platform ack interrupt to OSPM
-> > 				--->
-> > build notification in type4 channel
-> >                                       start processing in pcc_mbox_irq()
-> >                                        enter pcc handler for type4 chan
-> >                                           command complete cleared
-> > 			        	 read the notification
-> >                                  <---     clear platform ack irq
-> >    		* no effect from above as platform ack irq *
-> > 		* not yet triggered on this channel *
-> > ring the platform ack irq on type4 channel
-> > 				--->
-> >                                        leave pcc handler for type4 chan
-> >                                        enter pcc handler for type3 chan
-> >                                           command complete set
-> > 					 read the response
-> >                                  <---     clear platform ack irq
-> >                                        leave pcc handler for type3 chan
-> >                                       leave pcc_mbox_irq() handler
-> >                                       start processing in pcc_mbox_irq()
-> >                                        enter pcc handler for type4 chan
-> >                                        leave pcc handler for type4 chan
-> >                                        enter pcc handler for type3 chan
-> >                                        leave pcc handler for type3 chan
-> >                                       leave pcc_mbox_irq() handler
-> This is not easy to understand to me.
-> The issue as below described is already very clear to me.
-> So suggest remove above flow graph.
+> Add __GENMASK_t() which generalizes __GENMASK() to support different
 
-I understood it with the graph similar to the one above, though I simplified
-it in terms of PCC rather than specific IP reference.
+Is it with double underscore? I do not see it.
 
-> > The key issue occurs when OSPM tries to acknowledge platform ack
-> > interrupt for a notification which is ready to be read and processed
-> > but the interrupt itself is not yet triggered by the platform.
-> >
-> > This ineffective acknowledgment leads to an issue later in time where
-> > the interrupt remains pending as we exit the interrupt handler without
-> > clearing the platform ack interrupt as there is no pending response or
-> > notification. The interrupt acknowledgment order is incorrect.
-> >
+_t is used for typedef simple types. It's unfortunate to have it
+in such a macro. Perhaps T or TYPE will suffice. Or perhaps we want
+__GENMASK_Uxx() here?
 
-> Has this issue been confired? It's more better if has the log.😁
-> But it seems a valid issue.
+> types, and implement fixed-types versions of GENMASK() based on it.
+> The fixed-type version allows more strict checks to the min/max values
+> accepted, which is useful for defining registers like implemented by
+> i915 and xe drivers with their REG_GENMASK*() macros.
+> 
+> The strict checks rely on shift-count-overflow compiler check to fail
+> the build if a number outside of the range allowed is passed.
+> Example:
+> 
+> 	#define FOO_MASK GENMASK_U32(33, 4)
+> 
+> will generate a warning like:
+> 
+> 	../include/linux/bits.h:41:31: error: left shift count >= width of type [-Werror=shift-count-overflow]
+> 	   41 |          (((t)~0ULL - ((t)(1) << (l)) + 1) & \
+> 	      |                               ^~
 
-Yes Robbie reported this. He is away and can't test or respond until next
-week. The log just says there was loads of spurious interrupts and nobody
-cared log as you got in the first patch of yours fixing similar race.
+...
 
-> >
-> > To resolve this issue, the platform acknowledgment interrupt should
-> > always be cleared before processing the interrupt for any notifications
-> > or response.
-> >
-> AFAIC，always clearing the platform ack interrupt first which is also the
-> communication flow as ACPI spec described.
+> + * __GENMASK_U*() depends on BITS_PER_TYPE() which would not work in the asm
 
-Indeed, not sure how we missed it so far.
+Where are the double underscore variants? I see it only for U128.
 
-> I am not sure if it is ok when triggering interrupt and clearing interrupt
-> occur concurrently.
+> + * code as BITS_PER_TYPE() relies on sizeof(), something not available in
+> + * asm. Nethertheless, the concept of fixed width integers is a C thing which
+> + * does not apply to assembly code.
 
-Should be OK as we start clearing all the channels that share, if the
-handler doesn't clear any source, the interrupt must remain asserted.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> But this scenario is always possible. I think It doesn't matter with this
-> patch. It's just my confusion.
 
-Indeed, it can happen any time as you mentioned. No worries better to ask
-and clarify than assume. Thanks for your time and review.
-
---
-Regards,
-Sudeep
 
