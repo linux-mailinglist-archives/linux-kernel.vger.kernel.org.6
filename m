@@ -1,214 +1,171 @@
-Return-Path: <linux-kernel+bounces-547836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6A5A50E2E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:51:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF8F2A50E2F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:53:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB6B51890A4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:51:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9BC18919E2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:53:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5575C263C9B;
-	Wed,  5 Mar 2025 21:51:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1D72263C9B;
+	Wed,  5 Mar 2025 21:52:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aE0vshac"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="cZMa76wQ"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37F9818E362
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741211503; cv=none; b=ocqBie00bk+rRWz6SrGS+IztHyS+T/4OQ2Oi4kurKP5aIFKbuIpsq+Y4hiLmzJyKCLpoGe2tHFHfH5lpuydGES56u/JCIPOQVR6Y8Fr/NxICYxmkXfM1uKpMSchwl7SFIAcz2AO6NaNtv97L+RAT6ZCT17NSKeFXenE9anUTHaM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741211503; c=relaxed/simple;
-	bh=01ICYTbOUYDn5wacD9HW0N7glH6QXe/owYiBxke7rQA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ex/DijnxmrVHtWLGLSrDLSoq9cBfbqbN/4n1tbNYuGwPc2mSnIAjKDjL7GMOWpBXEaF52ZhgaS9wociGrvpBxS8wb378nyqVyY9fLvvWhXETzC7Us+NP425MRMvqmG2UenpapjZayLdMdGQgIoZZGiVD8tMpNLXUBubDr+yQBNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aE0vshac; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2237a32c03aso14235ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 13:51:41 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741211501; x=1741816301; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZubhIIsYYqScJTvJQURQn+6RxrzfbODl6pGutz3Xj48=;
-        b=aE0vshack+OWti2chQoWS0s/sN6oJtadp8U8Fa2uxq0j3kA9NCyzN+FRXb8xEYmaMp
-         SZfXgtuoifKCfNkJZzYgidwFaDBVTgRe2w4zDtR8T5/HNlq0b3jsk3eXqe5BTY6Wg6xe
-         5DGvT1TEee3XgE2HVrc4QAcxvmaY2B17NjNui988or0NRDw64Oq7GMjamsit/KWFlNMe
-         pfavrT5h1kGUcI0ovoxzPcNgWHYfHz7ypKlCKqFLmZEmq2B7fB6aXLu9mlXBforcKQxh
-         7zAUT2KhIGTFaDj4VEnsYXKg+Pfmckecf2GpC2ElIb6X4roJYZ0iVe7V9nZasj2YBUS9
-         XMjA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741211501; x=1741816301;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZubhIIsYYqScJTvJQURQn+6RxrzfbODl6pGutz3Xj48=;
-        b=UwrAXlKnmcUXGPBjHAmjTSMurYTuQH3W07MGs9ieN5pf16s58OkLwP1r6doqLXP4RJ
-         ZZOTiIXv0w18vjADXr3f4S6FmrvVs2moItn9qhekYH/RGlJv+PMh6o1BoJHlUX+ZwVKN
-         pl5IXsI84q0DCyw4kE6sjolcFH6zhGP+4VHzGUo+o9bM4ycHo2FV8qFg9CzsRNSHd08o
-         VEyFLnNThYqcB2jUmCMl9vNAjND9E9cMiSensee3Twz68MeiDby2erYEPoyiy9ZdQCnW
-         wdTP3XHqhL8KeP71qsIvZ+Qf1DHHOofH+QC4PKhVvpbTq/wUlpGxN0yUY3kf4JWPIQHa
-         9XUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVESqvihgdZ4EkKPyMyAOAB9IccZyNhzead2Tw9+I4sVSb9Fe3NgNLtTKu98ItcG8LLhRxtoIvQq1L6824=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZVFsF96lVsx8J18gdgA696J4F2kEkHJXjuJrACM/4oe+1I2AQ
-	NSdzHDlHzkqXNnxjfetxiwfko4cz3ZJh0VZluBH9vCLdNc/Z3iqQr7vzcbmkWXcunGYotgN3/4T
-	f4LcC+MRqMpfVLJUFnYpZBUj+Jn3zi+ciKHVj
-X-Gm-Gg: ASbGncsKl4g1qWlIkEPwBThcWWxFi54rufJaGrLKWUgRGKfm6TfoCHyCuTrHkpwGkKT
-	0poxcDomr9KC2b2PItBfroFoJe/EYASYjoQQ0Ycl8tFYPTQggqawPJH+pQF5SMins4eLOuVzBHF
-	l/wPWB9e9aBMMhX0lnnaCRlhgSOIvr8rsCzdLQ/ghEixzjKpkZnMvJKXQ=
-X-Google-Smtp-Source: AGHT+IG0QWHGCEKSo652tR8jBFYTbN6br3NuD7rA7VE5i5wP7NgDWYbmmxtWePY13JKMfkEgQeDEAP6YFTRzrKVgRkM=
-X-Received: by 2002:a17:902:ce11:b0:220:c905:689f with SMTP id
- d9443c01a7336-2240e4b9e0bmr71965ad.25.1741211501245; Wed, 05 Mar 2025
- 13:51:41 -0800 (PST)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D2E518E362
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 21:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741211579; cv=pass; b=F57I1Wtm+34y83/zjbSZ8kuQqGK/CbVS5ZTxZyvRn0skd9DINeevX40s6t+cSLwYItBZxKJYWGgIOTGW4206kyFBTBKEMU/BkK//FLgPjDtVGU2uDIgQ6Ag5XY8Z8sDc0tsN7kw3tWAZWol8G9A1NhDsFMTP06xgHCEqkPhUmck=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741211579; c=relaxed/simple;
+	bh=GaMaMg3VwbCFWstimVr6jj6x7MGRDFM+mLVf73o03w8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bBZikWCzSp+uqeM8egmfoIp5J4BWcYjPsAyvxPl9pzsKfAssRRb/oyhlk1ru0ml4TUwYLhcsG9TBQOyBvgUt0FZjwJ5j9BgxLQeKpQrjF4LprkZAMzQArEP+IESWkej+K8IN8bIXkxD6dVfbqgCCPLpwoWDSjeNPlwJY1sxBaFY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=cZMa76wQ; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741211562; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=bSYuxnUV/HlBSWa6+7SS5YTvWhp+Ct50cQeBrWYEQX1PzEMcsTgWTnZJIaynTXzpQga+MAFCFr7LTZRDwj380WIWlV4edsYpkysmjpmjzephoyehMA0Jvq2B+5rqbFA0a3ZxoZElJRA8bX9AT6+/C8Xukgy+YzTZxkvadZG8GVI=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741211562; h=Content-Type:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=GaMaMg3VwbCFWstimVr6jj6x7MGRDFM+mLVf73o03w8=; 
+	b=LmZUklc+fumaxBKpMqOD8YXBybgcx42/BGMFWi22TeQctlrvH5Ma6h/uGCzyobic0ii+IFAfkr9KDvKle+eOHuCTu6jXAWCGPD8nEfmkIimwQBKuGKfciJA1guDsvzNOKcGhTLLXzQ43ihQD/RcOGCJwrM0of8/m+M4amWFc5kw=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
+	dmarc=pass header.from=<sebastian.reichel@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741211562;
+	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
+	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Message-Id:Reply-To;
+	bh=GaMaMg3VwbCFWstimVr6jj6x7MGRDFM+mLVf73o03w8=;
+	b=cZMa76wQUcbJQCaInUNdiMEscPAH5rlre70ucJ/is6YNhsBe7fJm67efDeBLtIHA
+	I9v+8/IfeitwCAAxAWcMrXIc/nYSc27CnMMPROr5KX9SbvK7omVMXy09oG1Jj/3dqzD
+	Zn3GRb1azwjKMPE8fYQ1iOL67GBYcNBHarZRccVk=
+Received: by mx.zohomail.com with SMTPS id 1741211559978795.5927922700267;
+	Wed, 5 Mar 2025 13:52:39 -0800 (PST)
+Received: by venus (Postfix, from userid 1000)
+	id 08608183465; Wed, 05 Mar 2025 22:52:36 +0100 (CET)
+Date: Wed, 5 Mar 2025 22:52:36 +0100
+From: Sebastian Reichel <sebastian.reichel@collabora.com>
+To: Quentin Schulz <quentin.schulz@cherry.de>
+Cc: Heiko Stuebner <heiko@sntech.de>, vkoul@kernel.org, kishon@kernel.org, 
+	linux-phy@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr, 
+	Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: Re: [PATCH v2 2/2] phy: rockchip: usbdp: re-init the phy on
+ orientation-change
+Message-ID: <4mhobm5oxhjim6m2dwzmt63riuoruwaivmftnuaodwvplnleeg@w7yyv3zyxewe>
+References: <20250226103810.3746018-1-heiko@sntech.de>
+ <20250226103810.3746018-3-heiko@sntech.de>
+ <02757b21-7599-4ee7-9f97-247b04ba646a@cherry.de>
+ <dkjpudmzuuxvaotz4mx46yx7iacof7q6ck746j3rrqvlgbq3hk@6vtvy3gy3kff>
+ <2af85aa0-96dc-43ea-9542-88f91b21a028@cherry.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304-james-perf-hybrid-list-v1-0-a363ffac283c@linaro.org> <20250304-james-perf-hybrid-list-v1-3-a363ffac283c@linaro.org>
-In-Reply-To: <20250304-james-perf-hybrid-list-v1-3-a363ffac283c@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Wed, 5 Mar 2025 13:51:30 -0800
-X-Gm-Features: AQ5f1JqgDsOK30L0KW1LWPPaexfr7jsty_EekjhIiXiL-unpHg1wxzWG5JGHsu0
-Message-ID: <CAP-5=fVHE41=RuBf2fS6anTmNOy3DXZbUSw6p+SBaCM9oD-YOA@mail.gmail.com>
-Subject: Re: [PATCH 3/3] perf list: Don't deduplicate core PMUs when listing events
-To: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Robin Murphy <robin.murphy@arm.com>, 
-	Leo Yan <leo.yan@arm.com>, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="iiki2smch4scccrq"
+Content-Disposition: inline
+In-Reply-To: <2af85aa0-96dc-43ea-9542-88f91b21a028@cherry.de>
+X-Zoho-Virus-Status: 1
+X-Zoho-AV-Stamp: zmail-av-1.4.2/241.192.19
+X-ZohoMailClient: External
+
+
+--iiki2smch4scccrq
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/2] phy: rockchip: usbdp: re-init the phy on
+ orientation-change
+MIME-Version: 1.0
 
-On Tue, Mar 4, 2025 at 5:50=E2=80=AFAM James Clark <james.clark@linaro.org>=
- wrote:
->
-> Commit 7afbf90ea2e2 ("perf pmu: Don't de-duplicate core PMUs") fixed a
-> display mismatch related to deduplication within a single PMU, but it
-> didn't fix the case where deduplicated PMUs aren't listed at all.
->
-> Fix it by using the same function which takes is_core into account,
-> except in the use_core_pmus block where it's always going to be true.
-> Before this change, -v would be required to get the same behavior for
-> core PMUs. Now it's no longer required:
->
-> Before:
->  $ perf list | grep br_indirect_spec -A 1
->  br_indirect_spec
->     [Branch speculatively executed,indirect branch. Unit: armv8_cortex_a5=
-3]
->
-> After:
->  $ perf list | grep br_indirect_spec -A 2
->     [Branch speculatively executed,indirect branch. Unit: armv8_cortex_a5=
-3,
->      armv8_cortex_a57]
->
-> Signed-off-by: James Clark <james.clark@linaro.org>
-> ---
->  tools/perf/util/pmu.c  | 5 +++--
->  tools/perf/util/pmu.h  | 2 ++
->  tools/perf/util/pmus.c | 8 +++++---
->  3 files changed, 10 insertions(+), 5 deletions(-)
->
-> diff --git a/tools/perf/util/pmu.c b/tools/perf/util/pmu.c
-> index 57450c73fb63..caff0d309012 100644
-> --- a/tools/perf/util/pmu.c
-> +++ b/tools/perf/util/pmu.c
-> @@ -834,9 +834,10 @@ static int is_sysfs_pmu_core(const char *name)
->   *
->   * @skip_duplicate_pmus: False in verbose mode so all uncore PMUs are vi=
-sible
->   */
-> -static size_t pmu_deduped_name_len(const struct perf_pmu *pmu, const cha=
-r *name,
-> -                                  bool skip_duplicate_pmus)
-> +size_t pmu_deduped_name_len(const struct perf_pmu *pmu, const char *name=
-,
-> +                           bool skip_duplicate_pmus)
+Hi,
 
-nit: I think the name should be perf_pmu__deduped_name_len for
-consistency with the other non-static functions.
+On Mon, Mar 03, 2025 at 10:27:31AM +0100, Quentin Schulz wrote:
+> On 3/1/25 10:19 PM, Sebastian Reichel wrote:
+> > On Wed, Feb 26, 2025 at 01:38:10PM +0100, Quentin Schulz wrote:
+> > > Unrelated to this patch (but may be triggered by this patch?), I'm wo=
+ndering
+> > > how flip is really handled.
+> > >=20
+> > > It seems like we have flip store the orientation of the cable, but al=
+so if
+> > > rockchip,dp-lane-mux is set to <0 1>. But wouldn't that break if we i=
+gnore
+> > > that initial flipped lane-mux whenever a USB-C cable is inserted in r=
+everse?
+> > > Basically, shouldn't a reserve orientation of the cable when
+> > > rockchip,dp-lane-mux is set to <0 1> mean "normal mux"?
+> >=20
+> > If a USB-C connector is involved, the TypeC controller is supposed to
+> > setup the lane muxing based on the connector orientation. This
+> > happens via the typec API and in this hardware setup the PHY should
+> > not have the rockchip,dp-lane-mux DT property set.
+> >=20
+>=20
+> I could see some HW routing "mistake" where the USB-C connector in normal
+> orientation has DP lanes routed to RX1/TX1? Or is this expected to just be
+> faulty HW we shouldn't attempt at supporting?
 
->  {
-> +       name =3D name ?: "";
+You mean somebody routing the RK3588 SSTX1 and SSRX1 pins to SSTX2
+and SSRX2 of the TypeC connector and vice versa and thus effectively
+inverting the orientation on their board? I would say let's worry
+about that once somebody comes up with such a cursed hardware design.
 
-nit: Should this just use pmu->name ?
+Note, that rockchip,dp-lane-mux wouldn't be a good property for this
+setup either. With USB-C you don't necessarily have 2 lanes USB3 and
+2 lanes DP. You can also have 4 lanes USB3 (not supported by RK3588)
+or 4 lanes DP (should be supported by RK3588 hardware). So
+hardwiring the mux is a bad idea. Probably would require some flag
+for the TypeC orientation switch to handle the orientation
+information inverted.
 
->         return skip_duplicate_pmus && !pmu->is_core
->                 ? pmu_name_len_no_suffix(name)
->                 : strlen(name);
-> diff --git a/tools/perf/util/pmu.h b/tools/perf/util/pmu.h
-> index b93014cc3670..ce6a394a695d 100644
-> --- a/tools/perf/util/pmu.h
-> +++ b/tools/perf/util/pmu.h
-> @@ -297,5 +297,7 @@ struct perf_pmu *perf_pmus__find_core_pmu(void);
->
->  const char *perf_pmu__name_from_config(struct perf_pmu *pmu, u64 config)=
-;
->  bool perf_pmu__is_fake(const struct perf_pmu *pmu);
-> +size_t pmu_deduped_name_len(const struct perf_pmu *pmu, const char *name=
-,
-> +                           bool skip_duplicate_pmus);
->
->  #endif /* __PMU_H */
-> diff --git a/tools/perf/util/pmus.c b/tools/perf/util/pmus.c
-> index cb1b14ade25b..1acc27af4d02 100644
-> --- a/tools/perf/util/pmus.c
-> +++ b/tools/perf/util/pmus.c
-> @@ -358,12 +358,14 @@ static struct perf_pmu *perf_pmus__scan_skip_duplic=
-ates(struct perf_pmu *pmu)
->         if (!pmu) {
->                 pmu_read_sysfs(PERF_TOOL_PMU_TYPE_ALL_MASK);
->                 pmu =3D list_prepare_entry(pmu, &core_pmus, list);
-> -       } else
-> -               last_pmu_name_len =3D pmu_name_len_no_suffix(pmu->name ?:=
- "");
-> +       } else {
-> +               last_pmu_name_len =3D pmu_deduped_name_len(pmu, pmu->name=
-,
-> +                                                        /*skip_duplicate=
-_pmus=3D*/true);
-> +       }
->
->         if (use_core_pmus) {
->                 list_for_each_entry_continue(pmu, &core_pmus, list) {
-> -                       int pmu_name_len =3D pmu_name_len_no_suffix(pmu->=
-name ?: "");
-> +                       int pmu_name_len =3D strlen(pmu->name ?: "");
->
->                         if (last_pmu_name_len =3D=3D pmu_name_len &&
->                             !strncmp(last_pmu_name, pmu->name ?: "", pmu_=
-name_len))
+> > The rockchip,dp-lane-mux property is required if no USB-C connector
+> > is involved. For example if the lanes are routed to a Displayport
+> > connector. In that case the lane setup is fixed in hardware and
+> > there is no TypeC controller involved, which could do any setup ;)
+> >=20
+>=20
+> Yup I've seen that for the Rock 5 ITX and the evaluation board(s) do this.
+> Quite interesting :)
+>=20
+> Cheers,
+> Quentin
 
-Can this code be removed given there shouldn't be core PMUs with
-identical names? ie:
-```
-if (use_core_pmus) {
-    list_for_each_entry_continue(pmu, &core_pmus, list)
-        return pmu;
+Greetings,
 
-    pmu =3D NULL;
-    pmu =3D list_prepare_entry(pmu, &other_pmus, list);
-}
-```
+-- Sebastian
 
-Thanks,
-Ian
+--iiki2smch4scccrq
+Content-Type: application/pgp-signature; name="signature.asc"
 
->
-> --
-> 2.34.1
->
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEE72YNB0Y/i3JqeVQT2O7X88g7+poFAmfIx58ACgkQ2O7X88g7
++pp5wQ//ekpa+pqaf5idL+GfqVxmJL7gdtHvObD3VNfYoGb7LNc6EE6qgaaQqaEf
+CtyGW2XxjxkaWp2uJRrpQt8jAMy6kRI/gItvrFoa7pIZQaaJoqJyFPCSp9mL+eWf
+b8FBt531ViEd7TGendoNL9cpVKmnO6UjgMKtd3dppB6K/hBcWeUljojGHjBt9uz6
+AC0RhTR2+2P+IOoqWCS5Bb5VOqkPCX3VSdWrzKN/qMqynlOAk6o0Ar/qVyUaGztQ
+ezcRh/C38WsOWVFey8xTX43yyfUg+e5axYVTYvBXcL52qlQbXwxIsiKr2kQIXpRM
+0UAhywLTgeo5ZfSTtXwidwAuX00qdGRUSlbH+0rcfB8wQESaoqhZDJ2Pr2sSgmZL
+/lubA8hOtGjQ18L8rz87qjL8bugSk8ua15WDZq8wqY3CQ3u+3eQB8A1RNZOOJqd/
+EoJ26yr4hciaGy9aaGRX4MEuMK4K5cJTIaHeOtidQvuACp96bnA9uXLB2lBdAp7S
+1Ypyu6qH0xyOsMossSUg0ud+kWHLi/FPnifWo6aBIh3lrkSmfe6d5cyvVhMFOcYb
+bHu0ArA7u9b7nyyj0Rs5G+No8s94aobpfgpUjHOSzJhhbCXy6vidrJZAzwtF1dWB
+2e7ulm4IPup6C4fNBcWnC19XJaoepWF5BskB+BkLo+/Sa9BcErY=
+=+9iz
+-----END PGP SIGNATURE-----
+
+--iiki2smch4scccrq--
 
