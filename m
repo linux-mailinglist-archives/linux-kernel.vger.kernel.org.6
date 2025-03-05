@@ -1,115 +1,101 @@
-Return-Path: <linux-kernel+bounces-547042-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547043-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FFC9A50246
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:38:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BAC2A5024B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:39:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71D73B4348
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:36:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C13B2DCB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:36:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE6724C68B;
-	Wed,  5 Mar 2025 14:34:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20FED24EF75;
+	Wed,  5 Mar 2025 14:34:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kNaiNb52"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=proton.me header.i=@proton.me header.b="X+nq+VyV"
+Received: from mail-4322.protonmail.ch (mail-4322.protonmail.ch [185.70.43.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763B724C69D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:34:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E618024C69D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.43.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185269; cv=none; b=OM8eIXrhxWAKCPRzvUtcFXYYSADA2OZwkb0kMVUkSY+hHghlFui3Lz6z0690G71QBZYds92BztmcTYm4GnNcB6g9MMvzsQ1B75YlUQJ0zrt9Ig5nDiRl/rIkdlA3cfmxmoIYmQzIRXCs8stfL1/hcCMaIaRI+ywD3HlEH5OKCBc=
+	t=1741185284; cv=none; b=IczdlLyBEonsozZAVJqNj8e+qXabaF4DDKkwArmV5uyIHvttjjw1L77FKJGBO7QTTJNJPNEOa14p2Knej+4HE113oGMiEmkf/H4GKV3kFHTuDNHMxOXScfeet7hli/53Q44JpKGvYyb8L2I0Whpk0n720Hvai9h02HOi3J0GDeU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185269; c=relaxed/simple;
-	bh=Q20ygQOXxZfWxH1QwL6EtkQDkXQTKlkx9YZgOavk7ng=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sEO5HVlDXIC2hs5og2/00gAPqCYsetsvFJlSjf59zcO5Re6xZgW07nUP6TtRAsNonpgsfEucULd/HWgnf4QcikZ68r1/ms/wu8YG7aQlS/3JFkptKvLyWzcrmv7bq5T8RIFdZn0Zg9rNb2PyWwoOPC51vjq6T+EPy8lTJeZAZhM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kNaiNb52; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741185268; x=1772721268;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=Q20ygQOXxZfWxH1QwL6EtkQDkXQTKlkx9YZgOavk7ng=;
-  b=kNaiNb52ELgCM1QguObpfPTUAQTEJfxbLXGmG1ztRFksfcDjGyWgCmcw
-   zWNY859jkzUHQlNinwgVeJX7/mU6ttB3m9hC6pMdXb4mRq/XtRjpHGI7/
-   ce1Aetp+5U4MWiBfxr2qN4mpvNpRkkcr0A7mKwHgTzhc1sq11vuDvBT1Z
-   yFDhhWNJM95CBG2BTx3TTkEiSMM7I6MNwca++trZDcToMB1yLG5Vd99hu
-   cXqoNLue6vHUBtmkDNhRWi+6XQMvQ1ouCWs9R9bFxO27t0MaVY/svew3K
-   OM5wcUpdvRQbRFc4DCk5X7B+Wz+f1xCa2XKAH/TxNgberCt2PJHVQM4KJ
-   g==;
-X-CSE-ConnectionGUID: mZodHfgHTYSmXfmtRkL/rg==
-X-CSE-MsgGUID: 2Lx5qp16Qie0QzdDtTQrSg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42058787"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="42058787"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:34:27 -0800
-X-CSE-ConnectionGUID: 1SlVJIArRA+WKeKR7nzDPA==
-X-CSE-MsgGUID: dR5c/5nSRISnK44rdgG4Xw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119625346"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:34:24 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tpppE-0000000HRAs-2Xou;
-	Wed, 05 Mar 2025 16:34:20 +0200
-Date: Wed, 5 Mar 2025 16:34:20 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: mailhol.vincent@wanadoo.fr
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Subject: Re: [PATCH v4 1/8] bits: fix typo 'unsigned __init128' -> 'unsigned
- __int128'
-Message-ID: <Z8hg7J1jqlFF1Uka@smile.fi.intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-1-1873dcdf6723@wanadoo.fr>
+	s=arc-20240116; t=1741185284; c=relaxed/simple;
+	bh=+3KZycyRQWg6AONdj6MUvhWQ0yttj5flpyUcA4hxWz8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dme+TpIWB3Vzx6n9Z+2DVuoqG74oQOoaVV1VS2wc3CwPhrU7tW//Z7RhnunWJWhEBkuWQ75sHBhpD5WLilobeBJ4nbCHO8ZWQne/nvVfK4Z2467jvWUv2NCWUPOnHv2voHP+JEJeQ9jMjR+32HgHTqCp8yTxyUtHXJbCmq8keGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=X+nq+VyV; arc=none smtp.client-ip=185.70.43.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=cogdqg55erhcjfmdfg247whv2y.protonmail; t=1741185280; x=1741444480;
+	bh=+3KZycyRQWg6AONdj6MUvhWQ0yttj5flpyUcA4hxWz8=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector:List-Unsubscribe:List-Unsubscribe-Post;
+	b=X+nq+VyVUTJl6QdqXVEonz5IDPa9VbvjAvmcPlCsjHps5CeP/6HaxVKnCJ7Y4SC9M
+	 zLC/D5VHdBgK1qo/Ne32jj7FjEkYxYJ3cfxWfU3Jz7HwXPzBTG5oOP0x4TtSe4sFA2
+	 vrwSUItLtT0Pxp6RSWiBB1hA8O8cwAYx/+jMVduu8Mv2T09ooDQm7Km3c4lGM5zhSb
+	 Kai3cw9sdqjjbQcEbEL2sQPjCgd3GiT+k5+pRNL+fauHYqiDjuCeoIhOeIoiVFrxZj
+	 /iMYgsKhbmY5ex+74sl2YhcrROOs60341LtJHZ2yLO9/UUV+8IkYhtpe5iZ01TXZ6J
+	 AhusOW/Rp4qFw==
+Date: Wed, 05 Mar 2025 14:34:35 +0000
+To: Andreas Hindborg <a.hindborg@kernel.org>, Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+From: Benno Lossin <benno.lossin@proton.me>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH 14/22] rust: add pin-init crate build infrastructure
+Message-ID: <D88ENUE2B49N.FGSNLEB107E1@proton.me>
+In-Reply-To: <878qpja7b5.fsf@kernel.org>
+References: <20250304225245.2033120-1-benno.lossin@proton.me> <jpQp16UCJ00pInqOI-QFULU6-FKl2bBtAlmnxtXWLgXPVb7gy6d727nr7THeyks3ERF5Yqu3R6bikD0OK4mqXA==@protonmail.internalid> <20250304225245.2033120-15-benno.lossin@proton.me> <87h647d6xg.fsf@kernel.org> <cdfBMmuIl8Wl-KpI-koNDQJOCGBr9z9dOi5fxQvFbgNWQHHw6JtMizaMMbMniNlE841-9b7TdLuZ9Xh_hFsf7w==@protonmail.internalid> <D88BLHENDH8Y.HQUKEXN1XB7C@proton.me> <87ldtjbqw2.fsf@kernel.org> <okP1iZelIm5t6CfgoFyh0m8LiVEQW3ULUroZHdSQ97ul_BmPr47HBpB3RgHDMtm_2jzF4sTJszuUACsCGBEXcQ==@protonmail.internalid> <CANiq72k=KiYhKr9XHU38==Rx0df4rERyOL1abRG_cDo+4NNa0g@mail.gmail.com> <878qpja7b5.fsf@kernel.org>
+Feedback-ID: 71780778:user:proton
+X-Pm-Message-ID: eb7d669969bb2d542e365fcae0c70997690124b9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305-fixed-type-genmasks-v4-1-1873dcdf6723@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Mar 05, 2025 at 10:00:13PM +0900, Vincent Mailhol via B4 Relay wrote:
-> From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-> 
-> "int" was misspelled as "init" in GENMASK_U128() comments. Fix the typo.
+On Wed Mar 5, 2025 at 3:19 PM CET, Andreas Hindborg wrote:
+> "Miguel Ojeda" <miguel.ojeda.sandonis@gmail.com> writes:
+>
+>> On Wed, Mar 5, 2025 at 1:34=E2=80=AFPM Andreas Hindborg <a.hindborg@kern=
+el.org> wrote:
+>>>
+>>> I _really_ think that the ability to run the tests should be present in
+>>> the kernel repository. But I also do not want to block this series on i=
+t,
+>>> if it is something that will be easier to achieve with the build system
+>>> overhaul that is in the pipeline.
+>>
+>> No, that is not the plan. Even with the new build system, this is
+>> supposed to be developed upstream as far as I understand, so you will
+>> need to run them there anyway.
+>>
+>> Unless there is a reason we could catch more bugs here, that is.
+>
+> I guess it would be no different than `syn`. But I think it is a shame
+> that we move something that people could contribute to via the kernel
+> development flow - out of the kernel development flow.
 
-Please, fix it everywhere:
+You *can* send patches via the list, I will pick them up and run them
+through the GitHub CI.
 
-$ git grep -lw __init128
-include/linux/bits.h
-include/uapi/linux/const.h
-tools/include/linux/bits.h
-tools/include/uapi/linux/const.h
+Patches that arrive via GitHub will also go through the list and people
+can add their tags there.
 
--- 
-With Best Regards,
-Andy Shevchenko
+Also I don't think that pin-init will receive a lot of contributions in
+the first place. I do have a lot of changes planned for when we get
+`syn`, but other than that, I don't think it will change a lot in the
+future.
 
+---
+Cheers,
+Benno
 
 
