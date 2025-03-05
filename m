@@ -1,195 +1,124 @@
-Return-Path: <linux-kernel+bounces-545951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5350BA4F45B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:06:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FBC5A4F46A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:08:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DA116F468
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DC7716D229
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A891E152E12;
-	Wed,  5 Mar 2025 02:06:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04638152E12;
+	Wed,  5 Mar 2025 02:08:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6GYxL8C"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="gIC32lJS"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83834136E37;
-	Wed,  5 Mar 2025 02:06:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EECDC82C60;
+	Wed,  5 Mar 2025 02:08:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741140382; cv=none; b=tzi2avzPUZFyLgitg4gf5maIGyBo3MnjWvxB7sc6/PUo8jCSpBA2ua1Cm8ksrtmtN2h98i7FMF7Ivoa9zNgCqYIXJpMs2cOh/Te+rVTUD9dM5KRfQINw8ZCg0SuD8jjO1/q17jpyQKLRD2gz8M/S4pgUiL/KdEfirOEPk42ICeY=
+	t=1741140515; cv=none; b=QrjXtlQHsgs7R4JRUlYJ/rnGryMVqgneT1Km6U2YEo4ds2gfC/ImSJWJgowmYjO9ouLN81dh1bsBZrGlVUqY8BlQR2Ak8yUV8BZN1lkkWCxMMVNYi1jc/2u+mhMwbZvrvTDvRGrWkRqpM17gmNOJDvxxiQ+oE7cpXZwhBPD9l0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741140382; c=relaxed/simple;
-	bh=rXZ2Zr8lM8TrA/9SvxJsslt+rZS4wfnpBpkYvhXBP7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TPoDChVnw69oeTHq3uFzbZxletS9enF8z/t+vy6IKzG/6L9yRAi3P/QwDlhQbvJryxCqyfXuSYjprt1e7PzMEcnM/kkQ3S33CVeWyJKxV5pBOSctmBx6yCwOf5knefPUIegTtRUD0bLSxBFDARWYs8HJkKkzYkSqCZDEDrC9vrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6GYxL8C; arc=none smtp.client-ip=209.85.219.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6e88983cedaso47887126d6.1;
-        Tue, 04 Mar 2025 18:06:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741140379; x=1741745179; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1etl3V0lZaRtG6YH6PccrFQl/uVmRYaudXPpsrJaLBY=;
-        b=f6GYxL8CvqTnt6iJgufZnnLCxP6F4RRJ1Tdr/ccw3Rs2WnWpY+JPVnTtrFQEijYoCT
-         3hOABoUzG4zCSgvQUKs1tsccmYZBIq6oRpSJJhNxhKIfjy0pTJ49y64VAhe822IW5H3r
-         /IKQsgddTlj1S6Tc2USq0rO3beljTSYNno2a3hGEqkS01lsZ/QH+A3n7932QNdcX3jWa
-         Vl9nYFRQbw9WBY6meEiN0xiMf62DCRXZtjNzQF/4LeRkn3z7egh79nwkyHQMqTrwin6Q
-         xyF77v7ZFGV8fAy9A8O0u0IqgGmJVkjkVKPdfKyPEF78G0WYHts6rjMY8yAyp1fdJVAF
-         ea6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741140379; x=1741745179;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1etl3V0lZaRtG6YH6PccrFQl/uVmRYaudXPpsrJaLBY=;
-        b=ZjLbWV26PeSXWOlfEkHsPM9s9F93AU1PEzp1j0/FL4HMaA7T+egim1irUGHyYxuA8E
-         RRf4Hzn+kaQ1r6VPFBhKYnZRmu/dQdNpPmhLIS9gI/0CBAGunGAMC0ghVNUlPh5PCXFK
-         XQotiIBqQ6G/1YQhrIn4s98bQutnZq1C2wton2cmpMSCM2J/Q3/Q8SmrDugI8YIwLf9N
-         /xFQwhaaUocoQXGfbM6rRJ2ftA3oWQ7DNcDpytDZ4GxIid+k5gL0+EcIBb+UpYcwjqEx
-         j9lme6Y05i5Wp6ozENt+YX3ZRd/chceZWKM1NgRC2wA+NoOYWlT/4ByH5KgJYXm6sxKd
-         x45w==
-X-Forwarded-Encrypted: i=1; AJvYcCVm+4JYUuJmCA42ityZf8uskv6B8TQatB2qqaT9u3d3ISeYqK9JDtMIibGtlBMN3gqf6tZJC3NPPjomz94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnBdIBUxqVydi9kYUGsBLPnk9G/Q3nCLaOpmR9fNEU0nSUE+TH
-	Hos5WBg2yff3d9ELYEoLB3M4DT/cd05x8atDlF4LlJHnP4z5h1Rg
-X-Gm-Gg: ASbGnctfbQ4IvwT+lIdDnKejZFI2GVSQQFZa+HJgOQaZkPZOOCfSjiegjpnGhSfyztX
-	cU4KPoYh0KH1ytGTJac1xybrZKgGwoeOjolkfpz+wMq0mDSdOiy/+PjT3969xilssdABEVg9CDH
-	ZaJ9/GcInYbDZsQbkhQxyCJUGnyIaDy2of3bU9MBfaK38Efb6SQNggDIjbQ3XFiDfeaxXut70iA
-	4xopfLFA1g6FSOtzHXxaM+2O+AJNltiFnyFnEC8wUOXCe3VU0IjXqhq4CKoKlTtoYzKJHF84KMu
-	54h1BvUG6H/yJb7kHdT+KCWo61ChUTTkwz3lghzDZRFbhDEph4U9fCPcvTQZ8cwtVQ==
-X-Google-Smtp-Source: AGHT+IFeYhG66XP9kra/BVuJZMG8yqIj6oqdU+8B+nTKQRJtFvYXuuS00o+ECFpnOZZMu6oA70v5aw==
-X-Received: by 2002:a0c:e00e:0:b0:6e8:ebc6:fd5f with SMTP id 6a1803df08f44-6e8ebc70244mr290466d6.20.1741140379230;
-        Tue, 04 Mar 2025 18:06:19 -0800 (PST)
-Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:a5b9:4b66:4113:9357])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8baa851c3sm44981786d6.108.2025.03.04.18.06.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 18:06:18 -0800 (PST)
-From: Adam Simonelli <adamsimonelli@gmail.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jiri Slaby <jirislaby@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Steven Rostedt <rostedt@goodmis.org>,
- John Ogness <john.ogness@linutronix.de>,
- Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
-Subject:
- Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner if
- enabled as a console.
-Date: Tue, 04 Mar 2025 21:06:17 -0500
-Message-ID: <7969025.Sb9uPGUboI@nerdopolis2>
-In-Reply-To:
- <CAHp75VftQASqajiG_z-==CmVMu5Orv_Q8QMj-7W=sxsJPq6bJw@mail.gmail.com>
-References:
- <20250304035447.3138221-1-adamsimonelli@gmail.com>
- <20250304035447.3138221-4-adamsimonelli@gmail.com>
- <CAHp75VftQASqajiG_z-==CmVMu5Orv_Q8QMj-7W=sxsJPq6bJw@mail.gmail.com>
+	s=arc-20240116; t=1741140515; c=relaxed/simple;
+	bh=2qaY55EbUClEFWlHR/dlU8zjvd4SCa1PdEWwBvUXdWA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=u31r+HCxtIw2+J+Y2aNxj5Lf2dnQwRPHI4yjuIWiz5HkvQGP5p3uWfEfD/Ml4psegXwJI+R0LTC2esjkfNTn4EVqUnm7FpDTa+XiUHmzRBcfPVaaTfRXWSCpQ/JN4BFO6OErPkFsD4qLX/r2VZxj1n9DkMQAFsxiyud7/XH1pnY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=gIC32lJS; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524KchQO014502;
+	Wed, 5 Mar 2025 02:08:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=8zXsNO
+	fgaDdCDO14Py7QD/hmFwzYTQByJPaKXkUaR6Q=; b=gIC32lJSVEyLINqvFLXLRa
+	uI/NC1wwUV3+nliKUOQm72wVa3WKDJuaNnH9hAtKXR6N3gOe6oq+sJCgok3Rg3Xy
+	P+MtaFW3lcVdQyDASoXnYBEpzItyCjRr+qnD9OYJ4ANOOQb08JAZOJM65uXHzkZo
+	gRvu7iIw4qzJDC8cLJih7taCx0Vw34hJJBd9i0mU72IXHfymyM5f2+XixCHlEZeo
+	5ddSk80Lxz+A4nt7j63DJtM1hXuwVI0X1OKKiCNv4P4zlbjwdZ9/hCMlsVNt3qHp
+	9Y1y0pQtsGLfx928uVVRTJ/5RsgNoithOiZleWgx9gJ6WmkugCVC3dNix59lS9Qg
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4568r0h0px-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 02:08:03 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 524NZWpa013743;
+	Wed, 5 Mar 2025 02:08:02 GMT
+Received: from smtprelay04.wdc07v.mail.ibm.com ([172.16.1.71])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2krdvk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 02:08:02 +0000
+Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
+	by smtprelay04.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 525282Us48824582
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 5 Mar 2025 02:08:02 GMT
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EF4CD58056;
+	Wed,  5 Mar 2025 02:08:01 +0000 (GMT)
+Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DD72F5803F;
+	Wed,  5 Mar 2025 02:08:00 +0000 (GMT)
+Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.117.76])
+	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed,  5 Mar 2025 02:08:00 +0000 (GMT)
+Message-ID: <3aadae5d35af3f984b9e8bc548d73bb878d666bd.camel@linux.ibm.com>
+Subject: Re: [PATCH v9 1/7] ima: copy only complete measurement records
+ across kexec
+From: Mimi Zohar <zohar@linux.ibm.com>
+To: steven chen <chenste@linux.microsoft.com>, stefanb@linux.ibm.com,
+        roberto.sassu@huaweicloud.com, roberto.sassu@huawei.com,
+        eric.snowberg@oracle.com, ebiederm@xmission.com, paul@paul-moore.com,
+        code@tyhicks.com, bauermann@kolabnow.com,
+        linux-integrity@vger.kernel.org, kexec@lists.infradead.org,
+        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: madvenka@linux.microsoft.com, nramas@linux.microsoft.com,
+        James.Bottomley@HansenPartnership.com, bhe@redhat.com,
+        vgoyal@redhat.com, dyoung@redhat.com
+Date: Tue, 04 Mar 2025 21:08:00 -0500
+In-Reply-To: <20250304190351.96975-2-chenste@linux.microsoft.com>
+References: <20250304190351.96975-1-chenste@linux.microsoft.com>
+	 <20250304190351.96975-2-chenste@linux.microsoft.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-2.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: CAoPRjNKVmPFluf5VdmaD1zxNex0Mc7D
+X-Proofpoint-ORIG-GUID: CAoPRjNKVmPFluf5VdmaD1zxNex0Mc7D
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_01,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=983
+ suspectscore=0 impostorscore=0 priorityscore=1501 bulkscore=0 spamscore=0
+ mlxscore=0 phishscore=0 clxscore=1015 adultscore=0 lowpriorityscore=0
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2502100000 definitions=main-2503050013
 
-On Tuesday, March 4, 2025 1:51:52 AM EST Andy Shevchenko wrote:
-> On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
-> >
-> > From: Adam Simonelli <adamsimonelli@gmail.com>
-> >
-> > If CONFIG_NULL_TTY_DEFAULT_CONSOLE is enabled, and CONFIG_VT is disable=
-d,
-> > ttynull will become the default primary console device, based on the li=
-nk
-> > order.
-> >
-> > Many distributions ship with CONFIG_VT enabled. On tested desktop hardw=
-are
-> > if CONFIG_VT is disabled, the default console device falls back to
-> > /dev/ttyS0 instead of /dev/tty.
-> >
-> > This could cause issues in user space, and hardware problems:
-> >
-> > 1. The user space issues include the case where  /dev/ttyS0 is
-> > disconnected, and the TCGETS ioctl, which some user space libraries use
-> > as a probe to determine if a file is a tty, is called on /dev/console a=
-nd
-> > fails. Programs that call isatty() on /dev/console and get an incorrect
-> > false value may skip expected logging to /dev/console
+On Tue, 2025-03-04 at 11:03 -0800, steven chen wrote:
 >=20
-> Missing period at the end.
->=20
-> > 2. The hardware issues include the case if a user has a science instrum=
-ent
-> > or other device connected to the /dev/ttyS0 port, and they were to upgr=
-ade
-> > to a kernel that is disabling the CONFIG_VT option, kernel logs will th=
-en be
-> > sent to the device connected to /dev/ttyS0 unless they edit their kernel
-> > command line manually.
-> >
-> > The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
-> > maintainers an option to avoid this. Disabling CONFIG_VT and enabling
-> > CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
-> > is not dependant on hardware configuration by default, and avoid
-> > unexpected new behavior on devices connected to the /dev/ttyS0 serial
-> > port.
->=20
-> ...
->=20
-> >  obj-y                          +=3D vt/
->=20
-> + blank line.
->=20
-> > +# If ttynull is configured to be a console by default, ensure that it =
-is linked
-> > +# earlier before a real one is selected.
-> > +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
-> > +                               +=3D ttynull.o
->=20
-> Here is the question: are you sure that all console drivers that exist
-> in the kernel happen to be here? Have you grepped the source tree for
-> checking this?
->=20
-Grepping for console_initcall, the only other places I see outside of
-drivers/tty/ is=20
+>  - Compared the memory size allocated with memory size of the entire=20
+>    measurement record. Copy only complete measurement records if there=
+=20
+>    is enough memory. If there is not enough memory, it will not copy
+>    any IMA measurement records, and this situation will result in a=20
+>    failure of remote attestation.
 
-arch/mips/fw/arc/arc_con.c
-arch/mips/sibyte/common/cfe_console.c
-arch/powerpc/kernel/legacy_serial.c
-arch/powerpc/kernel/udbg.c
-arch/powerpc/platforms/powermac/setup.c
-arch/um/drivers/stderr_console.c
-arch/xtensa/platforms/iss/console.c
-drivers/s390/char/con3215.c
-drivers/s390/char/con3270.c
-drivers/s390/char/sclp_con.c
-drivers/s390/char/sclp_vt220.c
+In discussions with Tushar, I was very clear that as many measurement recor=
+ds as
+possible should be carried over to the kexec'ed kernel.  The main change be=
+tween
+v8 and v9 was to make sure the last record copied was a complete record.
 
-> ...
->=20
-> > +# If ttynull is enabled, but not as a boot console, it is linked and u=
-sed later
-> > +# after the real ones.
-> > +ifneq ($(CONFIG_NULL_TTY_DEFAULT_CONSOLE),y)
->=20
-> Also can be written as
-> ifeq ($(...),)
-> but it might be less explicit. Up to you.
->=20
-> >  obj-$(CONFIG_NULL_TTY)         +=3D ttynull.o
-> > +endif
->=20
->=20
-
-
-
-
+Mimi
 
