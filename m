@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-547344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FADAA5060B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:11:05 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 89A69A50609
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:10:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36243AA370
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:10:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75D9F3A5FA1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:10:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D59A2512F7;
-	Wed,  5 Mar 2025 17:09:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A342512C0;
+	Wed,  5 Mar 2025 17:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="L76yi27o"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="JIUlbDIH"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720B21A316B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F32919C542;
+	Wed,  5 Mar 2025 17:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194568; cv=none; b=r6rdbe8svlAU1ABZHkpmSgDhCm3wHQJg4iLzZIVD7mo0lru+10XvAJ6UB6qRkBoxyCBhj3p1QpquTL4ieR28hQ9FIp87EDT0uvQLTnp3NaWm8EYjdn/TP3RUIGiI3uVYmlH6OQhnD1u/7uzAkP3YBX/26R8XL73hxDtkdR4FqI8=
+	t=1741194553; cv=none; b=Kdqc531wtKza86/a9Vc4OZe4PoewjDhpi1oXK9D6d3gT0iGQ47Hw1mti2UNy1fpdhmumU4ja7qE3NFuTSAz/ddoI+x4ThwV3+EK2ttQzfBkCeRWHkJCSTy33B4HO+qwj182leSZhSzHCClVfQ7EjkhpJEzkkF+6DqqsQcOe0zt4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194568; c=relaxed/simple;
-	bh=YaS7Vw61tpQIxWBhHvbHuS/DKddYZcONhrC4ZkkXjrE=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=mFBhXpJCn7VSjDRI/RSHtLsAdgEpJOmp03m9XFyCscQ1TahC/W9SFBxjSxArDAhqK9WkIig0afKEPdRHxQsSuirY78cw98/7H+oHg19Fuz65gYRkT+vykfyJozjiQQCYMq6cOQZIHtTqo0mXjfSxHhN5Gk7pLGAcSSoN8Mz3j38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=L76yi27o; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741194541; x=1741799341; i=markus.elfring@web.de;
-	bh=YaS7Vw61tpQIxWBhHvbHuS/DKddYZcONhrC4ZkkXjrE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=L76yi27oBcT7j0UHkfzV8BEww0ObdYF4xYtqm/n/lkFEtavF8Tly6AGTymodmoUE
-	 hs8lqZ0xyZzF4P8HhHD2TS1YjxmIX2DPPr2UA+yKI5Slt6yF1ZVH4q72AXqi9NDRo
-	 CCmH1D1PmU8wTQrv4trt0UFCZVdwQvIT0d6Z+zh77BMnSsKgIGj8Yxtv+1HaaKUfR
-	 khz00VN2JfEyKOSKRtHeO8EFtuIMzfmC6xJI3dOsTJUzoMUVswYSMNe3LsTKs3x4x
-	 o08hZnuz7H4cD984gZexT98aiOdGu6e7bEHiWrcGwrH0u7EOwJdjxZiELAf5GzkbI
-	 ZvRha1ll/N36pae7gQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MlLE7-1tOYE43K61-00kWWL; Wed, 05
- Mar 2025 18:09:01 +0100
-Message-ID: <851bef96-245b-4f5c-8390-ab94dbc04063@web.de>
-Date: Wed, 5 Mar 2025 18:08:57 +0100
+	s=arc-20240116; t=1741194553; c=relaxed/simple;
+	bh=WEjrtOD5SRlKTyy/y4mcSiqWzrehr6/dzujDScRVSXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mV5zA9UAO1XKUsfbEjfQ0bA6Gcb6Et4f8H/4bxkw/vIOXew1pkOyNcxCn4wKvbOXzJZg9bA99O42AJ7sLaim5oCX5zAPtkRJTLqDVPfSuzql6nMDUefiFgIynNMu420LApCfB5uvAdIjEiMXmoCrAwBcitFJfSie93sLELyZfBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=JIUlbDIH; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1741194549;
+	bh=WEjrtOD5SRlKTyy/y4mcSiqWzrehr6/dzujDScRVSXo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=JIUlbDIHNioNd7WrpDtDuKtKn8bWX7d+oG8SQ2P2MeP9y5iWDknHOvrKE/09WnNbA
+	 8HE+45oVuLOBSgwZanuL02KBAV1DJ47m1oHlQN6M+nWZoOi2jdUNTVrrFRMgYTmt8g
+	 gWxQGel+PA5OQB/a0xCtVo6HemRRlBgwr2ruk6ZwiGgRsefROFVhmlNSDLH2YYwF87
+	 hkoHuXC4rW0GsXoLOYfSNxbMPg0uAsMNk9pZMas6lS9yy/7DIOOqjcXoDm/nDh5XqI
+	 WU6sj5qJ7VnEqU8r7daNnnI/GTSslVRAMwmGiWQuLW9m2myoALHlsnXSK8oSmaLvQe
+	 64VBNtKkvYiBw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id C659917E0599;
+	Wed,  5 Mar 2025 18:09:08 +0100 (CET)
+Message-ID: <dc68cb1c-0304-4ebf-ae38-444817a02f78@collabora.com>
+Date: Wed, 5 Mar 2025 18:09:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,60 +56,44 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-To: Ryosuke Yasuoka <ryasuoka@redhat.com>, dri-devel@lists.freedesktop.org,
- linux-mm@kvack.org, virtualization@lists.linux.dev,
- Andrew Morton <akpm@linux-foundation.org>, Chia-I Wu <olvaffe@gmail.com>,
- Christoph Hellwig <hch@infradead.org>,
- Dmitry Osipenko <dmitry.osipenko@collabora.com>,
- David Airlie <airlied@gmail.com>, Gerd Hoffmann <kraxel@redhat.com>,
- Gurchetan Singh <gurchetansingh@chromium.org>,
- Jocelyn Falempe <jfalempe@redhat.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, Uladzislau Rezki <urezki@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <20250305152555.318159-2-ryasuoka@redhat.com>
-Subject: Re: [PATCH drm-next 1/2] vmalloc: Add atomic_vmap
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250305152555.318159-2-ryasuoka@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:vEp7fO8OsXvltY+7oiG0U4Qokb3J1idWk083MmpQMlGUeIwHTKL
- jRh7hs+24rFyD+jl09lH+ncvGeCwbtWg961JToNhl4VKePRb7+aYCgPFENm1vRX8pbHDA4i
- zxnOW+aDPcsXlw3NruQ/sLB2XxT7g5LpG8UHpGYjNpIoMcPvKStEF6y8FzzgWuO0EICoJKb
- vXAbMLOSUS+c/O6ilBHGw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:YxuzAM20H38=;gHkRljwq/KV5WGk1op49fkFicqc
- 9+hDF7PwhqCqW2f4kk5i/KcpduA11TJaBjXWyLI4L3VpqOzUiHb0XPmfXJCVmm7I+3fQmHoP9
- DDnopOS6pVWYYhLTpJOL9Y/GMavuuRRvCio5xTqQLKw+WzCFxa2r2kgj4ptckTwDu8I5dOokT
- BjkuEjAB8Stv2pLpATxO64dtcZSQ0LIZdpevZXtonOkZKTdMp3QemYaudoA+dD92uRF7h2Hs1
- ijSZhc9apGr3TirahGb3XO1jnLgb9HIz3I/L1Q8T82JLKCb94hBs5a34lVWmuG6IC45ajiS/W
- QXsIn2Qn1IkIDTik6ZpLzMq7wBIrMUeYuhx7GIPbe9nRuLzWGPzgbtw9UcuBXCiyAb7LHYSYo
- /JsqOTvvJ9uCVvcjBK45KWxXqfz+fg2wa+OM48FfL3bd9O3N37+BgtGONVz87jkoH8ZVDx3P8
- /EUJo4g4x8buFuGXnIq+dO5lNNRzfgs3l7QZnAt9PjlEPIP5LffA0kj+TqYLhge1Nl6qhyA6V
- NXHOjPYArqM1zOkmjLmj2GfLwvxhpbrWEBlVFcetLW737LEASU2EBCKKLkTkncL7kCWbCHBeC
- rf5TQD0sE+J2Faqq4hU0u6XBP4q4Uxaeyo3hLULVzFLHvJQQSU/f+iN2RLowoTxYk5q4V2qBV
- xt10vUJahfgn3zh3C1ZCxPydJt5vPVOsqEAHOJ2tJ9h8KLgBzvhTnJUYpXDmi5QYfLxDu7eNb
- 67xd0Qii2mwZxGLJ2QLdAMH/8ep0o28WvNEchYkqgEUFf7Vy18Yxg3b7dkpazHS/+vlJNR1fx
- C//4EctTNRkqW5SJohwa6tSR6r2yZe+BmPzR1glbxoxiXLVI6emBXs+66x8/XVCFgKqzttxZe
- dDpP1CV7fKQEF2UNNrzPTjCECsPQImiQNBjW4vmeioM2/Il3M+lC2MiBB7GTRTx2+DaQq/dDZ
- jhx/N3t9ITztPm2Mbi1diyRRd8iRt+CaSkPbH6AwJUjH/eCVlZwNy/cqT7vgMkOa4Ys5JpIp3
- A5bFO+O1DKofWhyf7vhJ+QcJ9SbHZqwQ2fiYB8HS5KirYR3kN8hXSelgRQcYDr7nHafgc8dsn
- D/NOp/0wwL5OnO9FuABzFnHWIZr5UMkRDVJJPL9qDYD8fs1BhL5gI640Lv+PiEk8iczDhgRBM
- JsHuPXZ5dmII8/gulPYM9EDdJdGOkE8zoPNZljZ4n8PtOJ3P0WYlApOLCFbZzbhCeL66vNxLy
- bQ2gWuCZfKwyWhCNEtUmUtBY3m9dcwIDB4OBhbxh5q0/C+Njt/cq7dYONtJJFNZqVaOvnZxlL
- n/Hem3o5coHPuAH0UUSCz+WpXNpOoyCm+WpnzYJYplznBNhMSZDWMoWOINx2w+l+7sevpSShH
- MoyxcTY+fRffbMemiXvtoU0Ny+AcsrQ0SrYWJjm6E3cA7xr2+qAXLbJn8rmENw87JXrsIOgTc
- 3hNdO/NPSGU+8NUDlEtV1UdHFCro=
+Subject: Re: [PATCH] arm64: dts: mediatek: mt8390-genio-common: Add jack
+ detection with accdet
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: kernel@collabora.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20250304-genio700-accdet-dts-v1-1-86d77c5cc745@collabora.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20250304-genio700-accdet-dts-v1-1-86d77c5cc745@collabora.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-> Some drivers can use vmap in drm_panic, however, vmap is sleepable and
-> takes locks. Since drm_panic will vmap in panic handler, atomic_vmap
-> requests pages with GFP_ATOMIC and maps KVA without locks and sleep.
+Il 04/03/25 22:43, Nícolas F. R. A. Prado ha scritto:
+> Enable audio jack detection for the Genio 700 and 510 EVK boards. This
+> is handled by the MT6359 ACCDET block, which on these boards has the
+> HP_EINT pin pulled high and connected to a normally open 3.5mm jack.
+> 
+> Add a phandle to the accdet in the sound card node so the machine sound
+> driver can initialize the accdet.
+> 
+> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
 
-See also:
-https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.14-rc5#n94
+For the next merge cycle;
 
-Regards,
-Markus
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+
+> ---
+> This patch depends on both "Allow retrieving accessory detection
+> reference on MT8188" [1] and "Get mt6359-accdet ready for usage in
+> Devicetree" [2].
+> 
+> [1] https://lore.kernel.org/all/20250304-mt8188-accdet-v2-0-27f496c4aede@collabora.com
+> [2] https://lore.kernel.org/all/20250304-mt6359-accdet-dts-v3-0-5b0eafc29f5b@collabora.com
+> ---
+>   arch/arm64/boot/dts/mediatek/mt8390-genio-common.dtsi | 1 +
+>   1 file changed, 1 insertion(+)
+> 
 
