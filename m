@@ -1,191 +1,185 @@
-Return-Path: <linux-kernel+bounces-546171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D034AA4F73A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:39:05 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E5BBDA4F744
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:40:09 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F6553A7FCC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:38:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 57BAB16D49A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:40:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 619F21DDC12;
-	Wed,  5 Mar 2025 06:38:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8499A1DC198;
+	Wed,  5 Mar 2025 06:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eqyhctWe"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZtRGv3t"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8D71078F;
-	Wed,  5 Mar 2025 06:38:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CF01DF98D;
+	Wed,  5 Mar 2025 06:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741156737; cv=none; b=UFPUdLnAcF2D7vcspGWDK8SBtl4wOE7lkGtrRIFJv05xhtWU+Wi71nIEZx+PDges+aFMfsCoaRWZgkHxvFgu8WfM0WaLxHL/AdrpN+XkI9fqo/shbYvkckmD6NZ1zeFeAYfWr7feAIKFaL16xfVRn52RQ7mlcKAMO5sR3igzwdk=
+	t=1741156792; cv=none; b=SnT2PDwQy2Kyi0sxeczfjeWSiaqe1w5+lZ7V772ZbOwJ3mcgTf4iDt/ebR86MdmYhFABWH4Wg+WQk6cGtidqfa/d0e2IqZ1SBSOC7px9Dv6Nu6I0axtF7mSIkgANf4lwdnncf7yJiq8Ivv4BwBOKrKIshkrfbW4tEZqGD0x9RBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741156737; c=relaxed/simple;
-	bh=qpI2PgQCDJLC7BAxPRiGKYKh9UkyRzVa0QxyYizlb6U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=aFAw3ah7fqMqni4mK76xKSrtAw68lJAMKnfra4lvsJK/Iy6fvSKYhB8+/lu2UZQrjirPDrN2oaHeKrgh6456LhDPxlpXEENqEAYMDAdcJxe2Y2csv02tTPhtAS0h+j+lYEAtnJFjsoZy2eaLQfrOEyr7a24z1ipCZYzLZeNlR3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eqyhctWe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB4F0C4CEE2;
-	Wed,  5 Mar 2025 06:38:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741156737;
-	bh=qpI2PgQCDJLC7BAxPRiGKYKh9UkyRzVa0QxyYizlb6U=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=eqyhctWeY+yfRcKT9xvz+ZsWssjRVjnRBKOa78OrJIIUERS/9deQpUT/2a0MYgDhJ
-	 nIbwCMDDaaoHmIuK95B8jgK4AcLT6Q0Q3ZYhEqlcfulDq3uqVM49rpsiWp/2nliko6
-	 UtNlr9cGIB0tkg0lsByUum7ctY15riEFeeGznULDGCljspmkdZ7j6kH9rCx6jRqefG
-	 HQIS9BDyzUhbb8qLc0SAEe9OQjwXJqsGJ7hOHg9qu5gKT/yc3QmQVT/OcYJkWcANmZ
-	 Rv0GxezhnMmIUSMKaFE+tvVk45Bjzn/Ihsbf2y2QzqH13caYGSho1bCDACH8XoXndC
-	 p8Am/DF50LsiQ==
-Message-ID: <8740eeb8-9467-48bb-a911-e70c3da3c45a@kernel.org>
-Date: Wed, 5 Mar 2025 07:38:49 +0100
+	s=arc-20240116; t=1741156792; c=relaxed/simple;
+	bh=0odiSTYUNkwLcMWmJWPXdbE2gWNEYYCynJ47FWDc7Qs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=G6uwjkYcMFp/CLE4KGJvWlCNMC3vwd+USvh+ooKlCUSgp25qy9WamEMHLjws2S6TuZBHu07G2IRwVWuMrd9PuY43oPzGWj1OnPPU2GNf4HWYv+zizCJO4PsnpJc7oPu86povdvZ1hhD+EMbG/gSbf/AZuXqs/V2QHsnrBJQl1qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZtRGv3t; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c3b44dabe0so327516685a.1;
+        Tue, 04 Mar 2025 22:39:50 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741156790; x=1741761590; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SZA5b2x/fScL7d+i7eRMvLOrisXrqpzgaeKI+s5E2mY=;
+        b=KZtRGv3tIgTJ4ioSu7Xbmj19Kua8lfJqCqCE+BGefhpSQoL6cwJffd7XVrWkH6syOC
+         w+IkchCnnAHsgqQD5OIajSdcShhooWMozvrKkMz4D66e8c1ZoS+NuLqC4f3n3Ul9/th7
+         8DUfwHy8kkEtLw+Zg1EciWALU/Op0Zl/LuU25QtI4lFKFwotQQa2Ha+1QeV17B7D0VoM
+         phqT9BeMBaRZ1/Ua3+vmA5Wr9ZGi9l17beJ4SkZvkycd+UAXN8NzZrqmt5dehefhmChM
+         eLmfPlMhx+7oN1UjDzWV4MIeT6beCBwjSFbQG0mz8W9LXVOJP1Kc0F6DYcGXdKQRFh0l
+         E12Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741156790; x=1741761590;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SZA5b2x/fScL7d+i7eRMvLOrisXrqpzgaeKI+s5E2mY=;
+        b=LgEdL2WR6Xc4poNXSFbo1NEY2IE42RnEK6o1oIU6OqLmFvyGEyI89pFfpecZO8BVZT
+         22ZNPkTs2xpvjdMV5jWfvjXUhSVI1Eq5IMqx7WHwfJB8dAAr/I6l10xLWGbr2j3VEdgi
+         JpcAmsNv7LExnsLRmBZxKQBh2Q7hE0dnt04HNEHZbqhni0ZdPMhwZIboPGfVH+IShhBy
+         F0K/9+0T0Rja6dy3pWC9K+5S0i954XCF7X9s7rK5u9eP75Pbq04+NITnuahse9p4bt6x
+         n/xEtI4awyDI/bcOk47SDGK2YbR5wH90BvuOTgxNi4WrdCs2hzcx1Fevyf8oO5N9/FUY
+         9pmA==
+X-Forwarded-Encrypted: i=1; AJvYcCUGrXtO+olEW2mZn54KgmTvs7NacBNhDpYJg3aNtl49APBcQJOjvln8DS8C8EiEg7GPu95+VHwQcfNtYCEs@vger.kernel.org, AJvYcCVi8ilzv0m+67M+RQbYFg3DY6CIaBEJp5+otcaUKLdpltuYnzv0BFLO+rhfdREeImDtReNGykoQxiXK@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1I4rdI3sid/5T78E2dYsc0IqmzzMMap+KTvwvJfdd2g3bd1Cq
+	Wt6UJiqhd7UMf3TwKX0V8D63CZNb614h0+mCLSGNX6iLfMMzK3VJ
+X-Gm-Gg: ASbGnctdYZS5fOb6OTYU0DhXZ/EjEPmVw5apU4O3FFGK4CnveY0IZiJb4Zdvyob17oJ
+	rPVxu7Z7AoqbCHk3cqfRFMvJImKm9RhzZqnA05C7NUWyUSqHqJwgustHj9VtFW+gpP1zA/Bk4eD
+	GYWDEyfgvOsgKOjjODnFu3dklN7YvScd3yfPoJEisgPFB8Exv2sdqHe8Tps0pIcdrGtIaOGISQS
+	D7AuAGNHKe5ZqSEN4+s0Uscgvm+k1AbwLQhsEgEazojmStDjV6jQNx1jBiiqTdQu2xyT2M+YM6q
+	rHaGkGxKr+FxiROCq/PB
+X-Google-Smtp-Source: AGHT+IHQn5rcf/yZwl7qfbDraLVtkQEZKtE6MR9UkwRor+hKRVkXlhUT2tJZmUlvvrfGucfe6+0vEA==
+X-Received: by 2002:a05:620a:4899:b0:7c3:c01e:ad0a with SMTP id af79cd13be357-7c3d8ef2cd2mr402188285a.49.1741156790046;
+        Tue, 04 Mar 2025 22:39:50 -0800 (PST)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c3cc0c20ffsm231314385a.91.2025.03.04.22.39.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 22:39:49 -0800 (PST)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chen Wang <unicorn_wang@outlook.com>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Romain Gantois <romain.gantois@bootlin.com>,
+	Hariprasad Kelam <hkelam@marvell.com>,
+	Jisheng Zhang <jszhang@kernel.org>,
+	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>,
+	"Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>,
+	Simon Horman <horms@kernel.org>,
+	Furong Xu <0x1207@gmail.com>,
+	Lothar Rubusch <l.rubusch@gmail.com>,
+	Joe Hattori <joe@pf.is.s.u-tokyo.ac.jp>,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Jose Abreu <joabreu@synopsys.com>
+Cc: netdev@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	sophgo@lists.linux.dev,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org,
+	Yixun Lan <dlan@gentoo.org>,
+	Longbin Li <looong.bin@gmail.com>
+Subject: [PATCH net-next v6 0/4] riscv: sophgo: Add ethernet support for SG2044
+Date: Wed,  5 Mar 2025 14:39:12 +0800
+Message-ID: <20250305063920.803601-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] dt-binding: aspeed: Add LPC PCC controller
-To: Kevin Chen <kevin_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
- andrew@codeconstruct.com.au, derek.kiernan@amd.com, dragan.cvetic@amd.com,
- arnd@arndb.de, gregkh@linuxfoundation.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-References: <20250304104434.481429-1-kevin_chen@aspeedtech.com>
- <20250304104434.481429-2-kevin_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250304104434.481429-2-kevin_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/03/2025 11:44, Kevin Chen wrote:
-> Add dt-bindings for Aspeed for Aspeed LPC POST code capture controller.
+The ethernet controller of SG2044 is Synopsys DesignWare IP with
+custom clock. Add glue layer for it.
 
-Please use subject prefixes matching the subsystem. You can get them for
-example with `git log --oneline -- DIRECTORY_OR_FILE` on the directory
-your patch is touching. For bindings, the preferred subjects are
-explained here:
-https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
+Changed from v5:
+- https://lore.kernel.org/netdev/20250216123953.1252523-1-inochiama@gmail.com/
+1. apply Andrew's tag for patch 2,3
+3. patch 1: add dma-noncoherent property.
+2. patch 2,3: separate original patch into 2 part
+4. patch 4: adopt new stmmac_set_clk_tx_rate helper function
 
-Missing 's'.
+Changed from v4:
+- https://lore.kernel.org/netdev/20250209013054.816580-1-inochiama@gmail.com/
+1. apply Romain's tag
+2. patch 3: use device variable to replace &pdev->dev.
+3. patch 3: remove unused include.
+4. patch 3: make error message more useful.
 
-> 
-> Signed-off-by: Kevin Chen <kevin_chen@aspeedtech.com>
-> ---
->  .../devicetree/bindings/mfd/aspeed-lpc.yaml   | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml b/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
-> index 5dfe77aca167..367847bd7e75 100644
-> --- a/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
-> +++ b/Documentation/devicetree/bindings/mfd/aspeed-lpc.yaml
-> @@ -149,6 +149,35 @@ patternProperties:
->        - interrupts
->        - snoop-ports
->  
-> +  "^lpc-pcc@[0-9a-f]+$":
-> +    type: object
-> +    additionalProperties: false
-> +
-> +    description:
-> +      The LPC pcc interface allows the BMC to listen on and record the data
-> +      bytes written by the Host to the targeted LPC I/O pots.
-> +
-> +    properties:
-> +      compatible:
-> +        items:
-> +          - enum:
-> +              - aspeed,ast2600-lpc-pcc
-> +
-> +      reg:
-> +        maxItems: 1
-> +
-> +      interrupts:
-> +        maxItems: 1
-> +
-> +      pcc-ports:
+Changed from v3:
+- https://lore.kernel.org/netdev/20241223005843.483805-1-inochiama@gmail.com/
+1. rebase for 6.14.rc1
+2. remove the dependency requirement as it was already merged
+   into master.
 
-Missing vendor prefix
+Changed from RFC:
+- https://lore.kernel.org/netdev/20241101014327.513732-1-inochiama@gmail.com/
+1. patch 1: apply Krzysztof' tag
 
-> +        $ref: /schemas/types.yaml#/definitions/uint32-array
-> +        description: The LPC I/O ports to pcc
+Changed from v2:
+- https://lore.kernel.org/netdev/20241025011000.244350-1-inochiama@gmail.com/
+1. patch 1: merge the first and the second bindings patch to show the all
+            compatible change.
+2. patch 2: use of_device_compatible_match helper function to perform check.
+2. patch 3: remove unused include and sort the left.
+3. patch 3: fix wrong variable usage in sophgo_dwmac_fix_mac_speed
+4. patch 3: drop unused variable in the patch.
 
-Description is too vague. Why would we encode I/O ports as some numbers
-instead of GPIOs for example? If these are ports, why this is not a graph?
+Changed from v1:
+- https://lore.kernel.org/netdev/20241021103617.653386-1-inochiama@gmail.com/
+1. patch 2: remove sophgo,syscon as this mac delay is resolved.
+2. patch 2: apply all the properties unconditionally.
+3. patch 4: remove sophgo,syscon code as this mac delay is resolved.
+4. patch 4: use the helper function to compute rgmii clock.
+5. patch 4: use remove instead of remove_new for the platform driver.
 
-Missing constraints - min/maxItems, defaults, minimum/maximum etc.
+Inochi Amaoto (4):
+  dt-bindings: net: Add support for Sophgo SG2044 dwmac
+  net: stmmac: platform: Group GMAC4 compatible check
+  net: stmmac: platform: Add snps,dwmac-5.30a IP compatible string
+  net: stmmac: Add glue layer for Sophgo SG2044 SoC
 
-> +
-> +    required:
-> +      - compatible
-> +      - interrupts
-> +      - pcc-ports
-> +
->    "^uart-routing@[0-9a-f]+$":
->      $ref: /schemas/soc/aspeed/uart-routing.yaml#
->      description: The UART routing control under LPC register space
-> @@ -176,6 +205,13 @@ examples:
->          #size-cells = <1>;
->          ranges = <0x0 0x1e789000 0x1000>;
->  
-> +        lpc_pcc: lpc-pcc@0 {
-> +            compatible = "aspeed,ast2600-lpc-pcc";
-> +            reg = <0x0 0x140>;
-> +            interrupts = <GIC_SPI 145 IRQ_TYPE_LEVEL_HIGH>;
-> +            pcc-ports = <0x80>;
+ .../devicetree/bindings/net/snps,dwmac.yaml   |   4 +
+ .../bindings/net/sophgo,sg2044-dwmac.yaml     | 126 ++++++++++++++++++
+ drivers/net/ethernet/stmicro/stmmac/Kconfig   |  11 ++
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   1 +
+ .../ethernet/stmicro/stmmac/dwmac-sophgo.c    |  75 +++++++++++
+ .../ethernet/stmicro/stmmac/stmmac_platform.c |  17 ++-
+ 6 files changed, 229 insertions(+), 5 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/dwmac-sophgo.c
 
-So what 0x80 stands for?
+--
+2.48.1
 
-
-Best regards,
-Krzysztof
 
