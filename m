@@ -1,157 +1,126 @@
-Return-Path: <linux-kernel+bounces-547080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547077-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA41FA502D9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:56:29 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9F68A502CE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03631889D1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:49:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F23D188849B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:48:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F0524EAB2;
-	Wed,  5 Mar 2025 14:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72F2923ED52;
+	Wed,  5 Mar 2025 14:48:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="oQcqbkBE"
-Received: from out.smtpout.orange.fr (out-13.smtpout.orange.fr [193.252.22.13])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="2o77Y1cZ"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3710024E01A
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:49:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A6F5233704
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:48:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741186174; cv=none; b=Ezla9qRtt8a4mpvqo7Gn/+O+SY2iFSrEbjfnM90ypZ1KeFjywbXqMIsmL9MsV8AT3xW7udWzw+EZEyxZVwUVtbmb26Tt9RV47NETSn/1iwzncgyCAHWJHCp5PXITvdKLl4VmPiA3Yf0j8SGGw+irQsJCiu/Z3v8RKCe0J9OjpLo=
+	t=1741186108; cv=none; b=ux8Nz2H6b9zpaim2XV8rJEBkahkjHRBgThmKtsIR5DWLMD7Tow/BtGUoLKzwdaX4aVB8SuC/HhY5NBbH2pFx1NkUI6/U3Gr2OxwMT4R5goXBKJeaV2Z9N/Elv/288vskeZodsFr79Lg6Lcq1ryhTQmORc8jCKRl04MfZaIIbAao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741186174; c=relaxed/simple;
-	bh=CdZEXDdmycGNnqgioi99HXlao+olh8It264ntQrW6VY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t6Et1f+HQ3c27tiCeMi8LT5LfjzmG6DC319jNh1TsRMFdajjjlTUiua6QINQ+nWpf6FMjqCd60z4pD7FwPEwHUlQBnuNVbBUinVp5SlJiGiaPhR30c7I3AYq0roj0LZ2LwSG+nqsjfSPTucIuQgH3J4gHVu3RtdwFCGvUBwbvlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=oQcqbkBE; arc=none smtp.client-ip=193.252.22.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id pq2dtPvcTgWbapq2htQk0O; Wed, 05 Mar 2025 15:48:22 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741186102;
-	bh=3RcUUtJiVQIxZzOfKMrWa4tzRtxjWdXUh2HCxF6cfvM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=oQcqbkBEl+UgQi3Rr0ez6Ckv1SOIbEYh7API3Jf6hBUllX0xuBTJh6r8Cf9qGqd/u
-	 aS8Fbd2QKZImx/ILnJHSjpW3GuB9NAG/OfXXiNisriLhgcsNFE/4IRvuOjTL94XsAZ
-	 luNP+vlrQkN2DrSL2CD+alqysspVK2wC7QsaBEjY932I+CplGBHlr3218gx6GpEwya
-	 ilVUXKiOtsSoZ5cCeoH+VNzVZ5hJoo9ej6TMpHJoo9UVvvax9m4YrR8cgpD+8HHFBk
-	 FU6JChb2VY1Gc1e5vaf0op62DUYeL/yFOeG0gtOy4sQ7mlcq99zjgBTB60KkzqZKO+
-	 SKXWpnYX6mUnA==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 05 Mar 2025 15:48:22 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <d7f3150d-0167-44be-90b2-17f8a050687c@wanadoo.fr>
-Date: Wed, 5 Mar 2025 23:48:10 +0900
+	s=arc-20240116; t=1741186108; c=relaxed/simple;
+	bh=/wOYm4BQbZwNYztkdoE6SVbVTCnW3Q8MUGgOG7wmEMI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hPhYRl4WhR3Rt0XqWvpKOL0sKKzvMlrrjJ5lTkCpK+bOMonftfJnezFNsgx6wgh2NB1RXvOxvZYuhfu+MvzZ7cX+KRXquKhZTgXXLb6C/y3jUr496tS39QEzH9XIE367qOMvfLzoMDvQQgXELnzpFjr94rV/u9aH3rvzp+wJ4EQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=2o77Y1cZ; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-471fe5e0a80so61756761cf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:48:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741186105; x=1741790905; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=24D6lXOQ+l56ePiaj5GY2KChhMLcLv5f1xh2j/ejLd0=;
+        b=2o77Y1cZ15/w0QAyOdedookEPnBifhEfoSJfur5dvGAbef7yu+bZsSX0gEXeJWcWee
+         4uyPh+MrDuaOaLllsdqvLSfq1wnuUd20w9o6VSq+nmz6+usWCsBZiK52MV/AHPD+JhXf
+         cCimZsgzMQ/qwaDxVkbVMQozDaejKuobAQ4/YANsIWb9/jd+AP1To8dix1UlPWy2vbPZ
+         JGMrRFLOaVFeOvcFPEq1FW1/URJ2R4VpeYJZnbLyJqe14hpkT41DZPRWJhO4N/Clqc2w
+         xPSclEvlmzX5k+uczlt45kRLlF0rO3mfbklVK7RtvBJsdNuZGWQHdscGjMqL3SivP6Ev
+         +jZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741186105; x=1741790905;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=24D6lXOQ+l56ePiaj5GY2KChhMLcLv5f1xh2j/ejLd0=;
+        b=GxYnSbS2vhSRevLv2NfkO0GGwKdYLnRUWMe79HYRImUXT3hzP1y1LlGSpU0CMCVZgH
+         KIzMD6pMD9waI6zTJ1f8pNEPsLbUd4lg3uRfJ8tQz9cOwvAKAZ4cjXO5DP+6doGoHrty
+         rar5OKcSxxq8o+DJxSXpCzBRKRE8RHTOwPSdAqIQazwtrYn6bLwUO9SD23nH67PFDNs4
+         XzNdR8cmFxq66yLvthSTEq6xKC/M6XrQ3i1VEP6VbiHPiw5ssP4Q8E/8QVCkT4FR3Nwj
+         //N5DVo9SCUi1BCO06Qr4odrNTSjWBOC+50XrdzDFizzEsvxW9GBDd7PHJ8Oxk91eOlG
+         +shQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIJiL/sf0cPB2ELx1xf0CZIowUUZflufoTYVY0xEcqfOoNfeyLt4E60iucmKnqh5gXNywwIeUDpx60czA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRdo2Gva5f+Mq562Kbgj/+GRduYeYAOlf6dEUajUQyBaBjihkP
+	5m5aRT49xJRwhU0902i9H1yfdks9yOiXTPVzq8j47wzFtGKf5b1d/Apg003sjDM=
+X-Gm-Gg: ASbGncunEG92YtuF/oCwQzzWuBlH7w9Qni4YAFvtj5QLdeIk5UfV4befMJjDE0knrS7
+	hlykbufh7+VL27o8vTUCz47fYFkYmhqcNqSdxL4EuiBbyxOGDnMUQ1jiyOVLA6DbvX3gtiBjsjX
+	Q0iZL28OWR8O+7iHW0eZ8im903C3lkqRsTM7u6AnGxVu62ggj8pwukh8453CiNJfpsY+BkQGJFW
+	/3kELgBGSq0xRrGoFF05EXwOAhL3i5028NEpZSzPy8E6gZdAvheHtelhljga5co43Ir4OFaXdJj
+	k/OSCjIl2IxvwC+MsaVnCLj0Sa0lwRGhVu16d9m/5FU=
+X-Google-Smtp-Source: AGHT+IHWvywE6Bow3A7Liu9GCH87L5pfv4FN3FUQ8NcLUcFsOL/tgYX1eDIq8dtWSOkW13iZRkbEGA==
+X-Received: by 2002:a05:622a:52:b0:472:2021:b76a with SMTP id d75a77b69052e-4750b23c744mr53858061cf.11.1741186105155;
+        Wed, 05 Mar 2025 06:48:25 -0800 (PST)
+Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
+        by smtp.gmail.com with UTF8SMTPSA id d75a77b69052e-474ff3aa7d8sm22803941cf.30.2025.03.05.06.48.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 06:48:24 -0800 (PST)
+Date: Wed, 5 Mar 2025 09:48:23 -0500
+From: Johannes Weiner <hannes@cmpxchg.org>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Nhat Pham <nphamcs@gmail.com>,
+	Chengming Zhou <chengming.zhou@linux.dev>,
+	Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Herbert Xu <herbert@gondor.apana.org.au>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH mm-unstable 2/5] mm: zswap: Use object read/write APIs
+ instead of object mapping APIs
+Message-ID: <20250305144823.GB185622@cmpxchg.org>
+References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
+ <20250305061134.4105762-3-yosry.ahmed@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/8] bits: introduce fixed-type BIT
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-4-1873dcdf6723@wanadoo.fr>
- <Z8hgqOB5Ym-GGykS@smile.fi.intel.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z8hgqOB5Ym-GGykS@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305061134.4105762-3-yosry.ahmed@linux.dev>
 
-On 05/03/2025 at 23:33, Andy Shevchenko wrote:
-> On Wed, Mar 05, 2025 at 10:00:16PM +0900, Vincent Mailhol via B4 Relay wrote:
->> From: Lucas De Marchi <lucas.demarchi@intel.com>
->>
->> Implement fixed-type BIT to help drivers add stricter checks, like was
+On Wed, Mar 05, 2025 at 06:11:30AM +0000, Yosry Ahmed wrote:
+> Use the new object read/write APIs instead of mapping APIs.
 > 
-> Here and in the Subject I would use BIT_Uxx().
+> On compress side, zpool_obj_write() is more concise and provides exactly
+> what zswap needs to write the compressed object to the zpool, instead of
+> map->copy->unmap.
 > 
->> done for GENMASK().
+> On the decompress side, zpool_obj_read_begin() is sleepable, which
+> allows avoiding the memcpy() for zsmalloc and slightly simplifying the
+> code by:
+> - Avoiding checking if the zpool driver is sleepable, reducing special
+>   cases and shrinking the huge comment.
+> - Having a single zpool_obj_read_end() call rather than multiple
+>   conditional zpool_unmap_handle() calls.
 > 
-> ...
+> The !virt_addr_valid() case can be removed in the future if the crypto
+> API supports kmap addresses or by using kmap_to_page(), completely
+> eliminating the memcpy() path in zswap_decompress(). This a step toward
+> that. In that spirit, opportunistically make the comment more specific
+> about the kmap case instead of generic non-linear addresses. This is the
+> only case that needs to be handled in practice, and the generic comment
+> makes it seem like a bigger problem that it actually is.
 > 
->> +/*
->> + * Fixed-type variants of BIT(), with additional checks like GENMASK_t(). The
-> 
-> GENMASK_t() is not a well named macro.
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-Ack. I will rename to GENMASK_TYPE().
-
->> + * following examples generate compiler warnings due to shift-count-overflow:
->> + *
->> + * - BIT_U8(8)
->> + * - BIT_U32(-1)
->> + * - BIT_U32(40)
->> + */
->> +#define BIT_INPUT_CHECK(type, b) \
->> +	BUILD_BUG_ON_ZERO(const_true((b) >= BITS_PER_TYPE(type)))
->> +
->> +#define BIT_U8(b) (BIT_INPUT_CHECK(u8, b) + (unsigned int)BIT(b))
->> +#define BIT_U16(b) (BIT_INPUT_CHECK(u16, b) + (unsigned int)BIT(b))
-> 
-> Why not u8 and u16? This inconsistency needs to be well justified.
-
-Because of the C integer promotion rules, if casted to u8 or u16, the
-expression will immediately become a signed integer as soon as it is get
-used. For example, if casted to u8
-
-  BIT_U8(0) + BIT_U8(1)
-
-would be a signed integer. And that may surprise people.
-
-David also pointed this in the v3:
-
-https://lore.kernel.org/intel-xe/d42dc197a15649e69d459362849a37f2@AcuMS.aculab.com/
-
-and I agree with his comment.
-
-I explained this in the changelog below the --- cutter, but it is
-probably better to make the explanation more visible. I will add a
-comment in the code to explain this.
-
->> +#define BIT_U32(b) (BIT_INPUT_CHECK(u32, b) + (u32)BIT(b))
->> +#define BIT_U64(b) (BIT_INPUT_CHECK(u64, b) + (u64)BIT_ULL(b))
-> 
-> Can you also use a TAB between the parentheses for better readability?
-> E.g.,
-> 
-> #define BIT_U64(b)r	(BIT_INPUT_CHECK(u64, b) + (u64)BIT_ULL(b))
-
-Sure. I prefer it with space, but no strong opinion. I will put tab in v5.
-
-Yours sincerely,
-Vincent Mailhol
-
+Acked-by: Johannes Weiner <hannes@cmpxchg.org>
 
