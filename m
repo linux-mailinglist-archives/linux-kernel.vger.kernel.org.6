@@ -1,76 +1,76 @@
-Return-Path: <linux-kernel+bounces-547617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C936A50B9D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:38:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 542CAA50BA3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:39:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6D1C173D8B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:38:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D02487A9602
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:37:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81830253B76;
-	Wed,  5 Mar 2025 19:37:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7609625484C;
+	Wed,  5 Mar 2025 19:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g92+gyt8"
-Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gbHwSQGm"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A32C253B7C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:37:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A678253F1A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:38:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741203475; cv=none; b=EoBx9mj2PZiiXtANcwi2xIEMG7TUJvigC8F1CE8vEY8Dhr4e7gwHzXkw3tOZlpIxDwh7KH5YuDLweB15sWN2jFQwXKpr/gHp/xu2y8NFUMy/4JHEKG+6fWKMrGXSuwgSzBbTtoWQLSoJxxThfVgL10an0q3zrx/bGJJ71z6WpvY=
+	t=1741203488; cv=none; b=KlWVtXf1gz5EerDGfFSEqI5oqclJcX2Cn6/ILSvBmKRqH3LL4WLIyWpJjnHeM/+i9DYgQZq9A2lWZ6rKnYcdUAYK8j89+zpuNIfI5mcbTQ/5QD+fVaQs60eMz7/kDFFr8GKYmPuk/J1cis4NLCC9WYk473tUVP/A06AxTlzsyVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741203475; c=relaxed/simple;
-	bh=r/JCkE1A/VLSmSiv7YzZkQknfhDehP9WWEoKTpqyRXk=;
+	s=arc-20240116; t=1741203488; c=relaxed/simple;
+	bh=j/iTviw7PJPcpETuVwwtmw6HSTOe+M0fePl8x0v8b/A=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=S4KT+yxkf7QKM9/+jC+hKDpN0byIR9FhbirAQsNJ1Xvpvf9aXWmFd2R4g4diW88ivetAyEsiundD5AJ7iLNiMSh65hg49JEjZCqq6I0zEYlRqEJeXu4LpjxrzvXfpgWcd3hPWAaOfgg4E4QWeLZWdQ+ZI+XaX76NBQs0M0errkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g92+gyt8; arc=none smtp.client-ip=209.85.216.54
+	 MIME-Version; b=QEOx5q7T5bTZBNHaOnhe5ho3RPkjai7hm03SEH05BD40FzRENMC9sZnenttRB1jIj9XcyeJHV7xqH8toOQT/SmAfehIdMwd/3Cg6vJMgg8zDDqZn/dg7ISQiwReSRAexsAQm/hz+2K8UCpRmdtr2J51gmpVtLdwDxoPaAVRGTpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gbHwSQGm; arc=none smtp.client-ip=209.85.216.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2ff53b26af2so227295a91.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:37:54 -0800 (PST)
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2feae7e56c6so1881832a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:38:07 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741203474; x=1741808274; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741203487; x=1741808287; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XVL5x+1w+5pdmFPSNp6O0gS3bmjeUt72DJ16wn3q7tw=;
-        b=g92+gyt8PafJK68hqTKBTTJ5LyaNNmL4ZOUOB5icOMxcbVjR/Fwt6lyJTh8erMX1IO
-         HaR5b8seqw1SNUHUiThPzOWiNjkp3ugfgO5CkXEN6bNS/abP4AiqCuQG13QeyAniqQHP
-         NjRg1iCedZBzGRuhC0ROOHxkX2Nb/2JWpetB6F2iSTpV7Qb42pwDlGfQ3ZWUIciXYues
-         MSu2snhsDSMdpAvs3olSotqnRN7ez0fZwn+0KuvPtY2s1ZF58kF7ZBSHM1Ibg/rXERFC
-         4eR9m+GXJMC/PODAHaU834sZmsi4R6T2dOEbnc8n+mzZPIqESHElmIS9JVfQmsDc+OFG
-         UfLg==
+        bh=d7sXbP8vy3+v83lKPy6uZAVEBdTCaE0ovfzAtTI97R0=;
+        b=gbHwSQGmCgmUuaFQcCwH2meZbXW/K1VBc6r4qOISuvS3mddy8RQlZWUdEMKbYwyuh3
+         0O3VPblYEeNDzEDcIytmzo/QYYetFEpvVaADwvISrCi2FBEwvLBHs36KxRlOO8IUu9t5
+         G+HqIgjayoP34CGME9zvKMm+3cdXHSG3XYKICpvLg4/7WUE7p7Bc8rSqejTta6SMJZRA
+         M0bH8Z/VYHCd//M4K76UYJKagH9Zh3v6m42OQP5tNJ2IEaki05oG8N6v2P5/ZjbjcCWk
+         Sb0daFnf/t28HXBSsa7c2YbzItse8IxiW7jkuiMr0ohOnA4zeRHvdqpw0n1T+7gMYeWM
+         sfLA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741203474; x=1741808274;
+        d=1e100.net; s=20230601; t=1741203487; x=1741808287;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=XVL5x+1w+5pdmFPSNp6O0gS3bmjeUt72DJ16wn3q7tw=;
-        b=AKtfkFCIKhXLFF4jhJdqv3kTjkUjsxTlRbwzmG4NlSuKrU/xEm+V+TLoRN2M3Z5UMU
-         aOm2xcDLtqRGe8UBh82FrcsJmT7lbQEPnMWYmPeKLBuWLUCNSUOn2OFYvsPILCZI8S6d
-         EfDD/1A4w2anwunXS6iNOhCbyOhUyvqb/FFO1jASuisKwppjbS1HaInZSwYa0L0mfql+
-         pv/wGjxL5IY8I4pRTKA5TRalvhSMRhIngdIcAmN4Gs0O8yR8Tdiy5pgckQ3bEptZ5Wte
-         kNzi3qNhOx1Ty1Ns0+RPF8tteSJcelSboBRT3CguwxhetEzMslDDqbTvHiSCNlQXyUOg
-         6tvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUYoppatg9/ETy5kUfV1Aysow4pEFE7jYhgWbTAorYl6x1C9MA3N3fq9KYM+ZbplQlWRuLwAeT8IQpM2aE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYPc/Wit5XnAp52UQA0avR1rg1FQivf52Jc/ja7clADw0JRdo6
-	CuqWGiOdCcjDleCRJTOkoSIKCP7XztZmn//MDOng993v1xaYvNlc
-X-Gm-Gg: ASbGncvGkxUAMvLTI/ROan4FrUIytyQtVJXWRVrGrReIyVWLPN+LAi0gwBGLr9gEtPm
-	6n2wxM5UedWFQ6VgZOVo1/cp5oLcLxmOJ0Wa3vhysX2qzvPXondk/vGt5c3C4ortpVfav/+PzN3
-	7U21gF7N9eqQ+3Utd77d/mNltbEt1VMQH37QbCdxTCyGZNJo/va9d3lAVJJY759XYrhDZrgvUAW
-	ymZdIQtwVTWeDEI/Co6HbWRd/C+jFO3WDOLy500aD6gSv4gkT2bquZP3WjX8sqKpvs2eRRg2keC
-	0vx3YhMAgWsXG9ai9sfe/d49J2YrsggvVPIS3TABeUIJvh67YUd65N1QJLEx
-X-Google-Smtp-Source: AGHT+IHNsyo24/zrvRg4XtHFBGu5hJ7yR3l2dvNxqCeNbui3/L/DlOgNcf1xKJT/5yBT8maOJNvE1Q==
-X-Received: by 2002:a17:90b:1a8f:b0:2fa:6055:17e7 with SMTP id 98e67ed59e1d1-2ff497df3d2mr2866356a91.8.1741203473716;
-        Wed, 05 Mar 2025 11:37:53 -0800 (PST)
+        bh=d7sXbP8vy3+v83lKPy6uZAVEBdTCaE0ovfzAtTI97R0=;
+        b=mNg1DNNmTA2TK0As0FSXT8d+EWrCX/c/7r29TYkJjneXXctQe01EKTiNnGOitPa2dv
+         g4m2Up4FDxHfB4l8lImchB2XHS+/dwtPgpJpbzZ89koydjLEPRVM7u8ckNUjefTmq3E4
+         iO43oBVeXDpGqMLFlBfD+Ro512O1HGvEMDKoF0j2FPrj/1ZHSikrN9gtazkI8pIhaW9G
+         N6rH56j08XPd3YWQGgve5epNw7sfnPu5A8QUJN8oEZtZOMYuYffP97tlpFwc9GkWBHfa
+         /nxuJ9KRt9H85eB37meaSeg2YXf9bEvw0jn7s/TS1diPUw5ykYMZZrARfGkWBL51rw1v
+         D2lw==
+X-Forwarded-Encrypted: i=1; AJvYcCUk5bafEAl4R24YdrDz+dxjx8HwozBXQ4Mp1GW+anLYREYo3y7ypck0YncY10N06TyW2cRtD8z//zY3Kfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTaQDkhxSV7jPqpPBq0PjLXMFaNvLOMvQqasIzRf1HoxqwtZx1
+	VeZTM7mLAnJjPLBFthxAh8riMaLQ7qNZ1AiVS0KW+vU//dxy3tdBVAlHww==
+X-Gm-Gg: ASbGncu/ZTKctu2BL0c2UQ2UHzu82wssPrCZyXDOle4ReR+dA1k0Ml+Cb02QRZCnJjE
+	xEw/A24T+MkcTQcLThppKyrnpRXXB5JDx59JzNqg9E3STwodrrDkyHwehCXqSS2tkgmQCoEp5Aa
+	Eyg4oIZWlPxJDuk2qeKHkKPkNxhB1bRougPS8rF41z6LVmlmI9oBw5hVEDlw0Px2lTJJSacvjGO
+	W0GQ8xy3IIqlUaGQX2eW3qK9jYqP2Nk3bjbopxjvwk5fR28WyjP/psaL/b4wCbgfMVWyj4LOXpX
+	qim31yQ7ZUJF5ASFouvXAENRwLmhMMXRRY5JJySanZWf7vru9sndlZjZkV5h
+X-Google-Smtp-Source: AGHT+IHsjbx1miPTQBNrX7ZjboroAqHyYvjM19R16VWGXNXNp7juxMRcFLx8vf3UD4OuEm12sLJK7g==
+X-Received: by 2002:a17:90b:3a91:b0:2fe:b879:b68c with SMTP id 98e67ed59e1d1-2ff49824430mr2883031a91.6.1741203486654;
+        Wed, 05 Mar 2025 11:38:06 -0800 (PST)
 Received: from localhost.lp.veng.com.ar ([200.10.125.114])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7a2bbesm1898148a91.37.2025.03.05.11.37.51
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2ff4e7a2bbesm1898148a91.37.2025.03.05.11.38.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 11:37:53 -0800 (PST)
+        Wed, 05 Mar 2025 11:38:06 -0800 (PST)
 From: Gaston Gonzalez <gascoar@gmail.com>
 To: linux-staging@lists.linux.dev
 Cc: dpenkler@gmail.com,
@@ -81,9 +81,9 @@ Cc: dpenkler@gmail.com,
 	jiapeng.chong@linux.alibaba.com,
 	linux-kernel@vger.kernel.org,
 	Gaston Gonzalez <gascoar@gmail.com>
-Subject: [PATCH v2 3/4] staging: gpib: fix kernel-doc section for usb_gpib_line_status() function
-Date: Wed,  5 Mar 2025 16:32:20 -0300
-Message-ID: <20250305193614.39604-7-gascoar@gmail.com>
+Subject: [PATCH v2 4/4] staging: gpib: remove commented-out lines
+Date: Wed,  5 Mar 2025 16:32:22 -0300
+Message-ID: <20250305193614.39604-9-gascoar@gmail.com>
 X-Mailer: git-send-email 2.49.0.rc0
 In-Reply-To: <20250305193614.39604-1-gascoar@gmail.com>
 References: <20250305193614.39604-1-gascoar@gmail.com>
@@ -95,61 +95,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The function name field in the kernel-doc section for the
-usb_gpib_line_status() is defined as 'line_status'. In addition, after
-the kernel-doc section, there are three macro definition instead of the
-function definition.
-
-These issues trigger the warning:
-
-warning: expecting prototype for line_status(). Prototype was for WQT()
-instead.
-
-Fix the warning by renaming the function in the kernel-doc section and
-by moving the macros to the beginning of the file with the rest of
-macros definition.
+Remove commented-out code in function write_loop().
 
 Signed-off-by: Gaston Gonzalez <gascoar@gmail.com>
 ---
-v1 -> v2: remove extra blank line added by mistake in v1.
+v1 -> v2: no changes in this patch.
 
- drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 11 +++++------
- 1 file changed, 5 insertions(+), 6 deletions(-)
+ drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c | 11 -----------
+ 1 file changed, 11 deletions(-)
 
 diff --git a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-index 090857824d07..4a8e5905daf9 100644
+index 4a8e5905daf9..08c64b111a1f 100644
 --- a/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
 +++ b/drivers/staging/gpib/lpvo_usb_gpib/lpvo_usb_gpib.c
-@@ -78,6 +78,10 @@ module_param(debug, int, 0644);
- 			dev_dbg(board->gpib_dev, format, ## __VA_ARGS__); } \
- 	while (0)
+@@ -217,18 +217,7 @@ static inline int usec_diff(struct timespec64 *a, struct timespec64 *b)
  
-+#define WQT wait_queue_entry_t
-+#define WQH head
-+#define WQE entry
-+
- /* standard and extended command sets of the usb-gpib adapter */
- 
- #define USB_GPIB_ON	 "\nIB\n"
-@@ -644,17 +648,12 @@ static void usb_gpib_interface_clear(gpib_board_t *board, int assert)
+ static int write_loop(void *dev, char *msg, int leng)
+ {
+-//	  int nchar = 0, val;
+-
+-//	  do {
+-
+ 	return skel_do_write(dev, msg, leng);
+-
+-//		  if (val < 1) {
+-//			  return -EIO;
+-//		  }
+-//		  nchar +=val;
+-//	  } while (nchar < leng);
+-//	  return leng;
  }
  
  /**
-- * line_status() - Read the status of the bus lines.
-+ * usb_gpib_line_status() - Read the status of the bus lines.
-  *
-  *  @board:    the gpib_board data area for this gpib interface
-  *
-  *    We can read all lines.
-  */
--
--#define WQT wait_queue_entry_t
--#define WQH head
--#define WQE entry
--
- static int usb_gpib_line_status(const gpib_board_t *board)
- {
- 	int buffer;
 -- 
 2.49.0.rc0
 
