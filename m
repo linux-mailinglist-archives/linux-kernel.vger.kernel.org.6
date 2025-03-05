@@ -1,149 +1,106 @@
-Return-Path: <linux-kernel+bounces-547716-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BDA3A50C90
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:31:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72B66A50C93
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:31:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF9741882668
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:31:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA778188311E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:31:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C6B42571BD;
-	Wed,  5 Mar 2025 20:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D1251F4E3B;
+	Wed,  5 Mar 2025 20:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="IuJxw1qX"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="kOrGQWMP"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D728E2561A4
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A9E21917E4;
+	Wed,  5 Mar 2025 20:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741206655; cv=none; b=uB9dSCrxHVhcg2Ezr/ERYwrgADR1yKAm6YCoA0H+vniTU1FIUWgRXox1N+MKQhZUTjTjtwA5/PJ2hEX0xYCsPmXtZodsn7pQrrqkjQSZcBpUyd+o3tYh9rQoVGLbxsFSZIfH7O9ESi6EXs8msBzoE2NTcU6PzWVBR8PR8V3ynhI=
+	t=1741206694; cv=none; b=bg3YEsmMjFNRyqCXgLMdilYylgmsZ0056z3MR72IHaNNaojiEugSWZUmbRTtFVgSmgco/rT03Btp9TfehBbuhWcSD1d27DYkOm2x2XaUqqH1tz0H7f3DN4GtYNxjyK5lkmk6xdM1NTSvmTE4d32+vbOKAYZtXR3SvnjRA2Ix1Eg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741206655; c=relaxed/simple;
-	bh=CMFyWCDGDbW9/mXeVsTOJ32gxb6vUpEPCaJZb22v4aI=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=JubPX7XwCVQlkFzT9xZUVY04mvnpoXaJg4E3E17fpjKCnP1J+1AeaVcSztrnA6p5Ue+h36BfJ9Z0VtOk/oad7Gnt4D1h13lhBx+cTV6piMM2l1cvAT656beF7KvJq7UaMd8aZnpguBJp0QXouIFz7Hxth+6dZvvQfHxNhEmy/lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=IuJxw1qX; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741206651;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p04z4NA8ANBpeee2BaIv4nfZi9bpNGy7L59DW/TFIH4=;
-	b=IuJxw1qXki9Y8j6dAGW4w8UfiE4wUBjjfAqsCFQf/1aWS+lsfyXXKZs3LbiqaPf0pMhvs2
-	e6fYrAw4qSrrmby5rDLBWZ9ir2r1yxe9Cqz4rbgmYmF9nVkLBDAJUdffUZ0ik7ShGHm53S
-	k/jBXxB9RFopkMaX/CCmssHzh4Pkqg0=
-From: Oliver Upton <oliver.upton@linux.dev>
-To: kvmarm@lists.linux.dev
-Cc: Marc Zyngier <maz@kernel.org>,
-	Joey Gouly <joey.gouly@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Mingwei Zhang <mizhang@google.com>,
-	Colton Lewis <coltonlewis@google.com>,
-	Raghavendra Rao Ananta <rananta@google.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Janne Grunau <j@jannau.net>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: [PATCH v3 14/14] arm64: Enable IMP DEF PMUv3 traps on Apple M*
-Date: Wed,  5 Mar 2025 12:30:40 -0800
-Message-Id: <20250305203040.428448-1-oliver.upton@linux.dev>
-In-Reply-To: <20250305202641.428114-1-oliver.upton@linux.dev>
-References: <20250305202641.428114-1-oliver.upton@linux.dev>
+	s=arc-20240116; t=1741206694; c=relaxed/simple;
+	bh=WBNDtdCWGQh9oPEY49ejtX299nQF0XieKRNkEJJ79/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NgP3hfF9wRw0lzsD2sMVxH4Dwg9D6/EWuNJYKpPgj3NE4cSJ3U9CAhendonb0bYsh/3i68rpCX0psRky/Ii6sJfU2TxHIOijOaYar1swq25pJDqRSk19s4MLCpx8vW4k4HuNqj8vOnxaEk7tSbwONcIJ1uYJWvsiWds8vApp6zI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=kOrGQWMP; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=5N69iuSZpEP3m1sQZOVuMhRR/phcnv3Nm9ASp7xyfVE=; b=kOrGQWMPRD/iroQXeR6iOyX+Md
+	dbgAFsc4t/jIFa9ZM8NoLIbQsKZ+dtf3Ij7mnzbq36sVOtO4vHIV+tpJYXN+HqzGCWB85f4OQ4CtU
+	8InbhiB+XTG2vIqws1nkEbSwXzsIXXpDLu8X1/AZvSAD/iutOU1iEmRb7QQ6EYeoZtkX8drblW3s1
+	1QDV4bd9tCdaff5Nbq6CQWFy5paBSEpPEt3hLVsXCU4sONMHDcVoQcM4HCB2BZBgz6Tmkkj9NSfx0
+	+Tq+zt0qNZf5ys2CHT81hyPUVOij7RJ6AFbrO0VG4DRbok4roLlyAPY8luYiGUI8C0xbO4skAZX53
+	G/XUnQyw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpvOh-00000006AwN-1uRx;
+	Wed, 05 Mar 2025 20:31:19 +0000
+Date: Wed, 5 Mar 2025 20:31:19 +0000
+From: Matthew Wilcox <willy@infradead.org>
+To: Zi Yan <ziy@nvidia.com>
+Cc: Liu Shixin <liushixin2@huawei.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Barry Song <baohua@kernel.org>,
+	David Hildenbrand <david@redhat.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Lance Yang <ioworker0@gmail.com>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Hugh Dickins <hughd@google.com>,
+	Charan Teja Kalla <quic_charante@quicinc.com>,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] mm/migrate: fix shmem xarray update during migration
+Message-ID: <Z8i0l8apxDsThD9s@casper.infradead.org>
+References: <20250305200403.2822855-1-ziy@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305200403.2822855-1-ziy@nvidia.com>
 
-Apple M1 and M2 CPUs support IMPDEF traps of the PMUv3 sysregs, allowing
-a hypervisor to virtualize an architectural PMU for a VM. Flip the
-appropriate bit in HACR_EL2 on supporting hardware.
+On Wed, Mar 05, 2025 at 03:04:03PM -0500, Zi Yan wrote:
+> A shmem folio can be either in page cache or in swap cache, but not at the
+> same time. Namely, once it is in swap cache, folio->mapping should be NULL,
+> and the folio is no longer in a shmem mapping.
+> 
+> In __folio_migrate_mapping(), to determine the number of xarray entries
+> to update, folio_test_swapbacked() is used, but that conflates shmem in
+> page cache case and shmem in swap cache case. It leads to xarray
+> multi-index entry corruption, since it turns a sibling entry to a
+> normal entry during xas_store() (see [1] for a userspace reproduction).
+> Fix it by only using folio_test_swapcache() to determine whether xarray
+> is storing swap cache entries or not to choose the right number of xarray
+> entries to update.
+> 
+> [1] https://lore.kernel.org/linux-mm/Z8idPCkaJW1IChjT@casper.infradead.org/
+> 
+> Note:
+> In __split_huge_page(), folio_test_anon() && folio_test_swapcache() is used
+> to get swap_cache address space, but that ignores the shmem folio in swap
+> cache case. It could lead to NULL pointer dereferencing when a
+> in-swap-cache shmem folio is split at __xa_store(), since
+> !folio_test_anon() is true and folio->mapping is NULL. But fortunately,
+> its caller split_huge_page_to_list_to_order() bails out early with EBUSY
+> when folio->mapping is NULL. So no need to take care of it here.
+> 
+> Fixes: fc346d0a70a1 ("mm: migrate high-order folios in swap cache correctly")
+> Reported-by: Liu Shixin <liushixin2@huawei.com>
+> Closes: https://lore.kernel.org/all/28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com/
+> Suggested-by: Hugh Dickins <hughd@google.com>
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> Cc: stable@vger.kernel.org
 
-Tested-by: Janne Grunau <j@jannau.net>
-Signed-off-by: Oliver Upton <oliver.upton@linux.dev>
----
- arch/arm64/kernel/cpu_errata.c | 44 ++++++++++++++++++++++++++++++++++
- 1 file changed, 44 insertions(+)
-
-diff --git a/arch/arm64/kernel/cpu_errata.c b/arch/arm64/kernel/cpu_errata.c
-index 7ce555862895..a1e16b156fab 100644
---- a/arch/arm64/kernel/cpu_errata.c
-+++ b/arch/arm64/kernel/cpu_errata.c
-@@ -194,6 +194,43 @@ has_neoverse_n1_erratum_1542419(const struct arm64_cpu_capabilities *entry,
- 	return is_midr_in_range(midr, &range) && has_dic;
- }
- 
-+static const struct midr_range impdef_pmuv3_cpus[] = {
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M1_ICESTORM),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M1_FIRESTORM),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M1_ICESTORM_PRO),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M1_FIRESTORM_PRO),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M1_ICESTORM_MAX),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M1_FIRESTORM_MAX),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M2_BLIZZARD),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M2_AVALANCHE),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M2_BLIZZARD_PRO),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M2_AVALANCHE_PRO),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M2_BLIZZARD_MAX),
-+	MIDR_ALL_VERSIONS(MIDR_APPLE_M2_AVALANCHE_MAX),
-+	{},
-+};
-+
-+static bool has_impdef_pmuv3(const struct arm64_cpu_capabilities *entry, int scope)
-+{
-+	u64 dfr0 = read_sanitised_ftr_reg(SYS_ID_AA64DFR0_EL1);
-+	unsigned int pmuver;
-+
-+	if (!is_kernel_in_hyp_mode())
-+		return false;
-+
-+	pmuver = cpuid_feature_extract_unsigned_field(dfr0,
-+						      ID_AA64DFR0_EL1_PMUVer_SHIFT);
-+	if (pmuver != ID_AA64DFR0_EL1_PMUVer_IMP_DEF)
-+		return false;
-+
-+	return is_midr_in_range_list(read_cpuid_id(), impdef_pmuv3_cpus);
-+}
-+
-+static void cpu_enable_impdef_pmuv3_traps(const struct arm64_cpu_capabilities *__unused)
-+{
-+	sysreg_clear_set_s(SYS_HACR_EL2, 0, BIT(56));
-+}
-+
- #ifdef CONFIG_ARM64_WORKAROUND_REPEAT_TLBI
- static const struct arm64_cpu_capabilities arm64_repeat_tlbi_list[] = {
- #ifdef CONFIG_QCOM_FALKOR_ERRATUM_1009
-@@ -794,6 +831,13 @@ const struct arm64_cpu_capabilities arm64_errata[] = {
- 					{}
- 				})),
- 	},
-+	{
-+		.desc = "Apple IMPDEF PMUv3 Traps",
-+		.capability = ARM64_WORKAROUND_PMUV3_IMPDEF_TRAPS,
-+		.type = ARM64_CPUCAP_LOCAL_CPU_ERRATUM,
-+		.matches = has_impdef_pmuv3,
-+		.cpu_enable = cpu_enable_impdef_pmuv3_traps,
-+	},
- 	{
- 	}
- };
--- 
-2.39.5
-
+Reviewed-by: Matthew Wilcox (Oracle) <willy@infradead.org>
 
