@@ -1,168 +1,284 @@
-Return-Path: <linux-kernel+bounces-547631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27189A50BC8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:45:19 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 288F5A50BCE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:45:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65D533A5070
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:45:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 527D21885B3E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:45:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E7112512D9;
-	Wed,  5 Mar 2025 19:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B18DA25485C;
+	Wed,  5 Mar 2025 19:45:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KWn6sKyF"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="AjQKZBH9"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A7281DE4D3
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49C5F1DE4D3;
+	Wed,  5 Mar 2025 19:45:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741203912; cv=none; b=LwwJsIORPoC99SyQJwGfJJb1E7+K4+hjSOGvxzW15gKHhJ1VlExdL48L5OawUiM0hCV59PA/Q8vtYdu9FpDbMjuDfNn9KNW3wWWRNGuNEH8R4OFpYNYnDHp95f3M8P3xlaK5XhEEJwlyhdWgp9Ktj6Hrm2K6WtCa/02SoaUV5bk=
+	t=1741203942; cv=none; b=crxyAXXWkJ/v9bkDel1lXrqHu+V8aCp+IF9VSbu7V6Ft+y9OrGx/VdH4U4kf7afCD0c/HhTMXweAzDWM0yeCRF3NsNGS1M4TVvMZt7V+WTK67Tfs/3vloGA52zxIoZ98VEh8BvvoD3H+bSJEm/0zDe4mswaMR6f4qg9K8dH+4As=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741203912; c=relaxed/simple;
-	bh=18ZM1//KmWlpxbNtgrT5Ib/LlAyiKm/m64pVpWJqYVY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmAXX6Xf9vfitO7pzOjZPaDOAQxlMvdqSNarjitLe1VgvdjZwP4HhgTxEkfrAvcNecM1q5vrzfEKJzy4H7+bcC6J1ihDvRvUCUJNPOQYFhmcUgzaxfVaMgtBxJcYvI+3Snq2/qSiV9ZUTTyrsFXtwRq33mieROyC0KrVAlTiKGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KWn6sKyF; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741203911; x=1772739911;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=18ZM1//KmWlpxbNtgrT5Ib/LlAyiKm/m64pVpWJqYVY=;
-  b=KWn6sKyFBim14ZkCWl2uQaCnXYDrZFSif1SfsXfmlHTyoi7/fjRVxUPW
-   RUNMYU4ZFL9cIIgXgkqIhvCkEqXsty4/15Is3biUdeiHPz99lvP7U/1/V
-   Cz8c7YRQXbOuOVQc/BGQAAJLXdjY1BYXfQS4EIb9ZqrecMKbwpF7xfaMI
-   3UtlJQprPdLMEkwNzQkltejkYWujjfPSYbuhgJ3S0YXCLlDT0WsvQOf4g
-   +8kKtEzBVjtZ6MDxgoksp85ZhSkwmm1UWa8unYNqEdsiHdiV75XT6T2sv
-   WdTvT//qjdKW7bvVOfFd/Rj/3dDJA1hNqt/XLyXdVUGuJLlNxVY/JBuX+
-   g==;
-X-CSE-ConnectionGUID: usGBetMhTTOHIq0vsEX8OA==
-X-CSE-MsgGUID: rsYaxRIGRaqjqcIbsZjk/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="53585765"
-X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
-   d="scan'208";a="53585765"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 11:45:11 -0800
-X-CSE-ConnectionGUID: ka/lj1c3SCCQmIutfsiqfw==
-X-CSE-MsgGUID: XUV/fNJYRWG8hLjPhRMhIA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
-   d="scan'208";a="118507028"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 11:45:06 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tpufu-0000000HVgZ-1HsU;
-	Wed, 05 Mar 2025 21:45:02 +0200
-Date: Wed, 5 Mar 2025 21:45:02 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Cc: Yury Norov <yury.norov@gmail.com>,
-	Lucas De Marchi <lucas.demarchi@intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Jani Nikula <jani.nikula@linux.intel.com>,
-	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
-	Rodrigo Vivi <rodrigo.vivi@intel.com>,
-	Tvrtko Ursulin <tursulin@ursulin.net>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Andi Shyti <andi.shyti@linux.intel.com>,
-	David Laight <David.Laight@aculab.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Jani Nikula <jani.nikula@intel.com>
-Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
-Message-ID: <Z8ipvnURG_iejzSX@smile.fi.intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
- <Z8hx9AaUX_GvYq_A@thinkpad>
- <8301ecbc-d035-4257-9b04-c6ef9be4ce32@wanadoo.fr>
+	s=arc-20240116; t=1741203942; c=relaxed/simple;
+	bh=bL/x2ys+EM9SZYaqL9CiNuhB4mRB/IyUdJVwcVX0rig=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=fuQBh3XMf64XzgfVqG146HP9ymMXWqCV+SlVudHamrrJEzyd8RY21wgcCJoFxLsTMhs9D0qNl3ZsHKe/dJCuaX5wX3lQ11LMRgUG2YR3rzUS58cnkjxGPLQFic+J0DdH2A2nwd9u6uhHkWAtCGwdU3uleEZyfFuMW6XDwTGi9qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=AjQKZBH9; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id A923E25198;
+	Wed,  5 Mar 2025 20:45:38 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id o9klg4k5iJZM; Wed,  5 Mar 2025 20:45:37 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1741203937; bh=bL/x2ys+EM9SZYaqL9CiNuhB4mRB/IyUdJVwcVX0rig=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=AjQKZBH9JtsZvyWpwgTJQCjvJxTXYFjSmX59M2TBawGd+6cjsa6Y2HqeKQmBhcN25
+	 qD71hl4Y8bzIei/fdqEMHOerI1pY0Yvb+GCJx/5DEa2sgAPuVz/ZPYEWnD5b1+0/Jc
+	 vAenVi1UGFegBG285MmVc775LS/OdvLnlz/CyOJa6ORfPk9BbTvZe4oCXycTrZev2p
+	 IahOk6c7oHhMNqgkpiuvNfgazCXnj8StRTNAFyrpUzlFIiYZ6bR3djuJ18R1U0Lfpt
+	 NNGv1tqKYbHzr2eYeLiidizAnysVu6cUWmczlc31YtGtSVoAsYBEPtUZMWE+xJ+NyA
+	 EniD8dg3XNHBQ==
+From: Yao Zi <ziyao@disroot.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Cc: linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v2 5/8] clk: rockchip: Support MMC clocks in GRF region
+Date: Wed,  5 Mar 2025 19:45:13 +0000
+Message-ID: <20250305194513.47139-1-ziyao@disroot.org>
+In-Reply-To: <20250305194217.47052-1-ziyao@disroot.org>
+References: <20250305194217.47052-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8301ecbc-d035-4257-9b04-c6ef9be4ce32@wanadoo.fr>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Mar 06, 2025 at 01:48:49AM +0900, Vincent Mailhol wrote:
-> On 06/03/2025 at 00:47, Yury Norov wrote:
-> > On Wed, Mar 05, 2025 at 10:00:15PM +0900, Vincent Mailhol via B4 Relay wrote:
+Registers of MMC drive/sample clocks in Rockchip RV1106 and RK3528
+locate in GRF regions. Adjust MMC clock code to support register
+operations through regmap. Also add a helper to ease registration of GRF
+clocks.
 
-...
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ drivers/clk/rockchip/clk-mmc-phase.c | 24 +++++++++++++---
+ drivers/clk/rockchip/clk.c           | 42 ++++++++++++++++++++++++++++
+ drivers/clk/rockchip/clk.h           | 20 ++++++++++++-
+ 3 files changed, 81 insertions(+), 5 deletions(-)
 
-> > Having, in fact, different implementations of the same macro for kernel
-> > and userspace is a source of problems. Can we move GENMASK_TYPE() to uapi,
-> > and implement __GENMASK() on top of them? If not, I'd prefer to keep
-> > GENMASK and GENMASK_ULL untouched.
-> 
-> This is something which I tried to explain in the cover letter. I am not
-> confident to declare GENMASK_TYPE() in the uapi and expose it to the
-> userland. If we do so, any future change in the parameters would be a
-> user breaking change. __GENMASK_U128() looks already too much to me for
-> the uapi, I am not keen to bloat it even more with GENMASK_TYPE().
-> 
-> This plus the fact that if we use GENMASK_TYPE() to generate the asm
-> variant, then we can not rely on sizeof() in the definition which makes
-> everything over complicated.
-
-I am with you here. The less we done in uAPI the better.
-uAPI is something carved in stone, once done it's impossible to change.
-
-> I acknowledge that not having a common denominator is not best, but I
-> see this as an acceptable tradeoff.
-
-...
-
-> >> +#define GENMASK_U8(h, l) ((unsigned int)GENMASK_t(u8,  h, l))
-> >> +#define GENMASK_U16(h, l) ((unsigned int)GENMASK_t(u16, h, l))
-> > 
-> > Typecast to the type that user provides explicitly?  And maybe do
-> > in GENMASK_TYPE()
-> 
-> I have a slight preference for the cast to unsigned int for the reason
-> explained above. But that is not a deal breaker. If you believe that the
-> u8/u16 casts are better, let me know, I will be happy to change it :)
-
-At least can you provide an existing use case (or use cases) that need
-this castings? Also still a big question what will happen with it on asm.
-Can it cope with 0x000000f0 passed as imm8, for example?
-
-> >> +#define GENMASK_U32(h, l) GENMASK_t(u32, h, l)
-> >> +#define GENMASK_U64(h, l) GENMASK_t(u64, h, l)
-
-...
-
-> > But GENMASK_U128() becomes a special case now.
-> > The 128-bit GENMASK is unsued, but it's exported in uapi. Is there any
-> > simple way to end up with a common implementation for all fixed-type
-> > GENMASKs?
-> 
-> What bothers me is that the 128 bit types are not something available on
-> all architectures, c.f. the CONFIG_ARCH_SUPPORTS_INT128. So, I would
-> need a U128() equivalent to the ULL() but which does not break on
-> architectures which do not support 128 bits integers.
-> 
-> This is where I am stuck. If someone can guide me on how to write a
-> robust U128() macro, then I think the common implementation could be
-> feasible.
-
-I think we may leave that U128 stuff alone for now.
-
+diff --git a/drivers/clk/rockchip/clk-mmc-phase.c b/drivers/clk/rockchip/clk-mmc-phase.c
+index 91012078681b..b3ed8e7523e5 100644
+--- a/drivers/clk/rockchip/clk-mmc-phase.c
++++ b/drivers/clk/rockchip/clk-mmc-phase.c
+@@ -9,11 +9,14 @@
+ #include <linux/clk-provider.h>
+ #include <linux/io.h>
+ #include <linux/kernel.h>
++#include <linux/regmap.h>
+ #include "clk.h"
+ 
+ struct rockchip_mmc_clock {
+ 	struct clk_hw	hw;
+ 	void __iomem	*reg;
++	struct regmap	*grf;
++	int		grf_reg;
+ 	int		shift;
+ 	int		cached_phase;
+ 	struct notifier_block clk_rate_change_nb;
+@@ -54,7 +57,12 @@ static int rockchip_mmc_get_phase(struct clk_hw *hw)
+ 	if (!rate)
+ 		return 0;
+ 
+-	raw_value = readl(mmc_clock->reg) >> (mmc_clock->shift);
++	if (mmc_clock->grf)
++		regmap_read(mmc_clock->grf, mmc_clock->grf_reg, &raw_value);
++	else
++		raw_value = readl(mmc_clock->reg);
++
++	raw_value >>= mmc_clock->shift;
+ 
+ 	degrees = (raw_value & ROCKCHIP_MMC_DEGREE_MASK) * 90;
+ 
+@@ -134,8 +142,12 @@ static int rockchip_mmc_set_phase(struct clk_hw *hw, int degrees)
+ 	raw_value = delay_num ? ROCKCHIP_MMC_DELAY_SEL : 0;
+ 	raw_value |= delay_num << ROCKCHIP_MMC_DELAYNUM_OFFSET;
+ 	raw_value |= nineties;
+-	writel(HIWORD_UPDATE(raw_value, 0x07ff, mmc_clock->shift),
+-	       mmc_clock->reg);
++	raw_value = HIWORD_UPDATE(raw_value, 0x07ff, mmc_clock->shift);
++
++	if (mmc_clock->grf)
++		regmap_write(mmc_clock->grf, mmc_clock->grf_reg, raw_value);
++	else
++		writel(raw_value, mmc_clock->reg);
+ 
+ 	pr_debug("%s->set_phase(%d) delay_nums=%u reg[0x%p]=0x%03x actual_degrees=%d\n",
+ 		clk_hw_get_name(hw), degrees, delay_num,
+@@ -189,7 +201,9 @@ static int rockchip_mmc_clk_rate_notify(struct notifier_block *nb,
+ 
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+-				void __iomem *reg, int shift)
++				void __iomem *reg,
++				struct regmap *grf, int grf_reg,
++				int shift)
+ {
+ 	struct clk_init_data init;
+ 	struct rockchip_mmc_clock *mmc_clock;
+@@ -208,6 +222,8 @@ struct clk *rockchip_clk_register_mmc(const char *name,
+ 
+ 	mmc_clock->hw.init = &init;
+ 	mmc_clock->reg = reg;
++	mmc_clock->grf = grf;
++	mmc_clock->grf_reg = grf_reg;
+ 	mmc_clock->shift = shift;
+ 
+ 	clk = clk_register(NULL, &mmc_clock->hw);
+diff --git a/drivers/clk/rockchip/clk.c b/drivers/clk/rockchip/clk.c
+index cbf93ea119a9..ce2f3323d84e 100644
+--- a/drivers/clk/rockchip/clk.c
++++ b/drivers/clk/rockchip/clk.c
+@@ -590,6 +590,7 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
+ 				list->name,
+ 				list->parent_names, list->num_parents,
+ 				ctx->reg_base + list->muxdiv_offset,
++				NULL, 0,
+ 				list->div_shift
+ 			);
+ 			break;
+@@ -619,6 +620,11 @@ void rockchip_clk_register_branches(struct rockchip_clk_provider *ctx,
+ 			break;
+ 		case branch_linked_gate:
+ 			/* must be registered late, fall-through for error message */
++		case branch_mmc_grf:
++			/*
++			 * must be registered through rockchip_clk_register_grf_branches,
++			 * fall-through for error message
++			 */
+ 			break;
+ 		}
+ 
+@@ -665,6 +671,42 @@ void rockchip_clk_register_late_branches(struct device *dev,
+ }
+ EXPORT_SYMBOL_GPL(rockchip_clk_register_late_branches);
+ 
++void rockchip_clk_register_grf_branches(struct rockchip_clk_provider *ctx,
++					struct rockchip_clk_branch *list,
++					struct regmap *grf,
++					unsigned int nr_clk)
++{
++	unsigned int idx;
++	struct clk *clk;
++
++	for (idx = 0; idx < nr_clk; idx++, list++) {
++		clk = NULL;
++
++		switch (list->branch_type) {
++		case branch_mmc_grf:
++			clk = rockchip_clk_register_mmc(
++				list->name,
++				list->parent_names, list->num_parents,
++				NULL,
++				grf, list->muxdiv_offset,
++				list->div_shift
++			);
++			break;
++		default:
++			pr_err("%s: unknown clock type %d\n",
++			       __func__, list->branch_type);
++			break;
++		}
++
++		if (!clk)
++			pr_err("%s: failed to register clock %s: %ld\n",
++			       __func__, list->name, PTR_ERR(clk));
++		else
++			rockchip_clk_set_lookup(ctx, clk, list->id);
++	}
++}
++EXPORT_SYMBOL_GPL(rockchip_clk_register_grf_branches);
++
+ void rockchip_clk_register_armclk(struct rockchip_clk_provider *ctx,
+ 				  unsigned int lookup_id,
+ 				  const char *name, const char *const *parent_names,
+diff --git a/drivers/clk/rockchip/clk.h b/drivers/clk/rockchip/clk.h
+index df2b2d706450..ec86ba1dd38c 100644
+--- a/drivers/clk/rockchip/clk.h
++++ b/drivers/clk/rockchip/clk.h
+@@ -594,7 +594,9 @@ struct clk *rockchip_clk_register_cpuclk(const char *name,
+ 
+ struct clk *rockchip_clk_register_mmc(const char *name,
+ 				const char *const *parent_names, u8 num_parents,
+-				void __iomem *reg, int shift);
++				void __iomem *reg,
++				struct regmap *grf, int grf_reg,
++				int shift);
+ 
+ /*
+  * DDRCLK flags, including method of setting the rate
+@@ -633,6 +635,7 @@ enum rockchip_clk_branch_type {
+ 	branch_gate,
+ 	branch_linked_gate,
+ 	branch_mmc,
++	branch_mmc_grf,
+ 	branch_inverter,
+ 	branch_factor,
+ 	branch_ddrclk,
+@@ -983,6 +986,17 @@ struct rockchip_clk_branch {
+ 		.div_shift	= shift,			\
+ 	}
+ 
++#define MMC_GRF(_id, cname, pname, offset, shift)		\
++	{							\
++		.id		= _id,				\
++		.branch_type	= branch_mmc_grf,		\
++		.name		= cname,			\
++		.parent_names	= (const char *[]){ pname },	\
++		.num_parents	= 1,				\
++		.muxdiv_offset	= offset,			\
++		.div_shift	= shift,			\
++	}
++
+ #define INVERTER(_id, cname, pname, io, is, if)			\
+ 	{							\
+ 		.id		= _id,				\
+@@ -1132,6 +1146,10 @@ void rockchip_clk_register_late_branches(struct device *dev,
+ 					 struct rockchip_clk_provider *ctx,
+ 					 struct rockchip_clk_branch *list,
+ 					 unsigned int nr_clk);
++void rockchip_clk_register_grf_branches(struct rockchip_clk_provider *ctx,
++					struct rockchip_clk_branch *list,
++					struct regmap *grf,
++					unsigned int nr_clk);
+ void rockchip_clk_register_plls(struct rockchip_clk_provider *ctx,
+ 				struct rockchip_pll_clock *pll_list,
+ 				unsigned int nr_pll, int grf_lock_offset);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.48.1
 
 
