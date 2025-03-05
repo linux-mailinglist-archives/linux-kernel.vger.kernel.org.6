@@ -1,90 +1,198 @@
-Return-Path: <linux-kernel+bounces-547479-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547480-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62212A509FC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:28:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 879F6A509FE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:28:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A7CC81882678
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:28:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23DF83A38AD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:28:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D407024C062;
-	Wed,  5 Mar 2025 18:28:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0B61C6FF9;
+	Wed,  5 Mar 2025 18:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PWQbRJaN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rawN+bV5"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E0721A840E;
-	Wed,  5 Mar 2025 18:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193191C863D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741199313; cv=none; b=UnPZgyDZ8NJJ2Nv9fbTyZKDyTHx7UROSxn5urMijp6+Z+0bciRO78plMFkTm8/Zccr9uaH+jG5zHKOSlbnajisKk3Wij3VBIsG4VcoylEJaz77Tifx52vBoPmTuq/v6eVm7uKHYf9q8VdMkmyj1HULjmv8fqrMoi9R8ZAuZiqUI=
+	t=1741199325; cv=none; b=T5ArR9bWJpmVKlUFAxjReLafDUK6SL1O8ZNP9/iC9zM0qccFAwIAqaoPcz+2hKURNRDtRjnbmF1tdyw3kaYQ6jmhb31UBcaCE42dV6EPvmc/sduM1aHV7cxXP501iNH3suDy9JZO+U/PShQCjkx1W0Pb0TzoHL6kyMfwo319CDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741199313; c=relaxed/simple;
-	bh=QEyYKf/y4uJB60uwfNfehebuMGGLy43YFw7A8AAnOHQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=tRVlk6s6GZd01TQLEQ6ak0gH6mNcEMIJ+qjLP6AhWDrbzCA0IRijMp6B9ovWrTBH6HNxjuJOudRd64VaLR3zhxxEoQ7CqebZSSLTnTPYyLQrEeeRblvRSvvxQQA519SnwGJbPtwJluTOaXIv098YIN52smCtqZzZW18L9KKOLgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PWQbRJaN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 804FAC4CED1;
-	Wed,  5 Mar 2025 18:28:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741199311;
-	bh=QEyYKf/y4uJB60uwfNfehebuMGGLy43YFw7A8AAnOHQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=PWQbRJaNrdxy3IfAiBC9Xod1ZczhfpGqiR1tuW61SBqKO0Qs4HgefJ0CAkKlTYSR4
-	 TDGfDME12O0Fen2Da01GtiisEnB/r79L9CPABaSW6STJwRznzVsYnxVQFlF5MGD8vE
-	 te8Zkysnucmx7idHYyfnUSuhDdrTEyLZ6NyY9OvR3RXwaFFxnAKAMasTZs/Or1KuhN
-	 CMvFozX9RCq59FAaNRlyaZ1flTssMEvyeRok/r+WgMoNvRpxmJUsTcA9gkc5gxFv9j
-	 VI+mbzNg4R4j+TET/7/oZsk2k5MQWw+W1iReQZrkqjw6KQt1fYy3QsNEcWuZHf9x/2
-	 /lrgLQltGUpWQ==
-From: SeongJae Park <sj@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build warning after merge of the mm tree
-Date: Wed,  5 Mar 2025 10:28:29 -0800
-Message-Id: <20250305182829.56154-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250305203312.6f30e9c2@canb.auug.org.au>
-References: 
+	s=arc-20240116; t=1741199325; c=relaxed/simple;
+	bh=NXQNTWJeiSFzjPLlih2rgrST7ZU+kwSlPLsGUkO6i4Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DnEwAESm+ICznqlLv+xm915BPD1JxZJA1iXU4kG8w4dxMB4pJj9+S+UJhVos5wyt6L4V7XPMEhveIBqNM0Gw20RvBIIXjiK6ikzOCwIW8dzGhZiKlcP55sND029pM/2ZUfqLJe4aIbYRZfKKT8gqZZ98e8CsW9IKd5y/8WF7A/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rawN+bV5; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2234bec7192so133578755ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 10:28:43 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741199323; x=1741804123; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IlUZuaZqa3JLI6rAH+eSKbr5zwilBRdu2UhafBOdrdc=;
+        b=rawN+bV57J1B+RzCmZ77uY16uIki+f4lQ9ppIpAkWldjdzIMnlkOIEnCKIAOSOoOGh
+         jjkd8TApQJ5n5ruGtpwgOVUfEhGfijcHsYT3n1Lgxot7HWpAEs4033eFWCbcs96WjKh4
+         Shg1NLPB9a7KkAA1MexVwFCjo2lSgPJSSk5PWnfaIKds+1qKqn60LIEYTR8TyCkrCjBy
+         I+H/B5fyojgxbNVaYXHGwkTySQA5rx9rBSLgztiGEDsiThM6W4QD0by8V20kTq2F/k7H
+         WKXJP/nejCrj4h0a4U+O+Cf8sR0SHPVoB1BemiMXZ2cUCARNCV+m5V7+laeDq2CIRyar
+         dQiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741199323; x=1741804123;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IlUZuaZqa3JLI6rAH+eSKbr5zwilBRdu2UhafBOdrdc=;
+        b=cNx76VnHyJDt3xxfQQWa7D9WZFzsHi4MVycOulOGuHuQNdoWTH4Kcv4AXiITdpzQ6Y
+         lpXd1TgUC+cp4TxPLW55YpRwAALCEguuq8vrkQ/9Fk8QSZxDu5UmR+9CKTK49+dBzXeF
+         UKUrhmLLZj55Io3z1viGedQxLNwWWnBVeDLTRGZUWf4y485uRMAlbbtqAoeWUSs2hdnP
+         OUuXBURLHxrr2qfLUUHGbGF1/WMm1jiFSkpdaKnezWtAfDayiBO6ZN29LuB5tTcjz2ZO
+         7Z7miOj5+wp3SAI9DBcJmnHnuK8ZIuM2K61aZkQY9CRY+8izM+XJMGL4Y3mHEdhy2EMA
+         NT1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV4VlFJLDwFQRgkLdLHbyURT1kqT7AQCw26zcPQIhEwpM2Va/VgUbiPsQapIjQTFIiZuoCsfeD2l/ae1xw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy37GaBIYHpUEaXHypkOXtRcZkCRVjjSmSn0XtykdNBSAMIyV3z
+	bZlomkAUEO2lbrYkipiUgntISqtVVis2Otf6te+nirq+dFwcV45jdnCV04Ez5A==
+X-Gm-Gg: ASbGncvVE0aDipDdc5vmVbD02dKGhKBAWh/rFPSMb8YiVRL6xKSheP10YNblo6YXFQc
+	qVCivBmlPaodEjkNLFoGy2alUYMTC7tQpgFguGAPLsVB7fR/WKWu6gWl925m/AOVA3d1bKIDjNP
+	yXepvbHEeqidLgIG2HsYDj10VJNP/JwYuCzKStPk5rC1DERo6Rvpfe+USxdSpU/04snSpf/MXXJ
+	Z7GgbnylAZkmk0QdLrZG6LBxRU1/3hOG8nmw8Rr2bmeXqBZdGqJ/oCcXZh+UbFFcKfU5gwMLyKi
+	kHgwDlGP4pTaiNCCU17hK7x8XDFiTxaVsIJKIxx3bqIc7biGob/pudjW
+X-Google-Smtp-Source: AGHT+IF+TGwksJJjKWkdx/R8tEcgWJtus8Acn/xVNQz9+4wgbYvkHfwKDe4CHqeQdGOj/ucT3x99Xw==
+X-Received: by 2002:a05:6a21:3986:b0:1f0:e84c:866f with SMTP id adf61e73a8af0-1f3494967f1mr8474146637.21.1741199323380;
+        Wed, 05 Mar 2025 10:28:43 -0800 (PST)
+Received: from thinkpad ([120.60.140.239])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf2444sm12428366a12.3.2025.03.05.10.28.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 10:28:42 -0800 (PST)
+Date: Wed, 5 Mar 2025 23:58:33 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Fan Ni <nifan.cxl@gmail.com>, Shradha Todi <shradha.t@samsung.com>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com,
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
+	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
+Subject: Re: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
+Message-ID: <20250305182833.cgrwbrcwzjscxmku@thinkpad>
+References: <20250304171154.njoygsvfd567pb66@thinkpad>
+ <20250305173826.GA303920@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250305173826.GA303920@bhelgaas>
 
-Hi Stephen,
-
-On Wed, 5 Mar 2025 20:33:12 +1100 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-
-> Hi all,
+On Wed, Mar 05, 2025 at 11:38:26AM -0600, Bjorn Helgaas wrote:
+> On Tue, Mar 04, 2025 at 10:41:54PM +0530, Manivannan Sadhasivam wrote:
+> > On Wed, Mar 05, 2025 at 12:46:38AM +0900, Krzysztof Wilczyński wrote:
+> > > > On Mon, 3 Mar 2025 at 20:47, Krzysztof Wilczyński <kw@linux.com> wrote:
+> > > > > [...]
+> > > > > > > +int dwc_pcie_debugfs_init(struct dw_pcie *pci)
+> > > > > > > +{
+> > > > > > > +   char dirname[DWC_DEBUGFS_BUF_MAX];
+> > > > > > > +   struct device *dev = pci->dev;
+> > > > > > > +   struct debugfs_info *debugfs;
+> > > > > > > +   struct dentry *dir;
+> > > > > > > +   int ret;
+> > > > > > > +
+> > > > > > > +   /* Create main directory for each platform driver */
+> > > > > > > +   snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
+> > > > > > > +   dir = debugfs_create_dir(dirname, NULL);
+> > > > > > > +   debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
+> > > > > > > +   if (!debugfs)
+> > > > > > > +           return -ENOMEM;
+> > > > > > > +
+> > > > > > > +   debugfs->debug_dir = dir;
+> > > > > > > +   pci->debugfs = debugfs;
+> > > > > > > +   ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
+> > > > > > > +   if (ret)
+> > > > > > > +           dev_dbg(dev, "RASDES debugfs init failed\n");
+> > > > > >
+> > > > > > What will happen if ret != 0? still return 0?
+> > > > 
+> > > > And that is exactly what happens on Gray Hawk Single with R-Car
+> > > > V4M: dw_pcie_find_rasdes_capability() returns NULL, causing
+> > > > dwc_pcie_rasdes_debugfs_init() to return -ENODEV.
+> > > > 
+> > > > Debugfs issues should never be propagated upstream!
+> > ...
 > 
-> After merging the mm tree, today's linux-next build (htmldocs) produced
-> this warning:
+> > > > So while applying, you changed this like:
+> > > > 
+> > > >             ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
+> > > >     -       if (ret)
+> > > >     -               dev_dbg(dev, "RASDES debugfs init failed\n");
+> > > >     +       if (ret) {
+> > > >     +               dev_err(dev, "failed to initialize RAS DES debugfs\n");
+> > > >     +               return ret;
+> > > >     +       }
+> > > > 
+> > > >             return 0;
+> > > > 
+> > > > Hence this is now a fatal error, causing the probe to fail.
 > 
-> Documentation/mm/damon/design.rst:342: WARNING: undefined label: 'damon_design_region_based_sample' [ref.ref]
+> > Even though debugfs_init() failure is not supposed to fail the probe(),
+> > dwc_pcie_rasdes_debugfs_init() has a devm_kzalloc() and propagating that
+> > failure would be canolically correct IMO.
 > 
-> Introduced by commit
+> I'm not sure about this.  What's the requirement to propagate
+> devm_kzalloc() failures?  I think devres will free any allocs that
+> were successful regardless.
 > 
->   8a2e41c7ecfd ("Docs/mm/damon/design: document for intervals auto-tuning")
+> IIUC, we resolved the Gray Hawk Single issue by changing
+> dwc_pcie_rasdes_debugfs_init() to return success without doing
+> anything when there's no RAS DES Capability.
+> 
+> But dwc_pcie_debugfs_init() can still return failure, and that still
+> causes dw_pcie_ep_init_registers() to fail, which breaks the "don't
+> propagate debugfs issues upstream" rule:
+> 
+>   int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
+>   {
+>           ...
+>           ret = dwc_pcie_debugfs_init(pci);
+>           if (ret)
+>                   goto err_remove_edma;
+> 
+>           return 0;
+> 
+>   err_remove_edma:
+>           dw_pcie_edma_remove(pci);
+> 
+>           return ret;
+>   }
+> 
+> We can say that kzalloc() failure should "never" happen, and therefore
+> it's OK to fail the driver probe if it happens, but that doesn't seem
+> like a strong argument for breaking the "don't propagate debugfs
+> issues" rule.  And someday there may be other kinds of failures from
+> dwc_pcie_debugfs_init().
+> 
 
-Thank you for this kind report!  Just posted a fix:
-https://lore.kernel.org/20250305182744.56125-1-sj@kernel.org
+Fine with me. I was not too sure about propagating failure either.
 
+- Mani
 
-Thanks,
-SJ
-
-> 
-> -- 
-> Cheers,
-> Stephen Rothwell
-> 
+-- 
+மணிவண்ணன் சதாசிவம்
 
