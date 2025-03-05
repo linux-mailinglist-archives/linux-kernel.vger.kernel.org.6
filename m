@@ -1,191 +1,171 @@
-Return-Path: <linux-kernel+bounces-546049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C46F7A4F58B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:45:54 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE3A8A4F58E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:46:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E1F16FF65
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:45:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4FE43AC423
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0FAC19CD0E;
-	Wed,  5 Mar 2025 03:44:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ng6AnIrA"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C81186E56;
+	Wed,  5 Mar 2025 03:45:49 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FBFE18A6D5;
-	Wed,  5 Mar 2025 03:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3731624FC;
+	Wed,  5 Mar 2025 03:45:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741146293; cv=none; b=LYlOo5Yj/0cYBif3kWrA2xJ1TBzlVvcSBlxcqqNiHYVqNkKfEZIdHhrH7HvYYrBz3BqPQJOJYoWsqoAyhzi39yO6aA1MtcwAFibkaowkNN5qnv+mQY1wku9gKSNqsoAtqJejPIlggdNLFE5XPDR1ue4QNpddEMiT/zPn9Mchw94=
+	t=1741146348; cv=none; b=ob0uAgX5/G7PIRsZtcOhtEBC/YyYayWT6BNl4ss0kyS7LPePZNTQFrXLktcISzkB0Gh7AjnB5F9soJW6OsV2NPPnbSPjqaLMQx/oDP4uaRHu6esyKc0iMrrxG8vRa7ab9AQxZDGKLnRZsv7rLUIFStto5x7QlS1VG4oXW/lop9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741146293; c=relaxed/simple;
-	bh=G6B56ZsAoR/bIh1JopEk7s/pj+lVV13//00JyF8B6Qo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uVOfMXPJJigAlHpTT45Fl4BsC/PguCb8kkHVXmjs5B2LOWXo7kRTSZGR+zQ40GVYLzHB/D8BDRT/73equKREwDbYx1KYXAmf3hw3UO0ZcIe2XMS0GfQ693P+AHKd0oBHoJ0GxjFggazJBp6akxrWIxGbnyV3zGA4xTJPekAuTeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ng6AnIrA; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-22339936bbfso94647325ad.1;
-        Tue, 04 Mar 2025 19:44:51 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741146291; x=1741751091; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FSYH5+SwcmtCe+p0n+lRYfrltYt+gVN39RZaCf2MCi8=;
-        b=Ng6AnIrAIhRf4cqhhF10DZnupgtIbc66jh/XZx8DHsFA36VePuYxT9NpP6nArZeD2n
-         yOa+S7SWx6OT0m+RAHsKaLqfmwqmNwxoIQgyYXp9UDhXKKN33Xopu1GSofHyImDblHMg
-         CpXrDMuPxLpNYCKX0frGW0lWjr3hslJWXw4hmIfuR495m0us27Du4d/Z3D+bXNx1Sroh
-         /GQ2MkaWndc4f0GCeZ+sXDII6PpSH37QwjxyrsjC8Nm2weGkQi3+4PMEmT1j53ZBGJ/0
-         YfjgCIa7I3bHXP93js+Eqz4ZGbwo4dpkfUQeNrl6AqQ+kWEESnclZi/dZxSLAAQs9JXJ
-         CpMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741146291; x=1741751091;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FSYH5+SwcmtCe+p0n+lRYfrltYt+gVN39RZaCf2MCi8=;
-        b=uY9ENssMDJ5kSg6JIUwQwq8iBmjyrmcJL4N0LtDuMKyKjBDSXaRUPuZqYVP3ZNLdHU
-         vbNUXV9ihSX4SPsosDM0dfv0DchqDbWRaN19UWO7jGXKYyQlSAbMCUC/41YQG4Ju5kIj
-         uf3ad+ihx1HmyON0CO+etQ+W/8nwvzIHPbmHGJNxYfniL/rHqzA6k6ovd2me6JT6GOMI
-         uP5v3K6E95ITHjlSE3Ihc5yr3NN7HHIzxK5SE3oZBUOao+RajpH+Yft0CcGzsSLn3vC+
-         CGIZSezJSknPisZZT9EzBsSUEyCYAn1tZEx0mvb22eY+QfcKi8zAZo7vtfbbUi23rNmb
-         WfDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVVOHtXa9jXE8N8nX5GRgiFPTi/29UIv6xVpmUgULlkFfOTLsOjNLE36s4EAkqM4SjkIEcxu6IDyf1h@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxc1L/upqkSeY/k8h0/It2ywMZShaHVWmeekzVcRQ4PefMF8PSn
-	SJrpWo4+RM4n7mtfDTB+j63+F9STYptgUSywpHSLrStCP/WFouJ7
-X-Gm-Gg: ASbGncsYH6jY5dQGcR9TxUSPn8cvAx9wOczdjHGYVCUP8xSq8dudPB05ywnQAiPYEov
-	9SsasH1cKklcl5oHOLaSeDwQszb0bhJpi0/3+yWeRzZxXeqM/WiL9/q4VPz5coWMCUadC/SIKFN
-	LJfiLgelD4InRXd6urjnHcSnaxoJcAijTpRuJmlMedNIKMa+4zUVa3OZu+b5aJcMmHIllmcn3IL
-	E0IJZLEqKVz91EZJgreq8eo16EZsVZs7YNM9Yv3YW07IU0oS9PVriVzoeftTksfALy6ro8J/Igz
-	2TDb2Q6zM+nxxYIDPjJuBfyzVmrlB15oIKNxXrXR0ztEzUc8WQ4DJhA=
-X-Google-Smtp-Source: AGHT+IEY/W5EzK2xQM9ApeNVjlE0dvEXpH3lZiSewWlXGQlloKZ5FWhsNbQOOWfviYkdHfIw/kEpyg==
-X-Received: by 2002:a17:903:11c3:b0:215:4a4e:9262 with SMTP id d9443c01a7336-223f1c6af8fmr20720365ad.8.1741146291089;
-        Tue, 04 Mar 2025 19:44:51 -0800 (PST)
-Received: from cs20-buildserver.lan ([2403:c300:d305:9d26:2e0:4cff:fe68:863])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-223504c5c37sm102734335ad.133.2025.03.04.19.44.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 19:44:50 -0800 (PST)
-From: Stanley Chu <stanley.chuys@gmail.com>
-X-Google-Original-From: Stanley Chu <yschu@nuvoton.com>
-To: frank.li@nxp.com,
-	miquel.raynal@bootlin.com,
-	alexandre.belloni@bootlin.com,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	linux-i3c@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	tomer.maimon@nuvoton.com,
-	kwliu@nuvoton.com,
-	yschu@nuvoton.com
-Subject: [PATCH v6 5/5] i3c: master: svc: Fix npcm845 DAA process corruption
-Date: Wed,  5 Mar 2025 11:44:14 +0800
-Message-Id: <20250305034414.2246870-6-yschu@nuvoton.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250305034414.2246870-1-yschu@nuvoton.com>
-References: <20250305034414.2246870-1-yschu@nuvoton.com>
+	s=arc-20240116; t=1741146348; c=relaxed/simple;
+	bh=0yTzmYzJnjOSQukZ5c5JyGiOIX7TMKbcvpqAZR22Dy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NqHzgvzx669hox17c6vPlkNw9eLZp4oQsBnla/jujYiUa6wWWKYDwrmHhN0KqIHSUjxQI3IAkcnNCZr+aRSYrECb5DuxJ2c9gyhxOmHLIHtoI5jap+sZv5BZ/37xJZuOqw7cPy8BW8n7TdbuYTUDDji+A5IxXVEuPRIiLXDCowE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4Z6z4222wSz17NWt;
+	Wed,  5 Mar 2025 11:46:10 +0800 (CST)
+Received: from dggemv704-chm.china.huawei.com (unknown [10.3.19.47])
+	by mail.maildlp.com (Postfix) with ESMTPS id B8F5B1A0188;
+	Wed,  5 Mar 2025 11:45:36 +0800 (CST)
+Received: from kwepemn100009.china.huawei.com (7.202.194.112) by
+ dggemv704-chm.china.huawei.com (10.3.19.47) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 5 Mar 2025 11:45:36 +0800
+Received: from [10.67.121.59] (10.67.121.59) by kwepemn100009.china.huawei.com
+ (7.202.194.112) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Mar
+ 2025 11:45:35 +0800
+Message-ID: <397910e0-38eb-553a-2bd2-c338d8c3a49c@huawei.com>
+Date: Wed, 5 Mar 2025 11:45:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.2.0
+Subject: Re: [PATCH 02/14] mailbox: pcc: Always clear the platform ack
+ interrupt first
+To: Sudeep Holla <sudeep.holla@arm.com>, <linux-acpi@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Jassi Brar <jassisinghbrar@gmail.com>, Adam Young
+	<admiyo@os.amperecomputing.com>, Robbie King <robbiek@xsightlabs.com>
+References: <20250303-pcc_fixes_updates-v1-0-3b44f3d134b1@arm.com>
+ <20250303-pcc_fixes_updates-v1-2-3b44f3d134b1@arm.com>
+From: "lihuisong (C)" <lihuisong@huawei.com>
+In-Reply-To: <20250303-pcc_fixes_updates-v1-2-3b44f3d134b1@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemn100009.china.huawei.com (7.202.194.112)
 
-From: Stanley Chu <yschu@nuvoton.com>
 
-When MCONFIG.SKEW=0 and MCONFIG.ODHPP=0, the ENTDAA transaction gets
-corrupted and results in a no repeated-start condition at the end of
-address assignment.
-
-Workaround: Set MCONFIG.SKEW to 1 before initiating the DAA process.
-After the DAA process is completed, return MCONFIG.SKEW to its previous
-value.
-
-Reviewed-by: Frank Li <Frank.Li@nxp.com>
-Signed-off-by: Stanley Chu <yschu@nuvoton.com>
----
- drivers/i3c/master/svc-i3c-master.c | 30 ++++++++++++++++++++++++++++-
- 1 file changed, 29 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
-index 5c29912e0a69..df7eb038c6c9 100644
---- a/drivers/i3c/master/svc-i3c-master.c
-+++ b/drivers/i3c/master/svc-i3c-master.c
-@@ -32,6 +32,7 @@
- #define   SVC_I3C_MCONFIG_ODBAUD(x) FIELD_PREP(GENMASK(23, 16), (x))
- #define   SVC_I3C_MCONFIG_ODHPP(x) FIELD_PREP(BIT(24), (x))
- #define   SVC_I3C_MCONFIG_SKEW(x) FIELD_PREP(GENMASK(27, 25), (x))
-+#define   SVC_I3C_MCONFIG_SKEW_MASK GENMASK(27, 25)
- #define   SVC_I3C_MCONFIG_I2CBAUD(x) FIELD_PREP(GENMASK(31, 28), (x))
- 
- #define SVC_I3C_MCTRL        0x084
-@@ -150,6 +151,16 @@
-  * If it is a true SlvStart, the MSTATUS state is SLVREQ.
-  */
- #define SVC_I3C_QUIRK_FALSE_SLVSTART	BIT(1)
-+/*
-+ * SVC_I3C_QUIRK_DAA_CORRUPT:
-+ * When MCONFIG.SKEW=0 and MCONFIG.ODHPP=0, the ENTDAA transaction gets
-+ * corrupted and results in a no repeated-start condition at the end of
-+ * address assignment.
-+ * Workaround:
-+ * Set MCONFIG.SKEW to 1 before initiating the DAA process. After the DAA
-+ * process is completed, return MCONFIG.SKEW to its previous value.
-+ */
-+#define SVC_I3C_QUIRK_DAA_CORRUPT	BIT(2)
- 
- struct svc_i3c_cmd {
- 	u8 addr;
-@@ -259,6 +270,13 @@ static inline bool svc_has_quirk(struct svc_i3c_master *master, u32 quirk)
- 	return (master->drvdata->quirks & quirk);
- }
- 
-+static inline bool svc_has_daa_corrupt(struct svc_i3c_master *master)
-+{
-+	return ((master->drvdata->quirks & SVC_I3C_QUIRK_DAA_CORRUPT) &&
-+		!(master->mctrl_config &
-+		(SVC_I3C_MCONFIG_SKEW_MASK | SVC_I3C_MCONFIG_ODHPP(1))));
-+}
-+
- static inline bool is_events_enabled(struct svc_i3c_master *master, u32 mask)
- {
- 	return !!(master->enabled_events & mask);
-@@ -1144,7 +1162,16 @@ static int svc_i3c_master_do_daa(struct i3c_master_controller *m)
- 	}
- 
- 	spin_lock_irqsave(&master->xferqueue.lock, flags);
-+
-+	if (svc_has_daa_corrupt(master))
-+		writel(master->mctrl_config | SVC_I3C_MCONFIG_SKEW(1),
-+		       master->regs + SVC_I3C_MCONFIG);
-+
- 	ret = svc_i3c_master_do_daa_locked(master, addrs, &dev_nb);
-+
-+	if (svc_has_daa_corrupt(master))
-+		writel(master->mctrl_config, master->regs + SVC_I3C_MCONFIG);
-+
- 	spin_unlock_irqrestore(&master->xferqueue.lock, flags);
- 
- 	svc_i3c_master_clear_merrwarn(master);
-@@ -2031,7 +2058,8 @@ static const struct dev_pm_ops svc_i3c_pm_ops = {
- 
- const struct svc_i3c_drvdata npcm845_drvdata = {
- 	.quirks = SVC_I3C_QUIRK_FIFO_EMPTY |
--		SVC_I3C_QUIRK_FALSE_SLVSTART,
-+		SVC_I3C_QUIRK_FALSE_SLVSTART |
-+		SVC_I3C_QUIRK_DAA_CORRUPT,
- };
- 
- const struct svc_i3c_drvdata svc_default_drvdata = {};
--- 
-2.34.1
-
+在 2025/3/3 18:51, Sudeep Holla 写道:
+> The PCC mailbox interrupt handler (pcc_mbox_irq()) currently checks
+> for command completion flags and any error status before clearing the
+> interrupt.
+>
+> The below sequence highlights an issue in the handling of PCC mailbox
+> interrupts, specifically when dealing with doorbell notifications and
+> acknowledgment between the OSPM and the platform where type3 and type4
+> channels are sharing the interrupt.
+>
+>          Platform Firmware              OSPM/Linux PCC driver
+> ------------------------------------------------------------------------
+>                                       build message in shmem
+>                                       ring type3 channel doorbell
+> receives the doorbell interrupt
+>    process the message from OSPM
+>    build response for the message
+> ring the platform ack interrupt to OSPM
+> 				--->
+> build notification in type4 channel
+>                                       start processing in pcc_mbox_irq()
+>                                        enter pcc handler for type4 chan
+>                                           command complete cleared
+> 			        	 read the notification
+>                                  <---     clear platform ack irq
+>    		* no effect from above as platform ack irq *
+> 		* not yet triggered on this channel *
+> ring the platform ack irq on type4 channel
+> 				--->
+>                                        leave pcc handler for type4 chan
+>                                        enter pcc handler for type3 chan
+>                                           command complete set
+> 					 read the response
+>                                  <---     clear platform ack irq
+>                                        leave pcc handler for type3 chan
+>                                       leave pcc_mbox_irq() handler
+>                                       start processing in pcc_mbox_irq()
+>                                        enter pcc handler for type4 chan
+>                                        leave pcc handler for type4 chan
+>                                        enter pcc handler for type3 chan
+>                                        leave pcc handler for type3 chan
+>                                       leave pcc_mbox_irq() handler
+This is not easy to understand to me.
+The issue as below described is already very clear to me.
+So suggest remove above flow graph.
+> The key issue occurs when OSPM tries to acknowledge platform ack
+> interrupt for a notification which is ready to be read and processed
+> but the interrupt itself is not yet triggered by the platform.
+>
+> This ineffective acknowledgment leads to an issue later in time where
+> the interrupt remains pending as we exit the interrupt handler without
+> clearing the platform ack interrupt as there is no pending response or
+> notification. The interrupt acknowledgment order is incorrect.
+Has this issue been confired? It's more better if has the log.😁
+But it seems a valid issue.
+>
+> To resolve this issue, the platform acknowledgment interrupt should
+> always be cleared before processing the interrupt for any notifications
+> or response.
+AFAIC，always clearing the platform ack interrupt first which is also the 
+communication flow as ACPI spec described.
+I am not sure if it is ok when triggering interrupt and clearing 
+interrupt occur concurrently.
+But this scenario is always possible. I think It doesn't matter with 
+this patch. It's just my confusion.
+>
+> Reported-by: Robbie King <robbiek@xsightlabs.com>
+> Signed-off-by: Sudeep Holla <sudeep.holla@arm.com>
+Lgtm,
+Reviewed-by: Huisong Li <lihuisong@huawei.com>
+> ---
+>   drivers/mailbox/pcc.c | 7 ++++---
+>   1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/drivers/mailbox/pcc.c b/drivers/mailbox/pcc.c
+> index f2e4087281c70eeb5b9b33371596613a371dff4f..4c582fa2b8bf4c9a9368dba8220f567555dba963 100644
+> --- a/drivers/mailbox/pcc.c
+> +++ b/drivers/mailbox/pcc.c
+> @@ -313,6 +313,10 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+>   	int ret;
+>   
+>   	pchan = chan->con_priv;
+> +
+> +	if (pcc_chan_reg_read_modify_write(&pchan->plat_irq_ack))
+> +		return IRQ_NONE;
+> +
+>   	if (pchan->type == ACPI_PCCT_TYPE_EXT_PCC_MASTER_SUBSPACE &&
+>   	    !pchan->chan_in_use)
+>   		return IRQ_NONE;
+> @@ -330,9 +334,6 @@ static irqreturn_t pcc_mbox_irq(int irq, void *p)
+>   		return IRQ_NONE;
+>   	}
+>   
+> -	if (pcc_chan_reg_read_modify_write(&pchan->plat_irq_ack))
+> -		return IRQ_NONE;
+> -
+>   	/*
+>   	 * Clear this flag immediately after updating interrupt ack register
+>   	 * to avoid possible race in updatation of the flag from
+>
 
