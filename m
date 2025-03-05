@@ -1,136 +1,110 @@
-Return-Path: <linux-kernel+bounces-547475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5C5EA509ED
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:26:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F2C7A50911
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:14:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF9E162B2F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:26:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97038166152
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87E14245010;
-	Wed,  5 Mar 2025 18:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16ED7250C1A;
+	Wed,  5 Mar 2025 18:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="NAHvzRD8"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LfHD2vta"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E340F1C5D4E;
-	Wed,  5 Mar 2025 18:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712851D6DB4;
+	Wed,  5 Mar 2025 18:13:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741199187; cv=none; b=mcK2IArh2CCemRpBrhdJNKLfOQ1j6srOlRkm0H93qP1X7nKZ9/ze+BB7IeXiOUXs+VuozghfRqEOC/G39yfM0QANIhWfMgLlGZcGA9+oPk7JHPrtFvk0havySu2PMVDbUBqaGmq8zUl6e8+UqtPz9vgX9x1Uh5YUPfoptVN3pVk=
+	t=1741198406; cv=none; b=JrY+lydZwFdY1YDlrl79gm1txu8tR5/qPnjCDtsgZdjJZ2QXBGau7hGXEMoOqbPpQedHOQlLmgcn5qbtPBWBYR4zDiyULORExfgVEXdOyAno8JeG9p2cF8fjrlGXdLoza09zxsSt5FMt5DUyNxWioveYVvmwWdFOohmAwo0i9Yw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741199187; c=relaxed/simple;
-	bh=48DnJO3qW9Xs9zwpNZ50ar/9+kQ5TVK9X1F4TNoalcI=;
+	s=arc-20240116; t=1741198406; c=relaxed/simple;
+	bh=TCsk+sBiPB8l6Kt6oCdcWaTfve6D/4S6zhOFktjB3ds=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qghCfJQGWbF9CyuQwgKgZTNVngA2zdJlADrBGBt6kCKx1Ccb4IUXG63WM3nE5wTF7cTipjll5aSuq+OP0gkSqVl8gr7+xRj6Tpwefrt40AQ9s1p33Z3X0Q7mYnL2LJ9nN5525RyXBe6uig6HFflj+B1H4Cl4TpCJRejIxzACdVw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=NAHvzRD8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4998C4CED1;
-	Wed,  5 Mar 2025 18:26:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1741199186;
-	bh=48DnJO3qW9Xs9zwpNZ50ar/9+kQ5TVK9X1F4TNoalcI=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nsm4uTYI8yDQZNbcQUtwFQ87D24Qv8Y/mBuKDlE33wvndndmN7Pwz5BNdGJtmz0+zFbSwwU3OcsQtnJfbDiJXWFeA0A/G4SHu4CsNxVUFCbPhetR4iiEWEdu46ZfMNP7oKmxwR0iOCwaoBeaZIIyk80i7FWOBjxHZuue6IMZ9EI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LfHD2vta; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF09BC4CEE2;
+	Wed,  5 Mar 2025 18:13:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741198406;
+	bh=TCsk+sBiPB8l6Kt6oCdcWaTfve6D/4S6zhOFktjB3ds=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NAHvzRD8+X7g/AegMw7cyR1jIwlwz5qCxdSl8q5jhYOT4xNzXEaGJZB9Fdj+MeCy0
-	 zQCXdrTiF2LVuVJcDNOHIsvh5R7txnOr32WZiGaQgPeQy2LJV7s5axeUkJNO5y1Fcf
-	 ZdLkD4jegXk2G1loOK//y6wV7Kq4PNp1UoUjKgwU=
-Date: Wed, 5 Mar 2025 19:09:49 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: =?iso-8859-1?Q?Se=EFfane?= Idouchach <seifane53@gmail.com>
-Cc: dirk.behme@de.bosch.com, rafael@kernel.org, dakr@kernel.org,
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
-	stable@vger.kernel.org
-Subject: Re: [REGRESSION] Long boot times due to USB enumeration
-Message-ID: <2025030559-radiated-reviver-eebb@gregkh>
-References: <CAMpRfLORiuJOgUmpmjgCC1LZC1Kp0KFzPGXd9KQZELtr35P+eQ@mail.gmail.com>
+	b=LfHD2vta12yJo6VPpZ94vmo6B23JGndyWHz3gVEBGHoW60ZE50AE8joWkr9xT39YO
+	 GAj3/+fvbsX6kuGKljAGy8mg2sHBntML16sy5gh8t8x9kRNwwQ9joQQTqyV/4TDhoi
+	 cM+pfM0AmoLqmK9lLiIm55fBPP4eB9oAhoChVAH2qyF14qAhK3KbfHhzvpkAq6vgtE
+	 KcREGNGt5IIiYFtdtcV+gEyt3OkhVd7qUROjrBXv3V5kcFhHaneeSkPBZGVHAloBnF
+	 tSqSglYZOyGqZ2F6oVDfizGj8bLoX0ExecASlDDwgrz6xGriGpxKGdroXe+5mZACMV
+	 s51xMQ8GKQbnw==
+Date: Wed, 5 Mar 2025 19:13:05 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Dave Hansen <dave.hansen@intel.com>
+Cc: Eric Biggers <ebiggers@kernel.org>, x86@kernel.org,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	Ben Greear <greearb@candelatech.com>,
+	Xiao Liang <shaw.leon@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	"Bae, Chang Seok" <chang.seok.bae@intel.com>
+Subject: Re: [RFC PATCH v2] x86/fpu: make kernel-mode FPU reliably usable in
+ softirqs
+Message-ID: <Z8iUMRGyUpgisuc_@gmail.com>
+References: <20250304204954.3901-1-ebiggers@kernel.org>
+ <Z8gUYamgBr4M5ZaB@gmail.com>
+ <b6a80f6d-8469-429d-b03a-8fa71a33046b@intel.com>
+ <Z8iL1dY3o9OxQgBy@gmail.com>
+ <65c29e20-8d63-4323-b2e5-09e2e7bf3c1c@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAMpRfLORiuJOgUmpmjgCC1LZC1Kp0KFzPGXd9KQZELtr35P+eQ@mail.gmail.com>
+In-Reply-To: <65c29e20-8d63-4323-b2e5-09e2e7bf3c1c@intel.com>
 
-On Thu, Mar 06, 2025 at 12:32:59AM +0800, Seïfane Idouchach wrote:
-> Dear all,
+
+* Dave Hansen <dave.hansen@intel.com> wrote:
+
+> On 3/5/25 09:37, Ingo Molnar wrote:
+> > 
+> > * Dave Hansen <dave.hansen@intel.com> wrote:
+> > 
+> >> On 3/5/25 01:07, Ingo Molnar wrote:>> Alternatives considered:
+> >>>> - Make kernel-mode FPU sections fully preemptible.  This would require
+> >>>>   growing task_struct by another struct fpstate which is more than 2K.
+> >>>
+> >>> So that's something that will probably happen once the kernel is built 
+> >>> using APX anyway?
+> >>
+> >> I was expecting that building the kernel with APX would be very 
+> >> different than a kernel_fpu_begin(). We don't just need *one* more 
+> >> save area for APX registers: we need a stack, just like normal GPRs.
+> > 
+> > Yes - but my point is: with any APX build we'd probably be saving 
+> > FPU(-ish) registers at entry points, into a separate context area. If 
+> > that includes FPU registers then we'd not have to do 
+> > kernel_fpu_begin()/end().
 > 
-> I am reporting what I believe to be regression due to
-> c0a40097f0bc81deafc15f9195d1fb54595cd6d0.
-> 
-> After this change I am experiencing long boot times on a setup that
-> has what seems like a bad usb.
-> The progress of the boot gets halted while retrying (and ultimately
-> failing) to enumerate the USB device and is only allowed to continue
-> after giving up enumerating the USB device.
-> On Arch Linux this manifests itself by a message from SystemD having a
-> wait job on journald. Journald starts just after the enumeration fails
-> with "unable to enumerate USB device".
-> This results in longer boot times on average 1 minute longer than
-> usual (usually around 10s).
-> No stable kernel before this change exhibits the issue all stable
-> kernels after this change exhibit the issue.
-> 
-> See the related USB messages attached below (these messages are
-> continuous and have not been snipped) :
-> 
-> [...]
-> [    9.640854] usb 1-9: device descriptor read/64, error -110
-> [   25.147505] usb 1-9: device descriptor read/64, error -110
-> [   25.650779] usb 1-9: new high-speed USB device number 5 using xhci_hcd
-> [   30.907482] usb 1-9: device descriptor read/64, error -110
-> [   46.480900] usb 1-9: device descriptor read/64, error -110
-> [   46.589883] usb usb1-port9: attempt power cycle
-> [   46.990815] usb 1-9: new high-speed USB device number 6 using xhci_hcd
-> [   51.791571] usb 1-9: Device not responding to setup address.
-> [   56.801594] usb 1-9: Device not responding to setup address.
-> [   57.010803] usb 1-9: device not accepting address 6, error -71
-> [   57.137485] usb 1-9: new high-speed USB device number 7 using xhci_hcd
-> [   61.937624] usb 1-9: Device not responding to setup address.
-> [   66.947485] usb 1-9: Device not responding to setup address.
-> [   67.154086] usb 1-9: device not accepting address 7, error -71
-> [   67.156426] usb usb1-port9: unable to enumerate USB device
+> That's true. But wouldn't it be a bit silly to include _all_ FPU
+> registers? If the kernel isn't using AVX512, why bother saving and
+> restoring AVX512?
 
-That's a real issue, but should not be due to the commit id you
-referenced.
+Fair enough - although I bet the execution time difference between a 
+partial and a full FPU context save isn't as large as the buffer size 
+would suggest... There's a lot of setup cost in XSAVE* instructions 
+last I checked.
 
-> [...]
-> 
-> This issue does not manifest in 44a45be57f85.
+Thanks,
 
-What does that commit have to do with this?  That's just a build break
-fix.
-
-> I am available to test any patches to address this on my system since
-> I understand this could be quite hard to replicate on any system.
-> I am available to provide more information if I am able or with
-> guidance to help troubleshoot the issue further.
-> 
-> Wishing you all a good day.
-> 
-> #regzbot introduced: c0a40097f0bc81deafc15f9195d1fb54595cd6d0
-> 
-
-We know there are issues here.  That commit was "fixed" by commit
-15fffc6a5624 ("driver core: Fix uevent_show() vs driver detach race"),
-but then that caused a different problem, so it was reverted by commit
-9a71892cbcdb ("Revert "driver core: Fix uevent_show() vs driver detach
-race"").
-
-There are many discussions about this on the mailing list, with a
-proposal to add Dan's "fix" back.  If you could try that, it would be
-great to see.
-
-I think your USB problem is different here, but if you add 15fffc6a5624
-("driver core: Fix uevent_show() vs driver detach race") to your kernel,
-that would be great to see.
-
-thanks,
-
-greg k-h
+	Ingo
 
