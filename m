@@ -1,152 +1,136 @@
-Return-Path: <linux-kernel+bounces-546215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDA0BA4F7D7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:25:25 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 132C8A4F7D9
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:26:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 10409188FA5F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:25:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB1697A5F31
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:25:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF0191EC00B;
-	Wed,  5 Mar 2025 07:25:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iieZ0Pq6";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WvM/2IBZ"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3C6F1EDA21;
+	Wed,  5 Mar 2025 07:26:37 +0000 (UTC)
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B65E84D08;
-	Wed,  5 Mar 2025 07:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2188B84D08;
+	Wed,  5 Mar 2025 07:26:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741159519; cv=none; b=CPvKzT84iUwtAId3viayz2RZGW/beyiAV3giTF5FcsPla6XacWKoh9fL3F2DLq+pl6cfjxvvV0ksIt6i51voWKUSkdqAifZWrqn+I4ffbeZ4/tV0yJ78B5pBeO0P1w14nWxigCAZcspbIIOikjJlP4alub9WR6pHG0qHr5W6Xb4=
+	t=1741159597; cv=none; b=fJcmP4uMiwFXx8Z4H6ThTC3gEwve7inhWSIdQI3/8ydoPGTVxZe7aJ8JcUZR8r8N9rN+wRjIOsJEV2ey5PqTNdtFw8eFZKwB7PFZ/phEgtQijDeXKG4ic53YjuQv58n/gShoGsF05KCLylM05yNr3Nj8r61ctDWKT10Ppyh6TFE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741159519; c=relaxed/simple;
-	bh=Ce12eCJqtp7G0z3ZLIVdAta+74a1lkNWXI/HxhS566M=;
+	s=arc-20240116; t=1741159597; c=relaxed/simple;
+	bh=o0D0OR4ETeM6TgdeTYRWURr8ShM7XjsdgCXgPgCLuM4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t7rgD6hpRBjMRmzVReE2amkCKcLC/56WfuNm4nIB3XWFNq3oS/cMudRWoDIeG4W5wdN0qCUVlEkfETfeNv2KI8wc1cC/If/kdFZ8QcjuNuI1H0qbfRwB/6kxng5SUR3o547PuVaB8QV6g+VNpgBxijKJXFt+1F1QqF7iO5H0f4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iieZ0Pq6; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WvM/2IBZ; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 5 Mar 2025 08:25:14 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1741159515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RSg7BUAyTPsa5G5rGu81F0w65tdR3Cr9oXCjQAgwjJU=;
-	b=iieZ0Pq6uEdEhJhR9FALsZz01e/b9JXWW7SvRjRekGV3F1GaExuyg9FTF2lufvWB/h/kFU
-	QHG1h0R7U7CzNoPVllOp9+fIibuDksFXNVJlKMP8+E/2GiH8NRJu7bnbIIsUcAoXo8OdWG
-	FDAzn6AVM12WQlZFOeopwY2mdMNV9fUETlq4jxmTPNSRWDCyQIJ9UB/zNghpr2KM3hyGnH
-	+AKyf1YvbDloFbM2S/Wxrxx0rJv6fhEmsov/axsMfSOmAd6zdR2Gt29cYDUTmall1rrW17
-	4m/gKRtxz9DW0a82SLZMpIlaBqd04XhOMkyVW9cBB5FO8Xew9TTraz+ELUSSHQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1741159515;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=RSg7BUAyTPsa5G5rGu81F0w65tdR3Cr9oXCjQAgwjJU=;
-	b=WvM/2IBZUaySpaXEjNQ2jgf5LXP183VoC/0B3niTU0otd772I/kYYhg03FeT1NmkeoTh19
-	BtonpBUAm9XdvyBw==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Willy Tarreau <w@1wt.eu>
-Cc: Shuah Khan <shuah@kernel.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH 24/32] tools/nolibc: add getopt()
-Message-ID: <20250305081713-94bcf231-26a2-40fd-b54d-e0cc0251e521@linutronix.de>
-References: <20250304-nolibc-kselftest-harness-v1-0-adca7cd231e2@linutronix.de>
- <20250304-nolibc-kselftest-harness-v1-24-adca7cd231e2@linutronix.de>
- <20250304075429.GB9911@1wt.eu>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KU53z8t08RsV1GNY5vhKiDhKUSxtp+TJ/C2mu904iachPASXxmhB95VBI6N/5uBWtOj+fS9aJwU5a7b9/Eax9Dp1P1KBKAvte3hdC0ct+P0UB6hBcGXSx8LJEbHEqozPTCzrYpebXtF5Sw4XXXfs7dfgkgvYJ0b8uA+nXL/oVGE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-22185cddbffso8425615ad.1;
+        Tue, 04 Mar 2025 23:26:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741159595; x=1741764395;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HNgzDD9KflnZOadx5j+UnJGC4H2dSOBqjrhq830X+Ig=;
+        b=E4qPt9Ks/f+Uvc8FREFMMebjgMcIObSLc+zefBI4uBeYI+aTlPtEPbDvXV5xwxjLu9
+         8QfaTiq6K2tGoDAjmjmDwDYW6FCP5Jc449DduRHbJ9fZWDGJ1dHNMqfNjszRIsBAmvf+
+         d2Ezhi3FZqT5HqfLwIvp8mryFCgWvPATWFVeLPG08c6vPRUK3NjDs4zrWv+HhxRMsHT0
+         4jQ6/ja7W3bWiaAfMXiAnoEFQFe77jGplE7dlmgEKHac4XlDbiX9rux2eEszTqdQIJ4K
+         1Wll+1WKtaPgs3EMoMvDjYCFU1Suq6yOU4Hp1FwWI6BOhHs1HdDYgMsbhwzd+Sg0Ipx9
+         XM/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU2CFkrOrtLjhA65HfjJJgmAqzGSjqbFr1aadGoi7TmNhXVo48Hv9pFurw5H24q+ygxsbkX4ebwaelt@vger.kernel.org, AJvYcCVHKSefhuxW6TycnHRDIF0D6PwkzHDoSPP7JBoSzt3iRkg9lF6mxhDgW4nBn+PDi5epFESscek934l2+fcoaVW8Kw==@vger.kernel.org, AJvYcCVwfSFwCMjFjoyXhz+elXRXM/AMN9uqTiCajTk5JxAJpY9WsrCWz3u5k8PM5yRVcsmFv08uotZqwfGI/PM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXkWyrQqNgT57VPOBYaNsJhH/ksLf22bpB7ZxNxBsiJn3X3iMR
+	ZL7pTMUJb/FS3/RVp3ihGB77I0QJJ6jHzO+PpAf8D1g5HKJjZ1NbLB7HQpKpAt4=
+X-Gm-Gg: ASbGncvsLLathL468EIz478vQir7pTYgd/1TW8tB/HvpqcVzJ4OEz0VIerF69quzc9E
+	oCzAdg+wFT1Z+vs37rlL4Ru/2Tak+ACFUkWzCPsQdoDVUg5tcV1mN4kGJ+OuyZ2g6ftd7RLzSJz
+	K+AaPL/DQD5KqncwtLQ6OvW1WD7/XjLdkQAW56TxImb9XQ5xfvCf6FfvfNVJUfne74z9xRhmJ1J
+	vLqpVKI2QQyvdA2gms0W4yQT3KX0+1RIgxuany4hThSAarr6cj/j+IT99X4QF5ykSQVkNPQ8P0S
+	DUC8WRoDU7eKbAXajVEy3I+at/V6s0iebI5/mtn4FoGtL8QH9l+6SNpzBsqMT9vGW3wEuXVAp14
+	bj0g=
+X-Google-Smtp-Source: AGHT+IH4t9c1giK1O3kPlJL0PRn7mp5PNA7gzv7H2Tv8w5GXPqUFHbxAbvmymLda57tcg7gd3IxW4g==
+X-Received: by 2002:a05:6a00:9a0:b0:736:38b1:51c3 with SMTP id d2e1a72fcca58-7366e75b316mr10877398b3a.10.1741159595256;
+        Tue, 04 Mar 2025 23:26:35 -0800 (PST)
+Received: from localhost (fpd11144dd.ap.nuro.jp. [209.17.68.221])
+        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-736881fa8easm449243b3a.39.2025.03.04.23.26.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 23:26:34 -0800 (PST)
+Date: Wed, 5 Mar 2025 16:26:32 +0900
+From: 'Krzysztof =?utf-8?Q?Wilczy=C5=84ski'?= <kw@linux.com>
+To: Shradha Todi <shradha.t@samsung.com>
+Cc: 'Manivannan Sadhasivam' <manivannan.sadhasivam@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
+	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
+	Jonathan.Cameron@huawei.com, fan.ni@samsung.com,
+	nifan.cxl@gmail.com, a.manzanares@samsung.com,
+	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
+	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
+	will@kernel.org, mark.rutland@arm.com
+Subject: Re: [PATCH v7 4/5] Add debugfs based error injection support in DWC
+Message-ID: <20250305072632.GB847772@rocinante>
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+ <CGME20250221132039epcas5p31913eab0acec1eb5e7874897a084c725@epcas5p3.samsung.com>
+ <20250221131548.59616-5-shradha.t@samsung.com>
+ <20250303095200.GB1065658@rocinante>
+ <20250304152952.pal66goo2dwegevh@thinkpad>
+ <20250304153509.GA2310180@rocinante>
+ <061301db8d27$02e0ced0$08a26c70$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250304075429.GB9911@1wt.eu>
+In-Reply-To: <061301db8d27$02e0ced0$08a26c70$@samsung.com>
 
-On Tue, Mar 04, 2025 at 08:54:29AM +0100, Willy Tarreau wrote:
-> On Tue, Mar 04, 2025 at 08:10:54AM +0100, Thomas Weiﬂschuh wrote:
-> > diff --git a/tools/include/nolibc/getopt.h b/tools/include/nolibc/getopt.h
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..35aee582681b79e21bce8ddbf634ae9dfdef8f1d
-> > --- /dev/null
-> > +++ b/tools/include/nolibc/getopt.h
-> > @@ -0,0 +1,105 @@
-> > +/* SPDX-License-Identifier: LGPL-2.1 OR MIT */
-> > +/*
-> > + * getopt function definitions for NOLIBC, adapted from musl libc
-> > + * Copyright (C) 2005-2020 Rich Felker, et al.
-> > + * Copyright (C) 2025 Thomas Weiﬂschuh <linux@weissschuh.net>
-> > + */
-> > +
-> > +#ifndef _NOLIBC_GETOPT_H
-> > +#define _NOLIBC_GETOPT_H
-> > +
-> > +struct FILE;
-> > +static struct FILE *const stderr;
-> > +static int fprintf(struct FILE *stream, const char *fmt, ...);
+Hello,
+
+[...]
+> > > > > +		29) Generates duplicate TLPs - duplicate_dllp
+> > > > > +		30) Generates Nullified TLPs - nullified_tlp
+> > > >
+> > > > Would the above field called "duplicate_dllp" for duplicate TLPs be
+> > > > a potential typo?  Perhaps this should be called "duplicate_tlp"?
+> > > >
+> > >
+> > > Looks like a typo. As per Synopsys documentation, there is only 'duplicate TLP'
+> > > field.
+> > >
+> > > Good catch!
+> > 
+> > Updated.  Thank you!
+> > 
 > 
-> Is there a particular reason why you had to define these here
-> and include nolibc.h at the bottom instead of doing it the usual
-> way with the include at the top ?
-> 
-> If that's due to a limitation in nolibc, we might want to have a
-> closer look at it before it starts to affect other areas. Also if
-> in the future we have to add some str* dependencies here, it would
-> be easier if we can simply include the file as well.
+> Sorry, this was a typo. Krzysztof, we need another change for this typo.
 
-Doing a regular #include "stdio.h" does fail with the following error:
+Not a problem.  I am glad we caught this early.
 
-In file included from sysroot/i386/include/nolibc.h:109,
-                 from sysroot/i386/include/errno.h:26,
-                 from sysroot/i386/include/stdio.h:12,
-                 from harness-selftest.c:3,
-                 from nolibc-test.c:5:
-sysroot/i386/include/getopt.h: In function 'getopt':
-sysroot/i386/include/getopt.h:72:25: error: implicit declaration of function 'fprintf' [-Werror=implicit-function-declaration]
-   72 |                         fprintf(stderr, "%s: unrecognized option: %c\n", argv[0], *optchar);
-      |                         ^~~~~~~
-[+ some followup errors]
+[...]
+> --- a/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> +++ b/drivers/pci/controller/dwc/pcie-designware-debugfs.c
+> @@ -113,7 +113,7 @@ static const struct dwc_pcie_err_inj err_inj_list[] = {
+>         {"posted_tlp_data", 0x4, 0x4},
+>         {"non_post_tlp_data", 0x4, 0x5},
+>         {"cmpl_tlp_data", 0x4, 0x6},
+> -       {"duplicate_dllp", 0x5, 0x0},
+> +       {"duplicate_tlp", 0x5, 0x0},
+>         {"nullified_tlp", 0x5, 0x1},
+>  };
 
-The include chain is important here.
-The user code includes "stdio.h", which at the very beginning includes
-errno.h->nolibc.h->getopt.h. Now getopt.h tries to use the definitions from
-stdio.h. However as stdio.h was the entrypoint and is not yet fully parsed,
-these definitions are not yet available.
+Oh here too.  No worries.  I missed this one. :)
 
-> > +__attribute__((weak,unused,section(".data.nolibc_getopt")))
-> > +char *optarg;
-> > +__attribute__((weak,unused,section(".data.nolibc_getopt")))
-> > +int optind = 1;
-> > +__attribute__((weak,unused,section(".data.nolibc_getopt")))
-> > +int opterr = 1;
-> > +__attribute__((weak,unused,section(".data.nolibc_getopt")))
-> > +int optopt;
-> > +__attribute__((weak,unused,section(".data.nolibc_getopt")))
-> > +int __optpos;
-> 
-> I think that for better readability, you'd need to either place
-> them on the same line, or leave a blank line between each
-> declaration.
+> So sorry for the inconvenience! Should I post a patch for this?
 
-Ack.
+No, no need.  I will update this directly on the branch.
 
-> > +static __inline__
-> > +int getopt(int argc, char * const argv[], const char *optstring)
-> 
-> It would be better marked with the usual unused attribute. That's a
-> bit large for inlining, and I'm not convinced that the compiler will
-> see any opportunity for simplifying it given that it acts on a list
-> of actions taken from a string.
+Thank you!
 
-Ack.
+	Krzysztof
 
