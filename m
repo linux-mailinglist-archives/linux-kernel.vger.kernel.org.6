@@ -1,145 +1,180 @@
-Return-Path: <linux-kernel+bounces-547681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B23DA50C56
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:14:42 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0ADE2A50C58
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:15:06 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2786E188CFB3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:14:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F5773B0A45
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7739255E20;
-	Wed,  5 Mar 2025 20:14:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7187125525A;
+	Wed,  5 Mar 2025 20:15:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SndV3K8m"
-Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e3q9cVNh"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68139255237
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:14:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B24C255237
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 20:14:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741205676; cv=none; b=j7qqFV2i6DNGkL8zPb5n67imroWUGkgRfFYHhkgwTCsCUGMd7aujLnPE53zrMn2zrCQn58WNDMSIwc355RDViN3iz0tgmnTjxu7Nod2x/fSkslxERLpj+3okQ91INrSCuknA+hvEAVCyjvMi/5qSvJz/Oor6dAdX2nER1SWpRgo=
+	t=1741205700; cv=none; b=Ac/h3CxT4qxuZE/FUSBEuy4KXTYLO8bKRpEDNwW61PYhozfNjzO0Ey0zJfeOjaYxaez9OnLpBlikUbhk0DTt9qfTg+uS8ls99Uslt6jplgNsN7VunTpKrxJkqXw5dTjfsMBS8rb7ygxq+UDqcxKgff5uXUesRAabS8ieQvdlKME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741205676; c=relaxed/simple;
-	bh=72n5FagYl7I0GS8w6DivzwBotLDWglg1LU7AmhSW/Ks=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LHMod5lYGlAOXiLgsRsD5B/8sTN0uNndf6oxfmgA9gVzYC1lxNpMJBzhnWXzJ11o8jYDktieaDF2dmmpBjziAQpSePgw1usdhkBvoehxv85nFDnIjKJExlKENmLZcSefRv6LVxLQ1UWSwVkwAlXL6y6n6bwYkwQIer+loZd5LK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SndV3K8m; arc=none smtp.client-ip=209.85.221.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-388cae9eb9fso3855332f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 12:14:34 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741205672; x=1741810472; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=e5qd7Wszrfqzd4EGXS7jC8AKQgbVyyF+d0BKc3STsmk=;
-        b=SndV3K8mrWxmxQwTW+0zEIM2Nf4KkuObyG4N/XTFZWVsfN0/FnvhmS5D7hDV3NzZXj
-         iQBke9NHIJcH6pCNgq8nrP1KrRni/oKnl3kkZTBPmeb+5VQiT+KiwZuIEfqmQTSoDLIY
-         pcUkJM0pWUuAN2swMhpmMlv5PRTOdrlCt5Ozk2S0BqVPG8WMuECCe+qwnfciQd8gHGXY
-         Ph6ZzxV09c8Q+Bo8dUIH6FogIG2U84hhTRzdlleeBU2R2NTm5yTTdPnHSKYewrw29sKL
-         ai0/spaDtIpE+gM3q0xeVF2Ih996+ELhGuDvttbn6ycaj37ZETduf8KptG4SVVzHOmQX
-         zL2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741205672; x=1741810472;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=e5qd7Wszrfqzd4EGXS7jC8AKQgbVyyF+d0BKc3STsmk=;
-        b=tNID0Xdj/AOOqOUEdcSnJu1GvRP9pPxw75bN1ByL6x6tReXMSdt37B3nrvB5eIHmGv
-         83K9Yh007NdaJyS3shPToU6CUJk2CjdqtzkzbVis/W0dEGPuKxgrcTFkO05Xa95I6b92
-         dysMwpLp49okW5Q82+aklUMbM4nWs1RJT88Vo09K7oXzJFAoPTTu4UwZnmUYDN9/KTby
-         q1Y6ye7fPlD1mVeYjsP7Vwhhd/nDhJlSJ1Ax14CI6KzFRVXQhe6QdhHS6GFNVTEBJ1pr
-         1wzpt024q9dmMw2Iq25Aj6oz+pSTA59EoQwpZR/LkTaXyteUaDHVmL6DzE/uDX75LGZQ
-         iLVg==
-X-Forwarded-Encrypted: i=1; AJvYcCUE7FOumWtzDo7/SEQw1TV9c4kT0baNfYyTbnMRPs+mTSYmsLWKOtUQaXv5Int257ym3qGi733FinTLoc0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxogmInWeUWWWDe9LdZR4iBBEe+SO1aHPNrtcZ3/8vY29r4EOow
-	uWY6yp5saF4XNJ139qJINHA8Vtqzl7B0ONThsPXZoB/MzlM9x0R9sBhDdg==
-X-Gm-Gg: ASbGncuFWIaW0hMYYdOWs6nFaayRZfjeaSOaaAtBDSEhNmeLSwSwBpFI7iR48Cj9Qaj
-	rcdLWvqPavC6eezz7hv9KH5lfK4g1iys5sAS6i/H0svtQx3YEPxgvbkw31jP2XOJEqXgwjxjOq9
-	+1PWFv+0HXfDdYk6BfzMI+uMZgBQbazaabRtGHJWhFGYR7AV+1F7cFHezEefosLL9PDK7auRIQ4
-	Tpox75VoLci9lMlSTKNRLLnOICiyoEMHA4QAPDKDnNAp8sRMK1SrbI/Y97TXngrrU9BbO9xQznq
-	TKJlnlQHkpaKTwM6+0DRKQg8tkGjRhK7YSkD/pmgue+cd6sWtGc6GT6kA81+F+tvrzNoqia8Zi8
-	wn3Hwcts=
-X-Google-Smtp-Source: AGHT+IFVXG9Z6nCIN9g5IcDEftUx8c6/jASqlC8CQtcgPuG0+4kwCqL4En+z63gaZ/wszpVcbrujAg==
-X-Received: by 2002:a5d:6c62:0:b0:390:f1cb:286e with SMTP id ffacd0b85a97d-3911f76eeebmr3870550f8f.27.1741205672261;
-        Wed, 05 Mar 2025 12:14:32 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd431070dsm27441055e9.34.2025.03.05.12.14.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 12:14:31 -0800 (PST)
-Date: Wed, 5 Mar 2025 20:14:29 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Linus Torvalds <torvalds@linuxfoundation.org>
-Cc: Uros Bizjak <ubizjak@gmail.com>, Borislav Petkov <bp@alien8.de>, Dave
- Hansen <dave.hansen@intel.com>, x86@kernel.org,
- linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Dave Hansen
- <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
- locking insns
-Message-ID: <20250305201429.3026ba9f@pumpkin>
-In-Reply-To: <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
-References: <20250228123825.2729925-1-ubizjak@gmail.com>
-	<20f1af22-71dc-4d62-9615-03030012222e@intel.com>
-	<CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
-	<c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com>
-	<CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
-	<20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local>
-	<CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
-	<CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741205700; c=relaxed/simple;
+	bh=+dtIJ93sF5JRKmRZGRypMedIhHAR3r84GNnpv/Ale38=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=XEBOS1vARBuuj5/hqf1XNIK0O66lfKBD92QmRITXTpQEixcSW+bq1sFHImbV1nGrwTeQGxnVPzp6PAuUKGKkZQT5AJlBXLkzdBoaY6S7XaG2d4NhOMy9DRwU3bNJHHO6nsQ97iZQPagPMhpRa5IqYCay4AZLR8PkfvJ6ySu01CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e3q9cVNh; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1741205699; x=1772741699;
+  h=date:from:to:cc:subject:message-id;
+  bh=+dtIJ93sF5JRKmRZGRypMedIhHAR3r84GNnpv/Ale38=;
+  b=e3q9cVNhDnFdU+m9WtX/woDhDQjp2Io0Y5dbgot7Xqnjfbym06xB39vA
+   m6qP69SlT5wX+oqzyQj4crpXQvQKnxwZL7vadIA9ODHl9CysDDG6NV6Xy
+   Z0GZAezbTRAIvPcITrPQU4ZSwRCKDSMwHLiYzzSFTPW4o97ffd+qyyhxk
+   kwinFeE4dOD93fOLwjhkb4XQ7tb9T4SuIXcuSoo/HxVjMtCZedlqxH7i8
+   wk+TnWiE/H5WA2d/CW+QQRGPr6IWCrkhQSzt/uGkONf/oycIVZ95M4NPc
+   XyDL37kcForqC6u8H6dsuAG/0OUowpaJyrGJlpuTYkT5d8r8vOPQpBePj
+   g==;
+X-CSE-ConnectionGUID: iV0L8U52TBuD00YavlsaEg==
+X-CSE-MsgGUID: Fy1lwYhGTaWUzw9CGijnwg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42321939"
+X-IronPort-AV: E=Sophos;i="6.14,224,1736841600"; 
+   d="scan'208";a="42321939"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 12:14:58 -0800
+X-CSE-ConnectionGUID: kkoXlE+yQkO/tkCC5WkAfQ==
+X-CSE-MsgGUID: zJGG292iRNqz6B81lYhVeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
+   d="scan'208";a="156004715"
+Received: from lkp-server02.sh.intel.com (HELO 76cde6cc1f07) ([10.239.97.151])
+  by orviesa001.jf.intel.com with ESMTP; 05 Mar 2025 12:14:57 -0800
+Received: from kbuild by 76cde6cc1f07 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1tpv8n-000MAC-34;
+	Wed, 05 Mar 2025 20:14:55 +0000
+Date: Thu, 06 Mar 2025 04:14:46 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/asm] BUILD SUCCESS
+ c8b584fe82d0f1e478a598f954943b095a4a8f5c
+Message-ID: <202503060440.W23OSdQL-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Wed, 5 Mar 2025 07:04:08 -1000
-Linus Torvalds <torvalds@linuxfoundation.org> wrote:
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/asm
+branch HEAD: c8b584fe82d0f1e478a598f954943b095a4a8f5c  x86/irq/32: Change some static functions to bool
 
-> On Tue, 4 Mar 2025 at 22:54, Uros Bizjak <ubizjak@gmail.com> wrote:
-> >
-> > Even to my surprise, the patch has some noticeable effects on the
-> > performance, please see the attachment in [1] for LMBench data or [2]
-> > for some excerpts from the data. So, I think the patch has potential
-> > to improve the performance.  
-> 
-> I suspect some of the performance difference - which looks
-> unexpectedly large - is due to having run them on a CPU with the
-> horrendous indirect return costs, and then inlining can make a huge
-> difference.
-...
+elapsed time: 1447m
 
-Another possibility is that the processes are getting bounced around
-cpu in a slightly different way.
-An idle cpu might be running at 800MHz, run something that spins on it
-and the clock speed will soon jump to 4GHz.
-But if your 'spinning' process is migrated to a different cpu it starts
-again at 800MHz.
+configs tested: 88
+configs skipped: 1
 
-(I had something where a fpga compile when from 12 mins to over 20 because
-the kernel RSB stuffing caused the scheduler to behave differently even
-though nothing was doing a lot of system calls.)
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-All sorts of things can affect that - possibly even making some code faster!
+tested configs:
+alpha                             allnoconfig    gcc-14.2.0
+alpha                            allyesconfig    gcc-14.2.0
+arc                              allmodconfig    gcc-13.2.0
+arc                               allnoconfig    gcc-13.2.0
+arc                              allyesconfig    gcc-13.2.0
+arc                   randconfig-001-20250305    gcc-13.2.0
+arc                   randconfig-002-20250305    gcc-13.2.0
+arm                               allnoconfig    clang-17
+arm                              allyesconfig    gcc-14.2.0
+arm                   randconfig-001-20250305    gcc-14.2.0
+arm                   randconfig-002-20250305    clang-19
+arm                   randconfig-003-20250305    gcc-14.2.0
+arm                   randconfig-004-20250305    gcc-14.2.0
+arm64                            allmodconfig    clang-18
+arm64                             allnoconfig    gcc-14.2.0
+arm64                 randconfig-001-20250305    clang-15
+arm64                 randconfig-002-20250305    gcc-14.2.0
+arm64                 randconfig-003-20250305    clang-21
+arm64                 randconfig-004-20250305    gcc-14.2.0
+csky                              allnoconfig    gcc-14.2.0
+csky                  randconfig-001-20250305    gcc-14.2.0
+csky                  randconfig-002-20250305    gcc-14.2.0
+hexagon                           allnoconfig    clang-21
+hexagon                          allyesconfig    clang-18
+hexagon               randconfig-001-20250305    clang-21
+hexagon               randconfig-002-20250305    clang-18
+i386                              allnoconfig    gcc-12
+i386        buildonly-randconfig-001-20250305    clang-19
+i386        buildonly-randconfig-002-20250305    clang-19
+i386        buildonly-randconfig-003-20250305    clang-19
+i386        buildonly-randconfig-004-20250305    clang-19
+i386        buildonly-randconfig-005-20250305    clang-19
+i386        buildonly-randconfig-006-20250305    gcc-12
+loongarch                         allnoconfig    gcc-14.2.0
+loongarch             randconfig-001-20250305    gcc-14.2.0
+loongarch             randconfig-002-20250305    gcc-14.2.0
+m68k                              allnoconfig    gcc-14.2.0
+microblaze                        allnoconfig    gcc-14.2.0
+mips                              allnoconfig    gcc-14.2.0
+nios2                             allnoconfig    gcc-14.2.0
+nios2                 randconfig-001-20250305    gcc-14.2.0
+nios2                 randconfig-002-20250305    gcc-14.2.0
+openrisc                          allnoconfig    gcc-14.2.0
+parisc                            allnoconfig    gcc-14.2.0
+parisc                randconfig-001-20250305    gcc-14.2.0
+parisc                randconfig-002-20250305    gcc-14.2.0
+powerpc                           allnoconfig    gcc-14.2.0
+powerpc               randconfig-001-20250305    clang-17
+powerpc               randconfig-002-20250305    gcc-14.2.0
+powerpc               randconfig-003-20250305    gcc-14.2.0
+powerpc64             randconfig-001-20250305    clang-19
+powerpc64             randconfig-002-20250305    clang-17
+powerpc64             randconfig-003-20250305    clang-19
+riscv                             allnoconfig    gcc-14.2.0
+riscv                 randconfig-001-20250305    clang-19
+riscv                 randconfig-002-20250305    gcc-14.2.0
+s390                             allmodconfig    clang-19
+s390                              allnoconfig    clang-15
+s390                             allyesconfig    gcc-14.2.0
+s390                  randconfig-001-20250305    gcc-14.2.0
+s390                  randconfig-002-20250305    gcc-14.2.0
+sh                               allmodconfig    gcc-14.2.0
+sh                                allnoconfig    gcc-14.2.0
+sh                               allyesconfig    gcc-14.2.0
+sh                    randconfig-001-20250305    gcc-14.2.0
+sh                    randconfig-002-20250305    gcc-14.2.0
+sparc                            allmodconfig    gcc-14.2.0
+sparc                             allnoconfig    gcc-14.2.0
+sparc                 randconfig-001-20250305    gcc-14.2.0
+sparc                 randconfig-002-20250305    gcc-14.2.0
+sparc64               randconfig-001-20250305    gcc-14.2.0
+sparc64               randconfig-002-20250305    gcc-14.2.0
+um                               allmodconfig    clang-21
+um                                allnoconfig    clang-18
+um                               allyesconfig    gcc-12
+um                    randconfig-001-20250305    clang-19
+um                    randconfig-002-20250305    gcc-12
+x86_64                            allnoconfig    clang-19
+x86_64      buildonly-randconfig-001-20250305    clang-19
+x86_64      buildonly-randconfig-002-20250305    gcc-12
+x86_64      buildonly-randconfig-003-20250305    clang-19
+x86_64      buildonly-randconfig-004-20250305    gcc-12
+x86_64      buildonly-randconfig-005-20250305    clang-19
+x86_64      buildonly-randconfig-006-20250305    clang-19
+x86_64                              defconfig    gcc-11
+xtensa                            allnoconfig    gcc-14.2.0
+xtensa                randconfig-001-20250305    gcc-14.2.0
+xtensa                randconfig-002-20250305    gcc-14.2.0
 
-The (IIRC) 30k increase in code size will be a few functions being inlined.
-The bloat-o-meter might show which, and forcing a few inlines the same way
-should reduce that difference.
-OTOH I'm surprised that a single (or two) instruction makes that much
-difference - unless gcc is managing to discard the size of the entire
-function rather than just the asm block itself.
-
-Benchmarking on modern cpu is hard.
-You really do need to lock the cpu frequencies - and that may not be supported.
-
-	David
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
