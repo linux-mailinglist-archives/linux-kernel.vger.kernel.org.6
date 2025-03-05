@@ -1,99 +1,131 @@
-Return-Path: <linux-kernel+bounces-545893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F6FA4F334
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:05:51 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5459DA4F336
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:08 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3669416E8E4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:05:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF2D188E7D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:06:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9A881411DE;
-	Wed,  5 Mar 2025 01:05:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 102DF4AEE0;
+	Wed,  5 Mar 2025 01:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QVNNG/3c"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BS4ZOw+o"
 Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0311E50B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:05:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 124D712CDBE
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:05:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741136733; cv=none; b=ncL1WxCamHLQyQT5SEuix0i6kEIcebKIWfmNSC9eBOlbDO5MaRUVvBCXZKQLI9oKTP5AlDcoYTEpT2psdoio6GTz6MtKMeaCR9h1jYumkOqG+tGrt3nN4/fZMMNGH837rVrbGUD+PRTEso74yjlsAQT7kqCC+tmId4PX0dSnHjw=
+	t=1741136742; cv=none; b=piBvYvAeki4+AXnudUYL6qggaJVhg2SfTDu0Km0FyLRODuVJ7y/Q/Iy3B2WANKN3vVITgvBNSSoTun1IUpQjpdSHxD2/7+tRXG0wh4g4INb/c7e9b82PLik93AxQ+c1DeTSPU1PVJsdsQZQjSSJ3646KA4OtsChQ15sADfajFGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741136733; c=relaxed/simple;
-	bh=3/a1+KpSKzvgpXffEb1nxllhFmO3m/Iu2qEU34XHXbs=;
+	s=arc-20240116; t=1741136742; c=relaxed/simple;
+	bh=qTU8K2PWIG1V1RbO4Ak1BhgHZu1oSVP5mINIUP9TCOQ=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JKucxVyqPPYD6BOu/6Bwj55mZav7gticWquYj8R23+0kLBk2d3oZZyCiGlE7riowKueHcTXTOE1tOLiyFsbUEZMDNRfzfAu/wq0a5K/M7vbqrwepbD6KnnN2q8ZtDXRixJ/Jgy4BUYuc8a9uQ3ON7YTnc0CWcJDSmx4WdFG9Zd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QVNNG/3c; arc=none smtp.client-ip=209.85.216.73
+	 To:Cc:Content-Type; b=fRq2CMIUJBznZvYgBM6l0PgzLuHwJLNy+XMiRjkVgxavHZv6owez01Q/WY2m2zAQsy0uagd6T9amUVDTFwBjvt91qk6k/uwf7iupsTgE/WnM8VnQT/4d8TBVFw2jKIcu55TKGczPOCrQUT49wRUICQl7k9BMOzzX08Gbrg/P9xY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BS4ZOw+o; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2fede63f32dso11092802a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:05:31 -0800 (PST)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-2feda472a4aso6602133a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:05:40 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741136731; x=1741741531; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1741136740; x=1741741540; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=etTNE2hEXte3ED5XpfxiY83NHS/DfFcH3KjaI4ucW8M=;
-        b=QVNNG/3cDWG9YBHzqdKmA+bwMdicR9VfGorfO62mgvcdRa3TCQ6wDltMQNKBhKGwU8
-         o+8K0lOn6/MHOnIRDOotdlfmraso44Vo68VBlVvfUYpfzTXmnnRP4etD813iQRyeUz3O
-         xuhtOuTgpK+oaPoa91GMYFBz3qfjiOpoEudLdjYcpQ+i4JKehXXFwfEvx2E/naQRemKu
-         KExlizFrUH5I8HXhbXB5ODTnB46m+GOFbfr++9vWgG62ZIXAsmENijKljlJE7wbSMwAD
-         i7nls5Tx+j7bQ0fLtPqyO8hERBgFzzSG634dct4zdR2yNTTppO70ijJTLyvwKOqOOSCh
-         Y7vQ==
+        bh=BR5XnJZFVFkwGJLxiaHHW5HYcb+++VvFcuEr2xoZe5k=;
+        b=BS4ZOw+olRvQCKOkqlXhRaf9tYiWaAeaOwqkp+IxhurG3IbwS5QMaMmrPuPNMMTL+1
+         Ahss6t0e/1M2KhveNTb+IPdVbvfgzDrAXwTG1HjlLfuc0aVuQwfBHUvhFGfWl/rSur2F
+         OJ0i0DVMZTGgp9LDtN4OKF8mMoP4v51hm+pBekpJSRX8ZOy6LgnGgWGYF7SgyMnqfTDE
+         6nlZPoLXiR9WwTuF6Kf60RHftv0jPmKJsCs08Mhe2aoecV7Ju/Qw8az5y47CDqn6VbGG
+         LWiXJ/sPGCN4wR+0SoJlmF7AA+ISxc2KWK19+uESzcKHgCyhTZv4vqkP7MPuh5iCAufu
+         n3SQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741136731; x=1741741531;
+        d=1e100.net; s=20230601; t=1741136740; x=1741741540;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=etTNE2hEXte3ED5XpfxiY83NHS/DfFcH3KjaI4ucW8M=;
-        b=sMyH7+eqjmaVXQMYzmsgKE3iu6AEiWolLPKcMnSRTJxOFRDDwmYRQanqQNgG0cxerE
-         W2z5Qg/LKo3UOQ/yhS+bcqk12UYp9MG8eMO/uFwQsoD7+NVPHAySTsMbPG5QC63L8Lyd
-         TVdQIbRHTjKBjH7HohFqjUrypmKyoQ7JtqkT1dJCAbS60taHe6pk4s4fB/6gclowy1Cg
-         Ij/3YscdfehekJFZ96K2BDR/9DLPsXmln/ql33njh4TiBy/H5Xr6TCpjG9y0DsdSkjZG
-         jUpX206lPX9kTCxluddiyea0vJOXoEYoAlcZ112nbciw8Wer6R3CvGRGZ3WWhvEvLcLO
-         /8yg==
-X-Forwarded-Encrypted: i=1; AJvYcCVOBhZeaskn2soFUrsG9zJaVtv7HfQHOo8ZlhUKf41FQZzdu9IZnsHoSwmN7Bg1T/HmrOUJPiWon+Df5lI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwpMf7wvx4/hFxnWN4ZbmKBcf85MqPYeC4xcgcQ9SqxoAz1Sl1b
-	z4xQCWSft547jNp2QyAqy47UwWVLoOXZ5k7TV3UCZBzNi1pxL//pBiTbbLHqV1mH41DAmL8MHdl
-	1FQ==
-X-Google-Smtp-Source: AGHT+IFJu4hpYZ/WKyLJ7i2g3oDo/8fXGMeyX68X10asVWrc31mGPCiKp9L73rvY02oMYUtGqw/gUDwVKNI=
-X-Received: from pjbpl6.prod.google.com ([2002:a17:90b:2686:b0:2e9:38ea:ca0f])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:35c7:b0:2fa:b84:b31f
- with SMTP id 98e67ed59e1d1-2ff49814642mr2172122a91.25.1741136731375; Tue, 04
- Mar 2025 17:05:31 -0800 (PST)
-Date: Tue,  4 Mar 2025 17:05:10 -0800
-In-Reply-To: <20250228233852.3855676-1-seanjc@google.com>
+        bh=BR5XnJZFVFkwGJLxiaHHW5HYcb+++VvFcuEr2xoZe5k=;
+        b=TkdSXrhlHz8J0Ff/N8u7CUPupoC+DrOZoZOnYAw7lD19KOI6UQU3ntgZOVRRXLEaXo
+         B+RjBv7XGgHt9wADpKRU/xk3VJ4MSuvc5pmrgrs9TdByDybfkCw1WvcqfjD0V72peZ4l
+         gNlZUSwQkUeiAhph23GUOfPKWK8E05Zn1KWItil9BPAd+BGQ2vBaU4aRPQN9JBc0WTTJ
+         NY+lQe9OnwYJikhP5DBHVLetT6IcRJiIr/ioKqMkLCqnVL8kncDlYTKsRRQapTfV7j87
+         bDLffGF8E4/SkxEjq9pnzTTBSSoXafgVVFPcFf8Fn8HxCAhvoEqTppL5WJixbZy9btyB
+         SF6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXSeslEiho6zvvdJ8k7uZjiNn7dNCRiVUNn3W6+p93rLAHOSKXleImHAFPFovu3Oy9kRBEwZdzg1Q4EpFg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz0dWxW9zThRcW+loTY6WGUTx7ZSlbiEkwvsTxZfHosLqcmGKr8
+	T2Jrfku/lzBbXPKOqfH99v+Ppg2DtuR+dFChWIiodpYjFDCo/iL7yBgi31M6aXbf3WOLacQLJeO
+	ENw==
+X-Google-Smtp-Source: AGHT+IEgPfc6N3fp4PBiuSUOF/fXueFSpK+l5s5ONQlc7a3R9W7NXupP1/iDjCYnKuCRn/mgvD7uIz9BV8A=
+X-Received: from pjbnb1.prod.google.com ([2002:a17:90b:35c1:b0:2f7:d453:e587])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:258b:b0:2ee:f80c:6889
+ with SMTP id 98e67ed59e1d1-2ff49856dd9mr2501980a91.33.1741136740431; Tue, 04
+ Mar 2025 17:05:40 -0800 (PST)
+Date: Tue,  4 Mar 2025 17:05:12 -0800
+In-Reply-To: <20250227012541.3234589-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-References: <20250228233852.3855676-1-seanjc@google.com>
+References: <20250227012541.3234589-1-seanjc@google.com>
 X-Mailer: git-send-email 2.48.1.711.g2feabab25a-goog
-Message-ID: <174101674141.3908971.11827388921425650465.b4-ty@google.com>
-Subject: Re: [PATCH] KVM: selftests: Fix printf() format goof in SEV smoke test
+Message-ID: <174101578385.3894748.13921615638949593871.b4-ty@google.com>
+Subject: Re: [PATCH v2 00/10] KVM: SVM: Attempt to cleanup SEV_FEATURES
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Naveen N Rao <naveen@kernel.org>, Kim Phillips <kim.phillips@amd.com>, 
+	Tom Lendacky <thomas.lendacky@amd.com>, Alexey Kardashevskiy <aik@amd.com>, 
+	Pankaj Gupta <pankaj.gupta@amd.com>
 Content-Type: text/plain; charset="utf-8"
 
-On Fri, 28 Feb 2025 15:38:52 -0800, Sean Christopherson wrote:
-> Print out the index of mismatching XSAVE bytes using unsigned decimal
-> format.  Some versions of clang complain about trying to print an integer
-> as an unsigned char.
+On Wed, 26 Feb 2025 17:25:31 -0800, Sean Christopherson wrote:
+> Try to address the worst of the issues that arise with guest controlled SEV
+> features (thanks AP creation)[1].  The most pressing issue is with DebugSwap,
+> as a misbehaving guest could clobber host DR masks (which should be relatively
+> benign?).
 > 
->   x86/sev_smoke_test.c:55:51: error: format specifies type 'unsigned char'
->                                      but the argument has type 'int' [-Werror,-Wformat]
+> The other notable issue is that KVM doesn't guard against userspace manually
+> making a vCPU RUNNABLE after it has been DESTROYED (or after a failed CREATE).
+> This shouldn't be super problematic, as VMRUN is supposed to "only" fail if
+> the VMSA page is invalid, but passing a known bad PA to hardware isn't exactly
+> desirable.
 > 
 > [...]
 
-Applied to kvm-x86 fixes, thanks!
+Thanks for the reviews and testing!
 
-[1/1] KVM: selftests: Fix printf() format goof in SEV smoke test
-      https://github.com/kvm-x86/linux/commit/3b2d3db36801
+Applied:
+
+[01/10] KVM: SVM: Save host DR masks on CPUs with DebugSwap
+        https://github.com/kvm-x86/linux/commit/b2653cd3b75f
+[02/10] KVM: SVM: Don't rely on DebugSwap to restore host DR0..DR3
+        https://github.com/kvm-x86/linux/commit/807cb9ce2ed9
+
+to kvm-x86 fixes, and:
+
+[3/10] KVM: SVM: Refuse to attempt VRMUN if an SEV-ES+ guest has an invalid VMSA
+       https://github.com/kvm-x86/linux/commit/72d12715edcd
+[4/10] KVM: SVM: Don't change target vCPU state on AP Creation VMGEXIT error
+       https://github.com/kvm-x86/linux/commit/d26638bfcdfc
+[5/10] KVM: SVM: Require AP's "requested" SEV_FEATURES to match KVM's view
+       https://github.com/kvm-x86/linux/commit/745ff82199b1
+[6/10] KVM: SVM: Simplify request+kick logic in SNP AP Creation handling
+       https://github.com/kvm-x86/linux/commit/c6e129fb2ad2
+[7/10] KVM: SVM: Use guard(mutex) to simplify SNP AP Creation error handling
+       https://github.com/kvm-x86/linux/commit/46332437e1c5
+[8/10] KVM: SVM: Mark VMCB dirty before processing incoming snp_vmsa_gpa
+       https://github.com/kvm-x86/linux/commit/e268beee4a25
+[9/10] KVM: SVM: Use guard(mutex) to simplify SNP vCPU state updates
+       https://github.com/kvm-x86/linux/commit/5279d6f7e43d
+[10/10] KVM: SVM: Invalidate "next" SNP VMSA GPA even on failure
+       https://github.com/kvm-x86/linux/commit/4e96f010afb2
+
+to kvm-x86 svm.
 
 --
 https://github.com/kvm-x86/linux/tree/next
