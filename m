@@ -1,237 +1,175 @@
-Return-Path: <linux-kernel+bounces-546081-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B69AA4F618
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:30:34 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FCEA4F627
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:32:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8638E3AA1D4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:30:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07EC63A9EFB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:32:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332341C8603;
-	Wed,  5 Mar 2025 04:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3637A1B532F;
+	Wed,  5 Mar 2025 04:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="na/RtRd7"
-Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="UYQeNz3r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFF401B532F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:30:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1017A2E3364
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741149022; cv=none; b=q9noO+FvpEtnjXnd7tQGic3iXOKS2s7SzAD8N3wEHI1DCWQCnQ9ciyTzKl8SGJVUIalzMZbgE8k3Co06U1uRDT/pt+iBG9/XBqvyeUHtnHCpZm6n4jatMZy1f5O7hY9nG/dXnlWnRO/t5mNW4/jqBXBn1piJaS/JmxFvlFeACXE=
+	t=1741149167; cv=none; b=e60lgqn4Tz08fGfdbZrE26GNGSFLt75rbVqHIJkgAwdM/2EPNNxKFFGsNk+Wi75/L21TwOdwDfBrD7Z+Vs8k5w813E/ElL2jSULn/pNEvyTmCSehC0HviWpaoNwV+9+SKDR5LdphqVwjXdkyWa17X69uAUrJgFTMWxJ61T8Augg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741149022; c=relaxed/simple;
-	bh=O6/s2m8RxEllylHpZfEA1JZvaM68FhhtYDbILLNNmqk=;
+	s=arc-20240116; t=1741149167; c=relaxed/simple;
+	bh=nFWeksWwiHDRuocIyS5OZv5DOPyfdCfqD6Zc0mGUK2w=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PyXKU0mkpDICmf7HqK3Z05GkoN2Y5/pvLBbNAQq50/XgQ7kdqZIw0+xy8hVgmV30sBSppt8l+avHe3Re9WKWam3s8WMa61yn0MXWPkXAQYy9vh7I+lkvUma8HKM/UlOimST8bBC5PWaISS9wlcYKkrkzAKLuBdumkGDjQJ18RUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=na/RtRd7; arc=none smtp.client-ip=209.85.214.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-2237a32c03aso60895ad.1
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 20:30:20 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741149020; x=1741753820; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AqAVkWXON7xuHQOFv96KRGgH0wCs+/tXGGMj9KqfDeI=;
-        b=na/RtRd7tqfTjZRtK3g/RDptCGtcsO7XHnCbqKDG9kGIfqiMMIs+EG9mr4ktRpaNDX
-         c9ozLYEb69BUU7EDQvrGm4sQiuAoAyfyYCiV8Q3NjQziLMa6fz15fFUAbhocjnqRtShj
-         bt/FZhBuHtWCoqTdHkYNaW2cyvOxqRcIe6Jl6m3BxTkHiJYImuyymJ0oVISu9k4fwSfz
-         Q7Vp7fbeZVkAuQqA9dHtVb+XnDO5Gh/I1O6XttIPq7usUfusdw3RjbWGej+N+Kv2DEfD
-         CN5lfL/ztNS1LCR+vS/uAxy6MIlmxAyBjalC+M9XF3CwbvC8tijUsOXTAzTllKzp6sRg
-         T85Q==
+	 To:Cc:Content-Type; b=hd5wobOV5l0RSnUnGhLIjOSk8tRQUTBDaO341M/4LqhvqK4G8xHrsVc6zkRdNsaoLPF67gHokL8jDp80EDExXbDU6Enkni3v85LBXcLpA8wCF/ezzmv2SVsnpsUQgfStr32mmSRnbtBz6nyXLKMWARpxwmDiFlBhqZN03LNoEPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=UYQeNz3r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741149165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bjVevVXOLmssCLAAJ8imF8PLNyoL6QY0RzG5Mf1zavQ=;
+	b=UYQeNz3r0nIi97ZIzAsc99L0yI58eQMN9BwXbj1FfXDvhMzdnbTsKhk1WodMDxquVOfv3h
+	RMPsPwW/UadfY3a60anEyaz68bz4q7fGmswOS1HX//eNf4MFhrKR170ZU2UtkkjCMB2QyB
+	vr0jB63rRfoPq4YtdZBeV8GK5yyDEUI=
+Received: from mail-pj1-f71.google.com (mail-pj1-f71.google.com
+ [209.85.216.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-662-Ft7v-4giN1iu-ZGXdyvUuQ-1; Tue, 04 Mar 2025 23:32:33 -0500
+X-MC-Unique: Ft7v-4giN1iu-ZGXdyvUuQ-1
+X-Mimecast-MFC-AGG-ID: Ft7v-4giN1iu-ZGXdyvUuQ_1741149153
+Received: by mail-pj1-f71.google.com with SMTP id 98e67ed59e1d1-2fec3e38c2dso14596997a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 20:32:33 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741149020; x=1741753820;
+        d=1e100.net; s=20230601; t=1741149152; x=1741753952;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AqAVkWXON7xuHQOFv96KRGgH0wCs+/tXGGMj9KqfDeI=;
-        b=gWe2p97LhVeKntNmacF9y6aO+DkATd4zwSoulVs3BhnrgGZGtdH4MUBpU0MSkiUF1s
-         g5xSLldvo2cKIYlmDtONJmeoLvQKXD193AAmELB+ryIQ/T9M/2xc3ty2Eg37FLOEz4AJ
-         ZMTVKbncoknE/TLA9/uzwqQVqgpyGu4MPgRF96VDpxNf3vS5ZQe+Wr72lWnCrjOC486u
-         IUOZ9bula+m6T3SbJsRwfquFw1ScMuni4YhC7CCiT2XkrS9gsYoTxXFXh4bGI4ZwUCyR
-         3WHUPhUVM4yD7C6l7kNvFRQm/E10rU1P9HWRZBzdqcOHoSzAIQPhc1AARb3YJ1rgKEem
-         rShg==
-X-Forwarded-Encrypted: i=1; AJvYcCXmwORzZTADn42gI1DXlCKHpWOtWNyL63s49oCbF1WOed3tgMMzUlVGImV3dHTERmpR3IJ5Nsei8L6AOsg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznSzivlLp9HRdFZaVN6a51s22brV89GQkmt3lAxiY81Bfa7BxQ
-	PtvBcT5Apq/SC6q+1XiFsiV5y+qW1r6LPcujoiBBKoWV5bCwXfea1VF6ip7cw127ADiv58NhvQr
-	UpWDGGxXiMURTZj9IVR+UAfKKW1h+CvMSN2SC
-X-Gm-Gg: ASbGnctJ9cFaZ8l9JOFFS+RzLMdFPuge5gRnmk8LwLjJrs4K7NhYuikTRoOD5iaO0Iy
-	S6vRplo54IW2tMcjLmoGipcQN64GU+JSetBJcWF9SWT3Y7eyUkdKUkTIayfdnXTbZVkqS0ZJ/8E
-	nup0lpYqbN5+BqZL/pkRwiM22cL9c=
-X-Google-Smtp-Source: AGHT+IFXOo/mmL5SJ31wQtNHPUkm4JMIE8sOGmsWeE1gasbzoqgQCyR5uJ8DMXe8kraJhOzM+x9J4sLkrHLc+hRvljY=
-X-Received: by 2002:a17:903:3291:b0:212:26e:1b46 with SMTP id
- d9443c01a7336-223f452ff4bmr1032645ad.23.1741149019562; Tue, 04 Mar 2025
- 20:30:19 -0800 (PST)
+        bh=bjVevVXOLmssCLAAJ8imF8PLNyoL6QY0RzG5Mf1zavQ=;
+        b=ZK/ZGcFJ3VWceilVmDy1xp3OdK4i7kN4prjhxbV7o9A46J3N+wZGbQFk0YOFUf5ZQx
+         pHcxEamUc5KdJuTt+YdEAdyfa0ElbdIFZvmpq2uz5RoxvEOBlFlkYrPeEC+GVeLHjR3w
+         UcTvC+WDXIFp/dhnTc8uDTfXW1wZ3h/Xy7bkHhrQphZKqzZJK/tPMjnHuG5PJwmqZti5
+         raLAma2bJss3HHs282c1eT/kzJaO9csveUaZBZfjCBbfh93sprW4JnELnGaqaD+UeBrv
+         OTfn106cF9KWKltJYqA8YL8zAdHQ2QqQzYorzc1rUhcJw6vgcrQoav74o1/l2EKiUecC
+         nlxA==
+X-Forwarded-Encrypted: i=1; AJvYcCWmt5B24QkwI5zDDgpyJdB6seck3jgGudATDQ/nD3l9GufjvTAEVoR1LxMZDU4HbBIf2KMUUICjvHzkX5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwlX6K14wXoTcy9vC8lVpCgVH7I2t4i53iITd8hmE/4ErWzRm2u
+	nOfYQ+34tJyxDrEED8GKL9XWjedt1wPWEQB1Ob6QH/czcpQaAmG7wmSq0Lhdn6RI6/ghza2XqHm
+	gXmbiohhA9eecNiH86Kc78q9QUzqttapu2I0o/ED6z2ZUsAVfYxMd71uvBfjIsFydDZcao5sWhb
+	u+U+uubV86De4f93ygOyF0ovYOVZuQ/az7+R2E
+X-Gm-Gg: ASbGncv/Z0MUWB2djNztAj6lNuQMv298/ysJaVt6W1Gv4jPJhoaC+2dR55G1kxu3P4x
+	yY7xvImamCNxRC3qAIzsfCZnvtxdiUShGyGzvX1bUMnlIufC9xruBRolCk0ouTSuKT5EycD68NA
+	==
+X-Received: by 2002:a17:90b:1cd0:b0:2ea:a25d:3baa with SMTP id 98e67ed59e1d1-2ff4978e92amr2977188a91.5.1741149152687;
+        Tue, 04 Mar 2025 20:32:32 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IEhHW7v4PkX/3ohSqeT1tugqPYgOYC7QtruOmWg6dZQg09TZ3e6iZmJF1+UJ3XPL9kMzJDnCsDVq/d2f1hpDUo=
+X-Received: by 2002:a17:90b:1cd0:b0:2ea:a25d:3baa with SMTP id
+ 98e67ed59e1d1-2ff4978e92amr2977160a91.5.1741149152309; Tue, 04 Mar 2025
+ 20:32:32 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304013906.1393102-1-thomas.falcon@intel.com>
-In-Reply-To: <20250304013906.1393102-1-thomas.falcon@intel.com>
-From: Ian Rogers <irogers@google.com>
-Date: Tue, 4 Mar 2025 20:30:07 -0800
-X-Gm-Features: AQ5f1JrWW7mThi0-TdrkenDRcxOAjqehVtorC0CaIsHnJ3yQ2cnbxhzMHLItUls
-Message-ID: <CAP-5=fVwrG5ZViysO7qKYUw0326WFfa7nOzwe70drYfHq=AXhA@mail.gmail.com>
-Subject: Re: [PATCH v5] perf script: Fix output type for dynamically allocated
- core PMU's
-To: Thomas Falcon <thomas.falcon@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
-	Kan Liang <kan.liang@intel.com>
+References: <20250121103346.1030165-1-eperezma@redhat.com> <20250224164956-mutt-send-email-mst@kernel.org>
+ <CAJaqyWfir7+oVtC3Z+eC+jbDxkACs0J9a4-wnx_dgU5VeFhr8A@mail.gmail.com> <20250225072222-mutt-send-email-mst@kernel.org>
+In-Reply-To: <20250225072222-mutt-send-email-mst@kernel.org>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 5 Mar 2025 12:32:19 +0800
+X-Gm-Features: AQ5f1Jqvzx_MszP7oKSb_mOembHoEYJVKAnXmXCk5PO3hJR0roqLasWY_CV6zvM
+Message-ID: <CACGkMEte+TcMk5BRrcp4h+53p1oCs7uR+6OtSZzGj33kG3WL-Q@mail.gmail.com>
+Subject: Re: [PATCH] vduse: add virtio_fs to allowed dev id
+To: "Michael S. Tsirkin" <mst@redhat.com>
+Cc: Eugenio Perez Martin <eperezma@redhat.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, Hanna Reitz <hreitz@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, German Maglione <gmaglione@redhat.com>, stefanha@redhat.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Mar 3, 2025 at 5:39=E2=80=AFPM Thomas Falcon <thomas.falcon@intel.c=
-om> wrote:
+On Tue, Feb 25, 2025 at 8:31=E2=80=AFPM Michael S. Tsirkin <mst@redhat.com>=
+ wrote:
 >
-> This patch was originally posted here:
+> On Tue, Feb 25, 2025 at 01:17:02PM +0100, Eugenio Perez Martin wrote:
+> > On Mon, Feb 24, 2025 at 10:51=E2=80=AFPM Michael S. Tsirkin <mst@redhat=
+.com> wrote:
+> > >
+> > > On Tue, Jan 21, 2025 at 11:33:46AM +0100, Eugenio P=C3=A9rez wrote:
+> > > > A VDUSE device that implements virtiofs device works fine just by
+> > > > adding the device id to the whitelist.
+> > > >
+> > > > Signed-off-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+> > >
+> > >
+> > > OK, but the commit log really should say why
+> > > you are doing this.
+> >
+> > Sure I can expand on the motivation.
+> >
+> > Something like "Allowing VDUSE FS type allows to build filesystems
+> > that run in userspace and can be presented transparently to the host
+> > and the guest. After modifying userland's libfuse, this allows to
+> > expose a good amount to already available userland FS through vDPA."
+> >
+> > I'd add using the high performance virtio protocol but I still need to
+> > do more tests for this TBH.
+> >
+> > > And also why is it safe.
+> > >
+> >
+> > Can you expand on the scenarios you think this is insecure? While I
+> > understand it's security sensitive, you already need root to perform
+> > vdpa device operations. Is FS different from net or block?
+> >
+> > Thanks!
 >
-> https://lore.kernel.org/all/20241213215421.661139-1-thomas.falcon@intel.c=
-om/
+> I did not say it was insecure, just that you need to explain the
+> security considerations in the commit log.
+> The issue is that when one gave access to vdpa user device previously
+> it would only allow mounting blk now a filesystem.
 >
-> I have rebased on top of Arnaldo's patch here:
+> Net is different, it is gated by CAP_NET_ADMIN.
 >
-> https://lore.kernel.org/all/Z2XCi3PgstSrV0SE@x1/
->
-> The original commit message:
-> "
-> perf script output may show different fields on different core PMU's
-> that exist on heterogeneous platforms. For example,
->
-> perf record -e "{cpu_core/mem-loads-aux/,cpu_core/event=3D0xcd,\
-> umask=3D0x01,ldlat=3D3,name=3DMEM_UOPS_RETIRED.LOAD_LATENCY/}:upp"\
-> -c10000 -W -d -a -- sleep 1
->
-> perf script:
->
-> chromium-browse   46572 [002] 544966.882384:      10000         cpu_core/=
-MEM_UOPS_RETIRED.LOAD_LATENCY/: 7ffdf1391b0c     10268100142 \
->  |OP LOAD|LVL L1 hit|SNP None|TLB L1 or L2 hit|LCK No|BLK    N/A    5   7=
-    0   7fad7c47425d [unknown] (/usr/lib64/libglib-2.0.so.0.8000.3)
->
-> perf record -e cpu_atom/event=3D0xd0,umask=3D0x05,ldlat=3D3,\
-> name=3DMEM_UOPS_RETIRED.LOAD_LATENCY/upp -c10000 -W -d -a -- sleep 1
->
-> perf script:
->
-> gnome-control-c  534224 [023] 544951.816227:      10000 cpu_atom/MEM_UOPS=
-_RETIRED.LOAD_LATENCY/:   7f0aaaa0aae0  [unknown] (/usr/lib64/libglib-2.0.s=
-o.0.8000.3)
->
-> Some fields, such as data_src, are not included by default.
->
-> The cause is that while one PMU may be assigned a type such as
-> PERF_TYPE_RAW, other core PMU's are dynamically allocated at boot time.
-> If this value does not match an existing PERF_TYPE_X value,
-> output_type(perf_event_attr.type) will return OUTPUT_TYPE_OTHER.
->
-> Instead search for a core PMU with a matching perf_event_attr type
-> and, if one is found, return PERF_TYPE_RAW to match output of other
-> core PMU's.
-> "
->
-> Suggested-by: Kan Liang <kan.liang@intel.com>
-> Signed-off-by: Thomas Falcon <thomas.falcon@intel.com>
-> ---
-> v2: restrict pmu lookup to platforms with more than one core pmu
-> v3: only scan core pmu list
-> v4: rebase on top of Arnaldo's patch
-> v5: update based on Namhyung's feedback here
-> https://lore.kernel.org/lkml/Z8YcOidenzGofq7R@google.com/
-> ---
->  tools/perf/builtin-script.c | 16 ++++++++++++++++
->  1 file changed, 16 insertions(+)
->
-> diff --git a/tools/perf/builtin-script.c b/tools/perf/builtin-script.c
-> index d797cec4f054..4d2764df48a0 100644
-> --- a/tools/perf/builtin-script.c
-> +++ b/tools/perf/builtin-script.c
-> @@ -385,6 +385,19 @@ static int evsel_script__fprintf(struct evsel_script=
- *es, FILE *fp)
->                        st.st_size / 1024.0 / 1024.0, es->filename, es->sa=
-mples);
->  }
->
-> +static bool is_core_pmu_type(unsigned int type)
-> +{
-> +       struct perf_pmu *pmu =3D NULL;
-> +
-> +       if (perf_pmus__num_core_pmus() > 1) {
+> When net was introduced, selinux was there initially then it
+> was deferred and never surfaced.
+> Maybe we should revive it so it is possible to control which
+> devices can be created in a granular way.
 
-On ARM it isn't a given that if there is 1 core PMU the type will be
-PERF_TYPE_RAW, on x86 this is normally the case.
+Can we simply start from CAP_SYS_ADMIN?
 
-> +               while ((pmu =3D perf_pmus__scan_core(pmu)) !=3D NULL) {
-> +                       if (pmu->type =3D=3D type)
-> +                               return true;
-> +               }
-> +       }
-> +       return type =3D=3D PERF_TYPE_RAW;
-> +}
-> +
->  static inline int output_type(unsigned int type)
->  {
->         switch (type) {
-> @@ -395,6 +408,9 @@ static inline int output_type(unsigned int type)
->                         return type;
->         }
+Thanks
+
 >
-> +       if (is_core_pmu_type(type))
-
-Given this is called by evsel__output_type I think you can do:
-```
-static inline int output_type(unsigned int type)
-{
-       switch (type) {
-       case PERF_TYPE_SYNTH:
-               return OUTPUT_TYPE_SYNTH;
-       default:
-               if (type < PERF_TYPE_MAX)
-                       return type;
-       }
-
-       return OUTPUT_TYPE_OTHER;
-}
-
-static inline int evsel__output_type(struct evsel *evsel)
-{
-       int output_type =3D evsel->script_output_type;
-
-       if (output_type =3D=3D OUTPUT_TYPE_UNSET) {
-               output_type =3D output_type(evsel->core.attr.type);
-               if (output_type =3D=3D OUTPUT_TYPE_OTHER) {
-                      struct perf_pmu *pmu =3D evsel__find_pmu(evsel);
-
-                      if (pmu && pmu->is_core)
-                             output_type =3D PERF_TYPE_RAW;
-               }
-               evsel->script_output_type =3D output_type;
-
-       return output_type;
-}
-```
-The evsel__find_pmu will cache the PMU for future callers.
-
-Thanks,
-Ian
-
-> +               return PERF_TYPE_RAW;
-> +
->         return OUTPUT_TYPE_OTHER;
->  }
+> > > > ---
+> > > >  drivers/vdpa/vdpa_user/vduse_dev.c | 1 +
+> > > >  1 file changed, 1 insertion(+)
+> > > >
+> > > > diff --git a/drivers/vdpa/vdpa_user/vduse_dev.c b/drivers/vdpa/vdpa=
+_user/vduse_dev.c
+> > > > index 7ae99691efdf..6a9a37351310 100644
+> > > > --- a/drivers/vdpa/vdpa_user/vduse_dev.c
+> > > > +++ b/drivers/vdpa/vdpa_user/vduse_dev.c
+> > > > @@ -144,6 +144,7 @@ static struct workqueue_struct *vduse_irq_bound=
+_wq;
+> > > >  static u32 allowed_device_id[] =3D {
+> > > >       VIRTIO_ID_BLOCK,
+> > > >       VIRTIO_ID_NET,
+> > > > +     VIRTIO_ID_FS,
+> > > >  };
+> > > >
+> > > >  static inline struct vduse_dev *vdpa_to_vduse(struct vdpa_device *=
+vdpa)
+> > > > --
+> > > > 2.48.1
+> > >
 >
-> --
-> 2.48.1
->
+
 
