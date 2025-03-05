@@ -1,100 +1,158 @@
-Return-Path: <linux-kernel+bounces-547637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 323D4A50BDD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:47:13 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECA33A50BE1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:47:36 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D2C01895663
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:47:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E71553A19CF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:47:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2492C254B12;
-	Wed,  5 Mar 2025 19:46:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D923C254AE1;
+	Wed,  5 Mar 2025 19:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="pduOX6Bx"
-Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="gwirLofZ"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B49D25485C
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60E2252905;
+	Wed,  5 Mar 2025 19:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741204002; cv=none; b=WytF+lZXxQO+5CwhS5dz04+F8gfPDNJj1Xu3X7SrZxT+VI0f2gyGYzcpmZTHYSoqIWbDmaENVeTZ0anptOmjn1hGfh6/wBMHrNp06qITS8gPQhr3TFI84h70wgEG/El4MP6E4mWXxo56d+B16vjjCrM6a6W2NJFB67cMN8mueNg=
+	t=1741204024; cv=none; b=HdO1/1/o3+HVjlkaw5BV5gqyc69Lik7otvd3AD9v5gncmVJ6C2yybrni41ysAd+fsoW7cSENkfFyCgE4HZz7rfKWOzkRVQFH0Dv2twPp2bhpMPDO52jWOZBfZaFqULm3D1QXSIo9Q/M2moVsMwhUKtnBxBtEZ3pqWaZncDqzO+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741204002; c=relaxed/simple;
-	bh=TBYxcXb1uFyFuRMhjrlHFz8inUeSGUF71FqDEzLTzKk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IcXTddb+RqDlVgEBIQ4uQVRNlCJz95jmynCn0A+9VKk/uktQWNKu+/HuVhMIS16DmagIKEQ/bov/Nwaj+PXXAREwan2qLItoHxR9okH3jjVW/WtGlG65VhWDSzaIPZ3GBYNa1rMqVOJD0StPa3RF9gH59zl/5Vf9QYEdoRJqqCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=pduOX6Bx; arc=none smtp.client-ip=91.218.175.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 5 Mar 2025 11:46:31 -0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741203996;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4DH4yyq1YOxF+bzlMB1SUQ5BPKUaI0NfAtTF6Qw6nZc=;
-	b=pduOX6BxLOXgwIK495HLbYdHh7S7eLiS5RLNSg+GFiJ5ktzOnd+2EV7XpVFLxK8DtrunyT
-	3mRF9z+j4Qm18W2W2R2kKCUGnGfd1jwH9x5+xfaC78oPzcII5cWLJnpO4ychcWE0LffRpJ
-	zzbSJRGudHMaD2tDSdJH5MLXkddHS1I=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: David Hildenbrand <david@redhat.com>
-Cc: Matthew Wilcox <willy@infradead.org>, SeongJae Park <sj@kernel.org>, 
-	"Liam R. Howlett" <howlett@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, kernel-team@meta.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH 00/16] mm/madvise: batch tlb flushes for
- MADV_DONTNEED and MADV_FREE
-Message-ID: <snby4wevysj2hr6rmqcwezcujhwmjgtby6ogkrc4wmqnzcqcsv@tu23rsyltc2m>
-References: <20250305181611.54484-1-sj@kernel.org>
- <Z8ieZVFEa6vAouvu@casper.infradead.org>
- <46960f37-0d12-4cfd-a214-1ddae2495665@redhat.com>
+	s=arc-20240116; t=1741204024; c=relaxed/simple;
+	bh=Cs0UXnmHDTiLw3nJGpRGirh1JgzPrpDVR6LfngssIoM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=J1SYRRtVuRbIiqKJQ9jBFGR4FclCJWt2C3pMJFofkAZ23yJX40Lv0RnrVFBBj1Oo2a2M9Vt34dVu8tK5A2jkMZFBGmyYhoVW62RHuZwZKcR4n9LHi7UGUdgkAHAAUbwrm2E5d8WVYHk03I6Hv1UEH8qpm11JD498e8vU62xHNYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=gwirLofZ; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 4879F20262;
+	Wed,  5 Mar 2025 20:47:01 +0100 (CET)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id nYavXPYzK2LE; Wed,  5 Mar 2025 20:47:00 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1741204020; bh=Cs0UXnmHDTiLw3nJGpRGirh1JgzPrpDVR6LfngssIoM=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=gwirLofZWDZX5DLT57OCV/TyfjaJ9sAnYrPQXIJRqBPrDePDiBek8n/uhFRyCKWvW
+	 wtaP8GA3WE2MI6Db3AGyz/TBWWkT/N3JEl7ZJhQFQuYeoBH1LgFNeEJgrnhqtblLSx
+	 DhIW0oZ9AxgV7cu3rzFs47sepHnh+WdK/sa/Vjx8LFp4Hqr2kO57zjCouJtn47zGJ+
+	 D2qLQIrGfpNCy8fusBiT9i0g9RtYLHrfZO5cne7vnuJWCJVNBYdWlFP+CT/QM16tqs
+	 cfitqt/3IU2hNpBWvJ+PiGLeeCK0/pfcUm3XsTskSQIPmLk7BRcX7GHQdhxCnLFdU0
+	 WeuJ1cICDHYDA==
+From: Yao Zi <ziyao@disroot.org>
+To: Ulf Hansson <ulf.hansson@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Shresth Prasad <shresthprasad7@gmail.com>,
+	Cristian Ciocaltea <cristian.ciocaltea@collabora.com>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Chukun Pan <amadeus@jmu.edu.cn>
+Cc: linux-mmc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org,
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH v2 8/8] arm64: dts: rockchip: Enable SD-card interface on Radxa E20C
+Date: Wed,  5 Mar 2025 19:46:38 +0000
+Message-ID: <20250305194638.47187-1-ziyao@disroot.org>
+In-Reply-To: <20250305194217.47052-1-ziyao@disroot.org>
+References: <20250305194217.47052-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <46960f37-0d12-4cfd-a214-1ddae2495665@redhat.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 05, 2025 at 08:19:41PM +0100, David Hildenbrand wrote:
-> On 05.03.25 19:56, Matthew Wilcox wrote:
-> > On Wed, Mar 05, 2025 at 10:15:55AM -0800, SeongJae Park wrote:
-> > > For MADV_DONTNEED[_LOCKED] or MADV_FREE madvise requests, tlb flushes
-> > > can happen for each vma of the given address ranges.  Because such tlb
-> > > flushes are for address ranges of same process, doing those in a batch
-> > > is more efficient while still being safe.  Modify madvise() and
-> > > process_madvise() entry level code path to do such batched tlb flushes,
-> > > while the internal unmap logics do only gathering of the tlb entries to
-> > > flush.
-> > 
-> > Do real applications actually do madvise requests that span multiple
-> > VMAs?  It just seems weird to me.  Like, each vma comes from a separate
-> > call to mmap [1], so why would it make sense for an application to
-> > call madvise() across a VMA boundary?
-> 
-> I had the same question. If this happens in an app, I would assume that a
-> single MADV_DONTNEED call would usually not span multiples VMAs, and if it
-> does, not that many (and that often) that we would really care about it.
+SD-card is available on Radxa E20C board.
 
-IMHO madvise() is just an add-on and the real motivation behind this
-series is your next point.
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+---
+ .../boot/dts/rockchip/rk3528-radxa-e20c.dts   | 34 +++++++++++++++++++
+ 1 file changed, 34 insertions(+)
 
-> 
-> OTOH, optimizing tlb flushing when using a vectored MADV_DONTNEED version
-> would make more sense to me. I don't recall if process_madvise() allows for
-> that already, and if it does, is this series primarily tackling optimizing
-> that?
-
-Yes process_madvise() allows that and that is what SJ has benchmarked
-and reported in the cover letter. In addition, we are adding
-process_madvise() support in jemalloc which will land soon.
+diff --git a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+index 5346ef457c2a..a52a7924bb75 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3528-radxa-e20c.dts
+@@ -15,6 +15,10 @@ / {
+ 	model = "Radxa E20C";
+ 	compatible = "radxa,e20c", "rockchip,rk3528";
+ 
++	aliases {
++		mmc1 = &sdmmc;
++	};
++
+ 	chosen {
+ 		stdout-path = "serial0:1500000n8";
+ 	};
+@@ -104,6 +108,18 @@ vcc5v0_sys: regulator-5v0-vcc-sys {
+ 		regulator-min-microvolt = <5000000>;
+ 		regulator-max-microvolt = <5000000>;
+ 	};
++
++	vccio_sd: regulator-vccio-sd {
++		compatible = "regulator-gpio";
++		gpios = <&gpio4 RK_PB6 GPIO_ACTIVE_HIGH>;
++		pinctrl-names = "default";
++		pinctrl-0 = <&sdmmc_vol_ctrl_h>;
++		regulator-name = "vccio_sd";
++		regulator-min-microvolt = <1800000>;
++		regulator-max-microvolt = <3300000>;
++		states = <1800000 0x0>, <3300000 0x1>;
++		vin-supply = <&vcc5v0_sys>;
++	};
+ };
+ 
+ &pinctrl {
+@@ -126,6 +142,12 @@ wan_led_g: wan-led-g {
+ 			rockchip,pins = <4 RK_PC0 RK_FUNC_GPIO &pcfg_pull_none>;
+ 		};
+ 	};
++
++	sdmmc {
++		sdmmc_vol_ctrl_h: sdmmc-vol-ctrl-h {
++			rockchip,pins = <4 RK_PB6 RK_FUNC_GPIO &pcfg_pull_none>;
++		};
++	};
+ };
+ 
+ &saradc {
+@@ -133,6 +155,18 @@ &saradc {
+ 	status = "okay";
+ };
+ 
++&sdmmc {
++	bus-width = <4>;
++	cap-mmc-highspeed;
++	cap-sd-highspeed;
++	disable-wp;
++	no-sdio;
++	sd-uhs-sdr104;
++	vmmc-supply = <&vcc_3v3>;
++	vqmmc-supply = <&vccio_sd>;
++	status = "okay";
++};
++
+ &uart0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&uart0m0_xfer>;
+-- 
+2.48.1
 
 
