@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-547622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DF9CA50BAA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:42:06 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E122A50BAB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:42:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D42C81894E4B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:42:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5F464188A864
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7643B253F1C;
-	Wed,  5 Mar 2025 19:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786E325484C;
+	Wed,  5 Mar 2025 19:42:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LlvWTlSK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b="FOd0Hne9"
+Received: from r-passerv.ralfj.de (r-passerv.ralfj.de [109.230.236.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D319C78F3A;
-	Wed,  5 Mar 2025 19:41:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5512512F6;
+	Wed,  5 Mar 2025 19:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.230.236.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741203718; cv=none; b=K981Y3WFING14KU1cfOYsGUZBqWPmj7xnZwbYX8I2dxM+Oc2nC8yln3HfrhIqCdfvUOdZuj89LqDpORmsrJJwhneJ4QJYIaOLNB8drnxJfB/+TIWeScE3oSePRFOXLRl0qn51K5D2SS4oKg7+mirp0LdMvkOX1ICs8q1S2a67lY=
+	t=1741203736; cv=none; b=XCT/hzDYuVDOMbUn0d5gFtDsC4AcPNBP7eDcAbpoVQYwjVXo+5s7tXpW14dIpBqOaBXSxPw3LSmhRZhhoTB2tpVGVwfPZo5NdmEKyXzrfxpD4n2cH5vuubwgTzY959sCBQOqSt2Rtog2xsJGiQVrKloHPyX6IU/4vUGxCdpjPSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741203718; c=relaxed/simple;
-	bh=09KBCtyH3qwfcdlEzXR7ea7uD5dPwadkoEZ6N270w3o=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=GjilmFgSMjX+JVcUieJifsZYrtIYJjlNRGebdxFvXF+YibTVP4A7IYMY2CsCSCM+bt7+3xvM7S7UD870u4pulezMxpJ7sri+fcvdiAuHvG80OwTuLNTyHZ32S+pLi12jvk1kHth9njuYOltO4pjTjL/yrD6q7zzj6eN0e9e2HqA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LlvWTlSK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1DEB8C4CED1;
-	Wed,  5 Mar 2025 19:41:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741203718;
-	bh=09KBCtyH3qwfcdlEzXR7ea7uD5dPwadkoEZ6N270w3o=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=LlvWTlSKtMBLCbW9eWVCFYRmw1xkWNmLquOTZdbteQJ7HUx0YVK1cMzh+Jmbd5QO2
-	 q9hXWUHKoccY+WTucWtIi0aUlFs17vRPtziTTY5kya7G5jVGvwuXWCenQh1c+Mt/EN
-	 HAL96lHMmmuv69+auFfqEc00iEblXZo1BCNseTvGXaKDB/75Ap5l7oq9GOPzS0S4rW
-	 BbTDNPtzGOLX53OgdVCMo60VeZ61OYwef3p7GgJPhfgwEbP1MTVsp8mqL8wsDWzxRZ
-	 /Ht1p/Q+2W27tYmfP15Ah0fZavshfKjvAwtHlnX9TZnhH0xXPESWynFVzjzTJ1ybTK
-	 t4FLVX4+XH5Yw==
-Date: Wed, 5 Mar 2025 13:41:56 -0600
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Alistair Francis <alistair@alistair23.me>
-Cc: bhelgaas@google.com, linux-pci@vger.kernel.org,
-	Jonathan.Cameron@huawei.com, lukas@wunner.de,
-	alex.williamson@redhat.com, christian.koenig@amd.com,
-	kch@nvidia.com, gregkh@linuxfoundation.org, logang@deltatee.com,
-	linux-kernel@vger.kernel.org, alistair23@gmail.com,
-	chaitanyak@nvidia.com, rdunlap@infradead.org
-Subject: Re: [PATCH v16 3/4] PCI/DOE: Expose the DOE features via sysfs
-Message-ID: <20250305194156.GA309932@bhelgaas>
+	s=arc-20240116; t=1741203736; c=relaxed/simple;
+	bh=jvgDE48yAFQRM5GDptUv9cYZLwD0HT8HVoLIV3xxIss=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YcFl46kKrt/8BQ8yvYANhv/Cr+zukmmSM8AFhDviUbM0Iu3Ew4Lb6/K2x96zFNDJ1nCdy+XmnpiGWEi25cVGj3SiT8A75i7UtqfkVz+voalyzKGDgGFw+MI4TsPhROeAiBoHBUgag5WIYB+fO6G7M2ZQSfqHYvRySdBj9bpyriA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de; spf=pass smtp.mailfrom=ralfj.de; dkim=pass (1024-bit key) header.d=ralfj.de header.i=@ralfj.de header.b=FOd0Hne9; arc=none smtp.client-ip=109.230.236.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ralfj.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ralfj.de
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=ralfj.de; s=mail;
+	t=1741203727; bh=jvgDE48yAFQRM5GDptUv9cYZLwD0HT8HVoLIV3xxIss=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FOd0Hne964De2cbX/O5PqOkWir9XktbgHn7/3cLuvwXfbfAd3Jo/qAKckE5sG4VxJ
+	 6mhvJClqCvWSrNTN7fszGMzxRK/v+NRyFGI8w//o55T1gEzr2cVkIG+Nv4yvsCzeXt
+	 CVX4hzl/lQ7OYRGk//vFDxx05u5BPNfjdedKSHPs=
+Received: from [IPV6:2001:8e0:207e:3500:4ab6:48fe:df57:b084] (2001-8e0-207e-3500-4ab6-48fe-df57-b084.ewm.ftth.ip6.as8758.net [IPv6:2001:8e0:207e:3500:4ab6:48fe:df57:b084])
+	by r-passerv.ralfj.de (Postfix) with ESMTPSA id 1ABFA2052A89;
+	Wed,  5 Mar 2025 20:42:07 +0100 (CET)
+Message-ID: <915eacce-cfd8-4bed-a407-32513e43978f@ralfj.de>
+Date: Wed, 5 Mar 2025 20:42:05 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250227043404.2452562-3-alistair@alistair23.me>
+User-Agent: Mozilla Thunderbird
+Subject: Re: Allow data races on some read/write operations
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Boqun Feng <boqun.feng@gmail.com>,
+ comex <comexk@gmail.com>, Daniel Almeida <daniel.almeida@collabora.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>, dakr@kernel.org,
+ robin.murphy@arm.com, rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>, linux-kernel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>, Marek Szyprowski <m.szyprowski@samsung.com>,
+ airlied@redhat.com, iommu@lists.linux.dev, lkmm@lists.linux.dev
+References: <87bjuil15w.fsf@kernel.org>
+ <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
+ <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+ <87ikoqjg1n.fsf@kernel.org>
+ <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
+ <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
+ <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
+ <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
+ <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
+ <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
+ <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
+ <CAH5fLgidPHQzdUORNpNhtRFsKPU1T-0xdn5OSwYYZh3BgOVRQA@mail.gmail.com>
+ <18cmxblLU2QAa4YP25RWCKEnxuonOwWXavYmSsS4C5D40o8RaCkIXo0UDZ2SPnksk5nWYB29Y4zHkjQeOgd4ng==@protonmail.internalid>
+ <3aabca39-4658-454a-b0e3-e946e72977e1@ralfj.de> <87eczb71xs.fsf@kernel.org>
+Content-Language: en-US, de-DE
+From: Ralf Jung <post@ralfj.de>
+In-Reply-To: <87eczb71xs.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Feb 27, 2025 at 02:34:02PM +1000, Alistair Francis wrote:
-> The PCIe 6 specification added support for the Data Object
-> Exchange (DOE).
-> When DOE is supported the DOE Discovery Feature must be implemented per
-> PCIe r6.1 sec 6.30.1.1. The protocol allows a requester to obtain
-> information about the other DOE features supported by the device.
+Hi all,
 
-> +What:		/sys/bus/pci/devices/.../doe_features
-> +Date:		March 2025
-> +Contact:	Linux PCI developers <linux-pci@vger.kernel.org>
-> +Description:
-> +		This directory contains a list of the supported
-> +		Data Object Exchange (DOE) features. The features are
-> +		the file name. The contents of each file is the raw vendor id and
-> +		data object feature values.
-> +
-> +		The value comes from the device and specifies the vendor and
-> +		data object type supported. The lower (RHS of the colon) is
-> +		the data object type in hex. The upper (LHS of the colon)
-> +		is the vendor ID.
-> +
-> +		As all DOE devices must support the DOE discovery protocol, if
-> +		DOE is supported you will at least see the doe_discovery file, with
-> +		this contents
-> +
-> +		# cat doe_features/doe_discovery
-> +		0001:00
-> +
-> +		If the device supports other protocols you will see other files
-> +		as well. For example is CMA/SPDM and secure CMA/SPDM are supported
-> +		the doe_features directory will look like this
-> +
-> +		# ls doe_features
-> +		0001:01        0001:02        doe_discovery
+>>> For some kinds of hardware, we might not want to trust the hardware.
+>>> I.e., there is no race under normal operation, but the hardware could
+>>> have a bug or be malicious and we might not want that to result in UB.
+>>> This is pretty similar to syscalls that take a pointer into userspace
+>>> memory and read it - userspace shouldn't modify that memory during the
+>>> syscall, but it can and if it does, that should be well-defined.
+>>> (Though in the case of userspace, the copy happens in asm since it
+>>> also needs to deal with virtual memory and so on.)
+>>
+>> Wow you are really doing your best to combine all the hard problems at the same
+>> time. ;)
+>> Sharing memory with untrusted parties is another tricky issue, and even leaving
+>> aside all the theoretical trouble, practically speaking you'll want to
+>> exclusively use atomic accesses to interact with such memory. So doing this
+>> properly requires atomic memcpy. I don't know what that is blocked on, but it is
+>> good to know that it would help the kernel.
+> 
+> I am sort of baffled by this, since the C kernel has no such thing and
+> has worked fine for a few years. Is it a property of Rust that causes us
+> to need atomic memcpy, or is what the C kernel is doing potentially dangerous?
 
-Does this text need to be updated with s/protocol/feature/ as in the
-first patch?
+It's the same in C: a memcpy is a non-atomic access. If something else 
+concurrently mutates the memory you are copying from, or something else 
+concurrently reads/writes the memory you are copying two, that is UB.
+This is not specific to memcpy; it's the same for regular pointer loads/stores. 
+That's why you need READ_ONCE and WRITE_ONCE to specifically indicate to the 
+compiler that these are special accesses that need to be treated differently. 
+Something similar is needed for memcpy.
+
+Kind regards,
+Ralf
+
 
