@@ -1,100 +1,128 @@
-Return-Path: <linux-kernel+bounces-546264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D2BA4F887
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:17:30 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64DF5A4F88B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:17:59 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B86F416D878
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:17:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A98F218915BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CE41F4282;
-	Wed,  5 Mar 2025 08:17:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 938831F8677;
+	Wed,  5 Mar 2025 08:17:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="fK28Dh7m"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lEOTnVJJ"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8021F4611
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:17:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A8B1F4720
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:17:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741162645; cv=none; b=d9TBVGSCGXnwo2ZHNBeqnzjJZ8gX4pjnLEB5Sl9qoL39eoX8j9FHcBxtZbeEykJeBd0RzTAG5udH9rDlcp4pGKjMymnWnFH/TIn7fjyJ4mGzCTAdcjj11uXGr1RGWQJtxvOn2I4gzNuU7aO4+zATBz63gtVAc8c1n6iMxDvu54c=
+	t=1741162664; cv=none; b=pmdroII/ypDw3UC+xiVgeHj++1CelJ5kUAnIc2kj/OZfkVW/yZHkkNd+KbjOteMPtHNYPhjoeXraVzF6Nxb2gB4OUNDpuVHIMwjT/Wmf6oy1KYuEvOLcNsmL9CxAIjDLZWVfSrw1+OqWNzIpg1RafMQur/ZUTmFpQo7uGRACmwU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741162645; c=relaxed/simple;
-	bh=JJnrVQoYcy2Vl913UQWwg7PIxnpoJlbPZncOQybp9Dw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OLWWVwUv6pfqEPy21ob+h3qy30hR/v7kJX6DxbVGYEM7HfxSYG4/OHZjh4CP1RUNTOMhXWTUSOXzTCtVnAfYjkJxGVtD0sJV0Txv6CdDGQahCWpU9YU3Lu9zF+A+p6I8omCX8CXBzau6w+jnzbyjSexjJSOioG+AEuMHeo+68PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=fK28Dh7m; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-2235c5818a3so663725ad.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:17:23 -0800 (PST)
+	s=arc-20240116; t=1741162664; c=relaxed/simple;
+	bh=vcGEIoc9wmDs79ktQAByYkrcB1clkMgF+0QKb1CD3bE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dq+KYnIM3Gfbb3qiJwza8zeOoTi1jY4iN6zodICbhil0cNF+7eopHU6j6pZij4KDuC4OvXSVepOavjd64iziMXm1ZHe9pk9EpyfiZIT34F5jc0ZdtFNcGiiwCZ8jgoCm06q3yn5HVdZzoILWCb3CXSSBJQh5oAqHxB9fd5MA0gA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lEOTnVJJ; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-abf628d653eso560741166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:17:41 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1741162643; x=1741767443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hBrYGYkG3/uOX+m8XZikomKIbRAg1AjaPVwOGP9HNdk=;
-        b=fK28Dh7mi0P3kEXhfzPErJMqinKb/IDNyTFVqr8HvSoTiy289BlOK/jo0c4BsPOb9O
-         LqnFLz9IFE1JByhiK5W33WrgrJX0xYxYxJQT0W8Ju3CaRpIKHPAl9MSc5fcyC1X3x0IP
-         rM6SrJnpMWNnfCkw7W3TozjKeP6EHNhLkMWzw=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741162643; x=1741767443;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1741162660; x=1741767460; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hBrYGYkG3/uOX+m8XZikomKIbRAg1AjaPVwOGP9HNdk=;
-        b=UGQ0LMtxofLzpWg+u6GwVVDIuu3hlUSyHGUQLlFEGn0UCpjr+2Vg0i9SEiS3VW1r1/
-         rCrcxTeHqj3cVCM0GbFPCTSgD5L/yFYkmd8m1vqb8FtDoiA/rv6i/cN0m8LK9nuiq0Sn
-         glx6kRww4jzo+x6KRdoB7LmsAXze40du+NWU8l+b0Uv5vntXYv+Ubw9+HVBomZUgo3KG
-         3zZhqkJ9vUxS9gOa8pJEzAZ4DqYWYVq6CPvu+kw4FJSyLy5Mt4tsKPqh9f27BgLgAV00
-         0v7jVH6ncNSF2a0gV+yHDdRWl2yWdVOqkmHonMgWKAgBYnqkreSlDsFsyGBnhW8701kA
-         94aQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXa242Ikv06nXhZsBFqXlSiLRfuQRRh94kKIUyOUKkY/bbkCTI9Z6Iiyg10gi0Cese1/GLzVHLs8Hg/3FI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkHA1CsChA4MsCxTqBW7Pb/spwJJVSijwOIwA+BjCR1cuaATp7
-	8xzZL9BIL2sAmVr3RCuEc9ZBdcD1wzKEINeQH8KpI3xGAM95Da103+Z1Ass4sg==
-X-Gm-Gg: ASbGncs1a+bSjOPnRfDIevW/gmkIcAb/PM2XyQufc/K9It88Hx1CYwsk+Uw802ZDVM4
-	s1fFLAvP16wtaesImaOP4dPyiG5eOGwNn5J6vbTGcrIcoszBAONMFip8RVxMvjZ+6gz4jKg0g5N
-	DjtyavLXiCbTP9xFLGCD9IplFl2S6dB5Qdt6TmBjiGFHMrT4HmvNTGFtMFiIz5L6aazCTdBUJp/
-	XhQ2xaebHPNW2ttEK3U6CtFOyfTIlT+f0/o22h/uM7O9VO1baD/Gr8mVaW7ZRmry3EXmCa0t5bF
-	diXydpJ8xL51Xz3XiUjQbDn4CPtX0QPTWkb7jH05wH0Jgj4=
-X-Google-Smtp-Source: AGHT+IEZb+ikZ3wZQgwK7eoIYZ9zMOrbk8mbq9FH8fEgmGeKCMEKE+qkETYiZPwF80GgQYRjig0TQA==
-X-Received: by 2002:a05:6a00:460e:b0:736:46b4:bef2 with SMTP id d2e1a72fcca58-73682b7d47cmr3390892b3a.6.1741162642739;
-        Wed, 05 Mar 2025 00:17:22 -0800 (PST)
-Received: from google.com ([2401:fa00:8f:203:5a4:b795:7bd9:7ab7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-734a003dd31sm12292993b3a.152.2025.03.05.00.17.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 00:17:22 -0800 (PST)
-Date: Wed, 5 Mar 2025 17:17:17 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Minchan Kim <minchan@kernel.org>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
-	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 3/5] mm: zpool: Remove object mapping APIs
-Message-ID: <wiboon2ho2vkxsbipc2e4ehhihhhkun7dcyfyycbmfinfxcwg2@n6jbtakq3ncd>
-References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
- <20250305061134.4105762-4-yosry.ahmed@linux.dev>
+        bh=vcGEIoc9wmDs79ktQAByYkrcB1clkMgF+0QKb1CD3bE=;
+        b=lEOTnVJJ4JT7hVtbcV/cOW6oiBDHVoltJeerSZhHmZ38u9u432NciyIZ0EJkWpmkQA
+         HFi3WHkiHUZ3nBpMlMRgvPrHTq9TprRUIiNYWOqPBUUqh6JOQQ0BOelnrvKeXXpLlN7b
+         u+56pO9PTSBA0ic79zvLSPHKnsaMAs5It5n9ex7Dgxsp6grgVTJWU9vzeHnnsV4cZI8M
+         EG93gjWHHwCEt6UW0XlQlc5W2UZLwkjQuNiQA2aOctBhm37dqtm3Dzk3ywC73o5qgdvA
+         l34FJcFvdYasgEXsG30ttougTc8WtEF0ftSAY14Pp/wOXMmFTQdB1ksMH6LB8y1Y0j4b
+         W1KA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741162660; x=1741767460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vcGEIoc9wmDs79ktQAByYkrcB1clkMgF+0QKb1CD3bE=;
+        b=MXBcfwH5roLx/kdwCwcN1Nqh4MTiaVrf3mlA0ni4hU7qND4sJC+yz7bHiN1z9jmNVR
+         EEN1Uo923zndUlslmo79hyFMPpqpp6di/0URWpSScFpYSdIyhfW9yTtFyvVmdNMnf1Z+
+         7DYmKeozPgtDh3fnAc8lCyt4wBHXMnZusAhEaoGcIiPMlksJR8p4mjfIIcjmnclXM8uj
+         H0kJJEApOmekcZ2F4lYY4vqJnG4ajnhwkZrT3VldFVOOePu9XMonRVgZ/SSDRCGoxL49
+         LgkswBhNwEDXapSZ2e3c51SbSZDZbSt9OyqBi0Vymz/Fz/PRe7IF4MpacGmOuyo/U4It
+         14GA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWLIM0HO6A/RRHtA7pNDt3Q8jLS6zCxfwvnDQTEvi6T9bt7k0WZ3uHXc751lh0s2RtdAM9HlrAoL0+qCY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEKggJRQbx+QFLQBZIi3c+/wKUfDk0RX8YGQM/OzGyOsSJmC/z
+	IJXdiiuuU8d9xA89/o4BOeRTljORVwimvNNkOQQjcE6wfiANyjR5MCfOjI6msKYqdXzIvSryGWv
+	JC3u8SA96qOfWz5X0O9FiWMAEzCnjUEro5OuWAA==
+X-Gm-Gg: ASbGnctV9oLN/bQnDpphaerWHaV3dgDN1bU1ByOiGQv792jUu0rCuCB9guNpnOZRF/n
+	rXOl8x5cQR4mTJDfgorcWgb7vwNFYW9wF+beYXz1zYH0E6cYRutCzGUy6SsAwmbHB8d4G66abg3
+	nIJiYCeCGMSSUM04Qj+gXwcwW+ZCfjtqpU5kI1/98S0EHtc8MfqCqcCjU=
+X-Google-Smtp-Source: AGHT+IEwZ0V5j3sfTjf4uAsJrKtaGmo6/U3Ly5JasGKZTobPzrL9CMjyuO0uUfW8rk1IdcKtFLT5R5LYh+TMgFOTlKQ=
+X-Received: by 2002:a17:906:478f:b0:abf:6f87:670e with SMTP id
+ a640c23a62f3a-ac20d8c833cmr176738166b.22.1741162660345; Wed, 05 Mar 2025
+ 00:17:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305061134.4105762-4-yosry.ahmed@linux.dev>
+References: <20250303105241.17251-1-xuewen.yan@unisoc.com> <20250303120021.GA11590@noisy.programming.kicks-ass.net>
+ <CAB8ipk-pmSGoaxtMGhcvn7MmSEibvQDbCDgjp9iEDTzG5=_L7g@mail.gmail.com>
+In-Reply-To: <CAB8ipk-pmSGoaxtMGhcvn7MmSEibvQDbCDgjp9iEDTzG5=_L7g@mail.gmail.com>
+From: Vincent Guittot <vincent.guittot@linaro.org>
+Date: Wed, 5 Mar 2025 09:17:28 +0100
+X-Gm-Features: AQ5f1Jrs6iZ7BhBSuUeLE4Rx-MSwcPVFCqJAcOSm5AMzjIeeAWygEAU7LH-nobg
+Message-ID: <CAKfTPtBahSErKvd5y698v7+EZYGkT95dbO0LumZAWD=ut1vj3Q@mail.gmail.com>
+Subject: Re: [RFC PATCH V2 0/3] sched/fair: Fix nr-running vs delayed-dequeue
+To: Xuewen Yan <xuewen.yan94@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Xuewen Yan <xuewen.yan@unisoc.com>, mingo@redhat.com, 
+	juri.lelli@redhat.com, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
+	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, 
+	linux-kernel@vger.kernel.org, ke.wang@unisoc.com, di.shen@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (25/03/05 06:11), Yosry Ahmed wrote:
-> zpool_map_handle(), zpool_unmap_handle(), and zpool_can_sleep_mapped()
-> are no longer used. Remove them with the underlying driver callbacks.
-> 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+On Tue, 4 Mar 2025 at 02:56, Xuewen Yan <xuewen.yan94@gmail.com> wrote:
+>
+> Hi Peter
+>
+> On Mon, Mar 3, 2025 at 8:00=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+> >
+> > On Mon, Mar 03, 2025 at 06:52:38PM +0800, Xuewen Yan wrote:
+> > > Delayed dequeued feature keeps a sleeping sched_entitiy enqueued unti=
+l its
+> > > lag has elapsed. As a result, it stays also visible in rq->nr_running=
+.
+> > > However, sometimes when using nr-running, we should not consider
+> > > sched-delayed tasks.
+> > > This serie fixes those by adding a helper function which return the
+> > > number of sched-delayed tasks. And when we should get the real runnab=
+le
+> > > tasks, we sub the nr-delayed tasks.
+> > >
+> >
+> > Is there an actual performance improvement? Because when a runqueue
+> > looses competition, delayed tasks very quickly dissipate.
+>
+> At the moment, I don't have very detailed test data. I've been
+> studying delay-dequeue carefully recently, and these are the issues I
+> feel might need modification as I go through the code.
 
-Reviewed-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+Patch 1 makes sense for me but I'm less convinced by patch 2 and 3. As
+Peter also mentioned, the state where cpu_rq(cpu)->nr_running =3D=3D
+cfs_h_nr_delayed(cpu_rq(cpu)) is really transient as they will be
+picked as soon as the last runnable task will be dequeued
+
+>
+> Thanks!
+>
+> BR
 
