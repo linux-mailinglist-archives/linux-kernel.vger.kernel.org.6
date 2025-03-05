@@ -1,198 +1,151 @@
-Return-Path: <linux-kernel+bounces-547480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 879F6A509FE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:28:57 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623C6A50A04
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:29:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 23DF83A38AD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:28:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3C2B7A8ADE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0B61C6FF9;
-	Wed,  5 Mar 2025 18:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEF51253322;
+	Wed,  5 Mar 2025 18:29:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rawN+bV5"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ntXUTPGQ"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 193191C863D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C021252900
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:29:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741199325; cv=none; b=T5ArR9bWJpmVKlUFAxjReLafDUK6SL1O8ZNP9/iC9zM0qccFAwIAqaoPcz+2hKURNRDtRjnbmF1tdyw3kaYQ6jmhb31UBcaCE42dV6EPvmc/sduM1aHV7cxXP501iNH3suDy9JZO+U/PShQCjkx1W0Pb0TzoHL6kyMfwo319CDo=
+	t=1741199343; cv=none; b=jOZ/9Fy+qCOaIRCoChT502LUn0MrBxKijQnRWrPRrDmI8NuEdSoiAQxLXqdJY8LbVhjq0sAcYun4YgktXREqoizb/b6YjIUaQrZbHqOtH4J2OYPGHideDVg2cB0O7837C8meGaZlRjiA05pZF9C93HWIZi3bPD5zPDOJFoIsx4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741199325; c=relaxed/simple;
-	bh=NXQNTWJeiSFzjPLlih2rgrST7ZU+kwSlPLsGUkO6i4Q=;
+	s=arc-20240116; t=1741199343; c=relaxed/simple;
+	bh=m+xkMwoySrd0uSVjVDdxdBcJZDoeadqoxer/R/dsQu8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DnEwAESm+ICznqlLv+xm915BPD1JxZJA1iXU4kG8w4dxMB4pJj9+S+UJhVos5wyt6L4V7XPMEhveIBqNM0Gw20RvBIIXjiK6ikzOCwIW8dzGhZiKlcP55sND029pM/2ZUfqLJe4aIbYRZfKKT8gqZZ98e8CsW9IKd5y/8WF7A/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rawN+bV5; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2234bec7192so133578755ad.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 10:28:43 -0800 (PST)
+	 Content-Type:Content-Disposition:In-Reply-To; b=W/8NywYHzPvF9zcYiNF2rm4aC7mCc6+f/w/piNlc8RGjQi6t0d6NYTsLIGIZOHC0paBHgZFYck1LK6STXn0mC4i2lXyXRP4kQJIwpQ0QO1f8wHGkI5pKAMFNriPXI61WrvL2u45CUov6NcG2sEMBwLcJ3BucXHBunHN+AVhYu5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ntXUTPGQ; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c08b14baa9so606971585a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 10:29:01 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741199323; x=1741804123; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=IlUZuaZqa3JLI6rAH+eSKbr5zwilBRdu2UhafBOdrdc=;
-        b=rawN+bV57J1B+RzCmZ77uY16uIki+f4lQ9ppIpAkWldjdzIMnlkOIEnCKIAOSOoOGh
-         jjkd8TApQJ5n5ruGtpwgOVUfEhGfijcHsYT3n1Lgxot7HWpAEs4033eFWCbcs96WjKh4
-         Shg1NLPB9a7KkAA1MexVwFCjo2lSgPJSSk5PWnfaIKds+1qKqn60LIEYTR8TyCkrCjBy
-         I+H/B5fyojgxbNVaYXHGwkTySQA5rx9rBSLgztiGEDsiThM6W4QD0by8V20kTq2F/k7H
-         WKXJP/nejCrj4h0a4U+O+Cf8sR0SHPVoB1BemiMXZ2cUCARNCV+m5V7+laeDq2CIRyar
-         dQiA==
+        d=ziepe.ca; s=google; t=1741199340; x=1741804140; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=qytsi8AsRvyusqMe3jOhTvgsVPTM08UZ5Jj8wi8LUdo=;
+        b=ntXUTPGQ2OhCeIeDBZigmR2lhyh7Dwx091quvr3fUKRKbY1a5Vq1kr7PX3zyQLHRfr
+         DJRIRxj5MP8M0rOZ4cbG/9+kD6nzREFD66/T37MceNneQ+iTqDkHv4rs6H3XRtU3WQ1/
+         ZfL0BkSN3DK3JkdfTwjjW2SE9DoGicAW6tBdDJODmUf2JwMr44z+rt0m4bM3D3U+t4tF
+         3Gx5tDZimGE8rUazvfqFzzY7Ftu5ALorY1zO1eD4gipqmgvTQGeNyekJgCw5A4k3HXyE
+         zLsswuVuz6l6t3ukQIkdnjjaGCiAP+JfCD0E+l1T8HwgNA1khJvL49/Fx4mLalOR13nm
+         MfNA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741199323; x=1741804123;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=IlUZuaZqa3JLI6rAH+eSKbr5zwilBRdu2UhafBOdrdc=;
-        b=cNx76VnHyJDt3xxfQQWa7D9WZFzsHi4MVycOulOGuHuQNdoWTH4Kcv4AXiITdpzQ6Y
-         lpXd1TgUC+cp4TxPLW55YpRwAALCEguuq8vrkQ/9Fk8QSZxDu5UmR+9CKTK49+dBzXeF
-         UKUrhmLLZj55Io3z1viGedQxLNwWWnBVeDLTRGZUWf4y485uRMAlbbtqAoeWUSs2hdnP
-         OUuXBURLHxrr2qfLUUHGbGF1/WMm1jiFSkpdaKnezWtAfDayiBO6ZN29LuB5tTcjz2ZO
-         7Z7miOj5+wp3SAI9DBcJmnHnuK8ZIuM2K61aZkQY9CRY+8izM+XJMGL4Y3mHEdhy2EMA
-         NT1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV4VlFJLDwFQRgkLdLHbyURT1kqT7AQCw26zcPQIhEwpM2Va/VgUbiPsQapIjQTFIiZuoCsfeD2l/ae1xw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy37GaBIYHpUEaXHypkOXtRcZkCRVjjSmSn0XtykdNBSAMIyV3z
-	bZlomkAUEO2lbrYkipiUgntISqtVVis2Otf6te+nirq+dFwcV45jdnCV04Ez5A==
-X-Gm-Gg: ASbGncvVE0aDipDdc5vmVbD02dKGhKBAWh/rFPSMb8YiVRL6xKSheP10YNblo6YXFQc
-	qVCivBmlPaodEjkNLFoGy2alUYMTC7tQpgFguGAPLsVB7fR/WKWu6gWl925m/AOVA3d1bKIDjNP
-	yXepvbHEeqidLgIG2HsYDj10VJNP/JwYuCzKStPk5rC1DERo6Rvpfe+USxdSpU/04snSpf/MXXJ
-	Z7GgbnylAZkmk0QdLrZG6LBxRU1/3hOG8nmw8Rr2bmeXqBZdGqJ/oCcXZh+UbFFcKfU5gwMLyKi
-	kHgwDlGP4pTaiNCCU17hK7x8XDFiTxaVsIJKIxx3bqIc7biGob/pudjW
-X-Google-Smtp-Source: AGHT+IF+TGwksJJjKWkdx/R8tEcgWJtus8Acn/xVNQz9+4wgbYvkHfwKDe4CHqeQdGOj/ucT3x99Xw==
-X-Received: by 2002:a05:6a21:3986:b0:1f0:e84c:866f with SMTP id adf61e73a8af0-1f3494967f1mr8474146637.21.1741199323380;
-        Wed, 05 Mar 2025 10:28:43 -0800 (PST)
-Received: from thinkpad ([120.60.140.239])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf2444sm12428366a12.3.2025.03.05.10.28.36
+        d=1e100.net; s=20230601; t=1741199340; x=1741804140;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qytsi8AsRvyusqMe3jOhTvgsVPTM08UZ5Jj8wi8LUdo=;
+        b=vguAEEXCqZs5px5n3m3zyUEcqSZ2FZVKbDwgND+80QrsF4r8MbCaon+9hGnUzim5Kx
+         6PHZafzTlP9fYoiyUI0er5yS+gZ4CHkn2FevrpZbJAVzhmFq146S0oPjI/Q7KHyo3GdF
+         UYkCyb2UuHLbG2dFG7yEGhDJmvbmup/M5ciGiNX9hNJX+1mHkUz7jRP6mhqEjgH9TA51
+         y7E1XdCcY8HkEdLuMqxqoeQNlfirQVOrj6v5NfUnJZwHXt5+xN8RKfjepHsePDbphhty
+         VJk5ZLQN7h11hn6SxiD2fs6vrSDqRoVfiyahfY1dcDxD2fA9g7sv8Q1gpjSTQfdxpl7K
+         fbCw==
+X-Forwarded-Encrypted: i=1; AJvYcCU5NXR60rov7okOUvFD5XMbYFUvenw/t1d9I8liU38oY3spKGbRS2b6jHQocB4dQGQ/Jha97TuZEGOb+LE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOKzXX3TAVWAStWV/s2mp8p9ouxfvFMUQWWOWTFEtBL7JOgoUw
+	7v9glL8zBZrenlSP4WXnQxHE5pSOqWmX4JcsAx2B9LPwxEDZK044hesmHT/ZiYU=
+X-Gm-Gg: ASbGncs/8ynF+x0coIPkjIyfvbAgRfFAbPwLlPvB6R2ZvB/NONDy9EP7fGkqTdFD6mw
+	2RccD93ofNH6mpMUBxduf7k0g2j7srODKKNxjdvMBNm2r8Uo/t8BvllKi58ovv7eFV/jzT/8nXy
+	n5h0Wa2rDWyltsavzojF98Lv3P0moA+OtjIcmE/odmPgeNNEB7oivVXRuLubVhbaFjG9U+nUXEW
+	9QCQgl/MOT9piizow0AEzn2Pzdv7ru6SBpBtQqeQAN0tcZtxXU0P+CNd4doVo2MxyXpfGPiX+9L
+	M2R97h80YdSrk7Alpqo=
+X-Google-Smtp-Source: AGHT+IFWMmT9cW2Ut5DYuDUpvyIFOmmiZcEpt4WPetA8yQdQkDPqbKkYQiVXDZwiZSFr/BdwTkrEVw==
+X-Received: by 2002:a05:620a:8806:b0:7c3:bcb2:f440 with SMTP id af79cd13be357-7c3d8e703f8mr618694385a.33.1741199340112;
+        Wed, 05 Mar 2025 10:29:00 -0800 (PST)
+Received: from ziepe.ca ([130.41.10.206])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-474e90b8853sm44121231cf.65.2025.03.05.10.28.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 10:28:42 -0800 (PST)
-Date: Wed, 5 Mar 2025 23:58:33 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bjorn Helgaas <helgaas@kernel.org>
-Cc: Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Fan Ni <nifan.cxl@gmail.com>, Shradha Todi <shradha.t@samsung.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, lpieralisi@kernel.org,
-	robh@kernel.org, bhelgaas@google.com, jingoohan1@gmail.com,
-	Jonathan.Cameron@huawei.com, a.manzanares@samsung.com,
-	pankaj.dubey@samsung.com, cassel@kernel.org, 18255117159@163.com,
-	xueshuai@linux.alibaba.com, renyu.zj@linux.alibaba.com,
-	will@kernel.org, mark.rutland@arm.com,
-	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>,
-	Linux-Renesas <linux-renesas-soc@vger.kernel.org>
-Subject: Re: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
-Message-ID: <20250305182833.cgrwbrcwzjscxmku@thinkpad>
-References: <20250304171154.njoygsvfd567pb66@thinkpad>
- <20250305173826.GA303920@bhelgaas>
+        Wed, 05 Mar 2025 10:28:59 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tptUI-00000001UBj-3ss3;
+	Wed, 05 Mar 2025 14:28:58 -0400
+Date: Wed, 5 Mar 2025 14:28:58 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Stuart Yoder <stuyoder@gmail.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Charan Teja Kalla <quic_charante@quicinc.com>
+Subject: Re: [PATCH v2 4/4] iommu: Get DT/ACPI parsing into the proper probe
+ path
+Message-ID: <20250305182858.GK5011@ziepe.ca>
+References: <cover.1740753261.git.robin.murphy@arm.com>
+ <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250305173826.GA303920@bhelgaas>
+In-Reply-To: <e3b191e6fd6ca9a1e84c5e5e40044faf97abb874.1740753261.git.robin.murphy@arm.com>
 
-On Wed, Mar 05, 2025 at 11:38:26AM -0600, Bjorn Helgaas wrote:
-> On Tue, Mar 04, 2025 at 10:41:54PM +0530, Manivannan Sadhasivam wrote:
-> > On Wed, Mar 05, 2025 at 12:46:38AM +0900, Krzysztof Wilczyński wrote:
-> > > > On Mon, 3 Mar 2025 at 20:47, Krzysztof Wilczyński <kw@linux.com> wrote:
-> > > > > [...]
-> > > > > > > +int dwc_pcie_debugfs_init(struct dw_pcie *pci)
-> > > > > > > +{
-> > > > > > > +   char dirname[DWC_DEBUGFS_BUF_MAX];
-> > > > > > > +   struct device *dev = pci->dev;
-> > > > > > > +   struct debugfs_info *debugfs;
-> > > > > > > +   struct dentry *dir;
-> > > > > > > +   int ret;
-> > > > > > > +
-> > > > > > > +   /* Create main directory for each platform driver */
-> > > > > > > +   snprintf(dirname, DWC_DEBUGFS_BUF_MAX, "dwc_pcie_%s", dev_name(dev));
-> > > > > > > +   dir = debugfs_create_dir(dirname, NULL);
-> > > > > > > +   debugfs = devm_kzalloc(dev, sizeof(*debugfs), GFP_KERNEL);
-> > > > > > > +   if (!debugfs)
-> > > > > > > +           return -ENOMEM;
-> > > > > > > +
-> > > > > > > +   debugfs->debug_dir = dir;
-> > > > > > > +   pci->debugfs = debugfs;
-> > > > > > > +   ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
-> > > > > > > +   if (ret)
-> > > > > > > +           dev_dbg(dev, "RASDES debugfs init failed\n");
-> > > > > >
-> > > > > > What will happen if ret != 0? still return 0?
-> > > > 
-> > > > And that is exactly what happens on Gray Hawk Single with R-Car
-> > > > V4M: dw_pcie_find_rasdes_capability() returns NULL, causing
-> > > > dwc_pcie_rasdes_debugfs_init() to return -ENODEV.
-> > > > 
-> > > > Debugfs issues should never be propagated upstream!
-> > ...
-> 
-> > > > So while applying, you changed this like:
-> > > > 
-> > > >             ret = dwc_pcie_rasdes_debugfs_init(pci, dir);
-> > > >     -       if (ret)
-> > > >     -               dev_dbg(dev, "RASDES debugfs init failed\n");
-> > > >     +       if (ret) {
-> > > >     +               dev_err(dev, "failed to initialize RAS DES debugfs\n");
-> > > >     +               return ret;
-> > > >     +       }
-> > > > 
-> > > >             return 0;
-> > > > 
-> > > > Hence this is now a fatal error, causing the probe to fail.
-> 
-> > Even though debugfs_init() failure is not supposed to fail the probe(),
-> > dwc_pcie_rasdes_debugfs_init() has a devm_kzalloc() and propagating that
-> > failure would be canolically correct IMO.
-> 
-> I'm not sure about this.  What's the requirement to propagate
-> devm_kzalloc() failures?  I think devres will free any allocs that
-> were successful regardless.
-> 
-> IIUC, we resolved the Gray Hawk Single issue by changing
-> dwc_pcie_rasdes_debugfs_init() to return success without doing
-> anything when there's no RAS DES Capability.
-> 
-> But dwc_pcie_debugfs_init() can still return failure, and that still
-> causes dw_pcie_ep_init_registers() to fail, which breaks the "don't
-> propagate debugfs issues upstream" rule:
-> 
->   int dw_pcie_ep_init_registers(struct dw_pcie_ep *ep)
->   {
->           ...
->           ret = dwc_pcie_debugfs_init(pci);
->           if (ret)
->                   goto err_remove_edma;
-> 
->           return 0;
-> 
->   err_remove_edma:
->           dw_pcie_edma_remove(pci);
-> 
->           return ret;
->   }
-> 
-> We can say that kzalloc() failure should "never" happen, and therefore
-> it's OK to fail the driver probe if it happens, but that doesn't seem
-> like a strong argument for breaking the "don't propagate debugfs
-> issues" rule.  And someday there may be other kinds of failures from
-> dwc_pcie_debugfs_init().
-> 
+On Fri, Feb 28, 2025 at 03:46:33PM +0000, Robin Murphy wrote:
+> +	if (!dev->driver && dev->bus->dma_configure) {
+> +		mutex_unlock(&iommu_probe_device_lock);
+> +		dev->bus->dma_configure(dev);
+> +		mutex_lock(&iommu_probe_device_lock);
+> +	}
 
-Fine with me. I was not too sure about propagating failure either.
+I think it would be very nice to get rid of the lock/unlock.. It makes
+me nervous that we continue on assuming dev->iommu was freshly
+allocated..
 
-- Mani
+ setup the dev->iommu partially, then drop the lock.
 
--- 
-மணிவண்ணன் சதாசிவம்
+There is only one other caller in:
+
+static int really_probe(struct device *dev, const struct device_driver *drv)
+{
+	if (dev->bus->dma_configure) {
+		ret = dev->bus->dma_configure(dev);
+		if (ret)
+			goto pinctrl_bind_failed;
+	}
+
+Is it feasible to make it so the caller has to hold the
+iommu_probe_device_lock prior to calling the op?
+
+That would require moving the locking inside of_dma_configure to less
+inside, and using a new iommu_probe_device() wrapper.
+
+However, if you plan to turn this inside out soonish then it would not
+be worth the bother.
+
+Anyhow:
+
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
