@@ -1,104 +1,195 @@
-Return-Path: <linux-kernel+bounces-545950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29386A4F459
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:06:14 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5350BA4F45B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:06:28 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6495F3AB0DB
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 73DA116F468
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:06:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786E5143736;
-	Wed,  5 Mar 2025 02:06:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A891E152E12;
+	Wed,  5 Mar 2025 02:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Z9KU1cqC"
-Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f6GYxL8C"
+Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C2901096F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 02:06:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83834136E37;
+	Wed,  5 Mar 2025 02:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741140367; cv=none; b=JvCq1tBVMNM2Ztk8R1SByk3iUWWIZOHC+ax1QzoRZhLu+F9A75SasbOoHtvmqWAcnzsDAumixaiqViMQvW3l2zM68KPPi+c1fmMyhoX85M1hrIPwgvlb6i+t2CPlbS1KCWf8ursoqXRXOjnGaMVF2a2Lmcv+M4RUwU3AgRgHAS8=
+	t=1741140382; cv=none; b=tzi2avzPUZFyLgitg4gf5maIGyBo3MnjWvxB7sc6/PUo8jCSpBA2ua1Cm8ksrtmtN2h98i7FMF7Ivoa9zNgCqYIXJpMs2cOh/Te+rVTUD9dM5KRfQINw8ZCg0SuD8jjO1/q17jpyQKLRD2gz8M/S4pgUiL/KdEfirOEPk42ICeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741140367; c=relaxed/simple;
-	bh=t8x48EmF0+TpzK71MnOEzqfXvvnmv1F8xzBHAsJqg5A=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UBkJTEW3smC3o0ePaFvItWbExYAEBdo2CQLieMisW8bcddbYG5prazDw/R+jyVFAdJQUz9AJcsPMPXL2fX4t8KXsasIXPXA53rw431cOFbCbiz+pPPgJ9C2xmkEyJfLFEmsImqKRFox3tJnwP31jA6tSTxIIszSYtRWzmzYJkUo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Z9KU1cqC; arc=none smtp.client-ip=115.124.30.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1741140358; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=pRK4bd+Uu1FKHV8nOIix+G9vPECpr4JTmDRvSH2QUF0=;
-	b=Z9KU1cqCEKo717iGkN5F0Qtumgmqo0Ma+iIlZgbtdV0/sR7r7A9xjg3J+cPi4INEOuszAxvWsOgD5F4BKKPBP+xX7QL3Wkvq2p30YzvsNXINHDxt/oOUXwlT4wIGhfpZBN7PrY8o1PUdxaQUYGdxQMKr4CBPYfRTZraTiCxOR+M=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0WQjmW2l_1741140347 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 05 Mar 2025 10:05:58 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: fnkl.kernel@gmail.com
-Cc: j@jannau.net,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch,
-	dri-devel@lists.freedesktop.org,
-	asahi@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] drm: adp: Remove unnecessary print function dev_err()
-Date: Wed,  5 Mar 2025 10:05:46 +0800
-Message-Id: <20250305020546.96564-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.32.0.3.g01195cf9f
+	s=arc-20240116; t=1741140382; c=relaxed/simple;
+	bh=rXZ2Zr8lM8TrA/9SvxJsslt+rZS4wfnpBpkYvhXBP7M=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TPoDChVnw69oeTHq3uFzbZxletS9enF8z/t+vy6IKzG/6L9yRAi3P/QwDlhQbvJryxCqyfXuSYjprt1e7PzMEcnM/kkQ3S33CVeWyJKxV5pBOSctmBx6yCwOf5knefPUIegTtRUD0bLSxBFDARWYs8HJkKkzYkSqCZDEDrC9vrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f6GYxL8C; arc=none smtp.client-ip=209.85.219.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6e88983cedaso47887126d6.1;
+        Tue, 04 Mar 2025 18:06:20 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741140379; x=1741745179; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1etl3V0lZaRtG6YH6PccrFQl/uVmRYaudXPpsrJaLBY=;
+        b=f6GYxL8CvqTnt6iJgufZnnLCxP6F4RRJ1Tdr/ccw3Rs2WnWpY+JPVnTtrFQEijYoCT
+         3hOABoUzG4zCSgvQUKs1tsccmYZBIq6oRpSJJhNxhKIfjy0pTJ49y64VAhe822IW5H3r
+         /IKQsgddTlj1S6Tc2USq0rO3beljTSYNno2a3hGEqkS01lsZ/QH+A3n7932QNdcX3jWa
+         Vl9nYFRQbw9WBY6meEiN0xiMf62DCRXZtjNzQF/4LeRkn3z7egh79nwkyHQMqTrwin6Q
+         xyF77v7ZFGV8fAy9A8O0u0IqgGmJVkjkVKPdfKyPEF78G0WYHts6rjMY8yAyp1fdJVAF
+         ea6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741140379; x=1741745179;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1etl3V0lZaRtG6YH6PccrFQl/uVmRYaudXPpsrJaLBY=;
+        b=ZjLbWV26PeSXWOlfEkHsPM9s9F93AU1PEzp1j0/FL4HMaA7T+egim1irUGHyYxuA8E
+         RRf4Hzn+kaQ1r6VPFBhKYnZRmu/dQdNpPmhLIS9gI/0CBAGunGAMC0ghVNUlPh5PCXFK
+         XQotiIBqQ6G/1YQhrIn4s98bQutnZq1C2wton2cmpMSCM2J/Q3/Q8SmrDugI8YIwLf9N
+         /xFQwhaaUocoQXGfbM6rRJ2ftA3oWQ7DNcDpytDZ4GxIid+k5gL0+EcIBb+UpYcwjqEx
+         j9lme6Y05i5Wp6ozENt+YX3ZRd/chceZWKM1NgRC2wA+NoOYWlT/4ByH5KgJYXm6sxKd
+         x45w==
+X-Forwarded-Encrypted: i=1; AJvYcCVm+4JYUuJmCA42ityZf8uskv6B8TQatB2qqaT9u3d3ISeYqK9JDtMIibGtlBMN3gqf6tZJC3NPPjomz94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnBdIBUxqVydi9kYUGsBLPnk9G/Q3nCLaOpmR9fNEU0nSUE+TH
+	Hos5WBg2yff3d9ELYEoLB3M4DT/cd05x8atDlF4LlJHnP4z5h1Rg
+X-Gm-Gg: ASbGnctfbQ4IvwT+lIdDnKejZFI2GVSQQFZa+HJgOQaZkPZOOCfSjiegjpnGhSfyztX
+	cU4KPoYh0KH1ytGTJac1xybrZKgGwoeOjolkfpz+wMq0mDSdOiy/+PjT3969xilssdABEVg9CDH
+	ZaJ9/GcInYbDZsQbkhQxyCJUGnyIaDy2of3bU9MBfaK38Efb6SQNggDIjbQ3XFiDfeaxXut70iA
+	4xopfLFA1g6FSOtzHXxaM+2O+AJNltiFnyFnEC8wUOXCe3VU0IjXqhq4CKoKlTtoYzKJHF84KMu
+	54h1BvUG6H/yJb7kHdT+KCWo61ChUTTkwz3lghzDZRFbhDEph4U9fCPcvTQZ8cwtVQ==
+X-Google-Smtp-Source: AGHT+IFeYhG66XP9kra/BVuJZMG8yqIj6oqdU+8B+nTKQRJtFvYXuuS00o+ECFpnOZZMu6oA70v5aw==
+X-Received: by 2002:a0c:e00e:0:b0:6e8:ebc6:fd5f with SMTP id 6a1803df08f44-6e8ebc70244mr290466d6.20.1741140379230;
+        Tue, 04 Mar 2025 18:06:19 -0800 (PST)
+Received: from nerdopolis2.localnet ([2600:4040:5e66:a800:a5b9:4b66:4113:9357])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8baa851c3sm44981786d6.108.2025.03.04.18.06.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 04 Mar 2025 18:06:18 -0800 (PST)
+From: Adam Simonelli <adamsimonelli@gmail.com>
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Jiri Slaby <jirislaby@kernel.org>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Steven Rostedt <rostedt@goodmis.org>,
+ John Ogness <john.ogness@linutronix.de>,
+ Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
+Subject:
+ Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner if
+ enabled as a console.
+Date: Tue, 04 Mar 2025 21:06:17 -0500
+Message-ID: <7969025.Sb9uPGUboI@nerdopolis2>
+In-Reply-To:
+ <CAHp75VftQASqajiG_z-==CmVMu5Orv_Q8QMj-7W=sxsJPq6bJw@mail.gmail.com>
+References:
+ <20250304035447.3138221-1-adamsimonelli@gmail.com>
+ <20250304035447.3138221-4-adamsimonelli@gmail.com>
+ <CAHp75VftQASqajiG_z-==CmVMu5Orv_Q8QMj-7W=sxsJPq6bJw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-The print function dev_err() is redundant because platform_get_irq_byname()
-already prints an error.
+On Tuesday, March 4, 2025 1:51:52 AM EST Andy Shevchenko wrote:
+> On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
+> >
+> > From: Adam Simonelli <adamsimonelli@gmail.com>
+> >
+> > If CONFIG_NULL_TTY_DEFAULT_CONSOLE is enabled, and CONFIG_VT is disable=
+d,
+> > ttynull will become the default primary console device, based on the li=
+nk
+> > order.
+> >
+> > Many distributions ship with CONFIG_VT enabled. On tested desktop hardw=
+are
+> > if CONFIG_VT is disabled, the default console device falls back to
+> > /dev/ttyS0 instead of /dev/tty.
+> >
+> > This could cause issues in user space, and hardware problems:
+> >
+> > 1. The user space issues include the case where  /dev/ttyS0 is
+> > disconnected, and the TCGETS ioctl, which some user space libraries use
+> > as a probe to determine if a file is a tty, is called on /dev/console a=
+nd
+> > fails. Programs that call isatty() on /dev/console and get an incorrect
+> > false value may skip expected logging to /dev/console
+>=20
+> Missing period at the end.
+>=20
+> > 2. The hardware issues include the case if a user has a science instrum=
+ent
+> > or other device connected to the /dev/ttyS0 port, and they were to upgr=
+ade
+> > to a kernel that is disabling the CONFIG_VT option, kernel logs will th=
+en be
+> > sent to the device connected to /dev/ttyS0 unless they edit their kernel
+> > command line manually.
+> >
+> > The new CONFIG_NULL_TTY_CONSOLE option will give users and distribution
+> > maintainers an option to avoid this. Disabling CONFIG_VT and enabling
+> > CONFIG_NULL_TTY_CONSOLE will ensure the default kernel console behavior
+> > is not dependant on hardware configuration by default, and avoid
+> > unexpected new behavior on devices connected to the /dev/ttyS0 serial
+> > port.
+>=20
+> ...
+>=20
+> >  obj-y                          +=3D vt/
+>=20
+> + blank line.
+>=20
+> > +# If ttynull is configured to be a console by default, ensure that it =
+is linked
+> > +# earlier before a real one is selected.
+> > +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
+> > +                               +=3D ttynull.o
+>=20
+> Here is the question: are you sure that all console drivers that exist
+> in the kernel happen to be here? Have you grepped the source tree for
+> checking this?
+>=20
+Grepping for console_initcall, the only other places I see outside of
+drivers/tty/ is=20
 
-./drivers/gpu/drm/adp/adp_drv.c:470:2-9: line 470 is redundant because platform_get_irq() already prints an error.
-./drivers/gpu/drm/adp/adp_drv.c:476:2-9: line 476 is redundant because platform_get_irq() already prints an error.
+arch/mips/fw/arc/arc_con.c
+arch/mips/sibyte/common/cfe_console.c
+arch/powerpc/kernel/legacy_serial.c
+arch/powerpc/kernel/udbg.c
+arch/powerpc/platforms/powermac/setup.c
+arch/um/drivers/stderr_console.c
+arch/xtensa/platforms/iss/console.c
+drivers/s390/char/con3215.c
+drivers/s390/char/con3270.c
+drivers/s390/char/sclp_con.c
+drivers/s390/char/sclp_vt220.c
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=19211
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/gpu/drm/adp/adp_drv.c | 8 ++------
- 1 file changed, 2 insertions(+), 6 deletions(-)
+> ...
+>=20
+> > +# If ttynull is enabled, but not as a boot console, it is linked and u=
+sed later
+> > +# after the real ones.
+> > +ifneq ($(CONFIG_NULL_TTY_DEFAULT_CONSOLE),y)
+>=20
+> Also can be written as
+> ifeq ($(...),)
+> but it might be less explicit. Up to you.
+>=20
+> >  obj-$(CONFIG_NULL_TTY)         +=3D ttynull.o
+> > +endif
+>=20
+>=20
 
-diff --git a/drivers/gpu/drm/adp/adp_drv.c b/drivers/gpu/drm/adp/adp_drv.c
-index 0a39abdc9238..0eeb9e5fab26 100644
---- a/drivers/gpu/drm/adp/adp_drv.c
-+++ b/drivers/gpu/drm/adp/adp_drv.c
-@@ -466,16 +466,12 @@ static int adp_parse_of(struct platform_device *pdev, struct adp_drv_private *ad
- 	}
- 
- 	adp->be_irq = platform_get_irq_byname(pdev, "be");
--	if (adp->be_irq < 0) {
--		dev_err(dev, "failed to find be irq");
-+	if (adp->be_irq < 0)
- 		return adp->be_irq;
--	}
- 
- 	adp->fe_irq = platform_get_irq_byname(pdev, "fe");
--	if (adp->fe_irq < 0) {
--		dev_err(dev, "failed to find fe irq");
-+	if (adp->fe_irq < 0)
- 		return adp->fe_irq;
--	}
- 
- 	return 0;
- }
--- 
-2.32.0.3.g01195cf9f
+
+
 
 
