@@ -1,204 +1,193 @@
-Return-Path: <linux-kernel+bounces-546634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24888A4FD24
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:05:34 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A236A4FF22
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:57:31 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 309F2165036
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:05:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C36F01890D57
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:57:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21164205515;
-	Wed,  5 Mar 2025 11:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ADE62441A3;
+	Wed,  5 Mar 2025 12:57:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qBVkWa+T"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="o+kurU52"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 678D31A2397;
-	Wed,  5 Mar 2025 11:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55E96201270
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:57:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172712; cv=none; b=PDUuxiBC/lQXWmq7jHuuGg5ht37M+EzmgrXMQsyGnVH5qQN8Lw0L5d5Ixk9+vO1QSHR5L5vuJoeyJTLnvdyp8h1Kn83Zn08JVFWuj8agCaUMSKBi7v/jWTn2/cTSrxln3IqUC+zZxVS/vfe5lrWl+LJXqSaKHRxS1GEACP7cllo=
+	t=1741179441; cv=none; b=r6oaIYsfeoAYp3qAsIG+VANYxrvu+JBPiswZo+346jQS0l0Ksy7nIja2G59e8PZPNeOLsopPZNKd7Eykop9wo8tgnOvDZ1mzfChnH/OuVtxP7pOBYZzD6P/55Aa4/gIBMXGowJPkTWrMefaEd42PwzF/tnpcZ7sDZJeUsel9unU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172712; c=relaxed/simple;
-	bh=Wn+HkeuykAgkMxuLx9Wzsoz+97Luiz91NvrSXcwMjaw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C/Tkh9WHCGmQhgZ55+pYB3yTmwq902YYitd2EY+VsgjBQqGWLxJmyfSO4ZZnKdtoasmnZeT6+3mhZGUHbVgyR3DUiuRuXe/2nR5tm0C1Ll3IZmXAwT3J+Ci2lWtNkyCrv224/E1Yh/woZpOhG8mi7Hbs5mvHGmPi5+udDiG0hW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qBVkWa+T; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id E63F0C4CEE9;
-	Wed,  5 Mar 2025 11:05:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741172712;
-	bh=Wn+HkeuykAgkMxuLx9Wzsoz+97Luiz91NvrSXcwMjaw=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=qBVkWa+TLzXxlfX4DDUSH4nq9ONz+wRBPrDRFEtsnC1JtdrbntnlD4+5zDdn+TpNf
-	 8XdkHi05I4IgJkNEj6GiNjPFidGSTd5Sq3z3rihU24JnouQmUBxJWaGjrh14fGzQf1
-	 J5GnDnUEe2TPnshIO2fIE80llYIBnpnNjRHFHNMX0MZyqtqQbYInzCiM3PTNwIKRI0
-	 RyU/qkoI0All4z17Lk6T6bagQKh8e3BpQHquXg4kIfiQYhNimWOAgjr5PhMqDdolzF
-	 VQelBSkQOIxgER1EqNwnCoAxifC79sK0v1FFlFVxuznTP4KXexU6MfYcBNM4ig51pq
-	 vuZE5MlthWNmw==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id D4081C19F32;
-	Wed,  5 Mar 2025 11:05:11 +0000 (UTC)
-From: Keguang Zhang via B4 Relay <devnull+keguang.zhang.gmail.com@kernel.org>
-Date: Wed, 05 Mar 2025 19:05:04 +0800
-Subject: [PATCH v13 1/2] dt-bindings: mtd: Add Loongson-1 NAND Controller
+	s=arc-20240116; t=1741179441; c=relaxed/simple;
+	bh=gd5LQxYSNobGONqsfWu3J4CvsQJn9S8T/g4qqw/qSsQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:MIME-Version:
+	 Content-Type:References; b=RxY4iwa48K0cs+EUEVx+9arLEW8DqGGfzXXWNpm+iTNgEkA/8MB8+qNhKWXleCYGFlzHf3UtByoaiDFQz8SD9ooQ7+Gb0GU9r1hsKhoC+hnOlPFCx3ims1W3HOn+YJt+vUDvLjVFNgoYdTi26bbus+iNyJSyiuuHYojzxHAP0wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=o+kurU52; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250305125717epoutp03bb4b9e0245981e2d921d3e7214df3185~p6XkWSBhp2215422154epoutp03n
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:57:17 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250305125717epoutp03bb4b9e0245981e2d921d3e7214df3185~p6XkWSBhp2215422154epoutp03n
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1741179437;
+	bh=gd5LQxYSNobGONqsfWu3J4CvsQJn9S8T/g4qqw/qSsQ=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=o+kurU52q76p8064cA/1np7LRzyqDOvytsjGSNEDr0eAzDZtCgr0kyQJc58YJ4liv
+	 ClOOHf9oBdHbEAjf6+XDjOVdPczNytOQBXJafOXSE9hyYTSCW2Lw8Buc02nuNwq8V5
+	 pkDnpUHIJ7w9Fefjxy5j1AlCRLwBDooBLLDrXx0A=
+Received: from epsnrtp3.localdomain (unknown [182.195.42.164]) by
+	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
+	20250305125716epcas5p322c88e6ed91a5222a4693b12e9234e1b~p6XjsaVpt1709517095epcas5p3K;
+	Wed,  5 Mar 2025 12:57:16 +0000 (GMT)
+Received: from epsmges5p2new.samsung.com (unknown [182.195.38.174]) by
+	epsnrtp3.localdomain (Postfix) with ESMTP id 4Z7CHt4xThz4x9Pp; Wed,  5 Mar
+	2025 12:57:14 +0000 (GMT)
+Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
+	epsmges5p2new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	BD.F8.19933.A2A48C76; Wed,  5 Mar 2025 21:57:14 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas5p4.samsung.com (KnoxPortal) with ESMTPA id
+	20250305090444epcas5p4acfc664ce6db58fb94e563626d6dba98~p3MhwhOu-1500615006epcas5p4c;
+	Wed,  5 Mar 2025 09:04:44 +0000 (GMT)
+Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20250305090444epsmtrp18b28e75d93a81114b71ebefec3d4f9cf~p3MhviHD91135411354epsmtrp1b;
+	Wed,  5 Mar 2025 09:04:44 +0000 (GMT)
+X-AuditID: b6c32a4a-b87c770000004ddd-30-67c84a2aac7e
+Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
+	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	13.5D.23488.CA318C76; Wed,  5 Mar 2025 18:04:44 +0900 (KST)
+Received: from FDSFTE462 (unknown [107.122.81.248]) by epsmtip2.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20250305090440epsmtip2174139d7bcd7df32de34daa127ba8ad4~p3MemAZKR0782607826epsmtip2M;
+	Wed,  5 Mar 2025 09:04:40 +0000 (GMT)
+From: "Shradha Todi" <shradha.t@samsung.com>
+To: =?iso-8859-2?Q?'Krzysztof_Wilczy=F1ski'?= <kw@linux.com>
+Cc: "'Geert Uytterhoeven'" <geert@linux-m68k.org>, "'Fan Ni'"
+	<nifan.cxl@gmail.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pci@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-perf-users@vger.kernel.org>, <manivannan.sadhasivam@linaro.org>,
+	<lpieralisi@kernel.org>, <robh@kernel.org>, <bhelgaas@google.com>,
+	<jingoohan1@gmail.com>, <Jonathan.Cameron@huawei.com>,
+	<a.manzanares@samsung.com>, <pankaj.dubey@samsung.com>, <cassel@kernel.org>,
+	<18255117159@163.com>, <xueshuai@linux.alibaba.com>,
+	<renyu.zj@linux.alibaba.com>, <will@kernel.org>, <mark.rutland@arm.com>,
+	"'Yoshihiro Shimoda'" <yoshihiro.shimoda.uh@renesas.com>, "'Linux-Renesas'"
+	<linux-renesas-soc@vger.kernel.org>
+In-Reply-To: <20250305074447.GC847772@rocinante>
+Subject: RE: [PATCH v7 3/5] Add debugfs based silicon debug support in DWC
+Date: Wed, 5 Mar 2025 14:34:39 +0530
+Message-ID: <065b01db8dad$a2f0a4a0$e8d1ede0$@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250305-loongson1-nand-v13-1-a5bac21631cd@gmail.com>
-References: <20250305-loongson1-nand-v13-0-a5bac21631cd@gmail.com>
-In-Reply-To: <20250305-loongson1-nand-v13-0-a5bac21631cd@gmail.com>
-To: Miquel Raynal <miquel.raynal@bootlin.com>, 
- Richard Weinberger <richard@nod.at>, Vignesh Raghavendra <vigneshr@ti.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-mtd@lists.infradead.org, linux-kernel@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-mips@vger.kernel.org, 
- Keguang Zhang <keguang.zhang@gmail.com>, 
- Krzysztof Kozlowski <krzk@kernel.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1741172709; l=3113;
- i=keguang.zhang@gmail.com; s=20231129; h=from:subject:message-id;
- bh=EoSyInd/tPhcSSV/G9oyENpJ97B1jinURWqxESSsYu4=;
- b=nlQ8VE3UGDfj1uy6AWCHyUafsaGiIs4oXzhdyhTBrg+wQYX2jV1K0eIlDZPkAWQkMLHQxDUHk
- W+LvJ9mUJBCDEXmySc3RVeyMrLqbFeE2DkCNJ0D++RyyXAFYMPBjTAp
-X-Developer-Key: i=keguang.zhang@gmail.com; a=ed25519;
- pk=FMKGj/JgKll/MgClpNZ3frIIogsh5e5r8CeW2mr+WLs=
-X-Endpoint-Received: by B4 Relay for keguang.zhang@gmail.com/20231129 with
- auth_id=102
-X-Original-From: Keguang Zhang <keguang.zhang@gmail.com>
-Reply-To: keguang.zhang@gmail.com
-
-From: Keguang Zhang <keguang.zhang@gmail.com>
-
-Add devicetree binding document for Loongson-1 NAND controller.
-
-Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
-Signed-off-by: Keguang Zhang <keguang.zhang@gmail.com>
----
-Changes in v13:
-- None
-
-Changes in v12:
-- Add MTD label in the example.
-
-Changes in v11:
-- Remove the requirement for 'nand-use-soft-ecc-engine' and 'nand-ecc-algo'.
-- Add 'reg-names' to support DMA address.
-
-Changes in v10:
-- None
-
-Changes in v9:
-- Change the compatible to 'loongson,ls1*-nand-controller'.
-- Rename the file to loongson,ls1b-nand-controller.yaml
-- Some minor adjustments.
-
-Changes in v8:
-- Add a description part.
-- Adjust the compatible because the match data for ls1c-nfc differs from ls1b-nfc.
-- Mark 'nand-use-soft-ecc-engine' and 'nand-ecc-algo' as mandatory.
-- Delete the superfluous blank lines.
-
-Changes in v7:
-- rename the file to loongson,ls1b-nfc.yaml
-
-Changes in v6:
-- A newly added patch
----
- .../mtd/loongson,ls1b-nand-controller.yaml         | 72 ++++++++++++++++++++++
- 1 file changed, 72 insertions(+)
-
-diff --git a/Documentation/devicetree/bindings/mtd/loongson,ls1b-nand-controller.yaml b/Documentation/devicetree/bindings/mtd/loongson,ls1b-nand-controller.yaml
-new file mode 100644
-index 000000000000..a09e92e416c4
---- /dev/null
-+++ b/Documentation/devicetree/bindings/mtd/loongson,ls1b-nand-controller.yaml
-@@ -0,0 +1,72 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/mtd/loongson,ls1b-nand-controller.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Loongson-1 NAND Controller
-+
-+maintainers:
-+  - Keguang Zhang <keguang.zhang@gmail.com>
-+
-+description:
-+  The Loongson-1 NAND controller abstracts all supported operations,
-+  meaning it does not support low-level access to raw NAND flash chips.
-+  Moreover, the controller is paired with the DMA engine to perform
-+  READ and PROGRAM functions.
-+
-+allOf:
-+  - $ref: nand-controller.yaml
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - enum:
-+          - loongson,ls1b-nand-controller
-+          - loongson,ls1c-nand-controller
-+      - items:
-+          - enum:
-+              - loongson,ls1a-nand-controller
-+          - const: loongson,ls1b-nand-controller
-+
-+  reg:
-+    maxItems: 2
-+
-+  reg-names:
-+    items:
-+      - const: nand
-+      - const: nand-dma
-+
-+  dmas:
-+    maxItems: 1
-+
-+  dma-names:
-+    const: rxtx
-+
-+required:
-+  - compatible
-+  - reg
-+  - reg-names
-+  - dmas
-+  - dma-names
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    nand-controller@1fe78000 {
-+        compatible = "loongson,ls1b-nand-controller";
-+        reg = <0x1fe78000 0x24>, <0x1fe78040 0x4>;
-+        reg-names = "nand", "nand-dma";
-+        dmas = <&dma 0>;
-+        dma-names = "rxtx";
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+
-+        nand@0 {
-+            reg = <0>;
-+            label = "ls1x-nand";
-+            nand-use-soft-ecc-engine;
-+            nand-ecc-algo = "hamming";
-+        };
-+    };
-
--- 
-2.43.0
+Content-Type: text/plain; charset="iso-8859-2"
+Content-Transfer-Encoding: quoted-printable
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJfby7SiE0e/TbLvAHLJIl0P7SXpgHiQm8TAh/83CQB4BrFQwHvpDbsAQ7NFRkCkbJgbAIxNbulA4ETfrmx01XmsA==
+Content-Language: en-in
+X-Brightmail-Tracker: H4sIAAAAAAAAA02TfUxTVxiHOb39glhyBVwPbNp6ZVsGK7ZYusOK25IpuWE6URaXuBjWwV2L
+	lLbrh+IyNpQGsKKgwwkNNoLAgDkSyoeglBFAunVDIzY1E0ioAhEdHxsdGQHGWloW/nvOOc+b
+	9/zOycvGwr5lRbGzVHpKq5IpCWYIvaP/jdcFMSk/y4WuoteQs2iZha7270S1ZxVosKwBQ1OP
+	bTTU4KlkoaZqFxPllywzkPWpi4Ee3q5ioiGLnYmc7c101D49S0PGFSMdjRnPMVDdowc0tNph
+	A6im3cNC1QXTAK11d7KQcTQBzS21MtHftgXme1zyRkM5g7xpuQnILvMYi7xuNZDGgRkGaW06
+	xyRHXd1Msq+/2HvoTiQnnFdpZGvtN+Tib5fo5MW2JkAuWHekhh7LTlJQskxKy6dUGerMLJV8
+	L/FBWvr76QkSoUggSkRvEXyVLIfaS+w7kCpIzlJ60xP8kzKlwbuVKtPpiN3vJGnVBj3FV6h1
+	+r0EpclUasSaOJ0sR2dQyeNUlP5tkVAYn+AVP81WXHw+ztBYYe6v5jlWPhjhmkAwG+JieLb8
+	PjCBEHYYfgfAApsD8y/+AtA084DhXywCuGI9z9woGfdYGT4Ow20A3q7a45eeAVhfeQH4Dpj4
+	m3DCuYL5OAJPgitdM3SfhOEOBuwpLFyXgnEhdE8NrHM4ngIb3W6vxGbT8Wh4uYTrQw6eCIsn
+	tvkMDr4V/lI5QfcxhsfBKYc5wLGwvvoF5r8bHy5N1jP8bU/Apf5x4He48O5SyXoyiP8UDP+Y
+	rwsU7INFNXXAz+Hwub2N5ecoOF1aGGA5bGytCPhKuNhaS/Pzu7DXWUX383Z4xdFM8zcLhReW
+	JwIOB3ZaNngX9Kx2B/xIaBl8yCgDhHlTNvOmbOZN2cybMlwH9CYQSWl0OXJKl6CJV1Gn/v/x
+	DHWOFaxPR0xKJ3CPz8f1ARob9AHIxogIzguHXR7GyZSd/pLSqtO1BiWl6wMJ3ve+hEVty1B7
+	x0ulTxeJE4ViiUQiTtwjERFcTkGXUR6Gy2V6KpuiNJR2o47GDo7Kp30dc1R0Q/K4I1d0emyE
+	3pOnszfM2v7UTEVNb3nloDxi4aBJ6ryXWsH7pCWvjVdhOHyNEdKPVd1yHjXYYew/945/XH7i
+	CzJ0J5dq31GHBnql3+1XaGmT/z7ZP1Q0MCmeH453T5q2CghDifRkReT3Z5KeMLu3xEoOTwfx
+	5lZzR4SDp4rTqphDZVcEGZ6ID+/ao1NeMpSO8i1Pa1vKTdIGtSU7aI2TfRz7Xb57yFrfHmO+
+	Nev66syBzl6hIe3lI8ON0txgR4k1JdfzkeQ8N/pIUNrny8nS5LWg+yj8s0zeoV3Ds4cqtz9r
+	ruH1zN+p+FHwKoF3Z0XHU6WuR9fyjgl/4LUQdJ1CJorBtDrZf2vNyhamBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrOIsWRmVeSWpSXmKPExsWy7bCSvO4a4RPpBhdeClhcaf/NbjH9sKLF
+	kqYMi2MTVjBbPLu1l8lixZeZ7BarFl5js2jo+c1qsenxNVaLy7vmsFmcnXeczeLK1nUsFltf
+	vmOyaPnTwmJxt6WT1WLp9YtMFn+37WW0WLT1C7vFwuaXjBb/9+xgt2i5Y2rx/udmNouvez+z
+	OYh7LF4xhdVjzbw1jB47Z91l91iwqdSj5chbVo9NqzrZPO5c28PmcehwB1DyoaXHkyvTmTw2
+	L6n3+HZmIotH35ZVjB6fN8kF8EVx2aSk5mSWpRbp2yVwZdz9+Iyl4IVgxd+OGcwNjM/4uhg5
+	OSQETCQefNnE2sXIxSEksJtRYsWNNmaIhKTE54vrmCBsYYmV/56zg9hCAs8YJd59kwex2QR0
+	JJ5c+QNWLyJgI/Fn51sWEJtZ4AGrxNtb1RD125glNu0RBbE5BQwkHj47wghiCwt4Sax8+BCo
+	noODRUBFYlKPOIjJK2Ap0fEErJpXQFDi5MwnUBMNJJYs/MUEYWtLLFv4GupKBYmfT5exQlyQ
+	JfHz8ANGiBpxiaM/e5gnMArPQjJqFpJRs5CMmoWkZQEjyypGydSC4tz03GTDAsO81HK94sTc
+	4tK8dL3k/NxNjOC0oaWxg/Hdtyb9Q4xMHIyHGCU4mJVEeF+fOp4uxJuSWFmVWpQfX1Sak1p8
+	iFGag0VJnHelYUS6kEB6YklqdmpqQWoRTJaJg1OqgYllU+/ZbS7nDVSiWZOsX3psLnPw4Z7B
+	6/n7Wkxx+Z5eToPSL1a523UbltTM9Ahc9E9GM/Cgot3Ta9K1saIVC5+0i1YE+Pk9uiT648AM
+	zS6tnE7lPv4eH9kkjo1KU/52y+94qy8WYXdp14UzXC9N+OIiQg9vLp+k8+Xgik/db1oe5wr+
+	8O04wpuo99dI7drthVvnmTMpKi7w/idjk6GaeHH/09X/pxbctOMO9NsaErRpUr2B0EHlusyN
+	O3S3PQm4x81Q6nVM5FjtMpX2w2wb1JeVrz5r09KVylLzV81cZm+ED1Pvm6m/7rRFWHd2Mx1g
+	mbul7ELg4vPrShIP+Wb8+M695LKs6OInC3flnD3pqsRSnJFoqMVcVJwIAE1XIcOKAwAA
+X-CMS-MailID: 20250305090444epcas5p4acfc664ce6db58fb94e563626d6dba98
+X-Msg-Generator: CA
+X-Sendblock-Type: REQ_APPROVE
+CMS-TYPE: 105P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20250221132035epcas5p47221a5198df9bf86020abcefdfded789
+References: <20250221131548.59616-1-shradha.t@samsung.com>
+	<CGME20250221132035epcas5p47221a5198df9bf86020abcefdfded789@epcas5p4.samsung.com>
+	<20250221131548.59616-4-shradha.t@samsung.com> <Z8XrYxP_pZr6tFU8@debian>
+	<20250303194647.GC1552306@rocinante>
+	<CAMuHMdWens9ZZrjNH1Bd2AN3PJEP1KSUGdiJcBCt0uPGH_GiiA@mail.gmail.com>
+	<20250304154638.GB2310180@rocinante>
+	<061201db8d25$dd1e2bd0$975a8370$@samsung.com>
+	<20250305074447.GC847772@rocinante>
 
 
+
+> -----Original Message-----
+> From: 'Krzysztof Wilczy=F1ski'=20<kw=40linux.com>=0D=0A>=20Sent:=2005=20M=
+arch=202025=2013:15=0D=0A>=20To:=20Shradha=20Todi=20<shradha.t=40samsung.co=
+m>=0D=0A>=20Cc:=20'Geert=20Uytterhoeven'=20<geert=40linux-m68k.org>;=20'Fan=
+=20Ni'=20<nifan.cxl=40gmail.com>;=20linux-kernel=40vger.kernel.org;=20linux=
+-=0D=0A>=20pci=40vger.kernel.org;=20linux-arm-kernel=40lists.infradead.org;=
+=20linux-perf-users=40vger.kernel.org;=20manivannan.sadhasivam=40linaro.org=
+;=0D=0A>=20lpieralisi=40kernel.org;=20robh=40kernel.org;=20bhelgaas=40googl=
+e.com;=20jingoohan1=40gmail.com;=20Jonathan.Cameron=40huawei.com;=0D=0A>=20=
+a.manzanares=40samsung.com;=20pankaj.dubey=40samsung.com;=20cassel=40kernel=
+.org;=2018255117159=40163.com;=0D=0A>=20xueshuai=40linux.alibaba.com;=20ren=
+yu.zj=40linux.alibaba.com;=20will=40kernel.org;=20mark.rutland=40arm.com;=
+=20'Yoshihiro=20Shimoda'=0D=0A>=20<yoshihiro.shimoda.uh=40renesas.com>;=20'=
+Linux-Renesas'=20<linux-renesas-soc=40vger.kernel.org>=0D=0A>=20Subject:=20=
+Re:=20=5BPATCH=20v7=203/5=5D=20Add=20debugfs=20based=20silicon=20debug=20su=
+pport=20in=20DWC=0D=0A>=20=0D=0A>=20Hello,=0D=0A>=20=0D=0A>=20>=20I=20think=
+=20we=20shouldn't=20move=20the=20log=20level=20to=20be=20a=20WARN.=20I=20be=
+lieve=20many=0D=0A>=20>=20controllers=20might=20not=20support=20RAS=20DES=
+=20feature=20in=20their=20design=20and=0D=0A>=20>=20giving=20a=20warn=20dum=
+p=20would=20draw=20unnecessary=20attention.=0D=0A>=20=0D=0A>=20There=20will=
+=20be=20no=20backtrack=20printed=20with=20neither=20dev_err()=20nor=20dev_w=
+arn(),=20which=20is=20what=20we=20were=20using=20here.=20=20Using=20dev_WAR=
+N()=20or=0D=0A>=20the=20WARN()=20macro=20directly=20would=20be=20an=20overk=
+ill=20in=20this=20case,=20indeed.=0D=0A>=20=0D=0A=0D=0AOh=20sorry,=20I=20th=
+ought=20we=20were=20talking=20about=20WARN()=20here.=0D=0A=0D=0A>=20>=20My=
+=20opinion=20is=20to=20silently=20let=20it=20fail=20unless=20the=20user=20i=
+s=20actually=0D=0A>=20>=20interested=20in=20getting=20the=20RAS=20DES=20fea=
+ture=20up.=0D=0A>=20=0D=0A>=20I=20think,=20what=20we=20have=20there=20now=
+=20is=20fine.=20=20We=20don't=20error=20on=20the=20lack=20of=20RAS=20DES=20=
+capability=20when=20the=20platform=20does=20not=20support=20it,=0D=0Aand=0D=
+=0A>=20only=20return=20an=20error=20following=20a=20memory=20allocation=20f=
+ailure,=20which=20should=20ideally=20never=20happen.=0D=0A>=20=0D=0A>=20Tha=
+t=20said,=20have=20a=20look=20at=20the=20following:=0D=0A>=20=0D=0A>=20=20=
+=20https://web.git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=
+=3Dcontroller/dwc=0D=0A>=20=0D=0A>=20This=20is=20how=20the=20code=20looks=
+=20like=20at=20the=20moment.=0D=0A>=20=0D=0A>=20We=20can=20still=20move=20i=
+t=20to=20dev_dbg(),=20so=20basically=20suppress=20any=20errors=20or=20warni=
+ngs=20from=20being=20printed=20outside=20of=20the=20debug=20log=20level,=0D=
+=0Aif=20you=0D=0A>=20think=20it=20would=20be=20better.=0D=0A>=20=0D=0A=0D=
+=0ANo,=20the=20current=20version=20looks=20perfect.=20Thanks=21=0D=0A=0D=0A=
+>=20Thank=20you=21=0D=0A>=20=0D=0A>=20=09Krzysztof=0D=0A=0D=0A
 
