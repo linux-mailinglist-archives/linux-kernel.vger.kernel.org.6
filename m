@@ -1,241 +1,236 @@
-Return-Path: <linux-kernel+bounces-546542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B3D3A4FBEF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:30:02 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A26EA4FBED
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:29:43 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 99FCE3A8E86
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:29:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC14416B7D5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:29:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E17B7207656;
-	Wed,  5 Mar 2025 10:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966B1205ACB;
+	Wed,  5 Mar 2025 10:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Q6UzoFVA"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="FqsgI8T9"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2051.outbound.protection.outlook.com [40.107.105.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A514E1D6DAA
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:29:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741170585; cv=none; b=gqY+DD5DgNONfyMCxuV3a7ta0bfyw3z9meB665DzQoYFCu46ATTETUL4oHujPP82jSSx0QUcK8pOLV/OLjN242JjLLm55hw7Nk7zclrBfVd+4LsYzig2K/YIEqav2eNr0MgnsVNU2ZeEK0mGya0mKvWbXFtf4f/J0ID26XaHyVA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741170585; c=relaxed/simple;
-	bh=/ssVLQjzkOF7veq0ROXGQInOSKc7khRxeWWrgBk0TQ4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=jh5OatM+bXmXTL5dZC0NVg/euNlpiMgnunZFgAhJzfBEKvDW93ZIuhr3Tr2CoREbdft3GwynbT9CIZQYSKpLJ+Ze8P+HIjLMsOOgk+fw1GPFdTp2CH6rk8M/dTUhwIoOPIJlGGbhx8GOBIZ31ZvFm3XyuU1Y05cUTtTh6Aoqxnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Q6UzoFVA; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52524Ya8018845;
-	Wed, 5 Mar 2025 10:29:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=/ssVLQ
-	jzkOF7veq0ROXGQInOSKc7khRxeWWrgBk0TQ4=; b=Q6UzoFVATlWYQY9X5GKHKs
-	Rl8OwH1UY2ySxslORXYMyGvTORe9XzsnYeHIhqhvRtUGrCebXRivDoe9u2b8V+fj
-	BR0eZHipUOLzH6kjZk5SEygA1S85JAIaPtxS2NAnT3f+PAeNU3FIb9ia/gd7Y1/S
-	XkIJfBH0R/hNgYj347I73aZ4ky96+BcZasq+xKzGqPzEbjjPtTMQ6fLk8vKgWXgN
-	QQbS8oNgvSduMIIMN17KcIDl8a4oa3xwX+H01wQQ+qBWVzvo6IHKnbdqDI1OnQZs
-	lB4+fx/6f57+krVMwKqkY1coLfESGSV58TDROWuXx0hVkBnBQPwwXmWyQ7WYCawQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpmw7x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 10:29:02 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 525AAm9Z030868;
-	Wed, 5 Mar 2025 10:29:01 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4562xpmw7v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 10:29:01 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5257eENd013784;
-	Wed, 5 Mar 2025 10:29:00 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 454e2kt78x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 10:29:00 +0000
-Received: from smtpav06.wdc07v.mail.ibm.com (smtpav06.wdc07v.mail.ibm.com [10.39.53.233])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 525ASx6D26608290
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Mar 2025 10:28:59 GMT
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 33C4A58054;
-	Wed,  5 Mar 2025 10:28:59 +0000 (GMT)
-Received: from smtpav06.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BCE705803F;
-	Wed,  5 Mar 2025 10:28:54 +0000 (GMT)
-Received: from li-c18b6acc-24ee-11b2-a85c-81492619bda1.ibm.com (unknown [9.124.217.27])
-	by smtpav06.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Mar 2025 10:28:54 +0000 (GMT)
-Message-ID: <2502514e7bf51b6466f8a2682170d7163e5f5250.camel@linux.ibm.com>
-Subject: Re: [PATCH 1/1] sched/fair: Fix invalid pointer dereference in
- child_cfs_rq_on_list()
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Vincent Guittot
-	 <vincent.guittot@linaro.org>
-Cc: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        riel@surriel.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com, odin@uged.al,
-        linux-kernel@vger.kernel.org
-Date: Wed, 05 Mar 2025 15:58:53 +0530
-In-Reply-To: <f1bf21e6-4fd3-4f97-b28f-b0e8dc37ff91@arm.com>
-References: <20250304170007.245261-1-aboorvad@linux.ibm.com>
-	 <CAKfTPtCJKkwFeMKUrD3o224Nz4N+1qjtq0LvL945k9tJ8t8h-g@mail.gmail.com>
-	 <f1bf21e6-4fd3-4f97-b28f-b0e8dc37ff91@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED6971D6DAA;
+	Wed,  5 Mar 2025 10:29:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741170575; cv=fail; b=ARJhUO+wu/RB0kDCUc0O1BVhBe2Ap3GotY2j4rahuzLPCP/43g3QhGsbPx0P4GiSpApV5FZNGYyP3/BF+4d9cegEA8TndF68yRdHZXhj3X30HFXwYggUdgC5If05QiFWSL5j9zlZlRbkJEeA1FTb72NEbd6tUyjXXBR8wNoTKnQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741170575; c=relaxed/simple;
+	bh=jJ5WHUIQi1BwWvXxbKANu/eyLhUD135JVNCESaU5t7s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=br8155GgJUcuT255oWKTIMAJ9NqNwDc8qE+WYWh0TsqCnI0kj8+FqCNE+WEokTn8pND3GRtB60zDwFvOdfhO+v6xvC229stuztHohb2RvK9JZOCm8r2M5/yNezszsGf+geBn9eirke2rqdCmjIC3YdgKGi5Hpv/zrFBrewij0JU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=FqsgI8T9; arc=fail smtp.client-ip=40.107.105.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ayypQP90ShSQQ4vG+z7s8jN5nkIlY/qrspNTSf0Enh4Bf7SxZ09URYkpNkkZPy9bxd+sJ2447hTaBXHTO5p3QSZp4YOdUWtHZJhSvSOEMLpkju/2TwPrWuYTGqjO1TLoSNg2vgvj2FKW+wLFb1uWqE0LGs8+VUBnqmii/d7Wjlgy6fr4EOFRYNGxGzkbJA3qw1Td2fq+o1vAkudVV9A2ADvQzWB0Czk8eEMMoobylvbhuA49bL6b8eWdg5DU2QB0CPt27TXiyp/C619txnYSk6iSuJQkX+sCxYbel4JeKgofxEKge7JnNTUyLEs/pjtTbr60uhHg7MN+ZhhnSjq9bQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+oQBv9DGX5MBjYgZKt1qCzyNby2mcL2ak2VbrbY1MiI=;
+ b=k3XRFuXzkCQ8xoZUS9ma8G8l+deAjq7KpoIR+EveZbKeP2yztJno3/QJ7ZtJCgGXakaSyPFlxzhb0jOSBtI5iKuTrJktVpUm7tyqFpTUM3F1pl2XhJF3JYy/JeYrxrRnwFdPdRBg4K4DF005SsHhFIM5FS6A+AaKCw+Sx+Igj+gjlXUP+kPPFoLBwGWocSarlb/MyUAT59pPvcMcdWuqPnw4s0yCXq2DTbkO24UCc/xH8ODOecvAHRsi1WTRLl+VvgaTMQwwRdyuVICnINiGIpBwqNOG60jek0t1uGbYwPyb7qNzPI91BLDXJ+qu+lZWVOl9AJRtNg08n/ymPN05sQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+oQBv9DGX5MBjYgZKt1qCzyNby2mcL2ak2VbrbY1MiI=;
+ b=FqsgI8T9o+x7HrGvIsQhbACbyInG+/j1gb7UhGX36j31/khDLTK3iDoaU5jxUzaYLSNeKEocrkWXYorwAqly0jywf+OY2pbbDFimEzN/FjXWyLADmeA9PBSGq1QifPvTaX5YtgB6/J0VwAOZP7/W9KKvKWqhg0yd/1ZdOhxSs3lPWdfObe0TOqmh/18hdMI6X2OrN0UPZjlDg+zCAHB9T9UKDRqfIdnU9crkikcY+ZkEScr6nUXoavXXhkQrteFGFedPApCc2g3QNMsfVOD1XHqUYV8fq14q8GTpTT4NWKYPqPb4UJRXetHgtBE60P1kajqkGfO3GzlIR+u8m/jxcw==
+Received: from AS8PR04MB8642.eurprd04.prod.outlook.com (2603:10a6:20b:429::24)
+ by AS5PR04MB9729.eurprd04.prod.outlook.com (2603:10a6:20b:650::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.28; Wed, 5 Mar
+ 2025 10:29:31 +0000
+Received: from AS8PR04MB8642.eurprd04.prod.outlook.com
+ ([fe80::50d3:c32a:2a83:34bb]) by AS8PR04MB8642.eurprd04.prod.outlook.com
+ ([fe80::50d3:c32a:2a83:34bb%7]) with mapi id 15.20.8511.015; Wed, 5 Mar 2025
+ 10:29:31 +0000
+From: Jacky Bai <ping.bai@nxp.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, Yuanjie Yang
+	<quic_yuanjiey@quicinc.com>
+CC: "lpieralisi@kernel.org" <lpieralisi@kernel.org>, "rafael@kernel.org"
+	<rafael@kernel.org>, "daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>,
+	"james.morse@arm.com" <james.morse@arm.com>, "d-gole@ti.com" <d-gole@ti.com>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>,
+	"khilman@baylibre.com" <khilman@baylibre.com>, "quic_tingweiz@quicinc.com"
+	<quic_tingweiz@quicinc.com>
+Subject: RE: [PATCH v2] cpuidle: psci: Init cpuidle only for present CPUs
+Thread-Topic: [PATCH v2] cpuidle: psci: Init cpuidle only for present CPUs
+Thread-Index: AQHbOzhFh9gfrwvKcE+pYcIsioxEIrNkuiWAgABBTwCAAACKMA==
+Date: Wed, 5 Mar 2025 10:29:30 +0000
+Message-ID:
+ <AS8PR04MB8642344F9CA6D423D068E46C87CB2@AS8PR04MB8642.eurprd04.prod.outlook.com>
+References: <20241120103749.1450017-1-ping.bai@nxp.com>
+ <Z8fv3X0Pivh8zbMg@cse-cd02-lnx.ap.qualcomm.com>
+ <20250305102542.36q7lmctx5jm4mg7@bogus>
+In-Reply-To: <20250305102542.36q7lmctx5jm4mg7@bogus>
+Accept-Language: zh-CN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR04MB8642:EE_|AS5PR04MB9729:EE_
+x-ms-office365-filtering-correlation-id: f77963b0-28fd-403b-6fb6-08dd5bd09d80
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?aMFjdCHzy9JSyY1KtHSkPbN7nyAUgbUYLiUddZu7eeAGfdsnkcckl2Gjx+x7?=
+ =?us-ascii?Q?58ocoJS0xe5+HPH5J28vXhZBRyouYpDGLOIFV3PP1+7c7WcuR93UlGcLK3OS?=
+ =?us-ascii?Q?ctr4sTsUXqQ1OJ6+bLrQD328i8qS26W2LCsB/BIBRIe/uj8ZevB+U9xCfa2v?=
+ =?us-ascii?Q?Cb11lfbdEoKfQvBm1zlATeMnBRjXnyqQMHYvKMNt/DuFNbSTuxHpJv+5hvto?=
+ =?us-ascii?Q?OF838H4I9pHN/F7tIerQNN6IMoapsqQQ2++uuombfbMVU2syonOX/dKh2yj0?=
+ =?us-ascii?Q?u6HJIfvNlr7cZw8OzF0Y09+xTH62UmKWOehYS78gfAih1KP4q3d/jcEi1Mc1?=
+ =?us-ascii?Q?AooGN+UVcv7hlnd03jh0se3CEFNMZN01vPTZ4upVsgjH+4Natc9OBODoq76o?=
+ =?us-ascii?Q?ApLfc2kkUTC10ToqSpwUhI2Sb2xSeVKxK2ZYqq2YyxhX9nRPS0Y1OjaCvf/a?=
+ =?us-ascii?Q?jje2ZTCPKwBqWmU8H5i16OiOhKUZ8DsK36pigOLi7yL9qT7paCXWpQOzqkPD?=
+ =?us-ascii?Q?SRoAOCsKZIu+xmnpskE5CWNk6KaP6l2aMJCLBWy5+WwTv/QkM6yMudojwoC0?=
+ =?us-ascii?Q?vhVGtEpHCD4TU4/9xo36Wz3DWBGy7uDuw+DJie5TGz1fiA5klFr5O04d5awS?=
+ =?us-ascii?Q?9N4u56neNzESb9Q9NhyfJWYMCgXQoBWze/0K+PfoCx/qYVG6l2cuu+U6UkXA?=
+ =?us-ascii?Q?r3NQSxPdLa/xMIP5w/rkQUkVGSdMEU7LBSOhDgdSMivg/3aCapDsrvnIkreg?=
+ =?us-ascii?Q?ExPfO4tkuzj2g5pQ0R+TsYftQgi/GZgm9RfZgRTa29bVm6Xk6AhaNYLZ2fcq?=
+ =?us-ascii?Q?gcC7AQbLuXS4fjKza0UEvs9u4jFAq1eY84X5qw+OdCGb0Ohpf3n/PhpQy0A3?=
+ =?us-ascii?Q?bO8pWj4xo9RFUWrxtEvCSfTN4DZ/lj/bEWYSWmiVk71E97vWIkuGTRjTgFwx?=
+ =?us-ascii?Q?2lUw35mdY3IADmfY6nAVuifBqnPxdsn9nRk0tPv4oBTRy0wlJG3jDw0ShH/u?=
+ =?us-ascii?Q?N6QDh9XhHNcmslcgcFvyox4g3nX8lQkII8POEkQg+0nfqgEj1fVYTnN8W3yP?=
+ =?us-ascii?Q?P8pQk5sbXSTFf7BegiI1J0ky5ri1L7KK864L6IpDdOhubGeU2JxKKw2dWOR8?=
+ =?us-ascii?Q?1GGXi8/78FrtatmIcacfPofcb5mFNvMU/wn2WIzufHBp2ZCVa5F1kv4I6EBs?=
+ =?us-ascii?Q?J8WaSiw0vuQ1ZjnXgIL0q5eiHAFrDZQJ5Idrp/OEiOdEbx3DcJzOSFTWm4Gt?=
+ =?us-ascii?Q?dM3MfGz6MlZjSEk3wVNdM97GZs9RN1Wr7cMd+J7FA6q1oEXqTHnDjFk+x+H5?=
+ =?us-ascii?Q?e9SA5+oqT3oyuDZv5Z5LShOkLC5H9b1h7DyHuNQkUUUMbfSxRQGMbwrrJP7A?=
+ =?us-ascii?Q?WnFXQzPSm3Lm/CBk1m1dgG3b0GD4it2wPVGQg6w9Q1FhXT5o1sUMoE2MlP3a?=
+ =?us-ascii?Q?rLt9MsICizZvoZhfFzfbzp491w/XVWc6?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?xc2SMo88gfcZ81+EnENaucEmo7Djwt40l+B43ICbNksVF7Cz5sbYYPOH7FGK?=
+ =?us-ascii?Q?ReAPxZ9mJX7/3hohq0jnZwE6ecqVbKbyuLF2eAs9Ct3L51I6a2a7INIiLyaz?=
+ =?us-ascii?Q?UsufVaBWGSXvd+aw4VS+4NIJFhvpF5sh0CWHF8kB+HIZe/GkoRdfL/YxWMrp?=
+ =?us-ascii?Q?3qA0vFRw/ExwSCikCEwlf0yDZwS7pzNfwbBMaBvp9UrcB4zQ459aE3pNC/Xj?=
+ =?us-ascii?Q?1OSmcoR5hNXzSmJklIfOIMJRAIzr/coo5Fv38aHR3Is6NRburiDHlSRvHI7B?=
+ =?us-ascii?Q?LMSEDD0NgMEWAlNSCLdnN/KjHdLYYtjH/bRF1NlEGICt/cTIGslfPo8c7U3m?=
+ =?us-ascii?Q?tUniI5mXV6J8aCJxQ/PxRV6C/AF8P2TfmRCYnJp0ZvhyL3ARY++k/vzUIV6I?=
+ =?us-ascii?Q?FETX7MQ96035vASKw47jkti+5N9k8P9HJzUhlEWjXj9fo+E+3U/4rqxWq9M+?=
+ =?us-ascii?Q?WwNMOe41LJm9uusxIMcbLLXSfnbjpus+wkbSmU0FF8XTdgv9xbCqGDiFBuEx?=
+ =?us-ascii?Q?uB5nFcrwFGEnY0CwFDeC4+Qon9cBf7BJV4H1u8IfHzk9tsztLc/xlt6uHT1b?=
+ =?us-ascii?Q?Ebyl0C19qdyp7xmXBDPY2fFB+lvJ4ueqOOQiX+dPxWasKNLSCJIKQbfXaP+l?=
+ =?us-ascii?Q?bxPE/ZQsaKKMRBaeQVJL45ZIl2pokDk7RA2B85Mb87ksK8wou9V3SdIR3Tqf?=
+ =?us-ascii?Q?+aie1QM4khPDI9Atof+lV1MwxYUWroREnf2AyWV9dXRI9NCrv/vJB/yNWcJ5?=
+ =?us-ascii?Q?vGrkWusIFXVyod9Hgo//wB71qegcclioEtYZ5Im6phc4VM/yGXCJVMQ/I4P9?=
+ =?us-ascii?Q?8EwwkAtA/ldhpNOe69aAbHajhtrOoknj3YytJSrFpHDZak+YRkHnWLTYn8qj?=
+ =?us-ascii?Q?ojWlLPnm1YmcaRaEGsXn74DZ42lI8e17F1HfaPXnY1k8H10bF51zsNhsycYV?=
+ =?us-ascii?Q?BXdHwhDmYrp8Ml/nyIqcFcen2UE9ZKMhGPg5qTcuNeV0AWBBdceoxuI5hNj/?=
+ =?us-ascii?Q?So87Nxm4Oi5GfqkNu1A7UnJVLLowFmUC+9ldJ0tQV/aFAFyI+nA12v8DTitP?=
+ =?us-ascii?Q?6Ipa8/Rk/EeOs63eoxec+UUUCYA9BZT7GaWqmL6+ilfGLkK/gNv1vN9S4nAd?=
+ =?us-ascii?Q?53w3Qf1G3rjxNzxyZI3UGJuXw5cfOHOwN8n4QSCSNsd3jp/6B+h7pTdkKQSR?=
+ =?us-ascii?Q?ej2znhOss7DxzOxBDarv+BTXrra66YLmQPRCyEk32hO8gr99fASPdu5+DEQs?=
+ =?us-ascii?Q?4ueIXbZs/KjHrW/ps8egFUAbL1ezrq3hvUfcq1kQ+2NbRbyh4u6EqIjMHU0W?=
+ =?us-ascii?Q?KrLQAjXix6Awdk3OTUJ3NRuewA8Ic/mwsbsnpJQd6rvcYBqXFYk3IgH/X33A?=
+ =?us-ascii?Q?xP0t88pHzEXATsgq2CT1IIRx+Fe6STrgt2GfL4khUyU9gm+8k+hcWDzlgytP?=
+ =?us-ascii?Q?ho3HrPeatr6698JTTIJlKloAzRzS5f2okQMtsQpCq1ku+VU23kejonK7y0Tt?=
+ =?us-ascii?Q?6FD9C3WXiPdpFz2+xNiuM2ECiBGuCMGClH3jP1js6zRboQ5JXDy4Lg50Egs2?=
+ =?us-ascii?Q?nN72dac9anWVaUyp3N0=3D?=
+Content-Type: text/plain; charset="us-ascii"
 Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: wCG1TqLXfsPia6sFl_1UdHC101xv7zNd
-X-Proofpoint-GUID: t30njm51pL849fV-hY8jeRVerK2HWM6x
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_04,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 malwarescore=0
- mlxlogscore=767 spamscore=0 bulkscore=0 priorityscore=1501 adultscore=0
- lowpriorityscore=0 phishscore=0 mlxscore=0 impostorscore=0 clxscore=1015
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050084
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f77963b0-28fd-403b-6fb6-08dd5bd09d80
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2025 10:29:30.9779
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: grN4N7hc6vl/iIM7HGYjgS2feEZTgEygQ3VDi9sDEvcDnct66cBxGqf2VyACt/fx8w22dNq9dVWbkB6c4ru4Bg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS5PR04MB9729
 
-On Wed, 2025-03-05 at 10:23 +0100, Dietmar Eggemann wrote:
-> On 05/03/2025 09:21, Vincent Guittot wrote:
-> > On Tue, 4 Mar 2025 at 18:00, Aboorva Devarajan <aboorvad@linux.ibm.com>=
- wrote:
-> > >=20
-> > > In child_cfs_rq_on_list(), leaf_cfs_rq_list.prev is expected to point=
- to
-> > > a valid cfs_rq->leaf_cfs_rq_list in the hierarchy. However, when acce=
-ssed
-> > > from the first node in a list, leaf_cfs_rq_list.prev can incorrectly =
-point
-> > > back to the list head (rq->leaf_cfs_rq_list) instead of another
-> > > cfs_rq->leaf_cfs_rq_list.
-> > >=20
-> > > The function does not handle this case, leading to incorrect pointer
-> > > calculations and unintended memory accesses, which can result in a ke=
-rnel
-> > > crash.
-> > >=20
-> > > A recent attempt to reorder fields in struct rq exposed this issue by
-> > > modifying memory offsets and affecting how pointer computations are
-> > > resolved. While the problem existed before, it was previously masked =
-by
-> > > specific field arrangement. The reordering caused erroneous pointer
-> > > accesses, leading to a NULL dereference and a crash, as seen in the
+> Subject: Re: [PATCH v2] cpuidle: psci: Init cpuidle only for present CPUs
 >=20
-> I'm running tip/sched/core on arm64 and I still only see the wrong
-> pointer for 'prev_cfs_rq->tg->parent' in the 'prev =3D=3D
-> &rq->leaf_cfs_rq_list' case?
+> Hi Jacky,
 >=20
-> ...
-> cpu=3D5 prev_cfs_rq->tg=3Dffff00097efb63a0 parent=3D0000000000000010
-> cfs_rq->tg=3Dffff000802084000
-> ...
-
-Hi Dietmar,
-
-Thanks a lot for testing this,
-
-I have sent an updated patch (v2) to fix this:
-https://lore.kernel.org/all/20250305100854.318599-1-aboorvad@linux.ibm.com/
-
-Can you try and see if v2 works for you?
-
+> I wasn't Cc-ed on the original patch.
 >=20
-> > > following trace:
-> > >=20
-> > > [=C2=A0=C2=A0=C2=A0 2.152852] Call Trace:
-> > > [=C2=A0=C2=A0=C2=A0 2.152855] __update_blocked_fair+0x45c/0x6a0 (unre=
-liable)
-> > > [=C2=A0=C2=A0=C2=A0 2.152862] sched_balance_update_blocked_averages+0=
-x11c/0x24c
-> > > [=C2=A0=C2=A0=C2=A0 2.152869] sched_balance_softirq+0x60/0x9c
-> > > [=C2=A0=C2=A0=C2=A0 2.152876] handle_softirqs+0x148/0x3b4
-> > > [=C2=A0=C2=A0=C2=A0 2.152884] do_softirq_own_stack+0x40/0x54
-> > > [=C2=A0=C2=A0=C2=A0 2.152891] __irq_exit_rcu+0x18c/0x1b4
-> > > [=C2=A0=C2=A0=C2=A0 2.152897] irq_exit+0x20/0x38
-> > > [=C2=A0=C2=A0=C2=A0 2.152903] timer_interrupt+0x174/0x30c
-> > > [=C2=A0=C2=A0=C2=A0 2.152910] decrementer_common_virt+0x28c/0x290
-> > > [=C2=A0=C2=A0=C2=A0 2.059873] systemd[1]: Hostname set to ...
-> > > [=C2=A0=C2=A0=C2=A0 2.152682] BUG: Unable to handle kernel data acces=
-s on read at 0x100000125
-> > > [=C2=A0=C2=A0=C2=A0 2.152717] Faulting instruction address: 0xc000000=
-0001c0270
-> > > [=C2=A0=C2=A0=C2=A0 2.152724] Oops: Kernel access of bad area, sig: 7=
- [#1]
-> > > ..
-> > >=20
-> > > To fix this, introduce a check to detect when prev points to the list=
- head
-> > > (&rq->leaf_cfs_rq_list). If this condition is met, return early to pr=
-event
-> > > the use of an invalid prev_cfs_rq.
-> > >=20
-> > > Fixes: fdaba61ef8a2 ("sched/fair: Ensure that the CFS parent is added=
- after unthrottling")
-> > > Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
-> > > ---
-> > > =C2=A0kernel/sched/fair.c | 7 +++++--
-> > > =C2=A01 file changed, 5 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-> > > index 1c0ef435a7aa..a4daa7a9af0b 100644
-> > > --- a/kernel/sched/fair.c
-> > > +++ b/kernel/sched/fair.c
-> > > @@ -4045,12 +4045,15 @@ static inline bool child_cfs_rq_on_list(struc=
-t cfs_rq *cfs_rq)
-> > > =C2=A0{
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct cfs_rq *prev_cfs_rq=
-;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct list_head *prev;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct rq *rq;
-> > > +
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rq =3D rq_of(cfs_rq);
-> > >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cfs_rq->on_list) {
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 prev =3D cfs_rq->leaf_cfs_rq_list.prev;
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 if (prev =3D=3D &rq->leaf_cfs_rq_list)
-> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return f=
-alse;
-> >=20
-> > what about the else case below , prev can also point to rq->leaf_cfs_rq=
-_list
+> I was searching to provide feedback but couldn't find one.
 >=20
-> Should be the same issue IMHO. I'm not seeing it on my machine=C2=A0 duri=
-ng
-> startup or while doing simple taskgroup tests though, 'cfs_rq->on_list'
-> is always 1 so far.
+> On Wed, Mar 05, 2025 at 02:31:57PM +0800, Yuanjie Yang wrote:
+> > On Wed, Nov 20, 2024 at 06:37:49PM +0800, Jacky Bai wrote:
+> > > With 'nosmp' or 'maxcpus=3D0' boot command line parameters, the
+> > > 'cpu_present_mask' may not be the same as 'cpu_possible_mask'.
+> > >
+> > > In current psci cpuidle driver init, for_each_possible_cpu() is used
+> > > to init the cpuidle for each possible CPU. but in drivers/base/cpu.c
+> > > ->cpu_dev_register_generic(),
+> > > for_each_present_cpu() is used to register cpu device for present
+> > > CPUs.
+> > >
+> > > When boot system with 'nosmp' or 'maxcpus=3D0', the cpuidle driver
+> > > init failed due to no valid CPU device sysfs node for non-boot CPUs.
+> > >
+> > > [ 0.182993] Failed to register cpuidle device for cpu1
+> > >
+> > > Use for_each_present_cpu() to register cpuidle only for present
+> > > CPUs.
+> > >
 >=20
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 } else {
-> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 struct rq *rq =3D rq_of(cfs_rq);
-> > > -
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 prev =3D rq->tmp_alone_branch;
-> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 }
-> > >=20
-> > > --
-> > > 2.43.5
-> > >=20
+> Can you reword it something like
+> "
+>=20
+> for_each_possible_cpu() is currently used to initialize cpuidle in the PS=
+CI
+> cpuidle driver.
+>=20
+> However, in cpu_dev_register_generic(), for_each_present_cpu() is used to
+> register CPU devices which means the CPU devices are only registered for
+> present CPUs and not all possible CPUs.
+>=20
+> With nosmp or maxcpus=3D0, only the boot CPU is present, leading to the
+> failure:
+>=20
+>   |  Failed to register cpuidle device for cpu1
+>=20
+> Change for_each_possible_cpu() to for_each_present_cpu() in the PSCI
+> cpuidle driver to ensure it only registers cpuidle devices for CPUs that =
+are
+> actually present.
+>=20
+> "
+>=20
+> With that, you can add:
+>=20
+> Reviewed-by: Sudeep Holla <sudeep.holla@arm.com>
+>=20
+> Please cc Ulf Hansson <ulf.hansson@linaro.org> as well. Either him or Raf=
+ael
+> can then pick up the patch.
 >=20
 
-Regards,
-Aboorva
+Sorry, I should Cc you in the list. Thank you for your suggestion, I will r=
+esolve it in v3.
+
+BR
+
+> --
+> Regards,
+> Sudeep
 
