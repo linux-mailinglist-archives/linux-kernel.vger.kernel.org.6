@@ -1,108 +1,103 @@
-Return-Path: <linux-kernel+bounces-546482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546422-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EAEBA4FB28
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:05:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3231CA4FA8B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:46:22 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F511888F7F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:05:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 601A9167B1B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:46:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7D6086340;
-	Wed,  5 Mar 2025 10:05:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2292046AD;
+	Wed,  5 Mar 2025 09:46:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="moFFaNTZ"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="gOdJUsPP"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4D051C8612;
-	Wed,  5 Mar 2025 10:05:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AEFA1FCCE8;
+	Wed,  5 Mar 2025 09:46:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741169119; cv=none; b=FKfMktuMCqMUy4RbgItAy1CIItAMr10q8QOo0uhfTNFCNn6D/cuWPoIaPjWJ/I1GOwTVs4pAIqe+jWO7TKabdey9l3K4NPL8Nqm8s+Toexu45aT+eyl1i8egR04BlwSnASn+n045xgcMUQnkD119IvPOXo5L/CSZHfvkd1Lzn5Y=
+	t=1741167974; cv=none; b=pCl0Nuhh+1kBJ35M+NHilQMnpEEHbYrMsc1+RjGyQ/Af68NnTDOAfD26eYY9a9RaltVZ0k5OuBCjlxCr67YvKqGg0re+/2cFPDCJbx3OtfoaeSywOFJYzcfwza1Y4qRs2UuyCpx6uh3zsBrkeDUOz4jyd+m6GmBty6xiyEHYmbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741169119; c=relaxed/simple;
-	bh=Q+UcLBGbaunhRK9+TGvci4Rf/Tm3PJ1T8ztM7cMxtkQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ejWb47d94XqlTzKSWyqW6Vj6HZ1d3Rh1PHRUgysHBonGmV8P+Q/egY4k8uXQuqfwmLkwih3Pnym8oUvgE3014QMjAM4F8aUKcYl8N6YLQcPkuH2b0l+fIqcHg8B5b+Qu+5t4TjrQi1p3e+6Pjl2RsLTEKsO8Ups0+lkkgjmYAxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=moFFaNTZ; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:Content-Description:
-	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
-	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=9zRxtVYKtcy4a7k9RzqyNji6yQAZKeaZJwhRvL0/Bm4=; b=moFFaNTZwRmnRwOJdJOorSVwFq
-	vINEORDiAWAOXxD9sbqvNjTfmDP4fSLE7bmcpV8S9CUHYX9iaEkgH7lhdGTrKI7Bilii8tz2uwiqx
-	yTjL0PfDoeHvfYO/YuogwaxR/GU9ZUQw5l0q+M+Xx9d6k45H3d3B9gF3EokK4lPd04V08hBDM/k25
-	f94v2BnT/Q1cmMXZuaMFBD7wH66CU6Ypvp5MFG3VTXqy7Nb5JQWn5JBW2Jiz5qKpNi15VqDXbuF27
-	8dQqdnvhYdStjCTZZ1AJI9vxMyu2DvRp4wiKSXl/yx7TrAPN70QB1iiow81JC1jwcxFP38v/lvEgn
-	du7lUSPQ==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1tplJT-00AWMV-1C;
-	Wed, 05 Mar 2025 09:45:15 +0000
-Date: Wed, 5 Mar 2025 09:45:15 +0000
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Lino Sanfilippo <l.sanfilippo@kunbus.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm, tpm_tis: Fix timeout handling when waiting for TPM
- status
-Message-ID: <Z8gdKxsw2unC5UID@earth.li>
+	s=arc-20240116; t=1741167974; c=relaxed/simple;
+	bh=Kbh54lUmjGIQEV9Z+S046yWHQF6mX5mCkffxwogPYLM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=lzo3Q/kLzQI+6cSDyMfV5IpU2qsp7zqizifgS8e8NskeJYnHmS6qDP4kh9RDOPbrs4yZcsm6Jl36fQw2Iaxtg8rntOocidHfx0j4wb6xgNbOy/jQq1+oPk7Fr0PTYYPpaeQIM/EnkBozqXhocNfKeP9jsR/NGQLPMCREsZG5GdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=gOdJUsPP; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1741167970;
+	bh=0Gu1V4/nJxO2iA8JXqIJ5mOf1MVk4F+sy+iz/DXJbxY=;
+	h=Date:From:To:Cc:Subject:From;
+	b=gOdJUsPP1k4kHTHRjNR/R6ovuXI8p4RNms5/SB0H8KVcBfrDee1Rca90hRfn1jcBc
+	 vxa353VK9s5rjK3spClxLuq3k5KVoIt7uCGem3qjOp+9S1A9tLSMhkkympBTwJHT0D
+	 ljNjPQt/tS76RGRMqysLBXH3+GZsZdEd3vOzjEkbdhSjKVvhNEr41FXm1WL06hxIJV
+	 YZowLCYxGpYzbpuhfJOem2Ax6fz7e9PWzGPyivpxkZwC8zm2cYO+/isXeG7PrFSCxi
+	 mzU5VlPyEHexmMTKGPhLjAoUwvi2OOfZGkQrb0n3PpNlwUoGOpJtaNfwwlus1A2XD0
+	 VuQxG/Qj+fmbw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4Z773Q4Vhzz4wgp;
+	Wed,  5 Mar 2025 20:46:10 +1100 (AEDT)
+Date: Wed, 5 Mar 2025 20:46:09 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning after merge of Linus' tree
+Message-ID: <20250305204609.5e64768e@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/jjg3g/lzvcleZ9axxS/mtzj";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Jonathan McDowell <noodles@meta.com>
+--Sig_/jjg3g/lzvcleZ9axxS/mtzj
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The change to only use interrupts to handle supported status changes,
-then switch to polling for the rest, inverted the status test and sleep
-such that we can end up sleeping beyond our timeout and not actually
-checking the status. This can result in spurious TPM timeouts,
-especially on a more loaded system. Fix by switching the order back so
-we sleep *then* check. We've done a up front check when we enter the
-function so this won't cause an additional delay when the status is
-already what we're looking for.
+Hi all,
 
-Cc: stable@vger.kernel.org # v6.4+
-Fixes: e87fcf0dc2b4 ("tpm, tpm_tis: Only handle supported interrupts")
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
-Reviewed-by: Michal Suchánek <msuchanek@suse.de>
----
- drivers/char/tpm/tpm_tis_core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+After merging Linus' tree, today's linux-next build (htmldocs)
+produced this warning:
 
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index fdef214b9f6b..167d71747666 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -114,11 +114,11 @@ static int wait_for_tpm_stat(struct tpm_chip *chip, u8 mask,
- 		return 0;
- 	/* process status changes without irq support */
- 	do {
-+		usleep_range(priv->timeout_min,
-+			     priv->timeout_max);
- 		status = chip->ops->status(chip);
- 		if ((status & mask) == mask)
- 			return 0;
--		usleep_range(priv->timeout_min,
--			     priv->timeout_max);
- 	} while (time_before(jiffies, stop));
- 	return -ETIME;
- }
--- 
-2.48.1
+include/linux/pipe_fs_i.h:118: warning: Function parameter or struct member=
+ 'head_tail' not described in 'pipe_inode_info'
 
+Introduced by commit
+
+  3d252160b818 ("fs/pipe: Read pipe->{head,tail} atomically outside pipe->m=
+utex")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/jjg3g/lzvcleZ9axxS/mtzj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmfIHWEACgkQAVBC80lX
+0Gy+mAf/Sx863aHt2WG2LV71U10QgzZ7PLG5zyJxcnhjryR8Z6Rk7qsdZsgKfwLh
+Rp6x63Wywk8DOgWh5ZzY/VmFdx8nIOuNp89hBXGDculcCE7N/VRdUEmMusNRGcCr
+1BzqMhFPUUYUXyYyeU03UgYW23zWJFRNeIJi7qFVFwTH6JN6KWEuDk2a7eoEivcg
+ap2kAXUE6Zzcuar/o7d5roPe+ilr18crSg74/F9yMHxpcKDoYfUK1+DzRGLZripi
+A5YrOHQA6RyIDjDNdFpCQ7TD+JVB+Gk/T3m2bg9D1rYfr+FrubYp3RgVMLEeUA1S
+BCOxvmqKyjXRncbyMH4onBn5v8hb5Q==
+=0X+q
+-----END PGP SIGNATURE-----
+
+--Sig_/jjg3g/lzvcleZ9axxS/mtzj--
 
