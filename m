@@ -1,90 +1,205 @@
-Return-Path: <linux-kernel+bounces-546166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B522A4F730
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:36:45 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEB8A4F731
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:37:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6987B188D323
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:36:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D2FA16D141
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:37:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BADC1DB924;
-	Wed,  5 Mar 2025 06:36:39 +0000 (UTC)
-Received: from unicom146.biz-email.net (unicom146.biz-email.net [210.51.26.146])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1FC1DC9AA;
+	Wed,  5 Mar 2025 06:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="q929eVfK"
+Received: from out-189.mta1.migadu.com (out-189.mta1.migadu.com [95.215.58.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2011078F
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:36:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.51.26.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 259761DB924
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741156598; cv=none; b=C1M7EkTgeLqOL2UwRvRzbN5CLsQOrXeFYWOGrgiA/B6HUoKdBlcWb7gopcjlEZ+cARre9exTwwWno+NgYi5irZMvaBYdQ2Kaj6HcfEwAIJy86cEAm0/nB2qxHY7HeHrDdyCzJhNTa/peXJnUjM0oTogNMIt/SkL5MPM7sKR2oUU=
+	t=1741156622; cv=none; b=N8icxluB2tcS5G0G0kqFxKMYSYbmEJsIufngD9BMIiFcO4kOGnstR7SQjfC67IV5IS5n0VnDT+z6YaVpOB7E6QEXLIzHbxDA0oVWjK2UQxYD+2NCTUIWEYWruzL0N1pU/qR0UtDysvit0HTctmKrRtU0j2RGQr1DlYsl/AwvMHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741156598; c=relaxed/simple;
-	bh=0kdexJ+Louma7BZaTiIL3N8ymj6ogv49ggVLAOi/90s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XoxtwD9M7FguTR3acdq5lZXHa2LG7dJvwJc3siiwrfVSAmf3eNhJB/3FBkmH1BwiewabIH4jQmejbNdTOAEC9Yau9PNpHB/iUzlnLG2+6+8aXXOapSZ/jvl+J54zpo5gz5F22WDRdqzxeFaNxImQy4e/COktM1zQ5Kork0l3an0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com; spf=pass smtp.mailfrom=inspur.com; arc=none smtp.client-ip=210.51.26.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=inspur.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inspur.com
-Received: from Jtjnmail201617.home.langchao.com
-        by unicom146.biz-email.net ((D)) with ASMTP (SSL) id 202503051435174829;
-        Wed, 05 Mar 2025 14:35:17 +0800
-Received: from jtjnmail201607.home.langchao.com (10.100.2.7) by
- Jtjnmail201617.home.langchao.com (10.100.2.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 14:35:18 +0800
-Received: from locahost.localdomain (10.94.3.63) by
- jtjnmail201607.home.langchao.com (10.100.2.7) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 5 Mar 2025 14:35:17 +0800
-From: Charles Han <hanchunchao@inspur.com>
-To: <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>
-CC: <linux-kernel@vger.kernel.org>, Charles Han <hanchunchao@inspur.com>
-Subject: [PATCH] x86/delay: fix inconsistent indenting warning
-Date: Wed, 5 Mar 2025 14:35:14 +0800
-Message-ID: <20250305063515.3951-1-hanchunchao@inspur.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741156622; c=relaxed/simple;
+	bh=MQ1pDAsTrlBIav0BzasItVZpwgRo6TiIAF5eYti3qoY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sGujN5qtXYVyiXwJVLUfT4wILUr11jldfSc7IAjJpXkMCjX2OBxavOMhYNUlBnUEoNVfFVZ0K7NzrsRbGLtqqexOdbRtjqXHS0k0tKMw9Xa5KJUk7mXsFgD9V8V38sgWQ8S0rfBoSnmGXwER19HPr60KTucuWEDPoUUsYDMYjgM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=q929eVfK; arc=none smtp.client-ip=95.215.58.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 5 Mar 2025 07:36:54 +0100
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1741156618;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Twd6E1UAZBW/twPC+wFFwXwoo7sgq3iDutu+tgt2akA=;
+	b=q929eVfKDjfouYEoFUCZveBhmmGsXHnh1PqKb1kbZo2Dza+Zc7KWxiITnp5eGnzw8upk6R
+	IGdxzF+jmSHGynmyBwoIDqmNznytx3QX+fiOiagaVrd6bvIkl3vdTpe/uYtgjUNCiYDaOz
+	v2nW54CkMO/cTyqj2mHlLH9BUtlDDmQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/3] media: i2c: ov9282: add strobe_timeout v4l2 control
+Message-ID: <k2r3ro5dx6nneawdt7afonah46yyhztrfcy3i74ftbvfqknegb@efoixtkzkin6>
+References: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
+ <20250303-ov9282-flash-strobe-v1-3-0fd57a1564ba@linux.dev>
+ <CAPY8ntBBiuQtKErZ1+zDD5HBwjPRdBryduuB3XnhCZAdPC88GA@mail.gmail.com>
+ <CAPY8ntCiaTMdM_FRo3k9mYrzVnAuJYXrZU70Hf5=fLxButCOmg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: Jtjnmail201613.home.langchao.com (10.100.2.13) To
- jtjnmail201607.home.langchao.com (10.100.2.7)
-tUid: 2025305143517530fd40100995191fd90d73aa745cef0
-X-Abuse-Reports-To: service@corp-email.com
-Abuse-Reports-To: service@corp-email.com
-X-Complaints-To: service@corp-email.com
-X-Report-Abuse-To: service@corp-email.com
+In-Reply-To: <CAPY8ntCiaTMdM_FRo3k9mYrzVnAuJYXrZU70Hf5=fLxButCOmg@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Fix below inconsistent indenting smatch warning.
-smatch warnings:
-arch/x86/lib/delay.c:134 delay_halt_mwaitx() warn: inconsistent indenting
+Hi Dave,
 
-Signed-off-by: Charles Han <hanchunchao@inspur.com>
----
- arch/x86/lib/delay.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Tue, Mar 04, 2025 at 05:30:13PM +0000, Dave Stevenson wrote:
+> On Tue, 4 Mar 2025 at 10:28, Dave Stevenson
+> <dave.stevenson@raspberrypi.com> wrote:
+> >
+> > Hi Richard
+> >
+> > On Mon, 3 Mar 2025 at 22:59, Richard Leitner <richard.leitner@linux.dev> wrote:
+> > >
+> > > Add V4L2_CID_FLASH_TIMEOUT support using the "strobe_frame_span"
+> > > feature of the sensor. This is implemented by transforming the given µs
+> > > value by an interpolated formula to a "span step width" value and
+> > > writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
+> > > PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
+> > >
+> > > The maximum control value is set to the period of the current framerate.
+> > > This must be changed to a dynamic range as soon as this driver
+> > > implements the set_frame_interval() pad operation.
+> 
+> Rereading the patch as I'm looking at the whole series.
+> 
+> set_frame_interval() will never be implemented as it is the wrong API
+> for raw sensors.
+> See https://www.kernel.org/doc/html/latest/userspace-api/media/drivers/camera-sensor.html#raw-camera-sensors
+> This driver already implements PIXEL_RATE, HBLANK, and VBLANK for
+> frame interval configuration.
 
-diff --git a/arch/x86/lib/delay.c b/arch/x86/lib/delay.c
-index 23f81ca3f06b..e86eda2c0b04 100644
---- a/arch/x86/lib/delay.c
-+++ b/arch/x86/lib/delay.c
-@@ -131,7 +131,7 @@ static void delay_halt_mwaitx(u64 unused, u64 cycles)
- 	 * Use cpu_tss_rw as a cacheline-aligned, seldom accessed per-cpu
- 	 * variable as the monitor target.
- 	 */
--	 __monitorx(raw_cpu_ptr(&cpu_tss_rw), 0, 0);
-+	__monitorx(raw_cpu_ptr(&cpu_tss_rw), 0, 0);
- 
- 	/*
- 	 * AMD, like Intel, supports the EAX hint and EAX=0xf means, do not
--- 
-2.43.0
+Thanks Dave for bringing this up and sorry for not having known that
+before posting this series. It's my first work on camera sensors/v4l2
+and altough I have read a ton of docs I somehow missed this one.
 
+So regarding this patch: Should the maximum flash duration be calculated
+from the frame interval (as described in the docs)?
+Or is a "pretty high" constant maximum value preferred?
+
+regards;rl
+
+> 
+> > >
+> > > All register values are based on the OV9281 datasheet v1.53 (jan 2019)
+> > > and tested using an ov9281 VisionComponents module.
+> > >
+> > > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
+> > > ---
+> > >  drivers/media/i2c/ov9282.c | 31 +++++++++++++++++++++++++++++++
+> > >  1 file changed, 31 insertions(+)
+> > >
+> > > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
+> > > index c98ba466e9aea29baff0b13578d760bf69c958c5..f7dfe8987e524b73af7e16e12567e96627b4f89a 100644
+> > > --- a/drivers/media/i2c/ov9282.c
+> > > +++ b/drivers/media/i2c/ov9282.c
+> > > @@ -97,6 +97,10 @@
+> > >  #define OV9282_REG_MIPI_CTRL00 0x4800
+> > >  #define OV9282_GATED_CLOCK     BIT(5)
+> > >
+> > > +/* Flash/Strobe control registers */
+> > > +#define OV9282_REG_FLASH_DURATION      0x3925
+> > > +#define OV9282_FLASH_DURATION_DEFAULT  0x0000001A
+> > > +
+> > >  /* Input clock rate */
+> > >  #define OV9282_INCLK_RATE      24000000
+> > >
+> > > @@ -193,6 +197,7 @@ struct ov9282_mode {
+> > >   * @again_ctrl: Pointer to analog gain control
+> > >   * @pixel_rate: Pointer to pixel rate control
+> > >   * @flash_led_mode: Pointer to flash led mode control
+> > > + * @flash_timeout: Pointer to flash timeout control
+> > >   * @vblank: Vertical blanking in lines
+> > >   * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
+> > >   * @cur_mode: Pointer to current selected sensor mode
+> > > @@ -216,6 +221,7 @@ struct ov9282 {
+> > >         };
+> > >         struct v4l2_ctrl *pixel_rate;
+> > >         struct v4l2_ctrl *flash_led_mode;
+> > > +       struct v4l2_ctrl *flash_timeout;
+> >
+> > You only access this in ov9282_set_ctrl where you already have the
+> > struct v4l2_ctrl, so there is no need to store this in the main device
+> > state.
+> >
+> >   Dave
+> >
+> > >         u32 vblank;
+> > >         bool noncontinuous_clock;
+> > >         const struct ov9282_mode *cur_mode;
+> > > @@ -689,6 +695,24 @@ static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
+> > >                                 current_val);
+> > >  }
+> > >
+> > > +static int ov9282_set_ctrl_flash_timeout(struct ov9282 *ov9282, int value)
+> > > +{
+> > > +       /* Calculate "strobe_frame_span" increments from a given value (µs).
+> > > +        * This is quite tricky as "The step width of shift and span is
+> > > +        * programmable under system clock domain.", but it's not documented
+> > > +        * how to program this step width (at least in the datasheet available
+> > > +        * to the author at time of writing).
+> > > +        * The formula below is interpolated from different modes/framerates
+> > > +        * and should work quite well for most settings.
+> > > +        */
+> > > +       u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
+> > > +
+> > > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
+> > > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
+> > > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
+> > > +       return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
+> > > +}
+> > > +
+> > >  /**
+> > >   * ov9282_set_ctrl() - Set subdevice control
+> > >   * @ctrl: pointer to v4l2_ctrl structure
+> > > @@ -758,6 +782,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
+> > >         case V4L2_CID_FLASH_LED_MODE:
+> > >                 ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
+> > >                 break;
+> > > +       case V4L2_CID_FLASH_TIMEOUT:
+> > > +               ret = ov9282_set_ctrl_flash_timeout(ov9282, ctrl->val);
+> > > +               break;
+> > >         default:
+> > >                 dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
+> > >                 ret = -EINVAL;
+> > > @@ -1420,6 +1447,10 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
+> > >                                                         (1 << V4L2_FLASH_LED_MODE_TORCH),
+> > >                                                         V4L2_FLASH_LED_MODE_NONE);
+> > >
+> > > +       ov9282->flash_timeout = v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
+> > > +                                                 V4L2_CID_FLASH_TIMEOUT,
+> > > +                                                 0, 13900, 1, 8);
+> > > +
+> > >         ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
+> > >         if (!ret) {
+> > >                 /* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
+> > >
+> > > --
+> > > 2.47.2
+> > >
+> > >
 
