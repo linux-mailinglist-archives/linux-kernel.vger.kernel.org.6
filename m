@@ -1,84 +1,86 @@
-Return-Path: <linux-kernel+bounces-546659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20BA8A4FD62
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:17:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40036A4FD67
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:18:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43DA616C293
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:17:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 776C63A482F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A4AA230BCC;
-	Wed,  5 Mar 2025 11:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E71E226D05;
+	Wed,  5 Mar 2025 11:17:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="FzhJGJGN"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Lphl5ICA"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCE191FBC94;
-	Wed,  5 Mar 2025 11:16:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E86A72E3377
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:17:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741173411; cv=none; b=g5Dc+JMje54tV5Je1UMXsahcbLzo9wbwElL0LY9zbOxnCiiwjrYt7Spd+oJdtu3L69qzNJPdSuZsQruOdc3TwGKeor0oaz5aAiHB2BMmiLx3tPPeqV76QYcWPYhgwEu8ghxEWt3ef4D8n7nGOy4rBkh5AYEz6b5FqrbJV3ceTTA=
+	t=1741173469; cv=none; b=ofOdDvpQs9GGYRPpiS+fJEDz8mNQhUib01hQGiBOt9X07c7wrmr2N0NntZBw1mkDDzPXvsBNhvOtM6j3zH+aY4CWdziokVRVRU9leRQDhMb88Xos1N7XJTdXO75qxP7rs4KqQh72Al0DcRtaiKspZT84BZJuI85Pjtu8athNO4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741173411; c=relaxed/simple;
-	bh=oDeP14IAUCRnH4j6RavLjdXfuFH/GC4EiIFhWi0jTu4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZAShOLxg73Ge9GWo0sihh2rYsSdkGMoy9jkUSJney1wChRO/WhaqlXd5ithHQ7AJCk6Wb6xFL23ldpLiEt6CsVK/9oYKKjs+SLh5mhU1X5quMrskgUOdbnSRf886ZzMecHZFx1lBwI0u+GYMqogSmEaOS1/Ismzeb5P3j+Pw1GI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=FzhJGJGN; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 525BGBwo3933778
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Mar 2025 05:16:11 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741173371;
-	bh=pUoO09MYFSY7H1znYvfGa7jL/ZGhwkgxZ+hya5/sw48=;
-	h=From:To:CC:Subject:Date;
-	b=FzhJGJGNYNeIBow1V/v7Va3m4j+tDD/yAR5RSBeFtOa4L7ZMKLXFQ1bEFP4aU3jhQ
-	 C5tvZ+Mip0EAc4pFQeqVUs09Q/Y4i7MCuRZaNjPG2x/sZp5MoTCiO7eS3FCvy7xrB2
-	 nSzllldVO/ZSJuMgnkNsdOAn3Uv3KNvSqlaGwyUM=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 525BGBKv120467
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 5 Mar 2025 05:16:11 -0600
-Received: from DFLE100.ent.ti.com (10.64.6.21) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 5
- Mar 2025 05:16:10 -0600
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE100.ent.ti.com
- (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 5 Mar 2025 05:16:10 -0600
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 525BGARA106207;
-	Wed, 5 Mar 2025 05:16:10 -0600
-Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 525BG9WE014392;
-	Wed, 5 Mar 2025 05:16:10 -0600
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Vignesh Raghavendra <vigneshr@ti.com>, Meghana Malladi <m-malladi@ti.com>,
-        Diogo Ivo <diogo.ivo@siemens.com>, Lee Trager <lee@trager.us>,
-        Andrew Lunn
-	<andrew+netdev@lunn.ch>,
-        Roger Quadros <rogerq@kernel.org>,
-        MD Danish Anwar
-	<danishanwar@ti.com>,
-        Jonathan Corbet <corbet@lwn.net>, Simon Horman
-	<horms@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Eric Dumazet <edumazet@google.com>,
-        "David S. Miller"
-	<davem@davemloft.net>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <netdev@vger.kernel.org>, <srk@ti.com>
-Subject: [PATCH net-next v2] net: ti: icssg-prueth: Add ICSSG FW Stats
-Date: Wed, 5 Mar 2025 16:46:08 +0530
-Message-ID: <20250305111608.520042-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741173469; c=relaxed/simple;
+	bh=SVSH+f+O2e7LWdBEFSN/r7n6fzdsEWyiVARn8NbEe/k=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kWuQNQxWCS+/reOlWdgqqW33XT+PSpIJDrmYsANBY3NCV2K03ins06gKgw1TqRrO84Z1NsiHztSW+wVSfHlo4+Rzi8v+aFBcGivIq0z/26STrboLof2Zjszftyh2o0Al91cUFWh6HVY8DF8ttfvBQ8sp5pvVU14TN+lGYZyP0fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Lphl5ICA; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e5050d19e9so8636999a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 03:17:47 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1741173466; x=1741778266; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x6V1GXQi9zxTEgxla4zdqofUBg9eZtKu7BigZbCQbD4=;
+        b=Lphl5ICAsickXtR4DtnXGzC1qbI6SzDcCDJM9qsG8sAAVCldtWDRuIHf8g2g+UINaz
+         5MNLFydYLQpDMnGOoxfjDxaAhhsehjnS72RV+/51uKb/i7HcTmaUQThzqAqUaNN5lIKK
+         S3tawExa73W+GuP0RZniHlB5MpSKppNdlbr9Q=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741173466; x=1741778266;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x6V1GXQi9zxTEgxla4zdqofUBg9eZtKu7BigZbCQbD4=;
+        b=nNN3ulEMqqA2smsNjZmUxbqJZw4CZ4dv3wETrRR03AtfbZTCWmwTKLoJQKJlGVo4Y4
+         IzOJLnqfjHZV9HWfxAG2yXvyt49sVmjZceG47Z9s1q89yVrop9S3V6pCxhzBESPz0PUe
+         25Usni52uI8te1E6dQ9ip/vTuN4Xct3b1GkoybpO+BiPS2GVo5pv6fD7jGdVHWL2io/T
+         4FDQJQi4RZSRNTgJIV49OGRtkn/OQ/SaHQC8vBHyOrfa5e10eEXd962joHD0XPjjMkSf
+         kaIaKvaLOAhllToqpuJnP7OKe1q7bRQa0QEVCgglcJNfe1uSPacPYK89PbdqcTMNmeSo
+         ssfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU3zcQT0LBAZwOr6xtaZNc1TIxltCz4vNy4DWJDWaIxVagARzzbSxcDeIlwOwLGRk7obJlNY1C+xbhh4us=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtwzkOBvUrHXVjw4PFOsf19Xyss7fBDLwZnJNp+OJe0t6lXeJ+
+	gm1R4T7zWwtWpuhl8SQJU523rx1kBlXciP3DFDyZkliuMLc2YTE8d7G/kzIkrw==
+X-Gm-Gg: ASbGncvLeFkADOzBKJWMdm7tm0yFf+OB1Hfe1jMb7sv4nXmQTt1AxLsOFtXo7j3u3h4
+	TIL+8EfeP8pJoF4A+dRT4DAHuA/H27mb+opg1z+V4GG8sNaFLe4Brx/M1M0rMlcq30A+XyAN9ND
+	vLAHetASDc1nF4qIEDahXK6W4ZtwUykyI9/Guga9poG4KvOZM7HaVhT3/Y2/vxvs9yipsyFNTGi
+	NGPpJN4mJX+CwxgpUPozZ5qzScfrcX2LEtQZZ925M9ye95EuG1HXI9uj2aqj/39hSoxG6+cjHPz
+	nQHPsvWk0blQ+OQYWz+j705qiDHwA40Vkbf82Ifx1GyTPg9DsG0eKrRuIjMhCSckpocrSCIT8Fz
+	14q8I6IhHwhQHoizwlg35GuU8u9JPcRjCfkw=
+X-Google-Smtp-Source: AGHT+IEBt6x6NvkT3/tf3VkcgMbthjH75UXCNZdV2Qe0xe/ZqqD8mt9D26KJtU4BE02ygNrv54EMXg==
+X-Received: by 2002:a17:907:1c92:b0:ac1:ea29:4e74 with SMTP id a640c23a62f3a-ac20d92560dmr282776366b.28.1741173466038;
+        Wed, 05 Mar 2025 03:17:46 -0800 (PST)
+Received: from akuchynski.c.googlers.com.com (140.20.91.34.bc.googleusercontent.com. [34.91.20.140])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac21e902cddsm35907966b.113.2025.03.05.03.17.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 03:17:45 -0800 (PST)
+From: Andrei Kuchynski <akuchynski@chromium.org>
+To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Benson Leung <bleung@chromium.org>,
+	"Christian A. Ehrhardt" <lk@c--e.de>,
+	Jameson Thies <jthies@google.com>,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Andrei Kuchynski <akuchynski@chromium.org>
+Subject: [PATCH v2 0/1] Fix race condition causing NULL pointer dereference
+Date: Wed,  5 Mar 2025 11:17:38 +0000
+Message-ID: <20250305111739.1489003-1-akuchynski@chromium.org>
+X-Mailer: git-send-email 2.49.0.rc0.332.g42c0ae87b1-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,273 +88,81 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-The ICSSG firmware maintains set of stats called PA_STATS.
-Currently the driver only dumps 4 stats. Add support for dumping more
-stats.
+v2: tag update, no code changes.
 
-The offset for different stats are defined as MACROs in icssg_switch_map.h
-file. All the offsets are for Slice0. Slice1 offsets are slice0 + 4.
-The offset calculation is taken care while reading the stats in
-emac_update_hardware_stats().
+The kernel crashes during UCSI initialization due to a race condition.
+In ucsi_init():
+1. ucsi_register_port() sets up a work queue and schedules
+ucsi_check_connector_capability task.
+2. "PPM policy conflict" causes ucsi_send_command to fail.
+3. The error path (err_unregister) deallocates resources,
+setting con->partner to NULL.
+4. After that, ucsi_init() waits for the work queue to finish its task.
+5. ucsi_check_connector_capability task, running in the work queue,
+attempts to dereference the con->partner pointer, resulting in the crash.
 
-The statistics are documented in
-Documentation/networking/device_drivers/icssg_prueth.rst
+The core issue is that con->partner is set to NULL before
+the work queue task is guaranteed to have finished using it.
 
-Reviewed-by: Simon Horman <horms@kernel.org>
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
----
-v1 - v2:
-*) Created icssg_prueth.rst and added Documentation of firmware statistics
-as suggested by Jakub Kicinski <kuba@kernel.org>
-*) Removed unimplemented preemption statistics.
-*) Collected RB tag from Simon Horman <horms@kernel.org>
+The crash log:
 
-v1 - https://lore.kernel.org/all/20250227093712.2130561-1-danishanwar@ti.com/
+cros_ec_ucsi cros_ec_ucsi.3.auto: PPM Policy conflict
+ BUG: kernel NULL pointer dereference, address: 000000000000030c
+ #PF: supervisor read access in kernel mode
+ #PF: error_code(0x0000) - not-present page
+ PGD 0 P4D 0Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+ CPU: 8 UID: 0 PID: 13 Comm: kworker/u64:1 Tainted: G     U  W          
+ 6.12.0-g15b373ee5573-dirty #1 b5276ebf6ba85f471d9524ce34509877165c9f58
+ Tainted: [U]=USER, [W]=WARN
+ Hardware name: Google Fatcat/Fatcat, BIOS Google_Fatcat.16163.0.0 01/15/2025
+ Workqueue: cros_ec_ucsi.3.auto-con1 ucsi_poll_worker [typec_ucsi]
+ RIP: 0010:typec_partner_set_pd_revision+0x5/0x80 [typec]
+ Code: cc cc cc b8 ea ff ff ff c3 cc cc cc cc cc 0f 1f 80 00 00 00 00 90 90 90
+ 90 90 90 90 90 90 90 90 90 90 90 90 90 0f 1f 44 00 00 <66> 39 b7 0c 03 00 00
+ 75 06 c3 cc cc cc cc cc 55 48 89 e5 41 56 53
+ RSP: 0018:ffffb532400c7dd8 EFLAGS: 00010206
+ RAX: 0000000000000004 RBX: 0000000000000004 RCX: 0000000000000000
+ RDX: ffffb532400c7cc0 RSI: 0000000000000300 RDI: 0000000000000000
+ RBP: ffffb532400c7de8 R08: ffffa3ab042d28f0 R09: 0000000000000080
+ R10: 0000000000000080 R11: 00000000000000c0 R12: ffffa3ab01dc6480
+ R13: ffffa3ab120d12c0 R14: ffffa3ab120d12c0 R15: ffffa3ab12074000
+ FS:  0000000000000000(0000) GS:ffffa3ae6f800000(0000) knlGS:0000000000000000
+ CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+ CR2: 000000000000030c CR3: 000000010700e004 CR4: 0000000000772ef0
+ DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+ DR3: 0000000000000000 DR6: 00000000ffff07f0 DR7: 0000000000000400
+ PKRU: 55555554
+ Call Trace:
+  <TASK>
+  ? __die_body+0x6a/0xb0
+  ? page_fault_oops+0x38e/0x400
+  ? work_grab_pending+0x56/0x230
+  ? exc_page_fault+0x5b/0xb0
+  ? asm_exc_page_fault+0x22/0x30
+  ? typec_partner_set_pd_revision+0x5/0x80 
+  [typec bc1e7c7e089f4aaed440a0a5388387e3ef1ca2cb]
+  ucsi_check_connector_capability+0x71/0xa0 \
+  [typec_ucsi 843b0396f746abb17c01f8d4d12ead8b09b88609]
+  ucsi_poll_worker+0x3c/0x110 
+  [typec_ucsi 843b0396f746abb17c01f8d4d12ead8b09b88609]
+  process_scheduled_works+0x20e/0x450
+  worker_thread+0x2e0/0x390
+  kthread+0xee/0x110
+  ? __pfx_worker_thread+0x10/0x10
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork+0x38/0x50
+  ? __pfx_kthread+0x10/0x10
+  ret_from_fork_asm+0x1a/0x30
+  </TASK>
 
- .../device_drivers/ethernet/index.rst         |  1 +
- .../ethernet/ti/icssg_prueth.rst              | 56 ++++++++++++++++++
- drivers/net/ethernet/ti/icssg/icssg_prueth.h  |  2 +-
- drivers/net/ethernet/ti/icssg/icssg_stats.c   |  6 +-
- drivers/net/ethernet/ti/icssg/icssg_stats.h   | 58 ++++++++++++-------
- .../net/ethernet/ti/icssg/icssg_switch_map.h  | 33 +++++++++++
- 6 files changed, 129 insertions(+), 27 deletions(-)
- create mode 100644 Documentation/networking/device_drivers/ethernet/ti/icssg_prueth.rst
+Andrei Kuchynski (1):
+  usb: typec: ucsi: Fix NULL pointer access
 
-diff --git a/Documentation/networking/device_drivers/ethernet/index.rst b/Documentation/networking/device_drivers/ethernet/index.rst
-index 6fc1961492b7..cd5f31dd07ce 100644
---- a/Documentation/networking/device_drivers/ethernet/index.rst
-+++ b/Documentation/networking/device_drivers/ethernet/index.rst
-@@ -55,6 +55,7 @@ Contents:
-    ti/cpsw_switchdev
-    ti/am65_nuss_cpsw_switchdev
-    ti/tlan
-+   ti/icssg_prueth
-    toshiba/spider_net
-    wangxun/txgbe
-    wangxun/ngbe
-diff --git a/Documentation/networking/device_drivers/ethernet/ti/icssg_prueth.rst b/Documentation/networking/device_drivers/ethernet/ti/icssg_prueth.rst
-new file mode 100644
-index 000000000000..da21ddf431bb
---- /dev/null
-+++ b/Documentation/networking/device_drivers/ethernet/ti/icssg_prueth.rst
-@@ -0,0 +1,56 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+==============================================
-+Texas Instruments ICSSG PRUETH ethernet driver
-+==============================================
-+
-+:Version: 1.0
-+
-+ICSSG Firmware
-+==============
-+
-+Every ICSSG core has two Programmable Real-Time Unit(PRUs), two auxiliary
-+Real-Time Transfer Unit (RTUs), and two Transmit Real-Time Transfer Units
-+(TX_PRUs). Each one of these runs its own firmware. The firmwares combnined are
-+referred as ICSSG Firmware.
-+
-+Firmware Statistics
-+===================
-+
-+The ICSSG firmware maintains certain statistics which are dumped by the driver
-+via ``ethtool -S <interface>``
-+
-+These statistics are as follows,
-+
-+ - ``FW_RTU_PKT_DROP``: Diagnostic error counter which increments when RTU drops a locally injected packet due to port being disabled or rule violation.
-+ - ``FW_Q0_OVERFLOW``: TX overflow counter for queue0
-+ - ``FW_Q1_OVERFLOW``: TX overflow counter for queue1
-+ - ``FW_Q2_OVERFLOW``: TX overflow counter for queue2
-+ - ``FW_Q3_OVERFLOW``: TX overflow counter for queue3
-+ - ``FW_Q4_OVERFLOW``: TX overflow counter for queue4
-+ - ``FW_Q5_OVERFLOW``: TX overflow counter for queue5
-+ - ``FW_Q6_OVERFLOW``: TX overflow counter for queue6
-+ - ``FW_Q7_OVERFLOW``: TX overflow counter for queue7
-+ - ``FW_DROPPED_PKT``: This counter is incremented when a packet is dropped at PRU because of rule violation.
-+ - ``FW_RX_ERROR``: Incremented if there was a CRC error or Min/Max frame error at PRU
-+ - ``FW_RX_DS_INVALID``: Incremented when RTU detects Data Status invalid condition
-+ - ``FW_TX_DROPPED_PACKET``: Counter for packets dropped via TX Port
-+ - ``FW_TX_TS_DROPPED_PACKET``: Counter for packets with TS flag dropped via TX Port
-+ - ``FW_INF_PORT_DISABLED``: Incremented when RX frame is dropped due to port being disabled
-+ - ``FW_INF_SAV``: Incremented when RX frame is dropped due to Source Address violation
-+ - ``FW_INF_SA_DL``: Incremented when RX frame is dropped due to Source Address being in the denylist
-+ - ``FW_INF_PORT_BLOCKED``: Incremented when RX frame is dropped due to port being blocked and frame being a special frame
-+ - ``FW_INF_DROP_TAGGED`` : Incremented when RX frame is dropped for being tagged
-+ - ``FW_INF_DROP_PRIOTAGGED``: Incremented when RX frame is dropped for being priority tagged
-+ - ``FW_INF_DROP_NOTAG``: Incremented when RX frame is dropped for being untagged
-+ - ``FW_INF_DROP_NOTMEMBER``: Incremented when RX frame is dropped for port not being member of VLAN
-+ - ``FW_RX_EOF_SHORT_FRMERR``: Incremented if End Of Frame (EOF) task is scheduled without seeing RX_B1
-+ - ``FW_RX_B0_DROP_EARLY_EOF``: Incremented when frame is dropped due to Early EOF
-+ - ``FW_TX_JUMBO_FRM_CUTOFF``: Incremented when frame is cut off to prevent packet size > 2000 Bytes
-+ - ``FW_RX_EXP_FRAG_Q_DROP``: Incremented when express frame is received in the same queue as the previous fragment
-+ - ``FW_RX_FIFO_OVERRUN``: RX fifo overrun counter
-+ - ``FW_CUT_THR_PKT``: Incremented when a packet is forwarded using Cut-Through forwarding method
-+ - ``FW_HOST_RX_PKT_CNT``: Number of valid packets sent by Rx PRU to Host on PSI
-+ - ``FW_HOST_TX_PKT_CNT``: Number of valid packets copied by RTU0 to Tx queues
-+ - ``FW_HOST_EGRESS_Q_PRE_OVERFLOW``: Host Egress Q (Pre-emptible) Overflow Counter
-+ - ``FW_HOST_EGRESS_Q_EXP_OVERFLOW``: Host Egress Q (Pre-emptible) Overflow Counter
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 329b46e9ee53..ff7fce26e851 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -50,7 +50,7 @@
- 
- #define ICSSG_MAX_RFLOWS	8	/* per slice */
- 
--#define ICSSG_NUM_PA_STATS	4
-+#define ICSSG_NUM_PA_STATS	32
- #define ICSSG_NUM_MIIG_STATS	60
- /* Number of ICSSG related stats */
- #define ICSSG_NUM_STATS (ICSSG_NUM_MIIG_STATS + ICSSG_NUM_PA_STATS)
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.c b/drivers/net/ethernet/ti/icssg/icssg_stats.c
-index 8800bd3a8d07..3f1400e0207c 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_stats.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_stats.c
-@@ -11,7 +11,6 @@
- 
- #define ICSSG_TX_PACKET_OFFSET	0xA0
- #define ICSSG_TX_BYTE_OFFSET	0xEC
--#define ICSSG_FW_STATS_BASE	0x0248
- 
- static u32 stats_base[] = {	0x54c,	/* Slice 0 stats start */
- 				0xb18,	/* Slice 1 stats start */
-@@ -44,9 +43,8 @@ void emac_update_hardware_stats(struct prueth_emac *emac)
- 
- 	if (prueth->pa_stats) {
- 		for (i = 0; i < ARRAY_SIZE(icssg_all_pa_stats); i++) {
--			reg = ICSSG_FW_STATS_BASE +
--			      icssg_all_pa_stats[i].offset *
--			      PRUETH_NUM_MACS + slice * sizeof(u32);
-+			reg = icssg_all_pa_stats[i].offset +
-+			      slice * sizeof(u32);
- 			regmap_read(prueth->pa_stats, reg, &val);
- 			emac->pa_stats[i] += val;
- 		}
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_stats.h b/drivers/net/ethernet/ti/icssg/icssg_stats.h
-index e88b919f532c..5ec0b38e0c67 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_stats.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_stats.h
-@@ -155,24 +155,10 @@ static const struct icssg_miig_stats icssg_all_miig_stats[] = {
- 	ICSSG_MIIG_STATS(tx_bytes, true),
- };
- 
--/**
-- * struct pa_stats_regs - ICSSG Firmware maintained PA Stats register
-- * @fw_rx_cnt: Number of valid packets sent by Rx PRU to Host on PSI
-- * @fw_tx_cnt: Number of valid packets copied by RTU0 to Tx queues
-- * @fw_tx_pre_overflow: Host Egress Q (Pre-emptible) Overflow Counter
-- * @fw_tx_exp_overflow: Host Egress Q (Express) Overflow Counter
-- */
--struct pa_stats_regs {
--	u32 fw_rx_cnt;
--	u32 fw_tx_cnt;
--	u32 fw_tx_pre_overflow;
--	u32 fw_tx_exp_overflow;
--};
--
--#define ICSSG_PA_STATS(field)			\
--{						\
--	#field,					\
--	offsetof(struct pa_stats_regs, field),	\
-+#define ICSSG_PA_STATS(field)	\
-+{				\
-+	#field,			\
-+	field,			\
- }
- 
- struct icssg_pa_stats {
-@@ -181,10 +167,38 @@ struct icssg_pa_stats {
- };
- 
- static const struct icssg_pa_stats icssg_all_pa_stats[] = {
--	ICSSG_PA_STATS(fw_rx_cnt),
--	ICSSG_PA_STATS(fw_tx_cnt),
--	ICSSG_PA_STATS(fw_tx_pre_overflow),
--	ICSSG_PA_STATS(fw_tx_exp_overflow),
-+	ICSSG_PA_STATS(FW_RTU_PKT_DROP),
-+	ICSSG_PA_STATS(FW_Q0_OVERFLOW),
-+	ICSSG_PA_STATS(FW_Q1_OVERFLOW),
-+	ICSSG_PA_STATS(FW_Q2_OVERFLOW),
-+	ICSSG_PA_STATS(FW_Q3_OVERFLOW),
-+	ICSSG_PA_STATS(FW_Q4_OVERFLOW),
-+	ICSSG_PA_STATS(FW_Q5_OVERFLOW),
-+	ICSSG_PA_STATS(FW_Q6_OVERFLOW),
-+	ICSSG_PA_STATS(FW_Q7_OVERFLOW),
-+	ICSSG_PA_STATS(FW_DROPPED_PKT),
-+	ICSSG_PA_STATS(FW_RX_ERROR),
-+	ICSSG_PA_STATS(FW_RX_DS_INVALID),
-+	ICSSG_PA_STATS(FW_TX_DROPPED_PACKET),
-+	ICSSG_PA_STATS(FW_TX_TS_DROPPED_PACKET),
-+	ICSSG_PA_STATS(FW_INF_PORT_DISABLED),
-+	ICSSG_PA_STATS(FW_INF_SAV),
-+	ICSSG_PA_STATS(FW_INF_SA_DL),
-+	ICSSG_PA_STATS(FW_INF_PORT_BLOCKED),
-+	ICSSG_PA_STATS(FW_INF_DROP_TAGGED),
-+	ICSSG_PA_STATS(FW_INF_DROP_PRIOTAGGED),
-+	ICSSG_PA_STATS(FW_INF_DROP_NOTAG),
-+	ICSSG_PA_STATS(FW_INF_DROP_NOTMEMBER),
-+	ICSSG_PA_STATS(FW_RX_EOF_SHORT_FRMERR),
-+	ICSSG_PA_STATS(FW_RX_B0_DROP_EARLY_EOF),
-+	ICSSG_PA_STATS(FW_TX_JUMBO_FRM_CUTOFF),
-+	ICSSG_PA_STATS(FW_RX_EXP_FRAG_Q_DROP),
-+	ICSSG_PA_STATS(FW_RX_FIFO_OVERRUN),
-+	ICSSG_PA_STATS(FW_CUT_THR_PKT),
-+	ICSSG_PA_STATS(FW_HOST_RX_PKT_CNT),
-+	ICSSG_PA_STATS(FW_HOST_TX_PKT_CNT),
-+	ICSSG_PA_STATS(FW_HOST_EGRESS_Q_PRE_OVERFLOW),
-+	ICSSG_PA_STATS(FW_HOST_EGRESS_Q_EXP_OVERFLOW),
- };
- 
- #endif /* __NET_TI_ICSSG_STATS_H */
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-index 424a7e945ea8..490a9cc06fb0 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_switch_map.h
-@@ -231,4 +231,37 @@
- /* Start of 32 bits PA_STAT counters */
- #define PA_STAT_32b_START_OFFSET                           0x0080
- 
-+#define FW_RTU_PKT_DROP			0x0088
-+#define FW_Q0_OVERFLOW			0x0090
-+#define FW_Q1_OVERFLOW			0x0098
-+#define FW_Q2_OVERFLOW			0x00A0
-+#define FW_Q3_OVERFLOW			0x00A8
-+#define FW_Q4_OVERFLOW			0x00B0
-+#define FW_Q5_OVERFLOW			0x00B8
-+#define FW_Q6_OVERFLOW			0x00C0
-+#define FW_Q7_OVERFLOW			0x00C8
-+#define FW_DROPPED_PKT			0x00F8
-+#define FW_RX_ERROR			0x0100
-+#define FW_RX_DS_INVALID		0x0108
-+#define FW_TX_DROPPED_PACKET		0x0110
-+#define FW_TX_TS_DROPPED_PACKET		0x0118
-+#define FW_INF_PORT_DISABLED		0x0120
-+#define FW_INF_SAV			0x0128
-+#define FW_INF_SA_DL			0x0130
-+#define FW_INF_PORT_BLOCKED		0x0138
-+#define FW_INF_DROP_TAGGED		0x0140
-+#define FW_INF_DROP_PRIOTAGGED		0x0148
-+#define FW_INF_DROP_NOTAG		0x0150
-+#define FW_INF_DROP_NOTMEMBER		0x0158
-+#define FW_RX_EOF_SHORT_FRMERR		0x0188
-+#define FW_RX_B0_DROP_EARLY_EOF		0x0190
-+#define FW_TX_JUMBO_FRM_CUTOFF		0x0198
-+#define FW_RX_EXP_FRAG_Q_DROP		0x01A0
-+#define FW_RX_FIFO_OVERRUN		0x01A8
-+#define FW_CUT_THR_PKT			0x01B0
-+#define FW_HOST_RX_PKT_CNT		0x0248
-+#define FW_HOST_TX_PKT_CNT		0x0250
-+#define FW_HOST_EGRESS_Q_PRE_OVERFLOW	0x0258
-+#define FW_HOST_EGRESS_Q_EXP_OVERFLOW	0x0260
-+
- #endif /* __NET_TI_ICSSG_SWITCH_MAP_H  */
+ drivers/usb/typec/ucsi/ucsi.c | 13 +++++++------
+ 1 file changed, 7 insertions(+), 6 deletions(-)
 
-base-commit: f252f23ab657cd224cb8334ba69966396f3f629b
 -- 
-2.34.1
+2.49.0.rc0.332.g42c0ae87b1-goog
 
 
