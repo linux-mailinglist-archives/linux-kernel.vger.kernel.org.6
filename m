@@ -1,181 +1,119 @@
-Return-Path: <linux-kernel+bounces-547397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D197AA50690
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:40:37 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3068A50694
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:40:56 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 05C091889DB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:40:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90C373A6BE3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:40:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37426253357;
-	Wed,  5 Mar 2025 17:39:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36272512E1;
+	Wed,  5 Mar 2025 17:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cru5nLgz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="La/ubBuo";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UGGhjON7"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4A524C07D;
-	Wed,  5 Mar 2025 17:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91AE4250C15;
+	Wed,  5 Mar 2025 17:39:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741196367; cv=none; b=ZbY/+oX3hREoNUKDiolaLXTrWZO2/qGNA2YDrN2xPyQuh6UEH1xdYXs00IYXBBh22GLIdDr6PYJGExIDMdewdvbzT07BxUX65mI/QLG88pEHwwty9kIe1rbU8bTATPBfpDNql8GT8WnqLKiR8FKFxhpG5tBEpaiW6SQ99zM6Z0Y=
+	t=1741196395; cv=none; b=iWFBB8f4CRRQUnlw6yAx5B/gPMF9OXuf1+7V8Ay59UM2V7pQdJkZedmqzeuOtrLrLNm/SMXAZym9i3SN65yZ8KtNnpQ9V4TgWbdsVJRGxABygQYgtVUjnIR7CJnOHmj+4n9U+6Q91Svps+b3/GRfzHnP4nzMZJpr5mVsz6apE7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741196367; c=relaxed/simple;
-	bh=iaeOPT3vWx4E9oqHe4PhquvgcNeLALdwpOkdZJgJZIA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YfyVHZFHJ8abhHw07fj/UT3fJwJEOVSngcsEclBLOHHsaXcomKKmjbr0At4ee4IkLxSqneh3V1K8IzfHSIxsjWJlnC663LVnX5F5hYR4R2L8UkIfCGkl5GvltwpgPUMZdi8DGDY2Ayb/XMw9hwcixB4EVEduWmq4nSAwcjZ5QcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cru5nLgz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2778C4CEE0;
-	Wed,  5 Mar 2025 17:39:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741196367;
-	bh=iaeOPT3vWx4E9oqHe4PhquvgcNeLALdwpOkdZJgJZIA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cru5nLgzCC41CtNsmq/VbBtRtMqeCAwKBACMCgiJCwoClPE+Hc9+6s0kbh7R3682V
-	 0fAOSB0eBQkuI394JE293mpcC103S2AxueaMdcUSRvQDpl/snTsdBGfq0amlh/b2fe
-	 IjpL3BBJqjcDe7Lp6kmkD94YLGeXKtxvBP+zBsmwl3xzejcKGFyAiLuypNKcXtY6ib
-	 EozP3+79T4BYxdN2Zzy+DO2OSEm2kBbUABJdjriGcKLRgCdf26Y4kRxee4tu6t4zyo
-	 QSOfrfOJAkK7zzX2Vh6ssHgOBgWavTciyM3FxYvUcibTNbPWjl1QyuvKT+5UDdmuYr
-	 JUiCCzW+wPtYQ==
-Date: Wed, 5 Mar 2025 17:39:25 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
-	Ben Greear <greearb@candelatech.com>,
-	Xiao Liang <shaw.leon@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>
-Subject: Re: [RFC PATCH v2] x86/fpu: make kernel-mode FPU reliably usable in
- softirqs
-Message-ID: <20250305173925.GA4014401@google.com>
-References: <20250304204954.3901-1-ebiggers@kernel.org>
- <Z8gUYamgBr4M5ZaB@gmail.com>
+	s=arc-20240116; t=1741196395; c=relaxed/simple;
+	bh=B+wbsjjvgCYl9ZQMWL6LSAg8MKud07UMpiyZnW8Xl+E=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=fU7C4vMXopb1B4eQ6Hy/EMYUD21h5c1EAkJSoI+SvPBkC8pUhk8JAFlXKTtV/Cly9JbiYpihd1EegNw+pWqriEuVX3V+nzrauoB0yCkJxhfvF7JvH5JX1McfPHAuhU8IcJxcEN+WtjR31gvtk1A5FtEKmWo0GzGLhtqMFTYJIxo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=La/ubBuo; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UGGhjON7; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 05 Mar 2025 17:39:47 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741196391;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hD/lCQtBjMJNbD0fOBlfS+eJZmQe0QKwAmFitlBa5Ys=;
+	b=La/ubBuo4cVbrPE7UH1UhTaVfI07Ah7f4IujA2Q4q9nFmjE+EHiQz7ifFF+j9NmpeJ2Hlk
+	XFbukU4cFc+k64cSLj/djm0HV5mzWrPV+d2oujf+3mqWragKgzHbV58Z0NIzuTrbuWEoZs
+	t3znlzcMVUTS/zpQ1xeGI3qQ5w2TNC03EgQ05/Qd7lHb9YPcm//p5JbpQMx1TNVtUhc/2C
+	lxHM7AapbCB5bR6y83AvUI/OqSxC93QGcaCPpdMaikuouUE96thhuyEGA+Rwohqk+hqDPg
+	Jj82cY6bmMWtAtBI/MQ2KA3plHSDPZi/CwmkGFq0PkkdIn4oDqQO5R2JsWMUXw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741196391;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hD/lCQtBjMJNbD0fOBlfS+eJZmQe0QKwAmFitlBa5Ys=;
+	b=UGGhjON7JVMY18oK92EZg3bTmoAnipdi614nWP80BpAWgy+wGK5b5LglKVzgBrm00Ipp8d
+	i6Nd9vpK+nU354Cg==
+From: "tip-bot2 for Thorsten Blum" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/x86: Annotate struct bts_buffer::buf with
+ __counted_by()
+Cc: Thorsten Blum <thorsten.blum@linux.dev>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250305123134.215577-2-thorsten.blum@linux.dev>
+References: <20250305123134.215577-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Z8gUYamgBr4M5ZaB@gmail.com>
+Message-ID: <174119638803.14745.5873726326719106728.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 05, 2025 at 10:07:45AM +0100, Ingo Molnar wrote:
-> 
-> * Eric Biggers <ebiggers@kernel.org> wrote:
-> 
-> > From: Eric Biggers <ebiggers@google.com>
-> > 
-> > Currently kernel-mode FPU is not always usable in softirq context on
-> > x86, since softirqs can nest inside a kernel-mode FPU section in task
-> > context, and nested use of kernel-mode FPU is not supported.
-> > 
-> > Therefore, x86 SIMD-optimized code that can be called in softirq context
-> > has to sometimes fall back to non-SIMD code.  There are two options for
-> > the fallback, both of which are pretty terrible:
-> > 
-> >   (a) Use a scalar fallback.  This can be 10-100x slower than vectorized
-> >       code because it cannot use specialized instructions like AES, SHA,
-> >       or carryless multiplication.
-> > 
-> >   (b) Execute the request asynchronously using a kworker.  In other
-> >       words, use the "crypto SIMD helper" in crypto/simd.c.
-> > 
-> > Currently most of the x86 en/decryption code (skcipher and aead
-> > algorithms) uses option (b), since this avoids the slow scalar fallback
-> > and it is easier to wire up.  But option (b) is still really bad for its
-> > own reasons:
-> > 
-> >   - Punting the request to a kworker is bad for performance too.
-> >
-> >   - It forces the algorithm to be marked as asynchronous
-> >     (CRYPTO_ALG_ASYNC), preventing it from being used by crypto API
-> >     users who request a synchronous algorithm.  That's another huge
-> >     performance problem, which is especially unfortunate for users who
-> >     don't even do en/decryption in softirq context.
-> > 
-> >   - It makes all en/decryption operations take a detour through
-> >     crypto/simd.c.  That involves additional checks and an additional
-> >     indirect call, which slow down en/decryption for *everyone*.
-> > 
-> > Fortunately, the skcipher and aead APIs are only usable in task and 
-> > softirq context in the first place.  Thus, if kernel-mode FPU were to 
-> > be reliably usable in softirq context, no fallback would be needed. 
-> > Indeed, other architectures such as arm, arm64, and riscv have 
-> > already done this.
-> > 
-> > Therefore, this patch updates x86 accordingly to reliably support
-> > kernel-mode FPU in softirqs.
-> > 
-> > This is done by just disabling softirq processing in kernel-mode FPU
-> > sections (when hardirqs are not already disabled), as that prevents the
-> > nesting that was problematic.
-> > 
-> > This will delay some softirqs slightly, but only ones that would have
-> > otherwise been nested inside a task context kernel-mode FPU section.
-> > Any such softirqs would have taken the slow fallback path before if they
-> > tried to do any en/decryption.  Now these softirqs will just run at the
-> > end of the task context kernel-mode FPU section (since local_bh_enable()
-> > runs pending softirqs) and will no longer take the slow fallback path.
-> > 
-> > Alternatives considered:
-> > 
-> > - Make kernel-mode FPU sections fully preemptible.  This would require
-> >   growing task_struct by another struct fpstate which is more than 2K.
-> 
-> So that's something that will probably happen once the kernel is built 
-> using APX anyway?
+The following commit has been merged into the perf/core branch of tip:
 
-The APX state is just 16 GPRs, for 128 bytes total.  That's about 5% of the size
-of the fpstate (assuming AVX512 is supported).  As Dave mentioned, for in-kernel
-use of APX it probably will make more sense to treat the new GPRs like the
-existing ones, instead of using XSTATE and integrating it with kernel-mode FPU.
-I.e., they will be saved/restored using plain moves to/from a dedicated buffer.
+Commit-ID:     5e7adc81ae1b27ff565714d2933b291cf1e1271f
+Gitweb:        https://git.kernel.org/tip/5e7adc81ae1b27ff565714d2933b291cf1e1271f
+Author:        Thorsten Blum <thorsten.blum@linux.dev>
+AuthorDate:    Wed, 05 Mar 2025 13:31:34 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Wed, 05 Mar 2025 18:28:22 +01:00
 
-> 
-> > - Make softirqs save/restore the kernel-mode FPU state to a per-CPU
-> >   struct fpstate when nested use is detected.  Somewhat interesting, but
-> >   seems unnecessary when a simpler solution exists.
-> 
-> So:
-> 
-> >  void kernel_fpu_begin_mask(unsigned int kfpu_mask)
-> >  {
-> > -	preempt_disable();
-> > +	if (!irqs_disabled())
-> > +		fpregs_lock();
-> 
-> > +	if (!irqs_disabled())
-> > +		fpregs_unlock();
-> 
-> So why is the irqs_disabled() check needed here? (On x86 it can be a 
-> bit expensive at times, because the IRQ flag has to be loaded, 
-> including all flags, so basically it's a soft synchronization point of 
-> a sort.)
-> 
-> Ie. why cannot we simply do a local_bh_disable()/enable() pair (on 
-> !RT), ie. fpregs_lock()/fpregs_unlock()?
-> 
-> local_bh_disable() is very similar in cost to preempt_disable(), both 
-> are increasing the preempt_count.
+perf/x86: Annotate struct bts_buffer::buf with __counted_by()
 
-It's to keep kernel_fpu_begin()/end() working when hardirqs are disabled, since
-local_bh_disable()/enable() require that hardirqs be enabled.  See the changelog
-and https://lore.kernel.org/r/20250228035924.GC5588@sol.localdomain/.  There are
-other directions we could go, but this seems to be the simplest solution.  If we
-forbid kernel_fpu_begin() with hardirqs disabled (as PS1 did), then a call to
-irqs_disabled() is still needed in irq_fpu_usable().  To avoid irqs_disabled()
-entirely, we'd need to avoid disabling softirqs, which would mean supporting
-nested kernel-mode FPU in softirqs.  I can sent out a patch that does that using
-a per-CPU buffer, if you'd like to see that.  I wasn't super happy with the
-extra edge cases and memory usage, but we could go in that direction.
+Add the __counted_by() compiler attribute to the flexible array member
+buf to improve access bounds-checking via CONFIG_UBSAN_BOUNDS and
+CONFIG_FORTIFY_SOURCE.
 
-- Eric
+No functional changes intended.
+
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lore.kernel.org/r/20250305123134.215577-2-thorsten.blum@linux.dev
+---
+ arch/x86/events/intel/bts.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 8e09319..953868d 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -58,7 +58,7 @@ struct bts_buffer {
+ 	local_t		head;
+ 	unsigned long	end;
+ 	void		**data_pages;
+-	struct bts_phys	buf[];
++	struct bts_phys	buf[] __counted_by(nr_bufs);
+ };
+ 
+ static struct pmu bts_pmu;
 
