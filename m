@@ -1,171 +1,158 @@
-Return-Path: <linux-kernel+bounces-547257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A7C1A504F5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:34:09 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0D76A504EA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:32:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 466A3175629
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:31:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D35D7A3802
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:31:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D09517C7C4;
-	Wed,  5 Mar 2025 16:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PdkYWWY5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE08481C4;
-	Wed,  5 Mar 2025 16:31:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B24245C18;
+	Wed,  5 Mar 2025 16:32:29 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C69DBA27
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:32:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741192288; cv=none; b=CgbKTM1hsbNZrewFqz5Mqoihs8ZsqW2+w9KMRV0Iyx7Tyr2Gws28zNx8oLuW18GqnVnrXzrArIfYJkO6x+lmggczPJ5hFWTz0fNxQmUpQKPCsEnzN4fWA8zSFc14R0NVmqZuO/guEC6gVIxR701ByAYlpD9MGVQ+8TJCrBBpC1c=
+	t=1741192349; cv=none; b=ByKc1iZxLfoFi6j4M3SiDAuU6fc7bvoVEnq4dLUmBTTMoGfXfTjA/ltp1+vrtKjX6gfoIxNWP/u963mjLNYIB4XWclO0UpgrNmgMruydZrdxXGkRuxXkKcdRb4qRNrIhBiK7g6Mwn6z1FXbkWosHbCervHwEGFmSQWtQ7DNL5fg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741192288; c=relaxed/simple;
-	bh=mjfercYvHY6XW4hH6LajRSUm1yvoytFiSmictk11u7I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XMG9dr453VANWN5opIuo/dACLQWFkbJYvwQJiwnd3zxNP5XKlPNN+kxUvfJ48K2ioq6ZLDHjb9ja2qIyRJMaMoE31gQg4FoeUTEZZR5gct2dmy+1kOKVLzRQ/cACwauX0gqmO6IdoX8X9JF6Uf7Upzjozt8m9v5dv5zKkOhJJPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PdkYWWY5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BCFF4C4CED1;
-	Wed,  5 Mar 2025 16:31:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741192288;
-	bh=mjfercYvHY6XW4hH6LajRSUm1yvoytFiSmictk11u7I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PdkYWWY56USlcELtkXOwMTB0B7NndvMTFbHWm5Ez1ffZ0OqyMcPXJw/cZOJ7PvwWQ
-	 M7dU8sf4Zuc6QsozhigHmnHDk23XVG4RDTxL+4VJFuNWDjqDgEFxlsC+GDS5cALLVD
-	 VRXXDM6ZHQpf+Nl0iLbwdqs4K9ud2YMqVG8V484AYlfl2Zcs38b4WZtkGI8kx4n8Ex
-	 zttMpJTanbvdpSEmZoTTnnrPD5LcMiTek6zeT18QEJWDSj+XwLSeXK5fgoc97bcv1U
-	 KA9HSh9MhayMoQSl907mwR6zeVrPoSEvAxf0Ove4v0BFWrdq3inptn1Gw+Jjzgbz87
-	 KbLsJf+5Ko0Rg==
-Date: Wed, 5 Mar 2025 16:31:23 +0000
-From: Conor Dooley <conor@kernel.org>
-To: Jjian Zhou <jjian.zhou@mediatek.com>
-Cc: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Project_Global_Chrome_Upstream_Group@mediatek.com,
-	Jason-ch Chen <jason-ch.chen@mediatek.com>
-Subject: Re: [PATCH RFC 3/3] dt-bindings: mailbox: mtk,vcp-mbox: add mtk
- vcp-mbox document
-Message-ID: <20250305-chewing-henchman-aea98c18b412@spud>
-References: <20250305082047.15746-1-jjian.zhou@mediatek.com>
- <20250305082047.15746-4-jjian.zhou@mediatek.com>
+	s=arc-20240116; t=1741192349; c=relaxed/simple;
+	bh=3DNtNo0EEazacfPGv43q6KZ3e/o9N6odhUiUYZ1P4QM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=u4s0RgJXNlxDDJO/X9Ze/NTG4AgxCdIvrShezYGVg5Pp6xCQyyGkWXrAvP6yFpyH1uOIHDSOUmjnS2SBd8Tsz+4I9AvnOke6FjGKlAIxIGL6jTfwF4HllHfUIhCfCaWWePqd4F0c5rHbinOeph4heyQEpIQl6oL/trusY4cDxRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ECB8EFEC;
+	Wed,  5 Mar 2025 08:32:39 -0800 (PST)
+Received: from [10.57.83.152] (unknown [10.57.83.152])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id CAD883F5A1;
+	Wed,  5 Mar 2025 08:32:23 -0800 (PST)
+Message-ID: <47fd6aed-cb91-488d-ac2c-92f9ce73887f@arm.com>
+Date: Wed, 5 Mar 2025 16:32:21 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wpgFucSmUGsB0HoE"
-Content-Disposition: inline
-In-Reply-To: <20250305082047.15746-4-jjian.zhou@mediatek.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/11] arm64: hugetlb: Use set_ptes_anysz() and
+ ptep_get_and_clear_anysz()
+Content-Language: en-GB
+To: kernel test robot <lkp@intel.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Pasha Tatashin <pasha.tatashin@soleen.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Uladzislau Rezki <urezki@gmail.com>, Christoph Hellwig <hch@infradead.org>,
+ David Hildenbrand <david@redhat.com>,
+ "Matthew Wilcox (Oracle)" <willy@infradead.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ Alexandre Ghiti <alexghiti@rivosinc.com>,
+ Kevin Brodsky <kevin.brodsky@arm.com>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+ Linux Memory Management List <linux-mm@kvack.org>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250304150444.3788920-6-ryan.roberts@arm.com>
+ <202503052315.vk7m958M-lkp@intel.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <202503052315.vk7m958M-lkp@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 05/03/2025 16:00, kernel test robot wrote:
+> Hi Ryan,
+> 
+> kernel test robot noticed the following build warnings:
+> 
+> [auto build test WARNING on linus/master]
+> [also build test WARNING on v6.14-rc5 next-20250305]
+> [cannot apply to arm64/for-next/core akpm-mm/mm-everything arm-perf/for-next/perf]
+> [If your patch is applied to the wrong git tree, kindly drop us a note.
+> And when submitting patch, we suggest to use '--base' as documented in
+> https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> 
+> url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Roberts/arm64-hugetlb-Cleanup-huge_pte-size-discovery-mechanisms/20250304-230647
+> base:   linus/master
+> patch link:    https://lore.kernel.org/r/20250304150444.3788920-6-ryan.roberts%40arm.com
+> patch subject: [PATCH v3 05/11] arm64: hugetlb: Use set_ptes_anysz() and ptep_get_and_clear_anysz()
+> config: arm64-randconfig-003-20250305 (https://download.01.org/0day-ci/archive/20250305/202503052315.vk7m958M-lkp@intel.com/config)
+> compiler: clang version 21.0.0git (https://github.com/llvm/llvm-project 14170b16028c087ca154878f5ed93d3089a965c6)
+> reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250305/202503052315.vk7m958M-lkp@intel.com/reproduce)
+> 
+> If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> the same patch/commit), kindly add following tags
+> | Reported-by: kernel test robot <lkp@intel.com>
+> | Closes: https://lore.kernel.org/oe-kbuild-all/202503052315.vk7m958M-lkp@intel.com/
+> 
+> All warnings (new ones prefixed by >>):
+> 
+>    In file included from arch/arm64/mm/hugetlbpage.c:12:
+>    In file included from include/linux/mm.h:2224:
+>    include/linux/vmstat.h:504:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>      504 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+>          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+>      505 |                            item];
+>          |                            ~~~~
+>    include/linux/vmstat.h:511:43: warning: arithmetic between different enumeration types ('enum zone_stat_item' and 'enum numa_stat_item') [-Wenum-enum-conversion]
+>      511 |         return vmstat_text[NR_VM_ZONE_STAT_ITEMS +
+>          |                            ~~~~~~~~~~~~~~~~~~~~~ ^
+>      512 |                            NR_VM_NUMA_EVENT_ITEMS +
+>          |                            ~~~~~~~~~~~~~~~~~~~~~~
+>>> arch/arm64/mm/hugetlbpage.c:154:23: warning: parameter 'addr' set but not used [-Wunused-but-set-parameter]
+>      154 |                              unsigned long addr,
+>          |                                            ^
+>    3 warnings generated.
+> 
+> 
+> vim +/addr +154 arch/arm64/mm/hugetlbpage.c
+> 
+> bc5dfb4fd7bd471 Baolin Wang       2022-05-16  144  
+> d8bdcff2876424d Steve Capper      2017-08-22  145  /*
+> d8bdcff2876424d Steve Capper      2017-08-22  146   * Changing some bits of contiguous entries requires us to follow a
+> d8bdcff2876424d Steve Capper      2017-08-22  147   * Break-Before-Make approach, breaking the whole contiguous set
+> d8bdcff2876424d Steve Capper      2017-08-22  148   * before we can change any entries. See ARM DDI 0487A.k_iss10775,
+> d8bdcff2876424d Steve Capper      2017-08-22  149   * "Misprogramming of the Contiguous bit", page D4-1762.
+> d8bdcff2876424d Steve Capper      2017-08-22  150   *
+> d8bdcff2876424d Steve Capper      2017-08-22  151   * This helper performs the break step.
+> d8bdcff2876424d Steve Capper      2017-08-22  152   */
+> fb396bb459c1fa3 Anshuman Khandual 2022-05-10  153  static pte_t get_clear_contig(struct mm_struct *mm,
+> d8bdcff2876424d Steve Capper      2017-08-22 @154  			     unsigned long addr,
+> d8bdcff2876424d Steve Capper      2017-08-22  155  			     pte_t *ptep,
+> d8bdcff2876424d Steve Capper      2017-08-22  156  			     unsigned long pgsize,
+> d8bdcff2876424d Steve Capper      2017-08-22  157  			     unsigned long ncontig)
+> d8bdcff2876424d Steve Capper      2017-08-22  158  {
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  159  	pte_t pte, tmp_pte;
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  160  	bool present;
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  161  
+> 66251d3eadf78e2 Ryan Roberts      2025-03-04  162  	pte = ptep_get_and_clear_anysz(mm, ptep, pgsize);
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  163  	present = pte_present(pte);
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  164  	while (--ncontig) {
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  165  		ptep++;
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  166  		addr += pgsize;
 
---wpgFucSmUGsB0HoE
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Ahh yes, thanks! Looks like this line can be removed since we no longer need the
+address.
 
-On Wed, Mar 05, 2025 at 04:20:40PM +0800, Jjian Zhou wrote:
-> This patch adds document for mediatek vcp mbox.
->=20
-> Signed-off-by: Jjian Zhou <jjian.zhou@mediatek.com>
-> ---
->  .../bindings/mailbox/mtk,vcp-mbox.yaml        | 49 +++++++++++++++++++
->  1 file changed, 49 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/mtk,vcp-mbo=
-x.yaml
->=20
-> diff --git a/Documentation/devicetree/bindings/mailbox/mtk,vcp-mbox.yaml =
-b/Documentation/devicetree/bindings/mailbox/mtk,vcp-mbox.yaml
-> new file mode 100644
-> index 000000000000..d5afe295af14
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/mtk,vcp-mbox.yaml
+Catalin, I was optimistically hoping this might be the final version. If it is,
+are you happy to fold this in? Or do you want me to re-spin regardless?
 
-When you go !RFC, filename matching compatible please.
+> 66251d3eadf78e2 Ryan Roberts      2025-03-04  167  		tmp_pte = ptep_get_and_clear_anysz(mm, ptep, pgsize);
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  168  		if (present) {
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  169  			if (pte_dirty(tmp_pte))
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  170  				pte = pte_mkdirty(pte);
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  171  			if (pte_young(tmp_pte))
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  172  				pte = pte_mkyoung(pte);
+> d8bdcff2876424d Steve Capper      2017-08-22  173  		}
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  174  	}
+> 49c87f7677746f3 Ryan Roberts      2025-02-26  175  	return pte;
+> d8bdcff2876424d Steve Capper      2017-08-22  176  }
+> d8bdcff2876424d Steve Capper      2017-08-22  177  
+> 
 
-> @@ -0,0 +1,49 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/mtk,vcp-mbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek Video Companion Processor (VCP) mailbox
-> +
-> +maintainers:
-> +  - Jjian Zhou <Jjian.Zhou@mediatek.com>
-> +
-> +description: |
-> +  The MTK VCP mailbox enables the SoC to communicate with the VCP by pas=
-sing
-> +  messages through 64 32-bit wide registers. It has 32 interrupt vectors=
- in
-> +  either direction for signalling purposes.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt8196-vcp-mbox
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +  "#mbox-cells":
-> +    const: 0
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - interrupts
-> +  - "#mbox-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    vcp_mailbox0: mailbox@31b80000 {
-
-label here is unused, please drop it.
-
-Cheers,
-Conor.
-
-> +        compatible =3D "mediatek,mt8196-vcp-mbox";
-> +        reg =3D <0x31b80000 0x1000>;
-> +        interrupts =3D <GIC_SPI 789 IRQ_TYPE_LEVEL_HIGH 0>;
-> +        #mbox-cells =3D <0>;
-> +    };
-> --=20
-> 2.45.2
->=20
-
---wpgFucSmUGsB0HoE
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZ8h8WwAKCRB4tDGHoIJi
-0rmzAQDC6tROpS/C3bfqeRalnd+CJF3nrU5drTadY8j4LSJBswD/SAnH+kW5P5Zz
-1XAoP++vVC0+C1lqWccMOwxtkJk6nwo=
-=N2nw
------END PGP SIGNATURE-----
-
---wpgFucSmUGsB0HoE--
 
