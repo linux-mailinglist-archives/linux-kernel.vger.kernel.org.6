@@ -1,144 +1,131 @@
-Return-Path: <linux-kernel+bounces-547510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE745A50A4A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:51:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC209A50A4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:52:13 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4FED3AC54D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:51:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 93CA6172A13
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CA42512ED;
-	Wed,  5 Mar 2025 18:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="g1sIXQ0J"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E77253340;
+	Wed,  5 Mar 2025 18:51:57 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C6F118A6B5
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 18:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FB0C18A6B5;
+	Wed,  5 Mar 2025 18:51:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741200712; cv=none; b=CV8JL2Cup97bSF1ZLKG8luaUfrggs7pEcYElsDAZjl37Nho3gnJVWxWHk2AEFevq+drCY5XDzOp5SPMbRnylQQJ90PMnmdMFvmuZRHXdT+c7Tuy1QfrMY3aM+8aG9GKHhQnh5qelj2ZYtbhuLoFU6KDuyNuXWzrvS0OjqcAa5ts=
+	t=1741200717; cv=none; b=WDsbvl7y4+tihrXTM5jWBH3KbF6oftU5c/XRWGJCUKq/igpqL0N6T6w/qW4kleuM+PiaJh+ugMqJ+tTaUU5GAbsm/2SIM+tQImqj6OYTBIGNYnBwc+V8fwCIL9qep1RtXH/SM7TtI8p5c3Tq6sBwUOq7AuW2Vi7+6R3oxryb9uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741200712; c=relaxed/simple;
-	bh=RfmfL0IS+LyFgRufp3oTF1BFRsEV9ReRdkYc7pkwIBA=;
+	s=arc-20240116; t=1741200717; c=relaxed/simple;
+	bh=gnlTp6wg7JauvaL8a4K9vrq5T4pAlOC59D5utdSZC4I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KeqMgqpxf7Xv1OVH7T3VfyeL08Ee0Ox9MC3nONAHDmCzrkPEX0LjsjXk0jLfrVC9IKyq8t1BZ8H4RI5Me3A4ntOWfExDZf8LK2nVQ6p2mUFTVq54gjiXagKGC2SrG3nVQ0HMFFYKeV5Wb7zs1drLP2Ma72NqzUf/8AD4kWD9WD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=g1sIXQ0J; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=ezOs1RA2PMdRaE8a2I0woDGQvoaxmyX96aKleIL4//s=; b=g1sIXQ0Jf8DI6ZYbvF038gQjrB
-	cp/c8KUBs+7VxZDugWYDbTZIOpUTwfRzDyUrlOP2RnM4tkHkVmCHNksqwmn78NQ4fKU8ynMUftOG0
-	IJQd+474/XV5udfbijLYOw5Z41frOj6cyNMg2TctzvIgSRqMdcbRd3weXyUE2UjbSidapyhF+zMFc
-	pO4n/PTwDIR5R1wR58wOn8BhP9g62+Fvtzov+oGQsG14A5tk0S236A6Wujk4S6mst55ecpZ7Q1Pug
-	ldsCdMEg8xzIafE8LA2rSxAmITBMfeBsL7mw39+fEhxKjOQS/+X+wp8mg7wyLJgg3Qom39xAPIH75
-	fN5tRq+A==;
-Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1tptqG-000000062MY-3Hw2;
-	Wed, 05 Mar 2025 18:51:41 +0000
-Date: Wed, 5 Mar 2025 18:51:40 +0000
-From: Matthew Wilcox <willy@infradead.org>
-To: Zi Yan <ziy@nvidia.com>
-Cc: Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Liu Shixin <liushixin2@huawei.com>, linux-mm@kvack.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Barry Song <baohua@kernel.org>,
-	David Hildenbrand <david@redhat.com>,
-	Hugh Dickins <hughd@google.com>,
-	Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Lance Yang <ioworker0@gmail.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Subject: Re: Softlockup when test shmem swapout-swapin and compaction
-Message-ID: <Z8idPCkaJW1IChjT@casper.infradead.org>
-References: <28546fb4-5210-bf75-16d6-43e1f8646080@huawei.com>
- <c4a07dd6-fffa-41f4-b6ff-3e333d1b5fc2@linux.alibaba.com>
- <376D50C9-6DC8-4F58-9C43-173EDCD412DD@nvidia.com>
- <3812C3CC-DC05-46D2-9A87-920797227105@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sodDCWsl5mOGGRjCl/fGhu1JixxXA54SzWjF0+6xzvMtygDkKCuRORUYAxv22U+MGTgTDy+ydjFgA0ISpPFsj60iUquvxSs0yEPQfwe0UF7s8QYhIT97YTUQgtFE+SxSfs+ChTP8Xchmij9xvlMkXUvVdYG6Y++MCL17XMlIHlU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5e5b572e45cso1224316a12.0;
+        Wed, 05 Mar 2025 10:51:55 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741200714; x=1741805514;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=u9Bcx0gjvUvjedkP5bIPCZqQbMdhPkF/HMFV4Lbojoo=;
+        b=HUNVtQejY/A0l3ovhxZltUIWXPhF9+/tYP3Qd1ZcTONRLZdPgbn+lqJ+WF2aaSxsh6
+         8F5TgYB35nd623mXm/e5Hu062izYHvzZeVOYBLpc3gfwNn/OZWBNsy1c35JIaOYkoIer
+         IeeUqEynjKbrTznAqJ3728dK/5bH2qRRBhG4f0Z2juqfcizsIWg8Q2/Sfb0xKoVKANOg
+         TcmTG8QzAE4AsSjAo1qQ6fG9FVOqIy9xc2WjLdO27WU+RNbpVL53b1F27ex+7Kq6MwLH
+         qOx5OQsbY8MSlx6pbjgN5TDoFjTp2pIvdhIi6KGbVt1oVw0IlNrWwDFIv1aJHkwgaary
+         ofDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQS7kIu71JH17tO8txn1SFy/KosG5kXvnvEOkCFcjT3FxtqR4Nk1xHkS5NFHA7JLXlHjeHSVDxOFI/E4I=@vger.kernel.org, AJvYcCVhqDv4d/vuPP67wE9pMp2sRLgMGM53WEd0K4JTU92J5FRZ5q8J1SbHIYgrY7gPQNSbbWuO15c4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvfuW3Sa644UkM19LkQyeOoIKf//iLl6cHOreThn11ihdtsYmi
+	jEASBe/j5grd89UEVblNMmhNqIsHZ8qMeUyds3wr0vJBy47qlFa3
+X-Gm-Gg: ASbGncsgjKgX6FWTXjJ29vRxKCyHo/mkFhLRSdPMPA395Ne2YqVUk5/ZoPNXwsD0lWh
+	1QEK2uFxAeoYJ/HsO0ISLytGSMh3QO5uhRoGQ/My8uVitJ9V9AJRrk1y5E5Z31W+R9X+gPf1jJR
+	HPPNATsTUkGrO0NDbsGV5Cnc9k4MA8TkgUAy1q5dx6FveXl4/dXzZOxcrOHNLSelkCG4pL1saOX
+	B6GTqX3hFdolT1o4cWxBZmgwUHZ1pH8DPjqNumQW1c/NzV0/nvLzrw3gfylUmvEEWwL8G5GpHyk
+	0N4qOfwzKWRCKf6AdLxQ9kzjw/PN2QCzZ1QQ
+X-Google-Smtp-Source: AGHT+IEDHNcc894TPh82hqOYbFYBfCO7jI6zwH4fPv74yqgD/PeSdUHQTLyxYWxlpsvoz2QUD4lg0A==
+X-Received: by 2002:a17:907:c486:b0:ac2:13f:338b with SMTP id a640c23a62f3a-ac20db01cd2mr473179266b.55.1741200713496;
+        Wed, 05 Mar 2025 10:51:53 -0800 (PST)
+Received: from gmail.com ([2a03:2880:30ff:72::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf56691042sm805244466b.99.2025.03.05.10.51.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 10:51:52 -0800 (PST)
+Date: Wed, 5 Mar 2025 10:51:50 -0800
+From: Breno Leitao <leitao@debian.org>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Jakub Kicinski <kuba@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>, Amerigo Wang <amwang@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH net] netpoll: guard __netpoll_send_skb() with RCU read
+ lock
+Message-ID: <20250305-dancing-pretty-kestrel-b269df@leitao>
+References: <20250303-netpoll_rcu_v2-v1-1-6b34d8a01fa2@debian.org>
+ <20250304174732.2a1f2cb5@kernel.org>
+ <20250305-tamarin-of-amusing-luck-b9c84f@leitao>
+ <580ce055-b710-4e97-8d91-1cfea7ec4881@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <3812C3CC-DC05-46D2-9A87-920797227105@nvidia.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <580ce055-b710-4e97-8d91-1cfea7ec4881@lunn.ch>
 
-On Wed, Mar 05, 2025 at 01:44:29PM -0500, Zi Yan wrote:
-> OK, it is probably still caused by the __folio_migrate_mapping() bug, since
-> writing to sibling entries of a multi-index entry breaks the multi-index entry.
-> Thank Matthew for doing the experiments.
+On Wed, Mar 05, 2025 at 05:09:14PM +0100, Andrew Lunn wrote:
+> On Wed, Mar 05, 2025 at 01:09:49AM -0800, Breno Leitao wrote:
+> > Hello Jakub,
+> > 
+> > On Tue, Mar 04, 2025 at 05:47:32PM -0800, Jakub Kicinski wrote:
+> > > On Mon, 03 Mar 2025 03:44:12 -0800 Breno Leitao wrote:
+> > > > +	guard(rcu)();
+> > > 
+> > > Scoped guards if you have to.
+> > > Preferably just lock/unlock like a normal person..
+> > 
+> > Sure, I thought that we would be moving to scoped guards all across the
+> > board, at least that was my reading for a similar patch I sent a while
+> > ago:
+> > 
+> > 	https://lore.kernel.org/all/20250224123016.GA17456@noisy.programming.kicks-ass.net/
+> > 
+> > Anyway, in which case should I use scoped guard instead of just being
+> > like a normal person?
+> 
+> https://www.kernel.org/doc/html/latest/process/maintainer-netdev.html
+> 
+>   Section 1.6.5: Using device-managed and cleanup.h constructs
+> 
+>   Netdev remains skeptical about promises of all “auto-cleanup” APIs,
+>   including even devm_ helpers, historically. They are not the
+>   preferred style of implementation, merely an acceptable one.
+> 
+>   Use of guard() is discouraged within any function longer than 20
+>   lines, scoped_guard() is considered more readable. Using normal
+>   lock/unlock is still (weakly) preferred.
+> 
+>   Low level cleanup constructs (such as __free()) can be used when
+>   building APIs and helpers, especially scoped iterators. However,
+>   direct use of __free() within networking core and drivers is
+>   discouraged. Similar guidance applies to declaring variables
+>   mid-function.
+> 
+> So you need to spend time to find out what each subsystems view is on
+> various APIs.
 
-Here's what I did:
+That is clear. thanks for the heads-up!
 
-diff --git a/lib/test_xarray.c b/lib/test_xarray.c
-index 0e865bab4a10..4f38db416ff6 100644
---- a/lib/test_xarray.c
-+++ b/lib/test_xarray.c
-@@ -645,6 +645,26 @@ static noinline void check_multi_store_3(struct xarray *xa, unsigned long index,
-
-        xa_destroy(xa);
- }
-+
-+static noinline void check_multi_store_4(struct xarray *xa, unsigned long index,
-+               unsigned int order)
-+{
-+       XA_STATE(xas, xa, index);
-+       int i;
-+
-+       xa_store_order(xa, index, order, xa_mk_value(0), GFP_KERNEL);
-+       xa_dump(xa);
-+
-+       xas_lock(&xas);
-+       for (i = 0; i < (1 << order); i++) {
-+               xas_store(&xas, xa_mk_value(index));
-+               xas_next(&xas);
-+       }
-+       xas_unlock(&xas);
-+       xa_dump(xa);
-+
-+       xa_destroy(xa);
-+}
- #endif
-
- static noinline void check_multi_store(struct xarray *xa)
-@@ -724,6 +744,7 @@ static noinline void check_multi_store(struct xarray *xa)
-                check_multi_store_3(xa, 0, i);
-                check_multi_store_3(xa, 1UL << i, i);
-        }
-+       check_multi_store_4(xa, 16, 4);
- #endif
- }
-
-
-The xa_dump before shows sibling entries:
-
-$ ./tools/testing/radix-tree/xarray
-xarray: 0x55b2335be180x head 0x516004c75b82x flags 0 marks 0 0 0
-0-63: node 0x516004c75b80x max 0 parent (nil)x shift 0 count 16 values 16 array 0x55b2335be180x list 0x516004c75b98x 0x516004c75b98x marks 0 0 0
-16: value 0 (0x0) [0x1x]
-17: sibling (slot 16)
-18: sibling (slot 16)
-19: sibling (slot 16)
-[...]
-
-And then after shows them turned into normal entries:
-
-xarray: 0x55b2335be180x head 0x516004c75b82x flags 0 marks 0 0 0
-0-63: node 0x516004c75b80x max 0 parent (nil)x shift 0 count 16 values 31 array 0x55b2335be180x list 0x516004c75b98x 0x516004c75b98x marks 0 0 0
-16: value 16 (0x10) [0x21x]
-17: value 16 (0x10) [0x21x]
-18: value 16 (0x10) [0x21x]
-19: value 16 (0x10) [0x21x]
-
-so I understand why this took a long time to show up.  For most uses,
-you can't tell the difference between these situations.
+--breno
 
