@@ -1,144 +1,104 @@
-Return-Path: <linux-kernel+bounces-547328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9FE8A505EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:04:39 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E17DFA505EE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:05:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7D583A149F
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:04:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DF5C1653F3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:05:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C86AB19E806;
-	Wed,  5 Mar 2025 17:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C471A841A;
+	Wed,  5 Mar 2025 17:05:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="AYQaspob"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Os87h56v"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDD7D151992
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035BB19C542
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:05:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741194272; cv=none; b=QSnjFLpnVYxB8yP+LEnNP6jb3hfJCEs8n1vMlP0lW5QI6K0hIRSUIW4wfUp++pEY188p8guObMxNeU+eSpj/mU5GE4R1jAz8j+P/vWFM00528tismWMuAv2uECnW7CFzV9QwAWU7JlplXTvGokOnEBTn5buW/xKfyk3fEgFm4Xc=
+	t=1741194314; cv=none; b=UlcKBX2eMfmsQb3zH4JpopZQCT+cpGemK402+q/HjzhEHzM37gPjih0/FejiIt7zOcmGDPdWCYFc1By/OjyIe3Uwvy0uP/Wfz+GW7uaFhdsmBnqwYDXrelsj4+HrVq4G5WvPaGYxQmJmcrx9CME3ky0mmFrRRdiAmA5wIJY5naU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741194272; c=relaxed/simple;
-	bh=5kHn73F9ooUedujzkLSBcxrE4SVUuBll3iK/r3WIPYk=;
+	s=arc-20240116; t=1741194314; c=relaxed/simple;
+	bh=B/jQh5Knfwdn05WGTf329PGip2QghcVSlAu1iFJK+II=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G7QSGBk9hFDiompa+pr6oPNTItX0aS271UDoxfB6l4VkQznLf3CSGITb5tc9r0sLSf3Aknt9xFQhtefNXZ9S5dKx63iAj2zs879IKzVTMA4ZDmcOpdA7tU04TWG4xcoNyHRjWRJz/T9U4Hpv/70fmThJRsapLrU3PgNPYYKZrzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=AYQaspob; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-aaecf50578eso1348173466b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:04:29 -0800 (PST)
+	 To:Cc:Content-Type; b=qfiXA+IOvRsq7CM5+IqrgBt1QwekBoJ4xVCJr/SmTTZjo72Khkyid3DuLQzCtU0Vyjra8hASXm7/LtPbZVYmHZyP99CqM/WFC+CP1E/OP5FLEWdrixwjANUBHnCJx6lLZnb0mtUoj8Xqy0BJBOOPFssSpmJBWonG5LlvIC7n3B4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Os87h56v; arc=none smtp.client-ip=209.85.219.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-6e8c3a0d468so27522436d6.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:05:12 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1741194268; x=1741799068; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=kv40UN7CTmHsOioabQRDHDmDGt8SWK8BQaYTRtTR1Aw=;
-        b=AYQaspoboi50ZvEtAH3lRH0q/ceq5SuJgLIDd4aAq7C00pwt9QF8UhxMW+r7pYKpvl
-         vhC7DkC0qKBA3VDW5xe5bNyKclWJUq7SnnAJvaYNtK0F5SL4KeJxzKnfN6aq9YYmQd1v
-         UgxCeNXGpMcgDhxYATropyD3Qx4bsNOwMpkJ4=
+        d=gmail.com; s=20230601; t=1741194312; x=1741799112; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B/jQh5Knfwdn05WGTf329PGip2QghcVSlAu1iFJK+II=;
+        b=Os87h56vnIXkgQEE9Ji0vDAJ2ctNP8G0xvuvJ4wc/ejxx8tDLU9K/qZwnWOUS2F3d8
+         4CSuBVJUSq6a4LJ88VjWo5ob7/wWjpn9aEPeT2R/kDZ+W/HpXMijLGtdo6xmZSyHJt3v
+         TuqI/0cYCfkVjNshPtWC1G72OdABWyqbX85YcBOUsq1idjFgjWl4tB/HFIaLnDLqavId
+         YKXpFBFfqLzXSg4mjrft7irkMUvscKT51K4QUyIVANqKWb90SulkdTbIlEbwpqQCRLiO
+         DmbOX7DOAuI6D+2N+zTY4a4EvtdJSbjaM33VmJUSaeP0lC9vyR1KyScQL0nMGLgQaXK2
+         6ciQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741194268; x=1741799068;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kv40UN7CTmHsOioabQRDHDmDGt8SWK8BQaYTRtTR1Aw=;
-        b=vrjJ1lUILsBmzzE8KPCMUgTAyFks88oeSy0mSyXI6ig/RYTlFiemUwFRB8JhNKKw0d
-         nZcw/zk4MlpT1QU2bf3FFYr/rba91wZbXHTQAyhf91kNmE4W/5+En0nEPOCIDqWqq47O
-         Rjrp66bGfBKZU5niC0a0j1sSFcEfGioliX+uulz+NIopY0Atnfhi7Rp5le2cfaZisiAo
-         NpT9D8wCTylPWlKPTphctjCQq+e5/q9FVsIm93ls7OjPJBwiHI48/1xgQqosSxpj32L/
-         Dm7ujVn4IEiOubP1sH2Uv5tqcCQSamqGEGd2b2ra8NEQ4FVo42X63tkK0sUxtLeEOm9O
-         aliQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUjh0CTk9fAfVjuqkRFHvktM0WM+oAGNzEhr4nYWAQngz1HgvTfW7qU1P3eNEbD3UGIUvLTCqK7wNNnCaw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAS/f3DKuC/rprck28HH5nrQNX/Fr6ODg6uTGID9NDzVqXDLEy
-	SewISkYzwsgpsW6AgDxstgXRQbb4+Sg88048Z5atXvny71nocAkaQsXdubDuJDT6blvmxr3eEJX
-	aw75YQg==
-X-Gm-Gg: ASbGncuTltl63k9tfcxBRk29NVzIbQNd2b8Q2KUQeRBKhFNVHYJFgH0Y1sObGTrOspQ
-	8TEUL5cHTjvZHLo9ZAkyOknZfuZz1jjIFnDxpuhTtnuk0ImqgPwPnoG0uyZj+z7hxwDn0hPTjz1
-	c10GapbQjpmZ0qSHq1TG9AnDQxz5uAcfPRGz8aoLo1mMU3YIXNxvVO6kPgFIXQ+qm7ZsICJFabC
-	CQ6AasMAvamNpg/imnf+foW53Z3pQWyJ0U/bGstEvqPNktR2VFFERusHckZfCzWSq/Ryx3mAN6p
-	DQdJ3nbA6Tr7cNaI2mObImCELgdK9ZSkeo8x/f1/2Muw4WBwrwHlGwK1AuNlKXMsIbMoADmR5Q3
-	6I4yQqgTBBl6jJJcNUQ==
-X-Google-Smtp-Source: AGHT+IEcXO+eMYxmNYnaYXAG/AQKHRZIIFkmNh5MZwhwVJiK/PnVjbOPDJWYxY2P8moAyz1yZRvpsg==
-X-Received: by 2002:a17:906:f587:b0:ac1:e1e1:1f37 with SMTP id a640c23a62f3a-ac20da4dd5cmr409247966b.10.1741194267637;
-        Wed, 05 Mar 2025 09:04:27 -0800 (PST)
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com. [209.85.218.46])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e917b70asm375108566b.151.2025.03.05.09.04.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 09:04:26 -0800 (PST)
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-ab7430e27b2so1129088866b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:04:25 -0800 (PST)
-X-Forwarded-Encrypted: i=1; AJvYcCXhFoLB+5MsPgqY8qWOaaeEPivANV4qnP/HjOY/FXed6GRnQf8YPu8OjrrsSt7dNIoFqpGbpyE2hR7fjp8=@vger.kernel.org
-X-Received: by 2002:a17:907:d8e:b0:ac1:f003:be08 with SMTP id
- a640c23a62f3a-ac20da4e45bmr357515766b.12.1741194265100; Wed, 05 Mar 2025
- 09:04:25 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741194312; x=1741799112;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=B/jQh5Knfwdn05WGTf329PGip2QghcVSlAu1iFJK+II=;
+        b=cVPDeY3Qj1YjV1jU0LNEL7xIMSU3MqKNLSJl6YcXm1lCESi+a3IG5bElVioEErADkl
+         yK74/G3uzEuRKpGCvdtCNIQG4MOzd+I4A0UGyhEW2GY8FAMFIhvN9xeO/Bydo2gKo/m+
+         SSWyFtzJQyYJLrBMNDVoa6U7IwIZDIf1OZ40V8/11CtPq/CbM0Umj5/QI4nEdN/YxbYD
+         y7McEC7cUgkjvwkFQ+fPc2tHUO/VqkEbeCsge14YVGggcr7A/tK2RftVsRAYBHEW89I7
+         dQ3p7O8K/TEQVMbCsDGewRQTQKqqaKD6zBFiO1K9Rh92JMC5hSkn3rB0v6Hq9uMG/CC1
+         Pc8A==
+X-Forwarded-Encrypted: i=1; AJvYcCWGIlRXFH7xn/Ijo9ZAwjWT6WMI57BeYTIFcla3jDm8u70cF3HCp8wPviR/h9RPskQOMtmzFMhnmasD1rU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnbDNDe3kUOcu5Qwzw6KNWkXEs033ko50cfYzbshyh3ptCFD+P
+	XqFaI4FFCoGWhOIX0/FneXnWNyaGs204dLOIAmWIoWvAyyMl2d67g5yXsz9bBUq2wS9jB2fEvvy
+	uT+ydQtyrz4ixRfxOf42GbhvFspY=
+X-Gm-Gg: ASbGncsaigdjIlHZQOZNcpoJDTIBTZQYenDRXEnnYlX766v/kMpxY0xaajR9zMcif5s
+	Gk9yuG7+obOC4vdfFA4ZJkfI9CkCL2/fI9xYfm2+S8Cd1p/lnPV/jMK8IeT2vIxgPB46J1/5wMd
+	UHrEnhiDBV5yCMhwrBc+3jDTw+MoFkcPWSe/bkL9D/JWPk3P6+jynJ0HeCFQ==
+X-Google-Smtp-Source: AGHT+IFdjHDgSy5lKt1hKZCKPHDhr88g1xHOk2mlfN7Z6seMV4BqQBaj639LP1URBewpq7u6q13yUaphQ1vFz47SpCI=
+X-Received: by 2002:a05:6214:c45:b0:6e4:4011:9dff with SMTP id
+ 6a1803df08f44-6e8e6cbfc92mr48267966d6.1.1741194311624; Wed, 05 Mar 2025
+ 09:05:11 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250228123825.2729925-1-ubizjak@gmail.com> <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
- <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
- <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com> <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
- <20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local> <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
-In-Reply-To: <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
-From: Linus Torvalds <torvalds@linuxfoundation.org>
-Date: Wed, 5 Mar 2025 07:04:08 -1000
-X-Gmail-Original-Message-ID: <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
-X-Gm-Features: AQ5f1JpkQB5ShJPy0vuOavXhzF6M9md3GlU_-2Z0AWpteRo47ZA3BSSBHkk-2vk
-Message-ID: <CAHk-=wgBMG7CcwvW15ULJOsVEq5QRSj+ccgaUJU+XGxJKeXEVw@mail.gmail.com>
-Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
- locking insns
-To: Uros Bizjak <ubizjak@gmail.com>
-Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>, x86@kernel.org, 
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
+References: <20250305061134.4105762-1-yosry.ahmed@linux.dev> <20250305061134.4105762-6-yosry.ahmed@linux.dev>
+In-Reply-To: <20250305061134.4105762-6-yosry.ahmed@linux.dev>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Wed, 5 Mar 2025 09:05:00 -0800
+X-Gm-Features: AQ5f1JpLh86gyMowFNdcmuvC3GQ6XiUrcVobrLa4ZOQWYrpH3v9KLiMm9rVU_p8
+Message-ID: <CAKEwX=NM=A7uXmZAtfw-MDOmL3BhQx1C=OywPADpJWr6FrE+jw@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable 5/5] mm: zpool: Remove zpool_malloc_support_movable()
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Minchan Kim <minchan@kernel.org>, 
+	Sergey Senozhatsky <senozhatsky@chromium.org>, Herbert Xu <herbert@gondor.apana.org.au>, 
+	Thomas Gleixner <tglx@linutronix.de>, Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, 4 Mar 2025 at 22:54, Uros Bizjak <ubizjak@gmail.com> wrote:
+On Tue, Mar 4, 2025 at 10:12=E2=80=AFPM Yosry Ahmed <yosry.ahmed@linux.dev>=
+ wrote:
 >
-> Even to my surprise, the patch has some noticeable effects on the
-> performance, please see the attachment in [1] for LMBench data or [2]
-> for some excerpts from the data. So, I think the patch has potential
-> to improve the performance.
+> zpool_malloc_support_movable() always returns true for zsmalloc, the
+> only remaining zpool driver. Remove it and set the gfp flags in
+> zswap_compress() accordingly. Opportunistically use GFP_NOWAIT instead
+> of __GFP_NOWARN | __GFP_KSWAPD_RECLAIM for conciseness as they are
+> equivalent.
+>
+> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
 
-I suspect some of the performance difference - which looks
-unexpectedly large - is due to having run them on a CPU with the
-horrendous indirect return costs, and then inlining can make a huge
-difference.
-kvm
-Regardless, I absolutely think that using asm_inline here is the right
-thing for the locked instructions.
-
-That said, I do want to bring up another issue: maybe it's time to
-just retire the LOCK_PREFIX thing entirely?
-
-It harkens back to Ye Olde Days when UP was the norm, and we didn't
-want to pay the cost of lock prefixes when the kernel was built for
-SMP but was run on an UP machine.
-
-And honestly, none of that makes sense any more. You can't buy a UP
-machine any more, and the only UP case would be some silly minimal
-virtual environment, and if people really care about that minimal
-case, they should just compile the kernel without SMP support.
-Becxause UP has gone from being the default to being irrelevant. At
-least for x86-64.
-
-So I think we should just get rid of LOCK_PREFIX_HERE and the
-smp_locks section entirely.
-
-Which would probably obviate the need for your patch, since then the
-compiler wouldn't see it as some big instruction. But your patch isn't
-wrong, so this is absolutely not a NAK, more of a "we should go
-further".
-
-Hmm?
-
-                  Linus
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
