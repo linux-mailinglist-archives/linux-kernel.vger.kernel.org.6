@@ -1,81 +1,85 @@
-Return-Path: <linux-kernel+bounces-546452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1F19A4FADF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:57:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42B02A4FA97
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:49:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2718E171C51
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:56:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D543A69C5
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5EB32080E4;
-	Wed,  5 Mar 2025 09:54:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F9301DDA0C;
+	Wed,  5 Mar 2025 09:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="dwBf4Mio"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="uhtYePaH"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F14205510;
-	Wed,  5 Mar 2025 09:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 159702AF19
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:49:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741168468; cv=none; b=V+TmFHuOtonLyIb55mvLSwxoLY7vZfTDtSRyenlqdMZonQE+uBj32bQOOaTnhqRhRtbVizCig2gFZS8RCzhlirJIE924wrtq/mi+6TBaSyLA4e35gNADhmlJlxpK7FOtBsGHiFd/8qEAR5YeJLKZC9CT233MwiFaDEYGfeE+6Nw=
+	t=1741168187; cv=none; b=Skxpb/cisXHwwdVionKmbCNxeaZBQtGxAuxV1tSEHf1h6EEUnOJBLE50Y/Xoio8faXKzhlvcgiL1KnHzGZraNZ0q30HVZfLkrUbAbEQ7EWFo0x3J/D1bQ3JMk5DF3B1CECwp109GGF/QyYg7HA4ulsrJ36OiBrHEtFFupFlsfrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741168468; c=relaxed/simple;
-	bh=0UnlsJ/QMPp3en93prvQfDrfGSRGtCvMeCyLsWlTT+o=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KREzyw/Sa0JXc3tMNcG98S5Ii8xPzj17V+TWXWWz0QY4/LD5f/54EFxn2/lLqXp1YN4eEijrQjAy7SZSkXGU7AuzhwYZKSzXPDkQcXl5bD3zhTnICHRrCd1qhsGZ58kmP9YjV8DQJVN6jM51BBnHNyTfgD2rDt30rP4aCXNno2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=dwBf4Mio; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5258qMgM027811;
-	Wed, 5 Mar 2025 10:53:58 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	2wY6Dic8hzBm+S2wld/DgwBFhKKy9RZVyTbW8u8LUKQ=; b=dwBf4Mioiwv2Zu4l
-	INts2S2Ok7dimOSV+L0M6etY0G775n4SH5tmarEcC5Ibw+A1q1v2wRE9aep8P0U8
-	Z6TrdLUAkozG1VaCDf2i2oJZEXISCSwoy00CEYbXknCbM8PmuQhxy7Zm24+PNSnU
-	B0NoKf3CcmMycPbWKNVzZLW3zm1vaxF6wDRCfyaMKBABB9a81qRTC2lk6FevvvvA
-	oKCbfQikaOr6KtDV9LsnhmERFCU8Mtl35jnH2Zbv2fDm7AjgDU00BNRdRvNrNxAP
-	5foz5C4FFAsXG2YmA1pbnqmuUXjes6S0kKQOJ3IVmPCok6FFziHby5QCpMRtqFib
-	Kw8YOg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 454cp8ncfg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 10:53:58 +0100 (CET)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 2109840092;
-	Wed,  5 Mar 2025 10:52:50 +0100 (CET)
-Received: from Webmail-eu.st.com (eqndag1node6.st.com [10.75.129.135])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id DDBCC5AB282;
-	Wed,  5 Mar 2025 10:49:57 +0100 (CET)
-Received: from SAFDAG1NODE1.st.com (10.75.90.17) by EQNDAG1NODE6.st.com
- (10.75.129.135) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 5 Mar
- 2025 10:49:57 +0100
-Received: from localhost (10.48.86.222) by SAFDAG1NODE1.st.com (10.75.90.17)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 5 Mar
- 2025 10:49:57 +0100
-From: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
-To: <lee@kernel.org>, <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <jic23@kernel.org>, <daniel.lezcano@linaro.org>, <tglx@linutronix.de>
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <devicetree@vger.kernel.org>,
-        <wbg@kernel.org>, <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
-        <olivier.moysan@foss.st.com>, <fabrice.gasnier@foss.st.com>
-Subject: [PATCH v3 8/8] arm64: dts: st: use lptimer3 as tick broadcast source on stm32mp257f-ev1
-Date: Wed, 5 Mar 2025 10:49:35 +0100
-Message-ID: <20250305094935.595667-9-fabrice.gasnier@foss.st.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250305094935.595667-1-fabrice.gasnier@foss.st.com>
-References: <20250305094935.595667-1-fabrice.gasnier@foss.st.com>
+	s=arc-20240116; t=1741168187; c=relaxed/simple;
+	bh=E/Pq5yil0cjvU/ukMT3gU7USItiQoOxjeOU2SRQfly4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sCvep6PuvlMZowXWkB1FBTJEQITr67o1CHwVFlSPmdC9yVJxuqc5HR1VXexP1lnap7AjJ52NaaKhvv6DZg5HQ7VSzO1k/v1O5YwJb9b5vHFsn/d42nlgd1xAZYsSvc/r7MOXSCy+TU5b0ppXOibhBJnW4V217upoBhL76R8wWF0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=uhtYePaH; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-390eebcc371so2943108f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:49:44 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1741168183; x=1741772983; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=d5UjWZ5weILsPr8XknPLuQcsI7+ozARlM9fSmGa2npI=;
+        b=uhtYePaHMicj163yVgeoz9HVpObnyQeqY5tDSoBDW4VsjfExxsk6pkjEkFmUjRxhUr
+         CFI44y99WkEd+PgxuDLiB3FCoubMwBqRGtJ7X5eXXrvHa5X3eysizExUy4cxLvVuUDKt
+         6LMRmEJ9uVzrixup2wlWZdUvhYN35Tfg7cJhUpKhn5M8vhyOFyiqEIyZXY1O2I6SH01L
+         8LhiGC4/zSkIAzMZnC9wg3eGd9HP+l3WwDLHuFZyCoI4wI550/NOfthHWrw8gvyKJTHI
+         mj9M5ctN3Q/2LtX0qgn8tfDqBzlWFmxmS9dT8+n4OO+Gt3k6PVASTRK24jtv2URZXRbU
+         Kocw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741168183; x=1741772983;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=d5UjWZ5weILsPr8XknPLuQcsI7+ozARlM9fSmGa2npI=;
+        b=lsOASH262ZhhTOEY1PUh7/vhjP4oumdu/17kud7OAX7dEkNNFFLSWwsgh4AXUsw0wT
+         rVv3PVhTVPivYwf9lTYt2LI/bsY6vH4ihz1FALW3r1FWMa0KEO9mcSoRIbDwDSu+OscI
+         PLB/c5OwbUEzObTU0n9M0gi2wYsXXeZf6JW0utK5zLTStl1k7TjXKKn7JFSH6Fu1lRyW
+         iTzNj7xbSda4EnKoiH83Eh72LD4BeLCNkwasWmt8T2J47rmYIKO4f2wEmtdCW269NMB8
+         qnRN0EAsQYV6/nWwUiWbcQjR/2t+3PE0La+zjcD/LfEtaoU7Rv4RA2g9k9u6G/QnxGvJ
+         jg/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVZf/nkNg6OapWzz7taL0Ns4XGg85dpRnkwoQvIeBnsJNqlaQU7WVNCc+vbCOYSPBHcSj/SS7zunbgWJNA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcEZ4MUb7KpdPirtsoETKmwsehQw/QBZFXbaNibG6SEAHQDqgO
+	AlWJXPKn2hsMdpaGVz74x6I0glg3sNZdZbHpdZMxqyoSH+uxnN44LVwF6AW689gWpK3Uz6c2kEt
+	V
+X-Gm-Gg: ASbGncvVq83QBpIHy4O2/TTin/QYq82xM1DwSCHCsbSCJ2zSz7mvU1EQttDnvRfYRhc
+	2Qyu45H8CONB9OefGzAtSDgW+ePjjB/j/CLgl2DSMlJmfBeQXYgZmyb/CxXoNB7cU4ODniHbLTt
+	5h3sBHCPUYw4Vu5ej3dHU6WcR3catsleBqGm/jw7r5oetgYdbzucoipqaj+1vjCqaD/5opKElCg
+	a3E+FKt78ntsN9y9Oya2mPXDplSOUVEh9u0cRYGt4RdgniHef+4S8LWE1J73f34nVkiPZi7tYpr
+	9vECif7k8vwewySFJcMaOrf2twuiHJyo+V2fQ13bW8Ro
+X-Google-Smtp-Source: AGHT+IE3ZYndRd3aCGcDy1NsnHk1JcSuobolN1usfY3/rOQ1MO5BYlsEICE8u2lBmL8SzFUnc8hOrg==
+X-Received: by 2002:a5d:6da3:0:b0:390:fca6:ceb5 with SMTP id ffacd0b85a97d-3911f757bfcmr2025359f8f.27.1741168183239;
+        Wed, 05 Mar 2025 01:49:43 -0800 (PST)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:e514:53b3:5af8:e408])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd42c60c0sm12272005e9.22.2025.03.05.01.49.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 01:49:42 -0800 (PST)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Stephen Rothwell <sfr@canb.auug.org.au>
+Subject: [PATCH] gpiolib: fix kerneldoc
+Date: Wed,  5 Mar 2025 10:49:39 +0100
+Message-ID: <20250305094939.40011-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,43 +87,34 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE3.st.com (10.75.129.80) To SAFDAG1NODE1.st.com
- (10.75.90.17)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_03,2025-03-05_01,2024-11-22_01
 
-During the low power modes the generic ARM timer is deactivated, so the
-the tick broadcast is used, based on LPTIMER3 which is clocked by LSE on
-STMicroelectronics boards.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Signed-off-by: Patrick Delaunay <patrick.delaunay@foss.st.com>
-Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Add missing '@' to the kernel doc for the new of_node_instance_match
+field of struct gpio_chip.
+
+Fixes: bd3ce71078bd ("gpiolib: of: Handle threecell GPIO chips")
+Reported-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Closes: https://lore.kernel.org/all/20250305203929.70283b9b@canb.auug.org.au/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- arch/arm64/boot/dts/st/stm32mp257f-ev1.dts | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ include/linux/gpio/driver.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-index 1b88485a62a1..242115863ab4 100644
---- a/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-+++ b/arch/arm64/boot/dts/st/stm32mp257f-ev1.dts
-@@ -190,6 +190,14 @@ &i2c8 {
- 	status = "disabled";
- };
+diff --git a/include/linux/gpio/driver.h b/include/linux/gpio/driver.h
+index 83e0a7e86962..bbcad928ecce 100644
+--- a/include/linux/gpio/driver.h
++++ b/include/linux/gpio/driver.h
+@@ -548,7 +548,7 @@ struct gpio_chip {
+ 	unsigned int of_gpio_n_cells;
  
-+/* use LPTIMER with tick broadcast for suspend mode */
-+&lptimer3 {
-+	status = "okay";
-+	timer {
-+		status = "okay";
-+	};
-+};
-+
- &rtc {
- 	status = "okay";
- };
+ 	/**
+-	 * of_node_instance_match:
++	 * @of_node_instance_match:
+ 	 *
+ 	 * Determine if a chip is the right instance. Must be implemented by
+ 	 * any driver using more than one gpio_chip per device tree node.
 -- 
-2.25.1
+2.45.2
 
 
