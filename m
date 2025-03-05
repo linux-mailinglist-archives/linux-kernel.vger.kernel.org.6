@@ -1,198 +1,183 @@
-Return-Path: <linux-kernel+bounces-547658-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBE9A50C14
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:58:24 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF15DA50C15
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:59:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 154E83B0890
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:57:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C517A3508
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B395254859;
-	Wed,  5 Mar 2025 19:58:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44267254B09;
+	Wed,  5 Mar 2025 19:59:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hJnfnsy7"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzG/xID6"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC29249E5;
-	Wed,  5 Mar 2025 19:57:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6522E3365;
+	Wed,  5 Mar 2025 19:59:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741204681; cv=none; b=nZCWAs1XI3XRQpH5IfXVcmhn98nLC81ykA1of+zNyHgN0N+0uYJ6FKVoCfOrDr8eKfKjLIXYyYGIJWmlRHnOIjulQPjihd3wnErPV28/G8Kaal5I6fOTcCKJpFQI+I0YPcBB/UPKTvq+nc2aWAs6VKnp88fxaBruDskdJOMgpKw=
+	t=1741204741; cv=none; b=NEVcVMEXB+LojwMm+znPnMCc67lRey6QiJuMWxWGfdAxDjeOZ2ZEErqPvO6rh5sJPPbpiZ5AMcWXcNB2yQfwWUB6Yo4c8d2Sbs2Czd/wlzfem1vI+IwWLGpS9C81Fi+Vokzs1FExNmywb5ABOWMwrfX45dqFlp7HEtNpBi5/Rpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741204681; c=relaxed/simple;
-	bh=3SofOfUEe1y4VYfO2piZ8r/sTxcae5BWEc8HQTleXOs=;
+	s=arc-20240116; t=1741204741; c=relaxed/simple;
+	bh=rgWUhepNWVcyfwGSqjFipmjHMd/7q124bJ0FeQo2L/k=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZXuRdIWja4RBB4zJcwWPXyywxywYxghgJCTP3cTbjC75aUMCdHhXaYkSUH0BODBF7gq1agdewNxQ9BH1Wii1JkWeoUft6OmfikHsIj0iv9U0cy3c5tKVA7SZs1PIZfQ31qzlEDnKYk57ARwLGDxlYgusDo+PtBCLtHZh20VVmqc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hJnfnsy7; arc=none smtp.client-ip=209.85.208.53
+	 To:Cc:Content-Type; b=TzhcxuYptPabBQsWsvETiDw0260x9yIQ+OWkdMBKN9fdBnKcluiGKGIdrhhPw0+n8V+pZIhU0A0pyEB+qWgVkn4bzoobcEajYSaXotsVMu+ofnOMq9fxicWgis5rI5HVWh4vemZIdK/xeFz8EG6XmDvp6sFOdyJmw4/BjJfuPO0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzG/xID6; arc=none smtp.client-ip=209.85.216.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5e0573a84fcso9728745a12.2;
-        Wed, 05 Mar 2025 11:57:59 -0800 (PST)
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2feb9078888so12435343a91.3;
+        Wed, 05 Mar 2025 11:59:00 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741204678; x=1741809478; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1741204739; x=1741809539; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=E/ZXpjJi+S5vVQ+v/vLI8CHzh++7gcgmV+BrUYvx3Nk=;
-        b=hJnfnsy7Ed3T4rfVM7OKM4UZDtCJePkp6ZDWXaOKrEmhRyw3b/L9RXVBIsEZsOSZ1G
-         5FuAEFKSJNsdQDXodVAs4jrv4GOddAnxd4vvuPjn9Z+Ot/mjLR8ldTUeRCK+/o/S0zsh
-         g8hHaqrhT6qDeOGCq9rylOavsHQlU2w+Ugg5Tae9xmUir40wfvArJfRWxqqhiP+hA10l
-         1V3xzks3RZyibn3kVEmgrZSRjAorrecL3+Tx/xLhZIziJ1St524GLvSIGb37BtZlD643
-         8I+cvtmkUvCH+dEo5JFxGYEUOz7NFVszD+xxAo5ra+fFUNdOsTuOGdstqZ5jYqdAXMJM
-         AHxw==
+        bh=T1PVaYBpq9076U3IWZXvGpb8FBXofDXNAhkbJyruFPI=;
+        b=KzG/xID63yprQEA8UprCojeOTDqG4jp67ner65I9Y0ItaBqaq+75YEacu1VkucPMi4
+         32o+sFrO487CVQFfhKiNDSFaFNl96EH7O0GI2AAf+ErR/xHjCorl+uzSGSLu4suIOJ1i
+         eGJvpyT+jrfPs1RVtWF94XhC7+Xf0ikEVPgzV3thyNb54OjEQVdFTmK0wtjUpjNBCbrH
+         ZVoqW968f3rtg7BRm3ypvVZlz+A8tkWxuqHzZKIOEJAVFs+HpWZ/GNlFwH6nr66g91k3
+         pAHtZXCfY1GR5S9gjwLAR7GQKsOaN90BLhamObDRvqqXCnFF1yq/vDENJeSiEsNJb9fK
+         uEdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741204678; x=1741809478;
+        d=1e100.net; s=20230601; t=1741204739; x=1741809539;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=E/ZXpjJi+S5vVQ+v/vLI8CHzh++7gcgmV+BrUYvx3Nk=;
-        b=j9//xN9GI01AlcDGX2EH1pyVIrEWm6sUgEHpcW5lkD/eDXn3NHg3o57OKRJcgg/By2
-         3q0Efg+njUwMEBN1quUcmbyzLJ3gdryVdxjJEmfpywBj/RRLVmxyR+Ct40MfadX4CTUJ
-         imgqFvNMzbZt5E9Gdb942RCQQfNTdOK+jEmcxZJ6CPvikhaOR7p2HSqEy88SqVWXydTW
-         cF5HzMvgE12O9sVK+9MVbJWuyfIl815rzuqu9pbjLziknMo6T6KZMcG6A4XuSd65QbzV
-         f69VolsUU4OqRO7RfJC7kpPE3whRg5jGgU2YRmIlALPuMxbbOdLeYGLaB2co/jFXpJ7t
-         VvVw==
-X-Forwarded-Encrypted: i=1; AJvYcCV8KhubH7J4D1CsFql7AGcI8LeI/DxY+PRzShHC6UW2hQ+5E0SX7bOfxU/u//naOZa+9CO5/tlK@vger.kernel.org, AJvYcCW+dnMXW+vEQpaDH+9UzqNLClIyeRfgb7rQ2QoaNd44UXeebW6V8t/Ne6L6zEm5kLsDpj8xMSuucPLtF8c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuZmCWY2pYXkdHuWAuWOWoWHK+f5hALtH4axs8fOfQY337t7EH
-	0ZfNyCEjTwtnm/PyD9Ct3p1gEQTI4D4yFsQS7monPaOAIDUeoJSXdZ1VAEacpVCdyCZzlBw29bp
-	PtcML6xWgTX5o5kgFvgctDe1Dk7E=
-X-Gm-Gg: ASbGncvcx1FjhYk/EKrVfWB8KL219bKu7z/q+KllKl5tKpy7U9r2ry6KF0dq16pNsuz
-	XABOiaH62VQtFiBC5V8675Zk3K2Pz+FrGiInoh3iSWawFSS0NWBXNVcJj4vkHHqcYDJtpOUscGN
-	VswOQpweI4SYiOgwEnZQwDIYTv
-X-Google-Smtp-Source: AGHT+IEuPBQlxzGis7PUyBClL+qVCjee9w2SsaScpchDplJcvi/zqf/o++iTiWSQpCI+U46NgmAzyGnlqYNRUYoLkUw=
-X-Received: by 2002:a17:907:2da2:b0:abf:7af6:ea64 with SMTP id
- a640c23a62f3a-ac20da89861mr509314966b.45.1741204677419; Wed, 05 Mar 2025
- 11:57:57 -0800 (PST)
+        bh=T1PVaYBpq9076U3IWZXvGpb8FBXofDXNAhkbJyruFPI=;
+        b=Bs3HkHrwjv2P+HFKIUIVUJo5XlrqCcHEtfo4E5aKu8sRXdo+N3r1/Xk9B42evJIHYN
+         EQvVZpcc/V86Bcs1cObHG83Us35q/QdyB3SDqRRdzoE94owLjeRQLxyvcDQke3QR4liF
+         OPE5cxgWzH+StWQMIcqh2T9kVrnpeABjWBSZwgt2qXKz0SZvRe/1oeFjLuGk0ejf3zIp
+         xTPmxPV3L/h3Th92kRZwD0VqQl/4fQiogo47Ppyy7Y+/GjR61N2WH6hM6Hu52vhYWCZ7
+         dlf1lWkALSTHqSKQdbkMxy52qRhGPg8AnAVOlLKKc3HsBCLxShRXCXo5lYfstyM68nqF
+         HFOA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQ9XIJ5xKSo/sjsKx2/1cSStRTuhQkbl/DdYqau8m4rV06NUKghshC9OOCvTvqOkiHkrdr6oFMQV/Z0t1byr6/Lg==@vger.kernel.org, AJvYcCUqynC72Nh7xvjnuqHSWrXRVyqwMjNzmXfoSDFfDFe+dZRnMVkchXlJR2vodLSxcDu1h8qobWOmH8P3HPQoCPetRfUe@vger.kernel.org, AJvYcCXqhoHoq74tvp1qWdKlh6ThfH6rmE3VES0WSP1KojTII7hHewpI24JlPP22lcif6hs6dCk3LCfKv9K6mnk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxP2Y1EPrnIIIFVsG80POudDFQTJ0HJGNVjq8Iv+IOMtBxkAiG9
+	MuK3p5krAiR0KtqsUHuRVvRlrXLsU6Wu0Pe3PtqwQ+iILef3OhLGB9KSCS2Mmv8dZTpuy8DAWb1
+	kK8YDXDEOwbp+7Pc6B0ssz9vsmkY=
+X-Gm-Gg: ASbGncvMCL19Lac8aHPjz1u0Zp5sv9kbSBNqnSmG2a7T2c6lwNjq5xa3+PozgQrOl4y
+	gdLE6jMkul66kth6som1RnD/xsu62BOC6gDW2/myjlT2P48YWZtKRmM3w38A2hZlduBI+YvtKKP
+	yI+9o/Sz6qhwVyk6K8MjytJOE8
+X-Google-Smtp-Source: AGHT+IFfV/6qDYoZwPNJLCBtJE8ZyU4iJr7//K16BTPN6XDyLemrI4fIv4EKbuBvHlLWUWsZ7sQslXNBrtC5L25iHmI=
+X-Received: by 2002:a17:90b:3d12:b0:2ff:5ed8:83d1 with SMTP id
+ 98e67ed59e1d1-2ff5ed8d53fmr1796280a91.19.1741204739474; Wed, 05 Mar 2025
+ 11:58:59 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAMpRfLORiuJOgUmpmjgCC1LZC1Kp0KFzPGXd9KQZELtr35P+eQ@mail.gmail.com>
- <2025030559-radiated-reviver-eebb@gregkh>
-In-Reply-To: <2025030559-radiated-reviver-eebb@gregkh>
-From: =?UTF-8?Q?Se=C3=AFfane_Idouchach?= <seifane53@gmail.com>
-Date: Thu, 6 Mar 2025 03:57:41 +0800
-X-Gm-Features: AQ5f1JpQ1z6G7iloHzXVBiJZ3GUkFE92JcFSnEm6C7EdbyJf1xaWNLQKx29oq8s
-Message-ID: <CAMpRfLMQ=rWBpYCaco5X4Sh1ecHuiqa91TwsBo6m2MA_UMKM+g@mail.gmail.com>
-Subject: Re: [REGRESSION] Long boot times due to USB enumeration
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: dirk.behme@de.bosch.com, rafael@kernel.org, dakr@kernel.org, 
-	linux-kernel@vger.kernel.org, regressions@lists.linux.dev, 
-	stable@vger.kernel.org
+References: <20250304154846.1937958-1-david@redhat.com> <20250305152055.GB28112@redhat.com>
+ <CAEf4BzbyFy0eQHLac3zR8GiGDOUqYoTGAWDbFaeou903OGOTpg@mail.gmail.com> <62f93f79-a8d4-44a5-b276-3ac5af4ab25c@redhat.com>
+In-Reply-To: <62f93f79-a8d4-44a5-b276-3ac5af4ab25c@redhat.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 5 Mar 2025 11:58:46 -0800
+X-Gm-Features: AQ5f1JpNR9XR0Xgny3rOP3g1v3FV71Th_LHZWcRds0Sk3eNMx_5PJFuIV4e0zaU
+Message-ID: <CAEf4BzZcc6D3u5ATQmpkBt=8EhNuG7Xaibywx=hXcXTp346uFA@mail.gmail.com>
+Subject: Re: [PATCH -next v1 0/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
+To: David Hildenbrand <david@redhat.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-arm-kernel@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Matthew Wilcox <willy@infradead.org>, Russell King <linux@armlinux.org.uk>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
+	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
+	Tong Tiangen <tongtiangen@huawei.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 6, 2025 at 2:26=E2=80=AFAM Greg KH <gregkh@linuxfoundation.org>=
- wrote:
+On Wed, Mar 5, 2025 at 11:47=E2=80=AFAM David Hildenbrand <david@redhat.com=
+> wrote:
 >
-> On Thu, Mar 06, 2025 at 12:32:59AM +0800, Se=C3=AFfane Idouchach wrote:
-> > Dear all,
+> On 05.03.25 20:43, Andrii Nakryiko wrote:
+> > On Wed, Mar 5, 2025 at 7:22=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> =
+wrote:
+> >>
+> >> On 03/04, David Hildenbrand wrote:
+> >>>
+> >>> Currently, uprobe_write_opcode() implements COW-breaking manually, wh=
+ich is
+> >>> really far from ideal.
+> >>
+> >> To say at least ;)
+> >>
+> >> David, thanks for doing this. I'll try to read 3/3 tomorrow, but I don=
+'t
+> >> think I can really help. Let me repeat, this code was written many yea=
+rs
+> >> ago, I forgot everything, and today my understanding of mm/ is very po=
+or.
+> >> But I'll try anyway.
+> >>
+> >>> Are there any uprobe tests / benchmarks that are worth running?
+> >>
+> >> All I know about uprobe tests is that bpf people run a lot of tests wh=
+ich
+> >> use uprobes.
+> >>
+> >> Andrii, Jiri, what you advise?
+> >>
 > >
-> > I am reporting what I believe to be regression due to
-> > c0a40097f0bc81deafc15f9195d1fb54595cd6d0.
+> > We do have a bunch of tests within BPF selftests:
 > >
-> > After this change I am experiencing long boot times on a setup that
-> > has what seems like a bad usb.
-> > The progress of the boot gets halted while retrying (and ultimately
-> > failing) to enumerate the USB device and is only allowed to continue
-> > after giving up enumerating the USB device.
-> > On Arch Linux this manifests itself by a message from SystemD having a
-> > wait job on journald. Journald starts just after the enumeration fails
-> > with "unable to enumerate USB device".
-> > This results in longer boot times on average 1 minute longer than
-> > usual (usually around 10s).
-> > No stable kernel before this change exhibits the issue all stable
-> > kernels after this change exhibit the issue.
-> >
-> > See the related USB messages attached below (these messages are
-> > continuous and have not been snipped) :
-> >
-> > [...]
-> > [    9.640854] usb 1-9: device descriptor read/64, error -110
-> > [   25.147505] usb 1-9: device descriptor read/64, error -110
-> > [   25.650779] usb 1-9: new high-speed USB device number 5 using xhci_h=
-cd
-> > [   30.907482] usb 1-9: device descriptor read/64, error -110
-> > [   46.480900] usb 1-9: device descriptor read/64, error -110
-> > [   46.589883] usb usb1-port9: attempt power cycle
-> > [   46.990815] usb 1-9: new high-speed USB device number 6 using xhci_h=
-cd
-> > [   51.791571] usb 1-9: Device not responding to setup address.
-> > [   56.801594] usb 1-9: Device not responding to setup address.
-> > [   57.010803] usb 1-9: device not accepting address 6, error -71
-> > [   57.137485] usb 1-9: new high-speed USB device number 7 using xhci_h=
-cd
-> > [   61.937624] usb 1-9: Device not responding to setup address.
-> > [   66.947485] usb 1-9: Device not responding to setup address.
-> > [   67.154086] usb 1-9: device not accepting address 7, error -71
-> > [   67.156426] usb usb1-port9: unable to enumerate USB device
+> > cd tools/testing/selftest/bpf && make -j$(nproc) && sudo ./test_progs -=
+t uprobe
 >
-> That's a real issue, but should not be due to the commit id you
-> referenced.
->
-> > [...]
-> >
-> > This issue does not manifest in 44a45be57f85.
->
-> What does that commit have to do with this?  That's just a build break
-> fix.
->
-> > I am available to test any patches to address this on my system since
-> > I understand this could be quite hard to replicate on any system.
-> > I am available to provide more information if I am able or with
-> > guidance to help troubleshoot the issue further.
-> >
-> > Wishing you all a good day.
-> >
-> > #regzbot introduced: c0a40097f0bc81deafc15f9195d1fb54595cd6d0
-> >
->
-> We know there are issues here.  That commit was "fixed" by commit
-> 15fffc6a5624 ("driver core: Fix uevent_show() vs driver detach race"),
-> but then that caused a different problem, so it was reverted by commit
-> 9a71892cbcdb ("Revert "driver core: Fix uevent_show() vs driver detach
-> race"").
->
-> There are many discussions about this on the mailing list, with a
-> proposal to add Dan's "fix" back.  If you could try that, it would be
-> great to see.
->
-> I think your USB problem is different here, but if you add 15fffc6a5624
-> ("driver core: Fix uevent_show() vs driver detach race") to your kernel,
-> that would be great to see.
->
-> thanks,
->
-> greg k-h
+> I stumbled over them, but was so far not successful in building them in
+> my test VM (did not try too hard, though). Will try harder now that I
+> know that it actually tests uprobe properly :)
 
-Hello Greg,
+If you have decently recent Clang and pahole, then just make sure you
+have kernel built before you build selftests. So above instructions
+are more like:
 
-Thank you for your time.
+1. cd <linux-repo>
+2. cat tools/testing/selftests/bpf/{config, config.<your_arch>} >> .config
+3. make -j$(nproc) # build kernel with that adjusted config
+4. cd tools/testing/selftests/bpf
+5. make -j$(nproc) # build BPF selftests
+6. sudo ./test_progs -t uprobe # run selftests with "uprobe" in their name
 
-> What does that commit have to do with this?  That's just a build break
-> fix.
-This commit comes right before what seems to be the bad commit. I got
-to the cited (maybe) bad commit after a bisection and wanted to
-confirm the results.
-
-> I think your USB problem is different here, but if you add 15fffc6a5624
-> ("driver core: Fix uevent_show() vs driver detach race") to your kernel,
-> that would be great to see.
-
-After reapplying the patch (15fffc6a5624) at v6.13 (ffd294d346d1), it
-indeed does not resolve the issue.
-The behavior is bit different than at the reported commit
-(c0a40097f0bc) in the sense that it seems that the block is happening
-earlier in the boot before even systemd has started because there is
-no mention of a wait job.
-However the end result is still the same; the boot will only continue
-after the "unable to enumerate USB device" message.
-
-staying available if you have anything else
+>
+> >
+> > I also built an uprobe-stress tool to validate uprobe optimizations I
+> > was doing, this one is the most stand-alone thing to use for testing,
+> > please consider checking that. You can find it at [0], and see also
+> > [1] and [2] where  I was helping Peter to build it from sources, so
+> > that might be useful for you as well, if you run into problems with
+> > building. Running something like `sudo ./uprobe-stress -a10 -t5 -m5
+> > -f3` would hammer on this quite a bit.
+>
+> Thanks, I'll play with that as well.
+>
+> >
+> > I'm just about to leave on a short vacation, so won't have time to go
+> > over patches, but I plan to look at them when I'm back next week.
+> >
+> >    [0] https://github.com/libbpf/libbpf-bootstrap/tree/uprobe-stress
+> >    [1] https://lore.kernel.org/linux-trace-kernel/CAEf4BzZ+ygwfk8FKn5AS=
+_Ny=3DigvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com/
+> >    [2] https://lore.kernel.org/linux-trace-kernel/CAEf4BzZqKCR-EQz6LTi-=
+YvFY4RnYb_NnQXtwgZCv6aUo7gjkHg@mail.gmail.com
+> >
+> >> Oleg.
+> >>
+> >
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
