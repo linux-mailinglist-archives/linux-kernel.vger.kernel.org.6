@@ -1,128 +1,142 @@
-Return-Path: <linux-kernel+bounces-546271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F082A4F899
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:20:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7AC8A4F89D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:21:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D2DCB16F91A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:20:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 444F33A135D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:21:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB16C1F8677;
-	Wed,  5 Mar 2025 08:20:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FF941F8677;
+	Wed,  5 Mar 2025 08:21:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="03cl7met"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="kVU0y0iJ"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CA071D8DEE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D49FA14658D;
+	Wed,  5 Mar 2025 08:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741162826; cv=none; b=QicKW9nfyEEBCE9zrUKgUGxsDPt1jmIYmsDNHauekLnRlHQ3Bo/DkWQ0lVdDWaAwkFwLQQAPiiBlh7YpphLUkUbGyxAddMUDt9f8O0zPcfnSoTo6ldWG7AuijgLV7fWCnGtBzlcYC3YWVOIhPOi5oN22D2xj53JNgnVGH96W0t0=
+	t=1741162860; cv=none; b=af/x/YRDO8yLz44kQGT+gO+xWuM49c7kOzple+L+NFexZtOoKp4e35x9Hd/fCo5TSe5VJ2E+qX5mDz9Cf4cqnPDK+C+kdXdIDrOQYgvQV3HSr9SJ3B0V2+UxUhubtOIggUOIW90P8BVJqReDGeBdsvsu7UuBs/cKUJ77HwjVccU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741162826; c=relaxed/simple;
-	bh=RWpWc+faJ0YZsTPx4jkXwG1vJYFHTnCeCj6HQ2ZWZ8Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u5PcUQHmnmsFEeBs1J+Fq8iVfDCmLk40DeGdqowBPSmqJpdnRXJ46VDEq1EGkEoMEZUlUjxTzi2tMEMwrzURfqkS3MoyOTB5C75ttn5JrfuU0RfNbm4OdufwGzBMVqFRq5MJXwMQYClDhlSda2kMw0OslChInwZITPKsHTufOok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=03cl7met; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-abfe7b5fbe8so423939166b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:20:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1741162821; x=1741767621; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DZ9TMmWBCnKwhuUOANBJp50uacRGJFZ/d6Ba0SS8K6o=;
-        b=03cl7metXI1cLSykSQ15A0v9urzKwbn0ZkT+OxAUedRRVCcXmLO4k/5QngaDzqWWxx
-         OJpFu0+eWvnv/Sj3U1pIo1XkyZXjKxeLn2K11hS2ZyZmSACwCW1dxHknTMgct0ASxAP8
-         svykkAMIMCcArfI0VNMDN+dnaBE7rjvYnER16lHjGb/pweLNbHe/U0rLhR3vVOl3coRw
-         HKggazQcB8fgfDAp9j0I1qh9v9+BNbiTaL7o4dLv0klNKODMsAqt1/uWNoGvtwMIyplc
-         2WhF0vJI9xcORt0EiyhdFVep21WwHSiVHd8kw4DOsRavKYAhBZauJ/MB/Uf2vvVnmJ+1
-         Hnlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741162821; x=1741767621;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DZ9TMmWBCnKwhuUOANBJp50uacRGJFZ/d6Ba0SS8K6o=;
-        b=ZAxTJfcKi34po/mu8MsCSItByx4tRaHGoNlV+T1XS0/ZLAp3HIchwAApu78x9xzBH9
-         HAoB7jkKWmTBX6XnptFIJFQX1OX/YVKN2Fql+dgMOyD0fS22rPpl46h4YHf9eIzUzDGn
-         3GCo23ogI+vOJxZIHPoJ12seYhqqYZBMA+c9USqAKWUu9sfRypJkXc9aRCvQ+4CMauEe
-         MeqtyvdoCOkqJ8jJAV5u3nuAxasBfJOhwV0ivzzF9OYTzP+RxO3n5tYVQkmOG2lOxlmr
-         rH2bsz9a6x9Gu24QkSRTpbAgllBzlYYyGOcX4EzUAHQLzkuZ6GT44w+Vc/x/dILSNMWW
-         +C0w==
-X-Forwarded-Encrypted: i=1; AJvYcCX12rZULaO0yx/r0+TvEJWP6AL3YK46+n1AO12xooZEdt2yc768RuIZCKVVbw0SpiF+zUfH+QuaMR69hRI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQpPM2W8KO1ZszsyWZfV53gi59siQ5olDHJuHNPRrjw9g135zl
-	ahhvoq8UJS3jwyNAR7YQuqQyQsQmIINvrE03XfhrqYksOK5e7dl1lW47wS2oAEQ=
-X-Gm-Gg: ASbGncutAvBKa0pMs6b400nmC9+wQ2KFY7jwCkYR38RGDnWz6cAL3rRXGJZOEEfafLa
-	3+6e/hIVbUFQXNGukhmoTzQG4h9KK4BBnVHFem3vb9KdyEqbP/uRkQ9uWk+pP2GpufNV1ruGbZ6
-	1NR0pmPbZvHsh3DrHo4Qu6vK0zps9kandllsEa0cadRRKk87MFgjVfFkZD6uuQ9HSoYbHACeK3C
-	4bB8SzUOqTK6xsmMhuXeGLqMFqo2ZdIjEufw04fHGplKhAe4fH9yE9VKMyMnzSlMC8/XU7Yoqja
-	4+8ygpeCIqXg2xBgPq9SzC64PSgsRBGI2lJsHuz7xJH5th8GrIAgT1r8KkESk0JB6beSWTrOb6g
-	A
-X-Google-Smtp-Source: AGHT+IG3uX4osOFdkeIE8BVoOkaHQ2eM06ismAlJEsM6OrJRVb5spjiMCAH7SqlSZ6VKBFc01zjVCQ==
-X-Received: by 2002:a05:6402:2714:b0:5dc:6e27:e6e8 with SMTP id 4fb4d7f45d1cf-5e59f47ced8mr4078134a12.24.1741162821234;
-        Wed, 05 Mar 2025 00:20:21 -0800 (PST)
-Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf3f3bbfb3sm845989066b.77.2025.03.05.00.20.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 00:20:20 -0800 (PST)
-Message-ID: <2690fc33-0646-4aff-aacf-2760706139e1@blackwall.org>
-Date: Wed, 5 Mar 2025 10:20:18 +0200
+	s=arc-20240116; t=1741162860; c=relaxed/simple;
+	bh=s3Uk1BHVwIcZ5VUVVc13SVRBkZzEcEhWNPCLgY3F+N4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OdFB3otcEJNXhdyHfbcImSqMbi1S58yPKzbGKjYeHYn4qPBtIO4krhJUezSPDhscbjot8KXjj3HIT5FZMp7rs0i6JGRrafhhh0+Gm4efv/GOW3CXR2VVwSFSlgaK622k3j23y8b/PGK/HwMf8zR7T+n7HdwQ2lD5Y6x50Ns0QRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=kVU0y0iJ; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: bfcbacbaf99a11ef8eb9c36241bbb6fb-20250305
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=GFxWueo3Q7D0lqnHm7zaaDzy31RkGxj9+qLmZ+0IIcM=;
+	b=kVU0y0iJ1+0wStsj/S44pJwmWI3j954AP+9dA5t7YJ3MuOraAF4DCjIHdw7TpE5cljyMlOdhaDJczDbN6tuM6Zqp5274MOyw5genNDNVmfAPPQmDirTiVnV6PI4E4WjpEUN69OskZaksE/Ci79frisJ68wxa2tmnA6d1wC0aUjg=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.2.1,REQID:869f8c68-3c77-4ff1-b476-1edf62165389,IP:0,UR
+	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
+	elease,TS:0
+X-CID-META: VersionHash:0ef645f,CLOUDID:6461fa8b-f5b8-47d5-8cf3-b68fe7530c9a,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:ni
+	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: bfcbacbaf99a11ef8eb9c36241bbb6fb-20250305
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <jjian.zhou@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1280654986; Wed, 05 Mar 2025 16:20:50 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ mtkmbs13n1.mediatek.inc (172.21.101.193) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.28; Wed, 5 Mar 2025 16:20:49 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1258.28 via Frontend Transport; Wed, 5 Mar 2025 16:20:49 +0800
+From: Jjian Zhou <jjian.zhou@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Jason-ch Chen
+	<jason-ch.chen@mediatek.com>, Jjian Zhou <jjian.zhou@mediatek.com>
+Subject: [PATCH RFC 0/3] add VCP mailbox and IPC driver
+Date: Wed, 5 Mar 2025 16:20:37 +0800
+Message-ID: <20250305082047.15746-1-jjian.zhou@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 net-next 04/15] netfilter: bridge: Add conntrack double
- vlan and pppoe
-To: Eric Woudstra <ericwouds@gmail.com>,
- Michal Ostrowski <mostrows@earthlink.net>,
- Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Jiri Pirko <jiri@resnulli.us>,
- Ivan Vecera <ivecera@redhat.com>, Roopa Prabhu <roopa@nvidia.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Kuniyuki Iwashima <kuniyu@amazon.com>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Ahmed Zaki <ahmed.zaki@intel.com>,
- Alexander Lobakin <aleksander.lobakin@intel.com>,
- Vladimir Oltean <olteanv@gmail.com>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, linux-hardening@vger.kernel.org,
- Kees Cook <kees@kernel.org>, "Gustavo A. R. Silva" <gustavoars@kernel.org>
-References: <20250228201533.23836-1-ericwouds@gmail.com>
- <20250228201533.23836-5-ericwouds@gmail.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20250228201533.23836-5-ericwouds@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-MTK: N
 
-On 2/28/25 22:15, Eric Woudstra wrote:
-> This adds the capability to conntrack 802.1ad, QinQ, PPPoE and PPPoE-in-Q
-> packets that are passing a bridge.
-> 
-> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
-> ---
->  net/bridge/netfilter/nf_conntrack_bridge.c | 83 ++++++++++++++++++----
->  1 file changed, 71 insertions(+), 12 deletions(-)
->
+The VCP mailbox has 5 groups. Each group has corresponding interrupts,
+registers, and 64 slots (each slot is 4 bytes). Since different features
+share one of the mailbox groups, the VCP mailbox needs to establish a
+send table and a receive table. The send table is used to record the
+feature ID, mailbox ID, and the number of slots occupied. The receive table
+is used to record the feature ID, mailbox ID, the number of slots occupied,
+and the receive options. The API setup_mbox_table in mtk-vcp-ipc.c calculates
+the slot offset and pin index for each feature ID based on the mailbox ID and
+slot number in the send and receive tables (several slots form a pin, and
+each pin can trigger an interrupt). These descriptions are written in the
+mtk-vcp-ipc.c file -- we call it the IPC layer.
 
-Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
+We have two questions:
+How should we describe the mailbox and IPI?
+Can the intermediate IPC layer be rewritten as a virtual mailbox layer?
+
+Example of send and recve table:
+Operation | mbox_id | ipi_id | msg_size | align_size | slot_ofs | pin_index |  notes
+send          0          0       18          18           0          0
+recv          0          1       18          18          18          9
+send          1         15        8           8           0          0
+send          1         16       18          18           8          4
+send          1          9        2           2          26         13
+recv          1         15        8           8          28         14       ack of send ipi_id=15
+recv          1         17       18          18          36         18
+recv          1         10        2           2          54         27       ack of send ipi_id=2
+send          2         11       18          18           0          0
+send          2          2        2           2          18          9
+send          2          3        3           4          20         10
+send          2         32        2           2          24         12
+recv          2         12       18          18          26         13
+recv          2          5        1           2          44         22
+recv          2          2        1           2          46         23
+
+Recv ipi_id=2 is the ack of send ipi_id=2(The ipi_id=15 is the same.)
+
+Jjian Zhou (3):
+  mailbox: mediatek: Add mtk-vcp-mailbox driver
+  firmware: mediatek: Add vcp ipc protocol interface
+  dt-bindings: mailbox: mtk,vcp-mbox: add mtk vcp-mbox document
+
+ .../bindings/mailbox/mtk,vcp-mbox.yaml        |  49 ++
+ drivers/firmware/Kconfig                      |   9 +
+ drivers/firmware/Makefile                     |   1 +
+ drivers/firmware/mtk-vcp-ipc.c                | 481 ++++++++++++++++++
+ drivers/mailbox/Kconfig                       |   9 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/mtk-vcp-mailbox.c             | 179 +++++++
+ include/linux/firmware/mediatek/mtk-vcp-ipc.h | 151 ++++++
+ include/linux/mailbox/mtk-vcp-mailbox.h       |  34 ++
+ 9 files changed, 915 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/mtk,vcp-mbox.yaml
+ create mode 100644 drivers/firmware/mtk-vcp-ipc.c
+ create mode 100644 drivers/mailbox/mtk-vcp-mailbox.c
+ create mode 100644 include/linux/firmware/mediatek/mtk-vcp-ipc.h
+ create mode 100644 include/linux/mailbox/mtk-vcp-mailbox.h
+
+--
+2.45.2
 
 
