@@ -1,108 +1,135 @@
-Return-Path: <linux-kernel+bounces-546412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA4A3A4FA62
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:40:26 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B25EA4FA66
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:41:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E89E118911D5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:40:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AE1A1890B4B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC6F5204C1C;
-	Wed,  5 Mar 2025 09:40:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iDn06RqO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482132E3373
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:40:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E27204C27;
+	Wed,  5 Mar 2025 09:41:13 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16B082E3373
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741167621; cv=none; b=pBtiTDywPSvjYNb/TlpgD28xlekzTKXodTD+vp4aYDalAtnmANO7jTKJmZmoo9Vbdfqw0HHLGhA26MOAUhOcx/HW0igkG3vZe9+FSHJXIIp0HsMvJ7VqTEVPpaBLXT/TXRzfQa+IZCUhzC0jqndmQ4suhZCcHZ5hjWlV0Plefus=
+	t=1741167673; cv=none; b=gdtmO+33deSj8CchIfOxjpggToBEAU87BSrRnFZV8P77SYlh6ClMNNchsdEEp/81tAI+pZ3JdWvqmiw8kQDaf6SNCvUF7Cn+tiVGJ+jlkFJD7A2rNQYUYo/gFXrmFIFjzWHrz52ea/s9TpsAd8YKzhVydTq64OEhTyQkwndgY5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741167621; c=relaxed/simple;
-	bh=ltIe6+sX2XLfMhxGQRcdRDD02h9C6oTeIcIfHmw2Kmg=;
+	s=arc-20240116; t=1741167673; c=relaxed/simple;
+	bh=Vw+5e0EpzqsLzssyNulWsQ7b6CkuCULIKONC3H5iOgM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WwPjSN+oSnmgeMtcAbkJzbapCZKfr4uIKfZIJ6YM3dre13yRka7SkeQmpkJlfpe8arWO5ERyJG7b4uoYlp7XS+pjYI4a4vObuOSkOIfl1PQtIoewAwKFNyowzdXC0e3GhW2ifi0k9r1cKcXi4X0yis3elrLWvLcMzhFEHM6/3c0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iDn06RqO; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741167619; x=1772703619;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ltIe6+sX2XLfMhxGQRcdRDD02h9C6oTeIcIfHmw2Kmg=;
-  b=iDn06RqO1b6LMEjiwxoNw7N5SRqCqkxBDXqRNk26BOthsJfNCzJMfegC
-   tvfn7PB2NJCkDNbJqa92P7s7mOPsrVpe452uCi8mBhy0EREQGRVK8hVLR
-   fT66iF8Azp2LOnGaVi5jWBM6Pwup8cM2bZ+0dPaWOy5ir0ZJdp8zsq8mN
-   lBbOO9G1EKmggOMcXg+pS3HETqwgyABNRVHCEh29d/yZgqQrQ13wucMCI
-   2VQ8qB97IUFDoCSFkfKa8tjaZZHwAC8rEnRzA53BFSVtxibLpiCFV6wAG
-   r9oa7rmH7hw3kq78Ev1kxpM2zJytrCb0HU4xzc2u4/0DTWgJSCCrtFoat
-   Q==;
-X-CSE-ConnectionGUID: MTiFIOOlRYK2IzmE5ofjrA==
-X-CSE-MsgGUID: D/trHtsLRxm6OigfEo9lag==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="29704414"
-X-IronPort-AV: E=Sophos;i="6.14,222,1736841600"; 
-   d="scan'208";a="29704414"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 01:40:18 -0800
-X-CSE-ConnectionGUID: C6OGLUocTKCwmkM/rtbLmA==
-X-CSE-MsgGUID: Lsq9q/FbQ5qX8ptOUc2Urw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="149600868"
-Received: from smile.fi.intel.com ([10.237.72.58])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 01:40:17 -0800
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1tplEc-0000000HN5y-1kGx;
-	Wed, 05 Mar 2025 11:40:14 +0200
-Date: Wed, 5 Mar 2025 11:40:14 +0200
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	"Avizrat, Yaron" <yaron.avizrat@intel.com>,
-	"Elbaz, Koby" <koby.elbaz@intel.com>,
-	"Sinyuk, Konstantin" <konstantin.sinyuk@intel.com>
-Subject: Re: [PATCH v2 1/1] accel/habanalabs: Switch to use %ptTs
-Message-ID: <Z8gb_kzQ7COAUqnB@smile.fi.intel.com>
-References: <20250206192109.1133364-2-andriy.shevchenko@linux.intel.com>
- <87jz94y5zs.fsf@intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=dhgQWTyOLgvIg5jTd+8LWOF9xREM6wOoDZOkJXKtScXLG/uVOkSNJaGTgj6Y9Jra0oOjsaePgFe9sh9y5Igy8ncKCXaJrx1pcwYnWlFHnZ43lZqpnD9impgLK3WIbBrw/xa40rzvkjstIyMq2wA0ZeIxtwSuRZ6GHztjeY2poj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BA06FFEC;
+	Wed,  5 Mar 2025 01:41:24 -0800 (PST)
+Received: from bogus (unknown [10.57.37.20])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 186323F66E;
+	Wed,  5 Mar 2025 01:41:07 -0800 (PST)
+Date: Wed, 5 Mar 2025 09:41:04 +0000
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Will Deacon <will@kernel.org>
+Cc: Sebastian Ene <sebastianene@google.com>, catalin.marinas@arm.com,
+	Sudeep Holla <sudeep.holla@arm.com>, joey.gouly@arm.com,
+	maz@kernel.org, oliver.upton@linux.dev, snehalreddy@google.com,
+	suzuki.poulose@arm.com, vdonnefort@google.com, yuzenghui@huawei.com,
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-team@android.com,
+	Andrei Homescu <ahomescu@google.com>
+Subject: Re: [PATCH v2 4/4] KVM: arm64: Release the ownership of the hyp rx
+ buffer to Trustzone
+Message-ID: <20250305094104.vctshdtgdukno2aj@bogus>
+References: <20250227181750.3606372-1-sebastianene@google.com>
+ <20250227181750.3606372-5-sebastianene@google.com>
+ <20250305004522.GC31667@willie-the-truck>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <87jz94y5zs.fsf@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250305004522.GC31667@willie-the-truck>
 
-On Tue, Mar 04, 2025 at 09:01:59PM +0200, Jani Nikula wrote:
-> On Thu, 06 Feb 2025, Andy Shevchenko <andriy.shevchenko@linux.intel.com> wrote:
-> > Use %ptTs instead of open-coded variant to print contents of time64_t type
-> > in human readable form.
-
-...
-
-> > -	char pq_time_str[64] = "N/A", eq_time_str[64] = "N/A";
+On Wed, Mar 05, 2025 at 12:45:23AM +0000, Will Deacon wrote:
+> On Thu, Feb 27, 2025 at 06:17:49PM +0000, Sebastian Ene wrote:
+> > Introduce the release FF-A call to notify Trustzone that the hypervisor
+> > has finished copying the data from the buffer shared with Trustzone to
+> > the non-secure partition.
+> > 
+> > Reported-by: Andrei Homescu <ahomescu@google.com>
+> > Signed-off-by: Sebastian Ene <sebastianene@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/nvhe/ffa.c | 7 +++++--
+> >  1 file changed, 5 insertions(+), 2 deletions(-)
+> > 
+> > diff --git a/arch/arm64/kvm/hyp/nvhe/ffa.c b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > index 861f24de97cb..7da0203f1ee9 100644
+> > --- a/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > +++ b/arch/arm64/kvm/hyp/nvhe/ffa.c
+> > @@ -725,6 +725,7 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+> >  	DECLARE_REG(u32, uuid3, ctxt, 4);
+> >  	DECLARE_REG(u32, flags, ctxt, 5);
+> >  	u32 count, partition_sz, copy_sz;
+> > +	struct arm_smccc_res _res;
+> >  
+> >  	hyp_spin_lock(&host_buffers.lock);
+> >  	if (!host_buffers.rx) {
+> > @@ -741,7 +742,7 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+> >  
+> >  	count = res->a2;
+> >  	if (!count)
+> > -		goto out_unlock;
+> > +		goto release_rx;
+> >  
+> >  	if (hyp_ffa_version > FFA_VERSION_1_0) {
+> >  		/* Get the number of partitions deployed in the system */
+> > @@ -757,10 +758,12 @@ static void do_ffa_part_get(struct arm_smccc_res *res,
+> >  	copy_sz = partition_sz * count;
+> >  	if (copy_sz > KVM_FFA_MBOX_NR_PAGES * PAGE_SIZE) {
+> >  		ffa_to_smccc_res(res, FFA_RET_ABORTED);
+> > -		goto out_unlock;
+> > +		goto release_rx;
+> >  	}
+> >  
+> >  	memcpy(host_buffers.rx, hyp_buffers.rx, copy_sz);
+> > +release_rx:
+> > +	ffa_rx_release(&_res);
 > 
-> The "N/A" gets replaced with, I presume, "1970-01-01 00:00:00" for 0
-> timestamps, which is not the same thing.
+> Hmm, the FFA spec is characteristically unclear as to whether or not we
+> need to release the rx buffer in the case that the flags indicate use of
+> the rx buffer but the returned partition count is 0.
+> 
+> Sudeep -- do you know what we should be doing in that case?
+> 
 
-It's used only in dev_err() below which is why it's fine to update.
-Should I mention this in the commit message?
+We need to call RX_RELEASE here. I went back to the spec to confirm the
+same again.
 
-> But I honestly don't know anything about the driver.
+v1.2 EAC0 spec Section 7.2.2.4.2 Transfer of buffer ownership
+(Or just look for the section title in any version of the spec)
+"
+2. Ownership transfer for the RX buffer takes place as follows.
+    2. For a framework message,
+       1. Completion of the FFA_PARTITION_INFO_GET ABI transfers the ownership
+       of the caller’s RX buffer from the Producer to the Consumer.
+3. For both types of messages, an invocation of the following FF-A ABIs
+    transfers the ownership from the Consumer to the Producer.
+       1. FFA_MSG_WAIT ...
+       2. FFA_RX_RELEASE.
+"
+
+Hope that helps, can dig deeper if there are any ambiguities around this.
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
-
+Regards,
+Sudeep
 
