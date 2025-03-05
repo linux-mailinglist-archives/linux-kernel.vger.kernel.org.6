@@ -1,99 +1,278 @@
-Return-Path: <linux-kernel+bounces-545931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAF2A4F3EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:36:48 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 98931A4F3F0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:38:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 880D918908BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:36:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79B818908BC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:38:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE185148855;
-	Wed,  5 Mar 2025 01:36:40 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A34514A4FF;
+	Wed,  5 Mar 2025 01:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fi1hokbE"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31AB113C3CD;
-	Wed,  5 Mar 2025 01:36:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4C4469D;
+	Wed,  5 Mar 2025 01:38:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741138600; cv=none; b=PyURKWeaLNRuXoIJNUgjkoNnwEWZKf78YIIXv2zIAPrAtOwdggVvKvp/Xo3PbeGbjGDyIQo72v5mNvvFg5PAQmO5eAeSzPqvy/bkNT1tUAcamKKwhfnr4DfaVvWKNJI10x+bhfNc47y2OEhvCvK9ug2x352yu57Zs9VwvcwTyiw=
+	t=1741138692; cv=none; b=LQ19A0w9RbLSS4MnMl5ETw/Xms45KB6NYyHcxp1tHCntzKfPuOQIGnLECVw0A+jZP8BVN/TFK/sdWKZlhDGrsLOQVeoQero0lRL1aC9U5WmPSyc8sNNmT42djrYvcbHo69RYl8pxK/ZDCRSP21vzt0hiEe+rHtncjHXK21Brfxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741138600; c=relaxed/simple;
-	bh=tBvn2gr41JoUC1eHNgNoquOj4ynuJM6YbmSVAF9TBF8=;
-	h=Subject:To:References:CC:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=UHFa44gpxzwExisY1qYY1mgj14oVAV02PEdTPwNwitEHxzLkE4yyw7dGn1KVw9g9UPir2v0aTJKgbPeXMP21fXSctsxBMED7Z9Df93s4c7sIcG+qJfuyN9IWnuf6kCcHY8VjwvLJpdzF+CD8b93RVhyRMErVQOehnasBe1jEWt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4Z6w4l3hv8z1cyTM;
-	Wed,  5 Mar 2025 09:31:35 +0800 (CST)
-Received: from dggpemf100013.china.huawei.com (unknown [7.185.36.179])
-	by mail.maildlp.com (Postfix) with ESMTPS id 39A9614022D;
-	Wed,  5 Mar 2025 09:36:29 +0800 (CST)
-Received: from [10.67.120.126] (10.67.120.126) by
- dggpemf100013.china.huawei.com (7.185.36.179) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 5 Mar 2025 09:36:28 +0800
-Subject: Re: [PATCH] scsi: hisi: remove incorrect ACPI_PTR annotations
-To: =?UTF-8?Q?Uwe_Kleine-K=c3=b6nig?= <u.kleine-koenig@baylibre.com>
-References: <20250225163637.4169300-1-arnd@kernel.org>
- <49419ea6-5535-3612-c1c4-5ac58f2bc012@huawei.com>
- <h7oh3uhuvmulmqkxi5x73bnkmgkodjxemabiqwkrqu3jmbxu2e@p2pmhpxh6nxl>
-CC: Arnd Bergmann <arnd@kernel.org>, "James E.J. Bottomley"
-	<James.Bottomley@hansenpartnership.com>, "Martin K. Petersen"
-	<martin.petersen@oracle.com>, Arnd Bergmann <arnd@arndb.de>, Damien Le Moal
-	<dlemoal@kernel.org>, John Garry <john.g.garry@oracle.com>, Bart Van Assche
-	<bvanassche@acm.org>, Jason Yan <yanaijie@huawei.com>, Igor Pylypiv
-	<ipylypiv@google.com>, <linux-scsi@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <liyihang9@huawei.com>
-From: Yihang Li <liyihang9@huawei.com>
-Message-ID: <c75288a5-9e3c-e4c7-4717-9c04348dc7d4@huawei.com>
-Date: Wed, 5 Mar 2025 09:36:25 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:45.0) Gecko/20100101
- Thunderbird/45.7.1
+	s=arc-20240116; t=1741138692; c=relaxed/simple;
+	bh=q+lQrnLig8P+h64lBIb3J0GDXuMx/5dPCCATTg7SYys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tj4VuK1t48EPzTAb0A8018IJQgDtJ1L4R2fobOyMezqwEoWZKniyC9ZCtI5VTMAct3R9BMHLgs2/lQVPiwi64oFtIjnXtQ73RjwAFCMrFLSUhUCoj+gTk7RY00PxD71xnthCj0APSr4NGv1EcgZspmZgysin27wJXg1OZSq8OkY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fi1hokbE; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524NACHM009868;
+	Wed, 5 Mar 2025 01:37:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	6fXsemTRvb33GDa9HuDSscYG9ZYenOtIbcGHc+Y5ios=; b=fi1hokbEPKzjSwig
+	f3o9GtdkYo/k2VNCry0p0ye8MfYn+zvADlIL+B4/7WCjiG8BSJTlNPfVFpCQE9Al
+	6G3WMv5EulAlqeJQC+yYMX+6/ovtyjd0KJfSri+8Vdw21SXoxM2LlHW/9yhfQ2un
+	Fzc6eOBN0I1bPEsv+EuFd0a1RZjDc6f+LHZe6NC9+TEE4MUfinfTg+jcsENFOsU1
+	ougC4otCt/K6KDgoodcBm/tYrRszmWx1qWTl/AT5h1W/clKq4ANsrRQT7VzK1ml/
+	jRkXo3lm/pEY1Sp/oq+49YWpBr8kcUcofhv4WSQVEGlSXguiBRBzmbmNvqa8RyNH
+	hE3QJA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6tkpu4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 01:37:41 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5251bRGS023547
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Mar 2025 01:37:27 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
+ 17:37:22 -0800
+Message-ID: <25fadd59-e728-4fc0-9441-e9630c8c64cb@quicinc.com>
+Date: Wed, 5 Mar 2025 09:37:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <h7oh3uhuvmulmqkxi5x73bnkmgkodjxemabiqwkrqu3jmbxu2e@p2pmhpxh6nxl>
-Content-Type: text/plain; charset="windows-1252"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 05/10] Coresight: Allocate trace ID after building the
+ path
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
+ <20250303032931.2500935-6-quic_jiegan@quicinc.com>
+ <8efe6176-44a2-4b3d-b9b5-855b26f00187@arm.com>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <8efe6176-44a2-4b3d-b9b5-855b26f00187@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf100013.china.huawei.com (7.185.36.179)
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=HZbuTjE8 c=1 sm=1 tr=0 ts=67c7aae5 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=ke3Xk7aYDoRetkXMGe0A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: tbGWPvLgxQDczMcusIcCpbkV5VuIddwS
+X-Proofpoint-ORIG-GUID: tbGWPvLgxQDczMcusIcCpbkV5VuIddwS
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_01,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 mlxscore=0 spamscore=0 clxscore=1015 phishscore=0 bulkscore=0
+ priorityscore=1501 impostorscore=0 suspectscore=0 malwarescore=0
+ mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503050011
 
 
 
-On 2025/3/4 13:12, Uwe Kleine-K�nig wrote:
-> Hello,
-> 
-> On Wed, Feb 26, 2025 at 11:23:18AM +0800, Yihang Li wrote:
->> On 2025/2/26 0:36, Arnd Bergmann wrote:
->>> From: Arnd Bergmann <arnd@arndb.de>
->>>
->>> Building with W=1 shows a warning about sas_v2_acpi_match being unused when
->>> CONFIG_OF is disabled:
->>>
->>>     drivers/scsi/hisi_sas/hisi_sas_v2_hw.c:3635:36: error: unused variable 'sas_v2_acpi_match' [-Werror,-Wunused-const-variable]
->>>
->>> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+On 3/4/2025 10:58 PM, Suzuki K Poulose wrote:
+> On 03/03/2025 03:29, Jie Gan wrote:
+>> The trace_id will be stored in coresight_path instead of being declared
+>> everywhere and allocated after building the path.
 >>
->> Looks good. So Reviewed-by: Yihang Li <liyihang9@huawei.com>
+>> Co-developed-by: James Clark <james.clark@linaro.org>
+>> Signed-off-by: James Clark <james.clark@linaro.org>
+>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-core.c  | 44 +++++++++++++++++++
+>>   .../hwtracing/coresight/coresight-etm-perf.c  |  5 +--
+>>   drivers/hwtracing/coresight/coresight-priv.h  |  2 +
+>>   drivers/hwtracing/coresight/coresight-sysfs.c |  4 ++
+>>   4 files changed, 52 insertions(+), 3 deletions(-)
+>>
+>> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/ 
+>> hwtracing/coresight/coresight-core.c
+>> index ed0e9368324d..6adc06995d76 100644
+>> --- a/drivers/hwtracing/coresight/coresight-core.c
+>> +++ b/drivers/hwtracing/coresight/coresight-core.c
+>> @@ -655,6 +655,50 @@ static void coresight_drop_device(struct 
+>> coresight_device *csdev)
+>>       }
+>>   }
+>> +/*
+>> + * coresight device will read their existing or alloc a trace ID, if 
+>> their trace_id
+>> + * callback is set.
+>> + *
+>> + * Return 0 if the trace_id callback is not set.
+>> + * Return the result of the trace_id callback if it is set. The 
+>> return value
+>> + * will be the trace_id if successful, and an error number if it fails.
+>> + */
+>> +static int coresight_get_trace_id(struct coresight_device *csdev,
+>> +                  enum cs_mode mode,
+>> +                  struct coresight_device *sink)
+>> +{
+>> +    if (coresight_ops(csdev)->trace_id)
+>> +        return coresight_ops(csdev)->trace_id(csdev, mode, sink);
+>> +
+>> +    return 0;
+>> +}
+>> +
+>> +/*
+>> + * Call this after creating the path and before enabling it. This leaves
+>> + * the trace ID set on the path, or it remains 0 if it couldn't be 
+>> assigned.
+>> + */
+>> +void coresight_path_assign_trace_id(struct coresight_path *path,
+>> +                    enum cs_mode mode)
+>> +{
+>> +    struct coresight_device *sink = coresight_get_sink(&path- 
+>> >path_list);
+>> +    struct coresight_node *nd;
+>> +    int trace_id;
+>> +
+>> +    list_for_each_entry(nd, &path->path_list, link) {
+>> +        /* Assign a trace ID to the path for the first device that 
+>> wants to do it */
+>> +        trace_id = coresight_get_trace_id(nd->csdev, mode, sink);
+>> +
+>> +        /*
+>> +         * 0 in this context is that it didn't want to assign so keep 
+>> searching.
+>> +         * Non 0 is either success or fail.
+>> +        */
 > 
-> If you put your Reviewed-by tag in a separate line, the tooling that
-> most maintainers use pick it up automatically. Martin applied your patch
-> (currently as commit 7a9c0476d4073e742f474e71feeef4f54add4bc9 in
-> https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git 6.15/scsi-staging
-> ) indeed without your tag.
+> checkpatch complains:
+> 
+> WARNING: Block comments should align the * on each line
+> #65: FILE: drivers/hwtracing/coresight/coresight-core.c:694:
+> +                * Non 0 is either success or fail.
+> +               */
+> 
+> 
+> Please make sure to run the checkpatch on individual patches before 
+> submitting in the future. I will fix this up locally for now.
+> 
+> Kind regards
+> Suzuki
 > 
 
-Ok, thanks for the reminder. I'll pay attention next time.
+Hi Suzuki,
 
-Thanks
-Yihang
+Sure. Thanks for help to deal with the error this time. I will take care 
+in future.
+
+Jie
+
+> 
+> 
+>> +        if (trace_id != 0) {
+>> +            path->trace_id = trace_id;
+>> +            return;
+>> +        }
+>> +    }
+>> +}
+>> +
+>>   /**
+>>    * _coresight_build_path - recursively build a path from a @csdev to 
+>> a sink.
+>>    * @csdev:    The device to start from.
+>> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/ 
+>> drivers/hwtracing/coresight/coresight-etm-perf.c
+>> index b0426792f08a..134290ab622e 100644
+>> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
+>> @@ -319,7 +319,6 @@ static void *etm_setup_aux(struct perf_event 
+>> *event, void **pages,
+>>   {
+>>       u32 id, cfg_hash;
+>>       int cpu = event->cpu;
+>> -    int trace_id;
+>>       cpumask_t *mask;
+>>       struct coresight_device *sink = NULL;
+>>       struct coresight_device *user_sink = NULL, *last_sink = NULL;
+>> @@ -409,8 +408,8 @@ static void *etm_setup_aux(struct perf_event 
+>> *event, void **pages,
+>>           }
+>>           /* ensure we can allocate a trace ID for this CPU */
+>> -        trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink- 
+>> >perf_sink_id_map);
+>> -        if (!IS_VALID_CS_TRACE_ID(trace_id)) {
+>> +        coresight_path_assign_trace_id(path, CS_MODE_PERF);
+>> +        if (!IS_VALID_CS_TRACE_ID(path->trace_id)) {
+>>               cpumask_clear_cpu(cpu, mask);
+>>               coresight_release_path(path);
+>>               continue;
+>> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/ 
+>> hwtracing/coresight/coresight-priv.h
+>> index 27b7dc348d4a..2bea35bae0d4 100644
+>> --- a/drivers/hwtracing/coresight/coresight-priv.h
+>> +++ b/drivers/hwtracing/coresight/coresight-priv.h
+>> @@ -152,6 +152,8 @@ int coresight_make_links(struct coresight_device 
+>> *orig,
+>>   void coresight_remove_links(struct coresight_device *orig,
+>>                   struct coresight_connection *conn);
+>>   u32 coresight_get_sink_id(struct coresight_device *csdev);
+>> +void coresight_path_assign_trace_id(struct coresight_path *path,
+>> +                   enum cs_mode mode);
+>>   #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
+>>   extern int etm_readl_cp14(u32 off, unsigned int *val);
+>> diff --git a/drivers/hwtracing/coresight/coresight-sysfs.c b/drivers/ 
+>> hwtracing/coresight/coresight-sysfs.c
+>> index cb4c39732d26..d03751bf3d8a 100644
+>> --- a/drivers/hwtracing/coresight/coresight-sysfs.c
+>> +++ b/drivers/hwtracing/coresight/coresight-sysfs.c
+>> @@ -209,6 +209,10 @@ int coresight_enable_sysfs(struct 
+>> coresight_device *csdev)
+>>           goto out;
+>>       }
+>> +    coresight_path_assign_trace_id(path, CS_MODE_SYSFS);
+>> +    if (!IS_VALID_CS_TRACE_ID(path->trace_id))
+>> +        goto err_path;
+>> +
+>>       ret = coresight_enable_path(&path->path_list, CS_MODE_SYSFS, NULL);
+>>       if (ret)
+>>           goto err_path;
+> 
+
 
