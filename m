@@ -1,68 +1,66 @@
-Return-Path: <linux-kernel+bounces-548004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFF4FA53EB2
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:57:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8D1A53EB6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:57:58 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9567C1891461
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CC0483AE0AE
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:57:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E4DB207A3E;
-	Wed,  5 Mar 2025 23:57:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DAD0207A23;
+	Wed,  5 Mar 2025 23:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jlnekHAY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TkfXpqyF"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D291C1E7C20;
-	Wed,  5 Mar 2025 23:57:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC0911E7C20
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:57:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741219047; cv=none; b=c+YOTES1J1/3FYoMAB1+b+qFYWFg/bDxgFn5WND5PcX0LVylzkIz/C6T/YDHjhhWsW1I7h+ZruB/elu6RBg8+4YuUUzEzypl5rYECQMp/BG/HYRYb0luETMxCRTOXvzU7jBep9Wza6NhwzeqNFCjIphYT3V+pVZUoGCyLiDBJXA=
+	t=1741219068; cv=none; b=DSKCvhABNcDYSQPAqswLv1cbfSRqEV4gmQmTC03/P0g7aL04o+UNHs3msmZ2RHlK0g86CUpJM5hoXH2ZP76sx8X3QOeYsU/mG7kDmWF5CouWIQrBXVlZ0MVvrO6qBlpF9tjEOFcbmPnjAUBMxBw01hU+K42QzutV7cWFhmju4kQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741219047; c=relaxed/simple;
-	bh=QRJv6AFPFNy75p7zfaZ2IXSyUSPhoWe5fwtItKMg7Ts=;
+	s=arc-20240116; t=1741219068; c=relaxed/simple;
+	bh=sjr6OGckziQ9YjoNnbDRgjPZEbhWstKtXIcNkou+a8A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cP429G8ajYrOs2ywGSQvsDHQlkjj4nEsmv2F8Ar0YgqA1AK9mggXAkfhXBh5bFZoJqrnnl9QT5s0SfxikrnRoII3eFAlsDxmKSCU62Iec9TXC8Egb3CdLkjTTOgy8dD9vxKt44aWPXg8uyhbiqFyF7e7kRA5EMX01E1juJv86sk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jlnekHAY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96B9FC4CED1;
-	Wed,  5 Mar 2025 23:57:21 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=jkrcglvyNwz7QlBmNZnYtcvjoORsun+7ZNyOdhbAT+IZtzHsmtdmBPV4aYvx/AEmGsrzBcgd5SBAeq1QY2UhrKYVPE74jiiUPUCtyzaSsbREb7L3M+HeIZzMQeSJQmPzmvWWL9yWYdTCzjoSdpLkEpp3Kd640EASyN1XkbDX8Z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TkfXpqyF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 568FFC4CEE0;
+	Wed,  5 Mar 2025 23:57:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741219047;
-	bh=QRJv6AFPFNy75p7zfaZ2IXSyUSPhoWe5fwtItKMg7Ts=;
+	s=k20201202; t=1741219068;
+	bh=sjr6OGckziQ9YjoNnbDRgjPZEbhWstKtXIcNkou+a8A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jlnekHAYXRKnKt2JxmOVnfIz5RncxlJkMw1jFjdFoajqFchcIl4oNvJspBVLte/CK
-	 b7iYMcyvyHaESdqBVRMROUG3lc/r0CzYUpEHHLCzx89rjFNBGit5Ef2baSZYshn/xj
-	 xMn5+Q6CJDUo1Y4sco/dP4RikYTfhtDv84nWCxI5Bggqo00ciivFCze0rQPskIl+oh
-	 aOw1Sbl/5ThhxOUyDV9bEjCNFmmBnkh5Zi/5YQVE8LSHKB+vTccBks+LEN45zbGhEn
-	 IdbrAJJynzIZZL6wr6VTmNeXxwi2EHAjjC9Hk4ons0SlloVT8ES3QZ7bZt46sZqzhj
-	 wxBfrWCvpCldQ==
-Date: Thu, 6 Mar 2025 00:57:18 +0100
-From: Danilo Krummrich <dakr@kernel.org>
-To: Benno Lossin <benno.lossin@proton.me>
-Cc: airlied@gmail.com, simona@ffwll.ch, corbet@lwn.net,
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org,
-	tzimmermann@suse.de, ajanulgu@redhat.com, lyude@redhat.com,
-	pstanner@redhat.com, zhiw@nvidia.com, cjia@nvidia.com,
-	jhubbard@nvidia.com, bskeggs@nvidia.com, acurrid@nvidia.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, a.hindborg@kernel.org,
-	aliceryhl@google.com, tmgross@umich.edu, gregkh@linuxfoundation.org,
-	mcgrof@kernel.org, russ.weight@linux.dev,
-	dri-devel@lists.freedesktop.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, nouveau@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH v5 2/5] rust: firmware: introduce
- `firmware::ModInfoBuilder`
-Message-ID: <Z8jk3qs6nCIJz-39@pollux>
-References: <20250304173555.2496-1-dakr@kernel.org>
- <20250304173555.2496-3-dakr@kernel.org>
- <D88OSC9XJXZL.C5HXWFYCG9U6@proton.me>
- <Z8jSV5CpZDcXrviY@pollux>
- <D88Q7503C8FF.2TMMBSEMOGKU1@proton.me>
+	b=TkfXpqyFDo5zQ9MZZ5agzkXVt7qI+0luk5+RfNUOj7cYm0Tyb3jnfo6gMD0Ut9eve
+	 ErclBYH7EOOELDoWJU0y7CoCtWIWoIta9RbmEBX6ZI1fQPzhwGcHeiazzjAu6AsBWw
+	 b5/pxh32zLr+0bJwvrrWDwtAFyZxjUdMkTOIr6awWiHiCgr+gKuMFTaAOOS/JiZJRS
+	 e7htLB10fGt1tLIFDyDQDbN+nIwMRVOV3YuYwHB4cs52aP0tLwsllPxxTIcq1xEwnp
+	 NJLejuBwEelzbGH3FpGxMNjQ8Yu58WTEdkXSsVuuY/4mcYz75kYA893hIvaW1mVvXr
+	 J+alAQyfCea2A==
+Date: Wed, 5 Mar 2025 16:57:44 -0700
+From: Keith Busch <kbusch@kernel.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Hannes Reinecke <hare@suse.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Nilay Shroff <nilay@linux.ibm.com>,
+	John Meneghini <jmeneghi@redhat.com>, bmarzins@redhat.com,
+	Bryan Gurney <bgurney@redhat.com>, linux-nvme@lists.infradead.org,
+	linux-kernel@vger.kernel.org, Marco Patalano <mpatalan@redhat.com>,
+	axboe@kernel.dk
+Subject: Re: [PATCH] nvme: remove multipath module parameter
+Message-ID: <Z8jk-D3EjEdyBIU5@kbusch-mbp>
+References: <Z7Sh-3yHbXVmRbNL@kbusch-mbp>
+ <8a1730a1-1faf-4722-99e1-c3a85257b6f4@redhat.com>
+ <Z7TARX-tFY3mnuU7@kbusch-mbp>
+ <2ff87386-c6db-4f2e-be91-213504d99a78@linux.ibm.com>
+ <0656b66c-dd9c-495d-b1fc-4f09e763fa66@grimberg.me>
+ <Z7dct_AbaSO7uZ2h@kbusch-mbp>
+ <91ae613a-7b56-4ca0-b91c-6bc1eee798b8@suse.de>
+ <20250305141554.GA18065@lst.de>
+ <Z8hrJ5JVqi7TgFCn@kbusch-mbp>
+ <20250305235119.GB896@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -71,51 +69,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <D88Q7503C8FF.2TMMBSEMOGKU1@proton.me>
+In-Reply-To: <20250305235119.GB896@lst.de>
 
-On Wed, Mar 05, 2025 at 11:36:54PM +0000, Benno Lossin wrote:
-> On Wed Mar 5, 2025 at 11:38 PM CET, Danilo Krummrich wrote:
-> > On Wed, Mar 05, 2025 at 10:30:31PM +0000, Benno Lossin wrote:
-> >> On Tue Mar 4, 2025 at 6:34 PM CET, Danilo Krummrich wrote:
-> >> > +    /// Push an additional path component.
-> >> > +    ///
-> >> > +    /// After a new [`ModInfoBuilder`] instance has been created, [`ModInfoBuilder::prepare`] must
-> >> > +    /// be called before adding path components.
-> >> > +    pub const fn push(self, s: &str) -> Self {
-> >> > +        if N != 0 && self.n == 0 {
-> >> > +            crate::build_error!("Must call prepare() before push().");
-> >>
-> >> This will only prevent the first `prepare` call being missed, right?
-> >
-> > Correct, unfortunately there's no way to detect subsequent ones.
+On Thu, Mar 06, 2025 at 12:51:19AM +0100, Christoph Hellwig wrote:
+> On Wed, Mar 05, 2025 at 08:17:59AM -0700, Keith Busch wrote:
+> > > > Plus there are some NVMe devices out there which _despite_ being PCIe do 
+> > > > report NMIC and CMIC set (I won't name names, if you came across them 
+> > > > you'll know)
+> > > 
+> > > ?????
+> > > 
+> > > NMIC and CMIC is perfectly normal and expected for multiported PCIe.
+> > > WTF are you talking about?
+> > 
+> > Obviously he's not talking about multiported PCIe.
 > 
-> Does it make sense to do that one in the constructor?
+> Why is that obvious?  
+
+No one here would think a multiported device *wouldn't* report CMIC. The
+fact Hannes thinks that's a questionable feature for his device gives
+away that it is single ported.
+
+> At least based on the stated works he talks about
+> PCIe and not about multi-port.  The only not multiported devices I've
+> seen that report NMIC and CMIC are a specific firmware so that the
+> customer would get multipath behavior, which is a great workaround for
+> instable heavily switched fabrics.  Note that multiported isn't always
+> obvious as there are quite a few hacks using lane splitting around that
+> a normal host can't really see.
+
+In my experience, it's left enabled because of SRIOV, which many of
+these devices end up shipping without supporting in PCI space anyway.
+
+> > And he's right, the
+> > behavior of a PCIe hot plug is very different and often undesirable when
+> > it's under native multipath.
 > 
-> (After looking at the example below) Ah maybe you can't do that, since
-> then you would have two `prepare()` calls for the example below...?
+> If you do actual hotplug and expect the device to go away it's indeed
+> not desirable.  If you want the same device to come back after switched
+> fabric issues it is so desirable that people hack to devices to get it.
+> People talked about adding a queue_if_no_path-like parameter to control
+> keeping the multipath node alive a lot, but no one has ever invested
+> work into actually implementing it.
 
-Exactly.
+Not quite the same thing, but kind of related: I proposed this device
+missing debounce thing about a year ago:
 
-> >> If you always have to call this before `push`, why not inline it there?
-> >
-> > You can push() multiple times to compose the firmware path string (which is the
-> > whole purpose :).
-> 
-> Ah I see, I only looked at the example you have in the next patch. All
-> in all, I think this patch could use some better documentation, since I
-> had to read a lot of the code to understand what everything is supposed
-> to do...
-
-I can expand the example in module_firmware! to make things a bit more obvious.
-
-Otherwise, what information do you think is missing?
-
-> 
-> It might also make sense to make this more generic, since one probably
-> also needs this in other places? Or do you think this will only be
-> required for modinfo?
-
-Currently, I don't think there's any more need for a generic const string
-builder. For now, I think we're good. Let's factor it out, once we have actual
-need for that.
+https://lore.kernel.org/linux-nvme/Y+1aKcQgbskA2tra@kbusch-mbp.dhcp.thefacebook.com/
 
