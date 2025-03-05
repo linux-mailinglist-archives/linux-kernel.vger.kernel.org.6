@@ -1,185 +1,167 @@
-Return-Path: <linux-kernel+bounces-546065-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546066-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CCA2CA4F5EA
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:04:43 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id A66E9A4F5EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:06:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D925418898F9
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:04:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBEE9188DAC6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34E3119DF48;
-	Wed,  5 Mar 2025 04:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9865219DFA5;
+	Wed,  5 Mar 2025 04:06:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="azHsOzLu"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b="rLvHINT5"
+Received: from MA0PR01CU012.outbound.protection.outlook.com (mail-southindiaazolkn19011025.outbound.protection.outlook.com [52.103.67.25])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A817D2FF
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741147477; cv=none; b=JbYhVRD3l+YL91UA0w5LbULIJ49hM7cao2DgaZFowLmr9UkxWgeTtGTt2C9sIizeIQHhZA2i02gKyrTI/gtfoii53i14Qeo1CjEpopwTSVmM+DlAOIzHHH9P0BRflcvJj4LNuzWzV0jkeOMYrrgkoq6X/cbp0FAYfXc+fob2ago=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741147477; c=relaxed/simple;
-	bh=0Hk2CosclC19MySD3GnC7bFG71KMiLMn3FJ3byKgCIc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iaocXrIs+7WDlWRQAN4KNRb6ZRF6XFSe3Jb/5KPWACxru5ltDSD4MpdBL1Mu5mK6viyjx/VHSqr0P5kamOK1/dJKT/oNHdxWV6WNjVQYL6ou35PQv2g9an5bXHDLLotJ0hse0VK9p0/NT9TEZtawnqQg5ywncfOoDECQwzImGXo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=azHsOzLu; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5253kZg5017524;
-	Wed, 5 Mar 2025 04:04:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=at5cRb
-	HFoiACXGYCVV6rNbcnvoVnHFO7e8uHBBjB/bI=; b=azHsOzLuSTa1VfvWMn/ex2
-	m6JjuQKE8w5Bl75RbAMZz71udFLKEekLbliiXCw9GkBn3SWbL5OAxPjw/UiUbNyF
-	EHg3+EKTJdjOAY0B+HOx64h7thmtEovjAbVFY3Mc1RNvv3X/iGVhpHhba1kZlUNk
-	ype1eAL5DiJrijO0UA0muykjTn22ejI4dgsuhGXWdSV38o0z3hoq3zLQsTWOkMJV
-	Yq4TCFMaGl5HJJ20NDe0L2WangYVbto2AUn/tljIdPgnJwf0bNzDnDmZQWXAu6rS
-	rsZ4zMospka+QkBmS19k+EQ0DUTwwxin5Yvl8XiM90PmzGdFCO2MGooUWsQYniEw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 456f08r20u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 04:04:22 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 52544LG4019820;
-	Wed, 5 Mar 2025 04:04:22 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 456f08r20s-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 04:04:21 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5251p0Hg032243;
-	Wed, 5 Mar 2025 04:04:21 GMT
-Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 454cjt13yx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 04:04:21 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 52544K9Q16843376
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Mar 2025 04:04:20 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 91FE558058;
-	Wed,  5 Mar 2025 04:04:20 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4E81758061;
-	Wed,  5 Mar 2025 04:04:18 +0000 (GMT)
-Received: from [9.204.204.161] (unknown [9.204.204.161])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Mar 2025 04:04:18 +0000 (GMT)
-Message-ID: <934be33f-ba7d-4363-a1c8-e9e7c381646a@linux.ibm.com>
-Date: Wed, 5 Mar 2025 09:34:17 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D741D2FF;
+	Wed,  5 Mar 2025 04:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.67.25
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741147602; cv=fail; b=grOaIqYH/D/rCgj27GvWcVGhCZSeOzfNJCRn9ZLpZeHSAo4vuA4hiec0JJQLXNpmwDGgT/J2ulq0h6C3KWgvBuAYcWiDR2PsV+9J32j7fSLSat/vZ/IAifyLsQLFGlb6SI0bKnLDhMSzcxx9/sXYrX3AtmCkTRQJEPAS6I7P06M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741147602; c=relaxed/simple;
+	bh=WHUUh7QWuN55HvSFusPvS3TggS8reqD8qwZ7Woo7cyU=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VNFGqTwSMhS6iOfjRM0P52pGEgPtTURGs/7xU+WTFXmrlkCfbgtR9D/3Cy8W+ocvC+3MaIJaWOusawNwSb2N8adx5O+oBloC3dzTQtqf1Y09XZCNm5Ep5jEWrf6vt3FR1oQH2vUqvXdr/Qt7OHBkyvOmIgg0hrbmy6vn5WRXvIU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com; spf=pass smtp.mailfrom=live.com; dkim=pass (2048-bit key) header.d=live.com header.i=@live.com header.b=rLvHINT5; arc=fail smtp.client-ip=52.103.67.25
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=live.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=live.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=H42w0j2WePq4A+NYkzXuTELI6wAMKJh13TovBLeg6ndEc2HfgUUlHvHyk3wMwap9OdjduzDAy9yH3yOFdoV1VxM3490nf3M2IyKj+U2rI4fBUAOE4CuGnzPAiNG23rKveyJpPVdz0TU6jGJcCOfvbI2pFOjqmvO6QgP9TSb8qfEdZg8YblShzcLfHzlGi0hbAJe3w40sQp06XaAfIXDzmlrnAQ5ajQx8a1ArymXtmVr/4+sL32yDgNJBecRPxDA/3QWNa927VNJuZ65mnkPTlItYIqRF26d6SrpDF1ON1Z2yWIG+oCbtYjpJ4Ws2aB9hq+duvN7HemzPoPJ9fLm+eg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NfURnbVasnG66phUTNDFKcKrWjt3s/2L+KXYWRPcngg=;
+ b=utNKuWyCTbPdm27KQI2JnaXCTcSwtzuB6N9ejWcfrZHiDh/99/uP2CVoH/vMcTWHz/2D+99Fi1nW2EmKl/XMHST3B5gUEh3YPSejhhAoYYkI7wfXQN2lkP6sYihk2c71Lyoj0HZOYFH26oEEtMGbNdFFHJksypBwArT4xAmeTEAnRTttcBvUVhHXrCPLfhAIOxkIn4GtAx9+KqvLYLv47h2sJW9VP5PITsqwgCDETs4hseVTLdVQmyiCwxlu6hl4SXz6+Jfyi5ViBuQL4evboMC7U87PBLx6lMiH6swql7ZQcHQ6CyKnkUMh9xH6eSe6AZ/0aNEvrkxOOhrWAXFWRg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=live.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NfURnbVasnG66phUTNDFKcKrWjt3s/2L+KXYWRPcngg=;
+ b=rLvHINT5yQomWoh7VntT6q+dLh2LaFvDsdF8RW9/Zz1G2flwWa13o1WTeu4HxAKU3/1gWPWRzSnIZFgRUQbwoA02IcHBCZlZO4AhmlI/YnSq4vCC1rPDD27ptC1mtFyQU09rRDd7auitjfbpO6LvgDm6wixJDa/Sl9oFH4M3QuvlkwO8LKihGC+DrW0I5a4jVxfefbqs608PRT+9JlmQ0sfwwA/3JYSrvHQjB/SYYHyotJh3ckUcIliQcIepLjaPd12TVpjJcEwXThgsMd/7UhoBFsNxqlUvlwroOFGg+udT2WpofAAjLAHXNwWdYBa1mUL8epE8tYSzDYFeDp2RUQ==
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:f7::14)
+ by PN3PR01MB7351.INDPRD01.PROD.OUTLOOK.COM (2603:1096:c01:8b::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
+ 2025 04:06:35 +0000
+Received: from PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77]) by PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+ ([fe80::324:c085:10c8:4e77%7]) with mapi id 15.20.8489.028; Wed, 5 Mar 2025
+ 04:06:35 +0000
+From: Aditya Garg <gargaditya08@live.com>
+To: Jiri Kosina <jikos@kernel.org>, "jkosina@suse.com" <jkosina@suse.com>,
+	"jkosina@suse.cz" <jkosina@suse.cz>, Benjamin Tissoires
+	<benjamin.tissoires@redhat.com>, "bentiss@kernel.org" <bentiss@kernel.org>
+CC: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	"linux-input@vger.kernel.org" <linux-input@vger.kernel.org>
+Subject: [PATCH] HID: apple: remove unused APPLE_IGNORE_MOUSE quirk
+Thread-Topic: [PATCH] HID: apple: remove unused APPLE_IGNORE_MOUSE quirk
+Thread-Index: AQHbjYP8WlAbAbwLMESMrSz25c3BPQ==
+Date: Wed, 5 Mar 2025 04:06:34 +0000
+Message-ID: <4CBC715A-59C2-4815-8D90-62683850E176@live.com>
+Accept-Language: en-IN, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PN3PR01MB9597:EE_|PN3PR01MB7351:EE_
+x-ms-office365-filtering-correlation-id: eaa77326-ba7d-4f5a-315e-08dd5b9b1ec1
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|7092599003|8062599003|8060799006|15080799006|19110799003|102099032|3412199025|440099028;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?mN9B3/g91FtFBRIXiqVs8C9XspeRQJ9/N9irtKOJMoPns+JrJlKeynMEP2c5?=
+ =?us-ascii?Q?gMnmIt9N32UjzhnHcAH5Z3TuC2MZatuAr7McPrzIqUQzue1v+3IvmzwwINSD?=
+ =?us-ascii?Q?cQLEnVZ9NuT7B3+CUfSaMmHv3mwVZPPDYOQp4FQSfRRA5ecoFUUciC1VO7VP?=
+ =?us-ascii?Q?NYMM4EtvqXvzntzifB2Q5lNnNezLSmtEwn+jc27/SP//hgRocVJBtGzXAZMh?=
+ =?us-ascii?Q?APSdZ3HqHqqiOwGY5xcUo/0TcAVnRxnJ7FB8olp8ncY+hFduwXL29XdVjVUF?=
+ =?us-ascii?Q?PBne0uSxc7+UjFYZkNZf0/F/TMxOv9MN6BQG8OGBeALasxMGKo+3aDi+8Q+h?=
+ =?us-ascii?Q?52njGI+3LEUcSZXbzgJATPM5YLYBg5reLFabDL17pD+fKHOj9oiX+L3GKnKW?=
+ =?us-ascii?Q?F2nuhRZ9NBLT7CTb0U17AqWFyb/DWtvZWl2ECDFPg28G31ieJCVp/vChvid6?=
+ =?us-ascii?Q?3O+B29pL3silARi+IeZ/c1duIq4SVaTN4WMDGIVq66RL4M4jTag9eGmc2xuf?=
+ =?us-ascii?Q?roqpQQ6k4HjMkpOwIXYERYDurWfyUlYm4Bd86UDPfTNpDK0ROWaTMBEaSJA/?=
+ =?us-ascii?Q?RWfhWk24NxdQFJ9Wqi+OVgAlAtKQU6kyqS3ILY7C3EyrNmoz2PUuW68fEpin?=
+ =?us-ascii?Q?BU2VlgRFulbQrVxGDlQ8j0lgt2gRmuI1JsXs6RmJJpVgceWgkFDOeykLw04g?=
+ =?us-ascii?Q?D6alRxzh6s57ZS+ehcmBfFu2aaeuQFN3IYh07B1Ud4+ftQvZYQmUkwFdDalx?=
+ =?us-ascii?Q?WNdRi1SMz83dMPBUDKBpZnFzGVkwk0v27mKk8Otc4hIkSnmlg8JoBLScrUJY?=
+ =?us-ascii?Q?epJMSHhlKaCe0WMrveiI5VNd8nbjVMOo18kwLp23cIf1D2vsronU5McRVoBu?=
+ =?us-ascii?Q?TNKi9+YXz14P4bpOD2Pqn4IOHdLUmiSYUu48InP6stcBNQN9r14z3TqnbzNK?=
+ =?us-ascii?Q?GkPeGIxJ/gk2EQP+wzHQDWRmpL9IuoArzR/0/R64X8blNzjpOC3F5MLEpIP5?=
+ =?us-ascii?Q?+lZ/WCx7XPReVK+S4hx8gHAkHI9XOCKBnciHmnphIqzkM4rbGqjGpr741nd9?=
+ =?us-ascii?Q?rA0RapO+xaRGh8BXXSkAgIdUKZM2dg=3D=3D?=
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?hTrIiBq5dwsPRGv2588VXu0AHihOf1V7f3AQWeFdMi15nHWxNBaDsaBSbaM/?=
+ =?us-ascii?Q?ydJ7YtubohbKj4SkZZTQ4dpeyfd3X6V0POCVtfJsIfU95F5mlsB14C5TU6aD?=
+ =?us-ascii?Q?BSc89abEismMW14NtK+HAKzO+ImLywtpJRGDOCAAv/hgOhzCXQFET5lTLq39?=
+ =?us-ascii?Q?+vyfKgacyVbRjGCa4883SkI0Bv0tZ6SlAIBBnCrruh1qpYbpDCQPRs4ExS7a?=
+ =?us-ascii?Q?YuKsxhw0ppOpWX21fx1enJSl9GqfXOj2H4WS0LbbS7DI51GmR/oWF7GH29k7?=
+ =?us-ascii?Q?NJ3G4KUEU7ZFwx69sDd1oLtWnABCczL0Pwo+Q1PbiheVE49ahcobPzZLxoGa?=
+ =?us-ascii?Q?uNIwqrfiakbN4PrbZsbhk0Aw1WwZaZ1cNlA8hehsZcqparbjgK9+NZo1XKdm?=
+ =?us-ascii?Q?LK5zQ7pTDrpMNXogwjQy4uan8Wb137LgUtqgQfjGpd2muXBIZMLcgmUp2EM+?=
+ =?us-ascii?Q?r3Pfp5eOvJgjM/c5Y8l/A/2Syh/3GF8PvYCcwWwAo4BAIPC/SUI0I3Nc52DH?=
+ =?us-ascii?Q?ZR/WQfXAaAT3+tmI8Q7BFl6t4iLamnsEFpk6HQ3DSGcNf5JvCOF6nY40amgs?=
+ =?us-ascii?Q?5PxbuRQ2tYdN+4ly6I7xXXzFc64aJoxZRuOlPlIbiICktzISBCIDEuIS0AD+?=
+ =?us-ascii?Q?5DnvCPBewJJ6nJNSMZ1mrxfQ2YzPf6hbRU70yR90P66RjaBi0Kpi7C9K8km+?=
+ =?us-ascii?Q?qH54JZIBEB2VOqiljnF1LrgRQu/siAuakmBK6Jlf7snd1J9UOr3R7hB4AUGV?=
+ =?us-ascii?Q?DtjxEigO89QpM3+70/3gZ40dVrfsrYSz0wdTRToVkt/aRLPHqe0uvhUCQFti?=
+ =?us-ascii?Q?Cote6wnbEvFjP2hHJq2Y825f0xsIXvoouwl76uLhC57RFCjIJJWfGrmTxZEt?=
+ =?us-ascii?Q?V4q+sxnqrOet/00514CQzR7tywUIUQklCESa1nyKAwvqzgT4OpJcoAYzqnaV?=
+ =?us-ascii?Q?jCAT908Mhte7xHiVo+9xRHOk+wJyQa1oI0I5nknhlJ2HilkNdGMrwjcSWdxC?=
+ =?us-ascii?Q?yYWIPQoybxBCz1hC+RO9VKTIpnVjHsUbbSwRtqDwd5uyYz9R1vYH7UzlgM8D?=
+ =?us-ascii?Q?6nPKyFgWL4m7ZRbBPdUZT77OvaMgoNWMJgPsyuBFQ1KZaSmDSi7y+2q1o2Iw?=
+ =?us-ascii?Q?6TjhmOxn+BwIUqPb2n2DdqKw7IaejgmrIjicPP804oA5/uPJ/vu/3HK4oKce?=
+ =?us-ascii?Q?7w80QrNYF42ovveo+lKzXV8xt2lpjEL+YuLE0OirlcI8uBedeLwDLuriDO6a?=
+ =?us-ascii?Q?s/jLeIVmN1GxCDhQLWrAvbJUSFhmHkoTaXk9+Y46nbWMUJjedMNACT3DphRC?=
+ =?us-ascii?Q?muirTIDny6wfuYWWnGt9CtSg?=
+Content-Type: text/plain; charset="us-ascii"
+Content-ID: <D1B6E7EED7DE5843BD8DE0CB44204972@INDPRD01.PROD.OUTLOOK.COM>
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] powerpc: Fix 'intra_function_call not a direct call'
- warning
-Content-Language: en-GB
-To: Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-References: <88876fb4e412203452e57d1037a1341cf15ccc7b.1741128981.git.christophe.leroy@csgroup.eu>
-From: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-In-Reply-To: <88876fb4e412203452e57d1037a1341cf15ccc7b.1741128981.git.christophe.leroy@csgroup.eu>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: BMoyFnfcoA69ScC0GRn7TsTduTMu21sc
-X-Proofpoint-GUID: 17god4V6OdBT9Q1UpgOS2logHQAv34U2
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_02,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0 mlxscore=0
- phishscore=0 mlxlogscore=768 spamscore=0 malwarescore=0 adultscore=0
- clxscore=1011 suspectscore=0 priorityscore=1501 bulkscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2502100000 definitions=main-2503050028
+X-OriginatorOrg: sct-15-20-7719-20-msonline-outlook-ae5c4.templateTenant
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PN3PR01MB9597.INDPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: eaa77326-ba7d-4f5a-315e-08dd5b9b1ec1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2025 04:06:34.9972
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3PR01MB7351
 
-Hello Christophe,
+From: Aditya Garg <gargaditya08@live.com>
 
-On 05/03/25 4:30 am, Christophe Leroy wrote:
-> The following build warning have been reported:
->
->    arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
->    arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
->
-> This happens due to commit bb7f054f4de2 ("objtool/powerpc: Add support
-> for decoding all types of uncond branches") because that commit decodes
-> 'bl .+4' as a normal instruction because that instruction is used by
-> clang instead of 'bcl 20,31,+.4' for relocatable code.
->
-> The solution is simply to remove the ANNOTATE_INTRA_FUNCTION_CALL
-> annotation now that the instruction is not seen as a function call
-> anymore.
->
-> Reported-by: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-> Closes: https://lore.kernel.org/all/8c4c3fc2-2bd7-4148-af68-2f504d6119e0@linux.ibm.com
-> Fixes: bb7f054f4de2 ("objtool/powerpc: Add support for decoding all types of uncond branches")
-> Signed-off-by: Christophe Leroy <christophe.leroy@csgroup.eu>
-> ---
->   arch/powerpc/kernel/switch.S            | 1 -
->   arch/powerpc/kvm/book3s_hv_rmhandlers.S | 2 --
->   2 files changed, 3 deletions(-)
->
-> diff --git a/arch/powerpc/kernel/switch.S b/arch/powerpc/kernel/switch.S
-> index 608c0ce7cec6..59e3ee99db0e 100644
-> --- a/arch/powerpc/kernel/switch.S
-> +++ b/arch/powerpc/kernel/switch.S
-> @@ -39,7 +39,6 @@ flush_branch_caches:
->   
->   	// Flush the link stack
->   	.rept 64
-> -	ANNOTATE_INTRA_FUNCTION_CALL
->   	bl	.+4
->   	.endr
->   	b	1f
-> diff --git a/arch/powerpc/kvm/book3s_hv_rmhandlers.S b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-> index ea7ad200b330..83f7504349d2 100644
-> --- a/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-> +++ b/arch/powerpc/kvm/book3s_hv_rmhandlers.S
-> @@ -1524,14 +1524,12 @@ kvm_flush_link_stack:
->   
->   	/* Flush the link stack. On Power8 it's up to 32 entries in size. */
->   	.rept 32
-> -	ANNOTATE_INTRA_FUNCTION_CALL
->   	bl	.+4
->   	.endr
->   
->   	/* And on Power9 it's up to 64. */
->   BEGIN_FTR_SECTION
->   	.rept 32
-> -	ANNOTATE_INTRA_FUNCTION_CALL
->   	bl	.+4
->   	.endr
->   END_FTR_SECTION_IFSET(CPU_FTR_ARCH_300)
+The APPLE_IGNORE_MOUSE quirk was not used anywhere in this driver, so can
+be removed.
 
+Signed-off-by: Aditya Garg <gargaditya08@live.com>
+---
+ drivers/hid/hid-apple.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Applied this patch on top of linux-next 20250303, and it fixes the below 
-reported warning.
-
-arch/powerpc/kvm/book3s_hv_rmhandlers.o: warning: objtool: .text+0xe84: intra_function_call not a direct call
-arch/powerpc/kernel/switch.o: warning: objtool: .text+0x4: intra_function_call not a direct call
-
-
-
-Please add below tag:
-
-Tested-By: Venkat Rao Bagalkote <venkat88@linux.ibm.com>
-
-Regards,
-Venkat.
+diff --git a/drivers/hid/hid-apple.c b/drivers/hid/hid-apple.c
+index 3d7befe0a..fde438bee 100644
+--- a/drivers/hid/hid-apple.c
++++ b/drivers/hid/hid-apple.c
+@@ -30,7 +30,7 @@
+ #include "hid-ids.h"
+=20
+ #define APPLE_RDESC_JIS		BIT(0)
+-#define APPLE_IGNORE_MOUSE	BIT(1)
++/* BIT(1) reserved, was: APPLE_IGNORE_MOUSE */
+ #define APPLE_HAS_FN		BIT(2)
+ /* BIT(3) reserved, was: APPLE_HIDDEV */
+ #define APPLE_ISO_TILDE_QUIRK	BIT(4)
+--=20
+2.39.5 (Apple Git-154)
 
 
