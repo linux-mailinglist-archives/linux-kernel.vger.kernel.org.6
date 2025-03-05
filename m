@@ -1,121 +1,228 @@
-Return-Path: <linux-kernel+bounces-546662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64145A4FD71
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:19:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC93A4FD74
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:20:33 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94482167DC0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 480543ABD10
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC521F55FA;
-	Wed,  5 Mar 2025 11:19:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05F30233701;
+	Wed,  5 Mar 2025 11:20:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDfLzMPH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="guL9p3Nm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mYpz4kEB"
+Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 333E81FBC94;
-	Wed,  5 Mar 2025 11:19:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7C8A1EB5D4;
+	Wed,  5 Mar 2025 11:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741173543; cv=none; b=IgqszK4b7NyVc7nCcptKmA9vX1iPEDoM/9etXJU0FGgY4WKmD9AEMVD5Z7Yq9/D5UAQUF9wnv1Bo8Pv1DEHadfh3o71jrqFHS8HqfT3k/o+/u2RywMBRwJXu/be/WS/GFyCq6OQw6zD8KDWbKBjM7jfNSNyQvRA0EvIRcdUQEkA=
+	t=1741173622; cv=none; b=ICYZgpTAVNgtdhJEtAn57xIBCvNrPdb7Cqw1WPHpizV76JLKFkQVYRx8Dnazs641rOmIqr6aL/Wy3HYPh3jX4YuLSsWU3+e6Ob5J5YNxlAP+y7pSS7oKG3GHdo+cT8/Nt3BXylZFjuU27ZJ+7iE48xjF/jWU9FoE82zV+L7rmWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741173543; c=relaxed/simple;
-	bh=uyQKnScFs1ZWrV5m1+YTXqWVV6jbnFVO0N/wtoZIWAc=;
+	s=arc-20240116; t=1741173622; c=relaxed/simple;
+	bh=L1qAVFH/iTFiWBOyWb7WHytxG7ubOnnnrKNbi36vgdg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cAg1X749bt4Gx0Wu3EUAb602zEMzchEfprm9I3tI6X1X4NcWSYlso7NBkHS30gM1ZqUITFHhiBQC/K+QmY0Q7QKsSJZYC7DNkL5nGLAdo3nyrN12dqmBEihY287KZ2LuFpN+m/FNBucEvTdbPWHFs+QCS225VC43B+ee3nWeKOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDfLzMPH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B97F0C4CEE2;
-	Wed,  5 Mar 2025 11:18:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741173542;
-	bh=uyQKnScFs1ZWrV5m1+YTXqWVV6jbnFVO0N/wtoZIWAc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aDfLzMPHNQoL77B+Ly+CjwnYWj94ed1bcH6xyZis7FUFNTvnCUSAe3VixYfzQNvPJ
-	 4axfKDmwJF5KF/M6dwW0/xmeC8UI9lD8euI60H97Q3rwzhINqV7GDtvjWzIpDJ1lXp
-	 pWGGCDoyaP9Yv3Vs0KRpqRRm7fUOB0NZbJI30VEgu+7i6ls19By5fnGAvpPrg2pAKo
-	 UthdE6nNiGqGloGxv1ay0yE2VjwQonNcRuPx/dg+PwRkripgM0+DKsyND/BB4HgJdx
-	 ZrBS22igx/hsQW1Z3a5Fi+uSUwdYnB2CB6WcSyFrt27Nye0ne/AATgvGrpIhzU6JmK
-	 pybbLGu5AtyZg==
-Date: Wed, 5 Mar 2025 12:18:56 +0100
-From: Niklas Cassel <cassel@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: Jesper Nilsson <jesper.nilsson@axis.com>,
-	Lars Persson <lars.persson@axis.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-arm-kernel@axis.com,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: Re: [PATCH RFC NOT TESTED 0/2] PCI: artpec6: Try to clean up
- artpec6_pcie_cpu_addr_fixup()
-Message-ID: <Z8gxdWaU1N71pyj-@ryzen>
-References: <20250304-axis-v1-0-ed475ab3a3ed@nxp.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RWWoUNx8swI3Dc9Jw8i+77bMcsdtOX7jOpaxMrxFVtNJdZwGg6FBjg2rgP/rr/soksqn+pWxU4t8SlwTnWA32bIpmJEw0Xxvv+1AkylSyoILeyR1aOPir92rsdVedIy65QX7aFaFlIE/10kvDd4GslDgtWaS8+sLXHL3sIZeyYY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=guL9p3Nm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mYpz4kEB; arc=none smtp.client-ip=202.12.124.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.stl.internal (Postfix) with ESMTP id 4BB5D11401D2;
+	Wed,  5 Mar 2025 06:20:18 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-12.internal (MEProxy); Wed, 05 Mar 2025 06:20:18 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1741173618; x=
+	1741260018; bh=m9HbCY2L3S5nAunrxuRVcqEEHI+VNwMfOGb54zQ0t8w=; b=g
+	uL9p3NmZC49Iq1rS5nC0DNipVrTO/BlmXdrBVljz6vbijYTCsoXlCE3yMhT9xjxI
+	XPUthMM620bbbJcKSMoyP5vMDay7u8z9F5eg+pIW4v6/7UxVPWBzgX9BBB4Ll1Sk
+	WYLbKXzyhkWobXSgD6R4xmeAyj6ckVuTTBAVG3zhZQThfUvl5/uw/Igwl8Vwg9z8
+	kRUCYstG0OEIxybb87inRwGowhBTLT0cMCV6d6A7TjvWr+UiMsPU+57D35GoB4bG
+	8LKfBOj8hHB+Jd6WipM5kZHKXxNNyZExKRu6DVBk/pAb+r/g/TbgWRt0vCelW1Q+
+	pHTpP37uD/59lDatYErqg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741173618; x=1741260018; bh=m9HbCY2L3S5nAunrxuRVcqEEHI+VNwMfOGb
+	54zQ0t8w=; b=mYpz4kEBxfivzaIzdSg33W/OiX2BmZI6sVuepoZcu0MNrZoU05u
+	nsAXGdNk+PDhEOFRLGrBT4U4y1gEMoauWWrR8MD3O4z2bWHsdkNpfxGuxMpNPEOM
+	scloyk5sqQ7cJ5MaRB+GheCmji409dJxCoAoTjJhj6JSNI/uvk6ECcRx7zMYoI5I
+	ZcZtba3Yl8ebTmlrQvYgXKPsg5g003LtXV4HIhiiIxU4cGGV6Uov/g6gcH5Xsw6D
+	C4lqumLu0l+aHObS0RfPXKuzZxAFR+WVVG3RdRs+IVbI55+zOyye4MG3KiwgEs2K
+	VnZjy+9K/54zxrsrZ3j9F3b5G2uAkcHdw0w==
+X-ME-Sender: <xms:cTPIZ5RQaa0f9PzNBI69zoihWF8dVk6XYAW3U-xklbx2ToIk4pdOxA>
+    <xme:cTPIZyxjolyffy7RN2bR2r91ebhgePRRH_ggc448Rf58arp7esxAMkJ0_p9qARAYY
+    Kfgmb_hJy8OBU0w6R4>
+X-ME-Received: <xmr:cTPIZ-0ZLuKsw_tyP3qfCu4_I-9yTNa2EDqRP92bZHTCuhIl9aQVG1XQlqu6>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdegieekucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
+    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
+    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
+    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
+    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
+    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
+    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
+    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
+X-ME-Proxy: <xmx:cTPIZxBkS2oJ8aB86E8abOdtJQ46KNPx4PHo6P7Wy-LTm37urYe4gQ>
+    <xmx:cTPIZyi_A1nTfZpoP2_4hy_-EKNe3jF7rlX4FOaXiKwRtegNzPQXRw>
+    <xmx:cTPIZ1rwHK6hiL0D09-AwPh4ymo9GLQTgcD7DaRmF2owRZ3K4NYnPQ>
+    <xmx:cTPIZ9jD2DPBGQt0GNv6aQ9Z58zDGslWK5yitOu5bxqP2BRmY49h8A>
+    <xmx:cjPIZ5Q4HOJcfeGqCDZpxZ3B_J0P4PjdaIuiFaSTcyxLNUmG9IinpyyJ>
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Mar 2025 06:20:16 -0500 (EST)
+Date: Wed, 5 Mar 2025 12:20:15 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH v21 18/24] ovpn: add support for peer floating
+Message-ID: <Z8gzbz6YjdeGPqgu@hog>
+References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
+ <20250304-b4-ovpn-tmp-v21-18-d3cbb74bb581@openvpn.net>
+ <Z8dIXjwZ3QmiEcd-@hog>
+ <9c919407-fb91-48d7-bf2d-8437c2f3f4da@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250304-axis-v1-0-ed475ab3a3ed@nxp.com>
+In-Reply-To: <9c919407-fb91-48d7-bf2d-8437c2f3f4da@openvpn.net>
 
-Hello Frank, all,
-
-On Tue, Mar 04, 2025 at 12:49:34PM -0500, Frank Li wrote:
-> This patches basic on
-> https://lore.kernel.org/imx/20250128-pci_fixup_addr-v9-0-3c4bb506f665@nxp.com/
+2025-03-05, 00:19:32 +0100, Antonio Quartulli wrote:
+> On 04/03/2025 19:37, Sabrina Dubroca wrote:
+> > 2025-03-04, 01:33:48 +0100, Antonio Quartulli wrote:
+> > > A peer connected via UDP may change its IP address without reconnecting
+> > > (float).
+> > 
+> > Should that trigger a reset of the peer->dst_cache? And same when
+> > userspace updates the remote address? Otherwise it seems we could be
+> > stuck with a cached dst that cannot reach the peer.
 > 
-> I have not hardware to test and there are not axis,artpec7-pcie in kernel
-> tree.
+> Yeah, that make sense, otherwise ovpn_udpX_output would just try over and
+> over to re-use the cached source address (unless it becomes unavailable).
 
-If you do a simple:
-$ git grep artpec7
-
-You will see that there are just two drivers that support this SoC:
-drivers/pci/controller/dwc/pcie-artpec6.c
-drivers/crypto/axis/artpec6_crypto.c
-and their matching DT bindings:
-Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
-Documentation/devicetree/bindings/crypto/artpec6-crypto.txt
-
-I think that at some point in the there was an intent to upstream support
-for the ARTPEC-7 SoC, but now many years later, that hasn't happened,
-as there is not even a artpec7 dtsi.
-
-I think the nicest thing to the community is to drop artpec7 support from
-these two drivers, and deprecate the artpec7 compatibles in the DT bindings,
-as it is obviously making your life harder when trying to do improvements.
+Not just the source address, the routing entry too. I'm more concerned
+about that: trying to reuse a a cached routing entry that was good for
+the previous remote address, but not for the new one.
 
 
+[adding your next email]
+> I spent some more time thinking about this.
+> It makes sense to reset the dst cache when the local address changes, but
+> not in case of float (remote address changed).
 > 
-> Look for driver owner, who help test this and start move forward to remove
-> cpu_addr_fixup() work.
+> That's because we always want to first attempt sending packets using the
+> address where the remote peer sent the traffic to.
+> Should that not work (quite rare), then we have code in ovpn_udpX_output
+> that will reset the cache and attempt a different address.
 
-While I'm the original author of this PCIe driver, I do no longer have
-access to the hardware and documentation, so I cannot test.
+I don't think the code in ovpn_udpX_output will reset the cache unless
+it was made invalid by a system-wide routing table update (see
+dst_cache_per_cpu_get).
 
-For anyone interested in the cleanup Frank is doing, see:
-https://lore.kernel.org/linux-pci/Z8d96Qbggv117LlO@lizhi-Precision-Tower-5810/T/#m0ff14edaf871293ba16acd85e7942adacb603c6c
-
-Looking at your cover-letter for the series above,
-creating a simple-bus with:
-ranges = <0x0 0xc0000000 0x20000000>
-
-and handling that in PCIe DWC common code does look nicer compared to
-having a .cpu_addr_fixup() callback in each PCIe DWC glue driver.
-
-Hopefully someone with access to the hardware can test your series +
-this RFC.
+	rt = dst_cache_get_ip4(cache, &fl.saddr);
+	if (rt)
+		goto transmit;
+...
+transmit:
+	udp_tunnel_xmit_skb(rt, sk, skb, fl.saddr, fl.daddr, 0,
+			    ip4_dst_hoplimit(&rt->dst), 0, fl.fl4_sport,
+			    fl.fl4_dport, false, sk->sk_no_check_tx);
 
 
-Kind regards,
-Niklas
+So it seems that as long as dst_cache_get_ip4 gets us a dst (which
+AFAIU will happen, unless we did a dst_cache_reset or something else
+made the cached dst invalid -- and ovpn's floating/endpoint update
+doesn't do that), we'll just use it.
+
+
+> > > +void ovpn_peer_endpoints_update(struct ovpn_peer *peer, struct sk_buff *skb)
+> > > +{
+> > > +	struct hlist_nulls_head *nhead;
+> > > +	struct sockaddr_storage ss;
+> > > +	const u8 *local_ip = NULL;
+> > > +	struct sockaddr_in6 *sa6;
+> > > +	struct sockaddr_in *sa;
+> > > +	struct ovpn_bind *bind;
+> > > +	size_t salen = 0;
+> > > +
+> > > +	spin_lock_bh(&peer->lock);
+> > > +	bind = rcu_dereference_protected(peer->bind,
+> > > +					 lockdep_is_held(&peer->lock));
+> > > +	if (unlikely(!bind))
+> > > +		goto unlock;
+> > > +
+> > > +	switch (skb->protocol) {
+> > > +	case htons(ETH_P_IP):
+> > > +		/* float check */
+> > > +		if (unlikely(!ovpn_bind_skb_src_match(bind, skb))) {
+> > > +			if (bind->remote.in4.sin_family == AF_INET)
+> > > +				local_ip = (u8 *)&bind->local;
+> > 
+> > If I'm reading this correctly, we always reuse the existing local
+> > address when we have to re-create the bind, even if it doesn't match
+> > the skb? The "local endpoint update" chunk below is doing that, but
+> > only if we're keeping the same remote? It'll get updated the next time
+> > we receive a packet and call ovpn_peer_endpoints_update.
+> > 
+> > That might irritate the RPF check on the other side, if we still use
+> > our "old" source to talk to the new dest?
+> > 
+> > > +			sa = (struct sockaddr_in *)&ss;
+> > > +			sa->sin_family = AF_INET;
+> > > +			sa->sin_addr.s_addr = ip_hdr(skb)->saddr;
+> > > +			sa->sin_port = udp_hdr(skb)->source;
+> > > +			salen = sizeof(*sa);
+> > > +			break;
+> 
+> I think the issue is simply this 'break' above - by removing it, everything
+> should work as expected.
+
+Only if the bind was of the correct family? Checking an IPv4 local
+address (in the bind) against an IPv6 source address in the packet (or
+the other way around) isn't going to work well.
+
+
+> I thin this is a leftover from when float check and endpoint update were two
+> different functions/switch blocks.
+> 
+> > > +		}
+> > > +
+> > > +		/* local endpoint update */
+> > > +		if (unlikely(bind->local.ipv4.s_addr != ip_hdr(skb)->daddr)) {
+> > > +			net_dbg_ratelimited("%s: learning local IPv4 for peer %d (%pI4 -> %pI4)\n",
+> > > +					    netdev_name(peer->ovpn->dev),
+> > > +					    peer->id, &bind->local.ipv4.s_addr,
+> > > +					    &ip_hdr(skb)->daddr);
+> > > +			bind->local.ipv4.s_addr = ip_hdr(skb)->daddr;
+> > > +		}
+> > > +		break;
+
+-- 
+Sabrina
 
