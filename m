@@ -1,146 +1,109 @@
-Return-Path: <linux-kernel+bounces-547127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55C38A50340
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:14:36 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0013A50342
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:14:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 079B37A74C8
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:13:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC376188642B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674F924EF9E;
-	Wed,  5 Mar 2025 15:14:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B463324F594;
+	Wed,  5 Mar 2025 15:14:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q2X6tnJO"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hkfcbV6e"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E6738635D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 15:14:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9C98635D;
+	Wed,  5 Mar 2025 15:14:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741187665; cv=none; b=qIrAMTLercrNlHlRVOWHcjqvunB0tIZ00gj3mSIddHUOsX2CG59w4IYvxEKZ0UD08sPOTcrWU0Fy5dl8QUFghYSJL0x/bu4xPyoHjE18XVEET6OfMlp96OiqUlGIanoIb0JH/IcL9k6DTLaFWmH23gqVenzvDT80ci7rDHuptgg=
+	t=1741187675; cv=none; b=c4pxQgUbF0QA7VDJFRuJmQzwrWia26Z+vtR8l2CFuKpMQqv9JJ9Zxo6z3co1N4qwWQ7Fwc8mwZFZEW78Gm5tpPaokhc3/NqH2LltYS2+tLZ7mNcW02P95rQY4mt7LENHaZ990hzgCmFH4iadItjkMOW7yO/BM1y8S3LaTf0iPfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741187665; c=relaxed/simple;
-	bh=u+MmNU5cYsqecXTGaOd49fcR+qNB9ijTR8fhCcnqgkY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E8EAi86DsoEwK9Yk6modxU6U4yqdUa2jal+MVPzfQSbGyLTITm+m0QrYO3hoxxZbqjS+wXRQQaJD4R3Zkgsogl/ruZUIiGHDYurk3lDYrlXx4i5AnIkHwH8xtoc11aYBJZALL2lL+xRp8XMPp97TUdwAtBTC+52HMdhpuDDongc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q2X6tnJO; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-390effd3e85so5417036f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 07:14:23 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1741187662; x=1741792462; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=USPDd1qR6qH3mxfI/NByy4u8tquEDn6DJ2yFUkVbl7k=;
-        b=q2X6tnJO5pNJ2I5WU+na7HCs79D92reFfLyhqnTIGN0dpF2iyWh1kQLoL8EdqzxZW2
-         kqumBeQExVV53bflOOlO+HQiSfiKfyg2RslSPlmb99B1UbAS4ZtJa2CDE988uCiy9lSx
-         ek2ELzFWClHGGEkMrUhxiakvErTqgJ6QOdY+dOEpv3EZmvxrlFDuKXq1pVRZpMssIcXY
-         EQ3xrCllP2snNl8yydVQKujAihjzLsOxQPayu0B6enpbCqS3B8JwDwUt4mtJwKVC8GQ4
-         Rn0GAlis351PYme4BwIV14e0iRDHPgXu+593vRb2M8k9rLiSOBjGpuXNuWWtMHME6G/4
-         WGog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741187662; x=1741792462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=USPDd1qR6qH3mxfI/NByy4u8tquEDn6DJ2yFUkVbl7k=;
-        b=nz+PM4GCYnpV7Jqc6ZOHhiN+y0YyLiXztft6/HYgUFlgw6yF08496w9a77uIxuupnn
-         UgfnlQrUGXiWEfAYwU99VWkH7VFIz0JLh7Mi36NSjuK99Ie9SMXktjXTOo298aDq90Fo
-         8DjkHq8t98C1tpFNfiFPxAldPQZeRpy4m7PoGPNR4jPaZs9bNaBwK0LwGXUrxpCLwnyM
-         3yyhSQ1BTTZFxPlP+917eNdmKUONcYuZ0WMD6WCOBfqCImV3iZXSr1kdgFuUSggjsgbW
-         3tIdavgcfjU2z2FLeS9R/e7V7Lhs3nB5xe7gMpo0N+LpSHgFzpyQOwRsTCZMq8Rub44S
-         NC2A==
-X-Forwarded-Encrypted: i=1; AJvYcCUEYbMQFZwf323o6ZUtPZaZLUwQw0Je9nYYChWDwGTaqEXKirC/n8Tj9LoshGvrflE0cyLGyJmrTwQL6xU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiA8BXLN4R/4oYvEMc/VeCHMqz+WvOOTWL0VANE6qAQ39dGOKN
-	zwDsNfnU/4xlwPQ+ORzP13zY+IqyLty9DOgq6B6CPJoWtFgYhGbv+z92lesqzxB9dSd7CTrW93e
-	cWB2tIW3Kvv77ZcySSrYlGwy6NZGJ7ggjQ3E6
-X-Gm-Gg: ASbGnctKFAg3KWdbMMWNq44rOq2KvzFRO4m20yfwTfvVuMbQPSW98S6uOk01bd/Kd0m
-	n/PDStAMyCVUzEnOchUbXsbRlYx7MIV+yks0iK/8ZpdaDHAK/A1tt9X7lUgW1v2hBud2LFwP8Oy
-	bBflK2yRFyCqtTmBX2JKX+lBMsyxFfWIaw9umAyn7sYLVqG+Lfblv23NYo
-X-Google-Smtp-Source: AGHT+IFqCXmZxfeWdf6AUeawOXjP06fV+krKTSUdJEOiVcttMtOIN51sUxb5euhwgZAPfdDxI7qE9nMbSSez3B280Go=
-X-Received: by 2002:a5d:5f42:0:b0:390:df83:1f5d with SMTP id
- ffacd0b85a97d-3911f7a84fdmr3713711f8f.35.1741187662149; Wed, 05 Mar 2025
- 07:14:22 -0800 (PST)
+	s=arc-20240116; t=1741187675; c=relaxed/simple;
+	bh=oUCJHhTLkIkZYGtUC5LeznhRIkU1WBXDpdv7zgGdYkE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UnnzYTJV7iyqKWz+d6FcxhIq4WKi7T0PvSfcNmhyrZi3I0QhDYK70TQlRJuDZo66aa50QKkAqEKnCU/rPzCQWReMBesn6lh+pgsRTs73xTWoPT6n+K5jz0BROkDVtb9Eaq/hnWK18YG1lg5DkMv0klgWsaciVWj5T7cbtzKJSGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hkfcbV6e; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=tdeNOf9UKgSka2fVLsKE2/PskNhMSwr2fUM0473Ddao=; b=hkfcbV6eMLZ4tDrXgg1MvCQFUM
+	aRdyQaT18pOCXfCzvZGlMWpE6SSrJxRKlYMH3PFJvGGOtUGPvnrddmy2WuJlDGc0mC4H+fSSw9ERr
+	KvfhT1+sI27asFVYASQBKiJF9VXAI/WwK2fngp8pU4FAzYzTA5+xfb2PwL8GbhV3S4fg=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1tpqRu-002Vtc-LE; Wed, 05 Mar 2025 16:14:18 +0100
+Date: Wed, 5 Mar 2025 16:14:18 +0100
+From: Andrew Lunn <andrew@lunn.ch>
+To: Joseph Huang <Joseph.Huang@garmin.com>
+Cc: netdev@vger.kernel.org, Joseph Huang <joseph.huang.2024@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: dsa: mv88e6xxx: Verify after ATU Load ops
+Message-ID: <2ea7cde2-2aa1-4ef4-a3ea-9991c1928d68@lunn.ch>
+References: <20250304235352.3259613-1-Joseph.Huang@garmin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250305-unique-ref-v4-1-a8fdef7b1c2c@pm.me> <Z8hUIPtE_9P60fAf@google.com>
- <Z8hmCkeZGPwc5MuU@mango>
-In-Reply-To: <Z8hmCkeZGPwc5MuU@mango>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 5 Mar 2025 16:13:59 +0100
-X-Gm-Features: AQ5f1JrBXGxw1rKdzyIsN_nlrdaRKvKhTO3oHwvMg3FPvBcmlxl8QNPV-S8hcws
-Message-ID: <CAH5fLgjFBknTmhxQBPUdB-iNMjEkcyuLiu22-Nj-DGB1Gb7NkA@mail.gmail.com>
-Subject: Re: [PATCH v4] rust: adding UniqueRefCounted and UniqueRef types
-To: Oliver Mangold <oliver.mangold@pm.me>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304235352.3259613-1-Joseph.Huang@garmin.com>
 
-On Wed, Mar 5, 2025 at 3:56=E2=80=AFPM Oliver Mangold <oliver.mangold@pm.me=
-> wrote:
->
-> Hi Alice,
->
-> On 250305 1339, Alice Ryhl wrote:
-> > On Wed, Mar 05, 2025 at 11:31:44AM +0000, Oliver Mangold wrote:
-> >
-> > > +impl<T: UniqueRefCounted> Deref for UniqueRef<T> {
-> > > +    type Target =3D T;
-> > > +
-> > > +    fn deref(&self) -> &Self::Target {
-> > > +        // SAFETY: The type invariants guarantee that the object is =
-valid.
-> > > +        unsafe { self.ptr.as_ref() }
-> > > +    }
-> > > +}
-> >
-> > What stops people from doing this?
-> >
-> > let my_unique: UniqueRef<T> =3D ...;
-> > let my_ref: &T =3D &*my_unique;
-> > let my_shared: ARef<T> =3D ARef::from(my_ref);
-> >
-> > Now it is no longer unique.
-> >
-> Oh, indeed. That's a serious problem. I see 2 options to deal with that:
->
-> 1. remove ARef::From<&T>
->
-> I checked the users of this, and it looks to me like there is rather
-> a limited number and they are easy to fix by replacing the &T with ARef<T=
->.
-> But I assume that wouldn't be welcome as it is intrusive nonetheless
-> and of course there is ergonomic value in having the function around.
+On Tue, Mar 04, 2025 at 06:53:51PM -0500, Joseph Huang wrote:
+> ATU Load operations could fail silently if there's not enough space
+> on the device to hold the new entry.
+> 
+> Do a Read-After-Write verification after each fdb/mdb add operation
+> to make sure that the operation was really successful, and return
+> -ENOSPC otherwise.
 
-Definitely not an option. There are many users of this function that
-are in the process of being upstreamed. The ability to go &T ->
-ARef<T> is pretty fundamental for ARef.
+Please could you add a description of what the user sees when the ATU
+is full. What makes this a bug which needs fixing? I would of thought
+at least for unicast addresses, the switch has no entry for the
+destination, so sends the packet to the CPU. The CPU will then
+software bridge it out the correct port. Reporting ENOSPC will not
+change that.
 
-> 2. add some new traits so implementers can opt in/out of that function.
->
-> Basically one would have to pick if one wants to ARef::From<&T> or
-> UniqueRef<T> for one's type.
+> @@ -2845,7 +2866,8 @@ static int mv88e6xxx_port_fdb_add(struct dsa_switch *ds, int port,
+>  
+>  	mv88e6xxx_reg_lock(chip);
+>  	err = mv88e6xxx_port_db_load_purge(chip, port, addr, vid,
+> -					   MV88E6XXX_G1_ATU_DATA_STATE_UC_STATIC);
+> +					   MV88E6XXX_G1_ATU_DATA_STATE_UC_STATIC,
+> +					   true);
+>  	mv88e6xxx_reg_unlock(chip);
+>  
+>  	return err;
 
-I do think that you essentially need two structs to use this at all -
-one for the shared and one for the unique case. Sounds pretty
-unergonomic.
+> @@ -6613,7 +6635,8 @@ static int mv88e6xxx_port_mdb_add(struct dsa_switch *ds, int port,
+>  
+>  	mv88e6xxx_reg_lock(chip);
+>  	err = mv88e6xxx_port_db_load_purge(chip, port, mdb->addr, mdb->vid,
+> -					   MV88E6XXX_G1_ATU_DATA_STATE_MC_STATIC);
+> +					   MV88E6XXX_G1_ATU_DATA_STATE_MC_STATIC,
+> +					   true);
+>  	mv88e6xxx_reg_unlock(chip);
 
-What is the use-case for these abstractions?
+This change seems bigger than what it needs to be. Rather than modify
+mv88e6xxx_port_db_load_purge(), why not perform the lookup just in
+these two functions via a helper?
 
-Alice
+    Andrew
+
+---
+pw-bot: cr
 
