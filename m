@@ -1,186 +1,154 @@
-Return-Path: <linux-kernel+bounces-546159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E2DDA4F71A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:29:23 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B805CA4F71D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:29:35 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22D78188B5EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:29:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 56FC73AB90B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 06:29:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60CCD1DB92A;
-	Wed,  5 Mar 2025 06:29:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3927A1DF971;
+	Wed,  5 Mar 2025 06:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SXfiV1Cd"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNBiiREh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31441C6FE2
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 06:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 870251DDC00;
+	Wed,  5 Mar 2025 06:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741156156; cv=none; b=gn/Ip4orFOzm0T223scOL/1XthrSC4SWKHr2fxa65XtWcTCqP+rMrR7Wcuw65Tqh3GVzz84Y5fobNXiRL6sweVTvSwFyhzsuJXaQ3Z0CoyZyc9ypniOYJeHYHhsGYC2iNKZO3bzbXVsQKfa7HMDE1Aa6oD+2uljcW+Iw7pg3luU=
+	t=1741156158; cv=none; b=ANWcwQi/9o595PHFDh6iJ1T5d/7wOtxyEG/vmUsd8XqBDkrnHINXXRP60Gz2qusCav1B64F2+ho75dne4usje80txGVPhUzHL9iLm7uS/FCMDUFVKp3kCPBa50PW9iX9KW6gEPPb2ULh3LjpC4IgTL5BKjVnaDwKdYs91V1ulyc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741156156; c=relaxed/simple;
-	bh=o3kW0pNi6ws7nB2jg36SFJnOJzTNTNpMupdRuEa/EbY=;
+	s=arc-20240116; t=1741156158; c=relaxed/simple;
+	bh=QnNsAxAAPRtrdLLoNQzs0U4+euvNYFWn1D6cbxJcTc8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I5/oJ3pM1KDWd0C190agnM3if1Pma981YrrqLLUXW59zXJO3lZ1ZZ8eyEZaXeHHTCo+RqykV+Rrvqg/WYlMK4j00jntepnLJMjKRg2x4mWodnvulasyr6nyYvG+eOFgAxkSPcVjmve2hiY0mg8tsNDwe46uHpHnY7SD+a1M2sOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SXfiV1Cd; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 5 Mar 2025 07:29:04 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1741156151;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yTVCGwM23se+4ekAzT7AzWGiwiEjTwV1uOFKhvqzNAY=;
-	b=SXfiV1CdXUgC4BpwCUWZ/dVZ/bvdrcEF6cLvhakxEtaYbo7L4CLJs3gTnH6UMxPFgShlKX
-	2BELajcHcSmJW/rXUjCg7l72RrRK8b9hLpiclC3j9C/WLFWVTGsnDewDpRoEVvF7pmCxZR
-	XeY1Wi5dOXmOAZRJM18tWaE/dj9Fc6k=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Richard Leitner <richard.leitner@linux.dev>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] media: i2c: ov9282: add strobe_timeout v4l2 control
-Message-ID: <yghyzheyq3c4lv5ukcjuemyapeonxs7dpfz46unazcbmwd2hkf@wokmocjh5yed>
-References: <20250303-ov9282-flash-strobe-v1-0-0fd57a1564ba@linux.dev>
- <20250303-ov9282-flash-strobe-v1-3-0fd57a1564ba@linux.dev>
- <CAPY8ntBBiuQtKErZ1+zDD5HBwjPRdBryduuB3XnhCZAdPC88GA@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=SlzoKutA+ShZHK1aymx/wfI0mHb7SzGCFCu1a5ogvKVajKtwmmIuj5rylwtgW+DlyMOJ7bOqPOwCAY929xm6gIruumlnuDdstc+zolBvHFWhQPSkikC9/pIxgU4cW7Xm1CYfF4JLfO7rkmNtLsOQbBZy6Uxs8FpZIEtOUgFI3Yk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNBiiREh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48F3EC4CEEA;
+	Wed,  5 Mar 2025 06:29:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741156157;
+	bh=QnNsAxAAPRtrdLLoNQzs0U4+euvNYFWn1D6cbxJcTc8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FNBiiREhKnNfvq/1JKt9X0ADJWCS5DyxtjUYE86KMC44qQ0xw2dIrYa/mU1ZrMdCb
+	 detzbFtqM6wvD3l2oSHZ3CMi5Xm2SF3AGsjNME/wzSLw3XO/ZT+j44WiTS7b5gzaRx
+	 tsVBEGR2+6jNdsiNeoOYmbz5Sgi6j7aeAPVQ7JLgqRWB5158HTXhIOQFKPO7NquJ8T
+	 47F92xlT3pzLVtHs6SOizZpzUJBvEEzEXubjBsE6SDOBmmD4nzPSfpohiqg0OnJu+m
+	 OTV+oaTuQ6O7NwsIarbgI6lv519V8cI2fxqiQQUN/lbCYoUNLX7uuIwtU64hVyBant
+	 5CP8ErPQeASNg==
+Date: Wed, 5 Mar 2025 11:59:10 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Brian Norris <briannorris@chromium.org>
+Cc: Bjorn Helgaas <helgaas@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Hsin-Yi Wang <hsinyi@chromium.org>,
+	linux-kernel@vger.kernel.org, mika.westerberg@linux.intel.com,
+	linux-acpi@vger.kernel.org, linux-pci@vger.kernel.org,
+	lukas@wunner.de,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Subject: Re: [PATCH v5] PCI: Allow PCI bridges to go to D3Hot on all
+ Devicetree based platforms
+Message-ID: <20250305062910.egasvrhhfqhgtkhn@thinkpad>
+References: <20241126151711.v5.1.Id0a0e78ab0421b6bce51c4b0b87e6aebdfc69ec7@changeid>
+ <20250228174509.GA58365@bhelgaas>
+ <Z8IC_WDmix3YjOkv@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAPY8ntBBiuQtKErZ1+zDD5HBwjPRdBryduuB3XnhCZAdPC88GA@mail.gmail.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <Z8IC_WDmix3YjOkv@google.com>
 
-On Tue, Mar 04, 2025 at 10:28:45AM +0000, Dave Stevenson wrote:
-> Hi Richard
+On Fri, Feb 28, 2025 at 10:39:57AM -0800, Brian Norris wrote:
+> Hi Bjorn,
 > 
-> On Mon, 3 Mar 2025 at 22:59, Richard Leitner <richard.leitner@linux.dev> wrote:
-> >
-> > Add V4L2_CID_FLASH_TIMEOUT support using the "strobe_frame_span"
-> > feature of the sensor. This is implemented by transforming the given �s
-> > value by an interpolated formula to a "span step width" value and
-> > writing it to register PWM_CTRL_25, PWM_CTRL_26, PWM_CTRL_27,
-> > PWM_CTRL_28 (0x3925, 0x3926, 0x3927, 0x3928).
-> >
-> > The maximum control value is set to the period of the current framerate.
-> > This must be changed to a dynamic range as soon as this driver
-> > implements the set_frame_interval() pad operation.
-> >
-> > All register values are based on the OV9281 datasheet v1.53 (jan 2019)
-> > and tested using an ov9281 VisionComponents module.
-> >
-> > Signed-off-by: Richard Leitner <richard.leitner@linux.dev>
-> > ---
-> >  drivers/media/i2c/ov9282.c | 31 +++++++++++++++++++++++++++++++
-> >  1 file changed, 31 insertions(+)
-> >
-> > diff --git a/drivers/media/i2c/ov9282.c b/drivers/media/i2c/ov9282.c
-> > index c98ba466e9aea29baff0b13578d760bf69c958c5..f7dfe8987e524b73af7e16e12567e96627b4f89a 100644
-> > --- a/drivers/media/i2c/ov9282.c
-> > +++ b/drivers/media/i2c/ov9282.c
-> > @@ -97,6 +97,10 @@
-> >  #define OV9282_REG_MIPI_CTRL00 0x4800
-> >  #define OV9282_GATED_CLOCK     BIT(5)
-> >
-> > +/* Flash/Strobe control registers */
-> > +#define OV9282_REG_FLASH_DURATION      0x3925
-> > +#define OV9282_FLASH_DURATION_DEFAULT  0x0000001A
-> > +
-> >  /* Input clock rate */
-> >  #define OV9282_INCLK_RATE      24000000
-> >
-> > @@ -193,6 +197,7 @@ struct ov9282_mode {
-> >   * @again_ctrl: Pointer to analog gain control
-> >   * @pixel_rate: Pointer to pixel rate control
-> >   * @flash_led_mode: Pointer to flash led mode control
-> > + * @flash_timeout: Pointer to flash timeout control
-> >   * @vblank: Vertical blanking in lines
-> >   * @noncontinuous_clock: Selection of CSI2 noncontinuous clock mode
-> >   * @cur_mode: Pointer to current selected sensor mode
-> > @@ -216,6 +221,7 @@ struct ov9282 {
-> >         };
-> >         struct v4l2_ctrl *pixel_rate;
-> >         struct v4l2_ctrl *flash_led_mode;
-> > +       struct v4l2_ctrl *flash_timeout;
+> On Fri, Feb 28, 2025 at 11:45:09AM -0600, Bjorn Helgaas wrote:
+> > On Tue, Nov 26, 2024 at 03:17:11PM -0800, Brian Norris wrote:
+> > > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > > 
+> > > Unlike ACPI based platforms, there are no known issues with D3Hot for
+> > > the PCI bridges in Device Tree based platforms. 
+> > 
+> > Can we elaborate on this a little bit?  Referring to "known issues
+> > with ACPI-based platforms" depends on a lot of domain-specific history
+> > that most readers (including me) don't know.
 > 
-> You only access this in ov9282_set_ctrl where you already have the
-> struct v4l2_ctrl, so there is no need to store this in the main device
-> state.
-
-Sure. Thanks for reviewing and pointing this out. Will fix that in v2.
-
-(At least I was consistent and made the same mistakes for both controls ;-))
-
-regards;rl
-
+> Well, to me, the background here is simply the surrounding code context,
+> and the past discussions that I linked:
 > 
->   Dave
+> https://lore.kernel.org/linux-pci/20240227225442.GA249898@bhelgaas/
 > 
-> >         u32 vblank;
-> >         bool noncontinuous_clock;
-> >         const struct ov9282_mode *cur_mode;
-> > @@ -689,6 +695,24 @@ static int ov9282_set_ctrl_flash_led_mode(struct ov9282 *ov9282, int mode)
-> >                                 current_val);
-> >  }
-> >
-> > +static int ov9282_set_ctrl_flash_timeout(struct ov9282 *ov9282, int value)
-> > +{
-> > +       /* Calculate "strobe_frame_span" increments from a given value (�s).
-> > +        * This is quite tricky as "The step width of shift and span is
-> > +        * programmable under system clock domain.", but it's not documented
-> > +        * how to program this step width (at least in the datasheet available
-> > +        * to the author at time of writing).
-> > +        * The formula below is interpolated from different modes/framerates
-> > +        * and should work quite well for most settings.
-> > +        */
-> > +       u32 val = value * 192 / (ov9282->cur_mode->width + ov9282->hblank_ctrl->val);
-> > +
-> > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION, 1, (val >> 24) & 0xff);
-> > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 1, 1, (val >> 16) & 0xff);
-> > +       ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 2, 1, (val >> 8) & 0xff);
-> > +       return ov9282_write_reg(ov9282, OV9282_REG_FLASH_DURATION + 3, 1, val & 0xff);
-> > +}
-> > +
-> >  /**
-> >   * ov9282_set_ctrl() - Set subdevice control
-> >   * @ctrl: pointer to v4l2_ctrl structure
-> > @@ -758,6 +782,9 @@ static int ov9282_set_ctrl(struct v4l2_ctrl *ctrl)
-> >         case V4L2_CID_FLASH_LED_MODE:
-> >                 ret = ov9282_set_ctrl_flash_led_mode(ov9282, ctrl->val);
-> >                 break;
-> > +       case V4L2_CID_FLASH_TIMEOUT:
-> > +               ret = ov9282_set_ctrl_flash_timeout(ov9282, ctrl->val);
-> > +               break;
-> >         default:
-> >                 dev_err(ov9282->dev, "Invalid control %d", ctrl->id);
-> >                 ret = -EINVAL;
-> > @@ -1420,6 +1447,10 @@ static int ov9282_init_controls(struct ov9282 *ov9282)
-> >                                                         (1 << V4L2_FLASH_LED_MODE_TORCH),
-> >                                                         V4L2_FLASH_LED_MODE_NONE);
-> >
-> > +       ov9282->flash_timeout = v4l2_ctrl_new_std(ctrl_hdlr, &ov9282_ctrl_ops,
-> > +                                                 V4L2_CID_FLASH_TIMEOUT,
-> > +                                                 0, 13900, 1, 8);
-> > +
-> >         ret = v4l2_fwnode_device_parse(ov9282->dev, &props);
-> >         if (!ret) {
-> >                 /* Failure sets ctrl_hdlr->error, which we check afterwards anyway */
-> >
-> > --
-> > 2.47.2
-> >
-> >
+> The whole reason we need this patch is that:
+> (a) there's some vaguely specified reason this function (which prevents
+>     standard-specified behavior) exists; and
+> (b) that function includes a condition that allows all systems with a
+>     DMI/BIOS newer than year 2015 to use this feature.
+> 
+> Digging a bit further, it seems like maybe the only reason this feature
+> is prevented on DT systems is from commit ("9d26d3a8f1b0 PCI: Put PCIe
+> ports into D3 during suspend"), where the subtext is that it was written
+> by and for Intel in 2016, with an arbitrary time-based cutoff ("year
+> this was being developed") that only works for DMI systems. DT systems
+> do not tend to support DMI.
+> 
+
+I would say 'Majority of the DT systems' since there are exceptions like Qcom
+compute platforms where developers put devicetree in an ACPI based laptop with a
+BIOS/DMI (for a reason).
+
+> If any of this is what you're looking for, I can try to
+> copy/paste/summarize a few more of those bits, if it helps.
+> 
+> > I don't think "ACPI-based" or "devicetree-based" are good
+> > justifications for changing the behavior because they don't identify
+> > any specific reasons.  It's like saying "we can enable this feature
+> > because the platform spec is written in French."
+> 
+> AIUI, It's involved because of the general strategy of this function
+> (per its comments, "recent enough PCIe ports"). So far, it sounds like
+> that reason (presumably, old BIOS with poor power management code)
+> doesn't really apply to a system based on device tree, where the power
+> management code is mostly/entirely in the OS.
+> 
+> But really, the original commit doesn't actually state reasons, so maybe
+> the "known issues" phrasing could be weakened a bit, to avoid implying
+> there were any stated reasons.
+> 
+
+Right. I guess the commit tried to be less invasive so the author decided to
+limit it to DMI based systems. I couldn't think of any other reasons.
+
+> > > Past discussions (Link [1]) determined the restrictions around D3
+> > > should be relaxed for all Device Tree systems. 
+> > 
+> > This is far too generic a statement for me to sign up to, especially
+> > since "all Device Tree systems" doesn't say anything at all about how
+> > any particular hardware works or what behavior we're relying on.
+> > 
+> > We need to say something about what D3hot means (i.e., only message
+> > and type 0 config requests accepted) and that we know anything below
+> > the bridge is inaccessible in D3hot and why that's OK.  E.g., maybe we
+> > only care about wakeup requests and we know those still work with the
+> > bridge in D3hot because XYZ.
+> 
+
+This patch's main motive is to enable D3hot for bridges that was disabled for no
+good reasons, other than the one mentioned above. Maybe adding a bit more about
+bridge D3hot handling could be of help, but your comment sounds like you are
+questioning why allowing D3hot is OK? But we already enable it for newer DMI
+based systems. I think the question should be asked is, why PCI core decided to
+not allow D3hot for DT based platforms without any user reported issues.
+
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
