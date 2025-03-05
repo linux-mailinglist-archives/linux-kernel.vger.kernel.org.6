@@ -1,47 +1,72 @@
-Return-Path: <linux-kernel+bounces-546699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A5B4A4FDC6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:37:21 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC00A4FDCD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:37:50 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DFE5189303B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:37:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 81E0E7A1CAC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:36:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D31B241683;
-	Wed,  5 Mar 2025 11:35:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB2F7241C8B;
+	Wed,  5 Mar 2025 11:36:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HNzwL2Ap"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="lQxtl17T";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="b9OOLHcH"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D791C5F27;
-	Wed,  5 Mar 2025 11:35:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371A223372A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 11:36:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741174526; cv=none; b=XRTagposjHBZL8X2rD8uZUYfcg6VitBGVEo3LusLXvlsPCiWNnpKs+uL9llf4xVijhZ20xpPxlbRZZrPVV3PyP2o7g+vxVZsm2W3Fy0t97wSwBPslTaT78XzeyiMmBMcv0jLYyUOL2GkK62408jOLh1uBLDwi3dhN++KEe+JMRE=
+	t=1741174563; cv=none; b=SH9vrYeGQjyM1ZFszaaGke5+3ZKflqjpkkP8dkrxDG9ANxwhApoNoD5nYmohq/lX7GzAQXVL82ivL2FEgWaVb8hRmnU3B8ArXzppnGuvstlVznjWYIIbD7r5r5ZFFN9hQsF5AbnnNYy+kKNBHIhrd8SKPobUkB/yaaLlaLWfz8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741174526; c=relaxed/simple;
-	bh=5wKZo1W3/KKJwo73d2ABuM4lG0wjBbXCHJqMn98euFU=;
+	s=arc-20240116; t=1741174563; c=relaxed/simple;
+	bh=lkYwZAkFiROOBRGgKgNb7WxN7tbCcuE62yvWrzVR0kQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eR9OZKhc3kwjEo0bG7TO39EtaoQO1jOlzFANfFHagavY9r5MUX3tCfS9m2vc6ZArkKs/jfUShRfZNoqMD4JcqwpkAqm/+hltkJ/xDAhhhSMA5MS1wo/yiBN4KC8xjoqJCveS489c9NU7oR5+fNq75knjlILApjxZUzztFpsideo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HNzwL2Ap; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AD229C4CEE2;
-	Wed,  5 Mar 2025 11:35:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741174525;
-	bh=5wKZo1W3/KKJwo73d2ABuM4lG0wjBbXCHJqMn98euFU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HNzwL2Apz+ImWcI9E449fJ1uUCaPdrWT870QqZwQokeyeALzznCrATR+82SLgP5iR
-	 PNTj+ohzDf0Us/J46qONWbe9bakWDrN1d/DSgee/1e3NhX4sFWZ/vAVhJk9wwHzW21
-	 TmWMPE3apeOd993whfLADD6duv2C2uwBlf5MRjOuDIXMxf8tiWyj+Ft37yVK9ZrVPA
-	 lUTpnlqwIbVv8M020yEbOpnF74F99Tu4zzBx1DFMpW0MzXg27I0BZ6MQoRE6sX6bkt
-	 Vy48TaeHTxQI3sStfR6kbPjOeajO9cjOxotx/vyq8T5/lW+XWPmD2pOC8l5XjOZ/kQ
-	 4bjv6EnaztQsQ==
-Message-ID: <c7129d8e-87de-444c-be52-b2eedf03585f@kernel.org>
-Date: Wed, 5 Mar 2025 12:35:15 +0100
+	 In-Reply-To:Content-Type; b=figAMdBnIc43mkWoMM2pXrP6mTn298ZqM0LCDyv1uwWo1r4VBaP7V6Z9lImjKDhCFz0hd0Gezl3ocsMuOSVHIQl7si/k7SX0zb82kl+ExPXm/fVPv2RywSvaa5uaD+Q0rAQuFtd8h8Zeb8Y/u5/VDmiiIhKprewJ1WVSJJfR31A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=lQxtl17T; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=b9OOLHcH; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 126F621193;
+	Wed,  5 Mar 2025 11:35:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741174559; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lkYwZAkFiROOBRGgKgNb7WxN7tbCcuE62yvWrzVR0kQ=;
+	b=lQxtl17TEfYSqOtVCQYRY6yAa1Pr+k3WAU1ai3jSoztLb/gcddnhYovzs59Dh8Cm7qSmqk
+	1Dhe1J57hgRcRKpeuPMxmnOVUR2NdjCgjwKdKA5oKMICxn7LF16mFhALfE8Y8VXU1iNAde
+	pLLD23Z6ej3lfHe5QgXN/vpC4Nticio=
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=b9OOLHcH
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1741174558; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lkYwZAkFiROOBRGgKgNb7WxN7tbCcuE62yvWrzVR0kQ=;
+	b=b9OOLHcHT5WVqCcMrrzlEbH4GU27yfPn5z8OVlUkOlI+EIczNzKu1iAd69nrt6s2tjICvt
+	zICLfT2eerSA8BWE3kqObjnVCCuDIGexd0BGukCJLpUn4X8JCv1JQlBNzD87SxOPZtXN6d
+	+B59ushxGGdlQuHDGXxo/D6cVEmFOoY=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AE5861366F;
+	Wed,  5 Mar 2025 11:35:57 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id W0QUKR03yGeJFgAAD6G6ig
+	(envelope-from <jgross@suse.com>); Wed, 05 Mar 2025 11:35:57 +0000
+Message-ID: <d9a1a460-2982-429c-b29d-cf2483e9380a@suse.com>
+Date: Wed, 5 Mar 2025 12:35:56 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,240 +74,214 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/6] dt-bindings: soc: imx93-media-blk-ctrl: Add LDB
- subnode into schema and example
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Abel Vesa <abelvesa@kernel.org>,
- Peng Fan <peng.fan@nxp.com>, Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Ulf Hansson <ulf.hansson@linaro.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux@ew.tq-group.com, linux-clk@vger.kernel.org, linux-pm@vger.kernel.org
-References: <20250304154929.1785200-1-alexander.stein@ew.tq-group.com>
- <20250304154929.1785200-3-alexander.stein@ew.tq-group.com>
- <20250305-dandelion-axolotl-of-excitement-05fa70@krzk-bin>
- <4414669.ejJDZkT8p0@steina-w>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+To: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, x86@kernel.org, hpa@zytor.com,
+ Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>,
+ linux-kernel@vger.kernel.org, Larry.Dewey@amd.com,
+ Joerg Roedel <jroedel@suse.de>
+References: <20250305105234.235553-1-joro@8bytes.org>
+ <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
+ <Z8g01YhM_FtdB5n6@gmail.com>
+ <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4414669.ejJDZkT8p0@steina-w>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------JcxjzcPDEBKzIiqVYd8r5zK1"
+X-Rspamd-Queue-Id: 126F621193
+X-Spam-Level: 
+X-Spamd-Result: default: False [-5.40 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
+	MIME_BASE64_TEXT_BOGUS(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.19)[-0.929];
+	MIME_BASE64_TEXT(0.10)[];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MX_GOOD(-0.01)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	FROM_HAS_DN(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.com:+];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:dkim,suse.com:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -5.40
+X-Spam-Flag: NO
 
-On 05/03/2025 10:02, Alexander Stein wrote:
-> Hi,
-> 
-> Am Mittwoch, 5. März 2025, 08:13:04 CET schrieb Krzysztof Kozlowski:
->> On Tue, Mar 04, 2025 at 04:49:21PM +0100, Alexander Stein wrote:
->>> Document the LDB bridge subnode and add the subnode into the example.
->>> For the subnode to work, the block control must scan its subnodes and
->>
->> Don't describe drivers, but describe the hardware.
-> 
-> Thanks, I'll rephrase to describe the hardware better regarding LVDS.
-> 
->>
->>> bind drivers to them, do not misuse either simple-bus or simple-mfd
->>> here.
->>
->> I don't understand that simple-bus or simple-mfd statement. There are no
->> such compatibles here.
-> 
-> Same as above, the wording stems from 1cb0c87d27dcc ("dt-bindings: soc:
-> imx8mp-media-blk-ctrl: Add LDB subnode into schema and example").
-> I'll drop it to avoid confusion.
-> 
->>
->>>
->>> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
->>> ---
->>>  .../soc/imx/fsl,imx93-media-blk-ctrl.yaml     | 51 +++++++++++++++++++
->>>  1 file changed, 51 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
->>> index b3554e7f9e76d..cd785111928bf 100644
->>> --- a/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
->>> +++ b/Documentation/devicetree/bindings/soc/imx/fsl,imx93-media-blk-ctrl.yaml
->>> @@ -24,6 +24,14 @@ properties:
->>>    reg:
->>>      maxItems: 1
->>>  
->>> +  ranges: true
->>> +
->>> +  '#address-cells':
->>> +    const: 1
->>> +
->>> +  '#size-cells':
->>> +    const: 1
->>> +
->>>    '#power-domain-cells':
->>>      const: 1
->>>  
->>> @@ -46,9 +54,20 @@ properties:
->>>        - const: csi
->>>        - const: dsi
->>>  
->>> +  bridge@20:
->>
->> @20 looks wrong. Use 'ranges;' and try again your DTS...
->>
->> Binding is supposed to be complete. We have several examples when people
->> added children one-by-one, everytime with different reasoning about
->> child addressing.
->>
->> So please confirm: this is complete and no other children will ever be
->> added here... or you are 100% sure that all future children will be
->> unit-addressable (will have unit address and appropriate properties).
-> 
-> This block control is a collection of registers for different purposes:
-> * MIPI-DSI
-> * MIPI-CSI
-> * Parallel camera
-> * LVDS
-> * CAMERA_MUX
-> 
-> At lease for parallel camera, another subnode is expected ([1]).
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------JcxjzcPDEBKzIiqVYd8r5zK1
+Content-Type: multipart/mixed; boundary="------------fNLSXdtioElQx5biqeBqu3ie";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>
+Cc: Joerg Roedel <joro@8bytes.org>, x86@kernel.org, hpa@zytor.com,
+ Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>,
+ linux-kernel@vger.kernel.org, Larry.Dewey@amd.com,
+ Joerg Roedel <jroedel@suse.de>
+Message-ID: <d9a1a460-2982-429c-b29d-cf2483e9380a@suse.com>
+Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
+References: <20250305105234.235553-1-joro@8bytes.org>
+ <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
+ <Z8g01YhM_FtdB5n6@gmail.com>
+ <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
+In-Reply-To: <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
 
+--------------fNLSXdtioElQx5biqeBqu3ie
+Content-Type: multipart/mixed; boundary="------------bmCip0y9hNdidgAXC9mXmGmp"
 
-That one at least have MMIO as well. No I wonder whether the others will
-come without MMIO one day.
+--------------bmCip0y9hNdidgAXC9mXmGmp
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Why this cannot be sent all at once? Entire device binding?
+T24gMDUuMDMuMjUgMTI6MzEsIEJvcmlzbGF2IFBldGtvdiB3cm90ZToNCj4gT24gV2VkLCBN
+YXIgMDUsIDIwMjUgYXQgMTI6MjY6MTNQTSArMDEwMCwgSW5nbyBNb2xuYXIgd3JvdGU6DQo+
+PiBJdCdzICpmYXIqIGJldHRlciB0byBleHBvc2UgdGhpcyB2aWEgYSB0YXJnZXRlZCBzeXNm
+cyBlbnRyeSB0aGFuDQo+PiBwb2xsdXRpbmcgL3Byb2MvY3B1aW5mbyB3aXRoIGl0IHRoYXQg
+ZXZlcnlvbmUgYW5kIHRoZWlyIGRvZyBpcyBwYXJzaW5nDQo+PiBhbGwgdGhlIHRpbWUgLi4u
+DQo+IA0KPiBQYXN0aW5nIHdoYXQgd2UncmUgdGFsa2luZyBvbiBJUkM6DQo+IA0KPiAtIHdl
+IGRvbid0IHdhbnQgdG8gZXhwb3NlIGEgbmFrZWQgTVNSIHU2NCB0byB1c2Vyc3BhY2UuIE1p
+Z2h0IGFzIHdlbGwgdXNlDQo+ICAgIG1zci10b29scw0KPiANCj4gLSB0aGUgYmFja3N0b3J5
+IGlzLCB0aGVyZSBhcmUgYSBidW5jaCBvZiB0b29scyB3aGljaCB3YW5uYSBrbm93IHRoaXMg
+c28gd2UNCj4gICAgbmVlZCB0byBhZ3JlZSBvbiBob3cgdG8gc3VwcGx5IGl0IHRvIHRoZW0N
+Cj4gDQo+IC0gSSB0aGluayAvcHJvYy9jcHVpbmZvIGlzIHRoZSBiZXN0IG9wdGlvbiByaWdo
+dCBub3cNCj4gDQo+IC0gYW5kIHRoZW4gVERYIGNhbiB1c2UgdGhlIHNhbWUgdGhpbmcgdG9v
+DQo+IA0KPiAtIHdlIGhhdmUgYSBnZW5lcmFsIG5lZWQgdG8gZXhwb3NlIHdoYXQgYSBjb25m
+aWRlbnRpYWwgZ3Vlc3Qgc3VwcG9ydHMNCj4gDQo+IC0gYSAuLi4vc2V2IHN5c2ZzIGZpbGUg
+Y2xlYXJseSBkb2Vzbid0IGN1dCBpdCBiZWNhdXNlIFREWCBkb2Vzbid0IGhhdmUgInNldiIN
+Cj4gICAgLSBpdCBpcyB0aGUgSW50ZWwgdmVyc2lvbiBvZiBhIGNvbmZpZGVudGlhbCBndWVz
+dA0KPiANCj4gLSBhbmQgSSBkb24ndCB3YW50IHRvIGhhdmUgIjB4ZGVhZGJlZWYiIGluIHNv
+bWUgc3lzIGZpbGUgYnV0ICJTRVYgU0VWLUVTIFREWA0KPiAgICBTZWN1cmVUU0MiIGFuZCBz
+byBvbiB1c2VyLXJlYWRhYmxlIHN0cmluZ3MNCg0KVGhlcmUgaXMgL3N5cy9oeXBlcnZpc29y
+Lw0KDQpXaHkgZG9uJ3QgcHV0IGl0IHRoZXJlPyBNYXliZSB1bmRlciAvc3lzL2h5cGVydmlz
+b3IvY29jby4NCg0KDQpKdWVyZ2VuDQo=
+--------------bmCip0y9hNdidgAXC9mXmGmp
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
-> 
-> [1] https://lore.kernel.org/all/20240819024001.850065-1-victor.liu@nxp.com/
-> 
->> BTW, I don't quite get why this is both syscon and has translation for
->> child addresses. Does it mean your child does not use the same MMIO as
->> parent, thus leading to unsynchronized reg access?
-> 
-> I'm not sure what the best practices are. This LDB has two registers
-> inside this block. So it seems reasonable to me to indicate this using
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
-reg is fine, but you added ranges which means there is translation
-between child addressing and parent MMIO. Usually, although not always,
-when child is expected to use parent's syscon, you do not have ranges,
-because the syscon deals with that translation.
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
 
-What's more, your @20 means you depend on one specific value of ranges.
+--------------bmCip0y9hNdidgAXC9mXmGmp--
 
-I would just skip the ranges and claim there is no direct mapping of
-addresses. Reg defines offsets within this device addressing and this
-device will handle it.
+--------------fNLSXdtioElQx5biqeBqu3ie--
 
-> a reg property. On the other hand, access is solely done by accessing
-> via syscon, so unsynchronized reg access is not an issue.
-> 
-> What I am getting from your comments this node should not have 'reg'
-> property, as it uses syscon anyway.
+--------------JcxjzcPDEBKzIiqVYd8r5zK1
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
-> 
->>> +    type: object
->>> +    additionalProperties: true
->>> +    properties:
->>> +      compatible:
->>> +        contains:
->>> +          const: fsl,imx93-ldb
->>> +
->>>  required:
->>>    - compatible
->>>    - reg
->>> +  - ranges
->>> +  - '#address-cells'
->>> +  - '#size-cells'
->>>    - power-domains
->>>    - clocks
->>>    - clock-names
->>> @@ -77,4 +96,36 @@ examples:
->>>                 clock-names = "apb", "axi", "nic", "disp", "cam",
->>>                               "pxp", "lcdif", "isi", "csi", "dsi";
->>>        #power-domain-cells = <1>;
->>> +      #address-cells = <1>;
->>> +      #size-cells = <1>;
->>> +      ranges = <0x0 0x4ac10000 0x10000>;
->>> +
->>> +      bridge@20 {
->>> +          compatible = "fsl,imx93-ldb";
->>> +          reg = <0x20 0x4>, <0x24 0x4>;
->>> +          reg-names = "ldb", "lvds";
->>> +          clocks = <&clk IMX93_CLK_LVDS_GATE>;
->>> +          clock-names = "ldb";
->>> +
->>> +          ports {
->>> +              #address-cells = <1>;
->>> +              #size-cells = <0>;
->>> +
->>> +              port@0 {
->>> +                  reg = <0>;
->>> +
->>> +                  ldb_from_lcdif2: endpoint {
->>> +                      remote-endpoint = <&lcdif2_to_ldb>;
->>> +                  };
->>> +              };
->>> +
->>> +              port@1 {
->>> +                  reg = <1>;
->>> +
->>> +                  ldb_lvds: endpoint {
->>> +                      remote-endpoint = <&ldb_to_panel>;
->>> +                  };
->>> +              };
->>> +          };
->>
->> Messed indentation.
-> 
-> This is already from the original binding. I'll fix in a separate commit.
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmfINx0FAwAAAAAACgkQsN6d1ii/Ey9S
+gQf+I8CUShm31LLWJNsQeFyf1hZGQJsOl/449kb7XVEVmnfH8zSdBQq5hBenoSRspsJz4Pfdx5Rn
+HViHlrokjOvtG1KrZzis3dyAnqDlOXbVtHqbC0c613apL13HRpQjljYY9rYOiHpsN0XT4XZTyIMH
+jtHcduT55q0gm+OZHGw2nDnsrPyBmuHizapcZPXS+i12S9Ryxrb3Je4B9y6og2IDUQKratcNtcRK
+3Aef8PK6ThbzwdA7htEk1OAJh2jHQasrM6Pnsz1vB+uzf1GRz6ZGxyu4z0ziIgUwhG4gVpr0IvXi
+dgWXhaLUcNt89Lj5XqBwRB1Tiz26Lchja5mwiRE/aA==
+=i5JF
+-----END PGP SIGNATURE-----
 
-How? I did not see any '-', only adding here.
-
-
-Best regards,
-Krzysztof
+--------------JcxjzcPDEBKzIiqVYd8r5zK1--
 
