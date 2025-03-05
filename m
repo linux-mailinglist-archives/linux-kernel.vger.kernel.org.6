@@ -1,108 +1,110 @@
-Return-Path: <linux-kernel+bounces-546292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A2FA4F8CF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:30:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5CBBFA4F8D3
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:31:11 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B9F3A9D85
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:30:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08BA57A7D75
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:30:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6AF1F4194;
-	Wed,  5 Mar 2025 08:30:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 813C31F4194;
+	Wed,  5 Mar 2025 08:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b="oUDbmfB0"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fgoVHxWZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B993C1F150D
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 08:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEEF342AAF;
+	Wed,  5 Mar 2025 08:31:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741163415; cv=none; b=exQxh3TvCZqbs8DYhfV4XkFjcUetimecFNSqCpKa7WTqFfARsV6Lhz94OE0Z6NXS5PR02pMb1W2yfgD42eEk46+sV/iSi/HOPJ8p2LyQtLaHIeK07uHdgfAhXMhtWgrWZDqvX4rdYpubi5Y0oIuK9O3UG3xKzBBLXr/9Ndo3Spw=
+	t=1741163463; cv=none; b=kKsRXfwR3/8QXICr7K12wY1A8sikxMgpshyfK+Z/fQvDGLor5TXyBUbVrvm6hBvCJLrBlAGXVNtcEhen3xOfubMq2BjmURXJfBbL5Rx99u3xHCgCLKMyWD76K5vNrPcw3oxXiW8priYXqx3Z+2F0E2hgkFl5g8L5i/7FdgsuhXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741163415; c=relaxed/simple;
-	bh=7zIERAh8EpXhm6h89t7KnxUmJQwcOwho5sALkg39q5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RjNvsQXRyY/Wz+B7vqqiHijTNF7bwl0BpvjkwefMT1OAyFczzVCsSUFfIbuY7tfHRY2VOtHRWub0QTLBrpcQW9oMLBpH1fxCD4NF5vkfqiMeiy2K8h5jXX0p49dfsY/3lsgE448Is3QKeoCTybCQ+jCoR7ITUCu5e7kr456XGdw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev; spf=pass smtp.mailfrom=tuxon.dev; dkim=pass (2048-bit key) header.d=tuxon.dev header.i=@tuxon.dev header.b=oUDbmfB0; arc=none smtp.client-ip=209.85.221.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=tuxon.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxon.dev
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-390eb7c1024so3763089f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 00:30:13 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tuxon.dev; s=google; t=1741163412; x=1741768212; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=/pRZw5w+2U2qZZUcZUPyn53QbNuJsJLbWvkiinmtjsk=;
-        b=oUDbmfB08255YHGP697eyTIiS1KxIiBBUIf2ONlLq5Qth9GngoetTc0sbam+3PZt7y
-         pgJIz+ieTPJj6PRMiGucNLwRpzzE6RzYMQn3zCZfAg6aTfFzrN4Rdc9SQFDoECM6O5Gv
-         cYTm9pKHCoPWTEfdmu+nqQArpyejEPUu1RX1ElPS27y38zja9tLGQFRxbyjwpn9S6IZP
-         HgkJQAhXKtqTk/xx98GxleyVx3/drECyDm8qIkVZfMzzGbVyilT020ADZ+iryBNPn4xn
-         J5pb62vgk1vzQVR/eyxfWmSmyij8ZaQ1ZG0PhxL+9vtBTQz6TiEnMtxhjzNtzWlcwIoT
-         4/FQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741163412; x=1741768212;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/pRZw5w+2U2qZZUcZUPyn53QbNuJsJLbWvkiinmtjsk=;
-        b=sZZJImwkuUWOP/c2oaEU9c0YJjhCSzHgrpUIXLw0A2acDRCX3wnAaL7IUdEjokSgcy
-         MrVCmwPVGe6BiyhCGmXu+f+SWihtkaO+PqldWejwiGq0o+B7zSsmlyhDqrpoOelX/TRQ
-         Nh2QcAceyEWbiPvIIEDJ/8BeQ9Vx+WrXb4iqsJvU98Crjg4QRIhx1uEzZxHgJ9JeF29J
-         kOlWqDRtn65QZRZGT3+WfI1jdc50hE6rPgzj7scS7NZdfwKtaqroACtdzv/wQVroFQAV
-         39hettRyB8/LoLBbH1uFYo68P75VxBiPLWHW+Q0dYq28dfRVEnNdnb5wNuMCEgciTop7
-         Y8iw==
-X-Forwarded-Encrypted: i=1; AJvYcCXI41ZBeOazpJqReHj0xDpLvtAN0tcF2FAKL6hlHVFOhSx3WLP2zi62BEbIV+8/lhZJQdzbDM5TJaIzYIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEDhlV+VbkhFmCpdgcD/pvXqSKAORlQhDJyba8O29yPPHKpthF
-	BUwwEb9CqU8wYNocjNwjs2OCYXZHkrlzH0bP4hvtym99/Qauvt3KTYor8Xaulxg=
-X-Gm-Gg: ASbGncsjvrlxdR17PYVe35WafhivGWs8j+a7ypSs+5+Qt7Vpba08RgBQf5MTwo0ykke
-	C67zhyqwU4UjYlfZbiVQ71vzQ9Z6YSKmhQAX0jOczmvFa94qCkOGJM2Styi3XY0dzgRI/v/nOFw
-	W22417C2+rh0Ex00OkClzDS3BiUj2/+PqwDw/RnA7x0KmCgI+q2CNqRR7+/FhgqMOEYLdhZnE27
-	5i4zqKzDvhqfI8kNRJX+pu1p9qLlATViB5diszAAyH+VJGIZwNV+AGgpOhVANAHdfykKxIbiDlj
-	pZAo69gERUyJLjWrDzdk70zPnyjEBqFgtm8x43XiMRgAqVKtnKV7dQ==
-X-Google-Smtp-Source: AGHT+IFSdzvWtn7tTFdb3Ley/k3biVDCTE4cufgwD5dIqDrEulteNMEUpYhuCzwhg513O9Qc/kl5+Q==
-X-Received: by 2002:a5d:5986:0:b0:38f:4d20:4a0a with SMTP id ffacd0b85a97d-3911f756bb8mr1512469f8f.28.1741163411612;
-        Wed, 05 Mar 2025 00:30:11 -0800 (PST)
-Received: from [192.168.50.4] ([82.78.167.138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47b7cdbsm20550527f8f.54.2025.03.05.00.30.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 05 Mar 2025 00:30:11 -0800 (PST)
-Message-ID: <1e33b374-0454-4d03-a673-75f36e6fabfc@tuxon.dev>
-Date: Wed, 5 Mar 2025 10:30:09 +0200
+	s=arc-20240116; t=1741163463; c=relaxed/simple;
+	bh=okDqkVAZeMp5yL7AkuXqwEC+7QyMVjPCqidcSs1o0Qw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=er92fhdFNAZvAWLuYT8rcxXdK0Vc5b8OU7EMn7UjdjMfb8KSD7KgEjDll2+McSifsBiTtPK1CxfW0TaZM504G8BIMylFdCBoij+N/VPhXOS58vGjyqy3ssV6wgLrILNR9KZwQM54IMH/6C8EeSiD9zMTF2dWrLgvq4Tp6YeJpz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fgoVHxWZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B9C5C4CEE9;
+	Wed,  5 Mar 2025 08:31:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741163462;
+	bh=okDqkVAZeMp5yL7AkuXqwEC+7QyMVjPCqidcSs1o0Qw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fgoVHxWZza7iBpVfg1WoFHiLOBvm+Hgv7JkLzt3hl/2mNj5J++YVQhV7HbD0D3lGp
+	 JeHmz8P6+z9FTM4O1uhD7nzROQMZIrdqjgFb/XxIq6XbKQIwJsQmNd9ian/ZTM5skt
+	 JvKjMNSFJqkmILQXVaMzEyEAGTutAHJzbw504Kxpio0nZNRvaCzCJoAJulqPD5A6Js
+	 Uf6l5NQSkS0iOb/wmyCevWzf/VPKydhRZIKEmwh5QuKbLk8oOWY3hcvg5FBhrscIx0
+	 7Jgzeo7NX0eNCj7h/9JKiyfneofaObIVCzlgFoUi4fd9JKzK9SnVh62U9/uz241Qiv
+	 DH44qGi/2wxuw==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1tpk9Z-000000004XF-1eNj;
+	Wed, 05 Mar 2025 09:30:58 +0100
+Date: Wed, 5 Mar 2025 09:30:57 +0100
+From: Johan Hovold <johan@kernel.org>
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 0/8] arm64: dts: qcom: x1e: mark l12b and l15b always-on
+Message-ID: <Z8gLwSkMocE-KrbH@hovoldconsulting.com>
+References: <20250227081357.25971-1-johan+linaro@kernel.org>
+ <e6dc86bb-1dd1-486e-8e3e-18974da6cf86@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ARM: dts: microchip: sama7g5: add ADC hw trigger edge
- type
-To: nayabbasha.sayed@microchip.com, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Nicolas Ferre <nicolas.ferre@microchip.com>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20250304-sama7g5-hw-trigger-enable-v1-1-61b5618285f0@microchip.com>
-From: Claudiu Beznea <claudiu.beznea@tuxon.dev>
-Content-Language: en-US
-In-Reply-To: <20250304-sama7g5-hw-trigger-enable-v1-1-61b5618285f0@microchip.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6dc86bb-1dd1-486e-8e3e-18974da6cf86@oss.qualcomm.com>
 
+On Tue, Mar 04, 2025 at 06:07:32PM +0100, Konrad Dybcio wrote:
+> On 27.02.2025 9:13 AM, Johan Hovold wrote:
+> > The l12b and l15b supplies are used by components that are not (fully)
+> > described (and some never will be) and must never be disabled.
+> > 
+> > Mark the regulators as always-on to prevent them from being disabled,
+> > for example, when consumers probe defer or suspend.
+> > 
+> > Note that there are likely votes from other processors for these rpmh
+> > regulators (at least for l15b) but the OS should not rely on that in any
+> > case.
+> > 
+> > Included is also a patch that adds the missing HID supplies for the
+> > T14s. It was a corresponding change for the CRD that made me look into
+> > this to make sure these supplies were not disabled during suspend or on
+> > probe deferrals.
 
+> This looks good, too bad SL7 was left out :( I'll take care of that
+> myself
 
-On 04.03.2025 08:15, Nayab Sayed via B4 Relay wrote:
-> From: Nayab Sayed <nayabbasha.sayed@microchip.com>
-> 
-> Set ADC trigger edge type property as interrupt edge rising value.
-> 
-> Signed-off-by: Nayab Sayed <nayabbasha.sayed@microchip.com>
+Thanks for catching that. It seems my grep pattern was too specific
+given that you had dropped the voltages from the SL7 regulator labels
+whereas every other X1 board copy-pasted the CRD which had them:
 
-Applied to at91-dt, thanks!
+	vreg_l12b_1p2: ldo12 {
+
+	vreg_l12b: ldo12 {
+
+Like you, I'd prefer if they were not there (especially since they are
+not even correct with 3 V rails having "2p9" suffixes), but I see now
+that this pattern have been used also for some older Qualcomm machines.
+
+Perhaps we can drop them throughout, at least for X1, for consistency.
+
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+
+Thanks for reviewing.
+
+Johan
 
