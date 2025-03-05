@@ -1,274 +1,261 @@
-Return-Path: <linux-kernel+bounces-545997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D747A4F4F7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:57:41 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EEE4A4F4FA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:58:05 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A11127A3110
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:56:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F4BE16C38B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C398F1547E9;
-	Wed,  5 Mar 2025 02:57:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155BC15A843;
+	Wed,  5 Mar 2025 02:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ea6nFyUZ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MRwbldEA"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41ED45C18
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 02:57:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66AD91547E9
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 02:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741143453; cv=none; b=PaoTh5Tb0gnaL91IWLUf/pH80Rt8DIg9ZAlwqOtDNhCBcXLXYHrOvY/AMc2eCehxh+U6+dpPhtyJywmNRnE7xrTfwZKEUQUwn92E5Cu1mVeqcXuCV3AVAt0X8uUChYXmLU6oqQrR5NjkceORpqM9o+3gHnAXxMBDrkivLyKqsCw=
+	t=1741143477; cv=none; b=hGPy/UwBl2bPIhUKnvBKPstxknqCis7AYhRD1LdreqY1ZD111bH1SrgeYQ8G7iAdyMahzTfAEIQyGUtzWwkkPvrJnw02UxBmNq3CLceI40HlEjfz2cctpoNszkPg5PHV0rXuXHK62tUprT8MxN6fdv+dEDOL3UG43xqShLMaJiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741143453; c=relaxed/simple;
-	bh=aGKbrULwTdTRyT0A0kuO9eEUK3LxuA3FDrupb74BRd8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=QNMivd0QIz825r5F+8XwAs9KvrIo8ebeO4fH+QL0GEvXcBWot1+MsJLs27WYbAsnqZfQHdwoNohFjAOPtLCB6UdmbgvzF3+LqoulKzPWScaq48YkYQ2gc11gXNX5nxWZMFYgHR51AZyW9G+EzdI2joybvmQfhk5E7kChqB2HT1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ea6nFyUZ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741143449;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=k22zgh/jyAhJXidTGCj8WdWHgPrd2RoeEQ1YeZh9VQU=;
-	b=ea6nFyUZelcPbeKMEARgNi36k9BBlZYOds25u/JkNZTq0s1ydFv0DmeflgJSrYa0/B2c0O
-	YbN4OTihc3edoWg0jfdmH2wn4Cbrps7HsCFDtOmeoG+9zEytNcuMkXzs5q/hf5zeNf10oh
-	TRSgNolYT0uJ/5N+JjTRuNKrQ2ABYBs=
-Received: from mail-qv1-f70.google.com (mail-qv1-f70.google.com
- [209.85.219.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-652-pZwSXZBANg-j6pUnAaKfYg-1; Tue, 04 Mar 2025 21:57:26 -0500
-X-MC-Unique: pZwSXZBANg-j6pUnAaKfYg-1
-X-Mimecast-MFC-AGG-ID: pZwSXZBANg-j6pUnAaKfYg_1741143446
-Received: by mail-qv1-f70.google.com with SMTP id 6a1803df08f44-6e19e09cc20so105233986d6.2
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 18:57:26 -0800 (PST)
+	s=arc-20240116; t=1741143477; c=relaxed/simple;
+	bh=y7bMw3N+68dF2gots6s3j4ZbxaLrFGvk8JUQ//skTXY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cP1ctUEWMeG3+p+CvBxJvFlXYGf57fiqXgQ48D52Ht/yuzuonaqoVjEMQvTmU6Z3bz1Rm/Jhs0ijHTVvfzI03HndVy635uN8+LKVhWnaLsxQkZtnHtKBn1BNQ3dN3hPBu9pjHQq4hoSbRfbGc8Omb7JqrU1XbOm6/LYqyuopHm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MRwbldEA; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5497e7bf2e0so244755e87.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 18:57:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741143473; x=1741748273; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=K8qDHMP0/psqxw/XtRcA0VzgZ/XpGSLC12c3xrF1aPA=;
+        b=MRwbldEA57KcJhDX+SrkJg1FQxa3kFG7QIOne+i2iH05bzCydH8C/4yAuyJLFEyRqL
+         IDx4TzaEG6TG3MRmTOVEQB6HW+WI2+jQm7ywYxUg3KgOtZSQnTxHbF8orXgR2aqIkGXa
+         qy/WV51MoazPOn20HjtLlonAQ6Wqpp9MA5kdoYJyvLfh0mtKkb3+EbX/62+8MxAGxXOI
+         kHwKpqpbe5boU7GyZr8vxd3IVQlbWTC8oAYbB90wSw8rgi6zA+Uo+l2N41bFQDQuK0Io
+         51Kit/3fCJx4PKVHDhz7HiySMGeLQKdnoakKjnjd20Yea10lpAWq4ZqEeG8SriMRg7b0
+         Llqg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741143446; x=1741748246;
-        h=content-transfer-encoding:mime-version:user-agent:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=k22zgh/jyAhJXidTGCj8WdWHgPrd2RoeEQ1YeZh9VQU=;
-        b=SYr2Wx7z/MSQKXvOGtVtbw68qK2IrlXsXDZg5mANIxdQh+lQa1cuVAHtpba71hsmwb
-         HLujF7n1qY5B8U3rngz8D2ITRZQLpcCOWxiKvpzdE6NRxkrMrPltWALKKGtpI+4vwRNQ
-         m1H+s52sj2MAF5Ljx/RDyV/H/MjdkGGm1sVHwWm+2Ykc1ZolcjXKCI3jvyxWTo2mXmid
-         HTPdgUbVaNIiYXT9+t6Ade18pBIB/686jZ8Akg5CH2UWsOD5vQATQq5+PrSlYbuqn65/
-         bjaoI8aIc/T1d+Y3z7swqmxgpqne7sSOAN2Ml71ZhTvLlGgzs+AmhJZRF5dFkhEI8xFV
-         iyfw==
-X-Forwarded-Encrypted: i=1; AJvYcCWwm5zS+Td5Px+g4VQ3s8vzCjVvDsh1eBDMWxLOw63WVlwyqMqZdrElEbeeTToCkn939v3egmSsAlvmbgc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDIMdsjGnw4WI+Vp1xenR8PRlX9gQvU/wCr56/SKoskggLvLok
-	kEMyQNKZ0AevkbPeBW6RIHc2J65bILZwl6h9NgCCToL7J4pI3w+cjq8VQtDkgxEJDuDVqVea1qL
-	LD5qPL/4I/NaAoYSval7NaZeS7f7tKi1UGr3bHBf4R3HW1D4ApRGJGtWSpQ3tQQ==
-X-Gm-Gg: ASbGncsiwaGzgwqlpjvlly1lBG2x2TEneCu/1wlNbF9K+2464nlcXrrEZNxgVQEWUSA
-	i4o22nw4kUbBS8zB0eD5knUL9C2NzP+8HfLx1BjOOe50+l7CVkH3TVMekLmddzsqdMvUi+d54Y8
-	ELaSAY/DBR2yIOo+6sNCt5fRtJsxoXPZVQK/VhoWv/Vi6ShnVMptIQN+7Q1C1WwQkS3oiE3Bdn8
-	+6sf+/8MDsAym47EP6o6XZBamqHM3jbI/qnFViVzgALLY65zF+2wHs7aZ62edHqE89H42DsQ2D4
-	wjz4Jdi9zbfLrmA=
-X-Received: by 2002:a05:6214:1d0a:b0:6e8:91fd:cfc1 with SMTP id 6a1803df08f44-6e8e6cc7c25mr25924266d6.8.1741143445879;
-        Tue, 04 Mar 2025 18:57:25 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IF3t4AK4fYtyo86fru1RHMwYN6P4wHGOvLU4MQp/ldo7sNJZGdqoRV/DagPPmpy/Tv+u7OWHA==
-X-Received: by 2002:a05:6214:1d0a:b0:6e8:91fd:cfc1 with SMTP id 6a1803df08f44-6e8e6cc7c25mr25924086d6.8.1741143445523;
-        Tue, 04 Mar 2025 18:57:25 -0800 (PST)
-Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e8976eb136sm73941656d6.117.2025.03.04.18.57.24
+        d=1e100.net; s=20230601; t=1741143473; x=1741748273;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K8qDHMP0/psqxw/XtRcA0VzgZ/XpGSLC12c3xrF1aPA=;
+        b=cDLZAzAIovv5OiIpRNm/LkiT1ZbY5TPFx2iWEcRWXBFXX/y4cYgETMNn3qXt5tZp6H
+         saVs5jC5sGdEUm03KK7USosPKkrZT5JQko6ZrTTCH7z7/w5ov0Cq/8OTKCQBjHgxKoQ5
+         yGyXrhKN9j9iuNmEDU/SQLTiKN64UM25iJjkyVvQ9F0YzVlmIYaEETRwAHxFgrIrua/D
+         NCqqZns3tNxeB2IwKmgZzmclqIRqPvvk5DuTqGwEyHrAk9Y1Fqyek1k3bPC9yJ/Upjiw
+         lRycOHvioz0H8aUZvtY6gC/jyKzESpQfmuqdV7d4qo9RUEi5+XH7PRR081v2oLNd3vnd
+         r0EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWAEAdC7ALXBfesk1DOecg2uziD9Wb8SujgxRV4BeYNrwvzRG16IF7vBb3ZuRwuv77/w/A6oFBHufqkBVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgwxDT8ahpYixdTjtRj6KrQqKbtfx47R2i48Vz5qZq0V8o34B4
+	DLApl87dfmxb7oNH1y6B0J7dI1+QXHIw4iXreanLmhY+9xcMBpVm9nMMa5Lz4S4=
+X-Gm-Gg: ASbGncsWfWkVeLKWc8AoxJ7o4EURmzmgSuWT36v17ymq4q+yMIWZYBSSYvg3RE0jCXO
+	ou37dhNf6d0hw8ZtDrKt1IpAXNBU09S8UB94CrJyRrPYmiAYvrYtiMANOQSs+BbZUONv3QIQ+qr
+	T49QtqaqO1DdxjgdmFIVMfaQQig0t84/C5TtO+HadIROoiVq0qrIFN1vhSHU46RiQuh73xfQPTT
+	8lqODg6g/kT+PvMq2X34KfsTSCk4Id+gUF8G736+DGv2PkhJKfMw5QuqzfMCl6Zwyn6d654r7eZ
+	zXHoq4SlMhmcWbBegUqGFvK/5dzx51gqN5yGN/Hpf7cGkhm+Msjkf0+Qr4r5T9Zh1XU8XbCGfmR
+	zDzT5Me/hzRzWaRb96GkAryK0
+X-Google-Smtp-Source: AGHT+IHGOGwNINTW4ac1tC6VSgjqBJC0+1KyVOaHFcHtINPFKwdR1g09IOAfwlXr5N6PwikUjAqrUg==
+X-Received: by 2002:a05:6512:ac7:b0:545:2335:6597 with SMTP id 2adb3069b0e04-5497d383726mr462845e87.50.1741143473438;
+        Tue, 04 Mar 2025 18:57:53 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5494efff26esm1486481e87.73.2025.03.04.18.57.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 18:57:25 -0800 (PST)
-Message-ID: <910d5380b320ad39081c4a32ba643e6ad1cfcd55.camel@redhat.com>
-Subject: Re: [RFC PATCH 09/13] KVM: nSVM: Handle nested TLB flush requests
- through TLB_CONTROL
-From: Maxim Levitsky <mlevitsk@redhat.com>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
- <pbonzini@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Tue, 04 Mar 2025 21:57:24 -0500
-In-Reply-To: <Z8Yovz0I3QLuq6VQ@google.com>
-References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
-	 <20250205182402.2147495-10-yosry.ahmed@linux.dev>
-	 <2dfc8e02c16e78989bee94893cc48d531cdfa909.camel@redhat.com>
-	 <Z8Yovz0I3QLuq6VQ@google.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
+        Tue, 04 Mar 2025 18:57:52 -0800 (PST)
+Date: Wed, 5 Mar 2025 04:57:50 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wesley Cheng <quic_wcheng@quicinc.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2 7/9] arm64: dts: qcom: sm8750: Add USB support to
+ SM8750 SoCs
+Message-ID: <qr5vsq5b4pf5po3uq4esrozfjkmzq5q55tqlxxc74fh2pcygzi@vb7txcm5wpst>
+References: <20250304-sm8750_usb_master-v2-0-a698a2e68e06@quicinc.com>
+ <20250304-sm8750_usb_master-v2-7-a698a2e68e06@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250304-sm8750_usb_master-v2-7-a698a2e68e06@quicinc.com>
 
-On Mon, 2025-03-03 at 22:10 +0000, Yosry Ahmed wrote:
-> On Fri, Feb 28, 2025 at 09:06:18PM -0500, Maxim Levitsky wrote:
-> > On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
-> > > Handle L1's requests to flush L2's TLB through the TLB_CONTROL field of
-> > > VMCB12. This is currently redundant because a full flush is executed on
-> > > every nested transition, but is a step towards removing that.
-> > > 
-> > > TLB_CONTROL_FLUSH_ALL_ASID flushes all ASIDs from L1's perspective,
-> > > including its own, so do a guest TLB flush on both transitions. Never
-> > > propagate TLB_CONTROL_FLUSH_ALL_ASID from the guest to the actual VMCB,
-> > > as this gives the guest the power to flush the entire physical TLB
-> > > (including translations for the host and other VMs).
-> > > 
-> > > For other cases, the TLB flush is only done when entering L2. The nested
-> > > NPT MMU is also sync'd because TLB_CONTROL also flushes NPT
-> > > guest-physical mappings.
-> > > 
-> > > All TLB_CONTROL values can be handled by KVM regardless of FLUSHBYASID
-> > > support on the underlying CPU, so keep advertising FLUSHBYASID to the
-> > > guest unconditionally.
-> > > 
-> > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
-> > > ---
-> > >  arch/x86/kvm/svm/nested.c | 42 ++++++++++++++++++++++++++++++++-------
-> > >  arch/x86/kvm/svm/svm.c    |  6 +++---
-> > >  2 files changed, 38 insertions(+), 10 deletions(-)
-> > > 
-> > > diff --git a/arch/x86/kvm/svm/nested.c b/arch/x86/kvm/svm/nested.c
-> > > index 0735177b95a1d..e2c59eb2907e8 100644
-> > > --- a/arch/x86/kvm/svm/nested.c
-> > > +++ b/arch/x86/kvm/svm/nested.c
-> > > @@ -484,19 +484,36 @@ static void nested_save_pending_event_to_vmcb12(struct vcpu_svm *svm,
-> > >  
-> > >  static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
-> > >  {
-> > > +	struct vcpu_svm *svm = to_svm(vcpu);
-> > > +
-> > >  	/* Handle pending Hyper-V TLB flush requests */
-> > >  	kvm_hv_nested_transtion_tlb_flush(vcpu, npt_enabled);
-> > >  
-> > > +	/*
-> > > +	 * If L1 requested a TLB flush for L2, flush L2's TLB on nested entry
-> > > +	 * and sync the nested NPT MMU, as TLB_CONTROL also flushes NPT
-> > > +	 * guest-physical mappings. We technically only need to flush guest_mode
-> > > +	 * page tables.
-> > > +	 *
-> > > +	 * KVM_REQ_TLB_FLUSH_GUEST will flush L2's ASID even if the underlying
-> > > +	 * CPU does not support FLUSHBYASID (by assigning a new ASID), so we
-> > > +	 * can handle all TLB_CONTROL values from L1 regardless.
-> > > +	 *
-> > > +	 * Note that TLB_CONTROL_FLUSH_ASID_LOCAL is handled exactly like
-> > > +	 * TLB_CONTROL_FLUSH_ASID. We can technically flush less TLB entries,
-> > > +	 * but this would require significantly more complexity.
-> > > +	 */
-> > 
-> > I think it might make sense to note that we in essence support only one non zero ASID
-> > in L1, the one that it picks for the nested guest.
-> > 
-> > 
-> > Thus when asked to TLB_CONTROL_FLUSH_ALL_ASID 
-> > we need to flush the L2's real asid and L1 asid only.
+On Tue, Mar 04, 2025 at 01:56:40PM -0800, Melody Olvera wrote:
+> From: Wesley Cheng <quic_wcheng@quicinc.com>
 > 
-> This is described by the comment in nested_svm_exit_tlb_flush(). Do you
-> mean that we should also mention that here?
+> Add the base USB devicetree definitions for SM8750 platforms.  The overall
+> chipset contains a single DWC3 USB3 controller (rev. 200a), SS QMP PHY
+> (rev. v8) and M31 eUSB2 PHY.  The major difference for SM8750 is the
+> transition to using the M31 eUSB2 PHY compared to previous SoCs.
 > 
-> I guess one way to make things clearer is to describe the behavior for
-> all values of TLB_CONTROL here, and in nested_svm_exit_tlb_flush() just
-> say /* see nested_svm_entry_tlb_flush() */. Would that improve things?
-
-I guess that this will be a bit better.
-This was just a tiny nitpick though, just something I wondered a bit when
-reviewing.
-
-
-Best regards,
-	Maxim Levitsky
-
-
-
+> Enable USB support on SM8750 MTP and QRD variants. SM8750 has a QMP combo
+> PHY for the SSUSB path, and a M31 eUSB2 PHY for the HSUSB path.
 > 
-> > 
-> > > +	if (svm->nested.ctl.tlb_ctl != TLB_CONTROL_DO_NOTHING) {
-> > > +		if (nested_npt_enabled(svm))
-> > > +			kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
-> > > +		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-> > > +	}
-> > > +
-> > >  	/*
-> > >  	 * TODO: optimize unconditional TLB flush/MMU sync.  A partial list of
-> > >  	 * things to fix before this can be conditional:
-> > >  	 *
-> > > -	 *  - Honor L1's request to flush an ASID on nested VMRUN
-> > > -	 *  - Sync nested NPT MMU on VMRUN that flushes L2's ASID[*]
-> > >  	 *  - Don't crush a pending TLB flush in vmcb02 on nested VMRUN
-> > > -	 *
-> > > -	 * [*] Unlike nested EPT, SVM's ASID management can invalidate nested
-> > > -	 *     NPT guest-physical mappings on VMRUN.
-> > >  	 */
-> > >  	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
-> > >  	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
-> > > @@ -504,9 +521,18 @@ static void nested_svm_entry_tlb_flush(struct kvm_vcpu *vcpu)
-> > >  
-> > >  static void nested_svm_exit_tlb_flush(struct kvm_vcpu *vcpu)
-> > >  {
-> > > +	struct vcpu_svm *svm = to_svm(vcpu);
-> > > +
-> > >  	/* Handle pending Hyper-V TLB flush requests */
-> > >  	kvm_hv_nested_transtion_tlb_flush(vcpu, npt_enabled);
-> > >  
-> > > +	/*
-> > > +	 * If L1 had requested a full TLB flush when entering L2, also flush its
-> > > +	 * TLB entries when exiting back to L1.
-> > > +	 */
-> > > +	if (svm->nested.ctl.tlb_ctl == TLB_CONTROL_FLUSH_ALL_ASID)
-> > > +		kvm_make_request(KVM_REQ_TLB_FLUSH_GUEST, vcpu);
-> > 
-> > Makes sense.
-> > 
-> > > +
-> > >  	/* See nested_svm_entry_tlb_flush() */
-> > >  	kvm_make_request(KVM_REQ_MMU_SYNC, vcpu);
-> > >  	kvm_make_request(KVM_REQ_TLB_FLUSH_CURRENT, vcpu);
-> > > @@ -825,7 +851,8 @@ int enter_svm_guest_mode(struct kvm_vcpu *vcpu, u64 vmcb12_gpa,
-> > >  	nested_svm_copy_common_state(svm->vmcb01.ptr, svm->nested.vmcb02.ptr);
-> > >  
-> > >  	svm_switch_vmcb(svm, &svm->nested.vmcb02);
-> > > -	nested_vmcb02_prepare_control(svm, vmcb12->save.rip, vmcb12->save.cs.base);
-> > > +	nested_vmcb02_prepare_control(svm, vmcb12->save.rip,
-> > > +				      vmcb12->save.cs.base);
-> > >  	nested_vmcb02_prepare_save(svm, vmcb12);
-> > >  
-> > >  	ret = nested_svm_load_cr3(&svm->vcpu, svm->nested.save.cr3,
-> > > @@ -1764,7 +1791,8 @@ static int svm_set_nested_state(struct kvm_vcpu *vcpu,
-> > >  	nested_copy_vmcb_control_to_cache(svm, ctl);
-> > >  
-> > >  	svm_switch_vmcb(svm, &svm->nested.vmcb02);
-> > > -	nested_vmcb02_prepare_control(svm, svm->vmcb->save.rip, svm->vmcb->save.cs.base);
-> > > +	nested_vmcb02_prepare_control(svm, svm->vmcb->save.rip,
-> > > +				      svm->vmcb->save.cs.base);
-> > >  
-> > >  	/*
-> > >  	 * While the nested guest CR3 is already checked and set by
-> > > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-> > > index 8342c7eadbba8..5e7b1c9bfa605 100644
-> > > --- a/arch/x86/kvm/svm/svm.c
-> > > +++ b/arch/x86/kvm/svm/svm.c
-> > > @@ -5242,9 +5242,9 @@ static __init void svm_set_cpu_caps(void)
-> > >  		kvm_cpu_cap_set(X86_FEATURE_VMCBCLEAN);
-> > >  
-> > >  		/*
-> > > -		 * KVM currently flushes TLBs on *every* nested SVM transition,
-> > > -		 * and so for all intents and purposes KVM supports flushing by
-> > > -		 * ASID, i.e. KVM is guaranteed to honor every L1 ASID flush.
-> > > +		 * KVM currently handles all TLB_CONTROL values set by L1, even
-> > > +		 * if the underlying CPU does not. See
-> > > +		 * nested_svm_transition_tlb_flush().
-> > >  		 */
-> > >  		kvm_cpu_cap_set(X86_FEATURE_FLUSHBYASID);
-> > >  
-> > 
-> > Patch looks OK, but I can't be 100% sure about this.
-> > 
-> > Reviewed-by: Maxim Levitsky <mlevitsk@redhat.com>
-> > 
-> > Best regards,
-> > 	Maxim Levitsky
-> > 
-> > 
+> Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi | 163 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 163 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> index 3bbd7d18598ee0a3a0d5130c03a3166e1fc14d82..e543e65c7aba3213ca0b8a8f6dbaf1371ed8317e 100644
+> --- a/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> @@ -10,6 +10,7 @@
+>  #include <dt-bindings/interconnect/qcom,icc.h>
+>  #include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
+>  #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/phy/phy-qcom-qmp.h>
+>  #include <dt-bindings/power/qcom,rpmhpd.h>
+>  #include <dt-bindings/power/qcom-rpmpd.h>
+>  #include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> @@ -1966,6 +1967,168 @@ lpass_lpicx_noc: interconnect@7420000 {
+>  			#interconnect-cells = <2>;
+>  		};
+>  
+> +		usb_1_hsphy: phy@88e3000 {
+> +			compatible = "qcom,sm8750-m31-eusb2-phy";
+> +			reg = <0x0 0x88e3000 0x0 0x29c>;
+> +
+> +			clocks = <&tcsrcc TCSR_USB2_CLKREF_EN>;
+> +			clock-names = "ref";
+> +
+> +			resets = <&gcc GCC_QUSB2PHY_PRIM_BCR>;
+> +
+> +			#phy-cells = <0>;
+> +
+> +			status = "disabled";
+> +		};
+> +
+> +		usb_dp_qmpphy: phy@88e8000 {
+> +			compatible = "qcom,sm8750-qmp-usb3-dp-phy";
+> +			reg = <0x0 0x088e8000 0x0 0x4000>;
+> +
+> +			clocks = <&gcc GCC_USB3_PRIM_PHY_AUX_CLK>,
+> +				 <&rpmhcc RPMH_CXO_CLK>,
+> +				 <&gcc GCC_USB3_PRIM_PHY_COM_AUX_CLK>,
+> +				 <&gcc GCC_USB3_PRIM_PHY_PIPE_CLK>;
+> +			clock-names = "aux",
+> +				      "ref",
+> +				      "com_aux",
+> +				      "usb3_pipe";
+> +
+> +			resets = <&gcc GCC_USB3_PHY_PRIM_BCR>,
+> +				 <&gcc GCC_USB3_DP_PHY_PRIM_BCR>;
+> +			reset-names = "phy",
+> +				      "common";
+> +
+> +			power-domains = <&gcc GCC_USB3_PHY_GDSC>;
+> +
+> +			#clock-cells = <1>;
+> +			#phy-cells = <1>;
+> +
+> +			orientation-switch;
+> +
+> +			status = "disabled";
+> +
+> +			ports {
+> +				#address-cells = <1>;
+> +				#size-cells = <0>;
+> +
+> +				port@0 {
+> +					reg = <0>;
+> +
+> +					usb_dp_qmpphy_out: endpoint {
+> +					};
+> +				};
+> +
+> +				port@1 {
+> +					reg = <1>;
+> +
+> +					usb_dp_qmpphy_usb_ss_in: endpoint {
+> +						remote-endpoint = <&usb_1_dwc3_ss>;
+> +					};
+> +				};
+> +
+> +				port@2 {
+> +					reg = <2>;
+> +
+> +					usb_dp_qmpphy_dp_in: endpoint {
+> +					};
+> +				};
+> +			};
+> +		};
+> +
+> +		usb_1: usb@a6f8800 {
+> +			compatible = "qcom,sm8750-dwc3", "qcom,dwc3";
+> +			reg = <0x0 0x0a6f8800 0x0 0x400>;
+> +			status = "disabled";
 
+Status should be the last property
 
+> +			#address-cells = <2>;
+> +			#size-cells = <2>;
+> +			ranges;
+> +
+> +			clocks = <&gcc GCC_CFG_NOC_USB3_PRIM_AXI_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_MASTER_CLK>,
+> +				 <&gcc GCC_AGGRE_USB3_PRIM_AXI_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_SLEEP_CLK>,
+> +				 <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
+> +				 <&tcsrcc TCSR_USB3_CLKREF_EN>;
+> +			clock-names = "cfg_noc",
+> +				      "core",
+> +				      "iface",
+> +				      "sleep",
+> +				      "mock_utmi",
+> +				      "xo";
+> +
+> +			assigned-clocks = <&gcc GCC_USB30_PRIM_MOCK_UTMI_CLK>,
+> +					  <&gcc GCC_USB30_PRIM_MASTER_CLK>;
+> +			assigned-clock-rates = <19200000>, <200000000>;
+> +
+> +			interrupts-extended = <&intc GIC_SPI 130 IRQ_TYPE_LEVEL_HIGH>,
+> +						  <&intc GIC_SPI 131 IRQ_TYPE_LEVEL_HIGH>,
+
+Misaligned
+
+> +					      <&pdc 14 IRQ_TYPE_EDGE_BOTH>,
+> +					      <&pdc 15 IRQ_TYPE_EDGE_BOTH>,
+> +					      <&pdc 17 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "pwr_event",
+> +					  "hs_phy_irq",
+> +					  "dp_hs_phy_irq",
+> +					  "dm_hs_phy_irq",
+> +					  "ss_phy_irq";
+> +
+> +			power-domains = <&gcc GCC_USB30_PRIM_GDSC>;
+> +			required-opps = <&rpmhpd_opp_nom>;
+> +
+> +			resets = <&gcc GCC_USB30_PRIM_BCR>;
+> +
+> +			interconnects = <&aggre1_noc MASTER_USB3_0 0 &mc_virt SLAVE_EBI1 0>,
+
+QCOM_ICC_TAG_ALWAYS
+
+> +					<&gem_noc MASTER_APPSS_PROC 0 &config_noc SLAVE_USB3_0 0>;
+> +			interconnect-names = "usb-ddr", "apps-usb";
+> +
+
+-- 
+With best wishes
+Dmitry
 
