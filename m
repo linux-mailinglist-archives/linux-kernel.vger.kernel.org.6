@@ -1,198 +1,116 @@
-Return-Path: <linux-kernel+bounces-546058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160ADA4F5CD
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:53:33 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3DF7A4F5D8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:01:00 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B32FF3AAECF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:53:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D30691890E8D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:01:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AAB1189919;
-	Wed,  5 Mar 2025 03:53:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NXY1OvN/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FEC719ADBA;
+	Wed,  5 Mar 2025 04:00:55 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BE09BA2E
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 03:53:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E960158524
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:00:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741146802; cv=none; b=J6hO7nRAPzHBtH0wGrYAAKdLut86HfDX4ZmFaTGzdElM9gyR9yFHda7sR8TrBAlZmR6TXGVnTrCHTWl7C3UkczDT23LQ5Y8NO95kA+AtatbIpFLoCXsGyyAICi8NPJ2jlnI+TB0bzAc3kIEbPDz7LHUIHLFDsHCG/0s3Dz931OQ=
+	t=1741147255; cv=none; b=R4kBsGPshGV7bosNE5AV80HXR87F+K7mU4iv/MB0PRamA6uKxNZVJwcHZzLOHvMZLagZgg4xybGwDC3aXRD6c43VaKLAxJGn3Wjb4jwglM2O33hKh67uyDBqvVK7Z5Z6JhZBcpck3SZ7ATN+mgc9jacnpd7E7t7VfkKjgKR29Do=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741146802; c=relaxed/simple;
-	bh=KYu15OTxtFs2mF10JuE1RcryLYxEkKONS/St8WU9dMw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kzr+xRsJ7t/X3nnZH0rhX4HJadhtmVP2IWfLqoLWNSZoCQcsL0jK9zNITzj0Dg2YYHxNLRwJ8p3OFemdPVXVMOwfhU6DyppEMtPmzLBLY4PSSv2WFcMPqRx2SHDRkN2Y5X7UaQU7h9UviosUpNCYYqhcVw+HJgbJxWjPV3m4owM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NXY1OvN/; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741146798;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+mJRNWDqZaDl0D1j/RlDn06NEO5jFGolr9VYIE5+CIg=;
-	b=NXY1OvN/rhS34ZM5E5L7oVpgC1wVUWzkhXLTJzFsZlwV7r51m1fyNceQ3FFSrHDMr7S0no
-	qDgSQbABITHcbAdW72EMVle2IKz09NIF5SrX5GXx6X8ObiOfz4w9xzyPdMTeJLgUg3jQ89
-	bHjGzgh31KR8vvsXF4kMnGHs1Xs91ng=
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com
- [209.85.214.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-533-4TeJKAFqOPCH6_WjmnaKWQ-1; Tue, 04 Mar 2025 22:53:17 -0500
-X-MC-Unique: 4TeJKAFqOPCH6_WjmnaKWQ-1
-X-Mimecast-MFC-AGG-ID: 4TeJKAFqOPCH6_WjmnaKWQ_1741146796
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-223477ba158so189635005ad.0
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 19:53:17 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741146796; x=1741751596;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+mJRNWDqZaDl0D1j/RlDn06NEO5jFGolr9VYIE5+CIg=;
-        b=oxqf3n5sgX7Hi0UYOv2PxkDZ6oBDfLgGKD5TPfgJG10Nq92TrBmTl1Lb1tnYf3Ff/G
-         220nQ77TlpiW0tnbDvwqz43j5YxNLx76G60tjYvAAea2ClbQCxtygWDmDln84BqEcLpC
-         UO07qJwsYRuvonJF7Zw9zmwIpWfyMbIF8PQcoytrUi702nx4rSFabINAiNSS/UePc20T
-         XTnq93fGl+8WbHTdorPkzCCgr/1xF4IQX77dHm/21wac9HmcisXgydQSQn//8N19alEq
-         6zoHMtGQyX+5LT7MMbDGTGB3B722w2ZQVx6EeaugDrk3sVuX2yUSz/ycbJ41CLrYxmi2
-         QbDA==
-X-Forwarded-Encrypted: i=1; AJvYcCUZTd7UuPmSBCvV3VvCGnMLcJtK7bntgD6tqtKD3iSwWYR4bAn9ncPG4p4ieii56KMiEq2OaLn52b3Gdkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5ufI5W2xXhRsBUR4Ep+EpYsVjEfcIMpXZvqo4wgCWgj90ZqkC
-	o/wVs5Pt8/llo1r0XmT+A4MqJtBGTJoPyXo1w6iUDiZF3Z4CsYzcQ0mB6oRYn89duLqpuwircfm
-	6elpuYhDzRprCvmHRjMxjfg5d30vZKqOLEs9CZHFF+HHU7DQiKRCDFNqecePVfg==
-X-Gm-Gg: ASbGncs3LeDgNcYbbmtqrOhRDfu/3SMb3HGM3/djL0N6RoOn/GrPiRyyEFALu0udQ2E
-	AXIBbt38XOy0Mn7/ihHhJ+LtTLgtPmRayzOLLidcSK2rOsmx2WfX2ntcydfxgV9rjdaPg3nfuVl
-	7RQy6gqgCRjFCLdD5lzkFD0XrRC50zr7W8kdomb58WEeTQFTDL0yUeTkPXC7BwvN359opo7tCHz
-	9+eImE2Pu8IgGXlR6qpDQVfTljbLyCShTQATWv5qKwV0tNn+TIg4DmWKKpG+AIU4gZuaIxCP5hu
-	mz7dElr2esekk0g=
-X-Received: by 2002:a05:6a21:150c:b0:1ee:cf13:d4b5 with SMTP id adf61e73a8af0-1f3495afc1dmr2823093637.39.1741146796421;
-        Tue, 04 Mar 2025 19:53:16 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IFuyA16zIv02ugj3FPLruOV0ZdxdHMNTCUw0ZHSpkP3eGnIKTFgv0oqMKMfRXj1Nc/YwnybSw==
-X-Received: by 2002:a05:6a21:150c:b0:1ee:cf13:d4b5 with SMTP id adf61e73a8af0-1f3495afc1dmr2823058637.39.1741146796108;
-        Tue, 04 Mar 2025 19:53:16 -0800 (PST)
-Received: from [192.168.68.55] ([180.233.125.1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-aee7ddf20b8sm11041231a12.7.2025.03.04.19.53.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 19:53:15 -0800 (PST)
-Message-ID: <af65c1ea-202a-4a60-ab13-0c325385b7ec@redhat.com>
-Date: Wed, 5 Mar 2025 13:53:06 +1000
+	s=arc-20240116; t=1741147255; c=relaxed/simple;
+	bh=0qU+HPPxGJrOwXAzroPYXI6+/+jU7Q4yaXzp/TQlPvY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Olrwme8YWMQ0+qCz0jT02+2OaxzNalkuthLtj6WVw2P39vYNQrEaYt+M2gun2onFXz/l3kg/ooagn3TVUKxb68RXVGhEmbe1q9gHqRvtCtcIk90LOD5Zgjn25v5njy/9X91rD+KOGRdIxXtm0DcnGyTqjueie66HnWGklC/D3yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4Z6zHz0jk5z2DjfM;
+	Wed,  5 Mar 2025 11:56:31 +0800 (CST)
+Received: from kwepemg200013.china.huawei.com (unknown [7.202.181.64])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6224A1400D3;
+	Wed,  5 Mar 2025 12:00:43 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemg200013.china.huawei.com
+ (7.202.181.64) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Mar
+ 2025 12:00:42 +0800
+From: Liu Shixin <liushixin2@huawei.com>
+To: Muchun Song <muchun.song@linux.dev>, Andrew Morton
+	<akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Oscar
+ Salvador <osalvador@suse.de>, Kefeng Wang <wangkefeng.wang@huawei.com>, Peter
+ Xu <peterx@redhat.com>
+CC: <linux-mm@kvack.org>, <linux-kernel@vger.kernel.org>, Liu Shixin
+	<liushixin2@huawei.com>
+Subject: [PATCH v3] mm/hugetlb: update nr_huge_pages and surplus_huge_pages together
+Date: Wed, 5 Mar 2025 11:54:09 +0800
+Message-ID: <20250305035409.2391344-1-liushixin2@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 00/45] arm64: Support for Arm CCA in KVM
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>,
- Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
- <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
- Alexandru Elisei <alexandru.elisei@arm.com>,
- Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
- linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20250213161426.102987-1-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20250213161426.102987-1-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemg200013.china.huawei.com (7.202.181.64)
 
-On 2/14/25 2:13 AM, Steven Price wrote:
+In alloc_surplus_hugetlb_folio(), we increase nr_huge_pages and
+surplus_huge_pages separately. In the middle window, if we set
+nr_hugepages to smaller and satisfy count < persistent_huge_pages(h),
+the surplus_huge_pages will be increased by adjust_pool_surplus().
 
-[...]
+After adding delay in the middle window, we can reproduce the problem
+easily by following step:
 
-> 
-> The ABI to the RMM (the RMI) is based on RMM v1.0-rel0 specification[1].
-> 
-> This series is based on v6.14-rc1. It is also available as a git
-> repository:
-> 
-> https://gitlab.arm.com/linux-arm/linux-cca cca-host/v7
-> 
-> Work in progress changes for kvmtool are available from the git
-> repository below:
-> 
-> https://gitlab.arm.com/linux-arm/kvmtool-cca cca/v5
-> 
-> [1] https://developer.arm.com/documentation/den0137/1-0rel0/
-> [2] https://lore.kernel.org/r/a7011738-a084-46fa-947f-395d90b37f8b%40arm.com
-> 
+ 1. echo 3 > /proc/sys/vm/nr_overcommit_hugepages
+ 2. mmap two hugepages. When nr_huge_pages=2 and surplus_huge_pages=1,
+    goto step 3.
+ 3. echo 0 > /proc/sys/vm/nr_huge_pages
 
-I had a chance to test it by following Jean's instructions [1-2]. The guest can
-boot up and kvmtool also can boot the guest. I'm listing the repositories I used
-in case some body else want to give it a try.
+Finally, nr_huge_pages is less than surplus_huge_pages.
 
-[1] Jean's guide to build software components needed by ARM CCA stack
-     https://linaro.atlassian.net/wiki/spaces/QEMU/pages/29051027459/Building+an+RME+stack+for+QEMU
-[2] Jean's guide to build firmware needed by the emulated host
+To fix the problem, call only_alloc_fresh_hugetlb_folio() instead and
+move down __prep_account_new_huge_page() into the hugetlb_lock.
 
-host
-====
-tf-rmm    https://git.codelinaro.org/linaro/dcap/rmm.git                       (cca/v4)
-edk2:     git@github.com:tianocore/edk2.git                                    (edk2-stable202411)
-tf-a:     https://git.codelinaro.org/linaro/dcap/tf-a/trusted-firmware-a.git   (cca/v4)
-qemu      https://git.qemu.org/git/qemu.git                                    (stable-9.2)
-linux     https://git.gitlab.arm.com/linux-arm/linux-cca.git                   (cca-host/v7)
-buildroot https://github.com/buildroot/buildroot                               (master)
+Fixes: 0c397daea1d4 ("mm, hugetlb: further simplify hugetlb allocation API")
+Signed-off-by: Liu Shixin <liushixin2@huawei.com>
+---
+v2->v3: Modify the comment suggested by Oscar.
+ mm/hugetlb.c | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
 
-guest
-=====
-qemu      https://git.codelinaro.org/linaro/dcap/qemu.git                      (cca/latest)
-kvmtool   https://gitlab.arm.com/linux-arm/kvmtool-cca                         (cca/latest)
-linux     https://git.gitlab.arm.com/linux-arm/linux-cca.git                   (cca-guest/v7)
-
-Command lines to start the host
-================================
-[gshan@virtlab723 host]$ cat start.sh
-#!/bin/sh
-HOST_PATH=/home/gshan/sandbox/qemu/host
-GUEST_PATH=/home/gshan/sandbox/qemu/guest
-
-sudo ${HOST_PATH}/qemu/build/qemu-system-aarch64                      \
--M virt,virtualization=on,secure=on,gic-version=3,acpi=off            \
--cpu max,x-rme=on -m 4G -smp 8                                        \
--serial mon:stdio -monitor none -nographic -nodefaults                \
--bios ${HOST_PATH}/tf-a/flash.bin                                     \
--kernel ${HOST_PATH}/linux/arch/arm64/boot/Image                      \
--initrd ${HOST_PATH}/buildroot/output/images/rootfs.cpio.xz           \
--device pcie-root-port,bus=pcie.0,chassis=1,id=pcie.1                 \
--device pcie-root-port,bus=pcie.0,chassis=2,id=pcie.2                 \
--device pcie-root-port,bus=pcie.0,chassis=3,id=pcie.3                 \
--device pcie-root-port,bus=pcie.0,chassis=4,id=pcie.4                 \
--device virtio-9p-device,fsdev=shr0,mount_tag=shr0                    \
--fsdev local,security_model=none,path=${GUEST_PATH},id=shr0           \
--netdev tap,id=tap1,script=/etc/qemu-ifup,downscript=/etc/qemu-ifdown \
--device virtio-net-pci,bus=pcie.2,netdev=tap1,mac=78:ac:44:2b:43:f0
-
-Command lines to start the guest
-================================
-[gshan@virtlab723 guest]$ cat start_guest.sh
-#!/bin/sh
-key="VGhlIHJlYWxtIGd1ZXN0IHBlcnNvbmFsaXphdGlvbiBrZXkga"
-key+="W4gZm9ybWF0IG9mIGJhc2U2NCAgICAgICAgIA=="
-
-qemu-system-aarch64 -enable-kvm                                                     \
--object rme-guest,id=rme0,measurement-algorithm=sha512,personalization-value=${key} \
--M virt,gic-version=3,its=on,confidential-guest-support=rme0                        \
--cpu host -smp 2 -m 1024M                                                           \
--serial mon:stdio -monitor none -nographic -nodefaults                              \
--kernel /mnt/linux/arch/arm64/boot/Image                                            \
--initrd /mnt/buildroot/output/images/rootfs.cpio.xz                                 \
--append earlycon=pl011,mmio,0x10009000000
-
-Thanks,
-Gavin
+diff --git a/mm/hugetlb.c b/mm/hugetlb.c
+index 9faa1034704ff..0e08d2fff2360 100644
+--- a/mm/hugetlb.c
++++ b/mm/hugetlb.c
+@@ -2253,11 +2253,20 @@ static struct folio *alloc_surplus_hugetlb_folio(struct hstate *h,
+ 		goto out_unlock;
+ 	spin_unlock_irq(&hugetlb_lock);
+ 
+-	folio = alloc_fresh_hugetlb_folio(h, gfp_mask, nid, nmask);
++	folio = only_alloc_fresh_hugetlb_folio(h, gfp_mask, nid, nmask, NULL);
+ 	if (!folio)
+ 		return NULL;
+ 
++	hugetlb_vmemmap_optimize_folio(h, folio);
++
+ 	spin_lock_irq(&hugetlb_lock);
++	/*
++	 * nr_huge_pages needs to be adjusted within the same lock cycle
++	 * as surplus_pages, otherwise it might confuse
++	 * persistent_huge_pages() momentarily.
++	 */
++	__prep_account_new_huge_page(h, nid);
++
+ 	/*
+ 	 * We could have raced with the pool size change.
+ 	 * Double check that and simply deallocate the new page
+-- 
+2.34.1
 
 
