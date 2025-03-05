@@ -1,87 +1,60 @@
-Return-Path: <linux-kernel+bounces-546492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBB65A4FB51
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:10:02 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 236BFA4FB55
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:10:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA20E188DBA1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:09:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6A1B27A67EC
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9271C205AB0;
-	Wed,  5 Mar 2025 10:09:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59C9E204C35;
+	Wed,  5 Mar 2025 10:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="evB15Yn1"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40C8D86340
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 10:09:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="VEtUkFYf"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0EB586340;
+	Wed,  5 Mar 2025 10:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741169379; cv=none; b=VF7WfKneNd2NRLSminVyQ4ARHr6M3QMkcFHIjSmWw6eDZfbYZRzvi2QoFn4+2FORU1GO1uxo43qgGIMpaZZfZHDSbDTPzfvxly6XO7dFqDBL2dfqig+6IvQMLLqkkJE/Wh24Pf4d6MWe55MD7SE/PmaRAOCLXifQhLJoYK3xH9Y=
+	t=1741169444; cv=none; b=PGBO+J4eD2BypOl9uYOc1GKi/tioCDHQCOF18aW5nQHPi7aWF7c2/WQPMC5ClPusTgl7IlZKuyr1m9XNggH6excohLx2sq/nek9iWn3Y+Dhiovqu0p36h/FWgKIB7HVfGaROhgCstHvJD5Ks1f0QUmUAWcYchVeDZZpnDNd/kgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741169379; c=relaxed/simple;
-	bh=jRDsWGLHPyzD4dJakynyMEsgzpcLHEfSJ3qgCKI7Kqs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jZ9t7JB19s8WvVzVLrg1iWhpaSlxVsMd8vopyJfQ3Yq6KNaJJuHToPzgGraeewfBBqNhlcLhx8GUXvQFYooBF7WrxNItsGTAFWqMWr1Sryxmm3HaRPN+qrmRPnbOKkNZYibRvzVQ4CleHoRoafCCmtbTsSYRBfRbsds1/4ZUQyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=evB15Yn1; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 52594CAF008577;
-	Wed, 5 Mar 2025 10:09:02 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=uYhz189O/8pxfiPbgZRCulIxKGozZ0nBv2yVMcO7j
-	uU=; b=evB15Yn1QI3SD6GkdqQxGYciNf+nraV1h2XM1bR9VKPZA3rKcVr0JKgUj
-	/ZS7I5XKxOEU1NbQnQg/zmiUhNzPZA5Ejt4A8OvZtJqeHC5gyfAXr2HfLIpGoEnH
-	K9Xao6Dnb4dBhJUEEUutKBrwgWQdt886A1kDTBpvwERReu0UUx7hP2xsboTGHb5M
-	I5c2Rl14LVcfbyytR7QXYzLFULuAXLtyZXaFA+O+aPuNUw0kpg7Z9tMdfTcDt1LL
-	D6MKiADCAcK+TBKXml/dL6jeWTfr/c/TryVJ4qclLzXJllPGIb7QRYVvXBrMwbuz
-	LzvBzDrr7MiyU3x7sNNzvttKggTHA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4568ppaue9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 10:09:02 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 525A7IbB031861;
-	Wed, 5 Mar 2025 10:09:01 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4568ppaue6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 10:09:01 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5259HEIC020811;
-	Wed, 5 Mar 2025 10:09:00 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 454esk1wcq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 10:09:00 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 525A8xfJ56099152
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 5 Mar 2025 10:08:59 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 232FD2008D;
-	Wed,  5 Mar 2025 10:08:59 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 23F002008C;
-	Wed,  5 Mar 2025 10:08:56 +0000 (GMT)
-Received: from li-c18b6acc-24ee-11b2-a85c-81492619bda1.ibm.com.com (unknown [9.124.217.27])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed,  5 Mar 2025 10:08:55 +0000 (GMT)
-From: Aboorva Devarajan <aboorvad@linux.ibm.com>
-To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com,
-        vincent.guittot@linaro.org, riel@surriel.com
-Cc: dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-        mgorman@suse.de, vschneid@redhat.com, odin@uged.al,
-        linux-kernel@vger.kernel.org, aboorvad@linux.ibm.com
-Subject: [PATCH v2] sched/fair: Fix invalid pointer dereference in child_cfs_rq_on_list()
-Date: Wed,  5 Mar 2025 15:38:54 +0530
-Message-ID: <20250305100854.318599-1-aboorvad@linux.ibm.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741169444; c=relaxed/simple;
+	bh=p7qCmbn7qh8IoaNpypSjjh8REnQqe2JM+GRz9TM9Dek=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=BP66su3c7m497yNxhsS8L3OLWkW/yKBFJ491sCkoiqNgaGzfKguCb/W/+NGfxsstkHLQcEDa3/ML1tcsjBwzjc6NVxgYK8rcTlmivrly4jUoXQoFV9rf69iFHt9ajZ2GNqzt5clyOpDqCMRFbRF+1CfwEV3ZCqdTTPaejEdX/d8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=VEtUkFYf; arc=none smtp.client-ip=117.135.210.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=luJmq
+	zW3D/PHhjjmaO84ghpqEdiImWkNJgLVp6gRUTA=; b=VEtUkFYffxFzvHLt+hcDo
+	JGgjbhLHIJPu+hpxz4JaEO4TjYLKnwk+mjovJMGdNoqnwVqrMoQarfq5PS1BGanC
+	ZJm0VVD/CPvAsNz/nFKXBI8ZD3928rjiLIqfQ8IAqHMkIGm/cYW+CO5ySgCcK06T
+	gG0As/Wn6zwyWZPmFX8SNM=
+Received: from icess-ProLiant-DL380-Gen10.. (unknown [])
+	by gzga-smtp-mtada-g0-0 (Coremail) with SMTP id _____wCXviTwIshncgV_Qg--.37440S4;
+	Wed, 05 Mar 2025 18:09:53 +0800 (CST)
+From: Haoxiang Li <haoxiang_li2024@163.com>
+To: shshaikh@marvell.com,
+	manishc@marvell.com,
+	GR-Linux-NIC-Dev@marvell.com,
+	andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	rajesh.borundia@qlogic.com,
+	sucheta.chakraborty@qlogic.com
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Haoxiang Li <haoxiang_li2024@163.com>,
+	stable@vger.kernel.org
+Subject: [PATCH v2] qlcnic: fix a memory leak in qlcnic_sriov_set_guest_vlan_mode()
+Date: Wed,  5 Mar 2025 18:09:50 +0800
+Message-Id: <20250305100950.4001113-1-haoxiang_li2024@163.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,92 +62,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: khX0P5shTlI92e3on75lNawtlVq-Y8qV
-X-Proofpoint-ORIG-GUID: Ms0GmorFYxJvFSbQCwCbpMOyxSN4e4AG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_03,2025-03-05_01,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 phishscore=0
- bulkscore=0 lowpriorityscore=0 suspectscore=0 clxscore=1015 malwarescore=0
- mlxscore=0 impostorscore=0 adultscore=0 priorityscore=1501 mlxlogscore=634
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050079
+X-CM-TRANSID:_____wCXviTwIshncgV_Qg--.37440S4
+X-Coremail-Antispam: 1Uf129KBjvJXoW7CFW8uF48Ww13Jw1DCr4kZwb_yoW8WFykpF
+	47ZFyUWr95JF4jkws5Zwn2yrZ8C39Fy3sruF9xW393u34Utr4xGw1DArnIgrn0yr95GFW8
+	tr1DZ3W5XFn8A3JanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0pimhF7UUUUU=
+X-CM-SenderInfo: xkdr5xpdqjszblsqjki6rwjhhfrp/xtbB0hQHbmfIHmJ4MQAAs1
 
-In child_cfs_rq_on_list(), leaf_cfs_rq_list.prev is expected to point to
-a valid cfs_rq->leaf_cfs_rq_list in the hierarchy. However, in some
-cases leaf_cfs_rq_list.prev and rq->tmp_alone_branch can point to the
-list head (rq->leaf_cfs_rq_list) instead of another cfs_rq->leaf_cfs_rq_list.
+Add qlcnic_sriov_free_vlans() to free the memory allocated by
+qlcnic_sriov_alloc_vlans() if qlcnic_sriov_alloc_vlans() fails
+or "sriov->allowed_vlans" fails to be allocated.
 
-The function does not handle this case, leading to incorrect pointer
-calculations and unintended memory accesses, which can result in a kernel
-crash.
-
-A recent attempt to reorder fields in struct rq exposed this issue by
-modifying memory offsets and affecting how pointer computations are
-resolved. While the problem existed before, it was previously masked by
-specific field arrangement. The reordering caused erroneous pointer
-accesses, leading to a NULL dereference and a crash, as seen in the
-following trace:
-
-[    2.152852] Call Trace:
-[    2.152855] __update_blocked_fair+0x45c/0x6a0 (unreliable)
-[    2.152862] sched_balance_update_blocked_averages+0x11c/0x24c
-[    2.152869] sched_balance_softirq+0x60/0x9c
-[    2.152876] handle_softirqs+0x148/0x3b4
-[    2.152884] do_softirq_own_stack+0x40/0x54
-[    2.152891] __irq_exit_rcu+0x18c/0x1b4
-[    2.152897] irq_exit+0x20/0x38
-[    2.152903] timer_interrupt+0x174/0x30c
-[    2.152910] decrementer_common_virt+0x28c/0x290
-[    2.059873] systemd[1]: Hostname set to ...
-[    2.152682] BUG: Unable to handle kernel data access on read at 0x100000125
-[    2.152717] Faulting instruction address: 0xc0000000001c0270
-[    2.152724] Oops: Kernel access of bad area, sig: 7 [#1]
-..
-
-To fix this, introduce a check to detect when prev points to the list head
-(&rq->leaf_cfs_rq_list). If this condition is met, return early to prevent
-the use of an invalid prev_cfs_rq.
-
-Fixes: fdaba61ef8a2 ("sched/fair: Ensure that the CFS parent is added after unthrottling")
-Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Fixes: 91b7282b613d ("qlcnic: Support VLAN id config.")
+Cc: stable@vger.kernel.org
+Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
 ---
- kernel/sched/fair.c | 13 +++++++++++--
- 1 file changed, 11 insertions(+), 2 deletions(-)
+Changes in v2:
+- Add qlcnic_sriov_free_vlans() if qlcnic_sriov_alloc_vlans() fails.
+- Modify the patch description.
+vf_info was allocated by kcalloc, no need to do more checks cause
+kfree(NULL) is safe. Thanks, Paolo! 
+---
+ drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 1c0ef435a7aa..52ac22465a24 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -4045,15 +4045,24 @@ static inline bool child_cfs_rq_on_list(struct cfs_rq *cfs_rq)
- {
- 	struct cfs_rq *prev_cfs_rq;
- 	struct list_head *prev;
-+	struct rq *rq;
-+
-+	rq = rq_of(cfs_rq);
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+index f9dd50152b1e..0dd9d7cb1de9 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+@@ -446,16 +446,20 @@ static int qlcnic_sriov_set_guest_vlan_mode(struct qlcnic_adapter *adapter,
+ 		 sriov->num_allowed_vlans);
  
- 	if (cfs_rq->on_list) {
- 		prev = cfs_rq->leaf_cfs_rq_list.prev;
- 	} else {
--		struct rq *rq = rq_of(cfs_rq);
--
- 		prev = rq->tmp_alone_branch;
- 	}
+ 	ret = qlcnic_sriov_alloc_vlans(adapter);
+-	if (ret)
++	if (ret) {
++		qlcnic_sriov_free_vlans(adapter);
+ 		return ret;
++	}
  
-+	/*
-+	 * Return early if prev points to rq->leaf_cfs_rq_list, the
-+	 * list head and not a valid list node, to avoid computing
-+	 * an invalid prev_cfs_rq.
-+	 */
-+	if (prev == &rq->leaf_cfs_rq_list)
-+		return false;
-+
- 	prev_cfs_rq = container_of(prev, struct cfs_rq, leaf_cfs_rq_list);
+ 	if (!sriov->any_vlan)
+ 		return 0;
  
- 	return (prev_cfs_rq->tg->parent == cfs_rq->tg);
+ 	num_vlans = sriov->num_allowed_vlans;
+ 	sriov->allowed_vlans = kcalloc(num_vlans, sizeof(u16), GFP_KERNEL);
+-	if (!sriov->allowed_vlans)
++	if (!sriov->allowed_vlans) {
++		qlcnic_sriov_free_vlans(adapter);
+ 		return -ENOMEM;
++	}
+ 
+ 	vlans = (u16 *)&cmd->rsp.arg[3];
+ 	for (i = 0; i < num_vlans; i++)
 -- 
-2.43.5
+2.25.1
 
 
