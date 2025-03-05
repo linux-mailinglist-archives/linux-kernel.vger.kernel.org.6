@@ -1,146 +1,255 @@
-Return-Path: <linux-kernel+bounces-546762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CC43A4FE72
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:17:14 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3243A4FE73
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:17:24 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47EE77A8D6D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:16:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09FE01890850
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393CE245024;
-	Wed,  5 Mar 2025 12:16:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77A99245019;
+	Wed,  5 Mar 2025 12:17:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mIHsbNWr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="F3qXpfqX"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89FAB21D59C;
-	Wed,  5 Mar 2025 12:16:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3481DC9AA;
+	Wed,  5 Mar 2025 12:16:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741177011; cv=none; b=m4LRP1ReGFuJMKI+anTJLAXnSuF+HIZs+Zh9w+efPFJszsILV6nm35z+OCtDOon7ilO8NXacY4bfuUMfddQivXljoLJdMgkxJR8J6lkiOVllB3Ojw018ikty+EQYy7Znkv7yhe3dsDHgsOstSV7JUaoW6+HUyipJwjPfzuAzNMo=
+	t=1741177021; cv=none; b=CTzxkNpT06qwiB1PQ1rokWoLIQDVJfwW9zFO3c1rUIQsEeCbBIEq3SrSxDDJcXends0dDsWAVqwrE/IJhWfJTQYf6lrBhSNiVT39D77+S+kIzEVPRW9P2d7EKjq13uKtLwGWAklC4E7C2xVx3o6iXrgFFyr5rlkwnoduVucUC7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741177011; c=relaxed/simple;
-	bh=T2pQRTux3aYb+/CsCX8gA7mq5gtnfR9xR/UlnPTP87k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lOervjE9D2eaMk+FGHt4++bsuLTTMDdoIGSNBE81J1sVe068TmMY9q022ZT0cWuZzAUfxQMezvJEExcdgq14WPocghSmnGEMJF4+H/zxyCF9b/YtZklldMOrtNlF1KggH2xM+byepwqIfcFpjDW4wfU5vB00FonY60r2i3E8r2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mIHsbNWr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 195FEC4CEE7;
-	Wed,  5 Mar 2025 12:16:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741177011;
-	bh=T2pQRTux3aYb+/CsCX8gA7mq5gtnfR9xR/UlnPTP87k=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mIHsbNWrRVTGYVkCJ92Cdx5uA/uc0y8VXHzPS3Fh/qygSll/CTER9VrVIuuiCEDdd
-	 Sfjnb93R4rcMBV5Q5pMswQJVnw0HKpcKjWJq7qwV1yFQE4MVUvxShW5WwJNkK5Qn2g
-	 5HCzEZV5VmM2TEBFI2Vn27z+F760oO6JjXnrv1WINsP5JGY+ZzfN3yPzqR2NZhWioX
-	 QoEaDphzUj+BBjxaPUInUnahhyFjNBqxRGpsg8kW4tVmM5ruh88vzCeqoSya5oCboW
-	 YbB02XEl97+El+vn2IcPxiogWIwXcS/I4M4YYSC9dDpT23wwinbF1A78+1mfSOpKE1
-	 OlSAEpjFszaxA==
-Message-ID: <0606709e-2a08-4168-89f0-826a0fb23cab@kernel.org>
-Date: Wed, 5 Mar 2025 13:16:45 +0100
+	s=arc-20240116; t=1741177021; c=relaxed/simple;
+	bh=AIsTcl/z/wbI9CQAPm2/hrIV+cSeU1yrt7eLjKLN+P0=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=BnLu3xuzfx5iQw56rC/WpcjEbCY5VvgP1/+C84NOFBxFkJ9jT0LyGjtEQnpMO5ofwC8s4Wsmq3H1+z1xD4oPVwENKuGWVe5ec5DZdpSBPAq8SWKKwhuhJU0XS76GrwRzOIhXXMka0p5J510AOt1yjsalNNWaOClDezPM4rg9Lqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=F3qXpfqX; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (cpc89244-aztw30-2-0-cust6594.18-1.cable.virginm.net [86.31.185.195])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 72DA5605;
+	Wed,  5 Mar 2025 13:15:25 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1741176925;
+	bh=AIsTcl/z/wbI9CQAPm2/hrIV+cSeU1yrt7eLjKLN+P0=;
+	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
+	b=F3qXpfqXn95rATZloQ1EVBgYwsHcuA85rEQdcEaj2owY9GEV68jy2/Pj2Q5POpkcs
+	 JJZR61XcySz3zt+S9m0GVJH+3aiuourmLjKlfFa2xhzvBhwHLYvCcx8qR/zkZAnV2D
+	 gdC112k6G3phZd16/xaE30O3ceEhM5MmstzDNwzo=
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/5] dt-bindings: display: Document DPI color codings
-To: Maxime Ripard <mripard@kernel.org>
-Cc: Liu Ying <victor.liu@nxp.com>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
- tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch
-References: <20250304101530.969920-1-victor.liu@nxp.com>
- <20250304101530.969920-2-victor.liu@nxp.com>
- <20250304-deer-of-striking-pride-ff6e86@houat>
- <20250305-important-quizzical-chamois-ff48af@krzk-bin>
- <20250305-mustard-parrot-of-karma-1caf5d@houat>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20250305-mustard-parrot-of-karma-1caf5d@houat>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <Z8g6nWDe2cjumixt@kekkonen.localdomain>
+References: <20250305051442.3716817-1-shravan.chippa@microchip.com> <20250305051442.3716817-5-shravan.chippa@microchip.com> <174116732611.2914008.9738053002324304147@ping.linuxembedded.co.uk> <PH0PR11MB5611988F18EF02394E983AA881CB2@PH0PR11MB5611.namprd11.prod.outlook.com> <174117154242.2914008.10875320688605396953@ping.linuxembedded.co.uk> <Z8g6nWDe2cjumixt@kekkonen.localdomain>
+Subject: Re: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p and 480p resolutions
+From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+Cc: Shravan.Chippa@microchip.com, mchehab@kernel.org, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org, Conor.Dooley@microchip.com, Valentina.FernandezAlanis@microchip.com, Praveen.Kumar@microchip.com
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Date: Wed, 05 Mar 2025 12:16:55 +0000
+Message-ID: <174117701537.2914008.10570966567213022443@ping.linuxembedded.co.uk>
+User-Agent: alot/0.10
 
-On 05/03/2025 09:26, Maxime Ripard wrote:
-> On Wed, Mar 05, 2025 at 08:51:35AM +0100, Krzysztof Kozlowski wrote:
->> On Tue, Mar 04, 2025 at 11:33:44AM +0100, Maxime Ripard wrote:
->>>> +properties:
->>>> +  dpi-color-coding:
->>>> +    enum:
->>>> +      - 16bit-configuration1
->>>> +      - 16bit-configuration2
->>>> +      - 16bit-configuration3
->>>> +      - 18bit-configuration1
->>>> +      - 18bit-configuration2
->>>> +      - 24bit
->>>
->>> Do we really needs strings there? It would be much better to use an int
->>> plus a header
->>
->> So DTS would sill have a name, just being a define? Then what is the
->> benefit comparing to strings above in DTS readability?
-> 
-> There's no benefits and no downside when it comes to readability.
-> 
-> However, it's not the only criteria, and not having to manipulate
-> strings but instead just doing int comparison is a huge plus.
+Quoting Sakari Ailus (2025-03-05 11:50:53)
+> Hi Kieran, Shravan,
+>=20
+> On Wed, Mar 05, 2025 at 10:45:42AM +0000, Kieran Bingham wrote:
+> > Quoting Shravan.Chippa@microchip.com (2025-03-05 10:22:12)
+> > > Hi Kieran
+> > >=20
+> > > > -----Original Message-----
+> > > > From: Kieran Bingham <kieran.bingham@ideasonboard.com>
+> > > > Sent: Wednesday, March 5, 2025 3:05 PM
+> > > > To: mchehab@kernel.org; sakari.ailus@linux.intel.com; shravan Chipp=
+a -
+> > > > I35088 <Shravan.Chippa@microchip.com>
+> > > > Cc: linux-media@vger.kernel.org; linux-kernel@vger.kernel.org; Cono=
+r Dooley
+> > > > - M52691 <Conor.Dooley@microchip.com>; Valentina Fernandez Alanis -
+> > > > M63239 <Valentina.FernandezAlanis@microchip.com>; Praveen Kumar -
+> > > > I30718 <Praveen.Kumar@microchip.com>; shravan Chippa - I35088
+> > > > <Shravan.Chippa@microchip.com>
+> > > > Subject: Re: [PATCH V7 4/4] media: i2c: imx334: add modes for 720p =
+and 480p
+> > > > resolutions
+> > > >=20
+> > > > EXTERNAL EMAIL: Do not click links or open attachments unless you k=
+now the
+> > > > content is safe
+> > > >=20
+> > > > Quoting shravan kumar (2025-03-05 05:14:42)
+> > > > > From: Shravan Chippa <shravan.chippa@microchip.com>
+> > > > >
+> > > > > Added support for 1280x720@30 and 640x480@30 resolutions
+> > > > >
+> > > > > Signed-off-by: Shravan Chippa <shravan.chippa@microchip.com>
+> > > > > ---
+> > > > >  drivers/media/i2c/imx334.c | 66
+> > > > > ++++++++++++++++++++++++++++++++++++++
+> > > > >  1 file changed, 66 insertions(+)
+> > > > >
+> > > > > diff --git a/drivers/media/i2c/imx334.c b/drivers/media/i2c/imx33=
+4.c
+> > > > > index a7c0bd38c9b8..8cd1eecd0143 100644
+> > > > > --- a/drivers/media/i2c/imx334.c
+> > > > > +++ b/drivers/media/i2c/imx334.c
+> > > > > @@ -314,6 +314,46 @@ static const struct imx334_reg
+> > > > common_mode_regs[] =3D {
+> > > > >         {0x3002, 0x00},
+> > > > >  };
+> > > > >
+> > > > > +/* Sensor mode registers for 640x480@30fps */ static const struct
+> > > > > +imx334_reg mode_640x480_regs[] =3D {
+> > > > > +       {0x302c, 0x70},
+> > > > > +       {0x302d, 0x06},
+> > > >=20
+> > > > These two are a single 16 bit register HTRIMMING_START =3D 1648
+> > > >=20
+> > > > > +       {0x302e, 0x80},
+> > > > > +       {0x302f, 0x02},
+> > > >=20
+> > > > These two are a single 16 bit register HNUM =3D 640
+> > > >=20
+> > > > > +       {0x3074, 0x48},
+> > > > > +       {0x3075, 0x07},
+> > > >=20
+> > > > These two are a single 16 bit (well, 12 bit value) AREA3_ST_ADR_1 =
+=3D 1864
+> > > >=20
+> > > > > +       {0x308e, 0x49},
+> > > > > +       {0x308f, 0x07},
+> > > >=20
+> > > > These two are a single 16 bit register AREA3_ST_ADR_2 =3D 1865
+> > > >=20
+> > > > > +       {0x3076, 0xe0},
+> > > > > +       {0x3077, 0x01},
+> > > >=20
+> > > > These two are a single 16 bit register AREA3_WIDTH_1 =3D 480
+> > > >=20
+> > > > > +       {0x3090, 0xe0},
+> > > > > +       {0x3091, 0x01},
+> > > >=20
+> > > > These two are a single 16 bit register AREA3_WIDTH_2 =3D 480
+> > > >=20
+> > > > > +       {0x3308, 0xe0},
+> > > > > +       {0x3309, 0x01},
+> > > >=20
+> > > > These two are a single 16 bit register Y_OUT_SIZE
+> > > >=20
+> > > > Don't you think
+> > > >         { Y_OUT_SIZE, 480 },
+> > > >=20
+> > > > Is so much more readable and easier to comprehend and maintain?
+> > > >=20
+> > > >=20
+> > > > > +       {0x30d8, 0x30},
+> > > > > +       {0x30d9, 0x0b},
+> > > >=20
+> > > > These two are a single 16 bit register UNREAD_ED_ADR =3D 2864
+> > > >=20
+> > > > > +};
+> > > >=20
+> > > > I'm still sad that we can all know the names of all these registers=
+ and yet this
+> > > > is writing new tables of hex values.
+> > >=20
+> > > Do you want me use call like bellow API with register names:
+> > > CCI_REG16_LE(0x30d8);
+> > > cci_write();
+> > > cci_multi_reg_write();
+> > > devm_cci_regmap_init_i2c();
+> > =20
+> >=20
+> > Yes please, I would want that very much. I'm not very good at reading
+> > and storing hex values in my head! That's why I broke down the above
+> > registers to strings and decimal values.
+>=20
+> I agree, it'd be good to do these while changing the driver now. I think =
+it
+> could be done after adding the new modes, now that the patches already
+> exist.
 
-Sure, defines work as well. BTW, it has a minor drawback on bindings as
-it means you might need to update both binding and the header when
-adding new entry, but I understand that it makes implementation life
-easier or faster.
+That's ok with me! Either way I'm happy to see the drivers are getting
+cleaned up!
 
-Best regards,
-Krzysztof
+>=20
+> >=20
+> >=20
+> > The discussions at
+> > https://lore.kernel.org/all/PH0PR11MB5611FD22CF6E12F7226FA9C081E12@PH0P=
+R11MB5611.namprd11.prod.outlook.com/
+> > reports the full datasheet, and I stated:
+> >=20
+> >=20
+> > > > > This is an enormous amount of duplicated data that could be facto=
+red
+> > > > > out.
+> > > > >
+> > > > > These are also /very/ common against the existing mode register
+> > > > > tables too.
+> > > > >
+> > > > > I think several things need to happen in this driver:
+> > > > >
+> > > > >  1. It should be converted to use the CCI helpers.
+> > > > >  2. Whereever identifiable, the register names should be used
+> > > > > instead of
+> > > > >     just the addresses.
+> > > > >  3. The common factors of these tables should be de-duplicated.
+> > > > >
+> > > > > In your additions you only have differences in the following
+> > > > > registers from those entire tables:
+> >=20
+> > You replied with
+> >=20
+> > > >
+> > > > I will try to optimize camera resolution array register value usage=
+ by
+> > > > writing common register array values.
+> >=20
+> > which you have done (point 3), and is great progress in the series.
+> >=20
+> > Further down in the thread I stated:
+> >=20
+> >=20
+> > > > >  4. And ideally - the differences which determine the modes should
+> > > > > be
+> > > > >     factored out to calculations so that we are not writing out
+> > > > > large
+> > > > >     tables just to write a parameterised frame size.
+> > > > >
+> > > > >
+> > > > > I would beleive that at least steps 1 and 3 would be achievable, 2
+> > > > > and 4 would depend upon access to the datasheet.
+> > > > >
+> >=20
+> >=20
+> > I still believe steps 1 is important to this development. You have done
+> > step 3 I think. And now both step 2 and (later) step 4 are possible as =
+we
+> > have the datasheet.
+>=20
+> In this case the datasheet doesn't appear to be documenting the PLL.
+
+:-(
+
+But at least we will have enough to handle all the vmax/and cropping
+more directly.
+
+--
+Kieran
+
+
+>=20
+> --=20
+> Regards,
+>=20
+> Sakari Ailus
 
