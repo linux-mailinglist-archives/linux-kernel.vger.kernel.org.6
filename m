@@ -1,180 +1,241 @@
-Return-Path: <linux-kernel+bounces-547317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00E9A505C1
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:55:34 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 96643A505C8
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:56:27 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 403D41688E6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29C651689A1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:56:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1F761A5BB2;
-	Wed,  5 Mar 2025 16:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6931A9B39;
+	Wed,  5 Mar 2025 16:56:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="MgseTR0X"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2087.outbound.protection.outlook.com [40.107.93.87])
+	dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b="Yzct7SQR";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="dR6TGgq+"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0ED19E806
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 16:55:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.87
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741193726; cv=fail; b=FgzBQRdRF9T55ns7adZrtdAvKFju1EoVlM1TQPYlMz//xhOjMItnBH1l1pweaIlqjEWaFfgAw6mNwJ4zWSEkb5VcG7RKbFdN1/4HBqG8t7f0bnFKiHDgx/5BDcq3i76jq+lKVmWb9gKaUiHUzKwugTBRaheTlhyR8Q5cNBJy/4o=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741193726; c=relaxed/simple;
-	bh=EUXagF8w53aFFRs9fg4u8fjLDCnVYcO0sQgRnpppN74=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=TlRSKOLIs7LiXBEVHkpby1NbyhAhkkgtL2mvqRvvsMHjIKICPPaTzvCxlroil+6ABf0nCWwRxcdq8A7AwFqS2UVS4+05mo6+yOFe3Y02hdmKlbENXtbQRpZHSb8tp0/blm0A9IVomzQq5sjPVP5/yQulw292M9TE6TPME2Rzed0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=MgseTR0X; arc=fail smtp.client-ip=40.107.93.87
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nHt9fFI2tfCqdtpSh4YN/ke67aIK+eeLyhozgkSGFYr3a/9MxoVGcxAHw4R+6wa4grGi30uK6jMEJMDHLO81+lwz9D1juva/yLmShcvWaFLLfdYHpkCU6o7FWjgXbE1JAns91jSmF42IjJ96x3Tu8D84WKwhqxKynwSDs4gb4MEUPqoR35XLlG6GAl1jA6PcxM40QzaHh0OnELha6+PwSrVzRZ+UAP89iwb/wUHZNR0KOnpcocXodc4fVt+Ga+vdTMR5W7Mu0Ei+n2w2Ks/ud1SBxfcQyG1C10rNKHrotVW/HughXftwwq4FaHClx5gM4/12Dglmzv2jYQnj5DNf9A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=WwTS3VV/nqgqNtjKahWstSrBLUZEmMZnUHk09Mnvhqo=;
- b=P8hmca47iQ2T93cnz4VVc3daxZ8c/S+XlL0Qq4EQ6OYo02OQEGVddrS8dFBdWspciVOTL6Fad/osA3IC9CRE5Z80UXszSkSo2dH14BEHm70CBF///oiZhhQzQQq/fFnX6AjmOfAD+YMIZiKM8VPUc7jXUZeC5/2V2Eus8O0llSEC7y2CoeuRX35/ndyeak2QxNr2qoia0IkeQpCy4HVB9Asn4aMYGvHFwTk7Tpmv7iQqHiJL6YJCp+RhAkYnMMiAn+Rj91rIj9U1TNhFJjpdHYwPQsJhmVua5PDDh9lnZFRdxBNuWmEH+/agyLAAXzvWxSQBP4ZHlWExgtGAP0ZQAQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=WwTS3VV/nqgqNtjKahWstSrBLUZEmMZnUHk09Mnvhqo=;
- b=MgseTR0XGj7klxrVMSXjgNe3h4UBBZbj7e9Lz3IeCzRPu6fuK89xA6xwzKGG4/7vDzfiw/0JP6oGURQ3n8we+jfyfUIDrtJ7x6R6wha5687IggRdxF9y3q+8KufVQ8T3jfYOcvjqKWzdxiKPVNAOcuFrMiec+M6+un2/6OV4zgSRzOnyWoVKVRg9ZcroKg3yENCHOyHJpBpvkox6RcWDiFicm76GFwe12YYDveBlzsKaWyiu08pUIjBv6Gy9uvr8+Z3wyMAOvoCa4Qa6mhHyAjSvMjQWq6Gtw7eP/HJmXj988wAaLq9unTS+QKnR4ZSjsqy28PKMlJtuyoWbNcWk2w==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
- by CH3PR12MB9023.namprd12.prod.outlook.com (2603:10b6:610:17b::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Wed, 5 Mar
- 2025 16:55:21 +0000
-Received: from CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
- ([fe80::6eb6:7d37:7b4b:1732%4]) with mapi id 15.20.8511.017; Wed, 5 Mar 2025
- 16:55:21 +0000
-Date: Wed, 5 Mar 2025 12:55:19 -0400
-From: Jason Gunthorpe <jgg@nvidia.com>
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: will@kernel.org, robin.murphy@arm.com, joro@8bytes.org,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org, shameerali.kolothum.thodi@huawei.com
-Subject: Re: [PATCH v1 1/4] iommu/arm-smmu-v3: Pass in vmid to
- arm_smmu_make_s2_domain_ste()
-Message-ID: <20250305165519.GZ133783@nvidia.com>
-References: <cover.1741150594.git.nicolinc@nvidia.com>
- <214b10db02f1046efdc70e2c4803111357f60070.1741150594.git.nicolinc@nvidia.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <214b10db02f1046efdc70e2c4803111357f60070.1741150594.git.nicolinc@nvidia.com>
-X-ClientProxiedBy: YQZPR01CA0118.CANPRD01.PROD.OUTLOOK.COM
- (2603:10b6:c01:83::6) To CH3PR12MB8659.namprd12.prod.outlook.com
- (2603:10b6:610:17c::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2A719F121;
+	Wed,  5 Mar 2025 16:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741193778; cv=none; b=lGJU9khOsmbCHB40JxmWMEywycsINmknZv/LxVBeRiBvnwkDN2cEDpy71PHPbQhs2LTzLDEhPkHNQIEVDyINgxdr6KT2q1myPuB24rpWdWnVnp8k26/yaQOl5N8Nzh9bQ/fy8n2Td0oF8VwoTcgiCDUNWNHUjFiZz3Opq2zQr34=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741193778; c=relaxed/simple;
+	bh=pFjGlaUijoqPn1Kmc47+HhxkWegOEgp2VbTb7ZtNzVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BbLX4PhWsQfGPXD1l3eZl1lUUllsxRfvr2O2z1ay4wbuzMdVqNfZ3HRvrSF6XuopOs7XAPNi23wfxWwlm9bX6pRoKKnbnpY6/wVNZOXWwVk/ILscVK+ynt4fa8p8GIZEDRq8kCHV8+F1EQtHTmChIZwi03H1DSLBWbomRFxZRzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net; spf=pass smtp.mailfrom=queasysnail.net; dkim=pass (2048-bit key) header.d=queasysnail.net header.i=@queasysnail.net header.b=Yzct7SQR; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=dR6TGgq+; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=queasysnail.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=queasysnail.net
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 608601382772;
+	Wed,  5 Mar 2025 11:56:13 -0500 (EST)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Wed, 05 Mar 2025 11:56:13 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=queasysnail.net;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm2; t=1741193773; x=
+	1741280173; bh=dvRtmvDZ8uVLZFz1wO6ModhsZOqhq2/vvtE8LfNaqVw=; b=Y
+	zct7SQRhPYK9aUCRlSXWyM3ay/lThP1Fqjbgz4RFWWGBtgv3hSD0o1gwS4pPTg/K
+	8CeQ9PIOFBrMPBeE0ADg2cIWseM8Jk3I/YZg7C8SZ/hLAw9D7FlSIZ2MW2xNTL43
+	0IYtolECdYCfzHS7hA2we0jztsRrSGLaIAkQIyTtZtcpaEjfR0zLGv5t2hrMoip3
+	WNppa2WrBB0Xo7x5ID0/bd9p88QqXt+EYlVVo+Ift3H1GnU4CeV4OdDFNcdLkQOY
+	b6Zh1KYr2pNbSaVJ9nRq6Q8j7B8Hw5KtNeobocFpbygR5nPdjpYVKd97y3W5OeLE
+	IBwvBYBRXhYbHuxUXdm0Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=
+	1741193773; x=1741280173; bh=dvRtmvDZ8uVLZFz1wO6ModhsZOqhq2/vvtE
+	8LfNaqVw=; b=dR6TGgq+uuIK13VRZVMmd1mJUEmg8aeIky/FpOx4AJVEZ3N5Nfu
+	AdU0JAjYH+2PV39pq3/ryDcKkzWbWmdh8vQKNfhulMQv8laxccDK+UGJ7vL6aACj
+	BKC9td/RRNnQ2eqZZhnfCVMVM6ULADrm672TkAIYJXVDXC1D7UT2YlA4Dlpt6kf4
+	rzMIurOHObveQI7Ju9IQMGqbAnPdgUELQ1yj/x/gGTxEtcHGynboChAHdvUXM6Sw
+	S3RqKN5COP8+kNBBC3QBk18divbzcL1h0j5S2BwIQdBQGHHznbnzn6SV4G/vJ7xO
+	ekVPHoI9hHpRVKA4ctNavTgNrfXRt3Dbs3w==
+X-ME-Sender: <xms:LILIZ2BIkp7Yv9wO9eSFfv7ocOOXmzuSTNVx0Hb-aktPS0oPT1do4g>
+    <xme:LILIZwgtxTEyjGbgHZefffO6qC6Acw4WKW8HoJhO6llG2Azoei51o2Qgndrvar7NH
+    ThgAXxvljkLQlAL2cY>
+X-ME-Received: <xmr:LILIZ5m0KcJUqxcb-Nszp31M7t49qYxLl16vecy5djlXziCcS_rbEAFEcAds>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdehfeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
+    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
+    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddt
+    jeenucfhrhhomhepufgrsghrihhnrgcuffhusghrohgtrgcuoehsugesqhhuvggrshihsh
+    hnrghilhdrnhgvtheqnecuggftrfgrthhtvghrnhepuefhhfffgfffhfefueeiudegtdef
+    hfekgeetheegheeifffguedvuefffefgudffnecuvehluhhsthgvrhfuihiivgeptdenuc
+    frrghrrghmpehmrghilhhfrhhomhepshgusehquhgvrghshihsnhgrihhlrdhnvghtpdhn
+    sggprhgtphhtthhopedufedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghnth
+    honhhiohesohhpvghnvhhpnhdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghr
+    rdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrd
+    gtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehp
+    rggsvghnihesrhgvughhrghtrdgtohhmpdhrtghpthhtohepughonhgrlhgurdhhuhhnth
+    gvrhesghhmrghilhdrtghomhdprhgtphhtthhopehshhhurghhsehkvghrnhgvlhdrohhr
+    ghdprhgtphhtthhopehrhigriigrnhhovhdrshdrrgesghhmrghilhdrtghomhdprhgtph
+    htthhopegrnhgurhgvfidonhgvthguvghvsehluhhnnhdrtghh
+X-ME-Proxy: <xmx:LYLIZ0zH8pM7HJtjgVCz1eJ4hljheABm4oJSzAHXJD6seq-fBsTIug>
+    <xmx:LYLIZ7TnwPvNvDYOTwRVrMxU6hK1CJaNXsd3iYF-cLRHyiw9HTDU6g>
+    <xmx:LYLIZ_b7JLRBPbn_dYpfXbdtwIA8Y-X9AJOfHHYAQbWTBHVOyZEFZA>
+    <xmx:LYLIZ0Tdg_v5BDTiK3O9DIlqyAbDNh0DMHJYpA8a_PTPxhxUAmCVqg>
+    <xmx:LYLIZ5DKeQIBdV-8gXN2Osc-r9wGkOq42FupaBwE8C445zVIsN1lMNS->
+Feedback-ID: i934648bf:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 5 Mar 2025 11:56:12 -0500 (EST)
+Date: Wed, 5 Mar 2025 17:56:10 +0100
+From: Sabrina Dubroca <sd@queasysnail.net>
+To: Antonio Quartulli <antonio@openvpn.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Donald Hunter <donald.hunter@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, ryazanov.s.a@gmail.com,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+Subject: Re: [PATCH v21 18/24] ovpn: add support for peer floating
+Message-ID: <Z8iCKvIfFaskshlz@hog>
+References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
+ <20250304-b4-ovpn-tmp-v21-18-d3cbb74bb581@openvpn.net>
+ <Z8dIXjwZ3QmiEcd-@hog>
+ <9c919407-fb91-48d7-bf2d-8437c2f3f4da@openvpn.net>
+ <Z8gzbz6YjdeGPqgu@hog>
+ <cd9df084-8633-49f0-a851-ed2b1c9946d3@openvpn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|CH3PR12MB9023:EE_
-X-MS-Office365-Filtering-Correlation-Id: 123e3f2d-939f-4c22-81f9-08dd5c0683ee
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?mCvSKwUy5sC0e0nRKopSQXjED58Vlq0mphXPXgHGZlN3zWgQvRrNdUgA3PXU?=
- =?us-ascii?Q?FBDkWNq9uhaNHNL+hQ4jpeKs/CD2sFOGkjZt6S3tLp56r/uVIWe/IkR1yph9?=
- =?us-ascii?Q?bI/NhCQKvMr1YsioCEKfZFoDVKTruaEAlpPJrZKElWVouQvAFkfGvluws9o6?=
- =?us-ascii?Q?aU9CJCRloWo9qJt3oWvLYEZSrtKmxeqrM6h59UsoqogWGTXe12Cuaia5aYld?=
- =?us-ascii?Q?uWUppnr43HsajwoUkN+xj7bfbHRaC4qgtFGiN5EbUJcNs4dzBTFwMamONE5N?=
- =?us-ascii?Q?dKvs9+hjADNBdOOM3pPYcN15iPlYYFSY11IDueojnz+mKzjYO8oK9dKe/KC/?=
- =?us-ascii?Q?NTJ/5LRDDneSmHjQNUlDokHP/kvU2I9SAZqs5nmhEF5Naomep3MN1TS/x1vp?=
- =?us-ascii?Q?oP9qft58ZMwdqFvnhFnU0/0aqXAEeVsRnS/yT8YtcXAxh8QkjpxVDp9nnWvA?=
- =?us-ascii?Q?2XFCdUHgFRZIJiG2lwIYRG/QVgjqrs1q9gZf1no0Qyg/mRuvBhQf8IlfMKF4?=
- =?us-ascii?Q?TUYnZSvWW10+YC5jR4zA1ze/HtEu0EeCpeQ91dD6/PYU6UwSEKLzcyovPMQt?=
- =?us-ascii?Q?apXuMNcycRaj4xjSLvJ1CF/79Bc2LyYdghkP7ifX/p6h5oFiRj/GrIgnw0Ok?=
- =?us-ascii?Q?sGruc9dhnbDT6XCkpq0brCWIiXxL8b+aPp0QwtPxPK5DU2Rv8DwEmcvpxfvu?=
- =?us-ascii?Q?rrJCVt0m1njwgRmvd4O+S2WwXCwv1OdagfKxVGB/5F5UynGbmGgLIn1ocmNJ?=
- =?us-ascii?Q?caCYjqZwxseQwjFBfn6032gCRHw6zp0hnF6M8aQ7f36VOx1gTlVFjiFyGhqm?=
- =?us-ascii?Q?WfkS/boq+C1bvGYjoJuKdJEq/M4pb9OmWHdrJQ0AgG7cQ49e2oJ7yrmsINbE?=
- =?us-ascii?Q?/FF2Jny3kpEAGbkOwIiOUvgo13DvKxEXDBLRYmzV7SIX4cxG3dgDHOR7poxY?=
- =?us-ascii?Q?KDpWcxtIQonBIxJNLIDeMaabItnbMbw8s54q5nmYISXT0CqQv2R6AAOOuCXP?=
- =?us-ascii?Q?ewakmZKRqBPlfxI5s+uSG1RuNyGyzt3o8lVx+gBhBCKI6T4Y9xXmDZHnkA4k?=
- =?us-ascii?Q?++UYrGbuElawCN6J3ShkRonT3UkeLrgVPSu50eSJQgA4WDSV3/hmeSbxYFSi?=
- =?us-ascii?Q?kogEMNHu4ZEH+04wlZ20KesqLCYIpbovFe6gJ4MW7Acm029YlTVgHgBY2pNr?=
- =?us-ascii?Q?ZG0eQWCKNE3tfz3RvC6zDmf+AkNjxwYWkda7AIG4LGFRAdVwlZcf4Ui2yftC?=
- =?us-ascii?Q?VafPSlElCo7vwfFU0NmnKIwPALGtUXcYDh/9kcDqtK2OpxynzFgkGWwth1tc?=
- =?us-ascii?Q?xE10/EuuAGVD9XhOpixZNh2NB2LcYAEewGx3dhmIQhmbfIP3yrZXy32g1HRj?=
- =?us-ascii?Q?4KRsJPI5JFCq33vOHT3duccF8imN?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?u2R56D3BJIPUeXdEXL2vAl+uEaEhRoBUMCKK7rcXc/MJmXSllH6Fg8j1Jn4m?=
- =?us-ascii?Q?Qk8gSSsY8b7WLu4BBeKvd/IMstwLGfverAiMXb1zSp6wKByM9AqYhOfZ1Wyg?=
- =?us-ascii?Q?E10PQNCUJ5F9/IvXtKfv0uIbPbKKJWpG/fsqOfrMDLTq6mNON0fJ8vg/l0n6?=
- =?us-ascii?Q?ayKFphDatufLlz9ue6dL8FgKE/OqcJ61IjmiI/l1PZ36F/qiWq041PeSsedh?=
- =?us-ascii?Q?RiAu57YfioKpFIgTSVGWOAq6CJ2d6yT9fJ6N545Vzsr68Wb9CbLwtg9YlWIz?=
- =?us-ascii?Q?4IAG+7w+4NolzDEZ2p7vjfm32QSsf7ymoeg6dSfuBFnXVf56Bo3FyJKY7D2e?=
- =?us-ascii?Q?2MGfJEnm1UaAXvK5Eq5mZ4w9xl2lyXbEwSraz7ZX3b+xt0FD/w6d+5OpWthk?=
- =?us-ascii?Q?3fShI9sVRdmLEaTPNqU8pjiXSPLeZtgYVM1WHxNkOC/Gs0rnGSU2o8genTtB?=
- =?us-ascii?Q?5xFd6UNoQWpP04t1hD9kokPAuVzMK51bRkg/FfqaIRxJlC32+UfMmmeyQKVV?=
- =?us-ascii?Q?HoI1gA8ERcUgNi+7iv78EPjRba4gtFA5jFxtTYxTSfzOAZENT9fVfSLPhMOZ?=
- =?us-ascii?Q?jPUEn3qYFbwFixq6+rHv16ZKKz2aIiMiHz7DY3S+Gsu/pv9h/Ag5IvTWXkXm?=
- =?us-ascii?Q?VlfVml7O8cgWqAupPrkLHV3QeerEnCJ7N3butkhkSmHajHxnmhjR5iVtVGzN?=
- =?us-ascii?Q?u4/WMiMMKootDLQb4kOmc9vIukFca5HY45xixtvdnBUnKtBoPnY2ZfjEG2aO?=
- =?us-ascii?Q?eQBviEV1/OmEHeyy1NuijF4HWgvT4vgOmXFmtfppV1d4kUKWval/3nmbz9ry?=
- =?us-ascii?Q?s0Y9f2SWJ5ehrMWVBCgZPBXg+aTDvCiDutxGsEOySzrXM8H85GHoMUSmXXNA?=
- =?us-ascii?Q?I8lnbbkwN+77ZBOzWGDDuAW39MMTA+jsllAwgfgjLRQh9UpwM74StLS3Q4G2?=
- =?us-ascii?Q?oh6uiGS7Wxay5Ptn6D9TkYxbYEKYLQAf+t73AF8zY7aNukH/Bu5befEoVuJV?=
- =?us-ascii?Q?NRcKrjLyu5k7nPgbPz/cBNtL/4fNMm775Smpt1eDLxxV43h80opYpZABilok?=
- =?us-ascii?Q?/d/Ed7vXP4QtBtCt0ZUA+4CUSuAECqwepwSHWSPZ4lbhihrKzuotHEDJvabA?=
- =?us-ascii?Q?nz/m9gEVaaepMlO5o2pjZN7yOmnJyDCMjuewgJRIoXb83dbLw2l6FKmy0h45?=
- =?us-ascii?Q?eMSDDmBZA7SmNp3lan4UD3ILbtoHcPWbesmUOdt8+Q2FpiCBsZFXUgOxk4Bf?=
- =?us-ascii?Q?VGvkIKruhmjj0TGyT3I2UtyvCuo3dFqduja5sE1LCTCBFdYkxJxiv/S3xch4?=
- =?us-ascii?Q?kru+Wr4oa34C9TKN9Px9f6qaALKlo6L9RFhk1nr+lU0T1u8ew1M04BuAwuVP?=
- =?us-ascii?Q?jWQQAsOHPkqCNO+5UbZ09RFbP49RebcBIbNk6ma2EnVgOg+OmM/vxkxiYBOa?=
- =?us-ascii?Q?9D1EQRVdQtlljH8qntH5Ew+Rhvs9y1oBW9OYE/5XGoQ9vi1S3mI7gB6nuJfc?=
- =?us-ascii?Q?QD1Qf1a3nCTaO30RoT+tUZbAoEAmfXzjnc8RtH+hK7oSO8w/vz3lpT2fIITD?=
- =?us-ascii?Q?g8CMfLBif6KKXnopFHUdvXgv2Dh71Lxh0Q6YfCFD?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 123e3f2d-939f-4c22-81f9-08dd5c0683ee
-X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 16:55:21.1022
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ypZEVKNEpvU1/aLSoFfSMLQTYNylV/0SP0hZASHSW5Yz+Qz6psOSVbXh7BYYg3O/
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9023
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <cd9df084-8633-49f0-a851-ed2b1c9946d3@openvpn.net>
 
-On Tue, Mar 04, 2025 at 09:04:00PM -0800, Nicolin Chen wrote:
-> An stage-2 STE requires a vmid that has been so far allocated per domain,
-> so arm_smmu_make_s2_domain_ste() has been extracting the vmid from the S2
-> domain.
+2025-03-05, 14:14:36 +0100, Antonio Quartulli wrote:
+> On 05/03/2025 12:20, Sabrina Dubroca wrote:
+> > 2025-03-05, 00:19:32 +0100, Antonio Quartulli wrote:
+> > > On 04/03/2025 19:37, Sabrina Dubroca wrote:
+> > > > 2025-03-04, 01:33:48 +0100, Antonio Quartulli wrote:
+> > > > > A peer connected via UDP may change its IP address without reconnecting
+> > > > > (float).
+> > > > 
+> > > > Should that trigger a reset of the peer->dst_cache? And same when
+> > > > userspace updates the remote address? Otherwise it seems we could be
+> > > > stuck with a cached dst that cannot reach the peer.
+> > > 
+> > > Yeah, that make sense, otherwise ovpn_udpX_output would just try over and
+> > > over to re-use the cached source address (unless it becomes unavailable).
+> > 
+> > Not just the source address, the routing entry too. I'm more concerned
+> > about that: trying to reuse a a cached routing entry that was good for
+> > the previous remote address, but not for the new one.
+> > 
+> > 
+> > [adding your next email]
+> > > I spent some more time thinking about this.
+> > > It makes sense to reset the dst cache when the local address changes, but
+> > > not in case of float (remote address changed).
+> > > 
+> > > That's because we always want to first attempt sending packets using the
+> > > address where the remote peer sent the traffic to.
+> > > Should that not work (quite rare), then we have code in ovpn_udpX_output
+> > > that will reset the cache and attempt a different address.
+> > 
+> > I don't think the code in ovpn_udpX_output will reset the cache unless
+> > it was made invalid by a system-wide routing table update (see
+> > dst_cache_per_cpu_get).
+> > 
+> > 	rt = dst_cache_get_ip4(cache, &fl.saddr);
+> > 	if (rt)
+> > 		goto transmit;
+> > ...
+> > transmit:
+> > 	udp_tunnel_xmit_skb(rt, sk, skb, fl.saddr, fl.daddr, 0,
+> > 			    ip4_dst_hoplimit(&rt->dst), 0, fl.fl4_sport,
+> > 			    fl.fl4_dport, false, sk->sk_no_check_tx);
+> > 
+> > 
+> > So it seems that as long as dst_cache_get_ip4 gets us a dst (which
+> > AFAIU will happen, unless we did a dst_cache_reset or something else
+> > made the cached dst invalid -- and ovpn's floating/endpoint update
+> > doesn't do that), we'll just use it.
 > 
-> To share an S2 parent domain across vSMMUs in the same VM, a vmid will be
-> no longer allocated for nor stored in the S2 domain, but per vSMMU, which
-> means the arm_smmu_make_s2_domain_ste() can get a vmid either from an S2
-> domain (non nesting parent) or a vSMMU.
-> 
-> Allow to pass in vmid explicitly to arm_smmu_make_s2_domain_ste(), giving
-> its callers a chance to pick the vmid between a domain or a vSMMU.
-> 
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
-> ---
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.h         | 2 +-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c | 6 ++++--
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-test.c    | 3 ++-
->  drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c         | 6 +++---
->  4 files changed, 10 insertions(+), 7 deletions(-)
+> Mh yeah, you're right.
+> Then I'll reset the cache also when a float is detected.
 
-Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+Ok, thanks.
 
-Jason
+> > 
+> > 
+> > > > > +void ovpn_peer_endpoints_update(struct ovpn_peer *peer, struct sk_buff *skb)
+> > > > > +{
+> > > > > +	struct hlist_nulls_head *nhead;
+> > > > > +	struct sockaddr_storage ss;
+> > > > > +	const u8 *local_ip = NULL;
+> > > > > +	struct sockaddr_in6 *sa6;
+> > > > > +	struct sockaddr_in *sa;
+> > > > > +	struct ovpn_bind *bind;
+> > > > > +	size_t salen = 0;
+> > > > > +
+> > > > > +	spin_lock_bh(&peer->lock);
+> > > > > +	bind = rcu_dereference_protected(peer->bind,
+> > > > > +					 lockdep_is_held(&peer->lock));
+> > > > > +	if (unlikely(!bind))
+> > > > > +		goto unlock;
+> > > > > +
+> > > > > +	switch (skb->protocol) {
+> > > > > +	case htons(ETH_P_IP):
+> > > > > +		/* float check */
+> > > > > +		if (unlikely(!ovpn_bind_skb_src_match(bind, skb))) {
+> > > > > +			if (bind->remote.in4.sin_family == AF_INET)
+> > > > > +				local_ip = (u8 *)&bind->local;
+> > > > 
+> > > > If I'm reading this correctly, we always reuse the existing local
+> > > > address when we have to re-create the bind, even if it doesn't match
+> > > > the skb? The "local endpoint update" chunk below is doing that, but
+> > > > only if we're keeping the same remote? It'll get updated the next time
+> > > > we receive a packet and call ovpn_peer_endpoints_update.
+> > > > 
+> > > > That might irritate the RPF check on the other side, if we still use
+> > > > our "old" source to talk to the new dest?
+> > > > 
+> > > > > +			sa = (struct sockaddr_in *)&ss;
+> > > > > +			sa->sin_family = AF_INET;
+> > > > > +			sa->sin_addr.s_addr = ip_hdr(skb)->saddr;
+> > > > > +			sa->sin_port = udp_hdr(skb)->source;
+> > > > > +			salen = sizeof(*sa);
+> > > > > +			break;
+> > > 
+> > > I think the issue is simply this 'break' above - by removing it, everything
+> > > should work as expected.
+> > 
+> > Only if the bind was of the correct family? Checking an IPv4 local
+> > address (in the bind) against an IPv6 source address in the packet (or
+> > the other way around) isn't going to work well.
+> 
+> Ah I understand what you mean.
+> 
+> The purpose of "local_ip" is to provide a working local endpoint to be used
+> with the new remote address.
+> However, if the float is switching family we can't re-use the same old local
+> endpoint (hence the check).
+> In this case we'll learn the "new" local address later.
+>
+> Does it make sense?
+
+Sure, but we could have learned it immediately from the packet we just
+got, whether we're changing family or not. No need to wait for the
+next RX packet to also learn the new local address.
+
+But if we now do a dst_cache_reset with the peer float,
+ovpn_udp*_output will have to do a new route/local address lookup and
+I guess that should clean up the local address stored in the bind, and
+then update the dst_cache with the local address we just found.
+
+-- 
+Sabrina
 
