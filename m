@@ -1,155 +1,117 @@
-Return-Path: <linux-kernel+bounces-546067-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546068-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A27AA4F5EE
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:07:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECCA6A4F5F2
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:09:20 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38FBA168E18
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:06:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83CB2188B241
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 465B91A23B1;
-	Wed,  5 Mar 2025 04:06:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E9B1A254E;
+	Wed,  5 Mar 2025 04:09:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="CBDAyr6g"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NbNmZf2r"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4BCD19E7D1;
-	Wed,  5 Mar 2025 04:06:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFA9C1A2387
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 04:09:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741147605; cv=none; b=Jg3aPJYlgsBkbXMbbW/VvCD8VrufucNFR0tKYkbYPDmGFLmWcZmKeGAAfD1AI34aq675M/kN6YDTgSDLBPNP4Scrd1Z1qRZyL7sKqkFfmljQVuHcjm0rgDXACrMf6bn5IgCiCq94bFExTlggIVlntNc1GMIefGfQqC/C4C1fKMQ=
+	t=1741147749; cv=none; b=TR1Npx593AJIjhOa6wnQeR2qHgCifH8u8mO1DsO1owNxiqtm5SieoJNEexJtNcAZyF8UjcdpQal13kbOoJMlWFRRuvfLgL2BepCCs4bZ8l3kU6xYt42tvKJ6gUP3JM5J2Y0e99z9+pd/9CE4od01MZEMFeBuMtfh6RZ8t0dNCH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741147605; c=relaxed/simple;
-	bh=t//kC1ZuuWYzIIyvn7V+j9bMabJqtZZ6AFHBn97+huc=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=BDz/yr5rTlq3BUIEtijNX2TKKAjlgppjqSA82/Bx/qZfadKR7x6aGYrz+OHbWDgMxuikHFsMITlYUyx+iEx36vBax5qj8GSBJWfommETwXikddo2i0siXm3+/bFtYvCUaNaQqmXqBA/oEGd2W6qFHUZcVC5c2KzDrWeg5KCJMNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=CBDAyr6g; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1741147749; c=relaxed/simple;
+	bh=sl3kF2jIRgykOyy13qNEYv7/mlV05yVeWOFjVH+qAtU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cOYDAQtuUTkRaeubBP9Dr7IsmgcuTQTyO1HGR3akQ2J6FEKlKC7nRhC+2pQ3IlM39j+TYcz09LIT23Yx4LRpxQqDtwoj+Sz4a8qEhjR3HV2mugDzq3vweBJeVwV/MOlb4/6PV+8JDOg3bmx5vbFAbdrRVpzTsb5HiGvXuligzh4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NbNmZf2r; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741147746;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=sl3kF2jIRgykOyy13qNEYv7/mlV05yVeWOFjVH+qAtU=;
+	b=NbNmZf2r921zbEZwyXv5e6IrB9J4OhSlKcZO34ynbPW3ruM/yXPnCv1TvIWA/tbkJn3ACW
+	hoOiliesFY4wcinhSG2AerPctf/wtswbCw6SVALSyjr6HUXTZKjM+BzUC9bvpnvbyMLNzY
+	thbJbkoPG+4C72VYAxpU4TEupt5lLHI=
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com
+ [209.85.216.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-132-lFKl9_WUOCmJovxYcQaykA-1; Tue, 04 Mar 2025 23:08:55 -0500
+X-MC-Unique: lFKl9_WUOCmJovxYcQaykA-1
+X-Mimecast-MFC-AGG-ID: lFKl9_WUOCmJovxYcQaykA_1741147714
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-2feda472a4aso6861953a91.1
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 20:08:35 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741147714; x=1741752514;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sl3kF2jIRgykOyy13qNEYv7/mlV05yVeWOFjVH+qAtU=;
+        b=C5i1vcGg2e1r4Jkr3exXM1NukyozOUGgvWM4TUbj5i+EKqdeLtIGQHJaAvtYUzPV8o
+         SVWsXkE69dDysAJ2Qsd7kK2Z5oGQD8Agejn50aR1tE+AvgFtXk19uTWad8lqFC9deca9
+         PtZwyn83eEv0DkbRI684aFpm2SEClaQP4cDuFEJeZNxqWrTaK6wXKcaXoqUhJfp3qO8N
+         SjFjOH/29K9jNHsldwXQ/88Ssp/t+NSO62Xiso7oyM/yF+66Q/j8a90mfOt5/a2qp7pZ
+         MP5QNiQhxsAmkSZNA+86zArnB8ItdnMHRm1O1wGP6gLrYhF4s8ijgGghyeJ7KmJizbIU
+         nRgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0zP/kEhJBhJf95wE9LVKNaROsF0tEzH1h0gg7UBFVnVVusHa75p26hkl53j+RGraobOFO+yNN8KZSAFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz6JsCLLSooAYgO+Y54lqCrMbN1N1hKF/AODOePTYkTjUq0YXL/
+	6I8yIOE4tOEvevaa0oGfKrqLtTeSLYB99VHM3zxIprDC8QdH8jQOYpgvQGYykVKryhXhdK2xx3F
+	grWe5nNEPy82G9yMCiiekePqb7OPBLty2GGiC/D2VP+lE9iK9ZOnM2jB+C34CK9xFwXjo2fDIEY
+	iAzErNyVQQcrWzjji6RFPc4O/PtDllr9YHNjIb
+X-Gm-Gg: ASbGncsH8FHxwdDuhr82Mp5nAWYjs3o7vbOLo4SSv77aPPybEt1U4VZmjROkWDmEiv0
+	NDnPEkWHIEGYBLqt4yRSAS82aXbPFNyXB3d7heN3NFCLhtGSHYLTkX5Bf0IVdBD2IlkCroHizpg
+	==
+X-Received: by 2002:a17:90b:38c7:b0:2ea:3f34:f194 with SMTP id 98e67ed59e1d1-2ff497a94d1mr3253879a91.10.1741147714159;
+        Tue, 04 Mar 2025 20:08:34 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFRhAjiy6oJgdTVYVOYk9K5LcroQa6MmEtafp7KA+t5KO8Pe7O1jHU38xtYt3z4pO+pz1vuRaGm1QENB3uSDNs=
+X-Received: by 2002:a17:90b:38c7:b0:2ea:3f34:f194 with SMTP id
+ 98e67ed59e1d1-2ff497a94d1mr3253847a91.10.1741147713755; Tue, 04 Mar 2025
+ 20:08:33 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1741147601;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=pDELCpQeeRsQjBq8mPwKYZFbE0oodQGK1z39/kbbFVc=;
-	b=CBDAyr6gphxZstlSVsbNMId1zpTUhZp+pAWmgYDZI5aTdeZ+5+nb+TBqrBtQUrnRTU1GZb
-	Si9rzNzGXCDlFD2IIB8gCrmBa9Nc2M0oIKh9vnT4w05EvX9lPTgrhpPOsEq3w5XvwHskT2
-	QL282+8PZd6XrT0eT+hA0aCCcL5b1WNM7Gt/Uv5uLkpGedTMgV4WCyrpb2z9DgSIm6AEDo
-	pz8reP1rIZJj47AjtbDQDxo/pGlHwaTqqcZZspE8HTRxdAvt38uDCTONarVUiCj9VLoQ2e
-	ItwzTTEgIUEqZftGQ1ALfausu/4JWSVp95OuTAKXQ1LTQ7d9/w5eUNfvBHlIsQ==
-Date: Wed, 05 Mar 2025 05:06:41 +0100
-From: Dragan Simic <dsimic@manjaro.org>
-To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
-Cc: linux-rockchip@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, didi.debian@cknow.org, chris@z9.de
-Subject: Re: [PATCH v2 0/2] Slightly improve hardware description of Pine64
- RockPro64
-In-Reply-To: <2630232.Icojqenx9y@diego>
-References: <cover.1740941097.git.dsimic@manjaro.org>
- <174104113599.8946.16805724674396090918.b4-ty@sntech.de>
- <757afa87255212dfa5abf4c0e31deb08@manjaro.org> <2630232.Icojqenx9y@diego>
-Message-ID: <40aed1a2c3d4015881694e847beca683@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20250303085237.19990-1-sgarzare@redhat.com> <CAJaqyWfNieVxJu0pGCcjRc++wRnRpyHqfkuYpAqnKCLUjbW6Xw@mail.gmail.com>
+In-Reply-To: <CAJaqyWfNieVxJu0pGCcjRc++wRnRpyHqfkuYpAqnKCLUjbW6Xw@mail.gmail.com>
+From: Jason Wang <jasowang@redhat.com>
+Date: Wed, 5 Mar 2025 12:08:22 +0800
+X-Gm-Features: AQ5f1Jr9X3ymlwY6PrZDcvmZUstskG7PfMhNEYJbHpQgXjCqpakU8L3BFGy8d0g
+Message-ID: <CACGkMEtycEX=8FrKntZ7DUDaXf61y6ZE4=49SmQu5Nkh_tf39g@mail.gmail.com>
+Subject: Re: [PATCH] vhost: fix VHOST_*_OWNER documentation
+To: Eugenio Perez Martin <eperezma@redhat.com>
+Cc: Stefano Garzarella <sgarzare@redhat.com>, virtualization@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	"Michael S. Tsirkin" <mst@redhat.com>, kvm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Heiko,
+On Mon, Mar 3, 2025 at 5:29=E2=80=AFPM Eugenio Perez Martin <eperezma@redha=
+t.com> wrote:
+>
+> On Mon, Mar 3, 2025 at 9:52=E2=80=AFAM Stefano Garzarella <sgarzare@redha=
+t.com> wrote:
+> >
+> > VHOST_OWNER_SET and VHOST_OWNER_RESET are used in the documentation
+> > instead of VHOST_SET_OWNER and VHOST_RESET_OWNER respectively.
+> >
+> > To avoid confusion, let's use the right names in the documentation.
+> > No change to the API, only the documentation is involved.
+> >
+>
+> Reviewed-by: Eugenio P=C3=A9rez <eperezma@redhat.com>
+>
 
-On 2025-03-04 22:52, Heiko Stübner wrote:
-> Am Dienstag, 4. März 2025, 07:44:59 MEZ schrieb Dragan Simic:
->> On 2025-03-03 23:36, Heiko Stuebner wrote:
->> > On Sun, 02 Mar 2025 19:48:02 +0100, Dragan Simic wrote:
->> >> This is a small series that introduces small improvements to the way
->> >> Pine64 RockPro64 [1] single-board-computer is described in the DT
->> >> files.
->> >> This applies to both production-run revisions of the RockPro64.
->> >>
->> >> The introduced improvements boil down to eliminating some warnings
->> >> from
->> >> the kernel log, by adding a previously undefined regulator and by
->> >> adding
->> >> some previously missing references to the regulators.
->> >>
->> >> [...]
->> >
->> > Applied, thanks!
->> >
->> > [1/2] arm64: dts: rockchip: Add avdd HDMI supplies to RockPro64 board
->> > dtsi
->> >       commit: bd1c959f37f384b477f51572331b0dc828bd009a
->> > [2/2] arm64: dts: rockchip: Add missing PCIe supplies to RockPro64
->> > board dtsi
->> >       commit: 64ef4a4320e7aa3f0f267e01f170f52b90bf0b1b
->> >
->> > I've moved the pcie12v supply up one line.
->> > While in a mathematical sense it's true 12 > 3.3, we're sorting
->> > alphabetical, so it's 1?? < 3?? .
->> >
->> > And yes I sympathize with 3.3 < 12, but also have come to appreciate
->> > not
->> > having overly many special cases :-)
->> 
->> Great, thanks! :)
->> 
->> I'm fine with the alphabetical ordering, albeit with some caveats
->> described below, but the following part of the patch description
->> should also be removed, if possible, so the patch description fully
->> matches the introduced changes:
->> 
->>    Shuffle and reorder the "vpcie*-supply" properties a bit, so 
->> they're
->> sorted
->>    alphanumerically, which is a bit more logical and more useful than
->> having
->>    these properties listed in their strict alphabetical order.
-> 
-> I've amended the commit, dropping this block
+Acked-by: Jason Wang <jasowang@redhat.com>
 
-Thanks!
+Thanks
 
->> I'm hoping you'll agree that specifying alphanumerical ordering
->> for the properties in the DTS coding style is the way to go, just
->> like it's already specified for the ordering of the nodes.  I'll
->> go ahead and submit an appropriate patch for the DT guidelines.
-> 
-> vpcie0v9-supply = <&vcca_0v9>;
-> vpcie1v8-supply = <&vcca_1v8>;
-> vpcie3v3-supply = <&vcc3v3_pcie>;
-> vpcie12v-supply = <&vcc12v_dcin>;
-> 
-> In the end I don't care _that_ much, but personally I find that
-> alphanumerical ordering harder to read ;-) .
-> 
-> Because in the example above, my mind now constantly shouts
-> "why is vpcie1... after vpcie3... ..... ooooh right, it's 
-> alpha-numerical"
-> 
-> But I can live with it I guess ;-) .
-> As 3.3 is smaller than 12 afterall.
-
-Oh, I know very well first-hand how alphanumerical ordering may
-look and feel strange at first... :)
-
-I used ls(1) without the "-v" option for many, many years, and the
-things looked a bit strange after I decided to add "-v" to its set
-of options at some point, but after a short period of getting used
-to it, alphanumerical sorting became so logical and useful to me that
-alphabetical ordering is actually now harder to read and is looking
-a bit strange to me. :)
 
