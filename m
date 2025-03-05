@@ -1,180 +1,187 @@
-Return-Path: <linux-kernel+bounces-546078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1AF4A4F60C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:26:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F65CA4F610
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 05:28:53 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E101416F443
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:26:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B742A188C30D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 04:28:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359511C6FE4;
-	Wed,  5 Mar 2025 04:26:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5CB21C7000;
+	Wed,  5 Mar 2025 04:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BZZ5iXXn"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="Q7j2p32+"
+Received: from CY7PR03CU001.outbound.protection.outlook.com (mail-westcentralusazon11022138.outbound.protection.outlook.com [40.93.200.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2D019258E;
-	Wed,  5 Mar 2025 04:26:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741148772; cv=none; b=AlHfL9xlAxyPecP9mIltsp7KyahAwQpvSE7gyrD/So8bEO9gk35I/f9hAW7WL9WnOZIm0C9ldHJVtIfDHLEIis4hTtLD991GjHH62vZRn83W4Av6ns6OrdvMkpki7N1exOwQtDhszkzJNIwZgbYou78ag/37pA13KGG56uEauVo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741148772; c=relaxed/simple;
-	bh=Ma9rbC5Lm1hcZ0TRRXqeaYpaIEccVc7d1Sur+2dI6bA=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XvIxKhxEGJMx2NFysXiQe8V5L8LasOke40ic2bNZPRk+H1rl8KLX1nEazUIH2yJO+VBiYE/TQ3zccYGnOKcCEJM77t92BBqr8Vo9V0oFZE0xPt+b6qQjYqua1cfdeF/M7NYbDD+kbq8DAuBxmDpTYO6Ovq/SVvrmIad8kdXlzOY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BZZ5iXXn; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2232b12cd36so87521765ad.0;
-        Tue, 04 Mar 2025 20:26:10 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741148770; x=1741753570; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=lDbPu0GoIrMl1ekfCD/PMILNRbV5SLzILd3Nw6UHcyw=;
-        b=BZZ5iXXnZkls8MGlK7mGB0Vi/yERJ2Uzd4k/d9yW5GwfiSpsFny1oFxvV3wHSlbviH
-         +7exKVdMrxGmUi44mU2VEY7IOBItWyB62PtcttjSLGFDl3k1J8wZQeC+kWu0cooEG3Wm
-         4E6xUeSU2O++VkFIrURU9cPTz328Is9WLEpErRk28mv0m3NeqMHhgTO3ALXhxZBHBN+E
-         /pEo0f36HPsv1YBxEBlOLpmPdoRY8G0TlH92EmTo9WHW72apzBsPR39b/IlgyVSYbI/w
-         KzZeyIBxx18VASYFBkfH9F08lMsvSh68vUzpR+uexE/ZWFL1mBWn/M2WZQrq9m65pwao
-         SQ1w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741148770; x=1741753570;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lDbPu0GoIrMl1ekfCD/PMILNRbV5SLzILd3Nw6UHcyw=;
-        b=I3t9u8B7WJ865plYyZTuxLDOy3G4wtmZjqCC1/MLQv/DqYsqm+ftspFB+jaqEcr831
-         zipaSibBmXLvYFUoAiEg3l63vTSWGsBkG3nMww+PfOeXiSq0oRt+EzRtXsexbm27skZ8
-         YvykqSwTQMoWxq7fpWFSu+LlBfPEZENY2M/W3Z4OFBf5vdhTxEMMHgqApWryMD8EHbXY
-         a58n2qvxZbUhBWOUpPFsD5D5QcH+wn4ZC2rTRCzYQ29mkhlOIVtWhQTXoBe8wFIoZgSQ
-         bfyEVARvBqZwIJkQR7cHu1efG5P8lWUw4RUNQLVo15BnMa0lySwgYxUDcAlXdHsLtJKA
-         Q31g==
-X-Forwarded-Encrypted: i=1; AJvYcCXBKsNwWNI5//Gq6hUoBsFTUShhckCR3FLbjwstgfTw8G0m6oIRuJOgGruuLNcX1Lo45cAD9HRv+9Bt6+Y=@vger.kernel.org, AJvYcCXh5prK6wAUZcBfIyzMeVmhDWdlbWcWU2VcymUNaHy8SW29AD6UDX6kwDrxiOfXGrdNAONM5pPw0yehjHtzYhB3JA==@vger.kernel.org, AJvYcCXnfk+OTmOGsJYUCCl3iKWXiBlDlLJQcVuA7zzss3U5pE27QQPiwBRwzKCYbGT6qKQVpm39GUhdKopj@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ+TU1jxbU1MSr/6KjZSfRKfLWMT/XOn+XOt87MO2AuWZSfhqj
-	3kQTzTZxcKkgpYwNr0bPaGLogKJkaFRqrHfG+Qye70ZQPEFddL8w
-X-Gm-Gg: ASbGncvn0gs9unvM5E3GI7EgzB+4duXNkpEUsxtVjNd/vXUuK+UFRuLDG/MYc8qRMjT
-	qHwlKW0FhuX+dDoeOQKPDjgDbZq8oKtW+zuwsxLT7mNSZSTsTAQvtR2sH56NvlZjgfG8e6VCplx
-	cPgN7YIudAyMbRWG8w0UGy1O3XgL8MGxWtsUf/QUAVl62MEgfUQxQXoNY6r7h+Uqr8Uqop53cZ+
-	ttK83CSex3uI9e8tMhJxRozb7XipWgnJ6Dbim4hqUDZb70UfvqgXjDWruvOWkkH67ZlRPdgsOBz
-	3ahjSpuFIUL5lUb0ehno49wfwCsB4uYlyZ1iUA==
-X-Google-Smtp-Source: AGHT+IE5O1ZVuOwmp//oQrwhNgSp7QZxuUhf3G7FCkClB32cJAQnuuVkN/3c86LEBjvOfGY+rzBunA==
-X-Received: by 2002:a05:6a00:23c4:b0:736:3f4d:4d49 with SMTP id d2e1a72fcca58-73682b8b965mr2481120b3a.8.1741148770219;
-        Tue, 04 Mar 2025 20:26:10 -0800 (PST)
-Received: from debian ([2601:646:8f03:9fee:cf74:c30d:9ff:fbc6])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-736560f5e6esm5099715b3a.104.2025.03.04.20.26.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 20:26:09 -0800 (PST)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Tue, 4 Mar 2025 20:26:01 -0800
-To: Shradha Todi <shradha.t@samsung.com>
-Cc: 'Fan Ni' <nifan.cxl@gmail.com>,
-	'Krzysztof =?utf-8?Q?Wilczy=C5=84ski'?= <kw@linux.com>,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org, manivannan.sadhasivam@linaro.org,
-	lpieralisi@kernel.org, robh@kernel.org, bhelgaas@google.com,
-	jingoohan1@gmail.com, Jonathan.Cameron@huawei.com,
-	a.manzanares@samsung.com, pankaj.dubey@samsung.com,
-	cassel@kernel.org, 18255117159@163.com, xueshuai@linux.alibaba.com,
-	renyu.zj@linux.alibaba.com, will@kernel.org, mark.rutland@arm.com
-Subject: Re: [PATCH v7 5/5] Add debugfs based statistical counter support in
- DWC
-Message-ID: <Z8fSWcR_aXyxmFEZ@debian>
-References: <20250221131548.59616-1-shradha.t@samsung.com>
- <CGME20250221132043epcas5p27fde98558b13b3311cdc467e8f246380@epcas5p2.samsung.com>
- <20250221131548.59616-6-shradha.t@samsung.com>
- <Z8XuuNb6TRevUlHH@debian>
- <20250303194228.GB1552306@rocinante>
- <Z8YZEALV71PUkXpF@debian>
- <061401db8d28$5f0a4b40$1d1ee1c0$@samsung.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930911B4248;
+	Wed,  5 Mar 2025 04:28:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.200.138
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741148916; cv=fail; b=SyEe/Ql87j8MnxRXG1mZySba5Jl05MHcF1fqW8CmogLi3o0pUM84/cBwb5ieA3b0BaHLchuEygh17GdfeKIZ9v7pcamBQpchbrDD+ifn4G9KmSVjB2LGiwD+Um+qFB2/Jl9Z2j3+8bTRtP58AcKlNMN3fZhswovzqHJ8f8v1R1I=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741148916; c=relaxed/simple;
+	bh=pzMfU+gp20nu76v/wvMWumeClZFB3n99KIHjJjq197Q=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Hw5eBCihJdpwnCTjP8SglGzj992e7UmZ6Ey8hDZZMC9gvKBvjfjgCw12jI/1a6zKBSHvAQ7YIo3LcwKCahk/h2GuIVIFBedlYIVYEzpd2WtYycenRXEoCo5irMaXIlTECsUbx+kp+Ce7uOumsb4WMYgDM1y84hHAWaSdb4vjKzw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=Q7j2p32+; arc=fail smtp.client-ip=40.93.200.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=BUQd6vQGgsrQXM0XaLj/X+HoA6KKg2nW2WGMSdbIYZJzcd9Zt2LER2ubqnfbrNkYbPcClXYwowyoM6fw2QacAFZpQFk628m7W3wcrHTNBbAU1v8Q/tR3+z09hdBlMKv2tkTmDQvJv2aovlhLhx4ltJtPKUHrw3YXgQDbIpke9vSimsZBWsM0pBWkIzPwub7300Drv4Sbt0doiWRrTyp9esJ/O8pCpX0cMv+5oOzdDKLc0pMNfr5bx7zLBBxDAmrxqWdiWBsuNM89czjJ8CjOhS5Lra2tip4qzMl0kTtPAzdDHXiOtTjyhRDb60ml1es6hJr+ljxOVUVk4NM6gBUu4w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Nm2p65vLClKAm6dw+g/Xb94C5bsAEDXF7Pq8iVPdenk=;
+ b=HbuQbxhlF5VevXNB5WG0PkzV0VixELGjPinnRuC408eQFgGZE4lol+yGbuy7Qz8sW4OCJmyVz1NOisBwYX9uduGgwrHZlYw0zCCgg6WiYQVN73YVKEh8w3V6SG3yx27pZrCUf5eHTc9YgqU5QdkKlD0EbsCa1Xsur9D9Y2T5k3KsHgUAmy4HT4oxcRVRxPdT12Px8LVUUYnWWwRjtZvv7JVUPkwA5JPoqbkGS+dEwexDG0HGxoVxr+1CShaZaDzXq+GbNlmyJMwDyYo4WD3ME7M9bCkP/bKLdgX8SCQppqHY4vrgjO0rVkoaUhMIZ4FIP8BPMw70/62go9afPlExIw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Nm2p65vLClKAm6dw+g/Xb94C5bsAEDXF7Pq8iVPdenk=;
+ b=Q7j2p32+olaymqR9C+ddotnGiorWAPjsX3PMRxgpagKnCkenMeiWXMn007Pph029L48NtEh+PxB+KnB81j3hYOkTIAP2pksuHbDPO/3n5xLCm6DqSTG5XlxKDParnJBiNp+BubBTGwXqAka49sh04AiPCvY2Qdgurm4jSg7KU1M=
+Received: from SA6PR21MB4231.namprd21.prod.outlook.com (2603:10b6:806:412::20)
+ by SA1PR21MB2065.namprd21.prod.outlook.com (2603:10b6:806:1c0::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8534.7; Wed, 5 Mar
+ 2025 04:28:32 +0000
+Received: from SA6PR21MB4231.namprd21.prod.outlook.com
+ ([fe80::5c62:d7c6:4531:3aff]) by SA6PR21MB4231.namprd21.prod.outlook.com
+ ([fe80::5c62:d7c6:4531:3aff%4]) with mapi id 15.20.8511.012; Wed, 5 Mar 2025
+ 04:28:31 +0000
+From: Long Li <longli@microsoft.com>
+To: Jakub Kicinski <kuba@kernel.org>, "longli@linuxonhyperv.com"
+	<longli@linuxonhyperv.com>
+CC: Jason Gunthorpe <jgg@ziepe.ca>, Leon Romanovsky <leon@kernel.org>,
+	Konstantin Taranov <kotaranov@microsoft.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo Abeni
+	<pabeni@redhat.com>, "linux-rdma@vger.kernel.org"
+	<linux-rdma@vger.kernel.org>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>
+Subject: RE: [EXTERNAL] Re: [patch rdma-next v3 1/2] net: mana: Change the
+ function signature of mana_get_primary_netdev_rcu
+Thread-Topic: [EXTERNAL] Re: [patch rdma-next v3 1/2] net: mana: Change the
+ function signature of mana_get_primary_netdev_rcu
+Thread-Index: AQHbjW3mh02lTBwq7EquVhpKNEKkTLNj8bDg
+Date: Wed, 5 Mar 2025 04:28:31 +0000
+Message-ID:
+ <SA6PR21MB42316173AD04AB73805BA8E1CECB2@SA6PR21MB4231.namprd21.prod.outlook.com>
+References: <1741132802-26795-1-git-send-email-longli@linuxonhyperv.com>
+ <20250304172821.5cbfad8a@kernel.org>
+In-Reply-To: <20250304172821.5cbfad8a@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ActionId=31e6b6e4-72ff-4b29-81ce-b1ad58524131;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_ContentBits=0;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Enabled=true;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Method=Standard;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Name=Internal;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SetDate=2025-03-05T04:22:57Z;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_SiteId=72f988bf-86f1-41af-91ab-2d7cd011db47;MSIP_Label_f42aa342-8706-4288-bd11-ebb85995028c_Tag=10,
+ 3, 0, 1;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA6PR21MB4231:EE_|SA1PR21MB2065:EE_
+x-ms-office365-filtering-correlation-id: 0651d80f-fd4a-4b7d-07d2-08dd5b9e2f8b
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|10070799003|7416014|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?fFHR2VDbF8PGZwgRBLgi1mJWjgPw7fFWTf5IIO9IIDh7wjd1nXQWj3M861QA?=
+ =?us-ascii?Q?1/qivNk938BbNoYZfdcdaIN+yTRGhrnSFGnCbHHpoiaxOMMEgN0H56BWaxvi?=
+ =?us-ascii?Q?xvELSjpTQ6OAlMvN/CPlxRJxl/l2dSc/7GZSDV4FrWXEVmtY9Xh+xDTTpDUk?=
+ =?us-ascii?Q?mPvOh7RxSW1uwsnKM+T/Yq30Lvnsi3mZTGBbOI8dETl8qxmc8CGEcxBfMqzm?=
+ =?us-ascii?Q?vpWW6OmCSXHLBHjhnjVSI89eFyv8ZED18X+2A6qqHTxjY/c/VCUDdFbtk/uY?=
+ =?us-ascii?Q?Nva0ZnflZylh7YRGcXlceJTZYFLaeoi/HOJ5NYdHLrnvAhYfoSBx1vJY6+hD?=
+ =?us-ascii?Q?Q/mwHP2SbigtTh8ia5/fRXq+EZEGZ4O/+LnhD4Tm7HqCX/OmGJ2ElnQBO1Y3?=
+ =?us-ascii?Q?6otPSWJa1OIjr45XNPLEyf5seiC4lzEYHEEZkPva5wnYWWjASQq6NacOrEN/?=
+ =?us-ascii?Q?CpwQqmbUj0anNSNP27fpx1faMc5+LbspVj+1sufACH/CsVVRssYRMfcDzXO7?=
+ =?us-ascii?Q?xsT8W8rfF5/mP/yZFmuE4bRaXqzN9HX+gx9qnP/Ba01hpHD/eCmlAjaArITJ?=
+ =?us-ascii?Q?HGj6oU9zvyY3JadTjGORUTVnXZ2S8YXYX/dC5mHZn10O0gy+O6rjXjHVVuMN?=
+ =?us-ascii?Q?GLKEwHH5OFghKldyLGCPYvCOz28atagBHp55eIlQtcBWit4aOAqad0+ay+nV?=
+ =?us-ascii?Q?HXGl1sTQEJjo2sjqVz20bu25Y6LGr5R3/KLa6ufgIRzo82spELWK6CS7xIf1?=
+ =?us-ascii?Q?fNJoACnBQ+QSsJRpt9WWFCteStI0vipZhha6NyjFtaOIervHDsTlMmPDtf0u?=
+ =?us-ascii?Q?1okUaJGp8MY4PMd7uoenoOwto2LbbtL14M3ufPH89kEnedm7hYC43ROsGNSG?=
+ =?us-ascii?Q?yVTm6wvSoRVLgB/qEJN+6bwhMzRyxkbVXOEQZrmOk0pxPOVxGpZhTvty9pua?=
+ =?us-ascii?Q?GenPVM7yy4OJfHPqVCFmNkRQzP2IbwPV/zoT5mcEKqp0rOYuSENY/hw21g2x?=
+ =?us-ascii?Q?b3rB4IWdDD125YulUMkx8/StY7J8DE16qIKWaHK206PdL1sdq5/AOHXrJf/6?=
+ =?us-ascii?Q?RXZZWcTQDxtnHcB+BWfWZBxT6wHU2PZviqc/YgAKAx6/8PR0lC0IaooTYTNw?=
+ =?us-ascii?Q?24BP0dA+d3M85VRZ2K1AAaARmgsQBYX667xlQxbh76XkICcIEMFGhllad02P?=
+ =?us-ascii?Q?sk6CMBSLa0pu4DUk+7xqKOO7h1Ab10LJD0oEwUr9DzA+jVl0UJVA8qYSyB0S?=
+ =?us-ascii?Q?5Dx4FiFC5jDv/g53pEdvXmaFUTUTwRmeYecjn+9zXAxGEBFYGrhvi7t2MoQR?=
+ =?us-ascii?Q?1mb42Ok3Sz84Alc4og1PBgsPvHlju9iUUYcC/Y4ouEKbsS0VlOuobmlglHSr?=
+ =?us-ascii?Q?onHyB6xLYgHzu2sUrb7I9KhgS3L2d7gHwVEMfsyoBpndC+I1/w=3D=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA6PR21MB4231.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(10070799003)(7416014)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?rE5Hkg/DEGlvgNl/0wIkte+bX7D58iKfXB2ptdWj+11rZuhRB4YiP/iwH95N?=
+ =?us-ascii?Q?oIwEMLw7mKmeer2EkpqxfrdH2n+9x88a48TMhv+XMWlwj8mQRoGZZa9ucshv?=
+ =?us-ascii?Q?yDkrqnnn/fbabta5VouIV5Wea8Fvxs11pJOn6lyXGwkQFk7OrCcm6qhmsStT?=
+ =?us-ascii?Q?t6BZ1nw1aB3EH11u83N+oQSOUH55Pn2UumTi0wb60YBMq1DO3qWVTjFiooI+?=
+ =?us-ascii?Q?ON8Or+xmZdfaHikJBGN5TxK+yTeyajnMYawaNdiphillSokG2zi6/Glm8KdA?=
+ =?us-ascii?Q?L8dGilswE60o0OingqcnMBrUc5QaYOrvzEhYLaqkKx/pnMxs0R8CEAigBS32?=
+ =?us-ascii?Q?PSs0CViJFZOabujICcwIhljvJ0j7HOlfiS9Kw6Z3VjEi6DFpM4cUFFsTAP+D?=
+ =?us-ascii?Q?ojguhpdazkPPy1Vnn8aSr4lR3FUguzH3nfu0AxilBVsU16wPzJcby1ctSOrW?=
+ =?us-ascii?Q?YwnlzLPszMgr9WpPw0aHQqy1aRig/WLpLViPNJZNa+sOOf0w+bOujmytxyuS?=
+ =?us-ascii?Q?mcZdiyZWhIkISCpfz4QWiDg+vUrRr2knZfq5LcvyfA8BCNiPzjmfOxqDO2hz?=
+ =?us-ascii?Q?OmjshutVRl9Jo6VLTj+YvVtPfdPie0030PSUt7uDZhT+BKUZirS80w1Twl/Y?=
+ =?us-ascii?Q?2DX57061w+aUptQbsBXNEyq2XJY+zZ9e5pG25DF57aIVmtW7GS3UQceIukQU?=
+ =?us-ascii?Q?Qs9o+SRYMaUi64s522+G5wKJIAQinUmA9pOjpIJlz4TGZiLg+TQt68y+ieBt?=
+ =?us-ascii?Q?gLvvV1oDin26xIDdHtGuvzuy2zhypRWcCsPh6o3etrl7a6FSwd5tJUwtQ9hD?=
+ =?us-ascii?Q?vHl0zXjrZZry7fZayWcASov4tgv2KgfhPA19axY4fcp/OP5pDKRQU+9Gfrsw?=
+ =?us-ascii?Q?wW+nlRO5qykySQHXjBxrp+cffgrNnYc6iRHOCYkncK1QcP7IJOezXxmNMg2S?=
+ =?us-ascii?Q?euL+8w6pYJZ/hjyGWKMU9HbHuSra7f2Jo+07WIgIgR8/jW4oN8ICPRqKzqDy?=
+ =?us-ascii?Q?RAo3/9E/XDNOcpI1XPEy1SzAro0hwHouk5nTUECOpm9siSnPnE9BnqX1jLFT?=
+ =?us-ascii?Q?G0Ow3NeCIpSNkczVIvX97JLvmad4N2Mpf38npi5OLSMhWJa9N0sKSZOUUSM1?=
+ =?us-ascii?Q?hqEHSf3CqWECoadSU8NcA0cJh9gNZTI2JAPp8ofzsyrKr1dwij0C25gejmqV?=
+ =?us-ascii?Q?yzF836E08RmP42TUxtYVr7zd/ptl0gvn38lx9W71TOSQVsUnuHYS8coNGd1W?=
+ =?us-ascii?Q?LJYdkNWNs9rYza1Z5bA7gAZpzH+HuC1hM4BR2QNo/KsjcJ+RuELhi/iV6y9U?=
+ =?us-ascii?Q?0lP1l2Yd8shBQe71Ti/ZwrtNBzBFFFqOmnqNJUhUAQgvouvYAGWER0Wb9mL+?=
+ =?us-ascii?Q?AX8pj0xsgMWuF7tgcVM0bqAAzOCrX2JO+FgSejkupW2m6sd+HN92HTu5eHKD?=
+ =?us-ascii?Q?1mAVvccZzCe3qo9VPVLfK0ksWCZCgrzYVHf7iVELrljtuqPuLk51tdCK2Ody?=
+ =?us-ascii?Q?/M+OrC35JQ9auJm6TFvxmaO29/wrMnMhWVL/ST/DdxTJjlCEzJkoaQuz5qbN?=
+ =?us-ascii?Q?Vq4GmIZ8KqHcRrvTwabFh3wvxBCgnh6mxLvs1z0Pf9xcCv4X0QeprKBn26ZZ?=
+ =?us-ascii?Q?wgqdBxUWG9AICqN5uGeLeTIJk430W8NNIDyiNOX31Lc8?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <061401db8d28$5f0a4b40$1d1ee1c0$@samsung.com>
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA6PR21MB4231.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0651d80f-fd4a-4b7d-07d2-08dd5b9e2f8b
+X-MS-Exchange-CrossTenant-originalarrivaltime: 05 Mar 2025 04:28:31.6692
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: dj7USjiYdYd7GUpt/dEIpjanCyAyGWM5VXgRICSOq8IA7eXx5wR5F1HC8x3OqlBoH97G3kUubMftVoGOmq3vqA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR21MB2065
 
-On Tue, Mar 04, 2025 at 10:40:43PM +0530, Shradha Todi wrote:
-> 
-> 
-> > -----Original Message-----
-> > From: Fan Ni <nifan.cxl@gmail.com>
-> > Sent: 04 March 2025 02:33
-> > To: Krzysztof Wilczyński <kw@linux.com>
-> > Cc: Fan Ni <nifan.cxl@gmail.com>; Shradha Todi <shradha.t@samsung.com>; linux-kernel@vger.kernel.org; linux-
-> > pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org; linux-perf-users@vger.kernel.org; manivannan.sadhasivam@linaro.org;
-> > lpieralisi@kernel.org; robh@kernel.org; bhelgaas@google.com; jingoohan1@gmail.com; Jonathan.Cameron@huawei.com;
-> > a.manzanares@samsung.com; pankaj.dubey@samsung.com; cassel@kernel.org; 18255117159@163.com;
-> > xueshuai@linux.alibaba.com; renyu.zj@linux.alibaba.com; will@kernel.org; mark.rutland@arm.com
-> > Subject: Re: [PATCH v7 5/5] Add debugfs based statistical counter support in DWC
-> > 
-> > On Tue, Mar 04, 2025 at 04:42:28AM +0900, Krzysztof Wilczyński wrote:
-> > > Hello,
-> > >
-> > > [...]
-> > > > > +static ssize_t counter_value_read(struct file *file, char __user
-> > > > > +*buf, size_t count, loff_t *ppos) {
-> > > > > +	struct dwc_pcie_rasdes_priv *pdata = file->private_data;
-> > > > > +	struct dw_pcie *pci = pdata->pci;
-> > > > > +	struct dwc_pcie_rasdes_info *rinfo = pci->debugfs->rasdes_info;
-> > > > > +	char debugfs_buf[DWC_DEBUGFS_BUF_MAX];
-> > > > > +	ssize_t pos;
-> > > > > +	u32 val;
-> > > > > +
-> > > > > +	mutex_lock(&rinfo->reg_event_lock);
-> > > > > +	set_event_number(pdata, pci, rinfo);
-> > > > > +	val = dw_pcie_readl_dbi(pci, rinfo->ras_cap_offset + RAS_DES_EVENT_COUNTER_DATA_REG);
-> > > > > +	mutex_unlock(&rinfo->reg_event_lock);
-> > > > > +	pos = scnprintf(debugfs_buf, DWC_DEBUGFS_BUF_MAX, "Counter
-> > > > > +value: %d\n", val);
-> > > > > +
-> > > > > +	return simple_read_from_buffer(buf, count, ppos, debugfs_buf,
-> > > > > +pos); }
-> > > >
-> > > > Do we need to check whether the counter is enabled or not for the
-> > > > event before retrieving the counter value?
-> > >
-> > > I believe, we have a patch that aims to address, have a look at:
-> > >
-> > >
-> > > https://lore.kernel.org/linux-pci/20250225171239.19574-1-manivannan.sa
-> > > dhasivam@linaro.org
-> > 
-> > Maybe I missed something, that seems to fix counter_enable_read(), but here is to retrieve counter value.
-> > How dw_pcie_readl_dbi() can return something like "Counter Disabled"?
-> > 
-> > Fan
-> 
-> Hey Fan,
-> So the counter value will show 0 in case it is disabled so there will not be any issues as per say. We could add the
-> check here but I feel I have already exposed the functionality to check if a counter is enabled or disabled, (by reading the
-> counter_enable debugfs entry) so this could be handled in user space to only read the counter if it's enabled.
-Ok. 
-Returning 0 when the counter is disabled makes sense to me.
+> On Tue,  4 Mar 2025 16:00:01 -0800 longli@linuxonhyperv.com wrote:
+> > +	dev_hold(ndev);
+>=20
+> netdev_hold(), please
 
-Just some thought.
+Will change to netdev_hold().
 
-It seems natural to me if we make "counter_value" only visiable to
-users when the counter is enabled. 
+Is it mandatory to use a tracker, or is it okay to use NULL like the follow=
+ing code:
+https://web.git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
+/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_main.c?h=3Dv6.14-rc5#n8=
+37
 
-Fan
-> 
-> > >
-> > > Thank you!
-> > >
-> > > 	Krzysztof
-> 
-> 
+Thanks,
+Long
 
