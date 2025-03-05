@@ -1,195 +1,246 @@
-Return-Path: <linux-kernel+bounces-545993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24A32A4F4EF
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:54:53 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EF9CA4F4F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 03:55:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 332C0188E707
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:55:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9800D7A524F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5601C155A2F;
-	Wed,  5 Mar 2025 02:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C995F15575B;
+	Wed,  5 Mar 2025 02:55:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="C4B4NUjW"
-Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZHTkHUg8"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D0545C18;
-	Wed,  5 Mar 2025 02:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D927155759
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 02:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741143285; cv=none; b=PMjgOKi++Qyp0nNA0h5ZGpu2X/1Os7eOZGKDqOxA/tddIrAkZ2+PXEV1zzijx1Wh+qumx2AmuwR5bgSVy9f+lBaupHfYsLmzfc23Bm/lbkeVyJCQ7xwEKitVgHGmy5jiZ4zuR2v9cxrTokZda8Tu5uWvL11cFb5qJgxqITkswcE=
+	t=1741143307; cv=none; b=fvE7lyDHmijivAvDbzV5vtUn7jCKyBtg24ra/XA+ec3O6XESq/49dnaYY0OBmjmCZXBhZS4AoB8JKiflGh7NUvXPfIv8DO9DLMGkwIVnwRlHgFR/HS+swA51Dm7CAerz6NolnnzwKwTY9umX0zMxlCB09noS15DOZHuhT/w1OS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741143285; c=relaxed/simple;
-	bh=UV6gyGazzJ42NubyrUwHa0PU0qVcgVll114FV7ifGlA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GrcQRhLV+dXW72XusvMWbxglGrv86WRI7Na6VYuWkT4B8mzxGyHC9JvIo1FsDRW4yCQPs8JnmYFuHc31z+k1kyPoJT6+ZfslzMTMzw3cs0sYLcOQx7I8gRwkA+NtLm8Ih0cxs+kI1JLmSN+JR/DSIdOKsOx4G00t6eRYf9snuUE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=C4B4NUjW; arc=none smtp.client-ip=209.85.222.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7c3b4c4b409so495400785a.3;
-        Tue, 04 Mar 2025 18:54:43 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741143283; x=1741748083; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=UV6gyGazzJ42NubyrUwHa0PU0qVcgVll114FV7ifGlA=;
-        b=C4B4NUjWr9adFGs1UGGtUwqZQAcB5IHNJq1++qHwkFlsLCKvoHOoJ/0115JMQssPgT
-         MsCan0gxBrwsOwbPXsFHBGepmZlSUzBlCRO6WkK1xhfBOCu3VxUlttE2FfiZSUdU8l2F
-         dxGqOdFA/I063Tf8/+lbFrGPnygor5CDX1AOks8d/7e8QdDl1ulTucX//gMfQTJ+zrwt
-         ljzQ84A34REWanHJRO5gXBVTY/DlBo42Ah+Koprf5UAQd1SnnEr59XrSck78u1i8VEma
-         IBWxjf+gToPfM87u+0u30qOfC4B2Z9+S1f7fm+Cafw5wnF3K3mEe+EUa+15cbK7qiQxa
-         bRRw==
+	s=arc-20240116; t=1741143307; c=relaxed/simple;
+	bh=dY98b+A377+8lsbKOLqdLIFwY+nQhwzISrJ5IcPYpnU=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=RlwooVLUEA7WXVHLoLU72me0f4iRB3y+P7Eayf/kp49HeleC+rSVxAuSn6Bqwrt0+0AbfVHEfKkMQkZI/9LJ4LOrTteU9vYQmIPNw7h/TGEGAFkSJhu8VrTpD/vncEX8VcIOXNEmRy5z/rMtYBg94Tva9j2ciT0LVBxSHe4QDtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZHTkHUg8; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741143304;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KodJeN8JpIyPec2i6bfA+7AA+Kc+r/6tiAa2r4SqwME=;
+	b=ZHTkHUg8+BXtPOieasMz9+KHJzdsIckNiSMhvOq/yZq47Z9OsPpghaeX8hZ6XyEwunPDoP
+	jfFIR/OUBJBAzu8yEsGQszbZ/HS3bTCRM/8Cn2QzVnQgplj2WCk66/EmZh41j68fYM5yzq
+	tcSHj395zc/nrpXOVVHe69fs8dCoKP4=
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com
+ [209.85.222.199]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-474-fKhxXrUIPkuBVaklPVdgwg-1; Tue, 04 Mar 2025 21:54:57 -0500
+X-MC-Unique: fKhxXrUIPkuBVaklPVdgwg-1
+X-Mimecast-MFC-AGG-ID: fKhxXrUIPkuBVaklPVdgwg_1741143297
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c0a3568f4eso713877385a.3
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 18:54:57 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741143283; x=1741748083;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :feedback-id:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UV6gyGazzJ42NubyrUwHa0PU0qVcgVll114FV7ifGlA=;
-        b=D4ABOLKCMiOsj2u7yLophJF5yhM3BGa0DlkdzUvwCjfOCP0uQkjgQQgvJPv9zMLZ3x
-         8H1d8EE2T259KpVXmA2Zp/ANgg65CFe5szzz+rTNhBsTNPTbFL/SjWcjpAouvcnn8LW/
-         NIRlDrqIWXUus9SPKWZI/Hnng3+RkAQZ4OUzcroudMH8RU/Rf2xBMDb5HQukdQziClMB
-         yu7R3NMWTvyztibUMntAp0xDFQ9SmneURMbJkA9UINZ0gXqQ9HSHqkcBy3gf5gtrcbTH
-         YkLXNQGU9bCV5b8YhpkL70Wu4KDgQloRqtTY96+PZVC58Uyc5EHxH2OlFBYlSdCTVh5X
-         Jifg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrdEdC78OMUSZ4rk1fYgPnriLn7UwkEe0aNzgBXh4mS8LYYSYWO957iXTy2Z7QgIE1adMfG5yDpErz7WeD3qNi@vger.kernel.org, AJvYcCWgxPnrx29q+gAU4BXE3vMjQKo7TJDJXaW6z2fk+G34d0sGpng8MS+5YKGgJWnFandgMYuy3lbudebMfI2ckaCPKfXG@vger.kernel.org, AJvYcCWnfmVU3QQxiU/U3a0Ah0jYWAegfJrppPglaehbI+6J4cj3yF6pEBNDx5l7e2N8m1XfC67MG7ziMdNnNmE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpRNTzuQk+6WB7Ff3huGIRnhiQbXbTBmoMf2hYfPnjNE2k8Si6
-	vtzxTCWYffxsPuFYeQSgViNUbVufQ6MjpyVuq8RkY3fpHVQUjokv
-X-Gm-Gg: ASbGncsyjzMxhnx4CcF9bHCrMRc4q214bzUzkNdujlHcUSsztrY28tGikmZVQNuhNFg
-	HZu0wrpAf/8+5lQyDjALaiwpzEq2iPosb8Q1Qjcvo0fSCoBZsIO0F4K9OJK0XEQ7Y5oo+bdU22X
-	aBGK8eaYQKg+6VS0govHROurwO9etnOdzgxSweJKnTaRV2zyzhius7Q3A/xo1GiDdKzzDHw112U
-	HVX123LGX5b475Zc9HPS9yHWq36Hwb/GwXJr0R848+p49WBc9CG+otKiIjOVQIIn9i3q2Ocqqjl
-	KmzmkMry8em59RVtmI+PPpp2EhBHMTLcms905hT3O4FPumZlYUzTcthVqNn2A/EHHgZ3VC23NZ8
-	YDRtU7Beqj5cuIUxWsa2f4fwZJIjVgthED/g=
-X-Google-Smtp-Source: AGHT+IHBoQiW7YLCUvoHR0BGtgdkr30Lh1JWx2qiZpsHE/51TJNn1Bw7Jeixsoev4iKBvUmgHnx5uQ==
-X-Received: by 2002:a05:620a:2607:b0:7c2:40d1:8593 with SMTP id af79cd13be357-7c3d8e20ee3mr236316985a.3.1741143282793;
-        Tue, 04 Mar 2025 18:54:42 -0800 (PST)
-Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3ca43ad81sm228200185a.80.2025.03.04.18.54.41
+        d=1e100.net; s=20230601; t=1741143297; x=1741748097;
+        h=content-transfer-encoding:mime-version:user-agent:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=KodJeN8JpIyPec2i6bfA+7AA+Kc+r/6tiAa2r4SqwME=;
+        b=fFa1d1QF80LjG6VHBFALea9aeDxnxt0TJLKPQy0RqagggCEzZpJbHJpoMoQeWO2qEC
+         jUWHfvsDDmPnlaZz7DXq5f3iclP8dyP1mci7wNc1fZMfMhFcTqWbh7ss0DgywAk7O6P0
+         xgNnMGdyuJCcfl8gnH9hoym3DeydkIzEeviqFmQ5QOH2swfBNLLCPda3OhsbJwWQvYZn
+         8t47cdZjN5DQfn8o5FO+aHr3+ayPj0kMZx3mfJ8Yq2CAxX5D4EYimYZU6C2+2hB7pkq0
+         hUuiGqNzkymys41efpQbnMlo6MwIGbhNesCE26wZGM8n/4JUgTN8jz9g+q8014OkhzVU
+         LsJA==
+X-Forwarded-Encrypted: i=1; AJvYcCVbQyh95arKxDA+wJwJWJ/QFra+AoIWzbRTv42Ziv48qBUS11hqeHQ2OYdHAWzbcBJDHurW+vZZO5rsqkE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw96wEJc/GhtqJjGMtHgBtDpFqpMXLLP7D96vCvwSIF0ZbWOs45
+	xkYASVca98PeO3qYW/i3jcXat7o+UlTiSA7FpWD3t/AHchLLYrTupUJZyCSUwG8NZlU5dpRiwGN
+	Cou5WKvrQ/ZFyU79pl2uZbRsCQ3wwNWGkbJiwbbrIeR/VfWyzoQ7L7iabFuf36A==
+X-Gm-Gg: ASbGncsC0OhC8x7ghvyy3pX+u27XAZMaF7GbsXfOPNgfNOm1ojyAGzDSapWmWm+/71y
+	9nlgw5x5mTl8+pFeHzhXOXMq2qhSphU0rSA6DeGQooIr3nlNQMCEMLMJyieII/0ZzL1q5A6ewoG
+	LO7RxUrmVsLd0D+6hcxwCqmRmQDI0ZB7cRvD9jVIytz2y7uw5nwnn0xjlU7iONS7M1CZ/GjXZre
+	EC40yvuMGMf189CYbilzhJkFqIcVIlRckyGs8geVOGjFOLtApQM2Mh9VAov/zMxMPOrxXa4oAeR
+	blSLV/0m9pLg+Qo=
+X-Received: by 2002:a05:620a:2625:b0:7c3:d63d:7bcd with SMTP id af79cd13be357-7c3d8e46660mr247162985a.41.1741143297161;
+        Tue, 04 Mar 2025 18:54:57 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IFvz1+gJ0iMbpbQMRyWNUjg3QfvU/XXE38aN+scmgNB9MiYeNTM5Gib23Hs7J+qxa4wCy4h+A==
+X-Received: by 2002:a05:620a:2625:b0:7c3:d63d:7bcd with SMTP id af79cd13be357-7c3d8e46660mr247158285a.41.1741143296316;
+        Tue, 04 Mar 2025 18:54:56 -0800 (PST)
+Received: from starship ([2607:fea8:fc01:8d8d:6adb:55ff:feaa:b156])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3b2fb20f0sm419274585a.107.2025.03.04.18.54.55
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 04 Mar 2025 18:54:42 -0800 (PST)
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 71EED1200068;
-	Tue,  4 Mar 2025 21:54:41 -0500 (EST)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-05.internal (MEProxy); Tue, 04 Mar 2025 21:54:41 -0500
-X-ME-Sender: <xms:8bzHZ9LFSO-a7ihBB_pv8V5rMhqrCR_uO6brALv_DTsMkbnINqpj9w>
-    <xme:8bzHZ5ICRQVksAlERae5OZAvduwZlz1qAgrERq5bNKjTQt0f2uYUbcUpoMigZ3QGd
-    UpwwI3GC1dXsBLtQA>
-X-ME-Received: <xmr:8bzHZ1ucqTCiCh6UQ1HAcC2SWKqx4g4_vR06lzjQbgjSp2dCVHYOF0BiRw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdefjedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggugfgjsehtqhfstddt
-    tddvnecuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrg
-    hilhdrtghomheqnecuggftrfgrthhtvghrnhepheeufeduuefftdevffffhfehudeitdff
-    uedvveegleffudetueegvdehtdfhlefhnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepsghoqhhunhdomhgvshhmthhprghuthhhphgvrhhsohhn
-    rghlihhthidqieelvdeghedtieegqddujeejkeehheehvddqsghoqhhunhdrfhgvnhhgpe
-    epghhmrghilhdrtghomhesfhhigihmvgdrnhgrmhgvpdhnsggprhgtphhtthhopeeftddp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprhhoshhtvgguthesghhoohgumhhish
-    drohhrghdprhgtphhtthhopehrtghusehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghp
-    thhtohepphgruhhlmhgtkheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepfhhrvgguvg
-    hrihgtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehnvggvrhgrjhdruhhprgguhhih
-    rgihsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehjohgvlhesjhhovghlfhgvrhhnrg
-    hnuggvshdrohhrghdprhgtphhtthhopehjohhshhesjhhoshhhthhrihhplhgvthhtrdho
-    rhhgpdhrtghpthhtohepuhhrvgiikhhisehgmhgrihhlrdgtohhmpdhrtghpthhtohepmh
-    grthhhihgvuhdruggvshhnohihvghrshesvghffhhitghiohhsrdgtohhm
-X-ME-Proxy: <xmx:8bzHZ-bAeG0ZN1GRSTXMehPu8GzSaSPV29guxqRdGz2fwFl_WYKV5Q>
-    <xmx:8bzHZ0aKBJ5-5VFBHCz5DMRPMteMbfFZAPBaND6ZAQN2X7WHkXQD7Q>
-    <xmx:8bzHZyBgmAnxKIcGNuSZ5RxojsTbDVVWDzKB6k-raS6dr88qNYe3dQ>
-    <xmx:8bzHZyY_W8yOb5yK3MJYbCUbBXmGtxXxETMRJS4EIEmVEcYWau52eQ>
-    <xmx:8bzHZwrUTjFR0__3g6VW5Q28j-I-8Okx3u1SPTqqw8wuH5BuD7BoXgjr>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Tue,
- 4 Mar 2025 21:54:40 -0500 (EST)
-Date: Tue, 4 Mar 2025 18:54:38 -0800
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: rcu@vger.kernel.org, "Paul E. McKenney" <paulmck@kernel.org>,
- 	Frederic Weisbecker <frederic@kernel.org>,
- Neeraj Upadhyay <neeraj.upadhyay@kernel.org>,
- 	Joel Fernandes <joel@joelfernandes.org>,
- Josh Triplett <josh@joshtriplett.org>,
- 	Uladzislau Rezki <urezki@gmail.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- 	Lai Jiangshan <jiangshanlai@gmail.com>,
- Zqiang <qiang.zhang1211@gmail.com>, 	Davidlohr Bueso <dave@stgolabs.net>,
- Ingo Molnar <mingo@redhat.com>, 	Peter Zijlstra <peterz@infradead.org>,
- Juri Lelli <juri.lelli@redhat.com>,
- 	Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- 	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
- 	Valentin Schneider <vschneid@redhat.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, 	Shuah Khan <shuah@kernel.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- 	Clark Williams <clrkwllms@kernel.org>, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, 	linux-kselftest@vger.kernel.org,
- linux-rt-devel@lists.linux.dev, 	Ankur Arora <ankur.a.arora@oracle.com>
-Subject: Re: [PATCH rcu 06/11] osnoise: provide quiescent states
-Message-ID: <hrwgh7fevnkmkaizc7226kyywgzi22efmtnepzwah7ticrozbv@lcg23v6j7p7g>
-References: <20250225035516.26443-1-boqun.feng@gmail.com>
- <20250225035516.26443-7-boqun.feng@gmail.com>
- <20250304142127.391ca6bd@gandalf.local.home>
+        Tue, 04 Mar 2025 18:54:56 -0800 (PST)
+Message-ID: <f34c5ab727d2e0b6f064ddd11d596fb1841b75b3.camel@redhat.com>
+Subject: Re: [RFC PATCH 07/13] KVM: nSVM: Handle INVLPGA interception
+ correctly
+From: Maxim Levitsky <mlevitsk@redhat.com>
+To: Yosry Ahmed <yosry.ahmed@linux.dev>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini
+ <pbonzini@redhat.com>,  kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Tue, 04 Mar 2025 21:54:54 -0500
+In-Reply-To: <Z8YnjhfwHM_0HBNx@google.com>
+References: <20250205182402.2147495-1-yosry.ahmed@linux.dev>
+	 <20250205182402.2147495-8-yosry.ahmed@linux.dev>
+	 <330b0214680efacf15cf18d70788b9feab2b68b0.camel@redhat.com>
+	 <Z8YnjhfwHM_0HBNx@google.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.36.5 (3.36.5-2.fc32) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <20250304142127.391ca6bd@gandalf.local.home>
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 02:21:27PM -0500, Steven Rostedt wrote:
-> On Mon, 24 Feb 2025 19:55:11 -0800
-> Boqun Feng <boqun.feng@gmail.com> wrote:
->=20
-> > From: Ankur Arora <ankur.a.arora@oracle.com>
-> >=20
-> > To reduce RCU noise for nohz_full configurations, osnoise depends
-> > on cond_resched() providing quiescent states for PREEMPT_RCU=3Dn
-> > configurations. For PREEMPT_RCU=3Dy configurations -- where
-> > cond_resched() is a stub -- we do this by directly calling
-> > rcu_momentary_eqs().
-> >=20
-> > With (PREEMPT_LAZY=3Dy, PREEMPT_DYNAMIC=3Dn), however, we have a
-> > configuration with (PREEMPTION=3Dy, PREEMPT_RCU=3Dn) where neither
-> > of the above can help.
-> >=20
-> > Handle that by providing an explicit quiescent state here for all
-> > configurations.
-> >=20
-> > As mentioned above this is not needed for non-stubbed cond_resched(),
-> > but, providing a quiescent state here just pulls in one that a future
-> > cond_resched() would provide, so doesn't cause any extra work for
-> > this configuration.
-> >=20
-> > Cc: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Daniel Bristot de Oliveira <bristot@kernel.org>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
->=20
-> Acked-by: Steven Rostedt (Google) <rostedt@goodmis.org>
->=20
+On Mon, 2025-03-03 at 22:05 +0000, Yosry Ahmed wrote:
+> On Fri, Feb 28, 2025 at 08:55:18PM -0500, Maxim Levitsky wrote:
+> > On Wed, 2025-02-05 at 18:23 +0000, Yosry Ahmed wrote:
+> > > Currently, INVPLGA interception handles it like INVLPG, which flushes
+> > > L1's TLB translations for the address. It was implemented in this way
+> > > because L1 and L2 shared an ASID. Now, L1 and L2 have separate ASIDs. It
+> > > is still harmless to flush L1's translations, but it's only correct
+> > > because all translations are flushed on nested transitions anyway.
+> > > 
+> > > In preparation for stopping unconditional flushes on nested transitions,
+> > > handle INVPLGA interception properly. If L1 specified zero as the ASID,
+> > > this is equivalent to INVLPG, so handle it as such. Otherwise, use
+> > > INVPLGA to flush the translations of the appropriate ASID tracked by
+> > > KVM, if any. Sync the shadow MMU as well, as L1 invalidated L2's
+> > > mappings.
+> > > 
+> > > Opportunistically update svm_flush_tlb_gva() to use
+> > > svm->current_vmcb->asid instead of svm->vmcb->control.asid for
+> > > consistency. The two should always be in sync except when KVM allocates
+> > > a new ASID in pre_svm_run(), and they are shortly brought back in sync
+> > > in svm_vcpu_run(). However, if future changes add more code paths where
+> > > KVM allocates a new ASID, flushing the potentially old ASID in
+> > > svm->vmcb->control.asid would be unnecessary overhead (although probably
+> > > not much different from flushing the newly allocated ASID).
+> > > 
+> > > Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> > > ---
+> > >  arch/x86/include/asm/kvm_host.h |  2 ++
+> > >  arch/x86/kvm/mmu/mmu.c          |  5 +++--
+> > >  arch/x86/kvm/svm/svm.c          | 40 ++++++++++++++++++++++++++++++---
+> > >  3 files changed, 42 insertions(+), 5 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> > > index 5193c3dfbce15..1e147bb2e560f 100644
+> > > --- a/arch/x86/include/asm/kvm_host.h
+> > > +++ b/arch/x86/include/asm/kvm_host.h
+> > > @@ -2213,6 +2213,8 @@ int kvm_mmu_page_fault(struct kvm_vcpu *vcpu, gpa_t cr2_or_gpa, u64 error_code,
+> > >  		       void *insn, int insn_len);
+> > >  void kvm_mmu_print_sptes(struct kvm_vcpu *vcpu, gpa_t gpa, const char *msg);
+> > >  void kvm_mmu_invlpg(struct kvm_vcpu *vcpu, gva_t gva);
+> > > +void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+> > > +			       u64 addr, unsigned long roots, bool gva_flush);
+> > >  void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+> > >  			     u64 addr, unsigned long roots);
+> > >  void kvm_mmu_invpcid_gva(struct kvm_vcpu *vcpu, gva_t gva, unsigned long pcid);
+> > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > > index ac133abc9c173..f5e0d2c8f4bbe 100644
+> > > --- a/arch/x86/kvm/mmu/mmu.c
+> > > +++ b/arch/x86/kvm/mmu/mmu.c
+> > > @@ -6158,8 +6158,8 @@ static void kvm_mmu_invalidate_addr_in_root(struct kvm_vcpu *vcpu,
+> > >  	write_unlock(&vcpu->kvm->mmu_lock);
+> > >  }
+> > >  
+> > > -static void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+> > > -				      u64 addr, unsigned long roots, bool gva_flush)
+> > > +void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+> > > +			       u64 addr, unsigned long roots, bool gva_flush)
+> > >  {
+> > >  	int i;
+> > >  
+> > > @@ -6185,6 +6185,7 @@ static void __kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu
+> > >  			kvm_mmu_invalidate_addr_in_root(vcpu, mmu, addr, mmu->prev_roots[i].hpa);
+> > >  	}
+> > >  }
+> > > +EXPORT_SYMBOL_GPL(__kvm_mmu_invalidate_addr);
+> > >  
+> > >  void kvm_mmu_invalidate_addr(struct kvm_vcpu *vcpu, struct kvm_mmu *mmu,
+> > >  			     u64 addr, unsigned long roots)
+> > > diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
+> > > index a2d601cd4c283..9e29f87d3bd93 100644
+> > > --- a/arch/x86/kvm/svm/svm.c
+> > > +++ b/arch/x86/kvm/svm/svm.c
+> > > @@ -2483,6 +2483,7 @@ static int clgi_interception(struct kvm_vcpu *vcpu)
+> > >  
+> > >  static int invlpga_interception(struct kvm_vcpu *vcpu)
+> > >  {
+> > > +	struct vcpu_svm *svm = to_svm(vcpu);
+> > >  	gva_t gva = kvm_rax_read(vcpu);
+> > >  	u32 asid = kvm_rcx_read(vcpu);
+> > >  
+> > > @@ -2492,8 +2493,41 @@ static int invlpga_interception(struct kvm_vcpu *vcpu)
+> > >  
+> > >  	trace_kvm_invlpga(to_svm(vcpu)->vmcb->save.rip, asid, gva);
+> > >  
+> > > -	/* Let's treat INVLPGA the same as INVLPG (can be optimized!) */
+> > > -	kvm_mmu_invlpg(vcpu, gva);
+> > > +	/*
+> > > +	 * APM is silent about using INVLPGA to flush the host ASID (i.e. 0).
+> > > +	 * Do the logical thing and handle it like INVLPG.
+> > > +	 */
+> > > +	if (asid == 0) {
+> > > +		kvm_mmu_invlpg(vcpu, gva);
+> > > +		return kvm_skip_emulated_instruction(vcpu);
+> > > +	}
+> > > +
+> > > +	/*
+> > > +	 * Check if L1 specified the L2 ASID we are currently tracking. If it
+> > > +	 * isn't, do nothing as we have to handle the TLB flush when switching
+> > > +	 * to the new ASID anyway. APM mentions that INVLPGA is typically only
+> > > +	 * meaningful with shadow paging, so also do nothing if L1 is using
+> > > +	 * nested NPT.
+> > > +	 */
+> > > +	if (!nested_npt_enabled(svm) && asid == svm->nested.last_asid)
+> > > +		invlpga(gva, svm->nested.vmcb02.asid);
+> > 
+> > Hi, 
+> > 
+> > IMHO we can't just NOP the INVLPGA because it is not useful in nested NPT case.
+> > 
+> > If I understand the APM correctly, the CPU will honor the INVLPGA
+> > request, even when NPT is enabled, and so KVM must do this as well.
+> > 
+> > It is not useful for the hypervisor because it needs GVA, which in case of NPT,
+> > the hypervisor won't usually track, but we can't completely rule out that some
+> > hypervisor uses this in some cases.
+> 
+> Yeah I knew this was going to be a contention point, was mainly waiting
+> to see what others think here.
+> 
+> I guess we can just map the ASID passed by L1 to the actual ASID we use
+> for L2 and execute the INVLPGA as-is with the gva passed by L1.
 
-Applied, thanks!
 
-Regards,
-Boqun
+If I understand correctly, we in essence support only 2 nested ASIDs: 0 and the one that
+L1 used last time. Anything else will get flushed on next VM entry.
+ 
+So, if I understand this correctly all we need to do is to drop the 
+'nested_npt_enabled(svm)' check above, and it should work.
 
-> -- Steve
->=20
-> > Suggested-by: Paul E. McKenney <paulmck@kernel.org>
-> > Acked-by: Daniel Bristot de Oliveira <bristot@kernel.org>
-> > Signed-off-by: Ankur Arora <ankur.a.arora@oracle.com>
-> > Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
-> > ---
+
+Best regards,
+	Maxim Levitsky
+
+> 
+> > 
+> > Also, there is out of order patch here: last_asid isn't yet declared.
+> > It is added in patch 10.
+> 
+> Good catch, I will fix that, thanks!
+> 
+
+
 
