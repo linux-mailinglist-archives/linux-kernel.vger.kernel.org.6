@@ -1,262 +1,108 @@
-Return-Path: <linux-kernel+bounces-546616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5544AA4FCD4
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:53:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BFD7A4FCDD
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:55:29 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D71FC16590C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:53:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCA801885533
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3D82192F1;
-	Wed,  5 Mar 2025 10:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F78C221F0C;
+	Wed,  5 Mar 2025 10:55:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="kMN/xG5Y";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="cdyf4X0l"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="NER7FOob"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763F520D508;
-	Wed,  5 Mar 2025 10:53:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741172016; cv=none; b=oaacM4adX45kYWSxk+E3v1SEarGQOtiLa7tcV0KZjKJwLyE6kXllHzBKbTH3mjeV0OrpX/dRHDl/5k6+8rJqAiKBStq6neriMTSe1iCKtwfDH5ajcwkTEPJYIn8hbdWLwZytCY1phcieEPy3NNe3k9n5XTklMQVOs+hrscuQewU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741172016; c=relaxed/simple;
-	bh=7f3eiq8c9Zl8+3eUyWKxTZdcU+vENu8FJOnc9VQEkt0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NYfm/Cr/Rm4yO4LvpWxOgc/Yzmy8D5rZ+AqEDrVYZotR2n+UfRRiMytxRMK23qWBF23EOyL5qnpGAUNF0TFMKJNKVczOMTrzzjOVa00tRX/ve6/TeDM9zG2JVksnBoGv5Lk2sey+MOW/4UmNYp6B/YU/1xVPQzmwp2gYLm+eEW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=kMN/xG5Y; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=cdyf4X0l reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1741172011; x=1772708011;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=aafUxfw6iPij9nHv+DrHDc/H4nnT786J23hQpi850og=;
-  b=kMN/xG5Y5EMEuhUQ0ShMvYb9IUhgRvpl4hyCC6CAYyIv6CK2iDKUU7LH
-   0+7dXogNBNYCMKzgf8w+ql9svyxk0KVjA0QCG2zjLxgT4CdmTn7bbqPHn
-   3j0Zm/4+gysQ+2mQmlE9PUP47oz+nyJk+WaTth+vsrwQXRmX4NY6GgsmZ
-   FEcGaCPnja1SeVs9yvPE5vW9bGamggRWmSQEPxXYb82M9KggjKl1kNP6x
-   b/9gSebY5W6bNvCZbslzbcVzLadGPa7gb98C4RBpNxQNTzpnX7kFhh6df
-   yhfJDH8qgstLnX0SHSWMRkkn4Y1R4TuWlN2lQOOvJsdNgCON4y4tuPOIe
-   A==;
-X-CSE-ConnectionGUID: BPavKzvqTmyG3dI92QJn6w==
-X-CSE-MsgGUID: MbqESkNdRZyKfkJOOS86Pw==
-X-IronPort-AV: E=Sophos;i="6.14,222,1736809200"; 
-   d="scan'208";a="42307507"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 05 Mar 2025 11:53:22 +0100
-X-CheckPoint: {67C82D22-23-F35B2447-E1635CDE}
-X-MAIL-CPID: 1759D23DFCF55862F4B229D9F25E3B0D_1
-X-Control-Analysis: str=0001.0A006366.67C82D25.00D9,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 79448163A96;
-	Wed,  5 Mar 2025 11:53:17 +0100 (CET)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1741171998;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=aafUxfw6iPij9nHv+DrHDc/H4nnT786J23hQpi850og=;
-	b=cdyf4X0lWf7VMvYeBXGst4fA6rG903DHRsaJJgIG+SRo229zYkj9WxMAlfF/bwjXkb5Gg2
-	Kwu0yePXx/eoRMVk5cJx3DvwseOQrkZKSnWjDsJEeSOS5Q1WoXM0Wrz7VnPmQsJnXS9XHb
-	bZ/wAuX/sBnuqLRfM7nrdo16OEAkHBnpgrWcG4pNrzqGedNSDUeVV84KPmdsiWKTBbU1fB
-	FsL/kbI+VRasXs5jOV8FcMbyiowNpP4mD09wMJCsbSgaeo/SIRrGmPWSDLy8ESuaya6bMD
-	1bzOvgPRl46zuwfvX12BFwe1yLj5i1e6XLyQFYw2A6QdQu47w7r5H5/zqndx/Q==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Jean Delvare <jdelvare@suse.com>,
-	Guenter Roeck <linux@roeck-us.net>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	linux-hwmon@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] hwmon: (gpio-fan) Add regulator support
-Date: Wed,  5 Mar 2025 11:53:13 +0100
-Message-ID: <20250305105314.2009637-1-alexander.stein@ew.tq-group.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371A8219310;
+	Wed,  5 Mar 2025 10:55:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741172120; cv=pass; b=BYR8T2tkjoDi6/Q4yCEYe1oLN7lqS/vOENT6y6/WP/BPakBfebKhp2lkHk8oOg6UsgD4/9RSDQt9U6pAX0aF0lTiRiSbW+B//+43P8tZ/XkIjjKc12oSoHo2WrW8unEtXbv5F3B/YTdDDADTypoFkX/omt1z/zE8toZQkXFAB9s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741172120; c=relaxed/simple;
+	bh=GYN5w2MzWMmFwGQEgpnu8NbUznqwQSMrIGSbADvQp/0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aYrLhPGNBGLRuv7zkJMkeog2uynFqnnla+bLswhQN74veGtC5SW2q0g+nk+nub/3gZvUbcOnrTXbdurEuWVZIG6MR5CgyMyD5jde/T8oL4uVYBy9cCKOY8zLydTe3QTj8jA9Jf2a8VWkQWg2r6PPNb7rWplh0LvtJy/MsEmDit0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=NER7FOob; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741172021; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=BiJghRD32/9FYVLs2P+J6fdCaN/zWK2c6LsW9GDhkmnrTrn1F8t+JSlVmTEu5YcwX+0dg5OkcD8GstwF2BLIHiCLWE90e6j2x8ntlKYRPLd6iHeY+EIvfdTBwlkRkM2LbFa1oHEBhZQNlVrvEuknvYR27ChTUxB+c2iJRA6s1qM=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741172021; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=dRMz26do/txZBi10Mcoz5fXmESW0PSVQ9DKG49HFVjY=; 
+	b=dC4JJlkhKTXyRwbwtv3Gvyx0h1v3ETJftoZo6tjE2HwirDOxjj2U6uInf1BfNELhHaTpgYaw4ME+GSG3mg3GYASzUFJuk2SNH3WN/hWlfXhhq+joPk2QFVP9+Qr7Evcf9xh3JD5TFWlr6tzuHk1YaxJAEX52zqcCUEkz5fNpQY0=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
+	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741172021;
+	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=dRMz26do/txZBi10Mcoz5fXmESW0PSVQ9DKG49HFVjY=;
+	b=NER7FOobCE625v+5FstETaN/ynlDtm8YWSnCb1UekBY6fC6tzgxYHiZE4muEc6xC
+	KAar5OSGfLCjt1BOtWqzI9ENXU2A1Y5/n54JIsxY4RjWhkWwagN0jDzC7z0ecxgvEmm
+	nzuYnJZMkz4j2YRWFcFab0lOoGOg6eXYz9MLZzL8=
+Received: by mx.zohomail.com with SMTPS id 1741172020269320.1572108278864;
+	Wed, 5 Mar 2025 02:53:40 -0800 (PST)
+Message-ID: <077b7bbb-8ef9-4dcd-9b91-90af4653851b@collabora.com>
+Date: Wed, 5 Mar 2025 13:53:34 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 0/6] Add Synopsys DesignWare HDMI RX Controller
+To: Tim Surber <me@timsurber.de>, Hans Verkuil <hverkuil@xs4all.nl>,
+ Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
+ <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
+ nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
+ nicolas.dufresne@collabora.com,
+ Sebastian Reichel <sebastian.reichel@collabora.com>
+Cc: kernel@collabora.com, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-rockchip@lists.infradead.org,
+ Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Diederik de Haas <didi.debian@cknow.org>
+References: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
+ <78ff36f6-01a7-4df4-b653-c4509fb93af4@timsurber.de>
+ <1039aca7-89b9-44ef-9775-e7852e956362@timsurber.de>
+ <9b4b1e65-127d-422b-a359-a1d8e25652f9@xs4all.nl>
+ <88054acf-3051-414c-aef7-4c0f085d5182@collabora.com>
+ <47e022f4-1c1b-43c4-8f6c-bc1ff23ad39f@collabora.com>
+ <e0e144be-5cf9-4a79-a602-2ab2b7cd9aa1@timsurber.de>
+From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Content-Language: en-US
+In-Reply-To: <e0e144be-5cf9-4a79-a602-2ab2b7cd9aa1@timsurber.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-FANs might be supplied by a regulator which needs to be enabled as well.
-This is implemented using runtime PM. Every time speed_index changes from
-0 to non-zero and vise versa RPM is resumed or suspended.
-Intitial RPM state is determined by initial value of speed_index.
+On 3/5/25 13:41, Tim Surber wrote:
+> Hi,
+> 
+> so the 4:4:4 issue was just a gstreamer bug and it worked when I applied
+> an experimental fix [1].
+> 
+> So everything works for me using the default EDID now.
+> 
+> Tested-by: Tim Surber <me@timsurber.de>
+> 
+> [1]: https://gitlab.freedesktop.org/gstreamer/gstreamer/-/
+> merge_requests/8534
 
-Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
----
-Patch 1 & 2 from v1 [1] have already been applied, although number 2 [2] is not
-yet showing in next-20250305. Patches 3 & 4 (just removing comments) from v1
-have been dropped, so only this patch remains.
+Awesome! Glad this has been resolved, thanks for the testing.
 
-Changes in v2:
-* Make regulator non-optional
-
-[1] https://lore.kernel.org/all/20250210145934.761280-1-alexander.stein@ew.tq-group.com/
-[2] https://web.git.kernel.org/pub/scm/linux/kernel/git/groeck/linux-staging.git/commit/?h=hwmon-next&id=9fee7d19bab635f89223cc40dfd2c8797fdc4988
----
- drivers/hwmon/gpio-fan.c | 81 ++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 77 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/hwmon/gpio-fan.c b/drivers/hwmon/gpio-fan.c
-index cee3fa146d69a..db918d6858325 100644
---- a/drivers/hwmon/gpio-fan.c
-+++ b/drivers/hwmon/gpio-fan.c
-@@ -20,6 +20,9 @@
- #include <linux/gpio/consumer.h>
- #include <linux/of.h>
- #include <linux/of_platform.h>
-+#include <linux/pm.h>
-+#include <linux/pm_runtime.h>
-+#include <linux/regulator/consumer.h>
- #include <linux/thermal.h>
- 
- struct gpio_fan_speed {
-@@ -42,6 +45,7 @@ struct gpio_fan_data {
- 	bool			pwm_enable;
- 	struct gpio_desc	*alarm_gpio;
- 	struct work_struct	alarm_work;
-+	struct regulator	*supply;
- };
- 
- /*
-@@ -125,13 +129,38 @@ static int __get_fan_ctrl(struct gpio_fan_data *fan_data)
- }
- 
- /* Must be called with fan_data->lock held, except during initialization. */
--static void set_fan_speed(struct gpio_fan_data *fan_data, int speed_index)
-+static int set_fan_speed(struct gpio_fan_data *fan_data, int speed_index)
- {
- 	if (fan_data->speed_index == speed_index)
--		return;
-+		return 0;
-+
-+	if (fan_data->speed_index == 0 && speed_index > 0) {
-+		int ret;
-+
-+		ret = pm_runtime_resume_and_get(fan_data->dev);
-+		if (ret < 0) {
-+			dev_err(fan_data->dev,
-+				"Failed to runtime_get device: %d\n", ret);
-+			return ret;
-+		}
-+	}
- 
- 	__set_fan_ctrl(fan_data, fan_data->speed[speed_index].ctrl_val);
-+
-+	if (fan_data->speed_index > 0 && speed_index == 0) {
-+		int ret;
-+
-+		ret = pm_runtime_put_sync(fan_data->dev);
-+		if (ret < 0) {
-+			dev_err(fan_data->dev,
-+				"Failed to runtime_put device: %d\n", ret);
-+			return ret;
-+		}
-+	}
-+
- 	fan_data->speed_index = speed_index;
-+
-+	return 0;
- }
- 
- static int get_fan_speed_index(struct gpio_fan_data *fan_data)
-@@ -499,6 +528,8 @@ static void gpio_fan_stop(void *data)
- 	mutex_lock(&fan_data->lock);
- 	set_fan_speed(data, 0);
- 	mutex_unlock(&fan_data->lock);
-+
-+	pm_runtime_disable(fan_data->dev);
- }
- 
- static int gpio_fan_probe(struct platform_device *pdev)
-@@ -521,6 +552,11 @@ static int gpio_fan_probe(struct platform_device *pdev)
- 	platform_set_drvdata(pdev, fan_data);
- 	mutex_init(&fan_data->lock);
- 
-+	fan_data->supply = devm_regulator_get(dev, "fan");
-+	if (IS_ERR(fan_data->supply))
-+		return dev_err_probe(dev, PTR_ERR(fan_data->supply),
-+				     "Failed to get fan-supply");
-+
- 	/* Configure control GPIOs if available. */
- 	if (fan_data->gpios && fan_data->num_gpios > 0) {
- 		if (!fan_data->speed || fan_data->num_speed <= 1)
-@@ -548,6 +584,17 @@ static int gpio_fan_probe(struct platform_device *pdev)
- 			return err;
- 	}
- 
-+	pm_runtime_set_suspended(&pdev->dev);
-+	pm_runtime_enable(&pdev->dev);
-+	/* If current GPIO state is active, mark RPM as active as well */
-+	if (fan_data->speed_index > 0) {
-+		int ret;
-+
-+		ret = pm_runtime_resume_and_get(&pdev->dev);
-+		if (ret)
-+			return ret;
-+	}
-+
- 	/* Optional cooling device register for Device tree platforms */
- 	fan_data->cdev = devm_thermal_of_cooling_device_register(dev, np,
- 				"gpio-fan", fan_data, &gpio_fan_cool_ops);
-@@ -568,6 +615,28 @@ static void gpio_fan_shutdown(struct platform_device *pdev)
- 	}
- }
- 
-+static int gpio_fan_runtime_suspend(struct device *dev)
-+{
-+	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	if (fan_data->supply)
-+		ret = regulator_disable(fan_data->supply);
-+
-+	return ret;
-+}
-+
-+static int gpio_fan_runtime_resume(struct device *dev)
-+{
-+	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
-+	int ret = 0;
-+
-+	if (fan_data->supply)
-+		ret = regulator_enable(fan_data->supply);
-+
-+	return ret;
-+}
-+
- static int gpio_fan_suspend(struct device *dev)
- {
- 	struct gpio_fan_data *fan_data = dev_get_drvdata(dev);
-@@ -595,14 +664,18 @@ static int gpio_fan_resume(struct device *dev)
- 	return 0;
- }
- 
--static DEFINE_SIMPLE_DEV_PM_OPS(gpio_fan_pm, gpio_fan_suspend, gpio_fan_resume);
-+static const struct dev_pm_ops gpio_fan_pm = {
-+	RUNTIME_PM_OPS(gpio_fan_runtime_suspend,
-+		       gpio_fan_runtime_resume, NULL)
-+	SYSTEM_SLEEP_PM_OPS(gpio_fan_suspend, gpio_fan_resume)
-+};
- 
- static struct platform_driver gpio_fan_driver = {
- 	.probe		= gpio_fan_probe,
- 	.shutdown	= gpio_fan_shutdown,
- 	.driver	= {
- 		.name	= "gpio-fan",
--		.pm	= pm_sleep_ptr(&gpio_fan_pm),
-+		.pm	= pm_ptr(&gpio_fan_pm),
- 		.of_match_table = of_gpio_fan_match,
- 	},
- };
 -- 
-2.43.0
-
+Best regards,
+Dmitry
 
