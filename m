@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-547383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C0DA5066C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:35:00 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAD1EA5066F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:35:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FFE03A5428
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:34:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3B3D2189121E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:35:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836B92505D3;
-	Wed,  5 Mar 2025 17:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 160962505D3;
+	Wed,  5 Mar 2025 17:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b8slCI8w"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IHxYOIn3"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1FD1A9B2C;
-	Wed,  5 Mar 2025 17:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5031FA95C
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741196071; cv=none; b=ME4QUDWdpIDa9fxMj82enEra+xhc0Vd3jVwKqtFMaFVO6mZlY/bBBIvM/cqy+aZnI3oGel2SMHv4TAAv0Jzg6njXJMeFPE+KY54peGnTm7QOgx6B8nMlI3lqESeFLjTjl2V3vRgHX9IiQmWpXQ1KRIv3MUCTshPFC6rhxydQhHg=
+	t=1741196133; cv=none; b=CFQy1AoeMxal6ntJcf+ybO0u5qQ3pBCN7dQf7lTQJwbQGkOJT5dHqtkZXFGmGS9PPdRz28s3cP1XDE/uY2VBj8L/OVyciKMxNTz9fLrpXMKVTPxInJVWINzK77Mbc2HO7qja4NTNULfP/ufmzyFe82CpwLlgPDgPqVKF88sPSho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741196071; c=relaxed/simple;
-	bh=Q7tZdGiz//alVM/39HNaFeqFv5iOuMH45TZOP69sPZI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A0RZe85hrRPVpYzOCppEwKeqsYxkLf8hzxGxzSWro/dnhqofD2tyoDclKC1nvhq1LoZE91FVYVdsTKI5OaEEsTiNAIAzuNYNqBkZOC2NoXbGfSR3sqeVb6BlsjyAYnymtEMaGTsoZN/qYNq3vZTML4Ag1lEk9yJpP9EuGOZp0gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b8slCI8w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BA5CBC4CED1;
-	Wed,  5 Mar 2025 17:34:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741196070;
-	bh=Q7tZdGiz//alVM/39HNaFeqFv5iOuMH45TZOP69sPZI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b8slCI8webvsNko6Qht67wOJqNXeDy9d/AdScjQSNtzDlZ38aJ/3F8uj2Cb8R1scg
-	 AgFvRae2Dtp5v+YOB2y8PzvyFzFm/0/jw4gzk9Eh5TGfcHZc9NXlnrNBDCWuaQk79z
-	 qpqg+gd0Z3nBnAPcgnU+QVs47QLh3JGmtU1AldkqwXBuDahh0ANgP9QHNaTFEQzpEg
-	 KVeHcJzxB+M/pY6bQmloITS+/b37SPTVqfcjqQ+lDzl6P/X63ffHErqpakMy6bTMeq
-	 3lrdfAgQtpeugssSPQS0QybY5Jewvs3hPaPpMw0vA0fOBt1AgBqG0tf9QBZrjE1PKx
-	 kABHWIld3GiQA==
-Date: Wed, 5 Mar 2025 18:34:27 +0100
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Miguel Ojeda <ojeda@kernel.org>, Danilo Krummrich <dakr@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	Lyude Paul <lyude@redhat.com>, Guangbo Cui <2407018371@qq.com>,
-	Dirk Behme <dirk.behme@gmail.com>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Tamir Duberstein <tamird@gmail.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v8 00/14] hrtimer Rust API
-Message-ID: <Z8iLIyofy6KGOsq5@localhost.localdomain>
-References: <aIJ0ymzdUceCN05hwJpth4erH5u2SHYzYl52wGeT3uiO9bdk92ZkEmEEq9a9NXsInJYSz9uziwq-1fvdsXoeDA==@protonmail.internalid>
- <20250218-hrtimer-v3-v6-12-rc2-v8-0-48dedb015eb3@kernel.org>
- <877c5mci3p.fsf@kernel.org>
- <5kF-NYTBZbEqnnQud5LKnRXO0lfM0i6I2PoeFrpKDhCYwUuk_bG2Li1T1Nuv82r3VFD8adTcdx7yenXSIfTwmw==@protonmail.internalid>
- <Z7eYp_vZo5yDVOdI@pavilion.home>
- <87frk7hera.fsf@kernel.org>
- <Z7hheOSAuKdhq-1C@pavilion.home>
- <CANiq72mpYoig2Ro76K0E-sUtP31fW+0403zYWd6MumCgFKfTDQ@mail.gmail.com>
+	s=arc-20240116; t=1741196133; c=relaxed/simple;
+	bh=pHTYXfPrj8V8AbHEsvsY+SiWSQhwTD7mKEix6kuTEp4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bgBBARRWQn9q1xsJvf7FFvnHslHq4GlVftMbGy+i7gA8gHpllsQBSZyD1kVlTDh5NswQ3LS56nSem7/FKALQ0jzdQgNxML5W6uobZ2ctO/qn4J2gvDs0kp1h6f2UbvcDKKyO6Q/mVIhUNs7BpWkhZImZ4zf9cd8ExcGAvGgfFz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IHxYOIn3; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5e535d16180so5299598a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:35:30 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1741196129; x=1741800929; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=SM8bR6f4jLNAYKl22df1LLHJ43Y/HeDR/Ded9gUNkcw=;
+        b=IHxYOIn3cwrCs86XEl45AYoavl6RiKxO4AKuZwtRfufZkWsR4CeDQlM3Cs/pO1tGTf
+         RjSs3gD3eDp39+dVpWuA8kTk+qSVallfsD/hrJSNe5U5pK9BugIV33q9oIIYjepZw2aD
+         dM4zsDaV64sWy8i5hEeaTklKwg13EnLIGFUao=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741196129; x=1741800929;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SM8bR6f4jLNAYKl22df1LLHJ43Y/HeDR/Ded9gUNkcw=;
+        b=xMfwhidaOVju1/pDzaYXoDNNkgYhnMlsIiKVmIoBg8h/IpduWkOHPdgnF7TZC7J+5X
+         yhXWHo5r20RwD6j/cXwpwPuMQQdDluoypKelRd1iMaYK3R5aqR/K6KfSfYZNrTmldH65
+         Sa0WOHiG8gMsHwieD0zqJrMuvL/Uc9gLrFRgiq0MlDVYNSlv/cWPh7f2oLLPRHI6U98D
+         +n6NqTmfXJO02WWlFLP/wWLPuuGKifagJz/Uerl54URXUYX5QBEZbnUXtcYxsDfuqgD+
+         /zzccF3XpRghhAc4feu9WdOkeT0ib9NFzMoev31CfWec/QNd18zfuAk9XG2kDx9JY38s
+         oz3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUTaN9kKC14GNZX8QrtKVpqcnwdzafmkVAGwcg/KO8Sbatp+xyQ6uKWmnaxo7al8YyGB3TrJ2RznHfdZvw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxfn/JXRP+UWjj3xnM8pGnyWpdGzVd2DTlSgfaKm10eHR0/NxwM
+	Zme7Sd/Q4TSTQFJiVUu+l8Aby9TaeoNJi6QSpeIm1AxvUGcaN9KWk30aH7nqYZ/GEc4AIdZRE5q
+	8gH2Prw==
+X-Gm-Gg: ASbGnctM4Pt1l9CwAieXV2nEUpqTuL5EzlIhvm/atl5DZf+XsFSWXJKHZHwcOSv+sSJ
+	qTz8Jql8Q+96z+r3Vuc2L94Xyp6K4cVwxSQVV/eRbqBqnAluK71aSPSUsRHrxOdp1uf52T7tDMQ
+	yzIxyJnY7Z0zU2SYLHbwlDJPh938bumkKLIAKxXiILnSHGEQz3TMDu8p5gJYYQJ69bHyKfkj+ka
+	nslZn9/5dicrNZ6Lpb8bTUlLnsM1seGv2pCcc96RBP6/zMHH0ikcK8yJMy9p5IMQJnMsvgb5D0F
+	C9qCRBX6eHv+ZmY+Dr0TAF2T0tFIdv1zIuTNN0gM0a3YdSICtnyeF1tFQDO1CBK0zrk+g7rWt5i
+	FTMqMA8EEojh99nUH/8g=
+X-Google-Smtp-Source: AGHT+IGl5CThi90QVbC7Po/FDzmL65eTG4ZVhU2Dd9qiq7SAPHzMiFFK7kQFbh+P5PhW96J7lmnExA==
+X-Received: by 2002:a05:6402:274d:b0:5e0:49e4:2180 with SMTP id 4fb4d7f45d1cf-5e59f47cdc3mr8386810a12.25.1741196129035;
+        Wed, 05 Mar 2025 09:35:29 -0800 (PST)
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com. [209.85.128.46])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-ac1e382a04bsm418377366b.163.2025.03.05.09.35.28
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 09:35:28 -0800 (PST)
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43bbb440520so41965085e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:35:28 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCV8xW6NnjkzGb6pxbJjIRc6XqOqsYDjE2Pr0uZU89l1m9OnRLZFbBNhzQ/rCsSNxEZnyrnbvs4JfU6kxN8=@vger.kernel.org
+X-Received: by 2002:a5d:598d:0:b0:391:158f:3d59 with SMTP id
+ ffacd0b85a97d-3911f74088bmr3981462f8f.15.1741196127813; Wed, 05 Mar 2025
+ 09:35:27 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANiq72mpYoig2Ro76K0E-sUtP31fW+0403zYWd6MumCgFKfTDQ@mail.gmail.com>
+References: <20250305204609.5e64768e@canb.auug.org.au> <20250305112301.2897-1-kprateek.nayak@amd.com>
+In-Reply-To: <20250305112301.2897-1-kprateek.nayak@amd.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 5 Mar 2025 07:35:10 -1000
+X-Gmail-Original-Message-ID: <CAHk-=whuh+f8C4u+gCkxRZyrt7Gw_FFw_pKn-2SnTovZOvEKmg@mail.gmail.com>
+X-Gm-Features: AQ5f1JpVncbQJB8CMWOiHCOAk_h_Z8i-dDxgl5v-NmRX9Bj6aemi-yO_tNgOHd0
+Message-ID: <CAHk-=whuh+f8C4u+gCkxRZyrt7Gw_FFw_pKn-2SnTovZOvEKmg@mail.gmail.com>
+Subject: Re: [PATCH] include/linux/pipe_fs_i: Add htmldoc annotation for
+ "head_tail" member
+To: K Prateek Nayak <kprateek.nayak@amd.com>
+Cc: Oleg Nesterov <oleg@redhat.com>, Stephen Rothwell <sfr@canb.auug.org.au>, linux-kernel@vger.kernel.org, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>, Swapnil Sapkal <swapnil.sapkal@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 
-Le Sat, Feb 22, 2025 at 02:04:16PM +0100, Miguel Ojeda a écrit :
-> On Fri, Feb 21, 2025 at 12:20 PM Frederic Weisbecker
-> <frederic@kernel.org> wrote:
-> >
-> > I was thinking the patchset would be better routed towards the Rust tree?
-> >
-> > How do you guys proceed usually with bindings tree maintainance?
-> 
-> So far, what we have been doing is ask maintainers, first, if they
-> would be willing take the patches themselves -- they are the experts
-> of the subsystem, know what changes are incoming, etc. Some subsystems
-> have done this (e.g. KUnit). That is ideal, because the goal is to
-> scale and allows maintainers to be in full control.
-> 
-> Of course, sometimes maintainers are not fully comfortable doing that,
-> since they may not have the bandwidth, or the setup, or the Rust
-> knowledge. In those cases, we typically ask if they would be willing
-> to have a co-maintainer (i.e. in their entry, e.g. like locking did),
-> or a sub-maintainer (i.e. in a new entry, e.g. like block did), that
-> would take care of the bulk of the work from them.
-> 
-> I think that is a nice middle-ground -- the advantage of doing it like
-> that is that you get the benefits of knowing best what is going on
-> without too much work (hopefully), and it may allow you to get more
-> and more involved over time and confident on what is going on with the
-> Rust callers, typical issues that appear, etc. Plus the sub-maintainer
-> gets to learn more about the subsystem, its timelines, procedures,
-> etc., which you may welcome (if you are looking for new people to get
-> involved).
-> 
-> I think that would be a nice middle-ground. As far as I understand,
-> Andreas would be happy to commit to maintain the Rust side as a
-> sub-maintainer (for instance). He would also need to make sure the
-> tree builds properly with Rust enabled and so on. He already does
-> something similar for Jens. Would that work for you?
-> 
-> You could take the patches directly with his RoBs or Acked-bys, for
-> instance. Or perhaps it makes more sense to take PRs from him (on the
-> Rust code only, of course), to save you more work. Andreas does not
-> send PRs to anyone yet, but I think it would be a good time for him to
-> start learning how to apply patches himself etc.
-> 
-> If not, then the last fallback would be putting it in the Rust tree as
-> a sub-entry or similar.
-> 
-> I hope that clarifies (and thanks whatever you decide!).
+On Wed, 5 Mar 2025 at 01:24, K Prateek Nayak <kprateek.nayak@amd.com> wrote:
+>
+> Add htmldoc annotation for the newly introduced "head_tail" member
+> describing it to be a union of the pipe_inode_info's @head and @tail
+> members.
 
-Yes this clarifies a lot, thanks for the detailed options.
-I think it's preferrable that you guys maintain it because you
-are the experts with these Rust bindings and you'll be much
-more flexible committing and pushing to your own tree instead
-of waiting on us lagging to comprehend the content of each
-pull requests.
+Applied.
 
-Just keep us in Cc so we stay in touch with what's going on.
+I also committed the pipe_occupancy() fix for 32-bit, but did so
+without testing - it was ObviouslyCorrect(tm), but considering that
+everybody missed it in the original patch, "obvious" is all relative.
 
-Thanks a lot!
+And it turns out my worry about pipe_discard_from() was unnecessary.
+Yes, the code is buggy. But no, it doesn't matter. Why? There are no
+callers of that function ;)
 
-> 
-> Cheers,
-> Miguel
+That said, I still hope people will take a look at the code and see if
+there's anything else I missed.
+
+Oh, and testing. Testing would be good.
+
+        Linus
 
