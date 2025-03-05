@@ -1,82 +1,79 @@
-Return-Path: <linux-kernel+bounces-546234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DCC0A4F82A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:44:16 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1BE8A4F82C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 08:44:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EBFE16CBB0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:44:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 625F93A47A6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 07:44:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCF361DED5F;
-	Wed,  5 Mar 2025 07:44:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58B771F419A;
+	Wed,  5 Mar 2025 07:44:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="qQBwqW5F"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="Rgm7zUuT"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 812721DE4EC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:44:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB9A1F153A
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 07:44:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741160652; cv=none; b=Jvss8rojeg4XpPUi6iPpNeRzE1jTjMmcFFTKRgBziMJl3b5gLesPut1TWzWdOHD5POw+cEXocTu5FxPUNordLjy75GDntXM/Xs4gQdqfyLYhRMm8jcpU6NAPhL0SKkp8TV+uynmi0r22/CCWRPPUKtZKfLUZhlMqWAOOLjvEzQs=
+	t=1741160665; cv=none; b=qUcb0fk4HFtcteF3WH7NoxWal2H3sJSXpyGFGnzEqswPgYlY3Nsl94r7Aabvax2hW3Bax2TW5uRjubvaan+OuDKLztS0I6T+LPHdqF9JHH6AobkdIEJd/SjflM3iZ5ScjBY3/Rq4nRf0ITkfM+rY0oUFWBoQnNSwPr/q6ypH5i0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741160652; c=relaxed/simple;
-	bh=so1vOChmRHXBlFtvjtF17fRyfqlljb1Gqqi3fIjYvmE=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BeGws6YwJUHcXPijc0zrsqeJVCDSfuIsMjemPpO7F0wpORNXTanhNQWuRFiIm6lKlIobDaYE62DYZej7Wp9jqdmwQKwhic8ob1EEvP1CBVkZDuFP2sLtExFhEOjtceSX+uy7qjgItIzTvOIvpBiT/C27/KbdL6V/CJ4yVT0VB78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=qQBwqW5F; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43995b907cfso41399375e9.3
-        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:44:09 -0800 (PST)
+	s=arc-20240116; t=1741160665; c=relaxed/simple;
+	bh=UrNgFfuy70+VwkPgxKQZ6ZdnvRh29b6/odukdfgIbj0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=howndhzp3ExNynFlGB6IpONREoQxhYdNLXmKe4u3YwsxNJGFvcdmh5b8gAuOVv2/JslPDeJSluYgygBeqwvtfgxyMndYtzOdXyn+WqV3sPHInbFoMQMBbxteRe+gOBzOFhilaSjFrfm8zwazCNbHnpOVGUFIEt98PfX1Op4t05A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=Rgm7zUuT; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-ac1f5157c90so264444466b.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 23:44:23 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741160648; x=1741765448; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=+aVVWfpM/R7114kq8yw+67pir5NUPFWO9h9JRxaS7qo=;
-        b=qQBwqW5FHdq5FgVHJ7n9X8Z17sp5mtrNMv1ze68knpYPQeEnfqvnuSoqsuCsEQ2PoE
-         HgdoOtrtBE47wV2fWkdSgsEIcGHBezYbvXft90kLiLt3MD0U0n8HwlSpoQ0HzLiHBs18
-         T0NrrVJuud3wOhFlHgkfNgh2acLckRpwiWdQ2+hBN1qgTelF14GB9WxNHjJduvnPzdqo
-         mJ05KRx0rQusiiLF8W1n0QDJjX9H3+emVi2uw9KozZPq2FmMPuYQfGEbC0zWvJgcR+/Q
-         7plHFEjOm/rk/eN5gnkJ91lRrxpYvZStk3E3NpA2sU8w1tAhr1O+TNA/cHwP0U4Lxi2E
-         jxPQ==
+        d=suse.com; s=google; t=1741160662; x=1741765462; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=1nldCz0GLZ3kYSpyVKXApLHSDBz6vCT9Ad7Pgzjf9wI=;
+        b=Rgm7zUuTz+aU+Zkl3TcTyDR40rknetSkopNPCj/oSmxLfT35JjLSfnqAIQxD9gGFzs
+         uDp5wuq34Gl1gVeC2LyMxLVy738NuD1kchn2SYU8qZBFdFGLoG6CbWoLuSKO0bt1QxGZ
+         WNVVRVPRZ3O/FPz1mIaFdr7i6cHPJeQpSJnxVhyYzmEBXSIYabPJsbSLN+SKoiASpLEH
+         Bjh1+ZA7jF19zBzw6kzKKOQVf0Vy6oc3J4crZD8MVTbwi3XghH7vSWXpmGWwzZfguYfV
+         R/Y2XjjHDTUPTNFCN1PLz1U6sOSEfM95KxLDLZ0kUKygW85trDx1LL4lThhTgC89sFJr
+         up7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741160648; x=1741765448;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=+aVVWfpM/R7114kq8yw+67pir5NUPFWO9h9JRxaS7qo=;
-        b=mhz83kC+fyV43xcDUi5x51iaOh5qzQTiJaVETBsMtxelWXDGQA/klcAKpfr/yoGI4C
-         EJKZaHs0FceVyvpE7+teeQCfhhm1eGcgtP22JbJ9zcCl9ccpw4ZVF5zkHk8qHLA1Gl/w
-         2Dj5Le6fAueBmbTuJ1sHXjlwETryAUNJ4Ru++ihdF7A2wGAf0kQ1eD9Ot5xVcWdL6ChP
-         dHJ6QSWMcHgHGd1voJB9ZtGW6PUCB5ure7dnmJ5Kx/CY1Qobl2R3fNievULM3T2fU+C1
-         JRAQoD3D6I5Q3oW9gIZCPq1bO0+Hkf4IiTcjHq5aASQrvocW3r+CeMZLVhvZ1p7MTkbI
-         VwfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHkwqrYWiTk7AqthcCvTPdwFDxHWvfaKDNogD72+RMm+wrAdoEurvtz17K5PudLJvua6X10ThtILvi/co=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywyd+9v1HXSMzF2a4J7nfEs1clWRi/t/HErLXlnyn7j+IGDuYU5
-	zyKTiDFPSMe31TCFGBVEweJYI/6qvxw6+Tk0hSdl38J2Exl/Mta9gn/yypN6qfdsvj1H5cRrxuj
-	8
-X-Gm-Gg: ASbGncs57T7xnrzLHMozHF3xzuHvh3LAc8TTDixZsvUOvYbtAFCcxFD9Eq4GNlljgOr
-	Am64RZ9t8l8OQoO7SkQlUyxpLZptZ47phyEvvl4Z6JEBBYE+P9srJ+6aoJE0iJwM3rAHaWxhsz+
-	kQ+v9rEJwcLpAgEz7qrveLWTUQ/VTnml/SgTz+LCTtMR/Pb4m5EjCmxJ2MTTQAJqgCOplIfnJ5u
-	n4d1TrjTuP8vM6vLmRThpt/OkRp+Pcm5DeBU/EL+n9VysfoNavePtYIkPXZ3uxGUdE6joYOOSX2
-	tMB5KSPdQbg07bwg+qIbLg4enX8PNE0g5c2wcDUj0PoMuYKXk1HigQnlsRU9ICjPd2UoJ47xgyv
-	uLwyZGTq14qT1dpPQl1E=
-X-Google-Smtp-Source: AGHT+IEPvMkwnzMHESBZZ3ISL/jIpWI/iMcyXh+NYDVcMmY+PloN4Ai5r0S5PZs9sI+S0GqIqmbenw==
-X-Received: by 2002:a05:600c:4f15:b0:439:8c80:6af2 with SMTP id 5b1f17b1804b1-43bd2ae000emr10350255e9.21.1741160647791;
-        Tue, 04 Mar 2025 23:44:07 -0800 (PST)
-Received: from ?IPV6:2a01:e0a:982:cbb0:80fe:f5c:3d29:e407? ([2a01:e0a:982:cbb0:80fe:f5c:3d29:e407])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bd426c355sm9274075e9.1.2025.03.04.23.44.07
+        d=1e100.net; s=20230601; t=1741160662; x=1741765462;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1nldCz0GLZ3kYSpyVKXApLHSDBz6vCT9Ad7Pgzjf9wI=;
+        b=pSTWEa8aF+tE8tMEPJ/W/IEl0em5h1RL+OBDpJQvxgOIUsjedmO5dOV8RLO9k4QDGN
+         ZjGA9FVzuL1ev0SJ3UIASr+FYruAkei64NskgrGpAuhU5ja4qiAn1IRTpzYs4M9iC/Kr
+         77JTC5m2yeQkXN+N5ltmT9bche9bH1yQ/u588E2U24+Xt1tTQz/imMKUJooZjjozhKaL
+         pFb4Jvhm96UjyxBHGx6DN3y59NY4pCjF0go0TIF/Zj1H6qlogJAhgX7vPDwP7DFrNKrS
+         IFIiPnzEPq8Je4ijpqLtF436B7DuDwH4B/8DLehkUlA0PuoFnrpitXNqGSzYjCCSFewR
+         ti2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXjiHrN0wd6LUbonkt/fVyc1UaLpfxwfahaho569ePHwx0xNiKhAVvGVTlQ6LA3Hd8baz89nj1cC3ymgV0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzF/8yxHXVMcBkOh6TruBUYPGLJ07nNVQD1IQQZ5ixgLGT5aCK5
+	V+ZBvjdObeszoTrIFaSYc/F/29n+8dPpRv+lyBulMH+AHRsMWrM+W2JSYIzFUII=
+X-Gm-Gg: ASbGncvBQKCxs1PchUE2lJVJ7wVaynllAhRmPbOWtjD3rfkeI7IKMykdHR5qx/BbyL0
+	GQAEnlK9W5ac9RISbVZvyLs/Z5P8fUamUCGJhmRBRWQNcWODuK91JpuXC2gsOx8agk1SMi+iNCi
+	5S4mZ1ZsgpTJZlK4QL4vEZz+PBDHPgCizpVOowR/7+GbM7+ox5hQj7yu3X4lG5dAdFDvOB7+4B0
+	LhwyJ7wVYW8RfdDFKDS2ps9aGP3s44eM0q3fcJv0LuUhDKpS7JIFKh+oZS8eJL/MOVpp3EGm3IU
+	NHmXAStbfsIOP8gHJMqay36ip9jNOkFrqOnye/LWbzjgW5zJtslLQXqYW9fcxq668XUFiQiR
+X-Google-Smtp-Source: AGHT+IEDD9hLz++jtkr7mot50/VoADnGAIUOd5CuyJMU3KXlvgUIQG53kvXGhMENiPlw/k2p22uueg==
+X-Received: by 2002:a17:907:6d0f:b0:abf:d4a9:a09d with SMTP id a640c23a62f3a-ac20e02de81mr213786066b.47.1741160661447;
+        Tue, 04 Mar 2025 23:44:21 -0800 (PST)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-22350529edasm107223195ad.230.2025.03.04.23.44.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 04 Mar 2025 23:44:07 -0800 (PST)
-Message-ID: <02fb7b29-6af0-40f2-a187-326fd762835a@linaro.org>
-Date: Wed, 5 Mar 2025 08:44:07 +0100
+        Tue, 04 Mar 2025 23:44:20 -0800 (PST)
+Message-ID: <29ec66bd-27a0-443e-b19b-fb759a847dcb@suse.com>
+Date: Wed, 5 Mar 2025 18:14:16 +1030
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,77 +81,97 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/panel: fix Visionox RM692E5 dependencies
-To: Arnd Bergmann <arnd@kernel.org>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Danila Tikhonov <danila@jiaxyga.com>, Eugene Lepshy <fekz115@gmail.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- David Wronek <david@mainlining.org>, Sumit Semwal <sumit.semwal@linaro.org>,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20250304142907.732196-1-arnd@kernel.org>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20250304142907.732196-1-arnd@kernel.org>
+Subject: Re: [PATCH] btrfs/defrag: implement compression levels
+To: Daniel Vacek <neelx@suse.com>, Qu Wenruo <quwenruo.btrfs@gmx.com>
+Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+ David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250304171403.571335-1-neelx@suse.com>
+ <bc3446ce-347f-41da-9255-233e2e08f91c@gmx.com>
+ <CAPjX3FcZ6TJZnHNf3sm00F49BVsDzQaZr5fJHMXRUXne3gLZ2w@mail.gmail.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <CAPjX3FcZ6TJZnHNf3sm00F49BVsDzQaZr5fJHMXRUXne3gLZ2w@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 04/03/2025 15:29, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
-> 
-> The newly added driver uses the DSC helpers, so the corresponding
-> Kconfig option must be enabled:
-> 
-> ERROR: modpost: "drm_dsc_pps_payload_pack" [drivers/gpu/drm/panel/panel-visionox-rm692e5.ko] undefined!
-> 
-> Fixes: 7cb3274341bf ("drm/panel: Add Visionox RM692E5 panel driver")
-> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
-> ---
->   drivers/gpu/drm/panel/Kconfig | 2 ++
->   1 file changed, 2 insertions(+)
-> 
-> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
-> index 5927806cb4a9..e059b06e0239 100644
-> --- a/drivers/gpu/drm/panel/Kconfig
-> +++ b/drivers/gpu/drm/panel/Kconfig
-> @@ -1020,6 +1020,8 @@ config DRM_PANEL_VISIONOX_RM692E5
->   	depends on OF
->   	depends on DRM_MIPI_DSI
->   	depends on BACKLIGHT_CLASS_DEVICE
-> +	select DRM_DISPLAY_DSC_HELPER
-> +	select DRM_DISPLAY_HELPER
->   	help
->   	  Say Y here if you want to enable support for Visionox RM692E5 amoled
->   	  display panels, such as the one found in the Nothing Phone (1)
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
+在 2025/3/5 17:32, Daniel Vacek 写道:
+> On Tue, 4 Mar 2025 at 22:31, Qu Wenruo <quwenruo.btrfs@gmx.com> wrote:
+[...]
+>>
+>> I am not familiar with the compress level, but
+>> btrfs_compress_set_level() does extra clamping, maybe we also want to do
+>> that too?
+> 
+> This is intentionally left to be limited later. There's no need to do
+> it at this point and the code is simpler. It's also compression
+> type/method agnostic.
+
+You're right, the level checks are done in the compression path already.
+
+[...]
+>>>        /* spare for later */
+>>>        __u32 unused[4];
+>>
+>> We have enough space left here, although u32 is overkilled for
+>> compress_type, using the unused space for a new s8/s16/s32 member should
+>> be fine.
+> 
+> That is what I did originally, but discussing with Dave he suggested
+> this solution.
+
+Normally I would be fine with the union, to save some memory.
+
+Maybe I'm a little paranoid, but the defrag ioctl flag check is only 
+introduced last year by commit 173431b274a9 ("btrfs: defrag: reject 
+unknown flags of btrfs_ioctl_defrag_range_args").
+
+So it's possible that some older kernels don't have that commit, and may 
+incorrectly continue by ignoring the flag.
+Thankfully that should fail with -EINVAL (type always in the higher 
+bits, thus always tricking the NR_COMPRESS_TYPES check.
+
+If that layout (type in higher bits, level in lower bits) is 
+intentionally, I'd say it's very clever.
+
+Anyway either solution looks fine to me now.
+
+With that commit message fixed:
+
+Reviewed-by: Qu Wenruo <wqu@suse.com>
+
+Thanks,
+Qu
+> 
+>>
+>> Thanks,
+>> Qu
+> 
+
 
