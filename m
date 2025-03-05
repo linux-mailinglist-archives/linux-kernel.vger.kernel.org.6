@@ -1,58 +1,58 @@
-Return-Path: <linux-kernel+bounces-547765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3396BA50D49
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:25:40 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B830BA50D4C
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:25:54 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E5A7172120
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:25:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 440E57A56AB
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:24:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB1931FECAD;
-	Wed,  5 Mar 2025 21:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DE6020101E;
+	Wed,  5 Mar 2025 21:25:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="SEVI2LBS"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b="iRw7kNwd"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283351C6FE1;
-	Wed,  5 Mar 2025 21:25:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 230971FECCC;
+	Wed,  5 Mar 2025 21:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741209931; cv=pass; b=MVWaVs1lJ282TBm89ogkMARy5WqNJRkMvS3Zr54rZKUfq/LG3xoXLP8QIZ+W2L9cxf9Sxu/9dF+aFlppRWmY8DP7zdfbhJkZD4vOEt4HrOq9ueB93dncx/gspvyfKfkarSX+hACkK0CDDFuZBpnhy4hhlyO8gZUqtKEE7EJ+hEs=
+	t=1741209933; cv=pass; b=F6C3WmLvToEw1pDUAjD+B4xhLyn4ZsdJfZ6eBpnSGkYlNy8e5Fl/vKRWaT0ENzIM7KkCEU73IZOaMmKXxaYvd2LckRA/7t5bGC3mWrF1KPl4yvAww12QGZsZUt7Q1mLolSA8gDZ0SlEsRml5XLwsD1crT3f2Q58H+B/UzmF5ThA=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741209931; c=relaxed/simple;
-	bh=jLOOjWApcp9OJszvlkNggAmMoe8M/uG5DU7YDTZVOTo=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=rQThjDCUxspemtTDxlwWALCBesFgfCQKq+3clFyDbqITeQkOWB1WWe06eJRic06dRc8iFYRObRAuWPdNpbI4V4Aw6JVEqC84jm+Pl5n2+YogzQAqbuIQpZYUCCvaPnNPlCNTxLpVN0PXG/jBgYnKlEbkNHmuuKl+2oN+t1WLFvI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=SEVI2LBS; arc=pass smtp.client-ip=136.143.188.112
+	s=arc-20240116; t=1741209933; c=relaxed/simple;
+	bh=lmP6mTX70m64S1cwVwkdCGsTUrdF91DqCtjdZQJzKro=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=XAAV/fHrFpTDRhBuIXNMWvdqjLzzyZbAhRg3DhXAlAxyHQzI1jAQisyutcs71h6fXwn5Gca/U9KhEi/HNVbgb1LbI0nFHVxSb4V7W7Q4UOg0WswkFnQVuwCb147dTA7ogf1Ot+OAerGA5F0ZgNsq6RpYT49d/3lUDpY73/b7JzE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=nicolas.frattaroli@collabora.com header.b=iRw7kNwd; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741209895; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1741209902; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=bzzh4J066rrlw/ihx9SLlY9zNNloZQebThe9AanCEKNf/e+8VOgCHxIXTTW7xevUvZ4QGun97hwXW7C5PEdExoYn2zIhoAN8n4AyzNGJtJy03F4AEYXvoT3kJsXeP0qtSIq5y36Vmr+WKxNlR1OrNXsfA9y+LFIJ6EAaMKk84Cw=
+	b=LPpRpTOTpGBW1N1KXO6lG4fjXGnEfUiE2GVgGQIVE+onZ0oz0XRV/3pYPdxqmI4AdN//bdvfIbxWXruEFW0GpX8P2CFVTmeGjeyI1Mn7TJOH1pZ8GPVIZIxlLWz6v2ZalWhEEEM7hpChHz6Z71kYoK7xpq1QyBlPJqYq2Swt7UI=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741209895; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=oDZwMEiKq4FsOgak5vQT4YukQizxtAjLgSODP2Tnuxo=; 
-	b=IgTCk5EeMB/shkwzD58Rro5ckfJPfaiucDqxl1CYcYnrHhVxAekcCrM77OFeHftE+YBc1g2tuf9jM/4lBwIrZeXLKfDt70lz17t4OkE7tn+tEL5AVNTbx3PNFDSDsCDnEMccwE4LQAD/aeWZq4OQE0CiaiKPhBbUn0Xc+ISx20s=
+	t=1741209902; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=l0WQdUrdZJvKyXOHu07xCpPjCZtIyq2fPB6xG3qYqGM=; 
+	b=UnXK7L/fOkC2itQLu9yR5izY2gYsVhw2vm4+yXW+H0GB96q/zcRDpe94dsfOFrAkBdFPUBC/yJgASa87J/b4+yUihim/79xDEX6hggg+RH7bGqMWPvwRT3Ahj6CmKJMpY3RDywP7V/2ygDrKwHtRzEsAnRhDNclNCq4OkvhJ8Qk=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=nicolas.frattaroli@collabora.com;
 	dmarc=pass header.from=<nicolas.frattaroli@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741209895;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741209902;
 	s=zohomail; d=collabora.com; i=nicolas.frattaroli@collabora.com;
-	h=From:From:Subject:Subject:Date:Date:Message-Id:Message-Id:MIME-Version:Content-Type:Content-Transfer-Encoding:To:To:Cc:Cc:Reply-To;
-	bh=oDZwMEiKq4FsOgak5vQT4YukQizxtAjLgSODP2Tnuxo=;
-	b=SEVI2LBS4pji0ctEHwmFV91C8epT7xQIAur9xxQztsqBzYcddjC6bVpVdeg6yv/s
-	mrlLIbYNjQTVNz/UpVwltUTLT3RFZ9kmX8XAEbherSW3ipeM/RdjspwQMgqA5OvbMXO
-	pQH1jZSGVLRc8IqwJd2BzMTy74ikczMpYg0tDQ0w=
-Received: by mx.zohomail.com with SMTPS id 1741209893493878.8606211832787;
-	Wed, 5 Mar 2025 13:24:53 -0800 (PST)
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:References:In-Reply-To:To:To:Cc:Cc:Reply-To;
+	bh=l0WQdUrdZJvKyXOHu07xCpPjCZtIyq2fPB6xG3qYqGM=;
+	b=iRw7kNwdCDEIeYtbxWouwWu2FNaj4vprd51PoVeSVewffIOQifb9676ctXebrfAJ
+	ovozdcDgcO6Spmld312QBVlUleu561VWuZCdQ5HG1ziK6PNIrK40TlG14a7llo5A3ly
+	ooBwyIg3Y+S5iUxx1aroLsvsS2lBs7EANhMb60zM=
+Received: by mx.zohomail.com with SMTPS id 1741209899333471.5790605921402;
+	Wed, 5 Mar 2025 13:24:59 -0800 (PST)
 From: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
-Subject: [PATCH 0/7] Add RK3576 SAI Audio Controller Support
-Date: Wed, 05 Mar 2025 22:24:20 +0100
-Message-Id: <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
+Date: Wed, 05 Mar 2025 22:24:21 +0100
+Subject: [PATCH 1/7] dt-bindings: clock: rk3576: add IOC gated clocks
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,10 +61,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAATByGcC/zXMQQrCMBCF4auEWTswNsbGXkW6iHHUQZraSZRC6
- d0NFpf/g/ctkFmFM3RmAeWPZBlTjf3OQHyEdGeUa21oqHFkyaE+rWuPmINgbD3TwZI/eYZ6eCn
- fZP5h535r5eldzbKNcAmZMY7DIKUzieeCfxf6df0CpSjUSY0AAAA=
-X-Change-ID: 20250305-rk3576-sai-c78e0430898e
+Message-Id: <20250305-rk3576-sai-v1-1-64e6cf863e9a@collabora.com>
+References: <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
+In-Reply-To: <20250305-rk3576-sai-v1-0-64e6cf863e9a@collabora.com>
 To: Michael Turquette <mturquette@baylibre.com>, 
  Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
@@ -82,93 +81,41 @@ Cc: Luca Ceresoli <luca.ceresoli@bootlin.com>,
  Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 X-Mailer: b4 0.14.2
 
-This series adds support for Rockchip's Serial Audio Interface (SAI)
-controller, found on SoCs such as the RK3576. The SAI is a flexible
-controller IP that allows both transmitting and receiving digital audio
-in the I2S, TDM and PCM formats. Instances of this controller are used
-both for externally exposed audio interfaces, as well as for audio on
-video interfaces such as HDMI.
+Certain clocks on the RK3576 are additionally essentially "gated" behind
+some bit toggles in the IOC GRF range. Downstream ungates these by
+adding a separate clock driver that maps over the GRF range and leaks
+their implementation of this into the DT.
 
-Patch 1 and 2 do some preparatory work in the clock bindings and clock
-controller. The RK3576 has the SAI0 through SAI4 output mclks as well as
-the FSPI0 and FSPI1 clocks gated behind some GRF register writes. The
-RK3588 had this for its I2S audio clocks as well, but got away with not
-caring about it in mainline because the clocks were ungated by default.
-This is no longer the case with RK3576: the SAI mclk need to be ungated
-before they can be used.
-
-The gritty details are in patch 2, but to sum it up: we need to
-introduce a new clock branch type, and also rework the rockchip clock
-code to deal with multiple separate GRF regmaps.
-
-NB: checkpatch.pl seems to trip over patch 2 in some way that seems like
-a combination of the diff being too clever and at the same time too
-stupid.
-
-Patch 3 adds the devicetree schema for the SAI. Right now, we only have
-a RK3576 compatible, but as I understand it, the RK3528 uses this audio
-controller as well.
-
-Patch 4 is the main course and adds the driver. It's based on the
-downstream vendor driver, but substantial changes have been made in the
-hopes to make it suitable for upstream inclusion.
-
-Patch 5 and 6 are boring devicetree changes to add the nodes and use
-them in the ArmSoM Sige5 board. Patch 6 goes into some schematic-derived
-knowledge about where the audio signal can actually be tapped into in
-order to test this.
-
-Patch 7 enables the driver in the arm64 defconfig, as the RK3576 is
-supported in mainline, so its drivers should be enabled in the
-defconfig.
-
-To test this on the Sige5, I both soldered to the output 2 testpads, as
-well as fashioned a cable to plug into the headphone header. I should
-have some stuff arriving by mid-March to make more such cables, so if
-you have a Sige5 and want to test this but don't happen to sit on a pile
-of 03SUR-32S cables, then you may contact me off-list to request I send
-you such a cable from Switzerland, and I'll see what I can do.
-
-HDMI audio isn't enabled in this series yet, but I'll look into it
-either for a v2 or in a follow-up series. I really wanted to get this
-out to be reviewed now, as there's a substantial amount of code to look
-at that is ready for both review and testing.
+Instead, define some new clock IDs for these, so that consumers of these
+types of clocks can properly articulate which clock they're using, so
+that we can then add them to the clock driver for SoCs that need them.
 
 Signed-off-by: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
 ---
-Nicolas Frattaroli (7):
-      dt-bindings: clock: rk3576: add IOC gated clocks
-      clk: rockchip: add support for GRF gated clocks
-      ASoC: dt-bindings: add schema for rockchip SAI controllers
-      ASoC: rockchip: add Serial Audio Interface (SAI) driver
-      arm64: dts: rockchip: Add RK3576 SAI nodes
-      arm64: dts: rockchip: Add analog audio on RK3576 Sige5
-      arm64: defconfig: Enable Rockchip SAI
+ include/dt-bindings/clock/rockchip,rk3576-cru.h | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
- .../devicetree/bindings/sound/rockchip,sai.yaml    |  151 ++
- MAINTAINERS                                        |    7 +
- .../boot/dts/rockchip/rk3576-armsom-sige5.dts      |   56 +
- arch/arm64/boot/dts/rockchip/rk3576.dtsi           |  194 +++
- arch/arm64/configs/defconfig                       |    1 +
- drivers/clk/rockchip/Makefile                      |    1 +
- drivers/clk/rockchip/clk-rk3328.c                  |    6 +-
- drivers/clk/rockchip/clk-rk3568.c                  |    2 +-
- drivers/clk/rockchip/clk-rk3576.c                  |   59 +-
- drivers/clk/rockchip/clk.c                         |   24 +-
- drivers/clk/rockchip/clk.h                         |   49 +-
- drivers/clk/rockchip/gate-grf.c                    |  105 ++
- include/dt-bindings/clock/rockchip,rk3576-cru.h    |   10 +
- sound/soc/rockchip/Kconfig                         |    8 +
- sound/soc/rockchip/Makefile                        |    2 +
- sound/soc/rockchip/rockchip_sai.c                  | 1623 ++++++++++++++++++++
- sound/soc/rockchip/rockchip_sai.h                  |  251 +++
- 17 files changed, 2533 insertions(+), 16 deletions(-)
----
-base-commit: a03be51d680391ba113e2e22b38743c276b6e2fa
-change-id: 20250305-rk3576-sai-c78e0430898e
+diff --git a/include/dt-bindings/clock/rockchip,rk3576-cru.h b/include/dt-bindings/clock/rockchip,rk3576-cru.h
+index 25aed298ac2c2e2d37e2b441c9d92ac68801be6e..9dbccd8ed4689ee85c9220c1404f971b73c7d4ea 100644
+--- a/include/dt-bindings/clock/rockchip,rk3576-cru.h
++++ b/include/dt-bindings/clock/rockchip,rk3576-cru.h
+@@ -589,4 +589,14 @@
+ #define PCLK_EDP_S			569
+ #define ACLK_KLAD			570
+ 
++/* IOC-controlled output clocks */
++#define CLK_SAI0_MCLKOUT_TO_IO		571
++#define CLK_SAI1_MCLKOUT_TO_IO		572
++#define CLK_SAI2_MCLKOUT_TO_IO		573
++#define CLK_SAI3_MCLKOUT_TO_IO		574
++#define CLK_SAI4_MCLKOUT_TO_IO		575
++#define CLK_SAI4_MCLKOUT_TO_IO		575
++#define CLK_FSPI0_TO_IO			576
++#define CLK_FSPI1_TO_IO			577
++
+ #endif
 
-Best regards,
 -- 
-Nicolas Frattaroli <nicolas.frattaroli@collabora.com>
+2.48.1
 
 
