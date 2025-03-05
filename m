@@ -1,289 +1,265 @@
-Return-Path: <linux-kernel+bounces-547938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10BDBA53E07
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:06:44 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B11A520B4
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:00:37 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3AEE116CC41
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:06:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF1913AE489
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 23:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39821207A07;
-	Wed,  5 Mar 2025 23:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 254751FFC56;
+	Wed,  5 Mar 2025 23:00:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WNBlBXJy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="iOVJofYy"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2040.outbound.protection.outlook.com [40.107.244.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855B02080F1
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 23:05:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741215902; cv=none; b=mYQo2OWCAgDT9ZxsWUFM8NtfOQxta3kXZceUxnsN3IreGlinxVlU2mxmZoJZ6N8JZhby1P+8ubVGUHBGlbURJ+4SqPFB/rSC9NF6KQV+aoQgqS4NxU2wIJtNOEYApbTO+QaMK8rtC0Nrx3vMTFyDc57kEWJvetx6CmddPdXBHpk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741215902; c=relaxed/simple;
-	bh=6k1mzfqmaTQClOspjtMFRQo/6E8UR5r1FXaD+vI8r2M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UWjv925crTdJt86uD0r4VqjNLkuSHkBB03Jo9cSkWBleA31bN3Eg179oyXTmF3zpcI8AB27dheFSuyH56WAnpsTJKOyEoO8sF1Bmt1rOyyrvNmmfmobStU+uUioI9tlj03dBZiuMR4dn/mEa3vE9GFgNDaY+UoBMntvwbCsESmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WNBlBXJy; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741215899;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=t9G2Y/B8oV7JE32hgCTUV0vmO4Ma4WWVkNyK9m/56k4=;
-	b=WNBlBXJyp+/MmwJzTWwicVA7jvV89ZksO0oeLIXvk9YRs7Gdhw6ruNCA6Tg8P+GSZZHSMO
-	BgxlqLLqPKUnng7jxgd/HNVuHaGISw3eK/ce/7pT4ZTioscu2NQQzXyXL4hNVMYkDiyExL
-	62L1VRKL3/X/s1o8MHw8FMDfe8+j/Dk=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-152-fn86Z4c_Pd6p_StcYfz-ew-1; Wed,
- 05 Mar 2025 18:04:55 -0500
-X-MC-Unique: fn86Z4c_Pd6p_StcYfz-ew-1
-X-Mimecast-MFC-AGG-ID: fn86Z4c_Pd6p_StcYfz-ew_1741215893
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D209B1955F30;
-	Wed,  5 Mar 2025 23:04:51 +0000 (UTC)
-Received: from chopper.redhat.com (unknown [10.22.88.81])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9AC0E300019E;
-	Wed,  5 Mar 2025 23:04:47 +0000 (UTC)
-From: Lyude Paul <lyude@redhat.com>
-To: dri-devel@lists.freedesktop.org,
-	rust-for-linux@vger.kernel.org
-Cc: Danilo Krummrich <dakr@kernel.org>,
-	mcanal@igalia.com,
-	Alice Ryhl <aliceryhl@google.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Simona Vetter <sima@ffwll.ch>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [RFC v3 03/33] rust: drm/kms: Introduce the main ModeConfigObject traits
-Date: Wed,  5 Mar 2025 17:59:19 -0500
-Message-ID: <20250305230406.567126-4-lyude@redhat.com>
-In-Reply-To: <20250305230406.567126-1-lyude@redhat.com>
-References: <20250305230406.567126-1-lyude@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 749B02E337F;
+	Wed,  5 Mar 2025 23:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741215626; cv=fail; b=TFVr4wQKT0Up/8UAT2bW9MiDocp2Y/UCwunWEMicHs/qi71WUK8nkvrBJxLq8jNilE1h2r3sUOLbEBWvnbuhApJxf4UzpBxmk26WaIYsG4D/ynnQzFU+PgHbBgjdONyDbvaR25n/FqeGVdUMuVLH2+fwzawrDBUopFDASKbdk9Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741215626; c=relaxed/simple;
+	bh=Ld2EK9b1QKSfWFJN4YROc5FLb6ZnjEgFxoQWDLfbJqA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=U4iK3xjEBjeC8TOWtdGRmyg3KenrHVyrW7p5DovSmJUyRfXfFZD0HR6hJsrFyw6u6uOp8PD0QnkWuKK96vpva1eeSME+wMcCgQEW5F3O6E0wzdnmBltF/jauIukPsTa+2jkrT9lMF6IOtgxyMdsrBF4U5mgaZeqqocH/H/tFBls=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=iOVJofYy; arc=fail smtp.client-ip=40.107.244.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=USPaOuRYB6037LvCizlNDL58eZCgUSip9iPrDCLbwU+CVQS4bplcxKjuZ12+2nb+bQUMwMJSfuc2lUSCwFnN4g7URxHABIlwyFz9HLuLz14SGNRIOBlYOJuAb7ZNYnKEo4Beer8EMGaT222V4YquJOyvW8JR6f7+RLbOmEmPoTSFgrruHvKfxazMjkZUcxgWm0vy6BFmEc+RZBAcTIIgySdmqJ15980/6dgE3lAodtpeKaoOKAc6EdxFG/sIn/fBeoQJ+IRbwlYiyccVwxrRyEtNouW0dkq5ztf0t1FrcRQ+kE+fAUr8zWJKEGN+p9JSi0khVmv/plCmp2R4yt+Czw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zefVbbJxct/7OPK4dczgpZt66ypwD8vLHohwakMeWzk=;
+ b=cF1kGbZpJ4u2ELIRKHWFju4fWdGQClWSJpUESwTHDhjdSv4OgX4Xwq+LdWSrFhCh4tk2WphG0UOuWWplCgNgxqmZ2oyUm49gDUYepNgr6+9q3UcMCv6GLJT8oJhDDm5knGQYrzQcFfuoWpGcb/BcbZ09t500EMohUmhPz9SDMBC7mK17a4sXf3ey9wiTS++JJqpoQo+QjFJyUwiSf33rscdf9TmiVSLdni3eoQJ7O+x3BWyUYCkQ70m+ILg0f4FYQhTCcGnjNj9JhQg+bnqokhV1aHEqMYoTMWr9UPlQ1MOBuCc3vCH9AhXx4tk5w6nv1NfcNgy2mZZeusxM7lwnPw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zefVbbJxct/7OPK4dczgpZt66ypwD8vLHohwakMeWzk=;
+ b=iOVJofYyTBeNyduSu44MF0KYf9SQ4/P0Oe7evBBtXeawkHU1lum2jEsSWn+ta43gewhSUChTuQyh1L3dRN5Lh1MwE8hr2NP4a3wQqq/OAaaT+UolZG+NCnQej27epJhcrHsO3ajWYkzYvYyBt3rlrKi0Vozf+UMWGScJbj0yT+4=
+Received: from MW4PR03CA0149.namprd03.prod.outlook.com (2603:10b6:303:8c::34)
+ by CH3PR12MB9283.namprd12.prod.outlook.com (2603:10b6:610:1cd::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Wed, 5 Mar
+ 2025 23:00:15 +0000
+Received: from MWH0EPF000989E8.namprd02.prod.outlook.com
+ (2603:10b6:303:8c:cafe::7c) by MW4PR03CA0149.outlook.office365.com
+ (2603:10b6:303:8c::34) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.16 via Frontend Transport; Wed,
+ 5 Mar 2025 23:00:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ MWH0EPF000989E8.mail.protection.outlook.com (10.167.241.135) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8511.15 via Frontend Transport; Wed, 5 Mar 2025 23:00:14 +0000
+Received: from zenon.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 5 Mar
+ 2025 17:00:11 -0600
+From: "Pratik R. Sampat" <prsampat@amd.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>, <kvm@vger.kernel.org>,
+	<linux-kselftest@vger.kernel.org>
+CC: <seanjc@google.com>, <pbonzini@redhat.com>, <thomas.lendacky@amd.com>,
+	<tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <shuah@kernel.org>, <pgonda@google.com>,
+	<ashish.kalra@amd.com>, <nikunj@amd.com>, <pankaj.gupta@amd.com>,
+	<michael.roth@amd.com>, <sraithal@amd.com>, <prsampat@amd.com>
+Subject: [PATCH v8 00/10] Basic SEV-SNP Selftests
+Date: Wed, 5 Mar 2025 16:59:50 -0600
+Message-ID: <20250305230000.231025-1-prsampat@amd.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MWH0EPF000989E8:EE_|CH3PR12MB9283:EE_
+X-MS-Office365-Filtering-Correlation-Id: b65793b8-4e22-4c13-775c-08dd5c397d98
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|7416014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?3pPmNIjf5u4fAQ48Yd/voQaaH1qihD/OJRt+c3McVHwk0STCXS9tDd+e0I+k?=
+ =?us-ascii?Q?EEzVKPwQEsV2Qf+dNGbrgcuCeWf/pjgZR1jW2UUC5Sx2wpsk0dLHdtKKoHDt?=
+ =?us-ascii?Q?7Muchb97JD89//OxPrmwlTWA+UI9jI8yWwH18a0E6X0MPHxwS0HLABT1izZD?=
+ =?us-ascii?Q?2wZ3DnPjGoKTLVyk0egwmw2A4MJCCv/PRYcrnwEM+qduO1PNOPjaCpkYd1Kq?=
+ =?us-ascii?Q?6MZvCPqOx7qdpgENfgNI/R4srP6ATEsVBBOZZNQXsgGGXS8B7RxbRimXERXL?=
+ =?us-ascii?Q?JfYLRJZYrfnjoH48herMGKp1/1lGYbp6OqbBWOlMlakCae4Iq76sa559NH5x?=
+ =?us-ascii?Q?Nw5wUfXjNYemnJk3pMvtG0G7UzAuf8T0YI2xLw/8+z/Jzq/lvdXPCraoU2Qy?=
+ =?us-ascii?Q?0LcgLDaU2btEnMHMHCHk+16zWjC5i0J8kj/tW3nn8CVUoMM6ZdsPunEwgj3k?=
+ =?us-ascii?Q?K5xU1prtVdTHFJELTLYhrdIhKRHTbBlEw+1UJ1JLvF/FxPJkZvpW2cdM4Vth?=
+ =?us-ascii?Q?q8hSRSItCDpK2D5CAVou5x4dIuM83AX3JEUW59JgWBd2Z0j3yvRlfkoS4kww?=
+ =?us-ascii?Q?9Bl5c91ynqm8IF/HVfINqraYyecwaoJS1jhO8/OnEwHukgiB8QfQeYfD8TrU?=
+ =?us-ascii?Q?0QH4AcXIsRfRETM7FY+BchgLEjJ4HdNsTnNbDrKOmyNAM6bROzFJyhiqJA3U?=
+ =?us-ascii?Q?rwKNJcqf6MZix+1KwR8Ur2GT0XY3X/asPhRZfxXWy3hNHgn7iII6rxypkN1d?=
+ =?us-ascii?Q?dQGc2KiAt/VU7CVVjQf22/LSYsK6N1gW1xZWxnzYpRdAs3H++cm1UHW3yEIT?=
+ =?us-ascii?Q?eeMwseS9v8Z37mfdeCLitGW2Mt70Fg36G3ghpXjSlg7K/Kqe/1fbfJMSdLNu?=
+ =?us-ascii?Q?svtdIZSYbPL1P2LcQq/DzKFniqqBBcJIBr6150VCB/GFoZkek+UkbODlK6JV?=
+ =?us-ascii?Q?XaSCovxF6S9g3x+dyheoBcCYa13glC9cpjG+MR3X0TMMeIvqKb4EsILYl/cH?=
+ =?us-ascii?Q?gN2JvTHNt834vtya6FhiuX7B/VQnRD6ayl7L71xVna3/qtWwGnrSDczZBTc8?=
+ =?us-ascii?Q?fzf0bVvKt+Tbj09RBTDGW7fkuvySecTJbA7EFpX7sXjIS+s3rPZCeRzynlhb?=
+ =?us-ascii?Q?HkZBjbNo0bpUjOwP4HP6mjpXv1/KQlrsMqE8bBJbbgJxKF1zr+XhKMQ/M2ip?=
+ =?us-ascii?Q?/JnyfoeytxJbDFyhkr901S/qj+8NCf5pKE1KDTUPPFaeiygBg6El5orqSDDA?=
+ =?us-ascii?Q?vJ/mHgzGpz2Av88bIosuzHY6dIYVmASa5v0WP6vsCRhKTDDJgs80SFIPN5iv?=
+ =?us-ascii?Q?fwSyeJZkU99R/wUfPvVSG1DYNYLYF+HTdN5OsAjcXAMuDNoljMROToz20GMR?=
+ =?us-ascii?Q?rm4S2CI22LLm9P7yl6pzeWUOTq9qJMO1U+rU4vEW4RJ0rfw94yqga9X/4TZb?=
+ =?us-ascii?Q?a+SPJe5use708hEOCaU4TL8w58a1qbzB?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 05 Mar 2025 23:00:14.4794
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b65793b8-4e22-4c13-775c-08dd5c397d98
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	MWH0EPF000989E8.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9283
 
-The KMS API has a very consistent idea of a "mode config object", which
-includes any object with a drm_mode_object struct embedded in it. These
-objects have their own object IDs which DRM exposes to userspace, and we
-introduce the ModeConfigObject trait to represent any object matching these
-characteristics.
+This patch series extends the sev_init2 and the sev_smoke test to
+exercise the SEV-SNP VM launch workflow.
 
-One slightly less consistent trait of these objects however: some mode
-objects have a reference count, while others don't. Since rust requires
-that we are able to define the lifetime of an object up-front, we introduce
-two other super-traits of ModeConfigObject for this:
+Primarily, it introduces the architectural defines, its support in the
+SEV library and extends the tests to interact with the SEV-SNP ioctl()
+wrappers.
 
-* StaticModeObject - this trait represents any mode object which does not
-  have a reference count of its own. Such objects can be considered to
-  share the lifetime of their parent KMS device
-* RcModeObject - this trait represents any mode object which does have its
-  own reference count. Objects implementing this trait get a free blanket
-  implementation of AlwaysRefCounted, and as such can be used with the ARef
-  container without us having to implement AlwaysRefCounted for each
-  individual mode object.
+Patch 1  - Do not advertise SNP on initialization failure
+Patch 2  - SNP test for KVM_SEV_INIT2
+Patch 3  - Add vmgexit helper
+Patch 4  - Add SMT control interface helper
+Patch 5  - Replace assert() with TEST_ASSERT_EQ()
+Patch 6  - Introduce SEV+ VM type check
+Patch 7  - SNP iotcl() plumbing for the SEV library
+Patch 8  - Force set GUEST_MEMFD for SNP
+Patch 9  - Cleanups of smoke test - Decouple policy from type
+Patch 10 - SNP smoke test
 
-This will be able to handle most lifetimes we'll need with one exception:
-it's entirely possible a driver may want to hold a "owned" reference to a
-static mode object. We allow for this by introducing the KmsRef container,
-which grabs an owned refcount to the parent KMS device of a
-StaticModeObject and holds a pointer to said object - essentially allowing
-it to act identically to an owned refcount by preventing the device's
-lifetime from ending until the KmsRef is dropped. I choose not to use
-AlwaysRefCounted for this as holding a refcount to the device has its own
-set of implications since if you forget to drop the KmsRef the device will
-never be destroyed.
+The series is based on
+        git.kernel.org/pub/scm/virt/kvm/kvm.git next
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
+v7..v8:
+* Dropped exporting the SNP initialized API from ccp to KVM. Instead
+  call SNP_PLATFORM_STATUS within KVM to query the initialization. (Tom)
+  
+  While it may be cheaper to query sev->snp_initialized from ccp, making
+  the SNP platform call within KVM does away with any dependencies.
 
----
+v6..v7:
+https://lore.kernel.org/kvm/20250221210200.244405-7-prsampat@amd.com/
+Based on comments from Sean -
+* Replaced FW check with sev->snp_initialized
+* Dropped the patch which removes SEV+ KVM advertisement if INIT fails.
+  This should be now be resolved by the combination of the patches [1,2]
+  from Ashish.
+* Change vmgexit to an inline function
+* Export SMT control parsing interface to kvm_util
+  Note: hyperv_cpuid KST only compile tested
+* Replace assert() with TEST_ASSERT_EQ() within SEV library
+* Define KVM_SEV_PAGE_TYPE_INVALID for SEV call of encrypt_region()
+* Parameterize encrypt_region() to include privatize_region()
+* Deduplication of sev test calls between SEV,SEV-ES and SNP
+* Removed FW version tests for SNP
+* Included testing of SNP_POLICY_DBG
+* Dropped most tags from patches that have been changed or indirectly
+  affected
 
-V3:
-* Document why modesetting objects require Send + Sync
-* Make `ModeObject` an unsafe trait
-  I was prompted to make this change in response to one of Daniel's
-  comments, as it occurred to me that we need something that ensures that
-  implementers are only returning valid `drm_mode_object` pointers so we
-  have something to put down for the various related safety comments in
-  RcModeObject.
-  Also, update the safety comments there.
+[1] https://lore.kernel.org/all/d6d08c6b-9602-4f3d-92c2-8db6d50a1b92@amd.com
+[2] https://lore.kernel.org/all/f78ddb64087df27e7bcb1ae0ab53f55aa0804fab.1739226950.git.ashish.kalra@amd.com
 
-Signed-off-by: Lyude Paul <lyude@redhat.com>
----
- rust/kernel/drm/kms.rs | 127 ++++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 126 insertions(+), 1 deletion(-)
+v5..v6:
+https://lore.kernel.org/kvm/ab433246-e97c-495b-ab67-b0cb1721fb99@amd.com/
+* Rename is_sev_platform_init to sev_fw_initialized (Nikunj)
+* Rename KVM CPU feature X86_FEATURE_SNP to X86_FEATURE_SEV_SNP (Nikunj)
+* Collected Tags from Nikunj, Pankaj, Srikanth.
 
-diff --git a/rust/kernel/drm/kms.rs b/rust/kernel/drm/kms.rs
-index 78970c69f4cda..885bd5266a2d7 100644
---- a/rust/kernel/drm/kms.rs
-+++ b/rust/kernel/drm/kms.rs
-@@ -7,10 +7,11 @@
-     drm::{device::Device, drv::Driver},
-     error::to_result,
-     prelude::*,
-+    private::Sealed,
-     types::*,
- };
- use bindings;
--use core::{marker::PhantomData, ops::Deref};
-+use core::{marker::PhantomData, ops::Deref, ptr::NonNull};
- 
- /// The C vtable for a [`Device`].
- ///
-@@ -184,3 +185,127 @@ pub struct ModeConfigInfo {
-     /// An optional default fourcc format code to be preferred for clients.
-     pub preferred_fourcc: Option<u32>,
- }
-+
-+/// A modesetting object in DRM.
-+///
-+/// This is any type of object where the underlying C object contains a [`struct drm_mode_object`].
-+/// This type requires [`Send`] + [`Sync`] as all modesetting objects in DRM are able to be sent
-+/// between threads.
-+///
-+/// This type is only implemented by the DRM crate itself.
-+///
-+/// # Safety
-+///
-+/// [`raw_mode_obj()`] must always return a valid pointer to an initialized
-+/// [`struct drm_mode_object`].
-+///
-+/// [`struct drm_mode_object`]: srctree/include/drm/drm_mode_object.h
-+/// [`raw_mode_obj()`]: ModeObject::raw_mode_obj()
-+pub unsafe trait ModeObject: Sealed + Send + Sync {
-+    /// The parent driver for this [`ModeObject`].
-+    type Driver: KmsDriver;
-+
-+    /// Return the [`Device`] for this [`ModeObject`].
-+    fn drm_dev(&self) -> &Device<Self::Driver>;
-+
-+    /// Return a pointer to the [`struct drm_mode_object`] for this [`ModeObject`].
-+    ///
-+    /// [`struct drm_mode_object`]: (srctree/include/drm/drm_mode_object.h)
-+    fn raw_mode_obj(&self) -> *mut bindings::drm_mode_object;
-+}
-+
-+/// A trait for modesetting objects which don't come with their own reference-counting.
-+///
-+/// Some [`ModeObject`] types in DRM do not have a reference count. These types are considered
-+/// "static" and share the lifetime of their parent [`Device`]. To retrieve an owned reference to
-+/// such types, see [`KmsRef`].
-+///
-+/// # Safety
-+///
-+/// This trait must only be implemented for modesetting objects which do not have a refcount within
-+/// their [`struct drm_mode_object`], otherwise [`KmsRef`] can't guarantee the object will stay
-+/// alive.
-+///
-+/// [`struct drm_mode_object`]: (srctree/include/drm/drm_mode_object.h)
-+pub unsafe trait StaticModeObject: ModeObject {}
-+
-+/// An owned reference to a [`StaticModeObject`].
-+///
-+/// Note that since [`StaticModeObject`] types share the lifetime of their parent [`Device`], the
-+/// parent [`Device`] will stay alive as long as this type exists. Thus, users should be aware that
-+/// storing a [`KmsRef`] within a [`ModeObject`] is a circular reference.
-+///
-+/// # Invariants
-+///
-+/// `self.0` points to a valid instance of `T` throughout the lifetime of this type.
-+pub struct KmsRef<T: StaticModeObject>(NonNull<T>);
-+
-+// SAFETY: Owned references to DRM device are thread-safe.
-+unsafe impl<T: StaticModeObject> Send for KmsRef<T> {}
-+// SAFETY: Owned references to DRM device are thread-safe.
-+unsafe impl<T: StaticModeObject> Sync for KmsRef<T> {}
-+
-+impl<T: StaticModeObject> From<&T> for KmsRef<T> {
-+    fn from(value: &T) -> Self {
-+        // INVARIANT: Because the lifetime of the StaticModeObject is the same as the lifetime of
-+        // its parent device, we can ensure that `value` remains alive by incrementing the device's
-+        // reference count. The device will only disappear once we drop this reference in `Drop`.
-+        value.drm_dev().inc_ref();
-+
-+        Self(value.into())
-+    }
-+}
-+
-+impl<T: StaticModeObject> Drop for KmsRef<T> {
-+    fn drop(&mut self) {
-+        // SAFETY: We're reclaiming the reference we leaked in From<&T>
-+        drop(unsafe { ARef::from_raw(self.drm_dev().into()) })
-+    }
-+}
-+
-+impl<T: StaticModeObject> Deref for KmsRef<T> {
-+    type Target = T;
-+
-+    fn deref(&self) -> &Self::Target {
-+        // SAFETY: We're guaranteed object will point to a valid object as long as we hold dev
-+        unsafe { self.0.as_ref() }
-+    }
-+}
-+
-+impl<T: StaticModeObject> Clone for KmsRef<T> {
-+    fn clone(&self) -> Self {
-+        // INVARIANT: Because the lifetime of the StaticModeObject is the same as the lifetime of
-+        // its parent device, we can ensure that `value` remains alive by incrementing the device's
-+        // reference count. The device will only disappear once we drop this reference in `Drop`.
-+        self.drm_dev().inc_ref();
-+
-+        Self(self.0)
-+    }
-+}
-+
-+/// A trait for [`ModeObject`] which is reference counted.
-+///
-+/// This trait is implemented by DRM for any [`ModeObject`] which has a reference count provided by
-+/// [`struct drm_mode_object`]. It provides a common implementation of [`AlwaysRefCounted`], since
-+/// all [`RcModeObject`] types use the same functions for refcounting.
-+///
-+/// # Safety
-+///
-+/// The [`ModeObject`] must initialize the refcount in its [`struct drm_mode_object`] field.
-+///
-+/// [`struct drm_mode_object`]: (srctree/include/drm/drm_mode_object.h)
-+pub unsafe trait RcModeObject: ModeObject {}
-+
-+unsafe impl<T: RcModeObject> AlwaysRefCounted for T {
-+    fn inc_ref(&self) {
-+        // SAFETY: We're guaranteed by the safety contract of `ModeObject` that `raw_mode_obj()`
-+        // always returns a pointer to an initialized `drm_mode_object`.
-+        unsafe { bindings::drm_mode_object_get(self.raw_mode_obj()) }
-+    }
-+
-+    unsafe fn dec_ref(obj: NonNull<Self>) {
-+        // SAFETY: We're guaranteed by the safety contract of `ModeObject` that `raw_mode_obj()`
-+        // always returns a pointer to an initialized `drm_mode_object`.
-+        unsafe { bindings::drm_mode_object_put(obj.as_ref().raw_mode_obj()) }
-+    }
-+}
+v4..v5:
+https://lore.kernel.org/kvm/8e7d8172-879e-4a28-8438-343b1c386ec9@amd.com/
+* Introduced a check to disable advertising support for SEV, SEV-ES
+  and SNP when platform initialization fails (Nikunj)
+* Remove the redundant SNP check within is_sev_vm() (Nikunj)
+* Cleanup of the encrypt_region flow for better readability (Nikunj)
+* Refactor paths to use the canonical $(ARCH) to rebase for kvm/next
+
+v3..v4:
+https://lore.kernel.org/kvm/20241114234104.128532-1-pratikrajesh.sampat@amd.com/
+* Remove SNP FW API version check in the test and ensure the KVM
+  capability advertises the presence of the feature. Retain the minimum
+  version definitions to exercise these API versions in the smoke test
+* Retained only the SNP smoke test and SNP_INIT2 test
+* The SNP architectural defined merged with SNP_INIT2 test patch
+* SNP shutdown merged with SNP smoke test patch
+* Add SEV VM type check to abstract comparisons and reduce clutter
+* Define a SNP default policy which sets bits based on the presence of
+  SMT
+* Decouple privatization and encryption for it to be SNP agnostic
+* Assert for only positive tests using vm_ioctl()
+* Dropped tested-by tags
+
+In summary - based on comments from Sean, I have primarily reduced the
+scope of this patch series to focus on breaking down the SNP smoke test
+patch (v3 - patch2) to first introduce SEV-SNP support and use this
+interface to extend the sev_init2 and the sev_smoke test.
+
+The rest of the v3 patchset that introduces ioctl, pre fault, fallocate
+and negative tests, will be re-worked and re-introduced subsequently in
+future patch series post addressing the issues discussed.
+
+v2..v3:
+https://lore.kernel.org/kvm/20240905124107.6954-1-pratikrajesh.sampat@amd.com/
+* Remove the assignments for the prefault and fallocate test type
+  enums.
+* Fix error message for sev launch measure and finish.
+* Collect tested-by tags [Peter, Srikanth]
+
+Pratik R. Sampat (10):
+  KVM: SEV: Disable SEV-SNP support on initialization failure
+  KVM: selftests: SEV-SNP test for KVM_SEV_INIT2
+  KVM: selftests: Add vmgexit helper
+  KVM: selftests: Add SMT control state helper
+  KVM: selftests: Replace assert() with TEST_ASSERT_EQ()
+  KVM: selftests: Introduce SEV VM type check
+  KVM: selftests: Add library support for interacting with SNP
+  KVM: selftests: Force GUEST_MEMFD flag for SNP VM type
+  KVM: selftests: Abstractions for SEV to decouple policy from type
+  KVM: selftests: Add a basic SEV-SNP smoke test
+
+ arch/x86/include/uapi/asm/kvm.h               |  1 +
+ arch/x86/kvm/svm/sev.c                        | 30 +++++-
+ tools/arch/x86/include/uapi/asm/kvm.h         |  1 +
+ .../testing/selftests/kvm/include/kvm_util.h  | 35 +++++++
+ .../selftests/kvm/include/x86/processor.h     |  1 +
+ tools/testing/selftests/kvm/include/x86/sev.h | 42 ++++++++-
+ tools/testing/selftests/kvm/lib/kvm_util.c    |  7 +-
+ .../testing/selftests/kvm/lib/x86/processor.c |  4 +-
+ tools/testing/selftests/kvm/lib/x86/sev.c     | 93 +++++++++++++++++--
+ .../testing/selftests/kvm/x86/hyperv_cpuid.c  | 19 ----
+ .../selftests/kvm/x86/sev_init2_tests.c       | 13 +++
+ .../selftests/kvm/x86/sev_smoke_test.c        | 75 +++++++++------
+ 12 files changed, 261 insertions(+), 60 deletions(-)
+
 -- 
-2.48.1
+2.43.0
 
 
