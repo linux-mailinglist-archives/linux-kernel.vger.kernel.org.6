@@ -1,142 +1,163 @@
-Return-Path: <linux-kernel+bounces-546350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D294A4F987
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:07:48 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E07A4F989
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:08:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 53B001892D36
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:07:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98B2116CE00
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27D09202975;
-	Wed,  5 Mar 2025 09:07:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D505202996;
+	Wed,  5 Mar 2025 09:07:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTRdKlBO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hloeDu72"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D13320125B
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 09:07:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D17D120125B;
+	Wed,  5 Mar 2025 09:07:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741165660; cv=none; b=DIJYDbZEHIheCeYfF3yNnK/sPtv00SgbXl47QTJ2HOEj2U+tAYeyYaWqP95EH2LLB4hb0uUbi0fRnZ9Uh1yJoTgjUYXEg4oJTTcHZYqBjF4tsG1BZt9eNIWqzSbCQs5et5pm+qAw37l7DPLU0tDgMw3qyt/Gl1sQhSHOygFGOOQ=
+	t=1741165671; cv=none; b=KPYx3lA9qnbVRtbXGqvSVNfCNan3+ua7cJmTY9uZpyxn2ZXHcKMVKKpauP5HE8Kz0+N/nABNgEXJNwS9Y7D9dooyPRxHeTYVDD3+J/nQqubVFtZbFK3PpB7D4abn3MDqxDhg4V0ln1ap6CNuKterHY/7QVulW6mJB6ZAFXQoCFM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741165660; c=relaxed/simple;
-	bh=uEYVEqCtoYbzYquK/VaMlg3Ti7944pqijjFq53C1gDQ=;
+	s=arc-20240116; t=1741165671; c=relaxed/simple;
+	bh=evaHuRhxtZRjWX5MGBy0lPYyEGPoTjJrpdnxioPwXZ0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z3babHW9Vp2dX3cfAwnnn1oasGbSrhsO5Mrdv/BCrB/qH8nx+fyYrxo9X4gNI2S2eXFfNcOJiZgPiBbhVoVQjZPM9qjNONoZfo4gfo7t0sadT32T6Z7Xob6a+ToSZ+/ELP+fAVRWIx1U/566E6NTJx6GBFNriF+ezB1LEVRc3kI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTRdKlBO; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1741165657;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uEYVEqCtoYbzYquK/VaMlg3Ti7944pqijjFq53C1gDQ=;
-	b=RTRdKlBOGcXlh9JjYYd1zZgfU+RXhBN2Ixr4gzWvRfM0MJSvuFWIiY023cOV3SXmLsEUUY
-	xJbW6cbYYeJehcQLlJQXNBAueIlNhYR53QDTZ8u9dDoy/gOlXB4dt9xpfvQZMxKYSURn7E
-	8zvXsDPHYpslOhRD9qY+X4u/cVgYbg8=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-53-75fcvS1pN8uOQI6OOApj-w-1; Wed, 05 Mar 2025 04:07:36 -0500
-X-MC-Unique: 75fcvS1pN8uOQI6OOApj-w-1
-X-Mimecast-MFC-AGG-ID: 75fcvS1pN8uOQI6OOApj-w_1741165655
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-ac1e442740cso96273866b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 01:07:36 -0800 (PST)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741165655; x=1741770455;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uEYVEqCtoYbzYquK/VaMlg3Ti7944pqijjFq53C1gDQ=;
-        b=YgA8ksS8X0BhoWyRojqKLtnXwXYNI0RSyCCWwdM10GOeM4tysBCZIkEULfcvLKtTD1
-         jz7VGz2H0Ch/Xz0xgCmCLdush4hX9VZ7VN/IEjRZfy/DFErOeMNV697ry6jHFOQ0B90+
-         V64apRiNED4N78KS96d9RbkSl/kUgrIkco4iOaKGr6URKQ0ZEkp2liJR7tj8pfK4SHRH
-         oWCSnSmfBjEYqvofoU4O1gQ1NVBsEeV1DhyBt/S9Bo4lbklV7LqTd4cVmRT/IC1scZSQ
-         zkd/geIxg6AoV6qw3z6wQSNNcZ/uYSPqnrfsyVJ+SsL71OrQMFtS8UzPxhHVN4fHtMIE
-         hFSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXKGwxM4uuK94DNqhQ6nv6qQfs14Uz1NFwQl1/u/GGTT4sLlGbbjH7xHY1eDv1osEQoKw1qSkJ7EzgVRas=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVPIb+fqHGJMamUQ3hhaK0R89IPEbIG4lZCFKdJKcfzIvE1WpE
-	yciCcjV00irNFUmxkxsL+lmID9cTkLqMS7tECJYFlWO8/O7BEnH/pm6A/GuH4oUvP1e5p/eD5pq
-	mP2ms1OoU4+g8RpOkDXRelrwDEJcdij3JmUaLbfY1PnWHWQjWyOqJy6eMrqvuRg==
-X-Gm-Gg: ASbGnct4r7cBdbtTiQUh2oveUY1/Fpa57R0Q24Da3CmqlsjHCk7tbM8dG0V0ItLHZYQ
-	IdKUflTvOE8uIz5CEmRedwapavkHpO0lBbWSScT8c0jgdLoSXafioCHE10FH7fzqrIGthvrfaJy
-	dpLuUzd5NTZFjLBiRNhQRqgpS5S691Gd3YrWGOdUI1R3OVYwBiXfQb7UD0t1RwZw34Ai89Xp7/P
-	Dkqkrz8vSnCTDBL5XuHjSN9YESeP71UeiQmJ61az7US15Kco2z1Oz6NE2/4bk4p5Tu51/GHW/jx
-	gjA1BbgI64OYwQZ2E0mbclRpaIBB3W30tGAsxbyTYV8kIzFfJaaFT6oDel7mwGWs
-X-Received: by 2002:a17:907:1c18:b0:abf:44b1:22e4 with SMTP id a640c23a62f3a-ac20d8459e6mr251659766b.11.1741165655275;
-        Wed, 05 Mar 2025 01:07:35 -0800 (PST)
-X-Google-Smtp-Source: AGHT+IH3mtYAsZxhVAJSSQRaDW6E8YonUSexggQDnhx967E+2X1tR/N3HMP/nk3AgqXd36cQEhZhUw==
-X-Received: by 2002:a17:907:1c18:b0:abf:44b1:22e4 with SMTP id a640c23a62f3a-ac20d8459e6mr251655966b.11.1741165654712;
-        Wed, 05 Mar 2025 01:07:34 -0800 (PST)
-Received: from sgarzare-redhat (host-79-46-200-29.retail.telecomitalia.it. [79.46.200.29])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-abf7931de88sm476985366b.185.2025.03.05.01.07.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 01:07:33 -0800 (PST)
-Date: Wed, 5 Mar 2025 10:07:03 +0100
-From: Stefano Garzarella <sgarzare@redhat.com>
-To: Jarkko Sakkinen <jarkko@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>, 
-	Claudio Carvalho <cclaudio@linux.ibm.com>, Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org, 
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev, 
-	Dionna Glaze <dionnaglaze@google.com>, James Bottomley <James.Bottomley@hansenpartnership.com>, 
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>, Jason Gunthorpe <jgg@ziepe.ca>, 
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Dave Hansen <dave.hansen@linux.intel.com>, Tom Lendacky <thomas.lendacky@amd.com>, 
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 5/6] tpm: add SNP SVSM vTPM driver
-Message-ID: <u3hnfqimgnavrhy4wxa63zorvbjomj5ptoqrn4aqnr5wlnjtxs@xyy6d4merpvy>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-6-sgarzare@redhat.com>
- <Z8JoMrUm9Dnoqgoi@kernel.org>
- <tpi74sl22zqngutzbqp7ajz7khwom2fgth2n3i77houwdqc3gl@obkhgfcagubh>
- <Z8c4Avw2y7k4JODe@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOJD1+jlRZaSk1ho5SSxf7UjREn5W2PDM5Zx96+/RZfrD5UrVJ72rc4Di2NM/E45LlcKUGodjVtioKirGk27wDt0ZJumoWMmqS8wlfI0Lkdll5p6cCqI317h3AZJ6wY2O5iWhxHbCFQBe+MzbEyN4euj8n3HELdjOtUKndTHBJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hloeDu72; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6B8E0C4CEE2;
+	Wed,  5 Mar 2025 09:07:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741165671;
+	bh=evaHuRhxtZRjWX5MGBy0lPYyEGPoTjJrpdnxioPwXZ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=hloeDu72eul/DbY0xRIn+odBy+uo1/RcQNjA23F5WPuX5Tgg0D0l6q/mdEctCCLkk
+	 wS/+Ec9ze870/4ts0BI/THZx5RgHANdq19QVI1v3+C9NEZgG9AqvUnSfzy0ewoKhVo
+	 BDjJhbT2jCqSM2l0jGTXWR9hzC06R1RlPpZnws4W/hsaFJtiVpl0Mv1lnY0e1eSvUU
+	 /9io5XaRAlikFicGkQgz4XfW8RL7IkbxbPiaJPeIvRZtKV+EaIi2R+eHIk5mbGublq
+	 gvpcxXTif5HXkQtK30+QTp36zO8neuCocyy7rB3d7PbhA4V3EpArJk26vC3EPnQvtA
+	 v5Uy0JbjSG/Tw==
+Date: Wed, 5 Mar 2025 10:07:45 +0100
+From: Ingo Molnar <mingo@kernel.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: x86@kernel.org, linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>,
+	Ben Greear <greearb@candelatech.com>,
+	Xiao Liang <shaw.leon@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Andy Lutomirski <luto@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>
+Subject: Re: [RFC PATCH v2] x86/fpu: make kernel-mode FPU reliably usable in
+ softirqs
+Message-ID: <Z8gUYamgBr4M5ZaB@gmail.com>
+References: <20250304204954.3901-1-ebiggers@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <Z8c4Avw2y7k4JODe@kernel.org>
+In-Reply-To: <20250304204954.3901-1-ebiggers@kernel.org>
 
-On Tue, Mar 04, 2025 at 07:27:30PM +0200, Jarkko Sakkinen wrote:
->On Mon, Mar 03, 2025 at 05:46:16PM +0100, Stefano Garzarella wrote:
->> On Sat, Mar 01, 2025 at 03:51:46AM +0200, Jarkko Sakkinen wrote:
->> > On Fri, Feb 28, 2025 at 06:07:19PM +0100, Stefano Garzarella wrote:
->> > > Add driver for the vTPM defined by the AMD SVSM spec [1].
->> > >
->> > > The specification defines a protocol that a SEV-SNP guest OS can use to
->> > > discover and talk to a vTPM emulated by the Secure VM Service Module (SVSM)
->> > > in the guest context, but at a more privileged level (VMPL0).
->> > >
->> > > The new tpm-svsm platform driver uses two functions exposed by x86/sev
->> > > to verify that the device is actually emulated by the platform and to
->> > > send commands and receive responses.
->> > >
->> > > The vTPM is emulated through the TCG reference implementation, so this
->> > > driver leverages tpm_tcgsim.h to fill commands and parse responses.
->> >
->> > Why? Please don't.
->>
->> You mean it's better not to have the external header and have all the
->> functions here to prepare commands and parse responses?
->>
->> As I mentioned, I did this because there may be other future drivers that
->> could use it to talk to emulated devices in the same way, that is, through
->> the TCG TPM reference implementation,
+
+* Eric Biggers <ebiggers@kernel.org> wrote:
+
+> From: Eric Biggers <ebiggers@google.com>
+> 
+> Currently kernel-mode FPU is not always usable in softirq context on
+> x86, since softirqs can nest inside a kernel-mode FPU section in task
+> context, and nested use of kernel-mode FPU is not supported.
+> 
+> Therefore, x86 SIMD-optimized code that can be called in softirq context
+> has to sometimes fall back to non-SIMD code.  There are two options for
+> the fallback, both of which are pretty terrible:
+> 
+>   (a) Use a scalar fallback.  This can be 10-100x slower than vectorized
+>       code because it cannot use specialized instructions like AES, SHA,
+>       or carryless multiplication.
+> 
+>   (b) Execute the request asynchronously using a kworker.  In other
+>       words, use the "crypto SIMD helper" in crypto/simd.c.
+> 
+> Currently most of the x86 en/decryption code (skcipher and aead
+> algorithms) uses option (b), since this avoids the slow scalar fallback
+> and it is easier to wire up.  But option (b) is still really bad for its
+> own reasons:
+> 
+>   - Punting the request to a kworker is bad for performance too.
 >
->Sorry about harsh comment. I think we discussed this (MS simulator
->caused confusion). Anchor this to SVSM spec and we're fine.
+>   - It forces the algorithm to be marked as asynchronous
+>     (CRYPTO_ALG_ASYNC), preventing it from being used by crypto API
+>     users who request a synchronous algorithm.  That's another huge
+>     performance problem, which is especially unfortunate for users who
+>     don't even do en/decryption in softirq context.
+> 
+>   - It makes all en/decryption operations take a detour through
+>     crypto/simd.c.  That involves additional checks and an additional
+>     indirect call, which slow down en/decryption for *everyone*.
+> 
+> Fortunately, the skcipher and aead APIs are only usable in task and 
+> softirq context in the first place.  Thus, if kernel-mode FPU were to 
+> be reliably usable in softirq context, no fallback would be needed. 
+> Indeed, other architectures such as arm, arm64, and riscv have 
+> already done this.
+> 
+> Therefore, this patch updates x86 accordingly to reliably support
+> kernel-mode FPU in softirqs.
+> 
+> This is done by just disabling softirq processing in kernel-mode FPU
+> sections (when hardirqs are not already disabled), as that prevents the
+> nesting that was problematic.
+> 
+> This will delay some softirqs slightly, but only ones that would have
+> otherwise been nested inside a task context kernel-mode FPU section.
+> Any such softirqs would have taken the slow fallback path before if they
+> tried to do any en/decryption.  Now these softirqs will just run at the
+> end of the task context kernel-mode FPU section (since local_bh_enable()
+> runs pending softirqs) and will no longer take the slow fallback path.
+> 
+> Alternatives considered:
+> 
+> - Make kernel-mode FPU sections fully preemptible.  This would require
+>   growing task_struct by another struct fpstate which is more than 2K.
 
-Yeah, I think we are now aligned, I will try to fix in the next version!
+So that's something that will probably happen once the kernel is built 
+using APX anyway?
+
+> - Make softirqs save/restore the kernel-mode FPU state to a per-CPU
+>   struct fpstate when nested use is detected.  Somewhat interesting, but
+>   seems unnecessary when a simpler solution exists.
+
+So:
+
+>  void kernel_fpu_begin_mask(unsigned int kfpu_mask)
+>  {
+> -	preempt_disable();
+> +	if (!irqs_disabled())
+> +		fpregs_lock();
+
+> +	if (!irqs_disabled())
+> +		fpregs_unlock();
+
+So why is the irqs_disabled() check needed here? (On x86 it can be a 
+bit expensive at times, because the IRQ flag has to be loaded, 
+including all flags, so basically it's a soft synchronization point of 
+a sort.)
+
+Ie. why cannot we simply do a local_bh_disable()/enable() pair (on 
+!RT), ie. fpregs_lock()/fpregs_unlock()?
+
+local_bh_disable() is very similar in cost to preempt_disable(), both 
+are increasing the preempt_count.
 
 Thanks,
-Stefano
 
+	Ingo
 
