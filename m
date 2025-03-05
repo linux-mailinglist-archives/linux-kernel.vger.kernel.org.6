@@ -1,82 +1,173 @@
-Return-Path: <linux-kernel+bounces-545914-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF92A4F386
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:23:47 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47C1CA4F3E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:35:42 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 44FEE18847A6
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:23:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B613618909F1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D754113D8B2;
-	Wed,  5 Mar 2025 01:23:36 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0991E151998;
+	Wed,  5 Mar 2025 01:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mpNBfjRJ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF3CD5228;
-	Wed,  5 Mar 2025 01:23:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB9461428E7;
+	Wed,  5 Mar 2025 01:35:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741137816; cv=none; b=lXUyL/wci2t8aLymTqq9qhx9ArrKBsz99qZvmWBCsaWuDvb7BrlQb9X5wtXiBuGbKX0z6W3cAcvR08Yf/W3Ek/zgRd6GgsFcAthAU7mnuZ0+EZjrmPtVBRFAPRxcbOuAJlZSs2iIG4ZK07Evou1fkvFboSXNgd84R7BE8LG2ySM=
+	t=1741138528; cv=none; b=iYYKOj4F41jFMA9PFn50MXs41FLM45CwnwY2NmxijBiYaO8jvPQpGVQVucdaV0FQNnr+Ly5cV4ijtiMO60sEXs7+AG0RZsu+7Ld8ulwNtPsCZ+cianNJXQDnYaG6m8Xa0g/HQvi9HNySEAttIRcSssHx+/zreb9aJtjdtQ7aZOo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741137816; c=relaxed/simple;
-	bh=/pGsyz/6ThzK+KceFflPkTk2ot9eWG/BfuA8GInaWtw=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jXL/EDygv1lFJnfhVvfdYuRx26W+/KNHS1IvLKwyHIRrTpU7XDTTlesNIXbkhM6GcWEdmrTv5rTx5VN6l4xeJY6y0UHTNpm4DxE7g5BrDjD6raWPjygfmr7uvTQLbCPdktG8s576sPyEiqSRmwIAP0BdksBFWvY/mwCOhUu+0ng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z6vpZ1N3Kz1f07W;
-	Wed,  5 Mar 2025 09:19:18 +0800 (CST)
-Received: from dggpemf500002.china.huawei.com (unknown [7.185.36.57])
-	by mail.maildlp.com (Postfix) with ESMTPS id E94C01401F3;
-	Wed,  5 Mar 2025 09:23:30 +0800 (CST)
-Received: from huawei.com (10.175.101.6) by dggpemf500002.china.huawei.com
- (7.185.36.57) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Wed, 5 Mar
- 2025 09:23:30 +0800
-From: Yue Haibing <yuehaibing@huawei.com>
-To: <axboe@kernel.dk>, <asml.silence@gmail.com>
-CC: <io-uring@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<yuehaibing@huawei.com>
-Subject: [PATCH -next] io_uring: Remove unused declaration io_alloc_async_data()
-Date: Wed, 5 Mar 2025 09:34:54 +0800
-Message-ID: <20250305013454.3635021-1-yuehaibing@huawei.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1741138528; c=relaxed/simple;
+	bh=1mxRshSolbkoaIKsAkJCRRgE3etEr8qaYvLAZNdMO/8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=PVmyLFAt15jtW/oenmkmgUgU+x29dE79V+o2qDAuxQgBPKOln9NnBNL/6umV7CUPjvccsFdjH+nPL8U2kLUTxqW8rlH3cKKPRsRyAkwkqs8MUmQ4LqGiZA2V0FpQIde0NR+nsGhjrqvRwsgv4Nd8FhW0P6Ga/XeSwiy5HqXJOzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mpNBfjRJ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524NADJ9025365;
+	Wed, 5 Mar 2025 01:35:04 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nLs+5SLZJ4qjajbg8dAv5Pp89mRUdsV9Rqw/s+IwB34=; b=mpNBfjRJri4AhMhC
+	CMDTZzya5nC8OwRGnHt8JCnDV3zYqX67KpoeVRLDh29Kj9zjBPJAWaA+1aUA1EfZ
+	hXhDY6j80xJDYxEqHWlDYbt0CbVh41rdednZ22U4pqPfXXscQsYiDPLMnvCiRH7U
+	rVPzPpu2czdSgihoqVOpJ6euUOuPhik7fG0lGjaP9jMrxQkQsftty3a7+L+4+mJ4
+	+7/esdeAA7M3EaeuEyttv8bwUn4/Y/8mMb5jURgWJ5p1pxl4o+YpkW4BRF+dPfr2
+	3WbP2vxHtlcsk49s1RqhuV1giYkgBFWquMnw0y8gSJhwapQOvu9iknyR1jlmVHea
+	Lru1RQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p933q6f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 05 Mar 2025 01:35:03 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5251Z3fZ020582
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 5 Mar 2025 01:35:03 GMT
+Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
+ 17:34:58 -0800
+Message-ID: <bb2f4a5d-1a93-4637-908d-316516213061@quicinc.com>
+Date: Wed, 5 Mar 2025 09:34:56 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v15 04/10] Coresight: Introduce a new struct
+ coresight_path
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>,
+        James Clark <james.clark@linaro.org>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>
+CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
+        Jinlong Mao
+	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>
+References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
+ <20250303032931.2500935-5-quic_jiegan@quicinc.com>
+ <4e0959e7-cb66-41f1-b686-a274b6cbfd2e@arm.com>
+Content-Language: en-US
+From: Jie Gan <quic_jiegan@quicinc.com>
+In-Reply-To: <4e0959e7-cb66-41f1-b686-a274b6cbfd2e@arm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf500002.china.huawei.com (7.185.36.57)
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=Me2Wu4/f c=1 sm=1 tr=0 ts=67c7aa48 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=COk6AnOGAAAA:8 a=BNzsuDOjKBzrTUwNBxAA:9 a=3ZKOabzyN94A:10
+ a=QEXdDO2ut3YA:10 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: O5Xb635ZTtY1EM7RJ_0yyvJwNWqU69Zj
+X-Proofpoint-ORIG-GUID: O5Xb635ZTtY1EM7RJ_0yyvJwNWqU69Zj
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
+ definitions=2025-03-05_01,2025-03-04_02,2024-11-22_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
+ suspectscore=0 mlxscore=0 malwarescore=0 phishscore=0 spamscore=0
+ adultscore=0 lowpriorityscore=0 mlxlogscore=999 priorityscore=1501
+ impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
+ definitions=main-2503050010
 
-Commit ef623a647f42 ("io_uring: Move old async data allocation helper
-to header") leave behind this unused declaration.
 
-Signed-off-by: Yue Haibing <yuehaibing@huawei.com>
----
- io_uring/io_uring.h | 1 -
- 1 file changed, 1 deletion(-)
 
-diff --git a/io_uring/io_uring.h b/io_uring/io_uring.h
-index daf0e3b740ee..b95dab77e32d 100644
---- a/io_uring/io_uring.h
-+++ b/io_uring/io_uring.h
-@@ -88,7 +88,6 @@ struct file *io_file_get_fixed(struct io_kiocb *req, int fd,
- void __io_req_task_work_add(struct io_kiocb *req, unsigned flags);
- void io_req_task_work_add_remote(struct io_kiocb *req, struct io_ring_ctx *ctx,
- 				 unsigned flags);
--bool io_alloc_async_data(struct io_kiocb *req);
- void io_req_task_queue(struct io_kiocb *req);
- void io_req_task_complete(struct io_kiocb *req, io_tw_token_t tw);
- void io_req_task_queue_fail(struct io_kiocb *req, int ret);
--- 
-2.34.1
+On 3/5/2025 12:10 AM, Suzuki K Poulose wrote:
+> On 03/03/2025 03:29, Jie Gan wrote:
+>> Introduce a new strcuture, 'struct coresight_path', to store the data 
+>> that
+>> utilized by the devices in the path. The coresight_path will be built/ 
+>> released
+>> by coresight_build_path/coresight_release_path functions.
+>>
+>> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
+>> ---
+>>   drivers/hwtracing/coresight/coresight-core.c  | 16 +++++-----
+>>   .../hwtracing/coresight/coresight-etm-perf.c  | 30 ++++++++++---------
+>>   .../hwtracing/coresight/coresight-etm-perf.h  |  2 +-
+>>   drivers/hwtracing/coresight/coresight-priv.h  |  6 ++--
+>>   drivers/hwtracing/coresight/coresight-sysfs.c | 12 ++++----
+>>   include/linux/coresight.h                     | 10 +++++++
+>>   6 files changed, 44 insertions(+), 32 deletions(-)
+>>
+> 
+> ...
+> 
+>> diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+>> index ce9a5e71b261..67cf8bdbe5c0 100644
+>> --- a/include/linux/coresight.h
+>> +++ b/include/linux/coresight.h
+>> @@ -329,6 +329,16 @@ static struct coresight_dev_list (var) = 
+>> {                \
+>>   #define to_coresight_device(d) container_of(d, struct 
+>> coresight_device, dev)
+>> +/**
+>> + * struct coresight_path - data needed by enable/disable path
+>> + * @path:              path from source to sink.
+> 
+> This doesn't match the actual variable below.
+
+Hi Suzuki,
+
+Very sorry for the mistake. I should spot it in advance. I will take 
+care and enhance the self-checking process in the future.
+
+Jie
+
+> 
+>> + * @trace_id:          trace_id of the whole path.
+>> + */
+>> +struct coresight_path {
+>> +    struct list_head    path_list;
+>> +    u8            trace_id;
+>> +};
+>> +
+>>   enum cs_mode {
+>>       CS_MODE_DISABLED,
+>>       CS_MODE_SYSFS,
+> 
+> Suzuki
 
 
