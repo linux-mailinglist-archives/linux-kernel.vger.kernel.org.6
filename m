@@ -1,109 +1,122 @@
-Return-Path: <linux-kernel+bounces-547128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0013A50342
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:14:49 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45FDFA50344
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 16:15:04 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC376188642B
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:14:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F14DB3A7F18
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B463324F594;
-	Wed,  5 Mar 2025 15:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hkfcbV6e"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D9C98635D;
-	Wed,  5 Mar 2025 15:14:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C482A2500C0;
+	Wed,  5 Mar 2025 15:14:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B87924FBE8;
+	Wed,  5 Mar 2025 15:14:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741187675; cv=none; b=c4pxQgUbF0QA7VDJFRuJmQzwrWia26Z+vtR8l2CFuKpMQqv9JJ9Zxo6z3co1N4qwWQ7Fwc8mwZFZEW78Gm5tpPaokhc3/NqH2LltYS2+tLZ7mNcW02P95rQY4mt7LENHaZ990hzgCmFH4iadItjkMOW7yO/BM1y8S3LaTf0iPfM=
+	t=1741187682; cv=none; b=j9YrqM79POuZD21ppyUpcnrsndp599Ini6ePX4mTr4BGBf67kl1ZPwIV03dM6/3sAWvpYVkKSCJgEbAcwdjm4cEZ28GJ+T9Tw+hPzCL4TZidsYHxwJlZI7PfoeaTkp1AkcL1zTFjNYA+fk+L3hQ0gCzOnCMXXzNTBz2uJJM9xIY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741187675; c=relaxed/simple;
-	bh=oUCJHhTLkIkZYGtUC5LeznhRIkU1WBXDpdv7zgGdYkE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UnnzYTJV7iyqKWz+d6FcxhIq4WKi7T0PvSfcNmhyrZi3I0QhDYK70TQlRJuDZo66aa50QKkAqEKnCU/rPzCQWReMBesn6lh+pgsRTs73xTWoPT6n+K5jz0BROkDVtb9Eaq/hnWK18YG1lg5DkMv0klgWsaciVWj5T7cbtzKJSGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hkfcbV6e; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=tdeNOf9UKgSka2fVLsKE2/PskNhMSwr2fUM0473Ddao=; b=hkfcbV6eMLZ4tDrXgg1MvCQFUM
-	aRdyQaT18pOCXfCzvZGlMWpE6SSrJxRKlYMH3PFJvGGOtUGPvnrddmy2WuJlDGc0mC4H+fSSw9ERr
-	KvfhT1+sI27asFVYASQBKiJF9VXAI/WwK2fngp8pU4FAzYzTA5+xfb2PwL8GbhV3S4fg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1tpqRu-002Vtc-LE; Wed, 05 Mar 2025 16:14:18 +0100
-Date: Wed, 5 Mar 2025 16:14:18 +0100
-From: Andrew Lunn <andrew@lunn.ch>
-To: Joseph Huang <Joseph.Huang@garmin.com>
-Cc: netdev@vger.kernel.org, Joseph Huang <joseph.huang.2024@gmail.com>,
-	Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net: dsa: mv88e6xxx: Verify after ATU Load ops
-Message-ID: <2ea7cde2-2aa1-4ef4-a3ea-9991c1928d68@lunn.ch>
-References: <20250304235352.3259613-1-Joseph.Huang@garmin.com>
+	s=arc-20240116; t=1741187682; c=relaxed/simple;
+	bh=elgOmlowbnIPeZCBlF4QGmmo5m2Shp/74rd5tbSJygI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=U5hH2R+M5zsDkLn4JSoHVOdrDi5BeyEjucWDnqIN/456yuTIAad8QLvsdLn/XjjK7et4igBr7cX3NQspqZBHLfHFMlBHfVS0Ncc3unlvQshzBTwQpuGmPtVI0drqAatFo5FajNEL8yHTFMU7ieH2cUvIP2QTzp6UUQ+xWM9ZOtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 52441FEC;
+	Wed,  5 Mar 2025 07:14:47 -0800 (PST)
+Received: from [10.57.64.200] (unknown [10.57.64.200])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2CA603F673;
+	Wed,  5 Mar 2025 07:14:32 -0800 (PST)
+Message-ID: <4743eefe-b75d-4cca-b13a-8f4aafa34b49@arm.com>
+Date: Wed, 5 Mar 2025 15:14:30 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304235352.3259613-1-Joseph.Huang@garmin.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] power: energy_model: Rework the depends on for
+ CONFIG_ENERGY_MODEL
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Xuewen Yan <xuewen.yan@unisoc.com>, Xuewen Yan <xuewen.yan94@gmail.com>,
+ linux-pm@vger.kernel.org, len.brown@intel.com, linux-kernel@vger.kernel.org,
+ ke.wang@unisoc.com, jeson.gao@unisoc.com, di.shen@unisoc.com, pavel@ucw.cz
+References: <20241219091109.10050-1-xuewen.yan@unisoc.com>
+ <a43ebb14-be7f-4f8a-8892-cdb63eec4043@arm.com>
+ <CAB8ipk-qYR4LncOi2ue6Rbdc6CqX67_OydcOp14Yj=afYZPe=Q@mail.gmail.com>
+ <7bc89310-c0db-4940-8cd7-86566ecb5c65@arm.com>
+ <CAJZ5v0j3+TFB22FKcGMdy6bfvczAcp+egWv5WjY9dWmHKh8fpA@mail.gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAJZ5v0j3+TFB22FKcGMdy6bfvczAcp+egWv5WjY9dWmHKh8fpA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Mar 04, 2025 at 06:53:51PM -0500, Joseph Huang wrote:
-> ATU Load operations could fail silently if there's not enough space
-> on the device to hold the new entry.
+
+
+On 3/5/25 14:57, Rafael J. Wysocki wrote:
+> Hi,
 > 
-> Do a Read-After-Write verification after each fdb/mdb add operation
-> to make sure that the operation was really successful, and return
-> -ENOSPC otherwise.
+> On Wed, Mar 5, 2025 at 10:51 AM Lukasz Luba <lukasz.luba@arm.com> wrote:
+>>
+>> Hi Rafael,
+>>
+>> On 2/13/25 02:18, Xuewen Yan wrote:
+>>> Hi Rafael,
+>>>
+>>> I noticed that this patch has not been merged yet. Do you have any comments?
+>>>
+>>> BR
+>>>
+>>> On Thu, Dec 19, 2024 at 5:17 PM Lukasz Luba <lukasz.luba@arm.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 12/19/24 09:11, Xuewen Yan wrote:
+>>>>> From: Jeson Gao <jeson.gao@unisoc.com>
+>>>>>
+>>>>> Now not only CPUs can use energy efficiency models, but GPUs
+>>>>> can also use. On the other hand, even with only one CPU, we can also
+>>>>> use energy_model to align control in thermal.
+>>>>> So remove the dependence of SMP, and add the DEVFREQ.
+>>>>
+>>>> That's true, there are 1-CPU platforms supported. Also, GPU can have
+>>>> the EM alone.
+>>>>
+>>>>>
+>>>>> Signed-off-by: Jeson Gao <jeson.gao@unisoc.com>
+>>>>> ---
+>>>>>     kernel/power/Kconfig | 3 +--
+>>>>>     1 file changed, 1 insertion(+), 2 deletions(-)
+>>>>>
+>>>>> diff --git a/kernel/power/Kconfig b/kernel/power/Kconfig
+>>>>> index afce8130d8b9..c532aee09e12 100644
+>>>>> --- a/kernel/power/Kconfig
+>>>>> +++ b/kernel/power/Kconfig
+>>>>> @@ -361,8 +361,7 @@ config CPU_PM
+>>>>>
+>>>>>     config ENERGY_MODEL
+>>>>>         bool "Energy Model for devices with DVFS (CPUs, GPUs, etc)"
+>>>>> -     depends on SMP
+>>>>> -     depends on CPU_FREQ
+>>>>> +     depends on CPU_FREQ || PM_DEVFREQ
+>>>>>         help
+>>>>>           Several subsystems (thermal and/or the task scheduler for example)
+>>>>>           can leverage information about the energy consumed by devices to
+>>>>
+>>>> Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+>>
+>> Gentle ping. You probably have missed that change for the v6.15 queue
+> 
+> Indeed, I have missed this one.
+> 
+> Now applied as 6.15 material, thanks!
 
-Please could you add a description of what the user sees when the ATU
-is full. What makes this a bug which needs fixing? I would of thought
-at least for unicast addresses, the switch has no entry for the
-destination, so sends the packet to the CPU. The CPU will then
-software bridge it out the correct port. Reporting ENOSPC will not
-change that.
-
-> @@ -2845,7 +2866,8 @@ static int mv88e6xxx_port_fdb_add(struct dsa_switch *ds, int port,
->  
->  	mv88e6xxx_reg_lock(chip);
->  	err = mv88e6xxx_port_db_load_purge(chip, port, addr, vid,
-> -					   MV88E6XXX_G1_ATU_DATA_STATE_UC_STATIC);
-> +					   MV88E6XXX_G1_ATU_DATA_STATE_UC_STATIC,
-> +					   true);
->  	mv88e6xxx_reg_unlock(chip);
->  
->  	return err;
-
-> @@ -6613,7 +6635,8 @@ static int mv88e6xxx_port_mdb_add(struct dsa_switch *ds, int port,
->  
->  	mv88e6xxx_reg_lock(chip);
->  	err = mv88e6xxx_port_db_load_purge(chip, port, mdb->addr, mdb->vid,
-> -					   MV88E6XXX_G1_ATU_DATA_STATE_MC_STATIC);
-> +					   MV88E6XXX_G1_ATU_DATA_STATE_MC_STATIC,
-> +					   true);
->  	mv88e6xxx_reg_unlock(chip);
-
-This change seems bigger than what it needs to be. Rather than modify
-mv88e6xxx_port_db_load_purge(), why not perform the lookup just in
-these two functions via a helper?
-
-    Andrew
-
----
-pw-bot: cr
+Thanks Rafael!
 
