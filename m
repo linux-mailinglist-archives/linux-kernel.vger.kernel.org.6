@@ -1,183 +1,182 @@
-Return-Path: <linux-kernel+bounces-547659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547660-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF15DA50C15
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:59:11 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A62A5A50C16
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 20:59:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 31C517A3508
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:58:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFC2D3A231D
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:59:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44267254B09;
-	Wed,  5 Mar 2025 19:59:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3265C254AEC;
+	Wed,  5 Mar 2025 19:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KzG/xID6"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="O/yRMHxq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6522E3365;
-	Wed,  5 Mar 2025 19:59:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E177B249E5
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 19:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741204741; cv=none; b=NEVcVMEXB+LojwMm+znPnMCc67lRey6QiJuMWxWGfdAxDjeOZ2ZEErqPvO6rh5sJPPbpiZ5AMcWXcNB2yQfwWUB6Yo4c8d2Sbs2Czd/wlzfem1vI+IwWLGpS9C81Fi+Vokzs1FExNmywb5ABOWMwrfX45dqFlp7HEtNpBi5/Rpw=
+	t=1741204789; cv=none; b=g15SnXMeCXPQZS9xffi+zM3CzioPKScb93wTrts8IoPiVSsUcVGKNR1reVFikaLq6yyw+3hE0kxwwpgUZwTuHUCxFtAj1wCaOxugtWbKAj3Y1L/V4e6Yv5cXlj4oIUShvBjOh/fC1F1NPDPmeYncKnNcztIYSYLqUBVCviZx5OA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741204741; c=relaxed/simple;
-	bh=rgWUhepNWVcyfwGSqjFipmjHMd/7q124bJ0FeQo2L/k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TzhcxuYptPabBQsWsvETiDw0260x9yIQ+OWkdMBKN9fdBnKcluiGKGIdrhhPw0+n8V+pZIhU0A0pyEB+qWgVkn4bzoobcEajYSaXotsVMu+ofnOMq9fxicWgis5rI5HVWh4vemZIdK/xeFz8EG6XmDvp6sFOdyJmw4/BjJfuPO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KzG/xID6; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2feb9078888so12435343a91.3;
-        Wed, 05 Mar 2025 11:59:00 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741204739; x=1741809539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T1PVaYBpq9076U3IWZXvGpb8FBXofDXNAhkbJyruFPI=;
-        b=KzG/xID63yprQEA8UprCojeOTDqG4jp67ner65I9Y0ItaBqaq+75YEacu1VkucPMi4
-         32o+sFrO487CVQFfhKiNDSFaFNl96EH7O0GI2AAf+ErR/xHjCorl+uzSGSLu4suIOJ1i
-         eGJvpyT+jrfPs1RVtWF94XhC7+Xf0ikEVPgzV3thyNb54OjEQVdFTmK0wtjUpjNBCbrH
-         ZVoqW968f3rtg7BRm3ypvVZlz+A8tkWxuqHzZKIOEJAVFs+HpWZ/GNlFwH6nr66g91k3
-         pAHtZXCfY1GR5S9gjwLAR7GQKsOaN90BLhamObDRvqqXCnFF1yq/vDENJeSiEsNJb9fK
-         uEdw==
+	s=arc-20240116; t=1741204789; c=relaxed/simple;
+	bh=Cl18BFbo6lj/75bKJk7SfXOMUA2ZWAWvvgo3LQyvdCA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=SFsRxTxPnz+nuQ2tqjgrPNPjsKasoHkbHecWF0WzLnDaC8DthnAxGLFl9k6vCDkp5N5Xg0cxOchx/PyQINwCAL0aB8g8iGRdwFIY4irpjB2O8bpRzUMZ8Pd3FQrkFviY0tETrqHCnWWp1nE525vnwsvT9NZMYiIR5SY+NQEPWg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=O/yRMHxq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741204786;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=nZmZJbeQSrqRCdjQiNkr8QO8akLMmV/h+boSg4x+6iM=;
+	b=O/yRMHxqybyy+vtbszGN9fFiRlsggqMzqGiPTdfmU+L9HGOFkoGqGHnDiVr3h9HKHSlMcm
+	mvwaccQqzoYndFGQ2tZ3VPeEOip/AIP1Bg5csHrTzweE2K8RbBalgSXxCraKX5hQJoFmWb
+	d0jPVbr7aYz5B6aJTsYAdnoi3O+poGI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-433-FwXL4JGXOXWFOlExfpvr0w-1; Wed, 05 Mar 2025 14:59:34 -0500
+X-MC-Unique: FwXL4JGXOXWFOlExfpvr0w-1
+X-Mimecast-MFC-AGG-ID: FwXL4JGXOXWFOlExfpvr0w_1741204773
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4393e89e910so38432635e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 11:59:34 -0800 (PST)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741204739; x=1741809539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T1PVaYBpq9076U3IWZXvGpb8FBXofDXNAhkbJyruFPI=;
-        b=Bs3HkHrwjv2P+HFKIUIVUJo5XlrqCcHEtfo4E5aKu8sRXdo+N3r1/Xk9B42evJIHYN
-         EQvVZpcc/V86Bcs1cObHG83Us35q/QdyB3SDqRRdzoE94owLjeRQLxyvcDQke3QR4liF
-         OPE5cxgWzH+StWQMIcqh2T9kVrnpeABjWBSZwgt2qXKz0SZvRe/1oeFjLuGk0ejf3zIp
-         xTPmxPV3L/h3Th92kRZwD0VqQl/4fQiogo47Ppyy7Y+/GjR61N2WH6hM6Hu52vhYWCZ7
-         dlf1lWkALSTHqSKQdbkMxy52qRhGPg8AnAVOlLKKc3HsBCLxShRXCXo5lYfstyM68nqF
-         HFOA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQ9XIJ5xKSo/sjsKx2/1cSStRTuhQkbl/DdYqau8m4rV06NUKghshC9OOCvTvqOkiHkrdr6oFMQV/Z0t1byr6/Lg==@vger.kernel.org, AJvYcCUqynC72Nh7xvjnuqHSWrXRVyqwMjNzmXfoSDFfDFe+dZRnMVkchXlJR2vodLSxcDu1h8qobWOmH8P3HPQoCPetRfUe@vger.kernel.org, AJvYcCXqhoHoq74tvp1qWdKlh6ThfH6rmE3VES0WSP1KojTII7hHewpI24JlPP22lcif6hs6dCk3LCfKv9K6mnk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxP2Y1EPrnIIIFVsG80POudDFQTJ0HJGNVjq8Iv+IOMtBxkAiG9
-	MuK3p5krAiR0KtqsUHuRVvRlrXLsU6Wu0Pe3PtqwQ+iILef3OhLGB9KSCS2Mmv8dZTpuy8DAWb1
-	kK8YDXDEOwbp+7Pc6B0ssz9vsmkY=
-X-Gm-Gg: ASbGncvMCL19Lac8aHPjz1u0Zp5sv9kbSBNqnSmG2a7T2c6lwNjq5xa3+PozgQrOl4y
-	gdLE6jMkul66kth6som1RnD/xsu62BOC6gDW2/myjlT2P48YWZtKRmM3w38A2hZlduBI+YvtKKP
-	yI+9o/Sz6qhwVyk6K8MjytJOE8
-X-Google-Smtp-Source: AGHT+IFfV/6qDYoZwPNJLCBtJE8ZyU4iJr7//K16BTPN6XDyLemrI4fIv4EKbuBvHlLWUWsZ7sQslXNBrtC5L25iHmI=
-X-Received: by 2002:a17:90b:3d12:b0:2ff:5ed8:83d1 with SMTP id
- 98e67ed59e1d1-2ff5ed8d53fmr1796280a91.19.1741204739474; Wed, 05 Mar 2025
- 11:58:59 -0800 (PST)
+        d=1e100.net; s=20230601; t=1741204773; x=1741809573;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nZmZJbeQSrqRCdjQiNkr8QO8akLMmV/h+boSg4x+6iM=;
+        b=K3JkLg1FqzNsnXkkkleBGLdmaSvDIwz/sN9cxBA5ktlOijCtdHu+eM6ltoADPNPK3U
+         hjPf2U0aJ2WaIUnePWJubFXfYnZfp5bT2cwOnctq3NKh3LhZjrecDABpX4CnoWXX5i2t
+         WKmbCipvdnYuuP///ePxOf0Gj0XTmdWumaLYloPF5R+HCWb9o1OIpU5HntGETOwXr1Tp
+         aZBAtAS45Xap/dvLuAmFGtR3zTsG0YQarEV2Ya5L5FWM/lDq6dOMRF5U2BPZvvX2rnZy
+         sEloNrFMp9avSEw43z1z+ou1s1AWlYnCCoTESr3O6Rg4Jmzgkdgs0cY4z9fodG278Xfs
+         GuHg==
+X-Forwarded-Encrypted: i=1; AJvYcCWpeJ/pBVzI8XL/2z2lQNibY6f8/IGc20uPrrptRCDXVW8I/VYIytGQz7RXpMj6v4/O9hh+9idmDsEx6Ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwduKVImrrsCormEweRIEkolWrwbxF2A46TIaAypWc7Cmi7PSt
+	0PIvZDW4uoZl3tyilPr/HGqZrPRCOsQJMdwhW+iBmE+4m6ejeu6445Ga2aZqw1oSoynVegjXeSo
+	S9U8Lc/SOcRPvdyVrwfIstjugAc2KCerc8M8fOYdV6m1kWeudldknciRLIjUVow==
+X-Gm-Gg: ASbGncumiBa3UfYInBhTzGGXvFcw7sZL/GMWdvAXhi3qKrlBOLYrmfJJlTjccPLRMsg
+	DG/gBR0mW7W4I5BwEtxtMfKP5vGw/q8zlXEaXBGZrUKryTVTCwJPhIvRDOlcxsWncPQcd7fqDn6
+	kDYOA4cP1GG3eXTbZYe7iwJXe+vFiWnyHFkAsfig1ecNfWHufLRmqm9wbk/e9uGVcp4c1LE7AMl
+	WjotNfu+6LlKJOc/dIvHogdowEsyVVwSJWWnmt8c8AxjNe7xX+nfIPNIa1vzrurSzWc98KIOUj0
+	yFqTY9F1j6P5QVP4tQoYUFhWrTacmPFp4SXqj1bBEvb4NhU2qBott0bw8lWmbYHiB92OtPKz+Dy
+	FRH8zGGMfCTo2KQOxmx2hNYKV7ciw/ZqZpxnr+nxmXY8=
+X-Received: by 2002:a05:6000:178a:b0:391:13ef:1b0f with SMTP id ffacd0b85a97d-3911f7c3353mr4143941f8f.39.1741204773439;
+        Wed, 05 Mar 2025 11:59:33 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IE1I+GEM5IEPN5/WQ69b5Iw3kXM57cQdPQPl9xA9chlh/tdslQRtsW67EGy18cq+cCHjacCqg==
+X-Received: by 2002:a05:6000:178a:b0:391:13ef:1b0f with SMTP id ffacd0b85a97d-3911f7c3353mr4143922f8f.39.1741204773085;
+        Wed, 05 Mar 2025 11:59:33 -0800 (PST)
+Received: from ?IPV6:2003:cb:c739:5b00:84f2:50f3:bdc8:d500? (p200300cbc7395b0084f250f3bdc8d500.dip0.t-ipconnect.de. [2003:cb:c739:5b00:84f2:50f3:bdc8:d500])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e4844abbsm21789810f8f.70.2025.03.05.11.59.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 05 Mar 2025 11:59:32 -0800 (PST)
+Message-ID: <248ab74d-0f5c-4076-bfb2-a5eef8aca757@redhat.com>
+Date: Wed, 5 Mar 2025 20:59:30 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304154846.1937958-1-david@redhat.com> <20250305152055.GB28112@redhat.com>
- <CAEf4BzbyFy0eQHLac3zR8GiGDOUqYoTGAWDbFaeou903OGOTpg@mail.gmail.com> <62f93f79-a8d4-44a5-b276-3ac5af4ab25c@redhat.com>
-In-Reply-To: <62f93f79-a8d4-44a5-b276-3ac5af4ab25c@redhat.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Wed, 5 Mar 2025 11:58:46 -0800
-X-Gm-Features: AQ5f1JpNR9XR0Xgny3rOP3g1v3FV71Th_LHZWcRds0Sk3eNMx_5PJFuIV4e0zaU
-Message-ID: <CAEf4BzZcc6D3u5ATQmpkBt=8EhNuG7Xaibywx=hXcXTp346uFA@mail.gmail.com>
-Subject: Re: [PATCH -next v1 0/3] kernel/events/uprobes: uprobe_write_opcode() rewrite
-To: David Hildenbrand <david@redhat.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-arm-kernel@lists.infradead.org, linux-trace-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Matthew Wilcox <willy@infradead.org>, Russell King <linux@armlinux.org.uk>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Ian Rogers <irogers@google.com>, 
-	Adrian Hunter <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, 
-	Tong Tiangen <tongtiangen@huawei.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [QUESTION] Plain dereference and READ_ONCE() in fault handler
+To: Dev Jain <dev.jain@arm.com>, willy@infradead.org, ziy@nvidia.com,
+ hughd@google.com, ryan.roberts@arm.com, linux-kernel@vger.kernel.org,
+ linux-mm@kvack.org
+References: <20250305102159.96420-1-dev.jain@arm.com>
+ <8477d9ec-b9ce-4a3d-b61f-1bd44d3360a5@redhat.com>
+ <3c3f3cfe-9fa7-41d7-9759-cc67306f13f5@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <3c3f3cfe-9fa7-41d7-9759-cc67306f13f5@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 5, 2025 at 11:47=E2=80=AFAM David Hildenbrand <david@redhat.com=
-> wrote:
->
-> On 05.03.25 20:43, Andrii Nakryiko wrote:
-> > On Wed, Mar 5, 2025 at 7:22=E2=80=AFAM Oleg Nesterov <oleg@redhat.com> =
-wrote:
-> >>
-> >> On 03/04, David Hildenbrand wrote:
-> >>>
-> >>> Currently, uprobe_write_opcode() implements COW-breaking manually, wh=
-ich is
-> >>> really far from ideal.
-> >>
-> >> To say at least ;)
-> >>
-> >> David, thanks for doing this. I'll try to read 3/3 tomorrow, but I don=
-'t
-> >> think I can really help. Let me repeat, this code was written many yea=
-rs
-> >> ago, I forgot everything, and today my understanding of mm/ is very po=
-or.
-> >> But I'll try anyway.
-> >>
-> >>> Are there any uprobe tests / benchmarks that are worth running?
-> >>
-> >> All I know about uprobe tests is that bpf people run a lot of tests wh=
-ich
-> >> use uprobes.
-> >>
-> >> Andrii, Jiri, what you advise?
-> >>
-> >
-> > We do have a bunch of tests within BPF selftests:
-> >
-> > cd tools/testing/selftest/bpf && make -j$(nproc) && sudo ./test_progs -=
-t uprobe
->
-> I stumbled over them, but was so far not successful in building them in
-> my test VM (did not try too hard, though). Will try harder now that I
-> know that it actually tests uprobe properly :)
+> Oh I just looked at the arm64 definition and assumed ptep_get_lockless()
+> == READ_ONCE() :) Now this makes sense. So I am guessing that we can
+> still get away with a *vmf.pmd on 64-bit arches?
+> 
+> A separate question: When taking the create_huge_pmd() path with a read
+> fault and after taking the pmd lock, why shouldn't we check with
+> pmd_none(pmdp_get_lockless(vmf.pmd)) instead of plain *vmf.pmd...surely
+> now we must load the actual correct value from memory since we are
+> committing into mapping the huge zero folio?
 
-If you have decently recent Clang and pahole, then just make sure you
-have kernel built before you build selftests. So above instructions
-are more like:
+So you mean we go via create_huge_pmd()->do_huge_pmd_anonymous_page(), 
+to then end up in the path where we do the mm_get_huge_zero_folio().
 
-1. cd <linux-repo>
-2. cat tools/testing/selftests/bpf/{config, config.<your_arch>} >> .config
-3. make -j$(nproc) # build kernel with that adjusted config
-4. cd tools/testing/selftests/bpf
-5. make -j$(nproc) # build BPF selftests
-6. sudo ./test_progs -t uprobe # run selftests with "uprobe" in their name
+If we hold the PMD lock, pmd_none() cannot change, so there is no need 
+for the lockless variant?
 
->
-> >
-> > I also built an uprobe-stress tool to validate uprobe optimizations I
-> > was doing, this one is the most stand-alone thing to use for testing,
-> > please consider checking that. You can find it at [0], and see also
-> > [1] and [2] where  I was helping Peter to build it from sources, so
-> > that might be useful for you as well, if you run into problems with
-> > building. Running something like `sudo ./uprobe-stress -a10 -t5 -m5
-> > -f3` would hammer on this quite a bit.
->
-> Thanks, I'll play with that as well.
->
-> >
-> > I'm just about to leave on a short vacation, so won't have time to go
-> > over patches, but I plan to look at them when I'm back next week.
-> >
-> >    [0] https://github.com/libbpf/libbpf-bootstrap/tree/uprobe-stress
-> >    [1] https://lore.kernel.org/linux-trace-kernel/CAEf4BzZ+ygwfk8FKn5AS=
-_Ny=3DigvGcFzdDLE2FjcvwjCKazEWMA@mail.gmail.com/
-> >    [2] https://lore.kernel.org/linux-trace-kernel/CAEf4BzZqKCR-EQz6LTi-=
-YvFY4RnYb_NnQXtwgZCv6aUo7gjkHg@mail.gmail.com
-> >
-> >> Oleg.
-> >>
-> >
->
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+So with the lock, you get the actual correct value that cannot change.
+
+> And after looking somewhat more, why even is a pmd_none(*pmd) there in
+> set_huge_zero_folio()...it should be the responsibility of the caller to
+> verify this? Any caller will just assume that it got the huge zero folio
+> mapped so this check should be redundant.
+
+Yes, looks more like a VM_WARN_ON() scenario. So I agree that that one 
+does not sound useful. (*maybe* the compiler is smart enough to optimize 
+that check out)
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
