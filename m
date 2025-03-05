@@ -1,137 +1,103 @@
-Return-Path: <linux-kernel+bounces-546347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A24F9A4F97E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:05:14 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870C5A4FAB0
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 10:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C31C316C2C5
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:05:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BC483ADB97
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 09:53:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A7BB20409E;
-	Wed,  5 Mar 2025 09:04:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DA2C2066C3;
+	Wed,  5 Mar 2025 09:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b="bLjhNTZX"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FumxnhAf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15D77200100;
-	Wed,  5 Mar 2025 09:04:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741165485; cv=pass; b=lo3wkWET7nN2aiUFmcbLzB14JwnsIXKeT1Unb30fkXugk9ZRtnuQd50WkCPPX0DD1VMjt8vGFZ62e+8qLvLdxuec8IqZAr74lAEQR2hiTvcmpnWDnMMnAMJVFhy/yhE64xfE3Ycr3T2eNZYKjhSvu9zdgd9M9hWGvpXdsN27ztc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741165485; c=relaxed/simple;
-	bh=S991R8nHQ4KUci924RH3qwTCx89uQStWo80Kg/17WnU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JLLTT8w+286Q0MV6EBE12mum1Suyo3bOFpYwdUuiWLxEEFwg8sTUUt27ZMk9F/ofxz8tH+3h/T+zmbt7NgnhJ7zWAblE7cvpkutb2xayCe6Op+d1dZx0ypzmWDuoc9L0Tx2cdXViWD528aqXY3NKHkNEqX56mWSJrID+iEeBCqU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=dmitry.osipenko@collabora.com header.b=bLjhNTZX; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1741165421; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=aML6y84URqQeEpfaGBbocAOoCx9shK7lRLeSoL7zs5SX1eAi6LRKAG6UI4Di7Arvi4hBDCRvQNQY2QzEonJ9e8ueAyxRozm/BByW/Mwp7JxLk7NWxqlqzlZG6Hgs4UyJd8bKOeErF7BkfGaex0X2Cwg2a4hG/P8wZWpMAKQgYmE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1741165421; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=fyOnL4r76M4sHB9HhMIqMpDlTkHpMyvnwL+qPFwOmHY=; 
-	b=oDbow1UE+BO/cf067TxihaoptsAymW8fmn0K/GWMOsQcewdMgSnRY8WL/r6MzQK2jEORnLKABs/+d2dpVsB6sKOrGVcbb5GoMfvadhoVxOjP0rkp9WEmQrfSAX3BkhCQzklrHMQPJU29lgzhUSNRt+RgiQBUFIcawqpO/s56AuM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=dmitry.osipenko@collabora.com;
-	dmarc=pass header.from=<dmitry.osipenko@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741165421;
-	s=zohomail; d=collabora.com; i=dmitry.osipenko@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=fyOnL4r76M4sHB9HhMIqMpDlTkHpMyvnwL+qPFwOmHY=;
-	b=bLjhNTZXN88/2j7YByNhNOVK6VW1ivb+lAa2CKiF/l1zS2F9ScBlygN+utrENZI5
-	GepaEGfOUzYlfgTyLOgoyKqD6unUF8OQcNEs2XeSQHrv7W7b60GFHPcvLYVPwmyPI6l
-	j11vOC6LEwLoY3gl5lo7lnSQrYsVA+P44FEhQPgI=
-Received: by mx.zohomail.com with SMTPS id 1741165419515412.81218800288195;
-	Wed, 5 Mar 2025 01:03:39 -0800 (PST)
-Message-ID: <88054acf-3051-414c-aef7-4c0f085d5182@collabora.com>
-Date: Wed, 5 Mar 2025 12:03:33 +0300
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6197D205518;
+	Wed,  5 Mar 2025 09:53:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741168394; cv=none; b=KG8/Vbq2lwEoWM6GcOR+TVCeokv794tleZpC3Myv8h1Y1WJ6IGIN49mkxrZl88CaXR/ITy3+WHgiiahBZMTvExj+gPY6GU/yf8UFZECnBSIHukTyuh9kzyrjhWUEuk/M1iMwdrK+AHXZhB5upKe7VCpPMtjzZZIA0E6q539BZuk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741168394; c=relaxed/simple;
+	bh=UML+iHb2dTlgk19CzW49qLsC4xLAUZs1v41pgqomKkU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=WNHJSjdoAa+UKBn2cxO5DkD3Pq68kYWeJyOlgQsn8YXbu0QJdd1iNMQR7Fy+J2NZUXVeRCnsQXE2aFFo1PPsqqVTLUw83euxPn5HMg0lQTjtY3yot1EB3/e3Pg2gy5iyoPRLzMZT6mSy0jFbmftCzgkdcVTOJk+AbUttDAdevyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FumxnhAf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 287AEC4CEE2;
+	Wed,  5 Mar 2025 09:53:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741168393;
+	bh=UML+iHb2dTlgk19CzW49qLsC4xLAUZs1v41pgqomKkU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=FumxnhAfZ61FgXfJiNgxadYUcoWd9QhgLpStY2IJ5W8kXY412KeyaVvVkFPzC4vJF
+	 KfJgK5egnM4lVpcJnFeMEGcHytIqeUf/JGpABOFCBDuwCqT49ZPtSc9Qnx9gWgvNi2
+	 eDWxCDIfHaxBS69T7ynbLFaA2keRkWu4u2GLG2v8MvqaqSZxcNkLQ6q81JAt8fd4hR
+	 YkMJPWP7BdmLl5VDTtxqXQWMyvoi3Jwilvkh5deRRVp/VDOm7SCV8tF1wjhPkLNkOO
+	 +GAOUZ/2gC1GJiNcb9rPP0ZKdOyr4wV8Ow3Zv4jSznYePGfvyjsanE4TetohjxmsUo
+	 2RO3zKPNMk5Zg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  "Danilo Krummrich" <dakr@kernel.org>,  <linux-kernel@vger.kernel.org>,
+  <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 02/22] rust: move pin-init API into its own directory
+In-Reply-To: <20250304225245.2033120-3-benno.lossin@proton.me> (Benno Lossin's
+	message of "Tue, 04 Mar 2025 22:53:16 +0000")
+References: <20250304225245.2033120-1-benno.lossin@proton.me>
+	<tvMbtzZXTxG78GP05XwEiqdeUOb_IML2s97GEvGeEMHTYdJh2PKo7gRP7FPhaTlJnS16gC34KvGWMg16mR69VQ==@protonmail.internalid>
+	<20250304225245.2033120-3-benno.lossin@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 05 Mar 2025 10:03:59 +0100
+Message-ID: <87jz93g874.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 0/6] Add Synopsys DesignWare HDMI RX Controller
-To: Hans Verkuil <hverkuil@xs4all.nl>, Tim Surber <me@timsurber.de>,
- Shreeya Patel <shreeya.patel@collabora.com>, Heiko Stuebner
- <heiko@sntech.de>, Mauro Carvalho Chehab <mchehab@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, jose.abreu@synopsys.com,
- nelson.costa@synopsys.com, shawn.wen@rock-chips.com,
- nicolas.dufresne@collabora.com,
- Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: kernel@collabora.com, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org,
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Diederik de Haas <didi.debian@cknow.org>
-References: <20250304085819.108067-1-dmitry.osipenko@collabora.com>
- <78ff36f6-01a7-4df4-b653-c4509fb93af4@timsurber.de>
- <1039aca7-89b9-44ef-9775-e7852e956362@timsurber.de>
- <9b4b1e65-127d-422b-a359-a1d8e25652f9@xs4all.nl>
-From: Dmitry Osipenko <dmitry.osipenko@collabora.com>
-Content-Language: en-US
-In-Reply-To: <9b4b1e65-127d-422b-a359-a1d8e25652f9@xs4all.nl>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain
 
-On 3/5/25 11:10, Hans Verkuil wrote:
-> On 05/03/2025 01:59, Tim Surber wrote:
->> Hi Dmitry,
->>
->> I did some more testing. That the Apple TV did not work was a bit 
->> misleading.
->>
->> It was just, that the Apple TV defaulted to 4:4:4 Chroma which does not 
->> work at all for me. (The same happens using the vendor driver).
->>
->> When I changed the EDID to match the vendor driver the HDMI handshake 
->> happened with 4:2:0 chroma, where I could verify even 4k60fps using your 
->> driver, nice!
->>
->> So the remaining problems I see are:
->> - 4:4:4 chroma not working in any resolution
->> - 4:2:2 and RGB not working in 4k60fps (is this a hardware limitation?)
->>
->> A possible workaround could be to disable these non supported formats in 
->> the default EDID.
-> I would like to merge this driver this week, since otherwise it will likely
-> slip to v6.16. So if there is a working EDID, perhaps it can be used for now,
-> and later on it can be patched if there is a better EDID.
-> 
-> Would this EDID work? Tim, can you try this?
-> 
-> v4l2-ctl --set-edid type=hdmi-4k-600mhz,ycbcr444,ycbcr422
-> 
-> Alternatively, if there is indeed a HW limitation that prevents 4kp60 to work,
-> try this:
-> 
-> v4l2-ctl --set-edid type=hdmi-4k-300mhz,ycbcr444,ycbcr422
-> 
-> Whichever of the two works is what we can use as default EDID.
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-Disabling 444 and 422 is an option. Though, they work on my setup at
-4k@60p.
+> In preparation of splitting off the pin-init crate from the kernel
+> crate, move all pin-init API code (including proc-macros) into
+> `rust/pin-init`.
+>
+> Moved modules have their import path adjusted via the `#[path = "..."]`
+> attribute. This allows the files to still be imported in the kernel
+> crate even though the files are in different directories.
+>
+> Code that is moved out of files (but the file itself stays where it is)
+> is imported via the `include!` macro. This also allows the code to be
+> moved while still being part of the kernel crate.
+>
+> Note that this commit moves the generics parsing code out of the GPL-2.0
+> file `rust/macros/helpers.rs` into the Apache-2.0 OR MIT file
+> `rust/pin_init/internal/src/helpers.rs`. I am the sole author of that
+> code and it already is available with that license at [1].
+> The same is true for the entry-points of the proc-macros `pin_data`,
+> `pinned_drop` and `derive_zeroable` in `rust/macros/lib.rs` that are
+> moved to `rust/pin_data/internal/src/lib.rs`. Although there are some
+> smaller patches that fix the doctests.
+>
+> Link: https://github.com/Rust-for-Linux/pinned-init [1]
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
 
-In general, it often a challenge to get 4k@60p properly with any of
-these small board devices. 4k@60p works only using a short HDMI cable
-for me. Also, not everyone aware that the micro HDMI adapter needs to be
-compliant with HDMI 2.0 for 4k@60, that's why 300MHz is the default.
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
-Will be nice to have the good EDID enabled by default in the defconfig.
-Dealing with problems like that will be a headache for majority of
-people, IMO.
 
--- 
 Best regards,
-Dmitry
+Andreas Hindborg
+
+
+
 
