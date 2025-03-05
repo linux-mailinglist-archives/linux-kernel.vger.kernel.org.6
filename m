@@ -1,77 +1,211 @@
-Return-Path: <linux-kernel+bounces-547025-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 372E7A501EC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:28:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9ACCDA501EF
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:29:02 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CAB6188B98D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:26:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB2513AA454
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27A8A24BCE8;
-	Wed,  5 Mar 2025 14:26:02 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F305C24CEF0;
+	Wed,  5 Mar 2025 14:27:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="RekStM0K"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4ECFB24A077;
-	Wed,  5 Mar 2025 14:26:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741184761; cv=none; b=pDW+gZ7l5Lc0yDiZ6BUjGGQ6xMJfd5lwfihlchjw/xijzMBeILcYyn3Ea3Qvrt0jrpnRw1FLVm3LRQ0SCj49f/mLXbhdBKeboGtfnHcOTACuvFkx9TeXI+knKFFXE2qPaCbZnmzeWpqBIFvamorvih5chp7xgbe9/impQcpk5lE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741184761; c=relaxed/simple;
-	bh=MM1lLauZtbBl82rZecWqi2/StKbZuExCJbqi8DGngL0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bHuC2kskd5EnsBdQjak45Zbq8ach1lLs/iTHQOz4o4LJvHL4jbfGMd/SGeJNdC9ZtX1dU6gQeppGZybAu0GwgbOG9SSRH4KqX+GKJAiZYd/v7QdIjVstAegqmYCXnhdj9MPOPJ2yqHKfxv4eWje8dmWB0rLggqLMFV6sRneA0bU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 5863368AFE; Wed,  5 Mar 2025 15:25:55 +0100 (CET)
-Date: Wed, 5 Mar 2025 15:25:54 +0100
-From: Christoph Hellwig <hch@lst.de>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
-	Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>,
-	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
-	Hannes Reinecke <hare@suse.de>, linux-nvme@lists.infradead.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] nvme-tcp: fix signedness bug in
- nvme_tcp_init_connection()
-Message-ID: <20250305142554.GA18330@lst.de>
-References: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E8424C691;
+	Wed,  5 Mar 2025 14:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741184823; cv=pass; b=Vb3LuiTggm4LUZOl6hfWEIf3Lr3lRKtbiVhKXmq5jC7ozfbIlc0gVaak3L6vKyFWmzvAXP8PZSFe1TLnbu3AT7R/Kn6ieMXxNp39QUhCI1UG3DR0loly8wHNzgF5gMMUSnl4vvUBvYkPccGqlvC3484QANTrNGqZ+oyvMtIpQPk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741184823; c=relaxed/simple;
+	bh=/Z9S0QzKDsuLG0+3X3XdL82r5DXrvOFAaAskQNYSId4=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=j5JX+/rj148hUYQNnmTIkCZdtVMmD8hQJ/w5An/hnxRP74gw3nAqKc5RTiWeGiafTYFAJlXD6C9sillsstWnVHcDMPVwNChESA55W/QkaVQ5nH+TvTBa5IF+x3feQqJlWs1W/jwXUWiV1outdqCaUGUPBvScjdEwUrWOvkT6Zy8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=RekStM0K; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1741184778; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=UNe32RR04FyEtxJr78wuwJoPPVIRQJ/9ZZVrbt8MSyvtwmPpfoQlWjDO6l2ibYVqLMdcFelA5vds3leEP0F4NFkbOsjRHu644aLrsSDHwUqcVpCxiBw+TcvbQiSsdvHSKyjUJ8yT5kBIJNwtauWVdquf8RomVTEXIOlT4r6jhjA=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1741184778; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=AdsW+1At4dzqwKDMRG+xhUkB9QjIq0jRnj5pAKgqr7Q=; 
+	b=OXt96sUQvHVTNUyBiyYNSAjazgswZrJYRHmjY537bKwCQcl0w9CKzRYO8t+/3+mybKlS8XOrrCs07zXBl49bjHw/UaNji5pvZOAaPeZFYpFsFLjIrwNGMNFx3iVf0jAhjXGOyu1By8r0WaIxSmTvp25Qh0mFTJcXDH3keQzF110=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1741184778;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=AdsW+1At4dzqwKDMRG+xhUkB9QjIq0jRnj5pAKgqr7Q=;
+	b=RekStM0KWIrf2d7tmLV0YwK/ffv+lYmKJenAW06PEzAbke5LQEb7vHepf7wdPP2M
+	0LQHWJwHa7RIV1CF5IIDXBR5jwGf6ItIj9K5PdOa/rrvdeLJBjPIWKrwnne+CqyK30v
+	qHIWs7N7ed3dkSwT0fr3oZuRjxhJ8KCNhXT8lm/k=
+Received: by mx.zohomail.com with SMTPS id 1741184776075416.8048596435848;
+	Wed, 5 Mar 2025 06:26:16 -0800 (PST)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0f3be9ff-81a1-4c33-8960-75de2c239ae0@stanley.mountain>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.300.87.4.3\))
+Subject: Re: Allow data races on some read/write operations
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
+Date: Wed, 5 Mar 2025 11:25:58 -0300
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+ comex <comexk@gmail.com>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Benno Lossin <benno.lossin@proton.me>,
+ Abdiel Janulgue <abdiel.janulgue@gmail.com>,
+ dakr@kernel.org,
+ robin.murphy@arm.com,
+ rust-for-linux@vger.kernel.org,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Valentin Obst <kernel@valentinobst.de>,
+ linux-kernel@vger.kernel.org,
+ Christoph Hellwig <hch@lst.de>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ airlied@redhat.com,
+ iommu@lists.linux.dev,
+ lkmm@lists.linux.dev
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <23E19975-0AF5-4223-B05D-4891747B7C15@collabora.com>
+References: <87bjuil15w.fsf@kernel.org>
+ <t4HxdvR7WBX_861hiTXo72jqC9F9oRpIzgA_dD2yhcSuLISEkC-shMfSgllrFPpnkSZXGfRcc47keudMooNiIQ==@protonmail.internalid>
+ <CAH5fLgg5MuUu=TX8mMsPf5RcLhMLHSU4Vct=h8rFX6Z7HjPxeA@mail.gmail.com>
+ <87ikoqjg1n.fsf@kernel.org>
+ <KpWTCfIlcLYFBpSvWPfALJ9VQn5a99_RAvxgMBc1aCrSalPB-qaW9IhXyaDG7HM1AcFPX5chj_Yr7IQp3F7UqA==@protonmail.internalid>
+ <CAH5fLgh6ubawHh76wq7JPbcuBCWhm91m7Rc01MVsX-a3C6qaVA@mail.gmail.com>
+ <87mse2hrd8.fsf@kernel.org> <Z8YMTiKS4T9wC4t_@boqun-archlinux>
+ <ae8ac31f-c6ad-46ae-80dd-10ec081a16d1@ralfj.de>
+ <88456D33-C5CA-4F4F-990E-8C5F2AF7EAF9@gmail.com>
+ <hkhgihg4fjkg7zleqnumuj65dfvmxa5rzawkiafrf4kn5ss6nw@o7kc6xe2bmuj>
+ <25e7e425-ae72-4370-ae95-958882a07df9@ralfj.de>
+To: Ralf Jung <post@ralfj.de>
+X-Mailer: Apple Mail (2.3826.300.87.4.3)
+X-ZohoMailClient: External
 
-On Fri, Feb 28, 2025 at 12:39:41PM +0300, Dan Carpenter wrote:
-> index 8a9131c95a3d..361b04ec5b5d 100644
-> --- a/drivers/nvme/host/tcp.c
-> +++ b/drivers/nvme/host/tcp.c
-> @@ -1495,7 +1495,7 @@ static int nvme_tcp_init_connection(struct nvme_tcp_queue *queue)
->  	msg.msg_flags = MSG_WAITALL;
->  	ret = kernel_recvmsg(queue->sock, &msg, &iov, 1,
->  			iov.iov_len, msg.msg_flags);
-> -	if (ret < sizeof(*icresp)) {
-> +	if (ret < (int)sizeof(*icresp)) {
->  		pr_warn("queue %d: failed to receive icresp, error %d\n",
->  			nvme_tcp_queue_id(queue), ret);
->  		if (ret >= 0)
+Hi Rafl,
 
-I hate these magic casts.  What about something like:
+> On 5 Mar 2025, at 10:10, Ralf Jung <post@ralfj.de> wrote:
+>=20
+> Hi,
+>=20
+> On 05.03.25 04:24, Boqun Feng wrote:
+>> On Tue, Mar 04, 2025 at 12:18:28PM -0800, comex wrote:
+>>>=20
+>>>> On Mar 4, 2025, at 11:03=E2=80=AFAM, Ralf Jung <post@ralfj.de> =
+wrote:
+>>>>=20
+>>>> Those already exist in Rust, albeit only unstably:
+>>>> =
+<https://doc.rust-lang.org/nightly/std/intrinsics/fn.volatile_copy_memory.=
+html>.
+>>>> However, I am not sure how you'd even generate such a call in C? =
+The
+>>>> standard memcpy function is not doing volatile accesses, to my
+>>>> knowledge.
+>>>=20
+>>> The actual memcpy symbol that exists at runtime is written in
+>>> assembly, and should be valid to treat as performing volatile
+>>> accesses.
+>=20
+> memcpy is often written in C... and AFAIK compilers understand what =
+that function does and will, for instance, happily eliminate the call if =
+they can prove that the destination memory is not being read from again. =
+So, it doesn't behave like a volatile access at all.
+>=20
+>>> But both GCC and Clang special-case the memcpy function.  For =
+example,
+>>> if you call memcpy with a small constant as the size, the optimizer
+>>> will transform the call into one or more regular loads/stores, which
+>>> can then be optimized mostly like any other loads/stores (except for
+>>> opting out of alignment and type-based aliasing assumptions).  Even =
+if
+>>> the call isn=E2=80=99t transformed, the optimizer will still make =
+assumptions.
+>>> LLVM will automatically mark memcpy `nosync`, which makes it =
+undefined
+>>> behavior if the function =E2=80=9Ccommunicate[s] (synchronize[s]) =
+with another
+>>> thread=E2=80=9D, including through =E2=80=9Cvolatile accesses=E2=80=9D=
+. [1]
+>=20
+> The question is more,  what do clang and GCC document / guarantee in a =
+stable way regarding memcpy? I have not seen any indication so far that =
+a memcpy call would ever be considered volatile, so we have to treat it =
+like a non-volatile non-atomic operation.
+>=20
+>>> However, these optimizations should rarely trigger misbehavior in
+>>> practice, so I wouldn=E2=80=99t be surprised if Linux had some code =
+that
+>>> expected memcpy to act volatile=E2=80=A6
+>>>=20
+>> Also in this particular case we are discussing [1], it's a memcpy =
+(from
+>> or to) a DMA buffer, which means the device can also read or write =
+the
+>> memory, therefore the content of the memory may be altered outside =
+the
+>> program (the kernel), so we cannot use copy_nonoverlapping() I =
+believe.
+>> [1]: =
+https://lore.kernel.org/rust-for-linux/87bjuil15w.fsf@kernel.org/
+>=20
+> Is there actually a potential for races (with reads by hardware, not =
+other threads) on the memcpy'd memory? Or is this the pattern where you =
+copy some data somewhere and then set a flag in an MMIO register to =
+indicate that the data is ready and the device can start reading it? In =
+the latter case, the actual data copy does not race with anything, so it =
+can be a
 
-	if (ret >= 0 && ret < sizeof(*icresp))
-		ret = -ECONNRESET;
-	if (ret < 0) {
-		...
+This is device-specific.
+
+e.g.: for video codecs, if you don=E2=80=99t set a bit that starts the =
+decode or
+encode process for the current frame, everything remains as-is, i.e.: =
+untouched
+by the hardware. I can=E2=80=99t vouch for all other devices, and people =
+have
+already chimed in to say this is not necessarily the case for some of =
+them.
+
+> regular non-atomic non-volatile memcpy. The flag write *should* be a =
+release write, and release volatile writes do not exist, so that is a =
+problem, but it's a separate problem from volatile memcpy. One can use a =
+release fence followed by a relaxed write instead. Volatile writes do =
+not currently act like relaxed writes, but you need that anyway for =
+WRITE_ONCE to make sense so it seems fine to rely on that here as well.
+>=20
+> Rust should have atomic volatile accesses, and various ideas have been =
+proposed over the years, but sadly nobody has shown up to try and push =
+this through.
+>=20
+> If the memcpy itself can indeed race, you need an atomic volatile =
+memcpy -- which neither C nor Rust have, though there are proposals for =
+atomic memcpy (and arguably, there should be a way to interact with a =
+device using non-volatile atomics... but anyway in the LKMM, atomics are =
+modeled with volatile, so things are even more entangled than usual ;).
+>=20
+> Kind regards,
+> Ralf
+>=20
+
+=E2=80=94 Daniel
 
 
