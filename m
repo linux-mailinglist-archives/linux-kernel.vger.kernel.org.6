@@ -1,278 +1,251 @@
-Return-Path: <linux-kernel+bounces-545932-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98931A4F3F0
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:38:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD2E2A4F3F7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 02:40:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A79B818908BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:38:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235E216C696
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:40:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A34514A4FF;
-	Wed,  5 Mar 2025 01:38:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32CBA1519BD;
+	Wed,  5 Mar 2025 01:39:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fi1hokbE"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="KEmY2HhO"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E4C4469D;
-	Wed,  5 Mar 2025 01:38:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C49CB1465AD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 01:39:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741138692; cv=none; b=LQ19A0w9RbLSS4MnMl5ETw/Xms45KB6NYyHcxp1tHCntzKfPuOQIGnLECVw0A+jZP8BVN/TFK/sdWKZlhDGrsLOQVeoQero0lRL1aC9U5WmPSyc8sNNmT42djrYvcbHo69RYl8pxK/ZDCRSP21vzt0hiEe+rHtncjHXK21Brfxs=
+	t=1741138793; cv=none; b=QbPCpMLgGYZaIiOPuXNb+pvzNB1Pz2BgbSLyMFvLPD5wvohbzg7nz5Qd+XYe9EfdcDA2r9Zx/nT6mmggsafP7zJGmsfd/WMb5uAVEGSINnwUCS/kEfV0dPMcWY4wKkfrM94rnJhUJ11VhS0inYe6nAFGsXZokb+UBD6wC80Rj4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741138692; c=relaxed/simple;
-	bh=q+lQrnLig8P+h64lBIb3J0GDXuMx/5dPCCATTg7SYys=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tj4VuK1t48EPzTAb0A8018IJQgDtJ1L4R2fobOyMezqwEoWZKniyC9ZCtI5VTMAct3R9BMHLgs2/lQVPiwi64oFtIjnXtQ73RjwAFCMrFLSUhUCoj+gTk7RY00PxD71xnthCj0APSr4NGv1EcgZspmZgysin27wJXg1OZSq8OkY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fi1hokbE; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 524NACHM009868;
-	Wed, 5 Mar 2025 01:37:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	6fXsemTRvb33GDa9HuDSscYG9ZYenOtIbcGHc+Y5ios=; b=fi1hokbEPKzjSwig
-	f3o9GtdkYo/k2VNCry0p0ye8MfYn+zvADlIL+B4/7WCjiG8BSJTlNPfVFpCQE9Al
-	6G3WMv5EulAlqeJQC+yYMX+6/ovtyjd0KJfSri+8Vdw21SXoxM2LlHW/9yhfQ2un
-	Fzc6eOBN0I1bPEsv+EuFd0a1RZjDc6f+LHZe6NC9+TEE4MUfinfTg+jcsENFOsU1
-	ougC4otCt/K6KDgoodcBm/tYrRszmWx1qWTl/AT5h1W/clKq4ANsrRQT7VzK1ml/
-	jRkXo3lm/pEY1Sp/oq+49YWpBr8kcUcofhv4WSQVEGlSXguiBRBzmbmNvqa8RyNH
-	hE3QJA==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 455p6tkpu4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 05 Mar 2025 01:37:41 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5251bRGS023547
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 5 Mar 2025 01:37:27 GMT
-Received: from [10.64.68.153] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 4 Mar 2025
- 17:37:22 -0800
-Message-ID: <25fadd59-e728-4fc0-9441-e9630c8c64cb@quicinc.com>
-Date: Wed, 5 Mar 2025 09:37:12 +0800
+	s=arc-20240116; t=1741138793; c=relaxed/simple;
+	bh=dqWsSzrccmVHnLHCLmkQRVxxeSfQIVPPMj9Ba8t5jOk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=gM7a3a4rP0opYAYefpOoihoqnEONA5395gFW3M66G4DtusCcf6xJCaDFgnacp8fBWk0qgnM7lxLQ0LMo3OsHvwTO1XCJIyiymMQe8c68yp2tlk56DsQLvJBghu08ixZxDbcXwPPA5FaXQrrp3nE98MGewBOb60j/2ArrSaOkGro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=KEmY2HhO; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-223a0da61easo78125ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 17:39:51 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741138791; x=1741743591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9fA2KYQHik2cIQjoxJaa3twCTPuvqgtb1JUSNyfAxYc=;
+        b=KEmY2HhOS8mF2KDj8S398zL/v1r7A/0pFXXbr7COg5sO4riLlxI+m9l5LS63Xw5H0z
+         DFtXfHaP8JmFmct3QWE4c+tNRkETsrVr3cSXac1HnQz8L1vhBD5r2C1g6CdahfZv/RnG
+         fhuH3+R35Ks7+4UXylW1Fhn6EHMFOQtsksGyM57fwxCd3nwTobKe3uXRWUGaza7HaWNs
+         LBjL2DV26rHB0+ouRAVVz+OZGdnNh4icMh0dqTL8daa2+0a7J+eJzjUvZ2hx4MeNAIU2
+         f0QXmHMg8PpJC5IzwjgfQl5yBkwcTnKYkGg6y43zvO0zGHNByYsznxQdNvmXY9gjdc3J
+         QtEg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741138791; x=1741743591;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9fA2KYQHik2cIQjoxJaa3twCTPuvqgtb1JUSNyfAxYc=;
+        b=nS8qYK7JxyjQnHHhXlhUB0VBOgkzl/WCjAnWLXwMTHObK1MfCBlPFfvZI50h+JfL7A
+         DIcvEo7/AbmfN1/+20pYqXGa1iIk2rBkaJSfg2qdEhDJ0oI2NWaH9PFeR33tQIR5ISxv
+         hz9mQnD05D42et4Vf28NQ4dyZMHYf3jqD8w9e1p3OMHdSp/r3pMVwaQylT6IdPzdwQ35
+         /yYn2kKsjxCmY0hS582YFPvjPQwsq3t/z8r2pS/kx1yBGOUZOXaBhXbPAnduvrstlDtM
+         TIKHxYsBNBuQDTRA80Sw7nLPvFUw5FqpngpuQ33hi3m8hguNb2f/ThMYnP+c7/ey8sUV
+         qVIQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW6tsUydTfP8Wuqkxa8HOKk5UFtAxTyh3JrTlNlOUeLyxa4/dnLMKidpmqTHoi/o2bdZFPxxun6RkhsWlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzALBT6IAbHj02DlWGyuMqVtzpXhOkMxID1gDiCUDSKa/GGD+zm
+	MDIN5edBlFGhAFaS7Vaw3cBROILQ8NCdn51CdC7H0MUkjJHL9J0ErSXRmvmm26rdtVi1LeesdjV
+	Xpoe2HRcAuvwv9zH4EU7ZyJt0cZ7q8wNMv1nw
+X-Gm-Gg: ASbGncvzzZMzrlzAFdSzKiSWznRWQZfGPBpx+ZVdB9KxxmVuhjMpHeZfXrxvhOQE1O+
+	Z5DahAXvRC4DeZFr0nQH+doq9mv6tdiqf6onvoCZfBDr2sSQlb8pFYoe44sXgVOfg1zY7zj82qC
+	u4lkoY9hr7y/UOblnjloPWxzt86O723Ek17+s0VLFq5cIPlr4abACNPd5+
+X-Google-Smtp-Source: AGHT+IH5gXmkQSdJDrmvDbhcX1gVqatKumUNqefxFocuBrCcwtKWp6uWzxr+bTikNvWZpTgRK27RGaHlzULM/jBATGw=
+X-Received: by 2002:a17:903:494:b0:216:2839:145 with SMTP id
+ d9443c01a7336-223f44abcf5mr798995ad.1.1741138790491; Tue, 04 Mar 2025
+ 17:39:50 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v15 05/10] Coresight: Allocate trace ID after building the
- path
-To: Suzuki K Poulose <suzuki.poulose@arm.com>,
-        Mike Leach
-	<mike.leach@linaro.org>,
-        James Clark <james.clark@linaro.org>,
-        "Alexander
- Shishkin" <alexander.shishkin@linux.intel.com>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-CC: Tingwei Zhang <quic_tingweiz@quicinc.com>,
-        Jinlong Mao
-	<quic_jinlmao@quicinc.com>, <coresight@lists.linaro.org>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>
-References: <20250303032931.2500935-1-quic_jiegan@quicinc.com>
- <20250303032931.2500935-6-quic_jiegan@quicinc.com>
- <8efe6176-44a2-4b3d-b9b5-855b26f00187@arm.com>
-Content-Language: en-US
-From: Jie Gan <quic_jiegan@quicinc.com>
-In-Reply-To: <8efe6176-44a2-4b3d-b9b5-855b26f00187@arm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Authority-Analysis: v=2.4 cv=HZbuTjE8 c=1 sm=1 tr=0 ts=67c7aae5 cx=c_pps a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17 a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Vs1iUdzkB0EA:10 a=KKAkSRfTAAAA:8 a=COk6AnOGAAAA:8 a=ke3Xk7aYDoRetkXMGe0A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=cvBusfyB2V15izCimMoJ:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: tbGWPvLgxQDczMcusIcCpbkV5VuIddwS
-X-Proofpoint-ORIG-GUID: tbGWPvLgxQDczMcusIcCpbkV5VuIddwS
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1093,Hydra:6.0.680,FMLib:17.12.68.34
- definitions=2025-03-05_01,2025-03-04_02,2024-11-22_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 mlxscore=0 spamscore=0 clxscore=1015 phishscore=0 bulkscore=0
- priorityscore=1501 impostorscore=0 suspectscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2502100000
- definitions=main-2503050011
+References: <20250227041209.2031104-1-almasrymina@google.com>
+ <20250227041209.2031104-2-almasrymina@google.com> <20250228163846.0a59fb40@kernel.org>
+ <CAHS8izNQnTW7sad_oABtxhy3cHxGR0FWJucrHTSVX7ZAA6jT3Q@mail.gmail.com> <20250303162051.09ad684e@kernel.org>
+In-Reply-To: <20250303162051.09ad684e@kernel.org>
+From: Mina Almasry <almasrymina@google.com>
+Date: Tue, 4 Mar 2025 17:39:37 -0800
+X-Gm-Features: AQ5f1JokmBfu9vApWvP6OeSWBJnA3SLQMcYEIWf9RLvx2TEKaGIWTz1vBTgX4iM
+Message-ID: <CAHS8izNWt2-1bC2f0jv4Qpk_A9VpEXNvVRoXUtL43_16d-Ui-A@mail.gmail.com>
+Subject: Re: [PATCH net-next v6 1/8] net: add get_netmem/put_netmem support
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, kvm@vger.kernel.org, 
+	virtualization@lists.linux.dev, linux-kselftest@vger.kernel.org, 
+	Donald Hunter <donald.hunter@gmail.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, Andrew Lunn <andrew+netdev@lunn.ch>, 
+	Jeroen de Borst <jeroendb@google.com>, Harshitha Ramamurthy <hramamurthy@google.com>, 
+	Kuniyuki Iwashima <kuniyu@amazon.com>, Willem de Bruijn <willemb@google.com>, David Ahern <dsahern@kernel.org>, 
+	Neal Cardwell <ncardwell@google.com>, "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>, 
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?= <eperezma@redhat.com>, 
+	Stefan Hajnoczi <stefanha@redhat.com>, Stefano Garzarella <sgarzare@redhat.com>, Shuah Khan <shuah@kernel.org>, 
+	sdf@fomichev.me, asml.silence@gmail.com, dw@davidwei.uk, 
+	Jamal Hadi Salim <jhs@mojatatu.com>, Victor Nogueira <victor@mojatatu.com>, 
+	Pedro Tammela <pctammela@mojatatu.com>, Samiullah Khawaja <skhawaja@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Mar 3, 2025 at 4:20=E2=80=AFPM Jakub Kicinski <kuba@kernel.org> wro=
+te:
+>
+> On Fri, 28 Feb 2025 17:29:13 -0800 Mina Almasry wrote:
+> > On Fri, Feb 28, 2025 at 4:38=E2=80=AFPM Jakub Kicinski <kuba@kernel.org=
+> wrote:
+> > > On Thu, 27 Feb 2025 04:12:02 +0000 Mina Almasry wrote:
+> > > >  static inline void __skb_frag_ref(skb_frag_t *frag)
+> > > >  {
+> > > > -     get_page(skb_frag_page(frag));
+> > > > +     get_netmem(skb_frag_netmem(frag));
+> > > >  }
+> > >
+> > > Silently handling types of memory the caller may not be expecting
+> > > always worries me.
+> >
+> > Sorry, I'm not following. What caller is not expecting netmem?
+> > Here we're making sure __skb_frag_ref() handles netmem correctly,
+> > i.e. we were not expecting netmem here before, and after this patch
+> > we'll handle it correctly.
+> >
+> > > Why do we need this?
+> > >
+> >
+> > The MSG_ZEROCOPY TX path takes a page reference on the passed memory
+> > in zerocopy_fill_skb_from_iter() that kfree_skb() later drops when the
+> > skb is sent. We need an equivalent for netmem, which only supports pp
+> > refs today. This is my attempt at implementing a page_ref equivalent
+> > to net_iov and generic netmem.
+> >
+> > I think __skb_frag_[un]ref is used elsewhere in the TX path too,
+> > tcp_mtu_probe for example calls skb_frag_ref eventually.
+>
+> Any such caller must be inspected to make sure it generates
+> / anticipates skbs with appropriate pp_recycle and readable settings.
+> It's possible that adding a set of _netmem APIs would be too much
+> churn, but if it's not - it'd make it clear which parts of the kernel
+> we have inspected.
+>
 
+I see, you're concerned about interactions between skb->pp_recycle and
+skb->unreadable. My strategy to handle this is to take what works for
+pages, and extend it as carefully as possible to unreadable
+net_iovs/skbs. Abstractly speaking, I think skb_frag_ref/unref should
+be able to obtain/drop a ref on a frag regardless of what the
+underlying memory type is.
 
-On 3/4/2025 10:58 PM, Suzuki K Poulose wrote:
-> On 03/03/2025 03:29, Jie Gan wrote:
->> The trace_id will be stored in coresight_path instead of being declared
->> everywhere and allocated after building the path.
->>
->> Co-developed-by: James Clark <james.clark@linaro.org>
->> Signed-off-by: James Clark <james.clark@linaro.org>
->> Signed-off-by: Jie Gan <quic_jiegan@quicinc.com>
->> ---
->>   drivers/hwtracing/coresight/coresight-core.c  | 44 +++++++++++++++++++
->>   .../hwtracing/coresight/coresight-etm-perf.c  |  5 +--
->>   drivers/hwtracing/coresight/coresight-priv.h  |  2 +
->>   drivers/hwtracing/coresight/coresight-sysfs.c |  4 ++
->>   4 files changed, 52 insertions(+), 3 deletions(-)
->>
->> diff --git a/drivers/hwtracing/coresight/coresight-core.c b/drivers/ 
->> hwtracing/coresight/coresight-core.c
->> index ed0e9368324d..6adc06995d76 100644
->> --- a/drivers/hwtracing/coresight/coresight-core.c
->> +++ b/drivers/hwtracing/coresight/coresight-core.c
->> @@ -655,6 +655,50 @@ static void coresight_drop_device(struct 
->> coresight_device *csdev)
->>       }
->>   }
->> +/*
->> + * coresight device will read their existing or alloc a trace ID, if 
->> their trace_id
->> + * callback is set.
->> + *
->> + * Return 0 if the trace_id callback is not set.
->> + * Return the result of the trace_id callback if it is set. The 
->> return value
->> + * will be the trace_id if successful, and an error number if it fails.
->> + */
->> +static int coresight_get_trace_id(struct coresight_device *csdev,
->> +                  enum cs_mode mode,
->> +                  struct coresight_device *sink)
->> +{
->> +    if (coresight_ops(csdev)->trace_id)
->> +        return coresight_ops(csdev)->trace_id(csdev, mode, sink);
->> +
->> +    return 0;
->> +}
->> +
->> +/*
->> + * Call this after creating the path and before enabling it. This leaves
->> + * the trace ID set on the path, or it remains 0 if it couldn't be 
->> assigned.
->> + */
->> +void coresight_path_assign_trace_id(struct coresight_path *path,
->> +                    enum cs_mode mode)
->> +{
->> +    struct coresight_device *sink = coresight_get_sink(&path- 
->> >path_list);
->> +    struct coresight_node *nd;
->> +    int trace_id;
->> +
->> +    list_for_each_entry(nd, &path->path_list, link) {
->> +        /* Assign a trace ID to the path for the first device that 
->> wants to do it */
->> +        trace_id = coresight_get_trace_id(nd->csdev, mode, sink);
->> +
->> +        /*
->> +         * 0 in this context is that it didn't want to assign so keep 
->> searching.
->> +         * Non 0 is either success or fail.
->> +        */
-> 
-> checkpatch complains:
-> 
-> WARNING: Block comments should align the * on each line
-> #65: FILE: drivers/hwtracing/coresight/coresight-core.c:694:
-> +                * Non 0 is either success or fail.
-> +               */
-> 
-> 
-> Please make sure to run the checkpatch on individual patches before 
-> submitting in the future. I will fix this up locally for now.
-> 
-> Kind regards
-> Suzuki
-> 
+Currently __skb_frag_ref() obtains a page ref regardless of
+skb->pp_recycle setting, and skb_page_unref() drops a page_ref if
+!skb->pp_recycle and a pp ref if skb->pp_recycle. I extend the logic
+so that it applies as-is to net_iovs and unreadable skbs.
 
-Hi Suzuki,
+After this patch, __skb_frag_ref() obtains a 'page ref equivalent' on
+the net_iov regardless of the pp_recycle setting. My conjecture is
+that since that works for pages, it should also work for net_iovs.
 
-Sure. Thanks for help to deal with the error this time. I will take care 
-in future.
+Also after this patch, skb_page_unref will drop a pp ref on the
+net_iov if skb->pp_recycle is set, and drop a 'page ref equivalent' on
+the net_iov if !skb->pp_recycle. The conjecture again is that since
+that works for pages, it should extend to net_iovs.
 
-Jie
+With regards to the callers, my thinking is that since we preserved
+the semantics of __skb_frag_ref and skb_page_unref (and so
+skb_frag_ref/skb_frag_unref by extension), then all existing callers
+of skb_frag_[un]ref should work as is. Here is some code analysis of
+individual callers:
 
-> 
-> 
->> +        if (trace_id != 0) {
->> +            path->trace_id = trace_id;
->> +            return;
->> +        }
->> +    }
->> +}
->> +
->>   /**
->>    * _coresight_build_path - recursively build a path from a @csdev to 
->> a sink.
->>    * @csdev:    The device to start from.
->> diff --git a/drivers/hwtracing/coresight/coresight-etm-perf.c b/ 
->> drivers/hwtracing/coresight/coresight-etm-perf.c
->> index b0426792f08a..134290ab622e 100644
->> --- a/drivers/hwtracing/coresight/coresight-etm-perf.c
->> +++ b/drivers/hwtracing/coresight/coresight-etm-perf.c
->> @@ -319,7 +319,6 @@ static void *etm_setup_aux(struct perf_event 
->> *event, void **pages,
->>   {
->>       u32 id, cfg_hash;
->>       int cpu = event->cpu;
->> -    int trace_id;
->>       cpumask_t *mask;
->>       struct coresight_device *sink = NULL;
->>       struct coresight_device *user_sink = NULL, *last_sink = NULL;
->> @@ -409,8 +408,8 @@ static void *etm_setup_aux(struct perf_event 
->> *event, void **pages,
->>           }
->>           /* ensure we can allocate a trace ID for this CPU */
->> -        trace_id = coresight_trace_id_get_cpu_id_map(cpu, &sink- 
->> >perf_sink_id_map);
->> -        if (!IS_VALID_CS_TRACE_ID(trace_id)) {
->> +        coresight_path_assign_trace_id(path, CS_MODE_PERF);
->> +        if (!IS_VALID_CS_TRACE_ID(path->trace_id)) {
->>               cpumask_clear_cpu(cpu, mask);
->>               coresight_release_path(path);
->>               continue;
->> diff --git a/drivers/hwtracing/coresight/coresight-priv.h b/drivers/ 
->> hwtracing/coresight/coresight-priv.h
->> index 27b7dc348d4a..2bea35bae0d4 100644
->> --- a/drivers/hwtracing/coresight/coresight-priv.h
->> +++ b/drivers/hwtracing/coresight/coresight-priv.h
->> @@ -152,6 +152,8 @@ int coresight_make_links(struct coresight_device 
->> *orig,
->>   void coresight_remove_links(struct coresight_device *orig,
->>                   struct coresight_connection *conn);
->>   u32 coresight_get_sink_id(struct coresight_device *csdev);
->> +void coresight_path_assign_trace_id(struct coresight_path *path,
->> +                   enum cs_mode mode);
->>   #if IS_ENABLED(CONFIG_CORESIGHT_SOURCE_ETM3X)
->>   extern int etm_readl_cp14(u32 off, unsigned int *val);
->> diff --git a/drivers/hwtracing/coresight/coresight-sysfs.c b/drivers/ 
->> hwtracing/coresight/coresight-sysfs.c
->> index cb4c39732d26..d03751bf3d8a 100644
->> --- a/drivers/hwtracing/coresight/coresight-sysfs.c
->> +++ b/drivers/hwtracing/coresight/coresight-sysfs.c
->> @@ -209,6 +209,10 @@ int coresight_enable_sysfs(struct 
->> coresight_device *csdev)
->>           goto out;
->>       }
->> +    coresight_path_assign_trace_id(path, CS_MODE_SYSFS);
->> +    if (!IS_VALID_CS_TRACE_ID(path->trace_id))
->> +        goto err_path;
->> +
->>       ret = coresight_enable_path(&path->path_list, CS_MODE_SYSFS, NULL);
->>       if (ret)
->>           goto err_path;
-> 
+1. skb_release_data
+      __skb_frag_unref
+        skb_page_unref
 
+This code path expects to drop a pp_ref if skb->pp_recycle, and drop a
+page ref if !skb->pp_recycle. We make sure to do this regardless if
+the skb is actually filled with net_iovs or pages, and the conjecture
+is that since the logic to acquire/drop a pp=3Dpage ref works for pages,
+it should work for the net_iovs as well.
+
+2. __skb_zcopy_downgrade_managed
+      skb_frag_ref
+
+Same thing here, since this code expects to get a page ref on the
+frag, we obtain the net_iov equivalent of a page_ref and that should
+work as well for net_iovs as pages. I could look at more callers, but
+the general thinking is the same. Am I off the rails here?
+
+Of course, we could leave skb_frag_[un]ref as-is and create an
+skb_frag_[un]ref_netmem which support net_iovs, but my ambition here
+was to make skb_frag_[un]ref itself support netmem rather than fork
+the frag refcounting - if it seems like a good idea?
+
+> > > In general, I'm surprised by the lack of bug reports for devmem.
+> >
+> > I guess we did a good job making sure we don't regress the page paths.
+>
+> :)
+>
+> > The lack of support in any driver that qemu will run is an issue. I
+> > wonder if also the fact that devmem needs some setup is also an issue.
+> > We need headersplit enabled, udmabuf created, netlink API bound, and
+> > then a connection referring to created and we don't support loopback.
+> > I think maybe it all may make it difficult for syzbot to repro. I've
+> > had it on my todo list to investigate this more.
+> >
+> > > Can you think of any way we could expose this more to syzbot?
+> > > First thing that comes to mind is a simple hack in netdevsim,
+> > > to make it insert a netmem handle (allocated locally, not a real
+> > > memory provider), every N packets (controllable via debugfs).
+> > > Would that work?
+> >
+> > Yes, great idea. I don't see why it wouldn't work.
+> >
+> > We don't expect mixing of net_iovs and pages in the same skb, but
+> > netdevsim could create one net_iov skb every N skbs.
+> >
+> > I guess I'm not totally sure something is discoverable to syzbot. Is a
+> > netdevsim hack toggleable via a debugfs sufficient for syzbot? I'll
+> > investigate and ask.
+>
+> Yeah, my unreliable memory is that syzbot has a mixed record discovering
+> problems with debugfs. If you could ask Dmitry for advice that'd be
+> ideal.
+
+Yes, I took a look here and discussed with Willem. Long story short is
+that syzbot support is possible but with a handful of changes. We'll
+look into that.
+
+Long story long, for syzbot support I don't think netdevsim itself
+will be useful. Its our understanding so far that syzbot doesn't do
+anything special with netdevsim. We'll need to add queue
+API/page_pool/unreadable netmem support to one of the drivers qemu
+(syzbot) uses, and that should get syzbot fuzzing the control plane.
+
+To get syzbot to fuzz the data plane, I think we need to set up a
+special syzbot instance which configures udmabuf/rss/flow
+steering/netlink binding and start injecting packets through the data
+path. Syzbot would not discover a working config on its own. I'm told
+it's rare to set up specialized syzbot instances but we could sell
+that this coverage is important enough.
+
+Hacking netdevsim like you suggested would be useful as well, but
+outside of syzbot, AFAICT so far. We can run existing netdevsim data
+path tests with netdevsim in 'unreadable netmem mode' and see if it
+can reproduce issues. Although I'm not sure how to integrate that with
+continuous testing yet.
+
+--
+Thanks,
+Mina
 
