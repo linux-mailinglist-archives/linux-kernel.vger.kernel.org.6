@@ -1,123 +1,124 @@
-Return-Path: <linux-kernel+bounces-547374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA7E4A5065D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:29:35 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E97AA50658
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:29:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 258613A3B76
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:29:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 763B6163937
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:29:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99139250C07;
-	Wed,  5 Mar 2025 17:29:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7927250C02;
+	Wed,  5 Mar 2025 17:29:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="cvyNvSK7"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="K0TT9O2h"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE371A260;
-	Wed,  5 Mar 2025 17:29:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6029F481DD
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741195765; cv=none; b=l1brQO7FNC4Z/5zSoJr2xRQ5wDGleDTWLZAxMIAxRibkbWm7PRdAZT7xsYzU5fAgMEEF+PmYX3pGFIVbXJoOpW/1Nh71LdRsKrybuaFK5hhDyScQTxMjcgy7WUXrBqyNJIVLKqm3SB7Z7Ta5fUIO6DvmkVJw5hsmbkBpXw0Jr34=
+	t=1741195751; cv=none; b=W756cVINfFStP+VMzsqZcnrNqE7dBTvVxV1MODdttLSfAkV7+l7F8h2hue7wAbEdXkvivcOOUkQeK6rwpiRh64i1eDa0IdFuThNc7i3e6ItlNhdJAxibqiWKrcdcSwsRdgLM3UbhYalVpgmkxdewR+0m8BYBcMrou2qpGudXlzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741195765; c=relaxed/simple;
-	bh=xtiQKLe0sh2b/5K2i8jzCLuSRfvmaqQV+l/0T1lc8Vc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=n1y/wcwVKbUXAX89oofWJPRpsfWdykRh5L1Ve1fMIeomGR2hHWysT7OsaUr5vYNhDoxosy7F6kkiOb1wh8MSODt6AhjLeS84nkuc8uCJCCTch65O0BTVaPrDiPMZeF7u69bu6Ny5EB3/GHTBvJ84C8Td8wVf+lF54bifkLmrXUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=cvyNvSK7; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1741195738; x=1741800538; i=markus.elfring@web.de;
-	bh=xtiQKLe0sh2b/5K2i8jzCLuSRfvmaqQV+l/0T1lc8Vc=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=cvyNvSK7JhyaAmdAq1JK1chrv4QprDbNH6hoqgkxFk1feZ5vTk43BevHf+2nHg9K
-	 P4A513oALEtWPNcM3qu0e+nvbllCfGkM7nebEo11in/gQk5yLIn+NVp5qqkHJtEd3
-	 hk9ioe+QSojqxyncq4aHYOYrl3EaoDE4jfcicoQfL0pdV3YgRDf4c55XFOOBMS5aV
-	 lyISBbosBh22FBqi1F6rcie9MbLYF3PvEaZ92+SsyuHRLQjKkx0CCFE4AqyFPfsJA
-	 EdU8wM87Mpsr6zG/0BTbnPAJ3zjjCkoewSbCk8EZjOxz1mLDRuKQweZgtro9kpZwR
-	 Lc+/PXeAze2DjqKTwA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.70.10]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1M91Po-1tvx5b3WNS-00H6a9; Wed, 05
- Mar 2025 18:28:57 +0100
-Message-ID: <e9372f7e-cefb-4f8a-9dbd-b26baceb0d3a@web.de>
-Date: Wed, 5 Mar 2025 18:28:56 +0100
+	s=arc-20240116; t=1741195751; c=relaxed/simple;
+	bh=B1wNsGRlbNuh23FquOiVRPjfZ7QTWBC3oKDQKjyCdJQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lYtZK9BmSYLJfNzH3ga82wvRd3sRrQsVSLyLb0AZD3rKc2lHIR6Kf3x3GyUXkCkDYFrrwiQlk23SUGl3mtWUslGm2yKyQ73wG6psdLmyMuw9m5bp4CA2WkpLpdbOtM1UF2yLH977srOgKGXH8ec+hVvduYiho08loRrq1fBnpoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=K0TT9O2h; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-471ebfbad4dso52485421cf.3
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:29:09 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1741195748; x=1741800548; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=c907La5P+bJluU/LHcR6Es6yd6jk3jgKb5ChVAM4Ut4=;
+        b=K0TT9O2hTf5bnrGKM+kXK/8rBL6Dhtz+A4wj+laJR6nnyAkZjq44J4EE8EtNgDvcTR
+         GMZ8BmS30STVnJERL3MiucAk51Asx+hAXWU3mK64Tyu6LDYr6bbSlR9Gn3neJ8hptXsU
+         xxCyRay28z+yZFzULF33wVx/WebpPtuS0bdTnhcm6aMKxZ0vtXc9EVI1HhsFl3RZ803M
+         WHt8l2Rm84t/cv+0/aOiUfxGjWLrkJgHPnYhfXxPYysppMTQDtER6BfmG88GKeNfcx9g
+         JLP51QHm2HG1X1xQW7cyLXqqo8SSrvqiO9bZjjom0hoSBTPsG1caktyW69JBJOW5OpGp
+         HeWg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741195748; x=1741800548;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=c907La5P+bJluU/LHcR6Es6yd6jk3jgKb5ChVAM4Ut4=;
+        b=XPJT1ClpMMvIIp8U0eIddOP70x6Jbo3t0GXMGNIO5adB0s3SFK3Xd+dnfEFF2NJ8wh
+         Azq0b4ULQQkQ+xV68Zsfajjl8bwG+gDXWa6DlcZMKMEXJEIuge+1Rm8pNsbaA8kf9AGz
+         /Kx4Xwul2Oy1Ag+wOmC91kCUQDjBYz5T0U3ny8HdLMn56XeulyBDfqVThGYDFYstNSGN
+         zO/Dc48oLDNeDSVcCtQ8LbtQy6RQuty2saSeRNbqnbrHiEV3yYP9fjx6to7nz8uTuLzK
+         g91RpQPjgezJFfwtPJK19OuUPE2Qm7DzSks4L6mV8MQPig/oG6CJfoZQlco8q2Txubm1
+         Vjxg==
+X-Forwarded-Encrypted: i=1; AJvYcCULKk9/fQONbHcLKu4CPo16IB0+WBrjhPi/ns7oi6akxXlloDmMghy7dc+PlcrvKXzqjFdkXmIjLAuL9o8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxje95fjYXG/Z0EIcYh5qKOs3RI3NaJsNi4Jyn/KM2z1/7vPW+U
+	IOwNlpPQAgOf+VnzUmSH+Ekkq2lzRQCnNNnS+/oifRU39BR1tK8kAFk3FfEwwQU=
+X-Gm-Gg: ASbGnctg/sDi4KkzGEJ7QDI+t+6G30TDxdVTx4zz8h/YNl0Ni+geGgxgncFk+nDNnRi
+	LYEWWnulXXtfm+7lCPJS2Nqbx9C2+q7/vhwVUIXDf0dXOjQ/TwwbtsMejOE+59GWMI+3GLpzOOV
+	OPQf7KhDvn0H+vbVhvVu5T/uGh3k9oOMLo7vAprjtC2ncccVimM2/J6rLEQ7GM2CLzFC9yLjoxE
+	mvkS0KF1JF8QP3mCEh9stG/jRtYNcOLdBx1UozTUIFskAUxbEX8fG0QUeK/I5S/wxgKtf4r7E/6
+	ijFxH/fQVyIr6eJTTp0=
+X-Google-Smtp-Source: AGHT+IF4HNniD3vBEgV7Gc4XgcYAVaPywo5omCnN6AqAFGgL1Wjv+qwspVU+lTzqtNoHgcoOul5LVg==
+X-Received: by 2002:a05:6214:2525:b0:6e1:6c94:b5c5 with SMTP id 6a1803df08f44-6e8e6d144c4mr53580176d6.4.1741195748275;
+        Wed, 05 Mar 2025 09:29:08 -0800 (PST)
+Received: from ziepe.ca ([130.41.10.206])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6e89765364esm81249136d6.35.2025.03.05.09.29.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 09:29:07 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tpsYM-00000001TIk-3gw4;
+	Wed, 05 Mar 2025 13:29:06 -0400
+Date: Wed, 5 Mar 2025 13:29:06 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
+	zhangkun09@huawei.com, liuyonglong@huawei.com,
+	fanghaiqing@huawei.com, Robin Murphy <robin.murphy@arm.com>,
+	Alexander Duyck <alexander.duyck@gmail.com>,
+	IOMMU <iommu@lists.linux.dev>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Ilias Apalodimas <ilias.apalodimas@linaro.org>,
+	Eric Dumazet <edumazet@google.com>, Simon Horman <horms@kernel.org>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next v10 4/4] page_pool: skip dma sync operation for
+ inflight pages
+Message-ID: <20250305172906.GG5011@ziepe.ca>
+References: <20250226110340.2671366-1-linyunsheng@huawei.com>
+ <20250226110340.2671366-5-linyunsheng@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: video: au1100fb: Move a variable assignment behind a null pointer
- check in au1100fb_setmode()
-To: Helge Deller <deller@gmx.de>, Dan Carpenter <dan.carpenter@linaro.org>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
- kernel-janitors@vger.kernel.org, linux-fbdev@vger.kernel.org,
- dri-devel@lists.freedesktop.org
-Cc: Antonino Daplas <adaplas@pol.net>, Thomas Zimmermann
- <tzimmermann@suse.de>, Yihao Han <hanyihao@vivo.com>, cocci@inria.fr,
- LKML <linux-kernel@vger.kernel.org>
-References: <40c60719-4bfe-b1a4-ead7-724b84637f55@web.de>
- <1a11455f-ab57-dce0-1677-6beb8492a257@web.de>
- <86551e6f-d529-1ff6-6ce6-b9669d10e6cb@web.de>
- <3f1e7aaa-501a-44f1-8122-28e9efa0a33c@web.de>
- <ugymllbkcsg22ffgyofvkquh5afbvoyv2nna5udmy3xfhv2rjz@jhgghzldzm4u>
- <eebf8c0c-7a6a-405f-aaab-2a8a8c2bd91f@stanley.mountain>
- <hwk2nf62owdo3olxrwt5tu7nwfpjkrr3yawizfpb3xn6ydeekx@xwz7nh5ece2c>
- <47c37d1a-5740-4f48-ac0f-635d8b6f51b2@stanley.mountain>
- <9d042e6a-6d93-4ae4-8373-28b9dec21867@web.de>
- <81a620bb-205f-45f7-9036-e8e44a8e7be9@gmx.de>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <81a620bb-205f-45f7-9036-e8e44a8e7be9@gmx.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:yWGWNO6K9aUNn3g3Qc5ZNkQf3WSZXFZx/7sAlXKN2G2OkmRvkTM
- OOorb9nBJRzzmErR9eJErw6GmksCApLqzMDcyKGuL3v4Qalgpp5Oo9wJ3hULjiXC7J/bBVT
- BDd3SQO+O0DWCKxnpPQhgtzzOvZVrnHen1F1NTITC3WjdS1jKPIEEhHglUQ5+uuk2CmrSEC
- oWIV86XuELAY2ecrMErmQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:UByq28hN30c=;zVhcrG6+Sh75YoWB+H09FcqgW8Z
- bgunNY71oawVGm5ys86Bfzfb67540oJ+u7DAgmYRadi+0yDuVnhsBjFqkBXS9yWJESCsOSZfU
- 4xgJJrykXQYALn4/eCVlRvVAoYzpKDR0SGzMpZFWdB+hFqSpAO7yrjX3O3Y9qUHmGkMPJZCOn
- cTFIhVVjD21fVeX2V2oZ4NbofQkCoa9OX0/KtqN1O7Bj90dOdP7Rhs5955TPCw57vqxdIZINT
- EDxDN7hucnIllSj4HktdwGfvRVzgciVCR/nnoUSB7OeeYt+Qqe9MZEKv8OLs48GVCT2yVXeX2
- +DoXgPQDJlQfvSnXLcULgMhRhpAMRdbT9rw9T49pS3OdLxxzTi5FbYpan4orQAAObc/4Gam+G
- Ck/fSxbbd8JBEAdpATuUUwJr1RRXLv37TQl/9bqMJH+wLx/IauUHcfAQ3ziqYcnSki2F9ziyL
- Q1E4abj3MTZihySUQ4yPtvuNhnQBWWW44B2EiygAOmZaWQIPka5WebAJ7Sjy1T3mrYWjHeFPo
- 8CskaPVmU4QL8uazhS0gNgFAcRT0Vi6yjHr5fN7AIktIoGoMgfNaorFcZOUoHWrM8LCsIQBB/
- jfi0OhDkRJMzOo382MpJHfpGv4sF0IDGdXlzlizhUcyT6MISK2mVuDtW2rORZJpYDz8a6Rckl
- +4exgw40+U+PoIQn+Z9XSUokVxe6OlUiROGCTAGJbdpTjWIbLXHDDXg5dvfAUkXlVq9Fv+nVP
- 0mSbtQtRFOKIB0qiFYM4bOtxQTqYN3tuPVXu9deUZoo7K5vCP/FWPIPvPxzkLJQNxq3utAaXY
- wy9PW371DMmOIsHCUHKsDtdOGfw2H1lDvs6PB6l8fYLhBVU4dDlPGLgh59oEHyhkFBwPXuW5w
- 3DonwIC2P/zQ4cG6tm7VZtlFzxdZ+ye5k9UO0VUYwjYPiNCx8WNRPPjfmSKXhKWFgi3p6N7g5
- IqJNj/mDysSDG7RMaM39tVrMPrcwWZ8z6oGHThg3E5KmK82dUi5vxGn6jZUhz3yu4Fc8XXkof
- x6ZwtZzdVSYWDdsBr/SyXlQ8i+cfKJ6LiyG1jn8hNyWoneUdnXcqWbXMWRD0/s/IIUFN4feVO
- I+Bf45nMJvdMnn/o7rH1XpipM/SL74qzSqCXvBmn8Us6B8Ldb+aijiIzoTFfCBXAwLGwzMSp9
- Zt2uJqzqSrKjv17g8ph2Ngy58lhUGkeMwNdZg+ECbRjvBmqa4iqqoy/GVwljXXF9MS3G9asd1
- 55uKhfWqWAIurDzhp96ZZq6/p8+TCaWltkV6C1rkxi2OY29xF/DgPnppVH43MTVtZQy3LFpVK
- 5sEG80yWxY2f9zBsaV4bzd2XXY4aGsbDjy4kz00PAAtDOJcQQCeAgHB79klC6ohFF0vUFZueU
- 6sovH08njwKsHLeJNlo49Z1ac79ph2nit6SBuAOrxGbke7PLx+ynScb3jmLZWWyWKcHw1i9ni
- heWvOeA==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250226110340.2671366-5-linyunsheng@huawei.com>
 
-> No crash or anything can or will happen here.
->
-> Markus, maybe you missed the "&" in front of "&fbdev->info" ?
-Would you get into the mood to adjust development views
-if you would take any feedback and further background information
-(by David Svoboda for example) better into account?
-https://wiki.sei.cmu.edu/confluence/display/c/EXP34-C.+Do+not+dereference+=
-null+pointers?focusedCommentId=3D405504139#comment-405504139
+On Wed, Feb 26, 2025 at 07:03:39PM +0800, Yunsheng Lin wrote:
+> Skip dma sync operation for inflight pages before the
+> sync operation in page_pool_item_unmap() as DMA API
+> expects to be called with a valid device bound to a
+> driver as mentioned in [1].
+> 
+> After page_pool_destroy() is called, the page is not
+> expected to be recycled back to pool->alloc cache and
+> dma sync operation is not needed when the page is not
+> recyclable or pool->ring is full, so only skip the dma
+> sync operation for the infilght pages by clearing the
+> pool->dma_sync, as rcu sync operation in
+> page_pool_destroy() is paired with rcu lock in
+> page_pool_recycle_in_ring() to ensure that there is no
+> dma sync operation called after rcu sync operation.
 
-Regards,
-Markus
+Are you guaranteeing that the cache is made consistent before freeing
+the page back to the mm? That is required..
+
+Jason
 
