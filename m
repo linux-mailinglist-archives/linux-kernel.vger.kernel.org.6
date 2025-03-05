@@ -1,147 +1,229 @@
-Return-Path: <linux-kernel+bounces-547054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF5D6A50269
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:43:08 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8DBDA5026E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:43:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDEA93B473D
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:39:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C120188788F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F1224EF77;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08EF624EF70;
 	Wed,  5 Mar 2025 14:38:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b="bjPvyDUY"
-Received: from out.smtpout.orange.fr (out-18.smtpout.orange.fr [193.252.22.18])
-	(using TLSv1.2 with cipher AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="o8paCwND"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AB724E4AC
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.252.22.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0A224BC17;
+	Wed,  5 Mar 2025 14:38:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741185522; cv=none; b=pppwn7VIP+TZUWV44L9W9gf70GPBW4Tlx1GMizMft7Izf4oUoo80X9iL9RKgnlvr0gasSro+MgRvCuVKV5licrzzkqi++ofmUBChXLMxng4TLLAZyB2zhb9no25ItoogY3xYnOzsvCQS15Q/33u82jbSB16oZus6MZhdnKN/DSk=
+	t=1741185521; cv=none; b=AWsTIwxlaIkITn0iX09s7kc99SS5LR8Do1xVxRCYVD5vGBRg2f8rLfWjBt1PC42U9MytMRRFrAyWYCBtjktbUt4GcfYsRSRqZgMYOI7nCCajJ1KUeVP4//vHUR9XwRjsrQg1ijVRZAAuzkwk6JtAv82NhG/8xPr+QhfVfULDePI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741185522; c=relaxed/simple;
-	bh=tksZDjOx+lhpuP8p1NOBivgwygQmAviiRwSbg25KVEI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nTJnMPJiF3XGWdtv36ntQfCaaxhTif++3gCawrEleKCunluE5qrDj1FeyRmfXCYVckU7yLmIeZHNI0G6bYG9Xa9dC4fikVQjuWO/0hSTicueP/57CQbQsMzOJcz+ZAwUtCfHq6588VyN9mRa7MSmpwOrExjxb/+2ogtQ8q6frhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr; spf=pass smtp.mailfrom=wanadoo.fr; dkim=pass (2048-bit key) header.d=wanadoo.fr header.i=@wanadoo.fr header.b=bjPvyDUY; arc=none smtp.client-ip=193.252.22.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wanadoo.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wanadoo.fr
-Received: from [172.16.82.72] ([124.33.176.97])
-	by smtp.orange.fr with ESMTPA
-	id ppt6tfHU4ZnsCpptAt1SYw; Wed, 05 Mar 2025 15:38:31 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wanadoo.fr;
-	s=t20230301; t=1741185511;
-	bh=x2nOvp4g9bFkC6yO0erJTirmhqJkuNeb1P2mmnB3KBU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=bjPvyDUY/se9o2pP5tDIAusnInJWDOy2mekPDHUS2KEuKRirH8+ox56wpA7stYCZm
-	 q7zvgNyuZoD7HrITpnkgeb2cNkK6D/ZqZIVn51eUzcHzogKXHfC9rBiMLLjlePztYs
-	 d30DhKqINbc5L4WesBGZ7dTFU85s0rR71bHEsdXSx2w2RLE/n4W1fHytRneWE2f1sk
-	 Vb72sLOrjdEAN6oyNRbclQhdGWhm8F1zLFBEMh7TBAyzkHwUSUruR9VrqdvevxKeZH
-	 9NaMNDoOt9uhcD6chvo45UKxehoMCYCITu5lIaZhZfuj7lgokCRjLK8h8HoTyRLugb
-	 ye339IYmVQ4/w==
-X-ME-Helo: [172.16.82.72]
-X-ME-Auth: bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI=
-X-ME-Date: Wed, 05 Mar 2025 15:38:31 +0100
-X-ME-IP: 124.33.176.97
-Message-ID: <9f0215c4-62e5-4dfa-8dac-732682600c8c@wanadoo.fr>
-Date: Wed, 5 Mar 2025 23:38:19 +0900
+	s=arc-20240116; t=1741185521; c=relaxed/simple;
+	bh=4TB5DOPQd21hKHuqCzgn5hFKWa7l8WTPFGMMoIXKVUE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dZ4Y7qc+6lD2Kbcu8nxqfVys5aBcM9MWQpkInJe65bLxz7PJoC1plcyjhs4ggcfZJJnClsQXDW9lmmljph22+pmjkxRwmlTIp7FG4p5Y0VKCPUNXG7QlfqQA7aXRIz6byhWubxFe16sf9rYMwzn4zmgl57+nVjFkOCJ5kB3RlKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=o8paCwND; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3645EC4CED1;
+	Wed,  5 Mar 2025 14:38:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741185520;
+	bh=4TB5DOPQd21hKHuqCzgn5hFKWa7l8WTPFGMMoIXKVUE=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=o8paCwND1OXZaThX0PBLZWfCWlsxJ85F5H8VUjHQrn9/EBMgPgPJQEDjZ21qk5qTw
+	 OPPlKAEpsUSpBj5gMZ0xgHJ8IGSct0+CTaTYtJRUoUQ1vAjsnpx0QmkszxcTkCQK1f
+	 EnOzHP8+FM9qrjEJ8znAPwUg1mgVaUQo6oWRXHpuHlnLTIAKZqqK6UtHfPM7NqzI8/
+	 /y0k9aiJH+0XHNmZpCESikQdr7fQ4Bej3LtO47+8RIDIbQM02S90xuv6n3G9wD6jWR
+	 mrpLy/4PvwNuBgtTlUV/gSleToWNNn/w2gFGrXeNrd5hh+eYJ5HZJO3K9NL9XwtX0e
+	 JmFDe47NMYz1Q==
+Date: Wed, 5 Mar 2025 14:38:24 +0000
+From: Jonathan Cameron <jic23@kernel.org>
+To: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
+Cc: <lee@kernel.org>, <ukleinek@kernel.org>, <alexandre.torgue@foss.st.com>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+ <wbg@kernel.org>, <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+ <catalin.marinas@arm.com>, <will@kernel.org>, <devicetree@vger.kernel.org>,
+ <linux-stm32@st-md-mailman.stormreply.com>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <linux-iio@vger.kernel.org>, <linux-pwm@vger.kernel.org>,
+ <olivier.moysan@foss.st.com>
+Subject: Re: [PATCH 3/8] iio: trigger: stm32-lptimer: add support for
+ stm32mp25
+Message-ID: <20250305143824.138a2605@jic23-huawei>
+In-Reply-To: <20250224180150.3689638-4-fabrice.gasnier@foss.st.com>
+References: <20250224180150.3689638-1-fabrice.gasnier@foss.st.com>
+	<20250224180150.3689638-4-fabrice.gasnier@foss.st.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.48; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 3/8] bits: introduce fixed-type genmasks
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Yury Norov <yury.norov@gmail.com>,
- Lucas De Marchi <lucas.demarchi@intel.com>,
- Rasmus Villemoes <linux@rasmusvillemoes.dk>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
- Rodrigo Vivi <rodrigo.vivi@intel.com>, Tvrtko Ursulin
- <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>,
- linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>,
- David Laight <David.Laight@aculab.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
- Jani Nikula <jani.nikula@intel.com>
-References: <20250305-fixed-type-genmasks-v4-0-1873dcdf6723@wanadoo.fr>
- <20250305-fixed-type-genmasks-v4-3-1873dcdf6723@wanadoo.fr>
- <Z8hf7pN84-64LWPv@smile.fi.intel.com>
-Content-Language: en-US
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Autocrypt: addr=mailhol.vincent@wanadoo.fr; keydata=
- xjMEZluomRYJKwYBBAHaRw8BAQdAf+/PnQvy9LCWNSJLbhc+AOUsR2cNVonvxhDk/KcW7FvN
- LFZpbmNlbnQgTWFpbGhvbCA8bWFpbGhvbC52aW5jZW50QHdhbmFkb28uZnI+wrIEExYKAFoC
- GwMFCQp/CJcFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AWIQTtj3AFdOZ/IOV06OKrX+uI
- bbuZwgUCZx41XhgYaGtwczovL2tleXMub3BlbnBncC5vcmcACgkQq1/riG27mcIYiwEAkgKK
- BJ+ANKwhTAAvL1XeApQ+2NNNEwFWzipVAGvTRigA+wUeyB3UQwZrwb7jsQuBXxhk3lL45HF5
- 8+y4bQCUCqYGzjgEZx4y8xIKKwYBBAGXVQEFAQEHQJrbYZzu0JG5w8gxE6EtQe6LmxKMqP6E
- yR33sA+BR9pLAwEIB8J+BBgWCgAmFiEE7Y9wBXTmfyDldOjiq1/riG27mcIFAmceMvMCGwwF
- CQPCZwAACgkQq1/riG27mcJU7QEA+LmpFhfQ1aij/L8VzsZwr/S44HCzcz5+jkxnVVQ5LZ4B
- ANOCpYEY+CYrld5XZvM8h2EntNnzxHHuhjfDOQ3MAkEK
-In-Reply-To: <Z8hf7pN84-64LWPv@smile.fi.intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On 05/03/2025 at 23:30, Andy Shevchenko wrote:
-> On Wed, Mar 05, 2025 at 10:00:15PM +0900, Vincent Mailhol via B4 Relay wrote:
->> From: Yury Norov <yury.norov@gmail.com>
->>
->> Add __GENMASK_t() which generalizes __GENMASK() to support different
+On Mon, 24 Feb 2025 19:01:45 +0100
+Fabrice Gasnier <fabrice.gasnier@foss.st.com> wrote:
+
+> From: Olivier Moysan <olivier.moysan@foss.st.com>
 > 
-> Is it with double underscore? I do not see it.
-
-This is my mistake. In an earlier draft, it was __GENMASK_t(),
-meanwhile, I dropped the __ prefix but forget to update the patch
-description.
-
-> _t is used for typedef simple types. It's unfortunate to have it
-> in such a macro.
-
-Ack.
-
-> Perhaps T or TYPE will suffice. Or perhaps we want
-> __GENMASK_Uxx() here?
-
-If no objection, I have a preference for GENMASK_TYPE().
-
->> types, and implement fixed-types versions of GENMASK() based on it.
->> The fixed-type version allows more strict checks to the min/max values
->> accepted, which is useful for defining registers like implemented by
->> i915 and xe drivers with their REG_GENMASK*() macros.
->>
->> The strict checks rely on shift-count-overflow compiler check to fail
->> the build if a number outside of the range allowed is passed.
->> Example:
->>
->> 	#define FOO_MASK GENMASK_U32(33, 4)
->>
->> will generate a warning like:
->>
->> 	../include/linux/bits.h:41:31: error: left shift count >= width of type [-Werror=shift-count-overflow]
->> 	   41 |          (((t)~0ULL - ((t)(1) << (l)) + 1) & \
->> 	      |                               ^~
+> Add support for STM32MP25 SoC. Use newly introduced compatible to handle
+> this new HW variant. Add new trigger definitions that can be used by the
+> stm32 analog-to-digital converter. Use compatible data to identify them.
 > 
-> ...
-> 
->> + * __GENMASK_U*() depends on BITS_PER_TYPE() which would not work in the asm
-> 
-> Where are the double underscore variants? I see it only for U128.
+> Signed-off-by: Olivier Moysan <olivier.moysan@foss.st.com>
+> Signed-off-by: Fabrice Gasnier <fabrice.gasnier@foss.st.com>
 
-Same as above. The description is incorrect. I will fix this in v5.
+Hi. I'm not really following why you can't use devm calls for the
+trigger probe path and hence why you need the explicit remove.
+Feels like a lot of infrastructure and I can't see why we need it.
 
->> + * code as BITS_PER_TYPE() relies on sizeof(), something not available in
->> + * asm. Nethertheless, the concept of fixed width integers is a C thing which
->> + * does not apply to assembly code.
+Jonathan
 
-Yours sincerely,
-Vincent Mailhol
+
+> @@ -54,25 +82,49 @@ bool is_stm32_lptim_trigger(struct iio_trigger *trig)
+>  }
+>  EXPORT_SYMBOL(is_stm32_lptim_trigger);
+>  
+> -static int stm32_lptim_setup_trig(struct stm32_lptim_trigger *priv)
+> +static void stm32_lptim_unregister_triggers(struct stm32_lptim_trigger *priv)
+>  {
+> -	struct iio_trigger *trig;
+> +	struct iio_trigger *tr;
+>  
+> -	trig = devm_iio_trigger_alloc(priv->dev, "%s", priv->trg);
+> -	if  (!trig)
+> -		return -ENOMEM;
+> +	list_for_each_entry(tr, &priv->tr_list, alloc_list)
+> +		iio_trigger_unregister(tr);
+> +}
+> +
+> +static int stm32_lptim_register_triggers(struct stm32_lptim_trigger *priv)
+> +{
+> +	const char * const *cur = priv->triggers;
+> +	int ret;
+>  
+> -	trig->dev.parent = priv->dev->parent;
+> -	trig->ops = &stm32_lptim_trigger_ops;
+> -	iio_trigger_set_drvdata(trig, priv);
+> +	INIT_LIST_HEAD(&priv->tr_list);
+>  
+> -	return devm_iio_trigger_register(priv->dev, trig);
+> +	while (cur && *cur) {
+> +		struct iio_trigger *trig;
+> +
+> +		trig = devm_iio_trigger_alloc(priv->dev, "%s", *cur);
+> +		if  (!trig)
+> +			return -ENOMEM;
+> +
+> +		trig->dev.parent = priv->dev->parent;
+> +		trig->ops = &stm32_lptim_trigger_ops;
+> +		iio_trigger_set_drvdata(trig, priv);
+> +
+> +		ret = iio_trigger_register(trig);
+
+I'm not really following why you can't use devm_iio_trigger_register() here
+and avoid your own tracking with the list below.
+
+
+> +		if (ret)
+> +			return ret;
+> +
+> +		list_add_tail(&trig->alloc_list, &priv->tr_list);
+> +		cur++;
+> +	}
+> +
+> +	return 0;
+>  }
+>  
+>  static int stm32_lptim_trigger_probe(struct platform_device *pdev)
+>  {
+>  	struct stm32_lptim_trigger *priv;
+> +	struct stm32_lptim_cfg const *lptim_cfg;
+>  	u32 index;
+> +	int ret;
+>  
+>  	priv = devm_kzalloc(&pdev->dev, sizeof(*priv), GFP_KERNEL);
+>  	if (!priv)
+> @@ -81,23 +133,42 @@ static int stm32_lptim_trigger_probe(struct platform_device *pdev)
+>  	if (device_property_read_u32(&pdev->dev, "reg", &index))
+>  		return -EINVAL;
+>  
+> -	if (index >= ARRAY_SIZE(stm32_lptim_triggers))
+> +	lptim_cfg = device_get_match_data(&pdev->dev);
+> +
+> +	if (index >= lptim_cfg->nb_triggers)
+>  		return -EINVAL;
+>  
+>  	priv->dev = &pdev->dev;
+> -	priv->trg = stm32_lptim_triggers[index];
+> +	priv->triggers = lptim_cfg->triggers[index];
+> +
+> +	ret = stm32_lptim_register_triggers(priv);
+> +	if (ret) {
+> +		stm32_lptim_unregister_triggers(priv);
+> +		return ret;
+> +	}
+> +
+> +	platform_set_drvdata(pdev, priv);
+> +
+> +	return 0;
+> +}
+> +
+> +static void stm32_lptim_trigger_remove(struct platform_device *pdev)
+> +{
+> +	struct stm32_lptim_trigger *priv = platform_get_drvdata(pdev);
+>  
+> -	return stm32_lptim_setup_trig(priv);
+> +	stm32_lptim_unregister_triggers(priv);
+
+Why not a devm_add_action_or_reset?
+or for that matter a devm_iio_trigger_register() in the first place.
+
+>  }
+>  
+>  static const struct of_device_id stm32_lptim_trig_of_match[] = {
+> -	{ .compatible = "st,stm32-lptimer-trigger", },
+> +	{ .compatible = "st,stm32-lptimer-trigger", .data = (void *)&stm32mp15_lptim_cfg },
+> +	{ .compatible = "st,stm32mp25-lptimer-trigger", .data = (void *)&stm32mp25_lptim_cfg},
+Why cast away a const then pass it to a const void *?
+
+That is I don't think the casts are needed.
+
+>  	{},
+>  };
+>  MODULE_DEVICE_TABLE(of, stm32_lptim_trig_of_match);
+>  
+>  static struct platform_driver stm32_lptim_trigger_driver = {
+>  	.probe = stm32_lptim_trigger_probe,
+> +	.remove = stm32_lptim_trigger_remove,
+>  	.driver = {
+>  		.name = "stm32-lptimer-trigger",
+>  		.of_match_table = stm32_lptim_trig_of_match,
+> diff --git a/include/linux/iio/timer/stm32-lptim-trigger.h b/include/linux/iio/timer/stm32-lptim-trigger.h
+> index a34dcf6a6001..ce3cf0addb2e 100644
+> --- a/include/linux/iio/timer/stm32-lptim-trigger.h
+> +++ b/include/linux/iio/timer/stm32-lptim-trigger.h
+> @@ -14,6 +14,15 @@
+>  #define LPTIM1_OUT	"lptim1_out"
+>  #define LPTIM2_OUT	"lptim2_out"
+>  #define LPTIM3_OUT	"lptim3_out"
+> +#define LPTIM4_OUT	"lptim4_out"
+> +#define LPTIM5_OUT	"lptim5_out"
+> +
+> +#define LPTIM1_CH1	"lptim1_ch1"
+> +#define LPTIM1_CH2	"lptim1_ch2"
+> +#define LPTIM2_CH1	"lptim2_ch1"
+> +#define LPTIM2_CH2	"lptim2_ch2"
+> +#define LPTIM3_CH1	"lptim3_ch1"
+> +#define LPTIM4_CH1	"lptim4_ch1"
+>  
+>  #if IS_REACHABLE(CONFIG_IIO_STM32_LPTIMER_TRIGGER)
+>  bool is_stm32_lptim_trigger(struct iio_trigger *trig);
 
 
