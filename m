@@ -1,134 +1,189 @@
-Return-Path: <linux-kernel+bounces-546730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF5EBA4FE1E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:00:07 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69D94A4FE1F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:00:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 972583AA957
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 11:59:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B9FB617349F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:00:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6C0242916;
-	Wed,  5 Mar 2025 11:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5924224293C;
+	Wed,  5 Mar 2025 12:00:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tq8prO7G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oT2aPgLB"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3015A20DD7F;
-	Wed,  5 Mar 2025 11:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2525243361
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741175999; cv=none; b=bJomzGPsyMj1woHzfO77cHAfJVQ/PC0EZkCmV7JQqDRJpAHge0dEg3EXMAWBOECP+fEqga91OnXmlqUtcvBp8NodGoQYOTHU3VB3iKmekf+C89fj+AwbXdLnv+VZ/qimhGPBFXogA3yF29BPxhcJGvLEhlIDuIUM7ExQPANqqJc=
+	t=1741176003; cv=none; b=DP9vQkf2h/41yITZ3VJwqi8U2+tY+ICfdf7Sp7tdVLdSv8L/JTIzGfTDh72XMptZp6k37vZ6LIn24aNU9+xg/u2b2xtQqBUqJfY1KxKUIDz+aIWD1pQkua00xQLy7+Y8JGLgpbHH8u5YHT3Vb8e1ON9PMZVCFDTI6ql4npC89/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741175999; c=relaxed/simple;
-	bh=1itfz5Dn/ifmwpBxuvw4a+A/Z8sq2airca0/Wm8mM/o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kLzjt4tD/SRHMgnLp9eZIXdxF7fM4D7WYVgYA1w+4X8S/SNzVkL/GEG68HYlk0HXN8KEaChDPRMkzrdmuDsdcfOyRgY4FdGNlT+XXmk9hiuRGS/L0JO51UgqwepaW3JxsMRILo/7SecpCdGqAQckn82bIsIByg/hkRbHj/7IgLY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tq8prO7G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15241C4CEE2;
-	Wed,  5 Mar 2025 11:59:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741175998;
-	bh=1itfz5Dn/ifmwpBxuvw4a+A/Z8sq2airca0/Wm8mM/o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=tq8prO7GuKGKr0n+6VxzhdZcbv6UyEHnV1+2FJLmOkhTzVD+kxJqs4BOa4UTzuHo9
-	 kKUwi/oZJOqJErJMFmzorjEbyW3/GVgXYqHmdUi3g3F5uEJTOUYzXqJeIMgDEzry1J
-	 o7BKjOYLkXMDVQU0/FkHa0m0M3Idkja1NHIBMlrOSsq3X91Oz7VCxHGqiHAV2qywsp
-	 F/Wb1tiEE6awH0XXn7blfbdNp2Vsr+9LR2fWfeq4dh0VrsJmWp6pDbmn2bLvHwv0aF
-	 Tevk4DQ6JkXFGj1ErpKOpMSl9+A15+osehcXGm+GVzpfvGSQS8gTKR/Gm2Gd9DUtI7
-	 2NJhK+KKY8FxQ==
-From: Andreas Hindborg <a.hindborg@kernel.org>
-To: "Benno Lossin" <benno.lossin@proton.me>
-Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
- <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
- <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
- <bjorn3_gh@protonmail.com>,  "Alice
- Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
-  "Danilo Krummrich" <dakr@kernel.org>,  "Masahiro Yamada"
- <masahiroy@kernel.org>,  "Nathan Chancellor" <nathan@kernel.org>,
-  "Nicolas Schier" <nicolas@fjasle.eu>,  <linux-kernel@vger.kernel.org>,
-  <rust-for-linux@vger.kernel.org>,  <linux-kbuild@vger.kernel.org>
-Subject: Re: [PATCH 14/22] rust: add pin-init crate build infrastructure
-In-Reply-To: <20250304225245.2033120-15-benno.lossin@proton.me> (Benno
-	Lossin's message of "Tue, 04 Mar 2025 22:55:09 +0000")
-References: <20250304225245.2033120-1-benno.lossin@proton.me>
-	<jpQp16UCJ00pInqOI-QFULU6-FKl2bBtAlmnxtXWLgXPVb7gy6d727nr7THeyks3ERF5Yqu3R6bikD0OK4mqXA==@protonmail.internalid>
-	<20250304225245.2033120-15-benno.lossin@proton.me>
-User-Agent: mu4e 1.12.7; emacs 29.4
-Date: Wed, 05 Mar 2025 12:59:39 +0100
-Message-ID: <87h647d6xg.fsf@kernel.org>
+	s=arc-20240116; t=1741176003; c=relaxed/simple;
+	bh=S3yywfLU2jBCwtpObciQg//2fXcEYPd0gB20atqKbaU=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=K5orH1h3ZA729GdT2vnNgD7fXZ1Ou5cm1kCIBlBBgpM0mAWiDktWs5YrKvHnTYfneYrobIchfrkv77Awj7YYfTHZGRCa4PMzrnBX0lABYrYT0DVGs3E6MBfrLNz7rvpMGibXg9yyb42oeGytMly4U6cqa+EF4ROiswRy6K9Ro9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oT2aPgLB; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-43ab5baf62cso49034995e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 04:00:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1741176000; x=1741780800; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=nxrQLrve5ZYCaqi57EKV0xP1vwlYg25qE1yTCds7PDM=;
+        b=oT2aPgLBlGo1m3kzcC3jwe/CEDX2GOuttRzRHWcHcPZcZOvlG5xwXu3cMXj9om0MIl
+         oBUhmY+bmJNX1/A1P4/XHp7/Rt+dvxK+HFtAQu9S2UTKSSgSHZ5pqHvahDWC17eDy2GV
+         KUep/6hAWUpq/vckqJhquWZs1pe0dnHiBpDGQRGTSB68q+5HPb00fh4ua0+cbrS40hyi
+         vkDLebGQdbnbUbM/Jf6/ANcfZpUUopDoioB/rfGeEdNfAVdFKrDdaVffzSvg2jII0sxQ
+         tUwAjLoSPyQZq49HI1L9Vvf1P2Vd2WVkbwXFlS+FchSgWzo5B5xAWnHVHecTaI2GWx+b
+         SGPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741176000; x=1741780800;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=nxrQLrve5ZYCaqi57EKV0xP1vwlYg25qE1yTCds7PDM=;
+        b=uLfjyLTHG6VW7xvS7+/POd4PspnS0eVAcm+lr+IRotgj4rQV/9yulNYl0JQyEen7Pp
+         26tapIv8eadUzSb9c73sjLSfdkR8rkB8YhHSZjzxR3Xt2qLUqxULPA1rJorwKQDwy9WS
+         i1Ngdbm7SIDtTbXIribqSqD6d4olgg55+rD4but/vD1sWm8JNevzWjySQqLPEQswRQoq
+         t2DfzbiCTKiqSsJrmv8oAudodDyYM+utWiwEDFz3Iq0YOrpNoDYq6G8U5ylbGM00K6ki
+         azBHjbyQZ/7uyr38IrdUdv78BbddVVl4UL3Hb7RL8JjtvEk4AkCHLSFQx0p5tH4DYujP
+         bwHg==
+X-Forwarded-Encrypted: i=1; AJvYcCW8TXLZUfJEE2qaGkDTkFtcc69zl7wRyADCXn0YxxZuQRMEX6oJIAOFxPIBvrK2fPx65TQ361hq1GiOSHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGu+651GCoMM/JaZ80evEaidQGh9AGDnACuXQwm1xKuIWVJGeP
+	yu22jjnI0uQHHDBnpRy50pD6HsK/CuyYDNCvlxlCcbiQfSY6Ps1/WP9nLLXYPdS/Dvvr8kzhZkI
+	q5+ggIdI4x9ylEA==
+X-Google-Smtp-Source: AGHT+IEp4F4FRlg80to2EP2sY+4qO0ru8U+D3wg9quZRpyNms8E1gnkZpcYcpd3+IIhL0cRuubq1VuG2e9urz9g=
+X-Received: from wmqa15.prod.google.com ([2002:a05:600c:348f:b0:43b:bfff:e091])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4fd2:b0:43b:d025:76a6 with SMTP id 5b1f17b1804b1-43bd298fcfdmr22365455e9.15.1741176000162;
+ Wed, 05 Mar 2025 04:00:00 -0800 (PST)
+Date: Wed, 5 Mar 2025 11:59:58 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Message-ID: <Z8g8vhS9rqQ_ez48@google.com>
+Subject: [Bug report] Memory leak in scmi_device_create
+From: Alice Ryhl <aliceryhl@google.com>
+To: Sudeep Holla <sudeep.holla@arm.com>, Cristian Marussi <cristian.marussi@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-"Benno Lossin" <benno.lossin@proton.me> writes:
+Dear SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE (SCPI/SCMI) Message
+Protocol drivers maintainers,
 
-> From: Miguel Ojeda <ojeda@kernel.org>
->
-> Add infrastructure for moving the initialization API to its own crate.
-> Covers all make targets such as `rust-analyzer` and `rustdoc`. The tests
-> of pin-init are not added to `rusttest`, as they are already tested in
-> the user-space repository [1].
+I flashed a v6.13-rc3 kernel onto a Rock5B board and noticed the
+following output in my terminal:
 
-If it's not too much hassle, why not add them in the kernel as well? I
-would rather not have to go fetch the user space repo from github, in
-the event that I ever need to patch pin-init.
+[  687.694465] kmemleak: 4 new suspected memory leaks (see /sys/kernel/debug/kmemleak)
 
+It seems that there is a memory leak for devices created with
+scmi_device_create.
 
->
-> Link: https://github.com/Rust-for-Linux/pin-init [1]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> Co-developed-by: Benno Lossin <benno.lossin@proton.me>
-> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
-> ---
->  rust/Makefile                      | 75 +++++++++++++++++++++++-------
->  rust/pin-init/internal/src/_lib.rs |  3 ++
->  rust/pin-init/internal/src/lib.rs  |  4 ++
->  rust/pin-init/src/_lib.rs          |  5 ++
->  scripts/Makefile.build             |  2 +-
->  scripts/generate_rust_analyzer.py  | 17 ++++++-
->  6 files changed, 86 insertions(+), 20 deletions(-)
->  create mode 100644 rust/pin-init/internal/src/_lib.rs
->  create mode 100644 rust/pin-init/src/_lib.rs
->
-> diff --git a/rust/Makefile b/rust/Makefile
-> index ea3849eb78f6..90310f0620eb 100644
-> --- a/rust/Makefile
-> +++ b/rust/Makefile
+This was with a kernel running v6.13-rc3, but as far as I can tell, no
+relevant changes have landed since v6.13-rc3. My tree *does* include
+commit 295416091e44 ("firmware: arm_scmi: Fix slab-use-after-free in
+scmi_bus_notifier()"). I've only seen this kmemleak report once, so it's
+not happening consistently.
 
-[...]
+See below for the full kmemleak report.
 
-> @@ -110,11 +113,24 @@ rustdoc-compiler_builtins: $(src)/compiler_builtins.rs rustdoc-core FORCE
->  rustdoc-ffi: $(src)/ffi.rs rustdoc-core FORCE
->  	+$(call if_changed,rustdoc)
->
-> -rustdoc-kernel: private rustc_target_flags = --extern ffi \
-> +rustdoc-pin_init_internal: private rustdoc_host = yes
-> +rustdoc-pin_init_internal: private rustc_target_flags = --cfg kernel \
-> +    --extern proc_macro --crate-type proc-macro
-> +rustdoc-pin_init_internal: $(src)/pin-init/internal/src/_lib.rs FORCE
-> +	+$(call if_changed,rustdoc)
-> +
-> +rustdoc-pin_init: private rustdoc_host = yes
-> +rustdoc-pin_init: private rustc_target_flags = --extern pin_init_internal \
-> +    --extern macros --extern alloc --cfg kernel --cfg feature=\"alloc\"
-> +rustdoc-pin_init: $(src)/pin-init/src/_lib.rs rustdoc-pin_init_internal \
-> +    rustdoc-macros FORCE
-> +	+$(call if_changed,rustdoc)
+Alice
 
-Is it possible to do some code sharing here, such that when we add a
-crate, it's just a matter of putting the path/name on a list somewhere?
-
-
-Best regards,
-Andreas Hindborg
-
-
+$ sudo cat /sys/kernel/debug/kmemleak
+unreferenced object 0xffffff8106c86000 (size 2048):
+  comm "swapper/0", pid 1, jiffies 4294893094
+  hex dump (first 32 bytes):
+    02 00 00 00 10 00 00 00 c0 01 bc 03 81 ff ff ff  ................
+    60 67 ba 03 81 ff ff ff 18 60 c8 06 81 ff ff ff  `g.......`......
+  backtrace (crc feae9680):
+    [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
+    [<0000000056fe02c9>] __kmalloc_cache_noprof+0x1e0/0x450
+    [<00000000a8b3dfe1>] __scmi_device_create+0xb4/0x2b4
+    [<000000008714917b>] scmi_device_create+0x40/0x194
+    [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
+    [<00000000970bad38>] scmi_probe+0x584/0xa78
+    [<000000002600d2fd>] platform_probe+0xbc/0xf0
+    [<00000000f6f556b4>] really_probe+0x1b8/0x520
+    [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
+    [<00000000d613b754>] driver_probe_device+0x6c/0x208
+    [<00000000187a9170>] __driver_attach+0x168/0x328
+    [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
+    [<00000000984a3176>] driver_attach+0x34/0x44
+    [<00000000fc35bf2a>] bus_add_driver+0x1bc/0x358
+    [<00000000747fce19>] driver_register+0xc0/0x1a0
+    [<0000000081cb8754>] __platform_driver_register+0x40/0x50
+unreferenced object 0xffffff8103bc01c0 (size 32):
+  comm "swapper/0", pid 1, jiffies 4294893094
+  hex dump (first 32 bytes):
+    5f 5f 73 63 6d 69 5f 74 72 61 6e 73 70 6f 72 74  __scmi_transport
+    5f 64 65 76 69 63 65 5f 72 78 5f 31 30 00 ff ff  _device_rx_10...
+  backtrace (crc 8dab7ca7):
+    [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
+    [<00000000500dbc08>] __kmalloc_node_track_caller_noprof+0x234/0x528
+    [<000000004990eea4>] kstrdup+0x48/0x80
+    [<00000000ad4d2923>] kstrdup_const+0x30/0x3c
+    [<00000000e9d3bdc3>] __scmi_device_create+0xd4/0x2b4
+    [<000000008714917b>] scmi_device_create+0x40/0x194
+    [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
+    [<00000000970bad38>] scmi_probe+0x584/0xa78
+    [<000000002600d2fd>] platform_probe+0xbc/0xf0
+    [<00000000f6f556b4>] really_probe+0x1b8/0x520
+    [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
+    [<00000000d613b754>] driver_probe_device+0x6c/0x208
+    [<00000000187a9170>] __driver_attach+0x168/0x328
+    [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
+    [<00000000984a3176>] driver_attach+0x34/0x44
+    [<00000000fc35bf2a>] bus_add_driver+0x1bc/0x358
+unreferenced object 0xffffff8103ba6760 (size 16):
+  comm "swapper/0", pid 1, jiffies 4294893094
+  hex dump (first 16 bytes):
+    73 63 6d 69 5f 64 65 76 2e 32 00 03 81 ff ff ff  scmi_dev.2......
+  backtrace (crc ccc21b9a):
+    [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
+    [<00000000500dbc08>] __kmalloc_node_track_caller_noprof+0x234/0x528
+    [<00000000cdc440a0>] kvasprintf+0x90/0x11c
+    [<00000000500fc732>] kvasprintf_const+0x98/0x138
+    [<0000000030e28143>] kobject_set_name_vargs+0x68/0x104
+    [<00000000f15f6ece>] dev_set_name+0x6c/0x98
+    [<00000000c1f76eb4>] __scmi_device_create+0x17c/0x2b4
+    [<000000008714917b>] scmi_device_create+0x40/0x194
+    [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
+    [<00000000970bad38>] scmi_probe+0x584/0xa78
+    [<000000002600d2fd>] platform_probe+0xbc/0xf0
+    [<00000000f6f556b4>] really_probe+0x1b8/0x520
+    [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
+    [<00000000d613b754>] driver_probe_device+0x6c/0x208
+    [<00000000187a9170>] __driver_attach+0x168/0x328
+    [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
+unreferenced object 0xffffff810637c800 (size 512):
+  comm "swapper/0", pid 1, jiffies 4294893094
+  hex dump (first 32 bytes):
+    00 00 00 00 ad 4e ad de ff ff ff ff 00 00 00 00  .....N..........
+    ff ff ff ff ff ff ff ff 00 1e ee 83 c0 ff ff ff  ................
+  backtrace (crc 732b3ae6):
+    [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
+    [<0000000056fe02c9>] __kmalloc_cache_noprof+0x1e0/0x450
+    [<0000000026a3cb30>] device_add+0x54/0x570
+    [<00000000e515c343>] device_register+0x20/0x30
+    [<0000000042008204>] __scmi_device_create+0x184/0x2b4
+    [<000000008714917b>] scmi_device_create+0x40/0x194
+    [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
+    [<00000000970bad38>] scmi_probe+0x584/0xa78
+    [<000000002600d2fd>] platform_probe+0xbc/0xf0
+    [<00000000f6f556b4>] really_probe+0x1b8/0x520
+    [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
+    [<00000000d613b754>] driver_probe_device+0x6c/0x208
+    [<00000000187a9170>] __driver_attach+0x168/0x328
+    [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
+    [<00000000984a3176>] driver_attach+0x34/0x44
+    [<00000000fc35bf2a>] bus_add_driver+0x1bc/0x358
 
