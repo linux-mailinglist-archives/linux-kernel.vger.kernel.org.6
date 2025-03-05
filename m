@@ -1,78 +1,131 @@
-Return-Path: <linux-kernel+bounces-547425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F8B5A5074A
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:56:25 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2DDAA50760
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:57:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E4E7175165
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:55:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D18CC3A806E
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 17:56:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FEC252915;
-	Wed,  5 Mar 2025 17:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA1F2512CB;
+	Wed,  5 Mar 2025 17:56:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s55jNMP/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="AfHQydln"
+Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609032505B8
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A1824C07D
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 17:56:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741197317; cv=none; b=n6Tptfn2yOQhLxeR3CRBXl1Q9beKlbeHjPEYvPanKZbCQQ6urdxhwRJOg5FAeQcIqyXAgnVHXGY79NbCQVfKtI1yh/Az5HRq48A7M4eXCSuWzRHpE97pmIDr50VvjtVX9fUQp0FdWWiIeZ+w6eXr5VML8zb+6h71eo6MELvxe3Y=
+	t=1741197362; cv=none; b=jHr2QpZmb41FwE+Dk/pSge0XiwYz2JaAqVF/3dqj/Vfo5K3vnIUpi9kWQpd9OdCCjw+LLoPanVAb16et4uDCTlFh6YTDIRIJdFf+moRHHANVS0mKdUAliZDpEa7e3rNRE26wo1xrErrQmrrvrbBqyhaWKxJaIILFfUhJs9kE0cw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741197317; c=relaxed/simple;
-	bh=PitLcp5xxnd/PdyPMPoYxiuWe+XNePK9+4LoDc6ZVW4=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=E5MiZZdNwkyyTFeqk3HCxA53WMENYDAJBEo4KFID3FLcHyCWm9gGWge4QxMHb8wIHGfyjPSDSaT1rL7WMcZfaJ3XA+ujTA+ilhhhwrW6qJ3T6AohSNVbsZHaUdprp55VR44GsD75tbL2uirS1WcqtAXmmh9X9fq7GY9GcDSUID4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s55jNMP/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D5F3C4CED1;
-	Wed,  5 Mar 2025 17:55:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741197317;
-	bh=PitLcp5xxnd/PdyPMPoYxiuWe+XNePK9+4LoDc6ZVW4=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=s55jNMP/x+xg93N2YnbeGFuPp16W59pq29sSGyKMJJ0nP0ObG2agLLRa96iDwXOOA
-	 fui0hGdhvSg3Xr6qMOEK6Xuf/6J/8/kWvTf9N1DDncxe5rY7xAdO95Z4wfVNyRgaEj
-	 QN2HohgjlOFlvGPy8+0Jo45iHHnp+PmMk4W+/2Aewac9gp+VE9hofezfXfeiGCQTtO
-	 KLCo/zospFZGUnfG9TZQwJ0c8cT31A9sX41XGYcOO0LYJsG4uFdeoIJM1LrH1uxxAI
-	 jImPHLHJdL8/UZKsAdPYpYuf93I59my1K5RTWGzPPDe5m5g6Uvpg+4BZdxEvi4Ez4c
-	 XEGPWb0AstDJg==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 7119D380CEDD;
-	Wed,  5 Mar 2025 17:55:51 +0000 (UTC)
-Subject: Re: [GIT PULL] HID fixes for 6.14
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <0o3np45o-r9p7-s59s-0oss-opn264op2ron@xreary.bet>
-References: <0o3np45o-r9p7-s59s-0oss-opn264op2ron@xreary.bet>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <0o3np45o-r9p7-s59s-0oss-opn264op2ron@xreary.bet>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025030501
-X-PR-Tracked-Commit-Id: db52926fb0be40e1d588a346df73f5ea3a34a4c6
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 848e076317446f9c663771ddec142d7c2eb4cb43
-Message-Id: <174119735016.968605.13390473321551006663.pr-tracker-bot@kernel.org>
-Date: Wed, 05 Mar 2025 17:55:50 +0000
-To: Jiri Kosina <jikos@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-kernel@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>
+	s=arc-20240116; t=1741197362; c=relaxed/simple;
+	bh=TUPQEmrW/zlDUggHE/0eBZQD2cfbqcK2BAfpEugKfy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jncqpNYrL/yIlGLGO7Vnt3+2GvmBidDdfKhcF88pj9A8g7CPqgcs9eGBUM314AgXLWDRaTfuDaCKASbHf+mdMJgYORDwMJrWdHhZh8R068mvA/i8EDe+wuJJj1jZbaxDWUl0xRxL2m6tmO+EwSpGN7Xe8MHusNiw9mVv+P6tESc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=AfHQydln; arc=none smtp.client-ip=209.85.222.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7c07b65efeeso619699385a.2
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 09:56:01 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1741197360; x=1741802160; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+ep2jN4skgI+D4W4EsgQGzXEpA82GjT/riHpbC+3iOM=;
+        b=AfHQydlnFwA7/1kyWNMWDazmS3wM1eK3EcqG2DhRmRFNpWt2ack4GtkIYJF+b8pTiW
+         QPiOl9zpAWwGN6UYjr6U5J5QjnGJV7nw1rjZ0spKOle5Mmujc5pTg+FI0nkzetWz6pp9
+         u+5JQZTj3yo1n74JW2p8V4Aq5iTUPSfkvjANbM9Ak0GGK4+qdYB3EksKwfKnGBvSMdJt
+         z2LW2ZLjwaovBAmDpXp9fParXHVMityt/4Jsr+CuN7MHK/9vLl14fldf7g1dWRfPo84r
+         Kq/1xIbNz1r5CMDTZXvx8kCWMAQQYrKQ999ZIZHM5iF64ojyesWKEpmv/NrDdzVF133+
+         tlBQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741197360; x=1741802160;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+ep2jN4skgI+D4W4EsgQGzXEpA82GjT/riHpbC+3iOM=;
+        b=cn8rMpdY/oSL/+a9TUmY2HVJP0FdNuqyOggvYzF/aGaLGqy+IuvjrhFURlthtr1Yrg
+         zWki1qN3mMcMKev13ByIlkTbxVGbNg5u92mKyoI6O0UoDaGmbwSBZc6ktUaH0kqBZo8E
+         P8Tkchwz5IOgt2zIXxjnWD/ahUocUTklGdMtdMSrqqo+q88e701mqCJBnuaH9oOD3+iq
+         m7Hqv1fX4E6D9jXI0bbm3ouUBkHAeoodhOCkKJU4bprzAzYXGlpgTA7TNrVq1cAucP5g
+         uOxFS8KbqAvbFZBRWWJ3kSgJEsfu79Ugp6zLY3nlQi/aGfC1MCoCwalDzkZJW7tw95vL
+         ztgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWejMlgA+5DtxWZQhA9l2wAjznl3bpMAQkJaRUyUnQDLEoNFvU9ZTdzMitm5YDd5e6iPbsEsa7STKrhTQk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1QNpex/xiPQ0G0FdUVDNQGy2eGta7x+PZiLMcoU2rcOARAUH8
+	kOnybdMXsuuDlswF085AvWjeuMAuYtPi/Zs8rYi2yNvOp+QFF4u9fa8SAEw3fDw=
+X-Gm-Gg: ASbGncsd8naGIrmznogRw1Yw6cEqkcYs1TcM0DmOkXLkCrX3zLUr7Jg1g8xhXLihKJH
+	PGYUq4jlBD33CgduTwJPGwq+Zd16sdvmqAaKO8YrdHXlbMoepqebJgwalj6uBZZZeg2HjrUXZM+
+	SA0IojemFXWe/7j2+bqJV0eHAGb9kDOtHj40JAFrjvuH3n7RbzkwRX/2rs3A9pJtIbCAYaZI761
+	uhGOFoZAOxlOpB7NTj4x6Mf3tYYMdBWteAHVsHE3TjzYmSvowWAB1VpaK9uzRs8U16JM3JCdC+U
+	eoy8quK8pZzzfJAFt54=
+X-Google-Smtp-Source: AGHT+IE075gQ9paRBr5FJqePHxLiGeTWllaX8jx4kAg32gkUcqpKhkxzc9FKZ5jSjzoHlrJkCTJ+cQ==
+X-Received: by 2002:a05:620a:8908:b0:7c3:cbad:5729 with SMTP id af79cd13be357-7c3d8e7ae8cmr768466685a.25.1741197359262;
+        Wed, 05 Mar 2025 09:55:59 -0800 (PST)
+Received: from ziepe.ca ([130.41.10.206])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7c3b4c9e120sm486128485a.11.2025.03.05.09.55.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 05 Mar 2025 09:55:58 -0800 (PST)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1tpsyL-00000001TVM-2YSq;
+	Wed, 05 Mar 2025 13:55:57 -0400
+Date: Wed, 5 Mar 2025 13:55:57 -0400
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Hanjun Guo <guohanjun@huawei.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, Russell King <linux@armlinux.org.uk>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Stuart Yoder <stuyoder@gmail.com>,
+	Laurentiu Tudor <laurentiu.tudor@nxp.com>,
+	Nipun Gupta <nipun.gupta@amd.com>,
+	Nikhil Agarwal <nikhil.agarwal@amd.com>,
+	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Saravana Kannan <saravanak@google.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, linux-acpi@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	iommu@lists.linux.dev, devicetree@vger.kernel.org,
+	linux-pci@vger.kernel.org,
+	Charan Teja Kalla <quic_charante@quicinc.com>
+Subject: Re: [PATCH v2 2/4] iommu: Resolve ops in iommu_init_device()
+Message-ID: <20250305175557.GI5011@ziepe.ca>
+References: <cover.1740753261.git.robin.murphy@arm.com>
+ <fa4b6cfc67a352488b7f4e0b736008307ce9ac2e.1740753261.git.robin.murphy@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <fa4b6cfc67a352488b7f4e0b736008307ce9ac2e.1740753261.git.robin.murphy@arm.com>
 
-The pull request you sent on Wed, 5 Mar 2025 14:43:46 +0100 (CET):
+On Fri, Feb 28, 2025 at 03:46:31PM +0000, Robin Murphy wrote:
+> Since iommu_init_device() was factored out, it is in fact the only
+> consumer of the ops which __iommu_probe_device() is resolving, so let it
+> do that itself rather than passing them in. This also puts the ops
+> lookup at a more logical point relative to the rest of the flow through
+> __iommu_probe_device().
+> 
+> Signed-off-by: Robin Murphy <robin.murphy@arm.com>
+> ---
+> 
+> v2: New
+> 
+>  drivers/iommu/iommu.c | 30 ++++++++++++++++--------------
+>  1 file changed, 16 insertions(+), 14 deletions(-)
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/hid/hid.git tags/hid-for-linus-2025030501
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/848e076317446f9c663771ddec142d7c2eb4cb43
-
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Jason
 
