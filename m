@@ -1,85 +1,176 @@
-Return-Path: <linux-kernel+bounces-545840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-545842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC4FFA4F24E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:19:20 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB8DCA4F252
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 01:20:01 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEE42188DA10
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:19:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F7627A54C7
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 00:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7113D3B7A8;
-	Wed,  5 Mar 2025 00:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C5C17BA1;
+	Wed,  5 Mar 2025 00:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ieJN7/kM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b="KDKq6ARw"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD4D538DE1;
-	Wed,  5 Mar 2025 00:19:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C38553AC
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 00:19:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741133953; cv=none; b=h6VFJTSy28GabKvzPEj+DZPEKsW1qMlkw4PVtB1ygC9YyDNmvhPG+/i/833kCzHmsKS6p6kAPrHkNWyfN0IKlrxRG8oLnY9LkV4HqYpX5GC4KR6RqyGUGSFs9uzabuVhKSD/78CoifUad815BPV91u9TLVdXqBVWPQkt/PU+oFM=
+	t=1741133991; cv=none; b=Sy3oaB7o/WMfpdWGtEp2lT9gFPdWbJlg/nIOlGeCaHNEIUDBXlLZTB/ZmfBR8+3H8VDG2jel4uBLGmS6taPBsrwhBuhGJkaI1DKRkDL9leWikUMG5ufDK3Y+BjrF2Dz39u8FvFwnHvhU9yUPboA1PoBvRF1k/0C4+d2/YN8sngs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741133953; c=relaxed/simple;
-	bh=LvuMnlvN9J07K8g58fWqbDkGdxz8BL6D4q8fb+iXypU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=adet/B4Yyhq/Fl6qijaARXP2uxwwyAdBDDNrJ/+cqtEJ1s+o2Bo2XNf/h58ADx0g1oJGwMU+gJtePeDntsXI8RXbrL4b4snVviVO7XmD8CXlRIWbfKqsGqM4eBLAyU2yuZ8ViqgVxCNoa80OR+rtu9qgM8ah03ubR8HsUVIm9EM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ieJN7/kM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC09C4CEE5;
-	Wed,  5 Mar 2025 00:19:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741133953;
-	bh=LvuMnlvN9J07K8g58fWqbDkGdxz8BL6D4q8fb+iXypU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ieJN7/kMl4Ef2TMN0t+mICwSeXBYuE/24BZzt+zAK+BmFWAeqVIN2ibVgQBqKc6j9
-	 Mw8zzwVjvwhAX9jLMQ6um0u9JAWHXawzNZqln/UnbNqMnc7CeQVuCf+jf/n2fDiGnX
-	 Ydklh3Sq7rD0a7ZMW6BYuUL1pKPWvzkuVL0YA67aM7PAIZUEzPs/mqgzjFwvg/CIBL
-	 rmi5yGtIRmFCtch/m1I0DT8TQsYiZaK5+VS79SROj5ef5URjkAnXqL+EpMwnR92uw1
-	 aXURXJwfb5lBgxwMTY+cYteyTPQD/haf4NNLAoG7p3WE1UE+3CYwDkEPfyJD6vCTsM
-	 JLryDI3iIwClw==
-Date: Wed, 5 Mar 2025 02:19:08 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: linux-integrity@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>, linux-sgx@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arch/x86: Fix size overflows in sgx_encl_create()
-Message-ID: <Z8eYfALmwN68F39V@kernel.org>
-References: <20250305000602.127665-1-jarkko@kernel.org>
- <8255b211-5510-4c09-b13f-c4e3bd0d0aba@intel.com>
+	s=arc-20240116; t=1741133991; c=relaxed/simple;
+	bh=ZK68s+96odAp9mghpE9eTFA98cGvGR3nuInRJl6fJPM=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=V/oFfU+cp8YJ3/REScKdAxvTt83iRwIuxYtskkPXtttrDjuEfXQutBLAOe7pqZgK3fN7KJ+eziSXlukl3E8Nkle6JqXEt5DTLYPNYceXyuSlT+5OPo9bqKLGqTlUxeqUAFrtN6KEGdn7nUlyjDqV1uy2baS+aD1Ki2cFwZt1mBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net; spf=pass smtp.mailfrom=openvpn.com; dkim=pass (2048-bit key) header.d=openvpn.net header.i=@openvpn.net header.b=KDKq6ARw; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=openvpn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=openvpn.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5e51e3274f1so7031935a12.0
+        for <linux-kernel@vger.kernel.org>; Tue, 04 Mar 2025 16:19:48 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=openvpn.net; s=google; t=1741133987; x=1741738787; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6D4CeO3v05+ZBtc5CEcrGKWIhNna/EuPVsXiAB6x+mw=;
+        b=KDKq6ARw53HPLVILzGlRUebxTCAbzMQ9Owvkc33Smwfmk6U+evXkvQTWY8zGBFNpCb
+         l60YZokhss/Y0jrPpjaEDHY6LjXbdYNeQGq5XzvvgLLiNH1VTiWpEeubEBx45a6sNukm
+         YNvhPn97d3GwbLa+TLTqMYPB/ahiXIqbLSEsnVTWi0NIbbrAssO+LUeQ3ltopNlDypz4
+         pqpsT2fdG/c+1VhtHGLWJtWcCJvY407coN2RIBqatmyFqv6eDdzsqpfRA4LFtocAmsbw
+         qH757tCFzP6W2GIfV1y68ALbVMU/h0rHLWmMGTMxpMG6cxnwAKVQJLaEOup1VLXM6Upy
+         U+IQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741133987; x=1741738787;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:from:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=6D4CeO3v05+ZBtc5CEcrGKWIhNna/EuPVsXiAB6x+mw=;
+        b=dL2hUy7tC79V+sXDDHOrdanwkFn11CHz4NcvLTixgpTRkscMS/Uln86Cr91CpPUE5R
+         egINAIWspprqs84ACWSBKxbGJbKIs4H2FtRJbuqksN15KUJ6kbv8KO8n3F0qrv49k+PH
+         E20sd2iZONsgz9QHHCIz1lrGPDngCiou09rGuohhknNM4DmCsThj4ITFNWukOhxKxkTp
+         eQez/xU5qrpfaGASn200mS9mK660Hk+Z+Eq8jwFV6QA7I7680GrPxduOL2H/HsKzW9lN
+         SV4CnGgmhA/SYy1mK5s/I33YXEGYgBAaxHPRTu+PtPWd0jwH6XcmU++XHudi6e9ml0AR
+         vR2g==
+X-Forwarded-Encrypted: i=1; AJvYcCUH8Le3jQK1DC4vDk+qxxLVobDxbAWh+rZyEjZf6BCS1gTzdHAdj8GBMNDLzx55Js2LO+0gigUyQa82mUM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyqq9IH0Ihah6gd6BPig74fbsTlgJniz2Do2nejvJTkuso0w6wL
+	F+40wMUd/erO24Z0vEF8KXH2ft1CUa9HDDAWct48lmiIoffRcMW4c6+Ev52KHxI=
+X-Gm-Gg: ASbGncuVmi0uqbCpdYHdqO0uYcz/At6/36niwR2nYv/eOZctHL+AgElNHY2EKtt4leU
+	UVR6d7hQVSJT3zShA8qBr2OALX7EGlOpxQ8xmeN0zTUDghc5Q1mSkeQsznCObDK4UUuuSgxF1py
+	TY6UuLDwarUuaufBIFsSKKWRVPz1L91IJTH0jfmW0idlw2kkF5mx0Ua8VsBh/u+dcXh8F0hLfa6
+	r/IxTgyGSQS6bg8GUORJ/g3kOpvipYqPhRjmtTuAVNshoUjFNyee1Iz7kMSq/r9dh2zLTjvOFP6
+	OPu2ziDJMdmers9M89vnbhJqAa2VDK1LkGCP6i9VYIb6+FFbuKpFWl9QwFpex21fi798eA2BhCx
+	YSya52pU=
+X-Google-Smtp-Source: AGHT+IGUKpII5ucG6P2P0Im4u16sx6ubJmJfDIB+rxJ8m//Mn7nLKISpOLu5ZLftwyo3mtLq9b8Kug==
+X-Received: by 2002:a05:6402:5203:b0:5e1:9725:bb3e with SMTP id 4fb4d7f45d1cf-5e59f4869femr1173648a12.28.1741133987449;
+        Tue, 04 Mar 2025 16:19:47 -0800 (PST)
+Received: from ?IPV6:2001:67c:2fbc:1:2107:3d4f:958a:fa5f? ([2001:67c:2fbc:1:2107:3d4f:958a:fa5f])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5e50fcfe981sm6051928a12.27.2025.03.04.16.19.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 04 Mar 2025 16:19:45 -0800 (PST)
+Message-ID: <82aa82df-e378-4cf8-a296-1ebd1ab14413@openvpn.net>
+Date: Wed, 5 Mar 2025 01:19:43 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <8255b211-5510-4c09-b13f-c4e3bd0d0aba@intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v21 18/24] ovpn: add support for peer floating
+From: Antonio Quartulli <antonio@openvpn.net>
+To: Sabrina Dubroca <sd@queasysnail.net>
+Cc: netdev@vger.kernel.org, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Donald Hunter <donald.hunter@gmail.com>, Shuah Khan <shuah@kernel.org>,
+ ryazanov.s.a@gmail.com, Andrew Lunn <andrew+netdev@lunn.ch>,
+ Simon Horman <horms@kernel.org>, linux-kernel@vger.kernel.org,
+ linux-kselftest@vger.kernel.org, Xiao Liang <shaw.leon@gmail.com>
+References: <20250304-b4-ovpn-tmp-v21-0-d3cbb74bb581@openvpn.net>
+ <20250304-b4-ovpn-tmp-v21-18-d3cbb74bb581@openvpn.net> <Z8dIXjwZ3QmiEcd-@hog>
+ <9c919407-fb91-48d7-bf2d-8437c2f3f4da@openvpn.net>
+Content-Language: en-US
+Autocrypt: addr=antonio@openvpn.net; keydata=
+ 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
+Organization: OpenVPN Inc.
+In-Reply-To: <9c919407-fb91-48d7-bf2d-8437c2f3f4da@openvpn.net>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 04:18:03PM -0800, Dave Hansen wrote:
-> On 3/4/25 16:06, Jarkko Sakkinen wrote:
-> > +	/*
-> > +	 * This is a micro-architectural requirement. ECREATE would detect this
-> > +	 * too without mentionable overhead but this check guarantees also that
-> > +	 * the space calculations for EPC and shmem allocations never overflow.
-> > +	 */
-> > +	if (!is_power_of_2(secs->size))
-> > +		return -EINVAL;
+
+
+On 05/03/2025 00:19, Antonio Quartulli wrote:
+> On 04/03/2025 19:37, Sabrina Dubroca wrote:
+>> 2025-03-04, 01:33:48 +0100, Antonio Quartulli wrote:
+>>> A peer connected via UDP may change its IP address without reconnecting
+>>> (float).
+>>
+>> Should that trigger a reset of the peer->dst_cache? And same when
+>> userspace updates the remote address? Otherwise it seems we could be
+>> stuck with a cached dst that cannot reach the peer.
 > 
-> Isn't it a plain old documented architectural requirement?
+> Yeah, that make sense, otherwise ovpn_udpX_output would just try over 
+> and over to re-use the cached source address (unless it becomes 
+> unavailable).
 
-Yes, but it requires some explanation why it exists here instead of
-counting on ECREATE.
+I spent some more time thinking about this.
+It makes sense to reset the dst cache when the local address changes, 
+but not in case of float (remote address changed).
 
-What do you suggest?
+That's because we always want to first attempt sending packets using the 
+address where the remote peer sent the traffic to.
+Should that not work (quite rare), then we have code in ovpn_udpX_output 
+that will reset the cache and attempt a different address.
 
-BR, Jarkko
+
+Cheers,
+
+
+-- 
+Antonio Quartulli
+OpenVPN Inc.
+
 
