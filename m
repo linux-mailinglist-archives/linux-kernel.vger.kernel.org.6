@@ -1,157 +1,108 @@
-Return-Path: <linux-kernel+bounces-546808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ED35A4FEF7
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:46:48 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDCCBA4FEFA
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:47:57 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6BE03AC59E
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:46:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB4AA1890082
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 12:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6957222331E;
-	Wed,  5 Mar 2025 12:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55508243946;
+	Wed,  5 Mar 2025 12:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FxVzKQp7"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PyBpq2w6"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352A51E7C24
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 12:46:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BBF113633F;
+	Wed,  5 Mar 2025 12:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741178802; cv=none; b=RExm8Fx0O7Ls8XosZcfnnGPtvvziDBDxCa8VlNeIYDPgGgrcdn9MtJvZns4f7BdbTbfmT+gJtZyz8qHuf2JF/RgE4E2EiESqbmt8/IybLm/U2eCRMnThLJvPvPvdV6SAYMZ1bNqLPXGZu6LiHHXWRrxLgj8WFSpFDYYFmZCnunM=
+	t=1741178869; cv=none; b=g9Cuf/wjlY0/cbMopc4KWRLbBJ82SU1wL4yhpSAbQUIoX0XRNtH5CSPlJdbIKbOKiU6MYeZnOp7WFPXlPbdEP18dukRfmfVFtwYBXNptxdSAp2/4SeqNMZspW9IglD5QgJIjxTfmams6dpysFFSNdI5Wc4GS3JnNWEgVvuYdZ8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741178802; c=relaxed/simple;
-	bh=WdS934lDxFuI+lDi4WoiWzb2Te4Np1NHLjMjIUYas7k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gL5CV6W0/hOi1V/A+6BolUM67XhRj81p9X/pSSYjJ+wuAAvRfGoa5YhqwRIMKE1nCEp0WVpU40ipitWLAJkMAamB94BesdU6RFAbpDRylRMYOyiv5OPyVv2swaZjqV2Mz4D09Pb9K3ow2U2YqUHVd3vffyxU6yi8Bm6xxgk2bbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FxVzKQp7; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-38f406e9f80so5137536f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 04:46:39 -0800 (PST)
+	s=arc-20240116; t=1741178869; c=relaxed/simple;
+	bh=XfXFTTGp1QVFV98VxMX0zwHYNo/nftzqQspqCemC3fk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KKl+qDaYnAmfO1yPyyDrVtELcZ1OJxM4UhSyd/IFZ+fCFGCMjE42jAVsukySZUTAzX+l3L89cMTaw95qI2JxEdgaVH17/+iVrA+goJuIFr3/umSNlamfwWinUk7f0fptw1BfsDnnEpMnYI2Ut5OKUemjvpS1zaISqXWHrSOgLXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PyBpq2w6; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2fee688b474so861633a91.3;
+        Wed, 05 Mar 2025 04:47:48 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1741178798; x=1741783598; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=KijU2RK+5QiUTMaMHbVobX3TCajOSEvmIS7Lj9sfhOM=;
-        b=FxVzKQp7cZaM+4mdVVPpvwZdWqQF4tPb/k3yWkANko/ac8GB8GHSavmos/mkTnbotl
-         5t7Zhj4ElTHAw+OxBE2pXfWgHFTETcwRsztNa/JGr4h9K2kMvJbq5BKrXk0oLp0lj4AD
-         qOQoDggpJFK9ZdNasDnDOF2L7pjAiz1bqtub2dk05WMashNTmPaisAeCoZcRnOPs+hTF
-         WN/qachUuOHOWD1HfyX9ctvMteY1n5Dc2H8vSaC4xmLqkWobwxy3ppc6+091lclOrs1k
-         1glW+3HYbu5Yqkxn4XEt3uhU88PJfrVGyvET73R+pBcTyCUTzS26LhuPEyYBlTgrSQ2S
-         Df5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741178798; x=1741783598;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1741178868; x=1741783668; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=KijU2RK+5QiUTMaMHbVobX3TCajOSEvmIS7Lj9sfhOM=;
-        b=r0bOX+VsqQoJkLAjM2qPuCEZch1Ntq9SmODW5Wxte0B8NXgl81raAibpkmEDI8ppuM
-         J2jrlhGkZjq/N0dXTl2qIy5UL91O9BEAFwKpuzQ7I5j8pz1cWsDhk9ORw7iGujHCH5s4
-         ZMACYhQkh5rHc/SEbbsRdYiytaEo5EEG/I1hGSH6lVXuNfsFB1NK/W+HS2LbGp+FL1CL
-         NRHHruFIIe1KQEsPXs8wQL6HfTbGmWL/wJt6B9tTXDBZchvKjzm3dfhZIy0dLfT/SRsh
-         +uctRc9odcLxuX8jGfpSSrmz+05sNJ6/Bcftb/puAsnZW1pY3hbtQEUgif1GtE1c1dlf
-         x3qw==
-X-Forwarded-Encrypted: i=1; AJvYcCX7SKiw4TAkd/kovfZGEGz1yKqCPzgSX0qAOwKokySXVnrQxf6WJJ3nHzX5KNCN4hNDKEK12N2+kRpuFx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUG+UyUxPlzjKOOL4e3d8iLEHZzBslptuiAZqmMxCGzP1pjCHs
-	uhaNyDuq5rs6LajLT63BkgOvUw6lzaRkUVTIx8TnsgHDZJP2BDWrO9nTLoX16Qg=
-X-Gm-Gg: ASbGncuUFJy/zPp5nvhC0qRRHw/o+MzmgPDfKEi2VKl2AK6bCkZEcq0txw1J3fflDnN
-	C+rDQmgRmTdxPSi7TETXWEVLdBv744yDTQdMzmIssXWZ8zpgjVcmK4+JzQ3/xOJxTZsFJJKndPf
-	LaV1RvVnoOfnZhrnRuU9rOpKv3BvCmBJA27hleu2vEc6vnEg7xYQSY7cTtmeaXwWzw1S5nK0Mdy
-	RjlI4ZA8cIFH1XDQOIqh+IUf+EC3NTiivKpfxcgVv0HtDzhxGUQYICj8cEleMEY0WhusiCDF7OD
-	vqlzgaONq61Q6CRk69fUhyC1G+5uskGpWB6dt+HJqqeEZjM=
-X-Google-Smtp-Source: AGHT+IEPLJpRRf5FYWw3IKOdFaaLj6UT7vruoSQtSNaRt2Dkg2TweUaV2rcBDSTkZ88x2LYdtyxZrg==
-X-Received: by 2002:a5d:59ae:0:b0:391:10f9:f3a1 with SMTP id ffacd0b85a97d-3911f7bba1fmr3029040f8f.35.1741178798392;
-        Wed, 05 Mar 2025 04:46:38 -0800 (PST)
-Received: from pathway.suse.cz ([176.114.240.130])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-390e47a6a9fsm21175534f8f.36.2025.03.05.04.46.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 04:46:37 -0800 (PST)
-Date: Wed, 5 Mar 2025 13:46:36 +0100
-From: Petr Mladek <pmladek@suse.com>
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: David Gow <davidgow@google.com>, Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Shuah Khan <shuah@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
-Subject: Re: [PATCH v8 3/4] scanf: convert self-test to KUnit
-Message-ID: <Z8hHrIz2wwAMtQc8@pathway.suse.cz>
-References: <20250214-scanf-kunit-convert-v8-0-5ea50f95f83c@gmail.com>
- <20250214-scanf-kunit-convert-v8-3-5ea50f95f83c@gmail.com>
+        bh=XfXFTTGp1QVFV98VxMX0zwHYNo/nftzqQspqCemC3fk=;
+        b=PyBpq2w6WoXsptN67xAYeRJya/ycZiDE6I3z/HWCblUWDz7dx169XkQElZPwOdblqE
+         2lU5urN8nmFhmDoBtykq9Bxa/XMWF1WaW3/WcfZD8TCHf/i+qIsRJzEnu+ExEfKzGhaM
+         8vZZgQlMedgO2U0II5Chnkw4iBBoQz6BiBNN7kWxaZUYAptTJe98lVUvmg+skl1gDb7M
+         PCq52au+KYtvDTqZW5i5VYMASpwz/4ekw96QHjpaV7BjZ/bSjoTJEvdV2cwJTDkG5xAC
+         Ne8+Coqbq3iL6dvshm6/ITMzN5bxCtzDTjOVEWVVZ+dVcCoybeJ5ku3Rt2LRku1taUch
+         teVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741178868; x=1741783668;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XfXFTTGp1QVFV98VxMX0zwHYNo/nftzqQspqCemC3fk=;
+        b=hseUyHSoLTtFwv3UCg031EzIVmuS6At82HsjNTODE2ofCQT5UHIbOJJXaLDdKep4mv
+         Q1TpxkcznqEKbnfUfFf5RIcR0r06EThViJbhKUCflqlJMgLDOevx68mdse32ZniceyDu
+         Id1LLVZnt8yRzHXP79prQHc5qePqE1wqPnWzEPQtggDvWn5c6dPLYfly1R5INrUUs2PZ
+         Qz8bLYrWSFuoucoJ4ZFLdTNHi7sNY5lwPYBfZ6N3fDWA6z7JWuquKIiHzdZhH/cNVHh7
+         wQvXfPlWZFFZlwaro7fQRY4ndwsI7IPknzI2HH4Pj5Ks7R6RSrEjm+4pP7WQxTkpaFAw
+         735w==
+X-Forwarded-Encrypted: i=1; AJvYcCVLYIS5L/AjoCMNj0ngdfkjdU6wxOuP/iZ/8c4BQFOsRx8sJceTjX8fQHGXEM5uDxIrSZTD4t3aCi6UZhF7@vger.kernel.org, AJvYcCVwjmTGAkbgZO/UG60lDtCCqWVcB6+6Pe3QyYvKHAQDCsg3mHIi7sh66fLF632kGd/0j+yDbgFwPJnin30=@vger.kernel.org, AJvYcCW9IYVDGXuuNcV3bQEueheMdboGVvqIReR5TsYcodpeIOWUinmWsLjyD2XIgrz+UMtzTh4htPJ/T7cBlcWUSVQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyY54FVg1WAmjivWDEzy1TsceiJq0EWrb5SuWZDoaL/FSRLsP6n
+	3mlqrl5fmp+SzgsdYSNEFfinpbpOocf4jKYWBsGBmaWD5XgaIpKIXMxSfHx6v0eU7MtX218xc96
+	apDkbGdM6fD6lOJohhSvCHOwobUw=
+X-Gm-Gg: ASbGnctgs82nnFy5HLF3jBS++DfCcjLmQKvtQUfbdsYAuXZLuqkY5I/nkuOWum38py2
+	tlHcQSt52EgdmcdtG9kp//w1A73KijCurg7XzAcuiiLRdrtfrbjeXWyXvLbshYwzoBLQq8uS/IN
+	PJnHevMzJNm476Fsz7n7hYxNFBNw==
+X-Google-Smtp-Source: AGHT+IHR6wKMB4APddqt0jTu3j3PDlKIsQUgPx7zctPz/rbSum8GUWLgU6G0Oqw4f3Kok/VN9N6g+KQ774Dx5rxv9H8=
+X-Received: by 2002:a17:90b:4c0b:b0:2fe:957c:1146 with SMTP id
+ 98e67ed59e1d1-2ff497c4309mr2030809a91.6.1741178867659; Wed, 05 Mar 2025
+ 04:47:47 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250214-scanf-kunit-convert-v8-3-5ea50f95f83c@gmail.com>
+References: <20250304225245.2033120-1-benno.lossin@proton.me>
+ <jpQp16UCJ00pInqOI-QFULU6-FKl2bBtAlmnxtXWLgXPVb7gy6d727nr7THeyks3ERF5Yqu3R6bikD0OK4mqXA==@protonmail.internalid>
+ <20250304225245.2033120-15-benno.lossin@proton.me> <87h647d6xg.fsf@kernel.org>
+In-Reply-To: <87h647d6xg.fsf@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Wed, 5 Mar 2025 13:47:35 +0100
+X-Gm-Features: AQ5f1JrgLZHECIWbeIOwHVWTYGSTQpRk2veZ6sZwRLC6m5QNriP5yQ5LLd3onWQ
+Message-ID: <CANiq72mrxwuRJDQ4D0v4-LpdokDt4eLjfQu_QjvE9s0uBjegiA@mail.gmail.com>
+Subject: Re: [PATCH 14/22] rust: add pin-init crate build infrastructure
+To: Andreas Hindborg <a.hindborg@kernel.org>
+Cc: Benno Lossin <benno.lossin@proton.me>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri 2025-02-14 11:20:00, Tamir Duberstein wrote:
-> Convert the scanf() self-test to a KUnit test.
-> 
-> In the interest of keeping the patch reasonably-sized this doesn't
-> refactor the tests into proper parameterized tests - it's all one big
-> test case.
-> 
-> --- a/lib/test_scanf.c
-> +++ b/lib/tests/scanf_kunit.c
-> @@ -15,48 +13,35 @@
->  #include <linux/slab.h>
->  #include <linux/string.h>
->  
-> -#include "../tools/testing/selftests/kselftest_module.h"
-> -
->  #define BUF_SIZE 1024
->  
-> -KSTM_MODULE_GLOBALS();
-> -static char *test_buffer __initdata;
-> -static char *fmt_buffer __initdata;
-> -static struct rnd_state rnd_state __initdata;
-> +static char *test_buffer;
-> +static char *fmt_buffer;
-> +static struct rnd_state rnd_state;
->  
-> -typedef int (*check_fn)(const char *file, const int line, const void *check_data,
-> -			const char *string, const char *fmt, int n_args, va_list ap);
-> +typedef void (*check_fn)(struct kunit *test, const char *file, const int line,
-> +			 const void *check_data, const char *string, const char *fmt, int n_args,
-> +			 va_list ap);
->  
-> -static void __scanf(6, 0) __init
-> -_test(const char *file, const int line, check_fn fn, const void *check_data, const char *string,
-> -	const char *fmt, int n_args, ...)
-> +static void __scanf(7, 0)
+On Wed, Mar 5, 2025 at 12:59=E2=80=AFPM Andreas Hindborg <a.hindborg@kernel=
+.org> wrote:
+>
+> If it's not too much hassle, why not add them in the kernel as well? I
+> would rather not have to go fetch the user space repo from github, in
+> the event that I ever need to patch pin-init.
 
-This should be:
+If you need to patch it, then you should generally do so upstream --
+this is supposed to be a vendored/sync'd library.
 
-static void __scanf(7, 9)
-
-Otherwise, the compilation with W=1 produces the warning reported by
-the lkp@intel.com kernel test robot, see
-https://lore.kernel.org/r/202502160245.KUrryBJR-lkp@intel.com
-
-> +_test(struct kunit *test, const char *file, const int line, check_fn fn, const void *check_data,
-> +	const char *string, const char *fmt, int n_args, ...)
->  {
->  	va_list ap, ap_copy;
->  	int ret;
-
-Otherwise, it looks good to me.
-
-With the above fix:
-
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Tested-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
+Cheers,
+Miguel
 
