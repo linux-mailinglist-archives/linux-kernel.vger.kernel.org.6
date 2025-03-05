@@ -1,166 +1,213 @@
-Return-Path: <linux-kernel+bounces-546889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-546891-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75AF4A50033
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:18:28 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id D8100A5003A
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:19:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC497188CE26
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:13:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4F06189407B
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 13:14:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 267FF24BBE3;
-	Wed,  5 Mar 2025 13:12:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC59A24C08D;
+	Wed,  5 Mar 2025 13:12:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R60PGt1w"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bQnGzWp1"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADFDF2451C3;
-	Wed,  5 Mar 2025 13:12:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1EDA24BC12
+	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 13:12:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741180330; cv=none; b=m9nFENSgrroIMrCuP+h/tUkhdqsIWaVc9y4Gi/u7AWXzkvKDVwMDuR6bjlZOovzvfuzRhg9vBIH+yug3OWi1psI9x0fXCFzD1+LLgH1awD3nkb+CU9fUfa0YSfAwy4kNyk6kfFxp4tVdH8fvKuzPAJQyXexOjrwdtE7bnVXoXV4=
+	t=1741180361; cv=none; b=aqsQ0W2RBfKTVkLhCvTA2iqgnMFrDpBlrGNpbzW3jzzzi7Q6EkyqPCkforQqlrEaI2VeP7/YdGjqjXJqUD/w3+koh7ynBtfEJrq61GOqvpCMjA1rC7ELlPgJ4R8tlfqkoIE4crvwoW23VvSbNHVuG1BvfyD662EtXTldCdLDovs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741180330; c=relaxed/simple;
-	bh=XWF57BRJqLXtDAxpbZWGOksNU1jAu11Lx+Q5UfiE1yU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=UCQ72AZyA3n9rgUVqo6+1Ct2EojjNYmxUA8xZN037q0DpLGJEzrqGX4JjSbJzFHkbzNm9A/rx/nDnQJ5Lah9igyfSTFFPpe3d1NbBPnOJGC2YS8qc7jWZ2NsCcfXGpXZ8Bp0yPbiViIa3FVLhgUCOKwM9ejsO+mRHIhubm+lWTg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R60PGt1w; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-5495c1e1b63so4637136e87.0;
-        Wed, 05 Mar 2025 05:12:08 -0800 (PST)
+	s=arc-20240116; t=1741180361; c=relaxed/simple;
+	bh=niOkZ3yknjy6O15SgZEu1bTRkBCDN86QkzY45J5nUU4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LPY9N4XtNzh7UgsHN/NLgFG0EVRX8ZG6KaSUCdpkLLL8D/eiGUmvFm5gl6jUblTuEyxOxGqqPA+TgvyndugQRX9e6/PV1FboC4O8gBYeoAwwizyZ4Tw+6+xzC5WHwXeu6Rm9p3tLmUXnTyaQDNi+aXO8XhPdLDCGgAj80nfXrvA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bQnGzWp1; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-474e1b8c935so265561cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 05:12:38 -0800 (PST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741180327; x=1741785127; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gLyVk1H/T+BaRA8M8WKbV1btpn7yJl6bT0EpGKc3d14=;
-        b=R60PGt1wAuShsO4bskwNHL6qLLTalzcn5y9kzBrli/4Eb9PvyjpiWV5/pzGMQYUXz4
-         dOFkRWeCyEt+VEoZVKHWtoBisEzOLaLlFK9hutrrNiHQUFUbUb2HiIHLgeczhDTPyzoe
-         4a2hRlfGNyfgFzq08w1KKu2f4e7eACqxW3ncVZkLx6lHWcM+XQ223pMeNxchCuM7jJqE
-         ppB+TqWttlPGGEjH2hgTBARkl7erv0DMrKsu+QodYrTAg12AArsom9YHeT6oqngx0+Qn
-         IojiQa9/MTSohzbIL2xTXt9QIPQauiLvtPit52ROipNQk0pw41LoAzxoKlkuQRjgABTA
-         B/TA==
+        d=google.com; s=20230601; t=1741180358; x=1741785158; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=iOdrgfnKDo0adnIeWCzGbGdt+czcdG3OGWY151PLQj4=;
+        b=bQnGzWp1S5Lnz9b7S+X9iWyT1enphmYxyeyJwj5VVMYJnObuLGzhvMkG9uBL3XQ78b
+         Zo3JrmBI4ko2x+OO+iOQpQBqfBgjcS472wlJfVY900sBa3almRwnfbIdcWBcdXKwsieo
+         7k0oWhWF732whbIyH4GNsIMNo9o7b80aqltg+jU0O65LkiOSm3+oSVpH3YoRptaQnRij
+         NWBaZfEqos2npnT6v52bnbTpKCy19r6KPYKzleLdok7ZrEkR9SnnqDT5T6ABVfKQ+2Iz
+         NKN7Fajx9PPEYnKJdu5XQV9dDUNkJGUpIwD5ACAowRHjrTqUH64V59DpzL+Y1S7JzlY8
+         4rYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741180327; x=1741785127;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gLyVk1H/T+BaRA8M8WKbV1btpn7yJl6bT0EpGKc3d14=;
-        b=Ke08VrkdfTUAZn9xfTU2BeTUlnnmRiqQIGF4tDcn6lPNVcW8VpIyqIjoEbSmWG9QDS
-         bR8dzQ2X8YRkFb5RZuW1ZMc4XDDkAmS98IW6NnQ1/mki8cR8A4s0mkl75dsoC5GzV/vQ
-         N3r4BewJ1TEWlNczx2u463v6LXyTEGEHkd8UVbgalzhOX/TXypq1FXIiEDJSjV8QytO8
-         KHyta6SOo0w0hVfKMnnWbQBqqxkLPkXT0uZqHbBac8BptZUyElZ3FQybuNgRf08j7BbV
-         L+89l9j+X9RCXRs7H8Hm/fvFg/XvwUWViTi+FNZIE1geL+9Y/uvKa/TOzobhPjBdpEcn
-         1Imw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAthtmQ5Huy5r5en438C8DtwK8WQ+Kqr3c4AgKThUFATy6vfy4FXNARDYg9ScV00/ni4KCSWCgLXQQ@vger.kernel.org, AJvYcCVclL+l+RkvfSMGZ2eIjxFRUcyt474yx9DJOcF79TlWcucu7Vnu26ZT67bCrVkLxnX0NGkWjo462Sndf2v0@vger.kernel.org
-X-Gm-Message-State: AOJu0YzknL5x3V9u4069FD7nnlJusVCXXowPinKPJ+VVtmoiAM4Fqy18
-	mITERSrGP611ntMbU8vqa0Ul3KvmCHra3HvXGzRgzs5W3gwSkVAg
-X-Gm-Gg: ASbGncs0FFXnZt+RhKUHru2ng884ehH/2pQel2MtAE/cQOgvVKvO2T/+ZziBce+S23O
-	hJRvuzXHVLyxzA8iZlNiYZmgDUiBIylKEChcIMye8EApM92wLb/7yYhrA1sBqwf9byJWCj+z5W/
-	niM0Oq/vmIh3m3rlgUWvTLlqWVAP9qX+KoKqLR4aKfGzSuq+wra6Y687Dd3RfgNzSIkIdQHfBLL
-	/oXDWo5rX4lnVDxZUSQG7TV+tzDYzp4fpODYqL4kD904Eez/LPZnOBxs1z12ULrIvQ/9jbSiwJQ
-	e6X0QM2D73l+eW2wxUN4nWvnLrFldnbS8Mi4Oi1sgNurAuYo8bY=
-X-Google-Smtp-Source: AGHT+IFao0mdp4tr2pV/DdXUxmXZ4x0RoXao+mBWttv10JeWmGGD3KDJ0aWVgLE7O7OQ9NrH515YWg==
-X-Received: by 2002:ac2:5f19:0:b0:549:7d6e:fe84 with SMTP id 2adb3069b0e04-5497d6efeaemr813260e87.53.1741180326307;
-        Wed, 05 Mar 2025 05:12:06 -0800 (PST)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5495c261ab3sm1180860e87.57.2025.03.05.05.12.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 05:12:05 -0800 (PST)
-Date: Wed, 5 Mar 2025 15:11:59 +0200
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>
-Subject: [PATCH v3 0/4] gpio: Hide and obey valid_mask
-Message-ID: <cover.1741180097.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1741180358; x=1741785158;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iOdrgfnKDo0adnIeWCzGbGdt+czcdG3OGWY151PLQj4=;
+        b=Yo1LbSpuS24evfuqxDFpBG4ri6szekqHnpREa8lkjF+MzncYXaCigd/v3Pz2DDXVxo
+         ViHr1I7vDOvbcltidoLblz3dI2u84YpcBHJatQyc126yeaAQyM0zYdeUMPZoamd83qHm
+         AJy7sOrY/ZwOuhki4IF4obQwPcSTQ/JlGkt9Wf5sKveb4kGof0c0SCFewHgApGUWApbl
+         E8iZlSStfViIYmqDg/XqwkDSFSe+VGtA7PEZd+LOizjOg/p0raovXIlasxl160nU5RW6
+         h0ovBFKIhxOw11WxwdZnY51od5pPSBEKWDsSwSfk+o4tq5TAND9QchRQ64dBoPnZPllO
+         nxdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUkPWo3n7Tk9GqtjQ6ekofJODLOZisuM0A9Tb9S8r2dK+PgFnVoFuKFb4lVyATUFf2dOdFWrvG/UPZpFUo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywe7ZEXvM3omtpIdfYZNI8mV8W2H6MJMOcyynD7VdWe++TFMxPB
+	bBauefsQ3UuPxrLeuJq8dyeXYS4UpPnHqsYB0aUia7W1yWgIi1HzjjGFFc6dcvgw7/BaMeuLZgx
+	KCjiHgm/j9haIWOysLSIHzn8hzXAMeTIJ/Bdf
+X-Gm-Gg: ASbGncuKkkYJDJfpl3sMJOFApzIRQwzV2a+GnOSe4ECQ/IpWhSWxfC0OgV8hHXsNGAS
+	ObcfXasa0utUhEL6ARthsIizFtia6IpYUs4VW6PjPGIQZgjYODbePd+dpQQyyROOqJ48ACmfTB4
+	W9H9PH9nwneFF2jiBMea0kjDsoVrHQ+ABdXgqrrv4ZFEZyLgbP8BK9FUzN
+X-Google-Smtp-Source: AGHT+IFIn6b7M1PNu9NZZ9KBzOuRO4deZPOixhL9M73rMvQkDHUtfUtYPha+8DdwHlmaLHcT+urAybKKpNAnQK1YFdU=
+X-Received: by 2002:a05:622a:110b:b0:471:f560:27dc with SMTP id
+ d75a77b69052e-4750cae2127mr2406081cf.27.1741180357471; Wed, 05 Mar 2025
+ 05:12:37 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="wijtUninmDGEfi6/"
-Content-Disposition: inline
+References: <20250110-asi-rfc-v2-v2-0-8419288bc805@google.com>
+ <20250110-asi-rfc-v2-v2-2-8419288bc805@google.com> <Z8K2B3WJoICVbDj3@kernel.org>
+In-Reply-To: <Z8K2B3WJoICVbDj3@kernel.org>
+From: Brendan Jackman <jackmanb@google.com>
+Date: Wed, 5 Mar 2025 14:12:25 +0100
+X-Gm-Features: AQ5f1JrEWoe__i5J-gwzMxiuWZ9pJYk4XLPMWAQuPYUSu5vOhjZQNejm22RSyYE
+Message-ID: <CA+i-1C06Sunj0BmFON=MbWBK6ZDt_=K4P3BHChRBYyxXqEkQ2g@mail.gmail.com>
+Subject: Re: [PATCH RFC v2 02/29] x86: Create CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Andy Lutomirski <luto@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Richard Henderson <richard.henderson@linaro.org>, Matt Turner <mattst88@gmail.com>, 
+	Vineet Gupta <vgupta@kernel.org>, Russell King <linux@armlinux.org.uk>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>, 
+	Brian Cain <bcain@quicinc.com>, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	Michal Simek <monstr@monstr.eu>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Dinh Nguyen <dinguyen@kernel.org>, Jonas Bonn <jonas@southpole.se>, 
+	Stefan Kristiansson <stefan.kristiansson@saunalahti.fi>, Stafford Horne <shorne@gmail.com>, 
+	"James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>, 
+	Madhavan Srinivasan <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Sven Schnelle <svens@linux.ibm.com>, Yoshinori Sato <ysato@users.sourceforge.jp>, 
+	Rich Felker <dalias@libc.org>, John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, 
+	"David S. Miller" <davem@davemloft.net>, Andreas Larsson <andreas@gaisler.com>, 
+	Richard Weinberger <richard@nod.at>, Anton Ivanov <anton.ivanov@cambridgegreys.com>, 
+	Johannes Berg <johannes@sipsolutions.net>, Chris Zankel <chris@zankel.net>, 
+	Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	Andrew Morton <akpm@linux-foundation.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Uladzislau Rezki <urezki@gmail.com>, 
+	Christoph Hellwig <hch@infradead.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>, Christoph Lameter <cl@linux.com>, 
+	Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Ard Biesheuvel <ardb@kernel.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-alpha@vger.kernel.org, 
+	linux-snps-arc@lists.infradead.org, linux-arm-kernel@lists.infradead.org, 
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org, 
+	loongarch@lists.linux.dev, linux-m68k@lists.linux-m68k.org, 
+	linux-mips@vger.kernel.org, linux-openrisc@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
+	linux-riscv@lists.infradead.org, linux-s390@vger.kernel.org, 
+	linux-sh@vger.kernel.org, sparclinux@vger.kernel.org, 
+	linux-um@lists.infradead.org, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-trace-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-efi@vger.kernel.org, 
+	Junaid Shahid <junaids@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
+On Sat, Mar 01, 2025 at 09:23:51AM +0200, Mike Rapoport wrote:
+> Hi Brendan,
+>
+> On Fri, Jan 10, 2025 at 06:40:28PM +0000, Brendan Jackman wrote:
+> > Currently a nop config. Keeping as a separate commit for easy review of
+> > the boring bits. Later commits will use and enable this new config.
+> >
+> > This config is only added for non-UML x86_64 as other architectures do
+> > not yet have pending implementations. It also has somewhat artificial
+> > dependencies on !PARAVIRT and !KASAN which are explained in the Kconfig
+> > file.
+> >
+> > Co-developed-by: Junaid Shahid <junaids@google.com>
+> > Signed-off-by: Junaid Shahid <junaids@google.com>
+> > Signed-off-by: Brendan Jackman <jackmanb@google.com>
+> > ---
+> >  arch/alpha/include/asm/Kbuild      |  1 +
+> >  arch/arc/include/asm/Kbuild        |  1 +
+> >  arch/arm/include/asm/Kbuild        |  1 +
+> >  arch/arm64/include/asm/Kbuild      |  1 +
+> >  arch/csky/include/asm/Kbuild       |  1 +
+> >  arch/hexagon/include/asm/Kbuild    |  1 +
+> >  arch/loongarch/include/asm/Kbuild  |  3 +++
+> >  arch/m68k/include/asm/Kbuild       |  1 +
+> >  arch/microblaze/include/asm/Kbuild |  1 +
+> >  arch/mips/include/asm/Kbuild       |  1 +
+> >  arch/nios2/include/asm/Kbuild      |  1 +
+> >  arch/openrisc/include/asm/Kbuild   |  1 +
+> >  arch/parisc/include/asm/Kbuild     |  1 +
+> >  arch/powerpc/include/asm/Kbuild    |  1 +
+> >  arch/riscv/include/asm/Kbuild      |  1 +
+> >  arch/s390/include/asm/Kbuild       |  1 +
+> >  arch/sh/include/asm/Kbuild         |  1 +
+> >  arch/sparc/include/asm/Kbuild      |  1 +
+> >  arch/um/include/asm/Kbuild         |  2 +-
+> >  arch/x86/Kconfig                   | 14 ++++++++++++++
+> >  arch/xtensa/include/asm/Kbuild     |  1 +
+> >  include/asm-generic/asi.h          |  5 +++++
+> >  22 files changed, 41 insertions(+), 1 deletion(-)
+>
+> I don't think this all is needed. You can put asi.h with stubs used outside
+> of arch/x86 in include/linux and save you the hassle of updating every
+> architecture.
 
---wijtUninmDGEfi6/
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+...
 
-GPIO controllers may have some pins which can be excluded from the GPIO
-usage on certain hardware configurations. The valid_mask member of the
-struct gpio_chip has been used to denote usable pins if some pins should
-be excluded.
+> If you expect other architectures might implement ASI the config would better
+> fit into init/Kconfig or mm/Kconfig and in arch/x86/Kconfig will define
+> ARCH_HAS_MITIGATION_ADDRESS_SPACE_ISOLATION.
 
-The GPIO request should fail for GPIOs which are masked. Under certain
-conditions this was only done when GPIO chip provided the 'request'
-callback. We fix this to be always done.
+...
 
-The valid_mask member of the gpio_chip should no longer be directly
-populated by the drivers but GPIO core does this (unconditionally,
-overwriting any mask set directly by the drivers). Drivers are intended
-to populate the valid_mask using the init_valid_mask -callback.
+> > +++ b/include/asm-generic/asi.h
+> > @@ -0,0 +1,5 @@
+> > +/* SPDX-License-Identifier: GPL-2.0 */
+> > +#ifndef __ASM_GENERIC_ASI_H
+> > +#define __ASM_GENERIC_ASI_H
+> > +
+> > +#endif
+>
+> IMHO it should be include/linux/asi.h, with something like
+>
+> #infdef __LINUX_ASI_H
+> #define __LINUX_ASI_H
+>
+> #ifdef CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION
+>
+> #include <asm/asi.h>
+>
+> #else /* CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION */
+>
+> /* stubs for functions used outside arch/ */
+>
+> #endif /* CONFIG_MITIGATION_ADDRESS_SPACE_ISOLATION */
+>
+> #endif /* __LINUX_ASI_H */
 
-This series enforces using the init_valid_mask by hiding the valid_mask
-in structure which is internal to the GPIO core. A single in-tree driver
-was found to access the valid_mask directly. This series also removes
-those direct accesses as has been discussed [1]. Additionally, we
-introduce a getter-function which can be used to obtain the valid_mask.
-
-[1]: https://lore.kernel.org/all/TY3PR01MB11346EC54C8672C4D28F931F686CC2@TY=
-3PR01MB11346.jpnprd01.prod.outlook.com/
-
-Revision history:
-v2 =3D> v3:
- - Rebased on top of the gpio/for-next
-v1 =3D> v2:
- - Hide the 'valid_mask' instead of documenting it to be internal
- - Make the gpio_request() to obey the valid_mask whether the gpio_chip
-   has the 'request' -callback populated or not.
-
----
-
-
-Matti Vaittinen (4):
-  gpio: Respect valid_mask when requesting GPIOs
-  gpio: Add a valid_mask getter
-  gpio: gpio-rcar: Drop direct use of valid_mask
-  gpio: Hide valid_mask from direct assignments
-
- drivers/gpio/gpio-rcar.c    | 13 +++++-------
- drivers/gpio/gpiolib.c      | 40 ++++++++++++++++++++++++++-----------
- drivers/gpio/gpiolib.h      |  3 +++
- include/linux/gpio/driver.h |  9 +--------
- 4 files changed, 37 insertions(+), 28 deletions(-)
-
-
-base-commit: 44fe79020b91a1a8620e44d4f361b389e8fc552f
---=20
-2.48.1
-
-
---wijtUninmDGEfi6/
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmfITZoACgkQeFA3/03a
-ocW4JAf9EF0LAaL2gaAgx4U+/eJCSJKQAi+v0TTvPaUTpSjpY7d5KoyGhJpOe5ZO
-g4Vajk42ZVaGWc3yyhLmML3ESGNuC0dlGA7zTKoubLclUerwsFDqFk4y6MTCOFCD
-uizCndmdyxQCo2zBpcKdAmTSrCCZYiQbE111vfzOZjmJloMNIjk+xqhs+H3xL9Kj
-LH8UH3AGV4mnKJpdIUMiqkUuOT/P/+k/Y9Kwu9e32ZJvJeQBK7+Q5mMn4mFxBi5U
-05+CKtb5iMU5N0aFzufh3glMFaHKhmSCpwFYrG6aP8d9p6Eat9aCjE3n4EPnW7Ei
-w0KRvTRqYwZu9lozkYI39z+w5S+zyA==
-=rjrC
------END PGP SIGNATURE-----
-
---wijtUninmDGEfi6/--
+Thanks Mike! That does indeed look way tidier. I'll try to adopt it.
 
