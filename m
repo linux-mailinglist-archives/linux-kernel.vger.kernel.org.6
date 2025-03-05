@@ -1,108 +1,119 @@
-Return-Path: <linux-kernel+bounces-547087-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 208E0A502E3
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:57:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 445D5A502E1
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:56:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C349178F59
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B7FF3B6D43
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:51:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E61124BBFD;
-	Wed,  5 Mar 2025 14:51:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="t1ah6G4O"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058BB1DFDAE
-	for <linux-kernel@vger.kernel.org>; Wed,  5 Mar 2025 14:51:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA0D24E4A9;
+	Wed,  5 Mar 2025 14:52:04 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F10D241132;
+	Wed,  5 Mar 2025 14:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741186274; cv=none; b=D/juQN+T9BjYnLo+6tpK67ieavcWWxDBk9gAMiRu2tq/NbXV2MLCCHtEOL94+RU9ss6LdVWz+6CwHmCU11fniMCeuy0sBUM3FqldAjyg7nk+m6mtBYHiDWk0OEwhFLE7tfHOl0H2WgIEOGWPaiqgkviPl5V9B/JN8uCdYYsOKkQ=
+	t=1741186323; cv=none; b=jJKVeaLrd5cp4N3JS2geIPTz6V0MayTjDAGOoK1pxhzSQYVpTh4sCf3tf9HG/HOpKk5Wj0mth4QB5u3/xASmbLrwvMnzIE7DsYYnhCCIYKvx3MiESE8CyN3KDSSX/gdTh5VZ7vCrTqmSgRU7PMvsrqHQXO5f7OSKx+/5TvtZwKc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741186274; c=relaxed/simple;
-	bh=QEovUa2vPuSfFEuaGcUn0/mw6ygH2tQWr5wDjTOF5NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QKNdBzFHRhAspaFa5xcH/Admv823lXmC7HjRn0cDcbvKVUyCEG1ftSJFYpuesnKRfx9OtXpC/U/9dxhvu+uBpxuOBdyRi1iTEA8yz6xokd1eWfGBQc1Wwa669aO16ZbbgBDpFw6nmv6C3KJiV+TMScL+05qtyDYNVvqt/j/+i70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=t1ah6G4O; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7c08fc20194so1141569185a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 05 Mar 2025 06:51:12 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1741186272; x=1741791072; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=dE9CElg6HDSShGu/kQ3s/bjFB1eIULPlSk57mBPS9Lg=;
-        b=t1ah6G4OdpCA6HKqk3ZQZMoYFEayJNnK/9DukkW2JoIjwyf85P+qCdxOqXx4ggLY/G
-         1JMBvaxdWuQftMkq/qrG0SG5bLu43RICtafiHsXdA0ufRTvxwilY96crUL0bFG9v0pH9
-         K0/JUp/v+/i3sLMVl6AMowtnXFbZcL0clH9v0EG8ldCmFk8tcmo9VXy7lFaYFiu6z+rm
-         g7eXYuYFKOEfeBrI4JFAikhqlGJ7/vQynt7VxZ1sFn+jDSS2t2EA6g1cce6jTl+4nsiT
-         Dg/0T6uB/jG1CssnddGHoE2jmdN0gZKCTaCG/kB1yFoQpPUfaiI1kaq4yyqfps32esXY
-         MRTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741186272; x=1741791072;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dE9CElg6HDSShGu/kQ3s/bjFB1eIULPlSk57mBPS9Lg=;
-        b=ZqAFNh/3RPxFlnJTBndBY7JR/She7P2IM2HTeh6ClaphQkVgndwitJGjJ9mqIWdtVi
-         b9OB4K8acXiVOYUgRlKjw55pJDANg8WNHV93wgSFR72s2Mp59t2N12Fa1mDlHTBsUJOV
-         pz78dalCAW2qYypXO+mRk02YJQMRANnqi1K5HWa4DDyw93hqBJL9BqlHNgM1wcRjdZ37
-         dMu24WaJNhvpZCJycihtWjTJBizcGKmlWXkRdmlDKzAHAo1bV1cc2nxvmDsV6MiQh5v9
-         wPe1ZMQafNOeWFxvm2QtCQuf11Yb0tbXE4jVUOki2o5GJGt9j8tVAfzboM4DUl9x0xki
-         X3zg==
-X-Forwarded-Encrypted: i=1; AJvYcCW61XM5jSqZzeGSYm/DKNayWbToERTq304t1tN83D11ZXkfByYrtXpFsAbn8trqr0ziBshZ4Gi8fRGHBbY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykThbB4OSpU7ccpnM32GPLYwvR3cj7e2XD7eXZaJ/eXYiIVR6D
-	LGMHZ80/OlR1Tbm3LX2j5yX8YEN6nLz2ynWXCLbvA2+qJJfqY5AOZmHu547G7ok=
-X-Gm-Gg: ASbGnctuCxnKJj/LS4SFNxIlDTSGHDuJIaBgpX8EpxV0ZuYKhPUmBG5tM8iIDEKTdCT
-	Pf6MTFBYvo3CWEDzSiW5iWkmChwuN7cB5XIVdY87EN3g7FNiMQTGWLcU7L0g2Xqv7QneSXPU/JP
-	aHKPRY/vWdOWYiWD1wrZnptzs/voGyyuOpEjON9/Wa+dYtaUql05BbC107MyUvcDwTIAJ/HWf3W
-	x3bBs05WD11/STAkJrBGVxQTScOvOF5uWG2Obe4ff5OP5EHzKBRDCpXyX6jmps5AzjsUU6fWaoK
-	hPA156qnu5+3Y7vE7lbhGXiDdmALediLD0Hvlt+/U0c=
-X-Google-Smtp-Source: AGHT+IEeLC5roNaM/wkwvPtWJP1dEnBUAK+Q42BMCB4U/KlD2DKVib/MyRcKmz4mqDyyFQ4coaZA9A==
-X-Received: by 2002:a05:620a:2b96:b0:7c3:d5bc:b76c with SMTP id af79cd13be357-7c3d8e093e6mr485551985a.26.1741186271898;
-        Wed, 05 Mar 2025 06:51:11 -0800 (PST)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with UTF8SMTPSA id af79cd13be357-7c36fee8a08sm894054885a.6.2025.03.05.06.51.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 06:51:11 -0800 (PST)
-Date: Wed, 5 Mar 2025 09:51:10 -0500
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yosry Ahmed <yosry.ahmed@linux.dev>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Minchan Kim <minchan@kernel.org>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Herbert Xu <herbert@gondor.apana.org.au>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Peter Zijlstra <peterz@infradead.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH mm-unstable 4/5] mm: zsmalloc: Remove object mapping APIs
- and per-CPU map areas
-Message-ID: <20250305145110.GD185622@cmpxchg.org>
-References: <20250305061134.4105762-1-yosry.ahmed@linux.dev>
- <20250305061134.4105762-5-yosry.ahmed@linux.dev>
+	s=arc-20240116; t=1741186323; c=relaxed/simple;
+	bh=knYV42bhXwD1ks5Zmll1o+tHVVCzKfXDlss+8WojsR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=XFeKTMu/aKzBz7cHjTcQA5ps9Y7qs/Q+GXu1c8wVzux+2plkvRNoz+X7ud9ZIwhrPgcKlgwlc0URtoT+jC5md/tebz/RfrJf2DCJFTu2bjiGH1fltlRuuhn/rjXsMMDJLnQ7Wtd+3fgXHM0BBTiHJZlcfiFU+WytK+eH0U77yVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E76BFFEC;
+	Wed,  5 Mar 2025 06:52:14 -0800 (PST)
+Received: from [10.57.64.200] (unknown [10.57.64.200])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8F12B3F673;
+	Wed,  5 Mar 2025 06:51:59 -0800 (PST)
+Message-ID: <1796a9c5-4eb4-4120-a1fb-be773aace202@arm.com>
+Date: Wed, 5 Mar 2025 14:51:57 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305061134.4105762-5-yosry.ahmed@linux.dev>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] dt-bindings: thermal: generic-adc: Add optional
+ io-channel-cells property
+To: Svyatoslav Ryhel <clamor95@gmail.com>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ Laxman Dewangan <ldewangan@nvidia.com>, Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>, Daniel Lezcano <daniel.lezcano@linaro.org>,
+ linux-kernel@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>
+References: <20250303122151.91557-1-clamor95@gmail.com>
+ <20250303122151.91557-2-clamor95@gmail.com>
+ <08f305fa-0dbe-4ed9-bec5-cf8b5bbecfdb@arm.com>
+ <CAPVz0n0G+0_f3MONV0Y-tYAb1KOwkUNiY2Pms8CZ6ZGtxRmFFA@mail.gmail.com>
+Content-Language: en-US
+From: Lukasz Luba <lukasz.luba@arm.com>
+In-Reply-To: <CAPVz0n0G+0_f3MONV0Y-tYAb1KOwkUNiY2Pms8CZ6ZGtxRmFFA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Mar 05, 2025 at 06:11:32AM +0000, Yosry Ahmed wrote:
-> zs_map_object() and zs_unmap_object() are no longer used, remove them.
-> Since these are the only users of per-CPU mapping_areas, remove them and
-> the associated CPU hotplug callbacks too.
+
+
+On 3/5/25 10:03, Svyatoslav Ryhel wrote:
+> ср, 5 бер. 2025 р. о 12:00 Lukasz Luba <lukasz.luba@arm.com> пише:
+>>
+>>
+>>
+>> On 3/3/25 12:21, Svyatoslav Ryhel wrote:
+>>> This implements a mechanism to derive temperature values from an existing ADC IIO
+>>> channel, effectively creating a temperature IIO channel. This approach avoids adding
+>>> a new sensor and its associated conversion table, while providing IIO-based temperature
+>>> data for devices that may not utilize hwmon.
+>>>
+>>> Signed-off-by: Svyatoslav Ryhel <clamor95@gmail.com>
+>>> ---
+>>>    .../devicetree/bindings/thermal/generic-adc-thermal.yaml      | 4 ++++
+>>>    1 file changed, 4 insertions(+)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
+>>> index 12e6418dc24d..4bc2cff0593c 100644
+>>> --- a/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
+>>> +++ b/Documentation/devicetree/bindings/thermal/generic-adc-thermal.yaml
+>>> @@ -30,6 +30,9 @@ properties:
+>>>      io-channel-names:
+>>>        const: sensor-channel
+>>>
+>>> +  '#io-channel-cells':
+>>> +    const: 1
+>>> +
+>>>      temperature-lookup-table:
+>>>        description: |
+>>>          Lookup table to map the relation between ADC value and temperature.
+>>> @@ -60,6 +63,7 @@ examples:
+>>>            #thermal-sensor-cells = <0>;
+>>>            io-channels = <&ads1015 1>;
+>>>            io-channel-names = "sensor-channel";
+>>> +        #io-channel-cells = <1>;
+>>>            temperature-lookup-table = <
+>>>                  (-40000) 2578
+>>>                  (-39000) 2577
+>>
+>> Do we really need this change in the DT?
+>> Won't the code in the thermal driver that registers a new iio device
+>> would just be enough?
+>>
+>> I agree with Rob that it looks odd.
 > 
-> Signed-off-by: Yosry Ahmed <yosry.ahmed@linux.dev>
+> Building tree will complain on missing cells property if you try to
+> bind it. It is not in required category anyway.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+Fair enough, then I will leave it to DT folks.
+
+For me it's looks OK-ish, assuming you add this property with the
+comment describing it like Rob asked.
+
+UUIC it will always be only 1 channel - with that temperature,
+so shouldn't harm much the design in DT.
 
