@@ -1,151 +1,154 @@
-Return-Path: <linux-kernel+bounces-547762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75417A50D3C
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:23:12 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B5BEA50D3F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 22:23:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3188B16DA26
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D3C6B171D65
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 21:23:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 770061FDA62;
-	Wed,  5 Mar 2025 21:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D2451FE469;
+	Wed,  5 Mar 2025 21:23:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VWp5Mjaw"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="udubEywU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E384A33;
-	Wed,  5 Mar 2025 21:22:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D81834A33;
+	Wed,  5 Mar 2025 21:23:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741209781; cv=none; b=hQ/ERzMFwVd2eXhUC/FMQwJ73C/p76I4UGsNZTX12MsJ+8TnzYyGh2TfqMyZRnHnB00PXe+5p0bDBnmoM29yJp96QjudSyJhvUcf/KSONCIHafKL0JgsBOV0umk+SWGzUJiHffxEVEiNGrcbXojAzzzzzXa0DnbYhSycogJG8fk=
+	t=1741209817; cv=none; b=G81UNSwEIrY/0BYURt9m7IWB0lL8wlGa6OIxFbGD8enRMP/bX42gazDlnyBEak4hqBAMN92yc2ww658Ngy0RR2PSGb2cMIWHLlutIK6GhfPNWMv6ykMne6nlgBhyXjJEPxqtG+Mxrf1MnVWS06g98dcovrfmNN+QJNGi1w1X0xo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741209781; c=relaxed/simple;
-	bh=71PXLAgsUFwMvAk7XFPttIHq5FqJ5Bzimw8zOdx56eg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=TLQxV2f4hPVL4c5eOIyZxvBYNgdj+iEkw9bakb8adMRiAlnhYDi3nXzFMLwzvoSYC2Avvi8LG8A/ayCx0vw4M1/svKd/YlHJbJxBoYLCVXKk7jsebiyjsIlT8YHflOFQPymgDUSstDRYh1W0sNH9j6NdP5ZoJ+Rv0QxMYg6nEeQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VWp5Mjaw; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43bc30adad5so25470145e9.1;
-        Wed, 05 Mar 2025 13:22:59 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741209778; x=1741814578; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/QKdrZ9vRb4sWOyQt+BSoKpXoFWTF3y3wSrzqtJFv0s=;
-        b=VWp5Mjaw/L8MxD10+azWvfmQdmMAZl0jYn7/9KiABbhMtzxmZrg2cayHrxPRKhA3Y/
-         14jz0RlxJO9/OiPjFnDz4kQFtPAReXvmu661MBp04iEpUi+JiYOB2u9aA24kVkPRuAp7
-         OZqdbMQ5HRHQBivs53U9XTf5Tc86m5CL7thHEIdy1H8WMWKoawejccCcJrOsffbgBvCJ
-         vLuxDxRYlKwvqA5c0bjU5JPwH3LV+m+9VcPqPoaWWi4GBmSWdPW0zklrslfxrOGID5DD
-         GJhGv99+rL80cG012JVn+UcfaZXipWmsWeYUit6+7T16n/oetsaAWicTllISGQNF2ke4
-         XbJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741209778; x=1741814578;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/QKdrZ9vRb4sWOyQt+BSoKpXoFWTF3y3wSrzqtJFv0s=;
-        b=kEuEG6cXphEbopw9Yfb479leaeLLaXzg3j6zWX6grkY75iBT+rYnjvEm4LS8DaoIYI
-         9Jqz2RUAw5gAgZRQ29pg8cEkBtf28mDvUEcuy8Xu8SyIoIQSDOls9sJF51phERJfZHXT
-         LZv0R3xoNOMOQ3hWae+N5GAACMNKObb2pmAvM7Uc/DfqidtEeKtVvMLpNhH5cn0+Qqh+
-         R/3iULOH7QQ5rntoZFr9lcPDPuerB9wAarTT9WIJNrnC9U9VyN5a2h1tM8TzYXipzC/a
-         vAkKNyLY/vRXbpAML6Osj2Y51PaPY2AcQuNnDHANHe8pMsYmwvn1h3AFITwrCVnwHXzF
-         2ecQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7tWK7M8ie2wqSPL6wIXRa5v6H6HFcJ/cGusJ56S4I9UtzB1tIl9HzJM9Q9iuH75Mf0DLAV0sIsdGGjEw=@vger.kernel.org, AJvYcCWi50BZJMLOTD9aaY3k+ZNoxuLB0jIPDU121y0z//y3MjhXMMTobx3lg3eiFsLJZomyW/Gf5AJzEnerRXoU@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+X99bjnch5du6NrOPyhGaEZdBat1r1Z9pFSR6LQm3bX/MpQjn
-	5Bkov338gOEap3CzS7e7SFp9vxyAoZDuks5DvhxYtWEOBRX/ZR7E
-X-Gm-Gg: ASbGncvs/RVEKhjBgeqrABxHq5mwQaQYvFWGRKJrA40+169/mlA5rQzql1//tNypo7E
-	W7YWa8qY/m/4RWdzpmOZwn1NrfYA5eqnXNa7xd2iYjmoWW0bD7/hDCd9KP4UBUDZS3cg9WXul8B
-	tWxu/Eogz3QbW6SJsY1e/96aEXeGNwPZI27KksL2aYNSJmuaDNV2eo01N4NR6MecOp+5Ym/xE+m
-	YRQ1iJ8IPd2OMJ7fGeoK2ETE/2Nq05E8nT9bpXoN8nVZ/CrQ34txXhjayisy6fN/Lu+gD7s/xxZ
-	7vkjKgwYbE40+5+dPSc2v7B/U3V+je9q4vARNYjO64unWxsScs9K0cd0Zwim+a29a2E037Hf7t8
-	lLt4ptoA=
-X-Google-Smtp-Source: AGHT+IHf5G/WjTQU5XVggDdiHajuyOu5oqXpSdTcEFetMzqEdhVou5+ChNTWSOmXWX7SGwY1vuK8Xw==
-X-Received: by 2002:a05:600c:190d:b0:43b:c309:da4c with SMTP id 5b1f17b1804b1-43bd2951c4fmr42734125e9.10.1741209777613;
-        Wed, 05 Mar 2025 13:22:57 -0800 (PST)
-Received: from pumpkin (82-69-66-36.dsl.in-addr.zen.co.uk. [82.69.66.36])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43bcc136f5dsm38873525e9.1.2025.03.05.13.22.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 05 Mar 2025 13:22:57 -0800 (PST)
-Date: Wed, 5 Mar 2025 21:22:55 +0000
-From: David Laight <david.laight.linux@gmail.com>
-To: Ingo Molnar <mingo@kernel.org>
-Cc: Dave Hansen <dave.hansen@intel.com>, Eric Biggers <ebiggers@kernel.org>,
- x86@kernel.org, linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- Ard Biesheuvel <ardb@kernel.org>, Ben Greear <greearb@candelatech.com>,
- Xiao Liang <shaw.leon@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, Dave Hansen
- <dave.hansen@linux.intel.com>, Andy Lutomirski <luto@kernel.org>, "Jason A
- . Donenfeld" <Jason@zx2c4.com>, "Bae, Chang Seok"
- <chang.seok.bae@intel.com>
-Subject: Re: [RFC PATCH v2] x86/fpu: make kernel-mode FPU reliably usable in
- softirqs
-Message-ID: <20250305212255.4989a8ab@pumpkin>
-In-Reply-To: <Z8iL1dY3o9OxQgBy@gmail.com>
-References: <20250304204954.3901-1-ebiggers@kernel.org>
-	<Z8gUYamgBr4M5ZaB@gmail.com>
-	<b6a80f6d-8469-429d-b03a-8fa71a33046b@intel.com>
-	<Z8iL1dY3o9OxQgBy@gmail.com>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; arm-unknown-linux-gnueabihf)
+	s=arc-20240116; t=1741209817; c=relaxed/simple;
+	bh=DvbHalLpCxkuRiwdqtO8seg1Zu43gShTi+7ZD18U1h8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZEL77KhA4W/Pmn28sTopP7ME3bPBKiV0t+bNvGdo5rjxgFbimQkf+Q1RUivef+Lk/FspEw/RwcOyYyoRMsrX7K7AfwO5/6TciQriHF9lh0Hfi1e3Ulh1/z8Zi7ofmeXn0FZ/HXIh5uwI5+JyzquhvgV2CookGk8DGRcM8XpeRO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=udubEywU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 56472C4CEE8;
+	Wed,  5 Mar 2025 21:23:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741209816;
+	bh=DvbHalLpCxkuRiwdqtO8seg1Zu43gShTi+7ZD18U1h8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=udubEywU4g28gFPq/9N5lLM2nPK1lMawQ+GWUGIQt4obxSNbK7tbvj1DBi5YN/eM3
+	 2E1ekg9Wg36v2x08Of2jLE56mTUfeOMzOLoSWFjY8SA9zqgLY7qAfWJyTSRnkuz3C3
+	 VbLBIxk1bLSO9xongCpc+qWD9eBWh0d3z6PWABYjx3Iv0Ipmxia/DgeJtpTaXwFgnT
+	 vumj06ol2aIc4cN1EMP5Wr3OxlXmZ24xPqztZVnyZDHrDNCf5aZ0IrXN+Qh5MYC3In
+	 8rgqPuxDMH0A1CF5Pa45HOkyTtNnmW9BDaXb9Hmo/ThrparhMqIAc5PQ3YT90rDaIG
+	 iCM+4IundHthA==
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e6119fc5e9bso1330683276.0;
+        Wed, 05 Mar 2025 13:23:36 -0800 (PST)
+X-Forwarded-Encrypted: i=1; AJvYcCVyjZiARvlwfsy1T4b2XFZW2yNvVTJGv9I3P8Jg4sS9zmTlhW1Ar0yV7LJACzToeT63qlrYV6zYu5gX@vger.kernel.org, AJvYcCX0reZlse+DT9mvOySasA05Y4ega+fwlfYq2ea+K2gL1VQoC/VSRdSkfCcECyhhMM7LvNwY428miYkVOj3c@vger.kernel.org, AJvYcCXkGPqCQF0cEh8kovKNNznQLDo/mNYhBHq+5zK647IgT6nSpa/JLGcA3WCpZVF1qze2dDeYUntbhCrVFif5VLO+rWLFYlB6@vger.kernel.org, AJvYcCXwsXCS7kdCp23mD3C14viPssDHhkXT4Y327FJAgwl9KyYdAepS/F6XaAu1Kb5ebTgJYxPhBQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz59/eArWnYIvynSYImC0hwU8AHN9VwKxbrd0e4gxWG+Pldi6Sc
+	amDvu/ZM/irSzKE1+RDsCfVLd98ANiFW5ebfpW8ID6PhYYZhWvMXrTCPofXLLO+RwbrYEWzdyW+
+	38sbxKNebyitgnr/bse322Yuy810=
+X-Google-Smtp-Source: AGHT+IFclP7iVxvi0j9ekZjfJdMyS78JlgW+fr8ZvybEcumnXEaCDKm5SlFT/PVINMVVVcf+Uzsy3DGg4vx2Z/JvQhA=
+X-Received: by 2002:a05:6902:2a42:b0:e60:affa:673d with SMTP id
+ 3f1490d57ef6-e611e333584mr6233902276.48.1741209815692; Wed, 05 Mar 2025
+ 13:23:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <CAKtyLkFyqFCcqUi7TPn9niUwYcHwv8nVq-joKc8kd8tFg58p-Q@mail.gmail.com>
+ <1740784265-19829-1-git-send-email-jasjivsingh@linux.microsoft.com>
+ <CAKtyLkGV4cGJzbvVUAeLBp=evc_QAWPD8FsskHNVvx-1UZJB-A@mail.gmail.com> <0a5e586a-9b55-4905-8663-6ef0112aa32d@linux.microsoft.com>
+In-Reply-To: <0a5e586a-9b55-4905-8663-6ef0112aa32d@linux.microsoft.com>
+From: Fan Wu <wufan@kernel.org>
+Date: Wed, 5 Mar 2025 13:23:23 -0800
+X-Gmail-Original-Message-ID: <CAKtyLkEveJbJ9HAufC1_x8J287qqDFYZOhK2Y0MEaPo+dkJm2Q@mail.gmail.com>
+X-Gm-Features: AQ5f1JpnHsTCDFfoCzh84MJkz2wEhzTGjo9BEiGagwu5LFjMWyeoqQInPgwF4J8
+Message-ID: <CAKtyLkEveJbJ9HAufC1_x8J287qqDFYZOhK2Y0MEaPo+dkJm2Q@mail.gmail.com>
+Subject: Re: [PATCH v3] ipe: add errno field to IPE policy load auditing
+To: Jasjiv Singh <jasjivsingh@linux.microsoft.com>
+Cc: Fan Wu <wufan@kernel.org>, audit@vger.kernel.org, corbet@lwn.net, 
+	eparis@redhat.com, jmorris@namei.org, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org, 
+	paul@paul-moore.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 5 Mar 2025 18:37:25 +0100
-Ingo Molnar <mingo@kernel.org> wrote:
+On Tue, Mar 4, 2025 at 4:04=E2=80=AFPM Jasjiv Singh
+<jasjivsingh@linux.microsoft.com> wrote:
+>
+>
+>
+> On 3/3/2025 2:11 PM, Fan Wu wrote:
+> > On Fri, Feb 28, 2025 at 3:11=E2=80=AFPM Jasjiv Singh
+> > <jasjivsingh@linux.microsoft.com> wrote:
+> >>
+> >> Users of IPE require a way to identify when and why an operation fails=
+,
+> >> allowing them to both respond to violations of policy and be notified
+> >> of potentially malicious actions on their systems with respect to IPE.
+> >>
+> >> This patch introduces a new error field to the AUDIT_IPE_POLICY_LOAD e=
+vent
+> >> to log policy loading failures. Currently, IPE only logs successful po=
+licy
+> >> loads, but not failures. Tracking failures is crucial to detect malici=
+ous
+> >> attempts and ensure a complete audit trail for security events.
+> >>
+> >> The new error field will capture the following error codes:
+> >>
+> >> * 0: no error
+> >> * -EPERM: Insufficient permission
+> >> * -EEXIST: Same name policy already deployed
+> >> * -EBADMSG: policy is invalid
+> >> * -ENOMEM: out of memory (OOM)
+> >> * -ERANGE: policy version number overflow
+> >> * -EINVAL: policy version parsing error
+> >>
+> >
+> > These error codes are not exhaustive. We recently introduced the
+> > secondary keyring and platform keyring to sign policy so the policy
+> > loading could return -ENOKEY or -EKEYREJECT. And also the update
+> > policy can return -ESTALE when the policy version is old.
+> > This is my fault that I forgot we should also update the documentation
+> > of the newly introduced error codes. Could you please go through the
+> > whole loading code and find all possible error codes?  Also this is a
+> > good chance to update the current stale function documents.
+> >
+> > ...
+> >
+>
+> So, I looked into error codes when the policy loads. In ipe_new_policy,
+> the verify_pkcs7_signature can return a lot of errno codes (ex: ENOKEY,
+> EKEYREJECTED, EBADMSG, etc.) while parsing the pkcs7 and other functions
+> as well. Also, In ipe_new_policyfs_node used in new_policy(), I see the s=
+ame
+> issue with securityfs_create_dir and securityfs_create_file as they
+> return the errno directly from API to. So, what should we return?
 
-> * Dave Hansen <dave.hansen@intel.com> wrote:
-> 
-> > On 3/5/25 01:07, Ingo Molnar wrote:>> Alternatives considered:  
-> > >> - Make kernel-mode FPU sections fully preemptible.  This would require
-> > >>   growing task_struct by another struct fpstate which is more than 2K.  
-> > > 
-> > > So that's something that will probably happen once the kernel is built 
-> > > using APX anyway?  
-> > 
-> > I was expecting that building the kernel with APX would be very 
-> > different than a kernel_fpu_begin(). We don't just need *one* more 
-> > save area for APX registers: we need a stack, just like normal GPRs.  
-> 
-> Yes - but my point is: with any APX build we'd probably be saving 
-> FPU(-ish) registers at entry points, into a separate context area. If 
-> that includes FPU registers then we'd not have to do 
-> kernel_fpu_begin()/end().
+I think the key here is we need to document the errors in the ipe's
+context. For example, ENOKEY means the key used to sign the ipe policy
+is not found in the keyring, EKEYREJECTED means ipe signature
+verification failed. If an error does not have specific meaning for
+ipe then probably we don't need to document it.
 
-Since the registers are caller saved (like the SSE onwards ones)
-none of them really need to be saved on syscall entry
-(just zeroed on return).
-They do need saving on interrupt entry.
+>
+> For other functions: I have complied the errno list:
+>
+> * -ENOENT: Policy is not found while updating
 
-For some unknown reason the kernel saves the xyzmm ones on syscall entry.
-For normal programs they won't be live - because of the asm syscall
-wrapper is called from C.
-So I think they can only be live if a system call is directly inlined
-into the C function. Just marking them all 'clobbered' would have done.
-But it now all too late to change.
+This one means policy was deleted while updating, this only happens
+the update happened just after the policy deletion.
 
-	David
+> * -EEXIST: Same name policy already deployed
+> * -ERANGE: Policy version number overflow
+> * -EINVAL: Policy version parsing error
+> * -EPERM: Insufficient permission
+> * -ESTALE: Policy version is old
 
-> 
-> In other words, we'd be doing something close to 'growing task_struct 
-> by another struct fpstate', or so - regardless of whether it's in 
-> task_struct or some sort of extended pt_regs. The kernel would also be 
-> close to 'FPU-safe', i.e. there likely wouldn't be a need for 
-> kernel_fpu_begin()/end().
-> 
-> Thanks,
-> 
-> 	Ingo
-> 
+Maybe make this one clearer, how about trying to update an ipe policy
+with an older version policy.
 
+-Fan
 
