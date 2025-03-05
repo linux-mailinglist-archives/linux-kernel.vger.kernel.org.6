@@ -1,78 +1,59 @@
-Return-Path: <linux-kernel+bounces-547073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C077A502BC
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:53:08 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26D4A502B6
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 15:52:12 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AFAD189C61B
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA5743A3225
 	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 14:47:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16E4124EF70;
-	Wed,  5 Mar 2025 14:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49AAE24E4B4;
+	Wed,  5 Mar 2025 14:46:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YMCRN1wq"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="MU/UkorE"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1E224E4D9;
-	Wed,  5 Mar 2025 14:46:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4940A248885;
+	Wed,  5 Mar 2025 14:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741186003; cv=none; b=fCvi1kjFSKM0cfI7cW+ONZrz1b+r0twHcDBGe2D2nRLzMJMiQ89Y6olNHCcTp6dhVMkcaWADKnlrq/hhT1O0oAA3E8lXca5qoK/DvUHtSmnS03ckNtdVWO57sYkWulA/9ynPg/KQxGKeFADZZFoo9aa+lqMERESei7ptlHHPOCQ=
+	t=1741186012; cv=none; b=GDFQ679KkzR9aUgr4gSis44LlWohnFr3VuXFLBHWriLJM+8Mh1e2oIWsQxondPriMCyJ5oI7/CKkVGvNqTTOtbKhyjecMD14GyoFp8I0QlronXYec2hOdVjmG0xPwzg1vLlmChxjmkaxfP4TTbBxYByqkGk5aFf69B8dH3FL7zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741186003; c=relaxed/simple;
-	bh=L3jUhS/r+JH2pja+AgnftKyj5qnxWl+7BgssdXVj2gw=;
+	s=arc-20240116; t=1741186012; c=relaxed/simple;
+	bh=td9GWGpZCmiEAG4NRmj3Vt6e3H57F2nliCpx9zjtguE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EYv6rv+w0ObreoGEnHx4qhzBpkJCilz5ba8/+6a/U/qQbZTFKLCoemef+5TJucUT/ODEzZwaq+9wcfNqFI4Rd15jgX4Yc/nWVPQYJwmbBC6XrefKVePM9041XkqQ3rSiDr34va8kueus5pYOdliLAq64WD1ErCCcJUcCz+LlTM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YMCRN1wq; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741186002; x=1772722002;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=L3jUhS/r+JH2pja+AgnftKyj5qnxWl+7BgssdXVj2gw=;
-  b=YMCRN1wqjrZz0jVq2oA5gvJJXEE9JLqpd74quaAQ4VwV2oS63S/mZcY9
-   HmSyQQ2exkoBRWBIs95jfa9JSFsuPEq0j/wxsfXuy8/i+ZTJFKraqeebG
-   UmBL7hLlKikrFLi5hJCqr3OG1YdMil5i7njA8H9Mf9ERHWq9IeAah42ZA
-   oE8gngIMsJ6CNJHl7EbB2ThN+AldTEEPnxPz2KrFMlSQES1X/Sz+oKAD1
-   5JTaYC/cerR+uYn4clANO5hNTq2PzBmbrAkDRseoVv/U+61HrleVJHcjj
-   i90JIAeHhF3lr5iDjDTr+IoAagTOkxcP3Hd4z2eJilzptHc3ZBKhV2C94
-   Q==;
-X-CSE-ConnectionGUID: DxY+jS37SFapsqkH3qK0Kg==
-X-CSE-MsgGUID: LPwkdlqKSJqKdrq3HkcpYw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="52792665"
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="52792665"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:46:41 -0800
-X-CSE-ConnectionGUID: jF6/yAj2RoqpY3HCtIYkbw==
-X-CSE-MsgGUID: prA7QD4NTSOMacJKP8SD3Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.14,223,1736841600"; 
-   d="scan'208";a="118864143"
-Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 05 Mar 2025 06:46:39 -0800
-Received: from kekkonen.localdomain (localhost [127.0.0.1])
-	by kekkonen.fi.intel.com (Postfix) with SMTP id BD44F11FB58;
-	Wed,  5 Mar 2025 16:46:35 +0200 (EET)
-Date: Wed, 5 Mar 2025 14:46:35 +0000
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-From: Sakari Ailus <sakari.ailus@linux.intel.com>
-To: Tarang Raval <tarang.raval@siliconsignals.io>
-Cc: kieran.bingham@ideasonboard.com,
-	Dave Stevenson <dave.stevenson@raspberrypi.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 1/2] media: i2c: imx219: switch to
- {enable,disable}_streams
-Message-ID: <Z8hjy8CiM-QcjTME@kekkonen.localdomain>
-References: <20250305142117.29182-1-tarang.raval@siliconsignals.io>
- <20250305142117.29182-2-tarang.raval@siliconsignals.io>
+	 Content-Type:Content-Disposition:In-Reply-To; b=s5H7Pbv4TMGZdayLO+UdTdtuuZSykns3bFcVUGHfWdoSXGM6BG2yOGrFsU1xr1bf7fRBVEvNZGAMemm0RLTmDwN0mlFs0rAymKNdTzQNEJSy4Sd5JT6v0HPJVTImZEGZrhBPmn1TRccFI4t0Y7ky08dKOJXSTlPAOJx8Dh+BmyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=MU/UkorE; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=NQiHiWBYuLEjIBCwbtDawYA0OWXgtE0nlWIHtE9qJ/A=; b=MU/UkorEJtYCTL/69PWWpAlTQS
+	lJT1aQCWoVw57XnjyZJ0/P/XqTFLRedcJCU/f1ph8GVU+cS34ocBKwUyk7YDkboGQ1zN1L0hJ23+n
+	AxGrg6p5FVoU6pKjYlwxPQAqU8cSdK/N1A1JnJouGIYJEhw7/qa2ds+gGhv59Fhkvr986eXOI8CWU
+	ckgI4iliDeVkHKL8ZTJeK4hKJDMx+Mq6QwYwIgHV3WVVEc8Mol+cUeB9v+P+iolg18BqA7S/Qp5Zk
+	58aBWO3aRzO0sinW0PiM/q/9BZMU+1+jCAH0mR6wOp6E01O9xWbHa3+jkcMaB1A2bKkjezmhmQ1/h
+	CboY8POA==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1tpq1K-00000008Or0-3uVK;
+	Wed, 05 Mar 2025 14:46:50 +0000
+Date: Wed, 5 Mar 2025 06:46:50 -0800
+From: Christoph Hellwig <hch@infradead.org>
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Chao Yu <chao@kernel.org>, jaegeuk@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-f2fs-devel@lists.sourceforge.net,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: support F2FS_NOLINEAR_LOOKUP_FL
+Message-ID: <Z8hj2g_fj1zH1t_m@infradead.org>
+References: <20250303034606.1355224-1-chao@kernel.org>
+ <20250303230644.GA3695685@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,114 +62,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250305142117.29182-2-tarang.raval@siliconsignals.io>
+In-Reply-To: <20250303230644.GA3695685@google.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Tarang,
-
-Thanks for the update.
-
-On Wed, Mar 05, 2025 at 07:51:15PM +0530, Tarang Raval wrote:
-> Switch from s_stream to enable_streams and disable_streams callbacks.
+On Mon, Mar 03, 2025 at 11:06:44PM +0000, Eric Biggers wrote:
+> > +/* used for FS_IOC_GETFLAGS and FS_IOC_SETFLAGS */
+> > +enum {
+> > +	F2FS_NOLINEAR_LOOKUP_FLAG = 0x08000000,
+> > +};
 > 
-> Signed-off-by: Tarang Raval <tarang.raval@siliconsignals.io>
-> ---
->  drivers/media/i2c/imx219.c | 36 +++++++++++++++++-------------------
->  1 file changed, 17 insertions(+), 19 deletions(-)
-> 
-> diff --git a/drivers/media/i2c/imx219.c b/drivers/media/i2c/imx219.c
-> index f662c9d75511..12f1aa8824fe 100644
-> --- a/drivers/media/i2c/imx219.c
-> +++ b/drivers/media/i2c/imx219.c
-> @@ -723,12 +723,17 @@ static int imx219_configure_lanes(struct imx219 *imx219)
->  				  ARRAY_SIZE(imx219_4lane_regs), NULL);
->  };
->  
-> -static int imx219_start_streaming(struct imx219 *imx219,
-> -				  struct v4l2_subdev_state *state)
-> +static int imx219_enable_streams(struct v4l2_subdev *sd,
-> +				 struct v4l2_subdev_state *state, u32 pad,
-> +				 u64 streams_mask)
->  {
-> +	struct imx219 *imx219 = to_imx219(sd);
->  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
->  	int ret;
->  
-> +	if (pad != 0)
-> +		return -EINVAL;
+> FS_IOC_GETFLAGS and FS_IOC_SETFLAGS are not filesystem-specific, and the
+> supported flags are declared in include/uapi/linux/fs.h.  You can't just
+> randomly give an unused bit a filesystem specific meaning.
 
-There's no need to check for the pad argument: {enable,disable}_streams may
-be called on source pads only.
+Eww, yes.  This needs to be reverted ASAP.
 
-> +
->  	ret = pm_runtime_resume_and_get(&client->dev);
->  	if (ret < 0)
->  		return ret;
-> @@ -778,11 +783,17 @@ static int imx219_start_streaming(struct imx219 *imx219,
->  	return ret;
->  }
->  
-> -static void imx219_stop_streaming(struct imx219 *imx219)
-> +static int imx219_disable_streams(struct v4l2_subdev *sd,
-> +				  struct v4l2_subdev_state *state, u32 pad,
-> +				  u64 streams_mask)
->  {
-> +	struct imx219 *imx219 = to_imx219(sd);
->  	struct i2c_client *client = v4l2_get_subdevdata(&imx219->sd);
->  	int ret;
->  
-> +	if (pad != 0)
-> +		return -EINVAL;
+And I'd like to repeat my reminder that we need to stop file systems
+(and f2fs is particularly bad for this) to stop just adding random
+uapis without review from linux-fsdevel and linux-api.
 
-Ditto.
-
-> +
->  	/* set stream off register */
->  	ret = cci_write(imx219->regmap, IMX219_REG_MODE_SELECT,
->  			IMX219_MODE_STANDBY, NULL);
-> @@ -793,22 +804,7 @@ static void imx219_stop_streaming(struct imx219 *imx219)
->  	__v4l2_ctrl_grab(imx219->hflip, false);
->  
->  	pm_runtime_put(&client->dev);
-> -}
-> -
-> -static int imx219_set_stream(struct v4l2_subdev *sd, int enable)
-> -{
-> -	struct imx219 *imx219 = to_imx219(sd);
-> -	struct v4l2_subdev_state *state;
-> -	int ret = 0;
-> -
-> -	state = v4l2_subdev_lock_and_get_active_state(sd);
-> -
-> -	if (enable)
-> -		ret = imx219_start_streaming(imx219, state);
-> -	else
-> -		imx219_stop_streaming(imx219);
->  
-> -	v4l2_subdev_unlock_state(state);
->  	return ret;
->  }
->  
-> @@ -992,7 +988,7 @@ static int imx219_init_state(struct v4l2_subdev *sd,
->  }
->  
->  static const struct v4l2_subdev_video_ops imx219_video_ops = {
-> -	.s_stream = imx219_set_stream,
-> +	.s_stream = v4l2_subdev_s_stream_helper,
->  };
->  
->  static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
-> @@ -1001,6 +997,8 @@ static const struct v4l2_subdev_pad_ops imx219_pad_ops = {
->  	.set_fmt = imx219_set_pad_format,
->  	.get_selection = imx219_get_selection,
->  	.enum_frame_size = imx219_enum_frame_size,
-> +	.enable_streams = imx219_enable_streams,
-> +	.disable_streams = imx219_disable_streams,
->  };
->  
->  static const struct v4l2_subdev_ops imx219_subdev_ops = {
-
--- 
-Regards,
-
-Sakari Ailus
 
