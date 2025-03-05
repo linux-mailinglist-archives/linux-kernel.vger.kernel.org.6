@@ -1,138 +1,90 @@
-Return-Path: <linux-kernel+bounces-547515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-547513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AEDA50A52
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:53:17 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83568A50A4F
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 19:52:48 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF501889D06
-	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:53:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C99DC1889C79
+	for <lists+linux-kernel@lfdr.de>; Wed,  5 Mar 2025 18:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A92253B5C;
-	Wed,  5 Mar 2025 18:52:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79958253352;
+	Wed,  5 Mar 2025 18:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hD9HdkkZ"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pYVfNlNU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A182512ED;
-	Wed,  5 Mar 2025 18:52:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86A824C062;
+	Wed,  5 Mar 2025 18:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741200761; cv=none; b=NMEX5H3pP5VkYX12QW8gRaRCTwpinqJ5DHqXkTBw56LDTVCcFqRs56V7WWLUnniffRJhRK9MfaF0kVdmQgoqbGurFzH/q1qpiCP+lVelR3I7qHpsmUksHgVvjDbU/EbrK4w/R6MDcrxZfdJkDwU7Qk/CGPAcL0yOHrFh2BbFVjQ=
+	t=1741200736; cv=none; b=QlCjqJNZchRqke6Wh+A/MlqZ/a0lUNWKsOvP03lagyO3p9e3GACi2xzPpJuc7funI1an9X1Ep4ukcdpzwiqsQcesfrsANwSYZVWFL9qxCWKy6W0p1Op/57ZDat3GlPxVgAcW9WX/0ZS2vf/EKiesp7lFVvlMAkKLiKuwObB0Lxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741200761; c=relaxed/simple;
-	bh=5OGi9WhU9Aq5b60t6Jt1Mzylgj73/YdOQ5kzSR0pyxE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RHcpffpCCReHbrXoB1bhIbSH/DugriiDgrhxPaaetVs0mYJWwfBb8o9IVYhAKWsyLPyeVXiLYOi4mA4H95Gk2BpStrYI7sKAqB8o9fFNljXAE/rPY7tn14g4ZnjfQvtFWU2pwAy7DKrDavXKVjq7atz/oFrc4QFzD8KOaTlLsNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hD9HdkkZ; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5e4f88ea298so9560167a12.2;
-        Wed, 05 Mar 2025 10:52:39 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1741200758; x=1741805558; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=asKVsq7k90t+anWTAyo3VJyh0AkcVitH69hdmM8MsTo=;
-        b=hD9HdkkZJXOY0w8E5UIZpnNtcz0Owexu06G6wFlOzGZRnYq0NE+gYQP4ysZmdetceK
-         1ZanYZneSURLtw2q7aegazrrA/W/zbYtSELvKSSLMcn8cxEji/WeJ/xasVccKldBKCob
-         2HxFtncdNCLdoffgCoLDE8f5Pkhryx8cTfUh+h0V0FGpjl0oRGcsK78Qdk4LaV5PsY1W
-         G7x/XwHp0Y/Q/MffLRAFyg69KdsAc5OgGv2m5gMPUvKbjxk9gnoSV8NldwpJCV9MUV2R
-         C/MktraU5Yc1mnnoVAdSTwA81fSRaMT2ZslDRyVPUBw0GeNRiMA4sACU1uYE9wgvdGfv
-         rmUg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741200758; x=1741805558;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=asKVsq7k90t+anWTAyo3VJyh0AkcVitH69hdmM8MsTo=;
-        b=dkrki8ZzQZKOZIbBsOl/SS3WXxbnlTudJ7uF7kE2Q2B+v60iZX69CxrJ9e6fqwXmhs
-         560cOFYW293aADFXEWWQs4CKLNYquBGo3yeLa2fc978O7SdF4DtGPPZNkVVWSYac781X
-         DH1wWp/uD9t/eVJLUFUwy5A0cNuONblmmetBviZvw+Feyk/VgJadlw9m8YiQ2/rnnqO4
-         OVWPjOs+AHz33ii0a6rrtTApC0vX+gNsa+2hdRSZHkbBSr3ItbwzpxwrvkmKDNt6l4kR
-         wbztZSc5LLecOFCYT9iUxDVGVoVjyDmg6liCRJJNjlEQMdDmAZBjlkfEztsBVenFFaXD
-         yThg==
-X-Forwarded-Encrypted: i=1; AJvYcCXK3ldd46uc4mpcNn1GNGRCkW1A/+QoXVjwf+yFJDbGiVv1JCKbn8X7kfiK8cZPMQHA0idY9eJtSfMs2bU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSGEmAIRXiIfiCceR4/hJXqfmZ7im7AoJduq0PP4vIKf6bKt5v
-	cXg/k/ZDCRsEXYn/mtx2rGQ3FwbfXMmDfgznpUY9KOyTxtrC8qSVVUwSB20HmWcErv3eRmN1M0n
-	wJwAO7gTsXRzO25GIDff/QEkn0iQ=
-X-Gm-Gg: ASbGncti1tSJkdKwTT56M8enffVJ8Nm3xA3/D6B4UF3WMm06qDeBFOo9HXYOYxzaePy
-	M/jsQ7fQY/vc2cRYouQEsKFW4PK6xYPcSPeppV0dCNaHj2mYf6v/WRO0Rm7Z6Kw3IbUHe9z2ikO
-	R7NKCi9lR9OXJeiCEDEdh73rK5Ygie
-X-Google-Smtp-Source: AGHT+IFJvcOkeuIanqvTEWrSBlSvIhPEkB5zsmiNSFjOpGMFhf9m/19uwK5aTIkNOkInZMH31fSH43ty33pM+/ypuiQ=
-X-Received: by 2002:a17:907:9726:b0:ac1:da09:5d32 with SMTP id
- a640c23a62f3a-ac20d84621cmr487306166b.6.1741200757572; Wed, 05 Mar 2025
- 10:52:37 -0800 (PST)
+	s=arc-20240116; t=1741200736; c=relaxed/simple;
+	bh=EYpYX1LgHQBETK8SepZsHgMn4BIaNlRJVO1E8lO7/DY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=FW/0Arr49A0pAP4bxPhWPngze6UyMpcaVEuo65hCdMIcxT4TASKmK0Ux4/iZ1pLqQRz1u4vU0Sfvs41wiuKvg64xv4hU9pLUzqPI8bqoT3urNQKU1Md27+nuurW+/asDX5vkkqQ8FGwNJB9OKKvq0+itRAklBB1ud+V41KYvB4s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pYVfNlNU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 647A0C4CEE0;
+	Wed,  5 Mar 2025 18:52:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741200735;
+	bh=EYpYX1LgHQBETK8SepZsHgMn4BIaNlRJVO1E8lO7/DY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=pYVfNlNUmDqphukT2KTPQZmeW+mHaIoj6ioIR02cav0KBMBdBPw76rkUKonCp0M5g
+	 cE77q4uUSRXPoY6Yt1P+vfDvjY5Lbki4r6DJvh8DEhnc1huHschH8xxxep23tM0rlD
+	 JWLRFRs0dAJgdl4ZMy6yJJ3Wo/XVCSmFnFtYJT/1j+3lEX04fZ/QbYBimrfJNA64xi
+	 luZl5pJHCWeXq0zEVc/Fm889nlFblESLORMH/SxgfbqBN5H3tDs5Gf07iDq6BoDGcx
+	 gcLxcDblIZN9yJ45SMMBM2oWMieiSxfcKrcp+sZzckQvj3ltU/6IXtbF1eOOcZj2Nx
+	 5AsX2h3jC32Zg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Miguel Ojeda" <ojeda@kernel.org>,  "Alex Gaynor"
+ <alex.gaynor@gmail.com>,  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo"
+ <gary@garyguo.net>,  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>,  "Alice
+ Ryhl" <aliceryhl@google.com>,  "Trevor Gross" <tmgross@umich.edu>,
+  <stable@vger.kernel.org>,  <rust-for-linux@vger.kernel.org>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] rust: init: fix `Zeroable` implementation for
+ `Option<NonNull<T>>` and `Option<KBox<T>>`
+In-Reply-To: <20250305132836.2145476-1-benno.lossin@proton.me> (Benno Lossin's
+	message of "Wed, 05 Mar 2025 13:29:01 +0000")
+References: <t9wrOFEcf8XZ-aKch1r7feu9gBB6Wqs6_KgnLoSF6eZ01wvr4zV4Rbl4McWKaM25TlwevH55D6Yy_gLi2idFLA==@protonmail.internalid>
+	<20250305132836.2145476-1-benno.lossin@proton.me>
+User-Agent: mu4e 1.12.7; emacs 29.4
+Date: Wed, 05 Mar 2025 19:52:08 +0100
+Message-ID: <878qpj71k7.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250304035447.3138221-1-adamsimonelli@gmail.com>
- <20250304035447.3138221-4-adamsimonelli@gmail.com> <CAHp75VftQASqajiG_z-==CmVMu5Orv_Q8QMj-7W=sxsJPq6bJw@mail.gmail.com>
- <7969025.Sb9uPGUboI@nerdopolis2>
-In-Reply-To: <7969025.Sb9uPGUboI@nerdopolis2>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Wed, 5 Mar 2025 20:52:00 +0200
-X-Gm-Features: AQ5f1JpVHY8TTQrybjZBq3aG7LWM0EtWCpvAUrhdlktBqZTOU-Uz1UtaifmdCIM
-Message-ID: <CAHp75VfadXS8Z2G6U_DcOOZFFmaOSn_9uQN_N7Psse3kiSGj0g@mail.gmail.com>
-Subject: Re: [PATCH v6 3/3] tty: Change order of ttynull to be linked sooner
- if enabled as a console.
-To: Adam Simonelli <adamsimonelli@gmail.com>
-Cc: linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Jiri Slaby <jirislaby@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Steven Rostedt <rostedt@goodmis.org>, John Ogness <john.ogness@linutronix.de>, 
-	Sergey Senozhatsky <senozhatsky@chromium.org>, Petr Mladek <pmladek@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Mar 5, 2025 at 4:06=E2=80=AFAM Adam Simonelli <adamsimonelli@gmail.=
-com> wrote:
-> On Tuesday, March 4, 2025 1:51:52 AM EST Andy Shevchenko wrote:
-> > On Tue, Mar 4, 2025 at 5:55=E2=80=AFAM <adamsimonelli@gmail.com> wrote:
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-...
-
-> > >  obj-y                          +=3D vt/
-> >
-> > + blank line.
-> >
-> > > +# If ttynull is configured to be a console by default, ensure that i=
-t is linked
-> > > +# earlier before a real one is selected.
-> > > +obj-$(CONFIG_NULL_TTY_DEFAULT_CONSOLE) \
-> > > +                               +=3D ttynull.o
-> >
-> > Here is the question: are you sure that all console drivers that exist
-> > in the kernel happen to be here? Have you grepped the source tree for
-> > checking this?
-> >
-> Grepping for console_initcall, the only other places I see outside of
-> drivers/tty/ is
+> According to [1], `NonNull<T>` and `#[repr(transparent)]` wrapper types
+> such as our custom `KBox<T>` have the null pointer optimization only if
+> `T: Sized`. Thus remove the `Zeroable` implementation for the unsized
+> case.
 >
-> arch/mips/fw/arc/arc_con.c
-> arch/mips/sibyte/common/cfe_console.c
-> arch/powerpc/kernel/legacy_serial.c
-> arch/powerpc/kernel/udbg.c
-> arch/powerpc/platforms/powermac/setup.c
-> arch/um/drivers/stderr_console.c
-> arch/xtensa/platforms/iss/console.c
-> drivers/s390/char/con3215.c
-> drivers/s390/char/con3270.c
-> drivers/s390/char/sclp_con.c
-> drivers/s390/char/sclp_vt220.c
+> Link: https://doc.rust-lang.org/stable/std/option/index.html#representation [1]
+> Cc: stable@vger.kernel.org # v6.12+ (a custom patch will be needed for 6.6.y)
+> Fixes: 38cde0bd7b67 ("rust: init: add `Zeroable` trait and `init::zeroed` function")
+> Signed-off-by: Benno Lossin <benno.lossin@proton.me>
+> ---
 
-Which means you need to test your stuff on those cases, to see how the
-linker order is done there. It might be that your change wouldn't work
-there as expected (quick workaround is to mark the new option as
-depends on !S390 && !PPC and so on.
+Reviewed-by: Andreas Hindborg <a.hindborg@kernel.org>
 
---=20
-With Best Regards,
-Andy Shevchenko
+
+Best regards,
+Andreas Hindborg
+
+
+
 
