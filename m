@@ -1,135 +1,186 @@
-Return-Path: <linux-kernel+bounces-548814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72C08A549A0
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:38:40 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1830A5493F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:30:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 683C218988CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:37:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08E051736DD
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:30:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A464922A1CF;
-	Thu,  6 Mar 2025 11:31:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E6720A5D1;
+	Thu,  6 Mar 2025 11:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J6Z/LqDY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZZUwjdE1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="qBfNQ4Bp"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D41D42222CE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:31:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3232E20ADC9;
+	Thu,  6 Mar 2025 11:30:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741260667; cv=none; b=VdfK3W8aOiTxtdAjfeF4DDjJmmVhm1OqRYI1G0n3hswFlPM7qyMSm5G0ZuTNAMf0sP0iliGfTf6DKDthmt1UqiNyMVWL9PyIPJeM6UvV7i36DK5D2TyeKy14Is/kquPkQituoGrC/zI7slGamlD6gxD8l62CFohQ25AaeOFBi2Y=
+	t=1741260607; cv=none; b=o/RA4Jz9iYWt2UzbbOBUHNWwAyqKADjtkmPP14QO9QZieQzQ1l0K7WakYr85X4lqEyqfMvBCFOJ4+0GC0zxqvRvdxIcFVU7iwhFsfcxyAJXfB6MuNAp+1TlHqsaSA4HW4XfMI8I+u/pBTQnXYNKj/A2bMnYQv0Wo4oh/aPv0VaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741260667; c=relaxed/simple;
-	bh=nswRbJg0534axjb88dgcnucQYVhi1rNjBxDjWoz+4sg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=UraH4OwgAqlQVmVXGhMLXpyQqnxc6zLAGqLzpFNe3bVZNkc4oJ5A6vSGAw9NjhB7Pu8b/m/lnKH2/bOpuWIrr/PsmLS2rYkGwfzmspa0Ahh85RLFPbUV0U7WW1jlO9SVYlO+Is36YrxSoJree4FFHvGC9jFj5SR6IiRGedY+N00=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J6Z/LqDY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 8B4FCC4CEF4;
-	Thu,  6 Mar 2025 11:31:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741260667;
-	bh=nswRbJg0534axjb88dgcnucQYVhi1rNjBxDjWoz+4sg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=J6Z/LqDYN1zcrETwYMJoohVrou0m7VbhYwy09KG8AvYcgjT5n3PFlZbGOUgkDSSb4
-	 fkDzkrnWeMy5EyiLPma6ETmgdMmoB66RMWNNINCc8CEePoc2tTLMF0rL8ZaZsJqv8V
-	 Pqsaa3rLxMZR8lRuzklVIU/H4eNZDOMb36zU9fdPfkxtd2RD2WYiZMIMsDo3s9Vszd
-	 knYZyno8fGDo/2j2ZKjYN23DfDheOp3jE4crSzMAEurp8wypFOYXZ5iWRpWt8pxS9H
-	 G/uRiRQOT4jNHDXnq4pvq02d2bmIOTCVVzRhMnDbSPd+89S+hwdvgGzd85LOSOBIx+
-	 4GRf+/mm9zI9g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 8142FC282D1;
-	Thu,  6 Mar 2025 11:31:07 +0000 (UTC)
-From: Vincent Mailhol via B4 Relay <devnull+mailhol.vincent.wanadoo.fr@kernel.org>
-Date: Thu, 06 Mar 2025 20:29:58 +0900
-Subject: [PATCH v5 7/7] test_bits: add tests for BIT_U*()
+	s=arc-20240116; t=1741260607; c=relaxed/simple;
+	bh=OpJrKTIFzZ5pckjudi3Qin4EgJkRHJdkbCYsaO+8+/E=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=L2vOMEzW30Ns+WzijtUN6lpvUVGC5CkLLzm1CsggXtpDFVKy9REsvSIlotdUGZCb4C2CilhfhkUc85X308NzjAQpBr6WdFtIWAFBwgDJCuPnuiDtlYCzjXmSncXa2PzBtgSKZdjlDLgSJpfqmviSM9fiq4dA92ca30pbVWrRQ6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZZUwjdE1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=qBfNQ4Bp; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 06 Mar 2025 11:30:02 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741260604;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7NdCogl1ODaHR/OAf9QpmrH+l5xcgxjNSNuiCkD2Hn8=;
+	b=ZZUwjdE137yKZD+ExuxH6v4eTf56vE7QF4nmnNP8QQJQ3MtkvgOF4HJ93hENavhTmIHdPK
+	GsEY8KDgvZvZxnknZXz68+SROSzlPtzQjMRftLw+9g5Xobf9YrE+1kYCh41TpIm2ri2GMU
+	qDqEly49yyTyhrA6bGrL7cfeXQ51CE/d+eB7luJTPje/ZUQT/h96Nsi+0ecCnwDbmTks9k
+	gaBaDNDzwFRL0M/foPXBJ9OyQmv8J02rJwjkQNO5Wh1+yqkHe1gQs7Xj9wd57lOygBL5Re
+	ZKV83vhShqcNZY4ZBHq6g7E7KMMqsLybVtA/2An/gmZuxIuQMF0rX0/pILVADw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741260604;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=7NdCogl1ODaHR/OAf9QpmrH+l5xcgxjNSNuiCkD2Hn8=;
+	b=qBfNQ4Bp5xJmWqiW+NECXOZqYZPqE1vH5opXz1Ove/f77XPCa/pK3zuw8qLYjLa5XYbmoW
+	Am03WtcDc6+cpLAA==
+From: "tip-bot2 for Jiri Olsa" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: perf/core] uprobes/x86: Harden uretprobe syscall trampoline check
+Cc: Jann Horn <jannh@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Ingo Molnar <mingo@kernel.org>, Oleg Nesterov <oleg@redhat.com>,
+ Kees Cook <kees@kernel.org>, Andrii Nakryiko <andrii@kernel.org>,
+ "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>,
+ Andy Lutomirski <luto@kernel.org>, stable@vger.kernel.org, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250212220433.3624297-1-jolsa@kernel.org>
+References: <20250212220433.3624297-1-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Message-ID: <174126060240.14745.15365015848455636391.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250306-fixed-type-genmasks-v5-7-b443e9dcba63@wanadoo.fr>
-References: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
-In-Reply-To: <20250306-fixed-type-genmasks-v5-0-b443e9dcba63@wanadoo.fr>
-To: Yury Norov <yury.norov@gmail.com>, 
- Lucas De Marchi <lucas.demarchi@intel.com>, 
- Rasmus Villemoes <linux@rasmusvillemoes.dk>, 
- Jani Nikula <jani.nikula@linux.intel.com>, 
- Joonas Lahtinen <joonas.lahtinen@linux.intel.com>, 
- Rodrigo Vivi <rodrigo.vivi@intel.com>, 
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
- dri-devel@lists.freedesktop.org, Andi Shyti <andi.shyti@linux.intel.com>, 
- David Laight <David.Laight@ACULAB.COM>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
- Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1339;
- i=mailhol.vincent@wanadoo.fr; h=from:subject:message-id;
- bh=asAoSxIsd+6NgC+TDV5wEh4nM1LYuph2VqJY5OZYYVA=;
- b=owGbwMvMwCV2McXO4Xp97WbG02pJDOkn28uit0fOchL91THp8/2pV/2ZatYHPC/pu5WoLLzuq
- OS5RrXZHaUsDGJcDLJiiizLyjm5FToKvcMO/bWEmcPKBDKEgYtTACZiEsvwV9Lq43bev36PTq/U
- 28S76/Gz+Uf49G+sKPm5gDdLReyIUSrD/6T3j8zWV5iXfJwUN/2L1OH+B9t1fn1z3v9/13sNT/n
- Ms5wA
-X-Developer-Key: i=mailhol.vincent@wanadoo.fr; a=openpgp;
- fpr=ED8F700574E67F20E574E8E2AB5FEB886DBB99C2
-X-Endpoint-Received: by B4 Relay for mailhol.vincent@wanadoo.fr/default
- with auth_id=291
-X-Original-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
-Reply-To: mailhol.vincent@wanadoo.fr
 
-From: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+The following commit has been merged into the perf/core branch of tip:
 
-Add some additional tests in lib/test_bits.c to cover the expected
-results of the fixed type BIT_U*() macros.
+Commit-ID:     fa6192adc32f4fdfe5b74edd5b210e12afd6ecc0
+Gitweb:        https://git.kernel.org/tip/fa6192adc32f4fdfe5b74edd5b210e12afd6ecc0
+Author:        Jiri Olsa <jolsa@kernel.org>
+AuthorDate:    Wed, 12 Feb 2025 23:04:33 +01:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 06 Mar 2025 12:22:45 +01:00
 
-Signed-off-by: Vincent Mailhol <mailhol.vincent@wanadoo.fr>
+uprobes/x86: Harden uretprobe syscall trampoline check
+
+Jann reported a possible issue when trampoline_check_ip returns
+address near the bottom of the address space that is allowed to
+call into the syscall if uretprobes are not set up:
+
+   https://lore.kernel.org/bpf/202502081235.5A6F352985@keescook/T/#m9d416df341b8fbc11737dacbcd29f0054413cbbf
+
+Though the mmap minimum address restrictions will typically prevent
+creating mappings there, let's make sure uretprobe syscall checks
+for that.
+
+Fixes: ff474a78cef5 ("uprobe: Add uretprobe syscall to speed up return probe")
+Reported-by: Jann Horn <jannh@google.com>
+Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Reviewed-by: Kees Cook <kees@kernel.org>
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Acked-by: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Andy Lutomirski <luto@kernel.org>
+Cc: stable@vger.kernel.org
+Link: https://lore.kernel.org/r/20250212220433.3624297-1-jolsa@kernel.org
 ---
-Changelog
+ arch/x86/kernel/uprobes.c | 14 +++++++++-----
+ include/linux/uprobes.h   |  2 ++
+ kernel/events/uprobes.c   |  2 +-
+ 3 files changed, 12 insertions(+), 6 deletions(-)
 
-  v4 -> v5:
-
-    - BIT_U8()/BIT_U16() are now back to u8/u16.
-
-  v3 -> v4:
-
-    - New patch.
----
- lib/test_bits.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/lib/test_bits.c b/lib/test_bits.c
-index 91968227687bb11b7d1361b153c27eb851c6c1c2..72984fae7b815031bb6eb2892c772ffcc409cf78 100644
---- a/lib/test_bits.c
-+++ b/lib/test_bits.c
-@@ -9,6 +9,16 @@
+diff --git a/arch/x86/kernel/uprobes.c b/arch/x86/kernel/uprobes.c
+index 5a952c5..9194695 100644
+--- a/arch/x86/kernel/uprobes.c
++++ b/arch/x86/kernel/uprobes.c
+@@ -357,19 +357,23 @@ void *arch_uprobe_trampoline(unsigned long *psize)
+ 	return &insn;
+ }
  
- #define assert_type(t, x) _Generic(x, t: x, default: 0)
+-static unsigned long trampoline_check_ip(void)
++static unsigned long trampoline_check_ip(unsigned long tramp)
+ {
+-	unsigned long tramp = uprobe_get_trampoline_vaddr();
+-
+ 	return tramp + (uretprobe_syscall_check - uretprobe_trampoline_entry);
+ }
  
-+static_assert(assert_type(u8, BIT_U8(0)) == 1u);
-+static_assert(assert_type(u16, BIT_U16(0)) == 1u);
-+static_assert(assert_type(u32, BIT_U32(0)) == 1u);
-+static_assert(assert_type(u64, BIT_U64(0)) == 1ull);
+ SYSCALL_DEFINE0(uretprobe)
+ {
+ 	struct pt_regs *regs = task_pt_regs(current);
+-	unsigned long err, ip, sp, r11_cx_ax[3];
++	unsigned long err, ip, sp, r11_cx_ax[3], tramp;
 +
-+static_assert(assert_type(u8, BIT_U8(7)) == 0x80u);
-+static_assert(assert_type(u16, BIT_U16(15)) == 0x8000u);
-+static_assert(assert_type(u32, BIT_U32(31)) == 0x80000000u);
-+static_assert(assert_type(u64, BIT_U64(63)) == 0x8000000000000000ull);
++	/* If there's no trampoline, we are called from wrong place. */
++	tramp = uprobe_get_trampoline_vaddr();
++	if (unlikely(tramp == UPROBE_NO_TRAMPOLINE_VADDR))
++		goto sigill;
+ 
+-	if (regs->ip != trampoline_check_ip())
++	/* Make sure the ip matches the only allowed sys_uretprobe caller. */
++	if (unlikely(regs->ip != trampoline_check_ip(tramp)))
+ 		goto sigill;
+ 
+ 	err = copy_from_user(r11_cx_ax, (void __user *)regs->sp, sizeof(r11_cx_ax));
+diff --git a/include/linux/uprobes.h b/include/linux/uprobes.h
+index a40efdd..2e46b69 100644
+--- a/include/linux/uprobes.h
++++ b/include/linux/uprobes.h
+@@ -39,6 +39,8 @@ struct page;
+ 
+ #define MAX_URETPROBE_DEPTH		64
+ 
++#define UPROBE_NO_TRAMPOLINE_VADDR	(~0UL)
 +
- static_assert(assert_type(unsigned long, GENMASK(31, 0)) == U32_MAX);
- static_assert(assert_type(unsigned long long, GENMASK_ULL(63, 0)) == U64_MAX);
- static_assert(assert_type(u8, GENMASK_U8(7, 0)) == U8_MAX);
-
--- 
-2.45.3
-
-
+ struct uprobe_consumer {
+ 	/*
+ 	 * handler() can return UPROBE_HANDLER_REMOVE to signal the need to
+diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+index 921ad91..70c84b9 100644
+--- a/kernel/events/uprobes.c
++++ b/kernel/events/uprobes.c
+@@ -2169,8 +2169,8 @@ void uprobe_copy_process(struct task_struct *t, unsigned long flags)
+  */
+ unsigned long uprobe_get_trampoline_vaddr(void)
+ {
++	unsigned long trampoline_vaddr = UPROBE_NO_TRAMPOLINE_VADDR;
+ 	struct xol_area *area;
+-	unsigned long trampoline_vaddr = -1;
+ 
+ 	/* Pairs with xol_add_vma() smp_store_release() */
+ 	area = READ_ONCE(current->mm->uprobes_state.xol_area); /* ^^^ */
 
