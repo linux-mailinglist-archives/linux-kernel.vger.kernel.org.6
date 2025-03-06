@@ -1,221 +1,94 @@
-Return-Path: <linux-kernel+bounces-549792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549793-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 352D4A5574C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:10:45 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02681A55750
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:13:38 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA1D1897157
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:10:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A1BC189736A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91687270EA0;
-	Thu,  6 Mar 2025 20:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0452270EC9;
+	Thu,  6 Mar 2025 20:13:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="t4nr9u+g"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2082.outbound.protection.outlook.com [40.107.236.82])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2352126D5A7
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:10:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.82
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741291838; cv=fail; b=KPHlih7dm13cHultw3dkEWljUdwVmnjp1GqEI2r26mmA3OkugocGJmEvSyg5hi9g5MyzE9RxNRGbq2d3znq5X7Zt/kBZZkeCUrX5hxIGgf8Rw0zeRMvKpqwb4MIl0Hvie99Hx1Kv8GAl3oOHS8f3SNrRE8TZFjc8T/bQOq/wGFw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741291838; c=relaxed/simple;
-	bh=7tvbPi+y3azQRVoFjadF4xXJoc1nn6naq+TpEhPvGTE=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J+0M7xW5cSSwFyxqx3qndJkvXcmQOvcta6bprcqmV6/5HsMGTPY8O80Mcc9bbT3kuQJLbPBEQqC/JctRbhohRukLQAhsedFKE3iRrwuIA/RdX5uhVBJbN9mFO9ltPFj+uuaPXNEsBB/MuJezbW3iUHbB22wZmIWKnWXTdmR/Kkc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=t4nr9u+g; arc=fail smtp.client-ip=40.107.236.82
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=TJhEi9YHN+YACQoSevgWhz7rglfpansvUucNk1vfqQkLobjVuAJcX3o4mrNX65UFSzv9Q0uqwydq6sX1s1AZ14YO+i71uJil3ktiD4GsmRf96oGAALXFFoHMZJmu6w8sfA1uca1nF1lHuD9JANnEUXGDbytHUs0+92KLpmO3uhV8nZKWICcazuGP3zFe633MeGtHdUf4JZVPYX+6adq2RoNHMMZ23O0Ho8gtIbd+DWowyxuG3W6LrJifTQsA4eb/VVwFIRX+9Rxr9X2fXjTE6KgKiuNRLjVYFiOrA/Y/RQziozYStC5uFDmsZwaE+Ca8Ivz34s+9rbRZyEOKZiXemg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=bL2b0iAFCiKhc9W19MwEtlzE4DS/QA4+N3kjT/9YBng=;
- b=mOOyY2+5RgD9NO0dcKlnnrOASZkIZ/uBzh1Qd9pkN+JEdFjSo6nQZpXJuqlo6Ze84X78b0Wc/oE5N45f5R1H4BnIKz2h7juJXzta+1DVJmIOFPUHdtPNLJJt9J2qVplfH0FT97qrl4gBYE++Mp0X2tHosS3PUEt75OcO+AxkGpqTcQm2sqYyi7JQLh5Znbtx09sIEjW60iQ+tBDpCBdynM7s61+gB2WkS9AvVoCxiWMcu4dWjeBzwyjf51olqJ3FqOb1ZRpTHa35o+PjegPJW+vXVPoXOXrROwE8T1ZgHamO7xHPSfmB/oYTw0xoowfBC2UlfdOk99PRnZA9zbMSDQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.160) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=bL2b0iAFCiKhc9W19MwEtlzE4DS/QA4+N3kjT/9YBng=;
- b=t4nr9u+g3+xggOyBJWIkugsHsKKABhfjI971dicpt0dd3EabfiM77pKCFiGnm24sJO5kAOvpSXgQ5CDBvCBJTuINVXMCeHUiTEWASzLDsGt2PKiMBd6HjPclUZ0KgGKMz2mchI5umebWYXLdrXJg63VdOqEil5XX2PmWKYM5iUneEnedcxlhLvQ6k+Y+tXUP60l1tW2qGSQC10bh/a6LlcmJ48oQRXvWNd3FQpS7SgeDRh3+H2orV/9FXhDdhtOTRd+GqiZ1wLNEzKSrUhax9VaVVY6OcoR5zU/PVPiBpxETzKmka3XAY3vd8UC7NASNG3Bk8idmIdzjs5L7rejiCQ==
-Received: from BY3PR10CA0013.namprd10.prod.outlook.com (2603:10b6:a03:255::18)
- by CH3PR12MB7692.namprd12.prod.outlook.com (2603:10b6:610:145::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.17; Thu, 6 Mar
- 2025 20:10:28 +0000
-Received: from SJ1PEPF000023D0.namprd02.prod.outlook.com
- (2603:10b6:a03:255:cafe::db) by BY3PR10CA0013.outlook.office365.com
- (2603:10b6:a03:255::18) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8511.19 via Frontend Transport; Thu,
- 6 Mar 2025 20:10:28 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.160)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.160 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.160; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.160) by
- SJ1PEPF000023D0.mail.protection.outlook.com (10.167.244.4) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8511.15 via Frontend Transport; Thu, 6 Mar 2025 20:10:28 +0000
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by mail.nvidia.com
- (10.129.200.66) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Thu, 6 Mar 2025
- 12:10:14 -0800
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail202.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 6 Mar
- 2025 12:10:14 -0800
-Received: from Asurada-Nvidia (10.127.8.12) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14 via Frontend
- Transport; Thu, 6 Mar 2025 12:10:13 -0800
-Date: Thu, 6 Mar 2025 12:10:12 -0800
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>
-CC: "jgg@nvidia.com" <jgg@nvidia.com>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "joro@8bytes.org" <joro@8bytes.org>,
-	"will@kernel.org" <will@kernel.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
+	dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b="dGhADVRM"
+Received: from mail.mvand.net (mail.mvand.net [185.229.52.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B451342A8C;
+	Thu,  6 Mar 2025 20:13:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.229.52.35
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741292011; cv=none; b=GEPk/YFrx4HMQ4Nw1iC1Q8iK+7e4qAyj8SGVG2wkMkvdpYdCOSb5PfGoZqVWpk70ipyacNaJedXlISfIE8U1zRQuQXjEKQ8/ojM/pjKsHnhmtWC/4jYt3ehiJ41e3kPDOZwmbT7JKb99BUe70iwNpbFw6ZFhq2tpEk60OOEtWXU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741292011; c=relaxed/simple;
+	bh=Cgdy+MoS5drv8lXdb22ppJ0XjnIjqmgcB7r94/9mKUA=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 Mime-Version:Content-Type; b=mffgCTrqtxjhM0DJ6GkFPgYyEMPt5GSfMLXPd8CfakQj9eKONwVguX0Mn4yq+qSrpa8CJKK4FFvlqBhEoT2gO2hClq9R6cJ5PmbjNDZZM8UFxtHCeY8QM7xGIdjTb8MfLEstzkAdFEUksEr2fnFgf/VFRHyBbcLhdp59tCrlHR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl; spf=pass smtp.mailfrom=martijnvandeventer.nl; dkim=pass (2048-bit key) header.d=martijnvandeventer.nl header.i=@martijnvandeventer.nl header.b=dGhADVRM; arc=none smtp.client-ip=185.229.52.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=martijnvandeventer.nl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=martijnvandeventer.nl
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mail.mvand.net (Postfix) with ESMTPSA id 20E551FFBE;
+	Thu,  6 Mar 2025 21:13:28 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=martijnvandeventer.nl; s=default; t=1741292008;
+	bh=Cgdy+MoS5drv8lXdb22ppJ0XjnIjqmgcB7r94/9mKUA=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:From;
+	b=dGhADVRM3Zmg4x5jYwZff6ZrtJpm2vttKQC/YMrDTscaLRqd5tODw5ozbBXiKYgok
+	 Pmzp957BJE0rcZLmw1bDfpA2od0rQL1OB9n6lLNAWulycXkgl91lMesltuFWr0dUhm
+	 gcgHJHT78nIm59YuSP4tudZ0RCUPezElCf9bY9qrpN/RDf402faQvDTuhzfb8Z/SRR
+	 +BZJcnPZHkHSuVyF6Y2ur99XAl9agj2t5y6rxbtzG2kUJCaSYQjHMLg47xaGcpzl2U
+	 /v272BM1oQwqFG6Ez8vpTKLRPWDnp/IcTFEbf5GQQqPOTTDhvHDYSiS2jxkC5tKnmZ
+	 qeg7rEW5Y8WOA==
+From: <linux@martijnvandeventer.nl>
+To: "'Jerome Brunet'" <jbrunet@baylibre.com>
+Cc: "'Neil Armstrong'" <neil.armstrong@linaro.org>,
+	"'Michael Turquette'" <mturquette@baylibre.com>,
+	"'Stephen Boyd'" <sboyd@kernel.org>,
+	"'Kevin Hilman'" <khilman@baylibre.com>,
+	"'Martin Blumenstingl'" <martin.blumenstingl@googlemail.com>,
+	<linux-amlogic@lists.infradead.org>,
+	<linux-clk@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v3 1/3] iommu: Sort out domain user data
-Message-ID: <Z8oBJJz27/Z8P0vR@Asurada-Nvidia>
-References: <cover.1741034885.git.nicolinc@nvidia.com>
- <74a3bf91b52563faaf7ef7de065931e4df47e63f.1741034886.git.nicolinc@nvidia.com>
- <BN9PR11MB527602ABF245960E85402C588CCA2@BN9PR11MB5276.namprd11.prod.outlook.com>
+References: <20250213221702.606-1-linux@martijnvandeventer.nl>	<1jpljkzyf0.fsf@starbuckisacylon.baylibre.com>	<003301db888e$8ea84e90$abf8ebb0$@martijnvandeventer.nl>	<1jplj3g21q.fsf@starbuckisacylon.baylibre.com>	<004801db8eb7$99808e20$cc81aa60$@martijnvandeventer.nl> <1j4j065avo.fsf@starbuckisacylon.baylibre.com>
+In-Reply-To: <1j4j065avo.fsf@starbuckisacylon.baylibre.com>
+Subject: RE: [PATCH] clk: meson: g12a: Fix kernel warnings when no display attached
+Date: Thu, 6 Mar 2025 21:13:27 +0100
+Message-ID: <001401db8ed4$392ef030$ab8cd090$@martijnvandeventer.nl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <BN9PR11MB527602ABF245960E85402C588CCA2@BN9PR11MB5276.namprd11.prod.outlook.com>
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ1PEPF000023D0:EE_|CH3PR12MB7692:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3abfc8b5-5f86-4702-9615-08dd5ceaf081
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?on6aufAzpKizlOEIJTwwaEbwu8jeHP5mBn22tbVu+xa55/oWRnXeZAJtnzHH?=
- =?us-ascii?Q?HhQEYxUD9FR33XTMLq+a9q1CkUdhgxq8b8XhcKzBqR+LOAkNX7f3s+qYHRlz?=
- =?us-ascii?Q?oeKq5NXTvB2hEHtfbZLqkCIXz3yl59dGoWZLF2Omrwp+Spb8eBOGrpnCaJOk?=
- =?us-ascii?Q?jP4adCVaU0Hqu846cUmQx7+ZoyDC1RFt9DkSQ9I3NK172JAenpDPoXD0uO7I?=
- =?us-ascii?Q?bn5Zq7x+8K/X6ueowXvVzBb7dVivW8VUxU1XVmllV4RKeiuDyRFVnjrFLq3V?=
- =?us-ascii?Q?mrdtgeqbdfNuiYPs864v3iTPM6Y4ZZQ3m6P4vV8H3CdLuZtrQ5WAvCgwpPwd?=
- =?us-ascii?Q?4Jbc4AzgU/WWh/mJdWECSt92GrljTx+jH01022OQty/1VNxrBS2J+qVc5x5a?=
- =?us-ascii?Q?OdDNFPGlxtmxg7unNQVhG3z+4bFm8/gz6ThhYGwEtt4jEnGLqEoTuplqp+I/?=
- =?us-ascii?Q?ZllxGF0R5swjoY2HnZuDoEkSfqgQh5pnXSKFYcTc7Flq2RSjVlSMDsH/ah8f?=
- =?us-ascii?Q?w35QAgwQgOHE6Y+veWPBtIOlSuzb7kpu6aNynQ6KOQAEod4EgJo17MIudtsf?=
- =?us-ascii?Q?YlrZX39G+g78t350C+z5QtpCu28oGzJI1+UWjEURQp+rr0NeCpIxn4FfZDu8?=
- =?us-ascii?Q?9wb+gZa/QjOZzNrD/01XLvsWG2F8tkKV1so3FcJWm52z2f01bOuQP8inQWH0?=
- =?us-ascii?Q?UcC/tQgTGruvsSpoJDy5GoKLpIhyVCEvg0/LKBc/sUvLNkCr5ipyfhJqx9nm?=
- =?us-ascii?Q?Ek1kx3NCJdvRpiNfRsLZb85TwNqsfD3BV5AKxWiM1X5dHk2L2EGhQDizTeKU?=
- =?us-ascii?Q?ySIyixWyjt7nqTg3Pf+fFCx3CI/CBFclXXgkh825pbnt/4E4Mwu4O/A/Mv6u?=
- =?us-ascii?Q?jI5EsTZ2C5U/7N4SqPLZpPq5GWTUJ0dUxAClX+b1itI8ydqaHJCDckSWFUbn?=
- =?us-ascii?Q?auFrcRTctBCwhhL3z+mb+TpT7MuK0MMdrJIdylftO1GVlFyA+dxkB5um+2WH?=
- =?us-ascii?Q?3LdOjOXXBd/ZGsRhvwmVt1VwF3weadCixZk1+QjIqZVI6ytUv/Noe//C1Lmx?=
- =?us-ascii?Q?kh8VF7/CXS9PzNIkzsbLYwVwcj54h8mxzbOvYGjGaLel79POZoktIhQy78GW?=
- =?us-ascii?Q?GwtxygKif3jAH64R6EE+NXPodol3aGblbrFp3mzgvsMoPP4Y+0cGMvPQ+48J?=
- =?us-ascii?Q?G2fqQljmE5Jl1NlFTBhWnmBQLLFsf4zKH+nMV4RkXsV1uLFsFgshl88E6dru?=
- =?us-ascii?Q?Tren2+vWjcCamf3ACAXzDElr4cHH3g5tK/4pR4qWqJu2hxSPLGk/eBvVY7o/?=
- =?us-ascii?Q?WtubNzagT3WTLq2GpgYNG9xcylWf37FTBm2zpjnRiEynNs+sjbbXO45OTnoU?=
- =?us-ascii?Q?S3JYtsAU0nhMKx27zDd3mkTeUlYDjbZnZntJp7uy7ff7HyjbA+s0C5oNONnR?=
- =?us-ascii?Q?Bzl908NKjDjnuj+raAraCyIxDgIkdrSQ97YvKY29uXPsm5QM2a0PyjSCr08i?=
- =?us-ascii?Q?wSrSYaUXkVcy+nA=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.160;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge1.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 20:10:28.3293
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3abfc8b5-5f86-4702-9615-08dd5ceaf081
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.160];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ1PEPF000023D0.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB7692
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+Thread-Index: AQH3Houg6kGqwWGxu7A7A+ZA83tGEAI4axMrAfruu2QCUs8BLwIt43dLAg23U/Sy2VxfgA==
+Content-Language: en-us
 
-On Thu, Mar 06, 2025 at 05:59:03AM +0000, Tian, Kevin wrote:
-> > From: Nicolin Chen <nicolinc@nvidia.com>
-> > Sent: Tuesday, March 4, 2025 4:53 AM
-> > 
-> > From: Robin Murphy <robin.murphy@arm.com>
-> > 
-> > When DMA/MSI cookies were made first-class citizens back in commit
-> > 46983fcd67ac ("iommu: Pull IOVA cookie management into the core"), there
-> > was no real need to further expose the two different cookie types.
-> > However, now that IOMMUFD wants to add a third type of MSI-mapping
-> > cookie, we do have a nicely compelling reason to properly dismabiguate
-> > things at the domain level beyond just vaguely guessing from the domain
-> > type.
-> > 
-> > Meanwhile, we also effectively have another "cookie" in the form of the
-> > anonymous union for other user data, which isn't much better in terms of
-> > being vague and unenforced. The fact is that all these cookie types are
-> > mutually exclusive, in the sense that combining them makes zero sense
-> > and/or would be catastrophic (iommu_set_fault_handler() on an SVA
-> > domain, anyone?) - the only combination which *might* be reasonable is
-> > perhaps a fault handler and an MSI cookie, but nobody's doing that at
-> > the moment, so let's rule it out as well for the sake of being clear and
-> > robust. To that end, we pull DMA and MSI cookies apart a little more,
-> > mostly to clear up the ambiguity at domain teardown, then for clarity
-> > (and to save a little space), move them into the union, whose ownership
-> > we can then properly describe and enforce entirely unambiguously.
-> > 
-> > Signed-off-by: Robin Murphy <robin.murphy@arm.com>
-> > [nicolinc: rebase on latest tree; use prefix IOMMU_COOKIE_; merge unions
-> >            in iommu_domain; add IOMMU_COOKIE_IOMMUFD for
-> > iommufd_hwpt]
-> > Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Hi Jerome,
 > 
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>
-> 
-> with a nit:
-> 
-> >  	msi_addr &= ~(phys_addr_t)(size - 1);
-> > -	list_for_each_entry(msi_page, &cookie->msi_page_list, list)
-> > +	list_for_each_entry(msi_page, cookie_msi_pages(domain), list)
-> >  		if (msi_page->phys == msi_addr)
-> >  			return msi_page;
-> > 
-> 
-> Above checks cookie type in every iteration. Better save the list
-> pointer to a local variable.
+> Once again, you are encouraged to fix things up ... where fixes are needed.
 
-Ack.
+Encouragement is not the problem, time is ;-)
 
---------------------------------------------------------------
-@@ -1793,2 +1793,3 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
- {
-+       struct list_head *msi_page_list = cookie_msi_pages(domain);
-        struct iommu_dma_msi_page *msi_page;
-@@ -1799,3 +1800,3 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
-        msi_addr &= ~(phys_addr_t)(size - 1);
--       list_for_each_entry(msi_page, cookie_msi_pages(domain), list)
-+       list_for_each_entry(msi_page, msi_page_list, list)
-                if (msi_page->phys == msi_addr)
-@@ -1817,3 +1818,3 @@ static struct iommu_dma_msi_page *iommu_dma_get_msi_page(struct device *dev,
-        msi_page->iova = iova;
--       list_add(&msi_page->list, cookie_msi_pages(domain));
-+       list_add(&msi_page->list, msi_page_list);
-        return msi_page;
---------------------------------------------------------------
+> DRM is hardly immutable. If you don't feel like you can do it on your own,
+> you can still engage with the other contributors who may know this
+> better and help you.
 
-Thanks
-Nicolin
+Maybe in a few months when I have some more time. Thanks.
+
+> >
+> > On the other hand, I also understand that if you, as a maintainer, allow
+> > that, chances are it will never see a proper fix. :-)
+> >
+> > Cheers!
+> >
+-- 
+Best regards,
+Martijn
+
 
