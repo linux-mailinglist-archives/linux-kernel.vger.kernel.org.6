@@ -1,145 +1,95 @@
-Return-Path: <linux-kernel+bounces-548387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548400-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B52D7A5441F
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:01:29 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id CFAE8A54452
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:12:55 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BD38188BB7B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:01:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A35101892B6A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 08:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50951A3176;
-	Thu,  6 Mar 2025 08:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="H6efhXRc"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD521FCFCA;
+	Thu,  6 Mar 2025 08:12:37 +0000 (UTC)
+Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03ECBF9F8
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 08:01:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E9691FC7D5;
+	Thu,  6 Mar 2025 08:12:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741248084; cv=none; b=KENq2AEDO4MkgYkCQPyVdJvQmOcnewGuwZKlZDPWctxdK2Q4RAVGpdVM6wO/7TUA/ijdnM6KrZh/dJQXsZCkL0TtV/nbO7zb/Bi+UPqdL1O/eolgHvuMLc/8y//VaEKdqAe7kic14kbrTQvItJkujLB4+nzs4QyXLs1CbzasNd8=
+	t=1741248757; cv=none; b=q5nqxYzsP/BPFjWAaTEWE2EpfR3UzlJTFk8viT9ML1o4CRpZlJWi438s1ISfG8nKvjqbNJN4b7M4uOJdRm1sMYxwObNfaOc00RmVvrhSmde4a1Z4P5FU/ADBvWaYIpCygIy/UsD/UKNeE5jwauved1jgIi+bgtJxxDZF517pego=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741248084; c=relaxed/simple;
-	bh=YXfui0KAvTIvMPJoyMI8UxADsy9dy1q4GRghq0oBVCQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DYx7kIF23vNx402jBwlaKVtTQUj3IGPu3cUZphj90JeBzjXo/VQSY7Xi6ryO3DVTSXtS9aM/5MRBy86HENcD47x5T+r7YtnW70zTuHyrVbWxveitosgpEs3NvpqloLua9BnXfFYl4GVBYP+KU41ka57VErA8lUVb2cQDLv7P50k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=H6efhXRc; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1741248083; x=1772784083;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=YXfui0KAvTIvMPJoyMI8UxADsy9dy1q4GRghq0oBVCQ=;
-  b=H6efhXRck/WdFnSAFa4NSz2EbrBxUtphbHKeCBLvv8OzFVyXtPUgeQ8t
-   lFBhyfG1SLsES/X4iTb/EZJhZPUKnSQU9tVcHALjopqytgniew9W5Boym
-   Kk8TQjEn8fCrexyzj2zv2DbkR1PWwQqrCrLVV6E83GvFuk8uHUYC/QPi0
-   v1ji+GYbijMW+9hzjU3552GNvfSWiUZDZLc3ePaWvaspPY+YECaZ31IOo
-   jQchts7Yb7a5A3BhgUmxHM2x8duiOf9GeWF+55VP5/XaOjBysEC4D7Yi7
-   h0FTn7Yf16Uhp8E5IpwFpdk26OP/MkNWsNZlHIYfWLlw1Y57jFww3JrjO
-   w==;
-X-CSE-ConnectionGUID: iWj2sUrNSHWzCKTaAHDtjw==
-X-CSE-MsgGUID: gQ93XVmfQ4SlsXmeBAvRIw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11363"; a="42378774"
-X-IronPort-AV: E=Sophos;i="6.14,225,1736841600"; 
-   d="scan'208";a="42378774"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 06 Mar 2025 00:01:23 -0800
-X-CSE-ConnectionGUID: DumshYVjTb6zcdY+U4a9Ow==
-X-CSE-MsgGUID: p2i4/SkZS96Ap6u64H5YHw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.12,224,1728975600"; 
-   d="scan'208";a="119470433"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa007.jf.intel.com with ESMTP; 06 Mar 2025 00:01:19 -0800
-Received: by black.fi.intel.com (Postfix, from userid 1000)
-	id 1A52F20B; Thu, 06 Mar 2025 10:01:17 +0200 (EET)
-Date: Thu, 6 Mar 2025 10:01:17 +0200
-From: "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Borislav Petkov <bp@alien8.de>, Joerg Roedel <jroedel@suse.de>, 
-	Ingo Molnar <mingo@kernel.org>, Joerg Roedel <joro@8bytes.org>, x86@kernel.org, hpa@zytor.com, 
-	Tom Lendacky <thomas.lendacky@amd.com>, Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org, 
-	Larry.Dewey@amd.com, "Alexey Gladkov (Intel)" <alexey.gladkov@intel.com>
-Subject: Re: [PATCH] x86/sev: Make SEV_STATUS available via SYSFS
-Message-ID: <2koe2zg26fndx6d6jcmbg6dzybbgldgrjufupj74nvmav2dmqg@w6bknhosl64h>
-References: <20250305105234.235553-1-joro@8bytes.org>
- <20250305111251.GBZ8gxs_6O7g3gLVEh@fat_crate.local>
- <Z8g01YhM_FtdB5n6@gmail.com>
- <20250305113155.GCZ8g2K1XEdgynTA9D@fat_crate.local>
- <Z8g4sU_dsZgY0PuS@gmail.com>
- <20250305115035.GEZ8g6i7NTiSfkxk7J@fat_crate.local>
- <Z8hYEsHvwUwlOold@suse.de>
- <20250305153705.GKZ8hvoaz2GPt2rGtu@fat_crate.local>
- <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
+	s=arc-20240116; t=1741248757; c=relaxed/simple;
+	bh=r2SNjSzrTJri8d4TezjFMm+gimnEBaOKUfo4+QtRBeI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B1/5VRgOrtBatUDZ09pwrfd6RIjU7pF8to5sVRSGyhmhq99875pFWayJeeyPFbbIw41sc6TB878ZJXkVXKUFkbjMHyjyFtzAC4l3DegmesVGZrL/IEZifK29mW+xLtQ8cGUAKWIHNerFCRRyx160qhgRQJcQtdzz7gqSs4SGuPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+Received: from inva020.nxp.com (localhost [127.0.0.1])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 7443C1A1021;
+	Thu,  6 Mar 2025 09:03:52 +0100 (CET)
+Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
+	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 3B8D91A1018;
+	Thu,  6 Mar 2025 09:03:52 +0100 (CET)
+Received: from lsv03121.swis.in-blr01.nxp.com (lsv03121.swis.in-blr01.nxp.com [92.120.146.118])
+	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 693181800257;
+	Thu,  6 Mar 2025 16:03:50 +0800 (+08)
+From: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+To: miquel.raynal@bootlin.com,
+	conor.culhane@silvaco.com,
+	alexandre.belloni@bootlin.com,
+	linux-i3c@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org,
+	manjunatha.venkatesh@nxp.com,
+	rvmanjumce@gmail.com
+Subject: [PATCH v2] svc-i3c-master: Fix read from unreadable memory at svc_i3c_master_ibi_work()
+Date: Thu,  6 Mar 2025 13:33:45 +0530
+Message-ID: <20250306080345.243957-1-manjunatha.venkatesh@nxp.com>
+X-Mailer: git-send-email 2.46.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <b0cf4bfc-bf22-4986-9e76-62e3f54179ea@intel.com>
+Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: ClamAV using ClamSMTP
 
-On Wed, Mar 05, 2025 at 08:40:29AM -0800, Dave Hansen wrote:
-> On 3/5/25 07:37, Borislav Petkov wrote:
-> >> So this question boils down to whether the parsing of the bits happens
-> >> in kernel- or user-space. Actually there is already parsing in
-> >> kernel-space to print the status bits into the kernel log:
-> >>
-> >> 	SEV: Status: SEV SEV-ES SEV-SNP
-> >>
-> >> ... which is great for a quick glance without needing any tools. The
-> >> user-space tools which already exist have their own parsing of the bits
-> >> and for them it is much easier to consume the raw value of the
-> >> SEV_STATUS MSR. See my changes to snpguest:
-> >>
-> >> 	https://github.com/virtee/snpguest/pull/88/files
-> > Well, I guess we can do both:
-> > 
-> > cat /sys/...
-> > 
-> > SEV_STATUS(0xdeadbeef): SEV SEV-ES SEV-SNP
-> > 
-> > So that people don't have to pick apart the MSR hex value.
-> > 
-> >> Btw, what is the equivalent on the Intel TDX side for these feature
-> >> bits?
-> > There is none, AFAICT. That's why the whole discussion.
-> 
-> TDX's history isn't as exciting as SEV.
-> 
-> TDX guests have CPUID to tell them that they're running that way.
-> 
-> TDX hosts are much more arcane. You can't _actually_ know that it's a
-> TDX host until you actually start making successful SEAMCALLs and the
-> TDX module answers them. But we fudge it by just looking at
-> MSR_IA32_MKTME_KEYID_PARTITIONING at boot and assuming that anything
-> with that MSR will be able to be a TDX host.
-> 
-> We've just got X86_FEATUREs for hosts and guests:
-> 
-> 	#define X86_FEATURE_TDX_HOST_PLATFORM ( 7*32+ 7)
-> 	#define X86_FEATURE_TDX_GUEST ( 8*32+22)
-> 
-> and that's it.
-> 
-> Folks certainly _want_ something in sysfs to dump the TDX module version
-> and so forth, but we've resisted the urge so far.
+As part of I3C driver probing sequence for particular device instance,
+While adding to queue it is trying to access ibi variable of dev which is
+not yet initialized causing "Unable to handle kernel read from unreadable
+memory" resulting in kernel panic.
 
-Alexey looking into exposing TDX module version in sysfs for both guest
-and host.
+Signed-off-by: Manjunatha Venkatesh <manjunatha.venkatesh@nxp.com>
+---
+Changes since v1:
+  - Patch tittle updated as per the review feedback
 
-I think it would be useful for guest to make attributes and TD_CTLS
-available via sysfs. So far, we only dump them in dmesg on boot (see
-564ea84c8c14).
+ drivers/i3c/master/svc-i3c-master.c | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
 
+diff --git a/drivers/i3c/master/svc-i3c-master.c b/drivers/i3c/master/svc-i3c-master.c
+index d6057d8c7dec..98c4d2e5cd8d 100644
+--- a/drivers/i3c/master/svc-i3c-master.c
++++ b/drivers/i3c/master/svc-i3c-master.c
+@@ -534,8 +534,11 @@ static void svc_i3c_master_ibi_work(struct work_struct *work)
+ 	switch (ibitype) {
+ 	case SVC_I3C_MSTATUS_IBITYPE_IBI:
+ 		if (dev) {
+-			i3c_master_queue_ibi(dev, master->ibi.tbq_slot);
+-			master->ibi.tbq_slot = NULL;
++			data = i3c_dev_get_master_data(dev);
++			if (master->ibi.slots[data->ibi]) {
++				i3c_master_queue_ibi(dev, master->ibi.tbq_slot);
++				master->ibi.tbq_slot = NULL;
++			}
+ 		}
+ 		svc_i3c_master_emit_stop(master);
+ 		break;
 -- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+2.46.1
+
 
