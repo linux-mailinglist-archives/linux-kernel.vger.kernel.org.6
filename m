@@ -1,119 +1,179 @@
-Return-Path: <linux-kernel+bounces-548506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D8C3A545C3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:03:21 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE87A545C7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:03:40 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D3E13A6C3A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:03:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C1B81884A83
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:03:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF5C72066EF;
-	Thu,  6 Mar 2025 09:03:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AF362080F5;
+	Thu,  6 Mar 2025 09:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="V15rHs2S";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Lo/U7vzv"
-Received: from fhigh-b1-smtp.messagingengine.com (fhigh-b1-smtp.messagingengine.com [202.12.124.152])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="kXmdeiK/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5DF71EDA10
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69050202C4D;
+	Thu,  6 Mar 2025 09:03:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251794; cv=none; b=FMW/VMJmbKzS6Pz1CZ6YnLKy527uPyoc0zTF09kh1RIwMYsUX6yd/2kSHJ39z6Aq2Ri98Sgh+/+pcy+SfbLi50uw4cNcIsvD0yo6G8oKzPSPiOLz9NGO644LuPj+UgST8/J3zSZe5ChgzHuSCE3lYeFXhkTzdS4I5zOVq+U015o=
+	t=1741251810; cv=none; b=khZ3/pujczy4kiXcIie9GWjmMmMEhZ4gON8OBaF3cCActCgTUuQb2Al86PE8M/Wt7wBHl/BE+iQW9GZi/yjiF8AZnfspXTOO9oupHfs07FrdwWTbq3UF0d6PZRYhGdJI10vF3+HenflzgaIB2nQn1XmhtmZ6sRztYAXSTmkhm+0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251794; c=relaxed/simple;
-	bh=T9Sxi7UM96lJZzoWcrB8nkdiF4e8dZcfT3E9sdmD6oQ=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=nCEvOiR5flirVGMD8DRlUge97mIV2a1lmIjc5qSfkbvHGzN35uZYB/+3s5wJYpcRYD+N87GZUp584RHgfLV5bbBO32yChyOfZ49d5Rr7GRPZz+UwFJBjcUm9K8QKqzOTLjqOcmH8pXzH8jhsnl3cBEgV9mllzv6BduiDTZOo7Kg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=V15rHs2S; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Lo/U7vzv; arc=none smtp.client-ip=202.12.124.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 564422540103;
-	Thu,  6 Mar 2025 04:03:10 -0500 (EST)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-09.internal (MEProxy); Thu, 06 Mar 2025 04:03:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm3; t=1741251790;
-	 x=1741338190; bh=T9Sxi7UM96lJZzoWcrB8nkdiF4e8dZcfT3E9sdmD6oQ=; b=
-	V15rHs2SARquaLYXZI2/eQHUlWmBI7MvlxhEk04PptPf9NqMUCW4haq5dDgTlTdo
-	NuObg8qsLqYxGTW217FjBPp/Q+cPXlX/83mUlEO3YKRSD8mBPSOARxQBZiaIlxaR
-	vswGotNjvNuSkLM87T5A2XelXPd9rgLC4+bGQvUuTAHkw3l3caPPUprVZYW2dBh2
-	2/VBF3Gssj8nKy6KnmJjBRj756UpIOErqoJfCBctBw7BcRqm8qXlA96CVTqcGklK
-	mSIam4WMAK1E8Wx/Ss1I/ijEMmg0/hOHIK+2tt+Blb8KIurFS3AW+fpU2gSys9+F
-	Z1g40xdpoC+dLVBtz4Zymw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm1; t=1741251790; x=
-	1741338190; bh=T9Sxi7UM96lJZzoWcrB8nkdiF4e8dZcfT3E9sdmD6oQ=; b=L
-	o/U7vzv6zGcc6BHgsCcSMt1Ya/Tk9t5Vhg6md63Ac8LUor1/4PylT9wiI69+6YEx
-	Eo+S0xgB2Q8DtQwSettvmJLMtCrQSiI2xQPHVUIqty0kD7ePV9xI5MIt0yzsUP/P
-	WDmsUXUAqRkVImIWfiEyjfuZsnxwlShklyDOVLef/BbDrNCyYwM16kiylAt83P3F
-	6P7c8qDtbB4SDGOuu8p0S0jL4zdHh1C585QidvAkckNEbCjBYO16gaX4KA18RWA8
-	LCxN/ryw6FJYmK4XsSql9dCL7cOMn7+63hFHMMRaRLhuP1/L0R54dKDfsm0bQbIZ
-	bLdaXOVGsLadii6qV27ig==
-X-ME-Sender: <xms:zWTJZ22cS8InxrZX6ifTZXrwoCoUmsmXiV44cylar0MzvI4-3cwtlg>
-    <xme:zWTJZ5GkLauUzoNB79u6ryP0t80t3ssMGe63KFqgLlF4YIqNZYXit0-J0RDpq981g
-    fupqyeP2-BN_ZAj7w0>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeefvddrtddtgddutdejfedvucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggv
-    pdfurfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpih
-    gvnhhtshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertder
-    tddtnecuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnug
-    gsrdguvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeet
-    fefggfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrg
-    hmpehmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohep
-    hedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghrghhlsegsghguvghvrdhplh
-    dprhgtphhtthhopegsrghrthhoshiirdhgohhlrghsiigvfihskhhisehlihhnrghrohdr
-    ohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvgdprhgtphhtth
-    hopehlihhnuhigqdgrrhhmqdhkvghrnhgvlheslhhishhtshdrihhnfhhrrgguvggrugdr
-    ohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlh
-    drohhrgh
-X-ME-Proxy: <xmx:zWTJZ-6vVU_hwfA6CpYoqM2_KyGma8sbJjdhwmvqNDAhFx6yZsqcqQ>
-    <xmx:zWTJZ30o15uhtICFaA1zmH6UUk05KKBmCcFupwZqcfu2imFlHTPWcQ>
-    <xmx:zWTJZ5FPfJ4OcwRRQptLa4sFJGVOBoX7ftFAatrjyFrVEalF7tLKBw>
-    <xmx:zWTJZw_D_MJfCB3fBjmoGY96PU-QRXIFco6eSW_JVTcISiHtJ5h0UA>
-    <xmx:zmTJZ9h7ajJd_2rJtxZzCwtyFpi-AAHzFpfQAlj3kWwm95_Kiyd3bg75>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id D60B82220072; Thu,  6 Mar 2025 04:03:09 -0500 (EST)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1741251810; c=relaxed/simple;
+	bh=cpIhfzRQfyAuBaafeZo6QXxygGLDe7ulLKTftDugqOM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CtRE3Z47jhT44M/6oZFVOy+KXiEajTeypsWJMpkrTnEeg/5fSVao8oklXH4u9ked1YiyGeg5/00NAinwsfKxaL2b2T/W3f+8MOjhIcOn4w9MYTKdtwhETFULHKH2+F86hxqWPVPKND8o7idDG6saDiXtV45zcJylloaXg5ez33Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=kXmdeiK/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C6F8C4CEE0;
+	Thu,  6 Mar 2025 09:03:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1741251809;
+	bh=cpIhfzRQfyAuBaafeZo6QXxygGLDe7ulLKTftDugqOM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kXmdeiK/PSu5WC7U2LW7pvdm4dRSvDK8TGVY/KXqJI1K1kXFcPNPvL1c5fQhJiuWB
+	 X1ob1NDcwRw9PaNqmiL2koEbNzyCP900K66TSXNEuwBoFMhBagmpC+4BZu6TAlTyrV
+	 /ROLVgjlKNI7PRN6B2X/3o+FfmuQ/QApUxepU3yA=
+Date: Thu, 6 Mar 2025 10:03:26 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: David Jander <david@protonic.nl>
+Cc: Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
+	Jonathan Corbet <corbet@lwn.net>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-doc@vger.kernel.org, Nuno Sa <nuno.sa@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Oleksij Rempel <o.rempel@pengutronix.de>
+Subject: Re: [RFC PATCH 1/7] drivers: Add motion control subsystem
+Message-ID: <2025030638-wavy-napkin-41ab@gregkh>
+References: <20250227162823.3585810-1-david@protonic.nl>
+ <20250227162823.3585810-2-david@protonic.nl>
+ <6c6cqaxmsy7miesel4ghdeiea6nrpe4gti4xf5enfyg4uqro5u@vpmtd2t7gydi>
+ <20250305164046.4de5b6ef@erd003.prtnl>
+ <mzxammninwmak5ti4c6is4pbdx3xzzziiwbxiwrldjyxgae4ok@ocec24vu4txa>
+ <2025030611-embezzle-sacrament-00d9@gregkh>
+ <20250306092013.1147f27e@erd003.prtnl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 06 Mar 2025 10:02:49 +0100
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Bartosz Golaszewski" <brgl@bgdev.pl>,
- "Thomas Gleixner" <tglx@linutronix.de>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>
-Message-Id: <1f599860-0276-47a2-89cb-e655e516cf23@app.fastmail.com>
-In-Reply-To: <20250306084552.15894-1-brgl@bgdev.pl>
-References: <20250306084552.15894-1-brgl@bgdev.pl>
-Subject: Re: [PATCH] irqchip: davinci: remove leftover header
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250306092013.1147f27e@erd003.prtnl>
 
-On Thu, Mar 6, 2025, at 09:45, Bartosz Golaszewski wrote:
-> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Commit fa8dede4d0a0 ("irqchip: remove davinci aintc driver") removed the
-> davinci aintc driver but left behind the associated header. Remove it
-> now.
->
-> Fixes: fa8dede4d0a0 ("irqchip: remove davinci aintc driver")
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Thu, Mar 06, 2025 at 09:20:13AM +0100, David Jander wrote:
+> On Thu, 6 Mar 2025 08:18:46 +0100
+> Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
+> 
+> > On Thu, Mar 06, 2025 at 12:21:22AM +0100, Uwe Kleine-König wrote:
+> > > Hello David,
+> > > 
+> > > On Wed, Mar 05, 2025 at 04:40:45PM +0100, David Jander wrote:  
+> > > > On Fri, 28 Feb 2025 17:44:27 +0100
+> > > > Uwe Kleine-König <u.kleine-koenig@baylibre.com> wrote:  
+> > > > > On Thu, Feb 27, 2025 at 05:28:17PM +0100, David Jander wrote:
+> > > > > [...]  
+> > > > > > +static int motion_open(struct inode *inode, struct file *file)
+> > > > > > +{
+> > > > > > +	int minor = iminor(inode);
+> > > > > > +	struct motion_device *mdev = NULL, *iter;
+> > > > > > +	int err;
+> > > > > > +
+> > > > > > +	mutex_lock(&motion_mtx);    
+> > > > > 
+> > > > > If you use guard(), error handling gets a bit easier.  
+> > > > 
+> > > > This looks interesting. I didn't know about guard(). Thanks. I see the
+> > > > benefits, but in some cases it also makes the locked region less clearly
+> > > > visible. While I agree that guard() in this particular place is nice,
+> > > > I'm hesitant to try and replace all mutex_lock()/_unlock() calls with guard().
+> > > > Let me know if my assessment of the intended use of guard() is incorrect.  
+> > > 
+> > > I agree that guard() makes it harder for non-trivial functions to spot
+> > > the critical section. In my eyes this is outweight by not having to
+> > > unlock in all exit paths, but that might be subjective. Annother
+> > > downside of guard is that sparse doesn't understand it and reports
+> > > unbalanced locking.
+> > >    
+> > > > > > +	list_for_each_entry(iter, &motion_list, list) {
+> > > > > > +		if (iter->minor != minor)
+> > > > > > +			continue;
+> > > > > > +		mdev = iter;
+> > > > > > +		break;
+> > > > > > +	}    
+> > > > > 
+> > > > > This should be easier. If you use a cdev you can just do
+> > > > > container_of(inode->i_cdev, ...);  
+> > > > 
+> > > > Hmm... I don't yet really understand what you mean. I will have to study the
+> > > > involved code a bit more.  
+> > > 
+> > > The code that I'm convinced is correct is
+> > > https://lore.kernel.org/linux-pwm/00c9f1181dc351e1e6041ba6e41e4c30b12b6a27.1725635013.git.u.kleine-koenig@baylibre.com/
+> > > 
+> > > This isn't in mainline because there is some feedback I still have to
+> > > address, but I think it might serve as an example anyhow.
+> > >   
+> > > > > > [...]
+> > > > > > +
+> > > > > > +static const struct class motion_class = {
+> > > > > > +	.name		= "motion",
+> > > > > > +	.devnode	= motion_devnode,    
+> > > > > 
+> > > > > IIRC it's recommended to not create new classes, but a bus.  
+> > > > 
+> > > > Interesting. I did some searching, and all I could find was that the chapter
+> > > > in driver-api/driver-model about classes magically vanished between versions
+> > > > 5.12 and 5.13. Does anyone know where I can find some information about this?
+> > > > Sorry if I'm being blind...  
+> > > 
+> > > Half knowledge on my end at best. I would hope that Greg knows some
+> > > details (which might even be "no, classes are fine"). I added him to Cc:  
+> > 
+> > A class is there for when you have a common api that devices of
+> > different types can talk to userspace (i.e. the UAPI is common, not the
+> > hardware type).  Things like input devices, tty, disks, etc.  A bus is
+> > there to be able to write different drivers to bind to for that hardware
+> > bus type (pci, usb, i2c, platform, etc.)
+> > 
+> > So you need both, a bus to talk to the hardware, and a class to talk to
+> > userspace in a common way (ignore the fact that we can also talk to
+> > hardware directly from userspace like raw USB or i2c or PCI config
+> > space, that's all bus-specific stuff).
+> 
+> Thanks for chiming in. Let me see if I understand this correctly: In this
+> case, I have a UAPI that is common to different types of motion control
+> devices. So I need a class. check.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+Correct.
+
+> Do I need a bus? If one can conceive other drivers or kernel parts that talk to
+> motion drivers, I would need a bus. If that doesn't make sense, I don't. Right?
+
+Correct.
+
+> I actually can think of a new motion device that acts as an aggregator of
+> several single-channel motion devices into a single "virtual" multi-channel
+> device... so do I need also a bus? I suppose...?
+
+Nope, that should just be another class driver.  Think about how input
+does this, some input /dev/ nodes are the sum of ALL input /dev/ nodes
+together, while others are just for individual input devices.
+
+> Then the question remains: why did the chapter about classes vanish?
+
+What are you specifically referring to?  I don't remember deleting any
+documentation, did files move around somehow and the links not get
+updated?
+
+thanks,
+
+greg k-h
 
