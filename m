@@ -1,133 +1,179 @@
-Return-Path: <linux-kernel+bounces-549134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AC5A54DE9
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:36:02 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 482C9A54DEB
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 15:36:26 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43195168B49
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:36:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F31EA3AB1B0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2A4A16D9AA;
-	Thu,  6 Mar 2025 14:35:57 +0000 (UTC)
-Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64E3116EB42;
+	Thu,  6 Mar 2025 14:36:20 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBCCF70838
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 14:35:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3AB170838;
+	Thu,  6 Mar 2025 14:36:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741271757; cv=none; b=jcbAF8McypfwdciA9xPjwmgYHn83XYS9q98CEcH+3e1SJf2PZxVGLFr48VLxuNyXCozcPm46umXwvg7vNFdlPv6sYIjfJM1gKd8qbANHtbk0my1WDFQ5LMpAl6MlwAIzvWwUB2E6vE/FwBu2cbU/L16B/FTPOj/fvc9me6IMyPo=
+	t=1741271780; cv=none; b=S29zqZYf7Ozq4D1sHAqsa48MTPQ35pRC2Lv+EXI3qesviZMWKj3lzPQEFXqY1vCPrEkw8d1pjB7M08ZLk2o2RYvxi9Id4/Dqyaz4LdS+IpF5exuKFwylQjXAIhn1b674T6ZHoi0IGGOxHfcnTzCnxP7ymJvZbowIYcXBvTOO9T8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741271757; c=relaxed/simple;
-	bh=wtFFuTxcfMslv6SxPuzbH2ohFV+Ccz/6dlOARsPXUCo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=YPFDUPI3jicT5Njk9R07VxJBgknWgPx/YGcmh4YmzoSxEYxH49L94wvdqyWgtKc/oQINdVPvGs2b7nR4AEyDharE96tfBFZpHBjvte6kmrGRWyqX+OyxIlfQ85rbYJ0kKlhJPqZOV38UBaWhUCGQADrxFbwy5lA/6PPMk/SUA4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4Z7sLJ6ZQcz1f08P;
-	Thu,  6 Mar 2025 22:31:36 +0800 (CST)
-Received: from kwepemd500013.china.huawei.com (unknown [7.221.188.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9C90F1402C1;
-	Thu,  6 Mar 2025 22:35:51 +0800 (CST)
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemd500013.china.huawei.com (7.221.188.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 6 Mar 2025 22:35:50 +0800
-Message-ID: <14555bcf-933d-4322-b1a6-d33e37c55500@huawei.com>
-Date: Thu, 6 Mar 2025 22:35:49 +0800
+	s=arc-20240116; t=1741271780; c=relaxed/simple;
+	bh=+hBsYDGnvL3coGgp/aBij1w2/BTz8yx/AQM8HVZKSVg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mTcY5k/c4F0TeHGJF7fXFbbkUS0vVbNGvD8ZEq9bc+kVG9D9kZMY5N2ko0UZIiTAcDwKJAv76jRBUzgNhcytUC/ES4rZKimrKGvDTmFIXTPDibfJGX/mIr6tbZO2/Dt7fYrDgYCxSRkpfw0OcXx4GEIh5OJd3s9/EtT4g5qnny4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7979C4CEE0;
+	Thu,  6 Mar 2025 14:36:18 +0000 (UTC)
+Date: Thu, 6 Mar 2025 14:36:16 +0000
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Alice Ryhl <aliceryhl@google.com>
+Cc: Cristian Marussi <cristian.marussi@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org, arm-scmi@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [Bug report] Memory leak in scmi_device_create
+Message-ID: <Z8my4MZ-In0ibxVY@arm.com>
+References: <Z8g8vhS9rqQ_ez48@google.com>
+ <Z8iFeEWq16pNQdMa@pluto>
+ <Z8mCbc2Z2QGd3f8M@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 drm-dp 3/8] drm/hisilicon/hibmc: Add dp serdes cfg in
- dp process
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <lidongming5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-	<shiyongbang@huawei.com>
-References: <20250305112647.2344438-1-shiyongbang@huawei.com>
- <20250305112647.2344438-4-shiyongbang@huawei.com>
- <bg5yiyru6fqnm73qctgullgsdnywdnv2zbcy72mvglxf2uttp4@v2cmuekciqgm>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <bg5yiyru6fqnm73qctgullgsdnywdnv2zbcy72mvglxf2uttp4@v2cmuekciqgm>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemd500013.china.huawei.com (7.221.188.12)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8mCbc2Z2QGd3f8M@google.com>
 
-> On Wed, Mar 05, 2025 at 07:26:42PM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
->>
->> Add dp serdes cfg in link training process, and related adapting
->> and modificating. Change some init values about training,
->> because we want completely to negotiation process, so we start with
->> the maximum rate and the electrical characteristic level is 0.
-> In the commit message there should be a mention, why are you also
-> changing hibmc_kms_init().
->
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> ---
->> ChangeLog:
->> v3 -> v4:
->>    - add comments for if-statement of dp_init(), suggested by Dmitry Baryshkov.
->> v2 -> v3:
->>    - change commit to an imperative sentence, suggested by Dmitry Baryshkov.
->>    - put HIBMC_DP_HOST_SERDES_CTRL in dp_serdes.h, suggested by Dmitry Baryshkov.
->> v1 -> v2:
->>    - splittting the patch and add more detailed the changes in the commit message, suggested by Dmitry Baryshkov.
->> ---
->>   1                                             |  0
->>   .../gpu/drm/hisilicon/hibmc/dp/dp_config.h    |  1 +
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  5 ++-
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 32 ++++++++++++++++---
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_reg.h   |  5 +++
->>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_drv.c   | 12 +++----
->>   6 files changed, 43 insertions(+), 12 deletions(-)
->>   create mode 100644 1
->>
-> [...]
->
->> @@ -121,9 +119,11 @@ static int hibmc_kms_init(struct hibmc_drm_private *priv)
->>   		return ret;
->>   	}
->>   
->> -	/* if DP existed, init DP */
->> -	if ((readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL) &
->> -	     HIBMC_DP_HOST_SERDES_CTRL_MASK) == HIBMC_DP_HOST_SERDES_CTRL_VAL) {
->> +	/* if the serdes reg is readable and is not equal to 0,
->> +	 * DP existed, and init DP.
->> +	 */
-> Nit: A typical format for block comments is:
->
->    /*
->     * Something Something Something
->     */
->
-> Please follow it.
+On Thu, Mar 06, 2025 at 11:09:33AM +0000, Alice Ryhl wrote:
+> On Wed, Mar 05, 2025 at 05:10:16PM +0000, Cristian Marussi wrote:
+> > On Wed, Mar 05, 2025 at 11:59:58AM +0000, Alice Ryhl wrote:
+> > > This was with a kernel running v6.13-rc3, but as far as I can tell, no
+> > > relevant changes have landed since v6.13-rc3. My tree *does* include
+> > > commit 295416091e44 ("firmware: arm_scmi: Fix slab-use-after-free in
+> > > scmi_bus_notifier()"). I've only seen this kmemleak report once, so it's
+> > > not happening consistently.
+> > > 
+> > > See below for the full kmemleak report.
+> > > 
+> > > Alice
+> > > 
+> > > $ sudo cat /sys/kernel/debug/kmemleak
+> > > unreferenced object 0xffffff8106c86000 (size 2048):
+> > >   comm "swapper/0", pid 1, jiffies 4294893094
+> > >   hex dump (first 32 bytes):
+> > >     02 00 00 00 10 00 00 00 c0 01 bc 03 81 ff ff ff  ................
+> > >     60 67 ba 03 81 ff ff ff 18 60 c8 06 81 ff ff ff  `g.......`......
+> > >   backtrace (crc feae9680):
+> > >     [<00000000197aa008>] kmemleak_alloc+0x34/0xa0
+> > >     [<0000000056fe02c9>] __kmalloc_cache_noprof+0x1e0/0x450
+> > >     [<00000000a8b3dfe1>] __scmi_device_create+0xb4/0x2b4
+> > >     [<000000008714917b>] scmi_device_create+0x40/0x194
+> > >     [<000000001818f3cf>] scmi_chan_setup+0x144/0x3b8
+> > >     [<00000000970bad38>] scmi_probe+0x584/0xa78
+> > >     [<000000002600d2fd>] platform_probe+0xbc/0xf0
+> > >     [<00000000f6f556b4>] really_probe+0x1b8/0x520
+> > >     [<00000000eed93d59>] __driver_probe_device+0xe0/0x1d8
+> > >     [<00000000d613b754>] driver_probe_device+0x6c/0x208
+> > >     [<00000000187a9170>] __driver_attach+0x168/0x328
+> > >     [<00000000e3ff1834>] bus_for_each_dev+0x14c/0x178
+> > >     [<00000000984a3176>] driver_attach+0x34/0x44
+> > >     [<00000000fc35bf2a>] bus_add_driver+0x1bc/0x358
+> > >     [<00000000747fce19>] driver_register+0xc0/0x1a0
+> > >     [<0000000081cb8754>] __platform_driver_register+0x40/0x50
+> > > unreferenced object 0xffffff8103bc01c0 (size 32):
+> > 
+> > I could not reproduce on my setup, even though I run a system with
+> > all the existent SCMI protocols (and related drivers) enabled (and
+> > so a lot of device creations) and a downstream test driver that causes
+> > even more SCMI devices to be created/destroyed at load/unload.
+> > 
+> > Coming down the path from scmi_chan_setup(), it seems something around
+> > transport devices creation, but it is not obvious to me where the leak
+> > could hide....
+> > 
+> > ...any particular setup on your side ? ...using LKMs, loading/unloading,
+> > any usage pattern that could help me reproduce ?
+> 
+> I looked into this a bit more, and actually it does happen consistently.
+> It's just that kmemleak doesn't report it until 10 minutes after
+> booting, so I did not notice it.
 
-Ok, got it.
+You can force the scanning with:
 
+  echo scan > /sys/kernel/debug/kmemleak
 
->> +	ret = readl(priv->mmio + HIBMC_DP_HOST_SERDES_CTRL);
->> +	if (ret) {
->>   		ret = hibmc_dp_init(priv);
->>   		if (ret)
->>   			drm_err(dev, "failed to init dp: %d\n", ret);
->> -- 
->> 2.33.0
->>
+Just do it a couple of times after boot, no need to wait 10 min for the
+default background scanning.
+
+> user@rk3588-ci:~$ sudo cat /sys/kernel/debug/kmemleak
+> unreferenced object 0xffffff81068c0000 (size 2048):
+>   comm "swapper/0", pid 1, jiffies 4294893128
+>   hex dump (first 32 bytes):
+>     02 00 00 00 10 00 00 00 40 a3 7a 03 81 ff ff ff  ........@.z.....
+>     60 c8 79 03 81 ff ff ff 18 00 8c 06 81 ff ff ff  `.y.............
+>   backtrace (crc 60df30fb):
+>     kmemleak_alloc+0x34/0xa0
+>     __kmalloc_cache_noprof+0x1e0/0x450
+>     __scmi_device_create+0xb4/0x2b4
+
+Is this the kzalloc() for sizeof(*scmi_dev)? It's surprisingly large, I
+thought it would go for the kmalloc-1k slab as struct device is below
+this side, at least for my builds. Anyway...
+
+>     scmi_device_create+0x40/0x194
+>     scmi_chan_setup+0x144/0x3b8
+>     scmi_probe+0x51c/0x9fc
+>     platform_probe+0xbc/0xf0
+>     really_probe+0x1b8/0x520
+>     __driver_probe_device+0xe0/0x1d8
+>     driver_probe_device+0x6c/0x208
+>     __driver_attach+0x168/0x328
+>     bus_for_each_dev+0x14c/0x178
+>     driver_attach+0x34/0x44
+>     bus_add_driver+0x1bc/0x358
+>     driver_register+0xc0/0x1a0
+>     __platform_driver_register+0x40/0x50
+> unreferenced object 0xffffff81037aa340 (size 32):
+>   comm "swapper/0", pid 1, jiffies 4294893128
+>   hex dump (first 32 bytes):
+>     5f 5f 73 63 6d 69 5f 74 72 61 6e 73 70 6f 72 74  __scmi_transport
+>     5f 64 65 76 69 63 65 5f 72 78 5f 31 30 00 ff ff  _device_rx_10...
+>   backtrace (crc 8dab7ca7):
+>     kmemleak_alloc+0x34/0xa0
+>     __kmalloc_node_track_caller_noprof+0x234/0x528
+>     kstrdup+0x48/0x80
+>     kstrdup_const+0x30/0x3c
+
+These are referenced from the main structure above, so they'd be
+reported as leaks as well.
+
+This loop in scmi_device_create() looks strange:
+
+	list_for_each_entry(rdev, phead, node) {
+		struct scmi_device *sdev;
+
+		sdev = __scmi_device_create(np, parent,
+					    rdev->id_table->protocol_id,
+					    rdev->id_table->name);
+		/* Report errors and carry on... */
+		if (sdev)
+			scmi_dev = sdev;
+		else
+			pr_err("(%s) Failed to create device for protocol 0x%x (%s)\n",
+			       of_node_full_name(parent->of_node),
+			       rdev->id_table->protocol_id,
+			       rdev->id_table->name);
+	}
+
+We can override scmi_dev a few times in the loop and lose the previous
+sdev allocations. Is this intended?
+
+-- 
+Catalin
 
