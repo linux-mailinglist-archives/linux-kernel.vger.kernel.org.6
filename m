@@ -1,172 +1,132 @@
-Return-Path: <linux-kernel+bounces-548502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15993A545BA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:01:17 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0621A545BC
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:01:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DE791645F7
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:01:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C11C53A4094
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 09:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B73BE8828;
-	Thu,  6 Mar 2025 09:01:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B87F6207DF4;
+	Thu,  6 Mar 2025 09:01:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=earth.li header.i=@earth.li header.b="SOMuJmNd"
-Received: from the.earth.li (the.earth.li [93.93.131.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MEPYBiBY"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26CF019D071;
-	Thu,  6 Mar 2025 09:01:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.93.131.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D6C619D880
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 09:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741251666; cv=none; b=XVZ1+kGYXio0dxYy/h/zGIiyA6q6b5nNo63sTDPR+9s8hzl2SbLutEB5t3uTwbFiZbd5sXDyhyqcfOIlqMFU8muFlukwFz5nqbqpmKP5s25N9eYoZMszI2WUmcSiM2aVGRRfZwzVZcJPC3TAEM27wpjHVXWVt1P9mwLT28ngJsQ=
+	t=1741251699; cv=none; b=B1odTdleDbk76QB0Dd6a4LGarEC9wr1OC2T71rbEuB0bo8duynM3f0cxBWf5N+O/Zu4r5Y5ZjKmAiNFyY7SDPMpyvYJVkfwQ7EshC11l5PXP82kAXbxt49b1/ozx2lS7cs3gGTJoyC22gdSPvmzm/TuQUsxgLGd1zyDxX4vTngU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741251666; c=relaxed/simple;
-	bh=bFPyYCMrzKR8vp8DZ4QjKL2f7mF9ZTGXU+XgZbC8/SE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=HhvgE5Hgv4L5uKm2f5Hb/cEv1+ox+stjg7R/IqAlWqoSvvTAFcavrgymXembcyTbbSotfBRwEJlrP0cG2lFywa1iHWNGcTrbHdZlGSc3ShniHjT+YiO1moZBzko5rK4xsv5jeNTmHX+AoIPQ6PTPG5iTaIOuNlnTHZc7Yv793Dg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li; spf=pass smtp.mailfrom=earth.li; dkim=pass (2048-bit key) header.d=earth.li header.i=@earth.li header.b=SOMuJmNd; arc=none smtp.client-ip=93.93.131.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=earth.li
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=earth.li
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=earth.li;
-	s=the; h=Content-Type:MIME-Version:Message-ID:Subject:Cc:To:From:Date:Sender:
-	Reply-To:Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date
-	:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:
-	References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:List-Post:
-	List-Owner:List-Archive; bh=6IrX1eM8G/pcQ9Ik0E9LCERhzGjEzWP/RJw7jGqJxW4=; b=S
-	OMuJmNdn7T7jkpjiqYfIS8QIoC9gxUfeBwfleKjzyilJ0Yhkvtc2rqhlhx6a9bsiS15557l9+hjoh
-	1z9tPEAvdoJUVFSz240v3wDV0lJEdS233gZCzO6n9DM/WEqjvdOlc/hYO5HK9xHFge1lWJ0KVCyvo
-	B8karKoa6UM33TZaHkPs4OkFx9a2DyQJsO48VbW1K8w+Xo8gCgNNMcT3UfOo8dUGMIv3ghU9WJytq
-	Q/Aw2KHAKoFemjyKiLHcBHa7ymfx6aGwUqA0OApxmSCvoUoSf+b40ra6CD1H1FPg5imTec+dL+Ftu
-	dcxq+huiqtGU9N1RIY3qHTSEDO6+2FwtA==;
-Received: from noodles by the.earth.li with local (Exim 4.96)
-	(envelope-from <noodles@earth.li>)
-	id 1tq768-00BiOQ-17;
-	Thu, 06 Mar 2025 09:00:56 +0000
-Date: Thu, 6 Mar 2025 09:00:56 +0000
-From: Jonathan McDowell <noodles@earth.li>
-To: Jarkko Sakkinen <jarkko@kernel.org>, Peter Huewe <peterhuewe@gmx.de>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Stefan Berger <stefanb@linux.ibm.com>
-Cc: linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] tpm, tpm_tis: Workaround failed command reception on
- Infineon devices
-Message-ID: <Z8lkSKOqBgt78pU2@earth.li>
+	s=arc-20240116; t=1741251699; c=relaxed/simple;
+	bh=4JZq/mGfFlnxPW9pNixuWia30OIERIh5Dpt80vZaWd0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c4Y5/72VpCI0fRO33wqZsePMIhy+8DnNO1h0bsCVMsTTVr+mXClVJ13asay2AIHS8cAcBAvlsV0ztLCgC7KVOmOJ7LozSNhBP+OgS2tdNmloDuX+vFxOqX/LKR9sRBSO6U99oamdpTQYyUFhvR0eWZAT1XOgg5J+Widi+pbVBFs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MEPYBiBY; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-30bef9b04adso606211fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 01:01:37 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741251695; x=1741856495; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pGDL4TEb6k2+qfa9R2TSSmcOiUuibbQbJSU/WRBG5z0=;
+        b=MEPYBiBYNZg/7B66IXX/TIH6QWm54IuLXfRWi5t0HvnW7sC0Ql4wqY0lYSrxE4dBjk
+         64woXQZQ82BBLjiZInU8GePt/nMqJdNFzWYP03+KSegAzg0SXGw4H40VPu52MmJpoDYb
+         TtYVn5jL8KVt+7IXwhtP5gthxxIaXx4smG7BZzz5bMF6+oG4+VMfRG8MzE9K4sAIaeMF
+         Sn5V51sJW8nwBXGHXXUXH0BVej4JZpBlWXZYNC5SN3u0fAOY7iTchyZUvQQMeMqQrNMu
+         tzeE6912QcIEe4tR1e41SFwMbCG5zmKAJgV7R7gXpRTStZQMqfdGpylNFb7Ku11IGF31
+         8zxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741251695; x=1741856495;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pGDL4TEb6k2+qfa9R2TSSmcOiUuibbQbJSU/WRBG5z0=;
+        b=SUKAbFiOQm77iQiGPDmksmac3+ZGXHFD9/sj1cGid5ZVP3orIciKd77y5bZd1cjIJE
+         FMvHcJf41uFrjDZOG1hjFRzaQtQ0BTBze9vpfxNGTZq/rS4ZCwT5xXniltu8IQG6wRAT
+         k7FWok2F9v4oyP2B3RO7oWCFeWRglJbhDrPl12UVVyiVT5ueBP6Qct5UB+ghWNJXnanC
+         YULR7WF3bHOn+Xm5ZIfKbD9UTAB/NH7GmgTNnCMiJGo+eVquaTOPZdO5mG41fvHxYXat
+         Wfw5vzWhEAcwGViwR10rQumsMmOjNGH2qw+vcvI9+jevb3kEcO9rv8KPiOthC8VSywEF
+         EfeA==
+X-Forwarded-Encrypted: i=1; AJvYcCXgFdbtW2mELQqU2pnKl6HfGv/Dr8crXVOG0AA4gbTrwLithnJA4I3Wpah0972CxCngxA8RZ7HoebRTeRo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzyeRep8U1uleny0gaJ0g7Qtqj1dQXmTFnP1hF4xihq5W1hVrW
+	XOqOUo4APiFzzZAaf9pNo33zMmhY1hG+4CpPQ1mEAnr4mUbmo9//2TfebFgg0rRUVToOTp+97du
+	m/gXTT7vGW8lNbf0ZXnLSNrvZTqQ=
+X-Gm-Gg: ASbGncuCfP3u6//sCfiWx9WqHqyu3dJolhjBe7bTz/lurI/glnv962sEmekpStqHgpA
+	ru1NulJyBv6tUH6LeszgR4LAMpje6QXsUSZJfi4sciE4z3vVZ1T214LMRKLJwDbgi8DsEvcQSFN
+	eWGogcpzSaxaEmZpizY9Nv3beiag==
+X-Google-Smtp-Source: AGHT+IHXbMHW4YyShS1AIona/bs0M+r8jlEJ2xiWHRMpOX0N5js+AHUqQ2QNK9oCKsBGzam+l2IFP/7etWxsjce82Gc=
+X-Received: by 2002:a2e:9645:0:b0:30a:448a:467 with SMTP id
+ 38308e7fff4ca-30bd7a6fdadmr19351551fa.21.1741251695146; Thu, 06 Mar 2025
+ 01:01:35 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20250228123825.2729925-1-ubizjak@gmail.com> <20f1af22-71dc-4d62-9615-03030012222e@intel.com>
+ <CAFULd4bpHGE83qc37sbh=rpGj+SFqQrsNDLzL_-NQpo6pQH3jw@mail.gmail.com>
+ <c4aca08a-95c1-48ee-b4da-55a69b74101c@intel.com> <CAFULd4YVOEtT+bsp9H7ijaoJn2e2108tWhiFarRv=QxoUMZaiw@mail.gmail.com>
+ <20250301123802.GCZ8L_qsv7-WwUwqt5@fat_crate.local> <CAFULd4b=4rHcVAVSg_3yMb8=3ReiSriw_rM4vJL9_HvheXE92w@mail.gmail.com>
+ <20250305203633.GNZ8i10cVCCnhhULis@fat_crate.local> <20250305212638.GC35526@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250305212638.GC35526@noisy.programming.kicks-ass.net>
+From: Uros Bizjak <ubizjak@gmail.com>
+Date: Thu, 6 Mar 2025 10:01:31 +0100
+X-Gm-Features: AQ5f1JrRoa_h3AnkQYSTAY5Il94GcvsYSiPDByfBE6bFOLjB-n8gdCfuAyUMEeE
+Message-ID: <CAFULd4ZsHKA4Yh9CsxPjdoW-fa7yD1-Ov7xDN4E3J3c8O8yQ7g@mail.gmail.com>
+Subject: Re: [PATCH -tip] x86/locking/atomic: Use asm_inline for atomic
+ locking insns
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@intel.com>, x86@kernel.org, 
+	linux-kernel@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>, 
+	Ingo Molnar <mingo@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	"H. Peter Anvin" <hpa@zytor.com>, Linus Torvalds <torvalds@linuxfoundation.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Jonathan McDowell <noodles@meta.com>
+On Wed, Mar 5, 2025 at 10:26=E2=80=AFPM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Wed, Mar 05, 2025 at 09:36:33PM +0100, Borislav Petkov wrote:
+> > On Wed, Mar 05, 2025 at 09:54:11AM +0100, Uros Bizjak wrote:
+> > > The -Os argument was to show the effect of the patch when the compile=
+r
+> > > is instructed to take care of the overall size. Giving the compiler
+> > > -O2 and then looking at the overall size of the produced binary is
+> > > just wrong.
+> >
+> > No one cares about -Os AFAICT. It might as well be non-existent. So the=
+ effect
+> > doesn't matter.
+>
+> Well, more people would care if it didn't stand for -Ostupid I suppose.
+> That is, traditionally GCC made some very questionable choices with -Os,
+> quite horrendous code-gen.
 
-Some Infineon devices have a issue where the status register will get
-stuck with a quick REQUEST_USE / COMMAND_READY sequence. This is not
-simply a matter of requiring a longer timeout; the work around is to
-retry the command submission. Add appropriate logic to do this in the
-send path.
+Size optimizations result in 15% code size reduction (x86_64
+defconfig, gcc-14.2), so they reflect what user wanted:
 
-This is fixed in later firmware revisions, but those are not always
-available, and cannot generally be easily updated from outside a
-firmware environment.
+  text    data     bss     dec     hex filename
+27478996        4635807  814660 32929463        1f676b7 vmlinux-O2.o
+23859143        4617419  814724 29291286        1bef316 vmlinux-Os.o
 
-Testing has been performed with a simple repeated loop of doing a
-TPM2_CC_GET_CAPABILITY for TPM_CAP_PROP_MANUFACTURER using the Go code
-at:
+The compiler heuristics depend on tradeoffs, and -Os uses different
+tradeoffs than -O2. Unfortunately, there is no
+-Os-but-I-really-want-performace switch, but OTOH, tradeoffs can be
+adjusted. The compiler is open-source, and these adjustments can be
+discussed in public spaces (mailing lists and bugzilla) and eventually
+re-tuned. We are aware that the world around us changes, so tunings
+are not set in stone, but we also depend on user feedback.
 
- https://the.earth.li/~noodles/tpm-stuff/timeout-reproducer-simple.go
-
-It can take several hours to reproduce, and millions of operations.
-
-Signed-off-by: Jonathan McDowell <noodles@meta.com>
----
- drivers/char/tpm/tpm_tis_core.c | 17 ++++++++++++++---
- drivers/char/tpm/tpm_tis_core.h |  1 +
- include/linux/tpm.h             |  1 +
- 3 files changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/char/tpm/tpm_tis_core.c b/drivers/char/tpm/tpm_tis_core.c
-index 167d71747666..e4eae206a353 100644
---- a/drivers/char/tpm/tpm_tis_core.c
-+++ b/drivers/char/tpm/tpm_tis_core.c
-@@ -464,7 +464,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 
- 		if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
- 					&priv->int_queue, false) < 0) {
--			rc = -ETIME;
-+			if (test_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags))
-+				rc = -EAGAIN;
-+			else
-+				rc = -ETIME;
- 			goto out_err;
- 		}
- 		status = tpm_tis_status(chip);
-@@ -481,7 +484,10 @@ static int tpm_tis_send_data(struct tpm_chip *chip, const u8 *buf, size_t len)
- 
- 	if (wait_for_tpm_stat(chip, TPM_STS_VALID, chip->timeout_c,
- 				&priv->int_queue, false) < 0) {
--		rc = -ETIME;
-+		if (test_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags))
-+			rc = -EAGAIN;
-+		else
-+			rc = -ETIME;
- 		goto out_err;
- 	}
- 	status = tpm_tis_status(chip);
-@@ -546,9 +552,11 @@ static int tpm_tis_send_main(struct tpm_chip *chip, const u8 *buf, size_t len)
- 		if (rc >= 0)
- 			/* Data transfer done successfully */
- 			break;
--		else if (rc != -EIO)
-+		else if (rc != EAGAIN && rc != -EIO)
- 			/* Data transfer failed, not recoverable */
- 			return rc;
-+
-+		usleep_range(priv->timeout_min, priv->timeout_max);
- 	}
- 
- 	/* go and do it */
-@@ -1144,6 +1152,9 @@ int tpm_tis_core_init(struct device *dev, struct tpm_tis_data *priv, int irq,
- 		priv->timeout_max = TIS_TIMEOUT_MAX_ATML;
- 	}
- 
-+	if (priv->manufacturer_id == TPM_VID_IFX)
-+		set_bit(TPM_TIS_STATUS_WORKAROUND, &priv->flags);
-+
- 	if (is_bsw()) {
- 		priv->ilb_base_addr = ioremap(INTEL_LEGACY_BLK_BASE_ADDR,
- 					ILB_REMAP_SIZE);
-diff --git a/drivers/char/tpm/tpm_tis_core.h b/drivers/char/tpm/tpm_tis_core.h
-index 690ad8e9b731..ce97b58dc005 100644
---- a/drivers/char/tpm/tpm_tis_core.h
-+++ b/drivers/char/tpm/tpm_tis_core.h
-@@ -89,6 +89,7 @@ enum tpm_tis_flags {
- 	TPM_TIS_INVALID_STATUS		= 1,
- 	TPM_TIS_DEFAULT_CANCELLATION	= 2,
- 	TPM_TIS_IRQ_TESTED		= 3,
-+	TPM_TIS_STATUS_WORKAROUND	= 4,
- };
- 
- struct tpm_tis_data {
-diff --git a/include/linux/tpm.h b/include/linux/tpm.h
-index 20a40ade8030..6c3125300c00 100644
---- a/include/linux/tpm.h
-+++ b/include/linux/tpm.h
-@@ -335,6 +335,7 @@ enum tpm2_cc_attrs {
- #define TPM_VID_WINBOND  0x1050
- #define TPM_VID_STM      0x104A
- #define TPM_VID_ATML     0x1114
-+#define TPM_VID_IFX      0x15D1
- 
- enum tpm_chip_flags {
- 	TPM_CHIP_FLAG_BOOTSTRAPPED		= BIT(0),
--- 
-2.48.1
-
+Thanks,
+Uros.
 
