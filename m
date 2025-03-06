@@ -1,228 +1,140 @@
-Return-Path: <linux-kernel+bounces-548046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4C07A53F2D
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:32:34 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEE0A53F30
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:32:51 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A98171DE1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:32:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 236BB171C00
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:32:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB40481CD;
-	Thu,  6 Mar 2025 00:32:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19BA71F95C;
+	Thu,  6 Mar 2025 00:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRvSEAn4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="atx8Y3TD"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591C73CF58;
-	Thu,  6 Mar 2025 00:32:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16A002110E;
+	Thu,  6 Mar 2025 00:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741221134; cv=none; b=Tj7hbsRGwJFnJg7m4n/f7YrKaSUS+lYV85qkn5cG0hjbVZCPZNYS0lovZpBbg3zCYdnw3jP593OH2dG8PpZp3Qhtow+nHvv8b0pcYtId9U+jXdAMtWbEd9yMbUnzg7Vn9vFO3W48g/8qrcRjT+830VCqHDDEOiNJyYK43zzLsYE=
+	t=1741221164; cv=none; b=RA9iIQ/0UZuze0EY9WIqlbxNzqLOedovkR9QAdB2zdVmx3jLtmuZfhlH8oJ2WGoFvE7mA3dfC6uptHGUsxL2XovMAm1ZoP4XpE/hf4v9XwgXSNXvcklEUnGu+tyiXdZfq/NGV2IFInyZVWBFZnKfJk3VVyMG47sTbdlKNXYp4SE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741221134; c=relaxed/simple;
-	bh=R4KqX0E4mpkohaWHx+uYZ/ddOOFMeKdtAnsPl1grY1k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Uqh4osqqH8wKRo5v7gNZ7sIADVlpZbRxC89vgTGATNlyNS1GxguKrceNRPBXwsa/Heabk3tv69zTZChwUSDi4aYi6Yoay76LlcQidPkYT+xMrrAmb8GYT+7B1kEsdkIym7wZOczHDnlVZp7Fu8lolb+6zfetU716Vf/rcNcAOTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRvSEAn4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB3EC4CED1;
-	Thu,  6 Mar 2025 00:32:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741221133;
-	bh=R4KqX0E4mpkohaWHx+uYZ/ddOOFMeKdtAnsPl1grY1k=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NRvSEAn4ItpuQqydCQhIGkZzJ/Y36MrDbOc0qr9x9B8ktMK6BOefvbXwKrzxGxSB/
-	 cMgshWY5g3yrdg/uyj4o6jJcrqQgU7moo2siP9dwBI3LoVe0VkdWTVTguZXEGFaLTz
-	 K51ZTLy+aREh93Udqau+bIbzLmKVmi3AK1YzPLgxMK3REz26vw0Il1cFVa/cQahrUQ
-	 tQrollL2GBQkzpIGiqKaz0drr4Qe2D563StZI69/PNXrY3WFv4BnUhqaCaifH92zoh
-	 lQclqERw9TpMrpMNhWQau79b2dWwyYPMuTMvurP5KjB5pNWeOWrhqhbD5GKT16R+e+
-	 3+RNx/PS0bbBA==
-Date: Wed, 5 Mar 2025 16:32:11 -0800
-From: Lee Jones <lee@kernel.org>
-To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-rtc@vger.kernel.org, Inochi Amaoto <inochiama@gmail.com>,
-	dlan@gentoo.org, linux-kernel@vger.kernel.org,
-	Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	sophgo@lists.linux.dev
-Subject: Re: [PATCH v12 2/3] mfd: sophgo: cv1800: rtcsys: New driver
- (handling RTC only)
-Message-ID: <20250306003211.GA8350@google.com>
-References: <20250302195205.3183174-1-alexander.sverdlin@gmail.com>
- <20250302195205.3183174-3-alexander.sverdlin@gmail.com>
+	s=arc-20240116; t=1741221164; c=relaxed/simple;
+	bh=f5/msq66A8dGExPJS5orgs8AKsYIe/Lcr2NDLfzR7A8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IGXBDC2UF6ywIArkuSRvt7GWV1/cUBpLPp2hwwG+6zVKn50wD8pNuLl+amKxlZO0fy2uSRQjXMEk4eufG/U1+easmHjymHq9gWAjJVrQ2B4ZnkIPWS6sL40rFIUPvQnGS7FzbSENrntkKeyTOdySLQ4Vu0qyHwdw0Kgf5dk0E1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=atx8Y3TD; arc=none smtp.client-ip=209.85.219.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6e89959f631so1125716d6.3;
+        Wed, 05 Mar 2025 16:32:41 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741221161; x=1741825961; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kbniOkrcE/iLVnL8rQsYyL/qvVYTkKklM91CTqrRJBI=;
+        b=atx8Y3TDUXfX+GUHGeR84a2qbpKy/tWs7g+itfzhfjLqwdcJaA24vNwAbhNynSoLN6
+         KWL525s90CT+TsPKU6Zx0U1K7UkPqvS1LJh2ZNh3/GvXdbilO/jiLU+RLKFgCSXnOUur
+         uWAdQz3I0nVa2V92Jq5Y4EZ3XD2bpNeAAZ2aQPdG44qU2PO1mrMs4BWQ1Xd92UlZeFVp
+         2GqYrs2h0N0ZACD03usjyzU4wfYnDuxOavhE8/o31UJMeh/dgOG9NMe1ja9oYbD3Z5n5
+         +D+Ynx0zf6JPt1hwjMYgAC36FIzMk0PAZyZBxjDAIlbg7Xl5GOAkakM9U/2WAR1PWFZp
+         QfLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741221161; x=1741825961;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=kbniOkrcE/iLVnL8rQsYyL/qvVYTkKklM91CTqrRJBI=;
+        b=kxt0pi6XxGsrYs3Tw1W7xURswgyijh4e9vMyl7Pd7ZgNfEa19cB3yLGFwuPeRQDPcP
+         O64Te/8AGVJ+uOqDgTnYquD2uB6+fFv+AdM6JV7napTxVcsK8/Bt8yn5BSnHwerdMwTM
+         0yyZCOeq2O1clh0gnOAJIKdHqOUEnOZDJb+WtZhqXxzKThZ7Kh5xqTAnYkGjmCWmjo5k
+         tPKLuXKcE0ofTj3d4RL49G97zgZLzE0s5B2C7cIbOHMTW5DYETU2CCYeouipOVnhnidO
+         CjsupwGWfcI7OOVBvjchybg3pntd8ex5i/L77aO+EPhWyfZ8/KQldOH9d2a3jwk5zzbw
+         kFRw==
+X-Forwarded-Encrypted: i=1; AJvYcCU7YP+AUbE0+FdnuW2sgC7ZvPAwMKuhCqkfsVGkBEke2Hsb2TVy+Ke+dghvwJZLwBq17nLLliH704ed@vger.kernel.org, AJvYcCUq+kfxZIyJV4a6n1maCE/ZqRC/2EFJ1r0trWhUFRgyQfVVkj2XeLR4e88Wg3/TbAmPvn5bAEaXbe2H@vger.kernel.org, AJvYcCVa/VKd1TrwEw2zCPjKvGGln0QJLVrpcuP5L+CXh+5Rs/thwuwuwmTd4JBB20SXuzvFHUhwztROwUiKjior@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVY4tXK8oV8TGOzy4DSxWtw/0lHQcLKIlTJMUz1N9ZS5HdHRII
+	8IkSohoC6emnBRvJChFwTFMj8yi5b/O8V63OO8Ov5ug+UMeykmn4n5hePxLj4eJr/NoMZVjZwl/
+	SaCzFRElWWSnX1CXo2NVFN/i6hbI=
+X-Gm-Gg: ASbGncsPU0WCjPET+W/VFHt1d6oycFIlUTyBCOEfn9WV1fSNp8I3I4k5iO8l0DZ0YLX
+	SS/TPF5ouPsGkQqZypbsIrAIOTOTA0NERaG6rXjqdRzojHLLJWk9Zv6aTP1ZFs02Iw5yPbQCihY
+	zitIYe+pDDVfGZx3rg7Z0tsBe3Ig==
+X-Google-Smtp-Source: AGHT+IG+AhTOU/hFmUj2Gkpld0BqtJ/4yuByg5APV8R/JeUdRUJkWdIIvsJDj978xbhdoWG645LFlNqS3HrGShS/6Y0=
+X-Received: by 2002:a05:6214:2b09:b0:6e6:6535:17dd with SMTP id
+ 6a1803df08f44-6e8e6d13ef2mr91605216d6.7.1741221160908; Wed, 05 Mar 2025
+ 16:32:40 -0800 (PST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250302195205.3183174-3-alexander.sverdlin@gmail.com>
+References: <20250303235930.68731-1-danascape@gmail.com> <20250304143918.733d6cca@jic23-huawei>
+In-Reply-To: <20250304143918.733d6cca@jic23-huawei>
+From: Barry Song <21cnbao@gmail.com>
+Date: Thu, 6 Mar 2025 13:32:28 +1300
+X-Gm-Features: AQ5f1JosxNJs8S75DECePZKWETpL2y5LjB4cLtk5HNNr9lPQYzI9s5_-kDJ6Ibo
+Message-ID: <CAGsJ_4zGOvEK-NE1DBtk5jQZCfPp0vtjOb2pWskmhAAn_y93eQ@mail.gmail.com>
+Subject: Re: [PATCH v2] dt-bindings: iio: accel: add binding documentation for ADIS16203
+To: Jonathan Cameron <jic23@kernel.org>, Saalim Quadri <danascape@gmail.com>
+Cc: lars@metafoo.de, Michael.Hennerich@analog.com, gregkh@linuxfoundation.org, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-staging@lists.linux.dev, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, 02 Mar 2025, Alexander Sverdlin wrote:
+On Wed, Mar 5, 2025 at 3:39=E2=80=AFAM Jonathan Cameron <jic23@kernel.org> =
+wrote:
+>
+> On Tue,  4 Mar 2025 05:29:30 +0530
+> Saalim Quadri <danascape@gmail.com> wrote:
+>
+> > This patch add device tree binding documentation for ADIS16203.
+> >
+> > Signed-off-by: Saalim Quadri <danascape@gmail.com>
+> > ---
+> > Changes:
+> > V1 - V2: change compatible property from enum to const
+> >
+> >  .../bindings/iio/accel/adi,adis16203.yaml     | 52 +++++++++++++++++++
+> >  1 file changed, 52 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/iio/accel/adi,adi=
+s16203.yaml
+> >
+> > diff --git a/Documentation/devicetree/bindings/iio/accel/adi,adis16203.=
+yaml b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
+> > new file mode 100644
+> > index 000000000000..64370f13e1dc
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/iio/accel/adi,adis16203.yaml
+> > @@ -0,0 +1,52 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/iio/accel/adi,adis16203.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > +
+> > +title: Analog Devices ADIS16203 Programmable 360 Degrees Inclinometer
+> > +
+> > +maintainers:
+> > +  - Barry Song <21cnbao@gmail.com>
+> I think you'll be dropping this patch anyway, but just a quick not that
+> it isn't good to volunteer people.  Barry hasn't worked on these
+> devices for quite a long time now so seems unlikely he agreed to this.
 
-> Add driver for Sophgo CV1800 series SoC RTC MFD. The RTC module comprises
-> a 32kHz oscillator, Power-on-Reset (PoR) sub-module, HW state machine to
-> control chip power-on, power-off and reset. Furthermore, the 8051 subsystem
-> is located within RTCSYS including associated SRAM block.
-> 
-> This patch only populates RTC sub-device.
-> 
-> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> ---
-> Changelog:
-> v12:
-> - new patch
-> 
->  MAINTAINERS                 |  1 +
->  drivers/mfd/Kconfig         | 14 ++++++++
->  drivers/mfd/Makefile        |  1 +
->  drivers/mfd/cv1800-rtcsys.c | 66 +++++++++++++++++++++++++++++++++++++
->  4 files changed, 82 insertions(+)
->  create mode 100644 drivers/mfd/cv1800-rtcsys.c
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 92fc0eca7061..446156998380 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -22185,6 +22185,7 @@ M:	Chen Wang <unicorn_wang@outlook.com>
->  M:	Inochi Amaoto <inochiama@outlook.com>
->  T:	git https://github.com/sophgo/linux.git
->  S:	Maintained
-> +F:	drivers/mfd/cv1800-rtcsys.c
->  N:	sophgo
->  K:	sophgo
->  
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 6b0682af6e32..842cc4d95c4b 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -285,6 +285,20 @@ config MFD_CS42L43_SDW
->  	  Select this to support the Cirrus Logic CS42L43 PC CODEC with
->  	  headphone and class D speaker drivers over SoundWire.
->  
-> +config MFD_CV1800_RTCSYS
-> +	tristate "Sophgo CV1800 RTC MFD"
-> +	depends on ARCH_SOPHGO || COMPILE_TEST
-> +	select MFD_CORE
-> +	help
-> +	  If you say yes here you get support the RTC MFD driver for Sophgo
-> +	  CV1800 series SoC. The RTC module comprises a 32kHz oscillator,
-> +	  Power-on-Reset (PoR) sub-module, HW state machine to control chip
-> +	  power-on, power-off and reset. Furthermore, the 8051 subsystem is
-> +	  located within RTCSYS including associated SRAM block.
-> +
-> +	  This driver can also be built as a module. If so, the module will be
-> +	  called cv1800-rtcsys.
-> +
->  config MFD_MADERA
->  	tristate "Cirrus Logic Madera codecs"
->  	select MFD_CORE
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 9220eaf7cf12..3cf03ffeedbb 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -18,6 +18,7 @@ obj-$(CONFIG_MFD_CROS_EC_DEV)	+= cros_ec_dev.o
->  obj-$(CONFIG_MFD_CS42L43)	+= cs42l43.o
->  obj-$(CONFIG_MFD_CS42L43_I2C)	+= cs42l43-i2c.o
->  obj-$(CONFIG_MFD_CS42L43_SDW)	+= cs42l43-sdw.o
-> +obj-$(CONFIG_MFD_CV1800_RTCSYS)	+= cv1800-rtcsys.o
->  obj-$(CONFIG_MFD_ENE_KB3930)	+= ene-kb3930.o
->  obj-$(CONFIG_MFD_EXYNOS_LPASS)	+= exynos-lpass.o
->  obj-$(CONFIG_MFD_GATEWORKS_GSC)	+= gateworks-gsc.o
-> diff --git a/drivers/mfd/cv1800-rtcsys.c b/drivers/mfd/cv1800-rtcsys.c
-> new file mode 100644
-> index 000000000000..72d11284f1de
-> --- /dev/null
-> +++ b/drivers/mfd/cv1800-rtcsys.c
-> @@ -0,0 +1,66 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Driver for Sophgo CV1800 series SoC RTC MFD
-> + *
-> + * The RTC module comprises a 32kHz oscillator, Power-on-Reset (PoR) sub-module,
-> + * HW state machine to control chip power-on, power-off and reset. Furthermore,
-> + * the 8051 subsystem is located within RTCSYS including associated SRAM block.
-> + *
-> + * Copyright (C) 2025 Alexander Sverdlin <alexander.sverdlin@gmail.com>
-> + *
-> + */
-> +
-> +#include <linux/mfd/core.h>
-> +#include <linux/module.h>
-> +#include <linux/of.h>
-> +#include <linux/property.h>
-> +
-> +static struct resource cv1800_rtcsys_irq_resources[] = {
-> +	DEFINE_RES_IRQ_NAMED(0, "alarm"),
-> +};
-> +
-> +static const struct mfd_cell cv1800_rtcsys_subdev[] = {
-> +	{
-> +		.name = "cv1800-rtc",
-> +		.num_resources = 1,
-> +		.resources = &cv1800_rtcsys_irq_resources[0],
-> +	},
-> +};
-> +
-> +static const struct mfd_cell cv1800_rtcsys_rtc_subdev =
-> +	MFD_CELL_NAME("cv1800-rtc");
+Hi Saalim, if you're sending a v2, feel free to nominate yourself or anyone
+interested as the maintainer. Apologies, but I probably won=E2=80=99t have =
+time to
+handle this :-)
 
-How is this different from the one above?
+>
+> Jonathan
 
-Adding a single device does not constitute an MFD.
-
-> +static int cv1800_rtcsys_probe(struct platform_device *pdev)
-> +{
-> +	int irq;
-> +
-> +	irq = platform_get_irq_byname(pdev, "alarm");
-> +	if (irq < 0)
-> +		return irq;
-> +	cv1800_rtcsys_irq_resources[0].start = irq;
-> +	cv1800_rtcsys_irq_resources[0].end = irq;
-> +
-> +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
-> +				    cv1800_rtcsys_subdev,
-> +				    ARRAY_SIZE(cv1800_rtcsys_subdev),
-> +				    NULL, 0, NULL);
-> +}
-> +
-> +static const struct of_device_id cv1800_rtcsys_of_match[] = {
-> +	{ .compatible = "sophgo,cv1800b-rtc" },
-> +	{ /* sentinel */ }
-> +};
-> +MODULE_DEVICE_TABLE(of, cv1800_rtcsys_of_match);
-> +
-> +static struct platform_driver cv1800_rtcsys_mfd = {
-> +	.probe	= cv1800_rtcsys_probe,
-> +	.driver	= {
-> +		.name		= "cv1800_rtcsys",
-> +		.of_match_table	= cv1800_rtcsys_of_match,
-> +	},
-> +};
-> +module_platform_driver(cv1800_rtcsys_mfd);
-> +
-> +MODULE_AUTHOR("Alexander Sverdlin <alexander.sverdlin@gmail.com>");
-> +MODULE_DESCRIPTION("Sophgo CV1800 series SoC RTC MFD driver");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.48.1
-> 
-
--- 
-Lee Jones [李琼斯]
+Thanks
+Barry
 
