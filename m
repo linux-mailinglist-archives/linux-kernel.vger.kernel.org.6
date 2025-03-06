@@ -1,184 +1,147 @@
-Return-Path: <linux-kernel+bounces-548664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548666-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5675A547CB
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:31:50 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF177A547D0
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:32:45 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3813188B894
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:31:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 472AB188AE42
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 10:32:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CC09202F9A;
-	Thu,  6 Mar 2025 10:31:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B66B201034;
+	Thu,  6 Mar 2025 10:32:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="J/TR2+w7"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2060.outbound.protection.outlook.com [40.107.236.60])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eH9m5ZV/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 140CC1A76BC
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:31:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741257102; cv=fail; b=rFkrV6UdyVj1cYdGZAZ3K4NCqQ2E5tavgXbyIhGU1OmlAkXgTBWbXNVfWYUD6hpbrtTIXxeF24fWYNcft468u7SA3zM+FNhPYW4V8UL9JYSiS/sorueXaiCkMGvHrfHrbr3JSitozz8+qtCDSOZlNlas+iCu6MdTMHdAAQXpdYo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741257102; c=relaxed/simple;
-	bh=E8wSNf4oqf7a7+J7LF5+Pel1M35dEhWWvol3lKkXAro=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=AlN5mge6mDs6XeOVfQw2rJG3nqsRBRhqIolcmMq/IfyGjnPyBhcrzvIETuEOgj+6sXX8QWSUXRiO1EWl94l+vrfS+BDTEQeHVbTcFss3PMZwQMR2wEtHzj2HYAmzhdVmhcj9TasDQ6jmbf/I6ivTFeMKyBO4VH1LnBgsoRh/s6E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=J/TR2+w7; arc=fail smtp.client-ip=40.107.236.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=f43Xgokun+5ezE5nC8DOoQ3xb2KmU56tXnPR+pmAY706ZY/irtr4KZn9IUMVvLk5B9NUN/jSdTuYfO6pZfJNsrfWAkDMM78o++dhf5hqNc3WsNb7lMI8oq5PDv3Dy6S02lQI5cBV77dfkjKtRRUhdl0ry9KzhCREOa6lBDPqyuIdqLSBW7Ai7ntaHoVoUoJTVok8E6Jd9VGfpJUHD/1j62DN33cUGJsN6cc2V2tCKk4U4laJ7nDWvZoTJSwEePrvDuz7gDhpFSWtzYZ1G3ntE+Qd9zZqQI/1CPl0mLBHPPrqHUSK1cdfon8R2MzUZiNm15UcNKQqlovpvHPTm4BvsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=E8wSNf4oqf7a7+J7LF5+Pel1M35dEhWWvol3lKkXAro=;
- b=xfFw3THA8kcbPFZ2AFP0IhTPJsQFn8UvpACChxTetSqIiUpkWMpxIE/HsNQb9wMRyEqik6wtoqzGTYLL54ADN2XLmhDPBAR4bZ+UjBcxFbpa61qLfqVEAXJn8CKbY5DU3sGAjH40H7+ilnSPW7Dao+QtIFQ6ggUBcwtJtNGeH8MEw/O96sf1LHKFh5QtgrlEC7CgFvfu2W4l/hYMxOVBVBin6hGPKpnNFyXpnUjD9htNvWtFJ1GFZVx+EptI5zutjpE+mrb2A4xWJzfL3xqpPwZr9t9N82mpz6Bo9MmA5uIt9FFc+zUIUAYGdF3hRyjVqPAIMscGj3+fDPFJ/ss2FA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=E8wSNf4oqf7a7+J7LF5+Pel1M35dEhWWvol3lKkXAro=;
- b=J/TR2+w7/IbwyDarfAo56nAdHI0DmEZMJPFJdGC/5JOzkpWRYobbTRFBcD8q3kzi4Ipxy3Ww4oKpImPKl86CeQpJHaYY9UPc0scPmOXC1reACfjA3AaYidi375BIiVdktpbLL13PFkFYZeq9/xhO4FDUz4hBXQw1hbMqgw9OFAsxMH7f6WGVC6tNfp9B2XladtPEERS6QYOx5upNdRZJ2BAhSmoXlgqR7ohms5GT5+X+ols9q8/GbRBboWgjbqg2bdsEKMd2vBryDcn9jsX6C1G8WmQfDxM+Dc/JQaohDtzhOEO+pkKBqiXz/SiMNf1nwnqWLrIqMuvLKiNkeCZnZw==
-Received: from SA1PR12MB7199.namprd12.prod.outlook.com (2603:10b6:806:2bc::21)
- by CY8PR12MB7609.namprd12.prod.outlook.com (2603:10b6:930:99::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8511.16; Thu, 6 Mar
- 2025 10:31:37 +0000
-Received: from SA1PR12MB7199.namprd12.prod.outlook.com
- ([fe80::ae1b:d89a:dfb6:37c2]) by SA1PR12MB7199.namprd12.prod.outlook.com
- ([fe80::ae1b:d89a:dfb6:37c2%5]) with mapi id 15.20.8511.017; Thu, 6 Mar 2025
- 10:31:36 +0000
-From: Ankit Agrawal <ankita@nvidia.com>
-To: "Tian, Kevin" <kevin.tian@intel.com>, Nicolin Chen <nicolinc@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-CC: "joro@8bytes.org" <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] iommufd: Set domain->iommufd_hwpt in all hwpt->domain
- allocators
-Thread-Topic: [PATCH] iommufd: Set domain->iommufd_hwpt in all hwpt->domain
- allocators
-Thread-Index: AQHbjhRKYYA1hsvnkUKaWgEapVufirNlcWuAgAB3VPQ=
-Date: Thu, 6 Mar 2025 10:31:36 +0000
-Message-ID:
- <SA1PR12MB71999DB4E14F3A2F4650D964B0CA2@SA1PR12MB7199.namprd12.prod.outlook.com>
-References: <20250305211800.229465-1-nicolinc@nvidia.com>
- <BN9PR11MB52766B3F3ED1F7F14EA3B7B48CCA2@BN9PR11MB5276.namprd11.prod.outlook.com>
-In-Reply-To:
- <BN9PR11MB52766B3F3ED1F7F14EA3B7B48CCA2@BN9PR11MB5276.namprd11.prod.outlook.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-msip_labels:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR12MB7199:EE_|CY8PR12MB7609:EE_
-x-ms-office365-filtering-correlation-id: da38f520-d5e7-4211-1da6-08dd5c9a12be
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info:
- =?iso-8859-1?Q?3lHbY6JdmB83hOB3C6njErp5G0jrNKWoCYhXKYOldlBgEicWBr7jtDrTH0?=
- =?iso-8859-1?Q?QpyEEfleaX515dlQnCCKwTCXhjyBT+qKq6WH6m8EoAAZrcD51MaVCLyHby?=
- =?iso-8859-1?Q?LhUMrJ/W509DygEgUf22ih5FHF254K9kjTsipF6tsPqFNYTJMTJWKsNaVZ?=
- =?iso-8859-1?Q?I8gW5cmmyBLIDb7cAlFPdNyG2suui96+8WeO+7r1DbnsVgD8fv1xW8W+d8?=
- =?iso-8859-1?Q?0UGPH+eAIaxWREwwQupzWfK18gm1Tk7xv5PXMZdl2GJvv5LgnV+fFnrAJ1?=
- =?iso-8859-1?Q?yZAOSAuK7bLvidfygg7L5bKjPq9Pc/4kLFz1AWCfYgQw/lSl9zCV/f0lqV?=
- =?iso-8859-1?Q?IH35jLkc6V4029j31rcxydzhfkW171HMaSkqXoaEq9Tq+zrYV38VOGt/Kh?=
- =?iso-8859-1?Q?IE0YkfYd252PLsVXYIK6XWxS6hi3B6ks2yuAScMYDRpk9IoOBEAkCW4b3i?=
- =?iso-8859-1?Q?Za9l5UrIAFBJB67dlgA3qv7sG6GekRZBzPlPCgkJdeCsJV60vRSpPxB37q?=
- =?iso-8859-1?Q?JDxXSSQaWsr/G4cQesnWRpzgmVHUKAvoAXL6ej9voQtXXDtxN69LAYAyBe?=
- =?iso-8859-1?Q?H8U5U+3EcyIy6UR3nG0x+8l6RNdgvOEVrqhJA2ZfolyusuyXMqHqMnCmAW?=
- =?iso-8859-1?Q?9F9VXFBzw4O/jQ9yOYvJ5T5/Zt2ke4fKNJMaZW7AD7RtqdzVrHKylIxuna?=
- =?iso-8859-1?Q?TSCXPCn/SZvJ4HXMXcJNUqb+i1XRpZ5brekgN50MPlL+4+JFO1BQVkS6yA?=
- =?iso-8859-1?Q?AO2ZBQAeTY3nUacv7gftcbjYuPj7RqF9fyQrZIFOvCFozCPAjkRM55VYPN?=
- =?iso-8859-1?Q?pbycRI1jCNLb3S9gX14+KRV3RTag70KYP0z5k5dg4u5XQ5fMXlIg8XlmGD?=
- =?iso-8859-1?Q?qz+RvUswB3GSnBeFdmgXopbb3MSFqmTOXR5q4682TUNkRPXK1OgL7g24X9?=
- =?iso-8859-1?Q?thYPXYvXrtAA+QAj8ZC4MYyIUUg0ZgrAuO+peO5EfqA27L5KzEZ/0ndVZu?=
- =?iso-8859-1?Q?/qdLxT1HDPdC4pBIwTLxip+aRjLLeSgEog8/c2iK/WJ2Ft9TPd2GoO44kD?=
- =?iso-8859-1?Q?2xrCUN9FRWeuq2WnvSe7+ixsNoOgwIqA9rabjs67F5Jg7Zfs3ipLiOYqMA?=
- =?iso-8859-1?Q?eA///e12o7y3hJaE19Ct3P5vW2zNfuHpoGYy6vQG6uCbtYq2IXPEFCeYAa?=
- =?iso-8859-1?Q?yqGGTlPWxlf3J410Zf5hgW1ikw3W6sDW+aw4h48qKHjpr8u3I/bCgPFZlq?=
- =?iso-8859-1?Q?L1sG15gvUUgoqifmmZ+1C5PgRa1O1SyHNhCcSwOvczPZR6PiW5yMih9fLN?=
- =?iso-8859-1?Q?bYl2cQZu5g9/COJ5GEPmtIgYZX25TXjN1xG2tY8apOJbp2s64hN8xF3NgD?=
- =?iso-8859-1?Q?PSZ+B4fdkl+aAXm7TdBz1Oqd6MJvW4HJELowHA7+rtHnjYL0j/JEFYNuN9?=
- =?iso-8859-1?Q?++BvT/tkFtdWwsBztuWHWEJWcUUeWbv8PGG6iA4XICXhH917jDc2YF+fKq?=
- =?iso-8859-1?Q?AKVMLJMRI/ufid6xVc9zQL?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR12MB7199.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?iso-8859-1?Q?VXq5jq3Fo4GtOXzhUQXTBjcjHpjqi2TvM/5rFWTxhdRluU9oPSITPNDN8M?=
- =?iso-8859-1?Q?aa3sR4minPiazPlQmD3+WfZ7zBOYUVuSf42TTPfzPldbx+EArIfOmHuTKA?=
- =?iso-8859-1?Q?YasCjNw4pKWlSy4Zulf6IUaz7/PR9rJn266WXTlL8L1xVfQCNMVcTOzXYG?=
- =?iso-8859-1?Q?gh4B4sfHwCLfuFtR370dYICArQlGRy4jm6em4tJz+HTwsX/u86WMHvyEEw?=
- =?iso-8859-1?Q?j0r+Bc9IAYtsDfuVoQ/0ebBejSYvmoViQJrvkXudFyc5YdGwOs8XkgT79w?=
- =?iso-8859-1?Q?A8SJJdaapqFqKixjpKAivleAciVeCoXVWdrO8BR1Yx2Mp9nxVCQGor2cnU?=
- =?iso-8859-1?Q?Nx20Z+wR2WiuRgQurpyBLY9/Q4mSbMFUQAjd3kQPGaCq/OsGQW+1nR1Epk?=
- =?iso-8859-1?Q?PzpTTRKiyyxeiVqkfhBz14mxsJskUjKNBpUfpGUsgZTLTX8yQ1BRDJknjq?=
- =?iso-8859-1?Q?MiG827tiZiD+aG8OI2KGWM/tGpSBKG2N8IIl/KYQYFyOly//69r69+ohzn?=
- =?iso-8859-1?Q?KZmnQPz+m0h5MFf5vClTovMDmQXc37M535RE+TUf9gwwcvwoxOnViLgs5t?=
- =?iso-8859-1?Q?t4Gkj6DGqWSUfLpcpKp0eG7KbbtUkE698eG6A4cdCqill09cYP1pX5NaZK?=
- =?iso-8859-1?Q?j82Q5JT2yI5WMiJhU9rn7BxMT+iNk5ASejzVFGbx1+XpLFPPeDcBQzHjrH?=
- =?iso-8859-1?Q?D2I4ZGfsj1/Iago4vZ4MqKFc3GKgNH1zcHdBNvWTfs6f50TKX5o/jbKu2F?=
- =?iso-8859-1?Q?0pNw+mFJv/oHlR4yxDGCimzVZ+dne+defnUMlwpsefro48TOzxuQaZXv/X?=
- =?iso-8859-1?Q?NMbW8M5OigDe/Xx7rb+3/YhJZ66+HboRZiAu3CP5bv1+4c6F5BgA5nV8FD?=
- =?iso-8859-1?Q?aW/vcnNPesAqSJWkJO470mG8kQEfi0bMge+xccr04/w4DAEW/Os/dNqr1p?=
- =?iso-8859-1?Q?6xCmfOXltQXxlhFV5hJgACSd3FuTiAFdIJlZFjwM78DwRZe0n2nVV24rtp?=
- =?iso-8859-1?Q?vJ2vSNvU1MUxZG5vehKvqqhEeYZOMYdmD60r0BAM3M5uog990YPr4I/3tU?=
- =?iso-8859-1?Q?brftq/FJvzpcYXOMKEC/VHiCZFWD4b3+0g2wNmJs6DHv0/BOuZTJb2GGv8?=
- =?iso-8859-1?Q?IjmvCMFFrl69Bx7Ruzpqz7yin/prwZCcPFTYQzQKAD3F2jkE06BcAcwReV?=
- =?iso-8859-1?Q?8LpUNa66pv0eY2sSs3mydXf2JkspOH5giAN3SNhqXeluIHSGT//+H0POEv?=
- =?iso-8859-1?Q?C6dh5SRrcszeF7JAEiY+F6w5qeDxPiFYIIfMp33u+cdRQjijc4etCVLu7T?=
- =?iso-8859-1?Q?58f0hXcv/wT8UWePp66OGr/juMBb+jvnf5jve7Ws/K2MthbZ/USQfU3wfY?=
- =?iso-8859-1?Q?Bl0vkOCNQy1Be4OqJg5p7kkVVvwZt3TnHdRF3H/6TPUCJh2T0JTuilH4UV?=
- =?iso-8859-1?Q?a40+81XlM+WCBsoZ0kqaflyJlOCwmm7WgbCWy4BzG9Sj0Rh8TCBMUkf0zC?=
- =?iso-8859-1?Q?BsfIOnBSDQ3+fOGxwKZ8bl8pefwBIYoL5iw8qHY8fdfjLq2Ih664B6OJ5j?=
- =?iso-8859-1?Q?Ar6D3ECNanj343gt6pNBZj2CtM4YiTVZEghxekSDQd2UJAA6dp62KAJ5O5?=
- =?iso-8859-1?Q?8+r11x7zoPE0o=3D?=
-Content-Type: text/plain; charset="iso-8859-1"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AABE18A6B5
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 10:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741257160; cv=none; b=uXbwO4MCHrzQZVt/AXBqCs8V4TpSmvh68V6BXntQIHQTqJxelKWWoGIYGKWBx/hWfkB4MH5aAY8YiEv8Al91sCmIp+aBNxWWcKecT7zGrdY0Ld34DYefyF1J6rnXZtkjIaMZVPX8GTH7LA4sJg9+sA9aFIDGm+Qplp4pIgd1Za0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741257160; c=relaxed/simple;
+	bh=IGVAuJkuiiv0B8e7SlGUhgx4yCx9vKQqqr7RUi5IhrA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=k4/8K5rSrEfFyj1EFRO8Fezq8+osIKRrZAF/KDxGmAURad4vgpm1WSpRgUO33WOTWPgZzfFweNtY1hHJUTi2AVU5S25Uku8QaRB8atB4K6AwnZIMHKzgRTkjiwGQAFBzzpLuvBEh9NctytIRWCAjlHe1SW133LgVrNvkd6wJNTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eH9m5ZV/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1741257156;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=RMqW1t44N97ihf+A97Lk88vZ7a/tf/Mv4rMOKlQe5oc=;
+	b=eH9m5ZV/e21mWYUU1cSCyOfdZNAoGhc6aUbTi+lIALLyPSIA7GzAV+PAGccXYbaC506ia7
+	JW2QMwuRW87roaeEUIAFoI9MKL+Yc/1iOmNha/I370Jxz9UrgkcA46Nf20xSwZ1Ovi7n4Z
+	H3RrfhecQXCBPap94xG0nZAz0g9YSiI=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-438-ECkjq6kIOOq8Ut2c4CtVLw-1; Thu, 06 Mar 2025 05:32:17 -0500
+X-MC-Unique: ECkjq6kIOOq8Ut2c4CtVLw-1
+X-Mimecast-MFC-AGG-ID: ECkjq6kIOOq8Ut2c4CtVLw_1741257135
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43bc97e6360so2118855e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 02:32:16 -0800 (PST)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741257134; x=1741861934;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RMqW1t44N97ihf+A97Lk88vZ7a/tf/Mv4rMOKlQe5oc=;
+        b=VDEcQYxv8WOaR3KTMldN8eyINeZWNREVqUbOBuFrA/9PkMdjXsrTqOksptk/lJo8QR
+         nzTfE9l8FjsIiEVfi82X4abdM6+sMeJUlk7rFyiJpgW59Kd+LFvGGTQizQd/df6dWVRX
+         QyfGxoNgif8wo6QmMsQyvWCkwCyYirgCXlUG85915JV5lepFsNFbnB4jGUNRQZbRWIci
+         KgEBH6QVVVs1frpPh7xCl6rya2p455AkaJTdAL8a1wpAtg0qzwOJiU6bSRkHFX8B0xo5
+         xXsr3ROv4l6OsDlsbvE5ZtluhI6CsEItKyheVRpvfpT+efOVau9qSdIzM1Qn6Vnfacuq
+         EyHw==
+X-Forwarded-Encrypted: i=1; AJvYcCWO4fdNlYV6ujVjGDCnSRLpJcvTD+TsgqIkyUa6X6T6udJqA0SSQMWHPxk+MBfTH7+4q+F2nSgXb6gBlgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTqqFc9WZ8aO5WDf/9GepVjbMm1jaJUaPyf0sz5/YrHnTDv8Gd
+	vVoLxpuxUgkPuFy072PeNLskYjQLvjHMNndWiFIfVV3Iw3joNuemBb3VSCSS7cMgdlnUikXaAAk
+	7tRR3aDKE/q+R/V9QkRY1vqgfgWCobno4i816hFprSn4f7Stbxqp4/4BAx35Rag==
+X-Gm-Gg: ASbGncuH4TKFGiBj2lPNr87v7N3N9wR3EG8V0356+ZyRfMt+Gk+mCSCmqFA9PoqmXRv
+	RKC6wqWDpyow8sXBgX5HuJda06RMV7uU8NvqsBHLzHn3sKGWjdFpRqsCcpBTsoGeI/iaJmINdL/
+	TVPLq8nBAVRqea4WzODVBKA6SBg33I61yWdf8IsC1YF0QCA0hdRXk873NWfHL91Bt4Ee+7davrT
+	vptKZidgIkWo2yVicxpz0Jm+VJmrKZ721K7eFEJwx64PwTw0QudlZmnH2ix01eg66SxdiBzTD8I
+	H+Y1sCFCJox5w9yNOOLp68G94GoAPKQdu6mw4GAgM1b1wQ==
+X-Received: by 2002:a05:600c:4e8d:b0:439:930a:58aa with SMTP id 5b1f17b1804b1-43bd28a73f2mr56130325e9.0.1741257133325;
+        Thu, 06 Mar 2025 02:32:13 -0800 (PST)
+X-Google-Smtp-Source: AGHT+IGjneL1v6mm7CN1Ta5I26BcghZEUJFnb1sJCU6KoCgTgUbp+nI7Nhqiox0FcMr5Gc2xWIH6mA==
+X-Received: by 2002:a05:600c:4e8d:b0:439:930a:58aa with SMTP id 5b1f17b1804b1-43bd28a73f2mr56128875e9.0.1741257130527;
+        Thu, 06 Mar 2025 02:32:10 -0800 (PST)
+Received: from [192.168.88.253] (146-241-81-153.dyn.eolo.it. [146.241.81.153])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3912bfba888sm1639761f8f.16.2025.03.06.02.32.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 06 Mar 2025 02:32:10 -0800 (PST)
+Message-ID: <8ec75d7c-0fcf-4f7f-9505-31ec3dae4bdd@redhat.com>
+Date: Thu, 6 Mar 2025 11:32:08 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR12MB7199.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: da38f520-d5e7-4211-1da6-08dd5c9a12be
-X-MS-Exchange-CrossTenant-originalarrivaltime: 06 Mar 2025 10:31:36.5464
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 8Hl6lJcIkYddZINS2mfJKUXiP/cla8faDr5+hBme/A7+u+ASMl7/ZHq/FkSwi8T1oY/KFbRqbQBluKdfdgvmpQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CY8PR12MB7609
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] qlcnic: fix a memory leak in
+ qlcnic_sriov_set_guest_vlan_mode()
+To: Haoxiang Li <haoxiang_li2024@163.com>, shshaikh@marvell.com,
+ manishc@marvell.com, GR-Linux-NIC-Dev@marvell.com, andrew+netdev@lunn.ch,
+ davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ rajesh.borundia@qlogic.com, sucheta.chakraborty@qlogic.com
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ stable@vger.kernel.org
+References: <20250305100950.4001113-1-haoxiang_li2024@163.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20250305100950.4001113-1-haoxiang_li2024@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
->> Since iommufd_sw_msi() requires to access the domain->iommufd_hwpt, it=
-=0A=
->> is=0A=
->> better to set that explicitly prior to calling iommu_domain_set_sw_msi()=
-.=0A=
->>=0A=
->> Fixes: 748706d7ca06 ("iommu: Turn fault_data to iommufd private pointer"=
-)=0A=
->> Reported-by: Ankit Agrawal <ankita@nvidia.com>=0A=
->> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>=0A=
->=0A=
-> Reviewed-by: Kevin Tian <kevin.tian@intel.com>=0A=
-=0A=
-Tested-by: Ankit Agrawal <ankita@nvidia.com>=
+On 3/5/25 11:09 AM, Haoxiang Li wrote:
+> Add qlcnic_sriov_free_vlans() to free the memory allocated by
+> qlcnic_sriov_alloc_vlans() if qlcnic_sriov_alloc_vlans() fails
+> or "sriov->allowed_vlans" fails to be allocated.
+> 
+> Fixes: 91b7282b613d ("qlcnic: Support VLAN id config.")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Haoxiang Li <haoxiang_li2024@163.com>
+> ---
+> Changes in v2:
+> - Add qlcnic_sriov_free_vlans() if qlcnic_sriov_alloc_vlans() fails.
+> - Modify the patch description.
+> vf_info was allocated by kcalloc, no need to do more checks cause
+> kfree(NULL) is safe. Thanks, Paolo! 
+> ---
+>  drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c | 8 ++++++--
+>  1 file changed, 6 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+> index f9dd50152b1e..0dd9d7cb1de9 100644
+> --- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+> +++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_sriov_common.c
+> @@ -446,16 +446,20 @@ static int qlcnic_sriov_set_guest_vlan_mode(struct qlcnic_adapter *adapter,
+>  		 sriov->num_allowed_vlans);
+>  
+>  	ret = qlcnic_sriov_alloc_vlans(adapter);
+> -	if (ret)
+> +	if (ret) {
+> +		qlcnic_sriov_free_vlans(adapter);
+
+I'm sorry for the lack of clarity in my previous reply. I think it would
+be better to do this cleanup inside qlcnic_sriov_alloc_vlans(), so that
+on error it returns with no vlan allocated.
+
+There is another caller of qlcnic_sriov_alloc_vlans() which AFAICS still
+leak memory on error. Handling the deallocation in
+qlcnic_sriov_alloc_vlans() will address even that caller.
+
+Thanks,
+
+Paolo
+
 
