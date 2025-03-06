@@ -1,227 +1,228 @@
-Return-Path: <linux-kernel+bounces-548045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83D1A53F2B
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:32:20 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4C07A53F2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:32:34 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A2B01885BF4
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:32:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1A98171DE1
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 00:32:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38FF41F60A;
-	Thu,  6 Mar 2025 00:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EB40481CD;
+	Thu,  6 Mar 2025 00:32:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="hzj+OhjT"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NRvSEAn4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2F933DB;
-	Thu,  6 Mar 2025 00:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591C73CF58;
+	Thu,  6 Mar 2025 00:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741221130; cv=none; b=cEPfMFZcE1UO5+vRQ8OEP/rn6nXRe/W6zPcJ2SwN+g+L860Ugorlzt1oH0oFwLGrNiXtJ4yNPalUZZt5zUaNgs03/+Lh75yXi9CZoEM+Tc/6vraD7VevNlrdIycL3nvoh86QhcfXr4LcjP7PzxZqrBYKONi+Va9aRabt8IBVUMc=
+	t=1741221134; cv=none; b=Tj7hbsRGwJFnJg7m4n/f7YrKaSUS+lYV85qkn5cG0hjbVZCPZNYS0lovZpBbg3zCYdnw3jP593OH2dG8PpZp3Qhtow+nHvv8b0pcYtId9U+jXdAMtWbEd9yMbUnzg7Vn9vFO3W48g/8qrcRjT+830VCqHDDEOiNJyYK43zzLsYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741221130; c=relaxed/simple;
-	bh=YSgf5CDzA0ss+PwLHPtQej1mUa4XBDf4Gq7G9tQDejo=;
+	s=arc-20240116; t=1741221134; c=relaxed/simple;
+	bh=R4KqX0E4mpkohaWHx+uYZ/ddOOFMeKdtAnsPl1grY1k=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AH3Ghvk44paEucq0lavDRMga0CkeK1wrVsdIYWtYuxTxVXFfUQreUe2lF0rQ260oZZT2wuQJ8By7OSWolEzd2UFhWaHOPEeJyaDkQZ7Jhe2Iv5I6CY89g34/zb2HzzCV+LI5eGnqhpFaOVMnQD16H2TA6JrfQt0/AKCVzoGojxA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=hzj+OhjT; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=kUbOWVUUO3yOlnIfglKELSgnsKJiWXMSUdsbxd9R494=; b=hzj+OhjTv/kE2HesnAtGrZbxbc
-	C3DkNnsKLEf+ER8erB/OWR/2Pl+FITCYEUCZBhUiqo5WHCgP1+qPYrkBXlJx6okmYbnBLTi4LU3/q
-	4H2wcVpwk5OLZMldr7NGxReptG3u/d6Tr0FrqeYLmBQ+7QajxDKLh1U18pbleTn2F+Rg32jJWjlU7
-	ZBvnzTwdDfLxEfGisjzc8c2zqNN92W+YlFUqmvPtugMarW6MkQEZcfxuAD2MEGSNKUuD3Ri7NznhD
-	hUq5DUzfutJUZxtX/8QNdQgSQdDkZICP3VH5cSBdJvcZ0J5BjtdgoTg8eX5ayZIU29tHnOgTuMysg
-	rMmZWgqg==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:37982)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1tpz9R-000595-0h;
-	Thu, 06 Mar 2025 00:31:49 +0000
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1tpz9L-0006Ez-2j;
-	Thu, 06 Mar 2025 00:31:43 +0000
-Date: Thu, 6 Mar 2025 00:31:43 +0000
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uqh4osqqH8wKRo5v7gNZ7sIADVlpZbRxC89vgTGATNlyNS1GxguKrceNRPBXwsa/Heabk3tv69zTZChwUSDi4aYi6Yoay76LlcQidPkYT+xMrrAmb8GYT+7B1kEsdkIym7wZOczHDnlVZp7Fu8lolb+6zfetU716Vf/rcNcAOTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NRvSEAn4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FB3EC4CED1;
+	Thu,  6 Mar 2025 00:32:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741221133;
+	bh=R4KqX0E4mpkohaWHx+uYZ/ddOOFMeKdtAnsPl1grY1k=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NRvSEAn4ItpuQqydCQhIGkZzJ/Y36MrDbOc0qr9x9B8ktMK6BOefvbXwKrzxGxSB/
+	 cMgshWY5g3yrdg/uyj4o6jJcrqQgU7moo2siP9dwBI3LoVe0VkdWTVTguZXEGFaLTz
+	 K51ZTLy+aREh93Udqau+bIbzLmKVmi3AK1YzPLgxMK3REz26vw0Il1cFVa/cQahrUQ
+	 tQrollL2GBQkzpIGiqKaz0drr4Qe2D563StZI69/PNXrY3WFv4BnUhqaCaifH92zoh
+	 lQclqERw9TpMrpMNhWQau79b2dWwyYPMuTMvurP5KjB5pNWeOWrhqhbD5GKT16R+e+
+	 3+RNx/PS0bbBA==
+Date: Wed, 5 Mar 2025 16:32:11 -0800
+From: Lee Jones <lee@kernel.org>
+To: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-rtc@vger.kernel.org, Inochi Amaoto <inochiama@gmail.com>,
+	dlan@gentoo.org, linux-kernel@vger.kernel.org,
+	Jingbao Qiu <qiujingbao.dlmu@gmail.com>,
 	Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: Re: [PATCH 3/3] net: stmmac: Add DWMAC glue layer for Renesas GBETH
-Message-ID: <Z8js74ASE_b-y9sR@shell.armlinux.org.uk>
-References: <20250302181808.728734-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250302181808.728734-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <Z8SydsdDsZfdrdbE@shell.armlinux.org.uk>
- <CA+V-a8vCB7nP=tsv4UkOwODSs-9hiG-PxN6cpihfvwjq2itAHg@mail.gmail.com>
- <Z8TRQX2eaNzXOzV0@shell.armlinux.org.uk>
- <CA+V-a8vykhxqP30iTwN6yrqDgT8YRVE_MadjiTFp653rHVqMNg@mail.gmail.com>
- <Z8WQJQo5kW9QV-wV@shell.armlinux.org.uk>
- <CA+V-a8vCqxCaB_UEf-Ysg3biu5VoQ2_0OxWnN97Mdee9Op3YDA@mail.gmail.com>
- <Z8XZh9nvX3yrE6wB@shell.armlinux.org.uk>
- <CA+V-a8teuTznxBE2_LqqQcqRgQu1saAMuOUST8jFLFFTALqUMw@mail.gmail.com>
+	Chen Wang <unicorn_wang@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	sophgo@lists.linux.dev
+Subject: Re: [PATCH v12 2/3] mfd: sophgo: cv1800: rtcsys: New driver
+ (handling RTC only)
+Message-ID: <20250306003211.GA8350@google.com>
+References: <20250302195205.3183174-1-alexander.sverdlin@gmail.com>
+ <20250302195205.3183174-3-alexander.sverdlin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CA+V-a8teuTznxBE2_LqqQcqRgQu1saAMuOUST8jFLFFTALqUMw@mail.gmail.com>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250302195205.3183174-3-alexander.sverdlin@gmail.com>
 
-On Wed, Mar 05, 2025 at 09:26:43PM +0000, Lad, Prabhakar wrote:
-> I did investigate on these lines:
+On Sun, 02 Mar 2025, Alexander Sverdlin wrote:
+
+> Add driver for Sophgo CV1800 series SoC RTC MFD. The RTC module comprises
+> a 32kHz oscillator, Power-on-Reset (PoR) sub-module, HW state machine to
+> control chip power-on, power-off and reset. Furthermore, the 8051 subsystem
+> is located within RTCSYS including associated SRAM block.
 > 
-> 1] With my current patch series I have the below in remove callback
+> This patch only populates RTC sub-device.
 > 
-> +static void renesas_gbeth_remove(struct platform_device *pdev)
+> Signed-off-by: Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> ---
+> Changelog:
+> v12:
+> - new patch
+> 
+>  MAINTAINERS                 |  1 +
+>  drivers/mfd/Kconfig         | 14 ++++++++
+>  drivers/mfd/Makefile        |  1 +
+>  drivers/mfd/cv1800-rtcsys.c | 66 +++++++++++++++++++++++++++++++++++++
+>  4 files changed, 82 insertions(+)
+>  create mode 100644 drivers/mfd/cv1800-rtcsys.c
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index 92fc0eca7061..446156998380 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -22185,6 +22185,7 @@ M:	Chen Wang <unicorn_wang@outlook.com>
+>  M:	Inochi Amaoto <inochiama@outlook.com>
+>  T:	git https://github.com/sophgo/linux.git
+>  S:	Maintained
+> +F:	drivers/mfd/cv1800-rtcsys.c
+>  N:	sophgo
+>  K:	sophgo
+>  
+> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
+> index 6b0682af6e32..842cc4d95c4b 100644
+> --- a/drivers/mfd/Kconfig
+> +++ b/drivers/mfd/Kconfig
+> @@ -285,6 +285,20 @@ config MFD_CS42L43_SDW
+>  	  Select this to support the Cirrus Logic CS42L43 PC CODEC with
+>  	  headphone and class D speaker drivers over SoundWire.
+>  
+> +config MFD_CV1800_RTCSYS
+> +	tristate "Sophgo CV1800 RTC MFD"
+> +	depends on ARCH_SOPHGO || COMPILE_TEST
+> +	select MFD_CORE
+> +	help
+> +	  If you say yes here you get support the RTC MFD driver for Sophgo
+> +	  CV1800 series SoC. The RTC module comprises a 32kHz oscillator,
+> +	  Power-on-Reset (PoR) sub-module, HW state machine to control chip
+> +	  power-on, power-off and reset. Furthermore, the 8051 subsystem is
+> +	  located within RTCSYS including associated SRAM block.
+> +
+> +	  This driver can also be built as a module. If so, the module will be
+> +	  called cv1800-rtcsys.
+> +
+>  config MFD_MADERA
+>  	tristate "Cirrus Logic Madera codecs"
+>  	select MFD_CORE
+> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
+> index 9220eaf7cf12..3cf03ffeedbb 100644
+> --- a/drivers/mfd/Makefile
+> +++ b/drivers/mfd/Makefile
+> @@ -18,6 +18,7 @@ obj-$(CONFIG_MFD_CROS_EC_DEV)	+= cros_ec_dev.o
+>  obj-$(CONFIG_MFD_CS42L43)	+= cs42l43.o
+>  obj-$(CONFIG_MFD_CS42L43_I2C)	+= cs42l43-i2c.o
+>  obj-$(CONFIG_MFD_CS42L43_SDW)	+= cs42l43-sdw.o
+> +obj-$(CONFIG_MFD_CV1800_RTCSYS)	+= cv1800-rtcsys.o
+>  obj-$(CONFIG_MFD_ENE_KB3930)	+= ene-kb3930.o
+>  obj-$(CONFIG_MFD_EXYNOS_LPASS)	+= exynos-lpass.o
+>  obj-$(CONFIG_MFD_GATEWORKS_GSC)	+= gateworks-gsc.o
+> diff --git a/drivers/mfd/cv1800-rtcsys.c b/drivers/mfd/cv1800-rtcsys.c
+> new file mode 100644
+> index 000000000000..72d11284f1de
+> --- /dev/null
+> +++ b/drivers/mfd/cv1800-rtcsys.c
+> @@ -0,0 +1,66 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Driver for Sophgo CV1800 series SoC RTC MFD
+> + *
+> + * The RTC module comprises a 32kHz oscillator, Power-on-Reset (PoR) sub-module,
+> + * HW state machine to control chip power-on, power-off and reset. Furthermore,
+> + * the 8051 subsystem is located within RTCSYS including associated SRAM block.
+> + *
+> + * Copyright (C) 2025 Alexander Sverdlin <alexander.sverdlin@gmail.com>
+> + *
+> + */
+> +
+> +#include <linux/mfd/core.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/property.h>
+> +
+> +static struct resource cv1800_rtcsys_irq_resources[] = {
+> +	DEFINE_RES_IRQ_NAMED(0, "alarm"),
+> +};
+> +
+> +static const struct mfd_cell cv1800_rtcsys_subdev[] = {
+> +	{
+> +		.name = "cv1800-rtc",
+> +		.num_resources = 1,
+> +		.resources = &cv1800_rtcsys_irq_resources[0],
+> +	},
+> +};
+> +
+> +static const struct mfd_cell cv1800_rtcsys_rtc_subdev =
+> +	MFD_CELL_NAME("cv1800-rtc");
+
+How is this different from the one above?
+
+Adding a single device does not constitute an MFD.
+
+> +static int cv1800_rtcsys_probe(struct platform_device *pdev)
 > +{
-> +       struct renesas_gbeth *gbeth = get_stmmac_bsp_priv(&pdev->dev);
+> +	int irq;
 > +
-> +       stmmac_dvr_remove(&pdev->dev);
+> +	irq = platform_get_irq_byname(pdev, "alarm");
+> +	if (irq < 0)
+> +		return irq;
+> +	cv1800_rtcsys_irq_resources[0].start = irq;
+> +	cv1800_rtcsys_irq_resources[0].end = irq;
 > +
-> +       clk_bulk_disable_unprepare(gbeth->num_clks, gbeth->clks);
+> +	return devm_mfd_add_devices(&pdev->dev, PLATFORM_DEVID_AUTO,
+> +				    cv1800_rtcsys_subdev,
+> +				    ARRAY_SIZE(cv1800_rtcsys_subdev),
+> +				    NULL, 0, NULL);
 > +}
-> 
-> After dumping the CLK registers I found out that the Rx and Rx-180 CLK
-> never got turned OFF after unbind.
-
-I think that's where further investigation needs to happen. This
-suggests there's more enables than disables for these clocks, but
-there's nothing that I can see in your submitted driver that would
-account for that behaviour.
-
-> 2] I replaced the remove callback with below ie first turn OFF
-> Tx-180/Rx/Rx-180 clocks
-> 
-> +static void renesas_gbeth_remove(struct platform_device *pdev)
-> +{
-> +       struct renesas_gbeth *gbeth = get_stmmac_bsp_priv(&pdev->dev);
 > +
-> +       clk_bulk_disable_unprepare(gbeth->num_clks, gbeth->clks);
+> +static const struct of_device_id cv1800_rtcsys_of_match[] = {
+> +	{ .compatible = "sophgo,cv1800b-rtc" },
+> +	{ /* sentinel */ }
+> +};
+> +MODULE_DEVICE_TABLE(of, cv1800_rtcsys_of_match);
 > +
-> +      stmmac_dvr_remove(&pdev->dev);
-> +}
+> +static struct platform_driver cv1800_rtcsys_mfd = {
+> +	.probe	= cv1800_rtcsys_probe,
+> +	.driver	= {
+> +		.name		= "cv1800_rtcsys",
+> +		.of_match_table	= cv1800_rtcsys_of_match,
+> +	},
+> +};
+> +module_platform_driver(cv1800_rtcsys_mfd);
+> +
+> +MODULE_AUTHOR("Alexander Sverdlin <alexander.sverdlin@gmail.com>");
+> +MODULE_DESCRIPTION("Sophgo CV1800 series SoC RTC MFD driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.48.1
 > 
-> After dumping the CLK registers I confirmed all the clocks were OFF
-> (CSR/PCLK/Tx/Tx-180/Rx/Rx-180) after unbind operation. Now when I do a
-> bind operation Rx clock fails to enable, which is probably because the
-> PHY is not providing any clock.
-
-However, disabling clocks _before_ unregistering the net device is a
-bad thing to do! The netdev could still be in use.
-
-You can add:
-
-	if (ndev->phydev)
-		phy_eee_rx_clock_stop(ndev->phydev, false);
-
-just before unregister_netdev() in stmmac_dvr_remove() only as a way
-to test out that idea.
-
-Do the clock registers you refer to only update when the relevant
-clocks are actually running?
-
-> > However, PHYs that have negotiated EEE are permitted to stop their
-> > receive clock, which can be enabled by an appropriate control bit.
-> > phy_eee_rx_clock_stop() manipulates that bit. stmmac has in most
-> > cases permitted the PHY to stop its receive clock.
-> >
-> You mean phy_eee_rx_clock_stop() is the one which tells the PHY to
-> disable the Rx clocks? Actually I tried the below hunk with this as
-> well the Rx clock fails to be turned ON after unbind/bind operation.
-
-phy_eee_rx_clock_stop() doesn't turn the clock on/off per-se, it
-controls the bit which gives the PHY permission to disable the clock
-when the media is in EEE low-power mode. Note that 802.3 does not
-give a default setting for this bit, so:
-
-> diff --git a/drivers/net/phy/phy.c b/drivers/net/phy/phy.c
-> index 0ba434104f5b..e16f4a6f5715 100644
-> --- a/drivers/net/phy/phy.c
-> +++ b/drivers/net/phy/phy.c
-> @@ -1756,6 +1756,7 @@ EXPORT_SYMBOL_GPL(phy_eee_tx_clock_stop_capable);
->   */
->  int phy_eee_rx_clock_stop(struct phy_device *phydev, bool clk_stop_enable)
->  {
-> +       return 0;
->         int ret;
-> 
->         /* Configure the PHY to stop receiving xMII
-
-May not be wise, and if you want to ensure that the PHY does not stop
-the clock, then forcing clk_stop_enable to zero would be better.
-
-> > NVidia have been a recent victim of this - it is desirable to allow
-> > receive clock stop, but there hasn't been the APIs in the kernel
-> > to allow MAC drivers to re-enable the clock when they need it.
-> >
-> > Up until now, I had thought this was just a suspend/resume issue
-> > (which is NVidia's reported case). Your testing suggests that it is
-> > more widespread than that.
-> >
-> > While I've been waiting to hear from you, I've prepared some patches
-> > that change the solution that I proposed for NVidia (currently on top
-> > of that patch set).
->
-> I tried your latest patches [0], this didnt resolve the issue.
-
-I assume without the modification to phy_eee_rx_clock_stop() above -
-thanks. If so, then your issue is not EEE related.
-
-> [0] https://lore.kernel.org/all/Z8bbnSG67rqTj0pH@shell.armlinux.org.uk/
-
-Wasn't quite the latest, but still had the same build bug (thanks for
-reporting, now fixed.) Latest is equivalent so no need to re-test.
-
-> > However, before I proceed with them, I need you to get to the bottom
-> > of why:
-> >
-> > # ip li set dev $if down
-> > # ip li set dev $if up
-> >
-> > doesn't trigger it, but removing and re-inserting the module does.
-> >
-> Doing the above does not turn OFF/ON all the clocks. Looking at the
-> dump from the CLK driver on my platform only stmmaceth and pclk are
-> the clocks which get toggled and rest remain ON. Note Im not sure if
-> the PHY is disabling the Rx clocks when I run ip li set dev $if down I
-> cannot scope that pin on the board.
-> 
-> Please let me know if you have any pointers for me to look further
-> into this issue.
-
-Given the behaviour that you're reporting from your clock layer, I'm
-wondering if the problem is actually there... it seems weird that clocks
-aren't being turned off and on when they should.
 
 -- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Lee Jones [李琼斯]
 
