@@ -1,136 +1,100 @@
-Return-Path: <linux-kernel+bounces-549816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A45DA5578A
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:38:57 +0100 (CET)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92D4EA5578F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:39:49 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A64AA18898CF
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:38:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE2E7189302C
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 20:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C695227560B;
-	Thu,  6 Mar 2025 20:38:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC84327703F;
+	Thu,  6 Mar 2025 20:39:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b="JbTCmFOu"
-Received: from mailbackend.panix.com (mailbackend.panix.com [166.84.1.89])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="m8JIKYP4"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360EB1448E3;
-	Thu,  6 Mar 2025 20:38:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.84.1.89
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61D825D8FA
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 20:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741293516; cv=none; b=E7WD3Mv4Q0gXHolkCG632/DP5SDFngh/Wzz3C+20FnUmoPdrj2iMFXb5KDhCmqDBQjHH04Upv3rALNOCpPeqQNlqHD/KKVWCb6DqQRdyQPGGuK5BuO/63PxdS4KMvM0rDFMqwGf9x90boucICEM2WmeEfQBdvtu9jToBMEoo1lc=
+	t=1741293555; cv=none; b=tvAkeVVnyK1myrlShWV99YurvHHeq0dIpkXAkr8aVIbpgy56DRge+3thzpoutnrTfmGXo2hLy0hr4ShU49R7ubtcQ2p3h6lHeCZZpL4ZrRHeHaEnux1UFTYmXrxDvlEJbHoLIXT8hf8mce3Z2tK0Ksc9nBFMgBqg7mVtCNpOFmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741293516; c=relaxed/simple;
-	bh=qnoXiEkk5n6/KIxOU4pLw61ipm/zP5dR4OPIi0DeCzo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BC6nOMJ4EaRhGXqMY7lbo7YKfij8AkP7QoUP4zXjjic2sc9Rdu0OBV9fpXt5CnjTJFnvl2GFsYOB5Talhr/EU+IkKA743TLEeShiGsjs+MlWmJVVS2olk9QgiQTYYiWjzSE7h/HJ3MBX+nTJUVcetY5zWdFKmXXAK4ZU+BxNPgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com; spf=pass smtp.mailfrom=panix.com; dkim=pass (1024-bit key) header.d=panix.com header.i=@panix.com header.b=JbTCmFOu; arc=none smtp.client-ip=166.84.1.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=panix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=panix.com
-Received: from [10.50.4.49] (45-31-46-51.lightspeed.sndgca.sbcglobal.net [45.31.46.51])
-	by mailbackend.panix.com (Postfix) with ESMTPSA id 4Z81Tg5Mf6z4JYX;
-	Thu,  6 Mar 2025 15:38:31 -0500 (EST)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=panix.com; s=panix;
-	t=1741293513; bh=qnoXiEkk5n6/KIxOU4pLw61ipm/zP5dR4OPIi0DeCzo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To;
-	b=JbTCmFOuvaAF+WEJLsMMmjdYU2ERE7Dj9XrwPtB2Jx6YLzYQt6B79o34R1tcBE6tZ
-	 SLiUxC0DSLy6YA18cnQGsval8x960npt/75L41AmMs0Ed7BaqONLX6BUfgCvt6kECd
-	 GUk7gSouMlK6eMsjLzkRJFqfngIKpo/6ufhos6Tw=
-Message-ID: <8c485ed6-85e0-4d8f-b6dc-2e5c9115b116@panix.com>
-Date: Thu, 6 Mar 2025 12:38:30 -0800
+	s=arc-20240116; t=1741293555; c=relaxed/simple;
+	bh=kXlwnVm/MmDRRUROUu6959pIgE0xYihWzk7uz8o+OKM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cZ4S9RIxuKiSTIzbc13HOMh78Wi5rSWMd1zXEhpvIixVq09WrES1sHmh1Jhq7QLMbpzizYS6SlaSgYft2ocr34PJHcX+dWkXDyoWoZGKr+4dflsSnCy7aEdmwd0K6h3i+U0KvPTYngVy+JDL/S5ZoeT5aKpXbqq78MNYrneSPvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=m8JIKYP4; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: MIME-Version: Message-ID: Date: Subject: Cc:
+ To: From; q=dns/txt; s=fe-e1b5cab7be; t=1741293553;
+ bh=+Q3pBznN8M0b0cdvrfOAVu+/YpKDnQ8zfRnmStTM8EY=;
+ b=m8JIKYP4EZ3aEFTTlfg3ww3VDujeTlzjvbkClBiIep8uZp7l8X6fRJo9dGMIfNKFQPm8iaSpj
+ 5hqCky1XCN3ZD19pr5GlMBXk62DRuwSBMAd+eVnRtGoCuP2MmoLo+d1O+sm5Ekc0ylbzRnFCp+P
+ sOWqg04IxJ779Rr+e36Ihzo1aBSbI4yd5U+PW+dggJHE2zVQ70CnqAGsILKFnn7HNrpSoHn8Rtu
+ 3v89G2EtM5kx57Tl4jZfKi+CXXacFAGE3fv//hI/bnvZBTexJSfKQbSiftr4BNohqLVRKsUcecC
+ KBgnzIL9AaaYRkUuCFMbDaOAwqCwzX7GuDdOFQm7EISA==
+X-Forward-Email-ID: 67ca07e7deafcb1458af9232
+X-Forward-Email-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-Forward-Email-Version: 0.4.40
+X-Forward-Email-Website: https://forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Report-Abuse-To: abuse@forwardemail.net
+From: Jonas Karlman <jonas@kwiboo.se>
+To: Heiko Stuebner <heiko@sntech.de>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S . Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-rockchip@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Jonas Karlman <jonas@kwiboo.se>
+Subject: [PATCH 0/3] Use DELAY_ENABLE macro for RK3328, RK3566/RK3568 and RK3588
+Date: Thu,  6 Mar 2025 20:38:51 +0000
+Message-ID: <20250306203858.1677595-1-jonas@kwiboo.se>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: diagnosing resume failures after disconnected USB4 drives (Was:
- Re: PCI/ASPM: Fix L1SS saving (linus/master commit 7507eb3e7bfac))
-To: Lukas Wunner <lukas@wunner.de>,
- Mika Westerberg <mika.westerberg@linux.intel.com>, Me <kenny@panix.com>
-Cc: Bjorn Helgaas <helgaas@kernel.org>, ilpo.jarvinen@linux.intel.com,
- Bjorn Helgaas <bhelgaas@google.com>, Jian-Hong Pan <jhp@endlessos.org>,
- linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
- Nikl??vs Ko??es??ikovs <pinkflames.linux@gmail.com>,
- Andreas Noever <andreas.noever@gmail.com>,
- Michael Jamet <michael.jamet@intel.com>,
- Yehezkel Bernat <YehezkelShB@gmail.com>, linux-usb@vger.kernel.org
-References: <83d9302a-f743-43e4-9de2-2dd66d91ab5b@panix.com>
- <20250213135911.GG3713119@black.fi.intel.com>
- <a8d6ca75-8f50-4c46-8c67-fcf20d870dcc@panix.com>
- <20250214162948.GJ3713119@black.fi.intel.com>
- <661459dd-67d0-4e1c-bb28-9adf1417f660@panix.com>
- <20250226084404.GM3713119@black.fi.intel.com> <Z77ak-4YsdAKXbHr@wunner.de>
- <20250226091958.GN3713119@black.fi.intel.com> <Z8YKXC1IXYXctQrZ@wunner.de>
- <20250304082314.GE3713119@black.fi.intel.com> <Z8nRI6xjGl3frMe5@wunner.de>
-Content-Language: en-US
-From: Kenneth Crudup <kenny@panix.com>
-In-Reply-To: <Z8nRI6xjGl3frMe5@wunner.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+Almost all Rockchip GMAC variants use the DELAY_ENABLE macro to help
+enable or disable use of MAC rx/tx delay. However, RK3328, RK3566/RK3568
+and RK3588 GMAC driver does not.
 
-I'll do more testing but it's been a couple of attempts and it hasn't 
-locked up on me.
+Use of the DELAY_ENABLE macro help ensure the MAC rx/tx delay is
+disabled, instead of being enabled and using a zero delay, when
+RGMII_ID/RXID/TXID is used.
 
-Curious to see how Mika fares with it.
+RK3328 driver was merged around the same time as when DELAY_ENABLE was
+introduced so it is understandable why it was missed. Both RK3566/RK3568
+and RK3588 support were introduced much later yet they also missed using
+the DELAY_ENABLE macro (so did vendor kernel at that time).
 
--Kenny
+This series fixes all these cases to unify how GMAC delay feature is
+enabled or disabled across the different GMAC variants.
 
+Jonas Karlman (3):
+  net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for RK3328
+  net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for RK3566/RK3568
+  net: stmmac: dwmac-rk: Use DELAY_ENABLE macro for RK3588
 
-On 3/6/25 08:45, Lukas Wunner wrote:
-> On Tue, Mar 04, 2025 at 10:23:14AM +0200, Mika Westerberg wrote:
->> Unfortunately I still see the same hang. I double checked, with revert the
->> problem goes a way and with this patch I still see it.
->>
->> Steps:
->>
->> 1. Boot the system, nothing connected.
->> 2. Connect TBT 4 dock to the host.
->> 3. Connect TBT 3 NVMe to the TBT4 doc.
->> 4. Authorize both PCIe tunnels, verify devices are there.
->> 5. Enter s2idle.
->> 6. Unplug the TBT 4 dock from the host.
->> 7. Exit s2idle.
-> 
-> Thanks for testing.  Would you mind giving the below a spin?
-> 
-> I've realized this can likely be solved in a much easier way:
-> 
-> The ->resume_noirq callback is invoked while traversing down
-> the hierarchy and the topmost slot which detects device replacement
-> already marks everything below as disconnected.  Hence any nested
-> hotplug ports can just skip the replacement check because they're
-> disconnected as well.
-> 
-> -- >8 --
-> 
-> diff --git a/drivers/pci/hotplug/pciehp_core.c b/drivers/pci/hotplug/pciehp_core.c
-> index ff458e6..997841c 100644
-> --- a/drivers/pci/hotplug/pciehp_core.c
-> +++ b/drivers/pci/hotplug/pciehp_core.c
-> @@ -286,9 +286,12 @@ static int pciehp_suspend(struct pcie_device *dev)
->   
->   static bool pciehp_device_replaced(struct controller *ctrl)
->   {
-> -	struct pci_dev *pdev __free(pci_dev_put);
-> +	struct pci_dev *pdev __free(pci_dev_put) = NULL;
->   	u32 reg;
->   
-> +	if (pci_dev_is_disconnected(ctrl->pcie->port))
-> +		return false;
-> +
->   	pdev = pci_get_slot(ctrl->pcie->port->subordinate, PCI_DEVFN(0, 0));
->   	if (!pdev)
->   		return true;
-> 
+ .../net/ethernet/stmicro/stmmac/dwmac-rk.c    | 19 ++++++++++---------
+ 1 file changed, 10 insertions(+), 9 deletions(-)
 
 -- 
-Kenneth R. Crudup / Sr. SW Engineer, Scott County Consulting, Orange 
-County CA
+2.48.1
 
 
