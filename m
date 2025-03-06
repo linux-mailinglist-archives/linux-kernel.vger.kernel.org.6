@@ -1,230 +1,171 @@
-Return-Path: <linux-kernel+bounces-549413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CB18A55236
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:05:33 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53346A55250
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:07:15 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E186E1896E45
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:03:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DAE5188C93A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B9025A62E;
-	Thu,  6 Mar 2025 17:02:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B9B2566F3;
+	Thu,  6 Mar 2025 17:04:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="G/RDVZcM"
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2055.outbound.protection.outlook.com [40.107.212.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zaAP5RNB"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A8792561AB;
-	Thu,  6 Mar 2025 17:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741280534; cv=fail; b=DD41FifIZW5vnnV8Y0kn7x2BawTcEgPcwDbijKi+Th834TX66j04flo6aVO8jMU59XLajNictZ9co87/xae9qT6XDe1BJ24LxeuodywJ8YZ62BeHSmfv95cV1EOBYvYZtuq5MRuiNPxeteHpKonkSinCjxPwwJcYOJP+RQ/Lb1g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741280534; c=relaxed/simple;
-	bh=VMNwUi5dzFGCey8ddHHUs0klMM+hbZy1fERQqAP2ySc=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=XwRnAeF63FBMLJzagrBJ6mymjNgfAyu+LUyKLON3obAQogSAGB0OsqNaCn8f2MeOCuVb6bRCwwhKChHpQg40TfLtZA3zSAOT0UTbPfu3CaJOtFlSTdL/P4KZwYL8Uy7zBM/wsUP20DawVf4N2oahJW/jo48Hren6+hg9IA/GNO4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=G/RDVZcM; arc=fail smtp.client-ip=40.107.212.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Wcuhi3pWDU2W4+sQOuPnXix5JblgH014k2ahIf0rB+6UHa9DKw5a+JRoga+nxkRSo5JhMVPt1pAxMsrRWk7o7dBDk4v293jVtxKspz9AbgF3uVx1kGcG05lCaDmj2Pde9OfZr+on2xRmDnaLuqwNLo7x+dzCfv2Iy2A2X6ulTzF7GWQsPKk5OD7WOp63zEILCBeGEgwizFbGL1jCUMVQFTHTJ/oz7S00igS2dzOTAxPQJuWRVemf30lIRHI23ilck8wmfUNcFdSJH/5APjyMeqv0IM+Dkze/ynMOcXgmL3k6/imlyeFu0rngzM1aVj1hNFszC3DiEFO3RaoWp19/pw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=uUoU2dlXh6zTOgPMBagWEWt36VEIli/hSTmbS7c9Jg0=;
- b=GsNAaqvfW4SJQc2mXT75qkpmBZwp/RGbiKQ6oDXhpLH/Y/waZvRq0NHa9WLwx1SvEITMDKsz2ruCJ/TM8up/H4u597R/wLp1gZFOnJoLWMqZXX6A4EwQadun6CRlccEGePSXCb4c86n5yy3dgMrjsYz58hwgCdSaDywNKMfX8m9cPcWLx6Q5AHuj0OwdwLtJCJ/wlm0jTw1OGjfFma3t6i7vKvZFJgxwVMKwmd6viR7+E0ZTmYX80ef2WO1YR6x4jFBFUten9ZBZxFBr1J2dLeOTYiNhdUXmhMODPKThZ8QEiVVDodwTqfoNOd1GzKp18Gak3giD2CZZFakV+IUafQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=uUoU2dlXh6zTOgPMBagWEWt36VEIli/hSTmbS7c9Jg0=;
- b=G/RDVZcMx7xIm57R9kAXLfbM+IsGUGDsw0k+9j0QQPe7loVqCkw+3n16rYys69ggqgq8LB+T4OU1RMtQUC4r4+FzFwnV3tvYtxxniKtdZQ37m7RaiJcYCN1VQZVlO9s/rpe19jZHEU/v5qQUMpsw5JElp4Dia7kzUY+IS76jOyYT721xWyIqgXO4a9LxLACC+loFUOlRV8ZOzj+gZXEX9ni8bS6xXvIGuHUiqgQctkUsZgR4UO841axy4jmyUy8YAA73NT4WjVGyOfmXYp5+OUbwpJj7/wrSXRav6vamaGAFiGnO9T4iZtmkgokiI1psiP5ieEXnHwY5ltvfWNsXtg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com (2603:10b6:806:32b::7)
- by SN7PR12MB8789.namprd12.prod.outlook.com (2603:10b6:806:34b::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8489.29; Thu, 6 Mar
- 2025 17:02:09 +0000
-Received: from SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91]) by SN7PR12MB8059.namprd12.prod.outlook.com
- ([fe80::4ee2:654e:1fe8:4b91%5]) with mapi id 15.20.8489.028; Thu, 6 Mar 2025
- 17:02:09 +0000
-Message-ID: <002836c8-002f-43bb-956d-e5dce6546af4@nvidia.com>
-Date: Thu, 6 Mar 2025 12:02:05 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] sched/fair: Disable DL server on
- rcu_torture_disable_rt_throttle()
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
- Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
- stable@vger.kernel.org, "Paul E . McKenney" <paulmck@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <20250306011014.2926917-1-joelagnelf@nvidia.com>
- <Z8lsX0GDrx7Pa8vd@jlelli-thinkpadt14gen4.remote.csb>
-Content-Language: en-US
-From: Joel Fernandes <joelagnelf@nvidia.com>
-In-Reply-To: <Z8lsX0GDrx7Pa8vd@jlelli-thinkpadt14gen4.remote.csb>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BYAPR08CA0048.namprd08.prod.outlook.com
- (2603:10b6:a03:117::25) To SN7PR12MB8059.namprd12.prod.outlook.com
- (2603:10b6:806:32b::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEE587FD
+	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1741280697; cv=none; b=n/GnCC3M7ZnsFiyeGbJd0+hr9Y7IHhdI5GVO/t4KzXvs/TatcX/Il6aQPscf4uqOMjVoYZObRLUm+XwZgLeKVKNRl74HRNbvbNdaJuxproLhm0zQJHBe+iA+w94uhyJ86M07RjPkWj1NTxDO7rEy766+KGWQKVSnpfdAxCvIdB0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1741280697; c=relaxed/simple;
+	bh=5R30x4xhG8B8zMUfIGiFqFS6AcrcChLocLOkQPgCoT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kGFWCv11gNFJkr4lOd3K8QTOOhJb2ud3E6l0t3stU5rAZuoOZwgHO5tlx7qWaJwIG0ecahWIrta8RhBMIvUSELFnk23lZc3Acxyy+wKtQ1tKiQOa1jOJ3K0o6MDLOtzoTWn//Y5tmj1h0zIlJpsgvxRQ5x8CCONHFt/BeXNRM3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zaAP5RNB; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-548430564d9so974595e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 09:04:55 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1741280694; x=1741885494; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=zjfqdZik8Yo6VfIh3QiCKD6S9SpHxBu1Xihobwzn8xA=;
+        b=zaAP5RNB6J5GiJoFxntMrZFD88yQznhr4INF6vCgX/wyh4ilUafx42HwYwrci3u2tn
+         uVQeoMPsf7s0fk9Tz67xoReOjz1aM0WdAWiwwYwOdBaceuOv60a8GOW4y0qL2I5xcoxp
+         /RlRH5fS+gDMzspB/uv8rogwaHwk2aUq/vc0LhQT75GnuREF74kjSsMJlPBM2rtD2X0x
+         Y8NvlgZnwOWO4zwiX/gqdst2pPgde0IjxTjn66KSnknlotXEWR41UqJD5sglMyWFgA6Y
+         xIvufpUsapmHReurhGPZzb3s90G7PrNBKT+5dUhtwqovjzJB0v+wmOVW9Gdel5V0XUeg
+         AjZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741280694; x=1741885494;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zjfqdZik8Yo6VfIh3QiCKD6S9SpHxBu1Xihobwzn8xA=;
+        b=ZWIYtyhJU4ZzX0+3AOLS5VwEx+KLSKuRzaTM7HKAGGCx7jiCpN1qJGSPT/uIEu5tSL
+         yw3AbL8KJzPC1JbmD7ax0zDUkJQZC9oTJezhNn3taPufH3hGxNhjhNxvMQpBEZ7VFLAt
+         qutUemmXaHbJBzl7V8WV4NH5Q/wJTFk4U3Bn5Laj7cpwBtgZXFyweqg2yIk+qvugoE/s
+         fAXe9DcwkWmVKUp+tPpiUWCrFzTGUwBpwqpHxKqd0DTqPZRpnJHdbFfgSQBcZaKIrSvc
+         jmmWFXvGAJL2r4JgD1j/O0dCIGjxDvWujMPZXolpTqWhbqbupYR2sQraumdVEnqOLyIp
+         rJuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSnBG5KC6YJn723Gkvy/Xy68JFQ5qqwC8qTFApaGBc8eoKJdmSr8ztar2gKAbZ7xcfmJlh1rrv60cugLM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQg97LZpEsbMXRCycUO1IcMY7o7Qexl9ake594fuUVS3gnidwz
+	N4tbLbwTetc5rc4L7boeFILLO6T32mp230rSa0dTFc3peyNcx79aizHAep16dKE=
+X-Gm-Gg: ASbGncsZRtHEU0QWJdu0bTZ6KeGeqVaYSRmoYJWYe6/nAdHL6T3bNsAAmkfUErpY7hx
+	uavTbc2XTKLoMUKWSJhPZJKmM57eHNWxadmH48lQbLAor22EEeW14cE6qMIeFXqGBSzplo9O+NS
+	sVD5wD0TtQytkF8/OxI8ZKyXJHyzCRehsQGB5fuatfDJ3f5bkoCZQfd/PwKomeXmDobBQAf3kEk
+	+t6BK1MWgrOUnr9MA8nDTp/MIBNygth2zzuRR6fBB7nR659YDcpTgqm0kbYrn17nk7hmQUap4R7
+	pAwNkE3/S1gMj6ylrVHY4YuSWIyP5PJ7UCbUpil0I1ynZgFXVgLgoPgQszXGhiAF35UL6r/ywKz
+	I1S6lixO8M3avdKJSTFzUskxk
+X-Google-Smtp-Source: AGHT+IGb5n4nLHuJOo53o088PyCQtpwg/5P2yozwSc9CG3CJHR24aIjuY/xSZ/f5OkCiABcej8Dmzw==
+X-Received: by 2002:a05:6512:158f:b0:545:576:cbd2 with SMTP id 2adb3069b0e04-5497d32f8d1mr3030521e87.10.1741280693738;
+        Thu, 06 Mar 2025 09:04:53 -0800 (PST)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1bc4basm230680e87.164.2025.03.06.09.04.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 09:04:52 -0800 (PST)
+Date: Thu, 6 Mar 2025 19:04:48 +0200
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Cc: Caleb Connolly <caleb.connolly@linaro.org>, broonie@kernel.org, 
+	perex@perex.cz, tiwai@suse.com, krzysztof.kozlowski@linaro.org, 
+	linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	johan+linaro@kernel.org
+Subject: Re: [PATCH v3 0/6] ASoC: q6apm: fix under runs and fragment sizes
+Message-ID: <lim35p2lwwo7uelex6co72hvwskawmevgibzfdqk5av7cur6g7@wqyenx5jzgxb>
+References: <20250304105723.10579-1-srinivas.kandagatla@linaro.org>
+ <ea047098-2baf-456a-a57f-b698c0ce1b6e@linaro.org>
+ <9b4fd423-a463-4d50-a597-dbda532b6b61@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SN7PR12MB8059:EE_|SN7PR12MB8789:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66212b2f-838a-4c31-13e1-08dd5cd0a1a8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?N0NxSW9vM0laZGtBRkZqcVBvUWp5dWR0eUROZTJFNXhXZ3VzZWlNNXRhaTNy?=
- =?utf-8?B?QURCT2dZOHRBekFBbEdQVEZqMUZFblZXenliT0hzRGJ0eGIvSy9RSitrL3FS?=
- =?utf-8?B?d0FPMFRYK0dVdHlvYXZFVldwZXNVZDYzc2hZNmpTUlVYTkwyZklTYWdQL0N3?=
- =?utf-8?B?bHgzMkVucW1NVjRYWGhQbnhraUhQVitZejk3b1ViZkorbDk4cE8xV2QzN1FF?=
- =?utf-8?B?SFk1T0NWU25KaHhsdmxkQkNGdHpoc3k3RFZlTmRObmVITEVKTVhGVjNURTR3?=
- =?utf-8?B?UDVDTWhkU0tjc2lkS2VWUHQrdkFmaUt3TmJFQXZpL2VIRUVRNlhKYTh1RVd0?=
- =?utf-8?B?QWhGZWRsZjRvallMc1lsVERDeVYwNWRJM0JVSnROTVVUKzREYmVubmZYcjRW?=
- =?utf-8?B?M2tPZVlJRDl0OWtaUTNkQ1MvQURoRVN4QTdtWWFTQ2F4QnVWK1RTMEExVk13?=
- =?utf-8?B?R2dMVUtsUVlWdGhUTjkvVG9Zb2ltMVozU01oVG5qbmtmMnFBNTMxTUkzdTE2?=
- =?utf-8?B?Ym90WGt2Ly9aeit2QzQ3dWk5dm8wK3FSQXJvSEovQVIwOEZ0NjVoQW5peTRJ?=
- =?utf-8?B?VEpqNk1ZZHdmQVJyRjRreUNMSUFDSFZCK25BdkErTy9qYjRPck5oS0FZRE54?=
- =?utf-8?B?dzNqUk04ZHVCa3VXZ3pUU3BCb1d3dEVlMHhOYlQ2cDZoTWZ5T0xhMmU2cUFB?=
- =?utf-8?B?TnIwWVpXYTRndHY4Z29IcEVLaDhTZWdzSkxUMEZXTWVqVVdkRVVCUERQMDc1?=
- =?utf-8?B?OHRjVlhHbmNXUG9UN05rRVMxUWFvTS9ER1diMVFTbXc0TlF1WmpoUTNnZ09C?=
- =?utf-8?B?aTNkdnhnZUxvKzZGLzl3M1lmRmhEWGRybTVqR0hoOVRBRW11VXFMQ0NXM1pj?=
- =?utf-8?B?akM1K2Q3ckxwZ2Vyek10dmNmOXpjTkdURnZ3U2wzMUFpZks5TWhUQVZoUitW?=
- =?utf-8?B?d1NNb1F3VWpOcldYYUNUY0psdnBVRHNURVFGVnZvcTZZcEN3bWFXT2Z3Q3JB?=
- =?utf-8?B?LzdDWXF2clQwM1BmYldOVjM0aDJCYW5JeUt3TE0rRSs1dXhzNlg4YmRzaURB?=
- =?utf-8?B?Z0NVaTk3S0hPaGdSNXFlazcyYUEvcEQyWkZDY3Y2c0hZWkdrSzc0YndLc0FW?=
- =?utf-8?B?MFlOc2ZFejczVk9HRXRTeU9sdnNaQjk1QUI0MGxhQURQdmdyL0VOR0RTR2l3?=
- =?utf-8?B?WEZVR1hheWg2ejVFekg3ZjZoNkNjOFdCZHlvcExwU3VkWlptcTFmTUloVFM1?=
- =?utf-8?B?cmtVb1dsclhEQWNPaW01RVFIUnpsMW85UE5XYnN4OWpzcXFTRitjbm9xcjhK?=
- =?utf-8?B?WXZDekduZ0pqaTloY21KY2p2Rk8zbWhiQkM5aXRxenhPU2FjMGRwUW03bzFN?=
- =?utf-8?B?dkVRQ09ETVBveUIvQjR6dDR1OWdQaTNxNmV6c1pSYlZTR0VHd2ZaNU16dW8x?=
- =?utf-8?B?MytFMDRPcVZqRGMyazQ0WmRZRVFwNzl6NTlPeWxrcCt3SnZmN0FJbHhLVG1r?=
- =?utf-8?B?SWdLamhmY21McVB2emdnb3UrOFJVTXVqTGhrSHM5KzZuQy8zNVRKMnVOVm1R?=
- =?utf-8?B?T1liOE9JZzkzTmgvY3UvN2JCNk9FbmRQYnF3YUFramgzYmprYU5iWlljQWdN?=
- =?utf-8?B?NVlwL0phSHNDMWlJNkdhUU56NEgwMDg1UFB5R2czSTZCUHpDdGM3Uy83MHRk?=
- =?utf-8?B?cGg1ZzVySmRPTkVidDhUS1FEd21WZ1FKVU1sNkUyRzQ5aFdmcEhxaWFvMUZh?=
- =?utf-8?B?VGpMRUI4aGxPUFRkNmRWeWRJM1ppNnhBOENlZ3AzZWF1ZW9SQkJ3VHp4Q2sx?=
- =?utf-8?B?SFZSQ096dWl4VUlCcFNpRmhaWi84RlJoeHFCL2lweXRuNUJtTEVmcWc5TVFh?=
- =?utf-8?Q?OGRDGwiDVLFWq?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN7PR12MB8059.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dXhTb2ZyTGdrbitWMlFFMEI2QVpNY1d0UVNlNGFpSlJZR01VZkJ0dzhoOVpE?=
- =?utf-8?B?U01obFFGVFlPSnBIVjRFZzg4SFZvMmhNS0pXTjBXdldBQkdMQUt3bkNwdnA4?=
- =?utf-8?B?UGJOVCtNSm1SWTN2R3NFUjVDRE9SeS9xOVZ2K2hpSHhmL09RM1RVYWJmNTVM?=
- =?utf-8?B?T2NqN1RySE9DMTJUQ0lZNjFoc1lPRTlCR2MvNG44dHd2OGVYbXpVa1Z1WUl2?=
- =?utf-8?B?S21Oc1FOVE5OcXdtM1lpOXI0Y2dqSEJmc2tQYnZ0Skc4SGloQy90M2xnMVBK?=
- =?utf-8?B?U0NQb0tiMW9qL1BSZmtIWFNLUTRldjRUbnpKdTh5ZVFYQjBYVGNYL0NlQnNN?=
- =?utf-8?B?Q2xIQnlzMkpReHY2Y2lmZitLN1hOeVdvNnA0Um5lRWttd3Eya0pyZjhmWW8z?=
- =?utf-8?B?ak1XdCt6NERSdFl6WGlxbXh4WUo3cG4xSm40Mk4xb2N2a0YxakU5RHVoRTFz?=
- =?utf-8?B?VTRTQjI2R0MvYnQ4eVRzcHNlMFFTTFA1b0JiRTJsY3hrVkxaWEVGbUVyRWZ5?=
- =?utf-8?B?cFh6WHpwSjNIRlU2WklPQ2VpajFnMlZpOWRYWTd6bFd4amludjBUYVZIMXJF?=
- =?utf-8?B?NFQ0a3Z3K3dYWTBpclQzd1BSYjIyWkFRZ0N2bnpIdDlUM05zWGFEelJRVjJN?=
- =?utf-8?B?MHE3cTY3aHRxMXhuUzMrUDZaS3hrVExoWlUwcEozNDJFSlFGQjFvNWZLMEdY?=
- =?utf-8?B?bXhyWmVzdVNPbGg1S3lHK2NyUG5UeVNEUmhiQXl2a1ZvalZ3TDJwbjVQM0c0?=
- =?utf-8?B?b1FNZi9lYVBYYVJEc3B1VXBzVnlVSGo2S1JVVEhaUzZ4eVRkSDNFYlFPOElO?=
- =?utf-8?B?b0VEL1ZMRHR6bHM0Q0RIa1B4aDVMQzVYMU5kQ3hvV29qazlrcTA2b21Ubk13?=
- =?utf-8?B?M3hMTkdGRGJHR0lwRTdpYmdUNUJxSithWTA0aHp1ZkVST0xMMWE0UmhIMDlT?=
- =?utf-8?B?c3ppZGxCa2pVMDNuS3BXQVRRTXd2OVFGMjh0THpKSnVYNkpGSDJsTGtUWmlC?=
- =?utf-8?B?b2o3Zm1MM1JOSUtRN01kQmtycnM3STErZUR5S3Z6QUpwc2RiR0RiWXVNMDFI?=
- =?utf-8?B?eXNRVnBiai9yQVNUcC90bkduOUc3NWcwODRldkxid2xpN1dDSWdlZnV2QitL?=
- =?utf-8?B?Y0x0ZFYycDNFL3QzN2NOVTJGSFVPMzVuSysrOGN5eitMeERjY2N3ZUJoVFQ3?=
- =?utf-8?B?SFlCeEIvR29FSUhGUEpKWWR6dWQ3QzNQWm4xVHNNMjFmelBLdXdqZDRrakh4?=
- =?utf-8?B?MU9mUlR6ZE5rK0xWYmJzbXJuOVN2OW9qOHZvdXVhWmlocUpvWTFhY2JQNU5N?=
- =?utf-8?B?ZVZjWm5YTy9ocUNRL1ZvaVUwTkhHaGh0MDZ6ZFQ2NUdxWll0OFBWL01qRE4x?=
- =?utf-8?B?UHJUR0xObUMzNzNaMUxpVnVsc0JNaEpBYzJyZEpDcmpwVFM4am5qZHZGQlRO?=
- =?utf-8?B?a21xc2t6alRqbmR0V3lNSFJ1MWJzNUdWYzI4b0pSMitKVVc0SDNHZlZHdG9z?=
- =?utf-8?B?OW9Pd2xpR3p1NVpEeUZydHFQZzkvL0VBZ3RzREhPR3lzNktsRExYV0ZDNWJx?=
- =?utf-8?B?elVUMk9LYkFEV0s1akI5K3BFeEdFcmxrcDY4ZzM0MzJHUVRuc0hpL0xIdmhF?=
- =?utf-8?B?cU1GOVRBRzUvMldWK1oxUDRSVVZDaG1ScXZVbzNHUmMreGNJaUx2dFFDSi9X?=
- =?utf-8?B?RkhBMEliWWxVdHllZXQyMkk5U1Q1ZXJJNXgvR3R0V2ZocU9XWWRxMnJVNVRY?=
- =?utf-8?B?dlZrcElTc01MQ1dPUDQ3Vk5XbkNUdG9SMlZrMjFXYVZwb2k2VUdVM2R1VzE1?=
- =?utf-8?B?ZHlndTI5azl2dmZxa2pxdjNGZ1Q4aFVUTHFPeE5yUzJEeU50a3lKRFNpWGpx?=
- =?utf-8?B?aFhLekhhaWQweHJXNTRsMElxMHVrTVpJNzBHOU1hQUNlVTZoMjd3OVdIYzVk?=
- =?utf-8?B?ZFhHc29ObFlueXBOUytjNkJtaWZTUjR6aDFpVGoyajFBQXYvbzRHc2JMNUtD?=
- =?utf-8?B?Rlc4ek9UY0xndUVsUHFWZGZEeEF4OUp5VVowalpTQ3l2MFFJRnI1ZkRRWXkx?=
- =?utf-8?B?OTdITm1hRXNaNzFlSXVsL3NobThiaFcrZEZYYit2cEtaSk5UVUFqUkh1WVNa?=
- =?utf-8?B?bWNFWHpxeEVLZXFOYlhXTjhSVHVQNEVKVHJsMm9HSUZqZFQvSDdRSmhOZlJM?=
- =?utf-8?B?cHc9PQ==?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66212b2f-838a-4c31-13e1-08dd5cd0a1a8
-X-MS-Exchange-CrossTenant-AuthSource: SN7PR12MB8059.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 06 Mar 2025 17:02:09.3385
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: EPEnkiZP85XMHPxFnj2UWupqZhSjNGu+5UNyUp3F05mRhbYSnD4XdSi4Skril8Fuq6agBB1KcF3yMA2ABruTYw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB8789
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9b4fd423-a463-4d50-a597-dbda532b6b61@linaro.org>
 
-
-
-On 3/6/2025 4:35 AM, Juri Lelli wrote:
-> Hi Joel,
+On Thu, Mar 06, 2025 at 01:15:43PM +0000, Srinivas Kandagatla wrote:
 > 
-> On 05/03/25 20:10, Joel Fernandes wrote:
->> Currently, RCU boost testing in rcutorture is broken because it relies on
->> having RT throttling disabled. This means the test will always pass (or
->> rarely fail). This occurs because recently, RT throttling was replaced
->> by DL server which boosts CFS tasks even when rcutorture tried to
->> disable throttling (see rcu_torture_disable_rt_throttle()). However, the
->> systctl_sched_rt_runtime variable is not considered thus still allowing
->> RT tasks to be preempted by CFS tasks.
->>
->> Therefore this patch prevents DL server from starting when RCU torture
->> sets the sysctl_sched_rt_runtime to -1.
->>
->> With this patch, boosting in TREE09 fails reliably if RCU_BOOST=n.
->>
->> Steven also mentioned that this could fix RT usecases where users do not
->> want DL server to be interfering.
->>
->> Cc: stable@vger.kernel.org
->> Cc: Paul E. McKenney <paulmck@kernel.org>
->> Cc: Steven Rostedt <rostedt@goodmis.org>
->> Fixes: cea5a3472ac4 ("sched/fair: Cleanup fair_server")
->> Signed-off-by: Joel Fernandes <joelagnelf@nvidia.com>
->> ---
->> v1->v2:
->> 	Updated Fixes tag (Steven)
->> 	Moved the stoppage of DL server to fair (Juri)
 > 
-> I think what I suggested/wondered (sorry if I wasn't clear) is that we
-> might need a link between sched_rt_runtime and the fair_server per-cpu
-> runtime under sched/debug (i.e., sched_fair_write(), etc), otherwise one
-> can end up with DL server disabled and still non zero runtime on the
-> debug interface. This is only if we want to make that link, though;
-> which I am not entirely sure it is something we want to do, as we will
-> be stuck with an old/legacy interface if we do. Peter?
+> On 05/03/2025 22:17, Caleb Connolly wrote:
+> > Hi Srini,
+> > 
+> > On 3/4/25 10:57, srinivas.kandagatla@linaro.org wrote:
+> > > From: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+> > > 
+> > > On Qualcomm Audioreach setup, some of the audio artifacts are seen in
+> > > both recording and playback. These patches fix issues by
+> > > 1. Adjusting the fragment size that dsp can service.
+> > > 2. schedule available playback buffers in time for dsp to not hit
+> > > under runs
+> > > 3. remove some of the manual calculations done to get hardware pointer.
+> > > 
+> > > With these patches, am able to see Audio quality improvements.
+> > > 
+> > > Any testing would be appreciated.
+> > 
+> > This totally breaks audio on SDM845, and often results in a hard-crash
+> > to crashdump mode on my OnePlus 6.
 > 
-This is true. I was thinking more from a FAIR PoV. rt_bandwidth_enabled() is a
-generic function that's also called from the DL code. So I didn't per-se look at
-it like an DL server interface thing.
+> Its not possible.. as SDM845 is Elite DSP architecture, all of these patches
+> changes are very specific to Audioreach DSP architecture.
+> 
+> Could you please share the crash logs if you have any. It highly likely that
+> something else is triggering the hard-crash that you reported.
 
-But you also do have a point and curious to hear what Peter has to say.
+I will try reproducing this on RB3 today in the evening.
 
-thanks,
+> 
+> thanks,
+> Srini
+> > 
+> > Unfortunately I can't get UART logs right now. But I imagine this is
+> > reproducible on RB3.
+> > 
+> > Kind regards,
+> > > 
+> > > thanks,
+> > > Srini
+> > > 
+> > > Changes since v2:
+> > >     - dropped patch which is causing regression with pluseaudio.
+> > >     - setup period sizes only for capture path
+> > >     - fix underruns/overruns in dsp pipelines.
+> > >     - add fixes tag
+> > >     - add patch to fix buffer alignment
+> > > 
+> > > Changes since v1:
+> > >     - added new patches to fix the fragment size, pointer
+> > >       calculations
+> > >     - updated to schedule only available buffers.
+> > > 
+> > > Srinivas Kandagatla (6):
+> > >    ASoC: q6apm-dai: schedule all available frames to avoid dsp under-runs
+> > >    ASoC: q6apm: add q6apm_get_hw_pointer helper
+> > >    ASoC: q6apm-dai: make use of q6apm_get_hw_pointer
+> > >    ASoC: qdsp6: q6apm-dai: set correct period and buffer alignment.
+> > >    ASoC: qdsp6: q6apm-dai: fix capture pipeline overruns.
+> > >    ASoC: qdsp6: q6apm-dai: fix playback dsp pipeline underruns
+> > > 
+> > >   sound/soc/qcom/qdsp6/q6apm-dai.c | 63 +++++++++++++++++---------------
+> > >   sound/soc/qcom/qdsp6/q6apm.c     | 18 ++++++++-
+> > >   sound/soc/qcom/qdsp6/q6apm.h     |  3 ++
+> > >   3 files changed, 53 insertions(+), 31 deletions(-)
+> > > 
+> > 
 
- - Joel
-
+-- 
+With best wishes
+Dmitry
 
