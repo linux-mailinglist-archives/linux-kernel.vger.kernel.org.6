@@ -1,108 +1,170 @@
-Return-Path: <linux-kernel+bounces-549966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87612A55924
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:53:52 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7FBDA55926
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 22:54:14 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A30283B4C62
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:52:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 954BC3A6F30
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 21:53:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1523DDA8;
-	Thu,  6 Mar 2025 21:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4AF227602E;
+	Thu,  6 Mar 2025 21:54:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pweQuxs0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JfJDu03/";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1Au7ecFd"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EED2278104;
-	Thu,  6 Mar 2025 21:52:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC1282702B8;
+	Thu,  6 Mar 2025 21:54:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741297971; cv=none; b=mtBV+KNTc+w360WIHNBTIitM7hAkZ6lVLX4GtPKSXhrmirr/ty/YdoRZNNSztZhwX3oNqS3unCAnmXvzmpifFunNjrhwYUzZbhnr1C77b+mE5hfolCPt7n2iF5L/RSod1ob+08RbDvnnxZr2Z0TPRjdXsKt0QGnrwSFqeNRuwUA=
+	t=1741298046; cv=none; b=EaaRu94sEF1VNzEHZgAv/gYS8verTZSMXTbgggmjpCWnwgoYpJ1yThJUxtGFsyrMIru9+Gi6iBRt1bJFL8cij7Bn/NCy72P6FwNTAheoXHKMXvycTGdeik04NwfydRf03QHQHAwFJRu2tNtC/EFyfuHULrooEayo2VeVAUyQe/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741297971; c=relaxed/simple;
-	bh=LMR2PvMaqiPaqf+FPvIKU8w+oYH2T82yjmHwvvbMFQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZaO9YQo04/AXmS0pFvesx+14nqDUOBGzgwKw5VsDs0GiXlTh2njOboJw+jNFzz4KlWkPLqlbHwjcn5ag1RvBewALVRmFlp5AyL7CAGQyRQchiv5sT3lWXqIzCtybt505Ix+lww+h9/rxQiXAwIHFUe3TtrzIe6Wm4ORVb1y+8K8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pweQuxs0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30A6EC4CEE5;
-	Thu,  6 Mar 2025 21:52:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741297970;
-	bh=LMR2PvMaqiPaqf+FPvIKU8w+oYH2T82yjmHwvvbMFQ4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pweQuxs0SJwGMMkXVQOFGk1zV9wNaNjTXJbvTPtAY6ex/1UF0ZoIGO62qC/ovC1Xh
-	 +JfBA+W7lZqRzFlLe1vF4jLl5lzLEy7K8T5rO4vvxlt2exLv6fKj0el71Rmtd6Mx7E
-	 kaIKqwyCIp3c4cLT7P89M55oTKMpIw4M5H7eg0b78xIHyI9D5fJ1uzrI2qhk4SUY5D
-	 V09jBRwRpOvzLKkye2MEH1955mVC19azdZu1KVoN3qBvjRXJ03LZZCkjnTQ5Sn//hz
-	 nzP3GPe1jExmPbNlaD1EM8p0jqHNkpJgHGDfHfIZhS60QxbH1mp/xVI5yc8latBiQY
-	 cUjvO8HecOaKA==
-Date: Thu, 6 Mar 2025 23:52:46 +0200
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Stefano Garzarella <sgarzare@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Claudio Carvalho <cclaudio@linux.ibm.com>,
-	Peter Huewe <peterhuewe@gmx.de>, x86@kernel.org,
-	Dov Murik <dovmurik@linux.ibm.com>, linux-coco@lists.linux.dev,
-	Dionna Glaze <dionnaglaze@google.com>,
-	James Bottomley <James.Bottomley@hansenpartnership.com>,
-	Ingo Molnar <mingo@redhat.com>, Joerg Roedel <jroedel@suse.de>,
-	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Tom Lendacky <thomas.lendacky@amd.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [RFC PATCH v2 3/6] tpm: add send_recv() ops in tpm_class_ops
-Message-ID: <Z8oZLqn4p2-AWQbz@kernel.org>
-References: <20250228170720.144739-1-sgarzare@redhat.com>
- <20250228170720.144739-4-sgarzare@redhat.com>
- <Z8Jmps6AF_geaHUw@kernel.org>
- <3p5erujbhxw7ozdnfpmresv3dqdh2xszolv6mh4khkagoy3wit@ow5qht4keh4h>
- <0e156883acf95d31b9358831550d6d675e3ce4ff.camel@kernel.org>
- <Z8dg46Mj81Q9Z0WV@kernel.org>
- <jkr5z4thb55gs2jcmtcfipgg6p7z6ikhr6etd6l3nqpf723hf7@3fns3z5cjqk4>
- <20250305190229.GC354403@ziepe.ca>
+	s=arc-20240116; t=1741298046; c=relaxed/simple;
+	bh=0MxTVhkkqUJm8NYR6Rhvn3k8STzYB9/KQ8s+JjzPUL4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=ZKy4r76xF1gj7L66xhGYLrAc7mjdO6K4BjtntIn6AG2DRv2I1Ej1ZhmfD3V+Fr4M6GMtrRs9UgPU0Z+rXUqACI9AZMcVTqRZdd0CZL0NsfNj6yvv0hdAqwKdfE3S/KO5GWCu27QXWWAaREG6YfwSl7wWT6siTpO0wkyOCtRyGoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JfJDu03/; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1Au7ecFd; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 06 Mar 2025 21:54:01 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1741298042;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zsV/qOj1S2gyLzpiAdU+wKdYkU8ijPMIXpcYVkegI3o=;
+	b=JfJDu03/OQxbdbNyoRL+qz0Rk6XqHoxzn9s2IWbdHqO3seQh8ms/EJq24M8T/nAEHyiYsL
+	nF9VJ78OpBvVQKRloahEzCRGcwk9ABGY3Gr7a2TYQnZtjm0/EBPa+yrXtVlSGycP4iptqX
+	mf3/wPz7yFk48na3Wgw7N8FvnNeva/kzwkVS1tpUu87Mu1Vv7LQtvFZ4cZKJJtcoAATOfY
+	iizucM5dFMbFL1vllYzXfwm96IgbWWVeJamYwOJEdM/f8XgSW7OxxsS87A5KiHRRlNTPbX
+	p2tymo1Yg7LO9DFbqSzRsPWN+71W756gNTJ8IX1Qj654n4NgVfHA+o83LbZWqA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1741298042;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zsV/qOj1S2gyLzpiAdU+wKdYkU8ijPMIXpcYVkegI3o=;
+	b=1Au7ecFdWnpoTdWCo69KVnRQd7SKkz/4yeeC25kibiQBw2ycT1R0ltiGlEa6zO/Al5aIkv
+	3SzLa4pagSU6NoBA==
+From: "tip-bot2 for Li RongQing" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: perf/core] perf/x86/intel/bts: Check if bts_ctx is allocated
+ when calling BTS functions
+Cc: Jiri Olsa <olsajiri@gmail.com>, Jiri Olsa <jolsa@kernel.org>,
+ Adrian Hunter <adrian.hunter@intel.com>, Dave Hansen <dave.hansen@intel.com>,
+ Li RongQing <lirongqing@baidu.com>, Ingo Molnar <mingo@kernel.org>,
+ Peter Zijlstra <peterz@infradead.org>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250306051102.2642-1-lirongqing@baidu.com>
+References: <20250306051102.2642-1-lirongqing@baidu.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250305190229.GC354403@ziepe.ca>
+Message-ID: <174129804137.14745.8636756193763878398.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-On Wed, Mar 05, 2025 at 03:02:29PM -0400, Jason Gunthorpe wrote:
-> On Wed, Mar 05, 2025 at 10:04:25AM +0100, Stefano Garzarella wrote:
-> > Jason suggested the send_recv() ops [2], which I liked, but if you prefer to
-> > avoid that, I can restore what we did in v1 and replace the
-> > TPM_CHIP_FLAG_IRQ hack with your point 2 (or use TPM_CHIP_FLAG_IRQ if you
-> > think it is fine).
-> 
-> I think it is a pretty notable simplification for the driver as it
-> does not need to implement send, status, req_canceled and more ops.
-> 
-> Given the small LOC on the core side I'd call that simplification a
-> win..
+The following commit has been merged into the perf/core branch of tip:
 
-I'm sorry to disagree with you on this but adding a callback for
-one leaf driver is not what I would call "a win" :-)
+Commit-ID:     7a310c644cf571fbdb1d447a1dc39cf048634589
+Gitweb:        https://git.kernel.org/tip/7a310c644cf571fbdb1d447a1dc39cf048634589
+Author:        Li RongQing <lirongqing@baidu.com>
+AuthorDate:    Thu, 06 Mar 2025 13:11:02 +08:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Thu, 06 Mar 2025 22:42:26 +01:00
 
-I mean, it's either a minor twist in
+perf/x86/intel/bts: Check if bts_ctx is allocated when calling BTS functions
 
-1. "the framework code" which affects in a way all other leaf drivers.
-   At bare minimum it adds a tiny bit of complexity to the callback
-   interface and a tiny bit of accumulated maintenance cost.
-2. in the leaf driver
+bts_ctx might not be allocated, for example if the CPU has X86_FEATURE_PTI,
+but intel_bts_disable/enable_local() and intel_bts_interrupt() are called
+unconditionally from intel_pmu_handle_irq() and crash on bts_ctx.
 
-So I'd really would want to keep that tiny bit of extra complexity
-localized.
+So check if bts_ctx is allocated when calling BTS functions.
 
-> 
-> Jason
+Fixes: 3acfcefa795c ("perf/x86/intel/bts: Allocate bts_ctx only if necessary")
+Reported-by: Jiri Olsa <olsajiri@gmail.com>
+Tested-by: Jiri Olsa <jolsa@kernel.org>
+Suggested-by: Adrian Hunter <adrian.hunter@intel.com>
+Suggested-by: Dave Hansen <dave.hansen@intel.com>
+Signed-off-by: Li RongQing <lirongqing@baidu.com>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>
+Link: https://lore.kernel.org/r/20250306051102.2642-1-lirongqing@baidu.com
+---
+ arch/x86/events/intel/bts.c | 25 ++++++++++++++++++++-----
+ 1 file changed, 20 insertions(+), 5 deletions(-)
 
-BR, Jarkko
+diff --git a/arch/x86/events/intel/bts.c b/arch/x86/events/intel/bts.c
+index 953868d..39a987d 100644
+--- a/arch/x86/events/intel/bts.c
++++ b/arch/x86/events/intel/bts.c
+@@ -338,9 +338,14 @@ static void bts_event_stop(struct perf_event *event, int flags)
+ 
+ void intel_bts_enable_local(void)
+ {
+-	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+-	int state = READ_ONCE(bts->state);
++	struct bts_ctx *bts;
++	int state;
+ 
++	if (!bts_ctx)
++		return;
++
++	bts = this_cpu_ptr(bts_ctx);
++	state = READ_ONCE(bts->state);
+ 	/*
+ 	 * Here we transition from INACTIVE to ACTIVE;
+ 	 * if we instead are STOPPED from the interrupt handler,
+@@ -358,7 +363,12 @@ void intel_bts_enable_local(void)
+ 
+ void intel_bts_disable_local(void)
+ {
+-	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
++	struct bts_ctx *bts;
++
++	if (!bts_ctx)
++		return;
++
++	bts = this_cpu_ptr(bts_ctx);
+ 
+ 	/*
+ 	 * Here we transition from ACTIVE to INACTIVE;
+@@ -450,12 +460,17 @@ bts_buffer_reset(struct bts_buffer *buf, struct perf_output_handle *handle)
+ int intel_bts_interrupt(void)
+ {
+ 	struct debug_store *ds = this_cpu_ptr(&cpu_hw_events)->ds;
+-	struct bts_ctx *bts = this_cpu_ptr(bts_ctx);
+-	struct perf_event *event = bts->handle.event;
++	struct bts_ctx *bts;
++	struct perf_event *event;
+ 	struct bts_buffer *buf;
+ 	s64 old_head;
+ 	int err = -ENOSPC, handled = 0;
+ 
++	if (!bts_ctx)
++		return 0;
++
++	bts = this_cpu_ptr(bts_ctx);
++	event = bts->handle.event;
+ 	/*
+ 	 * The only surefire way of knowing if this NMI is ours is by checking
+ 	 * the write ptr against the PMI threshold.
 
