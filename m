@@ -1,55 +1,73 @@
-Return-Path: <linux-kernel+bounces-548084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 036D0A53FA1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:10:54 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85AC0A53FA3
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 02:11:21 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32FC21892875
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:11:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEBF81734F6
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 01:11:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A04013C9A4;
-	Thu,  6 Mar 2025 01:10:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED34D83A14;
+	Thu,  6 Mar 2025 01:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Z3o4sBW/"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dcfyWHV4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839DA13957E
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 01:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40DBC55887;
+	Thu,  6 Mar 2025 01:11:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741223437; cv=none; b=Dg6LPMVKjAkCS32NAw6RDkWtxfN6KdUb/Kfmj8mOT/ofJsA5jYl/dv2sGQFYovNKP9oc88V8m4M7SMfU2YbhzH2DcF9dy0vWZtN/+QbwBk2jqCzbuvvSbPdUIz9mrEW2nPCSZMKB3rrtTzuP5sLX259TeKK3HxdntCY1ugRpxXc=
+	t=1741223475; cv=none; b=Kr8dKrPUI4wfLTtMf+v/6QzOJI4PhkrGMUT6V2Fw6hsFgDmBAo3p+LG7kuDQdD44Z7LzQ7RIjC7gDZq3ozW6U03JyEtO/4CmdKb8qe4Ev82SveRY2rmL7Kcr9CcFKfaGqQbOqyoFnMjXYGVQyHaUjYes5zDhz9B7LCBZ+g+nukE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741223437; c=relaxed/simple;
-	bh=+Hc8vsUYhQ8odL+uATaoG000r3kc9nDdJqvlcs+g3Hw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RGZoQ0PU0xDYVnxKVHYRDunYSJiVSFv+hjI7t8DHAIX4aRuA9q+pthWjU3o6clBUBtCPtiXZGNmoMKUMaWuCz0hMp56rG0/+JcTb8RpKC6+9v+XQ5voD7yWEqpUu0wjYuP8VqmwOXaxose4RBFCXS4EgA94brVYTWTIEhhtsPZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Z3o4sBW/; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=7Y9rS+AETT1NXmp2dmIw1lH8pnQXRJxHrN42KuRZCJA=; b=Z3o4sBW/zaYjxCyN
-	3GpmUjqFB+0Iw+8/YEAeyV8W26r/iMHiECPGcHSLSRpHtgJLWKUE6nVl7/Ecm+Nq525ItBZVIslS8
-	hV4AFoZfo2nbof/znySjzhfcoB7o5t/MsKZZD/N8wrtEd8p4nOjXK71gh7zIeZod/u7xsfOM2i2R/
-	Q4NFMd0IaIcjYTCVBWkccgm3zN58hFduB4TF/gTVws93OY0SL1If3ncQaz+M2sFkYQLNbMMcOkHqH
-	rTfNullz92HFjOQX9uPhsVpdvVX/rk817RuuAMo1MPBU4zAN5Hc9mDrZxUM1KtIoSFl8MlgNK9cL+
-	iVZ2ZpvKet7OO2Ulcw==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1tpzkp-002zw6-2Y;
-	Thu, 06 Mar 2025 01:10:27 +0000
-From: linux@treblig.org
-To: lee@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] mfd: ezx-pcap: Remove unused pcap_adc_sync
-Date: Thu,  6 Mar 2025 01:10:27 +0000
-Message-ID: <20250306011027.257021-1-linux@treblig.org>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1741223475; c=relaxed/simple;
+	bh=nhNgSN7fSWvASe3DYMAgtFqWaPYCy8XHF9BRnLA2/0w=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=mBwtqsb8Zb6J2hyENfkTTSRAyZ59sLQGC/jemBjkjC45qZF4eRECcugwNI8Gt52Bh9yAmp9zSSIfWtzCkoVm8PBJsz6rxDg69md7l5YQRiZRMpQ0hgJq05ERj9Jewg8hSEHT0u26jCOqZtLnvEeaq3fAwGTwuoQU+Q2YZ4ZtwVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dcfyWHV4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70798C4CED1;
+	Thu,  6 Mar 2025 01:11:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741223473;
+	bh=nhNgSN7fSWvASe3DYMAgtFqWaPYCy8XHF9BRnLA2/0w=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=dcfyWHV4Njkaoch4pwUKGQQ/+N4/mhKeRYvgKIJy0bWpp0xvmn5614gnMdaoxaFnJ
+	 HW5ZrEq/jOp4Ji1SJ09Y+MhXAMj8K0Wnlg5TvMMp6j6oSJG2J7XXkKx6jVhFYmsFmo
+	 rDdy62TzP77sPlxOY/3vWE9PLFzKtHPiAHapmENn9nkksV99De9/gTriJCQ214l+C2
+	 Uy5tejxMGgRiVHaE9EKP+F3Hv7aafpS8oJuA8XHMSV4k6WhgFAkum/4fU9NH5JEyU7
+	 yq1kKamRXvb9J7/h4BYZfmCU8ySge5FR0SPXHQlnHP9vlpzE8ref8uk1N8qUgT1+Go
+	 uIgDKAadGmZuA==
+From: SeongJae Park <sj@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	stable@vger.kernel.org,
+	patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	torvalds@linux-foundation.org,
+	akpm@linux-foundation.org,
+	linux@roeck-us.net,
+	shuah@kernel.org,
+	patches@kernelci.org,
+	lkft-triage@lists.linaro.org,
+	pavel@denx.de,
+	jonathanh@nvidia.com,
+	f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com,
+	srw@sladewatkins.net,
+	rwarsow@gmx.de,
+	conor@kernel.org,
+	hargar@microsoft.com,
+	broonie@kernel.org,
+	damon@lists.linux.dev
+Subject: Re: [PATCH 6.12 000/150] 6.12.18-rc1 review
+Date: Wed,  5 Mar 2025 17:11:11 -0800
+Message-Id: <20250306011111.138928-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20250305174503.801402104@linuxfoundation.org>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,84 +76,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Hello,
 
-pcap_adc_sync() was added in 2009 by
-commit 13a09f93d2bf ("mfd: add PCAP driver")
-but has remained unused; the async version is still used.
+On Wed,  5 Mar 2025 18:47:09 +0100 Greg Kroah-Hartman <gregkh@linuxfoundation.org> wrote:
 
-Remove it.
+> This is the start of the stable review cycle for the 6.12.18 release.
+> There are 150 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Fri, 07 Mar 2025 17:44:26 +0000.
+> Anything received after that time might be too late.
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+This rc kernel passes DAMON functionality test[1] on my test machine.
+Attaching the test results summary below.  Please note that I retrieved the
+kernel from linux-stable-rc tree[2].
+
+Tested-by: SeongJae Park <sj@kernel.org>
+
+[1] https://github.com/damonitor/damon-tests/tree/next/corr
+[2] 43639cc57b22 ("Linux 6.12.18-rc1")
+
+Thanks,
+SJ
+
+[...]
+
 ---
- drivers/mfd/ezx-pcap.c       | 33 ---------------------------------
- include/linux/mfd/ezx-pcap.h |  1 -
- 2 files changed, 34 deletions(-)
 
-diff --git a/drivers/mfd/ezx-pcap.c b/drivers/mfd/ezx-pcap.c
-index 8d006f6be48c..1be4557b7bdd 100644
---- a/drivers/mfd/ezx-pcap.c
-+++ b/drivers/mfd/ezx-pcap.c
-@@ -25,11 +25,6 @@ struct pcap_adc_request {
- 	void *data;
- };
- 
--struct pcap_adc_sync_request {
--	u16 res[2];
--	struct completion completion;
--};
--
- struct pcap_chip {
- 	struct spi_device *spi;
- 
-@@ -335,34 +330,6 @@ int pcap_adc_async(struct pcap_chip *pcap, u8 bank, u32 flags, u8 ch[],
- }
- EXPORT_SYMBOL_GPL(pcap_adc_async);
- 
--static void pcap_adc_sync_cb(void *param, u16 res[])
--{
--	struct pcap_adc_sync_request *req = param;
--
--	req->res[0] = res[0];
--	req->res[1] = res[1];
--	complete(&req->completion);
--}
--
--int pcap_adc_sync(struct pcap_chip *pcap, u8 bank, u32 flags, u8 ch[],
--								u16 res[])
--{
--	struct pcap_adc_sync_request sync_data;
--	int ret;
--
--	init_completion(&sync_data.completion);
--	ret = pcap_adc_async(pcap, bank, flags, ch, pcap_adc_sync_cb,
--								&sync_data);
--	if (ret)
--		return ret;
--	wait_for_completion(&sync_data.completion);
--	res[0] = sync_data.res[0];
--	res[1] = sync_data.res[1];
--
--	return 0;
--}
--EXPORT_SYMBOL_GPL(pcap_adc_sync);
--
- /* subdevs */
- static int pcap_remove_subdev(struct device *dev, void *unused)
- {
-diff --git a/include/linux/mfd/ezx-pcap.h b/include/linux/mfd/ezx-pcap.h
-index ffde195e12b7..ea51b1cdca5a 100644
---- a/include/linux/mfd/ezx-pcap.h
-+++ b/include/linux/mfd/ezx-pcap.h
-@@ -31,7 +31,6 @@ int ezx_pcap_set_bits(struct pcap_chip *, u8, u32, u32);
- int pcap_to_irq(struct pcap_chip *, int);
- int irq_to_pcap(struct pcap_chip *, int);
- int pcap_adc_async(struct pcap_chip *, u8, u32, u8[], void *, void *);
--int pcap_adc_sync(struct pcap_chip *, u8, u32, u8[], u16[]);
- void pcap_set_ts_bits(struct pcap_chip *, u32);
- 
- #define PCAP_SECOND_PORT	1
--- 
-2.48.1
-
+ok 9 selftests: damon: damos_tried_regions.py
+ok 10 selftests: damon: damon_nr_regions.py
+ok 11 selftests: damon: reclaim.sh
+ok 12 selftests: damon: lru_sort.sh
+ok 13 selftests: damon: debugfs_empty_targets.sh
+ok 14 selftests: damon: debugfs_huge_count_read_write.sh
+ok 15 selftests: damon: debugfs_duplicate_context_creation.sh
+ok 16 selftests: damon: debugfs_rm_non_contexts.sh
+ok 17 selftests: damon: debugfs_target_ids_read_before_terminate_race.sh
+ok 18 selftests: damon: debugfs_target_ids_pid_leak.sh
+ok 19 selftests: damon: sysfs_update_removed_scheme_dir.sh
+ok 20 selftests: damon: sysfs_update_schemes_tried_regions_hang.py
+ok 1 selftests: damon-tests: kunit.sh
+ok 2 selftests: damon-tests: huge_count_read_write.sh
+ok 3 selftests: damon-tests: buffer_overflow.sh
+ok 4 selftests: damon-tests: rm_contexts.sh
+ok 5 selftests: damon-tests: record_null_deref.sh
+ok 6 selftests: damon-tests: dbgfs_target_ids_read_before_terminate_race.sh
+ok 7 selftests: damon-tests: dbgfs_target_ids_pid_leak.sh
+ok 8 selftests: damon-tests: damo_tests.sh
+ok 9 selftests: damon-tests: masim-record.sh
+ok 10 selftests: damon-tests: build_i386.sh
+ok 11 selftests: damon-tests: build_arm64.sh # SKIP
+ok 12 selftests: damon-tests: build_m68k.sh # SKIP
+ok 13 selftests: damon-tests: build_i386_idle_flag.sh
+ok 14 selftests: damon-tests: build_i386_highpte.sh
+ok 15 selftests: damon-tests: build_nomemcg.sh
+ [33m
+ [92mPASS [39m
 
