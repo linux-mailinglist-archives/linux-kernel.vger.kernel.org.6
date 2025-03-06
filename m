@@ -1,97 +1,143 @@
-Return-Path: <linux-kernel+bounces-548846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548847-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 861B9A549ED
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:49:15 +0100 (CET)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B42DA54A03
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:50:52 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A009B1886585
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:48:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C069188AC2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:50:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE7820B1E3;
-	Thu,  6 Mar 2025 11:48:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 929ED20C485;
+	Thu,  6 Mar 2025 11:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mQ5//VYL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FP8MOTlt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA6F920AF7A;
-	Thu,  6 Mar 2025 11:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB44F20C02E;
+	Thu,  6 Mar 2025 11:49:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741261712; cv=none; b=ps4vrXINeVDVYNO+lGSGpb6AtSLMKeZFxWpuuhpmqNW5y2RMWGw3y4i1T981IJuYjp4E6qLMWHIJxDzI24BSkPj0DMkIYGwxBHHM/QRdnOKxC+JplypxtrGCqZKsi8uXebQ+2xt32CPqM+D91Z9Cy9w8CGU3zOeDVt+q0X+bDmo=
+	t=1741261773; cv=none; b=EZPpgxuWGFCQ9+ePkqPJUaf6HH2puDclzzd32jy6yFs99oG8PjiTNmBnehW23vObnXq1wMtoYxDtoWIPf/ES+lub/ED7B5IhX0Env2zrdfFNZ2aaZdY1YxUMyJdggfjFuHWUJyktOcSN694bStZ3zc/+5C9uLlCJfvp0wUJy+ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741261712; c=relaxed/simple;
-	bh=IF8TdGmgh9xc0DtNTWthN3ZYCfRHqe6g1Azp45d5BYw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=G5BSqp32HleB9F2BH0292/A5jGzH/vqRtuWuJjOj49zmaVP5u+d8GdeV2DKzxix/hjzHtXYphnBL5XTG85BwHJLXj7Oq3ITMjyUWXcZyjGF+DV/RgldD/Jj6Yy/U8CYhci8yRD1Z+77iCzpKM/xicwwS8jn1cdHZwL6RnebB7SA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mQ5//VYL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 59FA6C4CEE0;
-	Thu,  6 Mar 2025 11:48:29 +0000 (UTC)
+	s=arc-20240116; t=1741261773; c=relaxed/simple;
+	bh=mV0euh285v75kNmGgabf/yMOj5wCPrSi9H0U89iCxAc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=LhodUZBiF1R38vIEOO3fdGVkOnutj8IhzMtbjpDml2uK3X1XhWkdKxoTRjR2l6hjRDT3vugLalcgzqULFjBnPYeb7FJ3ZVFvD9TYymULLI8a9gNFJGbTGpmV8STyYcFrWptN661ty14ROEw3gVyp1O15QVguWUw30+CZ4yL02Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FP8MOTlt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1FEFBC4CEE0;
+	Thu,  6 Mar 2025 11:49:23 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741261711;
-	bh=IF8TdGmgh9xc0DtNTWthN3ZYCfRHqe6g1Azp45d5BYw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=mQ5//VYLpCxsG/xCAubkudESPYQ5qH8kt9NTZ5t+VQY2/ag6rvMaXmjGltxEES25m
-	 TCZWbylTTSG9DjRELO1Nkj1XhCioH5s5MElY+UXFPX1YmPNjC6z2JvUTrYzVeiHr75
-	 HzNH/blt04uvxDz2fQjl5ldVEAOemeAjDhdA66g2mo4CxtJrackV3J1n095j/hkdAa
-	 ETQA2gOvcdj02McygT8JgXNuGnH5ns0FrGvLeX12ynskdoYIwjZdz0RNNPWh34lEyR
-	 ijhPo0DOr0FmR4pMjCtuZG5BfgQX9b6xsq9AXErPw/eMBtjMZL3dxqNv1RQtKrYkAN
-	 CHBx3PIFzfHRA==
-Date: Thu, 6 Mar 2025 11:48:26 +0000
-From: Simon Horman <horms@kernel.org>
-To: Breno Leitao <leitao@debian.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH net-next] netpoll: Optimize skb refilling on critical path
-Message-ID: <20250306114826.GX3666230@kernel.org>
-References: <20250304-netpoll_refill_v2-v1-1-06e2916a4642@debian.org>
+	s=k20201202; t=1741261771;
+	bh=mV0euh285v75kNmGgabf/yMOj5wCPrSi9H0U89iCxAc=;
+	h=Date:Subject:To:References:From:In-Reply-To:From;
+	b=FP8MOTltSChGzSWIIP/TRET8MsI3JgKJcfGqXFtVG+9sX/lg5J+A5MBLnUca0wyOF
+	 yBklM6TJ7SSMB1RS46d1FhV71Oezo3T0f5vPVXyzyRNnRfw12AfPXnEZThNHWrqpAp
+	 gbFsepCzt2aQYj6RUFXdioySZTZFRq6AicEr0bLYoFyjUPVvxRrCH7zPJDfv92hteF
+	 7UsZC/D7tbGU31NbF4YcMtXKTTXAvgDoEich/m1PjY717TeSCeKtqUjhMr7YXNR58s
+	 ielWYvCIvWjNGewbSwd+ciWevhff9SIPUdP7IcNR8gklB03BIHOON4t6Dz4Rf6MEN9
+	 QU5QJij+D6u1Q==
+Message-ID: <b3d7374e-b144-4b0a-96f8-0538f9cd1a39@kernel.org>
+Date: Thu, 6 Mar 2025 12:49:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250304-netpoll_refill_v2-v1-1-06e2916a4642@debian.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v11 4/7] arm64: dts: qcom: ipq9574: Reorder reg and
+ reg-names
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, bhelgaas@google.com,
+ lpieralisi@kernel.org, kw@linux.com, manivannan.sadhasivam@linaro.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, vkoul@kernel.org,
+ kishon@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
+ p.zabel@pengutronix.de, quic_nsekar@quicinc.com,
+ dmitry.baryshkov@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org
+References: <20250220094251.230936-1-quic_varada@quicinc.com>
+ <20250220094251.230936-5-quic_varada@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20250220094251.230936-5-quic_varada@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Mar 04, 2025 at 07:50:41AM -0800, Breno Leitao wrote:
-> netpoll tries to refill the skb queue on every packet send, independently
-> if packets are being consumed from the pool or not. This was
-> particularly problematic while being called from printk(), where the
-> operation would be done while holding the console lock.
-> 
-> Introduce a more intelligent approach to skb queue management. Instead
-> of constantly attempting to refill the queue, the system now defers
-> refilling to a work queue and only triggers the workqueue when a buffer
-> is actually dequeued. This change significantly reduces operations with
-> the lock held.
-> 
-> Add a work_struct to the netpoll structure for asynchronous refilling,
-> updating find_skb() to schedule refill work only when necessary (skb is
-> dequeued).
-> 
-> These changes have demonstrated a 15% reduction in time spent during
-> netpoll_send_msg operations, especially when no SKBs are not consumed
-> from consumed from pool.
-> 
-> When SKBs are being dequeued, the improvement is even better, around
-> 70%, mainly because refilling the SKB pool is now happening outside of
-> the critical patch (with console_owner lock held).
-> 
-> Signed-off-by: Breno Leitao <leitao@debian.org>
-> ---
-> The above results were obtained using the `function_graph` ftrace
-> tracer, with filtering enabled for the netpoll_send_udp() function. The
-> test was executed by running the netcons_basic.sh selftest hundreds of
-> times.
+On 20/02/2025 10:42, Varadarajan Narayanan wrote:
+> The 'reg' & 'reg-names' constraints used in the bindings and dtsi are
+> different resulting in dt_bindings_check errors. Re-order the reg entries,
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Why?
 
+> fix the node names and move the nodes to maintain sort order to address the
+
+Fixing (how?) node name looks like separate problem.
+
+
+> following errors/warnings.
+> 
+> 	arch/arm64/boot/dts/qcom/ipq9574-rdp449.dtb: pcie@20000000: reg-names:0: 'parf' was expected
+
+So this was added back in 2024 and never tested?
+
+> 	arch/arm64/boot/dts/qcom/ipq9574.dtsi:1045.24-1127.5: Warning (simple_bus_reg): /soc@0/pcie@20000000: simple-bus unit address format error, expected "88000"
+> 
+> Move the nodes to maintain sort order w.r.t address.
+> 
+
+I don't understand this commit msg and huge diff does not help. It's
+very difficult to spot the actual changes and since Qualcomm was never
+testing this in the past, I do not believe it is being tested now.
+
+Clearly explain what is the problem - *each of them*.
+
+Best regards,
+Krzysztof
 
