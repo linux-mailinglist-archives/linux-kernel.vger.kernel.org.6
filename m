@@ -1,84 +1,58 @@
-Return-Path: <linux-kernel+bounces-548848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-548849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83372A54A06
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:50:58 +0100 (CET)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68E87A54A0E
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 12:52:25 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D95527A6187
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:49:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D1F61698A9
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 11:52:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F83C20AF7D;
-	Thu,  6 Mar 2025 11:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1075E209668;
+	Thu,  6 Mar 2025 11:52:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DBIWW7Mt"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eWfurdml"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBEB8201001
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 11:50:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C138156225;
+	Thu,  6 Mar 2025 11:52:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741261835; cv=none; b=XVVj8xsZk5/3FTmWwMEPN5iFXE/fv/qBILnTKogoxUR1eqaXjxn9g0rsgsMVP12vERkhIU7xB5EpxObLiZ0H3h2bi8EmcEdUj+7kqX5m+138jL3ZsFqYXRWD0KbTW6akBKatNfz1DMudOP55x+2L5Dkl0SZizCGyC7/+SSL66eY=
+	t=1741261936; cv=none; b=KP6HBpj6ea7JnmY7wuPzKG2t7/mYgBmmIPu2fgR3mn5bjetp8owJjPMF2y20RuU/+NjXYNqpMp6G++VumSzfz27XDZsqGbnKp2rU9670bxgvsi+XEAdy8ph2+XeGUVODBHdgb1clhcK3m1kQ95DMDRoWnkvjUwkrqi7Cv05LLNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741261835; c=relaxed/simple;
-	bh=KW6gKhNVEHwn32fugr/2U2g0sGFhRAaeprfNuQzxcMg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cNbeDPqEXFLA1gqtDltBxtR1cYwvuv4sa6nQPQYeetzK5Gu7fH7bRNS7glRkiTT1j4zjk5paGRBSWXckDKvn5ITmJV+f/nicVjVVdD8SCnT890VZmTPh0tf7Zo9Fe5po11oVj9RQCZdODZmTbr2C+CTEkV4RkdY81m0upoG+Y/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DBIWW7Mt; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-543e4bbcd86so713186e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 03:50:33 -0800 (PST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1741261832; x=1741866632; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=tHLEs56MXmKRrOJm00TIGhH5j9WFJFOF+SMISsj0tcM=;
-        b=DBIWW7MtfNX9+gR+Ke4+i2JVVq8sXsuYY+QJumWktUmlKcPAlJtrbM5S8GNbGnN/TK
-         hSFNIisCNGutu7eI4AOHES6aBsiEzj8unW6nIZg+X5dwfD4g2tfn7I0AKcJz44fNuyft
-         q8OzWFBJOgKjCfwOzVUI/koSJYhHy3X35ORXRTqT28ymR+IUpc4UfIDBO0NBjDrnKap+
-         EQbIDJxT7V2j3HWIWIRAquzT5ZpQ5HmD0Mxm95lcE3npmBws6mQJjVxeMqNWVU9NPtDJ
-         Z1Fw/6xP6zez73FyMNyYjUx1IACCWNIDKSyPUZIstcigE9zccqb2HHOBD7mCKqggDWx7
-         UOBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1741261832; x=1741866632;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=tHLEs56MXmKRrOJm00TIGhH5j9WFJFOF+SMISsj0tcM=;
-        b=LPA+tpxB1986wcYcNFlL0SQKnhOk+/AWQfCgE6dE7HmuBa4sPXT1Pzn1uuEV5bNpZE
-         IjClhX3zygT5tGUAxjtBQDsC05CnpGhAL699NTlTMRvAUnZXH+uWK5rnaSkf5s2uS+Cp
-         aFwbC/bpfzP60x/ix1uQim9xSULwpxpx1RRVJ2gaAdD9iYpCq8wsfOtIJNec8b98acqh
-         L242MYVpH/Okr0l50s3WJbTSE95/DPurhYWt5AFFqGZX4YVMed3nnmseQT0ssmHiBnEF
-         BjgkZS8Kilun3Vwx65vLOn205MZfMAqBDpdUpdRN0BQps3wgfunJ/n+CD9TwH0Ur1rR0
-         jYDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW0MIUCMbjAKVkl5CO6XYHDB/gUxdDnItwt59v1lLLH/AZ0X6xXn2xsJYaJlP2m21TrumxUb3xiGg65TSk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM8aXC3phJuQzo8vFidQuuQzPxfkQKCH54U3/icRiFi7s5KoMz
-	4U4KVV4a8NjhMe9kFFHt6BN1pY+aJ7GLYkvilUed2JV7OIJTxcedi2dL93U50v0=
-X-Gm-Gg: ASbGncsEkk3uFAZImHcq73IObK7AyZxVinfi+ITKaTUNIs+GOdCL1DXzFZxKnwJiAm4
-	6iX2AhGXNq8QXlaVy9WxG4CEBD9rqYDX0IzF1IpNXJ6RHAciUX51db0+vrq5ZgC1J9ERWfecGWe
-	xLYJGYK94emZlB3KeSh2d5xusuEIu39NBhwbyBfVaK/tWS/59E86QqYn8laVgywqmEJmQK/KspH
-	zmAGt367v52vvesX1VyNSUfK38zmODczlcFBhnrWwVoR087UmO98YdlgeGehLvXTQCVqy6eeMtU
-	Urk0qzOObAUac3O9/tPV7rVxfoOPSPHzQzorVYKi6fqK51zCKlpiZUqhjzNIIi+8NIqR8B7KIOW
-	s/8IK6jsIZ51wvoRUuHo=
-X-Google-Smtp-Source: AGHT+IE3CFGsM2+vONvv9cMx7SdQHkTLKhGRwMFX9yWJVCnOit8f9RZqZcfJ9UeVca/gWd2EI8lsaQ==
-X-Received: by 2002:a05:6512:4025:b0:549:8f10:ec48 with SMTP id 2adb3069b0e04-5498f10ef22mr35757e87.29.1741261831815;
-        Thu, 06 Mar 2025 03:50:31 -0800 (PST)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-5498b1bc53bsm154826e87.191.2025.03.06.03.50.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 06 Mar 2025 03:50:29 -0800 (PST)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-input@vger.kernel.org
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Input: hisi_powerkey: Enable system-wakeup for s2idle
-Date: Thu,  6 Mar 2025 12:50:21 +0100
-Message-ID: <20250306115021.797426-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1741261936; c=relaxed/simple;
+	bh=G9qw8yU2JYwrSJd80gP5IXYjnfL0h1O2hrprO7bOI9s=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ArsIZwMLDMnEY9MOwHzViNoFRN2U37nNvlkTxO+gluTIg6BATzOolqD5/wQ4Ng9dyTqSnXlKkWtQq0eXSw592VfNgz0SamcnKlD8lZR1sXWv2ugPuS+yLXUEQp2u3wWSLoueY5ZozriOAUc4DbYsGPoXMCueOgIBt/8hi1AGmAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eWfurdml; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 43663C4CEE0;
+	Thu,  6 Mar 2025 11:52:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1741261934;
+	bh=G9qw8yU2JYwrSJd80gP5IXYjnfL0h1O2hrprO7bOI9s=;
+	h=From:To:Cc:Subject:Date:From;
+	b=eWfurdmlMMoXS1Rdf1BpyqqF2x1Y05Uyb6/bhqwS6/MSOpVuOLMeOqigqZikQu+YV
+	 wha8RO5po7/3h2K/e9j+UjF8Bm7bwSLwd0JIUF1mZMUXHX0UAZFR+RjFDo/ZEDHHhc
+	 aJtDCrECwZ58EEzmSVDKuFiRzE5YY38T12NAjietkr7yXSokRZB9wIhcxm2OrCw4ei
+	 Qv+n3PUXvOS6W7x8tafqqdy54U6OuXZoaa1ZVKFOtsgIsbW3mR6p0cO1gW4sT0Vzpi
+	 TwXsmCpiT5GvufKVAfn2hPa+ae3StD2FBlLqyI3pR/aKwTdCo1rB1csCm9YEbfioIU
+	 buv+8Z9Z9VZsQ==
+From: Leon Romanovsky <leon@kernel.org>
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: Chiara Meiohas <cmeiohas@nvidia.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
+	Mark Bloch <mbloch@nvidia.com>,
+	Patrisious Haddad <phaddad@nvidia.com>,
+	Yishai Hadas <yishaih@nvidia.com>
+Subject: [PATCH rdma-next v1 0/6] Introduce UCAP API and usage in mlx5
+Date: Thu,  6 Mar 2025 13:51:25 +0200
+Message-ID: <cover.1741261611.git.leon@kernel.org>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,29 +61,64 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-To wake up the system from s2idle when pressing the power-button, let's
-convert from using pm_wakeup_event() to pm_wakeup_dev_event(), as it allows
-us to specify the "hard" in-parameter, which needs to be set for s2idle.
+Changelog:
+v1:
+ * Used kref primitives instead of open-coded variant
+ * Check return value from dev_set_name()
+ * Added extra brackets around type in UCAP_ENABLED macro
+v0: https://lore.kernel.org/all/cover.1740574943.git.leon@kernel.org
 
-Signed-off-by: Ulf Hansson <ulf.hansson@linaro.org>
----
- drivers/input/misc/hisi_powerkey.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--------------------------------------------------------------------------
+This series introduces the User CAPability (UCAP) API that allows
+creating user contexts with various firmware privileges.
 
-diff --git a/drivers/input/misc/hisi_powerkey.c b/drivers/input/misc/hisi_powerkey.c
-index d3c293a95d32..d315017324d9 100644
---- a/drivers/input/misc/hisi_powerkey.c
-+++ b/drivers/input/misc/hisi_powerkey.c
-@@ -30,7 +30,7 @@ static irqreturn_t hi65xx_power_press_isr(int irq, void *q)
- {
- 	struct input_dev *input = q;
- 
--	pm_wakeup_event(input->dev.parent, MAX_HELD_TIME);
-+	pm_wakeup_dev_event(input->dev.parent, MAX_HELD_TIME, true);
- 	input_report_key(input, KEY_POWER, 1);
- 	input_sync(input);
- 
+The UCAP API provides fine-grained control over specific firmware
+features by representing each capability as a character device with root
+read-write access. Root processes can grant users special privileges by
+allowing access to these character devices. User contexts created using
+a file descriptor of a UCAP will have specific UCAP privileges.
+
+Two UCAP character devices are created for mlx5, and user contexts
+opened with at least one of these UCAPs are considered privileged. To
+ensure that privileged commands can always proceed, non-privileged
+commands are limited when a privileged user is present on the device.
+
+Thanks
+
+Chiara Meiohas (5):
+  RDMA/uverbs: Introduce UCAP (User CAPabilities) API
+  RDMA/mlx5: Create UCAP char devices for supported device capabilities
+  RDMA/uverbs: Add support for UCAPs in context creation
+  RDMA/mlx5: Check enabled UCAPs when creating ucontext
+  docs: infiniband: document the UCAP API
+
+Patrisious Haddad (1):
+  RDMA/mlx5: Expose RDMA TRANSPORT flow table types to userspace
+
+ Documentation/infiniband/index.rst            |   1 +
+ Documentation/infiniband/ucaps.rst            |  71 +++++
+ drivers/infiniband/core/Makefile              |   3 +-
+ drivers/infiniband/core/ucaps.c               | 267 ++++++++++++++++++
+ drivers/infiniband/core/uverbs_cmd.c          |  19 ++
+ drivers/infiniband/core/uverbs_main.c         |   2 +
+ .../infiniband/core/uverbs_std_types_device.c |   4 +
+ drivers/infiniband/hw/mlx5/devx.c             |  31 +-
+ drivers/infiniband/hw/mlx5/devx.h             |   5 +-
+ drivers/infiniband/hw/mlx5/fs.c               | 154 +++++++++-
+ drivers/infiniband/hw/mlx5/fs.h               |   2 +
+ drivers/infiniband/hw/mlx5/main.c             |  77 ++++-
+ drivers/infiniband/hw/mlx5/mlx5_ib.h          |   3 +
+ include/rdma/ib_ucaps.h                       |  25 ++
+ include/rdma/ib_verbs.h                       |   1 +
+ include/uapi/rdma/ib_user_ioctl_cmds.h        |   1 +
+ include/uapi/rdma/mlx5_user_ioctl_cmds.h      |   1 +
+ include/uapi/rdma/mlx5_user_ioctl_verbs.h     |   2 +
+ 18 files changed, 647 insertions(+), 22 deletions(-)
+ create mode 100644 Documentation/infiniband/ucaps.rst
+ create mode 100644 drivers/infiniband/core/ucaps.c
+ create mode 100644 include/rdma/ib_ucaps.h
+
 -- 
-2.43.0
+2.48.1
 
 
