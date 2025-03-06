@@ -1,116 +1,73 @@
-Return-Path: <linux-kernel+bounces-549376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3DE6A551DA
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:52:44 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF3E8A551CE
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:50:19 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94DE33A86D1
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:49:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C7F87AAF3B
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 16:48:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E5D269AE0;
-	Thu,  6 Mar 2025 16:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QhpUO6eC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F2DD25A335;
+	Thu,  6 Mar 2025 16:48:19 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A9D2698AE
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8275413635B;
+	Thu,  6 Mar 2025 16:48:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741279667; cv=none; b=VWKxFiq/GpuZ53/vTSDCoAupXqykhJY2sXCD/0hipDx3f5BOEwBgzRj+/v7fh1E/LOMb108sKs42nbGIyc9PSp6MG8iG4/ydZx/nYAk6sM8kQ3LLtjI4uCrzd9FZ4GiTSGy4E8h9zqNP/5372gqGNMhhjFK4N3kw2SL48Z677fM=
+	t=1741279699; cv=none; b=u6lVzXtEhuW672ORl0XZEcP423+Tj5pKwgJhWYicyqteXQEsGdc70QsgvkaiBxXpO1ys6O9Ws9JJf+vSTorRMqMhrrhPJ9i4NjfLiLPdLBAaORqZEI0Cy/a3/uFcXXJl1Qrb+oFPsnJSZ6l81doZ+83jYuODGBCmOsHcfiq3i9A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741279667; c=relaxed/simple;
-	bh=twFTbYxAB1EArSmPyT2JRqopxKqWs42pTkltMVGd1gA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 Cc:Content-Type; b=iH1Xz9tLjpOR79RTdrQ7scpkrvsJKhDE1Tia3gOV6EddH3e6S43TjrfW0nhGQ3M7Mxd6gEtM2n0WrniJVLnLjBv9cSl1b/BvkYgcs79bSgdz0AXrzpUIB2yYGZyE6gs2n34Q4HjDWIZC6Csdktuz15vvR9uhbYmZ2uSRPpb/z7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QhpUO6eC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDC1DC4CEE4
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 16:47:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1741279666;
-	bh=twFTbYxAB1EArSmPyT2JRqopxKqWs42pTkltMVGd1gA=;
-	h=References:In-Reply-To:From:Date:Subject:Cc:From;
-	b=QhpUO6eCNrtrllawflc6gCLCYI1Kn+tIfRMdkg4ME11yaYzCLWcRUoRJtx3z6dfLe
-	 moH5TeID0FA9GNEXP5a/dlY9zLbLp08NEQ800o+/eqcXlPSRpnugFbgGomBvKQ9Shg
-	 NSJnTl4+XspVZooYMw65XT7zprutVB92Fs3K2PsxdCbB8nKSGtALu5m454YOWbyJ1+
-	 A6jLVvKpp5GsusiOcTYav9mqyHR4779cNrVdfgeOhLluudoZReIJHsSGpbhA6MGJm5
-	 DXcm+ViEFciQ1U7BYKJz8Ak8XnxtUcTDnxTZVlE1O0ImLA5uVEEaA8nzmoi8E3ILa1
-	 mEjy+iWHPBtOg==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5494bc8a526so1022214e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 06 Mar 2025 08:47:46 -0800 (PST)
-X-Gm-Message-State: AOJu0YzTMha3DT9MzuDJbDsroQ7qubJaUUGGpc1P8ifK+yq8co0zz2k+
-	v+iUIqIlRSNB9wyCuIGKZLh/LrspmSQBAV5mac+2vLa+51oOd5pijxmoo7RS4LvcqUJMSQMCDRU
-	Ai1stSXDqEBp5jmt1i6d2vxWjm5c=
-X-Received: by 2002:a05:6512:1241:b0:549:733b:6afc with SMTP id
- 2adb3069b0e04-5497d3358bemt3061168e87.12.1741279665290; Thu, 06 Mar 2025
- 08:47:45 -0800 (PST)
+	s=arc-20240116; t=1741279699; c=relaxed/simple;
+	bh=cRxH/eNjPom3M8pp6oEsvNCyvMgaeq+dOvETtm3u/qE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PMVtyZAYuxvE76UWoES0N9dGLu37dB0GCucZ+0Cq3xLcD2X7SQlVPSXEN6OwQCQsOBR1xt6sUCI0ZC6WtvA21Lkyl/9s5pKJhO7Clg0cKJISyTmIBt31x6pkbETJAxbIR2ZCQeRQ1Iac+l/6UMBCAqtPUTTSPWg26rt+6qAAl18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [IPv6:2a01:37:1000::53df:5f1c:0])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 500AD300115FB;
+	Thu,  6 Mar 2025 17:48:13 +0100 (CET)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 35FC21F5C3; Thu,  6 Mar 2025 17:48:13 +0100 (CET)
+Date: Thu, 6 Mar 2025 17:48:13 +0100
+From: Lukas Wunner <lukas@wunner.de>
+To: Bjorn Helgaas <helgaas@kernel.org>
+Cc: "Chia-Lin Kao (AceLan)" <acelan.kao@canonical.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] PCI: pciehp: Fix system hang during resume with
+ daisy-chained hotplug controllers
+Message-ID: <Z8nRzYOgTz86xRwN@wunner.de>
+References: <20241022130243.263737-1-acelan.kao@canonical.com>
+ <20250305230959.GA318387@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250224132132.1765115-6-ardb+git@google.com>
-In-Reply-To: <20250224132132.1765115-6-ardb+git@google.com>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 6 Mar 2025 17:47:33 +0100
-X-Gmail-Original-Message-ID: <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
-X-Gm-Features: AQ5f1JqSV6MLnlpRrip5gVWxbX6kcgtJrmEkxxn0pKEv2rCJmgtvhbpESrpcKwY
-Message-ID: <CAMj1kXHamiZ8u4YO9FnrWhpcotUkAusDF_db_5H2qaVD85qmVA@mail.gmail.com>
-Subject: Re: [RFC PATCH 0/4] x86/build: Get rid of vmlinux postlink step
-Cc: linux-kernel@vger.kernel.org, x86@kernel.org, linux-kbuild@vger.kernel.org, 
-	Masahiro Yamada <masahiroy@kernel.org>, Ingo Molnar <mingo@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250305230959.GA318387@bhelgaas>
 
-On Mon, 24 Feb 2025 at 14:21, Ard Biesheuvel <ardb+git@google.com> wrote:
->
-> From: Ard Biesheuvel <ardb@kernel.org>
->
-> Kbuild supports an architecture specific Makefile.postlink file that is
-> invoked for the vmlinux target after it has been built. This Makefile
-> takes 'vmlinux' (which has just been built) as the target, and mangles
-> the file and/or constructs other intermediate artifacts from it.
->
-> This violates the general philosophy of Make, which is based on rules
-> and dependencies, and artifacts that are rebuilt only when any of their
-> dependencies have been updated.
->
-> Instead, the different incarnations of vmlinux that are consumed by
-> different stages of the build should be emitted as distinct files, where
-> rules and dependencies are used to define one in terms of the other.
->
-> This also works around an error observed here [0], where vmlinux is
-> deleted by Make because a subsequent step that consumes it as input
-> throws an error.
->
-> So refactor the vmlinux shell scripts and build rules so that
-> architectures that rely on --emit-relocs to construct vmlinux with
-> static relocations preserved will get a separate vmlinux.unstripped file
-> carrying those relocations. This removes the need for an imperative
-> postlink step, given that any rules that depend on the unstripped
-> vmlinux can now simply depend on vmlinux.unstripped, rather than inject
-> a build step into Makefile.postlink
->
-> S390 should be able to do the same. MIPS and RISC-V perform some
-> post-build checks on vmlinux, which is reasonable in principle for a
-> postlink step, although deleting vmlinux when the check fails is equally
-> unhelpful.
->
-> [0] https://lore.kernel.org/all/Z5ARucnUgqjwBnrp@gmail.com/T/#m731ed0206949fc3f39fcc8a7b82fe348a8fc80c4
->
-> Cc: Masahiro Yamada <masahiroy@kernel.org>
-> Cc: Ingo Molnar <mingo@kernel.org>
->
-> Ard Biesheuvel (4):
->   Kbuild/link-vmlinux.sh: Make output file name configurable
->   Kbuild: Introduce Kconfig symbol for linking vmlinux with relocations
->   Kbuild: Create intermediate vmlinux build with relocations preserved
->   x86: Get rid of Makefile.postlink
->
+On Wed, Mar 05, 2025 at 05:09:59PM -0600, Bjorn Helgaas wrote:
+> On Tue, Oct 22, 2024 at 09:02:43PM +0800, Chia-Lin Kao (AceLan) wrote:
+> > A system hang occurs when multiple PCIe hotplug controllers in a daisy-chained
+> > setup (like a Thunderbolt dock with NVMe storage) resume from system sleep.
 
-Ping?
+Thanks Bjorn for reminding me of AceLan's report.
+
+This appears to be the same issue Mika and Kenneth reported,
+a fix is currently being worked on in this thread:
+
+https://lore.kernel.org/all/Z8nRI6xjGl3frMe5@wunner.de/
 
