@@ -1,152 +1,109 @@
-Return-Path: <linux-kernel+bounces-549444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549445-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CB1BA552B3
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:16:38 +0100 (CET)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4A6EA552B7
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 18:17:07 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B35D162F3C
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:16:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08D687A7D2D
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 17:16:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 332A425BAD1;
-	Thu,  6 Mar 2025 17:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E744325A627;
+	Thu,  6 Mar 2025 17:16:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fhC/gnkw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dIiXdl4O";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fhC/gnkw";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="dIiXdl4O"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="eEP4cWko"
+Received: from mx.denx.de (mx.denx.de [89.58.32.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFAF6214805
-	for <linux-kernel@vger.kernel.org>; Thu,  6 Mar 2025 17:16:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C54002144BF;
+	Thu,  6 Mar 2025 17:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.32.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741281387; cv=none; b=DnVeEeOM6ur+Xldm4yHk96zdNxZyr58viT/G0rENu8buCPM5gkCYi3NVQ2l3i7GHGJLpemSIlHNorb44smB7FbDLNfqXu3Cz4fz4ZtrErt5QwMxVwM2YJIGstMeyf9RmH3EpPrq8X7fGYPVzdkRHtoNHsXARACCobr2ZVWrI0yQ=
+	t=1741281418; cv=none; b=RVaa/ywrnog5iZ1sxKd5ljinOJgp57nBm9Q2m0nlbVis1yn94PKuhy1zKa9OrNvZV/ZDcPABSv0awSnN5vX5a1zsWY5aiTq3gSVy5BnvTYStFC5lAupCzNzC/4StReEm5oDGaTKEINt7qVbcp7kmq03gj3PdtWsmUX7pLld/FwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741281387; c=relaxed/simple;
-	bh=XiPNr+xW3i7ZHIapSVpGaefvY/pz7sDtSpKJq+G3voA=;
+	s=arc-20240116; t=1741281418; c=relaxed/simple;
+	bh=T3CeNpmxeBukp3RAzBVcpHTzWqORc+ZZgVzatEtPYYc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KD8fTdmzrY0qSCT5AtEW8C/3Sa7xgLCtipp/bKwpF6Tso9E4bw/d9xYBLru0FGu6IuWbfjrgIlXJIZKo/IMQlQg0IaBHeJF962LzNRRgth1IgREQ8PSp7nln2H3OR3DlT/bTyARuRFQ3TMtLZgVRsXvDDlWypuqYxSK9rp5dUJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fhC/gnkw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dIiXdl4O; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fhC/gnkw; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=dIiXdl4O; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 026A91F8BB;
-	Thu,  6 Mar 2025 17:16:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741281384;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e2vuFY3kKP2iqWnCR3kOBl8o8A2I13iwS3PRqUbyO3A=;
-	b=fhC/gnkwai0DAOooOcNaFBNkgQ4nUXCFzTDLcsStN51C4Qc1SAt4WU3RTprqSpmCYPM1MN
-	OIw1W8ero26T0uMLVR5Eu5N6f2B/6Cl2Hq3hOPVDQ8+QgvvEbQLD9mLldp05Swz7MDJT36
-	D9ugKXKYldC4Sc5yI5IDh/r6tSIuXnw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741281384;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e2vuFY3kKP2iqWnCR3kOBl8o8A2I13iwS3PRqUbyO3A=;
-	b=dIiXdl4OS94YVYvlyxsOfa7v1XUGQ79Jorh2FkUyclD6ZiS0rBGfVnAuULUSr54BQsQpn3
-	EwrXAVtj5rKz6ZAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b="fhC/gnkw";
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=dIiXdl4O
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1741281384;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e2vuFY3kKP2iqWnCR3kOBl8o8A2I13iwS3PRqUbyO3A=;
-	b=fhC/gnkwai0DAOooOcNaFBNkgQ4nUXCFzTDLcsStN51C4Qc1SAt4WU3RTprqSpmCYPM1MN
-	OIw1W8ero26T0uMLVR5Eu5N6f2B/6Cl2Hq3hOPVDQ8+QgvvEbQLD9mLldp05Swz7MDJT36
-	D9ugKXKYldC4Sc5yI5IDh/r6tSIuXnw=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1741281384;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=e2vuFY3kKP2iqWnCR3kOBl8o8A2I13iwS3PRqUbyO3A=;
-	b=dIiXdl4OS94YVYvlyxsOfa7v1XUGQ79Jorh2FkUyclD6ZiS0rBGfVnAuULUSr54BQsQpn3
-	EwrXAVtj5rKz6ZAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D67A913A61;
-	Thu,  6 Mar 2025 17:16:23 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rhXVM2fYyWdWOAAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Thu, 06 Mar 2025 17:16:23 +0000
-Date: Thu, 6 Mar 2025 18:16:21 +0100
-From: David Sterba <dsterba@suse.cz>
-To: Daniel Vacek <neelx@suse.com>
-Cc: Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, Nick Terrell <terrelln@fb.com>,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] btrfs/defrag: implement compression levels
-Message-ID: <20250306171621.GK5777@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20250304171403.571335-1-neelx@suse.com>
- <20250306131537.972377-1-neelx@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=VG+7hWW7j5KlygtUOvlrHyaRop4yUgXUw5LbKhC7tPCF/zwyaAAEkZRppmY4XeS7BYP3G7T3tCi0n2+E0uf283EHPcscal0TwDIP0p93NU8bSI+akKT5uPSih/RjOGA9DDTujJXTgdMLqvyI+tBVqI/pljEjMnhwTDNDEOSAgbY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=eEP4cWko; arc=none smtp.client-ip=89.58.32.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 15A6B10381917;
+	Thu,  6 Mar 2025 18:16:48 +0100 (CET)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de; s=mx-20241105;
+	t=1741281413; h=from:subject:date:message-id:to:cc:mime-version:content-type:
+	 in-reply-to:references; bh=N3OHVsB0U8K5tQARNAc05MOkxZPI6Uii1+T1VS7QOHc=;
+	b=eEP4cWko9X8oHU7rJ1tNEk8jnb1LbO5iGl7Iq/gRUaiVNtC5qo7vzCCtFF1mqMFbib9g9h
+	TEdxA4vC3vNSdfbh/TTFRUIROFcQUmwx0CdAGfXgAfliolS04Y2Yct8hQNLGifIFPbUlxY
+	7kdn+HKM5xE04diRh90at/iGRTRTy/7/Euuao9IFQC8mlSA5MwrgrPGvPM3A+oaOc/xLah
+	/IQ6o9qEbpCHJ9Gwk3i7LbP0hZ1+jjd4iR7lr/8ChPrsvSmstPGFPgsTGUmHilns6Vu34c
+	9BSt/HGhtoV/ufpWQY4XRyoI+F8I1YxxMEtZIvqh2wzD2ifCKwyvGpq6TiihKA==
+Date: Thu, 6 Mar 2025 18:16:46 +0100
+From: Pavel Machek <pavel@denx.de>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: stable@vger.kernel.org, patches@lists.linux.dev,
+	linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+	akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+	patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+	jonathanh@nvidia.com, f.fainelli@gmail.com,
+	sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+	conor@kernel.org, hargar@microsoft.com, broonie@kernel.org
+Subject: Re: [PATCH 6.6 000/147] 6.6.81-rc2 review
+Message-ID: <Z8nYfp7VmFOg6J0Z@duo.ucw.cz>
+References: <20250306151412.957725234@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="+is5TnlxGyAtvNhy"
+Content-Disposition: inline
+In-Reply-To: <20250306151412.957725234@linuxfoundation.org>
+X-Last-TLS-Session-Version: TLSv1.3
+
+
+--+is5TnlxGyAtvNhy
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250306131537.972377-1-neelx@suse.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Rspamd-Queue-Id: 026A91F8BB
-X-Spam-Score: -4.21
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-4.21 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,suse.cz:replyto,suse.cz:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Mar 06, 2025 at 02:15:35PM +0100, Daniel Vacek wrote:
-> The zstd and zlib compression types support setting compression levels.
-> Enhance the defrag interface to specify the levels as well.
-> 
-> Signed-off-by: Daniel Vacek <neelx@suse.com>
-> ---
-> v3: Validate the level instead of clamping and fix the comment of the
->     btrfs_ioctl_defrag_range_args structure.
+Hi!
 
-Thanks, this looks good to me now, I'll add it to for-next.
+> This is the start of the stable review cycle for the 6.6.81 release.
+> There are 147 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+
+CIP testing did not find any problems here, or on 6.12 and 6.13.
+
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.13.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.12.y
+https://gitlab.com/cip-project/cip-testing/linux-stable-rc-ci/-/tree/linux-=
+6.6.y
+
+Tested-by: Pavel Machek (CIP) <pavel@denx.de>
+
+Best regards,
+                                                                Pavel
+--=20
+DENX Software Engineering GmbH,        Managing Director: Erika Unter
+HRB 165235 Munich, Office: Kirchenstr.5, D-82194 Groebenzell, Germany
+
+--+is5TnlxGyAtvNhy
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZ8nYfgAKCRAw5/Bqldv6
+8k8qAJ4p5qebsVHoFLPzf1RtQBYgKdEHngCggChioFvqAyM+5a+xse1pbnFwFuc=
+=Cpra
+-----END PGP SIGNATURE-----
+
+--+is5TnlxGyAtvNhy--
 
