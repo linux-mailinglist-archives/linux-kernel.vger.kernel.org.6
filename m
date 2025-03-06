@@ -1,242 +1,176 @@
-Return-Path: <linux-kernel+bounces-549023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-549016-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E13FA54C42
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:31:41 +0100 (CET)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A69FA54C2F
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 14:29:44 +0100 (CET)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BF9118981CE
-	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:31:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F2F93AC56A
+	for <lists+linux-kernel@lfdr.de>; Thu,  6 Mar 2025 13:29:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43C18213249;
-	Thu,  6 Mar 2025 13:30:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68D1220E6F1;
+	Thu,  6 Mar 2025 13:29:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M+watR+M"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O/3cMHPp"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C34C5212FA9;
-	Thu,  6 Mar 2025 13:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5647320CCC8;
+	Thu,  6 Mar 2025 13:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1741267812; cv=none; b=USgLbvUBGtnLZ4sG+KflmrEfx0m4+AqlDg0/smt0J6jBroEJZv5wPlRRNKB5L1d8U8/jXvEgl1Vf/XunkwBcacCTcRVPlZ2jdP2/sCuLMe5KSFXfu3W5j/Sh8S/965UGfBT6gGcwHjYzgX3jqeoSn0WYF6dZMGtVtzRONLW/GfI=
+	t=1741267767; cv=none; b=UwFd68M2KAqoam39zGLdNKbuflkFyXNCbAZVQ4SQzz20/X9XBhqPY+b6hI+feUvHPdI8B7iV2BzJRMqL9sXq30f3FX9CljePbKSQWS1LnQMbRQF+Nc61pugg/XI7gUzpGpIEXg2kuPZZ5IMASwENoWI+oXpnDpSIyNTo2VrMd4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1741267812; c=relaxed/simple;
-	bh=laRJ9ladmbhQdZFfMjSYO/idDyBVuvgVKWpycqlnfJM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iwU3Ys6cWx9NbJX2G58Zhzo3T3i4dso3wqz4psqczZnoeUq7xfPyXKzjdz5Vrj/uZNyvT7N3BkGtIPNj+TiP/uhcNJhNIThj2BfREAa9AR9ySDGE66Xcfd00N9qbqZU2Oj0w+50aBWA0mmZEjXlCj2WRtAkq4Zq/NHbtDXQYVc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M+watR+M; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTPS id 526DTL3k082856
-	(version=TLSv1.2 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NO);
-	Thu, 6 Mar 2025 07:29:21 -0600
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1741267761;
-	bh=iDDyX/GUZ+CUJ3pYmzP9suXbDiqqVJSQhjEWG3dT/qo=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=M+watR+MjOei+T5/gMyltnoV32cFlEf++pgYbFC3AsdblYFR16IrNuZa1SvwYQwz/
-	 yAqn9WZEVcCalhQR8bDwR5fBSTbEE34/W/WCU31JYwoTSDN9tnk0D6BJI4ra0gWqk4
-	 vC8QXPc5AEVIieSCKf64OEbIdp8+E/an4yDPQTEM=
-Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 526DTLEp039850;
-	Thu, 6 Mar 2025 07:29:21 -0600
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 6
- Mar 2025 07:29:20 -0600
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 6 Mar 2025 07:29:20 -0600
-Received: from localhost (ti.dhcp.ti.com [172.24.227.95] (may be forged))
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 526DTJVl078559;
-	Thu, 6 Mar 2025 07:29:20 -0600
-From: Devarsh Thakkar <devarsht@ti.com>
-To: <jyri.sarha@iki.fi>, <tomi.valkeinen@ideasonboard.com>,
-        <airlied@gmail.com>, <maarten.lankhorst@linux.intel.com>,
-        <mripard@kernel.org>, <tzimmermann@suse.de>,
-        <dri-devel@lists.freedesktop.org>, <simona@ffwll.ch>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-CC: <praneeth@ti.com>, <vigneshr@ti.com>, <aradhya.bhatia@linux.dev>,
-        <s-jain1@ti.com>, <r-donadkar@ti.com>, <j-choudhary@ti.com>,
-        <h-shenoy@ti.com>, <devarsht@ti.com>
-Subject: [PATCH v3 3/3] drm/tidss: Add support for AM62L display subsystem
-Date: Thu, 6 Mar 2025 18:59:14 +0530
-Message-ID: <20250306132914.1469387-4-devarsht@ti.com>
-X-Mailer: git-send-email 2.39.1
-In-Reply-To: <20250306132914.1469387-1-devarsht@ti.com>
-References: <20250306132914.1469387-1-devarsht@ti.com>
+	s=arc-20240116; t=1741267767; c=relaxed/simple;
+	bh=NpTgRj4T32Kir8hSGmXbmVcavENIjzDMEGc/xFU2qnw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tYLiP8CNv0g3eNcP7EBQHI46HCOhDIL0JEQgNNAAMPLbbuoXShXbCY2BhRsYMlOvIxyZEk3ZeUaB6di2ZFxH2rSmlUkMuYcAmcAbMse1tFVmpWwtZx+8R5AM/0LPSFyRoDfrHLaFGyPI8KkiAixR2kfRcPi3opZ6009iRfX04M4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O/3cMHPp; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-2234bec7192so13605145ad.2;
+        Thu, 06 Mar 2025 05:29:26 -0800 (PST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1741267765; x=1741872565; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oPmmVqolUe14kI3ULJzdQmwFUK3yVpwsyWJQGGs0vwk=;
+        b=O/3cMHPpFY6JYIkGs+8Gihmg55cd7b5Vr7hkhJuC94ssw80QDj5ekFUtQ/MkAgd00/
+         TODulRrrHspqlw1s1GujxnmBpoH9ufSPi7Tf3zeYhlSQd12pOaqYTe6+wfPF0av1Bsj7
+         V3m62ayxs0P2ibmNNMG2A7vAExB/5ZxqPXRL1U/wc6V+yQfnGQfyqHC73RLhcBnYVMDK
+         A1jecn9mQw6G4bR7fvvvAJkiDphRsWZwgy//FeHQu54IsZ9IXdhHJYYyMV1kyfdksaZG
+         SVJl7rqSf1ZhiWXvJJgwjRRJnE8hrqY02KepX4hx8UkOrLTQGfe2XF2zEX/lZOvKAnoB
+         KWbQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1741267765; x=1741872565;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oPmmVqolUe14kI3ULJzdQmwFUK3yVpwsyWJQGGs0vwk=;
+        b=Za2NA85S/R4OFzZkpztnQ58pz+wWXpWxhcIZflXk7KxWo4rQbquRCxzOg+iP2uOXUS
+         sn0lE0so9CPeIRbK6lOUX1lvN+vNR3hpTMfCEcBP4gIXURnwZFC43axUD62PlaQobL+1
+         c2zp5+TPuEONNQQgcFMdhfIh4iu82UQqalBQ8u0JCGoVnNq0LKqq+pYnKncV/wM1nhuM
+         sd76uWF5pvBNu/6oHAxrZLZwO54zKgP+U8HVOo89W1XuwGdgbPJshy2cLLZ0XwRWqzZG
+         gWa+sXmXKO6FkvClDCNowWyGQeTLXY/BASMHRbo2THqZObNsqk2ZJ0sfr9sJC+tUw3Nl
+         +4tw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzUwJ/RONsnpH5nyRxeCBFgeVgByRfH0+wFTT5XS/NVJX5xROrL5wJmeHrTbcc0FtpkX2TpQ4W@vger.kernel.org, AJvYcCXLDLkwz0g3pBFJTJogqFR59J9y9LIyr9mqqlUPRMjuJpY1DSxbPXpUuvlEtmOD1icyjWiSXTsgKmtduvDn+WvK@vger.kernel.org, AJvYcCXNyJHq7vc1FEN7FJM7R8nkmWoPwDz+x4KSqWq2uYlDFEqMxJo87C71l2wdLaea2TC2OQtucPII7hqpt6Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZwRdaiDhHmhHkFbbEdKa1iodwyJxDa9SUj+1/24pfLkN38gDA
+	S3GBM5kK+SDaPpx01o4xdV0DNSf6C8v26jdNLxXd4gEBO5Q6/unq
+X-Gm-Gg: ASbGncsI6ksgQpM1xallMrrBrd8Z9YtH/94lQnBDBdvwnoe2zK6dEsjZGD4dRu/bhIW
+	v6c+i1FR9Khuc7yoytjNAViPnBpKm87QxaewLB5P3igQcddCys/CjB7EWSClTAESUGsfos1S6Jd
+	8hGkJSyEwgnrxCh9/Q/fBK/G6J5CSjmjQZFlTE5CGlSjcS/MDgZ33oM6L/bCnr4AZs7NJCsHijH
+	gUZTIx0JoiERqyCQE0JjpYjg9xOtnwvn27PlE8lYRVEbWgHIyo0oljBYBCI7eCBP6khvFYzMIDl
+	dSNQyAbbA4Gn/HZBn7G7lLAmfdHUIogxIT4zvAuYnXdnygMH0A==
+X-Google-Smtp-Source: AGHT+IFY+cYCkzaiTLX3WEbwqeJCHIk9o8qrMibv0hyFPF5zYRWNTVoXpBXKn61/ivsfKZdrnq8KwA==
+X-Received: by 2002:a05:6a00:4f94:b0:736:3d6c:aa64 with SMTP id d2e1a72fcca58-73682cc533amr11194009b3a.21.1741267765508;
+        Thu, 06 Mar 2025 05:29:25 -0800 (PST)
+Received: from fedora ([43.228.180.230])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-7369820687csm1297266b3a.34.2025.03.06.05.29.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 06 Mar 2025 05:29:24 -0800 (PST)
+Date: Thu, 6 Mar 2025 13:29:16 +0000
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Cosmin Ratiu <cratiu@nvidia.com>
+Cc: "razor@blackwall.org" <razor@blackwall.org>,
+	Petr Machata <petrm@nvidia.com>,
+	"shuah@kernel.org" <shuah@kernel.org>,
+	"andrew+netdev@lunn.ch" <andrew+netdev@lunn.ch>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"jv@jvosburgh.net" <jv@jvosburgh.net>,
+	"jarod@redhat.com" <jarod@redhat.com>,
+	Jianbo Liu <jianbol@nvidia.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"edumazet@google.com" <edumazet@google.com>,
+	"pabeni@redhat.com" <pabeni@redhat.com>,
+	"horms@kernel.org" <horms@kernel.org>,
+	"kuba@kernel.org" <kuba@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+	"steffen.klassert@secunet.com" <steffen.klassert@secunet.com>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>
+Subject: Re: [PATCHv4 net 1/3] bonding: move IPsec deletion to
+ bond_ipsec_free_sa
+Message-ID: <Z8mjLEx37F-zaE0i@fedora>
+References: <20250304131120.31135-1-liuhangbin@gmail.com>
+ <20250304131120.31135-2-liuhangbin@gmail.com>
+ <4108bfd8-b19f-46ea-8820-47dd8fb9ee7c@blackwall.org>
+ <Z8hcFSElK7iF8u9o@fedora>
+ <f9bf79aff80eae232bc16863aa7a3ea56c80069a.camel@nvidia.com>
+ <Z8ls6fAwBtiV_C9b@fedora>
+ <Z8lysOLMnYoknLsW@fedora>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Z8lysOLMnYoknLsW@fedora>
 
-Enable display for AM62L DSS [1] which supports only a single display
-pipeline using a single overlay manager, single video port and a single
-video lite pipeline which does not support scaling.
+On Thu, Mar 06, 2025 at 10:02:34AM +0000, Hangbin Liu wrote:
+> > Set xs->xso.real_dev = NULL is a good idea. As we will break
+> > in bond_ipsec_del_sa()/bond_ipsec_free_sa() when there is no
+> > xs->xso.real_dev.
+> > 
+> > For bond_ipsec_add_sa_all(), I will move the xso.real_dev = real_dev
+> > after .xdo_dev_state_add() in case the following situation.
+> > 
+> Hmm, do we still need to the spin_lock in bond_ipsec_add_sa_all()? With
+> xs->xso.real_dev = NULL after bond_ipsec_del_sa_all(), it looks there is
+> no need the spin_lock in bond_ipsec_add_sa_all(). e.g.
+> 
+> 
+> diff --git a/drivers/net/bonding/bond_main.c b/drivers/net/bonding/bond_main.c
+> index 04b677d0c45b..3ada51c63207 100644
+> --- a/drivers/net/bonding/bond_main.c
+> +++ b/drivers/net/bonding/bond_main.c
+> @@ -537,15 +537,27 @@ static void bond_ipsec_add_sa_all(struct bonding *bond)
+>  	}
+>  
+>  	list_for_each_entry(ipsec, &bond->ipsec_list, list) {
+> +		spin_lock_bh(&ipsec->xs->lock);
+> +		/* Skip dead xfrm states, they'll be freed later. */
+> +		if (ipsec->xs->km.state == XFRM_STATE_DEAD) {
+> +			spin_unlock_bh(&ipsec->xs->lock);
+> +			continue;
+> +		}
+> +
+>  		/* If new state is added before ipsec_lock acquired */
+> -		if (ipsec->xs->xso.real_dev == real_dev)
+> +		if (ipsec->xs->xso.real_dev == real_dev) {
+> +			spin_unlock_bh(&ipsec->xs->lock);
+>  			continue;
+> +		}
+>  
+> -		ipsec->xs->xso.real_dev = real_dev;
+>  		if (real_dev->xfrmdev_ops->xdo_dev_state_add(ipsec->xs, NULL)) {
+>  			slave_warn(bond_dev, real_dev, "%s: failed to add SA\n", __func__);
+>  			ipsec->xs->xso.real_dev = NULL;
+>  		}
+> +		/* Set real_dev after .xdo_dev_state_add in case
+> +		 * __xfrm_state_delete() is called in parallel
+> +		 */
+> +		ipsec->xs->xso.real_dev = real_dev;
+>  	}
 
-The output of video port is routed to SoC boundary via DPI interface and
-the DPI signals from the video port are also routed to DSI Tx controller
-present within the SoC.
+OK, please ignore this, the .xdo_dev_state_add() need xso.real_dev to
+be set first. Then I'm still wonder how to avoid the race before
+.xdo_dev_state_add() is called, e.g.
 
-[1]: Section 11.7 (Display Subsystem and Peripherals)
-Link : https://www.ti.com/lit/pdf/sprujb4
+ bond_ipsec_add_sa_all()
+ spin_lock_bh(&ipsec->xs->lock);
+ ipsec->xs->xso.real_dev = real_dev;
+ spin_unlock(&ipsec->x->lock);
+                                            __xfrm_state_delete
+                                               - bond_ipsec_del_sa()
+                                                 - .xdo_dev_state_delete()
+					       - bond_ipsec_free_sa()
+					         - .xdo_dev_state_free()
+ .xdo_dev_state_add()
 
-Signed-off-by: Devarsh Thakkar <devarsht@ti.com>
----
-V3: 
-- Rebase on top of
-  0002-drm-tidss-Update-infra-to-support-DSS7-cut-down-vers.patch
-- Use the generic "tidss_am65x_common_regs" as common reg space
-  instead of creating a new one.
-
-V2: 
-- Add separate common reg space for AM62L
-- Add separate irq enable/disable/read/clear helpers for AM62L
-- Use separate helper function for setting overlay attributes
-- Drop Reviewed-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-  due to additional changes made in V2.
-
- drivers/gpu/drm/tidss/tidss_dispc.c | 46 +++++++++++++++++++++++++++++
- drivers/gpu/drm/tidss/tidss_dispc.h |  2 ++
- drivers/gpu/drm/tidss/tidss_drv.c   |  1 +
- 3 files changed, 49 insertions(+)
-
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
-index 9b46403dbb0c..0ca0c2106715 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.c
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.c
-@@ -440,6 +440,47 @@ const struct dispc_features dispc_am62a7_feats = {
- 	.vid_order = {1, 0},
- };
- 
-+const struct dispc_features dispc_am62l_feats = {
-+	.max_pclk_khz = {
-+		[DISPC_VP_DPI] = 165000,
-+	},
-+
-+	.subrev = DISPC_AM62L,
-+
-+	.common = "common",
-+	.common_regs = tidss_am65x_common_regs,
-+
-+	.num_vps = 1,
-+	.vp_name = { "vp1" },
-+	.ovr_name = { "ovr1" },
-+	.vpclk_name =  { "vp1" },
-+	.vp_bus_type = { DISPC_VP_DPI },
-+
-+	.vp_feat = { .color = {
-+			.has_ctm = true,
-+			.gamma_size = 256,
-+			.gamma_type = TIDSS_GAMMA_8BIT,
-+		},
-+	},
-+
-+	.num_planes = 2,
-+
-+	.vid_info = {
-+		{
-+			.vid_name = "vid",
-+			.vid_lite = false,
-+			.is_present = false,
-+		},
-+		{
-+			.vid_name = "vidl1",
-+			.vid_lite = true,
-+			.is_present = true,
-+		}
-+	},
-+
-+	.vid_order = {1, 0},
-+};
-+
- static const u16 *dispc_common_regmap;
- 
- struct dss_vp_data {
-@@ -957,6 +998,7 @@ dispc_irq_t dispc_read_and_clear_irqstatus(struct dispc_device *dispc)
- 		return dispc_k2g_read_and_clear_irqstatus(dispc);
- 	case DISPC_AM625:
- 	case DISPC_AM62A7:
-+	case DISPC_AM62L:
- 	case DISPC_AM65X:
- 	case DISPC_J721E:
- 		return dispc_k3_read_and_clear_irqstatus(dispc);
-@@ -974,6 +1016,7 @@ void dispc_set_irqenable(struct dispc_device *dispc, dispc_irq_t mask)
- 		break;
- 	case DISPC_AM625:
- 	case DISPC_AM62A7:
-+	case DISPC_AM62L:
- 	case DISPC_AM65X:
- 	case DISPC_J721E:
- 		dispc_k3_set_irqenable(dispc, mask);
-@@ -1466,6 +1509,7 @@ void dispc_ovr_set_plane(struct dispc_device *dispc, u32 hw_plane,
- 		break;
- 	case DISPC_AM625:
- 	case DISPC_AM62A7:
-+	case DISPC_AM62L:
- 	case DISPC_AM65X:
- 		dispc_am65x_ovr_set_plane(dispc, hw_plane, hw_videoport,
- 					  x, y, layer);
-@@ -2392,6 +2436,7 @@ static void dispc_plane_init(struct dispc_device *dispc)
- 		break;
- 	case DISPC_AM625:
- 	case DISPC_AM62A7:
-+	case DISPC_AM62L:
- 	case DISPC_AM65X:
- 	case DISPC_J721E:
- 		dispc_k3_plane_init(dispc);
-@@ -2500,6 +2545,7 @@ static void dispc_vp_write_gamma_table(struct dispc_device *dispc,
- 		break;
- 	case DISPC_AM625:
- 	case DISPC_AM62A7:
-+	case DISPC_AM62L:
- 	case DISPC_AM65X:
- 		dispc_am65x_vp_write_gamma_table(dispc, hw_videoport);
- 		break;
-diff --git a/drivers/gpu/drm/tidss/tidss_dispc.h b/drivers/gpu/drm/tidss/tidss_dispc.h
-index f1755e031348..61d1087c5cf0 100644
---- a/drivers/gpu/drm/tidss/tidss_dispc.h
-+++ b/drivers/gpu/drm/tidss/tidss_dispc.h
-@@ -67,6 +67,7 @@ enum dispc_vp_bus_type {
- enum dispc_dss_subrevision {
- 	DISPC_K2G,
- 	DISPC_AM625,
-+	DISPC_AM62L,
- 	DISPC_AM62A7,
- 	DISPC_AM65X,
- 	DISPC_J721E,
-@@ -96,6 +97,7 @@ struct dispc_features {
- extern const struct dispc_features dispc_k2g_feats;
- extern const struct dispc_features dispc_am625_feats;
- extern const struct dispc_features dispc_am62a7_feats;
-+extern const struct dispc_features dispc_am62l_feats;
- extern const struct dispc_features dispc_am65x_feats;
- extern const struct dispc_features dispc_j721e_feats;
- 
-diff --git a/drivers/gpu/drm/tidss/tidss_drv.c b/drivers/gpu/drm/tidss/tidss_drv.c
-index d4652e8cc28c..f2a4f659f574 100644
---- a/drivers/gpu/drm/tidss/tidss_drv.c
-+++ b/drivers/gpu/drm/tidss/tidss_drv.c
-@@ -242,6 +242,7 @@ static const struct of_device_id tidss_of_table[] = {
- 	{ .compatible = "ti,k2g-dss", .data = &dispc_k2g_feats, },
- 	{ .compatible = "ti,am625-dss", .data = &dispc_am625_feats, },
- 	{ .compatible = "ti,am62a7-dss", .data = &dispc_am62a7_feats, },
-+	{ .compatible = "ti,am62l-dss", .data = &dispc_am62l_feats, },
- 	{ .compatible = "ti,am65x-dss", .data = &dispc_am65x_feats, },
- 	{ .compatible = "ti,j721e-dss", .data = &dispc_j721e_feats, },
- 	{ }
--- 
-2.39.1
-
+Thanks
+Hangbin
 
